@@ -25,6 +25,8 @@ import { NavigateToNextHeaderParams, TabToNextHeaderParams } from "./interfaces/
 import { WithoutGridCommon } from "./interfaces/iCommon";
 import { FOCUSABLE_EXCLUDE, FOCUSABLE_SELECTOR } from "./utils/dom";
 import { TabGuardClassNames } from "./widgets/tabGuardCtrl";
+import { FilterManager } from "./filter/filterManager";
+import { IAdvancedFilterService } from "./interfaces/iAdvancedFilterService";
 
 @Bean('focusService')
 export class FocusService extends BeanStub {
@@ -38,6 +40,8 @@ export class FocusService extends BeanStub {
     @Optional('rangeService') private readonly rangeService: IRangeService;
     @Autowired('navigationService') public navigationService: NavigationService;
     @Autowired('ctrlsService') public ctrlsService: CtrlsService;
+    @Autowired('filterManager') public filterManager: FilterManager;
+    @Optional('advancedFilterService') public advancedFilterService: IAdvancedFilterService;
 
     public static AG_KEYBOARD_FOCUS: string = 'ag-keyboard-focus';
 
@@ -45,6 +49,8 @@ export class FocusService extends BeanStub {
     private focusedCellPosition: CellPosition | null;
     private restoredFocusedCellPosition: CellPosition | null;
     private focusedHeaderPosition: HeaderPosition | null;
+    /** the column that had focus before it moved into the advanced filter */
+    private advancedFilterFocusColumn: Column | undefined;
 
     private static keyboardModeActive: boolean = false;
     private static instancesMonitored: Map<Document, GridCtrl[]> = new Map();
@@ -363,9 +369,14 @@ export class FocusService extends BeanStub {
         fromTab?: boolean;
         allowUserOverride?: boolean;
         event?: KeyboardEvent;
+        fromCell?: boolean;
     }): boolean {
-        const { direction, fromTab, allowUserOverride, event } = params;
+        const { direction, fromTab, allowUserOverride, event, fromCell } = params;
         let { headerPosition } = params;
+
+        if (fromCell && this.filterManager.isAdvancedFilterHeaderActive()) {
+            return this.focusAdvancedFilter(headerPosition);
+        }
 
         if (allowUserOverride) {
             const currentPosition = this.getFocusedHeader();
@@ -400,7 +411,11 @@ export class FocusService extends BeanStub {
         if (!headerPosition) { return false; }
 
         if (headerPosition.headerRowIndex === -1) {
-            return this.focusGridView(headerPosition.column as Column);
+            if (this.filterManager.isAdvancedFilterHeaderActive()) {
+                return this.focusAdvancedFilter(headerPosition);
+            } else {
+                return this.focusGridView(headerPosition.column as Column);
+            }
         }
 
         this.headerNavigationService.scrollToColumn(headerPosition.column, direction);
@@ -434,6 +449,14 @@ export class FocusService extends BeanStub {
             headerPosition: { headerRowIndex, column },
             event
         });
+    }
+
+    public focusPreviousFromFirstCell(event?: KeyboardEvent): boolean {
+        if (this.filterManager.isAdvancedFilterHeaderActive()) {
+            return this.focusAdvancedFilter(null);
+        } else {
+            return this.focusLastHeader(event);
+        }
     }
 
     public isAnyCellFocused(): boolean {
@@ -606,5 +629,28 @@ export class FocusService extends BeanStub {
         }
 
         return false;
+    }
+
+    private focusAdvancedFilter(position: HeaderPosition | null): boolean {
+        this.advancedFilterFocusColumn = position?.column as Column | undefined;
+        return this.advancedFilterService.getCtrl().focusHeaderComp();
+    }
+
+    public focusNextFromAdvancedFilter(backwards?: boolean, forceFirstColumn?: boolean): boolean {
+        const column = (forceFirstColumn ? undefined : this.advancedFilterFocusColumn) ?? this.columnModel.getAllDisplayedColumns()?.[0];
+        if (backwards) {
+            return this.focusHeaderPosition({
+                headerPosition: {
+                    column: column,
+                    headerRowIndex: this.headerNavigationService.getHeaderRowCount() - 1
+                }
+            });
+        } else {
+            return this.focusGridView(column);
+        }
+    }
+
+    public clearAdvancedFilterColumn(): void {
+        this.advancedFilterFocusColumn = undefined;
     }
 }

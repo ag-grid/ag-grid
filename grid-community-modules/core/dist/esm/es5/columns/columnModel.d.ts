@@ -1,4 +1,4 @@
-// Type definitions for @ag-grid-community/core v30.0.6
+// Type definitions for @ag-grid-community/core v30.1.0
 // Project: https://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { ColumnGroup } from '../entities/columnGroup';
@@ -149,6 +149,7 @@ export declare class ColumnModel extends BeanStub {
     private resizeOperationQueue;
     private columnDefs;
     init(): void;
+    private onGroupDisplayTypeChanged;
     private onAutoGroupColumnDefChanged;
     private onSharedColDefChanged;
     setColumnDefs(columnDefs: (ColDef | ColGroupDef)[], source?: ColumnEventType): void;
@@ -377,7 +378,6 @@ export declare class ColumnModel extends BeanStub {
     private autoColsEqual;
     private getWidthOfColsInList;
     getGridBalancedTree(): IProvidedColumn[];
-    hasFloatingFilters(): boolean;
     getFirstDisplayedColumn(): Column | null;
     setColumnHeaderHeight(col: Column, height: number): void;
     getColumnGroupHeaderRowHeight(): number;

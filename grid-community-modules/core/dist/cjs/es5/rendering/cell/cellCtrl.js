@@ -73,8 +73,15 @@ var CellCtrl = /** @class */ (function (_super) {
         _this.rowCtrl = rowCtrl;
         // unique id to this instance, including the column ID to help with debugging in React as it's used in 'key'
         _this.instanceId = column.getId() + '-' + instanceIdSequence++;
+        var colDef = _this.column.getColDef();
+        _this.colIdSanitised = string_1.escapeString(_this.column.getId());
+        if (!_this.beans.gridOptionsService.is('suppressCellFocus')) {
+            _this.tabIndex = -1;
+        }
+        _this.isCellRenderer = colDef.cellRenderer != null || colDef.cellRendererSelector != null;
         _this.createCellPosition();
         _this.addFeatures();
+        _this.updateAndFormatValue(true);
         return _this;
     }
     CellCtrl.prototype.shouldRestoreFocus = function () {
@@ -144,11 +151,8 @@ var CellCtrl = /** @class */ (function (_super) {
         this.cellComp = comp;
         this.eGui = eGui;
         this.printLayout = printLayout;
-        // we force to make sure formatter gets called at least once,
-        // even if value has not changed (is is undefined)
-        this.updateAndFormatValue(true);
         this.addDomData();
-        this.onCellFocused();
+        this.onCellFocused(this.focusEventToRestore);
         this.applyStaticCssClasses();
         this.setWrapText();
         this.onFirstRightPinnedChanged();
@@ -159,15 +163,9 @@ var CellCtrl = /** @class */ (function (_super) {
             this.setupAutoHeight(eCellWrapper);
         }
         this.setAriaColIndex();
-        if (!this.beans.gridOptionsService.is('suppressCellFocus')) {
-            this.cellComp.setTabIndex(-1);
-        }
-        var colIdSanitised = string_1.escapeString(this.column.getId());
-        this.cellComp.setColId(colIdSanitised);
-        this.cellComp.setRole('gridcell');
         (_a = this.cellPositionFeature) === null || _a === void 0 ? void 0 : _a.setComp(eGui);
         (_b = this.cellCustomStyleFeature) === null || _b === void 0 ? void 0 : _b.setComp(comp);
-        (_c = this.tooltipFeature) === null || _c === void 0 ? void 0 : _c.setComp(comp);
+        (_c = this.tooltipFeature) === null || _c === void 0 ? void 0 : _c.setComp(eGui);
         (_d = this.cellKeyboardListenerFeature) === null || _d === void 0 ? void 0 : _d.setComp(this.eGui);
         if (this.cellRangeFeature) {
             this.cellRangeFeature.setComp(comp, eGui);
@@ -233,11 +231,35 @@ var CellCtrl = /** @class */ (function (_super) {
     CellCtrl.prototype.getInstanceId = function () {
         return this.instanceId;
     };
+    CellCtrl.prototype.getIncludeSelection = function () {
+        return this.includeSelection;
+    };
+    CellCtrl.prototype.getIncludeRowDrag = function () {
+        return this.includeRowDrag;
+    };
+    CellCtrl.prototype.getIncludeDndSource = function () {
+        return this.includeDndSource;
+    };
+    CellCtrl.prototype.getColumnIdSanitised = function () {
+        return this.colIdSanitised;
+    };
+    CellCtrl.prototype.getTabIndex = function () {
+        return this.tabIndex;
+    };
+    CellCtrl.prototype.getIsCellRenderer = function () {
+        return this.isCellRenderer;
+    };
+    CellCtrl.prototype.getValueToDisplay = function () {
+        return this.valueFormatted != null ? this.valueFormatted : this.value;
+    };
     CellCtrl.prototype.showValue = function (forceNewCellRendererInstance) {
         if (forceNewCellRendererInstance === void 0) { forceNewCellRendererInstance = false; }
-        var valueToDisplay = this.valueFormatted != null ? this.valueFormatted : this.value;
-        var params = this.createCellRendererParams();
-        var compDetails = this.beans.userComponentFactory.getCellRendererDetails(this.column.getColDef(), params);
+        var valueToDisplay = this.getValueToDisplay();
+        var compDetails;
+        if (this.isCellRenderer) {
+            var params = this.createCellRendererParams();
+            compDetails = this.beans.userComponentFactory.getCellRendererDetails(this.column.getColDef(), params);
+        }
         this.cellComp.setRenderDetails(compDetails, valueToDisplay, forceNewCellRendererInstance);
         this.refreshHandle();
     };
@@ -544,6 +566,9 @@ var CellCtrl = /** @class */ (function (_super) {
     CellCtrl.prototype.animateCell = function (cssName, flashDelay, fadeDelay) {
         var _this = this;
         var _a, _b;
+        if (!this.cellComp) {
+            return;
+        }
         var fullName = "ag-cell-" + cssName;
         var animationFullName = "ag-cell-" + cssName + "-animation";
         var gridOptionsService = this.beans.gridOptionsService;
@@ -591,8 +616,8 @@ var CellCtrl = /** @class */ (function (_super) {
         return this.column.isSuppressFillHandle();
     };
     CellCtrl.prototype.formatValue = function (value) {
-        var res = this.callValueFormatter(value);
-        return res != null ? res : value;
+        var _a;
+        return (_a = this.callValueFormatter(value)) !== null && _a !== void 0 ? _a : value;
     };
     CellCtrl.prototype.callValueFormatter = function (value) {
         return this.beans.valueFormatterService.formatValue(this.column, this.rowNode, value);
@@ -792,10 +817,20 @@ var CellCtrl = /** @class */ (function (_super) {
         this.cellComp.addOrRemoveCssClass(CSS_CELL_LAST_LEFT_PINNED, lastLeftPinned);
     };
     CellCtrl.prototype.onCellFocused = function (event) {
-        if (!this.cellComp || this.beans.gridOptionsService.is('suppressCellFocus')) {
+        if (this.beans.gridOptionsService.is('suppressCellFocus')) {
             return;
         }
         var cellFocused = this.beans.focusService.isCellFocused(this.cellPosition);
+        if (!this.cellComp) {
+            if (cellFocused && (event === null || event === void 0 ? void 0 : event.forceBrowserFocus)) {
+                // The cell comp has not been rendered yet, but the browser focus is being forced for this cell
+                // so lets save the event to apply it when setComp is called in the next turn.
+                this.focusEventToRestore = event;
+            }
+            return;
+        }
+        // Clear the saved focus event
+        this.focusEventToRestore = undefined;
         this.cellComp.addOrRemoveCssClass(CSS_CELL_FOCUS, cellFocused);
         // see if we need to force browser focus - this can happen if focus is programmatically set
         if (cellFocused && event && event.forceBrowserFocus) {

@@ -1,11 +1,12 @@
-import React, { useRef, useEffect, useState, forwardRef, useImperativeHandle, ForwardRefRenderFunction, memo, useContext } from 'react';
+import React, { ForwardRefRenderFunction, forwardRef, memo, useCallback, useContext, useImperativeHandle, useRef } from 'react';
 
 import {
-    TabGuardCtrl, ITabGuard, GridCtrl, TabGuardClassNames
+    GridCtrl,
+    ITabGuard,
+    TabGuardClassNames,
+    TabGuardCtrl
 } from '@ag-grid-community/core';
 import { BeansContext } from './beansContext';
-import { useLayoutEffectOnce } from './useEffectOnce';
-import { agFlushSync } from './utils';
 
 export interface TabGuardCompCallback {
     forceFocusOutOfContainer(): void;
@@ -23,9 +24,9 @@ const TabGuardCompRef: ForwardRefRenderFunction<TabGuardCompCallback, TabGuardPr
     const { children, eFocusableElement, onTabKeyDown, gridCtrl } = props;
     const { context } = useContext(BeansContext);
 
-    const topTabGuardRef = useRef<HTMLDivElement>(null);
-    const bottomTabGuardRef = useRef<HTMLDivElement>(null);
-    const tabGuardCtrlRef = useRef<TabGuardCtrl>();
+    const topTabGuardRef = useRef<HTMLDivElement | null>(null);
+    const bottomTabGuardRef = useRef<HTMLDivElement | null>(null);
+    const tabGuardCtrlRef = useRef<TabGuardCtrl | null>();
 
     const setTabIndex = (value?: string | null) => {
         const processedValue = value == null ? undefined : parseInt(value, 10).toString();
@@ -46,30 +47,40 @@ const TabGuardCompRef: ForwardRefRenderFunction<TabGuardCompCallback, TabGuardPr
         }
     }));
 
-    useLayoutEffectOnce(() => {
-        const eTopGuard = topTabGuardRef.current!;
-        const eBottomGuard = bottomTabGuardRef.current!;
+    const setupCtrl = useCallback(() => {
 
+        if (!topTabGuardRef.current && !bottomTabGuardRef.current) {
+            // Clean up after both refs have been removed
+            context.destroyBean(tabGuardCtrlRef.current);
+            tabGuardCtrlRef.current = null;
+            return;
+        } 
 
-        const compProxy: ITabGuard = {
-            setTabIndex
-        };
+        if (topTabGuardRef.current && bottomTabGuardRef.current) {
+            const compProxy: ITabGuard = {
+                setTabIndex
+            };
 
-        const ctrl = tabGuardCtrlRef.current = context.createBean(new TabGuardCtrl({
-            comp: compProxy,
-            eTopGuard: eTopGuard,
-            eBottomGuard: eBottomGuard,
-            eFocusableElement: eFocusableElement,
-            
-            onTabKeyDown: onTabKeyDown,
-            focusInnerElement: fromBottom => gridCtrl.focusInnerElement(fromBottom)
-        }));
+            tabGuardCtrlRef.current = context.createBean(new TabGuardCtrl({
+                comp: compProxy,
+                eTopGuard: topTabGuardRef.current,
+                eBottomGuard: bottomTabGuardRef.current,
+                eFocusableElement: eFocusableElement,
 
-        return () => {
-            context.destroyBean(ctrl);
-        };
+                onTabKeyDown: onTabKeyDown,
+                focusInnerElement: (fromBottom: any) => gridCtrl.focusInnerElement(fromBottom)
+            }));
+        }
+    }, []);
 
-    });
+    const setTopRef = useCallback((e: HTMLDivElement) => {
+        topTabGuardRef.current = e;
+        setupCtrl();
+    }, [setupCtrl]);
+    const setBottomRef = useCallback((e: HTMLDivElement) => {
+        bottomTabGuardRef.current = e;
+        setupCtrl();
+    }, [setupCtrl]);
 
     const createTabGuard = (side: 'top' | 'bottom') => {
         const className = side === 'top' ? TabGuardClassNames.TAB_GUARD_TOP : TabGuardClassNames.TAB_GUARD_BOTTOM;
@@ -78,7 +89,7 @@ const TabGuardCompRef: ForwardRefRenderFunction<TabGuardCompCallback, TabGuardPr
             <div 
                 className={ `${TabGuardClassNames.TAB_GUARD} ${className}` }
                 role="presentation"
-                ref={ side === 'top' ? topTabGuardRef : bottomTabGuardRef }
+                ref={side === 'top' ? setTopRef : setBottomRef}
             ></div>
         );
     }

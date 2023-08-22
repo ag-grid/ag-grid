@@ -75,8 +75,7 @@ This following shows the Selector always returning back an AG Rich Select Cell E
 cellEditorSelector: params => {
     return {
         component: 'agRichSelectCellEditor',
-        params: { values: ['Male', 'Female'] },
-        popup: true
+        params: { values: ['Male', 'Female'] }
     };
 }
 ```
@@ -97,8 +96,7 @@ cellEditorSelector: params => {
       component: 'agRichSelectCellEditor',
       params: {
         values: ['Male', 'Female']
-      },
-      popup: true
+      }
     }
   }
 

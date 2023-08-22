@@ -21,8 +21,8 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 };
 import { RefSelector } from "./componentAnnotations";
 import { AgAbstractLabel } from "./agAbstractLabel";
-import { AgAbstractField } from "./agAbstractField";
 import { PostConstruct } from "../context/context";
+import { Events } from "../eventKeys";
 var AgSlider = /** @class */ (function (_super) {
     __extends(AgSlider, _super);
     function AgSlider(config) {
@@ -35,7 +35,7 @@ var AgSlider = /** @class */ (function (_super) {
     };
     AgSlider.prototype.onValueChange = function (callbackFn) {
         var _this = this;
-        var eventChanged = AgAbstractField.EVENT_CHANGED;
+        var eventChanged = Events.EVENT_FIELD_VALUE_CHANGED;
         this.addManagedListener(this.eText, eventChanged, function () {
             var textValue = parseFloat(_this.eText.getValue());
             _this.eSlider.setValue(textValue.toString(), true);
@@ -75,7 +75,7 @@ var AgSlider = /** @class */ (function (_super) {
         }
         this.eText.setValue(value, true);
         this.eSlider.setValue(value, true);
-        this.dispatchEvent({ type: AgAbstractField.EVENT_CHANGED });
+        this.dispatchEvent({ type: Events.EVENT_FIELD_VALUE_CHANGED });
         return this;
     };
     AgSlider.prototype.setStep = function (step) {

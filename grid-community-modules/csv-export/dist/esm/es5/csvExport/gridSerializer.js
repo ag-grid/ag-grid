@@ -121,7 +121,7 @@ var GridSerializer = /** @class */ (function (_super) {
         return function (gridSerializingSession) {
             if (!params.skipColumnGroupHeaders) {
                 var groupInstanceIdCreator = new GroupInstanceIdCreator();
-                var displayedGroups = _this.displayedGroupCreator.createDisplayedGroups(columnsToExport, _this.columnModel.getGridBalancedTree(), groupInstanceIdCreator, null);
+                var displayedGroups = _this.displayedGroupCreator.createDisplayedGroups(columnsToExport, groupInstanceIdCreator, null);
                 _this.recursivelyAddHeaderGroups(displayedGroups, gridSerializingSession, params.processGroupHeaderCallback);
             }
             else if (params.columnGroups) {

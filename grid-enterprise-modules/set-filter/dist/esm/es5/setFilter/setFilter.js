@@ -320,7 +320,11 @@ var SetFilter = /** @class */ (function (_super) {
         var translate = this.localeService.getLocaleTextFunc();
         var filterListName = translate('ariaFilterList', 'Filter List');
         var isTree = !!this.setFilterParams.treeList;
-        var virtualList = this.virtualList = this.createBean(new VirtualList('filter', isTree ? 'tree' : 'listbox', filterListName));
+        var virtualList = this.virtualList = this.createBean(new VirtualList({
+            cssIdentifier: 'filter',
+            ariaRole: isTree ? 'tree' : 'listbox',
+            listName: filterListName
+        }));
         var eSetFilterList = this.getRefElement('eSetFilterList');
         if (isTree) {
             eSetFilterList.classList.add('ag-set-filter-tree-list');

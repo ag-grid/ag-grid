@@ -282,8 +282,11 @@ var HeaderFilterCellCtrl = /** @class */ (function (_super) {
         else {
             compPromise.then(function (compInstance) {
                 var _a;
-                if (!compInstance || ((_a = _this.userCompDetails) === null || _a === void 0 ? void 0 : _a.componentClass) !== newCompDetails.componentClass) {
+                if (!compInstance || _this.filterManager.areFilterCompsDifferent((_a = _this.userCompDetails) !== null && _a !== void 0 ? _a : null, newCompDetails)) {
                     _this.updateCompDetails(newCompDetails, becomeActive);
+                }
+                else {
+                    _this.updateFloatingFilterParams(newCompDetails);
                 }
             });
         }
@@ -297,6 +300,18 @@ var HeaderFilterCellCtrl = /** @class */ (function (_super) {
             this.setupSyncWithFilter();
             this.setupFilterChangedListener();
         }
+    };
+    HeaderFilterCellCtrl.prototype.updateFloatingFilterParams = function (userCompDetails) {
+        var _a;
+        if (!userCompDetails) {
+            return;
+        }
+        var params = userCompDetails.params;
+        (_a = this.comp.getFloatingFilterComp()) === null || _a === void 0 ? void 0 : _a.then(function (floatingFilter) {
+            if ((floatingFilter === null || floatingFilter === void 0 ? void 0 : floatingFilter.onParamsUpdated) && typeof floatingFilter.onParamsUpdated === 'function') {
+                floatingFilter.onParamsUpdated(params);
+            }
+        });
     };
     __decorate([
         context_1.Autowired('filterManager')

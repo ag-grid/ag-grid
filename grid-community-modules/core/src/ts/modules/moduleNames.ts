@@ -28,6 +28,7 @@ export enum ModuleNames {
     ExcelExportModule = "@ag-grid-enterprise/excel-export",
     ClipboardModule = "@ag-grid-enterprise/clipboard",
     SparklinesModule = "@ag-grid-enterprise/sparklines",
+    AdvancedFilterModule = "@ag-grid-enterprise/advanced-filter",
 
     // framework wrappers currently don't provide beans, comps etc, so no need to be modules,
     // however i argue they should be as in theory they 'could' provide beans etc

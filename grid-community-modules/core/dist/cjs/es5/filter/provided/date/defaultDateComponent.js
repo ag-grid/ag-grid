@@ -38,17 +38,14 @@ var DefaultDateComponent = /** @class */ (function (_super) {
     };
     DefaultDateComponent.prototype.init = function (params) {
         var _this = this;
+        this.params = params;
+        this.setParams(params);
         var eDocument = this.gridOptionsService.getDocument();
         var inputElement = this.eDateInput.getInputElement();
-        var shouldUseBrowserDatePicker = this.shouldUseBrowserDatePicker(params);
-        if (shouldUseBrowserDatePicker) {
-            inputElement.type = 'date';
-        }
         // ensures that the input element is focussed when a clear button is clicked,
         // unless using safari as there is no clear button and focus does not work properly
-        var usingSafariDatePicker = shouldUseBrowserDatePicker && browser_1.isBrowserSafari();
         this.addManagedListener(inputElement, 'mousedown', function () {
-            if (_this.eDateInput.isDisabled() || usingSafariDatePicker) {
+            if (_this.eDateInput.isDisabled() || _this.usingSafariDatePicker) {
                 return;
             }
             inputElement.focus();
@@ -60,8 +57,14 @@ var DefaultDateComponent = /** @class */ (function (_super) {
             if (_this.eDateInput.isDisabled()) {
                 return;
             }
-            params.onDateChanged();
+            _this.params.onDateChanged();
         });
+    };
+    DefaultDateComponent.prototype.setParams = function (params) {
+        var inputElement = this.eDateInput.getInputElement();
+        var shouldUseBrowserDatePicker = this.shouldUseBrowserDatePicker(params);
+        this.usingSafariDatePicker = shouldUseBrowserDatePicker && browser_1.isBrowserSafari();
+        inputElement.type = shouldUseBrowserDatePicker ? 'date' : 'text';
         var _a = params.filterParams || {}, minValidYear = _a.minValidYear, maxValidYear = _a.maxValidYear;
         if (minValidYear) {
             inputElement.min = minValidYear + "-01-01";
@@ -69,6 +72,10 @@ var DefaultDateComponent = /** @class */ (function (_super) {
         if (maxValidYear) {
             inputElement.max = maxValidYear + "-12-31";
         }
+    };
+    DefaultDateComponent.prototype.onParamsUpdated = function (params) {
+        this.params = params;
+        this.setParams(params);
     };
     DefaultDateComponent.prototype.getDate = function () {
         return date_1.parseDateTimeFromString(this.eDateInput.getValue());

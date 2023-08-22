@@ -1,13 +1,21 @@
 import { AgColorPanel } from "./agColorPanel";
-import { _, IAgLabel, AgPickerField, AgDialog } from "@ag-grid-community/core";
+import { _, IPickerFieldParams, AgPickerField, AgDialog, Component } from "@ag-grid-community/core";
 
-interface ColorPickerConfig extends IAgLabel {
+interface ColorPickerConfig extends IPickerFieldParams {
     color: string;
 }
 
-export class AgColorPicker extends AgPickerField<HTMLElement, string> {
+export class AgColorPicker extends AgPickerField<string, IPickerFieldParams, AgDialog> {
+
+    private isDestroyingPicker: boolean;
+
     constructor(config?: ColorPickerConfig) {
-        super(config, 'ag-color-picker', 'colorPicker');
+        super({
+            pickerAriaLabelKey: 'ariaLabelColorPicker',
+            pickerAriaLabelValue: 'Color Picker',
+            pickerType: 'ag-list',
+            ...config,
+        }, 'ag-color-picker', 'colorPicker');
 
         if (config && config.color) {
             this.value = config.color;
@@ -22,8 +30,9 @@ export class AgColorPicker extends AgPickerField<HTMLElement, string> {
         }
     }
 
-    public showPicker() {
+    protected createPickerComponent() {
         const eGuiRect = this.getGui().getBoundingClientRect();
+
         const colorDialog = this.createBean(new AgDialog({
             closable: false,
             modal: true,
@@ -35,45 +44,46 @@ export class AgColorPicker extends AgPickerField<HTMLElement, string> {
             y: eGuiRect.top - 250
         }));
 
-        this.isPickerDisplayed = true;
+        return colorDialog;
+    }
 
-        colorDialog.addCssClass('ag-color-dialog');
-        _.setAriaExpanded(this.eWrapper, true);
-
+    protected renderAndPositionPicker(): (() => void) {
+        const pickerComponent = this.pickerComponent!;
         const colorPanel = this.createBean(new AgColorPanel({ picker: this }));
 
+        pickerComponent.addCssClass('ag-color-dialog');
+
         colorPanel.addDestroyFunc(() => {
-            if (colorDialog.isAlive()) {
-                this.destroyBean(colorDialog);
+            if (pickerComponent.isAlive()) {
+                this.destroyBean(pickerComponent);
             }
         });
 
-        colorDialog.setParentComponent(this);
-        colorDialog.setBodyComponent(colorPanel);
+        pickerComponent.setParentComponent(this);
+        pickerComponent.setBodyComponent(colorPanel);
         colorPanel.setValue(this.getValue());
+        colorPanel.getGui().focus();
 
-        colorDialog.addDestroyFunc(() => {
+        pickerComponent.addDestroyFunc(() => {
             // here we check if the picker was already being
             // destroyed to avoid a stack overflow
             if (!this.isDestroyingPicker) {
+                this.beforeHidePicker();
                 this.isDestroyingPicker = true;
 
                 if (colorPanel.isAlive()) {
                     this.destroyBean(colorPanel);
                 }
+
+                if (this.isAlive()) {
+                    this.getFocusableElement().focus();
+                }
             } else {
                 this.isDestroyingPicker = false;
             }
-
-            if (this.isAlive()) {
-                _.setAriaExpanded(this.eWrapper, false);
-                this.getFocusableElement().focus();
-            }
-
-            this.isPickerDisplayed = false;
         });
 
-        return colorDialog;
+        return () => this.pickerComponent?.close();
     }
 
     public setValue(color: string): this {

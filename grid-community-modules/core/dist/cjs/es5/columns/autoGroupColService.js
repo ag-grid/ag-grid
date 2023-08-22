@@ -33,7 +33,7 @@ var AutoGroupColService = /** @class */ (function (_super) {
     function AutoGroupColService() {
         return _super !== null && _super.apply(this, arguments) || this;
     }
-    AutoGroupColService.prototype.createAutoGroupColumns = function (existingCols, rowGroupColumns) {
+    AutoGroupColService.prototype.createAutoGroupColumns = function (rowGroupColumns) {
         var _this = this;
         var groupAutoColumns = [];
         var doingTreeData = this.gridOptionsService.isTreeData();
@@ -46,18 +46,20 @@ var AutoGroupColService = /** @class */ (function (_super) {
         // for each column we are grouping by
         if (doingMultiAutoColumn) {
             rowGroupColumns.forEach(function (rowGroupCol, index) {
-                groupAutoColumns.push(_this.createOneAutoGroupColumn(existingCols, rowGroupCol, index));
+                groupAutoColumns.push(_this.createOneAutoGroupColumn(rowGroupCol, index));
             });
         }
         else {
-            groupAutoColumns.push(this.createOneAutoGroupColumn(existingCols));
+            groupAutoColumns.push(this.createOneAutoGroupColumn());
         }
         return groupAutoColumns;
     };
+    AutoGroupColService.prototype.updateAutoGroupColumns = function (autoGroupColumns) {
+        var _this = this;
+        autoGroupColumns.forEach(function (column, index) { return _this.updateOneAutoGroupColumn(column, index); });
+    };
     // rowGroupCol and index are missing if groupDisplayType != "multipleColumns"
-    AutoGroupColService.prototype.createOneAutoGroupColumn = function (existingCols, rowGroupCol, index) {
-        // if one provided by user, use it, otherwise create one
-        var defaultAutoColDef = this.generateDefaultColDef(rowGroupCol);
+    AutoGroupColService.prototype.createOneAutoGroupColumn = function (rowGroupCol, index) {
         // if doing multi, set the field
         var colId;
         if (rowGroupCol) {
@@ -66,50 +68,56 @@ var AutoGroupColService = /** @class */ (function (_super) {
         else {
             colId = exports.GROUP_AUTO_COLUMN_ID;
         }
-        var userAutoColDef = this.gridOptionsService.get('autoGroupColumnDef');
-        object_1.mergeDeep(defaultAutoColDef, userAutoColDef);
-        defaultAutoColDef = this.columnFactory.mergeColDefs(defaultAutoColDef, colId);
-        defaultAutoColDef.colId = colId;
+        var colDef = this.createAutoGroupColDef(colId, rowGroupCol, index);
+        colDef.colId = colId;
+        var newCol = new column_1.Column(colDef, null, colId, true);
+        this.context.createBean(newCol);
+        return newCol;
+    };
+    /**
+     * Refreshes an auto group col to load changes from defaultColDef or autoGroupColDef
+     */
+    AutoGroupColService.prototype.updateOneAutoGroupColumn = function (colToUpdate, index) {
+        var oldColDef = colToUpdate.getColDef();
+        var underlyingColId = typeof oldColDef.showRowGroup == 'string' ? oldColDef.showRowGroup : undefined;
+        var underlyingColumn = underlyingColId != null ? this.columnModel.getPrimaryColumn(underlyingColId) : undefined;
+        var colDef = this.createAutoGroupColDef(colToUpdate.getId(), underlyingColumn !== null && underlyingColumn !== void 0 ? underlyingColumn : undefined, index);
+        colToUpdate.setColDef(colDef, null);
+        this.columnFactory.applyColumnState(colToUpdate, colDef);
+    };
+    AutoGroupColService.prototype.createAutoGroupColDef = function (colId, underlyingColumn, index) {
+        // if one provided by user, use it, otherwise create one
+        var res = this.createBaseColDef(underlyingColumn);
+        var autoGroupColumnDef = this.gridOptionsService.get('autoGroupColumnDef');
+        object_1.mergeDeep(res, autoGroupColumnDef);
+        res = this.columnFactory.addColumnDefaultAndTypes(res, colId);
         // For tree data the filter is always allowed
         if (!this.gridOptionsService.isTreeData()) {
             // we would only allow filter if the user has provided field or value getter. otherwise the filter
             // would not be able to work.
-            var noFieldOrValueGetter = generic_1.missing(defaultAutoColDef.field) &&
-                generic_1.missing(defaultAutoColDef.valueGetter) &&
-                generic_1.missing(defaultAutoColDef.filterValueGetter) &&
-                defaultAutoColDef.filter !== 'agGroupColumnFilter';
+            var noFieldOrValueGetter = generic_1.missing(res.field) &&
+                generic_1.missing(res.valueGetter) &&
+                generic_1.missing(res.filterValueGetter) &&
+                res.filter !== 'agGroupColumnFilter';
             if (noFieldOrValueGetter) {
-                defaultAutoColDef.filter = false;
+                res.filter = false;
             }
         }
         // if showing many cols, we don't want to show more than one with a checkbox for selection
         if (index && index > 0) {
-            defaultAutoColDef.headerCheckboxSelection = false;
+            res.headerCheckboxSelection = false;
         }
-        var existingCol = existingCols.find(function (col) { return col.getId() == colId; });
         var isSortingCoupled = this.gridOptionsService.isColumnsSortingCoupledToGroup();
-        if (existingCol) {
-            if (isSortingCoupled) {
-                // if col is coupled sorting, and has sort attribute, we want to ignore this
-                // because we only accept the sort on creation of the col
-                defaultAutoColDef.sort = undefined;
-                defaultAutoColDef.sortIndex = undefined;
-            }
-            existingCol.setColDef(defaultAutoColDef, null);
-            this.columnFactory.applyColumnState(existingCol, defaultAutoColDef);
-            return existingCol;
+        var hasOwnData = res.valueGetter || res.field != null;
+        if (isSortingCoupled && !hasOwnData) {
+            // if col is coupled sorting, and has sort attribute, we want to ignore this
+            // because we only accept the sort on creation of the col
+            res.sortIndex = undefined;
+            res.initialSort = undefined;
         }
-        if (isSortingCoupled && (defaultAutoColDef.sort || defaultAutoColDef.initialSort || 'sortIndex' in defaultAutoColDef) && !defaultAutoColDef.field) {
-            // if no field, then this column cannot hold its own sort state
-            defaultAutoColDef.sort = null;
-            defaultAutoColDef.sortIndex = null;
-            defaultAutoColDef.initialSort = null;
-        }
-        var newCol = new column_1.Column(defaultAutoColDef, null, colId, true);
-        this.context.createBean(newCol);
-        return newCol;
+        return res;
     };
-    AutoGroupColService.prototype.generateDefaultColDef = function (rowGroupCol) {
+    AutoGroupColService.prototype.createBaseColDef = function (rowGroupCol) {
         var userDef = this.gridOptionsService.get('autoGroupColumnDef');
         var localeTextFunc = this.localeService.getLocaleTextFunc();
         var res = {

@@ -57,7 +57,7 @@ var Component = /** @class */ (function (_super) {
             location: 'UNKNOWN'
         };
     };
-    Component.prototype.setTooltip = function (newTooltipText) {
+    Component.prototype.setTooltip = function (newTooltipText, showDelayOverride, hideDelayOverride) {
         var _this = this;
         var removeTooltip = function () {
             if (_this.usingBrowserTooltips) {
@@ -72,7 +72,7 @@ var Component = /** @class */ (function (_super) {
                 _this.getGui().setAttribute('title', _this.tooltipText);
             }
             else {
-                _this.tooltipFeature = _this.createBean(new CustomTooltipFeature(_this));
+                _this.tooltipFeature = _this.createBean(new CustomTooltipFeature(_this, showDelayOverride, hideDelayOverride));
             }
         };
         if (this.tooltipText != newTooltipText) {

@@ -7,6 +7,11 @@ export interface VirtualListModel {
     /** Required if using soft refresh. If rows are equal, componentUpdater will be called instead of remove/create */
     areRowsEqual?(oldRow: any, newRow: any): boolean;
 }
+interface VirtualListParams {
+    cssIdentifier?: string;
+    ariaRole?: string;
+    listName?: string;
+}
 export declare class VirtualList extends TabGuardComp {
     private readonly cssIdentifier;
     private readonly ariaRole;
@@ -19,7 +24,7 @@ export declare class VirtualList extends TabGuardComp {
     private lastFocusedRowIndex;
     private readonly resizeObserverService;
     private readonly eContainer;
-    constructor(cssIdentifier?: string, ariaRole?: string, listName?: string | undefined);
+    constructor(params?: VirtualListParams);
     private postConstruct;
     private onGridStylesChanged;
     private setAriaProperties;
@@ -52,5 +57,7 @@ export declare class VirtualList extends TabGuardComp {
     private refreshRows;
     private addScrollListener;
     setModel(model: VirtualListModel): void;
+    getAriaElement(): Element;
     destroy(): void;
 }
+export {};

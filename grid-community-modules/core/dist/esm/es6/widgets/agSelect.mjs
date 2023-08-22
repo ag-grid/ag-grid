@@ -1,83 +1,70 @@
-var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
-    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
-    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
-    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
-    return c > 3 && r && Object.defineProperty(target, key, r), r;
-};
-import { AgAbstractField } from "./agAbstractField.mjs";
 import { AgPickerField } from "./agPickerField.mjs";
 import { AgList } from "./agList.mjs";
-import { Autowired, PostConstruct } from "../context/context.mjs";
-import { setElementWidth, getAbsoluteWidth, getInnerHeight } from "../utils/dom.mjs";
-import { setAriaExpanded } from "../utils/aria.mjs";
+import { Events } from "../eventKeys.mjs";
+import { KeyCode } from "../constants/keyCode.mjs";
+import { getInnerHeight } from "../utils/dom.mjs";
 export class AgSelect extends AgPickerField {
     constructor(config) {
-        super(config, 'ag-select', 'smallDown', 'listbox');
+        super(Object.assign({ pickerAriaLabelKey: 'ariaLabelSelectField', pickerAriaLabelValue: 'Select Field', pickerType: 'ag-list' }, config), 'ag-select', 'smallDown', 'listbox');
     }
-    init() {
+    postConstruct() {
+        var _a;
+        super.postConstruct();
+        this.createListComponent();
+        this.eWrapper.tabIndex = (_a = this.gridOptionsService.getNum('tabIndex')) !== null && _a !== void 0 ? _a : 0;
+    }
+    createListComponent() {
         this.listComponent = this.createBean(new AgList('select'));
         this.listComponent.setParentComponent(this);
-        this.eWrapper.tabIndex = 0;
-        this.listComponent.addManagedListener(this.listComponent, AgList.EVENT_ITEM_SELECTED, () => {
-            if (this.hideList) {
-                this.hideList();
+        this.listComponent.addGuiEventListener('keydown', (e) => {
+            if (e.key === KeyCode.TAB) {
+                e.preventDefault();
+                e.stopImmediatePropagation();
+                this.getGui().dispatchEvent(new KeyboardEvent('keydown', {
+                    key: e.key,
+                    shiftKey: e.shiftKey,
+                    ctrlKey: e.ctrlKey,
+                    bubbles: true
+                }));
             }
+            ;
+        });
+        this.listComponent.addManagedListener(this.listComponent, AgList.EVENT_ITEM_SELECTED, () => {
+            this.hidePicker();
             this.dispatchEvent({ type: AgSelect.EVENT_ITEM_SELECTED });
         });
-        this.listComponent.addManagedListener(this.listComponent, AgAbstractField.EVENT_CHANGED, () => {
-            this.setValue(this.listComponent.getValue(), false, true);
-            if (this.hideList) {
-                this.hideList();
+        this.listComponent.addManagedListener(this.listComponent, Events.EVENT_FIELD_VALUE_CHANGED, () => {
+            if (!this.listComponent) {
+                return;
             }
+            this.setValue(this.listComponent.getValue(), false, true);
+            this.hidePicker();
         });
     }
+    createPickerComponent() {
+        // do not create the picker every time to save state
+        return this.listComponent;
+    }
     showPicker() {
-        const listGui = this.listComponent.getGui();
-        const eDocument = this.gridOptionsService.getDocument();
-        const destroyMouseWheelFunc = this.addManagedListener(eDocument.body, 'wheel', (e) => {
-            if (!listGui.contains(e.target) && this.hideList) {
-                this.hideList();
-            }
-        });
-        const destroyFocusOutFunc = this.addManagedListener(listGui, 'focusout', (e) => {
-            if (!listGui.contains(e.relatedTarget) && this.hideList) {
-                this.hideList();
-            }
-        });
-        const translate = this.localeService.getLocaleTextFunc();
-        const addPopupRes = this.popupService.addPopup({
-            modal: true,
-            eChild: listGui,
-            closeOnEsc: true,
-            closedCallback: () => {
-                this.hideList = null;
-                this.isPickerDisplayed = false;
-                destroyFocusOutFunc();
-                destroyMouseWheelFunc();
-                if (this.isAlive()) {
-                    setAriaExpanded(this.eWrapper, false);
-                    this.getFocusableElement().focus();
-                }
-            },
-            ariaLabel: translate('ariaLabelSelectField', 'Select Field')
-        });
-        if (addPopupRes) {
-            this.hideList = addPopupRes.hideFunc;
+        if (!this.listComponent) {
+            return;
         }
-        this.isPickerDisplayed = true;
-        setElementWidth(listGui, getAbsoluteWidth(this.eWrapper));
-        setAriaExpanded(this.eWrapper, true);
-        listGui.style.maxHeight = getInnerHeight(this.popupService.getPopupParent()) + 'px';
-        listGui.style.position = 'absolute';
-        this.popupService.positionPopupByComponent({
-            type: 'ag-list',
-            eventSource: this.eWrapper,
-            ePopup: listGui,
-            position: 'under',
-            keepWithinBounds: true
+        super.showPicker();
+        this.listComponent.getGui().style.maxHeight = `${getInnerHeight(this.popupService.getPopupParent())}px`;
+        const ePicker = this.listComponent.getGui();
+        this.pickerFocusOutListener = this.addManagedListener(ePicker, 'focusout', (e) => {
+            if (!ePicker.contains(e.relatedTarget)) {
+                this.hidePicker();
+            }
         });
         this.listComponent.refreshHighlighted();
-        return this.listComponent;
+    }
+    beforeHidePicker() {
+        if (this.pickerFocusOutListener) {
+            this.pickerFocusOutListener();
+            this.pickerFocusOutListener = undefined;
+        }
+        super.beforeHidePicker();
     }
     addOptions(options) {
         options.forEach(option => this.addOption(option));
@@ -88,7 +75,7 @@ export class AgSelect extends AgPickerField {
         return this;
     }
     setValue(value, silent, fromPicker) {
-        if (this.value === value) {
+        if (this.value === value || !this.listComponent) {
             return this;
         }
         if (!fromPicker) {
@@ -102,17 +89,11 @@ export class AgSelect extends AgPickerField {
         return super.setValue(value, silent);
     }
     destroy() {
-        if (this.hideList) {
-            this.hideList();
+        if (this.listComponent) {
+            this.destroyBean(this.listComponent);
+            this.listComponent = undefined;
         }
-        this.destroyBean(this.listComponent);
         super.destroy();
     }
 }
 AgSelect.EVENT_ITEM_SELECTED = 'selectedItem';
-__decorate([
-    Autowired('popupService')
-], AgSelect.prototype, "popupService", void 0);
-__decorate([
-    PostConstruct
-], AgSelect.prototype, "init", null);

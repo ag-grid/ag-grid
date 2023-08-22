@@ -1,4 +1,4 @@
-// Type definitions for @ag-grid-community/core v30.0.6
+// Type definitions for @ag-grid-community/core v30.1.0
 // Project: https://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { IComponent } from "../interfaces/iComponent";
@@ -29,4 +29,6 @@ export interface IDateParams<TData = any, TContext = any> extends AgGridCommon<T
     filterParams: DateFilterParams;
 }
 export interface IDateComp extends IComponent<IDateParams>, IDate {
+    /** When used in a floating filter, a hook to perform any necessary operations when the column definition is updated. */
+    onParamsUpdated?(params: IDateParams): void;
 }

@@ -21,8 +21,8 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 };
 import { PopupComponent } from "../../widgets/popupComponent";
 import { RefSelector } from "../../widgets/componentAnnotations";
-import { AgCheckbox } from "../../widgets/agCheckbox";
 import { getAriaCheckboxStateName } from "../../utils/aria";
+import { Events } from "../../eventKeys";
 var CheckboxCellEditor = /** @class */ (function (_super) {
     __extends(CheckboxCellEditor, _super);
     function CheckboxCellEditor() {
@@ -36,7 +36,7 @@ var CheckboxCellEditor = /** @class */ (function (_super) {
         this.eCheckbox.setValue(isSelected);
         this.eCheckbox.getInputElement().setAttribute('tabindex', '-1');
         this.setAriaLabel(isSelected);
-        this.addManagedListener(this.eCheckbox, AgCheckbox.EVENT_CHANGED, function (event) { return _this.setAriaLabel(event.selected); });
+        this.addManagedListener(this.eCheckbox, Events.EVENT_FIELD_VALUE_CHANGED, function (event) { return _this.setAriaLabel(event.selected); });
     };
     CheckboxCellEditor.prototype.getValue = function () {
         return this.eCheckbox.getValue();

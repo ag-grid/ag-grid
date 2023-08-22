@@ -1,4 +1,4 @@
-// Type definitions for @ag-grid-community/core v30.0.6
+// Type definitions for @ag-grid-community/core v30.1.0
 // Project: https://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { IHeaderColumn } from "../interfaces/iHeaderColumn";
@@ -76,6 +76,11 @@ export declare class Column<TValue = any> implements IHeaderColumn<TValue>, IPro
     /** Returns the parent column group, if column grouping is active. */
     getParent(): ColumnGroup;
     setOriginalParent(originalParent: ProvidedColumnGroup | null): void;
+    /**
+     * Used for marryChildren, helps with comparing when duplicate groups have been created to manage split groups.
+     *
+     * Parent may contain a duplicate but not identical group when the group is split.
+     */
     getOriginalParent(): ProvidedColumnGroup | null;
     private initialise;
     private initDotNotation;

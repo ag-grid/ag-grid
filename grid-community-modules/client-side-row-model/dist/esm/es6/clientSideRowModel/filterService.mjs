@@ -7,9 +7,7 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 import { Autowired, Bean, BeanStub } from "@ag-grid-community/core";
 let FilterService = class FilterService extends BeanStub {
     filter(changedPath) {
-        const filterActive = this.filterManager.isColumnFilterPresent()
-            || this.filterManager.isQuickFilterPresent()
-            || this.filterManager.isExternalFilterPresent();
+        const filterActive = this.filterManager.isChildFilterPresent();
         this.filterNodes(filterActive, changedPath);
     }
     filterNodes(filterActive, changedPath) {

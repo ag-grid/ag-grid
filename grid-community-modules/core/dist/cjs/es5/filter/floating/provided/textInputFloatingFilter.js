@@ -31,20 +31,29 @@ var agInputTextField_1 = require("../../../widgets/agInputTextField");
 var keyCode_1 = require("../../../constants/keyCode");
 var textFilter_1 = require("../../provided/text/textFilter");
 var beanStub_1 = require("../../../context/beanStub");
+var dom_1 = require("../../../utils/dom");
 var FloatingFilterTextInputService = /** @class */ (function (_super) {
     __extends(FloatingFilterTextInputService, _super);
     function FloatingFilterTextInputService(params) {
         var _this = _super.call(this) || this;
         _this.params = params;
+        _this.valueChangedListener = function () { };
         return _this;
     }
     FloatingFilterTextInputService.prototype.setupGui = function (parentElement) {
-        this.eFloatingFilterTextInput = this.createManagedBean(new agInputTextField_1.AgInputTextField(this.params.config));
-        this.eFloatingFilterTextInput.setInputAriaLabel(this.params.ariaLabel);
-        parentElement.appendChild(this.eFloatingFilterTextInput.getGui());
+        var _this = this;
+        var _a;
+        this.eFloatingFilterTextInput = this.createManagedBean(new agInputTextField_1.AgInputTextField((_a = this.params) === null || _a === void 0 ? void 0 : _a.config));
+        var eInput = this.eFloatingFilterTextInput.getGui();
+        parentElement.appendChild(eInput);
+        this.addManagedListener(eInput, 'input', function (e) { return _this.valueChangedListener(e); });
+        this.addManagedListener(eInput, 'keydown', function (e) { return _this.valueChangedListener(e); });
     };
     FloatingFilterTextInputService.prototype.setEditable = function (editable) {
         this.eFloatingFilterTextInput.setDisabled(!editable);
+    };
+    FloatingFilterTextInputService.prototype.setAutoComplete = function (autoComplete) {
+        this.eFloatingFilterTextInput.setAutoComplete(autoComplete);
     };
     FloatingFilterTextInputService.prototype.getValue = function () {
         return this.eFloatingFilterTextInput.getValue();
@@ -52,14 +61,22 @@ var FloatingFilterTextInputService = /** @class */ (function (_super) {
     FloatingFilterTextInputService.prototype.setValue = function (value, silent) {
         this.eFloatingFilterTextInput.setValue(value, silent);
     };
-    FloatingFilterTextInputService.prototype.addValueChangedListener = function (listener) {
-        var inputGui = this.eFloatingFilterTextInput.getGui();
-        this.addManagedListener(inputGui, 'input', listener);
-        this.addManagedListener(inputGui, 'keydown', listener);
+    FloatingFilterTextInputService.prototype.setValueChangedListener = function (listener) {
+        this.valueChangedListener = listener;
+    };
+    FloatingFilterTextInputService.prototype.setParams = function (params) {
+        this.setAriaLabel(params.ariaLabel);
+        if (params.autoComplete !== undefined) {
+            this.setAutoComplete(params.autoComplete);
+        }
+    };
+    FloatingFilterTextInputService.prototype.setAriaLabel = function (ariaLabel) {
+        this.eFloatingFilterTextInput.setInputAriaLabel(ariaLabel);
     };
     return FloatingFilterTextInputService;
 }(beanStub_1.BeanStub));
 exports.FloatingFilterTextInputService = FloatingFilterTextInputService;
+;
 var TextInputFloatingFilter = /** @class */ (function (_super) {
     __extends(TextInputFloatingFilter, _super);
     function TextInputFloatingFilter() {
@@ -82,19 +99,44 @@ var TextInputFloatingFilter = /** @class */ (function (_super) {
         this.floatingFilterInputService.setValue(this.getFilterModelFormatter().getModelAsString(model));
     };
     TextInputFloatingFilter.prototype.init = function (params) {
-        this.params = params;
-        var displayName = this.columnModel.getDisplayNameForColumn(params.column, 'header', true);
-        var translate = this.localeService.getLocaleTextFunc();
-        var ariaLabel = displayName + " " + translate('ariaFilterInput', 'Filter Input');
-        this.floatingFilterInputService = this.createFloatingFilterInputService(ariaLabel);
-        this.floatingFilterInputService.setupGui(this.eFloatingFilterInputContainer);
+        this.setupFloatingFilterInputService(params);
         _super.prototype.init.call(this, params);
+        this.setTextInputParams(params);
+    };
+    TextInputFloatingFilter.prototype.setupFloatingFilterInputService = function (params) {
+        this.floatingFilterInputService = this.createFloatingFilterInputService(params);
+        this.floatingFilterInputService.setupGui(this.eFloatingFilterInputContainer);
+    };
+    TextInputFloatingFilter.prototype.setTextInputParams = function (params) {
+        var _a;
+        this.params = params;
+        var autoComplete = (_a = params.browserAutoComplete) !== null && _a !== void 0 ? _a : false;
+        this.floatingFilterInputService.setParams({
+            ariaLabel: this.getAriaLabel(params),
+            autoComplete: autoComplete,
+        });
         this.applyActive = providedFilter_1.ProvidedFilter.isUseApplyButton(this.params.filterParams);
         if (!this.isReadOnly()) {
             var debounceMs = providedFilter_1.ProvidedFilter.getDebounceMs(this.params.filterParams, this.getDefaultDebounceMs());
             var toDebounce = function_1.debounce(this.syncUpWithParentFilter.bind(this), debounceMs);
-            this.floatingFilterInputService.addValueChangedListener(toDebounce);
+            this.floatingFilterInputService.setValueChangedListener(toDebounce);
         }
+    };
+    TextInputFloatingFilter.prototype.onParamsUpdated = function (params) {
+        _super.prototype.onParamsUpdated.call(this, params);
+        this.setTextInputParams(params);
+    };
+    TextInputFloatingFilter.prototype.recreateFloatingFilterInputService = function (params) {
+        var value = this.floatingFilterInputService.getValue();
+        dom_1.clearElement(this.eFloatingFilterInputContainer);
+        this.destroyBean(this.floatingFilterInputService);
+        this.setupFloatingFilterInputService(params);
+        this.floatingFilterInputService.setValue(value, true);
+    };
+    TextInputFloatingFilter.prototype.getAriaLabel = function (params) {
+        var displayName = this.columnModel.getDisplayNameForColumn(params.column, 'header', true);
+        var translate = this.localeService.getLocaleTextFunc();
+        return displayName + " " + translate('ariaFilterInput', 'Filter Input');
     };
     TextInputFloatingFilter.prototype.syncUpWithParentFilter = function (e) {
         var _this = this;

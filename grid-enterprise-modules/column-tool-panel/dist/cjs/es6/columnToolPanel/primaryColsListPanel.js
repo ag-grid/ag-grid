@@ -58,7 +58,11 @@ class PrimaryColsListPanel extends core_1.Component {
         this.expandGroupsByDefault = !this.params.contractColumnSelection;
         const translate = this.localeService.getLocaleTextFunc();
         const columnListName = translate('ariaColumnList', 'Column List');
-        this.virtualList = this.createManagedBean(new core_1.VirtualList('column-select', 'tree', columnListName));
+        this.virtualList = this.createManagedBean(new core_1.VirtualList({
+            cssIdentifier: 'column-select',
+            ariaRole: 'tree',
+            listName: columnListName
+        }));
         this.appendChild(this.virtualList.getGui());
         this.virtualList.setComponentCreator((item, listItemElement) => {
             core_1._.setAriaLevel(listItemElement, (item.getDept() + 1));

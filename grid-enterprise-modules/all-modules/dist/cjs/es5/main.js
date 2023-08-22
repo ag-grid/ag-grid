@@ -12,6 +12,7 @@ var __exportStar = (this && this.__exportStar) || function(m, exports) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.AllModules = exports.AllEnterpriseModules = void 0;
 var all_modules_1 = require("@ag-grid-community/all-modules");
+var advanced_filter_1 = require("@ag-grid-enterprise/advanced-filter");
 var clipboard_1 = require("@ag-grid-enterprise/clipboard");
 var column_tool_panel_1 = require("@ag-grid-enterprise/column-tool-panel");
 var excel_export_1 = require("@ag-grid-enterprise/excel-export");
@@ -30,6 +31,7 @@ var status_bar_1 = require("@ag-grid-enterprise/status-bar");
 var viewport_row_model_1 = require("@ag-grid-enterprise/viewport-row-model");
 var sparklines_1 = require("@ag-grid-enterprise/sparklines");
 __exportStar(require("@ag-grid-community/all-modules"), exports);
+__exportStar(require("@ag-grid-enterprise/advanced-filter"), exports);
 __exportStar(require("@ag-grid-enterprise/clipboard"), exports);
 __exportStar(require("@ag-grid-enterprise/column-tool-panel"), exports);
 __exportStar(require("@ag-grid-enterprise/excel-export"), exports);
@@ -49,6 +51,7 @@ __exportStar(require("@ag-grid-enterprise/viewport-row-model"), exports);
 __exportStar(require("@ag-grid-enterprise/core"), exports);
 __exportStar(require("@ag-grid-enterprise/sparklines"), exports);
 exports.AllEnterpriseModules = [
+    advanced_filter_1.AdvancedFilterModule,
     clipboard_1.ClipboardModule,
     column_tool_panel_1.ColumnsToolPanelModule,
     excel_export_1.ExcelExportModule,

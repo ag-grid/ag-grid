@@ -10,7 +10,7 @@ class CountryCellRenderer implements ICellRendererComp {
 
     init(params: ICellRendererParams) {
         this.eGui = document.createElement('div');
-        this.eGui.innerHTML = `${params.value.name}`;
+        this.eGui.innerHTML = `<span style="overflow: hidden; text-overflow: ellipsis">${params.value.name}</span>`;
     }
 
     getGui() {
@@ -31,7 +31,6 @@ const columnDefs: ColDef[] = [
         editable: true,
         cellRenderer: GenderRenderer,
         cellEditor: 'agRichSelectCellEditor',
-        cellEditorPopup: true,
         cellEditorParams: {
             cellRenderer: GenderRenderer,
             values: ['Male', 'Female'],
@@ -55,7 +54,6 @@ const columnDefs: ColDef[] = [
         field: 'country',
         width: 110,
         cellEditor: 'agRichSelectCellEditor',
-        cellEditorPopup: true,
         cellRenderer: CountryCellRenderer,
         keyCreator: (params: KeyCreatorParams) => {
             return params.value.name

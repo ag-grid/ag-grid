@@ -495,7 +495,7 @@ export class GridBodyScrollFeature extends BeanStub {
 
             if (newScrollPosition !== null) {
                 this.setVerticalScrollPosition(newScrollPosition);
-                this.rowRenderer.redraw();
+                this.rowRenderer.redraw({ afterScroll: true });
             }
 
             // the row can get shifted if during the rendering (during rowRenderer.redraw()),

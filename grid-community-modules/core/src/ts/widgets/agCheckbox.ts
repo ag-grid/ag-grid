@@ -95,7 +95,7 @@ export class AgCheckbox extends AgAbstractInputField<HTMLInputElement, boolean> 
     }
 
     private dispatchChange(selected: boolean | undefined, previousValue: boolean | undefined, event?: MouseEvent) {
-        this.dispatchEvent({ type: AgCheckbox.EVENT_CHANGED, selected, previousValue, event });
+        this.dispatchEvent({ type: Events.EVENT_FIELD_VALUE_CHANGED, selected, previousValue, event });
 
         const input = this.getInputElement();
         const checkboxChangedEvent: CheckboxChangedEvent = {

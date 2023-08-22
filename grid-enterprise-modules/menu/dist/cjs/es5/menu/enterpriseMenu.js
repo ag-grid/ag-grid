@@ -137,7 +137,8 @@ var EnterpriseMenuFactory = /** @class */ (function (_super) {
             if (!isKeyboardEvent || !eventSource) {
                 return;
             }
-            if (core_1._.isVisible(eventSource)) {
+            var isColumnStillVisible = _this.columnModel.getAllDisplayedColumns().some(function (col) { return col === column; });
+            if (isColumnStillVisible && core_1._.isVisible(eventSource)) {
                 var focusableEl = _this.focusService.findTabbableParent(eventSource);
                 if (focusableEl) {
                     if (column) {
@@ -352,6 +353,9 @@ var EnterpriseMenu = /** @class */ (function (_super) {
         result.push('autoSizeThis');
         result.push('autoSizeAll');
         result.push(EnterpriseMenu.MENU_ITEM_SEPARATOR);
+        if (!!this.column.getColDef().showRowGroup) {
+            result.push('rowUnGroup');
+        }
         if (allowRowGroup && this.column.isPrimary()) {
             if (groupedByThisColumn) {
                 result.push('rowUnGroup');

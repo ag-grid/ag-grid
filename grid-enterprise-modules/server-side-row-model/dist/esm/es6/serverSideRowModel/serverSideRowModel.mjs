@@ -4,7 +4,7 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
-import { _, Autowired, Bean, BeanStub, Events, NumberSequence, PostConstruct, PreDestroy, RowNode } from "@ag-grid-community/core";
+import { _, Autowired, Bean, BeanStub, Events, NumberSequence, PostConstruct, PreDestroy, RowNode, Optional } from "@ag-grid-community/core";
 import { FullStore } from "./stores/fullStore.mjs";
 import { LazyStore } from "./stores/lazy/lazyStore.mjs";
 let ServerSideRowModel = class ServerSideRowModel extends BeanStub {
@@ -13,6 +13,7 @@ let ServerSideRowModel = class ServerSideRowModel extends BeanStub {
         this.onRowHeightChanged_debounced = _.debounce(this.onRowHeightChanged.bind(this), 100);
         this.pauseStoreUpdateListening = false;
         this.started = false;
+        this.managingPivotResultColumns = false;
     }
     // we don't implement as lazy row heights is not supported in this row model
     ensureRowHeightsValid() { return false; }
@@ -144,6 +145,12 @@ let ServerSideRowModel = class ServerSideRowModel extends BeanStub {
         rootStore.refreshAfterSort(params);
         this.onStoreUpdated();
     }
+    generateSecondaryColumns(pivotFields) {
+        const pivotColumnGroupDefs = this.pivotColDefService.createColDefsFromFields(pivotFields);
+        this.managingPivotResultColumns = true;
+        this.columnModel.setSecondaryColumns(pivotColumnGroupDefs, "rowModelUpdated");
+    }
+    ;
     resetRootStore() {
         this.destroyRootStore();
         this.rootNode = new RowNode(this.beans);
@@ -153,6 +160,11 @@ let ServerSideRowModel = class ServerSideRowModel extends BeanStub {
             this.storeParams = this.createStoreParams();
             this.rootNode.childStore = this.createBean(this.storeFactory.createStore(this.storeParams, this.rootNode));
             this.updateRowIndexesAndBounds();
+        }
+        if (this.managingPivotResultColumns) {
+            // if managing pivot columns, also reset secondary columns.
+            this.columnModel.setSecondaryColumns(null);
+            this.managingPivotResultColumns = false;
         }
         // this event shows/hides 'no rows' overlay
         const rowDataChangedEvent = {
@@ -465,6 +477,9 @@ __decorate([
 __decorate([
     Autowired('beans')
 ], ServerSideRowModel.prototype, "beans", void 0);
+__decorate([
+    Optional('pivotColDefService')
+], ServerSideRowModel.prototype, "pivotColDefService", void 0);
 __decorate([
     PreDestroy
 ], ServerSideRowModel.prototype, "destroyDatasource", null);

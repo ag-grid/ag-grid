@@ -1,9 +1,9 @@
-// Type definitions for @ag-grid-community/core v30.0.6
+// Type definitions for @ag-grid-community/core v30.1.0
 // Project: https://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { Component } from "./component";
-export interface ListOption {
-    value: string;
+export interface ListOption<TValue = string> {
+    value: TValue;
     text?: string;
 }
 export declare class AgList extends Component {

@@ -87,20 +87,20 @@
         }
     }
 
-    // override deafult react-color slider styles
+    // override default react-color slider styles
     :global(.hue-picker),
     :global(.alpha-picker) {
         height: 8px !important;
         cursor: pointer;
     }
 
-    // override deafult react-color slider styles
+    // override default react-color slider styles
     :global(.hue-horizontal),
     :global(.alpha-picker) > div > div {
         border-radius: 4px !important;
     }
 
-    // override deafult react-color slider styles
+    // override default react-color slider styles
     :global(.hue-horizontal) > div > div,
     :global(.alpha-picker) > div > div:last-child > div > div {
         transform: translate(-9px, -5px) !important;

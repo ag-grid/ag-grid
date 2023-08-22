@@ -1,6 +1,6 @@
 'use strict';
 
-import React, { Component } from 'react';
+import React, { Component, StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 import { AgGridReact } from '@ag-grid-community/react';
 import '@ag-grid-community/styles/ag-grid.css';
@@ -36,12 +36,6 @@ class GridExample extends Component {
             },
             detailCellRendererParams: {
                 refreshStrategy: 'rows',
-                template: (props) => (
-                    <div class="ag-details-row ag-details-row-fixed-height">
-                        <div style="padding: 4px; font-weight: bold;">{props.data.name} {props.data.calls} calls</div>
-                        <div ref="eDetailGrid" class="ag-details-grid ag-details-grid-fixed-height" />
-                    </div>
-                ),
                 detailGridOptions: {
                     rowSelection: 'multiple',
                     enableCellChangeFlash: true,
@@ -144,4 +138,4 @@ class GridExample extends Component {
 }
 
 const root = createRoot(document.getElementById('root'));
-root.render(<GridExample />);
+root.render(<StrictMode><GridExample /></StrictMode>);

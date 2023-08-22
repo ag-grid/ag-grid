@@ -4,12 +4,12 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
-import { AgAbstractField } from "./agAbstractField.mjs";
 import { Component } from "./component.mjs";
 import { PostConstruct } from "../context/context.mjs";
 import { escapeString } from "../utils/string.mjs";
 import { KeyCode } from '../constants/keyCode.mjs';
 import { setAriaPosInSet, setAriaRole, setAriaSelected, setAriaSetSize } from '../utils/aria.mjs';
+import { Events } from "../eventKeys.mjs";
 export class AgList extends Component {
     constructor(cssIdentifier = 'default') {
         super(/* html */ `<div class="ag-list ag-${cssIdentifier}-list" role="listbox"></div>`);
@@ -143,7 +143,7 @@ export class AgList extends Component {
         this.highlightedEl = null;
     }
     fireChangeEvent() {
-        this.dispatchEvent({ type: AgAbstractField.EVENT_CHANGED });
+        this.dispatchEvent({ type: Events.EVENT_FIELD_VALUE_CHANGED });
         this.fireItemSelected();
     }
     fireItemSelected() {

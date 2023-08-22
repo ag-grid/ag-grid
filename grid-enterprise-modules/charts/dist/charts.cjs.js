@@ -1,5 +1,5 @@
 /**
-          * @ag-grid-enterprise/charts - Advanced Data Grid / Data Table supporting Javascript / Typescript / React / Angular / Vue * @version v30.0.6
+          * @ag-grid-enterprise/charts - Advanced Data Grid / Data Table supporting Javascript / Typescript / React / Angular / Vue * @version v30.1.0
           * @link https://www.ag-grid.com/
           * @license Commercial
           */
@@ -668,8 +668,8 @@ var HdpiCanvas = /** @class */ (function () {
 // rather than become enticed by the much slower:
 // `ctx.strokeRect(...bbox);`
 // https://jsperf.com/array-vs-object-create-access
-var __assign$J = (undefined && undefined.__assign) || function () {
-    __assign$J = Object.assign || function(t) {
+var __assign$K = (undefined && undefined.__assign) || function () {
+    __assign$K = Object.assign || function(t) {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
             s = arguments[i];
             for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
@@ -677,7 +677,7 @@ var __assign$J = (undefined && undefined.__assign) || function () {
         }
         return t;
     };
-    return __assign$J.apply(this, arguments);
+    return __assign$K.apply(this, arguments);
 };
 var __read$$ = (undefined && undefined.__read) || function (o, n) {
     var m = typeof Symbol === "function" && o[Symbol.iterator];
@@ -771,7 +771,7 @@ var BBox = /** @class */ (function () {
             this.shrink(-amount, position);
         }
         else {
-            var paddingCopy = __assign$J({}, amount);
+            var paddingCopy = __assign$K({}, amount);
             for (var key in paddingCopy) {
                 paddingCopy[key] *= -1;
             }
@@ -1943,8 +1943,8 @@ var __extends$20 = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __assign$I = (undefined && undefined.__assign) || function () {
-    __assign$I = Object.assign || function(t) {
+var __assign$J = (undefined && undefined.__assign) || function () {
+    __assign$J = Object.assign || function(t) {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
             s = arguments[i];
             for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
@@ -1952,7 +1952,7 @@ var __assign$I = (undefined && undefined.__assign) || function () {
         }
         return t;
     };
-    return __assign$I.apply(this, arguments);
+    return __assign$J.apply(this, arguments);
 };
 var __decorate$1h = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -2201,7 +2201,7 @@ var Group = /** @class */ (function (_super) {
         }
         // Reduce churn if renderCtx is identical.
         var renderContextChanged = forceRender !== renderCtx.forceRender || clipBBox !== renderCtx.clipBBox || ctx !== renderCtx.ctx;
-        var childRenderContext = renderContextChanged ? __assign$I(__assign$I({}, renderCtx), { ctx: ctx, forceRender: forceRender, clipBBox: clipBBox }) : renderCtx;
+        var childRenderContext = renderContextChanged ? __assign$J(__assign$J({}, renderCtx), { ctx: ctx, forceRender: forceRender, clipBBox: clipBBox }) : renderCtx;
         // Render visible children.
         var skipped = 0;
         try {
@@ -2445,8 +2445,8 @@ var SceneDebugLevel;
     SceneDebugLevel[SceneDebugLevel["DETAILED"] = 1] = "DETAILED";
 })(SceneDebugLevel || (SceneDebugLevel = {}));
 
-var __assign$H = (undefined && undefined.__assign) || function () {
-    __assign$H = Object.assign || function(t) {
+var __assign$I = (undefined && undefined.__assign) || function () {
+    __assign$I = Object.assign || function(t) {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
             s = arguments[i];
             for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
@@ -2454,7 +2454,7 @@ var __assign$H = (undefined && undefined.__assign) || function () {
         }
         return t;
     };
-    return __assign$H.apply(this, arguments);
+    return __assign$I.apply(this, arguments);
 };
 var __awaiter$g = (undefined && undefined.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
@@ -2742,7 +2742,7 @@ var Scene = /** @class */ (function () {
                     },
                     markDirty: function () { return _this.markDirty(); },
                     canvas: this.canvas,
-                    debug: __assign$H(__assign$H({}, this.debug), { consoleLog: this.debug.level >= SceneDebugLevel.DETAILED }),
+                    debug: __assign$I(__assign$I({}, this.debug), { consoleLog: this.debug.level >= SceneDebugLevel.DETAILED }),
                 });
             }
             this.markDirty();
@@ -3023,7 +3023,7 @@ var Scene = /** @class */ (function () {
         var _this = this;
         var _a, _b;
         var name = (_a = (node instanceof Group ? node.name : null)) !== null && _a !== void 0 ? _a : node.id;
-        return __assign$H(__assign$H({ name: name, node: node, dirty: RedrawType[node.dirty] }, (((_b = node.parent) === null || _b === void 0 ? void 0 : _b.isVirtual)
+        return __assign$I(__assign$I({ name: name, node: node, dirty: RedrawType[node.dirty] }, (((_b = node.parent) === null || _b === void 0 ? void 0 : _b.isVirtual)
             ? {
                 virtualParentDirty: RedrawType[node.parent.dirty],
                 virtualParent: node.parent,
@@ -3074,7 +3074,7 @@ var Scene = /** @class */ (function () {
                 .reduce(function (r, p) { return r.concat(p); }, [])
                 .map(function (p) { return name + "." + p; });
         return {
-            dirtyTree: __assign$H({ name: name, node: node, dirty: RedrawType[node.dirty] }, childrenDirtyTree
+            dirtyTree: __assign$I({ name: name, node: node, dirty: RedrawType[node.dirty] }, childrenDirtyTree
                 .map(function (c) { return c.dirtyTree; })
                 .filter(function (t) { return t.dirty !== undefined; })
                 .reduce(function (result, childTree) {
@@ -4977,8 +4977,8 @@ function extendDomain(values, domain) {
     return domain;
 }
 
-var __assign$G = (undefined && undefined.__assign) || function () {
-    __assign$G = Object.assign || function(t) {
+var __assign$H = (undefined && undefined.__assign) || function () {
+    __assign$H = Object.assign || function(t) {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
             s = arguments[i];
             for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
@@ -4986,7 +4986,7 @@ var __assign$G = (undefined && undefined.__assign) || function () {
         }
         return t;
     };
-    return __assign$G.apply(this, arguments);
+    return __assign$H.apply(this, arguments);
 };
 var __read$U = (undefined && undefined.__read) || function (o, n) {
     var m = typeof Symbol === "function" && o[Symbol.iterator];
@@ -5100,28 +5100,28 @@ var DataModel = /** @class */ (function () {
             }
             finally { if (e_1) throw e_1.error; }
         }
-        this.opts = __assign$G({ dataVisible: true }, opts);
+        this.opts = __assign$H({ dataVisible: true }, opts);
         this.keys = props
             .filter(function (def) { return def.type === 'key'; })
-            .map(function (def, index) { return (__assign$G(__assign$G({}, def), { index: index, missing: 0 })); });
+            .map(function (def, index) { return (__assign$H(__assign$H({}, def), { index: index, missing: 0 })); });
         this.values = props
             .filter(function (def) { return def.type === 'value'; })
-            .map(function (def, index) { return (__assign$G(__assign$G({}, def), { index: index, missing: 0 })); });
+            .map(function (def, index) { return (__assign$H(__assign$H({}, def), { index: index, missing: 0 })); });
         this.aggregates = props
             .filter(function (def) { return def.type === 'aggregate'; })
-            .map(function (def, index) { return (__assign$G(__assign$G({}, def), { index: index })); });
+            .map(function (def, index) { return (__assign$H(__assign$H({}, def), { index: index })); });
         this.groupProcessors = props
             .filter(function (def) { return def.type === 'group-value-processor'; })
-            .map(function (def, index) { return (__assign$G(__assign$G({}, def), { index: index })); });
+            .map(function (def, index) { return (__assign$H(__assign$H({}, def), { index: index })); });
         this.propertyProcessors = props
             .filter(function (def) { return def.type === 'property-value-processor'; })
-            .map(function (def, index) { return (__assign$G(__assign$G({}, def), { index: index })); });
+            .map(function (def, index) { return (__assign$H(__assign$H({}, def), { index: index })); });
         this.reducers = props
             .filter(function (def) { return def.type === 'reducer'; })
-            .map(function (def, index) { return (__assign$G(__assign$G({}, def), { index: index })); });
+            .map(function (def, index) { return (__assign$H(__assign$H({}, def), { index: index })); });
         this.processors = props
             .filter(function (def) { return def.type === 'processor'; })
-            .map(function (def, index) { return (__assign$G(__assign$G({}, def), { index: index })); });
+            .map(function (def, index) { return (__assign$H(__assign$H({}, def), { index: index })); });
         try {
             for (var _d = __values$D(this.values), _e = _d.next(); !_e.done; _e = _d.next()) {
                 var def = _e.value;
@@ -5623,7 +5623,7 @@ var DataModel = /** @class */ (function () {
             }
             finally { if (e_16) throw e_16.error; }
         }
-        return __assign$G(__assign$G({}, data), { type: 'grouped', data: resultData, domain: __assign$G(__assign$G({}, data.domain), { groups: resultGroups }) });
+        return __assign$H(__assign$H({}, data), { type: 'grouped', data: resultData, domain: __assign$H(__assign$H({}, data.domain), { groups: resultGroups }) });
     };
     DataModel.prototype.aggregateData = function (processedData) {
         var e_17, _a;
@@ -6894,8 +6894,8 @@ var __extends$1Y = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __assign$F = (undefined && undefined.__assign) || function () {
-    __assign$F = Object.assign || function(t) {
+var __assign$G = (undefined && undefined.__assign) || function () {
+    __assign$G = Object.assign || function(t) {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
             s = arguments[i];
             for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
@@ -6903,7 +6903,7 @@ var __assign$F = (undefined && undefined.__assign) || function () {
         }
         return t;
     };
-    return __assign$F.apply(this, arguments);
+    return __assign$G.apply(this, arguments);
 };
 var __decorate$1d = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -6974,18 +6974,18 @@ function basicDiscreteCheckDatumValidation(v) {
 }
 function keyProperty(scope, propName, continuous, opts) {
     if (opts === void 0) { opts = {}; }
-    var result = __assign$F({ scopes: [scope.id], property: propName, type: 'key', valueType: continuous ? 'range' : 'category', validation: continuous ? basicContinuousCheckDatumValidation : basicDiscreteCheckDatumValidation }, opts);
+    var result = __assign$G({ scopes: [scope.id], property: propName, type: 'key', valueType: continuous ? 'range' : 'category', validation: continuous ? basicContinuousCheckDatumValidation : basicDiscreteCheckDatumValidation }, opts);
     return result;
 }
 function valueProperty(scope, propName, continuous, opts) {
     if (opts === void 0) { opts = {}; }
-    var result = __assign$F({ scopes: [scope.id], property: propName, type: 'value', valueType: continuous ? 'range' : 'category', validation: continuous ? basicContinuousCheckDatumValidation : basicDiscreteCheckDatumValidation }, opts);
+    var result = __assign$G({ scopes: [scope.id], property: propName, type: 'value', valueType: continuous ? 'range' : 'category', validation: continuous ? basicContinuousCheckDatumValidation : basicDiscreteCheckDatumValidation }, opts);
     return result;
 }
 function rangedValueProperty(scope, propName, opts) {
     if (opts === void 0) { opts = {}; }
     var _a = opts.min, min = _a === void 0 ? -Infinity : _a, _b = opts.max, max = _b === void 0 ? Infinity : _b, defOpts = __rest$4(opts, ["min", "max"]);
-    return __assign$F({ scopes: [scope.id], type: 'value', property: propName, valueType: 'range', validation: basicContinuousCheckDatumValidation, processor: function () { return function (datum) {
+    return __assign$G({ scopes: [scope.id], type: 'value', property: propName, valueType: 'range', validation: basicContinuousCheckDatumValidation, processor: function () { return function (datum) {
             if (typeof datum !== 'number')
                 return datum;
             if (isNaN(datum))
@@ -6995,7 +6995,7 @@ function rangedValueProperty(scope, propName, opts) {
 }
 function accumulativeValueProperty(scope, propName, continuous, opts) {
     if (opts === void 0) { opts = {}; }
-    var result = __assign$F(__assign$F({}, valueProperty(scope, propName, continuous, opts)), { processor: accumulatedValue() });
+    var result = __assign$G(__assign$G({}, valueProperty(scope, propName, continuous, opts)), { processor: accumulatedValue() });
     return result;
 }
 function groupAccumulativeValueProperty(scope, propName, continuous, mode, sum, opts) {
@@ -7912,8 +7912,8 @@ var ChartOverlays = /** @class */ (function () {
     return ChartOverlays;
 }());
 
-var __assign$E = (undefined && undefined.__assign) || function () {
-    __assign$E = Object.assign || function(t) {
+var __assign$F = (undefined && undefined.__assign) || function () {
+    __assign$F = Object.assign || function(t) {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
             s = arguments[i];
             for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
@@ -7921,7 +7921,7 @@ var __assign$E = (undefined && undefined.__assign) || function () {
         }
         return t;
     };
-    return __assign$E.apply(this, arguments);
+    return __assign$F.apply(this, arguments);
 };
 var __read$R = (undefined && undefined.__read) || function (o, n) {
     var m = typeof Symbol === "function" && o[Symbol.iterator];
@@ -7986,7 +7986,7 @@ function jsonDiff(source, target) {
     }
     if (targetType === 'primitive') {
         if (sourceType !== 'primitive') {
-            return __assign$E({}, target);
+            return __assign$F({}, target);
         }
         if (source !== target) {
             return target;
@@ -8205,7 +8205,7 @@ function jsonApply(target, source, params) {
                 if (ctr != null) {
                     var newValueArray = newValue;
                     targetAny[property] = newValueArray.map(function (v, idx) {
-                        return jsonApply(new ctr(), v, __assign$E(__assign$E({}, params), { path: propertyPath, matcherPath: propertyMatcherPath + '[]', idx: idx }));
+                        return jsonApply(new ctr(), v, __assign$F(__assign$F({}, params), { path: propertyPath, matcherPath: propertyMatcherPath + '[]', idx: idx }));
                     });
                 }
                 else {
@@ -8217,10 +8217,10 @@ function jsonApply(target, source, params) {
             }
             else if (newValueType === 'object') {
                 if (currentValue != null) {
-                    jsonApply(currentValue, newValue, __assign$E(__assign$E({}, params), { path: propertyPath, matcherPath: propertyMatcherPath, idx: undefined }));
+                    jsonApply(currentValue, newValue, __assign$F(__assign$F({}, params), { path: propertyPath, matcherPath: propertyMatcherPath, idx: undefined }));
                 }
                 else if (ctr != null) {
-                    targetAny[property] = jsonApply(new ctr(), newValue, __assign$E(__assign$E({}, params), { path: propertyPath, matcherPath: propertyMatcherPath, idx: undefined }));
+                    targetAny[property] = jsonApply(new ctr(), newValue, __assign$F(__assign$F({}, params), { path: propertyPath, matcherPath: propertyMatcherPath, idx: undefined }));
                 }
                 else {
                     targetAny[property] = newValue;
@@ -8530,8 +8530,8 @@ function linear(_a) {
 }
 var easeOut = createEase(function (x) { return Math.sin((x * Math.PI) / 2); });
 
-var __assign$D = (undefined && undefined.__assign) || function () {
-    __assign$D = Object.assign || function(t) {
+var __assign$E = (undefined && undefined.__assign) || function () {
+    __assign$E = Object.assign || function(t) {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
             s = arguments[i];
             for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
@@ -8539,7 +8539,7 @@ var __assign$D = (undefined && undefined.__assign) || function () {
         }
         return t;
     };
-    return __assign$D.apply(this, arguments);
+    return __assign$E.apply(this, arguments);
 };
 var RepeatType;
 (function (RepeatType) {
@@ -8626,7 +8626,7 @@ function animate(_a) {
 }
 function tween(opts) {
     var handleUpdate;
-    var animateOpts = __assign$D(__assign$D({}, opts), { autoplay: false, onUpdate: function (value) {
+    var animateOpts = __assign$E(__assign$E({}, opts), { autoplay: false, onUpdate: function (value) {
             handleUpdate === null || handleUpdate === void 0 ? void 0 : handleUpdate(value);
         } });
     var animationControls = animate(animateOpts);
@@ -8661,8 +8661,8 @@ var __extends$1X = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __assign$C = (undefined && undefined.__assign) || function () {
-    __assign$C = Object.assign || function(t) {
+var __assign$D = (undefined && undefined.__assign) || function () {
+    __assign$D = Object.assign || function(t) {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
             s = arguments[i];
             for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
@@ -8670,7 +8670,7 @@ var __assign$C = (undefined && undefined.__assign) || function () {
         }
         return t;
     };
-    return __assign$C.apply(this, arguments);
+    return __assign$D.apply(this, arguments);
 };
 var __rest$3 = (undefined && undefined.__rest) || function (s, e) {
     var t = {};
@@ -8784,7 +8784,7 @@ var AnimationManager = /** @class */ (function (_super) {
             (_b = opts.onUpdate) === null || _b === void 0 ? void 0 : _b.call(opts, opts.to);
             return;
         }
-        var optsExtra = __assign$C(__assign$C({}, opts), { autoplay: this.isPlaying ? opts.autoplay : false, driver: this.createDriver(id, disableInteractions) });
+        var optsExtra = __assign$D(__assign$D({}, opts), { autoplay: this.isPlaying ? opts.autoplay : false, driver: this.createDriver(id, disableInteractions) });
         if (this.controllers[id]) {
             this.controllers[id].stop();
         }
@@ -8839,7 +8839,7 @@ var AnimationManager = /** @class */ (function (_super) {
             for (var props_1 = __values$v(props), props_1_1 = props_1.next(); !props_1_1.done; props_1_1 = props_1.next()) {
                 var prop = props_1_1.value;
                 var inner_id = id + "-" + index;
-                this.animate(inner_id, __assign$C(__assign$C(__assign$C({}, opts), prop), { onUpdate: onUpdate(index), onPlay: onPlay, onStop: onStop, onComplete: onComplete }));
+                this.animate(inner_id, __assign$D(__assign$D(__assign$D({}, opts), prop), { onUpdate: onUpdate(index), onPlay: onPlay, onStop: onStop, onComplete: onComplete }));
                 index++;
             }
         }
@@ -8859,7 +8859,7 @@ var AnimationManager = /** @class */ (function (_super) {
             opts.duration = 1;
         }
         this.throttles[id] = Date.now();
-        this.animate(id, __assign$C({}, opts));
+        this.animate(id, __assign$D({}, opts));
     };
     AnimationManager.prototype.animateManyWithThrottle = function (id, props, opts) {
         var _this = this;
@@ -8884,11 +8884,11 @@ var AnimationManager = /** @class */ (function (_super) {
             (_a = opts.onStop) === null || _a === void 0 ? void 0 : _a.call(opts);
         };
         this.throttles[throttleId] = now;
-        return this.animateMany(id, props, __assign$C(__assign$C({}, opts), { onStop: onStop }));
+        return this.animateMany(id, props, __assign$D(__assign$D({}, opts), { onStop: onStop }));
     };
     AnimationManager.prototype.tween = function (opts) {
         var id = "tween-" + btoa(JSON.stringify(opts));
-        var optsExtra = __assign$C(__assign$C({}, opts), { driver: this.createDriver(id) });
+        var optsExtra = __assign$D(__assign$D({}, opts), { driver: this.createDriver(id) });
         return tween(optsExtra);
     };
     AnimationManager.prototype.createDriver = function (id, disableInteractions) {
@@ -9157,8 +9157,8 @@ var __extends$1U = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __assign$B = (undefined && undefined.__assign) || function () {
-    __assign$B = Object.assign || function(t) {
+var __assign$C = (undefined && undefined.__assign) || function () {
+    __assign$C = Object.assign || function(t) {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
             s = arguments[i];
             for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
@@ -9166,7 +9166,7 @@ var __assign$B = (undefined && undefined.__assign) || function () {
         }
         return t;
     };
-    return __assign$B.apply(this, arguments);
+    return __assign$C.apply(this, arguments);
 };
 var __awaiter$e = (undefined && undefined.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
@@ -9345,7 +9345,7 @@ var InteractionManager = /** @class */ (function (_super) {
                     return [2 /*return*/];
                 }
                 _loop_1 = function (type) {
-                    var interactionEvent = this_1.buildEvent(__assign$B(__assign$B({ event: event }, coords), { type: type }));
+                    var interactionEvent = this_1.buildEvent(__assign$C(__assign$C({ event: event }, coords), { type: type }));
                     this_1.listeners.cancellableDispatch(type, function () { return interactionEvent.consumed; }, interactionEvent);
                 };
                 this_1 = this;
@@ -9438,7 +9438,7 @@ var InteractionManager = /** @class */ (function (_super) {
         else if (typeof TouchEvent !== 'undefined' && event instanceof TouchEvent) {
             var lastTouch = (_a = event.touches[0]) !== null && _a !== void 0 ? _a : event.changedTouches[0];
             var clientX = lastTouch.clientX, clientY = lastTouch.clientY, pageX = lastTouch.pageX, pageY = lastTouch.pageY;
-            return __assign$B(__assign$B({}, InteractionManager.NULL_COORDS), { clientX: clientX, clientY: clientY, pageX: pageX, pageY: pageY });
+            return __assign$C(__assign$C({}, InteractionManager.NULL_COORDS), { clientX: clientX, clientY: clientY, pageX: pageX, pageY: pageY });
         }
         else if (event instanceof PageTransitionEvent) {
             if (event.persisted) {
@@ -9660,8 +9660,8 @@ var __extends$1T = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __assign$A = (undefined && undefined.__assign) || function () {
-    __assign$A = Object.assign || function(t) {
+var __assign$B = (undefined && undefined.__assign) || function () {
+    __assign$B = Object.assign || function(t) {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
             s = arguments[i];
             for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
@@ -9669,7 +9669,7 @@ var __assign$A = (undefined && undefined.__assign) || function () {
         }
         return t;
     };
-    return __assign$A.apply(this, arguments);
+    return __assign$B.apply(this, arguments);
 };
 var __values$s = (undefined && undefined.__values) || function(o) {
     var s = typeof Symbol === "function" && Symbol.iterator, m = s && o[s], i = 0;
@@ -9805,7 +9805,7 @@ var ZoomManager = /** @class */ (function (_super) {
             }
             finally { if (e_2) throw e_2.error; }
         }
-        var event = __assign$A(__assign$A({ type: 'zoom-change' }, (currentZoom !== null && currentZoom !== void 0 ? currentZoom : {})), { axes: axes });
+        var event = __assign$B(__assign$B({ type: 'zoom-change' }, (currentZoom !== null && currentZoom !== void 0 ? currentZoom : {})), { axes: axes });
         this.listeners.dispatch('zoom-change', event);
     };
     return ZoomManager;
@@ -9822,7 +9822,7 @@ var AxisZoomManager = /** @class */ (function () {
     AxisZoomManager.prototype.updateZoom = function (callerId, newZoom) {
         delete this.states[callerId];
         if (newZoom != null) {
-            this.states[callerId] = __assign$A({}, newZoom);
+            this.states[callerId] = __assign$B({}, newZoom);
         }
     };
     AxisZoomManager.prototype.getZoom = function () {
@@ -9832,15 +9832,15 @@ var AxisZoomManager = /** @class */ (function () {
         var _a, _b;
         var prevZoom = this.currentZoom;
         var last = Object.keys(this.states)[Object.keys(this.states).length - 1];
-        this.currentZoom = __assign$A({}, this.states[last]);
+        this.currentZoom = __assign$B({}, this.states[last]);
         var changed = (prevZoom === null || prevZoom === void 0 ? void 0 : prevZoom.min) !== ((_a = this.currentZoom) === null || _a === void 0 ? void 0 : _a.min) || (prevZoom === null || prevZoom === void 0 ? void 0 : prevZoom.max) !== ((_b = this.currentZoom) === null || _b === void 0 ? void 0 : _b.max);
         return changed;
     };
     return AxisZoomManager;
 }());
 
-var __assign$z = (undefined && undefined.__assign) || function () {
-    __assign$z = Object.assign || function(t) {
+var __assign$A = (undefined && undefined.__assign) || function () {
+    __assign$A = Object.assign || function(t) {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
             s = arguments[i];
             for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
@@ -9848,7 +9848,7 @@ var __assign$z = (undefined && undefined.__assign) || function () {
         }
         return t;
     };
-    return __assign$z.apply(this, arguments);
+    return __assign$A.apply(this, arguments);
 };
 function isLayoutStage(t) {
     return t !== 'layout-complete';
@@ -9877,7 +9877,7 @@ var LayoutService = /** @class */ (function () {
     LayoutService.prototype.dispatchPerformLayout = function (stage, ctx) {
         var result = this.layoutProcessors.reduceDispatch(stage, function (_a, ctx) {
             var shrinkRect = _a.shrinkRect;
-            return [__assign$z(__assign$z({}, ctx), { shrinkRect: shrinkRect })];
+            return [__assign$A(__assign$A({}, ctx), { shrinkRect: shrinkRect })];
         }, ctx);
         return result !== null && result !== void 0 ? result : ctx;
     };
@@ -12716,8 +12716,8 @@ var CallbackCache = /** @class */ (function () {
     return CallbackCache;
 }());
 
-var __assign$y = (undefined && undefined.__assign) || function () {
-    __assign$y = Object.assign || function(t) {
+var __assign$z = (undefined && undefined.__assign) || function () {
+    __assign$z = Object.assign || function(t) {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
             s = arguments[i];
             for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
@@ -12725,7 +12725,7 @@ var __assign$y = (undefined && undefined.__assign) || function () {
         }
         return t;
     };
-    return __assign$y.apply(this, arguments);
+    return __assign$z.apply(this, arguments);
 };
 var __awaiter$d = (undefined && undefined.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
@@ -12898,7 +12898,7 @@ var DataController = /** @class */ (function () {
             return Object.keys(diff).length === 0;
         }; };
         var mergeOpts = function (opts) {
-            return __assign$y(__assign$y({}, opts[0]), { props: opts.reduce(function (result, next) {
+            return __assign$z(__assign$z({}, opts[0]), { props: opts.reduce(function (result, next) {
                     var e_3, _a, _b;
                     var _c, _d, _e;
                     try {
@@ -12971,7 +12971,7 @@ var DataController = /** @class */ (function () {
             var resultCb = resultCbs[index];
             resultCb({
                 dataModel: dataModel,
-                processedData: __assign$y(__assign$y({}, processedData), { data: processedData.data.filter(function (_a) {
+                processedData: __assign$z(__assign$z({}, processedData), { data: processedData.data.filter(function (_a) {
                         var validScopes = _a.validScopes;
                         return validScopes == null || validScopes.some(function (s) { return s === scope; });
                     }) }),
@@ -13182,8 +13182,8 @@ var __extends$1I = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __assign$x = (undefined && undefined.__assign) || function () {
-    __assign$x = Object.assign || function(t) {
+var __assign$y = (undefined && undefined.__assign) || function () {
+    __assign$y = Object.assign || function(t) {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
             s = arguments[i];
             for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
@@ -13191,7 +13191,7 @@ var __assign$x = (undefined && undefined.__assign) || function () {
         }
         return t;
     };
-    return __assign$x.apply(this, arguments);
+    return __assign$y.apply(this, arguments);
 };
 var __decorate$14 = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -13331,7 +13331,7 @@ var Chart = /** @class */ (function (_super) {
             _this.lastInteractionEvent = undefined;
         });
         _this.onSeriesNodeClick = function (event) {
-            var seriesNodeClickEvent = __assign$x(__assign$x({}, event), { type: 'seriesNodeClick' });
+            var seriesNodeClickEvent = __assign$y(__assign$y({}, event), { type: 'seriesNodeClick' });
             Object.defineProperty(seriesNodeClickEvent, 'series', {
                 enumerable: false,
                 // Should display the deprecation warning
@@ -13340,7 +13340,7 @@ var Chart = /** @class */ (function (_super) {
             _this.fireEvent(seriesNodeClickEvent);
         };
         _this.onSeriesNodeDoubleClick = function (event) {
-            var seriesNodeDoubleClick = __assign$x(__assign$x({}, event), { type: 'seriesNodeDoubleClick' });
+            var seriesNodeDoubleClick = __assign$y(__assign$y({}, event), { type: 'seriesNodeDoubleClick' });
             _this.fireEvent(seriesNodeDoubleClick);
         };
         var scene = resources === null || resources === void 0 ? void 0 : resources.scene;
@@ -14323,7 +14323,7 @@ var Chart = /** @class */ (function (_super) {
             var canvas = this.scene.canvas;
             var point = datum.series.contentGroup.inverseTransformPoint(x, y);
             var canvasRect = canvas.element.getBoundingClientRect();
-            return __assign$x(__assign$x({}, meta), { pageX: Math.round(canvasRect.left + window.scrollX + point.x), pageY: Math.round(canvasRect.top + window.scrollY + point.y), offsetX: Math.round(point.x), offsetY: Math.round(point.y) });
+            return __assign$y(__assign$y({}, meta), { pageX: Math.round(canvasRect.left + window.scrollX + point.x), pageY: Math.round(canvasRect.top + window.scrollY + point.y), offsetX: Math.round(point.x), offsetY: Math.round(point.y) });
         }
         return meta;
     };
@@ -16611,8 +16611,8 @@ var __extends$1D = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __assign$w = (undefined && undefined.__assign) || function () {
-    __assign$w = Object.assign || function(t) {
+var __assign$x = (undefined && undefined.__assign) || function () {
+    __assign$x = Object.assign || function(t) {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
             s = arguments[i];
             for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
@@ -16620,7 +16620,7 @@ var __assign$w = (undefined && undefined.__assign) || function () {
         }
         return t;
     };
-    return __assign$w.apply(this, arguments);
+    return __assign$x.apply(this, arguments);
 };
 var __decorate$Y = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -17155,7 +17155,7 @@ var Axis = /** @class */ (function () {
                     textAlign = getTextAlign(parallel, configuredRotation, autoRotation, sideFlag, regularFlipFlag);
                     var rotated = configuredRotation !== 0 || autoRotation !== 0;
                     var rotation_1 = initialRotation + autoRotation;
-                    labelOverlap = this.checkLabelOverlap(rotation_1, rotated, labelMatrix, ticksResult, labelX, __assign$w(__assign$w({}, textProps), { textAlign: textAlign }));
+                    labelOverlap = this.checkLabelOverlap(rotation_1, rotated, labelMatrix, ticksResult, labelX, __assign$x(__assign$x({}, textProps), { textAlign: textAlign }));
                 }
             }
             catch (e_2_1) { e_2 = { error: e_2_1 }; }
@@ -17720,7 +17720,7 @@ var Axis = /** @class */ (function () {
         return d;
     };
     Axis.prototype.getLayoutState = function () {
-        return __assign$w({ rect: this.computeBBox(), gridPadding: this.gridPadding, seriesAreaPadding: this.seriesAreaPadding, tickSize: this.tick.size }, this.layout);
+        return __assign$x({ rect: this.computeBBox(), gridPadding: this.gridPadding, seriesAreaPadding: this.seriesAreaPadding, tickSize: this.tick.size }, this.layout);
     };
     Axis.prototype.createAxisContext = function () {
         var _this = this;
@@ -17750,7 +17750,7 @@ var Axis = /** @class */ (function () {
         if (this.axisContext == null) {
             this.axisContext = this.createAxisContext();
         }
-        var moduleInstance = new module.instanceConstructor(__assign$w(__assign$w({}, this.moduleCtx), { parent: this.axisContext }));
+        var moduleInstance = new module.instanceConstructor(__assign$x(__assign$x({}, this.moduleCtx), { parent: this.axisContext }));
         this.modules[module.optionsKey] = { instance: moduleInstance };
         this[module.optionsKey] = moduleInstance;
     };
@@ -18371,8 +18371,8 @@ var __extends$1y = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __assign$v = (undefined && undefined.__assign) || function () {
-    __assign$v = Object.assign || function(t) {
+var __assign$w = (undefined && undefined.__assign) || function () {
+    __assign$w = Object.assign || function(t) {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
             s = arguments[i];
             for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
@@ -18380,7 +18380,7 @@ var __assign$v = (undefined && undefined.__assign) || function () {
         }
         return t;
     };
-    return __assign$v.apply(this, arguments);
+    return __assign$w.apply(this, arguments);
 };
 var __decorate$U = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -18770,7 +18770,7 @@ var PieSeries = /** @class */ (function (_super) {
                         }
                         data = data.map(function (d, idx) {
                             var _a;
-                            return (seriesItemEnabled[idx] ? d : __assign$v(__assign$v({}, d), (_a = {}, _a[angleKey] = 0, _a)));
+                            return (seriesItemEnabled[idx] ? d : __assign$w(__assign$w({}, d), (_a = {}, _a[angleKey] = 0, _a)));
                         });
                         return [4 /*yield*/, dataController.request(this.id, data, {
                                 props: __spreadArray$h([
@@ -18838,7 +18838,7 @@ var PieSeries = /** @class */ (function (_super) {
             var legendItemValue = legendItemIdx >= 0 ? values[legendItemIdx] : undefined;
             var labels = _this.getLabels(datum, midAngle, span, true, currentValue, radiusValue, values[calloutLabelIdx], values[sectorLabelIdx], legendItemValue);
             var sectorFormat = _this.getSectorFormat(datum, index, index, false);
-            return __assign$v({ itemId: index, series: _this, datum: datum, index: index, angleValue: angleValue, midAngle: midAngle, midCos: Math.cos(midAngle), midSin: Math.sin(midAngle), startAngle: startAngle, endAngle: endAngle, sectorFormat: sectorFormat, radius: radius, radiusValue: radiusValue, legendItemValue: legendItemValue }, labels);
+            return __assign$w({ itemId: index, series: _this, datum: datum, index: index, angleValue: angleValue, midAngle: midAngle, midCos: Math.cos(midAngle), midSin: Math.sin(midAngle), startAngle: startAngle, endAngle: endAngle, sectorFormat: sectorFormat, radius: radius, radiusValue: radiusValue, legendItemValue: legendItemValue }, labels);
         });
         return [
             {
@@ -18878,9 +18878,9 @@ var PieSeries = /** @class */ (function (_super) {
                 sectorLabelText = String(sectorLabelValue);
             }
         }
-        return __assign$v(__assign$v(__assign$v({}, (calloutLabelText != null
+        return __assign$w(__assign$w(__assign$w({}, (calloutLabelText != null
             ? {
-                calloutLabel: __assign$v(__assign$v({}, this.getTextAlignment(midAngle)), { text: calloutLabelText, hidden: false, collisionTextAlign: undefined, collisionOffsetY: 0, box: undefined }),
+                calloutLabel: __assign$w(__assign$w({}, this.getTextAlignment(midAngle)), { text: calloutLabelText, hidden: false, collisionTextAlign: undefined, collisionOffsetY: 0, box: undefined }),
             }
             : {})), (sectorLabelText != null ? { sectorLabel: { text: sectorLabelText } } : {})), (legendItemKey != null && legendItemValue != null
             ? { legendItem: { key: legendItemKey, text: legendItemValue } }
@@ -19771,19 +19771,19 @@ var PieSeries = /** @class */ (function (_super) {
         };
         this.calloutLabelSelection.each(function (label) {
             var _a;
-            (_a = _this.ctx.animationManager) === null || _a === void 0 ? void 0 : _a.animate(_this.id + "_empty-update-ready_" + label.id, __assign$v(__assign$v({}, labelAnimationOptions), { onUpdate: function (opacity) {
+            (_a = _this.ctx.animationManager) === null || _a === void 0 ? void 0 : _a.animate(_this.id + "_empty-update-ready_" + label.id, __assign$w(__assign$w({}, labelAnimationOptions), { onUpdate: function (opacity) {
                     label.opacity = opacity;
                 } }));
         });
         this.sectorLabelSelection.each(function (label) {
             var _a;
-            (_a = _this.ctx.animationManager) === null || _a === void 0 ? void 0 : _a.animate(_this.id + "_empty-update-ready_" + label.id, __assign$v(__assign$v({}, labelAnimationOptions), { onUpdate: function (opacity) {
+            (_a = _this.ctx.animationManager) === null || _a === void 0 ? void 0 : _a.animate(_this.id + "_empty-update-ready_" + label.id, __assign$w(__assign$w({}, labelAnimationOptions), { onUpdate: function (opacity) {
                     label.opacity = opacity;
                 } }));
         });
         this.innerLabelsSelection.each(function (label) {
             var _a;
-            (_a = _this.ctx.animationManager) === null || _a === void 0 ? void 0 : _a.animate(_this.id + "_empty-update-ready_" + label.id, __assign$v(__assign$v({}, labelAnimationOptions), { onUpdate: function (opacity) {
+            (_a = _this.ctx.animationManager) === null || _a === void 0 ? void 0 : _a.animate(_this.id + "_empty-update-ready_" + label.id, __assign$w(__assign$w({}, labelAnimationOptions), { onUpdate: function (opacity) {
                     label.opacity = opacity;
                 } }));
         });
@@ -19872,8 +19872,8 @@ var PieSeries = /** @class */ (function (_super) {
     return PieSeries;
 }(PolarSeries));
 
-var __assign$u = (undefined && undefined.__assign) || function () {
-    __assign$u = Object.assign || function(t) {
+var __assign$v = (undefined && undefined.__assign) || function () {
+    __assign$v = Object.assign || function(t) {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
             s = arguments[i];
             for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
@@ -19881,7 +19881,7 @@ var __assign$u = (undefined && undefined.__assign) || function () {
         }
         return t;
     };
-    return __assign$u.apply(this, arguments);
+    return __assign$v.apply(this, arguments);
 };
 var JSON_APPLY_PLUGINS = {
     constructors: {},
@@ -19909,9 +19909,9 @@ var JSON_APPLY_OPTIONS = {
 };
 function getJsonApplyOptions() {
     return {
-        constructors: __assign$u(__assign$u({}, JSON_APPLY_OPTIONS.constructors), JSON_APPLY_PLUGINS.constructors),
+        constructors: __assign$v(__assign$v({}, JSON_APPLY_OPTIONS.constructors), JSON_APPLY_PLUGINS.constructors),
         constructedArrays: JSON_APPLY_PLUGINS.constructedArrays,
-        allowedTypes: __assign$u({}, JSON_APPLY_OPTIONS.allowedTypes),
+        allowedTypes: __assign$v({}, JSON_APPLY_OPTIONS.allowedTypes),
     };
 }
 
@@ -20099,8 +20099,8 @@ var __extends$1x = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __assign$t = (undefined && undefined.__assign) || function () {
-    __assign$t = Object.assign || function(t) {
+var __assign$u = (undefined && undefined.__assign) || function () {
+    __assign$u = Object.assign || function(t) {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
             s = arguments[i];
             for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
@@ -20108,7 +20108,7 @@ var __assign$t = (undefined && undefined.__assign) || function () {
         }
         return t;
     };
-    return __assign$t.apply(this, arguments);
+    return __assign$u.apply(this, arguments);
 };
 var __decorate$T = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -20199,7 +20199,7 @@ var Range = /** @class */ (function (_super) {
         _super.prototype.render.call(this, renderCtx);
     };
     Range.className = 'Range';
-    Range.defaultStyles = __assign$t(__assign$t({}, Shape.defaultStyles), { strokeWidth: 1 });
+    Range.defaultStyles = __assign$u(__assign$u({}, Shape.defaultStyles), { strokeWidth: 1 });
     __decorate$T([
         SceneChangeDetection({ redraw: RedrawType.MINOR })
     ], Range.prototype, "x1", void 0);
@@ -20586,8 +20586,8 @@ var __extends$1w = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __assign$s = (undefined && undefined.__assign) || function () {
-    __assign$s = Object.assign || function(t) {
+var __assign$t = (undefined && undefined.__assign) || function () {
+    __assign$t = Object.assign || function(t) {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
             s = arguments[i];
             for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
@@ -20595,7 +20595,7 @@ var __assign$s = (undefined && undefined.__assign) || function () {
         }
         return t;
     };
-    return __assign$s.apply(this, arguments);
+    return __assign$t.apply(this, arguments);
 };
 var __decorate$R = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -20651,7 +20651,7 @@ var CartesianAxis = /** @class */ (function (_super) {
         return _super.prototype.update.call(this, primaryTickCount);
     };
     CartesianAxis.prototype.createAxisContext = function () {
-        return __assign$s(__assign$s({}, _super.prototype.createAxisContext.call(this)), { position: this.position });
+        return __assign$t(__assign$t({}, _super.prototype.createAxisContext.call(this)), { position: this.position });
     };
     CartesianAxis.prototype.assignCrossLineArrayConstructor = function (crossLines) {
         assignJsonApplyConstructedArray(crossLines, CartesianCrossLine);
@@ -21512,8 +21512,8 @@ var __extends$1t = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __assign$r = (undefined && undefined.__assign) || function () {
-    __assign$r = Object.assign || function(t) {
+var __assign$s = (undefined && undefined.__assign) || function () {
+    __assign$s = Object.assign || function(t) {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
             s = arguments[i];
             for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
@@ -21521,7 +21521,7 @@ var __assign$r = (undefined && undefined.__assign) || function () {
         }
         return t;
     };
-    return __assign$r.apply(this, arguments);
+    return __assign$s.apply(this, arguments);
 };
 var __awaiter$a = (undefined && undefined.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
@@ -21633,7 +21633,7 @@ var CartesianChart = /** @class */ (function (_super) {
                             type: 'layout-complete',
                             chart: { width: this.scene.width, height: this.scene.height },
                             series: { rect: seriesRect, paddedRect: seriesPaddedRect, hoverRect: hoverRect, visible: visibility.series },
-                            axes: this.axes.map(function (axis) { return (__assign$r({ id: axis.id }, axis.getLayoutState())); }),
+                            axes: this.axes.map(function (axis) { return (__assign$s({ id: axis.id }, axis.getLayoutState())); }),
                         });
                         if (clipSeries) {
                             seriesRoot.setClipRectInGroupCoordinateSpace(seriesRect);
@@ -21651,8 +21651,8 @@ var CartesianChart = /** @class */ (function (_super) {
         var _b;
         // Start with a good approximation from the last update - this should mean that in many resize
         // cases that only a single pass is needed \o/.
-        var axisWidths = __assign$r({}, this._lastAxisWidths);
-        var visibility = __assign$r({}, this._lastVisibility);
+        var axisWidths = __assign$s({}, this._lastAxisWidths);
+        var visibility = __assign$s({}, this._lastVisibility);
         // Clean any positions which aren't valid with the current axis status (otherwise we end up
         // never being able to find a stable result).
         var liveAxisWidths = new Set(this._axes.map(function (a) { return a.position; }));
@@ -22886,8 +22886,8 @@ var __extends$1l = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __assign$q = (undefined && undefined.__assign) || function () {
-    __assign$q = Object.assign || function(t) {
+var __assign$r = (undefined && undefined.__assign) || function () {
+    __assign$r = Object.assign || function(t) {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
             s = arguments[i];
             for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
@@ -22895,7 +22895,7 @@ var __assign$q = (undefined && undefined.__assign) || function () {
         }
         return t;
     };
-    return __assign$q.apply(this, arguments);
+    return __assign$r.apply(this, arguments);
 };
 var __decorate$K = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -23013,7 +23013,7 @@ var CartesianStateMachine = /** @class */ (function (_super) {
 var CartesianSeries = /** @class */ (function (_super) {
     __extends$1l(CartesianSeries, _super);
     function CartesianSeries(opts) {
-        var _this = _super.call(this, __assign$q(__assign$q({}, opts), { useSeriesGroupLayer: true, directionKeys: DEFAULT_DIRECTION_KEYS, directionNames: DEFAULT_DIRECTION_NAMES })) || this;
+        var _this = _super.call(this, __assign$r(__assign$r({}, opts), { useSeriesGroupLayer: true, directionKeys: DEFAULT_DIRECTION_KEYS, directionNames: DEFAULT_DIRECTION_NAMES })) || this;
         _this.legendItemName = undefined;
         _this._contextNodeData = [];
         _this.nodeDataDependencies = {};
@@ -23867,8 +23867,8 @@ var __extends$1k = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __assign$p = (undefined && undefined.__assign) || function () {
-    __assign$p = Object.assign || function(t) {
+var __assign$q = (undefined && undefined.__assign) || function () {
+    __assign$q = Object.assign || function(t) {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
             s = arguments[i];
             for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
@@ -23876,7 +23876,7 @@ var __assign$p = (undefined && undefined.__assign) || function () {
         }
         return t;
     };
-    return __assign$p.apply(this, arguments);
+    return __assign$q.apply(this, arguments);
 };
 var __decorate$J = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -24505,7 +24505,7 @@ var AreaSeries = /** @class */ (function (_super) {
                 stroke.strokeOpacity = strokeOpacity;
                 stroke.lineDash = lineDash;
                 stroke.lineDashOffset = lineDashOffset;
-                (_e = _this.ctx.animationManager) === null || _e === void 0 ? void 0 : _e.animate(_this.id + "_empty-update-ready_stroke_" + seriesIdx, __assign$p(__assign$p({}, animationOptions), { onUpdate: function (xValue) {
+                (_e = _this.ctx.animationManager) === null || _e === void 0 ? void 0 : _e.animate(_this.id + "_empty-update-ready_stroke_" + seriesIdx, __assign$q(__assign$q({}, animationOptions), { onUpdate: function (xValue) {
                         stroke.path.clear({ trackChanges: true });
                         var moveTo = true;
                         points_1.forEach(function (point, index) {
@@ -24553,7 +24553,7 @@ var AreaSeries = /** @class */ (function (_super) {
                 fill.lineDash = lineDash;
                 fill.lineDashOffset = lineDashOffset;
                 fill.fillShadow = shadow;
-                (_f = _this.ctx.animationManager) === null || _f === void 0 ? void 0 : _f.animate(_this.id + "_empty-update-ready_fill_" + seriesIdx, __assign$p(__assign$p({}, animationOptions), { onUpdate: function (xValue) {
+                (_f = _this.ctx.animationManager) === null || _f === void 0 ? void 0 : _f.animate(_this.id + "_empty-update-ready_fill_" + seriesIdx, __assign$q(__assign$q({}, animationOptions), { onUpdate: function (xValue) {
                         fill.path.clear({ trackChanges: true });
                         var x = 0;
                         var y = 0;
@@ -24597,7 +24597,7 @@ var AreaSeries = /** @class */ (function (_super) {
                 var delay = (seriesRect === null || seriesRect === void 0 ? void 0 : seriesRect.width) ? (datum.point.x / seriesRect.width) * duration : 0;
                 var format = _this.animateFormatter(datum);
                 var size = (_b = (_a = datum.point) === null || _a === void 0 ? void 0 : _a.size) !== null && _b !== void 0 ? _b : 0;
-                (_c = _this.ctx.animationManager) === null || _c === void 0 ? void 0 : _c.animate(_this.id + "_empty-update-ready_" + marker.id, __assign$p(__assign$p({}, animationOptions), { to: (_d = format === null || format === void 0 ? void 0 : format.size) !== null && _d !== void 0 ? _d : size, delay: delay, duration: markerDuration, onUpdate: function (size) {
+                (_c = _this.ctx.animationManager) === null || _c === void 0 ? void 0 : _c.animate(_this.id + "_empty-update-ready_" + marker.id, __assign$q(__assign$q({}, animationOptions), { to: (_d = format === null || format === void 0 ? void 0 : format.size) !== null && _d !== void 0 ? _d : size, delay: delay, duration: markerDuration, onUpdate: function (size) {
                         marker.size = size;
                     } }));
             });
@@ -24920,8 +24920,8 @@ var Rect = /** @class */ (function (_super) {
     return Rect;
 }(Path));
 
-var __assign$o = (undefined && undefined.__assign) || function () {
-    __assign$o = Object.assign || function(t) {
+var __assign$p = (undefined && undefined.__assign) || function () {
+    __assign$p = Object.assign || function(t) {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
             s = arguments[i];
             for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
@@ -24929,7 +24929,7 @@ var __assign$o = (undefined && undefined.__assign) || function () {
         }
         return t;
     };
-    return __assign$o.apply(this, arguments);
+    return __assign$p.apply(this, arguments);
 };
 var __rest$1 = (undefined && undefined.__rest) || function (s, e) {
     var t = {};
@@ -25037,7 +25037,7 @@ function getRectConfig(_a) {
     var strokeOpacity = style.strokeOpacity, fillShadow = style.fillShadow, lineDash = style.lineDash, lineDashOffset = style.lineDashOffset;
     var format = undefined;
     if (formatter) {
-        format = callbackCache.call(formatter, __assign$o({ datum: datum.datum, xKey: datum.xKey, yKey: datum.yKey, fill: itemFill, stroke: itemStroke, strokeWidth: itemStrokeWidth, highlighted: isHighlighted, seriesId: seriesId, stackGroup: stackGroup }, opts));
+        format = callbackCache.call(formatter, __assign$p({ datum: datum.datum, xKey: datum.xKey, yKey: datum.yKey, fill: itemFill, stroke: itemStroke, strokeWidth: itemStrokeWidth, highlighted: isHighlighted, seriesId: seriesId, stackGroup: stackGroup }, opts));
     }
     return {
         fill: (_f = format === null || format === void 0 ? void 0 : format.fill) !== null && _f !== void 0 ? _f : itemFill,
@@ -26686,8 +26686,8 @@ var __extends$1g = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __assign$n = (undefined && undefined.__assign) || function () {
-    __assign$n = Object.assign || function(t) {
+var __assign$o = (undefined && undefined.__assign) || function () {
+    __assign$o = Object.assign || function(t) {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
             s = arguments[i];
             for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
@@ -26695,7 +26695,7 @@ var __assign$n = (undefined && undefined.__assign) || function () {
         }
         return t;
     };
-    return __assign$n.apply(this, arguments);
+    return __assign$o.apply(this, arguments);
 };
 var __decorate$F = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -27209,7 +27209,7 @@ var LineSeries = /** @class */ (function (_super) {
                 from: 0,
                 to: lineLength,
             };
-            (_d = _this.ctx.animationManager) === null || _d === void 0 ? void 0 : _d.animate(_this.id + "_empty-update-ready", __assign$n(__assign$n({}, animationOptions), { duration: duration, onUpdate: function (length) {
+            (_d = _this.ctx.animationManager) === null || _d === void 0 ? void 0 : _d.animate(_this.id + "_empty-update-ready", __assign$o(__assign$o({}, animationOptions), { duration: duration, onUpdate: function (length) {
                     linePath.clear({ trackChanges: true });
                     nodeData.forEach(function (datum, index) {
                         if (nodeLengths[index] <= length) {
@@ -27245,7 +27245,7 @@ var LineSeries = /** @class */ (function (_super) {
                 var delay = lineLength > 0 ? (nodeLengths[index] / lineLength) * duration : 0;
                 var format = _this.animateFormatter(datum);
                 var size = (_b = (_a = datum.point) === null || _a === void 0 ? void 0 : _a.size) !== null && _b !== void 0 ? _b : 0;
-                (_c = _this.ctx.animationManager) === null || _c === void 0 ? void 0 : _c.animate(_this.id + "_empty-update-ready_" + marker.id, __assign$n(__assign$n({}, animationOptions), { to: (_d = format === null || format === void 0 ? void 0 : format.size) !== null && _d !== void 0 ? _d : size, delay: delay, duration: markerDuration, onUpdate: function (size) {
+                (_c = _this.ctx.animationManager) === null || _c === void 0 ? void 0 : _c.animate(_this.id + "_empty-update-ready_" + marker.id, __assign$o(__assign$o({}, animationOptions), { to: (_d = format === null || format === void 0 ? void 0 : format.size) !== null && _d !== void 0 ? _d : size, delay: delay, duration: markerDuration, onUpdate: function (size) {
                         marker.size = size;
                     } }));
             });
@@ -27455,8 +27455,8 @@ var __extends$1f = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __assign$m = (undefined && undefined.__assign) || function () {
-    __assign$m = Object.assign || function(t) {
+var __assign$n = (undefined && undefined.__assign) || function () {
+    __assign$n = Object.assign || function(t) {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
             s = arguments[i];
             for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
@@ -27464,7 +27464,7 @@ var __assign$m = (undefined && undefined.__assign) || function () {
         }
         return t;
     };
-    return __assign$m.apply(this, arguments);
+    return __assign$n.apply(this, arguments);
 };
 var __decorate$E = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -27745,7 +27745,7 @@ var ScatterSeries = /** @class */ (function (_super) {
                             point: { x: x, y: y, size: markerSize },
                             nodeMidPoint: { x: x, y: y },
                             fill: fill,
-                            label: __assign$m({ text: text }, size),
+                            label: __assign$n({ text: text }, size),
                         };
                     }
                 }
@@ -27851,7 +27851,7 @@ var ScatterSeries = /** @class */ (function (_super) {
                 labelSelection = opts.labelSelection;
                 enabled = this.label.enabled;
                 placedLabels = enabled ? (_b = (_a = this.chart) === null || _a === void 0 ? void 0 : _a.placeLabels().get(this)) !== null && _b !== void 0 ? _b : [] : [];
-                placedNodeDatum = placedLabels.map(function (v) { return (__assign$m(__assign$m({}, v.datum), { point: {
+                placedNodeDatum = placedLabels.map(function (v) { return (__assign$n(__assign$n({}, v.datum), { point: {
                         x: v.x,
                         y: v.y,
                         size: v.datum.point.size,
@@ -28145,8 +28145,8 @@ var __extends$1d = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __assign$l = (undefined && undefined.__assign) || function () {
-    __assign$l = Object.assign || function(t) {
+var __assign$m = (undefined && undefined.__assign) || function () {
+    __assign$m = Object.assign || function(t) {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
             s = arguments[i];
             for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
@@ -28154,7 +28154,7 @@ var __assign$l = (undefined && undefined.__assign) || function () {
         }
         return t;
     };
-    return __assign$l.apply(this, arguments);
+    return __assign$m.apply(this, arguments);
 };
 var __decorate$D = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -28939,7 +28939,7 @@ var TreemapSeries = /** @class */ (function (_super) {
                 valueSize.width < availTextWidth &&
                 valueSize.height + labelSize.height + valueMargin < availTextHeight;
             labelMeta.set(datum, {
-                label: __assign$l({ text: wrappedText || labelText, style: labelStyle }, (datum.isLeaf
+                label: __assign$m({ text: wrappedText || labelText, style: labelStyle }, (datum.isLeaf
                     ? {
                         hAlign: 'center',
                         vAlign: 'middle',
@@ -29253,8 +29253,8 @@ function isPlainObject(x) {
     return isObject(x) && x.constructor === Object;
 }
 
-var __assign$k = (undefined && undefined.__assign) || function () {
-    __assign$k = Object.assign || function(t) {
+var __assign$l = (undefined && undefined.__assign) || function () {
+    __assign$l = Object.assign || function(t) {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
             s = arguments[i];
             for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
@@ -29262,7 +29262,7 @@ var __assign$k = (undefined && undefined.__assign) || function () {
         }
         return t;
     };
-    return __assign$k.apply(this, arguments);
+    return __assign$l.apply(this, arguments);
 };
 var __read$i = (undefined && undefined.__read) || function (o, n) {
     var m = typeof Symbol === "function" && o[Symbol.iterator];
@@ -29426,7 +29426,7 @@ var ChartTheme = /** @class */ (function () {
         };
     };
     ChartTheme.getBarSeriesDefaults = function () {
-        return __assign$k(__assign$k({}, this.getSeriesDefaults()), { fillOpacity: 1, strokeOpacity: 1, normalizedTo: undefined, strokeWidth: 1, lineDash: [0], lineDashOffset: 0, label: {
+        return __assign$l(__assign$l({}, this.getSeriesDefaults()), { fillOpacity: 1, strokeOpacity: 1, normalizedTo: undefined, strokeWidth: 1, lineDash: [0], lineDashOffset: 0, label: {
                 enabled: false,
                 fontStyle: undefined,
                 fontWeight: undefined,
@@ -29445,19 +29445,19 @@ var ChartTheme = /** @class */ (function () {
     };
     ChartTheme.getLineSeriesDefaults = function () {
         var seriesDefaults = this.getSeriesDefaults();
-        return __assign$k(__assign$k({}, seriesDefaults), { tooltip: __assign$k(__assign$k({}, seriesDefaults.tooltip), { format: undefined, position: {
+        return __assign$l(__assign$l({}, seriesDefaults), { tooltip: __assign$l(__assign$l({}, seriesDefaults.tooltip), { format: undefined, position: {
                     type: 'node',
                 } }) });
     };
     ChartTheme.getAreaSeriesDefaults = function () {
         var seriesDefaults = this.getSeriesDefaults();
-        return __assign$k(__assign$k({}, seriesDefaults), { nodeClickRange: 'nearest', tooltip: __assign$k(__assign$k({}, seriesDefaults.tooltip), { position: {
+        return __assign$l(__assign$l({}, seriesDefaults), { nodeClickRange: 'nearest', tooltip: __assign$l(__assign$l({}, seriesDefaults.tooltip), { position: {
                     type: 'node',
                 } }) });
     };
     ChartTheme.getScatterSeriesDefaults = function () {
         var seriesDefaults = this.getSeriesDefaults();
-        return __assign$k(__assign$k({}, seriesDefaults), { tooltip: __assign$k(__assign$k({}, seriesDefaults.tooltip), { position: {
+        return __assign$l(__assign$l({}, seriesDefaults), { tooltip: __assign$l(__assign$l({}, seriesDefaults.tooltip), { position: {
                     type: 'node',
                 } }) });
     };
@@ -29682,16 +29682,16 @@ var ChartTheme = /** @class */ (function () {
         return deepMerge$1(parentDefaults, defaults);
     };
     ChartTheme.fontFamily = 'Verdana, sans-serif';
-    ChartTheme.cartesianDefaults = __assign$k(__assign$k({}, ChartTheme.getChartDefaults()), { axes: {
-            number: __assign$k({}, ChartTheme.getAxisDefaults()),
-            log: __assign$k(__assign$k({}, ChartTheme.getAxisDefaults()), { base: 10 }),
-            category: __assign$k(__assign$k({}, ChartTheme.getAxisDefaults()), { groupPaddingInner: 0.1, label: __assign$k(__assign$k({}, ChartTheme.getAxisDefaults().label), { autoRotate: true }) }),
-            groupedCategory: __assign$k({}, ChartTheme.getAxisDefaults()),
-            time: __assign$k({}, ChartTheme.getAxisDefaults()),
+    ChartTheme.cartesianDefaults = __assign$l(__assign$l({}, ChartTheme.getChartDefaults()), { axes: {
+            number: __assign$l({}, ChartTheme.getAxisDefaults()),
+            log: __assign$l(__assign$l({}, ChartTheme.getAxisDefaults()), { base: 10 }),
+            category: __assign$l(__assign$l({}, ChartTheme.getAxisDefaults()), { groupPaddingInner: 0.1, label: __assign$l(__assign$l({}, ChartTheme.getAxisDefaults().label), { autoRotate: true }) }),
+            groupedCategory: __assign$l({}, ChartTheme.getAxisDefaults()),
+            time: __assign$l({}, ChartTheme.getAxisDefaults()),
         }, series: {
-            column: __assign$k({}, ChartTheme.getBarSeriesDefaults()),
-            bar: __assign$k({}, ChartTheme.getBarSeriesDefaults()),
-            line: __assign$k(__assign$k({}, ChartTheme.getLineSeriesDefaults()), { title: undefined, strokeWidth: 2, strokeOpacity: 1, lineDash: [0], lineDashOffset: 0, marker: __assign$k(__assign$k({}, ChartTheme.getCartesianSeriesMarkerDefaults()), { fillOpacity: 1, strokeOpacity: 1 }), label: {
+            column: __assign$l({}, ChartTheme.getBarSeriesDefaults()),
+            bar: __assign$l({}, ChartTheme.getBarSeriesDefaults()),
+            line: __assign$l(__assign$l({}, ChartTheme.getLineSeriesDefaults()), { title: undefined, strokeWidth: 2, strokeOpacity: 1, lineDash: [0], lineDashOffset: 0, marker: __assign$l(__assign$l({}, ChartTheme.getCartesianSeriesMarkerDefaults()), { fillOpacity: 1, strokeOpacity: 1 }), label: {
                     enabled: false,
                     fontStyle: undefined,
                     fontWeight: undefined,
@@ -29700,7 +29700,7 @@ var ChartTheme = /** @class */ (function () {
                     color: 'rgb(70, 70, 70)',
                     formatter: undefined,
                 } }),
-            scatter: __assign$k(__assign$k({}, ChartTheme.getScatterSeriesDefaults()), { sizeName: 'Size', labelName: 'Label', marker: __assign$k({}, ChartTheme.getCartesianSeriesMarkerDefaults()), label: {
+            scatter: __assign$l(__assign$l({}, ChartTheme.getScatterSeriesDefaults()), { sizeName: 'Size', labelName: 'Label', marker: __assign$l({}, ChartTheme.getCartesianSeriesMarkerDefaults()), label: {
                     enabled: false,
                     fontStyle: undefined,
                     fontWeight: undefined,
@@ -29708,13 +29708,13 @@ var ChartTheme = /** @class */ (function () {
                     fontFamily: ChartTheme.fontFamily,
                     color: 'rgb(70, 70, 70)',
                 } }),
-            area: __assign$k(__assign$k({}, ChartTheme.getAreaSeriesDefaults()), { normalizedTo: undefined, fillOpacity: 0.8, strokeOpacity: 1, strokeWidth: 2, lineDash: [0], lineDashOffset: 0, shadow: {
+            area: __assign$l(__assign$l({}, ChartTheme.getAreaSeriesDefaults()), { normalizedTo: undefined, fillOpacity: 0.8, strokeOpacity: 1, strokeWidth: 2, lineDash: [0], lineDashOffset: 0, shadow: {
                     enabled: false,
                     color: 'rgba(0, 0, 0, 0.5)',
                     xOffset: 3,
                     yOffset: 3,
                     blur: 5,
-                }, marker: __assign$k(__assign$k({}, ChartTheme.getCartesianSeriesMarkerDefaults()), { fillOpacity: 1, strokeOpacity: 1, enabled: false }), label: {
+                }, marker: __assign$l(__assign$l({}, ChartTheme.getCartesianSeriesMarkerDefaults()), { fillOpacity: 1, strokeOpacity: 1, enabled: false }), label: {
                     enabled: false,
                     fontStyle: undefined,
                     fontWeight: undefined,
@@ -29723,7 +29723,7 @@ var ChartTheme = /** @class */ (function () {
                     color: 'rgb(70, 70, 70)',
                     formatter: undefined,
                 } }),
-            histogram: __assign$k(__assign$k({}, ChartTheme.getSeriesDefaults()), { strokeWidth: 1, fillOpacity: 1, strokeOpacity: 1, lineDash: [0], lineDashOffset: 0, areaPlot: false, bins: undefined, aggregation: 'sum', label: {
+            histogram: __assign$l(__assign$l({}, ChartTheme.getSeriesDefaults()), { strokeWidth: 1, fillOpacity: 1, strokeOpacity: 1, lineDash: [0], lineDashOffset: 0, areaPlot: false, bins: undefined, aggregation: 'sum', label: {
                     enabled: false,
                     fontStyle: undefined,
                     fontWeight: undefined,
@@ -29739,8 +29739,8 @@ var ChartTheme = /** @class */ (function () {
                     blur: 5,
                 } }),
         } });
-    ChartTheme.polarDefaults = __assign$k(__assign$k({}, ChartTheme.getChartDefaults()), { series: {
-            pie: __assign$k(__assign$k({}, ChartTheme.getSeriesDefaults()), { title: {
+    ChartTheme.polarDefaults = __assign$l(__assign$l({}, ChartTheme.getChartDefaults()), { series: {
+            pie: __assign$l(__assign$l({}, ChartTheme.getSeriesDefaults()), { title: {
                     enabled: true,
                     fontStyle: undefined,
                     fontWeight: 'bold',
@@ -29784,8 +29784,8 @@ var ChartTheme = /** @class */ (function () {
                     margin: 2,
                 } }),
         } });
-    ChartTheme.hierarchyDefaults = __assign$k(__assign$k({}, ChartTheme.getChartDefaults()), { series: {
-            treemap: __assign$k(__assign$k({}, ChartTheme.getSeriesDefaults()), { showInLegend: false, labelKey: 'label', sizeKey: 'size', colorKey: 'color', colorDomain: [-5, 5], colorRange: ['#cb4b3f', '#6acb64'], groupFill: '#272931', groupStroke: 'black', groupStrokeWidth: 1, tileStroke: 'black', tileStrokeWidth: 1, gradient: true, tileShadow: {
+    ChartTheme.hierarchyDefaults = __assign$l(__assign$l({}, ChartTheme.getChartDefaults()), { series: {
+            treemap: __assign$l(__assign$l({}, ChartTheme.getSeriesDefaults()), { showInLegend: false, labelKey: 'label', sizeKey: 'size', colorKey: 'color', colorDomain: [-5, 5], colorRange: ['#cb4b3f', '#6acb64'], groupFill: '#272931', groupStroke: 'black', groupStrokeWidth: 1, tileStroke: 'black', tileStrokeWidth: 1, gradient: true, tileShadow: {
                     enabled: false,
                     color: 'rgba(0, 0, 0, 0.5)',
                     xOffset: 3,
@@ -29877,8 +29877,8 @@ var __extends$1c = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __assign$j = (undefined && undefined.__assign) || function () {
-    __assign$j = Object.assign || function(t) {
+var __assign$k = (undefined && undefined.__assign) || function () {
+    __assign$k = Object.assign || function(t) {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
             s = arguments[i];
             for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
@@ -29886,7 +29886,7 @@ var __assign$j = (undefined && undefined.__assign) || function () {
         }
         return t;
     };
-    return __assign$j.apply(this, arguments);
+    return __assign$k.apply(this, arguments);
 };
 var DarkTheme = /** @class */ (function (_super) {
     __extends$1c(DarkTheme, _super);
@@ -29918,9 +29918,9 @@ var DarkTheme = /** @class */ (function (_super) {
         };
         var chartAxesDefaults = {
             axes: {
-                number: __assign$j({}, axisDefaults),
-                category: __assign$j({}, axisDefaults),
-                time: __assign$j({}, axisDefaults),
+                number: __assign$k({}, axisDefaults),
+                category: __assign$k({}, axisDefaults),
+                time: __assign$k({}, axisDefaults),
             },
         };
         var chartDefaults = {
@@ -29965,9 +29965,9 @@ var DarkTheme = /** @class */ (function (_super) {
             }, {});
         };
         return this.mergeWithParentDefaults(_super.prototype.getDefaults.call(this), {
-            cartesian: __assign$j(__assign$j(__assign$j({}, chartDefaults), chartAxesDefaults), { series: __assign$j({ line: __assign$j({}, seriesLabelDefaults), bar: __assign$j({}, seriesLabelDefaults), column: __assign$j({}, seriesLabelDefaults), histogram: __assign$j({}, seriesLabelDefaults) }, getOverridesByType(CHART_TYPES.cartesianTypes)) }),
-            groupedCategory: __assign$j(__assign$j(__assign$j({}, chartDefaults), chartAxesDefaults), { series: __assign$j({ bar: __assign$j({}, seriesLabelDefaults), column: __assign$j({}, seriesLabelDefaults), histogram: __assign$j({}, seriesLabelDefaults) }, getOverridesByType(CHART_TYPES.cartesianTypes)) }),
-            polar: __assign$j(__assign$j({}, chartDefaults), { series: __assign$j({ pie: {
+            cartesian: __assign$k(__assign$k(__assign$k({}, chartDefaults), chartAxesDefaults), { series: __assign$k({ line: __assign$k({}, seriesLabelDefaults), bar: __assign$k({}, seriesLabelDefaults), column: __assign$k({}, seriesLabelDefaults), histogram: __assign$k({}, seriesLabelDefaults) }, getOverridesByType(CHART_TYPES.cartesianTypes)) }),
+            groupedCategory: __assign$k(__assign$k(__assign$k({}, chartDefaults), chartAxesDefaults), { series: __assign$k({ bar: __assign$k({}, seriesLabelDefaults), column: __assign$k({}, seriesLabelDefaults), histogram: __assign$k({}, seriesLabelDefaults) }, getOverridesByType(CHART_TYPES.cartesianTypes)) }),
+            polar: __assign$k(__assign$k({}, chartDefaults), { series: __assign$k({ pie: {
                         calloutLabel: {
                             color: fontColor,
                         },
@@ -29981,7 +29981,7 @@ var DarkTheme = /** @class */ (function (_super) {
                             color: fontColor,
                         },
                     } }, getOverridesByType(CHART_TYPES.polarTypes)) }),
-            hierarchy: __assign$j(__assign$j({}, chartDefaults), { series: __assign$j({ treemap: {
+            hierarchy: __assign$k(__assign$k({}, chartDefaults), { series: __assign$k({ treemap: {
                         tileStroke: 'white',
                         groupStroke: 'white',
                         title: {
@@ -30376,8 +30376,8 @@ var VividDark = /** @class */ (function (_super) {
     return VividDark;
 }(DarkTheme));
 
-var __assign$i = (undefined && undefined.__assign) || function () {
-    __assign$i = Object.assign || function(t) {
+var __assign$j = (undefined && undefined.__assign) || function () {
+    __assign$j = Object.assign || function(t) {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
             s = arguments[i];
             for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
@@ -30385,7 +30385,7 @@ var __assign$i = (undefined && undefined.__assign) || function () {
         }
         return t;
     };
-    return __assign$i.apply(this, arguments);
+    return __assign$j.apply(this, arguments);
 };
 var lightTheme = function () { return new ChartTheme(); };
 var darkTheme = function () { return new DarkTheme(); };
@@ -30407,7 +30407,7 @@ var darkThemes = {
     'ag-solar-dark': function () { return new SolarDark(); },
     'ag-vivid-dark': function () { return new VividDark(); },
 };
-var themes$1 = __assign$i(__assign$i({}, darkThemes), lightThemes);
+var themes$1 = __assign$j(__assign$j({}, darkThemes), lightThemes);
 function getChartTheme(value) {
     var _a;
     if (value instanceof ChartTheme) {
@@ -30430,7 +30430,7 @@ function getChartTheme(value) {
         value = value.baseTheme;
     }
     overrides.reverse();
-    var flattenedTheme = __assign$i({ baseTheme: value, overrides: jsonMerge(overrides) }, (palette ? { palette: palette } : {}));
+    var flattenedTheme = __assign$j({ baseTheme: value, overrides: jsonMerge(overrides) }, (palette ? { palette: palette } : {}));
     if (flattenedTheme.baseTheme || flattenedTheme.overrides) {
         var baseTheme = getChartTheme(flattenedTheme.baseTheme);
         return new baseTheme.constructor(flattenedTheme);
@@ -30438,8 +30438,8 @@ function getChartTheme(value) {
     return lightTheme();
 }
 
-var __assign$h = (undefined && undefined.__assign) || function () {
-    __assign$h = Object.assign || function(t) {
+var __assign$i = (undefined && undefined.__assign) || function () {
+    __assign$i = Object.assign || function(t) {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
             s = arguments[i];
             for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
@@ -30447,7 +30447,7 @@ var __assign$h = (undefined && undefined.__assign) || function () {
         }
         return t;
     };
-    return __assign$h.apply(this, arguments);
+    return __assign$i.apply(this, arguments);
 };
 var __values$9 = (undefined && undefined.__values) || function(o) {
     var s = typeof Symbol === "function" && Symbol.iterator, m = s && o[s], i = 0;
@@ -30574,7 +30574,7 @@ function processSeriesOptions(_opts, seriesOptions) {
         var _a;
         // Change the default for bar/columns when yKey is used to be grouped rather than stacked.
         if ((series.type === 'bar' || series.type === 'column') && series.yKey != null && !series.stacked) {
-            return __assign$h(__assign$h({}, series), { grouped: (_a = series.grouped) !== null && _a !== void 0 ? _a : true });
+            return __assign$i(__assign$i({}, series), { grouped: (_a = series.grouped) !== null && _a !== void 0 ? _a : true });
         }
         return series;
     });
@@ -30686,8 +30686,8 @@ function processSeriesOptions(_opts, seriesOptions) {
     return result;
 }
 
-var __assign$g = (undefined && undefined.__assign) || function () {
-    __assign$g = Object.assign || function(t) {
+var __assign$h = (undefined && undefined.__assign) || function () {
+    __assign$h = Object.assign || function(t) {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
             s = arguments[i];
             for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
@@ -30695,7 +30695,7 @@ var __assign$g = (undefined && undefined.__assign) || function () {
         }
         return t;
     };
-    return __assign$g.apply(this, arguments);
+    return __assign$h.apply(this, arguments);
 };
 var __values$8 = (undefined && undefined.__values) || function(o) {
     var s = typeof Symbol === "function" && Symbol.iterator, m = s && o[s], i = 0;
@@ -30841,7 +30841,7 @@ function prepareOptions(newOptions, fallbackOptions) {
         }
         finally { if (e_2) throw e_2.error; }
     }
-    options = __assign$g(__assign$g({}, options), { type: type });
+    options = __assign$h(__assign$h({}, options), { type: type });
     var defaultSeriesType = 'line';
     if (isAgCartesianChartOptions(options)) {
         defaultSeriesType = 'line';
@@ -30943,10 +30943,10 @@ function sanityCheckOptions(options) {
 }
 function mergeSeriesOptions(series, type, seriesThemes, globalTooltipPositionOptions) {
     var _a, _b;
-    var mergedTooltipPosition = jsonMerge([__assign$g({}, globalTooltipPositionOptions), (_a = series.tooltip) === null || _a === void 0 ? void 0 : _a.position], noDataCloneMergeOptions);
+    var mergedTooltipPosition = jsonMerge([__assign$h({}, globalTooltipPositionOptions), (_a = series.tooltip) === null || _a === void 0 ? void 0 : _a.position], noDataCloneMergeOptions);
     var mergedSeries = jsonMerge([
         (_b = seriesThemes[type]) !== null && _b !== void 0 ? _b : {},
-        __assign$g(__assign$g({}, series), { type: type, tooltip: __assign$g(__assign$g({}, series.tooltip), { position: mergedTooltipPosition }) }),
+        __assign$h(__assign$h({}, series), { type: type, tooltip: __assign$h(__assign$h({}, series.tooltip), { position: mergedTooltipPosition }) }),
     ], noDataCloneMergeOptions);
     return mergedSeries;
 }
@@ -31549,8 +31549,8 @@ var __extends$11 = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __assign$f = (undefined && undefined.__assign) || function () {
-    __assign$f = Object.assign || function(t) {
+var __assign$g = (undefined && undefined.__assign) || function () {
+    __assign$g = Object.assign || function(t) {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
             s = arguments[i];
             for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
@@ -31558,7 +31558,7 @@ var __assign$f = (undefined && undefined.__assign) || function () {
         }
         return t;
     };
-    return __assign$f.apply(this, arguments);
+    return __assign$g.apply(this, arguments);
 };
 var RangeSelector = /** @class */ (function (_super) {
     __extends$11(RangeSelector, _super);
@@ -31685,7 +31685,7 @@ var RangeSelector = /** @class */ (function (_super) {
         [mask, minHandle, maxHandle].forEach(function (child) {
             if (child.visible && (forceRender || child.dirty > RedrawType.NONE)) {
                 ctx.save();
-                child.render(__assign$f(__assign$f({}, renderCtx), { ctx: ctx, forceRender: forceRender }));
+                child.render(__assign$g(__assign$g({}, renderCtx), { ctx: ctx, forceRender: forceRender }));
                 ctx.restore();
             }
         });
@@ -32232,8 +32232,8 @@ function setupModules() {
     }
 }
 
-var __assign$e = (undefined && undefined.__assign) || function () {
-    __assign$e = Object.assign || function(t) {
+var __assign$f = (undefined && undefined.__assign) || function () {
+    __assign$f = Object.assign || function(t) {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
             s = arguments[i];
             for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
@@ -32241,7 +32241,7 @@ var __assign$e = (undefined && undefined.__assign) || function () {
         }
         return t;
     };
-    return __assign$e.apply(this, arguments);
+    return __assign$f.apply(this, arguments);
 };
 var __awaiter = (undefined && undefined.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
@@ -32552,7 +32552,7 @@ var AgChartInternal = /** @class */ (function () {
                         }
                         width = width !== null && width !== void 0 ? width : currentWidth;
                         height = height !== null && height !== void 0 ? height : currentHeight;
-                        options = __assign$e(__assign$e({}, chart.userOptions), { container: document.createElement('div'), width: width, height: height, autoSize: false, overrideDevicePixelRatio: 1 });
+                        options = __assign$f(__assign$f({}, chart.userOptions), { container: document.createElement('div'), width: width, height: height, autoSize: false, overrideDevicePixelRatio: 1 });
                         clonedChart = AgChartInternal.createOrUpdate(options);
                         return [4 /*yield*/, clonedChart.chart.waitForUpdate()];
                     case 1:
@@ -32582,7 +32582,7 @@ var AgChartInternal = /** @class */ (function () {
                 switch (_b.label) {
                     case 0:
                         if (processedOptions.type == null) {
-                            processedOptions = __assign$e(__assign$e({}, processedOptions), { type: (_a = chart.processedOptions.type) !== null && _a !== void 0 ? _a : optionsType(processedOptions) });
+                            processedOptions = __assign$f(__assign$f({}, processedOptions), { type: (_a = chart.processedOptions.type) !== null && _a !== void 0 ? _a : optionsType(processedOptions) });
                         }
                         return [4 /*yield*/, chart.awaitUpdateCompletion()];
                     case 1:
@@ -32837,7 +32837,7 @@ function registerListeners(source, listeners) {
 }
 function applyOptionValues(target, options, _a) {
     var _b = _a === void 0 ? {} : _a, skip = _b.skip, path = _b.path;
-    var applyOpts = __assign$e(__assign$e(__assign$e({}, getJsonApplyOptions()), { skip: skip }), (path ? { path: path } : {}));
+    var applyOpts = __assign$f(__assign$f(__assign$f({}, getJsonApplyOptions()), { skip: skip }), (path ? { path: path } : {}));
     return jsonApply(target, options, applyOpts);
 }
 function applySeriesValues(target, options, _a) {
@@ -32847,9 +32847,9 @@ function applySeriesValues(target, options, _a) {
     var jsonApplyOptions = getJsonApplyOptions();
     var ctrs = (_b = jsonApplyOptions.constructors) !== null && _b !== void 0 ? _b : {};
     var seriesTypeOverrides = {
-        constructors: __assign$e(__assign$e({}, ctrs), { title: target.type === 'pie' ? PieTitle : ctrs['title'] }),
+        constructors: __assign$f(__assign$f({}, ctrs), { title: target.type === 'pie' ? PieTitle : ctrs['title'] }),
     };
-    var applyOpts = __assign$e(__assign$e(__assign$e(__assign$e(__assign$e({}, jsonApplyOptions), seriesTypeOverrides), { skip: __spreadArray$6(['series[].type'], __read$f((skip !== null && skip !== void 0 ? skip : []))) }), (path ? { path: path } : {})), { idx: index !== null && index !== void 0 ? index : -1 });
+    var applyOpts = __assign$f(__assign$f(__assign$f(__assign$f(__assign$f({}, jsonApplyOptions), seriesTypeOverrides), { skip: __spreadArray$6(['series[].type'], __read$f((skip !== null && skip !== void 0 ? skip : []))) }), (path ? { path: path } : {})), { idx: index !== null && index !== void 0 ? index : -1 });
     var result = jsonApply(target, options, applyOpts);
     var listeners = options === null || options === void 0 ? void 0 : options.listeners;
     if (listeners != null) {
@@ -32858,7 +32858,7 @@ function applySeriesValues(target, options, _a) {
     var seriesGrouping = options.seriesGrouping;
     if ('seriesGrouping' in (options !== null && options !== void 0 ? options : {})) {
         if (seriesGrouping) {
-            var newSeriesGroup = Object.freeze(__assign$e(__assign$e({}, ((_c = target.seriesGrouping) !== null && _c !== void 0 ? _c : {})), seriesGrouping));
+            var newSeriesGroup = Object.freeze(__assign$f(__assign$f({}, ((_c = target.seriesGrouping) !== null && _c !== void 0 ? _c : {})), seriesGrouping));
             target.seriesGrouping = newSeriesGroup;
         }
         else {
@@ -32869,7 +32869,7 @@ function applySeriesValues(target, options, _a) {
 }
 
 // DO NOT UPDATE MANUALLY: Generated from script during build time
-var VERSION$1 = '8.0.6';
+var VERSION$1 = '8.1.0';
 
 var __extends$_ = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
@@ -33141,8 +33141,8 @@ function getLegacyAxisType(chartType) {
     }
 }
 
-var __assign$d = (undefined && undefined.__assign) || function () {
-    __assign$d = Object.assign || function(t) {
+var __assign$e = (undefined && undefined.__assign) || function () {
+    __assign$e = Object.assign || function(t) {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
             s = arguments[i];
             for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
@@ -33150,7 +33150,7 @@ var __assign$d = (undefined && undefined.__assign) || function () {
         }
         return t;
     };
-    return __assign$d.apply(this, arguments);
+    return __assign$e.apply(this, arguments);
 };
 function createAgChartTheme(chartProxyParams, proxy) {
     var _a;
@@ -33167,7 +33167,7 @@ function createAgChartTheme(chartProxyParams, proxy) {
     var crossFilteringOverrides = chartProxyParams.crossFiltering
         ? createCrossFilterThemeOverrides(proxy, chartProxyParams, crossFilterThemeOverridePoint)
         : undefined;
-    var formattingPanelOverrides = __assign$d({}, (chartOptionsToRestore !== null && chartOptionsToRestore !== void 0 ? chartOptionsToRestore : {}));
+    var formattingPanelOverrides = __assign$e({}, (chartOptionsToRestore !== null && chartOptionsToRestore !== void 0 ? chartOptionsToRestore : {}));
     var isTitleEnabled = function () {
         var isTitleEnabled = function (obj) {
             if (!obj) {
@@ -33260,7 +33260,7 @@ function createCrossFilterThemeOverrides(proxy, chartProxyParams, overrideType) 
 }
 var STATIC_INBUILT_STOCK_THEME_AXES_OVERRIDES = ALL_AXIS_TYPES.reduce(function (r, n) {
     var _a;
-    return (__assign$d(__assign$d({}, r), (_a = {}, _a[n] = { title: { _enabledFromTheme: true } }, _a)));
+    return (__assign$e(__assign$e({}, r), (_a = {}, _a[n] = { title: { _enabledFromTheme: true } }, _a)));
 }, {});
 function inbuiltStockThemeOverrides(params, titleEnabled) {
     var extraPadding = params.getExtraPaddingDirections();
@@ -33507,8 +33507,8 @@ var __extends$Y = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __assign$c = (undefined && undefined.__assign) || function () {
-    __assign$c = Object.assign || function(t) {
+var __assign$d = (undefined && undefined.__assign) || function () {
+    __assign$d = Object.assign || function(t) {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
             s = arguments[i];
             for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
@@ -33516,7 +33516,7 @@ var __assign$c = (undefined && undefined.__assign) || function () {
         }
         return t;
     };
-    return __assign$c.apply(this, arguments);
+    return __assign$d.apply(this, arguments);
 };
 var __decorate$w = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -33571,7 +33571,7 @@ var ChartController = /** @class */ (function (_super) {
             suppressChartRanges: false,
             crossFiltering: false
         };
-        var chartModelParams = __assign$c({}, common);
+        var chartModelParams = __assign$d({}, common);
         // modify the chart model properties based on the type of update
         switch (params.type) {
             case 'rangeChartUpdate':
@@ -34093,7 +34093,7 @@ var ChartDataPanel = /** @class */ (function (_super) {
     };
     ChartDataPanel.prototype.addChangeListener = function (component, columnState) {
         var _this = this;
-        this.addManagedListener(component, core.AgAbstractField.EVENT_CHANGED, function () {
+        this.addManagedListener(component, core.Events.EVENT_FIELD_VALUE_CHANGED, function () {
             columnState.selected = component.getValue();
             _this.chartController.updateForPanelChange(columnState);
         });
@@ -34913,7 +34913,7 @@ var AgAngleSelect = /** @class */ (function (_super) {
         if (core._.exists(this.getValue())) {
             this.eAngleValue.setValue(this.normalizeNegativeValue(this.getValue()).toString());
         }
-        this.addManagedListener(this, core.AgAbstractField.EVENT_CHANGED, function () {
+        this.addManagedListener(this, core.Events.EVENT_FIELD_VALUE_CHANGED, function () {
             var eDocument = _this.gridOptionsService.getDocument();
             if (_this.eAngleValue.getInputElement().contains(eDocument.activeElement)) {
                 return;
@@ -35005,7 +35005,7 @@ var AgAngleSelect = /** @class */ (function (_super) {
     };
     AgAngleSelect.prototype.onValueChange = function (callbackFn) {
         var _this = this;
-        this.addManagedListener(this, core.AgAbstractField.EVENT_CHANGED, function () {
+        this.addManagedListener(this, core.Events.EVENT_FIELD_VALUE_CHANGED, function () {
             callbackFn(_this.degrees);
         });
         return this;
@@ -35026,7 +35026,7 @@ var AgAngleSelect = /** @class */ (function (_super) {
             this.degrees = Math.floor(degrees);
             this.calculateCartesian();
             this.positionChildCircle(radiansValue);
-            this.dispatchEvent({ type: core.AgAbstractField.EVENT_CHANGED });
+            this.dispatchEvent({ type: core.Events.EVENT_FIELD_VALUE_CHANGED });
         }
         return this;
     };
@@ -37814,8 +37814,8 @@ var __extends$n = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __assign$b = (undefined && undefined.__assign) || function () {
-    __assign$b = Object.assign || function(t) {
+var __assign$c = (undefined && undefined.__assign) || function () {
+    __assign$c = Object.assign || function(t) {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
             s = arguments[i];
             for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
@@ -37823,7 +37823,7 @@ var __assign$b = (undefined && undefined.__assign) || function () {
         }
         return t;
     };
-    return __assign$b.apply(this, arguments);
+    return __assign$c.apply(this, arguments);
 };
 var __decorate$d = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -37876,7 +37876,7 @@ var MiniChartsContainer = /** @class */ (function (_super) {
         _this.chartController = chartController;
         _this.fills = fills;
         _this.strokes = strokes;
-        _this.chartGroups = __assign$b({}, chartGroups);
+        _this.chartGroups = __assign$c({}, chartGroups);
         return _this;
     }
     MiniChartsContainer.prototype.init = function () {
@@ -38609,8 +38609,8 @@ var __extends$j = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __assign$a = (undefined && undefined.__assign) || function () {
-    __assign$a = Object.assign || function(t) {
+var __assign$b = (undefined && undefined.__assign) || function () {
+    __assign$b = Object.assign || function(t) {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
             s = arguments[i];
             for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
@@ -38618,7 +38618,7 @@ var __assign$a = (undefined && undefined.__assign) || function () {
         }
         return t;
     };
-    return __assign$a.apply(this, arguments);
+    return __assign$b.apply(this, arguments);
 };
 var __decorate$9 = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -38689,7 +38689,7 @@ var TitleEdit = /** @class */ (function (_super) {
             if (title && title.node.containsPoint(event.offsetX, event.offsetY)) {
                 var bbox = title.node.computeBBox();
                 var xy = title.node.inverseTransformPoint(bbox.x, bbox.y);
-                _this.startEditing(__assign$a(__assign$a({}, bbox), xy), canvas.width);
+                _this.startEditing(__assign$b(__assign$b({}, bbox), xy), canvas.width);
             }
         });
         var wasInTitle = false;
@@ -39397,8 +39397,8 @@ var __extends$f = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __assign$9 = (undefined && undefined.__assign) || function () {
-    __assign$9 = Object.assign || function(t) {
+var __assign$a = (undefined && undefined.__assign) || function () {
+    __assign$a = Object.assign || function(t) {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
             s = arguments[i];
             for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
@@ -39406,7 +39406,7 @@ var __assign$9 = (undefined && undefined.__assign) || function () {
         }
         return t;
     };
-    return __assign$9.apply(this, arguments);
+    return __assign$a.apply(this, arguments);
 };
 var __decorate$5 = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -39740,7 +39740,7 @@ var ChartDataModel = /** @class */ (function (_super) {
         var colIdSet = new Set(columns.map(function (column) { return column.getColId(); }));
         // if no dimension found in supplied columns use the default category (always index = 0)
         var foundColState = this.dimensionColState.find(function (colState) { return colIdSet.has(colState.colId); }) || this.dimensionColState[0];
-        this.dimensionColState = this.dimensionColState.map(function (colState) { return (__assign$9(__assign$9({}, colState), { selected: colState.colId === foundColState.colId })); });
+        this.dimensionColState = this.dimensionColState.map(function (colState) { return (__assign$a(__assign$a({}, colState), { selected: colState.colId === foundColState.colId })); });
     };
     ChartDataModel.prototype.syncDimensionCellRange = function () {
         var selectedDimension = this.getSelectedDimension();
@@ -39771,8 +39771,8 @@ function deproxy(chartOrProxy) {
     return chartOrProxy;
 }
 
-var __assign$8 = (undefined && undefined.__assign) || function () {
-    __assign$8 = Object.assign || function(t) {
+var __assign$9 = (undefined && undefined.__assign) || function () {
+    __assign$9 = Object.assign || function(t) {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
             s = arguments[i];
             for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
@@ -39780,7 +39780,7 @@ var __assign$8 = (undefined && undefined.__assign) || function () {
         }
         return t;
     };
-    return __assign$8.apply(this, arguments);
+    return __assign$9.apply(this, arguments);
 };
 var ChartProxy = /** @class */ (function () {
     function ChartProxy(chartProxyParams) {
@@ -39848,7 +39848,7 @@ var ChartProxy = /** @class */ (function () {
             return data.map(function (d, index) {
                 var value = d[categoryKey];
                 var valueString = value && value.toString ? value.toString() : '';
-                var datum = __assign$8({}, d);
+                var datum = __assign$9({}, d);
                 datum[categoryKey] = { id: index, value: value, toString: function () { return valueString; } };
                 return datum;
             });
@@ -39862,7 +39862,7 @@ var ChartProxy = /** @class */ (function () {
         var formattingPanelOverrides = this.chart != null ?
             { overrides: this.getActiveFormattingPanelOverrides() } : {};
         this.clearThemeOverrides = false;
-        return __assign$8(__assign$8({}, existingOptions), { theme: __assign$8(__assign$8({}, createAgChartTheme(this.chartProxyParams, this)), (updatedOverrides ? { overrides: updatedOverrides } : formattingPanelOverrides)), container: this.chartProxyParams.parentElement, mode: 'integrated' });
+        return __assign$9(__assign$9({}, existingOptions), { theme: __assign$9(__assign$9({}, createAgChartTheme(this.chartProxyParams, this)), (updatedOverrides ? { overrides: updatedOverrides } : formattingPanelOverrides)), container: this.chartProxyParams.parentElement, mode: 'integrated' });
     };
     ChartProxy.prototype.getActiveFormattingPanelOverrides = function () {
         var _a, _b;
@@ -39903,8 +39903,8 @@ var __extends$e = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __assign$7 = (undefined && undefined.__assign) || function () {
-    __assign$7 = Object.assign || function(t) {
+var __assign$8 = (undefined && undefined.__assign) || function () {
+    __assign$8 = Object.assign || function(t) {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
             s = arguments[i];
             for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
@@ -39912,7 +39912,7 @@ var __assign$7 = (undefined && undefined.__assign) || function () {
         }
         return t;
     };
-    return __assign$7.apply(this, arguments);
+    return __assign$8.apply(this, arguments);
 };
 var CartesianChartProxy = /** @class */ (function (_super) {
     __extends$e(CartesianChartProxy, _super);
@@ -39924,7 +39924,7 @@ var CartesianChartProxy = /** @class */ (function (_super) {
     }
     CartesianChartProxy.prototype.update = function (params) {
         var axes = this.getAxes(params);
-        var options = __assign$7(__assign$7({}, this.getCommonChartOptions(params.updatedOverrides)), { data: this.getData(params, axes), axes: axes, series: this.getSeries(params) });
+        var options = __assign$8(__assign$8({}, this.getCommonChartOptions(params.updatedOverrides)), { data: this.getData(params, axes), axes: axes, series: this.getSeries(params) });
         AgChart.update(this.getChartRef(), options);
     };
     CartesianChartProxy.prototype.getData = function (params, axes) {
@@ -40156,8 +40156,8 @@ var __extends$d = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __assign$6 = (undefined && undefined.__assign) || function () {
-    __assign$6 = Object.assign || function(t) {
+var __assign$7 = (undefined && undefined.__assign) || function () {
+    __assign$7 = Object.assign || function(t) {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
             s = arguments[i];
             for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
@@ -40165,7 +40165,7 @@ var __assign$6 = (undefined && undefined.__assign) || function () {
         }
         return t;
     };
-    return __assign$6.apply(this, arguments);
+    return __assign$7.apply(this, arguments);
 };
 var BarChartProxy = /** @class */ (function (_super) {
     __extends$d(BarChartProxy, _super);
@@ -40187,7 +40187,7 @@ var BarChartProxy = /** @class */ (function (_super) {
         // Add a default label formatter to show '%' for normalized charts if none is provided
         if (this.isNormalised()) {
             var numberAxis = axes[1];
-            numberAxis.label = __assign$6(__assign$6({}, numberAxis.label), { formatter: function (params) { return Math.round(params.value) + '%'; } });
+            numberAxis.label = __assign$7(__assign$7({}, numberAxis.label), { formatter: function (params) { return Math.round(params.value) + '%'; } });
         }
         return axes;
     };
@@ -40211,13 +40211,13 @@ var BarChartProxy = /** @class */ (function (_super) {
         var _this = this;
         var palette = this.getChartPalette();
         var updatePrimarySeries = function (seriesOptions, index) {
-            return __assign$6(__assign$6({}, seriesOptions), { highlightStyle: { item: { fill: undefined } }, fill: palette === null || palette === void 0 ? void 0 : palette.fills[index], stroke: palette === null || palette === void 0 ? void 0 : palette.strokes[index], listeners: {
+            return __assign$7(__assign$7({}, seriesOptions), { highlightStyle: { item: { fill: undefined } }, fill: palette === null || palette === void 0 ? void 0 : palette.fills[index], stroke: palette === null || palette === void 0 ? void 0 : palette.strokes[index], listeners: {
                     nodeClick: _this.crossFilterCallback
                 } });
         };
         var updateFilteredOutSeries = function (seriesOptions) {
             var yKey = seriesOptions.yKey + '-filtered-out';
-            return __assign$6(__assign$6({}, deepMerge({}, seriesOptions)), { yKey: yKey, fill: hexToRGBA(seriesOptions.fill, '0.3'), stroke: hexToRGBA(seriesOptions.stroke, '0.3'), showInLegend: false });
+            return __assign$7(__assign$7({}, deepMerge({}, seriesOptions)), { yKey: yKey, fill: hexToRGBA(seriesOptions.fill, '0.3'), stroke: hexToRGBA(seriesOptions.stroke, '0.3'), showInLegend: false });
         };
         var allSeries = [];
         for (var i = 0; i < series.length; i++) {
@@ -40251,8 +40251,8 @@ var __extends$c = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __assign$5 = (undefined && undefined.__assign) || function () {
-    __assign$5 = Object.assign || function(t) {
+var __assign$6 = (undefined && undefined.__assign) || function () {
+    __assign$6 = Object.assign || function(t) {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
             s = arguments[i];
             for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
@@ -40260,7 +40260,7 @@ var __assign$5 = (undefined && undefined.__assign) || function () {
         }
         return t;
     };
-    return __assign$5.apply(this, arguments);
+    return __assign$6.apply(this, arguments);
 };
 var AreaChartProxy = /** @class */ (function (_super) {
     __extends$c(AreaChartProxy, _super);
@@ -40281,7 +40281,7 @@ var AreaChartProxy = /** @class */ (function (_super) {
         // Add a default label formatter to show '%' for normalized charts if none is provided
         if (this.isNormalised()) {
             var numberAxis = axes[1];
-            numberAxis.label = __assign$5(__assign$5({}, numberAxis.label), { formatter: function (params) { return Math.round(params.value) + '%'; } });
+            numberAxis.label = __assign$6(__assign$6({}, numberAxis.label), { formatter: function (params) { return Math.round(params.value) + '%'; } });
         }
         return axes;
     };
@@ -40365,8 +40365,8 @@ var __extends$a = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __assign$4 = (undefined && undefined.__assign) || function () {
-    __assign$4 = Object.assign || function(t) {
+var __assign$5 = (undefined && undefined.__assign) || function () {
+    __assign$5 = Object.assign || function(t) {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
             s = arguments[i];
             for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
@@ -40374,7 +40374,7 @@ var __assign$4 = (undefined && undefined.__assign) || function () {
         }
         return t;
     };
-    return __assign$4.apply(this, arguments);
+    return __assign$5.apply(this, arguments);
 };
 var PieChartProxy = /** @class */ (function (_super) {
     __extends$a(PieChartProxy, _super);
@@ -40383,7 +40383,7 @@ var PieChartProxy = /** @class */ (function (_super) {
     }
     PieChartProxy.prototype.update = function (params) {
         var data = params.data, category = params.category;
-        var options = __assign$4(__assign$4({}, this.getCommonChartOptions(params.updatedOverrides)), { data: this.crossFiltering ? this.getCrossFilterData(params) : this.transformData(data, category.id), series: this.getSeries(params) });
+        var options = __assign$5(__assign$5({}, this.getCommonChartOptions(params.updatedOverrides)), { data: this.crossFiltering ? this.getCrossFilterData(params) : this.transformData(data, category.id), series: this.getSeries(params) });
         AgChart.update(this.getChartRef(), options);
     };
     PieChartProxy.prototype.getSeries = function (params) {
@@ -40410,7 +40410,7 @@ var PieChartProxy = /** @class */ (function (_super) {
                     title: { text: f.displayName, showInLegend: numFields > 1 },
                 } : undefined;
                 // augment shared options with 'doughnut' specific options
-                return __assign$4(__assign$4(__assign$4(__assign$4({}, options), { outerRadiusOffset: outerRadiusOffset, innerRadiusOffset: innerRadiusOffset }), title), { calloutLine: {
+                return __assign$5(__assign$5(__assign$5(__assign$5({}, options), { outerRadiusOffset: outerRadiusOffset, innerRadiusOffset: innerRadiusOffset }), title), { calloutLine: {
                         colors: (_a = _this.getChartPalette()) === null || _a === void 0 ? void 0 : _a.strokes,
                     } });
             }
@@ -40433,13 +40433,13 @@ var PieChartProxy = /** @class */ (function (_super) {
         var _this = this;
         var palette = this.getChartPalette();
         var primaryOptions = function (seriesOptions) {
-            return __assign$4(__assign$4({}, seriesOptions), { calloutLabel: { enabled: false }, highlightStyle: { item: { fill: undefined } }, radiusKey: seriesOptions.angleKey, angleKey: seriesOptions.angleKey + '-total', radiusMin: 0, radiusMax: 1, listeners: {
+            return __assign$5(__assign$5({}, seriesOptions), { calloutLabel: { enabled: false }, highlightStyle: { item: { fill: undefined } }, radiusKey: seriesOptions.angleKey, angleKey: seriesOptions.angleKey + '-total', radiusMin: 0, radiusMax: 1, listeners: {
                     nodeClick: _this.crossFilterCallback,
                 } });
         };
         var filteredOutOptions = function (seriesOptions, angleKey) {
             var _a, _b;
-            return __assign$4(__assign$4({}, deepMerge({}, primaryOpts)), { radiusKey: angleKey + '-filtered-out', fills: changeOpacity((_a = seriesOptions.fills) !== null && _a !== void 0 ? _a : palette.fills, 0.3), strokes: changeOpacity((_b = seriesOptions.strokes) !== null && _b !== void 0 ? _b : palette.strokes, 0.3), showInLegend: false });
+            return __assign$5(__assign$5({}, deepMerge({}, primaryOpts)), { radiusKey: angleKey + '-filtered-out', fills: changeOpacity((_a = seriesOptions.fills) !== null && _a !== void 0 ? _a : palette.fills, 0.3), strokes: changeOpacity((_b = seriesOptions.strokes) !== null && _b !== void 0 ? _b : palette.strokes, 0.3), showInLegend: false });
         };
         // currently, only single 'doughnut' cross-filter series are supported
         var primarySeries = series[0];
@@ -40482,8 +40482,8 @@ var __extends$9 = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __assign$3 = (undefined && undefined.__assign) || function () {
-    __assign$3 = Object.assign || function(t) {
+var __assign$4 = (undefined && undefined.__assign) || function () {
+    __assign$4 = Object.assign || function(t) {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
             s = arguments[i];
             for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
@@ -40491,7 +40491,7 @@ var __assign$3 = (undefined && undefined.__assign) || function () {
         }
         return t;
     };
-    return __assign$3.apply(this, arguments);
+    return __assign$4.apply(this, arguments);
 };
 var __values$1 = (undefined && undefined.__values) || function(o) {
     var s = typeof Symbol === "function" && Symbol.iterator, m = s && o[s], i = 0;
@@ -40601,20 +40601,20 @@ var ScatterChartProxy = /** @class */ (function (_super) {
             var fill = palette === null || palette === void 0 ? void 0 : palette.fills[idx];
             var stroke = palette === null || palette === void 0 ? void 0 : palette.strokes[idx];
             var markerDomain = calcMarkerDomain(data, sizeKey);
-            var marker = __assign$3(__assign$3({}, series.marker), { fill: fill, stroke: stroke, domain: markerDomain });
-            return __assign$3(__assign$3({}, series), { marker: marker, highlightStyle: { item: { fill: 'yellow' } }, listeners: __assign$3(__assign$3({}, series.listeners), { nodeClick: _this.crossFilterCallback }) });
+            var marker = __assign$4(__assign$4({}, series.marker), { fill: fill, stroke: stroke, domain: markerDomain });
+            return __assign$4(__assign$4({}, series), { marker: marker, highlightStyle: { item: { fill: 'yellow' } }, listeners: __assign$4(__assign$4({}, series.listeners), { nodeClick: _this.crossFilterCallback }) });
         };
         var updateFilteredOutSeries = function (series) {
             var sizeKey = series.sizeKey, yKey = series.yKey, xKey = series.xKey;
             if (sizeKey != null) {
                 sizeKey = filteredOutKey(sizeKey);
             }
-            return __assign$3(__assign$3({}, series), { yKey: filteredOutKey(yKey), xKey: filteredOutKey(xKey), marker: __assign$3(__assign$3({}, series.marker), { fillOpacity: 0.3, strokeOpacity: 0.3 }), sizeKey: sizeKey, showInLegend: false, listeners: __assign$3(__assign$3({}, series.listeners), { nodeClick: function (e) {
+            return __assign$4(__assign$4({}, series), { yKey: filteredOutKey(yKey), xKey: filteredOutKey(xKey), marker: __assign$4(__assign$4({}, series.marker), { fillOpacity: 0.3, strokeOpacity: 0.3 }), sizeKey: sizeKey, showInLegend: false, listeners: __assign$4(__assign$4({}, series.listeners), { nodeClick: function (e) {
                         var _a;
                         var value = e.datum[filteredOutKey(xKey)];
                         // Need to remove the `-filtered-out` suffixes from the event so that
                         // upstream processing maps the event correctly onto grid column ids.
-                        var filterableEvent = __assign$3(__assign$3({}, e), { xKey: xKey, datum: __assign$3(__assign$3({}, e.datum), (_a = {}, _a[xKey] = value, _a)) });
+                        var filterableEvent = __assign$4(__assign$4({}, e), { xKey: xKey, datum: __assign$4(__assign$4({}, e.datum), (_a = {}, _a[xKey] = value, _a)) });
                         _this.crossFilterCallback(filterableEvent);
                     } }) });
         };
@@ -40878,8 +40878,8 @@ var __extends$6 = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __assign$2 = (undefined && undefined.__assign) || function () {
-    __assign$2 = Object.assign || function(t) {
+var __assign$3 = (undefined && undefined.__assign) || function () {
+    __assign$3 = Object.assign || function(t) {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
             s = arguments[i];
             for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
@@ -40887,7 +40887,7 @@ var __assign$2 = (undefined && undefined.__assign) || function () {
         }
         return t;
     };
-    return __assign$2.apply(this, arguments);
+    return __assign$3.apply(this, arguments);
 };
 var ComboChartProxy = /** @class */ (function (_super) {
     __extends$6(ComboChartProxy, _super);
@@ -40943,7 +40943,7 @@ var ComboChartProxy = /** @class */ (function (_super) {
                 var chartType = seriesChartType.chartType;
                 var grouped = ['groupedColumn', 'groupedBar'].includes(chartType);
                 var groupedOpts = grouped ? { grouped: true } : {};
-                return __assign$2({ type: getSeriesType(chartType), xKey: category.id, yKey: field.colId, yName: field.displayName, stacked: ['stackedArea', 'stackedColumn'].includes(chartType) }, groupedOpts);
+                return __assign$3({ type: getSeriesType(chartType), xKey: category.id, yKey: field.colId, yName: field.displayName, stacked: ['stackedArea', 'stackedColumn'].includes(chartType) }, groupedOpts);
             }
         });
     };
@@ -41373,10 +41373,10 @@ var GridChartComp = /** @class */ (function (_super) {
 }(core.Component));
 
 // DO NOT UPDATE MANUALLY: Generated from script during build time
-var VERSION = '30.0.6';
+var VERSION = '30.1.0';
 
-var __assign$1 = (undefined && undefined.__assign) || function () {
-    __assign$1 = Object.assign || function(t) {
+var __assign$2 = (undefined && undefined.__assign) || function () {
+    __assign$2 = Object.assign || function(t) {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
             s = arguments[i];
             for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
@@ -41384,7 +41384,7 @@ var __assign$1 = (undefined && undefined.__assign) || function () {
         }
         return t;
     };
-    return __assign$1.apply(this, arguments);
+    return __assign$2.apply(this, arguments);
 };
 var __rest = (undefined && undefined.__rest) || function (s, e) {
     var t = {};
@@ -41463,8 +41463,8 @@ function migrateV24(model) {
     var _b = model, chartType = _b.chartType, chartPalette = _b.chartPalette, // Migrate.
     _c = _b.chartOptions, xAxis = _c.xAxis, yAxis = _c.yAxis, chartOptions = __rest(_c, ["xAxis", "yAxis"]), chartModel = __rest(_b, ["chartType", "chartPalette", "chartOptions"]);
     var axesTypes = getLegacyAxisType(chartType);
-    var axes = axesTypes === null || axesTypes === void 0 ? void 0 : axesTypes.map(function (type, i) { return (__assign$1({ type: type }, (i === 0 ? xAxis : yAxis))); });
-    return __assign$1({ chartType: chartType, chartThemeName: (_a = LEGACY_PALETTES[chartPalette]) !== null && _a !== void 0 ? _a : 'ag-default', chartOptions: __assign$1(__assign$1({}, chartOptions), { axes: axes, xAxis: xAxis, yAxis: yAxis }) }, chartModel);
+    var axes = axesTypes === null || axesTypes === void 0 ? void 0 : axesTypes.map(function (type, i) { return (__assign$2({ type: type }, (i === 0 ? xAxis : yAxis))); });
+    return __assign$2({ chartType: chartType, chartThemeName: (_a = LEGACY_PALETTES[chartPalette]) !== null && _a !== void 0 ? _a : 'ag-default', chartOptions: __assign$2(__assign$2({}, chartOptions), { axes: axes, xAxis: xAxis, yAxis: yAxis }) }, chartModel);
 }
 function migrateV25_1(model) {
     // https://github.com/ag-grid/ag-grid/commit/61943f9fecbfb5ac1b9a1fd93788f9fdd8687181
@@ -41475,7 +41475,7 @@ function migrateV26(model) {
     // https://github.com/ag-grid/ag-grid/commit/df2445d88e64cb4e831d6163104a0fa60ccde3b5
     var highlightOptUpdate = function (_a) {
         var dimOpacity = _a.dimOpacity, opts = __rest(_a, ["dimOpacity"]);
-        return (__assign$1(__assign$1({}, opts), (dimOpacity != null ? { series: { dimOpacity: dimOpacity } } : {})));
+        return (__assign$2(__assign$2({}, opts), (dimOpacity != null ? { series: { dimOpacity: dimOpacity } } : {})));
     };
     model = jsonMutate('chartOptions.seriesDefaults.highlightStyle', model, highlightOptUpdate);
     // https://github.com/ag-grid/ag-grid/commit/f4e854e3dc459400fa00e6da2873cb8e9cfff6fe#
@@ -41491,7 +41491,7 @@ function migrateV26_1(model) {
     // https://github.com/ag-grid/ag-grid/commit/df2445d88e64cb4e831d6163104a0fa60ccde3b5
     var highlightOptUpdate = function (_a) {
         var item = _a.item, series = _a.series, opts = __rest(_a, ["item", "series"]);
-        return (__assign$1({ item: __assign$1(__assign$1({}, opts), item) }, (series ? { series: series } : {})));
+        return (__assign$2({ item: __assign$2(__assign$2({}, opts), item) }, (series ? { series: series } : {})));
     };
     model = jsonMutate('chartOptions.seriesDefaults.highlightStyle', model, highlightOptUpdate);
     model = jsonMutate('chartOptions.series[].highlightStyle', model, highlightOptUpdate);
@@ -41520,12 +41520,12 @@ function migrateV26_2(model) {
             var _b;
             var type = _a.type, axisProps = __rest(_a, ["type"]);
             return (_b = {},
-                _b[type] = __assign$1(__assign$1({}, minimalAxis_1), axisProps),
+                _b[type] = __assign$2(__assign$2({}, minimalAxis_1), axisProps),
                 _b);
         })
             .reduce(merge, {});
         ALL_AXIS_TYPES.filter(function (v) { return updatedAxes_1[v] == null; }).forEach(function (v) {
-            updatedAxes_1[v] = __assign$1({}, minimalAxis_1);
+            updatedAxes_1[v] = __assign$2({}, minimalAxis_1);
         });
         chartTypeMixin.axes = updatedAxes_1;
     }
@@ -41533,11 +41533,11 @@ function migrateV26_2(model) {
         .map(function (t) {
         var _a;
         return (_a = {},
-            _a[t] = __assign$1(__assign$1(__assign$1({}, chartTypeMixin), { series: seriesDefaults }), otherChartOptions),
+            _a[t] = __assign$2(__assign$2(__assign$2({}, chartTypeMixin), { series: seriesDefaults }), otherChartOptions),
             _a);
     })
         .reduce(merge, {});
-    model = __assign$1(__assign$1({}, otherModelProps), { chartType: chartType, chartOptions: updatedChartOptions });
+    model = __assign$2(__assign$2({}, otherModelProps), { chartType: chartType, chartOptions: updatedChartOptions });
     return model;
 }
 function migrateV28(model) {
@@ -41574,7 +41574,7 @@ function migrateV29_2(model) {
     var tooltipOptUpdate = function (_a) {
         var _b, _c, _d, _e;
         var tracking = _a.tracking, opts = __rest(_a, ["tracking"]);
-        var output = __assign$1({}, opts);
+        var output = __assign$2({}, opts);
         if (tracking === false) {
             (_b = output.position) !== null && _b !== void 0 ? _b : (output.position = { type: 'pointer' });
             (_c = output.range) !== null && _c !== void 0 ? _c : (output.range = 'nearest');
@@ -41751,7 +41751,7 @@ function jsonMutateProperty(path, skipMissing, json, mutator) {
         if (skipMissing && !hasProperty) {
             return parent;
         }
-        var result = __assign$1({}, parent);
+        var result = __assign$2({}, parent);
         mutator(result, targetName);
         return result;
     });
@@ -41760,7 +41760,7 @@ function jsonMutate(path, json, mutator) {
     var e_1, _a;
     var pathElements = path instanceof Array ? path : path.split('.');
     // Clone to avoid mutating original input.
-    json = __assign$1({}, json);
+    json = __assign$2({}, json);
     if (pathElements.length === 0) {
         return mutator(json);
     }
@@ -41798,7 +41798,7 @@ function jsonMutate(path, json, mutator) {
     }
     return json;
 }
-var merge = function (r, n) { return (__assign$1(__assign$1({}, r), n)); };
+var merge = function (r, n) { return (__assign$2(__assign$2({}, r), n)); };
 // Precise legacy palette fills/strokes can be found here for future reference:
 // https://github.com/ag-grid/ag-grid/blob/b22.1.0/grid-enterprise-modules/charts/src/charts/chart/palettes.ts
 var LEGACY_PALETTES = {
@@ -41824,8 +41824,8 @@ var __extends$4 = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __assign = (undefined && undefined.__assign) || function () {
-    __assign = Object.assign || function(t) {
+var __assign$1 = (undefined && undefined.__assign) || function () {
+    __assign$1 = Object.assign || function(t) {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
             s = arguments[i];
             for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
@@ -41833,7 +41833,7 @@ var __assign = (undefined && undefined.__assign) || function () {
         }
         return t;
     };
-    return __assign.apply(this, arguments);
+    return __assign$1.apply(this, arguments);
 };
 var __decorate$3 = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -41891,7 +41891,7 @@ var ChartService = /** @class */ (function (_super) {
     ChartService.prototype.getChartModels = function () {
         var models = [];
         var versionedModel = function (c) {
-            return __assign(__assign({}, c), { version: VERSION });
+            return __assign$1(__assign$1({}, c), { version: VERSION });
         };
         this.activeChartComps.forEach(function (c) { return models.push(versionedModel(c.getChartModel())); });
         return models;
@@ -42477,19 +42477,43 @@ var AgColorPanel = /** @class */ (function (_super) {
         return _this;
     }
     AgColorPanel.prototype.postConstruct = function () {
-        var eGui = this.getGui();
+        var _this = this;
+        this.initTabIndex();
         this.initRecentColors();
+        this.addGuiEventListener('focus', function () { return _this.spectrumColor.focus(); });
+        this.addGuiEventListener('keydown', function (e) {
+            if (e.key === core.KeyCode.ENTER && !e.defaultPrevented) {
+                _this.destroy();
+            }
+        });
+        this.addManagedListener(this.spectrumColor, 'keydown', function (e) { return _this.moveDragger(e); });
+        this.addManagedListener(this.spectrumAlphaSlider, 'keydown', function (e) { return _this.moveAlphaSlider(e); });
+        this.addManagedListener(this.spectrumHueSlider, 'keydown', function (e) { return _this.moveHueSlider(e); });
         this.addManagedListener(this.spectrumVal, 'mousedown', this.onSpectrumDraggerDown.bind(this));
-        this.addManagedListener(eGui, 'mousemove', this.onSpectrumDraggerMove.bind(this));
         this.addManagedListener(this.spectrumHue, 'mousedown', this.onSpectrumHueDown.bind(this));
-        this.addManagedListener(eGui, 'mousemove', this.onSpectrumHueMove.bind(this));
         this.addManagedListener(this.spectrumAlpha, 'mousedown', this.onSpectrumAlphaDown.bind(this));
-        this.addManagedListener(eGui, 'mousemove', this.onSpectrumAlphaMove.bind(this));
+        this.addGuiEventListener('mousemove', function (e) {
+            _this.onSpectrumDraggerMove(e);
+            _this.onSpectrumHueMove(e);
+            _this.onSpectrumAlphaMove(e);
+        });
         // Listening to `mouseup` on the document on purpose. The user might release the mouse button
         // outside the UI control. When the mouse returns back to the control's area, the dragging
         // of the thumb is not expected and seen as a bug.
         this.addManagedListener(document, 'mouseup', this.onMouseUp.bind(this));
         this.addManagedListener(this.recentColors, 'click', this.onRecentColorClick.bind(this));
+        this.addManagedListener(this.recentColors, 'keydown', function (e) {
+            if (e.key === core.KeyCode.ENTER || e.key === core.KeyCode.SPACE) {
+                e.preventDefault();
+                _this.onRecentColorClick(e);
+            }
+        });
+    };
+    AgColorPanel.prototype.initTabIndex = function () {
+        var tabIndex = this.tabIndex = (this.gridOptionsService.getNum('tabIndex') || 0).toString();
+        this.spectrumColor.setAttribute('tabindex', tabIndex);
+        this.spectrumHueSlider.setAttribute('tabindex', tabIndex);
+        this.spectrumAlphaSlider.setAttribute('tabindex', tabIndex);
     };
     AgColorPanel.prototype.refreshSpectrumRect = function () {
         return this.spectrumValRect = this.spectrumVal.getBoundingClientRect();
@@ -42537,41 +42561,85 @@ var AgColorPanel = /** @class */ (function (_super) {
     };
     AgColorPanel.prototype.moveDragger = function (e) {
         var valRect = this.spectrumValRect;
-        if (valRect) {
-            var x = e.clientX - valRect.left;
-            var y = e.clientY - valRect.top;
-            x = Math.max(x, 0);
-            x = Math.min(x, valRect.width);
-            y = Math.max(y, 0);
-            y = Math.min(y, valRect.height);
-            this.setSpectrumValue(x / valRect.width, 1 - y / valRect.height);
+        if (!valRect) {
+            return;
         }
+        var x;
+        var y;
+        if (e instanceof MouseEvent) {
+            x = e.clientX - valRect.left;
+            y = e.clientY - valRect.top;
+        }
+        else {
+            var isLeft = e.key === core.KeyCode.LEFT;
+            var isRight = e.key === core.KeyCode.RIGHT;
+            var isUp = e.key === core.KeyCode.UP;
+            var isDown = e.key === core.KeyCode.DOWN;
+            var isVertical = isUp || isDown;
+            var isHorizontal = isLeft || isRight;
+            if (!isVertical && !isHorizontal) {
+                return;
+            }
+            e.preventDefault();
+            var _a = this.getSpectrumValue(), currentX = _a.x, currentY = _a.y;
+            x = currentX + (isHorizontal ? (isLeft ? -5 : 5) : 0);
+            y = currentY + (isVertical ? (isUp ? -5 : 5) : 0);
+        }
+        x = Math.max(x, 0);
+        x = Math.min(x, valRect.width);
+        y = Math.max(y, 0);
+        y = Math.min(y, valRect.height);
+        this.setSpectrumValue(x / valRect.width, 1 - y / valRect.height);
     };
     AgColorPanel.prototype.moveHueSlider = function (e) {
-        var hueRect = this.spectrumHueRect;
-        if (hueRect) {
-            var slider = this.spectrumHueSlider;
-            var sliderRect = slider.getBoundingClientRect();
-            var x = e.clientX - hueRect.left;
-            x = Math.max(x, 0);
-            x = Math.min(x, hueRect.width);
-            this.H = 1 - x / hueRect.width;
-            slider.style.left = (x + sliderRect.width / 2) + 'px';
-            this.update();
+        var rect = this.spectrumHueRect;
+        if (!rect) {
+            return;
         }
+        var x = this.moveSlider(this.spectrumHueSlider, e);
+        if (x == null) {
+            return;
+        }
+        this.H = 1 - x / rect.width;
+        this.update();
     };
     AgColorPanel.prototype.moveAlphaSlider = function (e) {
-        var alphaRect = this.spectrumAlphaRect;
-        if (alphaRect) {
-            var slider = this.spectrumAlphaSlider;
-            var sliderRect = slider.getBoundingClientRect();
-            var x = e.clientX - alphaRect.left;
-            x = Math.max(x, 0);
-            x = Math.min(x, alphaRect.width);
-            this.A = x / alphaRect.width;
-            slider.style.left = (x + sliderRect.width / 2) + 'px';
-            this.update();
+        var rect = this.spectrumAlphaRect;
+        if (!rect) {
+            return;
         }
+        var x = this.moveSlider(this.spectrumAlphaSlider, e);
+        if (x == null) {
+            return;
+        }
+        this.A = x / rect.width;
+        this.update();
+    };
+    AgColorPanel.prototype.moveSlider = function (slider, e) {
+        var _a;
+        var sliderRect = slider.getBoundingClientRect();
+        var parentRect = (_a = slider.parentElement) === null || _a === void 0 ? void 0 : _a.getBoundingClientRect();
+        if (!slider || !parentRect) {
+            return null;
+        }
+        var x;
+        if (e instanceof MouseEvent) {
+            x = e.clientX - parentRect.left;
+        }
+        else {
+            var isLeft = e.key === core.KeyCode.LEFT;
+            var isRight = e.key === core.KeyCode.RIGHT;
+            if (!isLeft && !isRight) {
+                return null;
+            }
+            e.preventDefault();
+            var diff = isLeft ? -5 : 5;
+            x = (parseFloat(slider.style.left) - sliderRect.width / 2) + diff;
+        }
+        x = Math.max(x, 0);
+        x = Math.min(x, parentRect.width);
+        slider.style.left = (x + sliderRect.width / 2) + 'px';
+        return x;
     };
     AgColorPanel.prototype.update = function () {
         var color = Color.fromHSB(this.H * 360, this.S, this.B, this.A);
@@ -42593,24 +42661,33 @@ var AgColorPanel = /** @class */ (function (_super) {
      */
     AgColorPanel.prototype.setSpectrumValue = function (saturation, brightness) {
         var valRect = this.spectrumValRect || this.refreshSpectrumRect();
-        if (valRect) {
-            var dragger = this.spectrumDragger;
-            var draggerRect = dragger.getBoundingClientRect();
-            saturation = Math.max(0, saturation);
-            saturation = Math.min(1, saturation);
-            brightness = Math.max(0, brightness);
-            brightness = Math.min(1, brightness);
-            this.S = saturation;
-            this.B = brightness;
-            dragger.style.left = (saturation * valRect.width - draggerRect.width / 2) + 'px';
-            dragger.style.top = ((1 - brightness) * valRect.height - draggerRect.height / 2) + 'px';
-            this.update();
+        if (valRect == null) {
+            return;
         }
+        var dragger = this.spectrumDragger;
+        var draggerRect = dragger.getBoundingClientRect();
+        saturation = Math.max(0, saturation);
+        saturation = Math.min(1, saturation);
+        brightness = Math.max(0, brightness);
+        brightness = Math.min(1, brightness);
+        this.S = saturation;
+        this.B = brightness;
+        dragger.style.left = (saturation * valRect.width - draggerRect.width / 2) + 'px';
+        dragger.style.top = ((1 - brightness) * valRect.height - draggerRect.height / 2) + 'px';
+        this.update();
+    };
+    AgColorPanel.prototype.getSpectrumValue = function () {
+        var dragger = this.spectrumDragger;
+        var draggerRect = dragger.getBoundingClientRect();
+        var x = parseFloat(dragger.style.left) + draggerRect.width / 2;
+        var y = parseFloat(dragger.style.top) + draggerRect.height / 2;
+        return { x: x, y: y };
     };
     AgColorPanel.prototype.initRecentColors = function () {
+        var _this = this;
         var recentColors = AgColorPanel.recentColors;
         var innerHtml = recentColors.map(function (color, index) {
-            return "<div class=\"ag-recent-color\" id=" + index + " style=\"background-color: " + color + "; width: 15px; height: 15px;\" recent-color=\"" + color + "\"></div>";
+            return ( /* html */"<div class=\"ag-recent-color\" id=" + index + " style=\"background-color: " + color + "; width: 15px; height: 15px;\" recent-color=\"" + color + "\" tabIndex=\"" + _this.tabIndex + "\"></div>");
         });
         this.recentColors.innerHTML = innerHtml.join('');
     };
@@ -42657,7 +42734,7 @@ var AgColorPanel = /** @class */ (function (_super) {
     };
     AgColorPanel.maxRecentColors = 8;
     AgColorPanel.recentColors = [];
-    AgColorPanel.TEMPLATE = "<div class=\"ag-color-panel\">\n            <div ref=\"spectrumColor\" class=\"ag-spectrum-color\">\n                <div class=\"ag-spectrum-sat ag-spectrum-fill\">\n                    <div ref=\"spectrumVal\" class=\"ag-spectrum-val ag-spectrum-fill\">\n                        <div ref=\"spectrumDragger\" class=\"ag-spectrum-dragger\"></div>\n                    </div>\n                </div>\n            </div>\n            <div class=\"ag-spectrum-tools\">\n                <div ref=\"spectrumHue\" class=\"ag-spectrum-hue ag-spectrum-tool\">\n                    <div class=\"ag-spectrum-hue-background\"></div>\n                    <div ref=\"spectrumHueSlider\" class=\"ag-spectrum-slider\"></div>\n                </div>\n                <div ref=\"spectrumAlpha\" class=\"ag-spectrum-alpha ag-spectrum-tool\">\n                    <div class=\"ag-spectrum-alpha-background\"></div>\n                    <div ref=\"spectrumAlphaSlider\" class=\"ag-spectrum-slider\"></div>\n                </div>\n                <div ref=\"recentColors\" class=\"ag-recent-colors\"></div>\n            </div>\n        </div>";
+    AgColorPanel.TEMPLATE = "<div class=\"ag-color-panel\" tabindex=\"-1\">\n            <div ref=\"spectrumColor\" class=\"ag-spectrum-color\">\n                <div class=\"ag-spectrum-sat ag-spectrum-fill\">\n                    <div ref=\"spectrumVal\" class=\"ag-spectrum-val ag-spectrum-fill\">\n                        <div ref=\"spectrumDragger\" class=\"ag-spectrum-dragger\"></div>\n                    </div>\n                </div>\n            </div>\n            <div class=\"ag-spectrum-tools\">\n                <div ref=\"spectrumHue\" class=\"ag-spectrum-hue ag-spectrum-tool\">\n                    <div class=\"ag-spectrum-hue-background\"></div>\n                    <div ref=\"spectrumHueSlider\" class=\"ag-spectrum-slider\"></div>\n                </div>\n                <div ref=\"spectrumAlpha\" class=\"ag-spectrum-alpha ag-spectrum-tool\">\n                    <div class=\"ag-spectrum-alpha-background\"></div>\n                    <div ref=\"spectrumAlphaSlider\" class=\"ag-spectrum-slider\"></div>\n                </div>\n                <div ref=\"recentColors\" class=\"ag-recent-colors\"></div>\n            </div>\n        </div>";
     __decorate([
         core.RefSelector('spectrumColor')
     ], AgColorPanel.prototype, "spectrumColor", void 0);
@@ -42703,10 +42780,21 @@ var __extends = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
+var __assign = (undefined && undefined.__assign) || function () {
+    __assign = Object.assign || function(t) {
+        for (var s, i = 1, n = arguments.length; i < n; i++) {
+            s = arguments[i];
+            for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
+                t[p] = s[p];
+        }
+        return t;
+    };
+    return __assign.apply(this, arguments);
+};
 var AgColorPicker = /** @class */ (function (_super) {
     __extends(AgColorPicker, _super);
     function AgColorPicker(config) {
-        var _this = _super.call(this, config, 'ag-color-picker', 'colorPicker') || this;
+        var _this = _super.call(this, __assign({ pickerAriaLabelKey: 'ariaLabelColorPicker', pickerAriaLabelValue: 'Color Picker', pickerType: 'ag-list' }, config), 'ag-color-picker', 'colorPicker') || this;
         if (config && config.color) {
             _this.value = config.color;
         }
@@ -42718,8 +42806,7 @@ var AgColorPicker = /** @class */ (function (_super) {
             this.setValue(this.value);
         }
     };
-    AgColorPicker.prototype.showPicker = function () {
-        var _this = this;
+    AgColorPicker.prototype.createPickerComponent = function () {
         var eGuiRect = this.getGui().getBoundingClientRect();
         var colorDialog = this.createBean(new core.AgDialog({
             closable: false,
@@ -42731,37 +42818,40 @@ var AgColorPicker = /** @class */ (function (_super) {
             x: eGuiRect.right - 190,
             y: eGuiRect.top - 250
         }));
-        this.isPickerDisplayed = true;
-        colorDialog.addCssClass('ag-color-dialog');
-        core._.setAriaExpanded(this.eWrapper, true);
+        return colorDialog;
+    };
+    AgColorPicker.prototype.renderAndPositionPicker = function () {
+        var _this = this;
+        var pickerComponent = this.pickerComponent;
         var colorPanel = this.createBean(new AgColorPanel({ picker: this }));
+        pickerComponent.addCssClass('ag-color-dialog');
         colorPanel.addDestroyFunc(function () {
-            if (colorDialog.isAlive()) {
-                _this.destroyBean(colorDialog);
+            if (pickerComponent.isAlive()) {
+                _this.destroyBean(pickerComponent);
             }
         });
-        colorDialog.setParentComponent(this);
-        colorDialog.setBodyComponent(colorPanel);
+        pickerComponent.setParentComponent(this);
+        pickerComponent.setBodyComponent(colorPanel);
         colorPanel.setValue(this.getValue());
-        colorDialog.addDestroyFunc(function () {
+        colorPanel.getGui().focus();
+        pickerComponent.addDestroyFunc(function () {
             // here we check if the picker was already being
             // destroyed to avoid a stack overflow
             if (!_this.isDestroyingPicker) {
+                _this.beforeHidePicker();
                 _this.isDestroyingPicker = true;
                 if (colorPanel.isAlive()) {
                     _this.destroyBean(colorPanel);
+                }
+                if (_this.isAlive()) {
+                    _this.getFocusableElement().focus();
                 }
             }
             else {
                 _this.isDestroyingPicker = false;
             }
-            if (_this.isAlive()) {
-                core._.setAriaExpanded(_this.eWrapper, false);
-                _this.getFocusableElement().focus();
-            }
-            _this.isPickerDisplayed = false;
         });
-        return colorDialog;
+        return function () { var _a; return (_a = _this.pickerComponent) === null || _a === void 0 ? void 0 : _a.close(); };
     };
     AgColorPicker.prototype.setValue = function (color) {
         if (this.value === color) {

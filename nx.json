@@ -4,7 +4,15 @@
       "runner": "nx/tasks-runners/default",
       "options": {
         "cacheableOperations": [
-          "build_OFF"
+          "build",
+          "build-docs",
+          "build-prod",
+          "package",
+          "build-docs-initial",
+          "generate-doc-files",
+          "build-css",
+          "test",
+          "test:e2e"
         ]
       }
     }
@@ -13,6 +21,16 @@
     "build": {
       "dependsOn": [
         "^build"
+      ]
+    },
+    "build-prod": {
+      "dependsOn": [
+        "^build-prod"
+      ]
+    },
+    "package": {
+      "dependsOn": [
+        "^package"
       ]
     }
   }

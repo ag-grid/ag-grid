@@ -1,7 +1,7 @@
 @use "ag";
 
 @mixin output {
-    .ag-header {
+    .ag-header, .ag-advanced-filter-header {
         background-color: var(--ag-header-background-color);
         border-bottom: var(--ag-borders-critical) var(--ag-border-color);
     }
@@ -47,7 +47,7 @@
         top: calc(var(--ag-grid-size) * 2);
     }
 
-    @include ag.keyboard-focus((ag-header-cell, ag-header-group-cell), 4px);
+    @include ag.keyboard-focus((ag-header-cell, ag-header-group-cell, ag-advanced-filter-header-cell), 4px);
 
     .ag-header-icon {
         color: var(--ag-secondary-foreground-color);

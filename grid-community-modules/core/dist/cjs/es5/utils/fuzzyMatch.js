@@ -28,7 +28,7 @@ function fuzzySuggestions(inputValue, allSuggestions, hideIrrelevant, filterByPe
     if (hideIrrelevant) {
         thisSuggestions = thisSuggestions.filter(function (suggestion) { return suggestion.relevance !== 0; });
     }
-    if (filterByPercentageOfBestMatch && filterByPercentageOfBestMatch > 0) {
+    if (thisSuggestions.length > 0 && filterByPercentageOfBestMatch && filterByPercentageOfBestMatch > 0) {
         var bestMatch = thisSuggestions[0].relevance;
         var limit_1 = bestMatch * filterByPercentageOfBestMatch;
         thisSuggestions = thisSuggestions.filter(function (suggestion) { return limit_1 - suggestion.relevance < 0; });

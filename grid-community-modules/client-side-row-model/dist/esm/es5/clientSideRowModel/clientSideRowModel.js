@@ -906,6 +906,9 @@ var ClientSideRowModel = /** @class */ (function (_super) {
     ClientSideRowModel.prototype.resetRowHeights = function () {
         var atLeastOne = this.resetRowHeightsForAllRowNodes();
         this.rootNode.setRowHeight(this.rootNode.rowHeight, true);
+        if (this.rootNode.sibling) {
+            this.rootNode.sibling.setRowHeight(this.rootNode.sibling.rowHeight, true);
+        }
         // when pivotMode but pivot not active, root node is displayed on its own
         // because it's only ever displayed alone, refreshing the model (onRowHeightChanged) is not required
         if (atLeastOne) {
@@ -922,6 +925,9 @@ var ClientSideRowModel = /** @class */ (function (_super) {
             var detailNode = rowNode.detailNode;
             if (detailNode) {
                 detailNode.setRowHeight(detailNode.rowHeight, true);
+            }
+            if (rowNode.sibling) {
+                rowNode.sibling.setRowHeight(rowNode.sibling.rowHeight, true);
             }
             atLeastOne = true;
         });

@@ -40,27 +40,29 @@ var CellComp = /** @class */ (function (_super) {
         _this.rowNode = cellCtrl.getRowNode();
         _this.rowCtrl = cellCtrl.getRowCtrl();
         _this.eRow = eRow;
+        _this.cellCtrl = cellCtrl;
         _this.setTemplate(/* html */ "<div comp-id=\"" + _this.getCompId() + "\"/>");
         var eGui = _this.getGui();
         _this.forceWrapper = cellCtrl.isForceWrapper();
         _this.refreshWrapper(false);
-        var setAttribute = function (name, value, element) {
-            var actualElement = element ? element : eGui;
+        var setAttribute = function (name, value) {
             if (value != null && value != '') {
-                actualElement.setAttribute(name, value);
+                eGui.setAttribute(name, value);
             }
             else {
-                actualElement.removeAttribute(name);
+                eGui.removeAttribute(name);
             }
         };
+        aria_1.setAriaRole(eGui, 'gridcell');
+        setAttribute('col-id', cellCtrl.getColumnIdSanitised());
+        var tabIndex = cellCtrl.getTabIndex();
+        if (tabIndex !== undefined) {
+            setAttribute('tabindex', tabIndex.toString());
+        }
         var compProxy = {
             addOrRemoveCssClass: function (cssClassName, on) { return _this.addOrRemoveCssClass(cssClassName, on); },
             setUserStyles: function (styles) { return dom_1.addStylesToElement(eGui, styles); },
             getFocusableElement: function () { return _this.getFocusableElement(); },
-            setTabIndex: function (tabIndex) { return setAttribute('tabindex', tabIndex.toString()); },
-            setRole: function (role) { return aria_1.setAriaRole(eGui, role); },
-            setColId: function (colId) { return setAttribute('col-id', colId); },
-            setTitle: function (title) { return setAttribute('title', title); },
             setIncludeSelection: function (include) { return _this.includeSelection = include; },
             setIncludeRowDrag: function (include) { return _this.includeRowDrag = include; },
             setIncludeDndSource: function (include) { return _this.includeDndSource = include; },
@@ -74,7 +76,6 @@ var CellComp = /** @class */ (function (_super) {
             getCellRenderer: function () { return _this.cellRenderer || null; },
             getParentOfValue: function () { return _this.getParentOfValue(); }
         };
-        _this.cellCtrl = cellCtrl;
         cellCtrl.setComp(compProxy, _this.getGui(), _this.eCellWrapper, printLayout, editingRow);
         return _this;
     }

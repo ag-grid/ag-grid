@@ -1,5 +1,5 @@
 /**
-          * ag-charts-community - Advanced Charting / Charts supporting Javascript / Typescript / React / Angular / Vue * @version v8.0.6
+          * ag-charts-community - Advanced Charting / Charts supporting Javascript / Typescript / React / Angular / Vue * @version v8.1.0
           * @link https://www.ag-grid.com/
           * @license MIT
           */
@@ -26561,7 +26561,7 @@ function applySeriesValues(target, options, { path, index } = {}) {
 }
 
 // DO NOT UPDATE MANUALLY: Generated from script during build time
-const VERSION = '8.0.6';
+const VERSION = '8.1.0';
 
 var __decorate$1 = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;

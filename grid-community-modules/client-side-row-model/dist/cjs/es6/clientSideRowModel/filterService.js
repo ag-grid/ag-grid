@@ -10,9 +10,7 @@ exports.FilterService = void 0;
 const core_1 = require("@ag-grid-community/core");
 let FilterService = class FilterService extends core_1.BeanStub {
     filter(changedPath) {
-        const filterActive = this.filterManager.isColumnFilterPresent()
-            || this.filterManager.isQuickFilterPresent()
-            || this.filterManager.isExternalFilterPresent();
+        const filterActive = this.filterManager.isChildFilterPresent();
         this.filterNodes(filterActive, changedPath);
     }
     filterNodes(filterActive, changedPath) {

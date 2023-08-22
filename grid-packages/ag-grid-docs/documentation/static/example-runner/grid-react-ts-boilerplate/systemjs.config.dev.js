@@ -38,10 +38,10 @@
             css: {
             },
             react: {
-                main: './umd/react.profiling.min.js'
+                main: './umd/react.development.js'
             },
             'react-dom': {
-                main: './umd/react-dom.profiling.min.js'
+                main: './umd/react-dom.development.js'
             },
             'react-dom/server': {
                 main: '../umd/react-dom-server.browser.production.min.js'
@@ -113,6 +113,10 @@
                 main: './dist/cjs/es5/main.js',
                 defaultExtension: 'js',
                 format: 'cjs'
+            },
+            '@ag-grid-enterprise/advanced-filter': {
+                main: './dist/cjs/es5/main.js',
+                defaultExtension: 'js'
             },
             '@ag-grid-enterprise/all-modules': {
                 main: './dist/cjs/es5/main.js',

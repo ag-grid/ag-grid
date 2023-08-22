@@ -189,14 +189,17 @@
     }
 
     .ag-cell-inline-editing {
-        @include ag.card();
+        border: 1px solid var(--ag-border-color);
+        border-radius: var(--ag-card-radius);
+        box-shadow: var(--ag-card-shadow);
         padding: 0;
         // do not add `height` here.
         // height: (--ag-row-height) breaks gridOptions.rowHeight for the cellEditor 
         background-color: var(--ag-control-panel-background-color);
     }
 
-    .ag-popup-editor {
+    .ag-popup-editor .ag-large-text,
+    .ag-autocomplete-list-popup {
         @include ag.card();
         background-color: var(--ag-control-panel-background-color);
         padding: 0;

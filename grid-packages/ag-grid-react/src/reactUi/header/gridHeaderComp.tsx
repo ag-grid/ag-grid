@@ -1,36 +1,35 @@
-import React, { memo, useContext, useMemo, useRef, useState } from 'react';
+import React, { memo, useCallback, useContext, useMemo, useRef, useState } from 'react';
 import { BeansContext } from '../beansContext';
 import {
     IGridHeaderComp, GridHeaderCtrl,
 } from 'ag-grid-community';
 import { CssClasses } from '../utils';
 import HeaderRowContainerComp from './headerRowContainerComp';
-import { useLayoutEffectOnce } from '../useEffectOnce';
-
 
 const GridHeaderComp = () => {
 
-    const [cssClasses, setCssClasses] = useState<CssClasses>(new CssClasses());
+    const [cssClasses, setCssClasses] = useState<CssClasses>(() => new CssClasses());
     const [height, setHeight] = useState<string>();
 
     const {context} = useContext(BeansContext);
-    const eGui = useRef<HTMLDivElement>(null);
+    const eGui = useRef<HTMLDivElement | null>(null);
+    const gridCtrlRef = useRef<GridHeaderCtrl | null>(null);
 
-    useLayoutEffectOnce(() => {
-
+    const setRef = useCallback((e: HTMLDivElement) => {
+        eGui.current = e;
+        if (!e) {
+            context.destroyBean(gridCtrlRef.current!);
+            gridCtrlRef.current = null;
+            return;
+        }
         const compProxy: IGridHeaderComp = {
             addOrRemoveCssClass: (name, on) => setCssClasses(prev => prev.setClass(name, on)),
             setHeightAndMinHeight: height => setHeight(height)
         };
 
-        const ctrl = context.createBean(new GridHeaderCtrl());
-        ctrl.setComp(compProxy, eGui.current!, eGui.current!);
-
-        return () => {
-            context.destroyBean(ctrl);
-        };
-
-    });
+        gridCtrlRef.current = context.createBean(new GridHeaderCtrl());
+        gridCtrlRef.current.setComp(compProxy, eGui.current, eGui.current);
+    }, []);
 
     const className = useMemo( ()=> {
         let res = cssClasses.toString();
@@ -43,7 +42,7 @@ const GridHeaderComp = () => {
     }), [height]);
 
     return (
-        <div ref={eGui} className={className} style={style} role="presentation">
+        <div ref={setRef} className={className} style={style} role="presentation">
             <HeaderRowContainerComp pinned={'left'} />
             <HeaderRowContainerComp pinned={null}/>
             <HeaderRowContainerComp pinned={'right'} />

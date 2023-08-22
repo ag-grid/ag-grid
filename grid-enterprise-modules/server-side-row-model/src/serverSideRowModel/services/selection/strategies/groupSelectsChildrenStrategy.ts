@@ -266,8 +266,10 @@ export class GroupSelectsChildrenStrategy extends BeanStub implements ISelection
         // if this is the last node, hard add/remove based on its selectAllChildren state
         const isLastNode = !nodes.length;
         if (isLastNode) {
-            const needsDeleted = selectedState.selectAllChildren === params.newValue;
-            if (needsDeleted) {
+            // if the node is not selectable, we should never have it in selection state
+            const isNodeSelectable = nextNode.selectable;
+            const doesNodeConform = selectedState.selectAllChildren === params.newValue;
+            if (doesNodeConform || !isNodeSelectable) {
                 selectedState.toggledNodes.delete(nextNode.id!);
                 return;
             }

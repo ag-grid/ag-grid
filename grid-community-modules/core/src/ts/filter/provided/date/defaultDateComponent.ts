@@ -17,6 +17,9 @@ export class DefaultDateComponent extends Component implements IDateComp {
         );
     }
 
+    private params: IDateParams;
+    private usingSafariDatePicker: boolean;
+
     // this is a user component, and IComponent has "public destroy()" as part of the interface.
     // so we need to override destroy() just to make the method public.
     public destroy(): void {
@@ -24,28 +27,35 @@ export class DefaultDateComponent extends Component implements IDateComp {
     }
 
     public init(params: IDateParams): void {
+        this.params = params;
+        this.setParams(params);
+
         const eDocument = this.gridOptionsService.getDocument();
         const inputElement = this.eDateInput.getInputElement();
 
-        const shouldUseBrowserDatePicker = this.shouldUseBrowserDatePicker(params);
-        if (shouldUseBrowserDatePicker) {
-            inputElement.type = 'date';
-        }
-
         // ensures that the input element is focussed when a clear button is clicked,
         // unless using safari as there is no clear button and focus does not work properly
-        const usingSafariDatePicker = shouldUseBrowserDatePicker && isBrowserSafari();
         this.addManagedListener(inputElement, 'mousedown', () => {
-            if (this.eDateInput.isDisabled() || usingSafariDatePicker) { return; }
+            if (this.eDateInput.isDisabled() || this.usingSafariDatePicker) { return; }
             inputElement.focus();
         });
-
+        
         this.addManagedListener(inputElement, 'input', e => {
             if (e.target !== eDocument.activeElement) { return; }
             if (this.eDateInput.isDisabled()) { return; }
-
-            params.onDateChanged();
+            
+            this.params.onDateChanged();
         });
+        
+    }
+
+    private setParams(params: IDateParams): void {
+        const inputElement = this.eDateInput.getInputElement();
+
+        const shouldUseBrowserDatePicker = this.shouldUseBrowserDatePicker(params);
+        this.usingSafariDatePicker = shouldUseBrowserDatePicker && isBrowserSafari();
+
+        inputElement.type = shouldUseBrowserDatePicker ? 'date' : 'text';
 
         const { minValidYear, maxValidYear } = params.filterParams || {};
         if (minValidYear) {
@@ -54,6 +64,11 @@ export class DefaultDateComponent extends Component implements IDateComp {
         if (maxValidYear) {
             inputElement.max = `${maxValidYear}-12-31`;
         }
+    }
+
+    public onParamsUpdated(params: IDateParams): void {
+        this.params = params;
+        this.setParams(params);
     }
 
     public getDate(): Date | null {

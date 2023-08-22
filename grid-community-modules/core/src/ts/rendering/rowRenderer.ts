@@ -23,7 +23,7 @@ import { ICellEditor } from "../interfaces/iCellEditor";
 import { IRowModel } from "../interfaces/iRowModel";
 import { RowPosition } from "../entities/rowPositionUtils";
 import { PinnedRowModel } from "../pinnedRowModel/pinnedRowModel";
-import { exists, missing } from "../utils/generic";
+import { exists } from "../utils/generic";
 import { getAllValuesInObject, iterateObject } from "../utils/object";
 import { createArrayOfNumbers } from "../utils/number";
 import { doOnce, executeInAWhile } from "../utils/function";
@@ -175,16 +175,11 @@ export class RowRenderer extends BeanStub {
         return DEFAULT_KEEP_DETAIL_ROW_COUNT;
     }
 
-    public getRowCtrls(): RowCtrl[] {
-        return this.allRowCtrls;
-    }
-
     public getStickyTopRowCtrls(): RowCtrl[] {
         if (!this.stickyRowFeature) { return []; }
 
         return this.stickyRowFeature.getStickyRowCtrls();
     }
-
     private updateAllRowCtrls(): void {
         const liveList = getAllValuesInObject(this.rowCtrlsByRowIndex);
         const isEnsureDomOrder = this.gridOptionsService.is('ensureDomOrder');
@@ -195,7 +190,13 @@ export class RowRenderer extends BeanStub {
         }
         const zombieList = getAllValuesInObject(this.zombieRowCtrls);
         const cachedList = this.cachedRowCtrls ? this.cachedRowCtrls.getEntries() : [];
-        this.allRowCtrls = [...liveList, ...zombieList, ...cachedList];
+
+        if(zombieList.length > 0 || cachedList.length > 0) {
+            // Only spread if we need to.
+            this.allRowCtrls = [...liveList, ...zombieList, ...cachedList];
+        }else{
+            this.allRowCtrls = liveList;
+        }
     }
 
     private onCellFocusChanged(event?: CellFocusedEvent) {
@@ -389,6 +390,10 @@ export class RowRenderer extends BeanStub {
         return this.topRowCtrls;
     }
 
+    public getCentreRowCtrls(): RowCtrl[] {
+        return this.allRowCtrls;
+    }
+
     public getBottomRowCtrls(): RowCtrl[] {
         return this.bottomRowCtrls;
     }
@@ -425,36 +430,51 @@ export class RowRenderer extends BeanStub {
         this.redrawAfterModelUpdate(params);
     }
 
-    // if the row nodes are not rendered, no index is returned
-    private getRenderedIndexesForRowNodes(rowNodes: IRowNode[]): string[] {
-        const result: string[] = [];
-
-        if (missing(rowNodes)) { return result; }
-
-        iterateObject(this.rowCtrlsByRowIndex, (index: string, renderedRow: RowCtrl) => {
-            const rowNode = renderedRow.getRowNode();
-            if (rowNodes.indexOf(rowNode) >= 0) {
-                result.push(index);
+    public redrawRow(rowNode: RowNode, suppressEvent = false) {
+        if (rowNode.sticky) {
+            this.stickyRowFeature.refreshStickyNode(rowNode);
+        } else {
+            const destroyAndRecreateCtrl = (dataStruct: RowCtrl[] | { [idx: number]: RowCtrl }) => {
+                const ctrl = dataStruct[rowNode.rowIndex!];
+                if (!ctrl) {
+                    return;
+                }
+                if (ctrl.getRowNode() !== rowNode) {
+                    // if the node is in the wrong place, then the row model is responsible for triggering a full refresh.
+                    return;
+                }
+                ctrl.destroyFirstPass();
+                ctrl.destroySecondPass();
+                dataStruct[rowNode.rowIndex!] = this.createRowCon(rowNode, false, false);
             }
-        });
 
-        return result;
+            switch (rowNode.rowPinned) {
+                case 'top':
+                    destroyAndRecreateCtrl(this.topRowCtrls);
+                case 'bottom':
+                    destroyAndRecreateCtrl(this.bottomRowCtrls);
+                default:
+                    destroyAndRecreateCtrl(this.rowCtrlsByRowIndex);
+                    this.updateAllRowCtrls();
+            }
+        }
+
+        if (!suppressEvent) {
+            this.dispatchDisplayedRowsChanged(false);
+        }
     }
 
     public redrawRows(rowNodes?: IRowNode[]): void {
         // if no row nodes provided, then refresh everything
-        const partialRefresh = rowNodes != null && rowNodes.length > 0;
+        const partialRefresh = rowNodes != null;
 
         if (partialRefresh) {
-            const indexesToRemove = this.getRenderedIndexesForRowNodes(rowNodes!);
-            // remove the rows
-            this.removeRowCtrls(indexesToRemove);
+            rowNodes?.forEach(node => this.redrawRow(node as RowNode, true));
+            this.dispatchDisplayedRowsChanged(false);
+            return;
         }
 
-        // add draw them again
-        this.redrawAfterModelUpdate({
-            recycleRows: partialRefresh
-        });
+        this.redrawAfterModelUpdate();
     }
 
     private getCellToRestoreFocusToAfterRefresh(params?: RefreshViewParams): CellPosition | null {
@@ -502,6 +522,12 @@ export class RowRenderer extends BeanStub {
         const rowsToRecycle = recycleRows ? this.getRowsToRecycle() : null;
         if (!recycleRows) {
             this.removeAllRowComps();
+        }
+
+        this.workOutFirstAndLastRowsToRender();
+
+        if (this.stickyRowFeature) {
+            this.stickyRowFeature.checkStickyRows();
         }
 
         this.recycleRows(rowsToRecycle, animate);
@@ -662,7 +688,19 @@ export class RowRenderer extends BeanStub {
                 }
             });
 
-        this.refreshFullWidthRows(params.rowNodes);
+        if (params.rowNodes) {
+            // refresh the full width rows too
+            this.getRowCtrls(params.rowNodes).forEach(rowCtrl => {
+                if (!rowCtrl.isFullWidth()) {
+                    return;
+                }
+                const refreshed = rowCtrl.refreshFullWidth();
+                if (!refreshed) {
+                    this.redrawRow(rowCtrl.getRowNode(), true);
+                }
+            });
+            this.dispatchDisplayedRowsChanged(false);
+        }
     }
 
     public getCellRendererInstances(params: GetCellRendererInstancesParams): ICellRenderer[] {
@@ -761,14 +799,26 @@ export class RowRenderer extends BeanStub {
         return rowIdsMap.normal[id] != null;
     }
 
+    /**
+     * @param rowNodes if provided, returns the RowCtrls for the provided rowNodes. otherwise returns all RowCtrls.
+     */
+    public getRowCtrls(rowNodes?: IRowNode[] | null): RowCtrl[] {
+        const rowIdsMap = this.mapRowNodes(rowNodes);
+        const allRowCtrls = this.getAllRowCtrls();
+        if (!rowNodes || !rowIdsMap) {
+            return allRowCtrls;
+        }
+
+        return allRowCtrls.filter(rowCtrl => {
+            const rowNode = rowCtrl.getRowNode();
+            return this.isRowInMap(rowNode, rowIdsMap);
+        });
+    }
+
     // returns CellCtrl's that match the provided rowNodes and columns. eg if one row node
     // and two columns provided, that identifies 4 cells, so 4 CellCtrl's returned.
     private getCellCtrls(rowNodes?: IRowNode[] | null, columns?: (string | Column)[]): CellCtrl[] {
-        const rowIdsMap = this.mapRowNodes(rowNodes);
-        const res: CellCtrl[] = [];
-
         let colIdsMap: any;
-
         if (exists(columns)) {
             colIdsMap = {};
             columns.forEach((colKey: string | Column) => {
@@ -779,12 +829,8 @@ export class RowRenderer extends BeanStub {
             });
         }
 
-        const processRow = (rowCtrl: RowCtrl) => {
-            const rowNode: RowNode = rowCtrl.getRowNode();
-
-            // skip this row if it is missing from the provided list
-            if (rowIdsMap != null && !this.isRowInMap(rowNode, rowIdsMap)) { return; }
-
+        const res: CellCtrl[] = [];
+        this.getRowCtrls(rowNodes).forEach(rowCtrl => {
             rowCtrl.getAllCellCtrls().forEach(cellCtrl => {
                 const colId: string = cellCtrl.getColumn().getId();
                 const excludeColFromRefresh = colIdsMap && !colIdsMap[colId];
@@ -793,10 +839,7 @@ export class RowRenderer extends BeanStub {
 
                 res.push(cellCtrl);
             });
-        };
-
-        this.getAllRowCtrls().forEach(row => processRow(row));
-
+        });
         return res;
     }
 
@@ -848,14 +891,15 @@ export class RowRenderer extends BeanStub {
 
     private onBodyScroll(e: BodyScrollEvent) {
         if (e.direction !== 'vertical') { return; }
-        this.redraw();
+        this.redraw({ afterScroll: true });
     }
 
     // gets called when rows don't change, but viewport does, so after:
     // 1) height of grid body changes, ie number of displayed rows has changed
     // 2) grid scrolled to new position
     // 3) ensure index visible (which is a scroll)
-    public redraw(afterScroll = true) {
+    public redraw(params: { afterScroll?: boolean } = {}) {
+        const { afterScroll } = params;
         let cellFocused: CellPosition | undefined;
 
         // only try to refocus cells shifting in and out of sticky container
@@ -863,6 +907,20 @@ export class RowRenderer extends BeanStub {
         if (this.stickyRowFeature && browserSupportsPreventScroll()) {
             cellFocused = this.getCellToRestoreFocusToAfterRefresh() || undefined;
         }
+
+        const oldFirstRow = this.firstRenderedRow;
+        const oldLastRow = this.lastRenderedRow;
+        this.workOutFirstAndLastRowsToRender();
+
+        let hasStickyRowChanges = false;
+
+        if (this.stickyRowFeature) {
+            hasStickyRowChanges = this.stickyRowFeature.checkStickyRows();
+        }
+
+        const rangeChanged = this.firstRenderedRow !== oldFirstRow || this.lastRenderedRow !== oldLastRow;
+
+        if (afterScroll && !hasStickyRowChanges && !rangeChanged) { return; }
 
         this.getLockOnRefresh();
         this.recycleRows(null, false, afterScroll);
@@ -912,22 +970,20 @@ export class RowRenderer extends BeanStub {
 
         indexesToDraw.sort((a: number, b: number) => a - b);
 
-        indexesToDraw = indexesToDraw.filter(index => {
-            const rowNode = this.paginationProxy.getRow(index);
-            return rowNode && !rowNode.sticky;
-        });
+        const ret: number[] = [];
 
-        return indexesToDraw;
+        for (let i = 0; i < indexesToDraw.length; i++) {
+            const currRow = indexesToDraw[i];
+            const rowNode = this.paginationProxy.getRow(currRow);
+            if (rowNode && !rowNode.sticky) {
+                ret.push(currRow);
+            }
+        }
+
+        return ret;
     }
 
     private recycleRows(rowsToRecycle?: { [key: string]: RowCtrl; } | null, animate = false, afterScroll = false) {
-        this.rowContainerHeightService.updateOffset();
-        this.workOutFirstAndLastRowsToRender();
-
-        if (this.stickyRowFeature) {
-            this.stickyRowFeature.checkStickyRows();
-        }
-
         // the row can already exist and be in the following:
         // rowsToRecycle -> if model change, then the index may be different, however row may
         //                         exist here from previous time (mapped by id).
@@ -1005,7 +1061,7 @@ export class RowRenderer extends BeanStub {
 
         this.refreshFloatingRowComps();
         this.removeRowCtrls(rowsToRemove);
-        this.redraw();
+        this.redraw({ afterScroll: true });
     }
 
     public getFullWidthRowCtrls(rowNodes?: IRowNode[]): RowCtrl[] {
@@ -1021,39 +1077,6 @@ export class RowRenderer extends BeanStub {
 
             return true;
         });
-    }
-
-    public refreshFullWidthRow(rowNode: RowNode) {
-        this.refreshFullWidthRows([rowNode]);
-    }
-
-    private refreshFullWidthRows(rowNodes?: IRowNode[]) {
-        const fullWidthCtrls = this.getFullWidthRowCtrls(rowNodes);
-
-        let redraw = false;
-        const indicesToForce: number[] = [];
-        fullWidthCtrls.forEach(fullWidthCtrl => {
-            const refreshed = fullWidthCtrl.refreshFullWidth();
-            if (refreshed) {
-                return;
-            }
-
-            const node = fullWidthCtrl.getRowNode();
-            if (node.sticky) {
-                this.stickyRowFeature.refreshStickyNode(node);
-            } else {
-                indicesToForce.push(node.rowIndex!);
-            }
-            redraw = true;
-        });
-
-        if (indicesToForce.length > 0) {
-            this.removeRowCtrls(indicesToForce);
-        }
-
-        if (redraw) {
-            this.redraw(false);
-        }
     }
 
     private createOrUpdateRowCtrl(
@@ -1159,6 +1182,7 @@ export class RowRenderer extends BeanStub {
     }
 
     private workOutFirstAndLastRowsToRender(): void {
+        this.rowContainerHeightService.updateOffset();
         let newFirst: number;
         let newLast: number;
 

@@ -1,9 +1,10 @@
-import { Autowired, BeanStub, FocusService, GridApi, LoadSuccessParams, NumberSequence, PostConstruct, PreDestroy, RowNode, IRowNode, ServerSideGroupLevelParams, GetRowIdFunc, WithoutGridCommon, GetRowIdParams, Events } from "@ag-grid-community/core";
+import { Autowired, BeanStub, FocusService, GridApi, LoadSuccessParams, NumberSequence, PostConstruct, PreDestroy, RowNode, IRowNode, ServerSideGroupLevelParams, WithoutGridCommon, GetRowIdParams } from "@ag-grid-community/core";
 import { BlockUtils } from "../../blocks/blockUtils";
 import { NodeManager } from "../../nodeManager";
 import { LazyStore } from "./lazyStore";
 import { LazyBlockLoader } from "./lazyBlockLoader";
 import { MultiIndexMap } from "./multiIndexMap";
+import { ServerSideRowModel } from "src/serverSideRowModel/serverSideRowModel";
 
 interface LazyStoreNode {
     id: string;
@@ -16,6 +17,7 @@ export class LazyCache extends BeanStub {
     @Autowired('ssrmBlockUtils') private blockUtils: BlockUtils;
     @Autowired('focusService') private focusService: FocusService;
     @Autowired('ssrmNodeManager') private nodeManager: NodeManager;
+    @Autowired('rowModel') private serverSideRowModel: ServerSideRowModel;
 
     /**
      * Indicates whether this is still the live dataset for this store (used for ignoring old requests after purge)
@@ -112,7 +114,6 @@ export class LazyCache extends BeanStub {
         if (!this.store.isDisplayIndexInStore(displayIndex)) {
             return undefined;
         }
-
 
         // first try to directly look this node up in the display index map
         const node = this.nodeDisplayIndexMap.get(displayIndex);
@@ -706,7 +707,7 @@ export class LazyCache extends BeanStub {
     }
 
     private extractDuplicateIds(rows: any[]) {
-        if (!this.getRowIdFunc == null) {
+        if (this.getRowIdFunc != null) {
             return [];
         }
 
@@ -738,6 +739,10 @@ export class LazyCache extends BeanStub {
                 this.onLoadFailed(firstRowIndex, numberOfRowsExpected);
                 return;
             }
+        }
+
+        if (response.pivotResultFields) {
+            this.serverSideRowModel.generateSecondaryColumns(response.pivotResultFields);
         }
         
         const wasRefreshing = this.nodesToRefresh.size > 0;

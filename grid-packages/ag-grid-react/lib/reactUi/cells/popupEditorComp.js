@@ -1,4 +1,4 @@
-// ag-grid-react v30.0.6
+// ag-grid-react v30.1.0
 "use strict";
 var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
     if (k2 === undefined) k2 = k;
@@ -28,7 +28,7 @@ var useEffectOnce_1 = require("../useEffectOnce");
 var PopupEditorComp = function (props) {
     var _a = react_1.useState(), popupEditorWrapper = _a[0], setPopupEditorWrapper = _a[1];
     var _b = react_1.useContext(beansContext_1.BeansContext), context = _b.context, popupService = _b.popupService, localeService = _b.localeService, gridOptionsService = _b.gridOptionsService;
-    useEffectOnce_1.useLayoutEffectOnce(function () {
+    useEffectOnce_1.useEffectOnce(function () {
         var editDetails = props.editDetails, cellCtrl = props.cellCtrl, eParentCell = props.eParentCell;
         var compDetails = editDetails.compDetails;
         var useModelPopup = gridOptionsService.is('stopEditingWhenCellsLoseFocus');

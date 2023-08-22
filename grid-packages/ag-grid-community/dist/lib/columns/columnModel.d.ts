@@ -146,6 +146,7 @@ export declare class ColumnModel extends BeanStub {
     private resizeOperationQueue;
     private columnDefs;
     init(): void;
+    private onGroupDisplayTypeChanged;
     private onAutoGroupColumnDefChanged;
     private onSharedColDefChanged;
     setColumnDefs(columnDefs: (ColDef | ColGroupDef)[], source?: ColumnEventType): void;
@@ -374,7 +375,6 @@ export declare class ColumnModel extends BeanStub {
     private autoColsEqual;
     private getWidthOfColsInList;
     getGridBalancedTree(): IProvidedColumn[];
-    hasFloatingFilters(): boolean;
     getFirstDisplayedColumn(): Column | null;
     setColumnHeaderHeight(col: Column, height: number): void;
     getColumnGroupHeaderRowHeight(): number;

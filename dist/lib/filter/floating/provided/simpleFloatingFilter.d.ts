@@ -21,6 +21,8 @@ export declare abstract class SimpleFloatingFilter extends Component implements 
     protected setLastTypeFromModel(model: ProvidedFilterModel): void;
     protected canWeEditAfterModelFromParentFilter(model: ProvidedFilterModel): boolean;
     init(params: IFloatingFilterParams): void;
+    private setSimpleParams;
+    onParamsUpdated(params: IFloatingFilterParams): void;
     private doesFilterHaveSingleInput;
     private isTypeEditable;
 }

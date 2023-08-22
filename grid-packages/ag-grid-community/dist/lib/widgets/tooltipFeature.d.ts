@@ -16,18 +16,16 @@ export interface ITooltipFeatureCtrl {
     getRowNode?(): RowNode;
     getValueFormatted?(): string;
 }
-export interface ITooltipFeatureComp {
-    setTitle(title: string | undefined): void;
-}
 export declare class TooltipFeature extends BeanStub {
     private readonly ctrl;
     private readonly beans;
-    private comp;
+    private eGui;
     private tooltip;
     private genericTooltipFeature;
     private browserTooltips;
     constructor(ctrl: ITooltipFeatureCtrl, beans: Beans);
-    setComp(comp: ITooltipFeatureComp): void;
+    setComp(eGui: HTMLElement): void;
+    private setBrowserTooltip;
     private setupTooltip;
     private updateTooltipText;
     private createTooltipFeatureIfNeeded;

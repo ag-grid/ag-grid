@@ -1,5 +1,7 @@
 import { RowStyle } from '../entities/gridOptions';
 import { CellStyle } from '../entities/colDef';
+import { AgPromise } from './promise';
+import { ICellRendererComp } from '../rendering/cellRenderers/iCellRenderer';
 /**
  * This method adds a class to an element and remove that class from all siblings.
  * Useful for toggling state.
@@ -89,3 +91,10 @@ export declare function copyNodeList(nodeList: NodeListOf<Node> | null): Node[];
 export declare function iterateNamedNodeMap(map: NamedNodeMap, callback: (key: string, value: string) => void): void;
 export declare function addOrRemoveAttribute(element: HTMLElement, name: string, value: any): void;
 export declare function nodeListForEach<T extends Node>(nodeList: NodeListOf<T> | null, action: (value: T) => void): void;
+/**
+ * cell renderers are used in a few places. they bind to dom slightly differently to other cell renders as they
+ * can return back strings (instead of html element) in the getGui() method. common code placed here to handle that.
+ * @param {AgPromise<ICellRendererComp>} cellRendererPromise
+ * @param {HTMLElement} eTarget
+ */
+export declare function bindCellRendererToHtmlElement(cellRendererPromise: AgPromise<ICellRendererComp>, eTarget: HTMLElement): void;

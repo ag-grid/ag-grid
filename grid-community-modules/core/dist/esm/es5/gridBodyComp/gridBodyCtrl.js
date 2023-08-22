@@ -68,6 +68,7 @@ var GridBodyCtrl = /** @class */ (function (_super) {
         this.setFloatingHeights();
         this.disableBrowserDragging();
         this.addStopEditingWhenGridLosesFocus();
+        this.filterManager.setupAdvancedFilterHeaderComp(eTop);
         this.ctrlsService.registerGridBodyCtrl(this);
     };
     GridBodyCtrl.prototype.getComp = function () {
@@ -169,7 +170,7 @@ var GridBodyCtrl = /** @class */ (function (_super) {
         viewports.forEach(function (viewport) { return _this.addManagedListener(viewport, 'focusout', focusOutListener); });
     };
     GridBodyCtrl.prototype.updateRowCount = function () {
-        var headerCount = this.headerNavigationService.getHeaderRowCount();
+        var headerCount = this.headerNavigationService.getHeaderRowCount() + this.filterManager.getHeaderRowCount();
         var rowCount = this.rowModel.isLastRowIndexKnown() ? this.rowModel.getRowCount() : -1;
         var total = rowCount === -1 ? -1 : (headerCount + rowCount);
         this.comp.setRowCount(total);
@@ -340,7 +341,7 @@ var GridBodyCtrl = /** @class */ (function (_super) {
     };
     GridBodyCtrl.prototype.setStickyTopOffsetTop = function () {
         var headerCtrl = this.ctrlsService.getGridHeaderCtrl();
-        var headerHeight = headerCtrl.getHeaderHeight();
+        var headerHeight = headerCtrl.getHeaderHeight() + this.filterManager.getHeaderHeight();
         var pinnedTopHeight = this.pinnedRowModel.getPinnedTopTotalHeight();
         var height = 0;
         if (headerHeight > 0) {
@@ -432,6 +433,9 @@ var GridBodyCtrl = /** @class */ (function (_super) {
     __decorate([
         Autowired('rowModel')
     ], GridBodyCtrl.prototype, "rowModel", void 0);
+    __decorate([
+        Autowired('filterManager')
+    ], GridBodyCtrl.prototype, "filterManager", void 0);
     return GridBodyCtrl;
 }(BeanStub));
 export { GridBodyCtrl };

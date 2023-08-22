@@ -118,8 +118,9 @@ export class DefaultStrategy extends BeanStub implements ISelectionStrategy {
                 delete this.selectedNodes[node.id!];
             }
 
+            const isNodeSelectable = node.selectable;
             const doesNodeConform = params.newValue === this.selectedState.selectAll;
-            if (doesNodeConform) {
+            if (doesNodeConform || !isNodeSelectable) {
                 this.selectedState.toggledNodes.delete(node.id!);
                 return;
             }

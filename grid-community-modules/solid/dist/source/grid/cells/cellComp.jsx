@@ -22,10 +22,8 @@ const CellComp = (props) => {
     let renderCompVersion = 0;
     const [renderCompVersionList, setRenderCompVersionList] = createSignal([renderCompVersion]);
     const [userStyles, setUserStyles] = createSignal();
-    const [tabIndex, setTabIndex] = createSignal();
-    const [role, setRole] = createSignal();
-    const [colId, setColId] = createSignal();
-    const [title, setTitle] = createSignal();
+    const [tabIndex, setTabIndex] = createSignal(cellCtrl.getTabIndex());
+    const [colId, setColId] = createSignal(cellCtrl.getColumnIdSanitised());
     const [selectionCheckboxId, setSelectionCheckboxId] = createSignal();
     const [includeSelection, setIncludeSelection] = createSignal(false);
     const [includeRowDrag, setIncludeRowDrag] = createSignal(false);
@@ -72,10 +70,6 @@ const CellComp = (props) => {
             addOrRemoveCssClass: (name, on) => cssClassManager.addOrRemoveCssClass(name, on),
             setUserStyles: (styles) => setUserStyles(styles),
             getFocusableElement: () => eGui,
-            setTabIndex: tabIndex => setTabIndex(tabIndex),
-            setRole: role => setRole(role),
-            setColId: colId => setColId(colId),
-            setTitle: title => setTitle(title),
             setIncludeSelection: include => setIncludeSelection(include),
             setIncludeRowDrag: include => setIncludeRowDrag(include),
             setIncludeDndSource: include => setIncludeDndSource(include),
@@ -156,8 +150,7 @@ const CellComp = (props) => {
                 {editDetails() &&
             <ShowEditDetails editDetails={editDetails()} cellCtrl={cellCtrl} eGuiFn={eGuiFn} setInlineRef={setInlineEditorRef} setPopupRef={setPopupEditorRef}/>}
         </>);
-    return (<div ref={eGui} style={userStyles()} tabIndex={tabIndex()} role={role()} //fixme - why not hard code role to gridcell?
-     col-id={colId()} title={title()}> {showCellWrapper()
+    return (<div ref={eGui} style={userStyles()} tabIndex={tabIndex()} role={'gridcell'} col-id={colId()}> {showCellWrapper()
             ? (<div class="ag-cell-wrapper" role="presentation" ref={eCellWrapper}>
                         {bodyJsxFunc()}
                     </div>)

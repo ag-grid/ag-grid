@@ -19,7 +19,7 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
-import { AgAbstractField, Autowired, AgAbstractLabel, RefSelector, _ } from "@ag-grid-community/core";
+import { Autowired, Events, AgAbstractLabel, RefSelector, _ } from "@ag-grid-community/core";
 var AgAngleSelect = /** @class */ (function (_super) {
     __extends(AgAngleSelect, _super);
     function AgAngleSelect(config) {
@@ -64,7 +64,7 @@ var AgAngleSelect = /** @class */ (function (_super) {
         if (_.exists(this.getValue())) {
             this.eAngleValue.setValue(this.normalizeNegativeValue(this.getValue()).toString());
         }
-        this.addManagedListener(this, AgAbstractField.EVENT_CHANGED, function () {
+        this.addManagedListener(this, Events.EVENT_FIELD_VALUE_CHANGED, function () {
             var eDocument = _this.gridOptionsService.getDocument();
             if (_this.eAngleValue.getInputElement().contains(eDocument.activeElement)) {
                 return;
@@ -156,7 +156,7 @@ var AgAngleSelect = /** @class */ (function (_super) {
     };
     AgAngleSelect.prototype.onValueChange = function (callbackFn) {
         var _this = this;
-        this.addManagedListener(this, AgAbstractField.EVENT_CHANGED, function () {
+        this.addManagedListener(this, Events.EVENT_FIELD_VALUE_CHANGED, function () {
             callbackFn(_this.degrees);
         });
         return this;
@@ -177,7 +177,7 @@ var AgAngleSelect = /** @class */ (function (_super) {
             this.degrees = Math.floor(degrees);
             this.calculateCartesian();
             this.positionChildCircle(radiansValue);
-            this.dispatchEvent({ type: AgAbstractField.EVENT_CHANGED });
+            this.dispatchEvent({ type: Events.EVENT_FIELD_VALUE_CHANGED });
         }
         return this;
     };

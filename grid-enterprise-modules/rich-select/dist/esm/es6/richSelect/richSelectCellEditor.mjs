@@ -1,113 +1,51 @@
-var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
-    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
-    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
-    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
-    return c > 3 && r && Object.defineProperty(target, key, r), r;
-};
-import { Autowired, PopupComponent, RefSelector, VirtualList, KeyCode, _, } from "@ag-grid-community/core";
-import { RichSelectRow } from "./richSelectRow.mjs";
-import { bindCellRendererToHtmlElement } from "./utils.mjs";
+import { AgRichSelect, Events, PopupComponent, _ } from "@ag-grid-community/core";
 export class RichSelectCellEditor extends PopupComponent {
     constructor() {
-        super(RichSelectCellEditor.TEMPLATE);
-        this.selectionConfirmed = false;
-        this.searchString = '';
+        super(/* html */ `<div class="ag-cell-edit-wrapper"></div>`);
     }
     init(params) {
-        var _a;
         this.params = params;
-        this.selectedValue = params.value;
-        this.originalSelectedValue = params.value;
-        this.focusAfterAttached = params.cellStartedEdit;
-        const icon = _.createIconNoSpan('smallDown', this.gridOptionsService);
-        icon.classList.add('ag-rich-select-value-icon');
-        this.eValue.appendChild(icon);
-        this.virtualList = this.createManagedBean(new VirtualList('rich-select'));
-        this.virtualList.setComponentCreator(this.createRowComponent.bind(this));
-        this.eList.appendChild(this.virtualList.getGui());
-        if (_.exists(this.params.cellHeight)) {
-            this.virtualList.setRowHeight(this.params.cellHeight);
-        }
-        this.renderSelectedValue();
-        if (_.missing(params.values)) {
+        const { cellStartedEdit, values, cellHeight } = params;
+        if (_.missing(values)) {
             console.warn('AG Grid: richSelectCellEditor requires values for it to work');
             return;
         }
-        const values = params.values;
-        this.virtualList.setModel({
-            getRowCount: () => values.length,
-            getRow: (index) => values[index]
-        });
-        this.addGuiEventListener('keydown', this.onKeyDown.bind(this));
-        const virtualListGui = this.virtualList.getGui();
-        this.addManagedListener(virtualListGui, 'click', this.onClick.bind(this));
-        this.addManagedListener(virtualListGui, 'mousemove', this.onMouseMove.bind(this));
-        const debounceDelay = _.exists(params.searchDebounceDelay) ? params.searchDebounceDelay : 300;
-        this.clearSearchString = _.debounce(this.clearSearchString, debounceDelay);
-        if (((_a = params.eventKey) === null || _a === void 0 ? void 0 : _a.length) === 1) {
-            this.searchText(params.eventKey);
+        const richSelectParams = this.buildRichSelectParams();
+        this.richSelect = this.createManagedBean(new AgRichSelect(richSelectParams));
+        this.appendChild(this.richSelect);
+        this.addManagedListener(this.richSelect, Events.EVENT_FIELD_PICKER_VALUE_SELECTED, this.onEditorPickerValueSelected.bind(this));
+        this.addManagedListener(this.richSelect.getGui(), 'focusout', this.onEditorFocusOut.bind(this));
+        this.focusAfterAttached = cellStartedEdit;
+        if (_.exists(cellHeight)) {
+            this.richSelect.setRowHeight(cellHeight);
         }
     }
-    onKeyDown(event) {
-        const key = event.key;
-        event.preventDefault();
-        switch (key) {
-            case KeyCode.ENTER:
-                this.onEnterKeyDown();
-                break;
-            case KeyCode.TAB:
-                this.confirmSelection();
-                break;
-            case KeyCode.DOWN:
-            case KeyCode.UP:
-                this.onNavigationKeyDown(event, key);
-                break;
-            default:
-                this.searchText(event);
-        }
+    onEditorPickerValueSelected(e) {
+        this.params.stopEditing(!e.fromEnterKey);
     }
-    confirmSelection() {
-        this.selectionConfirmed = true;
-    }
-    onEnterKeyDown() {
-        this.confirmSelection();
-        this.params.stopEditing();
-    }
-    onNavigationKeyDown(event, key) {
-        // if we don't preventDefault the page body and/or grid scroll will move.
-        event.preventDefault();
-        const oldIndex = this.params.values.indexOf(this.selectedValue);
-        const newIndex = key === KeyCode.UP ? oldIndex - 1 : oldIndex + 1;
-        if (newIndex >= 0 && newIndex < this.params.values.length) {
-            const valueToSelect = this.params.values[newIndex];
-            this.setSelectedValue(valueToSelect);
-        }
-    }
-    searchText(key) {
-        if (typeof key !== 'string') {
-            let keyString = key.key;
-            if (keyString === KeyCode.BACKSPACE) {
-                this.searchString = this.searchString.slice(0, -1);
-                keyString = '';
-            }
-            else if (!_.isEventFromPrintableCharacter(key)) {
-                return;
-            }
-            this.searchText(keyString);
+    onEditorFocusOut(e) {
+        if (this.richSelect.getGui().contains(e.relatedTarget)) {
             return;
         }
-        this.searchString += key;
-        this.runSearch();
-        this.clearSearchString();
+        this.params.stopEditing(true);
     }
-    runSearch() {
-        const values = this.params.values;
-        let searchStrings;
-        if (typeof values[0] === 'number' || typeof values[0] === 'string') {
-            searchStrings = values.map(v => this.params.formatValue(v));
+    buildRichSelectParams() {
+        const { cellRenderer, value, values, colDef, formatValue, searchDebounceDelay, valueListGap } = this.params;
+        const ret = {
+            value: value,
+            valueList: values,
+            cellRenderer,
+            searchDebounceDelay,
+            valueFormatter: formatValue,
+            pickerAriaLabelKey: 'ariaLabelRichSelectField',
+            pickerAriaLabelValue: 'Rich Select Field',
+            pickerType: 'virtual-list',
+        };
+        if (valueListGap != null) {
+            ret.pickerGap = valueListGap;
         }
-        if (typeof values[0] === 'object' && this.params.colDef.keyCreator) {
-            searchStrings = values.map(value => {
+        if (typeof values[0] === 'object' && colDef.keyCreator) {
+            ret.searchStringCreator = (values) => values.map((value) => {
                 const keyParams = {
                     value: value,
                     colDef: this.params.colDef,
@@ -118,125 +56,35 @@ export class RichSelectCellEditor extends PopupComponent {
                     columnApi: this.gridOptionsService.columnApi,
                     context: this.gridOptionsService.context
                 };
-                return this.params.colDef.keyCreator(keyParams);
+                return colDef.keyCreator(keyParams);
             });
         }
-        if (!searchStrings) {
-            return;
-        }
-        const topSuggestion = _.fuzzySuggestions(this.searchString, searchStrings, true)[0];
-        if (!topSuggestion) {
-            return;
-        }
-        const topSuggestionIndex = searchStrings.indexOf(topSuggestion);
-        const topValue = values[topSuggestionIndex];
-        this.setSelectedValue(topValue);
-    }
-    clearSearchString() {
-        this.searchString = '';
-    }
-    renderSelectedValue() {
-        const valueFormatted = this.params.formatValue(this.selectedValue);
-        const eValue = this.eValue;
-        const params = {
-            value: this.selectedValue,
-            valueFormatted: valueFormatted,
-            api: this.gridOptionsService.api,
-        };
-        const compDetails = this.userComponentFactory.getCellRendererDetails(this.params, params);
-        const promise = compDetails ? compDetails.newAgStackInstance() : undefined;
-        if (promise) {
-            bindCellRendererToHtmlElement(promise, eValue);
-            promise.then(renderer => {
-                this.addDestroyFunc(() => this.getContext().destroyBean(renderer));
-            });
-        }
-        else {
-            if (_.exists(this.selectedValue)) {
-                eValue.innerText = valueFormatted;
-            }
-            else {
-                _.clearElement(eValue);
-            }
-        }
-    }
-    setSelectedValue(value) {
-        if (this.selectedValue === value) {
-            return;
-        }
-        const index = this.params.values.indexOf(value);
-        if (index === -1) {
-            return;
-        }
-        this.selectedValue = value;
-        this.virtualList.ensureIndexVisible(index);
-        this.virtualList.forEachRenderedRow((cmp, idx) => {
-            cmp.updateSelected(index === idx);
-        });
-        this.virtualList.focusRow(index);
-    }
-    createRowComponent(value) {
-        const valueFormatted = this.params.formatValue(value);
-        const row = new RichSelectRow(this.params);
-        this.getContext().createBean(row);
-        row.setState(value, valueFormatted, value === this.selectedValue);
-        return row;
-    }
-    onMouseMove(mouseEvent) {
-        const rect = this.virtualList.getGui().getBoundingClientRect();
-        const scrollTop = this.virtualList.getScrollTop();
-        const mouseY = mouseEvent.clientY - rect.top + scrollTop;
-        const row = Math.floor(mouseY / this.virtualList.getRowHeight());
-        const value = this.params.values[row];
-        // not using utils.exist() as want empty string test to pass
-        if (value !== undefined) {
-            this.setSelectedValue(value);
-        }
-    }
-    onClick() {
-        this.confirmSelection();
-        this.params.stopEditing();
+        return ret;
     }
     // we need to have the gui attached before we can draw the virtual rows, as the
     // virtual row logic needs info about the gui state
     afterGuiAttached() {
-        const selectedIndex = this.params.values.indexOf(this.selectedValue);
-        // we have to call this here to get the list to have the right height, ie
-        // otherwise it would not have scrolls yet and ensureIndexVisible would do nothing
-        this.virtualList.refresh();
-        if (selectedIndex >= 0) {
-            this.virtualList.ensureIndexVisible(selectedIndex);
-        }
-        // we call refresh again, as the list could of moved, and we need to render the new rows
-        this.virtualList.refresh();
-        if (this.focusAfterAttached) {
-            const indexToSelect = selectedIndex !== -1 ? selectedIndex : 0;
-            if (this.params.values.length) {
-                this.virtualList.focusRow(indexToSelect);
+        const { focusAfterAttached, params } = this;
+        setTimeout(() => {
+            if (!this.isAlive()) {
+                return;
             }
-            else {
-                this.getGui().focus();
+            if (focusAfterAttached) {
+                this.richSelect.getFocusableElement().focus();
             }
-        }
+            this.richSelect.showPicker();
+            const { eventKey } = params;
+            if (eventKey) {
+                if ((eventKey === null || eventKey === void 0 ? void 0 : eventKey.length) === 1) {
+                    this.richSelect.searchText(eventKey);
+                }
+            }
+        });
     }
     getValue() {
-        // NOTE: we don't use valueParser for Set Filter. The user should provide values that are to be
-        // set into the data. valueParser only really makese sense when the user is typing in text (not picking
-        // form a set).
-        return this.selectionConfirmed ? this.selectedValue : this.originalSelectedValue;
+        return this.richSelect.getValue();
+    }
+    isPopup() {
+        return false;
     }
 }
-// tab index is needed so we can focus, which is needed for keyboard events
-RichSelectCellEditor.TEMPLATE = `<div class="ag-rich-select" tabindex="-1">
-            <div ref="eValue" class="ag-rich-select-value"></div>
-            <div ref="eList" class="ag-rich-select-list"></div>
-        </div>`;
-__decorate([
-    Autowired('userComponentFactory')
-], RichSelectCellEditor.prototype, "userComponentFactory", void 0);
-__decorate([
-    RefSelector('eValue')
-], RichSelectCellEditor.prototype, "eValue", void 0);
-__decorate([
-    RefSelector('eList')
-], RichSelectCellEditor.prototype, "eList", void 0);

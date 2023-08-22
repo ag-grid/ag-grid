@@ -250,7 +250,7 @@ var SortController = /** @class */ (function (_super) {
             return column.getSort();
         }
         // if column has unique data, its sorting is independent - but can still be mixed
-        var columnHasUniqueData = !!column.getColDef().field;
+        var columnHasUniqueData = column.getColDef().field != null || !!column.getColDef().valueGetter;
         var sortableColumns = columnHasUniqueData ? __spreadArray([column], __read(linkedColumns)) : linkedColumns;
         var firstSort = sortableColumns[0].getSort();
         // the == is intentional, as null and undefined both represent no sort, which means they are equivalent

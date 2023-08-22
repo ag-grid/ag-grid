@@ -1,4 +1,4 @@
-// Type definitions for @ag-grid-community/core v30.0.6
+// Type definitions for @ag-grid-community/core v30.1.0
 // Project: https://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { ISimpleFilterModel, SimpleFilterModelFormatter, Tuple } from '../simpleFilter';
@@ -38,8 +38,13 @@ export interface INumberFilterParams extends IScalarFilterParams {
      * Typically used alongside `allowedCharPattern`, this provides a custom parser to convert the value entered in the filter inputs into a number that can be used for comparisons.
      */
     numberParser?: (text: string | null) => number | null;
+    /**
+     * Typically used alongside `allowedCharPattern`, this provides a custom formatter to convert the number value in the filter model
+     * into a string to be used in the filter input. This is the inverse of the `numberParser`.
+     */
+    numberFormatter?: (value: number | null) => string | null;
 }
-export declare class NumberFilterModelFormatter extends SimpleFilterModelFormatter {
+export declare class NumberFilterModelFormatter extends SimpleFilterModelFormatter<number> {
     protected conditionToString(condition: NumberFilterModel, options?: IFilterOptionDef): string;
 }
 export declare function getAllowedCharPattern(filterParams?: NumberFilterParams): string | null;
@@ -55,6 +60,7 @@ export declare class NumberFilter extends ScalarFilter<NumberFilterModel, number
     protected comparator(): Comparator<number>;
     protected setParams(params: NumberFilterParams): void;
     protected getDefaultFilterOptions(): string[];
+    protected setElementValue(element: AgInputTextField | AgInputNumberField, value: number | null): void;
     protected createValueElement(): HTMLElement;
     private createFromToElement;
     protected removeValueElements(startPosition: number, deleteCount?: number): void;

@@ -1,4 +1,4 @@
-// Type definitions for @ag-grid-community/core v30.0.6
+// Type definitions for @ag-grid-community/core v30.1.0
 // Project: https://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { RowCtrl } from "./row/rowCtrl";
@@ -70,7 +70,6 @@ export declare class RowRenderer extends BeanStub {
     private initialise;
     private initialiseCache;
     private getKeepDetailRowsCount;
-    getRowCtrls(): RowCtrl[];
     getStickyTopRowCtrls(): RowCtrl[];
     private updateAllRowCtrls;
     private onCellFocusChanged;
@@ -83,10 +82,11 @@ export declare class RowRenderer extends BeanStub {
     getAllCellsForColumn(column: Column): HTMLElement[];
     refreshFloatingRowComps(): void;
     getTopRowCtrls(): RowCtrl[];
+    getCentreRowCtrls(): RowCtrl[];
     getBottomRowCtrls(): RowCtrl[];
     private refreshFloatingRows;
     private onPinnedRowDataChanged;
-    private getRenderedIndexesForRowNodes;
+    redrawRow(rowNode: RowNode, suppressEvent?: boolean): void;
     redrawRows(rowNodes?: IRowNode[]): void;
     private getCellToRestoreFocusToAfterRefresh;
     private redrawAfterModelUpdate;
@@ -107,13 +107,19 @@ export declare class RowRenderer extends BeanStub {
     getEditingCells(): CellPosition[];
     private mapRowNodes;
     private isRowInMap;
+    /**
+     * @param rowNodes if provided, returns the RowCtrls for the provided rowNodes. otherwise returns all RowCtrls.
+     */
+    getRowCtrls(rowNodes?: IRowNode[] | null): RowCtrl[];
     private getCellCtrls;
     protected destroy(): void;
     private removeAllRowComps;
     private getRowsToRecycle;
     private removeRowCtrls;
     private onBodyScroll;
-    redraw(afterScroll?: boolean): void;
+    redraw(params?: {
+        afterScroll?: boolean;
+    }): void;
     private removeRowCompsNotToDraw;
     private calculateIndexesToDraw;
     private recycleRows;
@@ -121,8 +127,6 @@ export declare class RowRenderer extends BeanStub {
     private onDisplayedColumnsChanged;
     private redrawFullWidthEmbeddedRows;
     getFullWidthRowCtrls(rowNodes?: IRowNode[]): RowCtrl[];
-    refreshFullWidthRow(rowNode: RowNode): void;
-    private refreshFullWidthRows;
     private createOrUpdateRowCtrl;
     private destroyRowCtrls;
     private getRowBuffer;

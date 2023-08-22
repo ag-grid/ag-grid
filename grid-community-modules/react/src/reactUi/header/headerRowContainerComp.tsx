@@ -1,28 +1,35 @@
-import React, { memo, useContext, useMemo, useRef, useState } from 'react';
+import React, { memo, useCallback, useContext, useMemo, useRef, useState } from 'react';
 import { BeansContext } from '../beansContext';
 import {
     IHeaderRowContainerComp, HeaderRowCtrl, HeaderRowContainerCtrl, ColumnPinnedType
 } from '@ag-grid-community/core';
 import { CssClasses } from '../utils';
 import HeaderRowComp from './headerRowComp';
-import { useLayoutEffectOnce } from '../useEffectOnce';
 
 
 const HeaderRowContainerComp = (props: { pinned: ColumnPinnedType }) => {
 
-    const [cssClasses, setCssClasses] = useState<CssClasses>(new CssClasses());
+    const [cssClasses, setCssClasses] = useState<CssClasses>(() => new CssClasses());
     const [ariaHidden, setAriaHidden] = useState<true | false>(false);
     const [headerRowCtrls, setHeaderRowCtrls] = useState<HeaderRowCtrl[]>([]);
 
     const {context} = useContext(BeansContext);
-    const eGui = useRef<HTMLDivElement>(null);
+    const eGui = useRef<HTMLDivElement | null>(null);
     const eCenterContainer = useRef<HTMLDivElement>(null);
+    const headerRowCtrlRef = useRef<HeaderRowContainerCtrl | null>(null);
 
     const pinnedLeft = props.pinned === 'left';
     const pinnedRight = props.pinned === 'right';
     const centre = !pinnedLeft && !pinnedRight;
 
-    useLayoutEffectOnce(() => {
+    const setRef = useCallback((e: HTMLDivElement) => {
+        eGui.current = e;
+        if (!eGui.current) {
+            context.destroyBean(headerRowCtrlRef.current);
+            headerRowCtrlRef.current = null;
+            return;
+        }
+
         const compProxy: IHeaderRowContainerComp = {
             setDisplayed: displayed => {
                 setCssClasses(prev => prev.setClass('ag-hidden', !displayed));
@@ -52,14 +59,10 @@ const HeaderRowContainerComp = (props: { pinned: ColumnPinnedType }) => {
             }
         };
 
-        const ctrl = context.createBean(new HeaderRowContainerCtrl(props.pinned));
-        ctrl.setComp(compProxy, eGui.current!);
+        headerRowCtrlRef.current = context.createBean(new HeaderRowContainerCtrl(props.pinned));
+        headerRowCtrlRef.current.setComp(compProxy, eGui.current);
 
-        return () => {
-            context.destroyBean(ctrl);
-        };
-
-    });
+    }, []);
 
     const className = useMemo(() => cssClasses.toString(), [cssClasses]);
 
@@ -69,19 +72,19 @@ const HeaderRowContainerComp = (props: { pinned: ColumnPinnedType }) => {
         <>
             {
                 pinnedLeft && 
-                <div ref={eGui} className={"ag-pinned-left-header " + className} aria-hidden={ariaHidden} role="presentation">
+                <div ref={setRef} className={"ag-pinned-left-header " + className} aria-hidden={ariaHidden} role="presentation">
                     { insertRowsJsx() }
                 </div>
             }
             { 
                 pinnedRight && 
-                <div ref={eGui} className={"ag-pinned-right-header " + className} aria-hidden={ariaHidden} role="presentation">
+                <div ref={setRef} className={"ag-pinned-right-header " + className} aria-hidden={ariaHidden} role="presentation">
                 { insertRowsJsx() }
             </div>
             }
             { 
                 centre && 
-                <div ref={eGui} className={"ag-header-viewport " + className} role="presentation">
+                <div ref={setRef} className={"ag-header-viewport " + className} role="presentation">
                         <div ref={eCenterContainer} className={"ag-header-container"} role="rowgroup">
                         { insertRowsJsx() }
                     </div>

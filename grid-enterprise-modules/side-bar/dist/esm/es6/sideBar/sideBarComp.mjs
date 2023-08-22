@@ -115,10 +115,13 @@ export class SideBarComp extends Component {
         const sideBarRaw = this.gridOptionsService.get('sideBar');
         this.sideBar = SideBarDefParser.parse(sideBarRaw);
         if (!!this.sideBar && !!this.sideBar.toolPanels) {
-            const shouldDisplaySideBar = !this.sideBar.hiddenByDefault;
-            this.setDisplayed(shouldDisplaySideBar);
             const toolPanelDefs = this.sideBar.toolPanels;
             this.createToolPanelsAndSideButtons(toolPanelDefs);
+            if (!this.toolPanelWrappers.length) {
+                return;
+            }
+            const shouldDisplaySideBar = !this.sideBar.hiddenByDefault;
+            this.setDisplayed(shouldDisplaySideBar);
             this.setSideBarPosition(this.sideBar.position);
             if (!this.sideBar.hiddenByDefault) {
                 this.openToolPanel(this.sideBar.defaultToolPanel, 'sideBarInitializing');
@@ -161,6 +164,12 @@ export class SideBarComp extends Component {
         if (def.toolPanel === 'agFiltersToolPanel') {
             const moduleMissing = !ModuleRegistry.__assertRegistered(ModuleNames.FiltersToolPanelModule, 'Filters Tool Panel', this.context.getGridId());
             if (moduleMissing) {
+                return false;
+            }
+            if (this.filterManager.isAdvancedFilterEnabled()) {
+                _.doOnce(() => {
+                    console.warn('AG Grid: Advanced Filter does not work with Filters Tool Panel. Filters Tool Panel has been disabled.');
+                }, 'advancedFilterToolPanel');
                 return false;
             }
         }
@@ -265,6 +274,9 @@ __decorate([
 __decorate([
     Autowired('focusService')
 ], SideBarComp.prototype, "focusService", void 0);
+__decorate([
+    Autowired('filterManager')
+], SideBarComp.prototype, "filterManager", void 0);
 __decorate([
     RefSelector('sideBarButtons')
 ], SideBarComp.prototype, "sideBarButtonsComp", void 0);

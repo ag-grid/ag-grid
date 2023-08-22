@@ -66,6 +66,7 @@ import { AgSlider } from "./widgets/agSlider";
 import { AgInputNumberField } from "./widgets/agInputNumberField";
 import { AgInputRange } from "./widgets/agInputRange";
 import { AgSelect } from "./widgets/agSelect";
+import { AgRichSelect } from "./widgets/agRichSelect";
 import { AgToggleButton } from "./widgets/agToggleButton";
 import { RowPositionUtils } from "./entities/rowPositionUtils";
 import { CellPositionUtils } from "./entities/cellPositionUtils";
@@ -76,8 +77,7 @@ import { UndoRedoService } from "./undoRedo/undoRedoService";
 import { AgStackComponentsRegistry } from "./components/agStackComponentsRegistry";
 import { HeaderPositionUtils } from "./headerRendering/common/headerPosition";
 import { HeaderNavigationService } from "./headerRendering/common/headerNavigationService";
-import { exists, missing } from "./utils/generic";
-import { iterateObject } from "./utils/object";
+import { missing } from "./utils/generic";
 import { ColumnDefFactory } from "./columns/columnDefFactory";
 import { RowCssClassCalculator } from "./rendering/row/rowCssClassCalculator";
 import { RowNodeBlockLoader } from "./rowNodeCache/rowNodeBlockLoader";
@@ -98,6 +98,7 @@ import { FakeVScrollComp } from "./gridBodyComp/fakeVScrollComp";
 import { DataTypeService } from "./columns/dataTypeService";
 import { AgInputDateField } from "./widgets/agInputDateField";
 import { ValueParserService } from "./valueService/valueParserService";
+import { AgAutocomplete } from "./widgets/agAutocomplete";
 
 export interface GridParams {
     // used by Web Components
@@ -275,6 +276,7 @@ export class GridCoreCreator {
             { componentName: 'AgInputNumberField', componentClass: AgInputNumberField },
             { componentName: 'AgInputDateField', componentClass: AgInputDateField },
             { componentName: 'AgInputRange', componentClass: AgInputRange },
+            { componentName: 'AgRichSelect', componentClass: AgRichSelect },
             { componentName: 'AgSelect', componentClass: AgSelect },
             { componentName: 'AgSlider', componentClass: AgSlider },
             { componentName: 'AgGridBody', componentClass: GridBodyComp },
@@ -287,7 +289,8 @@ export class GridCoreCreator {
             { componentName: 'AgDialog', componentClass: AgDialog },
             { componentName: 'AgRowContainer', componentClass: RowContainerComp },
             { componentName: 'AgFakeHorizontalScroll', componentClass: FakeHScrollComp },
-            { componentName: 'AgFakeVerticalScroll', componentClass: FakeVScrollComp }
+            { componentName: 'AgFakeVerticalScroll', componentClass: FakeVScrollComp },
+            { componentName: 'AgAutocomplete', componentClass: AgAutocomplete },
         ];
 
         const moduleAgStackComps = this.extractModuleEntity(registeredModules,

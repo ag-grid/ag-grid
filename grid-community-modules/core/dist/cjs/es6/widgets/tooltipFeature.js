@@ -9,15 +9,24 @@ class TooltipFeature extends beanStub_1.BeanStub {
         this.ctrl = ctrl;
         this.beans = beans;
     }
-    setComp(comp) {
-        this.comp = comp;
+    setComp(eGui) {
+        this.eGui = eGui;
         this.setupTooltip();
+    }
+    setBrowserTooltip(tooltip) {
+        const name = 'title';
+        if (tooltip != null && tooltip != '') {
+            this.eGui.setAttribute(name, tooltip);
+        }
+        else {
+            this.eGui.removeAttribute(name);
+        }
     }
     setupTooltip() {
         this.browserTooltips = this.beans.gridOptionsService.is('enableBrowserTooltips');
         this.updateTooltipText();
         if (this.browserTooltips) {
-            this.comp.setTitle(this.tooltip != null ? this.tooltip : undefined);
+            this.setBrowserTooltip(this.tooltip);
         }
         else {
             this.createTooltipFeatureIfNeeded();
@@ -39,7 +48,7 @@ class TooltipFeature extends beanStub_1.BeanStub {
     refreshToolTip() {
         this.updateTooltipText();
         if (this.browserTooltips) {
-            this.comp.setTitle(this.tooltip != null ? this.tooltip : undefined);
+            this.setBrowserTooltip(this.tooltip);
         }
     }
     getTooltipParams() {
@@ -56,6 +65,7 @@ class TooltipFeature extends beanStub_1.BeanStub {
             data: rowNode ? rowNode.data : undefined,
             value: this.getTooltipText(),
             valueFormatted: ctrl.getValueFormatted ? ctrl.getValueFormatted() : undefined,
+            hideTooltipCallback: () => this.genericTooltipFeature.hideTooltip(true)
         };
     }
     getTooltipText() {

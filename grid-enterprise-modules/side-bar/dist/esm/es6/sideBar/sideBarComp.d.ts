@@ -2,6 +2,7 @@ import { Component, ISideBar, IToolPanel, SideBarDef } from "@ag-grid-community/
 export declare class SideBarComp extends Component implements ISideBar {
     private gridApi;
     private focusService;
+    private filterManager;
     private sideBarButtonsComp;
     private toolPanelWrappers;
     private sideBar;

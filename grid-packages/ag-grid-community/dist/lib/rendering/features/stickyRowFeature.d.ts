@@ -15,7 +15,7 @@ export declare class StickyRowFeature extends BeanStub {
     constructor(createRowCon: (rowNode: RowNode, animate: boolean, afterScroll: boolean) => RowCtrl, destroyRowCtrls: (rowCtrlsMap: RowCtrlMap | null | undefined, animate: boolean) => void);
     private postConstruct;
     getStickyRowCtrls(): RowCtrl[];
-    checkStickyRows(): void;
+    checkStickyRows(): boolean;
     refreshStickyNode(stickRowNode: RowNode): void;
     private refreshNodesAndContainerHeight;
 }

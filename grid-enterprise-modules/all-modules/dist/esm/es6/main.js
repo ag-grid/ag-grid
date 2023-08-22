@@ -1,4 +1,5 @@
 import { AllCommunityModules } from "@ag-grid-community/all-modules";
+import { AdvancedFilterModule } from "@ag-grid-enterprise/advanced-filter";
 import { ClipboardModule } from "@ag-grid-enterprise/clipboard";
 import { ColumnsToolPanelModule } from "@ag-grid-enterprise/column-tool-panel";
 import { ExcelExportModule } from "@ag-grid-enterprise/excel-export";
@@ -17,6 +18,7 @@ import { StatusBarModule } from "@ag-grid-enterprise/status-bar";
 import { ViewportRowModelModule } from "@ag-grid-enterprise/viewport-row-model";
 import { SparklinesModule } from "@ag-grid-enterprise/sparklines";
 export * from "@ag-grid-community/all-modules";
+export * from "@ag-grid-enterprise/advanced-filter";
 export * from "@ag-grid-enterprise/clipboard";
 export * from "@ag-grid-enterprise/column-tool-panel";
 export * from "@ag-grid-enterprise/excel-export";
@@ -36,6 +38,7 @@ export * from "@ag-grid-enterprise/viewport-row-model";
 export * from "@ag-grid-enterprise/core";
 export * from "@ag-grid-enterprise/sparklines";
 export const AllEnterpriseModules = [
+    AdvancedFilterModule,
     ClipboardModule,
     ColumnsToolPanelModule,
     ExcelExportModule,

@@ -9,7 +9,6 @@ export declare class DateCompWrapper {
     private dateComp;
     private tempValue;
     private disabled;
-    private displayed;
     private alive;
     private context;
     private eParent;
@@ -22,5 +21,6 @@ export declare class DateCompWrapper {
     setInputPlaceholder(placeholder: string): void;
     setInputAriaLabel(label: string): void;
     afterGuiAttached(params?: IAfterGuiAttachedParams): void;
+    updateParams(params: IDateParams): void;
     private setDateCompDisabled;
 }

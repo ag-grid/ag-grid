@@ -1,9 +1,8 @@
-// @ag-grid-community/react v30.0.6
+// @ag-grid-community/react v30.1.0
 import { GroupCellRendererCtrl, _ } from "@ag-grid-community/core";
-import React, { useContext, useImperativeHandle, forwardRef, useMemo, useRef, useState, useLayoutEffect } from 'react';
+import React, { useContext, useImperativeHandle, forwardRef, useMemo, useRef, useState, useLayoutEffect, useCallback } from 'react';
 import { BeansContext } from "../beansContext.mjs";
 import { showJsComp } from "../jsComp.mjs";
-import { useLayoutEffectOnce } from "../useEffectOnce.mjs";
 import { CssClasses } from "../utils.mjs";
 const GroupCellRenderer = forwardRef((props, ref) => {
     const context = useContext(BeansContext).context;
@@ -12,13 +11,14 @@ const GroupCellRenderer = forwardRef((props, ref) => {
     const eCheckboxRef = useRef(null);
     const eExpandedRef = useRef(null);
     const eContractedRef = useRef(null);
+    const ctrlRef = useRef();
     const [innerCompDetails, setInnerCompDetails] = useState();
     const [childCount, setChildCount] = useState();
     const [value, setValue] = useState();
-    const [cssClasses, setCssClasses] = useState(new CssClasses());
-    const [expandedCssClasses, setExpandedCssClasses] = useState(new CssClasses('ag-hidden'));
-    const [contractedCssClasses, setContractedCssClasses] = useState(new CssClasses('ag-hidden'));
-    const [checkboxCssClasses, setCheckboxCssClasses] = useState(new CssClasses('ag-invisible'));
+    const [cssClasses, setCssClasses] = useState(() => new CssClasses());
+    const [expandedCssClasses, setExpandedCssClasses] = useState(() => new CssClasses('ag-hidden'));
+    const [contractedCssClasses, setContractedCssClasses] = useState(() => new CssClasses('ag-hidden'));
+    const [checkboxCssClasses, setCheckboxCssClasses] = useState(() => new CssClasses('ag-invisible'));
     useImperativeHandle(ref, () => {
         return {
             // force new instance when grid tries to refresh
@@ -28,7 +28,13 @@ const GroupCellRenderer = forwardRef((props, ref) => {
     useLayoutEffect(() => {
         return showJsComp(innerCompDetails, context, eValueRef.current);
     }, [innerCompDetails]);
-    useLayoutEffectOnce(() => {
+    const setRef = useCallback((ref) => {
+        eGui.current = ref;
+        if (!eGui.current) {
+            context.destroyBean(ctrlRef.current);
+            ctrlRef.current = null;
+            return;
+        }
         const compProxy = {
             setInnerRenderer: (details, valueToDisplay) => {
                 setInnerCompDetails(details);
@@ -40,10 +46,9 @@ const GroupCellRenderer = forwardRef((props, ref) => {
             setExpandedDisplayed: displayed => setExpandedCssClasses(prev => prev.setClass('ag-hidden', !displayed)),
             setCheckboxVisible: visible => setCheckboxCssClasses(prev => prev.setClass('ag-invisible', !visible))
         };
-        const ctrl = context.createBean(new GroupCellRendererCtrl());
-        ctrl.init(compProxy, eGui.current, eCheckboxRef.current, eExpandedRef.current, eContractedRef.current, GroupCellRenderer, props);
-        return () => { context.destroyBean(ctrl); };
-    });
+        ctrlRef.current = context.createBean(new GroupCellRendererCtrl());
+        ctrlRef.current.init(compProxy, eGui.current, eCheckboxRef.current, eExpandedRef.current, eContractedRef.current, GroupCellRenderer, props);
+    }, []);
     const className = useMemo(() => `ag-cell-wrapper ${cssClasses.toString()}`, [cssClasses]);
     const expandedClassName = useMemo(() => `ag-group-expanded ${expandedCssClasses.toString()}`, [expandedCssClasses]);
     const contractedClassName = useMemo(() => `ag-group-contracted ${contractedCssClasses.toString()}`, [contractedCssClasses]);
@@ -52,7 +57,7 @@ const GroupCellRenderer = forwardRef((props, ref) => {
     const FwRenderer = useFwRenderer ? innerCompDetails.componentClass : undefined;
     const useValue = innerCompDetails == null && value != null;
     const escapedValue = _.escapeString(value, true);
-    return (React.createElement("span", Object.assign({ className: className, ref: eGui }, (!props.colDef ? { role: 'gridcell' } : {})),
+    return (React.createElement("span", Object.assign({ className: className, ref: setRef }, (!props.colDef ? { role: 'gridcell' } : {})),
         React.createElement("span", { className: expandedClassName, ref: eExpandedRef }),
         React.createElement("span", { className: contractedClassName, ref: eContractedRef }),
         React.createElement("span", { className: checkboxClassName, ref: eCheckboxRef }),

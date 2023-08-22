@@ -21,17 +21,14 @@ export class DefaultDateComponent extends Component {
         super.destroy();
     }
     init(params) {
+        this.params = params;
+        this.setParams(params);
         const eDocument = this.gridOptionsService.getDocument();
         const inputElement = this.eDateInput.getInputElement();
-        const shouldUseBrowserDatePicker = this.shouldUseBrowserDatePicker(params);
-        if (shouldUseBrowserDatePicker) {
-            inputElement.type = 'date';
-        }
         // ensures that the input element is focussed when a clear button is clicked,
         // unless using safari as there is no clear button and focus does not work properly
-        const usingSafariDatePicker = shouldUseBrowserDatePicker && isBrowserSafari();
         this.addManagedListener(inputElement, 'mousedown', () => {
-            if (this.eDateInput.isDisabled() || usingSafariDatePicker) {
+            if (this.eDateInput.isDisabled() || this.usingSafariDatePicker) {
                 return;
             }
             inputElement.focus();
@@ -43,8 +40,14 @@ export class DefaultDateComponent extends Component {
             if (this.eDateInput.isDisabled()) {
                 return;
             }
-            params.onDateChanged();
+            this.params.onDateChanged();
         });
+    }
+    setParams(params) {
+        const inputElement = this.eDateInput.getInputElement();
+        const shouldUseBrowserDatePicker = this.shouldUseBrowserDatePicker(params);
+        this.usingSafariDatePicker = shouldUseBrowserDatePicker && isBrowserSafari();
+        inputElement.type = shouldUseBrowserDatePicker ? 'date' : 'text';
         const { minValidYear, maxValidYear } = params.filterParams || {};
         if (minValidYear) {
             inputElement.min = `${minValidYear}-01-01`;
@@ -52,6 +55,10 @@ export class DefaultDateComponent extends Component {
         if (maxValidYear) {
             inputElement.max = `${maxValidYear}-12-31`;
         }
+    }
+    onParamsUpdated(params) {
+        this.params = params;
+        this.setParams(params);
     }
     getDate() {
         return parseDateTimeFromString(this.eDateInput.getValue());

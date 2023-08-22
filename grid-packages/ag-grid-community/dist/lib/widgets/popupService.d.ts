@@ -33,6 +33,7 @@ export interface AgPopup {
     hideFunc: () => void;
     isAnchored: boolean;
     instanceId: number;
+    alignedToElement?: HTMLElement;
     stopAnchoringPromise?: AgPromise<() => void>;
 }
 export interface AddPopupParams {
@@ -72,6 +73,8 @@ export declare class PopupService extends BeanStub {
         type: string;
         eventSource: HTMLElement;
     }): void;
+    private shouldRenderUnderOrAbove;
+    private setAlignedStyles;
     private callPostProcessPopup;
     positionPopup(params: PopupPositionParams): void;
     getActivePopups(): HTMLElement[];
@@ -83,6 +86,7 @@ export declare class PopupService extends BeanStub {
     private createPopupWrapper;
     private addEventListenersToPopup;
     private addPopupToPopupList;
+    private getPopupIndex;
     setPopupPositionRelatedToElement(popupEl: HTMLElement, relativeElement?: HTMLElement | null): AgPromise<() => void> | undefined;
     private removePopupFromPopupList;
     private keepPopupPositionedRelativeTo;

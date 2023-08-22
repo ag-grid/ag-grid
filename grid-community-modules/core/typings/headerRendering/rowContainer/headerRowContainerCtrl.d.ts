@@ -7,6 +7,7 @@ import { FocusService } from "../../focusService";
 import { ColumnGroup } from "../../entities/columnGroup";
 import { HeaderCellCtrl } from "../cells/column/headerCellCtrl";
 import { HeaderGroupCellCtrl } from "../cells/columnGroup/headerGroupCellCtrl";
+import { FilterManager } from "../../filter/filterManager";
 export interface IHeaderRowContainerComp {
     setCenterWidth(width: string): void;
     setViewportScrollLeft(left: number): void;
@@ -20,6 +21,7 @@ export declare class HeaderRowContainerCtrl extends BeanStub {
     private pinnedWidthService;
     private columnModel;
     focusService: FocusService;
+    filterManager: FilterManager;
     private pinned;
     private comp;
     private hidden;

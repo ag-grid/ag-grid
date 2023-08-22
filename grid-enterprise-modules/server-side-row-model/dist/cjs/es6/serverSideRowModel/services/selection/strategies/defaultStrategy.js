@@ -107,8 +107,9 @@ class DefaultStrategy extends core_1.BeanStub {
             else {
                 delete this.selectedNodes[node.id];
             }
+            const isNodeSelectable = node.selectable;
             const doesNodeConform = params.newValue === this.selectedState.selectAll;
-            if (doesNodeConform) {
+            if (doesNodeConform || !isNodeSelectable) {
                 this.selectedState.toggledNodes.delete(node.id);
                 return;
             }

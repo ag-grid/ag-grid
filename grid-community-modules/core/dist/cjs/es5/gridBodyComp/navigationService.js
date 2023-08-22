@@ -333,7 +333,7 @@ var NavigationService = /** @class */ (function (_super) {
                 }
                 else {
                     keyboardEvent.preventDefault();
-                    this.focusService.focusLastHeader(keyboardEvent);
+                    this.focusService.focusPreviousFromFirstCell(keyboardEvent);
                 }
             }
         }
@@ -514,7 +514,8 @@ var NavigationService = /** @class */ (function (_super) {
                     headerPosition: {
                         headerRowIndex: headerLen + (nextPosition.rowIndex),
                         column: nextPosition.column
-                    }
+                    },
+                    fromCell: true
                 });
                 return null;
             }
@@ -643,7 +644,8 @@ var NavigationService = /** @class */ (function (_super) {
             var headerLen = this.headerNavigationService.getHeaderRowCount();
             this.focusService.focusHeaderPosition({
                 headerPosition: { headerRowIndex: headerLen + (nextCell.rowIndex), column: currentCell.column },
-                event: event || undefined
+                event: event || undefined,
+                fromCell: true
             });
             return;
         }

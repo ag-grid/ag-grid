@@ -87,6 +87,21 @@ export class AgAbstractInputField extends AgAbstractField {
         setDisabled(this.eInput, disabled);
         return super.setDisabled(disabled);
     }
+    setAutoComplete(value) {
+        if (value === true) {
+            // Remove the autocomplete attribute if the value is explicitly set to true
+            // to allow the default browser autocomplete/autofill behaviour.
+            addOrRemoveAttribute(this.eInput, 'autocomplete', null);
+        }
+        else {
+            // When a string is provided, use it as the value of the autocomplete attribute.
+            // This enables users to specify how they want to the browser to handle the autocomplete on the input, as per spec:
+            // https://developer.mozilla.org/en-US/docs/Web/HTML/Attributes/autocomplete#values
+            const autoCompleteValue = typeof value === 'string' ? value : 'off';
+            addOrRemoveAttribute(this.eInput, 'autocomplete', autoCompleteValue);
+        }
+        return this;
+    }
 }
 __decorate([
     RefSelector('eLabel')

@@ -444,7 +444,7 @@ var GridBodyScrollFeature = /** @class */ (function (_super) {
             }
             if (newScrollPosition !== null) {
                 this.setVerticalScrollPosition(newScrollPosition);
-                this.rowRenderer.redraw();
+                this.rowRenderer.redraw({ afterScroll: true });
             }
             // the row can get shifted if during the rendering (during rowRenderer.redraw()),
             // the height of a row changes due to lazy calculation of row heights when using

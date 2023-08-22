@@ -29,11 +29,18 @@ export class DateFloatingFilter extends SimpleFloatingFilter {
         this.params = params;
         this.filterParams = params.filterParams;
         this.createDateComponent();
+        this.filterModelFormatter = new DateFilterModelFormatter(this.filterParams, this.localeService, this.optionsFactory);
         const translate = this.localeService.getLocaleTextFunc();
         this.eReadOnlyText
             .setDisabled(true)
             .setInputAriaLabel(translate('ariaDateFilterInput', 'Date Filter Input'));
-        this.filterModelFormatter = new DateFilterModelFormatter(this.filterParams, this.localeService, this.optionsFactory);
+    }
+    onParamsUpdated(params) {
+        super.onParamsUpdated(params);
+        this.params = params;
+        this.filterParams = params.filterParams;
+        this.updateDateComponent();
+        this.filterModelFormatter.updateParams({ optionsFactory: this.optionsFactory, dateFilterParams: this.filterParams });
     }
     setEditable(editable) {
         setDisplayed(this.eDateWrapper, editable);
@@ -76,14 +83,24 @@ export class DateFloatingFilter extends SimpleFloatingFilter {
             }
         });
     }
-    createDateComponent() {
+    getDateComponentParams() {
         const debounceMs = ProvidedFilter.getDebounceMs(this.params.filterParams, this.getDefaultDebounceMs());
-        const dateComponentParams = {
+        return {
             onDateChanged: debounce(this.onDateChanged.bind(this), debounceMs),
             filterParams: this.params.column.getColDef().filterParams
         };
-        this.dateComp = new DateCompWrapper(this.getContext(), this.userComponentFactory, dateComponentParams, this.eDateWrapper);
+    }
+    createDateComponent() {
+        this.dateComp = new DateCompWrapper(this.getContext(), this.userComponentFactory, this.getDateComponentParams(), this.eDateWrapper);
         this.addDestroyFunc(() => this.dateComp.destroy());
+    }
+    updateDateComponent() {
+        const params = this.getDateComponentParams();
+        const { api, columnApi, context } = this.gridOptionsService;
+        params.api = api;
+        params.columnApi = columnApi;
+        params.context = context;
+        this.dateComp.updateParams(params);
     }
     getFilterModelFormatter() {
         return this.filterModelFormatter;

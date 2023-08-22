@@ -41,29 +41,27 @@ var HeaderRowComp = /** @class */ (function (_super) {
     function HeaderRowComp(ctrl) {
         var _this = _super.call(this) || this;
         _this.headerComps = {};
-        var extraClass = ctrl.getType() == HeaderRowType.COLUMN_GROUP ? "ag-header-row-column-group" :
-            ctrl.getType() == HeaderRowType.FLOATING_FILTER ? "ag-header-row-column-filter" : "ag-header-row-column";
-        _this.setTemplate(/* html */ "<div class=\"ag-header-row " + extraClass + "\" role=\"row\"></div>");
         _this.ctrl = ctrl;
+        _this.setTemplate(/* html */ "<div class=\"" + _this.ctrl.getHeaderRowClass() + "\" role=\"row\"></div>");
         return _this;
     }
     //noinspection JSUnusedLocalSymbols
     HeaderRowComp.prototype.init = function () {
         var _this = this;
+        this.getGui().style.transform = this.ctrl.getTransform();
+        aria_1.setAriaRowIndex(this.getGui(), this.ctrl.getAriaRowIndex());
         var compProxy = {
-            setTransform: function (transform) { return _this.getGui().style.transform = transform; },
             setHeight: function (height) { return _this.getGui().style.height = height; },
             setTop: function (top) { return _this.getGui().style.top = top; },
-            setHeaderCtrls: function (ctrls) { return _this.setHeaderCtrls(ctrls); },
+            setHeaderCtrls: function (ctrls, forceOrder) { return _this.setHeaderCtrls(ctrls, forceOrder); },
             setWidth: function (width) { return _this.getGui().style.width = width; },
-            setAriaRowIndex: function (rowIndex) { return aria_1.setAriaRowIndex(_this.getGui(), rowIndex); }
         };
         this.ctrl.setComp(compProxy);
     };
     HeaderRowComp.prototype.destroyHeaderCtrls = function () {
-        this.setHeaderCtrls([]);
+        this.setHeaderCtrls([], false);
     };
-    HeaderRowComp.prototype.setHeaderCtrls = function (ctrls) {
+    HeaderRowComp.prototype.setHeaderCtrls = function (ctrls, forceOrder) {
         var _this = this;
         if (!this.isAlive()) {
             return;
@@ -84,9 +82,7 @@ var HeaderRowComp = /** @class */ (function (_super) {
             _this.getGui().removeChild(comp.getGui());
             _this.destroyBean(comp);
         });
-        var isEnsureDomOrder = this.gridOptionsService.is('ensureDomOrder');
-        var isPrintLayout = this.gridOptionsService.isDomLayout('print');
-        if (isEnsureDomOrder || isPrintLayout) {
+        if (forceOrder) {
             var comps = object_1.getAllValuesInObject(this.headerComps);
             // ordering the columns by left position orders them in the order they appear on the screen
             comps.sort(function (a, b) {

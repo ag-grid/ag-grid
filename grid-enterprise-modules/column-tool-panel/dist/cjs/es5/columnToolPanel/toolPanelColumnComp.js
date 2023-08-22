@@ -63,7 +63,7 @@ var ToolPanelColumnComp = /** @class */ (function (_super) {
         this.addManagedListener(this.focusWrapper, 'keydown', this.handleKeyDown.bind(this));
         this.addManagedListener(this.focusWrapper, 'contextmenu', this.onContextMenu.bind(this));
         this.addManagedPropertyListener('functionsReadOnly', this.onColumnStateChanged.bind(this));
-        this.addManagedListener(this.cbSelect, core_1.AgCheckbox.EVENT_CHANGED, this.onCheckboxChanged.bind(this));
+        this.addManagedListener(this.cbSelect, core_1.Events.EVENT_FIELD_VALUE_CHANGED, this.onCheckboxChanged.bind(this));
         this.addManagedListener(this.eLabel, 'click', this.onLabelClicked.bind(this));
         this.onColumnStateChanged();
         this.refreshAriaLabel();

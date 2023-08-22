@@ -71,7 +71,7 @@ Simple editor that uses HTML `select`.
 
 Specified with `agSelectCellEditor` and configured with `ILargeTextEditorParams`.
 
-<interface-documentation interfaceName='ISelectCellEditorParams' names='["values"]'></interface-documentation>
+<interface-documentation interfaceName='ISelectCellEditorParams' names='["values", "valueListGap"]'></interface-documentation>
 
 <snippet transform={false}>
 columnDefs: [
@@ -79,6 +79,7 @@ columnDefs: [
         cellEditor: 'agSelectCellEditor',
         cellEditorParams: {
             values: ['English', 'Spanish', 'French', 'Portuguese', '(other)'],
+            valueListGap: 0
         }
         // ...other props
     }
@@ -95,7 +96,7 @@ Note there is no need to specify `cellEditorPopup=true` for Select Cell Editor a
 |editing and 2) single click to open the Select.
 |
 |We also observed different results while using keyboard navigation to control editing, e.g.
-|while using <kbd>Enter</kbd> to start editing. Some browsers would open the Select, others would not.
+|while using `Enter` to start editing. Some browsers would open the Select, others would not.
 |This is down to the browser implementation and given there is no API for opening the
 |Select, there is nothing the grid can do.
 |
@@ -121,13 +122,12 @@ Benefits over browser's `select` are as follows:
 
 Specified with `agRichSelectCellEditor` and configured with `IRichCellEditorParams`.
 
-<interface-documentation interfaceName='IRichCellEditorParams' names='["values", "cellHeight", "formatValue", "cellRenderer", "searchDebounceDelay" ]'></interface-documentation>
+<interface-documentation interfaceName='IRichCellEditorParams' names='["values", "cellHeight", "valueListGap", "formatValue", "cellRenderer", "searchDebounceDelay" ]'></interface-documentation>
 
 <snippet transform={false}>
 columnDefs: [
     {
         cellEditor: 'agRichSelectCellEditor',
-        cellEditorPopup: true,
         cellEditorParams: {
             values: ['English', 'Spanish', 'French', 'Portuguese', '(other)'],
             cellHeight: 20,

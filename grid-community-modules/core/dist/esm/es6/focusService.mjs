@@ -262,8 +262,11 @@ let FocusService = FocusService_1 = class FocusService extends BeanStub {
         this.focusedHeaderPosition = { headerRowIndex, column };
     }
     focusHeaderPosition(params) {
-        const { direction, fromTab, allowUserOverride, event } = params;
+        const { direction, fromTab, allowUserOverride, event, fromCell } = params;
         let { headerPosition } = params;
+        if (fromCell && this.filterManager.isAdvancedFilterHeaderActive()) {
+            return this.focusAdvancedFilter(headerPosition);
+        }
         if (allowUserOverride) {
             const currentPosition = this.getFocusedHeader();
             const headerRowCount = this.headerNavigationService.getHeaderRowCount();
@@ -297,7 +300,12 @@ let FocusService = FocusService_1 = class FocusService extends BeanStub {
             return false;
         }
         if (headerPosition.headerRowIndex === -1) {
-            return this.focusGridView(headerPosition.column);
+            if (this.filterManager.isAdvancedFilterHeaderActive()) {
+                return this.focusAdvancedFilter(headerPosition);
+            }
+            else {
+                return this.focusGridView(headerPosition.column);
+            }
         }
         this.headerNavigationService.scrollToColumn(headerPosition.column, direction);
         const headerRowContainerCtrl = this.ctrlsService.getHeaderRowContainerCtrl(headerPosition.column.getPinned());
@@ -324,6 +332,14 @@ let FocusService = FocusService_1 = class FocusService extends BeanStub {
             headerPosition: { headerRowIndex, column },
             event
         });
+    }
+    focusPreviousFromFirstCell(event) {
+        if (this.filterManager.isAdvancedFilterHeaderActive()) {
+            return this.focusAdvancedFilter(null);
+        }
+        else {
+            return this.focusLastHeader(event);
+        }
     }
     isAnyCellFocused() {
         return !!this.focusedCellPosition;
@@ -469,6 +485,28 @@ let FocusService = FocusService_1 = class FocusService extends BeanStub {
         }
         return false;
     }
+    focusAdvancedFilter(position) {
+        this.advancedFilterFocusColumn = position === null || position === void 0 ? void 0 : position.column;
+        return this.advancedFilterService.getCtrl().focusHeaderComp();
+    }
+    focusNextFromAdvancedFilter(backwards, forceFirstColumn) {
+        var _a, _b;
+        const column = (_a = (forceFirstColumn ? undefined : this.advancedFilterFocusColumn)) !== null && _a !== void 0 ? _a : (_b = this.columnModel.getAllDisplayedColumns()) === null || _b === void 0 ? void 0 : _b[0];
+        if (backwards) {
+            return this.focusHeaderPosition({
+                headerPosition: {
+                    column: column,
+                    headerRowIndex: this.headerNavigationService.getHeaderRowCount() - 1
+                }
+            });
+        }
+        else {
+            return this.focusGridView(column);
+        }
+    }
+    clearAdvancedFilterColumn() {
+        this.advancedFilterFocusColumn = undefined;
+    }
 };
 FocusService.AG_KEYBOARD_FOCUS = 'ag-keyboard-focus';
 FocusService.keyboardModeActive = false;
@@ -500,6 +538,12 @@ __decorate([
 __decorate([
     Autowired('ctrlsService')
 ], FocusService.prototype, "ctrlsService", void 0);
+__decorate([
+    Autowired('filterManager')
+], FocusService.prototype, "filterManager", void 0);
+__decorate([
+    Optional('advancedFilterService')
+], FocusService.prototype, "advancedFilterService", void 0);
 __decorate([
     PostConstruct
 ], FocusService.prototype, "init", null);

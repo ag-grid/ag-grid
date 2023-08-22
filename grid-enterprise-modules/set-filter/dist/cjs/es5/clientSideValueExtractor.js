@@ -4,7 +4,7 @@ exports.ClientSideValuesExtractor = void 0;
 var core_1 = require("@ag-grid-community/core");
 /** @param V type of value in the Set Filter */
 var ClientSideValuesExtractor = /** @class */ (function () {
-    function ClientSideValuesExtractor(rowModel, filterParams, createKey, caseFormat, columnModel, valueService, treeDataOrGrouping, treeData, getDataPath) {
+    function ClientSideValuesExtractor(rowModel, filterParams, createKey, caseFormat, columnModel, valueService, treeDataOrGrouping, treeData, getDataPath, groupAllowUnbalanced) {
         this.rowModel = rowModel;
         this.filterParams = filterParams;
         this.createKey = createKey;
@@ -14,6 +14,7 @@ var ClientSideValuesExtractor = /** @class */ (function () {
         this.treeDataOrGrouping = treeDataOrGrouping;
         this.treeData = treeData;
         this.getDataPath = getDataPath;
+        this.groupAllowUnbalanced = groupAllowUnbalanced;
     }
     ClientSideValuesExtractor.prototype.extractUniqueValues = function (predicate, existingValues) {
         var _this = this;
@@ -99,8 +100,8 @@ var ClientSideValuesExtractor = /** @class */ (function () {
         if (dataPath) {
             dataPath = dataPath.map(function (treeKey) { return core_1._.toStringOrNull(core_1._.makeNull(treeKey)); });
         }
-        if (dataPath === null || dataPath === void 0 ? void 0 : dataPath.some(function (treeKey) { return treeKey == null; })) {
-            dataPath = null;
+        if (!treeData && this.groupAllowUnbalanced && (dataPath === null || dataPath === void 0 ? void 0 : dataPath.some(function (treeKey) { return treeKey == null; }))) {
+            dataPath = dataPath.filter(function (treeKey) { return treeKey != null; });
         }
         addValue(this.createKey(dataPath), dataPath);
     };

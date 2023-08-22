@@ -1,7 +1,6 @@
 import { ICellRendererComp } from '@ag-grid-community/core';
 import { MutableRefObject, useCallback, useContext, useEffect } from 'react';
 import { BeansContext } from '../beansContext';
-import { useEffectOnce } from '../useEffectOnce';
 import { RenderDetails } from './cellComp';
 
 const useJsCellRenderer = (
@@ -12,7 +11,7 @@ const useJsCellRenderer = (
     jsCellRendererRef: MutableRefObject<ICellRendererComp|undefined>,
     eGui: MutableRefObject<any>) => {
 
-        const {context, userComponentFactory} = useContext(BeansContext);
+        const {context} = useContext(BeansContext);
 
         const destroyCellRenderer = useCallback(() => {
             const comp = jsCellRendererRef.current;
@@ -70,15 +69,16 @@ const useJsCellRenderer = (
             parent.appendChild(compGui);
 
             jsCellRendererRef.current = comp;
+            // We do not return the destroy here as we want to keep the comp alive for our custom refresh approach above
 
         }, [showDetails, showTools, cellValueVersion]);
 
         // this effect makes sure destroyCellRenderer gets called when the
         // component is destroyed. as the other effect only updates when there
         // is a change in state
-        useEffectOnce(() => {
+        useEffect(() => {
             return destroyCellRenderer;
-        });
+        }, []);
 }
 
 export default useJsCellRenderer;

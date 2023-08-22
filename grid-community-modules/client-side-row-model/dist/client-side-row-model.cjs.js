@@ -1,5 +1,5 @@
 /**
-          * @ag-grid-community/client-side-row-model - Advanced Data Grid / Data Table supporting Javascript / Typescript / React / Angular / Vue * @version v30.0.6
+          * @ag-grid-community/client-side-row-model - Advanced Data Grid / Data Table supporting Javascript / Typescript / React / Angular / Vue * @version v30.1.0
           * @link https://www.ag-grid.com/
           * @license MIT
           */
@@ -1223,6 +1223,9 @@ var ClientSideRowModel = /** @class */ (function (_super) {
     ClientSideRowModel.prototype.resetRowHeights = function () {
         var atLeastOne = this.resetRowHeightsForAllRowNodes();
         this.rootNode.setRowHeight(this.rootNode.rowHeight, true);
+        if (this.rootNode.sibling) {
+            this.rootNode.sibling.setRowHeight(this.rootNode.sibling.rowHeight, true);
+        }
         // when pivotMode but pivot not active, root node is displayed on its own
         // because it's only ever displayed alone, refreshing the model (onRowHeightChanged) is not required
         if (atLeastOne) {
@@ -1239,6 +1242,9 @@ var ClientSideRowModel = /** @class */ (function (_super) {
             var detailNode = rowNode.detailNode;
             if (detailNode) {
                 detailNode.setRowHeight(detailNode.rowHeight, true);
+            }
+            if (rowNode.sibling) {
+                rowNode.sibling.setRowHeight(rowNode.sibling.rowHeight, true);
             }
             atLeastOne = true;
         });
@@ -1796,9 +1802,7 @@ var FilterService = /** @class */ (function (_super) {
         return _super !== null && _super.apply(this, arguments) || this;
     }
     FilterService.prototype.filter = function (changedPath) {
-        var filterActive = this.filterManager.isColumnFilterPresent()
-            || this.filterManager.isQuickFilterPresent()
-            || this.filterManager.isExternalFilterPresent();
+        var filterActive = this.filterManager.isChildFilterPresent();
         this.filterNodes(filterActive, changedPath);
     };
     FilterService.prototype.filterNodes = function (filterActive, changedPath) {
@@ -2006,7 +2010,7 @@ var ImmutableService = /** @class */ (function (_super) {
 }(core.BeanStub));
 
 // DO NOT UPDATE MANUALLY: Generated from script during build time
-var VERSION = '30.0.6';
+var VERSION = '30.1.0';
 
 var ClientSideRowModelModule = {
     version: VERSION,

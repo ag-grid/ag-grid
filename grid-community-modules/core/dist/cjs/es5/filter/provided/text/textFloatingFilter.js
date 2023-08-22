@@ -27,16 +27,18 @@ var TextFloatingFilter = /** @class */ (function (_super) {
         _super.prototype.init.call(this, params);
         this.filterModelFormatter = new textFilter_1.TextFilterModelFormatter(this.localeService, this.optionsFactory);
     };
+    TextFloatingFilter.prototype.onParamsUpdated = function (params) {
+        _super.prototype.onParamsUpdated.call(this, params);
+        this.filterModelFormatter.updateParams({ optionsFactory: this.optionsFactory });
+    };
     TextFloatingFilter.prototype.getDefaultFilterOptions = function () {
         return textFilter_1.TextFilter.DEFAULT_FILTER_OPTIONS;
     };
     TextFloatingFilter.prototype.getFilterModelFormatter = function () {
         return this.filterModelFormatter;
     };
-    TextFloatingFilter.prototype.createFloatingFilterInputService = function (ariaLabel) {
-        return this.createManagedBean(new textInputFloatingFilter_1.FloatingFilterTextInputService({
-            ariaLabel: ariaLabel
-        }));
+    TextFloatingFilter.prototype.createFloatingFilterInputService = function () {
+        return this.createManagedBean(new textInputFloatingFilter_1.FloatingFilterTextInputService());
     };
     return TextFloatingFilter;
 }(textInputFloatingFilter_1.TextInputFloatingFilter));

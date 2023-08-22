@@ -115,9 +115,9 @@ const GridComp = (props) => {
     const cssClasses = createMemo(() => classesList('ag-root-wrapper', rtlClass(), keyboardFocusClass(), layoutClass(), props.class));
     const bodyCssClasses = createMemo(() => classesList('ag-root-wrapper-body', 'ag-focus-managed', layoutClass()));
     const topStyle = createMemo(() => ({
-        userSelect: userSelect != null ? userSelect : '',
-        WebkitUserSelect: userSelect != null ? userSelect : '',
-        cursor: cursor != null ? cursor : ''
+        userSelect: userSelect != null ? userSelect() : '',
+        WebkitUserSelect: userSelect != null ? userSelect() : '',
+        cursor: cursor != null ? cursor() : ''
     }));
     return (<div ref={eGui} class={cssClasses()} style={topStyle()}>
             <div class={bodyCssClasses()} ref={eBody}>

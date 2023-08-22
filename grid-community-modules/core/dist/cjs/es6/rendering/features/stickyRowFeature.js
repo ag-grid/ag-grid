@@ -30,8 +30,7 @@ class StickyRowFeature extends beanStub_1.BeanStub {
     checkStickyRows() {
         let height = 0;
         if (!this.gridOptionsService.isGroupRowsSticky()) {
-            this.refreshNodesAndContainerHeight([], height);
-            return;
+            return this.refreshNodesAndContainerHeight([], height);
         }
         const stickyRows = [];
         const firstPixel = this.rowRenderer.getFirstVisibleVerticalPixel();
@@ -111,7 +110,7 @@ class StickyRowFeature extends beanStub_1.BeanStub {
             }
             break;
         }
-        this.refreshNodesAndContainerHeight(stickyRows, height);
+        return this.refreshNodesAndContainerHeight(stickyRows, height);
     }
     refreshStickyNode(stickRowNode) {
         const allStickyNodes = [];
@@ -121,12 +120,17 @@ class StickyRowFeature extends beanStub_1.BeanStub {
                 allStickyNodes.push(currentNode);
             }
         }
-        this.refreshNodesAndContainerHeight(allStickyNodes, this.containerHeight);
-        this.checkStickyRows();
+        if (this.refreshNodesAndContainerHeight(allStickyNodes, this.containerHeight)) {
+            this.checkStickyRows();
+        }
     }
     refreshNodesAndContainerHeight(allStickyNodes, height) {
+        let stickyRowsChanged = false;
         const removedCtrls = this.stickyRowCtrls.filter(ctrl => allStickyNodes.indexOf(ctrl.getRowNode()) === -1);
         const addedNodes = allStickyNodes.filter(rowNode => this.stickyRowCtrls.findIndex(ctrl => ctrl.getRowNode() === rowNode) === -1);
+        if (removedCtrls.length || addedNodes.length) {
+            stickyRowsChanged = true;
+        }
         const ctrlsToDestroy = {};
         removedCtrls.forEach(removedCtrl => {
             ctrlsToDestroy[removedCtrl.getRowNode().id] = removedCtrl;
@@ -146,7 +150,9 @@ class StickyRowFeature extends beanStub_1.BeanStub {
         if (this.containerHeight !== height) {
             this.containerHeight = height;
             this.gridBodyCtrl.setStickyTopHeight(height);
+            stickyRowsChanged = true;
         }
+        return stickyRowsChanged;
     }
 }
 __decorate([

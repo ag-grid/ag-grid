@@ -386,7 +386,14 @@ var DataTypeService = /** @class */ (function (_super) {
             if (columnTypeOverridesExist) {
                 _this.columnModel.processResizeOperations();
             }
+            var dataTypesInferredEvent = {
+                type: Events.EVENT_DATA_TYPES_INFERRED
+            };
+            _this.eventService.dispatchEvent(dataTypesInferredEvent);
         });
+    };
+    DataTypeService.prototype.isPendingInference = function () {
+        return this.isWaitingForRowData;
     };
     DataTypeService.prototype.processColumnsPendingInference = function (firstRowData, columnTypeOverridesExist) {
         var _this = this;
@@ -474,13 +481,23 @@ var DataTypeService = /** @class */ (function (_super) {
     DataTypeService.prototype.getDateFormatterFunction = function () {
         return this.getDateStringTypeDefinition().dateFormatter;
     };
+    DataTypeService.prototype.getDataTypeDefinition = function (column) {
+        var colDef = column.getColDef();
+        if (!colDef.cellDataType) {
+            return undefined;
+        }
+        return this.dataTypeDefinitions[colDef.cellDataType];
+    };
+    DataTypeService.prototype.getBaseDataType = function (column) {
+        var _a;
+        return (_a = this.getDataTypeDefinition(column)) === null || _a === void 0 ? void 0 : _a.baseDataType;
+    };
     DataTypeService.prototype.checkType = function (column, value) {
         var _a;
-        var colDef = column.getColDef();
-        if (!colDef.cellDataType || value == null) {
+        if (value == null) {
             return true;
         }
-        var dataTypeMatcher = (_a = this.dataTypeDefinitions[colDef.cellDataType]) === null || _a === void 0 ? void 0 : _a.dataTypeMatcher;
+        var dataTypeMatcher = (_a = this.getDataTypeDefinition(column)) === null || _a === void 0 ? void 0 : _a.dataTypeMatcher;
         if (!dataTypeMatcher) {
             return true;
         }

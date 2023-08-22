@@ -2,23 +2,20 @@ import { createEffect, createMemo, createSignal, onMount } from 'solid-js';
 import { CssClasses } from '../core/utils';
 import UserComp from '../userComps/userComp';
 const HeaderGroupCellComp = (props) => {
+    const { ctrl } = props;
     const [getCssClasses, setCssClasses] = createSignal(new CssClasses());
     const [getCssResizableClasses, setResizableCssClasses] = createSignal(new CssClasses());
     const [getResizableAriaHidden, setResizableAriaHidden] = createSignal("false");
     const [getWidth, setWidth] = createSignal();
-    const [getTitle, setTitle] = createSignal();
-    const [getColId, setColId] = createSignal();
+    const [getColId, setColId] = createSignal(ctrl.getColId());
     const [getAriaExpanded, setAriaExpanded] = createSignal();
     const [getUserCompDetails, setUserCompDetails] = createSignal();
     let eGui;
     let eResize;
-    const { ctrl } = props;
     onMount(() => {
         const compProxy = {
             setWidth: width => setWidth(width),
             addOrRemoveCssClass: (name, on) => setCssClasses(getCssClasses().setClass(name, on)),
-            setColId: id => setColId(id),
-            setTitle: title => setTitle(title),
             setUserCompDetails: compDetails => setUserCompDetails(compDetails),
             setResizableDisplayed: (displayed) => {
                 setResizableCssClasses(prev => prev.setClass('ag-hidden', !displayed));
@@ -41,7 +38,7 @@ const HeaderGroupCellComp = (props) => {
     }));
     const getClassName = createMemo(() => 'ag-header-group-cell ' + getCssClasses().toString());
     const getResizableClassName = createMemo(() => 'ag-header-cell-resize ' + getCssResizableClasses().toString());
-    return (<div ref={eGui} class={getClassName()} style={style()} title={getTitle()} col-id={getColId()} role="columnheader" tabIndex={-1} aria-expanded={getAriaExpanded()}>
+    return (<div ref={eGui} class={getClassName()} style={style()} col-id={getColId()} role="columnheader" tabIndex={-1} aria-expanded={getAriaExpanded()}>
 
             {getUserCompDetails()
             && <UserComp compDetails={getUserCompDetails()}/>}

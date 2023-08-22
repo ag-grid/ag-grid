@@ -1,15 +1,15 @@
 {
   "name": "ag-grid-angular",
-  "version": "30.0.6",
+  "version": "30.1.0",
   "scripts": {
     "clean": "rimraf dist .hash",
     "ng": "./node_modules/.bin/ng",
     "start": "./node_modules/.bin/ng serve",
-    "build": "npx gulp copy-from-module-source && ./node_modules/.bin/ng build && npm run hash",
+    "build": "npx gulp copy-from-module-source && ./node_modules/.bin/ng build",
+    "build-docs-initial": "npm run build",
     "build-prod": "npm run build",
     "test:e2e": "NODE_OPTIONS=--openssl-legacy-provider ./node_modules/.bin/ng test --watch false --browsers ChromeHeadless",
-    "lint": "./node_modules/.bin/ng lint",
-    "hash": "sh ../../scripts/hashDirectory.sh > .hash"
+    "lint": "./node_modules/.bin/ng lint"
   },
   "repository": {
     "type": "git",
@@ -33,8 +33,8 @@
     "zone.js": "~0.11.4"
   },
   "devDependencies": {
-    "ag-grid-community": "~30.0.6",
-    "@ag-grid-community/angular": "~30.0.6",
+    "ag-grid-community": "~30.1.0",
+    "@ag-grid-community/angular": "~30.1.0",
     "@angular-devkit/build-angular": "~12.2.17",
     "@angular/cli": "~12.2.17",
     "@angular/compiler-cli": "~12.2.0",

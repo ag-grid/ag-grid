@@ -201,6 +201,7 @@ export class SortController extends BeanStub {
         });
 
         const indexMap: Map<Column, number> = new Map();
+
         allSortedCols.forEach((col, idx) => indexMap.set(col, idx));
 
         // add the row group cols back
@@ -251,7 +252,7 @@ export class SortController extends BeanStub {
         }
 
         // if column has unique data, its sorting is independent - but can still be mixed
-        const columnHasUniqueData = !!column.getColDef().field;
+        const columnHasUniqueData = column.getColDef().field != null || !!column.getColDef().valueGetter;
         const sortableColumns = columnHasUniqueData ? [column, ...linkedColumns] : linkedColumns;
 
         const firstSort = sortableColumns[0].getSort();

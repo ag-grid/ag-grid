@@ -149,8 +149,9 @@ var DefaultStrategy = /** @class */ (function (_super) {
             else {
                 delete _this.selectedNodes[node.id];
             }
+            var isNodeSelectable = node.selectable;
             var doesNodeConform = params.newValue === _this.selectedState.selectAll;
-            if (doesNodeConform) {
+            if (doesNodeConform || !isNodeSelectable) {
                 _this.selectedState.toggledNodes.delete(node.id);
                 return;
             }

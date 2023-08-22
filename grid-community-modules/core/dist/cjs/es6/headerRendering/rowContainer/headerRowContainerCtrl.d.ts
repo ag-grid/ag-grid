@@ -1,4 +1,4 @@
-// Type definitions for @ag-grid-community/core v30.0.6
+// Type definitions for @ag-grid-community/core v30.1.0
 // Project: https://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { BeanStub } from "../../context/beanStub";
@@ -10,6 +10,7 @@ import { FocusService } from "../../focusService";
 import { ColumnGroup } from "../../entities/columnGroup";
 import { HeaderCellCtrl } from "../cells/column/headerCellCtrl";
 import { HeaderGroupCellCtrl } from "../cells/columnGroup/headerGroupCellCtrl";
+import { FilterManager } from "../../filter/filterManager";
 export interface IHeaderRowContainerComp {
     setCenterWidth(width: string): void;
     setViewportScrollLeft(left: number): void;
@@ -23,6 +24,7 @@ export declare class HeaderRowContainerCtrl extends BeanStub {
     private pinnedWidthService;
     private columnModel;
     focusService: FocusService;
+    filterManager: FilterManager;
     private pinned;
     private comp;
     private hidden;

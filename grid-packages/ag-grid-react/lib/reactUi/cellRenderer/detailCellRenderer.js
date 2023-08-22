@@ -1,4 +1,4 @@
-// ag-grid-react v30.0.6
+// ag-grid-react v30.1.0
 "use strict";
 var __assign = (this && this.__assign) || function () {
     __assign = Object.assign || function(t) {
@@ -36,15 +36,15 @@ var utils_1 = require("../utils");
 var ag_grid_community_1 = require("ag-grid-community");
 var beansContext_1 = require("../beansContext");
 var agGridReactUi_1 = require("../agGridReactUi");
-var useEffectOnce_1 = require("../useEffectOnce");
 var DetailCellRenderer = function (props, ref) {
     var _a = react_1.useContext(beansContext_1.BeansContext), ctrlsFactory = _a.ctrlsFactory, context = _a.context, gridOptionsService = _a.gridOptionsService, resizeObserverService = _a.resizeObserverService, clientSideRowModel = _a.clientSideRowModel, serverSideRowModel = _a.serverSideRowModel;
-    var _b = react_1.useState(new utils_1.CssClasses()), cssClasses = _b[0], setCssClasses = _b[1];
-    var _c = react_1.useState(new utils_1.CssClasses()), gridCssClasses = _c[0], setGridCssClasses = _c[1];
+    var _b = react_1.useState(function () { return new utils_1.CssClasses(); }), cssClasses = _b[0], setCssClasses = _b[1];
+    var _c = react_1.useState(function () { return new utils_1.CssClasses(); }), gridCssClasses = _c[0], setGridCssClasses = _c[1];
     var _d = react_1.useState(), detailGridOptions = _d[0], setDetailGridOptions = _d[1];
     var _e = react_1.useState(), detailRowData = _e[0], setDetailRowData = _e[1];
     var ctrlRef = react_1.useRef();
     var eGuiRef = react_1.useRef(null);
+    var resizeObserverDestroyFunc = react_1.useRef();
     var parentModules = react_1.useMemo(function () { return ag_grid_community_1.ModuleRegistry.__getGridRegisteredModules(props.api.getGridId()); }, [props]);
     var topClassName = react_1.useMemo(function () { return cssClasses.toString() + ' ag-details-row'; }, [cssClasses]);
     var gridClassName = react_1.useMemo(function () { return gridCssClasses.toString() + ' ag-details-grid'; }, [gridCssClasses]);
@@ -53,12 +53,18 @@ var DetailCellRenderer = function (props, ref) {
             refresh: function () { var _a, _b; return (_b = (_a = ctrlRef.current) === null || _a === void 0 ? void 0 : _a.refresh()) !== null && _b !== void 0 ? _b : false; }
         }); });
     }
-    useEffectOnce_1.useLayoutEffectOnce(function () {
-        if (props.template && typeof props.template === 'string') {
-            console.warn('AG Grid: detailCellRendererParams.template is not supported by React - this only works with frameworks that work against String templates. To change the template, please provide your own React Detail Cell Renderer.');
+    if (props.template) {
+        ag_grid_community_1._.doOnce(function () { return console.warn('AG Grid: detailCellRendererParams.template is not supported by AG Grid React. To change the template, provide a Custom Detail Cell Renderer. See https://ag-grid.com/react-data-grid/master-detail-custom-detail/'); }, "React_detailCellRenderer.template");
+    }
+    var setRef = react_1.useCallback(function (e) {
+        eGuiRef.current = e;
+        if (!eGuiRef.current) {
+            context.destroyBean(ctrlRef.current);
+            if (resizeObserverDestroyFunc.current) {
+                resizeObserverDestroyFunc.current();
+            }
+            return;
         }
-    });
-    useEffectOnce_1.useLayoutEffectOnce(function () {
         var compProxy = {
             addOrRemoveCssClass: function (name, on) { return setCssClasses(function (prev) { return prev.setClass(name, on); }); },
             addOrRemoveDetailGridCssClass: function (name, on) { return setGridCssClasses(function (prev) { return prev.setClass(name, on); }); },
@@ -73,7 +79,6 @@ var DetailCellRenderer = function (props, ref) {
         context.createBean(ctrl);
         ctrl.init(compProxy, props);
         ctrlRef.current = ctrl;
-        var resizeObserverDestroyFunc;
         if (gridOptionsService.is('detailRowAutoHeight')) {
             var checkRowSizeFunc = function () {
                 // when disposed, current is null, so nothing to do, and the resize observer will
@@ -101,21 +106,15 @@ var DetailCellRenderer = function (props, ref) {
                     setTimeout(updateRowHeightFunc, 0);
                 }
             };
-            resizeObserverDestroyFunc = resizeObserverService.observeResize(eGuiRef.current, checkRowSizeFunc);
+            resizeObserverDestroyFunc.current = resizeObserverService.observeResize(eGuiRef.current, checkRowSizeFunc);
             checkRowSizeFunc();
         }
-        return function () {
-            context.destroyBean(ctrl);
-            if (resizeObserverDestroyFunc) {
-                resizeObserverDestroyFunc();
-            }
-        };
-    });
+    }, []);
     var setGridApi = react_1.useCallback(function (api, columnApi) {
         var _a;
         (_a = ctrlRef.current) === null || _a === void 0 ? void 0 : _a.registerDetailWithMaster(api, columnApi);
     }, []);
-    return (react_1.default.createElement("div", { className: topClassName, ref: eGuiRef }, detailGridOptions &&
+    return (react_1.default.createElement("div", { className: topClassName, ref: setRef }, detailGridOptions &&
         react_1.default.createElement(agGridReactUi_1.AgGridReactUi, __assign({ className: gridClassName }, detailGridOptions, { modules: parentModules, rowData: detailRowData, setGridApi: setGridApi }))));
 };
 exports.default = react_1.forwardRef(DetailCellRenderer);

@@ -1,4 +1,4 @@
-// Type definitions for @ag-grid-community/core v30.0.6
+// Type definitions for @ag-grid-community/core v30.1.0
 // Project: https://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { Component } from '../../../widgets/component';
@@ -24,6 +24,8 @@ export declare abstract class SimpleFloatingFilter extends Component implements 
     protected setLastTypeFromModel(model: ProvidedFilterModel): void;
     protected canWeEditAfterModelFromParentFilter(model: ProvidedFilterModel): boolean;
     init(params: IFloatingFilterParams): void;
+    private setSimpleParams;
+    onParamsUpdated(params: IFloatingFilterParams): void;
     private doesFilterHaveSingleInput;
     private isTypeEditable;
 }

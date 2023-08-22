@@ -54,9 +54,13 @@ export interface IDateComparatorFunc {
     (filterLocalDateAtMidnight: Date, cellValue: any): number;
 }
 export declare class DateFilterModelFormatter extends SimpleFilterModelFormatter {
-    private readonly dateFilterParams;
+    private dateFilterParams;
     constructor(dateFilterParams: DateFilterParams, localeService: LocaleService, optionsFactory: OptionsFactory);
     protected conditionToString(condition: DateFilterModel, options?: IFilterOptionDef): string;
+    updateParams(params: {
+        dateFilterParams: DateFilterParams;
+        optionsFactory: OptionsFactory;
+    }): void;
 }
 export declare class DateFilter extends ScalarFilter<DateFilterModel, Date, DateCompWrapper> {
     static DEFAULT_FILTER_OPTIONS: import("../simpleFilter").ISimpleFilterModelType[];

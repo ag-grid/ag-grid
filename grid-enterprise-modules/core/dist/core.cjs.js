@@ -1,5 +1,5 @@
 /**
-          * @ag-grid-enterprise/core - Advanced Data Grid / Data Table supporting Javascript / Typescript / React / Angular / Vue * @version v30.0.6
+          * @ag-grid-enterprise/core - Advanced Data Grid / Data Table supporting Javascript / Typescript / React / Angular / Vue * @version v30.1.0
           * @link https://www.ag-grid.com/
           * @license Commercial
           */
@@ -475,7 +475,7 @@ var LicenseManager = /** @class */ (function () {
         console.error('****************************************************************************************************************************');
         this.watermarkMessage = "License Expired";
     };
-    LicenseManager.RELEASE_INFORMATION = 'MTY5MDI5NDc3MDg0Mg==';
+    LicenseManager.RELEASE_INFORMATION = 'MTY5MjU1NDg5NTU1NA==';
     return LicenseManager;
 }());
 
@@ -582,7 +582,7 @@ var WatermarkComp = /** @class */ (function (_super) {
 }(core.Component));
 
 // DO NOT UPDATE MANUALLY: Generated from script during build time
-var VERSION = '30.0.6';
+var VERSION = '30.1.0';
 
 var EnterpriseCoreModule = {
     version: VERSION,

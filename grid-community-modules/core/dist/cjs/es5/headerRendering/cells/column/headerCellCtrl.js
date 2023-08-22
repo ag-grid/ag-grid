@@ -63,7 +63,6 @@ var HeaderCellCtrl = /** @class */ (function (_super) {
         this.setupAutoHeight(eHeaderCompWrapper);
         this.addColumnHoverListener();
         this.setupFilterCss();
-        this.setupColId();
         this.setupClassesFromColDef();
         this.setupTooltip();
         this.addActiveHeaderMouseListeners();
@@ -86,6 +85,7 @@ var HeaderCellCtrl = /** @class */ (function (_super) {
         this.addManagedListener(this.eventService, eventKeys_1.Events.EVENT_COLUMN_ROW_GROUP_CHANGED, this.onColumnRowGroupChanged.bind(this));
         this.addManagedListener(this.eventService, eventKeys_1.Events.EVENT_COLUMN_PIVOT_CHANGED, this.onColumnPivotChanged.bind(this));
         this.addManagedListener(this.eventService, eventKeys_1.Events.EVENT_HEADER_HEIGHT_CHANGED, this.onHeaderHeightChanged.bind(this));
+        this.addManagedListener(this.eventService, eventKeys_1.Events.EVENT_DISPLAYED_COLUMNS_CHANGED, this.onHeaderHeightChanged.bind(this));
     };
     HeaderCellCtrl.prototype.addMouseDownListenerIfNeeded = function (eGui) {
         var _this = this;
@@ -205,7 +205,7 @@ var HeaderCellCtrl = /** @class */ (function (_super) {
             },
         };
         var tooltipFeature = this.createManagedBean(new tooltipFeature_1.TooltipFeature(tooltipCtrl, this.beans));
-        tooltipFeature.setComp(this.comp);
+        tooltipFeature.setComp(this.eGui);
         this.refreshFunctions.push(function () { return tooltipFeature.refreshToolTip(); });
     };
     HeaderCellCtrl.prototype.setupClassesFromColDef = function () {
@@ -409,7 +409,12 @@ var HeaderCellCtrl = /** @class */ (function (_super) {
         }
         var _b = this.getColumnGroupPaddingInfo(), numberOfParents = _b.numberOfParents, isSpanningTotal = _b.isSpanningTotal;
         comp.addOrRemoveCssClass('ag-header-span-height', numberOfParents > 0);
+        var headerHeight = columnModel.getColumnHeaderRowHeight();
         if (numberOfParents === 0) {
+            // if spanning has stopped then need to reset these values.
+            comp.addOrRemoveCssClass('ag-header-span-total', false);
+            eGui.style.setProperty('top', "0px");
+            eGui.style.setProperty('height', headerHeight + "px");
             return;
         }
         comp.addOrRemoveCssClass('ag-header-span-total', isSpanningTotal);
@@ -417,7 +422,6 @@ var HeaderCellCtrl = /** @class */ (function (_super) {
         var groupHeaderHeight = pivotMode
             ? columnModel.getPivotGroupHeaderHeight()
             : columnModel.getGroupHeaderHeight();
-        var headerHeight = columnModel.getColumnHeaderRowHeight();
         var extraHeight = numberOfParents * groupHeaderHeight;
         eGui.style.setProperty('top', -extraHeight + "px");
         eGui.style.setProperty('height', headerHeight + extraHeight + "px");
@@ -561,8 +565,8 @@ var HeaderCellCtrl = /** @class */ (function (_super) {
         this.addManagedListener(this.column, column_1.Column.EVENT_FILTER_ACTIVE_CHANGED, listener);
         listener();
     };
-    HeaderCellCtrl.prototype.setupColId = function () {
-        this.comp.setColId(this.column.getColId());
+    HeaderCellCtrl.prototype.getColId = function () {
+        return this.column.getColId();
     };
     HeaderCellCtrl.prototype.addActiveHeaderMouseListeners = function () {
         var _this = this;

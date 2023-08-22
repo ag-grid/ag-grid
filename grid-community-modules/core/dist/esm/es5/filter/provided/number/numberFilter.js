@@ -28,11 +28,11 @@ var NumberFilterModelFormatter = /** @class */ (function (_super) {
         var numberOfInputs = (options || {}).numberOfInputs;
         var isRange = condition.type == SimpleFilter.IN_RANGE || numberOfInputs === 2;
         if (isRange) {
-            return condition.filter + "-" + condition.filterTo;
+            return this.formatValue(condition.filter) + "-" + this.formatValue(condition.filterTo);
         }
         // cater for when the type doesn't need a value
         if (condition.filter != null) {
-            return "" + condition.filter;
+            return this.formatValue(condition.filter);
         }
         return "" + condition.type;
     };
@@ -72,10 +72,16 @@ var NumberFilter = /** @class */ (function (_super) {
     NumberFilter.prototype.setParams = function (params) {
         this.numberFilterParams = params;
         _super.prototype.setParams.call(this, params);
-        this.filterModelFormatter = new NumberFilterModelFormatter(this.localeService, this.optionsFactory);
+        this.filterModelFormatter = new NumberFilterModelFormatter(this.localeService, this.optionsFactory, this.numberFilterParams.numberFormatter);
     };
     NumberFilter.prototype.getDefaultFilterOptions = function () {
         return NumberFilter.DEFAULT_FILTER_OPTIONS;
+    };
+    NumberFilter.prototype.setElementValue = function (element, value) {
+        var valueToSet = this.numberFilterParams.numberFormatter
+            ? this.numberFilterParams.numberFormatter(value !== null && value !== void 0 ? value : null)
+            : value;
+        _super.prototype.setElementValue.call(this, element, valueToSet);
     };
     NumberFilter.prototype.createValueElement = function () {
         var allowedCharPattern = getAllowedCharPattern(this.numberFilterParams);

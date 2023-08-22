@@ -57,6 +57,7 @@ var GridHeaderCtrl = /** @class */ (function (_super) {
         this.addManagedListener(this.eventService, Events.EVENT_DISPLAYED_COLUMNS_CHANGED, listener);
         this.addManagedListener(this.eventService, Events.EVENT_COLUMN_HEADER_HEIGHT_CHANGED, listener);
         this.addManagedListener(this.eventService, Events.EVENT_GRID_STYLES_CHANGED, listener);
+        this.addManagedListener(this.eventService, Events.EVENT_ADVANCED_FILTER_ENABLED_CHANGED, listener);
     };
     GridHeaderCtrl.prototype.getHeaderHeight = function () {
         return this.headerHeight;
@@ -66,7 +67,7 @@ var GridHeaderCtrl = /** @class */ (function (_super) {
         var numberOfFloating = 0;
         var headerRowCount = columnModel.getHeaderRowCount();
         var totalHeaderHeight;
-        var hasFloatingFilters = columnModel.hasFloatingFilters();
+        var hasFloatingFilters = this.filterManager.hasFloatingFilters();
         if (hasFloatingFilters) {
             headerRowCount++;
             numberOfFloating = 1;
@@ -157,6 +158,9 @@ var GridHeaderCtrl = /** @class */ (function (_super) {
     __decorate([
         Autowired('ctrlsService')
     ], GridHeaderCtrl.prototype, "ctrlsService", void 0);
+    __decorate([
+        Autowired('filterManager')
+    ], GridHeaderCtrl.prototype, "filterManager", void 0);
     return GridHeaderCtrl;
 }(BeanStub));
 export { GridHeaderCtrl };

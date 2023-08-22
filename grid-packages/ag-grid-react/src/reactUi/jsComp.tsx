@@ -6,7 +6,7 @@ import { MutableRefObject } from 'react';
  * @returns Effect Cleanup function
  */
 export const showJsComp = (
-    compDetails: UserCompDetails | undefined, 
+    compDetails: UserCompDetails | undefined | null, 
     context: Context, eParent: HTMLElement, 
     ref?: MutableRefObject<any> | ((ref: any)=>void)
 )  => {

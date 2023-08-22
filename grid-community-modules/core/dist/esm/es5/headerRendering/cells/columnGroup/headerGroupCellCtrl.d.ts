@@ -1,18 +1,16 @@
-// Type definitions for @ag-grid-community/core v30.0.6
+// Type definitions for @ag-grid-community/core v30.1.0
 // Project: https://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { UserCompDetails } from "../../../components/framework/userComponentFactory";
 import { DragItem } from "../../../dragAndDrop/dragAndDropService";
 import { ColumnEventType } from "../../../events";
 import { ColumnGroup } from "../../../entities/columnGroup";
-import { ITooltipFeatureComp } from "../../../widgets/tooltipFeature";
 import { HeaderRowCtrl } from "../../row/headerRowCtrl";
 import { AbstractHeaderCellCtrl, IAbstractHeaderCellComp } from "../abstractCell/abstractHeaderCellCtrl";
-export interface IHeaderGroupCellComp extends IAbstractHeaderCellComp, ITooltipFeatureComp {
+export interface IHeaderGroupCellComp extends IAbstractHeaderCellComp {
     addOrRemoveCssClass(cssClassName: string, on: boolean): void;
     setResizableDisplayed(displayed: boolean): void;
     setWidth(width: string): void;
-    setColId(id: string): void;
     setAriaExpanded(expanded: 'true' | 'false' | undefined): void;
     setUserCompDetails(compDetails: UserCompDetails): void;
 }
@@ -33,7 +31,7 @@ export declare class HeaderGroupCellCtrl extends AbstractHeaderCellCtrl {
     private setupTooltip;
     private setupExpandable;
     private refreshExpanded;
-    private addAttributes;
+    getColId(): string;
     private addClasses;
     private setupMovingCss;
     private onFocusIn;

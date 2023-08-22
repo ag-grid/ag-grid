@@ -91,7 +91,7 @@ var AgCheckbox = /** @class */ (function (_super) {
         }
     };
     AgCheckbox.prototype.dispatchChange = function (selected, previousValue, event) {
-        this.dispatchEvent({ type: AgCheckbox.EVENT_CHANGED, selected: selected, previousValue: previousValue, event: event });
+        this.dispatchEvent({ type: Events.EVENT_FIELD_VALUE_CHANGED, selected: selected, previousValue: previousValue, event: event });
         var input = this.getInputElement();
         var checkboxChangedEvent = {
             type: Events.EVENT_CHECKBOX_CHANGED,

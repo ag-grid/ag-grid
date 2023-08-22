@@ -1,0 +1,33 @@
+{
+    "name": "ag-grid-modules",
+    "description": "NOTE: This package.json file is solely used by Plunker to look up type definitions.",
+    "dependencies": {
+        "@angular/core": "^14",
+        "@angular/platform-browser": "^14",
+        "@ag-grid-community/angular": "^30.0.6",
+        "@ag-grid-community/core": "^30.0.6",
+        "@ag-grid-community/styles": "^30.0.6",
+        "@ag-grid-community/client-side-row-model": "^30.0.6",
+        "@ag-grid-community/infinite-row-model": "^30.0.6",
+        "@ag-grid-community/csv-export": "^30.0.6",
+        "@ag-grid-enterprise/core": "^30.0.6",
+        "@ag-grid-enterprise/charts": "^30.0.6",
+        "@ag-grid-enterprise/sparklines": "^30.0.6",
+        "@ag-grid-enterprise/clipboard": "^30.0.6",
+        "@ag-grid-enterprise/column-tool-panel": "^30.0.6",
+        "@ag-grid-enterprise/excel-export": "^30.0.6",
+        "@ag-grid-enterprise/filter-tool-panel": "^30.0.6",
+        "@ag-grid-enterprise/master-detail": "^30.0.6",
+        "@ag-grid-enterprise/menu": "^30.0.6",
+        "@ag-grid-enterprise/range-selection": "^30.0.6",
+        "@ag-grid-enterprise/rich-select": "^30.0.6",
+        "@ag-grid-enterprise/row-grouping": "^30.0.6",
+        "@ag-grid-enterprise/server-side-row-model": "^30.0.6",
+        "@ag-grid-enterprise/set-filter": "^30.0.6",
+        "@ag-grid-enterprise/multi-filter": "^30.0.6",
+        "@ag-grid-enterprise/advanced-filter": "^30.0.6",
+        "@ag-grid-enterprise/side-bar": "^30.0.6",
+        "@ag-grid-enterprise/status-bar": "^30.0.6",
+        "@ag-grid-enterprise/viewport-row-model": "^30.0.6"
+    }
+}

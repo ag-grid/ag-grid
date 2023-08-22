@@ -21,6 +21,10 @@ export interface LoadSuccessParams {
      * Any extra information for the grid to associate with this load.
      */
     groupLevelInfo?: any;
+    /**
+     * The pivot fields in the response - if provided the grid will attempt to generate secondary columns.
+     */
+    pivotResultFields?: string[];
 }
 export declare abstract class RowNodeBlock extends BeanStub {
     static EVENT_LOAD_COMPLETE: string;

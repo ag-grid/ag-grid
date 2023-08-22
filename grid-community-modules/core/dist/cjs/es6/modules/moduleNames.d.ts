@@ -1,4 +1,4 @@
-// Type definitions for @ag-grid-community/core v30.0.6
+// Type definitions for @ag-grid-community/core v30.1.0
 // Project: https://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 export declare enum ModuleNames {
@@ -24,6 +24,7 @@ export declare enum ModuleNames {
     ExcelExportModule = "@ag-grid-enterprise/excel-export",
     ClipboardModule = "@ag-grid-enterprise/clipboard",
     SparklinesModule = "@ag-grid-enterprise/sparklines",
+    AdvancedFilterModule = "@ag-grid-enterprise/advanced-filter",
     AngularModule = "@ag-grid-community/angular",
     ReactModule = "@ag-grid-community/react",
     VueModule = "@ag-grid-community/vue"

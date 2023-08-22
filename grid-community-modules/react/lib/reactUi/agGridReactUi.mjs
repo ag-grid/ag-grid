@@ -1,6 +1,6 @@
-// @ag-grid-community/react v30.0.6
+// @ag-grid-community/react v30.1.0
 import { BaseComponentWrapper, ComponentUtil, CtrlsService, GridCoreCreator, _ } from '@ag-grid-community/core';
-import React, { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { NewReactComponent } from '../shared/newReactComponent.mjs';
 import { PortalManager } from '../shared/portalManager.mjs';
 import { ReactFrameworkOverrides } from '../shared/reactFrameworkOverrides.mjs';
@@ -26,7 +26,14 @@ export const AgGridReactUi = (props) => {
     }, []);
     // Hook to enable Portals to be displayed via the PortalManager
     const [, setPortalRefresher] = useState(0);
-    useLayoutEffect(() => {
+    const setRef = useCallback((e) => {
+        eGui.current = e;
+        if (!eGui.current) {
+            debug('AgGridReactUi.destroy');
+            destroyFuncs.current.forEach((f) => f());
+            destroyFuncs.current.length = 0;
+            return;
+        }
         const modules = props.modules || [];
         if (!portalManager.current) {
             portalManager.current = new PortalManager(() => setPortalRefresher((prev) => prev + 1), props.componentWrappingElement, props.maxComponentCreationTimeMs);
@@ -64,10 +71,6 @@ export const AgGridReactUi = (props) => {
                         if (props.setGridApi) {
                             props.setGridApi(api, gridOptionsRef.current.columnApi);
                         }
-                        destroyFuncs.current.push(() => {
-                            // Take local reference to api above so correct api gets destroyed on unmount.
-                            api.destroy();
-                        });
                     }
                 }
             });
@@ -86,11 +89,6 @@ export const AgGridReactUi = (props) => {
         };
         const gridCoreCreator = new GridCoreCreator();
         gridCoreCreator.create(eGui.current, gridOptionsRef.current, createUiCallback, acceptChangesCallback, gridParams);
-        return () => {
-            debug('AgGridReactUi.destroy');
-            destroyFuncs.current.forEach((f) => f());
-            destroyFuncs.current.length = 0;
-        };
     }, []);
     const style = useMemo(() => {
         return Object.assign({ height: '100%' }, (props.containerStyle || {}));
@@ -116,7 +114,7 @@ export const AgGridReactUi = (props) => {
             }
         });
     }, [props]);
-    return (React.createElement("div", { style: style, className: props.className, ref: eGui },
+    return (React.createElement("div", { style: style, className: props.className, ref: setRef },
         context && !context.isDestroyed() ? React.createElement(GridComp, { context: context }) : null, (_b = (_a = portalManager.current) === null || _a === void 0 ? void 0 : _a.getPortals()) !== null && _b !== void 0 ? _b : null));
 };
 class ReactFrameworkComponentWrapper extends BaseComponentWrapper {

@@ -5,14 +5,18 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
 var PivotColDefService_1;
-import { Autowired, Bean, BeanStub, _ } from "@ag-grid-community/core";
+import { Autowired, Bean, BeanStub, PostConstruct, _ } from "@ag-grid-community/core";
 let PivotColDefService = PivotColDefService_1 = class PivotColDefService extends BeanStub {
+    init() {
+        var _a, _b;
+        this.fieldSeparator = (_a = this.gos.get('serverSidePivotResultFieldSeparator')) !== null && _a !== void 0 ? _a : '_';
+        this.addManagedPropertyListener('serverSidePivotResultFieldSeparator', (propChange) => this.fieldSeparator = propChange.currentValue);
+        this.pivotDefaultExpanded = (_b = this.gos.getNum('pivotDefaultExpanded')) !== null && _b !== void 0 ? _b : 0;
+        this.addManagedPropertyListener('pivotDefaultExpanded', (propChange) => this.pivotDefaultExpanded = propChange.currentValue);
+    }
     createPivotColumnDefs(uniqueValues) {
         // this is passed to the columnModel, to configure the columns and groups we show
-        const pivotColumns = this.columnModel.getPivotColumns();
-        const valueColumns = this.columnModel.getValueColumns();
-        const levelsDeep = pivotColumns.length;
-        const pivotColumnGroupDefs = this.recursiveBuildGroup(0, uniqueValues, [], levelsDeep, pivotColumns);
+        const pivotColumnGroupDefs = this.createPivotColumnsFromUniqueValues(uniqueValues);
         function extractColDefs(input, arr = []) {
             input.forEach((def) => {
                 if (def.children !== undefined) {
@@ -26,7 +30,7 @@ let PivotColDefService = PivotColDefService_1 = class PivotColDefService extends
         }
         const pivotColumnDefs = extractColDefs(pivotColumnGroupDefs);
         // additional columns that contain the aggregated total for each value column per row
-        this.addRowGroupTotals(pivotColumnGroupDefs, pivotColumnDefs, valueColumns);
+        this.addRowGroupTotals(pivotColumnGroupDefs, pivotColumnDefs);
         // additional group columns that contain child totals for each collapsed child column / group
         this.addExpandablePivotGroups(pivotColumnGroupDefs, pivotColumnDefs);
         // additional group columns that contain an aggregated total across all child columns
@@ -40,7 +44,13 @@ let PivotColDefService = PivotColDefService_1 = class PivotColDefService extends
             pivotColumnDefs: pivotColumnDefsClone
         };
     }
-    recursiveBuildGroup(index, uniqueValue, pivotKeys, maxDepth, primaryPivotColumns) {
+    createPivotColumnsFromUniqueValues(uniqueValues) {
+        const pivotColumns = this.columnModel.getPivotColumns();
+        const maxDepth = pivotColumns.length;
+        const pivotColumnGroupDefs = this.recursivelyBuildGroup(0, uniqueValues, [], maxDepth, pivotColumns);
+        return pivotColumnGroupDefs;
+    }
+    recursivelyBuildGroup(index, uniqueValue, pivotKeys, maxDepth, primaryPivotColumns) {
         const measureColumns = this.columnModel.getValueColumns();
         if (index >= maxDepth) { // Base case - build the measure columns
             return this.buildMeasureCols(pivotKeys);
@@ -53,7 +63,9 @@ let PivotColDefService = PivotColDefService_1 = class PivotColDefService extends
             const leafCols = [];
             _.iterateObject(uniqueValue, (key) => {
                 const newPivotKeys = [...pivotKeys, key];
-                leafCols.push(Object.assign(Object.assign({}, this.createColDef(measureColumns[0], key, newPivotKeys)), { columnGroupShow: 'open' }));
+                const colDef = this.createColDef(measureColumns[0], key, newPivotKeys);
+                colDef.columnGroupShow = 'open';
+                leafCols.push(colDef);
             });
             leafCols.sort(comparator);
             return leafCols;
@@ -61,12 +73,15 @@ let PivotColDefService = PivotColDefService_1 = class PivotColDefService extends
         // Recursive case
         const groups = [];
         _.iterateObject(uniqueValue, (key, value) => {
+            // expand group by default based on depth of group. (pivotDefaultExpanded provides desired level of depth for expanding group by default)
+            const openByDefault = this.pivotDefaultExpanded === -1 || (index < this.pivotDefaultExpanded);
             const newPivotKeys = [...pivotKeys, key];
             groups.push({
-                children: this.recursiveBuildGroup(index + 1, value, newPivotKeys, maxDepth, primaryPivotColumns),
+                children: this.recursivelyBuildGroup(index + 1, value, newPivotKeys, maxDepth, primaryPivotColumns),
                 headerName: key,
                 pivotKeys: newPivotKeys,
                 columnGroupShow: 'open',
+                openByDefault: openByDefault,
                 groupId: this.generateColumnGroupId(newPivotKeys),
             });
         });
@@ -179,11 +194,12 @@ let PivotColDefService = PivotColDefService_1 = class PivotColDefService extends
         }
         return colIds;
     }
-    addRowGroupTotals(pivotColumnGroupDefs, pivotColumnDefs, valueColumns) {
+    addRowGroupTotals(pivotColumnGroupDefs, pivotColumnDefs) {
         if (!this.gridOptionsService.get('pivotRowTotals')) {
             return;
         }
         const insertAfter = this.gridOptionsService.get('pivotRowTotals') === 'after';
+        const valueColumns = this.columnModel.getValueColumns();
         // order of row group totals depends on position
         const valueCols = insertAfter ? valueColumns.slice() : valueColumns.slice().reverse();
         for (let i = 0; i < valueCols.length; i++) {
@@ -310,11 +326,85 @@ let PivotColDefService = PivotColDefService_1 = class PivotColDefService extends
         const pivotCols = this.columnModel.getPivotColumns().map((col) => col.getColId());
         return `pivot_${pivotCols.join('-')}_${pivotKeys.join('-')}_${measureColumnId}`;
     }
+    /**
+     * Used by the SSRM to create secondary columns from provided fields
+     * @param fields
+     */
+    createColDefsFromFields(fields) {
+        ;
+        // tear the ids down into groups, while this could be done in-step with the next stage, the lookup is faster 
+        // than searching col group children array for the right group
+        const uniqueValues = {};
+        for (let i = 0; i < fields.length; i++) {
+            const field = fields[i];
+            const parts = field.split(this.fieldSeparator);
+            let level = uniqueValues;
+            for (let p = 0; p < parts.length; p++) {
+                const part = parts[p];
+                if (level[part] == null) {
+                    level[part] = {};
+                }
+                level = level[part];
+            }
+        }
+        const uniqueValuesToGroups = (id, key, uniqueValues, depth) => {
+            var _a;
+            const children = [];
+            for (let key in uniqueValues) {
+                const item = uniqueValues[key];
+                const child = uniqueValuesToGroups(`${id}${this.fieldSeparator}${key}`, key, item, depth + 1);
+                children.push(child);
+            }
+            if (children.length === 0) {
+                const col = {
+                    colId: id,
+                    headerName: key,
+                    // this is to support using pinned rows, normally the data will be extracted from the aggData object using the colId
+                    // however pinned rows still access the data object by field, this prevents values with dots from being treated as complex objects
+                    valueGetter: (params) => { var _a; return (_a = params.data) === null || _a === void 0 ? void 0 : _a[id]; },
+                };
+                const potentialAggCol = this.columnModel.getPrimaryColumn(key);
+                if (potentialAggCol) {
+                    col.headerName = (_a = this.columnModel.getDisplayNameForColumn(potentialAggCol, 'header')) !== null && _a !== void 0 ? _a : key;
+                    col.aggFunc = potentialAggCol.getAggFunc();
+                    col.pivotValueColumn = potentialAggCol;
+                }
+                return col;
+            }
+            // this is a bit sketchy. As the fields can be anything we just build groups as deep as the fields go.
+            // nothing says user has to give us groups the same depth.
+            const collapseSingleChildren = this.gridOptionsService.is('removePivotHeaderRowWhenSingleValueColumn');
+            if (collapseSingleChildren && children.length === 1 && 'colId' in children[0]) {
+                children[0].headerName = key;
+                return children[0];
+            }
+            const group = {
+                openByDefault: this.pivotDefaultExpanded === -1 || depth < this.pivotDefaultExpanded,
+                groupId: id,
+                headerName: key,
+                children,
+            };
+            return group;
+        };
+        const res = [];
+        for (let key in uniqueValues) {
+            const item = uniqueValues[key];
+            const col = uniqueValuesToGroups(key, key, item, 0);
+            res.push(col);
+        }
+        return res;
+    }
 };
 PivotColDefService.PIVOT_ROW_TOTAL_PREFIX = 'PivotRowTotal_';
 __decorate([
     Autowired('columnModel')
 ], PivotColDefService.prototype, "columnModel", void 0);
+__decorate([
+    Autowired('gridOptionsService')
+], PivotColDefService.prototype, "gos", void 0);
+__decorate([
+    PostConstruct
+], PivotColDefService.prototype, "init", null);
 PivotColDefService = PivotColDefService_1 = __decorate([
     Bean('pivotColDefService')
 ], PivotColDefService);

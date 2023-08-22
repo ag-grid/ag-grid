@@ -37,13 +37,12 @@ var HeaderGroupCellComp = /** @class */ (function (_super) {
         var setAttribute = function (key, value) {
             return value != undefined ? eGui.setAttribute(key, value) : eGui.removeAttribute(key);
         };
+        eGui.setAttribute("col-id", this.ctrl.getColId());
         var compProxy = {
             addOrRemoveCssClass: function (cssClassName, on) { return _this.addOrRemoveCssClass(cssClassName, on); },
             setResizableDisplayed: function (displayed) { return dom_1.setDisplayed(_this.eResize, displayed); },
             setWidth: function (width) { return eGui.style.width = width; },
-            setColId: function (id) { return eGui.setAttribute("col-id", id); },
             setAriaExpanded: function (expanded) { return setAttribute('aria-expanded', expanded); },
-            setTitle: function (title) { return setAttribute("title", title); },
             setUserCompDetails: function (details) { return _this.setUserCompDetails(details); }
         };
         this.ctrl.setComp(compProxy, eGui, this.eResize);

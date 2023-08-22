@@ -9,7 +9,6 @@ const RowContainerComp = (props) => {
     const [rowCtrlsOrdered, setRowCtrlsOrdered] = createSignal([]);
     const [rowCtrls, setRowCtrls] = createSignal([]);
     const [domOrder, setDomOrder] = createSignal(false);
-    const [containerWidth, setContainerWidth] = createSignal('');
     const { name } = props;
     const containerType = createMemo(() => getRowContainerTypeForName(name));
     let eWrapper;
@@ -50,7 +49,11 @@ const RowContainerComp = (props) => {
             setViewportHeight: setViewportHeight,
             setRowCtrls: rowCtrls => setRowCtrls(rowCtrls),
             setDomOrder: domOrder => setDomOrder(domOrder),
-            setContainerWidth: width => setContainerWidth(width)
+            setContainerWidth: width => {
+                if (eContainer) {
+                    eContainer.style.width = width;
+                }
+            }
         };
         const ctrl = context.createBean(new RowContainerCtrl(name));
         onCleanup(() => context.destroyBean(ctrl));
@@ -59,10 +62,7 @@ const RowContainerComp = (props) => {
     const viewportStyle = createMemo(() => ({
         height: viewportHeight()
     }));
-    const containerStyle = createMemo(() => ({
-        width: containerWidth()
-    }));
-    const buildContainer = () => (<div class={containerClasses()} ref={eContainer} role={rowCtrls().length ? "rowgroup" : "presentation"} style={containerStyle()}>
+    const buildContainer = () => (<div class={containerClasses()} ref={eContainer} role={rowCtrls().length ? "rowgroup" : "presentation"}>
                 <For each={rowCtrlsOrdered()}>{(rowCtrl, i) => <RowComp rowCtrl={rowCtrl} containerType={containerType()}></RowComp>}</For>
         </div>);
     return (<>

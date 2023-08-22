@@ -1,4 +1,4 @@
-// ag-grid-react v30.0.6
+// ag-grid-react v30.1.0
 "use strict";
 var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
     if (k2 === undefined) k2 = k;
@@ -28,23 +28,26 @@ var beansContext_1 = require("../beansContext");
 var ag_grid_community_1 = require("ag-grid-community");
 var utils_1 = require("../utils");
 var headerRowContainerComp_1 = __importDefault(require("./headerRowContainerComp"));
-var useEffectOnce_1 = require("../useEffectOnce");
 var GridHeaderComp = function () {
-    var _a = react_1.useState(new utils_1.CssClasses()), cssClasses = _a[0], setCssClasses = _a[1];
+    var _a = react_1.useState(function () { return new utils_1.CssClasses(); }), cssClasses = _a[0], setCssClasses = _a[1];
     var _b = react_1.useState(), height = _b[0], setHeight = _b[1];
     var context = react_1.useContext(beansContext_1.BeansContext).context;
     var eGui = react_1.useRef(null);
-    useEffectOnce_1.useLayoutEffectOnce(function () {
+    var gridCtrlRef = react_1.useRef(null);
+    var setRef = react_1.useCallback(function (e) {
+        eGui.current = e;
+        if (!e) {
+            context.destroyBean(gridCtrlRef.current);
+            gridCtrlRef.current = null;
+            return;
+        }
         var compProxy = {
             addOrRemoveCssClass: function (name, on) { return setCssClasses(function (prev) { return prev.setClass(name, on); }); },
             setHeightAndMinHeight: function (height) { return setHeight(height); }
         };
-        var ctrl = context.createBean(new ag_grid_community_1.GridHeaderCtrl());
-        ctrl.setComp(compProxy, eGui.current, eGui.current);
-        return function () {
-            context.destroyBean(ctrl);
-        };
-    });
+        gridCtrlRef.current = context.createBean(new ag_grid_community_1.GridHeaderCtrl());
+        gridCtrlRef.current.setComp(compProxy, eGui.current, eGui.current);
+    }, []);
     var className = react_1.useMemo(function () {
         var res = cssClasses.toString();
         return 'ag-header ' + res;
@@ -53,7 +56,7 @@ var GridHeaderComp = function () {
         height: height,
         minHeight: height
     }); }, [height]);
-    return (react_1.default.createElement("div", { ref: eGui, className: className, style: style, role: "presentation" },
+    return (react_1.default.createElement("div", { ref: setRef, className: className, style: style, role: "presentation" },
         react_1.default.createElement(headerRowContainerComp_1.default, { pinned: 'left' }),
         react_1.default.createElement(headerRowContainerComp_1.default, { pinned: null }),
         react_1.default.createElement(headerRowContainerComp_1.default, { pinned: 'right' })));

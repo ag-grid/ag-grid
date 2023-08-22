@@ -100,6 +100,9 @@ var ColumnFactory = /** @class */ (function (_super) {
             nextChild.setOriginalParent(autoGroup);
             nextChild = autoGroup;
         }
+        if (dept === 0) {
+            column.setOriginalParent(null);
+        }
         // at this point, the nextChild is the top most item in the tree
         return nextChild;
     };
@@ -176,15 +179,19 @@ var ColumnFactory = /** @class */ (function (_super) {
         return maxDeptThisLevel;
     };
     ColumnFactory.prototype.recursivelyCreateColumns = function (defs, level, primaryColumns, existingColsCopy, columnKeyCreator, existingGroups) {
-        var _this = this;
-        return (defs || []).map(function (def) {
-            if (_this.isColumnGroup(def)) {
-                return _this.createColumnGroup(primaryColumns, def, level, existingColsCopy, columnKeyCreator, existingGroups);
+        if (!defs)
+            return [];
+        var result = new Array(defs.length);
+        for (var i = 0; i < result.length; i++) {
+            var def = defs[i];
+            if (this.isColumnGroup(def)) {
+                result[i] = this.createColumnGroup(primaryColumns, def, level, existingColsCopy, columnKeyCreator, existingGroups);
             }
             else {
-                return _this.createColumn(primaryColumns, def, existingColsCopy, columnKeyCreator);
+                result[i] = this.createColumn(primaryColumns, def, existingColsCopy, columnKeyCreator);
             }
-        });
+        }
+        return result;
     };
     ColumnFactory.prototype.createColumnGroup = function (primaryColumns, colGroupDef, level, existingColumns, columnKeyCreator, existingGroups) {
         var colGroupDefMerged = this.createMergedColGroupDef(colGroupDef);
@@ -221,12 +228,12 @@ var ColumnFactory = /** @class */ (function (_super) {
         if (!column) {
             // no existing column, need to create one
             var colId = columnKeyCreator.getUniqueKey(colDef.colId, colDef.field);
-            var colDefMerged = this.mergeColDefs(colDef, colId);
+            var colDefMerged = this.addColumnDefaultAndTypes(colDef, colId);
             column = new Column(colDefMerged, colDef, colId, primaryColumns);
             this.context.createBean(column);
         }
         else {
-            var colDefMerged = this.mergeColDefs(colDef, column.getColId());
+            var colDefMerged = this.addColumnDefaultAndTypes(colDef, column.getColId());
             column.setColDef(colDefMerged, colDef);
             this.applyColumnState(column, colDefMerged);
         }
@@ -279,25 +286,31 @@ var ColumnFactory = /** @class */ (function (_super) {
         }
     };
     ColumnFactory.prototype.findExistingColumn = function (newColDef, existingColsCopy) {
-        return (existingColsCopy || []).find(function (existingCol) {
-            var existingColDef = existingCol.getUserProvidedColDef();
-            if (!existingColDef) {
-                return false;
-            }
+        if (!existingColsCopy)
+            return undefined;
+        for (var i = 0; i < existingColsCopy.length; i++) {
+            var def = existingColsCopy[i].getUserProvidedColDef();
+            if (!def)
+                continue;
             var newHasId = newColDef.colId != null;
-            var newHasField = newColDef.field != null;
             if (newHasId) {
-                return existingCol.getId() === newColDef.colId;
+                if (existingColsCopy[i].getId() === newColDef.colId) {
+                    return existingColsCopy[i];
+                }
+                continue;
             }
+            var newHasField = newColDef.field != null;
             if (newHasField) {
-                return existingColDef.field === newColDef.field;
+                if (def.field === newColDef.field) {
+                    return existingColsCopy[i];
+                }
+                continue;
             }
-            // if no id or field present, then try object equivalence.
-            if (existingColDef === newColDef) {
-                return true;
+            if (def === newColDef) {
+                return existingColsCopy[i];
             }
-            return false;
-        });
+        }
+        return undefined;
     };
     ColumnFactory.prototype.findExistingGroup = function (newGroupDef, existingGroups) {
         return existingGroups.find(function (existingGroup) {
@@ -312,26 +325,26 @@ var ColumnFactory = /** @class */ (function (_super) {
             return false;
         });
     };
-    ColumnFactory.prototype.mergeColDefs = function (colDef, colId) {
+    ColumnFactory.prototype.addColumnDefaultAndTypes = function (colDef, colId) {
         // start with empty merged definition
-        var colDefMerged = {};
+        var res = {};
         // merge properties from default column definitions
         var defaultColDef = this.gridOptionsService.get('defaultColDef');
-        mergeDeep(colDefMerged, defaultColDef, false, true);
-        var columnType = this.dataTypeService.updateColDefAndGetColumnType(colDefMerged, colDef, colId);
+        mergeDeep(res, defaultColDef, false, true);
+        var columnType = this.dataTypeService.updateColDefAndGetColumnType(res, colDef, colId);
         if (columnType) {
-            this.assignColumnTypes(columnType, colDefMerged);
+            this.assignColumnTypes(columnType, res);
         }
         // merge properties from column definitions
-        mergeDeep(colDefMerged, colDef, false, true);
+        mergeDeep(res, colDef, false, true);
         var autoGroupColDef = this.gridOptionsService.get('autoGroupColumnDef');
         var isSortingCoupled = this.gridOptionsService.isColumnsSortingCoupledToGroup();
         if (colDef.rowGroup && autoGroupColDef && isSortingCoupled) {
             // override the sort for row group columns where the autoGroupColDef defines these values.
-            mergeDeep(colDefMerged, { sort: autoGroupColDef.sort, initialSort: autoGroupColDef.initialSort }, false, true);
+            mergeDeep(res, { sort: autoGroupColDef.sort, initialSort: autoGroupColDef.initialSort }, false, true);
         }
-        this.dataTypeService.validateColDef(colDefMerged);
-        return colDefMerged;
+        this.dataTypeService.validateColDef(res);
+        return res;
     };
     ColumnFactory.prototype.assignColumnTypes = function (typeKeys, colDefMerged) {
         if (!typeKeys.length) {

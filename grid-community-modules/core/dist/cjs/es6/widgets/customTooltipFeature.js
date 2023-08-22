@@ -11,39 +11,80 @@ const context_1 = require("../context/context");
 const beanStub_1 = require("../context/beanStub");
 const generic_1 = require("../utils/generic");
 const browser_1 = require("../utils/browser");
-const string_1 = require("../utils/string");
 const function_1 = require("../utils/function");
+const eventKeys_1 = require("../eventKeys");
 var TooltipStates;
 (function (TooltipStates) {
     TooltipStates[TooltipStates["NOTHING"] = 0] = "NOTHING";
     TooltipStates[TooltipStates["WAITING_TO_SHOW"] = 1] = "WAITING_TO_SHOW";
     TooltipStates[TooltipStates["SHOWING"] = 2] = "SHOWING";
 })(TooltipStates || (TooltipStates = {}));
+var TooltipTrigger;
+(function (TooltipTrigger) {
+    TooltipTrigger[TooltipTrigger["HOVER"] = 0] = "HOVER";
+    TooltipTrigger[TooltipTrigger["FOCUS"] = 1] = "FOCUS";
+})(TooltipTrigger || (TooltipTrigger = {}));
 class CustomTooltipFeature extends beanStub_1.BeanStub {
-    constructor(parentComp) {
+    constructor(parentComp, tooltipShowDelayOverride, tooltipHideDelayOverride) {
         super();
+        this.parentComp = parentComp;
+        this.tooltipShowDelayOverride = tooltipShowDelayOverride;
+        this.tooltipHideDelayOverride = tooltipHideDelayOverride;
         this.DEFAULT_SHOW_TOOLTIP_DELAY = 2000;
         this.DEFAULT_HIDE_TOOLTIP_DELAY = 10000;
         this.SHOW_QUICK_TOOLTIP_DIFF = 1000;
         this.FADE_OUT_TOOLTIP_TIMEOUT = 1000;
+        this.INTERACTIVE_HIDE_DELAY = 100;
+        this.interactionEnabled = false;
+        this.isInteractingWithTooltip = false;
         this.state = TooltipStates.NOTHING;
         // when showing the tooltip, we need to make sure it's the most recent instance we request, as due to
         // async we could request two tooltips before the first instance returns, in which case we should
         // disregard the second instance.
         this.tooltipInstanceCount = 0;
         this.tooltipMouseTrack = false;
-        this.parentComp = parentComp;
     }
     postConstruct() {
-        this.tooltipShowDelay = this.getTooltipDelay('show') || this.DEFAULT_SHOW_TOOLTIP_DELAY;
-        this.tooltipHideDelay = this.getTooltipDelay('hide') || this.DEFAULT_HIDE_TOOLTIP_DELAY;
+        if (this.gridOptionsService.is('tooltipInteraction')) {
+            this.interactionEnabled = true;
+        }
+        this.tooltipTrigger = this.getTooltipTrigger();
+        this.tooltipShowDelay = this.getTooltipDelay('show');
+        this.tooltipHideDelay = this.getTooltipDelay('hide');
         this.tooltipMouseTrack = this.gridOptionsService.is('tooltipMouseTrack');
         const el = this.parentComp.getGui();
-        this.addManagedListener(el, 'mouseenter', this.onMouseEnter.bind(this));
-        this.addManagedListener(el, 'mouseleave', this.onMouseLeave.bind(this));
+        if (this.tooltipTrigger === TooltipTrigger.HOVER) {
+            this.addManagedListener(el, 'mouseenter', this.onMouseEnter.bind(this));
+            this.addManagedListener(el, 'mouseleave', this.onMouseLeave.bind(this));
+        }
+        if (this.tooltipTrigger === TooltipTrigger.FOCUS) {
+            this.addManagedListener(el, 'focusin', this.onFocusIn.bind(this));
+            this.addManagedListener(el, 'focusout', this.onFocusOut.bind(this));
+        }
         this.addManagedListener(el, 'mousemove', this.onMouseMove.bind(this));
-        this.addManagedListener(el, 'mousedown', this.onMouseDown.bind(this));
-        this.addManagedListener(el, 'keydown', this.onKeyDown.bind(this));
+        if (!this.interactionEnabled) {
+            this.addManagedListener(el, 'mousedown', this.onMouseDown.bind(this));
+            this.addManagedListener(el, 'keydown', this.onKeyDown.bind(this));
+        }
+    }
+    getGridOptionsTooltipDelay(delayOption) {
+        const delay = this.gridOptionsService.getNum(delayOption);
+        if (generic_1.exists(delay)) {
+            if (delay < 0) {
+                function_1.doOnce(() => console.warn(`AG Grid: ${delayOption} should not be lower than 0`), `${delayOption}Warn`);
+            }
+            return Math.max(200, delay);
+        }
+        return undefined;
+    }
+    getTooltipDelay(type) {
+        var _a, _b, _c, _d;
+        if (type === 'show') {
+            return (_b = (_a = this.getGridOptionsTooltipDelay('tooltipShowDelay')) !== null && _a !== void 0 ? _a : this.tooltipShowDelayOverride) !== null && _b !== void 0 ? _b : this.DEFAULT_SHOW_TOOLTIP_DELAY;
+        }
+        else {
+            return (_d = (_c = this.getGridOptionsTooltipDelay('tooltipHideDelay')) !== null && _c !== void 0 ? _c : this.tooltipHideDelayOverride) !== null && _d !== void 0 ? _d : this.DEFAULT_HIDE_TOOLTIP_DELAY;
+        }
     }
     destroy() {
         // if this component gets destroyed while tooltip is showing, need to make sure
@@ -51,91 +92,118 @@ class CustomTooltipFeature extends beanStub_1.BeanStub {
         this.setToDoNothing();
         super.destroy();
     }
+    getTooltipTrigger() {
+        const trigger = this.gridOptionsService.get('tooltipTrigger');
+        if (!trigger || trigger === 'hover') {
+            return TooltipTrigger.HOVER;
+        }
+        return TooltipTrigger.FOCUS;
+    }
     onMouseEnter(e) {
+        // if `interactiveTooltipTimeoutId` is set, it means that this cell has a tooltip
+        // and we are in the process of moving the cursor from the tooltip back to the cell
+        // so we need to unlock this service here.
+        if (this.interactionEnabled && this.interactiveTooltipTimeoutId) {
+            this.unlockService();
+            this.startHideTimeout();
+        }
         if (browser_1.isIOSUserAgent()) {
             return;
         }
-        // every mouseenter should be following by a mouseleave, however for some unkonwn, it's possible for
-        // mouseenter to be called twice in a row, which can happen if editing the cell. this was reported
-        // in https://ag-grid.atlassian.net/browse/AG-4422. to get around this, we check the state, and if
-        // state is !=nothing, then we know mouseenter was already received.
-        if (this.state != TooltipStates.NOTHING) {
-            return;
+        if (CustomTooltipFeature.isLocked) {
+            this.showTooltipTimeoutId = window.setTimeout(() => {
+                this.prepareToShowTooltip(e);
+            }, this.INTERACTIVE_HIDE_DELAY);
         }
-        // if another tooltip was hidden very recently, we only wait 200ms to show, not the normal waiting time
-        const delay = this.isLastTooltipHiddenRecently() ? 200 : this.tooltipShowDelay;
-        this.showTooltipTimeoutId = window.setTimeout(this.showTooltip.bind(this), delay);
-        this.lastMouseEvent = e;
-        this.state = TooltipStates.WAITING_TO_SHOW;
-    }
-    onMouseLeave() {
-        this.setToDoNothing();
-    }
-    onKeyDown() {
-        this.setToDoNothing();
-    }
-    setToDoNothing() {
-        if (this.state === TooltipStates.SHOWING) {
-            this.hideTooltip();
+        else {
+            this.prepareToShowTooltip(e);
         }
-        this.clearTimeouts();
-        this.state = TooltipStates.NOTHING;
     }
     onMouseMove(e) {
         // there is a delay from the time we mouseOver a component and the time the
         // tooltip is displayed, so we need to track mousemove to be able to correctly
         // position the tooltip when showTooltip is called.
-        this.lastMouseEvent = e;
+        if (this.lastMouseEvent) {
+            this.lastMouseEvent = e;
+        }
         if (this.tooltipMouseTrack &&
             this.state === TooltipStates.SHOWING &&
             this.tooltipComp) {
-            this.positionTooltipUnderLastMouseEvent();
+            this.positionTooltip();
         }
     }
     onMouseDown() {
         this.setToDoNothing();
     }
-    getTooltipDelay(type) {
-        const tooltipShowDelay = this.gridOptionsService.getNum('tooltipShowDelay');
-        const tooltipHideDelay = this.gridOptionsService.getNum('tooltipHideDelay');
-        const delay = type === 'show' ? tooltipShowDelay : tooltipHideDelay;
-        const capitalisedType = string_1.capitalise(type);
-        if (generic_1.exists(delay)) {
-            if (delay < 0) {
-                function_1.doOnce(() => console.warn(`AG Grid: tooltip${capitalisedType}Delay should not be lower than 0`), `tooltip${capitalisedType}DelayWarn`);
-            }
-            return Math.max(200, delay);
+    onMouseLeave() {
+        // if interaction is enabled, we need to verify if the user is moving
+        // the cursor from the cell onto the tooltip, so we lock the service 
+        // for 100ms to prevent other tooltips from being created while this is happening.
+        if (this.interactionEnabled) {
+            this.lockService();
         }
-        return null;
-    }
-    hideTooltip() {
-        // check if comp exists - due to async, although we asked for
-        // one, the instance may not be back yet
-        if (this.tooltipComp) {
-            this.destroyTooltipComp();
-            CustomTooltipFeature.lastTooltipHideTime = new Date().getTime();
+        else {
+            this.setToDoNothing();
         }
-        this.state = TooltipStates.NOTHING;
     }
-    destroyTooltipComp() {
-        // add class to fade out the tooltip
-        this.tooltipComp.getGui().classList.add('ag-tooltip-hiding');
-        // make local copies of these variables, as we use them in the async function below,
-        // and we clear then to 'undefined' later, so need to take a copy before they are undefined.
-        const tooltipPopupDestroyFunc = this.tooltipPopupDestroyFunc;
-        const tooltipComp = this.tooltipComp;
-        window.setTimeout(() => {
-            tooltipPopupDestroyFunc();
-            this.getContext().destroyBean(tooltipComp);
-        }, this.FADE_OUT_TOOLTIP_TIMEOUT);
-        this.tooltipPopupDestroyFunc = undefined;
-        this.tooltipComp = undefined;
+    onFocusIn() {
+        this.prepareToShowTooltip();
+    }
+    onFocusOut(e) {
+        var _a;
+        const relatedTarget = e.relatedTarget;
+        const parentCompGui = this.parentComp.getGui();
+        const tooltipGui = (_a = this.tooltipComp) === null || _a === void 0 ? void 0 : _a.getGui();
+        if (this.isInteractingWithTooltip ||
+            parentCompGui.contains(relatedTarget) ||
+            (this.interactionEnabled && (tooltipGui === null || tooltipGui === void 0 ? void 0 : tooltipGui.contains(relatedTarget)))) {
+            return;
+        }
+        this.setToDoNothing();
+    }
+    onKeyDown() {
+        this.setToDoNothing();
+    }
+    prepareToShowTooltip(mouseEvent) {
+        // every mouseenter should be following by a mouseleave, however for some unknown, it's possible for
+        // mouseenter to be called twice in a row, which can happen if editing the cell. this was reported
+        // in https://ag-grid.atlassian.net/browse/AG-4422. to get around this, we check the state, and if
+        // state is != nothing, then we know mouseenter was already received.
+        if (this.state != TooltipStates.NOTHING || CustomTooltipFeature.isLocked) {
+            return false;
+        }
+        // if we are showing the tooltip because of focus, no delay at all
+        // if another tooltip was hidden very recently, we only wait 200ms to show, not the normal waiting time
+        let delay = 0;
+        if (mouseEvent) {
+            delay = this.isLastTooltipHiddenRecently() ? 200 : this.tooltipShowDelay;
+        }
+        this.lastMouseEvent = mouseEvent || null;
+        this.showTooltipTimeoutId = window.setTimeout(this.showTooltip.bind(this), delay);
+        this.state = TooltipStates.WAITING_TO_SHOW;
+        return true;
     }
     isLastTooltipHiddenRecently() {
         // return true if <1000ms since last time we hid a tooltip
         const now = new Date().getTime();
         const then = CustomTooltipFeature.lastTooltipHideTime;
         return (now - then) < this.SHOW_QUICK_TOOLTIP_DIFF;
+    }
+    setToDoNothing() {
+        if (this.state === TooltipStates.SHOWING) {
+            this.hideTooltip();
+        }
+        if (this.onBodyScrollEventCallback) {
+            this.onBodyScrollEventCallback();
+            this.onBodyScrollEventCallback = undefined;
+        }
+        if (this.onColumnMovedEventCallback) {
+            this.onColumnMovedEventCallback();
+            this.onColumnMovedEventCallback = undefined;
+        }
+        this.clearTimeouts();
+        this.state = TooltipStates.NOTHING;
+        this.lastMouseEvent = null;
     }
     showTooltip() {
         const params = Object.assign({}, this.parentComp.getTooltipParams());
@@ -152,6 +220,23 @@ class CustomTooltipFeature extends beanStub_1.BeanStub {
         const userDetails = this.userComponentFactory.getTooltipCompDetails(params);
         userDetails.newAgStackInstance().then(callback);
     }
+    hideTooltip(forceHide) {
+        if (!forceHide && this.isInteractingWithTooltip) {
+            return;
+        }
+        // check if comp exists - due to async, although we asked for
+        // one, the instance may not be back yet
+        if (this.tooltipComp) {
+            this.destroyTooltipComp();
+            CustomTooltipFeature.lastTooltipHideTime = new Date().getTime();
+        }
+        const event = {
+            type: eventKeys_1.Events.EVENT_TOOLTIP_HIDE,
+            parentGui: this.parentComp.getGui()
+        };
+        this.eventService.dispatchEvent(event);
+        this.state = TooltipStates.NOTHING;
+    }
     newTooltipComponentCallback(tooltipInstanceCopy, tooltipComp) {
         const compNoLongerNeeded = this.state !== TooltipStates.SHOWING || this.tooltipInstanceCount !== tooltipInstanceCopy;
         if (compNoLongerNeeded) {
@@ -163,6 +248,12 @@ class CustomTooltipFeature extends beanStub_1.BeanStub {
         if (!eGui.classList.contains('ag-tooltip')) {
             eGui.classList.add('ag-tooltip-custom');
         }
+        if (this.tooltipTrigger === TooltipTrigger.HOVER) {
+            eGui.classList.add('ag-tooltip-animate');
+        }
+        if (this.interactionEnabled) {
+            eGui.classList.add('ag-tooltip-interactive');
+        }
         const translate = this.localeService.getLocaleTextFunc();
         const addPopupRes = this.popupService.addPopup({
             eChild: eGui,
@@ -171,30 +262,146 @@ class CustomTooltipFeature extends beanStub_1.BeanStub {
         if (addPopupRes) {
             this.tooltipPopupDestroyFunc = addPopupRes.hideFunc;
         }
-        // this.tooltipPopupDestroyFunc = this.popupService.addPopup(false, eGui, false);
-        this.positionTooltipUnderLastMouseEvent();
-        this.hideTooltipTimeoutId = window.setTimeout(this.hideTooltip.bind(this), this.tooltipHideDelay);
+        this.positionTooltip();
+        if (this.tooltipTrigger === TooltipTrigger.FOCUS) {
+            this.onBodyScrollEventCallback = this.addManagedListener(this.eventService, eventKeys_1.Events.EVENT_BODY_SCROLL, this.setToDoNothing.bind(this));
+            this.onColumnMovedEventCallback = this.addManagedListener(this.eventService, eventKeys_1.Events.EVENT_COLUMN_MOVED, this.setToDoNothing.bind(this));
+        }
+        if (this.interactionEnabled) {
+            if (this.tooltipTrigger === TooltipTrigger.HOVER) {
+                this.tooltipMouseEnterListener = this.addManagedListener(eGui, 'mouseenter', this.onTooltipMouseEnter.bind(this)) || null;
+                this.tooltipMouseLeaveListener = this.addManagedListener(eGui, 'mouseleave', this.onTooltipMouseLeave.bind(this)) || null;
+            }
+            else {
+                this.tooltipFocusInListener = this.addManagedListener(eGui, 'focusin', this.onTooltipFocusIn.bind(this)) || null;
+                this.tooltipFocusOutListener = this.addManagedListener(eGui, 'focusout', this.onTooltipFocusOut.bind(this)) || null;
+            }
+        }
+        const event = {
+            type: eventKeys_1.Events.EVENT_TOOLTIP_SHOW,
+            tooltipGui: eGui,
+            parentGui: this.parentComp.getGui()
+        };
+        this.eventService.dispatchEvent(event);
+        this.startHideTimeout();
     }
-    positionTooltipUnderLastMouseEvent() {
-        this.popupService.positionPopupUnderMouseEvent({
+    onTooltipMouseEnter() {
+        this.isInteractingWithTooltip = true;
+        this.unlockService();
+    }
+    onTooltipMouseLeave() {
+        this.isInteractingWithTooltip = false;
+        this.lockService();
+    }
+    onTooltipFocusIn() {
+        this.isInteractingWithTooltip = true;
+    }
+    onTooltipFocusOut(e) {
+        var _a;
+        const parentGui = this.parentComp.getGui();
+        const tooltipGui = (_a = this.tooltipComp) === null || _a === void 0 ? void 0 : _a.getGui();
+        const relatedTarget = e.relatedTarget;
+        // focusout is dispatched when inner elements lose focus
+        // so we need to verify if focus is contained within the tooltip
+        if (tooltipGui === null || tooltipGui === void 0 ? void 0 : tooltipGui.contains(relatedTarget)) {
+            return;
+        }
+        this.isInteractingWithTooltip = false;
+        // if we move the focus from the tooltip back to the original cell
+        // the tooltip should remain open, but we need to restart the hide timeout counter
+        if (parentGui.contains(relatedTarget)) {
+            this.startHideTimeout();
+        }
+        // if the parent cell doesn't contain the focus, simply hide the tooltip
+        else {
+            this.hideTooltip();
+        }
+    }
+    positionTooltip() {
+        const params = {
             type: 'tooltip',
-            mouseEvent: this.lastMouseEvent,
             ePopup: this.tooltipComp.getGui(),
             nudgeY: 18,
             skipObserver: this.tooltipMouseTrack
+        };
+        if (this.lastMouseEvent) {
+            this.popupService.positionPopupUnderMouseEvent(Object.assign(Object.assign({}, params), { mouseEvent: this.lastMouseEvent }));
+        }
+        else {
+            this.popupService.positionPopupByComponent(Object.assign(Object.assign({}, params), { eventSource: this.parentComp.getGui(), position: 'under', keepWithinBounds: true, nudgeY: 5 }));
+        }
+    }
+    destroyTooltipComp() {
+        // add class to fade out the tooltip
+        this.tooltipComp.getGui().classList.add('ag-tooltip-hiding');
+        // make local copies of these variables, as we use them in the async function below,
+        // and we clear then to 'undefined' later, so need to take a copy before they are undefined.
+        const tooltipPopupDestroyFunc = this.tooltipPopupDestroyFunc;
+        const tooltipComp = this.tooltipComp;
+        const delay = this.tooltipTrigger === TooltipTrigger.HOVER ? this.FADE_OUT_TOOLTIP_TIMEOUT : 0;
+        window.setTimeout(() => {
+            tooltipPopupDestroyFunc();
+            this.getContext().destroyBean(tooltipComp);
+        }, delay);
+        this.clearTooltipListeners();
+        this.tooltipPopupDestroyFunc = undefined;
+        this.tooltipComp = undefined;
+    }
+    clearTooltipListeners() {
+        [
+            this.tooltipMouseEnterListener, this.tooltipMouseLeaveListener,
+            this.tooltipFocusInListener, this.tooltipFocusOutListener
+        ].forEach(listener => {
+            if (listener) {
+                listener();
+            }
         });
+        this.tooltipMouseEnterListener = this.tooltipMouseLeaveListener =
+            this.tooltipFocusInListener = this.tooltipFocusOutListener = null;
+    }
+    lockService() {
+        CustomTooltipFeature.isLocked = true;
+        this.interactiveTooltipTimeoutId = window.setTimeout(() => {
+            this.unlockService();
+            this.setToDoNothing();
+        }, this.INTERACTIVE_HIDE_DELAY);
+    }
+    unlockService() {
+        CustomTooltipFeature.isLocked = false;
+        this.clearInteractiveTimeout();
+    }
+    startHideTimeout() {
+        this.clearHideTimeout();
+        this.hideTooltipTimeoutId = window.setTimeout(this.hideTooltip.bind(this), this.tooltipHideDelay);
+    }
+    clearShowTimeout() {
+        if (!this.showTooltipTimeoutId) {
+            return;
+        }
+        window.clearTimeout(this.showTooltipTimeoutId);
+        this.showTooltipTimeoutId = undefined;
+    }
+    clearHideTimeout() {
+        if (!this.hideTooltipTimeoutId) {
+            return;
+        }
+        window.clearTimeout(this.hideTooltipTimeoutId);
+        this.hideTooltipTimeoutId = undefined;
+    }
+    clearInteractiveTimeout() {
+        if (!this.interactiveTooltipTimeoutId) {
+            return;
+        }
+        window.clearTimeout(this.interactiveTooltipTimeoutId);
+        this.interactiveTooltipTimeoutId = undefined;
     }
     clearTimeouts() {
-        if (this.showTooltipTimeoutId) {
-            window.clearTimeout(this.showTooltipTimeoutId);
-            this.showTooltipTimeoutId = undefined;
-        }
-        if (this.hideTooltipTimeoutId) {
-            window.clearTimeout(this.hideTooltipTimeoutId);
-            this.hideTooltipTimeoutId = undefined;
-        }
+        this.clearShowTimeout();
+        this.clearHideTimeout();
+        this.clearInteractiveTimeout();
     }
 }
+CustomTooltipFeature.isLocked = false;
 __decorate([
     context_1.Autowired('popupService')
 ], CustomTooltipFeature.prototype, "popupService", void 0);

@@ -169,7 +169,11 @@ ComponentUtil.EXCLUDED_INTERNAL_EVENTS = [
     Events.EVENT_CELL_FOCUS_CLEARED,
     Events.EVENT_GRID_STYLES_CHANGED,
     Events.EVENT_FILTER_DESTROYED,
-    Events.EVENT_ROW_DATA_UPDATE_STARTED
+    Events.EVENT_ROW_DATA_UPDATE_STARTED,
+    Events.EVENT_ADVANCED_FILTER_ENABLED_CHANGED,
+    Events.EVENT_DATA_TYPES_INFERRED,
+    Events.EVENT_FIELD_VALUE_CHANGED,
+    Events.EVENT_FIELD_PICKER_VALUE_SELECTED
 ];
 // events that are available for use by users of AG Grid and so should be documented
 /** EVENTS that should be exposed via code generation for the framework components.  */

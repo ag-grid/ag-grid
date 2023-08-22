@@ -1,4 +1,4 @@
-// Type definitions for @ag-grid-community/core v30.0.6
+// Type definitions for @ag-grid-community/core v30.1.0
 // Project: https://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { AgEvent } from "../events";
@@ -24,6 +24,10 @@ export interface LoadSuccessParams {
      * Any extra information for the grid to associate with this load.
      */
     groupLevelInfo?: any;
+    /**
+     * The pivot fields in the response - if provided the grid will attempt to generate secondary columns.
+     */
+    pivotResultFields?: string[];
 }
 export declare abstract class RowNodeBlock extends BeanStub {
     static EVENT_LOAD_COMPLETE: string;

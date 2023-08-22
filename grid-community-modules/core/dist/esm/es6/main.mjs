@@ -1,6 +1,6 @@
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / Typescript / React / Angular / Vue
- * @version v30.0.6
+ * @version v30.1.0
  * @link https://www.ag-grid.com/
  * @license MIT
  */
@@ -131,6 +131,7 @@ export { AgInputTextArea } from "./widgets/agInputTextArea.mjs";
 export { AgInputNumberField } from "./widgets/agInputNumberField.mjs";
 export { AgInputDateField } from "./widgets/agInputDateField.mjs";
 export { AgInputRange } from "./widgets/agInputRange.mjs";
+export { AgRichSelect } from "./widgets/agRichSelect.mjs";
 export { AgSelect } from "./widgets/agSelect.mjs";
 export { AgSlider } from "./widgets/agSlider.mjs";
 export { AgGroupComponent } from "./widgets/agGroupComponent.mjs";
@@ -149,6 +150,7 @@ export { TouchListener } from "./widgets/touchListener.mjs";
 export { VirtualList } from "./widgets/virtualList.mjs";
 export { AgAbstractLabel } from "./widgets/agAbstractLabel.mjs";
 export { AgPickerField } from "./widgets/agPickerField.mjs";
+export { AgAutocomplete } from "./widgets/agAutocomplete.mjs";
 // range
 export { CellRangeType, SelectionHandleType } from "./interfaces/IRangeService.mjs";
 // root
@@ -181,6 +183,7 @@ export { CellPositionUtils } from "./entities/cellPositionUtils.mjs";
 export { RowPositionUtils } from "./entities/rowPositionUtils.mjs";
 export { HeaderPositionUtils } from "./headerRendering/common/headerPosition.mjs";
 export { HeaderNavigationService, HeaderNavigationDirection } from "./headerRendering/common/headerNavigationService.mjs";
+export { DataTypeService } from "./columns/dataTypeService.mjs";
 export * from "./propertyKeys.mjs";
 export { ColumnApi } from "./columns/columnApi.mjs";
 export { BaseComponentWrapper } from "./components/framework/frameworkComponentWrapper.mjs";

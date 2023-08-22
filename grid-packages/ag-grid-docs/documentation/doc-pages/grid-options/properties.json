@@ -345,6 +345,30 @@
                 "name": "Tree Data Filtering",
                 "url": "/tree-data/#tree-data-filtering"
             }
+        },
+        "enableAdvancedFilter": {
+            "more": {
+                "name": "Advanced Filter",
+                "url": "/filter-advanced/"
+            }
+        },
+        "advancedFilterModel": {
+            "more": {
+                "name": "Advanced Filter",
+                "url": "/filter-advanced/#filter-model--    api"
+            }
+        },
+        "includeHiddenColumnsInAdvancedFilter": {
+            "more": {
+                "name": "Advanced Filter",
+                "url": "/filter-advanced/#including-hidden-columns"
+            }
+        },
+        "advancedFilterParent": {
+            "more": {
+                "name": "Advanced Filter",
+                "url": "/filter-advanced/#advanced-filter-parent"
+            }
         }
     },
     "charts": {
@@ -636,6 +660,12 @@
         },
         "pivotMode": {},
         "pivotPanelShow": {},
+        "pivotDefaultExpanded": {
+            "more": {
+                "name": "Opening Pivot Group Levels by Default",
+                "url": "/pivoting/#opening-pivot-group-levels-by-default"
+            }
+        },
         "pivotColumnGroupTotals": {
             "more": {
                 "name": "Pivot Column Group Totals",
@@ -1028,6 +1058,12 @@
         "purgeClosedRowNodes": {
             "description": "When enabled, closing group rows will remove children of that row. Next time the row is opened, child rows will be read from the datasource again. This property only applies when there is [Row Grouping](/server-side-model-grouping/). Default: `false`"
         },
+        "serverSidePivotResultFieldSeparator": {
+            "more": {
+                "name": "Providing Pivot Result Fields",
+                "url": "/server-side-model-pivoting/#providing-pivot-result-fields-simple"
+            }
+        },
         "serverSideSortAllLevels": {},
         "serverSideOnlyRefreshFilteredGroups": {},
         "serverSideInitialRowCount": {
@@ -1310,6 +1346,8 @@
         "enableBrowserTooltips": {},
         "tooltipShowDelay": {},
         "tooltipHideDelay": {},
-        "tooltipMouseTrack": {}
+        "tooltipMouseTrack": {},
+        "tooltipTrigger": {},
+        "tooltipInteraction": {}
     }
 }

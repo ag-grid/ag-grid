@@ -1,4 +1,4 @@
-// ag-grid-react v30.0.6
+// ag-grid-react v30.1.0
 "use strict";
 var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
     if (k2 === undefined) k2 = k;
@@ -23,7 +23,6 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var react_1 = __importStar(require("react"));
 var ag_grid_community_1 = require("ag-grid-community");
 var beansContext_1 = require("./beansContext");
-var useEffectOnce_1 = require("./useEffectOnce");
 var TabGuardCompRef = function (props, forwardRef) {
     var children = props.children, eFocusableElement = props.eFocusableElement, onTabKeyDown = props.onTabKeyDown, gridCtrl = props.gridCtrl;
     var context = react_1.useContext(beansContext_1.BeansContext).context;
@@ -48,27 +47,38 @@ var TabGuardCompRef = function (props, forwardRef) {
             (_a = tabGuardCtrlRef.current) === null || _a === void 0 ? void 0 : _a.forceFocusOutOfContainer();
         }
     }); });
-    useEffectOnce_1.useLayoutEffectOnce(function () {
-        var eTopGuard = topTabGuardRef.current;
-        var eBottomGuard = bottomTabGuardRef.current;
-        var compProxy = {
-            setTabIndex: setTabIndex
-        };
-        var ctrl = tabGuardCtrlRef.current = context.createBean(new ag_grid_community_1.TabGuardCtrl({
-            comp: compProxy,
-            eTopGuard: eTopGuard,
-            eBottomGuard: eBottomGuard,
-            eFocusableElement: eFocusableElement,
-            onTabKeyDown: onTabKeyDown,
-            focusInnerElement: function (fromBottom) { return gridCtrl.focusInnerElement(fromBottom); }
-        }));
-        return function () {
-            context.destroyBean(ctrl);
-        };
-    });
+    var setupCtrl = react_1.useCallback(function () {
+        if (!topTabGuardRef.current && !bottomTabGuardRef.current) {
+            // Clean up after both refs have been removed
+            context.destroyBean(tabGuardCtrlRef.current);
+            tabGuardCtrlRef.current = null;
+            return;
+        }
+        if (topTabGuardRef.current && bottomTabGuardRef.current) {
+            var compProxy = {
+                setTabIndex: setTabIndex
+            };
+            tabGuardCtrlRef.current = context.createBean(new ag_grid_community_1.TabGuardCtrl({
+                comp: compProxy,
+                eTopGuard: topTabGuardRef.current,
+                eBottomGuard: bottomTabGuardRef.current,
+                eFocusableElement: eFocusableElement,
+                onTabKeyDown: onTabKeyDown,
+                focusInnerElement: function (fromBottom) { return gridCtrl.focusInnerElement(fromBottom); }
+            }));
+        }
+    }, []);
+    var setTopRef = react_1.useCallback(function (e) {
+        topTabGuardRef.current = e;
+        setupCtrl();
+    }, [setupCtrl]);
+    var setBottomRef = react_1.useCallback(function (e) {
+        bottomTabGuardRef.current = e;
+        setupCtrl();
+    }, [setupCtrl]);
     var createTabGuard = function (side) {
         var className = side === 'top' ? ag_grid_community_1.TabGuardClassNames.TAB_GUARD_TOP : ag_grid_community_1.TabGuardClassNames.TAB_GUARD_BOTTOM;
-        return (react_1.default.createElement("div", { className: ag_grid_community_1.TabGuardClassNames.TAB_GUARD + " " + className, role: "presentation", ref: side === 'top' ? topTabGuardRef : bottomTabGuardRef }));
+        return (react_1.default.createElement("div", { className: ag_grid_community_1.TabGuardClassNames.TAB_GUARD + " " + className, role: "presentation", ref: side === 'top' ? setTopRef : setBottomRef }));
     };
     return (react_1.default.createElement(react_1.default.Fragment, null,
         createTabGuard('top'),

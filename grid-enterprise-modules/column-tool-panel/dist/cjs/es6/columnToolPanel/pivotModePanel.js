@@ -19,7 +19,7 @@ class PivotModePanel extends core_1.Component {
         this.cbPivotMode.setValue(this.columnModel.isPivotMode());
         const localeTextFunc = this.localeService.getLocaleTextFunc();
         this.cbPivotMode.setLabel(localeTextFunc('pivotMode', 'Pivot Mode'));
-        this.addManagedListener(this.cbPivotMode, core_1.AgCheckbox.EVENT_CHANGED, this.onBtPivotMode.bind(this));
+        this.addManagedListener(this.cbPivotMode, core_1.Events.EVENT_FIELD_VALUE_CHANGED, this.onBtPivotMode.bind(this));
         this.addManagedListener(this.eventService, core_1.Events.EVENT_NEW_COLUMNS_LOADED, this.onPivotModeChanged.bind(this));
         this.addManagedListener(this.eventService, core_1.Events.EVENT_COLUMN_PIVOT_MODE_CHANGED, this.onPivotModeChanged.bind(this));
     }

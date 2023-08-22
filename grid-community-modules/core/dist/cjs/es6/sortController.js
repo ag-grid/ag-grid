@@ -208,7 +208,7 @@ let SortController = SortController_1 = class SortController extends beanStub_1.
             return column.getSort();
         }
         // if column has unique data, its sorting is independent - but can still be mixed
-        const columnHasUniqueData = !!column.getColDef().field;
+        const columnHasUniqueData = column.getColDef().field != null || !!column.getColDef().valueGetter;
         const sortableColumns = columnHasUniqueData ? [column, ...linkedColumns] : linkedColumns;
         const firstSort = sortableColumns[0].getSort();
         // the == is intentional, as null and undefined both represent no sort, which means they are equivalent

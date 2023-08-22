@@ -25,27 +25,25 @@ class HeaderRowComp extends component_1.Component {
     constructor(ctrl) {
         super();
         this.headerComps = {};
-        const extraClass = ctrl.getType() == HeaderRowType.COLUMN_GROUP ? `ag-header-row-column-group` :
-            ctrl.getType() == HeaderRowType.FLOATING_FILTER ? `ag-header-row-column-filter` : `ag-header-row-column`;
-        this.setTemplate(/* html */ `<div class="ag-header-row ${extraClass}" role="row"></div>`);
         this.ctrl = ctrl;
+        this.setTemplate(/* html */ `<div class="${this.ctrl.getHeaderRowClass()}" role="row"></div>`);
     }
     //noinspection JSUnusedLocalSymbols
     init() {
+        this.getGui().style.transform = this.ctrl.getTransform();
+        aria_1.setAriaRowIndex(this.getGui(), this.ctrl.getAriaRowIndex());
         const compProxy = {
-            setTransform: transform => this.getGui().style.transform = transform,
             setHeight: height => this.getGui().style.height = height,
             setTop: top => this.getGui().style.top = top,
-            setHeaderCtrls: ctrls => this.setHeaderCtrls(ctrls),
+            setHeaderCtrls: (ctrls, forceOrder) => this.setHeaderCtrls(ctrls, forceOrder),
             setWidth: width => this.getGui().style.width = width,
-            setAriaRowIndex: rowIndex => aria_1.setAriaRowIndex(this.getGui(), rowIndex)
         };
         this.ctrl.setComp(compProxy);
     }
     destroyHeaderCtrls() {
-        this.setHeaderCtrls([]);
+        this.setHeaderCtrls([], false);
     }
-    setHeaderCtrls(ctrls) {
+    setHeaderCtrls(ctrls, forceOrder) {
         if (!this.isAlive()) {
             return;
         }
@@ -65,9 +63,7 @@ class HeaderRowComp extends component_1.Component {
             this.getGui().removeChild(comp.getGui());
             this.destroyBean(comp);
         });
-        const isEnsureDomOrder = this.gridOptionsService.is('ensureDomOrder');
-        const isPrintLayout = this.gridOptionsService.isDomLayout('print');
-        if (isEnsureDomOrder || isPrintLayout) {
+        if (forceOrder) {
             const comps = object_1.getAllValuesInObject(this.headerComps);
             // ordering the columns by left position orders them in the order they appear on the screen
             comps.sort((a, b) => {

@@ -31,32 +31,36 @@ var keyCode_1 = require("../../constants/keyCode");
 var SelectCellEditor = /** @class */ (function (_super) {
     __extends(SelectCellEditor, _super);
     function SelectCellEditor() {
-        var _this = _super.call(this, '<div class="ag-cell-edit-wrapper"><ag-select class="ag-cell-editor" ref="eSelect"></ag-select></div>') || this;
+        var _this = _super.call(this, /* html */ "<div class=\"ag-cell-edit-wrapper\">\n                <ag-select class=\"ag-cell-editor\" ref=\"eSelect\"></ag-select>\n            </div>") || this;
         _this.startedByEnter = false;
         return _this;
     }
     SelectCellEditor.prototype.init = function (params) {
         var _this = this;
         this.focusAfterAttached = params.cellStartedEdit;
-        if (generic_1.missing(params.values)) {
+        var values = params.values, value = params.value, eventKey = params.eventKey;
+        if (generic_1.missing(values)) {
             console.warn('AG Grid: no values found for select cellEditor');
             return;
         }
-        this.startedByEnter = params.eventKey != null ? params.eventKey === keyCode_1.KeyCode.ENTER : false;
+        this.startedByEnter = eventKey != null ? eventKey === keyCode_1.KeyCode.ENTER : false;
         var hasValue = false;
-        params.values.forEach(function (value) {
-            var option = { value: value };
-            var valueFormatted = _this.valueFormatterService.formatValue(params.column, null, value);
+        values.forEach(function (currentValue) {
+            var option = { value: currentValue };
+            var valueFormatted = _this.valueFormatterService.formatValue(params.column, null, currentValue);
             var valueFormattedExits = valueFormatted !== null && valueFormatted !== undefined;
-            option.text = valueFormattedExits ? valueFormatted : value;
+            option.text = valueFormattedExits ? valueFormatted : currentValue;
             _this.eSelect.addOption(option);
-            hasValue = hasValue || params.value === value;
+            hasValue = hasValue || value === currentValue;
         });
         if (hasValue) {
             this.eSelect.setValue(params.value, true);
         }
         else if (params.values.length) {
             this.eSelect.setValue(params.values[0], true);
+        }
+        if (params.valueListGap != null) {
+            this.eSelect.setPickerGap(params.valueListGap);
         }
         // we don't want to add this if full row editing, otherwise selecting will stop the
         // full row editing.
@@ -65,11 +69,16 @@ var SelectCellEditor = /** @class */ (function (_super) {
         }
     };
     SelectCellEditor.prototype.afterGuiAttached = function () {
+        var _this = this;
         if (this.focusAfterAttached) {
             this.eSelect.getFocusableElement().focus();
         }
         if (this.startedByEnter) {
-            this.eSelect.showPicker();
+            setTimeout(function () {
+                if (_this.isAlive()) {
+                    _this.eSelect.showPicker();
+                }
+            });
         }
     };
     SelectCellEditor.prototype.focusIn = function () {

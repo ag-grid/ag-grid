@@ -19,7 +19,7 @@
   --ag-row-hover-color: #fafafa;
   --ag-column-hover-color: #fafafa;
   --ag-control-panel-background-color: #fafafa;
-  --ag-selected-row-background-color: #eee;
+  --ag-selected-row-background-color: rgba(33, 150, 243, 0.3);
   --ag-checkbox-unchecked-color: #333;
   --ag-value-change-value-highlight-background-color: #00acc1;
   --ag-side-button-selected-background-color: transparent;
@@ -236,11 +236,11 @@
 .ag-theme-material .ag-filter-toolpanel-group-level-0-header {
   height: calc(var(--ag-grid-size) * 7);
 }
-.ag-theme-material .ag-ltr .ag-filter-apply-panel-button {
+.ag-theme-material .ag-ltr .ag-filter-apply-panel-button, .ag-theme-material .ag-ltr .ag-advanced-filter-apply-button {
   margin-left: var(--ag-grid-size);
 }
 
-.ag-theme-material .ag-rtl .ag-filter-apply-panel-button {
+.ag-theme-material .ag-rtl .ag-filter-apply-panel-button, .ag-theme-material .ag-rtl .ag-advanced-filter-apply-button {
   margin-right: var(--ag-grid-size);
 }
 
@@ -252,4 +252,7 @@
 }
 .ag-theme-material .ag-picker-field-wrapper:focus {
   box-shadow: 0 0 0 1px var(--ag-material-primary-color);
+}
+.ag-theme-material .ag-rich-select-list {
+  box-shadow: rgba(0, 0, 0, 0.2) 0px 5px 5px -3px, rgba(0, 0, 0, 0.14) 0px 8px 10px 1px, rgba(0, 0, 0, 0.12) 0px 3px 14px 2px;
 }

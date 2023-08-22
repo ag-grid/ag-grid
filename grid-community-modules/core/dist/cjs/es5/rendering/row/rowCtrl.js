@@ -94,7 +94,9 @@ var RowCtrl = /** @class */ (function (_super) {
             fullWidth: false
         };
         _this.lastMouseDownOnDragger = false;
+        _this.emptyStyle = {};
         _this.updateColumnListsPending = false;
+        _this.rowId = null;
         _this.businessKeySanitised = null;
         _this.beans = beans;
         _this.gridOptionsService = beans.gridOptionsService;
@@ -103,11 +105,16 @@ var RowCtrl = /** @class */ (function (_super) {
         _this.useAnimationFrameForCreate = useAnimationFrameForCreate;
         _this.printLayout = printLayout;
         _this.instanceId = rowNode.id + '-' + instanceIdSequence++;
+        _this.rowId = string_1.escapeString(rowNode.id);
+        if (_this.isFullWidth() && !_this.gridOptionsService.is('suppressCellFocus')) {
+            _this.tabIndex = -1;
+        }
         _this.setAnimateFlags(animateIn);
         _this.initRowBusinessKey();
         _this.rowFocused = beans.focusService.isRowFocused(_this.rowNode.rowIndex, _this.rowNode.rowPinned);
         _this.rowLevel = beans.rowCssClassCalculator.calculateRowLevel(_this.rowNode);
         _this.setRowType();
+        _this.rowStyles = _this.processStylesFromGridOptions();
         _this.addListeners();
         return _this;
     }
@@ -121,6 +128,15 @@ var RowCtrl = /** @class */ (function (_super) {
         }
         var businessKey = this.businessKeyForNodeFunc(this.rowNode);
         this.businessKeySanitised = string_1.escapeString(businessKey);
+    };
+    RowCtrl.prototype.getRowId = function () {
+        return this.rowId;
+    };
+    RowCtrl.prototype.getRowStyles = function () {
+        return this.rowStyles;
+    };
+    RowCtrl.prototype.getTabIndex = function () {
+        return this.tabIndex;
     };
     RowCtrl.prototype.isSticky = function () {
         return this.rowNode.sticky;
@@ -183,24 +199,20 @@ var RowCtrl = /** @class */ (function (_super) {
         this.onRowHeightChanged(gui);
         this.updateRowIndexes(gui);
         this.setFocusedClasses(gui);
-        this.setStylesFromGridOptions(gui);
+        this.setStylesFromGridOptions(false, gui); // no need to calculate styles already set in constructor
         if (gos.isRowSelection() && this.rowNode.selectable) {
             this.onRowSelected(gui);
         }
         this.updateColumnLists(!this.useAnimationFrameForCreate);
         var comp = gui.rowComp;
-        comp.setRole('row');
         var initialRowClasses = this.getInitialRowClasses(gui.containerType);
         initialRowClasses.forEach(function (name) { return comp.addOrRemoveCssClass(name, true); });
         this.executeSlideAndFadeAnimations(gui);
         if (this.rowNode.group) {
             aria_1.setAriaExpanded(gui.element, this.rowNode.expanded == true);
         }
-        this.setRowCompRowId(comp);
+        this.setRowCompRowId(comp, false); // false = don't update the id, as we already set it
         this.setRowCompRowBusinessKey(comp);
-        if (this.isFullWidth() && !this.gridOptionsService.is('suppressCellFocus')) {
-            comp.setTabIndex(-1);
-        }
         // DOM DATA
         gos.setDomData(gui.element, RowCtrl.DOM_DATA_KEY_ROW_CTRL, this);
         this.addDestroyFunc(function () { return gos.setDomData(gui.element, RowCtrl.DOM_DATA_KEY_ROW_CTRL, null); });
@@ -240,12 +252,17 @@ var RowCtrl = /** @class */ (function (_super) {
         }
         comp.setRowBusinessKey(this.businessKeySanitised);
     };
-    RowCtrl.prototype.setRowCompRowId = function (comp) {
-        var rowId = string_1.escapeString(this.rowNode.id);
-        if (rowId == null) {
+    RowCtrl.prototype.getBusinessKey = function () {
+        return this.businessKeySanitised;
+    };
+    RowCtrl.prototype.setRowCompRowId = function (comp, updateId) {
+        if (updateId) {
+            this.rowId = string_1.escapeString(this.rowNode.id);
+        }
+        if (this.rowId == null) {
             return;
         }
-        comp.setRowId(rowId);
+        comp.setRowId(this.rowId);
     };
     RowCtrl.prototype.executeSlideAndFadeAnimations = function (gui) {
         var _this = this;
@@ -424,9 +441,33 @@ var RowCtrl = /** @class */ (function (_super) {
         return res;
     };
     RowCtrl.prototype.updateColumnListsImpl = function (useFlushSync) {
-        var _this = this;
-        if (useFlushSync === void 0) { useFlushSync = false; }
         this.updateColumnListsPending = false;
+        this.createAllCellCtrls();
+        this.setCellCtrls(useFlushSync);
+    };
+    RowCtrl.prototype.setCellCtrls = function (useFlushSync) {
+        var _this = this;
+        this.allRowGuis.forEach(function (item) {
+            var cellControls = _this.getCellCtrlsForContainer(item.containerType);
+            item.rowComp.setCellCtrls(cellControls, useFlushSync);
+        });
+    };
+    RowCtrl.prototype.getCellCtrlsForContainer = function (containerType) {
+        switch (containerType) {
+            case rowContainerCtrl_1.RowContainerType.LEFT:
+                return this.leftCellCtrls.list;
+            case rowContainerCtrl_1.RowContainerType.RIGHT:
+                return this.rightCellCtrls.list;
+            case rowContainerCtrl_1.RowContainerType.FULL_WIDTH:
+                return [];
+            case rowContainerCtrl_1.RowContainerType.CENTER:
+                return this.centerCellCtrls.list;
+            default:
+                var exhaustiveCheck = containerType;
+                throw new Error("Unhandled case: " + exhaustiveCheck);
+        }
+    };
+    RowCtrl.prototype.createAllCellCtrls = function () {
         var columnModel = this.beans.columnModel;
         if (this.printLayout) {
             this.centerCellCtrls = this.createCellCtrls(this.centerCellCtrls, columnModel.getAllDisplayedColumns());
@@ -441,11 +482,6 @@ var RowCtrl = /** @class */ (function (_super) {
             var rightCols = columnModel.getDisplayedRightColumnsForRow(this.rowNode);
             this.rightCellCtrls = this.createCellCtrls(this.rightCellCtrls, rightCols, 'right');
         }
-        this.allRowGuis.forEach(function (item) {
-            var cellControls = item.containerType === rowContainerCtrl_1.RowContainerType.LEFT ? _this.leftCellCtrls :
-                item.containerType === rowContainerCtrl_1.RowContainerType.RIGHT ? _this.rightCellCtrls : _this.centerCellCtrls;
-            item.rowComp.setCellCtrls(cellControls.list, useFlushSync);
-        });
     };
     RowCtrl.prototype.isCellEligibleToBeRemoved = function (cellCtrl, nextContainerPinned) {
         var REMOVE_CELL = true;
@@ -467,15 +503,17 @@ var RowCtrl = /** @class */ (function (_super) {
         }
         return REMOVE_CELL;
     };
+    RowCtrl.prototype.getDomOrder = function () {
+        var isEnsureDomOrder = this.gridOptionsService.is('ensureDomOrder');
+        return isEnsureDomOrder || this.gridOptionsService.isDomLayout('print');
+    };
     RowCtrl.prototype.listenOnDomOrder = function (gui) {
         var _this = this;
         var listener = function () {
-            var isEnsureDomOrder = _this.gridOptionsService.is('ensureDomOrder');
-            var isPrintLayout = _this.gridOptionsService.isDomLayout('print');
-            gui.rowComp.setDomOrder(isEnsureDomOrder || isPrintLayout);
+            gui.rowComp.setDomOrder(_this.getDomOrder());
         };
         this.addManagedPropertyListener('domLayout', listener);
-        listener();
+        this.addManagedPropertyListener('ensureDomOrder', listener);
     };
     RowCtrl.prototype.setAnimateFlags = function (animateIn) {
         if (this.isSticky() || !animateIn) {
@@ -547,6 +585,10 @@ var RowCtrl = /** @class */ (function (_super) {
         this.addManagedListener(this.rowNode, rowNode_1.RowNode.EVENT_TOP_CHANGED, this.onTopChanged.bind(this));
         this.addManagedListener(this.rowNode, rowNode_1.RowNode.EVENT_EXPANDED_CHANGED, this.updateExpandedCss.bind(this));
         this.addManagedListener(this.rowNode, rowNode_1.RowNode.EVENT_HAS_CHILDREN_CHANGED, this.updateExpandedCss.bind(this));
+        if (this.rowNode.detail) {
+            // if the master row node has updated data, we also want to try to refresh the detail row
+            this.addManagedListener(this.rowNode.parent, rowNode_1.RowNode.EVENT_DATA_CHANGED, this.onRowNodeDataChanged.bind(this));
+        }
         this.addManagedListener(this.rowNode, rowNode_1.RowNode.EVENT_DATA_CHANGED, this.onRowNodeDataChanged.bind(this));
         this.addManagedListener(this.rowNode, rowNode_1.RowNode.EVENT_CELL_CHANGED, this.onRowNodeCellChanged.bind(this));
         this.addManagedListener(this.rowNode, rowNode_1.RowNode.EVENT_HIGHLIGHT_CHANGED, this.onRowNodeHighlightChanged.bind(this));
@@ -578,12 +620,11 @@ var RowCtrl = /** @class */ (function (_super) {
     };
     RowCtrl.prototype.onRowNodeDataChanged = function (event) {
         var _this = this;
-        // if master row has updated, then need to also try to refresh the detail node
-        if (this.rowNode.detailNode) {
-            this.beans.rowRenderer.refreshFullWidthRow(this.rowNode.detailNode);
-        }
         if (this.isFullWidth()) {
-            this.beans.rowRenderer.refreshFullWidthRow(this.rowNode);
+            var refresh = this.refreshFullWidth();
+            if (!refresh) {
+                this.beans.rowRenderer.redrawRow(this.rowNode);
+            }
             return;
         }
         // if this is an update, we want to refresh, as this will allow the user to put in a transition
@@ -597,7 +638,7 @@ var RowCtrl = /** @class */ (function (_super) {
         });
         // as data has changed update the dom row id attributes
         this.allRowGuis.forEach(function (gui) {
-            _this.setRowCompRowId(gui.rowComp);
+            _this.setRowCompRowId(gui.rowComp, true);
             _this.updateRowBusinessKey();
             _this.setRowCompRowBusinessKey(gui.rowComp);
         });
@@ -615,7 +656,7 @@ var RowCtrl = /** @class */ (function (_super) {
         this.postProcessCss();
     };
     RowCtrl.prototype.postProcessCss = function () {
-        this.setStylesFromGridOptions();
+        this.setStylesFromGridOptions(true);
         this.postProcessClassesFromGridOptions();
         this.postProcessRowClassRules();
         this.postProcessRowDragging();
@@ -1042,9 +1083,12 @@ var RowCtrl = /** @class */ (function (_super) {
             _this.allRowGuis.forEach(function (gui) { return gui.rowComp.addOrRemoveCssClass(className, false); });
         });
     };
-    RowCtrl.prototype.setStylesFromGridOptions = function (gui) {
-        var rowStyles = this.processStylesFromGridOptions();
-        this.forEachGui(gui, function (gui) { return gui.rowComp.setUserStyles(rowStyles); });
+    RowCtrl.prototype.setStylesFromGridOptions = function (updateStyles, gui) {
+        var _this = this;
+        if (updateStyles) {
+            this.rowStyles = this.processStylesFromGridOptions();
+        }
+        this.forEachGui(gui, function (gui) { return gui.rowComp.setUserStyles(_this.rowStyles); });
     };
     RowCtrl.prototype.getPinnedForContainer = function (rowContainerType) {
         var pinned = rowContainerType === rowContainerCtrl_1.RowContainerType.LEFT
@@ -1089,7 +1133,11 @@ var RowCtrl = /** @class */ (function (_super) {
             };
             rowStyleFuncResult = rowStyleFunc(params);
         }
-        return Object.assign({}, rowStyle, rowStyleFuncResult);
+        if (rowStyleFuncResult || rowStyle) {
+            return Object.assign({}, rowStyle, rowStyleFuncResult);
+        }
+        // Return constant reference for React
+        return this.emptyStyle;
     };
     RowCtrl.prototype.onRowSelected = function (gui) {
         var _this = this;
@@ -1162,8 +1210,12 @@ var RowCtrl = /** @class */ (function (_super) {
         return this.beans.frameworkOverrides;
     };
     RowCtrl.prototype.forEachGui = function (gui, callback) {
-        var list = gui ? [gui] : this.allRowGuis;
-        list.forEach(callback);
+        if (gui) {
+            callback(gui);
+        }
+        else {
+            this.allRowGuis.forEach(callback);
+        }
     };
     RowCtrl.prototype.onRowHeightChanged = function (gui) {
         // check for exists first - if the user is resetting the row height, then
@@ -1385,9 +1437,12 @@ var RowCtrl = /** @class */ (function (_super) {
             this.postProcessCss();
         }
     };
+    RowCtrl.prototype.getRowIndex = function () {
+        return this.rowNode.getRowIndexString();
+    };
     RowCtrl.prototype.updateRowIndexes = function (gui) {
         var rowIndexStr = this.rowNode.getRowIndexString();
-        var headerRowCount = this.beans.headerNavigationService.getHeaderRowCount();
+        var headerRowCount = this.beans.headerNavigationService.getHeaderRowCount() + this.beans.filterManager.getHeaderRowCount();
         var rowIsEven = this.rowNode.rowIndex % 2 === 0;
         var ariaRowIndex = headerRowCount + this.rowNode.rowIndex + 1;
         this.forEachGui(gui, function (c) {

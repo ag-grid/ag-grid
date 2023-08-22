@@ -100,7 +100,7 @@ let GridSerializer = class GridSerializer extends BeanStub {
         return (gridSerializingSession) => {
             if (!params.skipColumnGroupHeaders) {
                 const groupInstanceIdCreator = new GroupInstanceIdCreator();
-                const displayedGroups = this.displayedGroupCreator.createDisplayedGroups(columnsToExport, this.columnModel.getGridBalancedTree(), groupInstanceIdCreator, null);
+                const displayedGroups = this.displayedGroupCreator.createDisplayedGroups(columnsToExport, groupInstanceIdCreator, null);
                 this.recursivelyAddHeaderGroups(displayedGroups, gridSerializingSession, params.processGroupHeaderCallback);
             }
             else if (params.columnGroups) {

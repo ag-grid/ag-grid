@@ -1,4 +1,4 @@
-// Type definitions for @ag-grid-community/core v30.0.6
+// Type definitions for @ag-grid-community/core v30.1.0
 // Project: https://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { SimpleFilter, ISimpleFilterParams, ISimpleFilterModel, ISimpleFilterModelType, Tuple, SimpleFilterModelFormatter } from '../simpleFilter';
@@ -104,6 +104,7 @@ export declare class TextFilter extends SimpleFilter<TextFilterModel, string> {
     protected areSimpleModelsEqual(aSimple: TextFilterModel, bSimple: TextFilterModel): boolean;
     protected getInputs(position: number): Tuple<AgInputTextField>;
     protected getValues(position: number): Tuple<string>;
+    private getValuesWithSideEffects;
     protected getDefaultFilterOptions(): string[];
     protected createValueElement(): HTMLElement;
     private createFromToElement;

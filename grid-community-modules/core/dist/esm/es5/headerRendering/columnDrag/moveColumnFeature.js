@@ -180,6 +180,7 @@ var MoveColumnFeature = /** @class */ (function () {
             // If the columns we're dragging are the only visible columns of their group, move the hidden ones too
             var newCols_1 = [];
             allMovingColumns.forEach(function (col) {
+                var _a;
                 var movingGroup = null;
                 var parent = col.getParent();
                 while (parent != null && parent.getDisplayedLeafColumns().length === 1) {
@@ -187,8 +188,13 @@ var MoveColumnFeature = /** @class */ (function () {
                     parent = parent.getParent();
                 }
                 if (movingGroup != null) {
-                    var providedColumnGroup = movingGroup.getProvidedColumnGroup();
-                    providedColumnGroup.getLeafColumns().forEach(function (newCol) {
+                    var isMarryChildren = !!((_a = movingGroup.getColGroupDef()) === null || _a === void 0 ? void 0 : _a.marryChildren);
+                    var columnsToMove = isMarryChildren
+                        // when marry children is true, we also have to move hidden
+                        // columns within the group, so grab them from the `providedColumnGroup`
+                        ? movingGroup.getProvidedColumnGroup().getLeafColumns()
+                        : movingGroup.getLeafColumns();
+                    columnsToMove.forEach(function (newCol) {
                         if (!newCols_1.includes(newCol)) {
                             newCols_1.push(newCol);
                         }

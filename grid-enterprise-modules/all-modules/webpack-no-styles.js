@@ -6,6 +6,7 @@ var ClientSideRowModelModule = require('../../grid-community-modules/client-side
 var GridCoreModule = require('../../grid-community-modules/core');
 var CsvExportModule = require('../../grid-community-modules/csv-export');
 var InfiniteRowModelModule = require('../../grid-community-modules/infinite-row-model');
+var AdvancedFilterModule = require('../../grid-enterprise-modules/advanced-filter');
 var GridChartsModule = require('../../grid-enterprise-modules/charts');
 var ClipboardModule = require('../../grid-enterprise-modules/clipboard');
 var ColumnsToolPanelModule = require('../../grid-enterprise-modules/column-tool-panel');
@@ -48,6 +49,7 @@ exports['agCharts'] = agGridEnterprise['agCharts'];
 agGrid.ModuleRegistry.register(ClientSideRowModelModule.ClientSideRowModelModule);
 agGrid.ModuleRegistry.register(CsvExportModule.CsvExportModule);
 agGrid.ModuleRegistry.register(InfiniteRowModelModule.InfiniteRowModelModule);
+agGrid.ModuleRegistry.register(AdvancedFilterModule.AdvancedFilterModule);
 agGrid.ModuleRegistry.register(GridChartsModule.GridChartsModule);
 agGrid.ModuleRegistry.register(ClipboardModule.ClipboardModule);
 agGrid.ModuleRegistry.register(ColumnsToolPanelModule.ColumnsToolPanelModule);

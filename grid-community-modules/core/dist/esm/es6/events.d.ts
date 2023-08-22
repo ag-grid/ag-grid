@@ -1,4 +1,4 @@
-// Type definitions for @ag-grid-community/core v30.0.6
+// Type definitions for @ag-grid-community/core v30.1.0
 // Project: https://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { Column, ColumnPinnedType } from './entities/column';
@@ -71,6 +71,7 @@ export interface ColumnEverythingChangedEvent<TData = any, TContext = any> exten
     source: string;
 }
 export interface NewColumnsLoadedEvent<TData = any, TContext = any> extends AgGridEvent<TData, TContext> {
+    source: ColumnEventType;
 }
 export interface GridColumnsChangedEvent<TData = any, TContext = any> extends AgGridEvent<TData, TContext> {
 }
@@ -105,7 +106,16 @@ export declare type SelectionEventSourceType = 'api' | 'apiSelectAll' | 'apiSele
 export interface SelectionChangedEvent<TData = any, TContext = any> extends AgGridEvent<TData, TContext> {
     source: SelectionEventSourceType;
 }
+export declare type FilterChangedEventSourceType = 'api' | 'quickFilter' | 'columnFilter' | 'advancedFilter';
 export interface FilterChangedEvent<TData = any, TContext = any> extends AgGridEvent<TData, TContext> {
+    /**
+     * The source that triggered the filter change event. Can be one of the following:
+     * - `api` - triggered by an API call
+     * - `quickFilter` - triggered by user filtering from Quick Filter
+     * - `columnFilter` - triggered by user filtering from Column Menu
+     * - `advancedFilter` - triggered by user filtering from Advanced Filter
+     */
+    source?: FilterChangedEventSourceType;
     /** True if the filter was changed as a result of data changing */
     afterDataChange?: boolean;
     /** True if filter was changed via floating filter */
@@ -133,7 +143,7 @@ export interface FilterOpenedEvent<TData = any, TContext = any> extends AgGridEv
     eGui: HTMLElement;
 }
 export interface FilterDestroyedEvent<TData = any, TContext = any> extends AgGridEvent<TData, TContext> {
-    source: 'api' | 'columnChanged' | 'gridDestroyed';
+    source: 'api' | 'columnChanged' | 'gridDestroyed' | 'advancedFilterEnabled';
     column: Column;
 }
 export interface SortChangedEvent<TData = any, TContext = any> extends AgGridEvent<TData, TContext> {
@@ -322,6 +332,14 @@ export interface BodyScrollEndEvent<TData = any, TContext = any> extends BodyScr
 }
 export interface FlashCellsEvent<TData = any, TContext = any> extends AgGridEvent<TData, TContext> {
     cells: any;
+}
+export interface TooltipEvent<TData = any, TContext = any> extends AgGridEvent<TData, TContext> {
+    parentGui: HTMLElement;
+}
+export interface TooltipShowEvent<TData = any, TContext = any> extends TooltipEvent<TData, TContext> {
+    tooltipGui: HTMLElement;
+}
+export interface TooltipHideEvent<TData = any, TContext = any> extends TooltipEvent<TData, TContext> {
 }
 export interface PaginationPixelOffsetChangedEvent<TData = any, TContext = any> extends AgGridEvent<TData, TContext> {
 }
@@ -524,4 +542,18 @@ export interface DisplayedRowsChangedEvent<TData = any, TContext = any> extends 
     afterScroll: boolean;
 }
 export interface CssVariablesChanged<TData = any, TContext = any> extends AgGridEvent<TData, TContext> {
+}
+/**-----------------*/
+/** Internal EVENTS */
+/**-----------------*/
+export interface AdvancedFilterEnabledChangedEvent<TData = any, TContext = any> extends AgGridEvent<TData, TContext> {
+    enabled: boolean;
+}
+export interface DataTypesInferredEvent<TData = any, TContext = any> extends AgGridEvent<TData, TContext> {
+}
+export interface FieldValueEvent<TData = any, TContext = any> extends AgGridEvent<TData, TContext> {
+    value: any;
+}
+export interface FieldPickerValueSelectedEvent<TData = any, TContext = any> extends FieldValueEvent {
+    fromEnterKey: boolean;
 }

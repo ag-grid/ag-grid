@@ -84,6 +84,7 @@ For example:
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/ag-grid-enterprise/styles/ag-theme-alpine.css">
     <script type="module">
         import {
+            AdvancedFilterModule,
             ClientSideRowModelModule,
             ClipboardModule,
             ColumnsToolPanelModule,
@@ -106,6 +107,7 @@ For example:
         } from 'https://cdn.jsdelivr.net/npm/ag-grid-enterprise/dist/ag-grid-enterprise.esm.js';
 
         ModuleRegistry.registerModules([
+            AdvancedFilterModule,
             ClientSideRowModelModule,
             GridChartsModule,
             ClipboardModule,

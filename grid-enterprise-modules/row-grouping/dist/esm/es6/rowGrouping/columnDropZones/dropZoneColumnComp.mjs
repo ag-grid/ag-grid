@@ -177,7 +177,7 @@ export class DropZoneColumnComp extends Component {
             return;
         }
         this.popupShowing = true;
-        const virtualList = new VirtualList('select-agg-func');
+        const virtualList = new VirtualList({ cssIdentifier: 'select-agg-func' });
         const rows = this.aggFuncService.getFuncNames(this.column);
         const eGui = this.getGui();
         const virtualListGui = virtualList.getGui();

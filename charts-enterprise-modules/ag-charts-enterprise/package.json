@@ -1,6 +1,6 @@
 {
   "name": "ag-charts-enterprise",
-  "version": "8.0.5",
+  "version": "8.1.0",
   "description": "Advanced Charting / Charts supporting Javascript / Typescript / React / Angular / Vue",
   "main": "./dist/esm/es6/main.mjs",
   "module": "./dist/esm/es6/main.mjs",
@@ -14,9 +14,8 @@
     "build-esm-prod": "npx tsc -p tsconfig.esm.es5.json --sourceMap false && npx tsc -p tsconfig.esm.es6.json --sourceMap false",
     "watch-esm": "tsc -p tsconfig.esm.es5.json -w --preserveWatchOutput",
     "package": "node ../../module-build/rollup/build.js --bundlePrefix ag-charts-enterprise --umdModuleName agChartsEnterprise",
-    "build": "npx gulp copy-license-files && npm run build-cjs && npm run build-esm && npx gulp mjs-processing && npm run hash",
-    "build-prod": "npx gulp copy-license-files && npm run build-cjs-prod && npm run build-esm-prod && npx gulp mjs-processing && npm run hash",
-    "hash": "sh ../../scripts/hashDirectory.sh > .hash",
+    "build": "npx gulp copy-license-files && npm run build-cjs && npm run build-esm && npx gulp mjs-processing",
+    "build-prod": "npx gulp copy-license-files && npm run build-cjs-prod && npm run build-esm-prod && npx gulp mjs-processing",
     "install-hooks": "cd ../.. && husky install charts-enterprise-modules/ag-charts-enterprise/.husky",
     "lint": "run-s lint:*",
     "lint:prettier": "npx prettier -c .",
@@ -77,7 +76,7 @@
     "@types/pngjs": "^6.0.1",
     "@typescript-eslint/eslint-plugin": "^5.51.0",
     "@typescript-eslint/parser": "^5.51.0",
-    "ag-charts-community": "~8.0.5",
+    "ag-charts-community": "~8.1.0",
     "canvas": "^2.10.2",
     "eslint": "^6.8.0",
     "glob": "8.0.3",
@@ -102,7 +101,7 @@
     "del": "^6.0.0"
   },
   "peerDependencies": {
-    "ag-charts-community": "~8.0.5"
+    "ag-charts-community": "~8.1.0"
   },
   "publishConfig": {
     "access": "private"

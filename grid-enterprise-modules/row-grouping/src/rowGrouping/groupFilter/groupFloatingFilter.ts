@@ -11,6 +11,8 @@ import {
     IFloatingFilterComp,
     IFloatingFilterParams,
     RefSelector,
+    UserCompDetails,
+    ColumnEvent,
 } from '@ag-grid-community/core';
 import { GroupFilter } from './groupFilter';
 
@@ -25,7 +27,8 @@ export class GroupFloatingFilterComp extends Component implements IFloatingFilte
     private parentFilterInstance: GroupFilter;
     private underlyingFloatingFilter: IFloatingFilterComp | undefined;
     private showingUnderlyingFloatingFilter: boolean;
-    private columnVisibleChangedListener: (() => null) | null | undefined;
+    private compDetails: UserCompDetails;
+    private haveAddedColumnListeners: boolean = false;
     
     constructor() {
         super(/* html */ `
@@ -53,19 +56,29 @@ export class GroupFloatingFilterComp extends Component implements IFloatingFilte
         }).then(() => {
             this.addManagedListener(this.parentFilterInstance, GroupFilter.EVENT_SELECTED_COLUMN_CHANGED, () => this.onSelectedColumnChanged());
             this.addManagedListener(this.parentFilterInstance, GroupFilter.EVENT_COLUMN_ROW_GROUP_CHANGED, () => this.onColumnRowGroupChanged());
-        });;
+        });
+    }
+
+    public onParamsUpdated(params: IFloatingFilterParams<GroupFilter>): void {
+        this.params = params;
+        this.setParams();
+    }
+
+    private setParams(): void {
+        const displayName = this.columnModel.getDisplayNameForColumn(this.params.column, 'header', true);
+        const translate = this.localeService.getLocaleTextFunc();
+        this.eFloatingFilterText?.setInputAriaLabel(`${displayName} ${translate('ariaFilterInput', 'Filter Input')}`);
     }
 
     private setupReadOnlyFloatingFilterElement(): void {
         if (!this.eFloatingFilterText) {
             this.eFloatingFilterText = this.createManagedBean(new AgInputTextField());
-            const displayName = this.columnModel.getDisplayNameForColumn(this.params.column, 'header', true);
-            const translate = this.localeService.getLocaleTextFunc();
             
             this.eFloatingFilterText
                 .setDisabled(true)
-                .setInputAriaLabel(`${displayName} ${translate('ariaFilterInput', 'Filter Input')}`)
                 .addGuiEventListener('click', () => this.params.showParentFilter());
+
+            this.setParams();
         }
 
         this.updateDisplayedValue();
@@ -82,8 +95,11 @@ export class GroupFloatingFilterComp extends Component implements IFloatingFilte
         if (column && !column.isVisible()) {
             const compDetails = this.filterManager.getFloatingFilterCompDetails(column, this.params.showParentFilter);
             if (compDetails) {
-                if (!this.columnVisibleChangedListener) {
-                    this.columnVisibleChangedListener = this.addManagedListener(column, Column.EVENT_VISIBLE_CHANGED, this.onColumnVisibleChanged.bind(this));
+                this.compDetails = compDetails;
+                if (!this.haveAddedColumnListeners) {
+                    this.haveAddedColumnListeners = true;
+                    this.addManagedListener(column, Column.EVENT_VISIBLE_CHANGED, this.onColumnVisibleChanged.bind(this));
+                    this.addManagedListener(column, Column.EVENT_COL_DEF_CHANGED, this.onColDefChanged.bind(this));
                 }
                 return compDetails.newAgStackInstance().then(floatingFilter => {
                     this.underlyingFloatingFilter = floatingFilter;
@@ -100,6 +116,14 @@ export class GroupFloatingFilterComp extends Component implements IFloatingFilte
 
     private onColumnVisibleChanged(): void {
         this.setupUnderlyingFloatingFilterElement();
+    }
+
+    private onColDefChanged(event: ColumnEvent): void {
+        if (!event.column) { return; }
+        const compDetails = this.filterManager.getFloatingFilterCompDetails(event.column, this.params.showParentFilter);
+        if (compDetails) {
+            this.underlyingFloatingFilter?.onParamsUpdated?.(compDetails.params);
+        }
     }
 
     public onParentModelChanged(_model: null, event: FilterChangedEvent): void {

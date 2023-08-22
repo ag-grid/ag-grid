@@ -1,108 +1,17 @@
-import { Grid, ColDef, FirstDataRenderedEvent, GridOptions, IDoesFilterPassParams, IFilterComp, IFilterParams, IServerSideDatasource } from '@ag-grid-community/core'
+import { Grid, ColDef, FirstDataRenderedEvent, GridOptions, IDoesFilterPassParams, IFilterComp, IFilterParams, IServerSideDatasource, AgPromise, IAfterGuiAttachedParams } from '@ag-grid-community/core'
+declare var CustomAgeFilter: any;
 declare function createFakeServer(data: any): any;
 declare function createServerSideDatasource(server: any, gridOptions: GridOptions): IServerSideDatasource;
 declare function getCountries(): string[];
 
 const countries = getCountries();
 
-class CustomAgeFilter implements IFilterComp {
-  eGui: any
-  filterValue: number | null = null;
-  params!: IFilterParams;
-
-  init(params: IFilterParams) {
-    this.eGui = document.createElement('div')
-    this.eGui.innerHTML =
-      `<div>  
-          <label>    
-              <input type="radio" name="ageFilterValue" ref="btAll" checked/> All  
-          </label>  
-          <label>    
-              <input type="radio" name="ageFilterValue" ref="bt20"/> 20  
-          </label>  
-          <label>    
-              <input type="radio" name="ageFilterValue" ref="bt22"/> 22  
-          </label>
-        </div>`;
-
-    this.filterValue = null
-    this.params = params
-
-    // var that = this;
-
-    this.eGui
-      .querySelector('[ref="btAll"]')
-      .addEventListener('change', this.onSelection.bind(this, null))
-    this.eGui
-      .querySelector('[ref="bt20"]')
-      .addEventListener('change', this.onSelection.bind(this, 20))
-    this.eGui
-      .querySelector('[ref="bt22"]')
-      .addEventListener('change', this.onSelection.bind(this, 22))
-  }
-
-  onSelection(value: number | null) {
-    this.filterValue = value
-    this.params.filterChangedCallback()
-  }
-
-  getGui() {
-    return this.eGui
-  }
-
-  isFilterActive() {
-    return this.filterValue !== null
-  }
-
-  doesFilterPass(params: IDoesFilterPassParams) {
-    // not needed for server side filtering
-    const { api, colDef, column, columnApi, context } = this.params;
-    const { node } = params;
-    const value = this.params.valueGetter({
-      api,
-      colDef,
-      column,
-      columnApi,
-      context,
-      data: node.data,
-      getValue: (field) => node.data[field],
-      node,
-    });
-    return value == this.filterValue
-  }
-
-  getModel() {
-    if (this.filterValue === null) {
-      return null
-    } else {
-      // the format of what you return depends on your server side, just
-      // return something that your server side can work with.
-      return {
-        filter: this.filterValue,
-        type: 'equals',
-      }
-    }
-  }
-
-  setModel(model: any) {
-    if (model && model.filter === 20) {
-      this.eGui.querySelector('[ref="bt20"]').checked = true
-      this.filterValue = 20
-    } else if (model && model.filter === 22) {
-      this.eGui.querySelector('[ref="bt22"]').checked = true
-      this.filterValue = 22
-    } else {
-      this.eGui.querySelector('[ref="btAll"]').checked = true
-      this.filterValue = null
-    }
-  }
-}
-
 const columnDefs: ColDef[] = [
-  { field: 'athlete', enableRowGroup: true, enablePivot: true, filter: false },
+  { field: 'athlete', enableRowGroup: true, filter: false },
   {
     field: 'age',
     enableRowGroup: true,
+    enablePivot: true,
     filter: CustomAgeFilter,
   },
   {
@@ -152,10 +61,7 @@ const gridOptions: GridOptions<IOlympicData> = {
   pivotPanelShow: 'always',
   animateRows: true,
   sideBar: true,
-  suppressAggFuncInHeader: true,
-  // restrict to 2 server side calls concurrently
   maxConcurrentDatasourceRequests: 1,
-  cacheBlockSize: 100,
   maxBlocksInCache: 2,
   purgeClosedRowNodes: true,
   onFirstDataRendered: onFirstDataRendered,

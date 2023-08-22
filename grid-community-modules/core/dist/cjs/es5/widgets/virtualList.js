@@ -32,15 +32,14 @@ var eventKeys_1 = require("../eventKeys");
 var event_1 = require("../utils/event");
 var VirtualList = /** @class */ (function (_super) {
     __extends(VirtualList, _super);
-    function VirtualList(cssIdentifier, ariaRole, listName) {
-        if (cssIdentifier === void 0) { cssIdentifier = 'default'; }
-        if (ariaRole === void 0) { ariaRole = 'listbox'; }
-        var _this = _super.call(this, VirtualList.getTemplate(cssIdentifier)) || this;
+    function VirtualList(params) {
+        var _this = _super.call(this, VirtualList.getTemplate((params === null || params === void 0 ? void 0 : params.cssIdentifier) || 'default')) || this;
+        _this.renderedRows = new Map();
+        _this.rowHeight = 20;
+        var _a = params || {}, _b = _a.cssIdentifier, cssIdentifier = _b === void 0 ? 'default' : _b, _c = _a.ariaRole, ariaRole = _c === void 0 ? 'listbox' : _c, listName = _a.listName;
         _this.cssIdentifier = cssIdentifier;
         _this.ariaRole = ariaRole;
         _this.listName = listName;
-        _this.renderedRows = new Map();
-        _this.rowHeight = 20;
         return _this;
     }
     VirtualList.prototype.postConstruct = function () {
@@ -145,7 +144,7 @@ var VirtualList = /** @class */ (function (_super) {
         this.renderedRows.forEach(function (value, key) { return func(value.rowComponent, key); });
     };
     VirtualList.getTemplate = function (cssIdentifier) {
-        return /* html */ "\n            <div class=\"ag-virtual-list-viewport ag-" + cssIdentifier + "-virtual-list-viewport\" role=\"presentation\">\n                <div class=\"ag-virtual-list-container ag-" + cssIdentifier + "-virtual-list-container\" ref=\"eContainer\"></div>\n            </div>";
+        return ( /* html */"<div class=\"ag-virtual-list-viewport ag-" + cssIdentifier + "-virtual-list-viewport\" role=\"presentation\">\n                <div class=\"ag-virtual-list-container ag-" + cssIdentifier + "-virtual-list-container\" ref=\"eContainer\"></div>\n            </div>");
     };
     VirtualList.prototype.getItemHeight = function () {
         return this.environment.getListItemHeight();
@@ -219,7 +218,7 @@ var VirtualList = /** @class */ (function (_super) {
         this.renderedRows.forEach(function (_, rowIndex) { return _this.removeRow(rowIndex); });
     };
     VirtualList.prototype.drawVirtualRows = function (softRefresh) {
-        if (!this.isAlive()) {
+        if (!this.isAlive() || !this.model) {
             return;
         }
         var gui = this.getGui();
@@ -315,6 +314,9 @@ var VirtualList = /** @class */ (function (_super) {
     };
     VirtualList.prototype.setModel = function (model) {
         this.model = model;
+    };
+    VirtualList.prototype.getAriaElement = function () {
+        return this.eContainer;
     };
     VirtualList.prototype.destroy = function () {
         if (!this.isAlive()) {

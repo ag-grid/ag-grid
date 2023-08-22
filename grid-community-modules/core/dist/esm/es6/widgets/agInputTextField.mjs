@@ -12,11 +12,11 @@ export class AgInputTextField extends AgAbstractInputField {
         }
     }
     setValue(value, silent) {
-        const ret = super.setValue(value, silent);
+        // update the input before we call super.setValue, so it's updated before the value changed event is fired
         if (this.eInput.value !== value) {
             this.eInput.value = exists(value) ? value : '';
         }
-        return ret;
+        return super.setValue(value, silent);
     }
     /** Used to set an initial value into the input without necessarily setting `this.value` or triggering events (e.g. to set an invalid value) */
     setStartValue(value) {

@@ -20,20 +20,18 @@ class HeaderCellComp extends abstractHeaderCellComp_1.AbstractHeaderCellComp {
     }
     postConstruct() {
         const eGui = this.getGui();
-        const setAttribute = (name, value, element) => {
-            const actualElement = element ? element : eGui;
+        const setAttribute = (name, value) => {
             if (value != null && value != '') {
-                actualElement.setAttribute(name, value);
+                eGui.setAttribute(name, value);
             }
             else {
-                actualElement.removeAttribute(name);
+                eGui.removeAttribute(name);
             }
         };
+        setAttribute('col-id', this.column.getColId());
         const compProxy = {
             setWidth: width => eGui.style.width = width,
             addOrRemoveCssClass: (cssClassName, on) => this.addOrRemoveCssClass(cssClassName, on),
-            setColId: id => setAttribute('col-id', id),
-            setTitle: title => setAttribute('title', title),
             setAriaDescription: label => aria_1.setAriaDescription(eGui, label),
             setAriaSort: sort => sort ? aria_1.setAriaSort(eGui, sort) : aria_1.removeAriaSort(eGui),
             setUserCompDetails: compDetails => this.setUserCompDetails(compDetails),

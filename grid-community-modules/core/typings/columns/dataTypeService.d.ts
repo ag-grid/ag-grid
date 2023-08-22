@@ -1,5 +1,6 @@
 import { BeanStub } from '../context/beanStub';
 import { ColDef } from '../entities/colDef';
+import { BaseCellDataType, CoreDataTypeDefinition, DataTypeDefinition } from '../entities/dataType';
 import { Column } from '../entities/column';
 export declare class DataTypeService extends BeanStub {
     private rowModel;
@@ -32,6 +33,7 @@ export declare class DataTypeService extends BeanStub {
     private inferCellDataType;
     private getInitialData;
     private initWaitForRowData;
+    isPendingInference(): boolean;
     private processColumnsPendingInference;
     private getUpdatedColumnState;
     private checkObjectValueHandlers;
@@ -39,6 +41,8 @@ export declare class DataTypeService extends BeanStub {
     private getDateStringTypeDefinition;
     getDateParserFunction(): (value: string | undefined) => Date | undefined;
     getDateFormatterFunction(): (value: Date | undefined) => string | undefined;
+    getDataTypeDefinition(column: Column): DataTypeDefinition | CoreDataTypeDefinition | undefined;
+    getBaseDataType(column: Column): BaseCellDataType | undefined;
     checkType(column: Column, value: any): boolean;
     validateColDef(colDef: ColDef): void;
     private setColDefPropertiesForBaseDataType;

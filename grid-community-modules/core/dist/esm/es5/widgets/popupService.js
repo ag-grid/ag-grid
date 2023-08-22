@@ -96,11 +96,17 @@ var PopupService = /** @class */ (function (_super) {
         return this.gridCtrl.getGui();
     };
     PopupService.prototype.positionPopupForMenu = function (params) {
-        var sourceRect = params.eventSource.getBoundingClientRect();
+        var eventSource = params.eventSource, ePopup = params.ePopup;
+        var popupIdx = this.getPopupIndex(ePopup);
+        if (popupIdx !== -1) {
+            var popup = this.popupList[popupIdx];
+            popup.alignedToElement = eventSource;
+        }
+        var sourceRect = eventSource.getBoundingClientRect();
         var parentRect = this.getParentRect();
-        var y = this.keepXYWithinBounds(params.ePopup, sourceRect.top - parentRect.top, DIRECTION.vertical);
-        var minWidth = (params.ePopup.clientWidth > 0) ? params.ePopup.clientWidth : 200;
-        params.ePopup.style.minWidth = minWidth + "px";
+        var y = this.keepXYWithinBounds(ePopup, sourceRect.top - parentRect.top, DIRECTION.vertical);
+        var minWidth = (ePopup.clientWidth > 0) ? ePopup.clientWidth : 200;
+        ePopup.style.minWidth = minWidth + "px";
         var widthOfParent = parentRect.right - parentRect.left;
         var maxX = widthOfParent - minWidth;
         // the x position of the popup depends on RTL or LTR. for normal cases, LTR, we put the child popup
@@ -112,9 +118,11 @@ var PopupService = /** @class */ (function (_super) {
             x = xLeftPosition();
             if (x < 0) {
                 x = xRightPosition();
+                this.setAlignedStyles(ePopup, 'left');
             }
             if (x > maxX) {
                 x = 0;
+                this.setAlignedStyles(ePopup, 'right');
             }
         }
         else {
@@ -122,13 +130,15 @@ var PopupService = /** @class */ (function (_super) {
             x = xRightPosition();
             if (x > maxX) {
                 x = xLeftPosition();
+                this.setAlignedStyles(ePopup, 'right');
             }
             if (x < 0) {
                 x = 0;
+                this.setAlignedStyles(ePopup, 'left');
             }
         }
-        params.ePopup.style.left = x + "px";
-        params.ePopup.style.top = y + "px";
+        ePopup.style.left = x + "px";
+        ePopup.style.top = y + "px";
         function xRightPosition() {
             return sourceRect.right - parentRect.left - 2;
         }
@@ -158,28 +168,77 @@ var PopupService = /** @class */ (function (_super) {
     };
     PopupService.prototype.positionPopupByComponent = function (params) {
         var _this = this;
-        var sourceRect = params.eventSource.getBoundingClientRect();
-        var alignSide = params.alignSide || 'left';
-        var position = params.position || 'over';
+        var ePopup = params.ePopup, nudgeX = params.nudgeX, nudgeY = params.nudgeY, keepWithinBounds = params.keepWithinBounds, eventSource = params.eventSource, _a = params.alignSide, alignSide = _a === void 0 ? 'left' : _a, _b = params.position, position = _b === void 0 ? 'over' : _b, column = params.column, rowNode = params.rowNode, type = params.type;
+        var sourceRect = eventSource.getBoundingClientRect();
         var parentRect = this.getParentRect();
+        var popupIdx = this.getPopupIndex(ePopup);
+        if (popupIdx !== -1) {
+            var popup = this.popupList[popupIdx];
+            popup.alignedToElement = eventSource;
+        }
         var updatePosition = function () {
             var x = sourceRect.left - parentRect.left;
             if (alignSide === 'right') {
-                x -= (params.ePopup.offsetWidth - sourceRect.width);
+                x -= (ePopup.offsetWidth - sourceRect.width);
             }
-            var y = position === 'over'
-                ? (sourceRect.top - parentRect.top)
-                : (sourceRect.top - parentRect.top + sourceRect.height);
+            var y;
+            if (position === 'over') {
+                y = (sourceRect.top - parentRect.top);
+                _this.setAlignedStyles(ePopup, 'over');
+            }
+            else {
+                _this.setAlignedStyles(ePopup, 'under');
+                var alignSide_1 = _this.shouldRenderUnderOrAbove(ePopup, sourceRect, parentRect, params.nudgeY || 0);
+                if (alignSide_1 === 'under') {
+                    y = (sourceRect.top - parentRect.top + sourceRect.height);
+                }
+                else {
+                    y = (sourceRect.top - ePopup.offsetHeight - (nudgeY || 0) * 2) - parentRect.top;
+                }
+            }
             return { x: x, y: y };
         };
         this.positionPopup({
-            ePopup: params.ePopup,
-            nudgeX: params.nudgeX,
-            nudgeY: params.nudgeY,
-            keepWithinBounds: params.keepWithinBounds,
+            ePopup: ePopup,
+            nudgeX: nudgeX,
+            nudgeY: nudgeY,
+            keepWithinBounds: keepWithinBounds,
             updatePosition: updatePosition,
-            postProcessCallback: function () { return _this.callPostProcessPopup(params.type, params.ePopup, params.eventSource, null, params.column, params.rowNode); }
+            postProcessCallback: function () { return _this.callPostProcessPopup(type, ePopup, eventSource, null, column, rowNode); }
         });
+    };
+    PopupService.prototype.shouldRenderUnderOrAbove = function (ePopup, targetCompRect, parentRect, nudgeY) {
+        var spaceAvailableUnder = parentRect.bottom - targetCompRect.bottom;
+        var spaceAvailableAbove = targetCompRect.top - parentRect.top;
+        var spaceRequired = ePopup.offsetHeight + nudgeY;
+        if (spaceAvailableUnder > spaceRequired) {
+            return 'under';
+        }
+        if (spaceAvailableAbove > spaceRequired || spaceAvailableAbove > spaceAvailableUnder) {
+            return 'above';
+        }
+        return 'under';
+    };
+    PopupService.prototype.setAlignedStyles = function (ePopup, positioned) {
+        var popupIdx = this.getPopupIndex(ePopup);
+        if (popupIdx === -1) {
+            return;
+        }
+        var popup = this.popupList[popupIdx];
+        var alignedToElement = popup.alignedToElement;
+        if (!alignedToElement) {
+            return;
+        }
+        var positions = ['right', 'left', 'over', 'above', 'under'];
+        positions.forEach(function (position) {
+            alignedToElement.classList.remove("ag-has-popup-positioned-" + position);
+            ePopup.classList.remove("ag-popup-positioned-" + position);
+        });
+        if (!positioned) {
+            return;
+        }
+        alignedToElement.classList.add("ag-has-popup-positioned-" + positioned);
+        ePopup.classList.add("ag-popup-positioned-" + positioned);
     };
     PopupService.prototype.callPostProcessPopup = function (type, ePopup, eventSource, mouseEvent, column, rowNode) {
         var callback = this.gridOptionsService.getCallback('postProcessPopup');
@@ -285,7 +344,7 @@ var PopupService = /** @class */ (function (_super) {
             console.warn('AG Grid: could not find the document, document is empty');
             return { hideFunc: function () { } };
         }
-        var pos = this.popupList.findIndex(function (popup) { return popup.element === eChild; });
+        var pos = this.getPopupIndex(eChild);
         if (pos !== -1) {
             var popup = this.popupList[pos];
             return { hideFunc: popup.hideFunc };
@@ -413,11 +472,15 @@ var PopupService = /** @class */ (function (_super) {
             this.setPopupPositionRelatedToElement(element, anchorToElement);
         }
     };
+    PopupService.prototype.getPopupIndex = function (el) {
+        return this.popupList.findIndex(function (p) { return p.element === el; });
+    };
     PopupService.prototype.setPopupPositionRelatedToElement = function (popupEl, relativeElement) {
-        var popup = this.popupList.find(function (p) { return p.element === popupEl; });
-        if (!popup) {
+        var popupIndex = this.getPopupIndex(popupEl);
+        if (popupIndex === -1) {
             return;
         }
+        var popup = this.popupList[popupIndex];
         if (popup.stopAnchoringPromise) {
             popup.stopAnchoringPromise.then(function (destroyFunc) { return destroyFunc && destroyFunc(); });
         }
@@ -438,6 +501,7 @@ var PopupService = /** @class */ (function (_super) {
         return destroyPositionTracker;
     };
     PopupService.prototype.removePopupFromPopupList = function (element) {
+        this.setAlignedStyles(element, null);
         this.setPopupPositionRelatedToElement(element, null);
         this.popupList = this.popupList.filter(function (p) { return p.element !== element; });
     };
@@ -495,7 +559,7 @@ var PopupService = /** @class */ (function (_super) {
         if (!event) {
             return false;
         }
-        var indexOfThisChild = this.popupList.findIndex(function (popup) { return popup.element === target; });
+        var indexOfThisChild = this.getPopupIndex(target);
         if (indexOfThisChild === -1) {
             return false;
         }

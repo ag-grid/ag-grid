@@ -9,9 +9,11 @@ interface Props {
     fixVersion: string;
     onChange: (value: string) => any;
     children: any;
+    hideExpander: boolean;
+    isEmptyContent: boolean;
 }
 
-const Collapsible: FunctionComponent<Props> = ({ title, versions, fixVersion, onChange, children, hideExpander }) => {
+const Collapsible: FunctionComponent<Props> = ({ title, versions, fixVersion, onChange, children, hideExpander, isEmptyContent }) => {
     const [showNotes, setShowNotes] = useState(true);
     const [showMore, setShowMore] = useState(false);
 
@@ -25,14 +27,15 @@ const Collapsible: FunctionComponent<Props> = ({ title, versions, fixVersion, on
 
     return (
         <div className={showNotes ? styles.isOpen : undefined}>
-            <button className={styles.showHideButton} onClick={collapsibleHandler}>
+            <button className={classNames(styles.showHideButton, isEmptyContent ? styles.noHyperlink : '')} onClick={!isEmptyContent ? collapsibleHandler : undefined} disabled={isEmptyContent}>
                 <div>
-                    {title}
-                    <span className={classNames(styles.collapseIndicator, showNotes ? styles.isOpen : undefined)}>
-                        <Icon name="chevronRight" />
-                    </span>
+                    {title && !isEmptyContent && title}
+                    {!hideExpander && (
+                        <span className={classNames(styles.collapseIndicator, showNotes ? styles.isOpen : undefined)}>
+                            <Icon name="chevronRight" />
+                        </span>
+                    )}
                 </div>
-
                 <div className={styles.selectContainer}>
                     <label className={styles.versionLabel} onClick={handleVersionLabelClick}>
                         Version:
@@ -56,7 +59,7 @@ const Collapsible: FunctionComponent<Props> = ({ title, versions, fixVersion, on
                 <div
                     className={`${styles.content} ${showMore ? styles.contentExpanded : styles.contentCollapsed} ${
                         hideExpander ? styles.notExpandable : ''
-                    }`}
+                    } ${isEmptyContent ? styles.noContent : ''}`}
                 >
                     <div>{children}</div>
                     {!hideExpander ? (

@@ -60,6 +60,9 @@ var ReadOnlyFloatingFilter = /** @class */ (function (_super) {
             }
         });
     };
+    ReadOnlyFloatingFilter.prototype.onParamsUpdated = function (params) {
+        this.init(params);
+    };
     __decorate([
         RefSelector('eFloatingFilterText')
     ], ReadOnlyFloatingFilter.prototype, "eFloatingFilterText", void 0);

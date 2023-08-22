@@ -14,91 +14,89 @@ var __extends = (this && this.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
-    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
-    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
-    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
-    return c > 3 && r && Object.defineProperty(target, key, r), r;
+var __assign = (this && this.__assign) || function () {
+    __assign = Object.assign || function(t) {
+        for (var s, i = 1, n = arguments.length; i < n; i++) {
+            s = arguments[i];
+            for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
+                t[p] = s[p];
+        }
+        return t;
+    };
+    return __assign.apply(this, arguments);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.AgSelect = void 0;
-var agAbstractField_1 = require("./agAbstractField");
 var agPickerField_1 = require("./agPickerField");
 var agList_1 = require("./agList");
-var context_1 = require("../context/context");
+var eventKeys_1 = require("../eventKeys");
+var keyCode_1 = require("../constants/keyCode");
 var dom_1 = require("../utils/dom");
-var aria_1 = require("../utils/aria");
 var AgSelect = /** @class */ (function (_super) {
     __extends(AgSelect, _super);
     function AgSelect(config) {
-        return _super.call(this, config, 'ag-select', 'smallDown', 'listbox') || this;
+        return _super.call(this, __assign({ pickerAriaLabelKey: 'ariaLabelSelectField', pickerAriaLabelValue: 'Select Field', pickerType: 'ag-list' }, config), 'ag-select', 'smallDown', 'listbox') || this;
     }
-    AgSelect.prototype.init = function () {
+    AgSelect.prototype.postConstruct = function () {
+        var _a;
+        _super.prototype.postConstruct.call(this);
+        this.createListComponent();
+        this.eWrapper.tabIndex = (_a = this.gridOptionsService.getNum('tabIndex')) !== null && _a !== void 0 ? _a : 0;
+    };
+    AgSelect.prototype.createListComponent = function () {
         var _this = this;
         this.listComponent = this.createBean(new agList_1.AgList('select'));
         this.listComponent.setParentComponent(this);
-        this.eWrapper.tabIndex = 0;
-        this.listComponent.addManagedListener(this.listComponent, agList_1.AgList.EVENT_ITEM_SELECTED, function () {
-            if (_this.hideList) {
-                _this.hideList();
+        this.listComponent.addGuiEventListener('keydown', function (e) {
+            if (e.key === keyCode_1.KeyCode.TAB) {
+                e.preventDefault();
+                e.stopImmediatePropagation();
+                _this.getGui().dispatchEvent(new KeyboardEvent('keydown', {
+                    key: e.key,
+                    shiftKey: e.shiftKey,
+                    ctrlKey: e.ctrlKey,
+                    bubbles: true
+                }));
             }
+            ;
+        });
+        this.listComponent.addManagedListener(this.listComponent, agList_1.AgList.EVENT_ITEM_SELECTED, function () {
+            _this.hidePicker();
             _this.dispatchEvent({ type: AgSelect.EVENT_ITEM_SELECTED });
         });
-        this.listComponent.addManagedListener(this.listComponent, agAbstractField_1.AgAbstractField.EVENT_CHANGED, function () {
-            _this.setValue(_this.listComponent.getValue(), false, true);
-            if (_this.hideList) {
-                _this.hideList();
+        this.listComponent.addManagedListener(this.listComponent, eventKeys_1.Events.EVENT_FIELD_VALUE_CHANGED, function () {
+            if (!_this.listComponent) {
+                return;
             }
+            _this.setValue(_this.listComponent.getValue(), false, true);
+            _this.hidePicker();
         });
+    };
+    AgSelect.prototype.createPickerComponent = function () {
+        // do not create the picker every time to save state
+        return this.listComponent;
     };
     AgSelect.prototype.showPicker = function () {
         var _this = this;
-        var listGui = this.listComponent.getGui();
-        var eDocument = this.gridOptionsService.getDocument();
-        var destroyMouseWheelFunc = this.addManagedListener(eDocument.body, 'wheel', function (e) {
-            if (!listGui.contains(e.target) && _this.hideList) {
-                _this.hideList();
-            }
-        });
-        var destroyFocusOutFunc = this.addManagedListener(listGui, 'focusout', function (e) {
-            if (!listGui.contains(e.relatedTarget) && _this.hideList) {
-                _this.hideList();
-            }
-        });
-        var translate = this.localeService.getLocaleTextFunc();
-        var addPopupRes = this.popupService.addPopup({
-            modal: true,
-            eChild: listGui,
-            closeOnEsc: true,
-            closedCallback: function () {
-                _this.hideList = null;
-                _this.isPickerDisplayed = false;
-                destroyFocusOutFunc();
-                destroyMouseWheelFunc();
-                if (_this.isAlive()) {
-                    aria_1.setAriaExpanded(_this.eWrapper, false);
-                    _this.getFocusableElement().focus();
-                }
-            },
-            ariaLabel: translate('ariaLabelSelectField', 'Select Field')
-        });
-        if (addPopupRes) {
-            this.hideList = addPopupRes.hideFunc;
+        if (!this.listComponent) {
+            return;
         }
-        this.isPickerDisplayed = true;
-        dom_1.setElementWidth(listGui, dom_1.getAbsoluteWidth(this.eWrapper));
-        aria_1.setAriaExpanded(this.eWrapper, true);
-        listGui.style.maxHeight = dom_1.getInnerHeight(this.popupService.getPopupParent()) + 'px';
-        listGui.style.position = 'absolute';
-        this.popupService.positionPopupByComponent({
-            type: 'ag-list',
-            eventSource: this.eWrapper,
-            ePopup: listGui,
-            position: 'under',
-            keepWithinBounds: true
+        _super.prototype.showPicker.call(this);
+        this.listComponent.getGui().style.maxHeight = dom_1.getInnerHeight(this.popupService.getPopupParent()) + "px";
+        var ePicker = this.listComponent.getGui();
+        this.pickerFocusOutListener = this.addManagedListener(ePicker, 'focusout', function (e) {
+            if (!ePicker.contains(e.relatedTarget)) {
+                _this.hidePicker();
+            }
         });
         this.listComponent.refreshHighlighted();
-        return this.listComponent;
+    };
+    AgSelect.prototype.beforeHidePicker = function () {
+        if (this.pickerFocusOutListener) {
+            this.pickerFocusOutListener();
+            this.pickerFocusOutListener = undefined;
+        }
+        _super.prototype.beforeHidePicker.call(this);
     };
     AgSelect.prototype.addOptions = function (options) {
         var _this = this;
@@ -110,7 +108,7 @@ var AgSelect = /** @class */ (function (_super) {
         return this;
     };
     AgSelect.prototype.setValue = function (value, silent, fromPicker) {
-        if (this.value === value) {
+        if (this.value === value || !this.listComponent) {
             return this;
         }
         if (!fromPicker) {
@@ -124,19 +122,13 @@ var AgSelect = /** @class */ (function (_super) {
         return _super.prototype.setValue.call(this, value, silent);
     };
     AgSelect.prototype.destroy = function () {
-        if (this.hideList) {
-            this.hideList();
+        if (this.listComponent) {
+            this.destroyBean(this.listComponent);
+            this.listComponent = undefined;
         }
-        this.destroyBean(this.listComponent);
         _super.prototype.destroy.call(this);
     };
     AgSelect.EVENT_ITEM_SELECTED = 'selectedItem';
-    __decorate([
-        context_1.Autowired('popupService')
-    ], AgSelect.prototype, "popupService", void 0);
-    __decorate([
-        context_1.PostConstruct
-    ], AgSelect.prototype, "init", null);
     return AgSelect;
 }(agPickerField_1.AgPickerField));
 exports.AgSelect = AgSelect;

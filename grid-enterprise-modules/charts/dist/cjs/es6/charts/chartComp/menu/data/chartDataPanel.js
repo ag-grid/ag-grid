@@ -133,7 +133,7 @@ class ChartDataPanel extends core_1.Component {
         parent.insertBefore(eDiv, parent.children[index]);
     }
     addChangeListener(component, columnState) {
-        this.addManagedListener(component, core_1.AgAbstractField.EVENT_CHANGED, () => {
+        this.addManagedListener(component, core_1.Events.EVENT_FIELD_VALUE_CHANGED, () => {
             columnState.selected = component.getValue();
             this.chartController.updateForPanelChange(columnState);
         });

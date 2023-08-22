@@ -83,6 +83,7 @@ import { AgSlider } from "./widgets/agSlider";
 import { AgInputNumberField } from "./widgets/agInputNumberField";
 import { AgInputRange } from "./widgets/agInputRange";
 import { AgSelect } from "./widgets/agSelect";
+import { AgRichSelect } from "./widgets/agRichSelect";
 import { AgToggleButton } from "./widgets/agToggleButton";
 import { RowPositionUtils } from "./entities/rowPositionUtils";
 import { CellPositionUtils } from "./entities/cellPositionUtils";
@@ -113,6 +114,7 @@ import { FakeVScrollComp } from "./gridBodyComp/fakeVScrollComp";
 import { DataTypeService } from "./columns/dataTypeService";
 import { AgInputDateField } from "./widgets/agInputDateField";
 import { ValueParserService } from "./valueService/valueParserService";
+import { AgAutocomplete } from "./widgets/agAutocomplete";
 // creates JavaScript vanilla Grid, including JavaScript (ag-stack) components, which can
 // be wrapped by the framework wrappers
 var Grid = /** @class */ (function () {
@@ -247,6 +249,7 @@ var GridCoreCreator = /** @class */ (function () {
             { componentName: 'AgInputNumberField', componentClass: AgInputNumberField },
             { componentName: 'AgInputDateField', componentClass: AgInputDateField },
             { componentName: 'AgInputRange', componentClass: AgInputRange },
+            { componentName: 'AgRichSelect', componentClass: AgRichSelect },
             { componentName: 'AgSelect', componentClass: AgSelect },
             { componentName: 'AgSlider', componentClass: AgSlider },
             { componentName: 'AgGridBody', componentClass: GridBodyComp },
@@ -259,7 +262,8 @@ var GridCoreCreator = /** @class */ (function () {
             { componentName: 'AgDialog', componentClass: AgDialog },
             { componentName: 'AgRowContainer', componentClass: RowContainerComp },
             { componentName: 'AgFakeHorizontalScroll', componentClass: FakeHScrollComp },
-            { componentName: 'AgFakeVerticalScroll', componentClass: FakeVScrollComp }
+            { componentName: 'AgFakeVerticalScroll', componentClass: FakeVScrollComp },
+            { componentName: 'AgAutocomplete', componentClass: AgAutocomplete },
         ];
         var moduleAgStackComps = this.extractModuleEntity(registeredModules, function (module) { return module.agStackComponents ? module.agStackComponents : []; });
         components = components.concat(moduleAgStackComps);

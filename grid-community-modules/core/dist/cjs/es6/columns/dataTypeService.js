@@ -329,7 +329,14 @@ let DataTypeService = class DataTypeService extends beanStub_1.BeanStub {
             if (columnTypeOverridesExist) {
                 this.columnModel.processResizeOperations();
             }
+            const dataTypesInferredEvent = {
+                type: eventKeys_1.Events.EVENT_DATA_TYPES_INFERRED
+            };
+            this.eventService.dispatchEvent(dataTypesInferredEvent);
         });
+    }
+    isPendingInference() {
+        return this.isWaitingForRowData;
     }
     processColumnsPendingInference(firstRowData, columnTypeOverridesExist) {
         this.initialData = firstRowData;
@@ -415,13 +422,23 @@ let DataTypeService = class DataTypeService extends beanStub_1.BeanStub {
     getDateFormatterFunction() {
         return this.getDateStringTypeDefinition().dateFormatter;
     }
+    getDataTypeDefinition(column) {
+        const colDef = column.getColDef();
+        if (!colDef.cellDataType) {
+            return undefined;
+        }
+        return this.dataTypeDefinitions[colDef.cellDataType];
+    }
+    getBaseDataType(column) {
+        var _a;
+        return (_a = this.getDataTypeDefinition(column)) === null || _a === void 0 ? void 0 : _a.baseDataType;
+    }
     checkType(column, value) {
         var _a;
-        const colDef = column.getColDef();
-        if (!colDef.cellDataType || value == null) {
+        if (value == null) {
             return true;
         }
-        const dataTypeMatcher = (_a = this.dataTypeDefinitions[colDef.cellDataType]) === null || _a === void 0 ? void 0 : _a.dataTypeMatcher;
+        const dataTypeMatcher = (_a = this.getDataTypeDefinition(column)) === null || _a === void 0 ? void 0 : _a.dataTypeMatcher;
         if (!dataTypeMatcher) {
             return true;
         }

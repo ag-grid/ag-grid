@@ -1,5 +1,5 @@
 /**
-          * @ag-grid-enterprise/column-tool-panel - Advanced Data Grid / Data Table supporting Javascript / Typescript / React / Angular / Vue * @version v30.0.6
+          * @ag-grid-enterprise/column-tool-panel - Advanced Data Grid / Data Table supporting Javascript / Typescript / React / Angular / Vue * @version v30.1.0
           * @link https://www.ag-grid.com/
           * @license Commercial
           */
@@ -477,7 +477,7 @@ var ToolPanelColumnGroupComp = /** @class */ (function (_super) {
         this.addCssClass('ag-column-select-indent-' + this.columnDept);
         this.addManagedListener(this.eventService, core.Events.EVENT_COLUMN_PIVOT_MODE_CHANGED, this.onColumnStateChanged.bind(this));
         this.addManagedListener(this.eLabel, 'click', this.onLabelClicked.bind(this));
-        this.addManagedListener(this.cbSelect, core.AgCheckbox.EVENT_CHANGED, this.onCheckboxChanged.bind(this));
+        this.addManagedListener(this.cbSelect, core.Events.EVENT_FIELD_VALUE_CHANGED, this.onCheckboxChanged.bind(this));
         this.addManagedListener(this.modelItem, ColumnModelItem.EVENT_EXPANDED_CHANGED, this.onExpandChanged.bind(this));
         this.addManagedListener(this.focusWrapper, 'keydown', this.handleKeyDown.bind(this));
         this.addManagedListener(this.focusWrapper, 'contextmenu', this.onContextMenu.bind(this));
@@ -1043,7 +1043,7 @@ var ToolPanelColumnComp = /** @class */ (function (_super) {
         this.addManagedListener(this.focusWrapper, 'keydown', this.handleKeyDown.bind(this));
         this.addManagedListener(this.focusWrapper, 'contextmenu', this.onContextMenu.bind(this));
         this.addManagedPropertyListener('functionsReadOnly', this.onColumnStateChanged.bind(this));
-        this.addManagedListener(this.cbSelect, core.AgCheckbox.EVENT_CHANGED, this.onCheckboxChanged.bind(this));
+        this.addManagedListener(this.cbSelect, core.Events.EVENT_FIELD_VALUE_CHANGED, this.onCheckboxChanged.bind(this));
         this.addManagedListener(this.eLabel, 'click', this.onLabelClicked.bind(this));
         this.onColumnStateChanged();
         this.refreshAriaLabel();
@@ -1332,7 +1332,11 @@ var PrimaryColsListPanel = /** @class */ (function (_super) {
         this.expandGroupsByDefault = !this.params.contractColumnSelection;
         var translate = this.localeService.getLocaleTextFunc();
         var columnListName = translate('ariaColumnList', 'Column List');
-        this.virtualList = this.createManagedBean(new core.VirtualList('column-select', 'tree', columnListName));
+        this.virtualList = this.createManagedBean(new core.VirtualList({
+            cssIdentifier: 'column-select',
+            ariaRole: 'tree',
+            listName: columnListName
+        }));
         this.appendChild(this.virtualList.getGui());
         this.virtualList.setComponentCreator(function (item, listItemElement) {
             core._.setAriaLevel(listItemElement, (item.getDept() + 1));
@@ -1692,7 +1696,7 @@ var PivotModePanel = /** @class */ (function (_super) {
         this.cbPivotMode.setValue(this.columnModel.isPivotMode());
         var localeTextFunc = this.localeService.getLocaleTextFunc();
         this.cbPivotMode.setLabel(localeTextFunc('pivotMode', 'Pivot Mode'));
-        this.addManagedListener(this.cbPivotMode, core.AgCheckbox.EVENT_CHANGED, this.onBtPivotMode.bind(this));
+        this.addManagedListener(this.cbPivotMode, core.Events.EVENT_FIELD_VALUE_CHANGED, this.onBtPivotMode.bind(this));
         this.addManagedListener(this.eventService, core.Events.EVENT_NEW_COLUMNS_LOADED, this.onPivotModeChanged.bind(this));
         this.addManagedListener(this.eventService, core.Events.EVENT_COLUMN_PIVOT_MODE_CHANGED, this.onPivotModeChanged.bind(this));
     };
@@ -2280,7 +2284,7 @@ var ModelItemUtils = /** @class */ (function () {
 }());
 
 // DO NOT UPDATE MANUALLY: Generated from script during build time
-var VERSION = '30.0.6';
+var VERSION = '30.1.0';
 
 var ColumnsToolPanelModule = {
     version: VERSION,

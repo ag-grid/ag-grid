@@ -91,6 +91,10 @@ export abstract class SimpleFloatingFilter extends Component implements IFloatin
     }
 
     public init(params: IFloatingFilterParams): void {
+       this.setSimpleParams(params);
+    }
+
+    private setSimpleParams(params: IFloatingFilterParams): void {
         this.optionsFactory = new OptionsFactory();
         this.optionsFactory.init(params.filterParams as ScalarFilterParams, this.getDefaultFilterOptions());
         this.lastType = this.optionsFactory.getDefaultOption();
@@ -105,6 +109,10 @@ export abstract class SimpleFloatingFilter extends Component implements IFloatin
         // 2) the default type is not 'in range'
         const editable = this.isTypeEditable(this.lastType);
         this.setEditable(editable);
+    }
+
+    public onParamsUpdated(params: IFloatingFilterParams): void {
+        this.setSimpleParams(params);
     }
 
     private doesFilterHaveSingleInput(filterType: string) {

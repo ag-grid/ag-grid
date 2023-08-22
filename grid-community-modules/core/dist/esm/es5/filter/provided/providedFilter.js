@@ -239,7 +239,8 @@ var ProvidedFilter = /** @class */ (function (_super) {
         if (this.applyModel(afterDataChange ? 'rowDataUpdated' : 'ui')) {
             // the floating filter uses 'afterFloatingFilter' info, so it doesn't refresh after filter changed if change
             // came from floating filter
-            this.providedFilterParams.filterChangedCallback({ afterFloatingFilter: afterFloatingFilter, afterDataChange: afterDataChange });
+            var source = 'columnFilter';
+            this.providedFilterParams.filterChangedCallback({ afterFloatingFilter: afterFloatingFilter, afterDataChange: afterDataChange, source: source });
         }
         var closeOnApply = this.providedFilterParams.closeOnApply;
         // only close if an apply button is visible, otherwise we'd be closing every time a change was made!

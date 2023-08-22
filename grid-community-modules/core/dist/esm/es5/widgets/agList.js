@@ -19,12 +19,12 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
-import { AgAbstractField } from "./agAbstractField";
 import { Component } from "./component";
 import { PostConstruct } from "../context/context";
 import { escapeString } from "../utils/string";
 import { KeyCode } from '../constants/keyCode';
 import { setAriaPosInSet, setAriaRole, setAriaSelected, setAriaSetSize } from '../utils/aria';
+import { Events } from "../eventKeys";
 var AgList = /** @class */ (function (_super) {
     __extends(AgList, _super);
     function AgList(cssIdentifier) {
@@ -164,7 +164,7 @@ var AgList = /** @class */ (function (_super) {
         this.highlightedEl = null;
     };
     AgList.prototype.fireChangeEvent = function () {
-        this.dispatchEvent({ type: AgAbstractField.EVENT_CHANGED });
+        this.dispatchEvent({ type: Events.EVENT_FIELD_VALUE_CHANGED });
         this.fireItemSelected();
     };
     AgList.prototype.fireItemSelected = function () {

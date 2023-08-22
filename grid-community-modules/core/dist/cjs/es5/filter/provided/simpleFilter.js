@@ -49,9 +49,10 @@ var component_1 = require("../../widgets/component");
 var agAbstractInputField_1 = require("../../widgets/agAbstractInputField");
 var function_1 = require("../../utils/function");
 var SimpleFilterModelFormatter = /** @class */ (function () {
-    function SimpleFilterModelFormatter(localeService, optionsFactory) {
+    function SimpleFilterModelFormatter(localeService, optionsFactory, valueFormatter) {
         this.localeService = localeService;
         this.optionsFactory = optionsFactory;
+        this.valueFormatter = valueFormatter;
     }
     // used by:
     // 1) NumberFloatingFilter & TextFloatingFilter: Always, for both when editable and read only.
@@ -89,6 +90,13 @@ var SimpleFilterModelFormatter = /** @class */ (function () {
             }
             return this.conditionToString(condition, customOption);
         }
+    };
+    SimpleFilterModelFormatter.prototype.updateParams = function (params) {
+        this.optionsFactory = params.optionsFactory;
+    };
+    SimpleFilterModelFormatter.prototype.formatValue = function (value) {
+        var _a;
+        return this.valueFormatter ? ((_a = this.valueFormatter(value !== null && value !== void 0 ? value : null)) !== null && _a !== void 0 ? _a : '') : String(value);
     };
     return SimpleFilterModelFormatter;
 }());
@@ -289,6 +297,11 @@ var SimpleFilter = /** @class */ (function (_super) {
         this.createFilterListOptions();
         this.createOption();
         this.createMissingConditionsAndOperators();
+        if (this.isReadOnly()) {
+            // only do this when read only (so no other focusable elements), otherwise the tab order breaks
+            // as the tabbed layout managed focus feature will focus the body when it shouldn't
+            this.eFilterBody.setAttribute('tabindex', '-1');
+        }
     };
     SimpleFilter.prototype.setNumConditions = function (params) {
         var _a, _b;
@@ -496,13 +509,19 @@ var SimpleFilter = /** @class */ (function (_super) {
     SimpleFilter.prototype.afterGuiAttached = function (params) {
         _super.prototype.afterGuiAttached.call(this, params);
         this.resetPlaceholder();
-        if (!params || (!params.suppressFocus && !this.isReadOnly())) {
-            var firstInput = this.getInputs(0)[0];
-            if (!firstInput) {
-                return;
+        if (!(params === null || params === void 0 ? void 0 : params.suppressFocus)) {
+            if (this.isReadOnly()) {
+                // something needs focus otherwise keyboard navigation breaks, so focus the filter body
+                this.eFilterBody.focus();
             }
-            if (firstInput instanceof agAbstractInputField_1.AgAbstractInputField) {
-                firstInput.getInputElement().focus();
+            else {
+                var firstInput = this.getInputs(0)[0];
+                if (!firstInput) {
+                    return;
+                }
+                if (firstInput instanceof agAbstractInputField_1.AgAbstractInputField) {
+                    firstInput.getInputElement().focus();
+                }
             }
         }
     };

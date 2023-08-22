@@ -1,11 +1,13 @@
-import { IAgLabel, AgPickerField, AgDialog } from "@ag-grid-community/core";
-interface ColorPickerConfig extends IAgLabel {
+import { IPickerFieldParams, AgPickerField, AgDialog } from "@ag-grid-community/core";
+interface ColorPickerConfig extends IPickerFieldParams {
     color: string;
 }
-export declare class AgColorPicker extends AgPickerField<HTMLElement, string> {
+export declare class AgColorPicker extends AgPickerField<string, IPickerFieldParams, AgDialog> {
+    private isDestroyingPicker;
     constructor(config?: ColorPickerConfig);
     protected postConstruct(): void;
-    showPicker(): AgDialog;
+    protected createPickerComponent(): AgDialog;
+    protected renderAndPositionPicker(): (() => void);
     setValue(color: string): this;
     getValue(): string;
 }

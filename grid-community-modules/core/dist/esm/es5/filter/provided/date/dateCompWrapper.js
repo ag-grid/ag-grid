@@ -72,6 +72,12 @@ var DateCompWrapper = /** @class */ (function () {
             this.dateComp.afterGuiAttached(params);
         }
     };
+    DateCompWrapper.prototype.updateParams = function (params) {
+        var _a;
+        if (((_a = this.dateComp) === null || _a === void 0 ? void 0 : _a.onParamsUpdated) && typeof this.dateComp.onParamsUpdated === 'function') {
+            this.dateComp.onParamsUpdated(params);
+        }
+    };
     DateCompWrapper.prototype.setDateCompDisabled = function (disabled) {
         if (this.dateComp == null) {
             return;

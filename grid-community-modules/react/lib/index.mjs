@@ -1,6 +1,6 @@
-// @ag-grid-community/react v30.0.6
+// @ag-grid-community/react v30.1.0
 import React, { useState } from 'react';
-import ReactDOM from 'react-dom';
+import { createRoot } from 'react-dom/client';
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
 import { AgGridReactUi } from './reactUi/agGridReactUi.mjs';
 import '@ag-grid-community/styles/ag-grid.css';
@@ -28,4 +28,5 @@ const App = () => {
                     sortable: true
                 }, rowSelection: "multiple", animateRows: true, onGridReady: onGridReady, rowData: rowData, columnDefs: colDefs, modules: [ClientSideRowModelModule] }))));
 };
-ReactDOM.render(React.createElement(App, null), document.getElementById('root'));
+const root = createRoot(document.getElementById('root'));
+root.render(React.createElement(App, null));

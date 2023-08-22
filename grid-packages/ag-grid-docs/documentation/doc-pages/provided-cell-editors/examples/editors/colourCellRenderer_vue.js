@@ -1,5 +1,8 @@
 export default {
     template: `
-        <span :style="{paddingLeft: '5px', borderLeft: '10px solid ' + params.value}">{{params.value}}</span>
+        <div :style="{overflow: 'hidden', textOverflow: 'ellipsis'}">
+            <span :style="{paddingRight: '5px', borderLeft: '10px solid ' + params.value}"></span>
+            {{params.value}}
+        </div>
     `
 };

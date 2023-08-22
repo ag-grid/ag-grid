@@ -45,14 +45,29 @@ export function removeRepeatsFromArray(array, object) {
         }
     }
 }
+export function removeFromUnorderedArray(array, object) {
+    const index = array.indexOf(object);
+    if (index >= 0) {
+        // preserve the last element, then shorten array length by 1 to delete index
+        array[index] = array[array.length - 1];
+        array.pop();
+    }
+}
 export function removeFromArray(array, object) {
     const index = array.indexOf(object);
     if (index >= 0) {
         array.splice(index, 1);
     }
 }
+export function removeAllFromUnorderedArray(array, toRemove) {
+    for (let i = 0; i < toRemove.length; i++) {
+        removeFromUnorderedArray(array, toRemove[i]);
+    }
+}
 export function removeAllFromArray(array, toRemove) {
-    toRemove.forEach(item => removeFromArray(array, item));
+    for (let i = 0; i < toRemove.length; i++) {
+        removeFromArray(array, toRemove[i]);
+    }
 }
 export function insertIntoArray(array, object, toIndex) {
     array.splice(toIndex, 0, object);

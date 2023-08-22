@@ -4,9 +4,10 @@ import { PostConstruct } from "../context/context";
 import { escapeString } from "../utils/string";
 import { KeyCode } from '../constants/keyCode';
 import { setAriaPosInSet, setAriaRole, setAriaSelected, setAriaSetSize } from '../utils/aria';
+import { Events } from "../eventKeys";
 
-export interface ListOption {
-    value: string;
+export interface ListOption<TValue = string> {
+    value: TValue;
     text?: string;
 }
 
@@ -180,7 +181,7 @@ export class AgList extends Component {
     }
 
     private fireChangeEvent(): void {
-        this.dispatchEvent({ type: AgAbstractField.EVENT_CHANGED });
+        this.dispatchEvent({ type: Events.EVENT_FIELD_VALUE_CHANGED });
         this.fireItemSelected();
     }
 

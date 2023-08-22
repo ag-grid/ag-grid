@@ -16,9 +16,8 @@ const AboutPage = () => {
                     </section>
 
                     <section>
-
                         <article>
-                            <br/>
+                            <br />
                             <p>
                                 Born out of frustration with existing solutions, <strong>AG Grid</strong> evolved from a
                                 side project to becoming the leading JavaScript datagrid on the market. We are a company
@@ -30,9 +29,9 @@ const AboutPage = () => {
                             </p>
                             <p>
                                 Today, <strong>AG Grid</strong> is a self-funded, bootstrapped company with thousands of
-                                customers globally. Even though we've already created the world's best Javascript datagrid,
-                                our work isn't over: we're forging ahead with the development of new features to show the
-                                world what’s possible in a Javascript datagrid.
+                                customers globally. Even though we've already created the world's best Javascript
+                                datagrid, our work isn't over: we're forging ahead with the development of new features
+                                to show the world what’s possible in a Javascript datagrid.
                             </p>
                         </article>
                     </section>
@@ -42,15 +41,13 @@ const AboutPage = () => {
 
                         <article>
                             <p>
-                                We believe that a datagrid should be framework-agnostic, providing developers with flexibility
-                                and future-proofing their work. This philosophy is mirrored in our name; ‘AG' stands for agnostic.
-
-                                Our experience is in building Enterprise applications: we know that the datagrid is at
-                                the core of an Enterprise application, and needs to deliver performance and a rich
-                                feature set.
-
-                                We pride ourselves on offering what others typically charge for. <strong>AG Grid
-                                Community</strong> delivers features comparable to our competition, free of charge.
+                                We believe that a datagrid should be framework-agnostic, providing developers with
+                                flexibility and future-proofing their work. This philosophy is mirrored in our name;
+                                ‘AG' stands for agnostic. Our experience is in building Enterprise applications: we know
+                                that the datagrid is at the core of an Enterprise application, and needs to deliver
+                                performance and a rich feature set. We pride ourselves on offering what others typically
+                                charge for. <strong>AG Grid Community</strong> delivers features comparable to our
+                                competition, free of charge.
                             </p>
                         </article>
                     </section>
@@ -100,6 +97,11 @@ const AboutPage = () => {
                                 <p>Developer, Grid Core</p>
                             </div>
                             <div>
+                                <img src="../images/team/salmen.jpg" alt="Salmen Hichri, Developer" />
+                                <h3>Salmen Hichris</h3>
+                                <p>Developer, Grid Core</p>
+                            </div>
+                            <div>
                                 <img src="../images/team/alanT.jpg" alt="Alan Treadway, Developer" />
                                 <h3>Alan Treadway</h3>
                                 <p>Lead Developer, Data Visualisation</p>
@@ -123,7 +125,7 @@ const AboutPage = () => {
                                 <p>Head of Customer Services</p>
                             </div>
                             <div>
-                                <img src="../images/team/kiril.png" alt="Kiril Matev, Technical Product Manager" />
+                                <img src="../images/team/kiril.jpg" alt="Kiril Matev, Technical Product Manager" />
                                 <h3>Kiril Matev</h3>
                                 <p>Technical Product Manager</p>
                             </div>
@@ -199,6 +201,14 @@ const AboutPage = () => {
                                 <p>Business Development Manager</p>
                             </div>
                             <div>
+                                <img
+                                    src="../images/team/jordan.jpeg"
+                                    alt="Jordan Shekoni, Customer Experience Manager"
+                                />
+                                <h3>Jordan Shekoni</h3>
+                                <p>Key Account Manager </p>
+                            </div>
+                            <div>
                                 <img src="../images/team/robD.jpg" alt="Rob Dunkiert, Customer Experience Manager" />
                                 <h3>Rob Dunkiert</h3>
                                 <p>Customer Experience Manager</p>
@@ -222,14 +232,6 @@ const AboutPage = () => {
                                 <p>Customer Experience Manager</p>
                             </div>
                             <div>
-                                <img
-                                    src="../images/team/jordan.jpeg"
-                                    alt="Jordan Shekoni, Customer Experience Manager"
-                                />
-                                <h3>Jordan Shekoni</h3>
-                                <p>Customer Experience Manager</p>
-                            </div>
-                            <div>
                                 <img src="../images/team/tobi.jpg" alt="Tobi Aguda, Customer Experience Manager" />
                                 <h3>Tobi Aguda</h3>
                                 <p>Customer Experience Manager</p>
@@ -237,6 +239,11 @@ const AboutPage = () => {
                             <div>
                                 <img src="../images/team/kylie.jpg" alt="Kylie Slevin, Customer Experience Manager" />
                                 <h3>Kylie Slevin</h3>
+                                <p>Customer Experience Manager</p>
+                            </div>
+                            <div>
+                                <img src="../images/team/alexR.jpg" alt="Alex Russell, Customer Experience Manager" />
+                                <h3>Alex Russell</h3>
                                 <p>Customer Experience Manager</p>
                             </div>
                             <div>

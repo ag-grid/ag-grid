@@ -51,7 +51,7 @@ var __values = (this && this.__values) || function(o) {
     };
     throw new TypeError(s ? "Object is not iterable." : "Symbol.iterator is not defined.");
 };
-import { _, AgAbstractField, AgCheckbox, AgGroupComponent, AgRadioButton, AgSelect, AgToggleButton, AutoScrollService, Autowired, Component, DragAndDropService, DragSourceType, PostConstruct } from "@ag-grid-community/core";
+import { _, AgCheckbox, AgGroupComponent, AgRadioButton, AgSelect, AgToggleButton, AutoScrollService, Autowired, Component, DragAndDropService, DragSourceType, Events, PostConstruct } from "@ag-grid-community/core";
 import { ChartController } from "../../chartController";
 var DefaultDataPanelDef = {
     groups: [
@@ -188,7 +188,7 @@ var ChartDataPanel = /** @class */ (function (_super) {
     };
     ChartDataPanel.prototype.addChangeListener = function (component, columnState) {
         var _this = this;
-        this.addManagedListener(component, AgAbstractField.EVENT_CHANGED, function () {
+        this.addManagedListener(component, Events.EVENT_FIELD_VALUE_CHANGED, function () {
             columnState.selected = component.getValue();
             _this.chartController.updateForPanelChange(columnState);
         });

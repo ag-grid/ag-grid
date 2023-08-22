@@ -1,22 +1,24 @@
-// @ag-grid-community/react v30.0.6
-import React, { memo, useContext, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
+// @ag-grid-community/react v30.1.0
+import React, { memo, useCallback, useContext, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import { BeansContext } from '../beansContext.mjs';
 import { showJsComp } from '../jsComp.mjs';
-import { useLayoutEffectOnce } from '../useEffectOnce.mjs';
 import { CssClasses } from '../utils.mjs';
 const HeaderGroupCellComp = (props) => {
     const { context } = useContext(BeansContext);
-    const [cssClasses, setCssClasses] = useState(new CssClasses());
-    const [cssResizableClasses, setResizableCssClasses] = useState(new CssClasses());
+    const { ctrl } = props;
+    const [cssClasses, setCssClasses] = useState(() => new CssClasses());
+    const [cssResizableClasses, setResizableCssClasses] = useState(() => new CssClasses());
     const [resizableAriaHidden, setResizableAriaHidden] = useState("false");
-    const [title, setTitle] = useState();
-    const [colId, setColId] = useState();
     const [ariaExpanded, setAriaExpanded] = useState();
     const [userCompDetails, setUserCompDetails] = useState();
+    const colId = useMemo(() => ctrl.getColId(), []);
     const eGui = useRef(null);
     const eResize = useRef(null);
-    const { ctrl } = props;
-    useLayoutEffectOnce(() => {
+    const setRef = useCallback((e) => {
+        eGui.current = e;
+        if (!eGui.current) {
+            return;
+        }
         const compProxy = {
             setWidth: width => {
                 if (eGui.current) {
@@ -24,8 +26,6 @@ const HeaderGroupCellComp = (props) => {
                 }
             },
             addOrRemoveCssClass: (name, on) => setCssClasses(prev => prev.setClass(name, on)),
-            setColId: id => setColId(id),
-            setTitle: title => setTitle(title),
             setUserCompDetails: compDetails => setUserCompDetails(compDetails),
             setResizableDisplayed: (displayed) => {
                 setResizableCssClasses(prev => prev.setClass('ag-hidden', !displayed));
@@ -34,7 +34,7 @@ const HeaderGroupCellComp = (props) => {
             setAriaExpanded: expanded => setAriaExpanded(expanded)
         };
         ctrl.setComp(compProxy, eGui.current, eResize.current);
-    });
+    }, []);
     // js comps
     useLayoutEffect(() => showJsComp(userCompDetails, context, eGui.current), [userCompDetails]);
     // add drag handling, must be done after component is added to the dom
@@ -47,7 +47,7 @@ const HeaderGroupCellComp = (props) => {
     const resizableClassName = useMemo(() => 'ag-header-cell-resize ' + cssResizableClasses.toString(), [cssResizableClasses]);
     const reactUserComp = userCompDetails && userCompDetails.componentFromFramework;
     const UserCompClass = userCompDetails && userCompDetails.componentClass;
-    return (React.createElement("div", { ref: eGui, className: className, title: title, "col-id": colId, role: "columnheader", tabIndex: -1, "aria-expanded": ariaExpanded },
+    return (React.createElement("div", { ref: setRef, className: className, "col-id": colId, role: "columnheader", tabIndex: -1, "aria-expanded": ariaExpanded },
         reactUserComp && React.createElement(UserCompClass, Object.assign({}, userCompDetails.params)),
         React.createElement("div", { ref: eResize, "aria-hidden": resizableAriaHidden, className: resizableClassName })));
 };

@@ -1,6 +1,6 @@
 import { Component } from "./component";
-export interface ListOption {
-    value: string;
+export interface ListOption<TValue = string> {
+    value: TValue;
     text?: string;
 }
 export declare class AgList extends Component {

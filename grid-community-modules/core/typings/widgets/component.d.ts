@@ -23,7 +23,7 @@ export declare class Component extends BeanStub {
     private preConstructOnComponent;
     getCompId(): number;
     getTooltipParams(): WithoutGridCommon<ITooltipParams>;
-    setTooltip(newTooltipText?: string | null): void;
+    setTooltip(newTooltipText?: string | null, showDelayOverride?: number, hideDelayOverride?: number): void;
     private createChildComponentsFromTags;
     private createComponentFromElement;
     private copyAttributesFromNode;

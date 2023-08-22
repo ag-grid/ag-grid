@@ -1,5 +1,5 @@
 /**
-          * @ag-grid-enterprise/set-filter - Advanced Data Grid / Data Table supporting Javascript / Typescript / React / Angular / Vue * @version v30.0.6
+          * @ag-grid-enterprise/set-filter - Advanced Data Grid / Data Table supporting Javascript / Typescript / React / Angular / Vue * @version v30.1.0
           * @link https://www.ag-grid.com/
           * @license Commercial
           */
@@ -12,7 +12,7 @@ var core$1 = require('@ag-grid-enterprise/core');
 
 /** @param V type of value in the Set Filter */
 var ClientSideValuesExtractor = /** @class */ (function () {
-    function ClientSideValuesExtractor(rowModel, filterParams, createKey, caseFormat, columnModel, valueService, treeDataOrGrouping, treeData, getDataPath) {
+    function ClientSideValuesExtractor(rowModel, filterParams, createKey, caseFormat, columnModel, valueService, treeDataOrGrouping, treeData, getDataPath, groupAllowUnbalanced) {
         this.rowModel = rowModel;
         this.filterParams = filterParams;
         this.createKey = createKey;
@@ -22,6 +22,7 @@ var ClientSideValuesExtractor = /** @class */ (function () {
         this.treeDataOrGrouping = treeDataOrGrouping;
         this.treeData = treeData;
         this.getDataPath = getDataPath;
+        this.groupAllowUnbalanced = groupAllowUnbalanced;
     }
     ClientSideValuesExtractor.prototype.extractUniqueValues = function (predicate, existingValues) {
         var _this = this;
@@ -107,8 +108,8 @@ var ClientSideValuesExtractor = /** @class */ (function () {
         if (dataPath) {
             dataPath = dataPath.map(function (treeKey) { return core._.toStringOrNull(core._.makeNull(treeKey)); });
         }
-        if (dataPath === null || dataPath === void 0 ? void 0 : dataPath.some(function (treeKey) { return treeKey == null; })) {
-            dataPath = null;
+        if (!treeData && this.groupAllowUnbalanced && (dataPath === null || dataPath === void 0 ? void 0 : dataPath.some(function (treeKey) { return treeKey == null; }))) {
+            dataPath = dataPath.filter(function (treeKey) { return treeKey != null; });
         }
         addValue(this.createKey(dataPath), dataPath);
     };
@@ -628,8 +629,9 @@ var SetValueModel = /** @class */ (function () {
         this.keyComparator = (_a = keyComparator) !== null && _a !== void 0 ? _a : core._.defaultComparator;
         this.caseSensitive = !!caseSensitive;
         var getDataPath = gridOptionsService.get('getDataPath');
+        var groupAllowUnbalanced = gridOptionsService.is('groupAllowUnbalanced');
         if (rowModel.getType() === 'clientSide') {
-            this.clientSideValuesExtractor = new ClientSideValuesExtractor(rowModel, this.filterParams, this.createKey, this.caseFormat, columnModel, valueService, treeDataOrGrouping, !!treeDataTreeList, getDataPath);
+            this.clientSideValuesExtractor = new ClientSideValuesExtractor(rowModel, this.filterParams, this.createKey, this.caseFormat, columnModel, valueService, treeDataOrGrouping, !!treeDataTreeList, getDataPath, groupAllowUnbalanced);
         }
         if (values == null) {
             this.valuesType = SetFilterModelValuesType.TAKEN_FROM_GRID_VALUES;
@@ -916,7 +918,7 @@ var SetValueModel = /** @class */ (function () {
                     existingFormattedKeys_1.set(_this.caseFormat(key), key);
                 });
                 model.forEach(function (unformattedKey) {
-                    var formattedKey = _this.caseFormat(unformattedKey);
+                    var formattedKey = _this.caseFormat(core._.makeNull(unformattedKey));
                     var existingUnformattedKey = existingFormattedKeys_1.get(formattedKey);
                     if (existingUnformattedKey !== undefined) {
                         _this.selectKey(existingUnformattedKey);
@@ -1604,7 +1606,11 @@ var SetFilter = /** @class */ (function (_super) {
         var translate = this.localeService.getLocaleTextFunc();
         var filterListName = translate('ariaFilterList', 'Filter List');
         var isTree = !!this.setFilterParams.treeList;
-        var virtualList = this.virtualList = this.createBean(new core.VirtualList('filter', isTree ? 'tree' : 'listbox', filterListName));
+        var virtualList = this.virtualList = this.createBean(new core.VirtualList({
+            cssIdentifier: 'filter',
+            ariaRole: isTree ? 'tree' : 'listbox',
+            listName: filterListName
+        }));
         var eSetFilterList = this.getRefElement('eSetFilterList');
         if (isTree) {
             eSetFilterList.classList.add('ag-set-filter-tree-list');
@@ -2410,13 +2416,21 @@ var SetFloatingFilterComp = /** @class */ (function (_super) {
         _super.prototype.destroy.call(this);
     };
     SetFloatingFilterComp.prototype.init = function (params) {
-        var displayName = this.columnModel.getDisplayNameForColumn(params.column, 'header', true);
-        var translate = this.localeService.getLocaleTextFunc();
+        var _this = this;
+        this.params = params;
         this.eFloatingFilterText
             .setDisabled(true)
-            .setInputAriaLabel(displayName + " " + translate('ariaFilterInput', 'Filter Input'))
-            .addGuiEventListener('click', function () { return params.showParentFilter(); });
+            .addGuiEventListener('click', function () { return _this.params.showParentFilter(); });
+        this.setParams(params);
+    };
+    SetFloatingFilterComp.prototype.setParams = function (params) {
+        var displayName = this.columnModel.getDisplayNameForColumn(params.column, 'header', true);
+        var translate = this.localeService.getLocaleTextFunc();
+        this.eFloatingFilterText.setInputAriaLabel(displayName + " " + translate('ariaFilterInput', 'Filter Input'));
+    };
+    SetFloatingFilterComp.prototype.onParamsUpdated = function (params) {
         this.params = params;
+        this.setParams(params);
     };
     SetFloatingFilterComp.prototype.onParentModelChanged = function (parentModel) {
         this.updateFloatingFilterText(parentModel);
@@ -2464,7 +2478,7 @@ var SetFloatingFilterComp = /** @class */ (function (_super) {
 }(core.Component));
 
 // DO NOT UPDATE MANUALLY: Generated from script during build time
-var VERSION = '30.0.6';
+var VERSION = '30.1.0';
 
 var SetFilterModule = {
     version: VERSION,

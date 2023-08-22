@@ -7,7 +7,9 @@ export declare function areEqual<T>(a?: T[] | null, b?: T[] | null, comparator?:
 export declare function shallowCompare(arr1: any[], arr2: any[]): boolean;
 export declare function sortNumerically(array: number[]): number[];
 export declare function removeRepeatsFromArray<T>(array: T[], object: T): void;
+export declare function removeFromUnorderedArray<T>(array: T[], object: T): void;
 export declare function removeFromArray<T>(array: T[], object: T): void;
+export declare function removeAllFromUnorderedArray<T>(array: T[], toRemove: T[]): void;
 export declare function removeAllFromArray<T>(array: T[], toRemove: T[]): void;
 export declare function insertIntoArray<T>(array: T[], object: T, toIndex: number): void;
 export declare function insertArrayIntoArray<T>(dest: T[], src: T[], toIndex: number): void;

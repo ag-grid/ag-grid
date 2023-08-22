@@ -317,8 +317,11 @@ var FocusService = /** @class */ (function (_super) {
         this.focusedHeaderPosition = { headerRowIndex: headerRowIndex, column: column };
     };
     FocusService.prototype.focusHeaderPosition = function (params) {
-        var direction = params.direction, fromTab = params.fromTab, allowUserOverride = params.allowUserOverride, event = params.event;
+        var direction = params.direction, fromTab = params.fromTab, allowUserOverride = params.allowUserOverride, event = params.event, fromCell = params.fromCell;
         var headerPosition = params.headerPosition;
+        if (fromCell && this.filterManager.isAdvancedFilterHeaderActive()) {
+            return this.focusAdvancedFilter(headerPosition);
+        }
         if (allowUserOverride) {
             var currentPosition = this.getFocusedHeader();
             var headerRowCount = this.headerNavigationService.getHeaderRowCount();
@@ -352,7 +355,12 @@ var FocusService = /** @class */ (function (_super) {
             return false;
         }
         if (headerPosition.headerRowIndex === -1) {
-            return this.focusGridView(headerPosition.column);
+            if (this.filterManager.isAdvancedFilterHeaderActive()) {
+                return this.focusAdvancedFilter(headerPosition);
+            }
+            else {
+                return this.focusGridView(headerPosition.column);
+            }
         }
         this.headerNavigationService.scrollToColumn(headerPosition.column, direction);
         var headerRowContainerCtrl = this.ctrlsService.getHeaderRowContainerCtrl(headerPosition.column.getPinned());
@@ -379,6 +387,14 @@ var FocusService = /** @class */ (function (_super) {
             headerPosition: { headerRowIndex: headerRowIndex, column: column },
             event: event
         });
+    };
+    FocusService.prototype.focusPreviousFromFirstCell = function (event) {
+        if (this.filterManager.isAdvancedFilterHeaderActive()) {
+            return this.focusAdvancedFilter(null);
+        }
+        else {
+            return this.focusLastHeader(event);
+        }
     };
     FocusService.prototype.isAnyCellFocused = function () {
         return !!this.focusedCellPosition;
@@ -530,6 +546,28 @@ var FocusService = /** @class */ (function (_super) {
         }
         return false;
     };
+    FocusService.prototype.focusAdvancedFilter = function (position) {
+        this.advancedFilterFocusColumn = position === null || position === void 0 ? void 0 : position.column;
+        return this.advancedFilterService.getCtrl().focusHeaderComp();
+    };
+    FocusService.prototype.focusNextFromAdvancedFilter = function (backwards, forceFirstColumn) {
+        var _a, _b;
+        var column = (_a = (forceFirstColumn ? undefined : this.advancedFilterFocusColumn)) !== null && _a !== void 0 ? _a : (_b = this.columnModel.getAllDisplayedColumns()) === null || _b === void 0 ? void 0 : _b[0];
+        if (backwards) {
+            return this.focusHeaderPosition({
+                headerPosition: {
+                    column: column,
+                    headerRowIndex: this.headerNavigationService.getHeaderRowCount() - 1
+                }
+            });
+        }
+        else {
+            return this.focusGridView(column);
+        }
+    };
+    FocusService.prototype.clearAdvancedFilterColumn = function () {
+        this.advancedFilterFocusColumn = undefined;
+    };
     var FocusService_1;
     FocusService.AG_KEYBOARD_FOCUS = 'ag-keyboard-focus';
     FocusService.keyboardModeActive = false;
@@ -561,6 +599,12 @@ var FocusService = /** @class */ (function (_super) {
     __decorate([
         context_1.Autowired('ctrlsService')
     ], FocusService.prototype, "ctrlsService", void 0);
+    __decorate([
+        context_1.Autowired('filterManager')
+    ], FocusService.prototype, "filterManager", void 0);
+    __decorate([
+        context_1.Optional('advancedFilterService')
+    ], FocusService.prototype, "advancedFilterService", void 0);
     __decorate([
         context_1.PostConstruct
     ], FocusService.prototype, "init", null);

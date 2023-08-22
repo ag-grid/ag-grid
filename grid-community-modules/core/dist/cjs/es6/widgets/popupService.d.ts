@@ -1,4 +1,4 @@
-// Type definitions for @ag-grid-community/core v30.0.6
+// Type definitions for @ag-grid-community/core v30.1.0
 // Project: https://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { Column } from "../entities/column";
@@ -36,6 +36,7 @@ export interface AgPopup {
     hideFunc: () => void;
     isAnchored: boolean;
     instanceId: number;
+    alignedToElement?: HTMLElement;
     stopAnchoringPromise?: AgPromise<() => void>;
 }
 export interface AddPopupParams {
@@ -75,6 +76,8 @@ export declare class PopupService extends BeanStub {
         type: string;
         eventSource: HTMLElement;
     }): void;
+    private shouldRenderUnderOrAbove;
+    private setAlignedStyles;
     private callPostProcessPopup;
     positionPopup(params: PopupPositionParams): void;
     getActivePopups(): HTMLElement[];
@@ -86,6 +89,7 @@ export declare class PopupService extends BeanStub {
     private createPopupWrapper;
     private addEventListenersToPopup;
     private addPopupToPopupList;
+    private getPopupIndex;
     setPopupPositionRelatedToElement(popupEl: HTMLElement, relativeElement?: HTMLElement | null): AgPromise<() => void> | undefined;
     private removePopupFromPopupList;
     private keepPopupPositionedRelativeTo;

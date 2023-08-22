@@ -27,7 +27,6 @@ const columnDefs: ColDef[] = [
     field: 'color3', 
     cellRenderer: ColourCellRenderer,
     cellEditor: 'agRichSelectCellEditor',
-    cellEditorPopup: true,
     cellEditorParams: {
       values: colors, 
       cellRenderer: ColourCellRenderer

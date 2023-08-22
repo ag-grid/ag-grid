@@ -260,8 +260,11 @@ class HeaderFilterCellCtrl extends abstractHeaderCellCtrl_1.AbstractHeaderCellCt
         else {
             compPromise.then(compInstance => {
                 var _a;
-                if (!compInstance || ((_a = this.userCompDetails) === null || _a === void 0 ? void 0 : _a.componentClass) !== newCompDetails.componentClass) {
+                if (!compInstance || this.filterManager.areFilterCompsDifferent((_a = this.userCompDetails) !== null && _a !== void 0 ? _a : null, newCompDetails)) {
                     this.updateCompDetails(newCompDetails, becomeActive);
+                }
+                else {
+                    this.updateFloatingFilterParams(newCompDetails);
                 }
             });
         }
@@ -275,6 +278,18 @@ class HeaderFilterCellCtrl extends abstractHeaderCellCtrl_1.AbstractHeaderCellCt
             this.setupSyncWithFilter();
             this.setupFilterChangedListener();
         }
+    }
+    updateFloatingFilterParams(userCompDetails) {
+        var _a;
+        if (!userCompDetails) {
+            return;
+        }
+        const params = userCompDetails.params;
+        (_a = this.comp.getFloatingFilterComp()) === null || _a === void 0 ? void 0 : _a.then(floatingFilter => {
+            if ((floatingFilter === null || floatingFilter === void 0 ? void 0 : floatingFilter.onParamsUpdated) && typeof floatingFilter.onParamsUpdated === 'function') {
+                floatingFilter.onParamsUpdated(params);
+            }
+        });
     }
 }
 __decorate([

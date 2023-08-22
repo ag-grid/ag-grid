@@ -8,6 +8,8 @@ export declare class SetFloatingFilterComp<V = string> extends Component impleme
     constructor();
     destroy(): void;
     init(params: IFloatingFilterParams): void;
+    private setParams;
+    onParamsUpdated(params: IFloatingFilterParams): void;
     onParentModelChanged(parentModel: SetFilterModel): void;
     private parentSetFilterInstance;
     private addAvailableValuesListener;

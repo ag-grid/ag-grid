@@ -126,8 +126,8 @@ var RowNode = /** @class */ (function () {
         this.data = data;
         this.updateDataOnDetailNode();
         this.setId(id);
-        this.beans.selectionService.syncInRowNode(this, oldNode);
         this.checkRowSelectable();
+        this.beans.selectionService.syncInRowNode(this, oldNode);
         var event = this.createDataChangedEvent(data, oldData, false);
         this.dispatchLocalEvent(event);
     };

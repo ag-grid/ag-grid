@@ -49,7 +49,7 @@ class AgAngleSelect extends core_1.AgAbstractLabel {
         if (core_1._.exists(this.getValue())) {
             this.eAngleValue.setValue(this.normalizeNegativeValue(this.getValue()).toString());
         }
-        this.addManagedListener(this, core_1.AgAbstractField.EVENT_CHANGED, () => {
+        this.addManagedListener(this, core_1.Events.EVENT_FIELD_VALUE_CHANGED, () => {
             const eDocument = this.gridOptionsService.getDocument();
             if (this.eAngleValue.getInputElement().contains(eDocument.activeElement)) {
                 return;
@@ -140,7 +140,7 @@ class AgAngleSelect extends core_1.AgAbstractLabel {
         return this;
     }
     onValueChange(callbackFn) {
-        this.addManagedListener(this, core_1.AgAbstractField.EVENT_CHANGED, () => {
+        this.addManagedListener(this, core_1.Events.EVENT_FIELD_VALUE_CHANGED, () => {
             callbackFn(this.degrees);
         });
         return this;
@@ -161,7 +161,7 @@ class AgAngleSelect extends core_1.AgAbstractLabel {
             this.degrees = Math.floor(degrees);
             this.calculateCartesian();
             this.positionChildCircle(radiansValue);
-            this.dispatchEvent({ type: core_1.AgAbstractField.EVENT_CHANGED });
+            this.dispatchEvent({ type: core_1.Events.EVENT_FIELD_VALUE_CHANGED });
         }
         return this;
     }

@@ -1,11 +1,11 @@
-// Type definitions for @ag-grid-community/core v30.0.6
+// Type definitions for @ag-grid-community/core v30.1.0
 // Project: https://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { GridOptions } from "./entities/gridOptions";
 import { AgGridCommon } from "./interfaces/iCommon";
 declare type GridOptionKey = keyof GridOptions;
 declare type GetKeys<T, U> = {
-    [K in keyof T]: U extends T[K] ? K : (T[K] extends U | undefined ? K : never);
+    [K in keyof T]: U extends T[K] ? K : (T[K] extends U | null | undefined ? K : never);
 }[keyof T];
 /**
  *  Get the GridProperties that are of type `any`.

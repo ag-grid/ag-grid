@@ -1,12 +1,11 @@
-// @ag-grid-community/react v30.0.6
+// @ag-grid-community/react v30.1.0
 import { _, CssClassManager } from '@ag-grid-community/core';
-import React, { useCallback, useEffect, useRef, useState, useMemo, memo, useContext, useLayoutEffect } from 'react';
+import React, { useCallback, useRef, useState, useMemo, memo, useContext, useLayoutEffect } from 'react';
 import { isComponentStateless } from '../utils.mjs';
 import PopupEditorComp from './popupEditorComp.mjs';
 import useJsCellRenderer from './showJsRenderer.mjs';
 import { BeansContext } from '../beansContext.mjs';
 import { createSyncJsComp } from '../jsComp.mjs';
-import { useLayoutEffectOnce } from '../useEffectOnce.mjs';
 export var CellCompState;
 (function (CellCompState) {
     CellCompState[CellCompState["ShowValue"] = 0] = "ShowValue";
@@ -59,30 +58,26 @@ const jsxShowValue = (showDetails, key, parentId, cellRendererRef, showCellWrapp
 const CellComp = (props) => {
     const { context } = useContext(BeansContext);
     const { cellCtrl, printLayout, editingRow } = props;
-    const [renderDetails, setRenderDetails] = useState();
+    const tabIndex = cellCtrl.getTabIndex();
+    const colId = cellCtrl.getColumnIdSanitised();
+    const cellInstanceId = cellCtrl.getInstanceId();
+    // Only provide an initial state when not using a Cell Renderer so that we do not display a raw value before the cell renderer is created.
+    const [renderDetails, setRenderDetails] = useState(() => cellCtrl.getIsCellRenderer() ? undefined : { compDetails: undefined, value: cellCtrl.getValueToDisplay(), force: false });
     const [editDetails, setEditDetails] = useState();
     const [renderKey, setRenderKey] = useState(1);
     const [userStyles, setUserStyles] = useState();
-    const [tabIndex, setTabIndex] = useState();
-    const [role, setRole] = useState();
-    const [colId, setColId] = useState();
-    const [title, setTitle] = useState();
     const [includeSelection, setIncludeSelection] = useState(false);
     const [includeRowDrag, setIncludeRowDrag] = useState(false);
     const [includeDndSource, setIncludeDndSource] = useState(false);
     const [jsEditorComp, setJsEditorComp] = useState();
-    const forceWrapper = useMemo(() => cellCtrl.isForceWrapper(), []);
+    // useMemo as more then just accessing a boolean on the cellCtrl
+    const forceWrapper = useMemo(() => cellCtrl.isForceWrapper(), [cellCtrl]);
     const eGui = useRef(null);
     const cellRendererRef = useRef(null);
     const jsCellRendererRef = useRef();
     const cellEditorRef = useRef();
-    // when setting the ref, we also update the state item to force a re-render
     const eCellWrapper = useRef();
-    const [cellWrapperVersion, setCellWrapperVersion] = useState(0);
-    const setCellWrapperRef = useCallback((ref) => {
-        eCellWrapper.current = ref;
-        setCellWrapperVersion(v => v + 1);
-    }, []);
+    const cellWrapperDestroyFuncs = useRef([]);
     // when setting the ref, we also update the state item to force a re-render
     const eCellValue = useRef();
     const [cellValueVersion, setCellValueVersion] = useState(0);
@@ -105,10 +100,13 @@ const CellComp = (props) => {
                 });
             }
         }
-    }, []);
-    const setPopupCellEditorRef = useCallback((cellRenderer) => setCellEditorRef(true, cellRenderer), []);
-    const setInlineCellEditorRef = useCallback((cellRenderer) => setCellEditorRef(false, cellRenderer), []);
-    const cssClassManager = useMemo(() => new CssClassManager(() => eGui.current), []);
+    }, [cellCtrl]);
+    const setPopupCellEditorRef = useCallback((cellRenderer) => setCellEditorRef(true, cellRenderer), [setCellEditorRef]);
+    const setInlineCellEditorRef = useCallback((cellRenderer) => setCellEditorRef(false, cellRenderer), [setCellEditorRef]);
+    let cssClassManager = useRef();
+    if (!cssClassManager.current) {
+        cssClassManager.current = new CssClassManager(() => eGui.current);
+    }
     useJsCellRenderer(renderDetails, showCellWrapper, eCellValue.current, cellValueVersion, jsCellRendererRef, eGui);
     // if RenderDetails changed, need to call refresh. This is not our preferred way (the preferred
     // way for React is just allow the new props to propagate down to the React Cell Renderer)
@@ -174,20 +172,19 @@ const CellComp = (props) => {
         };
     }, [editDetails]);
     // tool widgets effect
-    useLayoutEffect(() => {
-        if (!cellCtrl || !context) {
+    const setCellWrapperRef = useCallback((ref) => {
+        eCellWrapper.current = ref;
+        if (!eCellWrapper.current) {
+            cellWrapperDestroyFuncs.current.forEach(f => f());
+            cellWrapperDestroyFuncs.current = [];
             return;
         }
-        if (!eCellWrapper.current || !showCellWrapper) {
-            return;
-        }
-        const destroyFuncs = [];
         const addComp = (comp) => {
             var _a;
             if (comp) {
                 const eGui = comp.getGui();
                 (_a = eCellWrapper.current) === null || _a === void 0 ? void 0 : _a.insertAdjacentElement('afterbegin', eGui);
-                destroyFuncs.push(() => {
+                cellWrapperDestroyFuncs.current.push(() => {
                     context.destroyBean(comp);
                     _.removeFromParent(eGui);
                 });
@@ -204,22 +201,21 @@ const CellComp = (props) => {
         if (includeRowDrag) {
             addComp(cellCtrl.createRowDragComp());
         }
-        return () => destroyFuncs.forEach(f => f());
-    }, [showCellWrapper, includeDndSource, includeRowDrag, includeSelection, cellWrapperVersion]);
+    }, [cellCtrl, context, includeDndSource, includeRowDrag, includeSelection]);
     // we use layout effect here as we want to synchronously process setComp and it's side effects
     // to ensure the component is fully initialised prior to the first browser paint. See AG-7018.
-    useLayoutEffectOnce(() => {
+    const setRef = useCallback((ref) => {
+        eGui.current = ref;
+        if (!eGui.current) {
+            return;
+        }
         if (!cellCtrl) {
             return;
         }
         const compProxy = {
-            addOrRemoveCssClass: (name, on) => cssClassManager.addOrRemoveCssClass(name, on),
+            addOrRemoveCssClass: (name, on) => cssClassManager.current.addOrRemoveCssClass(name, on),
             setUserStyles: (styles) => setUserStyles(styles),
             getFocusableElement: () => eGui.current,
-            setTabIndex: tabIndex => setTabIndex(tabIndex),
-            setRole: role => setRole(role),
-            setColId: colId => setColId(colId),
-            setTitle: title => setTitle(title),
             setIncludeSelection: include => setIncludeSelection(include),
             setIncludeRowDrag: include => setIncludeRowDrag(include),
             setIncludeDndSource: include => setIncludeDndSource(include),
@@ -227,10 +223,17 @@ const CellComp = (props) => {
             getCellRenderer: () => cellRendererRef.current ? cellRendererRef.current : jsCellRendererRef.current,
             getParentOfValue: () => eCellValue.current ? eCellValue.current : eCellWrapper.current ? eCellWrapper.current : eGui.current,
             setRenderDetails: (compDetails, value, force) => {
-                setRenderDetails({
-                    value,
-                    compDetails,
-                    force
+                setRenderDetails(prev => {
+                    if ((prev === null || prev === void 0 ? void 0 : prev.compDetails) !== compDetails || (prev === null || prev === void 0 ? void 0 : prev.value) !== value || (prev === null || prev === void 0 ? void 0 : prev.force) !== force) {
+                        return {
+                            value,
+                            compDetails,
+                            force
+                        };
+                    }
+                    else {
+                        return prev;
+                    }
                 });
             },
             setEditDetails: (compDetails, popup, popupPosition) => {
@@ -253,7 +256,7 @@ const CellComp = (props) => {
         };
         const cellWrapperOrUndefined = eCellWrapper.current || undefined;
         cellCtrl.setComp(compProxy, eGui.current, cellWrapperOrUndefined, printLayout, editingRow);
-    });
+    }, []);
     const reactCellRendererStateless = useMemo(() => {
         const res = renderDetails &&
             renderDetails.compDetails &&
@@ -261,15 +264,15 @@ const CellComp = (props) => {
             isComponentStateless(renderDetails.compDetails.componentClass);
         return !!res;
     }, [renderDetails]);
-    useEffect(() => {
+    useLayoutEffect(() => {
         var _a;
         if (!eGui.current) {
             return;
         }
-        cssClassManager.addOrRemoveCssClass('ag-cell-value', !showCellWrapper);
-        cssClassManager.addOrRemoveCssClass('ag-cell-inline-editing', !!editDetails && !editDetails.popup);
-        cssClassManager.addOrRemoveCssClass('ag-cell-popup-editing', !!editDetails && !!editDetails.popup);
-        cssClassManager.addOrRemoveCssClass('ag-cell-not-inline-editing', !editDetails || !!editDetails.popup);
+        cssClassManager.current.addOrRemoveCssClass('ag-cell-value', !showCellWrapper);
+        cssClassManager.current.addOrRemoveCssClass('ag-cell-inline-editing', !!editDetails && !editDetails.popup);
+        cssClassManager.current.addOrRemoveCssClass('ag-cell-popup-editing', !!editDetails && !!editDetails.popup);
+        cssClassManager.current.addOrRemoveCssClass('ag-cell-not-inline-editing', !editDetails || !!editDetails.popup);
         (_a = cellCtrl.getRowCtrl()) === null || _a === void 0 ? void 0 : _a.setInlineEditingCss(!!editDetails);
         if (cellCtrl.shouldRestoreFocus() && !cellCtrl.isEditing()) {
             // Restore focus to the cell if it was focused before and not editing.
@@ -277,11 +280,10 @@ const CellComp = (props) => {
             eGui.current.focus({ preventScroll: true });
         }
     });
-    const cellInstanceId = useMemo(() => cellCtrl.getInstanceId(), []);
     const showContents = () => (React.createElement(React.Fragment, null,
         (renderDetails != null && jsxShowValue(renderDetails, renderKey, cellInstanceId, cellRendererRef, showCellWrapper, reactCellRendererStateless, setCellValueRef)),
         (editDetails != null && jsxEditValue(editDetails, setInlineCellEditorRef, setPopupCellEditorRef, eGui.current, cellCtrl, jsEditorComp))));
-    return (React.createElement("div", { ref: eGui, style: userStyles, tabIndex: tabIndex, role: role, "col-id": colId, title: title }, showCellWrapper
+    return (React.createElement("div", { ref: setRef, style: userStyles, tabIndex: tabIndex, role: 'gridcell', "col-id": colId }, showCellWrapper
         ? (React.createElement("div", { className: "ag-cell-wrapper", role: "presentation", ref: setCellWrapperRef }, showContents()))
         : showContents()));
 };

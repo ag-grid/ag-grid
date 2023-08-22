@@ -1,4 +1,4 @@
-// Type definitions for @ag-grid-community/core v30.0.6
+// Type definitions for @ag-grid-community/core v30.1.0
 // Project: https://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { BeanStub } from "../../context/beanStub";
@@ -10,7 +10,6 @@ import { IHeaderParams } from "../../headerRendering/cells/column/headerComp";
 import { IHeaderGroupParams } from "../../headerRendering/cells/columnGroup/headerGroupComp";
 import { ICellEditorParams } from "../../interfaces/iCellEditor";
 import { IFilterDef, IFilterParams } from "../../interfaces/iFilter";
-import { IRichCellEditorParams } from "../../interfaces/iRichCellEditorParams";
 import { SetFilterParams } from "../../interfaces/iSetFilter";
 import { IStatusPanelParams, StatusPanelDef } from "../../interfaces/iStatusPanel";
 import { IToolPanelParams } from "../../interfaces/iToolPanel";
@@ -23,7 +22,8 @@ import { ITooltipParams } from "../../rendering/tooltipComponent";
 import { AgPromise } from "../../utils";
 import { ComponentType } from "./componentTypes";
 import { WithoutGridCommon } from "../../interfaces/iCommon";
-export declare type DefinitionObject = GridOptions | ColDef | ColGroupDef | IFilterDef | SetFilterParams | IRichCellEditorParams | ToolPanelDef | StatusPanelDef;
+import { RichSelectParams } from "../../widgets/agRichSelect";
+export declare type DefinitionObject = GridOptions | ColDef | ColGroupDef | IFilterDef | SetFilterParams | RichSelectParams | ToolPanelDef | StatusPanelDef;
 export interface UserCompDetails {
     componentClass: any;
     componentFromFramework: boolean;
@@ -47,7 +47,7 @@ export declare class UserComponentFactory extends BeanStub {
     getFullWidthDetailCellRendererDetails(params: WithoutGridCommon<ICellRendererParams>): UserCompDetails;
     getInnerRendererDetails(def: GroupCellRendererParams, params: WithoutGridCommon<ICellRendererParams>): UserCompDetails | undefined;
     getFullWidthGroupRowInnerCellRenderer(def: any, params: WithoutGridCommon<ICellRendererParams>): UserCompDetails | undefined;
-    getCellRendererDetails(def: ColDef | IRichCellEditorParams, params: WithoutGridCommon<ICellRendererParams>): UserCompDetails | undefined;
+    getCellRendererDetails(def: ColDef | RichSelectParams, params: WithoutGridCommon<ICellRendererParams>): UserCompDetails | undefined;
     getCellEditorDetails(def: ColDef, params: WithoutGridCommon<ICellEditorParams>): UserCompDetails | undefined;
     getFilterDetails(def: IFilterDef, params: WithoutGridCommon<IFilterParams>, defaultFilter: string): UserCompDetails | undefined;
     getDateCompDetails(params: WithoutGridCommon<IDateParams>): UserCompDetails;

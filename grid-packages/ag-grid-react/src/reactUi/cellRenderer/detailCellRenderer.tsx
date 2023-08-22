@@ -1,21 +1,22 @@
 import React, { useState, useMemo, useRef, useContext, useCallback, forwardRef, useImperativeHandle } from "react";
 import { CssClasses } from "../utils";
-import { IDetailCellRenderer, IDetailCellRendererCtrl, IDetailCellRendererParams, GridOptions, GridApi, ColumnApi, ModuleRegistry } from "ag-grid-community";
+import { IDetailCellRenderer, IDetailCellRendererCtrl, IDetailCellRendererParams, GridOptions, GridApi, ColumnApi, ModuleRegistry, _ } from "ag-grid-community";
 import { BeansContext } from "../beansContext";
 import { AgGridReactUi } from "../agGridReactUi";
-import { useLayoutEffectOnce } from "../useEffectOnce";
 
 const DetailCellRenderer = (props: IDetailCellRendererParams, ref: any) => {
 
     const { ctrlsFactory, context, gridOptionsService, resizeObserverService, clientSideRowModel, serverSideRowModel } = useContext(BeansContext);
 
-    const [cssClasses, setCssClasses] = useState<CssClasses>(new CssClasses());
-    const [gridCssClasses, setGridCssClasses] = useState<CssClasses>(new CssClasses());
+    const [cssClasses, setCssClasses] = useState<CssClasses>(() => new CssClasses());
+    const [gridCssClasses, setGridCssClasses] = useState<CssClasses>(() => new CssClasses());
     const [detailGridOptions, setDetailGridOptions] = useState<GridOptions>();
     const [detailRowData, setDetailRowData] = useState<any[]>();
 
     const ctrlRef = useRef<IDetailCellRendererCtrl>();
-    const eGuiRef = useRef<HTMLDivElement>(null);
+    const eGuiRef = useRef<HTMLDivElement | null>(null);
+
+    const resizeObserverDestroyFunc = useRef<() => void>();
 
     const parentModules = useMemo(() => ModuleRegistry.__getGridRegisteredModules(props.api.getGridId()), [props]);
     const topClassName = useMemo(() => cssClasses.toString() + ' ag-details-row', [cssClasses]);
@@ -26,14 +27,22 @@ const DetailCellRenderer = (props: IDetailCellRendererParams, ref: any) => {
             refresh() { return ctrlRef.current?.refresh() ?? false; }
         }));
     }
-    
-    useLayoutEffectOnce(() => {
-        if (props.template && typeof props.template === 'string') {
-            console.warn('AG Grid: detailCellRendererParams.template is not supported by React - this only works with frameworks that work against String templates. To change the template, please provide your own React Detail Cell Renderer.');
-        }
-    });
 
-    useLayoutEffectOnce(() => {
+    if (props.template) {
+        _.doOnce(() => console.warn('AG Grid: detailCellRendererParams.template is not supported by AG Grid React. To change the template, provide a Custom Detail Cell Renderer. See https://ag-grid.com/react-data-grid/master-detail-custom-detail/'), "React_detailCellRenderer.template");
+    }
+
+    const setRef = useCallback((e: HTMLDivElement) => {
+        eGuiRef.current = e;
+
+        if (!eGuiRef.current) {
+            context.destroyBean(ctrlRef.current);
+            if (resizeObserverDestroyFunc.current) {
+                resizeObserverDestroyFunc.current();
+            }
+            return;
+        }
+
         const compProxy: IDetailCellRenderer = {
             addOrRemoveCssClass: (name: string, on: boolean) => setCssClasses(prev => prev.setClass(name, on)),
             addOrRemoveDetailGridCssClass: (name: string, on: boolean) => setGridCssClasses(prev => prev.setClass(name, on)),
@@ -50,13 +59,11 @@ const DetailCellRenderer = (props: IDetailCellRendererParams, ref: any) => {
 
         ctrlRef.current = ctrl;
 
-        let resizeObserverDestroyFunc: () => void;
-
         if (gridOptionsService.is('detailRowAutoHeight')) {
             const checkRowSizeFunc = () => {
                 // when disposed, current is null, so nothing to do, and the resize observer will
                 // be disposed of soon
-                if (eGuiRef.current==null) { return; }
+                if (eGuiRef.current == null) { return; }
 
                 const clientHeight = eGuiRef.current.clientHeight;
 
@@ -78,25 +85,18 @@ const DetailCellRenderer = (props: IDetailCellRendererParams, ref: any) => {
                     setTimeout(updateRowHeightFunc, 0);
                 }
             };
-    
-            resizeObserverDestroyFunc = resizeObserverService.observeResize(eGuiRef.current!, checkRowSizeFunc);
+
+            resizeObserverDestroyFunc.current = resizeObserverService.observeResize(eGuiRef.current, checkRowSizeFunc);
             checkRowSizeFunc();
         }
+    }, []);
 
-        return () => {
-            context.destroyBean(ctrl);
-            if (resizeObserverDestroyFunc) {
-                resizeObserverDestroyFunc();
-            }
-        };
-    });
-
-    const setGridApi = useCallback( (api: GridApi, columnApi: ColumnApi) => {
+    const setGridApi = useCallback((api: GridApi, columnApi: ColumnApi) => {
         ctrlRef.current?.registerDetailWithMaster(api, columnApi)
     }, []);
 
     return (
-        <div className={topClassName} ref={eGuiRef}>
+        <div className={topClassName} ref={setRef}>
             {
                 detailGridOptions &&
                 <AgGridReactUi className={gridClassName} {...detailGridOptions} modules={parentModules} rowData={detailRowData} setGridApi={setGridApi}></AgGridReactUi>

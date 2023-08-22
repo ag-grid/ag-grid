@@ -3,6 +3,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.AgAbstractField = void 0;
 const agAbstractLabel_1 = require("./agAbstractLabel");
 const dom_1 = require("../utils/dom");
+const eventKeys_1 = require("../eventKeys");
 class AgAbstractField extends agAbstractLabel_1.AgAbstractLabel {
     constructor(config, template, className) {
         super(config, template);
@@ -15,7 +16,7 @@ class AgAbstractField extends agAbstractLabel_1.AgAbstractLabel {
         }
     }
     onValueChange(callbackFn) {
-        this.addManagedListener(this, AgAbstractField.EVENT_CHANGED, () => callbackFn(this.getValue()));
+        this.addManagedListener(this, eventKeys_1.Events.EVENT_FIELD_VALUE_CHANGED, () => callbackFn(this.getValue()));
         return this;
     }
     getWidth() {
@@ -38,10 +39,9 @@ class AgAbstractField extends agAbstractLabel_1.AgAbstractLabel {
         this.previousValue = this.value;
         this.value = value;
         if (!silent) {
-            this.dispatchEvent({ type: AgAbstractField.EVENT_CHANGED });
+            this.dispatchEvent({ type: eventKeys_1.Events.EVENT_FIELD_VALUE_CHANGED });
         }
         return this;
     }
 }
 exports.AgAbstractField = AgAbstractField;
-AgAbstractField.EVENT_CHANGED = 'valueChange';

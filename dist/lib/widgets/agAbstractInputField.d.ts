@@ -1,6 +1,6 @@
-import { IAgLabel } from './agAbstractLabel';
+import { IAgLabelParams } from './agAbstractLabel';
 import { AgAbstractField, FieldElement } from './agAbstractField';
-export interface IInputField extends IAgLabel {
+export interface IInputField extends IAgLabelParams {
     value?: any;
     width?: number;
 }
@@ -23,4 +23,5 @@ export declare abstract class AgAbstractInputField<TElement extends FieldElement
     setInputPlaceholder(placeholder: string): this;
     setInputAriaLabel(label?: string | null): this;
     setDisabled(disabled: boolean): this;
+    setAutoComplete(value: boolean | string): this;
 }

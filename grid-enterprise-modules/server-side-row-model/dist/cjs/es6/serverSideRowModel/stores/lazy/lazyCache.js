@@ -572,7 +572,7 @@ class LazyCache extends core_1.BeanStub {
         return (node.isExpandable() && node.expanded) || this.isNodeFocused(node);
     }
     extractDuplicateIds(rows) {
-        if (!this.getRowIdFunc == null) {
+        if (this.getRowIdFunc != null) {
             return [];
         }
         const newIds = new Set();
@@ -601,6 +601,9 @@ class LazyCache extends core_1.BeanStub {
                 this.onLoadFailed(firstRowIndex, numberOfRowsExpected);
                 return;
             }
+        }
+        if (response.pivotResultFields) {
+            this.serverSideRowModel.generateSecondaryColumns(response.pivotResultFields);
         }
         const wasRefreshing = this.nodesToRefresh.size > 0;
         response.rowData.forEach((data, responseRowIndex) => {
@@ -857,6 +860,9 @@ __decorate([
 __decorate([
     core_1.Autowired('ssrmNodeManager')
 ], LazyCache.prototype, "nodeManager", void 0);
+__decorate([
+    core_1.Autowired('rowModel')
+], LazyCache.prototype, "serverSideRowModel", void 0);
 __decorate([
     core_1.PostConstruct
 ], LazyCache.prototype, "init", null);

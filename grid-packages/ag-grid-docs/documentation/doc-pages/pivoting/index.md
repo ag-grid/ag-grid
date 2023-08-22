@@ -247,6 +247,37 @@ When there is more than one active pivot column, multiple group columns will app
 
 <grid-example title='Expandable Pivot Column Groups' name='expandable-pivot-column-groups' type='generated' options='{ "enterprise": true, "exampleHeight": 655, "modules": ["clientside", "rowgrouping", "menu", "columnpanel", "filterpanel"] }'></grid-example>
 
+### Opening Pivot Group Levels by Default
+
+To open all pivot groups down to a given group depth level use the `pivotDefaultExpanded` grid option as shown below: 
+
+<snippet>
+| const gridOptions = {
+|    columnDefs: [
+|        { field: 'country', rowGroup: true, enableRowGroup: true },
+|        { field: 'athlete' },
+|        { field: 'sport', pivot: true, enablePivot: true },
+|        { field: 'year', pivot: true, enablePivot: true },
+|        { field: 'date', pivot: true, enablePivot: true },
+|        { field: 'gold', aggFunc: 'sum' },
+|        { field: 'silver', aggFunc: 'sum' },
+|        { field: 'bronze', aggFunc: 'sum' },
+|        { field: 'bronze', aggFunc: 'sum' },
+|    ],
+|    // first (sport) pivot group level will be open by default
+|    pivotDefaultExpanded: 1,
+|    // other grid options ...
+| }
+</snippet>
+
+In the snippet above, the first pivot group level `sport` will be expanded by default as `pivotDefaultExpanded = 1`. 
+
+By default all pivot group levels are collapsed. To expand all pivot group levels set `pivotDefaultExpanded = -1`.
+
+The example below demonstrates the `pivotDefaultExpanded` behaviour. Note the first pivot group level `sport` is expanded by default as `pivotDefaultExpanded = 1`.
+
+<grid-example title='Open Pivot Group By Default' name='open-pivot-group-by-default' type='generated' options='{ "enterprise": true, "exampleHeight": 655, "modules": ["clientside", "rowgrouping", "menu", "columnpanel", "filterpanel"] }'></grid-example>
+
 ### Fixed Pivot Column Groups
 
 To fix the pivot column groups without the ability to expand and collapse the column groups, enable the following grid option property: `suppressExpandablePivotGroups=true`.

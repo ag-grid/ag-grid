@@ -1,4 +1,4 @@
-// ag-grid-react v30.0.6
+// ag-grid-react v30.1.0
 "use strict";
 var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
     if (k2 === undefined) k2 = k;
@@ -28,18 +28,24 @@ var beansContext_1 = require("../beansContext");
 var ag_grid_community_1 = require("ag-grid-community");
 var utils_1 = require("../utils");
 var headerRowComp_1 = __importDefault(require("./headerRowComp"));
-var useEffectOnce_1 = require("../useEffectOnce");
 var HeaderRowContainerComp = function (props) {
-    var _a = react_1.useState(new utils_1.CssClasses()), cssClasses = _a[0], setCssClasses = _a[1];
+    var _a = react_1.useState(function () { return new utils_1.CssClasses(); }), cssClasses = _a[0], setCssClasses = _a[1];
     var _b = react_1.useState(false), ariaHidden = _b[0], setAriaHidden = _b[1];
     var _c = react_1.useState([]), headerRowCtrls = _c[0], setHeaderRowCtrls = _c[1];
     var context = react_1.useContext(beansContext_1.BeansContext).context;
     var eGui = react_1.useRef(null);
     var eCenterContainer = react_1.useRef(null);
+    var headerRowCtrlRef = react_1.useRef(null);
     var pinnedLeft = props.pinned === 'left';
     var pinnedRight = props.pinned === 'right';
     var centre = !pinnedLeft && !pinnedRight;
-    useEffectOnce_1.useLayoutEffectOnce(function () {
+    var setRef = react_1.useCallback(function (e) {
+        eGui.current = e;
+        if (!eGui.current) {
+            context.destroyBean(headerRowCtrlRef.current);
+            headerRowCtrlRef.current = null;
+            return;
+        }
         var compProxy = {
             setDisplayed: function (displayed) {
                 setCssClasses(function (prev) { return prev.setClass('ag-hidden', !displayed); });
@@ -66,21 +72,18 @@ var HeaderRowContainerComp = function (props) {
                 }
             }
         };
-        var ctrl = context.createBean(new ag_grid_community_1.HeaderRowContainerCtrl(props.pinned));
-        ctrl.setComp(compProxy, eGui.current);
-        return function () {
-            context.destroyBean(ctrl);
-        };
-    });
+        headerRowCtrlRef.current = context.createBean(new ag_grid_community_1.HeaderRowContainerCtrl(props.pinned));
+        headerRowCtrlRef.current.setComp(compProxy, eGui.current);
+    }, []);
     var className = react_1.useMemo(function () { return cssClasses.toString(); }, [cssClasses]);
     var insertRowsJsx = function () { return headerRowCtrls.map(function (ctrl) { return react_1.default.createElement(headerRowComp_1.default, { ctrl: ctrl, key: ctrl.getInstanceId() }); }); };
     return (react_1.default.createElement(react_1.default.Fragment, null,
         pinnedLeft &&
-            react_1.default.createElement("div", { ref: eGui, className: "ag-pinned-left-header " + className, "aria-hidden": ariaHidden, role: "presentation" }, insertRowsJsx()),
+            react_1.default.createElement("div", { ref: setRef, className: "ag-pinned-left-header " + className, "aria-hidden": ariaHidden, role: "presentation" }, insertRowsJsx()),
         pinnedRight &&
-            react_1.default.createElement("div", { ref: eGui, className: "ag-pinned-right-header " + className, "aria-hidden": ariaHidden, role: "presentation" }, insertRowsJsx()),
+            react_1.default.createElement("div", { ref: setRef, className: "ag-pinned-right-header " + className, "aria-hidden": ariaHidden, role: "presentation" }, insertRowsJsx()),
         centre &&
-            react_1.default.createElement("div", { ref: eGui, className: "ag-header-viewport " + className, role: "presentation" },
+            react_1.default.createElement("div", { ref: setRef, className: "ag-header-viewport " + className, role: "presentation" },
                 react_1.default.createElement("div", { ref: eCenterContainer, className: "ag-header-container", role: "rowgroup" }, insertRowsJsx()))));
 };
 exports.default = react_1.memo(HeaderRowContainerComp);

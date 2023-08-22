@@ -37,10 +37,8 @@ const CellComp = (props: {
 
     const [userStyles, setUserStyles] = createSignal<CellStyle>();
 
-    const [tabIndex, setTabIndex] = createSignal<number>();
-    const [role, setRole] = createSignal<string>();
-    const [colId, setColId] = createSignal<string>();
-    const [title, setTitle] = createSignal<string | undefined>();
+    const [tabIndex, setTabIndex] = createSignal<number|undefined>(cellCtrl.getTabIndex());
+    const [colId, setColId] = createSignal<string>(cellCtrl.getColumnIdSanitised());
     const [selectionCheckboxId, setSelectionCheckboxId] = createSignal<string>();
     const [includeSelection, setIncludeSelection] = createSignal<boolean>(false);
     const [includeRowDrag, setIncludeRowDrag] = createSignal<boolean>(false);
@@ -95,10 +93,6 @@ const CellComp = (props: {
             addOrRemoveCssClass: (name, on) => cssClassManager.addOrRemoveCssClass(name, on),
             setUserStyles: (styles: CellStyle) => setUserStyles(styles),
             getFocusableElement: () => eGui,
-            setTabIndex: tabIndex => setTabIndex(tabIndex),
-            setRole: role => setRole(role),
-            setColId: colId => setColId(colId),
-            setTitle: title => setTitle(title),
             setIncludeSelection: include => setIncludeSelection(include),
             setIncludeRowDrag: include => setIncludeRowDrag(include),
             setIncludeDndSource: include => setIncludeDndSource(include),
@@ -216,9 +210,8 @@ const CellComp = (props: {
             ref={ eGui! }
             style={ userStyles() }
             tabIndex={ tabIndex() }
-            role={ role() as 'gridcell'} //fixme - why not hard code role to gridcell?
+            role={'gridcell'}
             col-id={ colId() }
-            title={ title() }
         > {
             showCellWrapper()
                 ? (

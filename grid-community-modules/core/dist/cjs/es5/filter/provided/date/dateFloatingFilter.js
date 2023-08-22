@@ -44,11 +44,18 @@ var DateFloatingFilter = /** @class */ (function (_super) {
         this.params = params;
         this.filterParams = params.filterParams;
         this.createDateComponent();
+        this.filterModelFormatter = new dateFilter_1.DateFilterModelFormatter(this.filterParams, this.localeService, this.optionsFactory);
         var translate = this.localeService.getLocaleTextFunc();
         this.eReadOnlyText
             .setDisabled(true)
             .setInputAriaLabel(translate('ariaDateFilterInput', 'Date Filter Input'));
-        this.filterModelFormatter = new dateFilter_1.DateFilterModelFormatter(this.filterParams, this.localeService, this.optionsFactory);
+    };
+    DateFloatingFilter.prototype.onParamsUpdated = function (params) {
+        _super.prototype.onParamsUpdated.call(this, params);
+        this.params = params;
+        this.filterParams = params.filterParams;
+        this.updateDateComponent();
+        this.filterModelFormatter.updateParams({ optionsFactory: this.optionsFactory, dateFilterParams: this.filterParams });
     };
     DateFloatingFilter.prototype.setEditable = function (editable) {
         dom_1.setDisplayed(this.eDateWrapper, editable);
@@ -92,15 +99,25 @@ var DateFloatingFilter = /** @class */ (function (_super) {
             }
         });
     };
-    DateFloatingFilter.prototype.createDateComponent = function () {
-        var _this = this;
+    DateFloatingFilter.prototype.getDateComponentParams = function () {
         var debounceMs = providedFilter_1.ProvidedFilter.getDebounceMs(this.params.filterParams, this.getDefaultDebounceMs());
-        var dateComponentParams = {
+        return {
             onDateChanged: function_1.debounce(this.onDateChanged.bind(this), debounceMs),
             filterParams: this.params.column.getColDef().filterParams
         };
-        this.dateComp = new dateCompWrapper_1.DateCompWrapper(this.getContext(), this.userComponentFactory, dateComponentParams, this.eDateWrapper);
+    };
+    DateFloatingFilter.prototype.createDateComponent = function () {
+        var _this = this;
+        this.dateComp = new dateCompWrapper_1.DateCompWrapper(this.getContext(), this.userComponentFactory, this.getDateComponentParams(), this.eDateWrapper);
         this.addDestroyFunc(function () { return _this.dateComp.destroy(); });
+    };
+    DateFloatingFilter.prototype.updateDateComponent = function () {
+        var params = this.getDateComponentParams();
+        var _a = this.gridOptionsService, api = _a.api, columnApi = _a.columnApi, context = _a.context;
+        params.api = api;
+        params.columnApi = columnApi;
+        params.context = context;
+        this.dateComp.updateParams(params);
     };
     DateFloatingFilter.prototype.getFilterModelFormatter = function () {
         return this.filterModelFormatter;

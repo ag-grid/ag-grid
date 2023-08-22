@@ -67,7 +67,7 @@ var AgAngleSelect = /** @class */ (function (_super) {
         if (core_1._.exists(this.getValue())) {
             this.eAngleValue.setValue(this.normalizeNegativeValue(this.getValue()).toString());
         }
-        this.addManagedListener(this, core_1.AgAbstractField.EVENT_CHANGED, function () {
+        this.addManagedListener(this, core_1.Events.EVENT_FIELD_VALUE_CHANGED, function () {
             var eDocument = _this.gridOptionsService.getDocument();
             if (_this.eAngleValue.getInputElement().contains(eDocument.activeElement)) {
                 return;
@@ -159,7 +159,7 @@ var AgAngleSelect = /** @class */ (function (_super) {
     };
     AgAngleSelect.prototype.onValueChange = function (callbackFn) {
         var _this = this;
-        this.addManagedListener(this, core_1.AgAbstractField.EVENT_CHANGED, function () {
+        this.addManagedListener(this, core_1.Events.EVENT_FIELD_VALUE_CHANGED, function () {
             callbackFn(_this.degrees);
         });
         return this;
@@ -180,7 +180,7 @@ var AgAngleSelect = /** @class */ (function (_super) {
             this.degrees = Math.floor(degrees);
             this.calculateCartesian();
             this.positionChildCircle(radiansValue);
-            this.dispatchEvent({ type: core_1.AgAbstractField.EVENT_CHANGED });
+            this.dispatchEvent({ type: core_1.Events.EVENT_FIELD_VALUE_CHANGED });
         }
         return this;
     };

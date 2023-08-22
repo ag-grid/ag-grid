@@ -103,6 +103,8 @@
         background-color: var(--ag-background-color);
         overflow-y: auto;
         overflow-x: hidden;
+        border-radius: var(--ag-border-radius);
+        border: var(--ag-borders) var(--ag-border-color);
     }
 
     .ag-list-item {
@@ -129,83 +131,9 @@
         }
     }
 
-    .ag-select {
-        .ag-picker-field-wrapper {
-            background-color: var(--ag-background-color);
-            min-height: var(--ag-list-item-height);
-            cursor: default;
-        }
-
-        &.ag-disabled .ag-picker-field-wrapper:focus {
-            box-shadow: none;
-        }
-
-        &:not(.ag-cell-editor, .ag-label-align-top) {
-            height: var(--ag-list-item-height);
-        }
-        .ag-picker-field-display {
-            margin: 4px;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-        }
-        .ag-picker-field-icon {
-            display: flex;
-            align-items: center;
-        }
-        &.ag-disabled {
-            opacity: 0.5;
-        }
-    }
-
-    ////////////////////////////////////////
-    // Rich Select
-    ////////////////////////////////////////
-    .ag-rich-select {
-        background-color: var(--ag-control-panel-background-color);
-    }
-
-    .ag-rich-select-list {
-        width: 100%;
-        min-width: 200px;
-        height: calc(var(--ag-row-height) * 6.5); // intentional
-    }
-
-    .ag-rich-select-value {
-        height: var(--ag-row-height);
-        border-bottom: var(--ag-borders-secondary) var(--ag-secondary-border-color);
-        padding-top: 0;
-        padding-bottom: 0;
-        @include ag.unthemed-rtl(( padding-left: var(--ag-cell-horizontal-padding) ));
-        @include ag.unthemed-rtl(( padding-right: var(--ag-grid-size) ));
-    }
-
-    .ag-rich-select-virtual-list-item {
-        cursor: default;
-        height: var(--ag-list-item-height);
-
-        .ag-keyboard-focus &:focus::after {
-            content: none
-        }
-
-        &:hover {
-            background-color: var(--ag-row-hover-color);
-        }
-    }
-
-    .ag-rich-select-row {
-        @include ag.unthemed-rtl(( padding-left: var(--ag-cell-horizontal-padding) ));
-    }
-
-    .ag-rich-select-row-selected {
-        background-color: var(--ag-selected-row-background-color);
-    }
-
     ////////////////////////////////////////
     // Selection checkbox
     ////////////////////////////////////////
-
-
     .ag-row-drag,
     .ag-selection-checkbox,
     .ag-group-expanded,
@@ -302,11 +230,21 @@
     }
 
     .ag-picker-field-wrapper {
-        border: 1px solid;
+        border: var(--ag-borders);
         border-color: var(--ag-border-color);
         border-radius: 5px;
+
+        &:disabled {
+            color: var(--ag-disabled-foreground-color);
+            background-color: var(--ag-input-disabled-background-color);
+            border-color: var(--ag-input-disabled-border-color);
+        }
+
+        &.ag-picker-has-focus,
         &:focus {
+            outline: none;
             box-shadow: var(--ag-input-focus-box-shadow);
+            border-color: var(--ag-input-focus-border-color);
         }
     }
 
@@ -386,6 +324,14 @@
         }
     }
 
+    .ag-spectrum-color,
+    .ag-spectrum-slider,
+    .ag-recent-color {
+        &:focus-visible:not(:disabled):not([readonly]) {
+            box-shadow: var(--ag-input-focus-box-shadow);
+        }
+    }
+
     ////////////////////////////////////////
     // Ghost Element (Drag and Drop)
     ////////////////////////////////////////
@@ -407,17 +353,133 @@
         color: var(--ag-foreground-color);
     }
 
-    ////////////////////////////////////////
-    // Popup
-    ////////////////////////////////////////
+    // Popups
     .ag-popup-child:not(.ag-tooltip-custom) {
         box-shadow: var(--ag-popup-shadow);
     }
 
     ////////////////////////////////////////
+    // Select
+    ////////////////////////////////////////
+    .ag-select {
+        .ag-picker-field-wrapper {
+            background-color: var(--ag-background-color);
+            min-height: var(--ag-list-item-height);
+            cursor: default;
+        }
+
+        &.ag-disabled .ag-picker-field-wrapper:focus {
+            box-shadow: none;
+        }
+
+        &:not(.ag-cell-editor, .ag-label-align-top) {
+            height: var(--ag-list-item-height);
+        }
+
+        .ag-picker-field-display {
+            margin: 4px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .ag-picker-field-icon {
+            display: flex;
+            align-items: center;
+        }
+
+        &.ag-disabled {
+            opacity: 0.5;
+        }
+    }
+
+    ////////////////////////////////////////
+    // Rich Select
+    ////////////////////////////////////////
+    .ag-rich-select-value,
+    .ag-rich-select-list {
+        background-color: var(--ag-background-color);
+    }
+
+    .ag-rich-select-list {
+        width: 100%;
+        height: auto;
+        border-radius: var(--ag-border-radius);
+        border: var(--ag-borders) var(--ag-border-color);
+        max-height: calc(var(--ag-row-height)*6.5);
+    }
+
+    .ag-rich-select-value {
+        border-bottom: var(--ag-borders-secondary) var(--ag-secondary-border-color);
+        padding-top: 0;
+        padding-bottom: 0;
+        @include ag.unthemed-rtl(( padding-left: var(--ag-cell-horizontal-padding) ));
+        @include ag.unthemed-rtl(( padding-right: var(--ag-grid-size) ));
+    }
+
+    .ag-popup-editor .ag-rich-select-value {
+        height: var(--ag-row-height);
+        min-width: 200px;
+    }
+
+    .ag-rich-select-virtual-list-item {
+        cursor: default;
+        height: var(--ag-list-item-height);
+
+        .ag-keyboard-focus &:focus::after {
+            content: none
+        }
+
+        &:hover {
+            background-color: var(--ag-row-hover-color);
+        }
+    }
+
+    .ag-rich-select-row {
+        @include ag.unthemed-rtl(( padding-left: var(--ag-cell-horizontal-padding) ));
+    }
+
+    .ag-rich-select-row-selected {
+        background-color: var(--ag-selected-row-background-color);
+    }
+
+    ////////////////////////////////////////
+    // Autocomplete
+    ////////////////////////////////////////
+    .ag-autocomplete {
+        width: 100%;
+    }
+
+    .ag-autocomplete-list {
+        width: 100%;
+        min-width: 200px;
+        height: calc(var(--ag-row-height) * 6.5); // intentional
+    }
+
+    .ag-autocomplete-virtual-list-item {
+        cursor: default;
+        height: var(--ag-list-item-height);
+
+        .ag-keyboard-focus &:focus::after {
+            content: none
+        }
+
+        &:hover {
+            background-color: var(--ag-row-hover-color);
+        }
+    }
+
+    .ag-autocomplete-row-label {
+        margin: 0px var(--ag-widget-container-horizontal-padding);
+    }
+
+    .ag-autocomplete-row-selected {
+        background-color: var(--ag-selected-row-background-color);
+    }
+
+    ////////////////////////////////////////
     // Dialog
     ////////////////////////////////////////
-
     .ag-dragging-range-handle .ag-dialog,
     .ag-dragging-fill-handle .ag-dialog {
         opacity: 0.7;
@@ -427,6 +489,7 @@
     .ag-dialog {
         border-radius: var(--ag-border-radius);
         border: var(--ag-borders) var(--ag-border-color);
+        box-shadow: var(--ag-popup-shadow);
     }
 
     .ag-panel {
@@ -454,14 +517,11 @@
         padding: var(--ag-grid-size);
         border: var(--ag-borders) var(--ag-border-color);
         border-radius: var(--ag-card-radius);
-        transition: opacity 1s;
         white-space: normal;
-        &.ag-tooltip-hiding {
-            opacity: 0;
-        }
     }
 
-    .ag-tooltip-custom {
+    .ag-tooltip.ag-tooltip-animate,
+    .ag-tooltip-custom.ag-tooltip-animate {
         transition: opacity 1s;
         &.ag-tooltip-hiding {
             opacity: 0;

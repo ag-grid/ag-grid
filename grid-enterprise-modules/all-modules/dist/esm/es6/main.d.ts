@@ -1,5 +1,6 @@
 import { Module } from "@ag-grid-community/all-modules";
 export * from "@ag-grid-community/all-modules";
+export * from "@ag-grid-enterprise/advanced-filter";
 export * from "@ag-grid-enterprise/clipboard";
 export * from "@ag-grid-enterprise/column-tool-panel";
 export * from "@ag-grid-enterprise/excel-export";

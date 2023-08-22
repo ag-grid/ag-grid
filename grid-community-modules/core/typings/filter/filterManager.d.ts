@@ -1,11 +1,12 @@
 import { AgPromise } from '../utils';
 import { RowNode } from '../entities/rowNode';
 import { Column } from '../entities/column';
-import { ColumnEventType } from '../events';
-import { IFilterComp, IFilterParams } from '../interfaces/iFilter';
+import { ColumnEventType, FilterChangedEventSourceType } from '../events';
+import { IFilterComp, IFilter, IFilterParams } from '../interfaces/iFilter';
 import { ColDef } from '../entities/colDef';
 import { UserCompDetails } from '../components/framework/userComponentFactory';
 import { BeanStub } from '../context/beanStub';
+import { AdvancedFilterModel } from '../interfaces/advancedFilterModel';
 export declare type FilterRequestSource = 'COLUMN_MENU' | 'TOOLBAR' | 'NO_UI';
 export declare class FilterManager extends BeanStub {
     private valueService;
@@ -13,6 +14,8 @@ export declare class FilterManager extends BeanStub {
     private rowModel;
     private userComponentFactory;
     private rowRenderer;
+    private dataTypeService;
+    private advancedFilterService;
     static QUICK_FILTER_SEPARATOR: string;
     private allColumnFilters;
     private allColumnListeners;
@@ -24,6 +27,7 @@ export declare class FilterManager extends BeanStub {
     private allowShowChangeAfterFilter;
     private externalFilterPresent;
     private aggFiltering;
+    private filterModelUpdateQueue;
     init(): void;
     private isExternalFilterPresentCallback;
     private doesExternalFilterPass;
@@ -38,6 +42,11 @@ export declare class FilterManager extends BeanStub {
     isColumnFilterPresent(): boolean;
     isAggregateFilterPresent(): boolean;
     isExternalFilterPresent(): boolean;
+    isChildFilterPresent(): boolean;
+    private isAdvancedFilterPresent;
+    private onAdvancedFilterEnabledChanged;
+    isAdvancedFilterEnabled(): boolean;
+    isAdvancedFilterHeaderActive(): boolean;
     private doAggregateFiltersPass;
     private updateActiveFilters;
     private updateFilterFlagInColumns;
@@ -47,13 +56,15 @@ export declare class FilterManager extends BeanStub {
     private setQuickFilter;
     resetQuickFilterCache(): void;
     private onIncludeHiddenColumnsInQuickFilterChanged;
-    refreshFiltersForAggregations(): void;
-    callOnFilterChangedOutsideRenderCycle(params?: {
+    private refreshFiltersForAggregations;
+    callOnFilterChangedOutsideRenderCycle(params: {
+        source?: FilterChangedEventSourceType;
         filterInstance?: IFilterComp;
         additionalEventAttributes?: any;
         columns?: Column[];
     }): void;
     onFilterChanged(params?: {
+        source?: FilterChangedEventSourceType;
         filterInstance?: IFilterComp;
         additionalEventAttributes?: any;
         columns?: Column[];
@@ -98,6 +109,18 @@ export declare class FilterManager extends BeanStub {
     private disposeColumnListener;
     private disposeFilterWrapper;
     private checkDestroyFilter;
+    areFilterCompsDifferent(oldCompDetails: UserCompDetails | null, newCompDetails: UserCompDetails | null): boolean;
+    getAdvancedFilterModel(): AdvancedFilterModel | null;
+    setAdvancedFilterModel(expression: AdvancedFilterModel | null): void;
+    private updateAdvancedFilterColumns;
+    hasFloatingFilters(): boolean;
+    getFilterInstance<TFilter extends IFilter>(key: string | Column, callback?: (filter: TFilter | null) => void): TFilter | null | undefined;
+    private getFilterInstanceImpl;
+    private warnAdvancedFilters;
+    setupAdvancedFilterHeaderComp(eCompToInsertBefore: HTMLElement): void;
+    getHeaderRowCount(): number;
+    getHeaderHeight(): number;
+    private processFilterModelUpdateQueue;
     protected destroy(): void;
 }
 export interface FilterWrapper {

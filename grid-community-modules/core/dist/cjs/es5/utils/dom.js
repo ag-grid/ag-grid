@@ -27,7 +27,7 @@ var __read = (this && this.__read) || function (o, n) {
     return ar;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.nodeListForEach = exports.addOrRemoveAttribute = exports.iterateNamedNodeMap = exports.copyNodeList = exports.isNodeOrElement = exports.formatSize = exports.setFixedHeight = exports.setElementHeight = exports.setFixedWidth = exports.setElementWidth = exports.isVerticalScrollShowing = exports.isHorizontalScrollShowing = exports.addStylesToElement = exports.prependDC = exports.insertWithDomOrder = exports.setDomChildOrder = exports.ensureDomOrder = exports.offsetWidth = exports.offsetHeight = exports.getElementAttribute = exports.appendHtml = exports.loadTemplate = exports.isVisible = exports.removeFromParent = exports.removeElement = exports.clearElement = exports.setScrollLeft = exports.getScrollLeft = exports.isRtlNegativeScroll = exports.getElementRectWithOffset = exports.getAbsoluteWidth = exports.getAbsoluteHeight = exports.getInnerWidth = exports.getInnerHeight = exports.getElementSize = exports.isElementChildOfClass = exports.setDisabled = exports.setVisible = exports.setDisplayed = exports.isFocusableFormField = exports.FOCUSABLE_EXCLUDE = exports.FOCUSABLE_SELECTOR = exports.radioCssClass = void 0;
+exports.bindCellRendererToHtmlElement = exports.nodeListForEach = exports.addOrRemoveAttribute = exports.iterateNamedNodeMap = exports.copyNodeList = exports.isNodeOrElement = exports.formatSize = exports.setFixedHeight = exports.setElementHeight = exports.setFixedWidth = exports.setElementWidth = exports.isVerticalScrollShowing = exports.isHorizontalScrollShowing = exports.addStylesToElement = exports.prependDC = exports.insertWithDomOrder = exports.setDomChildOrder = exports.ensureDomOrder = exports.offsetWidth = exports.offsetHeight = exports.getElementAttribute = exports.appendHtml = exports.loadTemplate = exports.isVisible = exports.removeFromParent = exports.removeElement = exports.clearElement = exports.setScrollLeft = exports.getScrollLeft = exports.isRtlNegativeScroll = exports.getElementRectWithOffset = exports.getAbsoluteWidth = exports.getAbsoluteHeight = exports.getInnerWidth = exports.getInnerHeight = exports.getElementSize = exports.isElementChildOfClass = exports.setDisabled = exports.setVisible = exports.setDisplayed = exports.isFocusableFormField = exports.FOCUSABLE_EXCLUDE = exports.FOCUSABLE_SELECTOR = exports.radioCssClass = void 0;
 var browser_1 = require("./browser");
 var generic_1 = require("./generic");
 var aria_1 = require("./aria");
@@ -478,3 +478,23 @@ function nodeListForEach(nodeList, action) {
     }
 }
 exports.nodeListForEach = nodeListForEach;
+/**
+ * cell renderers are used in a few places. they bind to dom slightly differently to other cell renders as they
+ * can return back strings (instead of html element) in the getGui() method. common code placed here to handle that.
+ * @param {AgPromise<ICellRendererComp>} cellRendererPromise
+ * @param {HTMLElement} eTarget
+ */
+function bindCellRendererToHtmlElement(cellRendererPromise, eTarget) {
+    cellRendererPromise.then(function (cellRenderer) {
+        var gui = cellRenderer.getGui();
+        if (gui != null) {
+            if (typeof gui === 'object') {
+                eTarget.appendChild(gui);
+            }
+            else {
+                eTarget.innerHTML = gui;
+            }
+        }
+    });
+}
+exports.bindCellRendererToHtmlElement = bindCellRendererToHtmlElement;

@@ -14,6 +14,17 @@ var __extends = (this && this.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
+var __assign = (this && this.__assign) || function () {
+    __assign = Object.assign || function(t) {
+        for (var s, i = 1, n = arguments.length; i < n; i++) {
+            s = arguments[i];
+            for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
+                t[p] = s[p];
+        }
+        return t;
+    };
+    return __assign.apply(this, arguments);
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.AgColorPicker = void 0;
 var agColorPanel_1 = require("./agColorPanel");
@@ -21,7 +32,7 @@ var core_1 = require("@ag-grid-community/core");
 var AgColorPicker = /** @class */ (function (_super) {
     __extends(AgColorPicker, _super);
     function AgColorPicker(config) {
-        var _this = _super.call(this, config, 'ag-color-picker', 'colorPicker') || this;
+        var _this = _super.call(this, __assign({ pickerAriaLabelKey: 'ariaLabelColorPicker', pickerAriaLabelValue: 'Color Picker', pickerType: 'ag-list' }, config), 'ag-color-picker', 'colorPicker') || this;
         if (config && config.color) {
             _this.value = config.color;
         }
@@ -33,8 +44,7 @@ var AgColorPicker = /** @class */ (function (_super) {
             this.setValue(this.value);
         }
     };
-    AgColorPicker.prototype.showPicker = function () {
-        var _this = this;
+    AgColorPicker.prototype.createPickerComponent = function () {
         var eGuiRect = this.getGui().getBoundingClientRect();
         var colorDialog = this.createBean(new core_1.AgDialog({
             closable: false,
@@ -46,37 +56,40 @@ var AgColorPicker = /** @class */ (function (_super) {
             x: eGuiRect.right - 190,
             y: eGuiRect.top - 250
         }));
-        this.isPickerDisplayed = true;
-        colorDialog.addCssClass('ag-color-dialog');
-        core_1._.setAriaExpanded(this.eWrapper, true);
+        return colorDialog;
+    };
+    AgColorPicker.prototype.renderAndPositionPicker = function () {
+        var _this = this;
+        var pickerComponent = this.pickerComponent;
         var colorPanel = this.createBean(new agColorPanel_1.AgColorPanel({ picker: this }));
+        pickerComponent.addCssClass('ag-color-dialog');
         colorPanel.addDestroyFunc(function () {
-            if (colorDialog.isAlive()) {
-                _this.destroyBean(colorDialog);
+            if (pickerComponent.isAlive()) {
+                _this.destroyBean(pickerComponent);
             }
         });
-        colorDialog.setParentComponent(this);
-        colorDialog.setBodyComponent(colorPanel);
+        pickerComponent.setParentComponent(this);
+        pickerComponent.setBodyComponent(colorPanel);
         colorPanel.setValue(this.getValue());
-        colorDialog.addDestroyFunc(function () {
+        colorPanel.getGui().focus();
+        pickerComponent.addDestroyFunc(function () {
             // here we check if the picker was already being
             // destroyed to avoid a stack overflow
             if (!_this.isDestroyingPicker) {
+                _this.beforeHidePicker();
                 _this.isDestroyingPicker = true;
                 if (colorPanel.isAlive()) {
                     _this.destroyBean(colorPanel);
+                }
+                if (_this.isAlive()) {
+                    _this.getFocusableElement().focus();
                 }
             }
             else {
                 _this.isDestroyingPicker = false;
             }
-            if (_this.isAlive()) {
-                core_1._.setAriaExpanded(_this.eWrapper, false);
-                _this.getFocusableElement().focus();
-            }
-            _this.isPickerDisplayed = false;
         });
-        return colorDialog;
+        return function () { var _a; return (_a = _this.pickerComponent) === null || _a === void 0 ? void 0 : _a.close(); };
     };
     AgColorPicker.prototype.setValue = function (color) {
         if (this.value === color) {

@@ -1,17 +1,15 @@
-// Type definitions for @ag-grid-community/core v30.0.6
+// Type definitions for @ag-grid-community/core v30.1.0
 // Project: https://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { UserCompDetails } from "../../../components/framework/userComponentFactory";
 import { Column } from "../../../entities/column";
 import { ColumnSortState } from "../../../utils/aria";
-import { ITooltipFeatureComp } from "../../../widgets/tooltipFeature";
 import { HeaderRowCtrl } from "../../row/headerRowCtrl";
 import { AbstractHeaderCellCtrl, IAbstractHeaderCellComp } from "../abstractCell/abstractHeaderCellCtrl";
 import { IHeader, IHeaderParams } from "./headerComp";
-export interface IHeaderCellComp extends IAbstractHeaderCellComp, ITooltipFeatureComp {
+export interface IHeaderCellComp extends IAbstractHeaderCellComp {
     setWidth(width: string): void;
     addOrRemoveCssClass(cssClassName: string, on: boolean): void;
-    setColId(id: string): void;
     setAriaDescription(description?: string): void;
     setAriaSort(sort?: ColumnSortState): void;
     setUserCompDetails(compDetails: UserCompDetails): void;
@@ -86,7 +84,7 @@ export declare class HeaderCellCtrl extends AbstractHeaderCellCtrl {
     private refreshAria;
     private addColumnHoverListener;
     private setupFilterCss;
-    private setupColId;
+    getColId(): string;
     private addActiveHeaderMouseListeners;
     private setActiveHeader;
 }

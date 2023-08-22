@@ -1,5 +1,6 @@
 import { AgAbstractLabel } from './agAbstractLabel.mjs';
 import { setFixedWidth } from '../utils/dom.mjs';
+import { Events } from '../eventKeys.mjs';
 export class AgAbstractField extends AgAbstractLabel {
     constructor(config, template, className) {
         super(config, template);
@@ -12,7 +13,7 @@ export class AgAbstractField extends AgAbstractLabel {
         }
     }
     onValueChange(callbackFn) {
-        this.addManagedListener(this, AgAbstractField.EVENT_CHANGED, () => callbackFn(this.getValue()));
+        this.addManagedListener(this, Events.EVENT_FIELD_VALUE_CHANGED, () => callbackFn(this.getValue()));
         return this;
     }
     getWidth() {
@@ -35,9 +36,8 @@ export class AgAbstractField extends AgAbstractLabel {
         this.previousValue = this.value;
         this.value = value;
         if (!silent) {
-            this.dispatchEvent({ type: AgAbstractField.EVENT_CHANGED });
+            this.dispatchEvent({ type: Events.EVENT_FIELD_VALUE_CHANGED });
         }
         return this;
     }
 }
-AgAbstractField.EVENT_CHANGED = 'valueChange';

@@ -4,7 +4,7 @@ import {
     GridCtrl,
     IGridComp
 } from 'ag-grid-community';
-import React, { memo, useCallback, useEffect, useMemo, useRef, useState, useLayoutEffect } from 'react';
+import React, { memo, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { BeansContext } from './beansContext';
 import GridBodyComp from './gridBodyComp';
 import useReactCommentEffect from './reactComment';
@@ -26,9 +26,11 @@ const GridComp = ({ context }: GridCompProps) => {
     const [tabGuardReady, setTabGuardReady] = useState<any>();
 
     const gridCtrlRef = useRef<GridCtrl | null>(null);
-    const eRootWrapperRef = useRef<HTMLDivElement>(null);
+    const eRootWrapperRef = useRef<HTMLDivElement | null>(null);
     const tabGuardRef = useRef<TabGuardCompCallback>();
-    const eGridBodyParentRef = useRef<HTMLDivElement>(null);
+    // eGridBodyParent is state as we use it in render
+    const [eGridBodyParent,setGridBodyParent] = useState<HTMLDivElement | null>(null);
+
     const focusInnerElementRef = useRef<((fromBottom?: boolean) => void)>(() => undefined);
 
     const onTabKeyDown = useCallback(() => undefined, []);
@@ -40,12 +42,21 @@ const GridComp = ({ context }: GridCompProps) => {
 
     useReactCommentEffect(' AG Grid ', eRootWrapperRef);
 
-    // create shared controller.
-    useLayoutEffect(() => {
-        if (context.isDestroyed()) { return; }
+    const setRef = useCallback((e: HTMLDivElement) => {
+        eRootWrapperRef.current = e;
 
-        const currentController = gridCtrlRef.current = context.createBean(new GridCtrl());
-        const gridCtrl = gridCtrlRef.current!;
+        if (!eRootWrapperRef.current) {
+            context.destroyBean(gridCtrlRef.current);
+            gridCtrlRef.current = null;
+            return;
+        }
+
+        if (context.isDestroyed()) {
+            return;
+        }
+
+        gridCtrlRef.current = context.createBean(new GridCtrl());
+        const gridCtrl = gridCtrlRef.current;
 
         focusInnerElementRef.current = gridCtrl.focusInnerElement.bind(gridCtrl);
 
@@ -79,20 +90,17 @@ const GridComp = ({ context }: GridCompProps) => {
             setUserSelect
         };
 
-        gridCtrl.setComp(compProxy, eRootWrapperRef.current!, eRootWrapperRef.current!);
+        gridCtrl.setComp(compProxy, eRootWrapperRef.current, eRootWrapperRef.current);
 
         setInitialised(true);
-        return () => {
-            context.destroyBean(currentController);
-            gridCtrlRef.current = null;
-        }
-    }, [context]);
+
+    }, []);
 
     // initialise the extra components
     useEffect(() => {
-        if (!tabGuardReady || !beans || !gridCtrlRef.current) { return; }
+        if (!tabGuardReady || !beans || !gridCtrlRef.current || !eGridBodyParent || !eRootWrapperRef.current) { return; }
 
-        const gridCtrl = gridCtrlRef.current!;
+        const gridCtrl = gridCtrlRef.current;
         const beansToDestroy: any[] = [];
         const {agStackComponentsRegistry} = beans;
 
@@ -102,8 +110,7 @@ const GridComp = ({ context }: GridCompProps) => {
         const WatermarkClass = agStackComponentsRegistry.getComponentClass('AG-WATERMARK');
         const PaginationClass = agStackComponentsRegistry.getComponentClass('AG-PAGINATION');
         const additionalEls: HTMLDivElement[] = [];
-        const eRootWrapper = eRootWrapperRef.current!;
-        const eGridBodyParent = eGridBodyParentRef.current!;
+        const eRootWrapper = eRootWrapperRef.current;
 
         if (gridCtrl.showDropZones() && HeaderDropZonesClass) {
             const headerDropZonesComp = context.createBean(new HeaderDropZonesClass());
@@ -157,7 +164,7 @@ const GridComp = ({ context }: GridCompProps) => {
                 }
             });
         }
-    }, [tabGuardReady])
+    }, [tabGuardReady, eGridBodyParent, beans])
 
     const rootWrapperClasses = useMemo(()=> classesList('ag-root-wrapper', rtlClass, keyboardFocusClass, layoutClass), [rtlClass, keyboardFocusClass, layoutClass]);
     const rootWrapperBodyClasses = useMemo(() => classesList('ag-root-wrapper-body', 'ag-focus-managed', layoutClass), [layoutClass]);
@@ -168,7 +175,6 @@ const GridComp = ({ context }: GridCompProps) => {
         cursor: cursor != null ? cursor : ''
     }), [userSelect, cursor]);
 
-    const eGridBodyParent = eGridBodyParentRef.current;
 
     const setTabGuardCompRef = useCallback((ref: TabGuardCompCallback) => {
         tabGuardRef.current = ref;
@@ -176,8 +182,8 @@ const GridComp = ({ context }: GridCompProps) => {
     }, []);
     
     return (
-        <div ref={ eRootWrapperRef } className={ rootWrapperClasses } style={ topStyle } role="presentation">
-            <div className={ rootWrapperBodyClasses } ref={ eGridBodyParentRef } role="presentation">
+        <div ref={setRef} className={rootWrapperClasses} style={topStyle} role="presentation">
+            <div className={ rootWrapperBodyClasses } ref={ setGridBodyParent } role="presentation">
                 {initialised && eGridBodyParent && beans &&
                     <BeansContext.Provider value={beans}>
                         <TabGuardComp

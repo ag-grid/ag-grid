@@ -101,12 +101,17 @@ export interface ICombinedSimpleModel<M extends ISimpleFilterModel> extends Prov
     conditions?: M[];
 }
 export declare type Tuple<T> = (T | null)[];
-export declare abstract class SimpleFilterModelFormatter {
+export declare abstract class SimpleFilterModelFormatter<TValue = any> {
     private readonly localeService;
-    private readonly optionsFactory;
-    constructor(localeService: LocaleService, optionsFactory: OptionsFactory);
+    private optionsFactory;
+    protected readonly valueFormatter?: ((value: TValue | null) => string | null) | undefined;
+    constructor(localeService: LocaleService, optionsFactory: OptionsFactory, valueFormatter?: ((value: TValue | null) => string | null) | undefined);
     getModelAsString(model: ISimpleFilterModel | null): string | null;
     protected abstract conditionToString(condition: ProvidedFilterModel, opts?: IFilterOptionDef): string;
+    updateParams(params: {
+        optionsFactory: OptionsFactory;
+    }): void;
+    protected formatValue(value?: TValue | null): string;
 }
 /**
  * Every filter with a dropdown where the user can specify a comparing type against the filter values.

@@ -33,4 +33,7 @@ export interface IDateParams<TData = any, TContext = any> extends AgGridCommon<T
     filterParams: DateFilterParams;
 }
 
-export interface IDateComp extends IComponent<IDateParams>, IDate { }
+export interface IDateComp extends IComponent<IDateParams>, IDate {
+    /** When used in a floating filter, a hook to perform any necessary operations when the column definition is updated. */
+    onParamsUpdated?(params: IDateParams): void;
+}

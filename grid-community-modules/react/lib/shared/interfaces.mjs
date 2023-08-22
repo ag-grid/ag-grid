@@ -1,4 +1,4 @@
-// @ag-grid-community/react v30.0.6
+// @ag-grid-community/react v30.1.0
 /** @deprecated v29 ChangeDetectionStrategyType has been deprecated. IdentityCheck will always be used now for a more consistent approach. */
 export var ChangeDetectionStrategyType;
 (function (ChangeDetectionStrategyType) {

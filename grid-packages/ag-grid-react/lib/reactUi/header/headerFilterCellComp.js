@@ -1,4 +1,4 @@
-// ag-grid-react v30.0.6
+// ag-grid-react v30.1.0
 "use strict";
 var __assign = (this && this.__assign) || function () {
     __assign = Object.assign || function(t) {
@@ -36,12 +36,11 @@ var beansContext_1 = require("../beansContext");
 var ag_grid_community_1 = require("ag-grid-community");
 var utils_1 = require("../utils");
 var jsComp_1 = require("../jsComp");
-var useEffectOnce_1 = require("../useEffectOnce");
 var HeaderFilterCellComp = function (props) {
     var context = react_1.useContext(beansContext_1.BeansContext).context;
-    var _a = react_1.useState(new utils_1.CssClasses('ag-header-cell', 'ag-floating-filter')), cssClasses = _a[0], setCssClasses = _a[1];
-    var _b = react_1.useState(new utils_1.CssClasses()), cssBodyClasses = _b[0], setBodyCssClasses = _b[1];
-    var _c = react_1.useState(new utils_1.CssClasses('ag-floating-filter-button', 'ag-hidden')), cssButtonWrapperClasses = _c[0], setButtonWrapperCssClasses = _c[1];
+    var _a = react_1.useState(function () { return new utils_1.CssClasses('ag-header-cell', 'ag-floating-filter'); }), cssClasses = _a[0], setCssClasses = _a[1];
+    var _b = react_1.useState(function () { return new utils_1.CssClasses(); }), cssBodyClasses = _b[0], setBodyCssClasses = _b[1];
+    var _c = react_1.useState(function () { return new utils_1.CssClasses('ag-floating-filter-button', 'ag-hidden'); }), cssButtonWrapperClasses = _c[0], setButtonWrapperCssClasses = _c[1];
     var _d = react_1.useState("false"), buttonWrapperAriaHidden = _d[0], setButtonWrapperAriaHidden = _d[1];
     var _e = react_1.useState(), userCompDetails = _e[0], setUserCompDetails = _e[1];
     var eGui = react_1.useRef(null);
@@ -58,7 +57,11 @@ var HeaderFilterCellComp = function (props) {
         userCompResolve.current && userCompResolve.current(value);
     };
     var ctrl = props.ctrl;
-    useEffectOnce_1.useLayoutEffectOnce(function () {
+    var setRef = react_1.useCallback(function (e) {
+        eGui.current = e;
+        if (!eGui.current) {
+            return;
+        }
         userCompPromise.current = new ag_grid_community_1.AgPromise(function (resolve) {
             userCompResolve.current = resolve;
         });
@@ -79,7 +82,7 @@ var HeaderFilterCellComp = function (props) {
             setMenuIcon: function (eIcon) { var _a; return (_a = eButtonShowMainFilter.current) === null || _a === void 0 ? void 0 : _a.appendChild(eIcon); }
         };
         ctrl.setComp(compProxy, eGui.current, eButtonShowMainFilter.current, eFloatingFilterBody.current);
-    });
+    }, []);
     // js comps
     react_1.useLayoutEffect(function () { return jsComp_1.showJsComp(userCompDetails, context, eFloatingFilterBody.current, userCompRef); }, [userCompDetails]);
     var className = react_1.useMemo(function () { return cssClasses.toString(); }, [cssClasses]);
@@ -93,7 +96,7 @@ var HeaderFilterCellComp = function (props) {
     }, [userCompDetails]);
     var reactUserComp = userCompDetails && userCompDetails.componentFromFramework;
     var UserCompClass = userCompDetails && userCompDetails.componentClass;
-    return (react_1.default.createElement("div", { ref: eGui, className: className, role: "gridcell", tabIndex: -1 },
+    return (react_1.default.createElement("div", { ref: setRef, className: className, role: "gridcell", tabIndex: -1 },
         react_1.default.createElement("div", { ref: eFloatingFilterBody, className: bodyClassName, role: "presentation" },
             reactUserComp && userCompStateless && react_1.default.createElement(UserCompClass, __assign({}, userCompDetails.params)),
             reactUserComp && !userCompStateless && react_1.default.createElement(UserCompClass, __assign({}, userCompDetails.params, { ref: userCompRef }))),

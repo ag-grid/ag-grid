@@ -26,22 +26,44 @@ class HeaderRowCtrl extends beanStub_1.BeanStub {
         this.rowIndex = rowIndex;
         this.pinned = pinned;
         this.type = type;
+        const typeClass = type == headerRowComp_1.HeaderRowType.COLUMN_GROUP ? `ag-header-row-column-group` :
+            type == headerRowComp_1.HeaderRowType.FLOATING_FILTER ? `ag-header-row-column-filter` : `ag-header-row-column`;
+        this.headerRowClass = `ag-header-row ${typeClass}`;
+    }
+    postConstruct() {
+        this.isPrintLayout = this.gridOptionsService.isDomLayout('print');
+        this.isEnsureDomOrder = this.gridOptionsService.is('ensureDomOrder');
     }
     getInstanceId() {
         return this.instanceId;
     }
-    setComp(comp) {
+    /**
+     *
+     * @param comp Proxy to the actual component
+     * @param initCompState Should the component be initialised with the current state of the controller. Default: true
+     */
+    setComp(comp, initCompState = true) {
         this.comp = comp;
-        this.onRowHeightChanged();
-        this.onVirtualColumnsChanged();
+        if (initCompState) {
+            this.onRowHeightChanged();
+            this.onVirtualColumnsChanged();
+        }
+        // width is managed directly regardless of framework and so is not included in initCompState
         this.setWidth();
         this.addEventListeners();
+    }
+    getHeaderRowClass() {
+        return this.headerRowClass;
+    }
+    getAriaRowIndex() {
+        return this.rowIndex + 1;
+    }
+    getTransform() {
         if (browser_1.isBrowserSafari()) {
             // fix for a Safari rendering bug that caused the header to flicker above chart panels
             // as you move the mouse over the header
-            this.comp.setTransform('translateZ(0)');
+            return 'translateZ(0)';
         }
-        comp.setAriaRowIndex(this.rowIndex + 1);
     }
     addEventListeners() {
         this.addManagedListener(this.eventService, eventKeys_1.Events.EVENT_COLUMN_RESIZED, this.onColumnResized.bind(this));
@@ -49,8 +71,10 @@ class HeaderRowCtrl extends beanStub_1.BeanStub {
         this.addManagedListener(this.eventService, eventKeys_1.Events.EVENT_VIRTUAL_COLUMNS_CHANGED, this.onVirtualColumnsChanged.bind(this));
         this.addManagedListener(this.eventService, eventKeys_1.Events.EVENT_COLUMN_HEADER_HEIGHT_CHANGED, this.onRowHeightChanged.bind(this));
         this.addManagedListener(this.eventService, eventKeys_1.Events.EVENT_GRID_STYLES_CHANGED, this.onRowHeightChanged.bind(this));
+        this.addManagedListener(this.eventService, eventKeys_1.Events.EVENT_ADVANCED_FILTER_ENABLED_CHANGED, this.onRowHeightChanged.bind(this));
         // when print layout changes, it changes what columns are in what section
         this.addManagedPropertyListener('domLayout', this.onDisplayedColumnsChanged.bind(this));
+        this.addManagedPropertyListener('ensureDomOrder', (e) => this.isEnsureDomOrder = e.currentValue);
         this.addManagedPropertyListener('headerHeight', this.onRowHeightChanged.bind(this));
         this.addManagedPropertyListener('pivotHeaderHeight', this.onRowHeightChanged.bind(this));
         this.addManagedPropertyListener('groupHeaderHeight', this.onRowHeightChanged.bind(this));
@@ -61,6 +85,7 @@ class HeaderRowCtrl extends beanStub_1.BeanStub {
         return generic_1.values(this.headerCellCtrls).find(cellCtrl => cellCtrl.getColumnGroupChild() === column);
     }
     onDisplayedColumnsChanged() {
+        this.isPrintLayout = this.gridOptionsService.isDomLayout('print');
         this.onVirtualColumnsChanged();
         this.setWidth();
         this.onRowHeightChanged();
@@ -76,8 +101,7 @@ class HeaderRowCtrl extends beanStub_1.BeanStub {
         this.comp.setWidth(`${width}px`);
     }
     getWidthForRow() {
-        const printLayout = this.gridOptionsService.isDomLayout('print');
-        if (printLayout) {
+        if (this.isPrintLayout) {
             const pinned = this.pinned != null;
             if (pinned) {
                 return 0;
@@ -90,10 +114,15 @@ class HeaderRowCtrl extends beanStub_1.BeanStub {
         return this.columnModel.getContainerWidth(this.pinned);
     }
     onRowHeightChanged() {
+        var { topOffset, rowHeight } = this.getTopAndHeight();
+        this.comp.setTop(topOffset + 'px');
+        this.comp.setHeight(rowHeight + 'px');
+    }
+    getTopAndHeight() {
         let headerRowCount = this.columnModel.getHeaderRowCount();
         const sizes = [];
         let numberOfFloating = 0;
-        if (this.columnModel.hasFloatingFilters()) {
+        if (this.filterManager.hasFloatingFilters()) {
             headerRowCount++;
             numberOfFloating = 1;
         }
@@ -112,9 +141,8 @@ class HeaderRowCtrl extends beanStub_1.BeanStub {
         for (let i = 0; i < this.rowIndex; i++) {
             topOffset += sizes[i];
         }
-        const thisRowHeight = sizes[this.rowIndex] + 'px';
-        this.comp.setTop(topOffset + 'px');
-        this.comp.setHeight(thisRowHeight);
+        const rowHeight = sizes[this.rowIndex];
+        return { topOffset, rowHeight };
     }
     getPinned() {
         return this.pinned;
@@ -123,6 +151,11 @@ class HeaderRowCtrl extends beanStub_1.BeanStub {
         return this.rowIndex;
     }
     onVirtualColumnsChanged() {
+        const ctrlsToDisplay = this.getHeaderCtrls();
+        const forceOrder = this.isEnsureDomOrder || this.isPrintLayout;
+        this.comp.setHeaderCtrls(ctrlsToDisplay, forceOrder);
+    }
+    getHeaderCtrls() {
         const oldCtrls = this.headerCellCtrls;
         this.headerCellCtrls = {};
         const columns = this.getColumnsInViewport();
@@ -181,11 +214,10 @@ class HeaderRowCtrl extends beanStub_1.BeanStub {
             }
         });
         const ctrlsToDisplay = object_1.getAllValuesInObject(this.headerCellCtrls);
-        this.comp.setHeaderCtrls(ctrlsToDisplay);
+        return ctrlsToDisplay;
     }
     getColumnsInViewport() {
-        const printLayout = this.gridOptionsService.isDomLayout('print');
-        return printLayout ? this.getColumnsInViewportPrintLayout() : this.getColumnsInViewportNormalLayout();
+        return this.isPrintLayout ? this.getColumnsInViewportPrintLayout() : this.getColumnsInViewportNormalLayout();
     }
     getColumnsInViewportPrintLayout() {
         // for print layout, we add all columns into the center
@@ -230,4 +262,10 @@ __decorate([
 __decorate([
     context_1.Autowired('focusService')
 ], HeaderRowCtrl.prototype, "focusService", void 0);
+__decorate([
+    context_1.Autowired('filterManager')
+], HeaderRowCtrl.prototype, "filterManager", void 0);
+__decorate([
+    context_1.PostConstruct
+], HeaderRowCtrl.prototype, "postConstruct", null);
 exports.HeaderRowCtrl = HeaderRowCtrl;

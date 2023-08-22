@@ -123,6 +123,9 @@ export class Events {
     public static EVENT_ROW_SELECTED: 'rowSelected' = 'rowSelected';
     public static EVENT_SELECTION_CHANGED: 'selectionChanged' = 'selectionChanged';
 
+    public static EVENT_TOOLTIP_SHOW: 'tooltipShow' = 'tooltipShow';
+    public static EVENT_TOOLTIP_HIDE: 'tooltipHide' = 'tooltipHide';
+
     public static EVENT_CELL_KEY_DOWN: 'cellKeyDown' = 'cellKeyDown';
 
     public static EVENT_CELL_MOUSE_OVER: 'cellMouseOver' = 'cellMouseOver';
@@ -235,6 +238,14 @@ export class Events {
     public static EVENT_FILTER_DESTROYED: 'filterDestroyed' = 'filterDestroyed';
 
     public static EVENT_ROW_DATA_UPDATE_STARTED: 'rowDataUpdateStarted' = 'rowDataUpdateStarted';
+
+    // Advanced Filters
+    public static EVENT_ADVANCED_FILTER_ENABLED_CHANGED: 'advancedFilterEnabledChanged' = 'advancedFilterEnabledChanged';
+    public static EVENT_DATA_TYPES_INFERRED: 'dataTypesInferred' = 'dataTypesInferred';
+
+    // Widgets
+    public static EVENT_FIELD_VALUE_CHANGED: 'fieldValueChanged' = 'fieldValueChanged';
+    public static EVENT_FIELD_PICKER_VALUE_SELECTED: 'fieldPickerValueSelected' = 'fieldPickerValueSelected';
 
     /*****************************  INTERNAL EVENTS: END ******************************************* */
 }

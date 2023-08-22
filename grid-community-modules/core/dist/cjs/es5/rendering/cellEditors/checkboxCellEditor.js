@@ -24,8 +24,8 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.CheckboxCellEditor = void 0;
 var popupComponent_1 = require("../../widgets/popupComponent");
 var componentAnnotations_1 = require("../../widgets/componentAnnotations");
-var agCheckbox_1 = require("../../widgets/agCheckbox");
 var aria_1 = require("../../utils/aria");
+var eventKeys_1 = require("../../eventKeys");
 var CheckboxCellEditor = /** @class */ (function (_super) {
     __extends(CheckboxCellEditor, _super);
     function CheckboxCellEditor() {
@@ -39,7 +39,7 @@ var CheckboxCellEditor = /** @class */ (function (_super) {
         this.eCheckbox.setValue(isSelected);
         this.eCheckbox.getInputElement().setAttribute('tabindex', '-1');
         this.setAriaLabel(isSelected);
-        this.addManagedListener(this.eCheckbox, agCheckbox_1.AgCheckbox.EVENT_CHANGED, function (event) { return _this.setAriaLabel(event.selected); });
+        this.addManagedListener(this.eCheckbox, eventKeys_1.Events.EVENT_FIELD_VALUE_CHANGED, function (event) { return _this.setAriaLabel(event.selected); });
     };
     CheckboxCellEditor.prototype.getValue = function () {
         return this.eCheckbox.getValue();

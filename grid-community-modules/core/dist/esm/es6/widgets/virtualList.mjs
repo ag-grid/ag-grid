@@ -13,13 +13,14 @@ import { TabGuardComp } from './tabGuardComp.mjs';
 import { Events } from '../eventKeys.mjs';
 import { stopPropagationForAgGrid } from '../utils/event.mjs';
 export class VirtualList extends TabGuardComp {
-    constructor(cssIdentifier = 'default', ariaRole = 'listbox', listName) {
-        super(VirtualList.getTemplate(cssIdentifier));
+    constructor(params) {
+        super(VirtualList.getTemplate((params === null || params === void 0 ? void 0 : params.cssIdentifier) || 'default'));
+        this.renderedRows = new Map();
+        this.rowHeight = 20;
+        const { cssIdentifier = 'default', ariaRole = 'listbox', listName } = params || {};
         this.cssIdentifier = cssIdentifier;
         this.ariaRole = ariaRole;
         this.listName = listName;
-        this.renderedRows = new Map();
-        this.rowHeight = 20;
     }
     postConstruct() {
         this.addScrollListener();
@@ -120,10 +121,9 @@ export class VirtualList extends TabGuardComp {
         this.renderedRows.forEach((value, key) => func(value.rowComponent, key));
     }
     static getTemplate(cssIdentifier) {
-        return /* html */ `
-            <div class="ag-virtual-list-viewport ag-${cssIdentifier}-virtual-list-viewport" role="presentation">
+        return ( /* html */`<div class="ag-virtual-list-viewport ag-${cssIdentifier}-virtual-list-viewport" role="presentation">
                 <div class="ag-virtual-list-container ag-${cssIdentifier}-virtual-list-container" ref="eContainer"></div>
-            </div>`;
+            </div>`);
     }
     getItemHeight() {
         return this.environment.getListItemHeight();
@@ -195,7 +195,7 @@ export class VirtualList extends TabGuardComp {
         this.renderedRows.forEach((_, rowIndex) => this.removeRow(rowIndex));
     }
     drawVirtualRows(softRefresh) {
-        if (!this.isAlive()) {
+        if (!this.isAlive() || !this.model) {
             return;
         }
         const gui = this.getGui();
@@ -287,6 +287,9 @@ export class VirtualList extends TabGuardComp {
     }
     setModel(model) {
         this.model = model;
+    }
+    getAriaElement() {
+        return this.eContainer;
     }
     destroy() {
         if (!this.isAlive()) {

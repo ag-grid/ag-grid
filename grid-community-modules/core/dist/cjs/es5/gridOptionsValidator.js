@@ -118,6 +118,7 @@ var GridOptionsValidator = /** @class */ (function () {
         validateRegistered('getMainMenuItems', moduleNames_1.ModuleNames.MenuModule);
         validateRegistered('getContextMenuItems', moduleNames_1.ModuleNames.MenuModule);
         validateRegistered('allowContextMenuWithControlKey', moduleNames_1.ModuleNames.MenuModule);
+        validateRegistered('enableAdvancedFilter', moduleNames_1.ModuleNames.AdvancedFilterModule);
     };
     GridOptionsValidator.prototype.checkColumnDefProperties = function () {
         var _this = this;

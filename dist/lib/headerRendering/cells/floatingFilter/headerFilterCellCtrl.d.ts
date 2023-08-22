@@ -49,4 +49,5 @@ export declare class HeaderFilterCellCtrl extends AbstractHeaderCellCtrl {
     private updateFilterButton;
     private onColDefChanged;
     private updateCompDetails;
+    private updateFloatingFilterParams;
 }

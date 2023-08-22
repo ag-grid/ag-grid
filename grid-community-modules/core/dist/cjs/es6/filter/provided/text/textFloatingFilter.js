@@ -8,16 +8,18 @@ class TextFloatingFilter extends textInputFloatingFilter_1.TextInputFloatingFilt
         super.init(params);
         this.filterModelFormatter = new textFilter_1.TextFilterModelFormatter(this.localeService, this.optionsFactory);
     }
+    onParamsUpdated(params) {
+        super.onParamsUpdated(params);
+        this.filterModelFormatter.updateParams({ optionsFactory: this.optionsFactory });
+    }
     getDefaultFilterOptions() {
         return textFilter_1.TextFilter.DEFAULT_FILTER_OPTIONS;
     }
     getFilterModelFormatter() {
         return this.filterModelFormatter;
     }
-    createFloatingFilterInputService(ariaLabel) {
-        return this.createManagedBean(new textInputFloatingFilter_1.FloatingFilterTextInputService({
-            ariaLabel
-        }));
+    createFloatingFilterInputService() {
+        return this.createManagedBean(new textInputFloatingFilter_1.FloatingFilterTextInputService());
     }
 }
 exports.TextFloatingFilter = TextFloatingFilter;

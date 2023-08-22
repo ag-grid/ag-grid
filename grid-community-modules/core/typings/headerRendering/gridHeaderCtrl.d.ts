@@ -8,6 +8,7 @@ export declare class GridHeaderCtrl extends BeanStub {
     private focusService;
     private columnModel;
     private ctrlsService;
+    private filterManager;
     private comp;
     private eGui;
     private headerHeight;

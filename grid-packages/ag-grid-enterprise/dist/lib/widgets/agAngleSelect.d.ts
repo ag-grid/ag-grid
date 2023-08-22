@@ -1,4 +1,4 @@
-import { DragService, AgAbstractLabel, IAgLabel } from "ag-grid-community";
+import { DragService, AgAbstractLabel, IAgLabelParams } from "ag-grid-community";
 export declare class AgAngleSelect extends AgAbstractLabel {
     private static TEMPLATE;
     protected readonly eLabel: HTMLElement;
@@ -12,7 +12,7 @@ export declare class AgAngleSelect extends AgAbstractLabel {
     private offsetX;
     private offsetY;
     private dragListener;
-    constructor(config?: IAgLabel);
+    constructor(config?: IAgLabelParams);
     postConstruct(): void;
     private updateNumberInput;
     private positionChildCircle;

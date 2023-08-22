@@ -1,8 +1,7 @@
-import { AgAbstractLabel, IAgLabel } from './agAbstractLabel';
+import { AgAbstractLabel, IAgLabelParams } from './agAbstractLabel';
 export declare type FieldElement = HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement;
-export declare abstract class AgAbstractField<TValue, TConfig extends IAgLabel = IAgLabel> extends AgAbstractLabel<TConfig> {
+export declare abstract class AgAbstractField<TValue, TConfig extends IAgLabelParams = IAgLabelParams> extends AgAbstractLabel<TConfig> {
     protected readonly className?: string | undefined;
-    static EVENT_CHANGED: string;
     protected previousValue: TValue | null | undefined;
     protected value: TValue | null | undefined;
     constructor(config?: TConfig, template?: string, className?: string | undefined);

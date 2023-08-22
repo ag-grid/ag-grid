@@ -1,11 +1,14 @@
-import { NumberFilter, NumberFilterModel } from './numberFilter';
-import { FloatingFilterInputService, TextInputFloatingFilter } from '../../floating/provided/textInputFloatingFilter';
+import { NumberFilterModel } from './numberFilter';
+import { FloatingFilterInputService, ITextInputFloatingFilterParams, TextInputFloatingFilter } from '../../floating/provided/textInputFloatingFilter';
 import { SimpleFilterModelFormatter } from '../simpleFilter';
-import { IFloatingFilterParams } from '../../floating/floatingFilter';
+export interface INumberFloatingFilterParams extends ITextInputFloatingFilterParams {
+}
 export declare class NumberFloatingFilter extends TextInputFloatingFilter<NumberFilterModel> {
     private filterModelFormatter;
-    init(params: IFloatingFilterParams<NumberFilter>): void;
+    private allowedCharPattern;
+    init(params: INumberFloatingFilterParams): void;
+    onParamsUpdated(params: INumberFloatingFilterParams): void;
     protected getDefaultFilterOptions(): string[];
     protected getFilterModelFormatter(): SimpleFilterModelFormatter;
-    protected createFloatingFilterInputService(ariaLabel: string): FloatingFilterInputService;
+    protected createFloatingFilterInputService(params: INumberFloatingFilterParams): FloatingFilterInputService;
 }

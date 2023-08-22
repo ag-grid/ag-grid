@@ -7,7 +7,7 @@ import { createDataSizeValue } from './utils';
 
 const IS_SSR = typeof window === 'undefined';
 
-export const Toolbar = ({ gridRef, dataSize, setDataSize, rowCols, gridTheme, setGridTheme }) => {
+export const Toolbar = ({ gridRef, dataSize, setDataSize, rowCols, gridTheme, setGridTheme, setCountryColumnPopupEditor }) => {
     function onDataSizeChanged(event) {
         const value = event.target.value;
         setDataSize(value);
@@ -19,6 +19,7 @@ export const Toolbar = ({ gridRef, dataSize, setDataSize, rowCols, gridTheme, se
 
     function onThemeChanged(event) {
         const newTheme = event.target.value || 'ag-theme-none';
+        setCountryColumnPopupEditor(newTheme, gridRef.current.columnApi);
         setGridTheme(newTheme);
         trackDemoToolbar({
             type: 'theme',

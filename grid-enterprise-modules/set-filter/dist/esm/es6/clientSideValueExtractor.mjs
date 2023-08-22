@@ -1,7 +1,7 @@
 import { _ } from '@ag-grid-community/core';
 /** @param V type of value in the Set Filter */
 export class ClientSideValuesExtractor {
-    constructor(rowModel, filterParams, createKey, caseFormat, columnModel, valueService, treeDataOrGrouping, treeData, getDataPath) {
+    constructor(rowModel, filterParams, createKey, caseFormat, columnModel, valueService, treeDataOrGrouping, treeData, getDataPath, groupAllowUnbalanced) {
         this.rowModel = rowModel;
         this.filterParams = filterParams;
         this.createKey = createKey;
@@ -11,6 +11,7 @@ export class ClientSideValuesExtractor {
         this.treeDataOrGrouping = treeDataOrGrouping;
         this.treeData = treeData;
         this.getDataPath = getDataPath;
+        this.groupAllowUnbalanced = groupAllowUnbalanced;
     }
     extractUniqueValues(predicate, existingValues) {
         const values = new Map();
@@ -94,8 +95,8 @@ export class ClientSideValuesExtractor {
         if (dataPath) {
             dataPath = dataPath.map(treeKey => _.toStringOrNull(_.makeNull(treeKey)));
         }
-        if (dataPath === null || dataPath === void 0 ? void 0 : dataPath.some(treeKey => treeKey == null)) {
-            dataPath = null;
+        if (!treeData && this.groupAllowUnbalanced && (dataPath === null || dataPath === void 0 ? void 0 : dataPath.some(treeKey => treeKey == null))) {
+            dataPath = dataPath.filter(treeKey => treeKey != null);
         }
         addValue(this.createKey(dataPath), dataPath);
     }

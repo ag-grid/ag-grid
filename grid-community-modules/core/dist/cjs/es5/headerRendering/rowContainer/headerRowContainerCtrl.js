@@ -70,6 +70,7 @@ var HeaderRowContainerCtrl = /** @class */ (function (_super) {
         this.setupDragAndDrop(this.eViewport);
         this.addManagedListener(this.eventService, eventKeys_1.Events.EVENT_GRID_COLUMNS_CHANGED, this.onGridColumnsChanged.bind(this));
         this.addManagedListener(this.eventService, eventKeys_1.Events.EVENT_DISPLAYED_COLUMNS_CHANGED, this.onDisplayedColumnsChanged.bind(this));
+        this.addManagedListener(this.eventService, eventKeys_1.Events.EVENT_ADVANCED_FILTER_ENABLED_CHANGED, this.onDisplayedColumnsChanged.bind(this));
         this.ctrlsService.registerHeaderContainer(this, this.pinned);
         if (this.columnModel.isReady()) {
             this.refresh();
@@ -104,7 +105,7 @@ var HeaderRowContainerCtrl = /** @class */ (function (_super) {
             }
         };
         var refreshFilters = function () {
-            _this.includeFloatingFilter = _this.columnModel.hasFloatingFilters() && !_this.hidden;
+            _this.includeFloatingFilter = _this.filterManager.hasFloatingFilters() && !_this.hidden;
             var destroyPreviousComp = function () {
                 _this.filtersRowCtrl = _this.destroyBean(_this.filtersRowCtrl);
             };
@@ -152,7 +153,7 @@ var HeaderRowContainerCtrl = /** @class */ (function (_super) {
         this.refresh(true);
     };
     HeaderRowContainerCtrl.prototype.onDisplayedColumnsChanged = function () {
-        var includeFloatingFilter = this.columnModel.hasFloatingFilters() && !this.hidden;
+        var includeFloatingFilter = this.filterManager.hasFloatingFilters() && !this.hidden;
         if (this.includeFloatingFilter !== includeFloatingFilter) {
             this.refresh(true);
         }
@@ -269,6 +270,9 @@ var HeaderRowContainerCtrl = /** @class */ (function (_super) {
     __decorate([
         context_1.Autowired('focusService')
     ], HeaderRowContainerCtrl.prototype, "focusService", void 0);
+    __decorate([
+        context_1.Autowired('filterManager')
+    ], HeaderRowContainerCtrl.prototype, "filterManager", void 0);
     return HeaderRowContainerCtrl;
 }(beanStub_1.BeanStub));
 exports.HeaderRowContainerCtrl = HeaderRowContainerCtrl;

@@ -1,4 +1,4 @@
-// Type definitions for @ag-grid-community/core v30.0.6
+// Type definitions for @ag-grid-community/core v30.1.0
 // Project: https://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { RowNode } from "../../entities/rowNode";
@@ -18,7 +18,7 @@ export declare class StickyRowFeature extends BeanStub {
     constructor(createRowCon: (rowNode: RowNode, animate: boolean, afterScroll: boolean) => RowCtrl, destroyRowCtrls: (rowCtrlsMap: RowCtrlMap | null | undefined, animate: boolean) => void);
     private postConstruct;
     getStickyRowCtrls(): RowCtrl[];
-    checkStickyRows(): void;
+    checkStickyRows(): boolean;
     refreshStickyNode(stickRowNode: RowNode): void;
     private refreshNodesAndContainerHeight;
 }

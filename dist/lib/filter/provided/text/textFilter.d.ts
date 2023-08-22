@@ -101,6 +101,7 @@ export declare class TextFilter extends SimpleFilter<TextFilterModel, string> {
     protected areSimpleModelsEqual(aSimple: TextFilterModel, bSimple: TextFilterModel): boolean;
     protected getInputs(position: number): Tuple<AgInputTextField>;
     protected getValues(position: number): Tuple<string>;
+    private getValuesWithSideEffects;
     protected getDefaultFilterOptions(): string[];
     protected createValueElement(): HTMLElement;
     private createFromToElement;

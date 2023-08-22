@@ -620,7 +620,7 @@ var LazyCache = /** @class */ (function (_super) {
     };
     LazyCache.prototype.extractDuplicateIds = function (rows) {
         var _this = this;
-        if (!this.getRowIdFunc == null) {
+        if (this.getRowIdFunc != null) {
             return [];
         }
         var newIds = new Set();
@@ -650,6 +650,9 @@ var LazyCache = /** @class */ (function (_super) {
                 this.onLoadFailed(firstRowIndex, numberOfRowsExpected);
                 return;
             }
+        }
+        if (response.pivotResultFields) {
+            this.serverSideRowModel.generateSecondaryColumns(response.pivotResultFields);
         }
         var wasRefreshing = this.nodesToRefresh.size > 0;
         response.rowData.forEach(function (data, responseRowIndex) {
@@ -913,6 +916,9 @@ var LazyCache = /** @class */ (function (_super) {
     __decorate([
         Autowired('ssrmNodeManager')
     ], LazyCache.prototype, "nodeManager", void 0);
+    __decorate([
+        Autowired('rowModel')
+    ], LazyCache.prototype, "serverSideRowModel", void 0);
     __decorate([
         PostConstruct
     ], LazyCache.prototype, "init", null);

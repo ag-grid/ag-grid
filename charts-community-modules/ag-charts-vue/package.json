@@ -1,7 +1,7 @@
 {
   "name": "ag-charts-vue",
   "description": "AG Charts Vue Component",
-  "version": "8.0.6",
+  "version": "8.1.0",
   "author": "Sean Landsman <sean@thelandsmans.com>",
   "license": "MIT",
   "main": "main.js",
@@ -26,13 +26,12 @@
     "clean": "rimraf dist lib .hash",
     "bundle": "NODE_OPTIONS=--openssl-legacy-provider npx vue-cli-service build --target lib src/AgChartsVue.ts",
     "npm": "npx tsc -p tsconfig-lib.json",
-    "build": "npm run npm && npm run bundle && npm run hash",
+    "build": "npm run npm && npm run bundle",
     "build-prod": "npm run build",
-    "lint": "npx vue-cli-service lint",
-    "hash": "sh ../../scripts/hashDirectory.sh > .hash"
+    "lint": "npx vue-cli-service lint"
   },
   "devDependencies": {
-    "ag-charts-community": "~8.0.6",
+    "ag-charts-community": "~8.1.0",
     "@types/node": "12.20.20",
     "@vue/cli-plugin-typescript": "3.11.0",
     "@vue/cli-plugin-unit-jest": "3.11.0",
@@ -45,7 +44,7 @@
     "rimraf": "3.0.2"
   },
   "peerDependencies": {
-    "ag-charts-community": "~8.0.6",
+    "ag-charts-community": "~8.1.0",
     "vue": ">= 2.2 <= 2.5.17 || >= 2.5.20",
     "vue-property-decorator": "^7.2.0 || ^8.0.0 || ^9.1.2"
   },

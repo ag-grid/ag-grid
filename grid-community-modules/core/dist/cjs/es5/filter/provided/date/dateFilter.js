@@ -65,6 +65,10 @@ var DateFilterModelFormatter = /** @class */ (function (_super) {
         // cater for when the type doesn't need a value
         return "" + type;
     };
+    DateFilterModelFormatter.prototype.updateParams = function (params) {
+        _super.prototype.updateParams.call(this, params);
+        this.dateFilterParams = params.dateFilterParams;
+    };
     return DateFilterModelFormatter;
 }(simpleFilter_1.SimpleFilterModelFormatter));
 exports.DateFilterModelFormatter = DateFilterModelFormatter;

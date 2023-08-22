@@ -413,7 +413,7 @@ class RowContainerCtrl extends beanStub_1.BeanStub {
             case RowContainerName.BOTTOM_FULL_WIDTH:
                 return this.rowRenderer.getBottomRowCtrls();
             default:
-                return this.rowRenderer.getRowCtrls();
+                return this.rowRenderer.getCentreRowCtrls();
         }
     }
 }

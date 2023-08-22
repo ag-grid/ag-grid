@@ -114,6 +114,7 @@ var GridOptionsValidator = /** @class */ (function () {
         validateRegistered('getMainMenuItems', ModuleNames.MenuModule);
         validateRegistered('getContextMenuItems', ModuleNames.MenuModule);
         validateRegistered('allowContextMenuWithControlKey', ModuleNames.MenuModule);
+        validateRegistered('enableAdvancedFilter', ModuleNames.AdvancedFilterModule);
     };
     GridOptionsValidator.prototype.checkColumnDefProperties = function () {
         var _this = this;

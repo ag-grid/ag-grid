@@ -4,7 +4,7 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
-import { AgAbstractField, Autowired, AgAbstractLabel, RefSelector, _ } from "@ag-grid-community/core";
+import { Autowired, Events, AgAbstractLabel, RefSelector, _ } from "@ag-grid-community/core";
 export class AgAngleSelect extends AgAbstractLabel {
     constructor(config) {
         super(config, AgAngleSelect.TEMPLATE);
@@ -46,7 +46,7 @@ export class AgAngleSelect extends AgAbstractLabel {
         if (_.exists(this.getValue())) {
             this.eAngleValue.setValue(this.normalizeNegativeValue(this.getValue()).toString());
         }
-        this.addManagedListener(this, AgAbstractField.EVENT_CHANGED, () => {
+        this.addManagedListener(this, Events.EVENT_FIELD_VALUE_CHANGED, () => {
             const eDocument = this.gridOptionsService.getDocument();
             if (this.eAngleValue.getInputElement().contains(eDocument.activeElement)) {
                 return;
@@ -137,7 +137,7 @@ export class AgAngleSelect extends AgAbstractLabel {
         return this;
     }
     onValueChange(callbackFn) {
-        this.addManagedListener(this, AgAbstractField.EVENT_CHANGED, () => {
+        this.addManagedListener(this, Events.EVENT_FIELD_VALUE_CHANGED, () => {
             callbackFn(this.degrees);
         });
         return this;
@@ -158,7 +158,7 @@ export class AgAngleSelect extends AgAbstractLabel {
             this.degrees = Math.floor(degrees);
             this.calculateCartesian();
             this.positionChildCircle(radiansValue);
-            this.dispatchEvent({ type: AgAbstractField.EVENT_CHANGED });
+            this.dispatchEvent({ type: Events.EVENT_FIELD_VALUE_CHANGED });
         }
         return this;
     }

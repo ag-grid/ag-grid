@@ -10,7 +10,7 @@ const HeaderFilterCellComp = (props: {ctrl: HeaderFilterCellCtrl}) => {
     const [getCssButtonWrapperClasses, setButtonWrapperCssClasses] = createSignal<CssClasses>(new CssClasses());
     const [getButtonWrapperAriaHidden, setButtonWrapperAriaHidden] = createSignal<"true" | "false">("false");
     const [getWidth, setWidth] = createSignal<string>();
-    const [getUserCompDetails, setUserCompDetails] = createSignal<UserCompDetails>();
+    const [getUserCompDetails, setUserCompDetails] = createSignal<UserCompDetails | null | undefined>();
 
     let eGui: HTMLDivElement;
     let eFloatingFilterBody: HTMLDivElement;

@@ -1,4 +1,4 @@
-// Type definitions for @ag-grid-community/core v30.0.6
+// Type definitions for @ag-grid-community/core v30.1.0
 // Project: https://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { Component } from './component';
@@ -9,6 +9,11 @@ export interface VirtualListModel {
     isRowSelected?(index: number): boolean | undefined;
     /** Required if using soft refresh. If rows are equal, componentUpdater will be called instead of remove/create */
     areRowsEqual?(oldRow: any, newRow: any): boolean;
+}
+interface VirtualListParams {
+    cssIdentifier?: string;
+    ariaRole?: string;
+    listName?: string;
 }
 export declare class VirtualList extends TabGuardComp {
     private readonly cssIdentifier;
@@ -22,7 +27,7 @@ export declare class VirtualList extends TabGuardComp {
     private lastFocusedRowIndex;
     private readonly resizeObserverService;
     private readonly eContainer;
-    constructor(cssIdentifier?: string, ariaRole?: string, listName?: string | undefined);
+    constructor(params?: VirtualListParams);
     private postConstruct;
     private onGridStylesChanged;
     private setAriaProperties;
@@ -55,5 +60,7 @@ export declare class VirtualList extends TabGuardComp {
     private refreshRows;
     private addScrollListener;
     setModel(model: VirtualListModel): void;
+    getAriaElement(): Element;
     destroy(): void;
 }
+export {};

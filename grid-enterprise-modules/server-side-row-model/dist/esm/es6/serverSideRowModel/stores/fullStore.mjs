@@ -4,7 +4,7 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
-import { _, Autowired, Events, NumberSequence, PostConstruct, PreDestroy, RowNodeBlock, ServerSideTransactionResultStatus } from "@ag-grid-community/core";
+import { _, Autowired, Events, NumberSequence, PostConstruct, PreDestroy, RowNodeBlock, ServerSideTransactionResultStatus, } from "@ag-grid-community/core";
 export class FullStore extends RowNodeBlock {
     constructor(ssrmParams, storeParams, parentRowNode) {
         // finite block represents a cache with just one block, thus 0 is the id, it's the first block
@@ -34,6 +34,7 @@ export class FullStore extends RowNodeBlock {
         this.initialiseRowNodes(initialRowCount);
         this.rowNodeBlockLoader.addBlock(this);
         this.addDestroyFunc(() => this.rowNodeBlockLoader.removeBlock(this));
+        this.postSortFunc = this.gridOptionsService.getCallback('postSortRows');
     }
     destroyRowNodes() {
         this.blockUtils.destroyRowNodes(this.allRowNodes);
@@ -121,6 +122,9 @@ export class FullStore extends RowNodeBlock {
         if (info) {
             Object.assign(this.info, info);
         }
+        if (params.pivotResultFields) {
+            this.serverSideRowModel.generateSecondaryColumns(params.pivotResultFields);
+        }
         const nodesToRecycle = this.allRowNodes.length > 0 ? this.allNodesMap : undefined;
         this.allRowNodes = [];
         this.nodesAfterSort = [];
@@ -201,6 +205,10 @@ export class FullStore extends RowNodeBlock {
             return;
         }
         this.nodesAfterSort = this.rowNodeSorter.doFullSort(this.nodesAfterFilter, sortOptions);
+        if (this.postSortFunc) {
+            const params = { nodes: this.nodesAfterSort };
+            this.postSortFunc(params);
+        }
     }
     filterRowNodes() {
         const serverIsFiltering = !this.storeUtils.isServerSideOnlyRefreshFilteredGroups() || this.storeUtils.isServerSideFilterOnServer();
@@ -623,6 +631,9 @@ __decorate([
 __decorate([
     Autowired('ssrmTransactionManager')
 ], FullStore.prototype, "transactionManager", void 0);
+__decorate([
+    Autowired('rowModel')
+], FullStore.prototype, "serverSideRowModel", void 0);
 __decorate([
     PostConstruct
 ], FullStore.prototype, "postConstruct", null);

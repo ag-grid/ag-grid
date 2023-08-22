@@ -4,7 +4,7 @@ exports.ClientSideValuesExtractor = void 0;
 const core_1 = require("@ag-grid-community/core");
 /** @param V type of value in the Set Filter */
 class ClientSideValuesExtractor {
-    constructor(rowModel, filterParams, createKey, caseFormat, columnModel, valueService, treeDataOrGrouping, treeData, getDataPath) {
+    constructor(rowModel, filterParams, createKey, caseFormat, columnModel, valueService, treeDataOrGrouping, treeData, getDataPath, groupAllowUnbalanced) {
         this.rowModel = rowModel;
         this.filterParams = filterParams;
         this.createKey = createKey;
@@ -14,6 +14,7 @@ class ClientSideValuesExtractor {
         this.treeDataOrGrouping = treeDataOrGrouping;
         this.treeData = treeData;
         this.getDataPath = getDataPath;
+        this.groupAllowUnbalanced = groupAllowUnbalanced;
     }
     extractUniqueValues(predicate, existingValues) {
         const values = new Map();
@@ -97,8 +98,8 @@ class ClientSideValuesExtractor {
         if (dataPath) {
             dataPath = dataPath.map(treeKey => core_1._.toStringOrNull(core_1._.makeNull(treeKey)));
         }
-        if (dataPath === null || dataPath === void 0 ? void 0 : dataPath.some(treeKey => treeKey == null)) {
-            dataPath = null;
+        if (!treeData && this.groupAllowUnbalanced && (dataPath === null || dataPath === void 0 ? void 0 : dataPath.some(treeKey => treeKey == null))) {
+            dataPath = dataPath.filter(treeKey => treeKey != null);
         }
         addValue(this.createKey(dataPath), dataPath);
     }

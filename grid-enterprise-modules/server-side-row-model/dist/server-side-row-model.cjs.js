@@ -1,5 +1,5 @@
 /**
-          * @ag-grid-enterprise/server-side-row-model - Advanced Data Grid / Data Table supporting Javascript / Typescript / React / Angular / Vue * @version v30.0.6
+          * @ag-grid-enterprise/server-side-row-model - Advanced Data Grid / Data Table supporting Javascript / Typescript / React / Angular / Vue * @version v30.1.0
           * @link https://www.ag-grid.com/
           * @license Commercial
           */
@@ -64,6 +64,7 @@ var FullStore = /** @class */ (function (_super) {
         this.initialiseRowNodes(initialRowCount);
         this.rowNodeBlockLoader.addBlock(this);
         this.addDestroyFunc(function () { return _this.rowNodeBlockLoader.removeBlock(_this); });
+        this.postSortFunc = this.gridOptionsService.getCallback('postSortRows');
     };
     FullStore.prototype.destroyRowNodes = function () {
         this.blockUtils.destroyRowNodes(this.allRowNodes);
@@ -152,6 +153,9 @@ var FullStore = /** @class */ (function (_super) {
         if (info) {
             Object.assign(this.info, info);
         }
+        if (params.pivotResultFields) {
+            this.serverSideRowModel.generateSecondaryColumns(params.pivotResultFields);
+        }
         var nodesToRecycle = this.allRowNodes.length > 0 ? this.allNodesMap : undefined;
         this.allRowNodes = [];
         this.nodesAfterSort = [];
@@ -234,6 +238,10 @@ var FullStore = /** @class */ (function (_super) {
             return;
         }
         this.nodesAfterSort = this.rowNodeSorter.doFullSort(this.nodesAfterFilter, sortOptions);
+        if (this.postSortFunc) {
+            var params = { nodes: this.nodesAfterSort };
+            this.postSortFunc(params);
+        }
     };
     FullStore.prototype.filterRowNodes = function () {
         var _this = this;
@@ -667,6 +675,9 @@ var FullStore = /** @class */ (function (_super) {
         core.Autowired('ssrmTransactionManager')
     ], FullStore.prototype, "transactionManager", void 0);
     __decorate$g([
+        core.Autowired('rowModel')
+    ], FullStore.prototype, "serverSideRowModel", void 0);
+    __decorate$g([
         core.PostConstruct
     ], FullStore.prototype, "postConstruct", null);
     __decorate$g([
@@ -733,6 +744,7 @@ var LazyBlockLoader = /** @class */ (function (_super) {
         return this.loadingNodes.has(index);
     };
     LazyBlockLoader.prototype.getBlockToLoad = function () {
+        var _this = this;
         var _a;
         var firstRowInViewport = this.api.getFirstDisplayedRow();
         var lastRowInViewport = this.api.getLastDisplayedRow();
@@ -761,6 +773,9 @@ var LazyBlockLoader = /** @class */ (function (_super) {
         nodesToRefresh.forEach(function (node) {
             if (node.rowIndex == null) {
                 nodeToRefresh = node;
+                return;
+            }
+            if (_this.isRowLoading(node.rowIndex)) {
                 return;
             }
             var distToViewportTop = Math.abs(firstRowInViewport - node.rowIndex);
@@ -835,9 +850,6 @@ var LazyBlockLoader = /** @class */ (function (_super) {
     };
     LazyBlockLoader.prototype.getNextBlockToLoad = function () {
         var result = this.getBlockToLoad();
-        if (result != null && result < 0) {
-            this.getBlockToLoad();
-        }
         if (result != null) {
             return [String(result), result + this.getBlockSize()];
         }
@@ -1623,7 +1635,7 @@ var LazyCache = /** @class */ (function (_super) {
     };
     LazyCache.prototype.extractDuplicateIds = function (rows) {
         var _this = this;
-        if (!this.getRowIdFunc == null) {
+        if (this.getRowIdFunc != null) {
             return [];
         }
         var newIds = new Set();
@@ -1653,6 +1665,9 @@ var LazyCache = /** @class */ (function (_super) {
                 this.onLoadFailed(firstRowIndex, numberOfRowsExpected);
                 return;
             }
+        }
+        if (response.pivotResultFields) {
+            this.serverSideRowModel.generateSecondaryColumns(response.pivotResultFields);
         }
         var wasRefreshing = this.nodesToRefresh.size > 0;
         response.rowData.forEach(function (data, responseRowIndex) {
@@ -1916,6 +1931,9 @@ var LazyCache = /** @class */ (function (_super) {
     __decorate$e([
         core.Autowired('ssrmNodeManager')
     ], LazyCache.prototype, "nodeManager", void 0);
+    __decorate$e([
+        core.Autowired('rowModel')
+    ], LazyCache.prototype, "serverSideRowModel", void 0);
     __decorate$e([
         core.PostConstruct
     ], LazyCache.prototype, "init", null);
@@ -2575,6 +2593,7 @@ var ServerSideRowModel = /** @class */ (function (_super) {
         _this.onRowHeightChanged_debounced = core._.debounce(_this.onRowHeightChanged.bind(_this), 100);
         _this.pauseStoreUpdateListening = false;
         _this.started = false;
+        _this.managingPivotResultColumns = false;
         return _this;
     }
     // we don't implement as lazy row heights is not supported in this row model
@@ -2707,6 +2726,11 @@ var ServerSideRowModel = /** @class */ (function (_super) {
         rootStore.refreshAfterSort(params);
         this.onStoreUpdated();
     };
+    ServerSideRowModel.prototype.generateSecondaryColumns = function (pivotFields) {
+        var pivotColumnGroupDefs = this.pivotColDefService.createColDefsFromFields(pivotFields);
+        this.managingPivotResultColumns = true;
+        this.columnModel.setSecondaryColumns(pivotColumnGroupDefs, "rowModelUpdated");
+    };
     ServerSideRowModel.prototype.resetRootStore = function () {
         this.destroyRootStore();
         this.rootNode = new core.RowNode(this.beans);
@@ -2716,6 +2740,11 @@ var ServerSideRowModel = /** @class */ (function (_super) {
             this.storeParams = this.createStoreParams();
             this.rootNode.childStore = this.createBean(this.storeFactory.createStore(this.storeParams, this.rootNode));
             this.updateRowIndexesAndBounds();
+        }
+        if (this.managingPivotResultColumns) {
+            // if managing pivot columns, also reset secondary columns.
+            this.columnModel.setSecondaryColumns(null);
+            this.managingPivotResultColumns = false;
         }
         // this event shows/hides 'no rows' overlay
         var rowDataChangedEvent = {
@@ -3031,6 +3060,9 @@ var ServerSideRowModel = /** @class */ (function (_super) {
     __decorate$c([
         core.Autowired('beans')
     ], ServerSideRowModel.prototype, "beans", void 0);
+    __decorate$c([
+        core.Optional('pivotColDefService')
+    ], ServerSideRowModel.prototype, "pivotColDefService", void 0);
     __decorate$c([
         core.PreDestroy
     ], ServerSideRowModel.prototype, "destroyDatasource", null);
@@ -4342,8 +4374,9 @@ var DefaultStrategy = /** @class */ (function (_super) {
             else {
                 delete _this.selectedNodes[node.id];
             }
+            var isNodeSelectable = node.selectable;
             var doesNodeConform = params.newValue === _this.selectedState.selectAll;
-            if (doesNodeConform) {
+            if (doesNodeConform || !isNodeSelectable) {
                 _this.selectedState.toggledNodes.delete(node.id);
                 return;
             }
@@ -4454,8 +4487,8 @@ var __extends$1 = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-var __assign = (undefined && undefined.__assign) || function () {
-    __assign = Object.assign || function(t) {
+var __assign$1 = (undefined && undefined.__assign) || function () {
+    __assign$1 = Object.assign || function(t) {
         for (var s, i = 1, n = arguments.length; i < n; i++) {
             s = arguments[i];
             for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
@@ -4463,7 +4496,7 @@ var __assign = (undefined && undefined.__assign) || function () {
         }
         return t;
     };
-    return __assign.apply(this, arguments);
+    return __assign$1.apply(this, arguments);
 };
 var __decorate$1 = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -4471,7 +4504,7 @@ var __decorate$1 = (undefined && undefined.__decorate) || function (decorators, 
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
-var __rest = (undefined && undefined.__rest) || function (s, e) {
+var __rest$1 = (undefined && undefined.__rest) || function (s, e) {
     var t = {};
     for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p) && e.indexOf(p) < 0)
         t[p] = s[p];
@@ -4602,7 +4635,7 @@ var GroupSelectsChildrenStrategy = /** @class */ (function (_super) {
     };
     GroupSelectsChildrenStrategy.prototype.setNodesSelected = function (params) {
         var _this = this;
-        var nodes = params.nodes, other = __rest(params, ["nodes"]);
+        var nodes = params.nodes, other = __rest$1(params, ["nodes"]);
         if (nodes.length === 0)
             return 0;
         if (params.rangeSelect) {
@@ -4621,7 +4654,7 @@ var GroupSelectsChildrenStrategy = /** @class */ (function (_super) {
                     return;
                 }
                 route.forEach(function (part) { return completedRoutes_1.add(part); });
-                _this.recursivelySelectNode(route, _this.selectedState, __assign({ node: node_1 }, other));
+                _this.recursivelySelectNode(route, _this.selectedState, __assign$1({ node: node_1 }, other));
             });
             this.removeRedundantState();
             this.lastSelected = node_1;
@@ -4629,7 +4662,7 @@ var GroupSelectsChildrenStrategy = /** @class */ (function (_super) {
         }
         params.nodes.forEach(function (node) {
             var idPathToNode = _this.getRouteToNode(node);
-            _this.recursivelySelectNode(idPathToNode, _this.selectedState, __assign(__assign({}, other), { node: node }));
+            _this.recursivelySelectNode(idPathToNode, _this.selectedState, __assign$1(__assign$1({}, other), { node: node }));
         });
         this.removeRedundantState();
         this.lastSelected = params.nodes[params.nodes.length - 1];
@@ -4728,8 +4761,10 @@ var GroupSelectsChildrenStrategy = /** @class */ (function (_super) {
         // if this is the last node, hard add/remove based on its selectAllChildren state
         var isLastNode = !nodes.length;
         if (isLastNode) {
-            var needsDeleted = selectedState.selectAllChildren === params.newValue;
-            if (needsDeleted) {
+            // if the node is not selectable, we should never have it in selection state
+            var isNodeSelectable = nextNode.selectable;
+            var doesNodeConform = selectedState.selectAllChildren === params.newValue;
+            if (doesNodeConform || !isNodeSelectable) {
                 selectedState.toggledNodes.delete(nextNode.id);
                 return;
             }
@@ -4831,11 +4866,33 @@ var __extends = (undefined && undefined.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
+var __assign = (undefined && undefined.__assign) || function () {
+    __assign = Object.assign || function(t) {
+        for (var s, i = 1, n = arguments.length; i < n; i++) {
+            s = arguments[i];
+            for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
+                t[p] = s[p];
+        }
+        return t;
+    };
+    return __assign.apply(this, arguments);
+};
 var __decorate = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+var __rest = (undefined && undefined.__rest) || function (s, e) {
+    var t = {};
+    for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p) && e.indexOf(p) < 0)
+        t[p] = s[p];
+    if (s != null && typeof Object.getOwnPropertySymbols === "function")
+        for (var i = 0, p = Object.getOwnPropertySymbols(s); i < p.length; i++) {
+            if (e.indexOf(p[i]) < 0 && Object.prototype.propertyIsEnumerable.call(s, p[i]))
+                t[p[i]] = s[p[i]];
+        }
+    return t;
 };
 var ServerSideSelectionService = /** @class */ (function (_super) {
     __extends(ServerSideSelectionService, _super);
@@ -4874,19 +4931,25 @@ var ServerSideSelectionService = /** @class */ (function (_super) {
         this.eventService.dispatchEvent(event);
     };
     ServerSideSelectionService.prototype.setNodesSelected = function (params) {
-        if (params.nodes.length > 1 && this.rowSelection !== 'multiple') {
+        var nodes = params.nodes, otherParams = __rest(params, ["nodes"]);
+        if (nodes.length > 1 && this.rowSelection !== 'multiple') {
             console.warn("AG Grid: cannot multi select while rowSelection='single'");
             return 0;
         }
-        if (params.nodes.length > 1 && params.rangeSelect) {
+        if (nodes.length > 1 && params.rangeSelect) {
             console.warn("AG Grid: cannot use range selection when multi selecting rows");
             return 0;
         }
-        var changedNodes = this.selectionStrategy.setNodesSelected(params);
-        this.shotgunResetNodeSelectionState(params.source);
+        var adjustedParams = __assign({ nodes: nodes.filter(function (node) { return node.selectable; }) }, otherParams);
+        // if no selectable nodes, then return 0
+        if (!adjustedParams.nodes.length) {
+            return 0;
+        }
+        var changedNodes = this.selectionStrategy.setNodesSelected(adjustedParams);
+        this.shotgunResetNodeSelectionState(adjustedParams.source);
         var event = {
             type: core.Events.EVENT_SELECTION_CHANGED,
-            source: params.source,
+            source: adjustedParams.source,
         };
         this.eventService.dispatchEvent(event);
         return changedNodes;
@@ -4932,6 +4995,24 @@ var ServerSideSelectionService = /** @class */ (function (_super) {
         // update any refs being held in the strategies
         this.selectionStrategy.processNewRow(rowNode);
         var isNodeSelected = this.selectionStrategy.isNodeSelected(rowNode);
+        // if the node was selected but node is not selectable, we deselect the node.
+        // (could be due to user applying selected state directly, or a change in selectable)
+        if (isNodeSelected != false && !rowNode.selectable) {
+            this.selectionStrategy.setNodesSelected({
+                nodes: [rowNode],
+                newValue: false,
+                source: 'api',
+            });
+            // we need to shotgun reset here as if this was hierarchical, some group nodes
+            // may be changing from indeterminate to unchecked.
+            this.shotgunResetNodeSelectionState();
+            var event_1 = {
+                type: core.Events.EVENT_SELECTION_CHANGED,
+                source: 'api',
+            };
+            this.eventService.dispatchEvent(event_1);
+            return;
+        }
         rowNode.setSelectedInitialValue(isNodeSelected);
     };
     ServerSideSelectionService.prototype.reset = function () {
@@ -5003,7 +5084,7 @@ var ServerSideSelectionService = /** @class */ (function (_super) {
 }(core.BeanStub));
 
 // DO NOT UPDATE MANUALLY: Generated from script during build time
-var VERSION = '30.0.6';
+var VERSION = '30.1.0';
 
 var ServerSideRowModelModule = {
     version: VERSION,

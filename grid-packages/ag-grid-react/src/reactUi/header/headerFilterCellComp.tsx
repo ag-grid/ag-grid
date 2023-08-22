@@ -1,21 +1,20 @@
-import React, { memo, useContext, useLayoutEffect, useMemo, useRef, useState } from 'react';
+import React, { memo, useCallback, useContext, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import { BeansContext } from '../beansContext';
 import { AgPromise, HeaderFilterCellCtrl, IFloatingFilter, IHeaderFilterCellComp, UserCompDetails } from 'ag-grid-community';
 import { CssClasses, isComponentStateless } from '../utils';
 import { showJsComp } from '../jsComp';
-import { useLayoutEffectOnce } from '../useEffectOnce';
 
 const HeaderFilterCellComp = (props: {ctrl: HeaderFilterCellCtrl}) => {
 
     const {context} = useContext(BeansContext);
 
-    const [cssClasses, setCssClasses] = useState<CssClasses>(new CssClasses('ag-header-cell', 'ag-floating-filter'));
-    const [cssBodyClasses, setBodyCssClasses] = useState<CssClasses>(new CssClasses());
-    const [cssButtonWrapperClasses, setButtonWrapperCssClasses] = useState<CssClasses>(new CssClasses('ag-floating-filter-button', 'ag-hidden'));
+    const [cssClasses, setCssClasses] = useState<CssClasses>(() => new CssClasses('ag-header-cell', 'ag-floating-filter'));
+    const [cssBodyClasses, setBodyCssClasses] = useState<CssClasses>(() => new CssClasses());
+    const [cssButtonWrapperClasses, setButtonWrapperCssClasses] = useState<CssClasses>(() => new CssClasses('ag-floating-filter-button', 'ag-hidden'));
     const [buttonWrapperAriaHidden, setButtonWrapperAriaHidden] = useState<"true" | "false">("false");
-    const [userCompDetails, setUserCompDetails] = useState<UserCompDetails>();
+    const [userCompDetails, setUserCompDetails] = useState<UserCompDetails | null>();
 
-    const eGui = useRef<HTMLDivElement>(null);
+    const eGui = useRef<HTMLDivElement | null>(null);
     const eFloatingFilterBody = useRef<HTMLDivElement>(null);
     const eButtonWrapper = useRef<HTMLDivElement>(null);
     const eButtonShowMainFilter = useRef<HTMLButtonElement>(null);
@@ -35,7 +34,11 @@ const HeaderFilterCellComp = (props: {ctrl: HeaderFilterCellCtrl}) => {
 
     const { ctrl } = props;
 
-    useLayoutEffectOnce(() => {
+    const setRef = useCallback((e: HTMLDivElement) => {
+        eGui.current = e;
+        if (!eGui.current) {
+            return;
+        }
 
         userCompPromise.current = new AgPromise<IFloatingFilter>(resolve => {
             userCompResolve.current = resolve;
@@ -58,9 +61,10 @@ const HeaderFilterCellComp = (props: {ctrl: HeaderFilterCellCtrl}) => {
             setMenuIcon: eIcon => eButtonShowMainFilter.current?.appendChild(eIcon)
         };
 
-        ctrl.setComp(compProxy, eGui.current!, eButtonShowMainFilter.current!, eFloatingFilterBody.current!);
+        ctrl.setComp(compProxy, eGui.current, eButtonShowMainFilter.current!, eFloatingFilterBody.current!);
 
-    });
+    }, []);
+
 
     // js comps
     useLayoutEffect(() => showJsComp(userCompDetails, context, eFloatingFilterBody.current!, userCompRef), [userCompDetails]);
@@ -80,7 +84,7 @@ const HeaderFilterCellComp = (props: {ctrl: HeaderFilterCellCtrl}) => {
     const UserCompClass = userCompDetails && userCompDetails.componentClass;
 
     return (
-        <div ref={eGui} className={className} role="gridcell" tabIndex={-1}>
+        <div ref={setRef} className={className} role="gridcell" tabIndex={-1}>
             <div ref={eFloatingFilterBody} className={bodyClassName} role="presentation">
                 { reactUserComp && userCompStateless && <UserCompClass { ...userCompDetails!.params } /> }
                 { reactUserComp && !userCompStateless && <UserCompClass { ...userCompDetails!.params } ref={ userCompRef }/> }

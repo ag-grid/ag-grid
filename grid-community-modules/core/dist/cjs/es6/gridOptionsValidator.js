@@ -96,6 +96,7 @@ let GridOptionsValidator = class GridOptionsValidator {
         validateRegistered('getMainMenuItems', moduleNames_1.ModuleNames.MenuModule);
         validateRegistered('getContextMenuItems', moduleNames_1.ModuleNames.MenuModule);
         validateRegistered('allowContextMenuWithControlKey', moduleNames_1.ModuleNames.MenuModule);
+        validateRegistered('enableAdvancedFilter', moduleNames_1.ModuleNames.AdvancedFilterModule);
     }
     checkColumnDefProperties() {
         if (this.gridOptions.columnDefs == null) {

@@ -35,20 +35,18 @@ var HeaderCellComp = /** @class */ (function (_super) {
     HeaderCellComp.prototype.postConstruct = function () {
         var _this = this;
         var eGui = this.getGui();
-        var setAttribute = function (name, value, element) {
-            var actualElement = element ? element : eGui;
+        var setAttribute = function (name, value) {
             if (value != null && value != '') {
-                actualElement.setAttribute(name, value);
+                eGui.setAttribute(name, value);
             }
             else {
-                actualElement.removeAttribute(name);
+                eGui.removeAttribute(name);
             }
         };
+        setAttribute('col-id', this.column.getColId());
         var compProxy = {
             setWidth: function (width) { return eGui.style.width = width; },
             addOrRemoveCssClass: function (cssClassName, on) { return _this.addOrRemoveCssClass(cssClassName, on); },
-            setColId: function (id) { return setAttribute('col-id', id); },
-            setTitle: function (title) { return setAttribute('title', title); },
             setAriaDescription: function (label) { return setAriaDescription(eGui, label); },
             setAriaSort: function (sort) { return sort ? setAriaSort(eGui, sort) : removeAriaSort(eGui); },
             setUserCompDetails: function (compDetails) { return _this.setUserCompDetails(compDetails); },

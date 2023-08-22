@@ -24,27 +24,29 @@ class CellComp extends component_1.Component {
         this.rowNode = cellCtrl.getRowNode();
         this.rowCtrl = cellCtrl.getRowCtrl();
         this.eRow = eRow;
+        this.cellCtrl = cellCtrl;
         this.setTemplate(/* html */ `<div comp-id="${this.getCompId()}"/>`);
         const eGui = this.getGui();
         this.forceWrapper = cellCtrl.isForceWrapper();
         this.refreshWrapper(false);
-        const setAttribute = (name, value, element) => {
-            const actualElement = element ? element : eGui;
+        const setAttribute = (name, value) => {
             if (value != null && value != '') {
-                actualElement.setAttribute(name, value);
+                eGui.setAttribute(name, value);
             }
             else {
-                actualElement.removeAttribute(name);
+                eGui.removeAttribute(name);
             }
         };
+        aria_1.setAriaRole(eGui, 'gridcell');
+        setAttribute('col-id', cellCtrl.getColumnIdSanitised());
+        const tabIndex = cellCtrl.getTabIndex();
+        if (tabIndex !== undefined) {
+            setAttribute('tabindex', tabIndex.toString());
+        }
         const compProxy = {
             addOrRemoveCssClass: (cssClassName, on) => this.addOrRemoveCssClass(cssClassName, on),
             setUserStyles: (styles) => dom_1.addStylesToElement(eGui, styles),
             getFocusableElement: () => this.getFocusableElement(),
-            setTabIndex: tabIndex => setAttribute('tabindex', tabIndex.toString()),
-            setRole: role => aria_1.setAriaRole(eGui, role),
-            setColId: colId => setAttribute('col-id', colId),
-            setTitle: title => setAttribute('title', title),
             setIncludeSelection: include => this.includeSelection = include,
             setIncludeRowDrag: include => this.includeRowDrag = include,
             setIncludeDndSource: include => this.includeDndSource = include,
@@ -54,7 +56,6 @@ class CellComp extends component_1.Component {
             getCellRenderer: () => this.cellRenderer || null,
             getParentOfValue: () => this.getParentOfValue()
         };
-        this.cellCtrl = cellCtrl;
         cellCtrl.setComp(compProxy, this.getGui(), this.eCellWrapper, printLayout, editingRow);
     }
     getParentOfValue() {

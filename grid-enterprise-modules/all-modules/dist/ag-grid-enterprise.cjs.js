@@ -1,5 +1,5 @@
 /**
-          * @ag-grid-enterprise/all-modules - Advanced Data Grid / Data Table supporting Javascript / Typescript / React / Angular / Vue * @version v30.0.6
+          * @ag-grid-enterprise/all-modules - Advanced Data Grid / Data Table supporting Javascript / Typescript / React / Angular / Vue * @version v30.1.0
           * @link https://www.ag-grid.com/
           * @license Commercial
           */
@@ -8,6 +8,7 @@
 Object.defineProperty(exports, '__esModule', { value: true });
 
 var allModules = require('@ag-grid-community/all-modules');
+var advancedFilter = require('@ag-grid-enterprise/advanced-filter');
 var clipboard = require('@ag-grid-enterprise/clipboard');
 var columnToolPanel = require('@ag-grid-enterprise/column-tool-panel');
 var excelExport = require('@ag-grid-enterprise/excel-export');
@@ -28,6 +29,7 @@ var sparklines = require('@ag-grid-enterprise/sparklines');
 var core = require('@ag-grid-enterprise/core');
 
 var AllEnterpriseModules = [
+    advancedFilter.AdvancedFilterModule,
     clipboard.ClipboardModule,
     columnToolPanel.ColumnsToolPanelModule,
     excelExport.ExcelExportModule,
@@ -54,6 +56,12 @@ Object.keys(allModules).forEach(function (k) {
     if (k !== 'default' && !exports.hasOwnProperty(k)) Object.defineProperty(exports, k, {
         enumerable: true,
         get: function () { return allModules[k]; }
+    });
+});
+Object.keys(advancedFilter).forEach(function (k) {
+    if (k !== 'default' && !exports.hasOwnProperty(k)) Object.defineProperty(exports, k, {
+        enumerable: true,
+        get: function () { return advancedFilter[k]; }
     });
 });
 Object.keys(clipboard).forEach(function (k) {

@@ -20,7 +20,7 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
 import { BeanStub } from "../../context/beanStub";
-import { Autowired } from "../../context/context";
+import { Autowired, PostConstruct } from "../../context/context";
 import { Events } from "../../eventKeys";
 import { isBrowserSafari } from "../../utils/browser";
 import { getAllValuesInObject, iterateObject } from "../../utils/object";
@@ -39,32 +39,58 @@ var HeaderRowCtrl = /** @class */ (function (_super) {
         _this.rowIndex = rowIndex;
         _this.pinned = pinned;
         _this.type = type;
+        var typeClass = type == HeaderRowType.COLUMN_GROUP ? "ag-header-row-column-group" :
+            type == HeaderRowType.FLOATING_FILTER ? "ag-header-row-column-filter" : "ag-header-row-column";
+        _this.headerRowClass = "ag-header-row " + typeClass;
         return _this;
     }
+    HeaderRowCtrl.prototype.postConstruct = function () {
+        this.isPrintLayout = this.gridOptionsService.isDomLayout('print');
+        this.isEnsureDomOrder = this.gridOptionsService.is('ensureDomOrder');
+    };
     HeaderRowCtrl.prototype.getInstanceId = function () {
         return this.instanceId;
     };
-    HeaderRowCtrl.prototype.setComp = function (comp) {
+    /**
+     *
+     * @param comp Proxy to the actual component
+     * @param initCompState Should the component be initialised with the current state of the controller. Default: true
+     */
+    HeaderRowCtrl.prototype.setComp = function (comp, initCompState) {
+        if (initCompState === void 0) { initCompState = true; }
         this.comp = comp;
-        this.onRowHeightChanged();
-        this.onVirtualColumnsChanged();
+        if (initCompState) {
+            this.onRowHeightChanged();
+            this.onVirtualColumnsChanged();
+        }
+        // width is managed directly regardless of framework and so is not included in initCompState
         this.setWidth();
         this.addEventListeners();
+    };
+    HeaderRowCtrl.prototype.getHeaderRowClass = function () {
+        return this.headerRowClass;
+    };
+    HeaderRowCtrl.prototype.getAriaRowIndex = function () {
+        return this.rowIndex + 1;
+    };
+    HeaderRowCtrl.prototype.getTransform = function () {
         if (isBrowserSafari()) {
             // fix for a Safari rendering bug that caused the header to flicker above chart panels
             // as you move the mouse over the header
-            this.comp.setTransform('translateZ(0)');
+            return 'translateZ(0)';
         }
-        comp.setAriaRowIndex(this.rowIndex + 1);
     };
     HeaderRowCtrl.prototype.addEventListeners = function () {
+        var _this = this;
         this.addManagedListener(this.eventService, Events.EVENT_COLUMN_RESIZED, this.onColumnResized.bind(this));
         this.addManagedListener(this.eventService, Events.EVENT_DISPLAYED_COLUMNS_CHANGED, this.onDisplayedColumnsChanged.bind(this));
         this.addManagedListener(this.eventService, Events.EVENT_VIRTUAL_COLUMNS_CHANGED, this.onVirtualColumnsChanged.bind(this));
         this.addManagedListener(this.eventService, Events.EVENT_COLUMN_HEADER_HEIGHT_CHANGED, this.onRowHeightChanged.bind(this));
         this.addManagedListener(this.eventService, Events.EVENT_GRID_STYLES_CHANGED, this.onRowHeightChanged.bind(this));
+        this.addManagedListener(this.eventService, Events.EVENT_ADVANCED_FILTER_ENABLED_CHANGED, this.onRowHeightChanged.bind(this));
         // when print layout changes, it changes what columns are in what section
         this.addManagedPropertyListener('domLayout', this.onDisplayedColumnsChanged.bind(this));
+        this.addManagedPropertyListener('ensureDomOrder', function (e) { return _this.isEnsureDomOrder = e.currentValue; });
         this.addManagedPropertyListener('headerHeight', this.onRowHeightChanged.bind(this));
         this.addManagedPropertyListener('pivotHeaderHeight', this.onRowHeightChanged.bind(this));
         this.addManagedPropertyListener('groupHeaderHeight', this.onRowHeightChanged.bind(this));
@@ -75,6 +101,7 @@ var HeaderRowCtrl = /** @class */ (function (_super) {
         return values(this.headerCellCtrls).find(function (cellCtrl) { return cellCtrl.getColumnGroupChild() === column; });
     };
     HeaderRowCtrl.prototype.onDisplayedColumnsChanged = function () {
+        this.isPrintLayout = this.gridOptionsService.isDomLayout('print');
         this.onVirtualColumnsChanged();
         this.setWidth();
         this.onRowHeightChanged();
@@ -90,8 +117,7 @@ var HeaderRowCtrl = /** @class */ (function (_super) {
         this.comp.setWidth(width + "px");
     };
     HeaderRowCtrl.prototype.getWidthForRow = function () {
-        var printLayout = this.gridOptionsService.isDomLayout('print');
-        if (printLayout) {
+        if (this.isPrintLayout) {
             var pinned = this.pinned != null;
             if (pinned) {
                 return 0;
@@ -104,10 +130,15 @@ var HeaderRowCtrl = /** @class */ (function (_super) {
         return this.columnModel.getContainerWidth(this.pinned);
     };
     HeaderRowCtrl.prototype.onRowHeightChanged = function () {
+        var _a = this.getTopAndHeight(), topOffset = _a.topOffset, rowHeight = _a.rowHeight;
+        this.comp.setTop(topOffset + 'px');
+        this.comp.setHeight(rowHeight + 'px');
+    };
+    HeaderRowCtrl.prototype.getTopAndHeight = function () {
         var headerRowCount = this.columnModel.getHeaderRowCount();
         var sizes = [];
         var numberOfFloating = 0;
-        if (this.columnModel.hasFloatingFilters()) {
+        if (this.filterManager.hasFloatingFilters()) {
             headerRowCount++;
             numberOfFloating = 1;
         }
@@ -126,9 +157,8 @@ var HeaderRowCtrl = /** @class */ (function (_super) {
         for (var i = 0; i < this.rowIndex; i++) {
             topOffset += sizes[i];
         }
-        var thisRowHeight = sizes[this.rowIndex] + 'px';
-        this.comp.setTop(topOffset + 'px');
-        this.comp.setHeight(thisRowHeight);
+        var rowHeight = sizes[this.rowIndex];
+        return { topOffset: topOffset, rowHeight: rowHeight };
     };
     HeaderRowCtrl.prototype.getPinned = function () {
         return this.pinned;
@@ -137,6 +167,11 @@ var HeaderRowCtrl = /** @class */ (function (_super) {
         return this.rowIndex;
     };
     HeaderRowCtrl.prototype.onVirtualColumnsChanged = function () {
+        var ctrlsToDisplay = this.getHeaderCtrls();
+        var forceOrder = this.isEnsureDomOrder || this.isPrintLayout;
+        this.comp.setHeaderCtrls(ctrlsToDisplay, forceOrder);
+    };
+    HeaderRowCtrl.prototype.getHeaderCtrls = function () {
         var _this = this;
         var oldCtrls = this.headerCellCtrls;
         this.headerCellCtrls = {};
@@ -196,11 +231,10 @@ var HeaderRowCtrl = /** @class */ (function (_super) {
             }
         });
         var ctrlsToDisplay = getAllValuesInObject(this.headerCellCtrls);
-        this.comp.setHeaderCtrls(ctrlsToDisplay);
+        return ctrlsToDisplay;
     };
     HeaderRowCtrl.prototype.getColumnsInViewport = function () {
-        var printLayout = this.gridOptionsService.isDomLayout('print');
-        return printLayout ? this.getColumnsInViewportPrintLayout() : this.getColumnsInViewportNormalLayout();
+        return this.isPrintLayout ? this.getColumnsInViewportPrintLayout() : this.getColumnsInViewportNormalLayout();
     };
     HeaderRowCtrl.prototype.getColumnsInViewportPrintLayout = function () {
         var _this = this;
@@ -246,6 +280,12 @@ var HeaderRowCtrl = /** @class */ (function (_super) {
     __decorate([
         Autowired('focusService')
     ], HeaderRowCtrl.prototype, "focusService", void 0);
+    __decorate([
+        Autowired('filterManager')
+    ], HeaderRowCtrl.prototype, "filterManager", void 0);
+    __decorate([
+        PostConstruct
+    ], HeaderRowCtrl.prototype, "postConstruct", null);
     return HeaderRowCtrl;
 }(BeanStub));
 export { HeaderRowCtrl };

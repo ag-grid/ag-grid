@@ -23,15 +23,24 @@ var TooltipFeature = /** @class */ (function (_super) {
         _this.beans = beans;
         return _this;
     }
-    TooltipFeature.prototype.setComp = function (comp) {
-        this.comp = comp;
+    TooltipFeature.prototype.setComp = function (eGui) {
+        this.eGui = eGui;
         this.setupTooltip();
+    };
+    TooltipFeature.prototype.setBrowserTooltip = function (tooltip) {
+        var name = 'title';
+        if (tooltip != null && tooltip != '') {
+            this.eGui.setAttribute(name, tooltip);
+        }
+        else {
+            this.eGui.removeAttribute(name);
+        }
     };
     TooltipFeature.prototype.setupTooltip = function () {
         this.browserTooltips = this.beans.gridOptionsService.is('enableBrowserTooltips');
         this.updateTooltipText();
         if (this.browserTooltips) {
-            this.comp.setTitle(this.tooltip != null ? this.tooltip : undefined);
+            this.setBrowserTooltip(this.tooltip);
         }
         else {
             this.createTooltipFeatureIfNeeded();
@@ -54,10 +63,11 @@ var TooltipFeature = /** @class */ (function (_super) {
     TooltipFeature.prototype.refreshToolTip = function () {
         this.updateTooltipText();
         if (this.browserTooltips) {
-            this.comp.setTitle(this.tooltip != null ? this.tooltip : undefined);
+            this.setBrowserTooltip(this.tooltip);
         }
     };
     TooltipFeature.prototype.getTooltipParams = function () {
+        var _this = this;
         var ctrl = this.ctrl;
         var column = ctrl.getColumn ? ctrl.getColumn() : undefined;
         var colDef = ctrl.getColDef ? ctrl.getColDef() : undefined;
@@ -71,6 +81,7 @@ var TooltipFeature = /** @class */ (function (_super) {
             data: rowNode ? rowNode.data : undefined,
             value: this.getTooltipText(),
             valueFormatted: ctrl.getValueFormatted ? ctrl.getValueFormatted() : undefined,
+            hideTooltipCallback: function () { return _this.genericTooltipFeature.hideTooltip(true); }
         };
     };
     TooltipFeature.prototype.getTooltipText = function () {

@@ -8,35 +8,45 @@ import { FilterChangedEvent } from '../../../events';
 import { AgInputTextField, ITextInputField } from '../../../widgets/agInputTextField';
 import { ColumnModel } from '../../../columns/columnModel';
 import { KeyCode } from '../../../constants/keyCode';
-import { TextFilterParams, TextFilter, TextFilterModel } from '../../provided/text/textFilter';
+import { TextFilterParams, TextFilter, TextFilterModel, ITextFilterParams } from '../../provided/text/textFilter';
 import { NumberFilter, NumberFilterModel } from '../../provided/number/numberFilter';
 import { BeanStub } from '../../../context/beanStub';
+import { clearElement } from '../../../utils/dom';
 
 export interface FloatingFilterInputService {
     setupGui(parentElement: HTMLElement): void;
     setEditable(editable: boolean): void;
     getValue(): string | null | undefined;
     setValue(value: string | null | undefined, silent?: boolean): void;
-    addValueChangedListener(listener: () => void): void;
+    setValueChangedListener(listener: (e: KeyboardEvent) => void): void;
+    setParams(params: { ariaLabel: string, autoComplete?: boolean | string }): void;
 }
 
 export class FloatingFilterTextInputService extends BeanStub implements FloatingFilterInputService {
     private eFloatingFilterTextInput: AgInputTextField;
+    private valueChangedListener: (e: KeyboardEvent) => void = () => {};
 
-    constructor(private params: { config?: ITextInputField, ariaLabel: string }) {
+    constructor(private params?: { config?: ITextInputField }) {
         super();
     }
 
     public setupGui(parentElement: HTMLElement): void {
-        this.eFloatingFilterTextInput = this.createManagedBean(new AgInputTextField(this.params.config));
+        this.eFloatingFilterTextInput = this.createManagedBean(new AgInputTextField(this.params?.config));
 
-        this.eFloatingFilterTextInput.setInputAriaLabel(this.params.ariaLabel);
+        const eInput = this.eFloatingFilterTextInput.getGui();
 
-        parentElement.appendChild(this.eFloatingFilterTextInput.getGui());
+        parentElement.appendChild(eInput);
+
+        this.addManagedListener(eInput, 'input', (e: KeyboardEvent) => this.valueChangedListener(e));
+        this.addManagedListener(eInput, 'keydown', (e: KeyboardEvent) => this.valueChangedListener(e));
     }
 
     public setEditable(editable: boolean): void {
         this.eFloatingFilterTextInput.setDisabled(!editable);
+    }
+
+    public setAutoComplete(autoComplete: boolean | string): void {
+        this.eFloatingFilterTextInput.setAutoComplete(autoComplete);
     }
 
     public getValue(): string | null | undefined {
@@ -47,12 +57,35 @@ export class FloatingFilterTextInputService extends BeanStub implements Floating
         this.eFloatingFilterTextInput.setValue(value, silent);
     }
 
-    public addValueChangedListener(listener: () => void): void {
-        const inputGui = this.eFloatingFilterTextInput.getGui();
-        this.addManagedListener(inputGui, 'input', listener);
-        this.addManagedListener(inputGui, 'keydown', listener);
+    public setValueChangedListener(listener: (e: KeyboardEvent) => void): void {
+       this.valueChangedListener = listener;
+    }
+
+    public setParams(params: { ariaLabel: string, autoComplete?: boolean | string }): void {
+        this.setAriaLabel(params.ariaLabel);
+
+        if (params.autoComplete !== undefined) {
+            this.setAutoComplete(params.autoComplete);
+        }
+    }
+
+    private setAriaLabel(ariaLabel: string): void {
+        this.eFloatingFilterTextInput.setInputAriaLabel(ariaLabel);
     }
 }
+
+export interface ITextInputFloatingFilterParams extends IFloatingFilterParams<TextFilter | NumberFilter> {
+    /**
+     * Overrides the browser's autocomplete/autofill behaviour by updating the autocomplete attribute on the input field used in the floating filter input.
+     * Possible values are:
+     * - `true` to allow the **default** browser autocomplete/autofill behaviour.
+     * - `false` to disable the browser autocomplete/autofill behavior by setting the `autocomplete` attribute to `off`.
+     * - A **string** to be used as the [autocomplete](https://developer.mozilla.org/en-US/docs/Web/HTML/Attributes/autocomplete) attribute value.
+     * Some browsers do not respect setting the HTML attribute `autocomplete="off"` and display the auto-fill prompts anyway.
+     * Default: `false`
+     */
+    browserAutoComplete?: boolean | string;
+};
 
 type ModelUnion = TextFilterModel | NumberFilterModel;
 export abstract class TextInputFloatingFilter<M extends ModelUnion> extends SimpleFloatingFilter {
@@ -60,11 +93,11 @@ export abstract class TextInputFloatingFilter<M extends ModelUnion> extends Simp
     @RefSelector('eFloatingFilterInputContainer') private readonly eFloatingFilterInputContainer: HTMLElement;
     private floatingFilterInputService: FloatingFilterInputService;
 
-    protected params: IFloatingFilterParams<TextFilter | NumberFilter>;
+    protected params: ITextInputFloatingFilterParams;
 
     private applyActive: boolean;
 
-    protected abstract createFloatingFilterInputService(ariaLabel: string): FloatingFilterInputService;
+    protected abstract createFloatingFilterInputService(params: ITextInputFloatingFilterParams): FloatingFilterInputService;
 
     @PostConstruct
     private postConstruct(): void {
@@ -89,26 +122,53 @@ export abstract class TextInputFloatingFilter<M extends ModelUnion> extends Simp
         this.floatingFilterInputService.setValue(this.getFilterModelFormatter().getModelAsString(model));
     }
 
-    public init(params: IFloatingFilterParams<TextFilter | NumberFilter>): void {
+    public init(params: ITextInputFloatingFilterParams): void {
+        this.setupFloatingFilterInputService(params);
+        super.init(params);
+        this.setTextInputParams(params);
+    }
+
+    private setupFloatingFilterInputService(params: ITextInputFloatingFilterParams): void {
+        this.floatingFilterInputService = this.createFloatingFilterInputService(params);
+        this.floatingFilterInputService.setupGui(this.eFloatingFilterInputContainer);
+    }
+
+    private setTextInputParams(params: ITextInputFloatingFilterParams): void {
         this.params = params;
 
-        const displayName = this.columnModel.getDisplayNameForColumn(params.column, 'header', true);
-        const translate = this.localeService.getLocaleTextFunc();
-        const ariaLabel = `${displayName} ${translate('ariaFilterInput', 'Filter Input')}`
-
-        this.floatingFilterInputService = this.createFloatingFilterInputService(ariaLabel);
-        this.floatingFilterInputService.setupGui(this.eFloatingFilterInputContainer);
-
-        super.init(params);
+        const autoComplete = params.browserAutoComplete ?? false;
+        this.floatingFilterInputService.setParams({
+            ariaLabel: this.getAriaLabel(params),
+            autoComplete,
+        });
 
         this.applyActive = ProvidedFilter.isUseApplyButton(this.params.filterParams);
         
         if (!this.isReadOnly()) {
             const debounceMs = ProvidedFilter.getDebounceMs(this.params.filterParams, this.getDefaultDebounceMs());
-            const toDebounce: () => void = debounce(this.syncUpWithParentFilter.bind(this), debounceMs);
+            const toDebounce: (e: KeyboardEvent) => void = debounce(this.syncUpWithParentFilter.bind(this), debounceMs);
 
-            this.floatingFilterInputService.addValueChangedListener(toDebounce);
+            this.floatingFilterInputService.setValueChangedListener(toDebounce);
         }
+    }
+
+    public onParamsUpdated(params: ITextInputFloatingFilterParams): void {
+        super.onParamsUpdated(params);
+        this.setTextInputParams(params);
+    }
+
+    protected recreateFloatingFilterInputService(params: ITextInputFloatingFilterParams): void {
+        const value = this.floatingFilterInputService.getValue();
+        clearElement(this.eFloatingFilterInputContainer);
+        this.destroyBean(this.floatingFilterInputService);
+        this.setupFloatingFilterInputService(params);
+        this.floatingFilterInputService.setValue(value, true);
+    }
+
+    private getAriaLabel(params: ITextInputFloatingFilterParams): string {
+        const displayName = this.columnModel.getDisplayNameForColumn(params.column, 'header', true);
+        const translate = this.localeService.getLocaleTextFunc();
+        return `${displayName} ${translate('ariaFilterInput', 'Filter Input')}`
     }
 
     private syncUpWithParentFilter(e: KeyboardEvent): void {

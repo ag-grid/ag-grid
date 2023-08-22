@@ -6,17 +6,14 @@ import HeaderFilterCellComp from './headerFilterCellComp';
 import HeaderGroupCellComp from './headerGroupCellComp';
 const HeaderRowComp = (props) => {
     const { gridOptionsService } = useContext(BeansContext);
-    const [getTransform, setTransform] = createSignal();
+    const { ctrl } = props;
+    const [getTransform, setTransform] = createSignal(ctrl.getTransform());
     const [getHeight, setHeight] = createSignal();
     const [getTop, setTop] = createSignal();
     const [getWidth, setWidth] = createSignal();
-    const [getAriaRowIndex, setAriaRowIndex] = createSignal();
+    const [getAriaRowIndex, setAriaRowIndex] = createSignal(ctrl.getAriaRowIndex());
     const [getCellCtrls, setCellCtrls] = createSignal([]);
     let eGui;
-    const { ctrl } = props;
-    const typeColumn = ctrl.getType() === HeaderRowType.COLUMN;
-    const typeGroup = ctrl.getType() === HeaderRowType.COLUMN_GROUP;
-    const typeFilter = ctrl.getType() === HeaderRowType.FLOATING_FILTER;
     const setCellCtrlsMaintainOrder = (next) => {
         const prev = getCellCtrls();
         const isEnsureDomOrder = gridOptionsService.is('ensureDomOrder');
@@ -36,12 +33,10 @@ const HeaderRowComp = (props) => {
     };
     onMount(() => {
         const compProxy = {
-            setTransform: transform => setTransform(transform),
             setHeight: height => setHeight(height),
             setTop: top => setTop(top),
             setHeaderCtrls: ctrls => setCellCtrlsMaintainOrder(ctrls),
-            setWidth: width => setWidth(width),
-            setAriaRowIndex: rowIndex => setAriaRowIndex(rowIndex)
+            setWidth: width => setWidth(width)
         };
         ctrl.setComp(compProxy);
     });
@@ -51,11 +46,7 @@ const HeaderRowComp = (props) => {
         top: getTop(),
         width: getWidth()
     }));
-    const cssClassesList = [`ag-header-row`];
-    typeColumn && cssClassesList.push(`ag-header-row-column`);
-    typeGroup && cssClassesList.push(`ag-header-row-column-group`);
-    typeFilter && cssClassesList.push(`ag-header-row-column-filter`);
-    const cssClasses = cssClassesList.join(' ');
+    const cssClasses = ctrl.getHeaderRowClass();
     const createCellJsx = (cellCtrl) => {
         switch (ctrl.getType()) {
             case HeaderRowType.COLUMN_GROUP:

@@ -13,26 +13,19 @@ class MultiFloatingFilterComp extends core_1.Component {
     constructor() {
         super(/* html */ `<div class="ag-multi-floating-filter ag-floating-filter-input"></div>`);
         this.floatingFilters = [];
+        this.compDetailsList = [];
     }
     init(params) {
         this.params = params;
-        const filterParams = params.filterParams;
+        const { compDetailsList } = this.getCompDetailsList(params);
+        return this.setParams(compDetailsList);
+    }
+    setParams(compDetailsList) {
         const floatingFilterPromises = [];
-        multiFilter_1.MultiFilter.getFilterDefs(filterParams).forEach((filterDef, index) => {
-            const floatingFilterParams = Object.assign(Object.assign({}, params), { 
-                // set the parent filter instance for each floating filter to the relevant child filter instance
-                parentFilterInstance: (callback) => {
-                    this.parentMultiFilterInstance((parent) => {
-                        const child = parent.getChildFilterInstance(index);
-                        if (child == null) {
-                            return;
-                        }
-                        callback(child);
-                    });
-                } });
-            core_1._.mergeDeep(floatingFilterParams.filterParams, filterDef.filterParams);
-            const floatingFilterPromise = this.createFloatingFilter(filterDef, floatingFilterParams);
+        compDetailsList.forEach(compDetails => {
+            const floatingFilterPromise = compDetails === null || compDetails === void 0 ? void 0 : compDetails.newAgStackInstance();
             if (floatingFilterPromise != null) {
+                this.compDetailsList.push(compDetails);
                 floatingFilterPromises.push(floatingFilterPromise);
             }
         });
@@ -46,6 +39,51 @@ class MultiFloatingFilterComp extends core_1.Component {
                 }
             });
         });
+    }
+    onParamsUpdated(params) {
+        this.params = params;
+        const { compDetailsList: newCompDetailsList, floatingFilterParamsList } = this.getCompDetailsList(params);
+        const allFloatingFilterCompsUnchanged = newCompDetailsList.length === this.compDetailsList.length
+            && newCompDetailsList.every((newCompDetails, index) => !this.filterManager.areFilterCompsDifferent(this.compDetailsList[index], newCompDetails));
+        if (allFloatingFilterCompsUnchanged) {
+            floatingFilterParamsList.forEach((floatingFilterParams, index) => {
+                var _a;
+                const floatingFilter = this.floatingFilters[index];
+                (_a = floatingFilter.onParamsUpdated) === null || _a === void 0 ? void 0 : _a.call(floatingFilter, floatingFilterParams);
+            });
+        }
+        else {
+            core_1._.clearElement(this.getGui());
+            this.destroyBeans(this.floatingFilters);
+            this.floatingFilters = [];
+            this.compDetailsList = [];
+            this.setParams(newCompDetailsList);
+        }
+    }
+    getCompDetailsList(params) {
+        const compDetailsList = [];
+        const floatingFilterParamsList = [];
+        const filterParams = params.filterParams;
+        multiFilter_1.MultiFilter.getFilterDefs(filterParams).forEach((filterDef, index) => {
+            const floatingFilterParams = Object.assign(Object.assign({}, params), { 
+                // set the parent filter instance for each floating filter to the relevant child filter instance
+                parentFilterInstance: (callback) => {
+                    this.parentMultiFilterInstance((parent) => {
+                        const child = parent.getChildFilterInstance(index);
+                        if (child == null) {
+                            return;
+                        }
+                        callback(child);
+                    });
+                } });
+            core_1._.mergeDeep(floatingFilterParams.filterParams, filterDef.filterParams);
+            const compDetails = this.getCompDetails(filterDef, floatingFilterParams);
+            if (compDetails) {
+                compDetailsList.push(compDetails);
+                floatingFilterParamsList.push(floatingFilterParams);
+            }
+        });
+        return { compDetailsList, floatingFilterParamsList };
     }
     onParentModelChanged(model, event) {
         // We don't want to update the floating filter if the floating filter caused the change,
@@ -77,11 +115,10 @@ class MultiFloatingFilterComp extends core_1.Component {
         this.floatingFilters.length = 0;
         super.destroy();
     }
-    createFloatingFilter(filterDef, params) {
+    getCompDetails(filterDef, params) {
         var _a;
         let defaultComponentName = (_a = this.userComponentFactory.getDefaultFloatingFilterType(filterDef, () => this.filterManager.getDefaultFloatingFilter(this.params.column))) !== null && _a !== void 0 ? _a : 'agReadOnlyFloatingFilter';
-        const compDetails = this.userComponentFactory.getFloatingFilterCompDetails(filterDef, params, defaultComponentName);
-        return compDetails ? compDetails.newAgStackInstance() : null;
+        return this.userComponentFactory.getFloatingFilterCompDetails(filterDef, params, defaultComponentName);
     }
     parentMultiFilterInstance(cb) {
         this.params.parentFilterInstance((parent) => {

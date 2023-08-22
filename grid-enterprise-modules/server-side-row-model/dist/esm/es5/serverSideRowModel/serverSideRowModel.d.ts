@@ -18,12 +18,14 @@ export declare class ServerSideRowModel extends BeanStub implements IServerSideR
     private nodeManager;
     private storeFactory;
     private beans;
+    private pivotColDefService;
     private onRowHeightChanged_debounced;
     private rootNode;
     private datasource;
     private storeParams;
     private pauseStoreUpdateListening;
     private started;
+    private managingPivotResultColumns;
     ensureRowHeightsValid(): boolean;
     start(): void;
     private destroyDatasource;
@@ -34,6 +36,7 @@ export declare class ServerSideRowModel extends BeanStub implements IServerSideR
     private onColumnEverything;
     private destroyRootStore;
     refreshAfterSort(newSortModel: SortModelItem[], params: StoreRefreshAfterParams): void;
+    generateSecondaryColumns(pivotFields: string[]): void;
     resetRootStore(): void;
     columnsToValueObjects(columns: Column[]): ColumnVO[];
     private createStoreParams;

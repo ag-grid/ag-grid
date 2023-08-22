@@ -60,6 +60,7 @@ var GridHeaderCtrl = /** @class */ (function (_super) {
         this.addManagedListener(this.eventService, eventKeys_1.Events.EVENT_DISPLAYED_COLUMNS_CHANGED, listener);
         this.addManagedListener(this.eventService, eventKeys_1.Events.EVENT_COLUMN_HEADER_HEIGHT_CHANGED, listener);
         this.addManagedListener(this.eventService, eventKeys_1.Events.EVENT_GRID_STYLES_CHANGED, listener);
+        this.addManagedListener(this.eventService, eventKeys_1.Events.EVENT_ADVANCED_FILTER_ENABLED_CHANGED, listener);
     };
     GridHeaderCtrl.prototype.getHeaderHeight = function () {
         return this.headerHeight;
@@ -69,7 +70,7 @@ var GridHeaderCtrl = /** @class */ (function (_super) {
         var numberOfFloating = 0;
         var headerRowCount = columnModel.getHeaderRowCount();
         var totalHeaderHeight;
-        var hasFloatingFilters = columnModel.hasFloatingFilters();
+        var hasFloatingFilters = this.filterManager.hasFloatingFilters();
         if (hasFloatingFilters) {
             headerRowCount++;
             numberOfFloating = 1;
@@ -160,6 +161,9 @@ var GridHeaderCtrl = /** @class */ (function (_super) {
     __decorate([
         context_1.Autowired('ctrlsService')
     ], GridHeaderCtrl.prototype, "ctrlsService", void 0);
+    __decorate([
+        context_1.Autowired('filterManager')
+    ], GridHeaderCtrl.prototype, "filterManager", void 0);
     return GridHeaderCtrl;
 }(beanStub_1.BeanStub));
 exports.GridHeaderCtrl = GridHeaderCtrl;

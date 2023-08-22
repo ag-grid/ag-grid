@@ -302,7 +302,11 @@ export class SetFilter extends ProvidedFilter {
         const translate = this.localeService.getLocaleTextFunc();
         const filterListName = translate('ariaFilterList', 'Filter List');
         const isTree = !!this.setFilterParams.treeList;
-        const virtualList = this.virtualList = this.createBean(new VirtualList('filter', isTree ? 'tree' : 'listbox', filterListName));
+        const virtualList = this.virtualList = this.createBean(new VirtualList({
+            cssIdentifier: 'filter',
+            ariaRole: isTree ? 'tree' : 'listbox',
+            listName: filterListName
+        }));
         const eSetFilterList = this.getRefElement('eSetFilterList');
         if (isTree) {
             eSetFilterList.classList.add('ag-set-filter-tree-list');

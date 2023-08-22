@@ -4,7 +4,7 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
-import { AgCheckbox, Autowired, Component, Events, PreConstruct, RefSelector } from "@ag-grid-community/core";
+import { Autowired, Component, Events, PreConstruct, RefSelector } from "@ag-grid-community/core";
 export class PivotModePanel extends Component {
     createTemplate() {
         return /* html */ `<div class="ag-pivot-mode-panel">
@@ -16,7 +16,7 @@ export class PivotModePanel extends Component {
         this.cbPivotMode.setValue(this.columnModel.isPivotMode());
         const localeTextFunc = this.localeService.getLocaleTextFunc();
         this.cbPivotMode.setLabel(localeTextFunc('pivotMode', 'Pivot Mode'));
-        this.addManagedListener(this.cbPivotMode, AgCheckbox.EVENT_CHANGED, this.onBtPivotMode.bind(this));
+        this.addManagedListener(this.cbPivotMode, Events.EVENT_FIELD_VALUE_CHANGED, this.onBtPivotMode.bind(this));
         this.addManagedListener(this.eventService, Events.EVENT_NEW_COLUMNS_LOADED, this.onPivotModeChanged.bind(this));
         this.addManagedListener(this.eventService, Events.EVENT_COLUMN_PIVOT_MODE_CHANGED, this.onPivotModeChanged.bind(this));
     }

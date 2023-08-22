@@ -291,8 +291,10 @@ var GroupSelectsChildrenStrategy = /** @class */ (function (_super) {
         // if this is the last node, hard add/remove based on its selectAllChildren state
         var isLastNode = !nodes.length;
         if (isLastNode) {
-            var needsDeleted = selectedState.selectAllChildren === params.newValue;
-            if (needsDeleted) {
+            // if the node is not selectable, we should never have it in selection state
+            var isNodeSelectable = nextNode.selectable;
+            var doesNodeConform = selectedState.selectAllChildren === params.newValue;
+            if (doesNodeConform || !isNodeSelectable) {
                 selectedState.toggledNodes.delete(nextNode.id);
                 return;
             }

@@ -39,9 +39,8 @@ const RowComp = (params) => {
     const { rowCtrl, containerType } = params;
     const [getRowIndex, setRowIndex] = createSignal();
     const [getRowId, setRowId] = createSignal();
-    const [getRole, setRole] = createSignal();
     const [getRowBusinessKey, setRowBusinessKey] = createSignal();
-    const [getTabIndex, setTabIndex] = createSignal();
+    const [getTabIndex, setTabIndex] = createSignal(rowCtrl.getTabIndex());
     const [getUserStyles, setUserStyles] = createSignal();
     const [getCellCtrls, setCellCtrls] = createSignal({ list: [], instanceIdMap: new Map() });
     const [getFullWidthCompDetails, setFullWidthCompDetails] = createSignal();
@@ -99,9 +98,7 @@ const RowComp = (params) => {
             setRowIndex: value => setRowIndex(value),
             setRowId: value => setRowId(value),
             setRowBusinessKey: value => setRowBusinessKey(value),
-            setTabIndex: value => setTabIndex(value),
             setUserStyles: (styles) => setUserStyles(styles),
-            setRole: value => setRole(value),
             // if we don't maintain the order, then cols will be ripped out and into the dom
             // when cols reordered, which would stop the CSS transitions from working
             setCellCtrls: next => setCellCtrls(maintainOrderOnColumns(getCellCtrls(), next, getDomOrder())),
@@ -123,9 +120,7 @@ const RowComp = (params) => {
     const isShowFullWidth = createMemo(() => getFullWidthCompDetails() != null);
     const showCellsJsx = () => (<For each={getCellCtrls().list}>{cellCtrl => <CellComp cellCtrl={cellCtrl} editingRow={rowCtrl.isEditing()} printLayout={rowCtrl.isPrintLayout()}/>}</For>);
     const showFullWidthJsx = () => (<UserComp compDetails={getFullWidthCompDetails()} ref={setFullWidthRef}/>);
-    return (<div ref={eGui} 
-    // role={ role() } /// FIXME
-    style={getRowStyles()} row-index={getRowIndex()} row-id={getRowId()} row-business-key={getRowBusinessKey()} tabIndex={getTabIndex()}>
+    return (<div ref={eGui} role='row' style={getRowStyles()} row-index={getRowIndex()} row-id={getRowId()} row-business-key={getRowBusinessKey()} tabIndex={getTabIndex()}>
             {isShowFullWidth() && showFullWidthJsx()}
             {isShowCells() && showCellsJsx()}
 

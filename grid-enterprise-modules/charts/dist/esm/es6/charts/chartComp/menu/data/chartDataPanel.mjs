@@ -4,7 +4,7 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
-import { _, AgAbstractField, AgCheckbox, AgGroupComponent, AgRadioButton, AgSelect, AgToggleButton, AutoScrollService, Autowired, Component, DragAndDropService, DragSourceType, PostConstruct } from "@ag-grid-community/core";
+import { _, AgCheckbox, AgGroupComponent, AgRadioButton, AgSelect, AgToggleButton, AutoScrollService, Autowired, Component, DragAndDropService, DragSourceType, Events, PostConstruct } from "@ag-grid-community/core";
 import { ChartController } from "../../chartController.mjs";
 const DefaultDataPanelDef = {
     groups: [
@@ -130,7 +130,7 @@ export class ChartDataPanel extends Component {
         parent.insertBefore(eDiv, parent.children[index]);
     }
     addChangeListener(component, columnState) {
-        this.addManagedListener(component, AgAbstractField.EVENT_CHANGED, () => {
+        this.addManagedListener(component, Events.EVENT_FIELD_VALUE_CHANGED, () => {
             columnState.selected = component.getValue();
             this.chartController.updateForPanelChange(columnState);
         });

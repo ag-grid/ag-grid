@@ -42,7 +42,6 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl {
         this.setupAutoHeight(eHeaderCompWrapper);
         this.addColumnHoverListener();
         this.setupFilterCss();
-        this.setupColId();
         this.setupClassesFromColDef();
         this.setupTooltip();
         this.addActiveHeaderMouseListeners();
@@ -65,6 +64,7 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl {
         this.addManagedListener(this.eventService, Events.EVENT_COLUMN_ROW_GROUP_CHANGED, this.onColumnRowGroupChanged.bind(this));
         this.addManagedListener(this.eventService, Events.EVENT_COLUMN_PIVOT_CHANGED, this.onColumnPivotChanged.bind(this));
         this.addManagedListener(this.eventService, Events.EVENT_HEADER_HEIGHT_CHANGED, this.onHeaderHeightChanged.bind(this));
+        this.addManagedListener(this.eventService, Events.EVENT_DISPLAYED_COLUMNS_CHANGED, this.onHeaderHeightChanged.bind(this));
     }
     addMouseDownListenerIfNeeded(eGui) {
         // we add a preventDefault in the DragService for Safari only
@@ -181,7 +181,7 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl {
             },
         };
         const tooltipFeature = this.createManagedBean(new TooltipFeature(tooltipCtrl, this.beans));
-        tooltipFeature.setComp(this.comp);
+        tooltipFeature.setComp(this.eGui);
         this.refreshFunctions.push(() => tooltipFeature.refreshToolTip());
     }
     setupClassesFromColDef() {
@@ -378,7 +378,12 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl {
         }
         const { numberOfParents, isSpanningTotal } = this.getColumnGroupPaddingInfo();
         comp.addOrRemoveCssClass('ag-header-span-height', numberOfParents > 0);
+        const headerHeight = columnModel.getColumnHeaderRowHeight();
         if (numberOfParents === 0) {
+            // if spanning has stopped then need to reset these values.
+            comp.addOrRemoveCssClass('ag-header-span-total', false);
+            eGui.style.setProperty('top', `0px`);
+            eGui.style.setProperty('height', `${headerHeight}px`);
             return;
         }
         comp.addOrRemoveCssClass('ag-header-span-total', isSpanningTotal);
@@ -386,7 +391,6 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl {
         const groupHeaderHeight = pivotMode
             ? columnModel.getPivotGroupHeaderHeight()
             : columnModel.getGroupHeaderHeight();
-        const headerHeight = columnModel.getColumnHeaderRowHeight();
         const extraHeight = numberOfParents * groupHeaderHeight;
         eGui.style.setProperty('top', `${-extraHeight}px`);
         eGui.style.setProperty('height', `${headerHeight + extraHeight}px`);
@@ -527,8 +531,8 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl {
         this.addManagedListener(this.column, Column.EVENT_FILTER_ACTIVE_CHANGED, listener);
         listener();
     }
-    setupColId() {
-        this.comp.setColId(this.column.getColId());
+    getColId() {
+        return this.column.getColId();
     }
     addActiveHeaderMouseListeners() {
         const listener = (e) => this.setActiveHeader(e.type === 'mouseenter');

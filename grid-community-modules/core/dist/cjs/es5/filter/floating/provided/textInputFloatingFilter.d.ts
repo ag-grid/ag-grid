@@ -1,4 +1,4 @@
-// Type definitions for @ag-grid-community/core v30.0.6
+// Type definitions for @ag-grid-community/core v30.1.0
 // Project: https://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { IFloatingFilterParams } from '../floatingFilter';
@@ -13,33 +13,60 @@ export interface FloatingFilterInputService {
     setEditable(editable: boolean): void;
     getValue(): string | null | undefined;
     setValue(value: string | null | undefined, silent?: boolean): void;
-    addValueChangedListener(listener: () => void): void;
+    setValueChangedListener(listener: (e: KeyboardEvent) => void): void;
+    setParams(params: {
+        ariaLabel: string;
+        autoComplete?: boolean | string;
+    }): void;
 }
 export declare class FloatingFilterTextInputService extends BeanStub implements FloatingFilterInputService {
-    private params;
+    private params?;
     private eFloatingFilterTextInput;
-    constructor(params: {
-        config?: ITextInputField;
-        ariaLabel: string;
-    });
+    private valueChangedListener;
+    constructor(params?: {
+        config?: ITextInputField | undefined;
+    } | undefined);
     setupGui(parentElement: HTMLElement): void;
     setEditable(editable: boolean): void;
+    setAutoComplete(autoComplete: boolean | string): void;
     getValue(): string | null | undefined;
     setValue(value: string | null | undefined, silent?: boolean): void;
-    addValueChangedListener(listener: () => void): void;
+    setValueChangedListener(listener: (e: KeyboardEvent) => void): void;
+    setParams(params: {
+        ariaLabel: string;
+        autoComplete?: boolean | string;
+    }): void;
+    private setAriaLabel;
+}
+export interface ITextInputFloatingFilterParams extends IFloatingFilterParams<TextFilter | NumberFilter> {
+    /**
+     * Overrides the browser's autocomplete/autofill behaviour by updating the autocomplete attribute on the input field used in the floating filter input.
+     * Possible values are:
+     * - `true` to allow the **default** browser autocomplete/autofill behaviour.
+     * - `false` to disable the browser autocomplete/autofill behavior by setting the `autocomplete` attribute to `off`.
+     * - A **string** to be used as the [autocomplete](https://developer.mozilla.org/en-US/docs/Web/HTML/Attributes/autocomplete) attribute value.
+     * Some browsers do not respect setting the HTML attribute `autocomplete="off"` and display the auto-fill prompts anyway.
+     * Default: `false`
+     */
+    browserAutoComplete?: boolean | string;
 }
 declare type ModelUnion = TextFilterModel | NumberFilterModel;
 export declare abstract class TextInputFloatingFilter<M extends ModelUnion> extends SimpleFloatingFilter {
     private readonly columnModel;
     private readonly eFloatingFilterInputContainer;
     private floatingFilterInputService;
-    protected params: IFloatingFilterParams<TextFilter | NumberFilter>;
+    protected params: ITextInputFloatingFilterParams;
     private applyActive;
-    protected abstract createFloatingFilterInputService(ariaLabel: string): FloatingFilterInputService;
+    protected abstract createFloatingFilterInputService(params: ITextInputFloatingFilterParams): FloatingFilterInputService;
     private postConstruct;
     protected getDefaultDebounceMs(): number;
     onParentModelChanged(model: M, event: FilterChangedEvent): void;
-    init(params: IFloatingFilterParams<TextFilter | NumberFilter>): void;
+    init(params: ITextInputFloatingFilterParams): void;
+    private setupFloatingFilterInputService;
+    private setTextInputParams;
+    onParamsUpdated(params: ITextInputFloatingFilterParams): void;
+    protected recreateFloatingFilterInputService(params: ITextInputFloatingFilterParams): void;
+    private getAriaLabel;
     private syncUpWithParentFilter;
     protected setEditable(editable: boolean): void;
 }

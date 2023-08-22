@@ -49,6 +49,9 @@ class ReadOnlyFloatingFilter extends component_1.Component {
             }
         });
     }
+    onParamsUpdated(params) {
+        this.init(params);
+    }
 }
 __decorate([
     componentAnnotations_1.RefSelector('eFloatingFilterText')

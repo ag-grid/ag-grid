@@ -203,7 +203,7 @@ var DropZoneColumnComp = /** @class */ (function (_super) {
             return;
         }
         this.popupShowing = true;
-        var virtualList = new core_1.VirtualList('select-agg-func');
+        var virtualList = new core_1.VirtualList({ cssIdentifier: 'select-agg-func' });
         var rows = this.aggFuncService.getFuncNames(this.column);
         var eGui = this.getGui();
         var virtualListGui = virtualList.getGui();

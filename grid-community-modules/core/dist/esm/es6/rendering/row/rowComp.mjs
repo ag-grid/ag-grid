@@ -12,6 +12,12 @@ export class RowComp extends Component {
         this.setTemplate(/* html */ `<div comp-id="${this.getCompId()}" style="${this.getInitialStyle(containerType)}"/>`);
         const eGui = this.getGui();
         const style = eGui.style;
+        this.domOrder = this.rowCtrl.getDomOrder();
+        setAriaRole(eGui, 'row');
+        const tabIndex = this.rowCtrl.getTabIndex();
+        if (tabIndex != null) {
+            eGui.setAttribute('tabindex', tabIndex.toString());
+        }
         const compProxy = {
             setDomOrder: domOrder => this.domOrder = domOrder,
             setCellCtrls: cellCtrls => this.setCellCtrls(cellCtrls),
@@ -22,10 +28,8 @@ export class RowComp extends Component {
             setTop: top => style.top = top,
             setTransform: transform => style.transform = transform,
             setRowIndex: rowIndex => eGui.setAttribute('row-index', rowIndex),
-            setRole: role => setAriaRole(eGui, role),
             setRowId: (rowId) => eGui.setAttribute('row-id', rowId),
             setRowBusinessKey: businessKey => eGui.setAttribute('row-business-key', businessKey),
-            setTabIndex: tabIndex => eGui.setAttribute('tabindex', tabIndex.toString())
         };
         ctrl.setComp(compProxy, this.getGui(), containerType);
         this.addDestroyFunc(() => {

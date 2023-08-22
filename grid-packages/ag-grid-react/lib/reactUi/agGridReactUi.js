@@ -1,4 +1,4 @@
-// ag-grid-react v30.0.6
+// ag-grid-react v30.1.0
 "use strict";
 var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
@@ -79,7 +79,14 @@ var AgGridReactUi = function (props) {
     }, []);
     // Hook to enable Portals to be displayed via the PortalManager
     var _d = react_1.useState(0), setPortalRefresher = _d[1];
-    react_1.useLayoutEffect(function () {
+    var setRef = react_1.useCallback(function (e) {
+        eGui.current = e;
+        if (!eGui.current) {
+            debug('AgGridReactUi.destroy');
+            destroyFuncs.current.forEach(function (f) { return f(); });
+            destroyFuncs.current.length = 0;
+            return;
+        }
         var modules = props.modules || [];
         if (!portalManager.current) {
             portalManager.current = new portalManager_1.PortalManager(function () { return setPortalRefresher(function (prev) { return prev + 1; }); }, props.componentWrappingElement, props.maxComponentCreationTimeMs);
@@ -112,15 +119,11 @@ var AgGridReactUi = function (props) {
                     return;
                 }
                 if (gridOptionsRef.current) {
-                    var api_1 = gridOptionsRef.current.api;
-                    if (api_1) {
+                    var api = gridOptionsRef.current.api;
+                    if (api) {
                         if (props.setGridApi) {
-                            props.setGridApi(api_1, gridOptionsRef.current.columnApi);
+                            props.setGridApi(api, gridOptionsRef.current.columnApi);
                         }
-                        destroyFuncs.current.push(function () {
-                            // Take local reference to api above so correct api gets destroyed on unmount.
-                            api_1.destroy();
-                        });
                     }
                 }
             });
@@ -139,11 +142,6 @@ var AgGridReactUi = function (props) {
         };
         var gridCoreCreator = new ag_grid_community_1.GridCoreCreator();
         gridCoreCreator.create(eGui.current, gridOptionsRef.current, createUiCallback, acceptChangesCallback, gridParams);
-        return function () {
-            debug('AgGridReactUi.destroy');
-            destroyFuncs.current.forEach(function (f) { return f(); });
-            destroyFuncs.current.length = 0;
-        };
     }, []);
     var style = react_1.useMemo(function () {
         return __assign({ height: '100%' }, (props.containerStyle || {}));
@@ -169,7 +167,7 @@ var AgGridReactUi = function (props) {
             }
         });
     }, [props]);
-    return (react_1.default.createElement("div", { style: style, className: props.className, ref: eGui },
+    return (react_1.default.createElement("div", { style: style, className: props.className, ref: setRef },
         context && !context.isDestroyed() ? react_1.default.createElement(gridComp_1.default, { context: context }) : null, (_b = (_a = portalManager.current) === null || _a === void 0 ? void 0 : _a.getPortals()) !== null && _b !== void 0 ? _b : null));
 };
 exports.AgGridReactUi = AgGridReactUi;

@@ -6,8 +6,8 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 };
 import { RefSelector } from "./componentAnnotations.mjs";
 import { AgAbstractLabel } from "./agAbstractLabel.mjs";
-import { AgAbstractField } from "./agAbstractField.mjs";
 import { PostConstruct } from "../context/context.mjs";
+import { Events } from "../eventKeys.mjs";
 export class AgSlider extends AgAbstractLabel {
     constructor(config) {
         super(config, AgSlider.TEMPLATE);
@@ -17,7 +17,7 @@ export class AgSlider extends AgAbstractLabel {
         this.eSlider.addCssClass('ag-slider-field');
     }
     onValueChange(callbackFn) {
-        const eventChanged = AgAbstractField.EVENT_CHANGED;
+        const eventChanged = Events.EVENT_FIELD_VALUE_CHANGED;
         this.addManagedListener(this.eText, eventChanged, () => {
             const textValue = parseFloat(this.eText.getValue());
             this.eSlider.setValue(textValue.toString(), true);
@@ -57,7 +57,7 @@ export class AgSlider extends AgAbstractLabel {
         }
         this.eText.setValue(value, true);
         this.eSlider.setValue(value, true);
-        this.dispatchEvent({ type: AgAbstractField.EVENT_CHANGED });
+        this.dispatchEvent({ type: Events.EVENT_FIELD_VALUE_CHANGED });
         return this;
     }
     setStep(step) {

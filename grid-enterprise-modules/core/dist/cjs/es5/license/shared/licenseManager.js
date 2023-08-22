@@ -299,7 +299,7 @@ var LicenseManager = /** @class */ (function () {
         console.error('****************************************************************************************************************************');
         this.watermarkMessage = "License Expired";
     };
-    LicenseManager.RELEASE_INFORMATION = 'MTY5MDI5NDc3MDg0Mg==';
+    LicenseManager.RELEASE_INFORMATION = 'MTY5MjU1NDg5NTU1NA==';
     return LicenseManager;
 }());
 exports.LicenseManager = LicenseManager;

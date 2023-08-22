@@ -1,4 +1,4 @@
-// Type definitions for @ag-grid-community/core v30.0.6
+// Type definitions for @ag-grid-community/core v30.1.0
 // Project: https://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { BeanStub } from "../context/beanStub";
@@ -11,6 +11,7 @@ export declare class GridHeaderCtrl extends BeanStub {
     private focusService;
     private columnModel;
     private ctrlsService;
+    private filterManager;
     private comp;
     private eGui;
     private headerHeight;

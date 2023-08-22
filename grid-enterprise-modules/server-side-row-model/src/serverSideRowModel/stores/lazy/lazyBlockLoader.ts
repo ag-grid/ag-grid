@@ -72,6 +72,11 @@ export class LazyBlockLoader extends BeanStub {
                 nodeToRefresh = node;
                 return;
             }
+
+            if(this.isRowLoading(node.rowIndex)) {
+                return;
+            }
+        
             const distToViewportTop = Math.abs(firstRowInViewport - node.rowIndex);
             const distToViewportBottom = Math.abs(node.rowIndex - lastRowInViewport);
             if (distToViewportTop < nodeToRefreshDist) {
@@ -152,9 +157,6 @@ export class LazyBlockLoader extends BeanStub {
 
     private getNextBlockToLoad(): [string, number] | null {
         const result = this.getBlockToLoad();
-        if (result != null && result < 0) {
-            this.getBlockToLoad();
-        }
         if (result != null) {
             return [String(result), result + this.getBlockSize()];
         }

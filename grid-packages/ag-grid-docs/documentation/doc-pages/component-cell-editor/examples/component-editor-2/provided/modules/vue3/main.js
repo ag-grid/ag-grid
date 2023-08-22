@@ -16,7 +16,7 @@ ModuleRegistry.registerModules([ClientSideRowModelModule, RichSelectModule]);
 class CountryCellRenderer {
     init(params) {
         this.eGui = document.createElement('div');
-        this.eGui.innerHTML = `${params.value.name}`;
+        this.eGui.innerHTML = `<span style="overflow: hidden; text-overflow: ellipsis">${params.value.name}</span>`;
     }
 
     getGui() {
@@ -70,7 +70,6 @@ const VueExample = {
                     editable: true,
                     cellRenderer: 'GenderRenderer',
                     cellEditor: 'agRichSelectCellEditor',
-                    cellEditorPopup: true,
                     cellEditorParams: {
                         cellRenderer: 'GenderRenderer',
                         values: ['Male', 'Female'],
@@ -94,7 +93,6 @@ const VueExample = {
                     field: 'country',
                     width: 110,
                     cellEditor: 'agRichSelectCellEditor',
-                    cellEditorPopup: true,
                     cellRenderer: CountryCellRenderer,
                     keyCreator: (params) => {
                         return params.value.name;

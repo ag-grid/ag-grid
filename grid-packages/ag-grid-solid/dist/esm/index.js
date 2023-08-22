@@ -392,9 +392,11 @@ class SolidFrameworkOverrides extends VanillaFrameworkOverrides {
 
 const _tmpl$$d = /*#__PURE__*/template(`<div class="ag-header-cell" role="columnheader" tabindex="-1"><div class="ag-header-cell-resize" role="presentation"></div><div class="ag-header-cell-comp-wrapper" role="presentation">`);
 const HeaderCellComp = props => {
+  const {
+    ctrl
+  } = props;
   const [getWidth, setWidth] = createSignal();
-  const [getTitle, setTitle] = createSignal();
-  const [getColId, setColId] = createSignal();
+  const [getColId, setColId] = createSignal(ctrl.getColId());
   const [getAriaSort, setAriaSort] = createSignal();
   const [getAriaDescription, setAriaDescription] = createSignal();
   const [getUserCompDetails, setUserCompDetails] = createSignal();
@@ -405,16 +407,11 @@ const HeaderCellComp = props => {
   const setRef = ref => {
     userComp = ref;
   };
-  const {
-    ctrl
-  } = props;
   const cssClassManager = new CssClassManager(() => eGui);
   onMount(() => {
     const compProxy = {
       setWidth: width => setWidth(width),
       addOrRemoveCssClass: (name, on) => cssClassManager.addOrRemoveCssClass(name, on),
-      setColId: id => setColId(id),
-      setTitle: title => setTitle(title),
       setAriaDescription: description => setAriaDescription(description),
       setAriaSort: sort => setAriaSort(sort),
       setUserCompDetails: compDetails => setUserCompDetails(compDetails),
@@ -463,22 +460,19 @@ const HeaderCellComp = props => {
     })());
     effect(_p$ => {
       const _v$ = style$1(),
-        _v$2 = getTitle(),
-        _v$3 = getColId(),
-        _v$4 = getAriaSort(),
-        _v$5 = getAriaDescription();
+        _v$2 = getColId(),
+        _v$3 = getAriaSort(),
+        _v$4 = getAriaDescription();
       _p$._v$ = style(_el$, _v$, _p$._v$);
-      _v$2 !== _p$._v$2 && setAttribute(_el$, "title", _p$._v$2 = _v$2);
-      _v$3 !== _p$._v$3 && setAttribute(_el$, "col-id", _p$._v$3 = _v$3);
-      _v$4 !== _p$._v$4 && setAttribute(_el$, "aria-sort", _p$._v$4 = _v$4);
-      _v$5 !== _p$._v$5 && setAttribute(_el$, "aria-description", _p$._v$5 = _v$5);
+      _v$2 !== _p$._v$2 && setAttribute(_el$, "col-id", _p$._v$2 = _v$2);
+      _v$3 !== _p$._v$3 && setAttribute(_el$, "aria-sort", _p$._v$3 = _v$3);
+      _v$4 !== _p$._v$4 && setAttribute(_el$, "aria-description", _p$._v$4 = _v$4);
       return _p$;
     }, {
       _v$: undefined,
       _v$2: undefined,
       _v$3: undefined,
-      _v$4: undefined,
-      _v$5: undefined
+      _v$4: undefined
     });
     return _el$;
   })();
@@ -590,25 +584,22 @@ const HeaderFilterCellComp = props => {
 
 const _tmpl$$b = /*#__PURE__*/template(`<div role="columnheader" tabindex="-1"><div>`);
 const HeaderGroupCellComp = props => {
+  const {
+    ctrl
+  } = props;
   const [getCssClasses, setCssClasses] = createSignal(new CssClasses());
   const [getCssResizableClasses, setResizableCssClasses] = createSignal(new CssClasses());
   const [getResizableAriaHidden, setResizableAriaHidden] = createSignal("false");
   const [getWidth, setWidth] = createSignal();
-  const [getTitle, setTitle] = createSignal();
-  const [getColId, setColId] = createSignal();
+  const [getColId, setColId] = createSignal(ctrl.getColId());
   const [getAriaExpanded, setAriaExpanded] = createSignal();
   const [getUserCompDetails, setUserCompDetails] = createSignal();
   let eGui;
   let eResize;
-  const {
-    ctrl
-  } = props;
   onMount(() => {
     const compProxy = {
       setWidth: width => setWidth(width),
       addOrRemoveCssClass: (name, on) => setCssClasses(getCssClasses().setClass(name, on)),
-      setColId: id => setColId(id),
-      setTitle: title => setTitle(title),
       setUserCompDetails: compDetails => setUserCompDetails(compDetails),
       setResizableDisplayed: displayed => {
         setResizableCssClasses(prev => prev.setClass('ag-hidden', !displayed));
@@ -650,18 +641,16 @@ const HeaderGroupCellComp = props => {
     effect(_p$ => {
       const _v$ = getClassName(),
         _v$2 = style$1(),
-        _v$3 = getTitle(),
-        _v$4 = getColId(),
-        _v$5 = getAriaExpanded(),
-        _v$6 = getResizableAriaHidden(),
-        _v$7 = getResizableClassName();
+        _v$3 = getColId(),
+        _v$4 = getAriaExpanded(),
+        _v$5 = getResizableAriaHidden(),
+        _v$6 = getResizableClassName();
       _v$ !== _p$._v$ && className(_el$, _p$._v$ = _v$);
       _p$._v$2 = style(_el$, _v$2, _p$._v$2);
-      _v$3 !== _p$._v$3 && setAttribute(_el$, "title", _p$._v$3 = _v$3);
-      _v$4 !== _p$._v$4 && setAttribute(_el$, "col-id", _p$._v$4 = _v$4);
-      _v$5 !== _p$._v$5 && setAttribute(_el$, "aria-expanded", _p$._v$5 = _v$5);
-      _v$6 !== _p$._v$6 && setAttribute(_el$2, "aria-hidden", _p$._v$6 = _v$6);
-      _v$7 !== _p$._v$7 && className(_el$2, _p$._v$7 = _v$7);
+      _v$3 !== _p$._v$3 && setAttribute(_el$, "col-id", _p$._v$3 = _v$3);
+      _v$4 !== _p$._v$4 && setAttribute(_el$, "aria-expanded", _p$._v$4 = _v$4);
+      _v$5 !== _p$._v$5 && setAttribute(_el$2, "aria-hidden", _p$._v$5 = _v$5);
+      _v$6 !== _p$._v$6 && className(_el$2, _p$._v$6 = _v$6);
       return _p$;
     }, {
       _v$: undefined,
@@ -669,8 +658,7 @@ const HeaderGroupCellComp = props => {
       _v$3: undefined,
       _v$4: undefined,
       _v$5: undefined,
-      _v$6: undefined,
-      _v$7: undefined
+      _v$6: undefined
     });
     return _el$;
   })();
@@ -681,19 +669,16 @@ const HeaderRowComp = props => {
   const {
     gridOptionsService
   } = useContext(BeansContext);
-  const [getTransform, setTransform] = createSignal();
-  const [getHeight, setHeight] = createSignal();
-  const [getTop, setTop] = createSignal();
-  const [getWidth, setWidth] = createSignal();
-  const [getAriaRowIndex, setAriaRowIndex] = createSignal();
-  const [getCellCtrls, setCellCtrls] = createSignal([]);
-  let eGui;
   const {
     ctrl
   } = props;
-  const typeColumn = ctrl.getType() === HeaderRowType.COLUMN;
-  const typeGroup = ctrl.getType() === HeaderRowType.COLUMN_GROUP;
-  const typeFilter = ctrl.getType() === HeaderRowType.FLOATING_FILTER;
+  const [getTransform, setTransform] = createSignal(ctrl.getTransform());
+  const [getHeight, setHeight] = createSignal();
+  const [getTop, setTop] = createSignal();
+  const [getWidth, setWidth] = createSignal();
+  const [getAriaRowIndex, setAriaRowIndex] = createSignal(ctrl.getAriaRowIndex());
+  const [getCellCtrls, setCellCtrls] = createSignal([]);
+  let eGui;
   const setCellCtrlsMaintainOrder = next => {
     const prev = getCellCtrls();
     const isEnsureDomOrder = gridOptionsService.is('ensureDomOrder');
@@ -715,12 +700,10 @@ const HeaderRowComp = props => {
   };
   onMount(() => {
     const compProxy = {
-      setTransform: transform => setTransform(transform),
       setHeight: height => setHeight(height),
       setTop: top => setTop(top),
       setHeaderCtrls: ctrls => setCellCtrlsMaintainOrder(ctrls),
-      setWidth: width => setWidth(width),
-      setAriaRowIndex: rowIndex => setAriaRowIndex(rowIndex)
+      setWidth: width => setWidth(width)
     };
     ctrl.setComp(compProxy);
   });
@@ -730,11 +713,7 @@ const HeaderRowComp = props => {
     top: getTop(),
     width: getWidth()
   }));
-  const cssClassesList = [`ag-header-row`];
-  typeColumn && cssClassesList.push(`ag-header-row-column`);
-  typeGroup && cssClassesList.push(`ag-header-row-column-group`);
-  typeFilter && cssClassesList.push(`ag-header-row-column-filter`);
-  const cssClasses = cssClassesList.join(' ');
+  const cssClasses = ctrl.getHeaderRowClass();
   const createCellJsx = cellCtrl => {
     switch (ctrl.getType()) {
       case HeaderRowType.COLUMN_GROUP:
@@ -1134,7 +1113,7 @@ const ShowRenderDetails = props => {
   })())];
 };
 
-const _tmpl$$6 = /*#__PURE__*/template(`<div> `),
+const _tmpl$$6 = /*#__PURE__*/template(`<div role="gridcell"> `),
   _tmpl$2$1 = /*#__PURE__*/template(`<div class="ag-cell-wrapper" role="presentation">`);
 const checkCellEditorDeprecations = (popup, cellEditor, cellCtrl) => {
   const col = cellCtrl.getColumn();
@@ -1162,10 +1141,8 @@ const CellComp = props => {
   let renderCompVersion = 0;
   const [renderCompVersionList, setRenderCompVersionList] = createSignal([renderCompVersion]);
   const [userStyles, setUserStyles] = createSignal();
-  const [tabIndex, setTabIndex] = createSignal();
-  const [role, setRole] = createSignal();
-  const [colId, setColId] = createSignal();
-  const [title, setTitle] = createSignal();
+  const [tabIndex, setTabIndex] = createSignal(cellCtrl.getTabIndex());
+  const [colId, setColId] = createSignal(cellCtrl.getColumnIdSanitised());
   const [selectionCheckboxId, setSelectionCheckboxId] = createSignal();
   const [includeSelection, setIncludeSelection] = createSignal(false);
   const [includeRowDrag, setIncludeRowDrag] = createSignal(false);
@@ -1212,10 +1189,6 @@ const CellComp = props => {
       addOrRemoveCssClass: (name, on) => cssClassManager.addOrRemoveCssClass(name, on),
       setUserStyles: styles => setUserStyles(styles),
       getFocusableElement: () => eGui,
-      setTabIndex: tabIndex => setTabIndex(tabIndex),
-      setRole: role => setRole(role),
-      setColId: colId => setColId(colId),
-      setTitle: title => setTitle(title),
       setIncludeSelection: include => setIncludeSelection(include),
       setIncludeRowDrag: include => setIncludeRowDrag(include),
       setIncludeDndSource: include => setIncludeDndSource(include),
@@ -1355,27 +1328,21 @@ const CellComp = props => {
     effect(_p$ => {
       const _v$ = userStyles(),
         _v$2 = tabIndex(),
-        _v$3 = role(),
-        _v$4 = colId(),
-        _v$5 = title();
+        _v$3 = colId();
       _p$._v$ = style(_el$, _v$, _p$._v$);
       _v$2 !== _p$._v$2 && setAttribute(_el$, "tabindex", _p$._v$2 = _v$2);
-      _v$3 !== _p$._v$3 && setAttribute(_el$, "role", _p$._v$3 = _v$3);
-      _v$4 !== _p$._v$4 && setAttribute(_el$, "col-id", _p$._v$4 = _v$4);
-      _v$5 !== _p$._v$5 && setAttribute(_el$, "title", _p$._v$5 = _v$5);
+      _v$3 !== _p$._v$3 && setAttribute(_el$, "col-id", _p$._v$3 = _v$3);
       return _p$;
     }, {
       _v$: undefined,
       _v$2: undefined,
-      _v$3: undefined,
-      _v$4: undefined,
-      _v$5: undefined
+      _v$3: undefined
     });
     return _el$;
   })();
 };
 
-const _tmpl$$5 = /*#__PURE__*/template(`<div>`);
+const _tmpl$$5 = /*#__PURE__*/template(`<div role="row">`);
 const maintainOrderOnColumns = (prev, next, domOrder) => {
   if (domOrder) {
     const res = {
@@ -1420,9 +1387,8 @@ const RowComp = params => {
   } = params;
   const [getRowIndex, setRowIndex] = createSignal();
   const [getRowId, setRowId] = createSignal();
-  const [getRole, setRole] = createSignal();
   const [getRowBusinessKey, setRowBusinessKey] = createSignal();
-  const [getTabIndex, setTabIndex] = createSignal();
+  const [getTabIndex, setTabIndex] = createSignal(rowCtrl.getTabIndex());
   const [getUserStyles, setUserStyles] = createSignal();
   const [getCellCtrls, setCellCtrls] = createSignal({
     list: [],
@@ -1485,9 +1451,7 @@ const RowComp = params => {
       setRowIndex: value => setRowIndex(value),
       setRowId: value => setRowId(value),
       setRowBusinessKey: value => setRowBusinessKey(value),
-      setTabIndex: value => setTabIndex(value),
       setUserStyles: styles => setUserStyles(styles),
-      setRole: value => setRole(value),
       // if we don't maintain the order, then cols will be ripped out and into the dom
       // when cols reordered, which would stop the CSS transitions from working
       setCellCtrls: next => setCellCtrls(maintainOrderOnColumns(getCellCtrls(), next, getDomOrder())),
@@ -1573,7 +1537,6 @@ const RowContainerComp = props => {
   const [rowCtrlsOrdered, setRowCtrlsOrdered] = createSignal([]);
   const [rowCtrls, setRowCtrls] = createSignal([]);
   const [domOrder, setDomOrder] = createSignal(false);
-  const [containerWidth, setContainerWidth] = createSignal('');
   const {
     name
   } = props;
@@ -1616,7 +1579,11 @@ const RowContainerComp = props => {
       setViewportHeight: setViewportHeight,
       setRowCtrls: rowCtrls => setRowCtrls(rowCtrls),
       setDomOrder: domOrder => setDomOrder(domOrder),
-      setContainerWidth: width => setContainerWidth(width)
+      setContainerWidth: width => {
+        if (eContainer) {
+          eContainer.style.width = width;
+        }
+      }
     };
     const ctrl = context.createBean(new RowContainerCtrl(name));
     onCleanup(() => context.destroyBean(ctrl));
@@ -1624,9 +1591,6 @@ const RowContainerComp = props => {
   });
   const viewportStyle = createMemo(() => ({
     height: viewportHeight()
-  }));
-  const containerStyle = createMemo(() => ({
-    width: containerWidth()
   }));
   const buildContainer = () => (() => {
     const _el$ = _tmpl$$4();
@@ -1645,16 +1609,13 @@ const RowContainerComp = props => {
     }));
     effect(_p$ => {
       const _v$ = containerClasses(),
-        _v$2 = rowCtrls().length ? "rowgroup" : "presentation",
-        _v$3 = containerStyle();
+        _v$2 = rowCtrls().length ? "rowgroup" : "presentation";
       _v$ !== _p$._v$ && className(_el$, _p$._v$ = _v$);
       _v$2 !== _p$._v$2 && setAttribute(_el$, "role", _p$._v$2 = _v$2);
-      _p$._v$3 = style(_el$, _v$3, _p$._v$3);
       return _p$;
     }, {
       _v$: undefined,
-      _v$2: undefined,
-      _v$3: undefined
+      _v$2: undefined
     });
     return _el$;
   })();
@@ -1667,17 +1628,17 @@ const RowContainerComp = props => {
     typeof _ref$3 === "function" ? use(_ref$3, _el$3) : eViewport = _el$3;
     insert(_el$3, buildContainer);
     effect(_p$ => {
-      const _v$4 = wrapperClasses(),
-        _v$5 = viewportClasses(),
-        _v$6 = viewportStyle();
-      _v$4 !== _p$._v$4 && className(_el$2, _p$._v$4 = _v$4);
-      _v$5 !== _p$._v$5 && className(_el$3, _p$._v$5 = _v$5);
-      _p$._v$6 = style(_el$3, _v$6, _p$._v$6);
+      const _v$3 = wrapperClasses(),
+        _v$4 = viewportClasses(),
+        _v$5 = viewportStyle();
+      _v$3 !== _p$._v$3 && className(_el$2, _p$._v$3 = _v$3);
+      _v$4 !== _p$._v$4 && className(_el$3, _p$._v$4 = _v$4);
+      _p$._v$5 = style(_el$3, _v$5, _p$._v$5);
       return _p$;
     }, {
+      _v$3: undefined,
       _v$4: undefined,
-      _v$5: undefined,
-      _v$6: undefined
+      _v$5: undefined
     });
     return _el$2;
   })(), template2 && (() => {
@@ -1686,14 +1647,14 @@ const RowContainerComp = props => {
     typeof _ref$4 === "function" ? use(_ref$4, _el$4) : eViewport = _el$4;
     insert(_el$4, buildContainer);
     effect(_p$ => {
-      const _v$7 = viewportClasses(),
-        _v$8 = viewportStyle();
-      _v$7 !== _p$._v$7 && className(_el$4, _p$._v$7 = _v$7);
-      _p$._v$8 = style(_el$4, _v$8, _p$._v$8);
+      const _v$6 = viewportClasses(),
+        _v$7 = viewportStyle();
+      _v$6 !== _p$._v$6 && className(_el$4, _p$._v$6 = _v$6);
+      _p$._v$7 = style(_el$4, _v$7, _p$._v$7);
       return _p$;
     }, {
-      _v$7: undefined,
-      _v$8: undefined
+      _v$6: undefined,
+      _v$7: undefined
     });
     return _el$4;
   })(), memo(() => template3 && buildContainer())];
@@ -1719,7 +1680,7 @@ const GridBodyComp = () => {
   const [getBodyViewportWidth, setBodyViewportWidth] = createSignal('');
   const [getMovingCss, setMovingCss] = createSignal(null);
   const [getForceVerticalScrollClass, setForceVerticalScrollClass] = createSignal(null);
-  const [getTopAndBottomOverflowY, setTopAndBottomOverflowY] = createSignal('');
+  const [getTopAndBottomOverflowY, setTopAndBottomOverflowY] = createSignal(null);
   const [getCellSelectableCss, setCellSelectableCss] = createSignal(null);
 
   // we initialise layoutClass to 'ag-layout-normal', because if we don't, the comp will initially
@@ -1789,21 +1750,21 @@ const GridBodyComp = () => {
   const getStickyTopClasses = createMemo(() => classesList('ag-sticky-top', getCellSelectableCss()));
   const getBottomClasses = createMemo(() => classesList('ag-floating-bottom', getCellSelectableCss()));
   const getTopStyle = createMemo(() => ({
-    height: getTopHeight,
-    'min-height': getTopHeight,
-    display: getTopDisplay,
-    'overflow-y': getTopAndBottomOverflowY
+    height: getTopHeight(),
+    'min-height': getTopHeight(),
+    display: getTopDisplay(),
+    'overflow-y': getTopAndBottomOverflowY()
   }));
   const getStickyTopStyle = createMemo(() => ({
-    height: getStickyTopHeight,
-    top: getStickyTopTop,
-    width: getStickyTopWidth
+    height: getStickyTopHeight(),
+    top: getStickyTopTop(),
+    width: getStickyTopWidth()
   }));
   const getBottomStyle = createMemo(() => ({
-    height: getBottomHeight,
-    'min-height': getBottomHeight,
-    display: getBottomDisplay,
-    'overflow-y': getTopAndBottomOverflowY
+    height: getBottomHeight(),
+    'min-height': getBottomHeight(),
+    display: getBottomDisplay(),
+    'overflow-y': getTopAndBottomOverflowY()
   }));
   const getBodyViewportStyle = createMemo(() => ({
     width: getBodyViewportWidth()
@@ -2140,9 +2101,9 @@ const GridComp = props => {
   const cssClasses = createMemo(() => classesList('ag-root-wrapper', rtlClass(), keyboardFocusClass(), layoutClass(), props.class));
   const bodyCssClasses = createMemo(() => classesList('ag-root-wrapper-body', 'ag-focus-managed', layoutClass()));
   const topStyle = createMemo(() => ({
-    userSelect: userSelect != null ? userSelect : '',
-    WebkitUserSelect: userSelect != null ? userSelect : '',
-    cursor: cursor != null ? cursor : ''
+    userSelect: userSelect != null ? userSelect() : '',
+    WebkitUserSelect: userSelect != null ? userSelect() : '',
+    cursor: cursor != null ? cursor() : ''
   }));
   return (() => {
     const _el$ = _tmpl$$1(),

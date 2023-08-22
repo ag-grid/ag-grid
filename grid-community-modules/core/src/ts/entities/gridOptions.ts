@@ -65,6 +65,8 @@ import {
     StoreRefreshedEvent,
     ToolPanelSizeChangedEvent,
     ToolPanelVisibleChangedEvent,
+    TooltipHideEvent,
+    TooltipShowEvent,
     UndoEndedEvent,
     UndoStartedEvent,
     ViewportChangedEvent,
@@ -94,6 +96,7 @@ import { FillOperationParams, GetChartToolbarItemsParams, GetContextMenuItemsPar
 import { SideBarDef } from "../interfaces/iSideBar";
 import { IRowNode } from "../interfaces/iRowNode";
 import { DataTypeDefinition } from "./dataType";
+import { AdvancedFilterModel } from "../interfaces/advancedFilterModel";
 
 export interface GridOptions<TData = any> {
 
@@ -121,6 +124,13 @@ export interface GridOptions<TData = any> {
     /** Set to `true` to use the browser's default tooltip instead of using the grid's Tooltip Component. Default: `false`  */
     enableBrowserTooltips?: boolean;
     /**
+     * The trigger that will cause tooltips to show and hide.
+     *  - `hover` - The tooltip will show/hide when a cell/header is hovered.
+     *  - `focus` - The tooltip will show/hide when a cell/header is focused.
+     * Default: 'hover'
+     */
+    tooltipTrigger?: 'hover' | 'focus';
+    /**
      * The delay in milliseconds that it takes for tooltips to show up once an element is hovered over.
      * **Note:** This property does not work if `enableBrowserTooltips` is `true`.
      * Default: `2000`
@@ -128,12 +138,18 @@ export interface GridOptions<TData = any> {
     tooltipShowDelay?: number;
     /**
      * The delay in milliseconds that it takes for tooltips to hide once they have been displayed.
-     * **Note:** This property does not work if `enableBrowserTooltips` is `true`.
+     * **Note:** This property does not work if `enableBrowserTooltips` is `true` and `tooltipHideTriggers` includes `timeout`.
      * Default: `10000`
      */
     tooltipHideDelay?: number;
     /** Set to `true` to have tooltips follow the cursor once they are displayed. Default: `false`  */
     tooltipMouseTrack?: boolean;
+    /**
+     * Set to `true` to enable tooltip interaction. When this option is enabled, the tooltip will not hide while the
+     * tooltip itself it being hovered or has focus.
+     * Default: `false`
+     */
+    tooltipInteraction?: boolean;
     /** DOM element to use as the popup parent for grid popups (context menu, column menu etc). */
     popupParent?: HTMLElement | null;
 
@@ -299,6 +315,21 @@ export interface GridOptions<TData = any> {
     includeHiddenColumnsInQuickFilter?: boolean;
     /** Set to `true` to override the default tree data filtering behaviour to instead exclude child nodes from filter results. Default: `false` */
     excludeChildrenWhenTreeDataFiltering?: boolean;
+    /** Set to true to enable the Advanced Filter. Default: `false` */
+    enableAdvancedFilter?: boolean;
+    /** Allows the state of the Advanced Filter to be set before the grid is loaded. */
+    advancedFilterModel?: AdvancedFilterModel | null;
+    /**
+     * Hidden columns are excluded from the Advanced Filter by default.
+     * To include hidden columns, set to `true`.
+     * Default: `false`
+     */
+    includeHiddenColumnsInAdvancedFilter?: boolean;
+    /**
+     * DOM element to use as the parent for the Advanced Filter to allow it to appear outside of the grid.
+     * Set to `null` or `undefined` to appear inside the grid.
+     */
+    advancedFilterParent?: HTMLElement | null;
 
     // *** Integrated Charts *** //
     /** Set to `true` to Enable Charts. Default: `false` */
@@ -448,6 +479,8 @@ export interface GridOptions<TData = any> {
     pivotMode?: boolean;
     /** When to show the 'pivot panel' (where you drag rows to pivot) at the top. Note that the pivot panel will never show if `pivotMode` is off. Default: `never` */
     pivotPanelShow?: 'always' | 'onlyWhenPivoting' | 'never';
+    /** If pivoting, set to the number of column group levels to expand by default, e.g. `0` for none, `1` for first level only, etc. Set to `-1` to expand everything. Default: `0` */
+    pivotDefaultExpanded?: number;
     /** When set and the grid is in pivot mode, automatically calculated totals will appear within the Pivot Column Groups, in the position specified. */
     pivotColumnGroupTotals?: 'before' | 'after';
     /** When set and the grid is in pivot mode, automatically calculated totals will appear for each value column in the position specified. */
@@ -702,6 +735,12 @@ export interface GridOptions<TData = any> {
     /** @deprecated v28 This property has been deprecated. Use `serverSideOnlyRefreshFilteredGroups` instead. */
     serverSideFilteringAlwaysResets?: boolean;
 
+    /**
+     * Used to split pivot field strings for generating pivot result columns when `pivotResultFields` is provided as part of a `getRows` success.
+     * Default: `_`
+     */
+    serverSidePivotResultFieldSeparator?: string;
+
     // *** Row Model: Viewport *** //
     /** To use the viewport row model you need to provide the grid with a `viewportDatasource`. */
     viewportDatasource?: IViewportDatasource;
@@ -922,7 +961,7 @@ export interface GridOptions<TData = any> {
     fillOperation?: (params: FillOperationParams<TData>) => any;
 
     // *** Sorting *** //
-    /** Callback to perform additional sorting after the grid has sorted the rows. */
+    /** Callback to perform additional sorting after the grid has sorted the rows. When used with SSRM, only applicable when `suppressServerSideInfiniteScroll=true` */
     postSortRows?: (params: PostSortRowsParams<TData>) => void;
 
     // *** Styling *** //
@@ -1136,6 +1175,11 @@ export interface GridOptions<TData = any> {
     onCellContextMenu?(event: CellContextMenuEvent<TData>): void;
     /** A change to range selection has occurred. */
     onRangeSelectionChanged?(event: RangeSelectionChangedEvent<TData>): void;
+
+    /** A tooltip has been displayed */
+    onTooltipShow?(event?: TooltipShowEvent<TData>): void;
+    /** A tooltip was hidden */
+    onTooltipHide?(event?: TooltipHideEvent<TData>): void;
 
     // *** Sorting *** //
     /** Sort has changed. The grid also listens for this and updates the model. */

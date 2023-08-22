@@ -78,9 +78,6 @@ let RowRenderer = class RowRenderer extends beanStub_1.BeanStub {
         }
         return DEFAULT_KEEP_DETAIL_ROW_COUNT;
     }
-    getRowCtrls() {
-        return this.allRowCtrls;
-    }
     getStickyTopRowCtrls() {
         if (!this.stickyRowFeature) {
             return [];
@@ -96,7 +93,13 @@ let RowRenderer = class RowRenderer extends beanStub_1.BeanStub {
         }
         const zombieList = object_1.getAllValuesInObject(this.zombieRowCtrls);
         const cachedList = this.cachedRowCtrls ? this.cachedRowCtrls.getEntries() : [];
-        this.allRowCtrls = [...liveList, ...zombieList, ...cachedList];
+        if (zombieList.length > 0 || cachedList.length > 0) {
+            // Only spread if we need to.
+            this.allRowCtrls = [...liveList, ...zombieList, ...cachedList];
+        }
+        else {
+            this.allRowCtrls = liveList;
+        }
     }
     onCellFocusChanged(event) {
         this.getAllCellCtrls().forEach(cellCtrl => cellCtrl.onCellFocused(event));
@@ -255,6 +258,9 @@ let RowRenderer = class RowRenderer extends beanStub_1.BeanStub {
     getTopRowCtrls() {
         return this.topRowCtrls;
     }
+    getCentreRowCtrls() {
+        return this.allRowCtrls;
+    }
     getBottomRowCtrls() {
         return this.bottomRowCtrls;
     }
@@ -279,32 +285,47 @@ let RowRenderer = class RowRenderer extends beanStub_1.BeanStub {
         };
         this.redrawAfterModelUpdate(params);
     }
-    // if the row nodes are not rendered, no index is returned
-    getRenderedIndexesForRowNodes(rowNodes) {
-        const result = [];
-        if (generic_1.missing(rowNodes)) {
-            return result;
+    redrawRow(rowNode, suppressEvent = false) {
+        if (rowNode.sticky) {
+            this.stickyRowFeature.refreshStickyNode(rowNode);
         }
-        object_1.iterateObject(this.rowCtrlsByRowIndex, (index, renderedRow) => {
-            const rowNode = renderedRow.getRowNode();
-            if (rowNodes.indexOf(rowNode) >= 0) {
-                result.push(index);
+        else {
+            const destroyAndRecreateCtrl = (dataStruct) => {
+                const ctrl = dataStruct[rowNode.rowIndex];
+                if (!ctrl) {
+                    return;
+                }
+                if (ctrl.getRowNode() !== rowNode) {
+                    // if the node is in the wrong place, then the row model is responsible for triggering a full refresh.
+                    return;
+                }
+                ctrl.destroyFirstPass();
+                ctrl.destroySecondPass();
+                dataStruct[rowNode.rowIndex] = this.createRowCon(rowNode, false, false);
+            };
+            switch (rowNode.rowPinned) {
+                case 'top':
+                    destroyAndRecreateCtrl(this.topRowCtrls);
+                case 'bottom':
+                    destroyAndRecreateCtrl(this.bottomRowCtrls);
+                default:
+                    destroyAndRecreateCtrl(this.rowCtrlsByRowIndex);
+                    this.updateAllRowCtrls();
             }
-        });
-        return result;
+        }
+        if (!suppressEvent) {
+            this.dispatchDisplayedRowsChanged(false);
+        }
     }
     redrawRows(rowNodes) {
         // if no row nodes provided, then refresh everything
-        const partialRefresh = rowNodes != null && rowNodes.length > 0;
+        const partialRefresh = rowNodes != null;
         if (partialRefresh) {
-            const indexesToRemove = this.getRenderedIndexesForRowNodes(rowNodes);
-            // remove the rows
-            this.removeRowCtrls(indexesToRemove);
+            rowNodes === null || rowNodes === void 0 ? void 0 : rowNodes.forEach(node => this.redrawRow(node, true));
+            this.dispatchDisplayedRowsChanged(false);
+            return;
         }
-        // add draw them again
-        this.redrawAfterModelUpdate({
-            recycleRows: partialRefresh
-        });
+        this.redrawAfterModelUpdate();
     }
     getCellToRestoreFocusToAfterRefresh(params) {
         const focusedCell = (params === null || params === void 0 ? void 0 : params.suppressKeepFocus) ? null : this.focusService.getFocusCellToUseAfterRefresh();
@@ -344,6 +365,10 @@ let RowRenderer = class RowRenderer extends beanStub_1.BeanStub {
         const rowsToRecycle = recycleRows ? this.getRowsToRecycle() : null;
         if (!recycleRows) {
             this.removeAllRowComps();
+        }
+        this.workOutFirstAndLastRowsToRender();
+        if (this.stickyRowFeature) {
+            this.stickyRowFeature.checkStickyRows();
         }
         this.recycleRows(rowsToRecycle, animate);
         this.gridBodyCtrl.updateRowCount();
@@ -475,7 +500,19 @@ let RowRenderer = class RowRenderer extends beanStub_1.BeanStub {
                 cellCtrl.refreshCell(refreshCellParams);
             }
         });
-        this.refreshFullWidthRows(params.rowNodes);
+        if (params.rowNodes) {
+            // refresh the full width rows too
+            this.getRowCtrls(params.rowNodes).forEach(rowCtrl => {
+                if (!rowCtrl.isFullWidth()) {
+                    return;
+                }
+                const refreshed = rowCtrl.refreshFullWidth();
+                if (!refreshed) {
+                    this.redrawRow(rowCtrl.getRowNode(), true);
+                }
+            });
+            this.dispatchDisplayedRowsChanged(false);
+        }
     }
     getCellRendererInstances(params) {
         var _a;
@@ -556,11 +593,23 @@ let RowRenderer = class RowRenderer extends beanStub_1.BeanStub {
         }
         return rowIdsMap.normal[id] != null;
     }
+    /**
+     * @param rowNodes if provided, returns the RowCtrls for the provided rowNodes. otherwise returns all RowCtrls.
+     */
+    getRowCtrls(rowNodes) {
+        const rowIdsMap = this.mapRowNodes(rowNodes);
+        const allRowCtrls = this.getAllRowCtrls();
+        if (!rowNodes || !rowIdsMap) {
+            return allRowCtrls;
+        }
+        return allRowCtrls.filter(rowCtrl => {
+            const rowNode = rowCtrl.getRowNode();
+            return this.isRowInMap(rowNode, rowIdsMap);
+        });
+    }
     // returns CellCtrl's that match the provided rowNodes and columns. eg if one row node
     // and two columns provided, that identifies 4 cells, so 4 CellCtrl's returned.
     getCellCtrls(rowNodes, columns) {
-        const rowIdsMap = this.mapRowNodes(rowNodes);
-        const res = [];
         let colIdsMap;
         if (generic_1.exists(columns)) {
             colIdsMap = {};
@@ -571,12 +620,8 @@ let RowRenderer = class RowRenderer extends beanStub_1.BeanStub {
                 }
             });
         }
-        const processRow = (rowCtrl) => {
-            const rowNode = rowCtrl.getRowNode();
-            // skip this row if it is missing from the provided list
-            if (rowIdsMap != null && !this.isRowInMap(rowNode, rowIdsMap)) {
-                return;
-            }
+        const res = [];
+        this.getRowCtrls(rowNodes).forEach(rowCtrl => {
             rowCtrl.getAllCellCtrls().forEach(cellCtrl => {
                 const colId = cellCtrl.getColumn().getId();
                 const excludeColFromRefresh = colIdsMap && !colIdsMap[colId];
@@ -585,8 +630,7 @@ let RowRenderer = class RowRenderer extends beanStub_1.BeanStub {
                 }
                 res.push(cellCtrl);
             });
-        };
-        this.getAllRowCtrls().forEach(row => processRow(row));
+        });
         return res;
     }
     destroy() {
@@ -633,18 +677,30 @@ let RowRenderer = class RowRenderer extends beanStub_1.BeanStub {
         if (e.direction !== 'vertical') {
             return;
         }
-        this.redraw();
+        this.redraw({ afterScroll: true });
     }
     // gets called when rows don't change, but viewport does, so after:
     // 1) height of grid body changes, ie number of displayed rows has changed
     // 2) grid scrolled to new position
     // 3) ensure index visible (which is a scroll)
-    redraw(afterScroll = true) {
+    redraw(params = {}) {
+        const { afterScroll } = params;
         let cellFocused;
         // only try to refocus cells shifting in and out of sticky container
         // if the browser supports focus ({ preventScroll })
         if (this.stickyRowFeature && browser_1.browserSupportsPreventScroll()) {
             cellFocused = this.getCellToRestoreFocusToAfterRefresh() || undefined;
+        }
+        const oldFirstRow = this.firstRenderedRow;
+        const oldLastRow = this.lastRenderedRow;
+        this.workOutFirstAndLastRowsToRender();
+        let hasStickyRowChanges = false;
+        if (this.stickyRowFeature) {
+            hasStickyRowChanges = this.stickyRowFeature.checkStickyRows();
+        }
+        const rangeChanged = this.firstRenderedRow !== oldFirstRow || this.lastRenderedRow !== oldLastRow;
+        if (afterScroll && !hasStickyRowChanges && !rangeChanged) {
+            return;
         }
         this.getLockOnRefresh();
         this.recycleRows(null, false, afterScroll);
@@ -685,18 +741,17 @@ let RowRenderer = class RowRenderer extends beanStub_1.BeanStub {
         // if we are redrawing due to model update, then old rows are in rowsToRecycle
         object_1.iterateObject(rowsToRecycle, checkRowToDraw);
         indexesToDraw.sort((a, b) => a - b);
-        indexesToDraw = indexesToDraw.filter(index => {
-            const rowNode = this.paginationProxy.getRow(index);
-            return rowNode && !rowNode.sticky;
-        });
-        return indexesToDraw;
+        const ret = [];
+        for (let i = 0; i < indexesToDraw.length; i++) {
+            const currRow = indexesToDraw[i];
+            const rowNode = this.paginationProxy.getRow(currRow);
+            if (rowNode && !rowNode.sticky) {
+                ret.push(currRow);
+            }
+        }
+        return ret;
     }
     recycleRows(rowsToRecycle, animate = false, afterScroll = false) {
-        this.rowContainerHeightService.updateOffset();
-        this.workOutFirstAndLastRowsToRender();
-        if (this.stickyRowFeature) {
-            this.stickyRowFeature.checkStickyRows();
-        }
         // the row can already exist and be in the following:
         // rowsToRecycle -> if model change, then the index may be different, however row may
         //                         exist here from previous time (mapped by id).
@@ -761,7 +816,7 @@ let RowRenderer = class RowRenderer extends beanStub_1.BeanStub {
         });
         this.refreshFloatingRowComps();
         this.removeRowCtrls(rowsToRemove);
-        this.redraw();
+        this.redraw({ afterScroll: true });
     }
     getFullWidthRowCtrls(rowNodes) {
         const rowNodesMap = this.mapRowNodes(rowNodes);
@@ -777,34 +832,6 @@ let RowRenderer = class RowRenderer extends beanStub_1.BeanStub {
             }
             return true;
         });
-    }
-    refreshFullWidthRow(rowNode) {
-        this.refreshFullWidthRows([rowNode]);
-    }
-    refreshFullWidthRows(rowNodes) {
-        const fullWidthCtrls = this.getFullWidthRowCtrls(rowNodes);
-        let redraw = false;
-        const indicesToForce = [];
-        fullWidthCtrls.forEach(fullWidthCtrl => {
-            const refreshed = fullWidthCtrl.refreshFullWidth();
-            if (refreshed) {
-                return;
-            }
-            const node = fullWidthCtrl.getRowNode();
-            if (node.sticky) {
-                this.stickyRowFeature.refreshStickyNode(node);
-            }
-            else {
-                indicesToForce.push(node.rowIndex);
-            }
-            redraw = true;
-        });
-        if (indicesToForce.length > 0) {
-            this.removeRowCtrls(indicesToForce);
-        }
-        if (redraw) {
-            this.redraw(false);
-        }
     }
     createOrUpdateRowCtrl(rowIndex, rowsToRecycle, animate, afterScroll) {
         let rowNode;
@@ -893,6 +920,7 @@ let RowRenderer = class RowRenderer extends beanStub_1.BeanStub {
         return rowsToBuffer * defaultRowHeight;
     }
     workOutFirstAndLastRowsToRender() {
+        this.rowContainerHeightService.updateOffset();
         let newFirst;
         let newLast;
         if (!this.paginationProxy.isRowsToRender()) {

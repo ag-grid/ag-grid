@@ -24,7 +24,7 @@ export declare class ColumnFactory extends BeanStub {
     applyColumnState(column: Column, colDef: ColDef): void;
     private findExistingColumn;
     private findExistingGroup;
-    mergeColDefs(colDef: ColDef, colId: string): ColDef;
+    addColumnDefaultAndTypes(colDef: ColDef, colId: string): ColDef;
     private assignColumnTypes;
     private isColumnGroup;
 }

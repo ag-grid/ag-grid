@@ -9,6 +9,7 @@ import {
     ValueGetterParams,
 } from '../entities/colDef';
 import {
+    BaseCellDataType,
     CoreDataTypeDefinition,
     DataTypeDefinition,
     DateStringDataTypeDefinition,
@@ -30,8 +31,9 @@ import { exists, toStringOrNull } from '../utils/generic';
 import { ValueFormatterService } from '../rendering/valueFormatterService';
 import { IRowNode } from '../interfaces/iRowNode';
 import { parseDateTimeFromString, serialiseDate } from '../utils/date';
-import { RowDataUpdateStartedEvent } from '../events';
+import { DataTypesInferredEvent, RowDataUpdateStartedEvent } from '../events';
 import { ColumnUtils } from './columnUtils';
+import { WithoutGridCommon } from '../interfaces/iCommon';
 
 interface GroupSafeValueFormatter {
     groupSafeValueFormatter?: ValueFormatterFunc;
@@ -432,7 +434,15 @@ export class DataTypeService extends BeanStub {
             if (columnTypeOverridesExist) {
                 this.columnModel.processResizeOperations();
             }
+            const dataTypesInferredEvent: WithoutGridCommon<DataTypesInferredEvent> = {
+                type: Events.EVENT_DATA_TYPES_INFERRED
+            }
+            this.eventService.dispatchEvent(dataTypesInferredEvent);
         });
+    }
+
+    public isPendingInference(): boolean {
+        return this.isWaitingForRowData;
     }
 
     private processColumnsPendingInference(firstRowData: any, columnTypeOverridesExist: boolean): void {
@@ -519,12 +529,21 @@ export class DataTypeService extends BeanStub {
         return this.getDateStringTypeDefinition().dateFormatter!;
     }
 
-    public checkType(column: Column, value: any): boolean {
+    public getDataTypeDefinition(column: Column): DataTypeDefinition | CoreDataTypeDefinition | undefined {
         const colDef = column.getColDef();
-        if (!colDef.cellDataType || value == null) {
+        if (!colDef.cellDataType) { return undefined; }
+        return this.dataTypeDefinitions[colDef.cellDataType as string];
+    }
+
+    public getBaseDataType(column: Column): BaseCellDataType | undefined {
+        return this.getDataTypeDefinition(column)?.baseDataType;
+    }
+
+    public checkType(column: Column, value: any): boolean {
+        if (value == null) {
             return true;
         }
-        const dataTypeMatcher = this.dataTypeDefinitions[colDef.cellDataType as string]?.dataTypeMatcher;
+        const dataTypeMatcher = this.getDataTypeDefinition(column)?.dataTypeMatcher;
         if (!dataTypeMatcher) {
             return true;
         }

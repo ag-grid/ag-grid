@@ -39,7 +39,7 @@ Every image is required to have an `id`. This way, if you're exporting the same 
 </note>
 
 <warning>
-| At the moment, it's only possible the export one image per cell.
+| At the moment, it's only possible to export one image per cell.
 </warning>
 
 ## Cells with Images

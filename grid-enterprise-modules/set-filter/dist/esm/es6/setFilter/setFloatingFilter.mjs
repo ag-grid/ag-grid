@@ -23,13 +23,20 @@ export class SetFloatingFilterComp extends Component {
         super.destroy();
     }
     init(params) {
-        const displayName = this.columnModel.getDisplayNameForColumn(params.column, 'header', true);
-        const translate = this.localeService.getLocaleTextFunc();
+        this.params = params;
         this.eFloatingFilterText
             .setDisabled(true)
-            .setInputAriaLabel(`${displayName} ${translate('ariaFilterInput', 'Filter Input')}`)
-            .addGuiEventListener('click', () => params.showParentFilter());
+            .addGuiEventListener('click', () => this.params.showParentFilter());
+        this.setParams(params);
+    }
+    setParams(params) {
+        const displayName = this.columnModel.getDisplayNameForColumn(params.column, 'header', true);
+        const translate = this.localeService.getLocaleTextFunc();
+        this.eFloatingFilterText.setInputAriaLabel(`${displayName} ${translate('ariaFilterInput', 'Filter Input')}`);
+    }
+    onParamsUpdated(params) {
         this.params = params;
+        this.setParams(params);
     }
     onParentModelChanged(parentModel) {
         this.updateFloatingFilterText(parentModel);

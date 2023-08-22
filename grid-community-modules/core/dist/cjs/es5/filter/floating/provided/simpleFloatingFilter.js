@@ -76,6 +76,9 @@ var SimpleFloatingFilter = /** @class */ (function (_super) {
         return this.isTypeEditable(simpleModel.type);
     };
     SimpleFloatingFilter.prototype.init = function (params) {
+        this.setSimpleParams(params);
+    };
+    SimpleFloatingFilter.prototype.setSimpleParams = function (params) {
         this.optionsFactory = new optionsFactory_1.OptionsFactory();
         this.optionsFactory.init(params.filterParams, this.getDefaultFilterOptions());
         this.lastType = this.optionsFactory.getDefaultOption();
@@ -88,6 +91,9 @@ var SimpleFloatingFilter = /** @class */ (function (_super) {
         // 2) the default type is not 'in range'
         var editable = this.isTypeEditable(this.lastType);
         this.setEditable(editable);
+    };
+    SimpleFloatingFilter.prototype.onParamsUpdated = function (params) {
+        this.setSimpleParams(params);
     };
     SimpleFloatingFilter.prototype.doesFilterHaveSingleInput = function (filterType) {
         var customFilterOption = this.optionsFactory.getCustomOption(filterType);

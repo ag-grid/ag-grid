@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.forEachReverse = exports.toStrings = exports.pushAll = exports.flatten = exports.includes = exports.moveInArray = exports.insertArrayIntoArray = exports.insertIntoArray = exports.removeAllFromArray = exports.removeFromArray = exports.removeRepeatsFromArray = exports.sortNumerically = exports.shallowCompare = exports.areEqual = exports.last = exports.existsAndNotEmpty = exports.firstExistingValue = void 0;
+exports.forEachReverse = exports.toStrings = exports.pushAll = exports.flatten = exports.includes = exports.moveInArray = exports.insertArrayIntoArray = exports.insertIntoArray = exports.removeAllFromArray = exports.removeAllFromUnorderedArray = exports.removeFromArray = exports.removeFromUnorderedArray = exports.removeRepeatsFromArray = exports.sortNumerically = exports.shallowCompare = exports.areEqual = exports.last = exports.existsAndNotEmpty = exports.firstExistingValue = void 0;
 const generic_1 = require("./generic");
 function firstExistingValue(...values) {
     for (let i = 0; i < values.length; i++) {
@@ -55,6 +55,15 @@ function removeRepeatsFromArray(array, object) {
     }
 }
 exports.removeRepeatsFromArray = removeRepeatsFromArray;
+function removeFromUnorderedArray(array, object) {
+    const index = array.indexOf(object);
+    if (index >= 0) {
+        // preserve the last element, then shorten array length by 1 to delete index
+        array[index] = array[array.length - 1];
+        array.pop();
+    }
+}
+exports.removeFromUnorderedArray = removeFromUnorderedArray;
 function removeFromArray(array, object) {
     const index = array.indexOf(object);
     if (index >= 0) {
@@ -62,8 +71,16 @@ function removeFromArray(array, object) {
     }
 }
 exports.removeFromArray = removeFromArray;
+function removeAllFromUnorderedArray(array, toRemove) {
+    for (let i = 0; i < toRemove.length; i++) {
+        removeFromUnorderedArray(array, toRemove[i]);
+    }
+}
+exports.removeAllFromUnorderedArray = removeAllFromUnorderedArray;
 function removeAllFromArray(array, toRemove) {
-    toRemove.forEach(item => removeFromArray(array, item));
+    for (let i = 0; i < toRemove.length; i++) {
+        removeFromArray(array, toRemove[i]);
+    }
 }
 exports.removeAllFromArray = removeAllFromArray;
 function insertIntoArray(array, object, toIndex) {

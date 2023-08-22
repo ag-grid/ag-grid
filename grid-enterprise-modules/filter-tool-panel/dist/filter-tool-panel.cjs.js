@@ -1,5 +1,5 @@
 /**
-          * @ag-grid-enterprise/filter-tool-panel - Advanced Data Grid / Data Table supporting Javascript / Typescript / React / Angular / Vue * @version v30.0.6
+          * @ag-grid-enterprise/filter-tool-panel - Advanced Data Grid / Data Table supporting Javascript / Typescript / React / Angular / Vue * @version v30.1.0
           * @link https://www.ag-grid.com/
           * @license Commercial
           */
@@ -156,7 +156,8 @@ var ToolPanelFilterComp = /** @class */ (function (_super) {
         this.eFilterName.innerText = this.columnModel.getDisplayNameForColumn(this.column, 'filterToolPanel', false) || '';
         this.addManagedListener(this.eFilterToolPanelHeader, 'click', this.toggleExpanded.bind(this));
         this.addManagedListener(this.eFilterToolPanelHeader, 'keydown', function (e) {
-            if (e.key === core.KeyCode.ENTER) {
+            if (e.key === core.KeyCode.ENTER || e.key === core.KeyCode.SPACE) {
+                e.preventDefault();
                 _this.toggleExpanded();
             }
         });
@@ -1036,7 +1037,7 @@ var FiltersToolPanel = /** @class */ (function (_super) {
 }(core.Component));
 
 // DO NOT UPDATE MANUALLY: Generated from script during build time
-var VERSION = '30.0.6';
+var VERSION = '30.1.0';
 
 var FiltersToolPanelModule = {
     version: VERSION,

@@ -1,8 +1,7 @@
-// @ag-grid-community/react v30.0.6
-import React, { useRef, forwardRef, useImperativeHandle, memo, useContext } from 'react';
-import { TabGuardCtrl, TabGuardClassNames } from '@ag-grid-community/core';
+// @ag-grid-community/react v30.1.0
+import React, { forwardRef, memo, useCallback, useContext, useImperativeHandle, useRef } from 'react';
+import { TabGuardClassNames, TabGuardCtrl } from '@ag-grid-community/core';
 import { BeansContext } from './beansContext.mjs';
-import { useLayoutEffectOnce } from './useEffectOnce.mjs';
 const TabGuardCompRef = (props, forwardRef) => {
     const { children, eFocusableElement, onTabKeyDown, gridCtrl } = props;
     const { context } = useContext(BeansContext);
@@ -27,27 +26,38 @@ const TabGuardCompRef = (props, forwardRef) => {
             (_a = tabGuardCtrlRef.current) === null || _a === void 0 ? void 0 : _a.forceFocusOutOfContainer();
         }
     }));
-    useLayoutEffectOnce(() => {
-        const eTopGuard = topTabGuardRef.current;
-        const eBottomGuard = bottomTabGuardRef.current;
-        const compProxy = {
-            setTabIndex
-        };
-        const ctrl = tabGuardCtrlRef.current = context.createBean(new TabGuardCtrl({
-            comp: compProxy,
-            eTopGuard: eTopGuard,
-            eBottomGuard: eBottomGuard,
-            eFocusableElement: eFocusableElement,
-            onTabKeyDown: onTabKeyDown,
-            focusInnerElement: fromBottom => gridCtrl.focusInnerElement(fromBottom)
-        }));
-        return () => {
-            context.destroyBean(ctrl);
-        };
-    });
+    const setupCtrl = useCallback(() => {
+        if (!topTabGuardRef.current && !bottomTabGuardRef.current) {
+            // Clean up after both refs have been removed
+            context.destroyBean(tabGuardCtrlRef.current);
+            tabGuardCtrlRef.current = null;
+            return;
+        }
+        if (topTabGuardRef.current && bottomTabGuardRef.current) {
+            const compProxy = {
+                setTabIndex
+            };
+            tabGuardCtrlRef.current = context.createBean(new TabGuardCtrl({
+                comp: compProxy,
+                eTopGuard: topTabGuardRef.current,
+                eBottomGuard: bottomTabGuardRef.current,
+                eFocusableElement: eFocusableElement,
+                onTabKeyDown: onTabKeyDown,
+                focusInnerElement: (fromBottom) => gridCtrl.focusInnerElement(fromBottom)
+            }));
+        }
+    }, []);
+    const setTopRef = useCallback((e) => {
+        topTabGuardRef.current = e;
+        setupCtrl();
+    }, [setupCtrl]);
+    const setBottomRef = useCallback((e) => {
+        bottomTabGuardRef.current = e;
+        setupCtrl();
+    }, [setupCtrl]);
     const createTabGuard = (side) => {
         const className = side === 'top' ? TabGuardClassNames.TAB_GUARD_TOP : TabGuardClassNames.TAB_GUARD_BOTTOM;
-        return (React.createElement("div", { className: `${TabGuardClassNames.TAB_GUARD} ${className}`, role: "presentation", ref: side === 'top' ? topTabGuardRef : bottomTabGuardRef }));
+        return (React.createElement("div", { className: `${TabGuardClassNames.TAB_GUARD} ${className}`, role: "presentation", ref: side === 'top' ? setTopRef : setBottomRef }));
     };
     return (React.createElement(React.Fragment, null,
         createTabGuard('top'),

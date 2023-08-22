@@ -1,4 +1,4 @@
-// Type definitions for @ag-grid-community/core v30.0.6
+// Type definitions for @ag-grid-community/core v30.1.0
 // Project: https://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { UserCompDetails } from "../../components/framework/userComponentFactory";
@@ -32,9 +32,7 @@ export interface IRowComp {
     setRowIndex(rowIndex: string): void;
     setRowId(rowId: string): void;
     setRowBusinessKey(businessKey: string): void;
-    setTabIndex(tabIndex: number): void;
-    setUserStyles(styles: RowStyle): void;
-    setRole(role: string): void;
+    setUserStyles(styles: RowStyle | undefined): void;
 }
 export declare class RowCtrl extends BeanStub {
     static DOM_DATA_KEY_ROW_CTRL: string;
@@ -63,13 +61,20 @@ export declare class RowCtrl extends BeanStub {
     private paginationPage;
     private lastMouseDownOnDragger;
     private rowLevel;
+    private rowStyles;
+    private readonly emptyStyle;
     private readonly printLayout;
     private updateColumnListsPending;
+    private rowId;
+    private tabIndex;
     private businessKeySanitised;
     private businessKeyForNodeFunc;
     constructor(rowNode: RowNode, beans: Beans, animateIn: boolean, useAnimationFrameForCreate: boolean, printLayout: boolean);
     private initRowBusinessKey;
     private updateRowBusinessKey;
+    getRowId(): string | null;
+    getRowStyles(): RowStyle | undefined;
+    getTabIndex(): number | undefined;
     isSticky(): boolean;
     getBeans(): Beans;
     getInstanceId(): string;
@@ -79,6 +84,7 @@ export declare class RowCtrl extends BeanStub {
     setCached(cached: boolean): void;
     private initialiseRowComp;
     private setRowCompRowBusinessKey;
+    getBusinessKey(): string | null;
     private setRowCompRowId;
     private executeSlideAndFadeAnimations;
     private addRowDraggerToRow;
@@ -92,7 +98,11 @@ export declare class RowCtrl extends BeanStub {
     private updateColumnLists;
     private createCellCtrls;
     private updateColumnListsImpl;
+    private setCellCtrls;
+    private getCellCtrlsForContainer;
+    private createAllCellCtrls;
     private isCellEligibleToBeRemoved;
+    getDomOrder(): boolean;
     private listenOnDomOrder;
     private setAnimateFlags;
     isEditing(): boolean;
@@ -142,7 +152,7 @@ export declare class RowCtrl extends BeanStub {
     private setStylesFromGridOptions;
     private getPinnedForContainer;
     private getInitialRowClasses;
-    processStylesFromGridOptions(): any;
+    processStylesFromGridOptions(): RowStyle | undefined;
     private onRowSelected;
     private createAriaLabel;
     isUseAnimationFrameForCreate(): boolean;
@@ -172,6 +182,7 @@ export declare class RowCtrl extends BeanStub {
     getRowNode(): RowNode;
     getCellCtrl(column: Column): CellCtrl | null;
     private onRowIndexChanged;
+    getRowIndex(): string;
     private updateRowIndexes;
     getPinnedLeftRowElement(): HTMLElement;
     getPinnedRightRowElement(): HTMLElement;

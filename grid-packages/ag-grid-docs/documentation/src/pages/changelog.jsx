@@ -12,6 +12,7 @@ import { hostPrefix } from '../utils/consts';
 import styles from './pipelineChangelog.module.scss';
 
 const IS_SSR = typeof window === 'undefined';
+const ALL_FIX_VERSIONS = 'All Versions';
 
 const Changelog = ({ location }) => {
     const extractFixVersionParameter = (location) => {
@@ -30,7 +31,7 @@ const Changelog = ({ location }) => {
     const [allReleaseNotes, setAllReleaseNotes] = useState(null);
     const [currentReleaseNotes, setCurrentReleaseNotes] = useState(null);
     const [markdownContent, setMarkdownContent] = useState(undefined);
-    const [fixVersion, setFixVersion] = useState(extractFixVersionParameter(location));
+    const [fixVersion, setFixVersion] = useState(extractFixVersionParameter(location) || ALL_FIX_VERSIONS);
     const URLFilterItemKey = useState(extractFilterTerm(location))[0];
     const searchBarEl = useRef(null);
 
@@ -43,11 +44,20 @@ const Changelog = ({ location }) => {
         };
     }, []);
 
+    const applyFixVersionFilter = useCallback(() => {
+        if (gridApi && fixVersion) {
+            const versionsFilterComponent = gridApi.getFilterInstance('versions');
+            const newModel = { values: fixVersion === ALL_FIX_VERSIONS ? versions : [fixVersion], filterType: 'set' };
+            versionsFilterComponent.setModel(newModel);
+            gridApi.onFilterChanged();
+        }
+    }, [gridApi, fixVersion, versions]);
+
     useEffect(() => {
         fetch(`${hostPrefix}/changelog/changelog.json`)
             .then((response) => response.json())
             .then((data) => {
-                const gridVersions = [...data.map((row) => row.versions[0])];
+                const gridVersions = [ALL_FIX_VERSIONS, ...data.map((row) => row.versions[0])];
                 setVersions([...new Set(gridVersions)]);
                 setRowData(data);
             });
@@ -57,6 +67,10 @@ const Changelog = ({ location }) => {
                 setAllReleaseNotes(data);
             });
     }, []);
+
+    useEffect(() => {
+        applyFixVersionFilter();
+    }, [gridApi, fixVersion, versions, applyFixVersionFilter]);
 
     useEffect(() => {
         let releaseNotesVersion = fixVersion;
@@ -132,6 +146,8 @@ const Changelog = ({ location }) => {
         autoHeaderHeight: true,
         wrapHeaderText: true,
         suppressMenu: true,
+        filter: true,
+        floatingFilter: true,
         suppressKeyboardEvent: (params) => {
             if (params.event.key === 'Enter' && params.node.master && params.event.type === 'keydown') {
                 params.api.getCellRendererInstances({ rowNodes: [params.node] })[0].clickHandlerFunc();
@@ -225,6 +241,15 @@ const Changelog = ({ location }) => {
                         component: 'paddingCellRenderer',
                     };
                 },
+                filter: 'agSetColumnFilter',
+                filterParams: {
+                    comparator: (a, b) => {
+                        const valA = parseInt(a);
+                        const valB = parseInt(b);
+                        if (valA === valB) return 0;
+                        return valA > valB ? -1 : 1;
+                    }
+                }
             },
             {
                 field: 'summary',
@@ -233,12 +258,22 @@ const Changelog = ({ location }) => {
                 width: 300,
                 minWidth: 200,
                 flex: 1,
+                filter: 'agTextColumnFilter'
             },
             {
                 field: 'versions',
                 headerName: 'Version',
-                width: 120,
+                width: 145,
                 resizable: true,
+                filter: 'agSetColumnFilter',
+                filterParams: {
+                    comparator: (a, b) => {
+                        const valA = parseInt(a);
+                        const valB = parseInt(b);
+                        if (valA === valB) return 0;
+                        return valA > valB ? -1 : 1;
+                    }
+                }
             },
             {
                 field: 'issueType',
@@ -271,11 +306,12 @@ const Changelog = ({ location }) => {
                         </Alert>
 
                         <ReleaseVersionNotes
-                            releaseNotes={currentReleaseNotes}
-                            markdownContent={markdownContent}
+                            releaseNotes={fixVersion === ALL_FIX_VERSIONS ? undefined : currentReleaseNotes}
+                            markdownContent={fixVersion === ALL_FIX_VERSIONS ? undefined : markdownContent}
                             versions={versions}
                             fixVersion={fixVersion}
                             onChange={switchDisplayedFixVersion}
+                            hideExpander={fixVersion === ALL_FIX_VERSIONS}
                         />
                     </section>
 
@@ -306,6 +342,9 @@ const Changelog = ({ location }) => {
                         isRowMaster={isRowMaster}
                         masterDetail
                         onGridReady={gridReady}
+                        onFirstDataRendered={() => {
+                            applyFixVersionFilter();
+                        }}
                     ></Grid>
                 </div>
             )}

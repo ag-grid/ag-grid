@@ -1,5 +1,5 @@
 /**
-          * @ag-grid-community/csv-export - Advanced Data Grid / Data Table supporting Javascript / Typescript / React / Angular / Vue * @version v30.0.6
+          * @ag-grid-community/csv-export - Advanced Data Grid / Data Table supporting Javascript / Typescript / React / Angular / Vue * @version v30.1.0
           * @link https://www.ag-grid.com/
           * @license MIT
           */
@@ -546,7 +546,7 @@ var GridSerializer = /** @class */ (function (_super) {
         return function (gridSerializingSession) {
             if (!params.skipColumnGroupHeaders) {
                 var groupInstanceIdCreator = new core.GroupInstanceIdCreator();
-                var displayedGroups = _this.displayedGroupCreator.createDisplayedGroups(columnsToExport, _this.columnModel.getGridBalancedTree(), groupInstanceIdCreator, null);
+                var displayedGroups = _this.displayedGroupCreator.createDisplayedGroups(columnsToExport, groupInstanceIdCreator, null);
                 _this.recursivelyAddHeaderGroups(displayedGroups, gridSerializingSession, params.processGroupHeaderCallback);
             }
             else if (params.columnGroups) {
@@ -796,7 +796,7 @@ var GridSerializer = /** @class */ (function (_super) {
 }(core.BeanStub));
 
 // DO NOT UPDATE MANUALLY: Generated from script during build time
-var VERSION = '30.0.6';
+var VERSION = '30.1.0';
 
 var CsvExportModule = {
     version: VERSION,

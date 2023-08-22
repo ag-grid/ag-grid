@@ -6,8 +6,8 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 };
 import { PopupComponent } from "../../widgets/popupComponent.mjs";
 import { RefSelector } from "../../widgets/componentAnnotations.mjs";
-import { AgCheckbox } from "../../widgets/agCheckbox.mjs";
 import { getAriaCheckboxStateName } from "../../utils/aria.mjs";
+import { Events } from "../../eventKeys.mjs";
 export class CheckboxCellEditor extends PopupComponent {
     constructor() {
         super(/* html */ `
@@ -22,7 +22,7 @@ export class CheckboxCellEditor extends PopupComponent {
         this.eCheckbox.setValue(isSelected);
         this.eCheckbox.getInputElement().setAttribute('tabindex', '-1');
         this.setAriaLabel(isSelected);
-        this.addManagedListener(this.eCheckbox, AgCheckbox.EVENT_CHANGED, (event) => this.setAriaLabel(event.selected));
+        this.addManagedListener(this.eCheckbox, Events.EVENT_FIELD_VALUE_CHANGED, (event) => this.setAriaLabel(event.selected));
     }
     getValue() {
         return this.eCheckbox.getValue();

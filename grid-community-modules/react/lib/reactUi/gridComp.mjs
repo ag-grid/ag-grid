@@ -1,6 +1,6 @@
-// @ag-grid-community/react v30.0.6
+// @ag-grid-community/react v30.1.0
 import { FocusService, GridCtrl } from '@ag-grid-community/core';
-import React, { memo, useCallback, useEffect, useMemo, useRef, useState, useLayoutEffect } from 'react';
+import React, { memo, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { BeansContext } from './beansContext.mjs';
 import GridBodyComp from './gridBodyComp.mjs';
 import useReactCommentEffect from './reactComment.mjs';
@@ -17,7 +17,8 @@ const GridComp = ({ context }) => {
     const gridCtrlRef = useRef(null);
     const eRootWrapperRef = useRef(null);
     const tabGuardRef = useRef();
-    const eGridBodyParentRef = useRef(null);
+    // eGridBodyParent is state as we use it in render
+    const [eGridBodyParent, setGridBodyParent] = useState(null);
     const focusInnerElementRef = useRef(() => undefined);
     const onTabKeyDown = useCallback(() => undefined, []);
     const beans = useMemo(() => {
@@ -27,12 +28,17 @@ const GridComp = ({ context }) => {
         return context.getBean('beans');
     }, [context]);
     useReactCommentEffect(' AG Grid ', eRootWrapperRef);
-    // create shared controller.
-    useLayoutEffect(() => {
+    const setRef = useCallback((e) => {
+        eRootWrapperRef.current = e;
+        if (!eRootWrapperRef.current) {
+            context.destroyBean(gridCtrlRef.current);
+            gridCtrlRef.current = null;
+            return;
+        }
         if (context.isDestroyed()) {
             return;
         }
-        const currentController = gridCtrlRef.current = context.createBean(new GridCtrl());
+        gridCtrlRef.current = context.createBean(new GridCtrl());
         const gridCtrl = gridCtrlRef.current;
         focusInnerElementRef.current = gridCtrl.focusInnerElement.bind(gridCtrl);
         const compProxy = {
@@ -62,14 +68,10 @@ const GridComp = ({ context }) => {
         };
         gridCtrl.setComp(compProxy, eRootWrapperRef.current, eRootWrapperRef.current);
         setInitialised(true);
-        return () => {
-            context.destroyBean(currentController);
-            gridCtrlRef.current = null;
-        };
-    }, [context]);
+    }, []);
     // initialise the extra components
     useEffect(() => {
-        if (!tabGuardReady || !beans || !gridCtrlRef.current) {
+        if (!tabGuardReady || !beans || !gridCtrlRef.current || !eGridBodyParent || !eRootWrapperRef.current) {
             return;
         }
         const gridCtrl = gridCtrlRef.current;
@@ -82,7 +84,6 @@ const GridComp = ({ context }) => {
         const PaginationClass = agStackComponentsRegistry.getComponentClass('AG-PAGINATION');
         const additionalEls = [];
         const eRootWrapper = eRootWrapperRef.current;
-        const eGridBodyParent = eGridBodyParentRef.current;
         if (gridCtrl.showDropZones() && HeaderDropZonesClass) {
             const headerDropZonesComp = context.createBean(new HeaderDropZonesClass());
             const eGui = headerDropZonesComp.getGui();
@@ -129,7 +130,7 @@ const GridComp = ({ context }) => {
                 }
             });
         };
-    }, [tabGuardReady]);
+    }, [tabGuardReady, eGridBodyParent, beans]);
     const rootWrapperClasses = useMemo(() => classesList('ag-root-wrapper', rtlClass, keyboardFocusClass, layoutClass), [rtlClass, keyboardFocusClass, layoutClass]);
     const rootWrapperBodyClasses = useMemo(() => classesList('ag-root-wrapper-body', 'ag-focus-managed', layoutClass), [layoutClass]);
     const topStyle = useMemo(() => ({
@@ -137,13 +138,12 @@ const GridComp = ({ context }) => {
         WebkitUserSelect: userSelect != null ? userSelect : '',
         cursor: cursor != null ? cursor : ''
     }), [userSelect, cursor]);
-    const eGridBodyParent = eGridBodyParentRef.current;
     const setTabGuardCompRef = useCallback((ref) => {
         tabGuardRef.current = ref;
         setTabGuardReady(ref !== null);
     }, []);
-    return (React.createElement("div", { ref: eRootWrapperRef, className: rootWrapperClasses, style: topStyle, role: "presentation" },
-        React.createElement("div", { className: rootWrapperBodyClasses, ref: eGridBodyParentRef, role: "presentation" }, initialised && eGridBodyParent && beans &&
+    return (React.createElement("div", { ref: setRef, className: rootWrapperClasses, style: topStyle, role: "presentation" },
+        React.createElement("div", { className: rootWrapperBodyClasses, ref: setGridBodyParent, role: "presentation" }, initialised && eGridBodyParent && beans &&
             React.createElement(BeansContext.Provider, { value: beans },
                 React.createElement(TabGuardComp, { ref: setTabGuardCompRef, eFocusableElement: eGridBodyParent, onTabKeyDown: onTabKeyDown, gridCtrl: gridCtrlRef.current }, // we wait for initialised before rending the children, so GridComp has created and registered with it's
                 // GridCtrl before we create the child GridBodyComp. Otherwise the GridBodyComp would initialise first,

@@ -36,20 +36,19 @@ export class HeaderCellComp extends AbstractHeaderCellComp<HeaderCellCtrl> {
 
         const eGui = this.getGui();
 
-        const setAttribute = (name: string, value: string | null | undefined, element?: HTMLElement) => {
-            const actualElement = element ? element : eGui;
+        const setAttribute = (name: string, value: string | null | undefined) => {
             if (value != null && value != '') {
-                actualElement.setAttribute(name, value);
+                eGui.setAttribute(name, value);
             } else {
-                actualElement.removeAttribute(name);
+                eGui.removeAttribute(name);
             }
         };
+
+        setAttribute('col-id', this.column.getColId());
 
         const compProxy: IHeaderCellComp = {
             setWidth: width => eGui.style.width = width,
             addOrRemoveCssClass: (cssClassName, on) => this.addOrRemoveCssClass(cssClassName, on),
-            setColId: id => setAttribute('col-id', id),
-            setTitle: title => setAttribute('title', title),
             setAriaDescription: label => setAriaDescription(eGui, label),
             setAriaSort: sort => sort ? setAriaSort(eGui, sort) : removeAriaSort(eGui),
             setUserCompDetails: compDetails => this.setUserCompDetails(compDetails),

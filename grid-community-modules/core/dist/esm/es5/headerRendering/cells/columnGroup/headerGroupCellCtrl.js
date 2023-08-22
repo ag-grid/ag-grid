@@ -45,7 +45,6 @@ var HeaderGroupCellCtrl = /** @class */ (function (_super) {
         this.comp = comp;
         this.displayName = this.columnModel.getDisplayNameForColumnGroup(this.columnGroup, 'header');
         this.addClasses();
-        this.addAttributes();
         this.setupMovingCss();
         this.setupExpandable();
         this.setupTooltip();
@@ -118,7 +117,7 @@ var HeaderGroupCellCtrl = /** @class */ (function (_super) {
             tooltipCtrl.getColDef = function () { return colGroupDef; };
         }
         var tooltipFeature = this.createManagedBean(new TooltipFeature(tooltipCtrl, this.beans));
-        tooltipFeature.setComp(this.comp);
+        tooltipFeature.setComp(this.eGui);
     };
     HeaderGroupCellCtrl.prototype.setupExpandable = function () {
         var providedColGroup = this.columnGroup.getProvidedColumnGroup();
@@ -137,8 +136,8 @@ var HeaderGroupCellCtrl = /** @class */ (function (_super) {
             this.comp.setAriaExpanded(undefined);
         }
     };
-    HeaderGroupCellCtrl.prototype.addAttributes = function () {
-        this.comp.setColId(this.columnGroup.getUniqueId());
+    HeaderGroupCellCtrl.prototype.getColId = function () {
+        return this.columnGroup.getUniqueId();
     };
     HeaderGroupCellCtrl.prototype.addClasses = function () {
         var _this = this;

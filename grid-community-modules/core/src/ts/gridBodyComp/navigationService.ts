@@ -377,7 +377,7 @@ export class NavigationService extends BeanStub {
                     this.focusService.focusNextGridCoreContainer(true, true);
                 } else {
                     keyboardEvent.preventDefault();
-                    this.focusService.focusLastHeader(keyboardEvent);
+                    this.focusService.focusPreviousFromFirstCell(keyboardEvent);
                 }
                 
             }
@@ -581,7 +581,8 @@ export class NavigationService extends BeanStub {
                     headerPosition: {
                         headerRowIndex: headerLen + (nextPosition.rowIndex),
                         column: nextPosition.column
-                    }
+                    },
+                    fromCell: true
                 });
 
                 return null;
@@ -725,7 +726,8 @@ export class NavigationService extends BeanStub {
 
             this.focusService.focusHeaderPosition({
                 headerPosition: { headerRowIndex: headerLen + (nextCell.rowIndex), column: currentCell.column },
-                event: event || undefined
+                event: event || undefined,
+                fromCell: true
             });
 
             return;

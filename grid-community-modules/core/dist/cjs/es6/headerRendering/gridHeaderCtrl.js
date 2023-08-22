@@ -41,6 +41,7 @@ class GridHeaderCtrl extends beanStub_1.BeanStub {
         this.addManagedListener(this.eventService, eventKeys_1.Events.EVENT_DISPLAYED_COLUMNS_CHANGED, listener);
         this.addManagedListener(this.eventService, eventKeys_1.Events.EVENT_COLUMN_HEADER_HEIGHT_CHANGED, listener);
         this.addManagedListener(this.eventService, eventKeys_1.Events.EVENT_GRID_STYLES_CHANGED, listener);
+        this.addManagedListener(this.eventService, eventKeys_1.Events.EVENT_ADVANCED_FILTER_ENABLED_CHANGED, listener);
     }
     getHeaderHeight() {
         return this.headerHeight;
@@ -50,7 +51,7 @@ class GridHeaderCtrl extends beanStub_1.BeanStub {
         let numberOfFloating = 0;
         let headerRowCount = columnModel.getHeaderRowCount();
         let totalHeaderHeight;
-        const hasFloatingFilters = columnModel.hasFloatingFilters();
+        const hasFloatingFilters = this.filterManager.hasFloatingFilters();
         if (hasFloatingFilters) {
             headerRowCount++;
             numberOfFloating = 1;
@@ -142,4 +143,7 @@ __decorate([
 __decorate([
     context_1.Autowired('ctrlsService')
 ], GridHeaderCtrl.prototype, "ctrlsService", void 0);
+__decorate([
+    context_1.Autowired('filterManager')
+], GridHeaderCtrl.prototype, "filterManager", void 0);
 exports.GridHeaderCtrl = GridHeaderCtrl;

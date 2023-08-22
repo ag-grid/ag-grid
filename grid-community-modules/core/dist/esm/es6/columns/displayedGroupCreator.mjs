@@ -5,67 +5,79 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
 import { ColumnGroup } from "../entities/columnGroup.mjs";
-import { ProvidedColumnGroup } from "../entities/providedColumnGroup.mjs";
 import { Bean } from "../context/context.mjs";
 import { BeanStub } from "../context/beanStub.mjs";
-import { last } from "../utils/array.mjs";
 import { exists } from "../utils/generic.mjs";
 // takes in a list of columns, as specified by the column definitions, and returns column groups
 let DisplayedGroupCreator = class DisplayedGroupCreator extends BeanStub {
     createDisplayedGroups(
     // all displayed columns sorted - this is the columns the grid should show
     sortedVisibleColumns, 
-    // the tree of columns, as provided by the users, used to know what groups columns roll up into
-    balancedColumnTree, 
     // creates unique id's for the group
     groupInstanceIdCreator, 
     // whether it's left, right or center col
     pinned, 
     // we try to reuse old groups if we can, to allow gui to do animation
     oldDisplayedGroups) {
-        const result = [];
-        let previousRealPath;
-        let previousOriginalPath;
         const oldColumnsMapped = this.mapOldGroupsById(oldDisplayedGroups);
-        // go through each column, then do a bottom up comparison to the previous column, and start
-        // to share groups if they converge at any point.
-        sortedVisibleColumns.forEach((currentColumn) => {
-            const currentOriginalPath = this.getOriginalPathForColumn(balancedColumnTree, currentColumn);
-            const currentRealPath = [];
-            const firstColumn = !previousOriginalPath;
-            for (let i = 0; i < currentOriginalPath.length; i++) {
-                if (firstColumn || currentOriginalPath[i] !== previousOriginalPath[i]) {
-                    // new group needed
-                    const newGroup = this.createColumnGroup(currentOriginalPath[i], groupInstanceIdCreator, oldColumnsMapped, pinned);
-                    currentRealPath[i] = newGroup;
-                    // if top level, add to result, otherwise add to parent
-                    if (i == 0) {
-                        result.push(newGroup);
+        /**
+         * The following logic starts at the leaf level of columns, iterating through them to build their parent
+         * groups when the parents match.
+         *
+         * The created groups are then added to an array, and similarly iterated on until we reach the top level.
+         *
+         * When row groups have no original parent, it's added to the result.
+         */
+        const topLevelResultCols = [];
+        // this is an array of cols or col groups at one level of depth, starting from leaf and ending at root
+        let groupsOrColsAtCurrentLevel = sortedVisibleColumns;
+        while (groupsOrColsAtCurrentLevel.length) {
+            // store what's currently iterating so the function can build the next level of col groups
+            const currentlyIterating = groupsOrColsAtCurrentLevel;
+            groupsOrColsAtCurrentLevel = [];
+            // store the index of the last row which was different from the previous row, this is used as a slice
+            // index for finding the children to group together
+            let lastGroupedColIdx = 0;
+            // create a group of children from lastGroupedColIdx to the provided `to` parameter
+            const createGroupToIndex = (to) => {
+                const from = lastGroupedColIdx;
+                lastGroupedColIdx = to;
+                const previousNode = currentlyIterating[from];
+                const previousNodeProvided = previousNode instanceof ColumnGroup ? previousNode.getProvidedColumnGroup() : previousNode;
+                const previousNodeParent = previousNodeProvided.getOriginalParent();
+                if (previousNodeParent == null) {
+                    // if the last node was different, and had a null parent, then we add all the nodes to the final
+                    // results)
+                    for (let i = from; i < to; i++) {
+                        topLevelResultCols.push(currentlyIterating[i]);
                     }
-                    else {
-                        currentRealPath[i - 1].addChild(newGroup);
-                    }
+                    return;
                 }
-                else {
-                    // reuse old group
-                    currentRealPath[i] = previousRealPath[i];
+                // the parent differs from the previous node, so we create a group from the previous node
+                // and add all to the result array, except the current node.
+                const newGroup = this.createColumnGroup(previousNodeParent, groupInstanceIdCreator, oldColumnsMapped, pinned);
+                for (let i = from; i < to; i++) {
+                    newGroup.addChild(currentlyIterating[i]);
+                }
+                groupsOrColsAtCurrentLevel.push(newGroup);
+            };
+            for (let i = 1; i < currentlyIterating.length; i++) {
+                const thisNode = currentlyIterating[i];
+                const thisNodeProvided = thisNode instanceof ColumnGroup ? thisNode.getProvidedColumnGroup() : thisNode;
+                const thisNodeParent = thisNodeProvided.getOriginalParent();
+                const previousNode = currentlyIterating[lastGroupedColIdx];
+                const previousNodeProvided = previousNode instanceof ColumnGroup ? previousNode.getProvidedColumnGroup() : previousNode;
+                const previousNodeParent = previousNodeProvided.getOriginalParent();
+                if (thisNodeParent !== previousNodeParent) {
+                    createGroupToIndex(i);
                 }
             }
-            const noColumnGroups = currentRealPath.length === 0;
-            if (noColumnGroups) {
-                // if we are not grouping, then the result of the above is an empty
-                // path (no groups), and we just add the column to the root list.
-                result.push(currentColumn);
+            if (lastGroupedColIdx < currentlyIterating.length) {
+                createGroupToIndex(currentlyIterating.length);
             }
-            else {
-                const leafGroup = last(currentRealPath);
-                leafGroup.addChild(currentColumn);
-            }
-            previousRealPath = currentRealPath;
-            previousOriginalPath = currentOriginalPath;
-        });
-        this.setupParentsIntoColumns(result, null);
-        return result;
+        }
+        this.setupParentsIntoColumns(topLevelResultCols, null);
+        return topLevelResultCols;
     }
     createColumnGroup(providedGroup, groupInstanceIdCreator, oldColumnsMapped, pinned) {
         const groupId = providedGroup.getGroupId();
@@ -113,35 +125,6 @@ let DisplayedGroupCreator = class DisplayedGroupCreator extends BeanStub {
                 this.setupParentsIntoColumns(columnGroup.getChildren(), columnGroup);
             }
         });
-    }
-    getOriginalPathForColumn(balancedColumnTree, column) {
-        const result = [];
-        let found = false;
-        const recursePath = (columnTree, dept) => {
-            for (let i = 0; i < columnTree.length; i++) {
-                // quit the search, so 'result' is kept with the found result
-                if (found) {
-                    return;
-                }
-                const node = columnTree[i];
-                if (node instanceof ProvidedColumnGroup) {
-                    recursePath(node.getChildren(), dept + 1);
-                    result[dept] = node;
-                }
-                else if (node === column) {
-                    found = true;
-                }
-            }
-        };
-        recursePath(balancedColumnTree, 0);
-        // it's possible we didn't find a path. this happens if the column is generated
-        // by the grid (auto-group), in that the definition didn't come from the client. in this case,
-        // we create a fake original path.
-        if (found) {
-            return result;
-        }
-        console.warn('AG Grid: could not get path');
-        return null;
     }
 };
 DisplayedGroupCreator = __decorate([

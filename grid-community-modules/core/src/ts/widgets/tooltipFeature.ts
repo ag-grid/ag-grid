@@ -22,16 +22,12 @@ export interface ITooltipFeatureCtrl {
     getValueFormatted?(): string;
 }
 
-export interface ITooltipFeatureComp {
-    setTitle(title: string | undefined): void;
-}
-
 export class TooltipFeature extends BeanStub {
 
     private readonly ctrl: ITooltipFeatureCtrl;
     private readonly beans: Beans;
 
-    private comp: ITooltipFeatureComp;
+    private eGui: HTMLElement;
 
     private tooltip: any;
 
@@ -45,9 +41,18 @@ export class TooltipFeature extends BeanStub {
         this.beans = beans;
     }
 
-    public setComp(comp: ITooltipFeatureComp): void {
-        this.comp = comp;
+    public setComp(eGui: HTMLElement): void {
+        this.eGui = eGui;
         this.setupTooltip();
+    }
+
+    private setBrowserTooltip(tooltip: string | null) {
+        const name = 'title';
+        if (tooltip != null && tooltip != '') {
+            this.eGui.setAttribute(name, tooltip);
+        } else {
+            this.eGui.removeAttribute(name);
+        }
     }
 
     private setupTooltip(): void {
@@ -55,7 +60,7 @@ export class TooltipFeature extends BeanStub {
         this.updateTooltipText();
 
         if (this.browserTooltips) {
-            this.comp.setTitle(this.tooltip != null ? this.tooltip : undefined);
+            this.setBrowserTooltip(this.tooltip);
         } else {
             this.createTooltipFeatureIfNeeded();
         }
@@ -80,7 +85,7 @@ export class TooltipFeature extends BeanStub {
         this.updateTooltipText();
 
         if (this.browserTooltips) {
-            this.comp.setTitle(this.tooltip != null ? this.tooltip : undefined);
+            this.setBrowserTooltip(this.tooltip);
         }
     }
 
@@ -99,6 +104,7 @@ export class TooltipFeature extends BeanStub {
             data: rowNode ? rowNode.data : undefined,
             value: this.getTooltipText(),
             valueFormatted: ctrl.getValueFormatted ? ctrl.getValueFormatted() : undefined,
+            hideTooltipCallback: () => this.genericTooltipFeature.hideTooltip(true)
         };
 
     }

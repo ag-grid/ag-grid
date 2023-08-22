@@ -7,12 +7,12 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.AgList = void 0;
-const agAbstractField_1 = require("./agAbstractField");
 const component_1 = require("./component");
 const context_1 = require("../context/context");
 const string_1 = require("../utils/string");
 const keyCode_1 = require("../constants/keyCode");
 const aria_1 = require("../utils/aria");
+const eventKeys_1 = require("../eventKeys");
 class AgList extends component_1.Component {
     constructor(cssIdentifier = 'default') {
         super(/* html */ `<div class="ag-list ag-${cssIdentifier}-list" role="listbox"></div>`);
@@ -146,7 +146,7 @@ class AgList extends component_1.Component {
         this.highlightedEl = null;
     }
     fireChangeEvent() {
-        this.dispatchEvent({ type: agAbstractField_1.AgAbstractField.EVENT_CHANGED });
+        this.dispatchEvent({ type: eventKeys_1.Events.EVENT_FIELD_VALUE_CHANGED });
         this.fireItemSelected();
     }
     fireItemSelected() {

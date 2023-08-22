@@ -54,6 +54,9 @@ export class SimpleFloatingFilter extends Component {
         return this.isTypeEditable(simpleModel.type);
     }
     init(params) {
+        this.setSimpleParams(params);
+    }
+    setSimpleParams(params) {
         this.optionsFactory = new OptionsFactory();
         this.optionsFactory.init(params.filterParams, this.getDefaultFilterOptions());
         this.lastType = this.optionsFactory.getDefaultOption();
@@ -66,6 +69,9 @@ export class SimpleFloatingFilter extends Component {
         // 2) the default type is not 'in range'
         const editable = this.isTypeEditable(this.lastType);
         this.setEditable(editable);
+    }
+    onParamsUpdated(params) {
+        this.setSimpleParams(params);
     }
     doesFilterHaveSingleInput(filterType) {
         const customFilterOption = this.optionsFactory.getCustomOption(filterType);

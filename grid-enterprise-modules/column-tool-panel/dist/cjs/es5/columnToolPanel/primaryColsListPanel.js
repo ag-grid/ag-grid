@@ -77,7 +77,11 @@ var PrimaryColsListPanel = /** @class */ (function (_super) {
         this.expandGroupsByDefault = !this.params.contractColumnSelection;
         var translate = this.localeService.getLocaleTextFunc();
         var columnListName = translate('ariaColumnList', 'Column List');
-        this.virtualList = this.createManagedBean(new core_1.VirtualList('column-select', 'tree', columnListName));
+        this.virtualList = this.createManagedBean(new core_1.VirtualList({
+            cssIdentifier: 'column-select',
+            ariaRole: 'tree',
+            listName: columnListName
+        }));
         this.appendChild(this.virtualList.getGui());
         this.virtualList.setComponentCreator(function (item, listItemElement) {
             core_1._.setAriaLevel(listItemElement, (item.getDept() + 1));

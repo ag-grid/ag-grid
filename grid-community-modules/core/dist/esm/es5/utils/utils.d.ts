@@ -1,4 +1,4 @@
-// Type definitions for @ag-grid-community/core v30.0.6
+// Type definitions for @ag-grid-community/core v30.1.0
 // Project: https://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import * as AriaUtils from './aria';
@@ -164,6 +164,7 @@ export declare const _: {
     iterateNamedNodeMap(map: NamedNodeMap, callback: (key: string, value: string) => void): void;
     addOrRemoveAttribute(element: HTMLElement, name: string, value: any): void;
     nodeListForEach<T_18 extends Node>(nodeList: NodeListOf<T_18> | null, action: (value: T_18) => void): void;
+    bindCellRendererToHtmlElement(cellRendererPromise: import("./promise").AgPromise<import("../main").ICellRendererComp<any>>, eTarget: HTMLElement): void;
     FOCUSABLE_SELECTOR: "[tabindex], input, select, button, textarea, [href]";
     FOCUSABLE_EXCLUDE: ".ag-hidden, .ag-hidden *, [disabled], .ag-disabled:not(.ag-button), .ag-disabled *";
     serialiseDate(date: Date | null, includeTime?: boolean, separator?: string): string | null;
@@ -190,16 +191,18 @@ export declare const _: {
     shallowCompare(arr1: any[], arr2: any[]): boolean;
     sortNumerically(array: number[]): number[];
     removeRepeatsFromArray<T_23>(array: T_23[], object: T_23): void;
-    removeFromArray<T_24>(array: T_24[], object: T_24): void;
-    removeAllFromArray<T_25>(array: T_25[], toRemove: T_25[]): void;
-    insertIntoArray<T_26>(array: T_26[], object: T_26, toIndex: number): void;
-    insertArrayIntoArray<T_27>(dest: T_27[], src: T_27[], toIndex: number): void;
-    moveInArray<T_28>(array: T_28[], objectsToMove: T_28[], toIndex: number): void;
-    includes<T_29>(array: T_29[], value: T_29): boolean;
+    removeFromUnorderedArray<T_24>(array: T_24[], object: T_24): void;
+    removeFromArray<T_25>(array: T_25[], object: T_25): void;
+    removeAllFromUnorderedArray<T_26>(array: T_26[], toRemove: T_26[]): void;
+    removeAllFromArray<T_27>(array: T_27[], toRemove: T_27[]): void;
+    insertIntoArray<T_28>(array: T_28[], object: T_28, toIndex: number): void;
+    insertArrayIntoArray<T_29>(dest: T_29[], src: T_29[], toIndex: number): void;
+    moveInArray<T_30>(array: T_30[], objectsToMove: T_30[], toIndex: number): void;
+    includes<T_31>(array: T_31[], value: T_31): boolean;
     flatten(arrayOfArrays: any[]): any[];
-    pushAll<T_30>(target: T_30[], source: T_30[]): void;
-    toStrings<T_31>(array: T_31[]): (string | null)[] | null;
-    forEachReverse<T_32>(list: T_32[], action: (value: T_32, index: number) => void): void;
+    pushAll<T_32>(target: T_32[], source: T_32[]): void;
+    toStrings<T_33>(array: T_33[]): (string | null)[] | null;
+    forEachReverse<T_34>(list: T_34[], action: (value: T_34, index: number) => void): void;
     setAriaRole(element: Element, role?: string | null | undefined): void;
     getAriaSortState(sortDirection: import("../main").SortDirection | "mixed"): AriaUtils.ColumnSortState;
     getAriaLevel(element: Element): number;

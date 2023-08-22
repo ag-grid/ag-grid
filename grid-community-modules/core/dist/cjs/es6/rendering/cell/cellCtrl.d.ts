@@ -1,4 +1,4 @@
-// Type definitions for @ag-grid-community/core v30.0.6
+// Type definitions for @ag-grid-community/core v30.1.0
 // Project: https://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { Beans } from "./../beans";
@@ -21,10 +21,6 @@ export interface ICellComp {
     addOrRemoveCssClass(cssClassName: string, on: boolean): void;
     setUserStyles(styles: CellStyle): void;
     getFocusableElement(): HTMLElement;
-    setTabIndex(tabIndex: number): void;
-    setRole(role: string): void;
-    setColId(colId: string): void;
-    setTitle(title: string | undefined): void;
     setIncludeSelection(include: boolean): void;
     setIncludeRowDrag(include: boolean): void;
     setIncludeDndSource(include: boolean): void;
@@ -43,6 +39,7 @@ export declare class CellCtrl extends BeanStub {
     private column;
     private rowNode;
     private rowCtrl;
+    private focusEventToRestore;
     private printLayout;
     private value;
     private valueFormatted;
@@ -54,9 +51,12 @@ export declare class CellCtrl extends BeanStub {
     private cellKeyboardListenerFeature;
     private cellPosition;
     private editing;
+    private isCellRenderer;
     private includeSelection;
     private includeDndSource;
     private includeRowDrag;
+    private colIdSanitised;
+    private tabIndex;
     private suppressRefreshCell;
     private customRowDragComp;
     private onCellCompAttachedFuncs;
@@ -67,6 +67,13 @@ export declare class CellCtrl extends BeanStub {
     setComp(comp: ICellComp, eGui: HTMLElement, eCellWrapper: HTMLElement | undefined, printLayout: boolean, startEditing: boolean): void;
     private setupAutoHeight;
     getInstanceId(): string;
+    getIncludeSelection(): boolean;
+    getIncludeRowDrag(): boolean;
+    getIncludeDndSource(): boolean;
+    getColumnIdSanitised(): string;
+    getTabIndex(): number | undefined;
+    getIsCellRenderer(): boolean;
+    getValueToDisplay(): any;
     private showValue;
     private setupControlComps;
     isForceWrapper(): boolean;

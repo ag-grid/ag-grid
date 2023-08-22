@@ -1,107 +1,96 @@
-import { AgAbstractField } from "./agAbstractField";
-import { AgPickerField } from "./agPickerField";
+import { AgPickerField, IPickerFieldParams } from "./agPickerField";
 import { ListOption, AgList } from "./agList";
-import { Autowired, PostConstruct } from "../context/context";
-import { PopupService } from "./popupService";
-import { setElementWidth, getAbsoluteWidth, getInnerHeight } from "../utils/dom";
-import { IAgLabel } from './agAbstractLabel';
-import { setAriaExpanded } from "../utils/aria";
+import { Events } from "../eventKeys";
+import { KeyCode } from "../constants/keyCode";
+import { getInnerHeight } from "../utils/dom";
 
-export class AgSelect extends AgPickerField<HTMLSelectElement, string> {
+export class AgSelect extends AgPickerField<string | null, IPickerFieldParams, AgList> {
     public static EVENT_ITEM_SELECTED = 'selectedItem';
-    protected listComponent: AgList;
-    private hideList: ((event?: any) => void) | null;
+    protected listComponent: AgList | undefined;
+    private pickerFocusOutListener: (() => null) | undefined;
 
-    @Autowired('popupService') private popupService: PopupService;
-
-    constructor(config?: IAgLabel) {
-        super(config, 'ag-select', 'smallDown', 'listbox');
+    constructor(config?: IPickerFieldParams) {
+        super({
+            pickerAriaLabelKey: 'ariaLabelSelectField',
+            pickerAriaLabelValue: 'Select Field',
+            pickerType: 'ag-list',
+            ...config
+        }, 'ag-select', 'smallDown', 'listbox');
     }
 
-    @PostConstruct
-    public init(): void {
+    protected postConstruct(): void {
+        super.postConstruct();
+        this.createListComponent();
+        this.eWrapper.tabIndex = this.gridOptionsService.getNum('tabIndex') ?? 0;
+    }
+
+    private createListComponent(): void {
         this.listComponent = this.createBean(new AgList('select'));
         this.listComponent.setParentComponent(this);
-        this.eWrapper.tabIndex = 0;
+
+        this.listComponent.addGuiEventListener('keydown', (e: KeyboardEvent) => {
+            if (e.key === KeyCode.TAB) {
+                e.preventDefault();
+                e.stopImmediatePropagation();
+
+                this.getGui().dispatchEvent(new KeyboardEvent('keydown', {
+                    key: e.key,
+                    shiftKey: e.shiftKey,
+                    ctrlKey: e.ctrlKey,
+                    bubbles: true
+                }));
+            };
+        })
 
         this.listComponent.addManagedListener(
             this.listComponent,
             AgList.EVENT_ITEM_SELECTED,
             () => {
-                if (this.hideList) { this.hideList(); }
+                this.hidePicker();
                 this.dispatchEvent({ type: AgSelect.EVENT_ITEM_SELECTED });
             }
         );
 
         this.listComponent.addManagedListener(
             this.listComponent,
-            AgAbstractField.EVENT_CHANGED,
+            Events.EVENT_FIELD_VALUE_CHANGED,
             () => {
-                this.setValue(this.listComponent.getValue(), false, true);
-
-                if (this.hideList) { this.hideList(); }
+                if (!this.listComponent) { return; }
+                this.setValue(this.listComponent.getValue()!, false, true);
+                this.hidePicker();
             }
         );
     }
 
+    protected createPickerComponent() {
+        // do not create the picker every time to save state
+        return this.listComponent!;
+    }
+
     public showPicker() {
-        const listGui = this.listComponent.getGui();
-        const eDocument = this.gridOptionsService.getDocument();
+        if (!this.listComponent) { return; }
 
-        const destroyMouseWheelFunc = this.addManagedListener(eDocument.body, 'wheel', (e: MouseEvent) => {
-            if (!listGui.contains(e.target as HTMLElement) && this.hideList) {
-                this.hideList();
+        super.showPicker();
+
+        this.listComponent.getGui().style.maxHeight = `${getInnerHeight(this.popupService.getPopupParent())}px`;
+
+        const ePicker = this.listComponent.getGui();
+        this.pickerFocusOutListener = this.addManagedListener(ePicker, 'focusout', (e: FocusEvent) => {
+            if (!ePicker.contains(e.relatedTarget as HTMLElement)) {
+                this.hidePicker();
             }
-        });
-
-        const destroyFocusOutFunc = this.addManagedListener(listGui, 'focusout', (e: FocusEvent) => {
-            if (!listGui.contains(e.relatedTarget as HTMLElement) && this.hideList) {
-                this.hideList();
-            }
-        });
-
-        const translate = this.localeService.getLocaleTextFunc();
-
-        const addPopupRes = this.popupService.addPopup({
-            modal: true,
-            eChild: listGui,
-            closeOnEsc: true,
-            closedCallback: () => {
-                this.hideList = null;
-                this.isPickerDisplayed = false;
-                destroyFocusOutFunc!();
-                destroyMouseWheelFunc!();
-
-                if (this.isAlive()) {
-                    setAriaExpanded(this.eWrapper, false);
-                    this.getFocusableElement().focus();
-                }
-            },
-            ariaLabel: translate('ariaLabelSelectField', 'Select Field')
-        });
-
-        if (addPopupRes) {
-            this.hideList = addPopupRes.hideFunc;
-        }
-        this.isPickerDisplayed = true;
-
-        setElementWidth(listGui, getAbsoluteWidth(this.eWrapper));
-        setAriaExpanded(this.eWrapper, true);
-
-        listGui.style.maxHeight = getInnerHeight(this.popupService.getPopupParent()) + 'px';
-        listGui.style.position = 'absolute';
-
-        this.popupService.positionPopupByComponent({
-            type: 'ag-list',
-            eventSource: this.eWrapper,
-            ePopup: listGui,
-            position: 'under',
-            keepWithinBounds: true
         });
 
         this.listComponent.refreshHighlighted();
+    }
 
-        return this.listComponent;
+    protected beforeHidePicker(): void {
+        if (this.pickerFocusOutListener) {
+            this.pickerFocusOutListener();
+            this.pickerFocusOutListener = undefined;
+        }
+
+        super.beforeHidePicker();
     }
 
     public addOptions(options: ListOption[]): this {
@@ -111,13 +100,13 @@ export class AgSelect extends AgPickerField<HTMLSelectElement, string> {
     }
 
     public addOption(option: ListOption): this {
-        this.listComponent.addOption(option);
+        this.listComponent!.addOption(option);
 
         return this;
     }
 
-    public setValue(value?: string | null, silent?: boolean, fromPicker?: boolean): this {
-        if (this.value === value) { return this; }
+    public setValue(value?: string | null , silent?: boolean, fromPicker?: boolean): this {
+        if (this.value === value || !this.listComponent) { return this; }
 
         if (!fromPicker) {
             this.listComponent.setValue(value, true);
@@ -133,11 +122,11 @@ export class AgSelect extends AgPickerField<HTMLSelectElement, string> {
     }
 
     protected destroy(): void {
-        if (this.hideList) {
-            this.hideList();
+        if (this.listComponent) {
+            this.destroyBean(this.listComponent);
+            this.listComponent = undefined;
         }
 
-        this.destroyBean(this.listComponent);
         super.destroy();
     }
 }

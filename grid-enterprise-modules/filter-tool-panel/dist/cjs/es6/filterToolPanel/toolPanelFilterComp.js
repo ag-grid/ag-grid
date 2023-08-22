@@ -25,7 +25,8 @@ class ToolPanelFilterComp extends core_1.Component {
         this.eFilterName.innerText = this.columnModel.getDisplayNameForColumn(this.column, 'filterToolPanel', false) || '';
         this.addManagedListener(this.eFilterToolPanelHeader, 'click', this.toggleExpanded.bind(this));
         this.addManagedListener(this.eFilterToolPanelHeader, 'keydown', (e) => {
-            if (e.key === core_1.KeyCode.ENTER) {
+            if (e.key === core_1.KeyCode.ENTER || e.key === core_1.KeyCode.SPACE) {
+                e.preventDefault();
                 this.toggleExpanded();
             }
         });

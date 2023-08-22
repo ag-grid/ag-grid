@@ -11,6 +11,7 @@ export declare class LazyCache extends BeanStub {
     private blockUtils;
     private focusService;
     private nodeManager;
+    private serverSideRowModel;
     /**
      * Indicates whether this is still the live dataset for this store (used for ignoring old requests after purge)
      */
@@ -114,7 +115,7 @@ export declare class LazyCache extends BeanStub {
         [key: string]: any;
     };
     destroyRowAtIndex(atStoreIndex: number): void;
-    getSsrmParams(): import("../../serverSideRowModel").SSRMParams;
+    getSsrmParams(): import("src/serverSideRowModel/serverSideRowModel").SSRMParams;
     /**
      * @param id the base id to be prefixed
      * @returns a node id with prefix if required

@@ -147,10 +147,13 @@ var SideBarComp = /** @class */ (function (_super) {
         var sideBarRaw = this.gridOptionsService.get('sideBar');
         this.sideBar = sideBarDefParser_1.SideBarDefParser.parse(sideBarRaw);
         if (!!this.sideBar && !!this.sideBar.toolPanels) {
-            var shouldDisplaySideBar = !this.sideBar.hiddenByDefault;
-            this.setDisplayed(shouldDisplaySideBar);
             var toolPanelDefs = this.sideBar.toolPanels;
             this.createToolPanelsAndSideButtons(toolPanelDefs);
+            if (!this.toolPanelWrappers.length) {
+                return;
+            }
+            var shouldDisplaySideBar = !this.sideBar.hiddenByDefault;
+            this.setDisplayed(shouldDisplaySideBar);
             this.setSideBarPosition(this.sideBar.position);
             if (!this.sideBar.hiddenByDefault) {
                 this.openToolPanel(this.sideBar.defaultToolPanel, 'sideBarInitializing');
@@ -204,6 +207,12 @@ var SideBarComp = /** @class */ (function (_super) {
         if (def.toolPanel === 'agFiltersToolPanel') {
             var moduleMissing = !core_1.ModuleRegistry.__assertRegistered(core_1.ModuleNames.FiltersToolPanelModule, 'Filters Tool Panel', this.context.getGridId());
             if (moduleMissing) {
+                return false;
+            }
+            if (this.filterManager.isAdvancedFilterEnabled()) {
+                core_1._.doOnce(function () {
+                    console.warn('AG Grid: Advanced Filter does not work with Filters Tool Panel. Filters Tool Panel has been disabled.');
+                }, 'advancedFilterToolPanel');
                 return false;
             }
         }
@@ -308,6 +317,9 @@ var SideBarComp = /** @class */ (function (_super) {
     __decorate([
         core_1.Autowired('focusService')
     ], SideBarComp.prototype, "focusService", void 0);
+    __decorate([
+        core_1.Autowired('filterManager')
+    ], SideBarComp.prototype, "filterManager", void 0);
     __decorate([
         core_1.RefSelector('sideBarButtons')
     ], SideBarComp.prototype, "sideBarButtonsComp", void 0);

@@ -17,7 +17,17 @@ export interface VirtualListModel {
     areRowsEqual?(oldRow: any, newRow: any): boolean;
 }
 
+interface VirtualListParams {
+    cssIdentifier?: string;
+    ariaRole?: string;
+    listName?: string;
+}
+
 export class VirtualList extends TabGuardComp {
+    private readonly cssIdentifier: string;
+    private readonly ariaRole: string;
+    private listName?: string;
+
     private model: VirtualListModel;
     private renderedRows = new Map<number, { rowComponent: Component; eDiv: HTMLDivElement; value: any; }>();
     private componentCreator: (value: any, listItemElement: HTMLElement) => Component;
@@ -28,12 +38,14 @@ export class VirtualList extends TabGuardComp {
     @Autowired('resizeObserverService') private readonly resizeObserverService: ResizeObserverService;
     @RefSelector('eContainer') private readonly eContainer: HTMLElement;
 
-    constructor(
-        private readonly cssIdentifier = 'default',
-        private readonly ariaRole = 'listbox',
-        private listName?: string
-    ) {
-        super(VirtualList.getTemplate(cssIdentifier));
+    constructor(params?: VirtualListParams) {
+        super(VirtualList.getTemplate(params?.cssIdentifier || 'default'));
+
+        const { cssIdentifier = 'default', ariaRole = 'listbox', listName } = params || {};
+
+        this.cssIdentifier = cssIdentifier;
+        this.ariaRole = ariaRole;
+        this.listName = listName;
     }
 
     @PostConstruct
@@ -51,7 +63,6 @@ export class VirtualList extends TabGuardComp {
         });
 
         this.setAriaProperties();
-
         this.addManagedListener(this.eventService, Events.EVENT_GRID_STYLES_CHANGED, this.onGridStylesChanged.bind(this));
     }
 
@@ -158,10 +169,11 @@ export class VirtualList extends TabGuardComp {
     }
 
     private static getTemplate(cssIdentifier: string) {
-        return /* html */`
-            <div class="ag-virtual-list-viewport ag-${cssIdentifier}-virtual-list-viewport" role="presentation">
+        return (/* html */
+            `<div class="ag-virtual-list-viewport ag-${cssIdentifier}-virtual-list-viewport" role="presentation">
                 <div class="ag-virtual-list-container ag-${cssIdentifier}-virtual-list-container" ref="eContainer"></div>
-            </div>`;
+            </div>`
+        );
     }
 
     private getItemHeight(): number {
@@ -248,7 +260,7 @@ export class VirtualList extends TabGuardComp {
     }
 
     private drawVirtualRows(softRefresh?: boolean) {
-        if (!this.isAlive()) { return; }
+        if (!this.isAlive() || !this.model) { return; }
 
         const gui = this.getGui();
         const topPixel = gui.scrollTop;
@@ -352,6 +364,10 @@ export class VirtualList extends TabGuardComp {
 
     public setModel(model: VirtualListModel): void {
         this.model = model;
+    }
+
+    public getAriaElement(): Element {
+        return this.eContainer;
     }
 
     public destroy(): void {

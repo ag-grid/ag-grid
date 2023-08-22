@@ -75,7 +75,7 @@ class AgCheckbox extends agAbstractInputField_1.AgAbstractInputField {
         }
     }
     dispatchChange(selected, previousValue, event) {
-        this.dispatchEvent({ type: AgCheckbox.EVENT_CHANGED, selected, previousValue, event });
+        this.dispatchEvent({ type: events_1.Events.EVENT_FIELD_VALUE_CHANGED, selected, previousValue, event });
         const input = this.getInputElement();
         const checkboxChangedEvent = {
             type: events_1.Events.EVENT_CHECKBOX_CHANGED,

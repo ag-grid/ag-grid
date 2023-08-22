@@ -1,30 +1,14 @@
-import { ICellEditor, IRichCellEditorParams, PopupComponent } from "@ag-grid-community/core";
-export declare class RichSelectCellEditor extends PopupComponent implements ICellEditor {
-    private static TEMPLATE;
-    private userComponentFactory;
-    private eValue;
-    private eList;
+import { ICellEditor, PopupComponent, RichCellEditorParams } from "@ag-grid-community/core";
+export declare class RichSelectCellEditor<TData = any, TValue = any> extends PopupComponent implements ICellEditor<TValue> {
     private params;
-    private virtualList;
     private focusAfterAttached;
-    private selectedValue;
-    private originalSelectedValue;
-    private selectionConfirmed;
-    private searchString;
+    private richSelect;
     constructor();
-    init(params: IRichCellEditorParams): void;
-    private onKeyDown;
-    private confirmSelection;
-    private onEnterKeyDown;
-    private onNavigationKeyDown;
-    private searchText;
-    private runSearch;
-    private clearSearchString;
-    private renderSelectedValue;
-    private setSelectedValue;
-    private createRowComponent;
-    private onMouseMove;
-    private onClick;
+    init(params: RichCellEditorParams<TData, TValue>): void;
+    private onEditorPickerValueSelected;
+    private onEditorFocusOut;
+    private buildRichSelectParams;
     afterGuiAttached(): void;
     getValue(): any;
+    isPopup(): boolean;
 }

@@ -19,7 +19,7 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
-import { _, Autowired, Events, NumberSequence, PostConstruct, PreDestroy, RowNodeBlock, ServerSideTransactionResultStatus } from "@ag-grid-community/core";
+import { _, Autowired, Events, NumberSequence, PostConstruct, PreDestroy, RowNodeBlock, ServerSideTransactionResultStatus, } from "@ag-grid-community/core";
 var FullStore = /** @class */ (function (_super) {
     __extends(FullStore, _super);
     function FullStore(ssrmParams, storeParams, parentRowNode) {
@@ -53,6 +53,7 @@ var FullStore = /** @class */ (function (_super) {
         this.initialiseRowNodes(initialRowCount);
         this.rowNodeBlockLoader.addBlock(this);
         this.addDestroyFunc(function () { return _this.rowNodeBlockLoader.removeBlock(_this); });
+        this.postSortFunc = this.gridOptionsService.getCallback('postSortRows');
     };
     FullStore.prototype.destroyRowNodes = function () {
         this.blockUtils.destroyRowNodes(this.allRowNodes);
@@ -141,6 +142,9 @@ var FullStore = /** @class */ (function (_super) {
         if (info) {
             Object.assign(this.info, info);
         }
+        if (params.pivotResultFields) {
+            this.serverSideRowModel.generateSecondaryColumns(params.pivotResultFields);
+        }
         var nodesToRecycle = this.allRowNodes.length > 0 ? this.allNodesMap : undefined;
         this.allRowNodes = [];
         this.nodesAfterSort = [];
@@ -223,6 +227,10 @@ var FullStore = /** @class */ (function (_super) {
             return;
         }
         this.nodesAfterSort = this.rowNodeSorter.doFullSort(this.nodesAfterFilter, sortOptions);
+        if (this.postSortFunc) {
+            var params = { nodes: this.nodesAfterSort };
+            this.postSortFunc(params);
+        }
     };
     FullStore.prototype.filterRowNodes = function () {
         var _this = this;
@@ -655,6 +663,9 @@ var FullStore = /** @class */ (function (_super) {
     __decorate([
         Autowired('ssrmTransactionManager')
     ], FullStore.prototype, "transactionManager", void 0);
+    __decorate([
+        Autowired('rowModel')
+    ], FullStore.prototype, "serverSideRowModel", void 0);
     __decorate([
         PostConstruct
     ], FullStore.prototype, "postConstruct", null);

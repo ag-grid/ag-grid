@@ -1,6 +1,6 @@
-// @ag-grid-community/react v30.0.6
+// @ag-grid-community/react v30.1.0
 import React, { useEffect, useRef, useState } from 'react';
-import ReactDOM from 'react-dom';
+import { createRoot } from 'react-dom/client';
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
 import { AgGridReact } from './agGridReact.mjs';
 import useGridApis from "./useGridApi.mjs";
@@ -26,4 +26,5 @@ const App = () => {
     return (React.createElement("div", { className: "ag-theme-alpine", style: { height: 400, width: 600 } },
         React.createElement(AgGridReact, { ref: gridRef, rowData: rowData, columnDefs: colDefs, modules: [ClientSideRowModelModule] })));
 };
-ReactDOM.render(React.createElement(App, null), document.getElementById('root'));
+const root = createRoot(document.getElementById('root'));
+root.render(React.createElement(App, null));

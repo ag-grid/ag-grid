@@ -36,7 +36,7 @@ let MenuItemMapper = class MenuItemMapper extends BeanStub {
         return resultList;
     }
     getStockMenuItem(key, column) {
-        var _a;
+        var _a, _b;
         const localeTextFunc = this.localeService.getLocaleTextFunc();
         const skipHeaderOnAutoSize = this.gridOptionsService.is('skipHeaderOnAutoSize');
         switch (key) {
@@ -96,11 +96,34 @@ let MenuItemMapper = class MenuItemMapper extends BeanStub {
                     icon: _.createIconNoSpan('menuAddRowGroup', this.gridOptionsService, null)
                 };
             case 'rowUnGroup':
+                const icon = _.createIconNoSpan('menuRemoveRowGroup', this.gridOptionsService, null);
+                const showRowGroup = column === null || column === void 0 ? void 0 : column.getColDef().showRowGroup;
+                // Handle single auto group column
+                if (showRowGroup === true) {
+                    return {
+                        name: localeTextFunc('ungroupAll', 'Un-Group All'),
+                        disabled: !(column === null || column === void 0 ? void 0 : column.getColDef().showRowGroup),
+                        action: () => this.columnModel.setRowGroupColumns([], "contextMenu"),
+                        icon: icon
+                    };
+                }
+                // Handle multiple auto group columns
+                if (typeof showRowGroup === 'string') {
+                    const underlyingColumn = (_a = this.columnModel.getSourceColumnsForGroupColumn(column)) === null || _a === void 0 ? void 0 : _a[0];
+                    const ungroupByName = (underlyingColumn != null) ? _.escapeString(this.columnModel.getDisplayNameForColumn(underlyingColumn, 'header')) : showRowGroup;
+                    return {
+                        name: localeTextFunc('ungroupBy', 'Un-Group by') + ' ' + ungroupByName,
+                        disabled: !(column === null || column === void 0 ? void 0 : column.getColDef().showRowGroup),
+                        action: () => this.columnModel.removeRowGroupColumn(showRowGroup, "contextMenu"),
+                        icon: icon
+                    };
+                }
+                // Handle primary column
                 return {
                     name: localeTextFunc('ungroupBy', 'Un-Group by') + ' ' + _.escapeString(this.columnModel.getDisplayNameForColumn(column, 'header')),
                     disabled: !(column === null || column === void 0 ? void 0 : column.isRowGroupActive()) || !(column === null || column === void 0 ? void 0 : column.getColDef().enableRowGroup),
                     action: () => this.columnModel.removeRowGroupColumn(column, "contextMenu"),
-                    icon: _.createIconNoSpan('menuRemoveRowGroup', this.gridOptionsService, null)
+                    icon: icon
                 };
             case 'resetColumns':
                 return {
@@ -213,7 +236,7 @@ let MenuItemMapper = class MenuItemMapper extends BeanStub {
                 return 'separator';
             case 'pivotChart':
             case 'chartRange':
-                return (_a = this.chartMenuItemMapper.getChartItems(key)) !== null && _a !== void 0 ? _a : null;
+                return (_b = this.chartMenuItemMapper.getChartItems(key)) !== null && _b !== void 0 ? _b : null;
             default: {
                 console.warn(`AG Grid: unknown menu item type ${key}`);
                 return null;

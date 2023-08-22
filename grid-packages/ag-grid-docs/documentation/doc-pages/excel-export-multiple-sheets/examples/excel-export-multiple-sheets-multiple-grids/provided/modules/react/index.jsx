@@ -100,6 +100,10 @@ class GridExample extends Component {
     }
 
     componentDidUpdate(prevProps, prevState) {
+        if ((!prevState.leftApi || !prevState.rightApi) && this.state.leftApi && this.state.rightApi) {
+            this.addGridDropZone();
+        }
+
         if (!prevState.rawData.length && this.state.rawData.length) {
             this.loadGrids();
         }
@@ -148,9 +152,6 @@ class GridExample extends Component {
             this.setState({
                 rightApi: params.api,
             });
-        }
-        if (this.state.leftApi && this.state.rightApi) {
-            this.addGridDropZone();
         }
     }
 

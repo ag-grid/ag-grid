@@ -128,9 +128,6 @@ var RowRenderer = /** @class */ (function (_super) {
         }
         return DEFAULT_KEEP_DETAIL_ROW_COUNT;
     };
-    RowRenderer.prototype.getRowCtrls = function () {
-        return this.allRowCtrls;
-    };
     RowRenderer.prototype.getStickyTopRowCtrls = function () {
         if (!this.stickyRowFeature) {
             return [];
@@ -146,7 +143,13 @@ var RowRenderer = /** @class */ (function (_super) {
         }
         var zombieList = object_1.getAllValuesInObject(this.zombieRowCtrls);
         var cachedList = this.cachedRowCtrls ? this.cachedRowCtrls.getEntries() : [];
-        this.allRowCtrls = __spreadArray(__spreadArray(__spreadArray([], __read(liveList)), __read(zombieList)), __read(cachedList));
+        if (zombieList.length > 0 || cachedList.length > 0) {
+            // Only spread if we need to.
+            this.allRowCtrls = __spreadArray(__spreadArray(__spreadArray([], __read(liveList)), __read(zombieList)), __read(cachedList));
+        }
+        else {
+            this.allRowCtrls = liveList;
+        }
     };
     RowRenderer.prototype.onCellFocusChanged = function (event) {
         this.getAllCellCtrls().forEach(function (cellCtrl) { return cellCtrl.onCellFocused(event); });
@@ -307,6 +310,9 @@ var RowRenderer = /** @class */ (function (_super) {
     RowRenderer.prototype.getTopRowCtrls = function () {
         return this.topRowCtrls;
     };
+    RowRenderer.prototype.getCentreRowCtrls = function () {
+        return this.allRowCtrls;
+    };
     RowRenderer.prototype.getBottomRowCtrls = function () {
         return this.bottomRowCtrls;
     };
@@ -332,32 +338,50 @@ var RowRenderer = /** @class */ (function (_super) {
         };
         this.redrawAfterModelUpdate(params);
     };
-    // if the row nodes are not rendered, no index is returned
-    RowRenderer.prototype.getRenderedIndexesForRowNodes = function (rowNodes) {
-        var result = [];
-        if (generic_1.missing(rowNodes)) {
-            return result;
+    RowRenderer.prototype.redrawRow = function (rowNode, suppressEvent) {
+        var _this = this;
+        if (suppressEvent === void 0) { suppressEvent = false; }
+        if (rowNode.sticky) {
+            this.stickyRowFeature.refreshStickyNode(rowNode);
         }
-        object_1.iterateObject(this.rowCtrlsByRowIndex, function (index, renderedRow) {
-            var rowNode = renderedRow.getRowNode();
-            if (rowNodes.indexOf(rowNode) >= 0) {
-                result.push(index);
+        else {
+            var destroyAndRecreateCtrl = function (dataStruct) {
+                var ctrl = dataStruct[rowNode.rowIndex];
+                if (!ctrl) {
+                    return;
+                }
+                if (ctrl.getRowNode() !== rowNode) {
+                    // if the node is in the wrong place, then the row model is responsible for triggering a full refresh.
+                    return;
+                }
+                ctrl.destroyFirstPass();
+                ctrl.destroySecondPass();
+                dataStruct[rowNode.rowIndex] = _this.createRowCon(rowNode, false, false);
+            };
+            switch (rowNode.rowPinned) {
+                case 'top':
+                    destroyAndRecreateCtrl(this.topRowCtrls);
+                case 'bottom':
+                    destroyAndRecreateCtrl(this.bottomRowCtrls);
+                default:
+                    destroyAndRecreateCtrl(this.rowCtrlsByRowIndex);
+                    this.updateAllRowCtrls();
             }
-        });
-        return result;
+        }
+        if (!suppressEvent) {
+            this.dispatchDisplayedRowsChanged(false);
+        }
     };
     RowRenderer.prototype.redrawRows = function (rowNodes) {
+        var _this = this;
         // if no row nodes provided, then refresh everything
-        var partialRefresh = rowNodes != null && rowNodes.length > 0;
+        var partialRefresh = rowNodes != null;
         if (partialRefresh) {
-            var indexesToRemove = this.getRenderedIndexesForRowNodes(rowNodes);
-            // remove the rows
-            this.removeRowCtrls(indexesToRemove);
+            rowNodes === null || rowNodes === void 0 ? void 0 : rowNodes.forEach(function (node) { return _this.redrawRow(node, true); });
+            this.dispatchDisplayedRowsChanged(false);
+            return;
         }
-        // add draw them again
-        this.redrawAfterModelUpdate({
-            recycleRows: partialRefresh
-        });
+        this.redrawAfterModelUpdate();
     };
     RowRenderer.prototype.getCellToRestoreFocusToAfterRefresh = function (params) {
         var focusedCell = (params === null || params === void 0 ? void 0 : params.suppressKeepFocus) ? null : this.focusService.getFocusCellToUseAfterRefresh();
@@ -398,6 +422,10 @@ var RowRenderer = /** @class */ (function (_super) {
         var rowsToRecycle = recycleRows ? this.getRowsToRecycle() : null;
         if (!recycleRows) {
             this.removeAllRowComps();
+        }
+        this.workOutFirstAndLastRowsToRender();
+        if (this.stickyRowFeature) {
+            this.stickyRowFeature.checkStickyRows();
         }
         this.recycleRows(rowsToRecycle, animate);
         this.gridBodyCtrl.updateRowCount();
@@ -525,6 +553,7 @@ var RowRenderer = /** @class */ (function (_super) {
             .forEach(function (cellCtrl) { return cellCtrl.flashCell({ flashDelay: flashDelay, fadeDelay: fadeDelay }); });
     };
     RowRenderer.prototype.refreshCells = function (params) {
+        var _this = this;
         if (params === void 0) { params = {}; }
         var refreshCellParams = {
             forceRefresh: params.force,
@@ -543,7 +572,19 @@ var RowRenderer = /** @class */ (function (_super) {
                 cellCtrl.refreshCell(refreshCellParams);
             }
         });
-        this.refreshFullWidthRows(params.rowNodes);
+        if (params.rowNodes) {
+            // refresh the full width rows too
+            this.getRowCtrls(params.rowNodes).forEach(function (rowCtrl) {
+                if (!rowCtrl.isFullWidth()) {
+                    return;
+                }
+                var refreshed = rowCtrl.refreshFullWidth();
+                if (!refreshed) {
+                    _this.redrawRow(rowCtrl.getRowNode(), true);
+                }
+            });
+            this.dispatchDisplayedRowsChanged(false);
+        }
     };
     RowRenderer.prototype.getCellRendererInstances = function (params) {
         var _this = this;
@@ -625,12 +666,25 @@ var RowRenderer = /** @class */ (function (_super) {
         }
         return rowIdsMap.normal[id] != null;
     };
+    /**
+     * @param rowNodes if provided, returns the RowCtrls for the provided rowNodes. otherwise returns all RowCtrls.
+     */
+    RowRenderer.prototype.getRowCtrls = function (rowNodes) {
+        var _this = this;
+        var rowIdsMap = this.mapRowNodes(rowNodes);
+        var allRowCtrls = this.getAllRowCtrls();
+        if (!rowNodes || !rowIdsMap) {
+            return allRowCtrls;
+        }
+        return allRowCtrls.filter(function (rowCtrl) {
+            var rowNode = rowCtrl.getRowNode();
+            return _this.isRowInMap(rowNode, rowIdsMap);
+        });
+    };
     // returns CellCtrl's that match the provided rowNodes and columns. eg if one row node
     // and two columns provided, that identifies 4 cells, so 4 CellCtrl's returned.
     RowRenderer.prototype.getCellCtrls = function (rowNodes, columns) {
         var _this = this;
-        var rowIdsMap = this.mapRowNodes(rowNodes);
-        var res = [];
         var colIdsMap;
         if (generic_1.exists(columns)) {
             colIdsMap = {};
@@ -641,12 +695,8 @@ var RowRenderer = /** @class */ (function (_super) {
                 }
             });
         }
-        var processRow = function (rowCtrl) {
-            var rowNode = rowCtrl.getRowNode();
-            // skip this row if it is missing from the provided list
-            if (rowIdsMap != null && !_this.isRowInMap(rowNode, rowIdsMap)) {
-                return;
-            }
+        var res = [];
+        this.getRowCtrls(rowNodes).forEach(function (rowCtrl) {
             rowCtrl.getAllCellCtrls().forEach(function (cellCtrl) {
                 var colId = cellCtrl.getColumn().getId();
                 var excludeColFromRefresh = colIdsMap && !colIdsMap[colId];
@@ -655,8 +705,7 @@ var RowRenderer = /** @class */ (function (_super) {
                 }
                 res.push(cellCtrl);
             });
-        };
-        this.getAllRowCtrls().forEach(function (row) { return processRow(row); });
+        });
         return res;
     };
     RowRenderer.prototype.destroy = function () {
@@ -704,19 +753,31 @@ var RowRenderer = /** @class */ (function (_super) {
         if (e.direction !== 'vertical') {
             return;
         }
-        this.redraw();
+        this.redraw({ afterScroll: true });
     };
     // gets called when rows don't change, but viewport does, so after:
     // 1) height of grid body changes, ie number of displayed rows has changed
     // 2) grid scrolled to new position
     // 3) ensure index visible (which is a scroll)
-    RowRenderer.prototype.redraw = function (afterScroll) {
-        if (afterScroll === void 0) { afterScroll = true; }
+    RowRenderer.prototype.redraw = function (params) {
+        if (params === void 0) { params = {}; }
+        var afterScroll = params.afterScroll;
         var cellFocused;
         // only try to refocus cells shifting in and out of sticky container
         // if the browser supports focus ({ preventScroll })
         if (this.stickyRowFeature && browser_1.browserSupportsPreventScroll()) {
             cellFocused = this.getCellToRestoreFocusToAfterRefresh() || undefined;
+        }
+        var oldFirstRow = this.firstRenderedRow;
+        var oldLastRow = this.lastRenderedRow;
+        this.workOutFirstAndLastRowsToRender();
+        var hasStickyRowChanges = false;
+        if (this.stickyRowFeature) {
+            hasStickyRowChanges = this.stickyRowFeature.checkStickyRows();
+        }
+        var rangeChanged = this.firstRenderedRow !== oldFirstRow || this.lastRenderedRow !== oldLastRow;
+        if (afterScroll && !hasStickyRowChanges && !rangeChanged) {
+            return;
         }
         this.getLockOnRefresh();
         this.recycleRows(null, false, afterScroll);
@@ -758,25 +819,24 @@ var RowRenderer = /** @class */ (function (_super) {
         // if we are redrawing due to model update, then old rows are in rowsToRecycle
         object_1.iterateObject(rowsToRecycle, checkRowToDraw);
         indexesToDraw.sort(function (a, b) { return a - b; });
-        indexesToDraw = indexesToDraw.filter(function (index) {
-            var rowNode = _this.paginationProxy.getRow(index);
-            return rowNode && !rowNode.sticky;
-        });
-        return indexesToDraw;
+        var ret = [];
+        for (var i = 0; i < indexesToDraw.length; i++) {
+            var currRow = indexesToDraw[i];
+            var rowNode = this.paginationProxy.getRow(currRow);
+            if (rowNode && !rowNode.sticky) {
+                ret.push(currRow);
+            }
+        }
+        return ret;
     };
     RowRenderer.prototype.recycleRows = function (rowsToRecycle, animate, afterScroll) {
-        var _this = this;
-        if (animate === void 0) { animate = false; }
-        if (afterScroll === void 0) { afterScroll = false; }
-        this.rowContainerHeightService.updateOffset();
-        this.workOutFirstAndLastRowsToRender();
-        if (this.stickyRowFeature) {
-            this.stickyRowFeature.checkStickyRows();
-        }
         // the row can already exist and be in the following:
         // rowsToRecycle -> if model change, then the index may be different, however row may
         //                         exist here from previous time (mapped by id).
         // this.rowCompsByIndex -> if just a scroll, then this will contain what is currently in the viewport
+        var _this = this;
+        if (animate === void 0) { animate = false; }
+        if (afterScroll === void 0) { afterScroll = false; }
         // this is all the indexes we want, including those that already exist, so this method
         // will end up going through each index and drawing only if the row doesn't already exist
         var indexesToDraw = this.calculateIndexesToDraw(rowsToRecycle);
@@ -838,7 +898,7 @@ var RowRenderer = /** @class */ (function (_super) {
         });
         this.refreshFloatingRowComps();
         this.removeRowCtrls(rowsToRemove);
-        this.redraw();
+        this.redraw({ afterScroll: true });
     };
     RowRenderer.prototype.getFullWidthRowCtrls = function (rowNodes) {
         var _this = this;
@@ -855,35 +915,6 @@ var RowRenderer = /** @class */ (function (_super) {
             }
             return true;
         });
-    };
-    RowRenderer.prototype.refreshFullWidthRow = function (rowNode) {
-        this.refreshFullWidthRows([rowNode]);
-    };
-    RowRenderer.prototype.refreshFullWidthRows = function (rowNodes) {
-        var _this = this;
-        var fullWidthCtrls = this.getFullWidthRowCtrls(rowNodes);
-        var redraw = false;
-        var indicesToForce = [];
-        fullWidthCtrls.forEach(function (fullWidthCtrl) {
-            var refreshed = fullWidthCtrl.refreshFullWidth();
-            if (refreshed) {
-                return;
-            }
-            var node = fullWidthCtrl.getRowNode();
-            if (node.sticky) {
-                _this.stickyRowFeature.refreshStickyNode(node);
-            }
-            else {
-                indicesToForce.push(node.rowIndex);
-            }
-            redraw = true;
-        });
-        if (indicesToForce.length > 0) {
-            this.removeRowCtrls(indicesToForce);
-        }
-        if (redraw) {
-            this.redraw(false);
-        }
     };
     RowRenderer.prototype.createOrUpdateRowCtrl = function (rowIndex, rowsToRecycle, animate, afterScroll) {
         var rowNode;
@@ -973,6 +1004,7 @@ var RowRenderer = /** @class */ (function (_super) {
         return rowsToBuffer * defaultRowHeight;
     };
     RowRenderer.prototype.workOutFirstAndLastRowsToRender = function () {
+        this.rowContainerHeightService.updateOffset();
         var newFirst;
         var newLast;
         if (!this.paginationProxy.isRowsToRender()) {

@@ -9,8 +9,8 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.AgSlider = void 0;
 const componentAnnotations_1 = require("./componentAnnotations");
 const agAbstractLabel_1 = require("./agAbstractLabel");
-const agAbstractField_1 = require("./agAbstractField");
 const context_1 = require("../context/context");
+const eventKeys_1 = require("../eventKeys");
 class AgSlider extends agAbstractLabel_1.AgAbstractLabel {
     constructor(config) {
         super(config, AgSlider.TEMPLATE);
@@ -20,7 +20,7 @@ class AgSlider extends agAbstractLabel_1.AgAbstractLabel {
         this.eSlider.addCssClass('ag-slider-field');
     }
     onValueChange(callbackFn) {
-        const eventChanged = agAbstractField_1.AgAbstractField.EVENT_CHANGED;
+        const eventChanged = eventKeys_1.Events.EVENT_FIELD_VALUE_CHANGED;
         this.addManagedListener(this.eText, eventChanged, () => {
             const textValue = parseFloat(this.eText.getValue());
             this.eSlider.setValue(textValue.toString(), true);
@@ -60,7 +60,7 @@ class AgSlider extends agAbstractLabel_1.AgAbstractLabel {
         }
         this.eText.setValue(value, true);
         this.eSlider.setValue(value, true);
-        this.dispatchEvent({ type: agAbstractField_1.AgAbstractField.EVENT_CHANGED });
+        this.dispatchEvent({ type: eventKeys_1.Events.EVENT_FIELD_VALUE_CHANGED });
         return this;
     }
     setStep(step) {

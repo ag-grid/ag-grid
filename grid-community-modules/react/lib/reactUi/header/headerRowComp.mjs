@@ -1,65 +1,42 @@
-// @ag-grid-community/react v30.0.6
-import { HeaderRowType, _ } from '@ag-grid-community/core';
-import React, { memo, useCallback, useContext, useMemo, useRef, useState } from 'react';
-import { BeansContext } from '../beansContext.mjs';
+// @ag-grid-community/react v30.1.0
+import { HeaderRowType } from '@ag-grid-community/core';
+import React, { memo, useCallback, useMemo, useRef, useState } from 'react';
 import HeaderCellComp from './headerCellComp.mjs';
 import HeaderGroupCellComp from './headerGroupCellComp.mjs';
 import HeaderFilterCellComp from './headerFilterCellComp.mjs';
-import { useLayoutEffectOnce } from '../useEffectOnce.mjs';
+import { getNextValueIfDifferent } from '../utils.mjs';
 const HeaderRowComp = (props) => {
-    const { gridOptionsService } = useContext(BeansContext);
-    const [transform, setTransform] = useState();
-    const [height, setHeight] = useState();
-    const [top, setTop] = useState();
-    const [ariaRowIndex, setAriaRowIndex] = useState();
-    const [cellCtrls, setCellCtrls] = useState([]);
-    const eGui = useRef(null);
     const { ctrl } = props;
-    const typeColumn = ctrl.getType() === HeaderRowType.COLUMN;
-    const typeGroup = ctrl.getType() === HeaderRowType.COLUMN_GROUP;
-    const typeFilter = ctrl.getType() === HeaderRowType.FLOATING_FILTER;
-    const setCellCtrlsMaintainOrder = useCallback((prev, next) => {
-        const isEnsureDomOrder = gridOptionsService.is('ensureDomOrder');
-        const isPrintLayout = gridOptionsService.isDomLayout('print');
-        // if we are ensuring dom order, we set the ctrls into the dom in the same order they appear on screen
-        if (isEnsureDomOrder || isPrintLayout) {
-            return next;
+    const { topOffset, rowHeight } = useMemo(() => ctrl.getTopAndHeight(), []);
+    const ariaRowIndex = ctrl.getAriaRowIndex();
+    const className = ctrl.getHeaderRowClass();
+    const transform = useMemo(() => ctrl.getTransform(), []);
+    const [height, setHeight] = useState(() => rowHeight + 'px');
+    const [top, setTop] = useState(() => topOffset + 'px');
+    const [cellCtrls, setCellCtrls] = useState(() => ctrl.getHeaderCtrls());
+    const eGui = useRef(null);
+    const setRef = useCallback((e) => {
+        eGui.current = e;
+        if (!e) {
+            return;
         }
-        // if not maintaining order, we want to keep the dom elements we have and add new ones to the end,
-        // otherwise we will loose transition effects as elements are placed in different dom locations
-        const prevMap = _.mapById(prev, c => c.getInstanceId());
-        const nextMap = _.mapById(next, c => c.getInstanceId());
-        const oldCtrlsWeAreKeeping = prev.filter(c => nextMap.has(c.getInstanceId()));
-        const newCtrls = next.filter(c => !prevMap.has(c.getInstanceId()));
-        return [...oldCtrlsWeAreKeeping, ...newCtrls];
-    }, []);
-    useLayoutEffectOnce(() => {
         const compProxy = {
-            setTransform: transform => setTransform(transform),
             setHeight: height => setHeight(height),
             setTop: top => setTop(top),
-            setHeaderCtrls: ctrls => setCellCtrls(prev => setCellCtrlsMaintainOrder(prev, ctrls)),
+            setHeaderCtrls: (ctrls, forceOrder) => setCellCtrls(prev => getNextValueIfDifferent(prev, ctrls, forceOrder)),
             setWidth: width => {
                 if (eGui.current) {
                     eGui.current.style.width = width;
                 }
             },
-            setAriaRowIndex: rowIndex => setAriaRowIndex(rowIndex)
         };
-        ctrl.setComp(compProxy);
-    });
+        ctrl.setComp(compProxy, false);
+    }, []);
     const style = useMemo(() => ({
         transform: transform,
         height: height,
         top: top,
     }), [transform, height, top]);
-    const className = useMemo(() => {
-        const res = [`ag-header-row`];
-        typeColumn && res.push(`ag-header-row-column`);
-        typeGroup && res.push(`ag-header-row-column-group`);
-        typeFilter && res.push(`ag-header-row-column-filter`);
-        return res.join(' ');
-    }, []);
     const createCellJsx = useCallback((cellCtrl) => {
         switch (ctrl.getType()) {
             case HeaderRowType.COLUMN_GROUP:
@@ -70,6 +47,6 @@ const HeaderRowComp = (props) => {
                 return React.createElement(HeaderCellComp, { ctrl: cellCtrl, key: cellCtrl.getInstanceId() });
         }
     }, []);
-    return (React.createElement("div", { ref: eGui, className: className, role: "row", style: style, "aria-rowindex": ariaRowIndex }, cellCtrls.map(createCellJsx)));
+    return (React.createElement("div", { ref: setRef, className: className, role: "row", style: style, "aria-rowindex": ariaRowIndex }, cellCtrls.map(createCellJsx)));
 };
 export default memo(HeaderRowComp);

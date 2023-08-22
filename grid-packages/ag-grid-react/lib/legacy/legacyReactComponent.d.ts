@@ -1,4 +1,4 @@
-// ag-grid-react v30.0.6
+// ag-grid-react v30.1.0
 import { AgPromise, ComponentType } from 'ag-grid-community';
 import { ReactComponent } from '../shared/reactComponent';
 import { AgGridReactLegacy } from './agGridReactLegacy';

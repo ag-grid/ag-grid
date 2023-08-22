@@ -14,6 +14,7 @@ export declare class AgColorPanel extends Component {
     private colorChanged;
     private static maxRecentColors;
     private static recentColors;
+    private tabIndex;
     private static TEMPLATE;
     private readonly spectrumColor;
     private readonly spectrumVal;
@@ -27,6 +28,7 @@ export declare class AgColorPanel extends Component {
         picker: Component;
     });
     private postConstruct;
+    private initTabIndex;
     private refreshSpectrumRect;
     private refreshHueRect;
     private refreshAlphaRect;
@@ -40,12 +42,14 @@ export declare class AgColorPanel extends Component {
     private moveDragger;
     private moveHueSlider;
     private moveAlphaSlider;
+    private moveSlider;
     private update;
     /**
      * @param saturation In the [0, 1] interval.
      * @param brightness In the [0, 1] interval.
      */
     setSpectrumValue(saturation: number, brightness: number): void;
+    private getSpectrumValue;
     private initRecentColors;
     setValue(val: string): void;
     private onRecentColorClick;

@@ -9,8 +9,9 @@ export declare class ClientSideValuesExtractor<V> {
     private readonly valueService;
     private readonly treeDataOrGrouping;
     private readonly treeData;
-    private readonly getDataPath?;
-    constructor(rowModel: IClientSideRowModel, filterParams: SetFilterParams<any, V>, createKey: (value: V | null, node?: RowNode) => string | null, caseFormat: <T extends string | null>(valueToFormat: T) => typeof valueToFormat, columnModel: ColumnModel, valueService: ValueService, treeDataOrGrouping: boolean, treeData: boolean, getDataPath?: GetDataPath<any> | undefined);
+    private readonly getDataPath;
+    private readonly groupAllowUnbalanced;
+    constructor(rowModel: IClientSideRowModel, filterParams: SetFilterParams<any, V>, createKey: (value: V | null, node?: RowNode) => string | null, caseFormat: <T extends string | null>(valueToFormat: T) => typeof valueToFormat, columnModel: ColumnModel, valueService: ValueService, treeDataOrGrouping: boolean, treeData: boolean, getDataPath: GetDataPath | undefined, groupAllowUnbalanced: boolean);
     extractUniqueValues(predicate: (node: RowNode) => boolean, existingValues?: Map<string | null, V | null>): Map<string | null, V | null>;
     private addValueForConvertValuesToString;
     private addValueForTreeDataOrGrouping;

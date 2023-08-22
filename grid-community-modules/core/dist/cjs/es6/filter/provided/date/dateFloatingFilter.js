@@ -32,11 +32,18 @@ class DateFloatingFilter extends simpleFloatingFilter_1.SimpleFloatingFilter {
         this.params = params;
         this.filterParams = params.filterParams;
         this.createDateComponent();
+        this.filterModelFormatter = new dateFilter_1.DateFilterModelFormatter(this.filterParams, this.localeService, this.optionsFactory);
         const translate = this.localeService.getLocaleTextFunc();
         this.eReadOnlyText
             .setDisabled(true)
             .setInputAriaLabel(translate('ariaDateFilterInput', 'Date Filter Input'));
-        this.filterModelFormatter = new dateFilter_1.DateFilterModelFormatter(this.filterParams, this.localeService, this.optionsFactory);
+    }
+    onParamsUpdated(params) {
+        super.onParamsUpdated(params);
+        this.params = params;
+        this.filterParams = params.filterParams;
+        this.updateDateComponent();
+        this.filterModelFormatter.updateParams({ optionsFactory: this.optionsFactory, dateFilterParams: this.filterParams });
     }
     setEditable(editable) {
         dom_1.setDisplayed(this.eDateWrapper, editable);
@@ -79,14 +86,24 @@ class DateFloatingFilter extends simpleFloatingFilter_1.SimpleFloatingFilter {
             }
         });
     }
-    createDateComponent() {
+    getDateComponentParams() {
         const debounceMs = providedFilter_1.ProvidedFilter.getDebounceMs(this.params.filterParams, this.getDefaultDebounceMs());
-        const dateComponentParams = {
+        return {
             onDateChanged: function_1.debounce(this.onDateChanged.bind(this), debounceMs),
             filterParams: this.params.column.getColDef().filterParams
         };
-        this.dateComp = new dateCompWrapper_1.DateCompWrapper(this.getContext(), this.userComponentFactory, dateComponentParams, this.eDateWrapper);
+    }
+    createDateComponent() {
+        this.dateComp = new dateCompWrapper_1.DateCompWrapper(this.getContext(), this.userComponentFactory, this.getDateComponentParams(), this.eDateWrapper);
         this.addDestroyFunc(() => this.dateComp.destroy());
+    }
+    updateDateComponent() {
+        const params = this.getDateComponentParams();
+        const { api, columnApi, context } = this.gridOptionsService;
+        params.api = api;
+        params.columnApi = columnApi;
+        params.context = context;
+        this.dateComp.updateParams(params);
     }
     getFilterModelFormatter() {
         return this.filterModelFormatter;

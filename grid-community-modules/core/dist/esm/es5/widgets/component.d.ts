@@ -1,4 +1,4 @@
-// Type definitions for @ag-grid-community/core v30.0.6
+// Type definitions for @ag-grid-community/core v30.1.0
 // Project: https://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { AgEvent } from "../events";
@@ -26,7 +26,7 @@ export declare class Component extends BeanStub {
     private preConstructOnComponent;
     getCompId(): number;
     getTooltipParams(): WithoutGridCommon<ITooltipParams>;
-    setTooltip(newTooltipText?: string | null): void;
+    setTooltip(newTooltipText?: string | null, showDelayOverride?: number, hideDelayOverride?: number): void;
     private createChildComponentsFromTags;
     private createComponentFromElement;
     private copyAttributesFromNode;

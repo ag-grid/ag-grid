@@ -2,14 +2,12 @@ import { UserCompDetails } from "../../../components/framework/userComponentFact
 import { DragItem } from "../../../dragAndDrop/dragAndDropService";
 import { ColumnEventType } from "../../../events";
 import { ColumnGroup } from "../../../entities/columnGroup";
-import { ITooltipFeatureComp } from "../../../widgets/tooltipFeature";
 import { HeaderRowCtrl } from "../../row/headerRowCtrl";
 import { AbstractHeaderCellCtrl, IAbstractHeaderCellComp } from "../abstractCell/abstractHeaderCellCtrl";
-export interface IHeaderGroupCellComp extends IAbstractHeaderCellComp, ITooltipFeatureComp {
+export interface IHeaderGroupCellComp extends IAbstractHeaderCellComp {
     addOrRemoveCssClass(cssClassName: string, on: boolean): void;
     setResizableDisplayed(displayed: boolean): void;
     setWidth(width: string): void;
-    setColId(id: string): void;
     setAriaExpanded(expanded: 'true' | 'false' | undefined): void;
     setUserCompDetails(compDetails: UserCompDetails): void;
 }
@@ -30,7 +28,7 @@ export declare class HeaderGroupCellCtrl extends AbstractHeaderCellCtrl {
     private setupTooltip;
     private setupExpandable;
     private refreshExpanded;
-    private addAttributes;
+    getColId(): string;
     private addClasses;
     private setupMovingCss;
     private onFocusIn;

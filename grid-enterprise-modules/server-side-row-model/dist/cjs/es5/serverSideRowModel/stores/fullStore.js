@@ -56,6 +56,7 @@ var FullStore = /** @class */ (function (_super) {
         this.initialiseRowNodes(initialRowCount);
         this.rowNodeBlockLoader.addBlock(this);
         this.addDestroyFunc(function () { return _this.rowNodeBlockLoader.removeBlock(_this); });
+        this.postSortFunc = this.gridOptionsService.getCallback('postSortRows');
     };
     FullStore.prototype.destroyRowNodes = function () {
         this.blockUtils.destroyRowNodes(this.allRowNodes);
@@ -144,6 +145,9 @@ var FullStore = /** @class */ (function (_super) {
         if (info) {
             Object.assign(this.info, info);
         }
+        if (params.pivotResultFields) {
+            this.serverSideRowModel.generateSecondaryColumns(params.pivotResultFields);
+        }
         var nodesToRecycle = this.allRowNodes.length > 0 ? this.allNodesMap : undefined;
         this.allRowNodes = [];
         this.nodesAfterSort = [];
@@ -226,6 +230,10 @@ var FullStore = /** @class */ (function (_super) {
             return;
         }
         this.nodesAfterSort = this.rowNodeSorter.doFullSort(this.nodesAfterFilter, sortOptions);
+        if (this.postSortFunc) {
+            var params = { nodes: this.nodesAfterSort };
+            this.postSortFunc(params);
+        }
     };
     FullStore.prototype.filterRowNodes = function () {
         var _this = this;
@@ -658,6 +666,9 @@ var FullStore = /** @class */ (function (_super) {
     __decorate([
         core_1.Autowired('ssrmTransactionManager')
     ], FullStore.prototype, "transactionManager", void 0);
+    __decorate([
+        core_1.Autowired('rowModel')
+    ], FullStore.prototype, "serverSideRowModel", void 0);
     __decorate([
         core_1.PostConstruct
     ], FullStore.prototype, "postConstruct", null);

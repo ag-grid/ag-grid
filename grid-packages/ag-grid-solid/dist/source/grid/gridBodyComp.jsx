@@ -19,7 +19,7 @@ const GridBodyComp = () => {
     const [getBodyViewportWidth, setBodyViewportWidth] = createSignal('');
     const [getMovingCss, setMovingCss] = createSignal(null);
     const [getForceVerticalScrollClass, setForceVerticalScrollClass] = createSignal(null);
-    const [getTopAndBottomOverflowY, setTopAndBottomOverflowY] = createSignal('');
+    const [getTopAndBottomOverflowY, setTopAndBottomOverflowY] = createSignal(null);
     const [getCellSelectableCss, setCellSelectableCss] = createSignal(null);
     // we initialise layoutClass to 'ag-layout-normal', because if we don't, the comp will initially
     // render with no width (as ag-layout-normal sets width to 0, which is needed for flex) which
@@ -68,7 +68,7 @@ const GridBodyComp = () => {
             setPinnedTopBottomOverflowY: setTopAndBottomOverflowY,
             setCellSelectableCss: (cssClass, flag) => setCellSelectableCss(flag ? cssClass : null),
             setBodyViewportWidth: setBodyViewportWidth,
-            registerBodyViewportResizeListener: listener => {
+            registerBodyViewportResizeListener: (listener) => {
                 const unsubscribeFromResize = resizeObserverService.observeResize(eBodyViewport, listener);
                 destroyFuncs.push(() => unsubscribeFromResize());
             }
@@ -87,21 +87,21 @@ const GridBodyComp = () => {
     const getStickyTopClasses = createMemo(() => classesList('ag-sticky-top', getCellSelectableCss()));
     const getBottomClasses = createMemo(() => classesList('ag-floating-bottom', getCellSelectableCss()));
     const getTopStyle = createMemo(() => ({
-        height: getTopHeight,
-        'min-height': getTopHeight,
-        display: getTopDisplay,
-        'overflow-y': getTopAndBottomOverflowY
+        height: getTopHeight(),
+        'min-height': getTopHeight(),
+        display: getTopDisplay(),
+        'overflow-y': getTopAndBottomOverflowY()
     }));
     const getStickyTopStyle = createMemo(() => ({
-        height: getStickyTopHeight,
-        top: getStickyTopTop,
-        width: getStickyTopWidth
+        height: getStickyTopHeight(),
+        top: getStickyTopTop(),
+        width: getStickyTopWidth()
     }));
     const getBottomStyle = createMemo(() => ({
-        height: getBottomHeight,
-        'min-height': getBottomHeight,
-        display: getBottomDisplay,
-        'overflow-y': getTopAndBottomOverflowY
+        height: getBottomHeight(),
+        'min-height': getBottomHeight(),
+        display: getBottomDisplay(),
+        'overflow-y': getTopAndBottomOverflowY()
     }));
     const getBodyViewportStyle = createMemo(() => ({
         width: getBodyViewportWidth()

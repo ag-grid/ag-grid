@@ -1,10 +1,10 @@
 /**
  * @ag-grid-community/all-modules - Advanced Data Grid / Data Table supporting Javascript / Typescript / React / Angular / Vue
- * @version v30.0.6
+ * @version v30.1.0
  * @link https://www.ag-grid.com/
  * @license MIT
  */
-// @ag-grid-community/all-modules v30.0.6
+// @ag-grid-community/all-modules v30.1.0
 define("agGrid", [], function() { return /******/ (function(modules) { // webpackBootstrap
 /******/ 	// The module cache
 /******/ 	var installedModules = {};
@@ -101,9 +101,9 @@ define("agGrid", [], function() { return /******/ (function(modules) { // webpac
  */
 var ClientSideRowModelModule = __webpack_require__(1);
 var GridCoreModule = __webpack_require__(3);
-var CsvExportModule = __webpack_require__(266);
-var InfiniteRowModelModule = __webpack_require__(277);
-var agGrid = __webpack_require__(283);
+var CsvExportModule = __webpack_require__(271);
+var InfiniteRowModelModule = __webpack_require__(282);
+var agGrid = __webpack_require__(288);
 Object.keys(agGrid).forEach(function(key) {
     exports[key] = agGrid[key];
 });
@@ -133,14 +133,14 @@ __webpack_require__.r(__webpack_exports__);
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ClientSideRowModelModule", function() { return ClientSideRowModelModule; });
 /* harmony import */ var _ag_grid_community_core__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(3);
-/* harmony import */ var _clientSideRowModel_clientSideRowModel_mjs__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(257);
-/* harmony import */ var _clientSideRowModel_filterStage_mjs__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(259);
-/* harmony import */ var _clientSideRowModel_sortStage_mjs__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(260);
-/* harmony import */ var _clientSideRowModel_flattenStage_mjs__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(261);
-/* harmony import */ var _clientSideRowModel_sortService_mjs__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(262);
-/* harmony import */ var _clientSideRowModel_filterService_mjs__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(263);
-/* harmony import */ var _clientSideRowModel_immutableService_mjs__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(264);
-/* harmony import */ var _version_mjs__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(265);
+/* harmony import */ var _clientSideRowModel_clientSideRowModel_mjs__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(262);
+/* harmony import */ var _clientSideRowModel_filterStage_mjs__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(264);
+/* harmony import */ var _clientSideRowModel_sortStage_mjs__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(265);
+/* harmony import */ var _clientSideRowModel_flattenStage_mjs__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(266);
+/* harmony import */ var _clientSideRowModel_sortService_mjs__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(267);
+/* harmony import */ var _clientSideRowModel_filterService_mjs__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(268);
+/* harmony import */ var _clientSideRowModel_immutableService_mjs__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(269);
+/* harmony import */ var _version_mjs__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(270);
 
 
 
@@ -478,7 +478,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _styling_layoutFeature_mjs__WEBPACK_IMPORTED_MODULE_93__ = __webpack_require__(122);
 /* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "LayoutCssClasses", function() { return _styling_layoutFeature_mjs__WEBPACK_IMPORTED_MODULE_93__["LayoutCssClasses"]; });
 
-/* harmony import */ var _widgets_agAbstractField_mjs__WEBPACK_IMPORTED_MODULE_94__ = __webpack_require__(66);
+/* harmony import */ var _widgets_agAbstractField_mjs__WEBPACK_IMPORTED_MODULE_94__ = __webpack_require__(67);
 /* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "AgAbstractField", function() { return _widgets_agAbstractField_mjs__WEBPACK_IMPORTED_MODULE_94__["AgAbstractField"]; });
 
 /* harmony import */ var _widgets_agCheckbox_mjs__WEBPACK_IMPORTED_MODULE_95__ = __webpack_require__(71);
@@ -505,208 +505,217 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _widgets_agInputRange_mjs__WEBPACK_IMPORTED_MODULE_102__ = __webpack_require__(198);
 /* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "AgInputRange", function() { return _widgets_agInputRange_mjs__WEBPACK_IMPORTED_MODULE_102__["AgInputRange"]; });
 
-/* harmony import */ var _widgets_agSelect_mjs__WEBPACK_IMPORTED_MODULE_103__ = __webpack_require__(65);
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "AgSelect", function() { return _widgets_agSelect_mjs__WEBPACK_IMPORTED_MODULE_103__["AgSelect"]; });
+/* harmony import */ var _widgets_agRichSelect_mjs__WEBPACK_IMPORTED_MODULE_103__ = __webpack_require__(199);
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "AgRichSelect", function() { return _widgets_agRichSelect_mjs__WEBPACK_IMPORTED_MODULE_103__["AgRichSelect"]; });
 
-/* harmony import */ var _widgets_agSlider_mjs__WEBPACK_IMPORTED_MODULE_104__ = __webpack_require__(199);
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "AgSlider", function() { return _widgets_agSlider_mjs__WEBPACK_IMPORTED_MODULE_104__["AgSlider"]; });
+/* harmony import */ var _widgets_agSelect_mjs__WEBPACK_IMPORTED_MODULE_104__ = __webpack_require__(65);
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "AgSelect", function() { return _widgets_agSelect_mjs__WEBPACK_IMPORTED_MODULE_104__["AgSelect"]; });
 
-/* harmony import */ var _widgets_agGroupComponent_mjs__WEBPACK_IMPORTED_MODULE_105__ = __webpack_require__(200);
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "AgGroupComponent", function() { return _widgets_agGroupComponent_mjs__WEBPACK_IMPORTED_MODULE_105__["AgGroupComponent"]; });
+/* harmony import */ var _widgets_agSlider_mjs__WEBPACK_IMPORTED_MODULE_105__ = __webpack_require__(203);
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "AgSlider", function() { return _widgets_agSlider_mjs__WEBPACK_IMPORTED_MODULE_105__["AgSlider"]; });
 
-/* harmony import */ var _widgets_agMenuItemComponent_mjs__WEBPACK_IMPORTED_MODULE_106__ = __webpack_require__(201);
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "AgMenuItemComponent", function() { return _widgets_agMenuItemComponent_mjs__WEBPACK_IMPORTED_MODULE_106__["AgMenuItemComponent"]; });
+/* harmony import */ var _widgets_agGroupComponent_mjs__WEBPACK_IMPORTED_MODULE_106__ = __webpack_require__(204);
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "AgGroupComponent", function() { return _widgets_agGroupComponent_mjs__WEBPACK_IMPORTED_MODULE_106__["AgGroupComponent"]; });
 
-/* harmony import */ var _widgets_agMenuList_mjs__WEBPACK_IMPORTED_MODULE_107__ = __webpack_require__(202);
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "AgMenuList", function() { return _widgets_agMenuList_mjs__WEBPACK_IMPORTED_MODULE_107__["AgMenuList"]; });
+/* harmony import */ var _widgets_agMenuItemComponent_mjs__WEBPACK_IMPORTED_MODULE_107__ = __webpack_require__(205);
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "AgMenuItemComponent", function() { return _widgets_agMenuItemComponent_mjs__WEBPACK_IMPORTED_MODULE_107__["AgMenuItemComponent"]; });
 
-/* harmony import */ var _widgets_agMenuPanel_mjs__WEBPACK_IMPORTED_MODULE_108__ = __webpack_require__(204);
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "AgMenuPanel", function() { return _widgets_agMenuPanel_mjs__WEBPACK_IMPORTED_MODULE_108__["AgMenuPanel"]; });
+/* harmony import */ var _widgets_agMenuList_mjs__WEBPACK_IMPORTED_MODULE_108__ = __webpack_require__(206);
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "AgMenuList", function() { return _widgets_agMenuList_mjs__WEBPACK_IMPORTED_MODULE_108__["AgMenuList"]; });
 
-/* harmony import */ var _widgets_agDialog_mjs__WEBPACK_IMPORTED_MODULE_109__ = __webpack_require__(205);
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "AgDialog", function() { return _widgets_agDialog_mjs__WEBPACK_IMPORTED_MODULE_109__["AgDialog"]; });
+/* harmony import */ var _widgets_agMenuPanel_mjs__WEBPACK_IMPORTED_MODULE_109__ = __webpack_require__(207);
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "AgMenuPanel", function() { return _widgets_agMenuPanel_mjs__WEBPACK_IMPORTED_MODULE_109__["AgMenuPanel"]; });
 
-/* harmony import */ var _widgets_agPanel_mjs__WEBPACK_IMPORTED_MODULE_110__ = __webpack_require__(206);
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "AgPanel", function() { return _widgets_agPanel_mjs__WEBPACK_IMPORTED_MODULE_110__["AgPanel"]; });
+/* harmony import */ var _widgets_agDialog_mjs__WEBPACK_IMPORTED_MODULE_110__ = __webpack_require__(208);
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "AgDialog", function() { return _widgets_agDialog_mjs__WEBPACK_IMPORTED_MODULE_110__["AgDialog"]; });
 
-/* harmony import */ var _widgets_component_mjs__WEBPACK_IMPORTED_MODULE_111__ = __webpack_require__(37);
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "Component", function() { return _widgets_component_mjs__WEBPACK_IMPORTED_MODULE_111__["Component"]; });
+/* harmony import */ var _widgets_agPanel_mjs__WEBPACK_IMPORTED_MODULE_111__ = __webpack_require__(209);
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "AgPanel", function() { return _widgets_agPanel_mjs__WEBPACK_IMPORTED_MODULE_111__["AgPanel"]; });
 
-/* harmony import */ var _widgets_managedFocusFeature_mjs__WEBPACK_IMPORTED_MODULE_112__ = __webpack_require__(63);
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "ManagedFocusFeature", function() { return _widgets_managedFocusFeature_mjs__WEBPACK_IMPORTED_MODULE_112__["ManagedFocusFeature"]; });
+/* harmony import */ var _widgets_component_mjs__WEBPACK_IMPORTED_MODULE_112__ = __webpack_require__(37);
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "Component", function() { return _widgets_component_mjs__WEBPACK_IMPORTED_MODULE_112__["Component"]; });
 
-/* harmony import */ var _widgets_tabGuardComp_mjs__WEBPACK_IMPORTED_MODULE_113__ = __webpack_require__(203);
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "TabGuardComp", function() { return _widgets_tabGuardComp_mjs__WEBPACK_IMPORTED_MODULE_113__["TabGuardComp"]; });
+/* harmony import */ var _widgets_managedFocusFeature_mjs__WEBPACK_IMPORTED_MODULE_113__ = __webpack_require__(63);
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "ManagedFocusFeature", function() { return _widgets_managedFocusFeature_mjs__WEBPACK_IMPORTED_MODULE_113__["ManagedFocusFeature"]; });
 
-/* harmony import */ var _widgets_tabGuardCtrl_mjs__WEBPACK_IMPORTED_MODULE_114__ = __webpack_require__(171);
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "TabGuardCtrl", function() { return _widgets_tabGuardCtrl_mjs__WEBPACK_IMPORTED_MODULE_114__["TabGuardCtrl"]; });
+/* harmony import */ var _widgets_tabGuardComp_mjs__WEBPACK_IMPORTED_MODULE_114__ = __webpack_require__(202);
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "TabGuardComp", function() { return _widgets_tabGuardComp_mjs__WEBPACK_IMPORTED_MODULE_114__["TabGuardComp"]; });
 
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "TabGuardClassNames", function() { return _widgets_tabGuardCtrl_mjs__WEBPACK_IMPORTED_MODULE_114__["TabGuardClassNames"]; });
+/* harmony import */ var _widgets_tabGuardCtrl_mjs__WEBPACK_IMPORTED_MODULE_115__ = __webpack_require__(171);
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "TabGuardCtrl", function() { return _widgets_tabGuardCtrl_mjs__WEBPACK_IMPORTED_MODULE_115__["TabGuardCtrl"]; });
 
-/* harmony import */ var _widgets_popupComponent_mjs__WEBPACK_IMPORTED_MODULE_115__ = __webpack_require__(89);
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "PopupComponent", function() { return _widgets_popupComponent_mjs__WEBPACK_IMPORTED_MODULE_115__["PopupComponent"]; });
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "TabGuardClassNames", function() { return _widgets_tabGuardCtrl_mjs__WEBPACK_IMPORTED_MODULE_115__["TabGuardClassNames"]; });
 
-/* harmony import */ var _widgets_popupService_mjs__WEBPACK_IMPORTED_MODULE_116__ = __webpack_require__(207);
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "PopupService", function() { return _widgets_popupService_mjs__WEBPACK_IMPORTED_MODULE_116__["PopupService"]; });
+/* harmony import */ var _widgets_popupComponent_mjs__WEBPACK_IMPORTED_MODULE_116__ = __webpack_require__(89);
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "PopupComponent", function() { return _widgets_popupComponent_mjs__WEBPACK_IMPORTED_MODULE_116__["PopupComponent"]; });
 
-/* harmony import */ var _widgets_touchListener_mjs__WEBPACK_IMPORTED_MODULE_117__ = __webpack_require__(85);
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "TouchListener", function() { return _widgets_touchListener_mjs__WEBPACK_IMPORTED_MODULE_117__["TouchListener"]; });
+/* harmony import */ var _widgets_popupService_mjs__WEBPACK_IMPORTED_MODULE_117__ = __webpack_require__(210);
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "PopupService", function() { return _widgets_popupService_mjs__WEBPACK_IMPORTED_MODULE_117__["PopupService"]; });
 
-/* harmony import */ var _widgets_virtualList_mjs__WEBPACK_IMPORTED_MODULE_118__ = __webpack_require__(208);
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "VirtualList", function() { return _widgets_virtualList_mjs__WEBPACK_IMPORTED_MODULE_118__["VirtualList"]; });
+/* harmony import */ var _widgets_touchListener_mjs__WEBPACK_IMPORTED_MODULE_118__ = __webpack_require__(85);
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "TouchListener", function() { return _widgets_touchListener_mjs__WEBPACK_IMPORTED_MODULE_118__["TouchListener"]; });
 
-/* harmony import */ var _widgets_agAbstractLabel_mjs__WEBPACK_IMPORTED_MODULE_119__ = __webpack_require__(67);
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "AgAbstractLabel", function() { return _widgets_agAbstractLabel_mjs__WEBPACK_IMPORTED_MODULE_119__["AgAbstractLabel"]; });
+/* harmony import */ var _widgets_virtualList_mjs__WEBPACK_IMPORTED_MODULE_119__ = __webpack_require__(201);
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "VirtualList", function() { return _widgets_virtualList_mjs__WEBPACK_IMPORTED_MODULE_119__["VirtualList"]; });
 
-/* harmony import */ var _widgets_agPickerField_mjs__WEBPACK_IMPORTED_MODULE_120__ = __webpack_require__(68);
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "AgPickerField", function() { return _widgets_agPickerField_mjs__WEBPACK_IMPORTED_MODULE_120__["AgPickerField"]; });
+/* harmony import */ var _widgets_agAbstractLabel_mjs__WEBPACK_IMPORTED_MODULE_120__ = __webpack_require__(68);
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "AgAbstractLabel", function() { return _widgets_agAbstractLabel_mjs__WEBPACK_IMPORTED_MODULE_120__["AgAbstractLabel"]; });
 
-/* harmony import */ var _interfaces_IRangeService_mjs__WEBPACK_IMPORTED_MODULE_121__ = __webpack_require__(132);
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "CellRangeType", function() { return _interfaces_IRangeService_mjs__WEBPACK_IMPORTED_MODULE_121__["CellRangeType"]; });
+/* harmony import */ var _widgets_agPickerField_mjs__WEBPACK_IMPORTED_MODULE_121__ = __webpack_require__(66);
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "AgPickerField", function() { return _widgets_agPickerField_mjs__WEBPACK_IMPORTED_MODULE_121__["AgPickerField"]; });
 
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "SelectionHandleType", function() { return _interfaces_IRangeService_mjs__WEBPACK_IMPORTED_MODULE_121__["SelectionHandleType"]; });
+/* harmony import */ var _widgets_agAutocomplete_mjs__WEBPACK_IMPORTED_MODULE_122__ = __webpack_require__(211);
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "AgAutocomplete", function() { return _widgets_agAutocomplete_mjs__WEBPACK_IMPORTED_MODULE_122__["AgAutocomplete"]; });
 
-/* harmony import */ var _autoScrollService_mjs__WEBPACK_IMPORTED_MODULE_122__ = __webpack_require__(126);
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "AutoScrollService", function() { return _autoScrollService_mjs__WEBPACK_IMPORTED_MODULE_122__["AutoScrollService"]; });
+/* harmony import */ var _interfaces_IRangeService_mjs__WEBPACK_IMPORTED_MODULE_123__ = __webpack_require__(132);
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "CellRangeType", function() { return _interfaces_IRangeService_mjs__WEBPACK_IMPORTED_MODULE_123__["CellRangeType"]; });
 
-/* harmony import */ var _vanillaFrameworkOverrides_mjs__WEBPACK_IMPORTED_MODULE_123__ = __webpack_require__(209);
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "VanillaFrameworkOverrides", function() { return _vanillaFrameworkOverrides_mjs__WEBPACK_IMPORTED_MODULE_123__["VanillaFrameworkOverrides"]; });
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "SelectionHandleType", function() { return _interfaces_IRangeService_mjs__WEBPACK_IMPORTED_MODULE_123__["SelectionHandleType"]; });
 
-/* harmony import */ var _cellNavigationService_mjs__WEBPACK_IMPORTED_MODULE_124__ = __webpack_require__(210);
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "CellNavigationService", function() { return _cellNavigationService_mjs__WEBPACK_IMPORTED_MODULE_124__["CellNavigationService"]; });
+/* harmony import */ var _autoScrollService_mjs__WEBPACK_IMPORTED_MODULE_124__ = __webpack_require__(126);
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "AutoScrollService", function() { return _autoScrollService_mjs__WEBPACK_IMPORTED_MODULE_124__["AutoScrollService"]; });
 
-/* harmony import */ var _alignedGridsService_mjs__WEBPACK_IMPORTED_MODULE_125__ = __webpack_require__(211);
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "AlignedGridsService", function() { return _alignedGridsService_mjs__WEBPACK_IMPORTED_MODULE_125__["AlignedGridsService"]; });
+/* harmony import */ var _vanillaFrameworkOverrides_mjs__WEBPACK_IMPORTED_MODULE_125__ = __webpack_require__(214);
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "VanillaFrameworkOverrides", function() { return _vanillaFrameworkOverrides_mjs__WEBPACK_IMPORTED_MODULE_125__["VanillaFrameworkOverrides"]; });
 
-/* harmony import */ var _constants_keyCode_mjs__WEBPACK_IMPORTED_MODULE_126__ = __webpack_require__(47);
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "KeyCode", function() { return _constants_keyCode_mjs__WEBPACK_IMPORTED_MODULE_126__["KeyCode"]; });
+/* harmony import */ var _cellNavigationService_mjs__WEBPACK_IMPORTED_MODULE_126__ = __webpack_require__(215);
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "CellNavigationService", function() { return _cellNavigationService_mjs__WEBPACK_IMPORTED_MODULE_126__["CellNavigationService"]; });
 
-/* harmony import */ var _grid_mjs__WEBPACK_IMPORTED_MODULE_127__ = __webpack_require__(212);
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "Grid", function() { return _grid_mjs__WEBPACK_IMPORTED_MODULE_127__["Grid"]; });
+/* harmony import */ var _alignedGridsService_mjs__WEBPACK_IMPORTED_MODULE_127__ = __webpack_require__(216);
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "AlignedGridsService", function() { return _alignedGridsService_mjs__WEBPACK_IMPORTED_MODULE_127__["AlignedGridsService"]; });
 
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "GridCoreCreator", function() { return _grid_mjs__WEBPACK_IMPORTED_MODULE_127__["GridCoreCreator"]; });
+/* harmony import */ var _constants_keyCode_mjs__WEBPACK_IMPORTED_MODULE_128__ = __webpack_require__(47);
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "KeyCode", function() { return _constants_keyCode_mjs__WEBPACK_IMPORTED_MODULE_128__["KeyCode"]; });
 
-/* harmony import */ var _gridApi_mjs__WEBPACK_IMPORTED_MODULE_128__ = __webpack_require__(117);
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "GridApi", function() { return _gridApi_mjs__WEBPACK_IMPORTED_MODULE_128__["GridApi"]; });
+/* harmony import */ var _grid_mjs__WEBPACK_IMPORTED_MODULE_129__ = __webpack_require__(217);
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "Grid", function() { return _grid_mjs__WEBPACK_IMPORTED_MODULE_129__["Grid"]; });
 
-/* harmony import */ var _eventKeys_mjs__WEBPACK_IMPORTED_MODULE_129__ = __webpack_require__(22);
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "Events", function() { return _eventKeys_mjs__WEBPACK_IMPORTED_MODULE_129__["Events"]; });
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "GridCoreCreator", function() { return _grid_mjs__WEBPACK_IMPORTED_MODULE_129__["GridCoreCreator"]; });
 
-/* harmony import */ var _focusService_mjs__WEBPACK_IMPORTED_MODULE_130__ = __webpack_require__(170);
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "FocusService", function() { return _focusService_mjs__WEBPACK_IMPORTED_MODULE_130__["FocusService"]; });
+/* harmony import */ var _gridApi_mjs__WEBPACK_IMPORTED_MODULE_130__ = __webpack_require__(117);
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "GridApi", function() { return _gridApi_mjs__WEBPACK_IMPORTED_MODULE_130__["GridApi"]; });
 
-/* harmony import */ var _gridOptionsService_mjs__WEBPACK_IMPORTED_MODULE_131__ = __webpack_require__(248);
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "GridOptionsService", function() { return _gridOptionsService_mjs__WEBPACK_IMPORTED_MODULE_131__["GridOptionsService"]; });
+/* harmony import */ var _eventKeys_mjs__WEBPACK_IMPORTED_MODULE_131__ = __webpack_require__(22);
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "Events", function() { return _eventKeys_mjs__WEBPACK_IMPORTED_MODULE_131__["Events"]; });
 
-/* harmony import */ var _eventService_mjs__WEBPACK_IMPORTED_MODULE_132__ = __webpack_require__(9);
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "EventService", function() { return _eventService_mjs__WEBPACK_IMPORTED_MODULE_132__["EventService"]; });
+/* harmony import */ var _focusService_mjs__WEBPACK_IMPORTED_MODULE_132__ = __webpack_require__(170);
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "FocusService", function() { return _focusService_mjs__WEBPACK_IMPORTED_MODULE_132__["FocusService"]; });
 
-/* harmony import */ var _rowNodes_selectableService_mjs__WEBPACK_IMPORTED_MODULE_133__ = __webpack_require__(231);
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "SelectableService", function() { return _rowNodes_selectableService_mjs__WEBPACK_IMPORTED_MODULE_133__["SelectableService"]; });
+/* harmony import */ var _gridOptionsService_mjs__WEBPACK_IMPORTED_MODULE_133__ = __webpack_require__(253);
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "GridOptionsService", function() { return _gridOptionsService_mjs__WEBPACK_IMPORTED_MODULE_133__["GridOptionsService"]; });
 
-/* harmony import */ var _rowNodes_rowNodeSorter_mjs__WEBPACK_IMPORTED_MODULE_134__ = __webpack_require__(241);
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "RowNodeSorter", function() { return _rowNodes_rowNodeSorter_mjs__WEBPACK_IMPORTED_MODULE_134__["RowNodeSorter"]; });
+/* harmony import */ var _eventService_mjs__WEBPACK_IMPORTED_MODULE_134__ = __webpack_require__(9);
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "EventService", function() { return _eventService_mjs__WEBPACK_IMPORTED_MODULE_134__["EventService"]; });
 
-/* harmony import */ var _ctrlsService_mjs__WEBPACK_IMPORTED_MODULE_135__ = __webpack_require__(242);
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "CtrlsService", function() { return _ctrlsService_mjs__WEBPACK_IMPORTED_MODULE_135__["CtrlsService"]; });
+/* harmony import */ var _rowNodes_selectableService_mjs__WEBPACK_IMPORTED_MODULE_135__ = __webpack_require__(236);
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "SelectableService", function() { return _rowNodes_selectableService_mjs__WEBPACK_IMPORTED_MODULE_135__["SelectableService"]; });
 
-/* harmony import */ var _gridComp_gridComp_mjs__WEBPACK_IMPORTED_MODULE_136__ = __webpack_require__(219);
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "GridComp", function() { return _gridComp_gridComp_mjs__WEBPACK_IMPORTED_MODULE_136__["GridComp"]; });
+/* harmony import */ var _rowNodes_rowNodeSorter_mjs__WEBPACK_IMPORTED_MODULE_136__ = __webpack_require__(246);
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "RowNodeSorter", function() { return _rowNodes_rowNodeSorter_mjs__WEBPACK_IMPORTED_MODULE_136__["RowNodeSorter"]; });
 
-/* harmony import */ var _gridComp_gridCtrl_mjs__WEBPACK_IMPORTED_MODULE_137__ = __webpack_require__(220);
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "GridCtrl", function() { return _gridComp_gridCtrl_mjs__WEBPACK_IMPORTED_MODULE_137__["GridCtrl"]; });
+/* harmony import */ var _ctrlsService_mjs__WEBPACK_IMPORTED_MODULE_137__ = __webpack_require__(247);
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "CtrlsService", function() { return _ctrlsService_mjs__WEBPACK_IMPORTED_MODULE_137__["CtrlsService"]; });
 
-/* harmony import */ var _logger_mjs__WEBPACK_IMPORTED_MODULE_138__ = __webpack_require__(218);
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "Logger", function() { return _logger_mjs__WEBPACK_IMPORTED_MODULE_138__["Logger"]; });
+/* harmony import */ var _gridComp_gridComp_mjs__WEBPACK_IMPORTED_MODULE_138__ = __webpack_require__(224);
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "GridComp", function() { return _gridComp_gridComp_mjs__WEBPACK_IMPORTED_MODULE_138__["GridComp"]; });
 
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "LoggerFactory", function() { return _logger_mjs__WEBPACK_IMPORTED_MODULE_138__["LoggerFactory"]; });
+/* harmony import */ var _gridComp_gridCtrl_mjs__WEBPACK_IMPORTED_MODULE_139__ = __webpack_require__(225);
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "GridCtrl", function() { return _gridComp_gridCtrl_mjs__WEBPACK_IMPORTED_MODULE_139__["GridCtrl"]; });
 
-/* harmony import */ var _sortController_mjs__WEBPACK_IMPORTED_MODULE_139__ = __webpack_require__(221);
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "SortController", function() { return _sortController_mjs__WEBPACK_IMPORTED_MODULE_139__["SortController"]; });
+/* harmony import */ var _logger_mjs__WEBPACK_IMPORTED_MODULE_140__ = __webpack_require__(223);
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "Logger", function() { return _logger_mjs__WEBPACK_IMPORTED_MODULE_140__["Logger"]; });
 
-/* harmony import */ var _templateService_mjs__WEBPACK_IMPORTED_MODULE_140__ = __webpack_require__(217);
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "TemplateService", function() { return _templateService_mjs__WEBPACK_IMPORTED_MODULE_140__["TemplateService"]; });
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "LoggerFactory", function() { return _logger_mjs__WEBPACK_IMPORTED_MODULE_140__["LoggerFactory"]; });
 
-/* harmony import */ var _localeService_mjs__WEBPACK_IMPORTED_MODULE_141__ = __webpack_require__(249);
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "LocaleService", function() { return _localeService_mjs__WEBPACK_IMPORTED_MODULE_141__["LocaleService"]; });
+/* harmony import */ var _sortController_mjs__WEBPACK_IMPORTED_MODULE_141__ = __webpack_require__(226);
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "SortController", function() { return _sortController_mjs__WEBPACK_IMPORTED_MODULE_141__["SortController"]; });
 
-/* harmony import */ var _utils_index_mjs__WEBPACK_IMPORTED_MODULE_142__ = __webpack_require__(38);
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "_", function() { return _utils_index_mjs__WEBPACK_IMPORTED_MODULE_142__["_"]; });
+/* harmony import */ var _templateService_mjs__WEBPACK_IMPORTED_MODULE_142__ = __webpack_require__(222);
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "TemplateService", function() { return _templateService_mjs__WEBPACK_IMPORTED_MODULE_142__["TemplateService"]; });
 
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "NumberSequence", function() { return _utils_index_mjs__WEBPACK_IMPORTED_MODULE_142__["NumberSequence"]; });
+/* harmony import */ var _localeService_mjs__WEBPACK_IMPORTED_MODULE_143__ = __webpack_require__(254);
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "LocaleService", function() { return _localeService_mjs__WEBPACK_IMPORTED_MODULE_143__["LocaleService"]; });
 
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "AgPromiseStatus", function() { return _utils_index_mjs__WEBPACK_IMPORTED_MODULE_142__["AgPromiseStatus"]; });
+/* harmony import */ var _utils_index_mjs__WEBPACK_IMPORTED_MODULE_144__ = __webpack_require__(38);
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "_", function() { return _utils_index_mjs__WEBPACK_IMPORTED_MODULE_144__["_"]; });
 
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "AgPromise", function() { return _utils_index_mjs__WEBPACK_IMPORTED_MODULE_142__["AgPromise"]; });
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "NumberSequence", function() { return _utils_index_mjs__WEBPACK_IMPORTED_MODULE_144__["NumberSequence"]; });
 
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "Timer", function() { return _utils_index_mjs__WEBPACK_IMPORTED_MODULE_142__["Timer"]; });
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "AgPromiseStatus", function() { return _utils_index_mjs__WEBPACK_IMPORTED_MODULE_144__["AgPromiseStatus"]; });
 
-/* harmony import */ var _valueService_valueService_mjs__WEBPACK_IMPORTED_MODULE_143__ = __webpack_require__(215);
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "ValueService", function() { return _valueService_valueService_mjs__WEBPACK_IMPORTED_MODULE_143__["ValueService"]; });
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "AgPromise", function() { return _utils_index_mjs__WEBPACK_IMPORTED_MODULE_144__["AgPromise"]; });
 
-/* harmony import */ var _valueService_valueCache_mjs__WEBPACK_IMPORTED_MODULE_144__ = __webpack_require__(225);
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "ValueCache", function() { return _valueService_valueCache_mjs__WEBPACK_IMPORTED_MODULE_144__["ValueCache"]; });
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "Timer", function() { return _utils_index_mjs__WEBPACK_IMPORTED_MODULE_144__["Timer"]; });
 
-/* harmony import */ var _valueService_expressionService_mjs__WEBPACK_IMPORTED_MODULE_145__ = __webpack_require__(216);
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "ExpressionService", function() { return _valueService_expressionService_mjs__WEBPACK_IMPORTED_MODULE_145__["ExpressionService"]; });
+/* harmony import */ var _valueService_valueService_mjs__WEBPACK_IMPORTED_MODULE_145__ = __webpack_require__(220);
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "ValueService", function() { return _valueService_valueService_mjs__WEBPACK_IMPORTED_MODULE_145__["ValueService"]; });
 
-/* harmony import */ var _valueService_valueParserService_mjs__WEBPACK_IMPORTED_MODULE_146__ = __webpack_require__(252);
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "ValueParserService", function() { return _valueService_valueParserService_mjs__WEBPACK_IMPORTED_MODULE_146__["ValueParserService"]; });
+/* harmony import */ var _valueService_valueCache_mjs__WEBPACK_IMPORTED_MODULE_146__ = __webpack_require__(230);
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "ValueCache", function() { return _valueService_valueCache_mjs__WEBPACK_IMPORTED_MODULE_146__["ValueCache"]; });
 
-/* harmony import */ var _entities_cellPositionUtils_mjs__WEBPACK_IMPORTED_MODULE_147__ = __webpack_require__(235);
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "CellPositionUtils", function() { return _entities_cellPositionUtils_mjs__WEBPACK_IMPORTED_MODULE_147__["CellPositionUtils"]; });
+/* harmony import */ var _valueService_expressionService_mjs__WEBPACK_IMPORTED_MODULE_147__ = __webpack_require__(221);
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "ExpressionService", function() { return _valueService_expressionService_mjs__WEBPACK_IMPORTED_MODULE_147__["ExpressionService"]; });
 
-/* harmony import */ var _entities_rowPositionUtils_mjs__WEBPACK_IMPORTED_MODULE_148__ = __webpack_require__(234);
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "RowPositionUtils", function() { return _entities_rowPositionUtils_mjs__WEBPACK_IMPORTED_MODULE_148__["RowPositionUtils"]; });
+/* harmony import */ var _valueService_valueParserService_mjs__WEBPACK_IMPORTED_MODULE_148__ = __webpack_require__(257);
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "ValueParserService", function() { return _valueService_valueParserService_mjs__WEBPACK_IMPORTED_MODULE_148__["ValueParserService"]; });
 
-/* harmony import */ var _headerRendering_common_headerPosition_mjs__WEBPACK_IMPORTED_MODULE_149__ = __webpack_require__(238);
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "HeaderPositionUtils", function() { return _headerRendering_common_headerPosition_mjs__WEBPACK_IMPORTED_MODULE_149__["HeaderPositionUtils"]; });
+/* harmony import */ var _entities_cellPositionUtils_mjs__WEBPACK_IMPORTED_MODULE_149__ = __webpack_require__(240);
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "CellPositionUtils", function() { return _entities_cellPositionUtils_mjs__WEBPACK_IMPORTED_MODULE_149__["CellPositionUtils"]; });
 
-/* harmony import */ var _headerRendering_common_headerNavigationService_mjs__WEBPACK_IMPORTED_MODULE_150__ = __webpack_require__(177);
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "HeaderNavigationService", function() { return _headerRendering_common_headerNavigationService_mjs__WEBPACK_IMPORTED_MODULE_150__["HeaderNavigationService"]; });
+/* harmony import */ var _entities_rowPositionUtils_mjs__WEBPACK_IMPORTED_MODULE_150__ = __webpack_require__(239);
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "RowPositionUtils", function() { return _entities_rowPositionUtils_mjs__WEBPACK_IMPORTED_MODULE_150__["RowPositionUtils"]; });
 
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "HeaderNavigationDirection", function() { return _headerRendering_common_headerNavigationService_mjs__WEBPACK_IMPORTED_MODULE_150__["HeaderNavigationDirection"]; });
+/* harmony import */ var _headerRendering_common_headerPosition_mjs__WEBPACK_IMPORTED_MODULE_151__ = __webpack_require__(243);
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "HeaderPositionUtils", function() { return _headerRendering_common_headerPosition_mjs__WEBPACK_IMPORTED_MODULE_151__["HeaderPositionUtils"]; });
 
-/* harmony import */ var _propertyKeys_mjs__WEBPACK_IMPORTED_MODULE_151__ = __webpack_require__(30);
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "PropertyKeys", function() { return _propertyKeys_mjs__WEBPACK_IMPORTED_MODULE_151__["PropertyKeys"]; });
+/* harmony import */ var _headerRendering_common_headerNavigationService_mjs__WEBPACK_IMPORTED_MODULE_152__ = __webpack_require__(177);
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "HeaderNavigationService", function() { return _headerRendering_common_headerNavigationService_mjs__WEBPACK_IMPORTED_MODULE_152__["HeaderNavigationService"]; });
 
-/* harmony import */ var _columns_columnApi_mjs__WEBPACK_IMPORTED_MODULE_152__ = __webpack_require__(214);
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "ColumnApi", function() { return _columns_columnApi_mjs__WEBPACK_IMPORTED_MODULE_152__["ColumnApi"]; });
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "HeaderNavigationDirection", function() { return _headerRendering_common_headerNavigationService_mjs__WEBPACK_IMPORTED_MODULE_152__["HeaderNavigationDirection"]; });
 
-/* harmony import */ var _components_framework_frameworkComponentWrapper_mjs__WEBPACK_IMPORTED_MODULE_153__ = __webpack_require__(253);
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "BaseComponentWrapper", function() { return _components_framework_frameworkComponentWrapper_mjs__WEBPACK_IMPORTED_MODULE_153__["BaseComponentWrapper"]; });
+/* harmony import */ var _columns_dataTypeService_mjs__WEBPACK_IMPORTED_MODULE_153__ = __webpack_require__(256);
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "DataTypeService", function() { return _columns_dataTypeService_mjs__WEBPACK_IMPORTED_MODULE_153__["DataTypeService"]; });
 
-/* harmony import */ var _environment_mjs__WEBPACK_IMPORTED_MODULE_154__ = __webpack_require__(229);
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "Environment", function() { return _environment_mjs__WEBPACK_IMPORTED_MODULE_154__["Environment"]; });
+/* harmony import */ var _propertyKeys_mjs__WEBPACK_IMPORTED_MODULE_154__ = __webpack_require__(30);
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "PropertyKeys", function() { return _propertyKeys_mjs__WEBPACK_IMPORTED_MODULE_154__["PropertyKeys"]; });
 
-/* harmony import */ var _widgets_customTooltipFeature_mjs__WEBPACK_IMPORTED_MODULE_155__ = __webpack_require__(54);
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "CustomTooltipFeature", function() { return _widgets_customTooltipFeature_mjs__WEBPACK_IMPORTED_MODULE_155__["CustomTooltipFeature"]; });
+/* harmony import */ var _columns_columnApi_mjs__WEBPACK_IMPORTED_MODULE_155__ = __webpack_require__(219);
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "ColumnApi", function() { return _columns_columnApi_mjs__WEBPACK_IMPORTED_MODULE_155__["ColumnApi"]; });
 
-/* harmony import */ var _interfaces_iChartOptions_mjs__WEBPACK_IMPORTED_MODULE_156__ = __webpack_require__(254);
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "DEFAULT_CHART_GROUPS", function() { return _interfaces_iChartOptions_mjs__WEBPACK_IMPORTED_MODULE_156__["DEFAULT_CHART_GROUPS"]; });
+/* harmony import */ var _components_framework_frameworkComponentWrapper_mjs__WEBPACK_IMPORTED_MODULE_156__ = __webpack_require__(258);
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "BaseComponentWrapper", function() { return _components_framework_frameworkComponentWrapper_mjs__WEBPACK_IMPORTED_MODULE_156__["BaseComponentWrapper"]; });
 
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "CHART_TOOL_PANEL_ALLOW_LIST", function() { return _interfaces_iChartOptions_mjs__WEBPACK_IMPORTED_MODULE_156__["CHART_TOOL_PANEL_ALLOW_LIST"]; });
+/* harmony import */ var _environment_mjs__WEBPACK_IMPORTED_MODULE_157__ = __webpack_require__(234);
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "Environment", function() { return _environment_mjs__WEBPACK_IMPORTED_MODULE_157__["Environment"]; });
 
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "CHART_TOOLBAR_ALLOW_LIST", function() { return _interfaces_iChartOptions_mjs__WEBPACK_IMPORTED_MODULE_156__["CHART_TOOLBAR_ALLOW_LIST"]; });
+/* harmony import */ var _widgets_customTooltipFeature_mjs__WEBPACK_IMPORTED_MODULE_158__ = __webpack_require__(54);
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "CustomTooltipFeature", function() { return _widgets_customTooltipFeature_mjs__WEBPACK_IMPORTED_MODULE_158__["CustomTooltipFeature"]; });
 
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "CHART_TOOL_PANEL_MENU_OPTIONS", function() { return _interfaces_iChartOptions_mjs__WEBPACK_IMPORTED_MODULE_156__["CHART_TOOL_PANEL_MENU_OPTIONS"]; });
+/* harmony import */ var _interfaces_iChartOptions_mjs__WEBPACK_IMPORTED_MODULE_159__ = __webpack_require__(259);
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "DEFAULT_CHART_GROUPS", function() { return _interfaces_iChartOptions_mjs__WEBPACK_IMPORTED_MODULE_159__["DEFAULT_CHART_GROUPS"]; });
 
-/* harmony import */ var _interfaces_iAgChartOptions_mjs__WEBPACK_IMPORTED_MODULE_157__ = __webpack_require__(255);
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "__FORCE_MODULE_DETECTION", function() { return _interfaces_iAgChartOptions_mjs__WEBPACK_IMPORTED_MODULE_157__["__FORCE_MODULE_DETECTION"]; });
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "CHART_TOOL_PANEL_ALLOW_LIST", function() { return _interfaces_iChartOptions_mjs__WEBPACK_IMPORTED_MODULE_159__["CHART_TOOL_PANEL_ALLOW_LIST"]; });
 
-/* harmony import */ var _interfaces_iSparklineCellRendererParams_mjs__WEBPACK_IMPORTED_MODULE_158__ = __webpack_require__(256);
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "BarColumnLabelPlacement", function() { return _interfaces_iSparklineCellRendererParams_mjs__WEBPACK_IMPORTED_MODULE_158__["BarColumnLabelPlacement"]; });
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "CHART_TOOLBAR_ALLOW_LIST", function() { return _interfaces_iChartOptions_mjs__WEBPACK_IMPORTED_MODULE_159__["CHART_TOOLBAR_ALLOW_LIST"]; });
 
-/* harmony import */ var _modules_moduleNames_mjs__WEBPACK_IMPORTED_MODULE_159__ = __webpack_require__(14);
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "ModuleNames", function() { return _modules_moduleNames_mjs__WEBPACK_IMPORTED_MODULE_159__["ModuleNames"]; });
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "CHART_TOOL_PANEL_MENU_OPTIONS", function() { return _interfaces_iChartOptions_mjs__WEBPACK_IMPORTED_MODULE_159__["CHART_TOOL_PANEL_MENU_OPTIONS"]; });
 
-/* harmony import */ var _modules_moduleRegistry_mjs__WEBPACK_IMPORTED_MODULE_160__ = __webpack_require__(13);
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "ModuleRegistry", function() { return _modules_moduleRegistry_mjs__WEBPACK_IMPORTED_MODULE_160__["ModuleRegistry"]; });
+/* harmony import */ var _interfaces_iAgChartOptions_mjs__WEBPACK_IMPORTED_MODULE_160__ = __webpack_require__(260);
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "__FORCE_MODULE_DETECTION", function() { return _interfaces_iAgChartOptions_mjs__WEBPACK_IMPORTED_MODULE_160__["__FORCE_MODULE_DETECTION"]; });
 
-/* harmony import */ var _events_mjs__WEBPACK_IMPORTED_MODULE_161__ = __webpack_require__(21);
+/* harmony import */ var _interfaces_iSparklineCellRendererParams_mjs__WEBPACK_IMPORTED_MODULE_161__ = __webpack_require__(261);
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "BarColumnLabelPlacement", function() { return _interfaces_iSparklineCellRendererParams_mjs__WEBPACK_IMPORTED_MODULE_161__["BarColumnLabelPlacement"]; });
+
+/* harmony import */ var _modules_moduleNames_mjs__WEBPACK_IMPORTED_MODULE_162__ = __webpack_require__(14);
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "ModuleNames", function() { return _modules_moduleNames_mjs__WEBPACK_IMPORTED_MODULE_162__["ModuleNames"]; });
+
+/* harmony import */ var _modules_moduleRegistry_mjs__WEBPACK_IMPORTED_MODULE_163__ = __webpack_require__(13);
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "ModuleRegistry", function() { return _modules_moduleRegistry_mjs__WEBPACK_IMPORTED_MODULE_163__["ModuleRegistry"]; });
+
+/* harmony import */ var _events_mjs__WEBPACK_IMPORTED_MODULE_164__ = __webpack_require__(21);
 /* empty/unused harmony star reexport *//**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / Typescript / React / Angular / Vue
- * @version v30.0.6
+ * @version v30.1.0
  * @link https://www.ag-grid.com/
  * @license MIT
  */
@@ -855,6 +864,8 @@ globalObj.MouseEvent = typeof MouseEvent === 'undefined' ? {} : MouseEvent;
 
 
 
+
+
 // range
 
 // root
@@ -879,6 +890,7 @@ globalObj.MouseEvent = typeof MouseEvent === 'undefined' ? {} : MouseEvent;
 
 
  // please leave this as is - we want it to be explicit for build reasons
+
 
 
 
@@ -1001,6 +1013,9 @@ let ColumnFactory = class ColumnFactory extends _context_beanStub_mjs__WEBPACK_I
             nextChild.setOriginalParent(autoGroup);
             nextChild = autoGroup;
         }
+        if (dept === 0) {
+            column.setOriginalParent(null);
+        }
         // at this point, the nextChild is the top most item in the tree
         return nextChild;
     }
@@ -1077,14 +1092,19 @@ let ColumnFactory = class ColumnFactory extends _context_beanStub_mjs__WEBPACK_I
         return maxDeptThisLevel;
     }
     recursivelyCreateColumns(defs, level, primaryColumns, existingColsCopy, columnKeyCreator, existingGroups) {
-        return (defs || []).map((def) => {
+        if (!defs)
+            return [];
+        const result = new Array(defs.length);
+        for (let i = 0; i < result.length; i++) {
+            const def = defs[i];
             if (this.isColumnGroup(def)) {
-                return this.createColumnGroup(primaryColumns, def, level, existingColsCopy, columnKeyCreator, existingGroups);
+                result[i] = this.createColumnGroup(primaryColumns, def, level, existingColsCopy, columnKeyCreator, existingGroups);
             }
             else {
-                return this.createColumn(primaryColumns, def, existingColsCopy, columnKeyCreator);
+                result[i] = this.createColumn(primaryColumns, def, existingColsCopy, columnKeyCreator);
             }
-        });
+        }
+        return result;
     }
     createColumnGroup(primaryColumns, colGroupDef, level, existingColumns, columnKeyCreator, existingGroups) {
         const colGroupDefMerged = this.createMergedColGroupDef(colGroupDef);
@@ -1121,12 +1141,12 @@ let ColumnFactory = class ColumnFactory extends _context_beanStub_mjs__WEBPACK_I
         if (!column) {
             // no existing column, need to create one
             const colId = columnKeyCreator.getUniqueKey(colDef.colId, colDef.field);
-            const colDefMerged = this.mergeColDefs(colDef, colId);
+            const colDefMerged = this.addColumnDefaultAndTypes(colDef, colId);
             column = new _entities_column_mjs__WEBPACK_IMPORTED_MODULE_2__["Column"](colDefMerged, colDef, colId, primaryColumns);
             this.context.createBean(column);
         }
         else {
-            const colDefMerged = this.mergeColDefs(colDef, column.getColId());
+            const colDefMerged = this.addColumnDefaultAndTypes(colDef, column.getColId());
             column.setColDef(colDefMerged, colDef);
             this.applyColumnState(column, colDefMerged);
         }
@@ -1179,25 +1199,31 @@ let ColumnFactory = class ColumnFactory extends _context_beanStub_mjs__WEBPACK_I
         }
     }
     findExistingColumn(newColDef, existingColsCopy) {
-        return (existingColsCopy || []).find(existingCol => {
-            const existingColDef = existingCol.getUserProvidedColDef();
-            if (!existingColDef) {
-                return false;
-            }
+        if (!existingColsCopy)
+            return undefined;
+        for (let i = 0; i < existingColsCopy.length; i++) {
+            const def = existingColsCopy[i].getUserProvidedColDef();
+            if (!def)
+                continue;
             const newHasId = newColDef.colId != null;
-            const newHasField = newColDef.field != null;
             if (newHasId) {
-                return existingCol.getId() === newColDef.colId;
+                if (existingColsCopy[i].getId() === newColDef.colId) {
+                    return existingColsCopy[i];
+                }
+                continue;
             }
+            const newHasField = newColDef.field != null;
             if (newHasField) {
-                return existingColDef.field === newColDef.field;
+                if (def.field === newColDef.field) {
+                    return existingColsCopy[i];
+                }
+                continue;
             }
-            // if no id or field present, then try object equivalence.
-            if (existingColDef === newColDef) {
-                return true;
+            if (def === newColDef) {
+                return existingColsCopy[i];
             }
-            return false;
-        });
+        }
+        return undefined;
     }
     findExistingGroup(newGroupDef, existingGroups) {
         return existingGroups.find(existingGroup => {
@@ -1212,26 +1238,26 @@ let ColumnFactory = class ColumnFactory extends _context_beanStub_mjs__WEBPACK_I
             return false;
         });
     }
-    mergeColDefs(colDef, colId) {
+    addColumnDefaultAndTypes(colDef, colId) {
         // start with empty merged definition
-        const colDefMerged = {};
+        const res = {};
         // merge properties from default column definitions
         const defaultColDef = this.gridOptionsService.get('defaultColDef');
-        Object(_utils_object_mjs__WEBPACK_IMPORTED_MODULE_6__["mergeDeep"])(colDefMerged, defaultColDef, false, true);
-        const columnType = this.dataTypeService.updateColDefAndGetColumnType(colDefMerged, colDef, colId);
+        Object(_utils_object_mjs__WEBPACK_IMPORTED_MODULE_6__["mergeDeep"])(res, defaultColDef, false, true);
+        const columnType = this.dataTypeService.updateColDefAndGetColumnType(res, colDef, colId);
         if (columnType) {
-            this.assignColumnTypes(columnType, colDefMerged);
+            this.assignColumnTypes(columnType, res);
         }
         // merge properties from column definitions
-        Object(_utils_object_mjs__WEBPACK_IMPORTED_MODULE_6__["mergeDeep"])(colDefMerged, colDef, false, true);
+        Object(_utils_object_mjs__WEBPACK_IMPORTED_MODULE_6__["mergeDeep"])(res, colDef, false, true);
         const autoGroupColDef = this.gridOptionsService.get('autoGroupColumnDef');
         const isSortingCoupled = this.gridOptionsService.isColumnsSortingCoupledToGroup();
         if (colDef.rowGroup && autoGroupColDef && isSortingCoupled) {
             // override the sort for row group columns where the autoGroupColDef defines these values.
-            Object(_utils_object_mjs__WEBPACK_IMPORTED_MODULE_6__["mergeDeep"])(colDefMerged, { sort: autoGroupColDef.sort, initialSort: autoGroupColDef.initialSort }, false, true);
+            Object(_utils_object_mjs__WEBPACK_IMPORTED_MODULE_6__["mergeDeep"])(res, { sort: autoGroupColDef.sort, initialSort: autoGroupColDef.initialSort }, false, true);
         }
-        this.dataTypeService.validateColDef(colDefMerged);
-        return colDefMerged;
+        this.dataTypeService.validateColDef(res);
+        return res;
     }
     assignColumnTypes(typeKeys, colDefMerged) {
         if (!typeKeys.length) {
@@ -1319,11 +1345,12 @@ class ColumnKeyCreator {
                 }
             }
             else {
-                idToTry = '' + count;
+                // no point in stringing this, object treats it the same anyway.
+                idToTry = count;
             }
             if (!this.existingKeys[idToTry]) {
                 this.existingKeys[idToTry] = true;
-                return idToTry;
+                return String(idToTry);
             }
             count++;
         }
@@ -1740,6 +1767,8 @@ class Column {
         this.autoHeaderHeight = null;
         this.moving = false;
         this.menuVisible = false;
+        this.lastLeftPinned = false;
+        this.firstRightPinned = false;
         this.filterActive = false;
         this.eventService = new _eventService_mjs__WEBPACK_IMPORTED_MODULE_0__["EventService"]();
         this.tooltipEnabled = false;
@@ -1832,6 +1861,11 @@ class Column {
     setOriginalParent(originalParent) {
         this.originalParent = originalParent;
     }
+    /**
+     * Used for marryChildren, helps with comparing when duplicate groups have been created to manage split groups.
+     *
+     * Parent may contain a duplicate but not identical group when the group is split.
+     */
     getOriginalParent() {
         return this.originalParent;
     }
@@ -2802,12 +2836,14 @@ class Context {
         if (this.destroyed) {
             return;
         }
+        // Set before doing the destroy, so if context.destroy() gets called via another bean
+        // we are marked as destroyed already to prevent running destroy() twice
+        this.destroyed = true;
         this.logger.log(">> Shutting down ag-Application Context");
         const beanInstances = this.getBeanInstances();
         this.destroyBeans(beanInstances);
         this.contextParams.providedBeanInstances = null;
         _modules_moduleRegistry_mjs__WEBPACK_IMPORTED_MODULE_3__["ModuleRegistry"].__unRegisterGridModules(this.contextParams.gridId);
-        this.destroyed = true;
         this.logger.log(">> ag-Application Context shut down - component is dead");
     }
     destroyBean(bean) {
@@ -2957,10 +2993,13 @@ function iterateObject(object, callback) {
         return;
     }
     if (Array.isArray(object)) {
-        object.forEach((value, index) => callback(`${index}`, value));
+        for (let i = 0; i < object.length; i++) {
+            callback(i.toString(), object[i]);
+        }
+        return;
     }
-    else {
-        Object.keys(object).forEach(key => callback(key, object[key]));
+    for (const [key, value] of Object.entries(object)) {
+        callback(key, value);
     }
 }
 function cloneObject(object) {
@@ -3505,6 +3544,7 @@ var ModuleNames;
     ModuleNames["ExcelExportModule"] = "@ag-grid-enterprise/excel-export";
     ModuleNames["ClipboardModule"] = "@ag-grid-enterprise/clipboard";
     ModuleNames["SparklinesModule"] = "@ag-grid-enterprise/sparklines";
+    ModuleNames["AdvancedFilterModule"] = "@ag-grid-enterprise/advanced-filter";
     // framework wrappers currently don't provide beans, comps etc, so no need to be modules,
     // however i argue they should be as in theory they 'could' provide beans etc
     ModuleNames["AngularModule"] = "@ag-grid-community/angular";
@@ -3817,7 +3857,9 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "shallowCompare", function() { return shallowCompare; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "sortNumerically", function() { return sortNumerically; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "removeRepeatsFromArray", function() { return removeRepeatsFromArray; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "removeFromUnorderedArray", function() { return removeFromUnorderedArray; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "removeFromArray", function() { return removeFromArray; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "removeAllFromUnorderedArray", function() { return removeAllFromUnorderedArray; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "removeAllFromArray", function() { return removeAllFromArray; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "insertIntoArray", function() { return insertIntoArray; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "insertArrayIntoArray", function() { return insertArrayIntoArray; });
@@ -3875,14 +3917,29 @@ function removeRepeatsFromArray(array, object) {
         }
     }
 }
+function removeFromUnorderedArray(array, object) {
+    const index = array.indexOf(object);
+    if (index >= 0) {
+        // preserve the last element, then shorten array length by 1 to delete index
+        array[index] = array[array.length - 1];
+        array.pop();
+    }
+}
 function removeFromArray(array, object) {
     const index = array.indexOf(object);
     if (index >= 0) {
         array.splice(index, 1);
     }
 }
+function removeAllFromUnorderedArray(array, toRemove) {
+    for (let i = 0; i < toRemove.length; i++) {
+        removeFromUnorderedArray(array, toRemove[i]);
+    }
+}
 function removeAllFromArray(array, toRemove) {
-    toRemove.forEach(item => removeFromArray(array, item));
+    for (let i = 0; i < toRemove.length; i++) {
+        removeFromArray(array, toRemove[i]);
+    }
 }
 function insertIntoArray(array, object, toIndex) {
     array.splice(toIndex, 0, object);
@@ -4033,12 +4090,12 @@ let ColumnModel = class ColumnModel extends _context_beanStub_mjs__WEBPACK_IMPOR
             this.pivotMode = pivotMode;
         }
         this.usingTreeData = this.gridOptionsService.isTreeData();
-        this.addManagedPropertyListener('groupDisplayType', () => this.onAutoGroupColumnDefChanged());
+        this.addManagedPropertyListener('groupDisplayType', () => this.onGroupDisplayTypeChanged());
         this.addManagedPropertyListener('autoGroupColumnDef', () => this.onAutoGroupColumnDefChanged());
         this.addManagedPropertyListener('defaultColDef', (params) => this.onSharedColDefChanged(params.source));
         this.addManagedPropertyListener('columnTypes', (params) => this.onSharedColDefChanged(params.source));
     }
-    onAutoGroupColumnDefChanged() {
+    onGroupDisplayTypeChanged() {
         // Possible for update to be called before columns are present in which case there is nothing to do here.
         if (!this.columnDefs) {
             return;
@@ -4048,9 +4105,16 @@ let ColumnModel = class ColumnModel extends _context_beanStub_mjs__WEBPACK_IMPOR
         this.updateGridColumns();
         this.updateDisplayedColumns('gridOptionsChanged');
     }
+    onAutoGroupColumnDefChanged() {
+        if (this.groupAutoColumns) {
+            this.autoGroupColService.updateAutoGroupColumns(this.groupAutoColumns);
+        }
+    }
     onSharedColDefChanged(source = 'api') {
-        // likewise for autoGroupCol, the default col def impacts this
-        this.forceRecreateAutoGroups = true;
+        // if we aren't going to force, update the auto cols in place
+        if (this.groupAutoColumns) {
+            this.autoGroupColService.updateAutoGroupColumns(this.groupAutoColumns);
+        }
         this.createColumnsFromColumnDefs(true, source);
     }
     setColumnDefs(columnDefs, source = 'api') {
@@ -4128,11 +4192,12 @@ let ColumnModel = class ColumnModel extends _context_beanStub_mjs__WEBPACK_IMPOR
         if (dispatchEventsFunc) {
             dispatchEventsFunc();
         }
-        this.dispatchNewColumnsLoaded();
+        this.dispatchNewColumnsLoaded(source);
     }
-    dispatchNewColumnsLoaded() {
+    dispatchNewColumnsLoaded(source) {
         const newColumnsLoadedEvent = {
-            type: _events_mjs__WEBPACK_IMPORTED_MODULE_2__["Events"].EVENT_NEW_COLUMNS_LOADED
+            type: _events_mjs__WEBPACK_IMPORTED_MODULE_2__["Events"].EVENT_NEW_COLUMNS_LOADED,
+            source
         };
         this.eventService.dispatchEvent(newColumnsLoadedEvent);
     }
@@ -4149,30 +4214,9 @@ let ColumnModel = class ColumnModel extends _context_beanStub_mjs__WEBPACK_IMPOR
         if (!primaryColumns) {
             return;
         }
-        this.gridColumns.sort((colA, colB) => {
-            const primaryIndexA = primaryColumns.indexOf(colA);
-            const primaryIndexB = primaryColumns.indexOf(colB);
-            // if both cols are present in primary, then we just return the position,
-            // so position is maintained.
-            const indexAPresent = primaryIndexA >= 0;
-            const indexBPresent = primaryIndexB >= 0;
-            if (indexAPresent && indexBPresent) {
-                return primaryIndexA - primaryIndexB;
-            }
-            if (indexAPresent) {
-                // B is auto group column, so put B first
-                return 1;
-            }
-            if (indexBPresent) {
-                // A is auto group column, so put A first
-                return -1;
-            }
-            // otherwise both A and B are auto-group columns. so we just keep the order
-            // as they were already in.
-            const gridIndexA = this.gridColumns.indexOf(colA);
-            const gridIndexB = this.gridColumns.indexOf(colB);
-            return gridIndexA - gridIndexB;
-        });
+        const primaryColsOrdered = primaryColumns.filter(col => this.gridColumns.indexOf(col) >= 0);
+        const otherCols = this.gridColumns.filter(col => primaryColsOrdered.indexOf(col) < 0);
+        this.gridColumns = [...otherCols, ...primaryColsOrdered];
         this.gridColumns = this.placeLockedColumns(this.gridColumns);
     }
     getAllDisplayedAutoHeightCols() {
@@ -4659,7 +4703,7 @@ let ColumnModel = class ColumnModel extends _context_beanStub_mjs__WEBPACK_IMPOR
     }
     setRowGroupColumns(colKeys, source = "api") {
         this.autoGroupsNeedBuilding = true;
-        this.setPrimaryColumnList(colKeys, this.rowGroupColumns, _events_mjs__WEBPACK_IMPORTED_MODULE_2__["Events"].EVENT_COLUMN_ROW_GROUP_CHANGED, this.setRowGroupActive.bind(this), source);
+        this.setPrimaryColumnList(colKeys, this.rowGroupColumns, _events_mjs__WEBPACK_IMPORTED_MODULE_2__["Events"].EVENT_COLUMN_ROW_GROUP_CHANGED, true, this.setRowGroupActive.bind(this), source);
     }
     setRowGroupActive(active, column, source) {
         if (active === column.isRowGroupActive()) {
@@ -4695,7 +4739,7 @@ let ColumnModel = class ColumnModel extends _context_beanStub_mjs__WEBPACK_IMPOR
         this.updatePrimaryColumnList(keys, this.pivotColumns, true, column => column.setPivotActive(true, source), _events_mjs__WEBPACK_IMPORTED_MODULE_2__["Events"].EVENT_COLUMN_PIVOT_CHANGED, source);
     }
     setPivotColumns(colKeys, source = "api") {
-        this.setPrimaryColumnList(colKeys, this.pivotColumns, _events_mjs__WEBPACK_IMPORTED_MODULE_2__["Events"].EVENT_COLUMN_PIVOT_CHANGED, (added, column) => {
+        this.setPrimaryColumnList(colKeys, this.pivotColumns, _events_mjs__WEBPACK_IMPORTED_MODULE_2__["Events"].EVENT_COLUMN_PIVOT_CHANGED, true, (added, column) => {
             column.setPivotActive(added, source);
         }, source);
     }
@@ -4708,7 +4752,10 @@ let ColumnModel = class ColumnModel extends _context_beanStub_mjs__WEBPACK_IMPOR
     removePivotColumn(key, source = "api") {
         this.removePivotColumns([key], source);
     }
-    setPrimaryColumnList(colKeys, masterList, eventName, columnCallback, source) {
+    setPrimaryColumnList(colKeys, masterList, eventName, detectOrderChange, columnCallback, source) {
+        const changes = new Map();
+        // store all original cols and their index.
+        masterList.forEach((col, idx) => changes.set(col, idx));
         masterList.length = 0;
         if (Object(_utils_generic_mjs__WEBPACK_IMPORTED_MODULE_9__["exists"])(colKeys)) {
             colKeys.forEach(key => {
@@ -4718,6 +4765,21 @@ let ColumnModel = class ColumnModel extends _context_beanStub_mjs__WEBPACK_IMPOR
                 }
             });
         }
+        masterList.forEach((col, idx) => {
+            const oldIndex = changes.get(col);
+            // if the column was not in the list, we add it as it's a change
+            // idx is irrelevant now.
+            if (oldIndex === undefined) {
+                changes.set(col, 0);
+                return;
+            }
+            if (detectOrderChange && oldIndex !== idx) {
+                // if we're detecting order changes, and the indexes differ, we retain this as it's changed
+                return;
+            }
+            // otherwise remove this col, as it's unchanged.
+            changes.delete(col);
+        });
         (this.primaryColumns || []).forEach(column => {
             const added = masterList.indexOf(column) >= 0;
             columnCallback(added, column);
@@ -4726,10 +4788,10 @@ let ColumnModel = class ColumnModel extends _context_beanStub_mjs__WEBPACK_IMPOR
             this.updateGridColumns();
         }
         this.updateDisplayedColumns(source);
-        this.dispatchColumnChangedEvent(eventName, masterList, source);
+        this.dispatchColumnChangedEvent(eventName, [...changes.keys()], source);
     }
     setValueColumns(colKeys, source = "api") {
-        this.setPrimaryColumnList(colKeys, this.valueColumns, _events_mjs__WEBPACK_IMPORTED_MODULE_2__["Events"].EVENT_COLUMN_VALUE_CHANGED, this.setValueActive.bind(this), source);
+        this.setPrimaryColumnList(colKeys, this.valueColumns, _events_mjs__WEBPACK_IMPORTED_MODULE_2__["Events"].EVENT_COLUMN_VALUE_CHANGED, false, this.setValueActive.bind(this), source);
     }
     setValueActive(active, column, source) {
         if (active === column.isValueActive()) {
@@ -4966,12 +5028,13 @@ let ColumnModel = class ColumnModel extends _context_beanStub_mjs__WEBPACK_IMPOR
     }
     moveRowGroupColumn(fromIndex, toIndex, source = "api") {
         const column = this.rowGroupColumns[fromIndex];
+        const impactedColumns = this.rowGroupColumns.slice(fromIndex, toIndex);
         this.rowGroupColumns.splice(fromIndex, 1);
         this.rowGroupColumns.splice(toIndex, 0, column);
         const event = {
             type: _events_mjs__WEBPACK_IMPORTED_MODULE_2__["Events"].EVENT_COLUMN_ROW_GROUP_CHANGED,
-            columns: this.rowGroupColumns,
-            column: this.rowGroupColumns.length === 1 ? this.rowGroupColumns[0] : null,
+            columns: impactedColumns,
+            column: impactedColumns.length === 1 ? impactedColumns[0] : null,
             source: source
         };
         this.eventService.dispatchEvent(event);
@@ -5642,11 +5705,19 @@ let ColumnModel = class ColumnModel extends _context_beanStub_mjs__WEBPACK_IMPOR
                 if (unchanged) {
                     return;
                 }
-                // returning all columns rather than what has changed!
+                const changes = new Set(colsBefore);
+                colsAfter.forEach(id => {
+                    // if the first list had it, delete it, as it's unchanged.
+                    if (!changes.delete(id)) {
+                        // if the second list has it, and first doesn't, add it.
+                        changes.add(id);
+                    }
+                });
+                const changesArr = [...changes];
                 const event = {
                     type: eventType,
-                    columns: colsAfter,
-                    column: colsAfter.length === 1 ? colsAfter[0] : null,
+                    columns: changesArr,
+                    column: changesArr.length === 1 ? changesArr[0] : null,
                     source: source
                 };
                 this.eventService.dispatchEvent(event);
@@ -5674,12 +5745,7 @@ let ColumnModel = class ColumnModel extends _context_beanStub_mjs__WEBPACK_IMPOR
             };
             const changedValues = getChangedColumns(valueChangePredicate);
             if (changedValues.length > 0) {
-                // we pass all value columns, now the ones that changed. this is the same
-                // as pivot and rowGroup cols, but different to all other properties below.
-                // this is more for backwards compatibility, as it's always been this way.
-                // really it should be the other way, as the order of the cols makes no difference
-                // for valueColumns (apart from displaying them in the tool panel).
-                this.dispatchColumnChangedEvent(_events_mjs__WEBPACK_IMPORTED_MODULE_2__["Events"].EVENT_COLUMN_VALUE_CHANGED, this.valueColumns, source);
+                this.dispatchColumnChangedEvent(_events_mjs__WEBPACK_IMPORTED_MODULE_2__["Events"].EVENT_COLUMN_VALUE_CHANGED, changedValues, source);
             }
             const resizeChangePredicate = (cs, c) => cs.width != c.getActualWidth();
             this.dispatchColumnResizedEvent(getChangedColumns(resizeChangePredicate), true, source);
@@ -6691,7 +6757,7 @@ let ColumnModel = class ColumnModel extends _context_beanStub_mjs__WEBPACK_IMPOR
                     left += column.getActualWidth();
                 });
             }
-            Object(_utils_array_mjs__WEBPACK_IMPORTED_MODULE_8__["removeAllFromArray"])(allColumns, columns);
+            Object(_utils_array_mjs__WEBPACK_IMPORTED_MODULE_8__["removeAllFromUnorderedArray"])(allColumns, columns);
         });
         // items left in allColumns are columns not displayed, so remove the left position. this is
         // important for the rows, as if a col is made visible, then taken out, then made visible again,
@@ -6812,6 +6878,7 @@ let ColumnModel = class ColumnModel extends _context_beanStub_mjs__WEBPACK_IMPOR
         return changed;
     }
     refreshFlexedColumns(params = {}) {
+        var _a;
         const source = params.source ? params.source : 'flex';
         if (params.viewportWidth != null) {
             this.flexViewportWidth = params.viewportWidth;
@@ -6824,31 +6891,56 @@ let ColumnModel = class ColumnModel extends _context_beanStub_mjs__WEBPACK_IMPOR
         // minWidth or maxWidth rules.
         let flexAfterDisplayIndex = -1;
         if (params.resizingCols) {
-            params.resizingCols.forEach(col => {
-                const indexOfCol = this.displayedColumnsCenter.indexOf(col);
-                if (flexAfterDisplayIndex < indexOfCol) {
-                    flexAfterDisplayIndex = indexOfCol;
+            const allResizingCols = new Set(params.resizingCols);
+            // find the last resizing col, as only cols after this one are affected by the resizing
+            let displayedCols = this.displayedColumnsCenter;
+            for (let i = displayedCols.length - 1; i >= 0; i--) {
+                if (allResizingCols.has(displayedCols[i])) {
+                    flexAfterDisplayIndex = i;
+                    break;
                 }
-            });
+            }
         }
-        const isColFlex = (col) => {
-            const afterResizingCols = this.displayedColumnsCenter.indexOf(col) > flexAfterDisplayIndex;
-            return col.getFlex() && afterResizingCols;
-        };
-        const knownWidthColumns = this.displayedColumnsCenter.filter(col => !isColFlex(col));
-        const flexingColumns = this.displayedColumnsCenter.filter(col => isColFlex(col));
-        const changedColumns = [];
+        // the width of all of the columns for which the width has been determined
+        let knownColumnsWidth = 0;
+        let flexingColumns = [];
+        // store the minimum width of all the flex columns, so we can determine if flex is even possible more quickly
+        let minimumFlexedWidth = 0;
+        let totalFlex = 0;
+        for (let i = 0; i < this.displayedColumnsCenter.length; i++) {
+            const isFlex = this.displayedColumnsCenter[i].getFlex() && i > flexAfterDisplayIndex;
+            if (isFlex) {
+                flexingColumns.push(this.displayedColumnsCenter[i]);
+                totalFlex += this.displayedColumnsCenter[i].getFlex();
+                minimumFlexedWidth += (_a = this.displayedColumnsCenter[i].getMinWidth()) !== null && _a !== void 0 ? _a : 0;
+            }
+            else {
+                knownColumnsWidth += this.displayedColumnsCenter[i].getActualWidth();
+            }
+        }
+        ;
         if (!flexingColumns.length) {
             return [];
+        }
+        let changedColumns = [];
+        // this is for performance to prevent trying to flex when unnecessary
+        if (knownColumnsWidth + minimumFlexedWidth > this.flexViewportWidth) {
+            // known columns and the minimum width of all the flex cols are too wide for viewport
+            // so don't flex
+            flexingColumns.forEach(col => { var _a; return col.setActualWidth((_a = col.getMinWidth()) !== null && _a !== void 0 ? _a : 0, source); });
+            // No columns should flex, but all have been changed. Swap arrays so events fire properly.
+            // Expensive logic won't execute as flex columns is empty.
+            changedColumns = flexingColumns;
+            flexingColumns = [];
         }
         const flexingColumnSizes = [];
         let spaceForFlexingColumns;
         outer: while (true) {
-            const totalFlex = flexingColumns.reduce((count, col) => count + col.getFlex(), 0);
-            spaceForFlexingColumns = this.flexViewportWidth - this.getWidthOfColsInList(knownWidthColumns);
+            spaceForFlexingColumns = this.flexViewportWidth - knownColumnsWidth;
+            const spacePerFlex = spaceForFlexingColumns / totalFlex;
             for (let i = 0; i < flexingColumns.length; i++) {
                 const col = flexingColumns[i];
-                const widthByFlexRule = spaceForFlexingColumns * col.getFlex() / totalFlex;
+                const widthByFlexRule = spacePerFlex * col.getFlex();
                 let constrainedWidth = 0;
                 const minWidth = col.getMinWidth();
                 const maxWidth = col.getMaxWidth();
@@ -6862,9 +6954,10 @@ let ColumnModel = class ColumnModel extends _context_beanStub_mjs__WEBPACK_IMPOR
                     // This column is not in fact flexing as it is being constrained to a specific size
                     // so remove it from the list of flexing columns and start again
                     col.setActualWidth(constrainedWidth, source);
-                    Object(_utils_array_mjs__WEBPACK_IMPORTED_MODULE_8__["removeFromArray"])(flexingColumns, col);
+                    Object(_utils_array_mjs__WEBPACK_IMPORTED_MODULE_8__["removeFromUnorderedArray"])(flexingColumns, col);
+                    totalFlex -= col.getFlex();
                     changedColumns.push(col);
-                    knownWidthColumns.push(col);
+                    knownColumnsWidth += col.getActualWidth();
                     continue outer;
                 }
                 flexingColumnSizes[i] = Math.round(widthByFlexRule);
@@ -6933,7 +7026,20 @@ let ColumnModel = class ColumnModel extends _context_beanStub_mjs__WEBPACK_IMPOR
         //
         // NOTE: the process below will assign values to `this.actualWidth` of each column without firing events
         // for this reason we need to manually dispatch resize events after the resize has been done for each column.
-        colsToSpread.forEach(column => column.resetActualWidth(source));
+        colsToSpread.forEach(column => {
+            var _a, _b;
+            column.resetActualWidth(source);
+            const widthOverride = limitsMap === null || limitsMap === void 0 ? void 0 : limitsMap[column.getId()];
+            const minOverride = ((_a = widthOverride === null || widthOverride === void 0 ? void 0 : widthOverride.minWidth) !== null && _a !== void 0 ? _a : params === null || params === void 0 ? void 0 : params.defaultMinWidth);
+            const maxOverride = ((_b = widthOverride === null || widthOverride === void 0 ? void 0 : widthOverride.maxWidth) !== null && _b !== void 0 ? _b : params === null || params === void 0 ? void 0 : params.defaultMaxWidth);
+            const colWidth = column.getActualWidth();
+            if (typeof minOverride === 'number' && colWidth < minOverride) {
+                column.setActualWidth(minOverride, source, true);
+            }
+            else if (typeof maxOverride === 'number' && colWidth > maxOverride) {
+                column.setActualWidth(maxOverride, source, true);
+            }
+        });
         while (!finishedResizing) {
             finishedResizing = true;
             const availablePixels = gridWidth - this.getWidthOfColsInList(colsToNotSpread);
@@ -6943,7 +7049,7 @@ let ColumnModel = class ColumnModel extends _context_beanStub_mjs__WEBPACK_IMPOR
                     var _a, _b;
                     const widthOverride = (_b = (_a = limitsMap === null || limitsMap === void 0 ? void 0 : limitsMap[column.getId()]) === null || _a === void 0 ? void 0 : _a.minWidth) !== null && _b !== void 0 ? _b : params === null || params === void 0 ? void 0 : params.defaultMinWidth;
                     if (typeof widthOverride === 'number') {
-                        column.setActualWidth(widthOverride);
+                        column.setActualWidth(widthOverride, source, true);
                         return;
                     }
                     column.setMinimum(source);
@@ -7012,9 +7118,9 @@ let ColumnModel = class ColumnModel extends _context_beanStub_mjs__WEBPACK_IMPOR
             }
         });
         const groupInstanceIdCreator = new _groupInstanceIdCreator_mjs__WEBPACK_IMPORTED_MODULE_5__["GroupInstanceIdCreator"]();
-        this.displayedTreeLeft = this.displayedGroupCreator.createDisplayedGroups(leftVisibleColumns, this.gridBalancedTree, groupInstanceIdCreator, 'left', this.displayedTreeLeft);
-        this.displayedTreeRight = this.displayedGroupCreator.createDisplayedGroups(rightVisibleColumns, this.gridBalancedTree, groupInstanceIdCreator, 'right', this.displayedTreeRight);
-        this.displayedTreeCentre = this.displayedGroupCreator.createDisplayedGroups(centerVisibleColumns, this.gridBalancedTree, groupInstanceIdCreator, null, this.displayedTreeCentre);
+        this.displayedTreeLeft = this.displayedGroupCreator.createDisplayedGroups(leftVisibleColumns, groupInstanceIdCreator, 'left', this.displayedTreeLeft);
+        this.displayedTreeRight = this.displayedGroupCreator.createDisplayedGroups(rightVisibleColumns, groupInstanceIdCreator, 'right', this.displayedTreeRight);
+        this.displayedTreeCentre = this.displayedGroupCreator.createDisplayedGroups(centerVisibleColumns, groupInstanceIdCreator, null, this.displayedTreeCentre);
         this.updateDisplayedMap();
     }
     updateDisplayedMap() {
@@ -7035,8 +7141,7 @@ let ColumnModel = class ColumnModel extends _context_beanStub_mjs__WEBPACK_IMPOR
         const allColumnGroups = this.getAllDisplayedTrees();
         this.columnUtils.depthFirstAllColumnTreeSearch(allColumnGroups, child => {
             if (child instanceof _entities_columnGroup_mjs__WEBPACK_IMPORTED_MODULE_0__["ColumnGroup"]) {
-                const columnGroup = child;
-                columnGroup.calculateDisplayedColumns();
+                child.calculateDisplayedColumns();
             }
         });
     }
@@ -7066,8 +7171,7 @@ let ColumnModel = class ColumnModel extends _context_beanStub_mjs__WEBPACK_IMPOR
         const groupingActive = this.rowGroupColumns.length > 0 || this.usingTreeData;
         const needAutoColumns = groupingActive && !suppressAutoColumn && !groupFullWidthRow;
         if (needAutoColumns) {
-            const existingCols = this.groupAutoColumns || [];
-            const newAutoGroupCols = this.autoGroupColService.createAutoGroupColumns(existingCols, this.rowGroupColumns);
+            const newAutoGroupCols = this.autoGroupColService.createAutoGroupColumns(this.rowGroupColumns);
             const autoColsDifferent = !this.autoColsEqual(newAutoGroupCols, this.groupAutoColumns);
             // we force recreate so new group cols pick up the new
             // definitions. otherwise we could ignore the new cols because they appear to be the same.
@@ -7098,13 +7202,6 @@ let ColumnModel = class ColumnModel extends _context_beanStub_mjs__WEBPACK_IMPOR
     }
     getGridBalancedTree() {
         return this.gridBalancedTree;
-    }
-    hasFloatingFilters() {
-        if (!this.gridColumns) {
-            return false;
-        }
-        const res = this.gridColumns.some(col => col.getColDef().floatingFilter);
-        return res;
     }
     getFirstDisplayedColumn() {
         const isRtl = this.gridOptionsService.is('enableRtl');
@@ -7184,7 +7281,7 @@ let ColumnModel = class ColumnModel extends _context_beanStub_mjs__WEBPACK_IMPOR
         if (!userColDef) {
             return false;
         }
-        const newColDef = this.columnFactory.mergeColDefs(userColDef, column.getColId());
+        const newColDef = this.columnFactory.addColumnDefaultAndTypes(userColDef, column.getColId());
         column.setColDef(newColDef, userColDef);
         return true;
     }
@@ -7719,6 +7816,8 @@ Events.EVENT_CELL_FOCUS_CLEARED = 'cellFocusCleared';
 Events.EVENT_FULL_WIDTH_ROW_FOCUSED = 'fullWidthRowFocused';
 Events.EVENT_ROW_SELECTED = 'rowSelected';
 Events.EVENT_SELECTION_CHANGED = 'selectionChanged';
+Events.EVENT_TOOLTIP_SHOW = 'tooltipShow';
+Events.EVENT_TOOLTIP_HIDE = 'tooltipHide';
 Events.EVENT_CELL_KEY_DOWN = 'cellKeyDown';
 Events.EVENT_CELL_MOUSE_OVER = 'cellMouseOver';
 Events.EVENT_CELL_MOUSE_OUT = 'cellMouseOut';
@@ -7802,6 +7901,12 @@ Events.EVENT_MOUSE_FOCUS = 'mouseFocus';
 Events.EVENT_STORE_UPDATED = 'storeUpdated';
 Events.EVENT_FILTER_DESTROYED = 'filterDestroyed';
 Events.EVENT_ROW_DATA_UPDATE_STARTED = 'rowDataUpdateStarted';
+// Advanced Filters
+Events.EVENT_ADVANCED_FILTER_ENABLED_CHANGED = 'advancedFilterEnabledChanged';
+Events.EVENT_DATA_TYPES_INFERRED = 'dataTypesInferred';
+// Widgets
+Events.EVENT_FIELD_VALUE_CHANGED = 'fieldValueChanged';
+Events.EVENT_FIELD_PICKER_VALUE_SELECTED = 'fieldPickerValueSelected';
 
 
 /***/ }),
@@ -7868,7 +7973,7 @@ var __decorate = (undefined && undefined.__decorate) || function (decorators, ta
 
 const GROUP_AUTO_COLUMN_ID = 'ag-Grid-AutoColumn';
 let AutoGroupColService = class AutoGroupColService extends _context_beanStub_mjs__WEBPACK_IMPORTED_MODULE_2__["BeanStub"] {
-    createAutoGroupColumns(existingCols, rowGroupColumns) {
+    createAutoGroupColumns(rowGroupColumns) {
         const groupAutoColumns = [];
         const doingTreeData = this.gridOptionsService.isTreeData();
         let doingMultiAutoColumn = this.gridOptionsService.isGroupMultiAutoColumn();
@@ -7880,18 +7985,19 @@ let AutoGroupColService = class AutoGroupColService extends _context_beanStub_mj
         // for each column we are grouping by
         if (doingMultiAutoColumn) {
             rowGroupColumns.forEach((rowGroupCol, index) => {
-                groupAutoColumns.push(this.createOneAutoGroupColumn(existingCols, rowGroupCol, index));
+                groupAutoColumns.push(this.createOneAutoGroupColumn(rowGroupCol, index));
             });
         }
         else {
-            groupAutoColumns.push(this.createOneAutoGroupColumn(existingCols));
+            groupAutoColumns.push(this.createOneAutoGroupColumn());
         }
         return groupAutoColumns;
     }
+    updateAutoGroupColumns(autoGroupColumns) {
+        autoGroupColumns.forEach((column, index) => this.updateOneAutoGroupColumn(column, index));
+    }
     // rowGroupCol and index are missing if groupDisplayType != "multipleColumns"
-    createOneAutoGroupColumn(existingCols, rowGroupCol, index) {
-        // if one provided by user, use it, otherwise create one
-        let defaultAutoColDef = this.generateDefaultColDef(rowGroupCol);
+    createOneAutoGroupColumn(rowGroupCol, index) {
         // if doing multi, set the field
         let colId;
         if (rowGroupCol) {
@@ -7900,50 +8006,56 @@ let AutoGroupColService = class AutoGroupColService extends _context_beanStub_mj
         else {
             colId = GROUP_AUTO_COLUMN_ID;
         }
-        const userAutoColDef = this.gridOptionsService.get('autoGroupColumnDef');
-        Object(_utils_object_mjs__WEBPACK_IMPORTED_MODULE_3__["mergeDeep"])(defaultAutoColDef, userAutoColDef);
-        defaultAutoColDef = this.columnFactory.mergeColDefs(defaultAutoColDef, colId);
-        defaultAutoColDef.colId = colId;
+        const colDef = this.createAutoGroupColDef(colId, rowGroupCol, index);
+        colDef.colId = colId;
+        const newCol = new _entities_column_mjs__WEBPACK_IMPORTED_MODULE_1__["Column"](colDef, null, colId, true);
+        this.context.createBean(newCol);
+        return newCol;
+    }
+    /**
+     * Refreshes an auto group col to load changes from defaultColDef or autoGroupColDef
+     */
+    updateOneAutoGroupColumn(colToUpdate, index) {
+        const oldColDef = colToUpdate.getColDef();
+        const underlyingColId = typeof oldColDef.showRowGroup == 'string' ? oldColDef.showRowGroup : undefined;
+        const underlyingColumn = underlyingColId != null ? this.columnModel.getPrimaryColumn(underlyingColId) : undefined;
+        const colDef = this.createAutoGroupColDef(colToUpdate.getId(), underlyingColumn !== null && underlyingColumn !== void 0 ? underlyingColumn : undefined, index);
+        colToUpdate.setColDef(colDef, null);
+        this.columnFactory.applyColumnState(colToUpdate, colDef);
+    }
+    createAutoGroupColDef(colId, underlyingColumn, index) {
+        // if one provided by user, use it, otherwise create one
+        let res = this.createBaseColDef(underlyingColumn);
+        const autoGroupColumnDef = this.gridOptionsService.get('autoGroupColumnDef');
+        Object(_utils_object_mjs__WEBPACK_IMPORTED_MODULE_3__["mergeDeep"])(res, autoGroupColumnDef);
+        res = this.columnFactory.addColumnDefaultAndTypes(res, colId);
         // For tree data the filter is always allowed
         if (!this.gridOptionsService.isTreeData()) {
             // we would only allow filter if the user has provided field or value getter. otherwise the filter
             // would not be able to work.
-            const noFieldOrValueGetter = Object(_utils_generic_mjs__WEBPACK_IMPORTED_MODULE_4__["missing"])(defaultAutoColDef.field) &&
-                Object(_utils_generic_mjs__WEBPACK_IMPORTED_MODULE_4__["missing"])(defaultAutoColDef.valueGetter) &&
-                Object(_utils_generic_mjs__WEBPACK_IMPORTED_MODULE_4__["missing"])(defaultAutoColDef.filterValueGetter) &&
-                defaultAutoColDef.filter !== 'agGroupColumnFilter';
+            const noFieldOrValueGetter = Object(_utils_generic_mjs__WEBPACK_IMPORTED_MODULE_4__["missing"])(res.field) &&
+                Object(_utils_generic_mjs__WEBPACK_IMPORTED_MODULE_4__["missing"])(res.valueGetter) &&
+                Object(_utils_generic_mjs__WEBPACK_IMPORTED_MODULE_4__["missing"])(res.filterValueGetter) &&
+                res.filter !== 'agGroupColumnFilter';
             if (noFieldOrValueGetter) {
-                defaultAutoColDef.filter = false;
+                res.filter = false;
             }
         }
         // if showing many cols, we don't want to show more than one with a checkbox for selection
         if (index && index > 0) {
-            defaultAutoColDef.headerCheckboxSelection = false;
+            res.headerCheckboxSelection = false;
         }
-        const existingCol = existingCols.find(col => col.getId() == colId);
         const isSortingCoupled = this.gridOptionsService.isColumnsSortingCoupledToGroup();
-        if (existingCol) {
-            if (isSortingCoupled) {
-                // if col is coupled sorting, and has sort attribute, we want to ignore this
-                // because we only accept the sort on creation of the col
-                defaultAutoColDef.sort = undefined;
-                defaultAutoColDef.sortIndex = undefined;
-            }
-            existingCol.setColDef(defaultAutoColDef, null);
-            this.columnFactory.applyColumnState(existingCol, defaultAutoColDef);
-            return existingCol;
+        const hasOwnData = res.valueGetter || res.field != null;
+        if (isSortingCoupled && !hasOwnData) {
+            // if col is coupled sorting, and has sort attribute, we want to ignore this
+            // because we only accept the sort on creation of the col
+            res.sortIndex = undefined;
+            res.initialSort = undefined;
         }
-        if (isSortingCoupled && (defaultAutoColDef.sort || defaultAutoColDef.initialSort || 'sortIndex' in defaultAutoColDef) && !defaultAutoColDef.field) {
-            // if no field, then this column cannot hold its own sort state
-            defaultAutoColDef.sort = null;
-            defaultAutoColDef.sortIndex = null;
-            defaultAutoColDef.initialSort = null;
-        }
-        const newCol = new _entities_column_mjs__WEBPACK_IMPORTED_MODULE_1__["Column"](defaultAutoColDef, null, colId, true);
-        this.context.createBean(newCol);
-        return newCol;
+        return res;
     }
-    generateDefaultColDef(rowGroupCol) {
+    createBaseColDef(rowGroupCol) {
         const userDef = this.gridOptionsService.get('autoGroupColumnDef');
         const localeTextFunc = this.localeService.getLocaleTextFunc();
         const res = {
@@ -8285,6 +8397,7 @@ let GridOptionsValidator = class GridOptionsValidator {
         validateRegistered('getMainMenuItems', _modules_moduleNames_mjs__WEBPACK_IMPORTED_MODULE_3__["ModuleNames"].MenuModule);
         validateRegistered('getContextMenuItems', _modules_moduleNames_mjs__WEBPACK_IMPORTED_MODULE_3__["ModuleNames"].MenuModule);
         validateRegistered('allowContextMenuWithControlKey', _modules_moduleNames_mjs__WEBPACK_IMPORTED_MODULE_3__["ModuleNames"].MenuModule);
+        validateRegistered('enableAdvancedFilter', _modules_moduleNames_mjs__WEBPACK_IMPORTED_MODULE_3__["ModuleNames"].AdvancedFilterModule);
     }
     checkColumnDefProperties() {
         if (this.gridOptions.columnDefs == null) {
@@ -8754,7 +8867,11 @@ ComponentUtil.EXCLUDED_INTERNAL_EVENTS = [
     _events_mjs__WEBPACK_IMPORTED_MODULE_0__["Events"].EVENT_CELL_FOCUS_CLEARED,
     _events_mjs__WEBPACK_IMPORTED_MODULE_0__["Events"].EVENT_GRID_STYLES_CHANGED,
     _events_mjs__WEBPACK_IMPORTED_MODULE_0__["Events"].EVENT_FILTER_DESTROYED,
-    _events_mjs__WEBPACK_IMPORTED_MODULE_0__["Events"].EVENT_ROW_DATA_UPDATE_STARTED
+    _events_mjs__WEBPACK_IMPORTED_MODULE_0__["Events"].EVENT_ROW_DATA_UPDATE_STARTED,
+    _events_mjs__WEBPACK_IMPORTED_MODULE_0__["Events"].EVENT_ADVANCED_FILTER_ENABLED_CHANGED,
+    _events_mjs__WEBPACK_IMPORTED_MODULE_0__["Events"].EVENT_DATA_TYPES_INFERRED,
+    _events_mjs__WEBPACK_IMPORTED_MODULE_0__["Events"].EVENT_FIELD_VALUE_CHANGED,
+    _events_mjs__WEBPACK_IMPORTED_MODULE_0__["Events"].EVENT_FIELD_PICKER_VALUE_SELECTED
 ];
 // events that are available for use by users of AG Grid and so should be documented
 /** EVENTS that should be exposed via code generation for the framework components.  */
@@ -8789,7 +8906,8 @@ PropertyKeys.STRING_PROPERTIES = [
     'rowSelection', 'overlayLoadingTemplate', 'overlayNoRowsTemplate', 'gridId',
     'quickFilterText', 'rowModelType', 'editType', 'domLayout', 'clipboardDelimiter', 'rowGroupPanelShow',
     'multiSortKey', 'pivotColumnGroupTotals', 'pivotRowTotals', 'pivotPanelShow', 'fillHandleDirection',
-    'serverSideStoreType', 'groupDisplayType', 'treeDataDisplayType', 'colResizeDefault'
+    'serverSideStoreType', 'groupDisplayType', 'treeDataDisplayType', 'colResizeDefault', 'tooltipTrigger',
+    'serverSidePivotResultFieldSeparator',
 ];
 PropertyKeys.OBJECT_PROPERTIES = [
     'components', 'rowStyle', 'context', 'autoGroupColumnDef', 'localeText', 'icons',
@@ -8797,14 +8915,14 @@ PropertyKeys.OBJECT_PROPERTIES = [
     'defaultColGroupDef', 'defaultColDef', 'defaultCsvExportParams', 'defaultExcelExportParams', 'columnTypes',
     'rowClassRules', 'detailCellRendererParams', 'loadingCellRendererParams', 'loadingOverlayComponentParams',
     'noRowsOverlayComponentParams', 'popupParent', 'statusBar', 'sideBar', 'chartThemeOverrides',
-    'customChartThemes', 'chartToolPanelsDef', 'dataTypeDefinitions'
+    'customChartThemes', 'chartToolPanelsDef', 'dataTypeDefinitions', 'advancedFilterModel', 'advancedFilterParent'
 ];
 PropertyKeys.ARRAY_PROPERTIES = [
-    'sortingOrder', 'alignedGrids', 'rowData', 'columnDefs', 'excelStyles', 'pinnedTopRowData', 'pinnedBottomRowData', 'chartThemes', 'rowClass'
+    'sortingOrder', 'alignedGrids', 'rowData', 'columnDefs', 'excelStyles', 'pinnedTopRowData', 'pinnedBottomRowData', 'chartThemes', 'rowClass',
 ];
 PropertyKeys.NUMBER_PROPERTIES = [
     'rowHeight', 'detailRowHeight', 'rowBuffer', 'headerHeight', 'groupHeaderHeight', 'floatingFiltersHeight',
-    'pivotHeaderHeight', 'pivotGroupHeaderHeight', 'groupDefaultExpanded', 'viewportRowModelPageSize',
+    'pivotHeaderHeight', 'pivotGroupHeaderHeight', 'groupDefaultExpanded', 'pivotDefaultExpanded', 'viewportRowModelPageSize',
     'viewportRowModelBufferSize', 'autoSizePadding', 'maxBlocksInCache', 'maxConcurrentDatasourceRequests', 'tooltipShowDelay',
     'tooltipHideDelay', 'cacheOverflowSize', 'paginationPageSize', 'cacheBlockSize', 'infiniteInitialRowCount', 'serverSideInitialRowCount', 'scrollbarWidth',
     'asyncTransactionWaitMillis', 'blockLoadDebounceMillis', 'keepDetailRowsCount',
@@ -8819,22 +8937,24 @@ PropertyKeys.BOOLEAN_PROPERTIES = [
     'enableRangeSelection', 'enableRangeHandle', 'enableFillHandle', 'suppressClearOnFillReduction', 'deltaSort', 'suppressTouch', 'suppressAsyncEvents',
     'allowContextMenuWithControlKey', 'suppressContextMenu', 'rememberGroupStateWhenNewData', 'enableCellChangeFlash', 'suppressDragLeaveHidesColumns',
     'suppressRowGroupHidesColumns', 'suppressMiddleClickScrolls', 'suppressPreventDefaultOnMouseWheel', 'suppressCopyRowsToClipboard', 'copyHeadersToClipboard',
-    'copyGroupHeadersToClipboard', 'pivotMode', 'suppressAggFuncInHeader', 'suppressColumnVirtualisation', 'alwaysAggregateAtRootLevel', 'suppressAggAtRootLevel', 'suppressFocusAfterRefresh',
-    'functionsPassive', 'functionsReadOnly', 'animateRows', 'groupSelectsFiltered', 'groupRemoveSingleChildren', 'groupRemoveLowestSingleChildren', 'enableRtl',
-    'suppressClickEdit', 'rowDragEntireRow', 'rowDragManaged', 'suppressRowDrag', 'suppressMoveWhenRowDragging', 'rowDragMultiRow', 'enableGroupEdit',
-    'embedFullWidthRows', 'suppressPaginationPanel', 'groupHideOpenParents', 'groupAllowUnbalanced', 'pagination', 'paginationAutoPageSize', 'suppressScrollOnNewData',
-    'suppressScrollWhenPopupsAreOpen', 'purgeClosedRowNodes', 'cacheQuickFilter', 'includeHiddenColumnsInQuickFilter', 'excludeHiddenColumnsFromQuickFilter', 'ensureDomOrder', 'accentedSort', 'suppressChangeDetection',
-    'valueCache', 'valueCacheNeverExpires', 'aggregateOnlyChangedColumns', 'suppressAnimationFrame', 'suppressExcelExport', 'suppressCsvExport', 'treeData', 'masterDetail',
-    'suppressMultiRangeSelection', 'enterMovesDown', 'enterMovesDownAfterEdit', 'enterNavigatesVerticallyAfterEdit', 'enterNavigatesVertically', 'suppressPropertyNamesCheck', 'rowMultiSelectWithClick', 'suppressRowHoverHighlight',
-    'suppressRowTransform', 'suppressClipboardPaste', 'suppressLastEmptyLineOnPaste', 'enableCharts', 'enableChartToolPanelsButton', 'suppressChartToolPanelsButton',
-    'suppressMaintainUnsortedOrder', 'enableCellTextSelection', 'suppressBrowserResizeObserver', 'suppressMaxRenderedRowRestriction', 'excludeChildrenWhenTreeDataFiltering',
-    'tooltipMouseTrack', 'keepDetailRows', 'paginateChildRows', 'preventDefaultOnContextMenu', 'undoRedoCellEditing', 'allowDragFromColumnsToolPanel',
-    'pivotSuppressAutoColumn', 'suppressExpandablePivotGroups', 'debounceVerticalScrollbar', 'detailRowAutoHeight', 'serverSideFilteringAlwaysResets', 'serverSideFilterAllLevels',
-    'serverSideSortingAlwaysResets', 'serverSideSortAllLevels', 'serverSideOnlyRefreshFilteredGroups', 'serverSideSortOnServer', 'serverSideFilterOnServer', 'suppressAggFilteredOnly',
-    'showOpenedGroup', 'suppressClipboardApi', 'suppressModelUpdateAfterUpdateTransaction', 'stopEditingWhenCellsLoseFocus', 'maintainColumnOrder', 'groupMaintainOrder',
-    'columnHoverHighlight', 'suppressReactUi', 'readOnlyEdit', 'suppressRowVirtualisation', 'enableCellEditingOnBackspace', 'resetRowDataOnUpdate',
-    'removePivotHeaderRowWhenSingleValueColumn', 'suppressCopySingleCellRanges', 'suppressGroupRowsSticky', 'suppressServerSideInfiniteScroll', 'rowGroupPanelSuppressSort',
-    'allowShowChangeAfterFilter', 'suppressCutToClipboard'
+    'copyGroupHeadersToClipboard', 'pivotMode', 'suppressAggFuncInHeader', 'suppressColumnVirtualisation', 'alwaysAggregateAtRootLevel', 'suppressAggAtRootLevel',
+    'suppressFocusAfterRefresh', 'functionsPassive', 'functionsReadOnly', 'animateRows', 'groupSelectsFiltered', 'groupRemoveSingleChildren',
+    'groupRemoveLowestSingleChildren', 'enableRtl', 'suppressClickEdit', 'rowDragEntireRow', 'rowDragManaged', 'suppressRowDrag', 'suppressMoveWhenRowDragging',
+    'rowDragMultiRow', 'enableGroupEdit', 'embedFullWidthRows', 'suppressPaginationPanel', 'groupHideOpenParents', 'groupAllowUnbalanced', 'pagination',
+    'paginationAutoPageSize', 'suppressScrollOnNewData', 'suppressScrollWhenPopupsAreOpen', 'purgeClosedRowNodes', 'cacheQuickFilter', 'includeHiddenColumnsInQuickFilter',
+    'excludeHiddenColumnsFromQuickFilter', 'ensureDomOrder', 'accentedSort', 'suppressChangeDetection', 'valueCache', 'valueCacheNeverExpires', 'aggregateOnlyChangedColumns',
+    'suppressAnimationFrame', 'suppressExcelExport', 'suppressCsvExport', 'treeData', 'masterDetail', 'suppressMultiRangeSelection', 'enterMovesDown',
+    'enterMovesDownAfterEdit', 'enterNavigatesVerticallyAfterEdit', 'enterNavigatesVertically', 'suppressPropertyNamesCheck', 'rowMultiSelectWithClick',
+    'suppressRowHoverHighlight', 'suppressRowTransform', 'suppressClipboardPaste', 'suppressLastEmptyLineOnPaste', 'enableCharts', 'enableChartToolPanelsButton',
+    'suppressChartToolPanelsButton', 'suppressMaintainUnsortedOrder', 'enableCellTextSelection', 'suppressBrowserResizeObserver', 'suppressMaxRenderedRowRestriction',
+    'excludeChildrenWhenTreeDataFiltering', 'tooltipMouseTrack', 'tooltipInteraction', 'keepDetailRows', 'paginateChildRows', 'preventDefaultOnContextMenu',
+    'undoRedoCellEditing', 'allowDragFromColumnsToolPanel', 'pivotSuppressAutoColumn', 'suppressExpandablePivotGroups', 'debounceVerticalScrollbar', 'detailRowAutoHeight',
+    'serverSideFilteringAlwaysResets', 'serverSideFilterAllLevels', 'serverSideSortingAlwaysResets', 'serverSideSortAllLevels', 'serverSideOnlyRefreshFilteredGroups',
+    'serverSideSortOnServer', 'serverSideFilterOnServer', 'suppressAggFilteredOnly', 'showOpenedGroup', 'suppressClipboardApi', 'suppressModelUpdateAfterUpdateTransaction',
+    'stopEditingWhenCellsLoseFocus', 'maintainColumnOrder', 'groupMaintainOrder', 'columnHoverHighlight', 'suppressReactUi', 'readOnlyEdit', 'suppressRowVirtualisation',
+    'enableCellEditingOnBackspace', 'resetRowDataOnUpdate', 'removePivotHeaderRowWhenSingleValueColumn', 'suppressCopySingleCellRanges', 'suppressGroupRowsSticky',
+    'suppressServerSideInfiniteScroll', 'rowGroupPanelSuppressSort', 'allowShowChangeAfterFilter', 'suppressCutToClipboard', 'enableAdvancedFilter',
+    'includeHiddenColumnsInAdvancedFilter',
 ];
 /** You do not need to include event callbacks in this list, as they are generated automatically. */
 PropertyKeys.FUNCTIONAL_PROPERTIES = [
@@ -8898,7 +9018,7 @@ function fuzzySuggestions(inputValue, allSuggestions, hideIrrelevant, filterByPe
     if (hideIrrelevant) {
         thisSuggestions = thisSuggestions.filter(suggestion => suggestion.relevance !== 0);
     }
-    if (filterByPercentageOfBestMatch && filterByPercentageOfBestMatch > 0) {
+    if (thisSuggestions.length > 0 && filterByPercentageOfBestMatch && filterByPercentageOfBestMatch > 0) {
         const bestMatch = thisSuggestions[0].relevance;
         const limit = bestMatch * filterByPercentageOfBestMatch;
         thisSuggestions = thisSuggestions.filter(suggestion => limit - suggestion.relevance < 0);
@@ -9043,11 +9163,9 @@ ColumnUtils = __decorate([
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "DisplayedGroupCreator", function() { return DisplayedGroupCreator; });
 /* harmony import */ var _entities_columnGroup_mjs__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(20);
-/* harmony import */ var _entities_providedColumnGroup_mjs__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(7);
-/* harmony import */ var _context_context_mjs__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(10);
-/* harmony import */ var _context_beanStub_mjs__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(16);
-/* harmony import */ var _utils_array_mjs__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(18);
-/* harmony import */ var _utils_generic_mjs__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(6);
+/* harmony import */ var _context_context_mjs__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(10);
+/* harmony import */ var _context_beanStub_mjs__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(16);
+/* harmony import */ var _utils_generic_mjs__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(6);
 var __decorate = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -9058,64 +9176,76 @@ var __decorate = (undefined && undefined.__decorate) || function (decorators, ta
 
 
 
-
-
 // takes in a list of columns, as specified by the column definitions, and returns column groups
-let DisplayedGroupCreator = class DisplayedGroupCreator extends _context_beanStub_mjs__WEBPACK_IMPORTED_MODULE_3__["BeanStub"] {
+let DisplayedGroupCreator = class DisplayedGroupCreator extends _context_beanStub_mjs__WEBPACK_IMPORTED_MODULE_2__["BeanStub"] {
     createDisplayedGroups(
     // all displayed columns sorted - this is the columns the grid should show
     sortedVisibleColumns, 
-    // the tree of columns, as provided by the users, used to know what groups columns roll up into
-    balancedColumnTree, 
     // creates unique id's for the group
     groupInstanceIdCreator, 
     // whether it's left, right or center col
     pinned, 
     // we try to reuse old groups if we can, to allow gui to do animation
     oldDisplayedGroups) {
-        const result = [];
-        let previousRealPath;
-        let previousOriginalPath;
         const oldColumnsMapped = this.mapOldGroupsById(oldDisplayedGroups);
-        // go through each column, then do a bottom up comparison to the previous column, and start
-        // to share groups if they converge at any point.
-        sortedVisibleColumns.forEach((currentColumn) => {
-            const currentOriginalPath = this.getOriginalPathForColumn(balancedColumnTree, currentColumn);
-            const currentRealPath = [];
-            const firstColumn = !previousOriginalPath;
-            for (let i = 0; i < currentOriginalPath.length; i++) {
-                if (firstColumn || currentOriginalPath[i] !== previousOriginalPath[i]) {
-                    // new group needed
-                    const newGroup = this.createColumnGroup(currentOriginalPath[i], groupInstanceIdCreator, oldColumnsMapped, pinned);
-                    currentRealPath[i] = newGroup;
-                    // if top level, add to result, otherwise add to parent
-                    if (i == 0) {
-                        result.push(newGroup);
+        /**
+         * The following logic starts at the leaf level of columns, iterating through them to build their parent
+         * groups when the parents match.
+         *
+         * The created groups are then added to an array, and similarly iterated on until we reach the top level.
+         *
+         * When row groups have no original parent, it's added to the result.
+         */
+        const topLevelResultCols = [];
+        // this is an array of cols or col groups at one level of depth, starting from leaf and ending at root
+        let groupsOrColsAtCurrentLevel = sortedVisibleColumns;
+        while (groupsOrColsAtCurrentLevel.length) {
+            // store what's currently iterating so the function can build the next level of col groups
+            const currentlyIterating = groupsOrColsAtCurrentLevel;
+            groupsOrColsAtCurrentLevel = [];
+            // store the index of the last row which was different from the previous row, this is used as a slice
+            // index for finding the children to group together
+            let lastGroupedColIdx = 0;
+            // create a group of children from lastGroupedColIdx to the provided `to` parameter
+            const createGroupToIndex = (to) => {
+                const from = lastGroupedColIdx;
+                lastGroupedColIdx = to;
+                const previousNode = currentlyIterating[from];
+                const previousNodeProvided = previousNode instanceof _entities_columnGroup_mjs__WEBPACK_IMPORTED_MODULE_0__["ColumnGroup"] ? previousNode.getProvidedColumnGroup() : previousNode;
+                const previousNodeParent = previousNodeProvided.getOriginalParent();
+                if (previousNodeParent == null) {
+                    // if the last node was different, and had a null parent, then we add all the nodes to the final
+                    // results)
+                    for (let i = from; i < to; i++) {
+                        topLevelResultCols.push(currentlyIterating[i]);
                     }
-                    else {
-                        currentRealPath[i - 1].addChild(newGroup);
-                    }
+                    return;
                 }
-                else {
-                    // reuse old group
-                    currentRealPath[i] = previousRealPath[i];
+                // the parent differs from the previous node, so we create a group from the previous node
+                // and add all to the result array, except the current node.
+                const newGroup = this.createColumnGroup(previousNodeParent, groupInstanceIdCreator, oldColumnsMapped, pinned);
+                for (let i = from; i < to; i++) {
+                    newGroup.addChild(currentlyIterating[i]);
+                }
+                groupsOrColsAtCurrentLevel.push(newGroup);
+            };
+            for (let i = 1; i < currentlyIterating.length; i++) {
+                const thisNode = currentlyIterating[i];
+                const thisNodeProvided = thisNode instanceof _entities_columnGroup_mjs__WEBPACK_IMPORTED_MODULE_0__["ColumnGroup"] ? thisNode.getProvidedColumnGroup() : thisNode;
+                const thisNodeParent = thisNodeProvided.getOriginalParent();
+                const previousNode = currentlyIterating[lastGroupedColIdx];
+                const previousNodeProvided = previousNode instanceof _entities_columnGroup_mjs__WEBPACK_IMPORTED_MODULE_0__["ColumnGroup"] ? previousNode.getProvidedColumnGroup() : previousNode;
+                const previousNodeParent = previousNodeProvided.getOriginalParent();
+                if (thisNodeParent !== previousNodeParent) {
+                    createGroupToIndex(i);
                 }
             }
-            const noColumnGroups = currentRealPath.length === 0;
-            if (noColumnGroups) {
-                // if we are not grouping, then the result of the above is an empty
-                // path (no groups), and we just add the column to the root list.
-                result.push(currentColumn);
+            if (lastGroupedColIdx < currentlyIterating.length) {
+                createGroupToIndex(currentlyIterating.length);
             }
-            else {
-                const leafGroup = Object(_utils_array_mjs__WEBPACK_IMPORTED_MODULE_4__["last"])(currentRealPath);
-                leafGroup.addChild(currentColumn);
-            }
-            previousRealPath = currentRealPath;
-            previousOriginalPath = currentOriginalPath;
-        });
-        this.setupParentsIntoColumns(result, null);
-        return result;
+        }
+        this.setupParentsIntoColumns(topLevelResultCols, null);
+        return topLevelResultCols;
     }
     createColumnGroup(providedGroup, groupInstanceIdCreator, oldColumnsMapped, pinned) {
         const groupId = providedGroup.getGroupId();
@@ -9128,7 +9258,7 @@ let DisplayedGroupCreator = class DisplayedGroupCreator extends _context_beanStu
         if (columnGroup && columnGroup.getProvidedColumnGroup() !== providedGroup) {
             columnGroup = null;
         }
-        if (Object(_utils_generic_mjs__WEBPACK_IMPORTED_MODULE_5__["exists"])(columnGroup)) {
+        if (Object(_utils_generic_mjs__WEBPACK_IMPORTED_MODULE_3__["exists"])(columnGroup)) {
             // clean out the old column group here, as we will be adding children into it again
             columnGroup.reset();
         }
@@ -9164,38 +9294,9 @@ let DisplayedGroupCreator = class DisplayedGroupCreator extends _context_beanStu
             }
         });
     }
-    getOriginalPathForColumn(balancedColumnTree, column) {
-        const result = [];
-        let found = false;
-        const recursePath = (columnTree, dept) => {
-            for (let i = 0; i < columnTree.length; i++) {
-                // quit the search, so 'result' is kept with the found result
-                if (found) {
-                    return;
-                }
-                const node = columnTree[i];
-                if (node instanceof _entities_providedColumnGroup_mjs__WEBPACK_IMPORTED_MODULE_1__["ProvidedColumnGroup"]) {
-                    recursePath(node.getChildren(), dept + 1);
-                    result[dept] = node;
-                }
-                else if (node === column) {
-                    found = true;
-                }
-            }
-        };
-        recursePath(balancedColumnTree, 0);
-        // it's possible we didn't find a path. this happens if the column is generated
-        // by the grid (auto-group), in that the definition didn't come from the client. in this case,
-        // we create a fake original path.
-        if (found) {
-            return result;
-        }
-        console.warn('AG Grid: could not get path');
-        return null;
-    }
 };
 DisplayedGroupCreator = __decorate([
-    Object(_context_context_mjs__WEBPACK_IMPORTED_MODULE_2__["Bean"])('displayedGroupCreator')
+    Object(_context_context_mjs__WEBPACK_IMPORTED_MODULE_1__["Bean"])('displayedGroupCreator')
 ], DisplayedGroupCreator);
 
 
@@ -9508,6 +9609,9 @@ class ReadOnlyFloatingFilter extends _widgets_component_mjs__WEBPACK_IMPORTED_MO
             }
         });
     }
+    onParamsUpdated(params) {
+        this.init(params);
+    }
 }
 __decorate([
     Object(_widgets_componentAnnotations_mjs__WEBPACK_IMPORTED_MODULE_1__["RefSelector"])('eFloatingFilterText')
@@ -9573,7 +9677,7 @@ class Component extends _context_beanStub_mjs__WEBPACK_IMPORTED_MODULE_1__["Bean
             location: 'UNKNOWN'
         };
     }
-    setTooltip(newTooltipText) {
+    setTooltip(newTooltipText, showDelayOverride, hideDelayOverride) {
         const removeTooltip = () => {
             if (this.usingBrowserTooltips) {
                 this.getGui().removeAttribute('title');
@@ -9587,7 +9691,7 @@ class Component extends _context_beanStub_mjs__WEBPACK_IMPORTED_MODULE_1__["Bean
                 this.getGui().setAttribute('title', this.tooltipText);
             }
             else {
-                this.tooltipFeature = this.createBean(new _customTooltipFeature_mjs__WEBPACK_IMPORTED_MODULE_5__["CustomTooltipFeature"](this));
+                this.tooltipFeature = this.createBean(new _customTooltipFeature_mjs__WEBPACK_IMPORTED_MODULE_5__["CustomTooltipFeature"](this, showDelayOverride, hideDelayOverride));
             }
         };
         if (this.tooltipText != newTooltipText) {
@@ -10493,6 +10597,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "iterateNamedNodeMap", function() { return iterateNamedNodeMap; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "addOrRemoveAttribute", function() { return addOrRemoveAttribute; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "nodeListForEach", function() { return nodeListForEach; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "bindCellRendererToHtmlElement", function() { return bindCellRendererToHtmlElement; });
 /* harmony import */ var _browser_mjs__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(41);
 /* harmony import */ var _generic_mjs__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(6);
 /* harmony import */ var _aria_mjs__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(40);
@@ -10895,6 +11000,25 @@ function nodeListForEach(nodeList, action) {
     for (let i = 0; i < nodeList.length; i++) {
         action(nodeList[i]);
     }
+}
+/**
+ * cell renderers are used in a few places. they bind to dom slightly differently to other cell renders as they
+ * can return back strings (instead of html element) in the getGui() method. common code placed here to handle that.
+ * @param {AgPromise<ICellRendererComp>} cellRendererPromise
+ * @param {HTMLElement} eTarget
+ */
+function bindCellRendererToHtmlElement(cellRendererPromise, eTarget) {
+    cellRendererPromise.then(cellRenderer => {
+        const gui = cellRenderer.getGui();
+        if (gui != null) {
+            if (typeof gui === 'object') {
+                eTarget.appendChild(gui);
+            }
+            else {
+                eTarget.innerHTML = gui;
+            }
+        }
+    });
 }
 
 
@@ -11522,8 +11646,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _context_beanStub_mjs__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(16);
 /* harmony import */ var _utils_generic_mjs__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(6);
 /* harmony import */ var _utils_browser_mjs__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(41);
-/* harmony import */ var _utils_string_mjs__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(25);
-/* harmony import */ var _utils_function_mjs__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(12);
+/* harmony import */ var _utils_function_mjs__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(12);
+/* harmony import */ var _eventKeys_mjs__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(22);
 var __decorate = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -11542,31 +11666,72 @@ var TooltipStates;
     TooltipStates[TooltipStates["WAITING_TO_SHOW"] = 1] = "WAITING_TO_SHOW";
     TooltipStates[TooltipStates["SHOWING"] = 2] = "SHOWING";
 })(TooltipStates || (TooltipStates = {}));
+var TooltipTrigger;
+(function (TooltipTrigger) {
+    TooltipTrigger[TooltipTrigger["HOVER"] = 0] = "HOVER";
+    TooltipTrigger[TooltipTrigger["FOCUS"] = 1] = "FOCUS";
+})(TooltipTrigger || (TooltipTrigger = {}));
 class CustomTooltipFeature extends _context_beanStub_mjs__WEBPACK_IMPORTED_MODULE_1__["BeanStub"] {
-    constructor(parentComp) {
+    constructor(parentComp, tooltipShowDelayOverride, tooltipHideDelayOverride) {
         super();
+        this.parentComp = parentComp;
+        this.tooltipShowDelayOverride = tooltipShowDelayOverride;
+        this.tooltipHideDelayOverride = tooltipHideDelayOverride;
         this.DEFAULT_SHOW_TOOLTIP_DELAY = 2000;
         this.DEFAULT_HIDE_TOOLTIP_DELAY = 10000;
         this.SHOW_QUICK_TOOLTIP_DIFF = 1000;
         this.FADE_OUT_TOOLTIP_TIMEOUT = 1000;
+        this.INTERACTIVE_HIDE_DELAY = 100;
+        this.interactionEnabled = false;
+        this.isInteractingWithTooltip = false;
         this.state = TooltipStates.NOTHING;
         // when showing the tooltip, we need to make sure it's the most recent instance we request, as due to
         // async we could request two tooltips before the first instance returns, in which case we should
         // disregard the second instance.
         this.tooltipInstanceCount = 0;
         this.tooltipMouseTrack = false;
-        this.parentComp = parentComp;
     }
     postConstruct() {
-        this.tooltipShowDelay = this.getTooltipDelay('show') || this.DEFAULT_SHOW_TOOLTIP_DELAY;
-        this.tooltipHideDelay = this.getTooltipDelay('hide') || this.DEFAULT_HIDE_TOOLTIP_DELAY;
+        if (this.gridOptionsService.is('tooltipInteraction')) {
+            this.interactionEnabled = true;
+        }
+        this.tooltipTrigger = this.getTooltipTrigger();
+        this.tooltipShowDelay = this.getTooltipDelay('show');
+        this.tooltipHideDelay = this.getTooltipDelay('hide');
         this.tooltipMouseTrack = this.gridOptionsService.is('tooltipMouseTrack');
         const el = this.parentComp.getGui();
-        this.addManagedListener(el, 'mouseenter', this.onMouseEnter.bind(this));
-        this.addManagedListener(el, 'mouseleave', this.onMouseLeave.bind(this));
+        if (this.tooltipTrigger === TooltipTrigger.HOVER) {
+            this.addManagedListener(el, 'mouseenter', this.onMouseEnter.bind(this));
+            this.addManagedListener(el, 'mouseleave', this.onMouseLeave.bind(this));
+        }
+        if (this.tooltipTrigger === TooltipTrigger.FOCUS) {
+            this.addManagedListener(el, 'focusin', this.onFocusIn.bind(this));
+            this.addManagedListener(el, 'focusout', this.onFocusOut.bind(this));
+        }
         this.addManagedListener(el, 'mousemove', this.onMouseMove.bind(this));
-        this.addManagedListener(el, 'mousedown', this.onMouseDown.bind(this));
-        this.addManagedListener(el, 'keydown', this.onKeyDown.bind(this));
+        if (!this.interactionEnabled) {
+            this.addManagedListener(el, 'mousedown', this.onMouseDown.bind(this));
+            this.addManagedListener(el, 'keydown', this.onKeyDown.bind(this));
+        }
+    }
+    getGridOptionsTooltipDelay(delayOption) {
+        const delay = this.gridOptionsService.getNum(delayOption);
+        if (Object(_utils_generic_mjs__WEBPACK_IMPORTED_MODULE_2__["exists"])(delay)) {
+            if (delay < 0) {
+                Object(_utils_function_mjs__WEBPACK_IMPORTED_MODULE_4__["doOnce"])(() => console.warn(`AG Grid: ${delayOption} should not be lower than 0`), `${delayOption}Warn`);
+            }
+            return Math.max(200, delay);
+        }
+        return undefined;
+    }
+    getTooltipDelay(type) {
+        var _a, _b, _c, _d;
+        if (type === 'show') {
+            return (_b = (_a = this.getGridOptionsTooltipDelay('tooltipShowDelay')) !== null && _a !== void 0 ? _a : this.tooltipShowDelayOverride) !== null && _b !== void 0 ? _b : this.DEFAULT_SHOW_TOOLTIP_DELAY;
+        }
+        else {
+            return (_d = (_c = this.getGridOptionsTooltipDelay('tooltipHideDelay')) !== null && _c !== void 0 ? _c : this.tooltipHideDelayOverride) !== null && _d !== void 0 ? _d : this.DEFAULT_HIDE_TOOLTIP_DELAY;
+        }
     }
     destroy() {
         // if this component gets destroyed while tooltip is showing, need to make sure
@@ -11574,91 +11739,118 @@ class CustomTooltipFeature extends _context_beanStub_mjs__WEBPACK_IMPORTED_MODUL
         this.setToDoNothing();
         super.destroy();
     }
+    getTooltipTrigger() {
+        const trigger = this.gridOptionsService.get('tooltipTrigger');
+        if (!trigger || trigger === 'hover') {
+            return TooltipTrigger.HOVER;
+        }
+        return TooltipTrigger.FOCUS;
+    }
     onMouseEnter(e) {
+        // if `interactiveTooltipTimeoutId` is set, it means that this cell has a tooltip
+        // and we are in the process of moving the cursor from the tooltip back to the cell
+        // so we need to unlock this service here.
+        if (this.interactionEnabled && this.interactiveTooltipTimeoutId) {
+            this.unlockService();
+            this.startHideTimeout();
+        }
         if (Object(_utils_browser_mjs__WEBPACK_IMPORTED_MODULE_3__["isIOSUserAgent"])()) {
             return;
         }
-        // every mouseenter should be following by a mouseleave, however for some unkonwn, it's possible for
-        // mouseenter to be called twice in a row, which can happen if editing the cell. this was reported
-        // in https://ag-grid.atlassian.net/browse/AG-4422. to get around this, we check the state, and if
-        // state is !=nothing, then we know mouseenter was already received.
-        if (this.state != TooltipStates.NOTHING) {
-            return;
+        if (CustomTooltipFeature.isLocked) {
+            this.showTooltipTimeoutId = window.setTimeout(() => {
+                this.prepareToShowTooltip(e);
+            }, this.INTERACTIVE_HIDE_DELAY);
         }
-        // if another tooltip was hidden very recently, we only wait 200ms to show, not the normal waiting time
-        const delay = this.isLastTooltipHiddenRecently() ? 200 : this.tooltipShowDelay;
-        this.showTooltipTimeoutId = window.setTimeout(this.showTooltip.bind(this), delay);
-        this.lastMouseEvent = e;
-        this.state = TooltipStates.WAITING_TO_SHOW;
-    }
-    onMouseLeave() {
-        this.setToDoNothing();
-    }
-    onKeyDown() {
-        this.setToDoNothing();
-    }
-    setToDoNothing() {
-        if (this.state === TooltipStates.SHOWING) {
-            this.hideTooltip();
+        else {
+            this.prepareToShowTooltip(e);
         }
-        this.clearTimeouts();
-        this.state = TooltipStates.NOTHING;
     }
     onMouseMove(e) {
         // there is a delay from the time we mouseOver a component and the time the
         // tooltip is displayed, so we need to track mousemove to be able to correctly
         // position the tooltip when showTooltip is called.
-        this.lastMouseEvent = e;
+        if (this.lastMouseEvent) {
+            this.lastMouseEvent = e;
+        }
         if (this.tooltipMouseTrack &&
             this.state === TooltipStates.SHOWING &&
             this.tooltipComp) {
-            this.positionTooltipUnderLastMouseEvent();
+            this.positionTooltip();
         }
     }
     onMouseDown() {
         this.setToDoNothing();
     }
-    getTooltipDelay(type) {
-        const tooltipShowDelay = this.gridOptionsService.getNum('tooltipShowDelay');
-        const tooltipHideDelay = this.gridOptionsService.getNum('tooltipHideDelay');
-        const delay = type === 'show' ? tooltipShowDelay : tooltipHideDelay;
-        const capitalisedType = Object(_utils_string_mjs__WEBPACK_IMPORTED_MODULE_4__["capitalise"])(type);
-        if (Object(_utils_generic_mjs__WEBPACK_IMPORTED_MODULE_2__["exists"])(delay)) {
-            if (delay < 0) {
-                Object(_utils_function_mjs__WEBPACK_IMPORTED_MODULE_5__["doOnce"])(() => console.warn(`AG Grid: tooltip${capitalisedType}Delay should not be lower than 0`), `tooltip${capitalisedType}DelayWarn`);
-            }
-            return Math.max(200, delay);
+    onMouseLeave() {
+        // if interaction is enabled, we need to verify if the user is moving
+        // the cursor from the cell onto the tooltip, so we lock the service 
+        // for 100ms to prevent other tooltips from being created while this is happening.
+        if (this.interactionEnabled) {
+            this.lockService();
         }
-        return null;
-    }
-    hideTooltip() {
-        // check if comp exists - due to async, although we asked for
-        // one, the instance may not be back yet
-        if (this.tooltipComp) {
-            this.destroyTooltipComp();
-            CustomTooltipFeature.lastTooltipHideTime = new Date().getTime();
+        else {
+            this.setToDoNothing();
         }
-        this.state = TooltipStates.NOTHING;
     }
-    destroyTooltipComp() {
-        // add class to fade out the tooltip
-        this.tooltipComp.getGui().classList.add('ag-tooltip-hiding');
-        // make local copies of these variables, as we use them in the async function below,
-        // and we clear then to 'undefined' later, so need to take a copy before they are undefined.
-        const tooltipPopupDestroyFunc = this.tooltipPopupDestroyFunc;
-        const tooltipComp = this.tooltipComp;
-        window.setTimeout(() => {
-            tooltipPopupDestroyFunc();
-            this.getContext().destroyBean(tooltipComp);
-        }, this.FADE_OUT_TOOLTIP_TIMEOUT);
-        this.tooltipPopupDestroyFunc = undefined;
-        this.tooltipComp = undefined;
+    onFocusIn() {
+        this.prepareToShowTooltip();
+    }
+    onFocusOut(e) {
+        var _a;
+        const relatedTarget = e.relatedTarget;
+        const parentCompGui = this.parentComp.getGui();
+        const tooltipGui = (_a = this.tooltipComp) === null || _a === void 0 ? void 0 : _a.getGui();
+        if (this.isInteractingWithTooltip ||
+            parentCompGui.contains(relatedTarget) ||
+            (this.interactionEnabled && (tooltipGui === null || tooltipGui === void 0 ? void 0 : tooltipGui.contains(relatedTarget)))) {
+            return;
+        }
+        this.setToDoNothing();
+    }
+    onKeyDown() {
+        this.setToDoNothing();
+    }
+    prepareToShowTooltip(mouseEvent) {
+        // every mouseenter should be following by a mouseleave, however for some unknown, it's possible for
+        // mouseenter to be called twice in a row, which can happen if editing the cell. this was reported
+        // in https://ag-grid.atlassian.net/browse/AG-4422. to get around this, we check the state, and if
+        // state is != nothing, then we know mouseenter was already received.
+        if (this.state != TooltipStates.NOTHING || CustomTooltipFeature.isLocked) {
+            return false;
+        }
+        // if we are showing the tooltip because of focus, no delay at all
+        // if another tooltip was hidden very recently, we only wait 200ms to show, not the normal waiting time
+        let delay = 0;
+        if (mouseEvent) {
+            delay = this.isLastTooltipHiddenRecently() ? 200 : this.tooltipShowDelay;
+        }
+        this.lastMouseEvent = mouseEvent || null;
+        this.showTooltipTimeoutId = window.setTimeout(this.showTooltip.bind(this), delay);
+        this.state = TooltipStates.WAITING_TO_SHOW;
+        return true;
     }
     isLastTooltipHiddenRecently() {
         // return true if <1000ms since last time we hid a tooltip
         const now = new Date().getTime();
         const then = CustomTooltipFeature.lastTooltipHideTime;
         return (now - then) < this.SHOW_QUICK_TOOLTIP_DIFF;
+    }
+    setToDoNothing() {
+        if (this.state === TooltipStates.SHOWING) {
+            this.hideTooltip();
+        }
+        if (this.onBodyScrollEventCallback) {
+            this.onBodyScrollEventCallback();
+            this.onBodyScrollEventCallback = undefined;
+        }
+        if (this.onColumnMovedEventCallback) {
+            this.onColumnMovedEventCallback();
+            this.onColumnMovedEventCallback = undefined;
+        }
+        this.clearTimeouts();
+        this.state = TooltipStates.NOTHING;
+        this.lastMouseEvent = null;
     }
     showTooltip() {
         const params = Object.assign({}, this.parentComp.getTooltipParams());
@@ -11675,6 +11867,23 @@ class CustomTooltipFeature extends _context_beanStub_mjs__WEBPACK_IMPORTED_MODUL
         const userDetails = this.userComponentFactory.getTooltipCompDetails(params);
         userDetails.newAgStackInstance().then(callback);
     }
+    hideTooltip(forceHide) {
+        if (!forceHide && this.isInteractingWithTooltip) {
+            return;
+        }
+        // check if comp exists - due to async, although we asked for
+        // one, the instance may not be back yet
+        if (this.tooltipComp) {
+            this.destroyTooltipComp();
+            CustomTooltipFeature.lastTooltipHideTime = new Date().getTime();
+        }
+        const event = {
+            type: _eventKeys_mjs__WEBPACK_IMPORTED_MODULE_5__["Events"].EVENT_TOOLTIP_HIDE,
+            parentGui: this.parentComp.getGui()
+        };
+        this.eventService.dispatchEvent(event);
+        this.state = TooltipStates.NOTHING;
+    }
     newTooltipComponentCallback(tooltipInstanceCopy, tooltipComp) {
         const compNoLongerNeeded = this.state !== TooltipStates.SHOWING || this.tooltipInstanceCount !== tooltipInstanceCopy;
         if (compNoLongerNeeded) {
@@ -11686,6 +11895,12 @@ class CustomTooltipFeature extends _context_beanStub_mjs__WEBPACK_IMPORTED_MODUL
         if (!eGui.classList.contains('ag-tooltip')) {
             eGui.classList.add('ag-tooltip-custom');
         }
+        if (this.tooltipTrigger === TooltipTrigger.HOVER) {
+            eGui.classList.add('ag-tooltip-animate');
+        }
+        if (this.interactionEnabled) {
+            eGui.classList.add('ag-tooltip-interactive');
+        }
         const translate = this.localeService.getLocaleTextFunc();
         const addPopupRes = this.popupService.addPopup({
             eChild: eGui,
@@ -11694,30 +11909,146 @@ class CustomTooltipFeature extends _context_beanStub_mjs__WEBPACK_IMPORTED_MODUL
         if (addPopupRes) {
             this.tooltipPopupDestroyFunc = addPopupRes.hideFunc;
         }
-        // this.tooltipPopupDestroyFunc = this.popupService.addPopup(false, eGui, false);
-        this.positionTooltipUnderLastMouseEvent();
-        this.hideTooltipTimeoutId = window.setTimeout(this.hideTooltip.bind(this), this.tooltipHideDelay);
+        this.positionTooltip();
+        if (this.tooltipTrigger === TooltipTrigger.FOCUS) {
+            this.onBodyScrollEventCallback = this.addManagedListener(this.eventService, _eventKeys_mjs__WEBPACK_IMPORTED_MODULE_5__["Events"].EVENT_BODY_SCROLL, this.setToDoNothing.bind(this));
+            this.onColumnMovedEventCallback = this.addManagedListener(this.eventService, _eventKeys_mjs__WEBPACK_IMPORTED_MODULE_5__["Events"].EVENT_COLUMN_MOVED, this.setToDoNothing.bind(this));
+        }
+        if (this.interactionEnabled) {
+            if (this.tooltipTrigger === TooltipTrigger.HOVER) {
+                this.tooltipMouseEnterListener = this.addManagedListener(eGui, 'mouseenter', this.onTooltipMouseEnter.bind(this)) || null;
+                this.tooltipMouseLeaveListener = this.addManagedListener(eGui, 'mouseleave', this.onTooltipMouseLeave.bind(this)) || null;
+            }
+            else {
+                this.tooltipFocusInListener = this.addManagedListener(eGui, 'focusin', this.onTooltipFocusIn.bind(this)) || null;
+                this.tooltipFocusOutListener = this.addManagedListener(eGui, 'focusout', this.onTooltipFocusOut.bind(this)) || null;
+            }
+        }
+        const event = {
+            type: _eventKeys_mjs__WEBPACK_IMPORTED_MODULE_5__["Events"].EVENT_TOOLTIP_SHOW,
+            tooltipGui: eGui,
+            parentGui: this.parentComp.getGui()
+        };
+        this.eventService.dispatchEvent(event);
+        this.startHideTimeout();
     }
-    positionTooltipUnderLastMouseEvent() {
-        this.popupService.positionPopupUnderMouseEvent({
+    onTooltipMouseEnter() {
+        this.isInteractingWithTooltip = true;
+        this.unlockService();
+    }
+    onTooltipMouseLeave() {
+        this.isInteractingWithTooltip = false;
+        this.lockService();
+    }
+    onTooltipFocusIn() {
+        this.isInteractingWithTooltip = true;
+    }
+    onTooltipFocusOut(e) {
+        var _a;
+        const parentGui = this.parentComp.getGui();
+        const tooltipGui = (_a = this.tooltipComp) === null || _a === void 0 ? void 0 : _a.getGui();
+        const relatedTarget = e.relatedTarget;
+        // focusout is dispatched when inner elements lose focus
+        // so we need to verify if focus is contained within the tooltip
+        if (tooltipGui === null || tooltipGui === void 0 ? void 0 : tooltipGui.contains(relatedTarget)) {
+            return;
+        }
+        this.isInteractingWithTooltip = false;
+        // if we move the focus from the tooltip back to the original cell
+        // the tooltip should remain open, but we need to restart the hide timeout counter
+        if (parentGui.contains(relatedTarget)) {
+            this.startHideTimeout();
+        }
+        // if the parent cell doesn't contain the focus, simply hide the tooltip
+        else {
+            this.hideTooltip();
+        }
+    }
+    positionTooltip() {
+        const params = {
             type: 'tooltip',
-            mouseEvent: this.lastMouseEvent,
             ePopup: this.tooltipComp.getGui(),
             nudgeY: 18,
             skipObserver: this.tooltipMouseTrack
+        };
+        if (this.lastMouseEvent) {
+            this.popupService.positionPopupUnderMouseEvent(Object.assign(Object.assign({}, params), { mouseEvent: this.lastMouseEvent }));
+        }
+        else {
+            this.popupService.positionPopupByComponent(Object.assign(Object.assign({}, params), { eventSource: this.parentComp.getGui(), position: 'under', keepWithinBounds: true, nudgeY: 5 }));
+        }
+    }
+    destroyTooltipComp() {
+        // add class to fade out the tooltip
+        this.tooltipComp.getGui().classList.add('ag-tooltip-hiding');
+        // make local copies of these variables, as we use them in the async function below,
+        // and we clear then to 'undefined' later, so need to take a copy before they are undefined.
+        const tooltipPopupDestroyFunc = this.tooltipPopupDestroyFunc;
+        const tooltipComp = this.tooltipComp;
+        const delay = this.tooltipTrigger === TooltipTrigger.HOVER ? this.FADE_OUT_TOOLTIP_TIMEOUT : 0;
+        window.setTimeout(() => {
+            tooltipPopupDestroyFunc();
+            this.getContext().destroyBean(tooltipComp);
+        }, delay);
+        this.clearTooltipListeners();
+        this.tooltipPopupDestroyFunc = undefined;
+        this.tooltipComp = undefined;
+    }
+    clearTooltipListeners() {
+        [
+            this.tooltipMouseEnterListener, this.tooltipMouseLeaveListener,
+            this.tooltipFocusInListener, this.tooltipFocusOutListener
+        ].forEach(listener => {
+            if (listener) {
+                listener();
+            }
         });
+        this.tooltipMouseEnterListener = this.tooltipMouseLeaveListener =
+            this.tooltipFocusInListener = this.tooltipFocusOutListener = null;
+    }
+    lockService() {
+        CustomTooltipFeature.isLocked = true;
+        this.interactiveTooltipTimeoutId = window.setTimeout(() => {
+            this.unlockService();
+            this.setToDoNothing();
+        }, this.INTERACTIVE_HIDE_DELAY);
+    }
+    unlockService() {
+        CustomTooltipFeature.isLocked = false;
+        this.clearInteractiveTimeout();
+    }
+    startHideTimeout() {
+        this.clearHideTimeout();
+        this.hideTooltipTimeoutId = window.setTimeout(this.hideTooltip.bind(this), this.tooltipHideDelay);
+    }
+    clearShowTimeout() {
+        if (!this.showTooltipTimeoutId) {
+            return;
+        }
+        window.clearTimeout(this.showTooltipTimeoutId);
+        this.showTooltipTimeoutId = undefined;
+    }
+    clearHideTimeout() {
+        if (!this.hideTooltipTimeoutId) {
+            return;
+        }
+        window.clearTimeout(this.hideTooltipTimeoutId);
+        this.hideTooltipTimeoutId = undefined;
+    }
+    clearInteractiveTimeout() {
+        if (!this.interactiveTooltipTimeoutId) {
+            return;
+        }
+        window.clearTimeout(this.interactiveTooltipTimeoutId);
+        this.interactiveTooltipTimeoutId = undefined;
     }
     clearTimeouts() {
-        if (this.showTooltipTimeoutId) {
-            window.clearTimeout(this.showTooltipTimeoutId);
-            this.showTooltipTimeoutId = undefined;
-        }
-        if (this.hideTooltipTimeoutId) {
-            window.clearTimeout(this.hideTooltipTimeoutId);
-            this.hideTooltipTimeoutId = undefined;
-        }
+        this.clearShowTimeout();
+        this.clearHideTimeout();
+        this.clearInteractiveTimeout();
     }
 }
+CustomTooltipFeature.isLocked = false;
 __decorate([
     Object(_context_context_mjs__WEBPACK_IMPORTED_MODULE_0__["Autowired"])('popupService')
 ], CustomTooltipFeature.prototype, "popupService", void 0);
@@ -11919,6 +12250,10 @@ class DateFilterModelFormatter extends _simpleFilter_mjs__WEBPACK_IMPORTED_MODUL
         }
         // cater for when the type doesn't need a value
         return `${type}`;
+    }
+    updateParams(params) {
+        super.updateParams(params);
+        this.dateFilterParams = params.dateFilterParams;
     }
 }
 class DateFilter extends _scalarFilter_mjs__WEBPACK_IMPORTED_MODULE_3__["ScalarFilter"] {
@@ -12190,6 +12525,12 @@ class DateCompWrapper {
             this.dateComp.afterGuiAttached(params);
         }
     }
+    updateParams(params) {
+        var _a;
+        if (((_a = this.dateComp) === null || _a === void 0 ? void 0 : _a.onParamsUpdated) && typeof this.dateComp.onParamsUpdated === 'function') {
+            this.dateComp.onParamsUpdated(params);
+        }
+    }
     setDateCompDisabled(disabled) {
         if (this.dateComp == null) {
             return;
@@ -12233,9 +12574,10 @@ __webpack_require__.r(__webpack_exports__);
 
 
 class SimpleFilterModelFormatter {
-    constructor(localeService, optionsFactory) {
+    constructor(localeService, optionsFactory, valueFormatter) {
         this.localeService = localeService;
         this.optionsFactory = optionsFactory;
+        this.valueFormatter = valueFormatter;
     }
     // used by:
     // 1) NumberFloatingFilter & TextFloatingFilter: Always, for both when editable and read only.
@@ -12272,6 +12614,13 @@ class SimpleFilterModelFormatter {
             }
             return this.conditionToString(condition, customOption);
         }
+    }
+    updateParams(params) {
+        this.optionsFactory = params.optionsFactory;
+    }
+    formatValue(value) {
+        var _a;
+        return this.valueFormatter ? ((_a = this.valueFormatter(value !== null && value !== void 0 ? value : null)) !== null && _a !== void 0 ? _a : '') : String(value);
     }
 }
 /**
@@ -12464,6 +12813,11 @@ class SimpleFilter extends _providedFilter_mjs__WEBPACK_IMPORTED_MODULE_1__["Pro
         this.createFilterListOptions();
         this.createOption();
         this.createMissingConditionsAndOperators();
+        if (this.isReadOnly()) {
+            // only do this when read only (so no other focusable elements), otherwise the tab order breaks
+            // as the tabbed layout managed focus feature will focus the body when it shouldn't
+            this.eFilterBody.setAttribute('tabindex', '-1');
+        }
     }
     setNumConditions(params) {
         var _a, _b;
@@ -12665,13 +13019,19 @@ class SimpleFilter extends _providedFilter_mjs__WEBPACK_IMPORTED_MODULE_1__["Pro
     afterGuiAttached(params) {
         super.afterGuiAttached(params);
         this.resetPlaceholder();
-        if (!params || (!params.suppressFocus && !this.isReadOnly())) {
-            const firstInput = this.getInputs(0)[0];
-            if (!firstInput) {
-                return;
+        if (!(params === null || params === void 0 ? void 0 : params.suppressFocus)) {
+            if (this.isReadOnly()) {
+                // something needs focus otherwise keyboard navigation breaks, so focus the filter body
+                this.eFilterBody.focus();
             }
-            if (firstInput instanceof _widgets_agAbstractInputField_mjs__WEBPACK_IMPORTED_MODULE_9__["AgAbstractInputField"]) {
-                firstInput.getInputElement().focus();
+            else {
+                const firstInput = this.getInputs(0)[0];
+                if (!firstInput) {
+                    return;
+                }
+                if (firstInput instanceof _widgets_agAbstractInputField_mjs__WEBPACK_IMPORTED_MODULE_9__["AgAbstractInputField"]) {
+                    firstInput.getInputElement().focus();
+                }
             }
         }
     }
@@ -13287,7 +13647,8 @@ class ProvidedFilter extends _widgets_component_mjs__WEBPACK_IMPORTED_MODULE_6__
         if (this.applyModel(afterDataChange ? 'rowDataUpdated' : 'ui')) {
             // the floating filter uses 'afterFloatingFilter' info, so it doesn't refresh after filter changed if change
             // came from floating filter
-            this.providedFilterParams.filterChangedCallback({ afterFloatingFilter, afterDataChange });
+            const source = 'columnFilter';
+            this.providedFilterParams.filterChangedCallback({ afterFloatingFilter, afterDataChange, source });
         }
         const { closeOnApply } = this.providedFilterParams;
         // only close if an apply button is visible, otherwise we'd be closing every time a change was made!
@@ -14263,92 +14624,78 @@ __decorate([
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "AgSelect", function() { return AgSelect; });
-/* harmony import */ var _agAbstractField_mjs__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(66);
-/* harmony import */ var _agPickerField_mjs__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(68);
-/* harmony import */ var _agList_mjs__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(69);
-/* harmony import */ var _context_context_mjs__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(10);
+/* harmony import */ var _agPickerField_mjs__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(66);
+/* harmony import */ var _agList_mjs__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(69);
+/* harmony import */ var _eventKeys_mjs__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(22);
+/* harmony import */ var _constants_keyCode_mjs__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(47);
 /* harmony import */ var _utils_dom_mjs__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(44);
-/* harmony import */ var _utils_aria_mjs__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(40);
-var __decorate = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
-    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
-    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
-    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
-    return c > 3 && r && Object.defineProperty(target, key, r), r;
-};
 
 
 
 
 
-
-class AgSelect extends _agPickerField_mjs__WEBPACK_IMPORTED_MODULE_1__["AgPickerField"] {
+class AgSelect extends _agPickerField_mjs__WEBPACK_IMPORTED_MODULE_0__["AgPickerField"] {
     constructor(config) {
-        super(config, 'ag-select', 'smallDown', 'listbox');
+        super(Object.assign({ pickerAriaLabelKey: 'ariaLabelSelectField', pickerAriaLabelValue: 'Select Field', pickerType: 'ag-list' }, config), 'ag-select', 'smallDown', 'listbox');
     }
-    init() {
-        this.listComponent = this.createBean(new _agList_mjs__WEBPACK_IMPORTED_MODULE_2__["AgList"]('select'));
+    postConstruct() {
+        var _a;
+        super.postConstruct();
+        this.createListComponent();
+        this.eWrapper.tabIndex = (_a = this.gridOptionsService.getNum('tabIndex')) !== null && _a !== void 0 ? _a : 0;
+    }
+    createListComponent() {
+        this.listComponent = this.createBean(new _agList_mjs__WEBPACK_IMPORTED_MODULE_1__["AgList"]('select'));
         this.listComponent.setParentComponent(this);
-        this.eWrapper.tabIndex = 0;
-        this.listComponent.addManagedListener(this.listComponent, _agList_mjs__WEBPACK_IMPORTED_MODULE_2__["AgList"].EVENT_ITEM_SELECTED, () => {
-            if (this.hideList) {
-                this.hideList();
+        this.listComponent.addGuiEventListener('keydown', (e) => {
+            if (e.key === _constants_keyCode_mjs__WEBPACK_IMPORTED_MODULE_3__["KeyCode"].TAB) {
+                e.preventDefault();
+                e.stopImmediatePropagation();
+                this.getGui().dispatchEvent(new KeyboardEvent('keydown', {
+                    key: e.key,
+                    shiftKey: e.shiftKey,
+                    ctrlKey: e.ctrlKey,
+                    bubbles: true
+                }));
             }
+            ;
+        });
+        this.listComponent.addManagedListener(this.listComponent, _agList_mjs__WEBPACK_IMPORTED_MODULE_1__["AgList"].EVENT_ITEM_SELECTED, () => {
+            this.hidePicker();
             this.dispatchEvent({ type: AgSelect.EVENT_ITEM_SELECTED });
         });
-        this.listComponent.addManagedListener(this.listComponent, _agAbstractField_mjs__WEBPACK_IMPORTED_MODULE_0__["AgAbstractField"].EVENT_CHANGED, () => {
-            this.setValue(this.listComponent.getValue(), false, true);
-            if (this.hideList) {
-                this.hideList();
+        this.listComponent.addManagedListener(this.listComponent, _eventKeys_mjs__WEBPACK_IMPORTED_MODULE_2__["Events"].EVENT_FIELD_VALUE_CHANGED, () => {
+            if (!this.listComponent) {
+                return;
             }
+            this.setValue(this.listComponent.getValue(), false, true);
+            this.hidePicker();
         });
     }
+    createPickerComponent() {
+        // do not create the picker every time to save state
+        return this.listComponent;
+    }
     showPicker() {
-        const listGui = this.listComponent.getGui();
-        const eDocument = this.gridOptionsService.getDocument();
-        const destroyMouseWheelFunc = this.addManagedListener(eDocument.body, 'wheel', (e) => {
-            if (!listGui.contains(e.target) && this.hideList) {
-                this.hideList();
-            }
-        });
-        const destroyFocusOutFunc = this.addManagedListener(listGui, 'focusout', (e) => {
-            if (!listGui.contains(e.relatedTarget) && this.hideList) {
-                this.hideList();
-            }
-        });
-        const translate = this.localeService.getLocaleTextFunc();
-        const addPopupRes = this.popupService.addPopup({
-            modal: true,
-            eChild: listGui,
-            closeOnEsc: true,
-            closedCallback: () => {
-                this.hideList = null;
-                this.isPickerDisplayed = false;
-                destroyFocusOutFunc();
-                destroyMouseWheelFunc();
-                if (this.isAlive()) {
-                    Object(_utils_aria_mjs__WEBPACK_IMPORTED_MODULE_5__["setAriaExpanded"])(this.eWrapper, false);
-                    this.getFocusableElement().focus();
-                }
-            },
-            ariaLabel: translate('ariaLabelSelectField', 'Select Field')
-        });
-        if (addPopupRes) {
-            this.hideList = addPopupRes.hideFunc;
+        if (!this.listComponent) {
+            return;
         }
-        this.isPickerDisplayed = true;
-        Object(_utils_dom_mjs__WEBPACK_IMPORTED_MODULE_4__["setElementWidth"])(listGui, Object(_utils_dom_mjs__WEBPACK_IMPORTED_MODULE_4__["getAbsoluteWidth"])(this.eWrapper));
-        Object(_utils_aria_mjs__WEBPACK_IMPORTED_MODULE_5__["setAriaExpanded"])(this.eWrapper, true);
-        listGui.style.maxHeight = Object(_utils_dom_mjs__WEBPACK_IMPORTED_MODULE_4__["getInnerHeight"])(this.popupService.getPopupParent()) + 'px';
-        listGui.style.position = 'absolute';
-        this.popupService.positionPopupByComponent({
-            type: 'ag-list',
-            eventSource: this.eWrapper,
-            ePopup: listGui,
-            position: 'under',
-            keepWithinBounds: true
+        super.showPicker();
+        this.listComponent.getGui().style.maxHeight = `${Object(_utils_dom_mjs__WEBPACK_IMPORTED_MODULE_4__["getInnerHeight"])(this.popupService.getPopupParent())}px`;
+        const ePicker = this.listComponent.getGui();
+        this.pickerFocusOutListener = this.addManagedListener(ePicker, 'focusout', (e) => {
+            if (!ePicker.contains(e.relatedTarget)) {
+                this.hidePicker();
+            }
         });
         this.listComponent.refreshHighlighted();
-        return this.listComponent;
+    }
+    beforeHidePicker() {
+        if (this.pickerFocusOutListener) {
+            this.pickerFocusOutListener();
+            this.pickerFocusOutListener = undefined;
+        }
+        super.beforeHidePicker();
     }
     addOptions(options) {
         options.forEach(option => this.addOption(option));
@@ -14359,7 +14706,7 @@ class AgSelect extends _agPickerField_mjs__WEBPACK_IMPORTED_MODULE_1__["AgPicker
         return this;
     }
     setValue(value, silent, fromPicker) {
-        if (this.value === value) {
+        if (this.value === value || !this.listComponent) {
             return this;
         }
         if (!fromPicker) {
@@ -14373,20 +14720,14 @@ class AgSelect extends _agPickerField_mjs__WEBPACK_IMPORTED_MODULE_1__["AgPicker
         return super.setValue(value, silent);
     }
     destroy() {
-        if (this.hideList) {
-            this.hideList();
+        if (this.listComponent) {
+            this.destroyBean(this.listComponent);
+            this.listComponent = undefined;
         }
-        this.destroyBean(this.listComponent);
         super.destroy();
     }
 }
 AgSelect.EVENT_ITEM_SELECTED = 'selectedItem';
-__decorate([
-    Object(_context_context_mjs__WEBPACK_IMPORTED_MODULE_3__["Autowired"])('popupService')
-], AgSelect.prototype, "popupService", void 0);
-__decorate([
-    _context_context_mjs__WEBPACK_IMPORTED_MODULE_3__["PostConstruct"]
-], AgSelect.prototype, "init", null);
 
 
 /***/ }),
@@ -14395,9 +14736,258 @@ __decorate([
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "AgPickerField", function() { return AgPickerField; });
+/* harmony import */ var _agAbstractField_mjs__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(67);
+/* harmony import */ var _componentAnnotations_mjs__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(56);
+/* harmony import */ var _utils_aria_mjs__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(40);
+/* harmony import */ var _utils_icon_mjs__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(45);
+/* harmony import */ var _utils_generic_mjs__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(6);
+/* harmony import */ var _utils_dom_mjs__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(44);
+/* harmony import */ var _constants_keyCode_mjs__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(47);
+/* harmony import */ var _context_context_mjs__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(10);
+var __decorate = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+
+
+
+
+
+
+
+
+class AgPickerField extends _agAbstractField_mjs__WEBPACK_IMPORTED_MODULE_0__["AgAbstractField"] {
+    constructor(config, className, pickerIcon, ariaRole) {
+        super(config, 
+        /* html */ `<div class="ag-picker-field" role="presentation">
+                <div ref="eLabel"></div>
+                <div ref="eWrapper"
+                    class="ag-wrapper ag-picker-field-wrapper ag-picker-collapsed"
+                    tabIndex="-1"
+                    aria-expanded="false"
+                    ${ariaRole ? `role="${ariaRole}"` : ''}
+                >
+                    <div ref="eDisplayField" class="ag-picker-field-display"></div>
+                    <div ref="eIcon" class="ag-picker-field-icon" aria-hidden="true"></div>
+                </div>
+            </div>`, className);
+        this.pickerIcon = pickerIcon;
+        this.isPickerDisplayed = false;
+        this.skipClick = false;
+        this.pickerGap = 4;
+        this.hideCurrentPicker = null;
+        this.onPickerFocusIn = this.onPickerFocusIn.bind(this);
+        this.onPickerFocusOut = this.onPickerFocusOut.bind(this);
+        if ((config === null || config === void 0 ? void 0 : config.pickerGap) != null) {
+            this.pickerGap = config.pickerGap;
+        }
+    }
+    postConstruct() {
+        super.postConstruct();
+        const displayId = `ag-${this.getCompId()}-display`;
+        this.eDisplayField.setAttribute('id', displayId);
+        Object(_utils_aria_mjs__WEBPACK_IMPORTED_MODULE_2__["setAriaDescribedBy"])(this.eWrapper, displayId);
+        const eGui = this.getGui();
+        this.addManagedListener(eGui, 'mousedown', (e) => {
+            var _a;
+            if (!this.skipClick &&
+                ((_a = this.pickerComponent) === null || _a === void 0 ? void 0 : _a.isAlive()) &&
+                Object(_utils_dom_mjs__WEBPACK_IMPORTED_MODULE_5__["isVisible"])(this.pickerComponent.getGui()) &&
+                eGui.contains(e.target)) {
+                this.skipClick = true;
+            }
+        });
+        const focusEl = this.getFocusableElement();
+        this.addManagedListener(eGui, 'keydown', this.onKeyDown.bind(this));
+        this.addManagedListener(this.eLabel, 'click', this.clickHandler.bind(this));
+        this.addManagedListener(focusEl, 'click', this.clickHandler.bind(this));
+        if (this.pickerIcon) {
+            const icon = Object(_utils_icon_mjs__WEBPACK_IMPORTED_MODULE_3__["createIconNoSpan"])(this.pickerIcon, this.gridOptionsService);
+            if (icon) {
+                this.eIcon.appendChild(icon);
+            }
+        }
+    }
+    refreshLabel() {
+        if (Object(_utils_generic_mjs__WEBPACK_IMPORTED_MODULE_4__["exists"])(this.getLabel())) {
+            Object(_utils_aria_mjs__WEBPACK_IMPORTED_MODULE_2__["setAriaLabelledBy"])(this.eWrapper, this.getLabelId());
+        }
+        else {
+            this.eWrapper.removeAttribute('aria-labelledby');
+        }
+        super.refreshLabel();
+    }
+    clickHandler() {
+        if (this.skipClick) {
+            this.skipClick = false;
+            return;
+        }
+        if (this.isDisabled()) {
+            return;
+        }
+        this.showPicker();
+    }
+    onKeyDown(e) {
+        switch (e.key) {
+            case _constants_keyCode_mjs__WEBPACK_IMPORTED_MODULE_6__["KeyCode"].UP:
+            case _constants_keyCode_mjs__WEBPACK_IMPORTED_MODULE_6__["KeyCode"].DOWN:
+            case _constants_keyCode_mjs__WEBPACK_IMPORTED_MODULE_6__["KeyCode"].ENTER:
+            case _constants_keyCode_mjs__WEBPACK_IMPORTED_MODULE_6__["KeyCode"].SPACE:
+                e.preventDefault();
+                this.clickHandler();
+                break;
+            case _constants_keyCode_mjs__WEBPACK_IMPORTED_MODULE_6__["KeyCode"].ESCAPE:
+                if (this.isPickerDisplayed) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    if (this.hideCurrentPicker) {
+                        this.hideCurrentPicker();
+                    }
+                }
+                break;
+        }
+    }
+    showPicker() {
+        this.isPickerDisplayed = true;
+        if (!this.pickerComponent) {
+            this.pickerComponent = this.createPickerComponent();
+        }
+        const pickerGui = this.pickerComponent.getGui();
+        pickerGui.addEventListener('focusin', this.onPickerFocusIn);
+        pickerGui.addEventListener('focusout', this.onPickerFocusOut);
+        this.hideCurrentPicker = this.renderAndPositionPicker();
+        this.toggleExpandedStyles(true);
+    }
+    renderAndPositionPicker() {
+        const eDocument = this.gridOptionsService.getDocument();
+        const ePicker = this.pickerComponent.getGui();
+        if (!this.gridOptionsService.is('suppressScrollWhenPopupsAreOpen')) {
+            this.destroyMouseWheelFunc = this.addManagedListener(eDocument.body, 'wheel', (e) => {
+                if (!ePicker.contains(e.target)) {
+                    this.hidePicker();
+                }
+            });
+        }
+        const translate = this.localeService.getLocaleTextFunc();
+        const { pickerType, pickerAriaLabelKey, pickerAriaLabelValue } = this.config;
+        const popupParams = {
+            modal: true,
+            eChild: ePicker,
+            closeOnEsc: true,
+            closedCallback: () => {
+                const shouldRestoreFocus = eDocument.activeElement === eDocument.body;
+                this.beforeHidePicker();
+                if (shouldRestoreFocus && this.isAlive()) {
+                    this.getFocusableElement().focus();
+                }
+            },
+            ariaLabel: translate(pickerAriaLabelKey, pickerAriaLabelValue),
+        };
+        const addPopupRes = this.popupService.addPopup(popupParams);
+        Object(_utils_dom_mjs__WEBPACK_IMPORTED_MODULE_5__["setElementWidth"])(ePicker, Object(_utils_dom_mjs__WEBPACK_IMPORTED_MODULE_5__["getAbsoluteWidth"])(this.eWrapper));
+        ePicker.style.position = 'absolute';
+        this.popupService.positionPopupByComponent({
+            type: pickerType,
+            eventSource: this.eWrapper,
+            ePopup: ePicker,
+            position: 'under',
+            keepWithinBounds: true,
+            nudgeY: this.pickerGap
+        });
+        return addPopupRes.hideFunc;
+    }
+    beforeHidePicker() {
+        if (this.destroyMouseWheelFunc) {
+            this.destroyMouseWheelFunc();
+            this.destroyMouseWheelFunc = undefined;
+        }
+        this.toggleExpandedStyles(false);
+        const pickerGui = this.pickerComponent.getGui();
+        pickerGui.removeEventListener('focusin', this.onPickerFocusIn);
+        pickerGui.removeEventListener('focusout', this.onPickerFocusOut);
+        this.isPickerDisplayed = false;
+        this.pickerComponent = undefined;
+        this.hideCurrentPicker = null;
+    }
+    toggleExpandedStyles(expanded) {
+        if (!this.isAlive()) {
+            return;
+        }
+        Object(_utils_aria_mjs__WEBPACK_IMPORTED_MODULE_2__["setAriaExpanded"])(this.eWrapper, expanded);
+        this.eWrapper.classList.toggle('ag-picker-expanded', expanded);
+        this.eWrapper.classList.toggle('ag-picker-collapsed', !expanded);
+    }
+    onPickerFocusIn() {
+        this.togglePickerHasFocus(true);
+    }
+    onPickerFocusOut(e) {
+        var _a;
+        if (!((_a = this.pickerComponent) === null || _a === void 0 ? void 0 : _a.getGui().contains(e.relatedTarget))) {
+            this.togglePickerHasFocus(false);
+        }
+    }
+    togglePickerHasFocus(focused) {
+        if (!this.pickerComponent) {
+            return;
+        }
+        this.eWrapper.classList.toggle('ag-picker-has-focus', focused);
+    }
+    hidePicker() {
+        if (this.hideCurrentPicker) {
+            this.hideCurrentPicker();
+        }
+    }
+    setAriaLabel(label) {
+        Object(_utils_aria_mjs__WEBPACK_IMPORTED_MODULE_2__["setAriaLabel"])(this.eWrapper, label);
+        return this;
+    }
+    setInputWidth(width) {
+        Object(_utils_dom_mjs__WEBPACK_IMPORTED_MODULE_5__["setElementWidth"])(this.eWrapper, width);
+        return this;
+    }
+    getFocusableElement() {
+        return this.eWrapper;
+    }
+    setPickerGap(gap) {
+        this.pickerGap = gap;
+        return this;
+    }
+    destroy() {
+        this.hidePicker();
+        super.destroy();
+    }
+}
+__decorate([
+    Object(_context_context_mjs__WEBPACK_IMPORTED_MODULE_7__["Autowired"])('popupService')
+], AgPickerField.prototype, "popupService", void 0);
+__decorate([
+    Object(_componentAnnotations_mjs__WEBPACK_IMPORTED_MODULE_1__["RefSelector"])('eLabel')
+], AgPickerField.prototype, "eLabel", void 0);
+__decorate([
+    Object(_componentAnnotations_mjs__WEBPACK_IMPORTED_MODULE_1__["RefSelector"])('eWrapper')
+], AgPickerField.prototype, "eWrapper", void 0);
+__decorate([
+    Object(_componentAnnotations_mjs__WEBPACK_IMPORTED_MODULE_1__["RefSelector"])('eDisplayField')
+], AgPickerField.prototype, "eDisplayField", void 0);
+__decorate([
+    Object(_componentAnnotations_mjs__WEBPACK_IMPORTED_MODULE_1__["RefSelector"])('eIcon')
+], AgPickerField.prototype, "eIcon", void 0);
+
+
+/***/ }),
+/* 67 */
+/***/ (function(__webpack_module__, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "AgAbstractField", function() { return AgAbstractField; });
-/* harmony import */ var _agAbstractLabel_mjs__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(67);
+/* harmony import */ var _agAbstractLabel_mjs__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(68);
 /* harmony import */ var _utils_dom_mjs__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(44);
+/* harmony import */ var _eventKeys_mjs__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(22);
+
 
 
 class AgAbstractField extends _agAbstractLabel_mjs__WEBPACK_IMPORTED_MODULE_0__["AgAbstractLabel"] {
@@ -14412,7 +15002,7 @@ class AgAbstractField extends _agAbstractLabel_mjs__WEBPACK_IMPORTED_MODULE_0__[
         }
     }
     onValueChange(callbackFn) {
-        this.addManagedListener(this, AgAbstractField.EVENT_CHANGED, () => callbackFn(this.getValue()));
+        this.addManagedListener(this, _eventKeys_mjs__WEBPACK_IMPORTED_MODULE_2__["Events"].EVENT_FIELD_VALUE_CHANGED, () => callbackFn(this.getValue()));
         return this;
     }
     getWidth() {
@@ -14435,16 +15025,15 @@ class AgAbstractField extends _agAbstractLabel_mjs__WEBPACK_IMPORTED_MODULE_0__[
         this.previousValue = this.value;
         this.value = value;
         if (!silent) {
-            this.dispatchEvent({ type: AgAbstractField.EVENT_CHANGED });
+            this.dispatchEvent({ type: _eventKeys_mjs__WEBPACK_IMPORTED_MODULE_2__["Events"].EVENT_FIELD_VALUE_CHANGED });
         }
         return this;
     }
 }
-AgAbstractField.EVENT_CHANGED = 'valueChange';
 
 
 /***/ }),
-/* 67 */
+/* 68 */
 /***/ (function(__webpack_module__, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -14568,148 +15157,18 @@ __decorate([
 
 
 /***/ }),
-/* 68 */
-/***/ (function(__webpack_module__, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "AgPickerField", function() { return AgPickerField; });
-/* harmony import */ var _agAbstractField_mjs__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(66);
-/* harmony import */ var _componentAnnotations_mjs__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(56);
-/* harmony import */ var _utils_aria_mjs__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(40);
-/* harmony import */ var _utils_icon_mjs__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(45);
-/* harmony import */ var _utils_generic_mjs__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(6);
-/* harmony import */ var _utils_dom_mjs__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(44);
-/* harmony import */ var _constants_keyCode_mjs__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(47);
-var __decorate = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
-    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
-    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
-    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
-    return c > 3 && r && Object.defineProperty(target, key, r), r;
-};
-
-
-
-
-
-
-
-class AgPickerField extends _agAbstractField_mjs__WEBPACK_IMPORTED_MODULE_0__["AgAbstractField"] {
-    constructor(config, className, pickerIcon, ariaRole) {
-        super(config, 
-        /* html */ `<div class="ag-picker-field" role="presentation">
-                <div ref="eLabel"></div>
-                <div ref="eWrapper"
-                    class="ag-wrapper ag-picker-field-wrapper"
-                    tabIndex="-1"
-                    aria-expanded="false"
-                    ${ariaRole ? `role="${ariaRole}"` : ''}
-                >
-                    <div ref="eDisplayField" class="ag-picker-field-display"></div>
-                    <div ref="eIcon" class="ag-picker-field-icon" aria-hidden="true"></div>
-                </div>
-            </div>`, className);
-        this.pickerIcon = pickerIcon;
-        this.isPickerDisplayed = false;
-        this.isDestroyingPicker = false;
-        this.skipClick = false;
-    }
-    postConstruct() {
-        super.postConstruct();
-        const displayId = `ag-${this.getCompId()}-display`;
-        this.eDisplayField.setAttribute('id', displayId);
-        Object(_utils_aria_mjs__WEBPACK_IMPORTED_MODULE_2__["setAriaDescribedBy"])(this.eWrapper, displayId);
-        const clickHandler = () => {
-            if (this.skipClick) {
-                this.skipClick = false;
-                return;
-            }
-            if (this.isDisabled()) {
-                return;
-            }
-            this.pickerComponent = this.showPicker();
-        };
-        const eGui = this.getGui();
-        this.addManagedListener(eGui, 'mousedown', (e) => {
-            if (!this.skipClick &&
-                this.pickerComponent &&
-                this.pickerComponent.isAlive() &&
-                Object(_utils_dom_mjs__WEBPACK_IMPORTED_MODULE_5__["isVisible"])(this.pickerComponent.getGui()) &&
-                eGui.contains(e.target)) {
-                this.skipClick = true;
-            }
-        });
-        this.addManagedListener(eGui, 'keydown', (e) => {
-            switch (e.key) {
-                case _constants_keyCode_mjs__WEBPACK_IMPORTED_MODULE_6__["KeyCode"].UP:
-                case _constants_keyCode_mjs__WEBPACK_IMPORTED_MODULE_6__["KeyCode"].DOWN:
-                case _constants_keyCode_mjs__WEBPACK_IMPORTED_MODULE_6__["KeyCode"].ENTER:
-                case _constants_keyCode_mjs__WEBPACK_IMPORTED_MODULE_6__["KeyCode"].SPACE:
-                    clickHandler();
-                case _constants_keyCode_mjs__WEBPACK_IMPORTED_MODULE_6__["KeyCode"].ESCAPE:
-                    if (this.isPickerDisplayed) {
-                        e.preventDefault();
-                    }
-                    break;
-            }
-        });
-        this.addManagedListener(this.eWrapper, 'click', clickHandler);
-        this.addManagedListener(this.eLabel, 'click', clickHandler);
-        if (this.pickerIcon) {
-            const icon = Object(_utils_icon_mjs__WEBPACK_IMPORTED_MODULE_3__["createIconNoSpan"])(this.pickerIcon, this.gridOptionsService);
-            if (icon) {
-                this.eIcon.appendChild(icon);
-            }
-        }
-    }
-    refreshLabel() {
-        if (Object(_utils_generic_mjs__WEBPACK_IMPORTED_MODULE_4__["exists"])(this.getLabel())) {
-            Object(_utils_aria_mjs__WEBPACK_IMPORTED_MODULE_2__["setAriaLabelledBy"])(this.eWrapper, this.getLabelId());
-        }
-        else {
-            this.eWrapper.removeAttribute('aria-labelledby');
-        }
-        super.refreshLabel();
-    }
-    setAriaLabel(label) {
-        Object(_utils_aria_mjs__WEBPACK_IMPORTED_MODULE_2__["setAriaLabel"])(this.eWrapper, label);
-        return this;
-    }
-    setInputWidth(width) {
-        Object(_utils_dom_mjs__WEBPACK_IMPORTED_MODULE_5__["setElementWidth"])(this.eWrapper, width);
-        return this;
-    }
-    getFocusableElement() {
-        return this.eWrapper;
-    }
-}
-__decorate([
-    Object(_componentAnnotations_mjs__WEBPACK_IMPORTED_MODULE_1__["RefSelector"])('eLabel')
-], AgPickerField.prototype, "eLabel", void 0);
-__decorate([
-    Object(_componentAnnotations_mjs__WEBPACK_IMPORTED_MODULE_1__["RefSelector"])('eWrapper')
-], AgPickerField.prototype, "eWrapper", void 0);
-__decorate([
-    Object(_componentAnnotations_mjs__WEBPACK_IMPORTED_MODULE_1__["RefSelector"])('eDisplayField')
-], AgPickerField.prototype, "eDisplayField", void 0);
-__decorate([
-    Object(_componentAnnotations_mjs__WEBPACK_IMPORTED_MODULE_1__["RefSelector"])('eIcon')
-], AgPickerField.prototype, "eIcon", void 0);
-
-
-/***/ }),
 /* 69 */
 /***/ (function(__webpack_module__, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "AgList", function() { return AgList; });
-/* harmony import */ var _agAbstractField_mjs__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(66);
-/* harmony import */ var _component_mjs__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(37);
-/* harmony import */ var _context_context_mjs__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(10);
-/* harmony import */ var _utils_string_mjs__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(25);
-/* harmony import */ var _constants_keyCode_mjs__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(47);
-/* harmony import */ var _utils_aria_mjs__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(40);
+/* harmony import */ var _component_mjs__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(37);
+/* harmony import */ var _context_context_mjs__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(10);
+/* harmony import */ var _utils_string_mjs__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(25);
+/* harmony import */ var _constants_keyCode_mjs__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(47);
+/* harmony import */ var _utils_aria_mjs__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(40);
+/* harmony import */ var _eventKeys_mjs__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(22);
 var __decorate = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -14722,7 +15181,7 @@ var __decorate = (undefined && undefined.__decorate) || function (decorators, ta
 
 
 
-class AgList extends _component_mjs__WEBPACK_IMPORTED_MODULE_1__["Component"] {
+class AgList extends _component_mjs__WEBPACK_IMPORTED_MODULE_0__["Component"] {
     constructor(cssIdentifier = 'default') {
         super(/* html */ `<div class="ag-list ag-${cssIdentifier}-list" role="listbox"></div>`);
         this.cssIdentifier = cssIdentifier;
@@ -14735,7 +15194,7 @@ class AgList extends _component_mjs__WEBPACK_IMPORTED_MODULE_1__["Component"] {
     handleKeyDown(e) {
         const key = e.key;
         switch (key) {
-            case _constants_keyCode_mjs__WEBPACK_IMPORTED_MODULE_4__["KeyCode"].ENTER:
+            case _constants_keyCode_mjs__WEBPACK_IMPORTED_MODULE_3__["KeyCode"].ENTER:
                 if (!this.highlightedEl) {
                     this.setValue(this.getValue());
                 }
@@ -14744,9 +15203,9 @@ class AgList extends _component_mjs__WEBPACK_IMPORTED_MODULE_1__["Component"] {
                     this.setValueByIndex(pos);
                 }
                 break;
-            case _constants_keyCode_mjs__WEBPACK_IMPORTED_MODULE_4__["KeyCode"].DOWN:
-            case _constants_keyCode_mjs__WEBPACK_IMPORTED_MODULE_4__["KeyCode"].UP:
-                const isDown = key === _constants_keyCode_mjs__WEBPACK_IMPORTED_MODULE_4__["KeyCode"].DOWN;
+            case _constants_keyCode_mjs__WEBPACK_IMPORTED_MODULE_3__["KeyCode"].DOWN:
+            case _constants_keyCode_mjs__WEBPACK_IMPORTED_MODULE_3__["KeyCode"].UP:
+                const isDown = key === _constants_keyCode_mjs__WEBPACK_IMPORTED_MODULE_3__["KeyCode"].DOWN;
                 let itemToHighlight;
                 e.preventDefault();
                 if (!this.highlightedEl) {
@@ -14768,7 +15227,7 @@ class AgList extends _component_mjs__WEBPACK_IMPORTED_MODULE_1__["Component"] {
     }
     addOption(listOption) {
         const { value, text } = listOption;
-        const sanitisedText = Object(_utils_string_mjs__WEBPACK_IMPORTED_MODULE_3__["escapeString"])(text || value);
+        const sanitisedText = Object(_utils_string_mjs__WEBPACK_IMPORTED_MODULE_2__["escapeString"])(text || value);
         this.options.push({ value, text: sanitisedText });
         this.renderOption(value, sanitisedText);
         this.updateIndices();
@@ -14777,13 +15236,13 @@ class AgList extends _component_mjs__WEBPACK_IMPORTED_MODULE_1__["Component"] {
     updateIndices() {
         const options = this.getGui().querySelectorAll('.ag-list-item');
         options.forEach((option, idx) => {
-            Object(_utils_aria_mjs__WEBPACK_IMPORTED_MODULE_5__["setAriaPosInSet"])(option, idx + 1);
-            Object(_utils_aria_mjs__WEBPACK_IMPORTED_MODULE_5__["setAriaSetSize"])(option, options.length);
+            Object(_utils_aria_mjs__WEBPACK_IMPORTED_MODULE_4__["setAriaPosInSet"])(option, idx + 1);
+            Object(_utils_aria_mjs__WEBPACK_IMPORTED_MODULE_4__["setAriaSetSize"])(option, options.length);
         });
     }
     renderOption(value, text) {
         const itemEl = document.createElement('div');
-        Object(_utils_aria_mjs__WEBPACK_IMPORTED_MODULE_5__["setAriaRole"])(itemEl, 'option');
+        Object(_utils_aria_mjs__WEBPACK_IMPORTED_MODULE_4__["setAriaRole"])(itemEl, 'option');
         itemEl.classList.add('ag-list-item', `ag-${this.cssIdentifier}-list-item`);
         itemEl.innerHTML = `<span>${text}</span>`;
         itemEl.tabIndex = -1;
@@ -14843,7 +15302,7 @@ class AgList extends _component_mjs__WEBPACK_IMPORTED_MODULE_1__["Component"] {
         this.clearHighlighted();
         this.highlightedEl = el;
         this.highlightedEl.classList.add(AgList.ACTIVE_CLASS);
-        Object(_utils_aria_mjs__WEBPACK_IMPORTED_MODULE_5__["setAriaSelected"])(this.highlightedEl, true);
+        Object(_utils_aria_mjs__WEBPACK_IMPORTED_MODULE_4__["setAriaSelected"])(this.highlightedEl, true);
         this.highlightedEl.focus();
     }
     clearHighlighted() {
@@ -14851,11 +15310,11 @@ class AgList extends _component_mjs__WEBPACK_IMPORTED_MODULE_1__["Component"] {
             return;
         }
         this.highlightedEl.classList.remove(AgList.ACTIVE_CLASS);
-        Object(_utils_aria_mjs__WEBPACK_IMPORTED_MODULE_5__["setAriaSelected"])(this.highlightedEl, false);
+        Object(_utils_aria_mjs__WEBPACK_IMPORTED_MODULE_4__["setAriaSelected"])(this.highlightedEl, false);
         this.highlightedEl = null;
     }
     fireChangeEvent() {
-        this.dispatchEvent({ type: _agAbstractField_mjs__WEBPACK_IMPORTED_MODULE_0__["AgAbstractField"].EVENT_CHANGED });
+        this.dispatchEvent({ type: _eventKeys_mjs__WEBPACK_IMPORTED_MODULE_5__["Events"].EVENT_FIELD_VALUE_CHANGED });
         this.fireItemSelected();
     }
     fireItemSelected() {
@@ -14865,7 +15324,7 @@ class AgList extends _component_mjs__WEBPACK_IMPORTED_MODULE_1__["Component"] {
 AgList.EVENT_ITEM_SELECTED = 'selectedItem';
 AgList.ACTIVE_CLASS = 'ag-active-item';
 __decorate([
-    _context_context_mjs__WEBPACK_IMPORTED_MODULE_2__["PostConstruct"]
+    _context_context_mjs__WEBPACK_IMPORTED_MODULE_1__["PostConstruct"]
 ], AgList.prototype, "init", null);
 
 
@@ -15002,7 +15461,7 @@ class AgCheckbox extends _agAbstractInputField_mjs__WEBPACK_IMPORTED_MODULE_1__[
         }
     }
     dispatchChange(selected, previousValue, event) {
-        this.dispatchEvent({ type: AgCheckbox.EVENT_CHANGED, selected, previousValue, event });
+        this.dispatchEvent({ type: _events_mjs__WEBPACK_IMPORTED_MODULE_0__["Events"].EVENT_FIELD_VALUE_CHANGED, selected, previousValue, event });
         const input = this.getInputElement();
         const checkboxChangedEvent = {
             type: _events_mjs__WEBPACK_IMPORTED_MODULE_0__["Events"].EVENT_CHECKBOX_CHANGED,
@@ -15037,7 +15496,7 @@ class AgCheckbox extends _agAbstractInputField_mjs__WEBPACK_IMPORTED_MODULE_1__[
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "AgAbstractInputField", function() { return AgAbstractInputField; });
 /* harmony import */ var _componentAnnotations_mjs__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(56);
-/* harmony import */ var _agAbstractField_mjs__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(66);
+/* harmony import */ var _agAbstractField_mjs__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(67);
 /* harmony import */ var _utils_dom_mjs__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(44);
 /* harmony import */ var _utils_aria_mjs__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(40);
 /* harmony import */ var _utils_generic_mjs__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(6);
@@ -15129,6 +15588,21 @@ class AgAbstractInputField extends _agAbstractField_mjs__WEBPACK_IMPORTED_MODULE
     setDisabled(disabled) {
         Object(_utils_dom_mjs__WEBPACK_IMPORTED_MODULE_2__["setDisabled"])(this.eInput, disabled);
         return super.setDisabled(disabled);
+    }
+    setAutoComplete(value) {
+        if (value === true) {
+            // Remove the autocomplete attribute if the value is explicitly set to true
+            // to allow the default browser autocomplete/autofill behaviour.
+            Object(_utils_dom_mjs__WEBPACK_IMPORTED_MODULE_2__["addOrRemoveAttribute"])(this.eInput, 'autocomplete', null);
+        }
+        else {
+            // When a string is provided, use it as the value of the autocomplete attribute.
+            // This enables users to specify how they want to the browser to handle the autocomplete on the input, as per spec:
+            // https://developer.mozilla.org/en-US/docs/Web/HTML/Attributes/autocomplete#values
+            const autoCompleteValue = typeof value === 'string' ? value : 'off';
+            Object(_utils_dom_mjs__WEBPACK_IMPORTED_MODULE_2__["addOrRemoveAttribute"])(this.eInput, 'autocomplete', autoCompleteValue);
+        }
+        return this;
     }
 }
 __decorate([
@@ -15269,11 +15743,18 @@ class DateFloatingFilter extends _floating_provided_simpleFloatingFilter_mjs__WE
         this.params = params;
         this.filterParams = params.filterParams;
         this.createDateComponent();
+        this.filterModelFormatter = new _dateFilter_mjs__WEBPACK_IMPORTED_MODULE_0__["DateFilterModelFormatter"](this.filterParams, this.localeService, this.optionsFactory);
         const translate = this.localeService.getLocaleTextFunc();
         this.eReadOnlyText
             .setDisabled(true)
             .setInputAriaLabel(translate('ariaDateFilterInput', 'Date Filter Input'));
-        this.filterModelFormatter = new _dateFilter_mjs__WEBPACK_IMPORTED_MODULE_0__["DateFilterModelFormatter"](this.filterParams, this.localeService, this.optionsFactory);
+    }
+    onParamsUpdated(params) {
+        super.onParamsUpdated(params);
+        this.params = params;
+        this.filterParams = params.filterParams;
+        this.updateDateComponent();
+        this.filterModelFormatter.updateParams({ optionsFactory: this.optionsFactory, dateFilterParams: this.filterParams });
     }
     setEditable(editable) {
         Object(_utils_dom_mjs__WEBPACK_IMPORTED_MODULE_6__["setDisplayed"])(this.eDateWrapper, editable);
@@ -15316,14 +15797,24 @@ class DateFloatingFilter extends _floating_provided_simpleFloatingFilter_mjs__WE
             }
         });
     }
-    createDateComponent() {
+    getDateComponentParams() {
         const debounceMs = _providedFilter_mjs__WEBPACK_IMPORTED_MODULE_5__["ProvidedFilter"].getDebounceMs(this.params.filterParams, this.getDefaultDebounceMs());
-        const dateComponentParams = {
+        return {
             onDateChanged: Object(_utils_function_mjs__WEBPACK_IMPORTED_MODULE_8__["debounce"])(this.onDateChanged.bind(this), debounceMs),
             filterParams: this.params.column.getColDef().filterParams
         };
-        this.dateComp = new _dateCompWrapper_mjs__WEBPACK_IMPORTED_MODULE_2__["DateCompWrapper"](this.getContext(), this.userComponentFactory, dateComponentParams, this.eDateWrapper);
+    }
+    createDateComponent() {
+        this.dateComp = new _dateCompWrapper_mjs__WEBPACK_IMPORTED_MODULE_2__["DateCompWrapper"](this.getContext(), this.userComponentFactory, this.getDateComponentParams(), this.eDateWrapper);
         this.addDestroyFunc(() => this.dateComp.destroy());
+    }
+    updateDateComponent() {
+        const params = this.getDateComponentParams();
+        const { api, columnApi, context } = this.gridOptionsService;
+        params.api = api;
+        params.columnApi = columnApi;
+        params.context = context;
+        this.dateComp.updateParams(params);
     }
     getFilterModelFormatter() {
         return this.filterModelFormatter;
@@ -15406,6 +15897,9 @@ class SimpleFloatingFilter extends _widgets_component_mjs__WEBPACK_IMPORTED_MODU
         return this.isTypeEditable(simpleModel.type);
     }
     init(params) {
+        this.setSimpleParams(params);
+    }
+    setSimpleParams(params) {
         this.optionsFactory = new _provided_optionsFactory_mjs__WEBPACK_IMPORTED_MODULE_2__["OptionsFactory"]();
         this.optionsFactory.init(params.filterParams, this.getDefaultFilterOptions());
         this.lastType = this.optionsFactory.getDefaultOption();
@@ -15418,6 +15912,9 @@ class SimpleFloatingFilter extends _widgets_component_mjs__WEBPACK_IMPORTED_MODU
         // 2) the default type is not 'in range'
         const editable = this.isTypeEditable(this.lastType);
         this.setEditable(editable);
+    }
+    onParamsUpdated(params) {
+        this.setSimpleParams(params);
     }
     doesFilterHaveSingleInput(filterType) {
         const customFilterOption = this.optionsFactory.getCustomOption(filterType);
@@ -15470,17 +15967,14 @@ class DefaultDateComponent extends _widgets_component_mjs__WEBPACK_IMPORTED_MODU
         super.destroy();
     }
     init(params) {
+        this.params = params;
+        this.setParams(params);
         const eDocument = this.gridOptionsService.getDocument();
         const inputElement = this.eDateInput.getInputElement();
-        const shouldUseBrowserDatePicker = this.shouldUseBrowserDatePicker(params);
-        if (shouldUseBrowserDatePicker) {
-            inputElement.type = 'date';
-        }
         // ensures that the input element is focussed when a clear button is clicked,
         // unless using safari as there is no clear button and focus does not work properly
-        const usingSafariDatePicker = shouldUseBrowserDatePicker && Object(_utils_browser_mjs__WEBPACK_IMPORTED_MODULE_3__["isBrowserSafari"])();
         this.addManagedListener(inputElement, 'mousedown', () => {
-            if (this.eDateInput.isDisabled() || usingSafariDatePicker) {
+            if (this.eDateInput.isDisabled() || this.usingSafariDatePicker) {
                 return;
             }
             inputElement.focus();
@@ -15492,8 +15986,14 @@ class DefaultDateComponent extends _widgets_component_mjs__WEBPACK_IMPORTED_MODU
             if (this.eDateInput.isDisabled()) {
                 return;
             }
-            params.onDateChanged();
+            this.params.onDateChanged();
         });
+    }
+    setParams(params) {
+        const inputElement = this.eDateInput.getInputElement();
+        const shouldUseBrowserDatePicker = this.shouldUseBrowserDatePicker(params);
+        this.usingSafariDatePicker = shouldUseBrowserDatePicker && Object(_utils_browser_mjs__WEBPACK_IMPORTED_MODULE_3__["isBrowserSafari"])();
+        inputElement.type = shouldUseBrowserDatePicker ? 'date' : 'text';
         const { minValidYear, maxValidYear } = params.filterParams || {};
         if (minValidYear) {
             inputElement.min = `${minValidYear}-01-01`;
@@ -15501,6 +16001,10 @@ class DefaultDateComponent extends _widgets_component_mjs__WEBPACK_IMPORTED_MODU
         if (maxValidYear) {
             inputElement.max = `${maxValidYear}-12-31`;
         }
+    }
+    onParamsUpdated(params) {
+        this.params = params;
+        this.setParams(params);
     }
     getDate() {
         return Object(_utils_date_mjs__WEBPACK_IMPORTED_MODULE_2__["parseDateTimeFromString"])(this.eDateInput.getValue());
@@ -15557,11 +16061,11 @@ class NumberFilterModelFormatter extends _simpleFilter_mjs__WEBPACK_IMPORTED_MOD
         const { numberOfInputs } = options || {};
         const isRange = condition.type == _simpleFilter_mjs__WEBPACK_IMPORTED_MODULE_0__["SimpleFilter"].IN_RANGE || numberOfInputs === 2;
         if (isRange) {
-            return `${condition.filter}-${condition.filterTo}`;
+            return `${this.formatValue(condition.filter)}-${this.formatValue(condition.filterTo)}`;
         }
         // cater for when the type doesn't need a value
         if (condition.filter != null) {
-            return `${condition.filter}`;
+            return this.formatValue(condition.filter);
         }
         return `${condition.type}`;
     }
@@ -15597,10 +16101,16 @@ class NumberFilter extends _scalarFilter_mjs__WEBPACK_IMPORTED_MODULE_1__["Scala
     setParams(params) {
         this.numberFilterParams = params;
         super.setParams(params);
-        this.filterModelFormatter = new NumberFilterModelFormatter(this.localeService, this.optionsFactory);
+        this.filterModelFormatter = new NumberFilterModelFormatter(this.localeService, this.optionsFactory, this.numberFilterParams.numberFormatter);
     }
     getDefaultFilterOptions() {
         return NumberFilter.DEFAULT_FILTER_OPTIONS;
+    }
+    setElementValue(element, value) {
+        const valueToSet = this.numberFilterParams.numberFormatter
+            ? this.numberFilterParams.numberFormatter(value !== null && value !== void 0 ? value : null)
+            : value;
+        super.setElementValue(element, valueToSet);
     }
     createValueElement() {
         const allowedCharPattern = getAllowedCharPattern(this.numberFilterParams);
@@ -15731,11 +16241,11 @@ class AgInputTextField extends _agAbstractInputField_mjs__WEBPACK_IMPORTED_MODUL
         }
     }
     setValue(value, silent) {
-        const ret = super.setValue(value, silent);
+        // update the input before we call super.setValue, so it's updated before the value changed event is fired
         if (this.eInput.value !== value) {
             this.eInput.value = Object(_utils_generic_mjs__WEBPACK_IMPORTED_MODULE_1__["exists"])(value) ? value : '';
         }
-        return ret;
+        return super.setValue(value, silent);
     }
     /** Used to set an initial value into the input without necessarily setting `this.value` or triggering events (e.g. to set an invalid value) */
     setStartValue(value) {
@@ -15921,24 +16431,30 @@ __webpack_require__.r(__webpack_exports__);
 
 
 class FloatingFilterNumberInputService extends _context_beanStub_mjs__WEBPACK_IMPORTED_MODULE_4__["BeanStub"] {
-    constructor(params) {
-        super();
-        this.params = params;
+    constructor() {
+        super(...arguments);
+        this.valueChangedListener = () => { };
         this.numberInputActive = true;
     }
     setupGui(parentElement) {
         this.eFloatingFilterNumberInput = this.createManagedBean(new _widgets_agInputNumberField_mjs__WEBPACK_IMPORTED_MODULE_2__["AgInputNumberField"]());
         this.eFloatingFilterTextInput = this.createManagedBean(new _widgets_agInputTextField_mjs__WEBPACK_IMPORTED_MODULE_3__["AgInputTextField"]());
         this.eFloatingFilterTextInput.setDisabled(true);
-        this.eFloatingFilterNumberInput.setInputAriaLabel(this.params.ariaLabel);
-        this.eFloatingFilterTextInput.setInputAriaLabel(this.params.ariaLabel);
-        parentElement.appendChild(this.eFloatingFilterNumberInput.getGui());
-        parentElement.appendChild(this.eFloatingFilterTextInput.getGui());
+        const eNumberInput = this.eFloatingFilterNumberInput.getGui();
+        const eTextInput = this.eFloatingFilterTextInput.getGui();
+        parentElement.appendChild(eNumberInput);
+        parentElement.appendChild(eTextInput);
+        this.setupListeners(eNumberInput, (e) => this.valueChangedListener(e));
+        this.setupListeners(eTextInput, (e) => this.valueChangedListener(e));
     }
     setEditable(editable) {
         this.numberInputActive = editable;
         this.eFloatingFilterNumberInput.setDisplayed(this.numberInputActive);
         this.eFloatingFilterTextInput.setDisplayed(!this.numberInputActive);
+    }
+    setAutoComplete(autoComplete) {
+        this.eFloatingFilterNumberInput.setAutoComplete(autoComplete);
+        this.eFloatingFilterTextInput.setAutoComplete(autoComplete);
     }
     getValue() {
         return this.getActiveInputElement().getValue();
@@ -15949,19 +16465,37 @@ class FloatingFilterNumberInputService extends _context_beanStub_mjs__WEBPACK_IM
     getActiveInputElement() {
         return this.numberInputActive ? this.eFloatingFilterNumberInput : this.eFloatingFilterTextInput;
     }
-    addValueChangedListener(listener) {
-        this.setupListeners(this.eFloatingFilterNumberInput.getGui(), listener);
-        this.setupListeners(this.eFloatingFilterTextInput.getGui(), listener);
+    setValueChangedListener(listener) {
+        this.valueChangedListener = listener;
     }
     setupListeners(element, listener) {
         this.addManagedListener(element, 'input', listener);
         this.addManagedListener(element, 'keydown', listener);
     }
+    setParams(params) {
+        this.setAriaLabel(params.ariaLabel);
+        if (params.autoComplete !== undefined) {
+            this.setAutoComplete(params.autoComplete);
+        }
+    }
+    setAriaLabel(ariaLabel) {
+        this.eFloatingFilterNumberInput.setInputAriaLabel(ariaLabel);
+        this.eFloatingFilterTextInput.setInputAriaLabel(ariaLabel);
+    }
 }
 class NumberFloatingFilter extends _floating_provided_textInputFloatingFilter_mjs__WEBPACK_IMPORTED_MODULE_1__["TextInputFloatingFilter"] {
     init(params) {
+        var _a;
         super.init(params);
-        this.filterModelFormatter = new _numberFilter_mjs__WEBPACK_IMPORTED_MODULE_0__["NumberFilterModelFormatter"](this.localeService, this.optionsFactory);
+        this.filterModelFormatter = new _numberFilter_mjs__WEBPACK_IMPORTED_MODULE_0__["NumberFilterModelFormatter"](this.localeService, this.optionsFactory, (_a = params.filterParams) === null || _a === void 0 ? void 0 : _a.numberFormatter);
+    }
+    onParamsUpdated(params) {
+        const allowedCharPattern = Object(_numberFilter_mjs__WEBPACK_IMPORTED_MODULE_0__["getAllowedCharPattern"])(params.filterParams);
+        if (allowedCharPattern !== this.allowedCharPattern) {
+            this.recreateFloatingFilterInputService(params);
+        }
+        super.onParamsUpdated(params);
+        this.filterModelFormatter.updateParams({ optionsFactory: this.optionsFactory });
     }
     getDefaultFilterOptions() {
         return _numberFilter_mjs__WEBPACK_IMPORTED_MODULE_0__["NumberFilter"].DEFAULT_FILTER_OPTIONS;
@@ -15969,16 +16503,15 @@ class NumberFloatingFilter extends _floating_provided_textInputFloatingFilter_mj
     getFilterModelFormatter() {
         return this.filterModelFormatter;
     }
-    createFloatingFilterInputService(ariaLabel) {
-        const allowedCharPattern = Object(_numberFilter_mjs__WEBPACK_IMPORTED_MODULE_0__["getAllowedCharPattern"])(this.params.filterParams);
-        if (allowedCharPattern) {
-            // need to sue text input
+    createFloatingFilterInputService(params) {
+        this.allowedCharPattern = Object(_numberFilter_mjs__WEBPACK_IMPORTED_MODULE_0__["getAllowedCharPattern"])(params.filterParams);
+        if (this.allowedCharPattern) {
+            // need to use text input
             return this.createManagedBean(new _floating_provided_textInputFloatingFilter_mjs__WEBPACK_IMPORTED_MODULE_1__["FloatingFilterTextInputService"]({
-                config: { allowedCharPattern },
-                ariaLabel
+                config: { allowedCharPattern: this.allowedCharPattern },
             }));
         }
-        return this.createManagedBean(new FloatingFilterNumberInputService({ ariaLabel }));
+        return this.createManagedBean(new FloatingFilterNumberInputService());
     }
 }
 
@@ -16000,6 +16533,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _constants_keyCode_mjs__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(47);
 /* harmony import */ var _provided_text_textFilter_mjs__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(82);
 /* harmony import */ var _context_beanStub_mjs__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(16);
+/* harmony import */ var _utils_dom_mjs__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(44);
 var __decorate = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -16015,18 +16549,26 @@ var __decorate = (undefined && undefined.__decorate) || function (decorators, ta
 
 
 
+
 class FloatingFilterTextInputService extends _context_beanStub_mjs__WEBPACK_IMPORTED_MODULE_8__["BeanStub"] {
     constructor(params) {
         super();
         this.params = params;
+        this.valueChangedListener = () => { };
     }
     setupGui(parentElement) {
-        this.eFloatingFilterTextInput = this.createManagedBean(new _widgets_agInputTextField_mjs__WEBPACK_IMPORTED_MODULE_5__["AgInputTextField"](this.params.config));
-        this.eFloatingFilterTextInput.setInputAriaLabel(this.params.ariaLabel);
-        parentElement.appendChild(this.eFloatingFilterTextInput.getGui());
+        var _a;
+        this.eFloatingFilterTextInput = this.createManagedBean(new _widgets_agInputTextField_mjs__WEBPACK_IMPORTED_MODULE_5__["AgInputTextField"]((_a = this.params) === null || _a === void 0 ? void 0 : _a.config));
+        const eInput = this.eFloatingFilterTextInput.getGui();
+        parentElement.appendChild(eInput);
+        this.addManagedListener(eInput, 'input', (e) => this.valueChangedListener(e));
+        this.addManagedListener(eInput, 'keydown', (e) => this.valueChangedListener(e));
     }
     setEditable(editable) {
         this.eFloatingFilterTextInput.setDisabled(!editable);
+    }
+    setAutoComplete(autoComplete) {
+        this.eFloatingFilterTextInput.setAutoComplete(autoComplete);
     }
     getValue() {
         return this.eFloatingFilterTextInput.getValue();
@@ -16034,12 +16576,20 @@ class FloatingFilterTextInputService extends _context_beanStub_mjs__WEBPACK_IMPO
     setValue(value, silent) {
         this.eFloatingFilterTextInput.setValue(value, silent);
     }
-    addValueChangedListener(listener) {
-        const inputGui = this.eFloatingFilterTextInput.getGui();
-        this.addManagedListener(inputGui, 'input', listener);
-        this.addManagedListener(inputGui, 'keydown', listener);
+    setValueChangedListener(listener) {
+        this.valueChangedListener = listener;
+    }
+    setParams(params) {
+        this.setAriaLabel(params.ariaLabel);
+        if (params.autoComplete !== undefined) {
+            this.setAutoComplete(params.autoComplete);
+        }
+    }
+    setAriaLabel(ariaLabel) {
+        this.eFloatingFilterTextInput.setInputAriaLabel(ariaLabel);
     }
 }
+;
 class TextInputFloatingFilter extends _simpleFloatingFilter_mjs__WEBPACK_IMPORTED_MODULE_4__["SimpleFloatingFilter"] {
     postConstruct() {
         this.setTemplate(/* html */ `
@@ -16060,19 +16610,44 @@ class TextInputFloatingFilter extends _simpleFloatingFilter_mjs__WEBPACK_IMPORTE
         this.floatingFilterInputService.setValue(this.getFilterModelFormatter().getModelAsString(model));
     }
     init(params) {
-        this.params = params;
-        const displayName = this.columnModel.getDisplayNameForColumn(params.column, 'header', true);
-        const translate = this.localeService.getLocaleTextFunc();
-        const ariaLabel = `${displayName} ${translate('ariaFilterInput', 'Filter Input')}`;
-        this.floatingFilterInputService = this.createFloatingFilterInputService(ariaLabel);
-        this.floatingFilterInputService.setupGui(this.eFloatingFilterInputContainer);
+        this.setupFloatingFilterInputService(params);
         super.init(params);
+        this.setTextInputParams(params);
+    }
+    setupFloatingFilterInputService(params) {
+        this.floatingFilterInputService = this.createFloatingFilterInputService(params);
+        this.floatingFilterInputService.setupGui(this.eFloatingFilterInputContainer);
+    }
+    setTextInputParams(params) {
+        var _a;
+        this.params = params;
+        const autoComplete = (_a = params.browserAutoComplete) !== null && _a !== void 0 ? _a : false;
+        this.floatingFilterInputService.setParams({
+            ariaLabel: this.getAriaLabel(params),
+            autoComplete,
+        });
         this.applyActive = _provided_providedFilter_mjs__WEBPACK_IMPORTED_MODULE_2__["ProvidedFilter"].isUseApplyButton(this.params.filterParams);
         if (!this.isReadOnly()) {
             const debounceMs = _provided_providedFilter_mjs__WEBPACK_IMPORTED_MODULE_2__["ProvidedFilter"].getDebounceMs(this.params.filterParams, this.getDefaultDebounceMs());
             const toDebounce = Object(_utils_function_mjs__WEBPACK_IMPORTED_MODULE_1__["debounce"])(this.syncUpWithParentFilter.bind(this), debounceMs);
-            this.floatingFilterInputService.addValueChangedListener(toDebounce);
+            this.floatingFilterInputService.setValueChangedListener(toDebounce);
         }
+    }
+    onParamsUpdated(params) {
+        super.onParamsUpdated(params);
+        this.setTextInputParams(params);
+    }
+    recreateFloatingFilterInputService(params) {
+        const value = this.floatingFilterInputService.getValue();
+        Object(_utils_dom_mjs__WEBPACK_IMPORTED_MODULE_9__["clearElement"])(this.eFloatingFilterInputContainer);
+        this.destroyBean(this.floatingFilterInputService);
+        this.setupFloatingFilterInputService(params);
+        this.floatingFilterInputService.setValue(value, true);
+    }
+    getAriaLabel(params) {
+        const displayName = this.columnModel.getDisplayNameForColumn(params.column, 'header', true);
+        const translate = this.localeService.getLocaleTextFunc();
+        return `${displayName} ${translate('ariaFilterInput', 'Filter Input')}`;
     }
     syncUpWithParentFilter(e) {
         const isEnterKey = e.key === _constants_keyCode_mjs__WEBPACK_IMPORTED_MODULE_6__["KeyCode"].ENTER;
@@ -16174,7 +16749,7 @@ class TextFilter extends _simpleFilter_mjs__WEBPACK_IMPORTED_MODULE_0__["SimpleF
             filterType: this.getFilterType(),
             type,
         };
-        const values = this.getValues(position);
+        const values = this.getValuesWithSideEffects(position, true);
         if (values.length > 0) {
             model.filter = values[0];
         }
@@ -16198,13 +16773,19 @@ class TextFilter extends _simpleFilter_mjs__WEBPACK_IMPORTED_MODULE_0__["SimpleF
         return [this.eValuesFrom[position], this.eValuesTo[position]];
     }
     getValues(position) {
+        return this.getValuesWithSideEffects(position, false);
+    }
+    getValuesWithSideEffects(position, applySideEffects) {
         const result = [];
         this.forEachPositionInput(position, (element, index, _elPosition, numberOfInputs) => {
+            var _a;
             if (index < numberOfInputs) {
-                const value = Object(_utils_generic_mjs__WEBPACK_IMPORTED_MODULE_2__["makeNull"])(element.getValue());
-                const cleanValue = (this.textFilterParams.trimInput ? TextFilter.trimInput(value) : value) || null;
-                result.push(cleanValue);
-                element.setValue(cleanValue, true); // ensure clean value is visible
+                let value = Object(_utils_generic_mjs__WEBPACK_IMPORTED_MODULE_2__["makeNull"])(element.getValue());
+                if (applySideEffects && this.textFilterParams.trimInput) {
+                    value = (_a = TextFilter.trimInput(value)) !== null && _a !== void 0 ? _a : null;
+                    element.setValue(value, true); // ensure clean value is visible
+                }
+                result.push(value);
             }
         });
         return result;
@@ -16325,16 +16906,18 @@ class TextFloatingFilter extends _floating_provided_textInputFloatingFilter_mjs_
         super.init(params);
         this.filterModelFormatter = new _textFilter_mjs__WEBPACK_IMPORTED_MODULE_0__["TextFilterModelFormatter"](this.localeService, this.optionsFactory);
     }
+    onParamsUpdated(params) {
+        super.onParamsUpdated(params);
+        this.filterModelFormatter.updateParams({ optionsFactory: this.optionsFactory });
+    }
     getDefaultFilterOptions() {
         return _textFilter_mjs__WEBPACK_IMPORTED_MODULE_0__["TextFilter"].DEFAULT_FILTER_OPTIONS;
     }
     getFilterModelFormatter() {
         return this.filterModelFormatter;
     }
-    createFloatingFilterInputService(ariaLabel) {
-        return this.createManagedBean(new _floating_provided_textInputFloatingFilter_mjs__WEBPACK_IMPORTED_MODULE_1__["FloatingFilterTextInputService"]({
-            ariaLabel
-        }));
+    createFloatingFilterInputService() {
+        return this.createManagedBean(new _floating_provided_textInputFloatingFilter_mjs__WEBPACK_IMPORTED_MODULE_1__["FloatingFilterTextInputService"]());
     }
 }
 
@@ -17183,30 +17766,36 @@ var __decorate = (undefined && undefined.__decorate) || function (decorators, ta
 
 class SelectCellEditor extends _widgets_popupComponent_mjs__WEBPACK_IMPORTED_MODULE_2__["PopupComponent"] {
     constructor() {
-        super('<div class="ag-cell-edit-wrapper"><ag-select class="ag-cell-editor" ref="eSelect"></ag-select></div>');
+        super(/* html */ `<div class="ag-cell-edit-wrapper">
+                <ag-select class="ag-cell-editor" ref="eSelect"></ag-select>
+            </div>`);
         this.startedByEnter = false;
     }
     init(params) {
         this.focusAfterAttached = params.cellStartedEdit;
-        if (Object(_utils_generic_mjs__WEBPACK_IMPORTED_MODULE_4__["missing"])(params.values)) {
+        const { values, value, eventKey } = params;
+        if (Object(_utils_generic_mjs__WEBPACK_IMPORTED_MODULE_4__["missing"])(values)) {
             console.warn('AG Grid: no values found for select cellEditor');
             return;
         }
-        this.startedByEnter = params.eventKey != null ? params.eventKey === _constants_keyCode_mjs__WEBPACK_IMPORTED_MODULE_5__["KeyCode"].ENTER : false;
+        this.startedByEnter = eventKey != null ? eventKey === _constants_keyCode_mjs__WEBPACK_IMPORTED_MODULE_5__["KeyCode"].ENTER : false;
         let hasValue = false;
-        params.values.forEach((value) => {
-            const option = { value };
-            const valueFormatted = this.valueFormatterService.formatValue(params.column, null, value);
+        values.forEach((currentValue) => {
+            const option = { value: currentValue };
+            const valueFormatted = this.valueFormatterService.formatValue(params.column, null, currentValue);
             const valueFormattedExits = valueFormatted !== null && valueFormatted !== undefined;
-            option.text = valueFormattedExits ? valueFormatted : value;
+            option.text = valueFormattedExits ? valueFormatted : currentValue;
             this.eSelect.addOption(option);
-            hasValue = hasValue || params.value === value;
+            hasValue = hasValue || value === currentValue;
         });
         if (hasValue) {
             this.eSelect.setValue(params.value, true);
         }
         else if (params.values.length) {
             this.eSelect.setValue(params.values[0], true);
+        }
+        if (params.valueListGap != null) {
+            this.eSelect.setPickerGap(params.valueListGap);
         }
         // we don't want to add this if full row editing, otherwise selecting will stop the
         // full row editing.
@@ -17219,7 +17808,11 @@ class SelectCellEditor extends _widgets_popupComponent_mjs__WEBPACK_IMPORTED_MOD
             this.eSelect.getFocusableElement().focus();
         }
         if (this.startedByEnter) {
-            this.eSelect.showPicker();
+            setTimeout(() => {
+                if (this.isAlive()) {
+                    this.eSelect.showPicker();
+                }
+            });
         }
     }
     focusIn() {
@@ -18389,8 +18982,8 @@ class RowNode {
         this.data = data;
         this.updateDataOnDetailNode();
         this.setId(id);
-        this.beans.selectionService.syncInRowNode(this, oldNode);
         this.checkRowSelectable();
+        this.beans.selectionService.syncInRowNode(this, oldNode);
         const event = this.createDataChangedEvent(data, oldData, false);
         this.dispatchLocalEvent(event);
     }
@@ -20436,8 +21029,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "CheckboxCellEditor", function() { return CheckboxCellEditor; });
 /* harmony import */ var _widgets_popupComponent_mjs__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(89);
 /* harmony import */ var _widgets_componentAnnotations_mjs__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(56);
-/* harmony import */ var _widgets_agCheckbox_mjs__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(71);
-/* harmony import */ var _utils_aria_mjs__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(40);
+/* harmony import */ var _utils_aria_mjs__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(40);
+/* harmony import */ var _eventKeys_mjs__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(22);
 var __decorate = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -20462,7 +21055,7 @@ class CheckboxCellEditor extends _widgets_popupComponent_mjs__WEBPACK_IMPORTED_M
         this.eCheckbox.setValue(isSelected);
         this.eCheckbox.getInputElement().setAttribute('tabindex', '-1');
         this.setAriaLabel(isSelected);
-        this.addManagedListener(this.eCheckbox, _widgets_agCheckbox_mjs__WEBPACK_IMPORTED_MODULE_2__["AgCheckbox"].EVENT_CHANGED, (event) => this.setAriaLabel(event.selected));
+        this.addManagedListener(this.eCheckbox, _eventKeys_mjs__WEBPACK_IMPORTED_MODULE_3__["Events"].EVENT_FIELD_VALUE_CHANGED, (event) => this.setAriaLabel(event.selected));
     }
     getValue() {
         return this.eCheckbox.getValue();
@@ -20480,7 +21073,7 @@ class CheckboxCellEditor extends _widgets_popupComponent_mjs__WEBPACK_IMPORTED_M
     }
     setAriaLabel(isSelected) {
         const translate = this.localeService.getLocaleTextFunc();
-        const stateName = Object(_utils_aria_mjs__WEBPACK_IMPORTED_MODULE_3__["getAriaCheckboxStateName"])(translate, isSelected);
+        const stateName = Object(_utils_aria_mjs__WEBPACK_IMPORTED_MODULE_2__["getAriaCheckboxStateName"])(translate, isSelected);
         const ariaLabel = translate('ariaToggleCellValue', 'Press SPACE to toggle cell value');
         this.eCheckbox.setInputAriaLabel(`${ariaLabel} (${stateName})`);
     }
@@ -21228,6 +21821,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _utils_dom_mjs__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(44);
 /* harmony import */ var _components_framework_componentTypes_mjs__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(111);
 /* harmony import */ var _gridApi_mjs__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(117);
+/* harmony import */ var _utils_function_mjs__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(12);
 var __decorate = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -21235,6 +21829,7 @@ var __decorate = (undefined && undefined.__decorate) || function (decorators, ta
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
 var FilterManager_1;
+
 
 
 
@@ -21263,6 +21858,8 @@ let FilterManager = FilterManager_1 = class FilterManager extends _context_beanS
         // this feature is turned off (hack code to always return false for isSuppressFlashingCellsBecauseFiltering(), put in)
         // 100,000 rows and group by country. then do some filtering. all the cells flash, which is silly.
         this.processingFilterChange = false;
+        // when we're waiting for cell data types to be inferred, we need to defer filter model updates
+        this.filterModelUpdateQueue = [];
     }
     init() {
         this.addManagedListener(this.eventService, _events_mjs__WEBPACK_IMPORTED_MODULE_3__["Events"].EVENT_GRID_COLUMNS_CHANGED, () => this.onColumnsChanged());
@@ -21272,12 +21869,16 @@ let FilterManager = FilterManager_1 = class FilterManager extends _context_beanS
             this.refreshFiltersForAggregations();
             this.resetQuickFilterCache();
         });
-        this.addManagedListener(this.eventService, _events_mjs__WEBPACK_IMPORTED_MODULE_3__["Events"].EVENT_NEW_COLUMNS_LOADED, () => this.resetQuickFilterCache());
+        this.addManagedListener(this.eventService, _events_mjs__WEBPACK_IMPORTED_MODULE_3__["Events"].EVENT_NEW_COLUMNS_LOADED, () => {
+            this.resetQuickFilterCache();
+            this.updateAdvancedFilterColumns();
+        });
         this.addManagedListener(this.eventService, _events_mjs__WEBPACK_IMPORTED_MODULE_3__["Events"].EVENT_COLUMN_ROW_GROUP_CHANGED, () => this.resetQuickFilterCache());
         this.addManagedListener(this.eventService, _events_mjs__WEBPACK_IMPORTED_MODULE_3__["Events"].EVENT_COLUMN_VISIBLE, () => {
             if (!this.gridOptionsService.is('includeHiddenColumnsInQuickFilter')) {
                 this.resetQuickFilterCache();
             }
+            this.updateAdvancedFilterColumns();
         });
         this.addManagedPropertyListener('quickFilterText', (e) => this.setQuickFilter(e.currentValue));
         this.addManagedPropertyListener('includeHiddenColumnsInQuickFilter', () => this.onIncludeHiddenColumnsInQuickFilterChanged());
@@ -21287,6 +21888,9 @@ let FilterManager = FilterManager_1 = class FilterManager extends _context_beanS
         this.externalFilterPresent = this.isExternalFilterPresentCallback();
         this.updateAggFiltering();
         this.addManagedPropertyListener('groupAggFiltering', () => this.updateAggFiltering());
+        this.addManagedPropertyListener('advancedFilterModel', (event) => this.setAdvancedFilterModel(event.currentValue));
+        this.addManagedListener(this.eventService, _events_mjs__WEBPACK_IMPORTED_MODULE_3__["Events"].EVENT_ADVANCED_FILTER_ENABLED_CHANGED, ({ enabled }) => this.onAdvancedFilterEnabledChanged(enabled));
+        this.addManagedListener(this.eventService, _events_mjs__WEBPACK_IMPORTED_MODULE_3__["Events"].EVENT_DATA_TYPES_INFERRED, () => this.processFilterModelUpdateQueue());
     }
     isExternalFilterPresentCallback() {
         const isFilterPresent = this.gridOptionsService.getCallback('isExternalFilterPresent');
@@ -21306,6 +21910,14 @@ let FilterManager = FilterManager_1 = class FilterManager extends _context_beanS
         this.quickFilterParts = this.quickFilter ? this.quickFilter.split(' ') : null;
     }
     setFilterModel(model) {
+        if (this.isAdvancedFilterEnabled()) {
+            this.warnAdvancedFilters();
+            return;
+        }
+        if (this.dataTypeService.isPendingInference()) {
+            this.filterModelUpdateQueue.push(model);
+            return;
+        }
         const allPromises = [];
         const previousModel = this.getFilterModel();
         if (model) {
@@ -21351,7 +21963,7 @@ let FilterManager = FilterManager_1 = class FilterManager extends _context_beanS
                 }
             });
             if (columns.length > 0) {
-                this.onFilterChanged({ columns });
+                this.onFilterChanged({ columns, source: 'api' });
             }
         });
     }
@@ -21394,6 +22006,37 @@ let FilterManager = FilterManager_1 = class FilterManager extends _context_beanS
     }
     isExternalFilterPresent() {
         return this.externalFilterPresent;
+    }
+    isChildFilterPresent() {
+        return this.isColumnFilterPresent()
+            || this.isQuickFilterPresent()
+            || this.isExternalFilterPresent()
+            || this.isAdvancedFilterPresent();
+    }
+    isAdvancedFilterPresent() {
+        return this.isAdvancedFilterEnabled() && this.advancedFilterService.isFilterPresent();
+    }
+    onAdvancedFilterEnabledChanged(enabled) {
+        var _a;
+        if (enabled) {
+            if (this.allColumnFilters.size) {
+                this.allColumnFilters.forEach(filterWrapper => this.disposeFilterWrapper(filterWrapper, 'advancedFilterEnabled'));
+                this.onFilterChanged({ source: 'advancedFilter' });
+            }
+        }
+        else {
+            if ((_a = this.advancedFilterService) === null || _a === void 0 ? void 0 : _a.isFilterPresent()) {
+                this.advancedFilterService.setModel(null);
+                this.onFilterChanged({ source: 'advancedFilter' });
+            }
+        }
+    }
+    isAdvancedFilterEnabled() {
+        var _a;
+        return (_a = this.advancedFilterService) === null || _a === void 0 ? void 0 : _a.isEnabled();
+    }
+    isAdvancedFilterHeaderActive() {
+        return this.isAdvancedFilterEnabled() && this.advancedFilterService.isHeaderActive();
     }
     doAggregateFiltersPass(node, filterToSkip) {
         return this.doColumnFiltersPass(node, filterToSkip, true);
@@ -21495,7 +22138,7 @@ let FilterManager = FilterManager_1 = class FilterManager extends _context_beanS
         if (this.quickFilter !== parsedFilter) {
             this.quickFilter = parsedFilter;
             this.setQuickFilterParts();
-            this.onFilterChanged();
+            this.onFilterChanged({ source: 'quickFilter' });
         }
     }
     resetQuickFilterCache() {
@@ -21505,7 +22148,7 @@ let FilterManager = FilterManager_1 = class FilterManager extends _context_beanS
         this.columnModel.refreshQuickFilterColumns();
         this.resetQuickFilterCache();
         if (this.isQuickFilterPresent()) {
-            this.onFilterChanged();
+            this.onFilterChanged({ source: 'quickFilter' });
         }
     }
     refreshFiltersForAggregations() {
@@ -21520,7 +22163,7 @@ let FilterManager = FilterManager_1 = class FilterManager extends _context_beanS
     // which results in React State getting applied in the main application, triggering a useEffect() to
     // be kicked off adn then the application calling the grid's API. in AG-6554, the custom filter was
     // getting it's useEffect() triggered in this way.
-    callOnFilterChangedOutsideRenderCycle(params = {}) {
+    callOnFilterChangedOutsideRenderCycle(params) {
         const action = () => this.onFilterChanged(params);
         if (this.rowRenderer.isRefreshInProgress()) {
             setTimeout(action, 0);
@@ -21530,7 +22173,7 @@ let FilterManager = FilterManager_1 = class FilterManager extends _context_beanS
         }
     }
     onFilterChanged(params = {}) {
-        const { filterInstance, additionalEventAttributes, columns } = params;
+        const { source, filterInstance, additionalEventAttributes, columns } = params;
         this.updateDependantFilters();
         this.updateActiveFilters();
         this.updateFilterFlagInColumns('filterChanged', additionalEventAttributes);
@@ -21546,6 +22189,7 @@ let FilterManager = FilterManager_1 = class FilterManager extends _context_beanS
             });
         });
         const filterChangedEvent = {
+            source,
             type: _events_mjs__WEBPACK_IMPORTED_MODULE_3__["Events"].EVENT_FILTER_CHANGED,
             columns: columns || [],
         };
@@ -21621,6 +22265,9 @@ let FilterManager = FilterManager_1 = class FilterManager extends _context_beanS
         }
         // lastly, check column filter
         if (this.isColumnFilterPresent() && !this.doColumnFiltersPass(params.rowNode, params.filterInstanceToSkip)) {
+            return false;
+        }
+        if (this.isAdvancedFilterPresent() && !this.advancedFilterService.doesFilterPass(params.rowNode)) {
             return false;
         }
         // got this far, all filters pass
@@ -21750,7 +22397,14 @@ let FilterManager = FilterManager_1 = class FilterManager extends _context_beanS
                 };
                 this.eventService.dispatchEvent(event);
             }, filterChangedCallback: (additionalEventAttributes) => {
-                const params = { filterInstance, additionalEventAttributes, columns: [column] };
+                var _a;
+                const source = (_a = additionalEventAttributes === null || additionalEventAttributes === void 0 ? void 0 : additionalEventAttributes.source) !== null && _a !== void 0 ? _a : 'api';
+                const params = {
+                    filterInstance,
+                    additionalEventAttributes,
+                    columns: [column],
+                    source,
+                };
                 this.callOnFilterChangedOutsideRenderCycle(params);
             }, doesRowPassOtherFilter: node => this.doesRowPassOtherFilters(filterInstance, node) });
         const compDetails = this.userComponentFactory.getFilterDetails(colDef, params, defaultFilter);
@@ -21846,7 +22500,9 @@ let FilterManager = FilterManager_1 = class FilterManager extends _context_beanS
             this.disposeColumnListener(colId);
         });
         if (columns.length > 0) {
-            this.onFilterChanged({ columns });
+            // When a filter changes as a side effect of a column changes,
+            // we report 'api' as the source, so that the client can distinguish
+            this.onFilterChanged({ columns, source: 'api' });
         }
         else {
             // onFilterChanged does this already
@@ -21866,6 +22522,9 @@ let FilterManager = FilterManager_1 = class FilterManager extends _context_beanS
     // for group filters, can change dynamically whether they are allowed or not
     isFilterAllowed(column) {
         var _a, _b;
+        if (this.isAdvancedFilterEnabled()) {
+            return false;
+        }
         const isFilterAllowed = column.isFilterAllowed();
         if (!isFilterAllowed) {
             return false;
@@ -21918,7 +22577,10 @@ let FilterManager = FilterManager_1 = class FilterManager extends _context_beanS
         this.disposeColumnListener(colId);
         if (filterWrapper) {
             this.disposeFilterWrapper(filterWrapper, source);
-            this.onFilterChanged({ columns: [column] });
+            this.onFilterChanged({
+                columns: [column],
+                source: 'api',
+            });
         }
     }
     disposeColumnListener(colId) {
@@ -21952,21 +22614,100 @@ let FilterManager = FilterManager_1 = class FilterManager extends _context_beanS
         const { compDetails } = column.isFilterAllowed()
             ? this.createFilterInstance(column)
             : { compDetails: null };
-        const areFilterCompsDifferent = (oldCompDetails, newCompDetails) => {
-            if (!newCompDetails || !oldCompDetails) {
-                return true;
-            }
-            const { componentClass: oldComponentClass } = oldCompDetails;
-            const { componentClass: newComponentClass } = newCompDetails;
-            const isSameComponentClass = oldComponentClass === newComponentClass ||
-                // react hooks returns new wrappers, so check nested render method
-                ((oldComponentClass === null || oldComponentClass === void 0 ? void 0 : oldComponentClass.render) && (newComponentClass === null || newComponentClass === void 0 ? void 0 : newComponentClass.render) &&
-                    oldComponentClass.render === newComponentClass.render);
-            return !isSameComponentClass;
-        };
-        if (areFilterCompsDifferent(filterWrapper.compDetails, compDetails)) {
+        if (this.areFilterCompsDifferent(filterWrapper.compDetails, compDetails)) {
             this.destroyFilter(column, 'columnChanged');
         }
+    }
+    areFilterCompsDifferent(oldCompDetails, newCompDetails) {
+        if (!newCompDetails || !oldCompDetails) {
+            return true;
+        }
+        const { componentClass: oldComponentClass } = oldCompDetails;
+        const { componentClass: newComponentClass } = newCompDetails;
+        const isSameComponentClass = oldComponentClass === newComponentClass ||
+            // react hooks returns new wrappers, so check nested render method
+            ((oldComponentClass === null || oldComponentClass === void 0 ? void 0 : oldComponentClass.render) && (newComponentClass === null || newComponentClass === void 0 ? void 0 : newComponentClass.render) &&
+                oldComponentClass.render === newComponentClass.render);
+        return !isSameComponentClass;
+    }
+    getAdvancedFilterModel() {
+        return this.isAdvancedFilterEnabled() ? this.advancedFilterService.getModel() : null;
+    }
+    setAdvancedFilterModel(expression) {
+        if (!this.isAdvancedFilterEnabled()) {
+            return;
+        }
+        this.advancedFilterService.setModel(expression);
+        this.onFilterChanged({ source: 'advancedFilter' });
+    }
+    updateAdvancedFilterColumns() {
+        if (!this.isAdvancedFilterEnabled()) {
+            return;
+        }
+        if (this.advancedFilterService.updateValidity()) {
+            this.onFilterChanged({ source: 'advancedFilter' });
+        }
+    }
+    hasFloatingFilters() {
+        if (this.isAdvancedFilterEnabled()) {
+            return false;
+        }
+        const gridColumns = this.columnModel.getAllGridColumns();
+        if (!gridColumns) {
+            return false;
+        }
+        return gridColumns.some(col => col.getColDef().floatingFilter);
+    }
+    getFilterInstance(key, callback) {
+        if (this.isAdvancedFilterEnabled()) {
+            this.warnAdvancedFilters();
+            return undefined;
+        }
+        const res = this.getFilterInstanceImpl(key, instance => {
+            if (!callback) {
+                return;
+            }
+            const unwrapped = Object(_gridApi_mjs__WEBPACK_IMPORTED_MODULE_12__["unwrapUserComp"])(instance);
+            callback(unwrapped);
+        });
+        const unwrapped = Object(_gridApi_mjs__WEBPACK_IMPORTED_MODULE_12__["unwrapUserComp"])(res);
+        return unwrapped;
+    }
+    getFilterInstanceImpl(key, callback) {
+        const column = this.columnModel.getPrimaryColumn(key);
+        if (!column) {
+            return undefined;
+        }
+        const filterPromise = this.getFilterComponent(column, 'NO_UI');
+        const currentValue = filterPromise && filterPromise.resolveNow(null, filterComp => filterComp);
+        if (currentValue) {
+            setTimeout(callback, 0, currentValue);
+        }
+        else if (filterPromise) {
+            filterPromise.then(comp => {
+                callback(comp);
+            });
+        }
+        return currentValue;
+    }
+    warnAdvancedFilters() {
+        Object(_utils_function_mjs__WEBPACK_IMPORTED_MODULE_13__["doOnce"])(() => {
+            console.warn('AG Grid: Column Filter API methods have been disabled as Advanced Filters are enabled.');
+        }, 'advancedFiltersCompatibility');
+    }
+    setupAdvancedFilterHeaderComp(eCompToInsertBefore) {
+        var _a;
+        (_a = this.advancedFilterService) === null || _a === void 0 ? void 0 : _a.getCtrl().setupHeaderComp(eCompToInsertBefore);
+    }
+    getHeaderRowCount() {
+        return this.isAdvancedFilterHeaderActive() ? 1 : 0;
+    }
+    getHeaderHeight() {
+        return this.isAdvancedFilterHeaderActive() ? this.advancedFilterService.getCtrl().getHeaderHeight() : 0;
+    }
+    processFilterModelUpdateQueue() {
+        this.filterModelUpdateQueue.forEach(model => this.setFilterModel(model));
+        this.filterModelUpdateQueue = [];
     }
     destroy() {
         super.destroy();
@@ -21991,6 +22732,12 @@ __decorate([
 __decorate([
     Object(_context_context_mjs__WEBPACK_IMPORTED_MODULE_2__["Autowired"])('rowRenderer')
 ], FilterManager.prototype, "rowRenderer", void 0);
+__decorate([
+    Object(_context_context_mjs__WEBPACK_IMPORTED_MODULE_2__["Autowired"])('dataTypeService')
+], FilterManager.prototype, "dataTypeService", void 0);
+__decorate([
+    Object(_context_context_mjs__WEBPACK_IMPORTED_MODULE_2__["Optional"])('advancedFilterService')
+], FilterManager.prototype, "advancedFilterService", void 0);
 __decorate([
     _context_context_mjs__WEBPACK_IMPORTED_MODULE_2__["PostConstruct"]
 ], FilterManager.prototype, "init", null);
@@ -22077,7 +22824,7 @@ let GridApi = class GridApi {
     __setProperty(propertyName, value) {
         // Ensure the GridOptions property gets updated and fires the change event as we
         // cannot assume that the dynamic Api call will updated GridOptions.
-        this.gridOptionsService.set(propertyName, value);
+        this.gos.set(propertyName, value);
         // If the dynamic api does update GridOptions then change detection in the 
         // GridOptionsService will prevent the event being fired twice.
         const setterName = this.getSetterMethod(propertyName);
@@ -22126,7 +22873,7 @@ let GridApi = class GridApi {
         }
     }
     getExcelExportMode(params) {
-        const baseParams = this.gridOptionsService.get('defaultExcelExportParams');
+        const baseParams = this.gos.get('defaultExcelExportParams');
         const mergedParams = Object.assign({ exportMode: 'xlsx' }, baseParams, params);
         return mergedParams.exportMode;
     }
@@ -22213,7 +22960,7 @@ let GridApi = class GridApi {
      * */
     setCacheBlockSize(blockSize) {
         if (this.serverSideRowModel) {
-            this.gridOptionsService.set('cacheBlockSize', blockSize);
+            this.gos.set('cacheBlockSize', blockSize);
             this.serverSideRowModel.resetRootStore();
         }
         else {
@@ -22222,7 +22969,7 @@ let GridApi = class GridApi {
     }
     /** Set new datasource for Infinite Row Model. */
     setDatasource(datasource) {
-        if (this.gridOptionsService.isRowModelType('infinite')) {
+        if (this.gos.isRowModelType('infinite')) {
             this.rowModel.setDatasource(datasource);
         }
         else {
@@ -22231,7 +22978,7 @@ let GridApi = class GridApi {
     }
     /** Set new datasource for Viewport Row Model. */
     setViewportDatasource(viewportDatasource) {
-        if (this.gridOptionsService.isRowModelType('viewport')) {
+        if (this.gos.isRowModelType('viewport')) {
             // this is bad coding, because it's using an interface that's exposed in the enterprise.
             // really we should create an interface in the core for viewportDatasource and let
             // the enterprise implement it, rather than casting to 'any' here
@@ -22288,19 +23035,19 @@ let GridApi = class GridApi {
     setColumnDefs(colDefs, source = "api") {
         this.columnModel.setColumnDefs(colDefs, source);
         // Keep gridOptions.columnDefs in sync
-        this.gridOptionsService.set('columnDefs', colDefs, true, { source });
+        this.gos.set('columnDefs', colDefs, true, { source });
     }
     /** Call to set new auto group column definition. The grid will recreate any auto-group columns if present. */
     setAutoGroupColumnDef(colDef, source = "api") {
-        this.gridOptionsService.set('autoGroupColumnDef', colDef, true, { source });
+        this.gos.set('autoGroupColumnDef', colDef, true, { source });
     }
     /** Call to set new Default Column Definition. */
     setDefaultColDef(colDef, source = "api") {
-        this.gridOptionsService.set('defaultColDef', colDef, true, { source });
+        this.gos.set('defaultColDef', colDef, true, { source });
     }
     /** Call to set new Column Types. */
     setColumnTypes(columnTypes, source = "api") {
-        this.gridOptionsService.set('columnTypes', columnTypes, true, { source });
+        this.gos.set('columnTypes', columnTypes, true, { source });
     }
     expireValueCache() {
         this.valueCache.expire();
@@ -22323,11 +23070,11 @@ let GridApi = class GridApi {
     }
     /** If `true`, the horizontal scrollbar will always be present, even if not required. Otherwise, it will only be displayed when necessary. */
     setAlwaysShowHorizontalScroll(show) {
-        this.gridOptionsService.set('alwaysShowHorizontalScroll', show);
+        this.gos.set('alwaysShowHorizontalScroll', show);
     }
     /** If `true`, the vertical scrollbar will always be present, even if not required. Otherwise it will only be displayed when necessary. */
     setAlwaysShowVerticalScroll(show) {
-        this.gridOptionsService.set('alwaysShowVerticalScroll', show);
+        this.gos.set('alwaysShowVerticalScroll', show);
     }
     /** Performs change detection on all cells, refreshing cells where required. */
     refreshCells(params = {}) {
@@ -22343,13 +23090,13 @@ let GridApi = class GridApi {
         this.rowRenderer.redrawRows(rowNodes);
     }
     setFunctionsReadOnly(readOnly) {
-        this.gridOptionsService.set('functionsReadOnly', readOnly);
+        this.gos.set('functionsReadOnly', readOnly);
     }
     /** Redraws the header. Useful if a column name changes, or something else that changes how the column header is displayed. */
     refreshHeader() {
         this.ctrlsService.getHeaderRowContainerCtrls().forEach(c => c.refresh());
     }
-    /** Returns `true` if any filter is set. This includes quick filter, advanced filter or external filter. */
+    /** Returns `true` if any filter is set. This includes quick filter, column filter, external filter or advanced filter. */
     isAnyFilterPresent() {
         return this.filterManager.isAnyFilterPresent();
     }
@@ -22428,7 +23175,7 @@ let GridApi = class GridApi {
      */
     getSizesForCurrentTheme() {
         return {
-            rowHeight: this.gridOptionsService.getRowHeightAsNumber(),
+            rowHeight: this.gos.getRowHeightAsNumber(),
             headerHeight: this.columnModel.getHeaderHeight()
         };
     }
@@ -22468,11 +23215,11 @@ let GridApi = class GridApi {
     }
     /** Get the current Quick Filter text from the grid, or `undefined` if none is set. */
     getQuickFilter() {
-        return this.gridOptionsService.get('quickFilterText');
+        return this.gos.get('quickFilterText');
     }
     /** Pass a Quick Filter text into the grid for filtering. */
     setQuickFilter(newFilter) {
-        this.gridOptionsService.set('quickFilterText', newFilter);
+        this.gos.set('quickFilterText', newFilter);
     }
     /**
      * @deprecated As of v30, hidden columns are excluded from the Quick Filter by default. To include hidden columns, use `setIncludeHiddenColumnsInQuickFilter` instead.
@@ -22487,7 +23234,39 @@ let GridApi = class GridApi {
      * Set to `true` to include them.
      */
     setIncludeHiddenColumnsInQuickFilter(value) {
-        this.gridOptionsService.set('includeHiddenColumnsInQuickFilter', value);
+        this.gos.set('includeHiddenColumnsInQuickFilter', value);
+    }
+    /** Get the state of the Advanced Filter. Used for saving Advanced Filter state */
+    getAdvancedFilterModel() {
+        if (_modules_moduleRegistry_mjs__WEBPACK_IMPORTED_MODULE_5__["ModuleRegistry"].__assertRegistered(_modules_moduleNames_mjs__WEBPACK_IMPORTED_MODULE_4__["ModuleNames"].AdvancedFilterModule, 'api.getAdvancedFilterModel', this.context.getGridId())) {
+            return this.filterManager.getAdvancedFilterModel();
+        }
+        return null;
+    }
+    /** Set the state of the Advanced Filter. Used for restoring Advanced Filter state */
+    setAdvancedFilterModel(advancedFilterModel) {
+        if (_modules_moduleRegistry_mjs__WEBPACK_IMPORTED_MODULE_5__["ModuleRegistry"].__assertRegistered(_modules_moduleNames_mjs__WEBPACK_IMPORTED_MODULE_4__["ModuleNames"].AdvancedFilterModule, 'api.setAdvancedFilterModel', this.context.getGridId())) {
+            this.filterManager.setAdvancedFilterModel(advancedFilterModel);
+        }
+    }
+    /** Enable/disable the Advanced Filter */
+    setEnableAdvancedFilter(enabled) {
+        this.gos.set('enableAdvancedFilter', enabled);
+    }
+    /**
+     * Updates the `includeHiddenColumnsInAdvancedFilter` grid option.
+     * By default hidden columns are excluded from the Advanced Filter.
+     * Set to `true` to include them.
+     */
+    setIncludeHiddenColumnsInAdvancedFilter(value) {
+        this.gos.set('includeHiddenColumnsInAdvancedFilter', value);
+    }
+    /**
+     * DOM element to use as the parent for the Advanced Filter, to allow it to appear outside of the grid.
+     * Set to `null` to appear inside the grid.
+     */
+    setAdvancedFilterParent(advancedFilterParent) {
+        this.gos.set('advancedFilterParent', advancedFilterParent);
     }
     /**
      * Set all of the provided nodes selection state to the provided value.
@@ -22702,32 +23481,7 @@ let GridApi = class GridApi {
      * If your filter is created asynchronously, `getFilterInstance` will return `null` so you will need to use the `callback` to access the filter instance instead.
      */
     getFilterInstance(key, callback) {
-        const res = this.getFilterInstanceImpl(key, instance => {
-            if (!callback) {
-                return;
-            }
-            const unwrapped = unwrapUserComp(instance);
-            callback(unwrapped);
-        });
-        const unwrapped = unwrapUserComp(res);
-        return unwrapped;
-    }
-    getFilterInstanceImpl(key, callback) {
-        const column = this.columnModel.getPrimaryColumn(key);
-        if (!column) {
-            return undefined;
-        }
-        const filterPromise = this.filterManager.getFilterComponent(column, 'NO_UI');
-        const currentValue = filterPromise && filterPromise.resolveNow(null, filterComp => filterComp);
-        if (currentValue) {
-            setTimeout(callback, 0, currentValue);
-        }
-        else if (filterPromise) {
-            filterPromise.then(comp => {
-                callback(comp);
-            });
-        }
-        return currentValue;
+        return this.filterManager.getFilterInstance(key, callback);
     }
     /** Destroys a filter. Useful to force a particular filter to be created from scratch again. */
     destroyFilter(key) {
@@ -22755,9 +23509,12 @@ let GridApi = class GridApi {
      * Returns the current column definitions.
     */
     getColumnDefs() { return this.columnModel.getColumnDefs(); }
-    /** Informs the grid that a filter has changed. This is typically called after a filter change through one of the filter APIs. */
-    onFilterChanged() {
-        this.filterManager.onFilterChanged();
+    /**
+     * Informs the grid that a filter has changed. This is typically called after a filter change through one of the filter APIs.
+     * @param source The source of the filter change event. If not specified defaults to `'api'`.
+     */
+    onFilterChanged(source = 'api') {
+        this.filterManager.onFilterChanged({ source });
     }
     /**
      * Gets the grid to act as if the sort was changed.
@@ -22766,11 +23523,17 @@ let GridApi = class GridApi {
     onSortChanged() {
         this.sortController.onSortChanged('api');
     }
-    /** Sets the state of all the advanced filters. Provide it with what you get from `getFilterModel()` to restore filter state. */
+    /**
+     * Sets the state of all the column filters. Provide it with what you get from `getFilterModel()` to restore filter state.
+     * If inferring cell data types, and row data is provided asynchronously and is yet to be set,
+     * the filter model will be applied asynchronously after row data is added.
+     * To always perform this synchronously, set `cellDataType = false` on the default column definition,
+     * or provide cell data types for every column.
+     */
     setFilterModel(model) {
         this.filterManager.setFilterModel(model);
     }
-    /** Gets the current state of all the advanced filters. Used for saving filter state. */
+    /** Gets the current state of all the column filters. Used for saving filter state. */
     getFilterModel() {
         return this.filterManager.getFilterModel();
     }
@@ -22788,15 +23551,15 @@ let GridApi = class GridApi {
     }
     /** Sets the `suppressRowDrag` property. */
     setSuppressRowDrag(value) {
-        this.gridOptionsService.set('suppressRowDrag', value);
+        this.gos.set('suppressRowDrag', value);
     }
     /** Sets the `suppressMoveWhenRowDragging` property. */
     setSuppressMoveWhenRowDragging(value) {
-        this.gridOptionsService.set('suppressMoveWhenRowDragging', value);
+        this.gos.set('suppressMoveWhenRowDragging', value);
     }
     /** Sets the `suppressRowClickSelection` property. */
     setSuppressRowClickSelection(value) {
-        this.gridOptionsService.set('suppressRowClickSelection', value);
+        this.gos.set('suppressRowClickSelection', value);
     }
     /** Adds a drop zone outside of the grid where rows can be dropped. */
     addRowDropZone(params) {
@@ -22815,14 +23578,14 @@ let GridApi = class GridApi {
     }
     /** Sets the height in pixels for the row containing the column label header. */
     setHeaderHeight(headerHeight) {
-        this.gridOptionsService.set('headerHeight', headerHeight);
+        this.gos.set('headerHeight', headerHeight);
     }
     /**
      * Switch between layout options: `normal`, `autoHeight`, `print`.
      * Defaults to `normal` if no domLayout provided.
      */
     setDomLayout(domLayout) {
-        this.gridOptionsService.set('domLayout', domLayout);
+        this.gos.set('domLayout', domLayout);
     }
     /** Sets the `enableCellTextSelection` property. */
     setEnableCellTextSelection(selectable) {
@@ -22830,98 +23593,98 @@ let GridApi = class GridApi {
     }
     /** Sets the preferred direction for the selection fill handle. */
     setFillHandleDirection(direction) {
-        this.gridOptionsService.set('fillHandleDirection', direction);
+        this.gos.set('fillHandleDirection', direction);
     }
     /** Sets the height in pixels for the rows containing header column groups. */
     setGroupHeaderHeight(headerHeight) {
-        this.gridOptionsService.set('groupHeaderHeight', headerHeight);
+        this.gos.set('groupHeaderHeight', headerHeight);
     }
     /** Sets the height in pixels for the row containing the floating filters. */
     setFloatingFiltersHeight(headerHeight) {
-        this.gridOptionsService.set('floatingFiltersHeight', headerHeight);
+        this.gos.set('floatingFiltersHeight', headerHeight);
     }
     /** Sets the height in pixels for the row containing the columns when in pivot mode. */
     setPivotHeaderHeight(headerHeight) {
-        this.gridOptionsService.set('pivotHeaderHeight', headerHeight);
+        this.gos.set('pivotHeaderHeight', headerHeight);
     }
     /** Sets the height in pixels for the row containing header column groups when in pivot mode. */
     setPivotGroupHeaderHeight(headerHeight) {
-        this.gridOptionsService.set('pivotGroupHeaderHeight', headerHeight);
+        this.gos.set('pivotGroupHeaderHeight', headerHeight);
     }
     setPivotMode(pivotMode) {
         this.columnModel.setPivotMode(pivotMode);
     }
     setAnimateRows(animateRows) {
-        this.gridOptionsService.set('animateRows', animateRows);
+        this.gos.set('animateRows', animateRows);
     }
     setIsExternalFilterPresent(isExternalFilterPresentFunc) {
-        this.gridOptionsService.set('isExternalFilterPresent', isExternalFilterPresentFunc);
+        this.gos.set('isExternalFilterPresent', isExternalFilterPresentFunc);
     }
     setDoesExternalFilterPass(doesExternalFilterPassFunc) {
-        this.gridOptionsService.set('doesExternalFilterPass', doesExternalFilterPassFunc);
+        this.gos.set('doesExternalFilterPass', doesExternalFilterPassFunc);
     }
     setNavigateToNextCell(navigateToNextCellFunc) {
-        this.gridOptionsService.set('navigateToNextCell', navigateToNextCellFunc);
+        this.gos.set('navigateToNextCell', navigateToNextCellFunc);
     }
     setTabToNextCell(tabToNextCellFunc) {
-        this.gridOptionsService.set('tabToNextCell', tabToNextCellFunc);
+        this.gos.set('tabToNextCell', tabToNextCellFunc);
     }
     setTabToNextHeader(tabToNextHeaderFunc) {
-        this.gridOptionsService.set('tabToNextHeader', tabToNextHeaderFunc);
+        this.gos.set('tabToNextHeader', tabToNextHeaderFunc);
     }
     setNavigateToNextHeader(navigateToNextHeaderFunc) {
-        this.gridOptionsService.set('navigateToNextHeader', navigateToNextHeaderFunc);
+        this.gos.set('navigateToNextHeader', navigateToNextHeaderFunc);
     }
     setRowGroupPanelShow(rowGroupPanelShow) {
-        this.gridOptionsService.set('rowGroupPanelShow', rowGroupPanelShow);
+        this.gos.set('rowGroupPanelShow', rowGroupPanelShow);
     }
     setGetGroupRowAgg(getGroupRowAggFunc) {
-        this.gridOptionsService.set('getGroupRowAgg', getGroupRowAggFunc);
+        this.gos.set('getGroupRowAgg', getGroupRowAggFunc);
     }
     setGetBusinessKeyForNode(getBusinessKeyForNodeFunc) {
-        this.gridOptionsService.set('getBusinessKeyForNode', getBusinessKeyForNodeFunc);
+        this.gos.set('getBusinessKeyForNode', getBusinessKeyForNodeFunc);
     }
     setGetChildCount(getChildCountFunc) {
-        this.gridOptionsService.set('getChildCount', getChildCountFunc);
+        this.gos.set('getChildCount', getChildCountFunc);
     }
     setProcessRowPostCreate(processRowPostCreateFunc) {
-        this.gridOptionsService.set('processRowPostCreate', processRowPostCreateFunc);
+        this.gos.set('processRowPostCreate', processRowPostCreateFunc);
     }
     setGetRowId(getRowIdFunc) {
-        this.gridOptionsService.set('getRowId', getRowIdFunc);
+        this.gos.set('getRowId', getRowIdFunc);
     }
     setGetRowClass(rowClassFunc) {
-        this.gridOptionsService.set('getRowClass', rowClassFunc);
+        this.gos.set('getRowClass', rowClassFunc);
     }
     setIsFullWidthRow(isFullWidthRowFunc) {
-        this.gridOptionsService.set('isFullWidthRow', isFullWidthRowFunc);
+        this.gos.set('isFullWidthRow', isFullWidthRowFunc);
     }
     setIsRowSelectable(isRowSelectableFunc) {
-        this.gridOptionsService.set('isRowSelectable', isRowSelectableFunc);
+        this.gos.set('isRowSelectable', isRowSelectableFunc);
     }
     setIsRowMaster(isRowMasterFunc) {
-        this.gridOptionsService.set('isRowMaster', isRowMasterFunc);
+        this.gos.set('isRowMaster', isRowMasterFunc);
     }
     setPostSortRows(postSortRowsFunc) {
-        this.gridOptionsService.set('postSortRows', postSortRowsFunc);
+        this.gos.set('postSortRows', postSortRowsFunc);
     }
     setGetDocument(getDocumentFunc) {
-        this.gridOptionsService.set('getDocument', getDocumentFunc);
+        this.gos.set('getDocument', getDocumentFunc);
     }
     setGetContextMenuItems(getContextMenuItemsFunc) {
-        this.gridOptionsService.set('getContextMenuItems', getContextMenuItemsFunc);
+        this.gos.set('getContextMenuItems', getContextMenuItemsFunc);
     }
     setGetMainMenuItems(getMainMenuItemsFunc) {
-        this.gridOptionsService.set('getMainMenuItems', getMainMenuItemsFunc);
+        this.gos.set('getMainMenuItems', getMainMenuItemsFunc);
     }
     setProcessCellForClipboard(processCellForClipboardFunc) {
-        this.gridOptionsService.set('processCellForClipboard', processCellForClipboardFunc);
+        this.gos.set('processCellForClipboard', processCellForClipboardFunc);
     }
     setSendToClipboard(sendToClipboardFunc) {
-        this.gridOptionsService.set('sendToClipboard', sendToClipboardFunc);
+        this.gos.set('sendToClipboard', sendToClipboardFunc);
     }
     setProcessCellFromClipboard(processCellFromClipboardFunc) {
-        this.gridOptionsService.set('processCellFromClipboard', processCellFromClipboardFunc);
+        this.gos.set('processCellFromClipboard', processCellFromClipboardFunc);
     }
     /** @deprecated v28 use `setProcessPivotResultColDef` instead */
     setProcessSecondaryColDef(processSecondaryColDefFunc) {
@@ -22934,22 +23697,22 @@ let GridApi = class GridApi {
         this.setProcessPivotResultColGroupDef(processSecondaryColGroupDefFunc);
     }
     setProcessPivotResultColDef(processPivotResultColDefFunc) {
-        this.gridOptionsService.set('processPivotResultColDef', processPivotResultColDefFunc);
+        this.gos.set('processPivotResultColDef', processPivotResultColDefFunc);
     }
     setProcessPivotResultColGroupDef(processPivotResultColGroupDefFunc) {
-        this.gridOptionsService.set('processPivotResultColGroupDef', processPivotResultColGroupDefFunc);
+        this.gos.set('processPivotResultColGroupDef', processPivotResultColGroupDefFunc);
     }
     setPostProcessPopup(postProcessPopupFunc) {
-        this.gridOptionsService.set('postProcessPopup', postProcessPopupFunc);
+        this.gos.set('postProcessPopup', postProcessPopupFunc);
     }
     setInitialGroupOrderComparator(initialGroupOrderComparatorFunc) {
-        this.gridOptionsService.set('initialGroupOrderComparator', initialGroupOrderComparatorFunc);
+        this.gos.set('initialGroupOrderComparator', initialGroupOrderComparatorFunc);
     }
     setGetChartToolbarItems(getChartToolbarItemsFunc) {
-        this.gridOptionsService.set('getChartToolbarItems', getChartToolbarItemsFunc);
+        this.gos.set('getChartToolbarItems', getChartToolbarItemsFunc);
     }
     setPaginationNumberFormatter(paginationNumberFormatterFunc) {
-        this.gridOptionsService.set('paginationNumberFormatter', paginationNumberFormatterFunc);
+        this.gos.set('paginationNumberFormatter', paginationNumberFormatterFunc);
     }
     /** @deprecated v28 use setGetServerSideGroupLevelParams instead */
     setGetServerSideStoreParams(getServerSideStoreParamsFunc) {
@@ -22957,25 +23720,25 @@ let GridApi = class GridApi {
         this.setGetServerSideGroupLevelParams(getServerSideStoreParamsFunc);
     }
     setGetServerSideGroupLevelParams(getServerSideGroupLevelParamsFunc) {
-        this.gridOptionsService.set('getServerSideGroupLevelParams', getServerSideGroupLevelParamsFunc);
+        this.gos.set('getServerSideGroupLevelParams', getServerSideGroupLevelParamsFunc);
     }
     setIsServerSideGroupOpenByDefault(isServerSideGroupOpenByDefaultFunc) {
-        this.gridOptionsService.set('isServerSideGroupOpenByDefault', isServerSideGroupOpenByDefaultFunc);
+        this.gos.set('isServerSideGroupOpenByDefault', isServerSideGroupOpenByDefaultFunc);
     }
     setIsApplyServerSideTransaction(isApplyServerSideTransactionFunc) {
-        this.gridOptionsService.set('isApplyServerSideTransaction', isApplyServerSideTransactionFunc);
+        this.gos.set('isApplyServerSideTransaction', isApplyServerSideTransactionFunc);
     }
     setIsServerSideGroup(isServerSideGroupFunc) {
-        this.gridOptionsService.set('isServerSideGroup', isServerSideGroupFunc);
+        this.gos.set('isServerSideGroup', isServerSideGroupFunc);
     }
     setGetServerSideGroupKey(getServerSideGroupKeyFunc) {
-        this.gridOptionsService.set('getServerSideGroupKey', getServerSideGroupKeyFunc);
+        this.gos.set('getServerSideGroupKey', getServerSideGroupKeyFunc);
     }
     setGetRowStyle(rowStyleFunc) {
-        this.gridOptionsService.set('getRowStyle', rowStyleFunc);
+        this.gos.set('getRowStyle', rowStyleFunc);
     }
     setGetRowHeight(rowHeightFunc) {
-        this.gridOptionsService.set('getRowHeight', rowHeightFunc);
+        this.gos.set('getRowHeight', rowHeightFunc);
     }
     assertSideBarLoaded(apiMethod) {
         return _modules_moduleRegistry_mjs__WEBPACK_IMPORTED_MODULE_5__["ModuleRegistry"].__assertRegistered(_modules_moduleNames_mjs__WEBPACK_IMPORTED_MODULE_4__["ModuleNames"].SideBarModule, 'api.' + apiMethod, this.context.getGridId());
@@ -23041,10 +23804,10 @@ let GridApi = class GridApi {
     }
     /** Resets the side bar to the provided configuration. The parameter is the same as the sideBar grid property. The side bar is re-created from scratch with the new config. */
     setSideBar(def) {
-        this.gridOptionsService.set('sideBar', def);
+        this.gos.set('sideBar', def);
     }
     setSuppressClipboardPaste(value) {
-        this.gridOptionsService.set('suppressClipboardPaste', value);
+        this.gos.set('suppressClipboardPaste', value);
     }
     /** Tells the grid to recalculate the row heights. */
     resetRowHeights() {
@@ -23057,20 +23820,20 @@ let GridApi = class GridApi {
         }
     }
     setGroupRemoveSingleChildren(value) {
-        this.gridOptionsService.set('groupRemoveSingleChildren', value);
+        this.gos.set('groupRemoveSingleChildren', value);
     }
     setGroupRemoveLowestSingleChildren(value) {
-        this.gridOptionsService.set('groupRemoveLowestSingleChildren', value);
+        this.gos.set('groupRemoveLowestSingleChildren', value);
     }
     setGroupDisplayType(value) {
-        this.gridOptionsService.set('groupDisplayType', value);
+        this.gos.set('groupDisplayType', value);
     }
     setRowClass(className) {
-        this.gridOptionsService.set('rowClass', className);
+        this.gos.set('rowClass', className);
     }
     /** Sets the `deltaSort` property */
     setDeltaSort(enable) {
-        this.gridOptionsService.set('deltaSort', enable);
+        this.gos.set('deltaSort', enable);
     }
     /**
      * Sets the `rowCount` and `maxRowFound` properties.
@@ -23119,22 +23882,22 @@ let GridApi = class GridApi {
     }
     /** Add an event listener for the specified `eventType`. Works similar to `addEventListener` for a browser DOM element. */
     addEventListener(eventType, listener) {
-        const async = this.gridOptionsService.useAsyncEvents();
+        const async = this.gos.useAsyncEvents();
         this.eventService.addEventListener(eventType, listener, async);
     }
     /** Add an event listener for all event types coming from the grid. */
     addGlobalListener(listener) {
-        const async = this.gridOptionsService.useAsyncEvents();
+        const async = this.gos.useAsyncEvents();
         this.eventService.addGlobalListener(listener, async);
     }
     /** Remove an event listener. */
     removeEventListener(eventType, listener) {
-        const async = this.gridOptionsService.useAsyncEvents();
+        const async = this.gos.useAsyncEvents();
         this.eventService.removeEventListener(eventType, listener, async);
     }
     /** Remove a global event listener. */
     removeGlobalListener(listener) {
-        const async = this.gridOptionsService.useAsyncEvents();
+        const async = this.gos.useAsyncEvents();
         this.eventService.removeGlobalListener(listener, async);
     }
     dispatchEvent(event) {
@@ -23349,7 +24112,7 @@ let GridApi = class GridApi {
     }
     /** DOM element to use as the popup parent for grid popups (context menu, column menu etc). */
     setPopupParent(ePopupParent) {
-        this.gridOptionsService.set('popupParent', ePopupParent);
+        this.gos.set('popupParent', ePopupParent);
     }
     /** Navigates the grid focus to the next cell, as if tabbing. */
     tabToNextCell(event) {
@@ -23398,6 +24161,9 @@ let GridApi = class GridApi {
         const cell = this.navigationService.getCellByPosition(cellPosition);
         if (!cell) {
             return;
+        }
+        if (!this.focusService.isCellFocused(cellPosition)) {
+            this.focusService.setFocusedCell(cellPosition);
         }
         cell.startRowOrCellEdit(params.key);
     }
@@ -23475,7 +24241,7 @@ let GridApi = class GridApi {
         this.clientSideRowModel.flushAsyncTransactions();
     }
     setSuppressModelUpdateAfterUpdateTransaction(value) {
-        this.gridOptionsService.set('suppressModelUpdateAfterUpdateTransaction', value);
+        this.gos.set('suppressModelUpdateAfterUpdateTransaction', value);
     }
     /**
      * Marks all the currently loaded blocks in the cache for reload.
@@ -23577,7 +24343,7 @@ let GridApi = class GridApi {
     }
     /** Resets the data type definitions. This will update the columns in the grid. */
     setDataTypeDefinitions(dataTypeDefinitions) {
-        this.gridOptionsService.set('dataTypeDefinitions', dataTypeDefinitions);
+        this.gos.set('dataTypeDefinitions', dataTypeDefinitions);
     }
     /**
      * Set whether the grid paginates the data or not.
@@ -23585,7 +24351,7 @@ let GridApi = class GridApi {
      *  - `false` to disable pagination
      */
     setPagination(value) {
-        this.gridOptionsService.set('pagination', value);
+        this.gos.set('pagination', value);
     }
     /**
      * Returns `true` when the last page is known.
@@ -23601,7 +24367,7 @@ let GridApi = class GridApi {
     }
     /** Sets the `paginationPageSize`, then re-paginates the grid so the changes are applied immediately. */
     paginationSetPageSize(size) {
-        this.gridOptionsService.set('paginationPageSize', size);
+        this.gos.set('paginationPageSize', size);
     }
     /** Returns the 0-based index of the page which is showing. */
     paginationGetCurrentPage() {
@@ -23662,7 +24428,7 @@ __decorate([
 ], GridApi.prototype, "selectionService", void 0);
 __decorate([
     Object(_context_context_mjs__WEBPACK_IMPORTED_MODULE_0__["Autowired"])('gridOptionsService')
-], GridApi.prototype, "gridOptionsService", void 0);
+], GridApi.prototype, "gos", void 0);
 __decorate([
     Object(_context_context_mjs__WEBPACK_IMPORTED_MODULE_0__["Autowired"])('valueService')
 ], GridApi.prototype, "valueService", void 0);
@@ -24168,6 +24934,7 @@ class GridBodyCtrl extends _context_beanStub_mjs__WEBPACK_IMPORTED_MODULE_0__["B
         this.setFloatingHeights();
         this.disableBrowserDragging();
         this.addStopEditingWhenGridLosesFocus();
+        this.filterManager.setupAdvancedFilterHeaderComp(eTop);
         this.ctrlsService.registerGridBodyCtrl(this);
     }
     getComp() {
@@ -24265,7 +25032,7 @@ class GridBodyCtrl extends _context_beanStub_mjs__WEBPACK_IMPORTED_MODULE_0__["B
         viewports.forEach(viewport => this.addManagedListener(viewport, 'focusout', focusOutListener));
     }
     updateRowCount() {
-        const headerCount = this.headerNavigationService.getHeaderRowCount();
+        const headerCount = this.headerNavigationService.getHeaderRowCount() + this.filterManager.getHeaderRowCount();
         const rowCount = this.rowModel.isLastRowIndexKnown() ? this.rowModel.getRowCount() : -1;
         const total = rowCount === -1 ? -1 : (headerCount + rowCount);
         this.comp.setRowCount(total);
@@ -24433,7 +25200,7 @@ class GridBodyCtrl extends _context_beanStub_mjs__WEBPACK_IMPORTED_MODULE_0__["B
     }
     setStickyTopOffsetTop() {
         const headerCtrl = this.ctrlsService.getGridHeaderCtrl();
-        const headerHeight = headerCtrl.getHeaderHeight();
+        const headerHeight = headerCtrl.getHeaderHeight() + this.filterManager.getHeaderHeight();
         const pinnedTopHeight = this.pinnedRowModel.getPinnedTopTotalHeight();
         let height = 0;
         if (headerHeight > 0) {
@@ -24525,6 +25292,9 @@ __decorate([
 __decorate([
     Object(_context_context_mjs__WEBPACK_IMPORTED_MODULE_1__["Autowired"])('rowModel')
 ], GridBodyCtrl.prototype, "rowModel", void 0);
+__decorate([
+    Object(_context_context_mjs__WEBPACK_IMPORTED_MODULE_1__["Autowired"])('filterManager')
+], GridBodyCtrl.prototype, "filterManager", void 0);
 
 
 /***/ }),
@@ -24950,7 +25720,7 @@ class GridBodyScrollFeature extends _context_beanStub_mjs__WEBPACK_IMPORTED_MODU
             }
             if (newScrollPosition !== null) {
                 this.setVerticalScrollPosition(newScrollPosition);
-                this.rowRenderer.redraw();
+                this.rowRenderer.redraw({ afterScroll: true });
             }
             // the row can get shifted if during the rendering (during rowRenderer.redraw()),
             // the height of a row changes due to lazy calculation of row heights when using
@@ -25975,7 +26745,7 @@ class RowContainerCtrl extends _context_beanStub_mjs__WEBPACK_IMPORTED_MODULE_0_
             case RowContainerName.BOTTOM_FULL_WIDTH:
                 return this.rowRenderer.getBottomRowCtrls();
             default:
-                return this.rowRenderer.getRowCtrls();
+                return this.rowRenderer.getCentreRowCtrls();
         }
     }
 }
@@ -26435,7 +27205,9 @@ class RowCtrl extends _context_beanStub_mjs__WEBPACK_IMPORTED_MODULE_0__["BeanSt
             fullWidth: false
         };
         this.lastMouseDownOnDragger = false;
+        this.emptyStyle = {};
         this.updateColumnListsPending = false;
+        this.rowId = null;
         this.businessKeySanitised = null;
         this.beans = beans;
         this.gridOptionsService = beans.gridOptionsService;
@@ -26444,11 +27216,16 @@ class RowCtrl extends _context_beanStub_mjs__WEBPACK_IMPORTED_MODULE_0__["BeanSt
         this.useAnimationFrameForCreate = useAnimationFrameForCreate;
         this.printLayout = printLayout;
         this.instanceId = rowNode.id + '-' + instanceIdSequence++;
+        this.rowId = Object(_utils_string_mjs__WEBPACK_IMPORTED_MODULE_12__["escapeString"])(rowNode.id);
+        if (this.isFullWidth() && !this.gridOptionsService.is('suppressCellFocus')) {
+            this.tabIndex = -1;
+        }
         this.setAnimateFlags(animateIn);
         this.initRowBusinessKey();
         this.rowFocused = beans.focusService.isRowFocused(this.rowNode.rowIndex, this.rowNode.rowPinned);
         this.rowLevel = beans.rowCssClassCalculator.calculateRowLevel(this.rowNode);
         this.setRowType();
+        this.rowStyles = this.processStylesFromGridOptions();
         this.addListeners();
     }
     initRowBusinessKey() {
@@ -26461,6 +27238,15 @@ class RowCtrl extends _context_beanStub_mjs__WEBPACK_IMPORTED_MODULE_0__["BeanSt
         }
         const businessKey = this.businessKeyForNodeFunc(this.rowNode);
         this.businessKeySanitised = Object(_utils_string_mjs__WEBPACK_IMPORTED_MODULE_12__["escapeString"])(businessKey);
+    }
+    getRowId() {
+        return this.rowId;
+    }
+    getRowStyles() {
+        return this.rowStyles;
+    }
+    getTabIndex() {
+        return this.tabIndex;
     }
     isSticky() {
         return this.rowNode.sticky;
@@ -26522,24 +27308,20 @@ class RowCtrl extends _context_beanStub_mjs__WEBPACK_IMPORTED_MODULE_0__["BeanSt
         this.onRowHeightChanged(gui);
         this.updateRowIndexes(gui);
         this.setFocusedClasses(gui);
-        this.setStylesFromGridOptions(gui);
+        this.setStylesFromGridOptions(false, gui); // no need to calculate styles already set in constructor
         if (gos.isRowSelection() && this.rowNode.selectable) {
             this.onRowSelected(gui);
         }
         this.updateColumnLists(!this.useAnimationFrameForCreate);
         const comp = gui.rowComp;
-        comp.setRole('row');
         const initialRowClasses = this.getInitialRowClasses(gui.containerType);
         initialRowClasses.forEach(name => comp.addOrRemoveCssClass(name, true));
         this.executeSlideAndFadeAnimations(gui);
         if (this.rowNode.group) {
             Object(_utils_aria_mjs__WEBPACK_IMPORTED_MODULE_7__["setAriaExpanded"])(gui.element, this.rowNode.expanded == true);
         }
-        this.setRowCompRowId(comp);
+        this.setRowCompRowId(comp, false); // false = don't update the id, as we already set it
         this.setRowCompRowBusinessKey(comp);
-        if (this.isFullWidth() && !this.gridOptionsService.is('suppressCellFocus')) {
-            comp.setTabIndex(-1);
-        }
         // DOM DATA
         gos.setDomData(gui.element, RowCtrl.DOM_DATA_KEY_ROW_CTRL, this);
         this.addDestroyFunc(() => gos.setDomData(gui.element, RowCtrl.DOM_DATA_KEY_ROW_CTRL, null));
@@ -26579,12 +27361,17 @@ class RowCtrl extends _context_beanStub_mjs__WEBPACK_IMPORTED_MODULE_0__["BeanSt
         }
         comp.setRowBusinessKey(this.businessKeySanitised);
     }
-    setRowCompRowId(comp) {
-        const rowId = Object(_utils_string_mjs__WEBPACK_IMPORTED_MODULE_12__["escapeString"])(this.rowNode.id);
-        if (rowId == null) {
+    getBusinessKey() {
+        return this.businessKeySanitised;
+    }
+    setRowCompRowId(comp, updateId) {
+        if (updateId) {
+            this.rowId = Object(_utils_string_mjs__WEBPACK_IMPORTED_MODULE_12__["escapeString"])(this.rowNode.id);
+        }
+        if (this.rowId == null) {
             return;
         }
-        comp.setRowId(rowId);
+        comp.setRowId(this.rowId);
     }
     executeSlideAndFadeAnimations(gui) {
         const { containerType } = gui;
@@ -26756,8 +27543,33 @@ class RowCtrl extends _context_beanStub_mjs__WEBPACK_IMPORTED_MODULE_0__["BeanSt
         });
         return res;
     }
-    updateColumnListsImpl(useFlushSync = false) {
+    updateColumnListsImpl(useFlushSync) {
         this.updateColumnListsPending = false;
+        this.createAllCellCtrls();
+        this.setCellCtrls(useFlushSync);
+    }
+    setCellCtrls(useFlushSync) {
+        this.allRowGuis.forEach(item => {
+            const cellControls = this.getCellCtrlsForContainer(item.containerType);
+            item.rowComp.setCellCtrls(cellControls, useFlushSync);
+        });
+    }
+    getCellCtrlsForContainer(containerType) {
+        switch (containerType) {
+            case _gridBodyComp_rowContainer_rowContainerCtrl_mjs__WEBPACK_IMPORTED_MODULE_4__["RowContainerType"].LEFT:
+                return this.leftCellCtrls.list;
+            case _gridBodyComp_rowContainer_rowContainerCtrl_mjs__WEBPACK_IMPORTED_MODULE_4__["RowContainerType"].RIGHT:
+                return this.rightCellCtrls.list;
+            case _gridBodyComp_rowContainer_rowContainerCtrl_mjs__WEBPACK_IMPORTED_MODULE_4__["RowContainerType"].FULL_WIDTH:
+                return [];
+            case _gridBodyComp_rowContainer_rowContainerCtrl_mjs__WEBPACK_IMPORTED_MODULE_4__["RowContainerType"].CENTER:
+                return this.centerCellCtrls.list;
+            default:
+                const exhaustiveCheck = containerType;
+                throw new Error(`Unhandled case: ${exhaustiveCheck}`);
+        }
+    }
+    createAllCellCtrls() {
         const columnModel = this.beans.columnModel;
         if (this.printLayout) {
             this.centerCellCtrls = this.createCellCtrls(this.centerCellCtrls, columnModel.getAllDisplayedColumns());
@@ -26772,11 +27584,6 @@ class RowCtrl extends _context_beanStub_mjs__WEBPACK_IMPORTED_MODULE_0__["BeanSt
             const rightCols = columnModel.getDisplayedRightColumnsForRow(this.rowNode);
             this.rightCellCtrls = this.createCellCtrls(this.rightCellCtrls, rightCols, 'right');
         }
-        this.allRowGuis.forEach(item => {
-            const cellControls = item.containerType === _gridBodyComp_rowContainer_rowContainerCtrl_mjs__WEBPACK_IMPORTED_MODULE_4__["RowContainerType"].LEFT ? this.leftCellCtrls :
-                item.containerType === _gridBodyComp_rowContainer_rowContainerCtrl_mjs__WEBPACK_IMPORTED_MODULE_4__["RowContainerType"].RIGHT ? this.rightCellCtrls : this.centerCellCtrls;
-            item.rowComp.setCellCtrls(cellControls.list, useFlushSync);
-        });
     }
     isCellEligibleToBeRemoved(cellCtrl, nextContainerPinned) {
         const REMOVE_CELL = true;
@@ -26798,14 +27605,16 @@ class RowCtrl extends _context_beanStub_mjs__WEBPACK_IMPORTED_MODULE_0__["BeanSt
         }
         return REMOVE_CELL;
     }
+    getDomOrder() {
+        const isEnsureDomOrder = this.gridOptionsService.is('ensureDomOrder');
+        return isEnsureDomOrder || this.gridOptionsService.isDomLayout('print');
+    }
     listenOnDomOrder(gui) {
         const listener = () => {
-            const isEnsureDomOrder = this.gridOptionsService.is('ensureDomOrder');
-            const isPrintLayout = this.gridOptionsService.isDomLayout('print');
-            gui.rowComp.setDomOrder(isEnsureDomOrder || isPrintLayout);
+            gui.rowComp.setDomOrder(this.getDomOrder());
         };
         this.addManagedPropertyListener('domLayout', listener);
-        listener();
+        this.addManagedPropertyListener('ensureDomOrder', listener);
     }
     setAnimateFlags(animateIn) {
         if (this.isSticky() || !animateIn) {
@@ -26875,6 +27684,10 @@ class RowCtrl extends _context_beanStub_mjs__WEBPACK_IMPORTED_MODULE_0__["BeanSt
         this.addManagedListener(this.rowNode, _entities_rowNode_mjs__WEBPACK_IMPORTED_MODULE_1__["RowNode"].EVENT_TOP_CHANGED, this.onTopChanged.bind(this));
         this.addManagedListener(this.rowNode, _entities_rowNode_mjs__WEBPACK_IMPORTED_MODULE_1__["RowNode"].EVENT_EXPANDED_CHANGED, this.updateExpandedCss.bind(this));
         this.addManagedListener(this.rowNode, _entities_rowNode_mjs__WEBPACK_IMPORTED_MODULE_1__["RowNode"].EVENT_HAS_CHILDREN_CHANGED, this.updateExpandedCss.bind(this));
+        if (this.rowNode.detail) {
+            // if the master row node has updated data, we also want to try to refresh the detail row
+            this.addManagedListener(this.rowNode.parent, _entities_rowNode_mjs__WEBPACK_IMPORTED_MODULE_1__["RowNode"].EVENT_DATA_CHANGED, this.onRowNodeDataChanged.bind(this));
+        }
         this.addManagedListener(this.rowNode, _entities_rowNode_mjs__WEBPACK_IMPORTED_MODULE_1__["RowNode"].EVENT_DATA_CHANGED, this.onRowNodeDataChanged.bind(this));
         this.addManagedListener(this.rowNode, _entities_rowNode_mjs__WEBPACK_IMPORTED_MODULE_1__["RowNode"].EVENT_CELL_CHANGED, this.onRowNodeCellChanged.bind(this));
         this.addManagedListener(this.rowNode, _entities_rowNode_mjs__WEBPACK_IMPORTED_MODULE_1__["RowNode"].EVENT_HIGHLIGHT_CHANGED, this.onRowNodeHighlightChanged.bind(this));
@@ -26904,12 +27717,11 @@ class RowCtrl extends _context_beanStub_mjs__WEBPACK_IMPORTED_MODULE_0__["BeanSt
         });
     }
     onRowNodeDataChanged(event) {
-        // if master row has updated, then need to also try to refresh the detail node
-        if (this.rowNode.detailNode) {
-            this.beans.rowRenderer.refreshFullWidthRow(this.rowNode.detailNode);
-        }
         if (this.isFullWidth()) {
-            this.beans.rowRenderer.refreshFullWidthRow(this.rowNode);
+            const refresh = this.refreshFullWidth();
+            if (!refresh) {
+                this.beans.rowRenderer.redrawRow(this.rowNode);
+            }
             return;
         }
         // if this is an update, we want to refresh, as this will allow the user to put in a transition
@@ -26921,7 +27733,7 @@ class RowCtrl extends _context_beanStub_mjs__WEBPACK_IMPORTED_MODULE_0__["BeanSt
         }));
         // as data has changed update the dom row id attributes
         this.allRowGuis.forEach(gui => {
-            this.setRowCompRowId(gui.rowComp);
+            this.setRowCompRowId(gui.rowComp, true);
             this.updateRowBusinessKey();
             this.setRowCompRowBusinessKey(gui.rowComp);
         });
@@ -26939,7 +27751,7 @@ class RowCtrl extends _context_beanStub_mjs__WEBPACK_IMPORTED_MODULE_0__["BeanSt
         this.postProcessCss();
     }
     postProcessCss() {
-        this.setStylesFromGridOptions();
+        this.setStylesFromGridOptions(true);
         this.postProcessClassesFromGridOptions();
         this.postProcessRowClassRules();
         this.postProcessRowDragging();
@@ -27346,9 +28158,11 @@ class RowCtrl extends _context_beanStub_mjs__WEBPACK_IMPORTED_MODULE_0__["BeanSt
             this.allRowGuis.forEach(gui => gui.rowComp.addOrRemoveCssClass(className, false));
         });
     }
-    setStylesFromGridOptions(gui) {
-        const rowStyles = this.processStylesFromGridOptions();
-        this.forEachGui(gui, gui => gui.rowComp.setUserStyles(rowStyles));
+    setStylesFromGridOptions(updateStyles, gui) {
+        if (updateStyles) {
+            this.rowStyles = this.processStylesFromGridOptions();
+        }
+        this.forEachGui(gui, gui => gui.rowComp.setUserStyles(this.rowStyles));
     }
     getPinnedForContainer(rowContainerType) {
         const pinned = rowContainerType === _gridBodyComp_rowContainer_rowContainerCtrl_mjs__WEBPACK_IMPORTED_MODULE_4__["RowContainerType"].LEFT
@@ -27393,7 +28207,11 @@ class RowCtrl extends _context_beanStub_mjs__WEBPACK_IMPORTED_MODULE_0__["BeanSt
             };
             rowStyleFuncResult = rowStyleFunc(params);
         }
-        return Object.assign({}, rowStyle, rowStyleFuncResult);
+        if (rowStyleFuncResult || rowStyle) {
+            return Object.assign({}, rowStyle, rowStyleFuncResult);
+        }
+        // Return constant reference for React
+        return this.emptyStyle;
     }
     onRowSelected(gui) {
         // Treat undefined as false, if we pass undefined down it gets treated as toggle class, rather than explicitly
@@ -27464,8 +28282,12 @@ class RowCtrl extends _context_beanStub_mjs__WEBPACK_IMPORTED_MODULE_0__["BeanSt
         return this.beans.frameworkOverrides;
     }
     forEachGui(gui, callback) {
-        const list = gui ? [gui] : this.allRowGuis;
-        list.forEach(callback);
+        if (gui) {
+            callback(gui);
+        }
+        else {
+            this.allRowGuis.forEach(callback);
+        }
     }
     onRowHeightChanged(gui) {
         // check for exists first - if the user is resetting the row height, then
@@ -27685,9 +28507,12 @@ class RowCtrl extends _context_beanStub_mjs__WEBPACK_IMPORTED_MODULE_0__["BeanSt
             this.postProcessCss();
         }
     }
+    getRowIndex() {
+        return this.rowNode.getRowIndexString();
+    }
     updateRowIndexes(gui) {
         const rowIndexStr = this.rowNode.getRowIndexString();
-        const headerRowCount = this.beans.headerNavigationService.getHeaderRowCount();
+        const headerRowCount = this.beans.headerNavigationService.getHeaderRowCount() + this.beans.filterManager.getHeaderRowCount();
         const rowIsEven = this.rowNode.rowIndex % 2 === 0;
         const ariaRowIndex = headerRowCount + this.rowNode.rowIndex + 1;
         this.forEachGui(gui, c => {
@@ -27787,8 +28612,15 @@ class CellCtrl extends _context_beanStub_mjs__WEBPACK_IMPORTED_MODULE_3__["BeanS
         this.rowCtrl = rowCtrl;
         // unique id to this instance, including the column ID to help with debugging in React as it's used in 'key'
         this.instanceId = column.getId() + '-' + instanceIdSequence++;
+        const colDef = this.column.getColDef();
+        this.colIdSanitised = Object(_utils_string_mjs__WEBPACK_IMPORTED_MODULE_5__["escapeString"])(this.column.getId());
+        if (!this.beans.gridOptionsService.is('suppressCellFocus')) {
+            this.tabIndex = -1;
+        }
+        this.isCellRenderer = colDef.cellRenderer != null || colDef.cellRendererSelector != null;
         this.createCellPosition();
         this.addFeatures();
+        this.updateAndFormatValue(true);
     }
     shouldRestoreFocus() {
         return this.beans.focusService.shouldRestoreFocus(this.cellPosition);
@@ -27855,11 +28687,8 @@ class CellCtrl extends _context_beanStub_mjs__WEBPACK_IMPORTED_MODULE_3__["BeanS
         this.cellComp = comp;
         this.eGui = eGui;
         this.printLayout = printLayout;
-        // we force to make sure formatter gets called at least once,
-        // even if value has not changed (is is undefined)
-        this.updateAndFormatValue(true);
         this.addDomData();
-        this.onCellFocused();
+        this.onCellFocused(this.focusEventToRestore);
         this.applyStaticCssClasses();
         this.setWrapText();
         this.onFirstRightPinnedChanged();
@@ -27870,15 +28699,9 @@ class CellCtrl extends _context_beanStub_mjs__WEBPACK_IMPORTED_MODULE_3__["BeanS
             this.setupAutoHeight(eCellWrapper);
         }
         this.setAriaColIndex();
-        if (!this.beans.gridOptionsService.is('suppressCellFocus')) {
-            this.cellComp.setTabIndex(-1);
-        }
-        const colIdSanitised = Object(_utils_string_mjs__WEBPACK_IMPORTED_MODULE_5__["escapeString"])(this.column.getId());
-        this.cellComp.setColId(colIdSanitised);
-        this.cellComp.setRole('gridcell');
         (_a = this.cellPositionFeature) === null || _a === void 0 ? void 0 : _a.setComp(eGui);
         (_b = this.cellCustomStyleFeature) === null || _b === void 0 ? void 0 : _b.setComp(comp);
-        (_c = this.tooltipFeature) === null || _c === void 0 ? void 0 : _c.setComp(comp);
+        (_c = this.tooltipFeature) === null || _c === void 0 ? void 0 : _c.setComp(eGui);
         (_d = this.cellKeyboardListenerFeature) === null || _d === void 0 ? void 0 : _d.setComp(this.eGui);
         if (this.cellRangeFeature) {
             this.cellRangeFeature.setComp(comp, eGui);
@@ -27943,10 +28766,34 @@ class CellCtrl extends _context_beanStub_mjs__WEBPACK_IMPORTED_MODULE_3__["BeanS
     getInstanceId() {
         return this.instanceId;
     }
+    getIncludeSelection() {
+        return this.includeSelection;
+    }
+    getIncludeRowDrag() {
+        return this.includeRowDrag;
+    }
+    getIncludeDndSource() {
+        return this.includeDndSource;
+    }
+    getColumnIdSanitised() {
+        return this.colIdSanitised;
+    }
+    getTabIndex() {
+        return this.tabIndex;
+    }
+    getIsCellRenderer() {
+        return this.isCellRenderer;
+    }
+    getValueToDisplay() {
+        return this.valueFormatted != null ? this.valueFormatted : this.value;
+    }
     showValue(forceNewCellRendererInstance = false) {
-        const valueToDisplay = this.valueFormatted != null ? this.valueFormatted : this.value;
-        const params = this.createCellRendererParams();
-        const compDetails = this.beans.userComponentFactory.getCellRendererDetails(this.column.getColDef(), params);
+        const valueToDisplay = this.getValueToDisplay();
+        let compDetails;
+        if (this.isCellRenderer) {
+            const params = this.createCellRendererParams();
+            compDetails = this.beans.userComponentFactory.getCellRendererDetails(this.column.getColDef(), params);
+        }
         this.cellComp.setRenderDetails(compDetails, valueToDisplay, forceNewCellRendererInstance);
         this.refreshHandle();
     }
@@ -28245,6 +29092,9 @@ class CellCtrl extends _context_beanStub_mjs__WEBPACK_IMPORTED_MODULE_3__["BeanS
     }
     animateCell(cssName, flashDelay, fadeDelay) {
         var _a, _b;
+        if (!this.cellComp) {
+            return;
+        }
         const fullName = `ag-cell-${cssName}`;
         const animationFullName = `ag-cell-${cssName}-animation`;
         const { gridOptionsService } = this.beans;
@@ -28292,8 +29142,8 @@ class CellCtrl extends _context_beanStub_mjs__WEBPACK_IMPORTED_MODULE_3__["BeanS
         return this.column.isSuppressFillHandle();
     }
     formatValue(value) {
-        const res = this.callValueFormatter(value);
-        return res != null ? res : value;
+        var _a;
+        return (_a = this.callValueFormatter(value)) !== null && _a !== void 0 ? _a : value;
     }
     callValueFormatter(value) {
         return this.beans.valueFormatterService.formatValue(this.column, this.rowNode, value);
@@ -28489,10 +29339,20 @@ class CellCtrl extends _context_beanStub_mjs__WEBPACK_IMPORTED_MODULE_3__["BeanS
         this.cellComp.addOrRemoveCssClass(CSS_CELL_LAST_LEFT_PINNED, lastLeftPinned);
     }
     onCellFocused(event) {
-        if (!this.cellComp || this.beans.gridOptionsService.is('suppressCellFocus')) {
+        if (this.beans.gridOptionsService.is('suppressCellFocus')) {
             return;
         }
         const cellFocused = this.beans.focusService.isCellFocused(this.cellPosition);
+        if (!this.cellComp) {
+            if (cellFocused && (event === null || event === void 0 ? void 0 : event.forceBrowserFocus)) {
+                // The cell comp has not been rendered yet, but the browser focus is being forced for this cell
+                // so lets save the event to apply it when setComp is called in the next turn.
+                this.focusEventToRestore = event;
+            }
+            return;
+        }
+        // Clear the saved focus event
+        this.focusEventToRestore = undefined;
         this.cellComp.addOrRemoveCssClass(CSS_CELL_FOCUS, cellFocused);
         // see if we need to force browser focus - this can happen if focus is programmatically set
         if (cellFocused && event && event.forceBrowserFocus) {
@@ -29075,15 +29935,24 @@ class TooltipFeature extends _context_beanStub_mjs__WEBPACK_IMPORTED_MODULE_0__[
         this.ctrl = ctrl;
         this.beans = beans;
     }
-    setComp(comp) {
-        this.comp = comp;
+    setComp(eGui) {
+        this.eGui = eGui;
         this.setupTooltip();
+    }
+    setBrowserTooltip(tooltip) {
+        const name = 'title';
+        if (tooltip != null && tooltip != '') {
+            this.eGui.setAttribute(name, tooltip);
+        }
+        else {
+            this.eGui.removeAttribute(name);
+        }
     }
     setupTooltip() {
         this.browserTooltips = this.beans.gridOptionsService.is('enableBrowserTooltips');
         this.updateTooltipText();
         if (this.browserTooltips) {
-            this.comp.setTitle(this.tooltip != null ? this.tooltip : undefined);
+            this.setBrowserTooltip(this.tooltip);
         }
         else {
             this.createTooltipFeatureIfNeeded();
@@ -29105,7 +29974,7 @@ class TooltipFeature extends _context_beanStub_mjs__WEBPACK_IMPORTED_MODULE_0__[
     refreshToolTip() {
         this.updateTooltipText();
         if (this.browserTooltips) {
-            this.comp.setTitle(this.tooltip != null ? this.tooltip : undefined);
+            this.setBrowserTooltip(this.tooltip);
         }
     }
     getTooltipParams() {
@@ -29122,6 +29991,7 @@ class TooltipFeature extends _context_beanStub_mjs__WEBPACK_IMPORTED_MODULE_0__[
             data: rowNode ? rowNode.data : undefined,
             value: this.getTooltipText(),
             valueFormatted: ctrl.getValueFormatted ? ctrl.getValueFormatted() : undefined,
+            hideTooltipCallback: () => this.genericTooltipFeature.hideTooltip(true)
         };
     }
     getTooltipText() {
@@ -30639,7 +31509,7 @@ let NavigationService = class NavigationService extends _context_beanStub_mjs__W
                 }
                 else {
                     keyboardEvent.preventDefault();
-                    this.focusService.focusLastHeader(keyboardEvent);
+                    this.focusService.focusPreviousFromFirstCell(keyboardEvent);
                 }
             }
         }
@@ -30818,7 +31688,8 @@ let NavigationService = class NavigationService extends _context_beanStub_mjs__W
                     headerPosition: {
                         headerRowIndex: headerLen + (nextPosition.rowIndex),
                         column: nextPosition.column
-                    }
+                    },
+                    fromCell: true
                 });
                 return null;
             }
@@ -30947,7 +31818,8 @@ let NavigationService = class NavigationService extends _context_beanStub_mjs__W
             const headerLen = this.headerNavigationService.getHeaderRowCount();
             this.focusService.focusHeaderPosition({
                 headerPosition: { headerRowIndex: headerLen + (nextCell.rowIndex), column: currentCell.column },
-                event: event || undefined
+                event: event || undefined,
+                fromCell: true
             });
             return;
         }
@@ -31266,6 +32138,12 @@ class RowComp extends _widgets_component_mjs__WEBPACK_IMPORTED_MODULE_0__["Compo
         this.setTemplate(/* html */ `<div comp-id="${this.getCompId()}" style="${this.getInitialStyle(containerType)}"/>`);
         const eGui = this.getGui();
         const style = eGui.style;
+        this.domOrder = this.rowCtrl.getDomOrder();
+        Object(_utils_aria_mjs__WEBPACK_IMPORTED_MODULE_4__["setAriaRole"])(eGui, 'row');
+        const tabIndex = this.rowCtrl.getTabIndex();
+        if (tabIndex != null) {
+            eGui.setAttribute('tabindex', tabIndex.toString());
+        }
         const compProxy = {
             setDomOrder: domOrder => this.domOrder = domOrder,
             setCellCtrls: cellCtrls => this.setCellCtrls(cellCtrls),
@@ -31276,10 +32154,8 @@ class RowComp extends _widgets_component_mjs__WEBPACK_IMPORTED_MODULE_0__["Compo
             setTop: top => style.top = top,
             setTransform: transform => style.transform = transform,
             setRowIndex: rowIndex => eGui.setAttribute('row-index', rowIndex),
-            setRole: role => Object(_utils_aria_mjs__WEBPACK_IMPORTED_MODULE_4__["setAriaRole"])(eGui, role),
             setRowId: (rowId) => eGui.setAttribute('row-id', rowId),
             setRowBusinessKey: businessKey => eGui.setAttribute('row-business-key', businessKey),
-            setTabIndex: tabIndex => eGui.setAttribute('tabindex', tabIndex.toString())
         };
         ctrl.setComp(compProxy, this.getGui(), containerType);
         this.addDestroyFunc(() => {
@@ -31421,27 +32297,29 @@ class CellComp extends _widgets_component_mjs__WEBPACK_IMPORTED_MODULE_0__["Comp
         this.rowNode = cellCtrl.getRowNode();
         this.rowCtrl = cellCtrl.getRowCtrl();
         this.eRow = eRow;
+        this.cellCtrl = cellCtrl;
         this.setTemplate(/* html */ `<div comp-id="${this.getCompId()}"/>`);
         const eGui = this.getGui();
         this.forceWrapper = cellCtrl.isForceWrapper();
         this.refreshWrapper(false);
-        const setAttribute = (name, value, element) => {
-            const actualElement = element ? element : eGui;
+        const setAttribute = (name, value) => {
             if (value != null && value != '') {
-                actualElement.setAttribute(name, value);
+                eGui.setAttribute(name, value);
             }
             else {
-                actualElement.removeAttribute(name);
+                eGui.removeAttribute(name);
             }
         };
+        Object(_utils_aria_mjs__WEBPACK_IMPORTED_MODULE_2__["setAriaRole"])(eGui, 'gridcell');
+        setAttribute('col-id', cellCtrl.getColumnIdSanitised());
+        const tabIndex = cellCtrl.getTabIndex();
+        if (tabIndex !== undefined) {
+            setAttribute('tabindex', tabIndex.toString());
+        }
         const compProxy = {
             addOrRemoveCssClass: (cssClassName, on) => this.addOrRemoveCssClass(cssClassName, on),
             setUserStyles: (styles) => Object(_utils_dom_mjs__WEBPACK_IMPORTED_MODULE_5__["addStylesToElement"])(eGui, styles),
             getFocusableElement: () => this.getFocusableElement(),
-            setTabIndex: tabIndex => setAttribute('tabindex', tabIndex.toString()),
-            setRole: role => Object(_utils_aria_mjs__WEBPACK_IMPORTED_MODULE_2__["setAriaRole"])(eGui, role),
-            setColId: colId => setAttribute('col-id', colId),
-            setTitle: title => setAttribute('title', title),
             setIncludeSelection: include => this.includeSelection = include,
             setIncludeRowDrag: include => this.includeRowDrag = include,
             setIncludeDndSource: include => this.includeDndSource = include,
@@ -31451,7 +32329,6 @@ class CellComp extends _widgets_component_mjs__WEBPACK_IMPORTED_MODULE_0__["Comp
             getCellRenderer: () => this.cellRenderer || null,
             getParentOfValue: () => this.getParentOfValue()
         };
-        this.cellCtrl = cellCtrl;
         cellCtrl.setComp(compProxy, this.getGui(), this.eCellWrapper, printLayout, editingRow);
     }
     getParentOfValue() {
@@ -32245,6 +33122,7 @@ class MoveColumnFeature {
             // If the columns we're dragging are the only visible columns of their group, move the hidden ones too
             let newCols = [];
             allMovingColumns.forEach((col) => {
+                var _a;
                 let movingGroup = null;
                 let parent = col.getParent();
                 while (parent != null && parent.getDisplayedLeafColumns().length === 1) {
@@ -32252,8 +33130,13 @@ class MoveColumnFeature {
                     parent = parent.getParent();
                 }
                 if (movingGroup != null) {
-                    const providedColumnGroup = movingGroup.getProvidedColumnGroup();
-                    providedColumnGroup.getLeafColumns().forEach((newCol) => {
+                    const isMarryChildren = !!((_a = movingGroup.getColGroupDef()) === null || _a === void 0 ? void 0 : _a.marryChildren);
+                    const columnsToMove = isMarryChildren
+                        // when marry children is true, we also have to move hidden
+                        // columns within the group, so grab them from the `providedColumnGroup`
+                        ? movingGroup.getProvidedColumnGroup().getLeafColumns()
+                        : movingGroup.getLeafColumns();
+                    columnsToMove.forEach((newCol) => {
                         if (!newCols.includes(newCol)) {
                             newCols.push(newCol);
                         }
@@ -32767,27 +33650,25 @@ class HeaderRowComp extends _widgets_component_mjs__WEBPACK_IMPORTED_MODULE_4__[
     constructor(ctrl) {
         super();
         this.headerComps = {};
-        const extraClass = ctrl.getType() == HeaderRowType.COLUMN_GROUP ? `ag-header-row-column-group` :
-            ctrl.getType() == HeaderRowType.FLOATING_FILTER ? `ag-header-row-column-filter` : `ag-header-row-column`;
-        this.setTemplate(/* html */ `<div class="ag-header-row ${extraClass}" role="row"></div>`);
         this.ctrl = ctrl;
+        this.setTemplate(/* html */ `<div class="${this.ctrl.getHeaderRowClass()}" role="row"></div>`);
     }
     //noinspection JSUnusedLocalSymbols
     init() {
+        this.getGui().style.transform = this.ctrl.getTransform();
+        Object(_utils_aria_mjs__WEBPACK_IMPORTED_MODULE_1__["setAriaRowIndex"])(this.getGui(), this.ctrl.getAriaRowIndex());
         const compProxy = {
-            setTransform: transform => this.getGui().style.transform = transform,
             setHeight: height => this.getGui().style.height = height,
             setTop: top => this.getGui().style.top = top,
-            setHeaderCtrls: ctrls => this.setHeaderCtrls(ctrls),
+            setHeaderCtrls: (ctrls, forceOrder) => this.setHeaderCtrls(ctrls, forceOrder),
             setWidth: width => this.getGui().style.width = width,
-            setAriaRowIndex: rowIndex => Object(_utils_aria_mjs__WEBPACK_IMPORTED_MODULE_1__["setAriaRowIndex"])(this.getGui(), rowIndex)
         };
         this.ctrl.setComp(compProxy);
     }
     destroyHeaderCtrls() {
-        this.setHeaderCtrls([]);
+        this.setHeaderCtrls([], false);
     }
-    setHeaderCtrls(ctrls) {
+    setHeaderCtrls(ctrls, forceOrder) {
         if (!this.isAlive()) {
             return;
         }
@@ -32807,9 +33688,7 @@ class HeaderRowComp extends _widgets_component_mjs__WEBPACK_IMPORTED_MODULE_4__[
             this.getGui().removeChild(comp.getGui());
             this.destroyBean(comp);
         });
-        const isEnsureDomOrder = this.gridOptionsService.is('ensureDomOrder');
-        const isPrintLayout = this.gridOptionsService.isDomLayout('print');
-        if (isEnsureDomOrder || isPrintLayout) {
+        if (forceOrder) {
             const comps = Object(_utils_object_mjs__WEBPACK_IMPORTED_MODULE_3__["getAllValuesInObject"])(this.headerComps);
             // ordering the columns by left position orders them in the order they appear on the screen
             comps.sort((a, b) => {
@@ -32877,20 +33756,18 @@ class HeaderCellComp extends _abstractCell_abstractHeaderCellComp_mjs__WEBPACK_I
     }
     postConstruct() {
         const eGui = this.getGui();
-        const setAttribute = (name, value, element) => {
-            const actualElement = element ? element : eGui;
+        const setAttribute = (name, value) => {
             if (value != null && value != '') {
-                actualElement.setAttribute(name, value);
+                eGui.setAttribute(name, value);
             }
             else {
-                actualElement.removeAttribute(name);
+                eGui.removeAttribute(name);
             }
         };
+        setAttribute('col-id', this.column.getColId());
         const compProxy = {
             setWidth: width => eGui.style.width = width,
             addOrRemoveCssClass: (cssClassName, on) => this.addOrRemoveCssClass(cssClassName, on),
-            setColId: id => setAttribute('col-id', id),
-            setTitle: title => setAttribute('title', title),
             setAriaDescription: label => Object(_utils_aria_mjs__WEBPACK_IMPORTED_MODULE_1__["setAriaDescription"])(eGui, label),
             setAriaSort: sort => sort ? Object(_utils_aria_mjs__WEBPACK_IMPORTED_MODULE_1__["setAriaSort"])(eGui, sort) : Object(_utils_aria_mjs__WEBPACK_IMPORTED_MODULE_1__["removeAriaSort"])(eGui),
             setUserCompDetails: compDetails => this.setUserCompDetails(compDetails),
@@ -32970,13 +33847,12 @@ class HeaderGroupCellComp extends _abstractCell_abstractHeaderCellComp_mjs__WEBP
     postConstruct() {
         const eGui = this.getGui();
         const setAttribute = (key, value) => value != undefined ? eGui.setAttribute(key, value) : eGui.removeAttribute(key);
+        eGui.setAttribute("col-id", this.ctrl.getColId());
         const compProxy = {
             addOrRemoveCssClass: (cssClassName, on) => this.addOrRemoveCssClass(cssClassName, on),
             setResizableDisplayed: (displayed) => Object(_utils_dom_mjs__WEBPACK_IMPORTED_MODULE_1__["setDisplayed"])(this.eResize, displayed),
             setWidth: width => eGui.style.width = width,
-            setColId: id => eGui.setAttribute("col-id", id),
             setAriaExpanded: expanded => setAttribute('aria-expanded', expanded),
-            setTitle: title => setAttribute("title", title),
             setUserCompDetails: details => this.setUserCompDetails(details)
         };
         this.ctrl.setComp(compProxy, eGui, this.eResize);
@@ -33058,6 +33934,7 @@ class HeaderRowContainerCtrl extends _context_beanStub_mjs__WEBPACK_IMPORTED_MOD
         this.setupDragAndDrop(this.eViewport);
         this.addManagedListener(this.eventService, _eventKeys_mjs__WEBPACK_IMPORTED_MODULE_3__["Events"].EVENT_GRID_COLUMNS_CHANGED, this.onGridColumnsChanged.bind(this));
         this.addManagedListener(this.eventService, _eventKeys_mjs__WEBPACK_IMPORTED_MODULE_3__["Events"].EVENT_DISPLAYED_COLUMNS_CHANGED, this.onDisplayedColumnsChanged.bind(this));
+        this.addManagedListener(this.eventService, _eventKeys_mjs__WEBPACK_IMPORTED_MODULE_3__["Events"].EVENT_ADVANCED_FILTER_ENABLED_CHANGED, this.onDisplayedColumnsChanged.bind(this));
         this.ctrlsService.registerHeaderContainer(this, this.pinned);
         if (this.columnModel.isReady()) {
             this.refresh();
@@ -33090,7 +33967,7 @@ class HeaderRowContainerCtrl extends _context_beanStub_mjs__WEBPACK_IMPORTED_MOD
             }
         };
         const refreshFilters = () => {
-            this.includeFloatingFilter = this.columnModel.hasFloatingFilters() && !this.hidden;
+            this.includeFloatingFilter = this.filterManager.hasFloatingFilters() && !this.hidden;
             const destroyPreviousComp = () => {
                 this.filtersRowCtrl = this.destroyBean(this.filtersRowCtrl);
             };
@@ -33138,7 +34015,7 @@ class HeaderRowContainerCtrl extends _context_beanStub_mjs__WEBPACK_IMPORTED_MOD
         this.refresh(true);
     }
     onDisplayedColumnsChanged() {
-        const includeFloatingFilter = this.columnModel.hasFloatingFilters() && !this.hidden;
+        const includeFloatingFilter = this.filterManager.hasFloatingFilters() && !this.hidden;
         if (this.includeFloatingFilter !== includeFloatingFilter) {
             this.refresh(true);
         }
@@ -33254,6 +34131,9 @@ __decorate([
 __decorate([
     Object(_context_context_mjs__WEBPACK_IMPORTED_MODULE_1__["Autowired"])('focusService')
 ], HeaderRowContainerCtrl.prototype, "focusService", void 0);
+__decorate([
+    Object(_context_context_mjs__WEBPACK_IMPORTED_MODULE_1__["Autowired"])('filterManager')
+], HeaderRowContainerCtrl.prototype, "filterManager", void 0);
 
 
 /***/ }),
@@ -33298,22 +34178,44 @@ class HeaderRowCtrl extends _context_beanStub_mjs__WEBPACK_IMPORTED_MODULE_0__["
         this.rowIndex = rowIndex;
         this.pinned = pinned;
         this.type = type;
+        const typeClass = type == _headerRowComp_mjs__WEBPACK_IMPORTED_MODULE_8__["HeaderRowType"].COLUMN_GROUP ? `ag-header-row-column-group` :
+            type == _headerRowComp_mjs__WEBPACK_IMPORTED_MODULE_8__["HeaderRowType"].FLOATING_FILTER ? `ag-header-row-column-filter` : `ag-header-row-column`;
+        this.headerRowClass = `ag-header-row ${typeClass}`;
+    }
+    postConstruct() {
+        this.isPrintLayout = this.gridOptionsService.isDomLayout('print');
+        this.isEnsureDomOrder = this.gridOptionsService.is('ensureDomOrder');
     }
     getInstanceId() {
         return this.instanceId;
     }
-    setComp(comp) {
+    /**
+     *
+     * @param comp Proxy to the actual component
+     * @param initCompState Should the component be initialised with the current state of the controller. Default: true
+     */
+    setComp(comp, initCompState = true) {
         this.comp = comp;
-        this.onRowHeightChanged();
-        this.onVirtualColumnsChanged();
+        if (initCompState) {
+            this.onRowHeightChanged();
+            this.onVirtualColumnsChanged();
+        }
+        // width is managed directly regardless of framework and so is not included in initCompState
         this.setWidth();
         this.addEventListeners();
+    }
+    getHeaderRowClass() {
+        return this.headerRowClass;
+    }
+    getAriaRowIndex() {
+        return this.rowIndex + 1;
+    }
+    getTransform() {
         if (Object(_utils_browser_mjs__WEBPACK_IMPORTED_MODULE_3__["isBrowserSafari"])()) {
             // fix for a Safari rendering bug that caused the header to flicker above chart panels
             // as you move the mouse over the header
-            this.comp.setTransform('translateZ(0)');
+            return 'translateZ(0)';
         }
-        comp.setAriaRowIndex(this.rowIndex + 1);
     }
     addEventListeners() {
         this.addManagedListener(this.eventService, _eventKeys_mjs__WEBPACK_IMPORTED_MODULE_2__["Events"].EVENT_COLUMN_RESIZED, this.onColumnResized.bind(this));
@@ -33321,8 +34223,10 @@ class HeaderRowCtrl extends _context_beanStub_mjs__WEBPACK_IMPORTED_MODULE_0__["
         this.addManagedListener(this.eventService, _eventKeys_mjs__WEBPACK_IMPORTED_MODULE_2__["Events"].EVENT_VIRTUAL_COLUMNS_CHANGED, this.onVirtualColumnsChanged.bind(this));
         this.addManagedListener(this.eventService, _eventKeys_mjs__WEBPACK_IMPORTED_MODULE_2__["Events"].EVENT_COLUMN_HEADER_HEIGHT_CHANGED, this.onRowHeightChanged.bind(this));
         this.addManagedListener(this.eventService, _eventKeys_mjs__WEBPACK_IMPORTED_MODULE_2__["Events"].EVENT_GRID_STYLES_CHANGED, this.onRowHeightChanged.bind(this));
+        this.addManagedListener(this.eventService, _eventKeys_mjs__WEBPACK_IMPORTED_MODULE_2__["Events"].EVENT_ADVANCED_FILTER_ENABLED_CHANGED, this.onRowHeightChanged.bind(this));
         // when print layout changes, it changes what columns are in what section
         this.addManagedPropertyListener('domLayout', this.onDisplayedColumnsChanged.bind(this));
+        this.addManagedPropertyListener('ensureDomOrder', (e) => this.isEnsureDomOrder = e.currentValue);
         this.addManagedPropertyListener('headerHeight', this.onRowHeightChanged.bind(this));
         this.addManagedPropertyListener('pivotHeaderHeight', this.onRowHeightChanged.bind(this));
         this.addManagedPropertyListener('groupHeaderHeight', this.onRowHeightChanged.bind(this));
@@ -33333,6 +34237,7 @@ class HeaderRowCtrl extends _context_beanStub_mjs__WEBPACK_IMPORTED_MODULE_0__["
         return Object(_utils_generic_mjs__WEBPACK_IMPORTED_MODULE_9__["values"])(this.headerCellCtrls).find(cellCtrl => cellCtrl.getColumnGroupChild() === column);
     }
     onDisplayedColumnsChanged() {
+        this.isPrintLayout = this.gridOptionsService.isDomLayout('print');
         this.onVirtualColumnsChanged();
         this.setWidth();
         this.onRowHeightChanged();
@@ -33348,8 +34253,7 @@ class HeaderRowCtrl extends _context_beanStub_mjs__WEBPACK_IMPORTED_MODULE_0__["
         this.comp.setWidth(`${width}px`);
     }
     getWidthForRow() {
-        const printLayout = this.gridOptionsService.isDomLayout('print');
-        if (printLayout) {
+        if (this.isPrintLayout) {
             const pinned = this.pinned != null;
             if (pinned) {
                 return 0;
@@ -33362,10 +34266,15 @@ class HeaderRowCtrl extends _context_beanStub_mjs__WEBPACK_IMPORTED_MODULE_0__["
         return this.columnModel.getContainerWidth(this.pinned);
     }
     onRowHeightChanged() {
+        var { topOffset, rowHeight } = this.getTopAndHeight();
+        this.comp.setTop(topOffset + 'px');
+        this.comp.setHeight(rowHeight + 'px');
+    }
+    getTopAndHeight() {
         let headerRowCount = this.columnModel.getHeaderRowCount();
         const sizes = [];
         let numberOfFloating = 0;
-        if (this.columnModel.hasFloatingFilters()) {
+        if (this.filterManager.hasFloatingFilters()) {
             headerRowCount++;
             numberOfFloating = 1;
         }
@@ -33384,9 +34293,8 @@ class HeaderRowCtrl extends _context_beanStub_mjs__WEBPACK_IMPORTED_MODULE_0__["
         for (let i = 0; i < this.rowIndex; i++) {
             topOffset += sizes[i];
         }
-        const thisRowHeight = sizes[this.rowIndex] + 'px';
-        this.comp.setTop(topOffset + 'px');
-        this.comp.setHeight(thisRowHeight);
+        const rowHeight = sizes[this.rowIndex];
+        return { topOffset, rowHeight };
     }
     getPinned() {
         return this.pinned;
@@ -33395,6 +34303,11 @@ class HeaderRowCtrl extends _context_beanStub_mjs__WEBPACK_IMPORTED_MODULE_0__["
         return this.rowIndex;
     }
     onVirtualColumnsChanged() {
+        const ctrlsToDisplay = this.getHeaderCtrls();
+        const forceOrder = this.isEnsureDomOrder || this.isPrintLayout;
+        this.comp.setHeaderCtrls(ctrlsToDisplay, forceOrder);
+    }
+    getHeaderCtrls() {
         const oldCtrls = this.headerCellCtrls;
         this.headerCellCtrls = {};
         const columns = this.getColumnsInViewport();
@@ -33453,11 +34366,10 @@ class HeaderRowCtrl extends _context_beanStub_mjs__WEBPACK_IMPORTED_MODULE_0__["
             }
         });
         const ctrlsToDisplay = Object(_utils_object_mjs__WEBPACK_IMPORTED_MODULE_4__["getAllValuesInObject"])(this.headerCellCtrls);
-        this.comp.setHeaderCtrls(ctrlsToDisplay);
+        return ctrlsToDisplay;
     }
     getColumnsInViewport() {
-        const printLayout = this.gridOptionsService.isDomLayout('print');
-        return printLayout ? this.getColumnsInViewportPrintLayout() : this.getColumnsInViewportNormalLayout();
+        return this.isPrintLayout ? this.getColumnsInViewportPrintLayout() : this.getColumnsInViewportNormalLayout();
     }
     getColumnsInViewportPrintLayout() {
         // for print layout, we add all columns into the center
@@ -33502,6 +34414,12 @@ __decorate([
 __decorate([
     Object(_context_context_mjs__WEBPACK_IMPORTED_MODULE_1__["Autowired"])('focusService')
 ], HeaderRowCtrl.prototype, "focusService", void 0);
+__decorate([
+    Object(_context_context_mjs__WEBPACK_IMPORTED_MODULE_1__["Autowired"])('filterManager')
+], HeaderRowCtrl.prototype, "filterManager", void 0);
+__decorate([
+    _context_context_mjs__WEBPACK_IMPORTED_MODULE_1__["PostConstruct"]
+], HeaderRowCtrl.prototype, "postConstruct", null);
 
 
 /***/ }),
@@ -33781,8 +34699,11 @@ class HeaderFilterCellCtrl extends _abstractCell_abstractHeaderCellCtrl_mjs__WEB
         else {
             compPromise.then(compInstance => {
                 var _a;
-                if (!compInstance || ((_a = this.userCompDetails) === null || _a === void 0 ? void 0 : _a.componentClass) !== newCompDetails.componentClass) {
+                if (!compInstance || this.filterManager.areFilterCompsDifferent((_a = this.userCompDetails) !== null && _a !== void 0 ? _a : null, newCompDetails)) {
                     this.updateCompDetails(newCompDetails, becomeActive);
+                }
+                else {
+                    this.updateFloatingFilterParams(newCompDetails);
                 }
             });
         }
@@ -33796,6 +34717,18 @@ class HeaderFilterCellCtrl extends _abstractCell_abstractHeaderCellCtrl_mjs__WEB
             this.setupSyncWithFilter();
             this.setupFilterChangedListener();
         }
+    }
+    updateFloatingFilterParams(userCompDetails) {
+        var _a;
+        if (!userCompDetails) {
+            return;
+        }
+        const params = userCompDetails.params;
+        (_a = this.comp.getFloatingFilterComp()) === null || _a === void 0 ? void 0 : _a.then(floatingFilter => {
+            if ((floatingFilter === null || floatingFilter === void 0 ? void 0 : floatingFilter.onParamsUpdated) && typeof floatingFilter.onParamsUpdated === 'function') {
+                floatingFilter.onParamsUpdated(params);
+            }
+        });
     }
 }
 __decorate([
@@ -34163,7 +35096,6 @@ class HeaderCellCtrl extends _abstractCell_abstractHeaderCellCtrl_mjs__WEBPACK_I
         this.setupAutoHeight(eHeaderCompWrapper);
         this.addColumnHoverListener();
         this.setupFilterCss();
-        this.setupColId();
         this.setupClassesFromColDef();
         this.setupTooltip();
         this.addActiveHeaderMouseListeners();
@@ -34186,6 +35118,7 @@ class HeaderCellCtrl extends _abstractCell_abstractHeaderCellCtrl_mjs__WEBPACK_I
         this.addManagedListener(this.eventService, _eventKeys_mjs__WEBPACK_IMPORTED_MODULE_4__["Events"].EVENT_COLUMN_ROW_GROUP_CHANGED, this.onColumnRowGroupChanged.bind(this));
         this.addManagedListener(this.eventService, _eventKeys_mjs__WEBPACK_IMPORTED_MODULE_4__["Events"].EVENT_COLUMN_PIVOT_CHANGED, this.onColumnPivotChanged.bind(this));
         this.addManagedListener(this.eventService, _eventKeys_mjs__WEBPACK_IMPORTED_MODULE_4__["Events"].EVENT_HEADER_HEIGHT_CHANGED, this.onHeaderHeightChanged.bind(this));
+        this.addManagedListener(this.eventService, _eventKeys_mjs__WEBPACK_IMPORTED_MODULE_4__["Events"].EVENT_DISPLAYED_COLUMNS_CHANGED, this.onHeaderHeightChanged.bind(this));
     }
     addMouseDownListenerIfNeeded(eGui) {
         // we add a preventDefault in the DragService for Safari only
@@ -34302,7 +35235,7 @@ class HeaderCellCtrl extends _abstractCell_abstractHeaderCellCtrl_mjs__WEBPACK_I
             },
         };
         const tooltipFeature = this.createManagedBean(new _widgets_tooltipFeature_mjs__WEBPACK_IMPORTED_MODULE_8__["TooltipFeature"](tooltipCtrl, this.beans));
-        tooltipFeature.setComp(this.comp);
+        tooltipFeature.setComp(this.eGui);
         this.refreshFunctions.push(() => tooltipFeature.refreshToolTip());
     }
     setupClassesFromColDef() {
@@ -34499,7 +35432,12 @@ class HeaderCellCtrl extends _abstractCell_abstractHeaderCellCtrl_mjs__WEBPACK_I
         }
         const { numberOfParents, isSpanningTotal } = this.getColumnGroupPaddingInfo();
         comp.addOrRemoveCssClass('ag-header-span-height', numberOfParents > 0);
+        const headerHeight = columnModel.getColumnHeaderRowHeight();
         if (numberOfParents === 0) {
+            // if spanning has stopped then need to reset these values.
+            comp.addOrRemoveCssClass('ag-header-span-total', false);
+            eGui.style.setProperty('top', `0px`);
+            eGui.style.setProperty('height', `${headerHeight}px`);
             return;
         }
         comp.addOrRemoveCssClass('ag-header-span-total', isSpanningTotal);
@@ -34507,7 +35445,6 @@ class HeaderCellCtrl extends _abstractCell_abstractHeaderCellCtrl_mjs__WEBPACK_I
         const groupHeaderHeight = pivotMode
             ? columnModel.getPivotGroupHeaderHeight()
             : columnModel.getGroupHeaderHeight();
-        const headerHeight = columnModel.getColumnHeaderRowHeight();
         const extraHeight = numberOfParents * groupHeaderHeight;
         eGui.style.setProperty('top', `${-extraHeight}px`);
         eGui.style.setProperty('height', `${headerHeight + extraHeight}px`);
@@ -34648,8 +35585,8 @@ class HeaderCellCtrl extends _abstractCell_abstractHeaderCellCtrl_mjs__WEBPACK_I
         this.addManagedListener(this.column, _entities_column_mjs__WEBPACK_IMPORTED_MODULE_3__["Column"].EVENT_FILTER_ACTIVE_CHANGED, listener);
         listener();
     }
-    setupColId() {
-        this.comp.setColId(this.column.getColId());
+    getColId() {
+        return this.column.getColId();
     }
     addActiveHeaderMouseListeners() {
         const listener = (e) => this.setActiveHeader(e.type === 'mouseenter');
@@ -34870,7 +35807,7 @@ class SelectAllFeature extends _context_beanStub_mjs__WEBPACK_IMPORTED_MODULE_1_
         this.addManagedListener(this.eventService, _events_mjs__WEBPACK_IMPORTED_MODULE_3__["Events"].EVENT_SELECTION_CHANGED, this.onSelectionChanged.bind(this));
         this.addManagedListener(this.eventService, _events_mjs__WEBPACK_IMPORTED_MODULE_3__["Events"].EVENT_PAGINATION_CHANGED, this.onSelectionChanged.bind(this));
         this.addManagedListener(this.eventService, _events_mjs__WEBPACK_IMPORTED_MODULE_3__["Events"].EVENT_MODEL_UPDATED, this.onModelChanged.bind(this));
-        this.addManagedListener(this.cbSelectAll, _widgets_agCheckbox_mjs__WEBPACK_IMPORTED_MODULE_0__["AgCheckbox"].EVENT_CHANGED, this.onCbSelectAll.bind(this));
+        this.addManagedListener(this.cbSelectAll, _events_mjs__WEBPACK_IMPORTED_MODULE_3__["Events"].EVENT_FIELD_VALUE_CHANGED, this.onCbSelectAll.bind(this));
         Object(_utils_aria_mjs__WEBPACK_IMPORTED_MODULE_4__["setAriaHidden"])(this.cbSelectAll.getGui(), true);
         this.cbSelectAll.getInputElement().setAttribute('tabindex', '-1');
         this.refreshSelectAllLabel();
@@ -35271,8 +36208,11 @@ let FocusService = FocusService_1 = class FocusService extends _context_beanStub
         this.focusedHeaderPosition = { headerRowIndex, column };
     }
     focusHeaderPosition(params) {
-        const { direction, fromTab, allowUserOverride, event } = params;
+        const { direction, fromTab, allowUserOverride, event, fromCell } = params;
         let { headerPosition } = params;
+        if (fromCell && this.filterManager.isAdvancedFilterHeaderActive()) {
+            return this.focusAdvancedFilter(headerPosition);
+        }
         if (allowUserOverride) {
             const currentPosition = this.getFocusedHeader();
             const headerRowCount = this.headerNavigationService.getHeaderRowCount();
@@ -35306,7 +36246,12 @@ let FocusService = FocusService_1 = class FocusService extends _context_beanStub
             return false;
         }
         if (headerPosition.headerRowIndex === -1) {
-            return this.focusGridView(headerPosition.column);
+            if (this.filterManager.isAdvancedFilterHeaderActive()) {
+                return this.focusAdvancedFilter(headerPosition);
+            }
+            else {
+                return this.focusGridView(headerPosition.column);
+            }
         }
         this.headerNavigationService.scrollToColumn(headerPosition.column, direction);
         const headerRowContainerCtrl = this.ctrlsService.getHeaderRowContainerCtrl(headerPosition.column.getPinned());
@@ -35333,6 +36278,14 @@ let FocusService = FocusService_1 = class FocusService extends _context_beanStub
             headerPosition: { headerRowIndex, column },
             event
         });
+    }
+    focusPreviousFromFirstCell(event) {
+        if (this.filterManager.isAdvancedFilterHeaderActive()) {
+            return this.focusAdvancedFilter(null);
+        }
+        else {
+            return this.focusLastHeader(event);
+        }
     }
     isAnyCellFocused() {
         return !!this.focusedCellPosition;
@@ -35478,6 +36431,28 @@ let FocusService = FocusService_1 = class FocusService extends _context_beanStub
         }
         return false;
     }
+    focusAdvancedFilter(position) {
+        this.advancedFilterFocusColumn = position === null || position === void 0 ? void 0 : position.column;
+        return this.advancedFilterService.getCtrl().focusHeaderComp();
+    }
+    focusNextFromAdvancedFilter(backwards, forceFirstColumn) {
+        var _a, _b;
+        const column = (_a = (forceFirstColumn ? undefined : this.advancedFilterFocusColumn)) !== null && _a !== void 0 ? _a : (_b = this.columnModel.getAllDisplayedColumns()) === null || _b === void 0 ? void 0 : _b[0];
+        if (backwards) {
+            return this.focusHeaderPosition({
+                headerPosition: {
+                    column: column,
+                    headerRowIndex: this.headerNavigationService.getHeaderRowCount() - 1
+                }
+            });
+        }
+        else {
+            return this.focusGridView(column);
+        }
+    }
+    clearAdvancedFilterColumn() {
+        this.advancedFilterFocusColumn = undefined;
+    }
 };
 FocusService.AG_KEYBOARD_FOCUS = 'ag-keyboard-focus';
 FocusService.keyboardModeActive = false;
@@ -35509,6 +36484,12 @@ __decorate([
 __decorate([
     Object(_context_context_mjs__WEBPACK_IMPORTED_MODULE_0__["Autowired"])('ctrlsService')
 ], FocusService.prototype, "ctrlsService", void 0);
+__decorate([
+    Object(_context_context_mjs__WEBPACK_IMPORTED_MODULE_0__["Autowired"])('filterManager')
+], FocusService.prototype, "filterManager", void 0);
+__decorate([
+    Object(_context_context_mjs__WEBPACK_IMPORTED_MODULE_0__["Optional"])('advancedFilterService')
+], FocusService.prototype, "advancedFilterService", void 0);
 __decorate([
     _context_context_mjs__WEBPACK_IMPORTED_MODULE_0__["PostConstruct"]
 ], FocusService.prototype, "init", null);
@@ -35725,7 +36706,6 @@ class HeaderGroupCellCtrl extends _abstractCell_abstractHeaderCellCtrl_mjs__WEBP
         this.comp = comp;
         this.displayName = this.columnModel.getDisplayNameForColumnGroup(this.columnGroup, 'header');
         this.addClasses();
-        this.addAttributes();
         this.setupMovingCss();
         this.setupExpandable();
         this.setupTooltip();
@@ -35796,7 +36776,7 @@ class HeaderGroupCellCtrl extends _abstractCell_abstractHeaderCellCtrl_mjs__WEBP
             tooltipCtrl.getColDef = () => colGroupDef;
         }
         const tooltipFeature = this.createManagedBean(new _widgets_tooltipFeature_mjs__WEBPACK_IMPORTED_MODULE_8__["TooltipFeature"](tooltipCtrl, this.beans));
-        tooltipFeature.setComp(this.comp);
+        tooltipFeature.setComp(this.eGui);
     }
     setupExpandable() {
         const providedColGroup = this.columnGroup.getProvidedColumnGroup();
@@ -35815,8 +36795,8 @@ class HeaderGroupCellCtrl extends _abstractCell_abstractHeaderCellCtrl_mjs__WEBP
             this.comp.setAriaExpanded(undefined);
         }
     }
-    addAttributes() {
-        this.comp.setColId(this.columnGroup.getUniqueId());
+    getColId() {
+        return this.columnGroup.getUniqueId();
     }
     addClasses() {
         const colGroupDef = this.columnGroup.getColGroupDef();
@@ -36280,6 +37260,7 @@ class GridHeaderCtrl extends _context_beanStub_mjs__WEBPACK_IMPORTED_MODULE_1__[
         this.addManagedListener(this.eventService, _eventKeys_mjs__WEBPACK_IMPORTED_MODULE_3__["Events"].EVENT_DISPLAYED_COLUMNS_CHANGED, listener);
         this.addManagedListener(this.eventService, _eventKeys_mjs__WEBPACK_IMPORTED_MODULE_3__["Events"].EVENT_COLUMN_HEADER_HEIGHT_CHANGED, listener);
         this.addManagedListener(this.eventService, _eventKeys_mjs__WEBPACK_IMPORTED_MODULE_3__["Events"].EVENT_GRID_STYLES_CHANGED, listener);
+        this.addManagedListener(this.eventService, _eventKeys_mjs__WEBPACK_IMPORTED_MODULE_3__["Events"].EVENT_ADVANCED_FILTER_ENABLED_CHANGED, listener);
     }
     getHeaderHeight() {
         return this.headerHeight;
@@ -36289,7 +37270,7 @@ class GridHeaderCtrl extends _context_beanStub_mjs__WEBPACK_IMPORTED_MODULE_1__[
         let numberOfFloating = 0;
         let headerRowCount = columnModel.getHeaderRowCount();
         let totalHeaderHeight;
-        const hasFloatingFilters = columnModel.hasFloatingFilters();
+        const hasFloatingFilters = this.filterManager.hasFloatingFilters();
         if (hasFloatingFilters) {
             headerRowCount++;
             numberOfFloating = 1;
@@ -36381,6 +37362,9 @@ __decorate([
 __decorate([
     Object(_context_context_mjs__WEBPACK_IMPORTED_MODULE_2__["Autowired"])('ctrlsService')
 ], GridHeaderCtrl.prototype, "ctrlsService", void 0);
+__decorate([
+    Object(_context_context_mjs__WEBPACK_IMPORTED_MODULE_2__["Autowired"])('filterManager')
+], GridHeaderCtrl.prototype, "filterManager", void 0);
 
 
 /***/ }),
@@ -37524,9 +38508,6 @@ let RowRenderer = class RowRenderer extends _context_beanStub_mjs__WEBPACK_IMPOR
         }
         return DEFAULT_KEEP_DETAIL_ROW_COUNT;
     }
-    getRowCtrls() {
-        return this.allRowCtrls;
-    }
     getStickyTopRowCtrls() {
         if (!this.stickyRowFeature) {
             return [];
@@ -37542,7 +38523,13 @@ let RowRenderer = class RowRenderer extends _context_beanStub_mjs__WEBPACK_IMPOR
         }
         const zombieList = Object(_utils_object_mjs__WEBPACK_IMPORTED_MODULE_5__["getAllValuesInObject"])(this.zombieRowCtrls);
         const cachedList = this.cachedRowCtrls ? this.cachedRowCtrls.getEntries() : [];
-        this.allRowCtrls = [...liveList, ...zombieList, ...cachedList];
+        if (zombieList.length > 0 || cachedList.length > 0) {
+            // Only spread if we need to.
+            this.allRowCtrls = [...liveList, ...zombieList, ...cachedList];
+        }
+        else {
+            this.allRowCtrls = liveList;
+        }
     }
     onCellFocusChanged(event) {
         this.getAllCellCtrls().forEach(cellCtrl => cellCtrl.onCellFocused(event));
@@ -37701,6 +38688,9 @@ let RowRenderer = class RowRenderer extends _context_beanStub_mjs__WEBPACK_IMPOR
     getTopRowCtrls() {
         return this.topRowCtrls;
     }
+    getCentreRowCtrls() {
+        return this.allRowCtrls;
+    }
     getBottomRowCtrls() {
         return this.bottomRowCtrls;
     }
@@ -37725,32 +38715,47 @@ let RowRenderer = class RowRenderer extends _context_beanStub_mjs__WEBPACK_IMPOR
         };
         this.redrawAfterModelUpdate(params);
     }
-    // if the row nodes are not rendered, no index is returned
-    getRenderedIndexesForRowNodes(rowNodes) {
-        const result = [];
-        if (Object(_utils_generic_mjs__WEBPACK_IMPORTED_MODULE_4__["missing"])(rowNodes)) {
-            return result;
+    redrawRow(rowNode, suppressEvent = false) {
+        if (rowNode.sticky) {
+            this.stickyRowFeature.refreshStickyNode(rowNode);
         }
-        Object(_utils_object_mjs__WEBPACK_IMPORTED_MODULE_5__["iterateObject"])(this.rowCtrlsByRowIndex, (index, renderedRow) => {
-            const rowNode = renderedRow.getRowNode();
-            if (rowNodes.indexOf(rowNode) >= 0) {
-                result.push(index);
+        else {
+            const destroyAndRecreateCtrl = (dataStruct) => {
+                const ctrl = dataStruct[rowNode.rowIndex];
+                if (!ctrl) {
+                    return;
+                }
+                if (ctrl.getRowNode() !== rowNode) {
+                    // if the node is in the wrong place, then the row model is responsible for triggering a full refresh.
+                    return;
+                }
+                ctrl.destroyFirstPass();
+                ctrl.destroySecondPass();
+                dataStruct[rowNode.rowIndex] = this.createRowCon(rowNode, false, false);
+            };
+            switch (rowNode.rowPinned) {
+                case 'top':
+                    destroyAndRecreateCtrl(this.topRowCtrls);
+                case 'bottom':
+                    destroyAndRecreateCtrl(this.bottomRowCtrls);
+                default:
+                    destroyAndRecreateCtrl(this.rowCtrlsByRowIndex);
+                    this.updateAllRowCtrls();
             }
-        });
-        return result;
+        }
+        if (!suppressEvent) {
+            this.dispatchDisplayedRowsChanged(false);
+        }
     }
     redrawRows(rowNodes) {
         // if no row nodes provided, then refresh everything
-        const partialRefresh = rowNodes != null && rowNodes.length > 0;
+        const partialRefresh = rowNodes != null;
         if (partialRefresh) {
-            const indexesToRemove = this.getRenderedIndexesForRowNodes(rowNodes);
-            // remove the rows
-            this.removeRowCtrls(indexesToRemove);
+            rowNodes === null || rowNodes === void 0 ? void 0 : rowNodes.forEach(node => this.redrawRow(node, true));
+            this.dispatchDisplayedRowsChanged(false);
+            return;
         }
-        // add draw them again
-        this.redrawAfterModelUpdate({
-            recycleRows: partialRefresh
-        });
+        this.redrawAfterModelUpdate();
     }
     getCellToRestoreFocusToAfterRefresh(params) {
         const focusedCell = (params === null || params === void 0 ? void 0 : params.suppressKeepFocus) ? null : this.focusService.getFocusCellToUseAfterRefresh();
@@ -37790,6 +38795,10 @@ let RowRenderer = class RowRenderer extends _context_beanStub_mjs__WEBPACK_IMPOR
         const rowsToRecycle = recycleRows ? this.getRowsToRecycle() : null;
         if (!recycleRows) {
             this.removeAllRowComps();
+        }
+        this.workOutFirstAndLastRowsToRender();
+        if (this.stickyRowFeature) {
+            this.stickyRowFeature.checkStickyRows();
         }
         this.recycleRows(rowsToRecycle, animate);
         this.gridBodyCtrl.updateRowCount();
@@ -37921,7 +38930,19 @@ let RowRenderer = class RowRenderer extends _context_beanStub_mjs__WEBPACK_IMPOR
                 cellCtrl.refreshCell(refreshCellParams);
             }
         });
-        this.refreshFullWidthRows(params.rowNodes);
+        if (params.rowNodes) {
+            // refresh the full width rows too
+            this.getRowCtrls(params.rowNodes).forEach(rowCtrl => {
+                if (!rowCtrl.isFullWidth()) {
+                    return;
+                }
+                const refreshed = rowCtrl.refreshFullWidth();
+                if (!refreshed) {
+                    this.redrawRow(rowCtrl.getRowNode(), true);
+                }
+            });
+            this.dispatchDisplayedRowsChanged(false);
+        }
     }
     getCellRendererInstances(params) {
         var _a;
@@ -38002,11 +39023,23 @@ let RowRenderer = class RowRenderer extends _context_beanStub_mjs__WEBPACK_IMPOR
         }
         return rowIdsMap.normal[id] != null;
     }
+    /**
+     * @param rowNodes if provided, returns the RowCtrls for the provided rowNodes. otherwise returns all RowCtrls.
+     */
+    getRowCtrls(rowNodes) {
+        const rowIdsMap = this.mapRowNodes(rowNodes);
+        const allRowCtrls = this.getAllRowCtrls();
+        if (!rowNodes || !rowIdsMap) {
+            return allRowCtrls;
+        }
+        return allRowCtrls.filter(rowCtrl => {
+            const rowNode = rowCtrl.getRowNode();
+            return this.isRowInMap(rowNode, rowIdsMap);
+        });
+    }
     // returns CellCtrl's that match the provided rowNodes and columns. eg if one row node
     // and two columns provided, that identifies 4 cells, so 4 CellCtrl's returned.
     getCellCtrls(rowNodes, columns) {
-        const rowIdsMap = this.mapRowNodes(rowNodes);
-        const res = [];
         let colIdsMap;
         if (Object(_utils_generic_mjs__WEBPACK_IMPORTED_MODULE_4__["exists"])(columns)) {
             colIdsMap = {};
@@ -38017,12 +39050,8 @@ let RowRenderer = class RowRenderer extends _context_beanStub_mjs__WEBPACK_IMPOR
                 }
             });
         }
-        const processRow = (rowCtrl) => {
-            const rowNode = rowCtrl.getRowNode();
-            // skip this row if it is missing from the provided list
-            if (rowIdsMap != null && !this.isRowInMap(rowNode, rowIdsMap)) {
-                return;
-            }
+        const res = [];
+        this.getRowCtrls(rowNodes).forEach(rowCtrl => {
             rowCtrl.getAllCellCtrls().forEach(cellCtrl => {
                 const colId = cellCtrl.getColumn().getId();
                 const excludeColFromRefresh = colIdsMap && !colIdsMap[colId];
@@ -38031,8 +39060,7 @@ let RowRenderer = class RowRenderer extends _context_beanStub_mjs__WEBPACK_IMPOR
                 }
                 res.push(cellCtrl);
             });
-        };
-        this.getAllRowCtrls().forEach(row => processRow(row));
+        });
         return res;
     }
     destroy() {
@@ -38079,18 +39107,30 @@ let RowRenderer = class RowRenderer extends _context_beanStub_mjs__WEBPACK_IMPOR
         if (e.direction !== 'vertical') {
             return;
         }
-        this.redraw();
+        this.redraw({ afterScroll: true });
     }
     // gets called when rows don't change, but viewport does, so after:
     // 1) height of grid body changes, ie number of displayed rows has changed
     // 2) grid scrolled to new position
     // 3) ensure index visible (which is a scroll)
-    redraw(afterScroll = true) {
+    redraw(params = {}) {
+        const { afterScroll } = params;
         let cellFocused;
         // only try to refocus cells shifting in and out of sticky container
         // if the browser supports focus ({ preventScroll })
         if (this.stickyRowFeature && Object(_utils_browser_mjs__WEBPACK_IMPORTED_MODULE_11__["browserSupportsPreventScroll"])()) {
             cellFocused = this.getCellToRestoreFocusToAfterRefresh() || undefined;
+        }
+        const oldFirstRow = this.firstRenderedRow;
+        const oldLastRow = this.lastRenderedRow;
+        this.workOutFirstAndLastRowsToRender();
+        let hasStickyRowChanges = false;
+        if (this.stickyRowFeature) {
+            hasStickyRowChanges = this.stickyRowFeature.checkStickyRows();
+        }
+        const rangeChanged = this.firstRenderedRow !== oldFirstRow || this.lastRenderedRow !== oldLastRow;
+        if (afterScroll && !hasStickyRowChanges && !rangeChanged) {
+            return;
         }
         this.getLockOnRefresh();
         this.recycleRows(null, false, afterScroll);
@@ -38131,18 +39171,17 @@ let RowRenderer = class RowRenderer extends _context_beanStub_mjs__WEBPACK_IMPOR
         // if we are redrawing due to model update, then old rows are in rowsToRecycle
         Object(_utils_object_mjs__WEBPACK_IMPORTED_MODULE_5__["iterateObject"])(rowsToRecycle, checkRowToDraw);
         indexesToDraw.sort((a, b) => a - b);
-        indexesToDraw = indexesToDraw.filter(index => {
-            const rowNode = this.paginationProxy.getRow(index);
-            return rowNode && !rowNode.sticky;
-        });
-        return indexesToDraw;
+        const ret = [];
+        for (let i = 0; i < indexesToDraw.length; i++) {
+            const currRow = indexesToDraw[i];
+            const rowNode = this.paginationProxy.getRow(currRow);
+            if (rowNode && !rowNode.sticky) {
+                ret.push(currRow);
+            }
+        }
+        return ret;
     }
     recycleRows(rowsToRecycle, animate = false, afterScroll = false) {
-        this.rowContainerHeightService.updateOffset();
-        this.workOutFirstAndLastRowsToRender();
-        if (this.stickyRowFeature) {
-            this.stickyRowFeature.checkStickyRows();
-        }
         // the row can already exist and be in the following:
         // rowsToRecycle -> if model change, then the index may be different, however row may
         //                         exist here from previous time (mapped by id).
@@ -38207,7 +39246,7 @@ let RowRenderer = class RowRenderer extends _context_beanStub_mjs__WEBPACK_IMPOR
         });
         this.refreshFloatingRowComps();
         this.removeRowCtrls(rowsToRemove);
-        this.redraw();
+        this.redraw({ afterScroll: true });
     }
     getFullWidthRowCtrls(rowNodes) {
         const rowNodesMap = this.mapRowNodes(rowNodes);
@@ -38223,34 +39262,6 @@ let RowRenderer = class RowRenderer extends _context_beanStub_mjs__WEBPACK_IMPOR
             }
             return true;
         });
-    }
-    refreshFullWidthRow(rowNode) {
-        this.refreshFullWidthRows([rowNode]);
-    }
-    refreshFullWidthRows(rowNodes) {
-        const fullWidthCtrls = this.getFullWidthRowCtrls(rowNodes);
-        let redraw = false;
-        const indicesToForce = [];
-        fullWidthCtrls.forEach(fullWidthCtrl => {
-            const refreshed = fullWidthCtrl.refreshFullWidth();
-            if (refreshed) {
-                return;
-            }
-            const node = fullWidthCtrl.getRowNode();
-            if (node.sticky) {
-                this.stickyRowFeature.refreshStickyNode(node);
-            }
-            else {
-                indicesToForce.push(node.rowIndex);
-            }
-            redraw = true;
-        });
-        if (indicesToForce.length > 0) {
-            this.removeRowCtrls(indicesToForce);
-        }
-        if (redraw) {
-            this.redraw(false);
-        }
     }
     createOrUpdateRowCtrl(rowIndex, rowsToRecycle, animate, afterScroll) {
         let rowNode;
@@ -38339,6 +39350,7 @@ let RowRenderer = class RowRenderer extends _context_beanStub_mjs__WEBPACK_IMPOR
         return rowsToBuffer * defaultRowHeight;
     }
     workOutFirstAndLastRowsToRender() {
+        this.rowContainerHeightService.updateOffset();
         let newFirst;
         let newLast;
         if (!this.paginationProxy.isRowsToRender()) {
@@ -38661,8 +39673,7 @@ class StickyRowFeature extends _context_beanStub_mjs__WEBPACK_IMPORTED_MODULE_0_
     checkStickyRows() {
         let height = 0;
         if (!this.gridOptionsService.isGroupRowsSticky()) {
-            this.refreshNodesAndContainerHeight([], height);
-            return;
+            return this.refreshNodesAndContainerHeight([], height);
         }
         const stickyRows = [];
         const firstPixel = this.rowRenderer.getFirstVisibleVerticalPixel();
@@ -38742,7 +39753,7 @@ class StickyRowFeature extends _context_beanStub_mjs__WEBPACK_IMPORTED_MODULE_0_
             }
             break;
         }
-        this.refreshNodesAndContainerHeight(stickyRows, height);
+        return this.refreshNodesAndContainerHeight(stickyRows, height);
     }
     refreshStickyNode(stickRowNode) {
         const allStickyNodes = [];
@@ -38752,12 +39763,17 @@ class StickyRowFeature extends _context_beanStub_mjs__WEBPACK_IMPORTED_MODULE_0_
                 allStickyNodes.push(currentNode);
             }
         }
-        this.refreshNodesAndContainerHeight(allStickyNodes, this.containerHeight);
-        this.checkStickyRows();
+        if (this.refreshNodesAndContainerHeight(allStickyNodes, this.containerHeight)) {
+            this.checkStickyRows();
+        }
     }
     refreshNodesAndContainerHeight(allStickyNodes, height) {
+        let stickyRowsChanged = false;
         const removedCtrls = this.stickyRowCtrls.filter(ctrl => allStickyNodes.indexOf(ctrl.getRowNode()) === -1);
         const addedNodes = allStickyNodes.filter(rowNode => this.stickyRowCtrls.findIndex(ctrl => ctrl.getRowNode() === rowNode) === -1);
+        if (removedCtrls.length || addedNodes.length) {
+            stickyRowsChanged = true;
+        }
         const ctrlsToDestroy = {};
         removedCtrls.forEach(removedCtrl => {
             ctrlsToDestroy[removedCtrl.getRowNode().id] = removedCtrl;
@@ -38777,7 +39793,9 @@ class StickyRowFeature extends _context_beanStub_mjs__WEBPACK_IMPORTED_MODULE_0_
         if (this.containerHeight !== height) {
             this.containerHeight = height;
             this.gridBodyCtrl.setStickyTopHeight(height);
+            stickyRowsChanged = true;
         }
+        return stickyRowsChanged;
     }
 }
 __decorate([
@@ -40038,11 +41056,857 @@ class AgInputRange extends _agAbstractInputField_mjs__WEBPACK_IMPORTED_MODULE_0_
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "AgRichSelect", function() { return AgRichSelect; });
+/* harmony import */ var _constants_keyCode_mjs__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(47);
+/* harmony import */ var _context_context_mjs__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(10);
+/* harmony import */ var _eventKeys_mjs__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(22);
+/* harmony import */ var _utils_aria_mjs__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(40);
+/* harmony import */ var _utils_dom_mjs__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(44);
+/* harmony import */ var _utils_function_mjs__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(12);
+/* harmony import */ var _utils_fuzzyMatch_mjs__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(31);
+/* harmony import */ var _utils_generic_mjs__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(6);
+/* harmony import */ var _utils_keyboard_mjs__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(46);
+/* harmony import */ var _agPickerField_mjs__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(66);
+/* harmony import */ var _agRichSelectRow_mjs__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(200);
+/* harmony import */ var _virtualList_mjs__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(201);
+var __decorate = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+
+
+
+
+
+
+
+
+
+
+
+
+class AgRichSelect extends _agPickerField_mjs__WEBPACK_IMPORTED_MODULE_9__["AgPickerField"] {
+    constructor(config) {
+        super(Object.assign({ pickerAriaLabelKey: 'ariaLabelRichSelectField', pickerAriaLabelValue: 'Rich Select Field', pickerType: 'ag-list' }, config), 'ag-rich-select', 'smallDown', 'combobox');
+        this.searchString = '';
+        this.highlightedItem = -1;
+        const { cellRowHeight, value, valueList, searchDebounceDelay } = config || {};
+        if (cellRowHeight) {
+            this.cellRowHeight = cellRowHeight;
+        }
+        if (value != null) {
+            this.value = value;
+        }
+        if (valueList != null) {
+            this.setValueList(valueList);
+        }
+        if (searchDebounceDelay != null) {
+            this.searchDebounceDelay = searchDebounceDelay;
+        }
+    }
+    postConstruct() {
+        var _a, _b;
+        super.postConstruct();
+        this.createListComponent();
+        this.eWrapper.tabIndex = (_a = this.gridOptionsService.getNum('tabIndex')) !== null && _a !== void 0 ? _a : 0;
+        this.eWrapper.classList.add('ag-rich-select-value');
+        const debounceDelay = (_b = this.searchDebounceDelay) !== null && _b !== void 0 ? _b : 300;
+        this.clearSearchString = Object(_utils_function_mjs__WEBPACK_IMPORTED_MODULE_5__["debounce"])(this.clearSearchString, debounceDelay);
+        this.renderSelectedValue();
+    }
+    createListComponent() {
+        this.listComponent = this.createManagedBean(new _virtualList_mjs__WEBPACK_IMPORTED_MODULE_11__["VirtualList"]({ cssIdentifier: 'rich-select' }));
+        this.listComponent.setComponentCreator(this.createRowComponent.bind(this));
+        this.listComponent.setParentComponent(this);
+        this.addManagedListener(this.listComponent, _eventKeys_mjs__WEBPACK_IMPORTED_MODULE_2__["Events"].EVENT_FIELD_PICKER_VALUE_SELECTED, (e) => {
+            this.onListValueSelected(e.value, e.fromEnterKey);
+        });
+        if (this.cellRowHeight) {
+            this.listComponent.setRowHeight(this.cellRowHeight);
+        }
+        const eListGui = this.listComponent.getGui();
+        const eListAriaEl = this.listComponent.getAriaElement();
+        this.addManagedListener(eListGui, 'mousemove', this.onPickerMouseMove.bind(this));
+        this.addManagedListener(eListGui, 'mousedown', e => e.preventDefault());
+        eListGui.classList.add('ag-rich-select-list');
+        const listId = `ag-rich-select-list-${this.listComponent.getCompId()}`;
+        eListAriaEl.setAttribute('id', listId);
+        Object(_utils_aria_mjs__WEBPACK_IMPORTED_MODULE_3__["setAriaControls"])(this.eWrapper, eListAriaEl);
+    }
+    renderSelectedValue() {
+        const { value, eDisplayField, config } = this;
+        const valueFormatted = this.config.valueFormatter ? this.config.valueFormatter(value) : value;
+        let userCompDetails;
+        if (config.cellRenderer) {
+            userCompDetails = this.userComponentFactory.getCellRendererDetails(this.config, {
+                value,
+                valueFormatted,
+                api: this.gridOptionsService.api
+            });
+        }
+        let userCompDetailsPromise;
+        if (userCompDetails) {
+            userCompDetailsPromise = userCompDetails.newAgStackInstance();
+        }
+        if (userCompDetailsPromise) {
+            Object(_utils_dom_mjs__WEBPACK_IMPORTED_MODULE_4__["clearElement"])(eDisplayField);
+            Object(_utils_dom_mjs__WEBPACK_IMPORTED_MODULE_4__["bindCellRendererToHtmlElement"])(userCompDetailsPromise, eDisplayField);
+            userCompDetailsPromise.then(renderer => {
+                this.addDestroyFunc(() => this.getContext().destroyBean(renderer));
+            });
+        }
+        else {
+            if (Object(_utils_generic_mjs__WEBPACK_IMPORTED_MODULE_7__["exists"])(this.value)) {
+                eDisplayField.innerText = valueFormatted;
+            }
+            else {
+                Object(_utils_dom_mjs__WEBPACK_IMPORTED_MODULE_4__["clearElement"])(eDisplayField);
+            }
+        }
+    }
+    setValueList(valueList) {
+        this.values = valueList;
+        this.highlightSelectedValue();
+    }
+    getCurrentValueIndex() {
+        const { values, value } = this;
+        if (value == null) {
+            return -1;
+        }
+        for (let i = 0; i < values.length; i++) {
+            if (values[i] === value) {
+                return i;
+            }
+        }
+        return -1;
+    }
+    highlightSelectedValue(index) {
+        if (index == null) {
+            index = this.getCurrentValueIndex();
+        }
+        if (index === -1) {
+            return;
+        }
+        this.highlightedItem = index;
+        if (this.listComponent) {
+            this.listComponent.forEachRenderedRow((cmp, idx) => {
+                cmp.updateHighlighted(this.highlightedItem === idx);
+            });
+        }
+    }
+    setRowHeight(height) {
+        if (height !== this.cellRowHeight) {
+            this.cellRowHeight = height;
+        }
+        if (this.listComponent) {
+            this.listComponent.setRowHeight(height);
+        }
+    }
+    createPickerComponent() {
+        const { values } = this;
+        this.listComponent.setModel({
+            getRowCount: () => values.length,
+            getRow: (index) => values[index]
+        });
+        // do not create the picker every time to save state
+        return this.listComponent;
+    }
+    showPicker() {
+        var _a, _b, _c;
+        super.showPicker();
+        const currentValueIndex = this.getCurrentValueIndex();
+        if (currentValueIndex !== -1) {
+            // make sure the virtual list has been sized correctly
+            (_a = this.listComponent) === null || _a === void 0 ? void 0 : _a.refresh();
+            (_b = this.listComponent) === null || _b === void 0 ? void 0 : _b.ensureIndexVisible(currentValueIndex);
+            this.highlightSelectedValue(currentValueIndex);
+        }
+        else {
+            (_c = this.listComponent) === null || _c === void 0 ? void 0 : _c.refresh();
+        }
+    }
+    beforeHidePicker() {
+        this.highlightedItem = -1;
+        super.beforeHidePicker();
+    }
+    searchText(searchKey) {
+        if (typeof searchKey !== 'string') {
+            let { key } = searchKey;
+            if (key === _constants_keyCode_mjs__WEBPACK_IMPORTED_MODULE_0__["KeyCode"].BACKSPACE) {
+                this.searchString = this.searchString.slice(0, -1);
+                key = '';
+            }
+            else if (!Object(_utils_keyboard_mjs__WEBPACK_IMPORTED_MODULE_8__["isEventFromPrintableCharacter"])(searchKey)) {
+                return;
+            }
+            searchKey.preventDefault();
+            this.searchText(key);
+            return;
+        }
+        this.searchString += searchKey;
+        this.runSearch();
+        this.clearSearchString();
+    }
+    runSearch() {
+        const values = this.values;
+        let searchStrings;
+        const { valueFormatter = (value => value), searchStringCreator } = this.config;
+        if (typeof values[0] === 'number' || typeof values[0] === 'string') {
+            searchStrings = values.map(v => valueFormatter(v));
+        }
+        else if (typeof values[0] === 'object' && searchStringCreator) {
+            searchStrings = searchStringCreator(values);
+        }
+        if (!searchStrings) {
+            return;
+        }
+        const topSuggestion = Object(_utils_fuzzyMatch_mjs__WEBPACK_IMPORTED_MODULE_6__["fuzzySuggestions"])(this.searchString, searchStrings, true)[0];
+        if (!topSuggestion) {
+            return;
+        }
+        const topSuggestionIndex = searchStrings.indexOf(topSuggestion);
+        this.selectListItem(topSuggestionIndex);
+    }
+    clearSearchString() {
+        this.searchString = '';
+    }
+    selectListItem(index) {
+        if (!this.isPickerDisplayed || !this.listComponent || index < 0 || index >= this.values.length) {
+            return;
+        }
+        this.listComponent.ensureIndexVisible(index);
+        this.highlightSelectedValue(index);
+    }
+    setValue(value, silent, fromPicker) {
+        const index = this.values.indexOf(value);
+        if (index === -1) {
+            return this;
+        }
+        this.value = value;
+        if (!fromPicker) {
+            this.selectListItem(index);
+        }
+        this.renderSelectedValue();
+        return super.setValue(value, silent);
+    }
+    createRowComponent(value) {
+        const row = new _agRichSelectRow_mjs__WEBPACK_IMPORTED_MODULE_10__["RichSelectRow"](this.config, this.eWrapper);
+        row.setParentComponent(this.listComponent);
+        this.getContext().createBean(row);
+        row.setState(value, value === this.value);
+        return row;
+    }
+    getRowForMouseEvent(e) {
+        const { listComponent } = this;
+        if (!listComponent) {
+            return -1;
+        }
+        const eGui = listComponent === null || listComponent === void 0 ? void 0 : listComponent.getGui();
+        const rect = eGui.getBoundingClientRect();
+        const scrollTop = listComponent.getScrollTop();
+        const mouseY = e.clientY - rect.top + scrollTop;
+        return Math.floor(mouseY / listComponent.getRowHeight());
+    }
+    onPickerMouseMove(e) {
+        if (!this.listComponent) {
+            return;
+        }
+        const row = this.getRowForMouseEvent(e);
+        if (row !== -1) {
+            this.selectListItem(row);
+        }
+    }
+    onNavigationKeyDown(event, key) {
+        // if we don't preventDefault the page body and/or grid scroll will move.
+        event.preventDefault();
+        const isDown = key === _constants_keyCode_mjs__WEBPACK_IMPORTED_MODULE_0__["KeyCode"].DOWN;
+        if (!this.isPickerDisplayed && isDown) {
+            this.showPicker();
+            return;
+        }
+        const oldIndex = this.highlightedItem;
+        const diff = isDown ? 1 : -1;
+        const newIndex = oldIndex === -1 ? 0 : oldIndex + diff;
+        this.selectListItem(newIndex);
+    }
+    onEnterKeyDown(e) {
+        if (!this.isPickerDisplayed) {
+            return;
+        }
+        e.preventDefault();
+        this.onListValueSelected(this.values[this.highlightedItem], true);
+    }
+    onListValueSelected(value, fromEnterKey) {
+        this.setValue(value, false, true);
+        this.dispatchPickerEvent(value, fromEnterKey);
+        this.hidePicker();
+    }
+    dispatchPickerEvent(value, fromEnterKey) {
+        const event = {
+            type: _eventKeys_mjs__WEBPACK_IMPORTED_MODULE_2__["Events"].EVENT_FIELD_PICKER_VALUE_SELECTED,
+            fromEnterKey,
+            value
+        };
+        this.dispatchEvent(event);
+    }
+    onKeyDown(event) {
+        const key = event.key;
+        switch (key) {
+            case _constants_keyCode_mjs__WEBPACK_IMPORTED_MODULE_0__["KeyCode"].LEFT:
+            case _constants_keyCode_mjs__WEBPACK_IMPORTED_MODULE_0__["KeyCode"].RIGHT:
+                event.preventDefault();
+                break;
+            case _constants_keyCode_mjs__WEBPACK_IMPORTED_MODULE_0__["KeyCode"].DOWN:
+            case _constants_keyCode_mjs__WEBPACK_IMPORTED_MODULE_0__["KeyCode"].UP:
+                this.onNavigationKeyDown(event, key);
+                break;
+            case _constants_keyCode_mjs__WEBPACK_IMPORTED_MODULE_0__["KeyCode"].ESCAPE:
+                if (this.isPickerDisplayed) {
+                    this.hidePicker();
+                }
+                break;
+            case _constants_keyCode_mjs__WEBPACK_IMPORTED_MODULE_0__["KeyCode"].ENTER:
+                this.onEnterKeyDown(event);
+                break;
+            default:
+                this.searchText(event);
+        }
+    }
+}
+__decorate([
+    Object(_context_context_mjs__WEBPACK_IMPORTED_MODULE_1__["Autowired"])('userComponentFactory')
+], AgRichSelect.prototype, "userComponentFactory", void 0);
+
+
+/***/ }),
+/* 200 */
+/***/ (function(__webpack_module__, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "RichSelectRow", function() { return RichSelectRow; });
+/* harmony import */ var _context_context_mjs__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(10);
+/* harmony import */ var _eventKeys_mjs__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(22);
+/* harmony import */ var _utils_dom_mjs__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(44);
+/* harmony import */ var _component_mjs__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(37);
+/* harmony import */ var _utils_string_mjs__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(25);
+/* harmony import */ var _utils_generic_mjs__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(6);
+/* harmony import */ var _utils_aria_mjs__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(40);
+var __decorate = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+
+
+
+
+
+
+
+class RichSelectRow extends _component_mjs__WEBPACK_IMPORTED_MODULE_3__["Component"] {
+    constructor(params, wrapperEl) {
+        super(/* html */ `<div class="ag-rich-select-row" role="presentation"></div>`);
+        this.params = params;
+        this.wrapperEl = wrapperEl;
+    }
+    postConstruct() {
+        this.addManagedListener(this.getGui(), 'mouseup', this.onMouseUp.bind(this));
+    }
+    setState(value, selected) {
+        let formattedValue = '';
+        if (this.params.valueFormatter) {
+            formattedValue = this.params.valueFormatter(value);
+        }
+        const rendererSuccessful = this.populateWithRenderer(value, formattedValue);
+        if (!rendererSuccessful) {
+            this.populateWithoutRenderer(value, formattedValue);
+        }
+        this.value = value;
+    }
+    updateHighlighted(highlighted) {
+        var _a;
+        const eGui = this.getGui();
+        const parentId = `ag-rich-select-row-${this.getCompId()}`;
+        (_a = eGui.parentElement) === null || _a === void 0 ? void 0 : _a.setAttribute('id', parentId);
+        if (highlighted) {
+            const parentAriaEl = this.getParentComponent().getAriaElement();
+            parentAriaEl.setAttribute('aria-activedescendant', parentId);
+            this.wrapperEl.setAttribute('data-active-option', parentId);
+        }
+        Object(_utils_aria_mjs__WEBPACK_IMPORTED_MODULE_6__["setAriaSelected"])(eGui.parentElement, highlighted);
+        this.addOrRemoveCssClass('ag-rich-select-row-selected', highlighted);
+    }
+    populateWithoutRenderer(value, valueFormatted) {
+        const eDocument = this.gridOptionsService.getDocument();
+        const eGui = this.getGui();
+        const span = eDocument.createElement('span');
+        span.style.overflow = 'hidden';
+        span.style.textOverflow = 'ellipsis';
+        const parsedValue = Object(_utils_string_mjs__WEBPACK_IMPORTED_MODULE_4__["escapeString"])(Object(_utils_generic_mjs__WEBPACK_IMPORTED_MODULE_5__["exists"])(valueFormatted) ? valueFormatted : value);
+        span.textContent = Object(_utils_generic_mjs__WEBPACK_IMPORTED_MODULE_5__["exists"])(parsedValue) ? parsedValue : '&nbsp;';
+        eGui.appendChild(span);
+    }
+    populateWithRenderer(value, valueFormatted) {
+        // bad coder here - we are not populating all values of the cellRendererParams
+        let cellRendererPromise;
+        let userCompDetails;
+        if (this.params.cellRenderer) {
+            userCompDetails = this.userComponentFactory.getCellRendererDetails(this.params, {
+                value,
+                valueFormatted,
+                api: this.gridOptionsService.api
+            });
+        }
+        if (userCompDetails) {
+            cellRendererPromise = userCompDetails.newAgStackInstance();
+        }
+        if (cellRendererPromise) {
+            Object(_utils_dom_mjs__WEBPACK_IMPORTED_MODULE_2__["bindCellRendererToHtmlElement"])(cellRendererPromise, this.getGui());
+        }
+        if (cellRendererPromise) {
+            cellRendererPromise.then(childComponent => {
+                this.addDestroyFunc(() => {
+                    this.getContext().destroyBean(childComponent);
+                });
+            });
+            return true;
+        }
+        return false;
+    }
+    onMouseUp() {
+        const parent = this.getParentComponent();
+        const event = {
+            type: _eventKeys_mjs__WEBPACK_IMPORTED_MODULE_1__["Events"].EVENT_FIELD_PICKER_VALUE_SELECTED,
+            fromEnterKey: false,
+            value: this.value
+        };
+        parent === null || parent === void 0 ? void 0 : parent.dispatchEvent(event);
+    }
+}
+__decorate([
+    Object(_context_context_mjs__WEBPACK_IMPORTED_MODULE_0__["Autowired"])('userComponentFactory')
+], RichSelectRow.prototype, "userComponentFactory", void 0);
+__decorate([
+    _context_context_mjs__WEBPACK_IMPORTED_MODULE_0__["PostConstruct"]
+], RichSelectRow.prototype, "postConstruct", null);
+
+
+/***/ }),
+/* 201 */
+/***/ (function(__webpack_module__, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "VirtualList", function() { return VirtualList; });
+/* harmony import */ var _context_context_mjs__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(10);
+/* harmony import */ var _componentAnnotations_mjs__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(56);
+/* harmony import */ var _utils_aria_mjs__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(40);
+/* harmony import */ var _constants_keyCode_mjs__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(47);
+/* harmony import */ var _utils_function_mjs__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(12);
+/* harmony import */ var _tabGuardComp_mjs__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(202);
+/* harmony import */ var _eventKeys_mjs__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(22);
+/* harmony import */ var _utils_event_mjs__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(17);
+var __decorate = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+
+
+
+
+
+
+
+
+class VirtualList extends _tabGuardComp_mjs__WEBPACK_IMPORTED_MODULE_5__["TabGuardComp"] {
+    constructor(params) {
+        super(VirtualList.getTemplate((params === null || params === void 0 ? void 0 : params.cssIdentifier) || 'default'));
+        this.renderedRows = new Map();
+        this.rowHeight = 20;
+        const { cssIdentifier = 'default', ariaRole = 'listbox', listName } = params || {};
+        this.cssIdentifier = cssIdentifier;
+        this.ariaRole = ariaRole;
+        this.listName = listName;
+    }
+    postConstruct() {
+        this.addScrollListener();
+        this.rowHeight = this.getItemHeight();
+        this.addResizeObserver();
+        this.initialiseTabGuard({
+            onFocusIn: (e) => this.onFocusIn(e),
+            onFocusOut: (e) => this.onFocusOut(e),
+            focusInnerElement: (fromBottom) => this.focusInnerElement(fromBottom),
+            onTabKeyDown: e => this.onTabKeyDown(e),
+            handleKeyDown: e => this.handleKeyDown(e)
+        });
+        this.setAriaProperties();
+        this.addManagedListener(this.eventService, _eventKeys_mjs__WEBPACK_IMPORTED_MODULE_6__["Events"].EVENT_GRID_STYLES_CHANGED, this.onGridStylesChanged.bind(this));
+    }
+    onGridStylesChanged() {
+        this.rowHeight = this.getItemHeight();
+        this.refresh();
+    }
+    setAriaProperties() {
+        const translate = this.localeService.getLocaleTextFunc();
+        const listName = translate('ariaDefaultListName', this.listName || 'List');
+        const ariaEl = this.eContainer;
+        Object(_utils_aria_mjs__WEBPACK_IMPORTED_MODULE_2__["setAriaRole"])(ariaEl, this.ariaRole);
+        Object(_utils_aria_mjs__WEBPACK_IMPORTED_MODULE_2__["setAriaLabel"])(ariaEl, listName);
+    }
+    addResizeObserver() {
+        const listener = () => this.drawVirtualRows();
+        const destroyObserver = this.resizeObserverService.observeResize(this.getGui(), listener);
+        this.addDestroyFunc(destroyObserver);
+    }
+    focusInnerElement(fromBottom) {
+        this.focusRow(fromBottom ? this.model.getRowCount() - 1 : 0);
+    }
+    onFocusIn(e) {
+        const target = e.target;
+        if (target.classList.contains('ag-virtual-list-item')) {
+            this.lastFocusedRowIndex = Object(_utils_aria_mjs__WEBPACK_IMPORTED_MODULE_2__["getAriaPosInSet"])(target) - 1;
+        }
+        return false;
+    }
+    onFocusOut(e) {
+        if (!this.getFocusableElement().contains(e.relatedTarget)) {
+            this.lastFocusedRowIndex = null;
+        }
+        return false;
+    }
+    handleKeyDown(e) {
+        switch (e.key) {
+            case _constants_keyCode_mjs__WEBPACK_IMPORTED_MODULE_3__["KeyCode"].UP:
+            case _constants_keyCode_mjs__WEBPACK_IMPORTED_MODULE_3__["KeyCode"].DOWN:
+                if (this.navigate(e.key === _constants_keyCode_mjs__WEBPACK_IMPORTED_MODULE_3__["KeyCode"].UP)) {
+                    e.preventDefault();
+                }
+                break;
+        }
+    }
+    onTabKeyDown(e) {
+        if (this.navigate(e.shiftKey)) {
+            e.preventDefault();
+        }
+        else {
+            Object(_utils_event_mjs__WEBPACK_IMPORTED_MODULE_7__["stopPropagationForAgGrid"])(e);
+            this.forceFocusOutOfContainer(e.shiftKey);
+        }
+    }
+    navigate(up) {
+        if (this.lastFocusedRowIndex == null) {
+            return false;
+        }
+        const nextRow = this.lastFocusedRowIndex + (up ? -1 : 1);
+        if (nextRow < 0 || nextRow >= this.model.getRowCount()) {
+            return false;
+        }
+        this.focusRow(nextRow);
+        return true;
+    }
+    getLastFocusedRow() {
+        return this.lastFocusedRowIndex;
+    }
+    focusRow(rowNumber) {
+        this.ensureIndexVisible(rowNumber);
+        window.setTimeout(() => {
+            if (!this.isAlive()) {
+                return;
+            }
+            const renderedRow = this.renderedRows.get(rowNumber);
+            if (renderedRow) {
+                renderedRow.eDiv.focus();
+            }
+        }, 10);
+    }
+    getComponentAt(rowIndex) {
+        const comp = this.renderedRows.get(rowIndex);
+        return comp && comp.rowComponent;
+    }
+    forEachRenderedRow(func) {
+        this.renderedRows.forEach((value, key) => func(value.rowComponent, key));
+    }
+    static getTemplate(cssIdentifier) {
+        return ( /* html */`<div class="ag-virtual-list-viewport ag-${cssIdentifier}-virtual-list-viewport" role="presentation">
+                <div class="ag-virtual-list-container ag-${cssIdentifier}-virtual-list-container" ref="eContainer"></div>
+            </div>`);
+    }
+    getItemHeight() {
+        return this.environment.getListItemHeight();
+    }
+    ensureIndexVisible(index) {
+        const lastRow = this.model.getRowCount();
+        if (typeof index !== 'number' || index < 0 || index >= lastRow) {
+            console.warn('AG Grid: invalid row index for ensureIndexVisible: ' + index);
+            return;
+        }
+        const rowTopPixel = index * this.rowHeight;
+        const rowBottomPixel = rowTopPixel + this.rowHeight;
+        const eGui = this.getGui();
+        const viewportTopPixel = eGui.scrollTop;
+        const viewportHeight = eGui.offsetHeight;
+        const viewportBottomPixel = viewportTopPixel + viewportHeight;
+        const viewportScrolledPastRow = viewportTopPixel > rowTopPixel;
+        const viewportScrolledBeforeRow = viewportBottomPixel < rowBottomPixel;
+        if (viewportScrolledPastRow) {
+            // if row is before, scroll up with row at top
+            eGui.scrollTop = rowTopPixel;
+        }
+        else if (viewportScrolledBeforeRow) {
+            // if row is below, scroll down with row at bottom
+            const newScrollPosition = rowBottomPixel - viewportHeight;
+            eGui.scrollTop = newScrollPosition;
+        }
+    }
+    setComponentCreator(componentCreator) {
+        this.componentCreator = componentCreator;
+    }
+    setComponentUpdater(componentUpdater) {
+        this.componentUpdater = componentUpdater;
+    }
+    getRowHeight() {
+        return this.rowHeight;
+    }
+    getScrollTop() {
+        return this.getGui().scrollTop;
+    }
+    setRowHeight(rowHeight) {
+        this.rowHeight = rowHeight;
+        this.refresh();
+    }
+    refresh(softRefresh) {
+        if (this.model == null || !this.isAlive()) {
+            return;
+        }
+        const rowCount = this.model.getRowCount();
+        this.eContainer.style.height = `${rowCount * this.rowHeight}px`;
+        // ensure height is applied before attempting to redraw rows
+        Object(_utils_function_mjs__WEBPACK_IMPORTED_MODULE_4__["waitUntil"])(() => this.eContainer.clientHeight >= rowCount * this.rowHeight, () => {
+            if (!this.isAlive()) {
+                return;
+            }
+            if (this.canSoftRefresh(softRefresh)) {
+                this.drawVirtualRows(true);
+            }
+            else {
+                this.clearVirtualRows();
+                this.drawVirtualRows();
+            }
+        });
+    }
+    canSoftRefresh(softRefresh) {
+        return !!(softRefresh && this.renderedRows.size && typeof this.model.areRowsEqual === 'function' && this.componentUpdater);
+    }
+    clearVirtualRows() {
+        this.renderedRows.forEach((_, rowIndex) => this.removeRow(rowIndex));
+    }
+    drawVirtualRows(softRefresh) {
+        if (!this.isAlive() || !this.model) {
+            return;
+        }
+        const gui = this.getGui();
+        const topPixel = gui.scrollTop;
+        const bottomPixel = topPixel + gui.offsetHeight;
+        const firstRow = Math.floor(topPixel / this.rowHeight);
+        const lastRow = Math.floor(bottomPixel / this.rowHeight);
+        this.ensureRowsRendered(firstRow, lastRow, softRefresh);
+    }
+    ensureRowsRendered(start, finish, softRefresh) {
+        // remove any rows that are no longer required
+        this.renderedRows.forEach((_, rowIndex) => {
+            if ((rowIndex < start || rowIndex > finish) && rowIndex !== this.lastFocusedRowIndex) {
+                this.removeRow(rowIndex);
+            }
+        });
+        if (softRefresh) {
+            // refresh any existing rows
+            this.refreshRows();
+        }
+        // insert any required new rows
+        for (let rowIndex = start; rowIndex <= finish; rowIndex++) {
+            if (this.renderedRows.has(rowIndex)) {
+                continue;
+            }
+            // check this row actually exists (in case overflow buffer window exceeds real data)
+            if (rowIndex < this.model.getRowCount()) {
+                this.insertRow(rowIndex);
+            }
+        }
+    }
+    insertRow(rowIndex) {
+        const value = this.model.getRow(rowIndex);
+        const eDiv = document.createElement('div');
+        eDiv.classList.add('ag-virtual-list-item', `ag-${this.cssIdentifier}-virtual-list-item`);
+        Object(_utils_aria_mjs__WEBPACK_IMPORTED_MODULE_2__["setAriaRole"])(eDiv, this.ariaRole === 'tree' ? 'treeitem' : 'option');
+        Object(_utils_aria_mjs__WEBPACK_IMPORTED_MODULE_2__["setAriaSetSize"])(eDiv, this.model.getRowCount());
+        Object(_utils_aria_mjs__WEBPACK_IMPORTED_MODULE_2__["setAriaPosInSet"])(eDiv, rowIndex + 1);
+        eDiv.setAttribute('tabindex', '-1');
+        if (typeof this.model.isRowSelected === 'function') {
+            const isSelected = this.model.isRowSelected(rowIndex);
+            Object(_utils_aria_mjs__WEBPACK_IMPORTED_MODULE_2__["setAriaSelected"])(eDiv, !!isSelected);
+            Object(_utils_aria_mjs__WEBPACK_IMPORTED_MODULE_2__["setAriaChecked"])(eDiv, isSelected);
+        }
+        eDiv.style.height = `${this.rowHeight}px`;
+        eDiv.style.top = `${this.rowHeight * rowIndex}px`;
+        const rowComponent = this.componentCreator(value, eDiv);
+        rowComponent.addGuiEventListener('focusin', () => this.lastFocusedRowIndex = rowIndex);
+        eDiv.appendChild(rowComponent.getGui());
+        // keep the DOM order consistent with the order of the rows
+        if (this.renderedRows.has(rowIndex - 1)) {
+            this.renderedRows.get(rowIndex - 1).eDiv.insertAdjacentElement('afterend', eDiv);
+        }
+        else if (this.renderedRows.has(rowIndex + 1)) {
+            this.renderedRows.get(rowIndex + 1).eDiv.insertAdjacentElement('beforebegin', eDiv);
+        }
+        else {
+            this.eContainer.appendChild(eDiv);
+        }
+        this.renderedRows.set(rowIndex, { rowComponent, eDiv, value });
+    }
+    removeRow(rowIndex) {
+        const component = this.renderedRows.get(rowIndex);
+        this.eContainer.removeChild(component.eDiv);
+        this.destroyBean(component.rowComponent);
+        this.renderedRows.delete(rowIndex);
+    }
+    refreshRows() {
+        const rowCount = this.model.getRowCount();
+        this.renderedRows.forEach((row, rowIndex) => {
+            var _a, _b;
+            if (rowIndex >= rowCount) {
+                this.removeRow(rowIndex);
+            }
+            else {
+                const newValue = this.model.getRow(rowIndex);
+                if ((_b = (_a = this.model).areRowsEqual) === null || _b === void 0 ? void 0 : _b.call(_a, row.value, newValue)) {
+                    this.componentUpdater(newValue, row.rowComponent);
+                }
+                else {
+                    // to be replaced later
+                    this.removeRow(rowIndex);
+                }
+            }
+        });
+    }
+    addScrollListener() {
+        this.addGuiEventListener('scroll', () => this.drawVirtualRows(), { passive: true });
+    }
+    setModel(model) {
+        this.model = model;
+    }
+    getAriaElement() {
+        return this.eContainer;
+    }
+    destroy() {
+        if (!this.isAlive()) {
+            return;
+        }
+        this.clearVirtualRows();
+        super.destroy();
+    }
+}
+__decorate([
+    Object(_context_context_mjs__WEBPACK_IMPORTED_MODULE_0__["Autowired"])('resizeObserverService')
+], VirtualList.prototype, "resizeObserverService", void 0);
+__decorate([
+    Object(_componentAnnotations_mjs__WEBPACK_IMPORTED_MODULE_1__["RefSelector"])('eContainer')
+], VirtualList.prototype, "eContainer", void 0);
+__decorate([
+    _context_context_mjs__WEBPACK_IMPORTED_MODULE_0__["PostConstruct"]
+], VirtualList.prototype, "postConstruct", null);
+
+
+/***/ }),
+/* 202 */
+/***/ (function(__webpack_module__, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "TabGuardComp", function() { return TabGuardComp; });
+/* harmony import */ var _component_mjs__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(37);
+/* harmony import */ var _utils_dom_mjs__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(44);
+/* harmony import */ var _tabGuardCtrl_mjs__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(171);
+/* harmony import */ var _utils_aria_mjs__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(40);
+
+
+
+
+class TabGuardComp extends _component_mjs__WEBPACK_IMPORTED_MODULE_0__["Component"] {
+    initialiseTabGuard(params) {
+        this.eTopGuard = this.createTabGuard('top');
+        this.eBottomGuard = this.createTabGuard('bottom');
+        this.eFocusableElement = this.getFocusableElement();
+        const tabGuards = [this.eTopGuard, this.eBottomGuard];
+        const compProxy = {
+            setTabIndex: tabIndex => {
+                tabGuards.forEach(tabGuard => tabIndex != null ? tabGuard.setAttribute('tabindex', tabIndex) : tabGuard.removeAttribute('tabindex'));
+            }
+        };
+        this.addTabGuards(this.eTopGuard, this.eBottomGuard);
+        this.tabGuardCtrl = this.createManagedBean(new _tabGuardCtrl_mjs__WEBPACK_IMPORTED_MODULE_2__["TabGuardCtrl"]({
+            comp: compProxy,
+            eTopGuard: this.eTopGuard,
+            eBottomGuard: this.eBottomGuard,
+            eFocusableElement: this.eFocusableElement,
+            onFocusIn: params.onFocusIn,
+            onFocusOut: params.onFocusOut,
+            focusInnerElement: params.focusInnerElement,
+            handleKeyDown: params.handleKeyDown,
+            onTabKeyDown: params.onTabKeyDown,
+            shouldStopEventPropagation: params.shouldStopEventPropagation
+        }));
+    }
+    createTabGuard(side) {
+        const tabGuard = document.createElement('div');
+        const cls = side === 'top' ? _tabGuardCtrl_mjs__WEBPACK_IMPORTED_MODULE_2__["TabGuardClassNames"].TAB_GUARD_TOP : _tabGuardCtrl_mjs__WEBPACK_IMPORTED_MODULE_2__["TabGuardClassNames"].TAB_GUARD_BOTTOM;
+        tabGuard.classList.add(_tabGuardCtrl_mjs__WEBPACK_IMPORTED_MODULE_2__["TabGuardClassNames"].TAB_GUARD, cls);
+        Object(_utils_aria_mjs__WEBPACK_IMPORTED_MODULE_3__["setAriaRole"])(tabGuard, 'presentation');
+        return tabGuard;
+    }
+    addTabGuards(topTabGuard, bottomTabGuard) {
+        this.eFocusableElement.insertAdjacentElement('afterbegin', topTabGuard);
+        this.eFocusableElement.insertAdjacentElement('beforeend', bottomTabGuard);
+    }
+    removeAllChildrenExceptTabGuards() {
+        const tabGuards = [this.eTopGuard, this.eBottomGuard];
+        Object(_utils_dom_mjs__WEBPACK_IMPORTED_MODULE_1__["clearElement"])(this.getFocusableElement());
+        this.addTabGuards(...tabGuards);
+    }
+    forceFocusOutOfContainer(up = false) {
+        this.tabGuardCtrl.forceFocusOutOfContainer(up);
+    }
+    appendChild(newChild, container) {
+        if (!Object(_utils_dom_mjs__WEBPACK_IMPORTED_MODULE_1__["isNodeOrElement"])(newChild)) {
+            newChild = newChild.getGui();
+        }
+        const { eBottomGuard: bottomTabGuard } = this;
+        if (bottomTabGuard) {
+            bottomTabGuard.insertAdjacentElement('beforebegin', newChild);
+        }
+        else {
+            super.appendChild(newChild, container);
+        }
+    }
+}
+
+
+/***/ }),
+/* 203 */
+/***/ (function(__webpack_module__, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "AgSlider", function() { return AgSlider; });
 /* harmony import */ var _componentAnnotations_mjs__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(56);
-/* harmony import */ var _agAbstractLabel_mjs__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(67);
-/* harmony import */ var _agAbstractField_mjs__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(66);
-/* harmony import */ var _context_context_mjs__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(10);
+/* harmony import */ var _agAbstractLabel_mjs__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(68);
+/* harmony import */ var _context_context_mjs__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(10);
+/* harmony import */ var _eventKeys_mjs__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(22);
 var __decorate = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -40062,7 +41926,7 @@ class AgSlider extends _agAbstractLabel_mjs__WEBPACK_IMPORTED_MODULE_1__["AgAbst
         this.eSlider.addCssClass('ag-slider-field');
     }
     onValueChange(callbackFn) {
-        const eventChanged = _agAbstractField_mjs__WEBPACK_IMPORTED_MODULE_2__["AgAbstractField"].EVENT_CHANGED;
+        const eventChanged = _eventKeys_mjs__WEBPACK_IMPORTED_MODULE_3__["Events"].EVENT_FIELD_VALUE_CHANGED;
         this.addManagedListener(this.eText, eventChanged, () => {
             const textValue = parseFloat(this.eText.getValue());
             this.eSlider.setValue(textValue.toString(), true);
@@ -40102,7 +41966,7 @@ class AgSlider extends _agAbstractLabel_mjs__WEBPACK_IMPORTED_MODULE_1__["AgAbst
         }
         this.eText.setValue(value, true);
         this.eSlider.setValue(value, true);
-        this.dispatchEvent({ type: _agAbstractField_mjs__WEBPACK_IMPORTED_MODULE_2__["AgAbstractField"].EVENT_CHANGED });
+        this.dispatchEvent({ type: _eventKeys_mjs__WEBPACK_IMPORTED_MODULE_3__["Events"].EVENT_FIELD_VALUE_CHANGED });
         return this;
     }
     setStep(step) {
@@ -40128,12 +41992,12 @@ __decorate([
     Object(_componentAnnotations_mjs__WEBPACK_IMPORTED_MODULE_0__["RefSelector"])('eText')
 ], AgSlider.prototype, "eText", void 0);
 __decorate([
-    _context_context_mjs__WEBPACK_IMPORTED_MODULE_3__["PostConstruct"]
+    _context_context_mjs__WEBPACK_IMPORTED_MODULE_2__["PostConstruct"]
 ], AgSlider.prototype, "init", null);
 
 
 /***/ }),
-/* 200 */
+/* 204 */
 /***/ (function(__webpack_module__, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -40368,15 +42232,15 @@ __decorate([
 
 
 /***/ }),
-/* 201 */
+/* 205 */
 /***/ (function(__webpack_module__, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "AgMenuItemComponent", function() { return AgMenuItemComponent; });
 /* harmony import */ var _context_context_mjs__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(10);
-/* harmony import */ var _agMenuList_mjs__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(202);
-/* harmony import */ var _agMenuPanel_mjs__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(204);
+/* harmony import */ var _agMenuList_mjs__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(206);
+/* harmony import */ var _agMenuPanel_mjs__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(207);
 /* harmony import */ var _component_mjs__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(37);
 /* harmony import */ var _constants_keyCode_mjs__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(47);
 /* harmony import */ var _utils_icon_mjs__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(45);
@@ -40684,15 +42548,15 @@ __decorate([
 
 
 /***/ }),
-/* 202 */
+/* 206 */
 /***/ (function(__webpack_module__, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "AgMenuList", function() { return AgMenuList; });
 /* harmony import */ var _context_context_mjs__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(10);
-/* harmony import */ var _agMenuItemComponent_mjs__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(201);
-/* harmony import */ var _tabGuardComp_mjs__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(203);
+/* harmony import */ var _agMenuItemComponent_mjs__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(205);
+/* harmony import */ var _tabGuardComp_mjs__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(202);
 /* harmony import */ var _constants_keyCode_mjs__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(47);
 /* harmony import */ var _utils_dom_mjs__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(44);
 /* harmony import */ var _utils_array_mjs__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(18);
@@ -40892,81 +42756,7 @@ __decorate([
 
 
 /***/ }),
-/* 203 */
-/***/ (function(__webpack_module__, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "TabGuardComp", function() { return TabGuardComp; });
-/* harmony import */ var _component_mjs__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(37);
-/* harmony import */ var _utils_dom_mjs__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(44);
-/* harmony import */ var _tabGuardCtrl_mjs__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(171);
-/* harmony import */ var _utils_aria_mjs__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(40);
-
-
-
-
-class TabGuardComp extends _component_mjs__WEBPACK_IMPORTED_MODULE_0__["Component"] {
-    initialiseTabGuard(params) {
-        this.eTopGuard = this.createTabGuard('top');
-        this.eBottomGuard = this.createTabGuard('bottom');
-        this.eFocusableElement = this.getFocusableElement();
-        const tabGuards = [this.eTopGuard, this.eBottomGuard];
-        const compProxy = {
-            setTabIndex: tabIndex => {
-                tabGuards.forEach(tabGuard => tabIndex != null ? tabGuard.setAttribute('tabindex', tabIndex) : tabGuard.removeAttribute('tabindex'));
-            }
-        };
-        this.addTabGuards(this.eTopGuard, this.eBottomGuard);
-        this.tabGuardCtrl = this.createManagedBean(new _tabGuardCtrl_mjs__WEBPACK_IMPORTED_MODULE_2__["TabGuardCtrl"]({
-            comp: compProxy,
-            eTopGuard: this.eTopGuard,
-            eBottomGuard: this.eBottomGuard,
-            eFocusableElement: this.eFocusableElement,
-            onFocusIn: params.onFocusIn,
-            onFocusOut: params.onFocusOut,
-            focusInnerElement: params.focusInnerElement,
-            handleKeyDown: params.handleKeyDown,
-            onTabKeyDown: params.onTabKeyDown,
-            shouldStopEventPropagation: params.shouldStopEventPropagation
-        }));
-    }
-    createTabGuard(side) {
-        const tabGuard = document.createElement('div');
-        const cls = side === 'top' ? _tabGuardCtrl_mjs__WEBPACK_IMPORTED_MODULE_2__["TabGuardClassNames"].TAB_GUARD_TOP : _tabGuardCtrl_mjs__WEBPACK_IMPORTED_MODULE_2__["TabGuardClassNames"].TAB_GUARD_BOTTOM;
-        tabGuard.classList.add(_tabGuardCtrl_mjs__WEBPACK_IMPORTED_MODULE_2__["TabGuardClassNames"].TAB_GUARD, cls);
-        Object(_utils_aria_mjs__WEBPACK_IMPORTED_MODULE_3__["setAriaRole"])(tabGuard, 'presentation');
-        return tabGuard;
-    }
-    addTabGuards(topTabGuard, bottomTabGuard) {
-        this.eFocusableElement.insertAdjacentElement('afterbegin', topTabGuard);
-        this.eFocusableElement.insertAdjacentElement('beforeend', bottomTabGuard);
-    }
-    removeAllChildrenExceptTabGuards() {
-        const tabGuards = [this.eTopGuard, this.eBottomGuard];
-        Object(_utils_dom_mjs__WEBPACK_IMPORTED_MODULE_1__["clearElement"])(this.getFocusableElement());
-        this.addTabGuards(...tabGuards);
-    }
-    forceFocusOutOfContainer(up = false) {
-        this.tabGuardCtrl.forceFocusOutOfContainer(up);
-    }
-    appendChild(newChild, container) {
-        if (!Object(_utils_dom_mjs__WEBPACK_IMPORTED_MODULE_1__["isNodeOrElement"])(newChild)) {
-            newChild = newChild.getGui();
-        }
-        const { eBottomGuard: bottomTabGuard } = this;
-        if (bottomTabGuard) {
-            bottomTabGuard.insertAdjacentElement('beforebegin', newChild);
-        }
-        else {
-            super.appendChild(newChild, container);
-        }
-    }
-}
-
-
-/***/ }),
-/* 204 */
+/* 207 */
 /***/ (function(__webpack_module__, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -40974,7 +42764,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "AgMenuPanel", function() { return AgMenuPanel; });
 /* harmony import */ var _context_context_mjs__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(10);
 /* harmony import */ var _constants_keyCode_mjs__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(47);
-/* harmony import */ var _tabGuardComp_mjs__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(203);
+/* harmony import */ var _tabGuardComp_mjs__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(202);
 var __decorate = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -41020,14 +42810,14 @@ __decorate([
 
 
 /***/ }),
-/* 205 */
+/* 208 */
 /***/ (function(__webpack_module__, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "AgDialog", function() { return AgDialog; });
 /* harmony import */ var _context_context_mjs__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(10);
-/* harmony import */ var _agPanel_mjs__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(206);
+/* harmony import */ var _agPanel_mjs__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(209);
 /* harmony import */ var _component_mjs__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(37);
 /* harmony import */ var _utils_dom_mjs__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(44);
 /* harmony import */ var _utils_icon_mjs__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(45);
@@ -41180,7 +42970,7 @@ __decorate([
 
 
 /***/ }),
-/* 206 */
+/* 209 */
 /***/ (function(__webpack_module__, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -41370,7 +43160,7 @@ __decorate([
 
 
 /***/ }),
-/* 207 */
+/* 210 */
 /***/ (function(__webpack_module__, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -41435,11 +43225,17 @@ let PopupService = PopupService_1 = class PopupService extends _context_beanStub
         return this.gridCtrl.getGui();
     }
     positionPopupForMenu(params) {
-        const sourceRect = params.eventSource.getBoundingClientRect();
+        const { eventSource, ePopup } = params;
+        const popupIdx = this.getPopupIndex(ePopup);
+        if (popupIdx !== -1) {
+            const popup = this.popupList[popupIdx];
+            popup.alignedToElement = eventSource;
+        }
+        const sourceRect = eventSource.getBoundingClientRect();
         const parentRect = this.getParentRect();
-        const y = this.keepXYWithinBounds(params.ePopup, sourceRect.top - parentRect.top, DIRECTION.vertical);
-        const minWidth = (params.ePopup.clientWidth > 0) ? params.ePopup.clientWidth : 200;
-        params.ePopup.style.minWidth = `${minWidth}px`;
+        const y = this.keepXYWithinBounds(ePopup, sourceRect.top - parentRect.top, DIRECTION.vertical);
+        const minWidth = (ePopup.clientWidth > 0) ? ePopup.clientWidth : 200;
+        ePopup.style.minWidth = `${minWidth}px`;
         const widthOfParent = parentRect.right - parentRect.left;
         const maxX = widthOfParent - minWidth;
         // the x position of the popup depends on RTL or LTR. for normal cases, LTR, we put the child popup
@@ -41451,9 +43247,11 @@ let PopupService = PopupService_1 = class PopupService extends _context_beanStub
             x = xLeftPosition();
             if (x < 0) {
                 x = xRightPosition();
+                this.setAlignedStyles(ePopup, 'left');
             }
             if (x > maxX) {
                 x = 0;
+                this.setAlignedStyles(ePopup, 'right');
             }
         }
         else {
@@ -41461,13 +43259,15 @@ let PopupService = PopupService_1 = class PopupService extends _context_beanStub
             x = xRightPosition();
             if (x > maxX) {
                 x = xLeftPosition();
+                this.setAlignedStyles(ePopup, 'right');
             }
             if (x < 0) {
                 x = 0;
+                this.setAlignedStyles(ePopup, 'left');
             }
         }
-        params.ePopup.style.left = `${x}px`;
-        params.ePopup.style.top = `${y}px`;
+        ePopup.style.left = `${x}px`;
+        ePopup.style.top = `${y}px`;
         function xRightPosition() {
             return sourceRect.right - parentRect.left - 2;
         }
@@ -41495,28 +43295,77 @@ let PopupService = PopupService_1 = class PopupService extends _context_beanStub
         };
     }
     positionPopupByComponent(params) {
-        const sourceRect = params.eventSource.getBoundingClientRect();
-        const alignSide = params.alignSide || 'left';
-        const position = params.position || 'over';
+        const { ePopup, nudgeX, nudgeY, keepWithinBounds, eventSource, alignSide = 'left', position = 'over', column, rowNode, type } = params;
+        const sourceRect = eventSource.getBoundingClientRect();
         const parentRect = this.getParentRect();
+        const popupIdx = this.getPopupIndex(ePopup);
+        if (popupIdx !== -1) {
+            const popup = this.popupList[popupIdx];
+            popup.alignedToElement = eventSource;
+        }
         const updatePosition = () => {
             let x = sourceRect.left - parentRect.left;
             if (alignSide === 'right') {
-                x -= (params.ePopup.offsetWidth - sourceRect.width);
+                x -= (ePopup.offsetWidth - sourceRect.width);
             }
-            const y = position === 'over'
-                ? (sourceRect.top - parentRect.top)
-                : (sourceRect.top - parentRect.top + sourceRect.height);
+            let y;
+            if (position === 'over') {
+                y = (sourceRect.top - parentRect.top);
+                this.setAlignedStyles(ePopup, 'over');
+            }
+            else {
+                this.setAlignedStyles(ePopup, 'under');
+                const alignSide = this.shouldRenderUnderOrAbove(ePopup, sourceRect, parentRect, params.nudgeY || 0);
+                if (alignSide === 'under') {
+                    y = (sourceRect.top - parentRect.top + sourceRect.height);
+                }
+                else {
+                    y = (sourceRect.top - ePopup.offsetHeight - (nudgeY || 0) * 2) - parentRect.top;
+                }
+            }
             return { x, y };
         };
         this.positionPopup({
-            ePopup: params.ePopup,
-            nudgeX: params.nudgeX,
-            nudgeY: params.nudgeY,
-            keepWithinBounds: params.keepWithinBounds,
+            ePopup,
+            nudgeX,
+            nudgeY,
+            keepWithinBounds,
             updatePosition,
-            postProcessCallback: () => this.callPostProcessPopup(params.type, params.ePopup, params.eventSource, null, params.column, params.rowNode)
+            postProcessCallback: () => this.callPostProcessPopup(type, ePopup, eventSource, null, column, rowNode)
         });
+    }
+    shouldRenderUnderOrAbove(ePopup, targetCompRect, parentRect, nudgeY) {
+        const spaceAvailableUnder = parentRect.bottom - targetCompRect.bottom;
+        const spaceAvailableAbove = targetCompRect.top - parentRect.top;
+        const spaceRequired = ePopup.offsetHeight + nudgeY;
+        if (spaceAvailableUnder > spaceRequired) {
+            return 'under';
+        }
+        if (spaceAvailableAbove > spaceRequired || spaceAvailableAbove > spaceAvailableUnder) {
+            return 'above';
+        }
+        return 'under';
+    }
+    setAlignedStyles(ePopup, positioned) {
+        const popupIdx = this.getPopupIndex(ePopup);
+        if (popupIdx === -1) {
+            return;
+        }
+        const popup = this.popupList[popupIdx];
+        const { alignedToElement } = popup;
+        if (!alignedToElement) {
+            return;
+        }
+        const positions = ['right', 'left', 'over', 'above', 'under'];
+        positions.forEach(position => {
+            alignedToElement.classList.remove(`ag-has-popup-positioned-${position}`);
+            ePopup.classList.remove(`ag-popup-positioned-${position}`);
+        });
+        if (!positioned) {
+            return;
+        }
+        alignedToElement.classList.add(`ag-has-popup-positioned-${positioned}`);
+        ePopup.classList.add(`ag-popup-positioned-${positioned}`);
     }
     callPostProcessPopup(type, ePopup, eventSource, mouseEvent, column, rowNode) {
         const callback = this.gridOptionsService.getCallback('postProcessPopup');
@@ -41620,7 +43469,7 @@ let PopupService = PopupService_1 = class PopupService extends _context_beanStub
             console.warn('AG Grid: could not find the document, document is empty');
             return { hideFunc: () => { } };
         }
-        const pos = this.popupList.findIndex(popup => popup.element === eChild);
+        const pos = this.getPopupIndex(eChild);
         if (pos !== -1) {
             const popup = this.popupList[pos];
             return { hideFunc: popup.hideFunc };
@@ -41745,11 +43594,15 @@ let PopupService = PopupService_1 = class PopupService extends _context_beanStub
             this.setPopupPositionRelatedToElement(element, anchorToElement);
         }
     }
+    getPopupIndex(el) {
+        return this.popupList.findIndex(p => p.element === el);
+    }
     setPopupPositionRelatedToElement(popupEl, relativeElement) {
-        const popup = this.popupList.find(p => p.element === popupEl);
-        if (!popup) {
+        const popupIndex = this.getPopupIndex(popupEl);
+        if (popupIndex === -1) {
             return;
         }
+        const popup = this.popupList[popupIndex];
         if (popup.stopAnchoringPromise) {
             popup.stopAnchoringPromise.then(destroyFunc => destroyFunc && destroyFunc());
         }
@@ -41770,6 +43623,7 @@ let PopupService = PopupService_1 = class PopupService extends _context_beanStub
         return destroyPositionTracker;
     }
     removePopupFromPopupList(element) {
+        this.setAlignedStyles(element, null);
         this.setPopupPositionRelatedToElement(element, null);
         this.popupList = this.popupList.filter(p => p.element !== element);
     }
@@ -41826,7 +43680,7 @@ let PopupService = PopupService_1 = class PopupService extends _context_beanStub
         if (!event) {
             return false;
         }
-        const indexOfThisChild = this.popupList.findIndex(popup => popup.element === target);
+        const indexOfThisChild = this.getPopupIndex(target);
         if (indexOfThisChild === -1) {
             return false;
         }
@@ -41962,20 +43816,324 @@ PopupService = PopupService_1 = __decorate([
 
 
 /***/ }),
-/* 208 */
+/* 211 */
 /***/ (function(__webpack_module__, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "VirtualList", function() { return VirtualList; });
-/* harmony import */ var _context_context_mjs__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(10);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "AgAutocomplete", function() { return AgAutocomplete; });
+/* harmony import */ var _component_mjs__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(37);
 /* harmony import */ var _componentAnnotations_mjs__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(56);
-/* harmony import */ var _utils_aria_mjs__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(40);
-/* harmony import */ var _constants_keyCode_mjs__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(47);
-/* harmony import */ var _utils_function_mjs__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(12);
-/* harmony import */ var _tabGuardComp_mjs__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(203);
-/* harmony import */ var _eventKeys_mjs__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(22);
-/* harmony import */ var _utils_event_mjs__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(17);
+/* harmony import */ var _context_context_mjs__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(10);
+/* harmony import */ var _agAutocompleteList_mjs__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(212);
+/* harmony import */ var _constants_keyCode_mjs__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(47);
+/* harmony import */ var _utils_generic_mjs__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(6);
+var __decorate = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+
+
+
+
+
+
+class AgAutocomplete extends _component_mjs__WEBPACK_IMPORTED_MODULE_0__["Component"] {
+    constructor() {
+        super(/* html */ `
+            <div class="ag-autocomplete" role="presentation">
+                <ag-input-text-field ref="eAutocompleteInput"></ag-input-text-field>
+            </div>`);
+        this.isListOpen = false;
+        this.lastPosition = 0;
+        this.valid = true;
+    }
+    postConstruct() {
+        this.eAutocompleteInput.onValueChange(value => this.onValueChanged(value));
+        this.eAutocompleteInput.getInputElement().setAttribute('autocomplete', 'off');
+        this.addGuiEventListener('keydown', this.onKeyDown.bind(this));
+        this.addGuiEventListener('click', this.updatePositionAndList.bind(this));
+        this.addDestroyFunc(() => {
+            this.destroyBean(this.autocompleteList);
+        });
+        this.addGuiEventListener('focusout', () => this.onFocusOut());
+    }
+    onValueChanged(value) {
+        const parsedValue = Object(_utils_generic_mjs__WEBPACK_IMPORTED_MODULE_5__["makeNull"])(value);
+        this.updateValue(parsedValue);
+        this.updateAutocompleteList(parsedValue);
+    }
+    updateValue(value) {
+        this.updateLastPosition();
+        this.dispatchEvent({
+            type: AgAutocomplete.EVENT_VALUE_CHANGED,
+            value
+        });
+        this.validate(value);
+    }
+    updateAutocompleteList(value) {
+        var _a, _b, _c, _d;
+        const autocompleteListParams = (_b = (_a = this.listGenerator) === null || _a === void 0 ? void 0 : _a.call(this, value, this.lastPosition)) !== null && _b !== void 0 ? _b : { enabled: false };
+        if (!autocompleteListParams.type || autocompleteListParams.type !== ((_c = this.autocompleteListParams) === null || _c === void 0 ? void 0 : _c.type)) {
+            if (this.isListOpen) {
+                this.closeList();
+            }
+        }
+        this.autocompleteListParams = autocompleteListParams;
+        if ((_d = this.autocompleteListParams) === null || _d === void 0 ? void 0 : _d.enabled) {
+            if (!this.isListOpen) {
+                this.openList();
+            }
+            const { searchString } = this.autocompleteListParams;
+            this.autocompleteList.setSearch(searchString !== null && searchString !== void 0 ? searchString : '');
+        }
+        else {
+            if (this.isListOpen) {
+                this.closeList();
+            }
+        }
+    }
+    onKeyDown(event) {
+        const key = event.key;
+        this.updateLastPosition();
+        switch (key) {
+            case _constants_keyCode_mjs__WEBPACK_IMPORTED_MODULE_4__["KeyCode"].ENTER:
+                this.onEnterKeyDown(event);
+                break;
+            case _constants_keyCode_mjs__WEBPACK_IMPORTED_MODULE_4__["KeyCode"].TAB:
+                this.onTabKeyDown(event);
+                break;
+            case _constants_keyCode_mjs__WEBPACK_IMPORTED_MODULE_4__["KeyCode"].DOWN:
+            case _constants_keyCode_mjs__WEBPACK_IMPORTED_MODULE_4__["KeyCode"].UP:
+                this.onUpDownKeyDown(event, key);
+                break;
+            case _constants_keyCode_mjs__WEBPACK_IMPORTED_MODULE_4__["KeyCode"].LEFT:
+            case _constants_keyCode_mjs__WEBPACK_IMPORTED_MODULE_4__["KeyCode"].RIGHT:
+            case _constants_keyCode_mjs__WEBPACK_IMPORTED_MODULE_4__["KeyCode"].PAGE_HOME:
+            case _constants_keyCode_mjs__WEBPACK_IMPORTED_MODULE_4__["KeyCode"].PAGE_END:
+                // input position is updated after this is called, so do async
+                setTimeout(() => {
+                    this.updatePositionAndList();
+                });
+                break;
+            case _constants_keyCode_mjs__WEBPACK_IMPORTED_MODULE_4__["KeyCode"].ESCAPE:
+                this.onEscapeKeyDown(event);
+                break;
+            case _constants_keyCode_mjs__WEBPACK_IMPORTED_MODULE_4__["KeyCode"].SPACE:
+                if (event.ctrlKey && !this.isListOpen) {
+                    event.preventDefault();
+                    this.forceOpenList();
+                }
+                break;
+        }
+    }
+    confirmSelection() {
+        var _a;
+        const selectedValue = (_a = this.autocompleteList) === null || _a === void 0 ? void 0 : _a.getSelectedValue();
+        if (selectedValue) {
+            this.closeList();
+            this.dispatchEvent({
+                type: AgAutocomplete.EVENT_OPTION_SELECTED,
+                value: this.getValue(),
+                position: this.lastPosition,
+                updateEntry: selectedValue,
+                autocompleteType: this.autocompleteListParams.type
+            });
+        }
+    }
+    onTabKeyDown(event) {
+        if (this.isListOpen) {
+            event.preventDefault();
+            event.stopPropagation();
+            this.confirmSelection();
+        }
+    }
+    onEnterKeyDown(event) {
+        event.preventDefault();
+        if (this.isListOpen) {
+            this.confirmSelection();
+        }
+        else {
+            this.onCompleted();
+        }
+    }
+    onUpDownKeyDown(event, key) {
+        var _a;
+        event.preventDefault();
+        if (!this.isListOpen) {
+            this.forceOpenList();
+        }
+        else {
+            (_a = this.autocompleteList) === null || _a === void 0 ? void 0 : _a.onNavigationKeyDown(event, key);
+        }
+    }
+    onEscapeKeyDown(event) {
+        if (this.isListOpen) {
+            event.preventDefault();
+            event.stopPropagation();
+            this.closeList();
+            this.setCaret(this.lastPosition, true);
+        }
+    }
+    onFocusOut() {
+        if (this.isListOpen) {
+            this.closeList();
+        }
+    }
+    updatePositionAndList() {
+        var _a;
+        this.updateLastPosition();
+        this.updateAutocompleteList((_a = this.eAutocompleteInput.getValue()) !== null && _a !== void 0 ? _a : null);
+    }
+    setCaret(position, setFocus) {
+        const eDocument = this.gridOptionsService.getDocument();
+        if (setFocus && eDocument.activeElement === eDocument.body) {
+            // clicking on the list loses focus, so restore
+            this.eAutocompleteInput.getFocusableElement().focus();
+        }
+        this.eAutocompleteInput.getInputElement().setSelectionRange(position, position);
+    }
+    forceOpenList() {
+        this.onValueChanged(this.eAutocompleteInput.getValue());
+    }
+    updateLastPosition() {
+        var _a;
+        this.lastPosition = (_a = this.eAutocompleteInput.getInputElement().selectionStart) !== null && _a !== void 0 ? _a : 0;
+    }
+    validate(value) {
+        var _a;
+        if (!this.validator) {
+            return;
+        }
+        this.validationMessage = this.validator(value);
+        this.eAutocompleteInput.getInputElement().setCustomValidity((_a = this.validationMessage) !== null && _a !== void 0 ? _a : '');
+        this.valid = !this.validationMessage;
+        this.dispatchEvent({
+            type: AgAutocomplete.EVENT_VALID_CHANGED,
+            isValid: this.valid,
+            validationMessage: this.validationMessage
+        });
+    }
+    openList() {
+        this.isListOpen = true;
+        // this is unmanaged as it gets destroyed/created each time it is opened
+        this.autocompleteList = this.createBean(new _agAutocompleteList_mjs__WEBPACK_IMPORTED_MODULE_3__["AgAutocompleteList"]({
+            autocompleteEntries: this.autocompleteListParams.entries,
+            onConfirmed: () => this.confirmSelection(),
+            forceLastSelection: this.forceLastSelection
+        }));
+        const ePopupGui = this.autocompleteList.getGui();
+        const positionParams = {
+            ePopup: ePopupGui,
+            type: 'autocomplete',
+            eventSource: this.getGui(),
+            position: 'under',
+            alignSide: this.gridOptionsService.is('enableRtl') ? 'right' : 'left',
+            keepWithinBounds: true
+        };
+        const addPopupRes = this.popupService.addPopup({
+            eChild: ePopupGui,
+            anchorToElement: this.getGui(),
+            positionCallback: () => this.popupService.positionPopupByComponent(positionParams),
+            ariaLabel: this.listAriaLabel
+        });
+        this.hidePopup = addPopupRes.hideFunc;
+        this.autocompleteList.afterGuiAttached();
+    }
+    closeList() {
+        this.isListOpen = false;
+        this.hidePopup();
+        this.destroyBean(this.autocompleteList);
+        this.autocompleteList = null;
+    }
+    onCompleted() {
+        if (this.isListOpen) {
+            this.closeList();
+        }
+        this.dispatchEvent({
+            type: AgAutocomplete.EVENT_VALUE_CONFIRMED,
+            value: this.getValue(),
+            isValid: this.isValid()
+        });
+    }
+    getValue() {
+        return Object(_utils_generic_mjs__WEBPACK_IMPORTED_MODULE_5__["makeNull"])(this.eAutocompleteInput.getValue());
+    }
+    setInputPlaceholder(placeholder) {
+        this.eAutocompleteInput.setInputPlaceholder(placeholder);
+        return this;
+    }
+    setInputAriaLabel(label) {
+        this.eAutocompleteInput.setInputAriaLabel(label);
+        return this;
+    }
+    setListAriaLabel(label) {
+        this.listAriaLabel = label;
+        return this;
+    }
+    setListGenerator(listGenerator) {
+        this.listGenerator = listGenerator;
+        return this;
+    }
+    setValidator(validator) {
+        this.validator = validator;
+        return this;
+    }
+    isValid() {
+        return this.valid;
+    }
+    setValue(params) {
+        const { value, position, silent, updateListOnlyIfOpen, restoreFocus } = params;
+        this.eAutocompleteInput.setValue(value, true);
+        this.setCaret(position !== null && position !== void 0 ? position : this.lastPosition, restoreFocus);
+        if (!silent) {
+            this.updateValue(value);
+        }
+        if (!updateListOnlyIfOpen || this.isListOpen) {
+            this.updateAutocompleteList(value);
+        }
+    }
+    setForceLastSelection(forceLastSelection) {
+        this.forceLastSelection = forceLastSelection;
+        return this;
+    }
+    setInputDisabled(disabled) {
+        this.eAutocompleteInput.setDisabled(disabled);
+        return this;
+    }
+}
+AgAutocomplete.EVENT_VALUE_CHANGED = 'eventValueChanged';
+AgAutocomplete.EVENT_VALUE_CONFIRMED = 'eventValueConfirmed';
+AgAutocomplete.EVENT_OPTION_SELECTED = 'eventOptionSelected';
+AgAutocomplete.EVENT_VALID_CHANGED = 'eventValidChanged';
+__decorate([
+    Object(_context_context_mjs__WEBPACK_IMPORTED_MODULE_2__["Autowired"])('popupService')
+], AgAutocomplete.prototype, "popupService", void 0);
+__decorate([
+    Object(_componentAnnotations_mjs__WEBPACK_IMPORTED_MODULE_1__["RefSelector"])('eAutocompleteInput')
+], AgAutocomplete.prototype, "eAutocompleteInput", void 0);
+__decorate([
+    _context_context_mjs__WEBPACK_IMPORTED_MODULE_2__["PostConstruct"]
+], AgAutocomplete.prototype, "postConstruct", null);
+
+
+/***/ }),
+/* 212 */
+/***/ (function(__webpack_module__, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "AgAutocompleteList", function() { return AgAutocompleteList; });
+/* harmony import */ var _componentAnnotations_mjs__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(56);
+/* harmony import */ var _virtualList_mjs__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(201);
+/* harmony import */ var _constants_keyCode_mjs__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(47);
+/* harmony import */ var _agAutocompleteRow_mjs__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(213);
+/* harmony import */ var _utils_fuzzyMatch_mjs__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(31);
+/* harmony import */ var _popupComponent_mjs__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(89);
+/* harmony import */ var _context_context_mjs__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(10);
+/* harmony import */ var _utils_generic_mjs__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(6);
 var __decorate = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -41990,303 +44148,215 @@ var __decorate = (undefined && undefined.__decorate) || function (decorators, ta
 
 
 
-class VirtualList extends _tabGuardComp_mjs__WEBPACK_IMPORTED_MODULE_5__["TabGuardComp"] {
-    constructor(cssIdentifier = 'default', ariaRole = 'listbox', listName) {
-        super(VirtualList.getTemplate(cssIdentifier));
-        this.cssIdentifier = cssIdentifier;
-        this.ariaRole = ariaRole;
-        this.listName = listName;
-        this.renderedRows = new Map();
-        this.rowHeight = 20;
-    }
-    postConstruct() {
-        this.addScrollListener();
-        this.rowHeight = this.getItemHeight();
-        this.addResizeObserver();
-        this.initialiseTabGuard({
-            onFocusIn: (e) => this.onFocusIn(e),
-            onFocusOut: (e) => this.onFocusOut(e),
-            focusInnerElement: (fromBottom) => this.focusInnerElement(fromBottom),
-            onTabKeyDown: e => this.onTabKeyDown(e),
-            handleKeyDown: e => this.handleKeyDown(e)
-        });
-        this.setAriaProperties();
-        this.addManagedListener(this.eventService, _eventKeys_mjs__WEBPACK_IMPORTED_MODULE_6__["Events"].EVENT_GRID_STYLES_CHANGED, this.onGridStylesChanged.bind(this));
-    }
-    onGridStylesChanged() {
-        this.rowHeight = this.getItemHeight();
-        this.refresh();
-    }
-    setAriaProperties() {
-        const translate = this.localeService.getLocaleTextFunc();
-        const listName = translate('ariaDefaultListName', this.listName || 'List');
-        const ariaEl = this.eContainer;
-        Object(_utils_aria_mjs__WEBPACK_IMPORTED_MODULE_2__["setAriaRole"])(ariaEl, this.ariaRole);
-        Object(_utils_aria_mjs__WEBPACK_IMPORTED_MODULE_2__["setAriaLabel"])(ariaEl, listName);
-    }
-    addResizeObserver() {
-        const listener = () => this.drawVirtualRows();
-        const destroyObserver = this.resizeObserverService.observeResize(this.getGui(), listener);
-        this.addDestroyFunc(destroyObserver);
-    }
-    focusInnerElement(fromBottom) {
-        this.focusRow(fromBottom ? this.model.getRowCount() - 1 : 0);
-    }
-    onFocusIn(e) {
-        const target = e.target;
-        if (target.classList.contains('ag-virtual-list-item')) {
-            this.lastFocusedRowIndex = Object(_utils_aria_mjs__WEBPACK_IMPORTED_MODULE_2__["getAriaPosInSet"])(target) - 1;
-        }
-        return false;
-    }
-    onFocusOut(e) {
-        if (!this.getFocusableElement().contains(e.relatedTarget)) {
-            this.lastFocusedRowIndex = null;
-        }
-        return false;
-    }
-    handleKeyDown(e) {
-        switch (e.key) {
-            case _constants_keyCode_mjs__WEBPACK_IMPORTED_MODULE_3__["KeyCode"].UP:
-            case _constants_keyCode_mjs__WEBPACK_IMPORTED_MODULE_3__["KeyCode"].DOWN:
-                if (this.navigate(e.key === _constants_keyCode_mjs__WEBPACK_IMPORTED_MODULE_3__["KeyCode"].UP)) {
-                    e.preventDefault();
-                }
-                break;
-        }
-    }
-    onTabKeyDown(e) {
-        if (this.navigate(e.shiftKey)) {
-            e.preventDefault();
-        }
-        else {
-            Object(_utils_event_mjs__WEBPACK_IMPORTED_MODULE_7__["stopPropagationForAgGrid"])(e);
-            this.forceFocusOutOfContainer(e.shiftKey);
-        }
-    }
-    navigate(up) {
-        if (this.lastFocusedRowIndex == null) {
-            return false;
-        }
-        const nextRow = this.lastFocusedRowIndex + (up ? -1 : 1);
-        if (nextRow < 0 || nextRow >= this.model.getRowCount()) {
-            return false;
-        }
-        this.focusRow(nextRow);
-        return true;
-    }
-    getLastFocusedRow() {
-        return this.lastFocusedRowIndex;
-    }
-    focusRow(rowNumber) {
-        this.ensureIndexVisible(rowNumber);
-        window.setTimeout(() => {
-            if (!this.isAlive()) {
-                return;
-            }
-            const renderedRow = this.renderedRows.get(rowNumber);
-            if (renderedRow) {
-                renderedRow.eDiv.focus();
-            }
-        }, 10);
-    }
-    getComponentAt(rowIndex) {
-        const comp = this.renderedRows.get(rowIndex);
-        return comp && comp.rowComponent;
-    }
-    forEachRenderedRow(func) {
-        this.renderedRows.forEach((value, key) => func(value.rowComponent, key));
-    }
-    static getTemplate(cssIdentifier) {
-        return /* html */ `
-            <div class="ag-virtual-list-viewport ag-${cssIdentifier}-virtual-list-viewport" role="presentation">
-                <div class="ag-virtual-list-container ag-${cssIdentifier}-virtual-list-container" ref="eContainer"></div>
-            </div>`;
-    }
-    getItemHeight() {
-        return this.environment.getListItemHeight();
-    }
-    ensureIndexVisible(index) {
-        const lastRow = this.model.getRowCount();
-        if (typeof index !== 'number' || index < 0 || index >= lastRow) {
-            console.warn('AG Grid: invalid row index for ensureIndexVisible: ' + index);
-            return;
-        }
-        const rowTopPixel = index * this.rowHeight;
-        const rowBottomPixel = rowTopPixel + this.rowHeight;
-        const eGui = this.getGui();
-        const viewportTopPixel = eGui.scrollTop;
-        const viewportHeight = eGui.offsetHeight;
-        const viewportBottomPixel = viewportTopPixel + viewportHeight;
-        const viewportScrolledPastRow = viewportTopPixel > rowTopPixel;
-        const viewportScrolledBeforeRow = viewportBottomPixel < rowBottomPixel;
-        if (viewportScrolledPastRow) {
-            // if row is before, scroll up with row at top
-            eGui.scrollTop = rowTopPixel;
-        }
-        else if (viewportScrolledBeforeRow) {
-            // if row is below, scroll down with row at bottom
-            const newScrollPosition = rowBottomPixel - viewportHeight;
-            eGui.scrollTop = newScrollPosition;
-        }
-    }
-    setComponentCreator(componentCreator) {
-        this.componentCreator = componentCreator;
-    }
-    setComponentUpdater(componentUpdater) {
-        this.componentUpdater = componentUpdater;
-    }
-    getRowHeight() {
-        return this.rowHeight;
-    }
-    getScrollTop() {
-        return this.getGui().scrollTop;
-    }
-    setRowHeight(rowHeight) {
-        this.rowHeight = rowHeight;
-        this.refresh();
-    }
-    refresh(softRefresh) {
-        if (this.model == null || !this.isAlive()) {
-            return;
-        }
-        const rowCount = this.model.getRowCount();
-        this.eContainer.style.height = `${rowCount * this.rowHeight}px`;
-        // ensure height is applied before attempting to redraw rows
-        Object(_utils_function_mjs__WEBPACK_IMPORTED_MODULE_4__["waitUntil"])(() => this.eContainer.clientHeight >= rowCount * this.rowHeight, () => {
-            if (!this.isAlive()) {
-                return;
-            }
-            if (this.canSoftRefresh(softRefresh)) {
-                this.drawVirtualRows(true);
-            }
-            else {
-                this.clearVirtualRows();
-                this.drawVirtualRows();
-            }
-        });
-    }
-    canSoftRefresh(softRefresh) {
-        return !!(softRefresh && this.renderedRows.size && typeof this.model.areRowsEqual === 'function' && this.componentUpdater);
-    }
-    clearVirtualRows() {
-        this.renderedRows.forEach((_, rowIndex) => this.removeRow(rowIndex));
-    }
-    drawVirtualRows(softRefresh) {
-        if (!this.isAlive()) {
-            return;
-        }
-        const gui = this.getGui();
-        const topPixel = gui.scrollTop;
-        const bottomPixel = topPixel + gui.offsetHeight;
-        const firstRow = Math.floor(topPixel / this.rowHeight);
-        const lastRow = Math.floor(bottomPixel / this.rowHeight);
-        this.ensureRowsRendered(firstRow, lastRow, softRefresh);
-    }
-    ensureRowsRendered(start, finish, softRefresh) {
-        // remove any rows that are no longer required
-        this.renderedRows.forEach((_, rowIndex) => {
-            if ((rowIndex < start || rowIndex > finish) && rowIndex !== this.lastFocusedRowIndex) {
-                this.removeRow(rowIndex);
-            }
-        });
-        if (softRefresh) {
-            // refresh any existing rows
-            this.refreshRows();
-        }
-        // insert any required new rows
-        for (let rowIndex = start; rowIndex <= finish; rowIndex++) {
-            if (this.renderedRows.has(rowIndex)) {
-                continue;
-            }
-            // check this row actually exists (in case overflow buffer window exceeds real data)
-            if (rowIndex < this.model.getRowCount()) {
-                this.insertRow(rowIndex);
-            }
-        }
-    }
-    insertRow(rowIndex) {
-        const value = this.model.getRow(rowIndex);
-        const eDiv = document.createElement('div');
-        eDiv.classList.add('ag-virtual-list-item', `ag-${this.cssIdentifier}-virtual-list-item`);
-        Object(_utils_aria_mjs__WEBPACK_IMPORTED_MODULE_2__["setAriaRole"])(eDiv, this.ariaRole === 'tree' ? 'treeitem' : 'option');
-        Object(_utils_aria_mjs__WEBPACK_IMPORTED_MODULE_2__["setAriaSetSize"])(eDiv, this.model.getRowCount());
-        Object(_utils_aria_mjs__WEBPACK_IMPORTED_MODULE_2__["setAriaPosInSet"])(eDiv, rowIndex + 1);
-        eDiv.setAttribute('tabindex', '-1');
-        if (typeof this.model.isRowSelected === 'function') {
-            const isSelected = this.model.isRowSelected(rowIndex);
-            Object(_utils_aria_mjs__WEBPACK_IMPORTED_MODULE_2__["setAriaSelected"])(eDiv, !!isSelected);
-            Object(_utils_aria_mjs__WEBPACK_IMPORTED_MODULE_2__["setAriaChecked"])(eDiv, isSelected);
-        }
-        eDiv.style.height = `${this.rowHeight}px`;
-        eDiv.style.top = `${this.rowHeight * rowIndex}px`;
-        const rowComponent = this.componentCreator(value, eDiv);
-        rowComponent.addGuiEventListener('focusin', () => this.lastFocusedRowIndex = rowIndex);
-        eDiv.appendChild(rowComponent.getGui());
-        // keep the DOM order consistent with the order of the rows
-        if (this.renderedRows.has(rowIndex - 1)) {
-            this.renderedRows.get(rowIndex - 1).eDiv.insertAdjacentElement('afterend', eDiv);
-        }
-        else if (this.renderedRows.has(rowIndex + 1)) {
-            this.renderedRows.get(rowIndex + 1).eDiv.insertAdjacentElement('beforebegin', eDiv);
-        }
-        else {
-            this.eContainer.appendChild(eDiv);
-        }
-        this.renderedRows.set(rowIndex, { rowComponent, eDiv, value });
-    }
-    removeRow(rowIndex) {
-        const component = this.renderedRows.get(rowIndex);
-        this.eContainer.removeChild(component.eDiv);
-        this.destroyBean(component.rowComponent);
-        this.renderedRows.delete(rowIndex);
-    }
-    refreshRows() {
-        const rowCount = this.model.getRowCount();
-        this.renderedRows.forEach((row, rowIndex) => {
-            var _a, _b;
-            if (rowIndex >= rowCount) {
-                this.removeRow(rowIndex);
-            }
-            else {
-                const newValue = this.model.getRow(rowIndex);
-                if ((_b = (_a = this.model).areRowsEqual) === null || _b === void 0 ? void 0 : _b.call(_a, row.value, newValue)) {
-                    this.componentUpdater(newValue, row.rowComponent);
-                }
-                else {
-                    // to be replaced later
-                    this.removeRow(rowIndex);
-                }
-            }
-        });
-    }
-    addScrollListener() {
-        this.addGuiEventListener('scroll', () => this.drawVirtualRows(), { passive: true });
-    }
-    setModel(model) {
-        this.model = model;
+class AgAutocompleteList extends _popupComponent_mjs__WEBPACK_IMPORTED_MODULE_5__["PopupComponent"] {
+    constructor(params) {
+        super(AgAutocompleteList.TEMPLATE);
+        this.params = params;
+        this.searchString = '';
     }
     destroy() {
-        if (!this.isAlive()) {
-            return;
-        }
-        this.clearVirtualRows();
         super.destroy();
     }
+    init() {
+        this.autocompleteEntries = this.params.autocompleteEntries;
+        this.virtualList = this.createManagedBean(new _virtualList_mjs__WEBPACK_IMPORTED_MODULE_1__["VirtualList"]({ cssIdentifier: 'autocomplete' }));
+        this.virtualList.setComponentCreator(this.createRowComponent.bind(this));
+        this.eList.appendChild(this.virtualList.getGui());
+        this.virtualList.setModel({
+            getRowCount: () => this.autocompleteEntries.length,
+            getRow: (index) => this.autocompleteEntries[index]
+        });
+        const virtualListGui = this.virtualList.getGui();
+        this.addManagedListener(virtualListGui, 'click', () => this.params.onConfirmed());
+        this.addManagedListener(virtualListGui, 'mousemove', this.onMouseMove.bind(this));
+        this.addManagedListener(virtualListGui, 'mousedown', (e) => e.preventDefault());
+        this.setSelectedValue(0);
+    }
+    onNavigationKeyDown(event, key) {
+        // if we don't preventDefault the page body and/or grid scroll will move.
+        event.preventDefault();
+        const oldIndex = this.autocompleteEntries.indexOf(this.selectedValue);
+        const newIndex = key === _constants_keyCode_mjs__WEBPACK_IMPORTED_MODULE_2__["KeyCode"].UP ? oldIndex - 1 : oldIndex + 1;
+        this.checkSetSelectedValue(newIndex);
+    }
+    setSearch(searchString) {
+        this.searchString = searchString;
+        if (Object(_utils_generic_mjs__WEBPACK_IMPORTED_MODULE_7__["exists"])(searchString)) {
+            this.runSearch();
+        }
+        else {
+            // reset
+            this.autocompleteEntries = this.params.autocompleteEntries;
+            this.virtualList.refresh();
+            this.checkSetSelectedValue(0);
+        }
+        this.updateSearchInList();
+    }
+    runContainsSearch(searchString, searchStrings) {
+        let topMatch;
+        let topMatchStartsWithSearchString = false;
+        const lowerCaseSearchString = searchString.toLocaleLowerCase();
+        const allMatches = searchStrings.filter(string => {
+            const lowerCaseString = string.toLocaleLowerCase();
+            const index = lowerCaseString.indexOf(lowerCaseSearchString);
+            const startsWithSearchString = index === 0;
+            const isMatch = index >= 0;
+            // top match is shortest value that starts with the search string, otherwise shortest value that includes the search string
+            if (isMatch && (!topMatch ||
+                (!topMatchStartsWithSearchString && startsWithSearchString) ||
+                (topMatchStartsWithSearchString === startsWithSearchString && string.length < topMatch.length))) {
+                topMatch = string;
+                topMatchStartsWithSearchString = startsWithSearchString;
+            }
+            return isMatch;
+        });
+        if (!topMatch && allMatches.length) {
+            topMatch = allMatches[0];
+        }
+        return { topMatch, allMatches };
+    }
+    runSearch() {
+        var _a, _b;
+        const { autocompleteEntries } = this.params;
+        const searchStrings = autocompleteEntries.map(v => { var _a; return (_a = v.displayValue) !== null && _a !== void 0 ? _a : v.key; });
+        let matchingStrings;
+        let topSuggestion;
+        if (this.params.useFuzzySearch) {
+            matchingStrings = Object(_utils_fuzzyMatch_mjs__WEBPACK_IMPORTED_MODULE_4__["fuzzySuggestions"])(this.searchString, searchStrings, true);
+            topSuggestion = matchingStrings.length ? matchingStrings[0] : undefined;
+        }
+        else {
+            const containsMatches = this.runContainsSearch(this.searchString, searchStrings);
+            matchingStrings = containsMatches.allMatches;
+            topSuggestion = containsMatches.topMatch;
+        }
+        let filteredEntries = autocompleteEntries.filter(({ key, displayValue }) => matchingStrings.includes(displayValue !== null && displayValue !== void 0 ? displayValue : key));
+        if (!filteredEntries.length && this.selectedValue && ((_b = (_a = this.params) === null || _a === void 0 ? void 0 : _a.forceLastSelection) === null || _b === void 0 ? void 0 : _b.call(_a, this.selectedValue, this.searchString))) {
+            filteredEntries = [this.selectedValue];
+        }
+        this.autocompleteEntries = filteredEntries;
+        this.virtualList.refresh();
+        if (!topSuggestion) {
+            return;
+        }
+        const topSuggestionIndex = matchingStrings.indexOf(topSuggestion);
+        this.checkSetSelectedValue(topSuggestionIndex);
+    }
+    updateSearchInList() {
+        this.virtualList.forEachRenderedRow((row) => row.setSearchString(this.searchString));
+    }
+    checkSetSelectedValue(index) {
+        if (index >= 0 && index < this.autocompleteEntries.length) {
+            this.setSelectedValue(index);
+        }
+    }
+    setSelectedValue(index) {
+        const value = this.autocompleteEntries[index];
+        if (this.selectedValue === value) {
+            return;
+        }
+        this.selectedValue = value;
+        this.virtualList.ensureIndexVisible(index);
+        this.virtualList.forEachRenderedRow((cmp, idx) => {
+            cmp.updateSelected(index === idx);
+        });
+    }
+    createRowComponent(value) {
+        var _a;
+        const row = new _agAutocompleteRow_mjs__WEBPACK_IMPORTED_MODULE_3__["AgAutocompleteRow"]();
+        this.getContext().createBean(row);
+        row.setState((_a = value.displayValue) !== null && _a !== void 0 ? _a : value.key, value === this.selectedValue);
+        return row;
+    }
+    onMouseMove(mouseEvent) {
+        const rect = this.virtualList.getGui().getBoundingClientRect();
+        const scrollTop = this.virtualList.getScrollTop();
+        const mouseY = mouseEvent.clientY - rect.top + scrollTop;
+        const row = Math.floor(mouseY / this.virtualList.getRowHeight());
+        this.checkSetSelectedValue(row);
+    }
+    afterGuiAttached() {
+        this.virtualList.refresh();
+    }
+    getSelectedValue() {
+        var _a;
+        if (!this.autocompleteEntries.length) {
+            return null;
+        }
+        ;
+        return (_a = this.selectedValue) !== null && _a !== void 0 ? _a : null;
+    }
 }
+AgAutocompleteList.TEMPLATE = `<div class="ag-autocomplete-list-popup">
+            <div ref="eList" class="ag-autocomplete-list"></div>
+        <div>`;
 __decorate([
-    Object(_context_context_mjs__WEBPACK_IMPORTED_MODULE_0__["Autowired"])('resizeObserverService')
-], VirtualList.prototype, "resizeObserverService", void 0);
+    Object(_componentAnnotations_mjs__WEBPACK_IMPORTED_MODULE_0__["RefSelector"])('eList')
+], AgAutocompleteList.prototype, "eList", void 0);
 __decorate([
-    Object(_componentAnnotations_mjs__WEBPACK_IMPORTED_MODULE_1__["RefSelector"])('eContainer')
-], VirtualList.prototype, "eContainer", void 0);
-__decorate([
-    _context_context_mjs__WEBPACK_IMPORTED_MODULE_0__["PostConstruct"]
-], VirtualList.prototype, "postConstruct", null);
+    _context_context_mjs__WEBPACK_IMPORTED_MODULE_6__["PostConstruct"]
+], AgAutocompleteList.prototype, "init", null);
 
 
 /***/ }),
-/* 209 */
+/* 213 */
+/***/ (function(__webpack_module__, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "AgAutocompleteRow", function() { return AgAutocompleteRow; });
+/* harmony import */ var _utils_string_mjs__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(25);
+/* harmony import */ var _utils_generic_mjs__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(6);
+/* harmony import */ var _component_mjs__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(37);
+
+
+
+class AgAutocompleteRow extends _component_mjs__WEBPACK_IMPORTED_MODULE_2__["Component"] {
+    constructor() {
+        super(/* html */ `
+        <div class="ag-autocomplete-row" role="presentation">
+            <div class="ag-autocomplete-row-label"></div>
+        </div>`);
+        this.hasHighlighting = false;
+    }
+    setState(value, selected) {
+        this.value = value;
+        this.render();
+        this.updateSelected(selected);
+    }
+    updateSelected(selected) {
+        this.addOrRemoveCssClass('ag-autocomplete-row-selected', selected);
+    }
+    setSearchString(searchString) {
+        var _a;
+        let keepHighlighting = false;
+        if (Object(_utils_generic_mjs__WEBPACK_IMPORTED_MODULE_1__["exists"])(searchString)) {
+            const index = (_a = this.value) === null || _a === void 0 ? void 0 : _a.toLocaleLowerCase().indexOf(searchString.toLocaleLowerCase());
+            if (index >= 0) {
+                keepHighlighting = true;
+                this.hasHighlighting = true;
+                const highlightEndIndex = index + searchString.length;
+                const startPart = Object(_utils_string_mjs__WEBPACK_IMPORTED_MODULE_0__["escapeString"])(this.value.slice(0, index));
+                const highlightedPart = Object(_utils_string_mjs__WEBPACK_IMPORTED_MODULE_0__["escapeString"])(this.value.slice(index, highlightEndIndex));
+                const endPart = Object(_utils_string_mjs__WEBPACK_IMPORTED_MODULE_0__["escapeString"])(this.value.slice(highlightEndIndex));
+                this.getGui().lastElementChild.innerHTML = `${startPart}<b>${highlightedPart}</b>${endPart}`;
+            }
+        }
+        if (!keepHighlighting && this.hasHighlighting) {
+            this.hasHighlighting = false;
+            this.render();
+        }
+    }
+    render() {
+        var _a;
+        // putting in blank if missing, so at least the user can click on it
+        this.getGui().lastElementChild.innerHTML = (_a = Object(_utils_string_mjs__WEBPACK_IMPORTED_MODULE_0__["escapeString"])(this.value)) !== null && _a !== void 0 ? _a : '&nbsp;';
+    }
+}
+
+
+/***/ }),
+/* 214 */
 /***/ (function(__webpack_module__, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -42332,7 +44402,7 @@ class VanillaFrameworkOverrides {
 
 
 /***/ }),
-/* 210 */
+/* 215 */
 /***/ (function(__webpack_module__, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -42682,7 +44752,7 @@ CellNavigationService = __decorate([
 
 
 /***/ }),
-/* 211 */
+/* 216 */
 /***/ (function(__webpack_module__, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -42928,107 +44998,111 @@ AlignedGridsService = __decorate([
 
 
 /***/ }),
-/* 212 */
+/* 217 */
 /***/ (function(__webpack_module__, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "Grid", function() { return Grid; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "GridCoreCreator", function() { return GridCoreCreator; });
-/* harmony import */ var _selectionService_mjs__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(213);
-/* harmony import */ var _columns_columnApi_mjs__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(214);
+/* harmony import */ var _selectionService_mjs__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(218);
+/* harmony import */ var _columns_columnApi_mjs__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(219);
 /* harmony import */ var _columns_columnModel_mjs__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(19);
 /* harmony import */ var _rendering_rowRenderer_mjs__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(185);
 /* harmony import */ var _headerRendering_gridHeaderComp_mjs__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(175);
 /* harmony import */ var _filter_filterManager_mjs__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(116);
-/* harmony import */ var _valueService_valueService_mjs__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(215);
+/* harmony import */ var _valueService_valueService_mjs__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(220);
 /* harmony import */ var _eventService_mjs__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(9);
 /* harmony import */ var _gridBodyComp_gridBodyComp_mjs__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(121);
 /* harmony import */ var _gridApi_mjs__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(117);
 /* harmony import */ var _columns_columnFactory_mjs__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(4);
 /* harmony import */ var _columns_displayedGroupCreator_mjs__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(33);
-/* harmony import */ var _valueService_expressionService_mjs__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(216);
-/* harmony import */ var _templateService_mjs__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(217);
-/* harmony import */ var _widgets_popupService_mjs__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__(207);
-/* harmony import */ var _logger_mjs__WEBPACK_IMPORTED_MODULE_15__ = __webpack_require__(218);
+/* harmony import */ var _valueService_expressionService_mjs__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(221);
+/* harmony import */ var _templateService_mjs__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(222);
+/* harmony import */ var _widgets_popupService_mjs__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__(210);
+/* harmony import */ var _logger_mjs__WEBPACK_IMPORTED_MODULE_15__ = __webpack_require__(223);
 /* harmony import */ var _columns_columnUtils_mjs__WEBPACK_IMPORTED_MODULE_16__ = __webpack_require__(32);
 /* harmony import */ var _rendering_autoWidthCalculator_mjs__WEBPACK_IMPORTED_MODULE_17__ = __webpack_require__(184);
 /* harmony import */ var _headerRendering_common_horizontalResizeService_mjs__WEBPACK_IMPORTED_MODULE_18__ = __webpack_require__(178);
 /* harmony import */ var _context_context_mjs__WEBPACK_IMPORTED_MODULE_19__ = __webpack_require__(10);
-/* harmony import */ var _gridComp_gridComp_mjs__WEBPACK_IMPORTED_MODULE_20__ = __webpack_require__(219);
+/* harmony import */ var _gridComp_gridComp_mjs__WEBPACK_IMPORTED_MODULE_20__ = __webpack_require__(224);
 /* harmony import */ var _dragAndDrop_dragAndDropService_mjs__WEBPACK_IMPORTED_MODULE_21__ = __webpack_require__(100);
 /* harmony import */ var _dragAndDrop_dragService_mjs__WEBPACK_IMPORTED_MODULE_22__ = __webpack_require__(114);
-/* harmony import */ var _sortController_mjs__WEBPACK_IMPORTED_MODULE_23__ = __webpack_require__(221);
+/* harmony import */ var _sortController_mjs__WEBPACK_IMPORTED_MODULE_23__ = __webpack_require__(226);
 /* harmony import */ var _focusService_mjs__WEBPACK_IMPORTED_MODULE_24__ = __webpack_require__(170);
 /* harmony import */ var _gridBodyComp_mouseEventService_mjs__WEBPACK_IMPORTED_MODULE_25__ = __webpack_require__(147);
-/* harmony import */ var _cellNavigationService_mjs__WEBPACK_IMPORTED_MODULE_26__ = __webpack_require__(210);
+/* harmony import */ var _cellNavigationService_mjs__WEBPACK_IMPORTED_MODULE_26__ = __webpack_require__(215);
 /* harmony import */ var _events_mjs__WEBPACK_IMPORTED_MODULE_27__ = __webpack_require__(21);
 /* harmony import */ var _rendering_valueFormatterService_mjs__WEBPACK_IMPORTED_MODULE_28__ = __webpack_require__(187);
 /* harmony import */ var _widgets_agCheckbox_mjs__WEBPACK_IMPORTED_MODULE_29__ = __webpack_require__(71);
 /* harmony import */ var _widgets_agRadioButton_mjs__WEBPACK_IMPORTED_MODULE_30__ = __webpack_require__(70);
-/* harmony import */ var _vanillaFrameworkOverrides_mjs__WEBPACK_IMPORTED_MODULE_31__ = __webpack_require__(209);
+/* harmony import */ var _vanillaFrameworkOverrides_mjs__WEBPACK_IMPORTED_MODULE_31__ = __webpack_require__(214);
 /* harmony import */ var _gridBodyComp_scrollVisibleService_mjs__WEBPACK_IMPORTED_MODULE_32__ = __webpack_require__(146);
 /* harmony import */ var _styling_stylingService_mjs__WEBPACK_IMPORTED_MODULE_33__ = __webpack_require__(194);
-/* harmony import */ var _rendering_columnHoverService_mjs__WEBPACK_IMPORTED_MODULE_34__ = __webpack_require__(222);
-/* harmony import */ var _rendering_columnAnimationService_mjs__WEBPACK_IMPORTED_MODULE_35__ = __webpack_require__(223);
+/* harmony import */ var _rendering_columnHoverService_mjs__WEBPACK_IMPORTED_MODULE_34__ = __webpack_require__(227);
+/* harmony import */ var _rendering_columnAnimationService_mjs__WEBPACK_IMPORTED_MODULE_35__ = __webpack_require__(228);
 /* harmony import */ var _columns_autoGroupColService_mjs__WEBPACK_IMPORTED_MODULE_36__ = __webpack_require__(24);
 /* harmony import */ var _pagination_paginationProxy_mjs__WEBPACK_IMPORTED_MODULE_37__ = __webpack_require__(193);
-/* harmony import */ var _pagination_paginationAutoPageSizeService_mjs__WEBPACK_IMPORTED_MODULE_38__ = __webpack_require__(224);
-/* harmony import */ var _valueService_valueCache_mjs__WEBPACK_IMPORTED_MODULE_39__ = __webpack_require__(225);
-/* harmony import */ var _valueService_changeDetectionService_mjs__WEBPACK_IMPORTED_MODULE_40__ = __webpack_require__(226);
-/* harmony import */ var _alignedGridsService_mjs__WEBPACK_IMPORTED_MODULE_41__ = __webpack_require__(211);
+/* harmony import */ var _pagination_paginationAutoPageSizeService_mjs__WEBPACK_IMPORTED_MODULE_38__ = __webpack_require__(229);
+/* harmony import */ var _valueService_valueCache_mjs__WEBPACK_IMPORTED_MODULE_39__ = __webpack_require__(230);
+/* harmony import */ var _valueService_changeDetectionService_mjs__WEBPACK_IMPORTED_MODULE_40__ = __webpack_require__(231);
+/* harmony import */ var _alignedGridsService_mjs__WEBPACK_IMPORTED_MODULE_41__ = __webpack_require__(216);
 /* harmony import */ var _components_framework_userComponentFactory_mjs__WEBPACK_IMPORTED_MODULE_42__ = __webpack_require__(110);
 /* harmony import */ var _components_framework_userComponentRegistry_mjs__WEBPACK_IMPORTED_MODULE_43__ = __webpack_require__(35);
-/* harmony import */ var _components_framework_agComponentUtils_mjs__WEBPACK_IMPORTED_MODULE_44__ = __webpack_require__(227);
-/* harmony import */ var _components_framework_componentMetadataProvider_mjs__WEBPACK_IMPORTED_MODULE_45__ = __webpack_require__(228);
+/* harmony import */ var _components_framework_agComponentUtils_mjs__WEBPACK_IMPORTED_MODULE_44__ = __webpack_require__(232);
+/* harmony import */ var _components_framework_componentMetadataProvider_mjs__WEBPACK_IMPORTED_MODULE_45__ = __webpack_require__(233);
 /* harmony import */ var _rendering_beans_mjs__WEBPACK_IMPORTED_MODULE_46__ = __webpack_require__(137);
-/* harmony import */ var _environment_mjs__WEBPACK_IMPORTED_MODULE_47__ = __webpack_require__(229);
+/* harmony import */ var _environment_mjs__WEBPACK_IMPORTED_MODULE_47__ = __webpack_require__(234);
 /* harmony import */ var _misc_animationFrameService_mjs__WEBPACK_IMPORTED_MODULE_48__ = __webpack_require__(183);
 /* harmony import */ var _gridBodyComp_navigationService_mjs__WEBPACK_IMPORTED_MODULE_49__ = __webpack_require__(148);
-/* harmony import */ var _rendering_rowContainerHeightService_mjs__WEBPACK_IMPORTED_MODULE_50__ = __webpack_require__(230);
-/* harmony import */ var _rowNodes_selectableService_mjs__WEBPACK_IMPORTED_MODULE_51__ = __webpack_require__(231);
-/* harmony import */ var _pagination_paginationComp_mjs__WEBPACK_IMPORTED_MODULE_52__ = __webpack_require__(232);
+/* harmony import */ var _rendering_rowContainerHeightService_mjs__WEBPACK_IMPORTED_MODULE_50__ = __webpack_require__(235);
+/* harmony import */ var _rowNodes_selectableService_mjs__WEBPACK_IMPORTED_MODULE_51__ = __webpack_require__(236);
+/* harmony import */ var _pagination_paginationComp_mjs__WEBPACK_IMPORTED_MODULE_52__ = __webpack_require__(237);
 /* harmony import */ var _misc_resizeObserverService_mjs__WEBPACK_IMPORTED_MODULE_53__ = __webpack_require__(182);
-/* harmony import */ var _rendering_overlays_overlayWrapperComponent_mjs__WEBPACK_IMPORTED_MODULE_54__ = __webpack_require__(233);
-/* harmony import */ var _widgets_agGroupComponent_mjs__WEBPACK_IMPORTED_MODULE_55__ = __webpack_require__(200);
-/* harmony import */ var _widgets_agDialog_mjs__WEBPACK_IMPORTED_MODULE_56__ = __webpack_require__(205);
-/* harmony import */ var _widgets_agPanel_mjs__WEBPACK_IMPORTED_MODULE_57__ = __webpack_require__(206);
+/* harmony import */ var _rendering_overlays_overlayWrapperComponent_mjs__WEBPACK_IMPORTED_MODULE_54__ = __webpack_require__(238);
+/* harmony import */ var _widgets_agGroupComponent_mjs__WEBPACK_IMPORTED_MODULE_55__ = __webpack_require__(204);
+/* harmony import */ var _widgets_agDialog_mjs__WEBPACK_IMPORTED_MODULE_56__ = __webpack_require__(208);
+/* harmony import */ var _widgets_agPanel_mjs__WEBPACK_IMPORTED_MODULE_57__ = __webpack_require__(209);
 /* harmony import */ var _widgets_agInputTextField_mjs__WEBPACK_IMPORTED_MODULE_58__ = __webpack_require__(78);
 /* harmony import */ var _widgets_agInputTextArea_mjs__WEBPACK_IMPORTED_MODULE_59__ = __webpack_require__(196);
-/* harmony import */ var _widgets_agSlider_mjs__WEBPACK_IMPORTED_MODULE_60__ = __webpack_require__(199);
+/* harmony import */ var _widgets_agSlider_mjs__WEBPACK_IMPORTED_MODULE_60__ = __webpack_require__(203);
 /* harmony import */ var _widgets_agInputNumberField_mjs__WEBPACK_IMPORTED_MODULE_61__ = __webpack_require__(79);
 /* harmony import */ var _widgets_agInputRange_mjs__WEBPACK_IMPORTED_MODULE_62__ = __webpack_require__(198);
 /* harmony import */ var _widgets_agSelect_mjs__WEBPACK_IMPORTED_MODULE_63__ = __webpack_require__(65);
-/* harmony import */ var _widgets_agToggleButton_mjs__WEBPACK_IMPORTED_MODULE_64__ = __webpack_require__(195);
-/* harmony import */ var _entities_rowPositionUtils_mjs__WEBPACK_IMPORTED_MODULE_65__ = __webpack_require__(234);
-/* harmony import */ var _entities_cellPositionUtils_mjs__WEBPACK_IMPORTED_MODULE_66__ = __webpack_require__(235);
-/* harmony import */ var _pinnedRowModel_pinnedRowModel_mjs__WEBPACK_IMPORTED_MODULE_67__ = __webpack_require__(188);
-/* harmony import */ var _modules_moduleRegistry_mjs__WEBPACK_IMPORTED_MODULE_68__ = __webpack_require__(13);
-/* harmony import */ var _modules_moduleNames_mjs__WEBPACK_IMPORTED_MODULE_69__ = __webpack_require__(14);
-/* harmony import */ var _undoRedo_undoRedoService_mjs__WEBPACK_IMPORTED_MODULE_70__ = __webpack_require__(236);
-/* harmony import */ var _components_agStackComponentsRegistry_mjs__WEBPACK_IMPORTED_MODULE_71__ = __webpack_require__(34);
-/* harmony import */ var _headerRendering_common_headerPosition_mjs__WEBPACK_IMPORTED_MODULE_72__ = __webpack_require__(238);
-/* harmony import */ var _headerRendering_common_headerNavigationService_mjs__WEBPACK_IMPORTED_MODULE_73__ = __webpack_require__(177);
-/* harmony import */ var _utils_generic_mjs__WEBPACK_IMPORTED_MODULE_74__ = __webpack_require__(6);
-/* harmony import */ var _columns_columnDefFactory_mjs__WEBPACK_IMPORTED_MODULE_75__ = __webpack_require__(239);
-/* harmony import */ var _rendering_row_rowCssClassCalculator_mjs__WEBPACK_IMPORTED_MODULE_76__ = __webpack_require__(240);
-/* harmony import */ var _rowNodeCache_rowNodeBlockLoader_mjs__WEBPACK_IMPORTED_MODULE_77__ = __webpack_require__(192);
-/* harmony import */ var _rowNodes_rowNodeSorter_mjs__WEBPACK_IMPORTED_MODULE_78__ = __webpack_require__(241);
-/* harmony import */ var _ctrlsService_mjs__WEBPACK_IMPORTED_MODULE_79__ = __webpack_require__(242);
-/* harmony import */ var _ctrlsFactory_mjs__WEBPACK_IMPORTED_MODULE_80__ = __webpack_require__(243);
-/* harmony import */ var _gridBodyComp_fakeHScrollComp_mjs__WEBPACK_IMPORTED_MODULE_81__ = __webpack_require__(244);
-/* harmony import */ var _gridBodyComp_pinnedWidthService_mjs__WEBPACK_IMPORTED_MODULE_82__ = __webpack_require__(246);
-/* harmony import */ var _gridBodyComp_rowContainer_rowContainerComp_mjs__WEBPACK_IMPORTED_MODULE_83__ = __webpack_require__(149);
-/* harmony import */ var _entities_rowNodeEventThrottle_mjs__WEBPACK_IMPORTED_MODULE_84__ = __webpack_require__(247);
-/* harmony import */ var _headerRendering_cells_column_standardMenu_mjs__WEBPACK_IMPORTED_MODULE_85__ = __webpack_require__(179);
-/* harmony import */ var _headerRendering_cells_column_sortIndicatorComp_mjs__WEBPACK_IMPORTED_MODULE_86__ = __webpack_require__(86);
-/* harmony import */ var _gridOptionsService_mjs__WEBPACK_IMPORTED_MODULE_87__ = __webpack_require__(248);
-/* harmony import */ var _localeService_mjs__WEBPACK_IMPORTED_MODULE_88__ = __webpack_require__(249);
-/* harmony import */ var _gridOptionsValidator_mjs__WEBPACK_IMPORTED_MODULE_89__ = __webpack_require__(27);
-/* harmony import */ var _gridBodyComp_fakeVScrollComp_mjs__WEBPACK_IMPORTED_MODULE_90__ = __webpack_require__(250);
-/* harmony import */ var _columns_dataTypeService_mjs__WEBPACK_IMPORTED_MODULE_91__ = __webpack_require__(251);
-/* harmony import */ var _widgets_agInputDateField_mjs__WEBPACK_IMPORTED_MODULE_92__ = __webpack_require__(197);
-/* harmony import */ var _valueService_valueParserService_mjs__WEBPACK_IMPORTED_MODULE_93__ = __webpack_require__(252);
+/* harmony import */ var _widgets_agRichSelect_mjs__WEBPACK_IMPORTED_MODULE_64__ = __webpack_require__(199);
+/* harmony import */ var _widgets_agToggleButton_mjs__WEBPACK_IMPORTED_MODULE_65__ = __webpack_require__(195);
+/* harmony import */ var _entities_rowPositionUtils_mjs__WEBPACK_IMPORTED_MODULE_66__ = __webpack_require__(239);
+/* harmony import */ var _entities_cellPositionUtils_mjs__WEBPACK_IMPORTED_MODULE_67__ = __webpack_require__(240);
+/* harmony import */ var _pinnedRowModel_pinnedRowModel_mjs__WEBPACK_IMPORTED_MODULE_68__ = __webpack_require__(188);
+/* harmony import */ var _modules_moduleRegistry_mjs__WEBPACK_IMPORTED_MODULE_69__ = __webpack_require__(13);
+/* harmony import */ var _modules_moduleNames_mjs__WEBPACK_IMPORTED_MODULE_70__ = __webpack_require__(14);
+/* harmony import */ var _undoRedo_undoRedoService_mjs__WEBPACK_IMPORTED_MODULE_71__ = __webpack_require__(241);
+/* harmony import */ var _components_agStackComponentsRegistry_mjs__WEBPACK_IMPORTED_MODULE_72__ = __webpack_require__(34);
+/* harmony import */ var _headerRendering_common_headerPosition_mjs__WEBPACK_IMPORTED_MODULE_73__ = __webpack_require__(243);
+/* harmony import */ var _headerRendering_common_headerNavigationService_mjs__WEBPACK_IMPORTED_MODULE_74__ = __webpack_require__(177);
+/* harmony import */ var _utils_generic_mjs__WEBPACK_IMPORTED_MODULE_75__ = __webpack_require__(6);
+/* harmony import */ var _columns_columnDefFactory_mjs__WEBPACK_IMPORTED_MODULE_76__ = __webpack_require__(244);
+/* harmony import */ var _rendering_row_rowCssClassCalculator_mjs__WEBPACK_IMPORTED_MODULE_77__ = __webpack_require__(245);
+/* harmony import */ var _rowNodeCache_rowNodeBlockLoader_mjs__WEBPACK_IMPORTED_MODULE_78__ = __webpack_require__(192);
+/* harmony import */ var _rowNodes_rowNodeSorter_mjs__WEBPACK_IMPORTED_MODULE_79__ = __webpack_require__(246);
+/* harmony import */ var _ctrlsService_mjs__WEBPACK_IMPORTED_MODULE_80__ = __webpack_require__(247);
+/* harmony import */ var _ctrlsFactory_mjs__WEBPACK_IMPORTED_MODULE_81__ = __webpack_require__(248);
+/* harmony import */ var _gridBodyComp_fakeHScrollComp_mjs__WEBPACK_IMPORTED_MODULE_82__ = __webpack_require__(249);
+/* harmony import */ var _gridBodyComp_pinnedWidthService_mjs__WEBPACK_IMPORTED_MODULE_83__ = __webpack_require__(251);
+/* harmony import */ var _gridBodyComp_rowContainer_rowContainerComp_mjs__WEBPACK_IMPORTED_MODULE_84__ = __webpack_require__(149);
+/* harmony import */ var _entities_rowNodeEventThrottle_mjs__WEBPACK_IMPORTED_MODULE_85__ = __webpack_require__(252);
+/* harmony import */ var _headerRendering_cells_column_standardMenu_mjs__WEBPACK_IMPORTED_MODULE_86__ = __webpack_require__(179);
+/* harmony import */ var _headerRendering_cells_column_sortIndicatorComp_mjs__WEBPACK_IMPORTED_MODULE_87__ = __webpack_require__(86);
+/* harmony import */ var _gridOptionsService_mjs__WEBPACK_IMPORTED_MODULE_88__ = __webpack_require__(253);
+/* harmony import */ var _localeService_mjs__WEBPACK_IMPORTED_MODULE_89__ = __webpack_require__(254);
+/* harmony import */ var _gridOptionsValidator_mjs__WEBPACK_IMPORTED_MODULE_90__ = __webpack_require__(27);
+/* harmony import */ var _gridBodyComp_fakeVScrollComp_mjs__WEBPACK_IMPORTED_MODULE_91__ = __webpack_require__(255);
+/* harmony import */ var _columns_dataTypeService_mjs__WEBPACK_IMPORTED_MODULE_92__ = __webpack_require__(256);
+/* harmony import */ var _widgets_agInputDateField_mjs__WEBPACK_IMPORTED_MODULE_93__ = __webpack_require__(197);
+/* harmony import */ var _valueService_valueParserService_mjs__WEBPACK_IMPORTED_MODULE_94__ = __webpack_require__(257);
+/* harmony import */ var _widgets_agAutocomplete_mjs__WEBPACK_IMPORTED_MODULE_95__ = __webpack_require__(211);
+
+
 
 
 
@@ -43175,7 +45249,7 @@ class GridCoreCreator {
         beans.ctrlsService.whenReady(() => {
             this.setColumnsAndData(beans);
             this.dispatchGridReadyEvent(beans);
-            const isEnterprise = _modules_moduleRegistry_mjs__WEBPACK_IMPORTED_MODULE_68__["ModuleRegistry"].__isRegistered(_modules_moduleNames_mjs__WEBPACK_IMPORTED_MODULE_69__["ModuleNames"].EnterpriseCoreModule, gridId);
+            const isEnterprise = _modules_moduleRegistry_mjs__WEBPACK_IMPORTED_MODULE_69__["ModuleRegistry"].__isRegistered(_modules_moduleNames_mjs__WEBPACK_IMPORTED_MODULE_70__["ModuleNames"].EnterpriseCoreModule, gridId);
             logger.log(`initialised successfully, enterprise = ${isEnterprise}`);
         });
         if (acceptChanges) {
@@ -43195,7 +45269,7 @@ class GridCoreCreator {
     }
     getRegisteredModules(params, gridId) {
         const passedViaConstructor = params ? params.modules : null;
-        const registered = _modules_moduleRegistry_mjs__WEBPACK_IMPORTED_MODULE_68__["ModuleRegistry"].__getRegisteredModules(gridId);
+        const registered = _modules_moduleRegistry_mjs__WEBPACK_IMPORTED_MODULE_69__["ModuleRegistry"].__getRegisteredModules(gridId);
         const allModules = [];
         const mapNames = {};
         // adds to list and removes duplicates
@@ -43204,7 +45278,7 @@ class GridCoreCreator {
                 if (!mapNames[currentModule.moduleName]) {
                     mapNames[currentModule.moduleName] = true;
                     allModules.push(currentModule);
-                    _modules_moduleRegistry_mjs__WEBPACK_IMPORTED_MODULE_68__["ModuleRegistry"].__register(currentModule, moduleBased, gridId);
+                    _modules_moduleRegistry_mjs__WEBPACK_IMPORTED_MODULE_69__["ModuleRegistry"].__register(currentModule, moduleBased, gridId);
                 }
             };
             addIndividualModule(mod);
@@ -43216,7 +45290,7 @@ class GridCoreCreator {
             passedViaConstructor.forEach(m => addModule(true, m, gridId));
         }
         if (registered) {
-            registered.forEach(m => addModule(!_modules_moduleRegistry_mjs__WEBPACK_IMPORTED_MODULE_68__["ModuleRegistry"].__isPackageBased(), m, undefined));
+            registered.forEach(m => addModule(!_modules_moduleRegistry_mjs__WEBPACK_IMPORTED_MODULE_69__["ModuleRegistry"].__isPackageBased(), m, undefined));
         }
         return allModules;
     }
@@ -43228,7 +45302,7 @@ class GridCoreCreator {
     }
     createProvidedBeans(eGridDiv, gridOptions, params) {
         let frameworkOverrides = params ? params.frameworkOverrides : null;
-        if (Object(_utils_generic_mjs__WEBPACK_IMPORTED_MODULE_74__["missing"])(frameworkOverrides)) {
+        if (Object(_utils_generic_mjs__WEBPACK_IMPORTED_MODULE_75__["missing"])(frameworkOverrides)) {
             frameworkOverrides = new _vanillaFrameworkOverrides_mjs__WEBPACK_IMPORTED_MODULE_31__["VanillaFrameworkOverrides"]();
         }
         const seed = {
@@ -43246,25 +45320,27 @@ class GridCoreCreator {
         let components = [
             { componentName: 'AgCheckbox', componentClass: _widgets_agCheckbox_mjs__WEBPACK_IMPORTED_MODULE_29__["AgCheckbox"] },
             { componentName: 'AgRadioButton', componentClass: _widgets_agRadioButton_mjs__WEBPACK_IMPORTED_MODULE_30__["AgRadioButton"] },
-            { componentName: 'AgToggleButton', componentClass: _widgets_agToggleButton_mjs__WEBPACK_IMPORTED_MODULE_64__["AgToggleButton"] },
+            { componentName: 'AgToggleButton', componentClass: _widgets_agToggleButton_mjs__WEBPACK_IMPORTED_MODULE_65__["AgToggleButton"] },
             { componentName: 'AgInputTextField', componentClass: _widgets_agInputTextField_mjs__WEBPACK_IMPORTED_MODULE_58__["AgInputTextField"] },
             { componentName: 'AgInputTextArea', componentClass: _widgets_agInputTextArea_mjs__WEBPACK_IMPORTED_MODULE_59__["AgInputTextArea"] },
             { componentName: 'AgInputNumberField', componentClass: _widgets_agInputNumberField_mjs__WEBPACK_IMPORTED_MODULE_61__["AgInputNumberField"] },
-            { componentName: 'AgInputDateField', componentClass: _widgets_agInputDateField_mjs__WEBPACK_IMPORTED_MODULE_92__["AgInputDateField"] },
+            { componentName: 'AgInputDateField', componentClass: _widgets_agInputDateField_mjs__WEBPACK_IMPORTED_MODULE_93__["AgInputDateField"] },
             { componentName: 'AgInputRange', componentClass: _widgets_agInputRange_mjs__WEBPACK_IMPORTED_MODULE_62__["AgInputRange"] },
+            { componentName: 'AgRichSelect', componentClass: _widgets_agRichSelect_mjs__WEBPACK_IMPORTED_MODULE_64__["AgRichSelect"] },
             { componentName: 'AgSelect', componentClass: _widgets_agSelect_mjs__WEBPACK_IMPORTED_MODULE_63__["AgSelect"] },
             { componentName: 'AgSlider', componentClass: _widgets_agSlider_mjs__WEBPACK_IMPORTED_MODULE_60__["AgSlider"] },
             { componentName: 'AgGridBody', componentClass: _gridBodyComp_gridBodyComp_mjs__WEBPACK_IMPORTED_MODULE_8__["GridBodyComp"] },
             { componentName: 'AgHeaderRoot', componentClass: _headerRendering_gridHeaderComp_mjs__WEBPACK_IMPORTED_MODULE_4__["GridHeaderComp"] },
-            { componentName: 'AgSortIndicator', componentClass: _headerRendering_cells_column_sortIndicatorComp_mjs__WEBPACK_IMPORTED_MODULE_86__["SortIndicatorComp"] },
+            { componentName: 'AgSortIndicator', componentClass: _headerRendering_cells_column_sortIndicatorComp_mjs__WEBPACK_IMPORTED_MODULE_87__["SortIndicatorComp"] },
             { componentName: 'AgPagination', componentClass: _pagination_paginationComp_mjs__WEBPACK_IMPORTED_MODULE_52__["PaginationComp"] },
             { componentName: 'AgOverlayWrapper', componentClass: _rendering_overlays_overlayWrapperComponent_mjs__WEBPACK_IMPORTED_MODULE_54__["OverlayWrapperComponent"] },
             { componentName: 'AgGroupComponent', componentClass: _widgets_agGroupComponent_mjs__WEBPACK_IMPORTED_MODULE_55__["AgGroupComponent"] },
             { componentName: 'AgPanel', componentClass: _widgets_agPanel_mjs__WEBPACK_IMPORTED_MODULE_57__["AgPanel"] },
             { componentName: 'AgDialog', componentClass: _widgets_agDialog_mjs__WEBPACK_IMPORTED_MODULE_56__["AgDialog"] },
-            { componentName: 'AgRowContainer', componentClass: _gridBodyComp_rowContainer_rowContainerComp_mjs__WEBPACK_IMPORTED_MODULE_83__["RowContainerComp"] },
-            { componentName: 'AgFakeHorizontalScroll', componentClass: _gridBodyComp_fakeHScrollComp_mjs__WEBPACK_IMPORTED_MODULE_81__["FakeHScrollComp"] },
-            { componentName: 'AgFakeVerticalScroll', componentClass: _gridBodyComp_fakeVScrollComp_mjs__WEBPACK_IMPORTED_MODULE_90__["FakeVScrollComp"] }
+            { componentName: 'AgRowContainer', componentClass: _gridBodyComp_rowContainer_rowContainerComp_mjs__WEBPACK_IMPORTED_MODULE_84__["RowContainerComp"] },
+            { componentName: 'AgFakeHorizontalScroll', componentClass: _gridBodyComp_fakeHScrollComp_mjs__WEBPACK_IMPORTED_MODULE_82__["FakeHScrollComp"] },
+            { componentName: 'AgFakeVerticalScroll', componentClass: _gridBodyComp_fakeVScrollComp_mjs__WEBPACK_IMPORTED_MODULE_91__["FakeVScrollComp"] },
+            { componentName: 'AgAutocomplete', componentClass: _widgets_agAutocomplete_mjs__WEBPACK_IMPORTED_MODULE_95__["AgAutocomplete"] },
         ];
         const moduleAgStackComps = this.extractModuleEntity(registeredModules, (module) => module.agStackComponents ? module.agStackComponents : []);
         components = components.concat(moduleAgStackComps);
@@ -43275,35 +45351,35 @@ class GridCoreCreator {
         const rowModelModules = registeredModules.filter(module => !module.rowModel || module.rowModel === rowModelType);
         // assert that the relevant module has been loaded
         const rowModelModuleNames = {
-            clientSide: _modules_moduleNames_mjs__WEBPACK_IMPORTED_MODULE_69__["ModuleNames"].ClientSideRowModelModule,
-            infinite: _modules_moduleNames_mjs__WEBPACK_IMPORTED_MODULE_69__["ModuleNames"].InfiniteRowModelModule,
-            serverSide: _modules_moduleNames_mjs__WEBPACK_IMPORTED_MODULE_69__["ModuleNames"].ServerSideRowModelModule,
-            viewport: _modules_moduleNames_mjs__WEBPACK_IMPORTED_MODULE_69__["ModuleNames"].ViewportRowModelModule
+            clientSide: _modules_moduleNames_mjs__WEBPACK_IMPORTED_MODULE_70__["ModuleNames"].ClientSideRowModelModule,
+            infinite: _modules_moduleNames_mjs__WEBPACK_IMPORTED_MODULE_70__["ModuleNames"].InfiniteRowModelModule,
+            serverSide: _modules_moduleNames_mjs__WEBPACK_IMPORTED_MODULE_70__["ModuleNames"].ServerSideRowModelModule,
+            viewport: _modules_moduleNames_mjs__WEBPACK_IMPORTED_MODULE_70__["ModuleNames"].ViewportRowModelModule
         };
         if (!rowModelModuleNames[rowModelType]) {
             console.error('AG Grid: could not find row model for rowModelType = ' + rowModelType);
             return;
         }
-        if (!_modules_moduleRegistry_mjs__WEBPACK_IMPORTED_MODULE_68__["ModuleRegistry"].__assertRegistered(rowModelModuleNames[rowModelType], `rowModelType = '${rowModelType}'`, gridId)) {
+        if (!_modules_moduleRegistry_mjs__WEBPACK_IMPORTED_MODULE_69__["ModuleRegistry"].__assertRegistered(rowModelModuleNames[rowModelType], `rowModelType = '${rowModelType}'`, gridId)) {
             return;
         }
         // beans should only contain SERVICES, it should NEVER contain COMPONENTS
         const beans = [
-            _rendering_beans_mjs__WEBPACK_IMPORTED_MODULE_46__["Beans"], _entities_rowPositionUtils_mjs__WEBPACK_IMPORTED_MODULE_65__["RowPositionUtils"], _entities_cellPositionUtils_mjs__WEBPACK_IMPORTED_MODULE_66__["CellPositionUtils"], _headerRendering_common_headerPosition_mjs__WEBPACK_IMPORTED_MODULE_72__["HeaderPositionUtils"],
+            _rendering_beans_mjs__WEBPACK_IMPORTED_MODULE_46__["Beans"], _entities_rowPositionUtils_mjs__WEBPACK_IMPORTED_MODULE_66__["RowPositionUtils"], _entities_cellPositionUtils_mjs__WEBPACK_IMPORTED_MODULE_67__["CellPositionUtils"], _headerRendering_common_headerPosition_mjs__WEBPACK_IMPORTED_MODULE_73__["HeaderPositionUtils"],
             _pagination_paginationAutoPageSizeService_mjs__WEBPACK_IMPORTED_MODULE_38__["PaginationAutoPageSizeService"], _gridApi_mjs__WEBPACK_IMPORTED_MODULE_9__["GridApi"], _components_framework_userComponentRegistry_mjs__WEBPACK_IMPORTED_MODULE_43__["UserComponentRegistry"], _components_framework_agComponentUtils_mjs__WEBPACK_IMPORTED_MODULE_44__["AgComponentUtils"],
             _components_framework_componentMetadataProvider_mjs__WEBPACK_IMPORTED_MODULE_45__["ComponentMetadataProvider"], _misc_resizeObserverService_mjs__WEBPACK_IMPORTED_MODULE_53__["ResizeObserverService"], _components_framework_userComponentFactory_mjs__WEBPACK_IMPORTED_MODULE_42__["UserComponentFactory"],
-            _rendering_rowContainerHeightService_mjs__WEBPACK_IMPORTED_MODULE_50__["RowContainerHeightService"], _headerRendering_common_horizontalResizeService_mjs__WEBPACK_IMPORTED_MODULE_18__["HorizontalResizeService"], _localeService_mjs__WEBPACK_IMPORTED_MODULE_88__["LocaleService"], _gridOptionsValidator_mjs__WEBPACK_IMPORTED_MODULE_89__["GridOptionsValidator"],
-            _pinnedRowModel_pinnedRowModel_mjs__WEBPACK_IMPORTED_MODULE_67__["PinnedRowModel"], _dragAndDrop_dragService_mjs__WEBPACK_IMPORTED_MODULE_22__["DragService"], _columns_displayedGroupCreator_mjs__WEBPACK_IMPORTED_MODULE_11__["DisplayedGroupCreator"], _eventService_mjs__WEBPACK_IMPORTED_MODULE_7__["EventService"], _gridOptionsService_mjs__WEBPACK_IMPORTED_MODULE_87__["GridOptionsService"],
-            _widgets_popupService_mjs__WEBPACK_IMPORTED_MODULE_14__["PopupService"], _selectionService_mjs__WEBPACK_IMPORTED_MODULE_0__["SelectionService"], _filter_filterManager_mjs__WEBPACK_IMPORTED_MODULE_5__["FilterManager"], _columns_columnModel_mjs__WEBPACK_IMPORTED_MODULE_2__["ColumnModel"], _headerRendering_common_headerNavigationService_mjs__WEBPACK_IMPORTED_MODULE_73__["HeaderNavigationService"],
+            _rendering_rowContainerHeightService_mjs__WEBPACK_IMPORTED_MODULE_50__["RowContainerHeightService"], _headerRendering_common_horizontalResizeService_mjs__WEBPACK_IMPORTED_MODULE_18__["HorizontalResizeService"], _localeService_mjs__WEBPACK_IMPORTED_MODULE_89__["LocaleService"], _gridOptionsValidator_mjs__WEBPACK_IMPORTED_MODULE_90__["GridOptionsValidator"],
+            _pinnedRowModel_pinnedRowModel_mjs__WEBPACK_IMPORTED_MODULE_68__["PinnedRowModel"], _dragAndDrop_dragService_mjs__WEBPACK_IMPORTED_MODULE_22__["DragService"], _columns_displayedGroupCreator_mjs__WEBPACK_IMPORTED_MODULE_11__["DisplayedGroupCreator"], _eventService_mjs__WEBPACK_IMPORTED_MODULE_7__["EventService"], _gridOptionsService_mjs__WEBPACK_IMPORTED_MODULE_88__["GridOptionsService"],
+            _widgets_popupService_mjs__WEBPACK_IMPORTED_MODULE_14__["PopupService"], _selectionService_mjs__WEBPACK_IMPORTED_MODULE_0__["SelectionService"], _filter_filterManager_mjs__WEBPACK_IMPORTED_MODULE_5__["FilterManager"], _columns_columnModel_mjs__WEBPACK_IMPORTED_MODULE_2__["ColumnModel"], _headerRendering_common_headerNavigationService_mjs__WEBPACK_IMPORTED_MODULE_74__["HeaderNavigationService"],
             _pagination_paginationProxy_mjs__WEBPACK_IMPORTED_MODULE_37__["PaginationProxy"], _rendering_rowRenderer_mjs__WEBPACK_IMPORTED_MODULE_3__["RowRenderer"], _valueService_expressionService_mjs__WEBPACK_IMPORTED_MODULE_12__["ExpressionService"], _columns_columnFactory_mjs__WEBPACK_IMPORTED_MODULE_10__["ColumnFactory"], _templateService_mjs__WEBPACK_IMPORTED_MODULE_13__["TemplateService"],
             _alignedGridsService_mjs__WEBPACK_IMPORTED_MODULE_41__["AlignedGridsService"], _gridBodyComp_navigationService_mjs__WEBPACK_IMPORTED_MODULE_49__["NavigationService"], _valueService_valueCache_mjs__WEBPACK_IMPORTED_MODULE_39__["ValueCache"], _valueService_valueService_mjs__WEBPACK_IMPORTED_MODULE_6__["ValueService"], _logger_mjs__WEBPACK_IMPORTED_MODULE_15__["LoggerFactory"],
-            _columns_columnUtils_mjs__WEBPACK_IMPORTED_MODULE_16__["ColumnUtils"], _rendering_autoWidthCalculator_mjs__WEBPACK_IMPORTED_MODULE_17__["AutoWidthCalculator"], _headerRendering_cells_column_standardMenu_mjs__WEBPACK_IMPORTED_MODULE_85__["StandardMenuFactory"], _dragAndDrop_dragAndDropService_mjs__WEBPACK_IMPORTED_MODULE_21__["DragAndDropService"], _columns_columnApi_mjs__WEBPACK_IMPORTED_MODULE_1__["ColumnApi"],
+            _columns_columnUtils_mjs__WEBPACK_IMPORTED_MODULE_16__["ColumnUtils"], _rendering_autoWidthCalculator_mjs__WEBPACK_IMPORTED_MODULE_17__["AutoWidthCalculator"], _headerRendering_cells_column_standardMenu_mjs__WEBPACK_IMPORTED_MODULE_86__["StandardMenuFactory"], _dragAndDrop_dragAndDropService_mjs__WEBPACK_IMPORTED_MODULE_21__["DragAndDropService"], _columns_columnApi_mjs__WEBPACK_IMPORTED_MODULE_1__["ColumnApi"],
             _focusService_mjs__WEBPACK_IMPORTED_MODULE_24__["FocusService"], _gridBodyComp_mouseEventService_mjs__WEBPACK_IMPORTED_MODULE_25__["MouseEventService"], _environment_mjs__WEBPACK_IMPORTED_MODULE_47__["Environment"], _cellNavigationService_mjs__WEBPACK_IMPORTED_MODULE_26__["CellNavigationService"], _rendering_valueFormatterService_mjs__WEBPACK_IMPORTED_MODULE_28__["ValueFormatterService"],
             _styling_stylingService_mjs__WEBPACK_IMPORTED_MODULE_33__["StylingService"], _gridBodyComp_scrollVisibleService_mjs__WEBPACK_IMPORTED_MODULE_32__["ScrollVisibleService"], _sortController_mjs__WEBPACK_IMPORTED_MODULE_23__["SortController"], _rendering_columnHoverService_mjs__WEBPACK_IMPORTED_MODULE_34__["ColumnHoverService"], _rendering_columnAnimationService_mjs__WEBPACK_IMPORTED_MODULE_35__["ColumnAnimationService"],
             _rowNodes_selectableService_mjs__WEBPACK_IMPORTED_MODULE_51__["SelectableService"], _columns_autoGroupColService_mjs__WEBPACK_IMPORTED_MODULE_36__["AutoGroupColService"], _valueService_changeDetectionService_mjs__WEBPACK_IMPORTED_MODULE_40__["ChangeDetectionService"], _misc_animationFrameService_mjs__WEBPACK_IMPORTED_MODULE_48__["AnimationFrameService"],
-            _undoRedo_undoRedoService_mjs__WEBPACK_IMPORTED_MODULE_70__["UndoRedoService"], _components_agStackComponentsRegistry_mjs__WEBPACK_IMPORTED_MODULE_71__["AgStackComponentsRegistry"], _columns_columnDefFactory_mjs__WEBPACK_IMPORTED_MODULE_75__["ColumnDefFactory"],
-            _rendering_row_rowCssClassCalculator_mjs__WEBPACK_IMPORTED_MODULE_76__["RowCssClassCalculator"], _rowNodeCache_rowNodeBlockLoader_mjs__WEBPACK_IMPORTED_MODULE_77__["RowNodeBlockLoader"], _rowNodes_rowNodeSorter_mjs__WEBPACK_IMPORTED_MODULE_78__["RowNodeSorter"], _ctrlsService_mjs__WEBPACK_IMPORTED_MODULE_79__["CtrlsService"],
-            _gridBodyComp_pinnedWidthService_mjs__WEBPACK_IMPORTED_MODULE_82__["PinnedWidthService"], _entities_rowNodeEventThrottle_mjs__WEBPACK_IMPORTED_MODULE_84__["RowNodeEventThrottle"], _ctrlsFactory_mjs__WEBPACK_IMPORTED_MODULE_80__["CtrlsFactory"], _columns_dataTypeService_mjs__WEBPACK_IMPORTED_MODULE_91__["DataTypeService"], _valueService_valueParserService_mjs__WEBPACK_IMPORTED_MODULE_93__["ValueParserService"]
+            _undoRedo_undoRedoService_mjs__WEBPACK_IMPORTED_MODULE_71__["UndoRedoService"], _components_agStackComponentsRegistry_mjs__WEBPACK_IMPORTED_MODULE_72__["AgStackComponentsRegistry"], _columns_columnDefFactory_mjs__WEBPACK_IMPORTED_MODULE_76__["ColumnDefFactory"],
+            _rendering_row_rowCssClassCalculator_mjs__WEBPACK_IMPORTED_MODULE_77__["RowCssClassCalculator"], _rowNodeCache_rowNodeBlockLoader_mjs__WEBPACK_IMPORTED_MODULE_78__["RowNodeBlockLoader"], _rowNodes_rowNodeSorter_mjs__WEBPACK_IMPORTED_MODULE_79__["RowNodeSorter"], _ctrlsService_mjs__WEBPACK_IMPORTED_MODULE_80__["CtrlsService"],
+            _gridBodyComp_pinnedWidthService_mjs__WEBPACK_IMPORTED_MODULE_83__["PinnedWidthService"], _entities_rowNodeEventThrottle_mjs__WEBPACK_IMPORTED_MODULE_85__["RowNodeEventThrottle"], _ctrlsFactory_mjs__WEBPACK_IMPORTED_MODULE_81__["CtrlsFactory"], _columns_dataTypeService_mjs__WEBPACK_IMPORTED_MODULE_92__["DataTypeService"], _valueService_valueParserService_mjs__WEBPACK_IMPORTED_MODULE_94__["ValueParserService"]
         ];
         const moduleBeans = this.extractModuleEntity(rowModelModules, (module) => module.beans ? module.beans : []);
         beans.push(...moduleBeans);
@@ -43335,7 +45411,7 @@ class GridCoreCreator {
 
 
 /***/ }),
-/* 213 */
+/* 218 */
 /***/ (function(__webpack_module__, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -43829,7 +45905,7 @@ SelectionService = __decorate([
 
 
 /***/ }),
-/* 214 */
+/* 219 */
 /***/ (function(__webpack_module__, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -44067,7 +46143,7 @@ ColumnApi = __decorate([
 
 
 /***/ }),
-/* 215 */
+/* 220 */
 /***/ (function(__webpack_module__, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -44427,7 +46503,7 @@ ValueService = __decorate([
 
 
 /***/ }),
-/* 216 */
+/* 221 */
 /***/ (function(__webpack_module__, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -44519,7 +46595,7 @@ ExpressionService = __decorate([
 
 
 /***/ }),
-/* 217 */
+/* 222 */
 /***/ (function(__webpack_module__, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -44595,7 +46671,7 @@ TemplateService = __decorate([
 
 
 /***/ }),
-/* 218 */
+/* 223 */
 /***/ (function(__webpack_module__, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -44652,7 +46728,7 @@ class Logger {
 
 
 /***/ }),
-/* 219 */
+/* 224 */
 /***/ (function(__webpack_module__, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -44662,9 +46738,9 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _widgets_componentAnnotations_mjs__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(56);
 /* harmony import */ var _utils_dom_mjs__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(44);
 /* harmony import */ var _focusService_mjs__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(170);
-/* harmony import */ var _gridCtrl_mjs__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(220);
+/* harmony import */ var _gridCtrl_mjs__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(225);
 /* harmony import */ var _styling_layoutFeature_mjs__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(122);
-/* harmony import */ var _widgets_tabGuardComp_mjs__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(203);
+/* harmony import */ var _widgets_tabGuardComp_mjs__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(202);
 var __decorate = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -44776,7 +46852,7 @@ __decorate([
 
 
 /***/ }),
-/* 220 */
+/* 225 */
 /***/ (function(__webpack_module__, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -44922,7 +46998,7 @@ __decorate([
 
 
 /***/ }),
-/* 221 */
+/* 226 */
 /***/ (function(__webpack_module__, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -45138,7 +47214,7 @@ let SortController = SortController_1 = class SortController extends _context_be
             return column.getSort();
         }
         // if column has unique data, its sorting is independent - but can still be mixed
-        const columnHasUniqueData = !!column.getColDef().field;
+        const columnHasUniqueData = column.getColDef().field != null || !!column.getColDef().valueGetter;
         const sortableColumns = columnHasUniqueData ? [column, ...linkedColumns] : linkedColumns;
         const firstSort = sortableColumns[0].getSort();
         // the == is intentional, as null and undefined both represent no sort, which means they are equivalent
@@ -45163,7 +47239,7 @@ SortController = SortController_1 = __decorate([
 
 
 /***/ }),
-/* 222 */
+/* 227 */
 /***/ (function(__webpack_module__, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -45207,7 +47283,7 @@ ColumnHoverService = __decorate([
 
 
 /***/ }),
-/* 223 */
+/* 228 */
 /***/ (function(__webpack_module__, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -45314,7 +47390,7 @@ ColumnAnimationService = __decorate([
 
 
 /***/ }),
-/* 224 */
+/* 229 */
 /***/ (function(__webpack_module__, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -45383,7 +47459,7 @@ PaginationAutoPageSizeService = __decorate([
 
 
 /***/ }),
-/* 225 */
+/* 230 */
 /***/ (function(__webpack_module__, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -45443,7 +47519,7 @@ ValueCache = __decorate([
 
 
 /***/ }),
-/* 226 */
+/* 231 */
 /***/ (function(__webpack_module__, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -45520,7 +47596,7 @@ ChangeDetectionService = __decorate([
 
 
 /***/ }),
-/* 227 */
+/* 232 */
 /***/ (function(__webpack_module__, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -45587,7 +47663,7 @@ AgComponentUtils = __decorate([
 
 
 /***/ }),
-/* 228 */
+/* 233 */
 /***/ (function(__webpack_module__, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -45706,7 +47782,7 @@ ComponentMetadataProvider = __decorate([
 
 
 /***/ }),
-/* 229 */
+/* 234 */
 /***/ (function(__webpack_module__, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -45926,7 +48002,7 @@ Environment = __decorate([
 
 
 /***/ }),
-/* 230 */
+/* 235 */
 /***/ (function(__webpack_module__, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -46067,7 +48143,7 @@ RowContainerHeightService = __decorate([
 
 
 /***/ }),
-/* 231 */
+/* 236 */
 /***/ (function(__webpack_module__, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -46131,7 +48207,7 @@ SelectableService = __decorate([
 
 
 /***/ }),
-/* 232 */
+/* 237 */
 /***/ (function(__webpack_module__, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -46406,7 +48482,7 @@ __decorate([
 
 
 /***/ }),
-/* 233 */
+/* 238 */
 /***/ (function(__webpack_module__, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -46573,7 +48649,7 @@ __decorate([
 
 
 /***/ }),
-/* 234 */
+/* 239 */
 /***/ (function(__webpack_module__, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -46707,7 +48783,7 @@ RowPositionUtils = __decorate([
 
 
 /***/ }),
-/* 235 */
+/* 240 */
 /***/ (function(__webpack_module__, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -46746,7 +48822,7 @@ CellPositionUtils = __decorate([
 
 
 /***/ }),
-/* 236 */
+/* 241 */
 /***/ (function(__webpack_module__, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -46754,7 +48830,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "UndoRedoService", function() { return UndoRedoService; });
 /* harmony import */ var _context_context_mjs__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(10);
 /* harmony import */ var _eventKeys_mjs__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(22);
-/* harmony import */ var _undoRedoStack_mjs__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(237);
+/* harmony import */ var _undoRedoStack_mjs__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(242);
 /* harmony import */ var _context_beanStub_mjs__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(16);
 var __decorate = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -47063,7 +49139,7 @@ UndoRedoService = __decorate([
 
 
 /***/ }),
-/* 237 */
+/* 242 */
 /***/ (function(__webpack_module__, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -47114,7 +49190,7 @@ UndoRedoStack.DEFAULT_STACK_SIZE = 10;
 
 
 /***/ }),
-/* 238 */
+/* 243 */
 /***/ (function(__webpack_module__, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -47255,7 +49331,7 @@ HeaderPositionUtils = __decorate([
 
 
 /***/ }),
-/* 239 */
+/* 244 */
 /***/ (function(__webpack_module__, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -47350,7 +49426,7 @@ ColumnDefFactory = __decorate([
 
 
 /***/ }),
-/* 240 */
+/* 245 */
 /***/ (function(__webpack_module__, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -47497,7 +49573,7 @@ RowCssClassCalculator = __decorate([
 
 
 /***/ }),
-/* 241 */
+/* 246 */
 /***/ (function(__webpack_module__, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -47630,7 +49706,7 @@ RowNodeSorter = __decorate([
 
 
 /***/ }),
-/* 242 */
+/* 247 */
 /***/ (function(__webpack_module__, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -47841,7 +49917,7 @@ CtrlsService = CtrlsService_1 = __decorate([
 
 
 /***/ }),
-/* 243 */
+/* 248 */
 /***/ (function(__webpack_module__, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -47880,14 +49956,14 @@ CtrlsFactory = __decorate([
 
 
 /***/ }),
-/* 244 */
+/* 249 */
 /***/ (function(__webpack_module__, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "FakeHScrollComp", function() { return FakeHScrollComp; });
 /* harmony import */ var _context_context_mjs__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(10);
-/* harmony import */ var _abstractFakeScrollComp_mjs__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(245);
+/* harmony import */ var _abstractFakeScrollComp_mjs__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(250);
 /* harmony import */ var _utils_dom_mjs__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(44);
 /* harmony import */ var _eventKeys_mjs__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(22);
 /* harmony import */ var _widgets_componentAnnotations_mjs__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(56);
@@ -48013,7 +50089,7 @@ __decorate([
 
 
 /***/ }),
-/* 245 */
+/* 250 */
 /***/ (function(__webpack_module__, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -48125,7 +50201,7 @@ __decorate([
 
 
 /***/ }),
-/* 246 */
+/* 251 */
 /***/ (function(__webpack_module__, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -48183,7 +50259,7 @@ PinnedWidthService = __decorate([
 
 
 /***/ }),
-/* 247 */
+/* 252 */
 /***/ (function(__webpack_module__, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -48256,7 +50332,7 @@ RowNodeEventThrottle = __decorate([
 
 
 /***/ }),
-/* 248 */
+/* 253 */
 /***/ (function(__webpack_module__, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -48641,7 +50717,7 @@ GridOptionsService = __decorate([
 
 
 /***/ }),
-/* 249 */
+/* 254 */
 /***/ (function(__webpack_module__, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -48698,14 +50774,14 @@ LocaleService = __decorate([
 
 
 /***/ }),
-/* 250 */
+/* 255 */
 /***/ (function(__webpack_module__, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "FakeVScrollComp", function() { return FakeVScrollComp; });
 /* harmony import */ var _context_context_mjs__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(10);
-/* harmony import */ var _abstractFakeScrollComp_mjs__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(245);
+/* harmony import */ var _abstractFakeScrollComp_mjs__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(250);
 /* harmony import */ var _utils_dom_mjs__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(44);
 /* harmony import */ var _rowContainer_setHeightFeature_mjs__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(143);
 /* harmony import */ var _eventKeys_mjs__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(22);
@@ -48769,7 +50845,7 @@ __decorate([
 
 
 /***/ }),
-/* 251 */
+/* 256 */
 /***/ (function(__webpack_module__, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -49114,7 +51190,14 @@ let DataTypeService = class DataTypeService extends _context_beanStub_mjs__WEBPA
             if (columnTypeOverridesExist) {
                 this.columnModel.processResizeOperations();
             }
+            const dataTypesInferredEvent = {
+                type: _eventKeys_mjs__WEBPACK_IMPORTED_MODULE_2__["Events"].EVENT_DATA_TYPES_INFERRED
+            };
+            this.eventService.dispatchEvent(dataTypesInferredEvent);
         });
+    }
+    isPendingInference() {
+        return this.isWaitingForRowData;
     }
     processColumnsPendingInference(firstRowData, columnTypeOverridesExist) {
         this.initialData = firstRowData;
@@ -49200,13 +51283,23 @@ let DataTypeService = class DataTypeService extends _context_beanStub_mjs__WEBPA
     getDateFormatterFunction() {
         return this.getDateStringTypeDefinition().dateFormatter;
     }
+    getDataTypeDefinition(column) {
+        const colDef = column.getColDef();
+        if (!colDef.cellDataType) {
+            return undefined;
+        }
+        return this.dataTypeDefinitions[colDef.cellDataType];
+    }
+    getBaseDataType(column) {
+        var _a;
+        return (_a = this.getDataTypeDefinition(column)) === null || _a === void 0 ? void 0 : _a.baseDataType;
+    }
     checkType(column, value) {
         var _a;
-        const colDef = column.getColDef();
-        if (!colDef.cellDataType || value == null) {
+        if (value == null) {
             return true;
         }
-        const dataTypeMatcher = (_a = this.dataTypeDefinitions[colDef.cellDataType]) === null || _a === void 0 ? void 0 : _a.dataTypeMatcher;
+        const dataTypeMatcher = (_a = this.getDataTypeDefinition(column)) === null || _a === void 0 ? void 0 : _a.dataTypeMatcher;
         if (!dataTypeMatcher) {
             return true;
         }
@@ -49468,7 +51561,7 @@ DataTypeService = __decorate([
 
 
 /***/ }),
-/* 252 */
+/* 257 */
 /***/ (function(__webpack_module__, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -49520,7 +51613,7 @@ ValueParserService = __decorate([
 
 
 /***/ }),
-/* 253 */
+/* 258 */
 /***/ (function(__webpack_module__, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -49558,7 +51651,7 @@ class BaseComponentWrapper {
 
 
 /***/ }),
-/* 254 */
+/* 259 */
 /***/ (function(__webpack_module__, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -49621,7 +51714,7 @@ const CHART_TOOL_PANEL_MENU_OPTIONS = {
 
 
 /***/ }),
-/* 255 */
+/* 260 */
 /***/ (function(__webpack_module__, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -49634,7 +51727,7 @@ const __FORCE_MODULE_DETECTION = 0;
 
 
 /***/ }),
-/* 256 */
+/* 261 */
 /***/ (function(__webpack_module__, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -49650,14 +51743,14 @@ var BarColumnLabelPlacement;
 
 
 /***/ }),
-/* 257 */
+/* 262 */
 /***/ (function(__webpack_module__, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ClientSideRowModel", function() { return ClientSideRowModel; });
 /* harmony import */ var _ag_grid_community_core__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(3);
-/* harmony import */ var _clientSideNodeManager_mjs__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(258);
+/* harmony import */ var _clientSideNodeManager_mjs__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(263);
 var __decorate = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -50518,6 +52611,9 @@ let ClientSideRowModel = class ClientSideRowModel extends _ag_grid_community_cor
     resetRowHeights() {
         const atLeastOne = this.resetRowHeightsForAllRowNodes();
         this.rootNode.setRowHeight(this.rootNode.rowHeight, true);
+        if (this.rootNode.sibling) {
+            this.rootNode.sibling.setRowHeight(this.rootNode.sibling.rowHeight, true);
+        }
         // when pivotMode but pivot not active, root node is displayed on its own
         // because it's only ever displayed alone, refreshing the model (onRowHeightChanged) is not required
         if (atLeastOne) {
@@ -50534,6 +52630,9 @@ let ClientSideRowModel = class ClientSideRowModel extends _ag_grid_community_cor
             const detailNode = rowNode.detailNode;
             if (detailNode) {
                 detailNode.setRowHeight(detailNode.rowHeight, true);
+            }
+            if (rowNode.sibling) {
+                rowNode.sibling.setRowHeight(rowNode.sibling.rowHeight, true);
             }
             atLeastOne = true;
         });
@@ -50592,7 +52691,7 @@ ClientSideRowModel = __decorate([
 
 
 /***/ }),
-/* 258 */
+/* 263 */
 /***/ (function(__webpack_module__, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -50884,7 +52983,7 @@ ClientSideNodeManager.ROOT_NODE_ID = 'ROOT_NODE_ID';
 
 
 /***/ }),
-/* 259 */
+/* 264 */
 /***/ (function(__webpack_module__, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -50914,7 +53013,7 @@ FilterStage = __decorate([
 
 
 /***/ }),
-/* 260 */
+/* 265 */
 /***/ (function(__webpack_module__, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -50959,7 +53058,7 @@ SortStage = __decorate([
 
 
 /***/ }),
-/* 261 */
+/* 266 */
 /***/ (function(__webpack_module__, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -51089,7 +53188,7 @@ FlattenStage = __decorate([
 
 
 /***/ }),
-/* 262 */
+/* 267 */
 /***/ (function(__webpack_module__, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -51314,7 +53413,7 @@ SortService = __decorate([
 
 
 /***/ }),
-/* 263 */
+/* 268 */
 /***/ (function(__webpack_module__, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -51330,9 +53429,7 @@ var __decorate = (undefined && undefined.__decorate) || function (decorators, ta
 
 let FilterService = class FilterService extends _ag_grid_community_core__WEBPACK_IMPORTED_MODULE_0__["BeanStub"] {
     filter(changedPath) {
-        const filterActive = this.filterManager.isColumnFilterPresent()
-            || this.filterManager.isQuickFilterPresent()
-            || this.filterManager.isExternalFilterPresent();
+        const filterActive = this.filterManager.isChildFilterPresent();
         this.filterNodes(filterActive, changedPath);
     }
     filterNodes(filterActive, changedPath) {
@@ -51407,7 +53504,7 @@ FilterService = __decorate([
 
 
 /***/ }),
-/* 264 */
+/* 269 */
 /***/ (function(__webpack_module__, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -51515,46 +53612,46 @@ ImmutableService = __decorate([
 
 
 /***/ }),
-/* 265 */
+/* 270 */
 /***/ (function(__webpack_module__, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "VERSION", function() { return VERSION; });
 // DO NOT UPDATE MANUALLY: Generated from script during build time
-const VERSION = '30.0.6';
+const VERSION = '30.1.0';
 
 
 /***/ }),
-/* 266 */
+/* 271 */
 /***/ (function(__webpack_module__, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _csvExport_baseCreator_mjs__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(267);
+/* harmony import */ var _csvExport_baseCreator_mjs__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(272);
 /* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "BaseCreator", function() { return _csvExport_baseCreator_mjs__WEBPACK_IMPORTED_MODULE_0__["BaseCreator"]; });
 
-/* harmony import */ var _csvExport_sessions_baseGridSerializingSession_mjs__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(268);
+/* harmony import */ var _csvExport_sessions_baseGridSerializingSession_mjs__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(273);
 /* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "BaseGridSerializingSession", function() { return _csvExport_sessions_baseGridSerializingSession_mjs__WEBPACK_IMPORTED_MODULE_1__["BaseGridSerializingSession"]; });
 
-/* harmony import */ var _csvExport_csvCreator_mjs__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(269);
+/* harmony import */ var _csvExport_csvCreator_mjs__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(274);
 /* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "CsvCreator", function() { return _csvExport_csvCreator_mjs__WEBPACK_IMPORTED_MODULE_2__["CsvCreator"]; });
 
-/* harmony import */ var _csvExportModule_mjs__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(272);
+/* harmony import */ var _csvExportModule_mjs__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(277);
 /* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "CsvExportModule", function() { return _csvExportModule_mjs__WEBPACK_IMPORTED_MODULE_3__["CsvExportModule"]; });
 
-/* harmony import */ var _csvExport_downloader_mjs__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(270);
+/* harmony import */ var _csvExport_downloader_mjs__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(275);
 /* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "Downloader", function() { return _csvExport_downloader_mjs__WEBPACK_IMPORTED_MODULE_4__["Downloader"]; });
 
-/* harmony import */ var _csvExport_gridSerializer_mjs__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(273);
+/* harmony import */ var _csvExport_gridSerializer_mjs__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(278);
 /* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "GridSerializer", function() { return _csvExport_gridSerializer_mjs__WEBPACK_IMPORTED_MODULE_5__["GridSerializer"]; });
 
 /* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "RowType", function() { return _csvExport_gridSerializer_mjs__WEBPACK_IMPORTED_MODULE_5__["RowType"]; });
 
-/* harmony import */ var _csvExport_xmlFactory_mjs__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(275);
+/* harmony import */ var _csvExport_xmlFactory_mjs__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(280);
 /* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "XmlFactory", function() { return _csvExport_xmlFactory_mjs__WEBPACK_IMPORTED_MODULE_6__["XmlFactory"]; });
 
-/* harmony import */ var _csvExport_zipContainer_mjs__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(276);
+/* harmony import */ var _csvExport_zipContainer_mjs__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(281);
 /* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "ZipContainer", function() { return _csvExport_zipContainer_mjs__WEBPACK_IMPORTED_MODULE_7__["ZipContainer"]; });
 
 
@@ -51568,7 +53665,7 @@ __webpack_require__.r(__webpack_exports__);
 
 
 /***/ }),
-/* 267 */
+/* 272 */
 /***/ (function(__webpack_module__, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -51594,7 +53691,7 @@ class BaseCreator {
 
 
 /***/ }),
-/* 268 */
+/* 273 */
 /***/ (function(__webpack_module__, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -51721,16 +53818,16 @@ class BaseGridSerializingSession {
 
 
 /***/ }),
-/* 269 */
+/* 274 */
 /***/ (function(__webpack_module__, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "CsvCreator", function() { return CsvCreator; });
 /* harmony import */ var _ag_grid_community_core__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(3);
-/* harmony import */ var _baseCreator_mjs__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(267);
-/* harmony import */ var _downloader_mjs__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(270);
-/* harmony import */ var _sessions_csvSerializingSession_mjs__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(271);
+/* harmony import */ var _baseCreator_mjs__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(272);
+/* harmony import */ var _downloader_mjs__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(275);
+/* harmony import */ var _sessions_csvSerializingSession_mjs__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(276);
 var __decorate = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -51827,7 +53924,7 @@ CsvCreator = __decorate([
 
 
 /***/ }),
-/* 270 */
+/* 275 */
 /***/ (function(__webpack_module__, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -51862,13 +53959,13 @@ class Downloader {
 
 
 /***/ }),
-/* 271 */
+/* 276 */
 /***/ (function(__webpack_module__, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "CsvSerializingSession", function() { return CsvSerializingSession; });
-/* harmony import */ var _baseGridSerializingSession_mjs__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(268);
+/* harmony import */ var _baseGridSerializingSession_mjs__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(273);
 
 const LINE_SEPARATOR = '\r\n';
 class CsvSerializingSession extends _baseGridSerializingSession_mjs__WEBPACK_IMPORTED_MODULE_0__["BaseGridSerializingSession"] {
@@ -51986,16 +54083,16 @@ class CsvSerializingSession extends _baseGridSerializingSession_mjs__WEBPACK_IMP
 
 
 /***/ }),
-/* 272 */
+/* 277 */
 /***/ (function(__webpack_module__, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "CsvExportModule", function() { return CsvExportModule; });
 /* harmony import */ var _ag_grid_community_core__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(3);
-/* harmony import */ var _csvExport_csvCreator_mjs__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(269);
-/* harmony import */ var _csvExport_gridSerializer_mjs__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(273);
-/* harmony import */ var _version_mjs__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(274);
+/* harmony import */ var _csvExport_csvCreator_mjs__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(274);
+/* harmony import */ var _csvExport_gridSerializer_mjs__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(278);
+/* harmony import */ var _version_mjs__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(279);
 
 
 
@@ -52008,7 +54105,7 @@ const CsvExportModule = {
 
 
 /***/ }),
-/* 273 */
+/* 278 */
 /***/ (function(__webpack_module__, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -52118,7 +54215,7 @@ let GridSerializer = class GridSerializer extends _ag_grid_community_core__WEBPA
         return (gridSerializingSession) => {
             if (!params.skipColumnGroupHeaders) {
                 const groupInstanceIdCreator = new _ag_grid_community_core__WEBPACK_IMPORTED_MODULE_0__["GroupInstanceIdCreator"]();
-                const displayedGroups = this.displayedGroupCreator.createDisplayedGroups(columnsToExport, this.columnModel.getGridBalancedTree(), groupInstanceIdCreator, null);
+                const displayedGroups = this.displayedGroupCreator.createDisplayedGroups(columnsToExport, groupInstanceIdCreator, null);
                 this.recursivelyAddHeaderGroups(displayedGroups, gridSerializingSession, params.processGroupHeaderCallback);
             }
             else if (params.columnGroups) {
@@ -52363,18 +54460,18 @@ GridSerializer = __decorate([
 
 
 /***/ }),
-/* 274 */
+/* 279 */
 /***/ (function(__webpack_module__, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "VERSION", function() { return VERSION; });
 // DO NOT UPDATE MANUALLY: Generated from script during build time
-const VERSION = '30.0.6';
+const VERSION = '30.1.0';
 
 
 /***/ }),
-/* 275 */
+/* 280 */
 /***/ (function(__webpack_module__, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -52445,7 +54542,7 @@ class XmlFactory {
 
 
 /***/ }),
-/* 276 */
+/* 281 */
 /***/ (function(__webpack_module__, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -52652,27 +54749,27 @@ ZipContainer.files = [];
 
 
 /***/ }),
-/* 277 */
+/* 282 */
 /***/ (function(__webpack_module__, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _infiniteRowModelModule_mjs__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(278);
+/* harmony import */ var _infiniteRowModelModule_mjs__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(283);
 /* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "InfiniteRowModelModule", function() { return _infiniteRowModelModule_mjs__WEBPACK_IMPORTED_MODULE_0__["InfiniteRowModelModule"]; });
 
 
 
 
 /***/ }),
-/* 278 */
+/* 283 */
 /***/ (function(__webpack_module__, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "InfiniteRowModelModule", function() { return InfiniteRowModelModule; });
 /* harmony import */ var _ag_grid_community_core__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(3);
-/* harmony import */ var _infiniteRowModel_infiniteRowModel_mjs__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(279);
-/* harmony import */ var _version_mjs__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(282);
+/* harmony import */ var _infiniteRowModel_infiniteRowModel_mjs__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(284);
+/* harmony import */ var _version_mjs__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(287);
 
 
 
@@ -52685,14 +54782,14 @@ const InfiniteRowModelModule = {
 
 
 /***/ }),
-/* 279 */
+/* 284 */
 /***/ (function(__webpack_module__, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "InfiniteRowModel", function() { return InfiniteRowModel; });
 /* harmony import */ var _ag_grid_community_core__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(3);
-/* harmony import */ var _infiniteCache_mjs__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(280);
+/* harmony import */ var _infiniteCache_mjs__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(285);
 var __decorate = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -52955,14 +55052,14 @@ InfiniteRowModel = __decorate([
 
 
 /***/ }),
-/* 280 */
+/* 285 */
 /***/ (function(__webpack_module__, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "InfiniteCache", function() { return InfiniteCache; });
 /* harmony import */ var _ag_grid_community_core__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(3);
-/* harmony import */ var _infiniteBlock_mjs__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(281);
+/* harmony import */ var _infiniteBlock_mjs__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(286);
 var __decorate = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -53244,7 +55341,7 @@ __decorate([
 
 
 /***/ }),
-/* 281 */
+/* 286 */
 /***/ (function(__webpack_module__, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -53399,26 +55496,26 @@ __decorate([
 
 
 /***/ }),
-/* 282 */
+/* 287 */
 /***/ (function(__webpack_module__, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "VERSION", function() { return VERSION; });
 // DO NOT UPDATE MANUALLY: Generated from script during build time
-const VERSION = '30.0.6';
+const VERSION = '30.1.0';
 
 
 /***/ }),
-/* 283 */
+/* 288 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "AllCommunityModules", function() { return AllCommunityModules; });
 /* harmony import */ var _ag_grid_community_client_side_row_model__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(1);
-/* harmony import */ var _ag_grid_community_infinite_row_model__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(277);
-/* harmony import */ var _ag_grid_community_csv_export__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(266);
+/* harmony import */ var _ag_grid_community_infinite_row_model__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(282);
+/* harmony import */ var _ag_grid_community_csv_export__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(271);
 /* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "ClientSideRowModelModule", function() { return _ag_grid_community_client_side_row_model__WEBPACK_IMPORTED_MODULE_0__["ClientSideRowModelModule"]; });
 
 /* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "BaseCreator", function() { return _ag_grid_community_csv_export__WEBPACK_IMPORTED_MODULE_2__["BaseCreator"]; });
@@ -53680,6 +55777,8 @@ __webpack_require__.r(__webpack_exports__);
 
 /* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "AgInputRange", function() { return _ag_grid_community_core__WEBPACK_IMPORTED_MODULE_3__["AgInputRange"]; });
 
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "AgRichSelect", function() { return _ag_grid_community_core__WEBPACK_IMPORTED_MODULE_3__["AgRichSelect"]; });
+
 /* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "AgSelect", function() { return _ag_grid_community_core__WEBPACK_IMPORTED_MODULE_3__["AgSelect"]; });
 
 /* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "AgSlider", function() { return _ag_grid_community_core__WEBPACK_IMPORTED_MODULE_3__["AgSlider"]; });
@@ -53717,6 +55816,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "AgAbstractLabel", function() { return _ag_grid_community_core__WEBPACK_IMPORTED_MODULE_3__["AgAbstractLabel"]; });
 
 /* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "AgPickerField", function() { return _ag_grid_community_core__WEBPACK_IMPORTED_MODULE_3__["AgPickerField"]; });
+
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "AgAutocomplete", function() { return _ag_grid_community_core__WEBPACK_IMPORTED_MODULE_3__["AgAutocomplete"]; });
 
 /* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "CellRangeType", function() { return _ag_grid_community_core__WEBPACK_IMPORTED_MODULE_3__["CellRangeType"]; });
 
@@ -53793,6 +55894,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "HeaderNavigationService", function() { return _ag_grid_community_core__WEBPACK_IMPORTED_MODULE_3__["HeaderNavigationService"]; });
 
 /* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "HeaderNavigationDirection", function() { return _ag_grid_community_core__WEBPACK_IMPORTED_MODULE_3__["HeaderNavigationDirection"]; });
+
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "DataTypeService", function() { return _ag_grid_community_core__WEBPACK_IMPORTED_MODULE_3__["DataTypeService"]; });
 
 /* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "PropertyKeys", function() { return _ag_grid_community_core__WEBPACK_IMPORTED_MODULE_3__["PropertyKeys"]; });
 

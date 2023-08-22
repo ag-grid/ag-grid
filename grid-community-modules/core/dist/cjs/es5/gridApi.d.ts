@@ -1,4 +1,4 @@
-// Type definitions for @ag-grid-community/core v30.0.6
+// Type definitions for @ag-grid-community/core v30.1.0
 // Project: https://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { AlignedGridsService } from "./alignedGridsService";
@@ -11,7 +11,7 @@ import { Column } from "./entities/column";
 import { ChartRef, DomLayoutType, GetChartToolbarItems, GetContextMenuItems, GetMainMenuItems, GetRowIdFunc, GetServerSideGroupKey, GridOptions, IsApplyServerSideTransaction, IsRowMaster, IsRowSelectable, IsServerSideGroup, RowClassParams, RowGroupingDisplayType, ServerSideGroupLevelParams } from "./entities/gridOptions";
 import { GetGroupRowAggParams, GetServerSideGroupLevelParamsParams, InitialGroupOrderComparatorParams, IsFullWidthRowParams, IsServerSideGroupOpenByDefaultParams, NavigateToNextCellParams, NavigateToNextHeaderParams, PaginationNumberFormatterParams, PostProcessPopupParams, PostSortRowsParams, ProcessRowParams, RowHeightParams, TabToNextCellParams, TabToNextHeaderParams } from "./interfaces/iCallbackParams";
 import { IRowNode, RowPinnedType } from "./interfaces/iRowNode";
-import { AgEvent, ColumnEventType, SelectionEventSourceType } from "./events";
+import { AgEvent, ColumnEventType, FilterChangedEventSourceType, SelectionEventSourceType } from "./events";
 import { RowDropZoneEvents, RowDropZoneParams } from "./gridBodyComp/rowDragFeature";
 import { HeaderPosition } from "./headerRendering/common/headerPosition";
 import { CsvExportParams, ProcessCellForExportParams } from "./interfaces/exportParams";
@@ -41,6 +41,7 @@ import { OverlayWrapperComponent } from "./rendering/overlays/overlayWrapperComp
 import { FlashCellsParams, GetCellEditorInstancesParams, GetCellRendererInstancesParams, RedrawRowsParams, RefreshCellsParams } from "./rendering/rowRenderer";
 import { IServerSideGroupSelectionState, IServerSideSelectionState } from "./interfaces/iServerSideSelection";
 import { DataTypeDefinition } from "./entities/dataType";
+import { AdvancedFilterModel } from "./interfaces/advancedFilterModel";
 export interface DetailGridInfo {
     /**
      * Id of the detail grid, the format is `detail_{ROW-ID}`,
@@ -72,7 +73,7 @@ export declare class GridApi<TData = any> {
     private filterManager;
     private columnModel;
     private selectionService;
-    private gridOptionsService;
+    private gos;
     private valueService;
     private alignedGridsService;
     private eventService;
@@ -219,7 +220,7 @@ export declare class GridApi<TData = any> {
     setFunctionsReadOnly(readOnly: boolean): void;
     /** Redraws the header. Useful if a column name changes, or something else that changes how the column header is displayed. */
     refreshHeader(): void;
-    /** Returns `true` if any filter is set. This includes quick filter, advanced filter or external filter. */
+    /** Returns `true` if any filter is set. This includes quick filter, column filter, external filter or advanced filter. */
     isAnyFilterPresent(): boolean;
     /** Returns `true` if any column filter is set, otherwise `false`. */
     isColumnFilterPresent(): boolean;
@@ -288,6 +289,23 @@ export declare class GridApi<TData = any> {
      * Set to `true` to include them.
      */
     setIncludeHiddenColumnsInQuickFilter(value: boolean): void;
+    /** Get the state of the Advanced Filter. Used for saving Advanced Filter state */
+    getAdvancedFilterModel(): AdvancedFilterModel | null;
+    /** Set the state of the Advanced Filter. Used for restoring Advanced Filter state */
+    setAdvancedFilterModel(advancedFilterModel: AdvancedFilterModel | null): void;
+    /** Enable/disable the Advanced Filter */
+    setEnableAdvancedFilter(enabled: boolean): void;
+    /**
+     * Updates the `includeHiddenColumnsInAdvancedFilter` grid option.
+     * By default hidden columns are excluded from the Advanced Filter.
+     * Set to `true` to include them.
+     */
+    setIncludeHiddenColumnsInAdvancedFilter(value: boolean): void;
+    /**
+     * DOM element to use as the parent for the Advanced Filter, to allow it to appear outside of the grid.
+     * Set to `null` to appear inside the grid.
+     */
+    setAdvancedFilterParent(advancedFilterParent: HTMLElement | null): void;
     /**
      * Set all of the provided nodes selection state to the provided value.
      */
@@ -417,7 +435,6 @@ export declare class GridApi<TData = any> {
      * If your filter is created asynchronously, `getFilterInstance` will return `null` so you will need to use the `callback` to access the filter instance instead.
      */
     getFilterInstance<TFilter extends IFilter>(key: string | Column, callback?: (filter: TFilter | null) => void): TFilter | null | undefined;
-    private getFilterInstanceImpl;
     /** Destroys a filter. Useful to force a particular filter to be created from scratch again. */
     destroyFilter(key: string | Column): void;
     /** Gets the status panel instance corresponding to the supplied `id`. */
@@ -427,16 +444,25 @@ export declare class GridApi<TData = any> {
      * Returns the current column definitions.
     */
     getColumnDefs(): (ColDef<TData> | ColGroupDef<TData>)[] | undefined;
-    /** Informs the grid that a filter has changed. This is typically called after a filter change through one of the filter APIs. */
-    onFilterChanged(): void;
+    /**
+     * Informs the grid that a filter has changed. This is typically called after a filter change through one of the filter APIs.
+     * @param source The source of the filter change event. If not specified defaults to `'api'`.
+     */
+    onFilterChanged(source?: FilterChangedEventSourceType): void;
     /**
      * Gets the grid to act as if the sort was changed.
      * Useful if you update some values and want to get the grid to reorder them according to the new values.
      */
     onSortChanged(): void;
-    /** Sets the state of all the advanced filters. Provide it with what you get from `getFilterModel()` to restore filter state. */
+    /**
+     * Sets the state of all the column filters. Provide it with what you get from `getFilterModel()` to restore filter state.
+     * If inferring cell data types, and row data is provided asynchronously and is yet to be set,
+     * the filter model will be applied asynchronously after row data is added.
+     * To always perform this synchronously, set `cellDataType = false` on the default column definition,
+     * or provide cell data types for every column.
+     */
     setFilterModel(model: any): void;
-    /** Gets the current state of all the advanced filters. Used for saving filter state. */
+    /** Gets the current state of all the column filters. Used for saving filter state. */
     getFilterModel(): {
         [key: string]: any;
     };

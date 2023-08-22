@@ -48,6 +48,7 @@ var ServerSideRowModel = /** @class */ (function (_super) {
         _this.onRowHeightChanged_debounced = core_1._.debounce(_this.onRowHeightChanged.bind(_this), 100);
         _this.pauseStoreUpdateListening = false;
         _this.started = false;
+        _this.managingPivotResultColumns = false;
         return _this;
     }
     // we don't implement as lazy row heights is not supported in this row model
@@ -180,6 +181,12 @@ var ServerSideRowModel = /** @class */ (function (_super) {
         rootStore.refreshAfterSort(params);
         this.onStoreUpdated();
     };
+    ServerSideRowModel.prototype.generateSecondaryColumns = function (pivotFields) {
+        var pivotColumnGroupDefs = this.pivotColDefService.createColDefsFromFields(pivotFields);
+        this.managingPivotResultColumns = true;
+        this.columnModel.setSecondaryColumns(pivotColumnGroupDefs, "rowModelUpdated");
+    };
+    ;
     ServerSideRowModel.prototype.resetRootStore = function () {
         this.destroyRootStore();
         this.rootNode = new core_1.RowNode(this.beans);
@@ -189,6 +196,11 @@ var ServerSideRowModel = /** @class */ (function (_super) {
             this.storeParams = this.createStoreParams();
             this.rootNode.childStore = this.createBean(this.storeFactory.createStore(this.storeParams, this.rootNode));
             this.updateRowIndexesAndBounds();
+        }
+        if (this.managingPivotResultColumns) {
+            // if managing pivot columns, also reset secondary columns.
+            this.columnModel.setSecondaryColumns(null);
+            this.managingPivotResultColumns = false;
         }
         // this event shows/hides 'no rows' overlay
         var rowDataChangedEvent = {
@@ -504,6 +516,9 @@ var ServerSideRowModel = /** @class */ (function (_super) {
     __decorate([
         core_1.Autowired('beans')
     ], ServerSideRowModel.prototype, "beans", void 0);
+    __decorate([
+        core_1.Optional('pivotColDefService')
+    ], ServerSideRowModel.prototype, "pivotColDefService", void 0);
     __decorate([
         core_1.PreDestroy
     ], ServerSideRowModel.prototype, "destroyDatasource", null);

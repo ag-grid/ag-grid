@@ -46,7 +46,9 @@ class RowCtrl extends beanStub_1.BeanStub {
             fullWidth: false
         };
         this.lastMouseDownOnDragger = false;
+        this.emptyStyle = {};
         this.updateColumnListsPending = false;
+        this.rowId = null;
         this.businessKeySanitised = null;
         this.beans = beans;
         this.gridOptionsService = beans.gridOptionsService;
@@ -55,11 +57,16 @@ class RowCtrl extends beanStub_1.BeanStub {
         this.useAnimationFrameForCreate = useAnimationFrameForCreate;
         this.printLayout = printLayout;
         this.instanceId = rowNode.id + '-' + instanceIdSequence++;
+        this.rowId = string_1.escapeString(rowNode.id);
+        if (this.isFullWidth() && !this.gridOptionsService.is('suppressCellFocus')) {
+            this.tabIndex = -1;
+        }
         this.setAnimateFlags(animateIn);
         this.initRowBusinessKey();
         this.rowFocused = beans.focusService.isRowFocused(this.rowNode.rowIndex, this.rowNode.rowPinned);
         this.rowLevel = beans.rowCssClassCalculator.calculateRowLevel(this.rowNode);
         this.setRowType();
+        this.rowStyles = this.processStylesFromGridOptions();
         this.addListeners();
     }
     initRowBusinessKey() {
@@ -72,6 +79,15 @@ class RowCtrl extends beanStub_1.BeanStub {
         }
         const businessKey = this.businessKeyForNodeFunc(this.rowNode);
         this.businessKeySanitised = string_1.escapeString(businessKey);
+    }
+    getRowId() {
+        return this.rowId;
+    }
+    getRowStyles() {
+        return this.rowStyles;
+    }
+    getTabIndex() {
+        return this.tabIndex;
     }
     isSticky() {
         return this.rowNode.sticky;
@@ -133,24 +149,20 @@ class RowCtrl extends beanStub_1.BeanStub {
         this.onRowHeightChanged(gui);
         this.updateRowIndexes(gui);
         this.setFocusedClasses(gui);
-        this.setStylesFromGridOptions(gui);
+        this.setStylesFromGridOptions(false, gui); // no need to calculate styles already set in constructor
         if (gos.isRowSelection() && this.rowNode.selectable) {
             this.onRowSelected(gui);
         }
         this.updateColumnLists(!this.useAnimationFrameForCreate);
         const comp = gui.rowComp;
-        comp.setRole('row');
         const initialRowClasses = this.getInitialRowClasses(gui.containerType);
         initialRowClasses.forEach(name => comp.addOrRemoveCssClass(name, true));
         this.executeSlideAndFadeAnimations(gui);
         if (this.rowNode.group) {
             aria_1.setAriaExpanded(gui.element, this.rowNode.expanded == true);
         }
-        this.setRowCompRowId(comp);
+        this.setRowCompRowId(comp, false); // false = don't update the id, as we already set it
         this.setRowCompRowBusinessKey(comp);
-        if (this.isFullWidth() && !this.gridOptionsService.is('suppressCellFocus')) {
-            comp.setTabIndex(-1);
-        }
         // DOM DATA
         gos.setDomData(gui.element, RowCtrl.DOM_DATA_KEY_ROW_CTRL, this);
         this.addDestroyFunc(() => gos.setDomData(gui.element, RowCtrl.DOM_DATA_KEY_ROW_CTRL, null));
@@ -190,12 +202,17 @@ class RowCtrl extends beanStub_1.BeanStub {
         }
         comp.setRowBusinessKey(this.businessKeySanitised);
     }
-    setRowCompRowId(comp) {
-        const rowId = string_1.escapeString(this.rowNode.id);
-        if (rowId == null) {
+    getBusinessKey() {
+        return this.businessKeySanitised;
+    }
+    setRowCompRowId(comp, updateId) {
+        if (updateId) {
+            this.rowId = string_1.escapeString(this.rowNode.id);
+        }
+        if (this.rowId == null) {
             return;
         }
-        comp.setRowId(rowId);
+        comp.setRowId(this.rowId);
     }
     executeSlideAndFadeAnimations(gui) {
         const { containerType } = gui;
@@ -367,8 +384,33 @@ class RowCtrl extends beanStub_1.BeanStub {
         });
         return res;
     }
-    updateColumnListsImpl(useFlushSync = false) {
+    updateColumnListsImpl(useFlushSync) {
         this.updateColumnListsPending = false;
+        this.createAllCellCtrls();
+        this.setCellCtrls(useFlushSync);
+    }
+    setCellCtrls(useFlushSync) {
+        this.allRowGuis.forEach(item => {
+            const cellControls = this.getCellCtrlsForContainer(item.containerType);
+            item.rowComp.setCellCtrls(cellControls, useFlushSync);
+        });
+    }
+    getCellCtrlsForContainer(containerType) {
+        switch (containerType) {
+            case rowContainerCtrl_1.RowContainerType.LEFT:
+                return this.leftCellCtrls.list;
+            case rowContainerCtrl_1.RowContainerType.RIGHT:
+                return this.rightCellCtrls.list;
+            case rowContainerCtrl_1.RowContainerType.FULL_WIDTH:
+                return [];
+            case rowContainerCtrl_1.RowContainerType.CENTER:
+                return this.centerCellCtrls.list;
+            default:
+                const exhaustiveCheck = containerType;
+                throw new Error(`Unhandled case: ${exhaustiveCheck}`);
+        }
+    }
+    createAllCellCtrls() {
         const columnModel = this.beans.columnModel;
         if (this.printLayout) {
             this.centerCellCtrls = this.createCellCtrls(this.centerCellCtrls, columnModel.getAllDisplayedColumns());
@@ -383,11 +425,6 @@ class RowCtrl extends beanStub_1.BeanStub {
             const rightCols = columnModel.getDisplayedRightColumnsForRow(this.rowNode);
             this.rightCellCtrls = this.createCellCtrls(this.rightCellCtrls, rightCols, 'right');
         }
-        this.allRowGuis.forEach(item => {
-            const cellControls = item.containerType === rowContainerCtrl_1.RowContainerType.LEFT ? this.leftCellCtrls :
-                item.containerType === rowContainerCtrl_1.RowContainerType.RIGHT ? this.rightCellCtrls : this.centerCellCtrls;
-            item.rowComp.setCellCtrls(cellControls.list, useFlushSync);
-        });
     }
     isCellEligibleToBeRemoved(cellCtrl, nextContainerPinned) {
         const REMOVE_CELL = true;
@@ -409,14 +446,16 @@ class RowCtrl extends beanStub_1.BeanStub {
         }
         return REMOVE_CELL;
     }
+    getDomOrder() {
+        const isEnsureDomOrder = this.gridOptionsService.is('ensureDomOrder');
+        return isEnsureDomOrder || this.gridOptionsService.isDomLayout('print');
+    }
     listenOnDomOrder(gui) {
         const listener = () => {
-            const isEnsureDomOrder = this.gridOptionsService.is('ensureDomOrder');
-            const isPrintLayout = this.gridOptionsService.isDomLayout('print');
-            gui.rowComp.setDomOrder(isEnsureDomOrder || isPrintLayout);
+            gui.rowComp.setDomOrder(this.getDomOrder());
         };
         this.addManagedPropertyListener('domLayout', listener);
-        listener();
+        this.addManagedPropertyListener('ensureDomOrder', listener);
     }
     setAnimateFlags(animateIn) {
         if (this.isSticky() || !animateIn) {
@@ -486,6 +525,10 @@ class RowCtrl extends beanStub_1.BeanStub {
         this.addManagedListener(this.rowNode, rowNode_1.RowNode.EVENT_TOP_CHANGED, this.onTopChanged.bind(this));
         this.addManagedListener(this.rowNode, rowNode_1.RowNode.EVENT_EXPANDED_CHANGED, this.updateExpandedCss.bind(this));
         this.addManagedListener(this.rowNode, rowNode_1.RowNode.EVENT_HAS_CHILDREN_CHANGED, this.updateExpandedCss.bind(this));
+        if (this.rowNode.detail) {
+            // if the master row node has updated data, we also want to try to refresh the detail row
+            this.addManagedListener(this.rowNode.parent, rowNode_1.RowNode.EVENT_DATA_CHANGED, this.onRowNodeDataChanged.bind(this));
+        }
         this.addManagedListener(this.rowNode, rowNode_1.RowNode.EVENT_DATA_CHANGED, this.onRowNodeDataChanged.bind(this));
         this.addManagedListener(this.rowNode, rowNode_1.RowNode.EVENT_CELL_CHANGED, this.onRowNodeCellChanged.bind(this));
         this.addManagedListener(this.rowNode, rowNode_1.RowNode.EVENT_HIGHLIGHT_CHANGED, this.onRowNodeHighlightChanged.bind(this));
@@ -515,12 +558,11 @@ class RowCtrl extends beanStub_1.BeanStub {
         });
     }
     onRowNodeDataChanged(event) {
-        // if master row has updated, then need to also try to refresh the detail node
-        if (this.rowNode.detailNode) {
-            this.beans.rowRenderer.refreshFullWidthRow(this.rowNode.detailNode);
-        }
         if (this.isFullWidth()) {
-            this.beans.rowRenderer.refreshFullWidthRow(this.rowNode);
+            const refresh = this.refreshFullWidth();
+            if (!refresh) {
+                this.beans.rowRenderer.redrawRow(this.rowNode);
+            }
             return;
         }
         // if this is an update, we want to refresh, as this will allow the user to put in a transition
@@ -532,7 +574,7 @@ class RowCtrl extends beanStub_1.BeanStub {
         }));
         // as data has changed update the dom row id attributes
         this.allRowGuis.forEach(gui => {
-            this.setRowCompRowId(gui.rowComp);
+            this.setRowCompRowId(gui.rowComp, true);
             this.updateRowBusinessKey();
             this.setRowCompRowBusinessKey(gui.rowComp);
         });
@@ -550,7 +592,7 @@ class RowCtrl extends beanStub_1.BeanStub {
         this.postProcessCss();
     }
     postProcessCss() {
-        this.setStylesFromGridOptions();
+        this.setStylesFromGridOptions(true);
         this.postProcessClassesFromGridOptions();
         this.postProcessRowClassRules();
         this.postProcessRowDragging();
@@ -957,9 +999,11 @@ class RowCtrl extends beanStub_1.BeanStub {
             this.allRowGuis.forEach(gui => gui.rowComp.addOrRemoveCssClass(className, false));
         });
     }
-    setStylesFromGridOptions(gui) {
-        const rowStyles = this.processStylesFromGridOptions();
-        this.forEachGui(gui, gui => gui.rowComp.setUserStyles(rowStyles));
+    setStylesFromGridOptions(updateStyles, gui) {
+        if (updateStyles) {
+            this.rowStyles = this.processStylesFromGridOptions();
+        }
+        this.forEachGui(gui, gui => gui.rowComp.setUserStyles(this.rowStyles));
     }
     getPinnedForContainer(rowContainerType) {
         const pinned = rowContainerType === rowContainerCtrl_1.RowContainerType.LEFT
@@ -1004,7 +1048,11 @@ class RowCtrl extends beanStub_1.BeanStub {
             };
             rowStyleFuncResult = rowStyleFunc(params);
         }
-        return Object.assign({}, rowStyle, rowStyleFuncResult);
+        if (rowStyleFuncResult || rowStyle) {
+            return Object.assign({}, rowStyle, rowStyleFuncResult);
+        }
+        // Return constant reference for React
+        return this.emptyStyle;
     }
     onRowSelected(gui) {
         // Treat undefined as false, if we pass undefined down it gets treated as toggle class, rather than explicitly
@@ -1075,8 +1123,12 @@ class RowCtrl extends beanStub_1.BeanStub {
         return this.beans.frameworkOverrides;
     }
     forEachGui(gui, callback) {
-        const list = gui ? [gui] : this.allRowGuis;
-        list.forEach(callback);
+        if (gui) {
+            callback(gui);
+        }
+        else {
+            this.allRowGuis.forEach(callback);
+        }
     }
     onRowHeightChanged(gui) {
         // check for exists first - if the user is resetting the row height, then
@@ -1296,9 +1348,12 @@ class RowCtrl extends beanStub_1.BeanStub {
             this.postProcessCss();
         }
     }
+    getRowIndex() {
+        return this.rowNode.getRowIndexString();
+    }
     updateRowIndexes(gui) {
         const rowIndexStr = this.rowNode.getRowIndexString();
-        const headerRowCount = this.beans.headerNavigationService.getHeaderRowCount();
+        const headerRowCount = this.beans.headerNavigationService.getHeaderRowCount() + this.beans.filterManager.getHeaderRowCount();
         const rowIsEven = this.rowNode.rowIndex % 2 === 0;
         const ariaRowIndex = headerRowCount + this.rowNode.rowIndex + 1;
         this.forEachGui(gui, c => {

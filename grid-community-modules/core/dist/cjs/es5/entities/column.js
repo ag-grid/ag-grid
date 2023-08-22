@@ -55,6 +55,8 @@ var Column = /** @class */ (function () {
         this.autoHeaderHeight = null;
         this.moving = false;
         this.menuVisible = false;
+        this.lastLeftPinned = false;
+        this.firstRightPinned = false;
         this.filterActive = false;
         this.eventService = new eventService_1.EventService();
         this.tooltipEnabled = false;
@@ -147,6 +149,11 @@ var Column = /** @class */ (function () {
     Column.prototype.setOriginalParent = function (originalParent) {
         this.originalParent = originalParent;
     };
+    /**
+     * Used for marryChildren, helps with comparing when duplicate groups have been created to manage split groups.
+     *
+     * Parent may contain a duplicate but not identical group when the group is split.
+     */
     Column.prototype.getOriginalParent = function () {
         return this.originalParent;
     };

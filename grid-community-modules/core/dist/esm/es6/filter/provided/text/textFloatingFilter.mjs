@@ -5,15 +5,17 @@ export class TextFloatingFilter extends TextInputFloatingFilter {
         super.init(params);
         this.filterModelFormatter = new TextFilterModelFormatter(this.localeService, this.optionsFactory);
     }
+    onParamsUpdated(params) {
+        super.onParamsUpdated(params);
+        this.filterModelFormatter.updateParams({ optionsFactory: this.optionsFactory });
+    }
     getDefaultFilterOptions() {
         return TextFilter.DEFAULT_FILTER_OPTIONS;
     }
     getFilterModelFormatter() {
         return this.filterModelFormatter;
     }
-    createFloatingFilterInputService(ariaLabel) {
-        return this.createManagedBean(new FloatingFilterTextInputService({
-            ariaLabel
-        }));
+    createFloatingFilterInputService() {
+        return this.createManagedBean(new FloatingFilterTextInputService());
     }
 }

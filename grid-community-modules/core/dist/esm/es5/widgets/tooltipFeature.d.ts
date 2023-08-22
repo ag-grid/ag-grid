@@ -1,4 +1,4 @@
-// Type definitions for @ag-grid-community/core v30.0.6
+// Type definitions for @ag-grid-community/core v30.1.0
 // Project: https://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { BeanStub } from "../context/beanStub";
@@ -19,18 +19,16 @@ export interface ITooltipFeatureCtrl {
     getRowNode?(): RowNode;
     getValueFormatted?(): string;
 }
-export interface ITooltipFeatureComp {
-    setTitle(title: string | undefined): void;
-}
 export declare class TooltipFeature extends BeanStub {
     private readonly ctrl;
     private readonly beans;
-    private comp;
+    private eGui;
     private tooltip;
     private genericTooltipFeature;
     private browserTooltips;
     constructor(ctrl: ITooltipFeatureCtrl, beans: Beans);
-    setComp(comp: ITooltipFeatureComp): void;
+    setComp(eGui: HTMLElement): void;
+    private setBrowserTooltip;
     private setupTooltip;
     private updateTooltipText;
     private createTooltipFeatureIfNeeded;

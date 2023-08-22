@@ -29,9 +29,7 @@ var FilterService = /** @class */ (function (_super) {
         return _super !== null && _super.apply(this, arguments) || this;
     }
     FilterService.prototype.filter = function (changedPath) {
-        var filterActive = this.filterManager.isColumnFilterPresent()
-            || this.filterManager.isQuickFilterPresent()
-            || this.filterManager.isExternalFilterPresent();
+        var filterActive = this.filterManager.isChildFilterPresent();
         this.filterNodes(filterActive, changedPath);
     };
     FilterService.prototype.filterNodes = function (filterActive, changedPath) {

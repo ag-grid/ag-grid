@@ -28,6 +28,12 @@ var RowComp = /** @class */ (function (_super) {
         _this.setTemplate(/* html */ "<div comp-id=\"" + _this.getCompId() + "\" style=\"" + _this.getInitialStyle(containerType) + "\"/>");
         var eGui = _this.getGui();
         var style = eGui.style;
+        _this.domOrder = _this.rowCtrl.getDomOrder();
+        setAriaRole(eGui, 'row');
+        var tabIndex = _this.rowCtrl.getTabIndex();
+        if (tabIndex != null) {
+            eGui.setAttribute('tabindex', tabIndex.toString());
+        }
         var compProxy = {
             setDomOrder: function (domOrder) { return _this.domOrder = domOrder; },
             setCellCtrls: function (cellCtrls) { return _this.setCellCtrls(cellCtrls); },
@@ -38,10 +44,8 @@ var RowComp = /** @class */ (function (_super) {
             setTop: function (top) { return style.top = top; },
             setTransform: function (transform) { return style.transform = transform; },
             setRowIndex: function (rowIndex) { return eGui.setAttribute('row-index', rowIndex); },
-            setRole: function (role) { return setAriaRole(eGui, role); },
             setRowId: function (rowId) { return eGui.setAttribute('row-id', rowId); },
             setRowBusinessKey: function (businessKey) { return eGui.setAttribute('row-business-key', businessKey); },
-            setTabIndex: function (tabIndex) { return eGui.setAttribute('tabindex', tabIndex.toString()); }
         };
         ctrl.setComp(compProxy, _this.getGui(), containerType);
         _this.addDestroyFunc(function () {

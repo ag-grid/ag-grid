@@ -7,25 +7,36 @@ import { HeaderCellCtrl } from "../cells/column/headerCellCtrl";
 import { HeaderGroupCellCtrl } from "../cells/columnGroup/headerGroupCellCtrl";
 import { HeaderRowType } from "./headerRowComp";
 export interface IHeaderRowComp {
-    setTransform(transform: string): void;
     setTop(top: string): void;
     setHeight(height: string): void;
-    setHeaderCtrls(ctrls: AbstractHeaderCellCtrl[]): void;
+    setHeaderCtrls(ctrls: AbstractHeaderCellCtrl[], forceOrder: boolean): void;
     setWidth(width: string): void;
-    setAriaRowIndex(rowIndex: number): void;
 }
 export declare class HeaderRowCtrl extends BeanStub {
     private columnModel;
     private focusService;
+    private filterManager;
     private comp;
     private rowIndex;
     private pinned;
     private type;
+    private headerRowClass;
     private instanceId;
     private headerCellCtrls;
+    private isPrintLayout;
+    private isEnsureDomOrder;
     constructor(rowIndex: number, pinned: ColumnPinnedType, type: HeaderRowType);
+    private postConstruct;
     getInstanceId(): number;
-    setComp(comp: IHeaderRowComp): void;
+    /**
+     *
+     * @param comp Proxy to the actual component
+     * @param initCompState Should the component be initialised with the current state of the controller. Default: true
+     */
+    setComp(comp: IHeaderRowComp, initCompState?: boolean): void;
+    getHeaderRowClass(): string;
+    getAriaRowIndex(): number;
+    getTransform(): string | undefined;
     private addEventListeners;
     getHeaderCellCtrl(column: ColumnGroup): HeaderGroupCellCtrl | undefined;
     getHeaderCellCtrl(column: Column): HeaderCellCtrl | undefined;
@@ -35,9 +46,14 @@ export declare class HeaderRowCtrl extends BeanStub {
     private setWidth;
     private getWidthForRow;
     private onRowHeightChanged;
+    getTopAndHeight(): {
+        topOffset: number;
+        rowHeight: number;
+    };
     getPinned(): ColumnPinnedType;
     getRowIndex(): number;
     private onVirtualColumnsChanged;
+    getHeaderCtrls(): any[];
     private getColumnsInViewport;
     private getColumnsInViewportPrintLayout;
     private getActualDepth;

@@ -57,6 +57,7 @@ var LazyBlockLoader = /** @class */ (function (_super) {
         return this.loadingNodes.has(index);
     };
     LazyBlockLoader.prototype.getBlockToLoad = function () {
+        var _this = this;
         var _a;
         var firstRowInViewport = this.api.getFirstDisplayedRow();
         var lastRowInViewport = this.api.getLastDisplayedRow();
@@ -85,6 +86,9 @@ var LazyBlockLoader = /** @class */ (function (_super) {
         nodesToRefresh.forEach(function (node) {
             if (node.rowIndex == null) {
                 nodeToRefresh = node;
+                return;
+            }
+            if (_this.isRowLoading(node.rowIndex)) {
                 return;
             }
             var distToViewportTop = Math.abs(firstRowInViewport - node.rowIndex);
@@ -159,9 +163,6 @@ var LazyBlockLoader = /** @class */ (function (_super) {
     };
     LazyBlockLoader.prototype.getNextBlockToLoad = function () {
         var result = this.getBlockToLoad();
-        if (result != null && result < 0) {
-            this.getBlockToLoad();
-        }
         if (result != null) {
             return [String(result), result + this.getBlockSize()];
         }

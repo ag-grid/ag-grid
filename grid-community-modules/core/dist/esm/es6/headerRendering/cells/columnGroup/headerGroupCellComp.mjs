@@ -15,13 +15,12 @@ export class HeaderGroupCellComp extends AbstractHeaderCellComp {
     postConstruct() {
         const eGui = this.getGui();
         const setAttribute = (key, value) => value != undefined ? eGui.setAttribute(key, value) : eGui.removeAttribute(key);
+        eGui.setAttribute("col-id", this.ctrl.getColId());
         const compProxy = {
             addOrRemoveCssClass: (cssClassName, on) => this.addOrRemoveCssClass(cssClassName, on),
             setResizableDisplayed: (displayed) => setDisplayed(this.eResize, displayed),
             setWidth: width => eGui.style.width = width,
-            setColId: id => eGui.setAttribute("col-id", id),
             setAriaExpanded: expanded => setAttribute('aria-expanded', expanded),
-            setTitle: title => setAttribute("title", title),
             setUserCompDetails: details => this.setUserCompDetails(details)
         };
         this.ctrl.setComp(compProxy, eGui, this.eResize);

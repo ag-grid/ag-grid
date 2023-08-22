@@ -1,11 +1,10 @@
-// ag-grid-react v30.0.6
+// ag-grid-react v30.1.0
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 var react_1 = require("react");
 var beansContext_1 = require("../beansContext");
-var useEffectOnce_1 = require("../useEffectOnce");
 var useJsCellRenderer = function (showDetails, showTools, eCellValue, cellValueVersion, jsCellRendererRef, eGui) {
-    var _a = react_1.useContext(beansContext_1.BeansContext), context = _a.context, userComponentFactory = _a.userComponentFactory;
+    var context = react_1.useContext(beansContext_1.BeansContext).context;
     var destroyCellRenderer = react_1.useCallback(function () {
         var comp = jsCellRendererRef.current;
         if (!comp) {
@@ -59,12 +58,13 @@ var useJsCellRenderer = function (showDetails, showTools, eCellValue, cellValueV
         var parent = showTools ? eCellValue : eGui.current;
         parent.appendChild(compGui);
         jsCellRendererRef.current = comp;
+        // We do not return the destroy here as we want to keep the comp alive for our custom refresh approach above
     }, [showDetails, showTools, cellValueVersion]);
     // this effect makes sure destroyCellRenderer gets called when the
     // component is destroyed. as the other effect only updates when there
     // is a change in state
-    useEffectOnce_1.useEffectOnce(function () {
+    react_1.useEffect(function () {
         return destroyCellRenderer;
-    });
+    }, []);
 };
 exports.default = useJsCellRenderer;

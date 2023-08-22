@@ -31,7 +31,6 @@ class HeaderGroupCellCtrl extends abstractHeaderCellCtrl_1.AbstractHeaderCellCtr
         this.comp = comp;
         this.displayName = this.columnModel.getDisplayNameForColumnGroup(this.columnGroup, 'header');
         this.addClasses();
-        this.addAttributes();
         this.setupMovingCss();
         this.setupExpandable();
         this.setupTooltip();
@@ -102,7 +101,7 @@ class HeaderGroupCellCtrl extends abstractHeaderCellCtrl_1.AbstractHeaderCellCtr
             tooltipCtrl.getColDef = () => colGroupDef;
         }
         const tooltipFeature = this.createManagedBean(new tooltipFeature_1.TooltipFeature(tooltipCtrl, this.beans));
-        tooltipFeature.setComp(this.comp);
+        tooltipFeature.setComp(this.eGui);
     }
     setupExpandable() {
         const providedColGroup = this.columnGroup.getProvidedColumnGroup();
@@ -121,8 +120,8 @@ class HeaderGroupCellCtrl extends abstractHeaderCellCtrl_1.AbstractHeaderCellCtr
             this.comp.setAriaExpanded(undefined);
         }
     }
-    addAttributes() {
-        this.comp.setColId(this.columnGroup.getUniqueId());
+    getColId() {
+        return this.columnGroup.getUniqueId();
     }
     addClasses() {
         const colGroupDef = this.columnGroup.getColGroupDef();

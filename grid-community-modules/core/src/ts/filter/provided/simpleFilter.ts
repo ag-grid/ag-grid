@@ -131,10 +131,11 @@ export interface ICombinedSimpleModel<M extends ISimpleFilterModel> extends Prov
 
 export type Tuple<T> = (T | null)[];
 
-export abstract class SimpleFilterModelFormatter {
+export abstract class SimpleFilterModelFormatter<TValue = any> {
     constructor(
         private readonly localeService: LocaleService,
-        private readonly optionsFactory: OptionsFactory
+        private optionsFactory: OptionsFactory,
+        protected readonly valueFormatter?: (value: TValue | null) => string | null
     ) {}
 
     // used by:
@@ -175,6 +176,14 @@ export abstract class SimpleFilterModelFormatter {
 
     // creates text equivalent of FilterModel. if it's a combined model, this takes just one condition.
     protected abstract conditionToString(condition: ProvidedFilterModel, opts?: IFilterOptionDef): string;
+
+    public updateParams(params: { optionsFactory: OptionsFactory }) {
+        this.optionsFactory = params.optionsFactory;
+    }
+
+    protected formatValue(value?: TValue | null): string {
+        return this.valueFormatter ? (this.valueFormatter(value ?? null) ?? '') : String(value);
+    }
 }
 
 /**
@@ -447,6 +456,12 @@ export abstract class SimpleFilter<M extends ISimpleFilterModel, V, E = AgInputT
 
         this.createOption();
         this.createMissingConditionsAndOperators();
+
+        if (this.isReadOnly()) {
+            // only do this when read only (so no other focusable elements), otherwise the tab order breaks
+            // as the tabbed layout managed focus feature will focus the body when it shouldn't
+            this.eFilterBody.setAttribute('tabindex', '-1');
+        }
     }
 
     private setNumConditions(params: SimpleFilterParams): void {
@@ -693,12 +708,17 @@ export abstract class SimpleFilter<M extends ISimpleFilterModel, V, E = AgInputT
 
         this.resetPlaceholder();
 
-        if (!params || (!params.suppressFocus && !this.isReadOnly())) {
-            const firstInput = this.getInputs(0)[0];
-            if (!firstInput) { return; }
+        if (!params?.suppressFocus) {
+            if (this.isReadOnly()) {
+                // something needs focus otherwise keyboard navigation breaks, so focus the filter body
+                this.eFilterBody.focus();
+            } else {
+                const firstInput = this.getInputs(0)[0];
+                if (!firstInput) { return; }
 
-            if (firstInput instanceof AgAbstractInputField) {
-                firstInput.getInputElement().focus();
+                if (firstInput instanceof AgAbstractInputField) {
+                    firstInput.getInputElement().focus();
+                }
             }
         }
     }

@@ -81,8 +81,7 @@ var StickyRowFeature = /** @class */ (function (_super) {
         var _this = this;
         var height = 0;
         if (!this.gridOptionsService.isGroupRowsSticky()) {
-            this.refreshNodesAndContainerHeight([], height);
-            return;
+            return this.refreshNodesAndContainerHeight([], height);
         }
         var stickyRows = [];
         var firstPixel = this.rowRenderer.getFirstVisibleVerticalPixel();
@@ -162,7 +161,7 @@ var StickyRowFeature = /** @class */ (function (_super) {
             }
             break;
         }
-        this.refreshNodesAndContainerHeight(stickyRows, height);
+        return this.refreshNodesAndContainerHeight(stickyRows, height);
     };
     StickyRowFeature.prototype.refreshStickyNode = function (stickRowNode) {
         var allStickyNodes = [];
@@ -172,14 +171,19 @@ var StickyRowFeature = /** @class */ (function (_super) {
                 allStickyNodes.push(currentNode);
             }
         }
-        this.refreshNodesAndContainerHeight(allStickyNodes, this.containerHeight);
-        this.checkStickyRows();
+        if (this.refreshNodesAndContainerHeight(allStickyNodes, this.containerHeight)) {
+            this.checkStickyRows();
+        }
     };
     StickyRowFeature.prototype.refreshNodesAndContainerHeight = function (allStickyNodes, height) {
         var e_1, _a, _b;
         var _this = this;
+        var stickyRowsChanged = false;
         var removedCtrls = this.stickyRowCtrls.filter(function (ctrl) { return allStickyNodes.indexOf(ctrl.getRowNode()) === -1; });
         var addedNodes = allStickyNodes.filter(function (rowNode) { return _this.stickyRowCtrls.findIndex(function (ctrl) { return ctrl.getRowNode() === rowNode; }) === -1; });
+        if (removedCtrls.length || addedNodes.length) {
+            stickyRowsChanged = true;
+        }
         var ctrlsToDestroy = {};
         removedCtrls.forEach(function (removedCtrl) {
             ctrlsToDestroy[removedCtrl.getRowNode().id] = removedCtrl;
@@ -209,7 +213,9 @@ var StickyRowFeature = /** @class */ (function (_super) {
         if (this.containerHeight !== height) {
             this.containerHeight = height;
             this.gridBodyCtrl.setStickyTopHeight(height);
+            stickyRowsChanged = true;
         }
+        return stickyRowsChanged;
     };
     __decorate([
         context_1.Autowired("rowModel")

@@ -1,4 +1,4 @@
-// ag-grid-react v30.0.6
+// ag-grid-react v30.1.0
 "use strict";
 var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
     if (k2 === undefined) k2 = k;
@@ -24,12 +24,9 @@ var __spreadArray = (this && this.__spreadArray) || function (to, from) {
         to[j] = from[i];
     return to;
 };
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 var react_1 = __importStar(require("react"));
-var react_dom_1 = __importDefault(require("react-dom"));
+var client_1 = require("react-dom/client");
 var client_side_row_model_1 = require("@ag-grid-community/client-side-row-model");
 var agGridReactUi_1 = require("./reactUi/agGridReactUi");
 require("@ag-grid-community/styles/ag-grid.css");
@@ -57,4 +54,5 @@ var App = function () {
                     sortable: true
                 }, rowSelection: "multiple", animateRows: true, onGridReady: onGridReady, rowData: rowData, columnDefs: colDefs, modules: [client_side_row_model_1.ClientSideRowModelModule] }))));
 };
-react_dom_1.default.render(react_1.default.createElement(App, null), document.getElementById('root'));
+var root = client_1.createRoot(document.getElementById('root'));
+root.render(react_1.default.createElement(App, null));

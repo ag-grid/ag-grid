@@ -34,6 +34,10 @@ export class DateFilterModelFormatter extends SimpleFilterModelFormatter {
         // cater for when the type doesn't need a value
         return `${type}`;
     }
+    updateParams(params) {
+        super.updateParams(params);
+        this.dateFilterParams = params.dateFilterParams;
+    }
 }
 export class DateFilter extends ScalarFilter {
     constructor() {

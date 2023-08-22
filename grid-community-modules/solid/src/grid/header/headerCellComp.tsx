@@ -4,9 +4,10 @@ import UserComp from '../userComps/userComp';
 
 const HeaderCellComp = (props: {ctrl: HeaderCellCtrl})=> {
 
+    const { ctrl } = props;
+
     const [getWidth, setWidth] = createSignal<string>();
-    const [getTitle, setTitle] = createSignal<string>();
-    const [getColId, setColId] = createSignal<string>();
+    const [getColId, setColId] = createSignal<string>(ctrl.getColId());
     const [getAriaSort, setAriaSort] = createSignal<ColumnSortState>();
     const [getAriaDescription, setAriaDescription] = createSignal<string>();
     const [getUserCompDetails, setUserCompDetails] = createSignal<UserCompDetails>();
@@ -27,16 +28,12 @@ const HeaderCellComp = (props: {ctrl: HeaderCellCtrl})=> {
         }
     }
 
-    const { ctrl } = props;
-
     const cssClassManager = new CssClassManager(() => eGui);
 
     onMount(() => {
         const compProxy: IHeaderCellComp = {
             setWidth: width => setWidth(width),
             addOrRemoveCssClass: (name, on) => cssClassManager.addOrRemoveCssClass(name, on),
-            setColId: id => setColId(id),
-            setTitle: title => setTitle(title),
 
             setAriaDescription: description => setAriaDescription(description),
             setAriaSort: sort => setAriaSort(sort),
@@ -70,7 +67,6 @@ const HeaderCellComp = (props: {ctrl: HeaderCellCtrl})=> {
             ref={eGui!}
             class="ag-header-cell"
             style={ style() }
-            title={ getTitle() }
             col-id={ getColId() }
             aria-sort={ getAriaSort() }
             role="columnheader"

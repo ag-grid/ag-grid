@@ -15,6 +15,7 @@ var __extends = (this && this.__extends) || (function () {
 })();
 import { AgAbstractLabel } from './agAbstractLabel';
 import { setFixedWidth } from '../utils/dom';
+import { Events } from '../eventKeys';
 var AgAbstractField = /** @class */ (function (_super) {
     __extends(AgAbstractField, _super);
     function AgAbstractField(config, template, className) {
@@ -30,7 +31,7 @@ var AgAbstractField = /** @class */ (function (_super) {
     };
     AgAbstractField.prototype.onValueChange = function (callbackFn) {
         var _this = this;
-        this.addManagedListener(this, AgAbstractField.EVENT_CHANGED, function () { return callbackFn(_this.getValue()); });
+        this.addManagedListener(this, Events.EVENT_FIELD_VALUE_CHANGED, function () { return callbackFn(_this.getValue()); });
         return this;
     };
     AgAbstractField.prototype.getWidth = function () {
@@ -53,11 +54,10 @@ var AgAbstractField = /** @class */ (function (_super) {
         this.previousValue = this.value;
         this.value = value;
         if (!silent) {
-            this.dispatchEvent({ type: AgAbstractField.EVENT_CHANGED });
+            this.dispatchEvent({ type: Events.EVENT_FIELD_VALUE_CHANGED });
         }
         return this;
     };
-    AgAbstractField.EVENT_CHANGED = 'valueChange';
     return AgAbstractField;
 }(AgAbstractLabel));
 export { AgAbstractField };

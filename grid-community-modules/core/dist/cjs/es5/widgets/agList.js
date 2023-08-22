@@ -22,12 +22,12 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.AgList = void 0;
-var agAbstractField_1 = require("./agAbstractField");
 var component_1 = require("./component");
 var context_1 = require("../context/context");
 var string_1 = require("../utils/string");
 var keyCode_1 = require("../constants/keyCode");
 var aria_1 = require("../utils/aria");
+var eventKeys_1 = require("../eventKeys");
 var AgList = /** @class */ (function (_super) {
     __extends(AgList, _super);
     function AgList(cssIdentifier) {
@@ -167,7 +167,7 @@ var AgList = /** @class */ (function (_super) {
         this.highlightedEl = null;
     };
     AgList.prototype.fireChangeEvent = function () {
-        this.dispatchEvent({ type: agAbstractField_1.AgAbstractField.EVENT_CHANGED });
+        this.dispatchEvent({ type: eventKeys_1.Events.EVENT_FIELD_VALUE_CHANGED });
         this.fireItemSelected();
     };
     AgList.prototype.fireItemSelected = function () {

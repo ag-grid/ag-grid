@@ -1,6 +1,12 @@
 import React, {Component} from 'react';
 
 export default class CustomDateComponent extends Component {
+    // we use a ref as well as state, as state is async,
+    // and after the grid calls setDate() (eg when setting filter model)
+    // it then can call getDate() immediately (eg to execute the filter)
+    // and we need to pass back the most recent value, not the old 'current state'.
+    date = null;
+
     constructor(props) {
         super(props);
 
@@ -40,11 +46,12 @@ export default class CustomDateComponent extends Component {
     getDate() {
         //ag-grid will call us here when in need to check what the current date value is hold by this
         //component.
-        return this.state.date;
+        return this.date;
     }
 
     setDate(date) {
         //ag-grid will call us here when it needs this component to update the date that it holds.
+        this.date = date;
         this.setState({date});
         this.picker.setDate(date);
     }
@@ -68,6 +75,7 @@ export default class CustomDateComponent extends Component {
     updateAndNotifyAgGrid(date) {
         //Callback after the state is set. This is where we tell ag-grid that the date has changed so
         //it will proceed with the filtering and we can then expect AG Grid to call us back to getDate
+        this.date = date;
         this.setState({date}, this.props.onDateChanged);
     }
 
@@ -76,7 +84,6 @@ export default class CustomDateComponent extends Component {
     //*********************************************************************************
 
     onDateChanged = (selectedDates) => {
-        this.setState({date: selectedDates[0]});
         this.updateAndNotifyAgGrid(selectedDates[0]);
     };
 }

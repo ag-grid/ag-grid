@@ -9,12 +9,16 @@ export declare class GroupFloatingFilterComp extends Component implements IFloat
     private parentFilterInstance;
     private underlyingFloatingFilter;
     private showingUnderlyingFloatingFilter;
-    private columnVisibleChangedListener;
+    private compDetails;
+    private haveAddedColumnListeners;
     constructor();
     init(params: IFloatingFilterParams<GroupFilter>): AgPromise<void>;
+    onParamsUpdated(params: IFloatingFilterParams<GroupFilter>): void;
+    private setParams;
     private setupReadOnlyFloatingFilterElement;
     private setupUnderlyingFloatingFilterElement;
     private onColumnVisibleChanged;
+    private onColDefChanged;
     onParentModelChanged(_model: null, event: FilterChangedEvent): void;
     private updateDisplayedValue;
     private onSelectedColumnChanged;

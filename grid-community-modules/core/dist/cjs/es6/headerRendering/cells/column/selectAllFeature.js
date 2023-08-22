@@ -44,7 +44,7 @@ class SelectAllFeature extends beanStub_1.BeanStub {
         this.addManagedListener(this.eventService, events_1.Events.EVENT_SELECTION_CHANGED, this.onSelectionChanged.bind(this));
         this.addManagedListener(this.eventService, events_1.Events.EVENT_PAGINATION_CHANGED, this.onSelectionChanged.bind(this));
         this.addManagedListener(this.eventService, events_1.Events.EVENT_MODEL_UPDATED, this.onModelChanged.bind(this));
-        this.addManagedListener(this.cbSelectAll, agCheckbox_1.AgCheckbox.EVENT_CHANGED, this.onCbSelectAll.bind(this));
+        this.addManagedListener(this.cbSelectAll, events_1.Events.EVENT_FIELD_VALUE_CHANGED, this.onCbSelectAll.bind(this));
         aria_1.setAriaHidden(this.cbSelectAll.getGui(), true);
         this.cbSelectAll.getInputElement().setAttribute('tabindex', '-1');
         this.refreshSelectAllLabel();

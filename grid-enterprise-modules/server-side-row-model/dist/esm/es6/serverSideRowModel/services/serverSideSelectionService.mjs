@@ -4,6 +4,17 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
+var __rest = (this && this.__rest) || function (s, e) {
+    var t = {};
+    for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p) && e.indexOf(p) < 0)
+        t[p] = s[p];
+    if (s != null && typeof Object.getOwnPropertySymbols === "function")
+        for (var i = 0, p = Object.getOwnPropertySymbols(s); i < p.length; i++) {
+            if (e.indexOf(p[i]) < 0 && Object.prototype.propertyIsEnumerable.call(s, p[i]))
+                t[p[i]] = s[p[i]];
+        }
+    return t;
+};
 import { Autowired, Bean, BeanStub, Events, PostConstruct } from "@ag-grid-community/core";
 import { DefaultStrategy } from "./selection/strategies/defaultStrategy.mjs";
 import { GroupSelectsChildrenStrategy } from "./selection/strategies/groupSelectsChildrenStrategy.mjs";
@@ -39,19 +50,25 @@ let ServerSideSelectionService = class ServerSideSelectionService extends BeanSt
         this.eventService.dispatchEvent(event);
     }
     setNodesSelected(params) {
-        if (params.nodes.length > 1 && this.rowSelection !== 'multiple') {
+        const { nodes } = params, otherParams = __rest(params, ["nodes"]);
+        if (nodes.length > 1 && this.rowSelection !== 'multiple') {
             console.warn(`AG Grid: cannot multi select while rowSelection='single'`);
             return 0;
         }
-        if (params.nodes.length > 1 && params.rangeSelect) {
+        if (nodes.length > 1 && params.rangeSelect) {
             console.warn(`AG Grid: cannot use range selection when multi selecting rows`);
             return 0;
         }
-        const changedNodes = this.selectionStrategy.setNodesSelected(params);
-        this.shotgunResetNodeSelectionState(params.source);
+        const adjustedParams = Object.assign({ nodes: nodes.filter(node => node.selectable) }, otherParams);
+        // if no selectable nodes, then return 0
+        if (!adjustedParams.nodes.length) {
+            return 0;
+        }
+        const changedNodes = this.selectionStrategy.setNodesSelected(adjustedParams);
+        this.shotgunResetNodeSelectionState(adjustedParams.source);
         const event = {
             type: Events.EVENT_SELECTION_CHANGED,
-            source: params.source,
+            source: adjustedParams.source,
         };
         this.eventService.dispatchEvent(event);
         return changedNodes;
@@ -96,6 +113,24 @@ let ServerSideSelectionService = class ServerSideSelectionService extends BeanSt
         // update any refs being held in the strategies
         this.selectionStrategy.processNewRow(rowNode);
         const isNodeSelected = this.selectionStrategy.isNodeSelected(rowNode);
+        // if the node was selected but node is not selectable, we deselect the node.
+        // (could be due to user applying selected state directly, or a change in selectable)
+        if (isNodeSelected != false && !rowNode.selectable) {
+            this.selectionStrategy.setNodesSelected({
+                nodes: [rowNode],
+                newValue: false,
+                source: 'api',
+            });
+            // we need to shotgun reset here as if this was hierarchical, some group nodes
+            // may be changing from indeterminate to unchecked.
+            this.shotgunResetNodeSelectionState();
+            const event = {
+                type: Events.EVENT_SELECTION_CHANGED,
+                source: 'api',
+            };
+            this.eventService.dispatchEvent(event);
+            return;
+        }
         rowNode.setSelectedInitialValue(isNodeSelected);
     }
     reset() {

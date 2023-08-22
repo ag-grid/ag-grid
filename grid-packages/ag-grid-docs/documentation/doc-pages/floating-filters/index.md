@@ -64,6 +64,21 @@ The screen shots below show example scenarios where the provided Number floating
 - **Two Values and One Condition - Read-Only**
     <image-caption src="floating-filters/resources/twoValuesOneCondition.png" alt="Two Values One Condition" width="24rem"></image-caption>
 
+### Controlling Autocomplete on Floating Filters
+
+The `Text` and `Number` floating filters support overriding the browser's autocomplete behaviour on the filter's input field.
+You can control that autocomplete behaviour by passing `browserAutoComplete` parameter in `floatingFilterComponentParams` (as
+defined in  `ITextFloatingFilterParams` and `INumberFloatingFilterParams`).
+
+Possible values for `browserAutoComplete`:
+
+- `true` to allow the browser's default autocomplete/autofill behaviour.
+- `false` to disable the browser autocomplete/autofill behaviour by setting the `autocomplete` attribute to `off`.
+- A **string** to be used as the [autocomplete](https://developer.mozilla.org/en-US/docs/Web/HTML/Attributes/autocomplete) attribute value.
+
+**By default**, `browserAutoComplete` is set to `false` to disable autocomplete.
+
+Some browsers do not respect setting the HTML attribute `autocomplete="off"` and display the auto-fill prompts anyway.
 
 ## Custom Floating Filters
 

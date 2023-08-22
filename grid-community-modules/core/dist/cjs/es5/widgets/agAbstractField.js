@@ -18,6 +18,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.AgAbstractField = void 0;
 var agAbstractLabel_1 = require("./agAbstractLabel");
 var dom_1 = require("../utils/dom");
+var eventKeys_1 = require("../eventKeys");
 var AgAbstractField = /** @class */ (function (_super) {
     __extends(AgAbstractField, _super);
     function AgAbstractField(config, template, className) {
@@ -33,7 +34,7 @@ var AgAbstractField = /** @class */ (function (_super) {
     };
     AgAbstractField.prototype.onValueChange = function (callbackFn) {
         var _this = this;
-        this.addManagedListener(this, AgAbstractField.EVENT_CHANGED, function () { return callbackFn(_this.getValue()); });
+        this.addManagedListener(this, eventKeys_1.Events.EVENT_FIELD_VALUE_CHANGED, function () { return callbackFn(_this.getValue()); });
         return this;
     };
     AgAbstractField.prototype.getWidth = function () {
@@ -56,11 +57,10 @@ var AgAbstractField = /** @class */ (function (_super) {
         this.previousValue = this.value;
         this.value = value;
         if (!silent) {
-            this.dispatchEvent({ type: AgAbstractField.EVENT_CHANGED });
+            this.dispatchEvent({ type: eventKeys_1.Events.EVENT_FIELD_VALUE_CHANGED });
         }
         return this;
     };
-    AgAbstractField.EVENT_CHANGED = 'valueChange';
     return AgAbstractField;
 }(agAbstractLabel_1.AgAbstractLabel));
 exports.AgAbstractField = AgAbstractField;

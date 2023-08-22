@@ -159,6 +159,7 @@ class MoveColumnFeature {
             // If the columns we're dragging are the only visible columns of their group, move the hidden ones too
             let newCols = [];
             allMovingColumns.forEach((col) => {
+                var _a;
                 let movingGroup = null;
                 let parent = col.getParent();
                 while (parent != null && parent.getDisplayedLeafColumns().length === 1) {
@@ -166,8 +167,13 @@ class MoveColumnFeature {
                     parent = parent.getParent();
                 }
                 if (movingGroup != null) {
-                    const providedColumnGroup = movingGroup.getProvidedColumnGroup();
-                    providedColumnGroup.getLeafColumns().forEach((newCol) => {
+                    const isMarryChildren = !!((_a = movingGroup.getColGroupDef()) === null || _a === void 0 ? void 0 : _a.marryChildren);
+                    const columnsToMove = isMarryChildren
+                        // when marry children is true, we also have to move hidden
+                        // columns within the group, so grab them from the `providedColumnGroup`
+                        ? movingGroup.getProvidedColumnGroup().getLeafColumns()
+                        : movingGroup.getLeafColumns();
+                    columnsToMove.forEach((newCol) => {
                         if (!newCols.includes(newCol)) {
                             newCols.push(newCol);
                         }

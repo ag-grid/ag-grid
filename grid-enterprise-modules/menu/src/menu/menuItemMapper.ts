@@ -122,11 +122,34 @@ export class MenuItemMapper extends BeanStub {
                     icon: _.createIconNoSpan('menuAddRowGroup', this.gridOptionsService, null)
                 };
             case 'rowUnGroup':
+                const icon = _.createIconNoSpan('menuRemoveRowGroup', this.gridOptionsService, null);
+                const showRowGroup = column?.getColDef().showRowGroup;
+                // Handle single auto group column
+                if (showRowGroup === true) {
+                    return {
+                        name: localeTextFunc('ungroupAll', 'Un-Group All'),
+                        disabled: !column?.getColDef().showRowGroup,
+                        action: () => this.columnModel.setRowGroupColumns([], "contextMenu"),
+                        icon: icon
+                    };
+                }
+                // Handle multiple auto group columns
+                if (typeof showRowGroup === 'string') {
+                    const underlyingColumn = this.columnModel.getSourceColumnsForGroupColumn(column!)?.[0];
+                    const ungroupByName = (underlyingColumn != null) ? _.escapeString(this.columnModel.getDisplayNameForColumn(underlyingColumn, 'header')) : showRowGroup;
+                    return {
+                        name: localeTextFunc('ungroupBy', 'Un-Group by') + ' ' + ungroupByName,
+                        disabled: !column?.getColDef().showRowGroup,
+                        action: () => this.columnModel.removeRowGroupColumn(showRowGroup, "contextMenu"),
+                        icon: icon
+                    };
+                }
+                // Handle primary column
                 return {
                     name: localeTextFunc('ungroupBy', 'Un-Group by') + ' ' + _.escapeString(this.columnModel.getDisplayNameForColumn(column, 'header')),
                     disabled: !column?.isRowGroupActive() || !column?.getColDef().enableRowGroup,
                     action: () => this.columnModel.removeRowGroupColumn(column, "contextMenu"),
-                    icon: _.createIconNoSpan('menuRemoveRowGroup', this.gridOptionsService, null)
+                    icon: icon
                 };
             case 'resetColumns':
                 return {
@@ -165,7 +188,7 @@ export class MenuItemMapper extends BeanStub {
                 } else {
                     return null;
                 }
-                case 'copyWithGroupHeaders':
+            case 'copyWithGroupHeaders':
                 if (ModuleRegistry.__assertRegistered(ModuleNames.ClipboardModule, 'Copy with Group Headers from Menu', this.context.getGridId())) {
                     return {
                         name: localeTextFunc('copyWithGroupHeaders', 'Copy with Group Headers'),

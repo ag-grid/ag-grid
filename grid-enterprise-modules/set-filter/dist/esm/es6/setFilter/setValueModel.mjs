@@ -52,8 +52,9 @@ export class SetValueModel {
         this.keyComparator = (_a = keyComparator) !== null && _a !== void 0 ? _a : _.defaultComparator;
         this.caseSensitive = !!caseSensitive;
         const getDataPath = gridOptionsService.get('getDataPath');
+        const groupAllowUnbalanced = gridOptionsService.is('groupAllowUnbalanced');
         if (rowModel.getType() === 'clientSide') {
-            this.clientSideValuesExtractor = new ClientSideValuesExtractor(rowModel, this.filterParams, this.createKey, this.caseFormat, columnModel, valueService, treeDataOrGrouping, !!treeDataTreeList, getDataPath);
+            this.clientSideValuesExtractor = new ClientSideValuesExtractor(rowModel, this.filterParams, this.createKey, this.caseFormat, columnModel, valueService, treeDataOrGrouping, !!treeDataTreeList, getDataPath, groupAllowUnbalanced);
         }
         if (values == null) {
             this.valuesType = SetFilterModelValuesType.TAKEN_FROM_GRID_VALUES;
@@ -323,7 +324,7 @@ export class SetValueModel {
                     existingFormattedKeys.set(this.caseFormat(key), key);
                 });
                 model.forEach(unformattedKey => {
-                    const formattedKey = this.caseFormat(unformattedKey);
+                    const formattedKey = this.caseFormat(_.makeNull(unformattedKey));
                     const existingUnformattedKey = existingFormattedKeys.get(formattedKey);
                     if (existingUnformattedKey !== undefined) {
                         this.selectKey(existingUnformattedKey);

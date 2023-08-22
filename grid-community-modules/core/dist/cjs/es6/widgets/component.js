@@ -43,7 +43,7 @@ class Component extends beanStub_1.BeanStub {
             location: 'UNKNOWN'
         };
     }
-    setTooltip(newTooltipText) {
+    setTooltip(newTooltipText, showDelayOverride, hideDelayOverride) {
         const removeTooltip = () => {
             if (this.usingBrowserTooltips) {
                 this.getGui().removeAttribute('title');
@@ -57,7 +57,7 @@ class Component extends beanStub_1.BeanStub {
                 this.getGui().setAttribute('title', this.tooltipText);
             }
             else {
-                this.tooltipFeature = this.createBean(new customTooltipFeature_1.CustomTooltipFeature(this));
+                this.tooltipFeature = this.createBean(new customTooltipFeature_1.CustomTooltipFeature(this, showDelayOverride, hideDelayOverride));
             }
         };
         if (this.tooltipText != newTooltipText) {

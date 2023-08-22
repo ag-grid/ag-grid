@@ -1,4 +1,4 @@
-// Type definitions for @ag-grid-community/core v30.0.6
+// Type definitions for @ag-grid-community/core v30.1.0
 // Project: https://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 import { DateFilter } from './dateFilter';
@@ -17,9 +17,12 @@ export declare class DateFloatingFilter extends SimpleFloatingFilter {
     constructor();
     protected getDefaultFilterOptions(): string[];
     init(params: IFloatingFilterParams<DateFilter>): void;
+    onParamsUpdated(params: IFloatingFilterParams<DateFilter>): void;
     protected setEditable(editable: boolean): void;
     onParentModelChanged(model: ISimpleFilterModel, event: FilterChangedEvent): void;
     private onDateChanged;
+    private getDateComponentParams;
     private createDateComponent;
+    private updateDateComponent;
     protected getFilterModelFormatter(): SimpleFilterModelFormatter;
 }

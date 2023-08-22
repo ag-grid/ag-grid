@@ -16,6 +16,7 @@ let ServerSideRowModel = class ServerSideRowModel extends core_1.BeanStub {
         this.onRowHeightChanged_debounced = core_1._.debounce(this.onRowHeightChanged.bind(this), 100);
         this.pauseStoreUpdateListening = false;
         this.started = false;
+        this.managingPivotResultColumns = false;
     }
     // we don't implement as lazy row heights is not supported in this row model
     ensureRowHeightsValid() { return false; }
@@ -147,6 +148,12 @@ let ServerSideRowModel = class ServerSideRowModel extends core_1.BeanStub {
         rootStore.refreshAfterSort(params);
         this.onStoreUpdated();
     }
+    generateSecondaryColumns(pivotFields) {
+        const pivotColumnGroupDefs = this.pivotColDefService.createColDefsFromFields(pivotFields);
+        this.managingPivotResultColumns = true;
+        this.columnModel.setSecondaryColumns(pivotColumnGroupDefs, "rowModelUpdated");
+    }
+    ;
     resetRootStore() {
         this.destroyRootStore();
         this.rootNode = new core_1.RowNode(this.beans);
@@ -156,6 +163,11 @@ let ServerSideRowModel = class ServerSideRowModel extends core_1.BeanStub {
             this.storeParams = this.createStoreParams();
             this.rootNode.childStore = this.createBean(this.storeFactory.createStore(this.storeParams, this.rootNode));
             this.updateRowIndexesAndBounds();
+        }
+        if (this.managingPivotResultColumns) {
+            // if managing pivot columns, also reset secondary columns.
+            this.columnModel.setSecondaryColumns(null);
+            this.managingPivotResultColumns = false;
         }
         // this event shows/hides 'no rows' overlay
         const rowDataChangedEvent = {
@@ -468,6 +480,9 @@ __decorate([
 __decorate([
     core_1.Autowired('beans')
 ], ServerSideRowModel.prototype, "beans", void 0);
+__decorate([
+    core_1.Optional('pivotColDefService')
+], ServerSideRowModel.prototype, "pivotColDefService", void 0);
 __decorate([
     core_1.PreDestroy
 ], ServerSideRowModel.prototype, "destroyDatasource", null);

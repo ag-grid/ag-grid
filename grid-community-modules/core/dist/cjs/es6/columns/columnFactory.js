@@ -83,6 +83,9 @@ let ColumnFactory = class ColumnFactory extends beanStub_1.BeanStub {
             nextChild.setOriginalParent(autoGroup);
             nextChild = autoGroup;
         }
+        if (dept === 0) {
+            column.setOriginalParent(null);
+        }
         // at this point, the nextChild is the top most item in the tree
         return nextChild;
     }
@@ -159,14 +162,19 @@ let ColumnFactory = class ColumnFactory extends beanStub_1.BeanStub {
         return maxDeptThisLevel;
     }
     recursivelyCreateColumns(defs, level, primaryColumns, existingColsCopy, columnKeyCreator, existingGroups) {
-        return (defs || []).map((def) => {
+        if (!defs)
+            return [];
+        const result = new Array(defs.length);
+        for (let i = 0; i < result.length; i++) {
+            const def = defs[i];
             if (this.isColumnGroup(def)) {
-                return this.createColumnGroup(primaryColumns, def, level, existingColsCopy, columnKeyCreator, existingGroups);
+                result[i] = this.createColumnGroup(primaryColumns, def, level, existingColsCopy, columnKeyCreator, existingGroups);
             }
             else {
-                return this.createColumn(primaryColumns, def, existingColsCopy, columnKeyCreator);
+                result[i] = this.createColumn(primaryColumns, def, existingColsCopy, columnKeyCreator);
             }
-        });
+        }
+        return result;
     }
     createColumnGroup(primaryColumns, colGroupDef, level, existingColumns, columnKeyCreator, existingGroups) {
         const colGroupDefMerged = this.createMergedColGroupDef(colGroupDef);
@@ -203,12 +211,12 @@ let ColumnFactory = class ColumnFactory extends beanStub_1.BeanStub {
         if (!column) {
             // no existing column, need to create one
             const colId = columnKeyCreator.getUniqueKey(colDef.colId, colDef.field);
-            const colDefMerged = this.mergeColDefs(colDef, colId);
+            const colDefMerged = this.addColumnDefaultAndTypes(colDef, colId);
             column = new column_1.Column(colDefMerged, colDef, colId, primaryColumns);
             this.context.createBean(column);
         }
         else {
-            const colDefMerged = this.mergeColDefs(colDef, column.getColId());
+            const colDefMerged = this.addColumnDefaultAndTypes(colDef, column.getColId());
             column.setColDef(colDefMerged, colDef);
             this.applyColumnState(column, colDefMerged);
         }
@@ -261,25 +269,31 @@ let ColumnFactory = class ColumnFactory extends beanStub_1.BeanStub {
         }
     }
     findExistingColumn(newColDef, existingColsCopy) {
-        return (existingColsCopy || []).find(existingCol => {
-            const existingColDef = existingCol.getUserProvidedColDef();
-            if (!existingColDef) {
-                return false;
-            }
+        if (!existingColsCopy)
+            return undefined;
+        for (let i = 0; i < existingColsCopy.length; i++) {
+            const def = existingColsCopy[i].getUserProvidedColDef();
+            if (!def)
+                continue;
             const newHasId = newColDef.colId != null;
-            const newHasField = newColDef.field != null;
             if (newHasId) {
-                return existingCol.getId() === newColDef.colId;
+                if (existingColsCopy[i].getId() === newColDef.colId) {
+                    return existingColsCopy[i];
+                }
+                continue;
             }
+            const newHasField = newColDef.field != null;
             if (newHasField) {
-                return existingColDef.field === newColDef.field;
+                if (def.field === newColDef.field) {
+                    return existingColsCopy[i];
+                }
+                continue;
             }
-            // if no id or field present, then try object equivalence.
-            if (existingColDef === newColDef) {
-                return true;
+            if (def === newColDef) {
+                return existingColsCopy[i];
             }
-            return false;
-        });
+        }
+        return undefined;
     }
     findExistingGroup(newGroupDef, existingGroups) {
         return existingGroups.find(existingGroup => {
@@ -294,26 +308,26 @@ let ColumnFactory = class ColumnFactory extends beanStub_1.BeanStub {
             return false;
         });
     }
-    mergeColDefs(colDef, colId) {
+    addColumnDefaultAndTypes(colDef, colId) {
         // start with empty merged definition
-        const colDefMerged = {};
+        const res = {};
         // merge properties from default column definitions
         const defaultColDef = this.gridOptionsService.get('defaultColDef');
-        object_1.mergeDeep(colDefMerged, defaultColDef, false, true);
-        const columnType = this.dataTypeService.updateColDefAndGetColumnType(colDefMerged, colDef, colId);
+        object_1.mergeDeep(res, defaultColDef, false, true);
+        const columnType = this.dataTypeService.updateColDefAndGetColumnType(res, colDef, colId);
         if (columnType) {
-            this.assignColumnTypes(columnType, colDefMerged);
+            this.assignColumnTypes(columnType, res);
         }
         // merge properties from column definitions
-        object_1.mergeDeep(colDefMerged, colDef, false, true);
+        object_1.mergeDeep(res, colDef, false, true);
         const autoGroupColDef = this.gridOptionsService.get('autoGroupColumnDef');
         const isSortingCoupled = this.gridOptionsService.isColumnsSortingCoupledToGroup();
         if (colDef.rowGroup && autoGroupColDef && isSortingCoupled) {
             // override the sort for row group columns where the autoGroupColDef defines these values.
-            object_1.mergeDeep(colDefMerged, { sort: autoGroupColDef.sort, initialSort: autoGroupColDef.initialSort }, false, true);
+            object_1.mergeDeep(res, { sort: autoGroupColDef.sort, initialSort: autoGroupColDef.initialSort }, false, true);
         }
-        this.dataTypeService.validateColDef(colDefMerged);
-        return colDefMerged;
+        this.dataTypeService.validateColDef(res);
+        return res;
     }
     assignColumnTypes(typeKeys, colDefMerged) {
         if (!typeKeys.length) {

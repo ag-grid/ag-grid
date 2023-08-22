@@ -54,6 +54,7 @@ class GridBodyCtrl extends beanStub_1.BeanStub {
         this.setFloatingHeights();
         this.disableBrowserDragging();
         this.addStopEditingWhenGridLosesFocus();
+        this.filterManager.setupAdvancedFilterHeaderComp(eTop);
         this.ctrlsService.registerGridBodyCtrl(this);
     }
     getComp() {
@@ -151,7 +152,7 @@ class GridBodyCtrl extends beanStub_1.BeanStub {
         viewports.forEach(viewport => this.addManagedListener(viewport, 'focusout', focusOutListener));
     }
     updateRowCount() {
-        const headerCount = this.headerNavigationService.getHeaderRowCount();
+        const headerCount = this.headerNavigationService.getHeaderRowCount() + this.filterManager.getHeaderRowCount();
         const rowCount = this.rowModel.isLastRowIndexKnown() ? this.rowModel.getRowCount() : -1;
         const total = rowCount === -1 ? -1 : (headerCount + rowCount);
         this.comp.setRowCount(total);
@@ -319,7 +320,7 @@ class GridBodyCtrl extends beanStub_1.BeanStub {
     }
     setStickyTopOffsetTop() {
         const headerCtrl = this.ctrlsService.getGridHeaderCtrl();
-        const headerHeight = headerCtrl.getHeaderHeight();
+        const headerHeight = headerCtrl.getHeaderHeight() + this.filterManager.getHeaderHeight();
         const pinnedTopHeight = this.pinnedRowModel.getPinnedTopTotalHeight();
         let height = 0;
         if (headerHeight > 0) {
@@ -411,4 +412,7 @@ __decorate([
 __decorate([
     context_1.Autowired('rowModel')
 ], GridBodyCtrl.prototype, "rowModel", void 0);
+__decorate([
+    context_1.Autowired('filterManager')
+], GridBodyCtrl.prototype, "filterManager", void 0);
 exports.GridBodyCtrl = GridBodyCtrl;

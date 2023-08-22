@@ -75,6 +75,8 @@ export class CountryCellRendererJs {
     init(params) {
         this.eGui = document.createElement('span');
         this.eGui.style.cursor = 'default';
+        this.eGui.style.overflow = 'hidden';
+        this.eGui.style.textOverflow = 'ellipsis';
 
         if (params.value === undefined) {
             return null;
@@ -215,7 +217,6 @@ const mobileDefaultCols = [
         editable: true,
         cellRenderer: 'countryCellRenderer',
         cellClass: 'vAlign',
-        cellEditorPopup: true,
         cellEditor: 'agRichSelectCellEditor',
         cellEditorParams: {
             cellRenderer: 'countryCellRenderer',
@@ -377,8 +378,8 @@ const desktopDefaultCols = [
                 width: 150,
                 editable: true,
                 cellRenderer: 'countryCellRenderer',
-                cellEditorPopup: true,
                 suppressFillHandle: true,
+                cellEditorPopup: false,
                 // pivotIndex: 1,
                 // rowGroupIndex: 1,
                 cellClass: ['countryCell', 'vAlign'],
@@ -610,6 +611,11 @@ const Example = () => {
     useEffect(() => {
         const params = new URLSearchParams(window.location.search);
         const theme = params.get('theme') || 'ag-theme-alpine';
+
+        const participantGroup = desktopDefaultCols.find(group => group.headerName === 'Participant');
+        const countryColumn = participantGroup.children.find(column => column.field === 'country')
+        countryColumn['cellEditorPopup'] = theme.includes('material') ? true : false;
+
         setGridTheme(theme);
     }, []);
     const [base64Flags, setBase64Flags] = useState();
@@ -1274,6 +1280,21 @@ const Example = () => {
         }, 0);
     };
 
+    const setCountryColumnPopupEditor = (theme, gridApi) => {
+        if(!columnDefs) {
+            return
+        }
+        const participantGroup = columnDefs.find(group => group.headerName === 'Participant');
+        if(!gridApi || !participantGroup) {
+            return
+        }
+
+        const countryColumn = participantGroup.children.find(column => column.field === 'country')
+        countryColumn['cellEditorPopup'] = theme.includes('material') ? true : false;
+
+        setColumnDefs(columnDefs);
+    }
+
     useEffect(() => {
         const small = IS_SSR
             ? false
@@ -1421,6 +1442,7 @@ const Example = () => {
                     rowCols={rowCols}
                     gridTheme={gridTheme}
                     setGridTheme={setGridTheme}
+                    setCountryColumnPopupEditor={setCountryColumnPopupEditor}
                 />
                 <span className={classnames({ [styles.messages]: true, [styles.show]: showMessage })}>
                     {message}

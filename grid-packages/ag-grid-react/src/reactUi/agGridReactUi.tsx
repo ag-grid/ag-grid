@@ -9,7 +9,7 @@ import {
     _
 } from 'ag-grid-community';
 import React, {
-    useCallback, useEffect, useLayoutEffect, useMemo,
+    useCallback, useEffect, useMemo,
     useRef,
     useState
 } from 'react';
@@ -52,7 +52,17 @@ export const AgGridReactUi = <TData,>(props: AgReactUiProps<TData>) => {
     // Hook to enable Portals to be displayed via the PortalManager
     const [, setPortalRefresher] = useState(0);
 
-    useLayoutEffect(() => {
+    const setRef = useCallback((e: HTMLDivElement) => {
+        eGui.current = e;
+        if (!eGui.current) {
+
+            debug('AgGridReactUi.destroy');
+            destroyFuncs.current.forEach((f) => f());
+            destroyFuncs.current.length = 0;
+
+            return;
+        }
+
         const modules = props.modules || [];
 
         if (!portalManager.current) {
@@ -69,7 +79,7 @@ export const AgGridReactUi = <TData,>(props: AgReactUiProps<TData>) => {
 
         const gridParams: GridParams = {
             providedBeanInstances: {
-                frameworkComponentWrapper: new ReactFrameworkComponentWrapper(portalManager.current!),
+                frameworkComponentWrapper: new ReactFrameworkComponentWrapper(portalManager.current),
             },
             modules,
             frameworkOverrides: new ReactFrameworkOverrides(true),
@@ -102,10 +112,6 @@ export const AgGridReactUi = <TData,>(props: AgReactUiProps<TData>) => {
                         if (props.setGridApi) {
                             props.setGridApi(api, gridOptionsRef.current.columnApi!);
                         }
-                        destroyFuncs.current.push(() => {
-                            // Take local reference to api above so correct api gets destroyed on unmount.
-                            api.destroy()
-                        });
                     }
                 }
             });
@@ -126,18 +132,13 @@ export const AgGridReactUi = <TData,>(props: AgReactUiProps<TData>) => {
 
         const gridCoreCreator = new GridCoreCreator();
         gridCoreCreator.create(
-            eGui.current!,
+            eGui.current,
             gridOptionsRef.current,
             createUiCallback,
             acceptChangesCallback,
             gridParams
         );
 
-        return () => {
-            debug('AgGridReactUi.destroy');
-            destroyFuncs.current.forEach((f) => f());
-            destroyFuncs.current.length = 0;
-        };
     }, []);
 
     const style = useMemo(() => {
@@ -169,7 +170,7 @@ export const AgGridReactUi = <TData,>(props: AgReactUiProps<TData>) => {
     }, [props]);
 
     return (
-        <div style={style} className={props.className} ref={eGui}>
+        <div style={style} className={props.className} ref={setRef}>
             {context && !context.isDestroyed() ? <GridComp context={context} /> : null}
             {portalManager.current?.getPortals() ?? null}
         </div>

@@ -12,11 +12,11 @@ class NumberFilterModelFormatter extends simpleFilter_1.SimpleFilterModelFormatt
         const { numberOfInputs } = options || {};
         const isRange = condition.type == simpleFilter_1.SimpleFilter.IN_RANGE || numberOfInputs === 2;
         if (isRange) {
-            return `${condition.filter}-${condition.filterTo}`;
+            return `${this.formatValue(condition.filter)}-${this.formatValue(condition.filterTo)}`;
         }
         // cater for when the type doesn't need a value
         if (condition.filter != null) {
-            return `${condition.filter}`;
+            return this.formatValue(condition.filter);
         }
         return `${condition.type}`;
     }
@@ -54,10 +54,16 @@ class NumberFilter extends scalarFilter_1.ScalarFilter {
     setParams(params) {
         this.numberFilterParams = params;
         super.setParams(params);
-        this.filterModelFormatter = new NumberFilterModelFormatter(this.localeService, this.optionsFactory);
+        this.filterModelFormatter = new NumberFilterModelFormatter(this.localeService, this.optionsFactory, this.numberFilterParams.numberFormatter);
     }
     getDefaultFilterOptions() {
         return NumberFilter.DEFAULT_FILTER_OPTIONS;
+    }
+    setElementValue(element, value) {
+        const valueToSet = this.numberFilterParams.numberFormatter
+            ? this.numberFilterParams.numberFormatter(value !== null && value !== void 0 ? value : null)
+            : value;
+        super.setElementValue(element, valueToSet);
     }
     createValueElement() {
         const allowedCharPattern = getAllowedCharPattern(this.numberFilterParams);

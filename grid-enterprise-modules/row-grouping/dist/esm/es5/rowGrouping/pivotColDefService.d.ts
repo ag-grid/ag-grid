@@ -1,13 +1,18 @@
-import { BeanStub, ColDef, ColGroupDef } from "@ag-grid-community/core";
+import { BeanStub, ColDef, ColGroupDef, IPivotColDefService } from "@ag-grid-community/core";
 export interface PivotColDefServiceResult {
     pivotColumnGroupDefs: (ColDef | ColGroupDef)[];
     pivotColumnDefs: ColDef[];
 }
-export declare class PivotColDefService extends BeanStub {
+export declare class PivotColDefService extends BeanStub implements IPivotColDefService {
     static PIVOT_ROW_TOTAL_PREFIX: string;
     private columnModel;
+    private gos;
+    private fieldSeparator;
+    private pivotDefaultExpanded;
+    init(): void;
     createPivotColumnDefs(uniqueValues: any): PivotColDefServiceResult;
-    private recursiveBuildGroup;
+    private createPivotColumnsFromUniqueValues;
+    private recursivelyBuildGroup;
     private buildMeasureCols;
     private addExpandablePivotGroups;
     private addPivotTotalsToGroups;
@@ -21,4 +26,9 @@ export declare class PivotColDefService extends BeanStub {
     private merge;
     private generateColumnGroupId;
     private generateColumnId;
+    /**
+     * Used by the SSRM to create secondary columns from provided fields
+     * @param fields
+     */
+    createColDefsFromFields(fields: string[]): (ColDef | ColGroupDef)[];
 }

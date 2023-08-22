@@ -71,7 +71,7 @@ function createSetValueModel(opts: Partial<typeof DEFAULT_OPTS> = DEFAULT_OPTS) 
     const caseFormat = simulateCaseSensitivity ?
         v => v : (v) => typeof v === 'string' ? v.toUpperCase() : v;
 
-    const gridOptionsService = mock<GridOptionsService>('get');
+    const gridOptionsService = mock<GridOptionsService>('get', 'is');
 
     const columnModel = mock<ColumnModel>('getRowGroupColumns');
     columnModel.getRowGroupColumns.mockImplementation(() => []);

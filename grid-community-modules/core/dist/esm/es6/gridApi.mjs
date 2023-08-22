@@ -59,7 +59,7 @@ let GridApi = class GridApi {
     __setProperty(propertyName, value) {
         // Ensure the GridOptions property gets updated and fires the change event as we
         // cannot assume that the dynamic Api call will updated GridOptions.
-        this.gridOptionsService.set(propertyName, value);
+        this.gos.set(propertyName, value);
         // If the dynamic api does update GridOptions then change detection in the 
         // GridOptionsService will prevent the event being fired twice.
         const setterName = this.getSetterMethod(propertyName);
@@ -108,7 +108,7 @@ let GridApi = class GridApi {
         }
     }
     getExcelExportMode(params) {
-        const baseParams = this.gridOptionsService.get('defaultExcelExportParams');
+        const baseParams = this.gos.get('defaultExcelExportParams');
         const mergedParams = Object.assign({ exportMode: 'xlsx' }, baseParams, params);
         return mergedParams.exportMode;
     }
@@ -195,7 +195,7 @@ let GridApi = class GridApi {
      * */
     setCacheBlockSize(blockSize) {
         if (this.serverSideRowModel) {
-            this.gridOptionsService.set('cacheBlockSize', blockSize);
+            this.gos.set('cacheBlockSize', blockSize);
             this.serverSideRowModel.resetRootStore();
         }
         else {
@@ -204,7 +204,7 @@ let GridApi = class GridApi {
     }
     /** Set new datasource for Infinite Row Model. */
     setDatasource(datasource) {
-        if (this.gridOptionsService.isRowModelType('infinite')) {
+        if (this.gos.isRowModelType('infinite')) {
             this.rowModel.setDatasource(datasource);
         }
         else {
@@ -213,7 +213,7 @@ let GridApi = class GridApi {
     }
     /** Set new datasource for Viewport Row Model. */
     setViewportDatasource(viewportDatasource) {
-        if (this.gridOptionsService.isRowModelType('viewport')) {
+        if (this.gos.isRowModelType('viewport')) {
             // this is bad coding, because it's using an interface that's exposed in the enterprise.
             // really we should create an interface in the core for viewportDatasource and let
             // the enterprise implement it, rather than casting to 'any' here
@@ -270,19 +270,19 @@ let GridApi = class GridApi {
     setColumnDefs(colDefs, source = "api") {
         this.columnModel.setColumnDefs(colDefs, source);
         // Keep gridOptions.columnDefs in sync
-        this.gridOptionsService.set('columnDefs', colDefs, true, { source });
+        this.gos.set('columnDefs', colDefs, true, { source });
     }
     /** Call to set new auto group column definition. The grid will recreate any auto-group columns if present. */
     setAutoGroupColumnDef(colDef, source = "api") {
-        this.gridOptionsService.set('autoGroupColumnDef', colDef, true, { source });
+        this.gos.set('autoGroupColumnDef', colDef, true, { source });
     }
     /** Call to set new Default Column Definition. */
     setDefaultColDef(colDef, source = "api") {
-        this.gridOptionsService.set('defaultColDef', colDef, true, { source });
+        this.gos.set('defaultColDef', colDef, true, { source });
     }
     /** Call to set new Column Types. */
     setColumnTypes(columnTypes, source = "api") {
-        this.gridOptionsService.set('columnTypes', columnTypes, true, { source });
+        this.gos.set('columnTypes', columnTypes, true, { source });
     }
     expireValueCache() {
         this.valueCache.expire();
@@ -305,11 +305,11 @@ let GridApi = class GridApi {
     }
     /** If `true`, the horizontal scrollbar will always be present, even if not required. Otherwise, it will only be displayed when necessary. */
     setAlwaysShowHorizontalScroll(show) {
-        this.gridOptionsService.set('alwaysShowHorizontalScroll', show);
+        this.gos.set('alwaysShowHorizontalScroll', show);
     }
     /** If `true`, the vertical scrollbar will always be present, even if not required. Otherwise it will only be displayed when necessary. */
     setAlwaysShowVerticalScroll(show) {
-        this.gridOptionsService.set('alwaysShowVerticalScroll', show);
+        this.gos.set('alwaysShowVerticalScroll', show);
     }
     /** Performs change detection on all cells, refreshing cells where required. */
     refreshCells(params = {}) {
@@ -325,13 +325,13 @@ let GridApi = class GridApi {
         this.rowRenderer.redrawRows(rowNodes);
     }
     setFunctionsReadOnly(readOnly) {
-        this.gridOptionsService.set('functionsReadOnly', readOnly);
+        this.gos.set('functionsReadOnly', readOnly);
     }
     /** Redraws the header. Useful if a column name changes, or something else that changes how the column header is displayed. */
     refreshHeader() {
         this.ctrlsService.getHeaderRowContainerCtrls().forEach(c => c.refresh());
     }
-    /** Returns `true` if any filter is set. This includes quick filter, advanced filter or external filter. */
+    /** Returns `true` if any filter is set. This includes quick filter, column filter, external filter or advanced filter. */
     isAnyFilterPresent() {
         return this.filterManager.isAnyFilterPresent();
     }
@@ -410,7 +410,7 @@ let GridApi = class GridApi {
      */
     getSizesForCurrentTheme() {
         return {
-            rowHeight: this.gridOptionsService.getRowHeightAsNumber(),
+            rowHeight: this.gos.getRowHeightAsNumber(),
             headerHeight: this.columnModel.getHeaderHeight()
         };
     }
@@ -450,11 +450,11 @@ let GridApi = class GridApi {
     }
     /** Get the current Quick Filter text from the grid, or `undefined` if none is set. */
     getQuickFilter() {
-        return this.gridOptionsService.get('quickFilterText');
+        return this.gos.get('quickFilterText');
     }
     /** Pass a Quick Filter text into the grid for filtering. */
     setQuickFilter(newFilter) {
-        this.gridOptionsService.set('quickFilterText', newFilter);
+        this.gos.set('quickFilterText', newFilter);
     }
     /**
      * @deprecated As of v30, hidden columns are excluded from the Quick Filter by default. To include hidden columns, use `setIncludeHiddenColumnsInQuickFilter` instead.
@@ -469,7 +469,39 @@ let GridApi = class GridApi {
      * Set to `true` to include them.
      */
     setIncludeHiddenColumnsInQuickFilter(value) {
-        this.gridOptionsService.set('includeHiddenColumnsInQuickFilter', value);
+        this.gos.set('includeHiddenColumnsInQuickFilter', value);
+    }
+    /** Get the state of the Advanced Filter. Used for saving Advanced Filter state */
+    getAdvancedFilterModel() {
+        if (ModuleRegistry.__assertRegistered(ModuleNames.AdvancedFilterModule, 'api.getAdvancedFilterModel', this.context.getGridId())) {
+            return this.filterManager.getAdvancedFilterModel();
+        }
+        return null;
+    }
+    /** Set the state of the Advanced Filter. Used for restoring Advanced Filter state */
+    setAdvancedFilterModel(advancedFilterModel) {
+        if (ModuleRegistry.__assertRegistered(ModuleNames.AdvancedFilterModule, 'api.setAdvancedFilterModel', this.context.getGridId())) {
+            this.filterManager.setAdvancedFilterModel(advancedFilterModel);
+        }
+    }
+    /** Enable/disable the Advanced Filter */
+    setEnableAdvancedFilter(enabled) {
+        this.gos.set('enableAdvancedFilter', enabled);
+    }
+    /**
+     * Updates the `includeHiddenColumnsInAdvancedFilter` grid option.
+     * By default hidden columns are excluded from the Advanced Filter.
+     * Set to `true` to include them.
+     */
+    setIncludeHiddenColumnsInAdvancedFilter(value) {
+        this.gos.set('includeHiddenColumnsInAdvancedFilter', value);
+    }
+    /**
+     * DOM element to use as the parent for the Advanced Filter, to allow it to appear outside of the grid.
+     * Set to `null` to appear inside the grid.
+     */
+    setAdvancedFilterParent(advancedFilterParent) {
+        this.gos.set('advancedFilterParent', advancedFilterParent);
     }
     /**
      * Set all of the provided nodes selection state to the provided value.
@@ -684,32 +716,7 @@ let GridApi = class GridApi {
      * If your filter is created asynchronously, `getFilterInstance` will return `null` so you will need to use the `callback` to access the filter instance instead.
      */
     getFilterInstance(key, callback) {
-        const res = this.getFilterInstanceImpl(key, instance => {
-            if (!callback) {
-                return;
-            }
-            const unwrapped = unwrapUserComp(instance);
-            callback(unwrapped);
-        });
-        const unwrapped = unwrapUserComp(res);
-        return unwrapped;
-    }
-    getFilterInstanceImpl(key, callback) {
-        const column = this.columnModel.getPrimaryColumn(key);
-        if (!column) {
-            return undefined;
-        }
-        const filterPromise = this.filterManager.getFilterComponent(column, 'NO_UI');
-        const currentValue = filterPromise && filterPromise.resolveNow(null, filterComp => filterComp);
-        if (currentValue) {
-            setTimeout(callback, 0, currentValue);
-        }
-        else if (filterPromise) {
-            filterPromise.then(comp => {
-                callback(comp);
-            });
-        }
-        return currentValue;
+        return this.filterManager.getFilterInstance(key, callback);
     }
     /** Destroys a filter. Useful to force a particular filter to be created from scratch again. */
     destroyFilter(key) {
@@ -737,9 +744,12 @@ let GridApi = class GridApi {
      * Returns the current column definitions.
     */
     getColumnDefs() { return this.columnModel.getColumnDefs(); }
-    /** Informs the grid that a filter has changed. This is typically called after a filter change through one of the filter APIs. */
-    onFilterChanged() {
-        this.filterManager.onFilterChanged();
+    /**
+     * Informs the grid that a filter has changed. This is typically called after a filter change through one of the filter APIs.
+     * @param source The source of the filter change event. If not specified defaults to `'api'`.
+     */
+    onFilterChanged(source = 'api') {
+        this.filterManager.onFilterChanged({ source });
     }
     /**
      * Gets the grid to act as if the sort was changed.
@@ -748,11 +758,17 @@ let GridApi = class GridApi {
     onSortChanged() {
         this.sortController.onSortChanged('api');
     }
-    /** Sets the state of all the advanced filters. Provide it with what you get from `getFilterModel()` to restore filter state. */
+    /**
+     * Sets the state of all the column filters. Provide it with what you get from `getFilterModel()` to restore filter state.
+     * If inferring cell data types, and row data is provided asynchronously and is yet to be set,
+     * the filter model will be applied asynchronously after row data is added.
+     * To always perform this synchronously, set `cellDataType = false` on the default column definition,
+     * or provide cell data types for every column.
+     */
     setFilterModel(model) {
         this.filterManager.setFilterModel(model);
     }
-    /** Gets the current state of all the advanced filters. Used for saving filter state. */
+    /** Gets the current state of all the column filters. Used for saving filter state. */
     getFilterModel() {
         return this.filterManager.getFilterModel();
     }
@@ -770,15 +786,15 @@ let GridApi = class GridApi {
     }
     /** Sets the `suppressRowDrag` property. */
     setSuppressRowDrag(value) {
-        this.gridOptionsService.set('suppressRowDrag', value);
+        this.gos.set('suppressRowDrag', value);
     }
     /** Sets the `suppressMoveWhenRowDragging` property. */
     setSuppressMoveWhenRowDragging(value) {
-        this.gridOptionsService.set('suppressMoveWhenRowDragging', value);
+        this.gos.set('suppressMoveWhenRowDragging', value);
     }
     /** Sets the `suppressRowClickSelection` property. */
     setSuppressRowClickSelection(value) {
-        this.gridOptionsService.set('suppressRowClickSelection', value);
+        this.gos.set('suppressRowClickSelection', value);
     }
     /** Adds a drop zone outside of the grid where rows can be dropped. */
     addRowDropZone(params) {
@@ -797,14 +813,14 @@ let GridApi = class GridApi {
     }
     /** Sets the height in pixels for the row containing the column label header. */
     setHeaderHeight(headerHeight) {
-        this.gridOptionsService.set('headerHeight', headerHeight);
+        this.gos.set('headerHeight', headerHeight);
     }
     /**
      * Switch between layout options: `normal`, `autoHeight`, `print`.
      * Defaults to `normal` if no domLayout provided.
      */
     setDomLayout(domLayout) {
-        this.gridOptionsService.set('domLayout', domLayout);
+        this.gos.set('domLayout', domLayout);
     }
     /** Sets the `enableCellTextSelection` property. */
     setEnableCellTextSelection(selectable) {
@@ -812,98 +828,98 @@ let GridApi = class GridApi {
     }
     /** Sets the preferred direction for the selection fill handle. */
     setFillHandleDirection(direction) {
-        this.gridOptionsService.set('fillHandleDirection', direction);
+        this.gos.set('fillHandleDirection', direction);
     }
     /** Sets the height in pixels for the rows containing header column groups. */
     setGroupHeaderHeight(headerHeight) {
-        this.gridOptionsService.set('groupHeaderHeight', headerHeight);
+        this.gos.set('groupHeaderHeight', headerHeight);
     }
     /** Sets the height in pixels for the row containing the floating filters. */
     setFloatingFiltersHeight(headerHeight) {
-        this.gridOptionsService.set('floatingFiltersHeight', headerHeight);
+        this.gos.set('floatingFiltersHeight', headerHeight);
     }
     /** Sets the height in pixels for the row containing the columns when in pivot mode. */
     setPivotHeaderHeight(headerHeight) {
-        this.gridOptionsService.set('pivotHeaderHeight', headerHeight);
+        this.gos.set('pivotHeaderHeight', headerHeight);
     }
     /** Sets the height in pixels for the row containing header column groups when in pivot mode. */
     setPivotGroupHeaderHeight(headerHeight) {
-        this.gridOptionsService.set('pivotGroupHeaderHeight', headerHeight);
+        this.gos.set('pivotGroupHeaderHeight', headerHeight);
     }
     setPivotMode(pivotMode) {
         this.columnModel.setPivotMode(pivotMode);
     }
     setAnimateRows(animateRows) {
-        this.gridOptionsService.set('animateRows', animateRows);
+        this.gos.set('animateRows', animateRows);
     }
     setIsExternalFilterPresent(isExternalFilterPresentFunc) {
-        this.gridOptionsService.set('isExternalFilterPresent', isExternalFilterPresentFunc);
+        this.gos.set('isExternalFilterPresent', isExternalFilterPresentFunc);
     }
     setDoesExternalFilterPass(doesExternalFilterPassFunc) {
-        this.gridOptionsService.set('doesExternalFilterPass', doesExternalFilterPassFunc);
+        this.gos.set('doesExternalFilterPass', doesExternalFilterPassFunc);
     }
     setNavigateToNextCell(navigateToNextCellFunc) {
-        this.gridOptionsService.set('navigateToNextCell', navigateToNextCellFunc);
+        this.gos.set('navigateToNextCell', navigateToNextCellFunc);
     }
     setTabToNextCell(tabToNextCellFunc) {
-        this.gridOptionsService.set('tabToNextCell', tabToNextCellFunc);
+        this.gos.set('tabToNextCell', tabToNextCellFunc);
     }
     setTabToNextHeader(tabToNextHeaderFunc) {
-        this.gridOptionsService.set('tabToNextHeader', tabToNextHeaderFunc);
+        this.gos.set('tabToNextHeader', tabToNextHeaderFunc);
     }
     setNavigateToNextHeader(navigateToNextHeaderFunc) {
-        this.gridOptionsService.set('navigateToNextHeader', navigateToNextHeaderFunc);
+        this.gos.set('navigateToNextHeader', navigateToNextHeaderFunc);
     }
     setRowGroupPanelShow(rowGroupPanelShow) {
-        this.gridOptionsService.set('rowGroupPanelShow', rowGroupPanelShow);
+        this.gos.set('rowGroupPanelShow', rowGroupPanelShow);
     }
     setGetGroupRowAgg(getGroupRowAggFunc) {
-        this.gridOptionsService.set('getGroupRowAgg', getGroupRowAggFunc);
+        this.gos.set('getGroupRowAgg', getGroupRowAggFunc);
     }
     setGetBusinessKeyForNode(getBusinessKeyForNodeFunc) {
-        this.gridOptionsService.set('getBusinessKeyForNode', getBusinessKeyForNodeFunc);
+        this.gos.set('getBusinessKeyForNode', getBusinessKeyForNodeFunc);
     }
     setGetChildCount(getChildCountFunc) {
-        this.gridOptionsService.set('getChildCount', getChildCountFunc);
+        this.gos.set('getChildCount', getChildCountFunc);
     }
     setProcessRowPostCreate(processRowPostCreateFunc) {
-        this.gridOptionsService.set('processRowPostCreate', processRowPostCreateFunc);
+        this.gos.set('processRowPostCreate', processRowPostCreateFunc);
     }
     setGetRowId(getRowIdFunc) {
-        this.gridOptionsService.set('getRowId', getRowIdFunc);
+        this.gos.set('getRowId', getRowIdFunc);
     }
     setGetRowClass(rowClassFunc) {
-        this.gridOptionsService.set('getRowClass', rowClassFunc);
+        this.gos.set('getRowClass', rowClassFunc);
     }
     setIsFullWidthRow(isFullWidthRowFunc) {
-        this.gridOptionsService.set('isFullWidthRow', isFullWidthRowFunc);
+        this.gos.set('isFullWidthRow', isFullWidthRowFunc);
     }
     setIsRowSelectable(isRowSelectableFunc) {
-        this.gridOptionsService.set('isRowSelectable', isRowSelectableFunc);
+        this.gos.set('isRowSelectable', isRowSelectableFunc);
     }
     setIsRowMaster(isRowMasterFunc) {
-        this.gridOptionsService.set('isRowMaster', isRowMasterFunc);
+        this.gos.set('isRowMaster', isRowMasterFunc);
     }
     setPostSortRows(postSortRowsFunc) {
-        this.gridOptionsService.set('postSortRows', postSortRowsFunc);
+        this.gos.set('postSortRows', postSortRowsFunc);
     }
     setGetDocument(getDocumentFunc) {
-        this.gridOptionsService.set('getDocument', getDocumentFunc);
+        this.gos.set('getDocument', getDocumentFunc);
     }
     setGetContextMenuItems(getContextMenuItemsFunc) {
-        this.gridOptionsService.set('getContextMenuItems', getContextMenuItemsFunc);
+        this.gos.set('getContextMenuItems', getContextMenuItemsFunc);
     }
     setGetMainMenuItems(getMainMenuItemsFunc) {
-        this.gridOptionsService.set('getMainMenuItems', getMainMenuItemsFunc);
+        this.gos.set('getMainMenuItems', getMainMenuItemsFunc);
     }
     setProcessCellForClipboard(processCellForClipboardFunc) {
-        this.gridOptionsService.set('processCellForClipboard', processCellForClipboardFunc);
+        this.gos.set('processCellForClipboard', processCellForClipboardFunc);
     }
     setSendToClipboard(sendToClipboardFunc) {
-        this.gridOptionsService.set('sendToClipboard', sendToClipboardFunc);
+        this.gos.set('sendToClipboard', sendToClipboardFunc);
     }
     setProcessCellFromClipboard(processCellFromClipboardFunc) {
-        this.gridOptionsService.set('processCellFromClipboard', processCellFromClipboardFunc);
+        this.gos.set('processCellFromClipboard', processCellFromClipboardFunc);
     }
     /** @deprecated v28 use `setProcessPivotResultColDef` instead */
     setProcessSecondaryColDef(processSecondaryColDefFunc) {
@@ -916,22 +932,22 @@ let GridApi = class GridApi {
         this.setProcessPivotResultColGroupDef(processSecondaryColGroupDefFunc);
     }
     setProcessPivotResultColDef(processPivotResultColDefFunc) {
-        this.gridOptionsService.set('processPivotResultColDef', processPivotResultColDefFunc);
+        this.gos.set('processPivotResultColDef', processPivotResultColDefFunc);
     }
     setProcessPivotResultColGroupDef(processPivotResultColGroupDefFunc) {
-        this.gridOptionsService.set('processPivotResultColGroupDef', processPivotResultColGroupDefFunc);
+        this.gos.set('processPivotResultColGroupDef', processPivotResultColGroupDefFunc);
     }
     setPostProcessPopup(postProcessPopupFunc) {
-        this.gridOptionsService.set('postProcessPopup', postProcessPopupFunc);
+        this.gos.set('postProcessPopup', postProcessPopupFunc);
     }
     setInitialGroupOrderComparator(initialGroupOrderComparatorFunc) {
-        this.gridOptionsService.set('initialGroupOrderComparator', initialGroupOrderComparatorFunc);
+        this.gos.set('initialGroupOrderComparator', initialGroupOrderComparatorFunc);
     }
     setGetChartToolbarItems(getChartToolbarItemsFunc) {
-        this.gridOptionsService.set('getChartToolbarItems', getChartToolbarItemsFunc);
+        this.gos.set('getChartToolbarItems', getChartToolbarItemsFunc);
     }
     setPaginationNumberFormatter(paginationNumberFormatterFunc) {
-        this.gridOptionsService.set('paginationNumberFormatter', paginationNumberFormatterFunc);
+        this.gos.set('paginationNumberFormatter', paginationNumberFormatterFunc);
     }
     /** @deprecated v28 use setGetServerSideGroupLevelParams instead */
     setGetServerSideStoreParams(getServerSideStoreParamsFunc) {
@@ -939,25 +955,25 @@ let GridApi = class GridApi {
         this.setGetServerSideGroupLevelParams(getServerSideStoreParamsFunc);
     }
     setGetServerSideGroupLevelParams(getServerSideGroupLevelParamsFunc) {
-        this.gridOptionsService.set('getServerSideGroupLevelParams', getServerSideGroupLevelParamsFunc);
+        this.gos.set('getServerSideGroupLevelParams', getServerSideGroupLevelParamsFunc);
     }
     setIsServerSideGroupOpenByDefault(isServerSideGroupOpenByDefaultFunc) {
-        this.gridOptionsService.set('isServerSideGroupOpenByDefault', isServerSideGroupOpenByDefaultFunc);
+        this.gos.set('isServerSideGroupOpenByDefault', isServerSideGroupOpenByDefaultFunc);
     }
     setIsApplyServerSideTransaction(isApplyServerSideTransactionFunc) {
-        this.gridOptionsService.set('isApplyServerSideTransaction', isApplyServerSideTransactionFunc);
+        this.gos.set('isApplyServerSideTransaction', isApplyServerSideTransactionFunc);
     }
     setIsServerSideGroup(isServerSideGroupFunc) {
-        this.gridOptionsService.set('isServerSideGroup', isServerSideGroupFunc);
+        this.gos.set('isServerSideGroup', isServerSideGroupFunc);
     }
     setGetServerSideGroupKey(getServerSideGroupKeyFunc) {
-        this.gridOptionsService.set('getServerSideGroupKey', getServerSideGroupKeyFunc);
+        this.gos.set('getServerSideGroupKey', getServerSideGroupKeyFunc);
     }
     setGetRowStyle(rowStyleFunc) {
-        this.gridOptionsService.set('getRowStyle', rowStyleFunc);
+        this.gos.set('getRowStyle', rowStyleFunc);
     }
     setGetRowHeight(rowHeightFunc) {
-        this.gridOptionsService.set('getRowHeight', rowHeightFunc);
+        this.gos.set('getRowHeight', rowHeightFunc);
     }
     assertSideBarLoaded(apiMethod) {
         return ModuleRegistry.__assertRegistered(ModuleNames.SideBarModule, 'api.' + apiMethod, this.context.getGridId());
@@ -1023,10 +1039,10 @@ let GridApi = class GridApi {
     }
     /** Resets the side bar to the provided configuration. The parameter is the same as the sideBar grid property. The side bar is re-created from scratch with the new config. */
     setSideBar(def) {
-        this.gridOptionsService.set('sideBar', def);
+        this.gos.set('sideBar', def);
     }
     setSuppressClipboardPaste(value) {
-        this.gridOptionsService.set('suppressClipboardPaste', value);
+        this.gos.set('suppressClipboardPaste', value);
     }
     /** Tells the grid to recalculate the row heights. */
     resetRowHeights() {
@@ -1039,20 +1055,20 @@ let GridApi = class GridApi {
         }
     }
     setGroupRemoveSingleChildren(value) {
-        this.gridOptionsService.set('groupRemoveSingleChildren', value);
+        this.gos.set('groupRemoveSingleChildren', value);
     }
     setGroupRemoveLowestSingleChildren(value) {
-        this.gridOptionsService.set('groupRemoveLowestSingleChildren', value);
+        this.gos.set('groupRemoveLowestSingleChildren', value);
     }
     setGroupDisplayType(value) {
-        this.gridOptionsService.set('groupDisplayType', value);
+        this.gos.set('groupDisplayType', value);
     }
     setRowClass(className) {
-        this.gridOptionsService.set('rowClass', className);
+        this.gos.set('rowClass', className);
     }
     /** Sets the `deltaSort` property */
     setDeltaSort(enable) {
-        this.gridOptionsService.set('deltaSort', enable);
+        this.gos.set('deltaSort', enable);
     }
     /**
      * Sets the `rowCount` and `maxRowFound` properties.
@@ -1101,22 +1117,22 @@ let GridApi = class GridApi {
     }
     /** Add an event listener for the specified `eventType`. Works similar to `addEventListener` for a browser DOM element. */
     addEventListener(eventType, listener) {
-        const async = this.gridOptionsService.useAsyncEvents();
+        const async = this.gos.useAsyncEvents();
         this.eventService.addEventListener(eventType, listener, async);
     }
     /** Add an event listener for all event types coming from the grid. */
     addGlobalListener(listener) {
-        const async = this.gridOptionsService.useAsyncEvents();
+        const async = this.gos.useAsyncEvents();
         this.eventService.addGlobalListener(listener, async);
     }
     /** Remove an event listener. */
     removeEventListener(eventType, listener) {
-        const async = this.gridOptionsService.useAsyncEvents();
+        const async = this.gos.useAsyncEvents();
         this.eventService.removeEventListener(eventType, listener, async);
     }
     /** Remove a global event listener. */
     removeGlobalListener(listener) {
-        const async = this.gridOptionsService.useAsyncEvents();
+        const async = this.gos.useAsyncEvents();
         this.eventService.removeGlobalListener(listener, async);
     }
     dispatchEvent(event) {
@@ -1331,7 +1347,7 @@ let GridApi = class GridApi {
     }
     /** DOM element to use as the popup parent for grid popups (context menu, column menu etc). */
     setPopupParent(ePopupParent) {
-        this.gridOptionsService.set('popupParent', ePopupParent);
+        this.gos.set('popupParent', ePopupParent);
     }
     /** Navigates the grid focus to the next cell, as if tabbing. */
     tabToNextCell(event) {
@@ -1380,6 +1396,9 @@ let GridApi = class GridApi {
         const cell = this.navigationService.getCellByPosition(cellPosition);
         if (!cell) {
             return;
+        }
+        if (!this.focusService.isCellFocused(cellPosition)) {
+            this.focusService.setFocusedCell(cellPosition);
         }
         cell.startRowOrCellEdit(params.key);
     }
@@ -1457,7 +1476,7 @@ let GridApi = class GridApi {
         this.clientSideRowModel.flushAsyncTransactions();
     }
     setSuppressModelUpdateAfterUpdateTransaction(value) {
-        this.gridOptionsService.set('suppressModelUpdateAfterUpdateTransaction', value);
+        this.gos.set('suppressModelUpdateAfterUpdateTransaction', value);
     }
     /**
      * Marks all the currently loaded blocks in the cache for reload.
@@ -1559,7 +1578,7 @@ let GridApi = class GridApi {
     }
     /** Resets the data type definitions. This will update the columns in the grid. */
     setDataTypeDefinitions(dataTypeDefinitions) {
-        this.gridOptionsService.set('dataTypeDefinitions', dataTypeDefinitions);
+        this.gos.set('dataTypeDefinitions', dataTypeDefinitions);
     }
     /**
      * Set whether the grid paginates the data or not.
@@ -1567,7 +1586,7 @@ let GridApi = class GridApi {
      *  - `false` to disable pagination
      */
     setPagination(value) {
-        this.gridOptionsService.set('pagination', value);
+        this.gos.set('pagination', value);
     }
     /**
      * Returns `true` when the last page is known.
@@ -1583,7 +1602,7 @@ let GridApi = class GridApi {
     }
     /** Sets the `paginationPageSize`, then re-paginates the grid so the changes are applied immediately. */
     paginationSetPageSize(size) {
-        this.gridOptionsService.set('paginationPageSize', size);
+        this.gos.set('paginationPageSize', size);
     }
     /** Returns the 0-based index of the page which is showing. */
     paginationGetCurrentPage() {
@@ -1644,7 +1663,7 @@ __decorate([
 ], GridApi.prototype, "selectionService", void 0);
 __decorate([
     Autowired('gridOptionsService')
-], GridApi.prototype, "gridOptionsService", void 0);
+], GridApi.prototype, "gos", void 0);
 __decorate([
     Autowired('valueService')
 ], GridApi.prototype, "valueService", void 0);

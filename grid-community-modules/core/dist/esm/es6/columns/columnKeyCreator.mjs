@@ -31,11 +31,12 @@ export class ColumnKeyCreator {
                 }
             }
             else {
-                idToTry = '' + count;
+                // no point in stringing this, object treats it the same anyway.
+                idToTry = count;
             }
             if (!this.existingKeys[idToTry]) {
                 this.existingKeys[idToTry] = true;
-                return idToTry;
+                return String(idToTry);
             }
             count++;
         }

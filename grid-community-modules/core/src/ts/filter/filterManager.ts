@@ -3,9 +3,9 @@ import { ValueService } from '../valueService/valueService';
 import { ColumnModel } from '../columns/columnModel';
 import { RowNode } from '../entities/rowNode';
 import { Column } from '../entities/column';
-import { Autowired, Bean, PostConstruct } from '../context/context';
+import { Autowired, Bean, Optional, PostConstruct } from '../context/context';
 import { IRowModel } from '../interfaces/iRowModel';
-import { ColumnEventType, Events, FilterChangedEvent, FilterModifiedEvent, FilterOpenedEvent, FilterDestroyedEvent } from '../events';
+import { ColumnEventType, Events, FilterChangedEvent, FilterModifiedEvent, FilterOpenedEvent, FilterDestroyedEvent, AdvancedFilterEnabledChangedEvent, FilterChangedEventSourceType } from '../events';
 import { IFilterComp, IFilter, IFilterParams } from '../interfaces/iFilter';
 import { ColDef, GetQuickFilterTextParams } from '../entities/colDef';
 import { UserCompDetails, UserComponentFactory } from '../components/framework/userComponentFactory';
@@ -22,6 +22,10 @@ import { PropertyChangedEvent } from '../gridOptionsService';
 import { FilterComponent } from '../components/framework/componentTypes';
 import { IFloatingFilterParams, IFloatingFilterParentCallback } from './floating/floatingFilter';
 import { unwrapUserComp } from '../gridApi';
+import { AdvancedFilterModel } from '../interfaces/advancedFilterModel';
+import { IAdvancedFilterService } from '../interfaces/iAdvancedFilterService';
+import { doOnce } from '../utils/function';
+import { DataTypeService } from '../columns/dataTypeService';
 
 export type FilterRequestSource = 'COLUMN_MENU' | 'TOOLBAR' | 'NO_UI';
 
@@ -33,6 +37,8 @@ export class FilterManager extends BeanStub {
     @Autowired('rowModel') private rowModel: IRowModel;
     @Autowired('userComponentFactory') private userComponentFactory: UserComponentFactory;
     @Autowired('rowRenderer') private rowRenderer: RowRenderer;
+    @Autowired('dataTypeService') private dataTypeService: DataTypeService;
+    @Optional('advancedFilterService') private advancedFilterService: IAdvancedFilterService;
 
     public static QUICK_FILTER_SEPARATOR = '\n';
 
@@ -57,6 +63,9 @@ export class FilterManager extends BeanStub {
 
     private aggFiltering: boolean;
 
+    // when we're waiting for cell data types to be inferred, we need to defer filter model updates
+    private filterModelUpdateQueue: { [key: string]: any; }[] = [];
+
     @PostConstruct
     public init(): void {
         this.addManagedListener(this.eventService, Events.EVENT_GRID_COLUMNS_CHANGED, () => this.onColumnsChanged());
@@ -66,12 +75,16 @@ export class FilterManager extends BeanStub {
             this.refreshFiltersForAggregations();
             this.resetQuickFilterCache();
         });
-        this.addManagedListener(this.eventService, Events.EVENT_NEW_COLUMNS_LOADED, () => this.resetQuickFilterCache());
+        this.addManagedListener(this.eventService, Events.EVENT_NEW_COLUMNS_LOADED, () => {
+            this.resetQuickFilterCache();
+            this.updateAdvancedFilterColumns();
+        });
         this.addManagedListener(this.eventService, Events.EVENT_COLUMN_ROW_GROUP_CHANGED, () => this.resetQuickFilterCache());
         this.addManagedListener(this.eventService, Events.EVENT_COLUMN_VISIBLE, () => {
             if (!this.gridOptionsService.is('includeHiddenColumnsInQuickFilter')) {
                 this.resetQuickFilterCache();
             }
+            this.updateAdvancedFilterColumns();
         });
 
         this.addManagedPropertyListener('quickFilterText', (e: PropertyChangedEvent) => this.setQuickFilter(e.currentValue));
@@ -85,6 +98,12 @@ export class FilterManager extends BeanStub {
 
         this.updateAggFiltering();
         this.addManagedPropertyListener('groupAggFiltering', () => this.updateAggFiltering());
+
+        this.addManagedPropertyListener('advancedFilterModel', (event: PropertyChangedEvent) => this.setAdvancedFilterModel(event.currentValue));
+        this.addManagedListener(this.eventService, Events.EVENT_ADVANCED_FILTER_ENABLED_CHANGED,
+            ({ enabled }: AdvancedFilterEnabledChangedEvent) => this.onAdvancedFilterEnabledChanged(enabled));
+
+        this.addManagedListener(this.eventService, Events.EVENT_DATA_TYPES_INFERRED, () => this.processFilterModelUpdateQueue());
     }
 
     private isExternalFilterPresentCallback() {
@@ -108,6 +127,16 @@ export class FilterManager extends BeanStub {
     }
 
     public setFilterModel(model: { [key: string]: any; }): void {
+        if (this.isAdvancedFilterEnabled()) {
+            this.warnAdvancedFilters();
+            return;
+        }
+
+        if (this.dataTypeService.isPendingInference()) {
+            this.filterModelUpdateQueue.push(model);
+            return;
+        }
+
         const allPromises: AgPromise<void>[] = [];
         const previousModel = this.getFilterModel();
 
@@ -163,7 +192,7 @@ export class FilterManager extends BeanStub {
             });
 
             if (columns.length > 0) {
-                this.onFilterChanged({ columns });
+                this.onFilterChanged({ columns, source: 'api' });
             }
         });
     }
@@ -216,6 +245,39 @@ export class FilterManager extends BeanStub {
 
     public isExternalFilterPresent(): boolean {
         return this.externalFilterPresent;
+    }
+
+    public isChildFilterPresent(): boolean {
+        return this.isColumnFilterPresent()
+            || this.isQuickFilterPresent() 
+            || this.isExternalFilterPresent()
+            || this.isAdvancedFilterPresent();
+    }
+
+    private isAdvancedFilterPresent(): boolean {
+        return this.isAdvancedFilterEnabled() && this.advancedFilterService.isFilterPresent();
+    }
+
+    private onAdvancedFilterEnabledChanged(enabled: boolean): void {
+        if (enabled) {
+            if (this.allColumnFilters.size) {
+                this.allColumnFilters.forEach(filterWrapper => this.disposeFilterWrapper(filterWrapper, 'advancedFilterEnabled'));
+                this.onFilterChanged({ source: 'advancedFilter' });
+            }
+        } else {
+            if (this.advancedFilterService?.isFilterPresent()) {
+                this.advancedFilterService.setModel(null);
+                this.onFilterChanged({ source: 'advancedFilter' });
+            }
+        }
+    }
+
+    public isAdvancedFilterEnabled(): boolean {
+        return this.advancedFilterService?.isEnabled();
+    }
+
+    public isAdvancedFilterHeaderActive(): boolean {
+        return this.isAdvancedFilterEnabled() && this.advancedFilterService.isHeaderActive();
     }
 
     private doAggregateFiltersPass(node: RowNode, filterToSkip?: IFilterComp) {
@@ -332,7 +394,7 @@ export class FilterManager extends BeanStub {
         if (this.quickFilter !== parsedFilter) {
             this.quickFilter = parsedFilter;
             this.setQuickFilterParts();
-            this.onFilterChanged();
+            this.onFilterChanged({ source: 'quickFilter' });
         }
     }
 
@@ -344,11 +406,11 @@ export class FilterManager extends BeanStub {
         this.columnModel.refreshQuickFilterColumns();
         this.resetQuickFilterCache();
         if (this.isQuickFilterPresent()) {
-            this.onFilterChanged();
+            this.onFilterChanged({ source: 'quickFilter' });
         }
     }
 
-    public refreshFiltersForAggregations() {
+    private refreshFiltersForAggregations() {
         const isAggFiltering = this.gridOptionsService.getGroupAggFiltering();
         if (isAggFiltering) {
             this.onFilterChanged();
@@ -361,7 +423,12 @@ export class FilterManager extends BeanStub {
     // which results in React State getting applied in the main application, triggering a useEffect() to
     // be kicked off adn then the application calling the grid's API. in AG-6554, the custom filter was
     // getting it's useEffect() triggered in this way.
-    public callOnFilterChangedOutsideRenderCycle(params: { filterInstance?: IFilterComp, additionalEventAttributes?: any, columns?: Column[] } = {}): void {
+    public callOnFilterChangedOutsideRenderCycle(params: {
+        source?: FilterChangedEventSourceType,
+        filterInstance?: IFilterComp,
+        additionalEventAttributes?: any,
+        columns?: Column[],
+    }): void {
         const action = () => this.onFilterChanged(params);
         if (this.rowRenderer.isRefreshInProgress()) {
             setTimeout(action, 0);
@@ -370,8 +437,13 @@ export class FilterManager extends BeanStub {
         }
     }
 
-    public onFilterChanged(params: { filterInstance?: IFilterComp, additionalEventAttributes?: any, columns?: Column[] } = {}): void {
-        const { filterInstance, additionalEventAttributes, columns } = params;
+    public onFilterChanged(params: {
+        source?: FilterChangedEventSourceType,
+        filterInstance?: IFilterComp,
+        additionalEventAttributes?: any,
+        columns?: Column[],
+    } = {}): void {
+        const { source, filterInstance, additionalEventAttributes, columns } = params;
 
         this.updateDependantFilters();
         this.updateActiveFilters();
@@ -388,6 +460,7 @@ export class FilterManager extends BeanStub {
         });
 
         const filterChangedEvent: WithoutGridCommon<FilterChangedEvent> = {
+            source,
             type: Events.EVENT_FILTER_CHANGED,
             columns: columns || [],
         };
@@ -495,6 +568,10 @@ export class FilterManager extends BeanStub {
 
         // lastly, check column filter
         if (this.isColumnFilterPresent() && !this.doColumnFiltersPass(params.rowNode, params.filterInstanceToSkip)) {
+            return false;
+        }
+
+        if (this.isAdvancedFilterPresent() && !this.advancedFilterService.doesFilterPass(params.rowNode)) {
             return false;
         }
 
@@ -654,7 +731,13 @@ export class FilterManager extends BeanStub {
                 this.eventService.dispatchEvent(event);
             },
             filterChangedCallback: (additionalEventAttributes?: any) => {
-                const params = { filterInstance, additionalEventAttributes, columns: [column] };
+                const source: FilterChangedEventSourceType = additionalEventAttributes?.source ?? 'api';
+                const params = {
+                    filterInstance,
+                    additionalEventAttributes,
+                    columns: [column],
+                    source,
+                };
                 this.callOnFilterChangedOutsideRenderCycle(params);
             },
             doesRowPassOtherFilter: node => this.doesRowPassOtherFilters(filterInstance, node),
@@ -764,7 +847,9 @@ export class FilterManager extends BeanStub {
         });
 
         if (columns.length > 0) {
-            this.onFilterChanged({ columns });
+            // When a filter changes as a side effect of a column changes,
+            // we report 'api' as the source, so that the client can distinguish
+            this.onFilterChanged({ columns, source: 'api' });
         } else {
             // onFilterChanged does this already
             this.updateDependantFilters();
@@ -784,6 +869,9 @@ export class FilterManager extends BeanStub {
 
     // for group filters, can change dynamically whether they are allowed or not
     public isFilterAllowed(column: Column): boolean {
+        if (this.isAdvancedFilterEnabled()) {
+            return false;
+        }
         const isFilterAllowed = column.isFilterAllowed();
         if (!isFilterAllowed) {
             return false;
@@ -846,7 +934,10 @@ export class FilterManager extends BeanStub {
 
         if (filterWrapper) {
             this.disposeFilterWrapper(filterWrapper, source);
-            this.onFilterChanged({ columns: [column] });
+            this.onFilterChanged({
+                columns: [column],
+                source: 'api',
+            });
         }
     }
 
@@ -859,7 +950,7 @@ export class FilterManager extends BeanStub {
         }
     }
 
-    private disposeFilterWrapper(filterWrapper: FilterWrapper, source: 'api' | 'columnChanged' | 'gridDestroyed'): void {
+    private disposeFilterWrapper(filterWrapper: FilterWrapper, source: 'api' | 'columnChanged' | 'gridDestroyed' | 'advancedFilterEnabled'): void {
         filterWrapper.filterPromise!.then(filter => {
             (filter!.setModel(null) || AgPromise.resolve()).then(() => {
                 this.getContext().destroyBean(filter);
@@ -890,22 +981,102 @@ export class FilterManager extends BeanStub {
             ? this.createFilterInstance(column)
             : { compDetails: null };
 
-        const areFilterCompsDifferent = (oldCompDetails: UserCompDetails | null, newCompDetails: UserCompDetails | null): boolean => {
-            if (!newCompDetails || !oldCompDetails) {
-                return true;
-            }
-            const { componentClass: oldComponentClass } = oldCompDetails;
-            const { componentClass: newComponentClass } = newCompDetails;
-            const isSameComponentClass = oldComponentClass === newComponentClass ||
-                // react hooks returns new wrappers, so check nested render method
-                (oldComponentClass?.render && newComponentClass?.render &&
-                    oldComponentClass.render === newComponentClass.render);
-            return !isSameComponentClass;
-        }
-
-        if (areFilterCompsDifferent(filterWrapper.compDetails, compDetails)) {
+        if (this.areFilterCompsDifferent(filterWrapper.compDetails, compDetails)) {
             this.destroyFilter(column, 'columnChanged');
         }
+    }
+
+    public areFilterCompsDifferent(oldCompDetails: UserCompDetails | null, newCompDetails: UserCompDetails | null): boolean {
+        if (!newCompDetails || !oldCompDetails) {
+            return true;
+        }
+        const { componentClass: oldComponentClass } = oldCompDetails;
+        const { componentClass: newComponentClass } = newCompDetails;
+        const isSameComponentClass = oldComponentClass === newComponentClass ||
+            // react hooks returns new wrappers, so check nested render method
+            (oldComponentClass?.render && newComponentClass?.render &&
+                oldComponentClass.render === newComponentClass.render);
+        return !isSameComponentClass;
+    }
+
+    public getAdvancedFilterModel(): AdvancedFilterModel | null {
+        return this.isAdvancedFilterEnabled() ? this.advancedFilterService.getModel() : null;
+    }
+
+    public setAdvancedFilterModel(expression: AdvancedFilterModel | null): void {
+        if (!this.isAdvancedFilterEnabled()) { return; }
+        this.advancedFilterService.setModel(expression);
+        this.onFilterChanged({ source: 'advancedFilter' });
+    }
+
+    private updateAdvancedFilterColumns(): void {
+        if (!this.isAdvancedFilterEnabled()) { return; }
+        if (this.advancedFilterService.updateValidity()) {
+            this.onFilterChanged({ source: 'advancedFilter' });
+        }
+    }
+
+    public hasFloatingFilters(): boolean {
+        if (this.isAdvancedFilterEnabled()) { return false; }
+        const gridColumns = this.columnModel.getAllGridColumns();
+        if (!gridColumns) { return false; }
+        return gridColumns.some(col => col.getColDef().floatingFilter);
+    }
+
+    public getFilterInstance<TFilter extends IFilter>(key: string | Column, callback?: (filter: TFilter | null) => void): TFilter | null | undefined {
+        if (this.isAdvancedFilterEnabled()) {
+            this.warnAdvancedFilters();
+            return undefined;
+        }
+        const res = this.getFilterInstanceImpl(key, instance => {
+            if (!callback) { return; }
+            const unwrapped = unwrapUserComp(instance) as any;
+            callback(unwrapped);
+        });
+        const unwrapped = unwrapUserComp(res);
+        return unwrapped as any;
+    }
+
+    private getFilterInstanceImpl(key: string | Column, callback: (filter: IFilter) => void): IFilter | null | undefined {
+        const column = this.columnModel.getPrimaryColumn(key);
+
+        if (!column) { return undefined; }
+
+        const filterPromise = this.getFilterComponent(column, 'NO_UI');
+        const currentValue = filterPromise && filterPromise.resolveNow<IFilterComp | null>(null, filterComp => filterComp);
+
+        if (currentValue) {
+            setTimeout(callback, 0, currentValue);
+        } else if (filterPromise) {
+            filterPromise.then(comp => {
+                callback(comp!);
+            });
+        }
+
+        return currentValue;
+    }
+
+    private warnAdvancedFilters(): void {
+        doOnce(() => {
+            console.warn('AG Grid: Column Filter API methods have been disabled as Advanced Filters are enabled.');
+        }, 'advancedFiltersCompatibility');
+    }
+
+    public setupAdvancedFilterHeaderComp(eCompToInsertBefore: HTMLElement): void {
+        this.advancedFilterService?.getCtrl().setupHeaderComp(eCompToInsertBefore);
+    }
+
+    public getHeaderRowCount(): number {
+        return this.isAdvancedFilterHeaderActive() ? 1 : 0;
+    }
+
+    public getHeaderHeight(): number {
+        return this.isAdvancedFilterHeaderActive() ? this.advancedFilterService.getCtrl().getHeaderHeight() : 0;
+    }
+
+    private processFilterModelUpdateQueue(): void {
+        this.filterModelUpdateQueue.forEach(model => this.setFilterModel(model));
+        this.filterModelUpdateQueue = [];
     }
 
     protected destroy() {

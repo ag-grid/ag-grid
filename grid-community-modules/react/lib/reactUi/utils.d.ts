@@ -1,4 +1,4 @@
-// @ag-grid-community/react v30.0.6
+// @ag-grid-community/react v30.1.0
 export declare const classesList: (...list: (string | null | undefined)[]) => string;
 export declare class CssClasses {
     private classesMap;
@@ -13,3 +13,12 @@ export declare const isComponentStateless: (Component: any) => boolean;
  * as we do not want to use flushSync when we are likely to already be in a render cycle
  */
 export declare const agFlushSync: (useFlushSync: boolean, fn: () => void) => void;
+/**
+ * The aim of this function is to maintain references to prev or next values where possible.
+ * If there are not real changes then return the prev value to avoid unnecessary renders.
+ * @param maintainOrder If we want to maintain the order of the elements in the dom in line with the next array
+ * @returns
+ */
+export declare function getNextValueIfDifferent<T extends {
+    getInstanceId: () => string;
+}>(prev: T[] | null, next: T[] | null, maintainOrder: boolean): T[] | null;

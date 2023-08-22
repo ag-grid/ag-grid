@@ -24,8 +24,8 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.AgSlider = void 0;
 var componentAnnotations_1 = require("./componentAnnotations");
 var agAbstractLabel_1 = require("./agAbstractLabel");
-var agAbstractField_1 = require("./agAbstractField");
 var context_1 = require("../context/context");
+var eventKeys_1 = require("../eventKeys");
 var AgSlider = /** @class */ (function (_super) {
     __extends(AgSlider, _super);
     function AgSlider(config) {
@@ -38,7 +38,7 @@ var AgSlider = /** @class */ (function (_super) {
     };
     AgSlider.prototype.onValueChange = function (callbackFn) {
         var _this = this;
-        var eventChanged = agAbstractField_1.AgAbstractField.EVENT_CHANGED;
+        var eventChanged = eventKeys_1.Events.EVENT_FIELD_VALUE_CHANGED;
         this.addManagedListener(this.eText, eventChanged, function () {
             var textValue = parseFloat(_this.eText.getValue());
             _this.eSlider.setValue(textValue.toString(), true);
@@ -78,7 +78,7 @@ var AgSlider = /** @class */ (function (_super) {
         }
         this.eText.setValue(value, true);
         this.eSlider.setValue(value, true);
-        this.dispatchEvent({ type: agAbstractField_1.AgAbstractField.EVENT_CHANGED });
+        this.dispatchEvent({ type: eventKeys_1.Events.EVENT_FIELD_VALUE_CHANGED });
         return this;
     };
     AgSlider.prototype.setStep = function (step) {

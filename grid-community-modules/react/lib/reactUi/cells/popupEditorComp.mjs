@@ -1,13 +1,13 @@
-// @ag-grid-community/react v30.0.6
+// @ag-grid-community/react v30.1.0
 import { PopupEditorWrapper } from '@ag-grid-community/core';
 import React, { useState, memo, useContext } from 'react';
 import { createPortal } from 'react-dom';
 import { BeansContext } from '../beansContext.mjs';
-import { useLayoutEffectOnce } from '../useEffectOnce.mjs';
+import { useEffectOnce } from '../useEffectOnce.mjs';
 const PopupEditorComp = (props) => {
     const [popupEditorWrapper, setPopupEditorWrapper] = useState();
     const { context, popupService, localeService, gridOptionsService } = useContext(BeansContext);
-    useLayoutEffectOnce(() => {
+    useEffectOnce(() => {
         const { editDetails, cellCtrl, eParentCell } = props;
         const { compDetails } = editDetails;
         const useModelPopup = gridOptionsService.is('stopEditingWhenCellsLoseFocus');

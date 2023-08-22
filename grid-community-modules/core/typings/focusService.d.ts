@@ -9,6 +9,8 @@ import { GridCtrl } from "./gridComp/gridCtrl";
 import { NavigationService } from "./gridBodyComp/navigationService";
 import { CtrlsService } from "./ctrlsService";
 import { HeaderCellCtrl } from "./headerRendering/cells/column/headerCellCtrl";
+import { FilterManager } from "./filter/filterManager";
+import { IAdvancedFilterService } from "./interfaces/iAdvancedFilterService";
 export declare class FocusService extends BeanStub {
     private eGridDiv;
     private readonly columnModel;
@@ -19,11 +21,15 @@ export declare class FocusService extends BeanStub {
     private readonly rangeService;
     navigationService: NavigationService;
     ctrlsService: CtrlsService;
+    filterManager: FilterManager;
+    advancedFilterService: IAdvancedFilterService;
     static AG_KEYBOARD_FOCUS: string;
     private gridCtrl;
     private focusedCellPosition;
     private restoredFocusedCellPosition;
     private focusedHeaderPosition;
+    /** the column that had focus before it moved into the advanced filter */
+    private advancedFilterFocusColumn;
     private static keyboardModeActive;
     private static instancesMonitored;
     /**
@@ -76,9 +82,11 @@ export declare class FocusService extends BeanStub {
         fromTab?: boolean;
         allowUserOverride?: boolean;
         event?: KeyboardEvent;
+        fromCell?: boolean;
     }): boolean;
     focusFirstHeader(): boolean;
     focusLastHeader(event?: KeyboardEvent): boolean;
+    focusPreviousFromFirstCell(event?: KeyboardEvent): boolean;
     isAnyCellFocused(): boolean;
     isRowFocused(rowIndex: number, floating?: string | null): boolean;
     findFocusableElements(rootNode: HTMLElement, exclude?: string | null, onlyUnmanaged?: boolean): HTMLElement[];
@@ -89,4 +97,7 @@ export declare class FocusService extends BeanStub {
     findTabbableParent(node: HTMLElement | null, limit?: number): HTMLElement | null;
     focusGridView(column?: Column, backwards?: boolean): boolean;
     focusNextGridCoreContainer(backwards: boolean, forceOut?: boolean): boolean;
+    private focusAdvancedFilter;
+    focusNextFromAdvancedFilter(backwards?: boolean, forceFirstColumn?: boolean): boolean;
+    clearAdvancedFilterColumn(): void;
 }

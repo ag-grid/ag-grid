@@ -3,9 +3,9 @@ title: "Custom Detail"
 enterprise: true
 ---
 
-When a Master Row is expanded, the grid uses the default Detail Cell Renderer to create and display the Detail Grid inside one row of the Master Grid. You can provide a customer Detail Cell Renderer to display something else if the default Detail Cell Renderer doesn't do what you want.
+When a Master Row is expanded, the grid uses the default Detail Cell Renderer to create and display the Detail Grid inside one row of the Master Grid. You can provide a custom Detail Cell Renderer to display something else if the default Detail Cell Renderer doesn't do what you want.
 
-Configure the grid to use a customer Detail Cell Renderer using the grid property `detailCellRenderer`.
+Configure the grid to use a custom Detail Cell Renderer using the grid property `detailCellRenderer`.
 
 <snippet spaceBetweenProperties="true">
 const gridOptions = {
@@ -19,7 +19,7 @@ const gridOptions = {
 The Detail Cell Renderer should be a [Cell Renderer](/component-cell-renderer/) component. See [Cell Renderer](/component-cell-renderer/) on how to build
 and register a Cell Renderer with the grid.
 
-The following examples demonstrate minimalist custom Detail Cell Renderer. Note that where a Detail Grid would normally appear, only the message "My Customer Detail" is shown.
+The following examples demonstrate minimalist custom Detail Cell Renderer. Note that where a Detail Grid would normally appear, only the message "My Custom Detail" is shown.
 
 <grid-example title='Simple Detail Cell Renderer' name='simple-custom-detail' type='generated' options='{ "enterprise": true, "exampleHeight": 545, "modules": ["clientside", "masterdetail", "menu", "columnpanel"] }'></grid-example>
 
@@ -33,7 +33,7 @@ This example shows a custom Detail Cell Renderer that uses a form rather than a 
 
 ## Custom Detail With Grid
 
-It is possible to provide a Customer Detail Grid that does a similar job to the default Detail Cell Renderer. This example demonstrates displaying a custom grid as the detail.
+It is possible to provide a Custom Detail Grid that does a similar job to the default Detail Cell Renderer. This example demonstrates displaying a custom grid as the detail.
 
 <grid-example title='Custom Detail Cell Renderer with Grid' name='custom-detail-with-grid' type='mixed' options='{ "enterprise": true, "exampleHeight": 545, "modules": ["clientside", "masterdetail", "menu", "columnpanel"] }'></grid-example>
  
@@ -66,11 +66,11 @@ this.masterGridApi.removeDetailGridInfo(detailId);
 
 ## Refreshing
 
-When data is updated in the grid using [Transaction Updates](/data-update-transactions/), the grid will call refresh on all Detail Cell Renderer's.
+When data is updated in the grid using [Transaction Updates](/data-update-transactions/), the grid will call refresh on all Detail Cell Renderers.
 
 It is up to the Detail Cell Renderer whether it wants to act on the refresh or not. If the `refresh()` method returns `true`, the grid will assume the Detail Cell Renderer has refreshed successfully and nothing more will happen. However if `false` is returned, the grid will destroy the Detail Cell Renderer and re-create it again.
 
-This pattern is similar to how refresh works for normal grid Cell Renderer's.
+This pattern is similar to how refresh works for normal grid Cell Renderers.
 
 The example below shows how components can optionally refresh on updates. The example refreshes the first row every one second. The `refresh()` method gets called on all Detail Cell Renderers after the transaction is applied. Only the first Detail Cell Renderer returns `false` so it is the only one that updates.
 

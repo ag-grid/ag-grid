@@ -1,12 +1,12 @@
 import { Component } from "./component";
 export declare type LabelAlignment = 'left' | 'right' | 'top';
-export interface IAgLabel {
+export interface IAgLabelParams {
     label?: HTMLElement | string;
     labelWidth?: number | 'flex';
     labelSeparator?: string;
     labelAlignment?: LabelAlignment;
 }
-export declare abstract class AgAbstractLabel<TConfig extends IAgLabel = IAgLabel> extends Component {
+export declare abstract class AgAbstractLabel<TConfig extends IAgLabelParams = IAgLabelParams> extends Component {
     protected abstract eLabel: HTMLElement;
     protected readonly config: TConfig;
     protected labelSeparator: string;

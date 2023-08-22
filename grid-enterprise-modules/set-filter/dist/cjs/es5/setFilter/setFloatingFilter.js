@@ -40,13 +40,21 @@ var SetFloatingFilterComp = /** @class */ (function (_super) {
         _super.prototype.destroy.call(this);
     };
     SetFloatingFilterComp.prototype.init = function (params) {
-        var displayName = this.columnModel.getDisplayNameForColumn(params.column, 'header', true);
-        var translate = this.localeService.getLocaleTextFunc();
+        var _this = this;
+        this.params = params;
         this.eFloatingFilterText
             .setDisabled(true)
-            .setInputAriaLabel(displayName + " " + translate('ariaFilterInput', 'Filter Input'))
-            .addGuiEventListener('click', function () { return params.showParentFilter(); });
+            .addGuiEventListener('click', function () { return _this.params.showParentFilter(); });
+        this.setParams(params);
+    };
+    SetFloatingFilterComp.prototype.setParams = function (params) {
+        var displayName = this.columnModel.getDisplayNameForColumn(params.column, 'header', true);
+        var translate = this.localeService.getLocaleTextFunc();
+        this.eFloatingFilterText.setInputAriaLabel(displayName + " " + translate('ariaFilterInput', 'Filter Input'));
+    };
+    SetFloatingFilterComp.prototype.onParamsUpdated = function (params) {
         this.params = params;
+        this.setParams(params);
     };
     SetFloatingFilterComp.prototype.onParentModelChanged = function (parentModel) {
         this.updateFloatingFilterText(parentModel);

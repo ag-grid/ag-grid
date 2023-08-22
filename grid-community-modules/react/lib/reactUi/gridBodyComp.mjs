@@ -1,11 +1,10 @@
-// @ag-grid-community/react v30.0.6
+// @ag-grid-community/react v30.1.0
 import { CssClassManager, GridBodyCtrl, RowContainerName, _ } from '@ag-grid-community/core';
-import React, { memo, useContext, useMemo, useRef, useState } from 'react';
+import React, { memo, useCallback, useContext, useMemo, useRef, useState } from 'react';
 import { BeansContext } from './beansContext.mjs';
 import GridHeaderComp from './header/gridHeaderComp.mjs';
 import useReactCommentEffect from './reactComment.mjs';
 import RowContainerComp from './rows/rowContainerComp.mjs';
-import { useLayoutEffectOnce } from './useEffectOnce.mjs';
 import { classesList } from './utils.mjs';
 const GridBodyComp = () => {
     const { context, agStackComponentsRegistry, resizeObserverService } = useContext(BeansContext);
@@ -26,44 +25,65 @@ const GridBodyComp = () => {
     // is due to React been async, for the non-async version (ie when not using React) this is not a
     // problem as the UI will finish initialising before we set data.
     const [layoutClass, setLayoutClass] = useState('ag-layout-normal');
-    const cssClassManager = useMemo(() => new CssClassManager(() => eRoot.current), []);
+    let cssClassManager = useRef();
+    if (!cssClassManager.current) {
+        cssClassManager.current = new CssClassManager(() => eRoot.current);
+    }
     const eRoot = useRef(null);
     const eTop = useRef(null);
     const eStickyTop = useRef(null);
     const eBody = useRef(null);
     const eBodyViewport = useRef(null);
     const eBottom = useRef(null);
+    const beansToDestroy = useRef([]);
+    const destroyFuncs = useRef([]);
     useReactCommentEffect(' AG Grid Body ', eRoot);
     useReactCommentEffect(' AG Pinned Top ', eTop);
     useReactCommentEffect(' AG Sticky Top ', eStickyTop);
     useReactCommentEffect(' AG Middle ', eBodyViewport);
     useReactCommentEffect(' AG Pinned Bottom ', eBottom);
-    useLayoutEffectOnce(() => {
-        const beansToDestroy = [];
-        const destroyFuncs = [];
+    const setRef = useCallback((e) => {
+        eRoot.current = e;
+        if (!eRoot.current) {
+            context.destroyBeans(beansToDestroy.current);
+            destroyFuncs.current.forEach(f => f());
+            beansToDestroy.current = [];
+            destroyFuncs.current = [];
+            return;
+        }
         if (!context) {
             return;
         }
         const newComp = (tag) => {
             const CompClass = agStackComponentsRegistry.getComponentClass(tag);
             const comp = context.createBean(new CompClass());
-            beansToDestroy.push(comp);
+            beansToDestroy.current.push(comp);
             return comp;
         };
-        if (eRoot.current) {
-            eRoot.current.appendChild(document.createComment(' AG Fake Horizontal Scroll '));
-            eRoot.current.appendChild(newComp('AG-FAKE-HORIZONTAL-SCROLL').getGui());
-            eRoot.current.appendChild(document.createComment(' AG Overlay Wrapper '));
-            eRoot.current.appendChild(newComp('AG-OVERLAY-WRAPPER').getGui());
-        }
+        const attachToDom = (eParent, eChild) => {
+            eParent.appendChild(eChild);
+            destroyFuncs.current.push(() => eParent.removeChild(eChild));
+        };
+        attachToDom(eRoot.current, document.createComment(' AG Fake Horizontal Scroll '));
+        attachToDom(eRoot.current, newComp('AG-FAKE-HORIZONTAL-SCROLL').getGui());
+        attachToDom(eRoot.current, document.createComment(' AG Overlay Wrapper '));
+        attachToDom(eRoot.current, newComp('AG-OVERLAY-WRAPPER').getGui());
         if (eBody.current) {
-            eBody.current.appendChild(document.createComment(' AG Fake Vertical Scroll '));
-            eBody.current.appendChild(newComp('AG-FAKE-VERTICAL-SCROLL').getGui());
+            attachToDom(eBody.current, document.createComment(' AG Fake Vertical Scroll '));
+            attachToDom(eBody.current, newComp('AG-FAKE-VERTICAL-SCROLL').getGui());
         }
         const compProxy = {
             setRowAnimationCssOnBodyViewport: setRowAnimationClass,
-            setColumnCount: count => _.setAriaColCount(eRoot.current, count),
-            setRowCount: count => _.setAriaRowCount(eRoot.current, count),
+            setColumnCount: count => {
+                if (eRoot.current) {
+                    _.setAriaColCount(eRoot.current, count);
+                }
+            },
+            setRowCount: count => {
+                if (eRoot.current) {
+                    _.setAriaRowCount(eRoot.current, count);
+                }
+            },
             setTopHeight,
             setBottomHeight,
             setStickyTopHeight,
@@ -71,7 +91,7 @@ const GridBodyComp = () => {
             setStickyTopWidth,
             setTopDisplay,
             setBottomDisplay,
-            setColumnMovingCss: (cssClass, flag) => cssClassManager.addOrRemoveCssClass(cssClass, flag),
+            setColumnMovingCss: (cssClass, flag) => cssClassManager.current.addOrRemoveCssClass(cssClass, flag),
             updateLayoutClasses: setLayoutClass,
             setAlwaysVerticalScrollClass: setForceVerticalScrollClass,
             setPinnedTopBottomOverflowY: setTopAndBottomOverflowY,
@@ -82,18 +102,16 @@ const GridBodyComp = () => {
                 }
             },
             registerBodyViewportResizeListener: listener => {
-                const unsubscribeFromResize = resizeObserverService.observeResize(eBodyViewport.current, listener);
-                destroyFuncs.push(() => unsubscribeFromResize());
+                if (eBodyViewport.current) {
+                    const unsubscribeFromResize = resizeObserverService.observeResize(eBodyViewport.current, listener);
+                    destroyFuncs.current.push(() => unsubscribeFromResize());
+                }
             }
         };
         const ctrl = context.createBean(new GridBodyCtrl());
-        beansToDestroy.push(ctrl);
+        beansToDestroy.current.push(ctrl);
         ctrl.setComp(compProxy, eRoot.current, eBodyViewport.current, eTop.current, eBottom.current, eStickyTop.current);
-        return () => {
-            context.destroyBeans(beansToDestroy);
-            destroyFuncs.forEach(f => f());
-        };
-    });
+    }, []);
     const rootClasses = useMemo(() => classesList('ag-root', 'ag-unselectable', layoutClass), [layoutClass]);
     const bodyViewportClasses = useMemo(() => classesList('ag-body-viewport', rowAnimationClass, layoutClass, forceVerticalScrollClass, cellSelectableCss), [rowAnimationClass, layoutClass, forceVerticalScrollClass, cellSelectableCss]);
     const bodyClasses = useMemo(() => classesList('ag-body', layoutClass), [layoutClass]);
@@ -120,7 +138,7 @@ const GridBodyComp = () => {
     }), [bottomHeight, bottomDisplay, topAndBottomOverflowY]);
     const createRowContainer = (container) => React.createElement(RowContainerComp, { name: container, key: `${container}-container` });
     const createSection = ({ section, children, className, style }) => (React.createElement("div", { ref: section, className: className, role: "presentation", style: style }, children.map(createRowContainer)));
-    return (React.createElement("div", { ref: eRoot, className: rootClasses, role: "treegrid" },
+    return (React.createElement("div", { ref: setRef, className: rootClasses, role: "treegrid" },
         React.createElement(GridHeaderComp, null),
         createSection({ section: eTop, className: topClasses, style: topStyle, children: [
                 RowContainerName.TOP_LEFT,

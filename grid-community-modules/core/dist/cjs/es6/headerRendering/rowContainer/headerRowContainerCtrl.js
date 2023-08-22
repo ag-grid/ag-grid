@@ -32,6 +32,7 @@ class HeaderRowContainerCtrl extends beanStub_1.BeanStub {
         this.setupDragAndDrop(this.eViewport);
         this.addManagedListener(this.eventService, eventKeys_1.Events.EVENT_GRID_COLUMNS_CHANGED, this.onGridColumnsChanged.bind(this));
         this.addManagedListener(this.eventService, eventKeys_1.Events.EVENT_DISPLAYED_COLUMNS_CHANGED, this.onDisplayedColumnsChanged.bind(this));
+        this.addManagedListener(this.eventService, eventKeys_1.Events.EVENT_ADVANCED_FILTER_ENABLED_CHANGED, this.onDisplayedColumnsChanged.bind(this));
         this.ctrlsService.registerHeaderContainer(this, this.pinned);
         if (this.columnModel.isReady()) {
             this.refresh();
@@ -64,7 +65,7 @@ class HeaderRowContainerCtrl extends beanStub_1.BeanStub {
             }
         };
         const refreshFilters = () => {
-            this.includeFloatingFilter = this.columnModel.hasFloatingFilters() && !this.hidden;
+            this.includeFloatingFilter = this.filterManager.hasFloatingFilters() && !this.hidden;
             const destroyPreviousComp = () => {
                 this.filtersRowCtrl = this.destroyBean(this.filtersRowCtrl);
             };
@@ -112,7 +113,7 @@ class HeaderRowContainerCtrl extends beanStub_1.BeanStub {
         this.refresh(true);
     }
     onDisplayedColumnsChanged() {
-        const includeFloatingFilter = this.columnModel.hasFloatingFilters() && !this.hidden;
+        const includeFloatingFilter = this.filterManager.hasFloatingFilters() && !this.hidden;
         if (this.includeFloatingFilter !== includeFloatingFilter) {
             this.refresh(true);
         }
@@ -228,4 +229,7 @@ __decorate([
 __decorate([
     context_1.Autowired('focusService')
 ], HeaderRowContainerCtrl.prototype, "focusService", void 0);
+__decorate([
+    context_1.Autowired('filterManager')
+], HeaderRowContainerCtrl.prototype, "filterManager", void 0);
 exports.HeaderRowContainerCtrl = HeaderRowContainerCtrl;

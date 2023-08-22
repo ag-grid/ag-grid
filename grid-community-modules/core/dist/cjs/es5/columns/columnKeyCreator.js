@@ -34,11 +34,12 @@ var ColumnKeyCreator = /** @class */ (function () {
                 }
             }
             else {
-                idToTry = '' + count;
+                // no point in stringing this, object treats it the same anyway.
+                idToTry = count;
             }
             if (!this.existingKeys[idToTry]) {
                 this.existingKeys[idToTry] = true;
-                return idToTry;
+                return String(idToTry);
             }
             count++;
         }

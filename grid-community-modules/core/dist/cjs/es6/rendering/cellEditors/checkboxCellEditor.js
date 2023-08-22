@@ -9,8 +9,8 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.CheckboxCellEditor = void 0;
 const popupComponent_1 = require("../../widgets/popupComponent");
 const componentAnnotations_1 = require("../../widgets/componentAnnotations");
-const agCheckbox_1 = require("../../widgets/agCheckbox");
 const aria_1 = require("../../utils/aria");
+const eventKeys_1 = require("../../eventKeys");
 class CheckboxCellEditor extends popupComponent_1.PopupComponent {
     constructor() {
         super(/* html */ `
@@ -25,7 +25,7 @@ class CheckboxCellEditor extends popupComponent_1.PopupComponent {
         this.eCheckbox.setValue(isSelected);
         this.eCheckbox.getInputElement().setAttribute('tabindex', '-1');
         this.setAriaLabel(isSelected);
-        this.addManagedListener(this.eCheckbox, agCheckbox_1.AgCheckbox.EVENT_CHANGED, (event) => this.setAriaLabel(event.selected));
+        this.addManagedListener(this.eCheckbox, eventKeys_1.Events.EVENT_FIELD_VALUE_CHANGED, (event) => this.setAriaLabel(event.selected));
     }
     getValue() {
         return this.eCheckbox.getValue();

@@ -1,4 +1,4 @@
-// ag-grid-react v30.0.6
+// ag-grid-react v30.1.0
 "use strict";
 var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
     if (k2 === undefined) k2 = k;
@@ -29,7 +29,6 @@ var beansContext_1 = require("./beansContext");
 var gridHeaderComp_1 = __importDefault(require("./header/gridHeaderComp"));
 var reactComment_1 = __importDefault(require("./reactComment"));
 var rowContainerComp_1 = __importDefault(require("./rows/rowContainerComp"));
-var useEffectOnce_1 = require("./useEffectOnce");
 var utils_1 = require("./utils");
 var GridBodyComp = function () {
     var _a = react_1.useContext(beansContext_1.BeansContext), context = _a.context, agStackComponentsRegistry = _a.agStackComponentsRegistry, resizeObserverService = _a.resizeObserverService;
@@ -50,44 +49,65 @@ var GridBodyComp = function () {
     // is due to React been async, for the non-async version (ie when not using React) this is not a
     // problem as the UI will finish initialising before we set data.
     var _o = react_1.useState('ag-layout-normal'), layoutClass = _o[0], setLayoutClass = _o[1];
-    var cssClassManager = react_1.useMemo(function () { return new ag_grid_community_1.CssClassManager(function () { return eRoot.current; }); }, []);
+    var cssClassManager = react_1.useRef();
+    if (!cssClassManager.current) {
+        cssClassManager.current = new ag_grid_community_1.CssClassManager(function () { return eRoot.current; });
+    }
     var eRoot = react_1.useRef(null);
     var eTop = react_1.useRef(null);
     var eStickyTop = react_1.useRef(null);
     var eBody = react_1.useRef(null);
     var eBodyViewport = react_1.useRef(null);
     var eBottom = react_1.useRef(null);
+    var beansToDestroy = react_1.useRef([]);
+    var destroyFuncs = react_1.useRef([]);
     reactComment_1.default(' AG Grid Body ', eRoot);
     reactComment_1.default(' AG Pinned Top ', eTop);
     reactComment_1.default(' AG Sticky Top ', eStickyTop);
     reactComment_1.default(' AG Middle ', eBodyViewport);
     reactComment_1.default(' AG Pinned Bottom ', eBottom);
-    useEffectOnce_1.useLayoutEffectOnce(function () {
-        var beansToDestroy = [];
-        var destroyFuncs = [];
+    var setRef = react_1.useCallback(function (e) {
+        eRoot.current = e;
+        if (!eRoot.current) {
+            context.destroyBeans(beansToDestroy.current);
+            destroyFuncs.current.forEach(function (f) { return f(); });
+            beansToDestroy.current = [];
+            destroyFuncs.current = [];
+            return;
+        }
         if (!context) {
             return;
         }
         var newComp = function (tag) {
             var CompClass = agStackComponentsRegistry.getComponentClass(tag);
             var comp = context.createBean(new CompClass());
-            beansToDestroy.push(comp);
+            beansToDestroy.current.push(comp);
             return comp;
         };
-        if (eRoot.current) {
-            eRoot.current.appendChild(document.createComment(' AG Fake Horizontal Scroll '));
-            eRoot.current.appendChild(newComp('AG-FAKE-HORIZONTAL-SCROLL').getGui());
-            eRoot.current.appendChild(document.createComment(' AG Overlay Wrapper '));
-            eRoot.current.appendChild(newComp('AG-OVERLAY-WRAPPER').getGui());
-        }
+        var attachToDom = function (eParent, eChild) {
+            eParent.appendChild(eChild);
+            destroyFuncs.current.push(function () { return eParent.removeChild(eChild); });
+        };
+        attachToDom(eRoot.current, document.createComment(' AG Fake Horizontal Scroll '));
+        attachToDom(eRoot.current, newComp('AG-FAKE-HORIZONTAL-SCROLL').getGui());
+        attachToDom(eRoot.current, document.createComment(' AG Overlay Wrapper '));
+        attachToDom(eRoot.current, newComp('AG-OVERLAY-WRAPPER').getGui());
         if (eBody.current) {
-            eBody.current.appendChild(document.createComment(' AG Fake Vertical Scroll '));
-            eBody.current.appendChild(newComp('AG-FAKE-VERTICAL-SCROLL').getGui());
+            attachToDom(eBody.current, document.createComment(' AG Fake Vertical Scroll '));
+            attachToDom(eBody.current, newComp('AG-FAKE-VERTICAL-SCROLL').getGui());
         }
         var compProxy = {
             setRowAnimationCssOnBodyViewport: setRowAnimationClass,
-            setColumnCount: function (count) { return ag_grid_community_1._.setAriaColCount(eRoot.current, count); },
-            setRowCount: function (count) { return ag_grid_community_1._.setAriaRowCount(eRoot.current, count); },
+            setColumnCount: function (count) {
+                if (eRoot.current) {
+                    ag_grid_community_1._.setAriaColCount(eRoot.current, count);
+                }
+            },
+            setRowCount: function (count) {
+                if (eRoot.current) {
+                    ag_grid_community_1._.setAriaRowCount(eRoot.current, count);
+                }
+            },
             setTopHeight: setTopHeight,
             setBottomHeight: setBottomHeight,
             setStickyTopHeight: setStickyTopHeight,
@@ -95,7 +115,7 @@ var GridBodyComp = function () {
             setStickyTopWidth: setStickyTopWidth,
             setTopDisplay: setTopDisplay,
             setBottomDisplay: setBottomDisplay,
-            setColumnMovingCss: function (cssClass, flag) { return cssClassManager.addOrRemoveCssClass(cssClass, flag); },
+            setColumnMovingCss: function (cssClass, flag) { return cssClassManager.current.addOrRemoveCssClass(cssClass, flag); },
             updateLayoutClasses: setLayoutClass,
             setAlwaysVerticalScrollClass: setForceVerticalScrollClass,
             setPinnedTopBottomOverflowY: setTopAndBottomOverflowY,
@@ -106,18 +126,16 @@ var GridBodyComp = function () {
                 }
             },
             registerBodyViewportResizeListener: function (listener) {
-                var unsubscribeFromResize = resizeObserverService.observeResize(eBodyViewport.current, listener);
-                destroyFuncs.push(function () { return unsubscribeFromResize(); });
+                if (eBodyViewport.current) {
+                    var unsubscribeFromResize_1 = resizeObserverService.observeResize(eBodyViewport.current, listener);
+                    destroyFuncs.current.push(function () { return unsubscribeFromResize_1(); });
+                }
             }
         };
         var ctrl = context.createBean(new ag_grid_community_1.GridBodyCtrl());
-        beansToDestroy.push(ctrl);
+        beansToDestroy.current.push(ctrl);
         ctrl.setComp(compProxy, eRoot.current, eBodyViewport.current, eTop.current, eBottom.current, eStickyTop.current);
-        return function () {
-            context.destroyBeans(beansToDestroy);
-            destroyFuncs.forEach(function (f) { return f(); });
-        };
-    });
+    }, []);
     var rootClasses = react_1.useMemo(function () {
         return utils_1.classesList('ag-root', 'ag-unselectable', layoutClass);
     }, [layoutClass]);
@@ -161,7 +179,7 @@ var GridBodyComp = function () {
         var section = _a.section, children = _a.children, className = _a.className, style = _a.style;
         return (react_1.default.createElement("div", { ref: section, className: className, role: "presentation", style: style }, children.map(createRowContainer)));
     };
-    return (react_1.default.createElement("div", { ref: eRoot, className: rootClasses, role: "treegrid" },
+    return (react_1.default.createElement("div", { ref: setRef, className: rootClasses, role: "treegrid" },
         react_1.default.createElement(gridHeaderComp_1.default, null),
         createSection({ section: eTop, className: topClasses, style: topStyle, children: [
                 ag_grid_community_1.RowContainerName.TOP_LEFT,

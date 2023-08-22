@@ -80,8 +80,9 @@ var SetValueModel = /** @class */ (function () {
         this.keyComparator = (_a = keyComparator) !== null && _a !== void 0 ? _a : core_1._.defaultComparator;
         this.caseSensitive = !!caseSensitive;
         var getDataPath = gridOptionsService.get('getDataPath');
+        var groupAllowUnbalanced = gridOptionsService.is('groupAllowUnbalanced');
         if (rowModel.getType() === 'clientSide') {
-            this.clientSideValuesExtractor = new clientSideValueExtractor_1.ClientSideValuesExtractor(rowModel, this.filterParams, this.createKey, this.caseFormat, columnModel, valueService, treeDataOrGrouping, !!treeDataTreeList, getDataPath);
+            this.clientSideValuesExtractor = new clientSideValueExtractor_1.ClientSideValuesExtractor(rowModel, this.filterParams, this.createKey, this.caseFormat, columnModel, valueService, treeDataOrGrouping, !!treeDataTreeList, getDataPath, groupAllowUnbalanced);
         }
         if (values == null) {
             this.valuesType = SetFilterModelValuesType.TAKEN_FROM_GRID_VALUES;
@@ -368,7 +369,7 @@ var SetValueModel = /** @class */ (function () {
                     existingFormattedKeys_1.set(_this.caseFormat(key), key);
                 });
                 model.forEach(function (unformattedKey) {
-                    var formattedKey = _this.caseFormat(unformattedKey);
+                    var formattedKey = _this.caseFormat(core_1._.makeNull(unformattedKey));
                     var existingUnformattedKey = existingFormattedKeys_1.get(formattedKey);
                     if (existingUnformattedKey !== undefined) {
                         _this.selectKey(existingUnformattedKey);

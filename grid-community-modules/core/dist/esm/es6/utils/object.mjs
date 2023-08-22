@@ -4,10 +4,13 @@ export function iterateObject(object, callback) {
         return;
     }
     if (Array.isArray(object)) {
-        object.forEach((value, index) => callback(`${index}`, value));
+        for (let i = 0; i < object.length; i++) {
+            callback(i.toString(), object[i]);
+        }
+        return;
     }
-    else {
-        Object.keys(object).forEach(key => callback(key, object[key]));
+    for (const [key, value] of Object.entries(object)) {
+        callback(key, value);
     }
 }
 export function cloneObject(object) {

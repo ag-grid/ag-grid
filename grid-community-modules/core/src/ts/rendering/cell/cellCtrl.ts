@@ -51,11 +51,6 @@ export interface ICellComp {
     setUserStyles(styles: CellStyle): void;
     getFocusableElement(): HTMLElement;
 
-    setTabIndex(tabIndex: number): void;
-    setRole(role: string): void;
-    setColId(colId: string): void;
-    setTitle(title: string | undefined): void;
-
     setIncludeSelection(include: boolean): void;
     setIncludeRowDrag(include: boolean): void;
     setIncludeDndSource(include: boolean): void;
@@ -83,6 +78,8 @@ export class CellCtrl extends BeanStub {
     private rowNode: RowNode;
     private rowCtrl: RowCtrl;
 
+    private focusEventToRestore: CellFocusedEvent | undefined;
+
     private printLayout: boolean;
 
     private value: any;
@@ -96,12 +93,14 @@ export class CellCtrl extends BeanStub {
     private cellKeyboardListenerFeature: CellKeyboardListenerFeature | null = null;
 
     private cellPosition: CellPosition;
-
     private editing: boolean;
-
+    
+    private isCellRenderer: boolean;
     private includeSelection: boolean;
     private includeDndSource: boolean;
     private includeRowDrag: boolean;
+    private colIdSanitised: string;
+    private tabIndex: number | undefined;
 
     private suppressRefreshCell = false;
 
@@ -120,8 +119,16 @@ export class CellCtrl extends BeanStub {
         // unique id to this instance, including the column ID to help with debugging in React as it's used in 'key'
         this.instanceId = column.getId() + '-' + instanceIdSequence++;
 
+        const colDef = this.column.getColDef();
+        this.colIdSanitised = escapeString(this.column.getId())!;
+        if (!this.beans.gridOptionsService.is('suppressCellFocus')) {
+            this.tabIndex = -1;
+        }
+        this.isCellRenderer = colDef.cellRenderer != null || colDef.cellRendererSelector != null;
+
         this.createCellPosition();
         this.addFeatures();
+        this.updateAndFormatValue(true);
     }
 
     public shouldRestoreFocus(): boolean {
@@ -211,13 +218,9 @@ export class CellCtrl extends BeanStub {
         this.eGui = eGui;
         this.printLayout = printLayout;
 
-        // we force to make sure formatter gets called at least once,
-        // even if value has not changed (is is undefined)
-        this.updateAndFormatValue(true);
-
         this.addDomData();
 
-        this.onCellFocused();
+        this.onCellFocused(this.focusEventToRestore);
         this.applyStaticCssClasses();
         this.setWrapText();
 
@@ -232,17 +235,9 @@ export class CellCtrl extends BeanStub {
 
         this.setAriaColIndex();
 
-        if (!this.beans.gridOptionsService.is('suppressCellFocus')) {
-            this.cellComp.setTabIndex(-1);
-        }
-
-        const colIdSanitised = escapeString(this.column.getId());
-        this.cellComp.setColId(colIdSanitised!);
-        this.cellComp.setRole('gridcell');
-
         this.cellPositionFeature?.setComp(eGui);
         this.cellCustomStyleFeature?.setComp(comp);
-        this.tooltipFeature?.setComp(comp);
+        this.tooltipFeature?.setComp(eGui);
         this.cellKeyboardListenerFeature?.setComp(this.eGui);
 
         if (this.cellRangeFeature) { this.cellRangeFeature.setComp(comp, eGui); }
@@ -257,7 +252,7 @@ export class CellCtrl extends BeanStub {
             this.onCellCompAttachedFuncs.forEach(func => func());
             this.onCellCompAttachedFuncs = [];
         }
-}
+    }
 
     private setupAutoHeight(eCellWrapper: HTMLElement): void {
         if (!this.column.isAutoHeight()) { return; }
@@ -315,11 +310,35 @@ export class CellCtrl extends BeanStub {
     public getInstanceId(): string {
         return this.instanceId;
     }
+    public getIncludeSelection(): boolean {
+        return this.includeSelection;
+    }
+    public getIncludeRowDrag(): boolean {
+        return this.includeRowDrag;
+    }
+    public getIncludeDndSource(): boolean {
+        return this.includeDndSource;
+    }
+    public getColumnIdSanitised(): string {
+        return this.colIdSanitised;
+    }
+    public getTabIndex(): number | undefined {
+        return this.tabIndex;
+    }
+    public getIsCellRenderer(): boolean {
+        return this.isCellRenderer;
+    }
+    public getValueToDisplay(): any {
+        return this.valueFormatted != null ? this.valueFormatted : this.value;
+    }
 
     private showValue(forceNewCellRendererInstance = false): void {
-        const valueToDisplay = this.valueFormatted != null ? this.valueFormatted : this.value;
-        const params = this.createCellRendererParams();
-        const compDetails = this.beans.userComponentFactory.getCellRendererDetails(this.column.getColDef(), params);
+        const valueToDisplay = this.getValueToDisplay();
+        let compDetails: UserCompDetails | undefined;
+        if (this.isCellRenderer) {
+            const params = this.createCellRendererParams();
+            compDetails = this.beans.userComponentFactory.getCellRendererDetails(this.column.getColDef(), params);
+        }
         this.cellComp.setRenderDetails(compDetails, valueToDisplay, forceNewCellRendererInstance);
         this.refreshHandle();
     }
@@ -662,6 +681,8 @@ export class CellCtrl extends BeanStub {
     }
 
     private animateCell(cssName: string, flashDelay?: number | null, fadeDelay?: number | null): void {
+        if (!this.cellComp) { return; }
+
         const fullName = `ag-cell-${cssName}`;
         const animationFullName = `ag-cell-${cssName}-animation`;
         const { gridOptionsService } = this.beans;
@@ -712,8 +733,7 @@ export class CellCtrl extends BeanStub {
     }
 
     private formatValue(value: any): any {
-        const res = this.callValueFormatter(value);
-        return res != null ? res : value;
+        return this.callValueFormatter(value) ?? value;
     }
 
     private callValueFormatter(value: any): any {
@@ -931,9 +951,21 @@ export class CellCtrl extends BeanStub {
     }
 
     public onCellFocused(event?: CellFocusedEvent): void {
-        if (!this.cellComp || this.beans.gridOptionsService.is('suppressCellFocus')) { return; }
-
+        if(this.beans.gridOptionsService.is('suppressCellFocus')){
+            return;
+        }
         const cellFocused = this.beans.focusService.isCellFocused(this.cellPosition);
+
+        if (!this.cellComp) {
+            if (cellFocused && event?.forceBrowserFocus) {
+                // The cell comp has not been rendered yet, but the browser focus is being forced for this cell
+                // so lets save the event to apply it when setComp is called in the next turn.
+                this.focusEventToRestore = event;
+            }
+            return;
+        }
+        // Clear the saved focus event
+        this.focusEventToRestore = undefined;
 
         this.cellComp.addOrRemoveCssClass(CSS_CELL_FOCUS, cellFocused);
 

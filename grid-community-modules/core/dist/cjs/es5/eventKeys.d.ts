@@ -1,4 +1,4 @@
-// Type definitions for @ag-grid-community/core v30.0.6
+// Type definitions for @ag-grid-community/core v30.1.0
 // Project: https://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 export declare class Events {
@@ -90,6 +90,8 @@ export declare class Events {
     static EVENT_FULL_WIDTH_ROW_FOCUSED: 'fullWidthRowFocused';
     static EVENT_ROW_SELECTED: 'rowSelected';
     static EVENT_SELECTION_CHANGED: 'selectionChanged';
+    static EVENT_TOOLTIP_SHOW: 'tooltipShow';
+    static EVENT_TOOLTIP_HIDE: 'tooltipHide';
     static EVENT_CELL_KEY_DOWN: 'cellKeyDown';
     static EVENT_CELL_MOUSE_OVER: 'cellMouseOver';
     static EVENT_CELL_MOUSE_OUT: 'cellMouseOut';
@@ -166,4 +168,8 @@ export declare class Events {
     static EVENT_STORE_UPDATED: 'storeUpdated';
     static EVENT_FILTER_DESTROYED: 'filterDestroyed';
     static EVENT_ROW_DATA_UPDATE_STARTED: 'rowDataUpdateStarted';
+    static EVENT_ADVANCED_FILTER_ENABLED_CHANGED: 'advancedFilterEnabledChanged';
+    static EVENT_DATA_TYPES_INFERRED: 'dataTypesInferred';
+    static EVENT_FIELD_VALUE_CHANGED: 'fieldValueChanged';
+    static EVENT_FIELD_PICKER_VALUE_SELECTED: 'fieldPickerValueSelected';
 }

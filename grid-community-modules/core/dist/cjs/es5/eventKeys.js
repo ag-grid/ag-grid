@@ -92,6 +92,8 @@ var Events = /** @class */ (function () {
     Events.EVENT_FULL_WIDTH_ROW_FOCUSED = 'fullWidthRowFocused';
     Events.EVENT_ROW_SELECTED = 'rowSelected';
     Events.EVENT_SELECTION_CHANGED = 'selectionChanged';
+    Events.EVENT_TOOLTIP_SHOW = 'tooltipShow';
+    Events.EVENT_TOOLTIP_HIDE = 'tooltipHide';
     Events.EVENT_CELL_KEY_DOWN = 'cellKeyDown';
     Events.EVENT_CELL_MOUSE_OVER = 'cellMouseOver';
     Events.EVENT_CELL_MOUSE_OUT = 'cellMouseOut';
@@ -175,6 +177,12 @@ var Events = /** @class */ (function () {
     Events.EVENT_STORE_UPDATED = 'storeUpdated';
     Events.EVENT_FILTER_DESTROYED = 'filterDestroyed';
     Events.EVENT_ROW_DATA_UPDATE_STARTED = 'rowDataUpdateStarted';
+    // Advanced Filters
+    Events.EVENT_ADVANCED_FILTER_ENABLED_CHANGED = 'advancedFilterEnabledChanged';
+    Events.EVENT_DATA_TYPES_INFERRED = 'dataTypesInferred';
+    // Widgets
+    Events.EVENT_FIELD_VALUE_CHANGED = 'fieldValueChanged';
+    Events.EVENT_FIELD_PICKER_VALUE_SELECTED = 'fieldPickerValueSelected';
     return Events;
 }());
 exports.Events = Events;

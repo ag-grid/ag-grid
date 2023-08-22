@@ -191,7 +191,7 @@ var ChartDataPanel = /** @class */ (function (_super) {
     };
     ChartDataPanel.prototype.addChangeListener = function (component, columnState) {
         var _this = this;
-        this.addManagedListener(component, core_1.AgAbstractField.EVENT_CHANGED, function () {
+        this.addManagedListener(component, core_1.Events.EVENT_FIELD_VALUE_CHANGED, function () {
             columnState.selected = component.getValue();
             _this.chartController.updateForPanelChange(columnState);
         });

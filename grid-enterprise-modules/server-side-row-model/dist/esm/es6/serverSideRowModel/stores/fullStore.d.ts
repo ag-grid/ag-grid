@@ -11,6 +11,7 @@ export declare class FullStore extends RowNodeBlock implements IServerSideStore 
     private nodeManager;
     private filterManager;
     private transactionManager;
+    private serverSideRowModel;
     private readonly level;
     private readonly groupLevel;
     private readonly leafGroup;
@@ -30,6 +31,7 @@ export declare class FullStore extends RowNodeBlock implements IServerSideStore 
     private topPx;
     private heightPx;
     private info;
+    private postSortFunc;
     constructor(ssrmParams: SSRMParams, storeParams: ServerSideGroupLevelParams, parentRowNode: RowNode);
     private postConstruct;
     private destroyRowNodes;

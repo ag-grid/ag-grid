@@ -71,6 +71,7 @@ export class CellComp extends Component implements TooltipParentComp {
         this.rowNode = cellCtrl.getRowNode();
         this.rowCtrl = cellCtrl.getRowCtrl();
         this.eRow = eRow;
+        this.cellCtrl = cellCtrl;
 
         this.setTemplate(/* html */`<div comp-id="${this.getCompId()}"/>`);
 
@@ -80,24 +81,26 @@ export class CellComp extends Component implements TooltipParentComp {
 
         this.refreshWrapper(false);
 
-        const setAttribute = (name: string, value: string | null | undefined, element?: HTMLElement) => {
-            const actualElement = element ? element : eGui;
+        const setAttribute = (name: string, value: string | null | undefined) => {
             if (value != null && value != '') {
-                actualElement.setAttribute(name, value);
+                eGui.setAttribute(name, value);
             } else {
-                actualElement.removeAttribute(name);
+                eGui.removeAttribute(name);
             }
         };
+
+        setAriaRole(eGui, 'gridcell');
+        setAttribute('col-id', cellCtrl.getColumnIdSanitised());
+        const tabIndex = cellCtrl.getTabIndex();
+        if (tabIndex !== undefined) {
+            setAttribute('tabindex', tabIndex.toString());
+        }
 
         const compProxy: ICellComp = {
             addOrRemoveCssClass: (cssClassName, on) => this.addOrRemoveCssClass(cssClassName, on),
             setUserStyles: (styles: CellStyle) => addStylesToElement(eGui, styles),
             getFocusableElement: () => this.getFocusableElement(),
-            setTabIndex: tabIndex => setAttribute('tabindex', tabIndex.toString()),
-            setRole: role => setAriaRole(eGui, role),
-            setColId: colId => setAttribute('col-id', colId),
-            setTitle: title => setAttribute('title', title),
-
+            
             setIncludeSelection: include => this.includeSelection = include,
             setIncludeRowDrag: include => this.includeRowDrag = include,
             setIncludeDndSource: include => this.includeDndSource = include,
@@ -112,7 +115,6 @@ export class CellComp extends Component implements TooltipParentComp {
             getParentOfValue: () => this.getParentOfValue()
         };
 
-        this.cellCtrl = cellCtrl;
         cellCtrl.setComp(compProxy, this.getGui(), this.eCellWrapper, printLayout, editingRow);
     }
 

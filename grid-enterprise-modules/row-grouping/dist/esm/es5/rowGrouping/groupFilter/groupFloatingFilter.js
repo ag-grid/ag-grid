@@ -24,7 +24,9 @@ import { GroupFilter } from './groupFilter';
 var GroupFloatingFilterComp = /** @class */ (function (_super) {
     __extends(GroupFloatingFilterComp, _super);
     function GroupFloatingFilterComp() {
-        return _super.call(this, /* html */ "\n            <div ref=\"eFloatingFilter\" class=\"ag-group-floating-filter ag-floating-filter-input\" role=\"presentation\"></div>\n        ") || this;
+        var _this = _super.call(this, /* html */ "\n            <div ref=\"eFloatingFilter\" class=\"ag-group-floating-filter ag-floating-filter-input\" role=\"presentation\"></div>\n        ") || this;
+        _this.haveAddedColumnListeners = false;
+        return _this;
     }
     GroupFloatingFilterComp.prototype.init = function (params) {
         var _this = this;
@@ -46,18 +48,25 @@ var GroupFloatingFilterComp = /** @class */ (function (_super) {
             _this.addManagedListener(_this.parentFilterInstance, GroupFilter.EVENT_SELECTED_COLUMN_CHANGED, function () { return _this.onSelectedColumnChanged(); });
             _this.addManagedListener(_this.parentFilterInstance, GroupFilter.EVENT_COLUMN_ROW_GROUP_CHANGED, function () { return _this.onColumnRowGroupChanged(); });
         });
-        ;
+    };
+    GroupFloatingFilterComp.prototype.onParamsUpdated = function (params) {
+        this.params = params;
+        this.setParams();
+    };
+    GroupFloatingFilterComp.prototype.setParams = function () {
+        var _a;
+        var displayName = this.columnModel.getDisplayNameForColumn(this.params.column, 'header', true);
+        var translate = this.localeService.getLocaleTextFunc();
+        (_a = this.eFloatingFilterText) === null || _a === void 0 ? void 0 : _a.setInputAriaLabel(displayName + " " + translate('ariaFilterInput', 'Filter Input'));
     };
     GroupFloatingFilterComp.prototype.setupReadOnlyFloatingFilterElement = function () {
         var _this = this;
         if (!this.eFloatingFilterText) {
             this.eFloatingFilterText = this.createManagedBean(new AgInputTextField());
-            var displayName = this.columnModel.getDisplayNameForColumn(this.params.column, 'header', true);
-            var translate = this.localeService.getLocaleTextFunc();
             this.eFloatingFilterText
                 .setDisabled(true)
-                .setInputAriaLabel(displayName + " " + translate('ariaFilterInput', 'Filter Input'))
                 .addGuiEventListener('click', function () { return _this.params.showParentFilter(); });
+            this.setParams();
         }
         this.updateDisplayedValue();
         this.eFloatingFilter.appendChild(this.eFloatingFilterText.getGui());
@@ -72,8 +81,11 @@ var GroupFloatingFilterComp = /** @class */ (function (_super) {
         if (column && !column.isVisible()) {
             var compDetails = this.filterManager.getFloatingFilterCompDetails(column, this.params.showParentFilter);
             if (compDetails) {
-                if (!this.columnVisibleChangedListener) {
-                    this.columnVisibleChangedListener = this.addManagedListener(column, Column.EVENT_VISIBLE_CHANGED, this.onColumnVisibleChanged.bind(this));
+                this.compDetails = compDetails;
+                if (!this.haveAddedColumnListeners) {
+                    this.haveAddedColumnListeners = true;
+                    this.addManagedListener(column, Column.EVENT_VISIBLE_CHANGED, this.onColumnVisibleChanged.bind(this));
+                    this.addManagedListener(column, Column.EVENT_COL_DEF_CHANGED, this.onColDefChanged.bind(this));
                 }
                 return compDetails.newAgStackInstance().then(function (floatingFilter) {
                     var _a, _b;
@@ -90,6 +102,16 @@ var GroupFloatingFilterComp = /** @class */ (function (_super) {
     };
     GroupFloatingFilterComp.prototype.onColumnVisibleChanged = function () {
         this.setupUnderlyingFloatingFilterElement();
+    };
+    GroupFloatingFilterComp.prototype.onColDefChanged = function (event) {
+        var _a, _b;
+        if (!event.column) {
+            return;
+        }
+        var compDetails = this.filterManager.getFloatingFilterCompDetails(event.column, this.params.showParentFilter);
+        if (compDetails) {
+            (_b = (_a = this.underlyingFloatingFilter) === null || _a === void 0 ? void 0 : _a.onParamsUpdated) === null || _b === void 0 ? void 0 : _b.call(_a, compDetails.params);
+        }
     };
     GroupFloatingFilterComp.prototype.onParentModelChanged = function (_model, event) {
         var _a, _b;

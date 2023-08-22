@@ -13,11 +13,33 @@ var __extends = (this && this.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
+var __assign = (this && this.__assign) || function () {
+    __assign = Object.assign || function(t) {
+        for (var s, i = 1, n = arguments.length; i < n; i++) {
+            s = arguments[i];
+            for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
+                t[p] = s[p];
+        }
+        return t;
+    };
+    return __assign.apply(this, arguments);
+};
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+var __rest = (this && this.__rest) || function (s, e) {
+    var t = {};
+    for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p) && e.indexOf(p) < 0)
+        t[p] = s[p];
+    if (s != null && typeof Object.getOwnPropertySymbols === "function")
+        for (var i = 0, p = Object.getOwnPropertySymbols(s); i < p.length; i++) {
+            if (e.indexOf(p[i]) < 0 && Object.prototype.propertyIsEnumerable.call(s, p[i]))
+                t[p[i]] = s[p[i]];
+        }
+    return t;
 };
 import { Autowired, Bean, BeanStub, Events, PostConstruct } from "@ag-grid-community/core";
 import { DefaultStrategy } from "./selection/strategies/defaultStrategy";
@@ -59,19 +81,25 @@ var ServerSideSelectionService = /** @class */ (function (_super) {
         this.eventService.dispatchEvent(event);
     };
     ServerSideSelectionService.prototype.setNodesSelected = function (params) {
-        if (params.nodes.length > 1 && this.rowSelection !== 'multiple') {
+        var nodes = params.nodes, otherParams = __rest(params, ["nodes"]);
+        if (nodes.length > 1 && this.rowSelection !== 'multiple') {
             console.warn("AG Grid: cannot multi select while rowSelection='single'");
             return 0;
         }
-        if (params.nodes.length > 1 && params.rangeSelect) {
+        if (nodes.length > 1 && params.rangeSelect) {
             console.warn("AG Grid: cannot use range selection when multi selecting rows");
             return 0;
         }
-        var changedNodes = this.selectionStrategy.setNodesSelected(params);
-        this.shotgunResetNodeSelectionState(params.source);
+        var adjustedParams = __assign({ nodes: nodes.filter(function (node) { return node.selectable; }) }, otherParams);
+        // if no selectable nodes, then return 0
+        if (!adjustedParams.nodes.length) {
+            return 0;
+        }
+        var changedNodes = this.selectionStrategy.setNodesSelected(adjustedParams);
+        this.shotgunResetNodeSelectionState(adjustedParams.source);
         var event = {
             type: Events.EVENT_SELECTION_CHANGED,
-            source: params.source,
+            source: adjustedParams.source,
         };
         this.eventService.dispatchEvent(event);
         return changedNodes;
@@ -117,6 +145,24 @@ var ServerSideSelectionService = /** @class */ (function (_super) {
         // update any refs being held in the strategies
         this.selectionStrategy.processNewRow(rowNode);
         var isNodeSelected = this.selectionStrategy.isNodeSelected(rowNode);
+        // if the node was selected but node is not selectable, we deselect the node.
+        // (could be due to user applying selected state directly, or a change in selectable)
+        if (isNodeSelected != false && !rowNode.selectable) {
+            this.selectionStrategy.setNodesSelected({
+                nodes: [rowNode],
+                newValue: false,
+                source: 'api',
+            });
+            // we need to shotgun reset here as if this was hierarchical, some group nodes
+            // may be changing from indeterminate to unchecked.
+            this.shotgunResetNodeSelectionState();
+            var event_1 = {
+                type: Events.EVENT_SELECTION_CHANGED,
+                source: 'api',
+            };
+            this.eventService.dispatchEvent(event_1);
+            return;
+        }
         rowNode.setSelectedInitialValue(isNodeSelected);
     };
     ServerSideSelectionService.prototype.reset = function () {

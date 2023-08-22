@@ -68,7 +68,7 @@ var MenuItemMapper = /** @class */ (function (_super) {
     };
     MenuItemMapper.prototype.getStockMenuItem = function (key, column) {
         var _this = this;
-        var _a;
+        var _a, _b;
         var localeTextFunc = this.localeService.getLocaleTextFunc();
         var skipHeaderOnAutoSize = this.gridOptionsService.is('skipHeaderOnAutoSize');
         switch (key) {
@@ -128,11 +128,34 @@ var MenuItemMapper = /** @class */ (function (_super) {
                     icon: _.createIconNoSpan('menuAddRowGroup', this.gridOptionsService, null)
                 };
             case 'rowUnGroup':
+                var icon = _.createIconNoSpan('menuRemoveRowGroup', this.gridOptionsService, null);
+                var showRowGroup_1 = column === null || column === void 0 ? void 0 : column.getColDef().showRowGroup;
+                // Handle single auto group column
+                if (showRowGroup_1 === true) {
+                    return {
+                        name: localeTextFunc('ungroupAll', 'Un-Group All'),
+                        disabled: !(column === null || column === void 0 ? void 0 : column.getColDef().showRowGroup),
+                        action: function () { return _this.columnModel.setRowGroupColumns([], "contextMenu"); },
+                        icon: icon
+                    };
+                }
+                // Handle multiple auto group columns
+                if (typeof showRowGroup_1 === 'string') {
+                    var underlyingColumn = (_a = this.columnModel.getSourceColumnsForGroupColumn(column)) === null || _a === void 0 ? void 0 : _a[0];
+                    var ungroupByName = (underlyingColumn != null) ? _.escapeString(this.columnModel.getDisplayNameForColumn(underlyingColumn, 'header')) : showRowGroup_1;
+                    return {
+                        name: localeTextFunc('ungroupBy', 'Un-Group by') + ' ' + ungroupByName,
+                        disabled: !(column === null || column === void 0 ? void 0 : column.getColDef().showRowGroup),
+                        action: function () { return _this.columnModel.removeRowGroupColumn(showRowGroup_1, "contextMenu"); },
+                        icon: icon
+                    };
+                }
+                // Handle primary column
                 return {
                     name: localeTextFunc('ungroupBy', 'Un-Group by') + ' ' + _.escapeString(this.columnModel.getDisplayNameForColumn(column, 'header')),
                     disabled: !(column === null || column === void 0 ? void 0 : column.isRowGroupActive()) || !(column === null || column === void 0 ? void 0 : column.getColDef().enableRowGroup),
                     action: function () { return _this.columnModel.removeRowGroupColumn(column, "contextMenu"); },
-                    icon: _.createIconNoSpan('menuRemoveRowGroup', this.gridOptionsService, null)
+                    icon: icon
                 };
             case 'resetColumns':
                 return {
@@ -245,7 +268,7 @@ var MenuItemMapper = /** @class */ (function (_super) {
                 return 'separator';
             case 'pivotChart':
             case 'chartRange':
-                return (_a = this.chartMenuItemMapper.getChartItems(key)) !== null && _a !== void 0 ? _a : null;
+                return (_b = this.chartMenuItemMapper.getChartItems(key)) !== null && _b !== void 0 ? _b : null;
             default: {
                 console.warn("AG Grid: unknown menu item type " + key);
                 return null;

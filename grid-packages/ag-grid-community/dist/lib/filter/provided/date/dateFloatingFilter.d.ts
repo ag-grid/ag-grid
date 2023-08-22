@@ -14,9 +14,12 @@ export declare class DateFloatingFilter extends SimpleFloatingFilter {
     constructor();
     protected getDefaultFilterOptions(): string[];
     init(params: IFloatingFilterParams<DateFilter>): void;
+    onParamsUpdated(params: IFloatingFilterParams<DateFilter>): void;
     protected setEditable(editable: boolean): void;
     onParentModelChanged(model: ISimpleFilterModel, event: FilterChangedEvent): void;
     private onDateChanged;
+    private getDateComponentParams;
     private createDateComponent;
+    private updateDateComponent;
     protected getFilterModelFormatter(): SimpleFilterModelFormatter;
 }

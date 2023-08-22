@@ -40,6 +40,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.AgColorPanel = void 0;
 var core_1 = require("@ag-grid-community/core");
 var ag_charts_community_1 = require("ag-charts-community");
+var core_2 = require("@ag-grid-community/core");
 var AgColorPanel = /** @class */ (function (_super) {
     __extends(AgColorPanel, _super);
     function AgColorPanel(config) {
@@ -56,19 +57,43 @@ var AgColorPanel = /** @class */ (function (_super) {
         return _this;
     }
     AgColorPanel.prototype.postConstruct = function () {
-        var eGui = this.getGui();
+        var _this = this;
+        this.initTabIndex();
         this.initRecentColors();
+        this.addGuiEventListener('focus', function () { return _this.spectrumColor.focus(); });
+        this.addGuiEventListener('keydown', function (e) {
+            if (e.key === core_2.KeyCode.ENTER && !e.defaultPrevented) {
+                _this.destroy();
+            }
+        });
+        this.addManagedListener(this.spectrumColor, 'keydown', function (e) { return _this.moveDragger(e); });
+        this.addManagedListener(this.spectrumAlphaSlider, 'keydown', function (e) { return _this.moveAlphaSlider(e); });
+        this.addManagedListener(this.spectrumHueSlider, 'keydown', function (e) { return _this.moveHueSlider(e); });
         this.addManagedListener(this.spectrumVal, 'mousedown', this.onSpectrumDraggerDown.bind(this));
-        this.addManagedListener(eGui, 'mousemove', this.onSpectrumDraggerMove.bind(this));
         this.addManagedListener(this.spectrumHue, 'mousedown', this.onSpectrumHueDown.bind(this));
-        this.addManagedListener(eGui, 'mousemove', this.onSpectrumHueMove.bind(this));
         this.addManagedListener(this.spectrumAlpha, 'mousedown', this.onSpectrumAlphaDown.bind(this));
-        this.addManagedListener(eGui, 'mousemove', this.onSpectrumAlphaMove.bind(this));
+        this.addGuiEventListener('mousemove', function (e) {
+            _this.onSpectrumDraggerMove(e);
+            _this.onSpectrumHueMove(e);
+            _this.onSpectrumAlphaMove(e);
+        });
         // Listening to `mouseup` on the document on purpose. The user might release the mouse button
         // outside the UI control. When the mouse returns back to the control's area, the dragging
         // of the thumb is not expected and seen as a bug.
         this.addManagedListener(document, 'mouseup', this.onMouseUp.bind(this));
         this.addManagedListener(this.recentColors, 'click', this.onRecentColorClick.bind(this));
+        this.addManagedListener(this.recentColors, 'keydown', function (e) {
+            if (e.key === core_2.KeyCode.ENTER || e.key === core_2.KeyCode.SPACE) {
+                e.preventDefault();
+                _this.onRecentColorClick(e);
+            }
+        });
+    };
+    AgColorPanel.prototype.initTabIndex = function () {
+        var tabIndex = this.tabIndex = (this.gridOptionsService.getNum('tabIndex') || 0).toString();
+        this.spectrumColor.setAttribute('tabindex', tabIndex);
+        this.spectrumHueSlider.setAttribute('tabindex', tabIndex);
+        this.spectrumAlphaSlider.setAttribute('tabindex', tabIndex);
     };
     AgColorPanel.prototype.refreshSpectrumRect = function () {
         return this.spectrumValRect = this.spectrumVal.getBoundingClientRect();
@@ -116,41 +141,85 @@ var AgColorPanel = /** @class */ (function (_super) {
     };
     AgColorPanel.prototype.moveDragger = function (e) {
         var valRect = this.spectrumValRect;
-        if (valRect) {
-            var x = e.clientX - valRect.left;
-            var y = e.clientY - valRect.top;
-            x = Math.max(x, 0);
-            x = Math.min(x, valRect.width);
-            y = Math.max(y, 0);
-            y = Math.min(y, valRect.height);
-            this.setSpectrumValue(x / valRect.width, 1 - y / valRect.height);
+        if (!valRect) {
+            return;
         }
+        var x;
+        var y;
+        if (e instanceof MouseEvent) {
+            x = e.clientX - valRect.left;
+            y = e.clientY - valRect.top;
+        }
+        else {
+            var isLeft = e.key === core_2.KeyCode.LEFT;
+            var isRight = e.key === core_2.KeyCode.RIGHT;
+            var isUp = e.key === core_2.KeyCode.UP;
+            var isDown = e.key === core_2.KeyCode.DOWN;
+            var isVertical = isUp || isDown;
+            var isHorizontal = isLeft || isRight;
+            if (!isVertical && !isHorizontal) {
+                return;
+            }
+            e.preventDefault();
+            var _a = this.getSpectrumValue(), currentX = _a.x, currentY = _a.y;
+            x = currentX + (isHorizontal ? (isLeft ? -5 : 5) : 0);
+            y = currentY + (isVertical ? (isUp ? -5 : 5) : 0);
+        }
+        x = Math.max(x, 0);
+        x = Math.min(x, valRect.width);
+        y = Math.max(y, 0);
+        y = Math.min(y, valRect.height);
+        this.setSpectrumValue(x / valRect.width, 1 - y / valRect.height);
     };
     AgColorPanel.prototype.moveHueSlider = function (e) {
-        var hueRect = this.spectrumHueRect;
-        if (hueRect) {
-            var slider = this.spectrumHueSlider;
-            var sliderRect = slider.getBoundingClientRect();
-            var x = e.clientX - hueRect.left;
-            x = Math.max(x, 0);
-            x = Math.min(x, hueRect.width);
-            this.H = 1 - x / hueRect.width;
-            slider.style.left = (x + sliderRect.width / 2) + 'px';
-            this.update();
+        var rect = this.spectrumHueRect;
+        if (!rect) {
+            return;
         }
+        var x = this.moveSlider(this.spectrumHueSlider, e);
+        if (x == null) {
+            return;
+        }
+        this.H = 1 - x / rect.width;
+        this.update();
     };
     AgColorPanel.prototype.moveAlphaSlider = function (e) {
-        var alphaRect = this.spectrumAlphaRect;
-        if (alphaRect) {
-            var slider = this.spectrumAlphaSlider;
-            var sliderRect = slider.getBoundingClientRect();
-            var x = e.clientX - alphaRect.left;
-            x = Math.max(x, 0);
-            x = Math.min(x, alphaRect.width);
-            this.A = x / alphaRect.width;
-            slider.style.left = (x + sliderRect.width / 2) + 'px';
-            this.update();
+        var rect = this.spectrumAlphaRect;
+        if (!rect) {
+            return;
         }
+        var x = this.moveSlider(this.spectrumAlphaSlider, e);
+        if (x == null) {
+            return;
+        }
+        this.A = x / rect.width;
+        this.update();
+    };
+    AgColorPanel.prototype.moveSlider = function (slider, e) {
+        var _a;
+        var sliderRect = slider.getBoundingClientRect();
+        var parentRect = (_a = slider.parentElement) === null || _a === void 0 ? void 0 : _a.getBoundingClientRect();
+        if (!slider || !parentRect) {
+            return null;
+        }
+        var x;
+        if (e instanceof MouseEvent) {
+            x = e.clientX - parentRect.left;
+        }
+        else {
+            var isLeft = e.key === core_2.KeyCode.LEFT;
+            var isRight = e.key === core_2.KeyCode.RIGHT;
+            if (!isLeft && !isRight) {
+                return null;
+            }
+            e.preventDefault();
+            var diff = isLeft ? -5 : 5;
+            x = (parseFloat(slider.style.left) - sliderRect.width / 2) + diff;
+        }
+        x = Math.max(x, 0);
+        x = Math.min(x, parentRect.width);
+        slider.style.left = (x + sliderRect.width / 2) + 'px';
+        return x;
     };
     AgColorPanel.prototype.update = function () {
         var color = ag_charts_community_1._Util.Color.fromHSB(this.H * 360, this.S, this.B, this.A);
@@ -172,24 +241,33 @@ var AgColorPanel = /** @class */ (function (_super) {
      */
     AgColorPanel.prototype.setSpectrumValue = function (saturation, brightness) {
         var valRect = this.spectrumValRect || this.refreshSpectrumRect();
-        if (valRect) {
-            var dragger = this.spectrumDragger;
-            var draggerRect = dragger.getBoundingClientRect();
-            saturation = Math.max(0, saturation);
-            saturation = Math.min(1, saturation);
-            brightness = Math.max(0, brightness);
-            brightness = Math.min(1, brightness);
-            this.S = saturation;
-            this.B = brightness;
-            dragger.style.left = (saturation * valRect.width - draggerRect.width / 2) + 'px';
-            dragger.style.top = ((1 - brightness) * valRect.height - draggerRect.height / 2) + 'px';
-            this.update();
+        if (valRect == null) {
+            return;
         }
+        var dragger = this.spectrumDragger;
+        var draggerRect = dragger.getBoundingClientRect();
+        saturation = Math.max(0, saturation);
+        saturation = Math.min(1, saturation);
+        brightness = Math.max(0, brightness);
+        brightness = Math.min(1, brightness);
+        this.S = saturation;
+        this.B = brightness;
+        dragger.style.left = (saturation * valRect.width - draggerRect.width / 2) + 'px';
+        dragger.style.top = ((1 - brightness) * valRect.height - draggerRect.height / 2) + 'px';
+        this.update();
+    };
+    AgColorPanel.prototype.getSpectrumValue = function () {
+        var dragger = this.spectrumDragger;
+        var draggerRect = dragger.getBoundingClientRect();
+        var x = parseFloat(dragger.style.left) + draggerRect.width / 2;
+        var y = parseFloat(dragger.style.top) + draggerRect.height / 2;
+        return { x: x, y: y };
     };
     AgColorPanel.prototype.initRecentColors = function () {
+        var _this = this;
         var recentColors = AgColorPanel.recentColors;
         var innerHtml = recentColors.map(function (color, index) {
-            return "<div class=\"ag-recent-color\" id=" + index + " style=\"background-color: " + color + "; width: 15px; height: 15px;\" recent-color=\"" + color + "\"></div>";
+            return ( /* html */"<div class=\"ag-recent-color\" id=" + index + " style=\"background-color: " + color + "; width: 15px; height: 15px;\" recent-color=\"" + color + "\" tabIndex=\"" + _this.tabIndex + "\"></div>");
         });
         this.recentColors.innerHTML = innerHtml.join('');
     };
@@ -236,7 +314,7 @@ var AgColorPanel = /** @class */ (function (_super) {
     };
     AgColorPanel.maxRecentColors = 8;
     AgColorPanel.recentColors = [];
-    AgColorPanel.TEMPLATE = "<div class=\"ag-color-panel\">\n            <div ref=\"spectrumColor\" class=\"ag-spectrum-color\">\n                <div class=\"ag-spectrum-sat ag-spectrum-fill\">\n                    <div ref=\"spectrumVal\" class=\"ag-spectrum-val ag-spectrum-fill\">\n                        <div ref=\"spectrumDragger\" class=\"ag-spectrum-dragger\"></div>\n                    </div>\n                </div>\n            </div>\n            <div class=\"ag-spectrum-tools\">\n                <div ref=\"spectrumHue\" class=\"ag-spectrum-hue ag-spectrum-tool\">\n                    <div class=\"ag-spectrum-hue-background\"></div>\n                    <div ref=\"spectrumHueSlider\" class=\"ag-spectrum-slider\"></div>\n                </div>\n                <div ref=\"spectrumAlpha\" class=\"ag-spectrum-alpha ag-spectrum-tool\">\n                    <div class=\"ag-spectrum-alpha-background\"></div>\n                    <div ref=\"spectrumAlphaSlider\" class=\"ag-spectrum-slider\"></div>\n                </div>\n                <div ref=\"recentColors\" class=\"ag-recent-colors\"></div>\n            </div>\n        </div>";
+    AgColorPanel.TEMPLATE = "<div class=\"ag-color-panel\" tabindex=\"-1\">\n            <div ref=\"spectrumColor\" class=\"ag-spectrum-color\">\n                <div class=\"ag-spectrum-sat ag-spectrum-fill\">\n                    <div ref=\"spectrumVal\" class=\"ag-spectrum-val ag-spectrum-fill\">\n                        <div ref=\"spectrumDragger\" class=\"ag-spectrum-dragger\"></div>\n                    </div>\n                </div>\n            </div>\n            <div class=\"ag-spectrum-tools\">\n                <div ref=\"spectrumHue\" class=\"ag-spectrum-hue ag-spectrum-tool\">\n                    <div class=\"ag-spectrum-hue-background\"></div>\n                    <div ref=\"spectrumHueSlider\" class=\"ag-spectrum-slider\"></div>\n                </div>\n                <div ref=\"spectrumAlpha\" class=\"ag-spectrum-alpha ag-spectrum-tool\">\n                    <div class=\"ag-spectrum-alpha-background\"></div>\n                    <div ref=\"spectrumAlphaSlider\" class=\"ag-spectrum-slider\"></div>\n                </div>\n                <div ref=\"recentColors\" class=\"ag-recent-colors\"></div>\n            </div>\n        </div>";
     __decorate([
         core_1.RefSelector('spectrumColor')
     ], AgColorPanel.prototype, "spectrumColor", void 0);
