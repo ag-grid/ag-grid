@@ -375,11 +375,11 @@ export class ColumnModel extends BeanStub {
         this.ready = true;
 
         // if we are showing secondary columns, then no need to update grid columns
-        // at this point, as it's the pivot service responsibility to change these
+        // unless the auto column needs rebuilt, as it's the pivot service responsibility to change these
         // if we are no longer pivoting (ie and need to revert back to primary, otherwise
         // we shouldn't be touching the primary).
         const gridColsNotProcessed = this.gridColsArePrimary === undefined;
-        const processGridCols = this.gridColsArePrimary || gridColsNotProcessed;
+        const processGridCols = this.gridColsArePrimary || gridColsNotProcessed || this.autoGroupsNeedBuilding;
 
         if (processGridCols) {
             this.updateGridColumns();
