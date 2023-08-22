@@ -325,10 +325,9 @@ export class GridOptionsService {
             return this.environment.getDefaultRowHeight();
         }
 
-        const rowHeight = this.gridOptions.rowHeight;
+        const rowHeight = this.environment.refreshRowHeightVariable();
 
-        if (rowHeight && this.isNumeric(rowHeight)) {
-            this.environment.setRowHeightVariable(rowHeight);
+        if (rowHeight !== -1) {
             return rowHeight;
         }
 

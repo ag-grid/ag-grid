@@ -217,13 +217,20 @@ export class Environment extends BeanStub {
         return this.getFromTheme(20, 'listItemHeight');
     }
 
-    public setRowHeightVariable(height: number): void {
+    public refreshRowHeightVariable(): number {
         const oldRowHeight = this.eGridDiv.style.getPropertyValue('--ag-line-height').trim();
+        const height = this.gridOptionsService.getNum('rowHeight');
+
+        if (height == null || isNaN(height) || !isFinite(height)) { return -1; }
+
         const newRowHeight = `${height}px`;
 
         if (oldRowHeight != newRowHeight) {
             this.eGridDiv.style.setProperty('--ag-line-height', newRowHeight);
+            return height;
         }
+
+        return oldRowHeight != '' ? parseFloat(oldRowHeight) : -1;
     }
 
     public getMinColWidth(): number {
