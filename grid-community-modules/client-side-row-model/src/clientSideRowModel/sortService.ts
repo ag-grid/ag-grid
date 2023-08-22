@@ -55,10 +55,15 @@ export class SortService extends BeanStub {
             // It's pointless to sort rows which aren't being displayed. in pivot mode we don't need to sort the leaf group children.
             const skipSortingPivotLeafs = isPivotMode && rowNode.leafGroup;
 
+            const hasGroupChild = (rowNode.childrenAfterAggFilter?.map(child => child.group).filter(isGroup => isGroup) ?? []).length > 0;
+            const hasNonGroupChild = (rowNode.childrenAfterAggFilter?.map(child => child.group).filter(isGroup => !isGroup) ?? []).length > 0;
+            const unbalanced = hasGroupChild && hasNonGroupChild
+            const groupMaintainOrderAndBalanced = groupMaintainOrder && !unbalanced;
+
             // Javascript sort is non deterministic when all the array items are equals, ie Comparator always returns 0,
             // so to ensure the array keeps its order, add an additional sorting condition manually, in this case we
             // are going to inspect the original array position. This is what sortedRowNodes is for.
-            let skipSortingGroups = groupMaintainOrder && groupColumnsPresent && !rowNode.leafGroup && !sortContainsGroupColumns;
+            let skipSortingGroups = groupMaintainOrderAndBalanced && groupColumnsPresent && !rowNode.leafGroup && !sortContainsGroupColumns;
             if (skipSortingGroups) {
                 const childrenToBeSorted = rowNode.childrenAfterAggFilter!.slice(0);
                 if (rowNode.childrenAfterSort) {
