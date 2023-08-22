@@ -55,15 +55,12 @@ export class SortService extends BeanStub {
             // It's pointless to sort rows which aren't being displayed. in pivot mode we don't need to sort the leaf group children.
             const skipSortingPivotLeafs = isPivotMode && rowNode.leafGroup;
 
-            const hasGroupChild = (rowNode.childrenAfterAggFilter?.map(child => child.group).filter(isGroup => isGroup) ?? []).length > 0;
-            const hasNonGroupChild = (rowNode.childrenAfterAggFilter?.map(child => child.group).filter(isGroup => !isGroup) ?? []).length > 0;
-            const unbalanced = hasGroupChild && hasNonGroupChild
-            const groupMaintainOrderAndBalanced = groupMaintainOrder && !unbalanced;
-
+            const childrenUnbalanced = rowNode.areChildrenUnbalanced();
+            
             // Javascript sort is non deterministic when all the array items are equals, ie Comparator always returns 0,
             // so to ensure the array keeps its order, add an additional sorting condition manually, in this case we
             // are going to inspect the original array position. This is what sortedRowNodes is for.
-            let skipSortingGroups = groupMaintainOrderAndBalanced && groupColumnsPresent && !rowNode.leafGroup && !sortContainsGroupColumns;
+            let skipSortingGroups = groupMaintainOrder && !childrenUnbalanced && groupColumnsPresent && !rowNode.leafGroup && !sortContainsGroupColumns;
             if (skipSortingGroups) {
                 const childrenToBeSorted = rowNode.childrenAfterAggFilter!.slice(0);
                 if (rowNode.childrenAfterSort) {
@@ -81,6 +78,16 @@ export class SortService extends BeanStub {
                 rowNode.childrenAfterSort = this.doDeltaSort(rowNode, allDirtyNodes, changedPath!, sortOptions);
             } else {
                 rowNode.childrenAfterSort = this.rowNodeSorter.doFullSort(rowNode.childrenAfterAggFilter!, sortOptions);
+            }
+
+            // maintain groups position relative to unbalanced children for groupMaintainOrder situations
+            if (childrenUnbalanced && groupMaintainOrder) {
+                let nonGroupRowsInOrder = rowNode.childrenAfterSort.filter(row => !row.group);
+                let rowGroupsInOrder = rowNode.childrenAfterSort.filter(row => row.group);
+                const groupsFirstInitially = rowNode.childrenAfterAggFilter![0]?.group
+                rowNode.childrenAfterSort = (groupsFirstInitially)
+                    ? [...rowGroupsInOrder, ...nonGroupRowsInOrder]
+                    : [...nonGroupRowsInOrder, ...rowGroupsInOrder];
             }
 
             if (rowNode.sibling) {

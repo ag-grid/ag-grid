@@ -858,6 +858,12 @@ export class RowNode<TData = any> implements IEventEmitter, IRowNode<TData> {
         return this.__hasChildren;
     }
 
+    public areChildrenUnbalanced(): boolean {
+        const hasGroupChild = (this.childrenAfterAggFilter?.map(child => child.group).filter(isGroup => isGroup) ?? []).length > 0;
+        const hasNonGroupChild = (this.childrenAfterAggFilter?.map(child => child.group).filter(isGroup => !isGroup) ?? []).length > 0;
+        return hasGroupChild && hasNonGroupChild;
+    }
+
     public isEmptyRowGroupNode(): boolean | undefined {
         return this.group && missingOrEmpty(this.childrenAfterGroup);
     }
