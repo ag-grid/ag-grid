@@ -383,7 +383,7 @@ export class ColumnModel extends BeanStub {
 
         if (processGridCols) {
             this.updateGridColumns();
-            if (colsPreviouslyExisted && !this.gridOptionsService.is('maintainColumnOrder')) {
+            if (colsPreviouslyExisted && this.gridColsArePrimary && !this.gridOptionsService.is('maintainColumnOrder')) {
                 this.orderGridColumnsLikePrimary();
             }
             this.updateDisplayedColumns(source);
