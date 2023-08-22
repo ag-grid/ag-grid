@@ -378,18 +378,19 @@ export class LazyCache extends BeanStub {
         // if node already exists, update it or destroy it
         if (lazyNode) {
             const { node } = lazyNode;
-            this.nodesToRefresh.delete(node);
             node.__needsRefreshWhenVisible = false;
 
             // if the node is the same, just update the content
             if (this.doesNodeMatch(data, node)) {
                 this.blockUtils.updateDataIntoRowNode(node, data);
+                this.nodesToRefresh.delete(node);
                 return node;
             }
 
             // if there's no id and this is an open group, protect this node from changes
             // hasChildren also checks for tree data and master detail
             if (this.getRowIdFunc == null && node.hasChildren() && node.expanded) {
+                this.nodesToRefresh.delete(node);
                 return node;
             }
 
@@ -527,7 +528,6 @@ export class LazyCache extends BeanStub {
         this.nodeMap.delete(lazyNode);
         
         this.nodeDisplayIndexMap.delete(lazyNode.node.rowIndex!);
-        this.nodesToRefresh.delete(lazyNode.node);
         
         if (lazyNode.node.hasChildren() && this.nodesToRefresh.size > 0) {
             // while refreshing, we retain the group nodes so they can be moved
@@ -536,6 +536,8 @@ export class LazyCache extends BeanStub {
         } else {
             this.blockUtils.destroyRowNode(lazyNode.node);
         }
+
+        this.nodesToRefresh.delete(lazyNode.node);
     }
 
     public getSsrmParams() {
