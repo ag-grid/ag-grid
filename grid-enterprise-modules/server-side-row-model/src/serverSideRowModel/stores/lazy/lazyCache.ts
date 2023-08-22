@@ -388,7 +388,8 @@ export class LazyCache extends BeanStub {
             }
 
             // if there's no id and this is an open group, protect this node from changes
-            if (this.getRowIdFunc == null && node.group && node.expanded) {
+            // hasChildren also checks for tree data and master detail
+            if (this.getRowIdFunc == null && node.hasChildren() && node.expanded) {
                 return node;
             }
 
@@ -528,7 +529,7 @@ export class LazyCache extends BeanStub {
         this.nodeDisplayIndexMap.delete(lazyNode.node.rowIndex!);
         this.nodesToRefresh.delete(lazyNode.node);
         
-        if (lazyNode.node.group && this.nodesToRefresh.size > 0) {
+        if (lazyNode.node.hasChildren() && this.nodesToRefresh.size > 0) {
             // while refreshing, we retain the group nodes so they can be moved
             // without losing state
             this.removedNodeCache.set(lazyNode.node.id!, lazyNode.node);
