@@ -63,43 +63,6 @@ const populateDevFolder = () => {
     );
 };
 
-const populateDevFolderDocs = (done) => {
-    console.log("Populating dev folder with modules...");
-
-    const createCopyTask = (source, destination) => {
-        const barrelPrefix = destination.includes('/') ? destination.split('/')[0] : '';
-        fs.mkdirpSync(`${publicFolder}/${DEV_DIR}/${barrelPrefix}`);
-        fs.symlinkSync(`${barrelPrefix ? '../' : ''}../../../${source}`, `${publicFolder}/${DEV_DIR}/${destination}`)
-    };
-
-     const moduleCopyTasks = gridCommunityModules
-        .concat(gridEnterpriseModules)
-        .concat(chartCommunityModules)
-        .concat(chartEnterpriseModules)
-        .map(module => createCopyTask(`${module.rootDir}`, module.publishedName));
-
-    const react = createCopyTask('../../grid-community-modules/react', '@ag-grid-community/react');
-    const angular = createCopyTask('../../grid-community-modules/angular/dist/ag-grid-angular', '@ag-grid-community/angular');
-    const vue = createCopyTask('../../grid-community-modules/vue', '@ag-grid-community/vue');
-    const vue3 = createCopyTask('../../grid-community-modules/vue3', '@ag-grid-community/vue3');
-
-    const styles = createCopyTask('../../grid-community-modules/styles', '@ag-grid-community/styles');
-
-    const chartReact = createCopyTask('../../charts-community-modules/ag-charts-react', 'ag-charts-react');
-    const chartAngular = createCopyTask('../../charts-community-modules/ag-charts-angular/dist/ag-charts-angular', 'ag-charts-angular');
-    const chartVue = createCopyTask('../../charts-community-modules/ag-charts-vue', 'ag-charts-vue');
-    const chartVue3 = createCopyTask('../../charts-community-modules/ag-charts-vue3', 'ag-charts-vue3');
-
-    const packageCommunity = createCopyTask('../../grid-packages/ag-grid-community', 'ag-grid-community');
-    const packageEnterprise = createCopyTask('../../grid-packages/ag-grid-enterprise', 'ag-grid-enterprise');
-    const packageAngular = createCopyTask('../../grid-packages/ag-grid-angular/dist/ag-grid-angular', 'ag-grid-angular');
-    const packageReact = createCopyTask('../../grid-packages/ag-grid-react', 'ag-grid-react');
-    const packageVue = createCopyTask('../../grid-packages/ag-grid-vue', 'ag-grid-vue');
-    const packageVue3 = createCopyTask('../../grid-packages/ag-grid-vue3', 'ag-grid-vue3');
-
-    done();
-};
-
 const processSource = () => {
     // the below caused errors if we tried to copy in from ag-grid and ag-grid-enterprise linked folders
     const phpFilter = filter('**/*.php', { restore: true });
@@ -220,7 +183,6 @@ gulp.task('generate-chart-examples', generateChartExamples.bind(null, '*', null)
 
 gulp.task('clean-dist', () => fs.remove(distFolder));
 gulp.task('populate-dev-folder', populateDevFolder);
-gulp.task('populate-dev-folder-docs', populateDevFolderDocs);
 gulp.task('process-src', processSource);
 gulp.task('process-src-docs', processSourceDocs);
 gulp.task('copy-from-dist', copyFromDistFolder);
@@ -229,7 +191,7 @@ gulp.task('copy-prod-webserver-files', copyProdWebServerFilesToDist);
 gulp.task('copy-documentation-website', copyDocumentationWebsite);
 gulp.task('generate-all-examples', series('generate-grid-examples', 'generate-chart-examples'));
 gulp.task('release-archive', series('clean-dist', 'process-src', 'copy-from-dist', 'copy-documentation-website', 'populate-dev-folder'));
-gulp.task('release-archive-docs', series('process-src-docs', 'copy-from-dist-docs', 'populate-dev-folder-docs'));
+gulp.task('release-archive-docs', series('process-src-docs', 'copy-from-dist-docs', 'populate-dev-folder'));
 gulp.task('release', series('clean-dist', 'process-src', 'copy-from-dist', 'copy-documentation-website', 'copy-prod-webserver-files'));
 gulp.task('default', series('release'));
 gulp.task('serve-dist', serveDist);
