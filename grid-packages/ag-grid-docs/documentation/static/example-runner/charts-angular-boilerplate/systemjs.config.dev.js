@@ -97,6 +97,9 @@
                 main: './dist/ag-charts-enterprise.cjs.js',
                 defaultExtension: 'js'
             },
+            '@ag-grid-community/core': {
+                format: 'cjs'
+            },
             rxjs: {
                 defaultExtension: false
             }

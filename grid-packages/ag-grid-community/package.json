@@ -8,7 +8,9 @@
     "clean": "rimraf dist main.d.ts src/styles .hash",
     "build": "npm run customise && npx gulp build && npm run rollup",
     "build-prod": "npm run build",
+    "build-new": "npm run customise && npx gulp build-new && npm run rollup",
     "package": "npx gulp package",
+    "package-new": "npx gulp package",
     "customise": "node customise.js",
     "rollup": "mkdir -p dist && node build.js"
   },

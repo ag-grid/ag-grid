@@ -10,6 +10,7 @@ const merge = require('merge2');
 const pkg = require('./package.json');
 const replace = require('gulp-replace');
 const rename = require('gulp-rename');
+const del = require("del");
 
 const headerTemplate = ['/**',
     ' * <%= pkg.name %> - <%= pkg.description %>',
@@ -137,7 +138,25 @@ const watchAndBuildBoth = () => {
     return gulp.watch(['./src/ts/**/*.ts'], parallel[tscSrcCjsEs5Task, tscSrcEsModulesEs5Task]);
 };
 
-// End of Typescript related tasks
+const DIST_FOLDER = 'dist/esm/es6/';
+
+const mjsProcessing = () => {
+    return gulp
+        .src(['dist/esm/es6/**/*.js', '!dist/esm/es6/**/*.map'])
+        .pipe(replace(/(import|export)(.*['"]\..*)(['"].*)/gi, (line) => {
+            if (line.startsWith("import") && (line.endsWith('./utils";') || line.endsWith('./utils\';'))) {
+                return line.replace('./utils', './utils/index.mjs');
+            }
+
+            const regexp = /(import|export)(.*['"]\..*)(['"].*)/gi;
+            const matches = [...line.matchAll(regexp)][0];
+            return `${matches[1]}${matches[2]}.mjs${matches[3]}`
+        }))
+        .pipe(rename({ extname: '.mjs' }))
+        .pipe(gulp.dest(DIST_FOLDER));
+}
+
+const cleanup = () => del([`${DIST_FOLDER}/**/*.js`]);
 
 // Typescript related tasks
 gulp.task('clean', cleanDist);
@@ -155,6 +174,7 @@ gulp.task('tsc-watch', series('tsc-no-clean', watchAndBuildBoth));
 gulp.task('tsc-clean', series('clean', 'tsc-no-clean'));
 gulp.task('tsc-clean-prod', parallel('clean', 'tsc-no-clean-prod'));
 gulp.task('tsc-no-clean', parallel('tsc-no-clean'));
+gulp.task('mjs-processing', series(mjsProcessing, cleanup));
 
 // default/release task
 gulp.task('default', series('tsc-clean'));

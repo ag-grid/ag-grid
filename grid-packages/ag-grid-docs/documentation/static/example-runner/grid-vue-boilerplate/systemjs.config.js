@@ -38,6 +38,9 @@
             app: {
                 defaultExtension: 'js'
             },
+            '@ag-grid-community/core': {
+                format: 'cjs'
+            },
             'ag-grid-vue': {
                 main: './lib/AgGridVue.js',
                 defaultExtension: 'js'

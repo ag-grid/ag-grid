@@ -21,7 +21,8 @@
     "webpack-updater": "NODE_OPTIONS=--openssl-legacy-provider node webpackUpdater.js",
     "webpack-build": "NODE_OPTIONS=--openssl-legacy-provider ./node_modules/.bin/gulp webpack-all-no-clean",
     "rollup": "node ../../module-build/rollup/build.js --bundlePrefix ag-grid-community --esmType autoRegister",
-    "package": "npm run webpack-updater && npm run webpack-build && npm run rollup"
+    "package": "npm run webpack-updater && npm run webpack-build && npm run rollup",
+    "package-new": "npm run webpack-updater && NODE_OPTIONS=--openssl-legacy-provider npx gulp webpack-docs && AG_CJS_GENERATION_ONLY=true npm run rollup"
   },
   "repository": {
     "type": "git",

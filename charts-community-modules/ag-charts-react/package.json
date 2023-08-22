@@ -8,6 +8,7 @@
     "clean": "rimraf lib umd .hash",
     "build": "npx gulp",
     "build-prod": "npm run build",
+    "build-docs-initial": "npm run build",
     "umd": "npx rollup -c",
     "test": "npx jest --passWithNoTests"
   },

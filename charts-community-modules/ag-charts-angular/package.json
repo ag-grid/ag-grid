@@ -7,6 +7,7 @@
     "build": "ng build",
     "build-docs": "npm run build",
     "build-prod": "npm run build",
+    "build-docs-initial": "npm run build",
     "test:e2e": "NODE_OPTIONS=--openssl-legacy-provider ng test --watch false --browsers ChromeHeadless",
     "lint": "ng lint"
   },

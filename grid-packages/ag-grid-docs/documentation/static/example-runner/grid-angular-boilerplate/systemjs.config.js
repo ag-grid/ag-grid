@@ -114,6 +114,9 @@
                     }
                 }
             },
+            '@ag-grid-community/core': {
+                format: 'cjs'
+            },
             'ag-grid-angular': {
                 main: './fesm2015/ag-grid-angular.js',
                 defaultExtension: 'js'

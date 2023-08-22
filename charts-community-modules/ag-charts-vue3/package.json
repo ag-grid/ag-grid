@@ -28,6 +28,7 @@
     "npm": "npx tsc -p tsconfig-lib.json",
     "build": "echo \"module.exports = require('./build')\" > ./node_modules/vue-template-compiler/index.js && npm run npm && npm run bundle",
     "build-prod": "npm run build",
+    "build-docs-initial": "npm run build",
     "lint": "npx vue-cli-service lint"
   },
   "devDependencies": {

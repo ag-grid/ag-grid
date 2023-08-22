@@ -12,8 +12,11 @@
     "build-cjs-prod": "npx tsc -p tsconfig.cjs.es5.json --sourceMap false && npx tsc -p tsconfig.cjs.es6.json --sourceMap false",
     "build-esm-prod": "npx tsc -p tsconfig.esm.es5.json --sourceMap false && npx tsc -p tsconfig.esm.es6.json --sourceMap false",
     "package": "node ../../module-build/rollup/build.js",
-    "build": "npm run build-cjs && npm run build-esm && npx tsc -p tsconfig.typings.json && npx gulp mjs-processing",
-    "build-prod": "npm run build-cjs-prod && npm run build-esm-prod && npx tsc -p tsconfig.typings.json --sourceMap false && npx gulp mjs-processing"
+    "package-new": "../../module-build/esbuild/bundle.sh",
+    "build": "npm run build-cjs && npm run build-esm && npm run typings && npm run mjs-processing",
+    "build-prod": "npm run build-cjs-prod && npm run build-esm-prod && npm run typings --sourceMap false && npm run mjs-processing",
+    "typings": "npx tsc -p tsconfig.typings.json",
+    "mjs-processing": "npx gulp mjs-processing"
   },
   "repository": {
     "type": "git",

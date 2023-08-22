@@ -17,6 +17,7 @@ const { generateGridExamples, generateChartExamples } = require('./example-gener
 const SKIP_INLINE = true;
 const DEV_DIR = 'dev';
 const distFolder = './dist';
+const publicFolder = './documentation/public';
 
 const { gridCommunityModules, gridEnterpriseModules, chartCommunityModules, chartEnterpriseModules } = getAllModules();
 
@@ -25,7 +26,7 @@ const populateDevFolder = () => {
     console.log("Populating dev folder with modules...");
 
     const createCopyTask = (source, cwd, destination) => gulp
-        .src([source, '!node_modules/**/*', '!src/**/*', '!cypress/**/*'], { cwd })
+        .src([source, '!node_modules/**/*', '!src/**/*', '!cypress/**/*', '!typings/**/*', '!**/test/**/*'], { cwd })
         .pipe(gulp.dest(`${distFolder}/${DEV_DIR}/${destination}`));
 
     const moduleCopyTasks = gridCommunityModules
@@ -60,6 +61,43 @@ const populateDevFolder = () => {
         chartReact, chartAngular, chartVue, chartVue3,
         packageCommunity, packageEnterprise, packageAngular, packageReact, packageVue, packageVue3
     );
+};
+
+const populateDevFolderDocs = (done) => {
+    console.log("Populating dev folder with modules...");
+
+    const createCopyTask = (source, destination) => {
+        const barrelPrefix = destination.includes('/') ? destination.split('/')[0] : '';
+        fs.mkdirpSync(`${publicFolder}/${DEV_DIR}/${barrelPrefix}`);
+        fs.symlinkSync(`${barrelPrefix ? '../' : ''}../../../${source}`, `${publicFolder}/${DEV_DIR}/${destination}`)
+    };
+
+     const moduleCopyTasks = gridCommunityModules
+        .concat(gridEnterpriseModules)
+        .concat(chartCommunityModules)
+        .concat(chartEnterpriseModules)
+        .map(module => createCopyTask(`${module.rootDir}`, module.publishedName));
+
+    const react = createCopyTask('../../grid-community-modules/react', '@ag-grid-community/react');
+    const angular = createCopyTask('../../grid-community-modules/angular/dist/ag-grid-angular', '@ag-grid-community/angular');
+    const vue = createCopyTask('../../grid-community-modules/vue', '@ag-grid-community/vue');
+    const vue3 = createCopyTask('../../grid-community-modules/vue3', '@ag-grid-community/vue3');
+
+    const styles = createCopyTask('../../grid-community-modules/styles', '@ag-grid-community/styles');
+
+    const chartReact = createCopyTask('../../charts-community-modules/ag-charts-react', 'ag-charts-react');
+    const chartAngular = createCopyTask('../../charts-community-modules/ag-charts-angular/dist/ag-charts-angular', 'ag-charts-angular');
+    const chartVue = createCopyTask('../../charts-community-modules/ag-charts-vue', 'ag-charts-vue');
+    const chartVue3 = createCopyTask('../../charts-community-modules/ag-charts-vue3', 'ag-charts-vue3');
+
+    const packageCommunity = createCopyTask('../../grid-packages/ag-grid-community', 'ag-grid-community');
+    const packageEnterprise = createCopyTask('../../grid-packages/ag-grid-enterprise', 'ag-grid-enterprise');
+    const packageAngular = createCopyTask('../../grid-packages/ag-grid-angular/dist/ag-grid-angular', 'ag-grid-angular');
+    const packageReact = createCopyTask('../../grid-packages/ag-grid-react', 'ag-grid-react');
+    const packageVue = createCopyTask('../../grid-packages/ag-grid-vue', 'ag-grid-vue');
+    const packageVue3 = createCopyTask('../../grid-packages/ag-grid-vue3', 'ag-grid-vue3');
+
+    done();
 };
 
 const processSource = () => {
@@ -101,11 +139,57 @@ const processSource = () => {
     );
 };
 
+const processSourceDocs = () => {
+    // the below caused errors if we tried to copy in from ag-grid and ag-grid-enterprise linked folders
+    const phpFilter = filter('**/*.php', { restore: true });
+    const bootstrapFilter = filter('src/dist/bootstrap/css/bootstrap.css', {
+        restore: true
+    });
+
+    const uncssPipe = [
+        uncss({
+            html: ['src/**/*.php', 'src/**/*.html'],
+            ignore: ['.nav-pills > li.active > a', '.nav-pills > li.active > a:hover', '.nav-pills > li.active > a:focus']
+        })
+    ];
+
+    return (
+        gulp
+            .src([
+                './src/**/*',
+                '!./src/dist/ag-grid-community/',
+                '!./src/dist/ag-grid-enterprise/',
+                '!./src/dist/@ag-grid-community/',
+                '!./src/dist/@ag-grid-enterprise/',
+                `!${DEV_DIR}`
+            ])
+            // inline the PHP part
+            .pipe(phpFilter)
+            // .pipe(debug())
+            .pipe(inlinesource())
+            // .pipe(debug())
+            .pipe(phpFilter.restore)
+            // do uncss
+            .pipe(bootstrapFilter)
+            // .pipe(debug())
+            .pipe(gulpIf(!SKIP_INLINE, postcss(uncssPipe)))
+            .pipe(bootstrapFilter.restore)
+            .pipe(gulp.dest(publicFolder))
+    );
+};
+
 const copyFromDistFolder = () => merge(
     gulp.src(['../../grid-community-modules/all-modules/dist/ag-grid-community.js']).pipe(gulp.dest(`${distFolder}/@ag-grid-community/all-modules/dist/`)),
     gulp
         .src(['../../grid-enterprise-modules/all-modules/dist/ag-grid-enterprise.js', '../../grid-enterprise-modules/all-modules/dist/ag-grid-enterprise.min.js'])
         .pipe(gulp.dest(`${distFolder}/@ag-grid-enterprise/all-modules/dist/`))
+);
+
+const copyFromDistFolderDocs = () => merge(
+    gulp.src(['../../grid-community-modules/all-modules/dist/ag-grid-community.js']).pipe(gulp.dest(`${publicFolder}/@ag-grid-community/all-modules/dist/`)),
+    gulp
+        .src(['../../grid-enterprise-modules/all-modules/dist/ag-grid-enterprise.js', '../../grid-enterprise-modules/all-modules/dist/ag-grid-enterprise.min.js'])
+        .pipe(gulp.dest(`${publicFolder}/@ag-grid-enterprise/all-modules/dist/`))
 );
 
 const copyProdWebServerFilesToDist = () => gulp.src([
@@ -136,12 +220,16 @@ gulp.task('generate-chart-examples', generateChartExamples.bind(null, '*', null)
 
 gulp.task('clean-dist', () => fs.remove(distFolder));
 gulp.task('populate-dev-folder', populateDevFolder);
+gulp.task('populate-dev-folder-docs', populateDevFolderDocs);
 gulp.task('process-src', processSource);
+gulp.task('process-src-docs', processSourceDocs);
 gulp.task('copy-from-dist', copyFromDistFolder);
+gulp.task('copy-from-dist-docs', copyFromDistFolderDocs);
 gulp.task('copy-prod-webserver-files', copyProdWebServerFilesToDist);
 gulp.task('copy-documentation-website', copyDocumentationWebsite);
 gulp.task('generate-all-examples', series('generate-grid-examples', 'generate-chart-examples'));
 gulp.task('release-archive', series('clean-dist', 'process-src', 'copy-from-dist', 'copy-documentation-website', 'populate-dev-folder'));
+gulp.task('release-archive-docs', series('process-src-docs', 'copy-from-dist-docs', 'populate-dev-folder-docs'));
 gulp.task('release', series('clean-dist', 'process-src', 'copy-from-dist', 'copy-documentation-website', 'copy-prod-webserver-files'));
 gulp.task('default', series('release'));
 gulp.task('serve-dist', serveDist);

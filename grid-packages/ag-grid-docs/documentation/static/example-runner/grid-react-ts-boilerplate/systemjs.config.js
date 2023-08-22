@@ -62,6 +62,9 @@
                 main: './index.tsx',
                 defaultExtension: 'tsx',
             },
+            '@ag-grid-community/core': {
+                format: 'cjs'
+            },
             'ag-grid-react': {
                 main: './lib/main.js',
                 defaultExtension: 'js'

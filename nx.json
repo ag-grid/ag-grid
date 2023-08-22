@@ -8,6 +8,7 @@
           "build-docs",
           "build-prod",
           "package",
+          "package-new",
           "build-docs-initial",
           "generate-doc-files",
           "build-css",
@@ -31,6 +32,11 @@
     "package": {
       "dependsOn": [
         "^package"
+      ]
+    },
+    "package-new": {
+      "dependsOn": [
+        "^package-new"
       ]
     }
   }

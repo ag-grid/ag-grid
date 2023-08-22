@@ -173,6 +173,7 @@ gulp.task('tsc', series('clean', 'tsc-no-clean'));
 
 // build tasks
 gulp.task('build', series('tsc', 'copy-grid-core-styles', 'copy-core-typings', 'copy-and-concat-typings-main'));
+gulp.task('build-new', series('tsc', 'copy-grid-core-styles', 'copy-and-concat-typings-main'));
 
 // default/release task
 gulp.task('default', series('build'));
