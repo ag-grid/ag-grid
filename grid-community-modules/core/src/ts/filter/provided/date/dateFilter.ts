@@ -52,6 +52,18 @@ export interface IDateFilterParams extends IScalarFilterParams {
     /** This is the maximum year that may be entered in a date field for the value to be considered valid. Default is no restriction. */
     maxValidYear?: number;
     /**
+     * The minimum valid date that can be entered in the filter.
+     * It can be a Date object or a string in the format `YYYY-MM-DD`.
+     * If set, this will override `minValidYear` - the minimum valid year setting.
+     */
+    minValidDate?: Date | string;
+    /**
+     * The maximum valid date that can be entered in the filter.
+     * It can be a Date object or a string in the format `YYYY-MM-DD`.
+     * If set, this will override `maxValidYear` - the maximum valid year setting.
+     */
+    maxValidDate?: Date | string;
+    /**
      * Defines the date format for the floating filter text when an in range filter has been applied.
      *
      * Default: `YYYY-MM-DD`
@@ -126,6 +138,8 @@ export class DateFilter extends ScalarFilter<DateFilterModel, Date, DateCompWrap
     private dateFilterParams: DateFilterParams;
     private minValidYear: number = DEFAULT_MIN_YEAR;
     private maxValidYear: number = DEFAULT_MAX_YEAR;
+    private minValidDate: Date | null = null;
+    private maxValidDate: Date | null = null;
     private filterModelFormatter: DateFilterModelFormatter;
 
     constructor() {
@@ -184,11 +198,28 @@ export class DateFilter extends ScalarFilter<DateFilterModel, Date, DateCompWrap
 
             return fallback;
         };
+
         this.minValidYear = yearParser('minValidYear', DEFAULT_MIN_YEAR);
         this.maxValidYear = yearParser('maxValidYear', DEFAULT_MAX_YEAR);
 
         if (this.minValidYear > this.maxValidYear) {
             console.warn(`AG Grid: DateFilter minValidYear should be <= maxValidYear`);
+        }
+
+        if (params.minValidDate) {
+            this.minValidDate = params.minValidDate instanceof Date ? params.minValidDate : parseDateTimeFromString(params.minValidDate);
+        } else {
+            this.minValidDate = null;
+        }
+
+        if (params.maxValidDate) {
+            this.maxValidDate = params.maxValidDate instanceof Date ? params.maxValidDate : parseDateTimeFromString(params.maxValidDate);
+        } else {
+            this.maxValidDate = null;
+        }
+
+        if (this.minValidDate && this.maxValidDate && this.minValidDate > this.maxValidDate) {
+            console.warn(`AG Grid: DateFilter minValidDate should be <= maxValidDate`);
         }
 
         this.filterModelFormatter = new DateFilterModelFormatter(this.dateFilterParams, this.localeService, this.optionsFactory);
@@ -254,22 +285,46 @@ export class DateFilter extends ScalarFilter<DateFilterModel, Date, DateCompWrap
         const removedComponents = this.removeItems(components, startPosition, deleteCount);
         removedComponents.forEach(comp => comp.destroy());
     }
+    
+    private isValidDateValue(value: Date | null): boolean {
+        if (value === null) {
+            return false;
+        }
+
+        if (this.minValidDate) {
+            if (value < this.minValidDate) {
+                return false;
+            }
+        } else {
+            if (value.getUTCFullYear() < this.minValidYear) {
+                return false;
+            }
+        }
+
+        if (this.maxValidDate) {
+            if (value > this.maxValidDate) {
+                return false;
+            }
+        } else {
+            if (value.getUTCFullYear() > this.maxValidYear) {
+                return false;
+            }
+        }
+
+        return true;
+    };
 
     protected isConditionUiComplete(position: number): boolean {
         if (!super.isConditionUiComplete(position)) {
             return false;
         }
 
-        const isValidDate = (value: Date | null) => value != null
-            && value.getUTCFullYear() >= this.minValidYear
-            && value.getUTCFullYear() <= this.maxValidYear;
-
         let valid = true;
         this.forEachInput((element, index, elPosition, numberOfInputs) => {
             if (elPosition !== position || !valid || index >= numberOfInputs) {
                 return;
             }
-            valid = valid && isValidDate(element.getDate());
+            valid = valid && this.isValidDateValue(element.getDate());
         });
 
         return valid;
