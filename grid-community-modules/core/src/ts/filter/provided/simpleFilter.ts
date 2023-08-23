@@ -816,7 +816,7 @@ export abstract class SimpleFilter<M extends ISimpleFilterModel, V, E = AgInputT
         });
     }
 
-    protected setElementValue(element: E, value: V | null): void {
+    protected setElementValue(element: E, value: V | null, fromFloatingFilter?: boolean): void {
         if (element instanceof AgAbstractInputField) {
             element.setValue(value != null ? String(value) : null, true);
         }
@@ -994,7 +994,7 @@ export abstract class SimpleFilter<M extends ISimpleFilterModel, V, E = AgInputT
     // (as that's where value is controlled), the 'type' part from the floating filter is dealt with in this class.
     private setValueFromFloatingFilter(value: V | null): void {
         this.forEachInput((element, index, position, _) => {
-            this.setElementValue(element, index === 0 && position === 0 ? value : null);
+            this.setElementValue(element, index === 0 && position === 0 ? value : null, true);
         });
     }
 
