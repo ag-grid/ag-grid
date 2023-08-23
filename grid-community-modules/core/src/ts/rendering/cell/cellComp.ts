@@ -100,19 +100,23 @@ export class CellComp extends Component implements TooltipParentComp {
             addOrRemoveCssClass: (cssClassName, on) => this.addOrRemoveCssClass(cssClassName, on),
             setUserStyles: (styles: CellStyle) => addStylesToElement(eGui, styles),
             getFocusableElement: () => this.getFocusableElement(),
-            
+
             setIncludeSelection: include => this.includeSelection = include,
             setIncludeRowDrag: include => this.includeRowDrag = include,
             setIncludeDndSource: include => this.includeDndSource = include,
 
-            setRenderDetails: (compDetails, valueToDisplay, force) =>
-                this.setRenderDetails(compDetails, valueToDisplay, force),
-            setEditDetails: (compDetails, popup, position) =>
-                this.setEditDetails(compDetails, popup, position),
+            setRenderDetails: (compDetails, valueToDisplay, force) => this.setRenderDetails(compDetails, valueToDisplay, force),
+            setEditDetails: (compDetails, popup, position) => this.setEditDetails(compDetails, popup, position),
 
             getCellEditor: () => this.cellEditor || null,
             getCellRenderer: () => this.cellRenderer || null,
-            getParentOfValue: () => this.getParentOfValue()
+            getParentOfValue: () => this.getParentOfValue(),
+            setWidth: (width: string) => {
+                eGui.style.width = width;
+            },
+            setLeft: (left: string) => {
+                eGui.style.left = left;
+            }
         };
 
         cellCtrl.setComp(compProxy, this.getGui(), this.eCellWrapper, printLayout, editingRow);

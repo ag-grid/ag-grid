@@ -1,4 +1,4 @@
-import { CellCtrl } from "./cellCtrl";
+import { CellCtrl, ICellComp } from "./cellCtrl";
 import { Column } from "../../entities/column";
 import { areEqual, last } from "../../utils/array";
 import { Events } from "../../eventKeys";
@@ -25,6 +25,7 @@ export class CellPositionFeature extends BeanStub {
     private rowSpan: number;
 
     private beans: Beans;
+    comp: ICellComp;
 
     constructor(ctrl: CellCtrl, beans: Beans) {
         super();
@@ -43,8 +44,9 @@ export class CellPositionFeature extends BeanStub {
         this.rowSpan = this.column.getRowSpan(this.rowNode);
     }
 
-    public setComp(eGui: HTMLElement): void {
+    public setComp(eGui: HTMLElement, comp: ICellComp): void {
         this.eGui = eGui;
+        this.comp = comp;
         this.onLeftChanged();
         this.onWidthChanged();
         this.applyRowSpan();
@@ -78,7 +80,8 @@ export class CellPositionFeature extends BeanStub {
     public onWidthChanged(): void {
         if (!this.eGui) { return; }
         const width = this.getCellWidth();
-        this.eGui.style.width = `${width}px`;
+        //this.eGui.style.width = `${width}px`;
+        this.comp.setWidth(`${width}px`)
     }
 
     private getCellWidth(): number {
@@ -118,7 +121,8 @@ export class CellPositionFeature extends BeanStub {
     public onLeftChanged(): void {
         if (!this.eGui) { return; }
         const left = this.modifyLeftForPrintLayout(this.getCellLeft());
-        this.eGui.style.left = left + 'px';
+        //this.eGui.style.left = left + 'px';
+        this.comp.setLeft(`${left}px`);
     }
 
     private getCellLeft(): number | null {

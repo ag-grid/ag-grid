@@ -55,6 +55,9 @@ export interface ICellComp {
     setIncludeRowDrag(include: boolean): void;
     setIncludeDndSource(include: boolean): void;
 
+    setWidth(width: string): void;
+    setLeft(left: string): void;
+
     getCellEditor(): ICellEditor | null;
     getCellRenderer(): ICellRenderer | null;
     getParentOfValue(): HTMLElement | null;
@@ -235,7 +238,7 @@ export class CellCtrl extends BeanStub {
 
         this.setAriaColIndex();
 
-        this.cellPositionFeature?.setComp(eGui);
+        this.cellPositionFeature?.setComp(eGui, comp);
         this.cellCustomStyleFeature?.setComp(comp);
         this.tooltipFeature?.setComp(eGui);
         this.cellKeyboardListenerFeature?.setComp(this.eGui);

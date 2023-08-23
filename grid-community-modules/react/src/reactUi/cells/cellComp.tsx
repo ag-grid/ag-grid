@@ -146,6 +146,9 @@ const CellComp = (props: {
     const [renderKey, setRenderKey] = useState<number>(1);
 
     const [userStyles, setUserStyles] = useState<CellStyle>();
+    
+    const [left, setLeft] = useState<string>();
+    const [width, setWidth] = useState<string>();
 
     const [includeSelection, setIncludeSelection] = useState<boolean>(false);
     const [includeRowDrag, setIncludeRowDrag] = useState<boolean>(false);
@@ -337,6 +340,8 @@ const CellComp = (props: {
             getCellRenderer: () => cellRendererRef.current ? cellRendererRef.current : jsCellRendererRef.current,
             getParentOfValue: () => eCellValue.current ? eCellValue.current : eCellWrapper.current ? eCellWrapper.current : eGui.current,
 
+            setWidth,
+            setLeft,
             setRenderDetails: (compDetails, value, force) => {
                 setRenderDetails(prev => {
 
@@ -401,6 +406,17 @@ const CellComp = (props: {
         }
     });
 
+    const styles = useMemo(() => {
+        const styles: CellStyle = {...userStyles};
+        if (left != null) {
+            styles.left = left;
+        }
+        if (width != null) {
+            styles.width = width;
+        }
+        return styles;
+    }, [userStyles,left, width]);
+
 
     const showContents = () => (
         <>
@@ -431,7 +447,7 @@ const CellComp = (props: {
     return (
         <div
             ref={setRef}
-            style={ userStyles }
+            style={ styles }
             tabIndex={ tabIndex }
             role={'gridcell'}
             col-id={colId}
