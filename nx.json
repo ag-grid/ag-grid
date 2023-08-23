@@ -9,6 +9,8 @@
           "build-prod",
           "package",
           "package-new",
+          "mjs-processing",
+          "typings",
           "build-docs-initial",
           "generate-doc-files",
           "build-css",
