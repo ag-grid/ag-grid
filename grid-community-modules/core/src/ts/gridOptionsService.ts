@@ -2,7 +2,7 @@ import { ColumnApi } from "./columns/columnApi";
 import { ComponentUtil } from "./components/componentUtil";
 import { Autowired, Bean, PostConstruct, PreDestroy, Qualifier } from "./context/context";
 import { DomLayoutType, GridOptions } from "./entities/gridOptions";
-import { GetGroupAggFilteringParams, GetRowIdParams, RowHeightParams } from "./interfaces/iCallbackParams";
+import { GetGroupAggFilteringParams, GetGroupIncludeFooterParams, GetRowIdParams, RowHeightParams } from "./interfaces/iCallbackParams";
 import { Environment } from "./environment";
 import { AgEvent, Events } from "./events";
 import { EventService } from "./eventService";
@@ -437,6 +437,21 @@ export class GridOptionsService {
 
         return undefined;
     }
+
+    public getGroupIncludeFooter(): (params: WithoutGridCommon<GetGroupIncludeFooterParams>) => boolean{
+        const userValue = this.gridOptions.groupIncludeFooter;
+
+        if (typeof userValue === 'function') {
+            return this.getCallback('groupIncludeFooter' as any) as any;
+        }
+
+        if (isTrue(userValue)) {
+            return () => true; 
+        }
+
+        return () => false;
+    }
+
     public isGroupMultiAutoColumn() {
         if (this.gridOptions.groupDisplayType) {
             return matchesGroupDisplayType('multipleColumns', this.gridOptions.groupDisplayType);

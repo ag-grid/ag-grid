@@ -92,7 +92,7 @@ import { IRowDragItem } from "../rendering/row/rowDragComp";
 import { ILoadingCellRendererParams } from "../rendering/cellRenderers/loadingCellRenderer";
 import { CellPosition } from "./cellPositionUtils";
 import { ColDef, ColGroupDef, IAggFunc, SortDirection } from "./colDef";
-import { FillOperationParams, GetChartToolbarItemsParams, GetContextMenuItemsParams, GetGroupRowAggParams, GetLocaleTextParams, GetMainMenuItemsParams, GetRowIdParams, GetServerSideGroupLevelParamsParams, InitialGroupOrderComparatorParams, IsApplyServerSideTransactionParams, IsExternalFilterPresentParams, IsFullWidthRowParams, IsGroupOpenByDefaultParams, IsServerSideGroupOpenByDefaultParams, NavigateToNextCellParams, NavigateToNextHeaderParams, PaginationNumberFormatterParams, PostProcessPopupParams, PostSortRowsParams, ProcessDataFromClipboardParams, ProcessRowParams, RowHeightParams, SendToClipboardParams, TabToNextCellParams, TabToNextHeaderParams, GetGroupAggFilteringParams } from "../interfaces/iCallbackParams";
+import { FillOperationParams, GetChartToolbarItemsParams, GetContextMenuItemsParams, GetGroupRowAggParams, GetLocaleTextParams, GetMainMenuItemsParams, GetRowIdParams, GetServerSideGroupLevelParamsParams, InitialGroupOrderComparatorParams, IsApplyServerSideTransactionParams, IsExternalFilterPresentParams, IsFullWidthRowParams, IsGroupOpenByDefaultParams, IsServerSideGroupOpenByDefaultParams, NavigateToNextCellParams, NavigateToNextHeaderParams, PaginationNumberFormatterParams, PostProcessPopupParams, PostSortRowsParams, ProcessDataFromClipboardParams, ProcessRowParams, RowHeightParams, SendToClipboardParams, TabToNextCellParams, TabToNextHeaderParams, GetGroupAggFilteringParams, GetGroupIncludeFooterParams } from "../interfaces/iCallbackParams";
 import { SideBarDef } from "../interfaces/iSideBar";
 import { IRowNode } from "../interfaces/iRowNode";
 import { DataTypeDefinition } from "./dataType";
@@ -604,7 +604,7 @@ export interface GridOptions<TData = any> {
      * This is handy for 'total' rows, that are displayed below the data when the group is open, and alongside the group when it is closed.
      * Default: `false`
      */
-    groupIncludeFooter?: boolean;
+    groupIncludeFooter?: boolean | UseGroupFooter<TData>;
     /** Set to `true` to show a 'grand total' group footer across all groups. Default: `false` */
     groupIncludeTotalFooter?: boolean;
     /** If `true`, and showing footer, aggregate data will always be displayed at both the header and footer levels. This stops the possibly undesirable behaviour of the header details 'jumping' to the footer on expand. Default: `false` */
@@ -1220,6 +1220,11 @@ export interface IsServerSideGroup {
 export interface IsRowFilterable<TData = any> {
     (params: GetGroupAggFilteringParams<TData>): boolean;
 }
+
+export interface UseGroupFooter<TData = any> {
+    (params: GetGroupIncludeFooterParams<TData>): boolean;
+}
+
 export interface IsApplyServerSideTransaction {
     (params: IsApplyServerSideTransactionParams): boolean;
 }

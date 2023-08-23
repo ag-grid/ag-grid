@@ -226,3 +226,7 @@ export interface GetLocaleTextParams<TData = any, TContext = any> extends AgGrid
 export interface GetGroupAggFilteringParams<TData = any, TContext = any> extends AgGridCommon<TData, TContext> {
     node: IRowNode<TData>;
 }
+
+export interface GetGroupIncludeFooterParams<TData = any, TContext = any> extends AgGridCommon<TData, TContext> {
+    node: IRowNode<TData>;
+}

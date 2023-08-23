@@ -632,11 +632,11 @@ export class GroupStage extends BeanStub implements IRowNodeStage {
         groupNode.childrenMapped = {};
         groupNode.updateHasChildren();
 
-        groupNode.parent = details.includeParents ? parent : null;
+        groupNode.parent = details.includeParents ? parent : null;  
 
         this.setExpandedInitialValue(details, groupNode);
 
-        if (this.gridOptionsService.is('groupIncludeFooter')) {
+        if (this.gridOptionsService.getGroupIncludeFooter()({node: groupNode})) {
             groupNode.createFooter();
         }
 
