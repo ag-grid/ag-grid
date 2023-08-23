@@ -667,11 +667,10 @@ export class SetFilter<V = string> extends ProvidedFilter<SetFilterModel, V> imp
             this.valueModel.selectAllMatchingMiniFilter();
         }
 
-        const shouldKeepCurrentSelection = this.valueModel.showAddCurrentSelectionToFilter() && this.valueModel.isAddCurrentSelectionToFilterChecked();
-
         // Here we implement AG-9090 TC2
         // When 'Add current selection to filter' is visible and checked, but no filter is applied:
         // Do NOT apply the current selection as filter.
+        const shouldKeepCurrentSelection = this.valueModel!.showAddCurrentSelectionToFilter() && this.valueModel!.isAddCurrentSelectionToFilterChecked();
         if (shouldKeepCurrentSelection && !this.getModel()) {
             return false;
         }
