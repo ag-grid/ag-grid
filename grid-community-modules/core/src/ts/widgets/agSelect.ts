@@ -2,7 +2,6 @@ import { AgPickerField, IPickerFieldParams } from "./agPickerField";
 import { ListOption, AgList } from "./agList";
 import { Events } from "../eventKeys";
 import { KeyCode } from "../constants/keyCode";
-import { getInnerHeight } from "../utils/dom";
 
 export class AgSelect extends AgPickerField<string | null, IPickerFieldParams, AgList> {
     public static EVENT_ITEM_SELECTED = 'selectedItem';
@@ -71,8 +70,6 @@ export class AgSelect extends AgPickerField<string | null, IPickerFieldParams, A
         if (!this.listComponent) { return; }
 
         super.showPicker();
-
-        this.listComponent.getGui().style.maxHeight = `${getInnerHeight(this.popupService.getPopupParent())}px`;
 
         const ePicker = this.listComponent.getGui();
         this.pickerFocusOutListener = this.addManagedListener(ePicker, 'focusout', (e: FocusEvent) => {

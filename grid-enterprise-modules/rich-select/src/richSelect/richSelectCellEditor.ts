@@ -38,7 +38,7 @@ export class RichSelectCellEditor<TData = any, TValue = any> extends PopupCompon
         this.appendChild(this.richSelect);
 
         this.addManagedListener(this.richSelect, Events.EVENT_FIELD_PICKER_VALUE_SELECTED, this.onEditorPickerValueSelected.bind(this));
-        this.addManagedListener(this.richSelect.getGui(), 'focusout', this.onEditorFocusOut.bind(this));
+        // this.addManagedListener(this.richSelect.getGui(), 'focusout', this.onEditorFocusOut.bind(this));
 
         this.focusAfterAttached = cellStartedEdit;
 
@@ -57,7 +57,7 @@ export class RichSelectCellEditor<TData = any, TValue = any> extends PopupCompon
     }
 
     private buildRichSelectParams(): RichSelectParams<TValue> {
-        const { cellRenderer, value, values, colDef, formatValue, searchDebounceDelay, valueListGap  } = this.params;
+        const { cellRenderer, value, values, colDef, formatValue, searchDebounceDelay, valueListGap, valueListMaxHeight, valueListMaxWidth  } = this.params;
 
         const ret: RichSelectParams = {
             value: value,
@@ -68,10 +68,9 @@ export class RichSelectCellEditor<TData = any, TValue = any> extends PopupCompon
             pickerAriaLabelKey: 'ariaLabelRichSelectField',
             pickerAriaLabelValue: 'Rich Select Field',
             pickerType: 'virtual-list',
-        }
-
-        if (valueListGap != null) {
-            ret.pickerGap = valueListGap;
+            pickerGap: valueListGap,
+            maxPickerHeight: valueListMaxHeight,
+            maxPickerWidth: valueListMaxWidth
         }
 
         if (typeof values[0] === 'object' && colDef.keyCreator) {

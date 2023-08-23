@@ -44,6 +44,7 @@ export class AgRichSelect<TValue = any> extends AgPickerField<TValue, RichSelect
             pickerAriaLabelValue: 'Rich Select Field',
             pickerType: 'ag-list',
             ...config,
+            maxPickerHeight: config?.maxPickerHeight ?? 'calc(var(--ag-row-height) * 6.5)',
         }, 'ag-rich-select', 'smallDown', 'combobox');
 
         const { cellRowHeight, value, valueList, searchDebounceDelay } = config || {};

@@ -11,6 +11,14 @@ export interface IRichCellEditorParams<TValue = any> {
     searchDebounceDelay?: number;
     /** The space in pixels between the value display and the list of items. Default: `4` */
     valueListGap?: number;
+    /** The maximum height of the list of items. If the value is a `number` it will be 
+     * treated as pixels, otherwise it should be a valid CSS size string. Default: `calc(var(--ag-row-height) * 6.5)`.
+     */
+    valueListMaxHeight?: number | string;
+    /** The maximum width of the list of items. If the value is a `number` it will be 
+     * treated as pixels, otherwise it should be a valid CSS size string. Default: Width of the cell being edited.
+     */
+    valueListMaxWidth?: number | string;
      /** A callback function that allows you to change the displayed value for simple data. */
     formatValue: (value: TValue | null | undefined) => string;
 }
