@@ -63,7 +63,14 @@ beforeEach(() => {
 
     virtualList = mock<VirtualList>('refresh');
 
-    setValueModel = mock<SetValueModel<string>>('getModel', 'isEverythingVisibleSelected');
+    setValueModel = mock<SetValueModel<string>>(
+        'getModel',
+        'setAppliedModelKeys',
+        'addToAppliedModelKeys',
+        'isEverythingVisibleSelected',
+        'showAddCurrentSelectionToFilter',
+        'isAddCurrentSelectionToFilterChecked'
+    );
 });
 
 function createSetFilter(filterParams?: any): SetFilter<unknown> {
@@ -168,7 +175,16 @@ describe('applyModel', () => {
     });
 
     it.each(['windows', 'mac'])('ensures any active filter is removed by selecting all values if all visible values are selected', excelMode => {
-        setValueModel = mock<SetValueModel<string>>('getModel', 'isEverythingVisibleSelected', 'selectAllMatchingMiniFilter');
+        setValueModel = mock<SetValueModel<string>>(
+            'getModel',
+            'setAppliedModelKeys',
+            'addToAppliedModelKeys',
+            'isEverythingVisibleSelected',
+            'selectAllMatchingMiniFilter',
+            'showAddCurrentSelectionToFilter',
+            'isAddCurrentSelectionToFilterChecked'
+        );
+
         const setFilter = createSetFilter({ excelMode });
 
         setValueModel.isEverythingVisibleSelected.mockReturnValue(true);

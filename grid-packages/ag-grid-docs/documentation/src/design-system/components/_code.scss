@@ -48,6 +48,7 @@ pre.code {
 pre.code > code {
     position: relative;
     display: inline-block;
+    min-width: 100%;
     padding: $vertical-padding $size-2;
     font-size: 0.9375em;
     background-color: white;

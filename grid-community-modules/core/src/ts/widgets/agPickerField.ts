@@ -4,7 +4,7 @@ import { RefSelector } from "./componentAnnotations";
 import { setAriaLabelledBy, setAriaLabel, setAriaDescribedBy, setAriaExpanded } from "../utils/aria";
 import { createIconNoSpan } from "../utils/icon";
 import { exists } from "../utils/generic";
-import { setElementWidth, isVisible, getAbsoluteWidth } from "../utils/dom";
+import { setElementWidth, isVisible, getAbsoluteWidth, getInnerHeight } from "../utils/dom";
 import { KeyCode } from '../constants/keyCode';
 import { IAgLabelParams } from './agAbstractLabel';
 import { AddPopupParams, PopupService } from "./popupService";
@@ -13,6 +13,8 @@ import { Autowired } from "../context/context";
 export interface IPickerFieldParams extends IAgLabelParams {
     pickerType: string;
     pickerGap?: number;
+    maxPickerWidth?: number | string;
+    maxPickerHeight?: number | string;
     pickerAriaLabelKey: string;
     pickerAriaLabelValue: string;
 }
@@ -23,13 +25,17 @@ export abstract class AgPickerField<TValue, TConfig extends IPickerFieldParams =
 
     protected pickerComponent: TComponent | undefined;
     protected isPickerDisplayed: boolean = false;
+
+    protected maxPickerHeight: string | undefined;
+    protected maxPickerWidth: string | undefined;
+    protected value: TValue;
+
+
     private skipClick: boolean = false;
     private pickerGap: number = 4;
 
     private hideCurrentPicker: (() => void) | null = null;
     private destroyMouseWheelFunc: (() => null) | undefined;
-    
-    protected value: TValue;
 
     @Autowired('popupService') protected popupService: PopupService;
 
@@ -56,8 +62,20 @@ export abstract class AgPickerField<TValue, TConfig extends IPickerFieldParams =
         this.onPickerFocusIn = this.onPickerFocusIn.bind(this);
         this.onPickerFocusOut = this.onPickerFocusOut.bind(this);
 
-        if (config?.pickerGap != null) {
-            this.pickerGap = config.pickerGap;
+        if (!config) { return; }
+
+        const { pickerGap, maxPickerHeight, maxPickerWidth } = config;
+
+        if (pickerGap != null) {
+            this.pickerGap = pickerGap;
+        }
+
+        if (maxPickerHeight != null) {
+            this.setPickerMaxHeight(maxPickerHeight);
+        }
+
+        if (maxPickerWidth != null) {
+            this.setPickerMaxWidth(maxPickerWidth);
         }
     }
 
@@ -186,16 +204,26 @@ export abstract class AgPickerField<TValue, TConfig extends IPickerFieldParams =
 
         const addPopupRes = this.popupService.addPopup(popupParams);
 
-        setElementWidth(ePicker, getAbsoluteWidth(this.eWrapper));
+        const eWrapperWidth = getAbsoluteWidth(this.eWrapper);
+        const { maxPickerHeight, maxPickerWidth, pickerGap } = this;
+
+        setElementWidth(ePicker, maxPickerWidth || eWrapperWidth);
+
+        const maxHeight = maxPickerHeight ?? `${getInnerHeight(this.popupService.getPopupParent())}px`;
+
+        ePicker.style.setProperty('max-height', maxHeight);
         ePicker.style.position = 'absolute';
+
+        const alignSide = this.gridOptionsService.is('enableRtl') ? 'right' : 'left';
 
         this.popupService.positionPopupByComponent({
             type: pickerType,
             eventSource: this.eWrapper,
             ePopup: ePicker,
             position: 'under',
+            alignSide,
             keepWithinBounds: true,
-            nudgeY: this.pickerGap
+            nudgeY: pickerGap
         });
 
         return addPopupRes.hideFunc;
@@ -266,6 +294,23 @@ export abstract class AgPickerField<TValue, TConfig extends IPickerFieldParams =
     public setPickerGap(gap: number): this {
         this.pickerGap = gap;
 
+        return this;
+    }
+
+    public setPickerMaxWidth(width?: number | string): this {
+        if (typeof width === 'number') {
+            width = `${width}px`;
+        }
+        this.maxPickerWidth = width == null ? undefined : width;
+        return this;
+    }
+
+    public setPickerMaxHeight(height?: number | string): this {
+        if (typeof height === 'number') {
+            height = `${height}px`;
+        }
+
+        this.maxPickerHeight = height == null ? undefined : height;
         return this;
     }
 
