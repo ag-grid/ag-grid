@@ -5,6 +5,7 @@ import { findMatch } from "./filterExpressionOperators";
 import {
     AutocompleteUpdate,
     checkAndUpdateExpression,
+    FilterExpressionFunctionParams,
     FilterExpressionParserParams,
     FilterExpressionValidationError,
     findEndPosition,
@@ -78,19 +79,12 @@ class OperatorParser {
                 operatorEndPosition == null ? this.params.expression.length : (operatorEndPosition + 1)
             );
         }
-        // if operator already chosen, don't allow other operators
-        const entries = operatorIndex || (operatorIndex == null && this.activeOperator) ? [
-            { key:  this.parsedOperator, displayValue: this.params.joinOperators[this.parsedOperator] }
-        ] : [
-            { key: 'and', displayValue: this.params.joinOperators.and },
-            { key: 'or', displayValue: this.params.joinOperators.or }
-        ];
-        return {
-            enabled: true,
-            type: 'join',
-            searchString,
-            entries
-        };
+        let entries = this.params.advancedFilterExpressionService.getJoinOperatorAutocompleteEntries();
+        if (operatorIndex || (operatorIndex == null && this.activeOperator)) {
+            // if operator already chosen, don't allow other operators
+            entries = entries.filter(({ key }) => key === this.parsedOperator);
+        }
+        return this.params.advancedFilterExpressionService.generateAutocompleteListParams(entries, 'join', searchString);
     }
 
     public updateExpression(position: number, updateEntry: AutocompleteEntry, operatorIndex: number): AutocompleteUpdate {
@@ -131,16 +125,17 @@ class OperatorParser {
 
     private parseOperator(endPosition: number): boolean {
         const operator = this.operators.length > this.activeOperator ? this.operators[this.activeOperator] : '';
-        const parsedValue = findMatch(operator, this.params.joinOperators, v => v) as 'and' | 'or';
+        const joinOperators = this.params.advancedFilterExpressionService.getExpressionJoinOperators();
+        const parsedValue = findMatch(operator, joinOperators, v => v) as 'and' | 'or';
         if (parsedValue) {
             // exact match
             this.operatorEndPositions[this.activeOperator] = endPosition;
-            const displayValue = this.params.joinOperators[parsedValue];
+            const displayValue = joinOperators[parsedValue];
             if (this.activeOperator) {
                 if (parsedValue !== this.parsedOperator) {
                     if (!this.validationError) {
                         this.validationError = {
-                            message: this.params.translate('advancedFilterValidationJoinOperatorMismatch'),
+                            message: this.params.advancedFilterExpressionService.translate('advancedFilterValidationJoinOperatorMismatch'),
                             startPosition: endPosition - operator.length + 1,
                             endPosition
                         };
@@ -162,7 +157,7 @@ class OperatorParser {
             // no match
             if (!this.validationError) {
                 this.validationError = {
-                    message: this.params.translate('advancedFilterValidationInvalidJoinOperator'),
+                    message: this.params.advancedFilterExpressionService.translate('advancedFilterValidationInvalidJoinOperator'),
                     startPosition: endPosition - operator.length + 1,
                     endPosition
                 };
@@ -246,7 +241,7 @@ export class JoinFilterExpressionParser {
         if (operatorError) { return operatorError; }
         if (this.extraEndBracket) {
             return {
-                message: this.params.translate('advancedFilterValidationExtraEndBracket'),
+                message: this.params.advancedFilterExpressionService.translate('advancedFilterValidationExtraEndBracket'),
                 startPosition: this.endPosition + 1,
                 endPosition: this.endPosition + 1
             }
@@ -259,7 +254,7 @@ export class JoinFilterExpressionParser {
         }
         if (translateKey) {
             return {
-                message: this.params.translate(translateKey),
+                message: this.params.advancedFilterExpressionService.translate(translateKey),
                 startPosition: this.params.expression.length,
                 endPosition: this.params.expression.length
             }
@@ -267,10 +262,10 @@ export class JoinFilterExpressionParser {
         return null;
     }
 
-    public getFunction(args: any[]): string {
+    public getFunction(params: FilterExpressionFunctionParams): string {
         const hasMultipleExpressions = this.expressionParsers.length > 1;
         const expression = this.expressionParsers.map(
-            expressionParser => expressionParser.getFunction(args)).join(` ${this.operatorParser.getFunction()} `
+            expressionParser => expressionParser.getFunction(params)).join(` ${this.operatorParser.getFunction()} `
         );
         return hasMultipleExpressions ? `(${expression})` : expression;
     }
@@ -280,7 +275,7 @@ export class JoinFilterExpressionParser {
             return undefined
         }
         if (!this.expressionParsers.length) {
-            return this.params.columnAutocompleteTypeGenerator('');
+            return this.getColumnAutocompleteListParams();
         }
 
         const expressionParserIndex = this.getExpressionParserIndex(position);
@@ -290,7 +285,7 @@ export class JoinFilterExpressionParser {
                 return { enabled: false };
             }
             // positioned before the expression, so new expression
-            return this.params.columnAutocompleteTypeGenerator('');
+            return this.getColumnAutocompleteListParams();
         }
 
         const expressionParser = this.expressionParsers[expressionParserIndex];
@@ -307,7 +302,7 @@ export class JoinFilterExpressionParser {
                 const operatorEndPosition = this.operatorParser.getLastOperatorEndPosition();
                 return operatorEndPosition == null || position <= operatorEndPosition + 1
                     ? this.operatorParser.getAutocompleteListParams(position, this.operatorParser.getNumOperators() - 1)
-                    : this.params.columnAutocompleteTypeGenerator('');
+                    : this.getColumnAutocompleteListParams();
             }
             if (this.params.expression[position - 1] === ')') {
                 return { enabled: false };
@@ -326,7 +321,7 @@ export class JoinFilterExpressionParser {
         if (expressionParserIndex == null) {
             // positioned before the expression
             const updatedValuePart = type === 'column'
-                ? this.params.columnValueCreator(updateEntry)
+                ? this.params.advancedFilterExpressionService.getColumnValue(updateEntry)
                 : updateEntry.displayValue ?? updateEntry.key;
             return updateExpression(expression, this.startPosition, this.startPosition, updatedValuePart, true);
         }
@@ -338,7 +333,13 @@ export class JoinFilterExpressionParser {
         if (updatedExpression == null) {
             if (type === 'column') {
                 // beyond the end of the expression, just do simple update
-                return updateExpression(expression, position, expression.length - 1, this.params.columnValueCreator(updateEntry), true); 
+                return updateExpression(
+                    expression,
+                    position,
+                    expression.length - 1,
+                    this.params.advancedFilterExpressionService.getColumnValue(updateEntry),
+                    true
+                ); 
             } else {
                 return this.operatorParser.updateExpression(position, updateEntry, expressionParserIndex);
             }
@@ -356,6 +357,14 @@ export class JoinFilterExpressionParser {
         } else {
             return this.expressionParsers[0].getModel();
         }
+    }
+
+    private getColumnAutocompleteListParams(): AutocompleteListParams {
+        return this.params.advancedFilterExpressionService.generateAutocompleteListParams(
+            this.params.advancedFilterExpressionService.getColumnAutocompleteEntries(),
+            'column',
+            ''
+        );
     }
 
     private getExpressionParserIndex(position: number): number | undefined {

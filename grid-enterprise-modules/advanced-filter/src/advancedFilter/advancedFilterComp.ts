@@ -15,6 +15,7 @@ import {
     WithoutGridCommon,
     _
 } from '@ag-grid-community/core';
+import { AdvancedFilterExpressionService } from './advancedFilterExpressionService';
 import { AdvancedFilterService } from './advancedFilterService';
 import { FilterExpressionParser } from './filterExpressionParser';
 import { AutocompleteUpdate } from './filterExpressionUtils';
@@ -23,6 +24,7 @@ export class AdvancedFilterComp extends Component {
     @RefSelector('eAutocomplete') private eAutocomplete: AgAutocomplete;
     @RefSelector('eApplyFilterButton') private eApplyFilterButton: HTMLElement;
     @Autowired('advancedFilterService') private advancedFilterService: AdvancedFilterService;
+    @Autowired('advancedFilterExpressionService') private advancedFilterExpressionService: AdvancedFilterExpressionService;
     @Autowired('filterManager') private filterManager: FilterManager;
 
     private expressionParser: FilterExpressionParser | null = null;
@@ -42,8 +44,8 @@ export class AdvancedFilterComp extends Component {
             .setListGenerator((_value, position) => this.generateAutocompleteListParams(position))
             .setValidator(() => this.validateValue())
             .setForceLastSelection((lastSelection, searchString) => this.forceLastSelection(lastSelection, searchString))
-            .setInputAriaLabel(this.advancedFilterService.translate('ariaAdvancedFilterInput'))
-            .setListAriaLabel(this.advancedFilterService.translate('ariaLabelAdvancedFilterAutocomplete'));
+            .setInputAriaLabel(this.advancedFilterExpressionService.translate('ariaAdvancedFilterInput'))
+            .setListAriaLabel(this.advancedFilterExpressionService.translate('ariaLabelAdvancedFilterAutocomplete'));
 
         this.refresh();
 
@@ -56,7 +58,7 @@ export class AdvancedFilterComp extends Component {
         this.addManagedListener(this.eAutocomplete, AgAutocomplete.EVENT_VALID_CHANGED,
             ({ isValid, validationMessage }: AutocompleteValidChangedEvent) => this.onValidChanged(isValid, validationMessage));
 
-        this.eApplyFilterButton.innerText = this.advancedFilterService.translate('advancedFilterApply');
+        this.eApplyFilterButton.innerText = this.advancedFilterExpressionService.translate('advancedFilterApply');
         this.activateTabIndex([this.eApplyFilterButton]);
         this.eApplyFilterButton.addEventListener('click', () => this.onValueConfirmed(this.eAutocomplete.isValid()));
         _.setDisabled(this.eApplyFilterButton, this.isApplyDisabled);
@@ -116,7 +118,7 @@ export class AdvancedFilterComp extends Component {
     private generateAutocompleteListParams(position: number): AutocompleteListParams {
         return this.expressionParser
             ? this.expressionParser.getAutocompleteListParams(position)
-            : this.advancedFilterService.getDefaultAutocompleteListParams('');
+            : this.advancedFilterExpressionService.getDefaultAutocompleteListParams('');
     }
 
     private updateExpression(
@@ -124,7 +126,7 @@ export class AdvancedFilterComp extends Component {
         updateEntry: AutocompleteEntry,
         type?: string
     ): AutocompleteUpdate {
-        this.advancedFilterService.updateAutocompleteCache(updateEntry, type);
+        this.advancedFilterExpressionService.updateAutocompleteCache(updateEntry, type);
         return this.expressionParser?.updateExpression(position, updateEntry, type) ?? this.advancedFilterService.getDefaultExpression(updateEntry);
     }
 
