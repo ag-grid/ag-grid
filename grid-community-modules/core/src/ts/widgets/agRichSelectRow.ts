@@ -65,7 +65,7 @@ export class RichSelectRow<TValue> extends Component {
         const span = eDocument.createElement('span');
         span.style.overflow = 'hidden';
         span.style.textOverflow = 'ellipsis';
-        const parsedValue = escapeString(exists(valueFormatted) ? valueFormatted : value);
+        const parsedValue = escapeString(exists(valueFormatted) ? valueFormatted : value, true);
         span.textContent =  exists(parsedValue) ? parsedValue : '&nbsp;';
 
         eGui.appendChild(span);
