@@ -5,6 +5,7 @@ import { Column, ColumnPinnedType } from "../../entities/column";
 import { ColumnGroup } from "../../entities/columnGroup";
 import { IHeaderColumn } from "../../interfaces/iHeaderColumn";
 import { Events } from "../../eventKeys";
+import { VirtualColumnsChangedEvent } from "../../events";
 import { FocusService } from "../../focusService";
 import { isBrowserSafari } from "../../utils/browser";
 import { getAllValuesInObject, iterateObject } from "../../utils/object";
@@ -19,7 +20,7 @@ import { FilterManager } from "../../filter/filterManager";
 export interface IHeaderRowComp {
     setTop(top: string): void;
     setHeight(height: string): void;
-    setHeaderCtrls(ctrls: AbstractHeaderCellCtrl[], forceOrder: boolean): void;
+    setHeaderCtrls(ctrls: AbstractHeaderCellCtrl[], forceOrder: boolean, afterScroll: boolean): void;
     setWidth(width: string): void;
 }
 
@@ -103,7 +104,7 @@ export class HeaderRowCtrl extends BeanStub {
     private addEventListeners(): void {
         this.addManagedListener(this.eventService, Events.EVENT_COLUMN_RESIZED, this.onColumnResized.bind(this));
         this.addManagedListener(this.eventService, Events.EVENT_DISPLAYED_COLUMNS_CHANGED, this.onDisplayedColumnsChanged.bind(this));
-        this.addManagedListener(this.eventService, Events.EVENT_VIRTUAL_COLUMNS_CHANGED, this.onVirtualColumnsChanged.bind(this));
+        this.addManagedListener(this.eventService, Events.EVENT_VIRTUAL_COLUMNS_CHANGED, (params: VirtualColumnsChangedEvent) => this.onVirtualColumnsChanged(params.afterScroll));
         this.addManagedListener(this.eventService, Events.EVENT_COLUMN_HEADER_HEIGHT_CHANGED, this.onRowHeightChanged.bind(this));
         this.addManagedListener(this.eventService, Events.EVENT_GRID_STYLES_CHANGED, this.onRowHeightChanged.bind(this));
         this.addManagedListener(this.eventService, Events.EVENT_ADVANCED_FILTER_ENABLED_CHANGED, this.onRowHeightChanged.bind(this));
@@ -205,10 +206,10 @@ export class HeaderRowCtrl extends BeanStub {
         return this.rowIndex;
     }
 
-    private onVirtualColumnsChanged(): void {
+    private onVirtualColumnsChanged(afterScroll: boolean = false): void {
         const ctrlsToDisplay = this.getHeaderCtrls();
         const forceOrder = this.isEnsureDomOrder || this.isPrintLayout;
-        this.comp.setHeaderCtrls(ctrlsToDisplay, forceOrder);
+        this.comp.setHeaderCtrls(ctrlsToDisplay, forceOrder, afterScroll);
     }
 
     public getHeaderCtrls() {

@@ -230,7 +230,7 @@ export class GridBodyScrollFeature extends BeanStub {
 
         this.fireScrollEvent(ScrollDirection.Horizontal);
         this.horizontallyScrollHeaderCenterAndFloatingCenter(scrollLeft);
-        this.onHorizontalViewportChanged();
+        this.centerRowContainerCtrl.onHorizontalViewportChanged(true);
     }
 
     private fireScrollEvent(direction: ScrollDirection): void {
@@ -307,9 +307,6 @@ export class GridBodyScrollFeature extends BeanStub {
         this.fireScrollEvent(ScrollDirection.Vertical);
     }
 
-    private onHorizontalViewportChanged(): void {
-        this.centerRowContainerCtrl.onHorizontalViewportChanged();
-    }
 
     // this is to cater for AG-3274, where grid is removed from the dom and then inserted back in again.
     // (which happens with some implementations of tabbing). this can result in horizontal scroll getting

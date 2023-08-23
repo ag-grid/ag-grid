@@ -461,7 +461,7 @@ export class ColumnModel extends BeanStub {
     // checks what columns are currently displayed due to column virtualisation. dispatches an event
     // if the list of columns has changed.
     // + setColumnWidth(), setViewportPosition(), setColumnDefs(), sizeColumnsToFit()
-    private checkViewportColumns(): void {
+    private checkViewportColumns(afterScroll: boolean = false): void {
         // check displayCenterColumnTree exists first, as it won't exist when grid is initialising
         if (this.displayedColumnsCenter == null) { return; }
 
@@ -470,13 +470,14 @@ export class ColumnModel extends BeanStub {
         if (!viewportColumnsChanged) { return; }
 
         const event: WithoutGridCommon<VirtualColumnsChangedEvent> = {
-            type: Events.EVENT_VIRTUAL_COLUMNS_CHANGED
+            type: Events.EVENT_VIRTUAL_COLUMNS_CHANGED,
+            afterScroll,
         };
 
         this.eventService.dispatchEvent(event);
     }
 
-    public setViewportPosition(scrollWidth: number, scrollPosition: number): void {
+    public setViewportPosition(scrollWidth: number, scrollPosition: number, afterScroll: boolean = false): void {
         if (scrollWidth !== this.scrollWidth || scrollPosition !== this.scrollPosition || this.bodyWidthDirty) {
             this.scrollWidth = scrollWidth;
             this.scrollPosition = scrollPosition;
@@ -487,7 +488,7 @@ export class ColumnModel extends BeanStub {
             this.setViewport();
 
             if (this.ready) {
-                this.checkViewportColumns();
+                this.checkViewportColumns(afterScroll);
             }
         }
     }
