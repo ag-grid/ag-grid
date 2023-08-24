@@ -77,7 +77,7 @@ export class AdvancedFilterExpressionService extends BeanStub {
         return this.getExpressionOperator(model.filterType, model.type)?.displayValue ?? model.type;
     }
 
-    public parseOperand(model: ColumnAdvancedFilterModel, excludeQuotes?: boolean): string {
+    public parseOperand(model: ColumnAdvancedFilterModel, skipFormatting?: boolean): string {
         const { colId, filter } = model as any;
         const column = this.columnModel.getPrimaryColumn(colId);
         let operand = '';
@@ -88,11 +88,11 @@ export class AdvancedFilterExpressionService extends BeanStub {
             } else {
                 operand1 = column ? this.valueFormatterService.formatValue(column, null, filter) : filter;
                 operand1 = operand1 ?? _.toStringOrNull(filter) ?? '';
-                if (!excludeQuotes) {
+                if (!skipFormatting) {
                     operand1 = `"${operand1}"`;
                 }
             }
-            operand = ` ${operand1}`;
+            operand = skipFormatting ? operand1 : ` ${operand1}`;
         }
         return operand;
     }

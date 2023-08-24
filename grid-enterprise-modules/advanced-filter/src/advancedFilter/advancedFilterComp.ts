@@ -23,6 +23,7 @@ import { AutocompleteUpdate } from './filterExpressionUtils';
 export class AdvancedFilterComp extends Component {
     @RefSelector('eAutocomplete') private eAutocomplete: AgAutocomplete;
     @RefSelector('eApplyFilterButton') private eApplyFilterButton: HTMLElement;
+    @RefSelector('eBuilderFilterButton') private eBuilderFilterButton: HTMLElement;
     @Autowired('advancedFilterService') private advancedFilterService: AdvancedFilterService;
     @Autowired('advancedFilterExpressionService') private advancedFilterExpressionService: AdvancedFilterExpressionService;
     @Autowired('filterManager') private filterManager: FilterManager;
@@ -35,6 +36,7 @@ export class AdvancedFilterComp extends Component {
             <div class="ag-advanced-filter" role="presentation" tabindex="-1">
                 <ag-autocomplete ref="eAutocomplete"></ag-autocomplete>
                 <button class="ag-button ag-standard-button ag-advanced-filter-apply-button" ref="eApplyFilterButton"></button>
+                <button class="ag-button ag-standard-button ag-advanced-filter-apply-button" ref="eBuilderFilterButton"></button>
             </div>`);
     }
 
@@ -62,6 +64,10 @@ export class AdvancedFilterComp extends Component {
         this.activateTabIndex([this.eApplyFilterButton]);
         this.eApplyFilterButton.addEventListener('click', () => this.onValueConfirmed(this.eAutocomplete.isValid()));
         _.setDisabled(this.eApplyFilterButton, this.isApplyDisabled);
+        
+        this.eBuilderFilterButton.innerText = 'Builder';
+        this.activateTabIndex([this.eBuilderFilterButton]);
+        this.eBuilderFilterButton.addEventListener('click', () => this.advancedFilterService.getCtrl().toggleFilterBuilder());
     }
 
     public refresh(): void {
