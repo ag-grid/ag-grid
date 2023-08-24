@@ -125,8 +125,9 @@ export class NumberFilter extends ScalarFilter<NumberFilterModel, number> {
         return NumberFilter.DEFAULT_FILTER_OPTIONS;
     }
 
-    protected setElementValue(element: AgInputTextField | AgInputNumberField, value: number | null): void {
-        const valueToSet = this.numberFilterParams.numberFormatter
+    protected setElementValue(element: AgInputTextField | AgInputNumberField, value: number | null, fromFloatingFilter?: boolean): void {
+        // values from floating filter are directly from the input, not from the model
+        const valueToSet = !fromFloatingFilter && this.numberFilterParams.numberFormatter
             ? this.numberFilterParams.numberFormatter(value ?? null)
             : value;
         super.setElementValue(element, valueToSet as any);

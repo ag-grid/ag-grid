@@ -3,7 +3,7 @@ import React, { memo, useCallback, useMemo, useRef, useState } from 'react';
 import HeaderCellComp from './headerCellComp';
 import HeaderGroupCellComp from './headerGroupCellComp';
 import HeaderFilterCellComp from './headerFilterCellComp';
-import { getNextValueIfDifferent } from '../utils';
+import { agFlushSync, getNextValueIfDifferent } from '../utils';
 
 const HeaderRowComp = (props: {ctrl: HeaderRowCtrl}) => {
 
@@ -30,8 +30,11 @@ const HeaderRowComp = (props: {ctrl: HeaderRowCtrl}) => {
         const compProxy: IHeaderRowComp = {
             setHeight: height => setHeight(height),
             setTop: top => setTop(top),
-            setHeaderCtrls: (ctrls, forceOrder) =>
-                setCellCtrls(prev => getNextValueIfDifferent(prev, ctrls, forceOrder)!),
+            setHeaderCtrls: (ctrls, forceOrder, afterScroll) =>{
+                agFlushSync(afterScroll, () => {
+                    setCellCtrls(prev => getNextValueIfDifferent(prev, ctrls, forceOrder)!)
+                });
+            },
             setWidth: width => {
                 if (eGui.current) {
                     eGui.current.style.width = width;
