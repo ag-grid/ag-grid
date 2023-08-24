@@ -636,11 +636,6 @@ export class GroupStage extends BeanStub implements IRowNodeStage {
 
         this.setExpandedInitialValue(details, groupNode);
 
-        // just checking that a callback exists and is not false. Cannot call callback yet until after later stages.
-        if (this.gridOptionsService.get('groupIncludeFooter')){
-            groupNode.createFooter();
-        }
-
         return groupNode;
     }
 
