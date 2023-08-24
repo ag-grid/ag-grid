@@ -762,7 +762,7 @@ export class RowNode<TData = any> implements IEventEmitter, IRowNode<TData> {
 
         // are we showing group footers
         const groupFootersEnabled = this.beans.gridOptionsService.getGroupIncludeFooter()({node: this});
-        
+
         // if doing footers, we normally don't show agg data at group level when group is open
         const groupAlwaysShowAggData = this.beans.gridOptionsService.is('groupSuppressBlankHeader');
 
