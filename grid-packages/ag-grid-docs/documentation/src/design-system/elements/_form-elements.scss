@@ -84,7 +84,7 @@ input[type='number'] {
 
 .ag-picker-field-wrapper {
     transition: border-color $default-transition-timing, box-shadow $default-transition-timing;
-    &:focus:not(:disabled):not([readonly]),
+    &:focus-within:not(:disabled):not([readonly]),
     &.ag-picker-has-focus {
         border-color: var(--input-focus-border-color);
     }

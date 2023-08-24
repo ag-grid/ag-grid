@@ -1273,6 +1273,15 @@
         height: 100%;
     }
 
+    .ag-rich-select-field-input {
+        flex: 1 1 auto;
+        .ag-input-field-input {
+            padding: 0 !important;
+            border: none !important;
+            box-shadow: none !important;
+        }
+    }
+
     // /**
     //  ****************************
     //  * Autocomplete

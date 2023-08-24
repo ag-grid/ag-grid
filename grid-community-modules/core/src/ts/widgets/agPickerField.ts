@@ -1,9 +1,8 @@
 import { AgAbstractField } from "./agAbstractField";
 import { Component } from "./component";
 import { RefSelector } from "./componentAnnotations";
-import { setAriaLabelledBy, setAriaLabel, setAriaDescribedBy, setAriaExpanded } from "../utils/aria";
+import { setAriaLabelledBy, setAriaLabel, setAriaDescribedBy, setAriaExpanded, setAriaRole } from "../utils/aria";
 import { createIconNoSpan } from "../utils/icon";
-import { exists } from "../utils/generic";
 import { setElementWidth, isVisible, getAbsoluteWidth, getInnerHeight } from "../utils/dom";
 import { KeyCode } from '../constants/keyCode';
 import { IAgLabelParams } from './agAbstractLabel';
@@ -17,7 +16,21 @@ export interface IPickerFieldParams extends IAgLabelParams {
     maxPickerHeight?: number | string;
     pickerAriaLabelKey: string;
     pickerAriaLabelValue: string;
+    template?: string;
+    className?: string;
+    pickerIcon?: string;
+    ariaRole?: string;
+    modalPicker?: boolean
 }
+
+const TEMPLATE = /* html */`
+    <div class="ag-picker-field" role="presentation">
+        <div ref="eLabel"></div>
+            <div ref="eWrapper" class="ag-wrapper ag-picker-field-wrapper ag-picker-collapsed">
+            <div ref="eDisplayField" class="ag-picker-field-display"></div>
+            <div ref="eIcon" class="ag-picker-field-icon" aria-hidden="true"></div>
+        </div>
+    </div>`;
 
 export abstract class AgPickerField<TValue, TConfig extends IPickerFieldParams = IPickerFieldParams, TComponent extends Component = Component> extends AgAbstractField<TValue, TConfig> {
 
@@ -36,6 +49,7 @@ export abstract class AgPickerField<TValue, TConfig extends IPickerFieldParams =
 
     private hideCurrentPicker: (() => void) | null = null;
     private destroyMouseWheelFunc: (() => null) | undefined;
+    private ariaRole?: string;
 
     @Autowired('popupService') protected popupService: PopupService;
 
@@ -44,21 +58,10 @@ export abstract class AgPickerField<TValue, TConfig extends IPickerFieldParams =
     @RefSelector('eDisplayField') protected readonly eDisplayField: HTMLElement;
     @RefSelector('eIcon') private readonly eIcon: HTMLButtonElement;
 
-    constructor(config?: TConfig, className?: string, private readonly pickerIcon?: string, ariaRole?: string) {
-        super(config,
-            /* html */ `<div class="ag-picker-field" role="presentation">
-                <div ref="eLabel"></div>
-                <div ref="eWrapper"
-                    class="ag-wrapper ag-picker-field-wrapper ag-picker-collapsed"
-                    tabIndex="-1"
-                    aria-expanded="false"
-                    ${ariaRole ? `role="${ariaRole}"` : ''}
-                >
-                    <div ref="eDisplayField" class="ag-picker-field-display"></div>
-                    <div ref="eIcon" class="ag-picker-field-icon" aria-hidden="true"></div>
-                </div>
-            </div>`, className);
+    constructor(config?: TConfig) {
+        super(config, config?.template || TEMPLATE, config?.className);
 
+        this.ariaRole = config?.ariaRole;
         this.onPickerFocusIn = this.onPickerFocusIn.bind(this);
         this.onPickerFocusOut = this.onPickerFocusOut.bind(this);
 
@@ -82,6 +85,8 @@ export abstract class AgPickerField<TValue, TConfig extends IPickerFieldParams =
     protected postConstruct() {
         super.postConstruct();
 
+        this.setupAria();
+
         const displayId = `ag-${this.getCompId()}-display`;
 
         this.eDisplayField.setAttribute('id', displayId);
@@ -100,26 +105,37 @@ export abstract class AgPickerField<TValue, TConfig extends IPickerFieldParams =
             }
         });
 
-        const focusEl = this.getFocusableElement();
-
         this.addManagedListener(eGui, 'keydown', this.onKeyDown.bind(this));
         this.addManagedListener(this.eLabel, 'click', this.clickHandler.bind(this));
-        this.addManagedListener(focusEl, 'click', this.clickHandler.bind(this));
+        this.addManagedListener(this.eWrapper, 'click', this.clickHandler.bind(this));
 
-        if (this.pickerIcon) {
-            const icon = createIconNoSpan(this.pickerIcon, this.gridOptionsService);
+        const { pickerIcon } = this.config;
+
+        if (pickerIcon) {
+            const icon = createIconNoSpan(pickerIcon, this.gridOptionsService);
             if (icon) {
                 this.eIcon.appendChild(icon);
             }
         }
     }
 
-    protected refreshLabel() {
-        if (exists(this.getLabel())) {
-            setAriaLabelledBy(this.eWrapper, this.getLabelId());
-        } else {
-            this.eWrapper.removeAttribute('aria-labelledby');
+
+    protected setupAria(): void {
+        const ariaEl = this.getAriaElement();
+        
+        ariaEl.setAttribute('tabindex', (this.gridOptionsService.getNum('tabIndex') || 0).toString());
+
+        setAriaExpanded(ariaEl, false);
+
+        if (this.ariaRole) {
+            setAriaRole(ariaEl, this.ariaRole);
         }
+    }
+
+    protected refreshLabel() {
+        const ariaEl = this.getAriaElement();
+
+        setAriaLabelledBy(ariaEl, this.getLabelId() ?? '');
 
         super.refreshLabel();
     }
@@ -185,10 +201,10 @@ export abstract class AgPickerField<TValue, TConfig extends IPickerFieldParams =
 
         const translate = this.localeService.getLocaleTextFunc();
 
-        const { pickerType, pickerAriaLabelKey, pickerAriaLabelValue } = this.config;
+        const { pickerType, pickerAriaLabelKey, pickerAriaLabelValue, modalPicker = true } = this.config;
 
         const popupParams: AddPopupParams = {
-            modal: true,
+            modal: modalPicker,
             eChild: ePicker,
             closeOnEsc: true,
             closedCallback: () => {
@@ -249,7 +265,11 @@ export abstract class AgPickerField<TValue, TConfig extends IPickerFieldParams =
 
     protected toggleExpandedStyles(expanded: boolean): void {
         if (!this.isAlive()) { return; }
-        setAriaExpanded(this.eWrapper, expanded);
+
+        const ariaEl = this.getAriaElement();
+
+        setAriaExpanded(ariaEl, expanded);
+
         this.eWrapper.classList.toggle('ag-picker-expanded', expanded);
         this.eWrapper.classList.toggle('ag-picker-collapsed', !expanded);
     }
@@ -277,7 +297,7 @@ export abstract class AgPickerField<TValue, TConfig extends IPickerFieldParams =
     }
 
     public setAriaLabel(label: string): this {
-        setAriaLabel(this.eWrapper, label);
+        setAriaLabel(this.getAriaElement(), label);
 
         return this;
     }

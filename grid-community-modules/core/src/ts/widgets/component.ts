@@ -280,6 +280,10 @@ export class Component extends BeanStub {
         return this.eGui;
     }
 
+    public getAriaElement(): Element {
+        return this.getFocusableElement();
+    }
+
     public setParentComponent(component: Component) {
         this.parentComponent = component;
     }

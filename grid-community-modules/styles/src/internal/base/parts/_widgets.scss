@@ -241,7 +241,7 @@
         }
 
         &.ag-picker-has-focus,
-        &:focus {
+        &:focus-within {
             outline: none;
             box-shadow: var(--ag-input-focus-box-shadow);
             border-color: var(--ag-input-focus-border-color);
@@ -414,6 +414,10 @@
         padding-bottom: 0;
         @include ag.unthemed-rtl(( padding-left: var(--ag-cell-horizontal-padding) ));
         @include ag.unthemed-rtl(( padding-right: var(--ag-grid-size) ));
+    }
+
+    .ag-rich-select-field-input {
+        @include ag.unthemed-rtl(( left: calc(var(--ag-cell-horizontal-padding)) ));
     }
 
     .ag-popup-editor .ag-rich-select-value {

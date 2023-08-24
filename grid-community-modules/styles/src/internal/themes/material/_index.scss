@@ -200,7 +200,7 @@
         padding-top: 60px;
     }
 
-    .ag-picker-field-wrapper:focus {
+    .ag-picker-field-wrapper:focus-within {
         box-shadow: 0 0 0 1px var(--ag-material-primary-color);
     }
     
