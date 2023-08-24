@@ -28,7 +28,7 @@ export class RichSelectRow<TValue> extends Component {
         this.addManagedListener(this.getGui(), 'mouseup', this.onMouseUp.bind(this));
     }
 
-    public setState(value: TValue, selected: boolean): void {
+    public setState(value: TValue): void {
         let formattedValue: string = ''
 
         if (this.params.valueFormatter) {

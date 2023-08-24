@@ -122,7 +122,7 @@ Benefits over browser's `select` are as follows:
 
 Specified with `agRichSelectCellEditor` and configured with `IRichCellEditorParams`.
 
-<interface-documentation interfaceName='IRichCellEditorParams' names='["values", "cellHeight", "valueListGap", "valueListMaxHeight", "valueListMaxWidth", "formatValue", "cellRenderer", "searchDebounceDelay" ]'></interface-documentation>
+<interface-documentation interfaceName='IRichCellEditorParams' names='["values", "cellHeight", "allowTyping", "valueListGap", "valueListMaxHeight", "valueListMaxWidth", "formatValue", "cellRenderer", "searchDebounceDelay" ]'></interface-documentation>
 
 <snippet transform={false}>
 columnDefs: [

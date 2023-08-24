@@ -180,7 +180,7 @@ export class VirtualList extends TabGuardComp {
         return this.environment.getListItemHeight();
     }
 
-    public ensureIndexVisible(index: number): void {
+    public ensureIndexVisible(index: number, scrollPartialIntoView: boolean = true): void {
         const lastRow = this.model.getRowCount();
 
         if (typeof index !== 'number' || index < 0 || index >= lastRow) {
@@ -196,8 +196,9 @@ export class VirtualList extends TabGuardComp {
         const viewportHeight = eGui.offsetHeight;
         const viewportBottomPixel = viewportTopPixel + viewportHeight;
 
-        const viewportScrolledPastRow = viewportTopPixel > rowTopPixel;
-        const viewportScrolledBeforeRow = viewportBottomPixel < rowBottomPixel;
+        const diff = scrollPartialIntoView ? 0 : this.rowHeight;
+        const viewportScrolledPastRow = viewportTopPixel > rowTopPixel + diff;
+        const viewportScrolledBeforeRow = viewportBottomPixel < rowBottomPixel - diff;
 
         if (viewportScrolledPastRow) {
             // if row is before, scroll up with row at top

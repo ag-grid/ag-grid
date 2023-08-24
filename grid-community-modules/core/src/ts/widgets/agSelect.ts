@@ -13,8 +13,11 @@ export class AgSelect extends AgPickerField<string | null, IPickerFieldParams, A
             pickerAriaLabelKey: 'ariaLabelSelectField',
             pickerAriaLabelValue: 'Select Field',
             pickerType: 'ag-list',
+            className: 'ag-select',
+            pickerIcon: 'smallDown',
+            ariaRole: 'listbox',
             ...config
-        }, 'ag-select', 'smallDown', 'listbox');
+        });
     }
 
     protected postConstruct(): void {

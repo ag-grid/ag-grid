@@ -57,7 +57,7 @@ export class RichSelectCellEditor<TData = any, TValue = any> extends PopupCompon
     }
 
     private buildRichSelectParams(): RichSelectParams<TValue> {
-        const { cellRenderer, value, values, colDef, formatValue, searchDebounceDelay, valueListGap, valueListMaxHeight, valueListMaxWidth  } = this.params;
+        const { cellRenderer, value, values, colDef, formatValue, searchDebounceDelay, valueListGap, valueListMaxHeight, valueListMaxWidth, allowTyping  } = this.params;
 
         const ret: RichSelectParams = {
             value: value,
@@ -69,6 +69,7 @@ export class RichSelectCellEditor<TData = any, TValue = any> extends PopupCompon
             pickerAriaLabelValue: 'Rich Select Field',
             pickerType: 'virtual-list',
             pickerGap: valueListGap,
+            allowTyping,
             maxPickerHeight: valueListMaxHeight,
             maxPickerWidth: valueListMaxWidth
         }
@@ -110,7 +111,7 @@ export class RichSelectCellEditor<TData = any, TValue = any> extends PopupCompon
             const { eventKey } = params;
             if (eventKey) {
                 if (eventKey?.length === 1) {
-                    this.richSelect.searchText(eventKey);
+                    this.richSelect.searchTextFromString(eventKey);
                 }
             }
 

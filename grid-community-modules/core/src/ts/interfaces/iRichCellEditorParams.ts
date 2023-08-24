@@ -7,6 +7,8 @@ export interface IRichCellEditorParams<TValue = any> {
     cellHeight: number;
     /** The cell renderer to use to render each value. Cell renderers are useful for rendering rich HTML values, or when processing complex data. */
     cellRenderer: any;
+    /** Set to `true` to be able to type values in the display area. Default `false`. */
+    allowTyping?: boolean;
     /** The value in `ms` for the fuzzy search debounce delay. Default: `300` */
     searchDebounceDelay?: number;
     /** The space in pixels between the value display and the list of items. Default: `4` */
