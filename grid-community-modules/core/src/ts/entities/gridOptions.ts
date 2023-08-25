@@ -602,6 +602,7 @@ export interface GridOptions<TData = any> {
      * If `true`, then by default, the footer will contain aggregate data (if any) when shown and the header will be blank.
      * When closed, the header will contain the aggregate data regardless of this setting (as the footer is hidden anyway).
      * This is handy for 'total' rows, that are displayed below the data when the group is open, and alongside the group when it is closed.
+     * If a callback function is provided, it can used to select which groups will have a footer added. 
      * Default: `false`
      */
     groupIncludeFooter?: boolean | UseGroupFooter<TData>;
