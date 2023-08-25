@@ -20,9 +20,23 @@ import {
     RefSelector,
     _
 } from "@ag-grid-community/core";
+import { AdvancedFilterBuilderDragFeature, AdvancedFilterBuilderDragStartedEvent } from "./advancedFilterBuilderDragFeature";
 import { AdvancedFilterExpressionService } from "./advancedFilterExpressionService";
 
-export interface AdvancedFilterBuilderRowParams {
+export interface AdvancedFilterBuilderAddEvent extends AgEvent {
+    item: AdvancedFilterBuilderItem;
+    isJoin: boolean;
+}
+
+export interface AdvancedFilterBuilderRemoveEvent extends AgEvent {
+    item: AdvancedFilterBuilderItem;
+}
+
+export interface AdvancedFilterBuilderEditStartedEvent extends AgEvent {
+    removeEditor: () => void;
+}
+
+export interface AdvancedFilterBuilderItem {
     filterModel: AdvancedFilterModel | null;
     level: number;
     parent?: JoinAdvancedFilterModel;
@@ -45,7 +59,7 @@ class ColumnParser {
             getKey: () => string,
             getDisplayValue: () => string,
             baseCellDataType: BaseCellDataType | undefined,
-            backgroundColor: string,
+            cssClass: string,
             getEditorParams: () => { values?: any[] },
             update: (key: string) => void
         ) => HTMLElement,
@@ -64,7 +78,7 @@ class ColumnParser {
             () => this.getColumnKey(),
             () => this.getColumnDisplayValue() ?? 'Select a column',
             this.baseCellDataType,
-            'lightcyan',
+            'ag-advanced-filter-builder-column-pill',
             () => ({ values: this.advancedFilterExpressionService.getColumnAutocompleteEntries() }),
             (key) => this.setColumnKey(key)
         );
@@ -87,7 +101,7 @@ class ColumnParser {
             () => this.getOperatorKey(),
             () => this.getOperatorDisplayValue() ?? 'Select an option',
             this.baseCellDataType,
-            'lightgreen',
+            'ag-advanced-filter-builder-option-pill',
             () => ({ values: this.getOperatorAutocompleteEntries() }),
             (key) => this.setOperatorKey(key),
         );
@@ -96,7 +110,7 @@ class ColumnParser {
 
     private createOperandPill(): void {
         const getKey = () => this.getOperandDisplayValue() ?? '';
-        this.eOperandPill = this.createPill(getKey, getKey, this.baseCellDataType, 'lightgrey', () => ({}), (key) => this.setOperand(key));
+        this.eOperandPill = this.createPill(getKey, getKey, this.baseCellDataType, 'ag-advanced-filter-builder-value-pill', () => ({}), (key) => this.setOperand(key));
         this.eParent.appendChild(this.eOperandPill);
     }
 
@@ -212,21 +226,27 @@ class ColumnParser {
     }
 }
 
-export class AdvancedFilterBuilderRowComp extends Component {
+export class AdvancedFilterBuilderItemComp extends Component {
     @RefSelector('eDragHandle') private eDragHandle: HTMLElement;
     @RefSelector('eLabel') private eLabel: HTMLElement;
     @RefSelector('eButton') private eButton: HTMLElement;
     @Autowired('advancedFilterExpressionService') private advancedFilterExpressionService: AdvancedFilterExpressionService;
     @Autowired('dragAndDropService') private dragAndDropService: DragAndDropService;
 
+    public static readonly ADD_EVENT = 'advancedFilterBuilderAddEvent';
+    public static readonly REMOVE_EVENT = 'advancedFilterBuilderRemoveEvent';
+    public static readonly EDIT_STARTED_EVENT = 'advancedFilterBuilderEditStartedEvent';
+    public static readonly EDIT_ENDED_EVENT = 'advancedFilterBuilderEditEndedEvent';
+    public static readonly VALUE_CHANGED_EVENT = 'advancedFilterBuilderValueChangedEvent';
+
     private getDragName: () => string;
 
-    constructor(private readonly params: AdvancedFilterBuilderRowParams) {
+    constructor(private readonly item: AdvancedFilterBuilderItem, private readonly dragFeature: AdvancedFilterBuilderDragFeature) {
         super(/* html */ `
-            <div class="ag-autocomplete-row" style="justify-content: space-between; margin-top: 4px; margin-bottom: 4px" role="presentation">
-                <div style="display: flex; align-items: center; height: 100%">
+            <div class="ag-advanced-filter-builder-item-wrapper" role="presentation">
+                <div class="ag-advanced-filter-builder-item">
                     <span ref="eDragHandle" class="ag-drag-handle" role="presentation"></span>
-                    <div style="display: flex; align-items: center; height: 100%" ref="eLabel"></div>
+                    <div class="ag-advanced-filter-builder-item-condition" ref="eLabel"></div>
                 </div>
                 <span ref="eButton" class="ag-column-drop-cell-button" role="presentation"></span>
             </div>
@@ -238,14 +258,13 @@ export class AdvancedFilterBuilderRowComp extends Component {
         this.eDragHandle.appendChild(_.createIconNoSpan('columnDrag', this.gridOptionsService)!);
         this.eButton.appendChild(_.createIconNoSpan('cancel', this.gridOptionsService)!);
 
-        const { filterModel, level } = this.params;
+        const { filterModel, level } = this.item;
         this.setupCondition(filterModel!);
         if (level === 0) {
             _.setDisplayed(this.eDragHandle, false);
             _.setDisplayed(this.eButton, false);
-            this.getGui().style.marginLeft = '16px';
         } else {
-            this.getGui().style.marginLeft = `${level * 20}px`;
+            this.addCssClass(`ag-advanced-filter-builder-indent-${level}`);
         }
 
         this.setupDragging();
@@ -253,9 +272,9 @@ export class AdvancedFilterBuilderRowComp extends Component {
         this.addManagedListener(this.eButton, 'click', (event: MouseEvent) => {
             event.stopPropagation();
             this.removeFromModel();
-            this.dispatchEvent({
-                type: 'remove',
-                row: this.params
+            this.dispatchEvent<AdvancedFilterBuilderRemoveEvent>({
+                type: AdvancedFilterBuilderItemComp.REMOVE_EVENT,
+                item: this.item
             });
         })
     }
@@ -275,7 +294,7 @@ export class AdvancedFilterBuilderRowComp extends Component {
                 () => filterModel.type,
                 () => this.advancedFilterExpressionService.parseJoinOperator(filterModel),
                 undefined,
-                'lightpink',
+                'ag-advanced-filter-builder-join-pill',
                 () => ({ values: this.advancedFilterExpressionService.getJoinOperatorAutocompleteEntries() }),
                 (key) => filterModel.type = key as any
             )
@@ -289,12 +308,9 @@ export class AdvancedFilterBuilderRowComp extends Component {
             filterModel,
             this.eLabel,
             this.createPill.bind(this),
-            this.params.valid,
+            this.item.valid,
             valid => {
-                this.params.valid = valid;
-                this.dispatchEvent({
-                    type: 'validChanged'
-                });
+                this.item.valid = valid;
             }
         );
         columnParser.render();
@@ -305,21 +321,15 @@ export class AdvancedFilterBuilderRowComp extends Component {
         getKey: () => string,
         getDisplayValue: () => string,
         baseCellDataType: BaseCellDataType | undefined,
-        backgroundColor: string,
+        cssClass: string,
         getEditorParams: () => { values?: any[] },
         update: (key: string) => void
     ): HTMLElement {
         const ePillWrapper = document.createElement('div');
-        ePillWrapper.style.margin = '0px 4px';
-        ePillWrapper.style.height = '100%';
-        ePillWrapper.style.display = 'flex';
-        ePillWrapper.style.alignItems = 'center';
+        ePillWrapper.classList.add('ag-advanced-filter-builder-pill-wrapper');
         const ePill = document.createElement('span');
-        ePill.style.borderRadius = 'var(--ag-border-radius)';
-        ePill.style.padding = '4px 8px';
-        ePill.style.backgroundColor = backgroundColor;
-        ePill.style.minHeight = 'calc(100% - 16px)';
-        ePill.style.minWidth = '8px';
+        ePill.classList.add('ag-advanced-filter-builder-pill');
+        ePill.classList.add(cssClass);
         ePill.innerText = getDisplayValue();
         ePill.addEventListener('click', () =>
             this.showEditor(
@@ -354,18 +364,18 @@ export class AdvancedFilterBuilderRowComp extends Component {
             this.destroyBean(eEditor);
             _.setDisplayed(ePill, true);
             this.dispatchEvent({
-                type: 'editEnd'
+                type: AdvancedFilterBuilderItemComp.EDIT_ENDED_EVENT
             });
         };
         const onUpdated = (key: string) => {
             update(key);
             this.dispatchEvent({
-                type: 'valueChanged'
+                type:AdvancedFilterBuilderItemComp.VALUE_CHANGED_EVENT
             })
             removeEditor();
         };
-        this.dispatchEvent({
-            type: 'editStart',
+        this.dispatchEvent<AdvancedFilterBuilderEditStartedEvent>({
+            type: AdvancedFilterBuilderItemComp.EDIT_STARTED_EVENT,
             removeEditor
         });
         if (values) {
@@ -402,7 +412,6 @@ export class AdvancedFilterBuilderRowComp extends Component {
             onUpdated(value.key)
         );
         const eEditorGui = eEditor.getGui();
-        eEditorGui.style.minWidth = '160px';
         ePillWrapper.appendChild(eEditorGui);
         eEditor.showPicker();
         eEditor.getFocusableElement().focus();
@@ -430,8 +439,8 @@ export class AdvancedFilterBuilderRowComp extends Component {
     }
 
     private removeFromModel(): void {
-        const parent = this.params.parent!;
-        const { filterModel } = this.params;
+        const parent = this.item.parent!;
+        const { filterModel } = this.item;
         const index = parent.conditions.indexOf(filterModel!);
         parent.conditions.splice(index, 1);
     }
@@ -443,19 +452,13 @@ export class AdvancedFilterBuilderRowComp extends Component {
             dragItemName: this.getDragName,
             defaultIconName: DragAndDropService.ICON_NOT_ALLOWED,
             getDragItem: () => ({}),
-            onDragStarted: () => {
-                const event: AgEvent = {
-                    type: 'advancedFilterBuilderDragStart',
-                    row: this.params
-                } as any;
-                this.eventService.dispatchEvent(event);
-            },
-            onDragStopped: () => {
-                const event: AgEvent = {
-                    type: 'advancedFilterBuilderDragEnd'
-                };
-                this.eventService.dispatchEvent(event);
-            }
+            onDragStarted: () => this.dragFeature.dispatchEvent<AdvancedFilterBuilderDragStartedEvent>({
+                type: AdvancedFilterBuilderDragFeature.DRAG_STARTED_EVENT,
+                item: this.item
+            }),
+            onDragStopped: () => this.dragFeature.dispatchEvent({
+                type: AdvancedFilterBuilderDragFeature.DRAG_ENDED_EVENT
+            })
         };
 
         this.dragAndDropService.addDragSource(dragSource, true);
@@ -463,39 +466,34 @@ export class AdvancedFilterBuilderRowComp extends Component {
     }
 }
 
-
-export class AdvancedFilterBuilderRowAddComp extends Component {
+export class AdvancedFilterBuilderItemAddComp extends Component {
     @RefSelector('eAddMultipleButton') private eAddMultipleButton: HTMLElement;
     @RefSelector('eAddSingleButton') private eAddSingleButton: HTMLElement;
 
-    constructor(private readonly params: AdvancedFilterBuilderRowParams) {
+    constructor(private readonly item: AdvancedFilterBuilderItem) {
         super(/* html */ `
-        <div class="ag-autocomplete-row" role="presentation">
+        <div class="ag-advanced-filter-builder-item" role="presentation">
             <button class="ag-button ag-standard-button" ref="eAddMultipleButton">Add Join</button>
-            <button class="ag-button ag-standard-button ag-advanced-filter-apply-button" ref="eAddSingleButton">Add Condition</button>
+            <button class="ag-button ag-standard-button ag-advanced-filter-builder-button" ref="eAddSingleButton">Add Condition</button>
         </div>
         `);
     }
 
     @PostConstruct
     private postConstruct(): void {
-        const { level } = this.params;
-        this.getGui().style.marginLeft = `${ level * 20 + 20 }px`;
+        const { level } = this.item;
+        this.addCssClass(`ag-advanced-filter-builder-indent-${level + 1}`);
 
-        this.eAddMultipleButton.addEventListener('click', () => {
-            this.dispatchEvent({
-                type: 'add',
-                row: this.params,
-                isJoin: true
-            });
-        });
+        this.eAddMultipleButton.addEventListener('click', () => this.dispatchEvent<AdvancedFilterBuilderAddEvent>({
+            type: AdvancedFilterBuilderItemComp.ADD_EVENT,
+            item: this.item,
+            isJoin: true
+        }));
 
-        this.eAddSingleButton.addEventListener('click', () => {
-            this.dispatchEvent({
-                type: 'add',
-                row: this.params,
-                isJoin: false
-            });
-        });
+        this.eAddSingleButton.addEventListener('click', () => this.dispatchEvent<AdvancedFilterBuilderAddEvent>({
+            type: AdvancedFilterBuilderItemComp.ADD_EVENT,
+            item: this.item,
+            isJoin: false
+        }));
     }
 }

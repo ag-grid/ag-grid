@@ -13,7 +13,14 @@ import {
     _
 } from "@ag-grid-community/core";
 import { AdvancedFilterBuilderDragFeature } from "./advancedFilterBuilderDragFeature";
-import { AdvancedFilterBuilderRowAddComp, AdvancedFilterBuilderRowComp, AdvancedFilterBuilderRowParams } from "./advancedFilterBuilderRowComp";
+import {
+    AdvancedFilterBuilderAddEvent,
+    AdvancedFilterBuilderEditStartedEvent,
+    AdvancedFilterBuilderRemoveEvent,
+    AdvancedFilterBuilderItemAddComp,
+    AdvancedFilterBuilderItemComp,
+    AdvancedFilterBuilderItem
+ } from "./advancedFilterBuilderItemComp";
 import { AdvancedFilterExpressionService } from "./advancedFilterExpressionService";
 import { AdvancedFilterService } from "./advancedFilterService";
 
@@ -28,16 +35,17 @@ export class AdvancedFilterBuilderComp extends Component {
     private virtualList: VirtualList;
     private filterModel: AdvancedFilterModel;
     private stringifiedModel: string;
-    private rows: AdvancedFilterBuilderRowParams[];
+    private items: AdvancedFilterBuilderItem[];
     private removeEditor: (() => void) | undefined;
+    private dragFeature: AdvancedFilterBuilderDragFeature;
 
     constructor() {
         super(/* html */ `
-            <div role="presentation" class="ag-advanced-filter-builder" style="height: 100%; width: 100%; background-color: var(--ag-control-panel-background-color); display: flex; flex-direction: column" tabindex="-1">
-                <div class="ag-autocomplete-list ag-advanced-filter-builder-list" style="flex: 1" ref="eList"></div>
-                <div style="display: flex; justify-content: flex-end; padding: var(--ag-widget-container-vertical-padding) var(--ag-widget-container-horizontal-padding); border-top: var(--ag-borders-secondary) var(--ag-secondary-border-color);">
-                    <button class="ag-button ag-standard-button ag-advanced-filter-apply-button" ref="eApplyFilterButton"></button>
-                    <button class="ag-button ag-standard-button ag-advanced-filter-apply-button" ref="eCancelFilterButton"></button>
+            <div role="presentation" class="ag-advanced-filter-builder" tabindex="-1">
+                <div class="ag-advanced-filter-builder-list" ref="eList"></div>
+                <div class="ag-advanced-filter-builder-button-panel">
+                    <button class="ag-button ag-standard-button ag-advanced-filter-builder-button" ref="eApplyFilterButton"></button>
+                    <button class="ag-button ag-standard-button ag-advanced-filter-builder-button" ref="eCancelFilterButton"></button>
                 </div>
             </div>`);
     }
@@ -47,20 +55,20 @@ export class AdvancedFilterBuilderComp extends Component {
         this.setupFilterModel();
 
         this.virtualList = this.createManagedBean(new VirtualList({ cssIdentifier: 'autocomplete' }));
-        this.virtualList.setComponentCreator(this.createRowComponent.bind(this));
+        this.virtualList.setComponentCreator(this.createItemComponent.bind(this));
         this.virtualList.setComponentUpdater(() => {});
         this.virtualList.setRowHeight(40);
         this.eList.appendChild(this.virtualList.getGui());
 
         this.virtualList.setModel({
-            getRowCount: () => this.rows.length,
-            getRow: (index: number) => this.rows[index],
-            areRowsEqual: (oldRow: AdvancedFilterBuilderRowParams, newRow: AdvancedFilterBuilderRowParams) => oldRow === newRow
+            getRowCount: () => this.items.length,
+            getRow: (index: number) => this.items[index],
+            areRowsEqual: (oldRow: AdvancedFilterBuilderItem, newRow: AdvancedFilterBuilderItem) => oldRow === newRow
         });
         this.buildList();
         this.virtualList.refresh();
 
-        this.createManagedBean(new AdvancedFilterBuilderDragFeature(this, this.virtualList));
+        this.dragFeature = this.createManagedBean(new AdvancedFilterBuilderDragFeature(this, this.virtualList));
 
         this.eApplyFilterButton.innerText = this.advancedFilterExpressionService.translate('advancedFilterApply');
         this.activateTabIndex([this.eApplyFilterButton]);
@@ -87,30 +95,30 @@ export class AdvancedFilterBuilderComp extends Component {
         });
     }
 
-    public getNumRows(): number {
-        return this.rows.length;
+    public getNumItems(): number {
+        return this.items.length;
     }
 
-    public moveRow(row: AdvancedFilterBuilderRowParams | null, destination: VirtualListDragItem<AdvancedFilterBuilderRowComp> | null): void {
-        if (!destination || !row) { return; }
-        const destinationRow = this.rows[destination.rowIndex];
-        const destinationParent = destinationRow.parent;
+    public moveItem(item: AdvancedFilterBuilderItem | null, destination: VirtualListDragItem<AdvancedFilterBuilderItemComp> | null): void {
+        if (!destination || !item) { return; }
+        const destinationItem = this.items[destination.rowIndex];
+        const destinationParent = destinationItem.parent;
 
         // trying to move before the root
         if (!destinationParent) { return; }
 
         // can't move into itself
-        if (this.isChildOrSelf(destinationParent, row.filterModel!)) { return; }
+        if (this.isChildOrSelf(destinationParent, item.filterModel!)) { return; }
 
-        const sourceParentIndex = row.parent!.conditions.indexOf(row.filterModel!);
-        row.parent!.conditions.splice(sourceParentIndex, 1);
-        let destinationParentIndex = destinationParent.conditions.indexOf(destinationRow.filterModel!);
+        const sourceParentIndex = item.parent!.conditions.indexOf(item.filterModel!);
+        item.parent!.conditions.splice(sourceParentIndex, 1);
+        let destinationParentIndex = destinationParent.conditions.indexOf(destinationItem.filterModel!);
         if (destinationParentIndex === -1) {
             destinationParentIndex = destinationParent.conditions.length
         } else if (destination.position === 'bottom') {
             destinationParentIndex += 1;
         }
-        destinationParent.conditions.splice(destinationParentIndex, 0, row.filterModel!);
+        destinationParent.conditions.splice(destinationParentIndex, 0, item.filterModel!);
         this.buildListAndRestoreValidity();
         this.validate();
     }
@@ -139,82 +147,84 @@ export class AdvancedFilterBuilderComp extends Component {
     }
 
     private buildList(): void {
-        const parseFilterModel = (filterModel: AdvancedFilterModel, rows: AdvancedFilterBuilderRowParams[], level: number, parent?: JoinAdvancedFilterModel) => {
-            rows.push({ filterModel, level, parent, valid: true });
+        const parseFilterModel = (filterModel: AdvancedFilterModel, items: AdvancedFilterBuilderItem[], level: number, parent?: JoinAdvancedFilterModel) => {
+            items.push({ filterModel, level, parent, valid: true });
             if (filterModel.filterType === 'join') {
-                filterModel.conditions.forEach(childFilterModel => parseFilterModel(childFilterModel, rows, level + 1, filterModel));
-                rows.push({ filterModel: null, level: level + 1, parent: filterModel, valid: true })
+                filterModel.conditions.forEach(childFilterModel => parseFilterModel(childFilterModel, items, level + 1, filterModel));
+                items.push({ filterModel: null, level: level + 1, parent: filterModel, valid: true })
             }
         }
-        this.rows = [];
-        parseFilterModel(this.filterModel, this.rows, 0);
+        this.items = [];
+        parseFilterModel(this.filterModel, this.items, 0);
     }
 
     private buildListAndRestoreValidity(): void {
         const invalidModels: AdvancedFilterModel[] = [];
-        this.rows.forEach(row => {
-            if (!row.valid) {
-                invalidModels.push(row.filterModel!);
+        this.items.forEach(item => {
+            if (!item.valid) {
+                invalidModels.push(item.filterModel!);
             }
         });
         this.buildList();
         if (invalidModels.length) {
-            this.rows.forEach(row => {
-                if (row.filterModel && invalidModels.includes(row.filterModel)) {
-                    row.valid = false;
+            this.items.forEach(item => {
+                if (item.filterModel && invalidModels.includes(item.filterModel)) {
+                    item.valid = false;
                 }
             });
         }
         this.virtualList.refresh();
     }
 
-    private createRowComponent(rowParams: AdvancedFilterBuilderRowParams): Component {
-        const row = rowParams.filterModel ? new AdvancedFilterBuilderRowComp(rowParams) : new AdvancedFilterBuilderRowAddComp(rowParams);
-        row.addEventListener('remove', ({ row }: any) => {
-            const index = this.rows.indexOf(row);
+    private createItemComponent(item: AdvancedFilterBuilderItem): Component {
+        const itemComp = item.filterModel ? new AdvancedFilterBuilderItemComp(item, this.dragFeature) : new AdvancedFilterBuilderItemAddComp(item);
+        itemComp.addEventListener(AdvancedFilterBuilderItemComp.REMOVE_EVENT, ({ item }: AdvancedFilterBuilderRemoveEvent) => {
+            const isJoin = item.filterModel?.filterType === 'join';
+            // if it's a join, we don't know how many children there are, so always rebuild
+            const index = isJoin ? -1 : this.items.indexOf(item);
             if (index >= 0) {
-                this.rows.splice(index, 1);
+                this.items.splice(index, 1);
                 this.virtualList.refresh(true);
             } else {
                 this.buildListAndRestoreValidity();
             }
             this.validate();
         });
-        row.addEventListener('editStart', ({ removeEditor }: any) => {
+        itemComp.addEventListener(AdvancedFilterBuilderItemComp.EDIT_STARTED_EVENT, ({ removeEditor }: AdvancedFilterBuilderEditStartedEvent) => {
             if (this.removeEditor) {
                 this.removeEditor();
             }
             this.removeEditor = removeEditor;
         });
-        row.addEventListener('editEnd', () => {
+        itemComp.addEventListener(AdvancedFilterBuilderItemComp.EDIT_ENDED_EVENT, () => {
             this.removeEditor = undefined;
         });
-        row.addEventListener('valueChanged', () => this.validate());
-        row.addEventListener('add', ({ row, isJoin }:  any) => {
-            const { parent, level } = row;
+        itemComp.addEventListener(AdvancedFilterBuilderItemComp.VALUE_CHANGED_EVENT, () => this.validate());
+        itemComp.addEventListener(AdvancedFilterBuilderItemComp.ADD_EVENT, ({ item, isJoin }:  AdvancedFilterBuilderAddEvent) => {
+            const { parent, level } = item;
             const filterModel = isJoin ? {
                 filterType: 'join',
                 type: 'AND',
                 conditions: []
             } as JoinAdvancedFilterModel : {} as ColumnAdvancedFilterModel;
-            parent.conditions.push(filterModel);
-            const index = this.rows.indexOf(row);
+            parent!.conditions.push(filterModel);
+            const index = this.items.indexOf(item);
             if (index >= 0) {
-                const newRows: AdvancedFilterBuilderRowParams[] = [{
+                const newItems: AdvancedFilterBuilderItem[] = [{
                     filterModel,
                     level,
                     parent,
                     valid: isJoin
                 }];
                 if (isJoin) {
-                    newRows.push({
+                    newItems.push({
                         filterModel: null,
                         level: level + 1,
                         valid: true,
                         parent: filterModel as JoinAdvancedFilterModel
                     })
                 }
-                this.rows.splice(index, 0, ...newRows);
+                this.items.splice(index, 0, ...newItems);
                 this.virtualList.refresh(true);
             } else {
                 this.buildListAndRestoreValidity();
@@ -222,9 +232,9 @@ export class AdvancedFilterBuilderComp extends Component {
             this.validate();
         });
 
-        this.getContext().createBean(row);
+        this.getContext().createBean(itemComp);
 
-        return row;
+        return itemComp;
     }
 
     private close(): void {
@@ -232,7 +242,7 @@ export class AdvancedFilterBuilderComp extends Component {
     }
 
     private validate(): void {
-        let disableApply = !this.rows.every(({ valid }) => valid);
+        let disableApply = !this.items.every(({ valid }) => valid);
         if (!disableApply) {
             disableApply = JSON.stringify(this.filterModel) === this.stringifiedModel;
         }

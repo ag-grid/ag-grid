@@ -840,14 +840,6 @@
         @include ag.unthemed-rtl((margin-left: calc(var(--ag-grid-size) * 2)));
     }
 
-    .ag-advanced-filter-builder {
-        @include ag.selectable(none);
-    }
-
-    .ag-advanced-filter-builder-list {
-        @include ag.list-item-hovered();
-    }
-
     // /**
     //  ****************************
     //  * Floating Filter
@@ -1777,6 +1769,10 @@
         }
 
         .ag-row-group-indent-#{$i} {
+            @include ag.unthemed-rtl(( padding-left: $i * 20px ));
+        }
+
+        .ag-advanced-filter-builder-indent-#{$i} {
             @include ag.unthemed-rtl(( padding-left: $i * 20px ));
         }
     }

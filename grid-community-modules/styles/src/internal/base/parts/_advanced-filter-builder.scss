@@ -1,0 +1,78 @@
+@use "ag";
+
+@mixin output {
+    .ag-advanced-filter-builder {
+        @include ag.selectable(none);
+        width: 100%;
+        background-color: var(--ag-control-panel-background-color);
+        display: flex;
+        flex-direction: column;
+    }
+
+    .ag-advanced-filter-builder-list {
+        @include ag.list-item-hovered();
+        flex: 1;
+        overflow: auto;
+    }
+
+    .ag-advanced-filter-builder-button-panel {
+        display: flex;
+        justify-content: flex-end;
+        padding: var(--ag-widget-container-vertical-padding) var(--ag-widget-container-horizontal-padding);
+        border-top: var(--ag-borders-secondary) var(--ag-secondary-border-color);
+    }
+
+    .ag-advanced-filter-builder-button {
+        margin-left: calc(var(--ag-grid-size) * 2);
+    }
+
+    .ag-advanced-filter-builder-item-wrapper {
+        display: flex;
+        flex: 1 1 auto;
+        align-items: center;
+        justify-content: space-between;
+        margin-top: var(--ag-grid-size);
+        margin-bottom: var(--ag-grid-size);
+        overflow: hidden;
+        padding-left: var(--ag-icon-size);
+    }
+
+    .ag-advanced-filter-builder-item, .ag-advanced-filter-builder-item-condition, .ag-advanced-filter-builder-pill-wrapper {
+        display: flex;
+        align-items: center;
+        height: 100%;
+    }
+
+    .ag-advanced-filter-builder-pill-wrapper {
+        margin: 0px var(--ag-grid-size);
+    }
+
+    .ag-advanced-filter-builder-pill {
+        border-radius: var(--ag-border-radius);
+        padding: var(--ag-grid-size) calc(var(--ag-grid-size) * 2);
+        min-height: calc(100% - var(--ag-grid-size) * 3);
+        min-width: calc(var(--ag-grid-size) * 2);
+    }
+
+    .ag-advanced-filter-builder-join-pill {
+        background-color: lightpink;
+    }
+
+    .ag-advanced-filter-builder-column-pill {
+        background-color: lightcyan;
+    }
+
+    .ag-advanced-filter-builder-option-pill {
+        background-color: lightgreen;
+    }
+
+    .ag-advanced-filter-builder-value-pill {
+        background-color: lightgrey;
+    }
+
+    @for $i from 1 to 10 {
+        .ag-advanced-filter-builder-indent-#{$i} {
+            @include ag.unthemed-rtl(( padding-left: calc(#{$i} * var(--ag-advanced-filter-builder-indent-size)) ));
+        }
+    }
+}

@@ -2,6 +2,7 @@ import { AutoScrollService } from "../autoScrollService";
 import { BeanStub } from "../context/beanStub";
 import { Autowired, PostConstruct } from "../context/context";
 import { AgEvent } from "../events";
+import { IEventEmitter } from "../interfaces/iEventEmitter";
 import { radioCssClass } from "../utils/dom";
 import { Component } from "../widgets/component";
 import { VirtualList } from "../widgets/virtualList";
@@ -16,6 +17,7 @@ export interface VirtualListDragItem<R extends Component> {
 }
 
 export interface VirtualListDragParams<C extends Component, R extends Component, V, E extends AgEvent> {
+    eventSource: Window | HTMLElement | IEventEmitter;
     listItemDragStartEvent: string;
     listItemDragEndEvent: string;
     dragSourceType: DragSourceType;
@@ -41,8 +43,8 @@ export class VirtualListDragFeature<C extends Component, R extends Component, V,
 
     @PostConstruct
     private postConstruct(): void {
-        this.addManagedListener(this.eventService, this.params.listItemDragStartEvent, this.listItemDragStart.bind(this));
-        this.addManagedListener(this.eventService, this.params.listItemDragEndEvent, this.listItemDragEnd.bind(this));
+        this.addManagedListener(this.params.eventSource, this.params.listItemDragStartEvent, this.listItemDragStart.bind(this));
+        this.addManagedListener(this.params.eventSource, this.params.listItemDragEndEvent, this.listItemDragEnd.bind(this));
 
         this.createDropTarget();
         this.createAutoScrollService();
