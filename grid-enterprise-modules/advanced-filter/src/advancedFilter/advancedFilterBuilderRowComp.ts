@@ -1,5 +1,6 @@
 import {
     AdvancedFilterModel,
+    AgEvent,
     AgInputNumberField,
     AgInputTextField,
     AgRichSelect,
@@ -9,6 +10,9 @@ import {
     Column,
     ColumnAdvancedFilterModel,
     Component,
+    DragAndDropService,
+    DragSource,
+    DragSourceType,
     Events,
     JoinAdvancedFilterModel,
     KeyCode,
@@ -21,7 +25,7 @@ import { AdvancedFilterExpressionService } from "./advancedFilterExpressionServi
 export interface AdvancedFilterBuilderRowParams {
     filterModel: AdvancedFilterModel | null;
     level: number;
-    parent?: AdvancedFilterModel;
+    parent?: JoinAdvancedFilterModel;
     valid: boolean;
 }
 
@@ -32,7 +36,6 @@ class ColumnParser {
     private eColumnPill: HTMLElement;
     private eOperatorPill: HTMLElement | undefined;
     private eOperandPill: HTMLElement | undefined;
-    private valid: boolean = true;
 
     constructor(
         private advancedFilterExpressionService: AdvancedFilterExpressionService,
@@ -46,6 +49,7 @@ class ColumnParser {
             getEditorParams: () => { values?: any[] },
             update: (key: string) => void
         ) => HTMLElement,
+        private valid: boolean,
         private updateValidity: (valid: boolean) => void
     ) {
         const columnDetails = this.advancedFilterExpressionService.getColumnDetails(filterModel.colId);
@@ -72,6 +76,10 @@ class ColumnParser {
                 this.createOperandPill();
             }
         }
+    }
+
+    public getDragName(): string {
+        return this.advancedFilterExpressionService.parseColumnFilterModel(this.filterModel);
     }
 
     private createOperatorPill(): void {
@@ -164,6 +172,7 @@ class ColumnParser {
 
     private setOperand(operand: string): void {
         let parsedOperand: string | number = operand;
+        // TODO - need to use parser here
         if (this.baseCellDataType === 'number') {
             parsedOperand = parseFloat(operand);
         }
@@ -204,14 +213,15 @@ class ColumnParser {
 }
 
 export class AdvancedFilterBuilderRowComp extends Component {
-    @Autowired('advancedFilterExpressionService') private advancedFilterExpressionService: AdvancedFilterExpressionService;
     @RefSelector('eDragHandle') private eDragHandle: HTMLElement;
     @RefSelector('eLabel') private eLabel: HTMLElement;
     @RefSelector('eButton') private eButton: HTMLElement;
+    @Autowired('advancedFilterExpressionService') private advancedFilterExpressionService: AdvancedFilterExpressionService;
+    @Autowired('dragAndDropService') private dragAndDropService: DragAndDropService;
 
-    private params: AdvancedFilterBuilderRowParams;
+    private getDragName: () => string;
 
-    constructor() {
+    constructor(private readonly params: AdvancedFilterBuilderRowParams) {
         super(/* html */ `
             <div class="ag-autocomplete-row" style="justify-content: space-between; margin-top: 4px; margin-bottom: 4px" role="presentation">
                 <div style="display: flex; align-items: center; height: 100%">
@@ -228,19 +238,7 @@ export class AdvancedFilterBuilderRowComp extends Component {
         this.eDragHandle.appendChild(_.createIconNoSpan('columnDrag', this.gridOptionsService)!);
         this.eButton.appendChild(_.createIconNoSpan('cancel', this.gridOptionsService)!);
 
-        this.addManagedListener(this.eButton, 'click', (event: MouseEvent) => {
-            event.stopPropagation();
-            this.removeFromModel();
-            this.dispatchEvent({
-                type: 'remove',
-                row: this.params
-            });
-        })
-    }
-
-    public setState(params: AdvancedFilterBuilderRowParams): void {
-        this.params = params;
-        const { filterModel, level } = params;
+        const { filterModel, level } = this.params;
         this.setupCondition(filterModel!);
         if (level === 0) {
             _.setDisplayed(this.eDragHandle, false);
@@ -249,6 +247,17 @@ export class AdvancedFilterBuilderRowComp extends Component {
         } else {
             this.getGui().style.marginLeft = `${level * 20}px`;
         }
+
+        this.setupDragging();
+
+        this.addManagedListener(this.eButton, 'click', (event: MouseEvent) => {
+            event.stopPropagation();
+            this.removeFromModel();
+            this.dispatchEvent({
+                type: 'remove',
+                row: this.params
+            });
+        })
     }
 
     private setupCondition(filterModel: AdvancedFilterModel): void {
@@ -271,16 +280,25 @@ export class AdvancedFilterBuilderRowComp extends Component {
                 (key) => filterModel.type = key as any
             )
         );
+        this.getDragName = () => this.advancedFilterExpressionService.parseJoinOperator(filterModel);
     }
 
     private setupColumnCondition(filterModel: ColumnAdvancedFilterModel): void {
-        const columnParser = new ColumnParser(this.advancedFilterExpressionService, filterModel, this.eLabel, this.createPill.bind(this), valid => {
-            this.params.valid = valid;
-            this.dispatchEvent({
-                type: 'validChanged'
-            });
-        });
+        const columnParser = new ColumnParser(
+            this.advancedFilterExpressionService,
+            filterModel,
+            this.eLabel,
+            this.createPill.bind(this),
+            this.params.valid,
+            valid => {
+                this.params.valid = valid;
+                this.dispatchEvent({
+                    type: 'validChanged'
+                });
+            }
+        );
         columnParser.render();
+        this.getDragName = () => columnParser.getDragName();
     }
 
     private createPill(
@@ -340,7 +358,10 @@ export class AdvancedFilterBuilderRowComp extends Component {
             });
         };
         const onUpdated = (key: string) => {
-            update(key)
+            update(key);
+            this.dispatchEvent({
+                type: 'valueChanged'
+            })
             removeEditor();
         };
         this.dispatchEvent({
@@ -409,41 +430,72 @@ export class AdvancedFilterBuilderRowComp extends Component {
     }
 
     private removeFromModel(): void {
-        const parent = this.params.parent as JoinAdvancedFilterModel;
+        const parent = this.params.parent!;
         const { filterModel } = this.params;
         const index = parent.conditions.indexOf(filterModel!);
         parent.conditions.splice(index, 1);
+    }
+
+    private setupDragging(): void {
+        const dragSource: DragSource = {
+            type: DragSourceType.AdvancedFilterBuilder,
+            eElement: this.eDragHandle,
+            dragItemName: this.getDragName,
+            defaultIconName: DragAndDropService.ICON_NOT_ALLOWED,
+            getDragItem: () => ({}),
+            onDragStarted: () => {
+                const event: AgEvent = {
+                    type: 'advancedFilterBuilderDragStart',
+                    row: this.params
+                } as any;
+                this.eventService.dispatchEvent(event);
+            },
+            onDragStopped: () => {
+                const event: AgEvent = {
+                    type: 'advancedFilterBuilderDragEnd'
+                };
+                this.eventService.dispatchEvent(event);
+            }
+        };
+
+        this.dragAndDropService.addDragSource(dragSource, true);
+        this.addDestroyFunc(() => this.dragAndDropService.removeDragSource(dragSource));
     }
 }
 
 
 export class AdvancedFilterBuilderRowAddComp extends Component {
-    @RefSelector('eButton') private eButton: HTMLElement;
+    @RefSelector('eAddMultipleButton') private eAddMultipleButton: HTMLElement;
+    @RefSelector('eAddSingleButton') private eAddSingleButton: HTMLElement;
 
-    private params: AdvancedFilterBuilderRowParams;
-
-    constructor() {
+    constructor(private readonly params: AdvancedFilterBuilderRowParams) {
         super(/* html */ `
         <div class="ag-autocomplete-row" role="presentation">
-            <span ref="eButton" role="presentation">&nbsp;+</span>
+            <button class="ag-button ag-standard-button" ref="eAddMultipleButton">Add Join</button>
+            <button class="ag-button ag-standard-button ag-advanced-filter-apply-button" ref="eAddSingleButton">Add Condition</button>
         </div>
         `);
     }
 
     @PostConstruct
     private postConstruct(): void {
-        // this.eButton.appendChild(_.createIconNoSpan('plus', this.gridOptionsService)!);
-        this.addGuiEventListener('click', () => {
+        const { level } = this.params;
+        this.getGui().style.marginLeft = `${ level * 20 + 20 }px`;
+
+        this.eAddMultipleButton.addEventListener('click', () => {
             this.dispatchEvent({
                 type: 'add',
-                row: this.params
+                row: this.params,
+                isJoin: true
             });
         });
-    }
 
-    public setState(params: AdvancedFilterBuilderRowParams): void {
-        this.params = params;
-        const { level } = params;
-        this.getGui().style.marginLeft = `${ level * 20 }px`;
+        this.eAddSingleButton.addEventListener('click', () => {
+            this.dispatchEvent({
+                type: 'add',
+                row: this.params,
+                isJoin: false
+            });
+        });
     }
 }

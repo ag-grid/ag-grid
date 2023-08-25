@@ -21,7 +21,6 @@ import {
     _
 } from "@ag-grid-community/core";
 import { FilterExpressionParser } from "./filterExpressionParser";
-import { ColFilterExpressionParser } from "./colFilterExpressionParser";
 import { AdvancedFilterCtrl } from "./advancedFilterCtrl";
 import { AdvancedFilterExpressionService } from "./advancedFilterExpressionService";
 import { FilterExpressionFunctionParams } from "./filterExpressionUtils";
@@ -91,12 +90,9 @@ export class AdvancedFilterService extends BeanStub implements IAdvancedFilterSe
             if (model.filterType === 'join') {
                 const operator = this.advancedFilterExpressionService.parseJoinOperator(model);
                 const expression = model.conditions.map(condition => parseModel(condition)).join(` ${operator} `);
-                return isFirstParent ? expression : `(${expression})`;
+                return isFirstParent || model.conditions.length <= 1 ? expression : `(${expression})`;
             } else {
-                const columnName = this.advancedFilterExpressionService.parseColumnName(model);
-                const operator = this.advancedFilterExpressionService.parseOperator(model);
-                let operands = this.advancedFilterExpressionService.parseOperand(model);
-                return `[${columnName}] ${operator}${operands}`;
+                return this.advancedFilterExpressionService.parseColumnFilterModel(model);
             }
         };
 

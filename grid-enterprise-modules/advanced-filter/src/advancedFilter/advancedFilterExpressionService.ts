@@ -97,6 +97,13 @@ export class AdvancedFilterExpressionService extends BeanStub {
         return operand;
     }
 
+    public parseColumnFilterModel(model: ColumnAdvancedFilterModel): string {
+        const columnName = this.parseColumnName(model);
+        const operator = this.parseOperator(model) ?? '';
+        let operands = this.parseOperand(model);
+        return `[${columnName}] ${operator}${operands}`;
+    }
+
     public updateAutocompleteCache(updateEntry: AutocompleteEntry, type?: string): void {
         if (type === 'column') {
             const { key: colId, displayValue } = updateEntry;
