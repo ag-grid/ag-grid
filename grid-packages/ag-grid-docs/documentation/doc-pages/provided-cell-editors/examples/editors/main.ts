@@ -1,7 +1,6 @@
 import { Grid, ColDef, GridOptions, ITextCellEditorParams, ILargeTextEditorParams, ISelectCellEditorParams, IRichCellEditorParams } from '@ag-grid-community/core'
 import { ColourCellRenderer } from './colourCellRenderer_typescript'
-
-const colors = ['Red','Green','Blue'];
+import colors from './colors';
 
 const columnDefs: ColDef[] = [
   { 
@@ -29,7 +28,10 @@ const columnDefs: ColDef[] = [
     cellEditor: 'agRichSelectCellEditor',
     cellEditorParams: {
       values: colors, 
-      cellRenderer: ColourCellRenderer
+      cellRenderer: ColourCellRenderer,
+      filterList: true,
+      searchType: 'match',
+      allowTyping: true,
     } as IRichCellEditorParams
   },
   { 

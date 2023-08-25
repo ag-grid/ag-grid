@@ -281,7 +281,7 @@ export class AgRichSelect<TValue = any> extends AgPickerField<TValue, RichSelect
 
     private onWrapperFocusOut(e: FocusEvent): void {
         if (!this.eWrapper.contains(e.relatedTarget as Element)) {
-            // this.hidePicker();
+            this.hidePicker();
         }
     }
 

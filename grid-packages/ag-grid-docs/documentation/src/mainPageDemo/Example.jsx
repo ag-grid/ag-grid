@@ -256,7 +256,7 @@ const mobileDefaultCols = [
         editable: true,
         cellEditor: 'agRichSelectCellEditor',
         cellEditorParams: {
-            values: games
+            values: [...games].sort()
         },
         filter: 'agSetColumnFilter',
         cellClass: () => 'alphabet',
@@ -474,7 +474,7 @@ const desktopDefaultCols = [
                 cellEditorParams: {
                     values: [...games].sort(),
                     allowTyping: true,
-                    searchType: 'matchAny',
+                    searchType: 'match',
                     filterList: true
                 },
                 tooltipField: 'game.name',
