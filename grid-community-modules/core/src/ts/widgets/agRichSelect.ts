@@ -102,6 +102,8 @@ export class AgRichSelect<TValue = any> extends AgPickerField<TValue, RichSelect
 
         if (this.isAllowTyping) {
             this.eDisplayField.classList.add('ag-hidden');
+        } else {
+            this.eInput.setDisplayed(false);
         }
 
         this.eWrapper.tabIndex = this.gridOptionsService.getNum('tabIndex') ?? 0;
