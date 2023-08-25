@@ -49,6 +49,7 @@ export class AgRichSelect<TValue = any> extends AgPickerField<TValue, RichSelect
     private searchString = '';
     private listComponent: VirtualList | undefined;
     private values: TValue[];
+    private currentList: TValue[];
     private cellRowHeight: number;
     private highlightedItem: number = -1;
 
@@ -82,7 +83,7 @@ export class AgRichSelect<TValue = any> extends AgPickerField<TValue, RichSelect
         }
 
         if (valueList != null) {
-            this.setValueList(valueList);
+            this.values = valueList;
         }
     }
 
@@ -180,18 +181,13 @@ export class AgRichSelect<TValue = any> extends AgPickerField<TValue, RichSelect
         }
     }
 
-    public setValueList(valueList: TValue[]): void {
-        this.values = valueList;
-        this.highlightSelectedValue();
-    }
-
     private getCurrentValueIndex(): number {
-        const { values, value } = this;
+        const { currentList, value } = this;
 
         if (value == null) { return -1; }
 
-        for (let i = 0; i < values.length; i++) {
-            if (values[i] === value) {
+        for (let i = 0; i < currentList.length; i++) {
+            if (currentList[i] === value) {
                 return i;
             }
         }
@@ -235,6 +231,10 @@ export class AgRichSelect<TValue = any> extends AgPickerField<TValue, RichSelect
 
     private updateListModel(valueList: TValue[]): void {
         if (!this.listComponent) { return; }
+
+        if (this.currentList === valueList) { return; }
+
+        this.currentList = valueList;
 
         this.listComponent.setModel({
             getRowCount: () => valueList.length,
@@ -394,7 +394,7 @@ export class AgRichSelect<TValue = any> extends AgPickerField<TValue, RichSelect
     }
 
     private selectListItem(index: number, preventUnnecessaryScroll?: boolean): void {
-        if (!this.isPickerDisplayed || !this.listComponent || index < 0 || index >= this.values.length) { return; }
+        if (!this.isPickerDisplayed || !this.listComponent || index < 0 || index >= this.currentList.length) { return; }
 
         this.listComponent.ensureIndexVisible(index, !preventUnnecessaryScroll);
         this.listComponent.refresh(true);
@@ -402,7 +402,7 @@ export class AgRichSelect<TValue = any> extends AgPickerField<TValue, RichSelect
     }
 
     public setValue(value: TValue, silent?: boolean, fromPicker?: boolean): this {
-        const index = this.values.indexOf(value);
+        const index = this.currentList.indexOf(value);
 
         if (index === -1) { return this; }
 
@@ -473,7 +473,7 @@ export class AgRichSelect<TValue = any> extends AgPickerField<TValue, RichSelect
         if (!this.isPickerDisplayed) { return; }
         e.preventDefault();
 
-        this.onListValueSelected(this.values[this.highlightedItem], true);
+        this.onListValueSelected(this.currentList[this.highlightedItem], true);
     }
 
     private onListValueSelected(value: TValue, fromEnterKey: boolean): void {
