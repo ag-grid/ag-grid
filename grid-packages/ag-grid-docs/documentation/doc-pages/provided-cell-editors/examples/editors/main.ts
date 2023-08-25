@@ -32,6 +32,7 @@ const columnDefs: ColDef[] = [
       filterList: true,
       searchType: 'match',
       allowTyping: true,
+      valueListMaxHeight: 220
     } as IRichCellEditorParams
   },
   { 
