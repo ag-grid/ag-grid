@@ -48,11 +48,9 @@ export class AgRichSelect<TValue = any> extends AgPickerField<TValue, RichSelect
 
     private searchString = '';
     private listComponent: VirtualList | undefined;
-    private searchDebounceDelay: number;
     private values: TValue[];
-    private highlightedItem: number = -1;
     private cellRowHeight: number;
-    private isAllowTyping: boolean = false;
+    private highlightedItem: number = -1;
 
     @Autowired('userComponentFactory') private userComponentFactory: UserComponentFactory;
     @RefSelector('eInput') private eInput: AgInputTextField;
@@ -73,13 +71,9 @@ export class AgRichSelect<TValue = any> extends AgPickerField<TValue, RichSelect
             maxPickerHeight: config?.maxPickerHeight ?? 'calc(var(--ag-row-height) * 6.5)',
         });
 
-        const { cellRowHeight, value, valueList, searchDebounceDelay, allowTyping } = config || {};
+        const { cellRowHeight, value, valueList } = config || {};
 
-        if (allowTyping) {
-            this.isAllowTyping = true;
-        }
-
-        if (cellRowHeight) {
+        if (cellRowHeight != null) {
             this.cellRowHeight = cellRowHeight;
         }
 
@@ -90,17 +84,15 @@ export class AgRichSelect<TValue = any> extends AgPickerField<TValue, RichSelect
         if (valueList != null) {
             this.setValueList(valueList);
         }
-
-        if (searchDebounceDelay != null) {
-            this.searchDebounceDelay = searchDebounceDelay;
-        }
     }
 
     protected postConstruct(): void {
         super.postConstruct();
         this.createListComponent();
 
-        if (this.isAllowTyping) {
+        const { allowTyping } = this.config;
+
+        if (allowTyping) {
             this.eDisplayField.classList.add('ag-hidden');
         } else {
             this.eInput.setDisplayed(false);
@@ -109,12 +101,12 @@ export class AgRichSelect<TValue = any> extends AgPickerField<TValue, RichSelect
         this.eWrapper.tabIndex = this.gridOptionsService.getNum('tabIndex') ?? 0;
         this.eWrapper.classList.add('ag-rich-select-value');
 
-        const debounceDelay = this.searchDebounceDelay ?? 300;
-        this.clearSearchString = debounce(this.clearSearchString, debounceDelay);
+        const { searchDebounceDelay = 300 } = this.config;
+        this.clearSearchString = debounce(this.clearSearchString, searchDebounceDelay);
 
         this.renderSelectedValue();
 
-        if (this.isAllowTyping) {
+        if (allowTyping) {
             this.eInput.onValueChange(value => this.searchTextFromString(value));
             this.addManagedListener(this.eWrapper, 'focus', this.onWrapperFocus.bind(this));
         }
@@ -123,16 +115,17 @@ export class AgRichSelect<TValue = any> extends AgPickerField<TValue, RichSelect
     }
 
     private createListComponent(): void {
-        this.listComponent = this.createManagedBean(new VirtualList({ cssIdentifier: 'rich-select' }))
+        this.listComponent = this.createBean(new VirtualList({ cssIdentifier: 'rich-select' }))
         this.listComponent.setComponentCreator(this.createRowComponent.bind(this));
         this.listComponent.setParentComponent(this);
 
         this.addManagedListener(this.listComponent, Events.EVENT_FIELD_PICKER_VALUE_SELECTED, (e: FieldPickerValueSelectedEvent) => {
             this.onListValueSelected(e.value, e.fromEnterKey);
         });
-
-        if (this.cellRowHeight) {
-            this.listComponent.setRowHeight(this.cellRowHeight);
+        
+        const { cellRowHeight } = this;
+        if (cellRowHeight) {
+            this.listComponent.setRowHeight(cellRowHeight);
         }
 
         const eListGui = this.listComponent.getGui();
@@ -151,7 +144,7 @@ export class AgRichSelect<TValue = any> extends AgPickerField<TValue, RichSelect
         const { value, eDisplayField, config } = this;
         const valueFormatted = this.config.valueFormatter ? this.config.valueFormatter(value) : value;
 
-        if (this.isAllowTyping) {
+        if (config.allowTyping) {
             this.eInput.setValue(valueFormatted);
             return;
         }
@@ -329,7 +322,7 @@ export class AgRichSelect<TValue = any> extends AgPickerField<TValue, RichSelect
         let suggestions: string[] = [];
         let filteredValues: TValue[] = [];
 
-        if (!searchValue.length) { return { suggestions, filteredValues: this.values } };
+        if (!searchValue.length) { return { suggestions, filteredValues } };
 
         const { searchType = 'fuzzy', filterList } = this.config;
 
@@ -379,8 +372,10 @@ export class AgRichSelect<TValue = any> extends AgPickerField<TValue, RichSelect
         const { suggestions, filteredValues } = this.getSuggestionsAndFilteredValues(this.searchString, searchStrings);
         const { filterList } = this.config;
 
+        const shouldFilter = filterList && this.searchString !== '';
+
         if (filterList) {
-            this.filterListModel(filteredValues);
+            this.filterListModel(shouldFilter ? filteredValues : values);
         }
 
         if (suggestions.length) {
@@ -498,7 +493,9 @@ export class AgRichSelect<TValue = any> extends AgPickerField<TValue, RichSelect
     }
 
     public getFocusableElement(): HTMLElement {
-        if (this.isAllowTyping) {
+        const { allowTyping } = this.config;
+
+        if (allowTyping) {
             return this.eInput.getFocusableElement();
         }
 
@@ -508,10 +505,12 @@ export class AgRichSelect<TValue = any> extends AgPickerField<TValue, RichSelect
     protected onKeyDown(event: KeyboardEvent): void {
         const key = event.key;
 
+        const { allowTyping } = this.config;
+
         switch (key) {
             case KeyCode.LEFT:
             case KeyCode.RIGHT:
-                if (!this.isAllowTyping) {
+                if (!allowTyping) {
                     event.preventDefault();
                 }
                 break;
@@ -528,10 +527,19 @@ export class AgRichSelect<TValue = any> extends AgPickerField<TValue, RichSelect
                 this.onEnterKeyDown(event);
                 break;
             default:
-                if (!this.isAllowTyping) {
+                if (!allowTyping) {
                     this.buildSearchStringFromKeyboardEvent(event);
                 }
         }
+    }
+
+    public destroy(): void {
+        if (this.listComponent) {
+            this.destroyBean(this.listComponent);
+            this.listComponent = undefined;
+        }
+
+        super.destroy();
     }
 
 }
