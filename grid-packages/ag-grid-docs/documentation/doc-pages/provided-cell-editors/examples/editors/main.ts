@@ -1,6 +1,6 @@
 import { Grid, ColDef, GridOptions, ITextCellEditorParams, ILargeTextEditorParams, ISelectCellEditorParams, IRichCellEditorParams } from '@ag-grid-community/core'
 import { ColourCellRenderer } from './colourCellRenderer_typescript'
-import colors from './colors';
+import { colors } from './colors';
 
 const columnDefs: ColDef[] = [
   { 
@@ -48,12 +48,19 @@ const columnDefs: ColDef[] = [
   }
 ];
 
-const data = Array.from(Array(20).keys()).map( (val: any, index: number) => ({
-  color1: colors[index%3],
-  color2: colors[index%3],
-  color3: colors[index%3],
-  description:  'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.'
-}) );
+function getRandomNumber(min: number, max: number) { // min and max included 
+  return Math.floor(Math.random() * (max - min + 1) + min)
+}
+
+const data = Array.from(Array(20).keys()).map(() => {
+  const color = colors[getRandomNumber(0, colors.length - 1)];
+  return ({
+    color1: color,
+    color2: color,
+    color3: color,
+    description:  'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.'
+  });
+});
 
 const gridOptions: GridOptions = {
   defaultColDef: {

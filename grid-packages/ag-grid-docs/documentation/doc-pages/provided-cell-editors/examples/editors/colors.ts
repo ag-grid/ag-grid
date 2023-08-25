@@ -1,4 +1,4 @@
-const colors: string[] = [
+export const colors: string[] = [
     'AliceBlue',
     'AntiqueWhite',
     'Aqua',
@@ -147,5 +147,3 @@ const colors: string[] = [
     'Yellow',
     'YellowGreen'
 ];
-
-export default colors;
