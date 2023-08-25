@@ -535,12 +535,7 @@ export class FilterManager extends BeanStub {
 
         if (!filterWrapper) {
             filterWrapper = this.createFilterWrapper(column, source);
-            const colId = column.getColId();
-            this.allColumnFilters.set(colId, filterWrapper);
-            this.allColumnListeners.set(
-                colId,
-                this.addManagedListener(column, Column.EVENT_COL_DEF_CHANGED, () => this.checkDestroyFilter(colId))
-            );
+            this.setColumnFilterWrapper(column, filterWrapper);
         } else if (source !== 'NO_UI') {
             this.putIntoGui(filterWrapper, source);
         }
@@ -652,9 +647,11 @@ export class FilterManager extends BeanStub {
     }
 
     private createFilterWrapper(column: Column, source: FilterRequestSource): FilterWrapper {
+        const filterParams = column.getColDef().filterParams;
         const filterWrapper: FilterWrapper = {
             column: column,
             filterPromise: null,
+            filterParams: filterParams ? { ...filterParams } : null,
             compiledElement: null,
             guiPromise: AgPromise.resolve(null),
             compDetails: null
@@ -853,14 +850,53 @@ export class FilterManager extends BeanStub {
         }
 
         const column = filterWrapper.column;
-
         const { compDetails } = column.isFilterAllowed()
             ? this.createFilterInstance(column)
             : { compDetails: null };
 
+        // Case when filter component changes
         if (this.areFilterCompsDifferent(filterWrapper.compDetails, compDetails)) {
             this.destroyFilter(column, 'columnChanged');
+            return;
         }
+
+        // Case when filter params changes
+        const newFilterParams = column.getColDef().filterParams;
+        if (this.areFilterParamsDifferent(filterWrapper.filterParams, newFilterParams)) {
+            // When filter wrapper does not have promise to retriece FilterComp, destroy
+            if (!filterWrapper.filterPromise) {
+                this.destroyFilter(column, 'columnChanged');
+                return;
+            }
+
+            // Otherwise - Check for refresh method before destruction
+            // If refresh() method is not implemented, destroy filter
+            filterWrapper.filterPromise.then(filter => {
+                const shouldRefreshFilter = filter?.refresh ? filter.refresh(newFilterParams) : true;
+                if (!shouldRefreshFilter) {
+                    this.destroyFilter(column, 'columnChanged');
+                } else {
+                    filterWrapper.filterParams = newFilterParams;
+                }
+            });
+        }
+    }
+
+    private setColumnFilterWrapper(column: Column, filterWrapper: FilterWrapper): void {
+        const colId = column.getColId();
+        this.allColumnFilters.set(colId, filterWrapper);
+        this.allColumnListeners.set(
+            colId,
+            this.addManagedListener(
+                column,
+                Column.EVENT_COL_DEF_CHANGED,
+                () => this.checkDestroyFilter(colId),
+            ),
+        );
+    }
+
+    private areFilterParamsDifferent(currentFilterParams: IFilterParams<any, any> | null, newFilterParams: IFilterParams<any, any> | null) {
+        return !_.jsonEquals(currentFilterParams, newFilterParams);
     }
 
     public areFilterCompsDifferent(oldCompDetails: UserCompDetails | null, newCompDetails: UserCompDetails | null): boolean {
@@ -973,6 +1009,7 @@ export interface FilterWrapper {
     compiledElement: any;
     column: Column;
     filterPromise: AgPromise<IFilterComp> | null;
+    filterParams: IFilterParams | null;
     guiPromise: AgPromise<HTMLElement | null>;
     compDetails: UserCompDetails | null;
 }

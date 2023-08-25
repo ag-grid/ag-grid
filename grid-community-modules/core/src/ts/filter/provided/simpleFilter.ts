@@ -15,6 +15,7 @@ import { ListOption } from '../../widgets/agList';
 import { IFloatingFilterParent } from '../floating/floatingFilter';
 import { doOnce, isFunction } from '../../utils/function';
 import { LocaleService } from '../../localeService';
+import { TextFilterModel, TextFilterParams } from './text/textFilter';
 
 export type JoinOperator = 'AND' | 'OR';
 
@@ -356,6 +357,54 @@ export abstract class SimpleFilter<M extends ISimpleFilterModel, V, E = AgInputT
         }
 
         return res;
+    }
+
+    refresh(newParams: IFilterParams): boolean {
+        const newParamsValue = newParams as TextFilterParams;
+        const model: any = this.getModel();
+
+        const textFilterModel: TextFilterModel | null = model && !model.conditions ? model : null;
+        const combinedModel: ICombinedSimpleModel<TextFilterModel> | null = model && model.conditions ? model : null;
+
+        //
+        // Check for situations when the filter should be destroyed and recreated
+        //
+        // A. For filer with single condition
+        if (textFilterModel) {
+            const typeExistsInNewOptionsList = newParamsValue.filterOptions
+                ?.find(option => option === textFilterModel.type) !== undefined;
+
+            // Case A.1. Do not refresh when existing type is not in new options list
+            if (!typeExistsInNewOptionsList) {
+                return false;
+            }
+        } else {
+            // B. For combined model with multiple conditions
+            if (combinedModel) {
+                const allTypesExistInNewOptionsList = combinedModel.conditions ?
+                    combinedModel.conditions.every(condition => {
+                        return newParamsValue.filterOptions
+                            ?.find(option => option === condition.type) !== undefined;
+                    }) : false;
+
+                // B.1. Do Not refresh when one of the existing types is not in new options list
+                if (!allTypesExistInNewOptionsList) {
+                    return false;
+                }
+            }
+        }
+
+        // No breaking changes new params,
+        // so safely update the options list and refresh the filter
+
+        this.optionsFactory = new OptionsFactory();
+        this.optionsFactory.init(newParams, this.getDefaultFilterOptions());
+        this.createFilterListOptions();
+        this.removeConditionsAndOperators(0);
+        this.createOption();
+        this.setModel(model);
+
+        return true;
     }
 
     protected setModelIntoUi(model: ISimpleFilterModel | ICombinedSimpleModel<M>): AgPromise<void> {

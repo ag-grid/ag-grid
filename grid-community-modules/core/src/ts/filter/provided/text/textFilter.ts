@@ -4,7 +4,7 @@ import {
     ISimpleFilterModel,
     ISimpleFilterModelType,
     Tuple,
-    SimpleFilterModelFormatter
+    SimpleFilterModelFormatter,
 } from '../simpleFilter';
 import { AgInputTextField } from '../../../widgets/agInputTextField';
 import { makeNull } from '../../../utils/generic';
@@ -19,13 +19,13 @@ export interface TextFilterModel extends ISimpleFilterModel {
     /**
      * The text value associated with the filter.
      * It's optional as custom filters may not have a text value.
-     * */
+     */
     filter?: string | null;
     /**
      * The 2nd text value associated with the filter, if supported.
-     * */
-     filterTo?: string | null;
-    }
+     */
+    filterTo?: string | null;
+}
 
 export interface TextMatcherParams extends BaseColDefParams {
     /**
