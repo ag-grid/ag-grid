@@ -254,6 +254,10 @@ const mobileDefaultCols = [
         field: 'game.name',
         width: 180,
         editable: true,
+        cellEditor: 'agRichSelectCellEditor',
+        cellEditorParams: {
+            values: games
+        },
         filter: 'agSetColumnFilter',
         cellClass: () => 'alphabet',
     },
@@ -466,6 +470,13 @@ const desktopDefaultCols = [
                 width: 180,
                 editable: true,
                 filter: 'agMultiColumnFilter',
+                cellEditor: 'agRichSelectCellEditor',
+                cellEditorParams: {
+                    values: [...games].sort(),
+                    allowTyping: true,
+                    searchType: 'matchAny',
+                    filterList: true
+                },
                 tooltipField: 'game.name',
                 // wrapText: true,
                 // autoHeight: true,

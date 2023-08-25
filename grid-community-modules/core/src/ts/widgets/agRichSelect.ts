@@ -28,7 +28,7 @@ export interface RichSelectParams<TValue = any> extends IPickerFieldParams {
     searchDebounceDelay?: number;
 
     filterList?: boolean;
-    searchType?: 'match' | 'fuzzy';
+    searchType?: 'match' | 'matchAny' | 'fuzzy';
 
     valueFormatter?: (value: TValue) => any;
     searchStringCreator?: (values: TValue[]) => string[]
@@ -234,13 +234,19 @@ export class AgRichSelect<TValue = any> extends AgPickerField<TValue, RichSelect
     protected createPickerComponent() {
         const { values }  = this;
 
-        this.listComponent!.setModel({
-            getRowCount: () => values.length,
-            getRow: (index: number) => values[index]
-        });
+        this.updateListModel(values);
 
         // do not create the picker every time to save state
         return this.listComponent!;
+    }
+
+    private updateListModel(valueList: TValue[]): void {
+        if (!this.listComponent) { return; }
+
+        this.listComponent.setModel({
+            getRowCount: () => valueList.length,
+            getRow: (index: number) => valueList[index]
+        });
     }
 
     public showPicker() {
@@ -306,42 +312,86 @@ export class AgRichSelect<TValue = any> extends AgPickerField<TValue, RichSelect
         this.runSearch();
     }
 
-    private runSearch() {
-        const values = this.values;
-        let searchStrings: string[] | undefined;
-
+    private buildSearchStrings(values: TValue[]): string[] | undefined {
         const { valueFormatter = (value => value), searchStringCreator } = this.config;
 
+        let searchStrings: string[] | undefined;
         if (typeof values[0] === 'number' || typeof values[0] === 'string') {
             searchStrings = values.map(v => valueFormatter(v));
         } else if (typeof values[0] === 'object' && searchStringCreator) {
             searchStrings = searchStringCreator(values);
         }
 
+        return searchStrings;
+    }
+
+    private getSuggestionsAndFilteredValues(searchValue: string, valueList: string[]): { suggestions: string[], filteredValues: TValue[] } {
+        let suggestions: string[] = [];
+        let filteredValues: TValue[] = [];
+
+        if (!searchValue.length) { return { suggestions, filteredValues: this.values } };
+
+        const { searchType = 'fuzzy', filterList } = this.config;
+
+        if (searchType === 'fuzzy') {
+            const fuzzySearchResult = fuzzySuggestions(this.searchString, valueList, true);
+            suggestions = fuzzySearchResult.values;
+
+            const indices = fuzzySearchResult.indices;
+            if (filterList && indices.length) {
+                for (let i = 0; indices.length; i++) {
+                    filteredValues.push(this.values[indices[i]]);
+                }
+            }
+        } else {
+            suggestions = valueList.filter((val, idx) => {
+                const currentValue = val.toLocaleLowerCase();
+                const valueToMatch = this.searchString.toLocaleLowerCase();
+
+                const isMatch = searchType === 'match' ? currentValue.startsWith(valueToMatch) : currentValue.indexOf(valueToMatch) !== -1;
+                if (filterList && isMatch) {
+                    filteredValues.push(this.values[idx]);
+                }
+                return isMatch;
+            });
+        }
+
+        return { suggestions, filteredValues };
+    }
+
+    private filterListModel(filteredValues: TValue[]): void {
+        const { filterList } = this.config;
+        if (!filterList) { return; }
+
+        this.updateListModel(filteredValues);
+        this.listComponent?.refresh();
+    }
+
+    private runSearch() {
+        const { values } = this;
+        const searchStrings = this.buildSearchStrings(values);
+
         if (!searchStrings) {
             this.highlightSelectedValue(-1);
             return;
         }
 
-        if (searchStrings) {
-            let topSuggestion: string;
+        const { suggestions, filteredValues } = this.getSuggestionsAndFilteredValues(this.searchString, searchStrings);
+        const { filterList } = this.config;
 
-            if (this.config.searchType === 'fuzzy') {
-                topSuggestion = fuzzySuggestions(this.searchString, searchStrings, true)[0];
-            } else {
-                topSuggestion = fuzzySuggestions(this.searchString, searchStrings, true)[0];
-            }
-            
-            if (topSuggestion) {
-                const topSuggestionIndex = searchStrings.indexOf(topSuggestion);
-                this.selectListItem(topSuggestionIndex);
-                return;
-            }
+        if (filterList) {
+            this.filterListModel(filteredValues);
         }
 
-        // no suggestion found
-        this.highlightSelectedValue(-1);
-        this.listComponent?.ensureIndexVisible(0);
+        if (suggestions.length) {
+            const topSuggestionIndex = filterList ? 0 : searchStrings.indexOf(suggestions[0]);
+            this.selectListItem(topSuggestionIndex);
+        } else {
+            this.highlightSelectedValue(-1);
+            if (!filterList || filteredValues.length) {
+                this.listComponent?.ensureIndexVisible(0);
+            }
+        }
     }
 
     private clearSearchString(): void {

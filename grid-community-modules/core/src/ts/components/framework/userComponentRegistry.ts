@@ -159,7 +159,7 @@ export class UserComponentRegistry extends BeanStub {
             // Don't include the old names / internals in potential suggestions
             ...Object.keys(this.agGridDefaults).filter(k => !['agCellEditor', 'agGroupRowRenderer', 'agSortIndicator'].includes(k)),
             ...Object.keys(this.jsComps)];
-        const suggestions = fuzzySuggestions(componentName, validComponents, true, 0.8);
+        const suggestions = fuzzySuggestions(componentName, validComponents, true, 0.8).values;
 
         console.warn(`AG Grid: Could not find '${componentName}' component. It was configured as "${propertyName}: '${componentName}'" but it wasn't found in the list of registered components.`);
         if (suggestions.length > 0) {
