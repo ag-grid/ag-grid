@@ -254,8 +254,8 @@ export class ColumnFactory extends BeanStub {
             removeFromArray(existingGroups, existingGroup);
         }
 
-        if (existingGroup && existingGroup.isExpanded()) {
-            providedGroup.setExpanded(true);
+        if (existingGroup) {
+            providedGroup.setExpanded(existingGroup.isExpanded());
         }
 
         const children = this.recursivelyCreateColumns(colGroupDefMerged.children,
