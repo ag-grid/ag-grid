@@ -820,6 +820,12 @@
                 "url": "/server-side-model-updating-transactions/#asynchronous-updates"
             }
         },
+        "applyServerSideRowData": {
+            "more": {
+                "name": "Providing Additional Data",
+                "url": "/server-side-model-configuration/#providing-additional-data"
+            }
+        },
         "getServerSideSelectionState": {
             "more": {
                 "name": "Selection",

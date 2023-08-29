@@ -214,7 +214,7 @@ export class FullStore extends RowNodeBlock implements IServerSideStore {
         this.flushAsyncTransactions();
     }
 
-    protected processServerResult(params: LoadSuccessParams): void {
+    public processServerResult(params: LoadSuccessParams): void {
         if (!this.isAlive()) { return; }
 
         const info = params.storeInfo || params.groupLevelInfo;

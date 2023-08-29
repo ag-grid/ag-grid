@@ -15,7 +15,8 @@ import {
     ColumnModel,
     GridOptions
 } from "@ag-grid-community/core";
-import { SSRMParams } from "../serverSideRowModel";
+import { SSRMParams, ServerSideRowModel } from "../serverSideRowModel";
+import { StoreFactory } from "./storeFactory";
 
 @Bean('ssrmStoreUtils')
 export class StoreUtils extends BeanStub {
@@ -23,6 +24,8 @@ export class StoreUtils extends BeanStub {
     @Autowired('columnApi') private columnApi: ColumnApi;
     @Autowired('columnModel') private columnModel: ColumnModel;
     @Autowired('gridApi') private gridApi: GridApi;
+    @Autowired('rowModel') private serverSideRowModel: ServerSideRowModel;
+    @Autowired('ssrmStoreFactory') private storeFactory: StoreFactory;
 
     public loadFromDatasource(p: {
         storeParams: SSRMParams,
@@ -81,6 +84,13 @@ export class StoreUtils extends BeanStub {
         const nextNode = findNodeFunc(nextKey);
 
         if (nextNode) {
+            // if we have the final node, but not the final store, we create it to allow
+            // early population of data
+            if (keys.length === 1 && !nextNode.childStore) {
+                const storeParams = this.serverSideRowModel.getParams();
+                nextNode.childStore = this.createBean(this.storeFactory.createStore(storeParams, nextNode));
+            }
+
             const keyListForNextLevel = keys.slice(1, keys.length);
             const nextStore = nextNode.childStore;
             return nextStore ? nextStore.getChildStore(keyListForNextLevel) : null;
