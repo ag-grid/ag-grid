@@ -438,6 +438,11 @@ export class GridOptionsService {
         return undefined;
     }
 
+    public isGroupIncludeFooterTrueOrCallback(): boolean{
+        const userValue = this.gridOptions.groupIncludeFooter;
+        return isTrue(userValue) || typeof userValue === 'function';
+    }
+
     public getGroupIncludeFooter(): (params: WithoutGridCommon<GetGroupIncludeFooterParams>) => boolean{
         const userValue = this.gridOptions.groupIncludeFooter;
 

@@ -55,6 +55,8 @@ export class GroupStage extends BeanStub implements IRowNodeStage {
     private usingTreeData: boolean;
     private getDataPath: GetDataPath | undefined;
 
+    private createGroupFooter: boolean;
+
     // we use a sequence variable so that each time we do a grouping, we don't
     // reuse the ids - otherwise the rowRenderer will confuse rowNodes between redraws
     // when it tries to animate between rows.
@@ -75,6 +77,10 @@ export class GroupStage extends BeanStub implements IRowNodeStage {
         if (this.usingTreeData) {
             this.getDataPath = this.gridOptionsService.get('getDataPath');
         }
+        this.createGroupFooter = this.beans.gridOptionsService.isGroupIncludeFooterTrueOrCallback();
+        this.addManagedPropertyListener('groupIncludeFooter', () => {
+            this.createGroupFooter = this.beans.gridOptionsService.isGroupIncludeFooterTrueOrCallback();
+        });
     }
 
     public execute(params: StageExecuteParams): void {
@@ -635,6 +641,10 @@ export class GroupStage extends BeanStub implements IRowNodeStage {
         groupNode.parent = details.includeParents ? parent : null;
 
         this.setExpandedInitialValue(details, groupNode);
+
+        if (this.createGroupFooter) {
+            groupNode.createFooter();
+        }
 
         return groupNode;
     }
