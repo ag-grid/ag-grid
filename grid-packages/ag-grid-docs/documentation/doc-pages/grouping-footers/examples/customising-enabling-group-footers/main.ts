@@ -1,4 +1,4 @@
-import { Grid, GridOptions } from '@ag-grid-community/core';
+import { Grid, GridOptions, GetGroupIncludeFooterParams } from '@ag-grid-community/core';
 import { getData } from "./data";
 
 const gridOptions: GridOptions = {
@@ -18,11 +18,12 @@ const gridOptions: GridOptions = {
   autoGroupColumnDef: {
     minWidth: 300,
   },
-  groupIncludeFooter: ({node}) => {
-    if (node && node.level === 1) return true
-    if (node && node.key === 'France') return true
-    
-    return false
+  groupIncludeFooter: (params: GetGroupIncludeFooterParams) => {
+    const node = params.node;
+    if (node && node.level === 1) return true;
+    if (node && node.key === 'France') return true;
+
+    return false;
   },
   animateRows: true,
   rowData: getData(),
