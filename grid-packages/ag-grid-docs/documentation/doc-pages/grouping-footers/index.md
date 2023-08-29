@@ -29,16 +29,16 @@ The following example demonstrates these properties. Note the following:
 
 <grid-example title='Enabling Group Footers' name='enabling-group-footers' type='generated' options='{ "enterprise": true, "exampleHeight": 503, "modules": ["clientside", "rowgrouping"] }'></grid-example>
 
-## Customising Group Footer Enablement
+## Dynamic Group Footers
 
-If you want a group footer to only be enabled for certain groups but not others, you can customise the group footer enablement through passing a custom callback function to the property `groupIncludeFooter` instead of a boolean.
+If you want a group footer to only be enabled for certain groups but not others, you can dynamically specify which groups to add footers for through passing a custom callback function to the property `groupIncludeFooter` instead of a boolean.
 
 For example, to only enable group footers for the first level of groups, you can 
 
 <snippet>
 const gridOptions = {
     // adds a group footer to the first level of groups
-    groupIncludeFooter: ({ node }) => node && node.level === 0
+    groupIncludeFooter: (params) => params.node && params.node.level === 0
 }
 </snippet>
 
@@ -46,15 +46,15 @@ To enable group footer for a particular group name, you can
 <snippet>
 const gridOptions = {
     // adds a group footer to group with the name France
-    groupIncludeFooter: ({ node }) => node && node.key === 'France'
+    groupIncludeFooter: (params) => params.node && params.node.key === 'France'
 }
 </snippet>
 
 
 The following example demonstrates a custom group footer enablement. Note the following:
 
-- Group Footer is shown for second level of groups
-- Group Footer is shown for the Group called `France`
+- Group Footer is shown for the second level of groups
+- Group Footer is shown for the group called `France`
 
 <grid-example title='Customising Enabling Group Footers' name='customising-enabling-group-footers' type='generated' options='{ "enterprise": true, "exampleHeight": 503, "modules": ["clientside", "rowgrouping"] }'></grid-example>
 
