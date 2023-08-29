@@ -27,6 +27,13 @@ const gridOptions: GridOptions = {
   },
   animateRows: true,
   rowData: getData(),
+  onFirstDataRendered: () => {
+    gridOptions.api.forEachNode((node) => {
+      if (node.key === 'France' || node.key === 'South Korea') {
+        gridOptions.api.setRowNodeExpanded(node, true);
+      }
+    });
+  }
 }
 
 // setup the grid after the page has finished loading
