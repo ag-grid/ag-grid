@@ -28,7 +28,7 @@ export interface RichSelectParams<TValue = any> extends IPickerFieldParams {
     searchDebounceDelay?: number;
 
     filterList?: boolean;
-    searchType?: 'match' | 'fuzzy';
+    searchType?: 'match' | 'matchAny' | 'fuzzy';
 
     valueFormatter?: (value: TValue) => any;
     searchStringCreator?: (values: TValue[]) => string[]
@@ -48,11 +48,10 @@ export class AgRichSelect<TValue = any> extends AgPickerField<TValue, RichSelect
 
     private searchString = '';
     private listComponent: VirtualList | undefined;
-    private searchDebounceDelay: number;
     private values: TValue[];
-    private highlightedItem: number = -1;
+    private currentList: TValue[];
     private cellRowHeight: number;
-    private isAllowTyping: boolean = false;
+    private highlightedItem: number = -1;
 
     @Autowired('userComponentFactory') private userComponentFactory: UserComponentFactory;
     @RefSelector('eInput') private eInput: AgInputTextField;
@@ -73,13 +72,9 @@ export class AgRichSelect<TValue = any> extends AgPickerField<TValue, RichSelect
             maxPickerHeight: config?.maxPickerHeight ?? 'calc(var(--ag-row-height) * 6.5)',
         });
 
-        const { cellRowHeight, value, valueList, searchDebounceDelay, allowTyping } = config || {};
+        const { cellRowHeight, value, valueList } = config || {};
 
-        if (allowTyping) {
-            this.isAllowTyping = true;
-        }
-
-        if (cellRowHeight) {
+        if (cellRowHeight != null) {
             this.cellRowHeight = cellRowHeight;
         }
 
@@ -88,11 +83,7 @@ export class AgRichSelect<TValue = any> extends AgPickerField<TValue, RichSelect
         }
 
         if (valueList != null) {
-            this.setValueList(valueList);
-        }
-
-        if (searchDebounceDelay != null) {
-            this.searchDebounceDelay = searchDebounceDelay;
+            this.values = valueList;
         }
     }
 
@@ -100,19 +91,23 @@ export class AgRichSelect<TValue = any> extends AgPickerField<TValue, RichSelect
         super.postConstruct();
         this.createListComponent();
 
-        if (this.isAllowTyping) {
+        const { allowTyping } = this.config;
+
+        if (allowTyping) {
             this.eDisplayField.classList.add('ag-hidden');
+        } else {
+            this.eInput.setDisplayed(false);
         }
 
         this.eWrapper.tabIndex = this.gridOptionsService.getNum('tabIndex') ?? 0;
         this.eWrapper.classList.add('ag-rich-select-value');
 
-        const debounceDelay = this.searchDebounceDelay ?? 300;
-        this.clearSearchString = debounce(this.clearSearchString, debounceDelay);
+        const { searchDebounceDelay = 300 } = this.config;
+        this.clearSearchString = debounce(this.clearSearchString, searchDebounceDelay);
 
         this.renderSelectedValue();
 
-        if (this.isAllowTyping) {
+        if (allowTyping) {
             this.eInput.onValueChange(value => this.searchTextFromString(value));
             this.addManagedListener(this.eWrapper, 'focus', this.onWrapperFocus.bind(this));
         }
@@ -121,16 +116,17 @@ export class AgRichSelect<TValue = any> extends AgPickerField<TValue, RichSelect
     }
 
     private createListComponent(): void {
-        this.listComponent = this.createManagedBean(new VirtualList({ cssIdentifier: 'rich-select' }))
+        this.listComponent = this.createBean(new VirtualList({ cssIdentifier: 'rich-select' }))
         this.listComponent.setComponentCreator(this.createRowComponent.bind(this));
         this.listComponent.setParentComponent(this);
 
         this.addManagedListener(this.listComponent, Events.EVENT_FIELD_PICKER_VALUE_SELECTED, (e: FieldPickerValueSelectedEvent) => {
             this.onListValueSelected(e.value, e.fromEnterKey);
         });
-
-        if (this.cellRowHeight) {
-            this.listComponent.setRowHeight(this.cellRowHeight);
+        
+        const { cellRowHeight } = this;
+        if (cellRowHeight) {
+            this.listComponent.setRowHeight(cellRowHeight);
         }
 
         const eListGui = this.listComponent.getGui();
@@ -149,7 +145,7 @@ export class AgRichSelect<TValue = any> extends AgPickerField<TValue, RichSelect
         const { value, eDisplayField, config } = this;
         const valueFormatted = this.config.valueFormatter ? this.config.valueFormatter(value) : value;
 
-        if (this.isAllowTyping) {
+        if (config.allowTyping) {
             this.eInput.setValue(valueFormatted);
             return;
         }
@@ -185,18 +181,13 @@ export class AgRichSelect<TValue = any> extends AgPickerField<TValue, RichSelect
         }
     }
 
-    public setValueList(valueList: TValue[]): void {
-        this.values = valueList;
-        this.highlightSelectedValue();
-    }
-
     private getCurrentValueIndex(): number {
-        const { values, value } = this;
+        const { currentList, value } = this;
 
         if (value == null) { return -1; }
 
-        for (let i = 0; i < values.length; i++) {
-            if (values[i] === value) {
+        for (let i = 0; i < currentList.length; i++) {
+            if (currentList[i] === value) {
                 return i;
             }
         }
@@ -232,13 +223,23 @@ export class AgRichSelect<TValue = any> extends AgPickerField<TValue, RichSelect
     protected createPickerComponent() {
         const { values }  = this;
 
-        this.listComponent!.setModel({
-            getRowCount: () => values.length,
-            getRow: (index: number) => values[index]
-        });
+        this.updateListModel(values);
 
         // do not create the picker every time to save state
         return this.listComponent!;
+    }
+
+    private updateListModel(valueList: TValue[]): void {
+        if (!this.listComponent) { return; }
+
+        if (this.currentList === valueList) { return; }
+
+        this.currentList = valueList;
+
+        this.listComponent.setModel({
+            getRowCount: () => valueList.length,
+            getRow: (index: number) => valueList[index]
+        });
     }
 
     public showPicker() {
@@ -273,7 +274,7 @@ export class AgRichSelect<TValue = any> extends AgPickerField<TValue, RichSelect
 
     private onWrapperFocusOut(e: FocusEvent): void {
         if (!this.eWrapper.contains(e.relatedTarget as Element)) {
-            // this.hidePicker();
+            this.hidePicker();
         }
     }
 
@@ -304,42 +305,88 @@ export class AgRichSelect<TValue = any> extends AgPickerField<TValue, RichSelect
         this.runSearch();
     }
 
-    private runSearch() {
-        const values = this.values;
-        let searchStrings: string[] | undefined;
-
+    private buildSearchStrings(values: TValue[]): string[] | undefined {
         const { valueFormatter = (value => value), searchStringCreator } = this.config;
 
+        let searchStrings: string[] | undefined;
         if (typeof values[0] === 'number' || typeof values[0] === 'string') {
             searchStrings = values.map(v => valueFormatter(v));
         } else if (typeof values[0] === 'object' && searchStringCreator) {
             searchStrings = searchStringCreator(values);
         }
 
+        return searchStrings;
+    }
+
+    private getSuggestionsAndFilteredValues(searchValue: string, valueList: string[]): { suggestions: string[], filteredValues: TValue[] } {
+        let suggestions: string[] = [];
+        let filteredValues: TValue[] = [];
+
+        if (!searchValue.length) { return { suggestions, filteredValues } };
+
+        const { searchType = 'fuzzy', filterList } = this.config;
+
+        if (searchType === 'fuzzy') {
+            const fuzzySearchResult = fuzzySuggestions(this.searchString, valueList, true);
+            suggestions = fuzzySearchResult.values;
+
+            const indices = fuzzySearchResult.indices;
+            if (filterList && indices.length) {
+                for (let i = 0; indices.length; i++) {
+                    filteredValues.push(this.values[indices[i]]);
+                }
+            }
+        } else {
+            suggestions = valueList.filter((val, idx) => {
+                const currentValue = val.toLocaleLowerCase();
+                const valueToMatch = this.searchString.toLocaleLowerCase();
+
+                const isMatch = searchType === 'match' ? currentValue.startsWith(valueToMatch) : currentValue.indexOf(valueToMatch) !== -1;
+                if (filterList && isMatch) {
+                    filteredValues.push(this.values[idx]);
+                }
+                return isMatch;
+            });
+        }
+
+        return { suggestions, filteredValues };
+    }
+
+    private filterListModel(filteredValues: TValue[]): void {
+        const { filterList } = this.config;
+        if (!filterList) { return; }
+
+        this.updateListModel(filteredValues);
+        this.listComponent?.refresh();
+    }
+
+    private runSearch() {
+        const { values } = this;
+        const searchStrings = this.buildSearchStrings(values);
+
         if (!searchStrings) {
             this.highlightSelectedValue(-1);
             return;
         }
 
-        if (searchStrings) {
-            let topSuggestion: string;
+        const { suggestions, filteredValues } = this.getSuggestionsAndFilteredValues(this.searchString, searchStrings);
+        const { filterList } = this.config;
 
-            if (this.config.searchType === 'fuzzy') {
-                topSuggestion = fuzzySuggestions(this.searchString, searchStrings, true)[0];
-            } else {
-                topSuggestion = fuzzySuggestions(this.searchString, searchStrings, true)[0];
-            }
-            
-            if (topSuggestion) {
-                const topSuggestionIndex = searchStrings.indexOf(topSuggestion);
-                this.selectListItem(topSuggestionIndex);
-                return;
-            }
+        const shouldFilter = filterList && this.searchString !== '';
+
+        if (filterList) {
+            this.filterListModel(shouldFilter ? filteredValues : values);
         }
 
-        // no suggestion found
-        this.highlightSelectedValue(-1);
-        this.listComponent?.ensureIndexVisible(0);
+        if (suggestions.length) {
+            const topSuggestionIndex = filterList ? 0 : searchStrings.indexOf(suggestions[0]);
+            this.selectListItem(topSuggestionIndex);
+        } else {
+            this.highlightSelectedValue(-1);
+            if (!filterList || filteredValues.length) {
+                this.listComponent?.ensureIndexVisible(0);
+            }
+        }
     }
 
     private clearSearchString(): void {
@@ -347,7 +394,7 @@ export class AgRichSelect<TValue = any> extends AgPickerField<TValue, RichSelect
     }
 
     private selectListItem(index: number, preventUnnecessaryScroll?: boolean): void {
-        if (!this.isPickerDisplayed || !this.listComponent || index < 0 || index >= this.values.length) { return; }
+        if (!this.isPickerDisplayed || !this.listComponent || index < 0 || index >= this.currentList.length) { return; }
 
         this.listComponent.ensureIndexVisible(index, !preventUnnecessaryScroll);
         this.listComponent.refresh(true);
@@ -355,7 +402,7 @@ export class AgRichSelect<TValue = any> extends AgPickerField<TValue, RichSelect
     }
 
     public setValue(value: TValue, silent?: boolean, fromPicker?: boolean): this {
-        const index = this.values.indexOf(value);
+        const index = this.currentList.indexOf(value);
 
         if (index === -1) { return this; }
 
@@ -426,7 +473,7 @@ export class AgRichSelect<TValue = any> extends AgPickerField<TValue, RichSelect
         if (!this.isPickerDisplayed) { return; }
         e.preventDefault();
 
-        this.onListValueSelected(this.values[this.highlightedItem], true);
+        this.onListValueSelected(this.currentList[this.highlightedItem], true);
     }
 
     private onListValueSelected(value: TValue, fromEnterKey: boolean): void {
@@ -446,7 +493,9 @@ export class AgRichSelect<TValue = any> extends AgPickerField<TValue, RichSelect
     }
 
     public getFocusableElement(): HTMLElement {
-        if (this.isAllowTyping) {
+        const { allowTyping } = this.config;
+
+        if (allowTyping) {
             return this.eInput.getFocusableElement();
         }
 
@@ -456,10 +505,12 @@ export class AgRichSelect<TValue = any> extends AgPickerField<TValue, RichSelect
     protected onKeyDown(event: KeyboardEvent): void {
         const key = event.key;
 
+        const { allowTyping } = this.config;
+
         switch (key) {
             case KeyCode.LEFT:
             case KeyCode.RIGHT:
-                if (!this.isAllowTyping) {
+                if (!allowTyping) {
                     event.preventDefault();
                 }
                 break;
@@ -476,10 +527,19 @@ export class AgRichSelect<TValue = any> extends AgPickerField<TValue, RichSelect
                 this.onEnterKeyDown(event);
                 break;
             default:
-                if (!this.isAllowTyping) {
+                if (!allowTyping) {
                     this.buildSearchStringFromKeyboardEvent(event);
                 }
         }
+    }
+
+    public destroy(): void {
+        if (this.listComponent) {
+            this.destroyBean(this.listComponent);
+            this.listComponent = undefined;
+        }
+
+        super.destroy();
     }
 
 }
