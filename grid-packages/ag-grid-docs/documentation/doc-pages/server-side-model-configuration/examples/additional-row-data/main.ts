@@ -40,12 +40,15 @@ document.addEventListener('DOMContentLoaded', function () {
       // register the datasource with the grid
       gridOptions.api!.setServerSideDatasource(datasource);
       
-      const initialData = fakeServer.getData({ startRow: 0, endRow: 100 });
+      const initialData = fakeServer.getData({
+        startRow: 0,
+        endRow: 100,
+      });
 
-      gridOptions.api.applyServerSideRowData({
+      gridOptions.api!.applyServerSideRowData({
         successParams: {
           rowData: initialData.rows,
-          lastRow: initialData.lastRow,
+          rowCount: initialData.lastRow,
         },
       });
     });
@@ -79,7 +82,7 @@ function createServerSideDatasource(server: any): IServerSideDatasource {
 
 function createFakeServer(allData: any[]) {
   return {
-    getData: (request: IServerSideGetRowsRequest) => {
+    getData: (request: Pick<IServerSideGetRowsRequest, 'startRow' | 'endRow'>) => {
       // in this simplified fake server all rows are contained in an array
       var requestedRows = allData.slice(request.startRow, request.endRow)
 

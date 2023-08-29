@@ -261,12 +261,6 @@ In the example below, note the following:
 
 <grid-example title='Group Selects Children' name='group-selects-children' type='generated' options='{ "enterprise": true, "exampleHeight": 525, "modules": ["clientside", "rowgrouping"] }'></grid-example>
 
-## Providing Hierarchical Data via API
-
-Below is an example of utilising `api.applyServerSideRowData` to populate data. The datasource is only used to provide root level rows, and when these are loaded the grid is provided the child row data via the API.
-
-<grid-example title='Hierarchical Data' name='hierarchy' type='generated' options='{ "enterprise": true, "modules": ["serverside", "menu", "columnpanel"] }'></grid-example>
-
 ## Next Up
 
 Continue to the next section to learn about [Pivoting](/pivoting/).
