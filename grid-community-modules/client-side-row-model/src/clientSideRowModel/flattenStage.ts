@@ -109,7 +109,7 @@ export class FlattenStage extends BeanStub implements IRowNodeStage {
                     // put a footer in if user is looking for it
                     const getGroupIncludeFooter = this.gridOptionsService.getGroupIncludeFooter();
                     const doesRowShowFooter = getGroupIncludeFooter({ node: rowNode });
-                    if (doesRowShowFooter && !!rowNode.sibling) {
+                    if (doesRowShowFooter) {
                         this.addRowNodeToRowsToDisplay(rowNode.sibling, result, nextRowTop, uiLevelForChildren);
                     }
                 }
