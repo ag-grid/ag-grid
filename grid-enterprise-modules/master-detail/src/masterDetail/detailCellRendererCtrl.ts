@@ -140,11 +140,6 @@ export class DetailCellRendererCtrl extends BeanStub implements IDetailCellRende
     }
 
     private loadRowData(): void {
-        switch(this.params.detailGridOptions.rowModelType ?? 'clientSide') {
-            case 'serverSide':
-                this.params.api?.refreshServerSide({ route: [] });
-        }
-
         // in case a refresh happens before the last refresh completes (as we depend on async
         // application logic) we keep track on what the latest call was.
         this.loadRowDataVersion++;
