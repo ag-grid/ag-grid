@@ -141,7 +141,6 @@ export class PrimaryColsListPanelItemDragFeature extends BeanStub {
         const columnsToMove: Column[] = this.getCurrentColumns();
 
         if (targetIndex != null) {
-            console.log(targetIndex, columnsToMove);
             this.columnModel.moveColumns(columnsToMove, targetIndex, 'toolPanelUi');
         }
 
