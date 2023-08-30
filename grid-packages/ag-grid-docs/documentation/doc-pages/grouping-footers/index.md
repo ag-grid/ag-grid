@@ -50,6 +50,7 @@ The following example demonstrates a custom group footer enablement. Note the fo
 
 - Group Footer is shown for the second level of groups
 - Group Footer is shown for the group called `France`
+- No Group Footers are shown for any other groups.
 
 <grid-example title='Customising Enabling Group Footers' name='customising-enabling-group-footers' type='generated' options='{ "enterprise": true, "exampleHeight": 588, "modules": ["clientside", "rowgrouping"] }'></grid-example>
 

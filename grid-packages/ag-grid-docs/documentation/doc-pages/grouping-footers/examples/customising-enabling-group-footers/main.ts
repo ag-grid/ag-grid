@@ -1,5 +1,4 @@
 import { Grid, GridOptions, GetGroupIncludeFooterParams } from '@ag-grid-community/core';
-import { getData } from "./data";
 
 const gridOptions: GridOptions = {
   columnDefs: [
@@ -26,11 +25,10 @@ const gridOptions: GridOptions = {
     return false;
   },
   animateRows: true,
-  rowData: getData(),
   onFirstDataRendered: () => {
-    gridOptions.api.forEachNode((node) => {
+    gridOptions.api!.forEachNode((node) => {
       if (node.key === 'France' || node.key === 'South Korea') {
-        gridOptions.api.setRowNodeExpanded(node, true);
+        gridOptions.api!.setRowNodeExpanded(node, true);
       }
     });
   }
@@ -40,4 +38,8 @@ const gridOptions: GridOptions = {
 document.addEventListener('DOMContentLoaded', function () {
   var gridDiv = document.querySelector<HTMLElement>('#myGrid')!
   new Grid(gridDiv, gridOptions)
+
+  fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
+    .then(response => response.json())
+    .then((data: IOlympicData[]) => gridOptions.api!.setRowData(data))
 })

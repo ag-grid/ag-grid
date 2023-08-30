@@ -689,9 +689,7 @@ export class RowNode<TData = any> implements IEventEmitter, IRowNode<TData> {
 
         // when using footers we need to refresh the group row, as the aggregation
         // values jump between group and footer
-        const getGroupIncludeFooter = this.beans.gridOptionsService.getGroupIncludeFooter();
-        const doesRowShowFooter = getGroupIncludeFooter({ node: this });
-        if (doesRowShowFooter) {
+        if (this.sibling) {
             this.beans.rowRenderer.refreshCells({ rowNodes: [this] });
         }
     }
