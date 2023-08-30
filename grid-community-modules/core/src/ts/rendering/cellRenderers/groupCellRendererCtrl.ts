@@ -673,7 +673,7 @@ export class GroupCellRendererCtrl extends BeanStub {
             this.getContext().createBean(cbSelectionComponent);
 
             cbSelectionComponent.init({
-                rowNode: rowNode,
+                rowNode: this.params.node as RowNode, // when groupHideOpenParents = true and group expanded, we want the checkbox to refer to leaf node state (not group node state)
                 column: this.params.column,
                 overrides: {
                     isVisible: this.params.checkbox,
