@@ -33,23 +33,18 @@ The following example demonstrates these properties. Note the following:
 
 If you want a group footer to only be enabled for certain groups but not others, you can dynamically specify which groups to add footers for through passing a custom callback function to the property `groupIncludeFooter` instead of a boolean.
 
-For example, to only enable group footers for the first level of groups, you can 
-
+For example, to enable group footers for the second level of groups and groups with name 'France'
 <snippet>
-const gridOptions = {
-    // adds a group footer to the first level of groups
-    groupIncludeFooter: (params) => params.node && params.node.level === 0
-}
+|const gridOptions = {
+|    // adds a group footer to the second level of groups and groups with name 'France'
+|    groupIncludeFooter: (params) => {
+|        const node = params.node;
+|        if (node && node.level === 1) return true;
+|        if (node && node.key === 'France') return true;
+|        return false;
+|    }
+|}
 </snippet>
-
-To enable group footer for a particular group name, you can 
-<snippet>
-const gridOptions = {
-    // adds a group footer to group with the name France
-    groupIncludeFooter: (params) => params.node && params.node.key === 'France'
-}
-</snippet>
-
 
 The following example demonstrates a custom group footer enablement. Note the following:
 
@@ -57,6 +52,24 @@ The following example demonstrates a custom group footer enablement. Note the fo
 - Group Footer is shown for the group called `France`
 
 <grid-example title='Customising Enabling Group Footers' name='customising-enabling-group-footers' type='generated' options='{ "enterprise": true, "exampleHeight": 588, "modules": ["clientside", "rowgrouping"] }'></grid-example>
+
+
+To enable group footer for a particular group column row, you could do the following: 
+
+<snippet>
+const gridOptions = {
+    // adds a group footer to rows grouped by the country column
+    groupIncludeFooter: (params) => params.node.rowGroupColumn.colId === 'country' 
+}
+</snippet>
+
+The following example demonstrates a custom group footer enablement for rows grouped by a country column. Note the following:
+
+- Group Footer is shown for rows grouped by the country column.
+- Group Footer are not shown for any other groups
+
+<grid-example title='Customising Enabling Group Footers' name='customising-enabling-group-footers-row-grouped' type='generated' options='{ "enterprise": true, "exampleHeight": 488, "modules": ["clientside", "rowgrouping"] }'></grid-example>
+
 
 ## Customising Footer Values
 
