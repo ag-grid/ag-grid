@@ -61,9 +61,9 @@ Component Refresh needs a bit more explanation. Here we go through some of the f
 |
 | - Calling `rowNode.setDataValue(colKey, value)` to set a value directly onto the `rowNode`. This is the preferred API way to change one value from outside of the grid.
 | - When editing a cell and editing is stopped, so that cell displays new value after editing.
-| - Calling `api.refreshCells()` to inform grid data has changed (see [Refresh](../view-refresh/)).
+| - Calling `api.refreshCells()` to inform grid data has changed (see [Refresh](/view-refresh/)).
 |
-| If any of the above occur and the grid confirms the data has changed via [Change Detection](../change-detection/), then the `refresh()` method will be called.
+| If any of the above occur and the grid confirms the data has changed via [Change Detection](/change-detection/), then the `refresh()` method will be called.
 |
 | The following will **not** result in the cell renderer's refresh method being called:
 |
