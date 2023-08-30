@@ -141,6 +141,7 @@ export class PrimaryColsListPanelItemDragFeature extends BeanStub {
         const columnsToMove: Column[] = this.getCurrentColumns();
 
         if (targetIndex != null) {
+            console.log(targetIndex, columnsToMove);
             this.columnModel.moveColumns(columnsToMove, targetIndex, 'toolPanelUi');
         }
 
@@ -183,6 +184,12 @@ export class PrimaryColsListPanelItemDragFeature extends BeanStub {
             isBefore = true;
         } else {
             targetColumn = columnItemComponent.getColumn();
+        }
+
+        // if the target col is in the cols to be moved, no index to move.
+        const movingCols = this.getCurrentColumns();
+        if (movingCols.indexOf(targetColumn) !== -1) {
+            return null;
         }
 
         const targetColumnIndex = this.columnModel.getAllGridColumns().indexOf(targetColumn);
