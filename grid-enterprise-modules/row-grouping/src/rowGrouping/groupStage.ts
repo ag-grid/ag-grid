@@ -642,6 +642,9 @@ export class GroupStage extends BeanStub implements IRowNodeStage {
 
         this.setExpandedInitialValue(details, groupNode);
 
+        // if groupIncludeFooter is true or callback, we always create a group node footer
+        // this is for export as otherwise if we create in the flatten stage then footers
+        // aren't created for non-expanded group nodes.
         if (this.createGroupFooter) {
             groupNode.createFooter();
         }
