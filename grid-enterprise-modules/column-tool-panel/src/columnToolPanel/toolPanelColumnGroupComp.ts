@@ -85,10 +85,6 @@ export class ToolPanelColumnGroupComp extends Component {
         checkboxGui.insertAdjacentElement('afterend', this.eDragHandle);
         checkboxInput.setAttribute('tabindex', '-1');
 
-        if (_.missing(this.displayName)) {
-            this.displayName = '>>';
-        }
-
         this.eLabel.innerHTML = this.displayName ? this.displayName : '';
         this.setupExpandContract();
 

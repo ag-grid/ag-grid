@@ -77,6 +77,8 @@ export class SelectAllFeature extends BeanStub {
         if (this.cbSelectAllVisible) {
             // in case user is trying this feature with the wrong model type
             this.checkRightRowModelType('selectAllCheckbox');
+            // in case user is trying this feature with the wrong model type
+            this.checkSelectionType('selectAllCheckbox');
             // make sure checkbox is showing the right state
             this.updateStateOfCheckbox();
         }
@@ -121,6 +123,16 @@ export class SelectAllFeature extends BeanStub {
 
         this.cbSelectAll.setInputAriaLabel(`${ariaLabel} (${ariaStatus})`);
         this.headerCellCtrl.refreshAriaDescription();
+    }
+
+    private checkSelectionType(feature: string): boolean {
+        const isMultiSelect = this.gridOptionsService.get('rowSelection') === 'multiple';
+
+        if (!isMultiSelect) {
+            console.warn(`AG Grid: ${feature} is only available if using 'multiple' rowSelection.`);
+            return false;
+        }
+        return true;
     }
 
     private checkRightRowModelType(feature: string): boolean {
@@ -172,7 +184,7 @@ export class SelectAllFeature extends BeanStub {
         }
 
         if (result) {
-            return this.checkRightRowModelType('headerCheckboxSelection');
+            return this.checkRightRowModelType('headerCheckboxSelection') && this.checkSelectionType('headerCheckboxSelection');
         }
 
         return false;
