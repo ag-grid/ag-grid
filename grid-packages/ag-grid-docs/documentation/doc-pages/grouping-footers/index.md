@@ -54,8 +54,8 @@ The following example demonstrates a custom group footer enablement. Note the fo
 
 <grid-example title='Customising Enabling Group Footers' name='customising-enabling-group-footers' type='generated' options='{ "enterprise": true, "exampleHeight": 588, "modules": ["clientside", "rowgrouping"] }'></grid-example>
 
-
-To enable group footer for a particular group column row, you could do the following: 
+### Example: Group Column Footers
+To enable group footer for a particular row group column, you could do the following: 
 
 <snippet>
 const gridOptions = {
