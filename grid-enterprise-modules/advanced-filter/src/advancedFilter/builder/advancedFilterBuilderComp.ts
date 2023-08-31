@@ -5,25 +5,24 @@ import {
     Component,
     FilterManager,
     JoinAdvancedFilterModel,
-    KeyCode,
     PostConstruct,
     RefSelector,
     VirtualList,
     VirtualListDragItem,
     _
 } from "@ag-grid-community/core";
+import { AdvancedFilterBuilderItemComp } from "./advancedFilterBuilderItemComp";
+import { AdvancedFilterExpressionService } from "../advancedFilterExpressionService";
+import { AdvancedFilterService } from "../advancedFilterService";
 import { AdvancedFilterBuilderDragFeature } from "./advancedFilterBuilderDragFeature";
+import { AdvancedFilterBuilderItemAddComp } from "./advancedFilterBuilderItemAddComp";
 import {
     AdvancedFilterBuilderAddEvent,
-    AdvancedFilterBuilderEditStartedEvent,
-    AdvancedFilterBuilderRemoveEvent,
-    AdvancedFilterBuilderItemAddComp,
-    AdvancedFilterBuilderItemComp,
+    AdvancedFilterBuilderEvents,
     AdvancedFilterBuilderItem,
-    AdvancedFilterBuilderMoveEvent
- } from "./advancedFilterBuilderItemComp";
-import { AdvancedFilterExpressionService } from "./advancedFilterExpressionService";
-import { AdvancedFilterService } from "./advancedFilterService";
+    AdvancedFilterBuilderMoveEvent,
+    AdvancedFilterBuilderRemoveEvent
+} from "./iAdvancedFilterBuilder";
 
 export class AdvancedFilterBuilderComp extends Component {
     @RefSelector('eList') private eList: HTMLElement;
@@ -37,7 +36,6 @@ export class AdvancedFilterBuilderComp extends Component {
     private filterModel: AdvancedFilterModel;
     private stringifiedModel: string;
     private items: AdvancedFilterBuilderItem[];
-    private removeEditor: (() => void) | undefined;
     private dragFeature: AdvancedFilterBuilderDragFeature;
     private showMove: boolean;
 
@@ -46,8 +44,8 @@ export class AdvancedFilterBuilderComp extends Component {
             <div role="presentation" class="ag-advanced-filter-builder" tabindex="-1">
                 <div class="ag-advanced-filter-builder-list" ref="eList"></div>
                 <div class="ag-advanced-filter-builder-button-panel">
-                    <button class="ag-button ag-standard-button ag-advanced-filter-builder-button" ref="eApplyFilterButton"></button>
-                    <button class="ag-button ag-standard-button ag-advanced-filter-builder-button" ref="eCancelFilterButton"></button>
+                    <button class="ag-button ag-standard-button ag-advanced-filter-builder-apply-button" ref="eApplyFilterButton"></button>
+                    <button class="ag-button ag-standard-button ag-advanced-filter-builder-cancel-button" ref="eCancelFilterButton"></button>
                 </div>
             </div>`);
     }
@@ -58,7 +56,7 @@ export class AdvancedFilterBuilderComp extends Component {
         this.showMove = true;
         this.setupFilterModel();
 
-        this.virtualList = this.createManagedBean(new VirtualList({ cssIdentifier: 'autocomplete' }));
+        this.virtualList = this.createManagedBean(new VirtualList({ cssIdentifier: 'advanced-filter-builder' }));
         this.virtualList.setComponentCreator(this.createItemComponent.bind(this));
         this.virtualList.setComponentUpdater(this.updateItemComponent.bind(this));
         this.virtualList.setRowHeight(40);
@@ -85,18 +83,6 @@ export class AdvancedFilterBuilderComp extends Component {
         this.eCancelFilterButton.innerText = 'Cancel';
         this.activateTabIndex([this.eCancelFilterButton]);
         this.eCancelFilterButton.addEventListener('click', () => this.close());
-
-        this.addGuiEventListener('keydown', (event: KeyboardEvent) => {
-            switch (event.key) {
-            case KeyCode.ESCAPE:
-                if (this.removeEditor) {
-                    event.preventDefault();
-                    event.stopPropagation();
-                    this.removeEditor();
-                }
-                break;
-            }
-        });
     }
 
     public getNumItems(): number {
@@ -213,19 +199,10 @@ export class AdvancedFilterBuilderComp extends Component {
 
     private createItemComponent(item: AdvancedFilterBuilderItem): Component {
         const itemComp = item.filterModel ? new AdvancedFilterBuilderItemComp(item, this.dragFeature) : new AdvancedFilterBuilderItemAddComp(item);
-        itemComp.addEventListener(AdvancedFilterBuilderItemComp.REMOVE_EVENT, ({ item }: AdvancedFilterBuilderRemoveEvent) => this.removeItem(item));
-        itemComp.addEventListener(AdvancedFilterBuilderItemComp.EDIT_STARTED_EVENT, ({ removeEditor }: AdvancedFilterBuilderEditStartedEvent) => {
-            if (this.removeEditor) {
-                this.removeEditor();
-            }
-            this.removeEditor = removeEditor;
-        });
-        itemComp.addEventListener(AdvancedFilterBuilderItemComp.EDIT_ENDED_EVENT, () => {
-            this.removeEditor = undefined;
-        });
-        itemComp.addEventListener(AdvancedFilterBuilderItemComp.VALUE_CHANGED_EVENT, () => this.validate());
-        itemComp.addEventListener(AdvancedFilterBuilderItemComp.ADD_EVENT, ({ item, isJoin }: AdvancedFilterBuilderAddEvent) => this.addItem(item, isJoin));
-        itemComp.addEventListener(AdvancedFilterBuilderItemComp.MOVE_EVENT, ({ item, backwards }: AdvancedFilterBuilderMoveEvent) => this.moveItemUpDown(item, backwards));
+        itemComp.addEventListener(AdvancedFilterBuilderEvents.REMOVE_EVENT, ({ item }: AdvancedFilterBuilderRemoveEvent) => this.removeItem(item));
+        itemComp.addEventListener(AdvancedFilterBuilderEvents.VALUE_CHANGED_EVENT, () => this.validate());
+        itemComp.addEventListener(AdvancedFilterBuilderEvents.ADD_EVENT, ({ item, isJoin }: AdvancedFilterBuilderAddEvent) => this.addItem(item, isJoin));
+        itemComp.addEventListener(AdvancedFilterBuilderEvents.MOVE_EVENT, ({ item, backwards }: AdvancedFilterBuilderMoveEvent) => this.moveItemUpDown(item, backwards));
 
         this.getContext().createBean(itemComp);
 
@@ -244,12 +221,15 @@ export class AdvancedFilterBuilderComp extends Component {
             conditions: []
         } as JoinAdvancedFilterModel : {} as ColumnAdvancedFilterModel;
         parent!.conditions.push(filterModel);
-        const index = this.items.indexOf(item);
+        let index = this.items.indexOf(item);
         const softRefresh = index >= 0;
         if (softRefresh) {
+            if (item.filterModel) {
+                index++;
+            }
             const newItems: AdvancedFilterBuilderItem[] = [{
                 filterModel,
-                level,
+                level: item.filterModel?.filterType === 'join' ? level + 1 : level,
                 parent,
                 valid: isJoin,
                 showMove: this.showMove

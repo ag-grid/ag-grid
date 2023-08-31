@@ -37,7 +37,7 @@ export interface RichSelectParams<TValue = any> extends IPickerFieldParams {
 const TEMPLATE = /* html */`
     <div class="ag-picker-field" role="presentation">
         <div ref="eLabel"></div>
-            <div ref="eWrapper" class="ag-wrapper ag-picker-field-wrapper ag-picker-collapsed">
+            <div ref="eWrapper" class="ag-wrapper ag-picker-field-wrapper ag-rich-select-value ag-picker-collapsed">
             <div ref="eDisplayField" class="ag-picker-field-display"></div>
             <ag-input-text-field ref="eInput" class="ag-rich-select-field-input"></ag-input-text-field>
             <div ref="eIcon" class="ag-picker-field-icon" aria-hidden="true"></div>
@@ -48,7 +48,7 @@ export class AgRichSelect<TValue = any> extends AgPickerField<TValue, RichSelect
 
     private searchString = '';
     private listComponent: VirtualList | undefined;
-    private values: TValue[];
+    protected values: TValue[];
     private currentList: TValue[];
     private cellRowHeight: number;
     private highlightedItem: number = -1;
@@ -65,7 +65,7 @@ export class AgRichSelect<TValue = any> extends AgPickerField<TValue, RichSelect
             className: 'ag-rich-select',
             pickerIcon: 'smallDown',
             ariaRole: 'combobox',
-            template: TEMPLATE,
+            template: config?.template ?? TEMPLATE,
             modalPicker: false,
             ...config,
             // maxPickerHeight needs to be set after expanding `config`
@@ -100,7 +100,6 @@ export class AgRichSelect<TValue = any> extends AgPickerField<TValue, RichSelect
         }
 
         this.eWrapper.tabIndex = this.gridOptionsService.getNum('tabIndex') ?? 0;
-        this.eWrapper.classList.add('ag-rich-select-value');
 
         const { searchDebounceDelay = 300 } = this.config;
         this.clearSearchString = debounce(this.clearSearchString, searchDebounceDelay);
@@ -520,6 +519,8 @@ export class AgRichSelect<TValue = any> extends AgPickerField<TValue, RichSelect
                 break;
             case KeyCode.ESCAPE:
                 if (this.isPickerDisplayed) {
+                    event.preventDefault();
+                    event.stopPropagation();
                     this.hidePicker();
                 }
                 break;

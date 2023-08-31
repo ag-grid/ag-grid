@@ -22,7 +22,7 @@
         border-top: var(--ag-borders-secondary) var(--ag-secondary-border-color);
     }
 
-    .ag-advanced-filter-builder-button {
+    .ag-advanced-filter-builder-apply-button, .ag-advanced-filter-builder-cancel-button {
         margin-left: calc(var(--ag-grid-size) * 2);
     }
 
@@ -37,7 +37,11 @@
         padding-left: var(--ag-icon-size);
     }
 
-    .ag-advanced-filter-builder-item, .ag-advanced-filter-builder-item-condition, .ag-advanced-filter-builder-pill-wrapper, .advanced-filter-builder-item-buttons {
+    .ag-advanced-filter-builder-item,
+    .ag-advanced-filter-builder-item-condition,
+    .ag-advanced-filter-builder-pill-wrapper,
+    .ag-advanced-filter-builder-pill,
+    .ag-advanced-filter-builder-item-buttons {
         display: flex;
         align-items: center;
         height: 100%;
@@ -52,6 +56,10 @@
         padding: var(--ag-grid-size) calc(var(--ag-grid-size) * 2);
         min-height: calc(100% - var(--ag-grid-size) * 3);
         min-width: calc(var(--ag-grid-size) * 2);
+    }
+
+    .ag-advanced-filter-builder-pill-display {
+        margin-right: var(--ag-grid-size);
     }
 
     .ag-advanced-filter-builder-join-pill {
@@ -76,6 +84,10 @@
         }
     }
 
+    .ag-advanced-filter-builder-item-buttons {
+        opacity: 50%;
+    }
+
     .ag-advanced-filter-builder-item-button {
         cursor: pointer;
         min-width: calc(var(--ag-grid-size) * 4);
@@ -86,5 +98,27 @@
     .ag-advanced-filter-builder-item-button-disabled {
         color: var(--ag-disabled-foreground-color);
         cursor: default;
+    }
+
+    .ag-advanced-filter-builder-virtual-list-item {
+        display: flex;
+        cursor: default;
+        height: var(--ag-list-item-height);
+
+        .ag-keyboard-focus &:focus::after {
+            content: none
+        }
+
+        &:hover {
+            background-color: var(--ag-row-hover-color);
+
+            .ag-advanced-filter-builder-item-buttons {
+                opacity: 100%;
+            }
+        }
+    }
+
+    .ag-advanced-filter-builder-invalid {
+        color: var(--ag-invalid-color);
     }
 }

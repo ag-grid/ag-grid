@@ -24,6 +24,8 @@ export class AdvancedFilterComp extends Component {
     @RefSelector('eAutocomplete') private eAutocomplete: AgAutocomplete;
     @RefSelector('eApplyFilterButton') private eApplyFilterButton: HTMLElement;
     @RefSelector('eBuilderFilterButton') private eBuilderFilterButton: HTMLElement;
+    @RefSelector('eBuilderFilterButtonIcon') private eBuilderFilterButtonIcon: HTMLElement;
+    @RefSelector('eBuilderFilterButtonLabel') private eBuilderFilterButtonLabel: HTMLElement;
     @Autowired('advancedFilterService') private advancedFilterService: AdvancedFilterService;
     @Autowired('advancedFilterExpressionService') private advancedFilterExpressionService: AdvancedFilterExpressionService;
     @Autowired('filterManager') private filterManager: FilterManager;
@@ -36,7 +38,10 @@ export class AdvancedFilterComp extends Component {
             <div class="ag-advanced-filter" role="presentation" tabindex="-1">
                 <ag-autocomplete ref="eAutocomplete"></ag-autocomplete>
                 <button class="ag-button ag-standard-button ag-advanced-filter-apply-button" ref="eApplyFilterButton"></button>
-                <button class="ag-button ag-standard-button ag-advanced-filter-apply-button" ref="eBuilderFilterButton"></button>
+                <div class="ag-advanced-filter-builder-button" ref="eBuilderFilterButton" role="presentation">
+                    <span ref="eBuilderFilterButtonIcon"></span>
+                    <span class="ag-advanced-filter-builder-button-label" ref="eBuilderFilterButtonLabel"></span>
+                </div>
             </div>`);
     }
 
@@ -65,7 +70,8 @@ export class AdvancedFilterComp extends Component {
         this.eApplyFilterButton.addEventListener('click', () => this.onValueConfirmed(this.eAutocomplete.isValid()));
         _.setDisabled(this.eApplyFilterButton, this.isApplyDisabled);
         
-        this.eBuilderFilterButton.innerText = 'Builder';
+        this.eBuilderFilterButtonIcon.appendChild(_.createIconNoSpan('advancedFilterBuilder', this.gridOptionsService)!);
+        this.eBuilderFilterButtonLabel.innerText = 'Builder';
         this.activateTabIndex([this.eBuilderFilterButton]);
         this.eBuilderFilterButton.addEventListener('click', () => this.advancedFilterService.getCtrl().toggleFilterBuilder());
     }

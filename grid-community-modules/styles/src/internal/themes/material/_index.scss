@@ -184,7 +184,7 @@
         height: calc(var(--ag-grid-size) * 7);
     }
 
-    .ag-filter-apply-panel-button, .ag-advanced-filter-apply-button {
+    .ag-filter-apply-panel-button, .ag-advanced-filter-apply-button, .ag-advanced-filter-builder-button {
         @include ag.theme-rtl((
             margin-left: var(--ag-grid-size)
         ));

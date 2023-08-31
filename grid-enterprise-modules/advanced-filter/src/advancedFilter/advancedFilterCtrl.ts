@@ -13,7 +13,7 @@ import {
 } from "@ag-grid-community/core";
 import { AdvancedFilterHeaderComp } from "./advancedFilterHeaderComp";
 import { AdvancedFilterComp } from "./advancedFilterComp";
-import { AdvancedFilterBuilderComp } from "./advancedFilterBuilderComp";
+import { AdvancedFilterBuilderComp } from "./builder/advancedFilterBuilderComp";
 
 export class AdvancedFilterCtrl extends BeanStub implements IAdvancedFilterCtrl {
     @Autowired('focusService') private focusService: FocusService;

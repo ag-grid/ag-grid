@@ -126,7 +126,14 @@ export const iconNameClassMap: { [key: string]: string; } = {
     // show on column header when column is sorted descending
     sortDescending: 'desc',
     // show on column header when column has no sort, only when enabled with gridOptions.unSortIcon=true
-    sortUnSort: 'none'
+    sortUnSort: 'none',
+    advancedFilterBuilder: 'group',
+    advancedFilterBuilderDrag: 'grip',
+    advancedFilterBuilderInvalid: 'not-allowed',
+    advancedFilterBuilderMoveUp: 'asc',
+    advancedFilterBuilderMoveDown: 'desc',
+    advancedFilterBuilderAdd: 'menu',
+    advancedFilterBuilderRemove: 'cancel',
 };
 
 /**

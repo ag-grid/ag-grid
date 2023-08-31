@@ -10,7 +10,7 @@ export const AdvancedFilterModule: Module = {
     moduleName: ModuleNames.AdvancedFilterModule,
     beans: [AdvancedFilterService, AdvancedFilterExpressionService],
     agStackComponents: [
-        { componentName: 'agAdvancedFilter', componentClass: AdvancedFilterComp },
+        { componentName: 'agAdvancedFilter', componentClass: AdvancedFilterComp }
     ],
     dependantModules: [
         EnterpriseCoreModule
