@@ -23,7 +23,8 @@ import {
     SelectionChangedEvent,
     IRowNode,
     StoreRefreshedEvent,
-    ISelectionService
+    ISelectionService,
+    LoadSuccessParams
 } from "@ag-grid-community/core";
 import { SSRMParams } from "../../serverSideRowModel";
 import { StoreUtils } from "../storeUtils";
@@ -93,6 +94,17 @@ export class LazyStore extends BeanStub implements IServerSideStore {
         this.displayIndexStart = undefined;
         this.displayIndexEnd = undefined;
         this.destroyBean(this.cache);
+    }
+
+    /**
+     * Given a server response, ingest the rows outside of the data source lifecycle.
+     * 
+     * @param rowDataParams the server response containing the rows to ingest
+     * @param startRow the index to start ingesting rows
+     * @param expectedRows the expected number of rows in the response (used to determine if the last row index is known)
+     */
+    applyRowData(rowDataParams: LoadSuccessParams, startRow: number, expectedRows: number) {
+        this.cache.onLoadSuccess(startRow, expectedRows, rowDataParams);
     }
 
     /**

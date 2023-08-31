@@ -44,6 +44,19 @@ The example below shows how debouncing block loading can be achieved. Note the f
 
 <grid-example title='Block Loading Debounce' name='block-load-debounce' type='generated' options='{ "enterprise": true, "modules": ["serverside", "menu", "columnpanel"] }'></grid-example>
 
+## Providing Additional Data
+
+It is possible to supply extra data to the grid outside of the datasource lifecycle. This can be used to populate the grid with data before scrolling, provide hierarchical data, or provide additional blocks.
+
+<api-documentation source='grid-api/api.json' section='serverSideRowModel' names='["applyServerSideRowData"]' ></api-documentation>
+
+The example below demonstrates that the grid can be populated with data outside of the datasource flow. Note the following:
+- The first loading row never displays, as the first 100 rows are loaded by default
+- 100 rows are provided by default, ignoring the `cacheBlockSize` property
+- The loading of these additional rows  bypasses the `blockLoadDebounceMillis` and `maxConcurrentDatasourceRequests` properties.
+
+<grid-example title='Additional Row Data' name='additional-row-data' type='generated' options='{ "enterprise": true, "modules": ["serverside"] }'></grid-example>
+
 ## Initial Scroll Position
 
 When using the server-side row model the initial scroll position of the grid can be set. This is achieved by calling 

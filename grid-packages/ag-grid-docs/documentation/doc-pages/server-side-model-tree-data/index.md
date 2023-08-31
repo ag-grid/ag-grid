@@ -145,3 +145,9 @@ The following example demonstrates Server-Side Tree Data Filtering using the [Se
 - The **Group** and **Date** columns both have `filterParams.excelMode = 'windows'`, which allows changes to the tree filter to be applied in batches.
 
 <grid-example title='Filtering Tree Data' name='filtering-tree-data' type='generated' options='{ "enterprise": true, "exampleHeight": 590, "extras": ["alasql"], "modules": ["serverside", "rowgrouping", "menu", "columnpanel", "setfilter"] }'></grid-example>
+
+## Providing Hierarchical Data via API
+
+Below is an example of utilising `api.applyServerSideRowData` to populate data. The datasource is only used to provide root level rows, and when these are loaded the grid is provided the child row data via the API.
+
+<grid-example title='Hierarchical Data' name='supplying-hierarchy' type='generated' options='{ "enterprise": true, "modules": ["serverside", "menu", "columnpanel"] }'></grid-example>

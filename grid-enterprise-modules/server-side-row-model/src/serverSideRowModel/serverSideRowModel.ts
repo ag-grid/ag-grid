@@ -27,7 +27,8 @@ import {
     WithoutGridCommon,
     RowModelType,
     Optional,
-    IPivotColDefService
+    IPivotColDefService,
+    LoadSuccessParams,
 } from "@ag-grid-community/core";
 
 import { NodeManager } from "./nodeManager";
@@ -133,6 +134,21 @@ export class ServerSideRowModel extends BeanStub implements IServerSideRowModel 
         this.destroyDatasource();
         this.datasource = datasource;
         this.resetRootStore();
+    }
+
+    public applyRowData(rowDataParams: LoadSuccessParams, startRow: number, route: string[]) {
+        const rootStore = this.getRootStore();
+        if (!rootStore) { return; }
+
+        const storeToExecuteOn = rootStore.getChildStore(route);
+
+        if (!storeToExecuteOn) { return };
+    
+        if (storeToExecuteOn instanceof LazyStore) {
+            storeToExecuteOn.applyRowData(rowDataParams, startRow, rowDataParams.rowData.length);
+        } else if (storeToExecuteOn instanceof FullStore){
+            storeToExecuteOn.processServerResult(rowDataParams);
+        }
     }
 
     public isLastRowIndexKnown(): boolean {

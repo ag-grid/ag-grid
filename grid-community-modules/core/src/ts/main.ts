@@ -458,7 +458,8 @@ export {
     TreeDataDisplayType,
     LoadingCellRendererSelectorFunc,
     LoadingCellRendererSelectorResult,
-    DomLayoutType
+    DomLayoutType,
+    UseGroupFooter
 } from "./entities/gridOptions";
 
 export {
@@ -489,6 +490,7 @@ export {
     PostSortRowsParams,
     GetLocaleTextParams,
     GetGroupAggFilteringParams,
+    GetGroupIncludeFooterParams
 } from "./interfaces/iCallbackParams";
 export {
     WithoutGridCommon

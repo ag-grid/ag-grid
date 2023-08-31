@@ -14,7 +14,6 @@ import {
     GetContextMenuItems,
     GetMainMenuItems,
     GetRowIdFunc,
-    GetRowNodeIdFunc,
     GetServerSideGroupKey,
     GridOptions,
     IsApplyServerSideTransaction,
@@ -64,7 +63,7 @@ import {
     CreateRangeChartParams,
     GetChartImageDataUrlParams,
     IChartService,
-    OpenChartToolPanelParams, UpdateChartParams, UpdateRangeChartParams,
+    OpenChartToolPanelParams, UpdateChartParams,
 } from './interfaces/IChartService';
 import { ClientSideRowModelStep, ClientSideRowModelSteps, IClientSideRowModel } from "./interfaces/iClientSideRowModel";
 import { IClipboardCopyParams, IClipboardCopyRowsParams, IClipboardService } from "./interfaces/iClipboardService";
@@ -78,7 +77,7 @@ import {
     ExcelFactoryMode,
     IExcelCreator
 } from "./interfaces/iExcelCreator";
-import { IFilter, IFilterComp } from "./interfaces/iFilter";
+import { IFilter } from "./interfaces/iFilter";
 import { IFiltersToolPanel } from "./interfaces/iFiltersToolPanel";
 import { IImmutableService } from "./interfaces/iImmutableService";
 import { IInfiniteRowModel } from "./interfaces/iInfiniteRowModel";
@@ -127,6 +126,7 @@ import { IServerSideGroupSelectionState, IServerSideSelectionState } from "./int
 import { DataTypeDefinition } from "./entities/dataType";
 import { RowNode } from "./entities/rowNode";
 import { AdvancedFilterModel } from "./interfaces/advancedFilterModel";
+import { LoadSuccessParams } from "./rowNodeCache/rowNodeBlock";
 
 export interface DetailGridInfo {
     /**
@@ -1861,6 +1861,27 @@ export class GridApi<TData = any> {
             return;
         }
         return this.serverSideTransactionManager.applyTransactionAsync(transaction, callback);
+    }
+
+    /**
+     * Applies row data to a server side store.
+     * New rows will overwrite rows at the same index in the same way as if provided by a datasource success callback.
+     * 
+     * startRow is only applicable when `suppressServerSideInfiniteScroll=true`
+    */
+    public applyServerSideRowData(params: { successParams: LoadSuccessParams, route?: string[], startRow?: number }) {
+        const startRow = params.startRow ?? 0;
+        const route = params.route ?? [];
+        if (startRow < 0) {
+            console.warn(`AG Grid: invalid value ${params.startRow} for startRow, the value should be >= 0`);
+            return;
+        }
+    
+        if (this.serverSideRowModel) {
+            this.serverSideRowModel.applyRowData(params.successParams, startRow, route);
+        } else {
+            this.logMissingRowModel('setServerSideDatasource', 'serverSide');
+        }
     }
 
     /** Gets all failed server side loads to retry. */

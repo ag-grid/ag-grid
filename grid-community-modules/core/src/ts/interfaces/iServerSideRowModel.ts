@@ -3,6 +3,7 @@ import { ServerSideTransaction, ServerSideTransactionResult } from "./serverSide
 import { ServerSideGroupLevelState } from "./IServerSideStore";
 import { IServerSideDatasource } from "./iServerSideDatasource";
 import { IRowNode } from "./iRowNode";
+import { LoadSuccessParams } from "../rowNodeCache/rowNodeBlock";
 
 export interface IServerSideRowModel extends IRowModel {
     refreshStore(params?: RefreshServerSideParams): void;
@@ -16,6 +17,7 @@ export interface IServerSideRowModel extends IRowModel {
     resetRootStore(): void;
     getBlockStates(): void;
     setRowCount(rowCount: number, isLastRowIndexKnown?: boolean): void;
+    applyRowData(rowDataParams: LoadSuccessParams, startRow: number, route: string[]): void;
 }
 
 export interface IServerSideTransactionManager {
