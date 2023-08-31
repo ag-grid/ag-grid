@@ -689,7 +689,7 @@ export class RowNode<TData = any> implements IEventEmitter, IRowNode<TData> {
 
         // when using footers we need to refresh the group row, as the aggregation
         // values jump between group and footer
-        if (this.beans.gridOptionsService.is('groupIncludeFooter')) {
+        if (this.sibling) {
             this.beans.rowRenderer.refreshCells({ rowNodes: [this] });
         }
     }
@@ -761,7 +761,8 @@ export class RowNode<TData = any> implements IEventEmitter, IRowNode<TData> {
         const isOpenGroup = this.group && this.expanded && !this.footer && !lockedClosedGroup;
 
         // are we showing group footers
-        const groupFootersEnabled = this.beans.gridOptionsService.is('groupIncludeFooter');
+        const getGroupIncludeFooter = this.beans.gridOptionsService.getGroupIncludeFooter();
+        const groupFootersEnabled = getGroupIncludeFooter({ node: this });
 
         // if doing footers, we normally don't show agg data at group level when group is open
         const groupAlwaysShowAggData = this.beans.gridOptionsService.is('groupSuppressBlankHeader');

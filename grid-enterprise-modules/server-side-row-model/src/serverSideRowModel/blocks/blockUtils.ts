@@ -120,7 +120,9 @@ export class BlockUtils extends BeanStub {
             }, 'ServerSideBlock-CannotHaveNullOrUndefinedForKey');
         }
 
-        if (this.beans.gridOptionsService.is('groupIncludeFooter')) {
+        const getGroupIncludeFooter = this.beans.gridOptionsService.getGroupIncludeFooter();
+        const doesRowShowFooter = getGroupIncludeFooter({ node: rowNode });
+        if (doesRowShowFooter) {
             rowNode.createFooter();
             if (rowNode.sibling) {
                 rowNode.sibling.uiLevel = rowNode.uiLevel + 1;
