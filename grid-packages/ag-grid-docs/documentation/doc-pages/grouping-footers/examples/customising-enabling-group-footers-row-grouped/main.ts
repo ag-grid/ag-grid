@@ -19,7 +19,10 @@ const gridOptions: GridOptions = {
   },
   groupIncludeFooter: (params: GetGroupIncludeFooterParams) => {
     const node = params.node;
-    return node && node.rowGroupColumn && node.rowGroupColumn.colId === 'country' 
+    if (!node || !node.rowGroupColumn) {
+      return false;
+    }
+    return node.rowGroupColumn.getId() === 'country';
   },
   animateRows: true,
   groupDefaultExpanded: 1
