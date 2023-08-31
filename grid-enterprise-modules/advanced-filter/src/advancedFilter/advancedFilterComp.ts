@@ -77,6 +77,7 @@ export class AdvancedFilterComp extends Component {
 
     public setInputDisabled(disabled: boolean): void {
         this.eAutocomplete.setInputDisabled(disabled);
+        _.setDisabled(this.eApplyFilterButton, disabled || this.isApplyDisabled);
     }
 
     public getTooltipParams(): WithoutGridCommon<ITooltipParams> {

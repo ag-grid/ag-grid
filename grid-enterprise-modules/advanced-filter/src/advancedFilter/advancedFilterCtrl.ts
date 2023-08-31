@@ -83,6 +83,7 @@ export class AdvancedFilterCtrl extends BeanStub implements IAdvancedFilterCtrl 
             return;
         }
 
+        this.setInputDisabled(true);
         const popupParent = this.popupService.getPopupParent();
         const width = _.getAbsoluteWidth(popupParent) * 0.75;
         const height = _.getAbsoluteHeight(popupParent) * 0.75;
@@ -98,13 +99,13 @@ export class AdvancedFilterCtrl extends BeanStub implements IAdvancedFilterCtrl 
             maximizable: true,
             centered: true,
             closable: true,
-            modal: true,
         }));
 
         this.eBuilderDialog.addEventListener(AgDialog.EVENT_DESTROYED, () => {
             this.destroyBean(this.eBuilderComp);
             this.eBuilderComp = undefined;
             this.eBuilderDialog = undefined;
+            this.setInputDisabled(false);
         });
     }
 

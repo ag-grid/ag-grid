@@ -38,7 +38,7 @@ export class AdvancedFilterExpressionService extends BeanStub {
     private columnNameToIdMap: { [columnNameUpperCase: string]: { colId: string, columnName: string } } = {};
     private columnAutocompleteEntries: AutocompleteEntry[] | null = null;
     private expressionOperators: FilterExpressionOperators;
-    private expressionJoinOperators: { and: string, or: string };
+    private expressionJoinOperators: { AND: string, OR: string };
     private expressionEvaluatorParams: { [colId: string]: FilterExpressionEvaluatorParams<any> } = {};
 
     @PostConstruct
@@ -56,7 +56,7 @@ export class AdvancedFilterExpressionService extends BeanStub {
 
     public parseJoinOperator(model: JoinAdvancedFilterModel): string {
         const { type } = model;
-        return this.expressionJoinOperators[type.toLowerCase() as 'and' | 'or'] ?? type;
+        return this.expressionJoinOperators[type] ?? type;
     }
 
     public parseColumnName(model: ColumnAdvancedFilterModel): string {
@@ -176,7 +176,7 @@ export class AdvancedFilterExpressionService extends BeanStub {
         return this.getDataTypeExpressionOperator(baseCellDataType)?.operators?.[operator!];
     }
 
-    public getExpressionJoinOperators(): { and: string, or: string } {
+    public getExpressionJoinOperators(): { AND: string, OR: string } {
         return this.expressionJoinOperators;
     }
 
@@ -265,10 +265,10 @@ export class AdvancedFilterExpressionService extends BeanStub {
         return `${ColFilterExpressionParser.COL_START_CHAR}${displayValue}${ColFilterExpressionParser.COL_END_CHAR}`;
     }
 
-    private generateExpressionJoinOperators(): { and: string, or: string } {
+    private generateExpressionJoinOperators(): { AND: string, OR: string } {
         return {
-            and: this.translate('advancedFilterAnd'),
-            or: this.translate('advancedFilterOr')
+            AND: this.translate('advancedFilterAnd'),
+            OR: this.translate('advancedFilterOr')
         };
     }
 

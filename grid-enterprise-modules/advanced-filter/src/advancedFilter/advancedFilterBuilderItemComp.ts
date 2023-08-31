@@ -23,14 +23,19 @@ import {
 import { AdvancedFilterBuilderDragFeature, AdvancedFilterBuilderDragStartedEvent } from "./advancedFilterBuilderDragFeature";
 import { AdvancedFilterExpressionService } from "./advancedFilterExpressionService";
 
-export interface AdvancedFilterBuilderAddEvent extends AgEvent {
+interface AdvancedFilterBuilderItemEvent extends AgEvent {
     item: AdvancedFilterBuilderItem;
+}
+
+export interface AdvancedFilterBuilderAddEvent extends AdvancedFilterBuilderItemEvent {
     isJoin: boolean;
 }
 
-export interface AdvancedFilterBuilderRemoveEvent extends AgEvent {
-    item: AdvancedFilterBuilderItem;
+export interface AdvancedFilterBuilderMoveEvent extends AdvancedFilterBuilderItemEvent {
+    backwards: boolean;
 }
+
+export interface AdvancedFilterBuilderRemoveEvent extends AdvancedFilterBuilderItemEvent { }
 
 export interface AdvancedFilterBuilderEditStartedEvent extends AgEvent {
     removeEditor: () => void;
@@ -41,6 +46,7 @@ export interface AdvancedFilterBuilderItem {
     level: number;
     parent?: JoinAdvancedFilterModel;
     valid: boolean;
+    showMove?: boolean;
 }
 
 class ColumnParser {
@@ -93,7 +99,7 @@ class ColumnParser {
     }
 
     public getDragName(): string {
-        return this.advancedFilterExpressionService.parseColumnFilterModel(this.filterModel);
+        return this.filterModel.colId ? this.advancedFilterExpressionService.parseColumnFilterModel(this.filterModel) : 'Select a column';
     }
 
     private createOperatorPill(): void {
@@ -229,11 +235,15 @@ class ColumnParser {
 export class AdvancedFilterBuilderItemComp extends Component {
     @RefSelector('eDragHandle') private eDragHandle: HTMLElement;
     @RefSelector('eLabel') private eLabel: HTMLElement;
-    @RefSelector('eButton') private eButton: HTMLElement;
+    @RefSelector('eMoveUpButton') private eMoveUpButton: HTMLElement;
+    @RefSelector('eMoveDownButton') private eMoveDownButton: HTMLElement;
+    @RefSelector('eAddButton') private eAddButton: HTMLElement;
+    @RefSelector('eRemoveButton') private eRemoveButton: HTMLElement;
     @Autowired('advancedFilterExpressionService') private advancedFilterExpressionService: AdvancedFilterExpressionService;
     @Autowired('dragAndDropService') private dragAndDropService: DragAndDropService;
 
     public static readonly ADD_EVENT = 'advancedFilterBuilderAddEvent';
+    public static readonly MOVE_EVENT = 'advancedFilterBuilderMoveEvent';
     public static readonly REMOVE_EVENT = 'advancedFilterBuilderRemoveEvent';
     public static readonly EDIT_STARTED_EVENT = 'advancedFilterBuilderEditStartedEvent';
     public static readonly EDIT_ENDED_EVENT = 'advancedFilterBuilderEditEndedEvent';
@@ -248,35 +258,81 @@ export class AdvancedFilterBuilderItemComp extends Component {
                     <span ref="eDragHandle" class="ag-drag-handle" role="presentation"></span>
                     <div class="ag-advanced-filter-builder-item-condition" ref="eLabel"></div>
                 </div>
-                <span ref="eButton" class="ag-column-drop-cell-button" role="presentation"></span>
+                <div class="advanced-filter-builder-item-buttons">
+                    <span ref="eMoveUpButton" class="ag-advanced-filter-builder-item-button" role="presentation"></span>
+                    <span ref="eMoveDownButton" class="ag-advanced-filter-builder-item-button" role="presentation"></span>
+                    <span ref="eAddButton" class="ag-advanced-filter-builder-item-button" role="presentation"></span>
+                    <span ref="eRemoveButton" class="ag-advanced-filter-builder-item-button" role="presentation"></span>
+                </div>
             </div>
         `);
     }
 
     @PostConstruct
     private postConstruct(): void {
-        this.eDragHandle.appendChild(_.createIconNoSpan('columnDrag', this.gridOptionsService)!);
-        this.eButton.appendChild(_.createIconNoSpan('cancel', this.gridOptionsService)!);
+        const { filterModel, level, showMove } = this.item;
 
-        const { filterModel, level } = this.item;
+        this.eDragHandle.appendChild(_.createIconNoSpan('columnDrag', this.gridOptionsService)!);
+        if (showMove) {
+            this.eMoveUpButton.appendChild(_.createIconNoSpan('sortAscending', this.gridOptionsService)!);
+            this.eMoveDownButton.appendChild(_.createIconNoSpan('sortDescending', this.gridOptionsService)!);
+        }
+        this.eAddButton.appendChild(_.createIconNoSpan('close', this.gridOptionsService)!);
+        this.eRemoveButton.appendChild(_.createIconNoSpan('cancel', this.gridOptionsService)!);
+
         this.setupCondition(filterModel!);
         if (level === 0) {
             _.setDisplayed(this.eDragHandle, false);
-            _.setDisplayed(this.eButton, false);
+            _.setDisplayed(this.eMoveUpButton, false);
+            _.setDisplayed(this.eMoveDownButton, false);
+            _.setDisplayed(this.eAddButton, false);
+            _.setDisplayed(this.eRemoveButton, false);
         } else {
             this.addCssClass(`ag-advanced-filter-builder-indent-${level}`);
+        }
+        if (!showMove) {
+            _.setDisplayed(this.eMoveUpButton, false);
+            _.setDisplayed(this.eMoveDownButton, false);
         }
 
         this.setupDragging();
 
-        this.addManagedListener(this.eButton, 'click', (event: MouseEvent) => {
+        this.addManagedListener(this.eMoveUpButton, 'click', (event: MouseEvent) => {
             event.stopPropagation();
-            this.removeFromModel();
+            this.dispatchEvent<AdvancedFilterBuilderMoveEvent>({
+                type: AdvancedFilterBuilderItemComp.MOVE_EVENT,
+                item: this.item,
+                backwards: true
+            });
+        });
+        this.addManagedListener(this.eMoveDownButton, 'click', (event: MouseEvent) => {
+            event.stopPropagation();
+            this.dispatchEvent<AdvancedFilterBuilderMoveEvent>({
+                type: AdvancedFilterBuilderItemComp.MOVE_EVENT,
+                item: this.item,
+                backwards: false
+            });
+        });
+        this.addManagedListener(this.eAddButton, 'click', (event: MouseEvent) => {
+            event.stopPropagation();
+
+        });
+        this.addManagedListener(this.eRemoveButton, 'click', (event: MouseEvent) => {
+            event.stopPropagation();
             this.dispatchEvent<AdvancedFilterBuilderRemoveEvent>({
                 type: AdvancedFilterBuilderItemComp.REMOVE_EVENT,
                 item: this.item
             });
         })
+    }
+
+    public setState(params: {
+        disableMoveUp?: boolean;
+        disableMoveDown?: boolean;
+    }): void {
+        const { disableMoveUp, disableMoveDown } = params;
+        this.eMoveUpButton.classList.toggle('ag-advanced-filter-builder-item-button-disabled', disableMoveUp);
+        this.eMoveDownButton.classList.toggle('ag-advanced-filter-builder-item-button-disabled', disableMoveDown);
     }
 
     private setupCondition(filterModel: AdvancedFilterModel): void {
@@ -436,13 +492,6 @@ export class AdvancedFilterBuilderItemComp extends Component {
         ePillWrapper.appendChild(eEditorGui);
         eEditor.getFocusableElement().focus();
         return eEditor;
-    }
-
-    private removeFromModel(): void {
-        const parent = this.item.parent!;
-        const { filterModel } = this.item;
-        const index = parent.conditions.indexOf(filterModel!);
-        parent.conditions.splice(index, 1);
     }
 
     private setupDragging(): void {

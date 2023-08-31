@@ -15,7 +15,7 @@ import {
 
 class OperatorParser {
     private operators: string[] = [];
-    private parsedOperator: 'and' | 'or';
+    private parsedOperator: 'AND' | 'OR';
     private operatorStartPositions: number[] = [];
     private operatorEndPositions: (number | undefined)[] = [];
     private activeOperator: number = 0;
@@ -59,11 +59,11 @@ class OperatorParser {
     }
 
     public getFunction(): string {
-        return this.parsedOperator === 'or' ? '||' : '&&';
+        return this.parsedOperator === 'OR' ? '||' : '&&';
     }
 
     public getModel(): 'AND' | 'OR' {
-        return this.parsedOperator === 'or' ? 'OR' : 'AND';
+        return this.parsedOperator === 'OR' ? 'OR' : 'AND';
     }
 
     public getAutocompleteListParams(position: number, operatorIndex?: number): AutocompleteListParams {
@@ -126,7 +126,7 @@ class OperatorParser {
     private parseOperator(endPosition: number): boolean {
         const operator = this.operators.length > this.activeOperator ? this.operators[this.activeOperator] : '';
         const joinOperators = this.params.advancedFilterExpressionService.getExpressionJoinOperators();
-        const parsedValue = findMatch(operator, joinOperators, v => v) as 'and' | 'or';
+        const parsedValue = findMatch(operator, joinOperators, v => v) as 'AND' | 'OR';
         if (parsedValue) {
             // exact match
             this.operatorEndPositions[this.activeOperator] = endPosition;

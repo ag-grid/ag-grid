@@ -19,7 +19,8 @@ import {
     AdvancedFilterBuilderRemoveEvent,
     AdvancedFilterBuilderItemAddComp,
     AdvancedFilterBuilderItemComp,
-    AdvancedFilterBuilderItem
+    AdvancedFilterBuilderItem,
+    AdvancedFilterBuilderMoveEvent
  } from "./advancedFilterBuilderItemComp";
 import { AdvancedFilterExpressionService } from "./advancedFilterExpressionService";
 import { AdvancedFilterService } from "./advancedFilterService";
@@ -38,6 +39,7 @@ export class AdvancedFilterBuilderComp extends Component {
     private items: AdvancedFilterBuilderItem[];
     private removeEditor: (() => void) | undefined;
     private dragFeature: AdvancedFilterBuilderDragFeature;
+    private showMove: boolean;
 
     constructor() {
         super(/* html */ `
@@ -52,11 +54,13 @@ export class AdvancedFilterBuilderComp extends Component {
 
     @PostConstruct
     private postConstruct(): void {
+        // TODO - read from config
+        this.showMove = true;
         this.setupFilterModel();
 
         this.virtualList = this.createManagedBean(new VirtualList({ cssIdentifier: 'autocomplete' }));
         this.virtualList.setComponentCreator(this.createItemComponent.bind(this));
-        this.virtualList.setComponentUpdater(() => {});
+        this.virtualList.setComponentUpdater(this.updateItemComponent.bind(this));
         this.virtualList.setRowHeight(40);
         this.eList.appendChild(this.virtualList.getGui());
 
@@ -101,26 +105,43 @@ export class AdvancedFilterBuilderComp extends Component {
 
     public moveItem(item: AdvancedFilterBuilderItem | null, destination: VirtualListDragItem<AdvancedFilterBuilderItemComp> | null): void {
         if (!destination || !item) { return; }
-        const destinationItem = this.items[destination.rowIndex];
-        const destinationParent = destinationItem.parent;
+        this.moveItemToIndex(item, destination.rowIndex, destination.position);
+    }
+
+    private removeItemFromParent(item: AdvancedFilterBuilderItem): number {
+        const sourceParentIndex = item.parent!.conditions.indexOf(item.filterModel!);
+        item.parent!.conditions.splice(sourceParentIndex, 1);
+        return sourceParentIndex;
+    }
+
+    private moveItemToIndex(item: AdvancedFilterBuilderItem, destinationRowIndex: number, destinationPosition: 'top' | 'bottom'): void {
+        const destinationItem = this.items[destinationRowIndex];
+        const destinationIsParent = destinationItem.filterModel?.filterType === 'join' && destinationPosition === 'bottom';
+        const destinationParent = destinationIsParent ? (destinationItem.filterModel as JoinAdvancedFilterModel) : destinationItem.parent;
 
         // trying to move before the root
         if (!destinationParent) { return; }
 
         // can't move into itself
-        if (this.isChildOrSelf(destinationParent, item.filterModel!)) { return; }
+        if (this.isChildOrSelf(destinationParent, item.filterModel!) || destinationItem === item) {
+            return;
+        }
 
-        const sourceParentIndex = item.parent!.conditions.indexOf(item.filterModel!);
-        item.parent!.conditions.splice(sourceParentIndex, 1);
-        let destinationParentIndex = destinationParent.conditions.indexOf(destinationItem.filterModel!);
-        if (destinationParentIndex === -1) {
-            destinationParentIndex = destinationParent.conditions.length
-        } else if (destination.position === 'bottom') {
-            destinationParentIndex += 1;
+        this.removeItemFromParent(item);
+
+        let destinationParentIndex;
+        if (destinationIsParent) {
+            destinationParentIndex = 0;
+        } else {
+            destinationParentIndex = destinationParent.conditions.indexOf(destinationItem.filterModel!);
+            if (destinationParentIndex === -1) {
+                destinationParentIndex = destinationParent.conditions.length
+            } else if (destinationPosition === 'bottom') {
+                destinationParentIndex += 1;
+            }
         }
         destinationParent.conditions.splice(destinationParentIndex, 0, item.filterModel!);
-        this.buildListAndRestoreValidity();
-        this.validate();
+        this.refreshList(false);
     }
 
     private isChildOrSelf(modelToCheck: AdvancedFilterModel, potentialParentModel: AdvancedFilterModel): boolean {
@@ -148,48 +169,51 @@ export class AdvancedFilterBuilderComp extends Component {
 
     private buildList(): void {
         const parseFilterModel = (filterModel: AdvancedFilterModel, items: AdvancedFilterBuilderItem[], level: number, parent?: JoinAdvancedFilterModel) => {
-            items.push({ filterModel, level, parent, valid: true });
+            items.push({ filterModel, level, parent, valid: true, showMove: this.showMove });
             if (filterModel.filterType === 'join') {
                 filterModel.conditions.forEach(childFilterModel => parseFilterModel(childFilterModel, items, level + 1, filterModel));
-                items.push({ filterModel: null, level: level + 1, parent: filterModel, valid: true })
+                if (level === 0) {
+                    items.push({ filterModel: null, level: level + 1, parent: filterModel, valid: true })
+                }
             }
         }
         this.items = [];
         parseFilterModel(this.filterModel, this.items, 0);
     }
 
-    private buildListAndRestoreValidity(): void {
-        const invalidModels: AdvancedFilterModel[] = [];
-        this.items.forEach(item => {
-            if (!item.valid) {
-                invalidModels.push(item.filterModel!);
-            }
-        });
-        this.buildList();
-        if (invalidModels.length) {
+    private refreshList(softRefresh: boolean): void {
+        if (!softRefresh) {
+            const invalidModels: AdvancedFilterModel[] = [];
             this.items.forEach(item => {
-                if (item.filterModel && invalidModels.includes(item.filterModel)) {
-                    item.valid = false;
+                if (!item.valid) {
+                    invalidModels.push(item.filterModel!);
                 }
             });
+            this.buildList();
+            if (invalidModels.length) {
+                this.items.forEach(item => {
+                    if (item.filterModel && invalidModels.includes(item.filterModel)) {
+                        item.valid = false;
+                    }
+                });
+            }
         }
-        this.virtualList.refresh();
+        this.virtualList.refresh(softRefresh);
+        this.validate();
+    }
+
+    private updateItemComponent(item: AdvancedFilterBuilderItem, comp: AdvancedFilterBuilderItemComp): void {
+        if (!this.showMove) { return; }
+        const index = this.items.indexOf(item)
+        comp.setState({
+            disableMoveUp: index === 1,
+            disableMoveDown: !this.canMoveDown(item, index)
+        });
     }
 
     private createItemComponent(item: AdvancedFilterBuilderItem): Component {
         const itemComp = item.filterModel ? new AdvancedFilterBuilderItemComp(item, this.dragFeature) : new AdvancedFilterBuilderItemAddComp(item);
-        itemComp.addEventListener(AdvancedFilterBuilderItemComp.REMOVE_EVENT, ({ item }: AdvancedFilterBuilderRemoveEvent) => {
-            const isJoin = item.filterModel?.filterType === 'join';
-            // if it's a join, we don't know how many children there are, so always rebuild
-            const index = isJoin ? -1 : this.items.indexOf(item);
-            if (index >= 0) {
-                this.items.splice(index, 1);
-                this.virtualList.refresh(true);
-            } else {
-                this.buildListAndRestoreValidity();
-            }
-            this.validate();
-        });
+        itemComp.addEventListener(AdvancedFilterBuilderItemComp.REMOVE_EVENT, ({ item }: AdvancedFilterBuilderRemoveEvent) => this.removeItem(item));
         itemComp.addEventListener(AdvancedFilterBuilderItemComp.EDIT_STARTED_EVENT, ({ removeEditor }: AdvancedFilterBuilderEditStartedEvent) => {
             if (this.removeEditor) {
                 this.removeEditor();
@@ -200,41 +224,107 @@ export class AdvancedFilterBuilderComp extends Component {
             this.removeEditor = undefined;
         });
         itemComp.addEventListener(AdvancedFilterBuilderItemComp.VALUE_CHANGED_EVENT, () => this.validate());
-        itemComp.addEventListener(AdvancedFilterBuilderItemComp.ADD_EVENT, ({ item, isJoin }:  AdvancedFilterBuilderAddEvent) => {
-            const { parent, level } = item;
-            const filterModel = isJoin ? {
-                filterType: 'join',
-                type: 'AND',
-                conditions: []
-            } as JoinAdvancedFilterModel : {} as ColumnAdvancedFilterModel;
-            parent!.conditions.push(filterModel);
-            const index = this.items.indexOf(item);
-            if (index >= 0) {
-                const newItems: AdvancedFilterBuilderItem[] = [{
-                    filterModel,
-                    level,
-                    parent,
-                    valid: isJoin
-                }];
-                if (isJoin) {
-                    newItems.push({
-                        filterModel: null,
-                        level: level + 1,
-                        valid: true,
-                        parent: filterModel as JoinAdvancedFilterModel
-                    })
-                }
-                this.items.splice(index, 0, ...newItems);
-                this.virtualList.refresh(true);
-            } else {
-                this.buildListAndRestoreValidity();
-            }
-            this.validate();
-        });
+        itemComp.addEventListener(AdvancedFilterBuilderItemComp.ADD_EVENT, ({ item, isJoin }: AdvancedFilterBuilderAddEvent) => this.addItem(item, isJoin));
+        itemComp.addEventListener(AdvancedFilterBuilderItemComp.MOVE_EVENT, ({ item, backwards }: AdvancedFilterBuilderMoveEvent) => this.moveItemUpDown(item, backwards));
 
         this.getContext().createBean(itemComp);
 
+        if (itemComp instanceof AdvancedFilterBuilderItemComp) {
+            this.updateItemComponent(item, itemComp);
+        }
+
         return itemComp;
+    }
+
+    private addItem(item: AdvancedFilterBuilderItem, isJoin: boolean): void {
+        const { parent, level } = item;
+        const filterModel = isJoin ? {
+            filterType: 'join',
+            type: 'AND',
+            conditions: []
+        } as JoinAdvancedFilterModel : {} as ColumnAdvancedFilterModel;
+        parent!.conditions.push(filterModel);
+        const index = this.items.indexOf(item);
+        const softRefresh = index >= 0;
+        if (softRefresh) {
+            const newItems: AdvancedFilterBuilderItem[] = [{
+                filterModel,
+                level,
+                parent,
+                valid: isJoin,
+                showMove: this.showMove
+            }];
+            this.items.splice(index, 0, ...newItems);
+        }
+        this.refreshList(softRefresh);
+    }
+
+    private removeItem(item: AdvancedFilterBuilderItem): void {
+        const parent = item.parent!;
+        const { filterModel } = item;
+        const parentIndex = parent.conditions.indexOf(filterModel!);
+        parent.conditions.splice(parentIndex, 1);
+
+        const isJoin = item.filterModel?.filterType === 'join';
+        // if it's a join, we don't know how many children there are, so always rebuild
+        const index = isJoin ? -1 : this.items.indexOf(item);
+        const softRefresh = index >= 0;
+        if (softRefresh) {
+            this.items.splice(index, 1);
+        }
+        this.refreshList(softRefresh);
+    }
+
+    private moveItemUpDown(item: AdvancedFilterBuilderItem, backwards: boolean): void {
+        const itemIndex = this.items.indexOf(item);
+        const destinationIndex = backwards ? itemIndex - 1 : itemIndex + 1;
+        if (destinationIndex === 0 || (!backwards && !this.canMoveDown(item, itemIndex))) {
+            return;
+        }
+        const destinationItem = this.items[destinationIndex];
+        const indexInParent = this.removeItemFromParent(item);
+        const { level, filterModel, parent } = item;
+        const { level: destinationLevel, filterModel: destinationFilterModel, parent: destinationParent } = destinationItem;
+        if (backwards) {
+            if (destinationLevel === level && destinationFilterModel!.filterType === 'join') {
+                // destination is empty join. move to last child
+                (destinationFilterModel as JoinAdvancedFilterModel).conditions.push(filterModel!);
+            } else if (destinationLevel <= level) {
+                // same parent or first child. move above destination in destination parent
+                const destinationIndex = destinationParent!.conditions.indexOf(destinationFilterModel!);
+                destinationParent!.conditions.splice(destinationIndex, 0, filterModel!);
+            } else {
+                // need to move up a level. move to end of previous item's children
+                const newParentItem = parent!.conditions[indexInParent - 1] as JoinAdvancedFilterModel;
+                newParentItem.conditions.push(filterModel!);
+            }
+        } else {
+            if (destinationLevel === level) {
+                if (destinationFilterModel!.filterType === 'join') {
+                    // destination is join. move to first child
+                    (destinationFilterModel as JoinAdvancedFilterModel).conditions.splice(0, 0, filterModel!);
+                } else {
+                    // switch positions
+                    const destinationIndex = destinationParent!.conditions.indexOf(destinationFilterModel!);
+                    destinationParent!.conditions.splice(destinationIndex + 1, 0, filterModel!);
+                }
+            } else {
+                if (indexInParent < parent!.conditions.length) {
+                    // keep in parent, but swap with next child
+                    parent!.conditions.splice(indexInParent + 1, 0, filterModel!);
+                } else {
+                    // need to move down a level. move after parent in its parent
+                    const parentItem = this.items.find(itemToCheck => itemToCheck.filterModel === parent);
+                    const destinationIndex = parentItem!.parent!.conditions.indexOf(parentItem!.filterModel!) + 1;
+                    parentItem!.parent!.conditions.splice(destinationIndex, 0, filterModel!);
+                }
+            }
+        }
+        this.refreshList(false);
+    }
+
+    private canMoveDown(item: AdvancedFilterBuilderItem, index: number): boolean {
+        return !((item.level === 1 && index === this.items.length - 2) || (item.level === 1 && item.parent!.conditions[item.parent!.conditions.length - 1] === item.filterModel!));
     }
 
     private close(): void {

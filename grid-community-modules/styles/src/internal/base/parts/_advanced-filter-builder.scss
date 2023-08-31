@@ -37,7 +37,7 @@
         padding-left: var(--ag-icon-size);
     }
 
-    .ag-advanced-filter-builder-item, .ag-advanced-filter-builder-item-condition, .ag-advanced-filter-builder-pill-wrapper {
+    .ag-advanced-filter-builder-item, .ag-advanced-filter-builder-item-condition, .ag-advanced-filter-builder-pill-wrapper, .advanced-filter-builder-item-buttons {
         display: flex;
         align-items: center;
         height: 100%;
@@ -74,5 +74,17 @@
         .ag-advanced-filter-builder-indent-#{$i} {
             @include ag.unthemed-rtl(( padding-left: calc(#{$i} * var(--ag-advanced-filter-builder-indent-size)) ));
         }
+    }
+
+    .ag-advanced-filter-builder-item-button {
+        cursor: pointer;
+        min-width: calc(var(--ag-grid-size) * 4);
+        margin: 0 calc(var(--ag-grid-size) * 0.5);
+        color: var(--ag-secondary-foreground-color);
+    }
+
+    .ag-advanced-filter-builder-item-button-disabled {
+        color: var(--ag-disabled-foreground-color);
+        cursor: default;
     }
 }
