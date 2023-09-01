@@ -34,7 +34,8 @@
         margin-top: var(--ag-grid-size);
         margin-bottom: var(--ag-grid-size);
         overflow: hidden;
-        padding-left: var(--ag-icon-size);
+        padding-left: var(--ag-advanced-filter-builder-indent-size);
+        padding-right: var(--ag-advanced-filter-builder-indent-size);
     }
 
     .ag-advanced-filter-builder-item,
@@ -60,6 +61,9 @@
 
     .ag-advanced-filter-builder-pill-display {
         margin-right: var(--ag-grid-size);
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
     }
 
     .ag-advanced-filter-builder-join-pill {
@@ -83,16 +87,12 @@
             @include ag.unthemed-rtl(( padding-left: calc(#{$i} * var(--ag-advanced-filter-builder-indent-size)) ));
         }
     }
-
-    .ag-advanced-filter-builder-item-buttons {
-        opacity: 50%;
-    }
-
+    
     .ag-advanced-filter-builder-item-button {
         cursor: pointer;
-        min-width: calc(var(--ag-grid-size) * 4);
         margin: 0 calc(var(--ag-grid-size) * 0.5);
         color: var(--ag-secondary-foreground-color);
+        opacity: 50%;
     }
 
     .ag-advanced-filter-builder-item-button-disabled {
@@ -112,7 +112,7 @@
         &:hover {
             background-color: var(--ag-row-hover-color);
 
-            .ag-advanced-filter-builder-item-buttons {
+            .ag-advanced-filter-builder-item-button {
                 opacity: 100%;
             }
         }
@@ -120,5 +120,12 @@
 
     .ag-advanced-filter-builder-invalid {
         color: var(--ag-invalid-color);
+        cursor: default;
+    }
+
+    .ag-advanced-filter-builder-validation {
+        .ag-advanced-filter-builder-invalid {
+            opacity: 100%;
+        }
     }
 }

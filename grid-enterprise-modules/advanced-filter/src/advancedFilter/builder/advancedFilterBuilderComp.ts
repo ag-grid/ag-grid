@@ -1,12 +1,14 @@
 import {
     AdvancedFilterModel,
     Autowired,
+    Beans,
     ColumnAdvancedFilterModel,
     Component,
     FilterManager,
     JoinAdvancedFilterModel,
     PostConstruct,
     RefSelector,
+    TooltipFeature,
     VirtualList,
     VirtualListDragItem,
     _
@@ -31,6 +33,7 @@ export class AdvancedFilterBuilderComp extends Component {
     @Autowired('filterManager') private filterManager: FilterManager;
     @Autowired('advancedFilterService') private advancedFilterService: AdvancedFilterService;
     @Autowired('advancedFilterExpressionService') private advancedFilterExpressionService: AdvancedFilterExpressionService;
+    @Autowired('beans') private beans: Beans;
 
     private virtualList: VirtualList;
     private filterModel: AdvancedFilterModel;
@@ -38,6 +41,8 @@ export class AdvancedFilterBuilderComp extends Component {
     private items: AdvancedFilterBuilderItem[];
     private dragFeature: AdvancedFilterBuilderDragFeature;
     private showMove: boolean;
+    private validationTooltipFeature: TooltipFeature;
+    private validationMessage: string | null = null;
 
     constructor() {
         super(/* html */ `
@@ -54,8 +59,25 @@ export class AdvancedFilterBuilderComp extends Component {
     private postConstruct(): void {
         // TODO - read from config
         this.showMove = true;
-        this.setupFilterModel();
 
+        this.setupFilterModel();
+        this.setupVirtualList();
+
+        this.dragFeature = this.createManagedBean(new AdvancedFilterBuilderDragFeature(this, this.virtualList));
+
+        this.setupButtons();
+    }
+
+    public getNumItems(): number {
+        return this.items.length;
+    }
+
+    public moveItem(item: AdvancedFilterBuilderItem | null, destination: VirtualListDragItem<AdvancedFilterBuilderItemComp> | null): void {
+        if (!destination || !item) { return; }
+        this.moveItemToIndex(item, destination.rowIndex, destination.position);
+    }
+
+    private setupVirtualList(): void {
         this.virtualList = this.createManagedBean(new VirtualList({ cssIdentifier: 'advanced-filter-builder' }));
         this.virtualList.setComponentCreator(this.createItemComponent.bind(this));
         this.virtualList.setComponentUpdater(this.updateItemComponent.bind(this));
@@ -69,9 +91,9 @@ export class AdvancedFilterBuilderComp extends Component {
         });
         this.buildList();
         this.virtualList.refresh();
+    }
 
-        this.dragFeature = this.createManagedBean(new AdvancedFilterBuilderDragFeature(this, this.virtualList));
-
+    private setupButtons(): void {
         this.eApplyFilterButton.innerText = this.advancedFilterExpressionService.translate('advancedFilterApply');
         this.activateTabIndex([this.eApplyFilterButton]);
         this.eApplyFilterButton.addEventListener('click', () => {
@@ -79,19 +101,28 @@ export class AdvancedFilterBuilderComp extends Component {
             this.filterManager.onFilterChanged({ source: 'advancedFilter' });
             this.close();
         });
-        _.setDisabled(this.eApplyFilterButton, true);
+
+        this.validationTooltipFeature = this.createManagedBean(new TooltipFeature({
+            getGui: () => this.eApplyFilterButton,
+            getLocation: () => 'advancedFilter',
+            getTooltipValue: () => this.validationMessage,
+            getTooltipShowDelayOverride: () => 1000
+        }, this.beans));
+        this.validationTooltipFeature.setComp(this.eApplyFilterButton);
+        this.validate();
+
+        this.eApplyFilterButton.addEventListener(
+            'mouseenter',
+            () => this.addOrRemoveCssClass('ag-advanced-filter-builder-validation', true)
+        );
+        this.eApplyFilterButton.addEventListener(
+            'mouseleave',
+            () => this.addOrRemoveCssClass('ag-advanced-filter-builder-validation', false)
+        );
+
         this.eCancelFilterButton.innerText = 'Cancel';
         this.activateTabIndex([this.eCancelFilterButton]);
         this.eCancelFilterButton.addEventListener('click', () => this.close());
-    }
-
-    public getNumItems(): number {
-        return this.items.length;
-    }
-
-    public moveItem(item: AdvancedFilterBuilderItem | null, destination: VirtualListDragItem<AdvancedFilterBuilderItemComp> | null): void {
-        if (!destination || !item) { return; }
-        this.moveItemToIndex(item, destination.rowIndex, destination.position);
     }
 
     private removeItemFromParent(item: AdvancedFilterBuilderItem): number {
@@ -198,11 +229,22 @@ export class AdvancedFilterBuilderComp extends Component {
     }
 
     private createItemComponent(item: AdvancedFilterBuilderItem): Component {
-        const itemComp = item.filterModel ? new AdvancedFilterBuilderItemComp(item, this.dragFeature) : new AdvancedFilterBuilderItemAddComp(item);
-        itemComp.addEventListener(AdvancedFilterBuilderEvents.REMOVE_EVENT, ({ item }: AdvancedFilterBuilderRemoveEvent) => this.removeItem(item));
+        const itemComp = item.filterModel
+            ? new AdvancedFilterBuilderItemComp(item, this.dragFeature)
+            : new AdvancedFilterBuilderItemAddComp(item);
+        itemComp.addEventListener(
+            AdvancedFilterBuilderEvents.REMOVE_EVENT,
+            ({ item }: AdvancedFilterBuilderRemoveEvent) => this.removeItem(item)
+        );
         itemComp.addEventListener(AdvancedFilterBuilderEvents.VALUE_CHANGED_EVENT, () => this.validate());
-        itemComp.addEventListener(AdvancedFilterBuilderEvents.ADD_EVENT, ({ item, isJoin }: AdvancedFilterBuilderAddEvent) => this.addItem(item, isJoin));
-        itemComp.addEventListener(AdvancedFilterBuilderEvents.MOVE_EVENT, ({ item, backwards }: AdvancedFilterBuilderMoveEvent) => this.moveItemUpDown(item, backwards));
+        itemComp.addEventListener(
+            AdvancedFilterBuilderEvents.ADD_EVENT,
+            ({ item, isJoin }: AdvancedFilterBuilderAddEvent) => this.addItem(item, isJoin)
+        );
+        itemComp.addEventListener(
+            AdvancedFilterBuilderEvents.MOVE_EVENT,
+            ({ item, backwards }: AdvancedFilterBuilderMoveEvent) => this.moveItemUpDown(item, backwards)
+        );
 
         this.getContext().createBean(itemComp);
 
@@ -304,7 +346,8 @@ export class AdvancedFilterBuilderComp extends Component {
     }
 
     private canMoveDown(item: AdvancedFilterBuilderItem, index: number): boolean {
-        return !((item.level === 1 && index === this.items.length - 2) || (item.level === 1 && item.parent!.conditions[item.parent!.conditions.length - 1] === item.filterModel!));
+        return !((item.level === 1 && index === this.items.length - 2) ||
+            (item.level === 1 && item.parent!.conditions[item.parent!.conditions.length - 1] === item.filterModel!));
     }
 
     private close(): void {
@@ -315,8 +358,15 @@ export class AdvancedFilterBuilderComp extends Component {
         let disableApply = !this.items.every(({ valid }) => valid);
         if (!disableApply) {
             disableApply = JSON.stringify(this.filterModel) === this.stringifiedModel;
+            if (disableApply) {
+                this.validationMessage = 'Current filter already applied.';
+            } else {
+                this.validationMessage = null;
+            }
+        } else {
+            this.validationMessage = 'Not all conditions are complete.';
         }
         _.setDisabled(this.eApplyFilterButton, disableApply);
-        // TODO - show invalid somehow
+        this.validationTooltipFeature.refreshToolTip();
     }
 }

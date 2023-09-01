@@ -16,6 +16,7 @@ export class ConditionPillWrapperComp extends Component {
     private eColumnPill: SelectPillComp | InputPillComp;
     private eOperatorPill: SelectPillComp | InputPillComp | undefined;
     private eOperandPill: SelectPillComp | InputPillComp | undefined;
+    private validationMessage: string | null = null;
 
     constructor() {
         super(/* html */`
@@ -32,10 +33,17 @@ export class ConditionPillWrapperComp extends Component {
         this.createPill = createPill;
         this.filterModel = item.filterModel as ColumnAdvancedFilterModel;
         this.setupColumnCondition(this.filterModel);
+        this.validate();
+
+        this.addDestroyFunc(() => this.destroyBeans([this.eColumnPill, this.eOperatorPill, this.eOperandPill]));
     }
 
     public getDragName(): string {
         return this.filterModel.colId ? this.advancedFilterExpressionService.parseColumnFilterModel(this.filterModel) : 'Select a column';
+    }
+
+    public getValidationMessage(): string | null {
+        return this.validationMessage;
     }
 
     private setupColumnCondition(filterModel: ColumnAdvancedFilterModel): void {
@@ -43,10 +51,7 @@ export class ConditionPillWrapperComp extends Component {
         this.baseCellDataType = columnDetails?.baseCellDataType ?? 'text';
         this.column = columnDetails?.column;
         this.numOperands = this.getNumOperands(this.getOperatorKey());
-        this.render();
-    }
-    
-    private render(): void {
+
         this.eColumnPill = this.createPill({
             key: this.getColumnKey(),
             displayValue: this.getColumnDisplayValue() ?? 'Select a column',
@@ -137,6 +142,7 @@ export class ConditionPillWrapperComp extends Component {
             this.setOperatorKey(undefined as any);
             if (this.eOperatorPill) {
                 _.removeFromParent(this.eOperatorPill.getGui());
+                this.destroyBean(this.eOperatorPill);
                 this.createOperatorPill();
             }
             this.validate();
@@ -180,19 +186,23 @@ export class ConditionPillWrapperComp extends Component {
     private destroyOperandPill(): void {
         delete (this.filterModel as any).filter;
         this.getGui().removeChild(this.eOperandPill!.getGui());
+        this.destroyBean(this.eOperandPill);
         this.eOperandPill = undefined;
     }
 
     private validate(): void {
-        const valid = _.exists(this.getColumnKey()) &&
-            _.exists(this.getOperatorKey()) &&
-            (
-                this.numOperands === 0 ||
-                !(this.baseCellDataType === 'number' && !_.exists(this.getOperandDisplayValue()))
-            );
+        let validationMessage = null;
+        if (!_.exists(this.getColumnKey())) {
+            validationMessage = 'Must select a column.';
+        } else if (!_.exists(this.getOperatorKey())) {
+            validationMessage = 'Must select an option.';
+        } else if (this.numOperands > 0 && this.baseCellDataType === 'number' && !_.exists(this.getOperandDisplayValue())) {
+            validationMessage = 'Must enter a value.';
+        }
 
-        if (valid !== this.item.valid) {
-            this.item.valid = valid;
+        this.item.valid = !validationMessage;
+        if (validationMessage !== this.validationMessage) {
+            this.validationMessage = validationMessage;
             this.dispatchEvent({
                 type: AdvancedFilterBuilderEvents.VALID_CHANGED_EVENT
             });

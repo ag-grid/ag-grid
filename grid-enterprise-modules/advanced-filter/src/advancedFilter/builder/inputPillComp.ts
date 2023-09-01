@@ -35,6 +35,7 @@ export class InputPillComp extends Component {
             event.preventDefault();
             this.showEditor();
         });
+        this.addDestroyFunc(() => this.destroyBean(this.eEditor));
     }
 
     private showEditor(): void {
@@ -47,14 +48,7 @@ export class InputPillComp extends Component {
             switch (event.key) {
                 case KeyCode.ENTER:
                     event.preventDefault();
-                    const value = this.eEditor!.getValue() ?? '';
-                    this.dispatchEvent<WithoutGridCommon<FieldValueEvent>>({
-                        type: Events.EVENT_FIELD_VALUE_CHANGED,
-                        value
-                    })
-                    this.value = value;
-                    this.renderValue();
-                    this.hideEditor();
+                    this.updateValue();
                     break;
                 case KeyCode.ESCAPE:
                     event.preventDefault();
@@ -64,21 +58,34 @@ export class InputPillComp extends Component {
             }
         });
         eEditorGui.addEventListener('focusout', () => {
-            this.hideEditor();
+            this.updateValue();
         })
         this.getGui().appendChild(eEditorGui);
         this.eEditor.getFocusableElement().focus();
     }
 
     private hideEditor(): void {
-        if (!this.eEditor) { return; }
-        _.removeFromParent(this.eEditor.getGui());
-        this.destroyBean(this.eEditor);
-        _.setDisplayed(this.ePill, true);
+        const { eEditor } = this;
+        if (!eEditor) { return; }
         this.eEditor = undefined;
+        this.getGui().removeChild(eEditor.getGui());
+        this.destroyBean(eEditor);
+        _.setDisplayed(this.ePill, true);
     }
 
     private renderValue(): void {
         this.ePill.innerText = this.value;
+    }
+
+    private updateValue(): void {
+        if (!this.eEditor) { return; }
+        const value = this.eEditor!.getValue() ?? '';
+        this.dispatchEvent<WithoutGridCommon<FieldValueEvent>>({
+            type: Events.EVENT_FIELD_VALUE_CHANGED,
+            value
+        })
+        this.value = value;
+        this.renderValue();
+        this.hideEditor();
     }
 }

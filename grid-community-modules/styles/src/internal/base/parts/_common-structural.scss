@@ -848,7 +848,7 @@
     .ag-advanced-filter-builder-button {   
         display: flex;
         font-weight: 600;
-        padding: var(--ag-grid-size) calc(var(--ag-grid-size) * 2);
+        padding: var(--ag-grid-size);
 
         &:hover {
             background-color: var(--ag-row-hover-color);

@@ -119,7 +119,7 @@ export class PrimaryColsListPanelItemDragFeature extends BeanStub {
         }
 
         // if the target col is in the cols to be moved, no index to move.
-        const movingCols = this.getCurrentColumns();
+        const movingCols = this.getCurrentColumns(currentDragValue);
         if (movingCols.indexOf(targetColumn) !== -1) {
             return null;
         }

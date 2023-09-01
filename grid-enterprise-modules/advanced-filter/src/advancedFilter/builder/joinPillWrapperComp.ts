@@ -7,7 +7,6 @@ import { SelectPillComp } from "./selectPillComp";
 export class JoinPillWrapperComp extends Component {
     @Autowired('advancedFilterExpressionService') private advancedFilterExpressionService: AdvancedFilterExpressionService;
 
-    private createPill: (params: CreatePillParams) => SelectPillComp | InputPillComp;
     private filterModel: JoinAdvancedFilterModel;
 
     constructor() {
@@ -21,17 +20,10 @@ export class JoinPillWrapperComp extends Component {
         createPill: (params: CreatePillParams) => SelectPillComp | InputPillComp
     }): void {
         const { item, createPill } = params;
-        this.createPill = createPill;
-        this.filterModel = item.filterModel as JoinAdvancedFilterModel;
-        this.setupJoinCondition(this.filterModel);
-    }
+        const filterModel = item.filterModel as JoinAdvancedFilterModel;
+        this.filterModel = filterModel;
 
-    public getDragName(): string {
-        return this.advancedFilterExpressionService.parseJoinOperator(this.filterModel);
-    }
-
-    private setupJoinCondition(filterModel: JoinAdvancedFilterModel): void {
-        const ePill = this.createPill({
+        const ePill = createPill({
             key: filterModel.type,
             displayValue: this.advancedFilterExpressionService.parseJoinOperator(filterModel),
             cssClass: 'ag-advanced-filter-builder-join-pill',
@@ -40,5 +32,14 @@ export class JoinPillWrapperComp extends Component {
             update: (key) => filterModel.type = key as any
         });
         this.getGui().appendChild(ePill.getGui());
+        this.addDestroyFunc(() => this.destroyBean(ePill));
+    }
+
+    public getDragName(): string {
+        return this.advancedFilterExpressionService.parseJoinOperator(this.filterModel);
+    }
+
+    public getValidationMessage(): string | null {
+        return null;
     }
 }
