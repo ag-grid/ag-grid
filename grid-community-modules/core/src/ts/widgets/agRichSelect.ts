@@ -113,7 +113,7 @@ export class AgRichSelect<TValue = any> extends AgPickerField<TValue, RichSelect
             this.eInput.onValueChange(value => this.searchTextFromString(value));
             this.addManagedListener(this.eWrapper, 'focus', this.onWrapperFocus.bind(this));
         }
-        // this.addManagedListener(this.eWrapper, 'focusout', this.onWrapperFocusOut.bind(this));
+        this.addManagedListener(this.eWrapper, 'focusout', this.onWrapperFocusOut.bind(this));
 
     }
 

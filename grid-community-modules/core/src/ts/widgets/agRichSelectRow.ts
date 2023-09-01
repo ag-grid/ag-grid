@@ -55,7 +55,7 @@ export class RichSelectRow<TValue> extends Component {
                 const startPart = escapeString(parsedValue.slice(0, index), true);
                 const highlightedPart = escapeString(parsedValue.slice(index, highlightEndIndex), true);
                 const endPart = escapeString(parsedValue.slice(highlightEndIndex));
-                this.renderValueWithoutRenderer(`${startPart}<b>${highlightedPart}</b>${endPart}`);
+                this.renderValueWithoutRenderer(`${startPart}<span class="ag-rich-select-row-text-highlight">${highlightedPart}</span>${endPart}`);
             }
         } else {
             this.renderValueWithoutRenderer(parsedValue);
