@@ -6,7 +6,7 @@ import { FieldPickerValueSelectedEvent } from "../events";
 import { WithoutGridCommon } from "../interfaces/iCommon";
 import { ICellRendererParams } from "../rendering/cellRenderers/iCellRenderer";
 import { AgPromise } from "../utils";
-import { setAriaControls } from "../utils/aria";
+import { setAriaActiveDescendant, setAriaControls, setAriaLabel } from "../utils/aria";
 import { bindCellRendererToHtmlElement, clearElement } from "../utils/dom";
 import { debounce } from "../utils/function";
 import { fuzzySuggestions } from "../utils/fuzzyMatch";
@@ -113,7 +113,7 @@ export class AgRichSelect<TValue = any> extends AgPickerField<TValue, RichSelect
             this.eInput.onValueChange(value => this.searchTextFromString(value));
             this.addManagedListener(this.eWrapper, 'focus', this.onWrapperFocus.bind(this));
         }
-        this.addManagedListener(this.eWrapper, 'focusout', this.onWrapperFocusOut.bind(this));
+        // this.addManagedListener(this.eWrapper, 'focusout', this.onWrapperFocusOut.bind(this));
 
     }
 
@@ -140,6 +140,10 @@ export class AgRichSelect<TValue = any> extends AgPickerField<TValue, RichSelect
 
         const listId = `ag-rich-select-list-${this.listComponent.getCompId()}`;
         eListAriaEl.setAttribute('id', listId);
+        const translate = this.localeService.getLocaleTextFunc();
+        const ariaLabel = translate(this.config.pickerAriaLabelKey, this.config.pickerAriaLabelValue);
+
+        setAriaLabel(eListAriaEl, ariaLabel);
         setAriaControls(this.eWrapper, eListAriaEl);
     }
 
@@ -378,6 +382,7 @@ export class AgRichSelect<TValue = any> extends AgPickerField<TValue, RichSelect
         const { suggestions, filteredValues } = this.getSuggestionsAndFilteredValues(this.searchString, searchStrings);
         const { filterList, highlightMatch } = this.config;
 
+        const filterValueLen = filteredValues.length;
         const shouldFilter = filterList && this.searchString !== '';
 
         if (filterList) {
@@ -392,10 +397,22 @@ export class AgRichSelect<TValue = any> extends AgPickerField<TValue, RichSelect
             }
         } else {
             this.highlightSelectedValue(-1);
-            if (!filterList || filteredValues.length) {
+            
+            if (!filterList || filterValueLen) {
                 this.listComponent?.ensureIndexVisible(0);
+            } else if (filterList) {
+                this.eWrapper.removeAttribute('data-active-option');
+                const eListAriaEl = this.listComponent?.getAriaElement();
+                if (eListAriaEl) {
+                    setAriaActiveDescendant(eListAriaEl, null);
+                }
             }
         }
+
+        const eListGui = this.listComponent?.getGui();
+
+        eListGui?.classList.toggle('ag-hidden', filterList && !filterValueLen)
+
     }
 
     private clearSearchString(): void {

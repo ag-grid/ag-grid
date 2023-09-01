@@ -10,7 +10,7 @@ import { FieldPickerValueSelectedEvent } from "../events";
 import { Component } from "./component";
 import { escapeString } from "../utils/string";
 import { exists } from "../utils/generic";
-import { setAriaSelected } from "../utils/aria";
+import { setAriaActiveDescendant, setAriaSelected } from "../utils/aria";
 import { VirtualList } from "./virtualList";
 
 export class RichSelectRow<TValue> extends Component {
@@ -70,7 +70,7 @@ export class RichSelectRow<TValue> extends Component {
 
         if (highlighted) {
             const parentAriaEl = (this.getParentComponent() as VirtualList).getAriaElement();
-            parentAriaEl.setAttribute('aria-activedescendant', parentId);
+            setAriaActiveDescendant(parentAriaEl, parentId);
             this.wrapperEl.setAttribute('data-active-option', parentId);
         }
 
