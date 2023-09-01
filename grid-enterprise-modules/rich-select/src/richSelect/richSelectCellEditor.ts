@@ -38,7 +38,7 @@ export class RichSelectCellEditor<TData = any, TValue = any> extends PopupCompon
         this.appendChild(this.richSelect);
 
         this.addManagedListener(this.richSelect, Events.EVENT_FIELD_PICKER_VALUE_SELECTED, this.onEditorPickerValueSelected.bind(this));
-        this.addManagedListener(this.richSelect.getGui(), 'focusout', this.onEditorFocusOut.bind(this));
+        // this.addManagedListener(this.richSelect.getGui(), 'focusout', this.onEditorFocusOut.bind(this));
 
         this.focusAfterAttached = cellStartedEdit;
 
@@ -61,7 +61,7 @@ export class RichSelectCellEditor<TData = any, TValue = any> extends PopupCompon
             cellRenderer, value, values, colDef, 
             formatValue, searchDebounceDelay, valueListGap, 
             valueListMaxHeight, valueListMaxWidth, allowTyping,
-            filterList, searchType
+            filterList, searchType, highlightMatch
         } = this.params;
 
         const ret: RichSelectParams = {
@@ -77,6 +77,7 @@ export class RichSelectCellEditor<TData = any, TValue = any> extends PopupCompon
             allowTyping,
             filterList,
             searchType,
+            highlightMatch,
             maxPickerHeight: valueListMaxHeight,
             maxPickerWidth: valueListMaxWidth
         }

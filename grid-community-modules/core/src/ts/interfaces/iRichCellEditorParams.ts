@@ -19,6 +19,10 @@ export interface IRichCellEditorParams<TValue = any> {
      * Default: `fuzzy` 
      */
     searchType?: 'match' | 'matchAny' | 'fuzzy';
+    /**
+     * If `true`, each item on the list of values will highlight the part of the text that matches the input. Default: `false`.
+     */
+    highlightMatch?: boolean;
     /** The value in `ms` for the search algorithm debounce delay (only relevant when `allowTyping=false`). Default: `300` */
     searchDebounceDelay?: number;
     /** The space in pixels between the value display and the list of items. Default: `4` */

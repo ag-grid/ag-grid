@@ -16,6 +16,7 @@ import { VirtualList } from "./virtualList";
 export class RichSelectRow<TValue> extends Component {
 
     private value: TValue;
+    private parsedValue: string | null;
 
     @Autowired('userComponentFactory') private userComponentFactory: UserComponentFactory;
 
@@ -42,6 +43,25 @@ export class RichSelectRow<TValue> extends Component {
         this.value = value;
     }
 
+    public highlightString(matchString: string): void {
+        const { parsedValue } = this;
+
+        if (this.params.cellRenderer || !exists(parsedValue)) { return; }
+
+        if (exists(matchString)) {
+            const index = parsedValue?.toLocaleLowerCase().indexOf(matchString.toLocaleLowerCase());
+            if (index >= 0) {
+                const highlightEndIndex = index + matchString.length;
+                const startPart = escapeString(parsedValue.slice(0, index), true);
+                const highlightedPart = escapeString(parsedValue.slice(index, highlightEndIndex), true);
+                const endPart = escapeString(parsedValue.slice(highlightEndIndex));
+                this.renderValueWithoutRenderer(`${startPart}<b>${highlightedPart}</b>${endPart}`);
+            }
+        } else {
+            this.renderValueWithoutRenderer(parsedValue);
+        }
+    }
+
     public updateHighlighted(highlighted: boolean): void {
         const eGui = this.getGui();
         const parentId = `ag-rich-select-row-${this.getCompId()}`;
@@ -66,9 +86,16 @@ export class RichSelectRow<TValue> extends Component {
         span.style.overflow = 'hidden';
         span.style.textOverflow = 'ellipsis';
         const parsedValue = escapeString(exists(valueFormatted) ? valueFormatted : value, true);
-        span.textContent =  exists(parsedValue) ? parsedValue : '&nbsp;';
+        this.parsedValue = exists(parsedValue) ? parsedValue : null;
 
         eGui.appendChild(span);
+        this.renderValueWithoutRenderer(parsedValue);
+    }
+
+    private renderValueWithoutRenderer(value: string | null): void {
+        const span = this.getGui().querySelector('span');
+        if (!span) { return; }
+        span.innerHTML = exists(value) ? value : '&nbsp;'
     }
 
     private populateWithRenderer(value: TValue, valueFormatted: string): boolean {

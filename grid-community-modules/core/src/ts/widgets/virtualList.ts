@@ -180,12 +180,15 @@ export class VirtualList extends TabGuardComp {
         return this.environment.getListItemHeight();
     }
 
-    public ensureIndexVisible(index: number, scrollPartialIntoView: boolean = true): void {
+    /**
+     * Returns true if the view had to be scrolled, otherwise, false.
+     */
+    public ensureIndexVisible(index: number, scrollPartialIntoView: boolean = true): boolean {
         const lastRow = this.model.getRowCount();
 
         if (typeof index !== 'number' || index < 0 || index >= lastRow) {
             console.warn('AG Grid: invalid row index for ensureIndexVisible: ' + index);
-            return;
+            return false;
         }
 
         const rowTopPixel = index * this.rowHeight;
@@ -203,11 +206,17 @@ export class VirtualList extends TabGuardComp {
         if (viewportScrolledPastRow) {
             // if row is before, scroll up with row at top
             eGui.scrollTop = rowTopPixel;
-        } else if (viewportScrolledBeforeRow) {
+            return true;
+        }
+        
+        if (viewportScrolledBeforeRow) {
             // if row is below, scroll down with row at bottom
             const newScrollPosition = rowBottomPixel - viewportHeight;
             eGui.scrollTop = newScrollPosition;
+            return true;
         }
+
+        return false;
     }
 
     public setComponentCreator(componentCreator: (value: any, listItemElement: HTMLElement) => Component): void {
