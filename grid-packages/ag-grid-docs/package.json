@@ -6,7 +6,7 @@
     "clean": "npm run clean-examples-dir && rimraf dist _dev .cache-loader .hash",
     "generate-doc-files": "cd ../../grid-community-modules/all-modules && npm run generate-doc-files",
     "clean-examples-dir": "cd documentation/doc-pages && git clean -fxd",
-    "generate-examples": "node dev-server.js generate-examples",
+    "generate-examples": "node new-dev-server.js generate-examples",
     "clean-documentation": "cd documentation && npm run clean",
     "start-new": "npm run clean-documentation && npm run generate-doc-files && NODE_OPTIONS=\"--openssl-legacy-provider --max-old-space-size=${AG_DOCS_HEAP_SIZE:-6144}\" ./node_modules/.bin/gulp serve-new",
     "serve-core-only-new": "npm run clean-examples-dir && AG_FW_EXAMPLES_TO_GENERATE=vanilla AG_SKIP_PACKAGE_EXAMPLES=true NODE_OPTIONS=\"--openssl-legacy-provider --max-old-space-size=${AG_DOCS_HEAP_SIZE:-6144}\" ./node_modules/.bin/gulp serve-core-only-new",
