@@ -248,106 +248,107 @@ const Search = ({ value, onChange }) => {
  * This displays the list of options in the Standalone Charts API Explorer.
  */
 export const Options = ({ chartType, updateOption }) => {
-    const [searchText, setSearchText] = useState('');
-    const getTrimmedSearchText = () => searchText.trim();
-    const matchesSearch = (name: string) => name.toLowerCase().indexOf(getTrimmedSearchText().toLowerCase()) >= 0;
-    const childMatchesSearch = (config: JsonProperty) => {
-        if (config.type === 'array') {
-            return childMatchesSearch(config.elements);
-        }
-        if (config.type === 'union') {
-            return config.options.some((o) => childMatchesSearch(o));
-        }
-        if (config.type === 'primitive' || config.type === 'function') {
-            return false;
-        }
-        return (
-            Object.keys(config.model.properties).some((key) => matchesSearch(key)) ||
-            Object.entries(config.model.properties).some(([_, value]) => childMatchesSearch(value.desc))
-        );
-    };
-    const isRequiresWholeObject = (prop: string) => ['highlightStyle', 'item', 'series'].includes(prop);
-    const isArraySkipped = (prop: string) =>
-        ['series', 'axes', 'gridStyle', 'crossLines', 'innerLabels'].includes(prop);
-    const isEditable = (key: string) => !['data', 'type', 'series.data'].includes(key);
-
-    const isSearching = getTrimmedSearchText() !== '';
-
-    const optionsType = chartType === 'pie' ? 'AgPolarChartOptions' : 'AgCartesianChartOptions';
-    const { interfaceLookup, codeLookup } = loadLookups('charts-api', 'charts-api/api.json');
-    const model = buildModel(optionsType, interfaceLookup, codeLookup);
-    const seriesModelDesc = model.properties['series']?.desc;
-    if (seriesModelDesc.type === 'array' && seriesModelDesc.elements.type === 'union') {
-        seriesModelDesc.elements.options = seriesModelDesc.elements.options.filter(
-            (o) => o.type === 'nested-object' && o.model.properties['type'].desc.tsType.indexOf(chartType) >= 0
-        );
-    }
-
-    const axesModelDesc = model.properties['axes']?.desc;
-    if (axesModelDesc?.type === 'array' && axesModelDesc.elements.type === 'union') {
-        const isAxisOfType = (axis: any, type: string) => axis.model.properties['type'].desc.tsType.includes(type);
-        const getAxisModel = (axisType: string, direction: 'x' | 'y') => {
-            const axis = deepClone(
-                (axesModelDesc.elements as any).options.find(
-                    (o) => o.type === 'nested-object' && isAxisOfType(o, axisType)
-                )
-            );
-            axis.model.properties.position.desc.tsType = direction === 'x' ? `'top' | 'bottom'` : `'left' | 'right'`;
-            return axis;
-        };
-        const isXNumeric = isXAxisNumeric(chartType);
-
-        // Replace "axes" array model with "axes[0]" and "axes[1]"
-        // object models preserving the properties order
-        const oldProps = model.properties;
-        const keys = Object.keys(model.properties);
-        const axesKeyIndex = keys.indexOf('axes');
-        const newProps: Record<string, JsonModelProperty> = {};
-        keys.slice(0, axesKeyIndex).forEach((key) => (newProps[key] = oldProps[key]));
-        newProps['axes[0]'] = {
-            deprecated: false,
-            desc: getAxisModel(isXNumeric ? 'number' : 'category', 'x'),
-            documentation: `/** X-axis (${isXNumeric ? 'numeric' : 'category'}). */`,
-            required: false,
-        };
-        newProps['axes[1]'] = {
-            deprecated: false,
-            desc: getAxisModel('number', 'y'),
-            documentation: '/** Y-axis (numeric). */',
-            required: false,
-        };
-        keys.slice(axesKeyIndex + 1).forEach((key) => (newProps[key] = oldProps[key]));
-        model.properties = newProps;
-    }
-
-    const context = {
-        chartType,
-        childMatchesSearch,
-        hasResults: false,
-        isArraySkipped,
-        isEditable,
-        isRequiresWholeObject,
-        isSearching,
-        matchesSearch,
-        updateOption,
-    };
-    const options = generateOptions({
-        model,
-        prefix: '',
-        parentMatchesSearch: false,
-        requiresWholeObject: false,
-        context,
-    });
-
-    return (
-        <div className={styles.options}>
-            <Search value={searchText} onChange={(value) => setSearchText(value)} />
-            {isSearching && !context.hasResults && (
-                <div className={styles.noContent}>No properties match your search: '{getTrimmedSearchText()}'</div>
-            )}
-            <div className={classnames(styles.content, { [styles.isSearching]: isSearching })}>{options}</div>
-        </div>
-    );
+    // const [searchText, setSearchText] = useState('');
+    // const getTrimmedSearchText = () => searchText.trim();
+    // const matchesSearch = (name: string) => name.toLowerCase().indexOf(getTrimmedSearchText().toLowerCase()) >= 0;
+    // const childMatchesSearch = (config: JsonProperty) => {
+    //     if (config.type === 'array') {
+    //         return childMatchesSearch(config.elements);
+    //     }
+    //     if (config.type === 'union') {
+    //         return config.options.some((o) => childMatchesSearch(o));
+    //     }
+    //     if (config.type === 'primitive' || config.type === 'function') {
+    //         return false;
+    //     }
+    //     return (
+    //         Object.keys(config.model.properties).some((key) => matchesSearch(key)) ||
+    //         Object.entries(config.model.properties).some(([_, value]) => childMatchesSearch(value.desc))
+    //     );
+    // };
+    // const isRequiresWholeObject = (prop: string) => ['highlightStyle', 'item', 'series'].includes(prop);
+    // const isArraySkipped = (prop: string) =>
+    //     ['series', 'axes', 'gridStyle', 'crossLines', 'innerLabels'].includes(prop);
+    // const isEditable = (key: string) => !['data', 'type', 'series.data'].includes(key);
+    //
+    // const isSearching = getTrimmedSearchText() !== '';
+    //
+    // const optionsType = chartType === 'pie' ? 'AgPolarChartOptions' : 'AgCartesianChartOptions';
+    // const { interfaceLookup, codeLookup } = loadLookups('charts-api', 'charts-api/api.json');
+    // const model = buildModel(optionsType, interfaceLookup, codeLookup);
+    // const seriesModelDesc = model.properties['series']?.desc;
+    // if (seriesModelDesc.type === 'array' && seriesModelDesc.elements.type === 'union') {
+    //     seriesModelDesc.elements.options = seriesModelDesc.elements.options.filter(
+    //         (o) => o.type === 'nested-object' && o.model.properties['type'].desc.tsType.indexOf(chartType) >= 0
+    //     );
+    // }
+    //
+    // const axesModelDesc = model.properties['axes']?.desc;
+    // if (axesModelDesc?.type === 'array' && axesModelDesc.elements.type === 'union') {
+    //     const isAxisOfType = (axis: any, type: string) => axis.model.properties['type'].desc.tsType.includes(type);
+    //     const getAxisModel = (axisType: string, direction: 'x' | 'y') => {
+    //         const axis = deepClone(
+    //             (axesModelDesc.elements as any).options.find(
+    //                 (o) => o.type === 'nested-object' && isAxisOfType(o, axisType)
+    //             )
+    //         );
+    //         axis.model.properties.position.desc.tsType = direction === 'x' ? `'top' | 'bottom'` : `'left' | 'right'`;
+    //         return axis;
+    //     };
+    //     const isXNumeric = isXAxisNumeric(chartType);
+    //
+    //     // Replace "axes" array model with "axes[0]" and "axes[1]"
+    //     // object models preserving the properties order
+    //     const oldProps = model.properties;
+    //     const keys = Object.keys(model.properties);
+    //     const axesKeyIndex = keys.indexOf('axes');
+    //     const newProps: Record<string, JsonModelProperty> = {};
+    //     keys.slice(0, axesKeyIndex).forEach((key) => (newProps[key] = oldProps[key]));
+    //     newProps['axes[0]'] = {
+    //         deprecated: false,
+    //         desc: getAxisModel(isXNumeric ? 'number' : 'category', 'x'),
+    //         documentation: `/** X-axis (${isXNumeric ? 'numeric' : 'category'}). */`,
+    //         required: false,
+    //     };
+    //     newProps['axes[1]'] = {
+    //         deprecated: false,
+    //         desc: getAxisModel('number', 'y'),
+    //         documentation: '/** Y-axis (numeric). */',
+    //         required: false,
+    //     };
+    //     keys.slice(axesKeyIndex + 1).forEach((key) => (newProps[key] = oldProps[key]));
+    //     model.properties = newProps;
+    // }
+    //
+    // const context = {
+    //     chartType,
+    //     childMatchesSearch,
+    //     hasResults: false,
+    //     isArraySkipped,
+    //     isEditable,
+    //     isRequiresWholeObject,
+    //     isSearching,
+    //     matchesSearch,
+    //     updateOption,
+    // };
+    // const options = generateOptions({
+    //     model,
+    //     prefix: '',
+    //     parentMatchesSearch: false,
+    //     requiresWholeObject: false,
+    //     context,
+    // });
+    //
+    // return (
+    //     <div className={styles.options}>
+    //         <Search value={searchText} onChange={(value) => setSearchText(value)} />
+    //         {isSearching && !context.hasResults && (
+    //             <div className={styles.noContent}>No properties match your search: '{getTrimmedSearchText()}'</div>
+    //         )}
+    //         <div className={classnames(styles.content, { [styles.isSearching]: isSearching })}>{options}</div>
+    //     </div>
+    // );
+    return <div>Hello World</div> // spl todo
 };
 
 interface GenerateOptionParameters {
