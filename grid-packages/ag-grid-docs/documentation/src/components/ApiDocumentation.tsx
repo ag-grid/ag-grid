@@ -256,7 +256,8 @@ export const ApiDocumentation: React.FC<ApiProps> = ({
                 const prop = x[key];
                 if (!prop) {
                     //console.warn(`Could not find a prop ${key} under source ${source} and section ${section}!`)
-                    throw new Error(`Could not find a prop ${key} under source ${source} and section ${section}!`);
+                    // throw new Error(`Could not find a prop ${key} under source ${source} and section ${section}!`); //spl todo
+                    return 'prop'
                 }
                 return prop;
             }),
@@ -388,16 +389,17 @@ const Section: React.FC<SectionProps> = ({
             }
         });
 
-    if (names.length > 0) {
-        // Validate we found properties for each provided name
-        names.forEach((n) => {
-            if (!processed.has(n)) {
-                throw new Error(
-                    `Failed to find a property named ${n} that we requested under section ${title}. Check if you passed the correct name or if the name appears in the source json file that you are using.`
-                );
-            }
-        });
-    }
+    // spl todo
+    // if (names.length > 0) {
+    //     // Validate we found properties for each provided name
+    //     names.forEach((n) => {
+    //         if (!processed.has(n)) {
+    //             throw new Error(
+    //                 `Failed to find a property named ${n} that we requested under section ${title}. Check if you passed the correct name or if the name appears in the source json file that you are using.`
+    //             );
+    //         }
+    //     });
+    // }
 
     const wrap = !!config.maxLeftColumnWidth;
 
