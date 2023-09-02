@@ -7,6 +7,7 @@ const inlinesource = require('gulp-inline-source');
 const cp = require('child_process');
 const filter = require('gulp-filter');
 const gulpIf = require('gulp-if');
+const debug = require('gulp-debug');
 const replace = require('gulp-replace');
 const merge = require('merge-stream');
 const { getAllModules } = require("./utils");
@@ -24,20 +25,28 @@ const { gridCommunityModules, gridEnterpriseModules, chartCommunityModules, char
 const populateDevFolder = () => {
     console.log("Populating dev folder with modules...");
 
-    const createCopyTask = (source, cwd, destination) => gulp
-        .src([source, '!node_modules/**/*', '!src/**/*', '!cypress/**/*'], { cwd })
-        .pipe(gulp.dest(`${distFolder}/${DEV_DIR}/${destination}`));
+    const createCopyTask = (source, cwd, destination) => {
+        return gulp
+            .src([source, '!node_modules/**/*', '!src/**/*', '!cypress/**/*'], { cwd })
+            .pipe(gulp.dest(`${distFolder}/${DEV_DIR}/${destination}`));
+    }
+
+    const createChartsCopyTask = (source, cwd, destination) => {
+        return gulp
+            .src([source, '!src/**/*', '!cypress/**/*'], { base: cwd })
+            .pipe(gulp.dest(`${distFolder}/${DEV_DIR}/${destination}`));
+    }
 
     const moduleCopyTasks = gridCommunityModules
         .concat(gridEnterpriseModules)
         .map(module => createCopyTask(`${module.rootDir}/**/*.*`, `${module.rootDir}/`, module.publishedName));
 
-    const chartsCommmunity = createCopyTask('./node_modules/ag-charts-community/**/*.*', './node_modules/ag-charts-community/', 'ag-charts-community');
-    const chartsReact = createCopyTask('./node_modules/ag-charts-react/**/*.*', './node_modules/ag-charts-react/', 'ag-charts-react');
-    const chartsAngular = createCopyTask('./node_modules/ag-charts-angular/**/*.*', './node_modules/ag-charts-angular/', 'ag-charts-angular');
-    const chartsVue = createCopyTask('./node_modules/ag-charts-vue/**/*.*', './node_modules/ag-charts-vue/', 'ag-charts-vue');
-    const chartsVue3 = createCopyTask('./node_modules/ag-charts-vue3/**/*.*', './node_modules/ag-charts-vue3/', 'ag-charts-vue3');
-    const chartsEnterprise = createCopyTask('./node_modules/ag-charts-enterprise/**/*.*', './node_modules/ag-charts-enterprise/', 'ag-charts-enterprise');
+    const chartsCommmunity = createChartsCopyTask('./node_modules/ag-charts-community/**/*.*', './node_modules/ag-charts-community', 'ag-charts-community');
+    const chartsReact = createChartsCopyTask('./node_modules/ag-charts-react/**/*.*', './node_modules/ag-charts-react/', 'ag-charts-react');
+    const chartsAngular = createChartsCopyTask('./node_modules/ag-charts-angular/**/*.*', './node_modules/ag-charts-angular/', 'ag-charts-angular');
+    const chartsVue = createChartsCopyTask('./node_modules/ag-charts-vue/**/*.*', './node_modules/ag-charts-vue/', 'ag-charts-vue');
+    const chartsVue3 = createChartsCopyTask('./node_modules/ag-charts-vue3/**/*.*', './node_modules/ag-charts-vue3/', 'ag-charts-vue3');
+    const chartsEnterprise = createChartsCopyTask('./node_modules/ag-charts-enterprise/**/*.*', './node_modules/ag-charts-enterprise/', 'ag-charts-enterprise');
 
     const react = createCopyTask('../../grid-community-modules/react/**/*.*', '../../grid-community-modules/react/', '@ag-grid-community/react');
     const angular = createCopyTask('../../grid-community-modules/angular/dist/ag-grid-angular/**/*.*', '../../grid-community-modules/angular/', '@ag-grid-community/angular');
@@ -57,7 +66,7 @@ const populateDevFolder = () => {
         ...moduleCopyTasks,
         react, angular, vue, vue3,
         styles,
-        chartsCommmunity, chartsEnterprise, chartReact, chartAngular, chartVue, chartVue3,
+        chartsCommmunity, chartsEnterprise, chartsReact, chartsAngular, chartsVue, chartsVue3,
         packageCommunity, packageEnterprise, packageAngular, packageReact, packageVue, packageVue3
     );
 };
