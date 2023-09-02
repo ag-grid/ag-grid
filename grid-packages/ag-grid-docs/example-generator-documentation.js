@@ -3,9 +3,9 @@ const {window, document} = new JSDOM('<!DOCTYPE html><html lang="en"></html>');
 const sucrase = require("sucrase");
 
 const agGridVersion = "^" + require('../../grid-community-modules/core/package.json').version;
-const agChartsVersion = "^" + require('../../charts-community-modules/ag-charts-community/package.json').version;
-const agChartsAngularVersion = "^" + require('../../charts-community-modules/ag-charts-angular/package.json').version;
-const agChartsReactVersion = "^" + require('../../charts-community-modules/ag-charts-react/package.json').version;
+const agChartsVersion = "^" + require('./node_modules/ag-charts-community/package.json').version;
+const agChartsAngularVersion = "^" + require('./node_modules/ag-charts-angular/package.json').version;
+const agChartsReactVersion = "^" + require('./node_modules/ag-charts-react/package.json').version;
 const agGridEnterpriseVersion = "^" + require('../../grid-enterprise-modules/core/package.json').version;
 const agGridReactVersion = "^" + require('../../grid-community-modules/react/package.json').version;
 const agGridAngularVersion = "^" + require('../../grid-community-modules/angular/package.json').version;

@@ -41,7 +41,7 @@
                 defaultExtension: 'jsx'
             },
             'ag-charts-react': {
-                main: './main.js',
+                main: './dist/index.esm.js',
                 defaultExtension: 'js'
             },
             'ag-charts-community': {
@@ -50,7 +50,7 @@
                 "format": "cjs"
             },
             'ag-charts-enterprise': {
-                main: './dist/ag-charts-enterprise.cjs.js',
+                main: './dist/main.cjs.js',
                 defaultExtension: 'js'
             },
         },

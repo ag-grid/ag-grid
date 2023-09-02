@@ -1,4 +1,4 @@
-import { AgChartOptions } from 'ag-charts-community';
+// import { AgChartOptions } from 'ag-charts-community';
 import React, { useMemo } from 'react';
 import GlobalContextConsumer from '../../components/GlobalContext';
 import isServerSideRendering from '../../utils/is-server-side-rendering';
@@ -225,7 +225,7 @@ const determineFrameworks = (
     return { framework, useFunctionalReact, useVue3, useTypescript, mainFile };
 };
 
-const applyChartOptions = (name: string, source: string, options: AgChartOptions) => {
+const applyChartOptions = (name: string, source: string, options: any) => {
     const toInject = Object.entries(options)
         .filter(([_, value]) => value !== undefined)
         .map(([name, value]) => `  ${name}: ${JSON.stringify(value, null, 2)}`)
@@ -236,7 +236,7 @@ const applyChartOptions = (name: string, source: string, options: AgChartOptions
     return Promise.resolve(modifiedSource);
 };
 
-const mutateMainFile = (file: ExampleFile, options: AgChartOptions) => {
+const mutateMainFile = (file: ExampleFile, options: any) => {
     return {
         ...file,
         content: fetch(file.publicURL)
@@ -245,7 +245,7 @@ const mutateMainFile = (file: ExampleFile, options: AgChartOptions) => {
     };
 };
 
-const mutateExampleInfo = (exampleInfo: ExampleInfo, mainFile: string, options: AgChartOptions) => {
+const mutateExampleInfo = (exampleInfo: ExampleInfo, mainFile: string, options: any) => {
     return {
         ...exampleInfo,
         // Patch main file with options configuration.
@@ -264,7 +264,7 @@ const mutateExampleInfo = (exampleInfo: ExampleInfo, mainFile: string, options: 
 const buildExampleInfo = (
     nodes: any,
     providedFramework: string,
-    options: AgChartOptions,
+    options: any,
     useFunctionalReact = false,
     useVue3 = false,
     useTypescript = false

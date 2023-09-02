@@ -47,7 +47,7 @@
                 defaultExtension: 'jsx'
             },
             'ag-charts-react': {
-                main: './main.js',
+                main: './dist/index.esm.js',
                 defaultExtension: 'js'
             }
         },

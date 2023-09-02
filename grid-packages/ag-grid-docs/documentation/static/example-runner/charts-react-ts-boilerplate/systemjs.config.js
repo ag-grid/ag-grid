@@ -58,9 +58,9 @@
                 defaultExtension: 'tsx',
             },
             'ag-charts-react': {
-                main: './main.js',
+                main: './dist/index.esm.js',
                 defaultExtension: 'js'
-            }
+            },
         },
         meta: {
             typescript: {

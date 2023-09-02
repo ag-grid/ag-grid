@@ -20,10 +20,10 @@ export class Chart extends React.Component<{ options: {}; fullScreen: boolean; s
     }
 
     componentDidMount() {
-        import('ag-charts-community').then(({ AgChart }) => {
-            this.AgChart = AgChart;
-            this.createChart();
-        });
+        // import('ag-charts-community').then(({ AgChart }) => {
+        //     this.AgChart = AgChart;
+        //     this.createChart();
+        // });
     }
 
     componentWillUnmount() {

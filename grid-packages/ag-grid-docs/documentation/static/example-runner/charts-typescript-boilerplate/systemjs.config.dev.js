@@ -50,7 +50,7 @@
                 "format": "cjs"
             },
             'ag-charts-enterprise': {
-                main: './dist/ag-charts-enterprise.cjs.js',
+                main: './dist/main.cjs.js',
                 defaultExtension: 'js'
             },
         }

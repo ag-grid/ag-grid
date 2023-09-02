@@ -1,6 +1,0 @@
-node_modules/
-dist/
-typings/
-dev-server/
-jest.*.js
-gulpfile.js

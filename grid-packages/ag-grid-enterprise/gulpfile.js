@@ -125,13 +125,13 @@ const copyGridCoreTypings = (done) => {
         done("node_modules/@ag-grid-enterprise/core/typings doesn't exist - exiting")
     }
 
-    exportedEnterpriseModules.concat(exportedChartsModules).forEach(exportedEnterpriseModule => {
+    exportedEnterpriseModules.forEach(exportedEnterpriseModule => {
         if (!fs.existsSync(`./node_modules/${exportedEnterpriseModule}/typings`)) {
             done(`./node_modules/${exportedEnterpriseModule}/typings doesn't exist - exiting`)
         }
     })
 
-    const typingsDirs = exportedEnterpriseModules.concat(exportedChartsModules).map(exportedEnterpriseModule =>
+    const typingsDirs = exportedEnterpriseModules.map(exportedEnterpriseModule =>
         [
             `./node_modules/${exportedEnterpriseModule}/typings/**/*`,
             `!./node_modules/${exportedEnterpriseModule}/typings/main.*`,
