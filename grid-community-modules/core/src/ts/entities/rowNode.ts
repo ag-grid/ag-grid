@@ -1161,4 +1161,16 @@ export class RowNode<TData = any> implements IEventEmitter, IRowNode<TData> {
         footerNode.sibling = this;
         this.sibling = footerNode;
     }
+
+    // Only used by SSRM. In CSRM this is never used as footers should always be present for
+    // the purpose of exporting collapsed groups. In SSRM it is not possible to export collapsed
+    // groups anyway, so can destroy footers.
+    public destroyFooter(): void {
+        if (!this.sibling) { return; }
+
+        this.sibling.setRowTop(null);
+        this.sibling.setRowIndex(null);
+
+        this.sibling = undefined as any;
+    }
 }
