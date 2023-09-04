@@ -342,7 +342,7 @@ export class AgRichSelect<TValue = any> extends AgPickerField<TValue, RichSelect
 
             const indices = fuzzySearchResult.indices;
             if (filterList && indices.length) {
-                for (let i = 0; indices.length; i++) {
+                for (let i = 0; i < indices.length; i++) {
                     filteredValues.push(this.values[indices[i]]);
                 }
             }
