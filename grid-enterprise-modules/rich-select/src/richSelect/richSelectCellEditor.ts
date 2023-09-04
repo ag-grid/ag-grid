@@ -38,7 +38,7 @@ export class RichSelectCellEditor<TData = any, TValue = any> extends PopupCompon
         this.appendChild(this.richSelect);
 
         this.addManagedListener(this.richSelect, Events.EVENT_FIELD_PICKER_VALUE_SELECTED, this.onEditorPickerValueSelected.bind(this));
-        // this.addManagedListener(this.richSelect.getGui(), 'focusout', this.onEditorFocusOut.bind(this));
+        this.addManagedListener(this.richSelect.getGui(), 'focusout', this.onEditorFocusOut.bind(this));
 
         this.focusAfterAttached = cellStartedEdit;
 
