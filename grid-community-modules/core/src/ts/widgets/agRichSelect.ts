@@ -380,7 +380,7 @@ export class AgRichSelect<TValue = any> extends AgPickerField<TValue, RichSelect
         }
 
         const { suggestions, filteredValues } = this.getSuggestionsAndFilteredValues(this.searchString, searchStrings);
-        const { filterList, highlightMatch } = this.config;
+        const { filterList, highlightMatch, searchType = 'fuzzy' } = this.config;
 
         const filterValueLen = filteredValues.length;
         const shouldFilter = filterList && this.searchString !== '';
@@ -392,7 +392,7 @@ export class AgRichSelect<TValue = any> extends AgPickerField<TValue, RichSelect
         if (suggestions.length) {
             const topSuggestionIndex = filterList ? 0 : searchStrings.indexOf(suggestions[0]);
             this.selectListItem(topSuggestionIndex);
-            if (highlightMatch) {
+            if (highlightMatch && searchType !== 'fuzzy') {
                 this.highlightFilterMatch();
             }
         } else {
@@ -453,7 +453,9 @@ export class AgRichSelect<TValue = any> extends AgPickerField<TValue, RichSelect
         this.getContext().createBean(row);
         row.setState(value);
 
-        if (this.config.highlightMatch) {
+        const { highlightMatch, searchType = 'fuzzy' } = this.config;
+
+        if (highlightMatch && searchType !== 'fuzzy') {
             row.highlightString(this.searchString);
         }
 

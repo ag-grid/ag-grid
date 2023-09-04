@@ -16,11 +16,14 @@ export interface IRichCellEditorParams<TValue = any> {
      *  - `match` - Matches if the value starts with the text typed.
      *  - `matchAny` - Matches if the value contains the text typed.
      *  - `fuzzy` - Matches the closest value to text typed.
+     * Note: When a cellRenderer is specified, this option will not work. 
      * Default: `fuzzy` 
      */
     searchType?: 'match' | 'matchAny' | 'fuzzy';
     /**
-     * If `true`, each item on the list of values will highlight the part of the text that matches the input. Default: `false`.
+     * If `true`, each item on the list of values will highlight the part of the text that matches the input. 
+     * This option does not work when `searchType="fuzzy"`.
+     * Default: `false`.
      */
     highlightMatch?: boolean;
     /** The value in `ms` for the search algorithm debounce delay (only relevant when `allowTyping=false`). Default: `300` */
