@@ -24,6 +24,7 @@ import rehypeReact from 'rehype-react';
 import { getProductType } from 'utils/page-header';
 import stripHtml from 'utils/strip-html';
 import DocumentationLink from '../components/DocumentationLink';
+import DownloadDSButton from 'components/DownloadDSButton';
 import LearningVideos from '../components/LearningVideos';
 import { trackApiDocumentation } from '../utils/analytics';
 import styles from './doc-page.module.scss';
@@ -47,7 +48,7 @@ const DocPageTemplate = ({ data, pageContext: { framework, exampleIndexData, pag
         if (!!value) {
             return value === 'true';
         }
-        return undefined
+        return undefined;
     };
 
     const getExampleRunnerProps = (props, library) => ({
@@ -127,6 +128,7 @@ const DocPageTemplate = ({ data, pageContext: { framework, exampleIndexData, pag
                     {children}
                 </pre>
             ),
+            'download-ds-button': DownloadDSButton,
         },
     }).Compiler;
 

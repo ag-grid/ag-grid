@@ -8,6 +8,7 @@ const EVENT_NAME = {
     demoToolbar: 'Demo Toolbar',
     infoEmail: 'Info Email',
     buyButton: 'Buy Button',
+    downloadDS: 'Download Figma Design System',
     page404: '404',
 };
 
@@ -119,3 +120,11 @@ export const trackBuyButton = (props: object) => {
         props,
     });
 };
+
+const trackDownloadDS = () => {
+    trackPlausible({
+        eventName: EVENT_NAME.downloadDS
+    });
+};
+
+export const trackOnceDownloadDS = createTrackPlausibleOnce(EVENT_NAME.downloadDS, trackDownloadDS);

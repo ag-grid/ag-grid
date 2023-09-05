@@ -1,0 +1,21 @@
+@use '../design-system' as *;
+
+.outer {
+  display: flex;
+  justify-content: center;
+}
+
+.button {
+  margin-top: $size-2;
+  text-align: center;
+  white-space: normal;
+  cursor: pointer;
+
+  span {
+    white-space: nowrap;
+  }
+
+  svg {
+    height: 1.4em;
+  }
+}
