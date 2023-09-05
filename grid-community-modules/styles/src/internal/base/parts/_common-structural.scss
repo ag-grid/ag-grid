@@ -1257,6 +1257,9 @@
         .ag-picker-field-display {
             overflow: hidden;
             text-overflow: ellipsis;
+            &.ag-display-as-placeholder {
+                opacity: 0.5;
+            }
         }
     }
 
@@ -1279,6 +1282,10 @@
             padding: 0 !important;
             border: none !important;
             box-shadow: none !important;
+            text-overflow: ellipsis;
+            &::placeholder {
+                opacity: 0.8;
+            }
         }
     }
 

@@ -12,6 +12,7 @@ import { debounce } from "../utils/function";
 import { fuzzySuggestions } from "../utils/fuzzyMatch";
 import { exists } from "../utils/generic";
 import { isEventFromPrintableCharacter } from "../utils/keyboard";
+import { escapeString } from "../utils/string";
 import { AgInputTextField } from "./agInputTextField";
 import { AgPickerField, IPickerFieldParams } from "./agPickerField";
 import { RichSelectRow } from "./agRichSelectRow";
@@ -30,6 +31,7 @@ export interface RichSelectParams<TValue = any> extends IPickerFieldParams {
     filterList?: boolean;
     searchType?: 'match' | 'matchAny' | 'fuzzy';
     highlightMatch?: boolean;
+    placeholder?: string;
 
     valueFormatter?: (value: TValue) => any;
     searchStringCreator?: (values: TValue[]) => string[]
@@ -93,9 +95,13 @@ export class AgRichSelect<TValue = any> extends AgPickerField<TValue, RichSelect
         super.postConstruct();
         this.createListComponent();
 
-        const { allowTyping } = this.config;
+        const { allowTyping, placeholder } = this.config;
 
         if (allowTyping) {
+            this.eInput
+                .setAutoComplete(false)
+                .setInputPlaceholder(placeholder);
+
             this.eDisplayField.classList.add('ag-hidden');
         } else {
             this.eInput.setDisplayed(false);
@@ -181,8 +187,15 @@ export class AgRichSelect<TValue = any> extends AgPickerField<TValue, RichSelect
         } else {
             if (exists(this.value)) {
                 eDisplayField.innerText = valueFormatted;
+                eDisplayField.classList.remove('ag-display-as-placeholder');
             } else {
-                clearElement(eDisplayField);
+                const { placeholder } = config;
+                if (exists(placeholder)) {
+                    eDisplayField.innerHTML = `${escapeString(placeholder)}`
+                    eDisplayField.classList.add('ag-display-as-placeholder');
+                } else {
+                    clearElement(eDisplayField);
+                }
             }
         }
     }
@@ -410,9 +423,7 @@ export class AgRichSelect<TValue = any> extends AgPickerField<TValue, RichSelect
         }
 
         const eListGui = this.listComponent?.getGui();
-
-        eListGui?.classList.toggle('ag-hidden', filterList && !filterValueLen)
-
+        eListGui?.classList.toggle('ag-hidden', shouldFilter && !filterValueLen)
     }
 
     private clearSearchString(): void {

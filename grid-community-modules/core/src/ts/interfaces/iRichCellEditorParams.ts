@@ -28,6 +28,8 @@ export interface IRichCellEditorParams<TValue = any> {
     highlightMatch?: boolean;
     /** The value in `ms` for the search algorithm debounce delay (only relevant when `allowTyping=false`). Default: `300` */
     searchDebounceDelay?: number;
+    /** A string value to be used when no value has been selected. */
+    valuePlaceholder?: string;
     /** The space in pixels between the value display and the list of items. Default: `4` */
     valueListGap?: number;
     /** The maximum height of the list of items. If the value is a `number` it will be 
