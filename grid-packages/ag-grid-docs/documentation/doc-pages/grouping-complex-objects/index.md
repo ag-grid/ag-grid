@@ -53,6 +53,17 @@ The example below shows grouping on the `country` column that contains complex o
 If using [Cell Data Types](../cell-data-types/), the key creator is automatically set to use the value formatter so it does not need to be specified directly.
 </note>
 
+## Original Row Data
+
+By default, when row grouping the cell value is selected from the first row in the group at the time of creation. This means the row value may not always be consistently typed depending on your data which can add complexity to your value formatter code. To instead change the behaviour to always use the string key as the value, enable `gridOptions.suppressGroupMaintainValueType`.
+
+In the example below, note the following.
+- The 'country' column `valueGetter` returns complex objects.
+- The 'country' column `keyCreator` ensures correct complex object grouping on the country code.
+- The 'country' column `valueFormatter` executes on the values displayed on the grouping column, displaying both the country name and code.
+
+<grid-example title='Maintain Value Type' name='maintain-value-type' type='generated' options='{ "enterprise": true, "exampleHeight": 515, "modules": ["clientside", "rowgrouping"] }'></grid-example>
+
 ## Next Up
 
 Continue to the next section to learn about [Unbalanced Groups](../grouping-unbalanced-groups/).
