@@ -25,17 +25,27 @@ export class RichSelectCellEditor<TData = any, TValue = any> extends PopupCompon
     public init(params: RichCellEditorParams<TData, TValue>): void {
         this.params = params;
 
-        const  { cellStartedEdit, values, cellHeight } = params;
+        const  { cellStartedEdit, cellHeight, values } = params;
 
         if (_.missing(values)) {
             console.warn('AG Grid: richSelectCellEditor requires values for it to work');
             return;
         }
 
-        const richSelectParams = this.buildRichSelectParams();
+        const { params: richSelectParams, valuesPromise } = this.buildRichSelectParams();
 
         this.richSelect = this.createManagedBean(new AgRichSelect<TValue>(richSelectParams));
         this.appendChild(this.richSelect);
+
+        if (valuesPromise) {
+            valuesPromise.then((values: TValue[]) => {
+                this.richSelect.setValueList({ valueList: values, refresh: true });
+                const searchStringCallback = this.getSearchStringCallback(values);
+                if (searchStringCallback) {
+                    this.richSelect.setSearchStringCreator(searchStringCallback);
+                }
+            });
+        }
 
         this.addManagedListener(this.richSelect, Events.EVENT_FIELD_PICKER_VALUE_SELECTED, this.onEditorPickerValueSelected.bind(this));
         this.addManagedListener(this.richSelect.getGui(), 'focusout', this.onEditorFocusOut.bind(this));
@@ -56,17 +66,15 @@ export class RichSelectCellEditor<TData = any, TValue = any> extends PopupCompon
         this.params.stopEditing(true);
     }
 
-    private buildRichSelectParams(): RichSelectParams<TValue> {
+    private buildRichSelectParams(): { params: RichSelectParams<TValue>, valuesPromise?: Promise<TValue[]> } {
         const { 
-            cellRenderer, value, values, colDef, 
-            formatValue, searchDebounceDelay, valueListGap,
-            valueListMaxHeight, valueListMaxWidth, allowTyping,
+            cellRenderer, value, values, formatValue, searchDebounceDelay, 
+            valueListGap, valueListMaxHeight, valueListMaxWidth, allowTyping,
             filterList, searchType, highlightMatch, valuePlaceholder
         } = this.params;
 
         const ret: RichSelectParams = {
             value: value,
-            valueList: values,
             cellRenderer,
             searchDebounceDelay,
             valueFormatter: formatValue,
@@ -83,24 +91,45 @@ export class RichSelectCellEditor<TData = any, TValue = any> extends PopupCompon
             placeholder: valuePlaceholder
         }
 
-        if (typeof values[0] === 'object' && colDef.keyCreator) {
-            ret.searchStringCreator = (values: TValue[]) => values.map((value: TValue) => {
-                const keyParams: KeyCreatorParams = {
-                    value: value,
-                    colDef: this.params.colDef,
-                    column: this.params.column,
-                    node: this.params.node,
-                    data: this.params.data,
-                    api: this.gridOptionsService.api,
-                    columnApi: this.gridOptionsService.columnApi,
-                    context: this.gridOptionsService.context
-                };
-                return colDef.keyCreator!(keyParams);
-            });
+        let valuesResult;
+        let valuesPromise;
 
+        if (typeof values === 'function') {
+            valuesResult = values(this.params);
+        } else {
+            valuesResult = values;
         }
 
-        return ret;
+        if (Array.isArray(valuesResult)) {
+            ret.valueList = valuesResult;
+            ret.searchStringCreator = this.getSearchStringCallback(valuesResult);
+        } else {
+            valuesPromise = valuesResult;
+        }
+
+        return { params: ret, valuesPromise };
+    }
+
+    private getSearchStringCallback(values: TValue[]): ((values: TValue[]) => string[]) | undefined {
+        const { colDef } = this.params;
+
+        if (typeof values[0] !== 'object' || !colDef.keyCreator) {
+            return;
+        }
+
+        return (values: TValue[]) => values.map((value: TValue) => {
+            const keyParams: KeyCreatorParams = {
+                value: value,
+                colDef: this.params.colDef,
+                column: this.params.column,
+                node: this.params.node,
+                data: this.params.data,
+                api: this.gridOptionsService.api,
+                columnApi: this.gridOptionsService.columnApi,
+                context: this.gridOptionsService.context
+            };
+            return colDef.keyCreator!(keyParams);
+        });
     }
 
     // we need to have the gui attached before we can draw the virtual rows, as the

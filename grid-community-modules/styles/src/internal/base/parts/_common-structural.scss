@@ -1265,6 +1265,9 @@
 
     .ag-rich-select-list {
         position: relative;
+        .ag-loading-text {
+            min-height: 2rem;
+        }
     }
 
     .ag-rich-select-row {
