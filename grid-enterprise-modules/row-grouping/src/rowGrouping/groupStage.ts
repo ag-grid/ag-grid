@@ -11,6 +11,7 @@ import {
     IsGroupOpenByDefaultParams,
     NumberSequence,
     PostConstruct,
+    PreConstruct,
     RowNode,
     RowNodeTransaction,
     SelectableService,
@@ -71,9 +72,16 @@ export class GroupStage extends BeanStub implements IRowNodeStage {
     private oldGroupingDetails: GroupingDetails;
     private oldGroupDisplayColIds: string;
 
+    @PreConstruct
+    private preConstruct(): void {
+        this.usingTreeData = this.gridOptionsService.isTreeData();
+        this.addManagedPropertyListener('treeData', (params) => {
+            this.usingTreeData = params.currentValue
+        });
+    }
+
     @PostConstruct
     private postConstruct(): void {
-        this.usingTreeData = this.gridOptionsService.isTreeData();
         if (this.usingTreeData) {
             this.getDataPath = this.gridOptionsService.get('getDataPath');
         }
