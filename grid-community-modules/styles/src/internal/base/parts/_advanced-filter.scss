@@ -18,17 +18,15 @@
     .ag-advanced-filter-apply-button, .ag-advanced-filter-builder-button {
         line-height: normal;
         @include ag.unthemed-rtl((margin-left: calc(var(--ag-grid-size) * 2)));
-        cursor: pointer;
-
-        &:disabled {
-            cursor: default;
+        
+        &:not(:disabled) {
+            cursor: pointer;
         }
     }
 
     .ag-advanced-filter-builder-button {   
         display: flex;
-        font-weight: 600;
-        padding: var(--ag-grid-size);
+        align-items: center;
         border: 0;
         background-color: unset;
 
@@ -64,8 +62,15 @@
         border-top: var(--ag-borders-secondary) var(--ag-secondary-border-color);
     }
 
-    .ag-advanced-filter-builder-apply-button, .ag-advanced-filter-builder-cancel-button {
-        margin-left: calc(var(--ag-grid-size) * 2);
+    .ag-advanced-filter-builder .ag-advanced-filter-builder-button-panel {
+        .ag-advanced-filter-builder-apply-button,
+        .ag-advanced-filter-builder-cancel-button {
+            margin-left: calc(var(--ag-grid-size) * 2);
+
+            &:not(:disabled) {
+                cursor: pointer;
+            }
+        }
     }
 
     .ag-advanced-filter-builder-item-wrapper {
@@ -150,19 +155,23 @@
     }
 
     .ag-advanced-filter-builder-join-pill {
-        background-color: lightpink;
+        color: var(--ag-advanced-filter-join-pill-foreground-color);
+        background-color: var(--ag-advanced-filter-join-pill-background-color);
     }
-
+    
     .ag-advanced-filter-builder-column-pill {
-        background-color: lightcyan;
+        color: var(--ag-advanced-filter-column-pill-foreground-color);
+        background-color: var(--ag-advanced-filter-column-pill-background-color);
     }
 
     .ag-advanced-filter-builder-option-pill {
-        background-color: lightgreen;
+        color: var(--ag-advanced-filter-option-pill-foreground-color);
+        background-color: var(--ag-advanced-filter-option-pill-background-color);
     }
 
     .ag-advanced-filter-builder-value-pill {
-        background-color: lightgrey;
+        color: var(--ag-advanced-filter-value-pill-foreground-color);
+        background-color: var(--ag-advanced-filter-value-pill-background-color);
     }
 
     @for $i from 1 to 10 {

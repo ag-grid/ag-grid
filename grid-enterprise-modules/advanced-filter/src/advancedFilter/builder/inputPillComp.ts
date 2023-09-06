@@ -40,7 +40,7 @@ export class InputPillComp extends Component {
             switch (event.key) {
                 case KeyCode.ENTER:
                     event.preventDefault();
-                    event.stopPropagation();
+                    _.stopPropagationForAgGrid(event);
                     this.showEditor();
                     break;
             }
@@ -62,12 +62,12 @@ export class InputPillComp extends Component {
             switch (event.key) {
                 case KeyCode.ENTER:
                     event.preventDefault();
-                    event.stopPropagation();
+                    _.stopPropagationForAgGrid(event);
                     this.updateValue(true);
                     break;
                 case KeyCode.ESCAPE:
                     event.preventDefault();
-                    event.stopPropagation();
+                    _.stopPropagationForAgGrid(event);
                     this.hideEditor(true);
                     break;
             }

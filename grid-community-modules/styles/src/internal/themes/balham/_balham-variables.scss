@@ -18,12 +18,20 @@
     --ag-input-disabled-background-color: #ebebeb;
     --ag-checkbox-unchecked-color: #7f8c8d;
     --ag-input-focus-border-color: #719ECE;
+    --ag-advanced-filter-join-pill-background-color: lightpink;
+    --ag-advanced-filter-column-pill-background-color: lightcyan;
+    --ag-advanced-filter-option-pill-background-color: lightgreen;
+    --ag-advanced-filter-value-pill-background-color: lightgrey;
 
     // derived colours (no color blending - these are shared by balham-dark)
     --ag-input-focus-box-shadow: 0 0 2px 1px var(--ag-input-focus-border-color);
     --ag-range-selection-border-color: var(--ag-balham-active-color);
     --ag-checkbox-checked-color: var(--ag-balham-active-color);
     --ag-checkbox-background-color: var(--ag-background-color);
+    --ag-advanced-filter-join-pill-foreground-color: var(--ag-foreground-color);
+    --ag-advanced-filter-column-pill-foreground-color: var(--ag-foreground-color);
+    --ag-advanced-filter-option-pill-foreground-color: var(--ag-foreground-color);
+    --ag-advanced-filter-value-pill-foreground-color: var(--ag-foreground-color);
 
     // derived and blended colours (these are static versions of the dynamic colour blends
     // applied by the Sass API and must be overridden in balham-dark)
@@ -81,6 +89,10 @@
     --ag-input-disabled-background-color: rgba(48, 46, 46, 0.3);
     --ag-modal-overlay-background-color: rgba(45, 52, 54, 0.66);
     --ag-checkbox-unchecked-color: #ecf0f1;
+    --ag-advanced-filter-join-pill-background-color: darkviolet;
+    --ag-advanced-filter-column-pill-background-color: darkcyan;
+    --ag-advanced-filter-option-pill-background-color: darkgreen;
+    --ag-advanced-filter-value-pill-background-color: dimgrey;
 
     // override blended colors from balham theme
     --ag-secondary-foreground-color: var(--ag-foreground-color);

@@ -173,15 +173,12 @@ export class AdvancedFilterBuilderItemComp extends TabGuardComp {
 
     private setupRemoveButton(): void {
         this.eRemoveButton.appendChild(_.createIconNoSpan('advancedFilterBuilderRemove', this.gridOptionsService)!);
-        this.addManagedListener(this.eRemoveButton, 'click', (event: MouseEvent) => {
-            event.stopPropagation();
-            this.removeItem();
-        });
+        this.addManagedListener(this.eRemoveButton, 'click', () => this.removeItem());
         this.addManagedListener(this.eRemoveButton, 'keydown', (event: KeyboardEvent) => {
             switch (event.key) {
                 case KeyCode.ENTER:
-                    event.stopPropagation();
                     event.preventDefault();
+                    _.stopPropagationForAgGrid(event);
                     this.removeItem();
                     break;
             }
@@ -201,14 +198,13 @@ export class AdvancedFilterBuilderItemComp extends TabGuardComp {
         if (showMove) {
             this.eMoveUpButton.appendChild(_.createIconNoSpan('advancedFilterBuilderMoveUp', this.gridOptionsService)!);
             this.addManagedListener(this.eMoveUpButton, 'click', (event: MouseEvent) => {
-                event.stopPropagation();
                 this.moveItem(true);
             });
             this.addManagedListener(this.eMoveUpButton, 'keydown', (event: KeyboardEvent) => {
                 switch (event.key) {
                     case KeyCode.ENTER:
-                        event.stopPropagation();
                         event.preventDefault();
+                        _.stopPropagationForAgGrid(event);
                         this.moveItem(true);
                         break;
                 }
@@ -223,14 +219,13 @@ export class AdvancedFilterBuilderItemComp extends TabGuardComp {
 
             this.eMoveDownButton.appendChild(_.createIconNoSpan('advancedFilterBuilderMoveDown', this.gridOptionsService)!);
             this.addManagedListener(this.eMoveDownButton, 'click', (event: MouseEvent) => {
-                event.stopPropagation();
                 this.moveItem(false);
             });
             this.addManagedListener(this.eMoveDownButton, 'keydown', (event: KeyboardEvent) => {
                 switch (event.key) {
                     case KeyCode.ENTER:
-                        event.stopPropagation();
                         event.preventDefault();
+                        _.stopPropagationForAgGrid(event);
                         this.moveItem(false);
                         break;
                 }

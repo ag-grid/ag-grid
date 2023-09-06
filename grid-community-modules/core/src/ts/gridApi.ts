@@ -127,6 +127,7 @@ import { DataTypeDefinition } from "./entities/dataType";
 import { RowNode } from "./entities/rowNode";
 import { AdvancedFilterModel } from "./interfaces/advancedFilterModel";
 import { LoadSuccessParams } from "./rowNodeCache/rowNodeBlock";
+import { IAdvancedFilterParams } from "./interfaces/iAdvancedFilterParams";
 
 export interface DetailGridInfo {
     /**
@@ -755,6 +756,10 @@ export class GridApi<TData = any> {
      */
     public setAdvancedFilterParent(advancedFilterParent: HTMLElement | null): void {
         this.gos.set('advancedFilterParent', advancedFilterParent);
+    }
+
+    public setAdvancedFilterParams(params?: IAdvancedFilterParams): void {
+        this.gos.set('advancedFilterParams', params);
     }
 
     /**

@@ -1,4 +1,4 @@
-import { AgRichSelect, AutocompleteEntry, RichSelectParams, VirtualList } from "@ag-grid-community/core";
+import { AgRichSelect, AutocompleteEntry, RichSelectParams, VirtualList, _ } from "@ag-grid-community/core";
 
 export interface SelectPillParams extends RichSelectParams<AutocompleteEntry> {
     getEditorParams: () => { values?: any[] },
@@ -45,7 +45,7 @@ export class SelectPillComp extends AgRichSelect<AutocompleteEntry> {
     }
 
     protected onEnterKeyDown(event: KeyboardEvent): void {
-        event.stopPropagation();
+        _.stopPropagationForAgGrid(event);
         if (this.isPickerDisplayed) {
             super.onEnterKeyDown(event);
         } else {

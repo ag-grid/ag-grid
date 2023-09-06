@@ -97,6 +97,7 @@ import { SideBarDef } from "../interfaces/iSideBar";
 import { IRowNode } from "../interfaces/iRowNode";
 import { DataTypeDefinition } from "./dataType";
 import { AdvancedFilterModel } from "../interfaces/advancedFilterModel";
+import { IAdvancedFilterParams } from "../interfaces/iAdvancedFilterParams";
 
 export interface GridOptions<TData = any> {
 
@@ -330,6 +331,7 @@ export interface GridOptions<TData = any> {
      * Set to `null` or `undefined` to appear inside the grid.
      */
     advancedFilterParent?: HTMLElement | null;
+    advancedFilterParams?: IAdvancedFilterParams;
 
     // *** Integrated Charts *** //
     /** Set to `true` to Enable Charts. Default: `false` */

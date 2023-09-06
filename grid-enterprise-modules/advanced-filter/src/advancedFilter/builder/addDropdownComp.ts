@@ -25,7 +25,7 @@ export class AddDropdownComp extends AgRichSelect {
     }
 
     protected onEnterKeyDown(event: KeyboardEvent): void {
-        event.stopPropagation();
+        _.stopPropagationForAgGrid(event);
         if (this.isPickerDisplayed) {
             super.onEnterKeyDown(event);
         } else {

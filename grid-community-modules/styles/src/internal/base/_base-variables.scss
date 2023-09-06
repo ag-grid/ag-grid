@@ -183,5 +183,14 @@
         --ag-card-shadow: none;
 
         --ag-popup-shadow: 5px 5px 10px rgba(0, 0, 0, 0.3);
+
+        --ag-advanced-filter-join-pill-foreground-color: var(--ag-foreground-color);
+        --ag-advanced-filter-join-pill-background-color: lightpink;
+        --ag-advanced-filter-column-pill-foreground-color: var(--ag-foreground-color);
+        --ag-advanced-filter-column-pill-background-color: lightcyan;
+        --ag-advanced-filter-option-pill-foreground-color: var(--ag-foreground-color);
+        --ag-advanced-filter-option-pill-background-color: lightgreen;
+        --ag-advanced-filter-value-pill-foreground-color: var(--ag-foreground-color);
+        --ag-advanced-filter-value-pill-background-color: lightgrey;
     };
 }

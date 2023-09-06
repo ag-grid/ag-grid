@@ -26,6 +26,10 @@
     --ag-subheader-background-color: #fff;
     --ag-invalid-color: #e02525;
     --ag-checkbox-unchecked-color: #999;
+    --ag-advanced-filter-join-pill-background-color: lightpink;
+    --ag-advanced-filter-column-pill-background-color: lightcyan;
+    --ag-advanced-filter-option-pill-background-color: lightgreen;
+    --ag-advanced-filter-value-pill-background-color: lightgrey;
     
     // derived colours (no color blending - these are shared by alpine-dark)
     --ag-checkbox-background-color: var(--ag-background-color);
@@ -35,6 +39,10 @@
     --ag-input-border-color: var(--ag-border-color);
     --ag-input-border-color-invalid: var(--ag-invalid-color);
     --ag-input-focus-box-shadow: 0 0 2px 0.1rem var(--ag-input-focus-border-color);
+    --ag-advanced-filter-join-pill-foreground-color: var(--ag-foreground-color);
+    --ag-advanced-filter-column-pill-foreground-color: var(--ag-foreground-color);
+    --ag-advanced-filter-option-pill-foreground-color: var(--ag-foreground-color);
+    --ag-advanced-filter-value-pill-foreground-color: var(--ag-foreground-color);
     
 
     // derived and blended colours (these are static versions of the dynamic colour blends
@@ -109,4 +117,8 @@
     --ag-chip-background-color: #{color.change(#fff, $alpha: 0.07)};
     --ag-input-disabled-border-color: #{color.change(#68686e, $alpha: 0.3)};
     --ag-input-disabled-background-color: #{color.change(#68686e, $alpha: 0.07)};
+    --ag-advanced-filter-join-pill-background-color: darkviolet;
+    --ag-advanced-filter-column-pill-background-color: darkcyan;
+    --ag-advanced-filter-option-pill-background-color: darkgreen;
+    --ag-advanced-filter-value-pill-background-color: dimgrey;
 }

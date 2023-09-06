@@ -8,6 +8,7 @@ import { ICellRendererParams } from "../rendering/cellRenderers/iCellRenderer";
 import { AgPromise } from "../utils";
 import { setAriaControls } from "../utils/aria";
 import { bindCellRendererToHtmlElement, clearElement } from "../utils/dom";
+import { stopPropagationForAgGrid } from "../utils/event";
 import { debounce } from "../utils/function";
 import { fuzzySuggestions } from "../utils/fuzzyMatch";
 import { exists } from "../utils/generic";
@@ -520,7 +521,7 @@ export class AgRichSelect<TValue = any> extends AgPickerField<TValue, RichSelect
             case KeyCode.ESCAPE:
                 if (this.isPickerDisplayed) {
                     event.preventDefault();
-                    event.stopPropagation();
+                    stopPropagationForAgGrid(event);
                     this.hidePicker();
                 }
                 break;

@@ -90,6 +90,7 @@ import {
     GridReadyEvent,
     GridSizeChangedEvent,
     HeaderPosition,
+    IAdvancedFilterParams,
     IAggFunc,
     IDatasource,
     IRowDragItem,
@@ -486,6 +487,7 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
          * Set to `null` or `undefined` to appear inside the grid.
          */
     @Input() public advancedFilterParent: HTMLElement | null | undefined = undefined;
+    @Input() public advancedFilterParams: IAdvancedFilterParams | undefined = undefined;
     /** Set to `true` to Enable Charts. Default: `false`     */
     @Input() public enableCharts: boolean | undefined = undefined;
     /** The list of chart themes that a user can chose from in the chart settings panel.

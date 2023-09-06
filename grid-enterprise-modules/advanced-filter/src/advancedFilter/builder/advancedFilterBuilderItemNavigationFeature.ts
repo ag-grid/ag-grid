@@ -1,4 +1,4 @@
-import { BeanStub, Component, KeyCode, PostConstruct } from "@ag-grid-community/core";
+import { BeanStub, Component, KeyCode, PostConstruct, _ } from "@ag-grid-community/core";
 
 export class AdvancedFilterBuilderItemNavigationFeature extends BeanStub {
     constructor(
@@ -16,20 +16,20 @@ export class AdvancedFilterBuilderItemNavigationFeature extends BeanStub {
                 case KeyCode.TAB:
                     if (!event.defaultPrevented) {
                         // tab guard handled the navigation. stop from reaching virtual list
-                        event.stopPropagation();
+                        _.stopPropagationForAgGrid(event);
                     }
                     break;
                 case KeyCode.UP:
                 case KeyCode.DOWN:
                     // if this hasn't been handled by an editor, prevent virtual list navigation
-                    event.preventDefault();
-                    event.stopPropagation();
+                    _.stopPropagationForAgGrid(event);
                     break;
                 case KeyCode.ESCAPE:
+                    if (_.isStopPropagationForAgGrid(event)) { return; }
                     const eDocument = this.gridOptionsService.getDocument();
                     if (this.eGui.contains(eDocument.activeElement)) {
                         event.preventDefault();
-                        event.stopPropagation();
+                        _.stopPropagationForAgGrid(event);
                         this.focusWrapper.focus();
                     }
                     break;
@@ -38,9 +38,13 @@ export class AdvancedFilterBuilderItemNavigationFeature extends BeanStub {
         this.addManagedListener(this.focusWrapper, 'keydown', (event: KeyboardEvent) => {
             switch (event.key) {
                 case KeyCode.ENTER:
-                    this.eFocusableComp.getFocusableElement().focus();
-                    event.preventDefault();
-                    event.stopPropagation();
+                    if (_.isStopPropagationForAgGrid(event)) { return; }
+                    const eDocument = this.gridOptionsService.getDocument();
+                    if (eDocument.activeElement === this.focusWrapper) {
+                        event.preventDefault();
+                        _.stopPropagationForAgGrid(event);
+                        this.eFocusableComp.getFocusableElement().focus();
+                    }
                     break;
             }
         });
