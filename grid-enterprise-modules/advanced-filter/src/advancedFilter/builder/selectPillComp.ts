@@ -1,9 +1,14 @@
 import { AgRichSelect, AutocompleteEntry, RichSelectParams, VirtualList } from "@ag-grid-community/core";
 
+export interface SelectPillParams extends RichSelectParams<AutocompleteEntry> {
+    getEditorParams: () => { values?: any[] },
+    wrapperClassName: string
+}
+
 export class SelectPillComp extends AgRichSelect<AutocompleteEntry> {
-    constructor(config: RichSelectParams<AutocompleteEntry>, private readonly getEditorParams: () => { values?: any[] }, private readonly cssClass: string) {
+    constructor(private readonly params: SelectPillParams) {
         super({
-            ...config ?? {},
+            ...params ?? {},
             template: /* html */`
                 <div class="ag-picker-field ag-advanced-filter-builder-pill-wrapper" role="presentation">
                     <div ref="eLabel"></div>
@@ -16,14 +21,18 @@ export class SelectPillComp extends AgRichSelect<AutocompleteEntry> {
         });
     }
 
+    public getFocusableElement(): HTMLElement {
+        return this.eWrapper;
+    }
+
     protected postConstruct(): void {
         super.postConstruct();
-        this.eWrapper.classList.add(this.cssClass);
+        this.eWrapper.classList.add(this.params.wrapperClassName);
     }
 
     protected createPickerComponent(): VirtualList {
         if (!this.values) {
-            const { values } = this.getEditorParams();
+            const { values } = this.params.getEditorParams();
             this.values = values!;
             const key = this.value.key;
             const value = values!.find(value => value.key === key) ?? {
@@ -33,5 +42,15 @@ export class SelectPillComp extends AgRichSelect<AutocompleteEntry> {
             this.value = value;
         }
         return super.createPickerComponent();
+    }
+
+    protected onEnterKeyDown(event: KeyboardEvent): void {
+        event.stopPropagation();
+        if (this.isPickerDisplayed) {
+            super.onEnterKeyDown(event);
+        } else {
+            event.preventDefault();
+            this.showPicker();
+        }
     }
 }

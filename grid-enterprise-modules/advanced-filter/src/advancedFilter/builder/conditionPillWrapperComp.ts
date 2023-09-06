@@ -46,6 +46,10 @@ export class ConditionPillWrapperComp extends Component {
         return this.validationMessage;
     }
 
+    public getFocusableElement(): HTMLElement {
+        return this.eColumnPill.getFocusableElement();
+    }
+
     private setupColumnCondition(filterModel: ColumnAdvancedFilterModel): void {
         const columnDetails = this.advancedFilterExpressionService.getColumnDetails(filterModel.colId);
         this.baseCellDataType = columnDetails?.baseCellDataType ?? 'text';

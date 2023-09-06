@@ -1,6 +1,48 @@
 @use "ag";
 
 @mixin output {
+    .ag-advanced-filter-header {
+        position: relative;
+        display: flex;
+        align-items: center;
+        padding-left: var(--ag-cell-horizontal-padding);
+        padding-right: var(--ag-cell-horizontal-padding);
+    }
+
+    .ag-advanced-filter {
+        display: flex;
+        align-items: center;
+        width: 100%;
+    }
+
+    .ag-advanced-filter-apply-button, .ag-advanced-filter-builder-button {
+        line-height: normal;
+        @include ag.unthemed-rtl((margin-left: calc(var(--ag-grid-size) * 2)));
+        cursor: pointer;
+
+        &:disabled {
+            cursor: default;
+        }
+    }
+
+    .ag-advanced-filter-builder-button {   
+        display: flex;
+        font-weight: 600;
+        padding: var(--ag-grid-size);
+        border: 0;
+        background-color: unset;
+
+        &:hover:not(:disabled) {
+            background-color: var(--ag-row-hover-color);
+        }
+    }
+
+    .ag-advanced-filter-builder-button-label {
+        margin-left: var(--ag-grid-size);
+    }
+
+    // BUILDER
+
     .ag-advanced-filter-builder {
         @include ag.selectable(none);
         width: 100%;
@@ -31,10 +73,10 @@
         flex: 1 1 auto;
         align-items: center;
         justify-content: space-between;
-        margin-top: var(--ag-grid-size);
-        margin-bottom: var(--ag-grid-size);
         overflow: hidden;
-        padding-left: var(--ag-advanced-filter-builder-indent-size);
+        padding-top: var(--ag-grid-size);
+        padding-bottom: var(--ag-grid-size);
+        padding-left: calc(var(--ag-advanced-filter-builder-indent-size) - var(--ag-grid-size));
         padding-right: var(--ag-advanced-filter-builder-indent-size);
     }
 
@@ -53,10 +95,51 @@
     }
 
     .ag-advanced-filter-builder-pill {
+        position: relative;
         border-radius: var(--ag-border-radius);
         padding: var(--ag-grid-size) calc(var(--ag-grid-size) * 2);
         min-height: calc(100% - var(--ag-grid-size) * 3);
         min-width: calc(var(--ag-grid-size) * 2);
+    }
+
+    // @include ag.keyboard-focus((ag-advanced-filter-builder-pill, ag-advanced-filter-builder-item-button), -4px);
+
+    .ag-keyboard-focus {
+        .ag-advanced-filter-builder-pill:focus {
+            outline: none;
+            &::after {
+                content: '';
+                position: absolute;
+                background-color: transparent;
+                pointer-events: none;
+                top: -4px;
+                left: -4px;
+                display: block;
+                width: calc(100% + 8px);
+                height: calc(100% + 8px);
+                border: 1px solid;
+                border-color: var(--ag-input-focus-border-color);
+            }
+        }
+    }
+
+    .ag-keyboard-focus {
+        .ag-advanced-filter-builder-item-button:focus {
+            outline: none;
+            &::after {
+                content: '';
+                position: absolute;
+                background-color: transparent;
+                pointer-events: none;
+                top: -4px;
+                left: -4px;
+                display: block;
+                width: calc(100% + 8px);
+                height: calc(100% + 8px);
+                border: 1px solid;
+                border-color: var(--ag-input-focus-border-color);
+            }
+        }
     }
 
     .ag-advanced-filter-builder-pill-display {
@@ -89,10 +172,14 @@
     }
     
     .ag-advanced-filter-builder-item-button {
+        position: relative;
         cursor: pointer;
-        margin: 0 calc(var(--ag-grid-size) * 0.5);
         color: var(--ag-secondary-foreground-color);
         opacity: 50%;
+    }
+
+    .ag-advanced-filter-builder-item-button-wrapper {
+        margin: 0 calc(var(--ag-grid-size) * 0.5);
     }
 
     .ag-advanced-filter-builder-item-button-disabled {
@@ -105,10 +192,6 @@
         cursor: default;
         height: var(--ag-list-item-height);
 
-        .ag-keyboard-focus &:focus::after {
-            content: none
-        }
-
         &:hover {
             background-color: var(--ag-row-hover-color);
 
@@ -118,14 +201,16 @@
         }
     }
 
+    .ag-keyboard-focus .ag-advanced-filter-builder-virtual-list-item-highlight .ag-advanced-filter-builder-item-button {
+        opacity: 100%;
+    }
+
     .ag-advanced-filter-builder-invalid {
         color: var(--ag-invalid-color);
         cursor: default;
     }
 
-    .ag-advanced-filter-builder-validation {
-        .ag-advanced-filter-builder-invalid {
-            opacity: 100%;
-        }
+    .ag-advanced-filter-builder-validation .ag-advanced-filter-builder-invalid {
+        opacity: 100%;
     }
 }

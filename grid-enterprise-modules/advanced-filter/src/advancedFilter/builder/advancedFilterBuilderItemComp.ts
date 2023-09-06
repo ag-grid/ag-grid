@@ -2,20 +2,22 @@ import {
     AutocompleteEntry,
     Autowired,
     Beans,
-    Component,
     DragAndDropService,
     DragSource,
     DragSourceType,
     Events,
     FieldPickerValueSelectedEvent,
     FieldValueEvent,
+    KeyCode,
     PostConstruct,
     RefSelector,
+    TabGuardComp,
     TooltipFeature,
     _
 } from "@ag-grid-community/core";
 import { AddDropdownComp } from "./addDropdownComp";
 import { AdvancedFilterBuilderDragFeature, AdvancedFilterBuilderDragStartedEvent } from "./advancedFilterBuilderDragFeature";
+import { AdvancedFilterBuilderItemNavigationFeature } from "./advancedFilterBuilderItemNavigationFeature";
 import { ConditionPillWrapperComp } from "./conditionPillWrapperComp";
 import {
     AdvancedFilterBuilderAddEvent,
@@ -29,7 +31,7 @@ import { InputPillComp } from "./inputPillComp";
 import { JoinPillWrapperComp } from "./joinPillWrapperComp";
 import { SelectPillComp } from "./selectPillComp";
 
-export class AdvancedFilterBuilderItemComp extends Component {
+export class AdvancedFilterBuilderItemComp extends TabGuardComp {
     @RefSelector('eDragHandle') private eDragHandle: HTMLElement;
     @RefSelector('eItem') private eItem: HTMLElement;
     @RefSelector('eButtons') private eButtons: HTMLElement;
@@ -48,18 +50,18 @@ export class AdvancedFilterBuilderItemComp extends Component {
     private moveUpTooltipFeature: TooltipFeature;
     private moveDownTooltipFeature: TooltipFeature;
 
-    constructor(private readonly item: AdvancedFilterBuilderItem, private readonly dragFeature: AdvancedFilterBuilderDragFeature) {
+    constructor(private readonly item: AdvancedFilterBuilderItem, private readonly dragFeature: AdvancedFilterBuilderDragFeature, private readonly focusWrapper: HTMLElement) {
         super(/* html */ `
             <div class="ag-advanced-filter-builder-item-wrapper" role="presentation">
                 <div ref="eItem" class="ag-advanced-filter-builder-item">
                     <span ref="eDragHandle" class="ag-drag-handle" role="presentation"></span>
                 </div>
                 <div ref="eButtons" class="ag-advanced-filter-builder-item-buttons">
-                    <span ref="eValidation" class="ag-advanced-filter-builder-item-button ag-advanced-filter-builder-invalid" role="presentation"></span>
-                    <span ref="eMoveUpButton" class="ag-advanced-filter-builder-item-button" role="presentation"></span>
-                    <span ref="eMoveDownButton" class="ag-advanced-filter-builder-item-button" role="presentation"></span>
-                    <span ref="eAddButton" class="ag-advanced-filter-builder-item-button" role="presentation"></span>
-                    <span ref="eRemoveButton" class="ag-advanced-filter-builder-item-button" role="presentation"></span>
+                    <span ref="eValidation" class="ag-advanced-filter-builder-item-button-wrapper ag-advanced-filter-builder-item-button ag-advanced-filter-builder-invalid" role="presentation"></span>
+                    <span ref="eMoveUpButton" class="ag-advanced-filter-builder-item-button-wrapper ag-advanced-filter-builder-item-button" role="presentation"></span>
+                    <span ref="eMoveDownButton" class="ag-advanced-filter-builder-item-button-wrapper ag-advanced-filter-builder-item-button" role="presentation"></span>
+                    <div ref="eAddButton" class="ag-advanced-filter-builder-item-button-wrapper" role="presentation"></div>
+                    <span ref="eRemoveButton" class="ag-advanced-filter-builder-item-button-wrapper ag-advanced-filter-builder-item-button" role="presentation"></span>
                 </div>
             </div>
         `);
@@ -89,6 +91,14 @@ export class AdvancedFilterBuilderItemComp extends Component {
             this.setupDragging();
         }
 
+        this.initialiseTabGuard({});
+
+        this.createManagedBean(new AdvancedFilterBuilderItemNavigationFeature(
+            this.getGui(),
+            this.focusWrapper,
+            this.ePillWrapper
+        ));
+
         this.addManagedListener(this.ePillWrapper, AdvancedFilterBuilderEvents.VALUE_CHANGED_EVENT, () => this.dispatchEvent({
             type: AdvancedFilterBuilderEvents.VALUE_CHANGED_EVENT
         }));
@@ -107,6 +117,10 @@ export class AdvancedFilterBuilderItemComp extends Component {
         this.eMoveDownButton.classList.toggle('ag-advanced-filter-builder-item-button-disabled', disableMoveDown);
         this.moveUpTooltipFeature.refreshToolTip();
         this.moveDownTooltipFeature.refreshToolTip();
+    }
+
+    public focusMoveButton(backwards: boolean): void {
+        (backwards ? this.eMoveUpButton : this.eMoveDownButton).focus();
     }
 
     private setupValidation(): void {
@@ -137,7 +151,7 @@ export class AdvancedFilterBuilderItemComp extends Component {
                     value == null ? null : value.displayValue ?? value.key,
             pickerIcon: 'advancedFilterBuilderAdd',
             maxPickerWidth: '120px'
-        }));
+        }, 'ag-advanced-filter-builder-item-button'));
         this.addManagedListener(
             eAddButton,
             Events.EVENT_FIELD_PICKER_VALUE_SELECTED,
@@ -148,6 +162,7 @@ export class AdvancedFilterBuilderItemComp extends Component {
             })
         );
         this.eAddButton.appendChild(eAddButton.getGui());
+
         const tooltipFeature = this.createManagedBean(new TooltipFeature({
             getGui: () => this.eAddButton,
             getLocation: () => 'advancedFilter',
@@ -160,17 +175,26 @@ export class AdvancedFilterBuilderItemComp extends Component {
         this.eRemoveButton.appendChild(_.createIconNoSpan('advancedFilterBuilderRemove', this.gridOptionsService)!);
         this.addManagedListener(this.eRemoveButton, 'click', (event: MouseEvent) => {
             event.stopPropagation();
-            this.dispatchEvent<AdvancedFilterBuilderRemoveEvent>({
-                type: AdvancedFilterBuilderEvents.REMOVE_EVENT,
-                item: this.item
-            });
+            this.removeItem();
         });
+        this.addManagedListener(this.eRemoveButton, 'keydown', (event: KeyboardEvent) => {
+            switch (event.key) {
+                case KeyCode.ENTER:
+                    event.stopPropagation();
+                    event.preventDefault();
+                    this.removeItem();
+                    break;
+            }
+        });
+
         const tooltipFeature = this.createManagedBean(new TooltipFeature({
             getGui: () => this.eRemoveButton,
             getLocation: () => 'advancedFilter',
             getTooltipValue: () => 'Remove'
         }, this.beans));
         tooltipFeature.setComp(this.eRemoveButton);
+
+        this.activateTabIndex([this.eRemoveButton]);
     }
 
     private setupMoveButtons(showMove?: boolean): void {
@@ -178,12 +202,18 @@ export class AdvancedFilterBuilderItemComp extends Component {
             this.eMoveUpButton.appendChild(_.createIconNoSpan('advancedFilterBuilderMoveUp', this.gridOptionsService)!);
             this.addManagedListener(this.eMoveUpButton, 'click', (event: MouseEvent) => {
                 event.stopPropagation();
-                this.dispatchEvent<AdvancedFilterBuilderMoveEvent>({
-                    type: AdvancedFilterBuilderEvents.MOVE_EVENT,
-                    item: this.item,
-                    backwards: true
-                });
+                this.moveItem(true);
             });
+            this.addManagedListener(this.eMoveUpButton, 'keydown', (event: KeyboardEvent) => {
+                switch (event.key) {
+                    case KeyCode.ENTER:
+                        event.stopPropagation();
+                        event.preventDefault();
+                        this.moveItem(true);
+                        break;
+                }
+            });
+
             this.moveUpTooltipFeature = this.createManagedBean(new TooltipFeature({
                 getGui: () => this.eMoveUpButton,
                 getLocation: () => 'advancedFilter',
@@ -194,18 +224,26 @@ export class AdvancedFilterBuilderItemComp extends Component {
             this.eMoveDownButton.appendChild(_.createIconNoSpan('advancedFilterBuilderMoveDown', this.gridOptionsService)!);
             this.addManagedListener(this.eMoveDownButton, 'click', (event: MouseEvent) => {
                 event.stopPropagation();
-                this.dispatchEvent<AdvancedFilterBuilderMoveEvent>({
-                    type: AdvancedFilterBuilderEvents.MOVE_EVENT,
-                    item: this.item,
-                    backwards: false
-                });
+                this.moveItem(false);
             });
+            this.addManagedListener(this.eMoveDownButton, 'keydown', (event: KeyboardEvent) => {
+                switch (event.key) {
+                    case KeyCode.ENTER:
+                        event.stopPropagation();
+                        event.preventDefault();
+                        this.moveItem(false);
+                        break;
+                }
+            });
+
             this.moveDownTooltipFeature = this.createManagedBean(new TooltipFeature({
                 getGui: () => this.eMoveDownButton,
                 getLocation: () => 'advancedFilter',
                 getTooltipValue: () => this.moveDownDisabled ? null : 'Move Down'
             }, this.beans));
             this.moveDownTooltipFeature.setComp(this.eMoveDownButton);
+
+            this.activateTabIndex([this.eMoveUpButton, this.eMoveDownButton]);
         } else {
             _.setDisplayed(this.eMoveUpButton, false);
             _.setDisplayed(this.eMoveDownButton, false);
@@ -236,8 +274,10 @@ export class AdvancedFilterBuilderItemComp extends Component {
                 },
                 valueFormatter: (value: AutocompleteEntry) =>
                     value == null ? null : value.displayValue ?? value.key,
-                maxPickerWidth: '100px'
-            }, params.getEditorParams, cssClass));
+                maxPickerWidth: '100px',
+                getEditorParams: params.getEditorParams,
+                wrapperClassName: cssClass
+            }));
             this.addManagedListener(
                 comp,
                 Events.EVENT_FIELD_PICKER_VALUE_SELECTED,
@@ -277,5 +317,20 @@ export class AdvancedFilterBuilderItemComp extends Component {
 
         this.dragAndDropService.addDragSource(dragSource, true);
         this.addDestroyFunc(() => this.dragAndDropService.removeDragSource(dragSource));
+    }
+
+    private removeItem(): void {
+        this.dispatchEvent<AdvancedFilterBuilderRemoveEvent>({
+            type: AdvancedFilterBuilderEvents.REMOVE_EVENT,
+            item: this.item
+        });
+    }
+
+    private moveItem(backwards: boolean): void {
+        this.dispatchEvent<AdvancedFilterBuilderMoveEvent>({
+            type: AdvancedFilterBuilderEvents.MOVE_EVENT,
+            item: this.item,
+            backwards
+        });
     }
 }

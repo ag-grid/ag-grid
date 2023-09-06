@@ -141,7 +141,7 @@ export class AdvancedFilterService extends BeanStub implements IAdvancedFilterSe
         return !this.gridOptionsService.get('advancedFilterParent');
     }
 
-    public getCtrl(): IAdvancedFilterCtrl {
+    public getCtrl(): AdvancedFilterCtrl {
         return this.ctrl;
     }
 

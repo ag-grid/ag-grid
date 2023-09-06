@@ -15,6 +15,7 @@ import {
     WithoutGridCommon,
     _
 } from '@ag-grid-community/core';
+import { AdvancedFilterCtrl } from './advancedFilterCtrl';
 import { AdvancedFilterExpressionService } from './advancedFilterExpressionService';
 import { AdvancedFilterService } from './advancedFilterService';
 import { FilterExpressionParser } from './filterExpressionParser';
@@ -32,16 +33,17 @@ export class AdvancedFilterComp extends Component {
 
     private expressionParser: FilterExpressionParser | null = null;
     private isApplyDisabled = true;
+    private builderOpen = false;
 
     constructor() {
         super(/* html */ `
             <div class="ag-advanced-filter" role="presentation" tabindex="-1">
                 <ag-autocomplete ref="eAutocomplete"></ag-autocomplete>
                 <button class="ag-button ag-standard-button ag-advanced-filter-apply-button" ref="eApplyFilterButton"></button>
-                <div class="ag-advanced-filter-builder-button" ref="eBuilderFilterButton" role="presentation">
+                <button class="ag-advanced-filter-builder-button" ref="eBuilderFilterButton">
                     <span ref="eBuilderFilterButtonIcon"></span>
                     <span class="ag-advanced-filter-builder-button-label" ref="eBuilderFilterButtonLabel"></span>
-                </div>
+                </button>
             </div>`);
     }
 
@@ -65,15 +67,8 @@ export class AdvancedFilterComp extends Component {
         this.addManagedListener(this.eAutocomplete, AgAutocomplete.EVENT_VALID_CHANGED,
             ({ isValid, validationMessage }: AutocompleteValidChangedEvent) => this.onValidChanged(isValid, validationMessage));
 
-        this.eApplyFilterButton.innerText = this.advancedFilterExpressionService.translate('advancedFilterApply');
-        this.activateTabIndex([this.eApplyFilterButton]);
-        this.eApplyFilterButton.addEventListener('click', () => this.onValueConfirmed(this.eAutocomplete.isValid()));
-        _.setDisabled(this.eApplyFilterButton, this.isApplyDisabled);
-        
-        this.eBuilderFilterButtonIcon.appendChild(_.createIconNoSpan('advancedFilterBuilder', this.gridOptionsService)!);
-        this.eBuilderFilterButtonLabel.innerText = 'Builder';
-        this.activateTabIndex([this.eBuilderFilterButton]);
-        this.eBuilderFilterButton.addEventListener('click', () => this.advancedFilterService.getCtrl().toggleFilterBuilder());
+        this.setupApplyButton();
+        this.setupBuilderButton();
     }
 
     public refresh(): void {
@@ -90,6 +85,21 @@ export class AdvancedFilterComp extends Component {
         const res = super.getTooltipParams();
         res.location = 'advancedFilter';
         return res;
+    }
+
+    private setupApplyButton(): void {
+        this.eApplyFilterButton.innerText = this.advancedFilterExpressionService.translate('advancedFilterApply');
+        this.activateTabIndex([this.eApplyFilterButton]);
+        this.addManagedListener(this.eApplyFilterButton, 'click', () => this.onValueConfirmed(this.eAutocomplete.isValid()));
+        _.setDisabled(this.eApplyFilterButton, this.isApplyDisabled);
+    }
+
+    private setupBuilderButton(): void {
+        this.eBuilderFilterButtonIcon.appendChild(_.createIconNoSpan('advancedFilterBuilder', this.gridOptionsService)!);
+        this.eBuilderFilterButtonLabel.innerText = 'Builder';
+        this.activateTabIndex([this.eBuilderFilterButton]);
+        this.addManagedListener(this.eBuilderFilterButton, 'click', () => this.openBuilder());
+        this.addManagedListener(this.advancedFilterService.getCtrl(), AdvancedFilterCtrl.EVENT_BUILDER_CLOSED, () => this.closeBuilder());
     }
 
     private onValueChanged(value: string | null): void {
@@ -145,5 +155,19 @@ export class AdvancedFilterComp extends Component {
 
     private forceLastSelection({ key, displayValue }: AutocompleteEntry, searchString: string): boolean {
         return !!searchString.toLocaleLowerCase().match(`^${(displayValue ?? key).toLocaleLowerCase()}\\s*$`);
+    }
+
+    private openBuilder(): void {
+        if (this.builderOpen) { return; }
+        this.builderOpen = true;
+        _.setDisabled(this.eBuilderFilterButton, true);
+        this.advancedFilterService.getCtrl().toggleFilterBuilder();
+    }
+
+    private closeBuilder(): void {
+        if (!this.builderOpen) { return; }
+        this.builderOpen = false;
+        _.setDisabled(this.eBuilderFilterButton, false);
+        this.eBuilderFilterButton.focus();
     }
 }

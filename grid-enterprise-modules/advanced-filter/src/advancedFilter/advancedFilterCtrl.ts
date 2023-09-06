@@ -20,6 +20,8 @@ export class AdvancedFilterCtrl extends BeanStub implements IAdvancedFilterCtrl 
     @Autowired('ctrlsService') private ctrlsService: CtrlsService;
     @Autowired('popupService') private popupService: PopupService;
 
+    public static readonly EVENT_BUILDER_CLOSED = 'advancedFilterBuilderClosed';
+
     private eHeaderComp: AdvancedFilterHeaderComp | undefined;
     private eFilterComp: AdvancedFilterComp | undefined;
     private hasAdvancedFilterParent: boolean;
@@ -99,6 +101,7 @@ export class AdvancedFilterCtrl extends BeanStub implements IAdvancedFilterCtrl 
             maximizable: true,
             centered: true,
             closable: true,
+            afterGuiAttached: () => this.eBuilderComp?.afterGuiAttached()
         }));
 
         this.eBuilderDialog.addEventListener(AgDialog.EVENT_DESTROYED, () => {
@@ -106,6 +109,9 @@ export class AdvancedFilterCtrl extends BeanStub implements IAdvancedFilterCtrl 
             this.eBuilderComp = undefined;
             this.eBuilderDialog = undefined;
             this.setInputDisabled(false);
+            this.dispatchEvent({
+                type: AdvancedFilterCtrl.EVENT_BUILDER_CLOSED
+            });
         });
     }
 

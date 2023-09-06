@@ -468,7 +468,7 @@ export class AgRichSelect<TValue = any> extends AgPickerField<TValue, RichSelect
         this.selectListItem(newIndex);
     }
 
-    private onEnterKeyDown(e: KeyboardEvent): void {
+    protected onEnterKeyDown(e: KeyboardEvent): void {
         if (!this.isPickerDisplayed) { return; }
         e.preventDefault();
 

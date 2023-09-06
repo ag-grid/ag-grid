@@ -8,6 +8,7 @@ export class JoinPillWrapperComp extends Component {
     @Autowired('advancedFilterExpressionService') private advancedFilterExpressionService: AdvancedFilterExpressionService;
 
     private filterModel: JoinAdvancedFilterModel;
+    private ePill: SelectPillComp | InputPillComp;
 
     constructor() {
         super(/* html */`
@@ -23,7 +24,7 @@ export class JoinPillWrapperComp extends Component {
         const filterModel = item.filterModel as JoinAdvancedFilterModel;
         this.filterModel = filterModel;
 
-        const ePill = createPill({
+        this.ePill = createPill({
             key: filterModel.type,
             displayValue: this.advancedFilterExpressionService.parseJoinOperator(filterModel),
             cssClass: 'ag-advanced-filter-builder-join-pill',
@@ -31,8 +32,8 @@ export class JoinPillWrapperComp extends Component {
             getEditorParams: () => ({ values: this.advancedFilterExpressionService.getJoinOperatorAutocompleteEntries() }),
             update: (key) => filterModel.type = key as any
         });
-        this.getGui().appendChild(ePill.getGui());
-        this.addDestroyFunc(() => this.destroyBean(ePill));
+        this.getGui().appendChild(this.ePill.getGui());
+        this.addDestroyFunc(() => this.destroyBean(this.ePill));
     }
 
     public getDragName(): string {
@@ -41,5 +42,9 @@ export class JoinPillWrapperComp extends Component {
 
     public getValidationMessage(): string | null {
         return null;
+    }
+
+    public getFocusableElement(): HTMLElement {
+        return this.ePill.getFocusableElement();
     }
 }

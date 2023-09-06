@@ -29,13 +29,27 @@ export class InputPillComp extends Component {
     @PostConstruct
     private postConstruct(): void {
         this.ePill.classList.add(this.params.cssClass);
+        this.activateTabIndex([this.ePill]);
         this.renderValue();
 
-        this.ePill.addEventListener('click', (event: MouseEvent) => {
+        this.addManagedListener(this.ePill, 'click', (event: MouseEvent) => {
             event.preventDefault();
             this.showEditor();
         });
+        this.addManagedListener(this.ePill, 'keydown', (event: KeyboardEvent) => {
+            switch (event.key) {
+                case KeyCode.ENTER:
+                    event.preventDefault();
+                    event.stopPropagation();
+                    this.showEditor();
+                    break;
+            }
+        });
         this.addDestroyFunc(() => this.destroyBean(this.eEditor));
+    }
+
+    public getFocusableElement(): HTMLElement {
+        return this.ePill;
     }
 
     private showEditor(): void {
@@ -44,40 +58,44 @@ export class InputPillComp extends Component {
         this.eEditor = this.createBean(this.params.isNumber ? new AgInputNumberField() : new AgInputTextField());
         this.eEditor.setValue(this.value);
         const eEditorGui = this.eEditor.getGui();
-        eEditorGui.addEventListener('keydown', (event: KeyboardEvent) => {
+        this.eEditor.addManagedListener(eEditorGui, 'keydown', (event: KeyboardEvent) => {
             switch (event.key) {
                 case KeyCode.ENTER:
                     event.preventDefault();
-                    this.updateValue();
+                    event.stopPropagation();
+                    this.updateValue(true);
                     break;
                 case KeyCode.ESCAPE:
                     event.preventDefault();
                     event.stopPropagation();
-                    this.hideEditor();
+                    this.hideEditor(true);
                     break;
             }
         });
-        eEditorGui.addEventListener('focusout', () => {
-            this.updateValue();
-        })
+        this.eEditor.addManagedListener(eEditorGui, 'focusout', () => {
+            this.updateValue(false);
+        });
         this.getGui().appendChild(eEditorGui);
         this.eEditor.getFocusableElement().focus();
     }
 
-    private hideEditor(): void {
+    private hideEditor(keepFocus: boolean): void {
         const { eEditor } = this;
         if (!eEditor) { return; }
         this.eEditor = undefined;
         this.getGui().removeChild(eEditor.getGui());
         this.destroyBean(eEditor);
         _.setDisplayed(this.ePill, true);
+        if (keepFocus) {
+            this.ePill.focus();
+        }
     }
 
     private renderValue(): void {
         this.ePill.innerText = this.value;
     }
 
-    private updateValue(): void {
+    private updateValue(keepFocus: boolean): void {
         if (!this.eEditor) { return; }
         const value = this.eEditor!.getValue() ?? '';
         this.dispatchEvent<WithoutGridCommon<FieldValueEvent>>({
@@ -86,6 +104,6 @@ export class InputPillComp extends Component {
         })
         this.value = value;
         this.renderValue();
-        this.hideEditor();
+        this.hideEditor(keepFocus);
     }
 }

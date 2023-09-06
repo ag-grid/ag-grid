@@ -77,6 +77,10 @@ export class AdvancedFilterBuilderComp extends Component {
         this.moveItemToIndex(item, destination.rowIndex, destination.position);
     }
 
+    public afterGuiAttached(): void {
+        this.getFocusableElement().focus();
+    }
+
     private setupVirtualList(): void {
         this.virtualList = this.createManagedBean(new VirtualList({ cssIdentifier: 'advanced-filter-builder' }));
         this.virtualList.setComponentCreator(this.createItemComponent.bind(this));
@@ -96,7 +100,7 @@ export class AdvancedFilterBuilderComp extends Component {
     private setupButtons(): void {
         this.eApplyFilterButton.innerText = this.advancedFilterExpressionService.translate('advancedFilterApply');
         this.activateTabIndex([this.eApplyFilterButton]);
-        this.eApplyFilterButton.addEventListener('click', () => {
+        this.addManagedListener(this.eApplyFilterButton, 'click', () => {
             this.advancedFilterService.setModel(this.filterModel);
             this.filterManager.onFilterChanged({ source: 'advancedFilter' });
             this.close();
@@ -111,18 +115,20 @@ export class AdvancedFilterBuilderComp extends Component {
         this.validationTooltipFeature.setComp(this.eApplyFilterButton);
         this.validate();
 
-        this.eApplyFilterButton.addEventListener(
+        this.addManagedListener(
+            this.eApplyFilterButton,
             'mouseenter',
             () => this.addOrRemoveCssClass('ag-advanced-filter-builder-validation', true)
         );
-        this.eApplyFilterButton.addEventListener(
+        this.addManagedListener(
+            this.eApplyFilterButton,
             'mouseleave',
             () => this.addOrRemoveCssClass('ag-advanced-filter-builder-validation', false)
         );
 
         this.eCancelFilterButton.innerText = 'Cancel';
         this.activateTabIndex([this.eCancelFilterButton]);
-        this.eCancelFilterButton.addEventListener('click', () => this.close());
+        this.addManagedListener(this.eCancelFilterButton, 'click', () => this.close());
     }
 
     private removeItemFromParent(item: AdvancedFilterBuilderItem): number {
@@ -228,25 +234,31 @@ export class AdvancedFilterBuilderComp extends Component {
         });
     }
 
-    private createItemComponent(item: AdvancedFilterBuilderItem): Component {
-        const itemComp = item.filterModel
-            ? new AdvancedFilterBuilderItemComp(item, this.dragFeature)
-            : new AdvancedFilterBuilderItemAddComp(item);
-        itemComp.addEventListener(
+    private createItemComponent(item: AdvancedFilterBuilderItem, focusWrapper: HTMLElement): Component {
+        const itemComp = this.createBean(item.filterModel
+            ? new AdvancedFilterBuilderItemComp(item, this.dragFeature, focusWrapper)
+            : new AdvancedFilterBuilderItemAddComp(item, focusWrapper));
+
+        itemComp.addManagedListener(
+            itemComp,
             AdvancedFilterBuilderEvents.REMOVE_EVENT,
             ({ item }: AdvancedFilterBuilderRemoveEvent) => this.removeItem(item)
         );
-        itemComp.addEventListener(AdvancedFilterBuilderEvents.VALUE_CHANGED_EVENT, () => this.validate());
-        itemComp.addEventListener(
+        itemComp.addManagedListener(
+            itemComp,
+            AdvancedFilterBuilderEvents.VALUE_CHANGED_EVENT,
+            () => this.validate()
+        );
+        itemComp.addManagedListener(
+            itemComp,
             AdvancedFilterBuilderEvents.ADD_EVENT,
             ({ item, isJoin }: AdvancedFilterBuilderAddEvent) => this.addItem(item, isJoin)
         );
-        itemComp.addEventListener(
+        itemComp.addManagedListener(
+            itemComp,
             AdvancedFilterBuilderEvents.MOVE_EVENT,
             ({ item, backwards }: AdvancedFilterBuilderMoveEvent) => this.moveItemUpDown(item, backwards)
         );
-
-        this.getContext().createBean(itemComp);
 
         if (itemComp instanceof AdvancedFilterBuilderItemComp) {
             this.updateItemComponent(item, itemComp);
@@ -279,6 +291,9 @@ export class AdvancedFilterBuilderComp extends Component {
             this.items.splice(index, 0, ...newItems);
         }
         this.refreshList(softRefresh);
+        if (softRefresh) {
+            this.virtualList.focusRow(index);
+        }
     }
 
     private removeItem(item: AdvancedFilterBuilderItem): void {
@@ -288,13 +303,16 @@ export class AdvancedFilterBuilderComp extends Component {
         parent.conditions.splice(parentIndex, 1);
 
         const isJoin = item.filterModel?.filterType === 'join';
+        const index = this.items.indexOf(item);
         // if it's a join, we don't know how many children there are, so always rebuild
-        const index = isJoin ? -1 : this.items.indexOf(item);
-        const softRefresh = index >= 0;
+        const softRefresh = !isJoin && index >= 0;
         if (softRefresh) {
             this.items.splice(index, 1);
         }
         this.refreshList(softRefresh);
+        if (index >= 0) {
+            this.virtualList.focusRow(index);
+        }
     }
 
     private moveItemUpDown(item: AdvancedFilterBuilderItem, backwards: boolean): void {
@@ -343,6 +361,13 @@ export class AdvancedFilterBuilderComp extends Component {
             }
         }
         this.refreshList(false);
+        const newIndex = this.items.findIndex(({ filterModel: filterModelToCheck }) => filterModelToCheck === filterModel);
+        if (newIndex >= 0) {
+            const comp = this.virtualList.getComponentAt(newIndex);
+            if (comp instanceof AdvancedFilterBuilderItemComp) {
+                comp.focusMoveButton(backwards);
+            }
+        }
     }
 
     private canMoveDown(item: AdvancedFilterBuilderItem, index: number): boolean {
