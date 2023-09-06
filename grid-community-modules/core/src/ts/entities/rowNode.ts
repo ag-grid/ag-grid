@@ -982,6 +982,10 @@ export class RowNode<TData = any> implements IEventEmitter, IRowNode<TData> {
 
         if (this.eventService) {
             this.dispatchLocalEvent(this.createLocalRowEvent(RowNode.EVENT_ROW_SELECTED));
+            const sibling = this.sibling;
+            if (sibling && sibling.footer) {
+                sibling.dispatchLocalEvent(sibling.createLocalRowEvent(RowNode.EVENT_ROW_SELECTED));
+            }
         }
 
         const event: RowSelectedEvent = {
