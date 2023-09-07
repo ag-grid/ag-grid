@@ -1056,6 +1056,19 @@ export class RowNode<TData = any> implements IEventEmitter, IRowNode<TData> {
         return false;
     }
 
+    /**
+     * Returns a list of ancestor nodes
+     */
+    public getAllOfAncestors(): RowNode[] {
+        const ancestors = [];
+        let parentNode = this.parent;
+        while (parentNode) {
+            ancestors.push(parentNode);
+            parentNode = parentNode.parent;
+        }
+        return ancestors;
+    }
+
     /** Add an event listener. */
     public addEventListener(eventType: RowNodeEventType, listener: Function): void {
         if (!this.eventService) {
