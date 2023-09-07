@@ -14,11 +14,13 @@ import {
 import { AdvancedFilterHeaderComp } from "./advancedFilterHeaderComp";
 import { AdvancedFilterComp } from "./advancedFilterComp";
 import { AdvancedFilterBuilderComp } from "./builder/advancedFilterBuilderComp";
+import { AdvancedFilterExpressionService } from "./advancedFilterExpressionService";
 
 export class AdvancedFilterCtrl extends BeanStub implements IAdvancedFilterCtrl {
     @Autowired('focusService') private focusService: FocusService;
     @Autowired('ctrlsService') private ctrlsService: CtrlsService;
     @Autowired('popupService') private popupService: PopupService;
+    @Autowired('advancedFilterExpressionService') private advancedFilterExpressionService: AdvancedFilterExpressionService;
 
     public static readonly EVENT_BUILDER_CLOSED = 'advancedFilterBuilderClosed';
 
@@ -92,7 +94,7 @@ export class AdvancedFilterCtrl extends BeanStub implements IAdvancedFilterCtrl 
 
         this.eBuilderComp = this.createBean(new AdvancedFilterBuilderComp());
         this.eBuilderDialog = this.createBean(new AgDialog({
-            title: 'Advanced Filter',
+            title: this.advancedFilterExpressionService.translate('advancedFilterBuilderTitle'),
             component: this.eBuilderComp,
             width,
             height,

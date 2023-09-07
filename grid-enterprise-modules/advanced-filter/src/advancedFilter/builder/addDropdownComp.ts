@@ -1,9 +1,13 @@
 import { AgRichSelect, AutocompleteEntry, RichSelectParams, _ } from "@ag-grid-community/core";
 
+export interface AddDropdownCompParams extends RichSelectParams<AutocompleteEntry> {
+    wrapperClassName?: string;
+}
+
 export class AddDropdownComp extends AgRichSelect {
-    constructor(config: RichSelectParams<AutocompleteEntry>, private readonly wrapperCssClass?: string) {
+    constructor(private readonly params: AddDropdownCompParams) {
         super({
-            ...config ?? {},
+            ...params,
             template: /* html */`
                 <div class="ag-picker-field" role="presentation">
                     <div ref="eLabel"></div>
@@ -19,8 +23,9 @@ export class AddDropdownComp extends AgRichSelect {
     protected postConstruct(): void {
         super.postConstruct();
         _.setDisplayed(this.eDisplayField, false);
-        if (this.wrapperCssClass) {
-            this.eWrapper.classList.add(this.wrapperCssClass);
+        const { wrapperClassName } = this.params;
+        if (wrapperClassName) {
+            this.eWrapper.classList.add(wrapperClassName);
         }
     }
 

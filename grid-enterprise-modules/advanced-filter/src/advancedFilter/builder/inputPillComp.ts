@@ -1,4 +1,5 @@
 import {
+    AgInputDateField,
     AgInputNumberField,
     AgInputTextField,
     Component,
@@ -17,7 +18,7 @@ export class InputPillComp extends Component {
     private eEditor: AgInputTextField | undefined;
     private value: string;
 
-    constructor(private readonly params: { value: string, cssClass: string, isNumber?: boolean }) {
+    constructor(private readonly params: { value: string, cssClass: string, type: 'text' | 'number' | 'date' }) {
         super(/* html */ `
             <div class="ag-advanced-filter-builder-pill-wrapper" role="presentation">
                 <div ref="ePill" class="ag-advanced-filter-builder-pill"></div>
@@ -55,7 +56,7 @@ export class InputPillComp extends Component {
     private showEditor(): void {
         if (this.eEditor) { return; }
         _.setDisplayed(this.ePill, false);
-        this.eEditor = this.createBean(this.params.isNumber ? new AgInputNumberField() : new AgInputTextField());
+        this.eEditor = this.createEditorComp(this.params.type);
         this.eEditor.setValue(this.value);
         const eEditorGui = this.eEditor.getGui();
         this.eEditor.addManagedListener(eEditorGui, 'keydown', (event: KeyboardEvent) => {
@@ -77,6 +78,22 @@ export class InputPillComp extends Component {
         });
         this.getGui().appendChild(eEditorGui);
         this.eEditor.getFocusableElement().focus();
+    }
+
+    private createEditorComp(type: 'text' | 'number' | 'date'): AgInputTextField | AgInputNumberField | AgInputDateField {
+        let comp;
+        switch (type) {
+            case 'text':
+                comp = new AgInputTextField();
+                break;
+            case 'number':
+                comp = new AgInputNumberField();
+                break;
+            case 'date':
+                comp = new AgInputDateField();
+                break;
+        }
+        return this.createBean(comp);
     }
 
     private hideEditor(keepFocus: boolean): void {

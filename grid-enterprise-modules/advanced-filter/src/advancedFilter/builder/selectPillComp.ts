@@ -8,7 +8,7 @@ export interface SelectPillParams extends RichSelectParams<AutocompleteEntry> {
 export class SelectPillComp extends AgRichSelect<AutocompleteEntry> {
     constructor(private readonly params: SelectPillParams) {
         super({
-            ...params ?? {},
+            ...params,
             template: /* html */`
                 <div class="ag-picker-field ag-advanced-filter-builder-pill-wrapper" role="presentation">
                     <div ref="eLabel"></div>

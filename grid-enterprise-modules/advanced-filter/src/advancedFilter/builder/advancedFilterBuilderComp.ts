@@ -102,7 +102,7 @@ export class AdvancedFilterBuilderComp extends Component {
     }
 
     private setupButtons(): void {
-        this.eApplyFilterButton.innerText = this.advancedFilterExpressionService.translate('advancedFilterApply');
+        this.eApplyFilterButton.innerText = this.advancedFilterExpressionService.translate('advancedFilterBuilderApply');
         this.activateTabIndex([this.eApplyFilterButton]);
         this.addManagedListener(this.eApplyFilterButton, 'click', () => {
             this.advancedFilterService.setModel(this.filterModel);
@@ -130,7 +130,7 @@ export class AdvancedFilterBuilderComp extends Component {
             () => this.addOrRemoveCssClass('ag-advanced-filter-builder-validation', false)
         );
 
-        this.eCancelFilterButton.innerText = 'Cancel';
+        this.eCancelFilterButton.innerText = this.advancedFilterExpressionService.translate('advancedFilterBuilderCancel');;
         this.activateTabIndex([this.eCancelFilterButton]);
         this.addManagedListener(this.eCancelFilterButton, 'click', () => this.close());
     }
@@ -245,22 +245,22 @@ export class AdvancedFilterBuilderComp extends Component {
 
         itemComp.addManagedListener(
             itemComp,
-            AdvancedFilterBuilderEvents.REMOVE_EVENT,
+            AdvancedFilterBuilderEvents.EVENT_REMOVED,
             ({ item }: AdvancedFilterBuilderRemoveEvent) => this.removeItem(item)
         );
         itemComp.addManagedListener(
             itemComp,
-            AdvancedFilterBuilderEvents.VALUE_CHANGED_EVENT,
+            AdvancedFilterBuilderEvents.EVENT_VALUE_CHANGED,
             () => this.validate()
         );
         itemComp.addManagedListener(
             itemComp,
-            AdvancedFilterBuilderEvents.ADD_EVENT,
+            AdvancedFilterBuilderEvents.EVENT_ADDED,
             ({ item, isJoin }: AdvancedFilterBuilderAddEvent) => this.addItem(item, isJoin)
         );
         itemComp.addManagedListener(
             itemComp,
-            AdvancedFilterBuilderEvents.MOVE_EVENT,
+            AdvancedFilterBuilderEvents.EVENT_MOVED,
             ({ item, backwards }: AdvancedFilterBuilderMoveEvent) => this.moveItemUpDown(item, backwards)
         );
 
@@ -388,12 +388,12 @@ export class AdvancedFilterBuilderComp extends Component {
         if (!disableApply) {
             disableApply = JSON.stringify(this.filterModel) === this.stringifiedModel;
             if (disableApply) {
-                this.validationMessage = 'Current filter already applied.';
+                this.validationMessage = this.advancedFilterExpressionService.translate('advancedFilterBuilderValidationAlreadyApplied');
             } else {
                 this.validationMessage = null;
             }
         } else {
-            this.validationMessage = 'Not all conditions are complete.';
+            this.validationMessage = this.advancedFilterExpressionService.translate('advancedFilterBuilderValidationIncomplete');
         }
         _.setDisabled(this.eApplyFilterButton, disableApply);
         this.validationTooltipFeature.refreshToolTip();

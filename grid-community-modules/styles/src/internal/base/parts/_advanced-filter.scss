@@ -179,16 +179,16 @@
             @include ag.unthemed-rtl(( padding-left: calc(#{$i} * var(--ag-advanced-filter-builder-indent-size)) ));
         }
     }
+
+    .ag-advanced-filter-builder-item-buttons > * {
+        margin: 0 calc(var(--ag-grid-size) * 0.5);
+    }
     
     .ag-advanced-filter-builder-item-button {
         position: relative;
         cursor: pointer;
         color: var(--ag-secondary-foreground-color);
         opacity: 50%;
-    }
-
-    .ag-advanced-filter-builder-item-button-wrapper {
-        margin: 0 calc(var(--ag-grid-size) * 0.5);
     }
 
     .ag-advanced-filter-builder-item-button-disabled {

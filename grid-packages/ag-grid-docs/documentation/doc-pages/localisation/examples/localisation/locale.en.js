@@ -88,6 +88,22 @@ const AG_GRID_LOCALE_EN = {
     advancedFilterValidationExtraEndBracket: 'Too many end brackets',
     advancedFilterValidationMessage: 'Expression has an error. ${variable1} - ${variable2}.',
     advancedFilterValidationMessageAtEnd: 'Expression has an error. ${variable} at end of expression.',
+    advancedFilterBuilderTitle: 'Advanced Filter',
+    advancedFilterBuilderApply: 'Apply',
+    advancedFilterBuilderCancel: 'Cancel',
+    advancedFilterBuilderAddButtonTooltip: 'Add Join or Condition',
+    advancedFilterBuilderRemoveButtonTooltip: 'Remove',
+    advancedFilterBuilderMoveUpButtonTooltip: 'Move Up',
+    advancedFilterBuilderMoveDownButtonTooltip: 'Move Down',
+    advancedFilterBuilderAddJoin: 'Add Join',
+    advancedFilterBuilderAddCondition: 'Add Condition',
+    advancedFilterBuilderSelectColumn: 'Select a column',
+    advancedFilterBuilderSelectOption: 'Select an option',
+    advancedFilterBuilderValidationAlreadyApplied: 'Current filter already applied.',
+    advancedFilterBuilderValidationIncomplete: 'Not all conditions are complete.',
+    advancedFilterBuilderValidationSelectColumn: 'Must select a column.',
+    advancedFilterBuilderValidationSelectOption: 'Must select an option.',
+    advancedFilterBuilderValidationEnterValue: 'Must enter a value.',
 
     // Side Bar
     columns: 'Columns',
@@ -374,6 +390,10 @@ const AG_GRID_LOCALE_EN = {
     ariaLabelSubMenu: 'SubMenu',
     ariaLabelAggregationFunction: 'Aggregation Function',
     ariaLabelAdvancedFilterAutocomplete: 'Advanced Filter Autocomplete',
+    ariaLabelAdvancedFilterBuilderAddField: 'Advanced Filter Builder Add Field',
+    ariaLabelAdvancedFilterBuilderColumnSelectField: 'Advanced Filter Builder Column Select Field',
+    ariaLabelAdvancedFilterBuilderOptionSelectField: 'Advanced Filter Builder Option Select Field',
+    ariaLabelAdvancedFilterBuilderJoinSelectField: 'Advanced Filter Builder Join Operator Select Field',
 
     // Number Format (Status Bar, Pagination Panel)
     thousandSeparator: ',',

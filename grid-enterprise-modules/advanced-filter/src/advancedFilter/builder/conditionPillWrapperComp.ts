@@ -1,4 +1,13 @@
-import { AutocompleteEntry, Autowired, BaseCellDataType, Column, ColumnAdvancedFilterModel, Component, _ } from "@ag-grid-community/core";
+import {
+    AutocompleteEntry,
+    Autowired,
+    BaseCellDataType,
+    Column,
+    ColumnAdvancedFilterModel,
+    Component,
+    ValueParserService,
+    _
+} from "@ag-grid-community/core";
 import { AdvancedFilterExpressionService } from "../advancedFilterExpressionService";
 import { AdvancedFilterBuilderEvents, AdvancedFilterBuilderItem, CreatePillParams } from "./iAdvancedFilterBuilder";
 import { InputPillComp } from "./inputPillComp";
@@ -6,6 +15,7 @@ import { SelectPillComp } from "./selectPillComp";
 
 export class ConditionPillWrapperComp extends Component {
     @Autowired('advancedFilterExpressionService') private advancedFilterExpressionService: AdvancedFilterExpressionService;
+    @Autowired('valueParserService') private valueParserService: ValueParserService;
 
     private item: AdvancedFilterBuilderItem;
     private createPill: (params: CreatePillParams) => SelectPillComp | InputPillComp;
@@ -39,7 +49,9 @@ export class ConditionPillWrapperComp extends Component {
     }
 
     public getDragName(): string {
-        return this.filterModel.colId ? this.advancedFilterExpressionService.parseColumnFilterModel(this.filterModel) : 'Select a column';
+        return this.filterModel.colId
+            ? this.advancedFilterExpressionService.parseColumnFilterModel(this.filterModel)
+            : this.getDefaultColumnDisplayValue();
     }
 
     public getValidationMessage(): string | null {
@@ -58,11 +70,13 @@ export class ConditionPillWrapperComp extends Component {
 
         this.eColumnPill = this.createPill({
             key: this.getColumnKey(),
-            displayValue: this.getColumnDisplayValue() ?? 'Select a column',
+            displayValue: this.getColumnDisplayValue() ?? this.getDefaultColumnDisplayValue(),
             cssClass: 'ag-advanced-filter-builder-column-pill',
             isSelect: true,
             getEditorParams: () => ({ values: this.advancedFilterExpressionService.getColumnAutocompleteEntries() }),
-            update: (key) => this.setColumnKey(key)
+            update: (key) => this.setColumnKey(key),
+            pickerAriaLabelKey: 'ariaLabelAdvancedFilterBuilderColumnSelectField',
+            pickerAriaLabelValue: 'Advanced Filter Builder Column Select Field'
         });
         this.getGui().appendChild(this.eColumnPill.getGui());
 
@@ -77,11 +91,13 @@ export class ConditionPillWrapperComp extends Component {
     private createOperatorPill(): void {
         this.eOperatorPill = this.createPill({
             key: this.getOperatorKey(),
-            displayValue: this.getOperatorDisplayValue() ?? 'Select an option',
+            displayValue: this.getOperatorDisplayValue() ?? this.getDefaultOptionSelectValue(),
             cssClass: 'ag-advanced-filter-builder-option-pill',
             isSelect: true,
             getEditorParams: () => ({ values: this.getOperatorAutocompleteEntries() }),
             update: (key) => this.setOperatorKey(key),
+            pickerAriaLabelKey: 'ariaLabelAdvancedFilterBuilderOptionSelectField',
+            pickerAriaLabelValue: 'Advanced Filter Builder Option Select Field'
         });
         this.eColumnPill.getGui().insertAdjacentElement('afterend', this.eOperatorPill.getGui());
     }
@@ -175,9 +191,8 @@ export class ConditionPillWrapperComp extends Component {
 
     private setOperand(operand: string): void {
         let parsedOperand: string | number = operand;
-        // TODO - need to use parser here
-        if (this.baseCellDataType === 'number') {
-            parsedOperand = parseFloat(operand);
+        if (this.baseCellDataType === 'number' && this.column) {
+            parsedOperand = this.valueParserService.parseValue(this.column, null, operand, undefined);
         }
         (this.filterModel as any).filter = parsedOperand;
         this.validate();
@@ -197,19 +212,27 @@ export class ConditionPillWrapperComp extends Component {
     private validate(): void {
         let validationMessage = null;
         if (!_.exists(this.getColumnKey())) {
-            validationMessage = 'Must select a column.';
+            validationMessage = this.advancedFilterExpressionService.translate('advancedFilterBuilderValidationSelectColumn');
         } else if (!_.exists(this.getOperatorKey())) {
-            validationMessage = 'Must select an option.';
+            validationMessage = this.advancedFilterExpressionService.translate('advancedFilterBuilderValidationSelectOption');
         } else if (this.numOperands > 0 && this.baseCellDataType === 'number' && !_.exists(this.getOperandDisplayValue())) {
-            validationMessage = 'Must enter a value.';
+            validationMessage = this.advancedFilterExpressionService.translate('advancedFilterBuilderValidationEnterValue');
         }
 
         this.item.valid = !validationMessage;
         if (validationMessage !== this.validationMessage) {
             this.validationMessage = validationMessage;
             this.dispatchEvent({
-                type: AdvancedFilterBuilderEvents.VALID_CHANGED_EVENT
+                type: AdvancedFilterBuilderEvents.EVENT_VALID_CHANGED
             });
         }
+    }
+
+    private getDefaultColumnDisplayValue(): string {
+        return this.advancedFilterExpressionService.translate('advancedFilterBuilderSelectColumn');
+    }
+
+    private getDefaultOptionSelectValue(): string {
+        return this.advancedFilterExpressionService.translate('advancedFilterBuilderSelectOption');
     }
 }

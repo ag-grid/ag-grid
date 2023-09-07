@@ -30,7 +30,9 @@ export class JoinPillWrapperComp extends Component {
             cssClass: 'ag-advanced-filter-builder-join-pill',
             isSelect: true,
             getEditorParams: () => ({ values: this.advancedFilterExpressionService.getJoinOperatorAutocompleteEntries() }),
-            update: (key) => filterModel.type = key as any
+            update: (key) => filterModel.type = key as any,
+            pickerAriaLabelKey: 'ariaLabelAdvancedFilterBuilderJoinSelectField',
+            pickerAriaLabelValue: 'Advanced Filter Builder Join Operator Select Field'
         });
         this.getGui().appendChild(this.ePill.getGui());
         this.addDestroyFunc(() => this.destroyBean(this.ePill));
