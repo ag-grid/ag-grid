@@ -588,6 +588,8 @@ export class SetFilter<V = string> extends ProvidedFilter<SetFilterModel, V> imp
             isExpanded = item.expanded;
             if (item.key === SetFilterDisplayValue.SELECT_ALL) {
                 isSelected = this.isSelectAllSelected();
+            } else if (item.key === SetFilterDisplayValue.ADD_SELECTION_TO_FILTER) {
+                isSelected = this.valueModel!.isAddCurrentSelectionToFilterChecked();
             } else if (item.children) {
                 isSelected = this.areAllChildrenSelected(item);
             } else {
@@ -596,6 +598,8 @@ export class SetFilter<V = string> extends ProvidedFilter<SetFilterModel, V> imp
         } else {
             if (item === SetFilterDisplayValue.SELECT_ALL) {
                 isSelected = this.isSelectAllSelected();
+            } else if (item === SetFilterDisplayValue.ADD_SELECTION_TO_FILTER) {
+                isSelected = this.valueModel!.isAddCurrentSelectionToFilterChecked();
             } else {
                 isSelected = this.valueModel!.isKeySelected(item);
             }
@@ -686,7 +690,7 @@ export class SetFilter<V = string> extends ProvidedFilter<SetFilterModel, V> imp
             }
 
             appliedModel.values.forEach(key => {
-                this.valueModel!.addToAppliedModelKeys(this.caseFormat(key));
+                this.valueModel!.addToAppliedModelKeys(key);
             });
         } else {
             if (!shouldKeepCurrentSelection) {
@@ -702,7 +706,7 @@ export class SetFilter<V = string> extends ProvidedFilter<SetFilterModel, V> imp
     }
 
     public doesFilterPass(params: IDoesFilterPassParams): boolean {
-        if (!this.setFilterParams || !this.valueModel || !this.valueModel.getAppliedModelKeys()) { return true; }
+        if (!this.setFilterParams || !this.valueModel || !this.valueModel.getCaseFormattedAppliedModelKeys()) { return true; }
 
         // if nothing selected, don't need to check value
         if (!this.valueModel.hasAnyAppliedModelKey()) {
@@ -772,7 +776,7 @@ export class SetFilter<V = string> extends ProvidedFilter<SetFilterModel, V> imp
     }
 
     private isInAppliedModel(key: string | null): boolean {
-        return this.valueModel!.hasAppliedModelKey(this.caseFormat(key));
+        return this.valueModel!.hasAppliedModelKey(key);
     }
 
     private getValueFromNode(node: IRowNode, data: any): V | null {

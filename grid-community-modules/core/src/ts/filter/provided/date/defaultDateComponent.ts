@@ -5,6 +5,7 @@ import { RefSelector } from '../../../widgets/componentAnnotations';
 import { serialiseDate, parseDateTimeFromString, dateToFormattedString } from '../../../utils/date';
 import { getSafariVersion, isBrowserChrome, isBrowserFirefox, isBrowserSafari } from '../../../utils/browser';
 import { IAfterGuiAttachedParams } from '../../../interfaces/iAfterGuiAttachedParams';
+import { doOnce } from '../../../utils/function';
 
 export class DefaultDateComponent extends Component implements IDateComp {
     @RefSelector('eDateInput') private readonly eDateInput: AgInputTextField;
@@ -63,6 +64,20 @@ export class DefaultDateComponent extends Component implements IDateComp {
             minValidDate,
             maxValidDate,
         } = params.filterParams || {};
+
+        if (minValidDate && minValidYear) {
+            doOnce(
+                () => console.warn('AG Grid: DateFilter should not have both minValidDate and minValidYear parameters set at the same time! minValidYear will be ignored.'),
+                'DateFilter.minValidDateAndMinValidYearWarning',
+            );
+        }
+
+        if (maxValidDate && maxValidYear) {
+            doOnce(
+                () => console.warn('AG Grid: DateFilter should not have both maxValidDate and maxValidYear parameters set at the same time! maxValidYear will be ignored.'),
+                'DateFilter.maxValidDateAndMaxValidYearWarning',
+            );
+        }
 
         if (minValidDate) {
             if (minValidDate instanceof Date) {

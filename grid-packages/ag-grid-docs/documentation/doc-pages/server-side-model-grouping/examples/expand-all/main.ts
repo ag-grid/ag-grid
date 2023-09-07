@@ -12,9 +12,9 @@ const gridOptions: GridOptions<IOlympicData> = {
     },
     { field: 'country', enableRowGroup: true, rowGroup: true, hide: true },
     { field: 'sport', enableRowGroup: true, rowGroup: true, hide: true },
-    { field: 'gold', aggFunc: 'sum' },
-    { field: 'silver', aggFunc: 'sum' },
-    { field: 'bronze', aggFunc: 'sum' },
+    { field: 'gold', aggFunc: 'sum', enableValue: true },
+    { field: 'silver', aggFunc: 'sum', enableValue: true },
+    { field: 'bronze', aggFunc: 'sum', enableValue: true },
   ],
   defaultColDef: {
     flex: 1,
@@ -28,7 +28,6 @@ const gridOptions: GridOptions<IOlympicData> = {
   },
   maxConcurrentDatasourceRequests: 1,
   rowModelType: 'serverSide',
-  suppressAggFuncInHeader: true,
   animateRows: true,
 }
 

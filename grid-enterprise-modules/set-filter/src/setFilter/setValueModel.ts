@@ -1,6 +1,6 @@
 import {
+    _,
     IClientSideRowModel,
-    Column,
     SetFilterParams,
     AgPromise,
     SetFilterValues,
@@ -12,7 +12,6 @@ import {
     IEventEmitter,
     EventService,
     RowNode,
-    _,
     SetFilterModelValue,
     ValueFormatterParams,
     GridOptionsService,
@@ -24,6 +23,7 @@ import { ClientSideValuesExtractor } from '../clientSideValueExtractor';
 import { FlatSetDisplayValueModel } from './flatSetDisplayValueModel';
 import { ISetDisplayValueModel, SetFilterModelTreeItem } from './iSetDisplayValueModel';
 import { TreeSetDisplayValueModel } from './treeSetDisplayValueModel';
+import { SetValueModelFilteringKeys } from './filteringKeys';
 
 export enum SetFilterModelValuesType {
     PROVIDED_LIST, PROVIDED_CALLBACK, TAKEN_FROM_GRID_VALUES
@@ -88,14 +88,13 @@ export class SetValueModel<V> implements IEventEmitter {
     /** Keys that have been selected for this filter. */
     private selectedKeys = new Set<string | null>();
 
-    // Here we keep track of the keys that are currently being used for filtering.
-    // In most cases, the filtering keys are the same as the selected keys,
-    // but for the specific case when excelMode = 'windows' and the user has ticked 'Add current selection to filter'
-    // the filtering keys can be different from the selected keys.
-    //
-    // To make the filtering super fast, we store the keys in an Set rather than using the default array.
-    private filteringKeys: Set<string | null> | null = null;
-    private noAppliedFilteringKeys: boolean = false;
+    /**
+     * Here we keep track of the keys that are currently being used for filtering.
+     * In most cases, the filtering keys are the same as the selected keys,
+     * but for the specific case when excelMode = 'windows' and the user has ticked 'Add current selection to filter',
+     * the filtering keys can be different from the selected keys.
+     */
+    private filteringKeys: SetValueModelFilteringKeys;
 
     private initialised: boolean = false;
 
@@ -137,6 +136,7 @@ export class SetValueModel<V> implements IEventEmitter {
         this.doesRowPassOtherFilters = doesRowPassOtherFilter;
         this.suppressSorting = suppressSorting || false;
         this.convertValuesToStrings = !!convertValuesToStrings;
+        this.filteringKeys = new SetValueModelFilteringKeys({ caseFormat: this.caseFormat });
         const keyComparator = comparator ?? colDef.comparator as (a: any, b: any) => number;
         const treeDataOrGrouping = !!treeDataTreeList || !!groupingTreeList;
         // If using complex objects and a comparator is provided, sort by values, otherwise need to sort by the string keys.
@@ -553,7 +553,7 @@ export class SetValueModel<V> implements IEventEmitter {
         // the filtering keys can be different from the selected keys, and they should be included
         // in the model.
         const filteringKeys = this.isAddCurrentSelectionToFilterChecked()
-            ? this.filteringKeys
+            ? this.filteringKeys.allFilteringKeys()
             : null;
 
         if (filteringKeys && filteringKeys.size > 0) {
@@ -563,7 +563,7 @@ export class SetValueModel<V> implements IEventEmitter {
                 // We use a set structure to avoid duplicates
                 const modelKeys = new Set<string | null>([
                     ...Array.from(filteringKeys),
-                    ...Array.from(this.selectedKeys).filter(key => !filteringKeys.has(key)).map(this.caseFormat),
+                    ...Array.from(this.selectedKeys).filter(key => !filteringKeys.has(key)),
                 ]);
                 return Array.from(modelKeys);
             } else {
@@ -652,28 +652,26 @@ export class SetValueModel<V> implements IEventEmitter {
     }
 
     public setAppliedModelKeys(appliedModelKeys: Set<string | null> | null): void {
-        this.filteringKeys = appliedModelKeys;
-        this.noAppliedFilteringKeys = !this.filteringKeys || this.filteringKeys.size === 0;
+        this.filteringKeys.setFilteringKeys(appliedModelKeys);
     }
 
     public addToAppliedModelKeys(appliedModelKey: string | null): void {
-        if (!this.filteringKeys) {
-            this.filteringKeys = new Set();
-        }
-
-        this.filteringKeys.add(appliedModelKey);
-        this.noAppliedFilteringKeys = false;
+        this.filteringKeys.addFilteringKey(appliedModelKey);
     }
 
     public getAppliedModelKeys(): Set<string | null> | null {
-        return this.filteringKeys;
+        return this.filteringKeys.allFilteringKeys();
+    }
+
+    public getCaseFormattedAppliedModelKeys(): Set<string | null> | null {
+        return this.filteringKeys.allFilteringKeysCaseFormatted()
     }
 
     public hasAppliedModelKey(appliedModelKey: string | null): boolean {
-        return this.filteringKeys ? this.filteringKeys.has(appliedModelKey) : false;
+        return this.filteringKeys.hasCaseFormattedFilteringKey(appliedModelKey);
     }
 
     public hasAnyAppliedModelKey(): boolean {
-        return !this.noAppliedFilteringKeys;
+        return !this.filteringKeys.noAppliedFilteringKeys();
     }
 }

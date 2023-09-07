@@ -5,9 +5,9 @@ const gridOptions: GridOptions<IOlympicData> = {
     { field: 'country', rowGroup: true, hide: true },
     { field: 'sport', rowGroup: true, hide: true },
     { field: 'year', minWidth: 100 },
-    { field: 'gold', aggFunc: 'sum' },
-    { field: 'silver', aggFunc: 'sum' },
-    { field: 'bronze', aggFunc: 'sum' },
+    { field: 'gold', aggFunc: 'sum', enableValue: true },
+    { field: 'silver', aggFunc: 'sum', enableValue: true },
+    { field: 'bronze', aggFunc: 'sum', enableValue: true },
   ],
   defaultColDef: {
     flex: 1,
@@ -23,8 +23,6 @@ const gridOptions: GridOptions<IOlympicData> = {
 
   // use the server-side row model
   rowModelType: 'serverSide',
-
-  suppressAggFuncInHeader: true,
 
   cacheBlockSize: 5,
 

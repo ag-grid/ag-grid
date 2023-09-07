@@ -103,6 +103,7 @@ export class AdvancedFilterComp extends Component {
     }
 
     private onValueChanged(value: string | null): void {
+        value = _.makeNull(value);
         this.advancedFilterService.setExpressionDisplayValue(value);
         this.expressionParser = this.advancedFilterService.createExpressionParser(value);
         const updatedExpression = this.expressionParser?.parseExpression();
