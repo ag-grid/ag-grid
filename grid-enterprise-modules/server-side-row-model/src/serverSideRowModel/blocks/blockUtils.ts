@@ -34,8 +34,8 @@ export class BlockUtils extends BeanStub {
     @PostConstruct
     private postConstruct(): void {
         this.rowHeight = this.gridOptionsService.getRowHeightAsNumber();
-        this.usingTreeData = this.gridOptionsService.isTreeData();
-        this.usingMasterDetail = this.gridOptionsService.isMasterDetail();
+        this.usingTreeData = this.gridOptionsService.is('treeData');
+        this.usingMasterDetail = this.gridOptionsService.is('masterDetail');
     }
 
     public createRowNode(params: {
@@ -199,7 +199,7 @@ export class BlockUtils extends BeanStub {
     private setGroupDataIntoRowNode(rowNode: RowNode): void {
         const groupDisplayCols: Column[] = this.columnModel.getGroupDisplayColumns();
 
-        const usingTreeData = this.gridOptionsService.isTreeData();
+        const usingTreeData = this.gridOptionsService.is('treeData');
 
         groupDisplayCols.forEach(col => {
             if (rowNode.groupData == null) {
