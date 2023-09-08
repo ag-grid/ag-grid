@@ -1,8 +1,12 @@
 import { ICellEditorParams } from "./iCellEditor";
 
+export interface RichCellEditorValuesCallback<TData = any, TValue = any> {
+    (params: ICellEditorParams<TData, TValue>): TValue[] | Promise<TValue[]>;
+}
+
 export interface IRichCellEditorParams<TData = any, TValue = any> {
     /** The list of values to be selected from. */
-    values: TValue[] | ((params: ICellEditorParams<TData, TValue>) => TValue[] | Promise<TValue[]>);
+    values: TValue[] | RichCellEditorValuesCallback<TData, TValue>;
     /** The row height, in pixels, of each value. */
     cellHeight: number;
     /** The cell renderer to use to render each value. Cell renderers are useful for rendering rich HTML values, or when processing complex data. */
