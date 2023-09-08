@@ -315,7 +315,7 @@ export class GridSerializer extends BeanStub {
 
         if (allColumns && !isPivotMode) {
             // add auto group column for tree data
-            const columns = this.gridOptionsService.isTreeData()
+            const columns = this.gridOptionsService.is('treeData')
                 ? this.columnModel.getGridColumns([GROUP_AUTO_COLUMN_ID])
                 : [];
 

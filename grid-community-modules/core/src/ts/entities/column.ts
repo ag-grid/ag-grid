@@ -356,7 +356,7 @@ export class Column<TValue = any> implements IHeaderColumn<TValue>, IProvidedCol
             ModuleRegistry.__assertRegistered(ModuleNames.RichSelectModule, this.colDef.cellEditor, this.gridOptionsService.getGridId());
         }
 
-        if (this.gridOptionsService.isTreeData()) {
+        if (this.gridOptionsService.is('treeData')) {
             const itemsNotAllowedWithTreeData: (keyof ColDef)[] = ['rowGroup', 'rowGroupIndex', 'pivot', 'pivotIndex'];
             const itemsUsed = itemsNotAllowedWithTreeData.filter(x => exists(colDefAny[x]));
             if (itemsUsed.length > 0) {
