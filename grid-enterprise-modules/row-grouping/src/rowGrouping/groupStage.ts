@@ -10,8 +10,6 @@ import {
     IRowNodeStage,
     IsGroupOpenByDefaultParams,
     NumberSequence,
-    PostConstruct,
-    PreConstruct,
     RowNode,
     RowNodeTransaction,
     SelectableService,
@@ -40,6 +38,14 @@ interface GroupingDetails {
     groupedColCount: number;
     transactions: RowNodeTransaction[];
     rowNodeOrder: { [id: string]: number; };
+    
+    groupAllowUnbalanced: boolean;
+    isGroupOpenByDefault: (params: WithoutGridCommon<IsGroupOpenByDefaultParams>) => boolean;
+    initialGroupOrderComparator: (params: WithoutGridCommon<InitialGroupOrderComparatorParams>) => number;
+    createGroupFooter: boolean;
+    
+    usingTreeData: boolean;
+    getDataPath: GetDataPath | undefined;
 }
 
 @Bean('groupStage')
@@ -50,13 +56,6 @@ export class GroupStage extends BeanStub implements IRowNodeStage {
     @Autowired('valueService') private valueService: ValueService;
     @Autowired('beans') private beans: Beans;
     @Autowired('selectionService') private selectionService: ISelectionService;
-
-    // if doing tree data, this is true. we set this at create time - as our code does not
-    // cater for the scenario where this is switched on / off dynamically
-    private usingTreeData: boolean;
-    private getDataPath: GetDataPath | undefined;
-
-    private createGroupFooter: boolean;
 
     // we use a sequence variable so that each time we do a grouping, we don't
     // reuse the ids - otherwise the rowRenderer will confuse rowNodes between redraws
@@ -72,25 +71,6 @@ export class GroupStage extends BeanStub implements IRowNodeStage {
     private oldGroupingDetails: GroupingDetails;
     private oldGroupDisplayColIds: string;
 
-    @PreConstruct
-    private preConstruct(): void {
-        this.usingTreeData = this.gridOptionsService.isTreeData();
-        this.addManagedPropertyListener('treeData', (params) => {
-            this.usingTreeData = params.currentValue
-        });
-    }
-
-    @PostConstruct
-    private postConstruct(): void {
-        if (this.usingTreeData) {
-            this.getDataPath = this.gridOptionsService.get('getDataPath');
-        }
-        this.createGroupFooter = this.beans.gridOptionsService.isGroupIncludeFooterTrueOrCallback();
-        this.addManagedPropertyListener('groupIncludeFooter', () => {
-            this.createGroupFooter = this.beans.gridOptionsService.isGroupIncludeFooterTrueOrCallback();
-        });
-    }
-
     public execute(params: StageExecuteParams): void {
 
         const details = this.createGroupingDetails(params);
@@ -102,16 +82,16 @@ export class GroupStage extends BeanStub implements IRowNodeStage {
             this.shotgunResetEverything(details, afterColsChanged);
         }
 
-        this.positionLeafsAndGroups(params.changedPath!);
-        this.orderGroups(details.rootNode);
+        if(!details.usingTreeData){
+            // we don't do group sorting for tree data
+            this.positionLeafsAndGroups(params.changedPath!);
+            this.orderGroups(details);
+        }
 
         this.selectableService.updateSelectableAfterGrouping(details.rootNode);
     }
 
     private positionLeafsAndGroups(changedPath: ChangedPath) {
-        // we don't do group sorting for tree data
-        if (this.usingTreeData) { return; }
-        
         changedPath.forEachChangedNodeDepthFirst(group => {
             if (group.childrenAfterGroup) {
                 const leafNodes: RowNode[] = [];
@@ -142,23 +122,29 @@ export class GroupStage extends BeanStub implements IRowNodeStage {
     private createGroupingDetails(params: StageExecuteParams): GroupingDetails {
         const { rowNode, changedPath, rowNodeTransactions, rowNodeOrder } = params;
 
-        const groupedCols = this.usingTreeData ? null : this.columnModel.getRowGroupColumns();
+        const usingTreeData = this.gridOptionsService.is('treeData');
+
+        const groupedCols = usingTreeData ? null : this.columnModel.getRowGroupColumns();
 
         const details: GroupingDetails = {
             // someone complained that the parent attribute was causing some change detection
-            // to break is some angular add-on - which i never used. taking the parent out breaks
-            // a cyclic dependency, hence this flag got introduced.
+            // to break in an angular add-on.  Taking the parent out breaks a cyclic dependency, hence this flag got introduced.
             includeParents: !this.gridOptionsService.is('suppressParentsInRowNodes'),
             expandByDefault: this.gridOptionsService.getNum('groupDefaultExpanded')!,
             groupedCols: groupedCols!,
             rootNode: rowNode,
             pivotMode: this.columnModel.isPivotMode(),
-            groupedColCount: this.usingTreeData || !groupedCols ? 0 : groupedCols.length,
+            groupedColCount: usingTreeData || !groupedCols ? 0 : groupedCols.length,
             rowNodeOrder: rowNodeOrder!,
             transactions: rowNodeTransactions!,
-
             // if no transaction, then it's shotgun, changed path would be 'not active' at this point anyway
-            changedPath: changedPath!
+            changedPath: changedPath!,
+            groupAllowUnbalanced:  this.gridOptionsService.is('groupAllowUnbalanced'),
+            isGroupOpenByDefault: this.gridOptionsService.getCallback('isGroupOpenByDefault') as any,
+            initialGroupOrderComparator: this.gridOptionsService.getCallback('initialGroupOrderComparator') as any,
+            createGroupFooter: this.gridOptionsService.isGroupIncludeFooterTrueOrCallback(),
+            usingTreeData: usingTreeData,
+            getDataPath: usingTreeData ? this.gridOptionsService.get('getDataPath') : undefined
         };
 
         return details;
@@ -172,7 +158,7 @@ export class GroupStage extends BeanStub implements IRowNodeStage {
             // and moving. if we want to Batch Remover working with tree data then would need
             // to consider how Filler Nodes would be impacted (it's possible that it can be easily
             // modified to work, however for now I don't have the brain energy to work it all out).
-            const batchRemover = !this.usingTreeData ? new BatchRemover() : undefined;
+            const batchRemover = !details.usingTreeData ? new BatchRemover() : undefined;
 
             // the order here of [add, remove, update] needs to be the same as in ClientSideNodeManager,
             // as the order is important when a record with the same id is added and removed in the same
@@ -214,12 +200,9 @@ export class GroupStage extends BeanStub implements IRowNodeStage {
         }, false, true);
     }
 
-    private orderGroups(rootNode: RowNode): void {
-        // we don't do group sorting for tree data
-        if (this.usingTreeData) { return; }
-
-        const comparator = this.gridOptionsService.getCallback('initialGroupOrderComparator');
-        if (_.exists(comparator)) { recursiveSort(rootNode); }
+    private orderGroups(details: GroupingDetails): void {
+        const comparator = details.initialGroupOrderComparator;
+        if (_.exists(comparator)) { recursiveSort(details.rootNode); }
 
         function recursiveSort(rowNode: RowNode): void {
             const doSort = _.exists(rowNode.childrenAfterGroup) &&
@@ -238,7 +221,7 @@ export class GroupStage extends BeanStub implements IRowNodeStage {
 
         // when doing tree data, the node is part of the path,
         // but when doing grid grouping, the node is not part of the path so we start with the parent.
-        let pointer = this.usingTreeData ? node : node.parent;
+        let pointer = details.usingTreeData ? node : node.parent;
         while (pointer && pointer !== details.rootNode) {
             res.push({
                 key: pointer.key!,
@@ -301,7 +284,7 @@ export class GroupStage extends BeanStub implements IRowNodeStage {
 
     private removeNodesInStages(leafRowNodes: RowNode[], details: GroupingDetails, batchRemover: BatchRemover | undefined): void {
         this.removeNodesFromParents(leafRowNodes, details, batchRemover);
-        if (this.usingTreeData) {
+        if (details.usingTreeData) {
             this.postRemoveCreateFillerNodes(leafRowNodes, details);
 
             // When not TreeData, then removeEmptyGroups is called just before the BatchRemover is flushed.
@@ -454,14 +437,14 @@ export class GroupStage extends BeanStub implements IRowNodeStage {
         const recurse = (rowNodes: RowNode[] | null) => {
             if (!rowNodes) { return; }
             rowNodes.forEach(rowNode => {
-                const isLeafNode = !this.usingTreeData && !rowNode.group;
+                const isLeafNode = !details.usingTreeData && !rowNode.group;
                 if (isLeafNode) { return; }
                 const groupInfo: GroupInfo = {
                     field: rowNode.field,
                     key: rowNode.key!,
                     rowGroupColumn: rowNode.rowGroupColumn
                 };
-                this.setGroupData(rowNode, groupInfo);
+                this.setGroupData(rowNode, groupInfo, details);
                 recurse(rowNode.childrenAfterGroup);
             });
         };
@@ -483,7 +466,7 @@ export class GroupStage extends BeanStub implements IRowNodeStage {
         // here to change leafGroup once.
         // we set .leafGroup to false for tree data, as .leafGroup is only used when pivoting, and pivoting
         // isn't allowed with treeData, so the grid never actually use .leafGroup when doing treeData.
-        rootNode.leafGroup = this.usingTreeData ? false : groupedCols.length === 0;
+        rootNode.leafGroup = details.usingTreeData ? false : groupedCols.length === 0;
 
         // we are doing everything from scratch, so reset childrenAfterGroup and childrenMapped from the rootNode
         rootNode.childrenAfterGroup = [];
@@ -509,7 +492,7 @@ export class GroupStage extends BeanStub implements IRowNodeStage {
         if (afterColumnsChanged) {
             // we only need to redo grouping if doing normal grouping (ie not tree data)
             // and the group cols have changed.
-            noFurtherProcessingNeeded = this.usingTreeData || this.areGroupColsEqual(details, this.oldGroupingDetails);
+            noFurtherProcessingNeeded = details.usingTreeData || this.areGroupColsEqual(details, this.oldGroupingDetails);
 
             // if the group display cols have changed, then we need to update rowNode.groupData
             // (regardless of tree data or row grouping)
@@ -543,7 +526,7 @@ export class GroupStage extends BeanStub implements IRowNodeStage {
                 [parentGroup.data, childNode.data]);
         }
 
-        if (this.usingTreeData) {
+        if (details.usingTreeData) {
             this.swapGroupWithUserNode(parentGroup, childNode, isMove);
         } else {
             childNode.parent = parentGroup;
@@ -624,7 +607,7 @@ export class GroupStage extends BeanStub implements IRowNodeStage {
         groupNode.field = groupInfo.field;
         groupNode.rowGroupColumn = groupInfo.rowGroupColumn;
 
-        this.setGroupData(groupNode, groupInfo);
+        this.setGroupData(groupNode, groupInfo, details);
 
         // we put 'row-group-' before the group id, so it doesn't clash with standard row id's. we also use 't-' and 'b-'
         // for top pinned and bottom pinned rows.
@@ -632,7 +615,7 @@ export class GroupStage extends BeanStub implements IRowNodeStage {
         groupNode.key = groupInfo.key;
 
         groupNode.level = level;
-        groupNode.leafGroup = this.usingTreeData ? false : level === (details.groupedColCount - 1);
+        groupNode.leafGroup = details.usingTreeData ? false : level === (details.groupedColCount - 1);
 
         groupNode.allLeafChildren = [];
 
@@ -640,7 +623,7 @@ export class GroupStage extends BeanStub implements IRowNodeStage {
         // i suspect this is updated in the filter stage
         groupNode.setAllChildrenCount(0);
 
-        groupNode.rowGroupIndex = this.usingTreeData ? null : level;
+        groupNode.rowGroupIndex = details.usingTreeData ? null : level;
 
         groupNode.childrenAfterGroup = [];
         groupNode.childrenMapped = {};
@@ -653,20 +636,20 @@ export class GroupStage extends BeanStub implements IRowNodeStage {
         // if groupIncludeFooter is true or callback, we always create a group node footer
         // this is for export as otherwise if we create in the flatten stage then footers
         // aren't created for non-expanded group nodes.
-        if (this.createGroupFooter) {
+        if (details.createGroupFooter) {
             groupNode.createFooter();
         }
 
         return groupNode;
     }
 
-    private setGroupData(groupNode: RowNode, groupInfo: GroupInfo): void {
+    private setGroupData(groupNode: RowNode, groupInfo: GroupInfo, details: GroupingDetails): void {
         groupNode.groupData = {};
         const groupDisplayCols: Column[] = this.columnModel.getGroupDisplayColumns();
         groupDisplayCols.forEach(col => {
             // newGroup.rowGroupColumn=null when working off GroupInfo, and we always display the group in the group column
             // if rowGroupColumn is present, then it's grid row grouping and we only include if configuration says so
-            const displayGroupForCol = this.usingTreeData || (groupNode.rowGroupColumn ? col.isRowGroupDisplayed(groupNode.rowGroupColumn.getId()) : false);
+            const displayGroupForCol = details.usingTreeData || (groupNode.rowGroupColumn ? col.isRowGroupDisplayed(groupNode.rowGroupColumn.getId()) : false);
             if (displayGroupForCol) {
                 groupNode.groupData![col.getColId()] = groupInfo.key;
             }
@@ -690,7 +673,7 @@ export class GroupStage extends BeanStub implements IRowNodeStage {
         }
 
         // use callback if exists
-        const userCallback = this.gridOptionsService.getCallback('isGroupOpenByDefault');
+        const userCallback = details.isGroupOpenByDefault;
         if (userCallback) {
             const params: WithoutGridCommon<IsGroupOpenByDefaultParams> = {
                 rowNode: groupNode,
@@ -715,14 +698,14 @@ export class GroupStage extends BeanStub implements IRowNodeStage {
     }
 
     private getGroupInfo(rowNode: RowNode, details: GroupingDetails): GroupInfo[] {
-        if (this.usingTreeData) {
-            return this.getGroupInfoFromCallback(rowNode);
+        if (details.usingTreeData) {
+            return this.getGroupInfoFromCallback(rowNode, details);
         }
         return this.getGroupInfoFromGroupColumns(rowNode, details);
     }
 
-    private getGroupInfoFromCallback(rowNode: RowNode): GroupInfo[] {
-        const keys: string[] | null = this.getDataPath ? this.getDataPath(rowNode.data) : null;
+    private getGroupInfoFromCallback(rowNode: RowNode, details: GroupingDetails): GroupInfo[] {        
+        const keys: string[] | null = details.getDataPath ? details.getDataPath(rowNode.data) : null;
 
         if (keys === null || keys === undefined || keys.length === 0) {
             _.doOnce(
@@ -743,7 +726,7 @@ export class GroupStage extends BeanStub implements IRowNodeStage {
             // unbalanced tree and pivot mode don't work together - not because of the grid, it doesn't make
             // mathematical sense as you are building up a cube. so if pivot mode, we put in a blank key where missing.
             // this keeps the tree balanced and hence can be represented as a group.
-            const createGroupForEmpty = details.pivotMode || !this.gridOptionsService.is('groupAllowUnbalanced');
+            const createGroupForEmpty = details.pivotMode || !details.groupAllowUnbalanced;
             if (createGroupForEmpty && !keyExists) {
                 key = '';
                 keyExists = true;
