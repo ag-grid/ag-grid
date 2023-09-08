@@ -240,7 +240,6 @@ export class ColumnModel extends BeanStub {
     private forceRecreateAutoGroups = false;
 
     private pivotMode = false;
-    private usingTreeData: boolean;
 
     // for horizontal visualisation of columns
     private scrollWidth: number;
@@ -272,11 +271,7 @@ export class ColumnModel extends BeanStub {
             this.pivotMode = pivotMode;
         }
 
-        this.usingTreeData = this.gridOptionsService.is('treeData');
-        this.addManagedPropertyListener('treeData', (params) => {
-            this.usingTreeData = params.currentValue
-            this.onGroupDisplayTypeChanged();
-        });
+        this.addManagedPropertyListener('treeData', () => this.onGroupDisplayTypeChanged());
         this.addManagedPropertyListener<ColDefPropertyChangedEvent>('groupDisplayType', () => this.onGroupDisplayTypeChanged());
         this.addManagedPropertyListener<ColDefPropertyChangedEvent>('autoGroupColumnDef', () => this.onAutoGroupColumnDefChanged());
         this.addManagedPropertyListener<ColDefPropertyChangedEvent>('defaultColDef', (params) => this.onSharedColDefChanged(params.source));
@@ -4022,7 +4017,7 @@ export class ColumnModel extends BeanStub {
         const suppressAutoColumn = this.pivotMode ?
             this.gridOptionsService.is('pivotSuppressAutoColumn') : this.isGroupSuppressAutoColumn();
 
-        const groupingActive = this.rowGroupColumns.length > 0 || this.usingTreeData;
+        const groupingActive = this.rowGroupColumns.length > 0 || this.gridOptionsService.is('treeData');
         const needAutoColumns = groupingActive && !suppressAutoColumn && !groupFullWidthRow;
 
         if (needAutoColumns) {
