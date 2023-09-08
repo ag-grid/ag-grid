@@ -43,6 +43,10 @@ export interface PropertyChangedEvent extends AgEvent {
     type: keyof GridOptions,
     currentValue: any;
     previousValue: any;
+    /** Unique id which can be used to link changes of multiple properties that were updated together.
+     * i.e a user updated multiple properties at the same time.
+     */
+    changeSetId: number;
 }
 
 export type PropertyChangedListener<T extends PropertyChangedEvent> = (event: T) => void
@@ -175,13 +179,37 @@ export class GridOptionsService {
     }
 
     /**
+     * Only update the property value, don't fire any events. This enables all properties
+     * that have been updated together to be updated before any events get triggered to avoid
+     * out of sync issues.
+     * @param key - key of the GridOption property to update
+     * @param newValue - new value for this property
+     */
+    public setPropertyOnly<K extends keyof GridOptions>(
+        key: K,
+        newValue: GridOptions[K]
+    ): GridOptions[K] {
+        const previousValue = this.gridOptions[key];
+        if (this.gridOptionLookup.has(key)) {
+            this.gridOptions[key] = newValue;
+        }
+        return previousValue;
+    }
+
+    /**
      *
      * @param key - key of the GridOption property to update
      * @param newValue - new value for this property
      * @param force - force the property change Event to be fired even if the value has not changed
      * @param eventParams - additional params to merge into the property changed event
      */
-    public set<K extends keyof GridOptions>(key: K, newValue: GridOptions[K], force = false, eventParams: object = {}): void {
+    public set<K extends keyof GridOptions>(
+        key: K,
+        newValue: GridOptions[K],
+        force = false,
+        eventParams: object = {},
+        changeSetId = -1
+    ): void {
         if (this.gridOptionLookup.has(key)) {
             const previousValue = this.gridOptions[key];
             if (force || previousValue !== newValue) {
@@ -190,7 +218,8 @@ export class GridOptionsService {
                     type: key,
                     currentValue: newValue,
                     previousValue: previousValue,
-                    ...eventParams
+                    changeSetId,
+                    ...eventParams,
                 };
                 this.propertyEventService.dispatchEvent(event);
             }

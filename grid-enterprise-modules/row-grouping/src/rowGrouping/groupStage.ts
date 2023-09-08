@@ -39,6 +39,7 @@ interface GroupingDetails {
     groupedColCount: number;
     transactions: RowNodeTransaction[];
     rowNodeOrder: { [id: string]: number; };
+    createGroupFooter: boolean;
 }
 
 @Bean('groupStage')
@@ -54,8 +55,6 @@ export class GroupStage extends BeanStub implements IRowNodeStage {
     // cater for the scenario where this is switched on / off dynamically
     private usingTreeData: boolean;
     private getDataPath: GetDataPath | undefined;
-
-    private createGroupFooter: boolean;
 
     // we use a sequence variable so that each time we do a grouping, we don't
     // reuse the ids - otherwise the rowRenderer will confuse rowNodes between redraws
@@ -77,10 +76,6 @@ export class GroupStage extends BeanStub implements IRowNodeStage {
         if (this.usingTreeData) {
             this.getDataPath = this.gridOptionsService.get('getDataPath');
         }
-        this.createGroupFooter = this.beans.gridOptionsService.isGroupIncludeFooterTrueOrCallback();
-        this.addManagedPropertyListener('groupIncludeFooter', () => {
-            this.createGroupFooter = this.beans.gridOptionsService.isGroupIncludeFooterTrueOrCallback();
-        });
     }
 
     public execute(params: StageExecuteParams): void {
@@ -150,7 +145,9 @@ export class GroupStage extends BeanStub implements IRowNodeStage {
             transactions: rowNodeTransactions!,
 
             // if no transaction, then it's shotgun, changed path would be 'not active' at this point anyway
-            changedPath: changedPath!
+            changedPath: changedPath!,
+
+            createGroupFooter: this.gridOptionsService.isGroupIncludeFooterTrueOrCallback()
         };
 
         return details;
@@ -645,7 +642,7 @@ export class GroupStage extends BeanStub implements IRowNodeStage {
         // if groupIncludeFooter is true or callback, we always create a group node footer
         // this is for export as otherwise if we create in the flatten stage then footers
         // aren't created for non-expanded group nodes.
-        if (this.createGroupFooter) {
+        if (details.createGroupFooter) {
             groupNode.createFooter();
         }
 

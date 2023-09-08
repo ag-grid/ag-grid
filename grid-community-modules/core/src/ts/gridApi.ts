@@ -159,7 +159,6 @@ export function unwrapUserComp<T>(comp: T): T {
 
 @Bean('gridApi')
 export class GridApi<TData = any> {
-
     @Optional('immutableService') private immutableService: IImmutableService;
     @Optional('csvCreator') private csvCreator: ICsvCreator;
     @Optional('excelCreator') private excelCreator: IExcelCreator;
@@ -203,7 +202,7 @@ export class GridApi<TData = any> {
 
     private serverSideRowModel: IServerSideRowModel;
 
-    private detailGridInfoMap: { [id: string]: DetailGridInfo | undefined; } = {};
+    private detailGridInfoMap: { [id: string]: DetailGridInfo | undefined } = {};
 
     private destroyCalled = false;
 
@@ -249,15 +248,24 @@ export class GridApi<TData = any> {
     }
 
     /** Used internally by grid. Not intended to be used by the client. Interface may change between releases. */
-    public __setProperty<K extends keyof GridOptions>(propertyName: K, value: GridOptions[K]) {
-
+    public __setProperty<K extends keyof GridOptions>(propertyName: K, value: GridOptions[K]): GridOptions[K] {
+        return this.gos.setPropertyOnly(propertyName, value);
+    }
+    /** Used internally by grid. Not intended to be used by the client. Interface may change between releases. */
+    public __updateProperty<K extends keyof GridOptions>(
+        propertyName: K,
+        value: GridOptions[K],
+        prevValue: GridOptions[K],
+        changeSetId: number
+    ) {
         // Ensure the GridOptions property gets updated and fires the change event as we
         // cannot assume that the dynamic Api call will updated GridOptions.
-        this.gos.set(propertyName, value);
-        // If the dynamic api does update GridOptions then change detection in the 
+        const force = value !== prevValue;
+        this.gos.set(propertyName, value, force, {}, changeSetId);
+        // If the dynamic api does update GridOptions then change detection in the
         // GridOptionsService will prevent the event being fired twice.
         const setterName = this.getSetterMethod(propertyName);
-        const dynamicApi = (this as any);
+        const dynamicApi = this as any;
         if (dynamicApi[setterName]) {
             dynamicApi[setterName](value);
         }
@@ -297,14 +305,22 @@ export class GridApi<TData = any> {
 
     /** Similar to `exportDataAsCsv`, except returns the result as a string rather than download it. */
     public getDataAsCsv(params?: CsvExportParams): string | undefined {
-        if (ModuleRegistry.__assertRegistered(ModuleNames.CsvExportModule, 'api.getDataAsCsv', this.context.getGridId())) {
+        if (
+            ModuleRegistry.__assertRegistered(ModuleNames.CsvExportModule, 'api.getDataAsCsv', this.context.getGridId())
+        ) {
             return this.csvCreator.getDataAsCsv(params);
         }
     }
 
     /** Downloads a CSV export of the grid's data. */
     public exportDataAsCsv(params?: CsvExportParams): void {
-        if (ModuleRegistry.__assertRegistered(ModuleNames.CsvExportModule, 'api.exportDataAsCSv', this.context.getGridId())) {
+        if (
+            ModuleRegistry.__assertRegistered(
+                ModuleNames.CsvExportModule,
+                'api.exportDataAsCSv',
+                this.context.getGridId()
+            )
+        ) {
             this.csvCreator.exportDataAsCsv(params);
         }
     }
@@ -315,10 +331,16 @@ export class GridApi<TData = any> {
         return mergedParams.exportMode;
     }
     private assertNotExcelMultiSheet(method: keyof GridApi, params?: ExcelExportParams): boolean {
-        if (!ModuleRegistry.__assertRegistered(ModuleNames.ExcelExportModule, 'api.' + method, this.context.getGridId())) { return false }
+        if (
+            !ModuleRegistry.__assertRegistered(ModuleNames.ExcelExportModule, 'api.' + method, this.context.getGridId())
+        ) {
+            return false;
+        }
         const exportMode = this.getExcelExportMode(params);
         if (this.excelCreator.getFactoryMode(exportMode) === ExcelFactoryMode.MULTI_SHEET) {
-            console.warn("AG Grid: The Excel Exporter is currently on Multi Sheet mode. End that operation by calling 'api.getMultipleSheetAsExcel()' or 'api.exportMultipleSheetsAsExcel()'");
+            console.warn(
+                "AG Grid: The Excel Exporter is currently on Multi Sheet mode. End that operation by calling 'api.getMultipleSheetAsExcel()' or 'api.exportMultipleSheetsAsExcel()'"
+            );
             return false;
         }
         return true;
@@ -340,7 +362,15 @@ export class GridApi<TData = any> {
 
     /** This is method to be used to get the grid's data as a sheet, that will later be exported either by `getMultipleSheetsAsExcel()` or `exportMultipleSheetsAsExcel()`. */
     public getSheetDataForExcel(params?: ExcelExportParams): string | undefined {
-        if (!ModuleRegistry.__assertRegistered(ModuleNames.ExcelExportModule, 'api.getSheetDataForExcel', this.context.getGridId())) { return; }
+        if (
+            !ModuleRegistry.__assertRegistered(
+                ModuleNames.ExcelExportModule,
+                'api.getSheetDataForExcel',
+                this.context.getGridId()
+            )
+        ) {
+            return;
+        }
         const exportMode = this.getExcelExportMode(params);
         this.excelCreator.setFactoryMode(ExcelFactoryMode.MULTI_SHEET, exportMode);
 
@@ -349,14 +379,26 @@ export class GridApi<TData = any> {
 
     /** Similar to `exportMultipleSheetsAsExcel`, except instead of downloading a file, it will return a [Blob](https://developer.mozilla.org/en-US/docs/Web/API/Blob) to be processed by the user. */
     public getMultipleSheetsAsExcel(params: ExcelExportMultipleSheetParams): Blob | undefined {
-        if (ModuleRegistry.__assertRegistered(ModuleNames.ExcelExportModule, 'api.getMultipleSheetsAsExcel', this.context.getGridId())) {
+        if (
+            ModuleRegistry.__assertRegistered(
+                ModuleNames.ExcelExportModule,
+                'api.getMultipleSheetsAsExcel',
+                this.context.getGridId()
+            )
+        ) {
             return this.excelCreator.getMultipleSheetsAsExcel(params);
         }
     }
 
     /** Downloads an Excel export of multiple sheets in one file. */
     public exportMultipleSheetsAsExcel(params: ExcelExportMultipleSheetParams): void {
-        if (ModuleRegistry.__assertRegistered(ModuleNames.ExcelExportModule, 'api.exportMultipleSheetsAsExcel', this.context.getGridId())) {
+        if (
+            ModuleRegistry.__assertRegistered(
+                ModuleNames.ExcelExportModule,
+                'api.exportMultipleSheetsAsExcel',
+                this.context.getGridId()
+            )
+        ) {
             return this.excelCreator.exportMultipleSheetsAsExcel(params);
         }
     }
@@ -369,7 +411,9 @@ export class GridApi<TData = any> {
      * `api.setGridAriaProperty('label', null)` will remove the `aria-label` attribute from the grid element.
      */
     public setGridAriaProperty(property: string, value: string | null): void {
-        if (!property) { return; }
+        if (!property) {
+            return;
+        }
         const eGrid = this.ctrlsService.getGridBodyCtrl().getGui();
         const ariaProperty = `aria-${property}`;
 
@@ -378,11 +422,14 @@ export class GridApi<TData = any> {
         } else {
             eGrid.setAttribute(ariaProperty, value);
         }
-
     }
 
     private logMissingRowModel(apiMethod: keyof GridApi, ...requiredRowModels: RowModelType[]) {
-        console.error(`AG Grid: api.${apiMethod} can only be called when gridOptions.rowModelType is ${requiredRowModels.join(' or ')}`);
+        console.error(
+            `AG Grid: api.${apiMethod} can only be called when gridOptions.rowModelType is ${requiredRowModels.join(
+                ' or '
+            )}`
+        );
     }
 
     /** Set new datasource for Server-Side Row Model. */
@@ -396,7 +443,7 @@ export class GridApi<TData = any> {
 
     /**
      * Updates the `cacheBlockSize` when requesting data from the server if `suppressServerSideInfiniteScroll` is not enabled.
-     * 
+     *
      * Note this purges all the cached data and reloads all the rows of the grid.
      * */
     public setCacheBlockSize(blockSize: number) {
@@ -481,24 +528,24 @@ export class GridApi<TData = any> {
     /**
      * Call to set new column definitions. The grid will redraw all the column headers, and then redraw all of the rows.
      */
-    public setColumnDefs(colDefs: (ColDef<TData> | ColGroupDef<TData>)[], source: ColumnEventType = "api") {
+    public setColumnDefs(colDefs: (ColDef<TData> | ColGroupDef<TData>)[], source: ColumnEventType = 'api') {
         this.columnModel.setColumnDefs(colDefs, source);
         // Keep gridOptions.columnDefs in sync
         this.gos.set('columnDefs', colDefs, true, { source });
     }
 
     /** Call to set new auto group column definition. The grid will recreate any auto-group columns if present. */
-    public setAutoGroupColumnDef(colDef: ColDef<TData>, source: ColumnEventType = "api") {
+    public setAutoGroupColumnDef(colDef: ColDef<TData>, source: ColumnEventType = 'api') {
         this.gos.set('autoGroupColumnDef', colDef, true, { source });
     }
 
     /** Call to set new Default Column Definition. */
-    public setDefaultColDef(colDef: ColDef<TData>, source: ColumnEventType = "api") {
+    public setDefaultColDef(colDef: ColDef<TData>, source: ColumnEventType = 'api') {
         this.gos.set('defaultColDef', colDef, true, { source });
     }
 
     /** Call to set new Column Types. */
-    public setColumnTypes(columnTypes: { string: ColDef<TData> }, source: ColumnEventType = "api") {
+    public setColumnTypes(columnTypes: { string: ColDef<TData> }, source: ColumnEventType = 'api') {
         this.gos.set('columnTypes', columnTypes, true, { source });
     }
 
@@ -511,7 +558,7 @@ export class GridApi<TData = any> {
      *  - `top`: The top pixel position of the current scroll in the grid
      *  - `bottom`: The bottom pixel position of the current scroll in the grid
      */
-    public getVerticalPixelRange(): { top: number, bottom: number; } {
+    public getVerticalPixelRange(): { top: number; bottom: number } {
         return this.gridBodyCtrl.getScrollFeature().getVScrollPosition();
     }
 
@@ -520,7 +567,7 @@ export class GridApi<TData = any> {
      * - `left`: The left pixel position of the current scroll in the grid
      * - `right`: The right pixel position of the current scroll in the grid
      */
-    public getHorizontalPixelRange(): { left: number, right: number; } {
+    public getHorizontalPixelRange(): { left: number; right: number } {
         return this.gridBodyCtrl.getScrollFeature().getHScrollPosition();
     }
 
@@ -556,7 +603,7 @@ export class GridApi<TData = any> {
 
     /** Redraws the header. Useful if a column name changes, or something else that changes how the column header is displayed. */
     public refreshHeader() {
-        this.ctrlsService.getHeaderRowContainerCtrls().forEach(c => c.refresh());
+        this.ctrlsService.getHeaderRowContainerCtrls().forEach((c) => c.refresh());
     }
 
     /** Returns `true` if any filter is set. This includes quick filter, column filter, external filter or advanced filter. */
@@ -651,7 +698,7 @@ export class GridApi<TData = any> {
     public getSizesForCurrentTheme() {
         return {
             rowHeight: this.gos.getRowHeightAsNumber(),
-            headerHeight: this.columnModel.getHeaderHeight()
+            headerHeight: this.columnModel.getHeaderHeight(),
         };
     }
 
@@ -698,7 +745,7 @@ export class GridApi<TData = any> {
         this.gos.set('quickFilterText', newFilter);
     }
 
-    /** 
+    /**
      * @deprecated As of v30, hidden columns are excluded from the Quick Filter by default. To include hidden columns, use `setIncludeHiddenColumnsInQuickFilter` instead.
      */
     public setExcludeHiddenColumnsFromQuickFilter(value: boolean): void {
@@ -711,7 +758,7 @@ export class GridApi<TData = any> {
         this.setIncludeHiddenColumnsInQuickFilter(!value);
     }
 
-    /** 
+    /**
      * Updates the `includeHiddenColumnsInQuickFilter` grid option.
      * By default hidden columns are excluded from the Quick Filter.
      * Set to `true` to include them.
@@ -722,15 +769,27 @@ export class GridApi<TData = any> {
 
     /** Get the state of the Advanced Filter. Used for saving Advanced Filter state */
     public getAdvancedFilterModel(): AdvancedFilterModel | null {
-        if (ModuleRegistry.__assertRegistered(ModuleNames.AdvancedFilterModule, 'api.getAdvancedFilterModel', this.context.getGridId())) {
+        if (
+            ModuleRegistry.__assertRegistered(
+                ModuleNames.AdvancedFilterModule,
+                'api.getAdvancedFilterModel',
+                this.context.getGridId()
+            )
+        ) {
             return this.filterManager.getAdvancedFilterModel();
         }
         return null;
     }
-    
+
     /** Set the state of the Advanced Filter. Used for restoring Advanced Filter state */
     public setAdvancedFilterModel(advancedFilterModel: AdvancedFilterModel | null): void {
-        if (ModuleRegistry.__assertRegistered(ModuleNames.AdvancedFilterModule, 'api.setAdvancedFilterModel', this.context.getGridId())) {
+        if (
+            ModuleRegistry.__assertRegistered(
+                ModuleNames.AdvancedFilterModule,
+                'api.setAdvancedFilterModel',
+                this.context.getGridId()
+            )
+        ) {
             this.filterManager.setAdvancedFilterModel(advancedFilterModel);
         }
     }
@@ -740,7 +799,7 @@ export class GridApi<TData = any> {
         this.gos.set('enableAdvancedFilter', enabled);
     }
 
-    /** 
+    /**
      * Updates the `includeHiddenColumnsInAdvancedFilter` grid option.
      * By default hidden columns are excluded from the Advanced Filter.
      * Set to `true` to include them.
@@ -760,8 +819,8 @@ export class GridApi<TData = any> {
     /**
      * Set all of the provided nodes selection state to the provided value.
      */
-    public setNodesSelected(params: { nodes: IRowNode[], newValue: boolean, source?: SelectionEventSourceType }) {
-        const allNodesValid = params.nodes.every(node => {
+    public setNodesSelected(params: { nodes: IRowNode[]; newValue: boolean; source?: SelectionEventSourceType }) {
+        const allNodesValid = params.nodes.every((node) => {
             if (node.rowPinned) {
                 console.warn('AG Grid: cannot select pinned rows');
                 return false;
@@ -778,12 +837,10 @@ export class GridApi<TData = any> {
             return;
         }
 
-
         const { nodes, source, newValue } = params;
         const nodesAsRowNode = nodes as RowNode[];
         this.selectionService.setNodesSelected({ nodes: nodesAsRowNode, source: source ?? 'api', newValue });
     }
-
 
     /**
      * Select all rows, regardless of filtering and rows that are not visible due to grouping being enabled and their groups not expanded.
@@ -819,7 +876,7 @@ export class GridApi<TData = any> {
 
     /**
      * Returns an object containing rules matching the selected rows in the SSRM.
-     * 
+     *
      * If `groupSelectsChildren=false` the returned object will be flat, and will conform to IServerSideSelectionState.
      * If `groupSelectsChildren=true` the retuned object will be hierarchical, and will conform to IServerSideGroupSelectionState.
      */
@@ -834,7 +891,7 @@ export class GridApi<TData = any> {
 
     /**
      * Set the rules matching the selected rows in the SSRM.
-     * 
+     *
      * If `groupSelectsChildren=false` the param will be flat, and should conform to IServerSideSelectionState.
      * If `groupSelectsChildren=true` the param will be hierarchical, and should conform to IServerSideGroupSelectionState.
      */
@@ -929,7 +986,7 @@ export class GridApi<TData = any> {
      * - `start` - Scrolls the column to the start of the viewport.
      * - `middle` - Scrolls the column to the middle of the viewport.
      * - `end` - Scrolls the column to the end of the viewport.
-    */
+     */
     public ensureColumnVisible(key: string | Column, position: 'auto' | 'start' | 'middle' | 'end' = 'auto') {
         this.gridBodyCtrl.getScrollFeature().ensureColumnVisible(key, position);
     }
@@ -998,11 +1055,14 @@ export class GridApi<TData = any> {
     }
 
     /**
-     * Returns the filter component instance for a column.     
+     * Returns the filter component instance for a column.
      * `key` can be a string field name or a ColDef object (matches on object reference, useful if field names are not unique).
      * If your filter is created asynchronously, `getFilterInstance` will return `null` so you will need to use the `callback` to access the filter instance instead.
      */
-    public getFilterInstance<TFilter extends IFilter>(key: string | Column, callback?: (filter: TFilter | null) => void): TFilter | null | undefined {
+    public getFilterInstance<TFilter extends IFilter>(
+        key: string | Column,
+        callback?: (filter: TFilter | null) => void
+    ): TFilter | null | undefined {
         return this.filterManager.getFilterInstance(key, callback);
     }
 
@@ -1016,7 +1076,15 @@ export class GridApi<TData = any> {
 
     /** Gets the status panel instance corresponding to the supplied `id`. */
     public getStatusPanel<TStatusPanel = IStatusPanel>(key: string): TStatusPanel | undefined {
-        if (!ModuleRegistry.__assertRegistered(ModuleNames.StatusBarModule, 'api.getStatusPanel', this.context.getGridId())) { return; }
+        if (
+            !ModuleRegistry.__assertRegistered(
+                ModuleNames.StatusBarModule,
+                'api.getStatusPanel',
+                this.context.getGridId()
+            )
+        ) {
+            return;
+        }
         const comp = this.statusBarService.getStatusPanel(key);
         return unwrapUserComp(comp) as any;
     }
@@ -1031,8 +1099,10 @@ export class GridApi<TData = any> {
 
     /**
      * Returns the current column definitions.
-    */
-    public getColumnDefs(): (ColDef<TData> | ColGroupDef<TData>)[] | undefined { return this.columnModel.getColumnDefs(); }
+     */
+    public getColumnDefs(): (ColDef<TData> | ColGroupDef<TData>)[] | undefined {
+        return this.columnModel.getColumnDefs();
+    }
 
     /**
      * Informs the grid that a filter has changed. This is typically called after a filter change through one of the filter APIs.
@@ -1062,7 +1132,7 @@ export class GridApi<TData = any> {
     }
 
     /** Gets the current state of all the column filters. Used for saving filter state. */
-    public getFilterModel(): { [key: string]: any; } {
+    public getFilterModel(): { [key: string]: any } {
         return this.filterManager.getFilterModel();
     }
 
@@ -1174,19 +1244,23 @@ export class GridApi<TData = any> {
         this.gos.set('doesExternalFilterPass', doesExternalFilterPassFunc);
     }
 
-    public setNavigateToNextCell(navigateToNextCellFunc: (params: NavigateToNextCellParams) => (CellPosition | null)): void {
+    public setNavigateToNextCell(
+        navigateToNextCellFunc: (params: NavigateToNextCellParams) => CellPosition | null
+    ): void {
         this.gos.set('navigateToNextCell', navigateToNextCellFunc);
     }
 
-    public setTabToNextCell(tabToNextCellFunc: (params: TabToNextCellParams) => (CellPosition | null)): void {
+    public setTabToNextCell(tabToNextCellFunc: (params: TabToNextCellParams) => CellPosition | null): void {
         this.gos.set('tabToNextCell', tabToNextCellFunc);
     }
 
-    public setTabToNextHeader(tabToNextHeaderFunc: (params: TabToNextHeaderParams) => (HeaderPosition | null)): void {
+    public setTabToNextHeader(tabToNextHeaderFunc: (params: TabToNextHeaderParams) => HeaderPosition | null): void {
         this.gos.set('tabToNextHeader', tabToNextHeaderFunc);
     }
 
-    public setNavigateToNextHeader(navigateToNextHeaderFunc: (params: NavigateToNextHeaderParams) => (HeaderPosition | null)): void {
+    public setNavigateToNextHeader(
+        navigateToNextHeaderFunc: (params: NavigateToNextHeaderParams) => HeaderPosition | null
+    ): void {
         this.gos.set('navigateToNextHeader', navigateToNextHeaderFunc);
     }
 
@@ -1254,19 +1328,21 @@ export class GridApi<TData = any> {
         this.gos.set('sendToClipboard', sendToClipboardFunc);
     }
 
-    public setProcessCellFromClipboard(processCellFromClipboardFunc: (params: ProcessCellForExportParams) => any): void {
+    public setProcessCellFromClipboard(
+        processCellFromClipboardFunc: (params: ProcessCellForExportParams) => any
+    ): void {
         this.gos.set('processCellFromClipboard', processCellFromClipboardFunc);
     }
 
     /** @deprecated v28 use `setProcessPivotResultColDef` instead */
     public setProcessSecondaryColDef(processSecondaryColDefFunc: (colDef: ColDef) => void): void {
-        logDeprecation<GridApi>('28.0', 'setProcessSecondaryColDef', 'setProcessPivotResultColDef')
+        logDeprecation<GridApi>('28.0', 'setProcessSecondaryColDef', 'setProcessPivotResultColDef');
         this.setProcessPivotResultColDef(processSecondaryColDefFunc);
     }
 
     /** @deprecated v28 use `setProcessPivotResultColGroupDef` instead */
     public setProcessSecondaryColGroupDef(processSecondaryColGroupDefFunc: (colDef: ColDef) => void): void {
-        logDeprecation<GridApi>('28.0', 'setProcessSecondaryColGroupDef', 'setProcessPivotResultColGroupDef')
+        logDeprecation<GridApi>('28.0', 'setProcessSecondaryColGroupDef', 'setProcessPivotResultColGroupDef');
         this.setProcessPivotResultColGroupDef(processSecondaryColGroupDefFunc);
     }
 
@@ -1282,7 +1358,9 @@ export class GridApi<TData = any> {
         this.gos.set('postProcessPopup', postProcessPopupFunc);
     }
 
-    public setInitialGroupOrderComparator(initialGroupOrderComparatorFunc: (params: InitialGroupOrderComparatorParams) => number): void {
+    public setInitialGroupOrderComparator(
+        initialGroupOrderComparatorFunc: (params: InitialGroupOrderComparatorParams) => number
+    ): void {
         this.gos.set('initialGroupOrderComparator', initialGroupOrderComparatorFunc);
     }
 
@@ -1290,21 +1368,29 @@ export class GridApi<TData = any> {
         this.gos.set('getChartToolbarItems', getChartToolbarItemsFunc);
     }
 
-    public setPaginationNumberFormatter(paginationNumberFormatterFunc: (params: PaginationNumberFormatterParams) => string): void {
+    public setPaginationNumberFormatter(
+        paginationNumberFormatterFunc: (params: PaginationNumberFormatterParams) => string
+    ): void {
         this.gos.set('paginationNumberFormatter', paginationNumberFormatterFunc);
     }
 
     /** @deprecated v28 use setGetServerSideGroupLevelParams instead */
-    public setGetServerSideStoreParams(getServerSideStoreParamsFunc: (params: GetServerSideGroupLevelParamsParams) => ServerSideGroupLevelParams): void {
+    public setGetServerSideStoreParams(
+        getServerSideStoreParamsFunc: (params: GetServerSideGroupLevelParamsParams) => ServerSideGroupLevelParams
+    ): void {
         logDeprecation<GridApi>('28.0', 'setGetServerSideStoreParams', 'setGetServerSideGroupLevelParams');
         this.setGetServerSideGroupLevelParams(getServerSideStoreParamsFunc);
     }
 
-    public setGetServerSideGroupLevelParams(getServerSideGroupLevelParamsFunc: (params: GetServerSideGroupLevelParamsParams) => ServerSideGroupLevelParams): void {
+    public setGetServerSideGroupLevelParams(
+        getServerSideGroupLevelParamsFunc: (params: GetServerSideGroupLevelParamsParams) => ServerSideGroupLevelParams
+    ): void {
         this.gos.set('getServerSideGroupLevelParams', getServerSideGroupLevelParamsFunc);
     }
 
-    public setIsServerSideGroupOpenByDefault(isServerSideGroupOpenByDefaultFunc: (params: IsServerSideGroupOpenByDefaultParams) => boolean): void {
+    public setIsServerSideGroupOpenByDefault(
+        isServerSideGroupOpenByDefaultFunc: (params: IsServerSideGroupOpenByDefaultParams) => boolean
+    ): void {
         this.gos.set('isServerSideGroupOpenByDefault', isServerSideGroupOpenByDefaultFunc);
     }
 
@@ -1329,7 +1415,11 @@ export class GridApi<TData = any> {
     }
 
     private assertSideBarLoaded(apiMethod: keyof GridApi): boolean {
-        return ModuleRegistry.__assertRegistered(ModuleNames.SideBarModule, 'api.' + apiMethod, this.context.getGridId());
+        return ModuleRegistry.__assertRegistered(
+            ModuleNames.SideBarModule,
+            'api.' + apiMethod,
+            this.context.getGridId()
+        );
     }
 
     /** Returns `true` if the side bar is visible. */
@@ -1368,7 +1458,7 @@ export class GridApi<TData = any> {
     /** Returns the ID of the currently shown tool panel if any, otherwise `null`. */
     public getOpenedToolPanel(): string | null {
         if (this.assertSideBarLoaded('getOpenedToolPanel')) {
-            return this.sideBarComp.openedItem()
+            return this.sideBarComp.openedItem();
         }
         return null;
     }
@@ -1460,7 +1550,7 @@ export class GridApi<TData = any> {
             console.error('AG Grid: setRowCount cannot be used while using row grouping.');
             return;
         }
-        
+
         if (this.infiniteRowModel) {
             this.infiniteRowModel.setRowCount(rowCount, maxRowFound);
             return;
@@ -1525,7 +1615,9 @@ export class GridApi<TData = any> {
     public destroy(): void {
         // this is needed as GridAPI is a bean, and GridAPI.destroy() is called as part
         // of context.destroy(). so we need to stop the infinite loop.
-        if (this.destroyCalled) { return; }
+        if (this.destroyCalled) {
+            return;
+        }
         this.destroyCalled = true;
 
         // destroy the UI first (as they use the services)
@@ -1559,7 +1651,9 @@ export class GridApi<TData = any> {
 
     /** Reset the Quick Filter cache text on every rowNode. */
     public resetQuickFilter(): void {
-        if (this.warnIfDestroyed('resetQuickFilter')) { return; }
+        if (this.warnIfDestroyed('resetQuickFilter')) {
+            return;
+        }
         this.filterManager.resetQuickFilterCache();
     }
 
@@ -1569,7 +1663,11 @@ export class GridApi<TData = any> {
             return this.rangeService.getCellRanges();
         }
 
-        ModuleRegistry.__assertRegistered(ModuleNames.RangeSelectionModule, 'api.getCellRanges', this.context.getGridId());
+        ModuleRegistry.__assertRegistered(
+            ModuleNames.RangeSelectionModule,
+            'api.getCellRanges',
+            this.context.getGridId()
+        );
         return null;
     }
 
@@ -1579,15 +1677,23 @@ export class GridApi<TData = any> {
             this.rangeService.addCellRange(params);
             return;
         }
-        ModuleRegistry.__assertRegistered(ModuleNames.RangeSelectionModule, 'api.addCellRange', this.context.getGridId());
+        ModuleRegistry.__assertRegistered(
+            ModuleNames.RangeSelectionModule,
+            'api.addCellRange',
+            this.context.getGridId()
+        );
     }
 
     /** Clears the selected ranges. */
     public clearRangeSelection(): void {
         if (this.rangeService) {
-            this.rangeService.removeAllCellRanges();    
+            this.rangeService.removeAllCellRanges();
         }
-        ModuleRegistry.__assertRegistered(ModuleNames.RangeSelectionModule, 'gridApi.clearRangeSelection', this.context.getGridId());
+        ModuleRegistry.__assertRegistered(
+            ModuleNames.RangeSelectionModule,
+            'gridApi.clearRangeSelection',
+            this.context.getGridId()
+        );
     }
     /** Reverts the last cell edit. */
     public undoCellEditing(): void {
@@ -1609,119 +1715,213 @@ export class GridApi<TData = any> {
 
     /** Returns a list of models with information about the charts that are currently rendered from the grid. */
     public getChartModels(): ChartModel[] | undefined {
-        if (ModuleRegistry.__assertRegistered(ModuleNames.GridChartsModule, 'api.getChartModels', this.context.getGridId())) {
+        if (
+            ModuleRegistry.__assertRegistered(
+                ModuleNames.GridChartsModule,
+                'api.getChartModels',
+                this.context.getGridId()
+            )
+        ) {
             return this.chartService.getChartModels();
         }
     }
 
     /** Returns the `ChartRef` using the supplied `chartId`. */
     public getChartRef(chartId: string): ChartRef | undefined {
-        if (ModuleRegistry.__assertRegistered(ModuleNames.GridChartsModule, 'api.getChartRef', this.context.getGridId())) {
+        if (
+            ModuleRegistry.__assertRegistered(ModuleNames.GridChartsModule, 'api.getChartRef', this.context.getGridId())
+        ) {
             return this.chartService.getChartRef(chartId);
         }
     }
 
     /** Returns a base64-encoded image data URL for the referenced chartId. */
     public getChartImageDataURL(params: GetChartImageDataUrlParams): string | undefined {
-        if (ModuleRegistry.__assertRegistered(ModuleNames.GridChartsModule, 'api.getChartImageDataURL', this.context.getGridId())) {
+        if (
+            ModuleRegistry.__assertRegistered(
+                ModuleNames.GridChartsModule,
+                'api.getChartImageDataURL',
+                this.context.getGridId()
+            )
+        ) {
             return this.chartService.getChartImageDataURL(params);
         }
     }
 
     /** Starts a browser-based image download for the referenced chartId. */
     public downloadChart(params: ChartDownloadParams) {
-        if (ModuleRegistry.__assertRegistered(ModuleNames.GridChartsModule, 'api.downloadChart', this.context.getGridId())) {
+        if (
+            ModuleRegistry.__assertRegistered(
+                ModuleNames.GridChartsModule,
+                'api.downloadChart',
+                this.context.getGridId()
+            )
+        ) {
             return this.chartService.downloadChart(params);
         }
     }
 
     /** Open the Chart Tool Panel. */
     public openChartToolPanel(params: OpenChartToolPanelParams) {
-        if (ModuleRegistry.__assertRegistered(ModuleNames.GridChartsModule, 'api.openChartToolPanel', this.context.getGridId())) {
+        if (
+            ModuleRegistry.__assertRegistered(
+                ModuleNames.GridChartsModule,
+                'api.openChartToolPanel',
+                this.context.getGridId()
+            )
+        ) {
             return this.chartService.openChartToolPanel(params);
         }
     }
 
     /** Close the Chart Tool Panel. */
     public closeChartToolPanel(params: CloseChartToolPanelParams) {
-        if (ModuleRegistry.__assertRegistered(ModuleNames.GridChartsModule, 'api.closeChartToolPanel', this.context.getGridId())) {
+        if (
+            ModuleRegistry.__assertRegistered(
+                ModuleNames.GridChartsModule,
+                'api.closeChartToolPanel',
+                this.context.getGridId()
+            )
+        ) {
             return this.chartService.closeChartToolPanel(params.chartId);
         }
     }
 
     /** Used to programmatically create charts from a range. */
     public createRangeChart(params: CreateRangeChartParams): ChartRef | undefined {
-        if (ModuleRegistry.__assertRegistered(ModuleNames.GridChartsModule, 'api.createRangeChart', this.context.getGridId())) {
+        if (
+            ModuleRegistry.__assertRegistered(
+                ModuleNames.GridChartsModule,
+                'api.createRangeChart',
+                this.context.getGridId()
+            )
+        ) {
             return this.chartService.createRangeChart(params);
         }
     }
 
     /** Used to programmatically create pivot charts from a grid. */
     public createPivotChart(params: CreatePivotChartParams): ChartRef | undefined {
-        if (ModuleRegistry.__assertRegistered(ModuleNames.GridChartsModule, 'api.createPivotChart', this.context.getGridId())) {
+        if (
+            ModuleRegistry.__assertRegistered(
+                ModuleNames.GridChartsModule,
+                'api.createPivotChart',
+                this.context.getGridId()
+            )
+        ) {
             return this.chartService.createPivotChart(params);
         }
     }
 
     /** Used to programmatically create cross filter charts from a range. */
     public createCrossFilterChart(params: CreateCrossFilterChartParams): ChartRef | undefined {
-        if (ModuleRegistry.__assertRegistered(ModuleNames.GridChartsModule, 'api.createCrossFilterChart', this.context.getGridId())) {
+        if (
+            ModuleRegistry.__assertRegistered(
+                ModuleNames.GridChartsModule,
+                'api.createCrossFilterChart',
+                this.context.getGridId()
+            )
+        ) {
             return this.chartService.createCrossFilterChart(params);
         }
     }
 
     /** Used to programmatically update a chart. */
     public updateChart(params: UpdateChartParams): void {
-        if (ModuleRegistry.__assertRegistered(ModuleNames.GridChartsModule, 'api.updateChart', this.context.getGridId())) {
+        if (
+            ModuleRegistry.__assertRegistered(ModuleNames.GridChartsModule, 'api.updateChart', this.context.getGridId())
+        ) {
             this.chartService.updateChart(params);
         }
     }
 
     /** Restores a chart using the `ChartModel` that was previously obtained from `getChartModels()`. */
     public restoreChart(chartModel: ChartModel, chartContainer?: HTMLElement): ChartRef | undefined {
-        if (ModuleRegistry.__assertRegistered(ModuleNames.GridChartsModule, 'api.restoreChart', this.context.getGridId())) {
+        if (
+            ModuleRegistry.__assertRegistered(
+                ModuleNames.GridChartsModule,
+                'api.restoreChart',
+                this.context.getGridId()
+            )
+        ) {
             return this.chartService.restoreChart(chartModel, chartContainer);
         }
     }
 
     /** Copies data to clipboard by following the same rules as pressing Ctrl+C. */
     public copyToClipboard(params?: IClipboardCopyParams) {
-        if (ModuleRegistry.__assertRegistered(ModuleNames.ClipboardModule, 'api.copyToClipboard', this.context.getGridId())) {
+        if (
+            ModuleRegistry.__assertRegistered(
+                ModuleNames.ClipboardModule,
+                'api.copyToClipboard',
+                this.context.getGridId()
+            )
+        ) {
             this.clipboardService.copyToClipboard(params);
         }
     }
 
     /** Cuts data to clipboard by following the same rules as pressing Ctrl+X. */
     public cutToClipboard(params?: IClipboardCopyParams) {
-        if (ModuleRegistry.__assertRegistered(ModuleNames.ClipboardModule, 'api.cutToClipboard', this.context.getGridId())) {
+        if (
+            ModuleRegistry.__assertRegistered(
+                ModuleNames.ClipboardModule,
+                'api.cutToClipboard',
+                this.context.getGridId()
+            )
+        ) {
             this.clipboardService.cutToClipboard(params, 'api');
         }
     }
 
     /** Copies the selected rows to the clipboard. */
     public copySelectedRowsToClipboard(params?: IClipboardCopyRowsParams): void {
-        if (ModuleRegistry.__assertRegistered(ModuleNames.ClipboardModule, 'api.copySelectedRowsToClipboard', this.context.getGridId())) {
+        if (
+            ModuleRegistry.__assertRegistered(
+                ModuleNames.ClipboardModule,
+                'api.copySelectedRowsToClipboard',
+                this.context.getGridId()
+            )
+        ) {
             this.clipboardService.copySelectedRowsToClipboard(params);
         }
     }
 
     /** Copies the selected ranges to the clipboard. */
     public copySelectedRangeToClipboard(params?: IClipboardCopyParams): void {
-        if (ModuleRegistry.__assertRegistered(ModuleNames.ClipboardModule, 'api.copySelectedRangeToClipboard', this.context.getGridId())) {
+        if (
+            ModuleRegistry.__assertRegistered(
+                ModuleNames.ClipboardModule,
+                'api.copySelectedRangeToClipboard',
+                this.context.getGridId()
+            )
+        ) {
             this.clipboardService.copySelectedRangeToClipboard(params);
         }
     }
 
     /** Copies the selected range down, similar to `Ctrl + D` in Excel. */
     public copySelectedRangeDown(): void {
-        if (ModuleRegistry.__assertRegistered(ModuleNames.ClipboardModule, 'api.copySelectedRangeDown', this.context.getGridId())) {
+        if (
+            ModuleRegistry.__assertRegistered(
+                ModuleNames.ClipboardModule,
+                'api.copySelectedRangeDown',
+                this.context.getGridId()
+            )
+        ) {
             this.clipboardService.copyRangeDown();
         }
     }
 
     /** Pastes the data from the Clipboard into the focused cell of the grid. If no grid cell is focused, calling this method has no effect. */
     public pasteFromClipboard(): void {
-        if (ModuleRegistry.__assertRegistered(ModuleNames.ClipboardModule, 'api.pasteFromClipboard', this.context.getGridId())) {
+        if (
+            ModuleRegistry.__assertRegistered(
+                ModuleNames.ClipboardModule,
+                'api.pasteFromClipboard',
+                this.context.getGridId()
+            )
+        ) {
             this.clipboardService.pasteFromClipboard();
         }
     }
@@ -1809,7 +2009,7 @@ export class GridApi<TData = any> {
         const cellPosition: CellPosition = {
             rowIndex: params.rowIndex,
             rowPinned: params.rowPinned || null,
-            column: column
+            column: column,
         };
         const notPinned = params.rowPinned == null;
         if (notPinned) {
@@ -1817,7 +2017,9 @@ export class GridApi<TData = any> {
         }
 
         const cell = this.navigationService.getCellByPosition(cellPosition);
-        if (!cell) { return; }
+        if (!cell) {
+            return;
+        }
         if (!this.focusService.isCellFocused(cellPosition)) {
             this.focusService.setFocusedCell(cellPosition);
         }
@@ -1832,7 +2034,7 @@ export class GridApi<TData = any> {
     }
 
     /** Add aggregations function with the specified keys. */
-    public addAggFuncs(aggFuncs: { [key: string]: IAggFunc; }): void {
+    public addAggFuncs(aggFuncs: { [key: string]: IAggFunc }): void {
         if (this.aggFuncService) {
             this.aggFuncService.addAggFuncs(aggFuncs);
         }
@@ -1855,7 +2057,10 @@ export class GridApi<TData = any> {
     }
 
     /** Batch apply transactions to the server side row model. */
-    public applyServerSideTransactionAsync(transaction: ServerSideTransaction, callback?: (res: ServerSideTransactionResult) => void): void {
+    public applyServerSideTransactionAsync(
+        transaction: ServerSideTransaction,
+        callback?: (res: ServerSideTransactionResult) => void
+    ): void {
         if (!this.serverSideTransactionManager) {
             this.logMissingRowModel('applyServerSideTransactionAsync', 'serverSide');
             return;
@@ -1866,17 +2071,17 @@ export class GridApi<TData = any> {
     /**
      * Applies row data to a server side store.
      * New rows will overwrite rows at the same index in the same way as if provided by a datasource success callback.
-     * 
+     *
      * startRow is only applicable when `suppressServerSideInfiniteScroll=true`
-    */
-    public applyServerSideRowData(params: { successParams: LoadSuccessParams, route?: string[], startRow?: number }) {
+     */
+    public applyServerSideRowData(params: { successParams: LoadSuccessParams; route?: string[]; startRow?: number }) {
         const startRow = params.startRow ?? 0;
         const route = params.route ?? [];
         if (startRow < 0) {
             console.warn(`AG Grid: invalid value ${params.startRow} for startRow, the value should be >= 0`);
             return;
         }
-    
+
         if (this.serverSideRowModel) {
             this.serverSideRowModel.applyRowData(params.successParams, startRow, route);
         } else {
@@ -1902,7 +2107,9 @@ export class GridApi<TData = any> {
     }
 
     /** Update row data. Pass a transaction object with lists for `add`, `remove` and `update`. */
-    public applyTransaction(rowDataTransaction: RowDataTransaction<TData>): RowNodeTransaction<TData> | null | undefined {
+    public applyTransaction(
+        rowDataTransaction: RowDataTransaction<TData>
+    ): RowNodeTransaction<TData> | null | undefined {
         if (!this.clientSideRowModel) {
             this.logMissingRowModel('applyTransaction', 'clientSide');
             return;
@@ -1911,10 +2118,11 @@ export class GridApi<TData = any> {
         return this.clientSideRowModel.updateRowData(rowDataTransaction);
     }
 
-
-
     /** Same as `applyTransaction` except executes asynchronously for efficiency. */
-    public applyTransactionAsync(rowDataTransaction: RowDataTransaction<TData>, callback?: (res: RowNodeTransaction<TData>) => void): void {
+    public applyTransactionAsync(
+        rowDataTransaction: RowDataTransaction<TData>,
+        callback?: (res: RowNodeTransaction<TData>) => void
+    ): void {
         if (!this.clientSideRowModel) {
             this.logMissingRowModel('applyTransactionAsync', 'clientSide');
             return;
@@ -1991,7 +2199,7 @@ export class GridApi<TData = any> {
     /** Returns info on all server side group levels. */
     public getServerSideGroupLevelState(): ServerSideGroupLevelState[] {
         if (!this.serverSideRowModel) {
-            this.logMissingRowModel('getServerSideGroupLevelState', 'serverSide')
+            this.logMissingRowModel('getServerSideGroupLevelState', 'serverSide');
             return [];
         }
         return this.serverSideRowModel.getStoreState();
@@ -2002,7 +2210,7 @@ export class GridApi<TData = any> {
         if (this.infiniteRowModel) {
             return this.infiniteRowModel.getRowCount();
         } else {
-            this.logMissingRowModel('getInfiniteRowCount', 'infinite')
+            this.logMissingRowModel('getInfiniteRowCount', 'infinite');
         }
     }
 
@@ -2043,9 +2251,7 @@ export class GridApi<TData = any> {
     }
 
     /** Resets the data type definitions. This will update the columns in the grid. */
-    public setDataTypeDefinitions(dataTypeDefinitions: {
-        [cellDataType: string]: DataTypeDefinition<TData>;
-    }): void {
+    public setDataTypeDefinitions(dataTypeDefinitions: { [cellDataType: string]: DataTypeDefinition<TData> }): void {
         this.gos.set('dataTypeDefinitions', dataTypeDefinitions);
     }
 

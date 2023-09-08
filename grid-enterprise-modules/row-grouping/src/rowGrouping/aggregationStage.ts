@@ -21,6 +21,7 @@ import {
 import { AggFuncService } from "./aggFuncService";
 
 interface AggregationDetails {
+    groupIncludeTotalFooter: boolean;
     changedPath: ChangedPath;
     valueColumns: Column[];
     pivotColumns: Column[];
@@ -38,14 +39,11 @@ export class AggregationStage extends BeanStub implements IRowNodeStage {
     private filteredOnly: boolean;
 
     private alwaysAggregateAtRootLevel: boolean;
-    private groupIncludeTotalFooter: boolean;
 
     @PostConstruct
     private init(): void {
         this.alwaysAggregateAtRootLevel = this.gridOptionsService.is('alwaysAggregateAtRootLevel');
         this.addManagedPropertyListener('alwaysAggregateAtRootLevel', (propChange) => this.alwaysAggregateAtRootLevel = propChange.currentValue);
-        this.groupIncludeTotalFooter = this.gridOptionsService.is('groupIncludeTotalFooter');
-        this.addManagedPropertyListener('groupIncludeTotalFooter', (propChange) => this.groupIncludeTotalFooter = propChange.currentValue);
     }
     
     // it's possible to recompute the aggregate without doing the other parts
@@ -73,11 +71,12 @@ export class AggregationStage extends BeanStub implements IRowNodeStage {
         const measureColumns = this.columnModel.getValueColumns();
         const pivotColumns = pivotActive ? this.columnModel.getPivotColumns() : [];
 
-        const aggDetails = {
-            changedPath: params.changedPath,
+        const aggDetails: AggregationDetails = {
+            groupIncludeTotalFooter: this.gridOptionsService.is('groupIncludeTotalFooter'),
+            changedPath: params.changedPath!,
             valueColumns: measureColumns,
             pivotColumns: pivotColumns
-        } as AggregationDetails;
+        };
 
         return aggDetails;
     }
@@ -108,7 +107,7 @@ export class AggregationStage extends BeanStub implements IRowNodeStage {
             //Optionally enable the aggregation at the root Node
             const isRootNode = rowNode.level === -1;
             // if total footer is displayed, the value is in use
-            if (isRootNode && !this.groupIncludeTotalFooter) {
+            if (isRootNode && !aggDetails.groupIncludeTotalFooter) {
                 const notPivoting = !this.columnModel.isPivotMode();
                 if (!this.alwaysAggregateAtRootLevel && notPivoting) { return; }
             }
