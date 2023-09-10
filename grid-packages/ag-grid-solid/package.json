@@ -36,24 +36,24 @@
     "update-deps": "taze -w && pnpm i",
     "typecheck": "tsc --noEmit"
   },
-  "dependencies": {},
   "peerDependencies": {
-    "solid-js": ">=1.0.0",
-    "ag-grid-community": "~30.1.0"
+    "ag-grid-community": "~30.1.0",
+    "solid-js": ">=1.0.0"
   },
   "devDependencies": {
+    "@ag-grid-community/styles": "^30.1.0",
     "ag-grid-community": "~30.1.0",
     "ag-grid-enterprise": "~30.1.0",
+    "gulp": "^4.0.2",
+    "gulp-replace": "^1.1.4",
     "prettier": "2.7.1",
-    "rollup": "^2.77.2",
-    "rollup-preset-solid": "^1.4.0",
-    "typescript": "^4.7.4",
-    "solid-js": "^1.4.8",
+    "rollup": "^3.29.1",
+    "rollup-preset-solid": "^2.0.1",
+    "solid-js": "^1.7.11",
     "taze": "^0.7.6",
-    "vite": "^3.0.4",
-    "vite-plugin-solid": "^2.3.0",
-    "gulp": "^4.0.0",
-    "gulp-replace": "^1.0.0"
+    "typescript": "^4.9.5",
+    "vite": "^4.4.9",
+    "vite-plugin-solid": "^2.7.0"
   },
   "keywords": [
     "solid"
