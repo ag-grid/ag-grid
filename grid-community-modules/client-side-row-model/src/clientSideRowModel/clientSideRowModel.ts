@@ -110,7 +110,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel 
             this.selectionService, this.beans);
 
         this.addManagedPropertyListener('treeData', () => {
-            this.nodeManager.updateAllNodesMasterDetail();
+            this.nodeManager.resetAllNodeState();
             refreshEverythingFunc();
         });
     }
