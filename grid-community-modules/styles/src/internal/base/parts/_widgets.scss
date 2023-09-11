@@ -406,6 +406,9 @@
         height: auto;
         border-radius: var(--ag-border-radius);
         border: var(--ag-borders) var(--ag-border-color);
+        .ag-loading-text {
+            padding: var(--ag-widget-vertical-spacing) var(--ag-widget-horizontal-spacing);
+        }
     }
 
     .ag-rich-select-value {
@@ -444,6 +447,10 @@
 
     .ag-rich-select-row-selected {
         background-color: var(--ag-selected-row-background-color);
+    }
+
+    .ag-rich-select-row-text-highlight {
+        font-weight: bold;
     }
 
     ////////////////////////////////////////

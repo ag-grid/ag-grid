@@ -1257,11 +1257,17 @@
         .ag-picker-field-display {
             overflow: hidden;
             text-overflow: ellipsis;
+            &.ag-display-as-placeholder {
+                opacity: 0.5;
+            }
         }
     }
 
     .ag-rich-select-list {
         position: relative;
+        .ag-loading-text {
+            min-height: 2rem;
+        }
     }
 
     .ag-rich-select-row {
@@ -1279,6 +1285,10 @@
             padding: 0 !important;
             border: none !important;
             box-shadow: none !important;
+            text-overflow: ellipsis;
+            &::placeholder {
+                opacity: 0.8;
+            }
         }
     }
 

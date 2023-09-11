@@ -162,6 +162,7 @@ import {
     TreeDataDisplayType,
     UndoEndedEvent,
     UndoStartedEvent,
+    UseGroupFooter,
     ViewportChangedEvent,
     VirtualColumnsChangedEvent,
     VirtualRowRemovedEvent
@@ -707,9 +708,10 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
          * If `true`, then by default, the footer will contain aggregate data (if any) when shown and the header will be blank.
          * When closed, the header will contain the aggregate data regardless of this setting (as the footer is hidden anyway).
          * This is handy for 'total' rows, that are displayed below the data when the group is open, and alongside the group when it is closed.
+         * If a callback function is provided, it can used to select which groups will have a footer added. 
          * Default: `false`
          */
-    @Input() public groupIncludeFooter: boolean | undefined = undefined;
+    @Input() public groupIncludeFooter: boolean | UseGroupFooter<TData> | undefined = undefined;
     /** Set to `true` to show a 'grand total' group footer across all groups. Default: `false`     */
     @Input() public groupIncludeTotalFooter: boolean | undefined = undefined;
     /** If `true`, and showing footer, aggregate data will always be displayed at both the header and footer levels. This stops the possibly undesirable behaviour of the header details 'jumping' to the footer on expand. Default: `false`     */
@@ -1197,7 +1199,6 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     static ngAcceptInputType_enableBrowserTooltips: boolean | null | '';
     static ngAcceptInputType_enableCellExpressions: boolean | null | '';
     static ngAcceptInputType_groupSelectsChildren: boolean | null | '';
-    static ngAcceptInputType_groupIncludeFooter: boolean | null | '';
     static ngAcceptInputType_groupIncludeTotalFooter: boolean | null | '';
     static ngAcceptInputType_groupSuppressBlankHeader: boolean | null | '';
     static ngAcceptInputType_suppressMenuHide: boolean | null | '';

@@ -474,8 +474,9 @@ const desktopDefaultCols = [
                 cellEditorParams: {
                     values: [...games].sort(),
                     allowTyping: true,
-                    searchType: 'match',
-                    filterList: true
+                    searchType: 'matchAny',
+                    filterList: true,
+                    highlightMatch: true
                 },
                 tooltipField: 'game.name',
                 // wrapText: true,

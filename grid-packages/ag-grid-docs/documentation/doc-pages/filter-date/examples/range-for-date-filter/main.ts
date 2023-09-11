@@ -4,7 +4,6 @@ const today = new Date();
 const tomorrow = new Date(today.getTime() + (24 * 60 * 60 * 1000));
 
 var filterParams: IDateFilterParams = {
-  minValidYear: 2000,
   minValidDate: '2008-01-08',
   maxValidDate: tomorrow,
   comparator: (filterLocalDateAtMidnight: Date, cellValue: string) => {

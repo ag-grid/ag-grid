@@ -109,7 +109,7 @@ export class AdvancedFilterService extends BeanStub implements IAdvancedFilterSe
     }
 
     public getModel(): AdvancedFilterModel | null {
-        const expressionParser = this.createExpressionParser(this.expression);
+        const expressionParser = this.createExpressionParser(this.appliedExpression);
         expressionParser?.parseExpression();
         return expressionParser?.getModel() ?? null;
     }

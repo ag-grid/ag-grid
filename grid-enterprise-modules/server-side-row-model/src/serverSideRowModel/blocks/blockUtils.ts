@@ -120,7 +120,9 @@ export class BlockUtils extends BeanStub {
             }, 'ServerSideBlock-CannotHaveNullOrUndefinedForKey');
         }
 
-        if (this.beans.gridOptionsService.is('groupIncludeFooter')) {
+        const getGroupIncludeFooter = this.beans.gridOptionsService.getGroupIncludeFooter();
+        const doesRowShowFooter = getGroupIncludeFooter({ node: rowNode });
+        if (doesRowShowFooter) {
             rowNode.createFooter();
             if (rowNode.sibling) {
                 rowNode.sibling.uiLevel = rowNode.uiLevel + 1;
@@ -145,6 +147,21 @@ export class BlockUtils extends BeanStub {
             this.setChildCountIntoRowNode(rowNode);
         } else if (rowNode.group) {
             this.setChildCountIntoRowNode(rowNode);
+
+            if (!rowNode.footer) {
+                const getGroupIncludeFooter = this.beans.gridOptionsService.getGroupIncludeFooter();
+                const doesRowShowFooter = getGroupIncludeFooter({ node: rowNode });
+                if (doesRowShowFooter) {
+                    if (rowNode.sibling) {
+                        rowNode.sibling.updateData(data);
+                    } else {
+                        rowNode.createFooter();
+                    }
+                } else if (rowNode.sibling) {
+                    rowNode.destroyFooter();
+                }
+            }
+
             // it's not possible for a node to change whether it's a group or not
             // when doing row grouping (as only rows at certain levels are groups),
             // so nothing to do here
@@ -232,6 +249,10 @@ export class BlockUtils extends BeanStub {
         rowNode.setRowIndex(displayIndexSeq.next());
         rowNode.setRowTop(nextRowTop.value);
         nextRowTop.value += rowNode.rowHeight!;
+
+        if (rowNode.footer) {
+            return;
+        }
 
         // set child for master / detail
         const hasDetailRow = rowNode.master;

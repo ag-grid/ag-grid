@@ -1,8 +1,12 @@
 import { ICellEditorParams } from "./iCellEditor";
 
-export interface IRichCellEditorParams<TValue = any> {
+export interface RichCellEditorValuesCallback<TData = any, TValue = any> {
+    (params: ICellEditorParams<TData, TValue>): TValue[] | Promise<TValue[]>;
+}
+
+export interface IRichCellEditorParams<TData = any, TValue = any> {
     /** The list of values to be selected from. */
-    values: TValue[];
+    values: TValue[] | RichCellEditorValuesCallback<TData, TValue>;
     /** The row height, in pixels, of each value. */
     cellHeight: number;
     /** The cell renderer to use to render each value. Cell renderers are useful for rendering rich HTML values, or when processing complex data. */
@@ -16,11 +20,20 @@ export interface IRichCellEditorParams<TValue = any> {
      *  - `match` - Matches if the value starts with the text typed.
      *  - `matchAny` - Matches if the value contains the text typed.
      *  - `fuzzy` - Matches the closest value to text typed.
+     * Note: When a cellRenderer is specified, this option will not work. 
      * Default: `fuzzy` 
      */
     searchType?: 'match' | 'matchAny' | 'fuzzy';
+    /**
+     * If `true`, each item on the list of values will highlight the part of the text that matches the input. 
+     * This option does not work when `searchType="fuzzy"`.
+     * Default: `false`.
+     */
+    highlightMatch?: boolean;
     /** The value in `ms` for the search algorithm debounce delay (only relevant when `allowTyping=false`). Default: `300` */
     searchDebounceDelay?: number;
+    /** A string value to be used when no value has been selected. */
+    valuePlaceholder?: string;
     /** The space in pixels between the value display and the list of items. Default: `4` */
     valueListGap?: number;
     /** The maximum height of the list of items. If the value is a `number` it will be 
@@ -35,4 +48,4 @@ export interface IRichCellEditorParams<TValue = any> {
     formatValue: (value: TValue | null | undefined) => string;
 }
 
-export interface RichCellEditorParams<TData = any, TValue = any, TContext = any> extends IRichCellEditorParams<TValue>, ICellEditorParams<TData, TValue, TContext> {}
+export interface RichCellEditorParams<TData = any, TValue = any, TContext = any> extends IRichCellEditorParams<TData, TValue>, ICellEditorParams<TData, TValue, TContext> {}

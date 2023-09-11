@@ -185,6 +185,12 @@ export class PrimaryColsListPanelItemDragFeature extends BeanStub {
             targetColumn = columnItemComponent.getColumn();
         }
 
+        // if the target col is in the cols to be moved, no index to move.
+        const movingCols = this.getCurrentColumns();
+        if (movingCols.indexOf(targetColumn) !== -1) {
+            return null;
+        }
+
         const targetColumnIndex = this.columnModel.getAllGridColumns().indexOf(targetColumn);
         const adjustedTarget = isBefore ? targetColumnIndex : targetColumnIndex + 1;
         const diff = this.getMoveDiff(adjustedTarget);

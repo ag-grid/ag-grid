@@ -76,7 +76,7 @@ export class RowCtrl extends BeanStub {
     private rowType: RowType;
 
     private leftGui: RowGui | undefined;
-    private centerGui: RowGui;
+    private centerGui: RowGui | undefined;
     private rightGui: RowGui | undefined;
     private fullWidthGui: RowGui | undefined;
 
@@ -222,12 +222,20 @@ export class RowCtrl extends BeanStub {
         this.allRowGuis = this.allRowGuis
             .filter(rowGui => rowGui.containerType !== containerType);
 
-        if (containerType === RowContainerType.LEFT) {
-            this.leftGui = undefined;
-        } else if (containerType === RowContainerType.RIGHT) {
-            this.rightGui = undefined;
-        } else if (containerType === RowContainerType.FULL_WIDTH) {
-            this.fullWidthGui = undefined;
+        switch (containerType) {
+            case RowContainerType.LEFT:
+                this.leftGui = undefined;
+                break;
+            case RowContainerType.RIGHT:
+                this.rightGui = undefined;
+                break;
+            case RowContainerType.FULL_WIDTH:
+                this.fullWidthGui = undefined;
+                break;
+            case RowContainerType.CENTER:
+                this.centerGui = undefined;
+                break;
+            default:
         }
     }
 
@@ -416,7 +424,8 @@ export class RowCtrl extends BeanStub {
         if (!func || !this.areAllContainersReady()) { return; }
 
         const params: WithoutGridCommon<ProcessRowParams> = {
-            eRow: this.centerGui?.element,
+            // areAllContainersReady asserts that centerGui is not null
+            eRow: this.centerGui!.element,
             ePinnedLeftRow: this.leftGui ? this.leftGui.element : undefined,
             ePinnedRightRow: this.rightGui ? this.rightGui.element : undefined,
             node: this.rowNode,

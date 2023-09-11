@@ -98,7 +98,7 @@ export abstract class AgAbstractInputField<TElement extends FieldElement, TValue
         return this;
     }
 
-    public setInputPlaceholder(placeholder: string): this {
+    public setInputPlaceholder(placeholder?: string | null): this {
         addOrRemoveAttribute(this.eInput, 'placeholder', placeholder);
 
         return this;

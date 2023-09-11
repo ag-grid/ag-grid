@@ -24,8 +24,8 @@ axes: [
 ]
 ```
 
-The category axis will attempt to render an [Axis Tick](/charts-axes-ticks/), [Axis Label](/charts-axis-labels/) and
-[Grid Line](/charts-axis-grid-lines/) for each category with even spacing.
+The category axis will attempt to render an [Axis Tick](/charts-axes-ticks/), [Axis Label](/charts-axes-labels/) and
+[Grid Line](/charts-axes-grid-lines/) for each category with even spacing.
 
 For a full list of configuration options see [Category Axis Options](#category-axis-options).
 

@@ -689,7 +689,7 @@ export class RowNode<TData = any> implements IEventEmitter, IRowNode<TData> {
 
         // when using footers we need to refresh the group row, as the aggregation
         // values jump between group and footer
-        if (this.beans.gridOptionsService.is('groupIncludeFooter')) {
+        if (this.sibling) {
             this.beans.rowRenderer.refreshCells({ rowNodes: [this] });
         }
     }
@@ -761,7 +761,8 @@ export class RowNode<TData = any> implements IEventEmitter, IRowNode<TData> {
         const isOpenGroup = this.group && this.expanded && !this.footer && !lockedClosedGroup;
 
         // are we showing group footers
-        const groupFootersEnabled = this.beans.gridOptionsService.is('groupIncludeFooter');
+        const getGroupIncludeFooter = this.beans.gridOptionsService.getGroupIncludeFooter();
+        const groupFootersEnabled = getGroupIncludeFooter({ node: this });
 
         // if doing footers, we normally don't show agg data at group level when group is open
         const groupAlwaysShowAggData = this.beans.gridOptionsService.is('groupSuppressBlankHeader');
@@ -981,6 +982,10 @@ export class RowNode<TData = any> implements IEventEmitter, IRowNode<TData> {
 
         if (this.eventService) {
             this.dispatchLocalEvent(this.createLocalRowEvent(RowNode.EVENT_ROW_SELECTED));
+            const sibling = this.sibling;
+            if (sibling && sibling.footer) {
+                sibling.dispatchLocalEvent(sibling.createLocalRowEvent(RowNode.EVENT_ROW_SELECTED));
+            }
         }
 
         const event: RowSelectedEvent = {
@@ -1159,5 +1164,17 @@ export class RowNode<TData = any> implements IEventEmitter, IRowNode<TData> {
         // sibling - but that's fine, as we can ignore this if the header is contracted.
         footerNode.sibling = this;
         this.sibling = footerNode;
+    }
+
+    // Only used by SSRM. In CSRM this is never used as footers should always be present for
+    // the purpose of exporting collapsed groups. In SSRM it is not possible to export collapsed
+    // groups anyway, so can destroy footers.
+    public destroyFooter(): void {
+        if (!this.sibling) { return; }
+
+        this.sibling.setRowTop(null);
+        this.sibling.setRowIndex(null);
+
+        this.sibling = undefined as any;
     }
 }

@@ -185,7 +185,7 @@ export { TextCellEditor, ITextCellEditorParams } from "./rendering/cellEditors/t
 export { NumberCellEditor, INumberCellEditorParams } from "./rendering/cellEditors/numberCellEditor";
 export { DateCellEditor, IDateCellEditorParams } from "./rendering/cellEditors/dateCellEditor";
 export { DateStringCellEditor, IDateStringCellEditorParams } from "./rendering/cellEditors/dateStringCellEditor";
-export { IRichCellEditorParams, RichCellEditorParams } from "./interfaces/iRichCellEditorParams";
+export { IRichCellEditorParams, RichCellEditorValuesCallback, RichCellEditorParams } from "./interfaces/iRichCellEditorParams";
 export { CheckboxCellEditor } from "./rendering/cellEditors/checkboxCellEditor";
 
 
@@ -457,7 +457,8 @@ export {
     TreeDataDisplayType,
     LoadingCellRendererSelectorFunc,
     LoadingCellRendererSelectorResult,
-    DomLayoutType
+    DomLayoutType,
+    UseGroupFooter
 } from "./entities/gridOptions";
 
 export {
@@ -488,6 +489,7 @@ export {
     PostSortRowsParams,
     GetLocaleTextParams,
     GetGroupAggFilteringParams,
+    GetGroupIncludeFooterParams
 } from "./interfaces/iCallbackParams";
 export {
     WithoutGridCommon

@@ -98,7 +98,7 @@ To enable [Row Group Footers](/grouping-footers/), set the `groupIncludeFooter` 
 
 <grid-example title='Group Footers' name='group-footer' type='generated' options='{ "enterprise": true, "extras": ["alasql"], "modules": ["serverside"] }'></grid-example>
 
-Row group footers can also be used with `groupDisplayType='multipleColumns`, as demonstrated in the example below.
+Row group footers can also be used with `groupDisplayType='multipleColumns'`, as demonstrated in the example below.
 
 <grid-example title='Multiple Group Columns and Footers' name='group-footer-multiple-cols' type='generated' options='{ "enterprise": true, "extras": ["alasql"], "modules": ["serverside"] }'></grid-example>
 

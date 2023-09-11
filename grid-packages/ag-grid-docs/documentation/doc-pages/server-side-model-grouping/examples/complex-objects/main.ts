@@ -9,9 +9,9 @@ const columnDefs: ColDef[] = [
     hide: true,
   },
 
-  { field: 'gold', aggFunc: 'sum' },
-  { field: 'silver', aggFunc: 'sum' },
-  { field: 'bronze', aggFunc: 'sum' },
+  { field: 'gold', aggFunc: 'sum', enableValue: true },
+  { field: 'silver', aggFunc: 'sum', enableValue: true },
+  { field: 'bronze', aggFunc: 'sum', enableValue: true },
 ]
 
 const gridOptions: GridOptions<IOlympicData> = {
@@ -30,7 +30,6 @@ const gridOptions: GridOptions<IOlympicData> = {
   rowModelType: 'serverSide',
 
   animateRows: true,
-  suppressAggFuncInHeader: true,
 }
 
 function getServerSideDatasource(server: any): IServerSideDatasource {
