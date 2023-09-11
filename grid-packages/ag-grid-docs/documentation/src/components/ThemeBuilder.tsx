@@ -1,13 +1,18 @@
-import classnames from 'classnames';
 import React, { useEffect, useRef, useState } from 'react';
+import { AgGridReact } from "@ag-grid-community/react"
+import { ClientSideRowModelModule } from "@ag-grid-community/client-side-row-model"
+import classnames from 'classnames';
 import styles from './ThemeBuilder.module.scss';
 
 import "@ag-grid-community/styles/ag-grid.css"
 import "@ag-grid-community/styles/ag-theme-alpine.css"
-import { AgGridReact } from "@ag-grid-community/react"
-import { ClientSideRowModelModule } from "@ag-grid-community/client-side-row-model"
 
-export const ThemeBuilder: React.FC<any> = ({
+export interface ThemeProps {
+    pageName?: string;
+    framework?: string;
+}
+
+export const ThemeBuilder: React.FC<ThemeProps> = ({
     pageName,
     framework
 }): any => {
