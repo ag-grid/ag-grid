@@ -84,7 +84,7 @@ export function traverseNodesWithKey(nodes: RowNode[] | null, callback: (node: R
             // also checking for children for tree data
             if (node.group || node.hasChildren()) {
                 keyParts.push(node.key);
-                const key = keyParts.join('|');
+                const key = keyParts.join('_AGGRID_'); // custom join to avoid potential clashes with user data
                 callback(node, key);
                 recursiveSearchNodes(node.childrenAfterGroup);
                 keyParts.pop();
