@@ -1,0 +1,149 @@
+@use "sass:map";
+@use '../design-system' as *;
+
+.breadcrumbs {
+    margin-bottom: 1rem;
+
+    a {
+        color: var(--link-primary);
+    }
+}
+
+.required {
+    color: red;
+}
+
+.apiReferenceOuter {
+    container-type: inline-size;
+
+    + .apiReferenceOuter {
+        margin-top: -1px;
+    }
+}
+
+.apiReference {
+    table-layout: fixed;
+
+    @container (max-width: #{$breakpoint-table-small}) {
+        display: block;
+
+        thead,
+        tbody,
+        tr,
+        td {
+            display: block;
+            width: 100%;
+        }
+
+        tr {
+            padding-top: $size-1;
+            padding-bottom: $size-1;
+        }
+
+        td {
+            padding-right: 0;
+            padding-left: 0;
+            border: none;
+        }
+    }
+
+    @container (min-width: #{$breakpoint-table-small}) {
+        height: 1px; // needed for divs to fit table cell heights correctly
+    }
+
+    tr:nth-child(even),
+    tr:nth-child(even) td {
+        background-color: white;
+    }
+
+    pre:global(.code) {
+        margin-top: $size-2;
+        margin-bottom: $size-1;
+    }
+
+    :global(a.docs-header-icon) {
+        font-size: var(--font-size-large);
+    }
+}
+
+.leftColumn {
+    width: 40%;
+    padding-left: 0;
+}
+
+.rightColumn {
+    padding-right: 0;
+}
+
+.name {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+
+    position: relative;
+    display: inline-block;
+    margin-top: $size-half;
+    padding-right: $size-3;
+    font-family: var(--monospace-font-family);
+    font-size: var(--font-size-large);
+    font-weight: var(--font-weight-bold);
+
+    @container (min-width: #{$breakpoint-table-small}) {
+        font-size: var(--font-size-medium);
+    }
+
+    :global(a.docs-header-icon) {
+        position: absolute;
+        bottom: -0.125em;
+    }
+}
+
+.metaList {
+    display: flex;
+    flex-wrap: wrap;
+    gap: $size-1 $size-3;
+}
+
+.metaItem {
+    display: flex;
+    flex-direction: column;
+}
+
+.metaLabel {
+    font-size: var(--font-size-extra-small);
+    color: var(--secondary-text-color);
+}
+
+.metaValue {
+    font-size: var(--font-size-small);
+    font-family: var(--monospace-font-family);
+    color: var(--code-text-color);
+}
+
+.description {
+    padding-top: $size-half;
+}
+
+.actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: $size-2 $size-4;
+    margin-top: $size-1;
+}
+
+.seeMore {
+    --text-color: var(--link-color);
+
+    min-width: 10.5ch;
+    transition: color $default-transition-timing;
+
+    &:hover {
+        --text-color: var(--link-hover-color);
+    }
+
+    svg {
+        --icon-size: 1em;
+
+        margin: -0.1em 0 0;
+        transition: fill $default-transition-timing;
+    }
+}

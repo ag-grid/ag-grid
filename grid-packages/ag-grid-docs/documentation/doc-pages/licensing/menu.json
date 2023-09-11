@@ -400,6 +400,11 @@
                 "showInCollapsed": true
               },
               {
+                "title": "Theme Builder",
+                "url": "/theme-builder/",
+                "showInCollapsed": true
+              },
+              {
                 "title": "Customisation",
                 "url": "/global-style-customisation/",
                 "showInCollapsed": true,
