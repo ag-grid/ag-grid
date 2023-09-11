@@ -30,7 +30,6 @@ import {
     RowModelType,
     SelectionChangedEvent,
     ISelectionService,
-    PropertyChangedEvent,
 } from "@ag-grid-community/core";
 import { ClientSideNodeManager } from "./clientSideNodeManager";
 
@@ -74,7 +73,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel 
     private rowDataTransactionBatch: BatchTransactionItem[] | null;
     private lastHighlightedRow: RowNode | null;
     private applyAsyncTransactionsTimeout: number | undefined;
-    private lastFooterChangeId = -1;
+
     @PostConstruct
     public init(): void {
         const refreshEverythingFunc = this.refreshModel.bind(this, { step: ClientSideRowModelSteps.EVERYTHING });
@@ -100,24 +99,10 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel 
             keepRenderedRows: true,
             animate
         });
-        const refreshAggListener = (event: PropertyChangedEvent) =>{
-            // TODO Maybe this logic could move to BeanStub if users pass an array of prop keys???
-            if(event.changeSetId === this.lastFooterChangeId){
-                // Already re-run aggregates for this change set so don't duplicate work
-                return;
-            }
-            this.lastFooterChangeId = event.changeSetId;
-            this.refreshModel({
-                step: ClientSideRowModelSteps.AGGREGATE,
-                keepRenderedRows: true,
-                animate
-            })
-        };
+        const refreshAggListener = this.refreshModel.bind(this, { step: ClientSideRowModelSteps.AGGREGATE });
         
-        this.addManagedPropertyListener('groupIncludeFooter', refreshAggListener);
-        this.addManagedPropertyListener('groupIncludeTotalFooter', refreshAggListener);
-        this.addManagedPropertyListener('groupRemoveSingleChildren', refreshMapListener);
-        this.addManagedPropertyListener('groupRemoveLowestSingleChildren', refreshMapListener);
+        this.addManagedPropertyListeners(['groupIncludeFooter', 'groupIncludeTotalFooter'], refreshAggListener);
+        this.addManagedPropertyListeners(['groupRemoveSingleChildren', 'groupRemoveLowestSingleChildren'], refreshMapListener);
 
         this.rootNode = new RowNode(this.beans);
         this.nodeManager = new ClientSideNodeManager(this.rootNode,
