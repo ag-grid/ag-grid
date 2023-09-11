@@ -93,7 +93,6 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel 
         this.addManagedListener(this.eventService, Events.EVENT_SORT_CHANGED, this.onSortChanged.bind(this));
         this.addManagedListener(this.eventService, Events.EVENT_COLUMN_PIVOT_MODE_CHANGED, refreshEverythingFunc);
         this.addManagedListener(this.eventService, Events.EVENT_GRID_STYLES_CHANGED, this.onGridStylesChanges.bind(this));
-        this.addManagedPropertyListener('treeData', refreshEverythingFunc);
 
         const refreshMapListener = this.refreshModel.bind(this, {
             step: ClientSideRowModelSteps.MAP,
@@ -109,6 +108,11 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel 
             this.gridOptionsService,
             this.eventService, this.columnModel,
             this.selectionService, this.beans);
+
+        this.addManagedPropertyListener('treeData', () => {
+            this.nodeManager.updateAllNodesMasterDetail();
+            refreshEverythingFunc();
+        });
     }
 
     public start(): void {
