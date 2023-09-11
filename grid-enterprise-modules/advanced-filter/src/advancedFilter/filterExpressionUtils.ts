@@ -1,4 +1,12 @@
-import { AutocompleteEntry, AutocompleteListParams, ColumnModel, DataTypeService, ValueParserService } from "@ag-grid-community/core";
+import {
+    AutocompleteEntry,
+    AutocompleteListParams,
+    BaseCellDataType,
+    Column,
+    ColumnModel,
+    DataTypeService,
+    ValueParserService
+} from "@ag-grid-community/core";
 import { ADVANCED_FILTER_LOCALE_TEXT } from './advancedFilterLocaleText';
 import { FilterExpressionOperators } from "./filterExpressionOperators";
 
@@ -13,6 +21,7 @@ export interface FilterExpressionParserParams {
     operators: FilterExpressionOperators;
     joinOperators: { and: string, or: string };
     translate: (key: keyof typeof ADVANCED_FILTER_LOCALE_TEXT, variableValues?: string[]) => string;
+    parseOperandModelValue: (operand: string, baseCellDataType: BaseCellDataType, column: Column) => string | number | null;
 }
 
 export interface FilterExpression {
