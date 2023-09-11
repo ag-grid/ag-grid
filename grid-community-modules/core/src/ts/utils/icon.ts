@@ -132,8 +132,8 @@ export const iconNameClassMap: { [key: string]: string; } = {
     advancedFilterBuilderInvalid: 'not-allowed',
     advancedFilterBuilderMoveUp: 'asc',
     advancedFilterBuilderMoveDown: 'desc',
-    advancedFilterBuilderAdd: 'menu',
-    advancedFilterBuilderRemove: 'cancel',
+    advancedFilterBuilderAdd: 'plus',
+    advancedFilterBuilderRemove: 'minus',
 };
 
 /**
