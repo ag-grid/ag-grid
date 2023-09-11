@@ -56,7 +56,7 @@ export class FlattenStage extends BeanStub implements IRowNodeStage {
         uiLevel: number
     ) {
         if (_.missingOrEmpty(rowsToFlatten)) { return; }
-
+        const getGroupIncludeFooter = this.gridOptionsService.getGroupIncludeFooter();
         const hideOpenParents = this.gridOptionsService.is('groupHideOpenParents');
         // these two are mutually exclusive, so if first set, we don't set the second
         const groupRemoveSingleChildren = this.gridOptionsService.is('groupRemoveSingleChildren');
@@ -107,7 +107,6 @@ export class FlattenStage extends BeanStub implements IRowNodeStage {
                         nextRowTop, skipLeafNodes, uiLevelForChildren);
 
                     // put a footer in if user is looking for it
-                    const getGroupIncludeFooter = this.gridOptionsService.getGroupIncludeFooter();
                     const doesRowShowFooter = getGroupIncludeFooter({ node: rowNode });
                     if (doesRowShowFooter) {
                         this.addRowNodeToRowsToDisplay(rowNode.sibling, result, nextRowTop, uiLevelForChildren);
