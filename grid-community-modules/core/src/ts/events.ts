@@ -185,6 +185,7 @@ export interface SortChangedEvent<TData = any, TContext = any> extends AgGridEve
 }
 
 export interface GridReadyEvent<TData = any, TContext = any> extends AgGridEvent<TData, TContext> { }
+export interface GridPreDestroyedEvent<TData = any, TContext = any> extends AgGridEvent<TData, TContext> { }
 
 export interface DisplayedColumnsWidthChangedEvent<TData = any, TContext = any> extends AgGridEvent<TData, TContext> { } // not documented
 export interface ColumnHoverChangedEvent<TData = any, TContext = any> extends AgGridEvent<TData, TContext> { } // not documented

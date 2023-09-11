@@ -73,6 +73,7 @@ export class GridOptionsService {
     // we store this locally, so we are not calling getScrollWidth() multiple times as it's an expensive operation
     private scrollbarWidth: number;
     private domDataKey = '__AG_' + Math.random().toString();
+    private static readonly alwaysSyncGlobalEvents: string[] = [Events.EVENT_GRID_PRE_DESTROYED];
 
     // Store locally to avoid retrieving many times as these are requested for every callback
     public api: GridApi;
@@ -97,6 +98,7 @@ export class GridOptionsService {
         this.gridOptionLookup = new Set([...ComponentUtil.ALL_PROPERTIES, ...ComponentUtil.EVENT_CALLBACKS]);
         const async = !this.is('suppressAsyncEvents');
         this.eventService.addGlobalListener(this.globalEventHandler.bind(this), async);
+        this.eventService.addGlobalListener(this.globalSyncEventHandler.bind(this), false);
 
         // sets an initial calculation for the scrollbar width
         this.getScrollbarWidth();
@@ -208,6 +210,28 @@ export class GridOptionsService {
     globalEventHandler(eventName: string, event?: any): void {
         // prevent events from being fired _after_ the grid has been destroyed
         if (this.destroyed) {
+            return;
+        }
+
+        // Always sync events (such as GridPreDestroyed) can only be fired via: globalSyncEventHandler()
+        if (GridOptionsService.alwaysSyncGlobalEvents.includes(eventName)) {
+            return;
+        }
+
+        const callbackMethodName = ComponentUtil.getCallbackForEvent(eventName);
+        if (typeof (this.gridOptions as any)[callbackMethodName] === 'function') {
+            (this.gridOptions as any)[callbackMethodName](event);
+        }
+    }
+
+    // For certain events that should always be in sync, such as GridPreDestroyed, we execute them here.
+    globalSyncEventHandler(eventName: string, event?: any): void {
+        if (this.destroyed) {
+            return;
+        }
+
+        // Only execute events that should always be in sync
+        if (GridOptionsService.alwaysSyncGlobalEvents.includes(eventName) === false) {
             return;
         }
 
