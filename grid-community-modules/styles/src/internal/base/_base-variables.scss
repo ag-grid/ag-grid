@@ -163,7 +163,7 @@
 
         --ag-set-filter-indent-size: calc(var(--ag-grid-size) + var(--ag-icon-size));
 
-        --ag-advanced-filter-builder-indent-size: calc(var(--ag-grid-size) + var(--ag-icon-size));
+        --ag-advanced-filter-builder-indent-size: calc(var(--ag-grid-size) * 2 + var(--ag-icon-size));
 
         --ag-row-group-indent-size: calc(var(--ag-cell-widget-spacing) + var(--ag-icon-size));
 

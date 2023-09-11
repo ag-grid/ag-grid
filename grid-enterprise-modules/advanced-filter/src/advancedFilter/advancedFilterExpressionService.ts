@@ -100,7 +100,7 @@ export class AdvancedFilterExpressionService extends BeanStub {
     public parseColumnFilterModel(model: ColumnAdvancedFilterModel): string {
         const columnName = this.parseColumnName(model);
         const operator = this.parseOperator(model) ?? '';
-        let operands = this.parseOperand(model);
+        const operands = this.parseOperand(model);
         return `[${columnName}] ${operator}${operands}`;
     }
 

@@ -215,7 +215,7 @@ export class ConditionPillWrapperComp extends Component {
             validationMessage = this.advancedFilterExpressionService.translate('advancedFilterBuilderValidationSelectColumn');
         } else if (!_.exists(this.getOperatorKey())) {
             validationMessage = this.advancedFilterExpressionService.translate('advancedFilterBuilderValidationSelectOption');
-        } else if (this.numOperands > 0 && this.baseCellDataType === 'number' && !_.exists(this.getOperandDisplayValue())) {
+        } else if (this.numOperands > 0 && !_.exists(this.getOperandDisplayValue())) {
             validationMessage = this.advancedFilterExpressionService.translate('advancedFilterBuilderValidationEnterValue');
         }
 

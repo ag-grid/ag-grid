@@ -8,11 +8,11 @@ export function getAdvancedFilterBuilderAddButtonParams(translate: (key: keyof t
         pickerAriaLabelValue: 'Advanced Filter Builder Add Field',
         pickerType: 'ag-list',
         valueList: [{
-            key: 'join',
-            displayValue: translate('advancedFilterBuilderAddJoin')
-        }, {
             key: 'condition',
             displayValue: translate('advancedFilterBuilderAddCondition')
+        }, {
+            key: 'join',
+            displayValue: translate('advancedFilterBuilderAddJoin')
         }],
         valueFormatter: (value: AutocompleteEntry) => value == null ? null : value.displayValue ?? value.key,
         pickerIcon: 'advancedFilterBuilderAdd',

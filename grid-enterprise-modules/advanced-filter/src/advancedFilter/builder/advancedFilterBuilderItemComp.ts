@@ -95,6 +95,8 @@ export class AdvancedFilterBuilderItemComp extends TabGuardComp {
             this.setupDragging();
         }
 
+        _.setAriaLevel(this.focusWrapper, level + 1);
+
         this.initialiseTabGuard({});
 
         this.createManagedBean(new AdvancedFilterBuilderItemNavigationFeature(
@@ -125,6 +127,10 @@ export class AdvancedFilterBuilderItemComp extends TabGuardComp {
 
     public focusMoveButton(backwards: boolean): void {
         (backwards ? this.eMoveUpButton : this.eMoveDownButton).focus();
+    }
+
+    public afterAdd(): void {
+        this.ePillWrapper.getFocusableElement().focus();
     }
 
     private setupValidation(): void {
@@ -243,6 +249,7 @@ export class AdvancedFilterBuilderItemComp extends TabGuardComp {
     private createPill(params: CreatePillParams): SelectPillComp | InputPillComp {
         const { key, displayValue, cssClass, update } = params;
         const onUpdated = (key: string) => {
+            if (key == null) { return; }
             update(key);
             this.dispatchEvent({
                 type: AdvancedFilterBuilderEvents.EVENT_VALUE_CHANGED
@@ -260,14 +267,16 @@ export class AdvancedFilterBuilderItemComp extends TabGuardComp {
                 },
                 valueFormatter: (value: AutocompleteEntry) =>
                     value == null ? null : value.displayValue ?? value.key,
-                maxPickerWidth: '100px',
+                variableWidth: true,
+                minPickerWidth: '140px',
+                maxPickerWidth: '200px',
                 getEditorParams,
                 wrapperClassName: cssClass
             }));
             this.addManagedListener(
                 comp,
                 Events.EVENT_FIELD_PICKER_VALUE_SELECTED,
-                ({ value }: FieldPickerValueSelectedEvent) => onUpdated(value.key)
+                ({ value }: FieldPickerValueSelectedEvent) => onUpdated(value?.key)
             );
             return comp;
         } else {

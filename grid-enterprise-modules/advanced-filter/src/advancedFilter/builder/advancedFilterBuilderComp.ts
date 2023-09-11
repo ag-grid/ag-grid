@@ -35,7 +35,7 @@ export class AdvancedFilterBuilderComp extends Component {
     @Autowired('advancedFilterExpressionService') private advancedFilterExpressionService: AdvancedFilterExpressionService;
     @Autowired('beans') private beans: Beans;
 
-    private virtualList: VirtualList;
+    private virtualList: VirtualList<AdvancedFilterBuilderItemComp | AdvancedFilterBuilderItemAddComp>;
     private filterModel: AdvancedFilterModel;
     private stringifiedModel: string;
     private items: AdvancedFilterBuilderItem[];
@@ -86,7 +86,11 @@ export class AdvancedFilterBuilderComp extends Component {
     }
 
     private setupVirtualList(): void {
-        this.virtualList = this.createManagedBean(new VirtualList({ cssIdentifier: 'advanced-filter-builder' }));
+        this.virtualList = this.createManagedBean(new VirtualList({
+            cssIdentifier: 'advanced-filter-builder',
+            ariaRole: 'tree',
+            listName: this.advancedFilterExpressionService.translate('ariaAdvancedFilterBuilderList')
+        }));
         this.virtualList.setComponentCreator(this.createItemComponent.bind(this));
         this.virtualList.setComponentUpdater(this.updateItemComponent.bind(this));
         this.virtualList.setRowHeight(40);
@@ -296,7 +300,7 @@ export class AdvancedFilterBuilderComp extends Component {
         }
         this.refreshList(softRefresh);
         if (softRefresh) {
-            this.virtualList.focusRow(index);
+            this.virtualList.getComponentAt(index)?.afterAdd();
         }
     }
 

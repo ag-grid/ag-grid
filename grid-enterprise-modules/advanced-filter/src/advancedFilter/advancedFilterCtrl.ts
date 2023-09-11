@@ -88,9 +88,8 @@ export class AdvancedFilterCtrl extends BeanStub implements IAdvancedFilterCtrl 
         }
 
         this.setInputDisabled(true);
-        const popupParent = this.popupService.getPopupParent();
-        const width = _.getAbsoluteWidth(popupParent) * 0.75;
-        const height = _.getAbsoluteHeight(popupParent) * 0.75;
+
+        const { width, height } = this.getBuilderDialogSize();
 
         this.eBuilderComp = this.createBean(new AdvancedFilterBuilderComp());
         this.eBuilderDialog = this.createBean(new AgDialog({
@@ -115,6 +114,17 @@ export class AdvancedFilterCtrl extends BeanStub implements IAdvancedFilterCtrl 
                 type: AdvancedFilterCtrl.EVENT_BUILDER_CLOSED
             });
         });
+    }
+
+    private getBuilderDialogSize(): { width: number, height: number; } {
+        const popupParent = this.popupService.getPopupParent();
+        const maxWidth = Math.round(_.getAbsoluteWidth(popupParent) * 0.75);
+        const maxHeight = Math.round(_.getAbsoluteHeight(popupParent) * 0.75);
+
+        const width = Math.min(600, maxWidth);
+        const height = Math.min(600, maxHeight);
+
+        return { width, height };
     }
 
     private onEnabledChanged(enabled: boolean): void {

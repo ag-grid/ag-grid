@@ -2,6 +2,7 @@ import {
     AgInputDateField,
     AgInputNumberField,
     AgInputTextField,
+    Autowired,
     Component,
     Events,
     FieldValueEvent,
@@ -11,9 +12,11 @@ import {
     WithoutGridCommon,
     _
 } from "@ag-grid-community/core";
+import { AdvancedFilterExpressionService } from "../advancedFilterExpressionService";
 
 export class InputPillComp extends Component {
     @RefSelector('ePill') private ePill: HTMLElement;
+    @Autowired('advancedFilterExpressionService') private advancedFilterExpressionService: AdvancedFilterExpressionService;
 
     private eEditor: AgInputTextField | undefined;
     private value: string;
@@ -109,7 +112,23 @@ export class InputPillComp extends Component {
     }
 
     private renderValue(): void {
-        this.ePill.innerText = this.value;
+        let value: string;
+        this.ePill.classList.remove(
+            'ag-advanced-filter-builder-value-empty',
+            'ag-advanced-filter-builder-value-number',
+            'ag-advanced-filter-builder-value-text'
+        );
+        if (!_.exists(this.value)) {
+            value = this.advancedFilterExpressionService.translate('advancedFilterBuilderEnterValue');
+            this.ePill.classList.add('ag-advanced-filter-builder-value-empty');
+        } else if (this.params.type === 'number') {
+            value = this.value;
+            this.ePill.classList.add('ag-advanced-filter-builder-value-number');
+        } else {
+            value = `"${this.value}"`;
+            this.ePill.classList.add('ag-advanced-filter-builder-value-text');
+        }
+        this.ePill.innerText = value;
     }
 
     private updateValue(keepFocus: boolean): void {
