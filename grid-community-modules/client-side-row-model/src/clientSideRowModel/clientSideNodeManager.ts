@@ -117,9 +117,20 @@ export class ClientSideNodeManager {
         }
     }
 
-    public updateAllNodesMasterDetail() {
+    public resetAllNodeState() {
         this.rootNode?.allLeafChildren?.forEach(node => {
             this.setMasterForRow(node, node.data, node.level, false);
+            node.childrenAfterGroup = [];
+            node.childrenAfterFilter = [];
+            node.childrenAfterSort = [];
+            node.childrenAfterAggFilter = [];
+            node.childrenMapped = {};
+            node.allLeafChildren = [];
+            node.group = false;
+            node.parent = null;
+            node.expanded = false;
+            node.groupData = {};
+            node.aggData = undefined;
         });
     }
 
