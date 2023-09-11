@@ -28,13 +28,11 @@ export class BlockUtils extends BeanStub {
     @Autowired('beans') private beans: Beans;
 
     private rowHeight: number;
-    private usingTreeData: boolean;
     private usingMasterDetail: boolean;
 
     @PostConstruct
     private postConstruct(): void {
         this.rowHeight = this.gridOptionsService.getRowHeightAsNumber();
-        this.usingTreeData = this.gridOptionsService.is('treeData');
         this.usingMasterDetail = this.gridOptionsService.is('masterDetail');
     }
 
@@ -142,7 +140,7 @@ export class BlockUtils extends BeanStub {
     public updateDataIntoRowNode(rowNode: RowNode, data: any): void {
         rowNode.updateData(data);
 
-        if (this.usingTreeData) {
+        if (this.gridOptionsService.is('treeData')) {
             this.setTreeGroupInfo(rowNode);
             this.setChildCountIntoRowNode(rowNode);
         } else if (rowNode.group) {
@@ -174,11 +172,12 @@ export class BlockUtils extends BeanStub {
 
     public setDataIntoRowNode(rowNode: RowNode, data: any, defaultId: string, cachedRowHeight: number | undefined): void {
         rowNode.stub = false;
+        const treeData = this.gridOptionsService.is('treeData');
 
         if (_.exists(data)) {
             rowNode.setDataAndId(data, defaultId);
 
-            if (this.usingTreeData) {
+            if (treeData) {
                 this.setTreeGroupInfo(rowNode);
             } else if (rowNode.group) {
                 this.setRowGroupInfo(rowNode);
@@ -191,7 +190,7 @@ export class BlockUtils extends BeanStub {
             rowNode.key = null;
         }
 
-        if (this.usingTreeData || rowNode.group) {
+        if (treeData || rowNode.group) {
             this.setGroupDataIntoRowNode(rowNode);
             this.setChildCountIntoRowNode(rowNode);
         }
