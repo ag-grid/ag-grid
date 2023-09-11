@@ -99,7 +99,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel 
             keepRenderedRows: true,
             animate
         });
-        const refreshAggListener = this.refreshModel.bind(this, { step: ClientSideRowModelSteps.AGGREGATE });
+        const refreshAggListener = () => this.refreshModel({ step: ClientSideRowModelSteps.EVERYTHING, groupState: this.getGroupState(true)});
         
         this.addManagedPropertyListeners(['groupIncludeFooter', 'groupIncludeTotalFooter'], refreshAggListener);
         this.addManagedPropertyListeners(['groupRemoveSingleChildren', 'groupRemoveLowestSingleChildren'], refreshMapListener);
@@ -890,8 +890,10 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel 
         }
     }
 
-    private getGroupState(): any {
-        if (!this.rootNode.childrenAfterGroup || !this.gridOptionsService.is('rememberGroupStateWhenNewData')) { return null; }
+    private getGroupState(force: boolean = false): any {
+        if (!this.rootNode.childrenAfterGroup) { return null; }
+        
+        if (!force && (!this.gridOptionsService.is('rememberGroupStateWhenNewData'))) { return null; }
         const result: any = {};
         _.traverseNodesWithKey(this.rootNode.childrenAfterGroup, (node: RowNode, key: string) => result[key] = node.expanded);
         return result;
