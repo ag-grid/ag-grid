@@ -276,13 +276,18 @@ export class AdvancedFilterBuilderComp extends Component {
     }
 
     private addItem(item: AdvancedFilterBuilderItem, isJoin: boolean): void {
-        const { parent, level } = item;
+        const { parent, level, filterModel: itemFilterModel } = item;
         const filterModel = isJoin ? {
             filterType: 'join',
             type: 'AND',
             conditions: []
         } as JoinAdvancedFilterModel : {} as ColumnAdvancedFilterModel;
-        parent!.conditions.push(filterModel);
+        const insertIndex = parent!.conditions.indexOf(itemFilterModel!) + 1;
+        if (insertIndex > 0) {
+            parent!.conditions.splice(insertIndex, 0, filterModel);
+        } else {
+            parent!.conditions.push(filterModel);
+        }
         let index = this.items.indexOf(item);
         const softRefresh = index >= 0;
         if (softRefresh) {
