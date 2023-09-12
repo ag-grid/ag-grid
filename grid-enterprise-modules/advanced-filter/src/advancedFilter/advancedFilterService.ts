@@ -4,8 +4,11 @@ import {
     AutocompleteEntry,
     AutocompleteListParams,
     Autowired,
+    BaseCellDataType,
     Bean,
     BeanStub,
+    Column,
+    ColumnAdvancedFilterModel,
     ColumnModel,
     DataTypeService,
     Events,
@@ -132,19 +135,7 @@ export class AdvancedFilterService extends BeanStub implements IAdvancedFilterSe
                     columnName = colId;
                 }
                 const operator = this.expressionOperators[model.filterType]?.operators?.[model.type]?.displayValue ?? model.type;
-                const { filter } = model as any;
-                const column = this.columnModel.getPrimaryColumn(colId);
-                let operands = '';
-                if (filter != null) {
-                    let operand1;
-                    if (model.filterType === 'number') {
-                        operand1 = _.toStringOrNull(filter) ?? '';
-                    } else {
-                        operand1 = column ? this.valueFormatterService.formatValue(column, null, filter) : filter;
-                        operand1 = `"${operand1 ?? _.toStringOrNull(filter) ?? ''}"`;
-                    }
-                    operands = ` ${operand1}`;
-                }
+                const operands = this.getOperandDisplayValue(model);
                 return `[${columnName}] ${operator}${operands}`;
             }
         };
@@ -154,6 +145,51 @@ export class AdvancedFilterService extends BeanStub implements IAdvancedFilterSe
         this.setExpressionDisplayValue(expression);
         this.applyExpression();
         this.ctrl.refreshComp();
+    }
+
+    public getOperandDisplayValue(model: ColumnAdvancedFilterModel): string {
+        const { colId, filter } = model as any;
+        const column = this.columnModel.getPrimaryColumn(colId);
+        let operand = '';
+        if (filter != null) {
+            let operand1;
+            switch (model.filterType) {
+                case 'number':
+                    operand1 = _.toStringOrNull(filter) ?? '';
+                    break;
+                case 'date':
+                    const dateValue = _.parseDateTimeFromString(filter);
+                    operand1 = column ? this.valueFormatterService.formatValue(column, null, dateValue) : null;
+                    break;
+                case 'dateString':
+                    // need to convert from ISO date string to Date to data string format to formatted string format
+                    const dateStringDateValue = _.parseDateTimeFromString(filter);
+                    const dateStringStringValue = column
+                        ? this.dataTypeService.getDateFormatterFunction()(dateStringDateValue ?? undefined)
+                        : null;
+                    operand1 = column ? this.valueFormatterService.formatValue(column, null, dateStringStringValue) : null;
+                    break;
+            }
+            if (model.filterType !== 'number') {
+                operand1 = `"${operand1 ?? _.toStringOrNull(filter) ?? ''}"`;
+            }
+            operand = ` ${operand1}`;
+        }
+        return operand;
+    }
+
+    public getOperandModelValue(operand: string, baseCellDataType: BaseCellDataType, column: Column): string | number | null {
+        switch (baseCellDataType) {
+            case 'number':
+                return parseFloat(operand);
+            case 'date':
+                return _.serialiseDate(this.valueParserService.parseValue(column, null, operand, undefined), false);
+            case 'dateString':
+                // displayed string format may be different from data string format, so parse before converting to date
+                const parsedDateString = this.valueParserService.parseValue(column, null, operand, undefined);
+                return _.serialiseDate(this.dataTypeService.getDateParserFunction()(parsedDateString) ?? null, false);
+        }
+        return operand;
     }
 
     public getExpressionDisplayValue(): string | null {
@@ -181,7 +217,8 @@ export class AdvancedFilterService extends BeanStub implements IAdvancedFilterSe
             columnValueCreator: updateEntry => this.getColumnValue(updateEntry),
             operators: this.expressionOperators,
             joinOperators: this.expressionJoinOperators,
-            translate: (key, variableValues) => this.translate(key, variableValues)
+            translate: (key, variableValues) => this.translate(key, variableValues),
+            parseOperandModelValue: (operand, baseCellDataType, column) => this.getOperandModelValue(operand, baseCellDataType, column)
         });
     }
 
@@ -356,10 +393,15 @@ export class AdvancedFilterService extends BeanStub implements IAdvancedFilterSe
                         };
                         break;
                     case 'object':
-                        params = {
-                            valueConverter: (value, node) => this.valueFormatterService.formatValue(column, node, value)
-                                ?? (typeof value.toString === 'function' ? value.toString() : '')
-                        };
+                        // If there's a filter value getter, assume the value is already a string. Otherwise we need to format it.
+                        if (column.getColDef().filterValueGetter) {
+                            params = { valueConverter: (v: any) => v };
+                        } else {
+                            params = {
+                                valueConverter: (value, node) => this.valueFormatterService.formatValue(column, node, value)
+                                    ?? (typeof value.toString === 'function' ? value.toString() : '')
+                            };
+                        }
                         break;
                     case 'text': 
                     case undefined: 
