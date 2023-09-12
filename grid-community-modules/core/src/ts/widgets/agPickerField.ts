@@ -88,16 +88,14 @@ export abstract class AgPickerField<TValue, TConfig extends IPickerFieldParams =
         this.setupAria();
 
         const displayId = `ag-${this.getCompId()}-display`;
-
         this.eDisplayField.setAttribute('id', displayId);
-        setAriaDescribedBy(this.getAriaElement(), displayId);
 
-        const eGui = this.getGui();
+        const ariaEl = this.getAriaElement();
+        setAriaDescribedBy(ariaEl, displayId);
+        this.addManagedListener(ariaEl, 'keydown', this.onKeyDown.bind(this));
 
-        this.addManagedListener(eGui, 'keydown', this.onKeyDown.bind(this));
         this.addManagedListener(this.eLabel, 'mousedown', this.onLabelOrWrapperMouseDown.bind(this));
         this.addManagedListener(this.eWrapper, 'mousedown', this.onLabelOrWrapperMouseDown.bind(this));
-
 
         const { pickerIcon } = this.config;
 

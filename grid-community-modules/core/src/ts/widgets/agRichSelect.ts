@@ -610,9 +610,15 @@ export class AgRichSelect<TValue = any> extends AgPickerField<TValue, RichSelect
         switch (key) {
             case KeyCode.LEFT:
             case KeyCode.RIGHT:
+            case KeyCode.PAGE_HOME:
+            case KeyCode.PAGE_END:
                 if (!allowTyping) {
                     event.preventDefault();
                 }
+                break;
+            case KeyCode.PAGE_UP:
+            case KeyCode.PAGE_DOWN:
+                event.preventDefault();
                 break;
             case KeyCode.DOWN:
             case KeyCode.UP:
