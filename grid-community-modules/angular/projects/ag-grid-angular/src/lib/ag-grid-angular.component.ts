@@ -296,8 +296,8 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
 
      @Input() public gridOptions: GridOptions<TData> | undefined;
      /**
-     * Used to register AG Grid Modules directly with this instance of the grid.
-     * See [Providing Modules To Individual Grids](https://www.ag-grid.com/angular-data-grid/modules/#providing-modules-to-individual-grids) for more information.
+     * Used to register AG Grid Modules directly with this instance of the grid. 
+     * See [Providing Modules To Individual Grids](https://www.ag-grid.com/angular-data-grid/modules/#providing-modules-to-individual-grids) for more information. 
      */
      @Input() public modules: Module[] | undefined;
 

@@ -36,13 +36,19 @@ export class EventService implements IEventEmitter {
         @Qualifier('loggerFactory') loggerFactory: LoggerFactory,
         @Qualifier('gridOptionsService') gridOptionsService: GridOptionsService,
         @Qualifier('frameworkOverrides') frameworkOverrides: IFrameworkOverrides,
-        @Qualifier('globalEventListener') globalEventListener: Function | null = null) {
+        @Qualifier('globalEventListener') globalEventListener: Function | null = null,
+        @Qualifier('globalSyncEventListener') globalSyncEventListener: Function | null = null
+    ) {
         this.frameworkOverrides = frameworkOverrides;
         this.gridOptionsService = gridOptionsService;
 
         if (globalEventListener) {
             const async = gridOptionsService.useAsyncEvents();
             this.addGlobalListener(globalEventListener, async);
+        }
+
+        if (globalSyncEventListener) {
+            this.addGlobalListener(globalSyncEventListener, false);
         }
     }
 
