@@ -5,6 +5,7 @@ import {
     Events,
     FieldPickerValueSelectedEvent,
     PostConstruct,
+    RefSelector,
     TooltipFeature,
     _
 } from "@ag-grid-community/core";
@@ -17,10 +18,17 @@ import { AdvancedFilterBuilderAddEvent, AdvancedFilterBuilderEvents, AdvancedFil
 export class AdvancedFilterBuilderItemAddComp extends Component {
     @Autowired('beans') private readonly beans: Beans;
     @Autowired('advancedFilterExpressionService') private readonly advancedFilterExpressionService: AdvancedFilterExpressionService;
+    @RefSelector('eItem') private readonly eItem: HTMLElement;
 
     constructor(private readonly item: AdvancedFilterBuilderItem, private readonly focusWrapper: HTMLElement) {
         super(/* html */ `
-            <div class="ag-advanced-filter-builder-item ag-advanced-filter-builder-indent-1" role="presentation"></div>
+            <div class="ag-advanced-filter-builder-item-wrapper" role="presentation">
+                <div ref="eItem" class="ag-advanced-filter-builder-item" role="presentation">
+                    <div class="ag-advanced-filter-builder-item-tree-lines" aria-hidden="true">
+                        <div class="ag-advanced-filter-builder-item-tree-line-vertical-top ag-advanced-filter-builder-item-tree-line-horizontal"></div>
+                    </div>
+                </div>
+            </div>
         `);
     }
 
@@ -37,7 +45,7 @@ export class AdvancedFilterBuilderItemAddComp extends Component {
                 isJoin: value.key === 'join'
             });
         });
-        this.getGui().appendChild(eAddButton.getGui());
+        this.eItem.appendChild(eAddButton.getGui());
 
         const tooltipFeature = this.createManagedBean(new TooltipFeature({
             getGui: () => eAddButton.getGui(),

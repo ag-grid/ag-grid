@@ -1762,10 +1762,6 @@
         .ag-row-group-indent-#{$i} {
             @include ag.unthemed-rtl(( padding-left: $i * 20px ));
         }
-
-        .ag-advanced-filter-builder-indent-#{$i} {
-            @include ag.unthemed-rtl(( padding-left: $i * 20px ));
-        }
     }
 
     .ag-ltr {

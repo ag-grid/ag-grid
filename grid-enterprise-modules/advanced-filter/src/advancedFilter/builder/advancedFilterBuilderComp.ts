@@ -234,11 +234,30 @@ export class AdvancedFilterBuilderComp extends Component {
     }
 
     private updateItemComponent(item: AdvancedFilterBuilderItem, comp: AdvancedFilterBuilderItemComp): void {
-        if (!this.showMove) { return; }
-        const index = this.items.indexOf(item)
+        const index = this.items.indexOf(item);
+        const populateTreeLines = (filterModel: AdvancedFilterModel | null, treeLines: boolean[]) => {
+            const parentItem = this.items.find(itemToCheck => itemToCheck.filterModel === filterModel);
+            const parentFilterModel = parentItem?.parent;
+            if (parentFilterModel) {
+                const { conditions } = (parentFilterModel as JoinAdvancedFilterModel);
+                // check parent
+                populateTreeLines(parentFilterModel, treeLines);
+                treeLines.push(conditions[conditions.length - 1] === filterModel);
+            }
+        };
+        const treeLines: boolean[] = [];
+        const { filterModel } = item;
+        if (filterModel) {
+            populateTreeLines(filterModel, treeLines);
+            // the add item button is always last child
+            treeLines[0] = false;
+        }
+        const showStartTreeLine = filterModel?.filterType === 'join' && !!filterModel.conditions.length;
         comp.setState({
             disableMoveUp: index === 1,
-            disableMoveDown: !this.canMoveDown(item, index)
+            disableMoveDown: !this.canMoveDown(item, index),
+            treeLines,
+            showStartTreeLine
         });
     }
 

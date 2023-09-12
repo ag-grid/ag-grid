@@ -35,6 +35,7 @@ import { JoinPillWrapperComp } from "./joinPillWrapperComp";
 import { SelectPillComp } from "./selectPillComp";
 
 export class AdvancedFilterBuilderItemComp extends TabGuardComp {
+    @RefSelector('eTreeLines') private eTreeLines: HTMLElement;
     @RefSelector('eDragHandle') private eDragHandle: HTMLElement;
     @RefSelector('eItem') private eItem: HTMLElement;
     @RefSelector('eButtons') private eButtons: HTMLElement;
@@ -54,10 +55,15 @@ export class AdvancedFilterBuilderItemComp extends TabGuardComp {
     private moveUpTooltipFeature: TooltipFeature;
     private moveDownTooltipFeature: TooltipFeature;
 
-    constructor(private readonly item: AdvancedFilterBuilderItem, private readonly dragFeature: AdvancedFilterBuilderDragFeature, private readonly focusWrapper: HTMLElement) {
+    constructor(
+        private readonly item: AdvancedFilterBuilderItem,
+        private readonly dragFeature: AdvancedFilterBuilderDragFeature,
+        private readonly focusWrapper: HTMLElement
+    ) {
         super(/* html */ `
             <div class="ag-advanced-filter-builder-item-wrapper" role="presentation">
                 <div ref="eItem" class="ag-advanced-filter-builder-item">
+                    <div ref="eTreeLines" class="ag-advanced-filter-builder-item-tree-lines" aria-hidden="true"></div>
                     <span ref="eDragHandle" class="ag-drag-handle" role="presentation"></span>
                 </div>
                 <div ref="eButtons" class="ag-advanced-filter-builder-item-buttons">
@@ -81,10 +87,15 @@ export class AdvancedFilterBuilderItemComp extends TabGuardComp {
         this.eItem.appendChild(this.ePillWrapper.getGui());
         
         if (level === 0) {
+            const eTreeLine = document.createElement('div');
+            eTreeLine.classList.add('ag-advanced-filter-builder-item-tree-line-vertical-bottom');
+            eTreeLine.classList.add('ag-advanced-filter-builder-item-tree-line-root');
+            this.eTreeLines.appendChild(eTreeLine);
+
             _.setDisplayed(this.eDragHandle, false);
             _.setDisplayed(this.eButtons, false);
         } else {
-            this.addCssClass(`ag-advanced-filter-builder-indent-${level}`);
+            this.setupTreeLines(level);
 
             this.eDragHandle.appendChild(_.createIconNoSpan('advancedFilterBuilderDrag', this.gridOptionsService)!);
             this.setupValidation();
@@ -114,15 +125,22 @@ export class AdvancedFilterBuilderItemComp extends TabGuardComp {
     public setState(params: {
         disableMoveUp?: boolean;
         disableMoveDown?: boolean;
+        treeLines: boolean[];
+        showStartTreeLine: boolean;
     }): void {
-        if (this.item.level === 0) { return; }
-        const { disableMoveUp, disableMoveDown } = params;
-        this.moveUpDisabled = !!disableMoveUp;
-        this.moveDownDisabled = !!disableMoveDown;
-        this.eMoveUpButton.classList.toggle('ag-advanced-filter-builder-item-button-disabled', disableMoveUp);
-        this.eMoveDownButton.classList.toggle('ag-advanced-filter-builder-item-button-disabled', disableMoveDown);
-        this.moveUpTooltipFeature.refreshToolTip();
-        this.moveDownTooltipFeature.refreshToolTip();
+        const { level } = this.item;
+        if (level === 0) { return; }
+        const { filterModel, showMove } = this.item;
+        const { disableMoveUp, disableMoveDown, treeLines, showStartTreeLine } = params;
+        this.updateTreeLines(treeLines, showStartTreeLine);
+        if (showMove) {
+            this.moveUpDisabled = !!disableMoveUp;
+            this.moveDownDisabled = !!disableMoveDown;
+            this.eMoveUpButton.classList.toggle('ag-advanced-filter-builder-item-button-disabled', disableMoveUp);
+            this.eMoveDownButton.classList.toggle('ag-advanced-filter-builder-item-button-disabled', disableMoveDown);
+            this.moveUpTooltipFeature.refreshToolTip();
+            this.moveDownTooltipFeature.refreshToolTip();
+        }
     }
 
     public focusMoveButton(backwards: boolean): void {
@@ -131,6 +149,32 @@ export class AdvancedFilterBuilderItemComp extends TabGuardComp {
 
     public afterAdd(): void {
         this.ePillWrapper.getFocusableElement().focus();
+    }
+
+    private setupTreeLines(level: number): void {
+        for (let i = 0; i < level; i++) {
+            const eTreeLine = document.createElement('div');
+            this.eTreeLines.appendChild(eTreeLine);
+        }
+    }
+
+    private updateTreeLines(treeLines: boolean[], showStartTreeLine: boolean): void {
+        const lastTreeLineIndex = treeLines.length - 1;
+        const { children } = this.eTreeLines;
+        for (let i = 0; i < lastTreeLineIndex; i++) {
+            const eTreeLine = children.item(i);
+            if (eTreeLine) {
+                eTreeLine.classList.toggle('ag-advanced-filter-builder-item-tree-line-vertical', !treeLines[i]);
+            }
+        }
+        const eTreeLine = children.item(lastTreeLineIndex);
+        if (eTreeLine) {
+            eTreeLine.classList.add('ag-advanced-filter-builder-item-tree-line-horizontal');
+            const isLastChild = treeLines[lastTreeLineIndex];
+            eTreeLine.classList.toggle('ag-advanced-filter-builder-item-tree-line-vertical-top', isLastChild);
+            eTreeLine.classList.toggle('ag-advanced-filter-builder-item-tree-line-vertical', !isLastChild);
+        }
+        this.eDragHandle.classList.toggle('ag-advanced-filter-builder-item-tree-line-vertical-bottom', showStartTreeLine);
     }
 
     private setupValidation(): void {
