@@ -1,6 +1,5 @@
 import classnames from 'classnames';
 import { ApiDocumentation, InterfaceDocumentation } from 'components/ApiDocumentation';
-import { ThemeBuilder } from 'components/ThemeBuilder';
 import ChartGallery from 'components/chart-gallery/ChartGallery';
 import ChartsApiExplorer from 'components/charts-api-explorer/ChartsApiExplorer';
 import ExampleRunner from 'components/example-runner/ExampleRunner';
@@ -82,7 +81,6 @@ const DocPageTemplate = ({ data, pageContext: { framework, exampleIndexData, pag
                     sources: props.sources != null ? JSON.parse(props.sources) : undefined,
                     config: props.config != null ? JSON.parse(props.config) : undefined,
                 }),
-            'theme-builder': ThemeBuilder,
             'interface-documentation': (props) =>
                 InterfaceDocumentation({
                     ...props,

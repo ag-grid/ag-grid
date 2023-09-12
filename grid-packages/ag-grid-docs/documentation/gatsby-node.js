@@ -185,7 +185,7 @@ exports.onCreateNode = async ({node, loadNodeContent, getNode, actions: {createN
     }
 };
 
-const FULL_SCREEN_PAGES = ['example'];
+const FULL_SCREEN_PAGES = ['example', 'theme-builder'];
 
 const FULL_SCREEN_WITH_FOOTER_PAGES = [
     'license-pricing',
