@@ -118,20 +118,11 @@ export class ClientSideNodeManager {
     }
 
     public resetAllNodeState() {
-        this.rootNode?.allLeafChildren?.forEach(node => {
-            this.setMasterForRow(node, node.data, node.level, false);
-            node.childrenAfterGroup = [];
-            node.childrenAfterFilter = [];
-            node.childrenAfterSort = [];
-            node.childrenAfterAggFilter = [];
-            node.childrenMapped = {};
-            node.allLeafChildren = [];
-            node.group = false;
-            node.parent = null;
-            node.expanded = false;
-            node.groupData = {};
-            node.aggData = undefined;
-        });
+        // reset all nodes map, as we're just repopulating it with the same nodes when we call createNode
+        this.allNodesMap = {};
+        // Shotgun reset all node state. This is used by treeData reactivity to ensure nodes don't include any group state
+        // the selectionService will sync in old selection state into these new nodes.
+        this.rootNode.allLeafChildren = this.rootNode.allLeafChildren.map(leafNode => this.createNode(leafNode.data, this.rootNode, ClientSideNodeManager.TOP_LEVEL));
     }
 
     public updateRowData(rowDataTran: RowDataTransaction, rowNodeOrder: { [id: string]: number } | null | undefined): RowNodeTransaction {
