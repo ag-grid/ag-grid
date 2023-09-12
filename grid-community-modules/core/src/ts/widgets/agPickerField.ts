@@ -90,7 +90,7 @@ export abstract class AgPickerField<TValue, TConfig extends IPickerFieldParams =
         const displayId = `ag-${this.getCompId()}-display`;
 
         this.eDisplayField.setAttribute('id', displayId);
-        setAriaDescribedBy(this.eWrapper, displayId);
+        setAriaDescribedBy(this.getAriaElement(), displayId);
 
         const eGui = this.getGui();
 

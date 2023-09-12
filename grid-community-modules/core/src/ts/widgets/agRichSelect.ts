@@ -467,7 +467,7 @@ export class AgRichSelect<TValue = any> extends AgPickerField<TValue, RichSelect
             if (!shouldFilter || filterValueLen) {
                 this.listComponent?.ensureIndexVisible(0);
             } else if (shouldFilter) {
-                this.eWrapper.removeAttribute('data-active-option');
+                this.getAriaElement().removeAttribute('data-active-option');
                 const eListAriaEl = this.listComponent?.getAriaElement();
                 if (eListAriaEl) {
                     setAriaActiveDescendant(eListAriaEl, null);
