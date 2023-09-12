@@ -71,7 +71,7 @@ export class RowDragComp extends Component {
     // returns true if all compatibility items work out
     private checkCompatibility(): void {
         const managed = this.gridOptionsService.is('rowDragManaged');
-        const treeData = this.gridOptionsService.isTreeData();
+        const treeData = this.gridOptionsService.is('treeData');
 
         if (treeData && managed) {
             doOnce(() =>
