@@ -272,7 +272,7 @@ export class ColumnModel extends BeanStub {
             this.pivotMode = pivotMode;
         }
 
-        this.usingTreeData = this.gridOptionsService.isTreeData();
+        this.usingTreeData = this.gridOptionsService.is('treeData');
 
         this.addManagedPropertyListener<ColDefPropertyChangedEvent>('groupDisplayType', () => this.onGroupDisplayTypeChanged());
         this.addManagedPropertyListener<ColDefPropertyChangedEvent>('autoGroupColumnDef', () => this.onAutoGroupColumnDefChanged());
@@ -498,7 +498,7 @@ export class ColumnModel extends BeanStub {
     }
 
     private isPivotSettingAllowed(pivot: boolean): boolean {
-        if (pivot && this.gridOptionsService.isTreeData()) {
+        if (pivot && this.gridOptionsService.is('treeData')) {
             console.warn("AG Grid: Pivot mode not available in conjunction Tree Data i.e. 'gridOptions.treeData: true'");
             return false;
         }

@@ -106,7 +106,7 @@ export class Beans {
 
     @PostConstruct
     private postConstruct(): void {
-        this.doingMasterDetail = this.gridOptionsService.isMasterDetail();
+        this.doingMasterDetail = this.gridOptionsService.is('masterDetail');
 
         if (this.gridOptionsService.isRowModelType('clientSide')) {
             this.clientSideRowModel = this.rowModel as IClientSideRowModel;

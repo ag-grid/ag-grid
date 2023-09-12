@@ -441,20 +441,10 @@ export class GridOptionsService {
         return true;
     }
 
-    public isTreeData(): boolean {
-        return this.is('treeData') && ModuleRegistry.__assertRegistered(ModuleNames.RowGroupingModule, 'Tree Data', this.api.getGridId());
-    }
-    public isMasterDetail() {
-        return this.is('masterDetail') && ModuleRegistry.__assertRegistered(ModuleNames.MasterDetailModule, 'masterDetail', this.api.getGridId());
-    }
-    public isEnableRangeSelection(): boolean {
-        return this.is('enableRangeSelection') && ModuleRegistry.__isRegistered(ModuleNames.RangeSelectionModule, this.api.getGridId());
-    }
-
     public isColumnsSortingCoupledToGroup(): boolean {
         const autoGroupColumnDef = this.gridOptions.autoGroupColumnDef;
         const isClientSideRowModel = this.isRowModelType('clientSide');
-        return isClientSideRowModel && !autoGroupColumnDef?.comparator && !this.isTreeData();
+        return isClientSideRowModel && !autoGroupColumnDef?.comparator && !this.is('treeData');
     }
 
     public getGroupAggFiltering(): ((params: WithoutGridCommon<GetGroupAggFilteringParams>) => boolean) | undefined {
