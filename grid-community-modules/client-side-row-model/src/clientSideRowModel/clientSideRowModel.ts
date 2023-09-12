@@ -697,15 +697,9 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel 
         recursionType: RecursionType;
         index: number;
         includeFooterNodes: boolean
-    }) {
+    }): number {
         const { nodes, callback, recursionType, includeFooterNodes } = params;
         let { index } = params;
-
-        const firstNode = nodes[0];
-
-        if (includeFooterNodes && firstNode?.parent?.sibling) {
-            nodes.push(firstNode.parent.sibling);
-        } 
 
         for (let i = 0; i < nodes.length; i++) {
             const node = nodes[i];
@@ -740,6 +734,21 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel 
                 }
             }
         }
+
+        const parentNode = nodes[0]?.parent;
+        if (!includeFooterNodes || !parentNode) return index;
+
+        const isRootNode = parentNode === this.rootNode;
+        if (isRootNode) {
+            const totalFooters = this.gridOptionsService.is('groupIncludeTotalFooter');
+            if (!totalFooters) return index;
+        } else {
+            const isGroupIncludeFooter = this.gridOptionsService.getGroupIncludeFooter();
+            if (!isGroupIncludeFooter({ node: parentNode })) return index;
+        }
+
+        parentNode.createFooter();
+        callback(parentNode.sibling, index++);
         return index;
     }
 
