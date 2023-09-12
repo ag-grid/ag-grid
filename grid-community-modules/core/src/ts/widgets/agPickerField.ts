@@ -94,20 +94,10 @@ export abstract class AgPickerField<TValue, TConfig extends IPickerFieldParams =
 
         const eGui = this.getGui();
 
-        this.addManagedListener(eGui, 'mousedown', (e: MouseEvent) => {
-            if (
-                !this.skipClick &&
-                this.pickerComponent?.isAlive() &&
-                isVisible(this.pickerComponent.getGui()) &&
-                eGui.contains(e.target as HTMLElement)
-            ) {
-                this.skipClick = true;
-            }
-        });
-
         this.addManagedListener(eGui, 'keydown', this.onKeyDown.bind(this));
-        this.addManagedListener(this.eLabel, 'click', this.clickHandler.bind(this));
-        this.addManagedListener(this.eWrapper, 'click', this.clickHandler.bind(this));
+        this.addManagedListener(this.eLabel, 'mousedown', this.onLabelOrWrapperMouseDown.bind(this));
+        this.addManagedListener(this.eWrapper, 'mousedown', this.onLabelOrWrapperMouseDown.bind(this));
+
 
         const { pickerIcon } = this.config;
 
@@ -140,14 +130,19 @@ export abstract class AgPickerField<TValue, TConfig extends IPickerFieldParams =
         super.refreshLabel();
     }
 
-    private clickHandler(): void {
+    private onLabelOrWrapperMouseDown(): void {
         if (this.skipClick) {
             this.skipClick = false;
             return;
         }
 
         if (this.isDisabled()) { return; }
-        this.showPicker();
+
+        if (this.isPickerDisplayed) {
+            this.hidePicker();
+        } else {
+            this.showPicker();
+        }
     }
 
     protected onKeyDown(e: KeyboardEvent): void {
@@ -157,7 +152,7 @@ export abstract class AgPickerField<TValue, TConfig extends IPickerFieldParams =
             case KeyCode.ENTER:
             case KeyCode.SPACE:
                 e.preventDefault();
-                this.clickHandler();
+                this.onLabelOrWrapperMouseDown();
                 break;
             case KeyCode.ESCAPE:
                 if (this.isPickerDisplayed) {

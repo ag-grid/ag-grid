@@ -6,7 +6,6 @@ import { KeyCode } from "../constants/keyCode";
 export class AgSelect extends AgPickerField<string | null, IPickerFieldParams, AgList> {
     public static EVENT_ITEM_SELECTED = 'selectedItem';
     protected listComponent: AgList | undefined;
-    private pickerFocusOutListener: (() => null) | undefined;
 
     constructor(config?: IPickerFieldParams) {
         super({
@@ -74,23 +73,7 @@ export class AgSelect extends AgPickerField<string | null, IPickerFieldParams, A
 
         super.showPicker();
 
-        const ePicker = this.listComponent.getGui();
-        this.pickerFocusOutListener = this.addManagedListener(ePicker, 'focusout', (e: FocusEvent) => {
-            if (!ePicker.contains(e.relatedTarget as HTMLElement)) {
-                this.hidePicker();
-            }
-        });
-
         this.listComponent.refreshHighlighted();
-    }
-
-    protected beforeHidePicker(): void {
-        if (this.pickerFocusOutListener) {
-            this.pickerFocusOutListener();
-            this.pickerFocusOutListener = undefined;
-        }
-
-        super.beforeHidePicker();
     }
 
     public addOptions(options: ListOption[]): this {

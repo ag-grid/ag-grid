@@ -13,7 +13,7 @@ export interface IRichCellEditorParams<TData = any, TValue = any> {
     cellRenderer: any;
     /** Set to `true` to be able to type values in the display area. Default: `false`. */
     allowTyping?: boolean;
-    /** If `true` it will filter the list of values as you type (only relevant when `allowTying=true`). Default: `false` */
+    /** If `true` it will filter the list of values as you type (only relevant when `allowTyping=true`). Default: `false` */
     filterList: true;
     /** 
      * The type of search algorithm that is used when searching for values. 
