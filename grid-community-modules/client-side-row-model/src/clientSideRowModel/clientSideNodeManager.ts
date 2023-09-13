@@ -117,14 +117,6 @@ export class ClientSideNodeManager {
         }
     }
 
-    public resetAllNodeState() {
-        // reset all nodes map, as we're just repopulating it with the same nodes when we call createNode
-        this.allNodesMap = {};
-        // Shotgun reset all node state. This is used by treeData reactivity to ensure nodes don't include any group state
-        // the selectionService will sync in old selection state into these new nodes.
-        this.rootNode.allLeafChildren = this.rootNode.allLeafChildren.map(leafNode => this.createNode(leafNode.data, this.rootNode, ClientSideNodeManager.TOP_LEVEL));
-    }
-
     public updateRowData(rowDataTran: RowDataTransaction, rowNodeOrder: { [id: string]: number } | null | undefined): RowNodeTransaction {
         this.dispatchRowDataUpdateStartedEvent(rowDataTran.add);
 
