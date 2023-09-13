@@ -57,10 +57,10 @@ export class AdvancedFilterBuilderComp extends Component {
 
     @PostConstruct
     private postConstruct(): void {
-        const { showMoveButtons } = this.gridOptionsService.get('advancedFilterParams') ?? {};
-        this.showMove = !!showMoveButtons;
+        const { builderShowMoveButtons } = this.gridOptionsService.get('advancedFilterParams') ?? {};
+        this.showMove = !!builderShowMoveButtons;
         this.addManagedPropertyListener('advancedFilterParams', ({currentValue}) => {
-            this.showMove = !!currentValue?.showMoveButtons;
+            this.showMove = !!currentValue?.builderShowMoveButtons;
             this.refreshList(false);
         })
 

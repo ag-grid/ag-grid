@@ -119,16 +119,16 @@ export class ConditionPillWrapperComp extends Component {
         return this.filterModel.colId;
     }
 
-    private getColumnDisplayValue(): string {
-        return this.advancedFilterExpressionService.parseColumnName(this.filterModel);
+    private getColumnDisplayValue(): string | undefined {
+        return this.advancedFilterExpressionService.getColumnDisplayValue(this.filterModel);
     }
 
     private getOperatorKey(): string {
         return this.filterModel.type;
     }
 
-    private getOperatorDisplayValue(): string {
-        return this.advancedFilterExpressionService.parseOperator(this.filterModel);
+    private getOperatorDisplayValue(): string | undefined {
+        return this.advancedFilterExpressionService.getOperatorDisplayValue(this.filterModel);
     }
 
     private getOperandDisplayValue(): string {
@@ -191,8 +191,8 @@ export class ConditionPillWrapperComp extends Component {
 
     private setOperand(operand: string): void {
         let parsedOperand: string | number = operand;
-        if (this.baseCellDataType === 'number' && this.column) {
-            parsedOperand = this.valueParserService.parseValue(this.column, null, operand, undefined);
+        if (this.column) {
+            parsedOperand = this.advancedFilterExpressionService.getOperandModelValue(operand, this.baseCellDataType, this.column) ?? '';
         }
         (this.filterModel as any).filter = parsedOperand;
         this.validate();

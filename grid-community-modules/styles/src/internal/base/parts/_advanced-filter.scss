@@ -200,6 +200,11 @@
         background-color: var(--ag-advanced-filter-value-pill-color);
 
         cursor: text;
+        text-overflow: ellipsis;
+        overflow: hidden;
+        white-space: nowrap;
+        display: block;
+        max-width: 140px;
     }
 
     .ag-advanced-filter-builder-value-number {

@@ -61,7 +61,7 @@ export class AdvancedFilterExpressionService extends BeanStub {
         return this.expressionJoinOperators[type] ?? type;
     }
 
-    public parseColumnName(model: ColumnAdvancedFilterModel): string {
+    public getColumnDisplayValue(model: ColumnAdvancedFilterModel): string | undefined {
         const { colId } = model;
         const columnEntries = this.getColumnAutocompleteEntries();
         const columnEntry = columnEntries.find(({ key }) => key === colId);
@@ -75,14 +75,14 @@ export class AdvancedFilterExpressionService extends BeanStub {
         return columnName;
     }
 
-    public parseOperator(model: ColumnAdvancedFilterModel): string {
+    public getOperatorDisplayValue(model: ColumnAdvancedFilterModel): string | undefined {
         return this.getExpressionOperator(model.filterType, model.type)?.displayValue ?? model.type;
     }
 
     public getOperandModelValue(operand: string, baseCellDataType: BaseCellDataType, column: Column): string | number | null {
         switch (baseCellDataType) {
             case 'number':
-                return parseFloat(operand);
+                return _.exists(operand) ? Number(operand) : null;
             case 'date':
                 return _.serialiseDate(this.valueParserService.parseValue(column, null, operand, undefined), false);
             case 'dateString':
@@ -128,8 +128,8 @@ export class AdvancedFilterExpressionService extends BeanStub {
     }
 
     public parseColumnFilterModel(model: ColumnAdvancedFilterModel): string {
-        const columnName = this.parseColumnName(model);
-        const operator = this.parseOperator(model) ?? '';
+        const columnName = this.getColumnDisplayValue(model) ?? '';
+        const operator = this.getOperatorDisplayValue(model) ?? '';
         const operands = this.getOperandDisplayValue(model);
         return `[${columnName}] ${operator}${operands}`;
     }

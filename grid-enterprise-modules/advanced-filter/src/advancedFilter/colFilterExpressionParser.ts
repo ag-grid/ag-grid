@@ -246,7 +246,7 @@ class OperandParser implements Parser {
             }
             switch (this.baseCellDataType) {
                 case 'number':
-                    if (isNaN(this.modelValue as number)) {
+                    if (this.quotes || isNaN(this.modelValue as number)) {
                         this.valid = false;
                         this.validationMessage = advancedFilterExpressionService.translate('advancedFilterValidationNotANumber');
                     }
@@ -428,7 +428,7 @@ export class ColFilterExpressionParser {
         const { baseCellDataType, column } = this.columnParser!;
         switch (baseCellDataType) {
             case 'number':
-                operand = parseFloat(operand);
+                operand = Number(operand);
                 break;
             case 'date':
             case 'dateString':

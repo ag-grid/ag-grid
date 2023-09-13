@@ -102,6 +102,7 @@ export class AdvancedFilterCtrl extends BeanStub implements IAdvancedFilterCtrl 
             maximizable: true,
             centered: true,
             closable: true,
+            minWidth: this.gridOptionsService.get('advancedFilterParams')?.builderMinWidth ?? 500,
             afterGuiAttached: () => this.eBuilderComp?.afterGuiAttached()
         }));
 
@@ -118,7 +119,7 @@ export class AdvancedFilterCtrl extends BeanStub implements IAdvancedFilterCtrl 
 
     private getBuilderDialogSize(): { width: number, height: number; } {
         const popupParent = this.popupService.getPopupParent();
-        const maxWidth = Math.round(_.getAbsoluteWidth(popupParent) * 0.75);
+        const maxWidth = Math.round(_.getAbsoluteWidth(popupParent));
         const maxHeight = Math.round(_.getAbsoluteHeight(popupParent) * 0.75);
 
         const width = Math.min(600, maxWidth);

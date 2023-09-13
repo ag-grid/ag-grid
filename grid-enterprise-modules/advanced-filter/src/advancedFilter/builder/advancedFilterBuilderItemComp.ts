@@ -190,7 +190,10 @@ export class AdvancedFilterBuilderItemComp extends TabGuardComp {
     }
 
     private setupAddButton(): void {
-        const addButtonParams = getAdvancedFilterBuilderAddButtonParams(key => this.advancedFilterExpressionService.translate(key));
+        const addButtonParams = getAdvancedFilterBuilderAddButtonParams(
+            key => this.advancedFilterExpressionService.translate(key),
+            this.gridOptionsService.get('advancedFilterParams')?.builderAddSelectWidth
+        );
         const eAddButton = this.createManagedBean(new AddDropdownComp(addButtonParams));
         this.addManagedListener(
             eAddButton,
@@ -301,6 +304,9 @@ export class AdvancedFilterBuilderItemComp extends TabGuardComp {
         };
         if (params.isSelect) {
             const { getEditorParams, pickerAriaLabelKey, pickerAriaLabelValue } = params;
+            const advancedFilterParams = this.gridOptionsService.get('advancedFilterParams');
+            const minPickerWidth = `${advancedFilterParams?.builderPillSelectMinWidth ?? 140}px`;
+            const maxPickerWidth = `${advancedFilterParams?.builderPillSelectMaxWidth ?? 200}px`;
             const comp = this.createBean(new SelectPillComp({
                 pickerAriaLabelKey,
                 pickerAriaLabelValue,
@@ -312,8 +318,8 @@ export class AdvancedFilterBuilderItemComp extends TabGuardComp {
                 valueFormatter: (value: AutocompleteEntry) =>
                     value == null ? null : value.displayValue ?? value.key,
                 variableWidth: true,
-                minPickerWidth: '140px',
-                maxPickerWidth: '200px',
+                minPickerWidth,
+                maxPickerWidth,
                 getEditorParams,
                 wrapperClassName: cssClass
             }));
