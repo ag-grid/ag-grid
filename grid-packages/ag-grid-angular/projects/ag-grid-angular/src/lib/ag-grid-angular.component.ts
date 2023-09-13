@@ -487,6 +487,7 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
          * Set to `null` or `undefined` to appear inside the grid.
          */
     @Input() public advancedFilterParent: HTMLElement | null | undefined = undefined;
+    /** Customise the parameters passed to the Advanced Filter.     */
     @Input() public advancedFilterParams: IAdvancedFilterParams | undefined = undefined;
     /** Set to `true` to Enable Charts. Default: `false`     */
     @Input() public enableCharts: boolean | undefined = undefined;

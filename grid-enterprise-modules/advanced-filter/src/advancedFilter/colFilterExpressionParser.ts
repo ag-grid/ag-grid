@@ -514,9 +514,9 @@ export class ColFilterExpressionParser {
     }
 
     private hasOperand(baseCellDataType?: BaseCellDataType, operator?: string): boolean {
-        return !baseCellDataType
-            || !operator
-            || (this.params.advancedFilterExpressionService.getExpressionOperator(baseCellDataType, operator)?.numOperands ?? 0) > 0;
+        return !baseCellDataType ||
+            !operator ||
+            (this.params.advancedFilterExpressionService.getExpressionOperator(baseCellDataType, operator)?.numOperands ?? 0) > 0;
     }
 
     private doesOperandNeedQuotes(baseCellDataType?: BaseCellDataType): boolean {

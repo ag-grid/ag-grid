@@ -331,6 +331,7 @@ export interface GridOptions<TData = any> {
      * Set to `null` or `undefined` to appear inside the grid.
      */
     advancedFilterParent?: HTMLElement | null;
+    /** Customise the parameters passed to the Advanced Filter. */
     advancedFilterParams?: IAdvancedFilterParams;
 
     // *** Integrated Charts *** //

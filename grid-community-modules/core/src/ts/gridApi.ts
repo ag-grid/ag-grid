@@ -766,6 +766,7 @@ export class GridApi<TData = any> {
         this.gos.set('advancedFilterParent', advancedFilterParent);
     }
 
+    /** Updates the Advanced Filter parameters. */
     public setAdvancedFilterParams(params?: IAdvancedFilterParams): void {
         this.gos.set('advancedFilterParams', params);
     }
