@@ -171,45 +171,7 @@
         min-width: calc(var(--ag-grid-size) * 2);
     }
 
-    // @include ag.keyboard-focus((ag-advanced-filter-builder-pill, ag-advanced-filter-builder-item-button), -4px);
-
-    .ag-keyboard-focus {
-        .ag-advanced-filter-builder-pill:focus {
-            outline: none;
-            &::after {
-                content: '';
-                position: absolute;
-                background-color: transparent;
-                pointer-events: none;
-                top: -4px;
-                left: -4px;
-                display: block;
-                width: calc(100% + 8px);
-                height: calc(100% + 8px);
-                border: 1px solid;
-                border-color: var(--ag-input-focus-border-color);
-            }
-        }
-    }
-
-    .ag-keyboard-focus {
-        .ag-advanced-filter-builder-item-button:focus {
-            outline: none;
-            &::after {
-                content: '';
-                position: absolute;
-                background-color: transparent;
-                pointer-events: none;
-                top: -4px;
-                left: -4px;
-                display: block;
-                width: calc(100% + 8px);
-                height: calc(100% + 8px);
-                border: 1px solid;
-                border-color: var(--ag-input-focus-border-color);
-            }
-        }
-    }
+    @include ag.keyboard-focus((ag-advanced-filter-builder-pill, ag-advanced-filter-builder-item-button), -4px);
 
     .ag-advanced-filter-builder-pill-display {
         margin-right: var(--ag-grid-size);
@@ -278,16 +240,13 @@
         }
     }
 
-    .ag-keyboard-focus .ag-advanced-filter-builder-virtual-list-item-highlight .ag-advanced-filter-builder-item-button {
+    .ag-keyboard-focus .ag-advanced-filter-builder-virtual-list-item-highlight .ag-advanced-filter-builder-item-button,
+    .ag-advanced-filter-builder-validation .ag-advanced-filter-builder-invalid {
         opacity: 100%;
     }
 
     .ag-advanced-filter-builder-invalid {
         color: var(--ag-invalid-color);
         cursor: default;
-    }
-
-    .ag-advanced-filter-builder-validation .ag-advanced-filter-builder-invalid {
-        opacity: 100%;
     }
 }
