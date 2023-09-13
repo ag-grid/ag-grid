@@ -254,8 +254,8 @@
     }
 
     .ag-advanced-filter-builder-invalid {
+        margin: 0 var(--ag-grid-size);
         color: var(--ag-invalid-color);
         cursor: default;
-        opacity: 100%;
     }
 }

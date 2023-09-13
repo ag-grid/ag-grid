@@ -65,9 +65,9 @@ export class AdvancedFilterBuilderItemComp extends TabGuardComp {
                 <div ref="eItem" class="ag-advanced-filter-builder-item">
                     <div ref="eTreeLines" class="ag-advanced-filter-builder-item-tree-lines" aria-hidden="true"></div>
                     <span ref="eDragHandle" class="ag-drag-handle" role="presentation"></span>
+                    <span ref="eValidation" class="ag-advanced-filter-builder-item-button ag-advanced-filter-builder-invalid" role="presentation"></span>
                 </div>
                 <div ref="eButtons" class="ag-advanced-filter-builder-item-buttons">
-                    <span ref="eValidation" class="ag-advanced-filter-builder-item-button ag-advanced-filter-builder-invalid" role="presentation"></span>
                     <span ref="eMoveUpButton" class="ag-advanced-filter-builder-item-button" role="presentation"></span>
                     <span ref="eMoveDownButton" class="ag-advanced-filter-builder-item-button" role="presentation"></span>
                     <div ref="eAddButton" role="presentation"></div>
@@ -84,7 +84,7 @@ export class AdvancedFilterBuilderItemComp extends TabGuardComp {
         const isJoin = filterModel!.filterType === 'join';
         this.ePillWrapper = this.createManagedBean(isJoin ? new JoinPillWrapperComp() : new ConditionPillWrapperComp());
         this.ePillWrapper.init({ item: this.item, createPill: (params: CreatePillParams) => this.createPill(params) });
-        this.eItem.appendChild(this.ePillWrapper.getGui());
+        this.eDragHandle.insertAdjacentElement('afterend', this.ePillWrapper.getGui());
         
         if (level === 0) {
             const eTreeLine = document.createElement('div');
