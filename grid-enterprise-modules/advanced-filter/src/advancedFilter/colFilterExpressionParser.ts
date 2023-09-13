@@ -237,6 +237,9 @@ class OperandParser implements Parser {
             // missing end quote
             this.valid = false;
             this.validationMessage = this.params.translate('advancedFilterValidationMissingQuote');
+        } else if (this.modelValue === '') {
+            this.valid = false;
+            this.validationMessage = this.params.translate('advancedFilterValidationMissingValue');
         } else {
             const modelValue = this.params.parseOperandModelValue(this.operand, this.baseCellDataType, this.column!);
             if (modelValue != null) {
