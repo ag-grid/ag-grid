@@ -149,6 +149,8 @@
         @include ag.unthemed-rtl((margin-right: var(--ag-widget-container-horizontal-padding)))
     }
 
+    @include ag.keyboard-focus((ag-filter-virtual-list-item), 1px);
+
     .ag-filter-apply-panel {
         padding: var(--ag-widget-container-vertical-padding) var(--ag-widget-container-horizontal-padding);
         border-top: var(--ag-borders-secondary) var(--ag-secondary-border-color);
