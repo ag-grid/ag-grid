@@ -18,10 +18,10 @@
     --ag-input-disabled-background-color: #ebebeb;
     --ag-checkbox-unchecked-color: #7f8c8d;
     --ag-input-focus-border-color: #719ECE;
-    --ag-advanced-filter-join-pill-color: lightpink;
-    --ag-advanced-filter-column-pill-color: lightcyan;
-    --ag-advanced-filter-option-pill-color: lightgreen;
-    --ag-advanced-filter-value-pill-color: lightgrey;
+    --ag-advanced-filter-join-pill-color: #fa8686;
+    --ag-advanced-filter-column-pill-color: #94e57a;
+    --ag-advanced-filter-option-pill-color: #f9bd7e;
+    --ag-advanced-filter-value-pill-color: #69c2f5;
 
     // derived colours (no color blending - these are shared by balham-dark)
     --ag-input-focus-box-shadow: 0 0 2px 1px var(--ag-input-focus-border-color);
@@ -85,10 +85,10 @@
     --ag-input-disabled-background-color: rgba(48, 46, 46, 0.3);
     --ag-modal-overlay-background-color: rgba(45, 52, 54, 0.66);
     --ag-checkbox-unchecked-color: #ecf0f1;
-    --ag-advanced-filter-join-pill-color: darkviolet;
-    --ag-advanced-filter-column-pill-color: darkcyan;
-    --ag-advanced-filter-option-pill-color: darkgreen;
-    --ag-advanced-filter-value-pill-color: dimgrey;
+    --ag-advanced-filter-join-pill-color: #c83d3d;
+    --ag-advanced-filter-column-pill-color: #49a539;
+    --ag-advanced-filter-option-pill-color: #932cc4;
+    --ag-advanced-filter-value-pill-color: #3b60d6;
 
     // override blended colors from balham theme
     --ag-secondary-foreground-color: var(--ag-foreground-color);
