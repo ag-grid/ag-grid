@@ -357,7 +357,7 @@ export class AdvancedFilterBuilderItemComp extends TabGuardComp {
             type: DragSourceType.AdvancedFilterBuilder,
             eElement: this.eDragHandle,
             dragItemName: () => this.ePillWrapper.getDragName(),
-            defaultIconName: DragAndDropService.ICON_NOT_ALLOWED,
+            getDefaultIconName: () => DragAndDropService.ICON_NOT_ALLOWED,
             getDragItem: () => ({}),
             onDragStarted: () => this.dragFeature.dispatchEvent<AdvancedFilterBuilderDragStartedEvent>({
                 type: AdvancedFilterBuilderDragFeature.EVENT_DRAG_STARTED,

@@ -8,7 +8,6 @@ import {
     ColumnModel,
     DataTypeService,
     Events,
-    IAdvancedFilterCtrl,
     IAdvancedFilterService,
     IRowModel,
     IRowNode,

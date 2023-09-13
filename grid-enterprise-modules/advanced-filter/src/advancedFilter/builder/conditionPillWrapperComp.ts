@@ -132,7 +132,7 @@ export class ConditionPillWrapperComp extends Component {
     }
 
     private getOperandDisplayValue(): string {
-        return this.advancedFilterExpressionService.parseOperand(this.filterModel, true);
+        return this.advancedFilterExpressionService.getOperandDisplayValue(this.filterModel, true);
     }
 
     private hasOperand(): boolean {

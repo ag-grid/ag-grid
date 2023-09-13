@@ -28,6 +28,7 @@ export const ADVANCED_FILTER_LOCALE_TEXT = {
     advancedFilterValidationInvalidOption: 'Option not found',
     advancedFilterValidationMissingQuote: 'Value is missing an end quote',
     advancedFilterValidationNotANumber: 'Value is not a number',
+    advancedFilterValidationInvalidDate: 'Value is not a valid date',
     advancedFilterValidationMissingCondition: 'Condition is missing',
     advancedFilterValidationJoinOperatorMismatch: 'Join operators within a condition must be the same',
     advancedFilterValidationInvalidJoinOperator: 'Join operator not found',

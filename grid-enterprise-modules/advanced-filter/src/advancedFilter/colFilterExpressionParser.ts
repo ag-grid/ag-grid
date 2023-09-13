@@ -1,5 +1,5 @@
 
-import { AdvancedFilterModel, AutocompleteEntry, AutocompleteListParams, BaseCellDataType, Column } from "@ag-grid-community/core";
+import { AdvancedFilterModel, AutocompleteEntry, AutocompleteListParams, BaseCellDataType, Column, _ } from "@ag-grid-community/core";
 import { ADVANCED_FILTER_LOCALE_TEXT } from "./advancedFilterLocaleText";
 import {
     AutocompleteUpdate,
@@ -232,17 +232,32 @@ class OperandParser implements Parser {
     }
 
     private parseOperand(fromComplete: boolean, position: number): void {
+        const { advancedFilterExpressionService } = this.params;
         this.endPosition = position;
         this.modelValue = this.operand;
         if (fromComplete && this.quotes) {
             // missing end quote
             this.valid = false;
-            this.validationMessage = this.params.advancedFilterExpressionService.translate('advancedFilterValidationMissingQuote');
-        } else if (this.baseCellDataType === 'number') {
-            this.modelValue = this.params.valueParserService.parseValue(this.column!, null, this.operand, undefined);
-            if (isNaN(this.modelValue as number)) {
-                this.valid = false;
-                this.validationMessage = this.params.advancedFilterExpressionService.translate('advancedFilterValidationNotANumber');
+            this.validationMessage = advancedFilterExpressionService.translate('advancedFilterValidationMissingQuote');
+        } else {
+            const modelValue = advancedFilterExpressionService.getOperandModelValue(this.operand, this.baseCellDataType, this.column!);
+            if (modelValue != null) {
+                this.modelValue = modelValue;
+            }
+            switch (this.baseCellDataType) {
+                case 'number':
+                    if (isNaN(this.modelValue as number)) {
+                        this.valid = false;
+                        this.validationMessage = advancedFilterExpressionService.translate('advancedFilterValidationNotANumber');
+                    }
+                    break;
+                case 'date':
+                case 'dateString':
+                    if (modelValue == null) {
+                        this.valid = false;
+                        this.validationMessage = advancedFilterExpressionService.translate('advancedFilterValidationInvalidDate');
+                    }
+                    break;
             }
         }
     }
@@ -413,10 +428,12 @@ export class ColFilterExpressionParser {
         const { baseCellDataType, column } = this.columnParser!;
         switch (baseCellDataType) {
             case 'number':
-            case 'boolean':
+                operand = parseFloat(operand);
+                break;
             case 'date':
             case 'dateString':
                 operand = this.params.valueParserService.parseValue(column!, null, operand, undefined);
+                break;
         }
         if (baseCellDataType === 'dateString') {
             return this.params.dataTypeService.getDateParserFunction()(operand as string);

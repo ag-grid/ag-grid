@@ -79,6 +79,18 @@ export class DefaultDateComponent extends Component implements IDateComp {
             );
         }
 
+        if (minValidDate && maxValidDate) {
+            const [parsedMinValidDate, parsedMaxValidDate] = [minValidDate, maxValidDate]
+                .map(v => v instanceof Date ? v : parseDateTimeFromString(v));
+
+            if (parsedMinValidDate && parsedMaxValidDate && parsedMinValidDate.getTime() > parsedMaxValidDate.getTime()) {
+                doOnce(
+                    () => console.warn('AG Grid: DateFilter parameter minValidDate should always be lower than or equal to parameter maxValidDate.'),
+                    'DateFilter.minValidDateAndMaxValidDateWarning',
+                );
+            }
+        }
+
         if (minValidDate) {
             if (minValidDate instanceof Date) {
                 inputElement.min = dateToFormattedString(minValidDate);

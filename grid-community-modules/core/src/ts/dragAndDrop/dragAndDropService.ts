@@ -62,7 +62,7 @@ export interface DragSource {
     /**
      * Icon to show when not over a drop zone
      */
-    defaultIconName?: string;
+    getDefaultIconName?: () => string;
     /**
      * The drop target associated with this dragSource. When dragging starts, this
      * target does not get an onDragEnter event.
@@ -558,7 +558,7 @@ export class DragAndDropService extends BeanStub {
         let eIcon: Element | null = null;
 
         if (!iconName) {
-            iconName = this.dragSource.defaultIconName || DragAndDropService.ICON_NOT_ALLOWED;
+            iconName = this.dragSource.getDefaultIconName ? this.dragSource.getDefaultIconName() : DragAndDropService.ICON_NOT_ALLOWED;
         }
 
         switch (iconName) {

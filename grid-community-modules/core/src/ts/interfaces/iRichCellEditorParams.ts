@@ -1,15 +1,19 @@
 import { ICellEditorParams } from "./iCellEditor";
 
+export interface RichCellEditorValuesCallback<TData = any, TValue = any> {
+    (params: ICellEditorParams<TData, TValue>): TValue[] | Promise<TValue[]>;
+}
+
 export interface IRichCellEditorParams<TData = any, TValue = any> {
     /** The list of values to be selected from. */
-    values: TValue[] | ((params: ICellEditorParams<TData, TValue>) => TValue[] | Promise<TValue[]>);
+    values: TValue[] | RichCellEditorValuesCallback<TData, TValue>;
     /** The row height, in pixels, of each value. */
     cellHeight: number;
     /** The cell renderer to use to render each value. Cell renderers are useful for rendering rich HTML values, or when processing complex data. */
     cellRenderer: any;
     /** Set to `true` to be able to type values in the display area. Default: `false`. */
     allowTyping?: boolean;
-    /** If `true` it will filter the list of values as you type (only relevant when `allowTying=true`). Default: `false` */
+    /** If `true` it will filter the list of values as you type (only relevant when `allowTyping=true`). Default: `false` */
     filterList: true;
     /** 
      * The type of search algorithm that is used when searching for values. 

@@ -17,7 +17,7 @@ export class AutoGroupColService extends BeanStub {
     public createAutoGroupColumns(rowGroupColumns: Column[]): Column[] {
         const groupAutoColumns: Column[] = [];
 
-        const doingTreeData = this.gridOptionsService.isTreeData();
+        const doingTreeData = this.gridOptionsService.is('treeData');
         let doingMultiAutoColumn = this.gridOptionsService.isGroupMultiAutoColumn();
 
         if (doingTreeData && doingMultiAutoColumn) {
@@ -83,7 +83,7 @@ export class AutoGroupColService extends BeanStub {
         res = this.columnFactory.addColumnDefaultAndTypes(res, colId);
 
         // For tree data the filter is always allowed
-        if (!this.gridOptionsService.isTreeData()) {
+        if (!this.gridOptionsService.is('treeData')) {
             // we would only allow filter if the user has provided field or value getter. otherwise the filter
             // would not be able to work.
             const noFieldOrValueGetter =

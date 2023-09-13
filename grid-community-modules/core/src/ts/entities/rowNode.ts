@@ -837,7 +837,7 @@ export class RowNode<TData = any> implements IEventEmitter, IRowNode<TData> {
 
         const isSsrm = this.beans.gridOptionsService.isRowModelType('serverSide');
         if (isSsrm) {
-            const isTreeData = this.beans.gridOptionsService.isTreeData();
+            const isTreeData = this.beans.gridOptionsService.is('treeData');
             const isGroupFunc = this.beans.gridOptionsService.get('isServerSideGroup');
             // stubs and footers can never have children, as they're grid rows. if tree data the presence of children
             // is determined by the isServerSideGroup callback, if not tree data then the rows group property will be set.
@@ -982,6 +982,10 @@ export class RowNode<TData = any> implements IEventEmitter, IRowNode<TData> {
 
         if (this.eventService) {
             this.dispatchLocalEvent(this.createLocalRowEvent(RowNode.EVENT_ROW_SELECTED));
+            const sibling = this.sibling;
+            if (sibling && sibling.footer) {
+                sibling.dispatchLocalEvent(sibling.createLocalRowEvent(RowNode.EVENT_ROW_SELECTED));
+            }
         }
 
         const event: RowSelectedEvent = {

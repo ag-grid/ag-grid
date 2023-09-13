@@ -250,15 +250,23 @@ export class GridApi<TData = any> {
     }
 
     /** Used internally by grid. Not intended to be used by the client. Interface may change between releases. */
-    public __setProperty<K extends keyof GridOptions>(propertyName: K, value: GridOptions[K]) {
-
+    public __setPropertyOnly<K extends keyof GridOptions>(propertyName: K, value: GridOptions[K]): boolean {
+        return this.gos.__setPropertyOnly(propertyName, value);
+    }
+    /** Used internally by grid. Not intended to be used by the client. Interface may change between releases. */
+    public __updateProperty<K extends keyof GridOptions>(
+        propertyName: K,
+        value: GridOptions[K],
+        force: boolean,
+        changeSetId: number
+    ) {
         // Ensure the GridOptions property gets updated and fires the change event as we
         // cannot assume that the dynamic Api call will updated GridOptions.
-        this.gos.set(propertyName, value);
-        // If the dynamic api does update GridOptions then change detection in the 
+        this.gos.set(propertyName, value, force, {}, changeSetId);
+        // If the dynamic api does update GridOptions then change detection in the
         // GridOptionsService will prevent the event being fired twice.
         const setterName = this.getSetterMethod(propertyName);
-        const dynamicApi = (this as any);
+        const dynamicApi = this as any;
         if (dynamicApi[setterName]) {
             dynamicApi[setterName](value);
         }

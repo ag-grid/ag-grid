@@ -60,7 +60,7 @@ To enable group footer for a particular row group column, you could do the follo
 <snippet>
 const gridOptions = {
     // adds a group footer to rows grouped by the country column
-    groupIncludeFooter: (params) => params.node.rowGroupColumn.colId === 'country' 
+    groupIncludeFooter: (params) => params.node.rowGroupColumn.getId() === 'country' 
 }
 </snippet>
 
