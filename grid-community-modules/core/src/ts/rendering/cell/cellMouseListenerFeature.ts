@@ -138,6 +138,8 @@ export class CellMouseListenerFeature extends Beans {
         if (shiftKey && ranges) {
             // this stops the cell from getting focused
             mouseEvent.preventDefault();
+            // focus could have been lost, so restore it to the starting cell in the range if needed
+            this.beans.focusService.checkAndRestoreCellFocus();
         }
 
         // if we are clicking on a checkbox, we need to make sure the cell wrapping that checkbox
