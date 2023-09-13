@@ -14,8 +14,8 @@ const [props, watch, model] = getAgGridProperties();
 })
 export class AgGridVue extends Vue {
 
-    private static ROW_DATA_EVENTS = ['rowDataChanged', 'rowDataUpdated', 'cellValueChanged', 'rowValueChanged'];
-    private static ALWAYS_SYNC_GLOBAL_EVENTS: string[] = [Events.EVENT_GRID_PRE_DESTROYED];
+    private static ROW_DATA_EVENTS: Set<string> = new Set(['rowDataChanged', 'rowDataUpdated', 'cellValueChanged', 'rowValueChanged']);
+    private static ALWAYS_SYNC_GLOBAL_EVENTS: Set<string> = new Set([Events.EVENT_GRID_PRE_DESTROYED]);
 
     private static kebabProperty(property: string) {
         return property.replace(/([a-z])([A-Z])/g, '$1-$2').toLowerCase();
@@ -59,10 +59,8 @@ export class AgGridVue extends Vue {
                 this.gridReadyFired = true;
             }
 
-            if (
-                AgGridVue.ALWAYS_SYNC_GLOBAL_EVENTS.includes(eventType) && !restrictToSyncOnly ||
-                !AgGridVue.ALWAYS_SYNC_GLOBAL_EVENTS.includes(eventType) && restrictToSyncOnly
-            ) {
+            const alwaysSync = AgGridVue.ALWAYS_SYNC_GLOBAL_EVENTS.has(eventType);
+            if ((alwaysSync && !restrictToSyncOnly) || (!alwaysSync && restrictToSyncOnly)) {
                 return;
             }
 
@@ -153,7 +151,7 @@ export class AgGridVue extends Vue {
     private updateModelIfUsed(eventType: string) {
         if (this.gridReadyFired &&
             this.$listeners['data-model-changed'] &&
-            AgGridVue.ROW_DATA_EVENTS.indexOf(eventType) !== -1) {
+            AgGridVue.ROW_DATA_EVENTS.has(eventType)) {
 
             if (this.emitRowModel) {
                 this.emitRowModel();

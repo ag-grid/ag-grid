@@ -234,6 +234,11 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
             this.columnApi = this.gridOptions.columnApi;
         }
 
+        if (this.gridPreDestroyed.observers.length > 0) {
+            console.warn('AG Grid: gridPreDestroyed event listener registered via (gridPreDestroyed)="method($event)" will be ignored! ' +
+                'Please assign via gridOptions.gridPreDestroyed and pass to the grid as [gridOptions]="gridOptions"');
+        }
+
         this._initialised = true;
 
         // sometimes, especially in large client apps gridReady can fire before ngAfterViewInit

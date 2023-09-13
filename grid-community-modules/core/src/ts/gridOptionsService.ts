@@ -73,7 +73,7 @@ export class GridOptionsService {
     // we store this locally, so we are not calling getScrollWidth() multiple times as it's an expensive operation
     private scrollbarWidth: number;
     private domDataKey = '__AG_' + Math.random().toString();
-    private static readonly alwaysSyncGlobalEvents: string[] = [Events.EVENT_GRID_PRE_DESTROYED];
+    private static readonly alwaysSyncGlobalEvents: Set<string> = new Set([Events.EVENT_GRID_PRE_DESTROYED]);
 
     // Store locally to avoid retrieving many times as these are requested for every callback
     public api: GridApi;
@@ -209,7 +209,7 @@ export class GridOptionsService {
     // responsible for calling the onXXX functions on gridOptions
     // It forces events defined in GridOptionsService.alwaysSyncGlobalEvents to be fired synchronously.
     // This is required for events such as GridPreDestroyed.
-    // Other events are fired can be fired asynchronously or synchronously depending on config.
+    // Other events can be fired asynchronously or synchronously depending on config.
     globalEventHandlerFactory = (restrictToSyncOnly?: boolean) => {
         return (eventName: string, event?: any) => {
             // prevent events from being fired _after_ the grid has been destroyed
@@ -217,10 +217,8 @@ export class GridOptionsService {
                 return;
             }
 
-            if (
-                GridOptionsService.alwaysSyncGlobalEvents.includes(eventName) && !restrictToSyncOnly ||
-                !GridOptionsService.alwaysSyncGlobalEvents.includes(eventName) && restrictToSyncOnly
-            ) {
+            const alwaysSync = GridOptionsService.alwaysSyncGlobalEvents.has(eventName);
+            if ((alwaysSync && !restrictToSyncOnly) || (!alwaysSync && restrictToSyncOnly)) {
                 return;
             }
 
