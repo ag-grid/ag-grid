@@ -178,6 +178,7 @@
         overflow: hidden;
         text-overflow: ellipsis;
         white-space: nowrap;
+        font-weight: 500;
     }
 
     .ag-advanced-filter-builder-join-pill {
@@ -205,10 +206,12 @@
         white-space: nowrap;
         display: block;
         max-width: 140px;
+        font-weight: 500;
     }
 
     .ag-advanced-filter-builder-value-number {
         font-family: monospace;
+        font-family: 700;
     }
 
     .ag-advanced-filter-builder-value-empty {
@@ -253,5 +256,6 @@
     .ag-advanced-filter-builder-invalid {
         color: var(--ag-invalid-color);
         cursor: default;
+        opacity: 100%;
     }
 }
