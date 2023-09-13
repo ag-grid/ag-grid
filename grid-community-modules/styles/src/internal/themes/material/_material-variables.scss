@@ -28,14 +28,10 @@
     --ag-checkbox-unchecked-color: #333;
     --ag-value-change-value-highlight-background-color: #00acc1;
     --ag-side-button-selected-background-color: transparent;
-    --ag-advanced-filter-join-pill-foreground-color: #fff;
-    --ag-advanced-filter-join-pill-background-color: #b53f51;
-    --ag-advanced-filter-column-pill-foreground-color: #fff;
-    --ag-advanced-filter-column-pill-background-color: #3f8cb5;
-    --ag-advanced-filter-option-pill-foreground-color: #fff;
-    --ag-advanced-filter-option-pill-background-color: #b5a33f;
-    --ag-advanced-filter-value-pill-foreground-color: #fff;
-    --ag-advanced-filter-value-pill-background-color: #3f51b5;
+    --ag-advanced-filter-join-pill-color: #b53f51;
+    --ag-advanced-filter-column-pill-color: #3f8cb5;
+    --ag-advanced-filter-option-pill-color: #b5a33f;
+    --ag-advanced-filter-value-pill-color: #3f51b5;
 
     // derived colours (no color blending)
     --ag-range-selection-border-color: var(--ag-material-primary-color);

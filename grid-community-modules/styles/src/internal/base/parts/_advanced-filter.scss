@@ -219,23 +219,23 @@
     }
 
     .ag-advanced-filter-builder-join-pill {
-        color: var(--ag-advanced-filter-join-pill-foreground-color);
-        background-color: var(--ag-advanced-filter-join-pill-background-color);
+        color: var(--ag-foreground-color);
+        background-color: var(--ag-advanced-filter-join-pill-color);
     }
     
     .ag-advanced-filter-builder-column-pill {
-        color: var(--ag-advanced-filter-column-pill-foreground-color);
-        background-color: var(--ag-advanced-filter-column-pill-background-color);
+        color: var(--ag-foreground-color);
+        background-color: var(--ag-advanced-filter-column-pill-color);
     }
 
     .ag-advanced-filter-builder-option-pill {
-        color: var(--ag-advanced-filter-option-pill-foreground-color);
-        background-color: var(--ag-advanced-filter-option-pill-background-color);
+        color: var(--ag-foreground-color);
+        background-color: var(--ag-advanced-filter-option-pill-color);
     }
 
     .ag-advanced-filter-builder-value-pill {
-        color: var(--ag-advanced-filter-value-pill-foreground-color);
-        background-color: var(--ag-advanced-filter-value-pill-background-color);
+        color: var(--ag-foreground-color);
+        background-color: var(--ag-advanced-filter-value-pill-color);
 
         cursor: text;
     }
