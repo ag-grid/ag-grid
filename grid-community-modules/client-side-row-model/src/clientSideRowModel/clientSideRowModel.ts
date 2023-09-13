@@ -110,7 +110,9 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel 
             this.selectionService, this.beans);
 
         this.addManagedPropertyListener('treeData', () => {
+            // Shotgun reset all node state. This is used by treeData reactivity to ensure nodes don't include any group state
             this.nodeManager.setRowData(this.rootNode.allLeafChildren.map(child => child.data))
+
             refreshEverythingFunc();
         });
     }
