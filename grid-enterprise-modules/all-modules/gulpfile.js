@@ -91,7 +91,7 @@ const webpackTask = (minify, styles, libraryTarget) => {
             resolve: {
                 extensions: ['.mjs', '.js'],
                 alias: {
-                    "ag-charts-community": path.resolve(__dirname, 'node_modules/@ag-grid-enterprise/charts/node_modules/ag-charts-community/dist/ag-charts-community.esm.js')
+                    "ag-charts-community": path.resolve(__dirname, 'node_modules/@ag-grid-enterprise/charts/node_modules/ag-charts-community/dist/main.esm.js')
                 }
             },
             output: {
