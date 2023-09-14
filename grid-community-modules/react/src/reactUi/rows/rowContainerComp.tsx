@@ -12,7 +12,6 @@ const RowContainerComp = (params: {name: RowContainerName}) => {
     const { name } = params;
     const containerType = useMemo(() => getRowContainerTypeForName(name), [name]);
 
-    const eWrapper = useRef<HTMLDivElement | null>(null);
     const eViewport = useRef<HTMLDivElement | null>(null);
     const eContainer = useRef<HTMLDivElement | null>(null);
 
@@ -22,43 +21,31 @@ const RowContainerComp = (params: {name: RowContainerName}) => {
     const rowContainerCtrlRef = useRef<RowContainerCtrl | null>();
 
     const cssClasses = useMemo(() => RowContainerCtrl.getRowContainerCssClasses(name), [name]);
-    const wrapperClasses = useMemo( ()=> classesList(cssClasses.wrapper), [cssClasses]);
     const viewportClasses = useMemo( ()=> classesList(cssClasses.viewport), [cssClasses]);
     const containerClasses = useMemo( ()=> classesList(cssClasses.container), [cssClasses]);
 
     // no need to useMemo for boolean types
-    const template1 = name === RowContainerName.CENTER;
-    const template2 = name === RowContainerName.TOP_CENTER
+    const template1 = name === RowContainerName.CENTER
+        || name === RowContainerName.TOP_CENTER
         || name === RowContainerName.BOTTOM_CENTER
         || name === RowContainerName.STICKY_TOP_CENTER;
-    const template3 = !template1 && !template2;
 
-    const topLevelRef = template1 ? eWrapper : template2 ? eViewport : eContainer;
+    const topLevelRef = template1 ? eViewport : eContainer;
 
     useReactCommentEffect(' AG Row Container ' + name + ' ', topLevelRef);
 
     const areElementsReady = useCallback(() => {
         if (template1) {
-            return eWrapper.current != null && eViewport.current != null && eContainer.current != null;
-        }
-        if (template2) {
             return eViewport.current != null && eContainer.current != null;
         }
-        if (template3) {
-            return eContainer.current != null;
-        }
+        return eContainer.current != null;
     }, []);
 
     const areElementsRemoved = useCallback(() => {
         if (template1) {
-            return eWrapper.current == null && eViewport.current == null && eContainer.current == null;
-        }
-        if (template2) {
             return eViewport.current == null && eContainer.current == null;
         }
-        if (template3) {
-            return eContainer.current == null;
-        }
+        return eContainer.current == null;
     }, []);
 
     const setRef = useCallback(() => {
@@ -100,14 +87,13 @@ const RowContainerComp = (params: {name: RowContainerName}) => {
             }
 
             rowContainerCtrlRef.current = context.createBean(new RowContainerCtrl(name));
-            rowContainerCtrlRef.current.setComp(compProxy, eContainer.current!, eViewport.current!, eWrapper.current!);
+            rowContainerCtrlRef.current.setComp(compProxy, eContainer.current!, eViewport.current!);
         }
 
     }, [areElementsReady, areElementsRemoved]);
 
     const setContainerRef = useCallback((e: HTMLDivElement) => { eContainer.current = e; setRef(); }, [setRef]);
     const setViewportRef = useCallback((e: HTMLDivElement) => { eViewport.current = e; setRef(); }, [setRef]);
-    const setWrapperRef = useCallback((e: HTMLDivElement) => { eWrapper.current = e; setRef(); }, [setRef]);
 
     const buildContainer = () => (
         <div
@@ -126,21 +112,11 @@ const RowContainerComp = (params: {name: RowContainerName}) => {
     return (
         <>
             {
-                template1 &&
-                <div className={wrapperClasses} ref={setWrapperRef} role="presentation">
-                    <div className={viewportClasses} ref={setViewportRef} role="presentation">
-                        { buildContainer() }
-                    </div>
-                </div>
-            }
-            {
-                template2 &&
+                template1 ?
                 <div className={viewportClasses} ref={setViewportRef} role="presentation">
                     { buildContainer() }
-                </div>
-            }
-            {
-                template3 && buildContainer()
+                </div> :
+                buildContainer()
             }
         </>
     );

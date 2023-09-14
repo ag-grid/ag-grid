@@ -176,6 +176,14 @@
         flex: 1 1 auto;
     }
 
+    .ag-body-viewport, .ag-center-cols-viewport {
+        &::-webkit-scrollbar {
+            display: none;
+        }
+        -ms-overflow-style: none;
+        scrollbar-width: none;
+    }
+
     .ag-body-viewport {
         display: flex;
 
@@ -281,35 +289,12 @@
     //  * Scrollers
     //  ****************************
     // */
-    .ag-center-cols-clipper {
-        flex: 1 1 auto;
-        min-width: 0;
-        overflow: hidden;
-        min-height: 100%;
-        // translate3d is necessary here due to a BUG in Safari
-        // where it becomes impossible to click on scrollbars
-        // that are only visible during scroll.
-        transform: translate3d(0,0,0);
-    }
-
     .ag-body {
         position: relative;
         display: flex;
         flex: 1 1 auto;
         flex-direction: row !important; // we have to state this for rtl, otherwise row-reverse is inherited
         min-height: 0;
-    }
-
-    .ag-body-clipper {
-        overflow: hidden;
-        min-width: 0px;
-        flex: 1 1 auto;
-        height: 100%;
-
-        // translate3d is necessary here due to a BUG in Safari
-        // where it becomes impossible to click on scrollbars
-        // that are only visible during scroll.
-        transform: translate3d(0,0,0);
     }
 
     .ag-body-horizontal-scroll,

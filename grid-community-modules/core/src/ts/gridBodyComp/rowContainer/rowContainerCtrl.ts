@@ -107,10 +107,6 @@ const ViewportCssClasses: Map<RowContainerName, string> = convertToMap([
     [RowContainerName.BOTTOM_CENTER, 'ag-floating-bottom-viewport'],
 ]);
 
-const WrapperCssClasses: Map<RowContainerName, string> = convertToMap([
-    [RowContainerName.CENTER, 'ag-center-cols-clipper'],
-]);
-
 export interface IRowContainerComp {
     setViewportHeight(height: string): void;
     setRowCtrls(rowCtrls: RowCtrl[], useFlushSync: boolean): void;
@@ -120,11 +116,10 @@ export interface IRowContainerComp {
 
 export class RowContainerCtrl extends BeanStub {
 
-    public static getRowContainerCssClasses(name: RowContainerName): {container?: string, viewport?: string, wrapper?: string} {
+    public static getRowContainerCssClasses(name: RowContainerName): { container?: string, viewport?: string } {
         const containerClass = ContainerCssClasses.get(name);
         const viewportClass = ViewportCssClasses.get(name);
-        const wrapperClass = WrapperCssClasses.get(name);
-        return {container: containerClass, viewport: viewportClass, wrapper: wrapperClass};
+        return { container: containerClass, viewport: viewportClass };
     }
 
     public static getPinned(name: RowContainerName): ColumnPinnedType {
@@ -158,7 +153,6 @@ export class RowContainerCtrl extends BeanStub {
     private comp: IRowContainerComp;
     private eContainer: HTMLElement;
     private eViewport: HTMLElement;
-    private eWrapper: HTMLElement;
     private enableRtl: boolean;
     private embedFullWidthRows: boolean;
 
@@ -218,11 +212,10 @@ export class RowContainerCtrl extends BeanStub {
         return this.viewportSizeFeature;
     }
 
-    public setComp(view: IRowContainerComp, eContainer: HTMLElement, eViewport: HTMLElement, eWrapper: HTMLElement): void {
+    public setComp(view: IRowContainerComp, eContainer: HTMLElement, eViewport: HTMLElement): void {
         this.comp = view;
         this.eContainer = eContainer;
         this.eViewport = eViewport;
-        this.eWrapper = eWrapper;
 
         this.createManagedBean(new RowContainerEventsFeature(this.eContainer));
         this.addPreventScrollWhileDragging();
@@ -249,7 +242,7 @@ export class RowContainerCtrl extends BeanStub {
             this.pinnedWidthFeature = this.createManagedBean(new SetPinnedRightWidthFeature(this.eContainer));
             this.addManagedListener(this.eventService, Events.EVENT_RIGHT_PINNED_WIDTH_CHANGED, () => this.onPinnedWidthChanged());
         });
-        this.forContainers(allMiddle, () => this.createManagedBean(new SetHeightFeature(this.eContainer, this.eWrapper)));
+        this.forContainers(allMiddle, () => this.createManagedBean(new SetHeightFeature(this.eContainer, this.name === RowContainerName.CENTER ? eViewport : undefined)));
         this.forContainers(allNoFW, () => this.createManagedBean(new DragListenerFeature(this.eContainer)));
 
         this.forContainers(allCenter, () => this.createManagedBean(
@@ -270,17 +263,13 @@ export class RowContainerCtrl extends BeanStub {
     }
 
     private refreshPaddingForFakeScrollbar(): void {
-        const { enableRtl, columnModel, name, eWrapper, eContainer } = this;
+        const { enableRtl, columnModel, eContainer } = this;
         const sideToCheck = enableRtl ? RowContainerName.LEFT : RowContainerName.RIGHT;
         this.forContainers([RowContainerName.CENTER, sideToCheck], () => {
             const pinnedWidth = columnModel.getContainerWidth(sideToCheck);
             const marginSide = enableRtl ? 'marginLeft' : 'marginRight';
 
-            if (name === RowContainerName.CENTER) {
-                eWrapper.style[marginSide] = pinnedWidth ? '0px' : '16px';
-            } else {
-                eContainer.style[marginSide] = pinnedWidth ? '16px' : '0px';
-            }
+            eContainer.style[marginSide] = pinnedWidth ? '16px' : '0px';
         });
     }
 
@@ -334,16 +323,6 @@ export class RowContainerCtrl extends BeanStub {
     }
 
     private onScrollVisibilityChanged(): void {
-        const scrollWidth = this.gridOptionsService.getScrollbarWidth() || 0;
-
-        if (this.name === RowContainerName.CENTER) {
-            const visible = this.scrollVisibleService.isHorizontalScrollShowing();
-            const scrollbarWidth = visible ? scrollWidth : 0;
-            const size = scrollbarWidth == 0 ? '100%' : `calc(100% + ${scrollbarWidth}px)`;
-
-            this.animationFrameService.requestAnimationFrame(() => this.comp.setViewportHeight(size));
-        }
-
         if (this.name === RowContainerName.FULL_WIDTH) {
             const pad = isInvisibleScrollbar() ? 16 : 0;
             const size = `calc(100% - ${pad}px)`;

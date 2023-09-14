@@ -155,10 +155,6 @@ const GridBodyComp = () => {
         classesList('ag-body', layoutClass), 
         [layoutClass]
     );
-    const bodyClipperClasses = useMemo(() =>
-        classesList('ag-body-clipper', layoutClass), 
-        [layoutClass]
-    );
     const topClasses = useMemo(() =>
         classesList('ag-floating-top', cellSelectableCss), 
         [cellSelectableCss]
@@ -214,15 +210,13 @@ const GridBodyComp = () => {
                 RowContainerName.TOP_FULL_WIDTH,
             ]}) }
             <div className={bodyClasses} ref={eBody} role="presentation">
-                <div className={bodyClipperClasses} role="presentation">
-                    { createSection({ section: eBodyViewport, className: bodyViewportClasses, 
-                        children: [
-                        RowContainerName.LEFT,
-                        RowContainerName.CENTER,
-                        RowContainerName.RIGHT,
-                        RowContainerName.FULL_WIDTH,
-                    ]}) }
-                </div>
+                { createSection({ section: eBodyViewport, className: bodyViewportClasses, 
+                    children: [
+                    RowContainerName.LEFT,
+                    RowContainerName.CENTER,
+                    RowContainerName.RIGHT,
+                    RowContainerName.FULL_WIDTH,
+                ]}) }
             </div>
             { createSection({ section: eStickyTop, className: stickyTopClasses, style: stickyTopStyle, children: [
                 RowContainerName.STICKY_TOP_LEFT,
