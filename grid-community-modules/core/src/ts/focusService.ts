@@ -653,27 +653,4 @@ export class FocusService extends BeanStub {
     public clearAdvancedFilterColumn(): void {
         this.advancedFilterFocusColumn = undefined;
     }
-
-    public checkAndRestoreCellFocus(): void {
-        if (!this.focusedCellPosition) { return; }
-
-        const { column, rowIndex, rowPinned } = this.focusedCellPosition;
-        const rowCtrl = this.rowRenderer.getRowByPosition({ rowIndex, rowPinned });
-        const cellCtrl = rowCtrl?.getCellCtrl(column);
-        const eCell = cellCtrl?.getGui();
-
-        if (
-            eCell &&
-            !cellCtrl?.isEditing() &&
-            !eCell.contains(this.gridOptionsService.getDocument().activeElement)
-        ) {
-            this.setFocusedCell({
-                column,
-                rowIndex,
-                rowPinned,
-                forceBrowserFocus: true,
-                preventScrollOnBrowserFocus: true,
-            });
-        }
-    }
 }

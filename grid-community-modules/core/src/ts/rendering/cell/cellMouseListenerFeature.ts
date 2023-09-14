@@ -77,7 +77,8 @@ export class CellMouseListenerFeature extends Beans {
         const editOnSingleClick = (gridOptionsService.is('singleClickEdit') || colDef.singleClickEdit)
             && !gridOptionsService.is('suppressClickEdit');
 
-        if (editOnSingleClick) {
+        // edit on single click, but not if extending a range
+        if (editOnSingleClick && !(mouseEvent.shiftKey && rangeService?.getCellRanges().length != 0)) {
             this.cellCtrl.startRowOrCellEdit();
         }
     }
@@ -136,10 +137,31 @@ export class CellMouseListenerFeature extends Beans {
         // if shift clicking, and a range exists, we keep the focus on the cell that started the
         // range as the user then changes the range selection.
         if (shiftKey && ranges) {
-            // this stops the cell from getting focused
-            mouseEvent.preventDefault();
-            // focus could have been lost, so restore it to the starting cell in the range if needed
-            this.beans.focusService.checkAndRestoreCellFocus();
+            if (!this.beans.focusService.isCellFocused(this.cellCtrl.getCellPosition())) {
+                // this stops the cell from getting focused
+                mouseEvent.preventDefault();
+
+                const focusedCellPosition = this.beans.focusService.getFocusedCell();
+                if (focusedCellPosition) {
+                    const { column, rowIndex, rowPinned } = focusedCellPosition;
+                    const rowCtrl = this.beans.rowRenderer.getRowByPosition({ rowIndex, rowPinned });
+                    const cellCtrl = rowCtrl?.getCellCtrl(column);
+
+                    // if the focused cell is editing, need to stop editing first
+                    if (cellCtrl?.isEditing()) {
+                        cellCtrl.stopEditing();
+                    }
+
+                    // focus could have been lost, so restore it to the starting cell in the range if needed
+                    this.beans.focusService.setFocusedCell({
+                        column,
+                        rowIndex,
+                        rowPinned,
+                        forceBrowserFocus: true,
+                        preventScrollOnBrowserFocus: true,
+                    });
+                }
+            }
         }
 
         // if we are clicking on a checkbox, we need to make sure the cell wrapping that checkbox
