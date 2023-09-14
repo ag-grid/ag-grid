@@ -1104,8 +1104,6 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     @Output() public cellKeyDown: EventEmitter<CellKeyDownEvent<TData> | FullWidthCellKeyDownEvent<TData>> = new EventEmitter<CellKeyDownEvent<TData> | FullWidthCellKeyDownEvent<TData>>();
     /** The grid has initialised and is ready for most api calls, but may not be fully rendered yet      */
     @Output() public gridReady: EventEmitter<GridReadyEvent<TData>> = new EventEmitter<GridReadyEvent<TData>>();
-    /** Invoked immediately before the grid is destroyed. This is useful for cleanup logic that needs to run before the grid is torn down.     */
-    @Output() public gridPreDestroyed: EventEmitter<GridPreDestroyedEvent<TData>> = new EventEmitter<GridPreDestroyedEvent<TData>>();
     /** Fired the first time data is rendered into the grid. Use this event if you want to auto resize columns based on their contents     */
     @Output() public firstDataRendered: EventEmitter<FirstDataRenderedEvent<TData>> = new EventEmitter<FirstDataRenderedEvent<TData>>();
     /** The size of the grid `div` has changed. In other words, the grid was resized.     */
