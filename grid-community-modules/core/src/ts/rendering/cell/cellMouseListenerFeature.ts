@@ -163,7 +163,7 @@ export class CellMouseListenerFeature extends Beans {
 
         if (rangeService) {
             const cellInRange = rangeService.isCellInAnyRange(this.cellCtrl.getCellPosition());
-            const isRightClick = mouseEvent.button === 2 || (mouseEvent.ctrlKey && this.gridOptionsService.is('allowContextMenuWithControlKey'));
+            const isRightClick = mouseEvent.button === 2 || (mouseEvent.ctrlKey && this.beans.gridOptionsService.is('allowContextMenuWithControlKey'));
 
             if (cellInRange && isRightClick) {
                 return true;
