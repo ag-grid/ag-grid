@@ -593,25 +593,8 @@ export class FilterManager extends BeanStub {
 
         const params: IFilterParams = {
             ...this.createFilterParams(column, colDef),
-            filterModifiedCallback: () => {
-                const event: WithoutGridCommon<FilterModifiedEvent> = {
-                    type: Events.EVENT_FILTER_MODIFIED,
-                    column,
-                    filterInstance
-                };
-
-                this.eventService.dispatchEvent(event);
-            },
-            filterChangedCallback: (additionalEventAttributes?: any) => {
-                const source: FilterChangedEventSourceType = additionalEventAttributes?.source ?? 'api';
-                const params = {
-                    filterInstance,
-                    additionalEventAttributes,
-                    columns: [column],
-                    source,
-                };
-                this.callOnFilterChangedOutsideRenderCycle(params);
-            },
+            filterModifiedCallback: () => { this.filterModifiedCallbackFactory(filterInstance, column)() },
+            filterChangedCallback: () => { this.filterChangedCallbackFactory(filterInstance, column) },
             doesRowPassOtherFilter: node => this.doesRowPassOtherFilters(filterInstance, node),
         };
 
@@ -843,6 +826,31 @@ export class FilterManager extends BeanStub {
         });
     }
 
+    private filterModifiedCallbackFactory(filter: IFilterComp<any>, column: Column<any>) {
+        return () => {
+            const event: WithoutGridCommon<FilterModifiedEvent> = {
+                type: Events.EVENT_FILTER_MODIFIED,
+                column,
+                filterInstance: filter,
+            };
+
+            this.eventService.dispatchEvent(event);
+        }
+    }
+
+    private filterChangedCallbackFactory(filter: IFilterComp<any>, column: Column<any>) {
+        return (additionalEventAttributes?: any) => {
+            const source: FilterChangedEventSourceType = additionalEventAttributes?.source ?? 'api';
+            const params = {
+                filter,
+                additionalEventAttributes,
+                columns: [column],
+                source,
+            };
+            this.callOnFilterChangedOutsideRenderCycle(params);
+        };
+    }
+
     private checkDestroyFilter(colId: string): void {
         const filterWrapper = this.allColumnFilters.get(colId);
         if (!filterWrapper) {
@@ -863,16 +871,23 @@ export class FilterManager extends BeanStub {
         // Case when filter params changes
         const newFilterParams = column.getColDef().filterParams;
         if (this.areFilterParamsDifferent(filterWrapper.filterParams, newFilterParams)) {
-            // When filter wrapper does not have promise to retriece FilterComp, destroy
+            // When filter wrapper does not have promise to retrieve FilterComp, destroy
             if (!filterWrapper.filterPromise) {
                 this.destroyFilter(column, 'columnChanged');
                 return;
             }
 
             // Otherwise - Check for refresh method before destruction
-            // If refresh() method is not implemented, destroy filter
+            // If refresh() method is implemented - call it and destroy filter if it returns false
+            // Otherwise - do nothing ( filter will not be destroyed - we assume new params are compatible with old ones )
             filterWrapper.filterPromise.then(filter => {
-                const shouldRefreshFilter = filter?.refresh ? filter.refresh(newFilterParams) : true;
+                const shouldRefreshFilter = filter?.refresh ? filter.refresh({
+                    ...this.createFilterParams(column, column.getColDef()),
+                    filterModifiedCallback: this.filterModifiedCallbackFactory(filter, column),
+                    filterChangedCallback: this.filterChangedCallbackFactory(filter, column),
+                    doesRowPassOtherFilter: node => this.doesRowPassOtherFilters(filter, node),
+                    ...newFilterParams,
+                }) : true;
                 if (!shouldRefreshFilter) {
                     this.destroyFilter(column, 'columnChanged');
                 } else {

@@ -394,14 +394,17 @@ export abstract class SimpleFilter<M extends ISimpleFilterModel, V, E = AgInputT
             }
         }
 
+        // B. Check number of conditions
+        if (typeof newParamsValue.maxNumConditions === 'number') {
+            if (combinedModel && combinedModel.conditions && combinedModel.conditions.length > newParamsValue.maxNumConditions) {
+                return false;
+            }
+        }
+
         // No breaking changes new params,
         // so safely update the options list and refresh the filter
 
-        this.optionsFactory = new OptionsFactory();
-        this.optionsFactory.init(newParams, this.getDefaultFilterOptions());
-        this.createFilterListOptions();
-        this.removeConditionsAndOperators(0);
-        this.createOption();
+        this.setParams(newParams);
         this.setModel(model);
 
         return true;
