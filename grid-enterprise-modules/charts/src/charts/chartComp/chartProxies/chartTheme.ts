@@ -7,7 +7,6 @@ import {
     AgChartThemeOverrides,
     AgChartThemePalette,
     AgPieSeriesTooltipRendererParams,
-    AgPolarSeriesTheme,
 } from 'ag-charts-community';
 import { ALL_AXIS_TYPES } from '../utils/axisTypeMapper';
 import { getSeriesType } from '../utils/seriesTypeMapper';
@@ -109,9 +108,9 @@ function createCrossFilterThemeOverrides(
         },
     };
 
-    const series: AgPolarSeriesTheme = {};
+    const pieOverrides: AgChartThemeOverrides['pie'] = {};
     if (overrideType === 'polar') {
-        series.pie = {
+        pieOverrides.series = {
             tooltip: {
                 renderer: ({
                     angleName,
@@ -139,7 +138,7 @@ function createCrossFilterThemeOverrides(
             listeners: {
                 click: (e: any) => chartProxyParams.crossFilterCallback(e, true),
             },
-            series,
+            ...pieOverrides,
         },
     };
 }
