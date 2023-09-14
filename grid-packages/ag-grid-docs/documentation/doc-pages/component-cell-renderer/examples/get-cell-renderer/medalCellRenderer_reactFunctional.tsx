@@ -5,7 +5,7 @@ export default forwardRef((props: ICellRendererParams, ref) => {
     useImperativeHandle(ref, () => {
         return {
             medalUserFunction() {
-                console.log(`user function called for medal column: row = ${props.rowIndex}, column = ${props.column?.getId()}`);
+                console.log(`user function called for medal column: row = ${props.node.rowIndex}, column = ${props.column?.getId()}`);
             }
         }
     });

@@ -262,8 +262,7 @@ export class ValueService extends BeanStub {
         // if no '.', then it's not a deep value
         let valuesAreSame: boolean = false;
         if (!isFieldContainsDots) {
-            // soft comparison to match strings and numbers
-            valuesAreSame = data[field] == newValue;
+            valuesAreSame = data[field] === newValue;
             if (!valuesAreSame) {
                 data[field] = newValue;
             }
@@ -274,8 +273,7 @@ export class ValueService extends BeanStub {
             while (fieldPieces.length > 0 && currentObject) {
                 const fieldPiece: any = fieldPieces.shift();
                 if (fieldPieces.length === 0) {
-                    // soft comparison to match strings and numbers
-                    valuesAreSame = currentObject[fieldPiece] == newValue;
+                    valuesAreSame = currentObject[fieldPiece] === newValue;
                     if (!valuesAreSame) {
                         currentObject[fieldPiece] = newValue;
                     }

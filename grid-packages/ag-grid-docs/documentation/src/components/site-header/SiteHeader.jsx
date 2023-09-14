@@ -22,10 +22,10 @@ const links = [
         name: 'Documentation',
         url: withPrefix('/documentation/'),
     },
-    {
-        name: 'Theme Builder',
-        url: '/theme-builder',
-    },
+    // {
+    //     name: 'Theme Builder',
+    //     url: '/theme-builder',
+    // },
     {
         name: 'Pricing',
         url: '/license-pricing',

@@ -14,7 +14,7 @@ export default class CellRenderer extends Component {
   onButtonClicked() {
     // start editing this cell. see the docs on the params that this method takes
     this.props.api.startEditingCell({
-      rowIndex: this.props.rowIndex,
+      rowIndex: this.props.node.rowIndex,
       colKey: this.props.column.getId(),
     });
   }

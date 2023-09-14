@@ -21,7 +21,7 @@ export class CellRenderer implements ICellRendererAngularComp {
 
     onClick() {
         this.params.api.startEditingCell({
-          rowIndex: this.params.rowIndex,
+          rowIndex: this.params.node.rowIndex!,
           colKey: this.params.column!.getId(),
         });
     }

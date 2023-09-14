@@ -75,6 +75,7 @@ export class GridOptionsService {
     // we store this locally, so we are not calling getScrollWidth() multiple times as it's an expensive operation
     private scrollbarWidth: number;
     private domDataKey = '__AG_' + Math.random().toString();
+    private static readonly alwaysSyncGlobalEvents: Set<string> = new Set([Events.EVENT_GRID_PRE_DESTROYED]);
 
     // Store locally to avoid retrieving many times as these are requested for every callback
     public api: GridApi;
@@ -98,7 +99,8 @@ export class GridOptionsService {
     public init(): void {
         this.gridOptionLookup = new Set([...ComponentUtil.ALL_PROPERTIES, ...ComponentUtil.EVENT_CALLBACKS]);
         const async = !this.is('suppressAsyncEvents');
-        this.eventService.addGlobalListener(this.globalEventHandler.bind(this), async);
+        this.eventService.addGlobalListener(this.globalEventHandlerFactory().bind(this), async);
+        this.eventService.addGlobalListener(this.globalEventHandlerFactory(true).bind(this), false);
 
         // sets an initial calculation for the scrollbar width
         this.getScrollbarWidth();
@@ -236,17 +238,27 @@ export class GridOptionsService {
     }
 
     // responsible for calling the onXXX functions on gridOptions
-    globalEventHandler(eventName: string, event?: any): void {
-        // prevent events from being fired _after_ the grid has been destroyed
-        if (this.destroyed) {
-            return;
-        }
+    // It forces events defined in GridOptionsService.alwaysSyncGlobalEvents to be fired synchronously.
+    // This is required for events such as GridPreDestroyed.
+    // Other events can be fired asynchronously or synchronously depending on config.
+    globalEventHandlerFactory = (restrictToSyncOnly?: boolean) => {
+        return (eventName: string, event?: any) => {
+            // prevent events from being fired _after_ the grid has been destroyed
+            if (this.destroyed) {
+                return;
+            }
 
-        const callbackMethodName = ComponentUtil.getCallbackForEvent(eventName);
-        if (typeof (this.gridOptions as any)[callbackMethodName] === 'function') {
-            (this.gridOptions as any)[callbackMethodName](event);
+            const alwaysSync = GridOptionsService.alwaysSyncGlobalEvents.has(eventName);
+            if ((alwaysSync && !restrictToSyncOnly) || (!alwaysSync && restrictToSyncOnly)) {
+                return;
+            }
+
+            const callbackMethodName = ComponentUtil.getCallbackForEvent(eventName);
+            if (typeof (this.gridOptions as any)[callbackMethodName] === 'function') {
+                (this.gridOptions as any)[callbackMethodName](event);
+            }
         }
-    }
+    };
 
     // *************** Helper methods ************************** //
     // Methods to share common GridOptions related logic that goes above accessing a single property

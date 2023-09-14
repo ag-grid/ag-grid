@@ -398,14 +398,16 @@ export class AgRichSelect<TValue = any> extends AgPickerField<TValue, RichSelect
 
         if (!searchValue.length) { return { suggestions, filteredValues } };
 
-        const { searchType = 'fuzzy', filterList } = this.config;
+        const { allowTyping, searchType = 'fuzzy', filterList } = this.config;
+
+        const shouldFilterList = filterList && allowTyping;
 
         if (searchType === 'fuzzy') {
             const fuzzySearchResult = fuzzySuggestions(this.searchString, valueList, true);
             suggestions = fuzzySearchResult.values;
 
             const indices = fuzzySearchResult.indices;
-            if (filterList && indices.length) {
+            if (shouldFilterList && indices.length) {
                 for (let i = 0; i < indices.length; i++) {
                     filteredValues.push(this.values[indices[i]]);
                 }
@@ -416,7 +418,7 @@ export class AgRichSelect<TValue = any> extends AgPickerField<TValue, RichSelect
                 const valueToMatch = this.searchString.toLocaleLowerCase();
 
                 const isMatch = searchType === 'match' ? currentValue.startsWith(valueToMatch) : currentValue.indexOf(valueToMatch) !== -1;
-                if (filterList && isMatch) {
+                if (shouldFilterList && isMatch) {
                     filteredValues.push(this.values[idx]);
                 }
                 return isMatch;
@@ -427,8 +429,9 @@ export class AgRichSelect<TValue = any> extends AgPickerField<TValue, RichSelect
     }
 
     private filterListModel(filteredValues: TValue[]): void {
-        const { filterList } = this.config;
-        if (!filterList) { return; }
+        const { allowTyping,  filterList } = this.config;
+
+        if (!allowTyping || !filterList) { return; }
 
         this.setValueList({ valueList: filteredValues, refresh: true });
     }
@@ -443,17 +446,17 @@ export class AgRichSelect<TValue = any> extends AgPickerField<TValue, RichSelect
         }
 
         const { suggestions, filteredValues } = this.getSuggestionsAndFilteredValues(this.searchString, searchStrings);
-        const { filterList, highlightMatch, searchType = 'fuzzy' } = this.config;
+        const { allowTyping, filterList, highlightMatch, searchType = 'fuzzy' } = this.config;
 
         const filterValueLen = filteredValues.length;
-        const shouldFilter = filterList && this.searchString !== '';
+        const shouldFilter = !!(allowTyping && filterList && this.searchString !== '');
 
-        if (filterList) {
+        if (shouldFilter) {
             this.filterListModel(shouldFilter ? filteredValues : values);
         }
 
         if (suggestions.length) {
-            const topSuggestionIndex = filterList ? 0 : searchStrings.indexOf(suggestions[0]);
+            const topSuggestionIndex = shouldFilter ? 0 : searchStrings.indexOf(suggestions[0]);
             this.selectListItem(topSuggestionIndex);
             if (highlightMatch && searchType !== 'fuzzy') {
                 this.highlightFilterMatch();
@@ -461,10 +464,10 @@ export class AgRichSelect<TValue = any> extends AgPickerField<TValue, RichSelect
         } else {
             this.highlightSelectedValue(-1);
             
-            if (!filterList || filterValueLen) {
+            if (!shouldFilter || filterValueLen) {
                 this.listComponent?.ensureIndexVisible(0);
-            } else if (filterList) {
-                this.eWrapper.removeAttribute('data-active-option');
+            } else if (shouldFilter) {
+                this.getAriaElement().removeAttribute('data-active-option');
                 const eListAriaEl = this.listComponent?.getAriaElement();
                 if (eListAriaEl) {
                     setAriaActiveDescendant(eListAriaEl, null);
@@ -607,9 +610,15 @@ export class AgRichSelect<TValue = any> extends AgPickerField<TValue, RichSelect
         switch (key) {
             case KeyCode.LEFT:
             case KeyCode.RIGHT:
+            case KeyCode.PAGE_HOME:
+            case KeyCode.PAGE_END:
                 if (!allowTyping) {
                     event.preventDefault();
                 }
+                break;
+            case KeyCode.PAGE_UP:
+            case KeyCode.PAGE_DOWN:
+                event.preventDefault();
                 break;
             case KeyCode.DOWN:
             case KeyCode.UP:

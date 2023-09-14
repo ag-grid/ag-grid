@@ -33,7 +33,7 @@ export class CellRenderer implements ICellRendererComp {
     onButtonClicked() {
       // start editing this cell. see the docs on the params that this method takes
       const startEditingParams = {
-        rowIndex: this.params.rowIndex,
+        rowIndex: this.params.node.rowIndex!,
         colKey: this.params.column!.getId(),
       };
       this.params.api.startEditingCell(startEditingParams);

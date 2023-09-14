@@ -120,17 +120,15 @@ Note that if you use the example inlined the scroll bars shown are for the conta
 
 <grid-example title='Auto Height' name='auto-height' type='generated' options='{ "enterprise": true, "exampleHeight": 660, "noStyle": 1, "myGridReference": 1, "modules": ["clientside", "rowgrouping", "menu", "columnpanel"] }'></grid-example>
 
-When using Auto Height, there is a minimum of 150px set to the grid rows section. This is to avoid an empty grid which would look weird. To remove this minimum height, add the following CSS:
+## Min Height with Auto Height
+
+When using Auto Height, there is a minimum of 150px set to the grid rows section. This is to avoid an empty grid which would look weird. In particular, this allows room to show the 'no rows' message when no rows are in the grid, otherwise this message would be overlaying on top of the header. To remove this minimum height, add the following CSS:
 
 <snippet transform={false} language="css">
 .ag-center-cols-clipper {
     min-height: unset !important;
 }
 </snippet>
-
-## Min Height with Auto Height
-
-There is a minimum height of 50px for displaying the rows for autoheight. This is for aesthetic purposes, in particular to allow room to show the 'no rows' message when no rows are in the grid otherwise this message would be overlaying on top of the header which does not look well.
 
 It is not possible to specify a max height when using auto-height.
 

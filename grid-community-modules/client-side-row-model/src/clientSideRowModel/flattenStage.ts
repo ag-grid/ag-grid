@@ -137,7 +137,12 @@ export class FlattenStage extends BeanStub implements IRowNodeStage {
                     // put a footer in if user is looking for it
                     const doesRowShowFooter = details.getGroupIncludeFooter({ node: rowNode });
                     if (doesRowShowFooter) {
+                        // ensure node is available.
+                        rowNode.createFooter();
                         this.addRowNodeToRowsToDisplay(details, rowNode.sibling, result, uiLevelForChildren);
+                    } else {
+                        // remove node if it's unnecessary.
+                        rowNode.destroyFooter();
                     }
                 }
             } else if (rowNode.master && rowNode.expanded) {

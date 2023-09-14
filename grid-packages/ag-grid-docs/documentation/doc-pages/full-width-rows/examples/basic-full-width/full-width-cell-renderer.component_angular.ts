@@ -17,8 +17,8 @@ export class FullWidthCellRenderer implements ICellRendererAngularComp {
     agInit(params: ICellRendererParams): void {
         this.cssClass = params.node.rowPinned ? 'example-full-width-pinned-row' :
             'example-full-width-row';
-        this.message = params.node.rowPinned ? `Pinned full width row at index ${params.rowIndex}` :
-            `Normal full width row at index${params.rowIndex}`;
+        this.message = params.node.rowPinned ? `Pinned full width row at index ${params.node.rowIndex}` :
+            `Normal full width row at index ${params.node.rowIndex}`;
     }
 
     clicked() {
