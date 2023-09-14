@@ -235,6 +235,7 @@
             "displayName": "Miscellaneous"
         },
         "gridReady": {},
+        "gridPreDestroyed": {},
         "firstDataRendered": {},
         "gridSizeChanged": {},
         "modelUpdated": {},

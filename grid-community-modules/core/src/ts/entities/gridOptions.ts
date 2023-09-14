@@ -39,7 +39,10 @@ import {
     DragStoppedEvent,
     ExpandCollapseAllEvent, FilterChangedEvent,
     FilterModifiedEvent, FilterOpenedEvent, FirstDataRenderedEvent, FullWidthCellKeyDownEvent, GridColumnsChangedEvent,
-    GridReadyEvent, GridSizeChangedEvent, ModelUpdatedEvent,
+    GridReadyEvent,
+    GridPreDestroyedEvent,
+    GridSizeChangedEvent,
+    ModelUpdatedEvent,
     NewColumnsLoadedEvent,
     PaginationChangedEvent,
     PasteEndEvent,
@@ -1088,6 +1091,8 @@ export interface GridOptions<TData = any> {
     // *** Miscellaneous *** //
     /** The grid has initialised and is ready for most api calls, but may not be fully rendered yet  */
     onGridReady?(event: GridReadyEvent<TData>): void;
+    /** Invoked immediately before the grid is destroyed. This is useful for cleanup logic that needs to run before the grid is torn down. */
+    onGridPreDestroyed?(event: GridPreDestroyedEvent<TData>): void;
     /** Fired the first time data is rendered into the grid. Use this event if you want to auto resize columns based on their contents */
     onFirstDataRendered?(event: FirstDataRenderedEvent<TData>): void;
     /** The size of the grid `div` has changed. In other words, the grid was resized. */

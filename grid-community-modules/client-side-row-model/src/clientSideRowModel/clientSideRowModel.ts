@@ -100,8 +100,10 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel 
             animate
         });
 
-        this.addManagedPropertyListener('groupRemoveSingleChildren', refreshMapListener);
-        this.addManagedPropertyListener('groupRemoveLowestSingleChildren', refreshMapListener);
+        this.addManagedPropertyListeners([
+            'groupRemoveSingleChildren', 'groupRemoveLowestSingleChildren',
+            'groupIncludeFooter', 'groupIncludeTotalFooter',
+        ], refreshMapListener);
 
         this.rootNode = new RowNode(this.beans);
         this.nodeManager = new ClientSideNodeManager(this.rootNode,
@@ -397,7 +399,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel 
 
         const changedPath = new ChangedPath(false, this.rootNode);
 
-        if (noTransactions || this.gridOptionsService.isTreeData()) {
+        if (noTransactions || this.gridOptionsService.is('treeData')) {
             changedPath.setInactive();
         }
 
@@ -697,15 +699,9 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel 
         recursionType: RecursionType;
         index: number;
         includeFooterNodes: boolean
-    }) {
+    }): number {
         const { nodes, callback, recursionType, includeFooterNodes } = params;
         let { index } = params;
-
-        const firstNode = nodes[0];
-
-        if (includeFooterNodes && firstNode?.parent?.sibling) {
-            nodes.push(firstNode.parent.sibling);
-        } 
 
         for (let i = 0; i < nodes.length; i++) {
             const node = nodes[i];
@@ -740,6 +736,21 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel 
                 }
             }
         }
+
+        const parentNode = nodes[0]?.parent;
+        if (!includeFooterNodes || !parentNode) return index;
+
+        const isRootNode = parentNode === this.rootNode;
+        if (isRootNode) {
+            const totalFooters = this.gridOptionsService.is('groupIncludeTotalFooter');
+            if (!totalFooters) return index;
+        } else {
+            const isGroupIncludeFooter = this.gridOptionsService.getGroupIncludeFooter();
+            if (!isGroupIncludeFooter({ node: parentNode })) return index;
+        }
+
+        parentNode.createFooter();
+        callback(parentNode.sibling, index++);
         return index;
     }
 
@@ -763,7 +774,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel 
     // + gridApi.expandAll()
     // + gridApi.collapseAll()
     public expandOrCollapseAll(expand: boolean): void {
-        const usingTreeData = this.gridOptionsService.isTreeData();
+        const usingTreeData = this.gridOptionsService.is('treeData');
         const usingPivotMode = this.columnModel.isPivotActive();
 
         const recursiveExpandOrCollapse = (rowNodes: RowNode[] | null): void => {

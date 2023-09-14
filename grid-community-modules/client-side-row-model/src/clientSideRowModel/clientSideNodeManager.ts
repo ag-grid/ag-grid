@@ -66,8 +66,8 @@ export class ClientSideNodeManager {
         // func below doesn't have 'this' pointer, so need to pull out these bits
         this.suppressParentsInRowNodes = this.gridOptionsService.is('suppressParentsInRowNodes');
         this.isRowMasterFunc = this.gridOptionsService.get('isRowMaster');
-        this.doingTreeData = this.gridOptionsService.isTreeData();
-        this.doingMasterDetail = this.gridOptionsService.isMasterDetail();
+        this.doingTreeData = this.gridOptionsService.is('treeData');
+        this.doingMasterDetail = this.gridOptionsService.is('masterDetail');
     }
 
     public getCopyOfNodesMap(): { [id: string]: RowNode } {

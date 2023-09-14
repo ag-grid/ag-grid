@@ -427,7 +427,7 @@ export class EnterpriseMenu extends BeanStub {
 
         const isInMemoryRowModel = this.rowModel.getType() === 'clientSide';
 
-        const usingTreeData = this.gridOptionsService.isTreeData();
+        const usingTreeData = this.gridOptionsService.is('treeData');
 
         const allowValueAgg =
             // if primary, then only allow aggValue if grouping and it's a value columns

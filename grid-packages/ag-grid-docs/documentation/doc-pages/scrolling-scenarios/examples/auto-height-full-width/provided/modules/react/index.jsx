@@ -45,7 +45,7 @@ const createRowData = () => {
 const fullWidthCellRenderer = (props) => {
     // pinned rows will have node.floating set to either 'top' or 'bottom' - see docs for floating
     const [cssClass] = useState(props.node.rowPinned ? 'example-full-width-floating-row' : 'example-full-width-row')
-    const [message] = useState(props.node.rowPinned ? `Floating full width row at index ${props.rowIndex}` : `Normal full width row at index ${props.rowIndex}`)
+    const [message] = useState(props.node.rowPinned ? `Floating full width row at index ${props.node.rowIndex}` : `Normal full width row at index ${props.node.rowIndex}`)
 
     return (
         <div>

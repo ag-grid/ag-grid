@@ -103,6 +103,7 @@ import { AgAutocomplete } from "./widgets/agAutocomplete";
 export interface GridParams {
     // used by Web Components
     globalEventListener?: Function;
+    globalSyncEventListener?: Function; // Always sync - for events such as gridPreDestroyed
 
     // this allows the base frameworks (React, Angular, etc) to provide alternative cellRenderers and cellEditors
     frameworkOverrides?: IFrameworkOverrides;
@@ -257,6 +258,7 @@ export class GridCoreCreator {
             gridOptions: gridOptions,
             eGridDiv: eGridDiv,
             globalEventListener: params ? params.globalEventListener : null,
+            globalSyncEventListener: params ? params.globalSyncEventListener : null,
             frameworkOverrides: frameworkOverrides
         };
         if (params && params.providedBeanInstances) {

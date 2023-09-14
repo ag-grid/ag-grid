@@ -358,7 +358,7 @@ export class RowCtrl extends BeanStub {
     }
 
     private addRowDraggerToRow(gui: RowGui) {
-        if (this.gridOptionsService.isEnableRangeSelection()) {
+        if (this.gridOptionsService.is('enableRangeSelection')) {
             doOnce(() => {
                 console.warn('AG Grid: Setting `rowDragEntireRow: true` in the gridOptions doesn\'t work with `enableRangeSelection: true`');
             }, 'rowDragAndRangeSelectionEnabled');

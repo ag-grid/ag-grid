@@ -291,14 +291,17 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl {
 
         if (!this.draggable) { return; }
 
-        const hideColumnOnExit = !this.gridOptionsService.is('suppressDragLeaveHidesColumns');
+        let hideColumnOnExit = !this.gridOptionsService.is('suppressDragLeaveHidesColumns');
         this.moveDragSource = {
             type: DragSourceType.HeaderCell,
             eElement: eSource,
-            defaultIconName: hideColumnOnExit ? DragAndDropService.ICON_HIDE : DragAndDropService.ICON_NOT_ALLOWED,
+            getDefaultIconName: () => hideColumnOnExit ? DragAndDropService.ICON_HIDE : DragAndDropService.ICON_NOT_ALLOWED,
             getDragItem: () => this.createDragItem(),
             dragItemName: this.displayName,
-            onDragStarted: () => this.column.setMoving(true, "uiColumnMoved"),
+            onDragStarted: () => {
+                hideColumnOnExit = !this.gridOptionsService.is('suppressDragLeaveHidesColumns');
+                this.column.setMoving(true, "uiColumnMoved");
+            },
             onDragStopped: () => this.column.setMoving(false, "uiColumnMoved"),
             onGridEnter: (dragItem) => {
                 if (hideColumnOnExit) {

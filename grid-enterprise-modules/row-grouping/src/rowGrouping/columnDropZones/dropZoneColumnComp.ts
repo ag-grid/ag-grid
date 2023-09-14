@@ -175,7 +175,7 @@ export class DropZoneColumnComp extends Component {
         const dragSource: DragSource = {
             type: DragSourceType.ToolPanel,
             eElement: this.eDragHandle,
-            defaultIconName: DragAndDropService.ICON_HIDE,
+            getDefaultIconName: () => DragAndDropService.ICON_HIDE,
             getDragItem: () => this.createDragItem(),
             dragItemName: this.displayName,
             dragSourceDropTarget: this.dragSourceDropTarget

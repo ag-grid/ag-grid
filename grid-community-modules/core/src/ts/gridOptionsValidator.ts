@@ -88,6 +88,9 @@ export class GridOptionsValidator {
         validateRegistered('getContextMenuItems', ModuleNames.MenuModule);
         validateRegistered('allowContextMenuWithControlKey', ModuleNames.MenuModule);
         validateRegistered('enableAdvancedFilter', ModuleNames.AdvancedFilterModule);
+        validateRegistered('treeData', ModuleNames.RowGroupingModule);
+        validateRegistered('enableRangeSelection', ModuleNames.RangeSelectionModule);
+        validateRegistered('masterDetail', ModuleNames.MasterDetailModule);
     }
 
     private checkColumnDefProperties() {
