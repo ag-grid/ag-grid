@@ -738,7 +738,9 @@ export class RowCtrl extends BeanStub {
     }
 
     private onRowNodeDataChanged(event: DataChangedEvent): void {
-        if (this.isFullWidth()) {
+        const fullWidthChanged = this.isFullWidth() !== !!this.rowNode.isFullWidthCell();
+
+        if (fullWidthChanged) {
             const refresh = this.refreshFullWidth();
             if (!refresh) {
                 this.beans.rowRenderer.redrawRow(this.rowNode);
