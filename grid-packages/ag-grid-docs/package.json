@@ -50,6 +50,7 @@
   "private": true,
   "homepage": "https://www.ag-grid.com/",
   "dependencies": {
+    "codesandbox": "2.2.3",
     "chokidar": "3.5.1",
     "escodegen": "1.11.0",
     "esprima": "4.0.1",

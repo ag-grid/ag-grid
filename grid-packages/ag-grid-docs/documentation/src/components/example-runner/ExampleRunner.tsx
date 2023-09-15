@@ -9,7 +9,7 @@ import { OpenInCTA } from '../OpenInCTA';
 import CodeViewer from './CodeViewer';
 import styles from './ExampleRunner.module.scss';
 import ExampleRunnerResult from './ExampleRunnerResult';
-import { getExampleInfo, getIndexHtmlUrl, openPlunker } from './helpers';
+import { getExampleInfo, getIndexHtmlUrl, openPlunker, openCodeSandbox } from './helpers';
 import { getIndexHtml } from './index-html-helper';
 import { trackExampleRunnerEvent } from './track-example-runner-event';
 import { useExampleFileNodes } from './use-example-file-nodes';
@@ -595,6 +595,11 @@ const ExampleRunnerInner = ({
                             {!exampleInfo.options.noPlunker && (
                                 <li>
                                     <OpenInCTA type="plunker" onClick={() => openPlunker(exampleInfo)} />
+                                </li>
+                            )}
+                            {!exampleInfo.options.noPlunker && (
+                                <li>
+                                    <OpenInCTA type="codesandbox" onClick={() => openCodeSandbox(exampleInfo)} />
                                 </li>
                             )}
                         </ul>
