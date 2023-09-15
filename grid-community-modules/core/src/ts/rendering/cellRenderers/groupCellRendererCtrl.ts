@@ -589,13 +589,17 @@ export class GroupCellRendererCtrl extends BeanStub {
         const pivotModeAndLeafGroup = pivotMode && displayedGroup.leafGroup;
         const addExpandableCss = isExpandable && !pivotModeAndLeafGroup;
         const isTotalFooterNode = node.footer && node.level === -1;
-        const noIcon = this.eExpanded?.classList.contains('ag-hidden') && this.eContracted?.classList.contains('ag-hidden')
 
         this.comp.addOrRemoveCssClass('ag-cell-expandable', addExpandableCss);
         this.comp.addOrRemoveCssClass('ag-row-group', addExpandableCss);
 
         if (pivotMode) {
-            this.comp.addOrRemoveCssClass('ag-pivot-leaf-group', pivotModeAndLeafGroup || noIcon);
+
+            // AG-9310 there was previously an issue when 'pivotMode = true' and 'showOpenedGroup = true' leaving group cell without padding when there was no expander.
+            // assigning 'ag-pivot-leaf-group' adds the offset to un-expandable cells in this situation and resolves the issue.
+            const noIconShowOpenedGroupEnabled = !this.displayedGroupNode.expanded && !isExpandable && this.gridOptionsService.is('showOpenedGroup');
+
+            this.comp.addOrRemoveCssClass('ag-pivot-leaf-group', pivotModeAndLeafGroup || noIconShowOpenedGroupEnabled);
         } else if (!isTotalFooterNode) {
             this.comp.addOrRemoveCssClass('ag-row-group-leaf-indent', !addExpandableCss);
         }
