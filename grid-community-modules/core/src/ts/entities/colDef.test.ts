@@ -15,7 +15,7 @@ describe('ColDef.field Types', () => {
         const t: ColDef<RowData>[] = [
             { field: 'a' },
             { field: 'b' },
-            // @ts-expect-error - string is not assignable to number
+            // @ts-expect-error - non existent field
             { field: 'c' },
         ];
     })
@@ -26,7 +26,7 @@ describe('ColDef.field Types', () => {
             { field: 'a' },
             { field: 'b' },
             { field: 'c' },
-            // @ts-expect-error - string is not assignable to number
+            // @ts-expect-error - non existent field
             { field: 'd' },
         ];
     })
@@ -56,5 +56,33 @@ describe('ColDef.field Types', () => {
             // @ts-expect-error - string is not assignable to number
             { field: 'b' },
         ]
+    })
+
+    test('Recursive TData', () => {
+        interface RowData {
+            a: number;
+            d: number;
+
+            f: number;
+
+            g: number;
+
+            child: RowData
+            
+        }
+        const t: ColDef<RowData>[] = [
+            { field: 'a' },
+            { field: 'child' },
+            { field: 'child.a' },
+            { field: 'child.child' },
+            { field: 'child.child.a' },
+            { field: 'child.child.child' },
+            // @ts-expect-error - validate type 6 levels deep
+            { field: 'child.child.child.child.child.child.childWrong' },
+            // Let the user take care of the rest
+            { field: 'child.child.child.child.child.child.child.childWrong' },
+            { field: 'child.child.child.child.child.child.child.child.child.child.child.child.child.child.child.child' },
+            
+        ];
     })
 });
