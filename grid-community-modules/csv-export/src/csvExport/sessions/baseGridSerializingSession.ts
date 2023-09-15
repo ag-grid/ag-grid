@@ -101,6 +101,8 @@ export abstract class BaseGridSerializingSession<T> implements GridSerializingSe
         if (currentColumnGroupIndex !== -1) {
             if (node.groupData?.[column.getId()] != null) { return true; }
 
+            if (this.gridOptionsService.isRowModelType('serverSide') && node.group) return true;
+
             // if this is a top level footer, always render`Total` in the left-most cell
             if (node.footer && node.level === -1) {
                 const colDef = column.getColDef();
