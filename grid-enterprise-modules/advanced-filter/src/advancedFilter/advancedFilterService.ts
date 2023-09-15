@@ -64,6 +64,7 @@ export class AdvancedFilterService extends BeanStub implements IAdvancedFilterSe
         this.addManagedPropertyListener('enableAdvancedFilter', (event: PropertyChangedEvent) => this.setEnabled(!!event.currentValue))
         this.addManagedListener(this.eventService, Events.EVENT_NEW_COLUMNS_LOADED,
             (event: NewColumnsLoadedEvent) => this.onNewColumnsLoaded(event));
+        this.addManagedPropertyListener('includeHiddenColumnsInAdvancedFilter', () => this.updateValidity());
     }
 
     public isEnabled(): boolean {
@@ -100,6 +101,7 @@ export class AdvancedFilterService extends BeanStub implements IAdvancedFilterSe
         this.setExpressionDisplayValue(expression);
         this.applyExpression();
         this.ctrl.refreshComp();
+        this.ctrl.refreshBuilderComp();
     }
 
     public getExpressionDisplayValue(): string | null {
@@ -185,15 +187,19 @@ export class AdvancedFilterService extends BeanStub implements IAdvancedFilterSe
     }
 
     public updateValidity(): boolean {
+        this.advancedFilterExpressionService.resetColumnCaches();
         const expressionParser = this.createExpressionParser(this.expression);
         expressionParser?.parseExpression();
         const isValid = !expressionParser || expressionParser.isValid();
 
-        if (isValid === this.isValid) { return false; }
+        const updatedValidity = isValid !== this.isValid;
 
-        this.applyExpressionFromParser(expressionParser);
-        this.ctrl.refreshComp();
-        return true;
+        if (updatedValidity) {
+            this.applyExpressionFromParser(expressionParser);
+            this.ctrl.refreshComp();
+        }
+        this.ctrl.refreshBuilderComp();
+        return updatedValidity;
     }
 
     private onNewColumnsLoaded(event: NewColumnsLoadedEvent): void {

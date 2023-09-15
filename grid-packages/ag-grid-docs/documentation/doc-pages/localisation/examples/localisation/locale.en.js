@@ -336,7 +336,15 @@ const AG_GRID_LOCALE_EN = {
     secondaryAxis: 'Secondary Axis',
 
     // ARIA
+    ariaAdvancedFilterBuilderItem: '${variable1}. Level ${variable2}. Press ENTER to edit.',
+    ariaAdvancedFilterBuilderItemValidation: '${variable1}. Level ${variable2}. ${variable3} Press ENTER to edit.',
     ariaAdvancedFilterBuilderList: 'Advanced Filter Builder List',
+    ariaAdvancedFilterBuilderFilterItem: 'Filter Condition',
+    ariaAdvancedFilterBuilderGroupItem: 'Filter Group',
+    ariaAdvancedFilterBuilderColumn: 'Column',
+    ariaAdvancedFilterBuilderOption: 'Option',
+    ariaAdvancedFilterBuilderValueP: 'Value',
+    ariaAdvancedFilterBuilderJoinOperator: 'Join Operator',
     ariaAdvancedFilterInput: 'Advanced Filter Input',
     ariaChecked: 'checked',
     ariaColumn: 'Column',

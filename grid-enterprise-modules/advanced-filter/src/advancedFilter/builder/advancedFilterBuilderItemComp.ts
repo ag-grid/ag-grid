@@ -62,16 +62,16 @@ export class AdvancedFilterBuilderItemComp extends TabGuardComp {
     ) {
         super(/* html */ `
             <div class="ag-advanced-filter-builder-item-wrapper" role="presentation">
-                <div ref="eItem" class="ag-advanced-filter-builder-item">
+                <div ref="eItem" class="ag-advanced-filter-builder-item" role="presentation">
                     <div ref="eTreeLines" class="ag-advanced-filter-builder-item-tree-lines" aria-hidden="true"></div>
-                    <span ref="eDragHandle" class="ag-drag-handle" role="presentation"></span>
-                    <span ref="eValidation" class="ag-advanced-filter-builder-item-button ag-advanced-filter-builder-invalid" role="presentation"></span>
+                    <span ref="eDragHandle" class="ag-drag-handle" aria-hidden="true"></span>
+                    <span ref="eValidation" class="ag-advanced-filter-builder-item-button ag-advanced-filter-builder-invalid" aria-hidden="true"></span>
                 </div>
                 <div ref="eButtons" class="ag-advanced-filter-builder-item-buttons">
-                    <span ref="eMoveUpButton" class="ag-advanced-filter-builder-item-button" role="presentation"></span>
-                    <span ref="eMoveDownButton" class="ag-advanced-filter-builder-item-button" role="presentation"></span>
+                    <span ref="eMoveUpButton" class="ag-advanced-filter-builder-item-button" role="button"></span>
+                    <span ref="eMoveDownButton" class="ag-advanced-filter-builder-item-button" role="button"></span>
                     <div ref="eAddButton" role="presentation"></div>
-                    <span ref="eRemoveButton" class="ag-advanced-filter-builder-item-button" role="presentation"></span>
+                    <span ref="eRemoveButton" class="ag-advanced-filter-builder-item-button" role="button"></span>
                 </div>
             </div>
         `);
@@ -94,6 +94,7 @@ export class AdvancedFilterBuilderItemComp extends TabGuardComp {
 
             _.setDisplayed(this.eDragHandle, false);
             _.setDisplayed(this.eButtons, false);
+            _.setAriaExpanded(this.focusWrapper, true);
         } else {
             this.setupTreeLines(level);
 
@@ -104,6 +105,7 @@ export class AdvancedFilterBuilderItemComp extends TabGuardComp {
             this.setupRemoveButton();
 
             this.setupDragging();
+            this.updateAriaExpanded();
         }
 
         _.setAriaLevel(this.focusWrapper, level + 1);
@@ -115,6 +117,8 @@ export class AdvancedFilterBuilderItemComp extends TabGuardComp {
             this.focusWrapper,
             this.ePillWrapper
         ));
+
+        this.updateAriaLabel();
 
         this.addManagedListener(this.ePillWrapper, AdvancedFilterBuilderEvents.EVENT_VALUE_CHANGED, () => this.dispatchEvent({
             type: AdvancedFilterBuilderEvents.EVENT_VALUE_CHANGED
@@ -130,14 +134,17 @@ export class AdvancedFilterBuilderItemComp extends TabGuardComp {
     }): void {
         const { level } = this.item;
         if (level === 0) { return; }
-        const { filterModel, showMove } = this.item;
+        const { showMove } = this.item;
         const { disableMoveUp, disableMoveDown, treeLines, showStartTreeLine } = params;
         this.updateTreeLines(treeLines, showStartTreeLine);
+        this.updateAriaExpanded();
         if (showMove) {
             this.moveUpDisabled = !!disableMoveUp;
             this.moveDownDisabled = !!disableMoveDown;
             this.eMoveUpButton.classList.toggle('ag-advanced-filter-builder-item-button-disabled', disableMoveUp);
             this.eMoveDownButton.classList.toggle('ag-advanced-filter-builder-item-button-disabled', disableMoveDown);
+            _.setAriaDisabled(this.eMoveUpButton, !!disableMoveUp);
+            _.setAriaDisabled(this.eMoveDownButton, !!disableMoveDown);
             this.moveUpTooltipFeature.refreshToolTip();
             this.moveDownTooltipFeature.refreshToolTip();
         }
@@ -233,6 +240,7 @@ export class AdvancedFilterBuilderItemComp extends TabGuardComp {
             getTooltipValue: () => this.advancedFilterExpressionService.translate('advancedFilterBuilderRemoveButtonTooltip')
         }, this.beans));
         tooltipFeature.setComp(this.eRemoveButton);
+        _.setAriaLabel(this.eRemoveButton, this.advancedFilterExpressionService.translate('advancedFilterBuilderRemoveButtonTooltip'));
 
         this.activateTabIndex([this.eRemoveButton]);
     }
@@ -259,6 +267,7 @@ export class AdvancedFilterBuilderItemComp extends TabGuardComp {
                     : this.advancedFilterExpressionService.translate('advancedFilterBuilderMoveUpButtonTooltip')
             }, this.beans));
             this.moveUpTooltipFeature.setComp(this.eMoveUpButton);
+            _.setAriaLabel(this.eMoveUpButton, this.advancedFilterExpressionService.translate('advancedFilterBuilderMoveUpButtonTooltip'));
 
             this.eMoveDownButton.appendChild(_.createIconNoSpan('advancedFilterBuilderMoveDown', this.gridOptionsService)!);
             this.addManagedListener(this.eMoveDownButton, 'click', () => this.moveItem(false));
@@ -280,6 +289,7 @@ export class AdvancedFilterBuilderItemComp extends TabGuardComp {
                     : this.advancedFilterExpressionService.translate('advancedFilterBuilderMoveDownButtonTooltip')
             }, this.beans));
             this.moveDownTooltipFeature.setComp(this.eMoveDownButton);
+            _.setAriaLabel(this.eMoveDownButton, this.advancedFilterExpressionService.translate('advancedFilterBuilderMoveDownButtonTooltip'));
 
             this.activateTabIndex([this.eMoveUpButton, this.eMoveDownButton]);
         } else {
@@ -291,10 +301,11 @@ export class AdvancedFilterBuilderItemComp extends TabGuardComp {
     private updateValidity(): void {
         _.setVisible(this.eValidation, !this.item.valid);
         this.validationTooltipFeature.refreshToolTip();
+        this.updateAriaLabel();
     }
 
     private createPill(params: CreatePillParams): SelectPillComp | InputPillComp {
-        const { key, displayValue, cssClass, update } = params;
+        const { key, displayValue, cssClass, update, ariaLabel } = params;
         const onUpdated = (key: string) => {
             if (key == null) { return; }
             update(key);
@@ -321,7 +332,8 @@ export class AdvancedFilterBuilderItemComp extends TabGuardComp {
                 minPickerWidth,
                 maxPickerWidth,
                 getEditorParams,
-                wrapperClassName: cssClass
+                wrapperClassName: cssClass,
+                ariaLabel
             }));
             this.addManagedListener(
                 comp,
@@ -333,7 +345,8 @@ export class AdvancedFilterBuilderItemComp extends TabGuardComp {
             const comp = this.createBean(new InputPillComp({
                 value: displayValue,
                 cssClass,
-                type: this.getInputType(params.baseCellDataType)
+                type: this.getInputType(params.baseCellDataType),
+                ariaLabel
             }));
             this.addManagedListener(
                 comp,
@@ -376,6 +389,33 @@ export class AdvancedFilterBuilderItemComp extends TabGuardComp {
 
         this.dragAndDropService.addDragSource(dragSource, true);
         this.addDestroyFunc(() => this.dragAndDropService.removeDragSource(dragSource));
+    }
+
+    private updateAriaLabel(): void {
+        const wrapperLabel = this.ePillWrapper.getAriaLabel();
+        const level = `${this.item.level + 1}`;
+        const validationMessage = this.ePillWrapper.getValidationMessage();
+        let ariaLabel;
+        if (validationMessage) {
+            ariaLabel = this.advancedFilterExpressionService.translate(
+                'ariaAdvancedFilterBuilderItemValidation',
+                [wrapperLabel, level, validationMessage]
+            );
+        } else {
+            ariaLabel = this.advancedFilterExpressionService.translate(
+                'ariaAdvancedFilterBuilderItem',
+                [wrapperLabel, level]
+            );
+        }
+        _.setAriaLabel(this.focusWrapper, ariaLabel);
+    }
+
+    private updateAriaExpanded(): void {
+        _.removeAriaExpanded(this.focusWrapper);
+        const { filterModel } = this.item;
+        if (filterModel?.filterType === 'join' && filterModel.conditions.length) {
+            _.setAriaExpanded(this.focusWrapper, true);
+        }
     }
 
     private removeItem(): void {

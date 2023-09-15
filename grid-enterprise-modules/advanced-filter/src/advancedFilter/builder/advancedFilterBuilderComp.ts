@@ -64,12 +64,26 @@ export class AdvancedFilterBuilderComp extends Component {
             this.refreshList(false);
         })
 
-        this.setupFilterModel();
+        this.filterModel = this.setupFilterModel();
         this.setupVirtualList();
 
         this.dragFeature = this.createManagedBean(new AdvancedFilterBuilderDragFeature(this, this.virtualList));
 
         this.setupButtons();
+    }
+
+    public refresh(): void {
+        let indexToFocus = this.virtualList.getLastFocusedRow();
+        this.setupFilterModel();
+        this.validateItems();
+        this.refreshList(false);
+        if (indexToFocus != null) {
+            // last focused row is cleared on focus out, so if defined, we need to put the focus back
+            if (!this.virtualList.getComponentAt(indexToFocus)) {
+                indexToFocus = 0;
+            }
+            this.virtualList.focusRow(indexToFocus);
+        }
     }
 
     public getNumItems(): number {
@@ -182,20 +196,26 @@ export class AdvancedFilterBuilderComp extends Component {
         );
     }
 
-    private setupFilterModel(): void {
-        this.filterModel = this.advancedFilterService.getModel() ?? {
+    private setupFilterModel(): AdvancedFilterModel {
+        const filterModel = this.formatFilterModel(this.advancedFilterService.getModel());
+        this.stringifiedModel = JSON.stringify(filterModel);
+        return filterModel
+    }
+
+    private formatFilterModel(filterModel: AdvancedFilterModel | null): AdvancedFilterModel {
+        filterModel = filterModel ?? {
             filterType: 'join',
             type: 'AND',
             conditions: []
         }
-        if (this.filterModel.filterType !== 'join') {
-            this.filterModel = {
+        if (filterModel.filterType !== 'join') {
+            filterModel = {
                 filterType: 'join',
                 type: 'AND',
-                conditions: [this.filterModel]
+                conditions: [filterModel]
             };
         }
-        this.stringifiedModel = JSON.stringify(this.filterModel);
+        return filterModel;
     }
 
     private buildList(): void {
@@ -430,5 +450,42 @@ export class AdvancedFilterBuilderComp extends Component {
         }
         _.setDisabled(this.eApplyFilterButton, disableApply);
         this.validationTooltipFeature.refreshToolTip();
+    }
+
+    private validateItems(): void {
+        const clearOperator = (filterModel: ColumnAdvancedFilterModel) => {
+            filterModel.type = undefined as any;
+        }
+        const clearOperand = (filterModel: ColumnAdvancedFilterModel) => {
+            delete (filterModel as any).filter;
+        }
+        this.items.forEach(item => {
+            if (!item.valid || !item.filterModel || item.filterModel.filterType === 'join') {
+                return;
+            }
+            const { filterModel } = item;
+            const { colId } = filterModel;
+            const hasColumn = this.advancedFilterExpressionService.getColumnAutocompleteEntries().find(({ key }) => key === colId);
+            const columnDetails = this.advancedFilterExpressionService.getColumnDetails(filterModel.colId);
+            if (!hasColumn || !columnDetails) {
+                item.valid = false;
+                filterModel.colId = undefined as any;
+                clearOperator(filterModel);
+                clearOperand(filterModel);
+                return;
+            }
+            const operatorForType = this.advancedFilterExpressionService.getDataTypeExpressionOperator(columnDetails.baseCellDataType)!;
+            const operator = operatorForType.operators[filterModel.type];
+            if (!operator) {
+                item.valid = false;
+                clearOperator(filterModel);
+                clearOperand(filterModel);
+                return;
+            }
+            if (operator.numOperands > 0 && !_.exists((filterModel as any).filter)) {
+                item.valid = false;
+                return;
+            }
+        });
     }
 }

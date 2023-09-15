@@ -2,6 +2,7 @@ import { AgRichSelect, AutocompleteEntry, RichSelectParams, _ } from "@ag-grid-c
 
 export interface AddDropdownCompParams extends RichSelectParams<AutocompleteEntry> {
     wrapperClassName?: string;
+    ariaLabel: string;
 }
 
 export class AddDropdownComp extends AgRichSelect {
@@ -22,11 +23,15 @@ export class AddDropdownComp extends AgRichSelect {
 
     protected postConstruct(): void {
         super.postConstruct();
+
+        const { wrapperClassName, ariaLabel } = this.params;
+
         _.setDisplayed(this.eDisplayField, false);
-        const { wrapperClassName } = this.params;
         if (wrapperClassName) {
             this.eWrapper.classList.add(wrapperClassName);
         }
+        _.setAriaLabelledBy(this.eWrapper, '');
+        _.setAriaLabel(this.eWrapper, ariaLabel);
     }
 
     protected onEnterKeyDown(event: KeyboardEvent): void {

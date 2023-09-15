@@ -169,12 +169,24 @@
         padding: var(--ag-grid-size) calc(var(--ag-grid-size) * 2);
         min-height: calc(100% - var(--ag-grid-size) * 3);
         min-width: calc(var(--ag-grid-size) * 2);
+
+        .ag-picker-field-display {
+            margin-right: var(--ag-grid-size);
+        }
+
+        .ag-advanced-filter-builder-value-number {
+            font-family: monospace;
+            font-weight: 700;
+        }
+    
+        .ag-advanced-filter-builder-value-empty {
+            color: var(--ag-disabled-foreground-color);
+        }
     }
 
     @include ag.keyboard-focus((ag-advanced-filter-builder-pill, ag-advanced-filter-builder-item-button), -4px);
 
     .ag-advanced-filter-builder-pill-display {
-        margin-right: var(--ag-grid-size);
         overflow: hidden;
         text-overflow: ellipsis;
         white-space: nowrap;
@@ -201,21 +213,11 @@
         background-color: var(--ag-advanced-filter-value-pill-color);
 
         cursor: text;
-        text-overflow: ellipsis;
-        overflow: hidden;
-        white-space: nowrap;
-        display: block;
         max-width: 140px;
-        font-weight: 500;
-    }
 
-    .ag-advanced-filter-builder-value-number {
-        font-family: monospace;
-        font-family: 700;
-    }
-
-    .ag-advanced-filter-builder-value-empty {
-        color: var(--ag-disabled-foreground-color);
+        .ag-advanced-filter-builder-pill-display {
+            display: block;
+        }
     }
 
     .ag-advanced-filter-builder-item-buttons > * {

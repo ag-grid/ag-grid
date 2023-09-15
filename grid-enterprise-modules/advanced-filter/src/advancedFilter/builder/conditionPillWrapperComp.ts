@@ -30,7 +30,7 @@ export class ConditionPillWrapperComp extends Component {
 
     constructor() {
         super(/* html */`
-            <div class="ag-advanced-filter-builder-item-condition"></div>
+            <div class="ag-advanced-filter-builder-item-condition" role="presentation"></div>
         `);
     }
 
@@ -52,6 +52,10 @@ export class ConditionPillWrapperComp extends Component {
         return this.filterModel.colId
             ? this.advancedFilterExpressionService.parseColumnFilterModel(this.filterModel)
             : this.getDefaultColumnDisplayValue();
+    }
+
+    public getAriaLabel(): string{
+        return `${this.advancedFilterExpressionService.translate('ariaAdvancedFilterBuilderFilterItem')} ${this.getDragName()}`;
     }
 
     public getValidationMessage(): string | null {
@@ -76,7 +80,8 @@ export class ConditionPillWrapperComp extends Component {
             getEditorParams: () => ({ values: this.advancedFilterExpressionService.getColumnAutocompleteEntries() }),
             update: (key) => this.setColumnKey(key),
             pickerAriaLabelKey: 'ariaLabelAdvancedFilterBuilderColumnSelectField',
-            pickerAriaLabelValue: 'Advanced Filter Builder Column Select Field'
+            pickerAriaLabelValue: 'Advanced Filter Builder Column Select Field',
+            ariaLabel: this.advancedFilterExpressionService.translate('ariaAdvancedFilterBuilderColumn')
         });
         this.getGui().appendChild(this.eColumnPill.getGui());
 
@@ -97,7 +102,8 @@ export class ConditionPillWrapperComp extends Component {
             getEditorParams: () => ({ values: this.getOperatorAutocompleteEntries() }),
             update: (key) => this.setOperatorKey(key),
             pickerAriaLabelKey: 'ariaLabelAdvancedFilterBuilderOptionSelectField',
-            pickerAriaLabelValue: 'Advanced Filter Builder Option Select Field'
+            pickerAriaLabelValue: 'Advanced Filter Builder Option Select Field',
+            ariaLabel: this.advancedFilterExpressionService.translate('ariaAdvancedFilterBuilderOption')
         });
         this.eColumnPill.getGui().insertAdjacentElement('afterend', this.eOperatorPill.getGui());
     }
@@ -110,7 +116,8 @@ export class ConditionPillWrapperComp extends Component {
             baseCellDataType: this.baseCellDataType,
             cssClass: 'ag-advanced-filter-builder-value-pill',
             isSelect: false,
-            update: (key) => this.setOperand(key)
+            update: (key) => this.setOperand(key),
+            ariaLabel: this.advancedFilterExpressionService.translate('ariaAdvancedFilterBuilderValue')
         });
         this.getGui().appendChild(this.eOperandPill.getGui());
     }

@@ -62,6 +62,14 @@ export class AdvancedFilterBuilderItemAddComp extends Component {
             this.focusWrapper,
             eAddButton
         ));
+
+        _.setAriaLabel(
+            this.focusWrapper,
+            this.advancedFilterExpressionService.translate('ariaAdvancedFilterBuilderItem', [
+                this.advancedFilterExpressionService.translate('advancedFilterBuilderAddButtonTooltip'),
+                `${this.item.level + 1}`
+            ])
+        );
     }
 
     public afterAdd(): void {

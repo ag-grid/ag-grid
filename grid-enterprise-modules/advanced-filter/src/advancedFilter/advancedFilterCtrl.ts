@@ -72,6 +72,10 @@ export class AdvancedFilterCtrl extends BeanStub implements IAdvancedFilterCtrl 
         this.eHeaderComp?.refresh();
     }
 
+    public refreshBuilderComp(): void {
+        this.eBuilderComp?.refresh();
+    }
+
     public getHeaderHeight(): number {
         return this.eHeaderComp?.getHeight() ?? 0;
     }

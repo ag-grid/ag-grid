@@ -16,15 +16,18 @@ import { AdvancedFilterExpressionService } from "../advancedFilterExpressionServ
 
 export class InputPillComp extends Component {
     @RefSelector('ePill') private ePill: HTMLElement;
+    @RefSelector('eLabel') private eLabel: HTMLElement;
     @Autowired('advancedFilterExpressionService') private advancedFilterExpressionService: AdvancedFilterExpressionService;
 
     private eEditor: AgInputTextField | undefined;
     private value: string;
 
-    constructor(private readonly params: { value: string, cssClass: string, type: 'text' | 'number' | 'date' }) {
+    constructor(private readonly params: { value: string, cssClass: string, type: 'text' | 'number' | 'date', ariaLabel: string }) {
         super(/* html */ `
             <div class="ag-advanced-filter-builder-pill-wrapper" role="presentation">
-                <div ref="ePill" class="ag-advanced-filter-builder-pill"></div>
+                <div ref="ePill" class="ag-advanced-filter-builder-pill" role="button">
+                    <span ref="eLabel" class="ag-advanced-filter-builder-pill-display"></span>
+                </div>
             </div>
         `);
         this.value = params.value;
@@ -32,8 +35,15 @@ export class InputPillComp extends Component {
 
     @PostConstruct
     private postConstruct(): void {
-        this.ePill.classList.add(this.params.cssClass);
+        const{ cssClass, ariaLabel } = this.params;
+
+        this.ePill.classList.add(cssClass);
         this.activateTabIndex([this.ePill]);
+
+        this.eLabel.id = `${this.getCompId()}`;
+        _.setAriaDescribedBy(this.ePill, this.eLabel.id);
+        _.setAriaLabel(this.ePill, ariaLabel);
+
         this.renderValue();
 
         this.addManagedListener(this.ePill, 'click', (event: MouseEvent) => {
@@ -113,22 +123,22 @@ export class InputPillComp extends Component {
 
     private renderValue(): void {
         let value: string;
-        this.ePill.classList.remove(
+        this.eLabel.classList.remove(
             'ag-advanced-filter-builder-value-empty',
             'ag-advanced-filter-builder-value-number',
             'ag-advanced-filter-builder-value-text'
         );
         if (!_.exists(this.value)) {
             value = this.advancedFilterExpressionService.translate('advancedFilterBuilderEnterValue');
-            this.ePill.classList.add('ag-advanced-filter-builder-value-empty');
+            this.eLabel.classList.add('ag-advanced-filter-builder-value-empty');
         } else if (this.params.type === 'number') {
             value = this.value;
-            this.ePill.classList.add('ag-advanced-filter-builder-value-number');
+            this.eLabel.classList.add('ag-advanced-filter-builder-value-number');
         } else {
             value = `"${this.value}"`;
-            this.ePill.classList.add('ag-advanced-filter-builder-value-text');
+            this.eLabel.classList.add('ag-advanced-filter-builder-value-text');
         }
-        this.ePill.innerText = value;
+        this.eLabel.innerText = value;
     }
 
     private updateValue(keepFocus: boolean): void {

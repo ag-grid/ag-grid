@@ -17,6 +17,7 @@ export function getAdvancedFilterBuilderAddButtonParams(translate: (key: keyof t
         valueFormatter: (value: AutocompleteEntry) => value == null ? null : value.displayValue ?? value.key,
         pickerIcon: 'advancedFilterBuilderAdd',
         maxPickerWidth: `${maxPickerWidth ?? 120}px`,
-        wrapperClassName: 'ag-advanced-filter-builder-item-button'
+        wrapperClassName: 'ag-advanced-filter-builder-item-button',
+        ariaLabel: translate('advancedFilterBuilderAddButtonTooltip')
     };
 }

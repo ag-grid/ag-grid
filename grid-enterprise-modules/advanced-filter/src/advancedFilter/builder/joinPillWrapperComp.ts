@@ -12,7 +12,7 @@ export class JoinPillWrapperComp extends Component {
 
     constructor() {
         super(/* html */`
-            <div class="ag-advanced-filter-builder-item-condition"></div>
+            <div class="ag-advanced-filter-builder-item-condition" role="presentation"></div>
         `);
     }
 
@@ -32,7 +32,8 @@ export class JoinPillWrapperComp extends Component {
             getEditorParams: () => ({ values: this.advancedFilterExpressionService.getJoinOperatorAutocompleteEntries() }),
             update: (key) => filterModel.type = key as any,
             pickerAriaLabelKey: 'ariaLabelAdvancedFilterBuilderJoinSelectField',
-            pickerAriaLabelValue: 'Advanced Filter Builder Join Operator Select Field'
+            pickerAriaLabelValue: 'Advanced Filter Builder Join Operator Select Field',
+            ariaLabel: this.advancedFilterExpressionService.translate('ariaAdvancedFilterBuilderJoinOperator')
         });
         this.getGui().appendChild(this.ePill.getGui());
         this.addDestroyFunc(() => this.destroyBean(this.ePill));
@@ -40,6 +41,10 @@ export class JoinPillWrapperComp extends Component {
 
     public getDragName(): string {
         return this.advancedFilterExpressionService.parseJoinOperator(this.filterModel);
+    }
+
+    public getAriaLabel(): string {
+        return `${this.advancedFilterExpressionService.translate('ariaAdvancedFilterBuilderGroupItem')} ${this.getDragName()}`;
     }
 
     public getValidationMessage(): string | null {

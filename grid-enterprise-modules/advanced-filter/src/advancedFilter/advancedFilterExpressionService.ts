@@ -9,10 +9,8 @@ import {
     ColumnAdvancedFilterModel,
     ColumnModel,
     DataTypeService,
-    Events,
     JoinAdvancedFilterModel,
     PostConstruct,
-    PropertyChangedEvent,
     ValueFormatterService,
     ValueParserService,
     _,
@@ -36,7 +34,6 @@ export class AdvancedFilterExpressionService extends BeanStub {
     @Autowired('columnModel') private columnModel: ColumnModel;
     @Autowired('dataTypeService') private dataTypeService: DataTypeService;
 
-    private includeHiddenColumns = false;
     private columnNameToIdMap: { [columnNameUpperCase: string]: { colId: string, columnName: string } } = {};
     private columnAutocompleteEntries: AutocompleteEntry[] | null = null;
     private expressionOperators: FilterExpressionOperators;
@@ -47,13 +44,6 @@ export class AdvancedFilterExpressionService extends BeanStub {
     private postConstruct(): void {
         this.expressionJoinOperators = this.generateExpressionJoinOperators();
         this.expressionOperators = this.generateExpressionOperators();
-        this.includeHiddenColumns = this.gridOptionsService.is('includeHiddenColumnsInAdvancedFilter');
-
-        this.addManagedListener(this.eventService, Events.EVENT_GRID_COLUMNS_CHANGED, () => this.resetColumnCaches());
-        this.addManagedPropertyListener('includeHiddenColumnsInAdvancedFilter', (event: PropertyChangedEvent) => {
-            this.includeHiddenColumns = !!event.currentValue;
-            this.resetColumnCaches();
-        });
     }
 
     public parseJoinOperator(model: JoinAdvancedFilterModel): string {
@@ -164,8 +154,9 @@ export class AdvancedFilterExpressionService extends BeanStub {
         }
         const columns = this.columnModel.getAllPrimaryColumns() ?? [];
         const entries: AutocompleteEntry[] = [];
+        const includeHiddenColumns = this.gridOptionsService.is('includeHiddenColumnsInAdvancedFilter');
         columns.forEach(column => {
-            if (column.getColDef().filter && (this.includeHiddenColumns || column.isVisible() || column.isRowGroupActive())) {
+            if (column.getColDef().filter && (includeHiddenColumns || column.isVisible() || column.isRowGroupActive())) {
                 entries.push({
                     key: column.getColId(),
                     displayValue: this.columnModel.getDisplayNameForColumn(column, 'advancedFilter')!
@@ -314,7 +305,7 @@ export class AdvancedFilterExpressionService extends BeanStub {
         return isValid ? filterOptions : undefined;
     }
 
-    private resetColumnCaches(): void {
+    public resetColumnCaches(): void {
         this.columnAutocompleteEntries = null;
         this.columnNameToIdMap = {};
     }

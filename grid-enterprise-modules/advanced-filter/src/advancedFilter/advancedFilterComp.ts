@@ -41,7 +41,7 @@ export class AdvancedFilterComp extends Component {
                 <ag-autocomplete ref="eAutocomplete"></ag-autocomplete>
                 <button class="ag-button ag-standard-button ag-advanced-filter-apply-button" ref="eApplyFilterButton"></button>
                 <button class="ag-advanced-filter-builder-button" ref="eBuilderFilterButton">
-                    <span ref="eBuilderFilterButtonIcon"></span>
+                    <span ref="eBuilderFilterButtonIcon" aria-hidden="true"></span>
                     <span class="ag-advanced-filter-builder-button-label" ref="eBuilderFilterButtonLabel"></span>
                 </button>
             </div>`);

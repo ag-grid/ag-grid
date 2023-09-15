@@ -2,7 +2,8 @@ import { AgRichSelect, AutocompleteEntry, RichSelectParams, VirtualList, _ } fro
 
 export interface SelectPillParams extends RichSelectParams<AutocompleteEntry> {
     getEditorParams: () => { values?: any[] },
-    wrapperClassName: string
+    wrapperClassName: string,
+    ariaLabel: string;
 }
 
 export class SelectPillComp extends AgRichSelect<AutocompleteEntry> {
@@ -27,7 +28,12 @@ export class SelectPillComp extends AgRichSelect<AutocompleteEntry> {
 
     protected postConstruct(): void {
         super.postConstruct();
-        this.eWrapper.classList.add(this.params.wrapperClassName);
+
+        const { wrapperClassName, ariaLabel } = this.params;
+
+        this.eWrapper.classList.add(wrapperClassName);
+        _.setAriaLabelledBy(this.eWrapper, '');
+        _.setAriaLabel(this.eWrapper, ariaLabel);
     }
 
     protected createPickerComponent(): VirtualList {

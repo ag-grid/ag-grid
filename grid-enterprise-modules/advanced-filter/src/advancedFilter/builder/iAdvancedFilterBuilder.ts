@@ -40,7 +40,8 @@ interface BaseCreatePillParams {
     key: string,
     displayValue: string,
     cssClass: string,
-    update: (key: string) => void
+    update: (key: string) => void,
+    ariaLabel: string
 }
 
 export class AdvancedFilterBuilderEvents {
