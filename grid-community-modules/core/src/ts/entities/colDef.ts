@@ -129,7 +129,7 @@ export type ColDefField<TData = any, TValue = any> = TData extends any ? NestedF
 export type NestedFieldPaths<TData = any, TValue = any, TDepth = 0> = {
     [TKey in StringOrNumKeys<TData>]:
         | (TData[TKey] extends TValue ? `${TKey}` : never)
-        | (TData[TKey] extends Array<any> ? never : NestedPath<TData[TKey], `${TKey}`, TValue, Inc<TDepth>>);
+        | NestedPath<TData[TKey], `${TKey}`, TValue, Inc<TDepth>>;
 }[StringOrNumKeys<TData>];
 
 
