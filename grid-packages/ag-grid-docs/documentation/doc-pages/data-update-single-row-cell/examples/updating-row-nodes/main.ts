@@ -1,6 +1,6 @@
 import { Grid, GridOptions, GetRowIdParams } from '@ag-grid-community/core'
 
-var rowData = [
+const rowData = [
   { id: 'aa', make: 'Toyota', model: 'Celica', price: 35000 },
   { id: 'bb', make: 'Ford', model: 'Mondeo', price: 32000 },
   { id: 'cc', make: 'Porsche', model: 'Boxster', price: 72000 },
@@ -27,6 +27,7 @@ const gridOptions: GridOptions = {
     return params.data.id
   },
   rowData: rowData,
+  enableCellChangeFlash: true,
 }
 
 function updateSort() {
@@ -38,27 +39,37 @@ function updateFilter() {
 }
 
 function setPriceOnToyota() {
-  var rowNode = gridOptions.api!.getRowNode('aa')!
-  var newPrice = Math.floor(Math.random() * 100000)
+  const rowNode = gridOptions.api!.getRowNode('aa')!
+  const newPrice = Math.floor(Math.random() * 100000)
   rowNode.setDataValue('price', newPrice)
 }
 
-function setDataOnFord() {
-  var rowNode = gridOptions.api!.getRowNode('bb')!
-  var newPrice = Math.floor(Math.random() * 100000)
-  var newModel = 'T-' + Math.floor(Math.random() * 1000)
-  var newData = {
+function generateNewFordData() {
+  const newPrice = Math.floor(Math.random() * 100000);
+  const newModel = 'T-' + Math.floor(Math.random() * 1000);
+  return {
     id: 'bb',
     make: 'Ford',
     model: newModel,
     price: newPrice,
-  }
-  rowNode.setData(newData)
+  };
+}
+
+function setDataOnFord() {
+  const rowNode = gridOptions.api!.getRowNode('bb')!;
+  const newData = generateNewFordData();
+  rowNode.setData(newData);
+}
+
+function updateDataOnFord() {
+  const rowNode = gridOptions.api!.getRowNode('bb')!;
+  const newData = generateNewFordData();
+  rowNode.updateData(newData);
 }
 
 // wait for the document to be loaded, otherwise
 // AG Grid will not find the div in the document.
 document.addEventListener('DOMContentLoaded', function () {
-  var eGridDiv = document.querySelector<HTMLElement>('#myGrid')!
+  const eGridDiv = document.querySelector<HTMLElement>('#myGrid')!
   new Grid(eGridDiv, gridOptions)
 })
