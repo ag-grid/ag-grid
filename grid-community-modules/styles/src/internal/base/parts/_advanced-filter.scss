@@ -236,6 +236,10 @@
         cursor: default;
     }
 
+    .ag-advanced-filter-builder-virtual-list-container {
+        top: var(--ag-grid-size);
+    }
+
     .ag-advanced-filter-builder-virtual-list-item {
         display: flex;
         cursor: default;
