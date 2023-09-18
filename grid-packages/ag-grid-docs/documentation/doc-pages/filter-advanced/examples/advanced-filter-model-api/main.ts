@@ -1,5 +1,36 @@
 import { Grid, GridOptions, AdvancedFilterModel } from '@ag-grid-community/core'
 
+const advancedFilterModel: AdvancedFilterModel =  {
+  filterType: 'join',
+  type: 'AND',
+  conditions: [
+    {
+      filterType: 'join',
+      type: 'OR',
+      conditions: [
+        {
+          filterType: 'number',
+          colId: 'age',
+          type: 'greaterThan',
+          filter: 23,
+        },
+        {
+          filterType: 'text',
+          colId: 'sport',
+          type: 'endsWith',
+          filter: 'ing',
+        }
+      ]
+    },
+    {
+      filterType: 'text',
+      colId: 'country',
+      type: 'contains',
+      filter: 'united',
+    }
+  ]
+};
+
 const gridOptions: GridOptions<IOlympicData> = {
   columnDefs: [
     { field: 'athlete' },
@@ -18,36 +49,7 @@ const gridOptions: GridOptions<IOlympicData> = {
     resizable: true,
   },
   enableAdvancedFilter: true,
-  advancedFilterModel: {
-    filterType: 'join',
-    type: 'AND',
-    conditions: [
-      {
-        filterType: 'join',
-        type: 'OR',
-        conditions: [
-          {
-            filterType: 'number',
-            colId: 'age',
-            type: 'greaterThan',
-            filter: 23,
-          },
-          {
-            filterType: 'text',
-            colId: 'sport',
-            type: 'endsWith',
-            filter: 'ing',
-          }
-        ]
-      },
-      {
-        filterType: 'text',
-        colId: 'country',
-        type: 'contains',
-        filter: 'united',
-      }
-    ]
-  },
+  advancedFilterModel: advancedFilterModel,
 }
 
 var savedFilterModel: AdvancedFilterModel | null = null;

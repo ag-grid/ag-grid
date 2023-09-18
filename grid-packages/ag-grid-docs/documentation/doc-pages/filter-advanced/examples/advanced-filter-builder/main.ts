@@ -1,4 +1,35 @@
-import { Grid, GridOptions, GridReadyEvent } from '@ag-grid-community/core'
+import { Grid, GridOptions, AdvancedFilterModel } from '@ag-grid-community/core';
+
+const advancedFilterModel: AdvancedFilterModel = {
+  filterType: 'join',
+    type: 'AND',
+    conditions: [
+      {
+        filterType: 'join',
+        type: 'OR',
+        conditions: [
+          {
+            filterType: 'number',
+            colId: 'age',
+            type: 'greaterThan',
+            filter: 23,
+          },
+          {
+            filterType: 'text',
+            colId: 'sport',
+            type: 'endsWith',
+            filter: 'ing',
+          }
+        ]
+      },
+      {
+        filterType: 'text',
+        colId: 'country',
+        type: 'contains',
+        filter: 'united',
+      }
+    ]
+};
 
 const gridOptions: GridOptions<IOlympicData> = {
   columnDefs: [
@@ -18,10 +49,9 @@ const gridOptions: GridOptions<IOlympicData> = {
     resizable: true,
   },
   enableAdvancedFilter: true,
-  popupParent: document.getElementById('wrapper'),
-  onGridReady: (params: GridReadyEvent) => {
-    // could also be provided via grid option `advancedFilterParent`
-    params.api.setAdvancedFilterParent(document.getElementById('advancedFilterParent'));
+  advancedFilterModel: advancedFilterModel,
+  onFirstDataRendered: () => {
+    gridOptions.api!.showAdvancedFilterBuilder();
   }
 }
 

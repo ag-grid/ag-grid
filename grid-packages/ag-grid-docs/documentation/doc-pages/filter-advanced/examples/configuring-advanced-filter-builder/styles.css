@@ -1,0 +1,27 @@
+.example-wrapper {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+#myGrid {
+    flex: 1 1 0px;
+    width: 100%;
+}
+
+.example-header {
+    margin-bottom: 10px;
+}
+
+.parent {
+    display: none;
+}
+
+.filter-icon {
+    margin-left: 4px;
+    color: grey;
+}
+
+.filter-icon-disabled {
+    display: none;
+}

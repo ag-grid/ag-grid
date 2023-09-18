@@ -57,10 +57,10 @@ export class AdvancedFilterBuilderComp extends Component {
 
     @PostConstruct
     private postConstruct(): void {
-        const { builderShowMoveButtons } = this.gridOptionsService.get('advancedFilterParams') ?? {};
-        this.showMove = !!builderShowMoveButtons;
-        this.addManagedPropertyListener('advancedFilterParams', ({currentValue}) => {
-            this.showMove = !!currentValue?.builderShowMoveButtons;
+        const { showMoveButtons } = this.gridOptionsService.get('advancedFilterBuilderParams') ?? {};
+        this.showMove = !!showMoveButtons;
+        this.addManagedPropertyListener('advancedFilterBuilderParams', ({currentValue}) => {
+            this.showMove = !!currentValue?.showMoveButtons;
             this.refreshList(false);
         })
 
@@ -433,7 +433,7 @@ export class AdvancedFilterBuilderComp extends Component {
     }
 
     private close(): void {
-        this.advancedFilterService.getCtrl().toggleFilterBuilder();
+        this.advancedFilterService.getCtrl().toggleFilterBuilder('ui');
     }
 
     private validate(): void {

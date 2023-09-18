@@ -3,6 +3,7 @@
  ************************************************************************************************/
 import { ColumnApi } from "../columns/columnApi";
 import {
+    AdvancedFilterBuilderVisibleChangedEvent,
     AsyncTransactionsFlushed, BodyScrollEndEvent, BodyScrollEvent, CellClickedEvent,
     CellContextMenuEvent,
     CellDoubleClickedEvent,
@@ -97,7 +98,7 @@ import { SideBarDef } from "../interfaces/iSideBar";
 import { IRowNode } from "../interfaces/iRowNode";
 import { DataTypeDefinition } from "./dataType";
 import { AdvancedFilterModel } from "../interfaces/advancedFilterModel";
-import { IAdvancedFilterParams } from "../interfaces/iAdvancedFilterParams";
+import { IAdvancedFilterBuilderParams } from "../interfaces/iAdvancedFilterBuilderParams";
 
 export interface GridOptions<TData = any> {
 
@@ -331,8 +332,8 @@ export interface GridOptions<TData = any> {
      * Set to `null` or `undefined` to appear inside the grid.
      */
     advancedFilterParent?: HTMLElement | null;
-    /** Customise the parameters passed to the Advanced Filter. */
-    advancedFilterParams?: IAdvancedFilterParams;
+    /** Customise the parameters passed to the Advanced Filter Builder. */
+    advancedFilterBuilderParams?: IAdvancedFilterBuilderParams;
 
     // *** Integrated Charts *** //
     /** Set to `true` to Enable Charts. Default: `false` */
@@ -1073,6 +1074,8 @@ export interface GridOptions<TData = any> {
     onFilterChanged?(event: FilterChangedEvent<TData>): void;
     /** Filter was modified but not applied. Used when filters have 'Apply' buttons. */
     onFilterModified?(event: FilterModifiedEvent<TData>): void;
+    /** Advanced Filter Builder visibility has changed (opened or closed). */
+    onAdvancedFilterBuilderVisibleChanged?(event: AdvancedFilterBuilderVisibleChangedEvent<TData>): void;
 
     // *** Integrated Charts *** //
     /** A chart has been created. */

@@ -1,4 +1,5 @@
 import {
+    AdvancedFilterBuilderVisibleChangedEvent,
     AdvancedFilterEnabledChangedEvent,
     AgDialog,
     Autowired,
@@ -9,6 +10,7 @@ import {
     IAdvancedFilterCtrl,
     PopupService,
     PostConstruct,
+    WithoutGridCommon,
     _
 } from "@ag-grid-community/core";
 import { AdvancedFilterHeaderComp } from "./advancedFilterHeaderComp";
@@ -29,6 +31,7 @@ export class AdvancedFilterCtrl extends BeanStub implements IAdvancedFilterCtrl 
     private hasAdvancedFilterParent: boolean;
     private eBuilderComp: AdvancedFilterBuilderComp | undefined;
     private eBuilderDialog: AgDialog | undefined;
+    private builderDestroySource?: 'api' | 'ui';
 
     constructor(private enabled: boolean) {
         super();
@@ -85,8 +88,13 @@ export class AdvancedFilterCtrl extends BeanStub implements IAdvancedFilterCtrl 
         this.eHeaderComp?.setInputDisabled(disabled);
     }
 
-    public toggleFilterBuilder(): void {
+    public toggleFilterBuilder(source: 'api' | 'ui', force?: boolean): void {
+        if ((force && this.eBuilderDialog) || (force === false && !this.eBuilderDialog)) {
+            // state requested is already active
+            return;
+        }
         if (this.eBuilderDialog) {
+            this.builderDestroySource = source;
             this.destroyBean(this.eBuilderDialog);
             return;
         }
@@ -94,6 +102,7 @@ export class AdvancedFilterCtrl extends BeanStub implements IAdvancedFilterCtrl 
         this.setInputDisabled(true);
 
         const { width, height } = this.getBuilderDialogSize();
+        const minWidth = this.gridOptionsService.get('advancedFilterBuilderParams')?.minWidth ?? 500;
 
         this.eBuilderComp = this.createBean(new AdvancedFilterBuilderComp());
         this.eBuilderDialog = this.createBean(new AgDialog({
@@ -106,9 +115,11 @@ export class AdvancedFilterCtrl extends BeanStub implements IAdvancedFilterCtrl 
             maximizable: true,
             centered: true,
             closable: true,
-            minWidth: this.gridOptionsService.get('advancedFilterParams')?.builderMinWidth ?? 500,
+            minWidth,
             afterGuiAttached: () => this.eBuilderComp?.afterGuiAttached()
         }));
+
+        this.dispatchFilterBuilderVisibleChangedEvent(source, true);
 
         this.eBuilderDialog.addEventListener(AgDialog.EVENT_DESTROYED, () => {
             this.destroyBean(this.eBuilderComp);
@@ -118,7 +129,18 @@ export class AdvancedFilterCtrl extends BeanStub implements IAdvancedFilterCtrl 
             this.dispatchEvent({
                 type: AdvancedFilterCtrl.EVENT_BUILDER_CLOSED
             });
+            this.dispatchFilterBuilderVisibleChangedEvent(this.builderDestroySource ?? 'ui', false);
+            this.builderDestroySource = undefined;
         });
+    }
+
+    private dispatchFilterBuilderVisibleChangedEvent(source: 'api' | 'ui', visible: boolean): void {
+        const event: WithoutGridCommon<AdvancedFilterBuilderVisibleChangedEvent> = {
+            type: Events.EVENT_ADVANCED_FILTER_BUILDER_VISIBLE_CHANGED,
+            source,
+            visible
+        };
+        this.eventService.dispatchEvent(event);
     }
 
     private getBuilderDialogSize(): { width: number, height: number; } {

@@ -1,4 +1,4 @@
-import { Grid, GridOptions } from '@ag-grid-community/core'
+import { Grid, GridOptions } from '@ag-grid-community/core';
 
 interface IOlympicDataTypes extends IOlympicData {
   dateObject: Date;

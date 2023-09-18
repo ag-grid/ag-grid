@@ -1,15 +1,15 @@
 /**
- * Parameters passed to the Advanced Filter
+ * Parameters passed to the Advanced Filter Builder
  */
-export interface IAdvancedFilterParams {
+export interface IAdvancedFilterBuilderParams {
     /** Minimum width in pixels of the Advanced Filter Builder popup. Default: `500` */
-    builderMinWidth?: number;
+    minWidth?: number;
     /** Whether to show the move up and move down buttons in the Advanced Filter Builder. Default: `false` */
-    builderShowMoveButtons?: boolean;
+    showMoveButtons?: boolean;
     /** Width in pixels of the Advanced Filter Builder add button select popup. Default: `120` */
-    builderAddSelectWidth?: number;
+    addSelectWidth?: number;
     /** Min width in pixels of the Advanced Filter Builder pill select popup. Default: `140` */
-    builderPillSelectMinWidth?: number;
+    pillSelectMinWidth?: number;
     /** Max width in pixels of the Advanced Filter Builder pill select popup. Default: `200` */
-    builderPillSelectMaxWidth?: number;
+    pillSelectMaxWidth?: number;
 }

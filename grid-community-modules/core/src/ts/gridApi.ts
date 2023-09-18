@@ -127,7 +127,7 @@ import { DataTypeDefinition } from "./entities/dataType";
 import { RowNode } from "./entities/rowNode";
 import { AdvancedFilterModel } from "./interfaces/advancedFilterModel";
 import { LoadSuccessParams } from "./rowNodeCache/rowNodeBlock";
-import { IAdvancedFilterParams } from "./interfaces/iAdvancedFilterParams";
+import { IAdvancedFilterBuilderParams } from "./interfaces/iAdvancedFilterBuilderParams";
 
 export interface DetailGridInfo {
     /**
@@ -766,9 +766,16 @@ export class GridApi<TData = any> {
         this.gos.set('advancedFilterParent', advancedFilterParent);
     }
 
-    /** Updates the Advanced Filter parameters. */
-    public setAdvancedFilterParams(params?: IAdvancedFilterParams): void {
-        this.gos.set('advancedFilterParams', params);
+    /** Updates the Advanced Filter Builder parameters. */
+    public setAdvancedFilterBuilderParams(params?: IAdvancedFilterBuilderParams): void {
+        this.gos.set('advancedFilterBuilderParams', params);
+    }
+
+    /** Open the Advanced Filter Builder dialog (if enabled). */
+    public showAdvancedFilterBuilder(): void {
+        if (ModuleRegistry.__assertRegistered(ModuleNames.AdvancedFilterModule, 'api.setAdvancedFilterModel', this.context.getGridId())) {
+            this.filterManager.showAdvancedFilterBuilder('api');
+        }
     }
 
     /**

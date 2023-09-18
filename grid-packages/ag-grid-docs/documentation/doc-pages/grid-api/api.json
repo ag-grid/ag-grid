@@ -243,6 +243,18 @@
                 "name": "Advanced Filter",
                 "url": "/filter-advanced/#advanced-filter-parent"
             }
+        },
+        "setAdvancedFilterBuilderParams":  {
+            "more": {
+                "name": "Advanced Filter",
+                "url": "/filter-advanced/#configuring-advanced-filter-builder"
+            }
+        },
+        "showAdvancedFilterBuilder":  {
+            "more": {
+                "name": "Advanced Filter",
+                "url": "/filter-advanced/#configuring-advanced-filter-builder"
+            }
         }
     },
     "navigation": {

@@ -136,7 +136,7 @@ export {
     BooleanAdvancedFilterModelType
 }  from './interfaces/advancedFilterModel';
 export { IAdvancedFilterCtrl } from './interfaces/iAdvancedFilterCtrl';
-export { IAdvancedFilterParams } from './interfaces/iAdvancedFilterParams';
+export { IAdvancedFilterBuilderParams } from './interfaces/iAdvancedFilterBuilderParams';
 export { IAdvancedFilterService } from './interfaces/iAdvancedFilterService';
 
 // gridPanel

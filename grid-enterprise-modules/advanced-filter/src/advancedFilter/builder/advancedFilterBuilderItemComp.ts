@@ -199,7 +199,7 @@ export class AdvancedFilterBuilderItemComp extends TabGuardComp {
     private setupAddButton(): void {
         const addButtonParams = getAdvancedFilterBuilderAddButtonParams(
             key => this.advancedFilterExpressionService.translate(key),
-            this.gridOptionsService.get('advancedFilterParams')?.builderAddSelectWidth
+            this.gridOptionsService.get('advancedFilterBuilderParams')?.addSelectWidth
         );
         const eAddButton = this.createManagedBean(new AddDropdownComp(addButtonParams));
         this.addManagedListener(
@@ -315,9 +315,9 @@ export class AdvancedFilterBuilderItemComp extends TabGuardComp {
         };
         if (params.isSelect) {
             const { getEditorParams, pickerAriaLabelKey, pickerAriaLabelValue } = params;
-            const advancedFilterParams = this.gridOptionsService.get('advancedFilterParams');
-            const minPickerWidth = `${advancedFilterParams?.builderPillSelectMinWidth ?? 140}px`;
-            const maxPickerWidth = `${advancedFilterParams?.builderPillSelectMaxWidth ?? 200}px`;
+            const advancedFilterBuilderParams = this.gridOptionsService.get('advancedFilterBuilderParams');
+            const minPickerWidth = `${advancedFilterBuilderParams?.pillSelectMinWidth ?? 140}px`;
+            const maxPickerWidth = `${advancedFilterBuilderParams?.pillSelectMaxWidth ?? 200}px`;
             const comp = this.createBean(new SelectPillComp({
                 pickerAriaLabelKey,
                 pickerAriaLabelValue,
