@@ -22,7 +22,8 @@ import {
     IsServerSideGroup,
     RowClassParams,
     RowGroupingDisplayType,
-    ServerSideGroupLevelParams
+    ServerSideGroupLevelParams,
+    UseGroupFooter
 } from "./entities/gridOptions";
 import {
     GetGroupRowAggParams,
@@ -1444,6 +1445,14 @@ export class GridApi<TData = any> {
 
     public setGroupDisplayType(value: RowGroupingDisplayType) {
         this.gos.set('groupDisplayType', value);
+    }
+
+    public setGroupIncludeFooter(value: boolean | UseGroupFooter<TData>) {
+        this.gos.set('groupIncludeFooter', value);
+    }
+
+    public setGroupIncludeTotalFooter(value: boolean) {
+        this.gos.set('groupIncludeTotalFooter', value);
     }
 
     public setRowClass(className: string | undefined): void {
