@@ -65,10 +65,10 @@ function fullWidthCellRenderer(params: ICellRendererParams) {
 
     if (params.node.rowPinned) {
         cssClass = 'example-full-width-floating-row'
-        message = 'Floating full width row at index ' + params.rowIndex
+        message = 'Floating full width row at index ' + params.node.rowIndex
     } else {
         cssClass = 'example-full-width-row'
-        message = 'Normal full width row at index' + params.rowIndex
+        message = 'Normal full width row at index ' + params.node.rowIndex
     }
 
     const eDiv = document.createElement('div');

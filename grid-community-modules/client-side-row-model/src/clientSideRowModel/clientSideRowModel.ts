@@ -100,8 +100,20 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel 
             animate
         });
 
-        this.addManagedPropertyListener('groupRemoveSingleChildren', refreshMapListener);
-        this.addManagedPropertyListener('groupRemoveLowestSingleChildren', refreshMapListener);
+        this.addManagedPropertyListeners([
+            'groupRemoveSingleChildren', 'groupRemoveLowestSingleChildren',
+            'groupIncludeFooter',
+        ], refreshMapListener);
+
+        const refreshAggListener = this.refreshModel.bind(this, {
+            step: ClientSideRowModelSteps.AGGREGATE,
+            keepRenderedRows: true,
+            animate
+        });
+
+        this.addManagedPropertyListeners([
+            'groupIncludeTotalFooter',
+        ], refreshAggListener);
 
         this.rootNode = new RowNode(this.beans);
         this.nodeManager = new ClientSideNodeManager(this.rootNode,

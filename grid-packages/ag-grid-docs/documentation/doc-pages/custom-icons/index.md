@@ -30,7 +30,7 @@ If you intend to replace every icon in the grid using the same font then you can
 
 ```css
 /* replace all icons in the grid with icons from Font Awesome */
-.ag-theme-alpine .ag-icon-pin {
+.ag-theme-alpine {
   --ag-icon-font-family: "Font Awesome 5 Free";
   --ag-icon-font-code-aggregation: "\f247";
   --ag-icon-font-code-arrows: "\f0b2";

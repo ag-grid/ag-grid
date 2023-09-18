@@ -127,6 +127,7 @@ import { DataTypeDefinition } from "./entities/dataType";
 import { RowNode } from "./entities/rowNode";
 import { AdvancedFilterModel } from "./interfaces/advancedFilterModel";
 import { LoadSuccessParams } from "./rowNodeCache/rowNodeBlock";
+import { Events } from './eventKeys';
 import { IAdvancedFilterBuilderParams } from "./interfaces/iAdvancedFilterBuilderParams";
 
 export interface DetailGridInfo {
@@ -1549,9 +1550,10 @@ export class GridApi<TData = any> {
         if (this.destroyCalled) { return; }
         this.destroyCalled = true;
 
+        this.dispatchEvent({ type: Events.EVENT_GRID_PRE_DESTROYED });
+
         // destroy the UI first (as they use the services)
         const gridCtrl = this.ctrlsService.getGridCtrl();
-
         if (gridCtrl) {
             gridCtrl.destroyGridUi();
         }

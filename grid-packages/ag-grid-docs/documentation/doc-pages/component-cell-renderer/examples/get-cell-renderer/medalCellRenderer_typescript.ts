@@ -16,7 +16,7 @@ export class MedalCellRenderer implements ICellRendererComp {
     }
 
     medalUserFunction() {
-        console.log(`user function called for medal column: row = ${this.params.rowIndex}, column = ${this.params.column?.getId()}`);
+        console.log(`user function called for medal column: row = ${this.params.node.rowIndex}, column = ${this.params.column?.getId()}`);
     }
 
     refresh(params: ICellRendererParams): boolean {

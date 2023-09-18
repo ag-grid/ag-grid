@@ -5,8 +5,9 @@ title: "Column Sizing"
 All columns can be resized by dragging the top right portion of the column.
 
 ## Enable Sizing
-
-Turn column resizing on for the grid by setting `resizable=true` for each column. To set resizing for each column, set `resizable=true` on the [default column definition](/column-definitions/#default-column-definitions).
+Turn column resizing on for the grid by setting `resizable=true` on the 
+[Default Column Definition](/column-definitions/#default-column-definitions). To set resizing for individual columns, 
+set `resizable=true` in their respective definitions.
 
 The snippet below allows all columns except Address to be resized by explicitly setting each column.
 

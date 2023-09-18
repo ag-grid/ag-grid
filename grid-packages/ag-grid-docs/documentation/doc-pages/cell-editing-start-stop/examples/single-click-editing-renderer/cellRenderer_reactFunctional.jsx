@@ -3,7 +3,7 @@ import React, {Component} from "react";
 export default function cellRenderer(props) {
   const handleClick = () => {
     props.api.startEditingCell({
-      rowIndex: props.rowIndex,
+      rowIndex: props.node.rowIndex,
       colKey: props.column.getId(),
     });
   };

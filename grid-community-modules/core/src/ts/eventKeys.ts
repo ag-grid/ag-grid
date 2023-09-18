@@ -150,6 +150,8 @@ export class Events {
 
     /** Gets called once after the grid has finished initialising. */
     public static EVENT_GRID_READY: 'gridReady' = 'gridReady';
+    /** Called once when the grid is about to get destroyed. */
+    public static EVENT_GRID_PRE_DESTROYED: 'gridPreDestroyed' = 'gridPreDestroyed';
     /** Width of height of the main grid div has changed. Grid listens for this and does layout of grid if it's
      * changed, so always filling the space it was given. */
     public static EVENT_GRID_SIZE_CHANGED: 'gridSizeChanged' = 'gridSizeChanged';

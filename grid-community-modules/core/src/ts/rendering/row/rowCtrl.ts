@@ -738,6 +738,14 @@ export class RowCtrl extends BeanStub {
     }
 
     private onRowNodeDataChanged(event: DataChangedEvent): void {
+        // if the row is rendered incorrectly, as the requirements for whether this is a FW row have changed, we force re-render this row.
+        const fullWidthChanged = this.isFullWidth() !== !!this.rowNode.isFullWidthCell();
+        if (fullWidthChanged) {
+            this.beans.rowRenderer.redrawRow(this.rowNode);
+            return;
+        }
+
+        // this bit of logic handles trying to refresh the FW row ctrl, or delegating to removing/recreating it if unsupported.
         if (this.isFullWidth()) {
             const refresh = this.refreshFullWidth();
             if (!refresh) {

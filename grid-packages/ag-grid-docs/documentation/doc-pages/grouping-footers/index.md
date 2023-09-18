@@ -33,7 +33,8 @@ The following example demonstrates these properties. Note the following:
 
 If you want a group footer to only be enabled for certain groups but not others, you can dynamically specify which groups to add footers for through passing a custom callback function to the property `groupIncludeFooter` instead of a boolean.
 
-For example, to enable group footers for the second level of groups and groups with name 'France'
+For example, to enable group footers for the second level of groups and groups with name 'France':
+
 <snippet>
 |const gridOptions = {
 |    // adds a group footer to the second level of groups and groups with name 'France'

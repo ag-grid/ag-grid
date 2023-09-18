@@ -1,9 +1,9 @@
-import { withPrefix } from 'gatsby';
-import { stringify } from 'query-string';
-import { agGridVersion, localPrefix } from 'utils/consts';
+import {withPrefix} from 'gatsby';
+import {stringify} from 'query-string';
+import {getParameters} from "codesandbox/lib/api/define";
+import {agGridVersion, localPrefix} from 'utils/consts';
 import isDevelopment from 'utils/is-development';
-import { ParameterConfig } from '../../pages/example-runner';
-import { getIndexHtml } from './index-html-helper';
+import {getIndexHtml} from './index-html-helper';
 
 /**
  * The "internalFramework" is the framework name we use inside the example runner depending on which options the
@@ -145,7 +145,7 @@ const getFrameworkFiles = (framework, internalFramework) => {
 };
 
 export const getExampleFiles = (exampleInfo, forPlunker = false) => {
-    const { sourcePath, framework, internalFramework, boilerplatePath, library } = exampleInfo;
+    const {sourcePath, framework, internalFramework, boilerplatePath, library} = exampleInfo;
 
     const filesForExample = exampleInfo.getFiles().map((node) => ({
         path: node.relativePath.replace(sourcePath, ''),
@@ -199,7 +199,7 @@ export const getExampleFiles = (exampleInfo, forPlunker = false) => {
                     }
                 }
 
-                files[f.path] = { source, isFramework: f.isFramework };
+                files[f.path] = {source, isFramework: f.isFramework};
             });
 
             promises.push(promise);
@@ -214,7 +214,7 @@ export const getExampleFiles = (exampleInfo, forPlunker = false) => {
 };
 
 export const openPlunker = (exampleInfo) => {
-    const { title, framework, internalFramework } = exampleInfo;
+    const {title, framework, internalFramework} = exampleInfo;
 
     getExampleFiles(exampleInfo, true).then((files) => {
         // Let's open the grid configuration file by default
@@ -243,6 +243,51 @@ export const openPlunker = (exampleInfo) => {
         Object.keys(files).forEach((key) => {
             addHiddenInput(`files[${key}]`, files[key].source);
         });
+
+        document.body.appendChild(form);
+        form.submit();
+        document.body.removeChild(form);
+    });
+};
+
+export const openCodeSandbox = (exampleInfo) => {
+    const {title, framework, internalFramework} = exampleInfo;
+
+    getExampleFiles(exampleInfo, true).then((files) => {
+
+        const filesToSubmit = {};
+        Object.keys(files).forEach((key) => {
+            filesToSubmit[key] = {content: files[key].source};
+        });
+
+        const parameters = getParameters({
+            files: filesToSubmit,
+            template: 'static'
+        });
+
+        // Let's open the grid configuration file by default
+        const fileToOpen = getEntryFile(framework, internalFramework);
+
+        const form = document.createElement('form');
+        form.method = 'post';
+        form.style.display = 'none';
+        form.action = `//codesandbox.io/api/v1/sandboxes/define?file=/${fileToOpen}`;
+        form.target = '_blank';
+
+        const addHiddenInput = (name, value) => {
+            const input = document.createElement('input');
+            input.type = 'hidden';
+            input.name = name;
+            input.value = value;
+
+            form.appendChild(input);
+        };
+
+        addHiddenInput('tags[0]', 'ag-grid');
+        addHiddenInput('tags[1]', 'example');
+        addHiddenInput('private', true);
+        addHiddenInput('description', title);
+        addHiddenInput('parameters', parameters);
 
         document.body.appendChild(form);
         form.submit();

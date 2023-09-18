@@ -13,8 +13,8 @@ export default {
     beforeMount() {
         this.cssClass = this.params.pinned ? 'example-full-width-pinned' :
             'example-full-width-row';
-        this.message = this.params.pinned ? `Pinned full width on ${this.params.pinned} - index ${this.params.rowIndex}` :
-            `Non pinned full width row at index${this.params.rowIndex}`;
+        this.message = this.params.pinned ? `Pinned full width on ${this.params.pinned} - index ${this.params.node.rowIndex}` :
+            `Non pinned full width row at index ${this.params.node.rowIndex}`;
     },
     methods: {
         clicked() {

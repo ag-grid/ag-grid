@@ -218,6 +218,8 @@ export class GridSerializer extends BeanStub {
             } else if (this.columnModel.isPivotMode()) {
                 if (usingCsrm) {
                     (rowModel as IClientSideRowModel).forEachPivotNode(processRow, true);
+                } else if (usingSsrm) {
+                    (rowModel as IServerSideRowModel).forEachNodeAfterFilterAndSort(processRow, true);
                 } else {
                     // must be enterprise, so we can just loop through all the nodes
                     rowModel.forEachNode(processRow);
@@ -242,7 +244,7 @@ export class GridSerializer extends BeanStub {
                     } else if (usingCsrm) {
                         (rowModel as IClientSideRowModel).forEachNodeAfterFilterAndSort(processRow, true);
                     } else if (usingSsrm) {
-                        (rowModel as IServerSideRowModel).forEachNodeAfterFilterAndSort(processRow);
+                        (rowModel as IServerSideRowModel).forEachNodeAfterFilterAndSort(processRow, true);
                     } else {
                         rowModel.forEachNode(processRow);
                     }

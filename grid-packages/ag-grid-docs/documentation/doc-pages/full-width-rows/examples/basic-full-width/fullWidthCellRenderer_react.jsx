@@ -8,8 +8,8 @@ export default class FullWidthCellRenderer extends Component {
         this.state = {
             cssClass: props.node.rowPinned ? 'example-full-width-pinned-row' :
                 'example-full-width-row',
-            message: props.node.rowPinned ? `Pinned full width row at index ${props.rowIndex}` :
-                `Normal full width row at index${props.rowIndex}`
+            message: props.node.rowPinned ? `Pinned full width row at index ${props.node.rowIndex}` :
+                `Normal full width row at index ${props.node.rowIndex}`
         }
     }
 

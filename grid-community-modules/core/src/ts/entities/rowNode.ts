@@ -823,9 +823,15 @@ export class RowNode<TData = any> implements IEventEmitter, IRowNode<TData> {
         // if no event service, nobody has registered for events, so no need fire event
         if (this.eventService) {
             colIds.forEach(colId => {
-                const column = this.beans.columnModel.getGridColumn(colId)!;
                 const value = this.aggData ? this.aggData[colId] : undefined;
                 const oldValue = oldAggData ? oldAggData[colId] : undefined;
+
+                if (value === oldValue) { return; }
+
+                // do a quick lookup - despite the event it's possible the column no longer exists
+                const column = this.beans.columnModel.lookupGridColumn(colId)!;
+                if (!column) { return; }
+
                 this.dispatchCellChangedEvent(column, value, oldValue);
             });
         }

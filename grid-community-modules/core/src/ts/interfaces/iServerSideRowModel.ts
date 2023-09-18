@@ -13,7 +13,7 @@ export interface IServerSideRowModel extends IRowModel {
     retryLoads(): void;
     expandAll(value: boolean): void;
     setDatasource(datasource: IServerSideDatasource): void;
-    forEachNodeAfterFilterAndSort(callback: (node: IRowNode, index: number) => void): void;
+    forEachNodeAfterFilterAndSort(callback: (node: IRowNode, index: number) => void, includeFooterNodes?: boolean): void;
     resetRootStore(): void;
     getBlockStates(): void;
     setRowCount(rowCount: number, isLastRowIndexKnown?: boolean): void;
