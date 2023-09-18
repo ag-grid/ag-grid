@@ -49,7 +49,7 @@ import { CtrlsService } from '../ctrlsService';
 import { HeaderGroupCellCtrl } from '../headerRendering/cells/columnGroup/headerGroupCellCtrl';
 import { WithoutGridCommon } from '../interfaces/iCommon';
 import { matchesGroupDisplayType, matchesTreeDataDisplayType } from '../gridOptionsValidator';
-import { PropertyChangedEvent } from '../gridOptionsService';
+import { PropertyValueChangedEvent } from '../gridOptionsService';
 
 export interface ColumnResizeSet {
     columns: Column[];
@@ -114,7 +114,7 @@ export interface IColumnLimit {
     maxWidth?: number;
 }
 
-export interface ColDefPropertyChangedEvent extends PropertyChangedEvent {
+export interface ColDefPropertyChangedEvent extends PropertyValueChangedEvent<any> {
     source?: ColumnEventType;
 }
 
@@ -274,10 +274,10 @@ export class ColumnModel extends BeanStub {
 
         this.usingTreeData = this.gridOptionsService.is('treeData');
 
-        this.addManagedPropertyListener<ColDefPropertyChangedEvent>('groupDisplayType', () => this.onGroupDisplayTypeChanged());
-        this.addManagedPropertyListener<ColDefPropertyChangedEvent>('autoGroupColumnDef', () => this.onAutoGroupColumnDefChanged());
-        this.addManagedPropertyListener<ColDefPropertyChangedEvent>('defaultColDef', (params) => this.onSharedColDefChanged(params.source));
-        this.addManagedPropertyListener<ColDefPropertyChangedEvent>('columnTypes', (params) => this.onSharedColDefChanged(params.source));
+        this.addManagedPropertyListener('groupDisplayType', () => this.onGroupDisplayTypeChanged());
+        this.addManagedPropertyListener('autoGroupColumnDef', () => this.onAutoGroupColumnDefChanged());
+        this.addManagedPropertyListener('defaultColDef', (params: ColDefPropertyChangedEvent) => this.onSharedColDefChanged(params.source));
+        this.addManagedPropertyListener('columnTypes', (params: ColDefPropertyChangedEvent) => this.onSharedColDefChanged(params.source));
     }
 
     private onGroupDisplayTypeChanged() {

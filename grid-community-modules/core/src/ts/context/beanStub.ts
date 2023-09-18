@@ -5,7 +5,7 @@ import { Autowired, Context, PreDestroy } from "./context";
 import { IFrameworkOverrides } from "../interfaces/iFrameworkOverrides";
 import { Component } from "../widgets/component";
 import { addSafePassiveEventListener } from "../utils/event";
-import { GridOptionsService, PropertyChangedEvent, PropertyChangedListener } from "../gridOptionsService";
+import { GridOptionsService, PropertyChangedEvent, PropertyChangedListener, PropertyValueChangedEvent, PropertyValueChangedListener } from "../gridOptionsService";
 import { GridOptions } from "../entities/gridOptions";
 import { LocaleService } from "../localeService";
 import { Environment } from "../environment";
@@ -122,9 +122,9 @@ export class BeanStub implements IEventEmitter {
         return destroyFunc;
     }
 
-    private setupGridOptionListener<T extends PropertyChangedEvent>(
+    private setupGridOptionListener<K extends keyof GridOptions>(
         event: keyof GridOptions,
-        listener: PropertyChangedListener<T>
+        listener: PropertyValueChangedListener<K>
     ) {
         this.gridOptionsService.addEventListener(event, listener);
         const destroyFunc: () => null = () => {
@@ -140,17 +140,18 @@ export class BeanStub implements IEventEmitter {
      * @param event GridOption property to listen to changes for.
      * @param listener Listener to run when property value changes
      */
-    public addManagedPropertyListener<T extends PropertyChangedEvent>(
-        event: keyof GridOptions,
-        listener: PropertyChangedListener<T>
+    public addManagedPropertyListener<K extends keyof GridOptions>(
+        event: K,
+        listener: PropertyValueChangedListener<K>
     ): void {
         if (this.destroyed) {
             return;
         }
 
-        this.setupGridOptionListener<T>(event, listener);
+        this.setupGridOptionListener(event, listener);
     }
 
+    private propertyListenerId = 0;
     /**
      * Setup managed property listeners for the given set of GridOption properties.
      * The listener will be run if any of the property changes but will only run once if
@@ -159,24 +160,29 @@ export class BeanStub implements IEventEmitter {
      * @param events Array of GridOption properties to listen for changes too.
      * @param listener Shared listener to run if any of the properties change
      */
-    public addManagedPropertyListeners<T extends PropertyChangedEvent>(
+    public addManagedPropertyListeners(
         events: (keyof GridOptions)[],
-        listener: PropertyChangedListener<T>
+        listener: PropertyChangedListener
     ): void {
         if (this.destroyed) {
             return;
         }
 
         // Ensure each set of events can run for the same changeSetId
-        const eventsKey = events.join('-');
+        const eventsKey = events.join('-') + this.propertyListenerId++;
 
-        const wrappedListener = (event: T) => {
-            if (event.changeSetId === this.lastChangeSetIdLookup[eventsKey]) {
+        const wrappedListener = (event: PropertyValueChangedEvent<any>) => {
+            if (event.changeSet.id === this.lastChangeSetIdLookup[eventsKey]) {
                 // Already run the listener for this set of prop changes so don't run again
                 return;
             }
-            this.lastChangeSetIdLookup[eventsKey] = event.changeSetId;
-            listener(event);
+            this.lastChangeSetIdLookup[eventsKey] = event.changeSet.id;
+            // Don't expose the underlying event value changes to the group listener.
+            const propertiesChangeEvent: PropertyChangedEvent = {
+                type: 'gridPropertyChanged',
+                changeSet: event.changeSet,
+            };
+            listener(propertiesChangeEvent);
         };
 
         events.forEach((event) => this.setupGridOptionListener(event, wrappedListener));

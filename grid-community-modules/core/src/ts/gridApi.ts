@@ -49,7 +49,7 @@ import { FocusService } from "./focusService";
 import { GridBodyCtrl } from "./gridBodyComp/gridBodyCtrl";
 import { NavigationService } from "./gridBodyComp/navigationService";
 import { RowDropZoneEvents, RowDropZoneParams } from "./gridBodyComp/rowDragFeature";
-import { GridOptionsService } from "./gridOptionsService";
+import { PropertyChangeSet, GridOptionsService } from "./gridOptionsService";
 import { logDeprecation } from "./gridOptionsValidator";
 import { HeaderPosition } from "./headerRendering/common/headerPosition";
 import { CsvExportParams, ProcessCellForExportParams } from "./interfaces/exportParams";
@@ -259,11 +259,11 @@ export class GridApi<TData = any> {
         propertyName: K,
         value: GridOptions[K],
         force: boolean,
-        changeSetId: number
+        changeSet: PropertyChangeSet = { id: -1, properties: []}
     ) {
         // Ensure the GridOptions property gets updated and fires the change event as we
         // cannot assume that the dynamic Api call will updated GridOptions.
-        this.gos.set(propertyName, value, force, {}, changeSetId);
+        this.gos.set(propertyName, value, force, {}, changeSet);
         // If the dynamic api does update GridOptions then change detection in the
         // GridOptionsService will prevent the event being fired twice.
         const setterName = this.getSetterMethod(propertyName);
