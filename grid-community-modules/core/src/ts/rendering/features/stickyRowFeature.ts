@@ -107,7 +107,7 @@ export class StickyRowFeature extends BeanStub {
 
             const parents: RowNode[] = [];
             let p = firstRow.parent!;
-            while (p.level >= 0) {
+            while (p && p.level >= 0) {
                 parents.push(p);
                 p = p.parent!;
             }
