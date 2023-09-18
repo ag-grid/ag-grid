@@ -1005,7 +1005,7 @@ export class FilterManager extends BeanStub {
 
     public setAdvancedFilterModel(expression: AdvancedFilterModel | null | undefined): void {
         if (!this.isAdvancedFilterEnabled()) { return; }
-        this.advancedFilterService.setModel(expression);
+        this.advancedFilterService.setModel(expression ?? null);
         this.onFilterChanged({ source: 'advancedFilter' });
     }
 

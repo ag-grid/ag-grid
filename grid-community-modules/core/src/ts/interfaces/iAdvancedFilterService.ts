@@ -11,7 +11,7 @@ export interface IAdvancedFilterService {
 
     getModel(): AdvancedFilterModel | null;
 
-    setModel(model: AdvancedFilterModel | null | undefined): void;
+    setModel(model: AdvancedFilterModel | null): void;
 
     isHeaderActive(): boolean;
 

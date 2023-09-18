@@ -117,7 +117,7 @@ export class AdvancedFilterService extends BeanStub implements IAdvancedFilterSe
         return expressionParser?.getModel() ?? null;
     }
 
-    public setModel(model: AdvancedFilterModel | null | undefined): void {
+    public setModel(model: AdvancedFilterModel | null): void {
         const parseModel = (model: AdvancedFilterModel, isFirstParent?: boolean): string | null => {
             if (model.filterType === 'join') {
                 const operator = model.type === 'OR' ? this.expressionJoinOperators.or : this.expressionJoinOperators.and;
