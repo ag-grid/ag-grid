@@ -33,7 +33,6 @@ export class ClientSideNodeManager {
     private isRowMasterFunc?: IsRowMaster;
     private suppressParentsInRowNodes: boolean;
 
-    private doingTreeData: boolean;
     private doingMasterDetail: boolean;
 
     // when user is provide the id's, we also keep a map of ids to row nodes for convenience
@@ -66,7 +65,6 @@ export class ClientSideNodeManager {
         // func below doesn't have 'this' pointer, so need to pull out these bits
         this.suppressParentsInRowNodes = this.gridOptionsService.is('suppressParentsInRowNodes');
         this.isRowMasterFunc = this.gridOptionsService.get('isRowMaster');
-        this.doingTreeData = this.gridOptionsService.is('treeData');
         this.doingMasterDetail = this.gridOptionsService.is('masterDetail');
     }
 
@@ -191,7 +189,8 @@ export class ClientSideNodeManager {
             const len = allLeafChildren.length;
             let normalisedAddIndex = addIndex;
 
-            if (this.doingTreeData && addIndex > 0 && len > 0) {
+            const isTreeData = this.gridOptionsService.is('treeData');
+            if (isTreeData && addIndex > 0 && len > 0) {
                 for (let i = 0; i < len; i++) {
                     if (allLeafChildren[i]?.rowIndex == addIndex - 1) { normalisedAddIndex = i + 1; break; }
                 }
@@ -314,7 +313,8 @@ export class ClientSideNodeManager {
     }
 
     private setMasterForRow(rowNode: RowNode, data: any, level: number, setExpanded: boolean): void {
-        if (this.doingTreeData) {
+        const isTreeData = this.gridOptionsService.is('treeData');
+        if (isTreeData) {
             rowNode.setMaster(false);
             if (setExpanded) {
                 rowNode.expanded = false;
