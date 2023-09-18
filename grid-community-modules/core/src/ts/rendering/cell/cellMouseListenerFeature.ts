@@ -77,7 +77,8 @@ export class CellMouseListenerFeature extends Beans {
         const editOnSingleClick = (gridOptionsService.is('singleClickEdit') || colDef.singleClickEdit)
             && !gridOptionsService.is('suppressClickEdit');
 
-        if (editOnSingleClick) {
+        // edit on single click, but not if extending a range
+        if (editOnSingleClick && !(mouseEvent.shiftKey && rangeService?.getCellRanges().length != 0)) {
             this.cellCtrl.startRowOrCellEdit();
         }
     }
@@ -115,7 +116,8 @@ export class CellMouseListenerFeature extends Beans {
     private onMouseDown(mouseEvent: MouseEvent): void {
         const { ctrlKey, metaKey, shiftKey } = mouseEvent;
         const target = mouseEvent.target as HTMLElement;
-        const { eventService, rangeService } = this.beans;
+        const { cellCtrl, beans } = this;
+        const { eventService, rangeService, focusService } = beans;
 
         // do not change the range for right-clicks inside an existing range
         if (this.isRightClickInExistingRange(mouseEvent)) {
@@ -128,16 +130,37 @@ export class CellMouseListenerFeature extends Beans {
             // We only need to pass true to focusCell when the browser is Safari and we are trying
             // to focus the cell itself. This should never be true if the mousedown was triggered
             // due to a click on a cell editor for example.
-            const forceBrowserFocus = (isBrowserSafari()) && !this.cellCtrl.isEditing() && !isFocusableFormField(target);
+            const forceBrowserFocus = (isBrowserSafari()) && !cellCtrl.isEditing() && !isFocusableFormField(target);
 
-            this.cellCtrl.focusCell(forceBrowserFocus);
+            cellCtrl.focusCell(forceBrowserFocus);
         }
 
         // if shift clicking, and a range exists, we keep the focus on the cell that started the
         // range as the user then changes the range selection.
-        if (shiftKey && ranges) {
+        if (shiftKey && ranges && !focusService.isCellFocused(cellCtrl.getCellPosition())) {
             // this stops the cell from getting focused
             mouseEvent.preventDefault();
+
+            const focusedCellPosition = focusService.getFocusedCell();
+            if (focusedCellPosition) {
+                const { column, rowIndex, rowPinned } = focusedCellPosition;
+                const focusedRowCtrl = beans.rowRenderer.getRowByPosition({ rowIndex, rowPinned });
+                const focusedCellCtrl = focusedRowCtrl?.getCellCtrl(column);
+
+                // if the focused cell is editing, need to stop editing first
+                if (focusedCellCtrl?.isEditing()) {
+                    focusedCellCtrl.stopEditing();
+                }
+
+                // focus could have been lost, so restore it to the starting cell in the range if needed
+                focusService.setFocusedCell({
+                    column,
+                    rowIndex,
+                    rowPinned,
+                    forceBrowserFocus: true,
+                    preventScrollOnBrowserFocus: true,
+                });
+            }
         }
 
         // if we are clicking on a checkbox, we need to make sure the cell wrapping that checkbox
@@ -163,7 +186,7 @@ export class CellMouseListenerFeature extends Beans {
 
         if (rangeService) {
             const cellInRange = rangeService.isCellInAnyRange(this.cellCtrl.getCellPosition());
-            const isRightClick = mouseEvent.button === 2 || (mouseEvent.ctrlKey && this.gridOptionsService.is('allowContextMenuWithControlKey'));
+            const isRightClick = mouseEvent.button === 2 || (mouseEvent.ctrlKey && this.beans.gridOptionsService.is('allowContextMenuWithControlKey'));
 
             if (cellInRange && isRightClick) {
                 return true;

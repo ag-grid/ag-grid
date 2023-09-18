@@ -12,7 +12,9 @@
         }
 
         &.ag-root-wrapper {
-            display: inline-flex;
+            // this has to be inline-block otherwise the grid gets constrained by the viewport (AG-5616)
+            // and other values like `inline-flex` will add a small gap at the top (AG-9296)
+            display: inline-block;
         }
 
         .ag-center-cols-clipper {

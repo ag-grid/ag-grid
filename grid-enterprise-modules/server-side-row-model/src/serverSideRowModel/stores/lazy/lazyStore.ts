@@ -307,15 +307,19 @@ export class LazyStore extends BeanStub implements IServerSideStore {
      * 
      * For the purpose of exclusively server side filtered stores, this is the same as getNodes().forEachDeep
      */
-    forEachNodeDeepAfterFilterAndSort(callback: (rowNode: RowNode<any>, index: number) => void, sequence = new NumberSequence()): void {
+    forEachNodeDeepAfterFilterAndSort(callback: (rowNode: RowNode<any>, index: number) => void, sequence = new NumberSequence(), includeFooterNodes = false): void {
         const orderedNodes = this.cache.getOrderedNodeMap();
         for (let key in orderedNodes) {
             const lazyNode = orderedNodes[key];
             callback(lazyNode.node, sequence.next());
             const childCache = lazyNode.node.childStore;
             if (childCache) {
-                childCache.forEachNodeDeepAfterFilterAndSort(callback, sequence);
+                childCache.forEachNodeDeepAfterFilterAndSort(callback, sequence, includeFooterNodes);
             }
+        }
+
+        if (includeFooterNodes && this.parentRowNode.sibling) {
+            callback(this.parentRowNode.sibling, sequence.next());
         }
     }
 

@@ -49,7 +49,7 @@ import { CtrlsService } from '../ctrlsService';
 import { HeaderGroupCellCtrl } from '../headerRendering/cells/columnGroup/headerGroupCellCtrl';
 import { WithoutGridCommon } from '../interfaces/iCommon';
 import { matchesGroupDisplayType, matchesTreeDataDisplayType } from '../gridOptionsValidator';
-import { PropertyChangedEvent } from '../gridOptionsService';
+import { PropertyValueChangedEvent } from '../gridOptionsService';
 
 export interface ColumnResizeSet {
     columns: Column[];
@@ -114,7 +114,7 @@ export interface IColumnLimit {
     maxWidth?: number;
 }
 
-export interface ColDefPropertyChangedEvent extends PropertyChangedEvent {
+export interface ColDefPropertyChangedEvent extends PropertyValueChangedEvent<any> {
     source?: ColumnEventType;
 }
 
@@ -2606,6 +2606,10 @@ export class ColumnModel extends BeanStub {
 
     public getGridColumn(key: string | Column): Column | null {
         return this.getColumn(key, this.gridColumns, this.gridColumnsMap);
+    }
+
+    public lookupGridColumn(key: string) {
+        return this.gridColumnsMap[key];
     }
 
     private getSecondaryColumn(key: string | Column): Column | null {

@@ -395,14 +395,18 @@ export class FullStore extends RowNodeBlock implements IServerSideStore {
         });
     }
 
-    public forEachNodeDeepAfterFilterAndSort(callback: (rowNode: RowNode, index: number) => void, sequence = new NumberSequence()): void {
+    public forEachNodeDeepAfterFilterAndSort(callback: (rowNode: RowNode, index: number) => void, sequence = new NumberSequence(), includeFooterNodes = false): void {
         this.nodesAfterSort.forEach(rowNode => {
             callback(rowNode, sequence.next());
             const childCache = rowNode.childStore;
             if (childCache) {
-                childCache.forEachNodeDeepAfterFilterAndSort(callback, sequence);
+                childCache.forEachNodeDeepAfterFilterAndSort(callback, sequence, includeFooterNodes);
             }
         });
+
+        if (includeFooterNodes && this.parentRowNode.sibling) {
+            callback(this.parentRowNode.sibling, sequence.next());
+        }
     }
 
     public getRowUsingDisplayIndex(displayRowIndex: number): IRowNode | undefined {

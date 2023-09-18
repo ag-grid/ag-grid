@@ -174,15 +174,15 @@ const AboutPage = () => {
                             <div>
                                 <img
                                     src="../images/team/victoria.jpeg"
-                                    alt="Victoria Tennant, Business Development Manager"
+                                    alt="Victoria Tennant, Head of Renewals Department"
                                 />
                                 <h3>Victoria Tennant</h3>
-                                <p>Renewals Team Manager</p>
+                                <p>Head of Renewals Department</p>
                             </div>
                             <div>
-                                <img src="../images/team/dimple.jpg" alt="Dimple Unalkat, Customer Experience Team" />
+                                <img src="../images/team/dimple.jpg" alt="Dimple Unalkat, Head of Initials Department" />
                                 <h3>Dimple Unalkat</h3>
-                                <p>Initials Team Manager</p>
+                                <p>Head of Initials Department</p>
                             </div>
                             <div>
                                 <img
@@ -209,16 +209,16 @@ const AboutPage = () => {
                                 <p>Key Account Manager </p>
                             </div>
                             <div>
-                                <img src="../images/team/robD.jpg" alt="Rob Dunkiert, Customer Experience Manager" />
-                                <h3>Rob Dunkiert</h3>
-                                <p>Customer Experience Manager</p>
-                            </div>
-                            <div>
                                 <img
                                     src="../images/team/seweety.jpeg"
-                                    alt="Seweety Kumar, Customer Experience Manager"
+                                    alt="Seweety Kumar, Renewals Team Lead"
                                 />
                                 <h3>Seweety Kumar</h3>
+                                <p>Renewals Team Lead</p>
+                            </div>
+                            <div>
+                                <img src="../images/team/robD.jpg" alt="Rob Dunkiert, Customer Experience Manager" />
+                                <h3>Rob Dunkiert</h3>
                                 <p>Customer Experience Manager</p>
                             </div>
                             <div>

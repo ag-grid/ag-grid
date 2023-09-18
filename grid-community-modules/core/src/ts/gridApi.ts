@@ -22,7 +22,8 @@ import {
     IsServerSideGroup,
     RowClassParams,
     RowGroupingDisplayType,
-    ServerSideGroupLevelParams
+    ServerSideGroupLevelParams,
+    UseGroupFooter
 } from "./entities/gridOptions";
 import {
     GetGroupRowAggParams,
@@ -48,7 +49,7 @@ import { FocusService } from "./focusService";
 import { GridBodyCtrl } from "./gridBodyComp/gridBodyCtrl";
 import { NavigationService } from "./gridBodyComp/navigationService";
 import { RowDropZoneEvents, RowDropZoneParams } from "./gridBodyComp/rowDragFeature";
-import { GridOptionsService } from "./gridOptionsService";
+import { PropertyChangeSet, GridOptionsService } from "./gridOptionsService";
 import { logDeprecation } from "./gridOptionsValidator";
 import { HeaderPosition } from "./headerRendering/common/headerPosition";
 import { CsvExportParams, ProcessCellForExportParams } from "./interfaces/exportParams";
@@ -258,11 +259,11 @@ export class GridApi<TData = any> {
         propertyName: K,
         value: GridOptions[K],
         force: boolean,
-        changeSetId: number
+        changeSet: PropertyChangeSet = { id: -1, properties: []}
     ) {
         // Ensure the GridOptions property gets updated and fires the change event as we
         // cannot assume that the dynamic Api call will updated GridOptions.
-        this.gos.set(propertyName, value, force, {}, changeSetId);
+        this.gos.set(propertyName, value, force, {}, changeSet);
         // If the dynamic api does update GridOptions then change detection in the
         // GridOptionsService will prevent the event being fired twice.
         const setterName = this.getSetterMethod(propertyName);
@@ -1444,6 +1445,14 @@ export class GridApi<TData = any> {
 
     public setGroupDisplayType(value: RowGroupingDisplayType) {
         this.gos.set('groupDisplayType', value);
+    }
+
+    public setGroupIncludeFooter(value: boolean | UseGroupFooter<TData>) {
+        this.gos.set('groupIncludeFooter', value);
+    }
+
+    public setGroupIncludeTotalFooter(value: boolean) {
+        this.gos.set('groupIncludeTotalFooter', value);
     }
 
     public setRowClass(className: string | undefined): void {

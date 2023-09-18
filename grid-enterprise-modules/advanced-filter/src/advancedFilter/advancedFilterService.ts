@@ -89,11 +89,11 @@ export class AdvancedFilterService extends BeanStub implements IAdvancedFilterSe
         }
         this.includeHiddenColumns = this.gridOptionsService.is('includeHiddenColumnsInAdvancedFilter');
 
-        this.addManagedPropertyListener('enableAdvancedFilter', (event: PropertyChangedEvent) => this.setEnabled(!!event.currentValue))
+        this.addManagedPropertyListener('enableAdvancedFilter', (event) => this.setEnabled(!!event.currentValue))
         this.addManagedListener(this.eventService, Events.EVENT_GRID_COLUMNS_CHANGED, () => this.resetColumnCaches());
         this.addManagedListener(this.eventService, Events.EVENT_NEW_COLUMNS_LOADED,
             (event: NewColumnsLoadedEvent) => this.onNewColumnsLoaded(event));
-        this.addManagedPropertyListener('includeHiddenColumnsInAdvancedFilter', (event: PropertyChangedEvent) => {
+        this.addManagedPropertyListener('includeHiddenColumnsInAdvancedFilter', (event) => {
             this.includeHiddenColumns = !!event.currentValue;
             this.resetColumnCaches();
         });
@@ -117,7 +117,7 @@ export class AdvancedFilterService extends BeanStub implements IAdvancedFilterSe
         return expressionParser?.getModel() ?? null;
     }
 
-    public setModel(model: AdvancedFilterModel | null): void {
+    public setModel(model: AdvancedFilterModel | null | undefined): void {
         const parseModel = (model: AdvancedFilterModel, isFirstParent?: boolean): string | null => {
             if (model.filterType === 'join') {
                 const operator = model.type === 'OR' ? this.expressionJoinOperators.or : this.expressionJoinOperators.and;
