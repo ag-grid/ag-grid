@@ -26,10 +26,10 @@
     --ag-subheader-background-color: #fff;
     --ag-invalid-color: #e02525;
     --ag-checkbox-unchecked-color: #999;
-    --ag-advanced-filter-join-pill-color: #fa8686;
-    --ag-advanced-filter-column-pill-color: #94e57a;
-    --ag-advanced-filter-option-pill-color: #f9bd7e;
-    --ag-advanced-filter-value-pill-color: #69c2f5;
+    --ag-advanced-filter-join-pill-color: #f08e8d;
+    --ag-advanced-filter-column-pill-color: #a6e194;
+    --ag-advanced-filter-option-pill-color: #f3c08b;
+    --ag-advanced-filter-value-pill-color: #85c0e4;
     
     // derived colours (no color blending - these are shared by alpine-dark)
     --ag-checkbox-background-color: var(--ag-background-color);
@@ -113,8 +113,8 @@
     --ag-chip-background-color: #{color.change(#fff, $alpha: 0.07)};
     --ag-input-disabled-border-color: #{color.change(#68686e, $alpha: 0.3)};
     --ag-input-disabled-background-color: #{color.change(#68686e, $alpha: 0.07)};
-    --ag-advanced-filter-join-pill-color: #c83d3d;
-    --ag-advanced-filter-column-pill-color: #49a539;
-    --ag-advanced-filter-option-pill-color: #932cc4;
-    --ag-advanced-filter-value-pill-color: #3b60d6;
+    --ag-advanced-filter-join-pill-color: #7a3a37;
+    --ag-advanced-filter-column-pill-color: #355f2d;
+    --ag-advanced-filter-option-pill-color: #5a3168;
+    --ag-advanced-filter-value-pill-color: #374c86;
 }
