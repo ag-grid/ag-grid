@@ -59,6 +59,7 @@ Check out the [developer documentation](https://www.ag-grid.com/documentation/?u
 * [Get Started with Angular](https://www.ag-grid.com/angular-data-grid/getting-started/?utm_source=ag-grid-readme&utm_medium=repository&utm_campaign=github)
 * [Get Started with React](https://www.ag-grid.com/react-data-grid/getting-started/?utm_source=ag-grid-readme&utm_medium=repository&utm_campaign=github)
 * [Get Started with Vue](https://www.ag-grid.com/vue-data-grid/getting-started/?utm_source=ag-grid-readme&utm_medium=repository&utm_campaign=github)
+* [Get Started with Solid](https://www.ag-grid.com/react-data-grid/solidjs/?utm_source=ag-grid-readme&utm_medium=repository&utm_campaign=github)
 
 ## Getting started
 
