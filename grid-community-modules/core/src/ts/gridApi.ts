@@ -259,7 +259,7 @@ export class GridApi<TData = any> {
         propertyName: K,
         value: GridOptions[K],
         force: boolean,
-        changeSet: PropertyChangeSet = { id: -1, properties: []}
+        changeSet: PropertyChangeSet | undefined = undefined
     ) {
         // Ensure the GridOptions property gets updated and fires the change event as we
         // cannot assume that the dynamic Api call will updated GridOptions.

@@ -172,11 +172,15 @@ export class BeanStub implements IEventEmitter {
         const eventsKey = events.join('-') + this.propertyListenerId++;
 
         const wrappedListener = (event: PropertyValueChangedEvent<any>) => {
-            if (event.changeSet.id === this.lastChangeSetIdLookup[eventsKey]) {
-                // Already run the listener for this set of prop changes so don't run again
-                return;
+            if (event.changeSet) {
+                // ChangeSet is only set when the property change is part of a group of changes from ComponentUtils
+                // Direct api calls should always be run as 
+                if (event.changeSet && event.changeSet.id === this.lastChangeSetIdLookup[eventsKey]) {
+                    // Already run the listener for this set of prop changes so don't run again
+                    return;
+                }
+                this.lastChangeSetIdLookup[eventsKey] = event.changeSet.id;
             }
-            this.lastChangeSetIdLookup[eventsKey] = event.changeSet.id;
             // Don't expose the underlying event value changes to the group listener.
             const propertiesChangeEvent: PropertyChangedEvent = {
                 type: 'gridPropertyChanged',

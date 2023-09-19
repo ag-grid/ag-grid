@@ -47,7 +47,7 @@ export interface PropertyChangeSet {
 }
 export interface PropertyChangedEvent extends AgEvent {
     type: 'gridPropertyChanged',
-    changeSet: PropertyChangeSet;
+    changeSet: PropertyChangeSet | undefined;
 }
 
 /**
@@ -57,7 +57,7 @@ type GridOptionsOrBooleanCoercedValue<K extends keyof GridOptions> = K extends B
 
 export interface PropertyValueChangedEvent<K extends keyof GridOptions> extends AgEvent {
     type: K;
-    changeSet: PropertyChangeSet;
+    changeSet: PropertyChangeSet | undefined;
     currentValue: GridOptionsOrBooleanCoercedValue<K>;
     previousValue: GridOptionsOrBooleanCoercedValue<K>;
 }
@@ -228,7 +228,7 @@ export class GridOptionsService {
         newValue: GridOptions[K],
         force = false,
         eventParams: object = {},
-        changeSet: PropertyChangeSet = { id: -1, properties: []} 
+        changeSet: PropertyChangeSet | undefined = undefined 
     ): void {
         if (this.gridOptionLookup.has(key)) {
             const previousValue = this.gridOptions[key];
