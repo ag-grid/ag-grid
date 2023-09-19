@@ -144,9 +144,6 @@ export class RowCtrl extends BeanStub {
 
         this.instanceId = rowNode.id + '-' + instanceIdSequence++;
         this.rowId = escapeString(rowNode.id);
-        if (this.isFullWidth() && !this.gridOptionsService.is('suppressCellFocus')) {
-            this.tabIndex = -1;
-        }
 
         this.setAnimateFlags(animateIn);
         this.initRowBusinessKey();
@@ -156,6 +153,11 @@ export class RowCtrl extends BeanStub {
 
         this.setRowType();
         this.rowStyles = this.processStylesFromGridOptions();
+
+        // calls to `isFullWidth()` only work after `setRowType` has been called.
+        if (this.isFullWidth() && !this.gridOptionsService.is('suppressCellFocus')) {
+            this.tabIndex = -1;
+        }
 
         this.addListeners();
     }
