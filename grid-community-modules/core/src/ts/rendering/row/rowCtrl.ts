@@ -277,7 +277,7 @@ export class RowCtrl extends BeanStub {
             setAriaExpanded(gui.element, this.rowNode.expanded == true);
         }
 
-        this.setRowCompRowId(comp, false); // false = don't update the id, as we already set it
+        this.setRowCompRowId(comp);
         this.setRowCompRowBusinessKey(comp);
 
         // DOM DATA
@@ -324,16 +324,14 @@ export class RowCtrl extends BeanStub {
 
     private setRowCompRowBusinessKey(comp: IRowComp): void {
         if (this.businessKeySanitised == null) { return; }
-            comp.setRowBusinessKey(this.businessKeySanitised);
+        comp.setRowBusinessKey(this.businessKeySanitised);
     }
     public getBusinessKey(): string | null {
         return this.businessKeySanitised;
     }
 
-    private setRowCompRowId(comp: IRowComp, updateId: boolean) {
-        if(updateId){
-            this.rowId = escapeString(this.rowNode.id);
-        }
+    private setRowCompRowId(comp: IRowComp) {
+        this.rowId = escapeString(this.rowNode.id);
         if (this.rowId == null) { return; }
 
         comp.setRowId(this.rowId);
@@ -777,7 +775,7 @@ export class RowCtrl extends BeanStub {
 
         // as data has changed update the dom row id attributes
         this.allRowGuis.forEach(gui => {
-            this.setRowCompRowId(gui.rowComp, true);
+            this.setRowCompRowId(gui.rowComp);
             this.updateRowBusinessKey();
             this.setRowCompRowBusinessKey(gui.rowComp);
         });
