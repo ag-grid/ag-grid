@@ -122,6 +122,32 @@ The grand total aggregation is normally not seen, unless the grid is configured 
 
 When the grid is empty, the aggregations are still called once with an empty set. This is to calculate the grand total aggregation for the top level.
 
+## Multi-Level Custom Function Aggregation
+
+In order to support multi-level custom function aggregation, `value` property and `count` property must specified in the object returned by the custom aggregation function.
+
+See in the example below:
+
+<snippet>
+| const avgAggFunction = (params) => {
+|   // ...
+|   const result = {
+|     count: count,
+|     avg: avg,
+|     value: avg,
+|   };
+|
+|   return result;
+| }
+</snippet>
+
+- `value` and `count` are both specified by the custom function `avgAggFunction()`
+
+The `value` and `count` properties are needed to support `avgAggFunction()` calculations on the group level above.
+
+<grid-example title='Multi-Level Custom Function Aggregation' name='custom-avg-function' type='generated' options='{ "enterprise": true, "modules": ["clientside", "rowgrouping", "menu", "columnpanel", "filterpanel", "setfilter"] }'></grid-example>
+
+
 ## Multi-Column Aggregation
 
 This section provides an example of how to calculate a ratio using values from multiple columns.
