@@ -144,9 +144,6 @@ export class RowCtrl extends BeanStub {
 
         this.instanceId = rowNode.id + '-' + instanceIdSequence++;
         this.rowId = escapeString(rowNode.id);
-        if (this.isFullWidth() && !this.gridOptionsService.is('suppressCellFocus')) {
-            this.tabIndex = -1;
-        }
 
         this.setAnimateFlags(animateIn);
         this.initRowBusinessKey();
@@ -155,6 +152,11 @@ export class RowCtrl extends BeanStub {
         this.rowLevel = beans.rowCssClassCalculator.calculateRowLevel(this.rowNode);
 
         this.setRowType();
+
+        // calls to `this.isFullWidth()` only work after `setRowType` has been called.
+        if (this.isFullWidth() && !this.gridOptionsService.is('suppressCellFocus')) {
+            this.tabIndex = -1;
+        }
         this.rowStyles = this.processStylesFromGridOptions();
 
         this.addListeners();
@@ -445,7 +447,7 @@ export class RowCtrl extends BeanStub {
 
     private setRowType(): void {
         const isStub = this.rowNode.stub;
-        const isFullWidthCell = this.rowNode.isFullWidthCell();
+        const isFullWidthCell = this.isFullWidth();
         const isDetailCell = this.beans.doingMasterDetail && this.rowNode.detail;
         const pivotMode = this.beans.columnModel.isPivotMode();
         // we only use full width for groups, not footers. it wouldn't make sense to include footers if not looking
@@ -469,7 +471,6 @@ export class RowCtrl extends BeanStub {
     }
 
     private updateColumnLists(suppressAnimationFrame = false, useFlushSync = false): void {
-
         if (this.isFullWidth()) { return; }
 
         const noAnimation = suppressAnimationFrame
