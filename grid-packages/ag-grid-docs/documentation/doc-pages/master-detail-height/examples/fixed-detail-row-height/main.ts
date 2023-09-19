@@ -33,6 +33,7 @@ const gridOptions: GridOptions<IAccount> = {
       params.successCallback(params.data.callRecords)
     },
   } as IDetailCellRendererParams<IAccount, ICallRecord>,
+  alwaysShowVerticalScroll: true,
   onFirstDataRendered: onFirstDataRendered,
 }
 
