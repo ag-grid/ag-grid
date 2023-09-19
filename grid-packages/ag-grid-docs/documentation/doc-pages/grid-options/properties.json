@@ -576,7 +576,6 @@
             }
         },
         "getDocument": {},
-        "suppressParentsInRowNodes": {},
         "suppressTouch": {
             "more": {
                 "name": "Touch Support",
