@@ -13,7 +13,6 @@ import {
     IRowNode,
     NewColumnsLoadedEvent,
     PostConstruct,
-    PropertyChangedEvent,
     ValueParserService,
     ValueService,
     WithoutGridCommon,
@@ -61,7 +60,7 @@ export class AdvancedFilterService extends BeanStub implements IAdvancedFilterSe
             },
         }
 
-        this.addManagedPropertyListener('enableAdvancedFilter', (event: PropertyChangedEvent) => this.setEnabled(!!event.currentValue))
+        this.addManagedPropertyListener('enableAdvancedFilter', (event) => this.setEnabled(!!event.currentValue))
         this.addManagedListener(this.eventService, Events.EVENT_NEW_COLUMNS_LOADED,
             (event: NewColumnsLoadedEvent) => this.onNewColumnsLoaded(event));
         this.addManagedPropertyListener('includeHiddenColumnsInAdvancedFilter', () => this.updateValidity());

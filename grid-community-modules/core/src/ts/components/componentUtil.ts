@@ -188,9 +188,13 @@ export class ComponentUtil {
             // Use isChanged to control event via force option as by the time we call __updateProperty the gridOptions[key] will already contain the new value.
             const isChanged = api.__setPropertyOnly(gridKey, coercedValue);
             return {gridKey, coercedValue, isChanged}
-        });
+        })
+        // Only include properties that have changed
+        .filter(u => u.isChanged);
+
         // Then cause any property change event listeners to be fired.
-        updates.forEach((u) => api.__updateProperty(u.gridKey, u.coercedValue, u.isChanged, this.changeSetId));
+        const updatedKeys = updates.map(u => u.gridKey);
+        updates.forEach((u) => api.__updateProperty(u.gridKey, u.coercedValue, u.isChanged, {id: this.changeSetId, properties: updatedKeys }));
 
         // copy changes into an event for dispatch
         const event: WithoutGridCommon<ComponentStateChangedEvent> = {

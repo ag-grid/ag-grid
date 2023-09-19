@@ -1149,9 +1149,17 @@ export class RowNode<TData = any> implements IEventEmitter, IRowNode<TData> {
         // the animate screws up with the daemons hanging around
         if (this.sibling) { return; }
 
+        // we don't copy these properties as they cause the footer node
+        // to have properties which should be unique to the row.
+        const ignoredProperties = new Set([
+            'eventService',
+            '__objectId',
+            'sticky',
+        ]);
         const footerNode = new RowNode(this.beans);
 
         Object.keys(this).forEach( key => {
+            if (ignoredProperties.has(key)) { return; }
             (footerNode as any)[key] = (this as any)[key];
         });
 

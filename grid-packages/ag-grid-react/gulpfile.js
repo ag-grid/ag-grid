@@ -65,7 +65,10 @@ const umd = () => {
                 'ag-grid-community': 'agGrid'
             },
         },
-        plugins: [typescript(), commonjs(), uglify()]
+        plugins: [
+            typescript({ tsconfig: "tsconfig.umd.json"}),
+            commonjs(),
+            uglify()]
     })
         .pipe(source('ag-grid-react.min.js'))
         .pipe(gulp.dest('./bundles'))
