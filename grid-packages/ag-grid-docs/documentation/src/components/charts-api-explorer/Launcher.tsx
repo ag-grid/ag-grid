@@ -53,23 +53,6 @@ const LauncherInner = ({
     useTypescript,
     set,
 }) => {
-    return <div>bob</div>
-};
-
-const LauncherInner2 = ({
-    framework,
-    options,
-    fullScreen,
-    setFullScreen,
-    fullScreenGraph,
-    setFullScreenGraph,
-
-    useFunctionalReact,
-    enableVue3,
-    useVue3,
-    useTypescript,
-    set,
-}) => {
     const nodes = useExampleFileNodes();
     const exampleInfo = useMemo(
         () => buildExampleInfo(nodes, framework, options, useFunctionalReact, useVue3, useTypescript),

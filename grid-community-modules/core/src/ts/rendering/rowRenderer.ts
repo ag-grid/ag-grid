@@ -1012,7 +1012,6 @@ export class RowRenderer extends BeanStub {
         });
 
         if (rowsToRecycle) {
-            console.log('rowsToRecycle', rowsToRecycle);
             const useAnimationFrame = afterScroll && !this.gridOptionsService.is('suppressAnimationFrame') && !this.printLayout;
             if (useAnimationFrame) {
                 this.beans.animationFrameService.addDestroyTask(() => {
