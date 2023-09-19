@@ -175,7 +175,13 @@
         },
         "filterOpened": {},
         "filterChanged": {},
-        "filterModified": {}
+        "filterModified": {},
+        "advancedFilterBuilderVisibleChanged": {
+            "more": {
+                "name": "Advanced Filter",
+                "url": "/filter-advanced/#configuring-advanced-filter-builder"
+            }
+        }
     },
     "sort": {
         "meta": {

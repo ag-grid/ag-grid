@@ -87,7 +87,7 @@ export class FilterManager extends BeanStub {
             this.updateAdvancedFilterColumns();
         });
 
-        this.addManagedPropertyListener('quickFilterText', (e: PropertyChangedEvent) => this.setQuickFilter(e.currentValue));
+        this.addManagedPropertyListener('quickFilterText', (e) => this.setQuickFilter(e.currentValue));
         this.addManagedPropertyListener('includeHiddenColumnsInQuickFilter', () => this.onIncludeHiddenColumnsInQuickFilterChanged());
 
         this.quickFilter = this.parseQuickFilter(this.gridOptionsService.get('quickFilterText'));
@@ -99,7 +99,7 @@ export class FilterManager extends BeanStub {
         this.updateAggFiltering();
         this.addManagedPropertyListener('groupAggFiltering', () => this.updateAggFiltering());
 
-        this.addManagedPropertyListener('advancedFilterModel', (event: PropertyChangedEvent) => this.setAdvancedFilterModel(event.currentValue));
+        this.addManagedPropertyListener('advancedFilterModel', (event) => this.setAdvancedFilterModel(event.currentValue));
         this.addManagedListener(this.eventService, Events.EVENT_ADVANCED_FILTER_ENABLED_CHANGED,
             ({ enabled }: AdvancedFilterEnabledChangedEvent) => this.onAdvancedFilterEnabledChanged(enabled));
 
@@ -383,7 +383,7 @@ export class FilterManager extends BeanStub {
         return newFilter.toUpperCase();
     }
 
-    private setQuickFilter(newFilter: string): void {
+    private setQuickFilter(newFilter: string | undefined): void {
         if (newFilter != null && typeof newFilter !== 'string') {
             console.warn(`AG Grid - setQuickFilter() only supports string inputs, received: ${typeof newFilter}`);
             return;
@@ -1003,10 +1003,15 @@ export class FilterManager extends BeanStub {
         return this.isAdvancedFilterEnabled() ? this.advancedFilterService.getModel() : null;
     }
 
-    public setAdvancedFilterModel(expression: AdvancedFilterModel | null): void {
+    public setAdvancedFilterModel(expression: AdvancedFilterModel | null | undefined): void {
         if (!this.isAdvancedFilterEnabled()) { return; }
-        this.advancedFilterService.setModel(expression);
+        this.advancedFilterService.setModel(expression ?? null);
         this.onFilterChanged({ source: 'advancedFilter' });
+    }
+
+    public showAdvancedFilterBuilder(source: 'api' | 'ui'): void {
+        if (!this.isAdvancedFilterEnabled()) { return; }
+        this.advancedFilterService.getCtrl().toggleFilterBuilder(source, true);
     }
 
     private updateAdvancedFilterColumns(): void {

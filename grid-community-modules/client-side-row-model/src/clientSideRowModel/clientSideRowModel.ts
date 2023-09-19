@@ -120,6 +120,11 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel 
             this.gridOptionsService,
             this.eventService, this.columnModel,
             this.selectionService, this.beans);
+
+        this.addManagedPropertyListener('treeData', () => {
+            // Shotgun reset all node state. This is used by treeData reactivity to ensure nodes don't include any group state
+            this.setRowData(this.rootNode.allLeafChildren.map(child => child.data));
+        });
     }
 
     public start(): void {
@@ -636,8 +641,8 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel 
             // infinite loops happen when there is space between rows. this can happen
             // when Auto Height is active, cos we re-calculate row tops asyncronously
             // when row heights change, which can temporarly result in gaps between rows.
-            const caughtInInfiniteLoop = oldBottomPointer === bottomPointer 
-                                        && oldTopPointer === topPointer;
+            const caughtInInfiniteLoop = oldBottomPointer === bottomPointer
+                && oldTopPointer === topPointer;
             if (caughtInInfiniteLoop) { return midPointer; }
 
             oldBottomPointer = bottomPointer;
@@ -660,9 +665,9 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel 
 
     public forEachNode(callback: (node: RowNode, index: number) => void, includeFooterNodes: boolean = false): void {
         this.recursivelyWalkNodesAndCallback({
-            nodes: [...(this.rootNode.childrenAfterGroup || [])], 
+            nodes: [...(this.rootNode.childrenAfterGroup || [])],
             callback,
-            recursionType: RecursionType.Normal, 
+            recursionType: RecursionType.Normal,
             index: 0,
             includeFooterNodes
         });
@@ -672,7 +677,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel 
         this.recursivelyWalkNodesAndCallback({
             nodes: [...(this.rootNode.childrenAfterAggFilter || [])],
             callback,
-            recursionType: RecursionType.AfterFilter, 
+            recursionType: RecursionType.AfterFilter,
             index: 0,
             includeFooterNodes
         });
@@ -825,7 +830,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel 
         this.refreshModel({ step: ClientSideRowModelSteps.MAP });
 
         const eventSource = expand ? 'expandAll' : 'collapseAll';
-        const event: WithoutGridCommon<ExpandCollapseAllEvent> = {            
+        const event: WithoutGridCommon<ExpandCollapseAllEvent> = {
             type: Events.EVENT_EXPAND_COLLAPSE_ALL,
             source: eventSource
         };
@@ -1023,7 +1028,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel 
         }
 
         if (rowNodeTrans.length > 0) {
-            const event: WithoutGridCommon<AsyncTransactionsFlushed> = {                
+            const event: WithoutGridCommon<AsyncTransactionsFlushed> = {
                 type: Events.EVENT_ASYNC_TRANSACTIONS_FLUSHED,
                 results: rowNodeTrans
             };

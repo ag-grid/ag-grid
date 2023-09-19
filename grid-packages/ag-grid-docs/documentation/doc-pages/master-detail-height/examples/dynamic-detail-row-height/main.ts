@@ -43,6 +43,7 @@ const gridOptions: GridOptions = {
       return allDetailRowHeight + (gridSizes && gridSizes.headerHeight || 0) + offset
     }
   },
+  alwaysShowVerticalScroll: true,
   onFirstDataRendered: onFirstDataRendered,
 }
 

@@ -4,7 +4,7 @@ import { Events } from '../events';
 import { BeanStub } from "../context/beanStub";
 import { getAbsoluteHeight, getAbsoluteWidth, getElementRectWithOffset } from '../utils/dom';
 import { last } from '../utils/array';
-import { isElementInEventPath } from '../utils/event';
+import { isElementInEventPath, isStopPropagationForAgGrid } from '../utils/event';
 import { KeyCode } from '../constants/keyCode';
 import { FocusService } from "../focusService";
 import { GridCtrl } from "../gridComp/gridCtrl";
@@ -517,7 +517,7 @@ export class PopupService extends BeanStub {
 
             const key = event.key;
 
-            if (key === KeyCode.ESCAPE) {
+            if (key === KeyCode.ESCAPE && !isStopPropagationForAgGrid(event)) {
                 removeListeners({ keyboardEvent: event });
             }
         };

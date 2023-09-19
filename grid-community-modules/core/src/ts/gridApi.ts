@@ -22,7 +22,8 @@ import {
     IsServerSideGroup,
     RowClassParams,
     RowGroupingDisplayType,
-    ServerSideGroupLevelParams
+    ServerSideGroupLevelParams,
+    UseGroupFooter
 } from "./entities/gridOptions";
 import {
     GetGroupRowAggParams,
@@ -48,7 +49,7 @@ import { FocusService } from "./focusService";
 import { GridBodyCtrl } from "./gridBodyComp/gridBodyCtrl";
 import { NavigationService } from "./gridBodyComp/navigationService";
 import { RowDropZoneEvents, RowDropZoneParams } from "./gridBodyComp/rowDragFeature";
-import { GridOptionsService } from "./gridOptionsService";
+import { PropertyChangeSet, GridOptionsService } from "./gridOptionsService";
 import { logDeprecation } from "./gridOptionsValidator";
 import { HeaderPosition } from "./headerRendering/common/headerPosition";
 import { CsvExportParams, ProcessCellForExportParams } from "./interfaces/exportParams";
@@ -128,6 +129,7 @@ import { RowNode } from "./entities/rowNode";
 import { AdvancedFilterModel } from "./interfaces/advancedFilterModel";
 import { LoadSuccessParams } from "./rowNodeCache/rowNodeBlock";
 import { Events } from './eventKeys';
+import { IAdvancedFilterBuilderParams } from "./interfaces/iAdvancedFilterBuilderParams";
 
 export interface DetailGridInfo {
     /**
@@ -258,11 +260,11 @@ export class GridApi<TData = any> {
         propertyName: K,
         value: GridOptions[K],
         force: boolean,
-        changeSetId: number
+        changeSet: PropertyChangeSet | undefined = undefined
     ) {
         // Ensure the GridOptions property gets updated and fires the change event as we
         // cannot assume that the dynamic Api call will updated GridOptions.
-        this.gos.set(propertyName, value, force, {}, changeSetId);
+        this.gos.set(propertyName, value, force, {}, changeSet);
         // If the dynamic api does update GridOptions then change detection in the
         // GridOptionsService will prevent the event being fired twice.
         const setterName = this.getSetterMethod(propertyName);
@@ -764,6 +766,18 @@ export class GridApi<TData = any> {
      */
     public setAdvancedFilterParent(advancedFilterParent: HTMLElement | null): void {
         this.gos.set('advancedFilterParent', advancedFilterParent);
+    }
+
+    /** Updates the Advanced Filter Builder parameters. */
+    public setAdvancedFilterBuilderParams(params?: IAdvancedFilterBuilderParams): void {
+        this.gos.set('advancedFilterBuilderParams', params);
+    }
+
+    /** Open the Advanced Filter Builder dialog (if enabled). */
+    public showAdvancedFilterBuilder(): void {
+        if (ModuleRegistry.__assertRegistered(ModuleNames.AdvancedFilterModule, 'api.setAdvancedFilterModel', this.context.getGridId())) {
+            this.filterManager.showAdvancedFilterBuilder('api');
+        }
     }
 
     /**
@@ -1444,6 +1458,14 @@ export class GridApi<TData = any> {
 
     public setGroupDisplayType(value: RowGroupingDisplayType) {
         this.gos.set('groupDisplayType', value);
+    }
+
+    public setGroupIncludeFooter(value: boolean | UseGroupFooter<TData>) {
+        this.gos.set('groupIncludeFooter', value);
+    }
+
+    public setGroupIncludeTotalFooter(value: boolean) {
+        this.gos.set('groupIncludeTotalFooter', value);
     }
 
     public setRowClass(className: string | undefined): void {

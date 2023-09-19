@@ -48,7 +48,7 @@ const HeaderRowContainerComp = (props: {pinned: ColumnPinnedType | null})=> {
         destroyFuncs.push( ()=> context.destroyBean(ctrl) );
     });
 
-    const getClassName = createMemo( ()=> getCssClasses.toString() );
+    const getClassName = createMemo( ()=> getCssClasses().toString() );
 
     const insertRowsJsx = ()=> 
     <For each={getHeaderRowCtrls()}>{ ctrl =>

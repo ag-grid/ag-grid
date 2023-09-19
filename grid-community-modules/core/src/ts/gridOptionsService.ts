@@ -2,7 +2,7 @@ import { ColumnApi } from "./columns/columnApi";
 import { ComponentUtil } from "./components/componentUtil";
 import { Autowired, Bean, PostConstruct, PreDestroy, Qualifier } from "./context/context";
 import { DomLayoutType, GridOptions } from "./entities/gridOptions";
-import { GetGroupAggFilteringParams, GetGroupIncludeFooterParams, GetRowIdParams, RowHeightParams } from "./interfaces/iCallbackParams";
+import { GetGroupAggFilteringParams, GetGroupIncludeFooterParams, RowHeightParams } from "./interfaces/iCallbackParams";
 import { Environment } from "./environment";
 import { AgEvent, Events } from "./events";
 import { EventService } from "./eventService";
@@ -13,8 +13,6 @@ import { AnyGridOptions } from "./propertyKeys";
 import { doOnce } from "./utils/function";
 import { exists, missing } from "./utils/generic";
 import { getScrollbarWidth } from './utils/browser';
-import { ModuleRegistry } from "./modules/moduleRegistry";
-import { ModuleNames } from "./modules/moduleNames";
 import { matchesGroupDisplayType } from "./gridOptionsValidator";
 import { IRowNode } from "./interfaces/iRowNode";
 
@@ -39,17 +37,33 @@ type NonPrimitiveProps = Exclude<keyof GridOptions, BooleanProps | NumberProps |
 type ExtractParamsFromCallback<TCallback> = TCallback extends (params: infer PA) => any ? PA : never;
 type ExtractReturnTypeFromCallback<TCallback> = TCallback extends (params: AgGridCommon<any, any>) => infer RT ? RT : never;
 type WrappedCallback<K extends CallbackProps, OriginalCallback extends GridOptions[K]> = undefined | ((params: WithoutGridCommon<ExtractParamsFromCallback<OriginalCallback>>) => ExtractReturnTypeFromCallback<OriginalCallback>)
-export interface PropertyChangedEvent extends AgEvent {
-    type: keyof GridOptions,
-    currentValue: any;
-    previousValue: any;
+export interface PropertyChangeSet {
     /** Unique id which can be used to link changes of multiple properties that were updated together.
      * i.e a user updated multiple properties at the same time.
      */
-    changeSetId: number;
+    id: number;
+    /** All the properties that have been updated in this change set */
+    properties: (keyof GridOptions)[];
+}
+export interface PropertyChangedEvent extends AgEvent {
+    type: 'gridPropertyChanged',
+    changeSet: PropertyChangeSet | undefined;
 }
 
-export type PropertyChangedListener<T extends PropertyChangedEvent> = (event: T) => void
+/**
+ * For boolean properties the changed value will have been coerced to a boolean, so we do not want the type to include the undefined value.
+ */
+type GridOptionsOrBooleanCoercedValue<K extends keyof GridOptions> = K extends BooleanProps ? boolean : GridOptions[K];
+
+export interface PropertyValueChangedEvent<K extends keyof GridOptions> extends AgEvent {
+    type: K;
+    changeSet: PropertyChangeSet | undefined;
+    currentValue: GridOptionsOrBooleanCoercedValue<K>;
+    previousValue: GridOptionsOrBooleanCoercedValue<K>;
+}
+
+export type PropertyChangedListener = (event: PropertyChangedEvent) => void
+export type PropertyValueChangedListener<K extends keyof GridOptions> = (event: PropertyValueChangedEvent<K>) => void
 
 function toNumber(value: any): number | undefined {
     if (typeof value == 'number') {
@@ -214,17 +228,17 @@ export class GridOptionsService {
         newValue: GridOptions[K],
         force = false,
         eventParams: object = {},
-        changeSetId = -1
+        changeSet: PropertyChangeSet | undefined = undefined 
     ): void {
         if (this.gridOptionLookup.has(key)) {
             const previousValue = this.gridOptions[key];
             if (force || previousValue !== newValue) {
                 this.gridOptions[key] = newValue;
-                const event: PropertyChangedEvent = {
+                const event: PropertyValueChangedEvent<K> = {
                     type: key,
                     currentValue: newValue,
-                    previousValue: previousValue,
-                    changeSetId,
+                    previousValue,
+                    changeSet,
                     ...eventParams,
                 };
                 this.propertyEventService.dispatchEvent(event);
@@ -232,10 +246,10 @@ export class GridOptionsService {
         }
     }
 
-    addEventListener<T extends PropertyChangedEvent>(key: keyof GridOptions, listener: PropertyChangedListener<T>): void {
+    addEventListener<K extends keyof GridOptions>(key: K, listener: PropertyValueChangedListener<K>): void {
         this.propertyEventService.addEventListener(key, listener);
     }
-    removeEventListener<T extends PropertyChangedEvent>(key: keyof GridOptions, listener: PropertyChangedListener<T>): void {
+    removeEventListener<K extends keyof GridOptions>(key: K, listener: PropertyValueChangedListener<K>): void {
         this.propertyEventService.removeEventListener(key, listener);
     }
 

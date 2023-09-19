@@ -369,6 +369,12 @@
                 "name": "Advanced Filter",
                 "url": "/filter-advanced/#advanced-filter-parent"
             }
+        },
+        "advancedFilterBuilderParams": {
+            "more": {
+                "name": "Advanced Filter",
+                "url": "/filter-advanced/#configuring-advanced-filter-builder"
+            }
         }
     },
     "charts": {

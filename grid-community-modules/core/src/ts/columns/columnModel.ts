@@ -49,7 +49,7 @@ import { CtrlsService } from '../ctrlsService';
 import { HeaderGroupCellCtrl } from '../headerRendering/cells/columnGroup/headerGroupCellCtrl';
 import { WithoutGridCommon } from '../interfaces/iCommon';
 import { matchesGroupDisplayType, matchesTreeDataDisplayType } from '../gridOptionsValidator';
-import { PropertyChangedEvent } from '../gridOptionsService';
+import { PropertyValueChangedEvent } from '../gridOptionsService';
 
 export interface ColumnResizeSet {
     columns: Column[];
@@ -114,7 +114,7 @@ export interface IColumnLimit {
     maxWidth?: number;
 }
 
-export interface ColDefPropertyChangedEvent extends PropertyChangedEvent {
+export interface ColDefPropertyChangedEvent extends PropertyValueChangedEvent<any> {
     source?: ColumnEventType;
 }
 
@@ -240,7 +240,6 @@ export class ColumnModel extends BeanStub {
     private forceRecreateAutoGroups = false;
 
     private pivotMode = false;
-    private usingTreeData: boolean;
 
     // for horizontal visualisation of columns
     private scrollWidth: number;
@@ -272,15 +271,13 @@ export class ColumnModel extends BeanStub {
             this.pivotMode = pivotMode;
         }
 
-        this.usingTreeData = this.gridOptionsService.is('treeData');
-
-        this.addManagedPropertyListener<ColDefPropertyChangedEvent>('groupDisplayType', () => this.onGroupDisplayTypeChanged());
-        this.addManagedPropertyListener<ColDefPropertyChangedEvent>('autoGroupColumnDef', () => this.onAutoGroupColumnDefChanged());
-        this.addManagedPropertyListener<ColDefPropertyChangedEvent>('defaultColDef', (params) => this.onSharedColDefChanged(params.source));
-        this.addManagedPropertyListener<ColDefPropertyChangedEvent>('columnTypes', (params) => this.onSharedColDefChanged(params.source));
+        this.addManagedPropertyListeners(['groupDisplayType', 'treeData'], () => this.buildAutoGroupColumns());
+        this.addManagedPropertyListener('autoGroupColumnDef', () => this.onAutoGroupColumnDefChanged());
+        this.addManagedPropertyListener('defaultColDef', (params: ColDefPropertyChangedEvent) => this.onSharedColDefChanged(params.source));
+        this.addManagedPropertyListener('columnTypes', (params: ColDefPropertyChangedEvent) => this.onSharedColDefChanged(params.source));
     }
 
-    private onGroupDisplayTypeChanged() {
+    private buildAutoGroupColumns() {
         // Possible for update to be called before columns are present in which case there is nothing to do here.
         if (!this.columnDefs) { return; }
 
@@ -4023,7 +4020,7 @@ export class ColumnModel extends BeanStub {
         const suppressAutoColumn = this.pivotMode ?
             this.gridOptionsService.is('pivotSuppressAutoColumn') : this.isGroupSuppressAutoColumn();
 
-        const groupingActive = this.rowGroupColumns.length > 0 || this.usingTreeData;
+        const groupingActive = this.rowGroupColumns.length > 0 || this.gridOptionsService.is('treeData');
         const needAutoColumns = groupingActive && !suppressAutoColumn && !groupFullWidthRow;
 
         if (needAutoColumns) {

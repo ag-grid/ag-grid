@@ -28,6 +28,21 @@ The following example demonstrates the Advanced Filter:
 
 <note>Advanced Filter and Column Filters cannot be active at the same time. Enabling Advanced Filter will disable Column Filters.</note>
 
+## Advanced Filter Builder
+
+As well as typing into the Advanced Filter input, Advanced Filters can also be set by using the Advanced Filter Builder. This displays a hierarchical view of the filter, and allows the different filter parts to be set using dropdowns and inputs. It also allows for filter conditions to be added, deleted and reordered.
+
+The Advanced Filter Builder can be launched by clicking the `Builder` button next to the Advanced Filter input.
+
+The following example demonstrates the Advanced Filter Builder:
+- Click on any of the dropdown pills to change the join operators, columns and filter options.
+- Click on the value pills to change the filter values.
+- Use the drag handles to move the filter conditions or groups around.
+- Use the add and remove buttons to create new conditions or delete existing ones.
+- If the filter is valid (and does not match the already applied filter), click the `Apply` button to apply the filter.
+
+<grid-example title='Advanced Filter Builder' name='advanced-filter-builder' type='generated' options='{ "enterprise": true, "modules": ["clientside", "menu", "advancedfilter"] }'></grid-example>
+
 ## Configuring Columns
 
 For a column to appear in the Advanced Filter, it needs to have `filter: true` (or set to a non-null and non-false value).
@@ -187,6 +202,33 @@ The following example demonstrates displaying the Advanced Filter outside of the
 - Popup Parent is set to an element containing both the grid and the Advanced Filter parent.
 
 <grid-example title='External Parent' name='external-parent' type='generated' options='{ "enterprise": true, "modules": ["clientside", "menu", "advancedfilter"] }'></grid-example>
+
+## Configuring Advanced Filter Builder
+
+The Advanced Filter Builder can be configured using the `IAdvancedFilterBuilderParams` interface:
+
+<interface-documentation interfaceName='IAdvancedFilterBuilderParams' config='{"description":"", "sortAlphabetically":"true"}'></interface-documentation>
+
+The params can be set via the grid option `advancedFilterBuilderParams`, or using the grid API method `setAdvancedFilterBuilderParams`:
+
+<api-documentation source='grid-options/properties.json' section='filter' names='["advancedFilterBuilderParams"]'></api-documentation>
+
+<api-documentation source='grid-api/api.json' section='filter' names='["setAdvancedFilterBuilderParams"]'></api-documentation>
+
+As well as using the button in the Advanced Filter, it's possible to launch the Advanced Filter Builder via the `showAdvancedFilterBuilder` grid API method:
+
+<api-documentation source='grid-api/api.json' section='filter' names='["showAdvancedFilterBuilder"]'></api-documentation>
+
+When the Advanced Filter Builder is shown or hidden, the `advancedFilterBuilderVisibleChanged` event is fired:
+
+<api-documentation source='grid-events/events.json' section='filter' names='["advancedFilterBuilderVisibleChanged"]'></api-documentation>
+
+The following example demonstrates configuring the Advanced Filter Builder:
+- The `Advanced Filter Builder` button displays the Advanced Filter Builder via the API method `showAdvancedFilterBuilder`.
+- The `advancedFilterBuilderVisibleChanged` event is used to toggle the disabled status of the `Advanced Filter Builder` button.
+- The `showMoveButtons` param is set in the `advancedFilterBuilderParams`, which displays buttons allowing the filter rows to be moved up and down (including via keyboard navigation).
+
+<grid-example title='Configuring Advanced Filter Builder' name='configuring-advanced-filter-builder' type='generated' options='{ "enterprise": true, "modules": ["clientside", "menu", "advancedfilter"], "extras": ["fontawesome"] }'></grid-example>
 
 ## Cell Data Type Handling
 

@@ -92,6 +92,7 @@ export {
 export { RowDropZoneParams, RowDropZoneEvents } from "./gridBodyComp/rowDragFeature";
 export { DragService, DragListenerParams } from "./dragAndDrop/dragService";
 export { IRowDragItem } from "./rendering/row/rowDragComp";
+export { VirtualListDragFeature, VirtualListDragItem, VirtualListDragParams } from "./dragAndDrop/virtualListDragFeature";
 
 // entities
 export { Column, ColumnPinnedType } from "./entities/column";
@@ -135,6 +136,7 @@ export {
     BooleanAdvancedFilterModelType
 }  from './interfaces/advancedFilterModel';
 export { IAdvancedFilterCtrl } from './interfaces/iAdvancedFilterCtrl';
+export { IAdvancedFilterBuilderParams } from './interfaces/iAdvancedFilterBuilderParams';
 export { IAdvancedFilterService } from './interfaces/iAdvancedFilterService';
 
 // gridPanel
@@ -513,6 +515,7 @@ export { WrappableInterface, BaseComponentWrapper, FrameworkComponentWrapper } f
 export { IFrameworkOverrides } from "./interfaces/iFrameworkOverrides";
 export { Environment } from "./environment";
 export { ITooltipComp, ITooltipParams, TooltipLocation } from "./rendering/tooltipComponent";
+export { TooltipFeature } from "./widgets/tooltipFeature";
 export { CustomTooltipFeature } from "./widgets/customTooltipFeature";
 export { IAggregationStage } from "./interfaces/iAggregationStage";
 

@@ -199,7 +199,21 @@ sortAscending: 'asc'
 // show on column header when column is sorted descending
 sortDescending: 'desc'
 // show on column header when column has no sort, only when enabled with gridOptions.unSortIcon=true
-sortUnSort: 'none'
+sortUnSort: 'none',
+// Builder button in Advanced Filter
+advancedFilterBuilder: 'group',
+// drag handle used to pick up Advanced Filter Builder rows
+advancedFilterBuilderDrag: 'grip',
+// Advanced Filter Builder row validation error
+advancedFilterBuilderInvalid: 'not-allowed',
+// shown on Advanced Filter Builder rows to move them up
+advancedFilterBuilderMoveUp: 'up',
+// shown on Advanced Filter Builder rows to move them down
+advancedFilterBuilderMoveDown: 'down',
+// shown on Advanced Filter Builder rows to add new rows
+advancedFilterBuilderAdd: 'plus',
+// shown on Advanced Filter Builder rows to remove row
+advancedFilterBuilderRemove: 'minus',
 ```
 
 ## Provided Icons

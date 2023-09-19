@@ -144,18 +144,20 @@ export class RowCtrl extends BeanStub {
 
         this.instanceId = rowNode.id + '-' + instanceIdSequence++;
         this.rowId = escapeString(rowNode.id);
-        if (this.isFullWidth() && !this.gridOptionsService.is('suppressCellFocus')) {
-            this.tabIndex = -1;
-        }
 
-        this.setAnimateFlags(animateIn);
         this.initRowBusinessKey();
 
         this.rowFocused = beans.focusService.isRowFocused(this.rowNode.rowIndex!, this.rowNode.rowPinned);
         this.rowLevel = beans.rowCssClassCalculator.calculateRowLevel(this.rowNode);
 
         this.setRowType();
+        this.setAnimateFlags(animateIn);
         this.rowStyles = this.processStylesFromGridOptions();
+
+        // calls to `isFullWidth()` only work after `setRowType` has been called.
+        if (this.isFullWidth() && !this.gridOptionsService.is('suppressCellFocus')) {
+            this.tabIndex = -1;
+        }
 
         this.addListeners();
     }
@@ -275,7 +277,7 @@ export class RowCtrl extends BeanStub {
             setAriaExpanded(gui.element, this.rowNode.expanded == true);
         }
 
-        this.setRowCompRowId(comp, false); // false = don't update the id, as we already set it
+        this.setRowCompRowId(comp);
         this.setRowCompRowBusinessKey(comp);
 
         // DOM DATA
@@ -322,16 +324,14 @@ export class RowCtrl extends BeanStub {
 
     private setRowCompRowBusinessKey(comp: IRowComp): void {
         if (this.businessKeySanitised == null) { return; }
-            comp.setRowBusinessKey(this.businessKeySanitised);
+        comp.setRowBusinessKey(this.businessKeySanitised);
     }
     public getBusinessKey(): string | null {
         return this.businessKeySanitised;
     }
 
-    private setRowCompRowId(comp: IRowComp, updateId: boolean) {
-        if(updateId){
-            this.rowId = escapeString(this.rowNode.id);
-        }
+    private setRowCompRowId(comp: IRowComp) {
+        this.rowId = escapeString(this.rowNode.id);
         if (this.rowId == null) { return; }
 
         comp.setRowId(this.rowId);
@@ -469,7 +469,6 @@ export class RowCtrl extends BeanStub {
     }
 
     private updateColumnLists(suppressAnimationFrame = false, useFlushSync = false): void {
-
         if (this.isFullWidth()) { return; }
 
         const noAnimation = suppressAnimationFrame
@@ -627,11 +626,21 @@ export class RowCtrl extends BeanStub {
         const pinningRight = this.beans.columnModel.isPinningRight();
 
         if (oldRowTopExists) {
+            if (this.isFullWidth()) {
+                this.slideInAnimation.fullWidth = true;
+                return;
+            }
+
             // if the row had a previous position, we slide it in
             this.slideInAnimation.center = true;
             this.slideInAnimation.left = pinningLeft;
             this.slideInAnimation.right = pinningRight;
         } else {
+            if (this.isFullWidth()) {
+                this.fadeInAnimation.fullWidth = true;
+                return;
+            }
+
             // if the row had no previous position, we fade it in
             this.fadeInAnimation.center = true;
             this.fadeInAnimation.left = pinningLeft;
@@ -766,7 +775,7 @@ export class RowCtrl extends BeanStub {
 
         // as data has changed update the dom row id attributes
         this.allRowGuis.forEach(gui => {
-            this.setRowCompRowId(gui.rowComp, true);
+            this.setRowCompRowId(gui.rowComp);
             this.updateRowBusinessKey();
             this.setRowCompRowBusinessKey(gui.rowComp);
         });

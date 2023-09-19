@@ -16,6 +16,12 @@
     li {
         margin-bottom: 0.125em !important;
     }
+
+    @container (max-width: 780px) {
+        :global(.verbs) {
+            display: none;
+        }
+    }
 }
 
 .importInfoIcon {
