@@ -25,24 +25,24 @@ const RowContainerComp = (params: {name: RowContainerName}) => {
     const containerClasses = useMemo( ()=> classesList(cssClasses.container), [cssClasses]);
 
     // no need to useMemo for boolean types
-    const template1 = name === RowContainerName.CENTER
+    const centerTemplate = name === RowContainerName.CENTER
         || name === RowContainerName.TOP_CENTER
         || name === RowContainerName.BOTTOM_CENTER
         || name === RowContainerName.STICKY_TOP_CENTER;
 
-    const topLevelRef = template1 ? eViewport : eContainer;
+    const topLevelRef = centerTemplate ? eViewport : eContainer;
 
     useReactCommentEffect(' AG Row Container ' + name + ' ', topLevelRef);
 
     const areElementsReady = useCallback(() => {
-        if (template1) {
+        if (centerTemplate) {
             return eViewport.current != null && eContainer.current != null;
         }
         return eContainer.current != null;
     }, []);
 
     const areElementsRemoved = useCallback(() => {
-        if (template1) {
+        if (centerTemplate) {
             return eViewport.current == null && eContainer.current == null;
         }
         return eContainer.current == null;
@@ -112,7 +112,7 @@ const RowContainerComp = (params: {name: RowContainerName}) => {
     return (
         <>
             {
-                template1 ?
+                centerTemplate ?
                 <div className={viewportClasses} ref={setViewportRef} role="presentation">
                     { buildContainer() }
                 </div> :

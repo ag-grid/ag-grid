@@ -24,7 +24,7 @@ const RowContainerComp = (props: {name: RowContainerName})=> {
     const containerClasses = createMemo(() => classesList(cssClasses().container));
 
     // no need to useMemo for boolean types
-    const template1 = name === RowContainerName.CENTER
+    const centerTemplate = name === RowContainerName.CENTER
         || name === RowContainerName.TOP_CENTER 
         || name === RowContainerName.BOTTOM_CENTER 
         || name === RowContainerName.STICKY_TOP_CENTER;
@@ -87,7 +87,7 @@ const RowContainerComp = (props: {name: RowContainerName})=> {
     return (
         <>
             {
-                template1 ?
+                centerTemplate ?
                 <div class={ viewportClasses() } ref= { eViewport! } role="presentation" style={ viewportStyle() }>
                     { buildContainer() }
                 </div> :
