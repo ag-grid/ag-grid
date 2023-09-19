@@ -3,7 +3,7 @@ import { Component } from "./component";
 import { RefSelector } from "./componentAnnotations";
 import { setAriaLabelledBy, setAriaLabel, setAriaDescribedBy, setAriaExpanded, setAriaRole } from "../utils/aria";
 import { createIconNoSpan } from "../utils/icon";
-import { setElementWidth, isVisible, getAbsoluteWidth, getInnerHeight } from "../utils/dom";
+import { setElementWidth, isVisible, getAbsoluteWidth, getInnerHeight, formatSize } from "../utils/dom";
 import { KeyCode } from '../constants/keyCode';
 import { IAgLabelParams } from './agAbstractLabel';
 import { AddPopupParams, PopupService } from "./popupService";
@@ -12,6 +12,12 @@ import { Autowired } from "../context/context";
 export interface IPickerFieldParams extends IAgLabelParams {
     pickerType: string;
     pickerGap?: number;
+    /**
+     * If true, will set min-width and max-width (if present), and will set width to wrapper element width.
+     * If false, will set min-width, max-width and width to maxPickerWidth or wrapper element width.
+     */
+    variableWidth?: boolean;
+    minPickerWidth?: number | string;
     maxPickerWidth?: number | string;
     maxPickerHeight?: number | string;
     pickerAriaLabelKey: string;
@@ -40,6 +46,8 @@ export abstract class AgPickerField<TValue, TConfig extends IPickerFieldParams =
     protected isPickerDisplayed: boolean = false;
 
     protected maxPickerHeight: string | undefined;
+    protected variableWidth: boolean;
+    protected minPickerWidth: string | undefined;
     protected maxPickerWidth: string | undefined;
     protected value: TValue;
 
@@ -67,14 +75,20 @@ export abstract class AgPickerField<TValue, TConfig extends IPickerFieldParams =
 
         if (!config) { return; }
 
-        const { pickerGap, maxPickerHeight, maxPickerWidth } = config;
+        const { pickerGap, maxPickerHeight, variableWidth, minPickerWidth, maxPickerWidth } = config;
 
         if (pickerGap != null) {
             this.pickerGap = pickerGap;
         }
 
+        this.variableWidth = !!variableWidth;
+
         if (maxPickerHeight != null) {
             this.setPickerMaxHeight(maxPickerHeight);
+        }
+
+        if (minPickerWidth != null) {
+            this.setPickerMinWidth(minPickerWidth);
         }
 
         if (maxPickerWidth != null) {
@@ -213,10 +227,19 @@ export abstract class AgPickerField<TValue, TConfig extends IPickerFieldParams =
 
         const addPopupRes = this.popupService.addPopup(popupParams);
 
-        const eWrapperWidth = getAbsoluteWidth(this.eWrapper);
-        const { maxPickerHeight, maxPickerWidth, pickerGap } = this;
+        const { maxPickerHeight, minPickerWidth, maxPickerWidth, pickerGap, variableWidth } = this;
 
-        setElementWidth(ePicker, maxPickerWidth || eWrapperWidth);
+        if (variableWidth) {
+            if (minPickerWidth) {
+                ePicker.style.minWidth = minPickerWidth;
+            }
+            ePicker.style.width = formatSize(getAbsoluteWidth(this.eWrapper));
+            if (maxPickerWidth) {
+                ePicker.style.maxWidth = maxPickerWidth;
+            }
+        } else {
+            setElementWidth(ePicker, maxPickerWidth ?? getAbsoluteWidth(this.eWrapper));
+        }
 
         const maxHeight = maxPickerHeight ?? `${getInnerHeight(this.popupService.getPopupParent())}px`;
 
@@ -307,6 +330,14 @@ export abstract class AgPickerField<TValue, TConfig extends IPickerFieldParams =
     public setPickerGap(gap: number): this {
         this.pickerGap = gap;
 
+        return this;
+    }
+
+    public setPickerMinWidth(width?: number | string): this {
+        if (typeof width === 'number') {
+            width = `${width}px`;
+        }
+        this.minPickerWidth = width == null ? undefined : width;
         return this;
     }
 

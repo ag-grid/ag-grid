@@ -1009,6 +1009,11 @@ export class FilterManager extends BeanStub {
         this.onFilterChanged({ source: 'advancedFilter' });
     }
 
+    public showAdvancedFilterBuilder(source: 'api' | 'ui'): void {
+        if (!this.isAdvancedFilterEnabled()) { return; }
+        this.advancedFilterService.getCtrl().toggleFilterBuilder(source, true);
+    }
+
     private updateAdvancedFilterColumns(): void {
         if (!this.isAdvancedFilterEnabled()) { return; }
         if (this.advancedFilterService.updateValidity()) {

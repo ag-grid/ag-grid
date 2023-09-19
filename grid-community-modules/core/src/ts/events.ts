@@ -179,6 +179,13 @@ export interface FilterDestroyedEvent<TData = any, TContext = any> extends AgGri
     column: Column;
 }
 
+export interface AdvancedFilterBuilderVisibleChangedEvent<TData = any, TContext = any> extends AgGridEvent<TData, TContext> {
+    /** Source of the visibility status change. */
+    source: 'api' | 'ui';
+    /** `true` if now visible. `false` if now hidden. */
+    visible: boolean
+}
+
 export interface SortChangedEvent<TData = any, TContext = any> extends AgGridEvent<TData, TContext> {
     /** Source of the sort change. */
     source: string;

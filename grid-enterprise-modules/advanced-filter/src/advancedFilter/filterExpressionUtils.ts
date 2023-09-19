@@ -1,32 +1,18 @@
-import {
-    AutocompleteEntry,
-    AutocompleteListParams,
-    BaseCellDataType,
-    Column,
-    ColumnModel,
-    DataTypeService,
-    ValueParserService
-} from "@ag-grid-community/core";
-import { ADVANCED_FILTER_LOCALE_TEXT } from './advancedFilterLocaleText';
-import { FilterExpressionOperators } from "./filterExpressionOperators";
+import { ColumnModel, DataTypeService, ValueParserService } from '@ag-grid-community/core';
+import { AdvancedFilterExpressionService } from './advancedFilterExpressionService';
+import { FilterExpressionEvaluatorParams, FilterExpressionOperator } from "./filterExpressionOperators";
 
 export interface FilterExpressionParserParams {
     expression: string;
     columnModel: ColumnModel;
     dataTypeService: DataTypeService;
     valueParserService: ValueParserService;
-    columnAutocompleteTypeGenerator: (searchString: string) => AutocompleteListParams;
-    columnValueCreator: (updateEntry: AutocompleteEntry) => string;
-    colIdResolver: (columnName: string) => { colId: string, columnName: string } | null;
-    operators: FilterExpressionOperators;
-    joinOperators: { and: string, or: string };
-    translate: (key: keyof typeof ADVANCED_FILTER_LOCALE_TEXT, variableValues?: string[]) => string;
-    parseOperandModelValue: (operand: string, baseCellDataType: BaseCellDataType, column: Column) => string | number | null;
+    advancedFilterExpressionService: AdvancedFilterExpressionService;
 }
 
 export interface FilterExpression {
     functionBody: string;
-    args: any[];
+    params: FilterExpressionFunctionParams;
 }
 
 export interface AutocompleteUpdate {
@@ -39,6 +25,12 @@ export interface FilterExpressionValidationError {
     message: string;
     startPosition: number;
     endPosition: number;
+}
+
+export interface FilterExpressionFunctionParams {
+    operands: any[];
+    operators: FilterExpressionOperator<any>[];
+    evaluatorParams: FilterExpressionEvaluatorParams<any, any>[];
 }
 
 export function getSearchString(value: string, position: number, endPosition: number): string {

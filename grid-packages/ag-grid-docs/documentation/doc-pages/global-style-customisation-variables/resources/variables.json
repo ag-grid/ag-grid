@@ -385,6 +385,10 @@
       "description": "How much to indent child filter items in the Set Filter List relative to their parent",
       "type": "CSS length (e.g. `0`, `4px` or `50%`)"
     },
+    "--ag-advanced-filter-builder-indent-size": {
+      "description": "How much to indent child filter items in the Advanced Filter Builder relative to their parent",
+      "type": "CSS length (e.g. `0`, `4px` or `50%`)"
+    },
     "--ag-row-group-indent-size": {
       "description": "How much to indent child rows in the grid relative to their parent row",
       "type": "CSS length (e.g. `0`, `4px` or `50%`)"

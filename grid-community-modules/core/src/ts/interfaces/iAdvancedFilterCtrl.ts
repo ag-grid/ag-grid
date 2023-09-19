@@ -4,4 +4,6 @@ export interface IAdvancedFilterCtrl {
     focusHeaderComp(): boolean;
 
     getHeaderHeight(): number;
+
+    toggleFilterBuilder(source: 'api' | 'ui', force?: boolean): void;
 }

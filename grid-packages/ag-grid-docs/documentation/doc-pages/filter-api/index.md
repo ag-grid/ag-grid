@@ -169,7 +169,7 @@ The following example demonstrates all of the Provided Filters with `readOnly: t
 
 Filtering causes the following events to be emitted:
 
-<api-documentation source='grid-events/events.json' section='filter'></api-documentation>
+<api-documentation source='grid-events/events.json' section='filter' names='["filterOpened", "filterChanged", "filterModified"]'></api-documentation>
 
 ## Next Up
 

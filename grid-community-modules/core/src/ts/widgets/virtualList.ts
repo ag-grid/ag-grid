@@ -23,15 +23,15 @@ interface VirtualListParams {
     listName?: string;
 }
 
-export class VirtualList extends TabGuardComp {
+export class VirtualList<C extends Component = Component> extends TabGuardComp {
     private readonly cssIdentifier: string;
     private readonly ariaRole: string;
     private listName?: string;
 
     private model: VirtualListModel;
-    private renderedRows = new Map<number, { rowComponent: Component; eDiv: HTMLDivElement; value: any; }>();
-    private componentCreator: (value: any, listItemElement: HTMLElement) => Component;
-    private componentUpdater: (value: any, component: Component) => void;
+    private renderedRows = new Map<number, { rowComponent: C; eDiv: HTMLDivElement; value: any; }>();
+    private componentCreator: (value: any, listItemElement: HTMLElement) => C;
+    private componentUpdater: (value: any, component: C) => void;
     private rowHeight = 20;
     private lastFocusedRowIndex: number | null;
 
@@ -158,13 +158,13 @@ export class VirtualList extends TabGuardComp {
         }, 10);
     }
 
-    public getComponentAt(rowIndex: number): Component | undefined {
+    public getComponentAt(rowIndex: number): C | undefined {
         const comp = this.renderedRows.get(rowIndex);
 
         return comp && comp.rowComponent;
     }
 
-    public forEachRenderedRow(func: (comp: Component, idx: number) => void): void {
+    public forEachRenderedRow(func: (comp: C, idx: number) => void): void {
         this.renderedRows.forEach((value, key)  => func(value.rowComponent, key));
     }
 
@@ -219,11 +219,11 @@ export class VirtualList extends TabGuardComp {
         return false;
     }
 
-    public setComponentCreator(componentCreator: (value: any, listItemElement: HTMLElement) => Component): void {
+    public setComponentCreator(componentCreator: (value: any, listItemElement: HTMLElement) => C): void {
         this.componentCreator = componentCreator;
     }
 
-    public setComponentUpdater(componentUpdater: (value: any, component: Component) => void): void {
+    public setComponentUpdater(componentUpdater: (value: any, component: C) => void): void {
         this.componentUpdater = componentUpdater;
     }
 

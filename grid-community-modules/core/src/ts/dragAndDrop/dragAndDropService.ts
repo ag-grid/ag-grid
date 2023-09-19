@@ -39,7 +39,7 @@ export interface DragItem {
     } };
 }
 
-export enum DragSourceType { ToolPanel, HeaderCell, RowDrag, ChartPanel }
+export enum DragSourceType { ToolPanel, HeaderCell, RowDrag, ChartPanel, AdvancedFilterBuilder }
 
 export interface DragSource {
     /**

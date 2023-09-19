@@ -138,6 +138,8 @@ export class Events {
     public static EVENT_FILTER_MODIFIED: 'filterModified' = 'filterModified';
     public static EVENT_FILTER_OPENED: 'filterOpened' = 'filterOpened';
 
+    public static EVENT_ADVANCED_FILTER_BUILDER_VISIBLE_CHANGED: 'advancedFilterBuilderVisibleChanged' = 'advancedFilterBuilderVisibleChanged';
+
     public static EVENT_SORT_CHANGED: 'sortChanged' = 'sortChanged';
 
     /** A row was removed from the dom, for any reason. Use to clean up resources (if any) used by the row. */

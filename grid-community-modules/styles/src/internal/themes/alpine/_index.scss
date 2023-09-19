@@ -254,6 +254,11 @@
     .ag-date-time-list-page-entry-is-current {
         background-color: var(--ag-alpine-active-color);
     }
+
+    .ag-advanced-filter-builder-button {
+        padding: var(--ag-grid-size);
+        font-weight: 600;
+    }
 }
 
 .ag-theme-alpine-dark {

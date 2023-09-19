@@ -21,6 +21,7 @@ export interface DialogOptions extends PanelOptions {
     movable?: boolean;
     alwaysOnTop?: boolean;
     maximizable?: boolean;
+    afterGuiAttached?: () => void;
 }
 
 export class AgDialog extends AgPanel {
@@ -68,7 +69,7 @@ export class AgDialog extends AgPanel {
 
     protected renderComponent() {
         const eGui = this.getGui();
-        const { alwaysOnTop, modal, title } = this.config as DialogOptions;
+        const { alwaysOnTop, modal, title, afterGuiAttached  } = this.config as DialogOptions;
         const translate = this.localeService.getLocaleTextFunc();
 
         const addPopupRes = this.popupService.addPopup({
@@ -77,7 +78,8 @@ export class AgDialog extends AgPanel {
             closeOnEsc: true,
             closedCallback: this.destroy.bind(this),
             alwaysOnTop,
-            ariaLabel: title || translate('ariaLabelDialog', 'Dialog')
+            ariaLabel: title || translate('ariaLabelDialog', 'Dialog'),
+            afterGuiAttached
         });
 
         if (addPopupRes) {

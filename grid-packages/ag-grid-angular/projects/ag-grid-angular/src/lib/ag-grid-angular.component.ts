@@ -16,6 +16,7 @@ import { AgPromise, ComponentUtil, Grid, GridOptions, GridParams, Module } from 
 
 // @START_IMPORTS@
 import {
+    AdvancedFilterBuilderVisibleChangedEvent,
     AdvancedFilterModel,
     AgChartTheme,
     AgChartThemeOverrides,
@@ -91,6 +92,7 @@ import {
     GridReadyEvent,
     GridSizeChangedEvent,
     HeaderPosition,
+    IAdvancedFilterBuilderParams,
     IAggFunc,
     IDatasource,
     IRowDragItem,
@@ -492,6 +494,8 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
          * Set to `null` or `undefined` to appear inside the grid.
          */
     @Input() public advancedFilterParent: HTMLElement | null | undefined = undefined;
+    /** Customise the parameters passed to the Advanced Filter Builder.     */
+    @Input() public advancedFilterBuilderParams: IAdvancedFilterBuilderParams | undefined = undefined;
     /** Set to `true` to Enable Charts. Default: `false`     */
     @Input() public enableCharts: boolean | undefined = undefined;
     /** The list of chart themes that a user can chose from in the chart settings panel.
@@ -1092,6 +1096,8 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     @Output() public filterChanged: EventEmitter<FilterChangedEvent<TData>> = new EventEmitter<FilterChangedEvent<TData>>();
     /** Filter was modified but not applied. Used when filters have 'Apply' buttons.     */
     @Output() public filterModified: EventEmitter<FilterModifiedEvent<TData>> = new EventEmitter<FilterModifiedEvent<TData>>();
+    /** Advanced Filter Builder visibility has changed (opened or closed).     */
+    @Output() public advancedFilterBuilderVisibleChanged: EventEmitter<AdvancedFilterBuilderVisibleChangedEvent<TData>> = new EventEmitter<AdvancedFilterBuilderVisibleChangedEvent<TData>>();
     /** A chart has been created.     */
     @Output() public chartCreated: EventEmitter<ChartCreated<TData>> = new EventEmitter<ChartCreated<TData>>();
     /** The data range for the chart has been changed.     */

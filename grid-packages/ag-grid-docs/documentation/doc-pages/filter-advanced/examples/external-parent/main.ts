@@ -1,4 +1,4 @@
-import { Grid, GridOptions } from '@ag-grid-community/core'
+import { Grid, GridOptions, GridReadyEvent } from '@ag-grid-community/core'
 
 const gridOptions: GridOptions<IOlympicData> = {
   columnDefs: [
@@ -19,7 +19,7 @@ const gridOptions: GridOptions<IOlympicData> = {
   },
   enableAdvancedFilter: true,
   popupParent: document.getElementById('wrapper'),
-  onGridReady: (params) => {
+  onGridReady: (params: GridReadyEvent) => {
     // could also be provided via grid option `advancedFilterParent`
     params.api.setAdvancedFilterParent(document.getElementById('advancedFilterParent'));
   }
