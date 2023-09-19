@@ -255,7 +255,6 @@ export const openPlunker = (exampleInfo) => {
 
         const supportedFrameworks = new Set(['angular', 'typescript', 'reactFunctionalTs', 'vanilla'])
         const include = key => {
-            console.log(key, supportedFrameworks.has(framework));
             if (key === 'package.json' && !supportedFrameworks.has(framework)) {
                 return false;
             }
@@ -287,6 +286,10 @@ export const openCodeSandbox = (exampleInfo) => {
         form.action = `//codesandbox.io/api/v1/sandboxes/define`;
         form.target = '_blank';
 
+        function isFrameworkReact() {
+            return new Set(['react', 'reactFunctional', 'reactFunctionalTs']).has(internalFramework);
+        }
+
         const getTemplateForInternalFramework = () => {
             switch (internalFramework) {
                 case 'react':
@@ -300,6 +303,10 @@ export const openCodeSandbox = (exampleInfo) => {
         }
 
         const getPathForFile = file => {
+            if(!isFrameworkReact()) {
+                return file;
+            }
+
             if(file === 'index.html') {
                 return `public/index.html`
             }
@@ -311,7 +318,7 @@ export const openCodeSandbox = (exampleInfo) => {
             return file;
         }
 
-        const exclude = key => ['systemjs.config.js', 'systemjs.config.dev.js', 'css.js'].includes(key)
+        const exclude = key => isFrameworkReact() && ['systemjs.config.js', 'systemjs.config.dev.js', 'css.js'].includes(key)
 
         const filesToSubmit = {};
         Object.keys(files)
