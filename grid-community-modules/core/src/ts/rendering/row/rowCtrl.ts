@@ -145,13 +145,13 @@ export class RowCtrl extends BeanStub {
         this.instanceId = rowNode.id + '-' + instanceIdSequence++;
         this.rowId = escapeString(rowNode.id);
 
-        this.setAnimateFlags(animateIn);
         this.initRowBusinessKey();
 
         this.rowFocused = beans.focusService.isRowFocused(this.rowNode.rowIndex!, this.rowNode.rowPinned);
         this.rowLevel = beans.rowCssClassCalculator.calculateRowLevel(this.rowNode);
 
         this.setRowType();
+        this.setAnimateFlags(animateIn);
         this.rowStyles = this.processStylesFromGridOptions();
 
         // calls to `isFullWidth()` only work after `setRowType` has been called.
@@ -628,11 +628,21 @@ export class RowCtrl extends BeanStub {
         const pinningRight = this.beans.columnModel.isPinningRight();
 
         if (oldRowTopExists) {
+            if (this.isFullWidth()) {
+                this.slideInAnimation.fullWidth = true;
+                return;
+            }
+
             // if the row had a previous position, we slide it in
             this.slideInAnimation.center = true;
             this.slideInAnimation.left = pinningLeft;
             this.slideInAnimation.right = pinningRight;
         } else {
+            if (this.isFullWidth()) {
+                this.fadeInAnimation.fullWidth = true;
+                return;
+            }
+
             // if the row had no previous position, we fade it in
             this.fadeInAnimation.center = true;
             this.fadeInAnimation.left = pinningLeft;
