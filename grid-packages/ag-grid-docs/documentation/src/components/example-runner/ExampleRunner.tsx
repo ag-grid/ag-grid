@@ -594,12 +594,12 @@ const ExampleRunnerInner = ({
                             </li>
                             {!exampleInfo.options.noPlunker && (
                                 <li>
-                                    <OpenInCTA type="plunker" onClick={() => openPlunker(exampleInfo)} />
+                                    <OpenInCTA type="codesandbox" onClick={() => openCodeSandbox(exampleInfo)} />
                                 </li>
                             )}
                             {!exampleInfo.options.noPlunker && (
                                 <li>
-                                    <OpenInCTA type="codesandbox" onClick={() => openCodeSandbox(exampleInfo)} />
+                                    <OpenInCTA type="plunker" onClick={() => openPlunker(exampleInfo)} />
                                 </li>
                             )}
                         </ul>
@@ -637,9 +637,9 @@ const isGeneratedExample = (type) => ['generated', 'mixed', 'typescript'].includ
 
 const writeIndexHtmlFile = (exampleInfo) => {
     const { appLocation, type } = exampleInfo;
-    const indexHtml = getIndexHtml(exampleInfo, true);
+    const { plunkerIndexHtml, codesandboxIndexHtml } = getIndexHtml(exampleInfo, true);
 
-    fs.writeFileSync(`public${appLocation}index.html`, indexHtml);
+    fs.writeFileSync(`public${appLocation}index.html`, plunkerIndexHtml);
 
     const templateIndexHtmlPath = `public${appLocation}../../index.html`;
 

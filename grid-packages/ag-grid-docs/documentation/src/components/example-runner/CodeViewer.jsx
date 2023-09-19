@@ -96,7 +96,8 @@ const updateFiles = (exampleInfo, setFiles, setActiveFile, didUnmount) => {
 
     const { framework, internalFramework } = exampleInfo;
 
-    getExampleFiles(exampleInfo).then((files) => {
+    getExampleFiles(exampleInfo).then((exampleFiles) => {
+        const files = exampleFiles.plunker;
         if (didUnmount()) {
             return;
         }

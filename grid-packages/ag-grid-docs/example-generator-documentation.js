@@ -637,10 +637,10 @@ const modules = moduleMapping
     .filter(moduleConfig => !moduleConfig.framework)
     .map(moduleConfig => moduleConfig.module);
 
-/** If you provide a package.json file to plunker it will load the types and provide JsDocs and type checking. */
+/** Used for type checking in plunker, and type checking & dep installation with codesandbox */
 function addPackageJson(type, framework, importType, basePath) {
 
-    const supportedFrameworks = new Set(['angular', 'typescript', 'reactFunctionalTs', 'vanilla'])
+    const supportedFrameworks = new Set(['angular', 'typescript', 'react', 'reactFunctional', 'reactFunctionalTs', 'vanilla'])
     if (!supportedFrameworks.has(framework)) {
         return;
     }
@@ -660,7 +660,11 @@ function addPackageJson(type, framework, importType, basePath) {
         addDependency('@angular/platform-browser', "^14");
     }
 
-    if (framework === 'reactFunctionalTs') {
+    function isFrameworkReact() {
+        return new Set(['react', 'reactFunctional', 'reactFunctionalTs']).has(framework);
+    }
+
+    if (isFrameworkReact()) {
         addDependency('react', '18');
         addDependency('react-dom', '18');
 
@@ -672,7 +676,7 @@ function addPackageJson(type, framework, importType, basePath) {
         if (type === 'grid' && framework === 'angular') {
             addDependency('@ag-grid-community/angular', agGridAngularVersion);
         }
-        if (type === 'grid' && framework === 'reactFunctionalTs') {
+        if (type === 'grid' && isFrameworkReact()) {
             addDependency('@ag-grid-community/react', agGridReactVersion);
         }
         modules.forEach(m => addDependency(m, agGridVersion));
@@ -681,7 +685,7 @@ function addPackageJson(type, framework, importType, basePath) {
             if (framework === 'angular') {
                 addDependency('ag-grid-angular', agGridAngularVersion);
             }
-            if (framework === 'reactFunctionalTs') {
+            if (isFrameworkReact()) {
                 addDependency('ag-grid-react', agGridReactVersion);
             }
             addDependency('ag-grid-community', agGridVersion);
@@ -692,7 +696,7 @@ function addPackageJson(type, framework, importType, basePath) {
             if (framework === 'angular') {
                 addDependency('ag-charts-angular', agChartsAngularVersion);
             }
-            if (framework === 'reactFunctionalTs') {
+            if (isFrameworkReact()) {
                 addDependency('ag-charts-react', agChartsReactVersion);
             }
         }

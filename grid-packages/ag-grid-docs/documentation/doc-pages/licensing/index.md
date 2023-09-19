@@ -146,7 +146,7 @@ Use this if you are using CommonJS to load AG Grid.
 </snippet>
 
 <framework-specific-section frameworks="javascript">
-|### Via Grid Packages
+|### Via Grid UMD Bundles
 |
 |If you are using the bundled version of AG Grid (e.g. you are using `ag-grid-enterprise/dist/ag-grid-enterprise.js`) set the license like this.
 |

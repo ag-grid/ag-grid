@@ -34,9 +34,11 @@ const ExampleRunnerResult = ({ isOnScreen = true, resultFrameIsVisible = true, e
         const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
 
         if (isDevelopment()) {
+            const { plunkerIndexHtml, codesandboxIndexHtml } = getIndexHtml(exampleInfo, true);
+
             // in development mode we generate the index HTML on the fly and inject it into the iframe
             iframeDoc.open();
-            iframeDoc.write(isExecuting ? getIndexHtml(exampleInfo, true) : '');
+            iframeDoc.write(isExecuting ? plunkerIndexHtml : '');
             iframeDoc.close();
         } else {
             iframe.src = isExecuting ? getIndexHtmlUrl(exampleInfo) : '';

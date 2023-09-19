@@ -12,6 +12,7 @@ import {getIndexHtml} from './index-html-helper';
  * - 'vanilla' (JavaScript)
  * - 'react' (React Classes)
  * - 'reactFunctional' (React Hooks)
+ * - 'reactFunctionalTs' (React Hooks with Typescript)
  * - 'angular' (Angular)
  * - 'vue' (Vue)
  * - 'vue3' (Vue 3)
@@ -162,7 +163,10 @@ export const getExampleFiles = (exampleInfo, forPlunker = false) => {
         })
     );
 
-    const files = {};
+    const files = {
+        plunker: {},
+        csb: {}
+    };
     const promises = [];
 
     filesForExample
@@ -176,7 +180,8 @@ export const getExampleFiles = (exampleInfo, forPlunker = false) => {
             }
         })
         .forEach((f) => {
-            files[f.path] = null; // preserve ordering
+            files.plunker[f.path] = null;   // preserve ordering
+            files.csb[f.path] = null;       // preserve ordering
 
             const sourcePromise = f.content ?? fetch(f.publicURL).then((response) => response.text());
             const promise = sourcePromise.then((source) => {
@@ -199,15 +204,22 @@ export const getExampleFiles = (exampleInfo, forPlunker = false) => {
                     }
                 }
 
-                files[f.path] = {source, isFramework: f.isFramework};
+                files.plunker[f.path] = {source, isFramework: f.isFramework};
+                files.csb[f.path] = {source, isFramework: f.isFramework};
             });
 
             promises.push(promise);
         });
 
-    files['index.html'] = {
-        source: getIndexHtml(exampleInfo),
-        isFramework: false,
+    const { plunkerIndexHtml, codeSandBoxIndexHtml } = getIndexHtml(exampleInfo);
+
+    files.plunker['index.html'] = {
+        source: plunkerIndexHtml,
+        isFramework: false
+    };
+    files.csb['index.html'] = {
+        source: codeSandBoxIndexHtml,
+        isFramework: false
     };
 
     return Promise.all(promises).then(() => files);
@@ -216,7 +228,8 @@ export const getExampleFiles = (exampleInfo, forPlunker = false) => {
 export const openPlunker = (exampleInfo) => {
     const {title, framework, internalFramework} = exampleInfo;
 
-    getExampleFiles(exampleInfo, true).then((files) => {
+    getExampleFiles(exampleInfo, true).then((exampleFiles) => {
+        const files = exampleFiles.plunker;
         // Let's open the grid configuration file by default
         const fileToOpen = getEntryFile(framework, internalFramework);
 
@@ -240,7 +253,19 @@ export const openPlunker = (exampleInfo) => {
         addHiddenInput('private', true);
         addHiddenInput('description', title);
 
-        Object.keys(files).forEach((key) => {
+        const supportedFrameworks = new Set(['angular', 'typescript', 'reactFunctionalTs', 'vanilla'])
+        const include = key => {
+            console.log(key, supportedFrameworks.has(framework));
+            if (key === 'package.json' && !supportedFrameworks.has(framework)) {
+                return false;
+            }
+
+            return true;
+        }
+
+        Object.keys(files)
+            .filter(include)
+            .forEach((key) => {
             addHiddenInput(`files[${key}]`, files[key].source);
         });
 
@@ -253,26 +278,53 @@ export const openPlunker = (exampleInfo) => {
 export const openCodeSandbox = (exampleInfo) => {
     const {title, framework, internalFramework} = exampleInfo;
 
-    getExampleFiles(exampleInfo, true).then((files) => {
-
-        const filesToSubmit = {};
-        Object.keys(files).forEach((key) => {
-            filesToSubmit[key] = {content: files[key].source};
-        });
-
-        const parameters = getParameters({
-            files: filesToSubmit,
-            template: 'static'
-        });
-
-        // Let's open the grid configuration file by default
-        const fileToOpen = getEntryFile(framework, internalFramework);
+    getExampleFiles(exampleInfo, true).then((exampleFiles) => {
+        const files = exampleFiles.csb;
 
         const form = document.createElement('form');
         form.method = 'post';
         form.style.display = 'none';
-        form.action = `//codesandbox.io/api/v1/sandboxes/define?file=/${fileToOpen}`;
+        form.action = `//codesandbox.io/api/v1/sandboxes/define`;
         form.target = '_blank';
+
+        const getTemplateForInternalFramework = () => {
+            switch (internalFramework) {
+                case 'react':
+                case 'reactFunctional':
+                    return 'create-react-app';
+                case 'reactFunctionalTs':
+                    return 'create-react-app-typescript';
+                default:
+                    return 'static';
+            }
+        }
+
+        const getPathForFile = file => {
+            if(file === 'index.html') {
+                return `public/index.html`
+            }
+
+            if(/([a-zA-Z0-9\\s_.])+(.js|.jsx|.tsx|.ts|.css)$/.test(file)) {
+                return `src/${file.replace('.jsx', '.js')}`;
+            }
+
+            return file;
+        }
+
+        const exclude = key => ['systemjs.config.js', 'systemjs.config.dev.js', 'css.js'].includes(key)
+
+        const filesToSubmit = {};
+        Object.keys(files)
+            .filter((key) => !exclude(key))
+            .forEach((key) => {
+                filesToSubmit[getPathForFile(key)] = {content: files[key].source};
+            });
+
+        const parameters = getParameters({
+            files: filesToSubmit,
+            template: getTemplateForInternalFramework()
+        });
+
 
         const addHiddenInput = (name, value) => {
             const input = document.createElement('input');
