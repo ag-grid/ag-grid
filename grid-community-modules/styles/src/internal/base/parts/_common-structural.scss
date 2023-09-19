@@ -273,6 +273,10 @@
         pointer-events: none;
     }
 
+    .ag-full-width-container {
+        width: 100%;
+    }
+
     .ag-floating-bottom-full-width-container, .ag-floating-top-full-width-container {
         display: inline-block;
         overflow: hidden;

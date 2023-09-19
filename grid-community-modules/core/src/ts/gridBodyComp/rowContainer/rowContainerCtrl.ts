@@ -274,12 +274,10 @@ export class RowContainerCtrl extends BeanStub {
     }
 
     private addListeners(): void {
-        this.addManagedListener(this.eventService, Events.EVENT_SCROLL_VISIBILITY_CHANGED, () => this.onScrollVisibilityChanged());
         this.addManagedListener(this.eventService, Events.EVENT_DISPLAYED_COLUMNS_CHANGED, () => this.onDisplayedColumnsChanged());
         this.addManagedListener(this.eventService, Events.EVENT_DISPLAYED_COLUMNS_WIDTH_CHANGED, () => this.onDisplayedColumnsWidthChanged());
         this.addManagedListener(this.eventService, Events.EVENT_DISPLAYED_ROWS_CHANGED, (params: DisplayedRowsChangedEvent) => this.onDisplayedRowsChanged(params.afterScroll));
 
-        this.onScrollVisibilityChanged();
         this.onDisplayedColumnsChanged();
         this.onDisplayedColumnsWidthChanged();
         this.onDisplayedRowsChanged();
@@ -321,15 +319,6 @@ export class RowContainerCtrl extends BeanStub {
     private onDisplayedColumnsWidthChanged(): void {
         this.forContainers([RowContainerName.CENTER], () => this.onHorizontalViewportChanged());
     }
-
-    private onScrollVisibilityChanged(): void {
-        if (this.name === RowContainerName.FULL_WIDTH) {
-            const pad = isInvisibleScrollbar() ? 16 : 0;
-            const size = `calc(100% - ${pad}px)`;
-            this.eContainer.style.setProperty('width', size);
-        }
-    }
-
     // this methods prevents the grid views from being scrolled while the dragService is being used
     // eg. the view should not scroll up and down while dragging rows using the rowDragComp.
     private addPreventScrollWhileDragging(): void {
