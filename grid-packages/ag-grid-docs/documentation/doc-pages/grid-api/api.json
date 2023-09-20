@@ -566,6 +566,13 @@
         "getCurrentUndoSize": {},
         "getCurrentRedoSize": {}
     },
+    "treeData": {
+        "meta": {
+            "displayName": "Tree Data",
+            "description": "See [TreeData](/tree-data/) for more information"
+        },
+        "setTreeData": {}
+    },
     "rowPivoting": {
         "meta": {
             "displayName": "Pivot and Aggregation",
