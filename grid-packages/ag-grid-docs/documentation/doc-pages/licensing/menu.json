@@ -118,6 +118,12 @@
                 "showInCollapsed": true
               },
               {
+                "title": "Grid Lifecycle",
+                "box-title": "Grid Lifecycle",
+                "url": "/grid-lifecycle/",
+                "showInCollapsed": true
+              },
+              {
                 "title": "Row Object",
                 "url": "/row-object/",
                 "showInCollapsed": true
