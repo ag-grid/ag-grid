@@ -16,21 +16,18 @@ const RowContainerComp = (props: {name: RowContainerName})=> {
     const { name } = props;
     const containerType = createMemo(() => getRowContainerTypeForName(name));
 
-    let eWrapper: HTMLDivElement;
     let eViewport: HTMLDivElement;
     let eContainer: HTMLDivElement;
 
     const cssClasses = createMemo(() => RowContainerCtrl.getRowContainerCssClasses(name));
-    const wrapperClasses = createMemo( ()=> classesList(cssClasses().wrapper));
-    const viewportClasses = createMemo( ()=> classesList(cssClasses().viewport));
-    const containerClasses = createMemo( ()=> classesList(cssClasses().container));
+    const viewportClasses = createMemo(() => classesList(cssClasses().viewport));
+    const containerClasses = createMemo(() => classesList(cssClasses().container));
 
     // no need to useMemo for boolean types
-    const template1 = name === RowContainerName.CENTER;
-    const template2 = name === RowContainerName.TOP_CENTER 
-                    || name === RowContainerName.BOTTOM_CENTER 
-                    || name === RowContainerName.STICKY_TOP_CENTER;
-    const template3 = !template1 && !template2;
+    const centerTemplate = name === RowContainerName.CENTER
+        || name === RowContainerName.TOP_CENTER 
+        || name === RowContainerName.BOTTOM_CENTER 
+        || name === RowContainerName.STICKY_TOP_CENTER;
 
     // if domOrder=true, then we just copy rowCtrls into rowCtrlsOrdered observing order,
     // however if false, then we need to keep the order as they are in the dom, otherwise rowAnimation breaks
@@ -68,7 +65,7 @@ const RowContainerComp = (props: {name: RowContainerName})=> {
         const ctrl = context.createBean(new RowContainerCtrl(name));
         onCleanup(() => context.destroyBean(ctrl));
 
-        ctrl.setComp(compProxy, eContainer, eViewport, eWrapper);
+        ctrl.setComp(compProxy, eContainer, eViewport);
     });
 
     const viewportStyle = createMemo(() => ({
@@ -90,21 +87,11 @@ const RowContainerComp = (props: {name: RowContainerName})=> {
     return (
         <>
             {
-                template1 &&
-                <div class={ wrapperClasses() } ref={ eWrapper! } role="presentation">
-                    <div class={ viewportClasses() } ref= { eViewport! } role="presentation" style={ viewportStyle() }>
-                        { buildContainer() }
-                    </div>
-                </div>
-            }
-            {
-                template2 &&
+                centerTemplate ?
                 <div class={ viewportClasses() } ref= { eViewport! } role="presentation" style={ viewportStyle() }>
                     { buildContainer() }
-                </div>
-            }
-            {
-                template3 && buildContainer()
+                </div> :
+                buildContainer()
             }
         </>
     );

@@ -125,7 +125,7 @@ Note that if you use the example inlined the scroll bars shown are for the conta
 When using Auto Height, there is a minimum of 150px set to the grid rows section. This is to avoid an empty grid which would look weird. In particular, this allows room to show the 'no rows' message when no rows are in the grid, otherwise this message would be overlaying on top of the header. To remove this minimum height, add the following CSS:
 
 <snippet transform={false} language="css">
-.ag-center-cols-clipper {
+.ag-center-cols-viewport {
     min-height: unset !important;
 }
 </snippet>
