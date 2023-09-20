@@ -318,6 +318,10 @@ export interface GridOptions<TData = any> {
      * Default: `false`
      */
     includeHiddenColumnsInQuickFilter?: boolean;
+    /** Changes how the Quick Filter splits the Quick Filter text into search terms. */
+    quickFilterParser?: (quickFilter: string) => string[];
+    /** Changes the matching logic for whether a row passes the Quick Filter. */
+    quickFilterMatcher?: (quickFilterParts: string[], rowQuickFilterAggregateText: string) => boolean;
     /** Set to `true` to override the default tree data filtering behaviour to instead exclude child nodes from filter results. Default: `false` */
     excludeChildrenWhenTreeDataFiltering?: boolean;
     /** Set to true to enable the Advanced Filter. Default: `false` */

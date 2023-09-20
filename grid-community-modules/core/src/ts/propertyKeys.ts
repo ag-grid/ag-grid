@@ -102,7 +102,7 @@ export class PropertyKeys {
         'processPivotResultColGroupDef', 'getBusinessKeyForNode', 'isRowSelectable', 'rowDragText',
         'groupRowRenderer', 'fullWidthCellRenderer',
         'loadingCellRenderer', 'loadingOverlayComponent', 'noRowsOverlayComponent',
-        'detailCellRenderer'
+        'detailCellRenderer', 'quickFilterParser', 'quickFilterMatcher'
     ];
 
 

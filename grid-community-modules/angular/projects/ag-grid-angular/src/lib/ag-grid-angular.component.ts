@@ -479,6 +479,10 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
          * Default: `false`
          */
     @Input() public includeHiddenColumnsInQuickFilter: boolean | undefined = undefined;
+    /** Changes how the Quick Filter splits the Quick Filter text into search terms.     */
+    @Input() public quickFilterParser: ((quickFilter: string) => string[]) | undefined = undefined;
+    /** Changes the matching logic for whether a row passes the Quick Filter.     */
+    @Input() public quickFilterMatcher: ((quickFilterParts: string[], rowQuickFilterAggregateText: string) => boolean) | undefined = undefined;
     /** Set to `true` to override the default tree data filtering behaviour to instead exclude child nodes from filter results. Default: `false`     */
     @Input() public excludeChildrenWhenTreeDataFiltering: boolean | undefined = undefined;
     /** Set to true to enable the Advanced Filter. Default: `false`     */
