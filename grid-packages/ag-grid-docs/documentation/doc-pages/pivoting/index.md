@@ -336,6 +336,39 @@ Below shows some examples of saving and restoring state with pivot in mind. Note
 
 <grid-example title='Saving & Restoring Column State' name='state' type='generated' options='{ "enterprise": true, "exampleHeight": 630, "modules": ["clientside", "rowgrouping", "menu", "setfilter", "columnpanel", "filterpanel"] }'></grid-example>
 
+## Enabling Pivot Panel
+
+To display the pivot panel set `pivotPanelShow` as shown below:
+
+<snippet spaceBetweenProperties="true">
+|  const gridOptions = {
+|      columnDefs: [
+|          { field: 'country', rowGroup: true, enableRowGroup: true },
+|          { field: 'athlete' },
+|          { field: 'year', pivot: true, enablePivot: true },
+|          { field: 'sport', pivot: true, enablePivot: true },
+|          { field: 'gold', aggFunc: 'sum' },
+|          { field: 'silver', aggFunc: 'sum' },
+|      ],
+|      pivotMode: true,
+|      // possible options: 'never', 'always', 'onlyWhenPivoting'
+|      pivotPanelShow: 'always',
+|  }
+</snippet>
+
+In the snippet above, the Pivot Panel is configured so that is `'always'` displayed. To only display the Pivot
+Panel when pivoting is active use: `'onlyWhenPivoting'`.
+
+This is demonstrated in the following example, note the following:
+
+- There are two active pivot columns as the supplied `year` and `sport` column definitions have `enablePivot=true` declared.
+
+- The Pivot Panel is always shown as `pivotPanelShow = 'always'`.
+
+- The order of `year` and `sport` can be re-arranged within Pivot Panel as they have `enablePivot=true` enabled.
+
+<grid-example title='Enabling Pivot Panel' name='pivot-panel' type='generated' options='{ "enterprise": true, "exampleHeight": 540, "modules": ["clientside", "rowgrouping"] }'></grid-example>
+
 ## Pivot API
 
 Below shows examples of using the pivot API directly. Use this is you want to build out your own toolPanel.
