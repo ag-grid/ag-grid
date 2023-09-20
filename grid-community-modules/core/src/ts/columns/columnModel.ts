@@ -4164,6 +4164,21 @@ export class ColumnModel extends BeanStub {
         return true;
     }
 
+    public isColumnGroupingLocked(column: Column): boolean {
+        const groupLockGroupColumns = this.gridOptionsService.getNum('groupLockGroupColumns') ?? 0;
+        const autoColumns = this.getGroupAutoColumns();
+        if (!autoColumns?.length || !column.isRowGroupActive() || groupLockGroupColumns === 0) {
+            return false;
+        }
+
+        if (groupLockGroupColumns === -1) {
+            return true;
+        }
+
+        const colIndex = this.rowGroupColumns.findIndex(groupCol => groupCol.getColId() === column.getColId());
+        return groupLockGroupColumns > colIndex;
+    }
+
     public generateColumnStateForRowGroupAndPivotIndexes(
         updatedRowGroupColumnState: { [colId: string]: ColumnState },
         updatedPivotColumnState: { [colId: string]: ColumnState }

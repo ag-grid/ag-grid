@@ -656,6 +656,12 @@
                 "showInCollapsed": false
               },
               {
+                "title": "Locking Group Columns",
+                "url": "/grouping-locking-group-columns/",
+                "enterprise": true,
+                "showInCollapsed": false
+              },
+              {
                 "title": "Group Order",
                 "url": "/grouping-group-order/",
                 "enterprise": true,
