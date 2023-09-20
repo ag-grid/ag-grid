@@ -8,6 +8,7 @@ import { waitUntil } from '../utils/function';
 import { TabGuardComp } from './tabGuardComp';
 import { Events } from '../eventKeys';
 import { stopPropagationForAgGrid } from '../utils/event';
+import { AnimationFrameService } from '../misc/animationFrameService';
 
 export interface VirtualListModel {
     getRowCount(): number;
@@ -36,6 +37,7 @@ export class VirtualList<C extends Component = Component> extends TabGuardComp {
     private lastFocusedRowIndex: number | null;
 
     @Autowired('resizeObserverService') private readonly resizeObserverService: ResizeObserverService;
+    @Autowired('animationFrameService') private readonly animationFrameService: AnimationFrameService;
     @RefSelector('eContainer') private readonly eContainer: HTMLElement;
 
     constructor(params?: VirtualListParams) {
@@ -81,7 +83,8 @@ export class VirtualList<C extends Component = Component> extends TabGuardComp {
     }
 
     private addResizeObserver(): void {
-        const listener = () => this.drawVirtualRows();
+        // do this in an animation frame to prevent loops
+        const listener = () => this.animationFrameService.requestAnimationFrame(() => this.drawVirtualRows());
         const destroyObserver = this.resizeObserverService.observeResize(this.getGui(), listener);
         this.addDestroyFunc(destroyObserver);
     }

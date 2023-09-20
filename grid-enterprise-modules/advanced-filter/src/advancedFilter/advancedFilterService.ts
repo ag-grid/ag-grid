@@ -88,7 +88,9 @@ export class AdvancedFilterService extends BeanStub implements IAdvancedFilterSe
         const parseModel = (model: AdvancedFilterModel, isFirstParent?: boolean): string | null => {
             if (model.filterType === 'join') {
                 const operator = this.advancedFilterExpressionService.parseJoinOperator(model);
-                const expression = model.conditions.map(condition => parseModel(condition)).join(` ${operator} `);
+                const expression = model.conditions.map(condition => parseModel(condition))
+                    .filter(condition => _.exists(condition))
+                    .join(` ${operator} `);
                 return isFirstParent || model.conditions.length <= 1 ? expression : `(${expression})`;
             } else {
                 return this.advancedFilterExpressionService.parseColumnFilterModel(model);
