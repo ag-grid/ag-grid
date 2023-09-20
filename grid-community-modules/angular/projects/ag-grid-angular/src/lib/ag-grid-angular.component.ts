@@ -559,7 +559,7 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     @Input() public valueCacheNeverExpires: boolean | undefined = undefined;
     /** Set to `true` to allow cell expressions. Default: `false`     */
     @Input() public enableCellExpressions: boolean | undefined = undefined;
-    /** @deprecated - If `true`, row nodes do not have their parents set.
+    /** @deprecated v30.2 If `true`, row nodes do not have their parents set.
          * The grid doesn't use the parent reference, but it is included to help the client code navigate the node tree if it wants by providing bi-direction navigation up and down the tree.
          * If this is a problem (e.g. if you need to convert the tree to JSON, which does not allow cyclic dependencies) then set this to `true`.
          * Default: `false`
