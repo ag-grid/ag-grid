@@ -34,8 +34,8 @@
   "devDependencies": {
     "ag-charts-community": "~8.1.0",
     "@types/jest": "^25.2.1",
-    "@types/react": "^18",
-    "@types/react-dom": "^18",
+    "@types/react": "~18.0.0",
+    "@types/react-dom": "~18.0.0",
     "babel-preset-react-app": "^9.0.1",
     "enzyme": "^3.10.0",
     "enzyme-adapter-react-16": "^1.14.0",
