@@ -869,6 +869,12 @@
                 "url": "/row-selection/#group-selection"
             }
         },
+        "groupLockGroupColumns": {
+            "more": {
+                "name": "Group Lock Group Columns",
+                "url": "/grouping-locking-group-columns"
+            }
+        },
         "groupIncludeFooter": {
             "more": {
                 "name": "Enabling Group Footers",

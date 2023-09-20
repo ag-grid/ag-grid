@@ -81,4 +81,4 @@ The following example demonstrates the row group panel used alongside multiple g
 
 ## Next Up
 
-Continue to the next section to learn how to add [Group Order](../grouping-group-order/).
+Continue to the next section to learn about [Locking Group Columns](../grouping-locking-group-columns/).
