@@ -347,7 +347,13 @@
         "expandAll": {},
         "collapseAll": {},
         "setRowNodeExpanded": {},
-        "onGroupExpandedOrCollapsed": {}
+        "onGroupExpandedOrCollapsed": {},
+        "setTreeData": {
+            "more": {
+                "name": "Tree Data",
+                "url": "/tree-data/"
+            }
+        }
     },
     "rowDrag": {
         "meta": {
@@ -565,13 +571,6 @@
         "redoCellEditing": {},
         "getCurrentUndoSize": {},
         "getCurrentRedoSize": {}
-    },
-    "treeData": {
-        "meta": {
-            "displayName": "Tree Data",
-            "description": "See [TreeData](/tree-data/) for more information"
-        },
-        "setTreeData": {}
     },
     "rowPivoting": {
         "meta": {
