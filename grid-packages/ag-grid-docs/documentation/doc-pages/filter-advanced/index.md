@@ -1,5 +1,6 @@
 ---
 title: "Advanced Filter"
+enterprise: true
 ---
 
 The Advanced Filter allows for complex filter conditions to be entered across columns in a single type-ahead input.
