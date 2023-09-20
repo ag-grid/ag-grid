@@ -4,7 +4,7 @@
   "description": "Documentation for AG Grid",
   "scripts": {
     "clean": "npm run clean-examples-dir && rimraf dist _dev .cache-loader .hash",
-    "clean-examples-dir": "cd documentation/doc-pages && find . -type d -name _gen -exec rmdir {} ;",
+    "clean-examples-dir": "cd documentation/doc-pages && find . -type d -name _gen -exec rm -rf {} +",
     "generate-examples": "node dev-server.js generate-examples",
     "start": "NODE_OPTIONS=\"--openssl-legacy-provider --max-old-space-size=${AG_DOCS_HEAP_SIZE:-6144}\" ./node_modules/.bin/gulp serve",
     "start-new": "NODE_OPTIONS=\"--openssl-legacy-provider --max-old-space-size=${AG_DOCS_HEAP_SIZE:-6144}\" ./node_modules/.bin/gulp serve-new",
