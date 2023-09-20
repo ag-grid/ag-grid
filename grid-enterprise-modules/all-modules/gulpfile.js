@@ -124,6 +124,7 @@ const webpackTask = (minify, styles, libraryTarget) => {
                                         plugins: () => [
                                             require('cssnano')({
                                                 preset: ['default', {
+                                                    convertValues: false,
                                                     discardComments: {
                                                         removeAll: true,
                                                     },
