@@ -372,6 +372,11 @@ export class GridApi<TData = any> {
         }
     }
 
+    /** Sets the `treeData` property. */
+    public setTreeData(newTreeData: boolean): void {
+        this.gos.set('treeData', newTreeData);
+    }
+
     /**
      * Sets an ARIA property in the grid panel (element with `role=\"grid\"`), and removes an ARIA property when the value is null.
      *
