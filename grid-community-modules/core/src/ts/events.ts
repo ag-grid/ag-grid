@@ -523,7 +523,7 @@ export interface ColumnMovedEvent<TData = any, TContext = any> extends ColumnEve
 }
 
 export interface ColumnVisibleEvent<TData = any, TContext = any> extends ColumnEvent<TData, TContext> {
-    /** True if column was set to visible, false if set to hide */
+    /** True if column was set to visible, false if set to hide, undefined if in a single call some columns were shown while others hidden */
     visible?: boolean;
 }
 
