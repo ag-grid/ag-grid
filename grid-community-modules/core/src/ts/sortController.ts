@@ -223,19 +223,21 @@ export class SortController extends BeanStub {
 
     // used by server side row models, to sent sort to server
     public getSortModel(): SortModelItem[] {
-        // because this is used by the SSRM, we include redundant options and let the server decide
-        return this.getColumnsWithSortingOrdered().map(column => ({
-            sort: column.getSort()!,
-            colId: column.getId()
-        }));
+        return this.getColumnsWithSortingOrdered()
+            .filter(column => column.getSort())
+            .map(column => ({
+                sort: column.getSort()!,
+                colId: column.getId()
+            }));
     }
 
     public getSortOptions(): SortOption[] {
-        // this is used for client side sorting, as such we can ignore redundant column sorts
-        return this.getColumnsWithSortingOrdered().map(column => ({
-            sort: column.getSort()!,
-            column
-        }));
+        return this.getColumnsWithSortingOrdered()
+            .filter(column => column.getSort())
+            .map(column => ({
+                sort: column.getSort()!,
+                column
+            }));
     }
 
     public canColumnDisplayMixedSort(column: Column): boolean {
