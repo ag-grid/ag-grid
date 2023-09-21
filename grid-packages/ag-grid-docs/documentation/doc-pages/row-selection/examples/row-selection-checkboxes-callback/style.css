@@ -1,0 +1,10 @@
+.toggle-container {
+    margin: 0.5rem 0;
+}
+
+body {
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}

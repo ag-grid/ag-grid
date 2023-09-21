@@ -45,22 +45,7 @@
         display: flex;
         gap: 0 $size-4;
         width: 100%;
-        border-top-right-radius: var(--border-radius);
-        border-top-left-radius: var(--border-radius);
-        border-top: 2px solid var(--border-color);
-        border-right: 2px solid var(--border-color);
-        border-left: 2px solid var(--border-color);
-        box-shadow: inset 0 -2px 0 0 var(--bright-blue-gray);
         overflow-x: auto;
-    }
-
-    .tabs-nav-list {
-        display: flex;
-        flex-shrink: 0;
-        margin: 0;
-        padding-left: $size-half;
-        list-style-type: none;
-        border-bottom: none;
     }
 
     .tabs-nav-item {
@@ -123,12 +108,6 @@
 
     .tabs-content {
         position: relative;
-        border-bottom-right-radius: var(--border-radius);
-        border-bottom-left-radius: var(--border-radius);
-        border-right: 2px solid var(--border-color);
-        border-bottom: 2px solid var(--border-color);
-        border-left: 2px solid var(--border-color);
-        padding: $size-2;
     }
 
     pre.code {

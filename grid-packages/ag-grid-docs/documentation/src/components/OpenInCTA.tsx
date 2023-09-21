@@ -26,17 +26,17 @@ const COPY_TEXT: Record<CtaType, ReactNode> = {
     ),
     plunker: (
         <>
-            <span className='verbs'>Edit on</span> Plunker <Icon name="plunker" />
+            <Icon name="plunker" /> Plunker
         </>
     ),
     stackblitz: (
         <>
-            <span className='verbs'>Edit on</span> StackBlitz <Icon name="stackblitz" />
+            StackBlitz <Icon name="stackblitz" />
         </>
     ),
     codesandbox: (
         <>
-            <span className='verbs'>Edit on</span> CodeSandbox <Icon name="codesandbox" />
+            CodeSandbox <Icon name="codesandbox" />
         </>
     ),
 };

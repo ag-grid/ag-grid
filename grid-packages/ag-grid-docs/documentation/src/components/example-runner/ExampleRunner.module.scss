@@ -5,13 +5,35 @@
     margin-bottom: $size-2;
 }
 
+.hoverButton {
+    margin-top: 5px;
+
+    color: white;
+    padding: 0.25rem 0.5rem;
+    border-top-left-radius: 3px;
+    border-bottom-left-radius: 3px;
+    display: inline-block;
+    background-color: #358eee;
+
+    transition: .5s;
+}
+.hoverButtonRight {
+    padding: 0.25rem 0.5rem 0.25rem 0.25rem;
+    border-top-right-radius: 3px;
+    border-bottom-right-radius: 3px;
+    background-color: #358eee;
+    display: inline-block;
+}
+.hoverButton:hover, .hoverButtonRight:hover {
+    background-color: #2e81d9;
+}
+
 .externalLinks {
     display: flex;
     align-items: center;
-    gap: $size-2;
+    gap: $size-half;
     flex-shrink: 0;
     margin-left: auto;
-    padding-right: $size-2;
 
     li {
         margin-bottom: 0.125em !important;

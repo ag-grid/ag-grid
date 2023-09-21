@@ -236,6 +236,11 @@
             "showInCollapsed": true
           },
           {
+            "title": "Row Selection",
+            "url": "/row-selection/",
+            "showInCollapsed": true
+          },
+          {
             "title": "Row Spanning",
             "box-title": "Spanning",
             "url": "/row-spanning/",
@@ -284,230 +289,324 @@
         ]
       },
       {
-        "title": "Build & Tooling",
-        "icon": "docs-tooling",
-        "matrixExcludeChildren": true,
+        "title": "Filtering",
+        "icon": "docs-filtering",
         "items": [
           {
-            "title": "Install with NPM",
-            "url": "/npm/",
-            "showInCollapsed": true,
-            "frameworks": ["javascript"]
+            "title": "Overview",
+            "url": "/filtering-overview/",
+            "showInCollapsed": true
           },
           {
-            "title": "Download Bundles",
-            "url": "/download/",
-            "showInCollapsed": true,
-            "frameworks": ["javascript"]
+            "title": "Column Filters",
+            "url": "/filtering/",
+            "showInCollapsed": false,
+            "items": [
+              {
+                "title": "Text Filter",
+                "url": "/filter-text/",
+                "showInCollapsed": true
+              },
+              {
+                "title": "Number Filter",
+                "url": "/filter-number/",
+                "showInCollapsed": true
+              },
+              {
+                "title": "Date Filter",
+                "url": "/filter-date/",
+                "showInCollapsed": true
+              },
+              {
+                "title": "Set Filter",
+                "url": "/filter-set/",
+                "enterprise": true,
+                "matrixExcludeChildren": true,
+                "showInCollapsed": true,
+                "items": [
+                  {
+                    "title": "Filter List",
+                    "url": "/filter-set-filter-list/",
+                    "enterprise": true
+                  },
+                  {
+                    "title": "Data Updates",
+                    "url": "/filter-set-data-updates/",
+                    "enterprise": true
+                  },
+                  {
+                    "title": "Tree List",
+                    "url": "/filter-set-tree-list/",
+                    "enterprise": true
+                  },
+                  {
+                    "title": "Mini Filter",
+                    "url": "/filter-set-mini-filter/",
+                    "enterprise": true
+                  },
+                  {
+                    "title": "Excel Mode",
+                    "url": "/filter-set-excel-mode/",
+                    "enterprise": true
+                  },
+                  {
+                    "title": "API",
+                    "url": "/filter-set-api/",
+                    "enterprise": true
+                  }
+                ]
+              },
+              {
+                "title": "Multi Filter",
+                "url": "/filter-multi/",
+                "enterprise": true,
+                "showInCollapsed": true
+              },
+              {
+                "title": "Filter Conditions",
+                "url": "/filter-conditions/"
+              },
+              {
+                "title": "Applying Filters",
+                "url": "/filter-applying/"
+              },
+              {
+                "title": "Filter API",
+                "url": "/filter-api/"
+              },
+              {
+                "title": "Floating Filters",
+                "url": "/floating-filters/"
+              }
+            ]
           },
           {
-            "title": "Community & Enterprise",
-            "url": "/licensing/",
+            "title": "Advanced Filter",
+            "url": "/filter-advanced/",
             "enterprise": true,
             "showInCollapsed": true
           },
           {
-            "title": "Packages vs Modules",
-            "url": "/packages-modules/",
-            "showInCollapsed": true,
-            "items": [
-              {
-                "title": "Packages",
-                "url": "/packages/",
-                "items": [
-                  {
-                    "title": "Using ES Modules",
-                    "url": "/esm-packages/",
-                    "frameworks": ["javascript"]
-                  }
-                ]
-              },
-              {
-                "title": "Modules",
-                "url": "/modules/",
-                "items": [
-                  {
-                    "title": "Using ES Modules",
-                    "url": "/esm-modules/",
-                    "frameworks": ["javascript"]
-                  }
-                ]
-              },
-              {
-                "title": "Modules - Example",
-                "url": "/modules-building/",
-                "frameworks": ["angular", "react", "vue"]
-              },
-              {
-                "title": "Custom UMD Bundle",
-                "url": "/modules-building/",
-                "frameworks": ["javascript"]
-              }
-            ]
-          },
-          {
-            "title": "Supported Browsers",
-            "url": "/supported-browsers/",
+            "title": "External Filter",
+            "url": "/filter-external/",
             "showInCollapsed": true
           },
           {
-            "title": "Building",
-            "url": "/building/",
-            "showInCollapsed": true,
-            "frameworks": ["javascript"],
-            "items": [
-              {
-                "title": "Rollup",
-                "url": "/building-rollup/",
-                "frameworks": ["javascript"]
-              },
-              {
-                "title": "TypeScript & Webpack",
-                "url": "/building-typescript/",
-                "frameworks": ["javascript"]
-              },
-              {
-                "title": "AMD",
-                "url": "/building-amd/",
-                "frameworks": ["javascript"]
-              }
-            ]
-          }
-        ]
-      }
-    ]
-  },
-  {
-    "group": "Core Features",
-    "items": [
-      {
-        "title": "Layout & Styling",
-        "icon": "docs-styling",
-        "items": [
-          {
-            "title": "AG Grid Design System",
-            "url": "/ag-grid-design-system/",
+            "title": "Quick Filter",
+            "url": "/filter-quick/",
             "showInCollapsed": true
-          },
-          {
-            "title": "Global Styling",
-            "url": "/global-style/",
-            "showInCollapsed": true,
-            "items": [
-              {
-                "title": "Themes",
-                "url": "/themes/",
-                "showInCollapsed": true
-              },
-              {
-                "title": "Customisation",
-                "url": "/global-style-customisation/",
-                "showInCollapsed": true,
-                "items": [
-                  {
-                    "title": "Variable Reference",
-                    "url": "/global-style-customisation-variables/",
-                    "showInCollapsed": false
-                  },
-                  {
-                    "title": "Colours & Fonts",
-                    "url": "/global-style-customisation-colours/",
-                    "showInCollapsed": false
-                  },
-                  {
-                    "title": "Compactness & Row Height",
-                    "url": "/global-style-customisation-compactness/",
-                    "showInCollapsed": false
-                  },
-                  {
-                    "title": "Selections",
-                    "url": "/global-style-customisation-selections/",
-                    "showInCollapsed": false
-                  },
-                  {
-                    "title": "Headers",
-                    "url": "/global-style-customisation-headers/",
-                    "showInCollapsed": false
-                  },
-                  {
-                    "title": "Borders",
-                    "url": "/global-style-customisation-borders/",
-                    "showInCollapsed": false
-                  },
-                  {
-                    "title": "Icons",
-                    "url": "/custom-icons/",
-                    "showInCollapsed": false
-                  },
-                  {
-                    "title": "Tool Panels",
-                    "url": "/global-style-customisation-tool-panels/",
-                    "showInCollapsed": false
-                  },
-                  {
-                    "title": "Inputs & Widgets",
-                    "url": "/global-style-customisation-widgets/",
-                    "showInCollapsed": false
-                  },
-                  {
-                    "title": "Menus & Popups",
-                    "url": "/global-style-customisation-popups/",
-                    "showInCollapsed": false
-                  },
-                  {
-                    "title": "Advanced CSS",
-                    "url": "/global-style-customisation-css/",
-                    "showInCollapsed": false
-                  }
-                ]
-              },
-              {
-                "title": "Sass",
-                "url": "/global-style-customisation-sass/",
-                "showInCollapsed": false
-              }
-            ]
-          },
-          {
-            "title": "Styling Rows",
-            "url": "/row-styles/",
-            "showInCollapsed": true
-          },
-          {
-            "title": "Styling Cells",
-            "box-title": "Cells",
-            "url": "/cell-styles/",
-            "showInCollapsed": true
-          },
-          {
-            "title": "Grid Size",
-            "url": "/grid-size/",
-            "showInCollapsed": true
-          },
-          {
-            "title": "Printing",
-            "url": "/printing/",
-            "showInCollapsed": true
-          },
-          {
-            "title": "Upgrading to v28+",
-            "url": "/global-style-upgrading-to-v28/",
-            "showInCollapsed": true,
-            "items": [
-              {
-                "title": "CSS",
-                "url": "/global-style-upgrading-to-v28-css/",
-                "showInCollapsed": false
-              },
-              {
-                "title": "Sass",
-                "url": "/global-style-upgrading-to-v28-sass/",
-                "showInCollapsed": false
-              }
-            ]
           }
         ]
       },
+      {
+        "title": "Group & Pivot",
+        "icon": "docs-group",
+        "items": [
+          {
+            "title": "Row Grouping",
+            "url": "/grouping/",
+            "enterprise": true,
+            "showInCollapsed": true,
+            "matrixExcludeChildren": true,
+            "items": [
+              {
+                "title": "Display Types",
+                "url": "/grouping-display-types/",
+                "enterprise": true,
+                "items": [
+                  {
+                    "title": "Single Group Column",
+                    "url": "/grouping-single-group-column/",
+                    "enterprise": true,
+                    "showInCollapsed": false
+                  },
+                  {
+                    "title": "Multiple Group Columns",
+                    "url": "/grouping-multiple-group-columns/",
+                    "enterprise": true,
+                    "showInCollapsed": false
+                  },
+                  {
+                    "title": "Group Rows",
+                    "url": "/grouping-group-rows/",
+                    "enterprise": true,
+                    "showInCollapsed": false
+                  },
+                  {
+                    "title": "Custom Group Columns",
+                    "url": "/grouping-custom-group-columns/",
+                    "enterprise": true,
+                    "showInCollapsed": false
+                  }
+                ]
+              },
+              {
+                "title": "Row Group Panel",
+                "url": "/grouping-group-panel/",
+                "enterprise": true,
+                "showInCollapsed": false
+              },
+              {
+                "title": "Group Order",
+                "url": "/grouping-group-order/",
+                "enterprise": true,
+                "showInCollapsed": false
+              },
+              {
+                "title": "Sorting Groups",
+                "url": "/grouping-sorting/",
+                "enterprise": true,
+                "showInCollapsed": false
+              },
+              {
+                "title": "Filtering Groups",
+                "url": "/grouping-filtering/",
+                "enterprise": true,
+                "showInCollapsed": false,
+                "matrixExcludeChildren": true,
+                "items": [
+                  {
+                    "title": "Group Column Filter",
+                    "url": "/grouping-column-filter/",
+                    "enterprise": true,
+                    "showInCollapsed": false
+                  },
+                  {
+                    "title": "Custom Group Filtering",
+                    "url": "/grouping-custom-filtering/",
+                    "enterprise": true,
+                    "showInCollapsed": false
+                  }
+                ]
+              },
+              {
+                "title": "Group Footers",
+                "url": "/grouping-footers/",
+                "enterprise": true,
+                "showInCollapsed": false
+              },
+              {
+                "title": "Opening Groups",
+                "url": "/grouping-opening-groups/",
+                "enterprise": true,
+                "showInCollapsed": false
+              },
+              {
+                "title": "Selecting Row Groups",
+                "url": "/grouping-selecting-groups/",
+                "enterprise": true,
+                "showInCollapsed": false
+              },
+              {
+                "title": "Complex Objects",
+                "url": "/grouping-complex-objects/",
+                "enterprise": true,
+                "showInCollapsed": false
+              },
+              {
+                "title": "Unbalanced Groups",
+                "url": "/grouping-unbalanced-groups/",
+                "enterprise": true,
+                "showInCollapsed": false
+              }
+            ]
+          },
+          {
+            "title": "Aggregation",
+            "url": "/aggregation/",
+            "enterprise": true,
+            "showInCollapsed": true,
+            "matrixExcludeChildren": true,
+            "items": [
+              {
+                "title": "Custom Functions",
+                "url": "/aggregation-custom-functions/",
+                "enterprise": true,
+                "showInCollapsed": false
+              },
+              {
+                "title": "Filtering",
+                "url": "/aggregation-filtering/",
+                "enterprise": true,
+                "showInCollapsed": false
+              },
+              {
+                "title": "Other",
+                "url": "/aggregation-other/",
+                "enterprise": true,
+                "showInCollapsed": false
+              }
+            ]
+          },
+          {
+            "title": "Tree Data",
+            "url": "/tree-data/",
+            "enterprise": true,
+            "showInCollapsed": true
+          },
+          {
+            "title": "Pivoting",
+            "url": "/pivoting/",
+            "enterprise": true,
+            "showInCollapsed": true
+          }
+        ]
+      },
+      {
+        "title": "Master Detail",
+        "icon": "docs-detail",
+        "items": [
+          {
+            "title": "Overview",
+            "url": "/master-detail/",
+            "enterprise": true,
+            "showInCollapsed": true
+          },
+          {
+            "title": "Detail Grids",
+            "url": "/master-detail-grids/",
+            "enterprise": true,
+            "showInCollapsed": true
+          },
+          {
+            "title": "Detail Height",
+            "url": "/master-detail-height/",
+            "enterprise": true,
+            "showInCollapsed": true
+          },
+          {
+            "title": "Detail Refresh",
+            "url": "/master-detail-refresh/",
+            "enterprise": true,
+            "showInCollapsed": true
+          },
+          {
+            "title": "Master Rows",
+            "url": "/master-detail-master-rows/",
+            "enterprise": true,
+            "showInCollapsed": true
+          },
+          {
+            "title": "Nesting",
+            "url": "/master-detail-nesting/",
+            "enterprise": true,
+            "showInCollapsed": true
+          },
+          {
+            "title": "Custom Detail",
+            "url": "/master-detail-custom-detail/",
+            "enterprise": true,
+            "showInCollapsed": false
+          },
+          {
+            "title": "Other",
+            "url": "/master-detail-other/",
+            "enterprise": true,
+            "showInCollapsed": false
+          }
+        ]
+      },
+
       {
         "title": "Client-Side Data",
         "icon": "docs-csd",
@@ -711,17 +810,359 @@
         ]
       },
       {
-        "title": "Selection",
+        "title": "Import & Export",
+        "icon": "docs-import-export",
+        "items": [
+          {
+            "title": "CSV Export",
+            "url": "/csv-export/",
+            "showInCollapsed": true
+          },
+          {
+            "title": "Excel Export",
+            "url": "/excel-export/",
+            "showInCollapsed": true,
+            "enterprise": true,
+            "items": [
+              {
+                "title": "API Reference",
+                "url": "/excel-export-api/",
+                "enterprise": true
+              },
+              {
+                "title": "Styles",
+                "url": "/excel-export-styles/",
+                "enterprise": true
+              },
+              {
+                "title": "Formulas",
+                "url": "/excel-export-formulas/",
+                "enterprise": true
+              },
+              {
+                "title": "Extra Content",
+                "url": "/excel-export-extra-content/",
+                "enterprise": true
+              },
+              {
+                "title": "Customising Content",
+                "url": "/excel-export-customising-content/",
+                "enterprise": true
+              },
+              {
+                "title": "Images",
+                "url": "/excel-export-images/",
+                "enterprise": true
+              },
+              {
+                "title": "Multiple Sheets",
+                "url": "/excel-export-multiple-sheets/",
+                "enterprise": true
+              },
+              {
+                "title": "Rows",
+                "url": "/excel-export-rows/",
+                "enterprise": true
+              },
+              {
+                "title": "Columns",
+                "url": "/excel-export-columns/",
+                "enterprise": true
+              },
+              {
+                "title": "Data Types",
+                "url": "/excel-export-data-types/",
+                "enterprise": true
+              },
+              {
+                "title": "Hyperlinks",
+                "url": "/excel-export-hyperlinks/",
+                "enterprise": true
+              },
+              {
+                "title": "Master Detail",
+                "url": "/excel-export-master-detail/",
+                "enterprise": true
+              },
+              {
+                "title": "Page Setup",
+                "url": "/excel-export-page-setup/",
+                "enterprise": true
+              }
+            ]
+          },
+          {
+            "title": "Clipboard",
+            "url": "/clipboard/",
+            "enterprise": true,
+            "showInCollapsed": true
+          },
+          {
+            "title": "Drag & Drop",
+            "url": "/drag-and-drop/",
+            "showInCollapsed": true
+          },
+          {
+            "title": "See Also",
+            "url": "",
+            "items": [
+              {
+                "title": "Import Excel",
+                "url": "/excel-import/"
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "group": "Core Features",
+    "items": [
+      {
+        "title": "Layout & Styling",
+        "icon": "docs-styling",
+        "items": [
+          {
+            "title": "AG Grid Design System",
+            "url": "/ag-grid-design-system/",
+            "showInCollapsed": true
+          },
+          {
+            "title": "Global Styling",
+            "url": "/global-style/",
+            "showInCollapsed": true,
+            "items": [
+              {
+                "title": "Themes",
+                "url": "/themes/",
+                "showInCollapsed": true
+              },
+              {
+                "title": "Customisation",
+                "url": "/global-style-customisation/",
+                "showInCollapsed": true,
+                "items": [
+                  {
+                    "title": "Variable Reference",
+                    "url": "/global-style-customisation-variables/",
+                    "showInCollapsed": false
+                  },
+                  {
+                    "title": "Colours & Fonts",
+                    "url": "/global-style-customisation-colours/",
+                    "showInCollapsed": false
+                  },
+                  {
+                    "title": "Compactness & Row Height",
+                    "url": "/global-style-customisation-compactness/",
+                    "showInCollapsed": false
+                  },
+                  {
+                    "title": "Selections",
+                    "url": "/global-style-customisation-selections/",
+                    "showInCollapsed": false
+                  },
+                  {
+                    "title": "Headers",
+                    "url": "/global-style-customisation-headers/",
+                    "showInCollapsed": false
+                  },
+                  {
+                    "title": "Borders",
+                    "url": "/global-style-customisation-borders/",
+                    "showInCollapsed": false
+                  },
+                  {
+                    "title": "Icons",
+                    "url": "/custom-icons/",
+                    "showInCollapsed": false
+                  },
+                  {
+                    "title": "Tool Panels",
+                    "url": "/global-style-customisation-tool-panels/",
+                    "showInCollapsed": false
+                  },
+                  {
+                    "title": "Inputs & Widgets",
+                    "url": "/global-style-customisation-widgets/",
+                    "showInCollapsed": false
+                  },
+                  {
+                    "title": "Menus & Popups",
+                    "url": "/global-style-customisation-popups/",
+                    "showInCollapsed": false
+                  },
+                  {
+                    "title": "Advanced CSS",
+                    "url": "/global-style-customisation-css/",
+                    "showInCollapsed": false
+                  }
+                ]
+              },
+              {
+                "title": "Sass",
+                "url": "/global-style-customisation-sass/",
+                "showInCollapsed": false
+              }
+            ]
+          },
+          {
+            "title": "Styling Rows",
+            "url": "/row-styles/",
+            "showInCollapsed": true
+          },
+          {
+            "title": "Styling Cells",
+            "box-title": "Cells",
+            "url": "/cell-styles/",
+            "showInCollapsed": true
+          },
+          {
+            "title": "Grid Size",
+            "url": "/grid-size/",
+            "showInCollapsed": true
+          },
+          {
+            "title": "Printing",
+            "url": "/printing/",
+            "showInCollapsed": true
+          },
+          {
+            "title": "Upgrading to v28+",
+            "url": "/global-style-upgrading-to-v28/",
+            "showInCollapsed": true,
+            "items": [
+              {
+                "title": "CSS",
+                "url": "/global-style-upgrading-to-v28-css/",
+                "showInCollapsed": false
+              },
+              {
+                "title": "Sass",
+                "url": "/global-style-upgrading-to-v28-sass/",
+                "showInCollapsed": false
+              }
+            ]
+          }
+        ]
+      },
+
+      {
+        "title": "Build & Tooling",
+        "icon": "docs-tooling",
+        "matrixExcludeChildren": true,
+        "items": [
+          {
+            "title": "Install with NPM",
+            "url": "/npm/",
+            "showInCollapsed": true,
+            "frameworks": ["javascript"]
+          },
+          {
+            "title": "Download Bundles",
+            "url": "/download/",
+            "showInCollapsed": true,
+            "frameworks": ["javascript"]
+          },
+          {
+            "title": "Community & Enterprise",
+            "url": "/licensing/",
+            "enterprise": true,
+            "showInCollapsed": true
+          },
+          {
+            "title": "Packages vs Modules",
+            "url": "/packages-modules/",
+            "showInCollapsed": true,
+            "items": [
+              {
+                "title": "Packages",
+                "url": "/packages/",
+                "items": [
+                  {
+                    "title": "Using ES Modules",
+                    "url": "/esm-packages/",
+                    "frameworks": ["javascript"]
+                  }
+                ]
+              },
+              {
+                "title": "Modules",
+                "url": "/modules/",
+                "items": [
+                  {
+                    "title": "Using ES Modules",
+                    "url": "/esm-modules/",
+                    "frameworks": ["javascript"]
+                  }
+                ]
+              },
+              {
+                "title": "Modules - Example",
+                "url": "/modules-building/",
+                "frameworks": ["angular", "react", "vue"]
+              },
+              {
+                "title": "Custom UMD Bundle",
+                "url": "/modules-building/",
+                "frameworks": ["javascript"]
+              }
+            ]
+          },
+          {
+            "title": "Supported Browsers",
+            "url": "/supported-browsers/",
+            "showInCollapsed": true
+          },
+          {
+            "title": "Building",
+            "url": "/building/",
+            "showInCollapsed": true,
+            "frameworks": ["javascript"],
+            "items": [
+              {
+                "title": "Rollup",
+                "url": "/building-rollup/",
+                "frameworks": ["javascript"]
+              },
+              {
+                "title": "TypeScript & Webpack",
+                "url": "/building-typescript/",
+                "frameworks": ["javascript"]
+              },
+              {
+                "title": "AMD",
+                "url": "/building-amd/",
+                "frameworks": ["javascript"]
+              }
+            ]
+          },
+          {
+            "title": "Testing",
+            "url": "/testing/",
+            "showInCollapsed": true
+          },
+          {
+            "title": "Testing Async",
+            "url": "/testing-async/",
+            "showInCollapsed": true,
+            "frameworks": ["angular"]
+          },
+          {
+            "title": "Security",
+            "url": "/security/",
+            "showInCollapsed": true
+          }
+        ]
+      },
+      {
+        "title": "Cell Selection",
         "icon": "docs-selection",
         "items": [
           {
             "title": "Overview",
             "url": "/selection-overview/",
-            "showInCollapsed": true
-          },
-          {
-            "title": "Row Selection",
-            "url": "/row-selection/",
             "showInCollapsed": true
           },
           {
@@ -743,116 +1184,6 @@
                 "showInCollapsed": true
               }
             ]
-          }
-        ]
-      },
-      {
-        "title": "Filtering",
-        "icon": "docs-filtering",
-        "items": [
-          {
-            "title": "Overview",
-            "url": "/filtering-overview/",
-            "showInCollapsed": true
-          },
-          {
-            "title": "Column Filters",
-            "url": "/filtering/",
-            "showInCollapsed": false,
-            "items": [
-              {
-                "title": "Text Filter",
-                "url": "/filter-text/",
-                "showInCollapsed": true
-              },
-              {
-                "title": "Number Filter",
-                "url": "/filter-number/",
-                "showInCollapsed": true
-              },
-              {
-                "title": "Date Filter",
-                "url": "/filter-date/",
-                "showInCollapsed": true
-              },
-              {
-                "title": "Set Filter",
-                "url": "/filter-set/",
-                "enterprise": true,
-                "matrixExcludeChildren": true,
-                "showInCollapsed": true,
-                "items": [
-                  {
-                    "title": "Filter List",
-                    "url": "/filter-set-filter-list/",
-                    "enterprise": true
-                  },
-                  {
-                    "title": "Data Updates",
-                    "url": "/filter-set-data-updates/",
-                    "enterprise": true
-                  },
-                  {
-                    "title": "Tree List",
-                    "url": "/filter-set-tree-list/",
-                    "enterprise": true
-                  },
-                  {
-                    "title": "Mini Filter",
-                    "url": "/filter-set-mini-filter/",
-                    "enterprise": true
-                  },
-                  {
-                    "title": "Excel Mode",
-                    "url": "/filter-set-excel-mode/",
-                    "enterprise": true
-                  },
-                  {
-                    "title": "API",
-                    "url": "/filter-set-api/",
-                    "enterprise": true
-                  }
-                ]
-              },
-              {
-                "title": "Multi Filter",
-                "url": "/filter-multi/",
-                "enterprise": true,
-                "showInCollapsed": true
-              },
-              {
-                "title": "Filter Conditions",
-                "url": "/filter-conditions/"
-              },
-              {
-                "title": "Applying Filters",
-                "url": "/filter-applying/"
-              },
-              {
-                "title": "Filter API",
-                "url": "/filter-api/"
-              },
-              {
-                "title": "Floating Filters",
-                "url": "/floating-filters/"
-              }
-            ]
-          },
-          {
-            "title": "Advanced Filter",
-            "url": "/filter-advanced/",
-            "enterprise": true,
-            "showInCollapsed": true
-          },
-          {
-            "title": "External Filter",
-            "url": "/filter-external/",
-            "showInCollapsed": true
-          },
-          {
-            "title": "Quick Filter",
-            "url": "/filter-quick/",
-            "showInCollapsed": true
           }
         ]
       },
@@ -978,313 +1309,6 @@
             "title": "Full Row",
             "url": "/cell-editing-full-row/",
             "showInCollapsed": true
-          }
-        ]
-      },
-      {
-        "title": "Group & Pivot",
-        "icon": "docs-group",
-        "items": [
-          {
-            "title": "Row Grouping",
-            "url": "/grouping/",
-            "enterprise": true,
-            "showInCollapsed": true,
-            "matrixExcludeChildren": true,
-            "items": [
-              {
-                "title": "Display Types",
-                "url": "/grouping-display-types/",
-                "enterprise": true,
-                "items": [
-                  {
-                    "title": "Single Group Column",
-                    "url": "/grouping-single-group-column/",
-                    "enterprise": true,
-                    "showInCollapsed": false
-                  },
-                  {
-                    "title": "Multiple Group Columns",
-                    "url": "/grouping-multiple-group-columns/",
-                    "enterprise": true,
-                    "showInCollapsed": false
-                  },
-                  {
-                    "title": "Group Rows",
-                    "url": "/grouping-group-rows/",
-                    "enterprise": true,
-                    "showInCollapsed": false
-                  },
-                  {
-                    "title": "Custom Group Columns",
-                    "url": "/grouping-custom-group-columns/",
-                    "enterprise": true,
-                    "showInCollapsed": false
-                  }
-                ]
-              },
-              {
-                "title": "Row Group Panel",
-                "url": "/grouping-group-panel/",
-                "enterprise": true,
-                "showInCollapsed": false
-              },
-              {
-                "title": "Group Order",
-                "url": "/grouping-group-order/",
-                "enterprise": true,
-                "showInCollapsed": false
-              },
-              {
-                "title": "Sorting Groups",
-                "url": "/grouping-sorting/",
-                "enterprise": true,
-                "showInCollapsed": false
-              },
-              {
-                "title": "Filtering Groups",
-                "url": "/grouping-filtering/",
-                "enterprise": true,
-                "showInCollapsed": false,
-                "matrixExcludeChildren": true,
-                "items": [
-                  {
-                    "title": "Group Column Filter",
-                    "url": "/grouping-column-filter/",
-                    "enterprise": true,
-                    "showInCollapsed": false
-                  },
-                  {
-                    "title": "Custom Group Filtering",
-                    "url": "/grouping-custom-filtering/",
-                    "enterprise": true,
-                    "showInCollapsed": false
-                  }
-                ]
-              },
-              {
-                "title": "Group Footers",
-                "url": "/grouping-footers/",
-                "enterprise": true,
-                "showInCollapsed": false
-              },
-              {
-                "title": "Opening Groups",
-                "url": "/grouping-opening-groups/",
-                "enterprise": true,
-                "showInCollapsed": false
-              },
-              {
-                "title": "Complex Objects",
-                "url": "/grouping-complex-objects/",
-                "enterprise": true,
-                "showInCollapsed": false
-              },
-              {
-                "title": "Unbalanced Groups",
-                "url": "/grouping-unbalanced-groups/",
-                "enterprise": true,
-                "showInCollapsed": false
-              }
-            ]
-          },
-          {
-            "title": "Aggregation",
-            "url": "/aggregation/",
-            "enterprise": true,
-            "showInCollapsed": true,
-            "matrixExcludeChildren": true,
-            "items": [
-              {
-                "title": "Custom Functions",
-                "url": "/aggregation-custom-functions/",
-                "enterprise": true,
-                "showInCollapsed": false
-              },
-              {
-                "title": "Filtering",
-                "url": "/aggregation-filtering/",
-                "enterprise": true,
-                "showInCollapsed": false
-              },
-              {
-                "title": "Other",
-                "url": "/aggregation-other/",
-                "enterprise": true,
-                "showInCollapsed": false
-              }
-            ]
-          },
-          {
-            "title": "Tree Data",
-            "url": "/tree-data/",
-            "enterprise": true,
-            "showInCollapsed": true
-          },
-          {
-            "title": "Pivoting",
-            "url": "/pivoting/",
-            "enterprise": true,
-            "showInCollapsed": true
-          }
-        ]
-      },
-      {
-        "title": "Master Detail",
-        "icon": "docs-detail",
-        "items": [
-          {
-            "title": "Overview",
-            "url": "/master-detail/",
-            "enterprise": true,
-            "showInCollapsed": true
-          },
-          {
-            "title": "Detail Grids",
-            "url": "/master-detail-grids/",
-            "enterprise": true,
-            "showInCollapsed": true
-          },
-          {
-            "title": "Detail Height",
-            "url": "/master-detail-height/",
-            "enterprise": true,
-            "showInCollapsed": true
-          },
-          {
-            "title": "Detail Refresh",
-            "url": "/master-detail-refresh/",
-            "enterprise": true,
-            "showInCollapsed": true
-          },
-          {
-            "title": "Master Rows",
-            "url": "/master-detail-master-rows/",
-            "enterprise": true,
-            "showInCollapsed": true
-          },
-          {
-            "title": "Nesting",
-            "url": "/master-detail-nesting/",
-            "enterprise": true,
-            "showInCollapsed": true
-          },
-          {
-            "title": "Custom Detail",
-            "url": "/master-detail-custom-detail/",
-            "enterprise": true,
-            "showInCollapsed": false
-          },
-          {
-            "title": "Other",
-            "url": "/master-detail-other/",
-            "enterprise": true,
-            "showInCollapsed": false
-          }
-        ]
-      },
-      {
-        "title": "Import & Export",
-        "icon": "docs-import-export",
-        "items": [
-          {
-            "title": "CSV Export",
-            "url": "/csv-export/",
-            "showInCollapsed": true
-          },
-          {
-            "title": "Excel Export",
-            "url": "/excel-export/",
-            "showInCollapsed": true,
-            "enterprise": true,
-            "items": [
-              {
-                "title": "API Reference",
-                "url": "/excel-export-api/",
-                "enterprise": true
-              },
-              {
-                "title": "Styles",
-                "url": "/excel-export-styles/",
-                "enterprise": true
-              },
-              {
-                "title": "Formulas",
-                "url": "/excel-export-formulas/",
-                "enterprise": true
-              },
-              {
-                "title": "Extra Content",
-                "url": "/excel-export-extra-content/",
-                "enterprise": true
-              },
-              {
-                "title": "Customising Content",
-                "url": "/excel-export-customising-content/",
-                "enterprise": true
-              },
-              {
-                "title": "Images",
-                "url": "/excel-export-images/",
-                "enterprise": true
-              },
-              {
-                "title": "Multiple Sheets",
-                "url": "/excel-export-multiple-sheets/",
-                "enterprise": true
-              },
-              {
-                "title": "Rows",
-                "url": "/excel-export-rows/",
-                "enterprise": true
-              },
-              {
-                "title": "Columns",
-                "url": "/excel-export-columns/",
-                "enterprise": true
-              },
-              {
-                "title": "Data Types",
-                "url": "/excel-export-data-types/",
-                "enterprise": true
-              },
-              {
-                "title": "Hyperlinks",
-                "url": "/excel-export-hyperlinks/",
-                "enterprise": true
-              },
-              {
-                "title": "Master Detail",
-                "url": "/excel-export-master-detail/",
-                "enterprise": true
-              },
-              {
-                "title": "Page Setup",
-                "url": "/excel-export-page-setup/",
-                "enterprise": true
-              }
-            ]
-          },
-          {
-            "title": "Clipboard",
-            "url": "/clipboard/",
-            "enterprise": true,
-            "showInCollapsed": true
-          },
-          {
-            "title": "Drag & Drop",
-            "url": "/drag-and-drop/",
-            "showInCollapsed": true
-          },
-          {
-            "title": "See Also",
-            "url": "",
-            "items": [
-              {
-                "title": "Import Excel",
-                "url": "/excel-import/"
-              }
-            ]
           }
         ]
       }
@@ -2113,30 +2137,6 @@
           {
             "title": "Localisation",
             "url": "/localisation/",
-            "showInCollapsed": true
-          }
-        ]
-      },
-      {
-        "title": "Testing & Security",
-        "icon": "docs-testing",
-        "matrixExcludeChildren": true,
-        "level-2-display-style-forced": "block",
-        "items": [
-          {
-            "title": "Testing",
-            "url": "/testing/",
-            "showInCollapsed": true
-          },
-          {
-            "title": "Testing Async",
-            "url": "/testing-async/",
-            "showInCollapsed": true,
-            "frameworks": ["angular"]
-          },
-          {
-            "title": "Security",
-            "url": "/security/",
             "showInCollapsed": true
           }
         ]

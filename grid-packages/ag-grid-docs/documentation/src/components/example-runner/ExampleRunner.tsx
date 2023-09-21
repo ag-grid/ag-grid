@@ -496,6 +496,7 @@ const ExampleRunnerInner = ({
         ]
     );
 
+    const [activeCta, setActiveCta] = useState(<OpenInCTA type="plunker" onClick={() => openPlunker(exampleInfo)} />);
     const [hasWindow, setHasWindow] = useState(false);
     useEffect(() => {
         if (typeof window !== 'undefined') {
@@ -550,64 +551,10 @@ const ExampleRunnerInner = ({
         <div id={exampleInfo.linkId} style={{ minHeight: `${exampleHeight + 48}px` }}>
             {hasWindow && (
                 <div className={classnames('tabs-outer', styles.tabsContainer)}>
-                    <header className={classnames('tabs-header', styles.header)}>
-                        <ul className="tabs-nav-list" role="tablist">
-                            {/* eslint-disable-line */}
-                            <li className="tabs-nav-item" role="presentation">
-                                <button
-                                    className={classnames('button-style-none', 'tabs-nav-link', { active: !showCode })}
-                                    onClick={(e) => {
-                                        setShowCode(false);
-                                        e.preventDefault();
-                                    }}
-                                    role="tab"
-                                    title="Run example"
-                                    disabled={!showCode}
-                                >
-                                    Preview <Icon name="executableProgram" />
-                                </button>
-                            </li>
-                            <li className="tabs-nav-item" role="presentation">
-                                <button
-                                    className={classnames(
-                                        'button-style-none',
-                                        'tabs-nav-link',
-                                        { active: showCode },
-                                        styles.codeTabButton
-                                    )}
-                                    onClick={(e) => {
-                                        setShowCode(true);
-                                        e.preventDefault();
-                                    }}
-                                    role="tab"
-                                    title="View Example Source Code"
-                                    disabled={showCode}
-                                >
-                                    Code <Icon name="code" />
-                                </button>
-                            </li>
-                        </ul>
-
-                        <ul className={classnames('list-style-none', styles.externalLinks)}>
-                            <li>
-                                <OpenInCTA type="newTab" href={getIndexHtmlUrl(exampleInfo)} />
-                            </li>
-                            {!exampleInfo.options.noPlunker && (
-                                <li>
-                                    <OpenInCTA type="codesandbox" onClick={() => openCodeSandbox(exampleInfo)} />
-                                </li>
-                            )}
-                            {!exampleInfo.options.noPlunker && (
-                                <li>
-                                    <OpenInCTA type="plunker" onClick={() => openPlunker(exampleInfo)} />
-                                </li>
-                            )}
-                        </ul>
-                    </header>
                     <div
                         className={classnames('tabs-content', styles.content)}
                         role="tabpanel"
-                        aria-labelledby={`${showCode ? 'Preview' : 'Code'} tab`}
+                        aria-labelledby="Preview"
                         style={{ height: exampleHeight, width: '100%' }}
                     >
                         <VisibilitySensor partialVisibility={true}>
@@ -625,8 +572,32 @@ const ExampleRunnerInner = ({
                                 );
                             }}
                         </VisibilitySensor>
-                        <CodeViewer isActive={showCode} exampleInfo={exampleInfo} />
                     </div>
+                    <header className={classnames('tabs-header', styles.header)}>
+                        <ul className={classnames('list-style-none', styles.externalLinks)}>
+                            <li>
+                                <div style={{ cursor: 'pointer', display: 'inline-block', color: 'white' }}>
+                                    <div className={styles.hoverButton}>
+                                        {activeCta}
+                                    </div>
+                                    <div className={styles.hoverButtonRight}>
+                                        <div style={{
+                                            display: 'inline-block',
+                                            width: 0,
+                                            height: 0,
+                                            marginLeft: '0.255em',
+                                            verticalAlign: '0.255em',
+                                            borderTop: '0.3em solid',
+                                            borderRight: '0.3em solid transparent',
+                                            borderBottom: 0,
+                                            borderLeft: '0.3em solid transparent',
+                                        }}>
+                                        </div>
+                                    </div>
+                                </div>
+                            </li>
+                        </ul>
+                    </header>
                 </div>
             )}
         </div>

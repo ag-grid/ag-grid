@@ -1,12 +1,11 @@
 @use '../design-system' as *;
 
 .cta {
-    --text-color: var(--link-color);
-
+    --text-color: white;
+    font-size: 14px;
     transition: color $default-transition-timing;
 
     &:hover {
-        --text-color: var(--link-hover-color);
     }
 
     svg {
