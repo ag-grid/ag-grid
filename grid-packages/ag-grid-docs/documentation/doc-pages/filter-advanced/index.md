@@ -3,7 +3,7 @@ title: "Advanced Filter"
 enterprise: true
 ---
 
-The Advanced Filter allows for complex filter conditions to be entered across columns in a single type-ahead input.
+The Advanced Filter allows for complex filter conditions to be entered across columns in a single type-ahead input, as well as within a hierarchical visual builder.
 
 ## Enabling Advanced Filter
 
