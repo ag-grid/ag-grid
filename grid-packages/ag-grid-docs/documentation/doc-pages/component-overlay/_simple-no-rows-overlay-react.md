@@ -6,7 +6,7 @@
 <snippet transform={false} language="jsx">
 |export default props => {
 |    return (
-|        &lt;div className="ag-overlay-loading-center" style={{backgroundColor: 'lightcoral', height: '9%'}}>
+|        &lt;div className="ag-overlay-loading-center" style={{backgroundColor: '#b4bebe', height: '9%'}}>
 |            &lt;i className="far fa-frown"> {props.noRowsMessageFunc()}&lt;/i>
 |        &lt;/div>
 |    );

@@ -43,7 +43,7 @@ The example below demonstrates how the loading overlay is shown automatically wh
 
 The overlays are customised by providing custom HTML templates to `overlayLoadingTemplate` and `overlayNoRowsTemplate`.
 
-<grid-example title='Overlays' name='overlays' type='mixed' options='{ "exampleHeight": 580 }'></grid-example>
+<grid-example title='Overlays' name='overlays' type='mixed' options='{ "exampleHeight": 350 }'></grid-example>
 
 
 

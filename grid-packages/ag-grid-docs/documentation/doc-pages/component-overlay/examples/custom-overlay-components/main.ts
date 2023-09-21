@@ -35,7 +35,7 @@ const gridOptions: GridOptions<IOlympicData> = {
   },
   noRowsOverlayComponent: CustomNoRowsOverlay,
   noRowsOverlayComponentParams: {
-    noRowsMessageFunc: () => 'Sorry - no rows! at: ' + new Date(),
+    noRowsMessageFunc: () => 'No rows found at: ' + new Date().toLocaleTimeString(),
   },
 }
 
