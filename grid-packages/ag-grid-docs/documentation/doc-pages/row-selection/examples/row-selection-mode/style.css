@@ -8,3 +8,38 @@ body {
     flex-direction: column;
     overflow: hidden;
 }
+
+.toggle-button {
+    border-radius: 5px;
+    background-color: #034c93;
+    display: inline-block;
+
+    overflow: hidden;
+}
+
+.toggle-button > input {
+    display: none;
+}
+
+.toggle-button > label {
+    color: white;
+    padding: 5px 2.5px;
+    display: inline-block;
+
+    cursor: pointer;
+
+    transition: 0.5s;
+}
+
+.toggle-button > label:hover {
+    background-color: #05437f;
+    box-shadow: inset -1px 1px 6px 2px rgba(0,0,0,0.44);
+}
+
+.toggle-button > label:first-of-type {
+    padding-left: 5px;
+}
+
+.toggle-button > label:last-of-type {
+    padding-right: 5px; 
+}

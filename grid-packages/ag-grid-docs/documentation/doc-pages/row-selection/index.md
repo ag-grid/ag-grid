@@ -2,9 +2,13 @@
 title: "Row Selection"
 ---
 
-Row Selection enables users to choose rows by clicking on them. This page describes how to configure row selection with AGGrid.
+Row Selection enables users to choose rows by clicking on them. This page describes how to configure row selection in the grid.
 
 ## Row Selection Mode
+
+Row selection has two different modes, enabled by passing a value to the `rowSelection` grid option.
+- `single` allows users to only have one row selected at any time.
+- `multiple` allows users to select multiple rows by holding <kbd>Shift</kbd> to select a range, or <kbd>Ctrl</kbd> to multi-select rows.
 
 <grid-example title='rowSelection' name='row-selection-mode' type='generated'></grid-example>
 
@@ -13,10 +17,6 @@ const gridOptions = {
     rowSelection: 'single',
 }
 </snippet>
-
-Row selection has two different modes, enabled by passing a value to the `rowSelection` grid option.
-- `single` allows users to only have one row selected at any time.
-- `multiple` allows users to select multiple rows by holding <kbd>Shift</kbd> to select a range, or <kbd>Ctrl</kbd> to multi-select rows.
 
 ## Multi-Select By Default
 

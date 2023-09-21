@@ -577,6 +577,19 @@ const ExampleRunnerInner = ({
                         <ul className={classnames('list-style-none', styles.externalLinks)}>
                             <li>
                                 <div style={{ cursor: 'pointer', display: 'inline-block', color: 'white' }}>
+                                    <div className={`${styles.hoverButton} ${styles.hoverButtonRight}`}>
+                                        <a
+                                            href={getIndexHtmlUrl(exampleInfo)}
+                                            target='_blank'
+                                            style={{ color: 'inherit' }}
+                                        >
+                                            &nbsp;+ New Tab
+                                        </a>
+                                    </div>
+                                </div>
+                            </li>
+                            <li>
+                                <div style={{ cursor: 'pointer', display: 'inline-block', color: 'white' }}>
                                     <div className={styles.hoverButton}>
                                         {activeCta}
                                     </div>
