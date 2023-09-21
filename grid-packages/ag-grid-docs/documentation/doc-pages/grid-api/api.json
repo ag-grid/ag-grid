@@ -515,7 +515,7 @@
                 "url": "/overlays/"
             }
         },
-        "showLoadingOverlay": {},
+        "setLoading": {},
         "showNoRowsOverlay": {},
         "hideOverlay": {}
     },

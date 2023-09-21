@@ -597,6 +597,7 @@
                 "url": "/overlays/"
             }
         },
+        "loading": {},
         "overlayLoadingTemplate": {},
         "loadingOverlayComponent": {
             "description": "Provide a custom loading overlay component.",
@@ -606,7 +607,6 @@
             }
         },
         "loadingOverlayComponentParams": {},
-        "suppressLoadingOverlay": {},
         "overlayNoRowsTemplate": {},
         "noRowsOverlayComponent": {
             "description": "Provide a custom no rows overlay component.",

@@ -914,18 +914,48 @@ export class GridApi<TData = any> {
         this.gridBodyCtrl.sizeColumnsToFit(params);
     }
 
-    /** Show the 'loading' overlay. */
+    /** 
+     * Set the `loading` property: `true` to show, `false` to hide the loading overlay.
+     */
+    public setLoading(loading: boolean){
+        this.gos.set('loading', loading)
+    }
+
+    /** Show the loading overlay. 
+     * @deprecated v30 Use setLoading(true) instead.
+    */
     public showLoadingOverlay(): void {
+        logDeprecation<GridApi>(
+            '30',
+            'showLoadingOverlay',
+            'setLoading',
+            'Call `setLoading` with the value `true` to show the loading overlay.'
+        );
         this.overlayWrapperComp.showLoadingOverlay();
     }
 
-    /** Show the 'no rows' overlay. */
-    public showNoRowsOverlay(): void {
-        this.overlayWrapperComp.showNoRowsOverlay();
+    /** 
+     * Show / Hide the No Rows overlay: `true` to show, `false` to hide.
+     */
+    public showNoRowsOverlay(show?: boolean): void {
+        if(show === false){
+            this.overlayWrapperComp.hideOverlay();
+        }else{
+            this.overlayWrapperComp.showNoRowsOverlay();
+        }
     }
 
-    /** Hides the overlay if showing. */
+    /** 
+     * Hides the No Rows overlay if showing. 
+     * @deprecated v30 Use showNoRowsOverlay(false) instead.
+     */
     public hideOverlay(): void {
+        logDeprecation<GridApi>(
+            '30',
+            'hideOverlay',
+            'showNoRowsOverlay',
+            'Call `showNoRowsOverlay` with the value `false` to hide the No Rows overlay.'
+        );
         this.overlayWrapperComp.hideOverlay();
     }
 

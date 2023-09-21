@@ -579,6 +579,9 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     @Input() public suppressChangeDetection: boolean | undefined = undefined;
     /** Set this to `true` to enable debug information from the grid and related components. Will result in additional logging being output, but very useful when investigating problems. Default: `false`     */
     @Input() public debug: boolean | undefined = undefined;
+    /** 
+         * Show / hide the loading overlay.     */
+    @Input() public loading: boolean | undefined = undefined;
     /** Provide a template for 'loading' overlay.     */
     @Input() public overlayLoadingTemplate: string | undefined = undefined;
     /** Provide a custom loading overlay component.
@@ -587,7 +590,9 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     @Input() public loadingOverlayComponent: any = undefined;
     /** Customise the parameters provided to the loading overlay component.     */
     @Input() public loadingOverlayComponentParams: any = undefined;
-    /** Disables the 'loading' overlay. Default: `false`     */
+    /** Disables the 'loading' overlay.
+         * @deprecated v30 Set `loading = false` instead to never show the loading overlay.
+         *  Default: `false`     */
     @Input() public suppressLoadingOverlay: boolean | undefined = undefined;
     /** Provide a template for 'no rows' overlay.     */
     @Input() public overlayNoRowsTemplate: string | undefined = undefined;
@@ -597,7 +602,7 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     @Input() public noRowsOverlayComponent: any = undefined;
     /** Customise the parameters provided to the no rows overlay component.     */
     @Input() public noRowsOverlayComponentParams: any = undefined;
-    /** Disables the 'no rows' overlay. Default: `false`     */
+    /** Disables the 'no rows' overlay from being displayed when . Default: `false`     */
     @Input() public suppressNoRowsOverlay: boolean | undefined = undefined;
     /** Set whether pagination is enabled. Default: `false`     */
     @Input() public pagination: boolean | undefined = undefined;
@@ -1225,6 +1230,7 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     static ngAcceptInputType_suppressMultiSort: boolean | null | '';
     static ngAcceptInputType_alwaysMultiSort: boolean | null | '';
     static ngAcceptInputType_singleClickEdit: boolean | null | '';
+    static ngAcceptInputType_loading: boolean | null | '';
     static ngAcceptInputType_suppressLoadingOverlay: boolean | null | '';
     static ngAcceptInputType_suppressNoRowsOverlay: boolean | null | '';
     static ngAcceptInputType_suppressAutoSize: boolean | null | '';

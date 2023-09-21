@@ -1,8 +1,8 @@
 <div class="example-wrapper">
     <div style="margin-bottom: 5px;">
-        <button onclick="onBtShowLoading()">Show Loading Overlay</button>
-        <button onclick="onBtShowNoRows()">Show No Rows Overlay</button>
-        <button onclick="onBtHide()">Hide Overlay</button>
+        <button onclick="onBtSetLoading(true)">Loading = true</button>
+        <button onclick="onBtSetLoading(false)">Loading = false</button>
+        <button onclick="reloadData()">Reload data</button>
     </div> 
     <div id="myGrid" class="ag-theme-alpine"></div>
 </div>

@@ -4,7 +4,7 @@ import { UserComponentFactory } from '../../components/framework/userComponentFa
 import { RefSelector } from '../../widgets/componentAnnotations';
 import { ILoadingOverlayComp, ILoadingOverlayParams } from './loadingOverlayComponent';
 import { INoRowsOverlayComp, INoRowsOverlayParams } from './noRowsOverlayComponent';
-import { AgPromise } from '../../utils';
+import { AgPromise , _} from '../../utils';
 import { clearElement } from '../../utils/dom';
 import { LayoutCssClasses, LayoutFeature, LayoutView, UpdateLayoutClassesParams } from "../../styling/layoutFeature";
 import { PaginationProxy } from "../../pagination/paginationProxy";
@@ -37,6 +37,8 @@ export class OverlayWrapperComponent extends Component implements LayoutView {
     private destroyRequested = false;
     private manuallyDisplayed: boolean = false;
 
+    private isLoadingPresent: boolean;
+
     constructor() {
         super(OverlayWrapperComponent.TEMPLATE);
     }
@@ -53,11 +55,33 @@ export class OverlayWrapperComponent extends Component implements LayoutView {
         this.createManagedBean(new LayoutFeature(this));
         this.setDisplayed(false, { skipAriaHidden: true });
 
-        this.addManagedListener(this.eventService, Events.EVENT_ROW_DATA_UPDATED, this.onRowDataUpdated.bind(this));
-        this.addManagedListener(this.eventService, Events.EVENT_NEW_COLUMNS_LOADED, this.onNewColumnsLoaded.bind(this));
+        this.isLoadingPresent = this.gridOptionsService.exists('loading');
 
-        if (this.gridOptionsService.isRowModelType('clientSide') && !this.gridOptionsService.get('rowData')) {
-            this.showLoadingOverlay();
+        this.addManagedListener(this.eventService, Events.EVENT_ROW_DATA_UPDATED, this.onRowDataUpdated.bind(this));
+        this.addManagedListener(
+            this.eventService,
+            Events.EVENT_NEW_COLUMNS_LOADED,
+            this.onNewColumnsLoaded.bind(this)
+        );
+
+        const updateOverlay = (isLoading: boolean) => {
+            if (isLoading) {
+                this.showLoadingOverlay();
+            } else {
+                this.showOrHideOverlay();
+            }
+        };
+        this.addManagedPropertyListener('loading', (event) => updateOverlay(event.currentValue));
+
+        if (this.isLoadingPresent) {
+            if(this.gridOptionsService.is('loading')){
+                updateOverlay(true);
+            }
+        } else {
+            // Setup the initial loading overlay if loading is not manually being controlled
+            if (this.gridOptionsService.isRowModelType('clientSide') && !this.gridOptionsService.get('rowData')) {
+                this.showLoadingOverlay();
+            }
         }
 
         this.gridApi.registerOverlayWrapperComp(this);
@@ -69,9 +93,18 @@ export class OverlayWrapperComponent extends Component implements LayoutView {
         overlayWrapperClassList.toggle('ag-overlay-no-rows-wrapper', loadingType === LoadingType.NoRows);
     }
 
-    public showLoadingOverlay(): void {
-        if (this.gridOptionsService.is('suppressLoadingOverlay')) { return; }
+    private warnOnce(message: string): void {
+        _.doOnce(() => console.warn("AG Grid: " + message), message);
+    }
 
+    public showLoadingOverlay(): void {
+        if (this.gridOptionsService.is('suppressLoadingOverlay')) {
+            return;
+        }
+        if (this.isLoadingPresent && !this.gridOptionsService.is('loading')) {
+            this.warnOnce('api.showLoadingOverlay() is ignored as grid option loading=false. Set loading=true to show loading overlay.');
+            return;
+        }
         const params: WithoutGridCommon<ILoadingOverlayParams> = {};
 
         const compDetails = this.userComponentFactory.getLoadingOverlayCompDetails(params);
@@ -82,6 +115,11 @@ export class OverlayWrapperComponent extends Component implements LayoutView {
 
     public showNoRowsOverlay(): void {
         if (this.gridOptionsService.is('suppressNoRowsOverlay')) { return; }
+
+        if (this.gridOptionsService.is('loading')) {
+            this.warnOnce('GridOption loading=true, so api.showNoRowsOverlay() is ignored.');
+            return;
+        }
 
         const params: WithoutGridCommon<INoRowsOverlayParams> = {};
 
@@ -135,6 +173,11 @@ export class OverlayWrapperComponent extends Component implements LayoutView {
     }
 
     public hideOverlay(): void {
+        if (this.gridOptionsService.is('loading')) {
+            this.warnOnce('To hide the loading overlay call api.setLoading(false) or set loading=false.');
+            return;
+        }
+
         this.manuallyDisplayed = false;
         this.destroyActiveOverlay();
         this.setDisplayed(false, { skipAriaHidden: true });
@@ -146,6 +189,9 @@ export class OverlayWrapperComponent extends Component implements LayoutView {
     }
 
     private showOrHideOverlay(): void {
+        // Don't hide or show if loading overlay is present
+        if(this.gridOptionsService.is('loading')) { return; }
+        
         const isEmpty = this.paginationProxy.isEmpty();
         const isSuppressNoRowsOverlay = this.gridOptionsService.is('suppressNoRowsOverlay');
         if (isEmpty && !isSuppressNoRowsOverlay) {

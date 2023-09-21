@@ -77,6 +77,10 @@ export class GridOptionsValidator {
             console.warn("AG Grid: 'enableRangeHandle' or 'enableFillHandle' will not work unless 'enableRangeSelection' is set to true");
         }
 
+        if(this.gridOptionsService.exists('loading') && this.gridOptionsService.is('suppressLoadingOverlay')) {
+            this.pickOneWarning('loading', 'suppressLoadingOverlay');
+        }
+
         const validateRegistered = (prop: keyof GridOptions, module: ModuleNames) => this.gridOptionsService.exists(prop) && ModuleRegistry.__assertRegistered(module, prop, this.gridOptionsService.getGridId());
 
         // Ensure the SideBar is registered which will then lead them to register Column / Filter Tool panels as required by their config.
@@ -232,6 +236,7 @@ export class GridOptionsValidator {
         excludeHiddenColumnsFromQuickFilter: { version: '30', message: 'Hidden columns are now excluded from the Quick Filter by default. This can be toggled using `includeHiddenColumnsInQuickFilter`.' },
         enterMovesDown: { version: '30', newProp: 'enterNavigatesVertically', copyToNewProp: true },
         enterMovesDownAfterEdit: { version: '30', newProp: 'enterNavigatesVerticallyAfterEdit', copyToNewProp: true },
+        suppressLoadingOverlay: { version: '30', newProp: 'loading'},
         suppressParentsInRowNodes: { version: '30.2', message: 'Using suppressParentsInRowNodes is no longer recommended. To serialize nodes it is now recommended to instead remove the parent node reference before serialization.'},
     }
 

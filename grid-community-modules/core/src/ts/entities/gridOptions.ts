@@ -441,6 +441,11 @@ export interface GridOptions<TData = any> {
     debug?: boolean;
 
     // *** Overlays *** //
+
+    /** 
+     * Show / hide the loading overlay. */
+    loading?: boolean;
+
     /** Provide a template for 'loading' overlay. */
     overlayLoadingTemplate?: string;
     /**
@@ -451,7 +456,9 @@ export interface GridOptions<TData = any> {
     /** Customise the parameters provided to the loading overlay component. */
     loadingOverlayComponentParams?: any;
 
-    /** Disables the 'loading' overlay. Default: `false` */
+    /** Disables the 'loading' overlay.
+     * @deprecated v30 Set `loading = false` instead to never show the loading overlay.
+     *  Default: `false` */
     suppressLoadingOverlay?: boolean;
 
     /** Provide a template for 'no rows' overlay. */
@@ -464,8 +471,7 @@ export interface GridOptions<TData = any> {
     noRowsOverlayComponent?: any;
     /** Customise the parameters provided to the no rows overlay component. */
     noRowsOverlayComponentParams?: any;
-
-    /** Disables the 'no rows' overlay. Default: `false` */
+    /** Disables the 'no rows' overlay from being displayed when . Default: `false` */
     suppressNoRowsOverlay?: boolean;
 
     // *** Pagination *** //
