@@ -29,6 +29,7 @@ const gridOptions: GridOptions = {
     defaultColDef: {
         minWidth: 150,
     },
+    suppressLoadingOverlay: true,
     onGridReady: (params: GridReadyEvent<TAthlete>) => {
         const column = gridOptions.columnApi?.getColumn('athleteDescription');
         if (column) {

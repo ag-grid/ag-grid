@@ -1,4 +1,17 @@
-function getData() {
+export interface TAthlete {
+    name: string;
+    medals: {
+        gold: number;
+        silver: number;
+        bronze: number;
+    },
+    person: {
+        age: number;
+        country: string;
+    },
+}
+
+export function getData(): TAthlete[] {
     return [
         {
             "name": "Michael Phelps",
