@@ -762,9 +762,7 @@ export class GridApi<TData = any> {
     
     /** Set the state of the Advanced Filter. Used for restoring Advanced Filter state */
     public setAdvancedFilterModel(advancedFilterModel: AdvancedFilterModel | null): void {
-        if (ModuleRegistry.__assertRegistered(ModuleNames.AdvancedFilterModule, 'api.setAdvancedFilterModel', this.context.getGridId())) {
-            this.filterManager.setAdvancedFilterModel(advancedFilterModel);
-        }
+        this.gos.set('advancedFilterModel', advancedFilterModel);
     }
 
     /** Enable/disable the Advanced Filter */
