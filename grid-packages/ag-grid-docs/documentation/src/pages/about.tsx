@@ -122,6 +122,11 @@ const AboutPage = () => {
                                 <p>Developer, Data Visualisation</p>
                             </div>
                             <div>
+                                <img src="../images/team/ido.jpg" alt="Ido Moshe, Developer" />
+                                <h3>Ido Moshe</h3>
+                                <p>Developer, Data Visualisation</p>
+                            </div>
+                            <div>
                                 <img src="../images/team/oli.jpg" alt="Oli Legat, Developer" />
                                 <h3>Oli Legat</h3>
                                 <p>Developer, Data Visualisation</p>
@@ -163,6 +168,11 @@ const AboutPage = () => {
                                 <img src="../images/team/mark.jpg" alt="Mark Durrant, Lead UX Designer" />
                                 <h3>Mark Durrant</h3>
                                 <p>Lead UX Designer</p>
+                            </div>
+                            <div>
+                                <img src="../images/team/james.jpg" alt="James Swinton-Bland, Developer relations lead" />
+                                <h3>James Swinton-Bland</h3>
+                                <p>Developer Relations Lead</p>
                             </div>
                         </article>
                     </section>
