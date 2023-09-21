@@ -131,9 +131,9 @@ The example below shows Auto Height. Column A has Auto Height enabled by setting
 <!-- this example uses a timeout to set data - the runner doesn't currently support this sort of thing -->
 <grid-example title='Auto Row Height' name='auto-row-height' type='generated' options=' { "enterprise": true, "modules": ["clientside", "rowgrouping", "menu", "columnpanel"] }'></grid-example>
 
-<note>
+<warning>
 Columns with Auto Height will always be rendered. The grid needs to have all Auto Height Columns rendered in order to correctly set the height of the row. Because Auto Height adds size listeners to cells and stops Column Virtualisation, consideration should be given for when and how to use it. Only apply Auto Height to columns where it makes sense. For example, if you have many columns that do not require a variable height, then do not set them to Auto Height.
-</note>
+</warning>
 
 ### Lazy Height Calculation
 
