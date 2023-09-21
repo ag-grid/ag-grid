@@ -365,7 +365,9 @@
                 "name": "Tree Data",
                 "url": "/tree-data/"
             }
-        }
+        },
+        "setGroupIncludeFooter": {},
+        "setGroupIncludeTotalFooter": {}
     },
     "rowDrag": {
         "meta": {

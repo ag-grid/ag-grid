@@ -1481,10 +1481,16 @@ export class GridApi<TData = any> {
         this.gos.set('groupDisplayType', value);
     }
 
+    /**
+     * Sets the `groupIncludeFooter` property
+     */
     public setGroupIncludeFooter(value: boolean | UseGroupFooter<TData>) {
         this.gos.set('groupIncludeFooter', value);
     }
 
+    /**
+     * Sets the `groupIncludeTotalFooter` property
+     */
     public setGroupIncludeTotalFooter(value: boolean) {
         this.gos.set('groupIncludeTotalFooter', value);
     }
