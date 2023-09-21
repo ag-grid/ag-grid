@@ -626,7 +626,7 @@ export class RowCtrl extends BeanStub {
         const pinningRight = this.beans.columnModel.isPinningRight();
 
         if (oldRowTopExists) {
-            if (this.isFullWidth()) {
+            if (this.isFullWidth() && this.gridOptionsService.is('embedFullWidthRows')) {
                 this.slideInAnimation.fullWidth = true;
                 return;
             }
@@ -636,7 +636,7 @@ export class RowCtrl extends BeanStub {
             this.slideInAnimation.left = pinningLeft;
             this.slideInAnimation.right = pinningRight;
         } else {
-            if (this.isFullWidth()) {
+            if (this.isFullWidth() && this.gridOptionsService.is('embedFullWidthRows')) {
                 this.fadeInAnimation.fullWidth = true;
                 return;
             }
