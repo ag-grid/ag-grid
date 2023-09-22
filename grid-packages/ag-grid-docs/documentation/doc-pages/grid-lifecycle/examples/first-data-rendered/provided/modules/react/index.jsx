@@ -1,12 +1,12 @@
 'use strict';
 
-import React, {Component} from 'react';
-import {createRoot} from 'react-dom/client';
-import {AgGridReact} from '@ag-grid-community/react';
+import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
+import { ModuleRegistry } from '@ag-grid-community/core';
+import { AgGridReact } from '@ag-grid-community/react';
 import '@ag-grid-community/styles/ag-grid.css';
 import "@ag-grid-community/styles/ag-theme-alpine.css";
-import {ModuleRegistry} from '@ag-grid-community/core';
-import {ClientSideRowModelModule} from '@ag-grid-community/client-side-row-model';
+import React,{ Component } from 'react';
+import { createRoot } from 'react-dom/client';
 
 // Register the required feature modules with the Grid
 ModuleRegistry.registerModules([ClientSideRowModelModule])
@@ -77,7 +77,8 @@ class GridExample extends Component {
     render() {
         return (
             <div style={{width: '100%', height: '100%'}}>
-                <div className="example-wrapper" style={{"height": "100%", "boxSizing": "border-box"}}>
+              <div className="test-container">
+                <div className="test-header">
                     <div style={{"display": "flex", "flexDirection": "column", "marginBottom": "1rem"}}>
                         <div><span style={{"fontWeight": "bold"}}>Athlete Description</span> column width:</div>
                         <div style={{ paddingLeft: "1em" }}>- On gridReady event: <span style={{"fontWeight": "bold"}}>{this.state.col1SizeInfoOnGridReady}</span></div>
@@ -92,6 +93,7 @@ class GridExample extends Component {
                     >
                         Load Grid Data
                     </button>
+                    </div>
                     <div
                         style={{
                             height: '100%',

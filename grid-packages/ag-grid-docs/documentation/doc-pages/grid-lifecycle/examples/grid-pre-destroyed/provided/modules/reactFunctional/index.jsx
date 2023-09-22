@@ -97,7 +97,8 @@ const GridExample = () => {
 
     return (
         <div style={containerStyle}>
-            <div style={{"height": "100%"}} className="example-wrapper">
+            <div className="test-container">
+                <div className="test-header">
                 {gridVisible && (
                     <div id="exampleButtons" style={{"marginBottom": "1rem"}}>
                         <button onClick={() => updateColumnWidth()}>Change Columns Width</button>
@@ -118,6 +119,7 @@ const GridExample = () => {
                         <button onClick={() => reloadGrid()}>Reload Grid</button>
                     </div>
                 )}
+                </div>
                 <div style={{"height": "100%", "boxSizing": "border-box"}}>
                     <div
                         style={{

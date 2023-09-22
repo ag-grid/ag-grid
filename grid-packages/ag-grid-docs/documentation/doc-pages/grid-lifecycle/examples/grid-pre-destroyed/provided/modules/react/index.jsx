@@ -100,7 +100,8 @@ class GridExample extends Component {
         const { gridVisible, columnsWidthOnPreDestroyed } = this.state;
         return (
             <div style={{width: '100%', height: '100%'}}>
-                <div style={{"height": "100%"}} className="example-wrapper">
+              <div className="test-container">
+                <div className="test-header">
                     {gridVisible && (
                         <div id="exampleButtons" style={{"marginBottom": "1rem"}}>
                             <button onClick={() => this.updateColumnWidth()}>Change Columns Width</button>
@@ -121,6 +122,7 @@ class GridExample extends Component {
                             <button onClick={() => this.reloadGrid()}>Reload Grid</button>
                         </div>
                     )}
+                    </div>
                     <div style={{"height": "100%", "boxSizing": "border-box"}}>
                         <div
                             style={{

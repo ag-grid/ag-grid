@@ -69,13 +69,15 @@ const GridExample = () => {
 
     return (
         <div style={containerStyle}>
-            <div className="example-wrapper" style={{"height": "100%", "boxSizing": "border-box"}}>
-                <div style={{"display": "flex", "flexDirection": "column", "marginBottom": "1rem"}}>
-                    <div><span style={{"fontWeight": "bold"}}>Athlete Description</span> column width:</div>
-                    <div style={{ paddingLeft: "1em" }}>- On gridReady event: <span style={{"fontWeight": "bold"}}>{col1SizeInfoOnGridReady}</span></div>
-                    <div style={{ paddingLeft: "1em" }}>- On firstDataRendered event: <span style={{"fontWeight": "bold"}}>{col1SizeInfOnFirstDataRendered}</span></div>
+              <div className="test-container">
+                <div className="test-header">
+                    <div style={{"display": "flex", "flexDirection": "column", "marginBottom": "1rem"}}>
+                        <div><span style={{"fontWeight": "bold"}}>Athlete Description</span> column width:</div>
+                        <div style={{ paddingLeft: "1em" }}>- On gridReady event: <span style={{"fontWeight": "bold"}}>{col1SizeInfoOnGridReady}</span></div>
+                        <div style={{ paddingLeft: "1em" }}>- On firstDataRendered event: <span style={{"fontWeight": "bold"}}>{col1SizeInfOnFirstDataRendered}</span></div>
+                    </div>
+                    <button id="loadGridDataButton" onClick={loadGridData} style={{"marginBottom": "1rem"}}>Load Grid Data</button>
                 </div>
-                <button id="loadGridDataButton" onClick={loadGridData} style={{"marginBottom": "1rem"}}>Load Grid Data</button>
                 <div style={gridStyle} className="ag-theme-alpine">
                     <AgGridReact
                         columnDefs={columnDefs}
