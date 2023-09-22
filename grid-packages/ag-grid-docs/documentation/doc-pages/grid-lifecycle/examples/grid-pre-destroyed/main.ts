@@ -73,7 +73,6 @@ function destroyGrid() {
     }
 
     gridOptions.api.destroy();
-    columnWidths = undefined;
 }
 
 function reloadGrid() {
@@ -86,18 +85,17 @@ function reloadGrid() {
                 ...colDef,
             };
 
-            if (colDef.field || colDef.width) {
-                const width = colDef.field ? columnWidths?.get(colDef.field) : undefined
-                result.width = typeof width === 'number' ? width : colDef.width;
+            const restoredWidth = columnWidths?.get(colDef.field);
+            if (restoredWidth) {
+                result.width = restoredWidth;
             }
 
             return result;
         }) : gridOptions.columnDefs;
 
-    new Grid(gridDiv, {
-        ...gridOptions,
-        columnDefs: updatedColDefs || gridOptions.columnDefs || []
-    });
+    gridOptions.columnDefs = updatedColDefs;
+
+    new Grid(gridDiv, gridOptions);
 
     const parentContainer = document.querySelector<HTMLElement>('#gridPreDestroyedState');
     parentContainer!.style.display = 'none';
