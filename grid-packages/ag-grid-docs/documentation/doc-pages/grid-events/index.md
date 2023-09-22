@@ -2,7 +2,7 @@
 title: "Grid Events"
 ---
 
-This is a list of the events that the grid raises.
+This is a list of all the events that the grid raises.
 
 <framework-specific-section frameworks="javascript">
 |You register callbacks for these events through the `GridOptions` interface.
