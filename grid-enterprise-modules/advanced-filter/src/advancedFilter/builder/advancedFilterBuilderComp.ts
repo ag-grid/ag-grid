@@ -47,8 +47,8 @@ export class AdvancedFilterBuilderComp extends Component {
     constructor() {
         super(/* html */ `
             <div role="presentation" class="ag-advanced-filter-builder" tabindex="-1">
-                <div class="ag-advanced-filter-builder-list" ref="eList"></div>
-                <div class="ag-advanced-filter-builder-button-panel">
+                <div role="presentation" class="ag-advanced-filter-builder-list" ref="eList"></div>
+                <div role="presentation" class="ag-advanced-filter-builder-button-panel">
                     <button class="ag-button ag-standard-button ag-advanced-filter-builder-apply-button" ref="eApplyFilterButton"></button>
                     <button class="ag-button ag-standard-button ag-advanced-filter-builder-cancel-button" ref="eCancelFilterButton"></button>
                 </div>
@@ -96,7 +96,7 @@ export class AdvancedFilterBuilderComp extends Component {
     }
 
     public afterGuiAttached(): void {
-        this.getFocusableElement().focus();
+        this.virtualList.focusRow(0);
     }
 
     private setupVirtualList(): void {

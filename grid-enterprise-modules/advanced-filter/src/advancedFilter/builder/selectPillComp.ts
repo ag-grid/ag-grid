@@ -26,6 +26,16 @@ export class SelectPillComp extends AgRichSelect<AutocompleteEntry> {
         return this.eWrapper;
     }
 
+    public showPicker(): void {
+        // avoid focus handling issues with multiple rich selects
+        setTimeout(() => super.showPicker());
+    }
+
+    public hidePicker(): void {
+        // avoid focus handling issues with multiple rich selects
+        setTimeout(() => super.hidePicker());
+    }
+
     protected postConstruct(): void {
         super.postConstruct();
 
