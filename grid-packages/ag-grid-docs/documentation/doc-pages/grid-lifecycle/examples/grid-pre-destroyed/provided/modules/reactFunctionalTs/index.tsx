@@ -7,12 +7,7 @@ import '@ag-grid-community/styles/ag-grid.css';
 import '@ag-grid-community/styles/ag-theme-alpine.css';
 import {ModuleRegistry} from '@ag-grid-community/core';
 import {ClientSideRowModelModule} from '@ag-grid-community/client-side-row-model';
-import {
-    ColDef,
-    ColumnApi,
-    GridPreDestroyedEvent,
-    GridReadyEvent
-} from '@ag-grid-community/core';
+import { ColDef, ColumnApi, GridPreDestroyedEvent, GridReadyEvent } from '@ag-grid-community/core';
 
 import {TAthlete, getDataSet} from './data';
 

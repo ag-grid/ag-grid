@@ -1,4 +1,4 @@
-import { Grid, GridApi, ColumnApi, GridOptions, GridReadyEvent, FirstDataRenderedEvent, ValueGetterParams } from '@ag-grid-community/core';
+import { Grid, GridOptions, GridReadyEvent, FirstDataRenderedEvent, ValueGetterParams } from '@ag-grid-community/core';
 
 import { getData, TAthlete } from './data';
 
