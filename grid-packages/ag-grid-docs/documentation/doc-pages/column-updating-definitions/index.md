@@ -26,12 +26,8 @@ if the column still exists after the new definitions are applied. For example tr
 
 ## Updating Column Definitions {#changing-column-definition}
 
-The majority of column definition properties can be updated. For example if you want to change the Header Name of a column, you
+All properties of a column definition can be updated. For example if you want to change the Header Name of a column, you
 update the `headerName` on the Column Definition and then set the list of Column Definitions into the grid again.
-
-<note>
-`rowDrag` is an exception – currently it is not reactive. Modifying this property after the grid is set won't take effect, the column definitions will not refresh. 
-</note> 
 
 It is not possible to update the Column Definition of just one column in isolation. Only a new set of Column Definitions
 can be applied.
