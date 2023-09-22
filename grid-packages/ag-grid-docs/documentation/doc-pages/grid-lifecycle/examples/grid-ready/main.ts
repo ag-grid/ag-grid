@@ -1,6 +1,5 @@
-import { Grid, GridOptions, GridReadyEvent } from '@ag-grid-community/core';
-
-import { getData, TAthlete } from './data';
+import { Grid,GridOptions,GridReadyEvent } from '@ag-grid-community/core';
+import { getData,TAthlete } from './data';
 
 const gridOptions: GridOptions = {
     columnDefs: [
@@ -27,12 +26,15 @@ const gridOptions: GridOptions = {
 };
 
 function reloadGrid() {
-    if (gridOptions.api) {
-        gridOptions.api.destroy();
-    }
+  if (gridOptions.api) {
+    gridOptions.api.destroy()
+  }
 
-    const gridDiv = document.querySelector<HTMLElement>('#myGrid')!;
-    new Grid(gridDiv, gridOptions);
+  setTimeout(() => {
+    // Artificial delay to show grid being destroyed and re-created
+    const gridDiv = document.querySelector<HTMLElement>("#myGrid")!
+    new Grid(gridDiv, gridOptions)
+  }, 500)
 }
 
 const gridDiv = document.querySelector<HTMLElement>('#myGrid')!;

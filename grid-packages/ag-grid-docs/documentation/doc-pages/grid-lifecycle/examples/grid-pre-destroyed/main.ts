@@ -46,7 +46,7 @@ const displayColumnsWidth = (values: ColumnWidth[]) => {
     }
 
     const html = '<ul>'
-        + (values || []).map(value => `<li>Field: ${value.field} | Wdith: ${value.width}px</li>`).join('')
+        + (values || []).map(value => `<li>Field: ${value.field} | Width: ${value.width}px</li>`).join('')
         + '</ul>';
 
     parentContainer.style.display = 'block';

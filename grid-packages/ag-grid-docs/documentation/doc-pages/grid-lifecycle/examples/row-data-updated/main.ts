@@ -1,5 +1,4 @@
 import { Grid, GridOptions, FirstDataRenderedEvent, RowDataUpdatedEvent } from '@ag-grid-community/core';
-
 import { getDataSetA, getDataSetB, TAthlete } from './data';
 
 const updateRowCount = (value?: string | number) => {
