@@ -27,7 +27,7 @@ const gridOptions: GridOptions<IOlympicDataWithId> = {
   // fetch 10 rows at a time (default is 100)
   cacheBlockSize: 50,
 
-  // only keep 4 blocks of rows (default is keep all rows)
+  // only keep 2 blocks of rows (default is keep all rows)
   maxBlocksInCache: 2,
 }
 

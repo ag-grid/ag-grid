@@ -21,7 +21,18 @@ The example below demonstrates using the different buttons. It also demonstrates
 - The **Athlete** and **Age** columns have filters with Apply and Reset buttons, but different orders.
 - The **Country** column has a filter with Apply and Clear buttons.
 - The **Year** column has a filter with Apply and Cancel buttons.
-- The **Age** and **Year** columns have `closeOnApply` set to `true`, so the filter popup will be closed immediately when the filter is applied, reset or cancelled. Pressing <kbd>Enter</kbd> will also apply the filter and close the popup.
+- The **Age** and **Year** columns have `closeOnApply` set to `true`, so the filter popup will be closed immediately when the filter is applied or cancelled. Pressing <kbd>Enter</kbd> will also apply the filter and close the popup.
+- In the **Age** column, Reset will close the filter popup due to the presence of Apply button. 
+
+The expected behaviour when closing the filter popup:
+
+- Apply closes popup only when `closeOnApply` set to `true`.
+- Reset closes popup only when `closeOnApply` set to `true` and Apply button is present.
+- Cancel closes popup only when `closeOnApply `set to `true`.
+- Clear never closes popup.
+
+Note the following about  filter events:
+
 - `onFilterOpened` is called when the filter is opened.
 - `onFilterModified` is called when the filter changes regardless of whether the Apply button is present.
 - `onFilterChanged` is called only after a new filter is applied.

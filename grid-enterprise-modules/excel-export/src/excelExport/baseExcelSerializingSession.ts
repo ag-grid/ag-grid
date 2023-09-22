@@ -296,7 +296,7 @@ export abstract class BaseExcelSerializingSession<T> extends BaseGridSerializing
                 skipCols = colSpan - 1;
                 currentCells.push(this.createMergedCell(excelStyleId, this.getDataTypeForValue(valueForCell), valueForCell, colSpan - 1));
             } else {
-                currentCells.push(this.createCell(excelStyleId, this.getDataTypeForValue(valueFormatted ?? valueForCell), valueForCell, valueFormatted));
+                currentCells.push(this.createCell(excelStyleId, this.getDataTypeForValue(valueForCell), valueForCell, valueFormatted));
             }
         };
     }

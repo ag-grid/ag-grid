@@ -30,6 +30,7 @@ export const ADVANCED_FILTER_LOCALE_TEXT = {
     advancedFilterAnd: 'AND',
     advancedFilterOr: 'OR',
     advancedFilterApply: 'Apply',
+    advancedFilterBuilder: 'Builder',
     advancedFilterValidationMissingColumn: 'Column is missing',
     advancedFilterValidationMissingOption: 'Option is missing',
     advancedFilterValidationMissingValue: 'Value is missing',

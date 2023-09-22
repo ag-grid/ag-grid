@@ -303,16 +303,19 @@ export const openCodeSandbox = (exampleInfo) => {
         }
 
         const getPathForFile = file => {
-            if(!isFrameworkReact()) {
+            if (!isFrameworkReact()) {
                 return file;
             }
 
-            if(file === 'index.html') {
+            if (file === 'index.html') {
                 return `public/index.html`
             }
 
-            if(/([a-zA-Z0-9\\s_.])+(.js|.jsx|.tsx|.ts|.css)$/.test(file)) {
-                return `src/${file.replace('.jsx', '.js')}`;
+            if (/([a-zA-Z0-9\\s_.])+(.js|.jsx|.tsx|.ts|.css)$/.test(file)) {
+                if(file === 'index.jsx') {
+                    return `src/index.js`
+                }
+                return `src/${file}`;
             }
 
             return file;

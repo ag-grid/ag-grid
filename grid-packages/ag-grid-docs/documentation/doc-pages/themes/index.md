@@ -101,6 +101,10 @@ The majority of users select a provided theme and [make customisations using CSS
 
 A theme is simply a CSS class name matching the pattern `ag-theme-*`, along with CSS rules that target this class name.
 
+<warning>
+If you create your own theme, it's name has to follow the `ag-theme-*` naming convention, otherwise styles will not be applied to floating elements (eg. context menus) properly.
+</warning>
+
 Ensure that `ag-grid.css` is loaded, choose a theme name and apply it to the grid:
 
 ```html
