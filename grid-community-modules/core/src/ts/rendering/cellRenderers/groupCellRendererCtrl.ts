@@ -586,7 +586,8 @@ export class GroupCellRendererCtrl extends BeanStub {
 
         // compensation padding for leaf nodes, so there is blank space instead of the expand icon
         const pivotMode = columnModel.isPivotMode();
-        const pivotModeAndLeafGroup = pivotMode && displayedGroup.leafGroup;
+        const hideOpenParents = this.gridOptionsService.is('groupHideOpenParents');
+        const pivotModeAndLeafGroup = pivotMode && (displayedGroup.leafGroup || (hideOpenParents && !isExpandable));
         const addExpandableCss = isExpandable && !pivotModeAndLeafGroup;
         const isTotalFooterNode = node.footer && node.level === -1;
 
@@ -595,9 +596,7 @@ export class GroupCellRendererCtrl extends BeanStub {
 
         if (pivotMode) {
             this.comp.addOrRemoveCssClass('ag-pivot-leaf-group', pivotModeAndLeafGroup);
-        }
-        
-        if (!isTotalFooterNode) {
+        } else if (!isTotalFooterNode) {
             this.comp.addOrRemoveCssClass('ag-row-group-leaf-indent', !addExpandableCss);
         }
     }

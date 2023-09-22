@@ -18,6 +18,10 @@
         .ag-row-group-indent-#{$i} {
             @include ag.unthemed-rtl(( padding-left: calc(#{$i} * var(--ag-row-group-indent-size)) ));
         }
+
+        .ag-row-level-#{$i} .ag-pivot-leaf-group {
+            @include ag.unthemed-rtl(( margin-left: var(--ag-row-group-indent-size) ));
+        }
     }
 
     .ag-row-group-leaf-indent {
