@@ -2,24 +2,23 @@
 title: "Grid Lifecycle"
 ---
 
-AG Grid fires lifecycle events to enable applications to run code at key moments in the grid's lifecycle. For example: at initialization, first data rendered, data updated and destruction.
+This section covers some common lifecycle events that are raised after grid initialisation, data updates, and before the 
+grid is destroyed.
 
-This guide focuses on the most commonly used lifecycle events.
-For a complete list of all available grid events, visit [Grid Events](/grid-events/) documentation page.
+<note>
+The events on this page are listed in the order they are raised. For a full list.
+</note>
 
 ## Grid Ready
 
-The first event fired is `gridReady` which signals the grid has initialised and is ready for api calls. This doesn't mean that the grid has fully rendered on the screen yet.
+The `gridReady` event fires upon grid initialisation but the grid may not be fully rendered.
 
-### Use Cases
+**Common Uses:**
+- Customising Grid via API calls.
+- Event listener setup.
+- Grid-dependent setup code.
 
-* Calling api methods to customize the grid
-* Setting up event listeners
-* Running setup code that requires the grid to be initialized
-
-### Example
-
-In this example, the `gridReady` event retrieves a users pinning preference and applies it before the data is rendered.
+In this example, `gridReady` applies user pinning preferences before rendering data.
 
 <grid-example title='Using Grid Ready Event' name='grid-ready' type='mixed'></grid-example>
 
@@ -27,56 +26,44 @@ In this example, the `gridReady` event retrieves a users pinning preference and 
 
 The `firstDataRendered` event fires the first time data is rendered into the grid.
 
-### Use Cases
+**Common Uses:**
+- Resizing Columns
+- Execute row-based logic.
+- Hiding loaders.
+- Capture post-render stats.
 
-* Hiding loaders or placeholders once grid data is displayed
-* Capturing grid state only available post-render (e.g. auto-calculated column widths)
-* Running logic requiring the grid rows to be rendered
-
-### Example
-
-This example demonstrates using `firstDataRendered` to capture auto-calculated column widths.
-
-Click the __Load Grid Data__ button, the first column width is calculated based on the loaded data. We use the `firstDataRendered` event to capture the new column width and display it in the UI.
+This example demonstrates using `firstDataRendered` to capture auto-calculated column widths. Click "Load Grid Data" 
+to calculate the first column's width.
 
 <grid-example title='Using Grid Ready Event' name='first-data-rendered' type='mixed'></grid-example>
 
 ## Row Data Updated
 
-The `rowDataUpdated` event fires when the client has updated data for the grid either by setting new Row Data or by applying a Row Transaction.
+The `rowDataUpdated` event fires when the grid's data changes, by setting [Updating Row Data](/data-update-row-data/) or
+by applying [Transaction Updates](/data-update-transactions/). In the [Server Side Row Model](/server-side-model), use
+the [Model Updated Event](/grid-events/model-updated/) instead.
 
-This is only triggered when the client uses the [Client Side](/client-side-model/) row model.
-For the [Server Side](/server-side-model/) row model, use the [Model Updated](/grid-events/model-updated/) event instead.
+**Common Uses:**
 
-### Use Cases
+- Refreshing related UI elements on data changes.
+- Triggering calculations or application logic based on data changes.
+- Broadcasting data changes to other parts of the app.
 
-* Refreshing other UI components to reflect the new data
-* Triggering calculations or application logic based on data changes
-* Broadcasting data changes to other parts of the app
-
-### Example
-
-This example demonstrates using `rowDataUpdated` to update another component when grid data changes.
+In this example, `rowDataUpdated` refreshes another component when the grid's data changes.
 
 <grid-example title='Using Grid Ready Event' name='row-data-updated' type='mixed'></grid-example>
 
 ## Grid Pre-Destroyed
 
-The `gridPreDestroyed` event is invoked immediately before the grid is destroyed and removed from the DOM.
+The `gridPreDestroyed` event fires just before the grid is destroyed and is removed from the DOM.
 
-### Use Cases
+**Common Uses:**
 
-* Cleaning up resources or state used by the grid, like removing event listeners.
-* Capturing final grid state before destroy, if needed for persistence or recovery.
-* Tearing down integrations with other libraries.
+- Clean up resources.
+- Save grid state.
+- Disconnect other libraries.
 
-### Example
-
-In this example, column widths can be edited by users either by resizing columns directly or clicking
-the `Change Columns Width` button.
-
-When the grid is destroyed, the `gridPreDestroyed` callback captures the current column widths for future use.
-When the grid is re-created using the __Reload Grid__ button, the column widths are restored to their previous values.
+In this example, `gridPreDestroyed` saves column widths before destruction and are restored when reloaded.
 
 <grid-example title='Using Grid Ready Event' name='grid-pre-destroyed' type='mixed'></grid-example>
 
