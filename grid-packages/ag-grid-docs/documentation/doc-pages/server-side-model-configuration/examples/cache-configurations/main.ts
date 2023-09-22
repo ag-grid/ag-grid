@@ -24,7 +24,7 @@ const gridOptions: GridOptions<IOlympicDataWithId> = {
   // use the server-side row model
   rowModelType: 'serverSide',
 
-  // fetch 10 rows at a time (default is 100)
+  // fetch 50 rows at a time (default is 100)
   cacheBlockSize: 50,
 
   // only keep 2 blocks of rows (default is keep all rows)
