@@ -92,6 +92,7 @@ const HeaderLinks = ({ path, isOpen, toggleIsOpen }) => {
 
 const HeaderExpandButton = ({ isOpen, toggleIsOpen }) => (
     <button
+        id="header-expand-button"
         className={styles.mobileMenuButton}
         type="button"
         aria-controls={styles.mainNav}

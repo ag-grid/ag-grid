@@ -49,6 +49,17 @@ export const onRenderBody = ({setPostBodyComponents}) => {
                     offset: function() { return ${scrollOffset}; }
                 });`
         }}/>,
+        <script dangerouslySetInnerHTML={{
+            __html: `
+            document.addEventListener("DOMContentLoaded", (event) => {
+                console.log('loaded', document.querySelector("#header-expand-button"));
+                document.querySelector("#header-expand-button").addEventListener('click', function() {
+                    alert('blah');
+                }, false);
+            });
+            
+            `}}>
+        </script>
     ]);
 };
 
