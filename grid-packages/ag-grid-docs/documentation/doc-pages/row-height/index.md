@@ -131,6 +131,10 @@ The example below shows Auto Height. Column A has Auto Height enabled by setting
 <!-- this example uses a timeout to set data - the runner doesn't currently support this sort of thing -->
 <grid-example title='Auto Row Height' name='auto-row-height' type='generated' options=' { "enterprise": true, "modules": ["clientside", "rowgrouping", "menu", "columnpanel"] }'></grid-example>
 
+<warning>
+Columns with Auto Height will always be rendered. The grid needs to have all Auto Height Columns rendered in order to correctly set the height of the row. Because Auto Height adds size listeners to cells and stops Column Virtualisation, consideration should be given for when and how to use it. Only apply Auto Height to columns where it makes sense. For example, if you have many columns that do not require a variable height, then do not set them to Auto Height.
+</warning>
+
 ### Lazy Height Calculation
 
 Auto Height works by the grid listening for height changes for all Cells configured for Auto Height.
@@ -144,15 +148,6 @@ This means the row heights and row positions are changing as the grid is scrolli
 -  If scrolling up and showing rows for the first time (e.g. the user jumps to the bottom scroll position and then starts slowly scrolling up), then the row positions will jump as the rows coming into view at the top will get resized and the new height will impact the position of all rows beneath it. For example if the row gets resized to be 10 pixels taller, rows below it will get pushed down by 10 rows. If scrolling down this isn't observed as rows below are not in view.
 
 The above are results of Lazy Height Calculation. It is not possible to avoid these effects.
-
-### Auto Height and Column Virtualisation
-
-Columns with Auto Height will always be rendered. The grid needs to have all Auto Height Columns rendered in order to correctly set the height of the row.
-
-### Auto Height Performance Consideration
-
-Because Auto Height adds size listeners to cells and stops Column Virtualisation, consideration should be given for when and how to use it. Only apply Auto Height to columns where it makes sense. For example, if you have many columns that do not require a variable height, then do not set them to Auto Height.
-
 
 ## Height for Pinned Rows
 

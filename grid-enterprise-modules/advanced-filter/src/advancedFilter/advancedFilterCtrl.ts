@@ -101,8 +101,7 @@ export class AdvancedFilterCtrl extends BeanStub implements IAdvancedFilterCtrl 
 
         this.setInputDisabled(true);
 
-        const { width, height } = this.getBuilderDialogSize();
-        const minWidth = this.gridOptionsService.get('advancedFilterBuilderParams')?.minWidth ?? 500;
+        const { width, height, minWidth } = this.getBuilderDialogSize();
 
         this.eBuilderComp = this.createBean(new AdvancedFilterBuilderComp());
         this.eBuilderDialog = this.createBean(new AgDialog({
@@ -143,15 +142,16 @@ export class AdvancedFilterCtrl extends BeanStub implements IAdvancedFilterCtrl 
         this.eventService.dispatchEvent(event);
     }
 
-    private getBuilderDialogSize(): { width: number, height: number; } {
+    private getBuilderDialogSize(): { width: number, height: number, minWidth: number } {
+        const minWidth = this.gridOptionsService.get('advancedFilterBuilderParams')?.minWidth ?? 500;
         const popupParent = this.popupService.getPopupParent();
-        const maxWidth = Math.round(_.getAbsoluteWidth(popupParent));
-        const maxHeight = Math.round(_.getAbsoluteHeight(popupParent) * 0.75);
+        const maxWidth = Math.round(_.getAbsoluteWidth(popupParent)) - 2; // assume 1 pixel border
+        const maxHeight = Math.round(_.getAbsoluteHeight(popupParent) * 0.75) - 2;
 
-        const width = Math.min(600, maxWidth);
+        const width = Math.min(Math.max(600, minWidth), maxWidth);
         const height = Math.min(600, maxHeight);
 
-        return { width, height };
+        return { width, height, minWidth };
     }
 
     private onEnabledChanged(enabled: boolean): void {

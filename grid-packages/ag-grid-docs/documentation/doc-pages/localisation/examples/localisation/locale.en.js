@@ -74,6 +74,7 @@ const AG_GRID_LOCALE_EN = {
     advancedFilterAnd: 'AND',
     advancedFilterOr: 'OR',
     advancedFilterApply: 'Apply',
+    advancedFilterBuilder: 'Builder',
     advancedFilterValidationMissingColumn: 'Column is missing',
     advancedFilterValidationMissingOption: 'Option is missing',
     advancedFilterValidationMissingValue: 'Value is missing',

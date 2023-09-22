@@ -479,6 +479,10 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
          * Default: `false`
          */
     @Input() public includeHiddenColumnsInQuickFilter: boolean | undefined = undefined;
+    /** Changes how the Quick Filter splits the Quick Filter text into search terms.     */
+    @Input() public quickFilterParser: ((quickFilter: string) => string[]) | undefined = undefined;
+    /** Changes the matching logic for whether a row passes the Quick Filter.     */
+    @Input() public quickFilterMatcher: ((quickFilterParts: string[], rowQuickFilterAggregateText: string) => boolean) | undefined = undefined;
     /** Set to `true` to override the default tree data filtering behaviour to instead exclude child nodes from filter results. Default: `false`     */
     @Input() public excludeChildrenWhenTreeDataFiltering: boolean | undefined = undefined;
     /** Set to true to enable the Advanced Filter. Default: `false`     */
@@ -494,6 +498,8 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
          * Set to `null` or `undefined` to appear inside the grid.
          */
     @Input() public advancedFilterParent: HTMLElement | null | undefined = undefined;
+    /** Customise the parameters passed to the Advanced Filter Builder.     */
+    @Input() public advancedFilterBuilderParams: IAdvancedFilterBuilderParams | undefined = undefined;
     /** Set to `true` to Enable Charts. Default: `false`     */
     @Input() public enableCharts: boolean | undefined = undefined;
     /** The list of chart themes that a user can chose from in the chart settings panel.
@@ -553,7 +559,7 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     @Input() public valueCacheNeverExpires: boolean | undefined = undefined;
     /** Set to `true` to allow cell expressions. Default: `false`     */
     @Input() public enableCellExpressions: boolean | undefined = undefined;
-    /** If `true`, row nodes do not have their parents set.
+    /** @deprecated v30.2 If `true`, row nodes do not have their parents set.
          * The grid doesn't use the parent reference, but it is included to help the client code navigate the node tree if it wants by providing bi-direction navigation up and down the tree.
          * If this is a problem (e.g. if you need to convert the tree to JSON, which does not allow cyclic dependencies) then set this to `true`.
          * Default: `false`
@@ -1094,6 +1100,8 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     @Output() public filterChanged: EventEmitter<FilterChangedEvent<TData>> = new EventEmitter<FilterChangedEvent<TData>>();
     /** Filter was modified but not applied. Used when filters have 'Apply' buttons.     */
     @Output() public filterModified: EventEmitter<FilterModifiedEvent<TData>> = new EventEmitter<FilterModifiedEvent<TData>>();
+    /** Advanced Filter Builder visibility has changed (opened or closed).     */
+    @Output() public advancedFilterBuilderVisibleChanged: EventEmitter<AdvancedFilterBuilderVisibleChangedEvent<TData>> = new EventEmitter<AdvancedFilterBuilderVisibleChangedEvent<TData>>();
     /** A chart has been created.     */
     @Output() public chartCreated: EventEmitter<ChartCreated<TData>> = new EventEmitter<ChartCreated<TData>>();
     /** The data range for the chart has been changed.     */

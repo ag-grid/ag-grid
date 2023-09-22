@@ -232,6 +232,7 @@ export class GridOptionsValidator {
         excludeHiddenColumnsFromQuickFilter: { version: '30', message: 'Hidden columns are now excluded from the Quick Filter by default. This can be toggled using `includeHiddenColumnsInQuickFilter`.' },
         enterMovesDown: { version: '30', newProp: 'enterNavigatesVertically', copyToNewProp: true },
         enterMovesDownAfterEdit: { version: '30', newProp: 'enterNavigatesVerticallyAfterEdit', copyToNewProp: true },
+        suppressParentsInRowNodes: { version: '30.2', message: 'Using suppressParentsInRowNodes is no longer recommended. To serialize nodes it is now recommended to instead remove the parent node reference before serialization.'},
     }
 
     private checkForDeprecated() {

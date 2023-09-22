@@ -318,6 +318,10 @@ export interface GridOptions<TData = any> {
      * Default: `false`
      */
     includeHiddenColumnsInQuickFilter?: boolean;
+    /** Changes how the Quick Filter splits the Quick Filter text into search terms. */
+    quickFilterParser?: (quickFilter: string) => string[];
+    /** Changes the matching logic for whether a row passes the Quick Filter. */
+    quickFilterMatcher?: (quickFilterParts: string[], rowQuickFilterAggregateText: string) => boolean;
     /** Set to `true` to override the default tree data filtering behaviour to instead exclude child nodes from filter results. Default: `false` */
     excludeChildrenWhenTreeDataFiltering?: boolean;
     /** Set to true to enable the Advanced Filter. Default: `false` */
@@ -415,7 +419,7 @@ export interface GridOptions<TData = any> {
     /** Set to `true` to allow cell expressions. Default: `false` */
     enableCellExpressions?: boolean;
     /**
-     * If `true`, row nodes do not have their parents set.
+     * @deprecated v30.2 If `true`, row nodes do not have their parents set.
      * The grid doesn't use the parent reference, but it is included to help the client code navigate the node tree if it wants by providing bi-direction navigation up and down the tree.
      * If this is a problem (e.g. if you need to convert the tree to JSON, which does not allow cyclic dependencies) then set this to `true`.
      * Default: `false`

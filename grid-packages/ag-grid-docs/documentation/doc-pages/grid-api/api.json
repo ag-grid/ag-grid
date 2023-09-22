@@ -202,6 +202,18 @@
                 "url": "/filter-quick/#include-hidden-columns"
             }
         },
+        "setQuickFilterParser": {
+            "more": {
+                "name": "Quick Filter Parser",
+                "url": "/filter-quick/#quick-filter-parser"
+            }
+        },
+        "setQuickFilterMatcher": {
+            "more": {
+                "name": "Quick Filter Matcher",
+                "url": "/filter-quick/#quick-filter-matcher"
+            }
+        },
         "isColumnFilterPresent": {},
         "isAnyFilterPresent": {},
         "getFilterInstance": {
@@ -353,7 +365,9 @@
                 "name": "Tree Data",
                 "url": "/tree-data/"
             }
-        }
+        },
+        "setGroupIncludeFooter": {},
+        "setGroupIncludeTotalFooter": {}
     },
     "rowDrag": {
         "meta": {

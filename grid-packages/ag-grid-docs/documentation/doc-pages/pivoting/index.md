@@ -356,7 +356,7 @@ To display the pivot panel set `pivotPanelShow` as shown below:
 |  }
 </snippet>
 
-In the snippet above, the Pivot Panel is configured so that is `'always'` displayed. To only display the Pivot
+In the snippet above, the Pivot Panel is configured so that it is `'always'` displayed. To only display the Pivot
 Panel when pivoting is active use: `'onlyWhenPivoting'`.
 
 This is demonstrated in the following example, note the following:

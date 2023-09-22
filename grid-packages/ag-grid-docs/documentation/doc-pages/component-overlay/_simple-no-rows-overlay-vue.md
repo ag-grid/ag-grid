@@ -6,7 +6,7 @@
 <snippet transform={false}>
 |const MyOverlay = {
 |    template: `
-|        &lt;div class="ag-overlay-loading-center" style="background-color: lightcoral;">
+|        &lt;div class="ag-overlay-loading-center" style="background-color: #b4bebe;">
 |            &lt;i class="far fa-frown"> {{params.noRowsMessageFunc()}}&lt;/i>
 |        &lt;/div>
 |    `

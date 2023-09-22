@@ -328,6 +328,18 @@
                 "url": "/filter-quick/#include-hidden-columns"
             }
         },
+        "quickFilterParser": {
+            "more": {
+                "name": "Quick Filter Parser",
+                "url": "/filter-quick/#quick-filter-parser"
+            }
+        },
+        "quickFilterMatcher": {
+            "more": {
+                "name": "Quick Filter Matcher",
+                "url": "/filter-quick/#quick-filter-matcher"
+            }
+        },
         "isExternalFilterPresent": {
             "more": {
                 "name": "External Filter",
@@ -564,7 +576,6 @@
             }
         },
         "getDocument": {},
-        "suppressParentsInRowNodes": {},
         "suppressTouch": {
             "more": {
                 "name": "Touch Support",

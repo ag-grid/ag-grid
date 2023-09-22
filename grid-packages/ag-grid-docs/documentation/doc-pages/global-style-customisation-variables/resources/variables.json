@@ -432,6 +432,22 @@
     "--ag-popup-shadow": {
       "description": "override the shadow for popups - cards that contain complex UI, like menus and charts",
       "type": "CSS box-shadow value (e.g. `0 5px 10px black`)"
+    },
+    "--ag-advanced-filter-join-pill-color": {
+      "description": "Colour of the join operator pills in the Advanced Filter Builder",
+      "type": "CSS color (e.g. `red` or `#fff`)"
+    },
+    "--ag-advanced-filter-column-pill-color": {
+      "description": "Colour of the column pills in the Advanced Filter Builder",
+      "type": "CSS color (e.g. `red` or `#fff`)"
+    },
+    "--ag-advanced-filter-option-pill-color": {
+      "description": "Colour of the filter option pills in the Advanced Filter Builder",
+      "type": "CSS color (e.g. `red` or `#fff`)"
+    },
+    "--ag-advanced-filter-value-pill-color": {
+      "description": "Colour of the value pills in the Advanced Filter Builder",
+      "type": "CSS color (e.g. `red` or `#fff`)"
     }
   }
 }

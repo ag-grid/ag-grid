@@ -736,6 +736,22 @@ export class GridApi<TData = any> {
         this.gos.set('includeHiddenColumnsInQuickFilter', value);
     }
 
+    /**
+     * Updates the `quickFilterParser` grid option,
+     * which changes how the Quick Filter splits the Quick Filter text into search terms.
+     */
+    public setQuickFilterParser(quickFilterParser?: (quickFilter: string) => string[]): void {
+        this.gos.set('quickFilterParser', quickFilterParser);
+    }
+
+    /**
+     * Updates the `quickFilterMatcher` grid option,
+     * which changes the matching logic for whether a row passes the Quick Filter.
+     */
+    public setQuickFilterMatcher(quickFilterMatcher?: (quickFilterParts: string[], rowQuickFilterAggregateText: string) => boolean): void {
+        this.gos.set('quickFilterMatcher', quickFilterMatcher);
+    }
+
     /** Get the state of the Advanced Filter. Used for saving Advanced Filter state */
     public getAdvancedFilterModel(): AdvancedFilterModel | null {
         if (ModuleRegistry.__assertRegistered(ModuleNames.AdvancedFilterModule, 'api.getAdvancedFilterModel', this.context.getGridId())) {
@@ -746,9 +762,7 @@ export class GridApi<TData = any> {
     
     /** Set the state of the Advanced Filter. Used for restoring Advanced Filter state */
     public setAdvancedFilterModel(advancedFilterModel: AdvancedFilterModel | null): void {
-        if (ModuleRegistry.__assertRegistered(ModuleNames.AdvancedFilterModule, 'api.setAdvancedFilterModel', this.context.getGridId())) {
-            this.filterManager.setAdvancedFilterModel(advancedFilterModel);
-        }
+        this.gos.set('advancedFilterModel', advancedFilterModel);
     }
 
     /** Enable/disable the Advanced Filter */
@@ -1465,10 +1479,16 @@ export class GridApi<TData = any> {
         this.gos.set('groupDisplayType', value);
     }
 
+    /**
+     * Sets the `groupIncludeFooter` property
+     */
     public setGroupIncludeFooter(value: boolean | UseGroupFooter<TData>) {
         this.gos.set('groupIncludeFooter', value);
     }
 
+    /**
+     * Sets the `groupIncludeTotalFooter` property
+     */
     public setGroupIncludeTotalFooter(value: boolean) {
         this.gos.set('groupIncludeTotalFooter', value);
     }
