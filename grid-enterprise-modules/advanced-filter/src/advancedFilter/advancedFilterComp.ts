@@ -96,7 +96,7 @@ export class AdvancedFilterComp extends Component {
 
     private setupBuilderButton(): void {
         this.eBuilderFilterButtonIcon.appendChild(_.createIconNoSpan('advancedFilterBuilder', this.gridOptionsService)!);
-        this.eBuilderFilterButtonLabel.innerText = 'Builder';
+        this.eBuilderFilterButtonLabel.innerText = this.advancedFilterExpressionService.translate('advancedFilterBuilder');
         this.activateTabIndex([this.eBuilderFilterButton]);
         this.addManagedListener(this.eBuilderFilterButton, 'click', () => this.openBuilder());
         this.addManagedListener(this.advancedFilterService.getCtrl(), AdvancedFilterCtrl.EVENT_BUILDER_CLOSED, () => this.closeBuilder());
