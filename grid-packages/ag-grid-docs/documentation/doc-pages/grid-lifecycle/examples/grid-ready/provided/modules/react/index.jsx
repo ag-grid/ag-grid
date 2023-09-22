@@ -1,12 +1,13 @@
 'use strict';
 
-import React, {Component} from 'react';
-import {createRoot} from 'react-dom/client';
-import {AgGridReact} from '@ag-grid-community/react';
+import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
+import { ModuleRegistry } from '@ag-grid-community/core';
+import { AgGridReact } from '@ag-grid-community/react';
 import '@ag-grid-community/styles/ag-grid.css';
 import '@ag-grid-community/styles/ag-theme-alpine.css';
-import {ModuleRegistry} from '@ag-grid-community/core';
-import {ClientSideRowModelModule} from '@ag-grid-community/client-side-row-model';
+import React,{ Component } from 'react';
+import { createRoot } from 'react-dom/client';
+import './styles.css';
 
 // Register the required feature modules with the Grid
 ModuleRegistry.registerModules([ClientSideRowModelModule])
@@ -53,32 +54,42 @@ class GridExample extends Component {
 
     render() {
         return (
-            <div style={{width: '100%', height: '100%'}}>
-                <div style={{"height": "100%", "boxSizing": "border-box"}}>
-                    <div style={{"marginBottom": "1rem"}}>
-                        <input type="checkbox" id="pinFirstColumnOnLoad"/>
-                        <label htmlFor="pinFirstColumnOnLoad">Pin first column on load</label>
-                    </div>
-                    <div style={{"marginBottom": "1rem"}}>
-                        <button id="reloadGridButton" onClick={() => this.reloadGrid()}>Reload Grid</button>
-                    </div>
-                    <div
-                        style={{
-                            height: '100%',
-                            width: '100%'
-                        }}
-                        className="ag-theme-alpine">
-                        <AgGridReact
-                            key={this.state.gridKey}
-                            columnDefs={this.state.columnDefs}
-                            rowData={this.state.rowData}
-                            rowSelection={this.state.rowSelection}
-                            onGridReady={this.onGridReady}
-                        />
-                    </div>
+          <div style={{ width: "100%", height: "100%" }}>
+            <div className="test-container">
+              <div className="test-header">
+                <div style={{ marginBottom: "1rem" }}>
+                  <input type="checkbox" id="pinFirstColumnOnLoad" />
+                  <label htmlFor="pinFirstColumnOnLoad">
+                    Pin first column on load
+                  </label>
                 </div>
+                <div style={{ marginBottom: "1rem" }}>
+                  <button
+                    id="reloadGridButton"
+                    onClick={() => this.reloadGrid()}
+                  >
+                    Reload Grid
+                  </button>
+                </div>
+              </div>
+              <div
+                style={{
+                  height: "100%",
+                  width: "100%",
+                }}
+                className="ag-theme-alpine"
+              >
+                <AgGridReact
+                  key={this.state.gridKey}
+                  columnDefs={this.state.columnDefs}
+                  rowData={this.state.rowData}
+                  rowSelection={this.state.rowSelection}
+                  onGridReady={this.onGridReady}
+                />
+              </div>
             </div>
-        );
+          </div>
+        )
     }
 }
 

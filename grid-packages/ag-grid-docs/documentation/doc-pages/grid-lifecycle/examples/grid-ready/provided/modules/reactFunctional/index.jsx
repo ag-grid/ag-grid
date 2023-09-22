@@ -1,10 +1,11 @@
 'use strict';
 
-import React, {useCallback, useMemo, useRef, useState, StrictMode} from 'react';
-import {createRoot} from 'react-dom/client';
-import {AgGridReact} from 'ag-grid-react';
 import 'ag-grid-community/styles/ag-grid.css';
 import 'ag-grid-community/styles/ag-theme-alpine.css';
+import { AgGridReact } from 'ag-grid-react';
+import React,{ StrictMode,useCallback,useMemo,useRef,useState } from 'react';
+import { createRoot } from 'react-dom/client';
+import './styles.css';
 
 const GridExample = () => {
     const gridRef = useRef();
@@ -40,30 +41,35 @@ const GridExample = () => {
     }, [])
 
     return (
-        <div style={containerStyle}>
-            <div style={{"height": "100%", "boxSizing": "border-box"}}>
-                <div style={{"marginBottom": "1rem"}}>
-                    <input type="checkbox" id="pinFirstColumnOnLoad"/>
-                    <label htmlFor="pinFirstColumnOnLoad">Pin first column on load</label>
-                </div>
-
-                <div style={{"marginBottom": "1rem"}}>
-                    <button id="reloadGridButton" onClick={reloadGrid}>Reload Grid</button>
-                </div>
-
-                <div style={gridStyle} className="ag-theme-alpine">
-                    <AgGridReact
-                        key={gridKey}
-                        ref={gridRef}
-                        rowData={rowData}
-                        columnDefs={columnDefs}
-                        rowSelection={'multiple'}
-                        onGridReady={onGridReady}
-                    />
-                </div>
+      <div style={containerStyle}>
+        <div className="test-container">
+          <div className="test-header">
+            <div style={{ marginBottom: "1rem" }}>
+              <input type="checkbox" id="pinFirstColumnOnLoad" />
+              <label htmlFor="pinFirstColumnOnLoad">
+                Pin first column on load
+              </label>
             </div>
+
+            <div style={{ marginBottom: "1rem" }}>
+              <button id="reloadGridButton" onClick={reloadGrid}>
+                Reload Grid
+              </button>
+            </div>
+          </div>
+          <div style={gridStyle} className="ag-theme-alpine">
+            <AgGridReact
+              key={gridKey}
+              ref={gridRef}
+              rowData={rowData}
+              columnDefs={columnDefs}
+              rowSelection={"multiple"}
+              onGridReady={onGridReady}
+            />
+          </div>
         </div>
-    );
+      </div>
+    )
 }
 
 const root = createRoot(document.getElementById('root'));

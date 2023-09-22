@@ -11,13 +11,15 @@ ModuleRegistry.registerModules([ClientSideRowModelModule])
 const VueExample = {
     template: `
         <div style="height: 100%">
-            <div style="height: 100%; box-sizing: border-box;">
-                <div style="margin-bottom: 1rem;">
-                    <input type="checkbox" id="pinFirstColumnOnLoad">
-                    <label for="pinFirstColumnOnLoad">Pin first column on load</label>
-                </div>
-                <div style="margin-bottom: 1rem;">
-                    <button id="reloadGridButton" v-on:click="reloadGrid()">Reload Grid</button>
+            <div class="test-container">
+                <div class="test-header">
+                    <div style="margin-bottom: 1rem;">
+                        <input type="checkbox" id="pinFirstColumnOnLoad">
+                        <label for="pinFirstColumnOnLoad">Pin first column on load</label>
+                    </div>
+                    <div style="margin-bottom: 1rem;">
+                        <button id="reloadGridButton" v-on:click="reloadGrid()">Reload Grid</button>
+                    </div>
                 </div>
                 <ag-grid-vue
                     v-if="isVisible"              

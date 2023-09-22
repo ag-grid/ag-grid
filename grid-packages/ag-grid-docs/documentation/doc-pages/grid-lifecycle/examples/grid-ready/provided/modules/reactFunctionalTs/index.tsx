@@ -9,6 +9,7 @@ import {ColDef, ColGroupDef, Grid, GridOptions, GridReadyEvent} from '@ag-grid-c
 import {TAthlete, getData} from './data';
 import {ModuleRegistry} from '@ag-grid-community/core';
 import {ClientSideRowModelModule} from '@ag-grid-community/client-side-row-model';
+import './styles.css';
 
 // Register the required feature modules with the Grid
 ModuleRegistry.registerModules([ClientSideRowModelModule])
@@ -49,14 +50,16 @@ const GridExample = () => {
 
     return (
         <div style={containerStyle}>
-            <div style={{"height": "100%", "boxSizing": "border-box"}}>
-                <div style={{"marginBottom": "1rem"}}>
-                    <input type="checkbox" id="pinFirstColumnOnLoad"/>
-                    <label htmlFor="pinFirstColumnOnLoad">Pin first column on load</label>
-                </div>
+            <div className="test-container">
+                <div className="test-header">
+                    <div style={{ "marginBottom": "1rem" }}>
+                        <input type="checkbox" id="pinFirstColumnOnLoad" />
+                        <label htmlFor="pinFirstColumnOnLoad">Pin first column on load</label>
+                    </div>
 
-                <div style={{"marginBottom": "1rem"}}>
-                    <button id="reloadGridButton" onClick={reloadGrid}>Reload Grid</button>
+                    <div style={{ "marginBottom": "1rem" }}>
+                        <button id="reloadGridButton" onClick={reloadGrid}>Reload Grid</button>
+                    </div>
                 </div>
 
                 <div style={gridStyle} className="ag-theme-alpine">
