@@ -21,7 +21,13 @@ const VueExample = {
                     <div v-if="showGridPreDestroyedState" id="gridPreDestroyedState">
                         State captured on grid pre-destroyed event:<br />
                         <strong>Column fields and widths</strong>
-                        <pre class="values"></pre>
+                        <div class="values">
+                            <ul>
+                                <li v-for="item in columnsWidthOnPreDestroyed" key="field">
+                                    Field: {{item.field}} | Width: {{item.width}}px
+                                </li>
+                            </ul>
+                        </div>
                         <button v-on:click="reloadGrid()">Reload Grid</button>
                     </div>
                 </div>
@@ -52,7 +58,7 @@ const VueExample = {
                 field: "person.age",
                 headerName: "Age"
             }],
-            currentColumnWidths: undefined,
+            columnsWidthOnPreDestroyed: undefined,
             gridApi: null,
             columnApi: null,
             defaultColDef: {
@@ -76,13 +82,10 @@ const VueExample = {
                 return;
             }
 
-            const currentColumnWidths = allColumns.map(column => ({
+            this.columnsWidthOnPreDestroyed = allColumns.map(column => ({
                 field: column.getColDef().field || '-',
                 width: column.getActualWidth(),
             }));
-
-            this.currentColumnWidths = new Map(currentColumnWidths
-                .map(columnWidth => [columnWidth.field, columnWidth.width]));
 
             this.showExampleButtons = false;
             this.showGridPreDestroyedState = true;
@@ -101,16 +104,17 @@ const VueExample = {
             this.showGrid = false;
         },
         reloadGrid() {
-            const updatedColDefs = this.currentColumnWidths ?
+            const updatedColDefs = this.columnsWidthOnPreDestroyed ?
                 this.columnDefs.map(val => {
                     const colDef = val;
                     const result = {
                         ...colDef,
                     };
 
-                    const restoredWidth = this.currentColumnWidths.get(colDef.field);
-                    if (restoredWidth) {
-                        result.width = restoredWidth;
+                    const restoredColState = this.columnsWidthOnPreDestroyed
+                        .find(col => col.field === colDef.field);
+                    if (restoredColState && restoredColState.width) {
+                        result.width = restoredColState.width;
                     }
 
                     return result;

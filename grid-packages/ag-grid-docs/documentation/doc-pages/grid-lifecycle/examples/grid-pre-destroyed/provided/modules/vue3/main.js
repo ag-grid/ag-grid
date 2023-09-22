@@ -21,7 +21,13 @@ const VueExample = {
                     <div v-if="showGridPreDestroyedState">
                         State captured on grid pre-destroyed event:<br />
                         <strong>Column fields and widths</strong>
-                        <pre class="values"></pre>
+                        <div class="values">
+                            <ul>
+                                <li v-for="item in columnsWidthOnPreDestroyed" key="field">
+                                    Field: {{item.field}} | Width: {{item.width}}px
+                                </li>
+                            </ul>
+                        </div>
                         <button v-on:click="reloadGrid()">Reload Grid</button>
                     </div>
                 </div>
@@ -59,7 +65,7 @@ const VueExample = {
             resizable: true,
         });
 
-        const currentColumnWidths = ref(null);
+        const columnsWidthOnPreDestroyed = ref([]);
         const showGrid = ref(true);
         const showExampleButtons = ref(true);
         const showGridPreDestroyedState = ref(false);
@@ -76,13 +82,10 @@ const VueExample = {
                 return;
             }
 
-            const updatedColumnWidths = allColumns.map(column => ({
+            columnsWidthOnPreDestroyed.value = allColumns.map(column => ({
                 field: column.getColDef().field || '-',
                 width: column.getActualWidth(),
             }));
-
-            currentColumnWidths.value = new Map(updatedColumnWidths
-                .map(columnWidth => [columnWidth.field, columnWidth.width]));
 
             showExampleButtons.value = false;
             showGridPreDestroyedState.value = true;
@@ -99,24 +102,24 @@ const VueExample = {
         };
         const destroyGrid = () => {
             showGrid.value = false;
-
         };
 
         const reloadGrid = () => {
-            const updatedColDefs = currentColumnWidths ?
+            const updatedColDefs = columnsWidthOnPreDestroyed ?
                 columnDefs.value.map(val => {
                     const colDef = val;
                     const result = {
                         ...colDef,
                     };
 
-                    const restoredWidth = currentColumnWidths.value.get(colDef.field);
-                    if (restoredWidth) {
-                        result.width = restoredWidth;
+                    const restoredColConfig = columnsWidthOnPreDestroyed.value
+                        .find(columnWidth => columnWidth.field === colDef.field);
+                    if (restoredColConfig && restoredColConfig.width) {
+                        result.width = restoredColConfig.width;
                     }
 
                     return result;
-                }) : currentColumnWidths;
+                }) : columnDefs;
 
             columnDefs.value = updatedColDefs;
             showGrid.value = true;
@@ -134,7 +137,7 @@ const VueExample = {
             gridColumnApi,
             defaultColDef,
             rowData,
-            currentColumnWidths,
+            columnsWidthOnPreDestroyed,
             showGrid,
             showExampleButtons,
             showGridPreDestroyedState,
