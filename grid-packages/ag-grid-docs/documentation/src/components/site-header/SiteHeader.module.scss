@@ -124,7 +124,7 @@
     }
 }
 
-:global(#main-nav) {
+#mainNav {
     --text-color: var(--white);
     --link-color: var(--white);
     --link-hover-color: var(--white);
@@ -133,19 +133,20 @@
     margin-left: auto;
     background-color: var(--site-nav-background);
 
+    // Hide by default
+    height: 0px;
+    overflow: hidden;
+
     @media screen and (min-width: $breakpoint-site-header-small) {
         margin-right: calc(var(--horizontal-margin) - 17px);
         width: unset;
         background-color: unset;
+        display: block !important;
+        overflow: visible;
     }
 
     @media screen and (min-width: $breakpoint-size-header-medium) {
         margin-right: calc(var(--horizontal-margin) - 27px);
-    }
-
-    @media screen and (min-width: $breakpoint-site-header-small) {
-        display: block !important;
-        overflow: visible;
     }
 }
 

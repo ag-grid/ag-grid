@@ -11,6 +11,8 @@ import { Icon } from '../Icon';
 import LogoMark from '../LogoMark';
 import styles from './SiteHeader.module.scss';
 
+const IS_SSR = typeof window === 'undefined';
+
 const SITE_HEADER_SMALL_WIDTH = parseInt(breakpoints['site-header-small'], 10);
 
 const links = [
@@ -92,10 +94,10 @@ const HeaderExpandButton = ({ isOpen, toggleIsOpen }) => (
     <button
         className={styles.mobileMenuButton}
         type="button"
-        aria-controls="main-nav"
+        aria-controls={styles.mainNav}
         aria-expanded={isOpen.toString()}
         aria-label="Toggle navigation"
-        onClick={() => toggleIsOpen()}
+        onClick={() => toggleIsOpen && toggleIsOpen()}
     >
         <MenuIcon className={styles.menuIcon} />
     </button>
@@ -114,12 +116,24 @@ const HeaderNav = ({ path }) => {
 
     return (
         <>
-            <HeaderExpandButton isOpen={isOpen} toggleIsOpen={toggleIsOpen} />
-            <Collapsible id="main-nav" isDisabled={isDesktop} isOpen={isOpen}>
-                <nav id={isDesktop ? 'main-nav' : undefined}>
-                    <HeaderLinks path={path} isOpen={isOpen} toggleIsOpen={toggleIsOpen} />
-                </nav>
-            </Collapsible>
+            {IS_SSR && (
+                <>
+                    <HeaderExpandButton isOpen={false} />
+                    <nav id={styles.mainNav}>
+                        <HeaderLinks path={path} isOpen={isOpen} toggleIsOpen={toggleIsOpen} />
+                    </nav>
+                </>
+            )}
+            {!IS_SSR && (
+                <>
+                    <HeaderExpandButton isOpen={isOpen} toggleIsOpen={toggleIsOpen} />
+                    <Collapsible id={styles.mainNav} isDisabled={isDesktop} isOpen={isOpen}>
+                        <nav id={isDesktop ? styles.mainNav : undefined}>
+                            <HeaderLinks path={path} isOpen={isOpen} toggleIsOpen={toggleIsOpen} />
+                        </nav>
+                    </Collapsible>
+                </>
+            )}
         </>
     );
 };
