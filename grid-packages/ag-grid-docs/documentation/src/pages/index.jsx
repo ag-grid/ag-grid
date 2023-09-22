@@ -9,6 +9,7 @@ import { agGridVersion } from '../utils/consts';
 import Seo from './components/SEO';
 // @ts-ignore
 import styles from './homepage.module.scss';
+import LogoMark from '../components/LogoMark';
 
 const IS_SSR = typeof window === 'undefined';
 
@@ -81,6 +82,11 @@ const Default = () => {
                     </section>
 
                     <section className={styles.heroGrid}>
+                        {IS_SSR &&
+                            <div className={styles.loadingLogoContainer}>
+                                <LogoMark isSpinning />
+                            </div>
+                        }
                         {!IS_SSR && (
                             <React.Suspense fallback={<></>}>
                                 <HeroGrid />
