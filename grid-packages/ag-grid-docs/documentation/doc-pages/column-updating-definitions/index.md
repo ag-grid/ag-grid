@@ -26,7 +26,7 @@ if the column still exists after the new definitions are applied. For example tr
 
 ## Updating Column Definitions {#changing-column-definition}
 
-The majority of column definition properties can be updated. For example if you want to change the Header Name of a column, you can
+The majority of column definition properties can be updated. For example if you want to change the Header Name of a column, you
 update the `headerName` on the Column Definition and then set the list of Column Definitions into the grid again.
 
 <note>
