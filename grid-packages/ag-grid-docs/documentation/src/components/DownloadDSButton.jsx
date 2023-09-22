@@ -9,7 +9,7 @@ const DownloadDSButton = () => {
         <div className={styles.outer}>
             <a
                 className={classnames(styles.button, 'button')}
-                href="../../../downloads/ag-grid-design-system-30.1.0.zip"
+                href="../../../downloads/ag-grid-design-system-30.2.0.zip"
                 download
                 onClick={() => {
                     trackOnceDownloadDS();
