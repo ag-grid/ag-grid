@@ -112,7 +112,7 @@ When the grid is re-created using the __Reload Grid__ button, the column widths 
 |>&lt;/ag-grid-angular>
 </snippet>
 </framework-specific-section>
-
-This is necessary because of how Angular handles event binding. Using the options object ensures the handler will be
-properly cleaned up by the Angular change detection.
+<framework-specific-section frameworks="angular">
+|This is necessary because of how Angular handles event binding. Using the options object ensures the handler will be
+|properly cleaned up by the Angular change detection.
 </framework-specific-section>
