@@ -1,6 +1,13 @@
-<div class="toggle-container">
-    <input type="checkbox" id="rowMultiSelectWithClick" name="rowMultiSelectWithClick" onclick="selectItem()">
-    <label for="rowMultiSelectWithClick">rowMultiSelectWithClick</label>
+<div style="font-family:system-ui, -apple-system, BlinkMacSystemFont">
+    <span style="color: #0a2c80;font-size:14px">rowMultiSelectWithClick:</span>
+    <div class="toggle-container">
+        <div class="toggle-button">
+            <input type="radio" id="enable" name="rowMultiSelectWithClick" value="enable" onclick="selectItem(true)">
+            <label for="enable">true</label>
+            <input type="radio" id="disable" name="rowMultiSelectWithClick" value="disable" onclick="selectItem(false)">
+            <label for="disable">false</label>
+        </div>
+    </div>
 </div>
 
 <div id="myGrid" style="height: 100%;" class="ag-theme-alpine"></div>

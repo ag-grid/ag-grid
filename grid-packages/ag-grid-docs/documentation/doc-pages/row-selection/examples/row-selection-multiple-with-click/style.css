@@ -8,3 +8,41 @@ body {
     flex-direction: column;
     overflow: hidden;
 }
+
+.toggle-button {
+    border-radius: 3px;
+    background-color: #8b929a;
+    display: inline-block;
+
+    overflow: hidden;
+
+    font-size: 14px;
+}
+
+input[type="radio"]:checked + label,
+input[type="checkbox"]:checked + label {
+   /* add your styles here to style the input labels */
+    background-color: #2e81d9;
+}
+
+.toggle-button > input {
+    display: none;
+}
+
+.toggle-button > label {
+    color: white;
+    padding: 5px;
+    display: inline-block;
+
+    cursor: pointer;
+
+    transition: background-color 0.5s;
+}
+
+.toggle-button > label:first-of-type {
+    padding-left: 10px;
+}
+
+.toggle-button > label:last-of-type {
+    padding-right: 10px; 
+}

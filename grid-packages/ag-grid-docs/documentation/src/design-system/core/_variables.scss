@@ -102,7 +102,8 @@ $abstract-colors: (
     'cerise-pink': #e83e8c,
     'danger-red': #dc3545,
     'papaya-whip': #ffeed9,
-    'pineapple': #5c3508
+    'pineapple': #5c3508,
+    'code-blue': #0a2c80,
 );
 
 // Semantic colors based on abstract colors
@@ -124,7 +125,7 @@ $semantic-colors: (
     // Inline
     'inline-element-background-color': ghost-white,
     // Code
-    'code-text-color': cerise-pink,
+    'code-text-color': code-blue,
     // Input
     'input-background-color': white,
     'input-secondary-background-color': ag-grid-grey,

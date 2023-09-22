@@ -15,20 +15,19 @@ const gridOptions: GridOptions = {
   columnDefs: columnDefs,
 
   rowSelection: 'multiple',
-  rowMultiSelectWithClick: false,
+  rowMultiSelectWithClick: true,
 }
 
-let checked = false;
-function selectItem(event: any) {
+function selectItem(enable: boolean) {
   if (gridOptions.api) {
-    checked = !checked;
-    gridOptions.api.__updateProperty('rowMultiSelectWithClick', checked, false);
+    gridOptions.api.__updateProperty('rowMultiSelectWithClick', enable, false);
   }
 }
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
-  const gridDiv = document.querySelector<HTMLElement>('#myGrid')!
+  document.querySelector('#enable')!.setAttribute('checked', 'true');
+  const gridDiv = document.querySelector<HTMLElement>('#myGrid')!;
   new Grid(gridDiv, gridOptions);
   fetch('https://www.ag-grid.com/example-assets/small-olympic-winners.json')
     .then(resp => resp.json())
