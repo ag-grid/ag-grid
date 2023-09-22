@@ -1,9 +1,9 @@
 'use strict';
 import 'ag-grid-community/styles/ag-grid.css';
 import 'ag-grid-community/styles/ag-theme-alpine.css';
-import React, { StrictMode, useCallback, useMemo, useRef, useState } from 'react';
-import { createRoot } from 'react-dom/client';
-import { AgGridReact } from 'ag-grid-react';
+import React, {StrictMode, useCallback, useMemo, useRef, useState} from 'react';
+import {createRoot} from 'react-dom/client';
+import {AgGridReact} from 'ag-grid-react';
 
 const GridExample = () => {
     const containerStyle = useMemo(() => ({width: '100%', height: '100%'}), []);
@@ -14,7 +14,6 @@ const GridExample = () => {
     const [columnDefs, setColumnDefs] = useState([
         {
             field: 'athleteDescription',
-            headerName: 'Athlete Description',
             valueGetter: (params) => {
                 const {data} = params;
                 const {person} = data;
@@ -67,10 +66,13 @@ const GridExample = () => {
             <div className="example-wrapper" style={{"height": "100%", "boxSizing": "border-box"}}>
                 <div style={{"display": "flex", "flexDirection": "column", "marginBottom": "1rem"}}>
                     <div><span style={{"fontWeight": "bold"}}>Athlete Description</span> column width:</div>
-                    <div>&nbsp;&nbsp;- On gridReady event: <span style={{"fontWeight": "bold"}}>{col1SizeInfoOnGridReady}</span></div>
-                    <div>&nbsp;&nbsp;- On firstDataRendered event: <span style={{"fontWeight": "bold"}}>{col1SizeInfOnFirstDataRendered}</span></div>
+                    <div style={{"paddingLeft": "1em"}}>- On gridReady event: <span
+                        style={{"fontWeight": "bold"}}>{col1SizeInfoOnGridReady}</span></div>
+                    <div style={{"paddingLeft": "1em"}}>- On firstDataRendered event: <span
+                        style={{"fontWeight": "bold"}}>{col1SizeInfOnFirstDataRendered}</span></div>
                 </div>
-                <button id="loadGridDataButton" onClick={loadGridData} style={{"marginBottom": "1rem"}}>Load Grid Data</button>
+                <button id="loadGridDataButton" onClick={loadGridData} style={{"marginBottom": "1rem"}}>Load Grid Data
+                </button>
                 <div style={gridStyle} className="ag-theme-alpine">
                     <AgGridReact
                         columnDefs={columnDefs}

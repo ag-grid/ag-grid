@@ -23,7 +23,6 @@ class GridExample extends Component {
             columnDefs: [
                 {
                     field: 'athleteDescription',
-                    headerName: 'Athlete Description',
                     valueGetter: (params) => {
                         const {data} = params;
                         const {person} = data;
@@ -81,8 +80,8 @@ class GridExample extends Component {
                 <div className="example-wrapper" style={{"height": "100%", "boxSizing": "border-box"}}>
                     <div style={{"display": "flex", "flexDirection": "column", "marginBottom": "1rem"}}>
                         <div><span style={{"fontWeight": "bold"}}>Athlete Description</span> column width:</div>
-                        <div>&nbsp;&nbsp;- On gridReady event: <span style={{"fontWeight": "bold"}}>{this.state.col1SizeInfoOnGridReady}</span></div>
-                        <div>&nbsp;&nbsp;- On firstDataRendered event: <span style={{"fontWeight": "bold"}}>{this.state.col1SizeInfOnFirstDataRendered}</span></div>
+                        <div style={{ paddingLeft: "1em" }}>- On gridReady event: <span style={{"fontWeight": "bold"}}>{this.state.col1SizeInfoOnGridReady}</span></div>
+                        <div style={{ paddingLeft: "1em" }}>- On firstDataRendered event: <span style={{"fontWeight": "bold"}}>{this.state.col1SizeInfOnFirstDataRendered}</span></div>
                     </div>
                     <button
                         onClick={() => this.loadGridData()}

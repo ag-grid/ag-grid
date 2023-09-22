@@ -86,3 +86,33 @@ When the grid is destroyed, the `gridPreDestroyed` callback captures the current
 When the grid is re-created using the __Reload Grid__ button, the column widths are restored to their previous values.
 
 <grid-example title='Using Grid Ready Event' name='grid-pre-destroyed' type='mixed'></grid-example>
+
+<framework-specific-section frameworks="angular">
+|### Angular PreDestroy Setup
+|When using Angular, register the `gridPreDestroyed` event handler in the grid options instead of on the grid element directly.
+|
+|For example:
+</framework-specific-section>
+<framework-specific-section frameworks="angular">
+<snippet transform={false}>
+|this.gridOptions = {
+|  onGridPreDestroyed: () => {
+|    // handler code
+|  }
+|};
+</snippet>
+</framework-specific-section>
+<framework-specific-section frameworks="angular">
+|Rather than:
+</framework-specific-section>
+<framework-specific-section frameworks="angular">
+<snippet transform={false}>
+|&lt;ag-grid-angular 
+|  (gridPreDestroyed)="onGridPreDestroyed($event)"
+|>&lt;/ag-grid-angular>
+</snippet>
+</framework-specific-section>
+
+This is necessary because of how Angular handles event binding. Using the options object ensures the handler will be
+properly cleaned up by the Angular change detection.
+</framework-specific-section>

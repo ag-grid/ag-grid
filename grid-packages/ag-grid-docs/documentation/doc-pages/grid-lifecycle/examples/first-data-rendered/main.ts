@@ -16,7 +16,6 @@ const gridOptions: GridOptions = {
     columnDefs: [
         {
             field: 'athleteDescription',
-            headerName: 'Athlete Description',
             valueGetter: (params: ValueGetterParams) => {
                 const { data } = params;
                 const { person } = data;
