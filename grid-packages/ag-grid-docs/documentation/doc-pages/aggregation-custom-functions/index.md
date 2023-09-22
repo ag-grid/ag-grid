@@ -122,28 +122,77 @@ The grand total aggregation is normally not seen, unless the grid is configured 
 
 When the grid is empty, the aggregations are still called once with an empty set. This is to calculate the grand total aggregation for the top level.
 
-## Multi-Level Custom Function Aggregation
+## Multi-Level Custom Aggregation Functions 
 
-In order to support multi-level custom function aggregation, `value` property and `count` property must specified in the object returned by the custom aggregation function.
+In row grouping situations, there are some important nuances to consider when defining custom aggregation functions. 
+Since data rows are modelled as a tree, custom aggregation functions are applied using a depth-first recursive approach.
+If you are unaware of the tree-like nature, your custom aggregation functions may behave differently to how you expect. 
 
-See in the example below:
+For example, with the simple mean average function below:
 
 <snippet>
-| const avgAggFunction = (params) => {
-|   // ...
-|   const result = {
-|     count: count,
-|     avg: avg,
-|     value: avg,
-|   };
-|
-|   return result;
+| const simpleAvg = (params) => {
+|   const values = params.values;
+|   const sum = values.reduce((a,b) => a + b, 0);
+|   return sum / values.length;
 | }
 </snippet>
 
-- `value` and `count` are both specified by the custom function `avgAggFunction()`
+The `simpleAvg` will behave as expected with the lowest level group, averaging the values. However, with a group of groups, 
+`simpleAvg` will be the average of the averages. In the code example below, for `simpleAvg` the country average would be the average of the year group averages.
 
-The `value` and `count` properties are needed to support `avgAggFunction()` calculations on the group level above.
+To create a custom aggregation function, which is applied to all leaf rows, the function needs to behave differently when being applied to a group row versus a leaf row. An object needs to be returned containing all the information needed for the calculations for parent groups.
+
+For example, the following function would create average over all leaf rows:
+
+<snippet>
+|  const avgAggFunction = (params) => {
+|    // the average will be the sum / count
+|    let sum = 0;
+|    let count = 0;
+|
+|    params.values.forEach((value) => {
+|      const groupNode = value !== null && value !== undefined && typeof value === 'object';
+|      if (groupNode) {
+|        // we are aggregating groups, so we take the
+|        // aggregated values to calculated a weighted average
+|        sum += value.sum;
+|        count += value.count;
+|      } else {
+|        // skip values that are not numbers (ie skip empty values)
+|        if (typeof value === 'number') {
+|          sum += value;
+|          count++;
+|        }
+|      }
+|    });
+|
+|    // avoid divide by zero error
+|    let avg = null;
+|    if (count !== 0) {
+|      avg = sum / count;
+|    }
+|
+|    // the result will be an object. when this cell is rendered, only the avg is shown.
+|    // however when this cell is part of another aggregation, the count is also needed
+|    // to create a weighted average for the next level.
+|    const result = {
+|      sum: sum,
+|      count: count,
+|      value: avg,
+|    };
+|
+|    return result;
+|  }
+</snippet>
+
+Note in the snippet of `avgAggFunction` above that:
+
+- `sum`, `value` and `count` are returned wrapped as an object
+- `sum` and `count` are needed for calculations by parent groups.
+- `value` is the result value shown in the grid
+
+In the code example below, you can see how `avgAggFunction()` and `simpleAvg()` provide different values at country level but same values at the year group level:
 
 <grid-example title='Multi-Level Custom Function Aggregation' name='custom-avg-function' type='generated' options='{ "enterprise": true, "modules": ["clientside", "rowgrouping", "menu", "columnpanel", "filterpanel", "setfilter"] }'></grid-example>
 

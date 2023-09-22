@@ -1,37 +1,42 @@
 import { Grid, ColDef, GridOptions, IAggFuncParams } from '@ag-grid-community/core'
 
-const columnDefs: ColDef[] = [
+const columnDefs = [
   { field: 'country', rowGroup: true, hide: true },
   { field: 'year', rowGroup: true, hide: true },
   {
-    headerName: 'avg(age)',
+    headerName: 'age using avgAggFunction()',
     field: 'age',
     aggFunc: avgAggFunction,
     enableValue: true,
-    minWidth: 200,
+    minWidth: 250,
+  },
+  {
+    headerName: 'age using simpleAvg()',
+    field: 'age',
+    aggFunc: simpleAvg,
+    enableValue: true,
+    minWidth: 250,
   },
 ];
 
-const gridOptions: GridOptions<IOlympicData> = {
+const gridOptions = {
   columnDefs: columnDefs,
-  defaultColDef: {
-    flex: 1,
-    minWidth: 150,
-    filter: true,
-    sortable: true,
-    resizable: true,
-  },
   autoGroupColumnDef: {
-    headerName: 'Athlete',
     field: 'athlete',
-    minWidth: 250,
+    minWidth: 350,
   },
   suppressAggFuncInHeader: true,
 };
 
+function simpleAvg(params) {
+  const values = params.values;
+  const sum = values.reduce((a,b) => a + b, 0);
+  return sum / values.length;
+};
+
 // the average function is tricky as the multiple levels require weighted averages
 // for the non-leaf node aggregations.
-function avgAggFunction(params: IAggFuncParams) {
+function avgAggFunction(params) {
   // the average will be the sum / count
   let sum = 0;
   let count = 0;
@@ -42,7 +47,7 @@ function avgAggFunction(params: IAggFuncParams) {
     if (groupNode) {
       // we are aggregating groups, so we take the
       // aggregated values to calculated a weighted average
-      sum += value.avg * value.count;
+      sum += value.sum;
       count += value.count;
     } else {
       // skip values that are not numbers (ie skip empty values)
@@ -63,8 +68,8 @@ function avgAggFunction(params: IAggFuncParams) {
   // however when this cell is part of another aggregation, the count is also needed
   // to create a weighted average for the next level.
   const result = {
+    sum: sum,
     count: count,
-    avg: avg,
     value: avg,
   };
 
