@@ -103,6 +103,18 @@ const HeaderExpandButton = ({ isOpen, toggleIsOpen }) => (
     </button>
 );
 
+const SSRHeaderNav = ({ isOpen, toggleIsOpen, path }) => {
+    return <>
+        <HeaderExpandButton isOpen={isOpen} toggleIsOpen={toggleIsOpen}  />
+        <nav id={styles.mainNav} style={{
+            overflow: isOpen ? 'visible' : 'hidden',
+            height: isOpen ? 'auto' : '0px'
+        }}>
+            <HeaderLinks path={path} isOpen={isOpen} toggleIsOpen={toggleIsOpen} />
+        </nav>
+    </>
+}
+
 const HeaderNav = ({ path }) => {
     const [isOpen, setIsOpen] = useState(false);
     const { width } = useWindowSize();
@@ -116,14 +128,7 @@ const HeaderNav = ({ path }) => {
 
     return (
         <>
-            {IS_SSR && (
-                <>
-                    <HeaderExpandButton isOpen={false} />
-                    <nav id={styles.mainNav}>
-                        <HeaderLinks path={path} isOpen={isOpen} toggleIsOpen={toggleIsOpen} />
-                    </nav>
-                </>
-            )}
+            {IS_SSR && <SSRHeaderNav isOpen={isOpen} toggleIsOpen={toggleIsOpen} path={path} />}
             {!IS_SSR && (
                 <>
                     <HeaderExpandButton isOpen={isOpen} toggleIsOpen={toggleIsOpen} />
