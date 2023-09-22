@@ -71,7 +71,7 @@ This example demonstrates using `rowDataUpdated` to update another component whe
 
 The `gridPreDestroyed` event is invoked immediately before the grid is destroyed and removed from the DOM.
 
-### When to use
+### Use Cases
 
 * Cleaning up resources or state used by the grid, like removing event listeners.
 * Capturing final grid state before destroy, if needed for persistence or recovery.
