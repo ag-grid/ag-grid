@@ -21,6 +21,16 @@ export class AddDropdownComp extends AgRichSelect {
         });
     }
 
+    public showPicker(): void {
+        // avoid focus handling issues with multiple rich selects
+        setTimeout(() => super.showPicker());
+    }
+
+    public hidePicker(): void {
+        // avoid focus handling issues with multiple rich selects
+        setTimeout(() => super.hidePicker());
+    }
+
     protected postConstruct(): void {
         super.postConstruct();
 
