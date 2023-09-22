@@ -1,4 +1,4 @@
-import { Grid, GridOptions, RowDataUpdatedEvent } from '@ag-grid-community/core';
+import { Grid, GridOptions, FirstDataRenderedEvent, RowDataUpdatedEvent } from '@ag-grid-community/core';
 
 import { getDataSetA, getDataSetB, TAthlete } from './data';
 
@@ -14,7 +14,7 @@ const gridOptions: GridOptions = {
         { field: 'person.age', headerName: 'Age' },
     ],
     rowData: getDataSetA(),
-    onFirstDataRendered: (event) => {
+    onFirstDataRendered: (event: FirstDataRenderedEvent) => {
         updateRowCount(event.api.getDisplayedRowCount());
     },
     onRowDataUpdated: (event: RowDataUpdatedEvent<TAthlete>) => {
