@@ -1,0 +1,1 @@
+export { MenuModule } from './menuModule';
