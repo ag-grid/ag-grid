@@ -52,7 +52,7 @@ md-include:complementing-component-vue.md
 <framework-specific-section frameworks="javascript,angular,vue">
 |Configure that a Custom Cell Editor is in a popup in one of the following ways:
 |1. Implement the `isPopup()` method on the Custom Cell Editor and return `true`.
-|1. Specify `cellEditorPopup=true` on the [Column Definition](../column-definitions/).
+|1. Specify `cellEditorPopup=true` on the [Column Definition](/column-definitions/).
 </framework-specific-section>
 
 <snippet>

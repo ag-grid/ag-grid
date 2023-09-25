@@ -43,7 +43,7 @@ The example below demonstrates the default row grouping behaviour. Note the foll
 
 ## Row Grouping Customisations
 
-The previous example demonstrated the [Default Row Grouping](../grouping/#example-default-row-grouping) behavior, 
+The previous example demonstrated the [Default Row Grouping](../grouping/#enabling-default-row-grouping) behavior, 
 however extensive Row Grouping customisations are also possible as summarised below:
 
 - **[Display Types](../grouping-display-types/)** - compares the different ways row groups can be displayed in the grid.

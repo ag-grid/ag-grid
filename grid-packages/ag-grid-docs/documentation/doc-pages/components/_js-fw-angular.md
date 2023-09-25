@@ -1,8 +1,12 @@
 <framework-specific-section frameworks="angular">
-|## Component Lifecyle Hook agInit
-|
-|Each custom Angular component must implement the `agInit(params)` lifecyle hook. AgInit is called by AG Grid before any of the [Angular Lifecyle hooks](https://angular.io/guide/lifecycle-hooks#lifecycle-hooks), including `ngOnInit`. This order is deterministic and applies to all component types.
-|
+|## Component Lifecycle Hook agInit
+</framework-specific-section>
+
+<framework-specific-section frameworks="angular">
+<p>Each custom Angular component must implement the <code>agInit(params)</code> lifecycle hook. AgInit is called by AG Grid before any of the <a href="https://angular.io/guide/lifecycle-hooks#lifecycle-hooks">Angular Lifecycle hooks</a>, including <code>ngOnInit</code>. This order is deterministic and applies to all component types.</p>
+</framework-specific-section>
+
+<framework-specific-section frameworks="angular">
 |## Mixing JavaScript and Angular
 |
 |When providing Custom Components you have a choice of the following:

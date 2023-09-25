@@ -93,7 +93,7 @@ The example below shows this in action where the following can be noted:
 ## Refreshing Tree Data
 
 Tree Data can be refreshed in the same way as groups are refreshed when not using Tree Data. This is
-explained in the [SSRM Refresh](/server-side-model-refresh/).
+explained in the [SSRM Refresh](/server-side-model-updating-refresh/).
 
 The example below shows this in action where the following can be noted:
 

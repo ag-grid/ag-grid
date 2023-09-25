@@ -1109,7 +1109,7 @@
               },
               {
                 "title": "Filtering",
-                "url": "/aggregation-filtering/",
+                "url": "/aggregation-filtering/#default-filtering-with-aggregated-values",
                 "enterprise": true,
                 "showInCollapsed": false
               },

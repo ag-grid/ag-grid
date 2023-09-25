@@ -75,13 +75,13 @@
         "addDetailGridInfo": {
             "more": {
                 "name": "Register Detail Grid",
-                "url": "/master-detail-custom-detail/#registering-detail-grid"
+                "url": "/master-detail-custom-detail/#register-detail-grid"
             }
         },
         "removeDetailGridInfo": {
             "more": {
                 "name": "Register Detail Grid",
-                "url": "/master-detail-custom-detail/#registering-detail-grid"
+                "url": "/master-detail-custom-detail/#register-detail-grid"
             }
         }
     },
@@ -759,13 +759,13 @@
         "openChartToolPanel": {
             "more": {
                 "name": "Open Chart Tool Panel",
-                "url": "/integrated-charts-api-chart-tool-panel/"
+                "url": "/integrated-charts-chart-tool-panels/#chart-tool-panel-api"
             }
         },
         "closeChartToolPanel": {
             "more": {
                 "name": "Close Chart Tool Panel",
-                "url": "/integrated-charts-api-chart-tool-panel/"
+                "url": "/integrated-charts-chart-tool-panels/#chart-tool-panel-api"
             }
         }
     },
@@ -825,7 +825,7 @@
         "refreshServerSide": {
             "more": {
                 "name": "Purging Groups",
-                "url": "/server-side-model-refresh/"
+                "url": "/server-side-model-updating-refresh/"
             }
         },
         "getServerSideGroupLevelState": {

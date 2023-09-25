@@ -118,7 +118,7 @@ the grid would complain 'Function not found' as it tries to use the function bef
 
 Note that custom aggregations will get called for the top level rows to calculate a 'Grand Total', not just for row groups. For example if you have 10 rows in the grid, the grid will still call the aggregation with 10 values to get a grand total aggregation.
 
-The grand total aggregation is normally not seen, unless the grid is configured with [Grouping Total Footers](/grouping/#grouping-footers). Total footers display the result of the aggregation for top level, for example displaying a grand total even if no row grouping is active.
+The grand total aggregation is normally not seen, unless the grid is configured with [Grouping Total Footers](/grouping-footers/#enabling-group-footers). Total footers display the result of the aggregation for top level, for example displaying a grand total even if no row grouping is active.
 
 When the grid is empty, the aggregations are still called once with an empty set. This is to calculate the grand total aggregation for the top level.
 

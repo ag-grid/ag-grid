@@ -30,7 +30,7 @@
 |grid will call (for example, the `onParentModelChanged` callback from an Editor Component), then you'll need to expose them with
 |`forwardRef` & `useImperativeHandle`.
 |
-||Please refer to the [Hook](/react-hooks/) documentation (or the examples on this page) for more information.
+|Please refer to the [Hooks](../react-hooks/) documentation (or the examples on this page) for more information.
 </note>
 </framework-specific-section>
 

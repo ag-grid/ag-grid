@@ -2,7 +2,7 @@
 title: "Grid Options"
 ---
 
-All of these grid options are available through the generic [`GridOptions<TData>`](/grid-interface/#grid-options) interface. 
+All of these grid options are available through the generic [`GridOptions<TData>`](/grid-interface/) interface. 
 
 `TData` can optionally be used to represent the shape of the row data and is explained further under [Typescript Generics](/typescript-generics).
 

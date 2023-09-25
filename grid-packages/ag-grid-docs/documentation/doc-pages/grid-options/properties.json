@@ -115,7 +115,7 @@
         "columnTypes": {
             "more": {
                 "name": "Custom Column Types",
-                "url": "/column-definitions/#custom-column-types"
+                "url": "/column-definitions/#default-column-definitions"
             }
         },
         "dataTypeDefinitions": {
@@ -367,7 +367,7 @@
         "advancedFilterModel": {
             "more": {
                 "name": "Advanced Filter",
-                "url": "/filter-advanced/#filter-model--    api"
+                "url": "/filter-advanced/#filter-model--api"
             }
         },
         "includeHiddenColumnsInAdvancedFilter": {
@@ -406,7 +406,7 @@
         "suppressChartToolPanelsButton": {
             "more": {
                 "name": "Suppress Chart Tool Panels Button",
-                "url": "/integrated-charts-chart-tool-panels/#showing-legacy-chart-toolbar"
+                "url": "/integrated-charts-chart-tool-panels"
             }
         },
         "getChartToolbarItems": {
@@ -442,7 +442,7 @@
         "chartToolPanelsDef": {
             "more": {
                 "name": "Chart Tool Panel customisation",
-                "url": "/integrated-charts-toolbar/#chart-tool-panel-customisation"
+                "url": "/integrated-charts-toolbar/#toolbar-customisation"
             }
         }
     },
@@ -602,7 +602,7 @@
             "description": "Provide a custom loading overlay component.",
             "more": {
                 "name": "Loading Overlay Component",
-                "url": "/component-overlay/#loading-rows-overlay-interface"
+                "url": "/component-overlay/#simple-loading-overlay-component"
             }
         },
         "loadingOverlayComponentParams": {},
@@ -612,7 +612,7 @@
             "description": "Provide a custom no rows overlay component.",
             "more": {
                 "name": "No Rows Overlay Component",
-                "url": "/component-overlay/#no-rows-overlay-interface"
+                "url": "/component-overlay/#simple-no-rows-overlay-component"
             }
         },
         "noRowsOverlayComponentParams": {},
@@ -715,13 +715,13 @@
         "aggFuncs": {
             "more": {
                 "name": "Custom Aggregation Functions",
-                "url": "/aggregation/#custom-aggregation-functions"
+                "url": "/aggregation/#customisations"
             }
         },
         "getGroupRowAgg": {
             "more": {
                 "name": "Custom Full Row Aggregation",
-                "url": "/aggregation/#custom-full-row-aggregation"
+                "url": "/aggregation-custom-functions/#custom-full-row-aggregation"
             }
         },
         "suppressAggFuncInHeader": {},
@@ -734,8 +734,8 @@
         },
         "suppressAggFilteredOnly": {
             "more": {
-                "name": "Custom Aggregation Functions",
-                "url": "/aggregation/#filtering"
+                "name": "Suppress Aggregation Updates When Filtering",
+                "url": "/aggregation-filtering/#suppressing-aggregation-updates-when-filtering"
             }
         },
         "groupAggFiltering": {},
@@ -828,7 +828,7 @@
         "rowDragText": {
             "more": {
                 "name": "Custom Row Drag Text",
-                "url": "row-dragging/#custom-row-drag-text"
+                "url": "/row-dragging/#custom-row-drag-text"
             }
         }
     },
@@ -916,7 +916,7 @@
         "initialGroupOrderComparator": {
             "more": {
                 "name": "Initial Group Order",
-                "url": "/grouping-group-order/#default-group-order"
+                "url": "/grouping-group-order/#initial-group-order"
             }
         },
         "groupRemoveSingleChildren": {
@@ -959,7 +959,7 @@
             "description": "Provide the Cell Renderer to use when `groupDisplayType = 'groupRows'`.",
             "more": {
                 "name": "Group Row Cell Renderer",
-                "url": "/grouping-group-rows/#providing-cell-renderer/"
+                "url": "/grouping-group-rows/#providing-cell-renderer"
             }
         },
         "groupRowRendererParams": {},
@@ -1078,7 +1078,7 @@
         "serverSidePivotResultFieldSeparator": {
             "more": {
                 "name": "Providing Pivot Result Fields",
-                "url": "/server-side-model-pivoting/#providing-pivot-result-fields-simple"
+                "url": "/server-side-model-pivoting/#supplying-pivot-result-fields-simple"
             }
         },
         "serverSideSortAllLevels": {},
@@ -1161,13 +1161,13 @@
         "debounceVerticalScrollbar": {
             "more": {
                 "name": "Debounce Vertical Scroll",
-                "url": "/scrolling-performance/#8-debounce-vertical-scroll"
+                "url": "/scrolling-performance/#debounce-vertical-scroll"
             }
         },
         "suppressHorizontalScroll": {
             "more": {
                 "name": "Aligned Grid as Footer",
-                "url": "/aligned-grids/#example-aligned-floating-footer"
+                "url": "/aligned-grids/#example-aligned-grid-as-footer"
             }
         },
         "suppressScrollOnNewData": {},
@@ -1261,7 +1261,7 @@
         "unSortIcon": {
             "more": {
                 "name": "Example Custom Sorting",
-                "url": "/row-sorting/#example-custom-sorting"
+                "url": "/row-sorting/#custom-sorting-example"
             }
         },
         "suppressMultiSort": {},

@@ -96,7 +96,7 @@ const gridOptions = {
 
 Accessing status panel instances is possible using `api.getStatusPanel(key)`. The key will be the value provided in the component configuration (see above), but will default to the component name if not provided.
 
-See [Accessing Status Bar Panel Instances](/component-status-bar/#accessing-status-bar-comp-instances) for more information.
+See [Accessing Status Bar Panel Instances](/component-status-bar/#accessing-status-bar-panel-instances) for more information.
 
 ## Configuration with Component Parameters
 
