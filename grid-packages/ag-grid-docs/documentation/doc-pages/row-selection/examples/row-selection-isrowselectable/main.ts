@@ -1,7 +1,7 @@
 import { Grid, ColDef, GridOptions } from '@ag-grid-community/core'
 
 const columnDefsA: ColDef[] = [
-  { field: 'athlete', checkboxSelection: true },
+  { field: 'athlete', checkboxSelection: true, showDisabledCheckboxes: true },
   { field: 'country' },
   { field: 'year' },
   { field: 'gold' },
@@ -21,6 +21,7 @@ const gridOptions: GridOptions = {
 function selectItem(value: boolean) {
   if (gridOptions.api) {
     gridOptions.api.__updateProperty('isRowSelectable', value ? (node) => node.data.year === 2008 : undefined, false);
+    gridOptions.api.forEachNode(node => (node as any).checkRowSelectable());
   }
 }
 

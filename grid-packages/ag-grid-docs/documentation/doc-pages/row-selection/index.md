@@ -102,7 +102,7 @@ A callback can be provided to this property to dynamically set whether the check
 
 ## Prevent Selection of Rows
 
-The `isRowSelectable` property is provided a callback that determines which rows can be selected.
+The `isRowSelectable` property is a callback that determines which rows can be selected.
 
 <grid-example title='checkbox' name='row-selection-isrowselectable' type='generated'></grid-example>
 
