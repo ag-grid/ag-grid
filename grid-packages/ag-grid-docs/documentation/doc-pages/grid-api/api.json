@@ -759,13 +759,13 @@
         "openChartToolPanel": {
             "more": {
                 "name": "Open Chart Tool Panel",
-                "url": "/integrated-charts-api-chart-tool-panel/"
+                "url": "/integrated-charts-chart-tool-panels/"
             }
         },
         "closeChartToolPanel": {
             "more": {
                 "name": "Close Chart Tool Panel",
-                "url": "/integrated-charts-api-chart-tool-panel/"
+                "url": "/integrated-charts-chart-tool-panels/"
             }
         }
     },
@@ -825,7 +825,7 @@
         "refreshServerSide": {
             "more": {
                 "name": "Purging Groups",
-                "url": "/server-side-model-refresh/"
+                "url": "/server-side-model-updating-refresh/"
             }
         },
         "getServerSideGroupLevelState": {

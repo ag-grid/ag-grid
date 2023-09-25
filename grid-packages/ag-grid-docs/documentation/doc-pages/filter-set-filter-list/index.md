@@ -280,7 +280,7 @@ const gridOptions = {
 </snippet>
 
 <note>
-The `caseSensitive` option also affects [Mini-Filter](/filter-set-mini-filter/#enabling-case-sensitive-searches) searches and [API](/filter-set-api/#enabling-case-sensitivity) behaviours.
+The `caseSensitive` option also affects [Mini-Filter](../filter-set-mini-filter/#enabling-case-sensitive-searches) searches and [API](../filter-set-api/#enabling-case-sensitivity) behaviours.
 </note>
 
 The following example demonstrates the difference in behaviour between `caseSensitive: false` (the default) and `caseSensitive: true`:

@@ -41,7 +41,7 @@ to calculate the first column's width.
 
 The `rowDataUpdated` event fires when the grid's data changes, by setting [Updating Row Data](/data-update-row-data/) or
 by applying [Transaction Updates](/data-update-transactions/). In the [Server Side Row Model](/server-side-model), use
-the [Model Updated Event](/grid-events/model-updated/) instead.
+the [Model Updated Event](/grid-events/#reference-miscellaneous-modelUpdated) instead.
 
 **Common Uses**
 
