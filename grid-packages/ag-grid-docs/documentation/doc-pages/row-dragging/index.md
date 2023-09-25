@@ -224,7 +224,7 @@ The example below shows row dragging with [Row Grouping](/grouping/) where the f
 
 The example below shows [Tree Data](/tree-data/) and row dragging where the following can be noted:
 
-- The [auto-group column](/tree-data/#auto-column-group) has row drag `true` for all rows.
+- The [auto-group column](/grouping/) has row drag `true` for all rows.
 
 -  The example registers for `onRowDragEnd` events and rearranges
    the rows when the drag completes.

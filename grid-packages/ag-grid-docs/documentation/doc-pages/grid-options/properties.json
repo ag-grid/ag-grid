@@ -406,7 +406,7 @@
         "suppressChartToolPanelsButton": {
             "more": {
                 "name": "Suppress Chart Tool Panels Button",
-                "url": "/integrated-charts-chart-tool-panels"
+                "url": "/integrated-charts-chart-tool-panels/"
             }
         },
         "getChartToolbarItems": {
@@ -715,13 +715,13 @@
         "aggFuncs": {
             "more": {
                 "name": "Custom Aggregation Functions",
-                "url": "/aggregation/#customisations"
+                "url": "/aggregation-custom-functions/#custom-aggregation-functions"
             }
         },
         "getGroupRowAgg": {
             "more": {
                 "name": "Custom Full Row Aggregation",
-                "url": "/aggregation-custom-functions/#custom-full-row-aggregation"
+                "url": "/aggregation/"
             }
         },
         "suppressAggFuncInHeader": {},
@@ -734,8 +734,8 @@
         },
         "suppressAggFilteredOnly": {
             "more": {
-                "name": "Suppress Aggregation Updates When Filtering",
-                "url": "/aggregation-filtering/#suppressing-aggregation-updates-when-filtering"
+                "name": "Custom Aggregation Functions",
+                "url": "/aggregation-custom-functions/#custom-aggregation-functions"
             }
         },
         "groupAggFiltering": {},
@@ -1077,7 +1077,7 @@
         },
         "serverSidePivotResultFieldSeparator": {
             "more": {
-                "name": "Providing Pivot Result Fields",
+                "name": "Supplying Pivot Result Fields",
                 "url": "/server-side-model-pivoting/#supplying-pivot-result-fields-simple"
             }
         },
