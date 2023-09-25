@@ -32869,7 +32869,7 @@ function applySeriesValues(target, options, _a) {
 }
 
 // DO NOT UPDATE MANUALLY: Generated from script during build time
-var VERSION$1 = '9.2.0';
+var VERSION$1 = '8.2.0';
 
 var __extends$_ = (undefined && undefined.__extends) || (function () {
     var extendStatics = function (d, b) {
