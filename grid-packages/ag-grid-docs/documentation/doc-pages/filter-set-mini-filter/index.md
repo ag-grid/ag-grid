@@ -101,7 +101,7 @@ const gridOptions = {
 The `caseSensitive` option also affects the values presented in the [Filter List](../filter-set-filter-list/#enabling-value-case-sensitivity) and [API](../filter-set-api/#enabling-case-sensitivity) behaviours.
 </note>
 
-See [Example: Filter List Case-Sensitivity](/filter-set-filter-list/#example-case-sensitive-set-filter-list) for a demonstration of the change in behaviour.
+See [Example: Filter List Case-Sensitivity](/filter-set-filter-list/#enabling-value-case-sensitivity) for a demonstration of the change in behaviour.
 
 ## Text Customisation
 

@@ -32,7 +32,7 @@ The snippet above shows the configuration required for a combination chart consi
 The example below demonstrates two common combination chart types. You can switch between these two combination chart types using the buttons above the chart. Please note:
 
 - Series are rendered according to the order in which they are added in the `series` array.
-- The area and line series are plotted on a [Secondary Axis](../axes/#multiple-axes-in-a-single-direction) with a different scale.
+- The area and line series are plotted on a [Secondary Axis](../axes-secondary/) with a different scale.
 - The `series` configurations are logged in the dev console when switching between combination charts.
 
 <chart-example title='Combination Charts' name='combination' type='generated'></chart-example>

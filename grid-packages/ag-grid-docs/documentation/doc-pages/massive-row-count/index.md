@@ -2,7 +2,7 @@
 title: "Massive Row Count"
 ---
 
-Given the grid uses [Row Virtualisation](/dom-virtualisation/#row-virtualisation) there is no
+Given the grid uses [Row Virtualisation](/dom-virtualisation/) there is no
 fixed limit to the number of rows the grid can display. However browsers do have a fixed limit
 on how tall a DOM div element can be. Given the grid renders using the DOM, the div that contains
 the rows has a fixed max height, and as such puts a limit on number of rows that can be
@@ -27,7 +27,7 @@ like the following:
 For example assume each row is 100px high, then this means the maximum number of rows the grid
 would be able to cater for with a max div height of 32,000,000 is 320,000.
 
-Although the grid uses [Row Virtualisation](/dom-virtualisation/#row-virtualisation) to only render
+Although the grid uses [Row Virtualisation](/dom-virtualisation/) to only render
 a subset of rows, it depends on setting the container height correctly to fit all rows such that the
 vertical scroll bar is able to scroll over the entire dataset.
 
