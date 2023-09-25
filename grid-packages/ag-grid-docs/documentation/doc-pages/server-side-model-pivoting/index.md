@@ -8,7 +8,7 @@ data using the Server-Side Row Model (SSRM).
 
 ## Enabling Pivoting
 
-To pivot on a column `pivot=true` should be set on the column definition. Additionally the grid needs to be in
+To pivot on a column `pivot=true` should be set on the column definition. Additionally, the grid needs to be in
 pivot mode which is set through the grid option `pivotMode=true`.
 
 In the snippet below a pivot is defined on the 'year' column and pivot mode is enabled:
@@ -211,7 +211,7 @@ The example demonstrates the following:
 
 - Columns `Gold, Silver` and `Bronze` all have `enableValue=true` which means they can be aggregated on. To aggregate, you drag the column to the `Values` section. When you are grouping, all columns in the `Values` section will be aggregated.
 
-- You can turn the grid into **Pivot Mode**. To do this, you click the pivot mode checkbox. When the grid is in pivot mode, the grid behaves similar to an Excel grid. This extra information is passed to your server as part of the request and it is your server's responsibility to return the data in the correct structure.
+- You can turn the grid into **Pivot Mode**. To do this, you click the pivot mode checkbox. When the grid is in pivot mode, the grid behaves similarly to an Excel grid. This extra information is passed to your server as part of the request and it is your server's responsibility to return the data in the correct structure.
 
 - Columns `Age, Country, Year` and `Sport` all have `enablePivot=true` which means they can be pivoted on when **Pivot Mode** is active. To pivot, you drag the column to the **Pivot** section.
 
