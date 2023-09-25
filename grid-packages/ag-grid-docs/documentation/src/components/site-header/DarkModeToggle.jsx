@@ -3,6 +3,7 @@ import React from 'react';
 import GlobalContextConsumer from '../GlobalContext';
 import { Icon } from '../Icon';
 import styles from './DarkModeToggle.module.scss';
+import headerStyles from './SiteHeader.module.scss';
 
 const IS_SSR = typeof window === 'undefined';
 
@@ -20,7 +21,7 @@ export const DarkModeToggle = () => {
                 htmlEl.classList.remove('no-transitions');
 
                 return (
-                    <li>
+                    <li className={classNames(headerStyles.navItem, styles.navItem)}>
                         <button
                             className={classNames(
                                 styles.toggle,

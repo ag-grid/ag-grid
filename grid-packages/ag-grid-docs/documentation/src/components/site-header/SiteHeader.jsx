@@ -116,7 +116,7 @@ const HeaderNav = ({ path }) => {
             <HeaderExpandButton isOpen={isOpen} toggleIsOpen={toggleIsOpen} />
             
             <Collapsible id="main-nav" isDisabled={isDesktop} isOpen={isOpen}>
-                <nav id={isDesktop ? 'main-nav' : undefined}>
+                <nav id={isDesktop ? 'main-nav' : undefined} className={styles.mainNav}>
                     <ul className={classnames(styles.navItemList, 'list-style-none')}>
                         <HeaderLinks path={path} isOpen={isOpen} toggleIsOpen={toggleIsOpen} />
                         <DarkModeToggle />
