@@ -403,7 +403,12 @@
                 "url": "/integrated-charts-user-created/#enabling-user-created-charts"
             }
         },
-        "suppressChartToolPanelsButton": {},
+        "suppressChartToolPanelsButton": {
+            "more": {
+                "name": "Suppress Chart Tool Panels Button",
+                "url": "/integrated-charts-chart-tool-panels"
+            }
+        },
         "getChartToolbarItems": {
             "more": {
                 "name": "Configuring Toolbar Items",
@@ -597,7 +602,7 @@
             "description": "Provide a custom loading overlay component.",
             "more": {
                 "name": "Loading Overlay Component",
-                "url": "/component-overlay/#loading-overlay-component"
+                "url": "/component-overlay/#simple-loading-overlay-component"
             }
         },
         "loadingOverlayComponentParams": {},
@@ -607,7 +612,7 @@
             "description": "Provide a custom no rows overlay component.",
             "more": {
                 "name": "No Rows Overlay Component",
-                "url": "/component-overlay/#no-rows-overlay-component"
+                "url": "/component-overlay/#simple-no-rows-overlay-component"
             }
         },
         "noRowsOverlayComponentParams": {},
