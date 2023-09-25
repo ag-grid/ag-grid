@@ -11,8 +11,8 @@ The grid provides two cell renderers for animating changes to data. They are:
 
 The example below shows both types of animation cell renders in action. To test, try the following:
 
-- Columns A, B and C are editable.
-- Columns D and E are updated via clicking the button.
+- Columns A, B are editable.
+- Columns C and D are updated via clicking the button.
 - Changes to any of the first 5 columns results in animations in the Total and Average column.
 - The example demonstrates setting custom colours for up and down changes using the `--ag-value-change-delta-up-color` and `--ag-value-change-delta-down-color` CSS Variables.
 
