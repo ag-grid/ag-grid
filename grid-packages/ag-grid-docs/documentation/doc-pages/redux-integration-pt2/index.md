@@ -372,7 +372,7 @@ with source code is shown below. In this example you can:
 - Right Click on a file for the option to delete the file.
 - Click and Drag on the move icon to move files and folders.
 
-<grid-example title='Redux File Browser' name='redux-file-browser' type='react' options=' { "enterprise": true,  "showImportsDropdown": false, "extras": ["fontawesome"] }'></grid-example>
+<grid-example title='Redux File Browser' name='redux-file-browser' type='react' options=' { "enterprise": true,  "showImportsDropdown": false, "extras": ["fontawesome"], "noCodeSandbox": true }'></grid-example>
 
 ## Conclusion
 

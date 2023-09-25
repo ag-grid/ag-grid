@@ -1,15 +1,18 @@
 import classnames from 'classnames';
 import React from 'react';
 import { trackOnceDownloadDS } from '../utils/analytics';
+import { hostPrefix } from '../utils/consts';
 import styles from './DownloadDSButton.module.scss';
 import { Icon } from './Icon';
+
+const DS_VERSION = "30.2.0";
 
 const DownloadDSButton = () => {
     return (
         <div className={styles.outer}>
             <a
                 className={classnames(styles.button, 'button')}
-                href="../../../downloads/ag-grid-design-system-30.2.0.zip"
+                href={`${hostPrefix}/../../downloads/ag-grid-design-system-${DS_VERSION}.zip`}
                 download
                 onClick={() => {
                     trackOnceDownloadDS();

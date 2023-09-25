@@ -198,7 +198,7 @@ From the example, you can observe:
 
 - Button '**Update Points**' updates one record using `api.applyTransaction(transaction)`. The grid aggregates the new value for display.
 
-- Button '**Add New Group**' adds one record for 'Year 5' using `api.applyTransaction(transaction)`. The grid does a delta change and adds one more row to represent this group while not touching the DOM with the remaining rows.
+- Button '**Add Year 5**' adds one record for 'Year 5' using `api.applyTransaction(transaction)`. The grid does a delta change and adds one more row to represent this group while not touching the DOM with the remaining rows.
 
 - Button '**Add Physics Row**' adds one record with subject 'Physics' using `api.applyTransaction(transaction)`. This impacts the columns in the grid as we are pivoting on 'course', so a new column is added for 'Physics'. Again this is all done without touching the remaining columns or rows in the grid.
 

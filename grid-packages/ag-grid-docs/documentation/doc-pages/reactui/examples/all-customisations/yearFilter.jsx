@@ -44,13 +44,13 @@ export default forwardRef((props, ref) => {
     }, [year]);
  
     return (
-        <div style={{display: "inline-block"}} onChange={onYearChange}>
+        <div style={{display: "inline-block"}} >
             <div style={{padding: "10px", backgroundColor: "#d3d3d3", textAlign: "center"}}>Year Filter</div>
             <label style={{margin: "10px", padding: "20px", display: "inline-block", backgroundColor: "#999999"}}>
-                <input type="radio" name="year" value="All" checked={year === 'All'}/> All
+                <input type="radio" name="year" value="All" checked={year === 'All'} onChange={onYearChange}/> All
             </label>
             <label style={{margin: "10px", padding: "20px", display: "inline-block", backgroundColor: "#999999"}}>
-                <input type="radio" name="year" value="2010" checked={year === '2010'}/> Since 2010
+                <input type="radio" name="year" value="2010" checked={year === '2010'} onChange={onYearChange}/> Since 2010
             </label>
         </div>
     )

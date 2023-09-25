@@ -90,11 +90,11 @@ Because you have access to the context (ctx) in your expression, you can add fun
 
 ## Example Cell Expressions
 
-This example demonstrates cell expressions. The second column values in the LHS (Left Hand Side) grid all have expressions. The following can be noted:
+This example demonstrates cell expressions. The second column values in the LHS (Left-Hand Side) grid all have expressions. The following can be noted:
 
-- 'Number Squared' and 'Number x 2' both take the number from the header as an input.
-- 'Today's Date' prints the date.
-- 'Sum A' and 'Sum B' both call a user provided function that is attached to the context (Note that 'Sum A' and 'Sum B' are using values from the RHS grid).
+- "Number Squared" and "Number x 2" both take the number from the header as an input.
+- "Today's Date" prints the date.
+- "Sum A" and "Sum B" both call a user provided function that is attached to the context (Note that "Sum A" and "Sum B" are using values from the RHS grid).
 
 <grid-example title='Cell Expressions' name='cell-expressions' type='typescript' options='{ "exampleHeight": 455, "theme": "ag-theme-alpine-dark" }'></grid-example>
 

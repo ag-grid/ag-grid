@@ -1,5 +1,5 @@
 <framework-specific-section frameworks="react">
-## Mixing JavaScript and React
+|## Mixing JavaScript and React
 |
 |When providing Custom Components you have a choice of the following:
 |1. Provide an AG Grid component as a React Component.

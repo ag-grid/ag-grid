@@ -6,6 +6,8 @@ import { AgGridReact } from '@ag-grid-community/react';
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
 import "@ag-grid-community/styles/ag-grid.css";
 import "@ag-grid-community/styles/ag-theme-alpine.css";
+import './styles.css';
+
 import ChildMessageRenderer from './childMessageRenderer.jsx';
 import CubeRenderer from './cubeRenderer.jsx';
 import CurrencyRenderer from './currencyRenderer.jsx';

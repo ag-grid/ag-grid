@@ -1121,6 +1121,8 @@ export class RowNode<TData = any> implements IEventEmitter, IRowNode<TData> {
      * - `false` if the node is not a full width cell
      */
     public isFullWidthCell(): boolean {
+        if (this.detail) { return true; }
+
         const isFullWidthCellFunc = this.beans.gridOptionsService.getCallback('isFullWidthRow');
         return isFullWidthCellFunc ? isFullWidthCellFunc({ rowNode: this }) : false;
     }

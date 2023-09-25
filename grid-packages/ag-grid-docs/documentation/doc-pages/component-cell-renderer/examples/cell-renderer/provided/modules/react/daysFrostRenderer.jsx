@@ -19,7 +19,7 @@ export default class DaysFrostRenderer extends Component {
                 {
                     new Array(this.props.value).fill('')
                         .map((_, idx) =>
-                            (<img key={idx} src={`https://www.ag-grid.com/example-assets/weather/${this.state.rendererImage}`} />)
+                            (<img key={idx} src={this.state.rendererImage} />)
                         )
                 }
             </span>

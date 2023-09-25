@@ -59,17 +59,19 @@ A Header Component allows customising the inside part of the header. The compone
 |&lt;!-- column moving and resize logic is put on this element by the grid -->
 |&lt;div class="ag-header-cell">
 |
-|&lt;!-- AG Grid will also always provide a resize bar (if column resizing
-|is enabled) and take care of all the resize logic. the grid usually
-|floats this element to the right.-->
-|&lt;div class="ag-header-cell-resize">&lt;/div>
+|    &lt;!-- AG Grid will also always provide a resize bar (if column resizing
+|        is enabled) and take care of all the resize logic. the grid usually
+|        floats this element to the right.-->
+|    &lt;div class="ag-header-cell-resize">&lt;/div>
 |
-|&lt;!-- checkbox for selection, if turned on.
-|the grid usually floats this element to the left. -->
-|&lt;div class="ag-header-select-all">&lt;/div>
+|    &lt;!-- checkbox for selection, if turned on.
+|        the grid usually floats this element to the left. -->
+|    &lt;div class="ag-header-select-all">&lt;/div>
 |
-|&lt;!-- the header component - this is the piece that you can customise -->
-|&lt;div class="ag-header-component">&lt;/div>
+|    &lt;!-- the header component - this is the piece that you can customise -->
+|    &lt;div class="ag-header-cell-comp-wrapper">&lt;/div>
+|
+|&lt;/div>
 </snippet>
 
 The grid is always responsible for the following:

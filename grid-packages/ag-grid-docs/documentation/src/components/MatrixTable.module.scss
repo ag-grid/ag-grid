@@ -5,7 +5,7 @@
 }
 
 .matrix {
-    table-layout: auto !important;
+    table-layout: fixed;
 
     @container (max-width: #{$breakpoint-table-small}) {
         @include stack-table();
