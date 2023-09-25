@@ -333,7 +333,7 @@
         "floatingFilterComponentParams": {
             "more": {
                 "name": "Floating Filter Parameters",
-                "url": "/component-floating-filter/#custom-filter-parameters"
+                "url": "/component-floating-filter/#example-custom-floating-filter"
             }
         },
         "suppressFiltersToolPanel": {}
@@ -487,7 +487,7 @@
             "description": "The custom header group component to be used for rendering the component header. If none specified the default AG Grid is used.",
             "more": {
                 "name": "Header Group Component",
-                "url": "/component-header/#header-group-components/"
+                "url": "/component-header/#header-group-components"
             }
         },
         "headerGroupComponentParams": {}
