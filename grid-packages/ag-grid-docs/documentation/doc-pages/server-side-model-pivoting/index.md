@@ -33,7 +33,7 @@ For more configuration details see the section on [Pivoting](/pivoting/).
 
 The actual pivoting is performed on the server when using the Server-Side Row Model.
 When the grid needs more rows it makes a request via `getRows(params)` on the
-[Server-Side Datasource](/server-side-model-datasource/#datasource-interface) with metadata
+[Server-Side Datasource](/server-side-model-datasource/) with metadata
 containing row grouping details.
 
 The properties relevant to pivoting in the request are shown below:
