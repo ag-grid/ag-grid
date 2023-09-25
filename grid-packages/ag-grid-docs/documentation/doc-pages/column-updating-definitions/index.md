@@ -64,11 +64,11 @@ All stateful attributes of Column Definitions are as follows:
 
 <note>
 | If you are interested in changing Column State only and not the other parts of the column definitions, then consider
-| working with the [Column State](/column-state/) API instead.
+| working with the [Column State](../column-state/) API instead.
 |
 | Column State is provided as part of Column Definitions to enable these properties to be reactive. Some developers wish
 | to update Column Definitions and expect the grid to respond. Other developers may find this non-intuitive and will
-| prefer interacting with [Column State](/column-state/) directly.
+| prefer interacting with [Column State](../column-state/) directly.
 </note>
 
 The **Initial Attribute** will be used only when the **Column is Created**. The **Stateful Attribute** will be used when the **Column is Created or Updated**.

@@ -345,7 +345,7 @@ title: "Get Started with AG Grid"
 <framework-specific-section frameworks="javascript">
 | ### Consuming Grid Events
 |
-| Listen to [Grid Events](../grid-events/) by adding a callback to the appropriate `on[eventName]` onto
+| Listen to [Grid Events](/grid-events/) by adding a callback to the appropriate `on[eventName]` onto
 | the Grid Options. This example demonstrates consuming the `cellClicked` event.
 </framework-specific-section>
 
@@ -476,7 +476,7 @@ title: "Get Started with AG Grid"
 </div>
 </tabs>
 <note>
-| Please refer to our [Compatibility Guide](/angular-compatibility/) for Supported Versions of
+| Please refer to our [Compatibility Guide](../angular-compatibility/) for Supported Versions of
 | Angular & AG Grid.
 </note>
 </framework-specific-section>
@@ -786,7 +786,7 @@ pointing to <a href="http://localhost:4200">localhost:4200</a>.</p>
 |
 | ### Setting Column Definitions
 |
-| Columns are defined by setting [Column definitions](../column-definitions/). Each Column Definition
+| Columns are defined by setting [Column Definitions](/column-definitions/). Each Column Definition
 | defines one Column. Properties can be set for all Columns using the Default Column Definition.
 </framework-specific-section>
 
@@ -852,7 +852,7 @@ pointing to <a href="http://localhost:4200">localhost:4200</a>.</p>
 |
 | ### Grid Properties
 |
-| Set other [Grid Options](../grid-options/) by adding parameters to `&lt;ag-grid-angular/>` component.
+| Set other [Grid Options](/grid-options/) by adding parameters to `&lt;ag-grid-angular/>` component.
 | This example demonstrates setting `animateRows` and `rowSelection`.
 </framework-specific-section>
 
@@ -1273,7 +1273,7 @@ pointing to <a href="http://localhost:3000">localhost:3000</a>.</p>
 <framework-specific-section frameworks="react">
 | ### Consuming Grid Events
 |
-| Listen to [Grid Events](../grid-events/) by adding a callback to the appropriate `on[eventName]` property.
+| Listen to [Grid Events](/grid-events/) by adding a callback to the appropriate `on[eventName]` property.
 | This example demonstrates consuming the `cellClicked` event.
 </framework-specific-section>
 
@@ -1289,7 +1289,7 @@ pointing to <a href="http://localhost:3000">localhost:3000</a>.</p>
 <framework-specific-section frameworks="react">
 | ### Grid Properties
 |
-| Set other [Grid Options](../grid-options/) by adding parameters to `&lt;AgGridReact/>` component.
+| Set other [Grid Options](/grid-options/) by adding parameters to `&lt;AgGridReact/>` component.
 | This example demonstrates setting `animateRows` and `rowSelection`.
 |
 </framework-specific-section>
@@ -1508,7 +1508,7 @@ pointing to <a href="http://localhost:3000">localhost:3000</a>.</p>
 <framework-specific-section frameworks="vue">
 | If you are unsure between Package Import and Module Import, you should use the Package Import
 | (i.e. `ag-grid-vue`/ `ag-grid-vue3`). For more information on import types please refer to the 
-| documentation [here.](../modules/)
+| [Modules](/modules/) documentation.
 |
 | This tutorial covers the use of Vue 3 with AG Grid - for the Vue 2 version of this tutorial please see the documentation [here.](/vue2/)
 |
@@ -1682,7 +1682,7 @@ in your browser of choice.</p>
 </framework-specific-section>
 
 <framework-specific-section frameworks="vue">
-| You can select from any of the [Grid Provided Themes](../themes/). If you don't like the provided themes you can [Customise the Provided Theme](/themes/) or do not use a Theme and style the grid yourself from scratch.
+| You can select from any of the [Grid Provided Themes](/themes/). If you don't like the provided themes you can [Customise the Provided Theme](/themes/) or do not use a Theme and style the grid yourself from scratch.
 |
 | The dimension of the Grid is also set on the grid's element `style="height: 500px"`.
 |
@@ -1716,7 +1716,7 @@ in your browser of choice.</p>
 <framework-specific-section frameworks="vue">
 | ### Setting Column Definitions
 |
-| Columns are defined by setting [Column definitions](../column-definitions/). Each Column Definition
+| Columns are defined by setting [Column Definitions](/column-definitions/). Each Column Definition
 | defines one Column. Properties can be set for all Columns using the Default Column Definition.
 |
 </framework-specific-section>
@@ -1774,7 +1774,7 @@ in your browser of choice.</p>
 <framework-specific-section frameworks="vue">
 | ### Consuming Grid Events
 |
-| Listen to [Grid Events](../grid-events/) by adding a callback to the appropriate `@[event-name]` property.
+| Listen to [Grid Events](/grid-events/) by adding a callback to the appropriate `@[event-name]` property.
 | This example demonstrates consuming the Cell Clicked event via the `@cell-clicked` property.
 |
 </framework-specific-section>
