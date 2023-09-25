@@ -1,7 +1,7 @@
 /**
-          * @ag-grid-enterprise/core - Advanced Data Grid / Data Table supporting Javascript / Typescript / React / Angular / Vue * @version v30.2.0
+          * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / Typescript / React / Angular / Vue * @version v30.2.0
           * @link https://www.ag-grid.com/
-          * @license Commercial
+          * @license MIT
           */
 /**
  * If value is undefined, null or blank, returns null, otherwise returns the value
@@ -14,13 +14,13 @@ function makeNull(value) {
     }
     return value;
 }
-function exists$1(value, allowEmptyString = false) {
+function exists(value, allowEmptyString = false) {
     return value != null && (value !== '' || allowEmptyString);
 }
 function missing(value) {
-    return !exists$1(value);
+    return !exists(value);
 }
-function missingOrEmpty$1(value) {
+function missingOrEmpty(value) {
     return value == null || value.length === 0;
 }
 function toStringOrNull(value) {
@@ -136,9 +136,9 @@ function values(object) {
 var GenericUtils = /*#__PURE__*/Object.freeze({
     __proto__: null,
     makeNull: makeNull,
-    exists: exists$1,
+    exists: exists,
     missing: missing,
-    missingOrEmpty: missingOrEmpty$1,
+    missingOrEmpty: missingOrEmpty,
     toStringOrNull: toStringOrNull,
     attrToNumber: attrToNumber,
     attrToBoolean: attrToBoolean,
@@ -293,7 +293,7 @@ function getAllValuesInObject(obj) {
     return ret;
 }
 function mergeDeep(dest, source, copyUndefined = true, makeCopyOfSimpleObjects = false) {
-    if (!exists$1(source)) {
+    if (!exists(source)) {
         return;
     }
     iterateObject(source, (key, sourceValue) => {
@@ -753,6 +753,222 @@ ModuleRegistry.globalModulesMap = {};
 ModuleRegistry.gridModulesMap = {};
 ModuleRegistry.areGridScopedModules = false;
 
+class Context {
+    constructor(params, logger) {
+        this.beanWrappers = {};
+        this.destroyed = false;
+        if (!params || !params.beanClasses) {
+            return;
+        }
+        this.contextParams = params;
+        this.logger = logger;
+        this.logger.log(">> creating ag-Application Context");
+        this.createBeans();
+        const beanInstances = this.getBeanInstances();
+        this.wireBeans(beanInstances);
+        this.logger.log(">> ag-Application Context ready - component is alive");
+    }
+    getBeanInstances() {
+        return values(this.beanWrappers).map(beanEntry => beanEntry.beanInstance);
+    }
+    createBean(bean, afterPreCreateCallback) {
+        if (!bean) {
+            throw Error(`Can't wire to bean since it is null`);
+        }
+        this.wireBeans([bean], afterPreCreateCallback);
+        return bean;
+    }
+    wireBeans(beanInstances, afterPreCreateCallback) {
+        this.autoWireBeans(beanInstances);
+        this.methodWireBeans(beanInstances);
+        this.callLifeCycleMethods(beanInstances, 'preConstructMethods');
+        // the callback sets the attributes, so the component has access to attributes
+        // before postConstruct methods in the component are executed
+        if (exists(afterPreCreateCallback)) {
+            beanInstances.forEach(afterPreCreateCallback);
+        }
+        this.callLifeCycleMethods(beanInstances, 'postConstructMethods');
+    }
+    createBeans() {
+        // register all normal beans
+        this.contextParams.beanClasses.forEach(this.createBeanWrapper.bind(this));
+        // register override beans, these will overwrite beans above of same name
+        // instantiate all beans - overridden beans will be left out
+        iterateObject(this.beanWrappers, (key, beanEntry) => {
+            let constructorParamsMeta;
+            if (beanEntry.bean.__agBeanMetaData && beanEntry.bean.__agBeanMetaData.autowireMethods && beanEntry.bean.__agBeanMetaData.autowireMethods.agConstructor) {
+                constructorParamsMeta = beanEntry.bean.__agBeanMetaData.autowireMethods.agConstructor;
+            }
+            const constructorParams = this.getBeansForParameters(constructorParamsMeta, beanEntry.bean.name);
+            const newInstance = new (beanEntry.bean.bind.apply(beanEntry.bean, [null, ...constructorParams]));
+            beanEntry.beanInstance = newInstance;
+        });
+        const createdBeanNames = Object.keys(this.beanWrappers).join(', ');
+        this.logger.log(`created beans: ${createdBeanNames}`);
+    }
+    // tslint:disable-next-line
+    createBeanWrapper(BeanClass) {
+        const metaData = BeanClass.__agBeanMetaData;
+        if (!metaData) {
+            let beanName;
+            if (BeanClass.prototype.constructor) {
+                beanName = getFunctionName(BeanClass.prototype.constructor);
+            }
+            else {
+                beanName = "" + BeanClass;
+            }
+            console.error(`Context item ${beanName} is not a bean`);
+            return;
+        }
+        const beanEntry = {
+            bean: BeanClass,
+            beanInstance: null,
+            beanName: metaData.beanName
+        };
+        this.beanWrappers[metaData.beanName] = beanEntry;
+    }
+    autoWireBeans(beanInstances) {
+        beanInstances.forEach(beanInstance => {
+            this.forEachMetaDataInHierarchy(beanInstance, (metaData, beanName) => {
+                const attributes = metaData.agClassAttributes;
+                if (!attributes) {
+                    return;
+                }
+                attributes.forEach((attribute) => {
+                    const otherBean = this.lookupBeanInstance(beanName, attribute.beanName, attribute.optional);
+                    beanInstance[attribute.attributeName] = otherBean;
+                });
+            });
+        });
+    }
+    methodWireBeans(beanInstances) {
+        beanInstances.forEach(beanInstance => {
+            this.forEachMetaDataInHierarchy(beanInstance, (metaData, beanName) => {
+                iterateObject(metaData.autowireMethods, (methodName, wireParams) => {
+                    // skip constructor, as this is dealt with elsewhere
+                    if (methodName === "agConstructor") {
+                        return;
+                    }
+                    const initParams = this.getBeansForParameters(wireParams, beanName);
+                    beanInstance[methodName].apply(beanInstance, initParams);
+                });
+            });
+        });
+    }
+    forEachMetaDataInHierarchy(beanInstance, callback) {
+        let prototype = Object.getPrototypeOf(beanInstance);
+        while (prototype != null) {
+            const constructor = prototype.constructor;
+            if (constructor.hasOwnProperty('__agBeanMetaData')) {
+                const metaData = constructor.__agBeanMetaData;
+                const beanName = this.getBeanName(constructor);
+                callback(metaData, beanName);
+            }
+            prototype = Object.getPrototypeOf(prototype);
+        }
+    }
+    getBeanName(constructor) {
+        if (constructor.__agBeanMetaData && constructor.__agBeanMetaData.beanName) {
+            return constructor.__agBeanMetaData.beanName;
+        }
+        const constructorString = constructor.toString();
+        const beanName = constructorString.substring(9, constructorString.indexOf("("));
+        return beanName;
+    }
+    getBeansForParameters(parameters, beanName) {
+        const beansList = [];
+        if (parameters) {
+            iterateObject(parameters, (paramIndex, otherBeanName) => {
+                const otherBean = this.lookupBeanInstance(beanName, otherBeanName);
+                beansList[Number(paramIndex)] = otherBean;
+            });
+        }
+        return beansList;
+    }
+    lookupBeanInstance(wiringBean, beanName, optional = false) {
+        if (this.destroyed) {
+            this.logger.log(`AG Grid: bean reference ${beanName} is used after the grid is destroyed!`);
+            return null;
+        }
+        if (beanName === "context") {
+            return this;
+        }
+        if (this.contextParams.providedBeanInstances && this.contextParams.providedBeanInstances.hasOwnProperty(beanName)) {
+            return this.contextParams.providedBeanInstances[beanName];
+        }
+        const beanEntry = this.beanWrappers[beanName];
+        if (beanEntry) {
+            return beanEntry.beanInstance;
+        }
+        if (!optional) {
+            console.error(`AG Grid: unable to find bean reference ${beanName} while initialising ${wiringBean}`);
+        }
+        return null;
+    }
+    callLifeCycleMethods(beanInstances, lifeCycleMethod) {
+        beanInstances.forEach(beanInstance => this.callLifeCycleMethodsOnBean(beanInstance, lifeCycleMethod));
+    }
+    callLifeCycleMethodsOnBean(beanInstance, lifeCycleMethod, methodToIgnore) {
+        // putting all methods into a map removes duplicates
+        const allMethods = {};
+        // dump methods from each level of the metadata hierarchy
+        this.forEachMetaDataInHierarchy(beanInstance, (metaData) => {
+            const methods = metaData[lifeCycleMethod];
+            if (methods) {
+                methods.forEach(methodName => {
+                    if (methodName != methodToIgnore) {
+                        allMethods[methodName] = true;
+                    }
+                });
+            }
+        });
+        const allMethodsList = Object.keys(allMethods);
+        allMethodsList.forEach(methodName => beanInstance[methodName]());
+    }
+    getBean(name) {
+        return this.lookupBeanInstance("getBean", name, true);
+    }
+    destroy() {
+        if (this.destroyed) {
+            return;
+        }
+        // Set before doing the destroy, so if context.destroy() gets called via another bean
+        // we are marked as destroyed already to prevent running destroy() twice
+        this.destroyed = true;
+        this.logger.log(">> Shutting down ag-Application Context");
+        const beanInstances = this.getBeanInstances();
+        this.destroyBeans(beanInstances);
+        this.contextParams.providedBeanInstances = null;
+        ModuleRegistry.__unRegisterGridModules(this.contextParams.gridId);
+        this.logger.log(">> ag-Application Context shut down - component is dead");
+    }
+    destroyBean(bean) {
+        if (!bean) {
+            return;
+        }
+        this.destroyBeans([bean]);
+    }
+    destroyBeans(beans) {
+        if (!beans) {
+            return [];
+        }
+        beans.forEach(bean => {
+            this.callLifeCycleMethodsOnBean(bean, 'preDestroyMethods', 'destroy');
+            // call destroy() explicitly if it exists
+            const beanAny = bean;
+            if (typeof beanAny.destroy === 'function') {
+                beanAny.destroy();
+            }
+        });
+        return [];
+    }
+    isDestroyed() {
+        return this.destroyed;
+    }
+    getGridId() {
+        return this.contextParams.gridId;
+    }
+}
 function PreConstruct(target, methodName, descriptor) {
     const props = getOrCreateProps$1(target.constructor);
     if (!props.preConstructMethods) {
@@ -842,7 +1058,7 @@ function getOrCreateProps$1(target) {
     return target.__agBeanMetaData;
 }
 
-var __decorate$2z = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$2x = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
@@ -1003,18 +1219,18 @@ let EventService = class EventService {
         queueCopy.forEach(func => func());
     }
 };
-__decorate$2z([
+__decorate$2x([
     __param$9(0, Qualifier('loggerFactory')),
     __param$9(1, Qualifier('gridOptionsService')),
     __param$9(2, Qualifier('frameworkOverrides')),
     __param$9(3, Qualifier('globalEventListener')),
     __param$9(4, Qualifier('globalSyncEventListener'))
 ], EventService.prototype, "setBeans", null);
-EventService = __decorate$2z([
+EventService = __decorate$2x([
     Bean('eventService')
 ], EventService);
 
-var __decorate$2y = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$2w = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
@@ -1151,8 +1367,8 @@ class Column {
     }
     initDotNotation() {
         const suppressDotNotation = this.gridOptionsService.is('suppressFieldDotNotation');
-        this.fieldContainsDots = exists$1(this.colDef.field) && this.colDef.field.indexOf('.') >= 0 && !suppressDotNotation;
-        this.tooltipFieldContainsDots = exists$1(this.colDef.tooltipField) && this.colDef.tooltipField.indexOf('.') >= 0 && !suppressDotNotation;
+        this.fieldContainsDots = exists(this.colDef.field) && this.colDef.field.indexOf('.') >= 0 && !suppressDotNotation;
+        this.tooltipFieldContainsDots = exists(this.colDef.tooltipField) && this.colDef.tooltipField.indexOf('.') >= 0 && !suppressDotNotation;
     }
     initMinAndMaxWidths() {
         const colDef = this.colDef;
@@ -1160,9 +1376,9 @@ class Column {
         this.maxWidth = this.columnUtils.calculateColMaxWidth(colDef);
     }
     initTooltip() {
-        this.tooltipEnabled = exists$1(this.colDef.tooltipField) ||
-            exists$1(this.colDef.tooltipValueGetter) ||
-            exists$1(this.colDef.tooltipComponent);
+        this.tooltipEnabled = exists(this.colDef.tooltipField) ||
+            exists(this.colDef.tooltipValueGetter) ||
+            exists(this.colDef.tooltipComponent);
     }
     resetActualWidth(source = 'api') {
         const initialWidth = this.columnUtils.calculateColInitialWidth(this.colDef);
@@ -1214,7 +1430,7 @@ class Column {
         const usingCSRM = this.gridOptionsService.isRowModelType('clientSide');
         if (usingCSRM && !ModuleRegistry.__isRegistered(ModuleNames.RowGroupingModule, this.gridOptionsService.getGridId())) {
             const rowGroupingItems = ['enableRowGroup', 'rowGroup', 'rowGroupIndex', 'enablePivot', 'enableValue', 'pivot', 'pivotIndex', 'aggFunc'];
-            const itemsUsed = rowGroupingItems.filter(x => exists$1(colDefAny[x]));
+            const itemsUsed = rowGroupingItems.filter(x => exists(colDefAny[x]));
             if (itemsUsed.length > 0) {
                 ModuleRegistry.__assertRegistered(ModuleNames.RowGroupingModule, itemsUsed.map(i => 'colDef.' + i).join(', '), this.gridOptionsService.getGridId());
             }
@@ -1224,12 +1440,12 @@ class Column {
         }
         if (this.gridOptionsService.is('treeData')) {
             const itemsNotAllowedWithTreeData = ['rowGroup', 'rowGroupIndex', 'pivot', 'pivotIndex'];
-            const itemsUsed = itemsNotAllowedWithTreeData.filter(x => exists$1(colDefAny[x]));
+            const itemsUsed = itemsNotAllowedWithTreeData.filter(x => exists(colDefAny[x]));
             if (itemsUsed.length > 0) {
                 warnOnce(`AG Grid: ${itemsUsed.join()} is not possible when doing tree data, your column definition should not have ${itemsUsed.join()}`, 'TreeDataCannotRowGroup');
             }
         }
-        if (exists$1(colDefAny.menuTabs)) {
+        if (exists(colDefAny.menuTabs)) {
             if (Array.isArray(colDefAny.menuTabs)) {
                 const communityMenuTabs = ['filterMenuTab'];
                 const enterpriseMenuTabs = ['columnsMenuTab', 'generalMenuTab'];
@@ -1247,16 +1463,16 @@ class Column {
                 warnOnce(`AG Grid: The typeof 'colDef.menuTabs' should be an array not:` + typeof colDefAny.menuTabs, 'wrongType_menuTabs');
             }
         }
-        if (exists$1(colDefAny.columnsMenuParams)) {
+        if (exists(colDefAny.columnsMenuParams)) {
             ModuleRegistry.__assertRegistered(ModuleNames.MenuModule, 'columnsMenuParams', this.gridOptionsService.getGridId());
         }
-        if (exists$1(colDefAny.columnsMenuParams)) {
+        if (exists(colDefAny.columnsMenuParams)) {
             ModuleRegistry.__assertRegistered(ModuleNames.ColumnsToolPanelModule, 'columnsMenuParams', this.gridOptionsService.getGridId());
         }
-        if (exists$1(this.colDef.width) && typeof this.colDef.width !== 'number') {
+        if (exists(this.colDef.width) && typeof this.colDef.width !== 'number') {
             warnOnce('AG Grid: colDef.width should be a number, not ' + typeof this.colDef.width, 'ColumnCheck');
         }
-        if (exists$1(colDefAny.columnGroupShow) && colDefAny.columnGroupShow !== 'closed' && colDefAny.columnGroupShow !== 'open') {
+        if (exists(colDefAny.columnGroupShow) && colDefAny.columnGroupShow !== 'closed' && colDefAny.columnGroupShow !== 'open') {
             warnOnce(`AG Grid: '${colDefAny.columnGroupShow}' is not valid for columnGroupShow. Valid values are 'open', 'closed', undefined, null`, 'columnGroupShow_invalid');
         }
     }
@@ -1387,7 +1603,7 @@ class Column {
         return missing(this.sort);
     }
     isSorting() {
-        return exists$1(this.sort);
+        return exists(this.sort);
     }
     getSortIndex() {
         return this.sortIndex;
@@ -1621,7 +1837,7 @@ class Column {
         this.dispatchStateUpdatedEvent('flex');
     }
     setMinimum(source = "api") {
-        if (exists$1(this.minWidth)) {
+        if (exists(this.minWidth)) {
             this.setActualWidth(this.minWidth, source);
         }
     }
@@ -1714,20 +1930,20 @@ Column.EVENT_PIVOT_CHANGED = 'columnPivotChanged';
 Column.EVENT_VALUE_CHANGED = 'columnValueChanged';
 // + dataTypeService - when waiting to infer cell data types
 Column.EVENT_STATE_UPDATED = 'columnStateUpdated';
-__decorate$2y([
+__decorate$2w([
     Autowired('gridOptionsService')
 ], Column.prototype, "gridOptionsService", void 0);
-__decorate$2y([
+__decorate$2w([
     Autowired('columnUtils')
 ], Column.prototype, "columnUtils", void 0);
-__decorate$2y([
+__decorate$2w([
     Autowired('columnHoverService')
 ], Column.prototype, "columnHoverService", void 0);
-__decorate$2y([
+__decorate$2w([
     PostConstruct
 ], Column.prototype, "initialise", null);
 
-var __decorate$2x = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$2v = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
@@ -1922,7 +2138,7 @@ class ProvidedColumnGroup {
 }
 ProvidedColumnGroup.EVENT_EXPANDED_CHANGED = 'expandedChanged';
 ProvidedColumnGroup.EVENT_EXPANDABLE_CHANGED = 'expandableChanged';
-__decorate$2x([
+__decorate$2v([
     PreDestroy
 ], ProvidedColumnGroup.prototype, "destroy", null);
 
@@ -1940,7 +2156,7 @@ const DefaultColumnTypes = {
 function firstExistingValue(...values) {
     for (let i = 0; i < values.length; i++) {
         const value = values[i];
-        if (exists$1(value)) {
+        if (exists(value)) {
             return value;
         }
     }
@@ -2075,7 +2291,7 @@ var ArrayUtils = /*#__PURE__*/Object.freeze({
 });
 
 const AG_GRID_STOP_PROPAGATION = '__ag_Grid_Stop_Propagation';
-const PASSIVE_EVENTS = ['touchstart', 'touchend', 'touchmove', 'touchcancel', 'scroll'];
+const PASSIVE_EVENTS$1 = ['touchstart', 'touchend', 'touchmove', 'touchcancel', 'scroll'];
 const supports = {};
 /**
  * a user once raised an issue - they said that when you opened a popup (eg context menu)
@@ -2157,7 +2373,7 @@ function getEventPath(event) {
     return createEventPath(eventNoType);
 }
 function addSafePassiveEventListener(frameworkOverrides, eElement, event, listener) {
-    const isPassive = includes(PASSIVE_EVENTS, event);
+    const isPassive = includes(PASSIVE_EVENTS$1, event);
     const options = isPassive ? { passive: true } : undefined;
     // this check is here for certain scenarios where I believe the user must be destroying
     // the grid somehow but continuing for it to be used
@@ -2178,7 +2394,7 @@ var EventUtils = /*#__PURE__*/Object.freeze({
     addSafePassiveEventListener: addSafePassiveEventListener
 });
 
-var __decorate$2w = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$2u = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
@@ -2346,29 +2562,29 @@ class BeanStub {
     }
 }
 BeanStub.EVENT_DESTROYED = 'destroyed';
-__decorate$2w([
+__decorate$2u([
     Autowired('frameworkOverrides')
 ], BeanStub.prototype, "frameworkOverrides", void 0);
-__decorate$2w([
+__decorate$2u([
     Autowired('context')
 ], BeanStub.prototype, "context", void 0);
-__decorate$2w([
+__decorate$2u([
     Autowired('eventService')
 ], BeanStub.prototype, "eventService", void 0);
-__decorate$2w([
+__decorate$2u([
     Autowired('gridOptionsService')
 ], BeanStub.prototype, "gridOptionsService", void 0);
-__decorate$2w([
+__decorate$2u([
     Autowired('localeService')
 ], BeanStub.prototype, "localeService", void 0);
-__decorate$2w([
+__decorate$2u([
     Autowired('environment')
 ], BeanStub.prototype, "environment", void 0);
-__decorate$2w([
+__decorate$2u([
     PreDestroy
 ], BeanStub.prototype, "destroy", null);
 
-var __decorate$2v = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$2t = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
@@ -2723,20 +2939,20 @@ let ColumnFactory = class ColumnFactory extends BeanStub {
         return abstractColDef.children !== undefined;
     }
 };
-__decorate$2v([
+__decorate$2t([
     Autowired('columnUtils')
 ], ColumnFactory.prototype, "columnUtils", void 0);
-__decorate$2v([
+__decorate$2t([
     Autowired('dataTypeService')
 ], ColumnFactory.prototype, "dataTypeService", void 0);
-__decorate$2v([
+__decorate$2t([
     __param$8(0, Qualifier('loggerFactory'))
 ], ColumnFactory.prototype, "setBeans", null);
-ColumnFactory = __decorate$2v([
+ColumnFactory = __decorate$2t([
     Bean('columnFactory')
 ], ColumnFactory);
 
-var __decorate$2u = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$2s = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
@@ -3003,7 +3219,7 @@ class ColumnGroup {
 }
 ColumnGroup.EVENT_LEFT_CHANGED = 'leftChanged';
 ColumnGroup.EVENT_DISPLAYED_CHILDREN_CHANGED = 'displayedChildrenChanged';
-__decorate$2u([
+__decorate$2s([
     Autowired('gridOptionsService')
 ], ColumnGroup.prototype, "gridOptionsService", void 0);
 
@@ -3222,7 +3438,7 @@ class GroupInstanceIdCreator {
     }
 }
 
-var __decorate$2t = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$2r = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
@@ -3349,13 +3565,13 @@ let AutoGroupColService = class AutoGroupColService extends BeanStub {
         return res;
     }
 };
-__decorate$2t([
+__decorate$2r([
     Autowired('columnModel')
 ], AutoGroupColService.prototype, "columnModel", void 0);
-__decorate$2t([
+__decorate$2r([
     Autowired('columnFactory')
 ], AutoGroupColService.prototype, "columnFactory", void 0);
-AutoGroupColService = __decorate$2t([
+AutoGroupColService = __decorate$2r([
     Bean('autoGroupColService')
 ], AutoGroupColService);
 
@@ -4019,7 +4235,7 @@ var FuzzyMatchUtils = /*#__PURE__*/Object.freeze({
     fuzzySuggestions: fuzzySuggestions
 });
 
-var __decorate$2s = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$2q = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
@@ -4228,16 +4444,16 @@ let GridOptionsValidator = class GridOptionsValidator {
         }
     }
 };
-__decorate$2s([
+__decorate$2q([
     Autowired('gridOptions')
 ], GridOptionsValidator.prototype, "gridOptions", void 0);
-__decorate$2s([
+__decorate$2q([
     Autowired('gridOptionsService')
 ], GridOptionsValidator.prototype, "gridOptionsService", void 0);
-__decorate$2s([
+__decorate$2q([
     PostConstruct
 ], GridOptionsValidator.prototype, "init", null);
-GridOptionsValidator = __decorate$2s([
+GridOptionsValidator = __decorate$2q([
     Bean('gridOptionsValidator')
 ], GridOptionsValidator);
 function matchesGroupDisplayType(toMatch, supplied) {
@@ -4257,7 +4473,7 @@ function matchesTreeDataDisplayType(toMatch, supplied) {
     return supplied === toMatch;
 }
 
-var __decorate$2r = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$2p = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
@@ -4854,7 +5070,7 @@ let ColumnModel = class ColumnModel extends BeanStub {
         }
         const emptySpaceBeforeColumn = (col) => {
             const left = col.getLeft();
-            return exists$1(left) && left > this.viewportLeft;
+            return exists(left) && left > this.viewportLeft;
         };
         // if doing column virtualisation, then we filter based on the viewport.
         const filterCallback = this.suppressColumnVirtualisation ? null : this.isColumnInRowViewport.bind(this);
@@ -4898,7 +5114,7 @@ let ColumnModel = class ColumnModel extends BeanStub {
         return this.getWidthOfColsInList(this.displayedColumnsRight);
     }
     updatePrimaryColumnList(keys, masterList, actionIsAdd, columnCallback, eventType, source = "api") {
-        if (!keys || missingOrEmpty$1(keys)) {
+        if (!keys || missingOrEmpty(keys)) {
             return;
         }
         let atLeastOne = false;
@@ -4993,7 +5209,7 @@ let ColumnModel = class ColumnModel extends BeanStub {
         // store all original cols and their index.
         masterList.forEach((col, idx) => changes.set(col, idx));
         masterList.length = 0;
-        if (exists$1(colKeys)) {
+        if (exists(colKeys)) {
             colKeys.forEach(key => {
                 const column = this.getPrimaryColumn(key);
                 if (column) {
@@ -5056,11 +5272,11 @@ let ColumnModel = class ColumnModel extends BeanStub {
     // returns the width we can set to this col, taking into consideration min and max widths
     normaliseColumnWidth(column, newWidth) {
         const minWidth = column.getMinWidth();
-        if (exists$1(minWidth) && newWidth < minWidth) {
+        if (exists(minWidth) && newWidth < minWidth) {
             newWidth = minWidth;
         }
         const maxWidth = column.getMaxWidth();
-        if (exists$1(maxWidth) && column.isGreaterThanMax(newWidth)) {
+        if (exists(maxWidth) && column.isGreaterThanMax(newWidth)) {
             newWidth = maxWidth;
         }
         return newWidth;
@@ -5122,7 +5338,7 @@ let ColumnModel = class ColumnModel extends BeanStub {
             const minWidth = col.getMinWidth();
             minWidthAccumulated += minWidth || 0;
             const maxWidth = col.getMaxWidth();
-            if (exists$1(maxWidth) && maxWidth > 0) {
+            if (exists(maxWidth) && maxWidth > 0) {
                 maxWidthAccumulated += maxWidth;
             }
             else {
@@ -5210,12 +5426,12 @@ let ColumnModel = class ColumnModel extends BeanStub {
                     }
                     const minWidth = col.getMinWidth();
                     const maxWidth = col.getMaxWidth();
-                    if (exists$1(minWidth) && colNewWidth < minWidth) {
+                    if (exists(minWidth) && colNewWidth < minWidth) {
                         colNewWidth = minWidth;
                         finishedCols[col.getId()] = true;
                         finishedColsGrew = true;
                     }
-                    else if (exists$1(maxWidth) && maxWidth > 0 && colNewWidth > maxWidth) {
+                    else if (exists(maxWidth) && maxWidth > 0 && colNewWidth > maxWidth) {
                         colNewWidth = maxWidth;
                         finishedCols[col.getId()] = true;
                         finishedColsGrew = true;
@@ -5493,10 +5709,10 @@ let ColumnModel = class ColumnModel extends BeanStub {
         return this.gridColumns;
     }
     isEmpty() {
-        return missingOrEmpty$1(this.gridColumns);
+        return missingOrEmpty(this.gridColumns);
     }
     isRowGroupEmpty() {
-        return missingOrEmpty$1(this.rowGroupColumns);
+        return missingOrEmpty(this.rowGroupColumns);
     }
     setColumnVisible(key, visible, source = "api") {
         this.setColumnsVisible([key], visible, source);
@@ -5559,7 +5775,7 @@ let ColumnModel = class ColumnModel extends BeanStub {
     action, 
     // should return back a column event of the right type
     source, createEvent) {
-        if (missingOrEmpty$1(keys)) {
+        if (missingOrEmpty(keys)) {
             return;
         }
         const updatedColumns = [];
@@ -5579,7 +5795,7 @@ let ColumnModel = class ColumnModel extends BeanStub {
             return;
         }
         this.updateDisplayedColumns(source);
-        if (exists$1(createEvent) && createEvent) {
+        if (exists(createEvent) && createEvent) {
             const event = createEvent();
             event.columns = updatedColumns;
             event.column = updatedColumns.length === 1 ? updatedColumns[0] : null;
@@ -5767,7 +5983,7 @@ let ColumnModel = class ColumnModel extends BeanStub {
         };
     }
     applyColumnState(params, source) {
-        if (missingOrEmpty$1(this.primaryColumns)) {
+        if (missingOrEmpty(this.primaryColumns)) {
             return false;
         }
         if (params && params.state && !params.state.forEach) {
@@ -5866,7 +6082,7 @@ let ColumnModel = class ColumnModel extends BeanStub {
         let { unmatchedAndAutoStates, unmatchedCount, } = applyStates(params.state || [], this.primaryColumns || [], (id) => this.getPrimaryColumn(id));
         // If there are still states left over, see if we can apply them to newly generated
         // secondary or auto columns. Also if defaults exist, ensure they are applied to secondary cols
-        if (unmatchedAndAutoStates.length > 0 || exists$1(params.defaultState)) {
+        if (unmatchedAndAutoStates.length > 0 || exists(params.defaultState)) {
             unmatchedCount = applyStates(unmatchedAndAutoStates, this.secondaryColumns || [], (id) => this.getSecondaryColumn(id)).unmatchedCount;
         }
         this.columnAnimationService.finish();
@@ -6054,7 +6270,7 @@ let ColumnModel = class ColumnModel extends BeanStub {
                     obj.value1 = stateItem[key1];
                     calculated = true;
                 }
-                if (exists$1(key2) && stateItem[key2] !== undefined) {
+                if (exists(key2) && stateItem[key2] !== undefined) {
                     obj.value2 = stateItem[key2];
                     calculated = true;
                 }
@@ -6063,7 +6279,7 @@ let ColumnModel = class ColumnModel extends BeanStub {
                 if (defaultState[key1] !== undefined) {
                     obj.value1 = defaultState[key1];
                 }
-                if (exists$1(key2) && defaultState[key2] !== undefined) {
+                if (exists(key2) && defaultState[key2] !== undefined) {
                     obj.value2 = defaultState[key2];
                 }
             }
@@ -6124,7 +6340,7 @@ let ColumnModel = class ColumnModel extends BeanStub {
                 }
             }
             else {
-                if (exists$1(aggFunc)) {
+                if (exists(aggFunc)) {
                     console.warn('AG Grid: stateItem.aggFunc must be a string. if using your own aggregation ' +
                         'functions, register the functions first before using them in get/set state. This is because it is ' +
                         'intended for the column state to be stored and retrieved as simple JSON.');
@@ -6248,7 +6464,7 @@ let ColumnModel = class ColumnModel extends BeanStub {
     }
     getAutoColumn(key) {
         if (!this.groupAutoColumns ||
-            !exists$1(this.groupAutoColumns) ||
+            !exists(this.groupAutoColumns) ||
             missing(this.groupAutoColumns)) {
             return null;
         }
@@ -6319,7 +6535,7 @@ let ColumnModel = class ColumnModel extends BeanStub {
         }
         // only columns with aggregation active can have aggregations
         const pivotValueColumn = column.getColDef().pivotValueColumn;
-        const pivotActiveOnThisColumn = exists$1(pivotValueColumn);
+        const pivotActiveOnThisColumn = exists(pivotValueColumn);
         let aggFunc = null;
         let aggFuncFound;
         // otherwise we have a measure that is active, and we are doing aggregation on it
@@ -6631,7 +6847,7 @@ let ColumnModel = class ColumnModel extends BeanStub {
     checkColSpanActiveInCols(columns) {
         let result = false;
         columns.forEach(col => {
-            if (exists$1(col.getColDef().colSpan)) {
+            if (exists(col.getColDef().colSpan)) {
                 result = true;
             }
         });
@@ -6643,7 +6859,7 @@ let ColumnModel = class ColumnModel extends BeanStub {
         const checkFunc = (col) => {
             const colDef = col.getColDef();
             const underlyingColumn = colDef.showRowGroup;
-            if (colDef && exists$1(underlyingColumn)) {
+            if (colDef && exists(underlyingColumn)) {
                 this.groupDisplayColumns.push(col);
                 if (typeof underlyingColumn === 'string') {
                     this.groupDisplayColumnsMap[underlyingColumn] = col;
@@ -6672,7 +6888,7 @@ let ColumnModel = class ColumnModel extends BeanStub {
         this.setFirstRightAndLastLeftPinned(source);
     }
     isSecondaryColumnsPresent() {
-        return exists$1(this.secondaryColumns);
+        return exists(this.secondaryColumns);
     }
     setSecondaryColumns(colDefs, source = "api") {
         const newColsPresent = colDefs && colDefs.length > 0;
@@ -6709,7 +6925,7 @@ let ColumnModel = class ColumnModel extends BeanStub {
         }
         const searchForColDefs = (colDefs2) => {
             colDefs2.forEach((abstractColDef) => {
-                const isGroup = exists$1(abstractColDef.children);
+                const isGroup = exists(abstractColDef.children);
                 if (isGroup) {
                     const colGroupDef = abstractColDef;
                     if (groupCallback) {
@@ -7182,10 +7398,10 @@ let ColumnModel = class ColumnModel extends BeanStub {
                 let constrainedWidth = 0;
                 const minWidth = col.getMinWidth();
                 const maxWidth = col.getMaxWidth();
-                if (exists$1(minWidth) && widthByFlexRule < minWidth) {
+                if (exists(minWidth) && widthByFlexRule < minWidth) {
                     constrainedWidth = minWidth;
                 }
-                else if (exists$1(maxWidth) && widthByFlexRule > maxWidth) {
+                else if (exists(maxWidth) && widthByFlexRule > maxWidth) {
                     constrainedWidth = maxWidth;
                 }
                 if (constrainedWidth) {
@@ -7309,12 +7525,12 @@ let ColumnModel = class ColumnModel extends BeanStub {
                     const minWidth = typeof minOverride === 'number' && minOverride > colMinWidth ? minOverride : column.getMinWidth();
                     const maxWidth = typeof maxOverride === 'number' && maxOverride < colMaxWidth ? maxOverride : column.getMaxWidth();
                     let newWidth = Math.round(column.getActualWidth() * scale);
-                    if (exists$1(minWidth) && newWidth < minWidth) {
+                    if (exists(minWidth) && newWidth < minWidth) {
                         newWidth = minWidth;
                         moveToNotSpread(column);
                         finishedResizing = false;
                     }
-                    else if (exists$1(maxWidth) && newWidth > maxWidth) {
+                    else if (exists(maxWidth) && newWidth > maxWidth) {
                         newWidth = maxWidth;
                         moveToNotSpread(column);
                         finishedResizing = false;
@@ -7604,59 +7820,59 @@ let ColumnModel = class ColumnModel extends BeanStub {
         return Object.values(existingColumnStateUpdates);
     }
 };
-__decorate$2r([
+__decorate$2p([
     Autowired('expressionService')
 ], ColumnModel.prototype, "expressionService", void 0);
-__decorate$2r([
+__decorate$2p([
     Autowired('columnFactory')
 ], ColumnModel.prototype, "columnFactory", void 0);
-__decorate$2r([
+__decorate$2p([
     Autowired('displayedGroupCreator')
 ], ColumnModel.prototype, "displayedGroupCreator", void 0);
-__decorate$2r([
+__decorate$2p([
     Autowired('ctrlsService')
 ], ColumnModel.prototype, "ctrlsService", void 0);
-__decorate$2r([
+__decorate$2p([
     Autowired('autoWidthCalculator')
 ], ColumnModel.prototype, "autoWidthCalculator", void 0);
-__decorate$2r([
+__decorate$2p([
     Autowired('columnUtils')
 ], ColumnModel.prototype, "columnUtils", void 0);
-__decorate$2r([
+__decorate$2p([
     Autowired('columnAnimationService')
 ], ColumnModel.prototype, "columnAnimationService", void 0);
-__decorate$2r([
+__decorate$2p([
     Autowired('autoGroupColService')
 ], ColumnModel.prototype, "autoGroupColService", void 0);
-__decorate$2r([
+__decorate$2p([
     Optional('aggFuncService')
 ], ColumnModel.prototype, "aggFuncService", void 0);
-__decorate$2r([
+__decorate$2p([
     Optional('valueCache')
 ], ColumnModel.prototype, "valueCache", void 0);
-__decorate$2r([
+__decorate$2p([
     Optional('animationFrameService')
 ], ColumnModel.prototype, "animationFrameService", void 0);
-__decorate$2r([
+__decorate$2p([
     Autowired('sortController')
 ], ColumnModel.prototype, "sortController", void 0);
-__decorate$2r([
+__decorate$2p([
     Autowired('columnDefFactory')
 ], ColumnModel.prototype, "columnDefFactory", void 0);
-__decorate$2r([
+__decorate$2p([
     PostConstruct
 ], ColumnModel.prototype, "init", null);
-__decorate$2r([
+__decorate$2p([
     PreDestroy
 ], ColumnModel.prototype, "destroyColumns", null);
-__decorate$2r([
+__decorate$2p([
     __param$7(0, Qualifier('loggerFactory'))
 ], ColumnModel.prototype, "setBeans", null);
-ColumnModel = __decorate$2r([
+ColumnModel = __decorate$2p([
     Bean('columnModel')
 ], ColumnModel);
 
-var __decorate$2q = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$2o = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
@@ -7746,11 +7962,11 @@ let ColumnUtils = class ColumnUtils extends BeanStub {
         });
     }
 };
-ColumnUtils = __decorate$2q([
+ColumnUtils = __decorate$2o([
     Bean('columnUtils')
 ], ColumnUtils);
 
-var __decorate$2p = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$2n = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
@@ -7838,7 +8054,7 @@ let DisplayedGroupCreator = class DisplayedGroupCreator extends BeanStub {
         if (columnGroup && columnGroup.getProvidedColumnGroup() !== providedGroup) {
             columnGroup = null;
         }
-        if (exists$1(columnGroup)) {
+        if (exists(columnGroup)) {
             // clean out the old column group here, as we will be adding children into it again
             columnGroup.reset();
         }
@@ -7875,11 +8091,11 @@ let DisplayedGroupCreator = class DisplayedGroupCreator extends BeanStub {
         });
     }
 };
-DisplayedGroupCreator = __decorate$2p([
+DisplayedGroupCreator = __decorate$2n([
     Bean('displayedGroupCreator')
 ], DisplayedGroupCreator);
 
-var __decorate$2o = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$2m = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
@@ -7909,7 +8125,7 @@ let AgStackComponentsRegistry = class AgStackComponentsRegistry extends BeanStub
         return this.componentsMappedByName[htmlTag];
     }
 };
-AgStackComponentsRegistry = __decorate$2o([
+AgStackComponentsRegistry = __decorate$2m([
     Bean('agStackComponentsRegistry')
 ], AgStackComponentsRegistry);
 
@@ -8720,7 +8936,7 @@ function insertWithDomOrder(eContainer, eToInsert, eChildBefore) {
 }
 /** @deprecated */
 function prependDC(parent, documentFragment) {
-    if (exists$1(parent.firstChild)) {
+    if (exists(parent.firstChild)) {
         parent.insertBefore(documentFragment, parent.firstChild);
     }
     else {
@@ -9201,7 +9417,7 @@ function isUserSuppressingKeyboardEvent(gridOptionsService, keyboardEvent, rowNo
 function isUserSuppressingHeaderKeyboardEvent(gridOptionsService, keyboardEvent, headerRowIndex, column) {
     const colDef = column.getDefinition();
     const colDefFunc = colDef && colDef.suppressHeaderKeyboardEvent;
-    if (!exists$1(colDefFunc)) {
+    if (!exists(colDefFunc)) {
         return false;
     }
     const params = {
@@ -9456,7 +9672,21 @@ class AgPromise {
     }
 }
 
-var __decorate$2n = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+/**
+ * A Util Class only used when debugging for printing time to console
+ */
+class Timer {
+    constructor() {
+        this.timestamp = new Date().getTime();
+    }
+    print(msg) {
+        const duration = (new Date().getTime()) - this.timestamp;
+        console.info(`${msg} = ${duration}`);
+        this.timestamp = new Date().getTime();
+    }
+}
+
+var __decorate$2l = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
@@ -9518,7 +9748,7 @@ class CustomTooltipFeature extends BeanStub {
     }
     getGridOptionsTooltipDelay(delayOption) {
         const delay = this.gridOptionsService.getNum(delayOption);
-        if (exists$1(delay)) {
+        if (exists(delay)) {
             if (delay < 0) {
                 doOnce(() => console.warn(`AG Grid: ${delayOption} should not be lower than 0`), `${delayOption}Warn`);
             }
@@ -9656,7 +9886,7 @@ class CustomTooltipFeature extends BeanStub {
     }
     showTooltip() {
         const params = Object.assign({}, this.parentComp.getTooltipParams());
-        if (!exists$1(params.value)) {
+        if (!exists(params.value)) {
             this.setToDoNothing();
             return;
         }
@@ -9851,13 +10081,13 @@ class CustomTooltipFeature extends BeanStub {
     }
 }
 CustomTooltipFeature.isLocked = false;
-__decorate$2n([
+__decorate$2l([
     Autowired('popupService')
 ], CustomTooltipFeature.prototype, "popupService", void 0);
-__decorate$2n([
+__decorate$2l([
     Autowired('userComponentFactory')
 ], CustomTooltipFeature.prototype, "userComponentFactory", void 0);
-__decorate$2n([
+__decorate$2l([
     PostConstruct
 ], CustomTooltipFeature.prototype, "postConstruct", null);
 
@@ -9929,7 +10159,7 @@ class CssClassManager {
     }
 }
 
-var __decorate$2m = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$2k = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
@@ -10222,16 +10452,19 @@ class Component extends BeanStub {
     }
 }
 Component.EVENT_DISPLAYED_CHANGED = 'displayedChanged';
-__decorate$2m([
+__decorate$2k([
     Autowired('agStackComponentsRegistry')
 ], Component.prototype, "agStackComponentsRegistry", void 0);
-__decorate$2m([
+__decorate$2k([
     PreConstruct
 ], Component.prototype, "preConstructOnComponent", null);
-__decorate$2m([
+__decorate$2k([
     PreConstruct
 ], Component.prototype, "createChildComponentsPreConstruct", null);
 
+function QuerySelector(selector) {
+    return querySelectorFunc.bind(this, selector, undefined);
+}
 function RefSelector(ref) {
     return querySelectorFunc.bind(this, `[ref=${ref}]`, ref);
 }
@@ -10284,7 +10517,7 @@ function getOrCreateProps(target, instanceName) {
     return target.__agComponentMetaData[instanceName];
 }
 
-var __decorate$2l = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$2j = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
@@ -10333,10 +10566,10 @@ class ReadOnlyFloatingFilter extends Component {
         this.init(params);
     }
 }
-__decorate$2l([
+__decorate$2j([
     RefSelector('eFloatingFilterText')
 ], ReadOnlyFloatingFilter.prototype, "eFloatingFilterText", void 0);
-__decorate$2l([
+__decorate$2j([
     Autowired('columnModel')
 ], ReadOnlyFloatingFilter.prototype, "columnModel", void 0);
 
@@ -10524,7 +10757,7 @@ const DEFAULT_FILTER_LOCALE_TEXT = {
     dateFormatOoo: 'yyyy-mm-dd',
 };
 
-var __decorate$2k = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$2i = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
@@ -10576,14 +10809,14 @@ class ManagedFocusFeature extends BeanStub {
     }
 }
 ManagedFocusFeature.FOCUS_MANAGED_CLASS = 'ag-focus-managed';
-__decorate$2k([
+__decorate$2i([
     Autowired('focusService')
 ], ManagedFocusFeature.prototype, "focusService", void 0);
-__decorate$2k([
+__decorate$2i([
     PostConstruct
 ], ManagedFocusFeature.prototype, "postConstruct", null);
 
-var __decorate$2j = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$2h = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
@@ -11283,17 +11516,17 @@ class PositionableFeature extends BeanStub {
         this.removeResizers();
     }
 }
-__decorate$2j([
+__decorate$2h([
     Autowired('popupService')
 ], PositionableFeature.prototype, "popupService", void 0);
-__decorate$2j([
+__decorate$2h([
     Autowired('resizeObserverService')
 ], PositionableFeature.prototype, "resizeObserverService", void 0);
-__decorate$2j([
+__decorate$2h([
     Autowired('dragService')
 ], PositionableFeature.prototype, "dragService", void 0);
 
-var __decorate$2i = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$2g = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
@@ -11629,17 +11862,17 @@ class ProvidedFilter extends Component {
         return this.eFilterBody;
     }
 }
-__decorate$2i([
+__decorate$2g([
     Autowired('rowModel')
 ], ProvidedFilter.prototype, "rowModel", void 0);
-__decorate$2i([
+__decorate$2g([
     RefSelector('eFilterBody')
 ], ProvidedFilter.prototype, "eFilterBody", void 0);
-__decorate$2i([
+__decorate$2g([
     PostConstruct
 ], ProvidedFilter.prototype, "postConstruct", null);
 
-var __decorate$2h = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$2f = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
@@ -11743,7 +11976,7 @@ class AgAbstractLabel extends Component {
         return !!this.disabled;
     }
 }
-__decorate$2h([
+__decorate$2f([
     PostConstruct
 ], AgAbstractLabel.prototype, "postConstruct", null);
 
@@ -11788,7 +12021,7 @@ class AgAbstractField extends AgAbstractLabel {
     }
 }
 
-var __decorate$2g = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$2e = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
@@ -12045,23 +12278,23 @@ class AgPickerField extends AgAbstractField {
         super.destroy();
     }
 }
-__decorate$2g([
+__decorate$2e([
     Autowired('popupService')
 ], AgPickerField.prototype, "popupService", void 0);
-__decorate$2g([
+__decorate$2e([
     RefSelector('eLabel')
 ], AgPickerField.prototype, "eLabel", void 0);
-__decorate$2g([
+__decorate$2e([
     RefSelector('eWrapper')
 ], AgPickerField.prototype, "eWrapper", void 0);
-__decorate$2g([
+__decorate$2e([
     RefSelector('eDisplayField')
 ], AgPickerField.prototype, "eDisplayField", void 0);
-__decorate$2g([
+__decorate$2e([
     RefSelector('eIcon')
 ], AgPickerField.prototype, "eIcon", void 0);
 
-var __decorate$2f = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$2d = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
@@ -12209,7 +12442,7 @@ class AgList extends Component {
 }
 AgList.EVENT_ITEM_SELECTED = 'selectedItem';
 AgList.ACTIVE_CLASS = 'ag-active-item';
-__decorate$2f([
+__decorate$2d([
     PostConstruct
 ], AgList.prototype, "init", null);
 
@@ -12293,7 +12526,7 @@ class AgSelect extends AgPickerField {
 }
 AgSelect.EVENT_ITEM_SELECTED = 'selectedItem';
 
-var __decorate$2e = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$2c = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
@@ -12330,7 +12563,7 @@ class AgAbstractInputField extends AgAbstractField {
         this.activateTabIndex([this.eInput]);
     }
     refreshLabel() {
-        if (exists$1(this.getLabel())) {
+        if (exists(this.getLabel())) {
             setAriaLabelledBy(this.eInput, this.getLabelId());
         }
         else {
@@ -12393,13 +12626,13 @@ class AgAbstractInputField extends AgAbstractField {
         return this;
     }
 }
-__decorate$2e([
+__decorate$2c([
     RefSelector('eLabel')
 ], AgAbstractInputField.prototype, "eLabel", void 0);
-__decorate$2e([
+__decorate$2c([
     RefSelector('eWrapper')
 ], AgAbstractInputField.prototype, "eWrapper", void 0);
-__decorate$2e([
+__decorate$2c([
     RefSelector('eInput')
 ], AgAbstractInputField.prototype, "eInput", void 0);
 
@@ -13370,7 +13603,7 @@ class ScalarFilter extends SimpleFilter {
     }
 }
 
-var __decorate$2d = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$2b = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
@@ -13630,7 +13863,7 @@ DateFilter.DEFAULT_FILTER_OPTIONS = [
     ScalarFilter.BLANK,
     ScalarFilter.NOT_BLANK,
 ];
-__decorate$2d([
+__decorate$2b([
     Autowired('userComponentFactory')
 ], DateFilter.prototype, "userComponentFactory", void 0);
 
@@ -13722,7 +13955,7 @@ class SimpleFloatingFilter extends Component {
     }
 }
 
-var __decorate$2c = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$2a = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
@@ -13821,17 +14054,17 @@ class DateFloatingFilter extends SimpleFloatingFilter {
         return this.filterModelFormatter;
     }
 }
-__decorate$2c([
+__decorate$2a([
     Autowired('userComponentFactory')
 ], DateFloatingFilter.prototype, "userComponentFactory", void 0);
-__decorate$2c([
+__decorate$2a([
     RefSelector('eReadOnlyText')
 ], DateFloatingFilter.prototype, "eReadOnlyText", void 0);
-__decorate$2c([
+__decorate$2a([
     RefSelector('eDateWrapper')
 ], DateFloatingFilter.prototype, "eDateWrapper", void 0);
 
-var __decorate$2b = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$29 = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
@@ -13946,7 +14179,7 @@ class DefaultDateComponent extends Component {
         return isBrowserChrome() || isBrowserFirefox() || (isBrowserSafari() && getSafariVersion() >= 14.1);
     }
 }
-__decorate$2b([
+__decorate$29([
     RefSelector('eDateInput')
 ], DefaultDateComponent.prototype, "eDateInput", void 0);
 
@@ -13963,7 +14196,7 @@ class AgInputTextField extends AgAbstractInputField {
     setValue(value, silent) {
         // update the input before we call super.setValue, so it's updated before the value changed event is fired
         if (this.eInput.value !== value) {
-            this.eInput.value = exists$1(value) ? value : '';
+            this.eInput.value = exists(value) ? value : '';
         }
         return super.setValue(value, silent);
     }
@@ -14085,7 +14318,7 @@ class AgInputNumberField extends AgInputTextField {
         return this.setValueOrInputValue(v => super.setValue(v, true), v => { this.eInput.value = v; }, value);
     }
     setValueOrInputValue(setValueFunc, setInputValueOnlyFunc, value) {
-        if (exists$1(value)) {
+        if (exists(value)) {
             // need to maintain the scientific notation format whilst typing (e.g. 1e10)
             let setInputValueOnly = this.isScientificNotation(value);
             if (setInputValueOnly && this.eInput.validity.valid) {
@@ -14469,7 +14702,7 @@ TextFilter.DEFAULT_MATCHER = ({ filterOption, value, filterText }) => {
     }
 };
 
-var __decorate$2a = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$28 = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
@@ -14594,13 +14827,13 @@ class TextInputFloatingFilter extends SimpleFloatingFilter {
         this.floatingFilterInputService.setEditable(editable);
     }
 }
-__decorate$2a([
+__decorate$28([
     Autowired('columnModel')
 ], TextInputFloatingFilter.prototype, "columnModel", void 0);
-__decorate$2a([
+__decorate$28([
     RefSelector('eFloatingFilterInputContainer')
 ], TextInputFloatingFilter.prototype, "eFloatingFilterInputContainer", void 0);
-__decorate$2a([
+__decorate$28([
     PostConstruct
 ], TextInputFloatingFilter.prototype, "postConstruct", null);
 
@@ -14829,7 +15062,7 @@ TouchListener.EVENT_DOUBLE_TAP = "doubleTap";
 TouchListener.EVENT_LONG_TAP = "longTap";
 TouchListener.DOUBLE_TAP_MILLIS = 500;
 
-var __decorate$29 = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$27 = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
@@ -14943,29 +15176,29 @@ SortIndicatorComp.TEMPLATE = `<span class="ag-sort-indicator-container">
             <span ref="eSortMixed" class="ag-sort-indicator-icon ag-sort-mixed-icon ag-hidden" aria-hidden="true"></span>
             <span ref="eSortNone" class="ag-sort-indicator-icon ag-sort-none-icon ag-hidden" aria-hidden="true"></span>
         </span>`;
-__decorate$29([
+__decorate$27([
     RefSelector('eSortOrder')
 ], SortIndicatorComp.prototype, "eSortOrder", void 0);
-__decorate$29([
+__decorate$27([
     RefSelector('eSortAsc')
 ], SortIndicatorComp.prototype, "eSortAsc", void 0);
-__decorate$29([
+__decorate$27([
     RefSelector('eSortDesc')
 ], SortIndicatorComp.prototype, "eSortDesc", void 0);
-__decorate$29([
+__decorate$27([
     RefSelector('eSortMixed')
 ], SortIndicatorComp.prototype, "eSortMixed", void 0);
-__decorate$29([
+__decorate$27([
     RefSelector('eSortNone')
 ], SortIndicatorComp.prototype, "eSortNone", void 0);
-__decorate$29([
+__decorate$27([
     Autowired('columnModel')
 ], SortIndicatorComp.prototype, "columnModel", void 0);
-__decorate$29([
+__decorate$27([
     Autowired('sortController')
 ], SortIndicatorComp.prototype, "sortController", void 0);
 
-var __decorate$28 = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$26 = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
@@ -15043,7 +15276,7 @@ class HeaderComp extends Component {
         }
         const touchListener = new TouchListener(this.getGui(), true);
         const suppressMenuHide = gridOptionsService.is('suppressMenuHide');
-        const tapMenuButton = suppressMenuHide && exists$1(this.eMenu);
+        const tapMenuButton = suppressMenuHide && exists(this.eMenu);
         const menuTouchListener = tapMenuButton ? new TouchListener(this.eMenu, true) : touchListener;
         if (this.params.enableMenu) {
             const eventType = tapMenuButton ? 'EVENT_TAP' : 'EVENT_LONG_TAP';
@@ -15177,47 +15410,47 @@ HeaderComp.TEMPLATE = `<div class="ag-cell-label-container" role="presentation">
                 <ag-sort-indicator ref="eSortIndicator"></ag-sort-indicator>
             </div>
         </div>`;
-__decorate$28([
+__decorate$26([
     Autowired('sortController')
 ], HeaderComp.prototype, "sortController", void 0);
-__decorate$28([
+__decorate$26([
     Autowired('menuFactory')
 ], HeaderComp.prototype, "menuFactory", void 0);
-__decorate$28([
+__decorate$26([
     Autowired('columnModel')
 ], HeaderComp.prototype, "columnModel", void 0);
-__decorate$28([
+__decorate$26([
     RefSelector('eFilter')
 ], HeaderComp.prototype, "eFilter", void 0);
-__decorate$28([
+__decorate$26([
     RefSelector('eSortIndicator')
 ], HeaderComp.prototype, "eSortIndicator", void 0);
-__decorate$28([
+__decorate$26([
     RefSelector('eMenu')
 ], HeaderComp.prototype, "eMenu", void 0);
-__decorate$28([
+__decorate$26([
     RefSelector('eLabel')
 ], HeaderComp.prototype, "eLabel", void 0);
-__decorate$28([
+__decorate$26([
     RefSelector('eText')
 ], HeaderComp.prototype, "eText", void 0);
-__decorate$28([
+__decorate$26([
     RefSelector('eSortOrder')
 ], HeaderComp.prototype, "eSortOrder", void 0);
-__decorate$28([
+__decorate$26([
     RefSelector('eSortAsc')
 ], HeaderComp.prototype, "eSortAsc", void 0);
-__decorate$28([
+__decorate$26([
     RefSelector('eSortDesc')
 ], HeaderComp.prototype, "eSortDesc", void 0);
-__decorate$28([
+__decorate$26([
     RefSelector('eSortMixed')
 ], HeaderComp.prototype, "eSortMixed", void 0);
-__decorate$28([
+__decorate$26([
     RefSelector('eSortNone')
 ], HeaderComp.prototype, "eSortNone", void 0);
 
-var __decorate$27 = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$25 = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
@@ -15309,7 +15542,7 @@ class HeaderGroupComp extends Component {
         var _a;
         // no renderer, default text render
         const { displayName, columnGroup } = this.params;
-        if (exists$1(displayName)) {
+        if (exists(displayName)) {
             const displayNameSanitised = escapeString(displayName);
             this.getRefElement('agLabel').innerHTML = displayNameSanitised;
         }
@@ -15321,13 +15554,13 @@ HeaderGroupComp.TEMPLATE = `<div class="ag-header-group-cell-label" ref="agConta
             <span ref="agOpened" class="ag-header-icon ag-header-expand-icon ag-header-expand-icon-expanded"></span>
             <span ref="agClosed" class="ag-header-icon ag-header-expand-icon ag-header-expand-icon-collapsed"></span>
         </div>`;
-__decorate$27([
+__decorate$25([
     Autowired("columnModel")
 ], HeaderGroupComp.prototype, "columnModel", void 0);
-__decorate$27([
+__decorate$25([
     RefSelector("agOpened")
 ], HeaderGroupComp.prototype, "eOpenIcon", void 0);
-__decorate$27([
+__decorate$25([
     RefSelector("agClosed")
 ], HeaderGroupComp.prototype, "eCloseIcon", void 0);
 
@@ -15349,7 +15582,7 @@ class PopupComponent extends Component {
     }
 }
 
-var __decorate$26 = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$24 = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
@@ -15366,7 +15599,7 @@ class LargeTextCellEditor extends PopupComponent {
             .setMaxLength(params.maxLength || 200)
             .setCols(params.cols || 60)
             .setRows(params.rows || 10);
-        if (exists$1(params.value, true)) {
+        if (exists(params.value, true)) {
             this.eTextArea.setValue(params.value.toString(), true);
         }
         this.addGuiEventListener('keydown', this.onKeyDown.bind(this));
@@ -15391,7 +15624,7 @@ class LargeTextCellEditor extends PopupComponent {
     }
     getValue() {
         const value = this.eTextArea.getValue();
-        if (!exists$1(value) && !exists$1(this.params.value)) {
+        if (!exists(value) && !exists(this.params.value)) {
             return this.params.value;
         }
         return this.params.parseValue(value);
@@ -15400,11 +15633,11 @@ class LargeTextCellEditor extends PopupComponent {
 LargeTextCellEditor.TEMPLATE = `<div class="ag-large-text">
             <ag-input-text-area ref="eTextArea" class="ag-large-text-input"></ag-input-text-area>
         </div>`;
-__decorate$26([
+__decorate$24([
     RefSelector("eTextArea")
 ], LargeTextCellEditor.prototype, "eTextArea", void 0);
 
-var __decorate$25 = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$23 = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
@@ -15479,14 +15712,14 @@ class SelectCellEditor extends PopupComponent {
         return false;
     }
 }
-__decorate$25([
+__decorate$23([
     Autowired('valueFormatterService')
 ], SelectCellEditor.prototype, "valueFormatterService", void 0);
-__decorate$25([
+__decorate$23([
     RefSelector('eSelect')
 ], SelectCellEditor.prototype, "eSelect", void 0);
 
-var __decorate$24 = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$22 = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
@@ -15573,7 +15806,7 @@ class SimpleCellEditor extends PopupComponent {
         return false;
     }
 }
-__decorate$24([
+__decorate$22([
     RefSelector('eInput')
 ], SimpleCellEditor.prototype, "eInput", void 0);
 
@@ -15590,7 +15823,7 @@ class TextCellEditorInput {
     }
     getValue() {
         const value = this.eInput.getValue();
-        if (!exists$1(value) && !exists$1(this.params.value)) {
+        if (!exists(value) && !exists(this.params.value)) {
             return this.params.value;
         }
         return this.params.parseValue(value);
@@ -15605,7 +15838,7 @@ class TextCellEditorInput {
         //   a) when user hits F2
         //   b) when user hits a printable character
         const value = this.eInput.getValue();
-        const len = (exists$1(value) && value.length) || 0;
+        const len = (exists(value) && value.length) || 0;
         if (len) {
             this.eInput.getInputElement().setSelectionRange(len, len);
         }
@@ -15617,7 +15850,7 @@ class TextCellEditor extends SimpleCellEditor {
     }
 }
 
-var __decorate$23 = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$21 = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
@@ -15639,7 +15872,7 @@ class AnimateShowChangeCellRenderer extends Component {
     showDelta(params, delta) {
         const absDelta = Math.abs(delta);
         const valueFormatted = params.formatValue(absDelta);
-        const valueToUse = exists$1(valueFormatted) ? valueFormatted : absDelta;
+        const valueToUse = exists(valueFormatted) ? valueFormatted : absDelta;
         const deltaUp = (delta >= 0);
         if (deltaUp) {
             this.eDelta.innerHTML = ARROW_UP + valueToUse;
@@ -15672,10 +15905,10 @@ class AnimateShowChangeCellRenderer extends Component {
         if (value === this.lastValue) {
             return false;
         }
-        if (exists$1(params.valueFormatted)) {
+        if (exists(params.valueFormatted)) {
             this.eValue.innerHTML = params.valueFormatted;
         }
-        else if (exists$1(params.value)) {
+        else if (exists(params.value)) {
             this.eValue.innerHTML = value;
         }
         else {
@@ -15704,11 +15937,11 @@ AnimateShowChangeCellRenderer.TEMPLATE = '<span>' +
     '<span class="ag-value-change-delta"></span>' +
     '<span class="ag-value-change-value"></span>' +
     '</span>';
-__decorate$23([
+__decorate$21([
     Autowired('filterManager')
 ], AnimateShowChangeCellRenderer.prototype, "filterManager", void 0);
 
-var __decorate$22 = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$20 = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
@@ -15768,10 +16001,10 @@ class AnimateSlideCellRenderer extends Component {
         }
         this.addSlideAnimation();
         this.lastValue = value;
-        if (exists$1(params.valueFormatted)) {
+        if (exists(params.valueFormatted)) {
             this.eCurrent.innerHTML = params.valueFormatted;
         }
-        else if (exists$1(params.value)) {
+        else if (exists(params.value)) {
             this.eCurrent.innerHTML = value;
         }
         else {
@@ -15783,7 +16016,7 @@ class AnimateSlideCellRenderer extends Component {
 AnimateSlideCellRenderer.TEMPLATE = `<span>
             <span class="ag-value-slide-current"></span>
         </span>`;
-__decorate$22([
+__decorate$20([
     Autowired('filterManager')
 ], AnimateSlideCellRenderer.prototype, "filterManager", void 0);
 
@@ -15891,7 +16124,7 @@ class RowNode {
         return oldNode;
     }
     setDataAndId(data, id) {
-        const oldNode = exists$1(this.id) ? this.createDaemonNode() : null;
+        const oldNode = exists(this.id) ? this.createDaemonNode() : null;
         const oldData = this.data;
         this.data = data;
         this.updateDataOnDetailNode();
@@ -15973,7 +16206,7 @@ class RowNode {
         return keys;
     }
     isPixelInRange(pixel) {
-        if (!exists$1(this.rowTop) || !exists$1(this.rowHeight)) {
+        if (!exists(this.rowTop) || !exists(this.rowHeight)) {
             return false;
         }
         return pixel >= this.rowTop && pixel < (this.rowTop + this.rowHeight);
@@ -16375,7 +16608,7 @@ class RowNode {
         return this.__hasChildren;
     }
     isEmptyRowGroupNode() {
-        return this.group && missingOrEmpty$1(this.childrenAfterGroup);
+        return this.group && missingOrEmpty(this.childrenAfterGroup);
     }
     dispatchCellChangedEvent(column, newValue, oldValue) {
         const cellChangedEvent = {
@@ -16570,7 +16803,7 @@ class RowNode {
         // all the way up to the column we are interested in, then we show the group cell.
         while (isCandidate && !foundFirstChildPath) {
             const parentRowNode = currentRowNode.parent;
-            const firstChild = exists$1(parentRowNode) && currentRowNode.firstChild;
+            const firstChild = exists(parentRowNode) && currentRowNode.firstChild;
             if (firstChild) {
                 if (parentRowNode.rowGroupColumn === rowGroupColumn) {
                     foundFirstChildPath = true;
@@ -16683,7 +16916,7 @@ RowNode.EVENT_UI_LEVEL_CHANGED = 'uiLevelChanged';
 RowNode.EVENT_HIGHLIGHT_CHANGED = 'rowHighlightChanged';
 RowNode.EVENT_DRAGGING_CHANGED = 'draggingChanged';
 
-var __decorate$21 = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$1$ = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
@@ -16812,14 +17045,14 @@ class CheckboxSelectionComponent extends Component {
         return (_b = (_a = this.column) === null || _a === void 0 ? void 0 : _a.getColDef()) === null || _b === void 0 ? void 0 : _b.checkboxSelection;
     }
 }
-__decorate$21([
+__decorate$1$([
     RefSelector('eCheckbox')
 ], CheckboxSelectionComponent.prototype, "eCheckbox", void 0);
-__decorate$21([
+__decorate$1$([
     PostConstruct
 ], CheckboxSelectionComponent.prototype, "postConstruct", null);
 
-var __decorate$20 = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$1_ = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
@@ -17204,29 +17437,29 @@ DragAndDropService.GHOST_TEMPLATE = `<div class="ag-dnd-ghost ag-unselectable">
             <span class="ag-dnd-ghost-icon ag-shake-left-to-right"></span>
             <div class="ag-dnd-ghost-label"></div>
         </div>`;
-__decorate$20([
+__decorate$1_([
     Autowired('dragService')
 ], DragAndDropService.prototype, "dragService", void 0);
-__decorate$20([
+__decorate$1_([
     Autowired('mouseEventService')
 ], DragAndDropService.prototype, "mouseEventService", void 0);
-__decorate$20([
+__decorate$1_([
     Autowired('columnApi')
 ], DragAndDropService.prototype, "columnApi", void 0);
-__decorate$20([
+__decorate$1_([
     Autowired('gridApi')
 ], DragAndDropService.prototype, "gridApi", void 0);
-__decorate$20([
+__decorate$1_([
     PostConstruct
 ], DragAndDropService.prototype, "init", null);
-__decorate$20([
+__decorate$1_([
     PreDestroy
 ], DragAndDropService.prototype, "clearDragSourceParamsList", null);
-DragAndDropService = DragAndDropService_1 = __decorate$20([
+DragAndDropService = DragAndDropService_1 = __decorate$1_([
     Bean('dragAndDropService')
 ], DragAndDropService);
 
-var __decorate$1$ = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$1Z = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
@@ -17332,13 +17565,13 @@ class RowDragComp extends Component {
         this.dragSource = null;
     }
 }
-__decorate$1$([
+__decorate$1Z([
     Autowired('beans')
 ], RowDragComp.prototype, "beans", void 0);
-__decorate$1$([
+__decorate$1Z([
     PostConstruct
 ], RowDragComp.prototype, "postConstruct", null);
-__decorate$1$([
+__decorate$1Z([
     PreDestroy
 ], RowDragComp.prototype, "removeDragSource", null);
 class VisibilityStrategy extends BeanStub {
@@ -17398,7 +17631,7 @@ class NonManagedVisibilityStrategy extends VisibilityStrategy {
         this.setDisplayedOrVisible(neverDisplayed);
     }
 }
-__decorate$1$([
+__decorate$1Z([
     PostConstruct
 ], NonManagedVisibilityStrategy.prototype, "postConstruct", null);
 // when managed, the visibility depends on sort, filter and row group, as well as suppressRowDrag property
@@ -17433,11 +17666,11 @@ class ManagedVisibilityStrategy extends VisibilityStrategy {
         this.setDisplayedOrVisible(neverDisplayed);
     }
 }
-__decorate$1$([
+__decorate$1Z([
     PostConstruct
 ], ManagedVisibilityStrategy.prototype, "postConstruct", null);
 
-var __decorate$1_ = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$1Y = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
@@ -17958,23 +18191,23 @@ class GroupCellRendererCtrl extends BeanStub {
         }
     }
 }
-__decorate$1_([
+__decorate$1Y([
     Autowired('expressionService')
 ], GroupCellRendererCtrl.prototype, "expressionService", void 0);
-__decorate$1_([
+__decorate$1Y([
     Autowired('valueFormatterService')
 ], GroupCellRendererCtrl.prototype, "valueFormatterService", void 0);
-__decorate$1_([
+__decorate$1Y([
     Autowired('columnModel')
 ], GroupCellRendererCtrl.prototype, "columnModel", void 0);
-__decorate$1_([
+__decorate$1Y([
     Autowired('userComponentFactory')
 ], GroupCellRendererCtrl.prototype, "userComponentFactory", void 0);
-__decorate$1_([
+__decorate$1Y([
     Autowired("ctrlsService")
 ], GroupCellRendererCtrl.prototype, "ctrlsService", void 0);
 
-var __decorate$1Z = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$1X = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
@@ -18042,23 +18275,23 @@ GroupCellRenderer.TEMPLATE = `<span class="ag-cell-wrapper">
             <span class="ag-group-value" ref="eValue"></span>
             <span class="ag-group-child-count" ref="eChildCount"></span>
         </span>`;
-__decorate$1Z([
+__decorate$1X([
     RefSelector('eExpanded')
 ], GroupCellRenderer.prototype, "eExpanded", void 0);
-__decorate$1Z([
+__decorate$1X([
     RefSelector('eContracted')
 ], GroupCellRenderer.prototype, "eContracted", void 0);
-__decorate$1Z([
+__decorate$1X([
     RefSelector('eCheckbox')
 ], GroupCellRenderer.prototype, "eCheckbox", void 0);
-__decorate$1Z([
+__decorate$1X([
     RefSelector('eValue')
 ], GroupCellRenderer.prototype, "eValue", void 0);
-__decorate$1Z([
+__decorate$1X([
     RefSelector('eChildCount')
 ], GroupCellRenderer.prototype, "eChildCount", void 0);
 
-var __decorate$1Y = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$1W = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
@@ -18096,10 +18329,10 @@ LoadingCellRenderer.TEMPLATE = `<div class="ag-loading">
             <span class="ag-loading-icon" ref="eLoadingIcon"></span>
             <span class="ag-loading-text" ref="eLoadingText"></span>
         </div>`;
-__decorate$1Y([
+__decorate$1W([
     RefSelector('eLoadingIcon')
 ], LoadingCellRenderer.prototype, "eLoadingIcon", void 0);
-__decorate$1Y([
+__decorate$1W([
     RefSelector('eLoadingText')
 ], LoadingCellRenderer.prototype, "eLoadingText", void 0);
 
@@ -18177,7 +18410,7 @@ class NumberCellEditorInput {
     }
     getValue() {
         const value = this.eInput.getValue();
-        if (!exists$1(value) && !exists$1(this.params.value)) {
+        if (!exists(value) && !exists(this.params.value)) {
             return this.params.value;
         }
         let parsedValue = this.params.parseValue(value);
@@ -18221,7 +18454,7 @@ class DateCellEditorInput {
     }
     getValue() {
         const value = this.eInput.getDate();
-        if (!exists$1(value) && !exists$1(this.params.value)) {
+        if (!exists(value) && !exists(this.params.value)) {
             return this.params.value;
         }
         return value !== null && value !== void 0 ? value : null;
@@ -18240,7 +18473,7 @@ class DateCellEditor extends SimpleCellEditor {
     }
 }
 
-var __decorate$1X = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$1V = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
@@ -18268,7 +18501,7 @@ class DateStringCellEditorInput {
     }
     getValue() {
         const value = this.formatDate(this.eInput.getDate());
-        if (!exists$1(value) && !exists$1(this.params.value)) {
+        if (!exists(value) && !exists(this.params.value)) {
             return this.params.value;
         }
         return this.params.parseValue(value !== null && value !== void 0 ? value : '');
@@ -18289,11 +18522,11 @@ class DateStringCellEditor extends SimpleCellEditor {
         super(new DateStringCellEditorInput(() => this.dataTypeService));
     }
 }
-__decorate$1X([
+__decorate$1V([
     Autowired('dataTypeService')
 ], DateStringCellEditor.prototype, "dataTypeService", void 0);
 
-var __decorate$1W = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$1U = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
@@ -18403,11 +18636,11 @@ CheckboxCellRenderer.TEMPLATE = `
         <div class="ag-cell-wrapper ag-checkbox-cell" role="presentation">
             <ag-checkbox role="presentation" ref="eCheckbox"></ag-checkbox>
         </div>`;
-__decorate$1W([
+__decorate$1U([
     RefSelector('eCheckbox')
 ], CheckboxCellRenderer.prototype, "eCheckbox", void 0);
 
-var __decorate$1V = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$1T = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
@@ -18450,11 +18683,11 @@ class CheckboxCellEditor extends PopupComponent {
         this.eCheckbox.setInputAriaLabel(`${ariaLabel} (${stateName})`);
     }
 }
-__decorate$1V([
+__decorate$1T([
     RefSelector('eCheckbox')
 ], CheckboxCellEditor.prototype, "eCheckbox", void 0);
 
-var __decorate$1U = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$1S = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
@@ -18572,13 +18805,13 @@ let UserComponentRegistry = class UserComponentRegistry extends BeanStub {
         console.warn(`If using a custom component check it has been registered as described in: https://ag-grid.com/javascript-data-grid/components/`);
     }
 };
-__decorate$1U([
+__decorate$1S([
     Autowired('gridOptions')
 ], UserComponentRegistry.prototype, "gridOptions", void 0);
-__decorate$1U([
+__decorate$1S([
     PostConstruct
 ], UserComponentRegistry.prototype, "init", null);
-UserComponentRegistry = __decorate$1U([
+UserComponentRegistry = __decorate$1S([
     Bean('userComponentRegistry')
 ], UserComponentRegistry);
 
@@ -18671,7 +18904,7 @@ FloatingFilterMapper.filterToFloatingFilterMapping = {
     agTextColumnFilter: 'agTextColumnFloatingFilter'
 };
 
-var __decorate$1T = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$1R = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
@@ -18894,22 +19127,22 @@ let UserComponentFactory = class UserComponentFactory extends BeanStub {
         return defaultFloatingFilterType;
     }
 };
-__decorate$1T([
+__decorate$1R([
     Autowired('gridOptions')
 ], UserComponentFactory.prototype, "gridOptions", void 0);
-__decorate$1T([
+__decorate$1R([
     Autowired('agComponentUtils')
 ], UserComponentFactory.prototype, "agComponentUtils", void 0);
-__decorate$1T([
+__decorate$1R([
     Autowired('componentMetadataProvider')
 ], UserComponentFactory.prototype, "componentMetadataProvider", void 0);
-__decorate$1T([
+__decorate$1R([
     Autowired('userComponentRegistry')
 ], UserComponentFactory.prototype, "userComponentRegistry", void 0);
-__decorate$1T([
+__decorate$1R([
     Optional('frameworkComponentWrapper')
 ], UserComponentFactory.prototype, "frameworkComponentWrapper", void 0);
-UserComponentFactory = __decorate$1T([
+UserComponentFactory = __decorate$1R([
     Bean('userComponentFactory')
 ], UserComponentFactory);
 
@@ -18920,7 +19153,7 @@ var ExcelFactoryMode;
     ExcelFactoryMode[ExcelFactoryMode["MULTI_SHEET"] = 1] = "MULTI_SHEET";
 })(ExcelFactoryMode || (ExcelFactoryMode = {}));
 
-var __decorate$1S = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$1Q = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
@@ -19077,7 +19310,7 @@ let DragService = class DragService extends BeanStub {
     isEventNearStartEvent(currentEvent, startEvent) {
         // by default, we wait 4 pixels before starting the drag
         const { dragStartPixels } = this.currentDragParams;
-        const requiredPixelDiff = exists$1(dragStartPixels) ? dragStartPixels : 4;
+        const requiredPixelDiff = exists(dragStartPixels) ? dragStartPixels : 4;
         return areEventsNear(currentEvent, startEvent, requiredPixelDiff);
     }
     getFirstActiveTouch(touchList) {
@@ -19190,13 +19423,13 @@ let DragService = class DragService extends BeanStub {
         this.dragEndFunctions.length = 0;
     }
 };
-__decorate$1S([
+__decorate$1Q([
     Autowired('mouseEventService')
 ], DragService.prototype, "mouseEventService", void 0);
-__decorate$1S([
+__decorate$1Q([
     PreDestroy
 ], DragService.prototype, "removeAllListeners", null);
-DragService = __decorate$1S([
+DragService = __decorate$1Q([
     Bean('dragService')
 ], DragService);
 
@@ -19280,7 +19513,7 @@ class AutoScrollService {
     }
 }
 
-var __decorate$1R = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$1P = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
@@ -19393,10 +19626,10 @@ class VirtualListDragFeature extends BeanStub {
         this.lastHoveredListItem = null;
     }
 }
-__decorate$1R([
+__decorate$1P([
     Autowired('dragAndDropService')
 ], VirtualListDragFeature.prototype, "dragAndDropService", void 0);
-__decorate$1R([
+__decorate$1P([
     PostConstruct
 ], VirtualListDragFeature.prototype, "postConstruct", null);
 
@@ -19418,7 +19651,7 @@ var ClientSideRowModelSteps;
     ClientSideRowModelSteps["NOTHING"] = "nothing";
 })(ClientSideRowModelSteps || (ClientSideRowModelSteps = {}));
 
-var __decorate$1Q = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$1O = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
@@ -19505,7 +19738,7 @@ let GridApi = class GridApi {
         let index = 0;
         iterateObject(this.detailGridInfoMap, (id, gridInfo) => {
             // check for undefined, as old references will still be lying around
-            if (exists$1(gridInfo)) {
+            if (exists(gridInfo)) {
                 callback(gridInfo, index);
                 index++;
             }
@@ -20488,7 +20721,7 @@ let GridApi = class GridApi {
     }
     /** Tells the grid to recalculate the row heights. */
     resetRowHeights() {
-        if (exists$1(this.clientSideRowModel)) {
+        if (exists(this.clientSideRowModel)) {
             if (this.columnModel.isAutoRowHeightActive()) {
                 console.warn('AG Grid: calling gridApi.resetRowHeights() makes no sense when using Auto Row Height.');
                 return;
@@ -21113,113 +21346,113 @@ let GridApi = class GridApi {
         this.paginationProxy.goToPage(page);
     }
 };
-__decorate$1Q([
+__decorate$1O([
     Optional('immutableService')
 ], GridApi.prototype, "immutableService", void 0);
-__decorate$1Q([
+__decorate$1O([
     Optional('csvCreator')
 ], GridApi.prototype, "csvCreator", void 0);
-__decorate$1Q([
+__decorate$1O([
     Optional('excelCreator')
 ], GridApi.prototype, "excelCreator", void 0);
-__decorate$1Q([
+__decorate$1O([
     Autowired('rowRenderer')
 ], GridApi.prototype, "rowRenderer", void 0);
-__decorate$1Q([
+__decorate$1O([
     Autowired('navigationService')
 ], GridApi.prototype, "navigationService", void 0);
-__decorate$1Q([
+__decorate$1O([
     Autowired('filterManager')
 ], GridApi.prototype, "filterManager", void 0);
-__decorate$1Q([
+__decorate$1O([
     Autowired('columnModel')
 ], GridApi.prototype, "columnModel", void 0);
-__decorate$1Q([
+__decorate$1O([
     Autowired('selectionService')
 ], GridApi.prototype, "selectionService", void 0);
-__decorate$1Q([
+__decorate$1O([
     Autowired('gridOptionsService')
 ], GridApi.prototype, "gos", void 0);
-__decorate$1Q([
+__decorate$1O([
     Autowired('valueService')
 ], GridApi.prototype, "valueService", void 0);
-__decorate$1Q([
+__decorate$1O([
     Autowired('alignedGridsService')
 ], GridApi.prototype, "alignedGridsService", void 0);
-__decorate$1Q([
+__decorate$1O([
     Autowired('eventService')
 ], GridApi.prototype, "eventService", void 0);
-__decorate$1Q([
+__decorate$1O([
     Autowired('pinnedRowModel')
 ], GridApi.prototype, "pinnedRowModel", void 0);
-__decorate$1Q([
+__decorate$1O([
     Autowired('context')
 ], GridApi.prototype, "context", void 0);
-__decorate$1Q([
+__decorate$1O([
     Autowired('rowModel')
 ], GridApi.prototype, "rowModel", void 0);
-__decorate$1Q([
+__decorate$1O([
     Autowired('sortController')
 ], GridApi.prototype, "sortController", void 0);
-__decorate$1Q([
+__decorate$1O([
     Autowired('paginationProxy')
 ], GridApi.prototype, "paginationProxy", void 0);
-__decorate$1Q([
+__decorate$1O([
     Autowired('focusService')
 ], GridApi.prototype, "focusService", void 0);
-__decorate$1Q([
+__decorate$1O([
     Autowired('dragAndDropService')
 ], GridApi.prototype, "dragAndDropService", void 0);
-__decorate$1Q([
+__decorate$1O([
     Optional('rangeService')
 ], GridApi.prototype, "rangeService", void 0);
-__decorate$1Q([
+__decorate$1O([
     Optional('clipboardService')
 ], GridApi.prototype, "clipboardService", void 0);
-__decorate$1Q([
+__decorate$1O([
     Optional('aggFuncService')
 ], GridApi.prototype, "aggFuncService", void 0);
-__decorate$1Q([
+__decorate$1O([
     Autowired('menuFactory')
 ], GridApi.prototype, "menuFactory", void 0);
-__decorate$1Q([
+__decorate$1O([
     Optional('contextMenuFactory')
 ], GridApi.prototype, "contextMenuFactory", void 0);
-__decorate$1Q([
+__decorate$1O([
     Autowired('valueCache')
 ], GridApi.prototype, "valueCache", void 0);
-__decorate$1Q([
+__decorate$1O([
     Autowired('animationFrameService')
 ], GridApi.prototype, "animationFrameService", void 0);
-__decorate$1Q([
+__decorate$1O([
     Optional('statusBarService')
 ], GridApi.prototype, "statusBarService", void 0);
-__decorate$1Q([
+__decorate$1O([
     Optional('chartService')
 ], GridApi.prototype, "chartService", void 0);
-__decorate$1Q([
+__decorate$1O([
     Optional('undoRedoService')
 ], GridApi.prototype, "undoRedoService", void 0);
-__decorate$1Q([
+__decorate$1O([
     Optional('rowNodeBlockLoader')
 ], GridApi.prototype, "rowNodeBlockLoader", void 0);
-__decorate$1Q([
+__decorate$1O([
     Optional('ssrmTransactionManager')
 ], GridApi.prototype, "serverSideTransactionManager", void 0);
-__decorate$1Q([
+__decorate$1O([
     Autowired('ctrlsService')
 ], GridApi.prototype, "ctrlsService", void 0);
-__decorate$1Q([
+__decorate$1O([
     PostConstruct
 ], GridApi.prototype, "init", null);
-__decorate$1Q([
+__decorate$1O([
     PreDestroy
 ], GridApi.prototype, "cleanDownReferencesToAvoidMemoryLeakInCaseApplicationIsKeepingReferenceToDestroyedGrid", null);
-GridApi = __decorate$1Q([
+GridApi = __decorate$1O([
     Bean('gridApi')
 ], GridApi);
 
-var __decorate$1P = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$1N = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
@@ -21273,7 +21506,7 @@ let QuickFilterService = QuickFilterService_1 = class QuickFilterService extends
         }
     }
     parseQuickFilter(newFilter) {
-        if (!exists$1(newFilter)) {
+        if (!exists(newFilter)) {
             return null;
         }
         if (!this.gridOptionsService.isRowModelType('clientSide')) {
@@ -21316,7 +21549,7 @@ let QuickFilterService = QuickFilterService_1 = class QuickFilterService extends
         const columns = this.columnModel.getAllColumnsForQuickFilter();
         return columns.some(column => {
             const part = this.getQuickFilterTextForColumn(column, node);
-            return exists$1(part) && part.indexOf(filterPart) >= 0;
+            return exists(part) && part.indexOf(filterPart) >= 0;
         });
     }
     doesRowPassQuickFilterCache(node, filterPart) {
@@ -21356,14 +21589,14 @@ let QuickFilterService = QuickFilterService_1 = class QuickFilterService extends
             };
             value = colDef.getQuickFilterText(params);
         }
-        return exists$1(value) ? value.toString().toUpperCase() : null;
+        return exists(value) ? value.toString().toUpperCase() : null;
     }
     getQuickFilterAggregateText(node) {
         const stringParts = [];
         const columns = this.columnModel.getAllColumnsForQuickFilter();
         columns.forEach(column => {
             const part = this.getQuickFilterTextForColumn(column, node);
-            if (exists$1(part)) {
+            if (exists(part)) {
                 stringParts.push(part);
             }
         });
@@ -21372,23 +21605,23 @@ let QuickFilterService = QuickFilterService_1 = class QuickFilterService extends
 };
 QuickFilterService.EVENT_QUICK_FILTER_CHANGED = 'quickFilterChanged';
 QuickFilterService.QUICK_FILTER_SEPARATOR = '\n';
-__decorate$1P([
+__decorate$1N([
     Autowired('valueService')
 ], QuickFilterService.prototype, "valueService", void 0);
-__decorate$1P([
+__decorate$1N([
     Autowired('columnModel')
 ], QuickFilterService.prototype, "columnModel", void 0);
-__decorate$1P([
+__decorate$1N([
     Autowired('rowModel')
 ], QuickFilterService.prototype, "rowModel", void 0);
-__decorate$1P([
+__decorate$1N([
     PostConstruct
 ], QuickFilterService.prototype, "postConstruct", null);
-QuickFilterService = QuickFilterService_1 = __decorate$1P([
+QuickFilterService = QuickFilterService_1 = __decorate$1N([
     Bean('quickFilterService')
 ], QuickFilterService);
 
-var __decorate$1O = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$1M = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
@@ -21523,7 +21756,7 @@ let FilterManager = class FilterManager extends BeanStub {
                 return;
             }
             const model = filter.getModel();
-            if (exists$1(model)) {
+            if (exists(model)) {
                 result[key] = model;
             }
         });
@@ -21915,7 +22148,7 @@ let FilterManager = class FilterManager extends BeanStub {
         filterWrapper.guiPromise = new AgPromise(resolve => {
             filterWrapper.filterPromise.then(filter => {
                 let guiFromFilter = filter.getGui();
-                if (!exists$1(guiFromFilter)) {
+                if (!exists(guiFromFilter)) {
                     console.warn(`AG Grid: getGui method from filter returned ${guiFromFilter}, it should be a DOM element or an HTML template string.`);
                 }
                 // for backwards compatibility with Angular 1 - we
@@ -22177,34 +22410,34 @@ let FilterManager = class FilterManager extends BeanStub {
         this.allColumnListeners.clear();
     }
 };
-__decorate$1O([
+__decorate$1M([
     Autowired('valueService')
 ], FilterManager.prototype, "valueService", void 0);
-__decorate$1O([
+__decorate$1M([
     Autowired('columnModel')
 ], FilterManager.prototype, "columnModel", void 0);
-__decorate$1O([
+__decorate$1M([
     Autowired('rowModel')
 ], FilterManager.prototype, "rowModel", void 0);
-__decorate$1O([
+__decorate$1M([
     Autowired('userComponentFactory')
 ], FilterManager.prototype, "userComponentFactory", void 0);
-__decorate$1O([
+__decorate$1M([
     Autowired('rowRenderer')
 ], FilterManager.prototype, "rowRenderer", void 0);
-__decorate$1O([
+__decorate$1M([
     Autowired('dataTypeService')
 ], FilterManager.prototype, "dataTypeService", void 0);
-__decorate$1O([
+__decorate$1M([
     Autowired('quickFilterService')
 ], FilterManager.prototype, "quickFilterService", void 0);
-__decorate$1O([
+__decorate$1M([
     Optional('advancedFilterService')
 ], FilterManager.prototype, "advancedFilterService", void 0);
-__decorate$1O([
+__decorate$1M([
     PostConstruct
 ], FilterManager.prototype, "init", null);
-FilterManager = __decorate$1O([
+FilterManager = __decorate$1M([
     Bean('filterManager')
 ], FilterManager);
 
@@ -22218,7 +22451,7 @@ class AbstractHeaderCellComp extends Component {
     }
 }
 
-var __decorate$1N = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$1L = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
@@ -22279,23 +22512,23 @@ HeaderFilterCellComp.TEMPLATE = `<div class="ag-header-cell ag-floating-filter" 
                 <button type="button" class="ag-button ag-floating-filter-button-button" ref="eButtonShowMainFilter" tabindex="-1"></button>
             </div>
         </div>`;
-__decorate$1N([
+__decorate$1L([
     RefSelector('eFloatingFilterBody')
 ], HeaderFilterCellComp.prototype, "eFloatingFilterBody", void 0);
-__decorate$1N([
+__decorate$1L([
     RefSelector('eButtonWrapper')
 ], HeaderFilterCellComp.prototype, "eButtonWrapper", void 0);
-__decorate$1N([
+__decorate$1L([
     RefSelector('eButtonShowMainFilter')
 ], HeaderFilterCellComp.prototype, "eButtonShowMainFilter", void 0);
-__decorate$1N([
+__decorate$1L([
     PostConstruct
 ], HeaderFilterCellComp.prototype, "postConstruct", null);
-__decorate$1N([
+__decorate$1L([
     PreDestroy
 ], HeaderFilterCellComp.prototype, "destroyFloatingFilterComp", null);
 
-var __decorate$1M = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$1K = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
@@ -22339,11 +22572,11 @@ class LayoutFeature extends BeanStub {
         return domLayout;
     }
 }
-__decorate$1M([
+__decorate$1K([
     PostConstruct
 ], LayoutFeature.prototype, "postConstruct", null);
 
-var __decorate$1L = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$1J = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
@@ -22830,32 +23063,32 @@ class GridBodyScrollFeature extends BeanStub {
         return { start: viewportStartPixel, end: viewportEndPixel, width: viewportWidth };
     }
 }
-__decorate$1L([
+__decorate$1J([
     Autowired('ctrlsService')
 ], GridBodyScrollFeature.prototype, "ctrlsService", void 0);
-__decorate$1L([
+__decorate$1J([
     Autowired('animationFrameService')
 ], GridBodyScrollFeature.prototype, "animationFrameService", void 0);
-__decorate$1L([
+__decorate$1J([
     Autowired('paginationProxy')
 ], GridBodyScrollFeature.prototype, "paginationProxy", void 0);
-__decorate$1L([
+__decorate$1J([
     Autowired('rowModel')
 ], GridBodyScrollFeature.prototype, "rowModel", void 0);
-__decorate$1L([
+__decorate$1J([
     Autowired('rowContainerHeightService')
 ], GridBodyScrollFeature.prototype, "heightScaler", void 0);
-__decorate$1L([
+__decorate$1J([
     Autowired('rowRenderer')
 ], GridBodyScrollFeature.prototype, "rowRenderer", void 0);
-__decorate$1L([
+__decorate$1J([
     Autowired('columnModel')
 ], GridBodyScrollFeature.prototype, "columnModel", void 0);
-__decorate$1L([
+__decorate$1J([
     PostConstruct
 ], GridBodyScrollFeature.prototype, "postConstruct", null);
 
-var __decorate$1K = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$1I = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
@@ -22905,7 +23138,7 @@ class RowDragFeature extends BeanStub {
     }
     onRowGroupChanged() {
         const rowGroups = this.columnModel.getRowGroupColumns();
-        this.isRowGroupActive = !missingOrEmpty$1(rowGroups);
+        this.isRowGroupActive = !missingOrEmpty(rowGroups);
     }
     getContainer() {
         return this.eContainer;
@@ -23181,44 +23414,44 @@ class RowDragFeature extends BeanStub {
         });
     }
 }
-__decorate$1K([
+__decorate$1I([
     Autowired('dragAndDropService')
 ], RowDragFeature.prototype, "dragAndDropService", void 0);
-__decorate$1K([
+__decorate$1I([
     Autowired('rowModel')
 ], RowDragFeature.prototype, "rowModel", void 0);
-__decorate$1K([
+__decorate$1I([
     Autowired('paginationProxy')
 ], RowDragFeature.prototype, "paginationProxy", void 0);
-__decorate$1K([
+__decorate$1I([
     Autowired('columnModel')
 ], RowDragFeature.prototype, "columnModel", void 0);
-__decorate$1K([
+__decorate$1I([
     Autowired('focusService')
 ], RowDragFeature.prototype, "focusService", void 0);
-__decorate$1K([
+__decorate$1I([
     Autowired('sortController')
 ], RowDragFeature.prototype, "sortController", void 0);
-__decorate$1K([
+__decorate$1I([
     Autowired('filterManager')
 ], RowDragFeature.prototype, "filterManager", void 0);
-__decorate$1K([
+__decorate$1I([
     Autowired('selectionService')
 ], RowDragFeature.prototype, "selectionService", void 0);
-__decorate$1K([
+__decorate$1I([
     Autowired('mouseEventService')
 ], RowDragFeature.prototype, "mouseEventService", void 0);
-__decorate$1K([
+__decorate$1I([
     Autowired('ctrlsService')
 ], RowDragFeature.prototype, "ctrlsService", void 0);
-__decorate$1K([
+__decorate$1I([
     Optional('rangeService')
 ], RowDragFeature.prototype, "rangeService", void 0);
-__decorate$1K([
+__decorate$1I([
     PostConstruct
 ], RowDragFeature.prototype, "postConstruct", null);
 
-var __decorate$1J = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$1H = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
@@ -23581,46 +23814,46 @@ class GridBodyCtrl extends BeanStub {
         this.eBodyViewport.removeEventListener('scroll', listener);
     }
 }
-__decorate$1J([
+__decorate$1H([
     Autowired('animationFrameService')
 ], GridBodyCtrl.prototype, "animationFrameService", void 0);
-__decorate$1J([
+__decorate$1H([
     Autowired('rowContainerHeightService')
 ], GridBodyCtrl.prototype, "rowContainerHeightService", void 0);
-__decorate$1J([
+__decorate$1H([
     Autowired('ctrlsService')
 ], GridBodyCtrl.prototype, "ctrlsService", void 0);
-__decorate$1J([
+__decorate$1H([
     Autowired('columnModel')
 ], GridBodyCtrl.prototype, "columnModel", void 0);
-__decorate$1J([
+__decorate$1H([
     Autowired('scrollVisibleService')
 ], GridBodyCtrl.prototype, "scrollVisibleService", void 0);
-__decorate$1J([
+__decorate$1H([
     Optional('contextMenuFactory')
 ], GridBodyCtrl.prototype, "contextMenuFactory", void 0);
-__decorate$1J([
+__decorate$1H([
     Autowired('headerNavigationService')
 ], GridBodyCtrl.prototype, "headerNavigationService", void 0);
-__decorate$1J([
+__decorate$1H([
     Autowired('dragAndDropService')
 ], GridBodyCtrl.prototype, "dragAndDropService", void 0);
-__decorate$1J([
+__decorate$1H([
     Autowired('pinnedRowModel')
 ], GridBodyCtrl.prototype, "pinnedRowModel", void 0);
-__decorate$1J([
+__decorate$1H([
     Autowired('rowRenderer')
 ], GridBodyCtrl.prototype, "rowRenderer", void 0);
-__decorate$1J([
+__decorate$1H([
     Autowired('popupService')
 ], GridBodyCtrl.prototype, "popupService", void 0);
-__decorate$1J([
+__decorate$1H([
     Autowired('mouseEventService')
 ], GridBodyCtrl.prototype, "mouseEventService", void 0);
-__decorate$1J([
+__decorate$1H([
     Autowired('rowModel')
 ], GridBodyCtrl.prototype, "rowModel", void 0);
-__decorate$1J([
+__decorate$1H([
     Autowired('filterManager')
 ], GridBodyCtrl.prototype, "filterManager", void 0);
 
@@ -24094,7 +24327,7 @@ class TooltipFeature extends BeanStub {
     }
 }
 
-var __decorate$1I = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$1G = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
@@ -24116,145 +24349,145 @@ let Beans = class Beans {
         }
     }
 };
-__decorate$1I([
+__decorate$1G([
     Autowired('resizeObserverService')
 ], Beans.prototype, "resizeObserverService", void 0);
-__decorate$1I([
+__decorate$1G([
     Autowired('paginationProxy')
 ], Beans.prototype, "paginationProxy", void 0);
-__decorate$1I([
+__decorate$1G([
     Autowired('context')
 ], Beans.prototype, "context", void 0);
-__decorate$1I([
+__decorate$1G([
     Autowired('columnApi')
 ], Beans.prototype, "columnApi", void 0);
-__decorate$1I([
+__decorate$1G([
     Autowired('gridApi')
 ], Beans.prototype, "gridApi", void 0);
-__decorate$1I([
+__decorate$1G([
     Autowired('gridOptionsService')
 ], Beans.prototype, "gridOptionsService", void 0);
-__decorate$1I([
+__decorate$1G([
     Autowired('expressionService')
 ], Beans.prototype, "expressionService", void 0);
-__decorate$1I([
+__decorate$1G([
     Autowired('environment')
 ], Beans.prototype, "environment", void 0);
-__decorate$1I([
+__decorate$1G([
     Autowired('rowRenderer')
 ], Beans.prototype, "rowRenderer", void 0);
-__decorate$1I([
+__decorate$1G([
     Autowired('templateService')
 ], Beans.prototype, "templateService", void 0);
-__decorate$1I([
+__decorate$1G([
     Autowired('valueService')
 ], Beans.prototype, "valueService", void 0);
-__decorate$1I([
+__decorate$1G([
     Autowired('eventService')
 ], Beans.prototype, "eventService", void 0);
-__decorate$1I([
+__decorate$1G([
     Autowired('columnModel')
 ], Beans.prototype, "columnModel", void 0);
-__decorate$1I([
+__decorate$1G([
     Autowired('headerNavigationService')
 ], Beans.prototype, "headerNavigationService", void 0);
-__decorate$1I([
+__decorate$1G([
     Autowired('navigationService')
 ], Beans.prototype, "navigationService", void 0);
-__decorate$1I([
+__decorate$1G([
     Autowired('columnAnimationService')
 ], Beans.prototype, "columnAnimationService", void 0);
-__decorate$1I([
+__decorate$1G([
     Optional('rangeService')
 ], Beans.prototype, "rangeService", void 0);
-__decorate$1I([
+__decorate$1G([
     Autowired('focusService')
 ], Beans.prototype, "focusService", void 0);
-__decorate$1I([
+__decorate$1G([
     Optional('contextMenuFactory')
 ], Beans.prototype, "contextMenuFactory", void 0);
-__decorate$1I([
+__decorate$1G([
     Autowired('popupService')
 ], Beans.prototype, "popupService", void 0);
-__decorate$1I([
+__decorate$1G([
     Autowired('valueFormatterService')
 ], Beans.prototype, "valueFormatterService", void 0);
-__decorate$1I([
+__decorate$1G([
     Autowired('stylingService')
 ], Beans.prototype, "stylingService", void 0);
-__decorate$1I([
+__decorate$1G([
     Autowired('columnHoverService')
 ], Beans.prototype, "columnHoverService", void 0);
-__decorate$1I([
+__decorate$1G([
     Autowired('userComponentFactory')
 ], Beans.prototype, "userComponentFactory", void 0);
-__decorate$1I([
+__decorate$1G([
     Autowired('userComponentRegistry')
 ], Beans.prototype, "userComponentRegistry", void 0);
-__decorate$1I([
+__decorate$1G([
     Autowired('animationFrameService')
 ], Beans.prototype, "animationFrameService", void 0);
-__decorate$1I([
+__decorate$1G([
     Autowired('dragService')
 ], Beans.prototype, "dragService", void 0);
-__decorate$1I([
+__decorate$1G([
     Autowired('dragAndDropService')
 ], Beans.prototype, "dragAndDropService", void 0);
-__decorate$1I([
+__decorate$1G([
     Autowired('sortController')
 ], Beans.prototype, "sortController", void 0);
-__decorate$1I([
+__decorate$1G([
     Autowired('filterManager')
 ], Beans.prototype, "filterManager", void 0);
-__decorate$1I([
+__decorate$1G([
     Autowired('rowContainerHeightService')
 ], Beans.prototype, "rowContainerHeightService", void 0);
-__decorate$1I([
+__decorate$1G([
     Autowired('frameworkOverrides')
 ], Beans.prototype, "frameworkOverrides", void 0);
-__decorate$1I([
+__decorate$1G([
     Autowired('cellPositionUtils')
 ], Beans.prototype, "cellPositionUtils", void 0);
-__decorate$1I([
+__decorate$1G([
     Autowired('rowPositionUtils')
 ], Beans.prototype, "rowPositionUtils", void 0);
-__decorate$1I([
+__decorate$1G([
     Autowired('selectionService')
 ], Beans.prototype, "selectionService", void 0);
-__decorate$1I([
+__decorate$1G([
     Optional('selectionHandleFactory')
 ], Beans.prototype, "selectionHandleFactory", void 0);
-__decorate$1I([
+__decorate$1G([
     Autowired('rowCssClassCalculator')
 ], Beans.prototype, "rowCssClassCalculator", void 0);
-__decorate$1I([
+__decorate$1G([
     Autowired('rowModel')
 ], Beans.prototype, "rowModel", void 0);
-__decorate$1I([
+__decorate$1G([
     Autowired('ctrlsService')
 ], Beans.prototype, "ctrlsService", void 0);
-__decorate$1I([
+__decorate$1G([
     Autowired('ctrlsFactory')
 ], Beans.prototype, "ctrlsFactory", void 0);
-__decorate$1I([
+__decorate$1G([
     Autowired('agStackComponentsRegistry')
 ], Beans.prototype, "agStackComponentsRegistry", void 0);
-__decorate$1I([
+__decorate$1G([
     Autowired('valueCache')
 ], Beans.prototype, "valueCache", void 0);
-__decorate$1I([
+__decorate$1G([
     Autowired('rowNodeEventThrottle')
 ], Beans.prototype, "rowNodeEventThrottle", void 0);
-__decorate$1I([
+__decorate$1G([
     Autowired('localeService')
 ], Beans.prototype, "localeService", void 0);
-__decorate$1I([
+__decorate$1G([
     Autowired('valueParserService')
 ], Beans.prototype, "valueParserService", void 0);
-__decorate$1I([
+__decorate$1G([
     PostConstruct
 ], Beans.prototype, "postConstruct", null);
-Beans = __decorate$1I([
+Beans = __decorate$1G([
     Bean('beans')
 ], Beans);
 
@@ -24615,7 +24848,7 @@ class CellKeyboardListenerFeature extends BeanStub {
     }
 }
 
-var __decorate$1H = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$1F = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
@@ -24673,7 +24906,7 @@ class DndSourceComp extends Component {
         this.setDisplayed(visible);
     }
 }
-__decorate$1H([
+__decorate$1F([
     PostConstruct
 ], DndSourceComp.prototype, "postConstruct", null);
 
@@ -24739,7 +24972,7 @@ class CellCtrl extends BeanStub {
         const getTooltipValue = () => {
             const colDef = this.column.getColDef();
             const data = this.rowNode.data;
-            if (colDef.tooltipField && exists$1(data)) {
+            if (colDef.tooltipField && exists(data)) {
                 return getValueUsingField(data, colDef.tooltipField, this.column.isTooltipFieldContainsDots());
             }
             const valueGetter = colDef.tooltipValueGetter;
@@ -25193,7 +25426,7 @@ class CellCtrl extends BeanStub {
         if (!flashDelay) {
             flashDelay = (_a = gridOptionsService.getNum('cellFlashDelay')) !== null && _a !== void 0 ? _a : 500;
         }
-        if (!exists$1(fadeDelay)) {
+        if (!exists(fadeDelay)) {
             fadeDelay = (_b = gridOptionsService.getNum('cellFadeDelay')) !== null && _b !== void 0 ? _b : 1000;
         }
         // we want to highlight the cells, without any animation
@@ -26012,7 +26245,7 @@ class RowCtrl extends BeanStub {
         if (this.isSticky() || !animateIn) {
             return;
         }
-        const oldRowTopExists = exists$1(this.rowNode.oldRowTop);
+        const oldRowTopExists = exists(this.rowNode.oldRowTop);
         const pinningLeft = this.beans.columnModel.isPinningLeft();
         const pinningRight = this.beans.columnModel.isPinningRight();
         if (oldRowTopExists) {
@@ -26831,7 +27064,7 @@ class RowCtrl extends BeanStub {
         }
         // need to make sure rowTop is not null, as this can happen if the node was once
         // visible (ie parent group was expanded) but is now not visible
-        if (exists$1(pixels)) {
+        if (exists(pixels)) {
             const afterPaginationPixels = this.applyPaginationOffset(pixels);
             const skipScaling = this.rowNode.isRowPinned() || this.rowNode.sticky;
             const afterScalingPixels = skipScaling ? afterPaginationPixels : this.beans.rowContainerHeightService.getRealPixelPosition(afterPaginationPixels);
@@ -26948,7 +27181,7 @@ class RowCtrl extends BeanStub {
 }
 RowCtrl.DOM_DATA_KEY_ROW_CTRL = 'renderedRow';
 
-var __decorate$1G = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$1E = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
@@ -27168,7 +27401,7 @@ class RowContainerEventsFeature extends BeanStub {
                 rowEnd = pinnedRowModel.getPinnedBottomRowData().length - 1;
             }
             const allDisplayedColumns = this.columnModel.getAllDisplayedColumns();
-            if (missingOrEmpty$1(allDisplayedColumns)) {
+            if (missingOrEmpty(allDisplayedColumns)) {
                 return;
             }
             rangeService.setCellRange({
@@ -27237,47 +27470,47 @@ class RowContainerEventsFeature extends BeanStub {
         this.undoRedoService.redo('ui');
     }
 }
-__decorate$1G([
+__decorate$1E([
     Autowired('mouseEventService')
 ], RowContainerEventsFeature.prototype, "mouseEventService", void 0);
-__decorate$1G([
+__decorate$1E([
     Autowired('valueService')
 ], RowContainerEventsFeature.prototype, "valueService", void 0);
-__decorate$1G([
+__decorate$1E([
     Optional('contextMenuFactory')
 ], RowContainerEventsFeature.prototype, "contextMenuFactory", void 0);
-__decorate$1G([
+__decorate$1E([
     Autowired('ctrlsService')
 ], RowContainerEventsFeature.prototype, "ctrlsService", void 0);
-__decorate$1G([
+__decorate$1E([
     Autowired('navigationService')
 ], RowContainerEventsFeature.prototype, "navigationService", void 0);
-__decorate$1G([
+__decorate$1E([
     Autowired('focusService')
 ], RowContainerEventsFeature.prototype, "focusService", void 0);
-__decorate$1G([
+__decorate$1E([
     Autowired('undoRedoService')
 ], RowContainerEventsFeature.prototype, "undoRedoService", void 0);
-__decorate$1G([
+__decorate$1E([
     Autowired('columnModel')
 ], RowContainerEventsFeature.prototype, "columnModel", void 0);
-__decorate$1G([
+__decorate$1E([
     Autowired('paginationProxy')
 ], RowContainerEventsFeature.prototype, "paginationProxy", void 0);
-__decorate$1G([
+__decorate$1E([
     Autowired('pinnedRowModel')
 ], RowContainerEventsFeature.prototype, "pinnedRowModel", void 0);
-__decorate$1G([
+__decorate$1E([
     Optional('rangeService')
 ], RowContainerEventsFeature.prototype, "rangeService", void 0);
-__decorate$1G([
+__decorate$1E([
     Optional('clipboardService')
 ], RowContainerEventsFeature.prototype, "clipboardService", void 0);
-__decorate$1G([
+__decorate$1E([
     PostConstruct
 ], RowContainerEventsFeature.prototype, "postConstruct", null);
 
-var __decorate$1F = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$1D = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
@@ -27375,20 +27608,20 @@ class ViewportSizeFeature extends BeanStub {
         this.columnModel.setViewportPosition(scrollWidth, scrollPosition);
     }
 }
-__decorate$1F([
+__decorate$1D([
     Autowired('ctrlsService')
 ], ViewportSizeFeature.prototype, "ctrlsService", void 0);
-__decorate$1F([
+__decorate$1D([
     Autowired('columnModel')
 ], ViewportSizeFeature.prototype, "columnModel", void 0);
-__decorate$1F([
+__decorate$1D([
     Autowired('scrollVisibleService')
 ], ViewportSizeFeature.prototype, "scrollVisibleService", void 0);
-__decorate$1F([
+__decorate$1D([
     PostConstruct
 ], ViewportSizeFeature.prototype, "postConstruct", null);
 
-var __decorate$1E = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$1C = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
@@ -27412,14 +27645,14 @@ class SetPinnedLeftWidthFeature extends BeanStub {
         return this.pinnedWidthService.getPinnedLeftWidth();
     }
 }
-__decorate$1E([
+__decorate$1C([
     Autowired('pinnedWidthService')
 ], SetPinnedLeftWidthFeature.prototype, "pinnedWidthService", void 0);
-__decorate$1E([
+__decorate$1C([
     PostConstruct
 ], SetPinnedLeftWidthFeature.prototype, "postConstruct", null);
 
-var __decorate$1D = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$1B = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
@@ -27443,14 +27676,14 @@ class SetPinnedRightWidthFeature extends BeanStub {
         return this.pinnedWidthService.getPinnedRightWidth();
     }
 }
-__decorate$1D([
+__decorate$1B([
     Autowired('pinnedWidthService')
 ], SetPinnedRightWidthFeature.prototype, "pinnedWidthService", void 0);
-__decorate$1D([
+__decorate$1B([
     PostConstruct
 ], SetPinnedRightWidthFeature.prototype, "postConstruct", null);
 
-var __decorate$1C = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$1A = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
@@ -27474,14 +27707,14 @@ class SetHeightFeature extends BeanStub {
         }
     }
 }
-__decorate$1C([
+__decorate$1A([
     Autowired("rowContainerHeightService")
 ], SetHeightFeature.prototype, "maxDivHeightScaler", void 0);
-__decorate$1C([
+__decorate$1A([
     PostConstruct
 ], SetHeightFeature.prototype, "postConstruct", null);
 
-var __decorate$1B = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$1z = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
@@ -27508,17 +27741,17 @@ class DragListenerFeature extends BeanStub {
         this.addDestroyFunc(() => this.dragService.removeDragSource(params));
     }
 }
-__decorate$1B([
+__decorate$1z([
     Optional('rangeService')
 ], DragListenerFeature.prototype, "rangeService", void 0);
-__decorate$1B([
+__decorate$1z([
     Autowired('dragService')
 ], DragListenerFeature.prototype, "dragService", void 0);
-__decorate$1B([
+__decorate$1z([
     PostConstruct
 ], DragListenerFeature.prototype, "postConstruct", null);
 
-var __decorate$1A = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$1y = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
@@ -27565,17 +27798,17 @@ class CenterWidthFeature extends BeanStub {
         this.callback(totalWidth);
     }
 }
-__decorate$1A([
+__decorate$1y([
     Autowired('columnModel')
 ], CenterWidthFeature.prototype, "columnModel", void 0);
-__decorate$1A([
+__decorate$1y([
     Autowired('scrollVisibleService')
 ], CenterWidthFeature.prototype, "scrollVisibleService", void 0);
-__decorate$1A([
+__decorate$1y([
     PostConstruct
 ], CenterWidthFeature.prototype, "postConstruct", null);
 
-var __decorate$1z = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$1x = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
@@ -27951,32 +28184,32 @@ class RowContainerCtrl extends BeanStub {
         }
     }
 }
-__decorate$1z([
+__decorate$1x([
     Autowired('scrollVisibleService')
 ], RowContainerCtrl.prototype, "scrollVisibleService", void 0);
-__decorate$1z([
+__decorate$1x([
     Autowired('dragService')
 ], RowContainerCtrl.prototype, "dragService", void 0);
-__decorate$1z([
+__decorate$1x([
     Autowired('ctrlsService')
 ], RowContainerCtrl.prototype, "ctrlsService", void 0);
-__decorate$1z([
+__decorate$1x([
     Autowired('columnModel')
 ], RowContainerCtrl.prototype, "columnModel", void 0);
-__decorate$1z([
+__decorate$1x([
     Autowired('resizeObserverService')
 ], RowContainerCtrl.prototype, "resizeObserverService", void 0);
-__decorate$1z([
+__decorate$1x([
     Autowired('animationFrameService')
 ], RowContainerCtrl.prototype, "animationFrameService", void 0);
-__decorate$1z([
+__decorate$1x([
     Autowired('rowRenderer')
 ], RowContainerCtrl.prototype, "rowRenderer", void 0);
-__decorate$1z([
+__decorate$1x([
     PostConstruct
 ], RowContainerCtrl.prototype, "postConstruct", null);
 
-var __decorate$1y = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$1w = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
@@ -28077,35 +28310,35 @@ class GridBodyComp extends Component {
         return [this.eTop, this.eBottom];
     }
 }
-__decorate$1y([
+__decorate$1w([
     Autowired('resizeObserverService')
 ], GridBodyComp.prototype, "resizeObserverService", void 0);
-__decorate$1y([
+__decorate$1w([
     Optional('rangeService')
 ], GridBodyComp.prototype, "rangeService", void 0);
-__decorate$1y([
+__decorate$1w([
     RefSelector('eBodyViewport')
 ], GridBodyComp.prototype, "eBodyViewport", void 0);
-__decorate$1y([
+__decorate$1w([
     RefSelector('eStickyTop')
 ], GridBodyComp.prototype, "eStickyTop", void 0);
-__decorate$1y([
+__decorate$1w([
     RefSelector('eTop')
 ], GridBodyComp.prototype, "eTop", void 0);
-__decorate$1y([
+__decorate$1w([
     RefSelector('eBottom')
 ], GridBodyComp.prototype, "eBottom", void 0);
-__decorate$1y([
+__decorate$1w([
     RefSelector('gridHeader')
 ], GridBodyComp.prototype, "headerRootComp", void 0);
-__decorate$1y([
+__decorate$1w([
     RefSelector('eBody')
 ], GridBodyComp.prototype, "eBody", void 0);
-__decorate$1y([
+__decorate$1w([
     PostConstruct
 ], GridBodyComp.prototype, "init", null);
 
-var __decorate$1x = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$1v = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
@@ -28164,17 +28397,17 @@ let ScrollVisibleService = class ScrollVisibleService extends BeanStub {
         return this.verticalScrollShowing;
     }
 };
-__decorate$1x([
+__decorate$1v([
     Autowired('ctrlsService')
 ], ScrollVisibleService.prototype, "ctrlsService", void 0);
-__decorate$1x([
+__decorate$1v([
     PostConstruct
 ], ScrollVisibleService.prototype, "postConstruct", null);
-ScrollVisibleService = __decorate$1x([
+ScrollVisibleService = __decorate$1v([
     Bean('scrollVisibleService')
 ], ScrollVisibleService);
 
-var __decorate$1w = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$1u = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
@@ -28206,7 +28439,7 @@ let MouseEventService = MouseEventService_1 = class MouseEventService extends Be
         let pointer = element;
         while (pointer) {
             const instanceId = pointer[MouseEventService_1.GRID_DOM_KEY];
-            if (exists$1(instanceId)) {
+            if (exists(instanceId)) {
                 const eventFromThisGrid = instanceId === this.gridInstanceId;
                 return eventFromThisGrid;
             }
@@ -28243,14 +28476,14 @@ let MouseEventService = MouseEventService_1 = class MouseEventService extends Be
 };
 MouseEventService.gridInstanceSequence = new NumberSequence();
 MouseEventService.GRID_DOM_KEY = '__ag_grid_instance';
-__decorate$1w([
+__decorate$1u([
     Autowired('ctrlsService')
 ], MouseEventService.prototype, "ctrlsService", void 0);
-MouseEventService = MouseEventService_1 = __decorate$1w([
+MouseEventService = MouseEventService_1 = __decorate$1u([
     Bean('mouseEventService')
 ], MouseEventService);
 
-var __decorate$1v = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$1t = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
@@ -28328,10 +28561,10 @@ let NavigationService = class NavigationService extends BeanStub {
     }
     navigateTo(navigateParams) {
         const { scrollIndex, scrollType, scrollColumn, focusIndex, focusColumn } = navigateParams;
-        if (exists$1(scrollColumn) && !scrollColumn.isPinned()) {
+        if (exists(scrollColumn) && !scrollColumn.isPinned()) {
             this.gridBodyCon.getScrollFeature().ensureColumnVisible(scrollColumn);
         }
-        if (exists$1(scrollIndex)) {
+        if (exists(scrollIndex)) {
             this.gridBodyCon.getScrollFeature().ensureIndexVisible(scrollIndex, scrollType);
         }
         // setFocusedCell relies on the browser default focus behavior to scroll the focused cell into view,
@@ -28668,7 +28901,7 @@ let NavigationService = class NavigationService extends BeanStub {
         else if (nextCell) {
             return this.tryToFocusFullWidthRow(nextCell.getRowPosition(), backwards);
         }
-        return exists$1(nextCell);
+        return exists(nextCell);
     }
     // called by the cell, when tab is pressed while editing.
     // @return: RenderedCell when navigation successful, otherwise null
@@ -28684,7 +28917,7 @@ let NavigationService = class NavigationService extends BeanStub {
             nextPosition = this.cellNavigationService.getNextTabbedCell(nextPosition, backwards);
             // allow user to override what cell to go to next
             const userFunc = this.gridOptionsService.getCallback('tabToNextCell');
-            if (exists$1(userFunc)) {
+            if (exists(userFunc)) {
                 const params = {
                     backwards: backwards,
                     editing: startEditing,
@@ -28692,7 +28925,7 @@ let NavigationService = class NavigationService extends BeanStub {
                     nextCellPosition: nextPosition ? nextPosition : null
                 };
                 const userCell = userFunc(params);
-                if (exists$1(userCell)) {
+                if (exists(userCell)) {
                     if (userCell.floating) {
                         doOnce(() => { console.warn(`AG Grid: tabToNextCellFunc return type should have attributes: rowIndex, rowPinned, column. However you had 'floating', maybe you meant 'rowPinned'?`); }, 'no floating in userCell');
                         userCell.rowPinned = userCell.floating;
@@ -28816,7 +29049,7 @@ let NavigationService = class NavigationService extends BeanStub {
         // we allow this, however if processing 'enter after edit' we don't allow override
         if (allowUserOverride) {
             const userFunc = this.gridOptionsService.getCallback('navigateToNextCell');
-            if (exists$1(userFunc)) {
+            if (exists(userFunc)) {
                 const params = {
                     key: key,
                     previousCellPosition: currentCell,
@@ -28824,7 +29057,7 @@ let NavigationService = class NavigationService extends BeanStub {
                     event: event
                 };
                 const userCell = userFunc(params);
-                if (exists$1(userCell)) {
+                if (exists(userCell)) {
                     if (userCell.floating) {
                         doOnce(() => { console.warn(`AG Grid: tabToNextCellFunc return type should have attributes: rowIndex, rowPinned, column. However you had 'floating', maybe you meant 'rowPinned'?`); }, 'no floating in userCell');
                         userCell.rowPinned = userCell.floating;
@@ -28951,50 +29184,50 @@ let NavigationService = class NavigationService extends BeanStub {
         }
     }
 };
-__decorate$1v([
+__decorate$1t([
     Autowired('mouseEventService')
 ], NavigationService.prototype, "mouseEventService", void 0);
-__decorate$1v([
+__decorate$1t([
     Autowired('paginationProxy')
 ], NavigationService.prototype, "paginationProxy", void 0);
-__decorate$1v([
+__decorate$1t([
     Autowired('focusService')
 ], NavigationService.prototype, "focusService", void 0);
-__decorate$1v([
+__decorate$1t([
     Optional('rangeService')
 ], NavigationService.prototype, "rangeService", void 0);
-__decorate$1v([
+__decorate$1t([
     Autowired('columnModel')
 ], NavigationService.prototype, "columnModel", void 0);
-__decorate$1v([
+__decorate$1t([
     Autowired('rowModel')
 ], NavigationService.prototype, "rowModel", void 0);
-__decorate$1v([
+__decorate$1t([
     Autowired('ctrlsService')
 ], NavigationService.prototype, "ctrlsService", void 0);
-__decorate$1v([
+__decorate$1t([
     Autowired('rowRenderer')
 ], NavigationService.prototype, "rowRenderer", void 0);
-__decorate$1v([
+__decorate$1t([
     Autowired('headerNavigationService')
 ], NavigationService.prototype, "headerNavigationService", void 0);
-__decorate$1v([
+__decorate$1t([
     Autowired("rowPositionUtils")
 ], NavigationService.prototype, "rowPositionUtils", void 0);
-__decorate$1v([
+__decorate$1t([
     Autowired("cellNavigationService")
 ], NavigationService.prototype, "cellNavigationService", void 0);
-__decorate$1v([
+__decorate$1t([
     Autowired("pinnedRowModel")
 ], NavigationService.prototype, "pinnedRowModel", void 0);
-__decorate$1v([
+__decorate$1t([
     PostConstruct
 ], NavigationService.prototype, "postConstruct", null);
-NavigationService = __decorate$1v([
+NavigationService = __decorate$1t([
     Bean('navigationService')
 ], NavigationService);
 
-var __decorate$1u = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$1s = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
@@ -29021,7 +29254,7 @@ class PopupEditorWrapper extends PopupComponent {
     }
 }
 PopupEditorWrapper.DOM_KEY_POPUP_EDITOR_WRAPPER = 'popupEditorWrapper';
-__decorate$1u([
+__decorate$1s([
     PostConstruct
 ], PopupEditorWrapper.prototype, "postConstruct", null);
 
@@ -29568,7 +29801,7 @@ class RowComp extends Component {
     }
 }
 
-var __decorate$1t = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$1r = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
@@ -29663,23 +29896,23 @@ class RowContainerComp extends Component {
         }
     }
 }
-__decorate$1t([
+__decorate$1r([
     Autowired('beans')
 ], RowContainerComp.prototype, "beans", void 0);
-__decorate$1t([
+__decorate$1r([
     RefSelector('eViewport')
 ], RowContainerComp.prototype, "eViewport", void 0);
-__decorate$1t([
+__decorate$1r([
     RefSelector('eContainer')
 ], RowContainerComp.prototype, "eContainer", void 0);
-__decorate$1t([
+__decorate$1r([
     PostConstruct
 ], RowContainerComp.prototype, "postConstruct", null);
-__decorate$1t([
+__decorate$1r([
     PreDestroy
 ], RowContainerComp.prototype, "preDestroy", null);
 
-var __decorate$1s = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$1q = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
@@ -29755,14 +29988,14 @@ class BodyDropPivotTarget {
         }
     }
 }
-__decorate$1s([
+__decorate$1q([
     Autowired('columnModel')
 ], BodyDropPivotTarget.prototype, "columnModel", void 0);
-__decorate$1s([
+__decorate$1q([
     Autowired('gridOptionsService')
 ], BodyDropPivotTarget.prototype, "gridOptionsService", void 0);
 
-var __decorate$1r = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$1p = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
@@ -29775,7 +30008,7 @@ class MoveColumnFeature {
         this.lastMovedInfo = null;
         this.pinned = pinned;
         this.eContainer = eContainer;
-        this.centerContainer = !exists$1(pinned);
+        this.centerContainer = !exists(pinned);
     }
     init() {
         this.ctrlsService.whenReady(() => {
@@ -30214,23 +30447,23 @@ class MoveColumnFeature {
         }
     }
 }
-__decorate$1r([
+__decorate$1p([
     Autowired('columnModel')
 ], MoveColumnFeature.prototype, "columnModel", void 0);
-__decorate$1r([
+__decorate$1p([
     Autowired('dragAndDropService')
 ], MoveColumnFeature.prototype, "dragAndDropService", void 0);
-__decorate$1r([
+__decorate$1p([
     Autowired('gridOptionsService')
 ], MoveColumnFeature.prototype, "gridOptionsService", void 0);
-__decorate$1r([
+__decorate$1p([
     Autowired('ctrlsService')
 ], MoveColumnFeature.prototype, "ctrlsService", void 0);
-__decorate$1r([
+__decorate$1p([
     PostConstruct
 ], MoveColumnFeature.prototype, "init", null);
 
-var __decorate$1q = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$1o = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
@@ -30313,19 +30546,19 @@ class BodyDropTarget extends BeanStub {
         this.currentDropListener.onDragStop(params);
     }
 }
-__decorate$1q([
+__decorate$1o([
     Autowired('dragAndDropService')
 ], BodyDropTarget.prototype, "dragAndDropService", void 0);
-__decorate$1q([
+__decorate$1o([
     Autowired('columnModel')
 ], BodyDropTarget.prototype, "columnModel", void 0);
-__decorate$1q([
+__decorate$1o([
     Autowired('ctrlsService')
 ], BodyDropTarget.prototype, "ctrlsService", void 0);
-__decorate$1q([
+__decorate$1o([
     PostConstruct
 ], BodyDropTarget.prototype, "postConstruct", null);
-__decorate$1q([
+__decorate$1o([
     PostConstruct
 ], BodyDropTarget.prototype, "init", null);
 
@@ -30377,7 +30610,7 @@ class CssClassApplier {
     }
 }
 
-var __decorate$1p = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$1n = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
@@ -30441,20 +30674,20 @@ HeaderCellComp.TEMPLATE = `<div class="ag-header-cell" role="columnheader" tabin
             <div ref="eResize" class="ag-header-cell-resize" role="presentation"></div>
             <div ref="eHeaderCompWrapper" class="ag-header-cell-comp-wrapper" role="presentation"></div>
         </div>`;
-__decorate$1p([
+__decorate$1n([
     RefSelector('eResize')
 ], HeaderCellComp.prototype, "eResize", void 0);
-__decorate$1p([
+__decorate$1n([
     RefSelector('eHeaderCompWrapper')
 ], HeaderCellComp.prototype, "eHeaderCompWrapper", void 0);
-__decorate$1p([
+__decorate$1n([
     PostConstruct
 ], HeaderCellComp.prototype, "postConstruct", null);
-__decorate$1p([
+__decorate$1n([
     PreDestroy
 ], HeaderCellComp.prototype, "destroyHeaderComp", null);
 
-var __decorate$1o = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$1m = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
@@ -30496,17 +30729,17 @@ class HeaderGroupCellComp extends AbstractHeaderCellComp {
 HeaderGroupCellComp.TEMPLATE = `<div class="ag-header-group-cell" role="columnheader" tabindex="-1">
             <div ref="eResize" class="ag-header-cell-resize" role="presentation"></div>
         </div>`;
-__decorate$1o([
+__decorate$1m([
     Autowired('userComponentFactory')
 ], HeaderGroupCellComp.prototype, "userComponentFactory", void 0);
-__decorate$1o([
+__decorate$1m([
     RefSelector('eResize')
 ], HeaderGroupCellComp.prototype, "eResize", void 0);
-__decorate$1o([
+__decorate$1m([
     PostConstruct
 ], HeaderGroupCellComp.prototype, "postConstruct", null);
 
-var __decorate$1n = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$1l = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
@@ -30590,14 +30823,14 @@ class HeaderRowComp extends Component {
         return result;
     }
 }
-__decorate$1n([
+__decorate$1l([
     PostConstruct
 ], HeaderRowComp.prototype, "init", null);
-__decorate$1n([
+__decorate$1l([
     PreDestroy
 ], HeaderRowComp.prototype, "destroyHeaderCtrls", null);
 
-var __decorate$1m = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$1k = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
@@ -30671,17 +30904,17 @@ class AbstractHeaderCellCtrl extends BeanStub {
     }
 }
 AbstractHeaderCellCtrl.DOM_DATA_KEY_HEADER_CTRL = 'headerCtrl';
-__decorate$1m([
+__decorate$1k([
     Autowired('focusService')
 ], AbstractHeaderCellCtrl.prototype, "focusService", void 0);
-__decorate$1m([
+__decorate$1k([
     Autowired('beans')
 ], AbstractHeaderCellCtrl.prototype, "beans", void 0);
-__decorate$1m([
+__decorate$1k([
     Autowired('userComponentFactory')
 ], AbstractHeaderCellCtrl.prototype, "userComponentFactory", void 0);
 
-var __decorate$1l = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$1j = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
@@ -30717,7 +30950,7 @@ class SetLeftFeature extends BeanStub {
     }
     setLeftFirstTime() {
         const suppressMoveAnimation = this.beans.gridOptionsService.is('suppressColumnMoveAnimation');
-        const oldLeftExists = exists$1(this.columnOrGroup.getOldLeft());
+        const oldLeftExists = exists(this.columnOrGroup.getOldLeft());
         const animateColumnMove = this.beans.columnAnimationService.isActive() && oldLeftExists && !suppressMoveAnimation;
         if (animateColumnMove) {
             this.animateInLeft();
@@ -30772,7 +31005,7 @@ class SetLeftFeature extends BeanStub {
         // if the value is null, then that means the column is no longer
         // displayed. there is logic in the rendering to fade these columns
         // out, so we don't try and change their left positions.
-        if (exists$1(value)) {
+        if (exists(value)) {
             this.eCell.style.left = `${value}px`;
         }
         let indexColumn;
@@ -30794,11 +31027,11 @@ class SetLeftFeature extends BeanStub {
         setAriaColIndex(this.ariaEl, index);
     }
 }
-__decorate$1l([
+__decorate$1j([
     PostConstruct
 ], SetLeftFeature.prototype, "postConstruct", null);
 
-var __decorate$1k = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$1i = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
@@ -30826,14 +31059,14 @@ class HoverFeature extends BeanStub {
         this.columnHoverService.setMouseOver(this.columns);
     }
 }
-__decorate$1k([
+__decorate$1i([
     Autowired('columnHoverService')
 ], HoverFeature.prototype, "columnHoverService", void 0);
-__decorate$1k([
+__decorate$1i([
     PostConstruct
 ], HoverFeature.prototype, "postConstruct", null);
 
-var __decorate$1j = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$1h = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
@@ -31113,17 +31346,17 @@ class HeaderFilterCellCtrl extends AbstractHeaderCellCtrl {
         });
     }
 }
-__decorate$1j([
+__decorate$1h([
     Autowired('filterManager')
 ], HeaderFilterCellCtrl.prototype, "filterManager", void 0);
-__decorate$1j([
+__decorate$1h([
     Autowired('columnHoverService')
 ], HeaderFilterCellCtrl.prototype, "columnHoverService", void 0);
-__decorate$1j([
+__decorate$1h([
     Autowired('menuFactory')
 ], HeaderFilterCellCtrl.prototype, "menuFactory", void 0);
 
-var __decorate$1i = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$1g = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
@@ -31223,17 +31456,17 @@ class ResizeFeature extends BeanStub {
         return result;
     }
 }
-__decorate$1i([
+__decorate$1g([
     Autowired('horizontalResizeService')
 ], ResizeFeature.prototype, "horizontalResizeService", void 0);
-__decorate$1i([
+__decorate$1g([
     Autowired('columnModel')
 ], ResizeFeature.prototype, "columnModel", void 0);
-__decorate$1i([
+__decorate$1g([
     PostConstruct
 ], ResizeFeature.prototype, "postConstruct", null);
 
-var __decorate$1h = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$1f = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
@@ -31386,20 +31619,20 @@ class SelectAllFeature extends BeanStub {
         return false;
     }
 }
-__decorate$1h([
+__decorate$1f([
     Autowired('gridApi')
 ], SelectAllFeature.prototype, "gridApi", void 0);
-__decorate$1h([
+__decorate$1f([
     Autowired('columnApi')
 ], SelectAllFeature.prototype, "columnApi", void 0);
-__decorate$1h([
+__decorate$1f([
     Autowired('rowModel')
 ], SelectAllFeature.prototype, "rowModel", void 0);
-__decorate$1h([
+__decorate$1f([
     Autowired('selectionService')
 ], SelectAllFeature.prototype, "selectionService", void 0);
 
-var __decorate$1g = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$1e = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
@@ -31532,14 +31765,14 @@ class TabGuardCtrl extends BeanStub {
         tabGuardToFocus.focus();
     }
 }
-__decorate$1g([
+__decorate$1e([
     Autowired('focusService')
 ], TabGuardCtrl.prototype, "focusService", void 0);
-__decorate$1g([
+__decorate$1e([
     PostConstruct
 ], TabGuardCtrl.prototype, "postConstruct", null);
 
-var __decorate$1f = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$1d = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
@@ -32041,47 +32274,47 @@ let FocusService = FocusService_1 = class FocusService extends BeanStub {
 FocusService.AG_KEYBOARD_FOCUS = 'ag-keyboard-focus';
 FocusService.keyboardModeActive = false;
 FocusService.instancesMonitored = new Map();
-__decorate$1f([
+__decorate$1d([
     Autowired('eGridDiv')
 ], FocusService.prototype, "eGridDiv", void 0);
-__decorate$1f([
+__decorate$1d([
     Autowired('columnModel')
 ], FocusService.prototype, "columnModel", void 0);
-__decorate$1f([
+__decorate$1d([
     Autowired('headerNavigationService')
 ], FocusService.prototype, "headerNavigationService", void 0);
-__decorate$1f([
+__decorate$1d([
     Autowired('rowRenderer')
 ], FocusService.prototype, "rowRenderer", void 0);
-__decorate$1f([
+__decorate$1d([
     Autowired('rowPositionUtils')
 ], FocusService.prototype, "rowPositionUtils", void 0);
-__decorate$1f([
+__decorate$1d([
     Autowired('cellPositionUtils')
 ], FocusService.prototype, "cellPositionUtils", void 0);
-__decorate$1f([
+__decorate$1d([
     Optional('rangeService')
 ], FocusService.prototype, "rangeService", void 0);
-__decorate$1f([
+__decorate$1d([
     Autowired('navigationService')
 ], FocusService.prototype, "navigationService", void 0);
-__decorate$1f([
+__decorate$1d([
     Autowired('ctrlsService')
 ], FocusService.prototype, "ctrlsService", void 0);
-__decorate$1f([
+__decorate$1d([
     Autowired('filterManager')
 ], FocusService.prototype, "filterManager", void 0);
-__decorate$1f([
+__decorate$1d([
     Optional('advancedFilterService')
 ], FocusService.prototype, "advancedFilterService", void 0);
-__decorate$1f([
+__decorate$1d([
     PostConstruct
 ], FocusService.prototype, "init", null);
-FocusService = FocusService_1 = __decorate$1f([
+FocusService = FocusService_1 = __decorate$1d([
     Bean('focusService')
 ], FocusService);
 
-var __decorate$1e = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$1c = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
@@ -32612,35 +32845,35 @@ class HeaderCellCtrl extends AbstractHeaderCellCtrl {
         this.comp.addOrRemoveCssClass('ag-header-active', active);
     }
 }
-__decorate$1e([
+__decorate$1c([
     Autowired('columnModel')
 ], HeaderCellCtrl.prototype, "columnModel", void 0);
-__decorate$1e([
+__decorate$1c([
     Autowired('columnHoverService')
 ], HeaderCellCtrl.prototype, "columnHoverService", void 0);
-__decorate$1e([
+__decorate$1c([
     Autowired('sortController')
 ], HeaderCellCtrl.prototype, "sortController", void 0);
-__decorate$1e([
+__decorate$1c([
     Autowired('menuFactory')
 ], HeaderCellCtrl.prototype, "menuFactory", void 0);
-__decorate$1e([
+__decorate$1c([
     Autowired('dragAndDropService')
 ], HeaderCellCtrl.prototype, "dragAndDropService", void 0);
-__decorate$1e([
+__decorate$1c([
     Autowired('resizeObserverService')
 ], HeaderCellCtrl.prototype, "resizeObserverService", void 0);
-__decorate$1e([
+__decorate$1c([
     Autowired('gridApi')
 ], HeaderCellCtrl.prototype, "gridApi", void 0);
-__decorate$1e([
+__decorate$1c([
     Autowired('columnApi')
 ], HeaderCellCtrl.prototype, "columnApi", void 0);
-__decorate$1e([
+__decorate$1c([
     PreDestroy
 ], HeaderCellCtrl.prototype, "removeDragSource", null);
 
-var __decorate$1d = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$1b = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
@@ -32772,20 +33005,20 @@ class GroupResizeFeature extends BeanStub {
         return result;
     }
 }
-__decorate$1d([
+__decorate$1b([
     Autowired('horizontalResizeService')
 ], GroupResizeFeature.prototype, "horizontalResizeService", void 0);
-__decorate$1d([
+__decorate$1b([
     Autowired('autoWidthCalculator')
 ], GroupResizeFeature.prototype, "autoWidthCalculator", void 0);
-__decorate$1d([
+__decorate$1b([
     Autowired('columnModel')
 ], GroupResizeFeature.prototype, "columnModel", void 0);
-__decorate$1d([
+__decorate$1b([
     PostConstruct
 ], GroupResizeFeature.prototype, "postConstruct", null);
 
-var __decorate$1c = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$1a = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
@@ -32838,11 +33071,11 @@ class GroupWidthFeature extends BeanStub {
         this.comp.addOrRemoveCssClass('ag-hidden', columnWidth === 0);
     }
 }
-__decorate$1c([
+__decorate$1a([
     PostConstruct
 ], GroupWidthFeature.prototype, "postConstruct", null);
 
-var __decorate$1b = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$19 = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
@@ -33069,20 +33302,20 @@ class HeaderGroupCellCtrl extends AbstractHeaderCellCtrl {
         return result;
     }
 }
-__decorate$1b([
+__decorate$19([
     Autowired('columnModel')
 ], HeaderGroupCellCtrl.prototype, "columnModel", void 0);
-__decorate$1b([
+__decorate$19([
     Autowired('dragAndDropService')
 ], HeaderGroupCellCtrl.prototype, "dragAndDropService", void 0);
-__decorate$1b([
+__decorate$19([
     Autowired('gridApi')
 ], HeaderGroupCellCtrl.prototype, "gridApi", void 0);
-__decorate$1b([
+__decorate$19([
     Autowired('columnApi')
 ], HeaderGroupCellCtrl.prototype, "columnApi", void 0);
 
-var __decorate$1a = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$18 = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
@@ -33327,20 +33560,20 @@ class HeaderRowCtrl extends BeanStub {
         super.destroy();
     }
 }
-__decorate$1a([
+__decorate$18([
     Autowired('columnModel')
 ], HeaderRowCtrl.prototype, "columnModel", void 0);
-__decorate$1a([
+__decorate$18([
     Autowired('focusService')
 ], HeaderRowCtrl.prototype, "focusService", void 0);
-__decorate$1a([
+__decorate$18([
     Autowired('filterManager')
 ], HeaderRowCtrl.prototype, "filterManager", void 0);
-__decorate$1a([
+__decorate$18([
     PostConstruct
 ], HeaderRowCtrl.prototype, "postConstruct", null);
 
-var __decorate$19 = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$17 = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
@@ -33544,26 +33777,26 @@ class HeaderRowContainerCtrl extends BeanStub {
         super.destroy();
     }
 }
-__decorate$19([
+__decorate$17([
     Autowired('ctrlsService')
 ], HeaderRowContainerCtrl.prototype, "ctrlsService", void 0);
-__decorate$19([
+__decorate$17([
     Autowired('scrollVisibleService')
 ], HeaderRowContainerCtrl.prototype, "scrollVisibleService", void 0);
-__decorate$19([
+__decorate$17([
     Autowired('pinnedWidthService')
 ], HeaderRowContainerCtrl.prototype, "pinnedWidthService", void 0);
-__decorate$19([
+__decorate$17([
     Autowired('columnModel')
 ], HeaderRowContainerCtrl.prototype, "columnModel", void 0);
-__decorate$19([
+__decorate$17([
     Autowired('focusService')
 ], HeaderRowContainerCtrl.prototype, "focusService", void 0);
-__decorate$19([
+__decorate$17([
     Autowired('filterManager')
 ], HeaderRowContainerCtrl.prototype, "filterManager", void 0);
 
-var __decorate$18 = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$16 = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
@@ -33645,17 +33878,17 @@ HeaderRowContainerComp.PINNED_RIGHT_TEMPLATE = `<div class="ag-pinned-right-head
 HeaderRowContainerComp.CENTER_TEMPLATE = `<div class="ag-header-viewport" role="presentation">
             <div class="ag-header-container" ref="eCenterContainer" role="rowgroup"></div>
         </div>`;
-__decorate$18([
+__decorate$16([
     RefSelector('eCenterContainer')
 ], HeaderRowContainerComp.prototype, "eCenterContainer", void 0);
-__decorate$18([
+__decorate$16([
     PostConstruct
 ], HeaderRowContainerComp.prototype, "init", null);
-__decorate$18([
+__decorate$16([
     PreDestroy
 ], HeaderRowContainerComp.prototype, "destroyRowComps", null);
 
-var __decorate$17 = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$15 = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
@@ -33780,23 +34013,23 @@ let HeaderNavigationService = class HeaderNavigationService extends BeanStub {
         this.gridBodyCon.getScrollFeature().ensureColumnVisible(columnToScrollTo);
     }
 };
-__decorate$17([
+__decorate$15([
     Autowired('focusService')
 ], HeaderNavigationService.prototype, "focusService", void 0);
-__decorate$17([
+__decorate$15([
     Autowired('headerPositionUtils')
 ], HeaderNavigationService.prototype, "headerPositionUtils", void 0);
-__decorate$17([
+__decorate$15([
     Autowired('ctrlsService')
 ], HeaderNavigationService.prototype, "ctrlsService", void 0);
-__decorate$17([
+__decorate$15([
     PostConstruct
 ], HeaderNavigationService.prototype, "postConstruct", null);
-HeaderNavigationService = __decorate$17([
+HeaderNavigationService = __decorate$15([
     Bean('headerNavigationService')
 ], HeaderNavigationService);
 
-var __decorate$16 = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$14 = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
@@ -33889,7 +34122,7 @@ class GridHeaderCtrl extends BeanStub {
             case KeyCode.LEFT:
                 direction = HeaderNavigationDirection.LEFT;
             case KeyCode.RIGHT:
-                if (!exists$1(direction)) {
+                if (!exists(direction)) {
                     direction = HeaderNavigationDirection.RIGHT;
                 }
                 this.headerNavigationService.navigateHorizontally(direction, false, e);
@@ -33897,7 +34130,7 @@ class GridHeaderCtrl extends BeanStub {
             case KeyCode.UP:
                 direction = HeaderNavigationDirection.UP;
             case KeyCode.DOWN:
-                if (!exists$1(direction)) {
+                if (!exists(direction)) {
                     direction = HeaderNavigationDirection.DOWN;
                 }
                 if (this.headerNavigationService.navigateVertically(direction, null, e)) {
@@ -33919,23 +34152,23 @@ class GridHeaderCtrl extends BeanStub {
         }
     }
 }
-__decorate$16([
+__decorate$14([
     Autowired('headerNavigationService')
 ], GridHeaderCtrl.prototype, "headerNavigationService", void 0);
-__decorate$16([
+__decorate$14([
     Autowired('focusService')
 ], GridHeaderCtrl.prototype, "focusService", void 0);
-__decorate$16([
+__decorate$14([
     Autowired('columnModel')
 ], GridHeaderCtrl.prototype, "columnModel", void 0);
-__decorate$16([
+__decorate$14([
     Autowired('ctrlsService')
 ], GridHeaderCtrl.prototype, "ctrlsService", void 0);
-__decorate$16([
+__decorate$14([
     Autowired('filterManager')
 ], GridHeaderCtrl.prototype, "filterManager", void 0);
 
-var __decorate$15 = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$13 = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
@@ -33965,11 +34198,11 @@ class GridHeaderComp extends Component {
     }
 }
 GridHeaderComp.TEMPLATE = `<div class="ag-header" role="presentation"/>`;
-__decorate$15([
+__decorate$13([
     PostConstruct
 ], GridHeaderComp.prototype, "postConstruct", null);
 
-var __decorate$14 = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$12 = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
@@ -34019,17 +34252,17 @@ let HorizontalResizeService = class HorizontalResizeService extends BeanStub {
         params.onResizing(this.resizeAmount);
     }
 };
-__decorate$14([
+__decorate$12([
     Autowired('dragService')
 ], HorizontalResizeService.prototype, "dragService", void 0);
-__decorate$14([
+__decorate$12([
     Autowired('ctrlsService')
 ], HorizontalResizeService.prototype, "ctrlsService", void 0);
-HorizontalResizeService = __decorate$14([
+HorizontalResizeService = __decorate$12([
     Bean('horizontalResizeService')
 ], HorizontalResizeService);
 
-var __decorate$13 = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$11 = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
@@ -34127,23 +34360,23 @@ let StandardMenuFactory = class StandardMenuFactory extends BeanStub {
         return column.isFilterAllowed() && column.getMenuTabs(['filterMenuTab']).includes('filterMenuTab');
     }
 };
-__decorate$13([
+__decorate$11([
     Autowired('filterManager')
 ], StandardMenuFactory.prototype, "filterManager", void 0);
-__decorate$13([
+__decorate$11([
     Autowired('popupService')
 ], StandardMenuFactory.prototype, "popupService", void 0);
-__decorate$13([
+__decorate$11([
     Autowired('focusService')
 ], StandardMenuFactory.prototype, "focusService", void 0);
-__decorate$13([
+__decorate$11([
     Autowired('ctrlsService')
 ], StandardMenuFactory.prototype, "ctrlsService", void 0);
-StandardMenuFactory = __decorate$13([
+StandardMenuFactory = __decorate$11([
     Bean('menuFactory')
 ], StandardMenuFactory);
 
-var __decorate$12 = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$10 = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
@@ -34303,20 +34536,37 @@ class TabbedLayout extends Component {
         this.activeItem = wrapper;
     }
 }
-__decorate$12([
+__decorate$10([
     Autowired('focusService')
 ], TabbedLayout.prototype, "focusService", void 0);
-__decorate$12([
+__decorate$10([
     RefSelector('eHeader')
 ], TabbedLayout.prototype, "eHeader", void 0);
-__decorate$12([
+__decorate$10([
     RefSelector('eBody')
 ], TabbedLayout.prototype, "eBody", void 0);
-__decorate$12([
+__decorate$10([
     PostConstruct
 ], TabbedLayout.prototype, "postConstruct", null);
 
-var __decorate$11 = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+/**
+ * @deprecated Since v29 simpleHttpRequest has been deprecated as it was only meant for use in internal AG Grid documentation examples. Please use the browser fetch api directly.
+ */
+function simpleHttpRequest(params) {
+    doOnce(() => console.warn(`AG Grid: Since v29 simpleHttpRequest has been deprecated as it was only meant for use in internal AG Grid documentation examples. Please use the browser fetch api directly.`), 'simpleHttpRequest');
+    return new AgPromise(resolve => {
+        const httpRequest = new XMLHttpRequest();
+        httpRequest.open('GET', params.url);
+        httpRequest.send();
+        httpRequest.onreadystatechange = function () {
+            if (httpRequest.readyState === 4 && httpRequest.status === 200) {
+                resolve(JSON.parse(httpRequest.responseText));
+            }
+        };
+    });
+}
+
+var __decorate$$ = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
@@ -34385,11 +34635,11 @@ let ResizeObserverService = class ResizeObserverService extends BeanStub {
         this.getFrameworkOverrides().setTimeout(executeAllFuncs, DEBOUNCE_DELAY);
     }
 };
-ResizeObserverService = __decorate$11([
+ResizeObserverService = __decorate$$([
     Bean('resizeObserverService')
 ], ResizeObserverService);
 
-var __decorate$10 = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$_ = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
@@ -34576,20 +34826,20 @@ let AnimationFrameService = class AnimationFrameService extends BeanStub {
         };
     }
 };
-__decorate$10([
+__decorate$_([
     Autowired('ctrlsService')
 ], AnimationFrameService.prototype, "ctrlsService", void 0);
-__decorate$10([
+__decorate$_([
     Autowired('paginationProxy')
 ], AnimationFrameService.prototype, "paginationProxy", void 0);
-__decorate$10([
+__decorate$_([
     PostConstruct
 ], AnimationFrameService.prototype, "init", null);
-AnimationFrameService = __decorate$10([
+AnimationFrameService = __decorate$_([
     Bean('animationFrameService')
 ], AnimationFrameService);
 
-var __decorate$$ = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$Z = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
@@ -34713,23 +34963,23 @@ let AutoWidthCalculator = class AutoWidthCalculator extends BeanStub {
         eDummyContainer.appendChild(eCloneParent);
     }
 };
-__decorate$$([
+__decorate$Z([
     Autowired('rowRenderer')
 ], AutoWidthCalculator.prototype, "rowRenderer", void 0);
-__decorate$$([
+__decorate$Z([
     Autowired('ctrlsService')
 ], AutoWidthCalculator.prototype, "ctrlsService", void 0);
-__decorate$$([
+__decorate$Z([
     Autowired('rowCssClassCalculator')
 ], AutoWidthCalculator.prototype, "rowCssClassCalculator", void 0);
-__decorate$$([
+__decorate$Z([
     PostConstruct
 ], AutoWidthCalculator.prototype, "postConstruct", null);
-AutoWidthCalculator = __decorate$$([
+AutoWidthCalculator = __decorate$Z([
     Bean('autoWidthCalculator')
 ], AutoWidthCalculator);
 
-var __decorate$_ = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$Y = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
@@ -34880,20 +35130,20 @@ class StickyRowFeature extends BeanStub {
         return stickyRowsChanged;
     }
 }
-__decorate$_([
+__decorate$Y([
     Autowired("rowModel")
 ], StickyRowFeature.prototype, "rowModel", void 0);
-__decorate$_([
+__decorate$Y([
     Autowired("rowRenderer")
 ], StickyRowFeature.prototype, "rowRenderer", void 0);
-__decorate$_([
+__decorate$Y([
     Autowired("ctrlsService")
 ], StickyRowFeature.prototype, "ctrlsService", void 0);
-__decorate$_([
+__decorate$Y([
     PostConstruct
 ], StickyRowFeature.prototype, "postConstruct", null);
 
-var __decorate$Z = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$X = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
@@ -34953,7 +35203,7 @@ let RowRenderer = class RowRenderer extends BeanStub {
     }
     getKeepDetailRowsCount() {
         const keepDetailRowsCount = this.gridOptionsService.getNum('keepDetailRowsCount');
-        if (exists$1(keepDetailRowsCount) && keepDetailRowsCount > 0) {
+        if (exists(keepDetailRowsCount) && keepDetailRowsCount > 0) {
             return keepDetailRowsCount;
         }
         return DEFAULT_KEEP_DETAIL_ROW_COUNT;
@@ -35491,11 +35741,11 @@ let RowRenderer = class RowRenderer extends BeanStub {
     // and two columns provided, that identifies 4 cells, so 4 CellCtrl's returned.
     getCellCtrls(rowNodes, columns) {
         let colIdsMap;
-        if (exists$1(columns)) {
+        if (exists(columns)) {
             colIdsMap = {};
             columns.forEach((colKey) => {
                 const column = this.columnModel.getGridColumn(colKey);
-                if (exists$1(column)) {
+                if (exists(column)) {
                     colIdsMap[column.getId()] = true;
                 }
             });
@@ -35714,7 +35964,7 @@ let RowRenderer = class RowRenderer extends BeanStub {
         // if no row comp, see if we can get it from the previous rowComps
         if (!rowCtrl) {
             rowNode = this.paginationProxy.getRow(rowIndex);
-            if (exists$1(rowNode) && exists$1(rowsToRecycle) && rowsToRecycle[rowNode.id] && rowNode.alreadyRendered) {
+            if (exists(rowNode) && exists(rowsToRecycle) && rowsToRecycle[rowNode.id] && rowNode.alreadyRendered) {
                 rowCtrl = rowsToRecycle[rowNode.id];
                 rowsToRecycle[rowNode.id] = null;
             }
@@ -35725,7 +35975,7 @@ let RowRenderer = class RowRenderer extends BeanStub {
             if (!rowNode) {
                 rowNode = this.paginationProxy.getRow(rowIndex);
             }
-            if (exists$1(rowNode)) {
+            if (exists(rowNode)) {
                 rowCtrl = this.createRowCon(rowNode, animate, afterScroll);
             }
             else {
@@ -36001,37 +36251,37 @@ let RowRenderer = class RowRenderer extends BeanStub {
         return blockInsideViewport;
     }
 };
-__decorate$Z([
+__decorate$X([
     Autowired("animationFrameService")
 ], RowRenderer.prototype, "animationFrameService", void 0);
-__decorate$Z([
+__decorate$X([
     Autowired("paginationProxy")
 ], RowRenderer.prototype, "paginationProxy", void 0);
-__decorate$Z([
+__decorate$X([
     Autowired("columnModel")
 ], RowRenderer.prototype, "columnModel", void 0);
-__decorate$Z([
+__decorate$X([
     Autowired("pinnedRowModel")
 ], RowRenderer.prototype, "pinnedRowModel", void 0);
-__decorate$Z([
+__decorate$X([
     Autowired("rowModel")
 ], RowRenderer.prototype, "rowModel", void 0);
-__decorate$Z([
+__decorate$X([
     Autowired("focusService")
 ], RowRenderer.prototype, "focusService", void 0);
-__decorate$Z([
+__decorate$X([
     Autowired("beans")
 ], RowRenderer.prototype, "beans", void 0);
-__decorate$Z([
+__decorate$X([
     Autowired("rowContainerHeightService")
 ], RowRenderer.prototype, "rowContainerHeightService", void 0);
-__decorate$Z([
+__decorate$X([
     Autowired("ctrlsService")
 ], RowRenderer.prototype, "ctrlsService", void 0);
-__decorate$Z([
+__decorate$X([
     PostConstruct
 ], RowRenderer.prototype, "postConstruct", null);
-RowRenderer = __decorate$Z([
+RowRenderer = __decorate$X([
     Bean("rowRenderer")
 ], RowRenderer);
 class RowCtrlCache {
@@ -36078,7 +36328,7 @@ class RowCtrlCache {
     }
 }
 
-var __decorate$Y = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$W = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
@@ -36124,14 +36374,14 @@ let ValueFormatterService = class ValueFormatterService extends BeanStub {
         return result;
     }
 };
-__decorate$Y([
+__decorate$W([
     Autowired('expressionService')
 ], ValueFormatterService.prototype, "expressionService", void 0);
-ValueFormatterService = __decorate$Y([
+ValueFormatterService = __decorate$W([
     Bean('valueFormatterService')
 ], ValueFormatterService);
 
-var __decorate$X = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$V = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
@@ -36144,14 +36394,14 @@ let PinnedRowModel = class PinnedRowModel extends BeanStub {
     }
     isEmpty(floating) {
         const rows = floating === 'top' ? this.pinnedTopRows : this.pinnedBottomRows;
-        return missingOrEmpty$1(rows);
+        return missingOrEmpty(rows);
     }
     isRowsToRender(floating) {
         return !this.isEmpty(floating);
     }
     getRowAtPixel(pixel, floating) {
         const rows = floating === 'top' ? this.pinnedTopRows : this.pinnedBottomRows;
-        if (missingOrEmpty$1(rows)) {
+        if (missingOrEmpty(rows)) {
             return 0; // this should never happen, just in case, 0 is graceful failure
         }
         for (let i = 0; i < rows.length; i++) {
@@ -36220,13 +36470,13 @@ let PinnedRowModel = class PinnedRowModel extends BeanStub {
         return this.pinnedBottomRows[index];
     }
     forEachPinnedTopRow(callback) {
-        if (missingOrEmpty$1(this.pinnedTopRows)) {
+        if (missingOrEmpty(this.pinnedTopRows)) {
             return;
         }
         this.pinnedTopRows.forEach(callback);
     }
     forEachPinnedBottomRow(callback) {
-        if (missingOrEmpty$1(this.pinnedBottomRows)) {
+        if (missingOrEmpty(this.pinnedBottomRows)) {
             return;
         }
         this.pinnedBottomRows.forEach(callback);
@@ -36242,13 +36492,13 @@ let PinnedRowModel = class PinnedRowModel extends BeanStub {
         return lastNode.rowTop + lastNode.rowHeight;
     }
 };
-__decorate$X([
+__decorate$V([
     Autowired('beans')
 ], PinnedRowModel.prototype, "beans", void 0);
-__decorate$X([
+__decorate$V([
     PostConstruct
 ], PinnedRowModel.prototype, "init", null);
-PinnedRowModel = __decorate$X([
+PinnedRowModel = __decorate$V([
     Bean('pinnedRowModel')
 ], PinnedRowModel);
 
@@ -36514,7 +36764,7 @@ RowNodeBlock.STATE_LOADING = 'loading';
 RowNodeBlock.STATE_LOADED = 'loaded';
 RowNodeBlock.STATE_FAILED = 'failed';
 
-var __decorate$W = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$U = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
@@ -36627,20 +36877,20 @@ let RowNodeBlockLoader = RowNodeBlockLoader_1 = class RowNodeBlockLoader extends
 };
 RowNodeBlockLoader.BLOCK_LOADED_EVENT = 'blockLoaded';
 RowNodeBlockLoader.BLOCK_LOADER_FINISHED_EVENT = 'blockLoaderFinished';
-__decorate$W([
+__decorate$U([
     Autowired('rowModel')
 ], RowNodeBlockLoader.prototype, "rowModel", void 0);
-__decorate$W([
+__decorate$U([
     PostConstruct
 ], RowNodeBlockLoader.prototype, "postConstruct", null);
-__decorate$W([
+__decorate$U([
     __param$6(0, Qualifier('loggerFactory'))
 ], RowNodeBlockLoader.prototype, "setBeans", null);
-RowNodeBlockLoader = RowNodeBlockLoader_1 = __decorate$W([
+RowNodeBlockLoader = RowNodeBlockLoader_1 = __decorate$U([
     Bean('rowNodeBlockLoader')
 ], RowNodeBlockLoader);
 
-var __decorate$V = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$T = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
@@ -36853,7 +37103,7 @@ let PaginationProxy = class PaginationProxy extends BeanStub {
         if (this.bottomRowBounds) {
             this.bottomRowBounds.rowIndex = this.bottomDisplayedRowIndex;
         }
-        this.setPixelOffset(exists$1(this.topRowBounds) ? this.topRowBounds.rowTop : 0);
+        this.setPixelOffset(exists(this.topRowBounds) ? this.topRowBounds.rowTop : 0);
     }
     setPixelOffset(value) {
         if (this.pixelOffset === value) {
@@ -36935,17 +37185,17 @@ let PaginationProxy = class PaginationProxy extends BeanStub {
         this.bottomDisplayedRowIndex = this.rowModel.getRowCount() - 1;
     }
 };
-__decorate$V([
+__decorate$T([
     Autowired('rowModel')
 ], PaginationProxy.prototype, "rowModel", void 0);
-__decorate$V([
+__decorate$T([
     PostConstruct
 ], PaginationProxy.prototype, "postConstruct", null);
-PaginationProxy = __decorate$V([
+PaginationProxy = __decorate$T([
     Bean('paginationProxy')
 ], PaginationProxy);
 
-var __decorate$U = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$S = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
@@ -37014,14 +37264,156 @@ let StylingService = class StylingService extends BeanStub {
         });
     }
 };
-__decorate$U([
+__decorate$S([
     Autowired('expressionService')
 ], StylingService.prototype, "expressionService", void 0);
-StylingService = __decorate$U([
+StylingService = __decorate$S([
     Bean('stylingService')
 ], StylingService);
 
-var __decorate$T = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+class AgToggleButton extends AgCheckbox {
+    constructor(config) {
+        super(config, 'ag-toggle-button');
+    }
+    setValue(value, silent) {
+        super.setValue(value, silent);
+        this.addOrRemoveCssClass('ag-selected', this.getValue());
+        return this;
+    }
+}
+
+class AgInputTextArea extends AgAbstractInputField {
+    constructor(config) {
+        super(config, 'ag-text-area', null, 'textarea');
+    }
+    setValue(value, silent) {
+        const ret = super.setValue(value, silent);
+        this.eInput.value = value;
+        return ret;
+    }
+    setCols(cols) {
+        this.eInput.cols = cols;
+        return this;
+    }
+    setRows(rows) {
+        this.eInput.rows = rows;
+        return this;
+    }
+}
+
+class AgInputDateField extends AgInputTextField {
+    constructor(config) {
+        super(config, 'ag-date-field', 'date');
+    }
+    postConstruct() {
+        super.postConstruct();
+        this.addManagedListener(this.eInput, 'wheel', this.onWheel.bind(this));
+        // ensures that the input element is focussed when a clear button is clicked,
+        // unless using safari as there is no clear button and focus does not work properly
+        const usingSafari = isBrowserSafari();
+        this.addManagedListener(this.eInput, 'mousedown', () => {
+            if (this.isDisabled() || usingSafari) {
+                return;
+            }
+            this.eInput.focus();
+        });
+        this.eInput.step = 'any';
+    }
+    onWheel(e) {
+        // Prevent default scroll events from incrementing / decrementing the input, since its inconsistent between browsers
+        if (document.activeElement === this.eInput) {
+            e.preventDefault();
+        }
+    }
+    setMin(minDate) {
+        var _a;
+        const min = minDate instanceof Date ? (_a = serialiseDate(minDate !== null && minDate !== void 0 ? minDate : null, false)) !== null && _a !== void 0 ? _a : undefined : minDate;
+        if (this.min === min) {
+            return this;
+        }
+        this.min = min;
+        addOrRemoveAttribute(this.eInput, 'min', min);
+        return this;
+    }
+    setMax(maxDate) {
+        var _a;
+        const max = maxDate instanceof Date ? (_a = serialiseDate(maxDate !== null && maxDate !== void 0 ? maxDate : null, false)) !== null && _a !== void 0 ? _a : undefined : maxDate;
+        if (this.max === max) {
+            return this;
+        }
+        this.max = max;
+        addOrRemoveAttribute(this.eInput, 'max', max);
+        return this;
+    }
+    setStep(step) {
+        if (this.step === step) {
+            return this;
+        }
+        this.step = step;
+        addOrRemoveAttribute(this.eInput, 'step', step);
+        return this;
+    }
+    getDate() {
+        var _a;
+        if (!this.eInput.validity.valid) {
+            return undefined;
+        }
+        return (_a = parseDateTimeFromString(this.getValue())) !== null && _a !== void 0 ? _a : undefined;
+    }
+    setDate(date, silent) {
+        this.setValue(serialiseDate(date !== null && date !== void 0 ? date : null, false), silent);
+    }
+}
+
+class AgInputRange extends AgAbstractInputField {
+    constructor(config) {
+        super(config, 'ag-range-field', 'range');
+    }
+    postConstruct() {
+        super.postConstruct();
+        const { min, max, step } = this.config;
+        if (min != null) {
+            this.setMinValue(min);
+        }
+        if (max != null) {
+            this.setMaxValue(max);
+        }
+        this.setStep(step || 1);
+    }
+    addInputListeners() {
+        this.addManagedListener(this.eInput, 'input', (e) => {
+            const value = e.target.value;
+            this.setValue(value);
+        });
+    }
+    setMinValue(value) {
+        this.min = value;
+        this.eInput.setAttribute('min', value.toString());
+        return this;
+    }
+    setMaxValue(value) {
+        this.max = value;
+        this.eInput.setAttribute('max', value.toString());
+        return this;
+    }
+    setStep(value) {
+        this.eInput.setAttribute('step', value.toString());
+        return this;
+    }
+    setValue(value, silent) {
+        if (this.min != null) {
+            value = Math.max(parseFloat(value), this.min).toString();
+        }
+        if (this.max != null) {
+            value = Math.min(parseFloat(value), this.max).toString();
+        }
+        const ret = super.setValue(value, silent);
+        this.eInput.value = value;
+        return ret;
+    }
+}
+
+var __decorate$R = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
@@ -37049,10 +37441,10 @@ class RichSelectRow extends Component {
     }
     highlightString(matchString) {
         const { parsedValue } = this;
-        if (this.params.cellRenderer || !exists$1(parsedValue)) {
+        if (this.params.cellRenderer || !exists(parsedValue)) {
             return;
         }
-        if (exists$1(matchString)) {
+        if (exists(matchString)) {
             const index = parsedValue === null || parsedValue === void 0 ? void 0 : parsedValue.toLocaleLowerCase().indexOf(matchString.toLocaleLowerCase());
             if (index >= 0) {
                 const highlightEndIndex = index + matchString.length;
@@ -37085,8 +37477,8 @@ class RichSelectRow extends Component {
         const span = eDocument.createElement('span');
         span.style.overflow = 'hidden';
         span.style.textOverflow = 'ellipsis';
-        const parsedValue = escapeString(exists$1(valueFormatted) ? valueFormatted : value, true);
-        this.parsedValue = exists$1(parsedValue) ? parsedValue : null;
+        const parsedValue = escapeString(exists(valueFormatted) ? valueFormatted : value, true);
+        this.parsedValue = exists(parsedValue) ? parsedValue : null;
         eGui.appendChild(span);
         this.renderValueWithoutRenderer(parsedValue);
     }
@@ -37095,7 +37487,7 @@ class RichSelectRow extends Component {
         if (!span) {
             return;
         }
-        span.innerHTML = exists$1(value) ? value : '&nbsp;';
+        span.innerHTML = exists(value) ? value : '&nbsp;';
     }
     populateWithRenderer(value, valueFormatted) {
         // bad coder here - we are not populating all values of the cellRendererParams
@@ -37134,10 +37526,10 @@ class RichSelectRow extends Component {
         parent === null || parent === void 0 ? void 0 : parent.dispatchEvent(event);
     }
 }
-__decorate$T([
+__decorate$R([
     Autowired('userComponentFactory')
 ], RichSelectRow.prototype, "userComponentFactory", void 0);
-__decorate$T([
+__decorate$R([
     PostConstruct
 ], RichSelectRow.prototype, "postConstruct", null);
 
@@ -37199,7 +37591,7 @@ class TabGuardComp extends Component {
     }
 }
 
-var __decorate$S = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$Q = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
@@ -37500,20 +37892,20 @@ class VirtualList extends TabGuardComp {
         super.destroy();
     }
 }
-__decorate$S([
+__decorate$Q([
     Autowired('resizeObserverService')
 ], VirtualList.prototype, "resizeObserverService", void 0);
-__decorate$S([
+__decorate$Q([
     Autowired('animationFrameService')
 ], VirtualList.prototype, "animationFrameService", void 0);
-__decorate$S([
+__decorate$Q([
     RefSelector('eContainer')
 ], VirtualList.prototype, "eContainer", void 0);
-__decorate$S([
+__decorate$Q([
     PostConstruct
 ], VirtualList.prototype, "postConstruct", null);
 
-var __decorate$R = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$P = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
@@ -37635,13 +38027,13 @@ class AgRichSelect extends AgPickerField {
             });
         }
         else {
-            if (exists$1(this.value)) {
+            if (exists(this.value)) {
                 eDisplayField.innerText = valueFormatted;
                 eDisplayField.classList.remove('ag-display-as-placeholder');
             }
             else {
                 const { placeholder } = config;
-                if (exists$1(placeholder)) {
+                if (exists(placeholder)) {
                     eDisplayField.innerHTML = `${escapeString(placeholder)}`;
                     eDisplayField.classList.add('ag-display-as-placeholder');
                 }
@@ -38024,14 +38416,14 @@ class AgRichSelect extends AgPickerField {
         super.destroy();
     }
 }
-__decorate$R([
+__decorate$P([
     Autowired('userComponentFactory')
 ], AgRichSelect.prototype, "userComponentFactory", void 0);
-__decorate$R([
+__decorate$P([
     RefSelector('eInput')
 ], AgRichSelect.prototype, "eInput", void 0);
 
-var __decorate$Q = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$O = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
@@ -38102,20 +38494,20 @@ AgSlider.TEMPLATE = `<div class="ag-slider">
                 <ag-input-number-field ref="eText"></ag-input-number-field>
             </div>
         </div>`;
-__decorate$Q([
+__decorate$O([
     RefSelector('eLabel')
 ], AgSlider.prototype, "eLabel", void 0);
-__decorate$Q([
+__decorate$O([
     RefSelector('eSlider')
 ], AgSlider.prototype, "eSlider", void 0);
-__decorate$Q([
+__decorate$O([
     RefSelector('eText')
 ], AgSlider.prototype, "eText", void 0);
-__decorate$Q([
+__decorate$O([
     PostConstruct
 ], AgSlider.prototype, "init", null);
 
-var __decorate$P = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$N = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
@@ -38303,32 +38695,32 @@ class AgGroupComponent extends Component {
 }
 AgGroupComponent.EVENT_EXPANDED = 'expanded';
 AgGroupComponent.EVENT_COLLAPSED = 'collapsed';
-__decorate$P([
+__decorate$N([
     RefSelector('eTitleBar')
 ], AgGroupComponent.prototype, "eTitleBar", void 0);
-__decorate$P([
+__decorate$N([
     RefSelector('eGroupOpenedIcon')
 ], AgGroupComponent.prototype, "eGroupOpenedIcon", void 0);
-__decorate$P([
+__decorate$N([
     RefSelector('eGroupClosedIcon')
 ], AgGroupComponent.prototype, "eGroupClosedIcon", void 0);
-__decorate$P([
+__decorate$N([
     RefSelector('eToolbar')
 ], AgGroupComponent.prototype, "eToolbar", void 0);
-__decorate$P([
+__decorate$N([
     RefSelector('cbGroupEnabled')
 ], AgGroupComponent.prototype, "cbGroupEnabled", void 0);
-__decorate$P([
+__decorate$N([
     RefSelector('eTitle')
 ], AgGroupComponent.prototype, "eTitle", void 0);
-__decorate$P([
+__decorate$N([
     RefSelector('eContainer')
 ], AgGroupComponent.prototype, "eContainer", void 0);
-__decorate$P([
+__decorate$N([
     PostConstruct
 ], AgGroupComponent.prototype, "postConstruct", null);
 
-var __decorate$O = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$M = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
@@ -38507,14 +38899,14 @@ class AgMenuList extends TabGuardComp {
         super.destroy();
     }
 }
-__decorate$O([
+__decorate$M([
     Autowired('focusService')
 ], AgMenuList.prototype, "focusService", void 0);
-__decorate$O([
+__decorate$M([
     PostConstruct
 ], AgMenuList.prototype, "postConstruct", null);
 
-var __decorate$N = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$L = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
@@ -38550,11 +38942,11 @@ class AgMenuPanel extends TabGuardComp {
         setTimeout(() => menuItem.getGui().focus(), 0);
     }
 }
-__decorate$N([
+__decorate$L([
     PostConstruct
 ], AgMenuPanel.prototype, "postConstruct", null);
 
-var __decorate$M = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$K = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
@@ -38836,14 +39228,14 @@ class AgMenuItemComponent extends Component {
 AgMenuItemComponent.EVENT_MENU_ITEM_SELECTED = 'menuItemSelected';
 AgMenuItemComponent.EVENT_MENU_ITEM_ACTIVATED = 'menuItemActivated';
 AgMenuItemComponent.ACTIVATION_DELAY = 80;
-__decorate$M([
+__decorate$K([
     Autowired('popupService')
 ], AgMenuItemComponent.prototype, "popupService", void 0);
-__decorate$M([
+__decorate$K([
     PostConstruct
 ], AgMenuItemComponent.prototype, "init", null);
 
-var __decorate$L = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$J = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
@@ -38997,23 +39389,23 @@ class AgPanel extends Component {
     }
 }
 AgPanel.CLOSE_BTN_TEMPLATE = `<div class="ag-button"></div>`;
-__decorate$L([
+__decorate$J([
     RefSelector('eContentWrapper')
 ], AgPanel.prototype, "eContentWrapper", void 0);
-__decorate$L([
+__decorate$J([
     RefSelector('eTitleBar')
 ], AgPanel.prototype, "eTitleBar", void 0);
-__decorate$L([
+__decorate$J([
     RefSelector('eTitleBarButtons')
 ], AgPanel.prototype, "eTitleBarButtons", void 0);
-__decorate$L([
+__decorate$J([
     RefSelector('eTitle')
 ], AgPanel.prototype, "eTitle", void 0);
-__decorate$L([
+__decorate$J([
     PostConstruct
 ], AgPanel.prototype, "postConstruct", null);
 
-var __decorate$K = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$I = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
@@ -39152,11 +39544,11 @@ class AgDialog extends AgPanel {
         return maximizeButtonComp;
     }
 }
-__decorate$K([
+__decorate$I([
     Autowired('popupService')
 ], AgDialog.prototype, "popupService", void 0);
 
-var __decorate$J = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$H = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
@@ -39456,10 +39848,10 @@ let PopupService = PopupService_1 = class PopupService extends BeanStub {
     initialisePopupPosition(element) {
         const ePopupParent = this.getPopupParent();
         const ePopupParentRect = ePopupParent.getBoundingClientRect();
-        if (!exists$1(element.style.top)) {
+        if (!exists(element.style.top)) {
             element.style.top = `${ePopupParentRect.top * -1}px`;
         }
-        if (!exists$1(element.style.left)) {
+        if (!exists(element.style.left)) {
             element.style.left = `${ePopupParentRect.left * -1}px`;
         }
     }
@@ -39733,19 +40125,19 @@ let PopupService = PopupService_1 = class PopupService extends BeanStub {
     }
 };
 PopupService.WAIT_FOR_POPUP_CONTENT_RESIZE = 200;
-__decorate$J([
+__decorate$H([
     Autowired('focusService')
 ], PopupService.prototype, "focusService", void 0);
-__decorate$J([
+__decorate$H([
     Autowired('ctrlsService')
 ], PopupService.prototype, "ctrlsService", void 0);
-__decorate$J([
+__decorate$H([
     Autowired('resizeObserverService')
 ], PopupService.prototype, "resizeObserverService", void 0);
-__decorate$J([
+__decorate$H([
     PostConstruct
 ], PopupService.prototype, "postConstruct", null);
-PopupService = PopupService_1 = __decorate$J([
+PopupService = PopupService_1 = __decorate$H([
     Bean('popupService')
 ], PopupService);
 
@@ -39768,7 +40160,7 @@ class AgAutocompleteRow extends Component {
     setSearchString(searchString) {
         var _a;
         let keepHighlighting = false;
-        if (exists$1(searchString)) {
+        if (exists(searchString)) {
             const index = (_a = this.value) === null || _a === void 0 ? void 0 : _a.toLocaleLowerCase().indexOf(searchString.toLocaleLowerCase());
             if (index >= 0) {
                 keepHighlighting = true;
@@ -39792,7 +40184,7 @@ class AgAutocompleteRow extends Component {
     }
 }
 
-var __decorate$I = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$G = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
@@ -39831,7 +40223,7 @@ class AgAutocompleteList extends PopupComponent {
     }
     setSearch(searchString) {
         this.searchString = searchString;
-        if (exists$1(searchString)) {
+        if (exists(searchString)) {
             this.runSearch();
         }
         else {
@@ -39939,14 +40331,14 @@ class AgAutocompleteList extends PopupComponent {
 AgAutocompleteList.TEMPLATE = `<div class="ag-autocomplete-list-popup">
             <div ref="eList" class="ag-autocomplete-list"></div>
         <div>`;
-__decorate$I([
+__decorate$G([
     RefSelector('eList')
 ], AgAutocompleteList.prototype, "eList", void 0);
-__decorate$I([
+__decorate$G([
     PostConstruct
 ], AgAutocompleteList.prototype, "init", null);
 
-var __decorate$H = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$F = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
@@ -40220,17 +40612,51 @@ AgAutocomplete.EVENT_VALUE_CHANGED = 'eventValueChanged';
 AgAutocomplete.EVENT_VALUE_CONFIRMED = 'eventValueConfirmed';
 AgAutocomplete.EVENT_OPTION_SELECTED = 'eventOptionSelected';
 AgAutocomplete.EVENT_VALID_CHANGED = 'eventValidChanged';
-__decorate$H([
+__decorate$F([
     Autowired('popupService')
 ], AgAutocomplete.prototype, "popupService", void 0);
-__decorate$H([
+__decorate$F([
     RefSelector('eAutocompleteInput')
 ], AgAutocomplete.prototype, "eAutocompleteInput", void 0);
-__decorate$H([
+__decorate$F([
     PostConstruct
 ], AgAutocomplete.prototype, "postConstruct", null);
 
-var __decorate$G = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+const OUTSIDE_ANGULAR_EVENTS = ['mouseover', 'mouseout', 'mouseenter', 'mouseleave', 'mousemove'];
+const PASSIVE_EVENTS = ['touchstart', 'touchend', 'touchmove', 'touchcancel'];
+/** The base frameworks, eg React & Angular, override this bean with implementations specific to their requirement. */
+class VanillaFrameworkOverrides {
+    constructor() {
+        this.renderingEngine = "vanilla";
+        this.isOutsideAngular = (eventType) => includes(OUTSIDE_ANGULAR_EVENTS, eventType);
+    }
+    // for Vanilla JS, we use simple timeout
+    setTimeout(action, timeout) {
+        window.setTimeout(action, timeout);
+    }
+    setInterval(action, timeout) {
+        return new AgPromise(resolve => {
+            resolve(window.setInterval(action, timeout));
+        });
+    }
+    // for Vanilla JS, we just add the event to the element
+    addEventListener(element, type, listener, useCapture) {
+        const isPassive = includes(PASSIVE_EVENTS, type);
+        element.addEventListener(type, listener, { capture: !!useCapture, passive: isPassive });
+    }
+    // for Vanilla JS, we just execute the listener
+    dispatchEvent(eventType, listener, global = false) {
+        listener();
+    }
+    frameworkComponent(name) {
+        return null;
+    }
+    isFrameworkComponent(comp) {
+        return false;
+    }
+}
+
+var __decorate$E = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
@@ -40542,26 +40968,26 @@ let CellNavigationService = class CellNavigationService extends BeanStub {
         return { rowIndex: newRowIndex, column: newColumn, rowPinned: newFloating };
     }
 };
-__decorate$G([
+__decorate$E([
     Autowired('columnModel')
 ], CellNavigationService.prototype, "columnModel", void 0);
-__decorate$G([
+__decorate$E([
     Autowired('rowModel')
 ], CellNavigationService.prototype, "rowModel", void 0);
-__decorate$G([
+__decorate$E([
     Autowired('rowRenderer')
 ], CellNavigationService.prototype, "rowRenderer", void 0);
-__decorate$G([
+__decorate$E([
     Autowired('pinnedRowModel')
 ], CellNavigationService.prototype, "pinnedRowModel", void 0);
-__decorate$G([
+__decorate$E([
     Autowired('paginationProxy')
 ], CellNavigationService.prototype, "paginationProxy", void 0);
-CellNavigationService = __decorate$G([
+CellNavigationService = __decorate$E([
     Bean('cellNavigationService')
 ], CellNavigationService);
 
-var __decorate$F = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$D = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
@@ -40773,23 +41199,23 @@ let AlignedGridsService = class AlignedGridsService extends BeanStub {
         }
     }
 };
-__decorate$F([
+__decorate$D([
     Autowired('columnModel')
 ], AlignedGridsService.prototype, "columnModel", void 0);
-__decorate$F([
+__decorate$D([
     Autowired('ctrlsService')
 ], AlignedGridsService.prototype, "ctrlsService", void 0);
-__decorate$F([
+__decorate$D([
     __param$5(0, Qualifier('loggerFactory'))
 ], AlignedGridsService.prototype, "setBeans", null);
-__decorate$F([
+__decorate$D([
     PostConstruct
 ], AlignedGridsService.prototype, "init", null);
-AlignedGridsService = __decorate$F([
+AlignedGridsService = __decorate$D([
     Bean('alignedGridsService')
 ], AlignedGridsService);
 
-var __decorate$E = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$C = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
@@ -41042,7 +41468,7 @@ let SelectionService = class SelectionService extends BeanStub {
     // used by the grid for rendering, it's a copy of what the node used
     // to be like before the id was changed.
     syncInOldRowNode(rowNode, oldNode) {
-        const oldNodeHasDifferentId = exists$1(oldNode) && (rowNode.id !== oldNode.id);
+        const oldNodeHasDifferentId = exists(oldNode) && (rowNode.id !== oldNode.id);
         if (oldNodeHasDifferentId && oldNode) {
             const id = oldNode.id;
             const oldNodeSelected = this.selectedNodes[id] == rowNode;
@@ -41052,7 +41478,7 @@ let SelectionService = class SelectionService extends BeanStub {
         }
     }
     syncInNewRowNode(rowNode) {
-        if (exists$1(this.selectedNodes[rowNode.id])) {
+        if (exists(this.selectedNodes[rowNode.id])) {
             rowNode.setSelectedInitialValue(true);
             this.selectedNodes[rowNode.id] = rowNode;
         }
@@ -41239,23 +41665,23 @@ let SelectionService = class SelectionService extends BeanStub {
     }
     setServerSideSelectionState(state) { }
 };
-__decorate$E([
+__decorate$C([
     Autowired('rowModel')
 ], SelectionService.prototype, "rowModel", void 0);
-__decorate$E([
+__decorate$C([
     Autowired('paginationProxy')
 ], SelectionService.prototype, "paginationProxy", void 0);
-__decorate$E([
+__decorate$C([
     __param$4(0, Qualifier('loggerFactory'))
 ], SelectionService.prototype, "setBeans", null);
-__decorate$E([
+__decorate$C([
     PostConstruct
 ], SelectionService.prototype, "init", null);
-SelectionService = __decorate$E([
+SelectionService = __decorate$C([
     Bean('selectionService')
 ], SelectionService);
 
-var __decorate$D = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$B = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
@@ -41468,17 +41894,17 @@ let ColumnApi = class ColumnApi {
         return this.getPivotResultColumn(pivotKeys, valueColKey);
     }
 };
-__decorate$D([
+__decorate$B([
     Autowired('columnModel')
 ], ColumnApi.prototype, "columnModel", void 0);
-__decorate$D([
+__decorate$B([
     PreDestroy
 ], ColumnApi.prototype, "cleanDownReferencesToAvoidMemoryLeakInCaseApplicationIsKeepingReferenceToDestroyedGrid", null);
-ColumnApi = __decorate$D([
+ColumnApi = __decorate$B([
     Bean('columnApi')
 ], ColumnApi);
 
-var __decorate$C = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$A = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
@@ -41621,7 +42047,7 @@ let ValueService = class ValueService extends BeanStub {
         };
         params.newValue = newValue;
         let valueWasDifferent;
-        if (exists$1(valueSetter)) {
+        if (exists(valueSetter)) {
             if (typeof valueSetter === 'function') {
                 valueWasDifferent = valueSetter(params);
             }
@@ -41796,26 +42222,26 @@ let ValueService = class ValueService extends BeanStub {
         return result;
     }
 };
-__decorate$C([
+__decorate$A([
     Autowired('expressionService')
 ], ValueService.prototype, "expressionService", void 0);
-__decorate$C([
+__decorate$A([
     Autowired('columnModel')
 ], ValueService.prototype, "columnModel", void 0);
-__decorate$C([
+__decorate$A([
     Autowired('valueCache')
 ], ValueService.prototype, "valueCache", void 0);
-__decorate$C([
+__decorate$A([
     Autowired('dataTypeService')
 ], ValueService.prototype, "dataTypeService", void 0);
-__decorate$C([
+__decorate$A([
     PostConstruct
 ], ValueService.prototype, "init", null);
-ValueService = __decorate$C([
+ValueService = __decorate$A([
     Bean('valueService')
 ], ValueService);
 
-var __decorate$B = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$z = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
@@ -41886,14 +42312,14 @@ let ExpressionService = class ExpressionService extends BeanStub {
         }
     }
 };
-__decorate$B([
+__decorate$z([
     __param$3(0, Qualifier('loggerFactory'))
 ], ExpressionService.prototype, "setBeans", null);
-ExpressionService = __decorate$B([
+ExpressionService = __decorate$z([
     Bean('expressionService')
 ], ExpressionService);
 
-var __decorate$A = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$y = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
@@ -41952,11 +42378,11 @@ let TemplateService = class TemplateService extends BeanStub {
         }
     }
 };
-TemplateService = __decorate$A([
+TemplateService = __decorate$y([
     Bean('templateService')
 ], TemplateService);
 
-var __decorate$z = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$x = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
@@ -41976,10 +42402,10 @@ let LoggerFactory = class LoggerFactory extends BeanStub {
         return this.logging;
     }
 };
-__decorate$z([
+__decorate$x([
     __param$2(0, Qualifier('gridOptionsService'))
 ], LoggerFactory.prototype, "setBeans", null);
-LoggerFactory = __decorate$z([
+LoggerFactory = __decorate$x([
     Bean('loggerFactory')
 ], LoggerFactory);
 class Logger {
@@ -41998,7 +42424,7 @@ class Logger {
     }
 }
 
-var __decorate$y = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$w = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
@@ -42101,26 +42527,26 @@ class GridCtrl extends BeanStub {
         this.view.forceFocusOutOfContainer(up);
     }
 }
-__decorate$y([
+__decorate$w([
     Autowired('focusService')
 ], GridCtrl.prototype, "focusService", void 0);
-__decorate$y([
+__decorate$w([
     Autowired('resizeObserverService')
 ], GridCtrl.prototype, "resizeObserverService", void 0);
-__decorate$y([
+__decorate$w([
     Autowired('columnModel')
 ], GridCtrl.prototype, "columnModel", void 0);
-__decorate$y([
+__decorate$w([
     Autowired('ctrlsService')
 ], GridCtrl.prototype, "ctrlsService", void 0);
-__decorate$y([
+__decorate$w([
     Autowired('mouseEventService')
 ], GridCtrl.prototype, "mouseEventService", void 0);
-__decorate$y([
+__decorate$w([
     Autowired('dragAndDropService')
 ], GridCtrl.prototype, "dragAndDropService", void 0);
 
-var __decorate$x = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$v = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
@@ -42206,23 +42632,23 @@ class GridComp extends TabGuardComp {
         return focusableContainers.filter(el => isVisible(el));
     }
 }
-__decorate$x([
+__decorate$v([
     Autowired('loggerFactory')
 ], GridComp.prototype, "loggerFactory", void 0);
-__decorate$x([
+__decorate$v([
     RefSelector('gridBody')
 ], GridComp.prototype, "gridBodyComp", void 0);
-__decorate$x([
+__decorate$v([
     RefSelector('sideBar')
 ], GridComp.prototype, "sideBarComp", void 0);
-__decorate$x([
+__decorate$v([
     RefSelector('rootWrapperBody')
 ], GridComp.prototype, "eRootWrapperBody", void 0);
-__decorate$x([
+__decorate$v([
     PostConstruct
 ], GridComp.prototype, "postConstruct", null);
 
-var __decorate$w = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$u = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
@@ -42442,14 +42868,14 @@ let SortController = SortController_1 = class SortController extends BeanStub {
     }
 };
 SortController.DEFAULT_SORTING_ORDER = ['asc', 'desc', null];
-__decorate$w([
+__decorate$u([
     Autowired('columnModel')
 ], SortController.prototype, "columnModel", void 0);
-SortController = SortController_1 = __decorate$w([
+SortController = SortController_1 = __decorate$u([
     Bean('sortController')
 ], SortController);
 
-var __decorate$v = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$t = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
@@ -42474,11 +42900,11 @@ let ColumnHoverService = class ColumnHoverService extends BeanStub {
         return !!this.selectedColumns && this.selectedColumns.indexOf(column) >= 0;
     }
 };
-ColumnHoverService = __decorate$v([
+ColumnHoverService = __decorate$t([
     Bean('columnHoverService')
 ], ColumnHoverService);
 
-var __decorate$u = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$s = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
@@ -42562,17 +42988,17 @@ let ColumnAnimationService = class ColumnAnimationService extends BeanStub {
         window.setTimeout(() => waitFuncs.forEach(func => func()), 300);
     }
 };
-__decorate$u([
+__decorate$s([
     Autowired('ctrlsService')
 ], ColumnAnimationService.prototype, "ctrlsService", void 0);
-__decorate$u([
+__decorate$s([
     PostConstruct
 ], ColumnAnimationService.prototype, "postConstruct", null);
-ColumnAnimationService = __decorate$u([
+ColumnAnimationService = __decorate$s([
     Bean('columnAnimationService')
 ], ColumnAnimationService);
 
-var __decorate$t = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$r = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
@@ -42614,17 +43040,17 @@ let PaginationAutoPageSizeService = class PaginationAutoPageSizeService extends 
         }
     }
 };
-__decorate$t([
+__decorate$r([
     Autowired('ctrlsService')
 ], PaginationAutoPageSizeService.prototype, "ctrlsService", void 0);
-__decorate$t([
+__decorate$r([
     PostConstruct
 ], PaginationAutoPageSizeService.prototype, "postConstruct", null);
-PaginationAutoPageSizeService = __decorate$t([
+PaginationAutoPageSizeService = __decorate$r([
     Bean('paginationAutoPageSizeService')
 ], PaginationAutoPageSizeService);
 
-var __decorate$s = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$q = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
@@ -42664,14 +43090,14 @@ let ValueCache = class ValueCache extends BeanStub {
         return rowNode.__cacheData[colId];
     }
 };
-__decorate$s([
+__decorate$q([
     PostConstruct
 ], ValueCache.prototype, "init", null);
-ValueCache = __decorate$s([
+ValueCache = __decorate$q([
     Bean('valueCache')
 ], ValueCache);
 
-var __decorate$r = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$p = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
@@ -42718,20 +43144,20 @@ let ChangeDetectionService = class ChangeDetectionService extends BeanStub {
         this.rowRenderer.refreshCells({ rowNodes: nodesToRefresh });
     }
 };
-__decorate$r([
+__decorate$p([
     Autowired('rowModel')
 ], ChangeDetectionService.prototype, "rowModel", void 0);
-__decorate$r([
+__decorate$p([
     Autowired('rowRenderer')
 ], ChangeDetectionService.prototype, "rowRenderer", void 0);
-__decorate$r([
+__decorate$p([
     PostConstruct
 ], ChangeDetectionService.prototype, "init", null);
-ChangeDetectionService = __decorate$r([
+ChangeDetectionService = __decorate$p([
     Bean('changeDetectionService')
 ], ChangeDetectionService);
 
-var __decorate$q = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$o = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
@@ -42776,14 +43202,14 @@ let AgComponentUtils = class AgComponentUtils extends BeanStub {
         return candidate.prototype && 'getGui' in candidate.prototype;
     }
 };
-__decorate$q([
+__decorate$o([
     Autowired("componentMetadataProvider")
 ], AgComponentUtils.prototype, "componentMetadataProvider", void 0);
-AgComponentUtils = __decorate$q([
+AgComponentUtils = __decorate$o([
     Bean("agComponentUtils")
 ], AgComponentUtils);
 
-var __decorate$p = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$n = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
@@ -42879,17 +43305,17 @@ let ComponentMetadataProvider = class ComponentMetadataProvider extends BeanStub
         return this.componentMetaData[name];
     }
 };
-__decorate$p([
+__decorate$n([
     Autowired("agComponentUtils")
 ], ComponentMetadataProvider.prototype, "agComponentUtils", void 0);
-__decorate$p([
+__decorate$n([
     PostConstruct
 ], ComponentMetadataProvider.prototype, "postConstruct", null);
-ComponentMetadataProvider = __decorate$p([
+ComponentMetadataProvider = __decorate$n([
     Bean("componentMetadataProvider")
 ], ComponentMetadataProvider);
 
-var __decorate$o = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$m = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
@@ -43078,7 +43504,7 @@ let Environment = class Environment extends BeanStub {
     }
     getMinColWidth() {
         const measuredMin = this.getFromTheme(null, 'headerCellMinWidth');
-        return exists$1(measuredMin) ? Math.max(measuredMin, MIN_COL_WIDTH) : MIN_COL_WIDTH;
+        return exists(measuredMin) ? Math.max(measuredMin, MIN_COL_WIDTH) : MIN_COL_WIDTH;
     }
     destroy() {
         this.calculatedSizes = null;
@@ -43088,17 +43514,17 @@ let Environment = class Environment extends BeanStub {
         super.destroy();
     }
 };
-__decorate$o([
+__decorate$m([
     Autowired('eGridDiv')
 ], Environment.prototype, "eGridDiv", void 0);
-__decorate$o([
+__decorate$m([
     PostConstruct
 ], Environment.prototype, "postConstruct", null);
-Environment = __decorate$o([
+Environment = __decorate$m([
     Bean('environment')
 ], Environment);
 
-var __decorate$n = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$l = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
@@ -43209,20 +43635,20 @@ let RowContainerHeightService = class RowContainerHeightService extends BeanStub
         return scrollPixel;
     }
 };
-__decorate$n([
+__decorate$l([
     Autowired('ctrlsService')
 ], RowContainerHeightService.prototype, "ctrlsService", void 0);
-__decorate$n([
+__decorate$l([
     __param$1(0, Qualifier("loggerFactory"))
 ], RowContainerHeightService.prototype, "agWire", null);
-__decorate$n([
+__decorate$l([
     PostConstruct
 ], RowContainerHeightService.prototype, "postConstruct", null);
-RowContainerHeightService = __decorate$n([
+RowContainerHeightService = __decorate$l([
     Bean('rowContainerHeightService')
 ], RowContainerHeightService);
 
-var __decorate$m = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$k = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
@@ -43254,7 +43680,7 @@ let SelectableService = class SelectableService extends BeanStub {
             if (this.groupSelectsChildren) {
                 // have this group selectable if at least one direct child is selectable
                 const firstSelectable = (nextChildrenFunc(child) || []).find(rowNode => rowNode.selectable === true);
-                rowSelectable = exists$1(firstSelectable);
+                rowSelectable = exists(firstSelectable);
             }
             else {
                 // directly retrieve selectable value from user callback
@@ -43264,14 +43690,14 @@ let SelectableService = class SelectableService extends BeanStub {
         });
     }
 };
-__decorate$m([
+__decorate$k([
     PostConstruct
 ], SelectableService.prototype, "init", null);
-SelectableService = __decorate$m([
+SelectableService = __decorate$k([
     Bean('selectableService')
 ], SelectableService);
 
-var __decorate$l = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$j = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
@@ -43485,44 +43911,44 @@ class PaginationComp extends Component {
         this.lbRecordCount.innerHTML = this.formatNumber(0);
     }
 }
-__decorate$l([
+__decorate$j([
     Autowired('paginationProxy')
 ], PaginationComp.prototype, "paginationProxy", void 0);
-__decorate$l([
+__decorate$j([
     Autowired('rowNodeBlockLoader')
 ], PaginationComp.prototype, "rowNodeBlockLoader", void 0);
-__decorate$l([
+__decorate$j([
     RefSelector('btFirst')
 ], PaginationComp.prototype, "btFirst", void 0);
-__decorate$l([
+__decorate$j([
     RefSelector('btPrevious')
 ], PaginationComp.prototype, "btPrevious", void 0);
-__decorate$l([
+__decorate$j([
     RefSelector('btNext')
 ], PaginationComp.prototype, "btNext", void 0);
-__decorate$l([
+__decorate$j([
     RefSelector('btLast')
 ], PaginationComp.prototype, "btLast", void 0);
-__decorate$l([
+__decorate$j([
     RefSelector('lbRecordCount')
 ], PaginationComp.prototype, "lbRecordCount", void 0);
-__decorate$l([
+__decorate$j([
     RefSelector('lbFirstRowOnPage')
 ], PaginationComp.prototype, "lbFirstRowOnPage", void 0);
-__decorate$l([
+__decorate$j([
     RefSelector('lbLastRowOnPage')
 ], PaginationComp.prototype, "lbLastRowOnPage", void 0);
-__decorate$l([
+__decorate$j([
     RefSelector('lbCurrent')
 ], PaginationComp.prototype, "lbCurrent", void 0);
-__decorate$l([
+__decorate$j([
     RefSelector('lbTotal')
 ], PaginationComp.prototype, "lbTotal", void 0);
-__decorate$l([
+__decorate$j([
     PostConstruct
 ], PaginationComp.prototype, "postConstruct", null);
 
-var __decorate$k = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$i = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
@@ -43650,26 +44076,26 @@ OverlayWrapperComponent.TEMPLATE = `
                 <div class="ag-overlay-wrapper" ref="eOverlayWrapper"></div>
             </div>
         </div>`;
-__decorate$k([
+__decorate$i([
     Autowired('userComponentFactory')
 ], OverlayWrapperComponent.prototype, "userComponentFactory", void 0);
-__decorate$k([
+__decorate$i([
     Autowired('paginationProxy')
 ], OverlayWrapperComponent.prototype, "paginationProxy", void 0);
-__decorate$k([
+__decorate$i([
     Autowired('gridApi')
 ], OverlayWrapperComponent.prototype, "gridApi", void 0);
-__decorate$k([
+__decorate$i([
     Autowired('columnModel')
 ], OverlayWrapperComponent.prototype, "columnModel", void 0);
-__decorate$k([
+__decorate$i([
     RefSelector('eOverlayWrapper')
 ], OverlayWrapperComponent.prototype, "eOverlayWrapper", void 0);
-__decorate$k([
+__decorate$i([
     PostConstruct
 ], OverlayWrapperComponent.prototype, "postConstruct", null);
 
-var __decorate$j = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$h = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
@@ -43749,7 +44175,7 @@ let RowPositionUtils = class RowPositionUtils extends BeanStub {
                 break;
             default:
                 // if we are not floating, but the other one is floating...
-                if (exists$1(rowB.rowPinned)) {
+                if (exists(rowB.rowPinned)) {
                     return rowB.rowPinned !== 'top';
                 }
                 break;
@@ -43775,20 +44201,20 @@ let RowPositionUtils = class RowPositionUtils extends BeanStub {
         return min;
     }
 };
-__decorate$j([
+__decorate$h([
     Autowired('rowModel')
 ], RowPositionUtils.prototype, "rowModel", void 0);
-__decorate$j([
+__decorate$h([
     Autowired('pinnedRowModel')
 ], RowPositionUtils.prototype, "pinnedRowModel", void 0);
-__decorate$j([
+__decorate$h([
     Autowired('paginationProxy')
 ], RowPositionUtils.prototype, "paginationProxy", void 0);
-RowPositionUtils = __decorate$j([
+RowPositionUtils = __decorate$h([
     Bean('rowPositionUtils')
 ], RowPositionUtils);
 
-var __decorate$i = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$g = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
@@ -43810,7 +44236,7 @@ let CellPositionUtils = class CellPositionUtils extends BeanStub {
         return colsMatch && floatingMatch && indexMatch;
     }
 };
-CellPositionUtils = __decorate$i([
+CellPositionUtils = __decorate$g([
     Bean('cellPositionUtils')
 ], CellPositionUtils);
 
@@ -43855,7 +44281,7 @@ class UndoRedoStack {
 }
 UndoRedoStack.DEFAULT_STACK_SIZE = 10;
 
-var __decorate$h = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$f = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
@@ -44124,38 +44550,38 @@ let UndoRedoService = class UndoRedoService extends BeanStub {
         }
     }
 };
-__decorate$h([
+__decorate$f([
     Autowired('focusService')
 ], UndoRedoService.prototype, "focusService", void 0);
-__decorate$h([
+__decorate$f([
     Autowired('ctrlsService')
 ], UndoRedoService.prototype, "ctrlsService", void 0);
-__decorate$h([
+__decorate$f([
     Autowired('rowModel')
 ], UndoRedoService.prototype, "rowModel", void 0);
-__decorate$h([
+__decorate$f([
     Autowired('pinnedRowModel')
 ], UndoRedoService.prototype, "pinnedRowModel", void 0);
-__decorate$h([
+__decorate$f([
     Autowired('cellPositionUtils')
 ], UndoRedoService.prototype, "cellPositionUtils", void 0);
-__decorate$h([
+__decorate$f([
     Autowired('rowPositionUtils')
 ], UndoRedoService.prototype, "rowPositionUtils", void 0);
-__decorate$h([
+__decorate$f([
     Autowired('columnModel')
 ], UndoRedoService.prototype, "columnModel", void 0);
-__decorate$h([
+__decorate$f([
     Optional('rangeService')
 ], UndoRedoService.prototype, "rangeService", void 0);
-__decorate$h([
+__decorate$f([
     PostConstruct
 ], UndoRedoService.prototype, "init", null);
-UndoRedoService = __decorate$h([
+UndoRedoService = __decorate$f([
     Bean('undoRedoService')
 ], UndoRedoService);
 
-var __decorate$g = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$e = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
@@ -44267,17 +44693,17 @@ let HeaderPositionUtils = class HeaderPositionUtils extends BeanStub {
         };
     }
 };
-__decorate$g([
+__decorate$e([
     Autowired('columnModel')
 ], HeaderPositionUtils.prototype, "columnModel", void 0);
-__decorate$g([
+__decorate$e([
     Autowired('ctrlsService')
 ], HeaderPositionUtils.prototype, "ctrlsService", void 0);
-HeaderPositionUtils = __decorate$g([
+HeaderPositionUtils = __decorate$e([
     Bean('headerPositionUtils')
 ], HeaderPositionUtils);
 
-var __decorate$f = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$d = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
@@ -44355,11 +44781,11 @@ let ColumnDefFactory = class ColumnDefFactory {
         return colDefCloned;
     }
 };
-ColumnDefFactory = __decorate$f([
+ColumnDefFactory = __decorate$d([
     Bean('columnDefFactory')
 ], ColumnDefFactory);
 
-var __decorate$e = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$c = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
@@ -44368,7 +44794,7 @@ var __decorate$e = (undefined && undefined.__decorate) || function (decorators, 
 let RowCssClassCalculator = class RowCssClassCalculator {
     getInitialRowClasses(params) {
         const classes = [];
-        if (exists$1(params.extraCssClass)) {
+        if (exists(params.extraCssClass)) {
             classes.push(params.extraCssClass);
         }
         classes.push('ag-row');
@@ -44481,17 +44907,17 @@ let RowCssClassCalculator = class RowCssClassCalculator {
         return rowNode.parent ? (rowNode.parent.level + 1) : 0;
     }
 };
-__decorate$e([
+__decorate$c([
     Autowired('stylingService')
 ], RowCssClassCalculator.prototype, "stylingService", void 0);
-__decorate$e([
+__decorate$c([
     Autowired('gridOptionsService')
 ], RowCssClassCalculator.prototype, "gridOptionsService", void 0);
-RowCssClassCalculator = __decorate$e([
+RowCssClassCalculator = __decorate$c([
     Bean('rowCssClassCalculator')
 ], RowCssClassCalculator);
 
-var __decorate$d = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$b = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
@@ -44596,20 +45022,20 @@ let RowNodeSorter = class RowNodeSorter extends BeanStub {
         return this.valueService.getValue(column, node, false, false);
     }
 };
-__decorate$d([
+__decorate$b([
     Autowired('valueService')
 ], RowNodeSorter.prototype, "valueService", void 0);
-__decorate$d([
+__decorate$b([
     Autowired('columnModel')
 ], RowNodeSorter.prototype, "columnModel", void 0);
-__decorate$d([
+__decorate$b([
     PostConstruct
 ], RowNodeSorter.prototype, "init", null);
-RowNodeSorter = __decorate$d([
+RowNodeSorter = __decorate$b([
     Bean('rowNodeSorter')
 ], RowNodeSorter);
 
-var __decorate$c = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$a = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
@@ -44803,11 +45229,11 @@ let CtrlsService = CtrlsService_1 = class CtrlsService extends BeanStub {
     }
 };
 CtrlsService.NAME = 'ctrlsService';
-CtrlsService = CtrlsService_1 = __decorate$c([
+CtrlsService = CtrlsService_1 = __decorate$a([
     Bean(CtrlsService_1.NAME)
 ], CtrlsService);
 
-var __decorate$b = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$9 = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
@@ -44829,11 +45255,11 @@ let CtrlsFactory = class CtrlsFactory extends BeanStub {
         return new ControllerClass();
     }
 };
-CtrlsFactory = __decorate$b([
+CtrlsFactory = __decorate$9([
     Bean('ctrlsFactory')
 ], CtrlsFactory);
 
-var __decorate$a = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$8 = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
@@ -44907,23 +45333,23 @@ class AbstractFakeScrollComp extends Component {
         this.addManagedListener(this.getViewport(), 'scroll', fn);
     }
 }
-__decorate$a([
+__decorate$8([
     RefSelector('eViewport')
 ], AbstractFakeScrollComp.prototype, "eViewport", void 0);
-__decorate$a([
+__decorate$8([
     RefSelector('eContainer')
 ], AbstractFakeScrollComp.prototype, "eContainer", void 0);
-__decorate$a([
+__decorate$8([
     Autowired('scrollVisibleService')
 ], AbstractFakeScrollComp.prototype, "scrollVisibleService", void 0);
-__decorate$a([
+__decorate$8([
     Autowired('ctrlsService')
 ], AbstractFakeScrollComp.prototype, "ctrlsService", void 0);
-__decorate$a([
+__decorate$8([
     Autowired('animationFrameService')
 ], AbstractFakeScrollComp.prototype, "animationFrameService", void 0);
 
-var __decorate$9 = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$7 = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
@@ -45020,23 +45446,23 @@ FakeHScrollComp.TEMPLATE = `<div class="ag-body-horizontal-scroll" aria-hidden="
             </div>
             <div class="ag-horizontal-right-spacer" ref="eRightSpacer"></div>
         </div>`;
-__decorate$9([
+__decorate$7([
     RefSelector('eLeftSpacer')
 ], FakeHScrollComp.prototype, "eLeftSpacer", void 0);
-__decorate$9([
+__decorate$7([
     RefSelector('eRightSpacer')
 ], FakeHScrollComp.prototype, "eRightSpacer", void 0);
-__decorate$9([
+__decorate$7([
     Autowired('columnModel')
 ], FakeHScrollComp.prototype, "columnModel", void 0);
-__decorate$9([
+__decorate$7([
     Autowired('pinnedRowModel')
 ], FakeHScrollComp.prototype, "pinnedRowModel", void 0);
-__decorate$9([
+__decorate$7([
     PostConstruct
 ], FakeHScrollComp.prototype, "postConstruct", null);
 
-var __decorate$8 = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$6 = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
@@ -45069,17 +45495,17 @@ let PinnedWidthService = class PinnedWidthService extends BeanStub {
         return this.leftWidth;
     }
 };
-__decorate$8([
+__decorate$6([
     Autowired('columnModel')
 ], PinnedWidthService.prototype, "columnModel", void 0);
-__decorate$8([
+__decorate$6([
     PostConstruct
 ], PinnedWidthService.prototype, "postConstruct", null);
-PinnedWidthService = __decorate$8([
+PinnedWidthService = __decorate$6([
     Bean('pinnedWidthService')
 ], PinnedWidthService);
 
-var __decorate$7 = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$5 = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
@@ -45126,20 +45552,20 @@ let RowNodeEventThrottle = class RowNodeEventThrottle extends BeanStub {
         this.dispatchExpandedDebounced();
     }
 };
-__decorate$7([
+__decorate$5([
     Autowired('animationFrameService')
 ], RowNodeEventThrottle.prototype, "animationFrameService", void 0);
-__decorate$7([
+__decorate$5([
     Autowired('rowModel')
 ], RowNodeEventThrottle.prototype, "rowModel", void 0);
-__decorate$7([
+__decorate$5([
     PostConstruct
 ], RowNodeEventThrottle.prototype, "postConstruct", null);
-RowNodeEventThrottle = __decorate$7([
+RowNodeEventThrottle = __decorate$5([
     Bean('rowNodeEventThrottle')
 ], RowNodeEventThrottle);
 
-var __decorate$6 = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$4 = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
@@ -45245,7 +45671,7 @@ let GridOptionsService = GridOptionsService_1 = class GridOptionsService {
      * @param property GridOption property
      */
     exists(property) {
-        return exists$1(this.gridOptions[property]);
+        return exists(this.gridOptions[property]);
     }
     /**
     * Wrap the user callback and attach the api, columnApi and context to the params object on the way through.
@@ -45423,13 +45849,13 @@ let GridOptionsService = GridOptionsService_1 = class GridOptionsService {
         // if user is providing document, we use the users one,
         // otherwise we use the document on the global namespace.
         let result = null;
-        if (this.gridOptions.getDocument && exists$1(this.gridOptions.getDocument)) {
+        if (this.gridOptions.getDocument && exists(this.gridOptions.getDocument)) {
             result = this.gridOptions.getDocument();
         }
         else if (this.eGridDiv) {
             result = this.eGridDiv.ownerDocument;
         }
-        if (result && exists$1(result)) {
+        if (result && exists(result)) {
             return result;
         }
         return document;
@@ -45442,7 +45868,7 @@ let GridOptionsService = GridOptionsService_1 = class GridOptionsService {
         return this.eGridDiv.getRootNode();
     }
     getAsyncTransactionWaitMillis() {
-        return exists$1(this.gridOptions.asyncTransactionWaitMillis) ? this.gridOptions.asyncTransactionWaitMillis : 50;
+        return exists(this.gridOptions.asyncTransactionWaitMillis) ? this.gridOptions.asyncTransactionWaitMillis : 50;
     }
     isAnimateRows() {
         // never allow animating if enforcing the row order
@@ -45504,33 +45930,33 @@ let GridOptionsService = GridOptionsService_1 = class GridOptionsService {
     }
 };
 GridOptionsService.alwaysSyncGlobalEvents = new Set([Events.EVENT_GRID_PRE_DESTROYED]);
-__decorate$6([
+__decorate$4([
     Autowired('gridOptions')
 ], GridOptionsService.prototype, "gridOptions", void 0);
-__decorate$6([
+__decorate$4([
     Autowired('eventService')
 ], GridOptionsService.prototype, "eventService", void 0);
-__decorate$6([
+__decorate$4([
     Autowired('environment')
 ], GridOptionsService.prototype, "environment", void 0);
-__decorate$6([
+__decorate$4([
     Autowired('eGridDiv')
 ], GridOptionsService.prototype, "eGridDiv", void 0);
-__decorate$6([
+__decorate$4([
     __param(0, Qualifier('gridApi')),
     __param(1, Qualifier('columnApi'))
 ], GridOptionsService.prototype, "agWire", null);
-__decorate$6([
+__decorate$4([
     PostConstruct
 ], GridOptionsService.prototype, "init", null);
-__decorate$6([
+__decorate$4([
     PreDestroy
 ], GridOptionsService.prototype, "destroy", null);
-GridOptionsService = GridOptionsService_1 = __decorate$6([
+GridOptionsService = GridOptionsService_1 = __decorate$4([
     Bean('gridOptionsService')
 ], GridOptionsService);
 
-var __decorate$5 = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$3 = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
@@ -45570,11 +45996,11 @@ let LocaleService = class LocaleService extends BeanStub {
         };
     }
 };
-LocaleService = __decorate$5([
+LocaleService = __decorate$3([
     Bean('localeService')
 ], LocaleService);
 
-var __decorate$4 = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$2 = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
@@ -45623,11 +46049,11 @@ FakeVScrollComp.TEMPLATE = `<div class="ag-body-vertical-scroll" aria-hidden="tr
                 <div class="ag-body-vertical-scroll-container" ref="eContainer"></div>
             </div>
         </div>`;
-__decorate$4([
+__decorate$2([
     PostConstruct
 ], FakeVScrollComp.prototype, "postConstruct", null);
 
-var __decorate$3 = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate$1 = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
@@ -46108,7 +46534,7 @@ let DataTypeService = class DataTypeService extends BeanStub {
                 if (usingSetFilter) {
                     mergeFilterParams({
                         valueFormatter: (params) => {
-                            if (!exists$1(params.value)) {
+                            if (!exists(params.value)) {
                                 return translate('blanks', '(Blanks)');
                             }
                             return translate(String(params.value), params.value ? 'True' : 'False');
@@ -46144,7 +46570,7 @@ let DataTypeService = class DataTypeService extends BeanStub {
                     mergeFilterParams({
                         valueFormatter: (params) => {
                             const valueFormatted = formatValue(params.column, params.node, params.value);
-                            return exists$1(valueFormatted) ? valueFormatted : translate('blanks', '(Blanks)');
+                            return exists(valueFormatted) ? valueFormatted : translate('blanks', '(Blanks)');
                         },
                         treeList: true,
                         treeListFormatter: (pathKey, level) => {
@@ -46166,7 +46592,7 @@ let DataTypeService = class DataTypeService extends BeanStub {
                     mergeFilterParams({
                         valueFormatter: (params) => {
                             const valueFormatted = formatValue(params.column, params.node, params.value);
-                            return exists$1(valueFormatted) ? valueFormatted : translate('blanks', '(Blanks)');
+                            return exists(valueFormatted) ? valueFormatted : translate('blanks', '(Blanks)');
                         },
                         treeList: true,
                         treeListPathGetter: (value) => {
@@ -46219,7 +46645,7 @@ let DataTypeService = class DataTypeService extends BeanStub {
                     mergeFilterParams({
                         valueFormatter: (params) => {
                             const valueFormatted = formatValue(params.column, params.node, params.value);
-                            return exists$1(valueFormatted) ? valueFormatted : translate('blanks', '(Blanks)');
+                            return exists(valueFormatted) ? valueFormatted : translate('blanks', '(Blanks)');
                         }
                     });
                 }
@@ -46290,29 +46716,29 @@ let DataTypeService = class DataTypeService extends BeanStub {
         };
     }
 };
-__decorate$3([
+__decorate$1([
     Autowired('rowModel')
 ], DataTypeService.prototype, "rowModel", void 0);
-__decorate$3([
+__decorate$1([
     Autowired('columnModel')
 ], DataTypeService.prototype, "columnModel", void 0);
-__decorate$3([
+__decorate$1([
     Autowired('columnUtils')
 ], DataTypeService.prototype, "columnUtils", void 0);
-__decorate$3([
+__decorate$1([
     Autowired('valueService')
 ], DataTypeService.prototype, "valueService", void 0);
-__decorate$3([
+__decorate$1([
     Autowired('valueFormatterService')
 ], DataTypeService.prototype, "valueFormatterService", void 0);
-__decorate$3([
+__decorate$1([
     PostConstruct
 ], DataTypeService.prototype, "init", null);
-DataTypeService = __decorate$3([
+DataTypeService = __decorate$1([
     Bean('dataTypeService')
 ], DataTypeService);
 
-var __decorate$2 = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
+var __decorate = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
@@ -46333,7 +46759,7 @@ let ValueParserService = class ValueParserService extends BeanStub {
             context: this.gridOptionsService.context
         };
         const valueParser = colDef.valueParser;
-        if (exists$1(valueParser)) {
+        if (exists(valueParser)) {
             if (typeof valueParser === 'function') {
                 return valueParser(params);
             }
@@ -46342,12 +46768,313 @@ let ValueParserService = class ValueParserService extends BeanStub {
         return newValue;
     }
 };
-__decorate$2([
+__decorate([
     Autowired('expressionService')
 ], ValueParserService.prototype, "expressionService", void 0);
-ValueParserService = __decorate$2([
+ValueParserService = __decorate([
     Bean('valueParserService')
 ], ValueParserService);
+
+// creates JavaScript vanilla Grid, including JavaScript (ag-stack) components, which can
+// be wrapped by the framework wrappers
+class Grid {
+    constructor(eGridDiv, gridOptions, params) {
+        if (!gridOptions) {
+            console.error('AG Grid: no gridOptions provided to the grid');
+            return;
+        }
+        this.gridOptions = gridOptions;
+        new GridCoreCreator().create(eGridDiv, gridOptions, context => {
+            const gridComp = new GridComp(eGridDiv);
+            context.createBean(gridComp);
+        }, undefined, params);
+    }
+    destroy() {
+        if (this.gridOptions && this.gridOptions.api) {
+            this.gridOptions.api.destroy();
+        }
+    }
+}
+let nextGridId = 1;
+// creates services of grid only, no UI, so frameworks can use this if providing
+// their own UI
+class GridCoreCreator {
+    create(eGridDiv, gridOptions, createUi, acceptChanges, params) {
+        var _a;
+        const debug = !!gridOptions.debug;
+        const gridId = (_a = gridOptions.gridId) !== null && _a !== void 0 ? _a : String(nextGridId++);
+        const registeredModules = this.getRegisteredModules(params, gridId);
+        const beanClasses = this.createBeansList(gridOptions.rowModelType, registeredModules, gridId);
+        const providedBeanInstances = this.createProvidedBeans(eGridDiv, gridOptions, params);
+        if (!beanClasses) {
+            return;
+        } // happens when no row model found
+        const contextParams = {
+            providedBeanInstances: providedBeanInstances,
+            beanClasses: beanClasses,
+            debug: debug,
+            gridId: gridId,
+        };
+        const logger = new Logger('AG Grid', () => gridOptions.debug);
+        const contextLogger = new Logger('Context', () => contextParams.debug);
+        const context = new Context(contextParams, contextLogger);
+        const beans = context.getBean('beans');
+        this.registerModuleUserComponents(beans, registeredModules);
+        this.registerStackComponents(beans, registeredModules);
+        this.registerControllers(beans, registeredModules);
+        createUi(context);
+        // we wait until the UI has finished initialising before setting in columns and rows
+        beans.ctrlsService.whenReady(() => {
+            this.setColumnsAndData(beans);
+            this.dispatchGridReadyEvent(beans);
+            const isEnterprise = ModuleRegistry.__isRegistered(ModuleNames.EnterpriseCoreModule, gridId);
+            logger.log(`initialised successfully, enterprise = ${isEnterprise}`);
+        });
+        if (acceptChanges) {
+            acceptChanges(context);
+        }
+    }
+    registerControllers(beans, registeredModules) {
+        registeredModules.forEach(module => {
+            if (module.controllers) {
+                module.controllers.forEach(meta => beans.ctrlsFactory.register(meta));
+            }
+        });
+    }
+    registerStackComponents(beans, registeredModules) {
+        const agStackComponents = this.createAgStackComponentsList(registeredModules);
+        beans.agStackComponentsRegistry.setupComponents(agStackComponents);
+    }
+    getRegisteredModules(params, gridId) {
+        const passedViaConstructor = params ? params.modules : null;
+        const registered = ModuleRegistry.__getRegisteredModules(gridId);
+        const allModules = [];
+        const mapNames = {};
+        // adds to list and removes duplicates
+        const addModule = (moduleBased, mod, gridId) => {
+            const addIndividualModule = (currentModule) => {
+                if (!mapNames[currentModule.moduleName]) {
+                    mapNames[currentModule.moduleName] = true;
+                    allModules.push(currentModule);
+                    ModuleRegistry.__register(currentModule, moduleBased, gridId);
+                }
+            };
+            addIndividualModule(mod);
+            if (mod.dependantModules) {
+                mod.dependantModules.forEach(m => addModule(moduleBased, m, gridId));
+            }
+        };
+        if (passedViaConstructor) {
+            passedViaConstructor.forEach(m => addModule(true, m, gridId));
+        }
+        if (registered) {
+            registered.forEach(m => addModule(!ModuleRegistry.__isPackageBased(), m, undefined));
+        }
+        return allModules;
+    }
+    registerModuleUserComponents(beans, registeredModules) {
+        const moduleUserComps = this.extractModuleEntity(registeredModules, (module) => module.userComponents ? module.userComponents : []);
+        moduleUserComps.forEach(compMeta => {
+            beans.userComponentRegistry.registerDefaultComponent(compMeta.componentName, compMeta.componentClass);
+        });
+    }
+    createProvidedBeans(eGridDiv, gridOptions, params) {
+        let frameworkOverrides = params ? params.frameworkOverrides : null;
+        if (missing(frameworkOverrides)) {
+            frameworkOverrides = new VanillaFrameworkOverrides();
+        }
+        const seed = {
+            gridOptions: gridOptions,
+            eGridDiv: eGridDiv,
+            globalEventListener: params ? params.globalEventListener : null,
+            globalSyncEventListener: params ? params.globalSyncEventListener : null,
+            frameworkOverrides: frameworkOverrides
+        };
+        if (params && params.providedBeanInstances) {
+            Object.assign(seed, params.providedBeanInstances);
+        }
+        return seed;
+    }
+    createAgStackComponentsList(registeredModules) {
+        let components = [
+            { componentName: 'AgCheckbox', componentClass: AgCheckbox },
+            { componentName: 'AgRadioButton', componentClass: AgRadioButton },
+            { componentName: 'AgToggleButton', componentClass: AgToggleButton },
+            { componentName: 'AgInputTextField', componentClass: AgInputTextField },
+            { componentName: 'AgInputTextArea', componentClass: AgInputTextArea },
+            { componentName: 'AgInputNumberField', componentClass: AgInputNumberField },
+            { componentName: 'AgInputDateField', componentClass: AgInputDateField },
+            { componentName: 'AgInputRange', componentClass: AgInputRange },
+            { componentName: 'AgRichSelect', componentClass: AgRichSelect },
+            { componentName: 'AgSelect', componentClass: AgSelect },
+            { componentName: 'AgSlider', componentClass: AgSlider },
+            { componentName: 'AgGridBody', componentClass: GridBodyComp },
+            { componentName: 'AgHeaderRoot', componentClass: GridHeaderComp },
+            { componentName: 'AgSortIndicator', componentClass: SortIndicatorComp },
+            { componentName: 'AgPagination', componentClass: PaginationComp },
+            { componentName: 'AgOverlayWrapper', componentClass: OverlayWrapperComponent },
+            { componentName: 'AgGroupComponent', componentClass: AgGroupComponent },
+            { componentName: 'AgPanel', componentClass: AgPanel },
+            { componentName: 'AgDialog', componentClass: AgDialog },
+            { componentName: 'AgRowContainer', componentClass: RowContainerComp },
+            { componentName: 'AgFakeHorizontalScroll', componentClass: FakeHScrollComp },
+            { componentName: 'AgFakeVerticalScroll', componentClass: FakeVScrollComp },
+            { componentName: 'AgAutocomplete', componentClass: AgAutocomplete },
+        ];
+        const moduleAgStackComps = this.extractModuleEntity(registeredModules, (module) => module.agStackComponents ? module.agStackComponents : []);
+        components = components.concat(moduleAgStackComps);
+        return components;
+    }
+    createBeansList(rowModelType = 'clientSide', registeredModules, gridId) {
+        // only load beans matching the required row model
+        const rowModelModules = registeredModules.filter(module => !module.rowModel || module.rowModel === rowModelType);
+        // assert that the relevant module has been loaded
+        const rowModelModuleNames = {
+            clientSide: ModuleNames.ClientSideRowModelModule,
+            infinite: ModuleNames.InfiniteRowModelModule,
+            serverSide: ModuleNames.ServerSideRowModelModule,
+            viewport: ModuleNames.ViewportRowModelModule
+        };
+        if (!rowModelModuleNames[rowModelType]) {
+            console.error('AG Grid: could not find row model for rowModelType = ' + rowModelType);
+            return;
+        }
+        if (!ModuleRegistry.__assertRegistered(rowModelModuleNames[rowModelType], `rowModelType = '${rowModelType}'`, gridId)) {
+            return;
+        }
+        // beans should only contain SERVICES, it should NEVER contain COMPONENTS
+        const beans = [
+            Beans, RowPositionUtils, CellPositionUtils, HeaderPositionUtils,
+            PaginationAutoPageSizeService, GridApi, UserComponentRegistry, AgComponentUtils,
+            ComponentMetadataProvider, ResizeObserverService, UserComponentFactory,
+            RowContainerHeightService, HorizontalResizeService, LocaleService, GridOptionsValidator,
+            PinnedRowModel, DragService, DisplayedGroupCreator, EventService, GridOptionsService,
+            PopupService, SelectionService, FilterManager, ColumnModel, HeaderNavigationService,
+            PaginationProxy, RowRenderer, ExpressionService, ColumnFactory, TemplateService,
+            AlignedGridsService, NavigationService, ValueCache, ValueService, LoggerFactory,
+            ColumnUtils, AutoWidthCalculator, StandardMenuFactory, DragAndDropService, ColumnApi,
+            FocusService, MouseEventService, Environment, CellNavigationService, ValueFormatterService,
+            StylingService, ScrollVisibleService, SortController, ColumnHoverService, ColumnAnimationService,
+            SelectableService, AutoGroupColService, ChangeDetectionService, AnimationFrameService,
+            UndoRedoService, AgStackComponentsRegistry, ColumnDefFactory,
+            RowCssClassCalculator, RowNodeBlockLoader, RowNodeSorter, CtrlsService,
+            PinnedWidthService, RowNodeEventThrottle, CtrlsFactory, DataTypeService, ValueParserService,
+            QuickFilterService
+        ];
+        const moduleBeans = this.extractModuleEntity(rowModelModules, (module) => module.beans ? module.beans : []);
+        beans.push(...moduleBeans);
+        // check for duplicates, as different modules could include the same beans that
+        // they depend on, eg ClientSideRowModel in enterprise, and ClientSideRowModel in community
+        const beansNoDuplicates = [];
+        beans.forEach(bean => {
+            if (beansNoDuplicates.indexOf(bean) < 0) {
+                beansNoDuplicates.push(bean);
+            }
+        });
+        return beansNoDuplicates;
+    }
+    extractModuleEntity(moduleEntities, extractor) {
+        return [].concat(...moduleEntities.map(extractor));
+    }
+    setColumnsAndData(beans) {
+        const columnDefs = beans.gridOptionsService.get('columnDefs');
+        beans.columnModel.setColumnDefs(columnDefs || [], "gridInitializing");
+        beans.rowModel.start();
+    }
+    dispatchGridReadyEvent(beans) {
+        const readyEvent = {
+            type: Events.EVENT_GRID_READY,
+        };
+        beans.eventService.dispatchEvent(readyEvent);
+    }
+}
+
+class BaseComponentWrapper {
+    wrap(OriginalConstructor, mandatoryMethodList, optionalMethodList = [], componentType) {
+        const wrapper = this.createWrapper(OriginalConstructor, componentType);
+        mandatoryMethodList.forEach((methodName => {
+            this.createMethod(wrapper, methodName, true);
+        }));
+        optionalMethodList.forEach((methodName => {
+            this.createMethod(wrapper, methodName, false);
+        }));
+        return wrapper;
+    }
+    unwrap(comp) {
+        return comp;
+    }
+    createMethod(wrapper, methodName, mandatory) {
+        wrapper.addMethod(methodName, this.createMethodProxy(wrapper, methodName, mandatory));
+    }
+    createMethodProxy(wrapper, methodName, mandatory) {
+        return function () {
+            if (wrapper.hasMethod(methodName)) {
+                return wrapper.callMethod(methodName, arguments);
+            }
+            if (mandatory) {
+                console.warn('AG Grid: Framework component is missing the method ' + methodName + '()');
+            }
+            return null;
+        };
+    }
+}
+
+const DEFAULT_CHART_GROUPS = {
+    columnGroup: [
+        'column',
+        'stackedColumn',
+        'normalizedColumn'
+    ],
+    barGroup: [
+        'bar',
+        'stackedBar',
+        'normalizedBar'
+    ],
+    pieGroup: [
+        'pie',
+        'doughnut'
+    ],
+    lineGroup: [
+        'line'
+    ],
+    scatterGroup: [
+        'scatter',
+        'bubble'
+    ],
+    areaGroup: [
+        'area',
+        'stackedArea',
+        'normalizedArea'
+    ],
+    histogramGroup: [
+        'histogram'
+    ],
+    combinationGroup: [
+        'columnLineCombo',
+        'areaColumnCombo',
+        'customCombo'
+    ]
+};
+const CHART_TOOL_PANEL_ALLOW_LIST = [
+    'chartSettings',
+    'chartData',
+    'chartFormat'
+];
+const CHART_TOOLBAR_ALLOW_LIST = [
+    'chartUnlink',
+    'chartLink',
+    'chartDownload'
+];
+const CHART_TOOL_PANEL_MENU_OPTIONS = {
+    settings: "chartSettings",
+    data: "chartData",
+    format: "chartFormat"
+};
+
+/**
+ * Internal Use Only: Used to ensure this file is treated as a module until we can use moduleDetection flag in Ts v4.7
+ */
+const __FORCE_MODULE_DETECTION = 0;
 
 var BarColumnLabelPlacement;
 (function (BarColumnLabelPlacement) {
@@ -46371,533 +47098,4 @@ globalObj.HTMLInputElement = typeof HTMLInputElement === 'undefined' ? {} : HTML
 globalObj.Node = typeof Node === 'undefined' ? {} : Node;
 globalObj.MouseEvent = typeof MouseEvent === 'undefined' ? {} : MouseEvent;
 
-class MD5 {
-    constructor() {
-        this.ieCompatibility = false;
-    }
-    init() {
-        this.ieCompatibility = (this.md5('hello') != '5d41402abc4b2a76b9719d911017c592');
-    }
-    md5cycle(x, k) {
-        let a = x[0], b = x[1], c = x[2], d = x[3];
-        a = this.ff(a, b, c, d, k[0], 7, -680876936);
-        d = this.ff(d, a, b, c, k[1], 12, -389564586);
-        c = this.ff(c, d, a, b, k[2], 17, 606105819);
-        b = this.ff(b, c, d, a, k[3], 22, -1044525330);
-        a = this.ff(a, b, c, d, k[4], 7, -176418897);
-        d = this.ff(d, a, b, c, k[5], 12, 1200080426);
-        c = this.ff(c, d, a, b, k[6], 17, -1473231341);
-        b = this.ff(b, c, d, a, k[7], 22, -45705983);
-        a = this.ff(a, b, c, d, k[8], 7, 1770035416);
-        d = this.ff(d, a, b, c, k[9], 12, -1958414417);
-        c = this.ff(c, d, a, b, k[10], 17, -42063);
-        b = this.ff(b, c, d, a, k[11], 22, -1990404162);
-        a = this.ff(a, b, c, d, k[12], 7, 1804603682);
-        d = this.ff(d, a, b, c, k[13], 12, -40341101);
-        c = this.ff(c, d, a, b, k[14], 17, -1502002290);
-        b = this.ff(b, c, d, a, k[15], 22, 1236535329);
-        a = this.gg(a, b, c, d, k[1], 5, -165796510);
-        d = this.gg(d, a, b, c, k[6], 9, -1069501632);
-        c = this.gg(c, d, a, b, k[11], 14, 643717713);
-        b = this.gg(b, c, d, a, k[0], 20, -373897302);
-        a = this.gg(a, b, c, d, k[5], 5, -701558691);
-        d = this.gg(d, a, b, c, k[10], 9, 38016083);
-        c = this.gg(c, d, a, b, k[15], 14, -660478335);
-        b = this.gg(b, c, d, a, k[4], 20, -405537848);
-        a = this.gg(a, b, c, d, k[9], 5, 568446438);
-        d = this.gg(d, a, b, c, k[14], 9, -1019803690);
-        c = this.gg(c, d, a, b, k[3], 14, -187363961);
-        b = this.gg(b, c, d, a, k[8], 20, 1163531501);
-        a = this.gg(a, b, c, d, k[13], 5, -1444681467);
-        d = this.gg(d, a, b, c, k[2], 9, -51403784);
-        c = this.gg(c, d, a, b, k[7], 14, 1735328473);
-        b = this.gg(b, c, d, a, k[12], 20, -1926607734);
-        a = this.hh(a, b, c, d, k[5], 4, -378558);
-        d = this.hh(d, a, b, c, k[8], 11, -2022574463);
-        c = this.hh(c, d, a, b, k[11], 16, 1839030562);
-        b = this.hh(b, c, d, a, k[14], 23, -35309556);
-        a = this.hh(a, b, c, d, k[1], 4, -1530992060);
-        d = this.hh(d, a, b, c, k[4], 11, 1272893353);
-        c = this.hh(c, d, a, b, k[7], 16, -155497632);
-        b = this.hh(b, c, d, a, k[10], 23, -1094730640);
-        a = this.hh(a, b, c, d, k[13], 4, 681279174);
-        d = this.hh(d, a, b, c, k[0], 11, -358537222);
-        c = this.hh(c, d, a, b, k[3], 16, -722521979);
-        b = this.hh(b, c, d, a, k[6], 23, 76029189);
-        a = this.hh(a, b, c, d, k[9], 4, -640364487);
-        d = this.hh(d, a, b, c, k[12], 11, -421815835);
-        c = this.hh(c, d, a, b, k[15], 16, 530742520);
-        b = this.hh(b, c, d, a, k[2], 23, -995338651);
-        a = this.ii(a, b, c, d, k[0], 6, -198630844);
-        d = this.ii(d, a, b, c, k[7], 10, 1126891415);
-        c = this.ii(c, d, a, b, k[14], 15, -1416354905);
-        b = this.ii(b, c, d, a, k[5], 21, -57434055);
-        a = this.ii(a, b, c, d, k[12], 6, 1700485571);
-        d = this.ii(d, a, b, c, k[3], 10, -1894986606);
-        c = this.ii(c, d, a, b, k[10], 15, -1051523);
-        b = this.ii(b, c, d, a, k[1], 21, -2054922799);
-        a = this.ii(a, b, c, d, k[8], 6, 1873313359);
-        d = this.ii(d, a, b, c, k[15], 10, -30611744);
-        c = this.ii(c, d, a, b, k[6], 15, -1560198380);
-        b = this.ii(b, c, d, a, k[13], 21, 1309151649);
-        a = this.ii(a, b, c, d, k[4], 6, -145523070);
-        d = this.ii(d, a, b, c, k[11], 10, -1120210379);
-        c = this.ii(c, d, a, b, k[2], 15, 718787259);
-        b = this.ii(b, c, d, a, k[9], 21, -343485551);
-        x[0] = this.add32(a, x[0]);
-        x[1] = this.add32(b, x[1]);
-        x[2] = this.add32(c, x[2]);
-        x[3] = this.add32(d, x[3]);
-    }
-    cmn(q, a, b, x, s, t) {
-        a = this.add32(this.add32(a, q), this.add32(x, t));
-        return this.add32((a << s) | (a >>> (32 - s)), b);
-    }
-    ff(a, b, c, d, x, s, t) {
-        return this.cmn((b & c) | ((~b) & d), a, b, x, s, t);
-    }
-    gg(a, b, c, d, x, s, t) {
-        return this.cmn((b & d) | (c & (~d)), a, b, x, s, t);
-    }
-    hh(a, b, c, d, x, s, t) {
-        return this.cmn(b ^ c ^ d, a, b, x, s, t);
-    }
-    ii(a, b, c, d, x, s, t) {
-        return this.cmn(c ^ (b | (~d)), a, b, x, s, t);
-    }
-    md51(s) {
-        const n = s.length;
-        const state = [1732584193, -271733879, -1732584194, 271733878];
-        let i;
-        for (i = 64; i <= s.length; i += 64) {
-            this.md5cycle(state, this.md5blk(s.substring(i - 64, i)));
-        }
-        s = s.substring(i - 64);
-        const tail = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
-        for (i = 0; i < s.length; i++) {
-            tail[i >> 2] |= s.charCodeAt(i) << ((i % 4) << 3);
-        }
-        tail[i >> 2] |= 0x80 << ((i % 4) << 3);
-        if (i > 55) {
-            this.md5cycle(state, tail);
-            for (i = 0; i < 16; i++) {
-                tail[i] = 0;
-            }
-        }
-        tail[14] = n * 8;
-        this.md5cycle(state, tail);
-        return state;
-    }
-    /* there needs to be support for Unicode here, * unless we pretend that we can redefine the MD-5
-     * algorithm for multi-byte characters (perhaps by adding every four 16-bit characters and
-     * shortening the sum to 32 bits). Otherwise I suthis.ggest performing MD-5 as if every character
-     * was two bytes--e.g., 0040 0025 = @%--but then how will an ordinary MD-5 sum be matched?
-     * There is no way to standardize text to something like UTF-8 before transformation; speed cost is
-     * utterly prohibitive. The JavaScript standard itself needs to look at this: it should start
-     * providing access to strings as preformed UTF-8 8-bit unsigned value arrays.
-     */
-    md5blk(s) {
-        const md5blks = [];
-        /* Andy King said do it this way. */
-        for (let i = 0; i < 64; i += 4) {
-            md5blks[i >> 2] = s.charCodeAt(i)
-                + (s.charCodeAt(i + 1) << 8)
-                + (s.charCodeAt(i + 2) << 16)
-                + (s.charCodeAt(i + 3) << 24);
-        }
-        return md5blks;
-    }
-    rhex(n) {
-        const hex_chr = '0123456789abcdef'.split('');
-        let s = '', j = 0;
-        for (; j < 4; j++) {
-            s += hex_chr[(n >> (j * 8 + 4)) & 0x0F]
-                + hex_chr[(n >> (j * 8)) & 0x0F];
-        }
-        return s;
-    }
-    hex(x) {
-        for (let i = 0; i < x.length; i++) {
-            x[i] = this.rhex(x[i]);
-        }
-        return x.join('');
-    }
-    md5(s) {
-        return this.hex(this.md51(s));
-    }
-    add32(a, b) {
-        return this.ieCompatibility ? this.add32Compat(a, b) : this.add32Std(a, b);
-    }
-    /* this function is much faster, so if possible we use it. Some IEs are the only ones I know of that
-     need the idiotic second function, generated by an if clause.  */
-    add32Std(a, b) {
-        return (a + b) & 0xFFFFFFFF;
-    }
-    add32Compat(x, y) {
-        const lsw = (x & 0xFFFF) + (y & 0xFFFF), msw = (x >> 16) + (y >> 16) + (lsw >> 16);
-        return (msw << 16) | (lsw & 0xFFFF);
-    }
-}
-
-// move to general utils
-function missingOrEmpty(value) {
-    return value == null || value.length === 0;
-}
-function exists(value, allowEmptyString = false) {
-    return value != null && (value !== '' || allowEmptyString);
-}
-class LicenseManager {
-    constructor(document) {
-        this.watermarkMessage = undefined;
-        this.document = document;
-        this.md5 = new MD5();
-        this.md5.init();
-    }
-    validateLicense() {
-        if (missingOrEmpty(LicenseManager.licenseKey)) {
-            if (!this.isWebsiteUrl() || this.isForceWatermark()) {
-                this.outputMissingLicenseKey();
-            }
-        }
-        else if (LicenseManager.licenseKey.length > 32) {
-            if (LicenseManager.licenseKey.indexOf("For_Trialing_ag-Grid_Only") !== -1) {
-                this.outputInvalidLicenseKey();
-            }
-            else {
-                const { md5, license, version, isTrial } = LicenseManager.extractLicenseComponents(LicenseManager.licenseKey);
-                if (md5 === this.md5.md5(license)) {
-                    if (exists(version) && version) {
-                        this.validateLicenseKeyForVersion(version, !!isTrial, license);
-                    }
-                    else {
-                        this.validateLegacyKey(license);
-                    }
-                }
-                else {
-                    this.outputInvalidLicenseKey();
-                }
-            }
-        }
-        else {
-            this.outputInvalidLicenseKey();
-        }
-    }
-    static extractExpiry(license) {
-        const restrictionHashed = license.substring(license.lastIndexOf('_') + 1, license.length);
-        return new Date(parseInt(LicenseManager.decode(restrictionHashed), 10));
-    }
-    static extractLicenseComponents(licenseKey) {
-        // when users copy the license key from a PDF extra zero width characters are sometimes copied too
-        // carriage returns and line feeds are problematic too
-        // all of which causes license key validation to fail - strip these out
-        let cleanedLicenseKey = licenseKey.replace(/[\u200B-\u200D\uFEFF]/g, '');
-        cleanedLicenseKey = cleanedLicenseKey.replace(/\r?\n|\r/g, '');
-        const hashStart = cleanedLicenseKey.length - 32;
-        const md5 = cleanedLicenseKey.substring(hashStart);
-        const license = cleanedLicenseKey.substring(0, hashStart);
-        const [version, isTrial] = LicenseManager.extractBracketedInformation(cleanedLicenseKey);
-        return { md5, license, version, isTrial };
-    }
-    getLicenseDetails(licenseKey) {
-        const { md5, license, version, isTrial } = LicenseManager.extractLicenseComponents(licenseKey);
-        let valid = (md5 === this.md5.md5(license)) && licenseKey.indexOf("For_Trialing_ag-Grid_Only") === -1;
-        let trialExpired = null;
-        let expiry = null;
-        if (valid) {
-            expiry = LicenseManager.extractExpiry(license);
-            valid = !isNaN(expiry.getTime());
-            if (isTrial) {
-                const now = new Date();
-                trialExpired = (expiry < now);
-            }
-        }
-        return {
-            licenseKey,
-            valid,
-            expiry: valid ? LicenseManager.formatDate(expiry) : null,
-            version: version ? version : 'legacy',
-            isTrial,
-            trialExpired
-        };
-    }
-    isDisplayWatermark() {
-        return this.isForceWatermark() || (!this.isLocalhost() && !this.isWebsiteUrl() && !missingOrEmpty(this.watermarkMessage));
-    }
-    getWatermarkMessage() {
-        return this.watermarkMessage || '';
-    }
-    getHostname() {
-        const win = (this.document.defaultView || window);
-        const loc = win.location;
-        const { hostname = '' } = loc;
-        return hostname;
-    }
-    isForceWatermark() {
-        const win = (this.document.defaultView || window);
-        const loc = win.location;
-        const { pathname } = loc;
-        return pathname ? pathname.indexOf('forceWatermark') !== -1 : false;
-    }
-    isWebsiteUrl() {
-        const hostname = this.getHostname();
-        return hostname.match(/^((?:\w+\.)?ag-grid\.com)$/) !== null;
-    }
-    isLocalhost() {
-        const hostname = this.getHostname();
-        return hostname.match(/^(?:127\.0\.0\.1|localhost)$/) !== null;
-    }
-    static formatDate(date) {
-        const monthNames = [
-            'January', 'February', 'March',
-            'April', 'May', 'June', 'July',
-            'August', 'September', 'October',
-            'November', 'December'
-        ];
-        const day = date.getDate();
-        const monthIndex = date.getMonth();
-        const year = date.getFullYear();
-        return day + ' ' + monthNames[monthIndex] + ' ' + year;
-    }
-    static getGridReleaseDate() {
-        return new Date(parseInt(LicenseManager.decode(LicenseManager.RELEASE_INFORMATION), 10));
-    }
-    static decode(input) {
-        const keystr = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=';
-        let t = '';
-        let n, r, i;
-        let s, o, u, a;
-        let f = 0;
-        const e = input.replace(/[^A-Za-z0-9+/=]/g, '');
-        while (f < e.length) {
-            s = keystr.indexOf(e.charAt(f++));
-            o = keystr.indexOf(e.charAt(f++));
-            u = keystr.indexOf(e.charAt(f++));
-            a = keystr.indexOf(e.charAt(f++));
-            n = s << 2 | o >> 4;
-            r = (o & 15) << 4 | u >> 2;
-            i = (u & 3) << 6 | a;
-            t = t + String.fromCharCode(n);
-            if (u != 64) {
-                t = t + String.fromCharCode(r);
-            }
-            if (a != 64) {
-                t = t + String.fromCharCode(i);
-            }
-        }
-        t = LicenseManager.utf8_decode(t);
-        return t;
-    }
-    static utf8_decode(input) {
-        input = input.replace(/rn/g, 'n');
-        let t = '';
-        for (let n = 0; n < input.length; n++) {
-            const r = input.charCodeAt(n);
-            if (r < 128) {
-                t += String.fromCharCode(r);
-            }
-            else if (r > 127 && r < 2048) {
-                t += String.fromCharCode(r >> 6 | 192);
-                t += String.fromCharCode(r & 63 | 128);
-            }
-            else {
-                t += String.fromCharCode(r >> 12 | 224);
-                t += String.fromCharCode(r >> 6 & 63 | 128);
-                t += String.fromCharCode(r & 63 | 128);
-            }
-        }
-        return t;
-    }
-    static setLicenseKey(licenseKey) {
-        this.licenseKey = licenseKey;
-    }
-    static extractBracketedInformation(licenseKey) {
-        const matches = licenseKey.split('[')
-            .filter(function (v) {
-            return v.indexOf(']') > -1;
-        })
-            .map(function (value) {
-            return value.split(']')[0];
-        });
-        if (!matches || matches.length === 0) {
-            return [null, null];
-        }
-        const isTrial = matches.filter(match => match === 'TRIAL').length === 1;
-        const version = matches.filter(match => match.indexOf("v") === 0).map(match => match.replace(/^v/, ""))[0];
-        return [version, isTrial];
-    }
-    validateLicenseKeyForVersion(version, isTrial, license) {
-        if (version !== '2') {
-            return;
-        }
-        if (isTrial) {
-            this.validateForTrial(license);
-        }
-        else {
-            this.validateLegacyKey(license);
-        }
-    }
-    validateLegacyKey(license) {
-        const gridReleaseDate = LicenseManager.getGridReleaseDate();
-        const expiry = LicenseManager.extractExpiry(license);
-        let valid = false;
-        let current = false;
-        if (!isNaN(expiry.getTime())) {
-            valid = true;
-            current = (gridReleaseDate < expiry);
-        }
-        if (!valid) {
-            this.outputInvalidLicenseKey();
-        }
-        else if (!current) {
-            const formattedExpiryDate = LicenseManager.formatDate(expiry);
-            const formattedReleaseDate = LicenseManager.formatDate(gridReleaseDate);
-            this.outputIncompatibleVersion(formattedExpiryDate, formattedReleaseDate);
-        }
-    }
-    validateForTrial(license) {
-        const expiry = LicenseManager.extractExpiry(license);
-        const now = new Date();
-        let valid = false;
-        let current = false;
-        if (!isNaN(expiry.getTime())) {
-            valid = true;
-            current = (expiry > now);
-        }
-        if (!valid) {
-            this.outputInvalidLicenseKey();
-        }
-        else if (!current) {
-            const formattedExpiryDate = LicenseManager.formatDate(expiry);
-            this.outputExpiredTrialKey(formattedExpiryDate);
-        }
-    }
-    outputInvalidLicenseKey() {
-        console.error('*****************************************************************************************************************');
-        console.error('***************************************** AG Grid Enterprise License ********************************************');
-        console.error('********************************************* Invalid License ***************************************************');
-        console.error('* Your license for AG Grid Enterprise is not valid - please contact info@ag-grid.com to obtain a valid license. *');
-        console.error('*****************************************************************************************************************');
-        console.error('*****************************************************************************************************************');
-        this.watermarkMessage = "Invalid License";
-    }
-    outputExpiredTrialKey(formattedExpiryDate) {
-        console.error('****************************************************************************************************************');
-        console.error('***************************************** AG Grid Enterprise License *******************************************');
-        console.error('*****************************************   Trial Period Expired.    *******************************************');
-        console.error(`* Your license for AG Grid Enterprise expired on ${formattedExpiryDate}.                                                *`);
-        console.error('* Please email info@ag-grid.com to purchase a license.                                                         *');
-        console.error('****************************************************************************************************************');
-        console.error('****************************************************************************************************************');
-        this.watermarkMessage = "Trial Period Expired";
-    }
-    outputMissingLicenseKey() {
-        console.error('****************************************************************************************************************');
-        console.error('***************************************** AG Grid Enterprise License *******************************************');
-        console.error('****************************************** License Key Not Found ***********************************************');
-        console.error('* All AG Grid Enterprise features are unlocked.                                                                *');
-        console.error('* This is an evaluation only version, it is not licensed for development projects intended for production.     *');
-        console.error('* If you want to hide the watermark, please email info@ag-grid.com for a trial license.                        *');
-        console.error('****************************************************************************************************************');
-        console.error('****************************************************************************************************************');
-        this.watermarkMessage = "For Trial Use Only";
-    }
-    outputIncompatibleVersion(formattedExpiryDate, formattedReleaseDate) {
-        console.error('****************************************************************************************************************************');
-        console.error('****************************************************************************************************************************');
-        console.error('*                                             AG Grid Enterprise License                                                   *');
-        console.error('*                           License not compatible with installed version of AG Grid Enterprise.                           *');
-        console.error('*                                                                                                                          *');
-        console.error(`* Your AG Grid License entitles you to all versions of AG Grid that we release within the time covered by your license     *`);
-        console.error(`* - typically we provide one year licenses which entitles you to all releases / updates of AG Grid within that year.       *`);
-        console.error(`* Your license has an end (expiry) date which stops the license key working with versions of AG Grid released after the    *`);
-        console.error(`* license end date. The license key that you have expires on ${formattedExpiryDate}, however the version of AG Grid you    *`);
-        console.error(`* are trying to use was released on ${formattedReleaseDate}.                                                               *`);
-        console.error('*                                                                                                                          *');
-        console.error('* Please contact info@ag-grid.com to renew your subscription to new versions and get a new license key to work with this   *');
-        console.error('* version of AG Grid.                                                                                                      *');
-        console.error('****************************************************************************************************************************');
-        console.error('****************************************************************************************************************************');
-        this.watermarkMessage = "License Expired";
-    }
-}
-LicenseManager.RELEASE_INFORMATION = 'MTY5NTU0ODUwMjk2NQ==';
-
-var __decorate$1 = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
-    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
-    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
-    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
-    return c > 3 && r && Object.defineProperty(target, key, r), r;
-};
-let GridLicenseManager = class GridLicenseManager extends BeanStub {
-    validateLicense() {
-        this.licenseManager = new LicenseManager(this.gridOptionsService.getDocument());
-        this.licenseManager.validateLicense();
-    }
-    static getLicenseDetails(licenseKey) {
-        return new LicenseManager(null).getLicenseDetails(licenseKey);
-    }
-    isDisplayWatermark() {
-        return this.licenseManager.isDisplayWatermark();
-    }
-    getWatermarkMessage() {
-        return this.licenseManager.getWatermarkMessage();
-    }
-    static setLicenseKey(licenseKey) {
-        LicenseManager.setLicenseKey(licenseKey);
-    }
-};
-__decorate$1([
-    PreConstruct
-], GridLicenseManager.prototype, "validateLicense", null);
-GridLicenseManager = __decorate$1([
-    Bean('licenseManager')
-], GridLicenseManager);
-
-var __decorate = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
-    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
-    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
-    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
-    return c > 3 && r && Object.defineProperty(target, key, r), r;
-};
-class WatermarkComp extends Component {
-    constructor() {
-        super(/* html*/ `<div class="ag-watermark">
-                <div ref="eLicenseTextRef" class="ag-watermark-text"></div>
-            </div>`);
-    }
-    postConstruct() {
-        const show = this.shouldDisplayWatermark();
-        this.setDisplayed(show);
-        if (show) {
-            this.eLicenseTextRef.innerText = this.licenseManager.getWatermarkMessage();
-            window.setTimeout(() => this.addCssClass('ag-opacity-zero'), 0);
-            window.setTimeout(() => this.setDisplayed(false), 5000);
-        }
-    }
-    shouldDisplayWatermark() {
-        return this.licenseManager.isDisplayWatermark();
-    }
-}
-__decorate([
-    Autowired('licenseManager')
-], WatermarkComp.prototype, "licenseManager", void 0);
-__decorate([
-    RefSelector('eLicenseTextRef')
-], WatermarkComp.prototype, "eLicenseTextRef", void 0);
-__decorate([
-    PostConstruct
-], WatermarkComp.prototype, "postConstruct", null);
-
-// DO NOT UPDATE MANUALLY: Generated from script during build time
-const VERSION = '30.2.0';
-
-const EnterpriseCoreModule = {
-    version: VERSION,
-    moduleName: ModuleNames.EnterpriseCoreModule,
-    beans: [GridLicenseManager],
-    agStackComponents: [
-        { componentName: 'AgWatermark', componentClass: WatermarkComp }
-    ]
-};
-
-export { EnterpriseCoreModule, GridLicenseManager as LicenseManager };
+export { AbstractHeaderCellCtrl, AgAbstractField, AgAbstractLabel, AgAutocomplete, AgCheckbox, AgDialog, AgGroupComponent, AgInputDateField, AgInputNumberField, AgInputRange, AgInputTextArea, AgInputTextField, AgMenuItemComponent, AgMenuList, AgMenuPanel, AgPanel, AgPickerField, AgPromise, AgPromiseStatus, AgRadioButton, AgRichSelect, AgSelect, AgSlider, AgStackComponentsRegistry, AgToggleButton, AlignedGridsService, AnimateShowChangeCellRenderer, AnimateSlideCellRenderer, AnimationFrameService, AutoScrollService, AutoWidthCalculator, Autowired, BarColumnLabelPlacement, BaseComponentWrapper, Bean, BeanStub, Beans, BodyDropPivotTarget, BodyDropTarget, CHART_TOOLBAR_ALLOW_LIST, CHART_TOOL_PANEL_ALLOW_LIST, CHART_TOOL_PANEL_MENU_OPTIONS, CellComp, CellCtrl, CellNavigationService, CellPositionUtils, CellRangeType, ChangedPath, CheckboxCellEditor, CheckboxCellRenderer, CheckboxSelectionComponent, ClientSideRowModelSteps, ColDefUtil, Column, ColumnApi, ColumnFactory, ColumnGroup, ColumnKeyCreator, ColumnModel, ColumnUtils, Component, ComponentUtil, Context, CssClassApplier, CssClassManager, CtrlsService, CustomTooltipFeature, DEFAULT_CHART_GROUPS, DataTypeService, DateCellEditor, DateFilter, DateStringCellEditor, DisplayedGroupCreator, DragAndDropService, DragService, DragSourceType, Environment, EventService, Events, ExcelFactoryMode, ExpressionService, FilterManager, FloatingFilterMapper, FocusService, GROUP_AUTO_COLUMN_ID, Grid, GridApi, GridBodyComp, GridBodyCtrl, GridComp, GridCoreCreator, GridCtrl, GridHeaderComp, GridHeaderCtrl, GridOptionsService, GroupCellRenderer, GroupCellRendererCtrl, GroupInstanceIdCreator, HeaderCellCtrl, HeaderFilterCellComp, HeaderFilterCellCtrl, HeaderGroupCellCtrl, HeaderNavigationDirection, HeaderNavigationService, HeaderPositionUtils, HeaderRowComp, HeaderRowContainerComp, HeaderRowContainerCtrl, HeaderRowCtrl, HeaderRowType, HorizontalDirection, HorizontalResizeService, KeyCode, LargeTextCellEditor, LayoutCssClasses, LocaleService, Logger, LoggerFactory, ManagedFocusFeature, ModuleNames, ModuleRegistry, MouseEventService, MoveColumnFeature, NavigationService, NumberCellEditor, NumberFilter, NumberSequence, Optional, PaginationProxy, PinnedRowModel, PopupComponent, PopupEditorWrapper, PopupService, PositionableFeature, PostConstruct, PreConstruct, PreDestroy, PropertyKeys, ProvidedColumnGroup, ProvidedFilter, Qualifier, QuerySelector, RefSelector, ResizeObserverService, RowAnimationCssClasses, RowContainerComp, RowContainerCtrl, RowContainerName, RowContainerType, RowCtrl, RowHighlightPosition, RowNode, RowNodeBlock, RowNodeBlockLoader, RowNodeSorter, RowPositionUtils, RowRenderer, ScalarFilter, ScrollVisibleService, SelectCellEditor, SelectableService, SelectionHandleType, ServerSideTransactionResultStatus, SetLeftFeature, SimpleFilter, SortController, SortIndicatorComp, StandardMenuFactory, StylingService, TabGuardClassNames, TabGuardComp, TabGuardCtrl, TabbedLayout, TemplateService, TextCellEditor, TextFilter, TextFloatingFilter, Timer, TooltipFeature, TouchListener, UserComponentFactory, UserComponentRegistry, ValueCache, ValueFormatterService, ValueParserService, ValueService, VanillaFrameworkOverrides, VerticalDirection, VirtualList, VirtualListDragFeature, _, __FORCE_MODULE_DETECTION, getRowContainerTypeForName, simpleHttpRequest };
