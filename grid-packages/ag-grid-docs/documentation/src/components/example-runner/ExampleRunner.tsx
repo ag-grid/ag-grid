@@ -592,7 +592,7 @@ const ExampleRunnerInner = ({
                             <li>
                                 <OpenInCTA type="newTab" href={getIndexHtmlUrl(exampleInfo)} />
                             </li>
-                            {!exampleInfo.options.noPlunker && (
+                            {!exampleInfo.options.noCodeSandbox && (
                                 <li>
                                     <OpenInCTA type="codesandbox" onClick={() => openCodeSandbox(exampleInfo)} />
                                 </li>
