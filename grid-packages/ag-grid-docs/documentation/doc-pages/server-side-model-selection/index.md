@@ -71,7 +71,7 @@ When adding a new row via transaction, the new row will be treated as if it conf
 
 - When clicking the `Add new Aggressive` button, the new row is unselected
 - After selecting the `Aggressive` group, new rows created by the `Add new Aggressive` button will be selected.
-- After toggling one of the child rows of the `Aggressive` group, new rows follow the groups previous selection state.
+- After toggling one of the child rows of the `Aggressive`` group, new rows follow the group's previous selection state.
 
 <grid-example title='Transactions Example' name='group-selects-children-transactions' type='generated' options='{ "enterprise": true, "exampleHeight": 590, "extras": ["alasql"], "modules": ["serverside", "rowgrouping"] }'></grid-example>
 
