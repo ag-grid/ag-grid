@@ -112,7 +112,7 @@ The following operations will **automatically** trigger aggregation change detec
 1. Using the `rowNode.setDataValue(col,value)` Row Node method.
 1. Using the `api.applyTransaction(transaction)` API method.
 
-To **manually** run aggregation change detection to re-compute the aggregated values, then call [api.refreshClientSideRowModel('aggregate')](/client-side-model/#refreshing-the-client-side-model).
+To **manually** run aggregation change detection to re-compute the aggregated values, then call [api.refreshClientSideRowModel('aggregate')](/client-side-row-stages/#refreshing-the-client-side-model).
 
 ## Change Detection and Sorting, Filtering, Grouping
 
@@ -129,7 +129,7 @@ The grid will **not**:
 
 The reason why sorting, filtering and grouping is not done automatically is that it would be considered bad user experience in most use cases to change the displayed rows while editing. For example, if a user edits a cell, then the row should not jump location (due to sorting and grouping) or even worse, disappear altogether (if the filter removes the row due to the new value failing the filter).
 
-For this reason, if you want to update the sorting, filtering or group grouping after an update, you should listen for the event `cellValueChanged` and call [api.applyTransaction(transaction)](/client-side-model/#refreshing-the-client-side-model) with the rows that were updated.
+For this reason, if you want to update the sorting, filtering or group grouping after an update, you should listen for the event `cellValueChanged` and call [api.applyTransaction(transaction)](/client-side-row-stages/#refreshing-the-client-side-model) with the rows that were updated.
 
 ### Example: Change Detection and Filter / Sort / Group
 
