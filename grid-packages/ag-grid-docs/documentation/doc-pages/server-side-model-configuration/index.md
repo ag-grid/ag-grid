@@ -96,7 +96,7 @@ row doesn't always correspond to one Row in the store.
 
 To handle this scenario, the grid provides `parentKeys` and `level` properties in the `GetRowIdParams` supplied to `getRowId()`.
 
-These can be used to create unique group id's as shown below:
+These can be used to create unique group IDs as shown below:
 
 <snippet>
 | const gridOptions = {
