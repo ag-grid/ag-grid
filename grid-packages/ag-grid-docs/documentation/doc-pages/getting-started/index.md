@@ -951,38 +951,34 @@ pointing to <a href="http://localhost:4200">localhost:4200</a>.</p>
 
 <framework-specific-section frameworks="react">
 <snippet transform={false} language="jsx" lineNumbers="true">
-|import React, { useState } from 'react';
-|import { createRoot } from 'react-dom/client';
-|import { AgGridReact } from 'ag-grid-react';
+|import { useState } from "react";
+|import { render } from "react-dom";
+|import { AgGridReact } from "ag-grid-react";
 |
-|import 'ag-grid-community/styles/ag-grid.css';
-|import 'ag-grid-community/styles/ag-theme-alpine.css';
+|import "ag-grid-community/styles/ag-grid.css";
+|import "ag-grid-community/styles/ag-theme-alpine.css";
 |
 |const App = () => {
-|    const [rowData] = useState([
-|        {make: "Toyota", model: "Celica", price: 35000},
-|        {make: "Ford", model: "Mondeo", price: 32000},
-|        {make: "Porsche", model: "Boxster", price: 72000}
-|    ]);
-|    
-|    const [columnDefs] = useState([
-|        { field: 'make' },
-|        { field: 'model' },
-|        { field: 'price' }
-|    ]);
+|  const [rowData] = useState([
+|    { make: "Toyota", model: "Celica", price: 35000 },
+|    { make: "Ford", model: "Mondeo", price: 32000 },
+|    { make: "Porsche", model: "Boxter", price: 72000 }
+|  ]);
 |
-|    return (
-|        &lt;div className="ag-theme-alpine" style={{height: 400, width: 600}}>
-|            &lt;AgGridReact
-|                rowData={rowData}
-|                columnDefs={columnDefs}>
-|            &lt;/AgGridReact>
-|        &lt;/div>
-|    );
+|  const [columnDefs] = useState([
+|    { field: "make" },
+|    { field: "model" },
+|    { field: "price" }
+|  ]);
+|
+|  return (
+|    &lt;div className="ag-theme-alpine" style={{ height: 400, width: 600 }}>
+|      &lt;AgGridReact rowData={rowData} columnDefs={columnDefs}>&lt;/AgGridReact>
+|    &lt;/div>
+|  );
 |};
 |
-|const root = createRoot(document.getElementById('root'));
-|root.render(&lt;GridExample />);
+|export default App;
 </snippet>
 </framework-specific-section>
 
