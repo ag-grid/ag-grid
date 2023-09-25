@@ -14,61 +14,16 @@ const Announcements = ({framework}) => (
     <>
         <div className={styles.versions}>
             <Version
-                version="30.1.0"
-                date="Aug 22"
+                version="30.2.0"
+                date="Sep 26"
                 highlights={[
                     {
-                        text: 'AG Grid Design System',
-                        url: 'https://ag-grid.com/javascript-data-grid/ag-grid-design-system/',
+                        text: 'Advanced Filter Builder',
+                        url: 'https://www.ag-grid.com/javascript-data-grid/filter-advanced/#advanced-filter-builder',
                     },
                     {
-                        text: 'Advanced Filter',
-                        url: 'https://ag-grid.com/javascript-data-grid/filter-advanced/',
-                    },
-                    {
-                        text: 'SSRM Pivot Result Fields',
-                        url: 'https://ag-grid.com/javascript-data-grid/server-side-model-pivoting/#supplying-pivot-result-fields-simple',
-                    },
-                ]}
-            ></Version>
-        </div>
-        <div className={styles.versions}>
-            <div className={versionStyles.version}>
-            <header>
-                <b className="font-size-large">Version 30.0.6</b>
-                <span className="text-secondary font-size-large">Jul 28</span>
-                <a href="https://blog.ag-grid.com/ag-grid-es-modules-and-commonjs/">ES Modules & CommonJS</a>
-            </header>
-            <a
-                className="font-size-small"
-                href={`${hostPrefix}/changelog/?fixVersion=30.0.6`}
-                target="_blank"
-                rel="noreferrer"
-            >
-                30.0.6 change log <Icon name="arrowRight" />
-            </a>
-            </div>
-        </div>
-        <div className={styles.versions}>
-            <Version
-                version="30.0.0"
-                date="Jun 9"
-                highlights={[
-                    {
-                        text: 'Cell Data Types',
-                        url: 'https://ag-grid.com/javascript-data-grid/cell-data-types/',
-                    },
-                    {
-                        text: 'New Built-In Cell Editors',
-                        url: 'https://ag-grid.com/javascript-data-grid/provided-cell-editors/',
-                    },
-                    {
-                        text: 'Grid-Specific Modules',
-                        url: 'https://www.ag-grid.com/javascript-data-grid/modules/#providing-modules-to-individual-grids',
-                    },
-                    {
-                        text: 'SSRM Row Group Footers',
-                        url: 'https://ag-grid.com/javascript-data-grid/server-side-model-grouping/#row-group-footers',
+                        text: 'Dynamic Group Footers',
+                        url: 'https://www.ag-grid.com/javascript-data-grid/grouping-footers/#dynamic-group-footers',
                     },
                 ]}
             ></Version>
