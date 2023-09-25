@@ -9,6 +9,8 @@ import { MenuModule } from '@ag-grid-enterprise/menu';
 import { ColumnsToolPanelModule } from '@ag-grid-enterprise/column-tool-panel';
 import '@ag-grid-community/styles/ag-grid.css';
 import "@ag-grid-community/styles/ag-theme-alpine.css";
+import './styles.css';
+
 
 import { ColDef, GetRowIdParams, GridReadyEvent, ICellRendererParams, IDatasource, ModuleRegistry } from '@ag-grid-community/core';
 // Register the required feature modules with the Grid

@@ -5,6 +5,8 @@ import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-mod
 
 import "@ag-grid-community/styles/ag-grid.css";
 import "@ag-grid-community/styles/ag-theme-alpine.css";
+import './styles.css';
+
 
 import { ModuleRegistry, ColDef, GridApi, GridReadyEvent, GetRowIdParams, RowDropZoneParams } from '@ag-grid-community/core';
 // Register the required feature modules with the Grid

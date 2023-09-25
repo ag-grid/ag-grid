@@ -5,6 +5,8 @@ import { ModuleRegistry } from '@ag-grid-community/core';
 import { AgGridReact } from '@ag-grid-community/react';
 import '@ag-grid-community/styles/ag-grid.css';
 import "@ag-grid-community/styles/ag-theme-alpine.css";
+import './styles.css';
+
 import React,{ Component } from 'react';
 import { createRoot } from 'react-dom/client';
 

@@ -7,6 +7,8 @@ import { ExcelExportModule, exportMultipleSheetsAsExcel } from '@ag-grid-enterpr
 
 import "@ag-grid-community/styles/ag-grid.css";
 import "@ag-grid-community/styles/ag-theme-alpine.css";
+import './styles.css';
+
 
 import { ColDef, ColumnApi, GetRowIdParams, GridApi, GridReadyEvent, ICellRendererParams, ModuleRegistry, RowDragEndEvent } from '@ag-grid-community/core';
 // Register the required feature modules with the Grid
