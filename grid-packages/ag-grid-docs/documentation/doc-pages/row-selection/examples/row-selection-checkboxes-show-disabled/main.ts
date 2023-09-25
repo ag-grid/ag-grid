@@ -1,7 +1,7 @@
 import { Grid, ColDef, GridOptions } from '@ag-grid-community/core'
 
 const columnDefsA: ColDef[] = [
-  { colId: 'permutationA', field: 'athlete', checkboxSelection: (params) => params.data.year === 2008 },
+  { colId: 'permutationA', field: 'athlete', checkboxSelection: (params) => params.data.year === 2008, showDisabledCheckboxes: true },
   { field: 'country' },
   { field: 'year' },
   { field: 'gold' },
@@ -10,7 +10,7 @@ const columnDefsA: ColDef[] = [
 ];
 
 const columnDefsB: ColDef[] = [
-  { colId: 'permutationB', field: 'athlete' },
+  { colId: 'permutationB', field: 'athlete', checkboxSelection: (params) => params.data.year === 2008 },
   { field: 'country' },
   { field: 'year' },
   { field: 'gold' },

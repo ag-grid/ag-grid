@@ -1,5 +1,5 @@
 ---
-title: "Row IDs"
+title: "Providing Rows"
 ---
 
 This section explains how the grid assigns row IDs and shows how applications can supply custom row IDs.  

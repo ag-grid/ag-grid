@@ -1,7 +1,7 @@
 import { Grid, ColDef, GridOptions } from '@ag-grid-community/core'
 
-const columnDefs: ColDef[] = [
-  { colId: 'permutationA', field: 'athlete' },
+const columnDefsA: ColDef[] = [
+  { colId: 'permutationA', field: 'athlete', checkboxSelection: true },
   { field: 'country' },
   { field: 'year' },
   { field: 'gold' },
@@ -9,8 +9,8 @@ const columnDefs: ColDef[] = [
   { field: 'bronze' },
 ];
 
-const columnDefs2: ColDef[] = [
-  { colId: 'permutationB', field: 'athlete', checkboxSelection: true },
+const columnDefsB: ColDef[] = [
+  { colId: 'permutationB', field: 'athlete' },
   { field: 'country' },
   { field: 'year' },
   { field: 'gold' },
@@ -21,21 +21,20 @@ const columnDefs2: ColDef[] = [
 const gridOptions: GridOptions = {
   animateRows: true,
   defaultColDef: { flex: 1 },
-  columnDefs: columnDefs,
+  columnDefs: columnDefsA,
 
-  rowSelection: 'single',
+  rowSelection: 'multiple',
 }
 
-let checked = false;
-function selectItem(event: any) {
+function selectItem(value: boolean) {
   if (gridOptions.api) {
-    checked = !checked;
-    gridOptions.api.__updateProperty('columnDefs', !checked ? columnDefs : columnDefs2, false);
+    gridOptions.api.__updateProperty('columnDefs', value ? columnDefsA : columnDefsB, false);
   }
 }
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
+  document.querySelector('#true')!.setAttribute('checked', 'true');
   const gridDiv = document.querySelector<HTMLElement>('#myGrid')!
   new Grid(gridDiv, gridOptions);
   fetch('https://www.ag-grid.com/example-assets/small-olympic-winners.json')

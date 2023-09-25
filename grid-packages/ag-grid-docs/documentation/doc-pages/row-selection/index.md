@@ -7,8 +7,8 @@ Row Selection enables users to choose rows by clicking on them. This page descri
 ## Row Selection Mode
 
 Row selection has two different modes, enabled by passing a value to the `rowSelection` grid option.
-- **"single"** allows users to only have one row selected at any time.
-- **"multiple"** allows users to select multiple rows by holding <kbd>Shift</kbd> to select a range, or <kbd>Ctrl</kbd> to multi-select rows.
+- **"single"** only allows users to have one row selected at any time.
+- **"multiple"** allows users to select multiple rows at a time by holding <kbd>Ctrl</kbd>, or <kbd>Shift</kbd> to select a range.
 
 <grid-example title='rowSelection' name='row-selection-mode' type='generated'></grid-example>
 
@@ -49,7 +49,7 @@ const gridOptions = {
 
 ### Checkboxes via Callback
 
-The `checkboxSelection` property can also be supplied a function. This allows dynamically setting whether a cell has a checkbox or not.
+The `colDef` property `checkboxSelection` can also be supplied a function. This allows dynamically setting whether a cell displays a checkbox.
 
 <grid-example title='checkbox' name='row-selection-checkboxes-callback' type='generated'></grid-example>
 
@@ -66,31 +66,45 @@ const gridOptions = {
 }
 </snippet>
 
+<note>When returning false from a callback, the grid will still provide space for the checkbox in the DOM to ensure cell data remains aligned.</note>
+
 ### Show Disabled Checkboxes
 
-The property `showDisabledCheckboxes` causes checkboxes to be displayed for rows which would otherwise not display them.
+When the `colDef` property `showDisabledCheckboxes` is enabled, this causes a disabled checkbox to be displayed for rows which have been configured to omit the checkbox.
+
+<grid-example title='checkbox' name='row-selection-checkboxes-show-disabled' type='generated'></grid-example>
 
 This can be used when:
 - `checkboxSelection` is configured with a callback function which returns false for a row.
 - `isRowSelectable` returns false for a row.
 
-*TODO* INSERT EXAMPLE DEMONSTRATING `showDisabledCheckboxes` PROPERTY
+<snippet>
+const gridOptions = {
+    columnDefs: [
+        {
+            field: 'athlete',
+            checkboxSelection: (params) => {
+                return params.node.data.year === 2008;
+            },
+            showDisabledCheckboxes: true,
+        },
+    ],
+}
+</snippet>
 
 ### Select-All Checkbox
 
-The `colDef` property `headerCheckboxSelection` can be enabled to display a checkbox in the column header which selects or deselects all rows.
+When the `colDef` property `headerCheckboxSelection` is enabled, a checkbox is displayed in the column header which selects or deselects all rows.
 
 *TODO* INSERT EXAMPLE DEMONSTRATING `colDef.headerCheckboxSelection` PROPERTY, this should have toggles for `headerCheckboxSelectionFilteredOnly` and `headerCheckboxSelectionCurrentPageOnly`
 
 A callback can be provided to this property to dynamically set whether the checkbox is displayed.
 
-<note>When returning false from a callback, the grid will still provide space for the checkbox in the DOM to ensure cell data remains aligned.</note>
-
 ## Prevent Selection of Rows
 
-The `isRowSelectable` callback property can be used to determine which rows can be selected.
+The `isRowSelectable` property is provided a callback that determines which rows can be selected.
 
-<grid-example title='checkbox' name='row-selection-checkboxes-callback' type='generated'></grid-example>
+<grid-example title='checkbox' name='row-selection-isrowselectable' type='generated'></grid-example>
 
 <snippet>
 const gridOptions = {
@@ -102,13 +116,13 @@ const gridOptions = {
 
 ## Selecting Row Groups (enterprise)
 
-See the [Selecting Groups](/grouping-selecting-groups/) section for more information on configurations specific to Row Grouping.
+See the [Selecting Groups](/grouping-selecting-groups/) section for more information on configuration specific to Row Grouping.
 
 ## Reference
 
 ### Grid API
 
-<api-documentation source='grid-api/api.json' section='selection' names='["selectAll","deselectAll","selectAllFiltered","deselectAllFiltered","getSelectedNodes", "getSelectedRows", "setNodesSelected"]'></api-documentation>
+<api-documentation source='grid-api/api.json' section='selection' names='["selectAll","deselectAll","selectAllFiltered","deselectAllFiltered","selectAllOnCurrentPage", "deselectAllOnCurrentPage", "getSelectedNodes", "getSelectedRows", "setNodesSelected"]'></api-documentation>
 
 
 ### Events

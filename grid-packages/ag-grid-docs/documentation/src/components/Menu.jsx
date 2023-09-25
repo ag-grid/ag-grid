@@ -1,5 +1,4 @@
 import classnames from 'classnames';
-import Announcements from 'components/Announcements';
 import { Icon } from 'components/Icon';
 import { Link } from 'gatsby';
 import React, { useEffect, useState } from 'react';
@@ -222,8 +221,6 @@ const Menu = ({ currentFramework, currentPage, path }) => {
                         />
                     );
                 })}
-
-                <Announcements framework={currentFramework} />
             </ul>
         </aside>
     );

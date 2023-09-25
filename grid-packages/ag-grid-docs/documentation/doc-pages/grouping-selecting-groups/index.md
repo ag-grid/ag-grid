@@ -5,7 +5,7 @@ enterprise: true
 
 Row Selection enables users to choose rows by clicking on them. This page describes configuration specific to Row Grouping.
 
-For more information on how to implement Row Selection in general, refer to the [Row Selection](../row-selection/) documentation page.
+See the [Row Selection](../row-selection/) page for basic selection configuration.
 
 ## Checkboxes with Auto Group Columns
 

@@ -1,16 +1,7 @@
 import { Grid, ColDef, GridOptions } from '@ag-grid-community/core'
 
 const columnDefsA: ColDef[] = [
-  { colId: 'permutationA', field: 'athlete', checkboxSelection: (params) => params.data.year === 2008 },
-  { field: 'country' },
-  { field: 'year' },
-  { field: 'gold' },
-  { field: 'silver' },
-  { field: 'bronze' },
-];
-
-const columnDefsB: ColDef[] = [
-  { colId: 'permutationB', field: 'athlete' },
+  { field: 'athlete', checkboxSelection: true },
   { field: 'country' },
   { field: 'year' },
   { field: 'gold' },
@@ -24,11 +15,12 @@ const gridOptions: GridOptions = {
   columnDefs: columnDefsA,
 
   rowSelection: 'multiple',
+  isRowSelectable: (node) => node.data.year === 2008,
 }
 
 function selectItem(value: boolean) {
   if (gridOptions.api) {
-    gridOptions.api.__updateProperty('columnDefs', value ? columnDefsA : columnDefsB, false);
+    gridOptions.api.__updateProperty('isRowSelectable', value ? (node) => node.data.year === 2008 : undefined, false);
   }
 }
 
