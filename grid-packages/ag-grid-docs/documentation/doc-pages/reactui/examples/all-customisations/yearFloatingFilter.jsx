@@ -1,9 +1,8 @@
-import React, { forwardRef, Fragment, useCallback, useEffect, useImperativeHandle, useMemo, useState } from 'react';
+import React, { forwardRef, useCallback, useImperativeHandle, useMemo, useState } from 'react';
 
 export default forwardRef((props, ref) => {
 
-    // const [year, setYear] = useState('All');
-    const [filterActive, setFilterActive] = useState();
+    const [filterActive, setFilterActive] = useState(false);
 
     // expose AG Grid Filter Lifecycle callbacks
     useImperativeHandle(ref, () => {
