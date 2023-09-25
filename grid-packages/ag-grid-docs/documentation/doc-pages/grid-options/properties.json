@@ -115,7 +115,7 @@
         "columnTypes": {
             "more": {
                 "name": "Custom Column Types",
-                "url": "/column-definitions/#custom-column-types"
+                "url": "/column-definitions/#default-column-definitions"
             }
         },
         "dataTypeDefinitions": {
@@ -367,7 +367,7 @@
         "advancedFilterModel": {
             "more": {
                 "name": "Advanced Filter",
-                "url": "/filter-advanced/#filter-model--    api"
+                "url": "/filter-advanced/#filter-model--api"
             }
         },
         "includeHiddenColumnsInAdvancedFilter": {
@@ -403,12 +403,7 @@
                 "url": "/integrated-charts-user-created/#enabling-user-created-charts"
             }
         },
-        "suppressChartToolPanelsButton": {
-            "more": {
-                "name": "Suppress Chart Tool Panels Button",
-                "url": "/integrated-charts-chart-tool-panels/#showing-legacy-chart-toolbar"
-            }
-        },
+        "suppressChartToolPanelsButton": {},
         "getChartToolbarItems": {
             "more": {
                 "name": "Configuring Toolbar Items",
@@ -442,7 +437,7 @@
         "chartToolPanelsDef": {
             "more": {
                 "name": "Chart Tool Panel customisation",
-                "url": "/integrated-charts-toolbar/#chart-tool-panel-customisation"
+                "url": "/integrated-charts-toolbar/#toolbar-customisation"
             }
         }
     },
@@ -602,7 +597,7 @@
             "description": "Provide a custom loading overlay component.",
             "more": {
                 "name": "Loading Overlay Component",
-                "url": "/component-overlay/#loading-rows-overlay-interface"
+                "url": "/component-overlay/#loading-overlay-component"
             }
         },
         "loadingOverlayComponentParams": {},
@@ -612,7 +607,7 @@
             "description": "Provide a custom no rows overlay component.",
             "more": {
                 "name": "No Rows Overlay Component",
-                "url": "/component-overlay/#no-rows-overlay-interface"
+                "url": "/component-overlay/#no-rows-overlay-component"
             }
         },
         "noRowsOverlayComponentParams": {},
@@ -715,13 +710,13 @@
         "aggFuncs": {
             "more": {
                 "name": "Custom Aggregation Functions",
-                "url": "/aggregation/#custom-aggregation-functions"
+                "url": "/aggregation/#customisations"
             }
         },
         "getGroupRowAgg": {
             "more": {
                 "name": "Custom Full Row Aggregation",
-                "url": "/aggregation/#custom-full-row-aggregation"
+                "url": "/aggregation-custom-functions/#custom-full-row-aggregation"
             }
         },
         "suppressAggFuncInHeader": {},
@@ -734,8 +729,8 @@
         },
         "suppressAggFilteredOnly": {
             "more": {
-                "name": "Custom Aggregation Functions",
-                "url": "/aggregation/#filtering"
+                "name": "Suppress Aggregation Updates When Filtering",
+                "url": "/aggregation-filtering/#suppressing-aggregation-updates-when-filtering"
             }
         },
         "groupAggFiltering": {},
@@ -828,7 +823,7 @@
         "rowDragText": {
             "more": {
                 "name": "Custom Row Drag Text",
-                "url": "row-dragging/#custom-row-drag-text"
+                "url": "/row-dragging/#custom-row-drag-text"
             }
         }
     },
@@ -1078,7 +1073,7 @@
         "serverSidePivotResultFieldSeparator": {
             "more": {
                 "name": "Providing Pivot Result Fields",
-                "url": "/server-side-model-pivoting/#providing-pivot-result-fields-simple"
+                "url": "/server-side-model-pivoting/#supplying-pivot-result-fields-simple"
             }
         },
         "serverSideSortAllLevels": {},

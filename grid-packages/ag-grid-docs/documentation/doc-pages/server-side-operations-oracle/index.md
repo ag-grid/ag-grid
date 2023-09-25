@@ -216,7 +216,7 @@ public class ServerSideGetRowsResponse {
 }
 ```
 
-We will discuss these in detail throughout this guide, however for more details see: [Server-Side Datasource](/server-side-model/#server-side-datasource)
+We will discuss these in detail throughout this guide, however for more details see: [Server-Side Datasource](/server-side-model-datasource/)
 
 
 ## Service Controller
