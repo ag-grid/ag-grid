@@ -38,8 +38,9 @@ The remainder of this page gives information that is common across all the compo
 
 md-include:declare-vue.md
 
-md-include:register-javascript.md
+## Registering Custom Components
 
+md-include:register-javascript.md
 md-include:register-angular.md 
 md-include:register-react.md 
 md-include:register-vue.md
