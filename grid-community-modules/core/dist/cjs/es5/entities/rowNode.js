@@ -828,6 +828,9 @@ var RowNode = /** @class */ (function () {
      * - `false` if the node is not a full width cell
      */
     RowNode.prototype.isFullWidthCell = function () {
+        if (this.detail) {
+            return true;
+        }
         var isFullWidthCellFunc = this.beans.gridOptionsService.getCallback('isFullWidthRow');
         return isFullWidthCellFunc ? isFullWidthCellFunc({ rowNode: this }) : false;
     };

@@ -56,7 +56,7 @@ export interface ColGroupDef<TData = any> extends AbstractColDef<TData> {
     suppressStickyLabel?: boolean;
     /**
     * The custom header group component to be used for rendering the component header. If none specified the default AG Grid is used.
-    * See [Header Group Component](https://www.ag-grid.com/javascript-data-grid/component-header/#header-group-components/) for framework specific implementation details.
+    * See [Header Group Component](https://www.ag-grid.com/javascript-data-grid/component-header/#header-group-components) for framework specific implementation details.
     */
     headerGroupComponent?: any;
     /** The params used to configure the `headerGroupComponent`. */

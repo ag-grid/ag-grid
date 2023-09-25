@@ -809,6 +809,9 @@ class RowNode {
      * - `false` if the node is not a full width cell
      */
     isFullWidthCell() {
+        if (this.detail) {
+            return true;
+        }
         const isFullWidthCellFunc = this.beans.gridOptionsService.getCallback('isFullWidthRow');
         return isFullWidthCellFunc ? isFullWidthCellFunc({ rowNode: this }) : false;
     }

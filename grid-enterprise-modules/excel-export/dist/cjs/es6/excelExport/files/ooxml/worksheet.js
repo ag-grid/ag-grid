@@ -205,7 +205,7 @@ const applyHeaderFontStyle = (headerString, font) => {
 const processHeaderFooterContent = (content) => content.reduce((prev, curr) => {
     const pos = getHeaderPosition(curr.position);
     const output = applyHeaderFontStyle(`${prev}&amp;${pos}`, curr.font);
-    return `${output}${core_1._.escapeString(replaceHeaderFooterTokens(curr.value))}`;
+    return `${output}${core_1._.escapeString(core_1._.utf8_encode(replaceHeaderFooterTokens(curr.value)))}`;
 }, '');
 const buildHeaderFooter = (headerFooterConfig) => {
     const rules = ['all', 'first', 'even'];

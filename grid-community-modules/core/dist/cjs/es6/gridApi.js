@@ -592,7 +592,7 @@ let GridApi = class GridApi {
      * Returns an object containing rules matching the selected rows in the SSRM.
      *
      * If `groupSelectsChildren=false` the returned object will be flat, and will conform to IServerSideSelectionState.
-     * If `groupSelectsChildren=true` the retuned object will be hierarchical, and will conform to IServerSideGroupSelectionState.
+     * If `groupSelectsChildren=true` the returned object will be hierarchical, and will conform to IServerSideGroupSelectionState.
      */
     getServerSideSelectionState() {
         if (generic_1.missing(this.serverSideRowModel)) {

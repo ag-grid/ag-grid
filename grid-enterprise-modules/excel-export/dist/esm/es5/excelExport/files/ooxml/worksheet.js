@@ -204,7 +204,7 @@ var processHeaderFooterContent = function (content) {
     return content.reduce(function (prev, curr) {
         var pos = getHeaderPosition(curr.position);
         var output = applyHeaderFontStyle(prev + "&amp;" + pos, curr.font);
-        return "" + output + _.escapeString(replaceHeaderFooterTokens(curr.value));
+        return "" + output + _.escapeString(_.utf8_encode(replaceHeaderFooterTokens(curr.value)));
     }, '');
 };
 var buildHeaderFooter = function (headerFooterConfig) {

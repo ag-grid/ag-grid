@@ -61499,7 +61499,7 @@ var processHeaderFooterContent = function (content) {
     return content.reduce(function (prev, curr) {
         var pos = getHeaderPosition(curr.position);
         var output = applyHeaderFontStyle(prev + "&amp;" + pos, curr.font);
-        return "" + output + agGridCommunity._.escapeString(replaceHeaderFooterTokens(curr.value));
+        return "" + output + agGridCommunity._.escapeString(agGridCommunity._.utf8_encode(replaceHeaderFooterTokens(curr.value)));
     }, '');
 };
 var buildHeaderFooter = function (headerFooterConfig) {
