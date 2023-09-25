@@ -107,23 +107,29 @@ There are two ways you can get fix this problem:
 
 <framework-specific-section frameworks="react">
 <snippet transform={false} language="ts">
-| // let's assume a React component as follows
-| class NameFilter extends React.Component {
-|     ... // standard filter methods hidden
+|// let's assume a React component as follows
+|export default forwardRef((props, ref) => {
+|    useImperativeHandle(ref, () => {
+|        return {
+|            ... // required filter methods
 |
-|     // put a custom method on the filter
-|     myMethod() {
-|         // does something
-|     }
-| }
+|            // put a custom method on the filter
+|            myMethod() {
+|                // does something
+|            }
+|        }
+|    });
 |
-| // later in your app, if you want to execute myMethod()...
-| laterOnInYourApplicationSomewhere() {
-|     // get reference to the AG Grid Filter component on name column
-|     api.getFilterInstance('name', filterInstance => {
-|         filterInstance.myMethod();
-|     });
-| }
+|    ... // rest of component
+|}
+|
+|// later in your app, if you want to execute myMethod()...
+|laterOnInYourApplicationSomewhere() {
+|    // get reference to the AG Grid Filter component on name column
+|    api.getFilterInstance('name', filterInstance => {
+|        filterInstance.myMethod();
+|    });
+|}
 </snippet>
 </framework-specific-section>
 
