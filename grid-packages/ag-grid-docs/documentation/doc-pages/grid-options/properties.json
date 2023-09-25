@@ -911,7 +911,7 @@
         "initialGroupOrderComparator": {
             "more": {
                 "name": "Initial Group Order",
-                "url": "/grouping-group-order/#default-group-order"
+                "url": "/grouping-group-order/#initial-group-order"
             }
         },
         "groupRemoveSingleChildren": {
@@ -954,7 +954,7 @@
             "description": "Provide the Cell Renderer to use when `groupDisplayType = 'groupRows'`.",
             "more": {
                 "name": "Group Row Cell Renderer",
-                "url": "/grouping-group-rows/#providing-cell-renderer/"
+                "url": "/grouping-group-rows/#providing-cell-renderer"
             }
         },
         "groupRowRendererParams": {},
@@ -1156,13 +1156,13 @@
         "debounceVerticalScrollbar": {
             "more": {
                 "name": "Debounce Vertical Scroll",
-                "url": "/scrolling-performance/#8-debounce-vertical-scroll"
+                "url": "/scrolling-performance/#debounce-vertical-scroll"
             }
         },
         "suppressHorizontalScroll": {
             "more": {
                 "name": "Aligned Grid as Footer",
-                "url": "/aligned-grids/#example-aligned-floating-footer"
+                "url": "/aligned-grids/#example-aligned-grid-as-footer"
             }
         },
         "suppressScrollOnNewData": {},
@@ -1256,7 +1256,7 @@
         "unSortIcon": {
             "more": {
                 "name": "Example Custom Sorting",
-                "url": "/row-sorting/#example-custom-sorting"
+                "url": "/row-sorting/#custom-sorting-example"
             }
         },
         "suppressMultiSort": {},

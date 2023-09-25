@@ -75,13 +75,13 @@
         "addDetailGridInfo": {
             "more": {
                 "name": "Register Detail Grid",
-                "url": "/master-detail-custom-detail/#registering-detail-grid"
+                "url": "/master-detail-custom-detail/#register-detail-grid"
             }
         },
         "removeDetailGridInfo": {
             "more": {
                 "name": "Register Detail Grid",
-                "url": "/master-detail-custom-detail/#registering-detail-grid"
+                "url": "/master-detail-custom-detail/#register-detail-grid"
             }
         }
     },
