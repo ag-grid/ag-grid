@@ -16590,6 +16590,9 @@ class RowNode {
      * - `false` if the node is not a full width cell
      */
     isFullWidthCell() {
+        if (this.detail) {
+            return true;
+        }
         const isFullWidthCellFunc = this.beans.gridOptionsService.getCallback('isFullWidthRow');
         return isFullWidthCellFunc ? isFullWidthCellFunc({ rowNode: this }) : false;
     }
@@ -19996,7 +19999,7 @@ let GridApi = class GridApi {
      * Returns an object containing rules matching the selected rows in the SSRM.
      *
      * If `groupSelectsChildren=false` the returned object will be flat, and will conform to IServerSideSelectionState.
-     * If `groupSelectsChildren=true` the retuned object will be hierarchical, and will conform to IServerSideGroupSelectionState.
+     * If `groupSelectsChildren=true` the returned object will be hierarchical, and will conform to IServerSideGroupSelectionState.
      */
     getServerSideSelectionState() {
         if (missing(this.serverSideRowModel)) {
@@ -50702,7 +50705,7 @@ const applyHeaderFontStyle = (headerString, font) => {
 const processHeaderFooterContent = (content) => content.reduce((prev, curr) => {
     const pos = getHeaderPosition(curr.position);
     const output = applyHeaderFontStyle(`${prev}&amp;${pos}`, curr.font);
-    return `${output}${_.escapeString(replaceHeaderFooterTokens(curr.value))}`;
+    return `${output}${_.escapeString(_.utf8_encode(replaceHeaderFooterTokens(curr.value)))}`;
 }, '');
 const buildHeaderFooter = (headerFooterConfig) => {
     const rules = ['all', 'first', 'even'];

@@ -19941,6 +19941,9 @@ class RowNode {
      * - `false` if the node is not a full width cell
      */
     isFullWidthCell() {
+        if (this.detail) {
+            return true;
+        }
         const isFullWidthCellFunc = this.beans.gridOptionsService.getCallback('isFullWidthRow');
         return isFullWidthCellFunc ? isFullWidthCellFunc({ rowNode: this }) : false;
     }
@@ -23792,7 +23795,7 @@ let GridApi = class GridApi {
      * Returns an object containing rules matching the selected rows in the SSRM.
      *
      * If `groupSelectsChildren=false` the returned object will be flat, and will conform to IServerSideSelectionState.
-     * If `groupSelectsChildren=true` the retuned object will be hierarchical, and will conform to IServerSideGroupSelectionState.
+     * If `groupSelectsChildren=true` the returned object will be hierarchical, and will conform to IServerSideGroupSelectionState.
      */
     getServerSideSelectionState() {
         if (Object(_utils_generic_mjs__WEBPACK_IMPORTED_MODULE_6__["missing"])(this.serverSideRowModel)) {
