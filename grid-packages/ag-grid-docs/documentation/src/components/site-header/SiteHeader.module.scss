@@ -15,6 +15,11 @@
     padding-left: 0 !important;
     padding-right: 0 !important;
 
+    // Required for collapsible mobile menu
+    > div {
+        width: 100%;
+    }
+
     @media screen and (min-width: $breakpoint-site-header-small) {
         flex-wrap: unset;
     }
@@ -124,7 +129,7 @@
     }
 }
 
-#mainNav {
+.mainNav {
     --text-color: var(--white);
     --link-color: var(--white);
     --link-hover-color: var(--white);
@@ -132,10 +137,6 @@
     width: 100%;
     margin-left: auto;
     background-color: var(--site-nav-background);
-
-    // Hide by default
-    height: 0px;
-    overflow: hidden;
 
     @media screen and (min-width: $breakpoint-site-header-small) {
         margin-right: calc(var(--horizontal-margin) - 17px);
