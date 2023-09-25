@@ -14,8 +14,8 @@ This section outlines how the grid fits in with native operating system drag and
 <note>
 The grid implements its own drag and drop separate to the operating system drag and drop.
 It is used internally by the grid for
-[Row Dragging](/row-dragging/) (for reordering rows) and for column dragging
-(e.g. re-ordering columns or moving columns in the [Column Tool Panel](/tool-panel-columns/)).
+[Row Dragging](../row-dragging/) (for reordering rows) and for column dragging
+(e.g. re-ordering columns or moving columns in the [Column Tool Panel](../tool-panel-columns/)).
 The grid uses its own implementation in these instances as it needs finer control over the data
 than native browser drag & drop supports. For example, the native d&d does not provide
 access to the dragged item until after the drag operation is complete.

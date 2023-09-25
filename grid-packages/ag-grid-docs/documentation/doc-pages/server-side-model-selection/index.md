@@ -7,7 +7,7 @@ Selecting rows and groups in the Server-Side Row Model is supported.
 Just set the property `rowSelection` to either `'single'` or `'multiple'` as with any other row model.
 
 <note>
-Server-Side Row Selection requires [Row ID's](../server-side-model-configuration/#providing-row-ids) to be supplied to grid.
+Server-Side Row Selection requires [Row IDs](../server-side-model-configuration/#providing-row-ids) to be supplied to grid.
 </note>
 
 ## Enabling Row Selection

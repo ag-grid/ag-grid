@@ -759,13 +759,13 @@
         "openChartToolPanel": {
             "more": {
                 "name": "Open Chart Tool Panel",
-                "url": "/integrated-charts-chart-tool-panels/"
+                "url": "/integrated-charts-chart-tool-panels/#chart-tool-panel-api"
             }
         },
         "closeChartToolPanel": {
             "more": {
                 "name": "Close Chart Tool Panel",
-                "url": "/integrated-charts-chart-tool-panels/"
+                "url": "/integrated-charts-chart-tool-panels/#chart-tool-panel-api"
             }
         }
     },

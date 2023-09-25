@@ -20,7 +20,7 @@ This is a list of all the events that the grid raises.
 
 <framework-specific-section frameworks="javascript">
 <note>
-| TypeScript users can take advantage of the events' interfaces. You can construct the interface name by suffixing the event name with `Event`. For example, the `cellClicked` event uses the interface `CellClickedEvent`. All events support generics. See [Typescript Generics](/typescript-generics) for more details.
+| TypeScript users can take advantage of the events' interfaces. You can construct the interface name by suffixing the event name with `Event`. For example, the `cellClicked` event uses the interface `CellClickedEvent`. All events support generics. See [Typescript Generics](../typescript-generics) for more details.
 </note>
 </framework-specific-section>
 
