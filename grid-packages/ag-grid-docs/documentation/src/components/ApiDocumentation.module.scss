@@ -53,7 +53,7 @@
 
     tr:nth-child(even),
     tr:nth-child(even) td {
-        background-color: white;
+        background-color: var(--default-background-color);
     }
 
     pre:global(.code) {

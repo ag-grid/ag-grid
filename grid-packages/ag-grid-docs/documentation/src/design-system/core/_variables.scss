@@ -318,6 +318,8 @@ $dark-scales: (
 
 // Semantic colors based on abstract colors
 $semantic-colors: (
+    // Background
+    'default-background-color': white,
     // Text
     'default-text-color': neutral-900,
     'text-color': default-text-color,

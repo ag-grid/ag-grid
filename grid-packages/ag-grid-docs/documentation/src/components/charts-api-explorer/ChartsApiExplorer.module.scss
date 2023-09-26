@@ -16,7 +16,7 @@
         padding-left: $size-2;
         padding-right: $size-2;
         padding-bottom: $size-2;
-        background: white;
+        background: var(--default-background-color);
 
         .optionsContainer {
             width: 500px;

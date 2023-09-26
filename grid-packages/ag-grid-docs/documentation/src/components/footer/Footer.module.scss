@@ -53,17 +53,19 @@
     }
 
     a {
+        text-decoration: underline;
         display: inline-block;
         min-width: $size-6;
         margin-top: -12px;
         margin-bottom: -12px;
         padding-top: 12px;
         padding-bottom: 12px;
+        text-decoration-color: transparent;
         text-underline-offset: 2px;
         transition: text-decoration-color $default-transition-timing;
 
         &:hover {
-            text-decoration-color: var(--white);
+            text-decoration-color: var(--text-color);
 
             :global(.icon) {
                 opacity: 1;
