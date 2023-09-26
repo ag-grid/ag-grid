@@ -1,0 +1,298 @@
+// Better color tools
+// https://github.com/drwpow/better-color-tools
+
+@use 'sass:color';
+@use 'sass:list';
+@use 'sass:math';
+@use 'sass:map';
+@use 'sass:meta';
+@use 'sass:string';
+
+$ONE_THIRD: math.div(1, 3);
+
+/// Mix colors through the Oklab space
+///
+/// @param {color} $color1
+/// @param {color} $color2
+/// @param {float} $weight [0.5] Mix strength (`0` = $color1, `0.5` = 50–50, `1` = $color2)
+/// @returns {color} Mix result
+@function mix($color1, $color2, $weight: 0.5) {
+    @if $weight == 0 {
+        @return $color1;
+    }
+    @if $weight == 1 {
+        @return $color2;
+    }
+
+    $w1: 1 - $weight;
+    $w2: $weight;
+
+    $oklab1: rgbToOklab($color1);
+    $oklab2: rgbToOklab($color2);
+
+    $labmix: (
+        'l': map.get($oklab1, 'l') * $w1 + map.get($oklab2, 'l') * $w2,
+        'a': map.get($oklab1, 'a') * $w1 + map.get($oklab2, 'a') * $w2,
+        'b': map.get($oklab1, 'b') * $w1 + map.get($oklab2, 'b') * $w2,
+    );
+
+    $rgb: oklabToRGB($labmix);
+    @return rgba($rgb, color.alpha($color1) * $w1 + color.alpha($color2) * $w2); // don’t forget the alpha channel!
+}
+
+/// Convert sRGB to Oklab
+///
+/// @param {color} $color
+/// @returns {map} Map of l, a, b, alpha
+@function rgbToOklab($color) {
+    // sRGB -> Linear RGB D65
+    $red: __degamma(math.div(color.red($color), 255));
+    $green: __degamma(math.div(color.green($color), 255));
+    $blue: __degamma(math.div(color.blue($color), 255));
+    $alpha: color.alpha($color);
+
+    // Linear RGB D65 -> LMS
+    $lms: (
+        'l': 0.4122214708 * $red + 0.5363325363 * $green + 0.0514459929 * $blue,
+        'm': 0.2119034982 * $red + 0.6806995451 * $green + 0.1073969566 * $blue,
+        's': 0.0883024619 * $red + 0.2817188376 * $green + 0.6299787005 * $blue,
+    );
+
+    // LMS -> Oklab
+    $l: 0.2104542553 * __cbrt(map.get($lms, 'l')) + 0.793617785 * __cbrt(map.get($lms, 'm')) - 0.0040720468 *
+        __cbrt(map.get($lms, 's'));
+    $a: 1.9779984951 * __cbrt(map.get($lms, 'l')) - 2.428592205 * __cbrt(map.get($lms, 'm')) + 0.4505937099 *
+        __cbrt(map.get($lms, 's'));
+    $b: 0.0259040371 * __cbrt(map.get($lms, 'l')) + 0.7827717662 * __cbrt(map.get($lms, 'm')) - 0.808675766 *
+        __cbrt(map.get($lms, 's'));
+    @return ('l': $l, 'a': $a, 'b': $b, alpha: $alpha);
+}
+
+/// Convert Oklab map to sRGB
+///
+/// @param {map} Map of l, a, b
+/// @returns {color} sRGB color
+@function oklabToRGB($oklab) {
+    @if meta.type-of($oklab) != 'map' {
+        @error "Must provide map of \"l\", \"a\", \"b\" values";
+    }
+
+    // Oklab -> LMS
+    $lms: (
+        'l':
+            math.pow(
+                map.get($oklab, 'l') + 0.39633779217376774 * map.get($oklab, 'a') + 0.2158037580607588 *
+                    map.get($oklab, 'b'),
+                3
+            ),
+        'm':
+            math.pow(
+                map.get($oklab, 'l') - 0.10556134232365633 * map.get($oklab, 'a') - 0.0638541747717059 *
+                    map.get($oklab, 'b'),
+                3
+            ),
+        's':
+            math.pow(
+                map.get($oklab, 'l') - 0.08948418209496574 * map.get($oklab, 'a') - 1.2914855378640917 *
+                    map.get($oklab, 'b'),
+                3
+            ),
+    );
+
+    // LMS -> Linear RGB D65
+    $r: math.max(
+        4.0767416621 * map.get($lms, 'l') - 3.3077115913 * map.get($lms, 'm') + 0.2309699292 * map.get($lms, 's'),
+        0
+    );
+    $g: math.max(
+        -1.2684380046 * map.get($lms, 'l') + 2.6097574011 * map.get($lms, 'm') - 0.3413193965 * map.get($lms, 's'),
+        0
+    );
+    $b: math.max(
+        -0.0041960863 * map.get($lms, 'l') - 0.7034186147 * map.get($lms, 'm') + 1.707614701 * map.get($lms, 's'),
+        0
+    );
+
+    $alpha: 1;
+    @if map.has-key($oklab, 'alpha') {
+        $alpha: map.get($oklab, 'alpha');
+    }
+
+    // Linear RGB D65 -> sRGB
+    @return rgba(__gamma($r) * 255, __gamma($g) * 255, __gamma($b) * 255, $alpha);
+}
+
+$ε: 0.0002;
+
+/// Convert RGB to Oklch map
+/// @param {color} $color
+/// @returns {map} Map of l, c, h, alpha
+@function rgbToOklch($color) {
+    $oklab: rgbToOklab($color);
+
+    $l: map.get($oklab, 'l');
+    $a: map.get($oklab, 'a');
+    $b: map.get($oklab, 'b');
+    $alpha: 1;
+    @if (map.has-key($oklab, 'alpha')) {
+        $alpha: map.get($oklab, 'alpha');
+    }
+
+    $h: 0;
+    @if (math.abs($a) >= $ε or math.abs($b) >= $ε) {
+        $h: __unitless(math.atan2($b, $a));
+    }
+    @while ($h < 0) {
+        $h: $h + 360;
+    }
+    @while ($h >= 360) {
+        $h: $h - 360;
+    }
+    @return (l: $l, c: math.sqrt(math.pow($a, 2) + math.pow($b, 2)), h: $h, alpha: $alpha);
+}
+
+/// Convert Oklch map to sRGB
+///
+/// @param {map} Map of l, c, h
+/// @returns {color} sRGB color
+@function oklchToRGB($oklch) {
+    @if meta.type-of($oklch) != 'map' {
+        @error "Must provide map of \"l\", \"c\", \"h\" values";
+    }
+
+    $l: map.get($oklch, 'l');
+    $c: map.get($oklch, 'c');
+    $h: map.get($oklch, 'h');
+    $alpha: 1;
+    @if (map.has-key($oklch, 'alpha')) {
+        $alpha: map.get($oklch, 'alpha');
+    }
+
+    // if lightness is 0, return pure black
+    @if ($l < $ε) {
+        @return rgba(0, 0, 0, $alpha);
+    }
+
+    @while ($h < 0) {
+        $h: $h + 360;
+    }
+    @while ($h >= 360) {
+        $h: $h - 360;
+    }
+
+    $a: math.cos(__degToRad($h)) * $c;
+    $b: math.sin(__degToRad($h)) * $c;
+
+    @return oklabToRGB(
+        (
+            l: $l,
+            a: $a,
+            b: $b,
+            alpha: $alpha,
+        )
+    );
+}
+
+/// Relatively lighten color via Oklab. Produces better results than Sass’ lighten().
+///
+/// @param {color} $color
+/// @param {float} $weight [0.5] Lightness strength (`0` = $color; `1` = white; `-1` = black)
+/// @returns {color} Lightened color
+@function lighten($color, $weight: 0.5) {
+    @if $weight >= 0 {
+        @return mix($color, #fff, $weight);
+    } @else {
+        @return darken($color, -$weight);
+    }
+}
+
+/// Relatively lighten color via Oklab. Produces better results than Sass’ lighten().
+///
+/// @param {color} $color
+/// @param {float} $weight [0.5] Darkness strength (`0` = $color; `1` = black; `-1` = white)
+/// @returns {color} Darkened color
+@function darken($color, $weight: 0.5) {
+    @if $weight >= 0 {
+        @return mix($color, #000, $weight);
+    } @else {
+        @return lighten($color, -$weight);
+    }
+}
+
+/// Turn any color into P3 (supporting browsers only)
+/// (https://webkit.org/blog/10042/wide-gamut-color-in-css-with-display-p3/)
+///
+/// @param {color} $color
+/// @returns {string} P3 color string
+@function p3($color) {
+    $r: math.div(color.red($color), 255);
+    $g: math.div(color.green($color), 255);
+    $b: math.div(color.blue($color), 255);
+    $a: color.alpha($color);
+    @if $a == 1 {
+        @return #{color(display-p3 $r $g $b)};
+    } @else {
+        @return #{color(display-p3 $r $g $b/$a)};
+    }
+}
+
+/// Get perceived lightness of a color. Produces far better results than HSL.
+///
+/// @param {color} $color
+/// @returns {float} Perceived lightness from `0` (dark) to `1`
+@function lightness($color) {
+    $oklab: rgbToOklab($color);
+    @return map.get($oklab, 'l');
+}
+
+/// Quickly generate fallbacks for a CSS property. Useful for experimental syntax and partial support.
+/// ex: `@include better.fallback(color, better.p3(#c4432b), #c4432b);`
+///
+/// @param {string} $property - The CSS property
+/// @param {string} $values... - Specify desired values in decreasing order of preference
+@mixin fallback($property, $values...) {
+    @if list.length($values) < 2 {
+        @error "Must specify at least 2 values for fallback()";
+    }
+    @for $i from list.length($values) through 1 {
+        #{$property}: list.nth($values, $i);
+    }
+}
+
+// utils
+
+/// convert sRGB to Linear RGB D65
+@function __degamma($value) {
+    @if $value <= 0.04045 {
+        @return math.div($value, 12.92);
+    }
+    @return math.pow(math.div($value + 0.055, 1.055), 2.4);
+}
+
+/// convert Linear RGB D65 to sRGB
+@function __gamma($value) {
+    @if $value <= 0.0031308 {
+        @return math.clamp($value * 12.92, 0, 1);
+    }
+    @return math.clamp(1.055 * math.pow($value, math.div(1, 2.4)) - 0.055, 0, 1);
+}
+
+/// Calculate cube root of a number (allows negative numbers, which Sass doesn’t allow)
+@function __cbrt($num) {
+    $cbrt: math.pow(math.abs($num), $ONE_THIRD);
+    @if $num < 0 {
+        @return -1 * $cbrt;
+    } @else {
+        @return $cbrt;
+    }
+}
+
+/// Degrees -> radians
+@function __degToRad($degrees) {
+    @return $degrees * math.div(math.$pi, 180);
+}
+
+/// Remove units
+@function __unitless($number) {
+    @return math.div($number, ($number * 0 + 1));
+}

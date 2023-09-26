@@ -80,7 +80,7 @@
             height: 0.85em;
             top: -0.1em;
             visibility: visible;
-            fill: var(--azure-blue);
+            fill: var(--link-color);
         }
     }
 
@@ -89,19 +89,6 @@
 
         width: 1rem;
         margin-left: 0.25rem;
-    }
-
-    a {
-        &:hover {
-            text-decoration: none;
-            color: var(--ag-grid-orange);
-        }
-    }
-
-    :global(.nav-link) {
-        p {
-            margin: 0;
-        }
     }
 
     ul li > p {

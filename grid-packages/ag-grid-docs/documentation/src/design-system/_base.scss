@@ -15,6 +15,7 @@ html {
     font-size: var(--font-size);
     line-height: var(--line-height);
     font-weight: var(--font-weight);
+    background-color: var(--default-background-color);
     color: var(--text-color);
 
     @media (min-width: $breakpoint-docs-nav-medium) {

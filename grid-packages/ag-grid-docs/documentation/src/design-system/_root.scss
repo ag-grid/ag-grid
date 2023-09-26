@@ -1,3 +1,4 @@
+@use "sass:map";
 @use 'core' as *;
 
 #{$css-variables-root} {
@@ -5,6 +6,14 @@
     @each $name, $hex in $abstract-colors {
         --#{$name}: #{$hex};
     }
+
+    // create a CSS variable for all scale colors
+    @each $name, $scale in $color-scales {
+        @each $key, $value in map.get($color-scales, $name) {
+            --#{$name}-#{unquote($key)}: #{$value};
+        }
+    }
+
     // create a CSS variable for every semantic color
     @each $name, $var-name in $semantic-colors {
         --#{$name}: var(--#{$var-name});
@@ -40,4 +49,32 @@
     --line-height: var(--line-height-normal);
 
     --icon-size: #{$icon-size};
+}
+
+html[data-dark-mode='true'] {
+    @each $name, $scale in $dark-scales {
+        @each $key, $value in map.get($dark-scales, $name) {
+            --#{$name}-#{unquote($key)}: #{$value};
+        }
+    }
+
+    // create a CSS variable for every semantic color
+    @each $name, $var-name in $dark-semantic-colors {
+        --#{$name}: var(--#{$var-name});
+    }
+}
+
+@media (prefers-color-scheme: dark) {
+    #{$css-variables-root}:not([data-dark-mode='false']) {
+        @each $name, $scale in $dark-scales {
+            @each $key, $value in map.get($dark-scales, $name) {
+                --#{$name}-#{unquote($key)}: #{$value};
+            }
+        }
+
+        // create a CSS variable for every semantic color
+        @each $name, $var-name in $dark-semantic-colors {
+            --#{$name}: var(--#{$var-name});
+        }
+    }
 }

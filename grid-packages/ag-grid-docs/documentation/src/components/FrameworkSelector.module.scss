@@ -38,10 +38,11 @@
     }
 
     span {
+        --text-color: var(--default-text-color);
+
         display: none;
         margin-left: 4px;
         font-size: var(--font-size);
-        color: #212529;
         transition: opacity $default-transition-timing;
     }
 

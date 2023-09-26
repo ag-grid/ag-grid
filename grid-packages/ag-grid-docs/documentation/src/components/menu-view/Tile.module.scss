@@ -9,7 +9,7 @@
     $columns-5: calc(20% - $columns-gap / 5 * 4);
 
     width: 100%;
-    background-color: var(--ghost-blue);
+    background-color: var(--background-100);
     border-radius: var(--border-radius);
     border: 2px solid var(--bright-blue-gray);
     transition: color $default-transition-timing, border-color $default-transition-timing,
@@ -138,7 +138,7 @@
 .videoTile {
     overflow: hidden;
     aspect-ratio: 16/9;
-    background-color: var(--bright-blue-gray);
+    background-color: var(--background-300);
 
     &:hover {
         background-color: var(--link-hover-color);

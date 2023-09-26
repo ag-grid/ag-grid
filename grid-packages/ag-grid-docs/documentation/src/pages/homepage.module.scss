@@ -23,7 +23,7 @@ gatsby-fast-refresh {
     --text-color: var(--white);
 
     padding-top: $size-5;
-    background-color: var(--dark-cerulean-blue);
+    background-color: var(--dark-blue-500);
 
     @media screen and (min-width: $breakpoint-hero-small) {
         padding-top: $size-7;
@@ -128,7 +128,7 @@ gatsby-fast-refresh {
 }
 
 .homepageFrameworks {
-    background-color: var(--bright-blue-gray);
+    background-color: var(--background-200);
     padding-top: $size-2;
     padding-bottom: $size-6;
 
@@ -149,7 +149,7 @@ gatsby-fast-refresh {
 
 .automatedIntegratedChartsOuter {
     margin-bottom: $size-8;
-    background-color: var(--bright-blue-gray);
+    background-color: var(--background-200);
 }
 
 .frameworksInner {
@@ -181,7 +181,7 @@ gatsby-fast-refresh {
 .homepageQuotes {
     padding-top: $size-7;
     padding-bottom: $size-1;
-    background-color: var(--ghost-blue);
+    background-color: var(--background-100);
 
     @media screen and (min-width: 940px) {
         padding-top: $size-8;
@@ -190,7 +190,7 @@ gatsby-fast-refresh {
 }
 
 .homepageCustomers {
-    background-color: var(--ghost-blue);
+    background-color: var(--background-100);
     padding-bottom: $size-6;
 }
 
@@ -230,6 +230,11 @@ gatsby-fast-refresh {
 
         @media screen and (min-width: 640px) {
             height: $size-1 * 10;
+        }
+
+        // WIP darkmode adjustment for customer logos
+        #{$darkmode-selector} & {
+            filter: grayscale(100%) invert(1) brightness(1.25);
         }
     }
 }
@@ -304,6 +309,11 @@ gatsby-fast-refresh {
     }
 }
 
+// Invert plunker logo for darkmode
+#{$darkmode-selector} .projectPlunker img {
+    filter: invert(1);
+}
+
 .automatedExampleDebugPanel {
     position: fixed;
     top: 0;
@@ -318,7 +328,7 @@ gatsby-fast-refresh {
 
     :global(.disabled) {
         h2 {
-            color: var(--ag-grid-grey);
+            color: var(--neutral-500);
 
             &::after {
                 content: ' (disabled)';
@@ -339,7 +349,7 @@ gatsby-fast-refresh {
     :global(.state) {
         &::before {
             content: 'State: ';
-            color: var(--dull-light-gray);
+            color: var(--neutral-500);
         }
     }
 
@@ -358,7 +368,7 @@ gatsby-fast-refresh {
     :global(.paused-state) {
         &::before {
             content: 'Paused at: ';
-            color: var(--dull-light-gray);
+            color: var(--neutral-500);
         }
     }
 
@@ -383,7 +393,7 @@ gatsby-fast-refresh {
 
         &::before {
             content: 'Mouse: ';
-            color: var(--dull-light-gray);
+            color: var(--neutral-500);
         }
     }
 
@@ -394,7 +404,7 @@ gatsby-fast-refresh {
 
         &::before {
             content: 'Manager: ';
-            color: var(--dull-light-gray);
+            color: var(--neutral-500);
         }
     }
 }

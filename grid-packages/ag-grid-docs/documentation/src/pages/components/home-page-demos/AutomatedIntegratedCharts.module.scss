@@ -224,7 +224,7 @@ $z-index-splash-contents: 10;
     // Override inline styles for 'dark-mode' automated cursor
     :global(.highlight),
     :global(.animate-click) {
-        fill: var(--azure-blue) !important;
+        fill: var(--link-color) !important;
     }
 
     :global(.highlight) {

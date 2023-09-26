@@ -15,6 +15,11 @@
     padding-left: 0 !important;
     padding-right: 0 !important;
 
+    // Required for collapsible mobile menu
+    > div {
+        width: 100%;
+    }
+
     @media screen and (min-width: $breakpoint-site-header-small) {
         flex-wrap: unset;
     }
@@ -32,7 +37,7 @@
 .mobileMenuButton {
     --button-color: transparent;
     --border-radius: 0;
-    --button-hover-color: #{rgba(map.get($abstract-colors, ag-grid-dark-blue), 0.6666)};
+    --button-hover-color: var(--dark-blue-700);
 
     appearance: none;
     display: flex;
@@ -124,7 +129,7 @@
     }
 }
 
-#mainNav {
+.mainNav {
     --text-color: var(--white);
     --link-color: var(--white);
     --link-hover-color: var(--white);
@@ -132,10 +137,6 @@
     width: 100%;
     margin-left: auto;
     background-color: var(--site-nav-background);
-
-    // Hide by default
-    height: 0px;
-    overflow: hidden;
 
     @media screen and (min-width: $breakpoint-site-header-small) {
         margin-right: calc(var(--horizontal-margin) - 17px);
@@ -217,6 +218,10 @@
     }
 }
 
+.github-item {
+    order: 2;
+}
+
 .github-item a {
     display: inline-block;
     position: relative;
@@ -245,7 +250,7 @@
 
         svg {
             position: relative;
-            top: 2px;
+            top: 5px;
             left: 0;
             transition: box-shadow 0.25s ease-in-out;
         }

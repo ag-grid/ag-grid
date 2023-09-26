@@ -9,6 +9,7 @@ import { useWindowSize } from '../../utils/use-window-size';
 import { Collapsible } from '../Collapsible';
 import { Icon } from '../Icon';
 import LogoMark from '../LogoMark';
+import { DarkModeToggle } from './DarkModeToggle';
 import styles from './SiteHeader.module.scss';
 
 const IS_SSR = typeof window === 'undefined';
@@ -60,34 +61,30 @@ const getCurrentPageName = (path) => {
 };
 
 const HeaderLinks = ({ path, isOpen, toggleIsOpen }) => {
-    return (
-        <ul className={classnames(styles.navItemList, 'list-style-none')}>
-            {links.map((link) => {
-                const linkClasses = classnames(styles.navItem, {
-                    [styles.navItemActive]: link.name === getCurrentPageName(path),
-                    [styles[link.cssClass]]: link.cssClass,
-                });
+    return links.map((link) => {
+        const linkClasses = classnames(styles.navItem, {
+            [styles.navItemActive]: link.name === getCurrentPageName(path),
+            [styles[link.cssClass]]: link.cssClass,
+        });
 
-                return (
-                    <li key={link.name.toLocaleLowerCase()} className={linkClasses}>
-                        <a
-                            className={styles.navLink}
-                            href={link.url}
-                            onClick={() => {
-                                if (isOpen) {
-                                    toggleIsOpen();
-                                }
-                            }}
-                            aria-label={`AG Grid ${link.name}`}
-                        >
-                            {link.icon}
-                            <span>{link.name}</span>
-                        </a>
-                    </li>
-                );
-            })}
-        </ul>
-    );
+        return (
+            <li key={link.name.toLocaleLowerCase()} className={linkClasses}>
+                <a
+                    className={styles.navLink}
+                    href={link.url}
+                    onClick={() => {
+                        if (isOpen) {
+                            toggleIsOpen();
+                        }
+                    }}
+                    aria-label={`AG Grid ${link.name}`}
+                >
+                    {link.icon}
+                    <span>{link.name}</span>
+                </a>
+            </li>
+        );
+    });
 };
 
 const HeaderExpandButton = ({ isOpen, toggleIsOpen }) => (
@@ -116,24 +113,16 @@ const HeaderNav = ({ path }) => {
 
     return (
         <>
-            {IS_SSR && (
-                <>
-                    <HeaderExpandButton isOpen={false} />
-                    <nav id={styles.mainNav}>
+            <HeaderExpandButton isOpen={isOpen} toggleIsOpen={toggleIsOpen} />
+            
+            <Collapsible id="main-nav" isDisabled={isDesktop} isOpen={isOpen}>
+                <nav id={isDesktop ? 'main-nav' : undefined} className={styles.mainNav}>
+                    <ul className={classnames(styles.navItemList, 'list-style-none')}>
                         <HeaderLinks path={path} isOpen={isOpen} toggleIsOpen={toggleIsOpen} />
-                    </nav>
-                </>
-            )}
-            {!IS_SSR && (
-                <>
-                    <HeaderExpandButton isOpen={isOpen} toggleIsOpen={toggleIsOpen} />
-                    <Collapsible id={styles.mainNav} isDisabled={isDesktop} isOpen={isOpen}>
-                        <nav id={isDesktop ? styles.mainNav : undefined}>
-                            <HeaderLinks path={path} isOpen={isOpen} toggleIsOpen={toggleIsOpen} />
-                        </nav>
-                    </Collapsible>
-                </>
-            )}
+                        <DarkModeToggle />
+                    </ul>
+                </nav>
+            </Collapsible>
         </>
     );
 };

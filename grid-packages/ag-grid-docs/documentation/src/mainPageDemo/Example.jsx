@@ -24,6 +24,7 @@ import { StatusBarModule } from '@ag-grid-enterprise/status-bar';
 import classnames from 'classnames';
 import React, { memo, useEffect, useMemo, useRef, useState } from 'react';
 import { Helmet } from 'react-helmet';
+import LocalStorage from '../utils/local-storage';
 import { booleanValues, colNames, countries, COUNTRY_CODES, firstNames, games, lastNames, months } from './consts';
 import { CountryFloatingFilterComponent } from './CountryFloatingFilterComponent';
 import styles from './Example.module.scss';
@@ -622,11 +623,9 @@ const Example = () => {
     const [gridTheme, setGridTheme] = useState(null);
     useEffect(() => {
         const params = new URLSearchParams(window.location.search);
-        const theme = params.get('theme') || 'ag-theme-alpine';
-
-        const participantGroup = desktopDefaultCols.find(group => group.headerName === 'Participant');
-        const countryColumn = participantGroup.children.find(column => column.field === 'country')
-        countryColumn['cellEditorPopup'] = theme.includes('material') ? true : false;
+        const theme =
+            params.get('theme') ||
+            (JSON.parse(LocalStorage.get('context')).darkMode ? 'ag-theme-alpine-dark' : 'ag-theme-alpine');
 
         setGridTheme(theme);
     }, []);
