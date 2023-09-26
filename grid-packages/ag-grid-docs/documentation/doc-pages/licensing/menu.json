@@ -16,21 +16,27 @@
             "title": "React Compatibility",
             "icon": "react",
             "url": "/react-compatibility",
-            "frameworks": ["react"]
+            "frameworks": [
+              "react"
+            ]
           },
           {
             "title": "Rendering",
             "icon": "react",
             "url": "/reactui/",
             "pane": "left",
-            "frameworks": ["react"]
+            "frameworks": [
+              "react"
+            ]
           },
           {
             "title": "Hooks",
             "icon": "reactHooks",
             "url": "/react-hooks/",
             "pane": "left",
-            "frameworks": ["react"]
+            "frameworks": [
+              "react"
+            ]
           },
           {
             "title": "Video Tutorial",
@@ -38,14 +44,18 @@
             "icon": "youtube",
             "menuHide": true,
             "pane": "left",
-            "frameworks": ["javascript"]
+            "frameworks": [
+              "javascript"
+            ]
           },
           {
             "title": "Plunker Example",
             "url": "{example}",
             "icon": "plunker",
             "menuHide": true,
-            "frameworks": ["javascript"],
+            "frameworks": [
+              "javascript"
+            ],
             "pane": "left"
           },
           {
@@ -53,7 +63,11 @@
             "url": "{example}",
             "icon": "{example-icon}",
             "menuHide": true,
-            "frameworks": ["angular", "react", "vue"],
+            "frameworks": [
+              "angular",
+              "react",
+              "vue"
+            ],
             "pane": "left"
           },
           {
@@ -61,28 +75,37 @@
             "url": "{thinkster}",
             "icon": "thinkster",
             "menuHide": true,
-            "frameworks": ["angular", "react"],
+            "frameworks": [
+              "angular",
+              "react"
+            ],
             "pane": "left"
           },
           {
             "title": "SolidJS",
             "icon": "solid",
             "url": "/solidjs",
-            "frameworks": ["react"],
+            "frameworks": [
+              "react"
+            ],
             "pane": "right"
           },
           {
             "title": "Angular Compatibility",
             "icon": "angular",
             "url": "/angular-compatibility",
-            "frameworks": ["angular"],
+            "frameworks": [
+              "angular"
+            ],
             "pane": "right"
           },
           {
             "title": "Vue 2 Tutorial",
             "icon": "vue",
             "url": "/vue2/",
-            "frameworks": ["vue"],
+            "frameworks": [
+              "vue"
+            ],
             "pane": "right"
           },
           {
@@ -93,7 +116,6 @@
       },
       {
         "title": "Interface / API",
-        "icon": "docs-api",
         "matrixExcludeChildren": true,
         "items": [
           {
@@ -113,13 +135,11 @@
               },
               {
                 "title": "Grid Events",
-                "box-title": "Events",
                 "url": "/grid-events/",
                 "showInCollapsed": true
               },
               {
                 "title": "Grid Lifecycle",
-                "box-title": "Grid Lifecycle",
                 "url": "/grid-lifecycle/",
                 "showInCollapsed": true
               },
@@ -161,48 +181,40 @@
       },
       {
         "title": "Columns",
-        "icon": "docs-columns",
         "matrixExcludeChildren": true,
         "items": [
           {
             "title": "Column Definitions",
-            "box-title": "Definitions",
             "url": "/column-definitions/",
             "showInCollapsed": true
           },
           {
             "title": "Updating Definitions",
-            "box-title": "State",
             "url": "/column-updating-definitions/",
             "showInCollapsed": true
           },
           {
             "title": "Column State",
-            "box-title": "State",
             "url": "/column-state/",
             "showInCollapsed": true
           },
           {
             "title": "Column Headers",
-            "box-title": "Headers",
             "url": "/column-headers/",
             "showInCollapsed": true
           },
           {
             "title": "Column Groups",
-            "box-title": "Groups",
             "url": "/column-groups/",
             "showInCollapsed": true
           },
           {
             "title": "Column Sizing",
-            "box-title": "Sizing",
             "url": "/column-sizing/",
             "showInCollapsed": true
           },
           {
             "title": "Column Moving",
-            "box-title": "Moving",
             "url": "/column-moving/",
             "showInCollapsed": true
           },
@@ -213,13 +225,11 @@
           },
           {
             "title": "Column Pinning",
-            "box-title": "Pinning",
             "url": "/column-pinning/",
             "showInCollapsed": true
           },
           {
             "title": "Column Spanning",
-            "box-title": "Spanning",
             "url": "/column-spanning/",
             "showInCollapsed": true
           }
@@ -227,53 +237,44 @@
       },
       {
         "title": "Rows",
-        "icon": "docs-row",
         "items": [
           {
             "title": "Row IDs",
-            "box-title": "IDs",
             "url": "/row-ids/",
             "showInCollapsed": true
           },
           {
             "title": "Row Sorting",
-            "box-title": "Sorting",
             "url": "/row-sorting/",
             "showInCollapsed": true
           },
           {
             "title": "Row Spanning",
-            "box-title": "Spanning",
             "url": "/row-spanning/",
             "showInCollapsed": true
           },
           {
             "title": "Row Pinning",
-            "box-title": "Pinning",
             "url": "/row-pinning/",
             "showInCollapsed": true
           },
           {
             "title": "Row Height",
-            "box-title": "Height",
             "url": "/row-height/",
             "showInCollapsed": true
           },
           {
             "title": "Full Width Rows",
-            "box-title": "Full Width",
             "url": "/full-width-rows/",
             "showInCollapsed": true
           },
           {
             "title": "Row Animation",
-            "box-title": "Animation",
             "url": "/row-animation/",
             "showInCollapsed": true
           },
           {
             "title": "Row Dragging",
-            "box-title": "Dragging",
             "showInCollapsed": true,
             "url": "/row-dragging/",
             "items": [
@@ -291,20 +292,23 @@
       },
       {
         "title": "Build & Tooling",
-        "icon": "docs-tooling",
         "matrixExcludeChildren": true,
         "items": [
           {
             "title": "Install with NPM",
             "url": "/npm/",
             "showInCollapsed": true,
-            "frameworks": ["javascript"]
+            "frameworks": [
+              "javascript"
+            ]
           },
           {
             "title": "Download Bundles",
             "url": "/download/",
             "showInCollapsed": true,
-            "frameworks": ["javascript"]
+            "frameworks": [
+              "javascript"
+            ]
           },
           {
             "title": "Community & Enterprise",
@@ -324,7 +328,9 @@
                   {
                     "title": "Using ES Modules",
                     "url": "/esm-packages/",
-                    "frameworks": ["javascript"]
+                    "frameworks": [
+                      "javascript"
+                    ]
                   }
                 ]
               },
@@ -335,19 +341,27 @@
                   {
                     "title": "Using ES Modules",
                     "url": "/esm-modules/",
-                    "frameworks": ["javascript"]
+                    "frameworks": [
+                      "javascript"
+                    ]
                   }
                 ]
               },
               {
                 "title": "Modules - Example",
                 "url": "/modules-building/",
-                "frameworks": ["angular", "react", "vue"]
+                "frameworks": [
+                  "angular",
+                  "react",
+                  "vue"
+                ]
               },
               {
                 "title": "Custom UMD Bundle",
                 "url": "/modules-building/",
-                "frameworks": ["javascript"]
+                "frameworks": [
+                  "javascript"
+                ]
               }
             ]
           },
@@ -360,22 +374,30 @@
             "title": "Building",
             "url": "/building/",
             "showInCollapsed": true,
-            "frameworks": ["javascript"],
+            "frameworks": [
+              "javascript"
+            ],
             "items": [
               {
                 "title": "Rollup",
                 "url": "/building-rollup/",
-                "frameworks": ["javascript"]
+                "frameworks": [
+                  "javascript"
+                ]
               },
               {
                 "title": "TypeScript & Webpack",
                 "url": "/building-typescript/",
-                "frameworks": ["javascript"]
+                "frameworks": [
+                  "javascript"
+                ]
               },
               {
                 "title": "AMD",
                 "url": "/building-amd/",
-                "frameworks": ["javascript"]
+                "frameworks": [
+                  "javascript"
+                ]
               }
             ]
           }
@@ -388,7 +410,6 @@
     "items": [
       {
         "title": "Layout & Styling",
-        "icon": "docs-styling",
         "items": [
           {
             "title": "AG Grid Design System",
@@ -481,7 +502,6 @@
           },
           {
             "title": "Styling Cells",
-            "box-title": "Cells",
             "url": "/cell-styles/",
             "showInCollapsed": true
           },
@@ -516,7 +536,6 @@
       },
       {
         "title": "Client-Side Data",
-        "icon": "docs-csd",
         "items": [
           {
             "title": "Overview",
@@ -569,7 +588,6 @@
       },
       {
         "title": "Server-Side Data",
-        "icon": "docs-ssd",
         "items": [
           {
             "title": "Row Models",
@@ -718,7 +736,6 @@
       },
       {
         "title": "Selection",
-        "icon": "docs-selection",
         "items": [
           {
             "title": "Overview",
@@ -754,7 +771,6 @@
       },
       {
         "title": "Filtering",
-        "icon": "docs-filtering",
         "items": [
           {
             "title": "Overview",
@@ -864,7 +880,6 @@
       },
       {
         "title": "Rendering",
-        "icon": "docs-rendering",
         "items": [
           {
             "title": "Cell Content",
@@ -943,7 +958,6 @@
       },
       {
         "title": "Editing",
-        "icon": "docs-editing",
         "items": [
           {
             "title": "Overview",
@@ -989,7 +1003,6 @@
       },
       {
         "title": "Group & Pivot",
-        "icon": "docs-group",
         "items": [
           {
             "title": "Row Grouping",
@@ -1137,7 +1150,6 @@
       },
       {
         "title": "Master Detail",
-        "icon": "docs-detail",
         "items": [
           {
             "title": "Overview",
@@ -1191,7 +1203,6 @@
       },
       {
         "title": "Import & Export",
-        "icon": "docs-import-export",
         "items": [
           {
             "title": "CSV Export",
@@ -1301,7 +1312,6 @@
     "items": [
       {
         "title": "Accessories",
-        "icon": "docs-accessories",
         "level-2-display-style-forced": "block",
         "items": [
           {
@@ -1357,7 +1367,6 @@
       },
       {
         "title": "Components",
-        "icon": "docs-components",
         "items": [
           {
             "title": "Registering Components",
@@ -1371,65 +1380,54 @@
             "items": [
               {
                 "title": "Cell Renderer",
-                "box-title": "Cell",
                 "url": "/component-cell-renderer/",
                 "showInCollapsed": true
               },
               {
                 "title": "Cell Editor",
-                "box-title": "Editor",
                 "url": "/component-cell-editor/",
                 "showInCollapsed": true
               },
               {
                 "title": "Date Component",
-                "box-title": "Date",
                 "url": "/component-date/"
               },
               {
                 "title": "Filter Component",
-                "box-title": "Filter",
                 "url": "/component-filter/",
                 "showInCollapsed": true
               },
               {
                 "title": "Floating Filter Component",
-                "box-title": "Floating Filter",
                 "url": "/component-floating-filter/"
               },
               {
                 "title": "Header Component",
-                "box-title": "Header",
                 "url": "/component-header/",
                 "showInCollapsed": true
               },
               {
                 "title": "Loading Cell Renderer",
-                "box-title": "Loading",
                 "url": "/component-loading-cell-renderer/"
               },
               {
                 "title": "Overlay Component",
-                "box-title": "Overlays",
                 "url": "/component-overlay/"
               },
               {
                 "title": "Status Bar Component",
-                "box-title": "Status Bar",
                 "url": "/component-status-bar/",
                 "enterprise": true,
                 "showInCollapsed": true
               },
               {
                 "title": "Tool Panel Component",
-                "box-title": "Tool Panel",
                 "url": "/component-tool-panel/",
                 "enterprise": true,
                 "showInCollapsed": true
               },
               {
                 "title": "Tooltip Component",
-                "box-title": "Tooltip",
                 "url": "/component-tooltip/",
                 "showInCollapsed": true
               },
@@ -1437,19 +1435,26 @@
                 "title": "Higher Order Components",
                 "url": "/framework-hoc/",
                 "showInCollapsed": true,
-                "frameworks": ["react"]
+                "frameworks": [
+                  "react"
+                ]
               },
               {
                 "title": "Parent/Child Communication",
                 "url": "/component-communication/",
                 "showInCollapsed": true,
-                "frameworks": ["angular", "vue"]
+                "frameworks": [
+                  "angular",
+                  "vue"
+                ]
               },
               {
                 "title": "Provide/Inject",
                 "url": "/component-provide-inject/",
                 "showInCollapsed": true,
-                "frameworks": ["vue"]
+                "frameworks": [
+                  "vue"
+                ]
               }
             ]
           }
@@ -1457,7 +1462,6 @@
       },
       {
         "title": "Sparklines",
-        "icon": "docs-sparklines",
         "items": [
           {
             "title": "Overview",
@@ -1519,7 +1523,6 @@
       },
       {
         "title": "Integrated Charts",
-        "icon": "docs-integrated-charts",
         "items": [
           {
             "title": "Overview",
@@ -1619,7 +1622,6 @@
       },
       {
         "title": "Standalone Charts",
-        "icon": "docs-standalone-charts",
         "items": [
           {
             "title": "Overview",
@@ -2053,7 +2055,6 @@
     "items": [
       {
         "title": "Scrolling",
-        "icon": "docs-scrolling",
         "items": [
           {
             "title": "DOM Virtualisation",
@@ -2094,7 +2095,6 @@
       },
       {
         "title": "Interactivity",
-        "icon": "docs-interactivity",
         "items": [
           {
             "title": "Keyboard Navigation",
@@ -2125,7 +2125,6 @@
       },
       {
         "title": "Testing & Security",
-        "icon": "docs-testing",
         "matrixExcludeChildren": true,
         "level-2-display-style-forced": "block",
         "items": [
@@ -2138,7 +2137,9 @@
             "title": "Testing Async",
             "url": "/testing-async/",
             "showInCollapsed": true,
-            "frameworks": ["angular"]
+            "frameworks": [
+              "angular"
+            ]
           },
           {
             "title": "Security",
@@ -2149,7 +2150,6 @@
       },
       {
         "title": "Miscellaneous",
-        "icon": "docs-misc",
         "matrixExcludeChildren": true,
         "level-2-display-style-forced": "block",
         "items": [
@@ -2157,31 +2157,41 @@
             "title": "Unidirectional Data Flow",
             "url": "/framework-data-flow/",
             "showInCollapsed": true,
-            "frameworks": ["vue"]
+            "frameworks": [
+              "vue"
+            ]
           },
           {
             "title": "Redux Integration Part 1",
             "url": "/redux-integration-pt1/",
             "showInCollapsed": true,
-            "frameworks": ["react"]
+            "frameworks": [
+              "react"
+            ]
           },
           {
             "title": "Redux Integration Part 2",
             "url": "/redux-integration-pt2/",
             "showInCollapsed": true,
-            "frameworks": ["react"]
+            "frameworks": [
+              "react"
+            ]
           },
           {
             "title": "Material UI Components",
             "url": "/material-design/",
             "showInCollapsed": true,
-            "frameworks": ["angular"]
+            "frameworks": [
+              "angular"
+            ]
           },
           {
             "title": "Miscellaneous",
             "url": "/framework-misc/",
             "showInCollapsed": true,
-            "frameworks": ["vue"]
+            "frameworks": [
+              "vue"
+            ]
           }
         ]
       }

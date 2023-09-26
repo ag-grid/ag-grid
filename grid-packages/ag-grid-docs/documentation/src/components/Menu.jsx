@@ -222,8 +222,6 @@ const Menu = ({ currentFramework, currentPage, path }) => {
                         />
                     );
                 })}
-
-                <Announcements framework={currentFramework} />
             </ul>
         </aside>
     );

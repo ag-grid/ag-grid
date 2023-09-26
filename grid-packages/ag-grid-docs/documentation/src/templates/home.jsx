@@ -212,7 +212,6 @@ const HomePage = ({ pageContext: { framework } }) => {
             {frameworkVideos && frameworkVideos.length > 0 && (
                 <VideoPanel framework={framework} videos={frameworkVideos} />
             )}
-            <MenuView framework={framework} data={menuData} />
         </div>
     );
 };
