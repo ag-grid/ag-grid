@@ -25,11 +25,11 @@ export const DarkModeToggle = () => {
                         <button
                             className={classNames(
                                 styles.toggle,
-                                !darkMode ? styles.light : styles.dark,
+                                darkMode ? styles.dark : styles.light,
                                 'button-style-none'
                             )}
                             onClick={() => {
-                                set({ darkMode: darkMode ? false : true });
+                                set({ darkMode: !darkMode });
                             }}
                         >
                             {darkMode ? <Icon name="sun" /> : <Icon name="moon" />}
