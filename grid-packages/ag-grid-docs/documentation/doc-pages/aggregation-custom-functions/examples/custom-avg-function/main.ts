@@ -1,6 +1,6 @@
 import { Grid, ColDef, GridOptions, IAggFuncParams } from '@ag-grid-community/core'
 
-const columnDefs = [
+const columnDefs: ColDef[] = [
   { field: 'country', rowGroup: true, hide: true },
   { field: 'year', rowGroup: true, hide: true },
   {
@@ -19,7 +19,7 @@ const columnDefs = [
   },
 ];
 
-const gridOptions = {
+const gridOptions: GridOptions<IOlympicData> = {
   columnDefs: columnDefs,
   autoGroupColumnDef: {
     field: 'athlete',
@@ -28,15 +28,15 @@ const gridOptions = {
   suppressAggFuncInHeader: true,
 };
 
-function simpleAvg(params) {
+function simpleAvg(params: IAggFuncParams) {
   const values = params.values;
-  const sum = values.reduce((a,b) => a + b, 0);
+  const sum = values.reduce((a: number,b: number) => a + b, 0);
   return sum / values.length;
 };
 
 // the average function is tricky as the multiple levels require weighted averages
 // for the non-leaf node aggregations.
-function avgAggFunction(params) {
+function avgAggFunction(params: IAggFuncParams) {
   // the average will be the sum / count
   let sum = 0;
   let count = 0;
