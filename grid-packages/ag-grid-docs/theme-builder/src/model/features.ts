@@ -1,4 +1,4 @@
-import { CellRange, GridApi, GridOptions } from 'ag-grid-community';
+import { CellRange, Events, GridApi, GridOptions } from 'ag-grid-community';
 import { indexBy } from './utils';
 
 export type Feature = {
@@ -9,10 +9,12 @@ export type Feature = {
   alwaysEnabled?: boolean;
   gridOptions?: Partial<GridOptions>;
   // put the grid into a state where this feature is visible so that it can be styled
-  show?: (api: GridApi) => unknown;
+  show?: (api: GridApi) => void;
   // get the state that should be restored after a grid rebuild to
-  getState?: (api: GridApi) => unknown;
-  restoreState?: (api: GridApi, state: unknown) => void;
+  getState?: (api: GridApi) => JSONValue;
+  restoreState?: (api: GridApi, state: JSONValue) => void;
+  // events on which to save and restore state
+  stateChangeEvents?: string[];
 };
 
 export const allFeatures: Feature[] = [
@@ -58,34 +60,58 @@ export const allFeatures: Feature[] = [
         rowStartIndex: 0,
         rowEndIndex: 2,
       });
+      api.addCellRange({
+        columnStart: 'model',
+        columnEnd: 'price',
+        rowStartIndex: 1,
+        rowEndIndex: 2,
+      });
     },
-    // TODO implement this in order to make getState work
-    // stateChangeEvents: [Events.EVENT_RANGE_SELECTION_CHANGED],
-    getState: (api): CellRange[] | null => api.getCellRanges(),
+    stateChangeEvents: [Events.EVENT_RANGE_SELECTION_CHANGED],
+    getState: (api) => {
+      const ranges = api.getCellRanges();
+      if (!ranges) return null;
+      return ranges.map((range) => ({
+        columnStart: range.columns[0]?.getId(),
+        columnEnd: range.columns[range.columns.length - 1]?.getId(),
+        rowStartIndex: range.startRow?.rowIndex,
+        rowEndIndex: range.endRow?.rowIndex,
+      }));
+    },
     restoreState: (api, state) => {
-      const savedSelections = state as CellRange[] | null;
-      savedSelections?.forEach((range) => {
-        const columnStart = range.columns[0]?.getId();
-        const columnEnd = range.columns[range.columns.length - 1]?.getId();
-        const rowStartIndex = range.startRow?.rowIndex;
-        const rowEndIndex = range.endRow?.rowIndex;
+      if (!Array.isArray(state)) throw new Error('Expected state to be an array');
+      state.forEach((range) => {
+        if (!range || typeof range !== 'object' || Array.isArray(range))
+          throw new Error(`Expected state item to be an object, got ${JSON.stringify(range)}`);
+        const { columnStart, columnEnd, rowStartIndex, rowEndIndex } = range;
         if (
-          columnStart != null &&
-          columnEnd != null &&
-          rowStartIndex != null &&
-          rowEndIndex != null
+          typeof columnStart !== 'string' ||
+          typeof columnEnd !== 'string' ||
+          typeof rowStartIndex !== 'number' ||
+          typeof rowEndIndex !== 'number'
         ) {
-          api.addCellRange({
-            columnStart,
-            columnEnd,
-            rowStartIndex,
-            rowEndIndex,
-          });
+          throw new Error(`Incorrect range keys on state item: ${JSON.stringify(range)}`);
         }
+        api.addCellRange({
+          columnStart,
+          columnEnd,
+          rowStartIndex,
+          rowEndIndex,
+        });
       });
     },
   },
 ];
+
+export type JSONPrimitive = string | number | boolean | null | undefined;
+
+export interface JSONObject {
+  [index: string]: JSONPrimitive | JSONObject | JSONArray;
+}
+
+export interface JSONArray extends Array<JSONPrimitive | JSONObject | JSONArray> {}
+
+export type JSONValue = JSONPrimitive | JSONArray | JSONObject;
 
 const isMultiCellRange = (r: CellRange) =>
   r.columns.length > 1 || Math.abs((r.startRow?.rowIndex || 0) - (r.endRow?.rowIndex || 0)) > 1;

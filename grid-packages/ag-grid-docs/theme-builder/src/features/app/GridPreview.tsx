@@ -3,13 +3,14 @@ import { ColDef, GridApi, GridOptions } from 'ag-grid-community';
 import { AgGridReact } from 'ag-grid-react';
 import { withErrorBoundary } from 'components/ErrorBoundary';
 import { useRenderedTheme } from 'features/app/useRenderedTheme';
-import { useEnabledFeatures } from 'features/inspector/inspectorHooks';
+import { useCurrentFeatureAtom, useEnabledFeatures } from 'features/inspector/inspectorHooks';
 import { useParentThemeAtom } from 'features/parentTheme/parentThemeAtoms';
 import { useVariableValues } from 'features/variables/variablesAtoms';
+import { Feature } from 'model/features';
 import { renderedThemeToCss } from 'model/render';
-import { getNames, isNotNull } from 'model/utils';
+import { getNames, isNotNull, logErrorMessage } from 'model/utils';
 import { valueToCss } from 'model/values';
-import { memo, useRef } from 'react';
+import { memo, useEffect, useMemo, useState } from 'react';
 
 const columnDefs: ColDef[] = [
   { field: 'make', flex: 1 },
@@ -31,16 +32,20 @@ const variablesRequiringRebuild = [
 ];
 
 const GridPreview = () => {
-  const enabledFeatures = useEnabledFeatures();
+  const features = useEnabledFeatures();
+  const [currentFeature] = useCurrentFeatureAtom();
   const [parentTheme] = useParentThemeAtom();
   const values = useVariableValues();
 
-  const apiRef = useRef<GridApi>();
+  const [api, setApi] = useState<GridApi | null>(null);
 
-  const gridOptions: GridOptions = {};
-  for (const feature of enabledFeatures) {
-    Object.assign(gridOptions, feature.gridOptions);
-  }
+  const gridOptions = useMemo(() => {
+    const options: GridOptions = {};
+    for (const feature of features) {
+      Object.assign(options, feature.gridOptions);
+    }
+    return options;
+  }, [features]);
 
   const renderedTheme = useRenderedTheme();
 
@@ -49,15 +54,38 @@ const GridPreview = () => {
     .filter(isNotNull)
     .map(valueToCss)
     .concat(parentTheme.name)
-    .concat(getNames(enabledFeatures))
+    .concat(getNames(features))
     .join(';');
+
+  useEffect(() => {
+    if (api) {
+      currentFeature?.show?.(api);
+    }
+  }, [currentFeature, api]);
 
   return (
     <Wrapper className={parentTheme.name} style={{ width: '100%', height: '100%' }}>
       <style>{renderedThemeToCss(renderedTheme)}</style>
       <AgGridReact
-        setGridApi={(api) => {
-          apiRef.current = api;
+        onGridReady={(e) => {
+          setApi(e.api);
+          for (const feature of features) {
+            restoreFeatureState(feature, e.api);
+          }
+        }}
+        onFirstDataRendered={(e) => {
+          for (const feature of features) {
+            for (const event of feature.stateChangeEvents || []) {
+              e.api.addEventListener(event, () => {
+                saveFeatureState(feature, e.api);
+              });
+            }
+          }
+          for (const feature of features) {
+            for (const event of feature.stateChangeEvents || []) {
+              e.api.addEventListener(event, () => saveFeatureState(feature, e.api));
+            }
+          }
         }}
         key={rebuildKey}
         rowData={rowData}
@@ -77,3 +105,33 @@ const Wrapper = styled('div')`
   width: 100%;
   height: 100%;
 `;
+
+const saveFeatureState = (feature: Feature, api: GridApi) => {
+  const key = `theme-builder.feature-state.${feature.name}`;
+  const state = feature.getState?.(api);
+  if (state == null) {
+    localStorage.removeItem(key);
+  } else {
+    localStorage.setItem(key, JSON.stringify(state));
+  }
+};
+
+const restoreFeatureState = (feature: Feature, api: GridApi) => {
+  const key = `theme-builder.feature-state.${feature.name}`;
+  const stateString = localStorage.getItem(key);
+  if (!stateString) return;
+  if (!feature.restoreState) {
+    localStorage.removeItem(key);
+  }
+  try {
+    feature.restoreState?.(api, JSON.parse(stateString));
+  } catch (e) {
+    logErrorMessage(
+      `Failed to restore ${feature.name} feature state using string value ${JSON.stringify(
+        stateString,
+      )}`,
+      e,
+    );
+    throw e;
+  }
+};

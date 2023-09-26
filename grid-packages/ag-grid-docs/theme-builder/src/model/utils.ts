@@ -29,10 +29,20 @@ export const kebabCaseToTitleCase = (variableName: string, prefix?: string) => {
   return variableName.replaceAll('-', ' ').replace(/(?:^|\W)+\w/g, (match) => match.toUpperCase());
 };
 
-export const logErrorMessage = (message: string) => {
-  // eslint-disable-next-line no-console
-  console.error(message);
+export const logErrorMessage = (message: string, error?: unknown) => {
+  if (error) {
+    // eslint-disable-next-line no-console
+    console.error(error, message);
+  } else {
+    // eslint-disable-next-line no-console
+    console.error(message);
+  }
 };
 
 export const getName = (object: { name: string }): string => object.name;
 export const getNames = (array: Array<{ name: string }>): string[] => array.map(getName);
+
+export const subtractArrays = <T>(a: T[], b: T[]): T[] => {
+  const bSet = new Set<T>(b);
+  return a.filter((value) => !bSet.has(value));
+};
