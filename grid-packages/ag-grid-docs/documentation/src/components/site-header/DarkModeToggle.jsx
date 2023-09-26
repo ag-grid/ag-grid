@@ -11,7 +11,6 @@ export const DarkModeToggle = () => {
     return IS_SSR ? null : (
         <GlobalContextConsumer>
             {({ darkMode, set }) => {
-                // [REVIEW] Don't think this is the right place for this global stuff, but it works
                 const htmlEl = document.querySelector('html');
 
                 // Using .no-transitions class so that there are no animations between light/dark modes
