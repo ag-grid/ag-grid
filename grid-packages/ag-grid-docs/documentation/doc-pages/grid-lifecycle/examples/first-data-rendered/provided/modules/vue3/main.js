@@ -71,7 +71,7 @@ const VueExample = {
                 athleteDescriptionColWidthOnFirstDataRendered.value = `${column.getActualWidth()}px`;
             }
 
-            console.warn('AG Grid: onFirstDataRendered event triggered');
+            console.log('AG Grid: onFirstDataRendered event triggered');
         };
         const loadGridData = () => {
             gridApi.value.setRowData(getData());
@@ -88,7 +88,7 @@ const VueExample = {
                 athleteDescriptionColWidthOnReady.value = `${column.getActualWidth()}px`;
             }
 
-            console.warn('AG Grid: onGridReady event triggered');
+            console.log('AG Grid: onGridReady event triggered');
         };
 
         return {

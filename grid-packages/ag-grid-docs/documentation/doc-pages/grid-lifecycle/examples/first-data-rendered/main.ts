@@ -36,7 +36,7 @@ const gridOptions: GridOptions = {
             setCol1SizeInfoOnGridReady(column.getActualWidth());
         }
 
-        console.warn('AG Grid: onGridReady event triggered');
+        console.log('AG Grid: onGridReady event triggered');
     },
     onFirstDataRendered: (params: FirstDataRenderedEvent<TAthlete>) => {
         const { columnApi } = params;
@@ -47,7 +47,7 @@ const gridOptions: GridOptions = {
             setCol1SizeInfOnFirstDataRendered(column.getActualWidth());
         }
 
-        console.warn('AG Grid: onFirstDataRendered event triggered');
+        console.log('AG Grid: onFirstDataRendered event triggered');
     }
 };
 

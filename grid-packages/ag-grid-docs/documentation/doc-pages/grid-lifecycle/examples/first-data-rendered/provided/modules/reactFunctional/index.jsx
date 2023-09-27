@@ -46,7 +46,7 @@ const GridExample = () => {
             setCol1SizeInfoOnGridReady(`${column.getActualWidth()}px`);
         }
 
-        console.warn('AG Grid: onGridReady event triggered');
+        console.log('AG Grid: onGridReady event triggered');
 
     }, []);
 
@@ -60,7 +60,7 @@ const GridExample = () => {
             setCol1SizeInfOnFirstDataRendered(`${column.getActualWidth()}px`);
         }
 
-        console.warn('AG Grid: onFirstDataRendered event triggered');
+        console.log('AG Grid: onFirstDataRendered event triggered');
     }, []);
 
     const loadGridData = useCallback(() => {
