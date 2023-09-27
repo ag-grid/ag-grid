@@ -32,9 +32,7 @@ import styles from './doc-page.module.scss';
  */
 const DocPageTemplate = ({ data, pageContext: { framework, exampleIndexData, pageName } }) => {
     const { markdownRemark: page } = data;
-    const [showSideMenu, setShowSideMenu] = useState(
-        page.frontmatter.sideMenu === null ? true : page.frontmatter.sideMenu
-    );
+    const [showSideMenu, setShowSideMenu] = useState(true);
 
     if (!page) {
         return null;
@@ -199,8 +197,7 @@ export const pageQuery = graphql`
             frontmatter {
                 title
                 version
-                enterprise
-                sideMenu
+                enterprise                
                 description
             }
             headings {
