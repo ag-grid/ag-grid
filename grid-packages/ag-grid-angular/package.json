@@ -16,7 +16,7 @@
     "url": "https://github.com/ag-grid/ag-grid.git"
   },
   "license": "MIT",
-  "module": "./dist/ag-grid-angular/fesm2015/ag-grid-angular.js",
+  "module": "./dist/ag-grid-angular/fesm2015/ag-grid-angular.mjs",
   "typings": "./dist/ag-grid-angular/index.d.ts",
   "dependencies": {
     "@angular/animations": "^14.3.0",
