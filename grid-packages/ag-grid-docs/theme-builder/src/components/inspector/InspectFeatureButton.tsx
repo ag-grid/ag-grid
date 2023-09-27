@@ -13,8 +13,9 @@ export const InspectFeatureButton = ({ feature }: InspectFeatureButtonProps) => 
 };
 
 const Button = styled('button')`
-  background-color: #fff;
-  --button-text-color: #000;
+  background-color: var(--default-background-color);
+  --button-text-color: var(--text-color);
+  font-weight: bold;
   text-align: left;
   display: flex;
 

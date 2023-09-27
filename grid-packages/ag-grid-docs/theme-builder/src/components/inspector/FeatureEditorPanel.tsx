@@ -60,7 +60,7 @@ const Container = styled('div')`
   left: 0;
   bottom: 0;
   right: 0;
-  background-color: #fff;
+  background-color: var(--default-background-color);
   display: flex;
   flex-direction: column;
 
@@ -101,8 +101,8 @@ const Buttons = styled('div')`
 `;
 
 const DisableButton = styled('button')`
-  background-color: #fff;
-  --button-text-color: #000;
+  background-color: var(--default-background-color);
+  --button-text-color: var(--text-color);
   border-color: var(--button-color);
 
   &:hover,

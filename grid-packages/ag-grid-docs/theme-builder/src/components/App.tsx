@@ -1,5 +1,5 @@
 import { VariableDescriptions, useUpdateVariableDescriptions } from 'atoms/variableDescriptions';
-import { RootContainer } from 'features/app/RootContainer';
+import { RootContainer } from './RootContainer';
 
 export type ThemeBuilderAppProps = {
   variableDescriptions: VariableDescriptions;

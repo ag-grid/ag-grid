@@ -1,5 +1,5 @@
 import { initStore } from 'atoms/store';
-import { App, ThemeBuilderAppProps } from 'features/app/App';
+import { App, ThemeBuilderAppProps } from 'components/App';
 import { Provider } from 'jotai';
 import { useMemo } from 'react';
 

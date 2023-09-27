@@ -4,11 +4,11 @@ import 'ag-grid-community/styles/ag-theme-alpine.css';
 import 'ag-grid-community/styles/ag-theme-balham.css';
 import 'ag-grid-community/styles/ag-theme-material.css';
 import 'ag-grid-enterprise';
-import { ParentThemeMenu } from 'features/app/ParentThemeMenu';
+import { Inspector } from 'components/inspector/Inspector';
 import { memo } from 'react';
 import { Tooltip } from 'react-tooltip';
-import { Inspector } from '../inspector/Inspector';
 import { GridPreview } from './GridPreview';
+import { ParentThemeMenu } from './ParentThemeMenu';
 
 export const RootContainer = memo(() => {
   return (

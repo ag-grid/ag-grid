@@ -1,9 +1,9 @@
 import styled from '@emotion/styled';
 import { useCurrentFeature } from 'atoms/currentFeature';
 import { useEnabledFeatures } from 'atoms/enabledFeatures';
-import { EnableFeatureButton } from 'features/inspector/EnableFeatureButton';
-import { FeatureEditor } from 'features/inspector/FeatureEditor';
-import { FeatureEditorPanel } from 'features/inspector/FeatureEditorPanel';
+import { EnableFeatureButton } from 'components/inspector/EnableFeatureButton';
+import { FeatureEditor } from 'components/inspector/FeatureEditor';
+import { FeatureEditorPanel } from 'components/inspector/FeatureEditorPanel';
 import { InspectFeatureButton } from './InspectFeatureButton';
 
 export const Inspector = () => {

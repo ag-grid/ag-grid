@@ -1,6 +1,6 @@
 import { Atom, WritableAtom, createStore } from 'jotai';
 import { Feature, getFeatureOrThrow } from 'model/features';
-import { Theme, getThemeOrThrow } from 'model/themes';
+import { Theme, alpineDarkTheme, alpineTheme, getThemeOrThrow } from 'model/themes';
 import { logErrorMessage, mapPresentObjectValues } from 'model/utils';
 import { VariableValues, parseCssString, valueToCss } from 'model/values';
 import { getVariableInfoOrThrow } from 'model/variables';
@@ -10,8 +10,14 @@ import { parentThemeAtom } from './parentTheme';
 import { allValueAtoms, valuesAtom } from './values';
 
 export const initStore = () => {
+  const defaultTheme =
+    typeof window === 'object' &&
+    window.document.documentElement.computedStyleMap().get('--color-scheme')?.toString() === 'dark'
+      ? alpineDarkTheme
+      : alpineTheme;
+
   const store = createStore();
-  restoreValue('parentTheme', deserializeTheme, store, parentThemeAtom);
+  restoreValue('parentTheme', deserializeTheme, store, parentThemeAtom, defaultTheme);
   restoreValue('enabledFeatures', deserializeEnabledFeatures, store, enabledFeaturesAtom);
   restoreValue('values', deserializeValues, store, valuesAtom);
 
@@ -52,9 +58,15 @@ const restoreValue = <T>(
   deserialize: (value: unknown) => T,
   store: Store,
   atom: WritableAtom<T, [T], void>,
+  defaultValue?: T,
 ) => {
   const storedString = localStorage.getItem(storageKey(key));
-  if (storedString == null) return;
+  if (storedString == null) {
+    if (defaultValue != null) {
+      store.set(atom, defaultValue);
+    }
+    return;
+  }
   let storedValue: unknown;
   try {
     storedValue = JSON.parse(storedString);
