@@ -1149,7 +1149,7 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     @Output() public rowDragLeave: EventEmitter<RowDragEvent<TData>> = new EventEmitter<RowDragEvent<TData>>();
     /** The drag has finished over the grid.     */
     @Output() public rowDragEnd: EventEmitter<RowDragEvent<TData>> = new EventEmitter<RowDragEvent<TData>>();
-    /** A row group column was added or removed.     */
+    /** A row group column was added, removed or reordered.     */
     @Output() public columnRowGroupChanged: EventEmitter<ColumnRowGroupChangedEvent<TData>> = new EventEmitter<ColumnRowGroupChangedEvent<TData>>();
     /** A row group was opened or closed.     */
     @Output() public rowGroupOpened: EventEmitter<RowGroupOpenedEvent<TData>> = new EventEmitter<RowGroupOpenedEvent<TData>>();

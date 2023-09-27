@@ -1143,7 +1143,7 @@ export interface GridOptions<TData = any> {
     onRowDragEnd?(event: RowDragEvent<TData>): void;
 
     // *** Row Grouping *** //
-    /** A row group column was added or removed. */
+    /** A row group column was added, removed or reordered. */
     onColumnRowGroupChanged?(event: ColumnRowGroupChangedEvent<TData>): void;
     /** A row group was opened or closed. */
     onRowGroupOpened?(event: RowGroupOpenedEvent<TData>): void;
