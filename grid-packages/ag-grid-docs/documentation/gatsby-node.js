@@ -13,7 +13,6 @@ const fs = require('fs-extra');
 const publicIp = require('public-ip');
 const gifFrames = require('gif-frames');
 const supportedFrameworks = require('./src/utils/supported-frameworks.js');
-const chartGallery = require('./doc-pages/charts-overview/gallery.json');
 const toKebabCase = require('./src/utils/to-kebab-case');
 const isDevelopment = require('./src/utils/is-development');
 const convertToFrameworkUrl = require('./src/utils/convert-to-framework-url');
@@ -306,48 +305,6 @@ const createDocPages = async (createPage, graphql, reporter) => {
 };
 
 /**
- * This creates pages for each of the charts in the chart gallery.
- */
-const createChartGalleryPages = createPage => {
-    const chartGalleryPageTemplate = path.resolve(`src/templates/chart-gallery-page.jsx`);
-    const filter = (c) => !c.startsWith('_');
-    const categories = Object.keys(chartGallery).filter(filter);
-
-    const namesByCategory = categories.reduce(
-        (names, c) => {
-            return names.concat(
-                Object.keys(chartGallery[c])
-                    .filter(filter)
-                    .map(k => ({category: c, name: k}))
-            );
-        },
-        []);
-
-    namesByCategory.forEach(({category, name}, i) => {
-        const {description} = chartGallery[category][name];
-
-        let previous = i > 0 ? namesByCategory[i - 1].name : null;
-        let next = i < namesByCategory.length - 1 ? namesByCategory[i + 1].name : null;
-
-        supportedFrameworks.forEach(framework => {
-            createPage({
-                path: `/${framework}-charts/gallery/${toKebabCase(name)}/`,
-                component: chartGalleryPageTemplate,
-                context: {
-                    frameworks: supportedFrameworks,
-                    framework,
-                    name,
-                    description,
-                    previous,
-                    next,
-                    pageName: 'charts-overview'
-                }
-            });
-        });
-    });
-};
-
-/**
  * This allows us to generate pages for the website.
  */
 exports.createPages = async ({actions: {createPage}, graphql, reporter}) => {
@@ -358,7 +315,6 @@ exports.createPages = async ({actions: {createPage}, graphql, reporter}) => {
 
     createHomePages(createPage);
     await createDocPages(createPage, graphql, reporter);
-    createChartGalleryPages(createPage);
 };
 
 /**
