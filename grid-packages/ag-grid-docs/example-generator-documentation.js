@@ -3,9 +3,6 @@ const {window, document} = new JSDOM('<!DOCTYPE html><html lang="en"></html>');
 const sucrase = require("sucrase");
 
 const agGridVersion = "^" + require('../../grid-community-modules/core/package.json').version;
-const agChartsVersion = "^" + require('../../charts-community-modules/ag-charts-community/package.json').version;
-const agChartsAngularVersion = "^" + require('../../charts-community-modules/ag-charts-angular/package.json').version;
-const agChartsReactVersion = "^" + require('../../charts-community-modules/ag-charts-react/package.json').version;
 const agGridEnterpriseVersion = "^" + require('../../grid-enterprise-modules/core/package.json').version;
 const agGridReactVersion = "^" + require('../../grid-community-modules/react/package.json').version;
 const agGridAngularVersion = "^" + require('../../grid-community-modules/angular/package.json').version;
@@ -552,16 +549,6 @@ function createExampleGenerator(exampleType, prefix, importTypes, incremental) {
                         // replace Typescript new Grid( with Javascript new agGrid.Grid(
                         jsFile = jsFile.replace(/new Grid\(/g, 'new agGrid.Grid(');
 
-                        // Chart classes that need scoping
-                        const chartImports = typedBindings.imports.find(i => i.module.includes('ag-charts-community') || i.module.includes('ag-charts-enterprise'));
-                        if (chartImports) {
-                            chartImports.imports.forEach(i => {
-                                const toReplace = `(?<!\\.)${i}([\\s\/.])`
-                                const reg = new RegExp(toReplace, "g");
-                                jsFile = jsFile.replace(reg, `${options && options.enterprise ? 'agChartsEnterprise' : 'agCharts'}.${i}$1`);
-                            })
-                        }
-
                         // replace Typescript LicenseManager.setLicenseKey( with Javascript agGrid.LicenseManager.setLicenseKey(
                         jsFile = jsFile.replace(/LicenseManager\.setLicenseKey\(/g, "agGrid.LicenseManager.setLicenseKey(");
 
@@ -671,15 +658,6 @@ function addPackageJson(type, framework, importType, basePath) {
             addDependency('ag-grid-community', agGridVersion);
             addDependency('ag-grid-enterprise', agGridEnterpriseVersion);
         }
-        if (type === 'chart') {
-            addDependency('ag-charts-community', agChartsVersion);
-            if (framework === 'angular') {
-                addDependency('ag-charts-angular', agChartsAngularVersion);
-            }
-            if (isFrameworkReact()) {
-                addDependency('ag-charts-react', agChartsReactVersion);
-            }
-        }
     }
 
     writeFile(path.join(basePath, 'package.json'), JSON.stringify(packageJson, null, 4));
@@ -724,21 +702,6 @@ module.exports.generateGridExamples = (scope, trigger, done, tsRegistered = fals
     }
 };
 
-module.exports.generateChartExamples = (scope, trigger, done, tsRegistered = false) => {
-    try {
-        if (!tsRegistered) {
-            require('ts-node').register();
-        }
-        generateExamples('chart', ['packages'], scope, trigger, done);
-    } catch (e) {
-        console.error('Failed to generate chart examples', e);
-
-        if (done) {
-            done(e);
-        }
-    }
-};
-
 module.exports.generateDocumentationExamples = async (chartsOnly, scope, trigger) => {
     require('ts-node').register();
     if (trigger) {
@@ -750,8 +713,5 @@ module.exports.generateDocumentationExamples = async (chartsOnly, scope, trigger
         console.log(`\u27F3 Generating all documentation examples...`);
     }
 
-    return new Promise(resolve => {
-        module.exports.generateChartExamples(scope, trigger, chartsOnly ? () => resolve() :
-            () => module.exports.generateGridExamples(scope, trigger, () => resolve(), true), true)
-    });
+    return new Promise(resolve => module.exports.generateGridExamples(scope, trigger, () => resolve(), true));
 };

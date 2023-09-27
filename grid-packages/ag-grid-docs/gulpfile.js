@@ -12,7 +12,7 @@ const merge = require('merge-stream');
 const { getAllModules } = require("./utils");
 // const debug = require('gulp-debug'); // don't remove this Gil
 
-const { generateGridExamples, generateChartExamples } = require('./example-generator-documentation');
+const { generateGridExamples } = require('./example-generator-documentation');
 
 const SKIP_INLINE = true;
 const DEV_DIR = 'dev';
