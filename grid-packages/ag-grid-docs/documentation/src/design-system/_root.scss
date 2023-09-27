@@ -51,6 +51,10 @@
     --icon-size: #{$icon-size};
 }
 
+html {
+    color-scheme: light;
+}
+
 html[data-dark-mode='true'] {
     @each $name, $scale in $dark-scales {
         @each $key, $value in map.get($dark-scales, $name) {
@@ -62,6 +66,8 @@ html[data-dark-mode='true'] {
     @each $name, $var-name in $dark-semantic-colors {
         --#{$name}: var(--#{$var-name});
     }
+
+    color-scheme: dark;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -76,5 +82,7 @@ html[data-dark-mode='true'] {
         @each $name, $var-name in $dark-semantic-colors {
             --#{$name}: var(--#{$var-name});
         }
+
+        color-scheme: dark;
     }
 }

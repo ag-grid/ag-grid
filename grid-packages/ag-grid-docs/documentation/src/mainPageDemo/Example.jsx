@@ -622,12 +622,13 @@ const Example = () => {
     const loadInstance = useRef(0);
     const [gridTheme, setGridTheme] = useState(null);
     useEffect(() => {
-        const params = new URLSearchParams(window.location.search);
-        const theme =
-            params.get('theme') ||
-            (JSON.parse(LocalStorage.get('context')).darkMode ? 'ag-theme-alpine-dark' : 'ag-theme-alpine');
-
-        setGridTheme(theme);
+        const themeFromURL = new URLSearchParams(window.location.search).get('theme');
+        if (themeFromURL) {
+            setGridTheme(themeFromURL)
+        } else {
+            const isDarkMode = document.documentElement.computedStyleMap().get('color-scheme')?.toString() === 'dark';
+            setGridTheme(isDarkMode ? 'ag-theme-alpine-dark' : 'ag-theme-alpine');
+        }
     }, []);
     const [base64Flags, setBase64Flags] = useState();
     const [defaultCols, setDefaultCols] = useState();
@@ -1422,6 +1423,8 @@ const Example = () => {
         }
     }, [dataSize]);
 
+    const restoreOriginalDarkModeOnLeave = useRef(null);
+
     useEffect(() => {
         if (!gridTheme) return;
         const isDark = gridTheme.indexOf('dark') >= 0;
@@ -1437,7 +1440,22 @@ const Example = () => {
         } else {
             gridOptions.chartThemes = null;
         }
+
+        if (restoreOriginalDarkModeOnLeave.current == null) {
+            restoreOriginalDarkModeOnLeave.current = document.querySelector("html").dataset.darkMode;
+        }
+
+        document.querySelector("html").dataset.darkMode = isDark ? 'true' : 'false';
     }, [gridTheme]);
+
+    useEffect(() => {
+        return () => {
+            if (restoreOriginalDarkModeOnLeave.current != null) {
+                document.querySelector("html").dataset.darkMode = restoreOriginalDarkModeOnLeave.current;
+            }
+
+        }
+    }, []);
 
     return (
         <>
