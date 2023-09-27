@@ -10,7 +10,7 @@ import ImageCaption from 'components/ImageCaption';
 import MatrixTable from 'components/MatrixTable';
 import Note from 'components/Note';
 import { OpenInCTA } from 'components/OpenInCTA';
-import { SEO } from 'components/SEO';gat
+import { SEO } from 'components/SEO';
 import SideMenu from 'components/SideMenu';
 import { Snippet } from 'components/snippet/Snippet';
 import { Tabs } from 'components/tabs/Tabs';

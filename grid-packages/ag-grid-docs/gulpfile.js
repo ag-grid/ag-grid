@@ -132,7 +132,6 @@ const serveDist = (done) => {
 };
 
 gulp.task('generate-grid-examples', generateGridExamples.bind(null, '*', null));
-gulp.task('generate-chart-examples', generateChartExamples.bind(null, '*', null));
 
 gulp.task('clean-dist', () => fs.remove(distFolder));
 gulp.task('populate-dev-folder', populateDevFolder);
@@ -140,13 +139,13 @@ gulp.task('process-src', processSource);
 gulp.task('copy-from-dist', copyFromDistFolder);
 gulp.task('copy-prod-webserver-files', copyProdWebServerFilesToDist);
 gulp.task('copy-documentation-website', copyDocumentationWebsite);
-gulp.task('generate-all-examples', series('generate-grid-examples', 'generate-chart-examples'));
+gulp.task('generate-all-examples', series('generate-grid-examples'));
 gulp.task('release-archive', series('clean-dist', 'process-src', 'copy-from-dist', 'copy-documentation-website', 'populate-dev-folder'));
 gulp.task('release', series('clean-dist', 'process-src', 'copy-from-dist', 'copy-documentation-website', 'copy-prod-webserver-files'));
 gulp.task('default', series('release'));
 gulp.task('serve-dist', serveDist);
 
-//                                                                      skipFrameworks, skipExampleFormatting, chartsOnly, skipExampleGeneration, skipAutoDocGeneration,
+//                                                                      skipFrameworks, skipExampleFormatting, skipExampleGeneration, skipAutoDocGeneration,
 gulp.task('serve',                  require('./dev-server').bind(null, false,           true,                  false,       false,                false));
 gulp.task('serve-core-only',        require('./dev-server').bind(null, true,            true,                  false,       false,                true));
 gulp.task('serve-with-formatting',  require('./dev-server').bind(null, false,           false,                 false,       false,                false));
