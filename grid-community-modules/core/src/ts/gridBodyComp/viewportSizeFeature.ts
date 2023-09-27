@@ -36,6 +36,9 @@ export class ViewportSizeFeature extends BeanStub {
             this.listenForResize();
         });
         this.addManagedListener(this.eventService, Events.EVENT_SCROLLBAR_WIDTH_CHANGED, this.onScrollbarWidthChanged.bind(this));
+        this.addManagedPropertyListeners(['alwaysShowHorizontalScroll', 'alwaysShowVerticalScroll'], () => {
+            this.checkViewportAndScrolls();
+        });
     }
 
     private listenForResize(): void {
