@@ -232,7 +232,7 @@ const skipPackages = () => {
 }
 
 function createExampleGenerator(exampleType, prefix, importTypes, incremental) {
-    const [parser, vanillaToVue, vanillaToVue3, vanillaToReact, vanillaToReactFunctional, vanillaToReactFunctionalTs, vanillaToAngular, vanillaToTypescript] = getGeneratorCode(prefix);
+    const [parser, vanillaToVue, vanillaToVue3, vanillaToReactFunctional, vanillaToReactFunctionalTs, vanillaToAngular, vanillaToTypescript] = getGeneratorCode(prefix);
     const appModuleAngular = new Map();
 
     importTypes.forEach(importType => {
@@ -398,24 +398,6 @@ function createExampleGenerator(exampleType, prefix, importTypes, incremental) {
             // When the type == typescript we only want to generate the vanilla option and so skip all other frameworks
 
             if (!skipFramework('react')) {
-                if (type === 'mixed' && providedExamples['react']) {
-                    importTypes.forEach(importType => copyProvidedExample(importType, 'react', providedExamples['react']));
-                } else {
-                    const reactScripts = getMatchingPaths('*_react.*', {ignore: ['**/*.tsx']});
-                    let reactConfigs = new Map();
-
-                    try {
-                        const getSource = vanillaToReact(deepCloneObject(bindings), extractComponentFileNames(reactScripts, '_react'), allStylesheets);
-                        importTypes.forEach(importType => reactConfigs.set(importType, {'index.jsx': getSource(importType)}));
-                        reactConfigs = addRawScripts(reactConfigs, true)
-                    } catch (e) {
-                        console.error(`Failed to process React example in ${examplePath}`, e);
-                        throw e;
-                    }
-
-                    importTypes.forEach(importType => writeExampleFiles(importType, 'react', 'react', reactScripts, reactConfigs.get(importType)));
-                }
-
                 if (type === 'mixed' && providedExamples['reactFunctional']) {
                     importTypes.forEach(importType => copyProvidedExample(importType, 'reactFunctional', providedExamples['reactFunctional']));
                 } else {
@@ -423,8 +405,7 @@ function createExampleGenerator(exampleType, prefix, importTypes, incremental) {
                     let reactDeclarativeConfigs = new Map();
 
                     if (vanillaToReactFunctional && options.reactFunctional !== false) {
-                        const hasFunctionalScripts = getMatchingPaths('*_reactFunctional.*', {ignore: ['**/*.tsx']}).length > 0;
-                        const reactScriptPostfix = hasFunctionalScripts ? 'reactFunctional' : 'react';
+                        const reactScriptPostfix = 'reactFunctional';
 
                         reactDeclarativeScripts = getMatchingPaths(`*_${reactScriptPostfix}.*`, {ignore: ['**/*.tsx']});
 
@@ -448,8 +429,7 @@ function createExampleGenerator(exampleType, prefix, importTypes, incremental) {
                     let reactDeclarativeConfigs = new Map();
 
                     if (vanillaToReactFunctionalTs && options.reactFunctional !== false) {
-                        const hasFunctionalScripts = getMatchingPaths('*_reactFunctional.tsx').length > 0;
-                        const reactScriptPostfix = hasFunctionalScripts ? 'reactFunctional' : 'react';
+                        const reactScriptPostfix = 'reactFunctional';
 
                         reactDeclarativeScripts = getMatchingPaths(`*_${reactScriptPostfix}.tsx`);
 
@@ -640,7 +620,7 @@ const modules = moduleMapping
 /** Used for type checking in plunker, and type checking & dep installation with codesandbox */
 function addPackageJson(type, framework, importType, basePath) {
 
-    const supportedFrameworks = new Set(['angular', 'typescript', 'react', 'reactFunctional', 'reactFunctionalTs', 'vanilla'])
+    const supportedFrameworks = new Set(['angular', 'typescript', 'reactFunctional', 'reactFunctionalTs', 'vanilla'])
     if (!supportedFrameworks.has(framework)) {
         return;
     }
@@ -661,7 +641,7 @@ function addPackageJson(type, framework, importType, basePath) {
     }
 
     function isFrameworkReact() {
-        return new Set(['react', 'reactFunctional', 'reactFunctionalTs']).has(framework);
+        return new Set(['reactFunctional', 'reactFunctionalTs']).has(framework);
     }
 
     if (isFrameworkReact()) {
@@ -709,13 +689,12 @@ function getGeneratorCode(prefix) {
     const {parser} = require(`${prefix}vanilla-src-parser.ts`);
     const {vanillaToVue} = require(`${prefix}vanilla-to-vue.ts`);
     const {vanillaToTypescript} = require(`${prefix}vanilla-to-typescript.ts`);
-    const {vanillaToReact} = require(`${prefix}vanilla-to-react.ts`);
     const {vanillaToVue3} = require(`${prefix}vanilla-to-vue3.ts`);
     const {vanillaToReactFunctional} = require(`${prefix}vanilla-to-react-functional.ts`);
     const {vanillaToReactFunctionalTs} = require(`${prefix}vanilla-to-react-functional-ts.ts`);
     const {vanillaToAngular} = require(`${prefix}vanilla-to-angular.ts`);
 
-    return [parser, vanillaToVue, vanillaToVue3, vanillaToReact, vanillaToReactFunctional, vanillaToReactFunctionalTs, vanillaToAngular, vanillaToTypescript];
+    return [parser, vanillaToVue, vanillaToVue3, vanillaToReactFunctional, vanillaToReactFunctionalTs, vanillaToAngular, vanillaToTypescript];
 }
 
 function generateExamples(type, importTypes, scope, trigger, done) {

@@ -10,21 +10,20 @@ import {getIndexHtml} from './index-html-helper';
  * user has selected. It can be one of the following:
  *
  * - 'vanilla' (JavaScript)
- * - 'react' (React Classes)
  * - 'reactFunctional' (React Hooks)
  * - 'reactFunctionalTs' (React Hooks with Typescript)
  * - 'angular' (Angular)
  * - 'vue' (Vue)
  * - 'vue3' (Vue 3)
  */
-const getInternalFramework = (framework, useFunctionalReact, useVue3, useTypescript) => {
+const getInternalFramework = (framework, useVue3, useTypescript) => {
     switch (framework) {
         case 'vue':
             return useVue3 ? 'vue3' : 'vue';
         case 'javascript':
             return useTypescript ? 'typescript' : 'vanilla';
         case 'react':
-            return useFunctionalReact ? (useTypescript ? 'reactFunctionalTs' : 'reactFunctional') : 'react';
+            return useTypescript ? 'reactFunctionalTs' : 'reactFunctional';
         default:
             return framework;
     }
@@ -39,7 +38,6 @@ export const getExampleInfo = (
     type,
     options = {},
     framework = 'javascript',
-    useFunctionalReact = false,
     useVue3 = false,
     useTypescript = false,
     importType = 'modules',
@@ -50,7 +48,7 @@ export const getExampleInfo = (
         importType = 'packages';
     }
 
-    const internalFramework = getInternalFramework(framework, useFunctionalReact, useVue3, useTypescript);
+    const internalFramework = getInternalFramework(framework, useVue3, useTypescript);
 
     let boilerPlateFramework;
     switch (framework) {
@@ -390,7 +388,6 @@ export const getIndexHtmlUrl = (exampleInfo) => {
             pageName,
             library,
             framework,
-            useFunctionalReact,
             useVue3,
             importType,
             name,
@@ -403,7 +400,6 @@ export const getIndexHtmlUrl = (exampleInfo) => {
             pageName: encodeURIComponent(pageName),
             library: encodeURIComponent(library),
             framework: encodeURIComponent(framework),
-            useFunctionalReact: encodeURIComponent(useFunctionalReact),
             useVue3: encodeURIComponent(useVue3),
             importType: encodeURIComponent(importType),
             name: encodeURIComponent(name),

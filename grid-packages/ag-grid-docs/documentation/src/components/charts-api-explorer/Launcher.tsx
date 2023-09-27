@@ -22,11 +22,10 @@ interface LauncherProps {
 export const Launcher = (props: LauncherProps) => {
     return (
         <GlobalContextConsumer>
-            {({ exampleImportType, useFunctionalReact, enableVue3, useVue3, useTypescript, set }) => {
+            {({ exampleImportType, enableVue3, useVue3, useTypescript, set }) => {
                 const innerProps = {
                     ...props,
                     exampleImportType,
-                    useFunctionalReact,
                     enableVue3,
                     useVue3: enableVue3 ? useVue3 : false,
                     useTypescript,
@@ -46,8 +45,6 @@ const LauncherInner = ({
     setFullScreen,
     fullScreenGraph,
     setFullScreenGraph,
-
-    useFunctionalReact,
     enableVue3,
     useVue3,
     useTypescript,
@@ -55,8 +52,8 @@ const LauncherInner = ({
 }) => {
     const nodes = useExampleFileNodes();
     const exampleInfo = useMemo(
-        () => buildExampleInfo(nodes, framework, options, useFunctionalReact, useVue3, useTypescript),
-        [nodes, framework, options, useFunctionalReact, useVue3, useTypescript]
+        () => buildExampleInfo(nodes, framework, options, useVue3, useTypescript),
+        [nodes, framework, options, useVue3, useTypescript]
     );
     const isGenerated = isGeneratedExample(exampleInfo.type);
 
@@ -66,21 +63,17 @@ const LauncherInner = ({
                 {/* perversely we don't show the hook/class when the type is react as the example provided will be displayed "as is" */}
                 {exampleInfo.framework === 'react' && exampleInfo.type !== 'react' && (
                     <ReactStyleSelector
-                        useFunctionalReact={useFunctionalReact}
                         useTypescript={useTypescript}
                         onChange={(event) => {
-                            switch (event.target.value) {
-                                case 'classes':
-                                    set({ useFunctionalReact: false, useTypescript: false });
-                                    break;
+                            switch (event.target.value) {                               
                                 case 'hooks':
-                                    set({ useFunctionalReact: true, useTypescript: false });
+                                    set({ useTypescript: false });
                                     break;
                                 case 'hooksTs':
-                                    set({ useFunctionalReact: true, useTypescript: true });
+                                    set({ useTypescript: true });
                                     break;
                                 default:
-                                    set({ useFunctionalReact: true, useTypescript: true });
+                                    set({ useTypescript: true });
                                     break;
                             }
                         }}
@@ -135,20 +128,19 @@ const LauncherInner = ({
     );
 };
 
-const ReactStyleSelector = ({ useFunctionalReact, useTypescript, onChange }) => {
+const ReactStyleSelector = ({ useTypescript, onChange }) => {
     const formId = `chart-api-explorer-react-style-selector`;
     return isServerSideRendering() ? null : (
         <>
             <label htmlFor={formId}>Language:</label>{' '}
             <select
                 id={formId}
-                value={useFunctionalReact ? (useTypescript ? 'hooksTs' : 'hooks') : 'classes'}
+                value={(useTypescript ? 'hooksTs' : 'hooks')}
                 onChange={onChange}
                 onBlur={onChange}
             >
-                <option value="classes">Classes</option>
-                <option value="hooks">Hooks</option>
-                <option value="hooksTs">Hooks TS</option>
+                <option value="hooks">Javascript</option>
+                <option value="hooksTs">Typescript</option>
             </select>
         </>
     );
@@ -199,7 +191,6 @@ interface ExampleInfo {
 
 const determineFrameworks = (
     framework: string = 'javascript',
-    useFunctionalReact = false,
     useVue3 = false,
     useTypescript = false
 ) => {
@@ -215,14 +206,14 @@ const determineFrameworks = (
             mainFile = 'app.component.ts';
             break;
         case 'react':
-            mainFile = useFunctionalReact && useTypescript ? 'index.tsx' : 'index.jsx';
+            mainFile = useTypescript ? 'index.tsx' : 'index.jsx';
             break;
         default:
             console.warn(`AG Grid Docs - unable to determine internalFramework for: ${framework}`);
             framework = 'javascript';
     }
 
-    return { framework, useFunctionalReact, useVue3, useTypescript, mainFile };
+    return { framework, useVue3, useTypescript, mainFile };
 };
 
 const applyChartOptions = (name: string, source: string, options: AgChartOptions) => {
@@ -265,11 +256,10 @@ const buildExampleInfo = (
     nodes: any,
     providedFramework: string,
     options: AgChartOptions,
-    useFunctionalReact = false,
     useVue3 = false,
     useTypescript = false
 ): ExampleInfo => {
-    const { framework, mainFile } = determineFrameworks(providedFramework, useFunctionalReact, useVue3, useTypescript);
+    const { framework, mainFile } = determineFrameworks(providedFramework, useVue3, useTypescript);
     const library = 'charts';
     const pageName = 'charts-api-explorer';
     const exampleName = 'baseline';
@@ -287,7 +277,6 @@ const buildExampleInfo = (
         type,
         exampleOptions,
         framework,
-        useFunctionalReact,
         useVue3,
         useTypescript,
         exampleImportType

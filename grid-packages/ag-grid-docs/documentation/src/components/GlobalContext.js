@@ -8,7 +8,7 @@ const storageOverrides = {
 
 const defaultContextValue = {
     exampleImportType: 'packages',
-    useFunctionalReact: true,
+    useTypescript: true,
     useVue3: false, // determines whether the user is going to see vue 2 or vue 3 examples (only applicable if enableVue3 is true)
     set: () => {},
     ...storageOverrides,
