@@ -109,6 +109,8 @@ export class RowCtrl extends BeanStub {
         fullWidth: false
     };
 
+    private rowDragComps: BeanStub[] = [];
+
     private readonly useAnimationFrameForCreate: boolean;
 
     private paginationPage: number;
@@ -372,7 +374,8 @@ export class RowCtrl extends BeanStub {
             gui.element,
             undefined, true
         );
-        this.createManagedBean(rowDragComp, this.beans.context);
+        const rowDragBean = this.createBean(rowDragComp, this.beans.context);
+        this.rowDragComps.push(rowDragBean);
     }
 
     private setupFullWidth(gui: RowGui): void {
@@ -727,6 +730,21 @@ export class RowCtrl extends BeanStub {
         this.addManagedListener(eventService, Events.EVENT_MODEL_UPDATED, this.onModelUpdated.bind(this));
 
         this.addManagedListener(eventService, Events.EVENT_COLUMN_MOVED, this.onColumnMoved.bind(this));
+
+        this.addDestroyFunc(() => {
+            this.destroyBeans(this.rowDragComps, this.beans.context);
+        });
+        this.addManagedPropertyListeners(['rowDragEntireRow'], () => {
+            const useRowDragEntireRow = this.gridOptionsService.is('rowDragEntireRow');
+            if (useRowDragEntireRow) {
+                this.allRowGuis.forEach(gui => {
+                    this.addRowDraggerToRow(gui);
+                });
+                return;
+            }
+            this.destroyBeans(this.rowDragComps, this.beans.context);
+            this.rowDragComps = [];
+        });
 
         this.addListenersForCellComps();
     }
