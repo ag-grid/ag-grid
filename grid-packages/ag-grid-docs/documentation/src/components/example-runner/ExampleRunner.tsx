@@ -22,12 +22,11 @@ import { useExampleFileNodes } from './use-example-file-nodes';
 export const ExampleRunner = (props) => {
     return (
         <GlobalContextConsumer>
-            {({ exampleImportType, useFunctionalReact, enableVue3, useVue3, useTypescript, set }) => {
+            {({ exampleImportType, enableVue3, useVue3, useTypescript, set }) => {
                 const innerProps = {
                     ...props,
                     // Allow overriding of the global context values per example
                     exampleImportType: props.exampleImportType ?? exampleImportType,
-                    useFunctionalReact,
                     useVue3: enableVue3 ? useVue3 : false,
                     useTypescript: props.useTypescript ?? useTypescript,
                 };
@@ -47,7 +46,6 @@ const saveGridIndexHtmlPermutations = (
     type,
     options,
     framework,
-    useFunctionalReact,
     useVue3,
     exampleImportType
 ) => {
@@ -66,7 +64,6 @@ const saveGridIndexHtmlPermutations = (
             type,
             options,
             framework,
-            useFunctionalReact,
             useVue3,
             false,
             alternativeImport
@@ -85,7 +82,6 @@ const saveGridIndexHtmlPermutations = (
                 type,
                 options,
                 framework,
-                !useFunctionalReact,
                 useVue3,
                 true,
                 'modules'
@@ -102,7 +98,6 @@ const saveGridIndexHtmlPermutations = (
                 type,
                 options,
                 framework,
-                !useFunctionalReact,
                 useVue3,
                 true,
                 'packages'
@@ -122,7 +117,6 @@ const saveGridIndexHtmlPermutations = (
                 type,
                 options,
                 framework,
-                !useFunctionalReact,
                 useVue3,
                 false,
                 'modules'
@@ -138,7 +132,6 @@ const saveGridIndexHtmlPermutations = (
                 type,
                 options,
                 framework,
-                !useFunctionalReact,
                 useVue3,
                 false,
                 'packages'
@@ -146,7 +139,6 @@ const saveGridIndexHtmlPermutations = (
             writeIndexHtmlFile(alternativeStylePackagesExampleInfo);
 
             // Add the typescript versions for functional
-            if (useFunctionalReact) {
                 const reactTsStyleModules = getExampleInfo(
                     nodes,
                     library,
@@ -156,7 +148,6 @@ const saveGridIndexHtmlPermutations = (
                     type,
                     options,
                     framework,
-                    useFunctionalReact,
                     useVue3,
                     true,
                     'modules'
@@ -172,13 +163,11 @@ const saveGridIndexHtmlPermutations = (
                     type,
                     options,
                     framework,
-                    useFunctionalReact,
                     useVue3,
                     true,
                     'packages'
                 );
                 writeIndexHtmlFile(reactTsStylePackages);
-            }
         }
 
         // 4. For Vue, also copy html file for Vue 3
@@ -192,7 +181,6 @@ const saveGridIndexHtmlPermutations = (
                 type,
                 options,
                 framework,
-                !useFunctionalReact,
                 true,
                 false,
                 'modules'
@@ -209,7 +197,6 @@ const saveGridIndexHtmlPermutations = (
                 type,
                 options,
                 framework,
-                !useFunctionalReact,
                 true,
                 false,
                 'packages'
@@ -228,7 +215,6 @@ const saveGridIndexHtmlPermutations = (
             type,
             options,
             framework,
-            !useFunctionalReact,
             useVue3,
             true
         );
@@ -245,14 +231,12 @@ const saveGridIndexHtmlPermutations = (
             type,
             options,
             framework,
-            !useFunctionalReact,
             useVue3,
             false
         );
         writeIndexHtmlFile(functionalExampleInfo);
 
         // Add the typescript versions for functional
-        if (useFunctionalReact) {
             const reactTsStyle = getExampleInfo(
                 nodes,
                 library,
@@ -262,12 +246,10 @@ const saveGridIndexHtmlPermutations = (
                 type,
                 options,
                 framework,
-                useFunctionalReact,
                 useVue3,
                 true
             );
             writeIndexHtmlFile(reactTsStyle);
-        }
     } else if (type === 'multi' && framework === 'vue') {
         // Also generate the alternative React style
         const functionalExampleInfo = getExampleInfo(
@@ -279,7 +261,6 @@ const saveGridIndexHtmlPermutations = (
             type,
             options,
             framework,
-            useFunctionalReact,
             !useVue3,
             false
         );
@@ -297,7 +278,6 @@ const saveChartIndexHtmlPermutations = (
     type,
     options,
     framework,
-    useFunctionalReact,
     useVue3
 ) => {
     if (isGeneratedExample(type)) {
@@ -314,7 +294,6 @@ const saveChartIndexHtmlPermutations = (
                 type,
                 options,
                 framework,
-                !useFunctionalReact,
                 true,
                 true,
                 'packages'
@@ -334,7 +313,6 @@ const saveChartIndexHtmlPermutations = (
                 type,
                 options,
                 framework,
-                !useFunctionalReact,
                 true,
                 false,
                 'packages'
@@ -354,7 +332,6 @@ const saveChartIndexHtmlPermutations = (
                 type,
                 options,
                 framework,
-                !useFunctionalReact,
                 useVue3,
                 false,
                 'packages'
@@ -362,7 +339,7 @@ const saveChartIndexHtmlPermutations = (
             writeIndexHtmlFile(alternativeStylePackagesExampleInfo);
 
             // Add the typescript versions for functional
-            if (useFunctionalReact) {
+
                 const reactTsStylePackages = getExampleInfo(
                     nodes,
                     library,
@@ -372,13 +349,11 @@ const saveChartIndexHtmlPermutations = (
                     type,
                     options,
                     framework,
-                    useFunctionalReact,
                     useVue3,
                     true,
                     'packages'
                 );
                 writeIndexHtmlFile(reactTsStylePackages);
-            }
         }
     } else if (type === 'multi' && framework === 'vue') {
         const vue3ExampleInfo = getExampleInfo(
@@ -406,7 +381,6 @@ const saveChartIndexHtmlPermutations = (
             type,
             options,
             framework,
-            !useFunctionalReact,
             true,
             true
         );
@@ -423,14 +397,12 @@ const saveChartIndexHtmlPermutations = (
             type,
             options,
             framework,
-            !useFunctionalReact,
             useVue3,
             false
         );
         writeIndexHtmlFile(functionalExampleInfo);
 
         // Add the typescript versions for functional
-        if (useFunctionalReact) {
             const reactTsStyle = getExampleInfo(
                 nodes,
                 library,
@@ -440,12 +412,10 @@ const saveChartIndexHtmlPermutations = (
                 type,
                 options,
                 framework,
-                useFunctionalReact,
                 useVue3,
                 true
             );
             writeIndexHtmlFile(reactTsStyle);
-        }
     }
 };
 
@@ -458,7 +428,6 @@ const ExampleRunnerInner = ({
     options,
     library,
     exampleImportType,
-    useFunctionalReact,
     useVue3,
     useTypescript,
 }) => {
@@ -475,7 +444,6 @@ const ExampleRunnerInner = ({
                 type,
                 options,
                 framework,
-                useFunctionalReact,
                 useVue3,
                 useTypescript,
                 exampleImportType
@@ -489,7 +457,6 @@ const ExampleRunnerInner = ({
             type,
             options,
             framework,
-            useFunctionalReact,
             useVue3,
             useTypescript,
             exampleImportType,
@@ -522,7 +489,6 @@ const ExampleRunnerInner = ({
                 type,
                 options,
                 framework,
-                useFunctionalReact,
                 useVue3,
                 exampleImportType
             );
@@ -536,7 +502,6 @@ const ExampleRunnerInner = ({
                 type,
                 options,
                 framework,
-                useFunctionalReact,
                 useVue3
             );
         }
