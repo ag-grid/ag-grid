@@ -9,10 +9,10 @@ export type Feature = {
   alwaysEnabled?: boolean;
   gridOptions?: Partial<GridOptions>;
   // put the grid into a state where this feature is visible so that it can be styled
-  show?: (api: GridApi) => void;
+  show?: (api: GridApi) => unknown;
   // get the state that should be restored after a grid rebuild to
-  getState?: (api: GridApi) => JSONValue;
-  restoreState?: (api: GridApi, state: JSONValue) => void;
+  getState?: (api: GridApi) => unknown;
+  restoreState?: (api: GridApi, state: unknown) => void;
   // events on which to save and restore state
   stateChangeEvents?: string[];
 };
@@ -68,40 +68,33 @@ export const allFeatures: Feature[] = [
       });
     },
     stateChangeEvents: [Events.EVENT_RANGE_SELECTION_CHANGED],
-    getState: (api) => {
-      const ranges = api.getCellRanges();
-      if (!ranges) return null;
-      return ranges.map((range) => ({
-        columnStart: range.columns[0]?.getId(),
-        columnEnd: range.columns[range.columns.length - 1]?.getId(),
-        rowStartIndex: range.startRow?.rowIndex,
-        rowEndIndex: range.endRow?.rowIndex,
-      }));
-    },
+    getState: (api): CellRange[] | null => api.getCellRanges(),
     restoreState: (api, state) => {
-      if (!Array.isArray(state)) throw new Error('Expected state to be an array');
-      state.forEach((range) => {
-        if (!range || typeof range !== 'object' || Array.isArray(range))
-          throw new Error(`Expected state item to be an object, got ${JSON.stringify(range)}`);
-        const { columnStart, columnEnd, rowStartIndex, rowEndIndex } = range;
+      const savedSelections = state as CellRange[] | null;
+      savedSelections?.forEach((range) => {
+        const columnStart = range.columns[0]?.getId();
+        const columnEnd = range.columns[range.columns.length - 1]?.getId();
+        const rowStartIndex = range.startRow?.rowIndex;
+        const rowEndIndex = range.endRow?.rowIndex;
         if (
-          typeof columnStart !== 'string' ||
-          typeof columnEnd !== 'string' ||
-          typeof rowStartIndex !== 'number' ||
-          typeof rowEndIndex !== 'number'
+          columnStart != null &&
+          columnEnd != null &&
+          rowStartIndex != null &&
+          rowEndIndex != null
         ) {
-          throw new Error(`Incorrect range keys on state item: ${JSON.stringify(range)}`);
+          api.addCellRange({
+            columnStart,
+            columnEnd,
+            rowStartIndex,
+            rowEndIndex,
+          });
         }
-        api.addCellRange({
-          columnStart,
-          columnEnd,
-          rowStartIndex,
-          rowEndIndex,
-        });
       });
     },
   },
 ];
+
+// export type ValueOrObjectOrArray<T> = T | Record<string, ValueOrObjectOrArray<T>> | Array<ValueOrObjectOrArray<T>>;
 
 export type JSONPrimitive = string | number | boolean | null | undefined;
 

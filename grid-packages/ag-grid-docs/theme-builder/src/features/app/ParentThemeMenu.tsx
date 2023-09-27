@@ -1,9 +1,10 @@
 import { allThemes, getThemeOrThrow } from 'model/themes';
 import { kebabCaseToTitleCase } from 'model/utils';
-import { useParentThemeAtom } from './parentThemeAtoms';
+import { useParentTheme, useSetParentTheme } from '../../atoms/parentTheme';
 
 export const ParentThemeMenu = () => {
-  const [parentTheme, setParentTheme] = useParentThemeAtom();
+  const parentTheme = useParentTheme();
+  const setParentTheme = useSetParentTheme();
 
   return (
     <select

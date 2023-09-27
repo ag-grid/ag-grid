@@ -1,15 +1,16 @@
 import styled from '@emotion/styled';
+import { useCurrentFeature } from 'atoms/currentFeature';
+import { useEnabledFeatures } from 'atoms/enabledFeatures';
 import { EnableFeatureButton } from 'features/inspector/EnableFeatureButton';
 import { FeatureEditor } from 'features/inspector/FeatureEditor';
 import { FeatureEditorPanel } from 'features/inspector/FeatureEditorPanel';
-import { useCurrentFeatureAtom, useEnabledFeatures } from 'features/inspector/inspectorHooks';
 import { InspectFeatureButton } from './InspectFeatureButton';
 
 export const Inspector = () => {
   const enabled = useEnabledFeatures();
   const inline = enabled.filter((f) => f.alwaysEnabled);
   const inspectable = enabled.filter((f) => !f.alwaysEnabled);
-  const [current] = useCurrentFeatureAtom();
+  const current = useCurrentFeature();
 
   return (
     <Container>

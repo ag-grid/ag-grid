@@ -4,7 +4,7 @@ import 'ag-grid-community/styles/ag-theme-alpine.css';
 import 'ag-grid-community/styles/ag-theme-balham.css';
 import 'ag-grid-community/styles/ag-theme-material.css';
 import 'ag-grid-enterprise';
-import { ParentThemeMenu } from 'features/parentTheme/ParentThemeMenu';
+import { ParentThemeMenu } from 'features/app/ParentThemeMenu';
 import { memo } from 'react';
 import { Tooltip } from 'react-tooltip';
 import { Inspector } from '../inspector/Inspector';

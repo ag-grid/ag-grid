@@ -1,9 +1,9 @@
-import { Control } from 'components/Control';
+import { useParentTheme } from 'atoms/parentTheme';
+import { useRenderedVariable } from 'atoms/renderedTheme';
+import { useVariableValueAtom } from 'atoms/values';
+import { useVariableDescription } from 'atoms/variableDescriptions';
 import { withErrorBoundary } from 'components/ErrorBoundary';
-import { useRenderedVariable } from 'features/app/useRenderedTheme';
-import { useVariableDescription } from 'features/app/useVariableDescriptions';
-import { useParentThemeAtom } from 'features/parentTheme/parentThemeAtoms';
-import { useVariableValueAtom } from 'features/variables/variablesAtoms';
+import { Control } from 'components/controls/Control';
 import { Feature } from 'model/features';
 import { kebabCaseToTitleCase } from 'model/utils';
 import { defaultValueForType } from 'model/values';
@@ -20,7 +20,7 @@ export type VariableControlProps = {
 };
 
 const VariableControl = ({ variableName, feature }: VariableControlProps): JSX.Element => {
-  const [parentTheme] = useParentThemeAtom();
+  const parentTheme = useParentTheme();
   const [value, setValue] = useVariableValueAtom(variableName);
   const renderedValue = useRenderedVariable(variableName);
   const info = getVariableInfoOrThrow(variableName);

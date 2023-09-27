@@ -1,13 +1,13 @@
 import styled from '@emotion/styled';
+import { useSetCurrentFeature } from 'atoms/currentFeature';
 import { Feature } from 'model/features';
-import { useCurrentFeatureAtom } from './inspectorHooks';
 
 type InspectFeatureButtonProps = {
   feature: Feature;
 };
 
 export const InspectFeatureButton = ({ feature }: InspectFeatureButtonProps) => {
-  const [, setInspectedFeature] = useCurrentFeatureAtom();
+  const setInspectedFeature = useSetCurrentFeature();
 
   return <Button onClick={() => setInspectedFeature(feature)}>{feature.displayName}</Button>;
 };

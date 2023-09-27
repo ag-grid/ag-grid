@@ -38,11 +38,3 @@ export const logErrorMessage = (message: string, error?: unknown) => {
     console.error(message);
   }
 };
-
-export const getName = (object: { name: string }): string => object.name;
-export const getNames = (array: Array<{ name: string }>): string[] => array.map(getName);
-
-export const subtractArrays = <T>(a: T[], b: T[]): T[] => {
-  const bSet = new Set<T>(b);
-  return a.filter((value) => !bSet.has(value));
-};

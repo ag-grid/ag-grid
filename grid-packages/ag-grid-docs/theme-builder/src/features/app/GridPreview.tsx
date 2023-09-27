@@ -1,16 +1,16 @@
 import styled from '@emotion/styled';
 import { ColDef, GridApi, GridOptions } from 'ag-grid-community';
 import { AgGridReact } from 'ag-grid-react';
+import { useCurrentFeature } from 'atoms/currentFeature';
+import { useEnabledFeatures } from 'atoms/enabledFeatures';
+import { useParentTheme } from 'atoms/parentTheme';
+import { useRenderedTheme } from 'atoms/renderedTheme';
+import { useVariableValues } from 'atoms/values';
 import { withErrorBoundary } from 'components/ErrorBoundary';
-import { useRenderedTheme } from 'features/app/useRenderedTheme';
-import { useCurrentFeatureAtom, useEnabledFeatures } from 'features/inspector/inspectorHooks';
-import { useParentThemeAtom } from 'features/parentTheme/parentThemeAtoms';
-import { useVariableValues } from 'features/variables/variablesAtoms';
-import { Feature } from 'model/features';
 import { renderedThemeToCss } from 'model/render';
-import { getNames, isNotNull, logErrorMessage } from 'model/utils';
+import { isNotNull } from 'model/utils';
 import { valueToCss } from 'model/values';
-import { memo, useEffect, useMemo, useState } from 'react';
+import { memo, useEffect, useMemo, useRef, useState } from 'react';
 
 const columnDefs: ColDef[] = [
   { field: 'make', flex: 1 },
@@ -33,8 +33,8 @@ const variablesRequiringRebuild = [
 
 const GridPreview = () => {
   const features = useEnabledFeatures();
-  const [currentFeature] = useCurrentFeatureAtom();
-  const [parentTheme] = useParentThemeAtom();
+  const currentFeature = useCurrentFeature();
+  const parentTheme = useParentTheme();
   const values = useVariableValues();
 
   const [api, setApi] = useState<GridApi | null>(null);
@@ -49,12 +49,14 @@ const GridPreview = () => {
 
   const renderedTheme = useRenderedTheme();
 
+  const featureState = useRef<Record<string, unknown>>({});
+
   const rebuildKey = variablesRequiringRebuild
     .map((variableName) => values[variableName])
     .filter(isNotNull)
     .map(valueToCss)
     .concat(parentTheme.name)
-    .concat(getNames(features))
+    .concat(features.map((f) => f.name))
     .join(';');
 
   useEffect(() => {
@@ -67,23 +69,19 @@ const GridPreview = () => {
     <Wrapper className={parentTheme.name} style={{ width: '100%', height: '100%' }}>
       <style>{renderedThemeToCss(renderedTheme)}</style>
       <AgGridReact
-        onGridReady={(e) => {
-          setApi(e.api);
+        onFirstDataRendered={({ api }) => {
+          setApi(api);
           for (const feature of features) {
-            restoreFeatureState(feature, e.api);
-          }
-        }}
-        onFirstDataRendered={(e) => {
-          for (const feature of features) {
-            for (const event of feature.stateChangeEvents || []) {
-              e.api.addEventListener(event, () => {
-                saveFeatureState(feature, e.api);
-              });
+            const state = featureState.current[feature.name];
+            if (state != null) {
+              feature.restoreState?.(api, state);
             }
           }
           for (const feature of features) {
             for (const event of feature.stateChangeEvents || []) {
-              e.api.addEventListener(event, () => saveFeatureState(feature, e.api));
+              api.addEventListener(event, () => {
+                featureState.current[feature.name] = feature.getState?.(api);
+              });
             }
           }
         }}
@@ -105,33 +103,3 @@ const Wrapper = styled('div')`
   width: 100%;
   height: 100%;
 `;
-
-const saveFeatureState = (feature: Feature, api: GridApi) => {
-  const key = `theme-builder.feature-state.${feature.name}`;
-  const state = feature.getState?.(api);
-  if (state == null) {
-    localStorage.removeItem(key);
-  } else {
-    localStorage.setItem(key, JSON.stringify(state));
-  }
-};
-
-const restoreFeatureState = (feature: Feature, api: GridApi) => {
-  const key = `theme-builder.feature-state.${feature.name}`;
-  const stateString = localStorage.getItem(key);
-  if (!stateString) return;
-  if (!feature.restoreState) {
-    localStorage.removeItem(key);
-  }
-  try {
-    feature.restoreState?.(api, JSON.parse(stateString));
-  } catch (e) {
-    logErrorMessage(
-      `Failed to restore ${feature.name} feature state using string value ${JSON.stringify(
-        stateString,
-      )}`,
-      e,
-    );
-    throw e;
-  }
-};

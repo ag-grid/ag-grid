@@ -1,11 +1,11 @@
+import { useAddEnabledFeature, useDisabledFeatures } from 'atoms/enabledFeatures';
 import { getFeatureOrThrow } from 'model/features';
-import { useDisabledFeatures, useEnableFeature } from './inspectorHooks';
 
 const defaultLabelValue = '$$label$$';
 
 export const EnableFeatureButton = () => {
   const options = useDisabledFeatures();
-  const enableFeature = useEnableFeature();
+  const addFeature = useAddEnabledFeature();
 
   if (!options.length) {
     return <></>;
@@ -17,7 +17,7 @@ export const EnableFeatureButton = () => {
       onChange={(e) => {
         const featureName = e.target.value;
         if (featureName !== defaultLabelValue) {
-          enableFeature(getFeatureOrThrow(featureName));
+          addFeature(getFeatureOrThrow(featureName));
         }
       }}
     >

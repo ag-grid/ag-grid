@@ -1,17 +1,18 @@
 import styled from '@emotion/styled';
+import { useSetCurrentFeature } from 'atoms/currentFeature';
+import { useRemoveEnabledFeature } from 'atoms/enabledFeatures';
 import { Feature } from 'model/features';
 import { useEffect, useRef } from 'react';
 import useTransition from 'react-transition-state';
 import { FeatureEditor } from './FeatureEditor';
-import { useCurrentFeatureAtom, useDisableFeature } from './inspectorHooks';
 
 type FeatureEditorPanelProps = {
   feature: Feature | null;
 };
 
 export const FeatureEditorPanel = (props: FeatureEditorPanelProps) => {
-  const disableFeature = useDisableFeature();
-  const [, setInspectedFeature] = useCurrentFeatureAtom();
+  const disableFeature = useRemoveEnabledFeature();
+  const setInspectedFeature = useSetCurrentFeature();
 
   const featureRef = useRef(props.feature);
   if (props.feature) {

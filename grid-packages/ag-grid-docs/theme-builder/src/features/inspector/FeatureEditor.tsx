@@ -1,9 +1,9 @@
 import styled from '@emotion/styled';
+import { useParentThemeVariables } from 'atoms/parentTheme';
+import { VariableControl } from 'components/controls/VariableControl';
 import { withErrorBoundary } from 'components/ErrorBoundary';
-import { useParentThemeVariables } from 'features/parentTheme/parentThemeAtoms';
 import { Feature } from 'model/features';
 import { memo } from 'react';
-import { VariableControl } from '../variables/VariableControl';
 
 export type FeatureEditorProps = {
   feature: Feature;

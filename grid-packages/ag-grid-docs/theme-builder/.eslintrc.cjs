@@ -22,6 +22,7 @@ module.exports = {
     'react/display-name': 'off',
     'react/prop-types': 'off',
     'no-console': 'warn',
+    '@typescript-eslint/require-await': 'off',
   },
   settings: {
     react: {

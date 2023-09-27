@@ -1,9 +1,12 @@
+import { initStore } from 'atoms/store';
 import { App, ThemeBuilderAppProps } from 'features/app/App';
 import { Provider } from 'jotai';
+import { useMemo } from 'react';
 
 export const ThemeBuilder = (props: ThemeBuilderAppProps) => {
+  const store = useMemo(initStore, []);
   return (
-    <Provider>
+    <Provider store={store}>
       <App {...props} />
     </Provider>
   );
