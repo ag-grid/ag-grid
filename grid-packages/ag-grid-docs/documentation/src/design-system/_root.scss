@@ -52,7 +52,7 @@
 }
 
 html {
-    color-scheme: light;
+    --color-scheme: light;
 }
 
 html[data-dark-mode='true'] {
@@ -67,7 +67,7 @@ html[data-dark-mode='true'] {
         --#{$name}: var(--#{$var-name});
     }
 
-    color-scheme: dark;
+    --color-scheme: dark;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -83,6 +83,6 @@ html[data-dark-mode='true'] {
             --#{$name}: var(--#{$var-name});
         }
 
-        color-scheme: dark;
+        --color-scheme: dark;
     }
 }

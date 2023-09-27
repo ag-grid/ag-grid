@@ -626,7 +626,7 @@ const Example = () => {
         if (themeFromURL) {
             setGridTheme(themeFromURL)
         } else {
-            const isDarkMode = document.documentElement.computedStyleMap().get('color-scheme')?.toString() === 'dark';
+            const isDarkMode = document.documentElement.computedStyleMap().get('--color-scheme')?.toString() === 'dark';
             setGridTheme(isDarkMode ? 'ag-theme-alpine-dark' : 'ag-theme-alpine');
         }
     }, []);
@@ -1423,13 +1423,10 @@ const Example = () => {
         }
     }, [dataSize]);
 
-    const restoreOriginalDarkModeOnLeave = useRef(null);
+    const isDarkTheme = gridTheme?.indexOf('dark')  >= 0;
 
     useEffect(() => {
-        if (!gridTheme) return;
-        const isDark = gridTheme.indexOf('dark') >= 0;
-
-        if (isDark) {
+        if (isDarkTheme) {
             gridOptions.chartThemes = [
                 'ag-default-dark',
                 'ag-material-dark',
@@ -1440,22 +1437,7 @@ const Example = () => {
         } else {
             gridOptions.chartThemes = null;
         }
-
-        if (restoreOriginalDarkModeOnLeave.current == null) {
-            restoreOriginalDarkModeOnLeave.current = document.querySelector("html").dataset.darkMode;
-        }
-
-        document.querySelector("html").dataset.darkMode = isDark ? 'true' : 'false';
     }, [gridTheme]);
-
-    useEffect(() => {
-        return () => {
-            if (restoreOriginalDarkModeOnLeave.current != null) {
-                document.querySelector("html").dataset.darkMode = restoreOriginalDarkModeOnLeave.current;
-            }
-
-        }
-    }, []);
 
     return (
         <>
@@ -1463,7 +1445,7 @@ const Example = () => {
                 <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.6.3/css/all.css" />
                 {helmet.map((entry) => entry)}
             </Helmet>
-            <div className={classnames(styles.exampleWrapper)}>
+            <div className={classnames(styles.exampleWrapper, isDarkTheme && styles.exampleWrapperDark)}>
                 <Toolbar
                     gridRef={gridRef}
                     dataSize={dataSize}
