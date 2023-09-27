@@ -875,7 +875,7 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     @Input() public suppressMultiRangeSelection: boolean | undefined = undefined;
     /** Set to `true` to be able to select the text within cells.
          *
-         *     **Note:** When this is set to `true`, the clipboard service is disabled.
+         *     **Note:** When this is set to `true`, the clipboard service is disabled and only selected text is copied.
          * Default: `false`
          */
     @Input() public enableCellTextSelection: boolean | undefined = undefined;

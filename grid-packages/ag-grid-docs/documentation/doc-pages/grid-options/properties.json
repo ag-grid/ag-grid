@@ -1215,7 +1215,12 @@
                 "url": "/range-selection/#suppress-multi-range-selection"
             }
         },
-        "enableCellTextSelection": {},
+        "enableCellTextSelection": {
+            "more":{
+                "name": "Using Cell Text Selection",
+                "url":"/clipboard/#using-the-browsers-text-selection"
+            }
+        },
         "enableRangeSelection": {
             "more": {
                 "name": "Range Selection",
