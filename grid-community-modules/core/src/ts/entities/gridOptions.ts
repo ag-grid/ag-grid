@@ -799,7 +799,7 @@ export interface GridOptions<TData = any> {
     /**
      * Set to `true` to be able to select the text within cells.
      *
-     * **Note:** When this is set to `true`, the clipboard service is disabled.
+     * **Note:** When this is set to `true`, the clipboard service is disabled and only selected text is copied.
      * Default: `false`
      */
     enableCellTextSelection?: boolean;
