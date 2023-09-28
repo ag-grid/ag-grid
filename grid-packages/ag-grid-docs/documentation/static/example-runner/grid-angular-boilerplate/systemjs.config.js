@@ -70,7 +70,6 @@
             "@angular/material/core": "npm:@angular/material@" + ANGULAR_MATERIAL_VERSION + "/fesm2015/core.mjs",
             "@angular/material/card": "npm:@angular/material@" + ANGULAR_MATERIAL_VERSION + "/fesm2015/card.mjs",
             "@angular/material/radio": "npm:@angular/material@" + ANGULAR_MATERIAL_VERSION + "/fesm2015/radio.mjs",
-            "@angular/material/card": "npm:@angular/material@" + ANGULAR_MATERIAL_VERSION + "/fesm2015/card.mjs",
             "@angular/material/slider": "npm:@angular/material@" + ANGULAR_MATERIAL_VERSION + "/fesm2015/slider.mjs",
             "@angular/material/select": "npm:@angular/material@" + ANGULAR_MATERIAL_VERSION + "/fesm2015/select.mjs",
             "@angular/material/progress-spinner": "npm:@angular/material@" + ANGULAR_MATERIAL_VERSION + "/fesm2015/progress-spinner.mjs",

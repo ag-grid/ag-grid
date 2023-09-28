@@ -196,8 +196,8 @@ export class AnimationFrameService extends BeanStub {
 
         if (win.requestAnimationFrame) {
             win.requestAnimationFrame(callback);
-        } else if (win.webkitRequestAnimationFrame) {
-            win.webkitRequestAnimationFrame(callback);
+        } else if ((win as any).webkitRequestAnimationFrame) {
+            (win as any).webkitRequestAnimationFrame(callback);
         } else {
             win.setTimeout(callback, 0);
         }
