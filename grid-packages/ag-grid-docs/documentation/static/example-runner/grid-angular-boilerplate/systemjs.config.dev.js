@@ -113,8 +113,8 @@
                 }
             },
             'ag-grid-angular': {
-                main: './dist/ag-grid-angular/fesm2015/ag-grid-angular.js',
-                defaultExtension: 'js'
+                main: './dist/ag-grid-angular/fesm2015/ag-grid-angular.mjs',
+                defaultExtension: 'mjs'
             },
             'ag-grid-community': {
                 main: './dist/ag-grid-community.cjs.js',
@@ -125,8 +125,8 @@
                 defaultExtension: 'js'
             },
             "@ag-grid-community/angular": {
-                main: "./dist/ag-grid-angular/fesm2015/ag-grid-community-angular.js",
-                defaultExtension: "js"
+                main: "./dist/ag-grid-angular/fesm2015/ag-grid-community-angular.mjs",
+                defaultExtension: "mjs"
             },
             // these are a little different in that they're in a directory and sjs doesn't default to the index.js inside...
             '@ag-grid-community/core/dist/cjs/es5/utils': {

@@ -11,8 +11,8 @@ The following page provides information that is relevant when using older versio
  
  | Angular | AG Grid   | AG Grid Legacy    |
  | --------| --------- | ------------------|
- | 16+     | 28 - 30+  | N/A               |
- | 14 - 15 | 25 - 30+  | N/A               |
+ | 17+     | 28 - 31+  | N/A               |
+ | 14 - 15 | 25 - 31+  | N/A               |
  | 12 - 13 | 25 - 30   | N/A               |
  | 10 - 11 | 24 - 27   | 28 - 29           |
  | 9       | 23 - 27   | 28                |
@@ -21,7 +21,7 @@ The following page provides information that is relevant when using older versio
 
  ## Future Support of Angular versions
 
-AG Grid currently supports Angular v12 and above. However, in the next major release (v31) we will be aligning our support to match Angular Long-term (LTS) versions on an ongoing basis. See [Angular Support policy and schedule](https://angular.io/guide/releases#support-policy-and-schedule). 
+AG Grid currently supports Angular v14 and above. Since AG Grid v31 we are now aligned to support Angular Long-term (LTS) versions on an ongoing basis. See [Angular Support policy and schedule](https://angular.io/guide/releases#support-policy-and-schedule). 
 
 ## AG Grid Legacy
 
