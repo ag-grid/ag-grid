@@ -26,8 +26,8 @@
     "clean": "rimraf dist lib .hash",
     "bundle": "NODE_OPTIONS=--openssl-legacy-provider npx vue-cli-service build --target lib src/AgChartsVue.ts",
     "npm": "npx tsc -p tsconfig-lib.json",
-    "build": "npm run npm && npm run bundle",
-    "build-prod": "npm run build",
+    "build-x": "npm run npm && npm run bundle",
+    "build-prod-x": "npm run build",
     "lint": "npx vue-cli-service lint"
   },
   "devDependencies": {

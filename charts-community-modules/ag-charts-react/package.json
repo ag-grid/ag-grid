@@ -6,8 +6,8 @@
   "typings": "./main.d.ts",
   "scripts": {
     "clean": "rimraf lib umd .hash",
-    "build": "npx gulp",
-    "build-prod": "npm run build",
+    "build-x": "npx gulp",
+    "build-prod-x": "npm run build",
     "umd": "npx rollup -c",
     "test": "npx jest --passWithNoTests"
   },
