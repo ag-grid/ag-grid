@@ -5,7 +5,7 @@ import { RowNode } from '../entities/rowNode';
 import { RowHighlightPosition } from '../interfaces/iRowNode';
 import { ChangedPath } from '../utils/changedPath';
 
-export type ClientSideRowModelStep = typeof ClientSideRowModelSteps[keyof typeof ClientSideRowModelSteps];
+export type ClientSideRowModelStep = `${ClientSideRowModelSteps}`;
 export enum ClientSideRowModelSteps {
     EVERYTHING = 'group',
     FILTER = 'filter',
