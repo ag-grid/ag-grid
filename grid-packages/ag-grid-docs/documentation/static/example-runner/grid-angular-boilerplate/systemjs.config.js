@@ -70,7 +70,6 @@
             "@angular/material/core": "npm:@angular/material@" + ANGULAR_MATERIAL_VERSION + "/fesm2015/core.mjs",
             "@angular/material/card": "npm:@angular/material@" + ANGULAR_MATERIAL_VERSION + "/fesm2015/card.mjs",
             "@angular/material/radio": "npm:@angular/material@" + ANGULAR_MATERIAL_VERSION + "/fesm2015/radio.mjs",
-            "@angular/material/card": "npm:@angular/material@" + ANGULAR_MATERIAL_VERSION + "/fesm2015/card.mjs",
             "@angular/material/slider": "npm:@angular/material@" + ANGULAR_MATERIAL_VERSION + "/fesm2015/slider.mjs",
             "@angular/material/select": "npm:@angular/material@" + ANGULAR_MATERIAL_VERSION + "/fesm2015/select.mjs",
             "@angular/material/progress-spinner": "npm:@angular/material@" + ANGULAR_MATERIAL_VERSION + "/fesm2015/progress-spinner.mjs",
@@ -97,7 +96,7 @@
             css: boilerplatePath + "css.js",
             ts: "npm:plugin-typescript@8.0.0/lib/plugin.js",
             tslib: "npm:tslib@2.3.1/tslib.js",
-            typescript: "npm:typescript@4.3.5/lib/typescript.min.js",
+            typescript: "npm:typescript@4.7.4/lib/typescript.min.js",
 
             // our app is within the app folder, appLocation comes from index.html
             app: appLocation + "app",
