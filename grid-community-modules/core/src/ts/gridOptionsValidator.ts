@@ -15,8 +15,9 @@ import { iterateObject } from './utils/object';
 type DeprecatedReference<T> = { [key: string]: { newProp?: keyof T, version: string, message?: string, copyToNewProp?: true, newPropValue?: any } }
 
 export function logDeprecation<T extends {}>(version: string, oldProp: keyof T, newProp?: keyof T, message?: string) {
-    const newPropMsg = newProp ? `Please use '${newProp}' instead. ` : '';
-    doOnce(() => console.warn(`AG Grid: since v${version}, '${oldProp}' is deprecated. ${newPropMsg}${message ?? ''}`), `Deprecated_${oldProp}`);
+    const newPropMsg = newProp ? `Please use '${newProp.toString()}' instead. ` : '';
+    const oldPropStr = oldProp?.toString();
+    doOnce(() => console.warn(`AG Grid: since v${version}, '${oldPropStr}' is deprecated. ${newPropMsg}${message ?? ''}`), `Deprecated_${oldPropStr}`);
 }
 
 // Vue adds these properties to all objects, so we ignore them when checking for invalid properties
