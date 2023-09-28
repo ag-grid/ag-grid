@@ -27,7 +27,7 @@
             'prop-types': 'npm:prop-types@15.8.1',
 
             ts: "npm:plugin-typescript@8.0.0/lib/plugin.js",
-            typescript: "npm:typescript@4.3.5/lib/typescript.min.js",
+            typescript: "npm:typescript@4.7.4/lib/typescript.min.js",
 
             app: appLocation,
             // systemJsMap comes from index.html
