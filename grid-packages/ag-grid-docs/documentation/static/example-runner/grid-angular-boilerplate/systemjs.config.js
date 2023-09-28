@@ -115,8 +115,8 @@
                 }
             },
             'ag-grid-angular': {
-                main: './fesm2015/ag-grid-angular.js',
-                defaultExtension: 'js'
+                main: './fesm2015/ag-grid-angular.mjs',
+                defaultExtension: 'mjs'
             },
             'ag-grid-community': {
                 main: './dist/ag-grid-community.cjs.min.js',
@@ -127,8 +127,8 @@
                 defaultExtension: 'js'
             },
             "@ag-grid-community/angular": {
-                main: "./fesm2015/ag-grid-community-angular.js",
-                defaultExtension: "js"
+                main: "./fesm2015/ag-grid-community-angular.mjs",
+                defaultExtension: "mjs"
             },
             rxjs: {
                 defaultExtension: false
