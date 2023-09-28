@@ -154,7 +154,6 @@ export class RowContainerCtrl extends BeanStub {
     private eContainer: HTMLElement;
     private eViewport: HTMLElement;
     private enableRtl: boolean;
-    private embedFullWidthRows: boolean;
 
     private viewportSizeFeature: ViewportSizeFeature | undefined; // only center has this
     private pinnedWidthFeature: SetPinnedLeftWidthFeature | SetPinnedRightWidthFeature | undefined;
@@ -175,7 +174,6 @@ export class RowContainerCtrl extends BeanStub {
     @PostConstruct
     private postConstruct(): void {
         this.enableRtl = this.gridOptionsService.is('enableRtl');
-        this.embedFullWidthRows = this.gridOptionsService.is('embedFullWidthRows');
 
         this.forContainers([RowContainerName.CENTER],
             () => this.viewportSizeFeature = this.createManagedBean(new ViewportSizeFeature(this)));
@@ -410,12 +408,13 @@ export class RowContainerCtrl extends BeanStub {
     private onDisplayedRowsChanged(useFlushSync: boolean = false): void {
         if (this.visible) {
             const printLayout = this.gridOptionsService.isDomLayout('print');
+            const embedFullWidthRows = this.gridOptionsService.is('embedFullWidthRows');
+            const embedFW = embedFullWidthRows || printLayout;
             // this just justifies if the ctrl is in the correct place, this will be fed with zombie rows by the
             // row renderer, so should not block them as they still need to animate -  the row renderer
             // will clean these up when they finish animating
             const doesRowMatch = (rowCtrl: RowCtrl) => {
                 const fullWidthRow = rowCtrl.isFullWidth();
-                const embedFW = this.embedFullWidthRows || printLayout;
 
                 const match = this.isFullWithContainer ?
                     !embedFW && fullWidthRow

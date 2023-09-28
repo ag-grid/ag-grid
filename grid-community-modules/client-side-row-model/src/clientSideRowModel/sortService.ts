@@ -23,13 +23,6 @@ export class SortService extends BeanStub {
     @Autowired('columnModel') private columnModel: ColumnModel;
     @Autowired('rowNodeSorter') private rowNodeSorter: RowNodeSorter;
 
-    private postSortFunc: ((params: WithoutGridCommon<PostSortRowsParams>) => void) | undefined;
-
-    @PostConstruct
-    public init(): void {
-        this.postSortFunc = this.gridOptionsService.getCallback('postSortRows');
-    }
-
     public sort(
         sortOptions: SortOption[],
         sortActive: boolean,
@@ -47,6 +40,7 @@ export class SortService extends BeanStub {
         }
 
         const isPivotMode = this.columnModel.isPivotMode();
+        const postSortFunc = this.gridOptionsService.getCallback('postSortRows');
 
         const callback = (rowNode: RowNode) => {
             // we clear out the 'pull down open parents' first, as the values mix up the sorting
@@ -84,9 +78,9 @@ export class SortService extends BeanStub {
 
             this.updateChildIndexes(rowNode);
 
-            if (this.postSortFunc) {
+            if (postSortFunc) {
                 const params: WithoutGridCommon<PostSortRowsParams> = { nodes: rowNode.childrenAfterSort };
-                this.postSortFunc(params);
+                postSortFunc(params);
             }
         };
 

@@ -7,10 +7,17 @@ import {
     FilterManager,
     RowNode,
     ColumnModel,
+    GridOptions,
 } from "@ag-grid-community/core";
 
 @Bean('filterAggregatesStage')
 export class FilterAggregatesStage extends BeanStub implements IRowNodeStage {
+    getImpactingGridOptions(): (keyof GridOptions<any>)[] {
+        return [
+            'groupAggFiltering',
+            'treeData',
+        ];
+    }
 
     @Autowired('filterManager') private filterManager: FilterManager;
     @Autowired('columnModel') private columnModel: ColumnModel;
