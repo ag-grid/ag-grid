@@ -7,7 +7,7 @@
     "build-x": "ng build",
     "build-docs-x": "npm run build",
     "build-prod-x": "npm run build",
-    "test:e2e": "NODE_OPTIONS=--openssl-legacy-provider ng test --watch false --browsers ChromeHeadless",
+    "test:e2e-x": "NODE_OPTIONS=--openssl-legacy-provider ng test --watch false --browsers ChromeHeadless",
     "lint": "ng lint"
   },
   "repository": {

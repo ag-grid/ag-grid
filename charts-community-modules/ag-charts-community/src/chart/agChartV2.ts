@@ -552,6 +552,7 @@ function applyLegend(chart: Chart, options: AgChartOptions) {
     chart.setLegendInit((legend) => {
         applyOptionValues(legend, options.legend ?? {}, { skip });
         if (options.legend?.listeners) {
+            // @ts-ignore
             Object.assign(chart.legend?.listeners, options.legend.listeners ?? {});
         }
     });

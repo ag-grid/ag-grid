@@ -96,7 +96,7 @@ function getServerSideDatasource(server: any) {
   };
 }
 
-let interval: number;
+let interval: any;
 
 function startUpdates() {
   interval = setInterval(() => randomUpdates({ numUpdate: 10, numAdd: 1, numRemove: 1 }), 10);
