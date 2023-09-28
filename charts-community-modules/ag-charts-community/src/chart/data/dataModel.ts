@@ -385,7 +385,7 @@ export class DataModel<
         let matches;
         try {
             matches = this.resolveProcessedDataIndicesById(scope, searchId, type);
-        } catch (e) {
+        } catch (e: any) {
             if (typeof searchId !== 'string' && /didn't find property definition/.test(e.message)) return [];
             throw e;
         }
