@@ -217,6 +217,7 @@ export class Column<TValue = any> implements IHeaderColumn<TValue>, IProvidedCol
         this.userProvidedColDef = userProvidedColDef;
         this.initMinAndMaxWidths();
         this.initDotNotation();
+        this.initTooltip();
         this.eventService.dispatchEvent(this.createColumnEvent('colDefChanged', "api"));
     }
 

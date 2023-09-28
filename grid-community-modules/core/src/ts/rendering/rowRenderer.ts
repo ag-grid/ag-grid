@@ -139,6 +139,7 @@ export class RowRenderer extends BeanStub {
         this.addManagedPropertyListeners(['domLayout', 'embedFullWidthRows'], this.onDomLayoutChanged.bind(this));
         this.addManagedPropertyListeners(['suppressMaxRenderedRowRestriction'], this.redraw.bind(this));
         this.addManagedPropertyListeners(['rowClass'], this.redrawRows.bind(this));
+        this.addManagedPropertyListeners(['suppressCellFocus', 'enableRangeSelection', 'enableCellTextSelection'], this.refreshCells.bind(this));
 
         if (this.gridOptionsService.isGroupRowsSticky()) {
             const rowModelType = this.rowModel.getType();
@@ -240,23 +241,7 @@ export class RowRenderer extends BeanStub {
             }
         });
 
-        const rangeSelectionEnabled = this.gridOptionsService.is('enableRangeSelection');
-        if (rangeSelectionEnabled) {
-
-            this.addManagedListener(this.eventService, Events.EVENT_RANGE_SELECTION_CHANGED, () => {
-                this.getAllCellCtrls().forEach(cellCtrl => cellCtrl.onRangeSelectionChanged());
-            });
-            this.addManagedListener(this.eventService, Events.EVENT_COLUMN_MOVED, () => {
-                this.getAllCellCtrls().forEach(cellCtrl => cellCtrl.updateRangeBordersIfRangeCount());
-            });
-            this.addManagedListener(this.eventService, Events.EVENT_COLUMN_PINNED, () => {
-                this.getAllCellCtrls().forEach(cellCtrl => cellCtrl.updateRangeBordersIfRangeCount());
-            });
-            this.addManagedListener(this.eventService, Events.EVENT_COLUMN_VISIBLE, () => {
-                this.getAllCellCtrls().forEach(cellCtrl => cellCtrl.updateRangeBordersIfRangeCount());
-            });
-
-        }
+        this.setupRangeSelectionListeners();
 
         // add listeners to the grid columns
         this.refreshListenersToColumnsForCellComps();
@@ -264,6 +249,43 @@ export class RowRenderer extends BeanStub {
         this.addManagedListener(this.eventService, Events.EVENT_GRID_COLUMNS_CHANGED, this.refreshListenersToColumnsForCellComps.bind(this));
 
         this.addDestroyFunc(this.removeGridColumnListeners.bind(this));
+    }
+
+    private setupRangeSelectionListeners = () => {
+        const onRangeSelectionChanged = () => {
+            this.getAllCellCtrls().forEach(cellCtrl => cellCtrl.onRangeSelectionChanged());
+        };
+
+        const onColumnMovedPinnedVisible = () => {
+            this.getAllCellCtrls().forEach(cellCtrl => cellCtrl.updateRangeBordersIfRangeCount());
+        };
+
+        const addRangeSelectionListeners = () => {
+            this.addManagedListener(this.eventService, Events.EVENT_RANGE_SELECTION_CHANGED, onRangeSelectionChanged);
+            this.addManagedListener(this.eventService, Events.EVENT_COLUMN_MOVED, onColumnMovedPinnedVisible);
+            this.addManagedListener(this.eventService, Events.EVENT_COLUMN_PINNED, onColumnMovedPinnedVisible);
+            this.addManagedListener(this.eventService, Events.EVENT_COLUMN_VISIBLE, onColumnMovedPinnedVisible);
+        };
+
+        const removeRangeSelectionListeners = () => {
+            this.removeEventListener(Events.EVENT_RANGE_SELECTION_CHANGED, onRangeSelectionChanged);
+            this.removeEventListener(Events.EVENT_COLUMN_MOVED, onColumnMovedPinnedVisible);
+            this.removeEventListener(Events.EVENT_COLUMN_PINNED, onColumnMovedPinnedVisible);
+            this.removeEventListener(Events.EVENT_COLUMN_VISIBLE, onColumnMovedPinnedVisible);
+        };
+        this.addDestroyFunc(() => removeRangeSelectionListeners());
+        this.addManagedPropertyListener('enableRangeSelection', (params) => {
+            const isEnabled = params.currentValue;
+            if (isEnabled) {
+                addRangeSelectionListeners();
+            } else {
+                removeRangeSelectionListeners();
+            }
+        });
+        const rangeSelectionEnabled = this.gridOptionsService.is('enableRangeSelection');
+        if (rangeSelectionEnabled) {
+            addRangeSelectionListeners();
+        }
     }
 
     // executes all functions in destroyFuncsForColumnListeners and then clears the list

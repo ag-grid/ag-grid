@@ -28,12 +28,10 @@ export class BlockUtils extends BeanStub {
     @Autowired('beans') private beans: Beans;
 
     private rowHeight: number;
-    private usingMasterDetail: boolean;
 
     @PostConstruct
     private postConstruct(): void {
         this.rowHeight = this.gridOptionsService.getRowHeightAsNumber();
-        this.usingMasterDetail = this.gridOptionsService.is('masterDetail');
     }
 
     public createRowNode(params: {
@@ -163,7 +161,7 @@ export class BlockUtils extends BeanStub {
             // it's not possible for a node to change whether it's a group or not
             // when doing row grouping (as only rows at certain levels are groups),
             // so nothing to do here
-        } else if (this.usingMasterDetail) {
+        } else if (this.gridOptionsService.is('masterDetail')) {
             // this should be implemented, however it's not the use case i'm currently
             // programming, so leaving for another day. to test this, create an example
             // where whether a master row is expandable or not is dynamic
@@ -181,7 +179,7 @@ export class BlockUtils extends BeanStub {
                 this.setTreeGroupInfo(rowNode);
             } else if (rowNode.group) {
                 this.setRowGroupInfo(rowNode);
-            } else if (this.usingMasterDetail) {
+            } else if (this.gridOptionsService.is('masterDetail')) {
                 this.setMasterDetailInfo(rowNode);
             }
 
