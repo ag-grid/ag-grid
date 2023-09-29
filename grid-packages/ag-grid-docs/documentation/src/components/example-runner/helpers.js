@@ -265,8 +265,8 @@ export const openPlunker = (exampleInfo) => {
         Object.keys(files)
             .filter(include)
             .forEach((key) => {
-            addHiddenInput(`files[${key}]`, files[key].source);
-        });
+                addHiddenInput(`files[${key}]`, files[key].source);
+            });
 
         document.body.appendChild(form);
         form.submit();
@@ -315,7 +315,10 @@ export const openCodeSandbox = (exampleInfo) => {
                 if(file === 'index.jsx') {
                     return `src/index.js`
                 }
-                return `src/${file}`;
+                if(file === 'styles.css') {
+                    return `src/styles.css`
+                }
+                return `public/${file}`;
             }
 
             return file;
