@@ -138,7 +138,10 @@ export class RowRenderer extends BeanStub {
 
         this.addManagedPropertyListeners(['domLayout', 'embedFullWidthRows'], this.onDomLayoutChanged.bind(this));
         this.addManagedPropertyListeners(['suppressMaxRenderedRowRestriction', 'rowBuffer'], this.redraw.bind(this));
-        this.addManagedPropertyListeners(['rowClass', 'suppressCellFocus'], this.redrawRows.bind(this));
+        this.addManagedPropertyListeners([
+            'rowClass', 'suppressCellFocus', 'getBusinessKeyForNode',
+            'fullWidthCellRenderer', 'fullWidthCellRendererParams', 'groupRowRenderer', // maybe only needs to refresh FW rows...
+        ], this.redrawRows.bind(this));
         this.addManagedPropertyListeners(['enableRangeSelection', 'enableCellTextSelection'], this.refreshCells.bind(this));
 
         if (this.gridOptionsService.isGroupRowsSticky()) {
