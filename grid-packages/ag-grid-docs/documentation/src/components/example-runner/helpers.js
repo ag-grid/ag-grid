@@ -313,7 +313,10 @@ export const openCodeSandbox = (exampleInfo) => {
                 if(file === 'index.jsx') {
                     return `src/index.js`
                 }
-                return `src/${file}`;
+                if(file === 'styles.css') {
+                    return `src/styles.css`
+                }
+                return `public/${file}`;
             }
 
             return file;
