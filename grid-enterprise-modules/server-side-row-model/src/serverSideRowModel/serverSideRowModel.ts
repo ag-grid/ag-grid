@@ -115,6 +115,7 @@ export class ServerSideRowModel extends BeanStub implements IServerSideRowModel 
             'rowHeight', 'getRowHeight',
             'treeData', 'isServerSideGroup', 'getServerSideGroupKey',
             'removePivotHeaderRowWhenSingleValueColumn',
+            'suppressServerSideInfiniteScroll',
         ], resetListener);
         this.verifyProps();
     }

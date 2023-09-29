@@ -118,7 +118,8 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel 
 
         // These props require a full CSRM data reset, as they're used by the node manager.
         const resetProps: (keyof GridOptions)[] = [
-            'treeData', 'getRowId',
+            'treeData', 'getDataPath',
+            'getRowId',
             'masterDetail', 'isRowMaster',
             'isRowSelectable', 'groupSelectsChildren',
             'rowHeight', 'getRowHeight',

@@ -24,6 +24,7 @@ export class PivotStage extends BeanStub implements IRowNodeStage {
             'pivotRowTotals',
             'pivotColumnGroupTotals',
             'suppressExpandablePivotGroups',
+            'pivotDefaultExpanded',
         ];
     }
 

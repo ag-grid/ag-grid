@@ -15,8 +15,6 @@ export class FilterStage extends BeanStub implements IRowNodeStage {
         return [
             'treeData',
             'excludeChildrenWhenTreeDataFiltering',
-            'isExternalFilterPresent',
-            'doesExternalFilterPass',
         ];
     }
 

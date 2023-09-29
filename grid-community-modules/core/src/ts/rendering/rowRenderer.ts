@@ -137,9 +137,9 @@ export class RowRenderer extends BeanStub {
         this.addManagedListener(this.eventService, Events.EVENT_BODY_HEIGHT_CHANGED, this.redraw.bind(this));
 
         this.addManagedPropertyListeners(['domLayout', 'embedFullWidthRows'], this.onDomLayoutChanged.bind(this));
-        this.addManagedPropertyListeners(['suppressMaxRenderedRowRestriction'], this.redraw.bind(this));
-        this.addManagedPropertyListeners(['rowClass'], this.redrawRows.bind(this));
-        this.addManagedPropertyListeners(['suppressCellFocus', 'enableRangeSelection', 'enableCellTextSelection'], this.refreshCells.bind(this));
+        this.addManagedPropertyListeners(['suppressMaxRenderedRowRestriction', 'rowBuffer'], this.redraw.bind(this));
+        this.addManagedPropertyListeners(['rowClass', 'suppressCellFocus'], this.redrawRows.bind(this));
+        this.addManagedPropertyListeners(['enableRangeSelection', 'enableCellTextSelection'], this.refreshCells.bind(this));
 
         if (this.gridOptionsService.isGroupRowsSticky()) {
             const rowModelType = this.rowModel.getType();
