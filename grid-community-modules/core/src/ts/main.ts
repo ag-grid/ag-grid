@@ -245,7 +245,7 @@ export { IServerSideDatasource, IServerSideGetRowsParams, IServerSideGetRowsRequ
 export { IServerSideRowModel, IServerSideTransactionManager, RefreshStoreParams, RefreshServerSideParams } from "./interfaces/iServerSideRowModel";
 export { IServerSideStore, StoreRefreshAfterParams, ServerSideGroupState, ServerSideGroupLevelState } from "./interfaces/IServerSideStore";
 
-export { ISideBar, SideBarDef, ToolPanelDef } from "./interfaces/iSideBar";
+export { ISideBarService, ISideBar, SideBarDef, ToolPanelDef } from "./interfaces/iSideBar";
 export { IGetRowsParams, IDatasource } from "./interfaces/iDatasource";
 
 //styling
@@ -342,6 +342,18 @@ export { ValueService } from "./valueService/valueService";
 export { ValueCache } from "./valueService/valueCache";
 export { ExpressionService } from "./valueService/expressionService";
 export { ValueParserService } from "./valueService/valueParserService";
+
+//state
+export {
+    GridState,
+    FilterState,
+    FocusedCellState,
+    PaginationState,
+    RangeSelectionCellState,
+    RangeSelectionState,
+    ScrollState,
+    SideBarState
+} from "./interfaces/gridState";
 
 // uncatalogued
 export { IRowModel, RowBounds, RowModelType } from "./interfaces/iRowModel";

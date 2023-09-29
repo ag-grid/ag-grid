@@ -91,6 +91,7 @@ import {
     GridPreDestroyedEvent,
     GridReadyEvent,
     GridSizeChangedEvent,
+    GridState,
     HeaderPosition,
     IAdvancedFilterBuilderParams,
     IAggFunc,
@@ -926,6 +927,7 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     /** @deprecated v29.2     */
     @Input() public functionsPassive: boolean | undefined = undefined;
     @Input() public enableGroupEdit: boolean | undefined = undefined;
+    @Input() public initialState: GridState | undefined = undefined;
     /** For customising the context menu.     */
     @Input() public getContextMenuItems: GetContextMenuItems<TData> | undefined = undefined;
     /** For customising the main 'column header' menu.     */

@@ -102,6 +102,7 @@ import { IRowNode } from "../interfaces/iRowNode";
 import { DataTypeDefinition } from "./dataType";
 import { AdvancedFilterModel } from "../interfaces/advancedFilterModel";
 import { IAdvancedFilterBuilderParams } from "../interfaces/iAdvancedFilterBuilderParams";
+import { GridState } from "../interfaces/gridState";
 
 export interface GridOptions<TData = any> {
 
@@ -857,6 +858,8 @@ export interface GridOptions<TData = any> {
     /** @deprecated v29.2 */
     functionsPassive?: boolean;
     enableGroupEdit?: boolean;
+
+    initialState?: GridState;
 
     // *****************************************************************************************************
     // If you change the callbacks on this interface, you must also update PropertyKeys to be consistent. *

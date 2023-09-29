@@ -92,7 +92,7 @@ import {
     RefreshServerSideParams
 } from "./interfaces/iServerSideRowModel";
 import { ServerSideGroupLevelState } from "./interfaces/IServerSideStore";
-import { ISideBar, SideBarDef } from "./interfaces/iSideBar";
+import { ISideBarService, SideBarDef } from "./interfaces/iSideBar";
 import { IStatusBarService } from "./interfaces/iStatusBarService";
 import { IStatusPanel } from "./interfaces/iStatusPanel";
 import { IToolPanel } from "./interfaces/iToolPanel";
@@ -130,6 +130,8 @@ import { AdvancedFilterModel } from "./interfaces/advancedFilterModel";
 import { LoadSuccessParams } from "./rowNodeCache/rowNodeBlock";
 import { Events } from './eventKeys';
 import { IAdvancedFilterBuilderParams } from "./interfaces/iAdvancedFilterBuilderParams";
+import { GridState } from "./interfaces/gridState";
+import { StateService } from "./misc/stateService";
 
 export interface DetailGridInfo {
     /**
@@ -195,11 +197,12 @@ export class GridApi<TData = any> {
     @Optional('rowNodeBlockLoader') private rowNodeBlockLoader: RowNodeBlockLoader;
     @Optional('ssrmTransactionManager') private serverSideTransactionManager: IServerSideTransactionManager;
     @Autowired('ctrlsService') private ctrlsService: CtrlsService;
+    @Optional('sideBarService') private sideBarService?: ISideBarService;
+    @Autowired('stateService') private stateService: StateService;
 
     private overlayWrapperComp: OverlayWrapperComponent;
 
     private gridBodyCtrl: GridBodyCtrl;
-    private sideBarComp: ISideBar;
 
     private clientSideRowModel: IClientSideRowModel;
     private infiniteRowModel: IInfiniteRowModel;
@@ -212,10 +215,6 @@ export class GridApi<TData = any> {
 
     public registerOverlayWrapperComp(overlayWrapperComp: OverlayWrapperComponent): void {
         this.overlayWrapperComp = overlayWrapperComp;
-    }
-
-    public registerSideBarComp(sideBarComp: ISideBar): void {
-        this.sideBarComp = sideBarComp;
     }
 
     @PostConstruct
@@ -1376,41 +1375,41 @@ export class GridApi<TData = any> {
 
     /** Returns `true` if the side bar is visible. */
     public isSideBarVisible(): boolean {
-        return this.assertSideBarLoaded('isSideBarVisible') && this.sideBarComp.isDisplayed();
+        return this.assertSideBarLoaded('isSideBarVisible') && this.sideBarService!.getSideBarComp().isDisplayed();
     }
 
     /** Show/hide the entire side bar, including any visible panel and the tab buttons. */
     public setSideBarVisible(show: boolean) {
         if (this.assertSideBarLoaded('setSideBarVisible')) {
-            this.sideBarComp.setDisplayed(show);
+            this.sideBarService!.getSideBarComp().setDisplayed(show);
         }
     }
 
     /** Sets the side bar position relative to the grid. Possible values are `'left'` or `'right'`. */
     public setSideBarPosition(position: 'left' | 'right') {
         if (this.assertSideBarLoaded('setSideBarPosition')) {
-            this.sideBarComp.setSideBarPosition(position);
+            this.sideBarService!.getSideBarComp().setSideBarPosition(position);
         }
     }
 
     /** Opens a particular tool panel. Provide the ID of the tool panel to open. */
     public openToolPanel(key: string) {
         if (this.assertSideBarLoaded('openToolPanel')) {
-            this.sideBarComp.openToolPanel(key, 'api');
+            this.sideBarService!.getSideBarComp().openToolPanel(key, 'api');
         }
     }
 
     /** Closes the currently open tool panel (if any). */
     public closeToolPanel() {
         if (this.assertSideBarLoaded('closeToolPanel')) {
-            this.sideBarComp.close('api');
+            this.sideBarService!.getSideBarComp().close('api');
         }
     }
 
     /** Returns the ID of the currently shown tool panel if any, otherwise `null`. */
     public getOpenedToolPanel(): string | null {
         if (this.assertSideBarLoaded('getOpenedToolPanel')) {
-            return this.sideBarComp.openedItem()
+            return this.sideBarService!.getSideBarComp().openedItem()
         }
         return null;
     }
@@ -1418,13 +1417,13 @@ export class GridApi<TData = any> {
     /** Force refresh all tool panels by calling their `refresh` method. */
     public refreshToolPanel(): void {
         if (this.assertSideBarLoaded('refreshToolPanel')) {
-            this.sideBarComp.refresh();
+            this.sideBarService!.getSideBarComp().refresh();
         }
     }
 
     /** Returns `true` if the tool panel is showing, otherwise `false`. */
     public isToolPanelShowing(): boolean {
-        return this.assertSideBarLoaded('isToolPanelShowing') && this.sideBarComp.isToolPanelShowing();
+        return this.assertSideBarLoaded('isToolPanelShowing') && this.sideBarService!.getSideBarComp().isToolPanelShowing();
     }
 
     public getToolPanelInstance(id: 'columns'): IColumnToolPanel | undefined;
@@ -1434,7 +1433,7 @@ export class GridApi<TData = any> {
     /** Gets the tool panel instance corresponding to the supplied `id`. */
     public getToolPanelInstance<TToolPanel = IToolPanel>(id: string): TToolPanel | undefined {
         if (this.assertSideBarLoaded('getToolPanelInstance')) {
-            const comp = this.sideBarComp.getToolPanelInstance(id);
+            const comp = this.sideBarService!.getSideBarComp().getToolPanelInstance(id);
             return unwrapUserComp(comp) as any;
         }
     }
@@ -1442,7 +1441,7 @@ export class GridApi<TData = any> {
     /** Returns the current side bar configuration. If a shortcut was used, returns the detailed long form. */
     public getSideBar(): SideBarDef | undefined {
         if (this.assertSideBarLoaded('getSideBar')) {
-            return this.sideBarComp.getDef();
+            return this.sideBarService!.getSideBarComp().getDef();
         }
         return undefined;
     }
@@ -2171,5 +2170,9 @@ export class GridApi<TData = any> {
     /** Goes to the specified page. If the page requested doesn't exist, it will go to the last page. */
     public paginationGoToPage(page: number): void {
         this.paginationProxy.goToPage(page);
+    }
+
+    public getState(): GridState {
+        return this.stateService.getState();
     }
 }
