@@ -4,7 +4,7 @@ import { Icon } from 'components/Icon';
 import { Link } from 'gatsby';
 import React, { useEffect, useState } from 'react';
 import convertToFrameworkUrl from 'utils/convert-to-framework-url';
-import rawMenuData from '../../doc-pages/licensing/menu.json';
+import menuData from '../../doc-pages/licensing/menu.json';
 import { isProductionEnvironment } from '../utils/consts';
 import { Collapsible } from './Collapsible';
 import { findParentItems } from './menu-find-parent-items';
@@ -12,30 +12,9 @@ import styles from './Menu.module.scss';
 
 const DOCS_BUTTON_ID = 'top-bar-docs-button';
 
-function filterProductionMenuData(data) {
-    if (!isProductionEnvironment()) {
-        // No filtering needed for non-production builds.
-        return data;
-    }
-
-    return (
-        data
-            // Filter out Charts Enterprise pages outside development environments.
-            .filter((item) => item.enterprise !== 'charts')
-            // Recursively filter children.
-            .map((item) => {
-                if (item.items == null) return item;
-
-                return { ...item, items: filterProductionMenuData(item.items) };
-            })
-    );
-}
-
 function toElementId(str) {
     return 'menu-' + str.toLowerCase().replace('&', '').replace('/', '').replaceAll(' ', '-');
 }
-
-const menuData = filterProductionMenuData(rawMenuData);
 
 const MenuSection = ({ title, items, currentFramework, isActive, toggleActive, activeParentItems }) => {
     return (
@@ -169,9 +148,7 @@ const Menu = ({ currentFramework, currentPage, path }) => {
     };
 
     const [activeSection, setActiveSection] = useState(null);
-    const combinedMenuItems = menuData
-        .reduce((combined, group) => [...combined, ...group.items], [])
-        .filter((group) => groupItemHasApplicableChild(group.items));
+    const combinedMenuItems = menuData.filter((group) => groupItemHasApplicableChild(group.items));
 
     const activeParentItems = findParentItems({
         combinedMenuItems,
@@ -202,24 +179,31 @@ const Menu = ({ currentFramework, currentPage, path }) => {
     return (
         <aside className={classnames(styles.menu, 'font-size-responsive')}>
             <ul id="side-nav" className={classnames(styles.menuInner, 'list-style-none', 'collapse')}>
-                {combinedMenuItems.map((item) => {
-                    const { title } = item;
-                    const isActive = title === activeSection;
-
-                    const toggleActive = (event) => {
-                        setActiveSection(isActive ? null : title);
-                    };
-
+                {combinedMenuItems.map((sectionItem, index) => {
                     return (
-                        <MenuSection
-                            key={title}
-                            title={title}
-                            items={item.items}
-                            currentFramework={currentFramework}
-                            isActive={isActive}
-                            toggleActive={toggleActive}
-                            activeParentItems={activeParentItems}
-                        />
+                        <React.Fragment key={index}>
+                            <h4>{sectionItem.group}</h4>
+                            {sectionItem.items.map((item) => {
+                                const isActive = item.title === activeSection;
+                                const toggleActive = () => {
+                                    setActiveSection(isActive ? null : item.title);
+                                };
+
+                                return (
+                                    <MenuSection
+                                        key={`${item.title}-menu`}
+                                        title={item.title}
+                                        items={item.items}
+                                        currentFramework={currentFramework}
+                                        isActive={isActive}
+                                        toggleActive={toggleActive}
+                                        activeParentItems={activeParentItems}
+                                    />
+                                );
+                            })}
+
+                            {index < combinedMenuItems.length - 1 && <hr />}
+                        </React.Fragment>
                     );
                 })}
             </ul>

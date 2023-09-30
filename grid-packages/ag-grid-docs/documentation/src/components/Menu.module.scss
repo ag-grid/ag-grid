@@ -35,6 +35,16 @@
     @media screen and (min-width: $breakpoint-docs-nav-large) {
         padding-left: var(--menu-horizontal-margin);
     }
+
+    hr {
+        margin-top: 20px;
+        margin-bottom: 10px;
+    }
+
+    h4 {
+        color: grey;
+    }
+
 }
 
 ul.menuInner {

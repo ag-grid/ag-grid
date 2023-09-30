@@ -4,7 +4,6 @@
     "items": [
       {
         "title": "Getting Started",
-        "matrixExcludeChildren": true,
         "items": [
           {
             "title": "Getting Started",
@@ -116,7 +115,6 @@
       },
       {
         "title": "Interface / API",
-        "matrixExcludeChildren": true,
         "items": [
           {
             "title": "Grid Interface",
@@ -181,7 +179,6 @@
       },
       {
         "title": "Columns",
-        "matrixExcludeChildren": true,
         "items": [
           {
             "title": "Column Definitions",
@@ -292,7 +289,6 @@
       },
       {
         "title": "Build & Tooling",
-        "matrixExcludeChildren": true,
         "items": [
           {
             "title": "Install with NPM",
@@ -599,7 +595,6 @@
             "url": "/server-side-model/",
             "showInCollapsed": true,
             "enterprise": true,
-            "matrixExcludeChildren": true,
             "items": [
               {
                 "title": "API Reference",
@@ -801,7 +796,6 @@
                 "title": "Set Filter",
                 "url": "/filter-set/",
                 "enterprise": true,
-                "matrixExcludeChildren": true,
                 "showInCollapsed": true,
                 "items": [
                   {
@@ -1009,7 +1003,6 @@
             "url": "/grouping/",
             "enterprise": true,
             "showInCollapsed": true,
-            "matrixExcludeChildren": true,
             "items": [
               {
                 "title": "Display Types",
@@ -1065,7 +1058,6 @@
                 "url": "/grouping-filtering/",
                 "enterprise": true,
                 "showInCollapsed": false,
-                "matrixExcludeChildren": true,
                 "items": [
                   {
                     "title": "Group Column Filter",
@@ -1112,7 +1104,6 @@
             "url": "/aggregation/",
             "enterprise": true,
             "showInCollapsed": true,
-            "matrixExcludeChildren": true,
             "items": [
               {
                 "title": "Custom Functions",
@@ -1697,7 +1688,6 @@
       },
       {
         "title": "Testing & Security",
-        "matrixExcludeChildren": true,
         "level-2-display-style-forced": "block",
         "items": [
           {
@@ -1722,7 +1712,6 @@
       },
       {
         "title": "Miscellaneous",
-        "matrixExcludeChildren": true,
         "level-2-display-style-forced": "block",
         "items": [
           {
