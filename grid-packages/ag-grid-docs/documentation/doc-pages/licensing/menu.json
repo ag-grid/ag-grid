@@ -1,5 +1,81 @@
 [
   {
+    "group": "API Reference",
+    "items": [
+      {
+        "title": "Grid Reference",
+        "items": [
+          {
+            "title": "Overview",
+            "url": "/grid-interface/",
+            "showInCollapsed": true
+          },
+          {
+            "title": "Grid Options",
+            "url": "/grid-options/",
+            "showInCollapsed": true
+          },
+          {
+            "title": "Grid API",
+            "url": "/grid-api/",
+            "showInCollapsed": true
+          },
+          {
+            "title": "Grid Events",
+            "url": "/grid-events/",
+            "showInCollapsed": true
+          },
+          {
+            "title": "Grid Lifecycle",
+            "url": "/grid-lifecycle/",
+            "showInCollapsed": true
+          },
+          {
+            "title": "Row Object",
+            "url": "/row-object/",
+            "showInCollapsed": true
+          }
+        ]
+      },
+      {
+        "title": "Column Reference",
+        "showInCollapsed": true,
+        "items": [
+          {
+            "title": "Overview",
+            "url": "/column-interface/",
+            "showInCollapsed": true
+          },
+          {
+            "title": "Column Properties",
+            "url": "/column-properties/",
+            "showInCollapsed": true
+          },
+          {
+            "title": "Column API",
+            "url": "/column-api/",
+            "showInCollapsed": true
+          },
+          {
+            "title": "Column Object",
+            "url": "/column-object/",
+            "showInCollapsed": true
+          }
+        ]
+      },
+      {
+        "title": "Typescript",
+        "items": [
+          {
+            "title": "Generics",
+            "url": "/typescript-generics/",
+            "showInCollapsed": true
+          }
+        ]
+      }
+    ]
+  },
+  {
     "group": "Grid Basics",
     "items": [
       {
@@ -110,70 +186,6 @@
           {
             "title": "Videos",
             "url": "/videos/"
-          }
-        ]
-      },
-      {
-        "title": "Interface / API",
-        "items": [
-          {
-            "title": "Grid Interface",
-            "url": "/grid-interface/",
-            "showInCollapsed": true,
-            "items": [
-              {
-                "title": "Grid Options",
-                "url": "/grid-options/",
-                "showInCollapsed": true
-              },
-              {
-                "title": "Grid API",
-                "url": "/grid-api/",
-                "showInCollapsed": true
-              },
-              {
-                "title": "Grid Events",
-                "url": "/grid-events/",
-                "showInCollapsed": true
-              },
-              {
-                "title": "Grid Lifecycle",
-                "url": "/grid-lifecycle/",
-                "showInCollapsed": true
-              },
-              {
-                "title": "Row Object",
-                "url": "/row-object/",
-                "showInCollapsed": true
-              }
-            ]
-          },
-          {
-            "title": "Column Interface",
-            "url": "/column-interface/",
-            "showInCollapsed": true,
-            "items": [
-              {
-                "title": "Column Properties",
-                "url": "/column-properties/",
-                "showInCollapsed": true
-              },
-              {
-                "title": "Column API",
-                "url": "/column-api/",
-                "showInCollapsed": true
-              },
-              {
-                "title": "Column Object",
-                "url": "/column-object/",
-                "showInCollapsed": true
-              }
-            ]
-          },
-          {
-            "title": "Typescript Generics",
-            "url": "/typescript-generics/",
-            "showInCollapsed": true
           }
         ]
       },
