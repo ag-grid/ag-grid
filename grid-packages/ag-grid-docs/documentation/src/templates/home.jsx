@@ -31,103 +31,7 @@ const flatRenderItems = (items, framework) => {
     }, []);
 };
 
-const panelItemsFilter = (pane, framework) => (data) =>
-    ((data.frameworks && data.frameworks.indexOf(framework) !== -1) || !data.frameworks) && data.pane === pane;
-
-const urlMap = {
-    javascript: {
-        'video-tutorial': 'https://youtu.be/KS-wg5zfCXc',
-        example: 'https://plnkr.co/edit/nmWxAxWONarW5gj2?p=preview?p=preview',
-        'example-title': 'StackBlitz Example',
-        'example-icon': 'stackblitz',
-    },
-    angular: {
-        'video-tutorial': 'https://youtu.be/AeEfiWAGyLc',
-        example:
-            'https://codesandbox.io/p/sandbox/ag-grid-angular-example-zly6rt?file=%2Fsrc%2Fapp%2Fapp.component.ts%3A1%2C1-2%2C1',
-        thinkster: 'https://thinkster.io/tutorials/fundamentals-of-ag-grid-with-angular',
-        'example-title': 'CodeSandbox Example',
-        'example-icon': 'codesandbox',
-    },
-    react: {
-        'video-tutorial': 'https://youtu.be/GTu79aWJT1E',
-        example: 'https://codesandbox.io/s/ag-grid-react-hello-world-9pnf3n',
-        thinkster: 'https://thinkster.io/tutorials/using-ag-grid-with-react-getting-started',
-        'example-title': 'CodeSandbox Example',
-        'example-icon': 'codesandbox',
-    },
-    vue: {
-        'video-tutorial': 'https://youtu.be/eW3qCti1lsA',
-        example: 'https://codesandbox.io/s/ag-grid-vue-3-example-bvwik?file=/src/App.vue',
-        'example-title': 'CodeSandbox Example',
-        'example-icon': 'codesandbox',
-    },
-};
-
-const parseGettingStartedUrl = (url, framework) => {
-    const match = url.match(/{(\w+-?\w*)}/);
-
-    if (match) {
-        return {
-            href: urlMap[framework][match[1]],
-            target: '_blank',
-            rel: 'noreferrer',
-        };
-    }
-
-    return {
-        href: convertUrl(url, framework),
-    };
-};
-
-const getLogo = (name, framework) => logos[name === 'framework' ? framework : name];
-
-const GettingStartedPane = ({ framework, data }) => {
-    const linksToRender = flatRenderItems(data, framework);
-
-    return (
-        <>
-            {linksToRender.map((link) => {
-                const title = link.title.includes('{example-title}') ? urlMap[framework]['example-title'] : link.title;
-                const icon = link.icon.includes('{example-icon}') ? urlMap[framework]['example-icon'] : link.icon;
-                const parsedLink = parseGettingStartedUrl(link.url, framework);
-                const frameworkCapitalised = framework.charAt(0).toUpperCase() + framework.slice(1);
-                const alt = `${frameworkCapitalised} Grid: ${link.title}`;
-
-                return (
-                    <a
-                        key={`${framework}_${link.title.replace(/\s/g, '').toLowerCase()}`}
-                        {...parsedLink}
-                        className={classnames(tileStyles.tile, tileStyles.linkTile)}
-                    >
-                        <div className={styles.gettingStartedLogo}>
-                            <img src={getLogo(icon, framework)} alt={alt} />
-                        </div>
-                        <div className={tileStyles.linkTileTitle}>{title}</div>
-                    </a>
-                );
-            })}
-        </>
-    );
-};
-
-const GettingStarted = ({ framework, data }) => {
-    const title = `Getting Started`;
-    const leftPaneItems = data.filter(panelItemsFilter('left', framework));
-    const rightPaneItems = data.filter(panelItemsFilter('right', framework));
-
-    return (
-        <div className={classnames(styles.section, styles.gettingStartedSection)}>
-            <h2>{title}</h2>
-            <div className={styles.sectionInner}>
-                <GettingStartedPane framework={framework} data={leftPaneItems} />
-                {rightPaneItems.length > 0 && <GettingStartedPane framework={framework} data={rightPaneItems} />}
-            </div>
-        </div>
-    );
-};
-
-const VideoPanel = ({ framework, videos }) => {
+const VideoPanel = ({ videos }) => {
     const title = `Videos`;
     return (
         <div className={styles.section}>
@@ -166,9 +70,6 @@ const VideoPanel = ({ framework, videos }) => {
  * This is the home page for the documentation.
  */
 const HomePage = ({ pageContext: { framework } }) => {
-    // basics / getting started
-    const gettingStartedItems = menuData[0].items[0].items;
-
     const frameworkVideos = featuredVideos[framework];
 
     const otherFrameworks = () => {
@@ -208,7 +109,6 @@ const HomePage = ({ pageContext: { framework } }) => {
                 </p>
             </div>
 
-            <GettingStarted framework={framework} data={gettingStartedItems} />
             {frameworkVideos && frameworkVideos.length > 0 && (
                 <VideoPanel framework={framework} videos={frameworkVideos} />
             )}
