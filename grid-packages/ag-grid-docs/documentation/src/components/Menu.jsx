@@ -168,14 +168,6 @@ const Menu = ({ currentFramework, currentPage, path }) => {
             );
         }, false);
 
-    useEffect(() => {
-        const sectionContainingPage = combinedMenuItems.filter((item) => containsPage(item.items))[0];
-
-        if (sectionContainingPage) {
-            setActiveSection(sectionContainingPage.title);
-        }
-    }, [currentPage, currentFramework]); // eslint-disable-line react-hooks/exhaustive-deps
-
     return (
         <aside className={classnames(styles.menu, 'font-size-responsive')}>
             <ul id="side-nav" className={classnames(styles.menuInner, 'list-style-none', 'collapse')}>
