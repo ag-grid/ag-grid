@@ -1,74 +1,64 @@
 import classnames from 'classnames';
-import Announcements from 'components/Announcements';
-import { Icon } from 'components/Icon';
+import React, { useState, useMemo, useCallback } from 'react';
 import { Link } from 'gatsby';
-import React, { useEffect, useState } from 'react';
+import { Icon } from 'components/Icon';
 import convertToFrameworkUrl from 'utils/convert-to-framework-url';
-import menuData from '../../doc-pages/licensing/menu.json';
-import { isProductionEnvironment } from '../utils/consts';
 import { Collapsible } from './Collapsible';
-import { findParentItems } from './menu-find-parent-items';
+import menuData from '../../doc-pages/licensing/menu.json';
 import styles from './Menu.module.scss';
 
 const DOCS_BUTTON_ID = 'top-bar-docs-button';
 
-function toElementId(str) {
-    return 'menu-' + str.toLowerCase().replace('&', '').replace('/', '').replaceAll(' ', '-');
-}
+const sectionHasPath = (sec, urlPath) => urlPath === sec.url || (sec.items || []).some(item => sectionHasPath(item, urlPath));
 
-const MenuSection = ({ title, items, currentFramework, isActive, toggleActive, activeParentItems }) => {
-    return (
-        <li key={title} className={styles.menuSection}>
-            <button
-                onClick={toggleActive}
-                tabIndex="0"
-                className={classnames(styles.sectionHeader, 'button-style-none', {
-                    [styles.active]: isActive,
-                })}
-                aria-expanded={isActive}
-                aria-controls={`#${toElementId(title)}`}
-            >
-                <Icon
-                    name="chevronRight"
-                    svgClasses={classnames(styles.sectionIcon, {
-                        [styles.active]: isActive,
-                    })}
-                />
-
-                {title}
-            </button>
-
-            <MenuGroup
-                group={{ group: title, items }}
-                currentFramework={currentFramework}
-                isTopLevel={true}
-                isActive={isActive}
-                activeParentItems={activeParentItems}
-            />
-        </li>
-    );
+const toElementId = str => {
+    return 'menu-' + str.toLowerCase()
+        .replace(/[&/]/g, '')  // Remove & and / characters
+        .replace(/\s+/g, '-')  // Replace spaces with hyphens
 };
 
-const MenuGroup = ({ group, currentFramework, isTopLevel, isActive, activeParentItems }) => {
+const MenuSection = ({ title, items, currentFramework, isActive, toggleActive, activeParentItems }) => {
+    const buttonClasses = classnames(styles.sectionHeader, 'button-style-none', { [styles.active]: isActive });
+    const iconClasses = classnames(styles.sectionIcon, { [styles.active]: isActive });
+
+    const elementId = useMemo(() => toElementId(title), [title]);
+
     return (
-        <Collapsible id={toElementId(group.group)} isDisabled={!isTopLevel} isOpen={isTopLevel && isActive}>
-            <ul id={isTopLevel && toElementId(group.group)} className={classnames(styles.menuGroup, 'list-style-none')}>
-                {group.items
-                    .filter(
-                        (item) => !item.menuHide && (!item.frameworks || item.frameworks.includes(currentFramework))
-                    )
-                    .map((item) => (
-                        <MenuItem
-                            key={item.title}
-                            item={item}
-                            currentFramework={currentFramework}
-                            activeParentItems={activeParentItems}
-                        />
-                    ))}
+        <li className={styles.menuSection}>
+            <button onClick={toggleActive} tabIndex="0" className={buttonClasses} aria-expanded={isActive} aria-controls={`#${elementId}`}>
+                <Icon name="chevronRight" svgClasses={iconClasses} />
+                {title}
+            </button>
+            <MenuGroup group={{ group: title, items }} currentFramework={currentFramework} isTopLevel={true} isActive={isActive} activeParentItems={activeParentItems} />
+        </li>
+    );
+}
+
+const MenuGroup = React.memo(({ group, currentFramework, isTopLevel, isActive, activeParentItems }) => {
+    const { items } = group;
+
+    // using memo here as filtered items only change when switching frameworks.
+    const filteredItems = useMemo(() => {
+        return items.filter(item => !item.menuHide && (!item.frameworks || item.frameworks.includes(currentFramework)));
+    }, [items, currentFramework]);
+
+    const topLevelElementId = isTopLevel ? toElementId(group.group) : null;
+
+    return (
+        <Collapsible id={topLevelElementId} isDisabled={!isTopLevel} isOpen={isTopLevel && isActive}>
+            <ul id={topLevelElementId} className={classnames(styles.menuGroup, 'list-style-none')}>
+                {filteredItems.map(item => (
+                    <MenuItem
+                        key={item.title}
+                        item={item}
+                        currentFramework={currentFramework}
+                        activeParentItems={activeParentItems}
+                    />
+                ))}
             </ul>
         </Collapsible>
     );
-};
+});
 
 const MenuItem = ({ item, currentFramework, activeParentItems }) => {
     const enterpriseIcon = item.enterprise && (
@@ -83,10 +73,21 @@ const MenuItem = ({ item, currentFramework, activeParentItems }) => {
         </>
     );
 
-    const isActiveParent = activeParentItems.some((parentItem) => {
+    const isActiveParent = useMemo(() => activeParentItems.some((parentItem) => {
         const hasUrl = Boolean(parentItem.url);
         return hasUrl ? parentItem.url === item.url : parentItem.title === item.title;
-    });
+    }), [item, activeParentItems]);
+
+    const handleClick = () => {
+        const docsButton = document.getElementById(DOCS_BUTTON_ID);
+        const docsButtonIsVisible = Boolean(
+            docsButton.offsetWidth || docsButton.offsetHeight || docsButton.getClientRects().length
+        );
+        const isOpen = !docsButton.classList.contains('collapsed');
+        if (isOpen && docsButtonIsVisible) {
+            docsButton.click();
+        }
+    };
 
     return (
         <li key={item.title}>
@@ -95,16 +96,7 @@ const MenuItem = ({ item, currentFramework, activeParentItems }) => {
                     to={convertToFrameworkUrl(item.url, currentFramework)}
                     activeClassName={styles.activeMenuItem}
                     className={isActiveParent ? styles.activeItemParent : undefined}
-                    onClick={() => {
-                        const docsButton = document.getElementById(DOCS_BUTTON_ID);
-                        const docsButtonIsVisible = Boolean(
-                            docsButton.offsetWidth || docsButton.offsetHeight || docsButton.getClientRects().length
-                        );
-                        const isOpen = !docsButton.classList.contains('collapsed');
-                        if (isOpen && docsButtonIsVisible) {
-                            docsButton.click();
-                        }
-                    }}
+                    onClick={handleClick}  // Added handleClick function here
                 >
                     {title}
                 </Link>
@@ -130,76 +122,52 @@ const MenuItem = ({ item, currentFramework, activeParentItems }) => {
     );
 };
 
-/**
- * This generates the navigation menu for the left-hand side. When a page loads, it will ensure the relevant section and
- * link is shown and highlighted.
- */
-const Menu = ({ currentFramework, currentPage, path }) => {
-    const groupItemHasApplicableChild = (items) => {
-        if (!items) {
-            return false;
-        }
-        return items.some(
-            (item) =>
-                item.frameworks === undefined ||
-                item.frameworks.includes(currentFramework) ||
-                groupItemHasApplicableChild(items.items)
-        );
-    };
-
+const Menu = ({ currentFramework, path }) => {
     const [activeSection, setActiveSection] = useState(null);
-    const combinedMenuItems = menuData.filter((group) => groupItemHasApplicableChild(group.items));
 
-    const activeParentItems = findParentItems({
-        combinedMenuItems,
-        page: currentPage,
-        path,
-    });
+    const pathSegment = `/${path.split('/').reverse()[1]}/`;
+    const activeParentItems = useMemo(() => {
+        return menuData.flatMap(section => {
+            const getFullPath = (sec, urlPath) =>
+                (sec.items || []).flatMap(item =>
+                    sectionHasPath(item, urlPath) ? [item, ...getFullPath(item, urlPath)] : []
+                );
 
-    const containsPage = (items, frameworks) =>
-        items.reduce((hasPage, item) => {
-            const availableFrameworks = item.frameworks || frameworks;
-
-            return (
-                hasPage ||
-                (item.url === `/${currentPage}/` &&
-                    (!availableFrameworks || availableFrameworks.includes(currentFramework))) ||
-                (item.items && containsPage(item.items, availableFrameworks))
-            );
-        }, false);
+            return sectionHasPath(section, pathSegment) ? [section, ...getFullPath(section, pathSegment)] : [];
+        }).filter(Boolean);
+    }, [path]);
 
     return (
-        <aside className={classnames(styles.menu, 'font-size-responsive')}>
+        <nav className={classnames(styles.menu, 'font-size-responsive')}>
             <ul id="side-nav" className={classnames(styles.menuInner, 'list-style-none', 'collapse')}>
-                {combinedMenuItems.map((sectionItem, index) => {
-                    return (
-                        <React.Fragment key={index}>
-                            <h4>{sectionItem.group}</h4>
-                            {sectionItem.items.map((item) => {
-                                const isActive = item.title === activeSection;
-                                const toggleActive = () => {
-                                    setActiveSection(isActive ? null : item.title);
-                                };
+                {menuData.map((sectionItem, index) => (
+                    <React.Fragment key={sectionItem.group}>
+                        <h4>{sectionItem.group}</h4>
+                        {sectionItem.items.map((item) => {
+                            const { title, items } = item;
+                            const isActive = title === activeSection;
 
-                                return (
-                                    <MenuSection
-                                        key={`${item.title}-menu`}
-                                        title={item.title}
-                                        items={item.items}
-                                        currentFramework={currentFramework}
-                                        isActive={isActive}
-                                        toggleActive={toggleActive}
-                                        activeParentItems={activeParentItems}
-                                    />
-                                );
-                            })}
+                            const toggleActive = useCallback(() => {
+                                setActiveSection(prevActive => (prevActive === title ? null : title));
+                            }, [title]);
 
-                            {index < combinedMenuItems.length - 1 && <hr />}
-                        </React.Fragment>
-                    );
-                })}
+                            return (
+                                <MenuSection
+                                    key={`${title}-menu`}
+                                    title={title}
+                                    items={items}
+                                    currentFramework={currentFramework}
+                                    isActive={isActive}
+                                    toggleActive={toggleActive.bind(null, title, isActive)}
+                                    activeParentItems={activeParentItems}
+                                />
+                            );
+                        })}
+                        {index < menuData.length - 1 && <hr />}
+                    </React.Fragment>
+                ))}
             </ul>
-        </aside>
+        </nav>
     );
 };
 
