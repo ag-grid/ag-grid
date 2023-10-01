@@ -32,6 +32,7 @@ export class SortService extends BeanStub {
         sortContainsGroupColumns: boolean,
     ): void {
         const groupMaintainOrder = this.gridOptionsService.is('groupMaintainOrder');
+        const groupDisplayType = this.gridOptionsService.get('groupDisplayType');
         const groupColumnsPresent = this.columnModel.getAllGridColumns().some(c => c.isRowGroupActive());
 
         let allDirtyNodes: { [key: string]: true } = {};
@@ -49,21 +50,42 @@ export class SortService extends BeanStub {
             // It's pointless to sort rows which aren't being displayed. in pivot mode we don't need to sort the leaf group children.
             const skipSortingPivotLeafs = isPivotMode && rowNode.leafGroup;
 
+
+            // AG-9265 For the specific situation of when groupMaintainOrder = true and groupDisplayType = 'groupRows',
+            // Allow sorting of group column, when the column is the underlying data of the group column.
+            // This is achieved by checking to see if all active sorts are present in row node's child, itself or any ancestors
+            let allowActiveGroupRowsSort = false;
+            if (groupMaintainOrder && groupDisplayType === 'groupRows' && sortOptions.length > 0) {
+                // are all active sort options in row node's child, itself or any ancestors?
+                allowActiveGroupRowsSort = true;
+                const child = rowNode.childrenAfterAggFilter?.[0] && rowNode.childrenAfterAggFilter[0];
+                const rowNodeAncestorsAndChild = child?.getAllOfAncestors().concat(child)
+                if (rowNodeAncestorsAndChild) {
+                    sortOptions.forEach(sortOption => {
+                        if (!rowNodeAncestorsAndChild.some(node => node.field === sortOption.column.getColId() && node.rowGroupColumn?.isRowGroupActive())) {
+                            allowActiveGroupRowsSort = false;
+                        }
+                    });
+                } else {
+                    allowActiveGroupRowsSort = false; // we don't need to allow sort when there are no children to sort
+                }
+            }
+
             // Javascript sort is non deterministic when all the array items are equals, ie Comparator always returns 0,
             // so to ensure the array keeps its order, add an additional sorting condition manually, in this case we
             // are going to inspect the original array position. This is what sortedRowNodes is for.
-            let skipSortingGroups = groupMaintainOrder && groupColumnsPresent && !rowNode.leafGroup && !sortContainsGroupColumns;
+            let skipSortingGroups = !allowActiveGroupRowsSort && groupMaintainOrder && groupColumnsPresent && !rowNode.leafGroup && !sortContainsGroupColumns;
             if (skipSortingGroups) {
                 const childrenToBeSorted = rowNode.childrenAfterAggFilter!.slice(0);
                 if (rowNode.childrenAfterSort) {
-                    const indexedOrders: { [key:string]: number } = {};
+                    const indexedOrders: { [key: string]: number } = {};
                     rowNode.childrenAfterSort.forEach((node, idx) => {
                         indexedOrders[node.id!] = idx;
                     });
                     childrenToBeSorted.sort((row1, row2) => (indexedOrders[row1.id!] ?? 0) - (indexedOrders[row2.id!] ?? 0));
                 }
                 rowNode.childrenAfterSort = childrenToBeSorted;
-            } else if(!sortActive || skipSortingPivotLeafs) {
+            } else if (!sortActive || skipSortingPivotLeafs) {
                 // if there's no sort to make, skip this step
                 rowNode.childrenAfterSort = rowNode.childrenAfterAggFilter!.slice(0);
             } else if (useDeltaSort) {
@@ -128,7 +150,7 @@ export class SortService extends BeanStub {
         const touchedRows: RowNode[] = [];
 
         unsortedRows.forEach(row => {
-            if(allTouchedNodes[row.id!] || !changedPath.canSkip(row)) {
+            if (allTouchedNodes[row.id!] || !changedPath.canSkip(row)) {
                 touchedRows.push(row);
             } else {
                 untouchedRowsMap[row.id!] = true;
@@ -136,7 +158,7 @@ export class SortService extends BeanStub {
         });
 
         const sortedUntouchedRows = oldSortedRows.filter(child => untouchedRowsMap[child.id!]);
-        
+
         const mapNodeToSortedNode = (rowNode: RowNode, pos: number): SortedRowNode => (
             { currentPos: pos, rowNode: rowNode }
         );
