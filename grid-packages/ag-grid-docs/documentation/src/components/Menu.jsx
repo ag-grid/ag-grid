@@ -1,43 +1,85 @@
 import classnames from 'classnames';
-import React, { useState, useMemo, useCallback } from 'react';
-import { Link } from 'gatsby';
-import { Icon } from 'components/Icon';
+import React, {useState, useMemo} from 'react';
+import {Link} from 'gatsby';
+import {Icon} from 'components/Icon';
 import convertToFrameworkUrl from 'utils/convert-to-framework-url';
-import { Collapsible } from './Collapsible';
+import {Collapsible} from './Collapsible';
 import menuData from '../../doc-pages/licensing/menu.json';
 import styles from './Menu.module.scss';
+import {toElementId, useActiveParentItems, useFilteredMenuData} from './menuUtils';
 
-const DOCS_BUTTON_ID = 'top-bar-docs-button';
-
-const sectionHasPath = (sec, urlPath) => urlPath === sec.url || (sec.items || []).some(item => sectionHasPath(item, urlPath));
-
-const toElementId = str => {
-    return 'menu-' + str.toLowerCase()
-        .replace(/[&/]/g, '')  // Remove & and / characters
-        .replace(/\s+/g, '-')  // Replace spaces with hyphens
+const useDocsButtonState = () => {
+    const [isDocsButtonOpen, setIsDocsButtonOpen] = useState(true);
+    return [isDocsButtonOpen, setIsDocsButtonOpen];
 };
 
-const MenuSection = ({ title, items, currentFramework, isActive, toggleActive, activeParentItems }) => {
-    const buttonClasses = classnames(styles.sectionHeader, 'button-style-none', { [styles.active]: isActive });
-    const iconClasses = classnames(styles.sectionIcon, { [styles.active]: isActive });
+const Menu = ({ currentFramework, path }) => {
+    const [isDocsButtonOpen, setIsDocsButtonOpen] = useDocsButtonState();
+    const [activeSection, setActiveSection] = useState(null);
+    const activeParentItems = useActiveParentItems(menuData, path);
+    const filteredMenuData = useFilteredMenuData(menuData, currentFramework);
+    const toggleActive = (title) => setActiveSection((prev) => (prev === title ? null : title));
 
-    const elementId = useMemo(() => toElementId(title), [title]);
+    return (
+        <nav className={classnames(styles.menu, 'font-size-responsive')}>
+            <ul id="side-nav" className={classnames(styles.menuInner, 'list-style-none', 'collapse')}>
+                {filteredMenuData.map(({ group, items }, index) => (
+                    <React.Fragment key={group}>
+                        <h4>{group}</h4>
+                        {items.map(({ title, items: childItems }) => (
+                            <MenuSection
+                                key={`${title}-menu`}
+                                title={title}
+                                items={childItems}
+                                currentFramework={currentFramework}
+                                isActive={title === activeSection}
+                                toggleActive={() => toggleActive(title)}
+                                activeParentItems={activeParentItems}
+                                isDocsButtonOpen={isDocsButtonOpen}
+                                setIsDocsButtonOpen={setIsDocsButtonOpen}
+                            />
+                        ))}
+                        {index < filteredMenuData.length - 1 && <hr />}
+                    </React.Fragment>
+                ))}
+            </ul>
+        </nav>
+    );
+};
+
+const MenuSection = ({title, items, currentFramework, isActive, toggleActive, activeParentItems}) => {
+    const [isDocsButtonOpen, setIsDocsButtonOpen] = useDocsButtonState();
+
+    const buttonClasses = classnames(styles.sectionHeader, 'button-style-none', {[styles.active]: isActive});
+    const iconClasses = classnames(styles.sectionIcon, {[styles.active]: isActive});
+    const elementId = toElementId(title);
 
     return (
         <li className={styles.menuSection}>
-            <button onClick={toggleActive} tabIndex="0" className={buttonClasses} aria-expanded={isActive} aria-controls={`#${elementId}`}>
-                <Icon name="chevronRight" svgClasses={iconClasses} />
+            <button onClick={toggleActive} tabIndex="0" className={buttonClasses} aria-expanded={isActive}
+                    aria-controls={`#${elementId}`}>
+                <Icon name="chevronRight" svgClasses={iconClasses}/>
                 {title}
             </button>
-            <MenuGroup group={{ group: title, items }} currentFramework={currentFramework} isTopLevel={true} isActive={isActive} activeParentItems={activeParentItems} />
+            <MenuGroup
+                group={{group: title, items}}
+                currentFramework={currentFramework}
+                isTopLevel={true}
+                isActive={isActive}
+                activeParentItems={activeParentItems}
+                isDocsButtonOpen={isDocsButtonOpen}
+                setIsDocsButtonOpen={setIsDocsButtonOpen}
+            />
         </li>
     );
 }
 
-const MenuGroup = React.memo(({ group, currentFramework, isTopLevel, isActive, activeParentItems }) => {
-    const { items } = group;
+const MenuGroup = ({group, currentFramework, isTopLevel, isActive, activeParentItems}) => {
+    const [isDocsButtonOpen, setIsDocsButtonOpen] = useDocsButtonState();
 
-    // using memo here as filtered items only change when switching frameworks.
+    const {items} = group;
+
+    // `useMemo` is worth it here as filtered items only change when switching frameworks.
     const filteredItems = useMemo(() => {
         return items.filter(item => !item.menuHide && (!item.frameworks || item.frameworks.includes(currentFramework)));
     }, [items, currentFramework]);
@@ -53,121 +95,55 @@ const MenuGroup = React.memo(({ group, currentFramework, isTopLevel, isActive, a
                         item={item}
                         currentFramework={currentFramework}
                         activeParentItems={activeParentItems}
+                        isDocsButtonOpen={isDocsButtonOpen}
+                        setIsDocsButtonOpen={setIsDocsButtonOpen}
                     />
                 ))}
             </ul>
         </Collapsible>
     );
-});
+}
 
-const MenuItem = ({ item, currentFramework, activeParentItems }) => {
-    const enterpriseIcon = item.enterprise && (
-        <span className={styles.enterpriseIcon}>
-            (e)
-            <Icon name="enterprise" />
-        </span>
-    );
-    const title = (
-        <>
-            {item.title}&nbsp;{enterpriseIcon}
-        </>
-    );
+const MenuItem = ({item, currentFramework, activeParentItems}) => {
+    const [isDocsButtonOpen, setIsDocsButtonOpen] = useDocsButtonState();
 
-    const isActiveParent = useMemo(() => activeParentItems.some((parentItem) => {
-        const hasUrl = Boolean(parentItem.url);
-        return hasUrl ? parentItem.url === item.url : parentItem.title === item.title;
+    const isActiveParent = useMemo(() => activeParentItems.some(parentItem => {
+        return parentItem.url ? parentItem.url === item.url : parentItem.title === item.title;
     }), [item, activeParentItems]);
 
-    const handleClick = () => {
-        const docsButton = document.getElementById(DOCS_BUTTON_ID);
-        const docsButtonIsVisible = Boolean(
-            docsButton.offsetWidth || docsButton.offsetHeight || docsButton.getClientRects().length
-        );
-        const isOpen = !docsButton.classList.contains('collapsed');
-        if (isOpen && docsButtonIsVisible) {
-            docsButton.click();
-        }
-    };
-
     return (
-        <li key={item.title}>
+        <li>
             {item.url ? (
                 <Link
                     to={convertToFrameworkUrl(item.url, currentFramework)}
                     activeClassName={styles.activeMenuItem}
                     className={isActiveParent ? styles.activeItemParent : undefined}
-                    onClick={handleClick}  // Added handleClick function here
+                    onClick={() => isDocsButtonOpen && setIsDocsButtonOpen(false)}
                 >
-                    {title}
+                    {item.title}
+                    {item.enterprise && (
+                        <span className={styles.enterpriseIcon}>
+                            (e)
+                            <Icon name="enterprise"/>
+                        </span>
+                    )}
                 </Link>
             ) : (
                 <span
-                    className={classnames(
-                        styles.groupLabel,
-                        isActiveParent ? styles.activeItemParent : undefined,
-                        'text-secondary'
-                    )}
-                >
-                    {title}
+                    className={classnames(styles.groupLabel, isActiveParent && styles.activeItemParent, 'text-secondary')}>
+                    {item.title}
                 </span>
             )}
             {item.items && !item.hideChildren && (
                 <MenuGroup
-                    group={{ group: item.title, items: item.items }}
+                    group={{group: item.title, items: item.items}}
                     currentFramework={currentFramework}
                     activeParentItems={activeParentItems}
+                    isDocsButtonOpen={isDocsButtonOpen}
+                    setIsDocsButtonOpen={setIsDocsButtonOpen}
                 />
             )}
         </li>
-    );
-};
-
-const Menu = ({ currentFramework, path }) => {
-    const [activeSection, setActiveSection] = useState(null);
-
-    const pathSegment = `/${path.split('/').reverse()[1]}/`;
-    const activeParentItems = useMemo(() => {
-        return menuData.flatMap(section => {
-            const getFullPath = (sec, urlPath) =>
-                (sec.items || []).flatMap(item =>
-                    sectionHasPath(item, urlPath) ? [item, ...getFullPath(item, urlPath)] : []
-                );
-
-            return sectionHasPath(section, pathSegment) ? [section, ...getFullPath(section, pathSegment)] : [];
-        }).filter(Boolean);
-    }, [path]);
-
-    return (
-        <nav className={classnames(styles.menu, 'font-size-responsive')}>
-            <ul id="side-nav" className={classnames(styles.menuInner, 'list-style-none', 'collapse')}>
-                {menuData.map((sectionItem, index) => (
-                    <React.Fragment key={sectionItem.group}>
-                        <h4>{sectionItem.group}</h4>
-                        {sectionItem.items.map((item) => {
-                            const { title, items } = item;
-                            const isActive = title === activeSection;
-
-                            const toggleActive = useCallback(() => {
-                                setActiveSection(prevActive => (prevActive === title ? null : title));
-                            }, [title]);
-
-                            return (
-                                <MenuSection
-                                    key={`${title}-menu`}
-                                    title={title}
-                                    items={items}
-                                    currentFramework={currentFramework}
-                                    isActive={isActive}
-                                    toggleActive={toggleActive.bind(null, title, isActive)}
-                                    activeParentItems={activeParentItems}
-                                />
-                            );
-                        })}
-                        {index < menuData.length - 1 && <hr />}
-                    </React.Fragment>
-                ))}
-            </ul>
-        </nav>
     );
 };
 
