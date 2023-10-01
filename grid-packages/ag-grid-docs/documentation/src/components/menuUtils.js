@@ -1,8 +1,9 @@
 export const toElementId = str => `menu-${str.toLowerCase().replace(/[&/\s]+/g, '-')}`;
 
-const sectionHasPath = (sec, urlPath) => urlPath === sec.url || (sec.items || []).some(item => sectionHasPath(item, urlPath));
+export const getActiveParentItems = (menuData, path) => {
+    const sectionHasPath = (sec, urlPath) => urlPath === sec.url || (sec.items || [])
+        .some(item => sectionHasPath(item, urlPath));
 
-export const useActiveParentItems = (menuData, path) => {
     const pathSegment = `/${path.split('/').reverse()[1]}/`;
 
     const getFullPath = (section, urlPath) => section.items?.flatMap(item =>
@@ -14,7 +15,7 @@ export const useActiveParentItems = (menuData, path) => {
     ).filter(Boolean);
 };
 
-export const useFilteredMenuData = (menuData, currentFramework) => {
+export const getFilteredMenuData = (menuData, currentFramework) => {
     return menuData.map(section => {
         const filteredItems = section.items.filter(item =>
             !item.menuHide && (!item.frameworks || item.frameworks.includes(currentFramework))

@@ -6,7 +6,7 @@ import convertToFrameworkUrl from 'utils/convert-to-framework-url';
 import {Collapsible} from './Collapsible';
 import menuData from '../../doc-pages/licensing/menu.json';
 import styles from './Menu.module.scss';
-import {toElementId, useActiveParentItems, useFilteredMenuData} from './menuUtils';
+import {toElementId, getActiveParentItems, getFilteredMenuData} from './menuUtils';
 
 const useDocsButtonState = () => {
     const [isDocsButtonOpen, setIsDocsButtonOpen] = useState(true);
@@ -16,8 +16,8 @@ const useDocsButtonState = () => {
 const Menu = ({currentFramework, path}) => {
     const [isDocsButtonOpen, setIsDocsButtonOpen] = useDocsButtonState();
     const [activeSections, setActiveSections] = useState(new Set());
-    const activeParentItems = useActiveParentItems(menuData, path);
-    const filteredMenuData = useFilteredMenuData(menuData, currentFramework);
+    const activeParentItems = getActiveParentItems(menuData, path);
+    const filteredMenuData = getFilteredMenuData(menuData, currentFramework);
 
     const toggleActive = (title) => {
         setActiveSections((prev) => prev.has(title) ? new Set() : new Set([title]));
