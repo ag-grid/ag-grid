@@ -759,7 +759,7 @@ export abstract class Chart extends Observable implements AgChartInstance {
             this.assignSeriesToAxes();
         }
 
-        const dataController = new DataController();
+        const dataController = new DataController(this.mode);
         const seriesPromises = this.series.map((s) => s.processData(dataController));
         await dataController.execute();
         await Promise.all(seriesPromises);
