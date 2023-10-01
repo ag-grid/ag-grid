@@ -1,5 +1,5 @@
 import classnames from 'classnames';
-import React, {useState, useMemo} from 'react';
+import React, {useState, useEffect, useMemo} from 'react';
 import {Link} from 'gatsby';
 import {Icon} from 'components/Icon';
 import convertToFrameworkUrl from 'utils/convert-to-framework-url';
@@ -13,33 +13,37 @@ const useDocsButtonState = () => {
     return [isDocsButtonOpen, setIsDocsButtonOpen];
 };
 
-const Menu = ({ currentFramework, path }) => {
+const Menu = ({currentFramework, path}) => {
     const [isDocsButtonOpen, setIsDocsButtonOpen] = useDocsButtonState();
-    const [activeSection, setActiveSection] = useState(null);
+    const [activeSections, setActiveSections] = useState(new Set());
     const activeParentItems = useActiveParentItems(menuData, path);
     const filteredMenuData = useFilteredMenuData(menuData, currentFramework);
-    const toggleActive = (title) => setActiveSection((prev) => (prev === title ? null : title));
+
+    const toggleActive = (title) => {
+        setActiveSections((prev) => prev.has(title) ? new Set() : new Set([title]));
+    };
 
     return (
         <nav className={classnames(styles.menu, 'font-size-responsive')}>
             <ul id="side-nav" className={classnames(styles.menuInner, 'list-style-none', 'collapse')}>
-                {filteredMenuData.map(({ group, items }, index) => (
+                {filteredMenuData.map(({group, items}, index) => (
                     <React.Fragment key={group}>
                         <h4>{group}</h4>
-                        {items.map(({ title, items: childItems }) => (
+                        {items.map(({title, items: childItems}) => (
                             <MenuSection
                                 key={`${title}-menu`}
                                 title={title}
                                 items={childItems}
                                 currentFramework={currentFramework}
-                                isActive={title === activeSection}
                                 toggleActive={() => toggleActive(title)}
                                 activeParentItems={activeParentItems}
+                                setActiveSections={setActiveSections}
+                                activeSections={activeSections}
                                 isDocsButtonOpen={isDocsButtonOpen}
                                 setIsDocsButtonOpen={setIsDocsButtonOpen}
                             />
                         ))}
-                        {index < filteredMenuData.length - 1 && <hr />}
+                        {index < filteredMenuData.length - 1 && <hr/>}
                     </React.Fragment>
                 ))}
             </ul>
@@ -47,12 +51,30 @@ const Menu = ({ currentFramework, path }) => {
     );
 };
 
-const MenuSection = ({title, items, currentFramework, isActive, toggleActive, activeParentItems}) => {
+const MenuSection = ({title, items, currentFramework, activeParentItems, toggleActive, activeSections, setActiveSections}) => {
+    const [shouldAutoExpand, setShouldAutoExpand] = useState(false);
     const [isDocsButtonOpen, setIsDocsButtonOpen] = useDocsButtonState();
+
+    const isActive = activeSections.has(title);
 
     const buttonClasses = classnames(styles.sectionHeader, 'button-style-none', {[styles.active]: isActive});
     const iconClasses = classnames(styles.sectionIcon, {[styles.active]: isActive});
     const elementId = toElementId(title);
+
+    useEffect(() => {
+        const isParentActive = activeParentItems.some(item => item.title === title);
+        setShouldAutoExpand(isParentActive);
+    }, [activeParentItems, title]);
+
+    useEffect(() => {
+        if (shouldAutoExpand) {
+            setActiveSections((prev) => {
+                const newSet = new Set(prev);
+                newSet.add(title);
+                return newSet;
+            });
+        }
+    }, [shouldAutoExpand]);
 
     return (
         <li className={styles.menuSection}>
