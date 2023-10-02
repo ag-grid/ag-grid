@@ -8,6 +8,7 @@ import { KeyCode } from '../constants/keyCode';
 import { IAgLabelParams } from './agAbstractLabel';
 import { AddPopupParams, PopupService } from "./popupService";
 import { Autowired } from "../context/context";
+import { Events } from "../eventKeys";
 
 export interface IPickerFieldParams extends IAgLabelParams {
     pickerType: string;
@@ -199,10 +200,8 @@ export abstract class AgPickerField<TValue, TConfig extends IPickerFieldParams =
         const ePicker = this.pickerComponent!.getGui();
 
         if (!this.gridOptionsService.is('suppressScrollWhenPopupsAreOpen')) {
-            this.destroyMouseWheelFunc = this.addManagedListener(eDocument.body, 'wheel', (e: MouseEvent) => {
-                if (!ePicker.contains(e.target as HTMLElement)) {
-                    this.hidePicker();
-                }
+            this.destroyMouseWheelFunc = this.addManagedListener(this.eventService, Events.EVENT_BODY_SCROLL, () => {
+                this.hidePicker();
             });
         }
 
