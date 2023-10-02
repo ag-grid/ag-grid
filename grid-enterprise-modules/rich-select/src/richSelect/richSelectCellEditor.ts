@@ -141,7 +141,11 @@ export class RichSelectCellEditor<TData = any, TValue = any> extends PopupCompon
             if (!this.isAlive()) { return; }
 
             if (focusAfterAttached) {
-                this.richSelect.getFocusableElement().focus();
+                const focusableEl = this.richSelect.getFocusableElement() as HTMLInputElement;
+                focusableEl.focus();
+                if (this.params.allowTyping) {
+                    focusableEl.select();
+                }
             }
     
             this.richSelect.showPicker();

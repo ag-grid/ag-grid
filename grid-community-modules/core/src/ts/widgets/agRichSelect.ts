@@ -7,7 +7,7 @@ import { WithoutGridCommon } from "../interfaces/iCommon";
 import { ICellRendererParams } from "../rendering/cellRenderers/iCellRenderer";
 import { AgPromise } from "../utils";
 import { setAriaActiveDescendant, setAriaControls, setAriaLabel } from "../utils/aria";
-import { bindCellRendererToHtmlElement, clearElement } from "../utils/dom";
+import { bindCellRendererToHtmlElement, clearElement, isVisible } from "../utils/dom";
 import { stopPropagationForAgGrid } from "../utils/event";
 import { debounce } from "../utils/function";
 import { fuzzySuggestions } from "../utils/fuzzyMatch";
@@ -340,10 +340,12 @@ export class AgRichSelect<TValue = any> extends AgPickerField<TValue, RichSelect
         super.beforeHidePicker();
     }
 
-    private onWrapperFocus(e: FocusEvent): void {
-        if (this.eInput) {
-            this.eInput.getFocusableElement().focus();
-        }
+    private onWrapperFocus(): void {
+        if (!this.eInput) { return; }
+
+        const focusableEl = this.eInput.getFocusableElement() as HTMLInputElement;
+        focusableEl.focus();
+        focusableEl.select();
     }
 
     private onWrapperFocusOut(e: FocusEvent): void {
@@ -625,8 +627,11 @@ export class AgRichSelect<TValue = any> extends AgPickerField<TValue, RichSelect
                 break;
             case KeyCode.ESCAPE:
                 if (this.isPickerDisplayed) {
-                    event.preventDefault();
-                    stopPropagationForAgGrid(event);
+                    if (isVisible(this.listComponent!.getGui())) {
+                        event.preventDefault();
+                        stopPropagationForAgGrid(event);
+                    }
+
                     this.hidePicker();
                 }
                 break;
