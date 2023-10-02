@@ -96,7 +96,7 @@
             css: boilerplatePath + "css.js",
             ts: "npm:plugin-typescript@8.0.0/lib/plugin.js",
             tslib: "npm:tslib@2.3.1/tslib.js",
-            typescript: "npm:typescript@4.7.4/lib/typescript.min.js",
+            typescript: "npm:typescript@4.3.5/lib/typescript.min.js",
 
             // our app is within the app folder, appLocation comes from index.html
             app: appLocation + "app",
