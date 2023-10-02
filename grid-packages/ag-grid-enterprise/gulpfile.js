@@ -115,7 +115,7 @@ const copyAndConcatMainTypings = () => {
         './dist/lib/agGridCoreExtension.d.ts'
     ])
          // the next line is specifically for AgChartThemeOverrides etc
-        .pipe(replace("import * as agCharts from 'ag-charts-community';", 'import * as agCharts from "./chart/agChartOptions";'))
+        // .pipe(replace("import * as agCharts from 'ag-charts-community';", 'import * as agCharts from "./chart/agChartOptions";'))
         .pipe(concat('main.d.ts'))
         .pipe(gulp.dest('./dist/lib'));
 };
@@ -125,13 +125,13 @@ const copyGridCoreTypings = (done) => {
         done("node_modules/@ag-grid-enterprise/core/typings doesn't exist - exiting")
     }
 
-    exportedEnterpriseModules.concat(exportedChartsModules).forEach(exportedEnterpriseModule => {
+    exportedEnterpriseModules.forEach(exportedEnterpriseModule => {
         if (!fs.existsSync(`./node_modules/${exportedEnterpriseModule}/typings`)) {
             done(`./node_modules/${exportedEnterpriseModule}/typings doesn't exist - exiting`)
         }
     })
 
-    const typingsDirs = exportedEnterpriseModules.concat(exportedChartsModules).map(exportedEnterpriseModule =>
+    const typingsDirs = exportedEnterpriseModules.map(exportedEnterpriseModule =>
         [
             `./node_modules/${exportedEnterpriseModule}/typings/**/*`,
             `!./node_modules/${exportedEnterpriseModule}/typings/main.*`,

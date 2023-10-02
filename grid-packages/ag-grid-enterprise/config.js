@@ -3,8 +3,7 @@ const node = require('rollup-plugin-node-resolve');
 const packageJson = require('./package.json');
 const typescript = require('rollup-plugin-typescript2');
 const alias = require('@rollup/plugin-alias');
-// const resolve = require("rollup-plugin-node-resolve");
-
+const commonjs = require("rollup-plugin-commonjs");
 
 const banner = ['/**',
     ` * ${packageJson.name} - ${packageJson.description}` +
@@ -60,7 +59,9 @@ function genConfig(name) {
                     {find: '@ag-grid-community/core', replacement: 'ag-grid-community'}
                 ]
             }),
-            node({format: opts.nodeFormatOverride }),      // for utils package - defaulting to use index.js
+            commonjs(),
+            node( ),      // for utils package - defaulting to use index.js
+            // node({format: opts.nodeFormatOverride }),      // for utils package - defaulting to use index.js
             typescript({
                 tsconfig: "tsconfig.es6.json"
             }),

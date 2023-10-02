@@ -21,6 +21,8 @@
     "updateSubModules": "sh ./scripts/updateSubModules.sh",
     "clean": "npx lerna run clean && npx lerna clean --yes",
     "bootstrap": "node scripts/patchLerna.js && node customise.js && npx lerna bootstrap --no-ci",
+    "bootstrap-ci": "node scripts/patchLerna.js && node customise.js && npx lerna bootstrap --no-ci --registry http://54.194.75.252:4873",
+    "update-charts-deps": "sh ./scripts/updateChartsDeps.sh",
     "ci-bootstrap-if-necessary": "./scripts/bootstrapBasedOnChangeset.sh",
     "bootstrap-single-thread": "npx lerna bootstrap --no-ci --concurrency 1",
     "clean-build-core": "npm run build-core -- --skip-nx-cache",

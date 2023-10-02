@@ -44,6 +44,10 @@
                 main: "./main.ts",
                 defaultExtension: "ts"
             },
+            'ag-charts-community': {
+                main: './dist/main.cjs.js',
+                defaultExtension: 'js'
+            },
             'ag-grid-community': {
                 main: './dist/ag-grid-community.cjs.min.js',
                 defaultExtension: 'js'
