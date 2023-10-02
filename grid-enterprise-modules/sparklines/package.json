@@ -14,7 +14,7 @@
     "package": "node ../../module-build/rollup/build.js",
     "build": "npm run build-cjs && npm run build-esm && npx gulp mjs-processing",
     "build-prod": "npm run build-cjs-prod && npm run build-esm-prod && npx gulp mjs-processing",
-    "test": "npx jest"
+    "testx": "npx jest"
   },
   "repository": {
     "type": "git",
