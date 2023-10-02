@@ -8,7 +8,6 @@ const storageOverrides = {
 
 const defaultContextValue = {
     exampleImportType: 'packages',
-    useTypescript: true,
     useVue3: false, // determines whether the user is going to see vue 2 or vue 3 examples (only applicable if enableVue3 is true)
     darkMode: typeof window === "object" ? document.documentElement.computedStyleMap().get('color-scheme')?.toString() === 'dark' : false,
     set: () => {},
