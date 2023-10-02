@@ -35,17 +35,6 @@
     @media screen and (min-width: $breakpoint-docs-nav-large) {
         padding-left: var(--menu-horizontal-margin);
     }
-
-    hr {
-        margin-top: 20px;
-        margin-bottom: 10px;
-        color: var(--secondary-text-color);
-    }
-
-    h4 {
-        color: var(--secondary-text-color);
-    }
-
 }
 
 ul.menuInner {
@@ -60,6 +49,19 @@ ul.menuInner {
 
     li li {
         margin-bottom: 0 !important;
+    }
+
+    hr {
+        margin-top: $size-3;
+        margin-bottom: $size-3;
+        height: 1px;
+        background-color: var(--bright-blue-gray);
+    }
+
+    h4 {
+        padding-left: 6px;
+        font-weight: var(--font-weight-normal);
+        color: var(--secondary-text-color);
     }
 
     @media screen and (min-width: $breakpoint-docs-nav-medium) {
