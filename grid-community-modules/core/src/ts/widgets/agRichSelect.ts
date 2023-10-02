@@ -434,6 +434,7 @@ export class AgRichSelect<TValue = any> extends AgPickerField<TValue, RichSelect
         if (!allowTyping || !filterList) { return; }
 
         this.setValueList({ valueList: filteredValues, refresh: true });
+        this.alignPickerToComponent();
     }
 
     private runSearch() {
@@ -451,9 +452,7 @@ export class AgRichSelect<TValue = any> extends AgPickerField<TValue, RichSelect
         const filterValueLen = filteredValues.length;
         const shouldFilter = !!(allowTyping && filterList && this.searchString !== '');
 
-        if (shouldFilter) {
-            this.filterListModel(shouldFilter ? filteredValues : values);
-        }
+        this.filterListModel(shouldFilter ? filteredValues : values);
 
         if (suggestions.length) {
             const topSuggestionIndex = shouldFilter ? 0 : searchStrings.indexOf(suggestions[0]);

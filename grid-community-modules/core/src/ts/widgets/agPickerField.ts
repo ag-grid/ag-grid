@@ -208,7 +208,7 @@ export abstract class AgPickerField<TValue, TConfig extends IPickerFieldParams =
 
         const translate = this.localeService.getLocaleTextFunc();
 
-        const { pickerType, pickerAriaLabelKey, pickerAriaLabelValue, modalPicker = true } = this.config;
+        const { pickerAriaLabelKey, pickerAriaLabelValue, modalPicker = true } = this.config;
 
         const popupParams: AddPopupParams = {
             modal: modalPicker,
@@ -227,7 +227,7 @@ export abstract class AgPickerField<TValue, TConfig extends IPickerFieldParams =
 
         const addPopupRes = this.popupService.addPopup(popupParams);
 
-        const { maxPickerHeight, minPickerWidth, maxPickerWidth, pickerGap, variableWidth } = this;
+        const { maxPickerHeight, minPickerWidth, maxPickerWidth, variableWidth } = this;
 
         if (variableWidth) {
             if (minPickerWidth) {
@@ -246,19 +246,28 @@ export abstract class AgPickerField<TValue, TConfig extends IPickerFieldParams =
         ePicker.style.setProperty('max-height', maxHeight);
         ePicker.style.position = 'absolute';
 
+        this.alignPickerToComponent();
+
+        return addPopupRes.hideFunc;
+    }
+
+    protected alignPickerToComponent(): void {
+        if (!this.pickerComponent) { return; } 
+
+        const { pickerType } = this.config;
+        const { pickerGap } = this;
+
         const alignSide = this.gridOptionsService.is('enableRtl') ? 'right' : 'left';
 
         this.popupService.positionPopupByComponent({
             type: pickerType,
             eventSource: this.eWrapper,
-            ePopup: ePicker,
+            ePopup: this.pickerComponent.getGui(),
             position: 'under',
             alignSide,
             keepWithinBounds: true,
             nudgeY: pickerGap
         });
-
-        return addPopupRes.hideFunc;
     }
 
     protected beforeHidePicker(): void {
