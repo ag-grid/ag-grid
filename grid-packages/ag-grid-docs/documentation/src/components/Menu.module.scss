@@ -4,7 +4,7 @@
     $top-bar-height: 58px;
 
     --menu-width: min(30vw, 320px);
-    --font-size: var(--font-size-medium);
+    --font-size: 16px;
 
     border-bottom: 1px solid var(--border-color);
 
@@ -58,9 +58,9 @@ ul.menuInner {
         background-color: var(--bright-blue-gray);
     }
 
-    h4 {
+    h5 {
         padding-left: 6px;
-        font-weight: var(--font-weight-normal);
+        font-weight: var(--font-weight-bold);
         color: var(--secondary-text-color);
     }
 
@@ -118,7 +118,7 @@ button.sectionHeader {
 }
 
 .menuGroup {
-    --first-indent-size: 4px;
+    --first-indent-size: 6px;
     --indent-size: 12px;
 
     line-height: var(--line-height-tight);

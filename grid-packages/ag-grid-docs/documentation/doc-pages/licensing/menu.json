@@ -1,6 +1,6 @@
 [
   {
-    "group": "Get Started",
+    "group": "GET STARTED",
     "items": [
       {
         "title": "Quick Start",
@@ -218,7 +218,7 @@
     ]
   },
   {
-    "group": "Basics",
+    "group": "BASICS",
     "items": [
       {
         "title": "Columns",
@@ -599,7 +599,7 @@
     ]
   },
   {
-    "group": "Advanced",
+    "group": "ADVANCED",
     "items": [
       {
         "title": "Group & Pivot",
@@ -1104,7 +1104,7 @@
     ]
   },
   {
-    "group": "Extensions",
+    "group": "EXTENSIONS",
     "items": [
       {
         "title": "Accessories",
@@ -1419,7 +1419,7 @@
     ]
   },
   {
-    "group": "Layout & Styling",
+    "group": "LAYOUT & STYLING",
     "items": [
       {
         "title": "Design System",
@@ -1541,7 +1541,7 @@
     ]
   },
   {
-    "group": "Other",
+    "group": "OTHER",
     "items": [
       {
         "title": "Scrolling",
@@ -1686,7 +1686,7 @@
     ]
   },
   {
-    "group": "API Reference",
+    "group": "API REFERENCE",
     "items": [
       {
         "title": "Grid API",
