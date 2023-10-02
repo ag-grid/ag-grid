@@ -75,6 +75,9 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel 
     private lastHighlightedRow: RowNode | null;
     private applyAsyncTransactionsTimeout: number | undefined;
 
+    /** prevent refresh model from being called via listeners before row data loaded */
+    private isRowDataLoaded: boolean = false;
+
     @PostConstruct
     public init(): void {
         const refreshEverythingFunc = this.refreshModel.bind(this, { step: ClientSideRowModelSteps.EVERYTHING });
@@ -496,6 +499,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel 
     }
 
     refreshModel(paramsOrStep: RefreshModelParams | ClientSideRowModelStep | undefined): void {
+        if (!this.isRowDataLoaded) { return; }
 
         let params = typeof paramsOrStep === 'object' && "step" in paramsOrStep ? paramsOrStep : this.buildRefreshModelParams(paramsOrStep);
 
@@ -999,6 +1003,8 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel 
             type: Events.EVENT_ROW_DATA_UPDATED
         };
         this.eventService.dispatchEvent(rowDataUpdatedEvent);
+
+        this.isRowDataLoaded = true;
 
         this.refreshModel({
             step: ClientSideRowModelSteps.EVERYTHING,

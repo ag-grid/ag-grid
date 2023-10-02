@@ -21,6 +21,8 @@ export class StateService extends BeanStub {
     @Autowired('columnModel') private columnModel: ColumnModel;
     @Autowired('paginationProxy') private paginationProxy: PaginationProxy;
 
+    private hasFirstDataRendered: boolean = false;
+
     @PostConstruct
     private postConstruct(): void {
         this.addManagedListener(this.eventService, Events.EVENT_NEW_COLUMNS_LOADED, (event: NewColumnsLoadedEvent) => {
@@ -28,7 +30,15 @@ export class StateService extends BeanStub {
                 this.setInitialStateOnColumnsInitialised();
             }
         });
-        this.addManagedListener(this.eventService, Events.EVENT_FIRST_DATA_RENDERED, () => this.setInitialStateOnFirstDataRendered());
+        this.addManagedListener(this.eventService, Events.EVENT_FIRST_DATA_RENDERED, () => {
+            this.hasFirstDataRendered = true;
+            this.setInitialStateOnFirstDataRendered();
+        });
+        this.addManagedListener(this.eventService, Events.EVENT_ROW_DATA_UPDATED, () => {
+            if (!this.hasFirstDataRendered) {
+                this.setInitialStateOnRowDataUpdated();
+            }
+        });
     }
 
     public getState(): GridState {
@@ -49,29 +59,27 @@ export class StateService extends BeanStub {
         }
     }
 
+    private setInitialStateOnRowDataUpdated(): void {
+        const { pagination: paginationState } = this.gridOptionsService.get('initialState') ?? {};
+        if (paginationState) {
+            this.paginationProxy.setPage(paginationState.page);
+        }
+    }
+
     private setInitialStateOnFirstDataRendered(): void {
         const {
             scroll: scrollState,
             rangeSelection: rangeSelectionState,
-            focusedCell: focusedCellState,
-            pagination: paginationState
+            focusedCell: focusedCellState
         } = this.gridOptionsService.get('initialState') ?? {};
-        const updateAfterPageLoad = () => {
-            if (focusedCellState) {
-                this.setFocusedCellState(focusedCellState);
-            }
-            if (rangeSelectionState) {
-                this.setRangeSelectionState(rangeSelectionState);
-            }
-            if (scrollState) {
-                this.setScrollState(scrollState);
-            }
+        if (focusedCellState) {
+            this.setFocusedCellState(focusedCellState);
         }
-        if (paginationState) {
-            this.setPaginationState(paginationState);
-            setTimeout(() => updateAfterPageLoad());
-        } else {
-            updateAfterPageLoad();
+        if (rangeSelectionState) {
+            this.setRangeSelectionState(rangeSelectionState);
+        }
+        if (scrollState) {
+            this.setScrollState(scrollState);
         }
     }
 
