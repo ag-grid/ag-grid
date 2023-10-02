@@ -30,6 +30,7 @@ import {
     RowModelType,
     SelectionChangedEvent,
     ISelectionService,
+    GridOptions,
 } from "@ag-grid-community/core";
 import { ClientSideNodeManager } from "./clientSideNodeManager";
 
@@ -94,36 +95,65 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel 
         this.addManagedListener(this.eventService, Events.EVENT_COLUMN_PIVOT_MODE_CHANGED, refreshEverythingFunc);
         this.addManagedListener(this.eventService, Events.EVENT_GRID_STYLES_CHANGED, this.onGridStylesChanges.bind(this));
 
-        const refreshMapListener = this.refreshModel.bind(this, {
-            step: ClientSideRowModelSteps.MAP,
-            keepRenderedRows: true,
-            animate
-        });
-
-        this.addManagedPropertyListeners([
-            'groupRemoveSingleChildren', 'groupRemoveLowestSingleChildren',
-            'groupIncludeFooter',
-        ], refreshMapListener);
-
-        const refreshAggListener = this.refreshModel.bind(this, {
-            step: ClientSideRowModelSteps.AGGREGATE,
-            keepRenderedRows: true,
-            animate
-        });
-
-        this.addManagedPropertyListeners([
-            'groupIncludeTotalFooter',
-        ], refreshAggListener);
+        // doesn't need done if doing full reset
+        // Property listeners which call `refreshModel` at different stages
+        this.addPropertyListeners();
 
         this.rootNode = new RowNode(this.beans);
         this.nodeManager = new ClientSideNodeManager(this.rootNode,
             this.gridOptionsService,
             this.eventService, this.columnModel,
             this.selectionService, this.beans);
+    }
 
-        this.addManagedPropertyListener('treeData', () => {
-            // Shotgun reset all node state. This is used by treeData reactivity to ensure nodes don't include any group state
-            this.setRowData(this.rootNode.allLeafChildren.map(child => child.data));
+    private addPropertyListeners() {
+        const orderedStages = [
+            { step: ClientSideRowModelSteps.EVERYTHING, module: this.groupStage },
+            { step: ClientSideRowModelSteps.FILTER, module: this.filterStage },
+            { step: ClientSideRowModelSteps.PIVOT, module: this.pivotStage },
+            { step: ClientSideRowModelSteps.AGGREGATE, module: this.aggregationStage },
+            { step: ClientSideRowModelSteps.SORT, module: this.sortStage },
+            { step: ClientSideRowModelSteps.MAP, module: this.flattenStage },
+        ].filter(stage => !!stage.module); // remove any unregistered modules.
+
+        // These props require a full CSRM data reset, as they're used by the node manager.
+        const resetProps: (keyof GridOptions)[] = [
+            'treeData', 'getDataPath',
+            'getRowId',
+            'masterDetail', 'isRowMaster',
+            'isRowSelectable', 'groupSelectsChildren',
+            'rowHeight', 'getRowHeight',
+        ];
+
+        const allProperties: (keyof GridOptions)[] = [
+            ...resetProps,
+        ];
+
+        orderedStages.forEach(({ module}) => allProperties.push(...module.getImpactingGridOptions()));
+        this.addManagedPropertyListeners(allProperties, (params) => {
+            const properties = params.changeSet?.properties;
+            if (!properties) {
+                return;
+            }
+
+            const propertySet = new Set(properties); // faster lookup.
+
+            const needsFullReset = resetProps.some(prop => propertySet.has(prop));
+            if (needsFullReset) {
+                this.setRowData(this.rootNode.allLeafChildren.map(child => child.data));
+                return;
+            }
+
+            // find the first stage that has a property that has changed.
+            for (let i = 0; i < orderedStages.length; i++) {
+                const { step, module } = orderedStages[i];
+                const impactsStage = module.getImpactingGridOptions().some(prop => propertySet.has(prop));
+                if (impactsStage) {
+                    const animate = !this.gridOptionsService.is('suppressAnimationFrame');
+                    this.refreshModel({ step, keepRenderedRows: true, animate });
+                    return;
+                }
+            }
         });
     }
 

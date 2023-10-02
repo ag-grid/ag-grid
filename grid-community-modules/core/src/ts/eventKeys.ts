@@ -43,6 +43,12 @@ export class Events {
     /** The list of displayed columns has changed, can result from columns open / close, column move, pivot, group, etc */
     public static EVENT_DISPLAYED_COLUMNS_CHANGED: 'displayedColumnsChanged' = 'displayedColumnsChanged';
 
+    /** The grid option related to suppressing movable columns has changed */
+    public static EVENT_SUPPRESS_COLUMN_MOVE_CHANGED: 'suppressMovableColumns' = 'suppressMovableColumns';
+
+    /** The grid option related to suppressing movable columns has changed */
+    public static EVENT_SUPPRESS_FIELD_DOT_NOTATION: 'suppressFieldDotNotation' = 'suppressFieldDotNotation';
+
     /** The list of virtual columns has changed, results from viewport changing */
     public static EVENT_VIRTUAL_COLUMNS_CHANGED: 'virtualColumnsChanged' = 'virtualColumnsChanged';
 

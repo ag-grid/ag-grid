@@ -1,16 +1,90 @@
 [
   {
-    "group": "Grid Basics",
+    "group": "API Reference",
     "items": [
       {
-        "title": "Getting Started",
-        "matrixExcludeChildren": true,
+        "title": "Grid Reference",
+        "items": [
+          {
+            "title": "Overview",
+            "url": "/grid-interface/",
+            "showInCollapsed": true
+          },
+          {
+            "title": "Grid Options",
+            "url": "/grid-options/",
+            "showInCollapsed": true
+          },
+          {
+            "title": "Grid API",
+            "url": "/grid-api/",
+            "showInCollapsed": true
+          },
+          {
+            "title": "Grid Events",
+            "url": "/grid-events/",
+            "showInCollapsed": true
+          },
+          {
+            "title": "Grid Lifecycle",
+            "url": "/grid-lifecycle/",
+            "showInCollapsed": true
+          },
+          {
+            "title": "Row Object",
+            "url": "/row-object/",
+            "showInCollapsed": true
+          }
+        ]
+      },
+      {
+        "title": "Column Reference",
+        "showInCollapsed": true,
+        "items": [
+          {
+            "title": "Overview",
+            "url": "/column-interface/",
+            "showInCollapsed": true
+          },
+          {
+            "title": "Column Properties",
+            "url": "/column-properties/",
+            "showInCollapsed": true
+          },
+          {
+            "title": "Column API",
+            "url": "/column-api/",
+            "showInCollapsed": true
+          },
+          {
+            "title": "Column Object",
+            "url": "/column-object/",
+            "showInCollapsed": true
+          }
+        ]
+      },
+      {
+        "title": "Typescript",
+        "items": [
+          {
+            "title": "Generics",
+            "url": "/typescript-generics/",
+            "showInCollapsed": true
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "group": "Get Started",
+    "items": [
+      {
+        "title": "Quick Start",
         "items": [
           {
             "title": "Getting Started",
             "url": "/getting-started/",
-            "icon": "framework",
-            "pane": "left"
+            "icon": "framework"
           },
           {
             "title": "React Compatibility",
@@ -24,7 +98,6 @@
             "title": "Rendering",
             "icon": "react",
             "url": "/reactui/",
-            "pane": "left",
             "frameworks": [
               "react"
             ]
@@ -33,7 +106,6 @@
             "title": "Hooks",
             "icon": "reactHooks",
             "url": "/react-hooks/",
-            "pane": "left",
             "frameworks": [
               "react"
             ]
@@ -43,7 +115,6 @@
             "url": "{video-tutorial}",
             "icon": "youtube",
             "menuHide": true,
-            "pane": "left",
             "frameworks": [
               "javascript"
             ]
@@ -55,8 +126,7 @@
             "menuHide": true,
             "frameworks": [
               "javascript"
-            ],
-            "pane": "left"
+            ]
           },
           {
             "title": "{example-title}",
@@ -67,8 +137,7 @@
               "angular",
               "react",
               "vue"
-            ],
-            "pane": "left"
+            ]
           },
           {
             "title": "Thinkster Course",
@@ -78,8 +147,7 @@
             "frameworks": [
               "angular",
               "react"
-            ],
-            "pane": "left"
+            ]
           },
           {
             "title": "SolidJS",
@@ -87,8 +155,7 @@
             "url": "/solidjs",
             "frameworks": [
               "react"
-            ],
-            "pane": "right"
+            ]
           },
           {
             "title": "Angular Compatibility",
@@ -96,8 +163,7 @@
             "url": "/angular-compatibility",
             "frameworks": [
               "angular"
-            ],
-            "pane": "right"
+            ]
           },
           {
             "title": "Vue 2 Tutorial",
@@ -105,8 +171,7 @@
             "url": "/vue2/",
             "frameworks": [
               "vue"
-            ],
-            "pane": "right"
+            ]
           },
           {
             "title": "Videos",
@@ -115,184 +180,7 @@
         ]
       },
       {
-        "title": "Interface / API",
-        "matrixExcludeChildren": true,
-        "items": [
-          {
-            "title": "Grid Interface",
-            "url": "/grid-interface/",
-            "showInCollapsed": true,
-            "items": [
-              {
-                "title": "Grid Options",
-                "url": "/grid-options/",
-                "showInCollapsed": true
-              },
-              {
-                "title": "Grid API",
-                "url": "/grid-api/",
-                "showInCollapsed": true
-              },
-              {
-                "title": "Grid Events",
-                "url": "/grid-events/",
-                "showInCollapsed": true
-              },
-              {
-                "title": "Grid Lifecycle",
-                "url": "/grid-lifecycle/",
-                "showInCollapsed": true
-              },
-              {
-                "title": "Row Object",
-                "url": "/row-object/",
-                "showInCollapsed": true
-              }
-            ]
-          },
-          {
-            "title": "Column Interface",
-            "url": "/column-interface/",
-            "showInCollapsed": true,
-            "items": [
-              {
-                "title": "Column Properties",
-                "url": "/column-properties/",
-                "showInCollapsed": true
-              },
-              {
-                "title": "Column API",
-                "url": "/column-api/",
-                "showInCollapsed": true
-              },
-              {
-                "title": "Column Object",
-                "url": "/column-object/",
-                "showInCollapsed": true
-              }
-            ]
-          },
-          {
-            "title": "Typescript Generics",
-            "url": "/typescript-generics/",
-            "showInCollapsed": true
-          }
-        ]
-      },
-      {
-        "title": "Columns",
-        "matrixExcludeChildren": true,
-        "items": [
-          {
-            "title": "Column Definitions",
-            "url": "/column-definitions/",
-            "showInCollapsed": true
-          },
-          {
-            "title": "Updating Definitions",
-            "url": "/column-updating-definitions/",
-            "showInCollapsed": true
-          },
-          {
-            "title": "Column State",
-            "url": "/column-state/",
-            "showInCollapsed": true
-          },
-          {
-            "title": "Column Headers",
-            "url": "/column-headers/",
-            "showInCollapsed": true
-          },
-          {
-            "title": "Column Groups",
-            "url": "/column-groups/",
-            "showInCollapsed": true
-          },
-          {
-            "title": "Column Sizing",
-            "url": "/column-sizing/",
-            "showInCollapsed": true
-          },
-          {
-            "title": "Column Moving",
-            "url": "/column-moving/",
-            "showInCollapsed": true
-          },
-          {
-            "title": "Cell Data Types",
-            "url": "/cell-data-types/",
-            "showInCollapsed": true
-          },
-          {
-            "title": "Column Pinning",
-            "url": "/column-pinning/",
-            "showInCollapsed": true
-          },
-          {
-            "title": "Column Spanning",
-            "url": "/column-spanning/",
-            "showInCollapsed": true
-          }
-        ]
-      },
-      {
-        "title": "Rows",
-        "items": [
-          {
-            "title": "Row IDs",
-            "url": "/row-ids/",
-            "showInCollapsed": true
-          },
-          {
-            "title": "Row Sorting",
-            "url": "/row-sorting/",
-            "showInCollapsed": true
-          },
-          {
-            "title": "Row Spanning",
-            "url": "/row-spanning/",
-            "showInCollapsed": true
-          },
-          {
-            "title": "Row Pinning",
-            "url": "/row-pinning/",
-            "showInCollapsed": true
-          },
-          {
-            "title": "Row Height",
-            "url": "/row-height/",
-            "showInCollapsed": true
-          },
-          {
-            "title": "Full Width Rows",
-            "url": "/full-width-rows/",
-            "showInCollapsed": true
-          },
-          {
-            "title": "Row Animation",
-            "url": "/row-animation/",
-            "showInCollapsed": true
-          },
-          {
-            "title": "Row Dragging",
-            "showInCollapsed": true,
-            "url": "/row-dragging/",
-            "items": [
-              {
-                "title": "External DropZone",
-                "url": "/row-dragging-to-external-dropzone/"
-              },
-              {
-                "title": "Grid to Grid",
-                "url": "/row-dragging-to-grid/"
-              }
-            ]
-          }
-        ]
-      },
-      {
         "title": "Build & Tooling",
-        "matrixExcludeChildren": true,
         "items": [
           {
             "title": "Install with NPM",
@@ -406,95 +294,218 @@
     ]
   },
   {
-    "group": "Core Features",
+    "group": "Grid Basics",
     "items": [
       {
-        "title": "Layout & Styling",
+        "title": "Columns",
         "items": [
           {
-            "title": "AG Grid Design System",
-            "url": "/ag-grid-design-system/",
+            "title": "Column Definitions",
+            "url": "/column-definitions/",
             "showInCollapsed": true
           },
           {
-            "title": "Global Styling",
+            "title": "Updating Definitions",
+            "url": "/column-updating-definitions/",
+            "showInCollapsed": true
+          },
+          {
+            "title": "Column State",
+            "url": "/column-state/",
+            "showInCollapsed": true
+          },
+          {
+            "title": "Column Headers",
+            "url": "/column-headers/",
+            "showInCollapsed": true
+          },
+          {
+            "title": "Column Groups",
+            "url": "/column-groups/",
+            "showInCollapsed": true
+          },
+          {
+            "title": "Column Sizing",
+            "url": "/column-sizing/",
+            "showInCollapsed": true
+          },
+          {
+            "title": "Column Moving",
+            "url": "/column-moving/",
+            "showInCollapsed": true
+          },
+          {
+            "title": "Cell Data Types",
+            "url": "/cell-data-types/",
+            "showInCollapsed": true
+          },
+          {
+            "title": "Column Pinning",
+            "url": "/column-pinning/",
+            "showInCollapsed": true
+          },
+          {
+            "title": "Column Spanning",
+            "url": "/column-spanning/",
+            "showInCollapsed": true
+          }
+        ]
+      },
+      {
+        "title": "Rows",
+        "items": [
+          {
+            "title": "Row IDs",
+            "url": "/row-ids/",
+            "showInCollapsed": true
+          },
+          {
+            "title": "Row Sorting",
+            "url": "/row-sorting/",
+            "showInCollapsed": true
+          },
+          {
+            "title": "Row Spanning",
+            "url": "/row-spanning/",
+            "showInCollapsed": true
+          },
+          {
+            "title": "Row Pinning",
+            "url": "/row-pinning/",
+            "showInCollapsed": true
+          },
+          {
+            "title": "Row Height",
+            "url": "/row-height/",
+            "showInCollapsed": true
+          },
+          {
+            "title": "Full Width Rows",
+            "url": "/full-width-rows/",
+            "showInCollapsed": true
+          },
+          {
+            "title": "Row Animation",
+            "url": "/row-animation/",
+            "showInCollapsed": true
+          },
+          {
+            "title": "Row Dragging",
+            "showInCollapsed": true,
+            "url": "/row-dragging/",
+            "items": [
+              {
+                "title": "External DropZone",
+                "url": "/row-dragging-to-external-dropzone/"
+              },
+              {
+                "title": "Grid to Grid",
+                "url": "/row-dragging-to-grid/"
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "group": "Layout & Styling",
+    "items": [
+      {
+        "title": "Design System",
+        "items": [
+          {
+            "title": "Getting Started",
+            "url": "/ag-grid-design-system/",
+            "showInCollapsed": true
+          }
+        ]
+      },
+      {
+        "title": "Global Styling",
+        "items": [
+          {
+            "title": "Overview",
             "url": "/global-style/",
+            "showInCollapsed": true
+          },
+          {
+            "title": "Themes",
+            "url": "/themes/",
+            "showInCollapsed": true
+          },
+          {
+            "title": "Customisation",
+            "url": "/global-style-customisation/",
             "showInCollapsed": true,
             "items": [
               {
-                "title": "Themes",
-                "url": "/themes/",
-                "showInCollapsed": true
+                "title": "Variable Reference",
+                "url": "/global-style-customisation-variables/",
+                "showInCollapsed": false
               },
               {
-                "title": "Customisation",
-                "url": "/global-style-customisation/",
-                "showInCollapsed": true,
-                "items": [
-                  {
-                    "title": "Variable Reference",
-                    "url": "/global-style-customisation-variables/",
-                    "showInCollapsed": false
-                  },
-                  {
-                    "title": "Colours & Fonts",
-                    "url": "/global-style-customisation-colours/",
-                    "showInCollapsed": false
-                  },
-                  {
-                    "title": "Compactness & Row Height",
-                    "url": "/global-style-customisation-compactness/",
-                    "showInCollapsed": false
-                  },
-                  {
-                    "title": "Selections",
-                    "url": "/global-style-customisation-selections/",
-                    "showInCollapsed": false
-                  },
-                  {
-                    "title": "Headers",
-                    "url": "/global-style-customisation-headers/",
-                    "showInCollapsed": false
-                  },
-                  {
-                    "title": "Borders",
-                    "url": "/global-style-customisation-borders/",
-                    "showInCollapsed": false
-                  },
-                  {
-                    "title": "Icons",
-                    "url": "/custom-icons/",
-                    "showInCollapsed": false
-                  },
-                  {
-                    "title": "Tool Panels",
-                    "url": "/global-style-customisation-tool-panels/",
-                    "showInCollapsed": false
-                  },
-                  {
-                    "title": "Inputs & Widgets",
-                    "url": "/global-style-customisation-widgets/",
-                    "showInCollapsed": false
-                  },
-                  {
-                    "title": "Menus & Popups",
-                    "url": "/global-style-customisation-popups/",
-                    "showInCollapsed": false
-                  },
-                  {
-                    "title": "Advanced CSS",
-                    "url": "/global-style-customisation-css/",
-                    "showInCollapsed": false
-                  }
-                ]
+                "title": "Colours & Fonts",
+                "url": "/global-style-customisation-colours/",
+                "showInCollapsed": false
               },
               {
-                "title": "Sass",
-                "url": "/global-style-customisation-sass/",
+                "title": "Compactness & Row Height",
+                "url": "/global-style-customisation-compactness/",
+                "showInCollapsed": false
+              },
+              {
+                "title": "Selections",
+                "url": "/global-style-customisation-selections/",
+                "showInCollapsed": false
+              },
+              {
+                "title": "Headers",
+                "url": "/global-style-customisation-headers/",
+                "showInCollapsed": false
+              },
+              {
+                "title": "Borders",
+                "url": "/global-style-customisation-borders/",
+                "showInCollapsed": false
+              },
+              {
+                "title": "Icons",
+                "url": "/custom-icons/",
+                "showInCollapsed": false
+              },
+              {
+                "title": "Tool Panels",
+                "url": "/global-style-customisation-tool-panels/",
+                "showInCollapsed": false
+              },
+              {
+                "title": "Inputs & Widgets",
+                "url": "/global-style-customisation-widgets/",
+                "showInCollapsed": false
+              },
+              {
+                "title": "Menus & Popups",
+                "url": "/global-style-customisation-popups/",
+                "showInCollapsed": false
+              },
+              {
+                "title": "Advanced CSS",
+                "url": "/global-style-customisation-css/",
                 "showInCollapsed": false
               }
             ]
           },
+          {
+            "title": "Sass",
+            "url": "/global-style-customisation-sass/",
+            "showInCollapsed": false
+          }
+        ]
+      },
+      {
+        "title": "Grid Styling",
+        "items": [
           {
             "title": "Styling Rows",
             "url": "/row-styles/",
@@ -514,26 +525,14 @@
             "title": "Printing",
             "url": "/printing/",
             "showInCollapsed": true
-          },
-          {
-            "title": "Upgrading to v28+",
-            "url": "/global-style-upgrading-to-v28/",
-            "showInCollapsed": true,
-            "items": [
-              {
-                "title": "CSS",
-                "url": "/global-style-upgrading-to-v28-css/",
-                "showInCollapsed": false
-              },
-              {
-                "title": "Sass",
-                "url": "/global-style-upgrading-to-v28-sass/",
-                "showInCollapsed": false
-              }
-            ]
           }
         ]
-      },
+      }
+    ]
+  },
+  {
+    "group": "Core Features",
+    "items": [
       {
         "title": "Client-Side Data",
         "items": [
@@ -599,7 +598,6 @@
             "url": "/server-side-model/",
             "showInCollapsed": true,
             "enterprise": true,
-            "matrixExcludeChildren": true,
             "items": [
               {
                 "title": "API Reference",
@@ -801,7 +799,6 @@
                 "title": "Set Filter",
                 "url": "/filter-set/",
                 "enterprise": true,
-                "matrixExcludeChildren": true,
                 "showInCollapsed": true,
                 "items": [
                   {
@@ -1009,7 +1006,6 @@
             "url": "/grouping/",
             "enterprise": true,
             "showInCollapsed": true,
-            "matrixExcludeChildren": true,
             "items": [
               {
                 "title": "Display Types",
@@ -1065,7 +1061,6 @@
                 "url": "/grouping-filtering/",
                 "enterprise": true,
                 "showInCollapsed": false,
-                "matrixExcludeChildren": true,
                 "items": [
                   {
                     "title": "Group Column Filter",
@@ -1112,7 +1107,6 @@
             "url": "/aggregation/",
             "enterprise": true,
             "showInCollapsed": true,
-            "matrixExcludeChildren": true,
             "items": [
               {
                 "title": "Custom Functions",
@@ -1697,7 +1691,6 @@
       },
       {
         "title": "Testing & Security",
-        "matrixExcludeChildren": true,
         "level-2-display-style-forced": "block",
         "items": [
           {
@@ -1722,7 +1715,6 @@
       },
       {
         "title": "Miscellaneous",
-        "matrixExcludeChildren": true,
         "level-2-display-style-forced": "block",
         "items": [
           {

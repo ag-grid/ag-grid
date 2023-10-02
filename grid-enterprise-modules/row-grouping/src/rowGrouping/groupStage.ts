@@ -18,7 +18,8 @@ import {
     Beans,
     ISelectionService,
     WithoutGridCommon,
-    InitialGroupOrderComparatorParams
+    InitialGroupOrderComparatorParams,
+    GridOptions
 } from "@ag-grid-community/core";
 import { BatchRemover } from "./batchRemover";
 
@@ -42,7 +43,6 @@ interface GroupingDetails {
     groupAllowUnbalanced: boolean;
     isGroupOpenByDefault: (params: WithoutGridCommon<IsGroupOpenByDefaultParams>) => boolean;
     initialGroupOrderComparator: (params: WithoutGridCommon<InitialGroupOrderComparatorParams>) => number;
-    createGroupFooter: boolean;
     
     usingTreeData: boolean;
     getDataPath: GetDataPath | undefined;
@@ -50,6 +50,17 @@ interface GroupingDetails {
 
 @Bean('groupStage')
 export class GroupStage extends BeanStub implements IRowNodeStage {
+    getImpactingGridOptions(): (keyof GridOptions<any>)[] {
+        return [
+            'treeData',
+            'suppressParentsInRowNodes',
+            'groupDefaultExpanded',
+            'groupAllowUnbalanced',
+            'isGroupOpenByDefault',
+            'initialGroupOrderComparator',
+            'getDataPath',
+        ];
+    }
 
     @Autowired('columnModel') private columnModel: ColumnModel;
     @Autowired('selectableService') private selectableService: SelectableService;
@@ -142,7 +153,6 @@ export class GroupStage extends BeanStub implements IRowNodeStage {
             groupAllowUnbalanced:  this.gridOptionsService.is('groupAllowUnbalanced'),
             isGroupOpenByDefault: this.gridOptionsService.getCallback('isGroupOpenByDefault') as any,
             initialGroupOrderComparator: this.gridOptionsService.getCallback('initialGroupOrderComparator') as any,
-            createGroupFooter: this.gridOptionsService.isGroupIncludeFooterTrueOrCallback(),
             usingTreeData: usingTreeData,
             getDataPath: usingTreeData ? this.gridOptionsService.get('getDataPath') : undefined
         };

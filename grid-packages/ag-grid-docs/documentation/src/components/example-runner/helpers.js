@@ -310,8 +310,16 @@ export const openCodeSandbox = (exampleInfo) => {
             }
 
             if (/([a-zA-Z0-9\\s_.])+(.js|.jsx|.tsx|.ts|.css)$/.test(file)) {
-                if(file === 'index.jsx') {
-                    return `src/index.js`
+                if(file.endsWith(".js")) {
+                    return `public/${file}`;
+                }
+
+                if(file.startsWith('index.')) {
+                    return `src/${file === 'index.jsx' ? 'index.js' : file}`;
+                }
+
+                if(file === 'styles.css') {
+                    return `src/styles.css`
                 }
                 return `src/${file}`;
             }

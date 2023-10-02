@@ -12,10 +12,10 @@ import {
     SortDirection
 } from "./colDef";
 import { EventService } from "../eventService";
-import { Autowired, PostConstruct } from "../context/context";
+import { Autowired, PostConstruct, PreDestroy } from "../context/context";
 import { ColumnUtils } from "../columns/columnUtils";
 import { IEventEmitter } from "../interfaces/iEventEmitter";
-import { AgEvent, ColumnEvent, ColumnEventType } from "../events";
+import { AgEvent, ColumnEvent, ColumnEventType, Events } from "../events";
 import { ColumnGroup, ColumnGroupShowType } from "./columnGroup";
 import { ProvidedColumnGroup } from "./providedColumnGroup";
 import { ModuleNames } from "../modules/moduleNames";
@@ -217,6 +217,7 @@ export class Column<TValue = any> implements IHeaderColumn<TValue>, IProvidedCol
         this.userProvidedColDef = userProvidedColDef;
         this.initMinAndMaxWidths();
         this.initDotNotation();
+        this.initTooltip();
         this.eventService.dispatchEvent(this.createColumnEvent('colDefChanged', "api"));
     }
 
@@ -263,6 +264,8 @@ export class Column<TValue = any> implements IHeaderColumn<TValue>, IProvidedCol
         this.initTooltip();
 
         this.validate();
+
+        this.registerGridOptionEventListeners();
     }
 
     private initDotNotation(): void {
@@ -411,6 +414,22 @@ export class Column<TValue = any> implements IHeaderColumn<TValue>, IProvidedCol
     /** Remove event listener from the column. */
     public removeEventListener(eventType: ColumnEventName, listener: Function): void {
         this.eventService.removeEventListener(eventType, listener);
+    }
+
+    private onSuppressFieldDotNotation = () => {
+        this.initDotNotation();
+        this.eventService.dispatchEvent(
+            this.createColumnEvent('colDefChanged', 'api')
+        );
+    };
+
+    private registerGridOptionEventListeners() {
+        this.gridOptionsService.addEventListener(Events.EVENT_SUPPRESS_FIELD_DOT_NOTATION, this.onSuppressFieldDotNotation);
+    }
+
+    @PreDestroy
+    private unregisterGridOptionEventListeners() {
+        this.gridOptionsService.removeEventListener(Events.EVENT_SUPPRESS_FIELD_DOT_NOTATION, this.onSuppressFieldDotNotation);
     }
 
     public createColumnFunctionCallbackParams(rowNode: IRowNode): ColumnFunctionCallbackParams {

@@ -6,6 +6,8 @@ import {
     ColDef,
     Column,
     ColumnModel,
+    GridOptions,
+    GridOptionsService,
     IRowNodeStage,
     RowNode,
     StageExecuteParams,
@@ -16,6 +18,19 @@ import { PivotColDefService } from "./pivotColDefService";
 
 @Bean('pivotStage')
 export class PivotStage extends BeanStub implements IRowNodeStage {
+    getImpactingGridOptions(): (keyof GridOptions<any>)[] {
+        return [
+            'removePivotHeaderRowWhenSingleValueColumn',
+            'pivotRowTotals',
+            'pivotColumnGroupTotals',
+            'suppressExpandablePivotGroups',
+            'pivotDefaultExpanded',
+            'processPivotResultColDef',
+            'processPivotResultColGroupDef',
+            'processSecondaryColDef',
+            'processSecondaryColGroupDef',
+        ];
+    }
 
     // these should go into the pivot column creator
     @Autowired('valueService') private valueService: ValueService;
@@ -28,6 +43,7 @@ export class PivotStage extends BeanStub implements IRowNodeStage {
 
     private aggregationColumnsHashLastTime: string | null;
     private aggregationFuncsHashLastTime: string;
+    private optionsLastTime: string;
 
     private groupColumnsHashLastTime: string | null;
 
@@ -69,7 +85,12 @@ export class PivotStage extends BeanStub implements IRowNodeStage {
         const groupColumnsChanged = groupColumnsHash !== this.groupColumnsHashLastTime;
         this.groupColumnsHashLastTime = groupColumnsHash;
 
-        if (uniqueValuesChanged || aggregationColumnsChanged || groupColumnsChanged || aggregationFuncsChanged) {
+        const optionsHash = this.getImpactingGridOptions()
+            .map(option => this.gridOptionsService.get(option as any)).join('#');
+        const optionsChanged = optionsHash !== this.optionsLastTime;
+        this.optionsLastTime = optionsHash;
+
+        if (uniqueValuesChanged || aggregationColumnsChanged || groupColumnsChanged || aggregationFuncsChanged || optionsChanged) {
             const {pivotColumnGroupDefs, pivotColumnDefs} = this.pivotColDefService.createPivotColumnDefs(this.uniqueValues);
             this.pivotColumnDefs = pivotColumnDefs;
             this.columnModel.setSecondaryColumns(pivotColumnGroupDefs, "rowModelUpdated");

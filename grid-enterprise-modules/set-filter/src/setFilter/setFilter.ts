@@ -345,6 +345,10 @@ export class SetFilter<V = string> extends ProvidedFilter<SetFilterModel, V> imp
                     this.syncAfterDataChange();
                 }
             });
+
+        this.addManagedPropertyListeners(['treeData', 'getDataPath', 'groupAllowUnbalanced'], () => {
+            this.syncAfterDataChange();
+        })
     }
 
     private syncAfterDataChange(): AgPromise<void> {

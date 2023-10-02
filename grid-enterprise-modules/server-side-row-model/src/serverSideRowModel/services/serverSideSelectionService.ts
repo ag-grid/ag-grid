@@ -7,7 +7,6 @@ import { ISelectionStrategy } from "./selection/strategies/iSelectionStrategy";
 export class ServerSideSelectionService extends BeanStub implements ISelectionService {
     @Autowired('rowModel') private rowModel: IRowModel;
     private selectionStrategy: ISelectionStrategy;
-    private rowSelection: 'single' | 'multiple' | undefined;
 
     @PostConstruct
     private init(): void {
@@ -26,8 +25,7 @@ export class ServerSideSelectionService extends BeanStub implements ISelectionSe
             this.eventService.dispatchEvent(event);
         });
 
-        this.rowSelection = this.gridOptionsService.get('rowSelection');
-        this.addManagedPropertyListener('rowSelection', (propChange) => this.rowSelection = propChange.currentValue);
+        this.addManagedPropertyListener('rowSelection', () => this.deselectAllRowNodes({ source: 'api' }));
 
         const StrategyClazz = !groupSelectsChildren ? DefaultStrategy : GroupSelectsChildrenStrategy;
         this.selectionStrategy = this.createManagedBean(new StrategyClazz());
@@ -51,7 +49,8 @@ export class ServerSideSelectionService extends BeanStub implements ISelectionSe
     public setNodesSelected(params: ISetNodesSelectedParams): number {
         const {nodes, ...otherParams} = params;
 
-        if (nodes.length > 1 && this.rowSelection !== 'multiple') {
+        const rowSelection = this.gridOptionsService.get('rowSelection');
+        if (nodes.length > 1 && rowSelection !== 'multiple') {
             console.warn(`AG Grid: cannot multi select while rowSelection='single'`);
             return 0;
         }

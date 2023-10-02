@@ -1,7 +1,6 @@
 import {
     Beans, ColumnModel, Events,
     EventService,
-    IsRowMaster,
     RowDataTransaction,
     RowNode,
     RowNodeTransaction,
@@ -30,11 +29,6 @@ export class ClientSideNodeManager {
 
     private static ROOT_NODE_ID = 'ROOT_NODE_ID';
 
-    private isRowMasterFunc?: IsRowMaster;
-    private suppressParentsInRowNodes: boolean;
-
-    private doingMasterDetail: boolean;
-
     // when user is provide the id's, we also keep a map of ids to row nodes for convenience
     private allNodesMap: { [id: string]: RowNode } = {};
 
@@ -55,17 +49,6 @@ export class ClientSideNodeManager {
         this.rootNode.childrenAfterSort = [];
         this.rootNode.childrenAfterAggFilter = [];
         this.rootNode.childrenAfterFilter = [];
-
-        // if we make this class a bean, then can annotate postConstruct
-        this.postConstruct();
-    }
-
-    // @PostConstruct - this is not a bean, so postConstruct called by constructor
-    public postConstruct(): void {
-        // func below doesn't have 'this' pointer, so need to pull out these bits
-        this.suppressParentsInRowNodes = this.gridOptionsService.is('suppressParentsInRowNodes');
-        this.isRowMasterFunc = this.gridOptionsService.get('isRowMaster');
-        this.doingMasterDetail = this.gridOptionsService.is('masterDetail');
     }
 
     public getCopyOfNodesMap(): { [id: string]: RowNode } {
@@ -296,7 +279,8 @@ export class ClientSideNodeManager {
         node.group = false;
         this.setMasterForRow(node, dataItem, level, true);
 
-        if (parent && !this.suppressParentsInRowNodes) {
+        const suppressParentsInRowNodes = this.gridOptionsService.is('suppressParentsInRowNodes');
+        if (parent && !suppressParentsInRowNodes) {
             node.parent = parent;
         }
         node.level = level;
@@ -320,12 +304,14 @@ export class ClientSideNodeManager {
                 rowNode.expanded = false;
             }
         } else {
+            const masterDetail = this.gridOptionsService.is('masterDetail');
             // this is the default, for when doing grid data
-            if (this.doingMasterDetail) {
+            if (masterDetail) {
                 // if we are doing master detail, then the
                 // default is that everything can be a Master Row.
-                if (this.isRowMasterFunc) {
-                    rowNode.setMaster(this.isRowMasterFunc(data));
+                const isRowMasterFunc = this.gridOptionsService.get('isRowMaster');
+                if (isRowMasterFunc) {
+                    rowNode.setMaster(isRowMasterFunc(data));
                 } else {
                     rowNode.setMaster(true);
                 }

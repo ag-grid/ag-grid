@@ -149,18 +149,19 @@ export class CellCtrl extends BeanStub {
         this.cellKeyboardListenerFeature = new CellKeyboardListenerFeature(this, this.beans, this.column, this.rowNode, this.rowCtrl);
         this.addDestroyFunc(() => { this.cellKeyboardListenerFeature?.destroy(); this.cellKeyboardListenerFeature = null; });
 
+        if (this.column.isTooltipEnabled()) {
+            this.enableTooltipFeature();
+            this.addDestroyFunc(() => { this.disableTooltipFeature(); });
+        }
+
         const rangeSelectionEnabled = this.beans.rangeService && this.beans.gridOptionsService.is('enableRangeSelection');
         if (rangeSelectionEnabled) {
             this.cellRangeFeature = new CellRangeFeature(this.beans, this);
             this.addDestroyFunc(() => { this.cellRangeFeature?.destroy(); this.cellRangeFeature = null; });
         }
-
-        if (this.column.isTooltipEnabled()) {
-            this.addTooltipFeature();
-        }
     }
 
-    private addTooltipFeature(): void {
+    private enableTooltipFeature(): void {
         const getTooltipValue = () => {
             const colDef = this.column.getColDef();
             const data = this.rowNode.data;
@@ -204,7 +205,13 @@ export class CellCtrl extends BeanStub {
         };
 
         this.tooltipFeature = new TooltipFeature(tooltipCtrl, this.beans);
-        this.addDestroyFunc(() => { this.tooltipFeature?.destroy(); this.tooltipFeature = null; });
+    }
+
+    private disableTooltipFeature() {
+        if (!this.tooltipFeature) { return; }
+
+        this.tooltipFeature.destroy();
+        this.tooltipFeature = null;
     }
 
     public setComp(
@@ -1014,6 +1021,13 @@ export class CellCtrl extends BeanStub {
 
     public onColDefChanged(): void {
         if (!this.cellComp) { return; }
+
+        const isTooltipEnabled = this.column.isTooltipEnabled();
+        if (isTooltipEnabled) {
+            this.enableTooltipFeature();
+        } else {
+            this.disableTooltipFeature();
+        }
 
         this.setWrapText();
 

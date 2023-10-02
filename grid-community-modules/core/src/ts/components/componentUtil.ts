@@ -48,7 +48,9 @@ export class ComponentUtil {
         Events.EVENT_ADVANCED_FILTER_ENABLED_CHANGED,
         Events.EVENT_DATA_TYPES_INFERRED,
         Events.EVENT_FIELD_VALUE_CHANGED,
-        Events.EVENT_FIELD_PICKER_VALUE_SELECTED
+        Events.EVENT_FIELD_PICKER_VALUE_SELECTED,
+        Events.EVENT_SUPPRESS_COLUMN_MOVE_CHANGED,
+        Events.EVENT_SUPPRESS_FIELD_DOT_NOTATION,
     ];
 
     // events that are available for use by users of AG Grid and so should be documented

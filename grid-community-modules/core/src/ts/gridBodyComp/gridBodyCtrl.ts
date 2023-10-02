@@ -103,6 +103,7 @@ export class GridBodyCtrl extends BeanStub {
         this.eStickyTop = eStickyTop;
 
         this.setCellTextSelection(this.gridOptionsService.is('enableCellTextSelection'));
+        this.addManagedPropertyListener('enableCellTextSelection', (props) => this.setCellTextSelection(props.currentValue));
 
         this.createManagedBean(new LayoutFeature(this.comp));
         this.bodyScrollFeature = this.createManagedBean(new GridBodyScrollFeature(this.eBodyViewport));
