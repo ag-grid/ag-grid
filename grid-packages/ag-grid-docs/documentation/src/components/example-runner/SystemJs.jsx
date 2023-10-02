@@ -1,9 +1,5 @@
 import React from 'react';
 import {
-    agChartsAngularVersion,
-    agChartsReactVersion,
-    agChartsVersion,
-    agChartsVueVersion,
     agGridAngularVersion,
     agGridReactVersion,
     agGridVersion,
@@ -148,11 +144,11 @@ const publishedConfiguration = {
         "ag-grid-vue3": `${NPM_CDN}/ag-grid-vue3@${agGridVue3Version}/`
     },
     gridCommunityPaths: {
-        "ag-charts-react": `${NPM_CDN}/ag-charts-react@${agChartsReactVersion}/`,
-        "ag-charts-angular": `${NPM_CDN}/ag-charts-angular@${agChartsAngularVersion}/`,
-        "ag-charts-vue": `${NPM_CDN}/ag-charts-vue@${agChartsVueVersion}/`,
-        "ag-charts-vue3": `${NPM_CDN}/ag-charts-vue3@${agChartsVueVersion}/`,
-        "ag-charts-community": `${NPM_CDN}/ag-charts-community@${agChartsVersion}/`,
+        "ag-charts-react": `${NPM_CDN}/ag-charts-react/`,
+        "ag-charts-angular": `${NPM_CDN}/ag-charts-angular/`,
+        "ag-charts-vue": `${NPM_CDN}/ag-charts-vue/`,
+        "ag-charts-vue3": `${NPM_CDN}/ag-charts-vue3/`,
+        "ag-charts-community": `${NPM_CDN}/ag-charts-community/`,
         /* START OF GRID COMMUNITY MODULES PATHS PROD - DO NOT DELETE */
         "@ag-grid-community/client-side-row-model": `https://cdn.jsdelivr.net/npm/@ag-grid-community/client-side-row-model@${agGridVersion}/dist/client-side-row-model.cjs.min.js`,
         "@ag-grid-community/core": `https://cdn.jsdelivr.net/npm/@ag-grid-community/core@${agGridVersion}/dist/core.cjs.min.js`,
@@ -161,11 +157,11 @@ const publishedConfiguration = {
         /* END OF GRID COMMUNITY MODULES PATHS PROD - DO NOT DELETE */
     },
     gridEnterprisePaths: {
-        "ag-charts-react": `${NPM_CDN}/ag-charts-react@${agChartsReactVersion}/`,
-        "ag-charts-angular": `${NPM_CDN}/ag-charts-angular@${agChartsAngularVersion}/`,
-        "ag-charts-vue": `${NPM_CDN}/ag-charts-vue@${agChartsVueVersion}/`,
-        "ag-charts-vue3": `${NPM_CDN}/ag-charts-vue3@${agChartsVueVersion}/`,
-        "ag-charts-community": `${NPM_CDN}/ag-charts-community@${agChartsVersion}/`,
+        "ag-charts-react": `${NPM_CDN}/ag-charts-react/`,
+        "ag-charts-angular": `${NPM_CDN}/ag-charts-angular/`,
+        "ag-charts-vue": `${NPM_CDN}/ag-charts-vue/`,
+        "ag-charts-vue3": `${NPM_CDN}/ag-charts-vue3/`,
+        "ag-charts-community": `${NPM_CDN}/ag-charts-community/`,
         /* START OF GRID ENTERPRISE MODULES PATHS PROD - DO NOT DELETE */
         "@ag-grid-community/client-side-row-model": `https://cdn.jsdelivr.net/npm/@ag-grid-community/client-side-row-model@${agGridVersion}/dist/client-side-row-model.cjs.min.js`,
         "@ag-grid-community/core": `https://cdn.jsdelivr.net/npm/@ag-grid-community/core@${agGridVersion}/dist/core.cjs.min.js`,
