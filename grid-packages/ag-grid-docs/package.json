@@ -59,7 +59,7 @@
     "jquery": "3.3.1",
     "jsdom": "13.0.0",
     "lnk": "1.1.0",
-    "moment": "2.22.2",
+    "moment": "2.29.4",
     "prettier": "2.2.1",
     "prettier-plugin-organize-imports": "^2.3.4",
     "tcp-port-used": "1.0.1",
