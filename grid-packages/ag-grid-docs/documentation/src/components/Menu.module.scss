@@ -4,7 +4,7 @@
     $top-bar-height: 58px;
 
     --menu-width: min(30vw, 320px);
-    --font-size: var(--font-size-medium);
+    --font-size: 16px;
 
     border-bottom: 1px solid var(--border-color);
 
@@ -35,17 +35,6 @@
     @media screen and (min-width: $breakpoint-docs-nav-large) {
         padding-left: var(--menu-horizontal-margin);
     }
-
-    hr {
-        margin-top: 20px;
-        margin-bottom: 10px;
-        color: var(--secondary-text-color);
-    }
-
-    h4 {
-        color: var(--secondary-text-color);
-    }
-
 }
 
 ul.menuInner {
@@ -60,6 +49,19 @@ ul.menuInner {
 
     li li {
         margin-bottom: 0 !important;
+    }
+
+    hr {
+        margin-top: $size-2;
+        margin-bottom: $size-2;
+        height: 1px;
+        background-color: var(--bright-blue-gray);
+    }
+
+    h5 {
+        padding-left: 6px;
+        font-weight: var(--font-weight-bold);
+        color: var(--secondary-text-color);
     }
 
     @media screen and (min-width: $breakpoint-docs-nav-medium) {
@@ -116,7 +118,7 @@ button.sectionHeader {
 }
 
 .menuGroup {
-    --first-indent-size: 4px;
+    --first-indent-size: 6px;
     --indent-size: 12px;
 
     line-height: var(--line-height-tight);

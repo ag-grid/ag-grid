@@ -15,7 +15,7 @@ export abstract class MiniChart extends Component {
     constructor(container: HTMLElement, tooltipName: string) {
         super();
 
-        const scene = new _Scene.Scene({ document: window.document, width: this.size, height: this.size });
+        const scene = new _Scene.Scene({ document: window.document, width: this.size, height: this.size } as any);
         scene.canvas.element.classList.add('ag-chart-mini-thumbnail-canvas');
         scene.root = this.root;
         scene.container = container;

@@ -28,7 +28,7 @@ const Menu = ({currentFramework, path}) => {
             <ul id="side-nav" className={classnames(styles.menuInner, 'list-style-none', 'collapse')}>
                 {filteredMenuData.map(({group, items}, index) => (
                     <React.Fragment key={group}>
-                        <h4>{group}</h4>
+                        <h5>{group}</h5>
                         {items.map(({title, items: childItems}) => (
                             <MenuSection
                                 key={`${title}-menu`}

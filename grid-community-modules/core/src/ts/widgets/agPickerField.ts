@@ -8,6 +8,7 @@ import { KeyCode } from '../constants/keyCode';
 import { IAgLabelParams } from './agAbstractLabel';
 import { AddPopupParams, PopupService } from "./popupService";
 import { Autowired } from "../context/context";
+import { Events } from "../eventKeys";
 
 export interface IPickerFieldParams extends IAgLabelParams {
     pickerType: string;
@@ -199,16 +200,14 @@ export abstract class AgPickerField<TValue, TConfig extends IPickerFieldParams =
         const ePicker = this.pickerComponent!.getGui();
 
         if (!this.gridOptionsService.is('suppressScrollWhenPopupsAreOpen')) {
-            this.destroyMouseWheelFunc = this.addManagedListener(eDocument.body, 'wheel', (e: MouseEvent) => {
-                if (!ePicker.contains(e.target as HTMLElement)) {
-                    this.hidePicker();
-                }
+            this.destroyMouseWheelFunc = this.addManagedListener(this.eventService, Events.EVENT_BODY_SCROLL, () => {
+                this.hidePicker();
             });
         }
 
         const translate = this.localeService.getLocaleTextFunc();
 
-        const { pickerType, pickerAriaLabelKey, pickerAriaLabelValue, modalPicker = true } = this.config;
+        const { pickerAriaLabelKey, pickerAriaLabelValue, modalPicker = true } = this.config;
 
         const popupParams: AddPopupParams = {
             modal: modalPicker,
@@ -227,7 +226,7 @@ export abstract class AgPickerField<TValue, TConfig extends IPickerFieldParams =
 
         const addPopupRes = this.popupService.addPopup(popupParams);
 
-        const { maxPickerHeight, minPickerWidth, maxPickerWidth, pickerGap, variableWidth } = this;
+        const { maxPickerHeight, minPickerWidth, maxPickerWidth, variableWidth } = this;
 
         if (variableWidth) {
             if (minPickerWidth) {
@@ -246,19 +245,28 @@ export abstract class AgPickerField<TValue, TConfig extends IPickerFieldParams =
         ePicker.style.setProperty('max-height', maxHeight);
         ePicker.style.position = 'absolute';
 
+        this.alignPickerToComponent();
+
+        return addPopupRes.hideFunc;
+    }
+
+    protected alignPickerToComponent(): void {
+        if (!this.pickerComponent) { return; } 
+
+        const { pickerType } = this.config;
+        const { pickerGap } = this;
+
         const alignSide = this.gridOptionsService.is('enableRtl') ? 'right' : 'left';
 
         this.popupService.positionPopupByComponent({
             type: pickerType,
             eventSource: this.eWrapper,
-            ePopup: ePicker,
+            ePopup: this.pickerComponent.getGui(),
             position: 'under',
             alignSide,
             keepWithinBounds: true,
             nudgeY: pickerGap
         });
-
-        return addPopupRes.hideFunc;
     }
 
     protected beforeHidePicker(): void {

@@ -146,7 +146,7 @@ export abstract class Sparkline {
         const element = document.createElement('div');
         element.setAttribute('class', 'ag-sparkline-wrapper');
 
-        const scene = new _Scene.Scene({ document });
+        const scene = new _Scene.Scene({ document } as any);
         this.scene = scene;
         this.canvasElement = scene.canvas.element;
         scene.root = root;

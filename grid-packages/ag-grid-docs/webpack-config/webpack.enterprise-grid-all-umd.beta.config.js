@@ -39,6 +39,7 @@ module.exports = merge(common, {
     },
     resolve: {
         alias: {
+            "ag-charts-community": path.resolve('./node_modules/@ag-grid-enterprise/charts/node_modules/ag-charts-community/dist/main.cjs.js'),
             "@ag-grid-community/core": path.resolve(__dirname, "../../../grid-community-modules/core/src/ts/main.ts"),
             "@ag-grid-community/client-side-row-model": path.resolve(__dirname, "../../../grid-community-modules/client-side-row-model/src/main.ts"),
             "@ag-grid-community/infinite-row-model": path.resolve(__dirname, "../../../grid-community-modules/infinite-row-model/src/main.ts"),

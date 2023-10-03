@@ -7,7 +7,7 @@ import { WithoutGridCommon } from "../interfaces/iCommon";
 import { ICellRendererParams } from "../rendering/cellRenderers/iCellRenderer";
 import { AgPromise } from "../utils";
 import { setAriaActiveDescendant, setAriaControls, setAriaLabel } from "../utils/aria";
-import { bindCellRendererToHtmlElement, clearElement } from "../utils/dom";
+import { bindCellRendererToHtmlElement, clearElement, isVisible } from "../utils/dom";
 import { stopPropagationForAgGrid } from "../utils/event";
 import { debounce } from "../utils/function";
 import { fuzzySuggestions } from "../utils/fuzzyMatch";
@@ -33,6 +33,7 @@ export interface RichSelectParams<TValue = any> extends IPickerFieldParams {
     searchType?: 'match' | 'matchAny' | 'fuzzy';
     highlightMatch?: boolean;
     placeholder?: string;
+    initialInputValue?: string;
 
     valueFormatter?: (value: TValue) => any;
     searchStringCreator?: (values: TValue[]) => string[]
@@ -172,10 +173,11 @@ export class AgRichSelect<TValue = any> extends AgPickerField<TValue, RichSelect
 
     private renderSelectedValue(): void {
         const { value, eDisplayField, config } = this;
+        const { allowTyping, initialInputValue } = this.config;
         const valueFormatted = this.config.valueFormatter ? this.config.valueFormatter(value) : value;
 
-        if (config.allowTyping) {
-            this.eInput.setValue(valueFormatted);
+        if (allowTyping) {
+            this.eInput.setValue(initialInputValue ?? valueFormatted)
             return;
         }
 
@@ -304,6 +306,7 @@ export class AgRichSelect<TValue = any> extends AgPickerField<TValue, RichSelect
     public showPicker() {
         super.showPicker();
         this.showCurrentValueInPicker();
+        this.displayOrHidePicker();
     }
 
     private showCurrentValueInPicker(): void {
@@ -340,10 +343,12 @@ export class AgRichSelect<TValue = any> extends AgPickerField<TValue, RichSelect
         super.beforeHidePicker();
     }
 
-    private onWrapperFocus(e: FocusEvent): void {
-        if (this.eInput) {
-            this.eInput.getFocusableElement().focus();
-        }
+    private onWrapperFocus(): void {
+        if (!this.eInput) { return; }
+
+        const focusableEl = this.eInput.getFocusableElement() as HTMLInputElement;
+        focusableEl.focus();
+        focusableEl.select();
     }
 
     private onWrapperFocusOut(e: FocusEvent): void {
@@ -434,6 +439,7 @@ export class AgRichSelect<TValue = any> extends AgPickerField<TValue, RichSelect
         if (!allowTyping || !filterList) { return; }
 
         this.setValueList({ valueList: filteredValues, refresh: true });
+        this.alignPickerToComponent();
     }
 
     private runSearch() {
@@ -451,9 +457,7 @@ export class AgRichSelect<TValue = any> extends AgPickerField<TValue, RichSelect
         const filterValueLen = filteredValues.length;
         const shouldFilter = !!(allowTyping && filterList && this.searchString !== '');
 
-        if (shouldFilter) {
-            this.filterListModel(shouldFilter ? filteredValues : values);
-        }
+        this.filterListModel(shouldFilter ? filteredValues : values);
 
         if (suggestions.length) {
             const topSuggestionIndex = shouldFilter ? 0 : searchStrings.indexOf(suggestions[0]);
@@ -475,8 +479,12 @@ export class AgRichSelect<TValue = any> extends AgPickerField<TValue, RichSelect
             }
         }
 
+        this.displayOrHidePicker();
+    }
+
+    private displayOrHidePicker(): void {
         const eListGui = this.listComponent?.getGui();
-        eListGui?.classList.toggle('ag-hidden', shouldFilter && !filterValueLen)
+        eListGui?.classList.toggle('ag-hidden', this.currentList.length === 0)
     }
 
     private clearSearchString(): void {
@@ -626,8 +634,11 @@ export class AgRichSelect<TValue = any> extends AgPickerField<TValue, RichSelect
                 break;
             case KeyCode.ESCAPE:
                 if (this.isPickerDisplayed) {
-                    event.preventDefault();
-                    stopPropagationForAgGrid(event);
+                    if (isVisible(this.listComponent!.getGui())) {
+                        event.preventDefault();
+                        stopPropagationForAgGrid(event);
+                    }
+
                     this.hidePicker();
                 }
                 break;
