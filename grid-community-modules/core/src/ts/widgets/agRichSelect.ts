@@ -33,6 +33,7 @@ export interface RichSelectParams<TValue = any> extends IPickerFieldParams {
     searchType?: 'match' | 'matchAny' | 'fuzzy';
     highlightMatch?: boolean;
     placeholder?: string;
+    initialInputValue?: string;
 
     valueFormatter?: (value: TValue) => any;
     searchStringCreator?: (values: TValue[]) => string[]
@@ -172,10 +173,11 @@ export class AgRichSelect<TValue = any> extends AgPickerField<TValue, RichSelect
 
     private renderSelectedValue(): void {
         const { value, eDisplayField, config } = this;
+        const { allowTyping, initialInputValue } = this.config;
         const valueFormatted = this.config.valueFormatter ? this.config.valueFormatter(value) : value;
 
-        if (config.allowTyping) {
-            this.eInput.setValue(valueFormatted);
+        if (allowTyping) {
+            this.eInput.setValue(initialInputValue ?? valueFormatted)
             return;
         }
 
