@@ -129,7 +129,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel 
             ...resetProps,
         ];
 
-        orderedStages.forEach(({ module}) => allProperties.push(...module.getImpactingGridOptions()));
+        orderedStages.forEach(({ module}) => allProperties.push(...module.getImpactingGridOptions?.() || []));
         this.addManagedPropertyListeners(allProperties, (params) => {
             const properties = params.changeSet?.properties;
             if (!properties) {
