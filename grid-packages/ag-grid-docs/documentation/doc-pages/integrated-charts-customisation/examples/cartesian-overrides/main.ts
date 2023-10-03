@@ -40,7 +40,7 @@ const gridOptions: GridOptions = {
   enableCharts: true,
   onFirstDataRendered: onFirstDataRendered,
   chartThemeOverrides: {
-    cartesian: {
+    common: {
       axes: {
         number: {
           line: {

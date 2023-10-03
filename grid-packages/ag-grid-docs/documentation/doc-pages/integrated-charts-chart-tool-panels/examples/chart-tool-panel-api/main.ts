@@ -22,7 +22,7 @@ const gridOptions: GridOptions = {
   popupParent: document.body,
   enableCharts: true,
   chartThemeOverrides: {
-    cartesian: {
+    common: {
       axes: {
         category: {
           label: {

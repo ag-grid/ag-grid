@@ -1004,21 +1004,7 @@ const Example = () => {
                 // console.log('Callback onRangeSelectionChanged: finished = ' + event.finished);
             },
             chartThemeOverrides: {
-                polar: {
-                    series: {
-                        pie: {
-                            calloutLabel: {
-                                enabled: false,
-                            },
-                            tooltip: {
-                                renderer: (params) => ({
-                                    content: '$' + formatThousands(Math.round(params.datum[params.angleKey])),
-                                }),
-                            },
-                        },
-                    },
-                },
-                cartesian: {
+                common: {
                     axes: {
                         number: {
                             label: {
@@ -1026,71 +1012,93 @@ const Example = () => {
                             },
                         },
                     },
+                },
+                pie: {
                     series: {
-                        column: {
-                            tooltip: {
-                                renderer: (params) => ({
-                                    content: '$' + formatThousands(Math.round(params.datum[params.yKey])),
-                                }),
-                            },
+                        calloutLabel: {
+                            enabled: false,
                         },
-                        bar: {
-                            tooltip: {
-                                renderer: (params) => ({
-                                    content: '$' + formatThousands(Math.round(params.datum[params.yKey])),
-                                }),
-                            },
+                        tooltip: {
+                            renderer: (params) => ({
+                                content: '$' + formatThousands(Math.round(params.datum[params.angleKey])),
+                            }),
                         },
-                        line: {
-                            tooltip: {
-                                renderer: (params) => ({
-                                    content: '$' + formatThousands(Math.round(params.datum[params.yKey])),
-                                }),
-                            },
+                    },
+                },
+                column: {
+                    series: {
+                        tooltip: {
+                            renderer: (params) => ({
+                                content: '$' + formatThousands(Math.round(params.datum[params.yKey])),
+                            }),
                         },
-                        area: {
-                            tooltip: {
-                                renderer: (params) => ({
-                                    content: '$' + formatThousands(Math.round(params.datum[params.yKey])),
-                                }),
-                            },
+                    },
+                },
+                bar: {
+                    series: {
+                        tooltip: {
+                            renderer: (params) => ({
+                                content: '$' + formatThousands(Math.round(params.datum[params.yKey])),
+                            }),
                         },
-                        scatter: {
-                            tooltip: {
-                                renderer: (params) => {
-                                    const label = params.labelKey ? params.datum[params.labelKey] + '<br>' : '';
-                                    const xValue = params.xName + ': $' + formatThousands(params.datum[params.xKey]);
-                                    const yValue = params.yName + ': $' + formatThousands(params.datum[params.yKey]);
-                                    let size = '';
-                                    if (params.sizeKey) {
-                                        size =
-                                            '<br>' +
-                                            params.sizeName +
-                                            ': $' +
-                                            formatThousands(params.datum[params.sizeKey]);
-                                    }
-                                    return {
-                                        content: label + xValue + '<br>' + yValue + size,
-                                    };
-                                },
-                            },
+                    },
+                },
+                line: {
+                    series: {
+                        tooltip: {
+                            renderer: (params) => ({
+                                content: '$' + formatThousands(Math.round(params.datum[params.yKey])),
+                            }),
                         },
-                        histogram: {
-                            tooltip: {
-                                renderer: (params) => ({
-                                    title:
-                                        (params.xName || params.xKey) +
+                    },
+                },
+                area: {
+                    series: {
+                        tooltip: {
+                            renderer: (params) => ({
+                                content: '$' + formatThousands(Math.round(params.datum[params.yKey])),
+                            }),
+                        },
+                    },
+                },
+                scatter: {
+                    series: {
+                        tooltip: {
+                            renderer: (params) => {
+                                const label = params.labelKey ? params.datum[params.labelKey] + '<br>' : '';
+                                const xValue = params.xName + ': $' + formatThousands(params.datum[params.xKey]);
+                                const yValue = params.yName + ': $' + formatThousands(params.datum[params.yKey]);
+                                let size = '';
+                                if (params.sizeKey) {
+                                    size =
+                                        '<br>' +
+                                        params.sizeName +
                                         ': $' +
-                                        formatThousands(params.datum.domain[0]) +
-                                        ' - $' +
-                                        formatThousands(params.datum.domain[1]),
-                                    // With a yKey, the value is the total of the yKey value for the population of the bin.
-                                    // Without a yKey, the value is a count of the population of the bin.
-                                    content: params.yKey
-                                        ? formatThousands(Math.round(params.datum.total))
-                                        : params.datum.frequency,
-                                }),
+                                        formatThousands(params.datum[params.sizeKey]);
+                                }
+                                return {
+                                    content: label + xValue + '<br>' + yValue + size,
+                                };
                             },
+                        },
+                    },
+                },
+                histogram: {
+                    series: {
+                        tooltip: {
+                            renderer: (params) => ({
+                                title:
+                                    (params.xName || params.xKey) +
+                                    ': $' +
+                                    formatThousands(params.datum.domain[0]) +
+                                    ' - $' +
+                                    formatThousands(params.datum.domain[1]),
+                                // With a yKey, the value is the total of the yKey value for the population of the bin.
+                                // Without a yKey, the value is a count of the population of the bin.
+                                content: params.yKey
+                                    ? formatThousands(Math.round(params.datum.total))
+                                    : params.datum.frequency,
+                            }),
                         },
                     },
                 },

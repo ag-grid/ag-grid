@@ -83,8 +83,6 @@ const gridOptions: GridOptions = {
               paddingY: 20,
             },
           },
-        },
-        cartesian: {
           axes: {
             number: {
               bottom: {

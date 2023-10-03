@@ -22,7 +22,7 @@ const gridOptions: GridOptions = {
   enableCharts: true,
   chartThemes: ['ag-pastel', 'ag-material-dark', 'ag-vivid-dark', 'ag-solar'],
   chartThemeOverrides: {
-    cartesian: {
+    common: {
       axes: {
         category: {
           label: {

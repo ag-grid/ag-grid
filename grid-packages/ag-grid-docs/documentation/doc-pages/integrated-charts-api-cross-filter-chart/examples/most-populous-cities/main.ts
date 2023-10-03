@@ -45,8 +45,6 @@ function createColumnChart(gridApi: GridApi) {
         legend: {
           enabled: false,
         },
-      },
-      cartesian: {
         axes: {
           category: {
             label: {
