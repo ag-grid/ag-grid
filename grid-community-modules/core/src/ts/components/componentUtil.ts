@@ -50,6 +50,7 @@ export class ComponentUtil {
         Events.EVENT_FIELD_VALUE_CHANGED,
         Events.EVENT_FIELD_PICKER_VALUE_SELECTED,
         Events.EVENT_SUPPRESS_COLUMN_MOVE_CHANGED,
+        Events.EVENT_SUPPRESS_MENU_HIDE_CHANGED,
         Events.EVENT_SUPPRESS_FIELD_DOT_NOTATION,
     ];
 
