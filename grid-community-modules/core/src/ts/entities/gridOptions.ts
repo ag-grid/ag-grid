@@ -246,11 +246,6 @@ export interface GridOptions<TData = any> {
     /** A map of component names to components. */
     components?: { [p: string]: any; };
 
-    /** @deprecated Set to true to enable the experimental React UI. Works with React framework only.
-     * It is planned the next major release of the grid will drop support of the legacy React engine,
-     * hence this property is deprecated as will be removed in the next major release. */
-    suppressReactUi?: boolean;
-
     // *** Editing *** //
     /** Set to `'fullRow'` to enable Full Row Editing. Otherwise leave blank to edit one cell at a time. */
     editType?: 'fullRow';
