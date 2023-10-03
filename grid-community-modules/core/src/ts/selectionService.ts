@@ -42,7 +42,13 @@ export class SelectionService extends BeanStub implements ISelectionService {
         this.groupSelectsChildren = this.gridOptionsService.is('groupSelectsChildren');
         this.addManagedPropertyListener('groupSelectsChildren', (propChange) => this.groupSelectsChildren = propChange.currentValue);
         this.rowSelection = this.gridOptionsService.get('rowSelection');
-        this.addManagedPropertyListener('rowSelection', (propChange) => this.rowSelection = propChange.currentValue);
+        this.addManagedPropertyListener('rowSelection', (propChange) => {
+            this.rowSelection = propChange.currentValue;
+
+            // reset selection when rowSelection reactively updates
+            this.selectedNodes = {};
+            this.lastSelectedNode = null;
+        });
 
         this.addManagedListener(this.eventService, Events.EVENT_ROW_SELECTED, this.onRowSelected.bind(this));
     }
@@ -94,7 +100,7 @@ export class SelectionService extends BeanStub implements ISelectionService {
                 }
             }
         }
-        
+
 
         let updatedCount = 0;
         for (let i = 0; i < nodes.length; i++) {
@@ -144,12 +150,12 @@ export class SelectionService extends BeanStub implements ISelectionService {
         }
         return updatedCount;
     }
-    
+
     // selects all rows between this node and the last selected node (or the top if this is the first selection).
     // not to be mixed up with 'cell range selection' where you drag the mouse, this is row range selection, by
     // holding down 'shift'.
     private selectRange(fromNode: RowNode, toNode: RowNode, value: boolean = true, source: SelectionEventSourceType): number {
-        const nodesToSelect = this.rowModel.getNodesInRangeForSelection(fromNode, toNode);   
+        const nodesToSelect = this.rowModel.getNodesInRangeForSelection(fromNode, toNode);
 
         let updatedCount = 0;
 

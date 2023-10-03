@@ -93,6 +93,12 @@
                 "url": "/selection-overview/"
             }
         },
+        "setRowSelection": {
+            "more": {
+                "name": "Row Selection",
+                "url": "/row-selection/"
+            }
+        },
         "selectAll": {},
         "deselectAll": {},
         "selectAllFiltered": {},

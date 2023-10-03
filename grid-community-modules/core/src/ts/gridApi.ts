@@ -550,6 +550,14 @@ export class GridApi<TData = any> {
         this.gos.set('alwaysShowVerticalScroll', show);
     }
 
+    /**
+     * Set the value of the grid property 'rowSelection'. Will update row selection approach accordingly.
+     * @param newRowSelection New Value for 'rowSelection'
+     */
+    public setRowSelection(newRowSelection: 'single' | 'multiple' | undefined) {
+        this.gos.set('rowSelection', newRowSelection);
+    }    
+
     /** Performs change detection on all cells, refreshing cells where required. */
     public refreshCells(params: RefreshCellsParams<TData> = {}): void {
         this.rowRenderer.refreshCells(params);

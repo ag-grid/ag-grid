@@ -122,7 +122,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel 
             'getRowId',
             'masterDetail', 'isRowMaster',
             'isRowSelectable', 'groupSelectsChildren',
-            'rowHeight', 'getRowHeight',
+            'rowHeight', 'getRowHeight', 'rowSelection'
         ];
 
         const allProperties: (keyof GridOptions)[] = [
