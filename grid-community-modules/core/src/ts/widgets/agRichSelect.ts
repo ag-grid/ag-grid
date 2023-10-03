@@ -304,6 +304,7 @@ export class AgRichSelect<TValue = any> extends AgPickerField<TValue, RichSelect
     public showPicker() {
         super.showPicker();
         this.showCurrentValueInPicker();
+        this.displayOrHidePicker();
     }
 
     private showCurrentValueInPicker(): void {
@@ -476,8 +477,12 @@ export class AgRichSelect<TValue = any> extends AgPickerField<TValue, RichSelect
             }
         }
 
+        this.displayOrHidePicker();
+    }
+
+    private displayOrHidePicker(): void {
         const eListGui = this.listComponent?.getGui();
-        eListGui?.classList.toggle('ag-hidden', shouldFilter && !filterValueLen)
+        eListGui?.classList.toggle('ag-hidden', this.currentList.length === 0)
     }
 
     private clearSearchString(): void {

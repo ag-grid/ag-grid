@@ -29,7 +29,6 @@ export class RichSelectCellEditor<TData = any, TValue = any> extends PopupCompon
 
         if (_.missing(values)) {
             console.warn('AG Grid: richSelectCellEditor requires values for it to work');
-            return;
         }
 
         const { params: richSelectParams, valuesPromise } = this.buildRichSelectParams();
@@ -97,7 +96,7 @@ export class RichSelectCellEditor<TData = any, TValue = any> extends PopupCompon
         if (typeof values === 'function') {
             valuesResult = values(this.params);
         } else {
-            valuesResult = values;
+            valuesResult = values ?? [];
         }
 
         if (Array.isArray(valuesResult)) {
@@ -138,7 +137,9 @@ export class RichSelectCellEditor<TData = any, TValue = any> extends PopupCompon
         const { focusAfterAttached, params } = this;
 
         setTimeout(() => {
-            if (!this.isAlive()) { return; }
+            if (!this.isAlive()) {
+                return;
+            }
 
             if (focusAfterAttached) {
                 const focusableEl = this.richSelect.getFocusableElement() as HTMLInputElement;
