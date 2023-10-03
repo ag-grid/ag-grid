@@ -7,7 +7,10 @@ import { coreFeature } from './core';
 import { filtersToolPanelFeature } from './filtersToolPanel';
 import { gridBodyFeature } from './gridBody';
 import { headerFeature } from './header';
+import { overlayFeature } from './overlay';
 import { rangeSelectionFeature } from './rangeSelection';
+import { rowGroupingFeature } from './rowGrouping';
+import { rowSelectionFeature } from './rowSelection';
 
 export type Feature = {
   name: string;
@@ -17,8 +20,11 @@ export type Feature = {
   alwaysEnabled?: boolean;
   gridOptions?: GridOptions;
   defaultColDef?: ColDef;
+  columnDefs?: ColDef[];
   // put the grid into a state where this feature is visible so that it can be styled
   show?: (api: GridApi) => unknown;
+  // undo `show` if necessary
+  hide?: (api: GridApi) => unknown;
   // get the state that should be restored after a grid rebuild to
   getState?: (api: GridApi) => unknown;
   restoreState?: (api: GridApi, state: unknown) => void;
@@ -34,6 +40,9 @@ export const allFeatures: Feature[] = [
   columnResizingFeature,
   columnsToolPanelFeature,
   filtersToolPanelFeature,
+  rowGroupingFeature,
+  overlayFeature,
+  rowSelectionFeature,
 ];
 
 const featuresByName = indexBy(allFeatures, 'name');
