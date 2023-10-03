@@ -116,7 +116,7 @@ const deserializeValues = (serialized: unknown): VariableValues => {
       throw new Error(`Expected string value for ${variableName} key`);
     }
     const info = getVariableInfoOrThrow(variableName);
-    const value = parseCssString(info.type, serializedValue);
+    const value = parseCssString(info, serializedValue);
     if (value == null)
       throw new Error(`Failed to parse CSS ${info.type} value ${JSON.stringify(serializedValue)}`);
     result[variableName] = value;

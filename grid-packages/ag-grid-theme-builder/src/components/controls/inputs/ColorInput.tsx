@@ -1,22 +1,12 @@
 import { color } from 'model/values/color';
-import { useEffect, useRef } from 'react';
 import { Input } from './Input';
 import { InputElement } from './InputElement';
+import { useFocusInput } from './useFocusInput';
 
-export const ColorInput: Input<'color'> = ({ value, onValueChange, initialFocus }) => {
-  const initialFocusRef = useRef(initialFocus);
-
-  const inputRef = useRef<HTMLInputElement>(null);
-
-  useEffect(() => {
-    if (initialFocusRef.current) {
-      inputRef.current?.focus();
-    }
-  }, []);
-
+export const ColorInput: Input<'color'> = ({ value, onValueChange, focus }) => {
   return (
     <InputElement
-      ref={inputRef}
+      ref={useFocusInput(focus)}
       type="color"
       value={value.hex}
       onChange={(e) => onValueChange(color(e.target.value))}

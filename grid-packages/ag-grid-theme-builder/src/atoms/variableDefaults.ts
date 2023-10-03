@@ -1,9 +1,6 @@
 import { atom, useAtomValue, useSetAtom } from 'jotai';
 import { Value, parseCssString } from 'model/values';
-import { border } from 'model/values/border';
-import { borderStyle } from 'model/values/borderStyle';
-import { color } from 'model/values/color';
-import { dimension } from 'model/values/dimension';
+import { getVariableDefaultValue } from 'model/values/defaults';
 import { getVariableInfoOrThrow } from 'model/variableInfo';
 import { useCallback } from 'react';
 
@@ -12,8 +9,7 @@ export const useGetVariableDefault = () => {
 
   return useCallback(
     (variableName: string) =>
-      valueGetter.getComputedValue(variableName) ||
-      defaultValueIfNoneSpecifiedInTheme(variableName),
+      valueGetter.getComputedValue(variableName) || getVariableDefaultValue(variableName),
     [valueGetter],
   );
 };
@@ -23,20 +19,6 @@ export const useResetVariableDefaults = () => {
   return useCallback(() => {
     set(new ComputedValueGetter());
   }, [set]);
-};
-
-const defaultValueIfNoneSpecifiedInTheme = (variableName: string): Value => {
-  const info = getVariableInfoOrThrow(variableName);
-  switch (info.type) {
-    case 'color':
-      return color('#999');
-    case 'dimension':
-      return dimension(1, 'px');
-    case 'border':
-      return border('solid', dimension(1, 'px'), color('#999'));
-    case 'borderStyle':
-      return borderStyle('solid');
-  }
 };
 
 const defaultsElementId = 'theme-builder-defaults-computation';
@@ -60,7 +42,7 @@ class ComputedValueGetter {
     const info = getVariableInfoOrThrow(variableName);
     const cssValue = styleMap.get(variableName);
     if (!cssValue) return null;
-    return (this.cache[variableName] = parseCssString(info.type, String(cssValue)));
+    return (this.cache[variableName] = parseCssString(info, String(cssValue)));
   }
 }
 

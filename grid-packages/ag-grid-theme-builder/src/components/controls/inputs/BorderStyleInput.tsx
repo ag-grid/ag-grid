@@ -1,20 +1,11 @@
 import { BorderStyle, allBorderStyles, borderStyle } from 'model/values/borderStyle';
-import { useEffect, useRef } from 'react';
 import { Input } from './Input';
+import { useFocusInput } from './useFocusInput';
 
-export const BorderStyleInput: Input<'borderStyle'> = ({ value, onValueChange, initialFocus }) => {
-  const initialFocusRef = useRef(initialFocus);
-
-  const inputRef = useRef<HTMLInputElement>(null);
-
-  useEffect(() => {
-    if (initialFocusRef.current) {
-      inputRef.current?.focus();
-    }
-  }, []);
-
+export const BorderStyleInput: Input<'borderStyle'> = ({ value, onValueChange, focus }) => {
   return (
     <select
+      ref={useFocusInput(focus)}
       value={value.lineStyle}
       onChange={(e) => {
         onValueChange(borderStyle(e.target.value as BorderStyle));

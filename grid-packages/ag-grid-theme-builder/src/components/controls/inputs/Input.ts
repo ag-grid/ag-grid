@@ -8,7 +8,7 @@ export type InputProps<T extends ValueType> = {
   onValueChange: (value: ValueByType[T]) => void;
   error: string | null;
   onErrorChange: (error: string | null) => void;
-  initialFocus?: boolean;
+  focus: boolean;
 };
 
 export type Input<T extends ValueType> = FC<InputProps<T>>;

@@ -13,12 +13,14 @@ export const DefaultValue = ({ value }: DefaultValueProps) => {
 
   if (value.type === 'color') {
     return (
-      <DefaultColorSwatch
-        style={{ backgroundColor: value.hex }}
-        className={colorIsDarkish(value) ? 'is-darkish' : undefined}
-      >
-        {value.hex}
-      </DefaultColorSwatch>
+      <ColorSwatchBackground>
+        <ColorSwatch
+          style={{ backgroundColor: value.hex }}
+          className={colorIsDarkish(value) ? 'is-darkish' : undefined}
+        >
+          {value.hex}
+        </ColorSwatch>
+      </ColorSwatchBackground>
     );
   }
 
@@ -32,7 +34,7 @@ const NoDefault = styled('div')`
   }
 `;
 
-const DefaultColorSwatch = styled('div')`
+const ColorSwatch = styled('div')`
   padding: 5px;
   overflow: hidden;
   line-height: 1em;
@@ -41,4 +43,17 @@ const DefaultColorSwatch = styled('div')`
   &.is-darkish {
     color: #fff;
   }
+`;
+
+const ColorSwatchBackground = styled('div')`
+  background-image: linear-gradient(45deg, #888 25%, transparent 25%),
+    linear-gradient(-45deg, #888 25%, transparent 25%),
+    linear-gradient(45deg, transparent 75%, #888 75%),
+    linear-gradient(-45deg, transparent 75%, #888 75%);
+  background-size: 20px 20px;
+  background-position:
+    0 0,
+    0 10px,
+    10px -10px,
+    -10px 0px;
 `;

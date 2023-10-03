@@ -13,6 +13,7 @@ import { BorderInput } from './inputs/BorderInput';
 import { BorderStyleInput } from './inputs/BorderStyleInput';
 import { ColorInput } from './inputs/ColorInput';
 import { DimensionInput } from './inputs/DimensionInput';
+import { DisplayInput } from './inputs/DisplayInput';
 
 export type VariableControlProps = {
   variableName: string;
@@ -31,7 +32,8 @@ const VariableControl = ({ variableName, feature }: VariableControlProps): JSX.E
 
   if (feature.suppressEditorFor?.has(variableName)) return <></>;
 
-  const label = kebabCaseToTitleCase(variableName, feature.commonVariablePrefix || '--ag-');
+  const prefix = (variableName === feature.commonVariablePrefix ? null : feature.commonVariablePrefix) || '--ag-'
+  const label =  kebabCaseToTitleCase(variableName, prefix);
 
   const renderDefault = () => {
     const defaultValue = renderedValue || getVariableDefault(variableName);
@@ -65,7 +67,7 @@ const VariableControl = ({ variableName, feature }: VariableControlProps): JSX.E
             error={error}
             onErrorChange={setError}
             onValueChange={setValue}
-            initialFocus={shouldFocus}
+            focus={shouldFocus}
           />
         );
       case 'dimension':
@@ -77,7 +79,7 @@ const VariableControl = ({ variableName, feature }: VariableControlProps): JSX.E
             error={error}
             onErrorChange={setError}
             onValueChange={setValue}
-            initialFocus={shouldFocus}
+            focus={shouldFocus}
           />
         );
       case 'border':
@@ -89,7 +91,7 @@ const VariableControl = ({ variableName, feature }: VariableControlProps): JSX.E
             error={error}
             onErrorChange={setError}
             onValueChange={setValue}
-            initialFocus={shouldFocus}
+            focus={shouldFocus}
           />
         );
       case 'borderStyle':
@@ -101,7 +103,19 @@ const VariableControl = ({ variableName, feature }: VariableControlProps): JSX.E
             error={error}
             onErrorChange={setError}
             onValueChange={setValue}
-            initialFocus={shouldFocus}
+            focus={shouldFocus}
+          />
+        );
+      case 'display':
+        if (info.type !== 'display') throw new Error(mismatchError);
+        return (
+          <DisplayInput
+            value={value}
+            info={info}
+            error={error}
+            onErrorChange={setError}
+            onValueChange={setValue}
+            focus={shouldFocus}
           />
         );
     }

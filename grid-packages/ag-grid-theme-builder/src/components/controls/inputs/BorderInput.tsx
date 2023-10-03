@@ -1,11 +1,14 @@
-import { borderStyleDefaultValue, colorDefaultValue, dimensionDefaultValue } from 'model/values';
 import { BorderValue } from 'model/values/border';
+import {
+  borderStyleDefaultValue,
+  colorDefaultValue,
+  dimensionDefaultValue,
+} from 'model/values/defaults';
 import {
   BorderStyleVariableInfo,
   ColorVariableInfo,
   DimensionVariableInfo,
 } from 'model/variableInfo';
-import { useRef } from 'react';
 import { BorderStyleInput } from './BorderStyleInput';
 import { ColorInput } from './ColorInput';
 import { DimensionInput } from './DimensionInput';
@@ -15,41 +18,54 @@ const borderColorInfo: ColorVariableInfo = { type: 'color' };
 const borderWidthInfo: DimensionVariableInfo = { type: 'dimension', min: 0, max: 50, step: 1 };
 const borderStyleInfo: BorderStyleVariableInfo = { type: 'borderStyle' };
 
-export const BorderInput: Input<'border'> = (props) => {
-  const propsRef = useRef(props);
-  propsRef.current = props;
-
+export const BorderInput: Input<'border'> = ({
+  info,
+  value,
+  onValueChange,
+  error,
+  onErrorChange,
+  focus,
+}) => {
   const onChange = (change: Partial<BorderValue>) => {
-    props.onValueChange({ ...props.value, ...change });
+    onValueChange({ ...value, ...change });
   };
+
+  const focusStyle = focus && !!info.style;
+  const focusWidth = focus && !!info.width && !focusStyle;
+  const focusColor = focus && !!info.color && !focusWidth;
+
+  const isNone = value.style?.lineStyle === 'none';
 
   return (
     <>
-      {props.info.style && (
+      {info.style && (
         <BorderStyleInput
           info={borderStyleInfo}
-          value={props.value.style || borderStyleDefaultValue}
+          value={value.style || borderStyleDefaultValue}
           onValueChange={(style) => onChange({ style })}
           error={null}
-          onErrorChange={props.onErrorChange}
+          onErrorChange={onErrorChange}
+          focus={focusStyle}
         />
       )}
-      {props.info.width && (
+      {info.width && !isNone && (
         <DimensionInput
           info={borderWidthInfo}
-          value={props.value.width || dimensionDefaultValue}
+          value={value.width || dimensionDefaultValue}
           onValueChange={(width) => onChange({ width })}
-          error={null}
-          onErrorChange={props.onErrorChange}
+          error={error}
+          onErrorChange={onErrorChange}
+          focus={focusWidth}
         />
       )}
-      {props.info.color && (
+      {info.color && !isNone && (
         <ColorInput
           info={borderColorInfo}
-          value={props.value.color || colorDefaultValue}
+          value={value.color || colorDefaultValue}
           onValueChange={(color) => onChange({ color })}
           error={null}
-          onErrorChange={props.onErrorChange}
+          onErrorChange={onErrorChange}
+          focus={focusColor}
         />
       )}
     </>

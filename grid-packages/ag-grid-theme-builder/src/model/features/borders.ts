@@ -3,6 +3,7 @@ import { Feature } from '.';
 export const bordersFeature: Feature = {
   name: 'borders',
   displayName: 'Borders',
+  commonVariablePrefix: '--ag-borders',
   variableNames: [
     '--ag-borders',
     '--ag-border-color',

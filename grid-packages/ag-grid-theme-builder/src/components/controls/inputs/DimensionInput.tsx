@@ -5,12 +5,11 @@ import { Input } from './Input';
 
 import { dimension } from 'model/values/dimension';
 import { InputElement } from './InputElement';
+import { useFocusInput } from './useFocusInput';
 
 export const DimensionInput: Input<'dimension'> = (props) => {
   const propsRef = useRef(props);
   propsRef.current = props;
-
-  const inputRef = useRef<HTMLInputElement>(null);
 
   const [inputValue, setInputValue] = useState(String(props.value.number));
 
@@ -33,20 +32,14 @@ export const DimensionInput: Input<'dimension'> = (props) => {
     setInputValue(String(props.value.number));
   }, [props.value.number]);
 
-  useEffect(() => {
-    if (propsRef.current.initialFocus) {
-      inputRef.current?.focus();
-    }
-  }, []);
-
   return (
     <>
       <InputElement
-        ref={inputRef}
+        ref={useFocusInput(props.focus)}
         type="number"
         value={inputValue}
         style={{
-          width: clamp(inputValue.length * charWidth + additionalWidth, minWidth, maxWidth),
+          width: clamp(inputValue.length * charWidth, minWidth, maxWidth) + additionalWidth,
         }}
         className={props.error ? 'is-error' : undefined}
         min={props.info.min}

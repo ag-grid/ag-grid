@@ -26,11 +26,16 @@ export type BorderStyleVariableInfo = CommonVariableInfo & {
   type: 'borderStyle';
 };
 
+export type DisplayVariableInfo = CommonVariableInfo & {
+  type: 'display';
+};
+
 export type VariableInfoByType = {
   dimension: DimensionVariableInfo;
   color: ColorVariableInfo;
   border: BorderVariableInfo;
   borderStyle: BorderStyleVariableInfo;
+  display: DisplayVariableInfo;
 };
 
 export type VariableInfo = VariableInfoByType[ValueType];
@@ -115,11 +120,10 @@ const variables: Record<string, VariableInfo> = {
   // '--ag-font-family': { type: 'font-family' },
   '--ag-font-size': { type: 'dimension', min: 0, max: 100, step: 1 },
   '--ag-grid-size': { type: 'dimension', min: 1, max: 50, step: 0.5 },
-  // TODO display inputs
-  // '--ag-header-column-resize-handle-display': {type: 'display'},
+  '--ag-header-column-resize-handle-display': { type: 'display' },
   '--ag-header-column-resize-handle-height': { type: 'dimension', min: 0, max: 100, step: 1 },
   '--ag-header-column-resize-handle-width': { type: 'dimension', min: 0, max: 100, step: 1 },
-  // '--ag-header-column-separator-display': {type: 'display'},
+  '--ag-header-column-separator-display': { type: 'display' },
   '--ag-header-column-separator-height': { type: 'dimension', min: 0, max: 100, step: 1 },
   '--ag-header-column-separator-width': { type: 'dimension', min: 0, max: 100, step: 1 },
   '--ag-header-height': { type: 'dimension', min: 0, max: 100, step: 1 },

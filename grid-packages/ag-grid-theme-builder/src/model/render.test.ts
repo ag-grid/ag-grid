@@ -7,6 +7,7 @@ import { border } from './values/border';
 import { borderStyle } from './values/borderStyle';
 import { color } from './values/color';
 import { dimension } from './values/dimension';
+import { display } from './values/display';
 
 const testTheme: Theme = {
   name: 'ag-theme-derived',
@@ -72,18 +73,19 @@ test(renderCSS, () => {
       features: [testFeature],
     }),
   ).toMatchInlineSnapshot(`
-      ".ag-theme-derived {
-          --plain-variable: 4px;
-          --blend-source: #aaaaaa80;
-          --provided-value-should-override-blend: #bbbbbb;
-          --variable-in-base-theme: #aaaaaa;
-          --blend-destination-should-copy-value: #aaaaaa80;
-          --blend-destination-should-apply-alpha-0.9: #aaaaaa73;
-          --blend-destination-should-overlay-twice: #aaaaaac0;
-          --blend-destination-should-be-overridden-in-base: #aaaaaa80;
-          --blend-destination-should-work-in-base: #aaaaaa0d;
-      }"
-    `);
+    ".ag-theme-derived {
+        --plain-variable: 4px;
+        --blend-source: #aaaaaa80;
+        --provided-value-should-override-blend: #bbbbbb;
+        --variable-not-in-any-theme: #aaaaaa;
+        --variable-in-base-theme: #aaaaaa;
+        --blend-destination-should-copy-value: #aaaaaa80;
+        --blend-destination-should-apply-alpha-0.9: #aaaaaa73;
+        --blend-destination-should-overlay-twice: #aaaaaac0;
+        --blend-destination-should-be-overridden-in-base: #aaaaaa80;
+        --blend-destination-should-work-in-base: #aaaaaa0d;
+    }"
+  `);
 });
 
 test(renderedThemeToCss, () => {
@@ -92,6 +94,7 @@ test(renderedThemeToCss, () => {
     dimension: dimension(8, 'em'),
     border: border('solid', dimension(1, 'px'), color('#fff')),
     borderStyle: borderStyle('double'),
+    display: display('none'),
   };
   expect(
     renderedThemeToCss({
@@ -104,6 +107,7 @@ test(renderedThemeToCss, () => {
         dimension: 8em;
         border: solid 1px #ffffff;
         borderStyle: double;
+        display: none;
     }"
   `);
 });

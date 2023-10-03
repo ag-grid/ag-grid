@@ -27,36 +27,38 @@ export const border = (
   return value;
 };
 
-export const borderToCss = ({ style, width, color }: BorderValue) =>
-  [
+export const borderToCss = ({ style, width, color }: BorderValue) => {
+  if (style?.lineStyle === 'none') return 'none';
+  return [
     style ? borderStyleToCss(style) : '',
     width ? dimensionToCss(width) : '',
     color ? colorToCss(color) : '',
   ]
     .filter(Boolean)
     .join(' ');
+};
 
 export const parseCssBorder = (css: string): BorderValue | null => {
-  const border: BorderValue = { type: 'border' };
+  const result: BorderValue = { type: 'border' };
   for (const word of splitCssList(css)) {
     const style = parseCssBorderStyle(word);
     if (style != null) {
-      border.style = style;
+      result.style = style;
       continue;
     }
     const width = parseCssDimension(word);
     if (width != null) {
-      border.width = width;
+      result.width = width;
       continue;
     }
     const color = parseCssColor(word);
     if (color != null) {
-      border.color = color;
+      result.color = color;
       continue;
     }
     return null;
   }
-  return border;
+  return result;
 };
 
 // parse a css space-delimited list, which is harder than string.split(" ")
