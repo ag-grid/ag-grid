@@ -1,4 +1,4 @@
-import { CellRange, Events } from '@ag-grid-community/core';
+import { CellRange } from '@ag-grid-community/core';
 import { RangeSelectionModule } from '@ag-grid-enterprise/range-selection';
 import { Feature } from '.';
 
@@ -10,16 +10,8 @@ export const rangeSelectionFeature: Feature = {
     '--ag-range-selection-border-color',
     '--ag-range-selection-border-style',
     '--ag-range-selection-background-color',
-    '--ag-range-selection-background-color-2',
-    '--ag-range-selection-background-color-3',
-    '--ag-range-selection-background-color-4',
     '--ag-range-selection-highlight-color',
   ],
-  suppressEditorFor: new Set([
-    '--ag-range-selection-background-color-2',
-    '--ag-range-selection-background-color-3',
-    '--ag-range-selection-background-color-4',
-  ]),
   gridOptions: {
     enableRangeSelection: true,
   },
@@ -40,7 +32,6 @@ export const rangeSelectionFeature: Feature = {
       rowEndIndex: 2,
     });
   },
-  stateChangeEvents: [Events.EVENT_RANGE_SELECTION_CHANGED],
   getState: (api): CellRange[] | null => api.getCellRanges(),
   restoreState: (api, state) => {
     const savedSelections = state as CellRange[] | null;

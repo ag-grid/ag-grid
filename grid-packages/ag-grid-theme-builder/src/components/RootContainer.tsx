@@ -2,6 +2,7 @@ import '@ag-grid-community/styles/ag-grid.css';
 import '@ag-grid-community/styles/ag-theme-alpine.css';
 import '@ag-grid-community/styles/ag-theme-balham.css';
 import '@ag-grid-community/styles/ag-theme-material.css';
+import { TrashCan } from '@carbon/icons-react';
 import styled from '@emotion/styled';
 import { useParentTheme } from 'atoms/parentTheme';
 import { useRenderedThemeCss } from 'atoms/renderedTheme';
@@ -11,6 +12,7 @@ import { memo, useLayoutEffect, useState } from 'react';
 import { Tooltip } from 'react-tooltip';
 import { CopyButton } from './CopyButton';
 import { GridPreview } from './GridPreview';
+import { IconButton } from './IconButton';
 import { ParentThemeMenu } from './ParentThemeMenu';
 
 export const RootContainer = memo(() => {
@@ -33,6 +35,16 @@ export const RootContainer = memo(() => {
           <>
             <TopRow>
               <ParentThemeMenu />
+              <IconButton
+                label="Discard changes"
+                icon={TrashCan}
+                onClick={() => {
+                  if (confirm('Discard all of your theme customisations?')) {
+                    localStorage.clear();
+                    location.reload();
+                  }
+                }}
+              />
               <CopyButton payload={renderedThemeCss} label="Copy CSS" />
             </TopRow>
             <Columns>

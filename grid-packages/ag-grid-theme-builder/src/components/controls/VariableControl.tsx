@@ -30,10 +30,10 @@ const VariableControl = ({ variableName, feature }: VariableControlProps): JSX.E
   const [error, setError] = useState<string | null>(null);
   const [shouldFocus, setShouldFocus] = useState(false);
 
-  if (feature.suppressEditorFor?.has(variableName)) return <></>;
-
-  const prefix = (variableName === feature.commonVariablePrefix ? null : feature.commonVariablePrefix) || '--ag-'
-  const label =  kebabCaseToTitleCase(variableName, prefix);
+  const prefix =
+    (variableName === feature.commonVariablePrefix ? null : feature.commonVariablePrefix) ||
+    '--ag-';
+  const label = kebabCaseToTitleCase(variableName, prefix);
 
   const renderDefault = () => {
     const defaultValue = renderedValue || getVariableDefault(variableName);

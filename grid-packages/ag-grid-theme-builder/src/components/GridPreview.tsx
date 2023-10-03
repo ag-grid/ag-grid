@@ -37,7 +37,7 @@ const GridPreview = () => {
 
   const [api, setApi] = useState<GridApi | null>(null);
 
-  const featureState = useRef<Record<string, unknown>>({});
+  const featureStateRef = useRef<Record<string, unknown>>({});
 
   const rebuildKey = variablesRequiringRebuild
     .map((variableName) => values[variableName])
@@ -51,33 +51,36 @@ const GridPreview = () => {
     const el = wrapperRef.current;
     if (!el) return;
 
+    const featureState = featureStateRef.current;
+
     // use the rebuild key to prevent lint errors - actually its job is just to
     // be in the dependencies array and cause the grid to be reinitialized when
     // it changes
     void rebuildKey;
 
+    const defaultColDef: ColDef = {};
+    for (const feature of features) {
+      assignOptions(defaultColDef, feature.defaultColDef);
+    }
+
     const options: GridOptions = {
+      defaultColDef,
       columnDefs,
       rowData,
-      onFirstDataRendered: ({ api }) => {
-        setApi(api);
+      onGridReady: ({ api }) => {
         for (const feature of features) {
-          const state = featureState.current[feature.name];
+          const state = featureState[feature.name];
           if (state != null) {
             feature.restoreState?.(api, state);
           }
         }
-        for (const feature of features) {
-          for (const event of feature.stateChangeEvents || []) {
-            api.addEventListener(event, () => {
-              featureState.current[feature.name] = feature.getState?.(api);
-            });
-          }
-        }
+      },
+      onFirstDataRendered: ({ api }) => {
+        setApi(api);
       },
     };
     for (const feature of features) {
-      Object.assign(options, feature.gridOptions);
+      assignOptions(options, feature.gridOptions);
     }
 
     const modules = features.flatMap((f) => f.modules || []);
@@ -85,6 +88,12 @@ const GridPreview = () => {
     const grid = new Grid(wrapperRef.current, options, { modules });
 
     return () => {
+      const api = options.api;
+      if (api) {
+        for (const feature of features) {
+          featureState[feature.name] = feature.getState?.(api);
+        }
+      }
       grid.destroy();
     };
   }, [features, rebuildKey]);
@@ -110,3 +119,16 @@ const Wrapper = styled('div')`
   width: 100%;
   height: 100%;
 `;
+
+const assignOptions = <T extends object>(a: T, b: T | null | undefined): void => {
+  if (!b) return;
+  const aRecord = a as Record<string, unknown>;
+  const bRecord = b as Record<string, unknown>;
+  for (const key of Object.keys(bRecord)) {
+    if (Array.isArray(aRecord[key]) && Array.isArray(bRecord[key])) {
+      aRecord[key] = [...(aRecord[key] as unknown[]), ...(bRecord[key] as unknown[])];
+    } else {
+      aRecord[key] = bRecord[key];
+    }
+  }
+};

@@ -1,7 +1,10 @@
-import { GridApi, GridOptions, Module } from '@ag-grid-community/core';
+import { ColDef, GridApi, GridOptions, Module, ModuleRegistry } from '@ag-grid-community/core';
 import { indexBy } from '../utils';
 import { bordersFeature } from './borders';
+import { columnResizingFeature } from './columnResizing';
+import { columnsToolPanelFeature } from './columnsToolPanel';
 import { coreFeature } from './core';
+import { filtersToolPanelFeature } from './filtersToolPanel';
 import { gridBodyFeature } from './gridBody';
 import { headerFeature } from './header';
 import { rangeSelectionFeature } from './rangeSelection';
@@ -10,17 +13,15 @@ export type Feature = {
   name: string;
   displayName: string;
   variableNames: string[];
-  suppressEditorFor?: Set<string>;
   commonVariablePrefix?: string;
   alwaysEnabled?: boolean;
-  gridOptions?: Partial<GridOptions>;
+  gridOptions?: GridOptions;
+  defaultColDef?: ColDef;
   // put the grid into a state where this feature is visible so that it can be styled
   show?: (api: GridApi) => unknown;
   // get the state that should be restored after a grid rebuild to
   getState?: (api: GridApi) => unknown;
   restoreState?: (api: GridApi, state: unknown) => void;
-  // events on which to save and restore state
-  stateChangeEvents?: string[];
   modules?: Module[];
 };
 
@@ -29,7 +30,10 @@ export const allFeatures: Feature[] = [
   rangeSelectionFeature,
   bordersFeature,
   gridBodyFeature,
-  headerFeature
+  headerFeature,
+  columnResizingFeature,
+  columnsToolPanelFeature,
+  filtersToolPanelFeature,
 ];
 
 const featuresByName = indexBy(allFeatures, 'name');
@@ -44,3 +48,6 @@ export const getFeatureOrThrow = (featureName: string): Feature => {
   }
   return feature;
 };
+
+export const registerFeatureModules = () =>
+  allFeatures.forEach((feature) => ModuleRegistry.registerModules(feature.modules || []));
