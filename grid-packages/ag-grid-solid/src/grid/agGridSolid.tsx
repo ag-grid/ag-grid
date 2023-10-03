@@ -43,38 +43,6 @@ const AgGridSolid = (props: AgGridSolidProps) => {
         destroyFuncs.length = 0;
     });
 
-    // we check for property changes. to get things started, we take a copy
-    // of all the properties at the start, and then compare against this for
-    // changes.
-    const propsCopy: any = {};
-    Object.keys(props).forEach(key => propsCopy[key] = (props as any)[key]);
-
-    createEffect(() => {
-        const keys = Object.keys(props);
-        const changes: { [key: string]: { currentValue: any, previousValue: any } } = {};
-        let changesExist = false;
-
-        keys.forEach(key => {
-            // this line reads from the prop, which in turn makes
-            // this prop a dependency for the effect.
-            const currentValue = (props as any)[key];
-
-            const previousValue = propsCopy[key];
-            if (previousValue !== currentValue) {
-                changes[key] = {
-                    currentValue,
-                    previousValue
-                };
-                propsCopy[key] = currentValue;
-                changesExist = true;
-            }
-        });
-
-        if (changesExist) {
-            ComponentUtil.processOnChange(changes, gridOptions.api!);
-        }
-    });
-
     onMount(() => {
 
         const modules = props.modules || [];
@@ -122,6 +90,38 @@ const AgGridSolid = (props: AgGridSolidProps) => {
 
         const gridCoreCreator = new GridCoreCreator();
         gridCoreCreator.create(eGui, gridOptions, createUiCallback, acceptChangesCallback, gridParams);
+    });
+
+    // we check for property changes. to get things started, we take a copy
+    // of all the properties at the start, and then compare against this for
+    // changes.
+    const propsCopy: any = {};
+    Object.keys(props).forEach(key => propsCopy[key] = (props as any)[key]);
+
+    createEffect(() => {
+        const keys = Object.keys(props);
+        const changes: { [key: string]: { currentValue: any, previousValue: any } } = {};
+        let changesExist = false;
+
+        keys.forEach(key => {
+            // this line reads from the prop, which in turn makes
+            // this prop a dependency for the effect.
+            const currentValue = (props as any)[key];
+
+            const previousValue = propsCopy[key];
+            if (previousValue !== currentValue) {
+                changes[key] = {
+                    currentValue,
+                    previousValue
+                };
+                propsCopy[key] = currentValue;
+                changesExist = true;
+            }
+        });
+
+        if (changesExist) {
+            ComponentUtil.processOnChange(changes, gridOptions.api!);
+        }
     });
 
     return (
