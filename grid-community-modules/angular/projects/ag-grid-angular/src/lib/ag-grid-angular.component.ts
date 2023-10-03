@@ -1339,7 +1339,6 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     static ngAcceptInputType_maintainColumnOrder: boolean | null | '';
     static ngAcceptInputType_groupMaintainOrder: boolean | null | '';
     static ngAcceptInputType_columnHoverHighlight: boolean | null | '';
-    static ngAcceptInputType_suppressReactUi: boolean | null | '';
     static ngAcceptInputType_readOnlyEdit: boolean | null | '';
     static ngAcceptInputType_suppressRowVirtualisation: boolean | null | '';
     static ngAcceptInputType_enableCellEditingOnBackspace: boolean | null | '';

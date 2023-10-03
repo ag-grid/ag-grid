@@ -82,7 +82,7 @@ export const AgGridReactUi = <TData,>(props: AgReactUiProps<TData>) => {
                 frameworkComponentWrapper: new ReactFrameworkComponentWrapper(portalManager.current),
             },
             modules,
-            frameworkOverrides: new ReactFrameworkOverrides(true),
+            frameworkOverrides: new ReactFrameworkOverrides(),
         };
 
         gridOptionsRef.current = props.gridOptions || {};
