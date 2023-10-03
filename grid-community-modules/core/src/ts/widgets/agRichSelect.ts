@@ -403,14 +403,16 @@ export class AgRichSelect<TValue = any> extends AgPickerField<TValue, RichSelect
 
         if (!searchValue.length) { return { suggestions, filteredValues } };
 
-        const { searchType = 'fuzzy', filterList } = this.config;
+        const { allowTyping, searchType = 'fuzzy', filterList } = this.config;
+
+        const shouldFilterList = filterList && allowTyping;
 
         if (searchType === 'fuzzy') {
             const fuzzySearchResult = fuzzySuggestions(this.searchString, valueList, true);
             suggestions = fuzzySearchResult.values;
 
             const indices = fuzzySearchResult.indices;
-            if (filterList && indices.length) {
+            if (shouldFilterList && indices.length) {
                 for (let i = 0; i < indices.length; i++) {
                     filteredValues.push(this.values[indices[i]]);
                 }
@@ -421,7 +423,7 @@ export class AgRichSelect<TValue = any> extends AgPickerField<TValue, RichSelect
                 const valueToMatch = this.searchString.toLocaleLowerCase();
 
                 const isMatch = searchType === 'match' ? currentValue.startsWith(valueToMatch) : currentValue.indexOf(valueToMatch) !== -1;
-                if (filterList && isMatch) {
+                if (shouldFilterList && isMatch) {
                     filteredValues.push(this.values[idx]);
                 }
                 return isMatch;
@@ -432,9 +434,9 @@ export class AgRichSelect<TValue = any> extends AgPickerField<TValue, RichSelect
     }
 
     private filterListModel(filteredValues: TValue[]): void {
-        const { filterList } = this.config;
+        const { allowTyping,  filterList } = this.config;
 
-        if (!filterList) { return; }
+        if (!allowTyping || !filterList) { return; }
 
         this.setValueList({ valueList: filteredValues, refresh: true });
         this.alignPickerToComponent();
@@ -450,10 +452,10 @@ export class AgRichSelect<TValue = any> extends AgPickerField<TValue, RichSelect
         }
 
         const { suggestions, filteredValues } = this.getSuggestionsAndFilteredValues(this.searchString, searchStrings);
-        const { filterList, highlightMatch, searchType = 'fuzzy' } = this.config;
+        const { allowTyping, filterList, highlightMatch, searchType = 'fuzzy' } = this.config;
 
         const filterValueLen = filteredValues.length;
-        const shouldFilter = !!(filterList && this.searchString !== '');
+        const shouldFilter = !!(allowTyping && filterList && this.searchString !== '');
 
         this.filterListModel(shouldFilter ? filteredValues : values);
 
