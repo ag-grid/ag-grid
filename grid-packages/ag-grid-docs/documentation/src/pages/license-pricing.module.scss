@@ -90,6 +90,21 @@
     }
 }
 
+.licensesOuter {
+  display: flex;
+  flex-wrap: wrap;
+  width: 100%;
+  gap: 0 $size-4;
+}
+
+.buyTogether {
+  margin-top: -$size-2;
+
+  button {
+    margin-left: $size-1;
+  }
+}
+
 .bulkLicenses,
 .communityEnterprise,
 .videoExplainer,

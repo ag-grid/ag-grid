@@ -12,29 +12,26 @@ type LicenseData = {
     subHeading: string;
     licenseBenefits: string[];
     priceFullDollars: string;
-    pricePer: string;
     buyLink: string;
 };
 
 const DEV_LICENSE_DATA: LicenseData[] = [
     {
         className: styles.singleApplicationLicense,
-        name: 'Single Application',
-        id: 'single-application',
-        subHeading: 'Development License',
+        name: 'AG Grid',
+        id: 'product',
+        subHeading: 'AG Grid Enterprise',
         priceFullDollars: '999',
         licenseBenefits: ['Perpetual license', '1 year of support', '1 year of updates'],
-        pricePer: 'Developer',
         buyLink: '/ecommerce/#/ecommerce/?licenseType=single',
     },
     {
         className: styles.multipleApplicationsLicense,
-        name: 'Multiple Application',
-        id: 'multiple-application',
-        subHeading: 'Development License',
+        name: 'AG Charts',
+        id: 'product',
+        subHeading: 'AG Charts Enterprise',
         licenseBenefits: ['Unlimited applications', 'Perpetual license', '1 year of support', '1 year of updates'],
-        priceFullDollars: '1,499',
-        pricePer: 'Developer',
+        priceFullDollars: '299',
         buyLink: '/ecommerce/#/ecommerce/?licenseType=multi',
     },
 ];
@@ -45,32 +42,30 @@ const makeNonBreaking = (text: string) => {
     return text.replace(' ', nonBreakingSpace);
 };
 
-const Price = ({ priceFullDollars, pricePer }) => {
+const Price = ({ priceFullDollars }) => {
     return (
         <div className={styles.price}>
+            <p className="font-size-small"><b>Starting at...</b></p>
             <p className={styles.priceFullDollars}>{priceFullDollars}</p>
             <p className="font-size-small">
-                <b>Per {pricePer}</b>
+                <b>Per Developer</b>
             </p>
         </div>
     );
 };
 
 const License = (props: LicenseData) => {
-    const { name, id, subHeading, licenseBenefits, priceFullDollars, pricePer, buyLink } = props;
+    const { name, id, subHeading, licenseBenefits, priceFullDollars, buyLink } = props;
 
     return (
         <>
             <div className={classnames(styles.top, 'top')}>
                 <div className={styles.licenseMeta}>
-                    <p className="font-size-small text-secondary">
-                        AG Grid Enterprise <Icon name="enterprise" />
-                    </p>
                     <p className={classnames(styles.name, 'font-size-extra-large', 'bold-text')}>{name}</p>
-                    <p className="font-size-small text-secondary">{subHeading}</p>
+                    <p className="font-size-small text-secondary">{subHeading}<Icon name="enterprise" /></p>
                 </div>
 
-                <Price priceFullDollars={priceFullDollars} pricePer={pricePer} />
+                <Price priceFullDollars={priceFullDollars} />
 
                 <div className={styles.licenseBenefits}>
                     <ul className="font-size-small list-style-none">

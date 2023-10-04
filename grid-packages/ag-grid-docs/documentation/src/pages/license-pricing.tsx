@@ -65,7 +65,14 @@ const LicensePricing = () => {
                     </div>
                 </div>
 
-                <Licenses />
+                <div className={styles.licensesOuter}>
+                    <Licenses />
+
+                    <p className={styles.buyTogether}>
+                      Or purchase <b>AG Grid Enterprise</b> & <b>AG Charts Enterprise</b> together: 
+                      <button className='button-secondary'>Configure now</button>
+                    </p>
+                </div>
             </div>
 
             <div className={styles.bulkLicenses}>

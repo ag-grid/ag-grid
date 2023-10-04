@@ -26,6 +26,7 @@
         background-color: rgba(255, 255, 255, var(--content-tint));
     }
 
+    &.product,
     &.single-application {
         --card-color: #0f5bce;
         --header-tint: 0.9;
