@@ -39,14 +39,6 @@ const DEV_LICENSE_DATA: LicenseData[] = [
     },
 ];
 
-const DEPLOY_LICENSE_DATA = {
-    name: 'Deployment License',
-    id: 'deployment',
-    subHeading: 'Purchase with Development License',
-    priceFullDollars: '750',
-    pricePer: 'Application Production Environment',
-};
-
 const makeNonBreaking = (text: string) => {
     const nonBreakingSpace = '\u00A0';
 
@@ -59,26 +51,6 @@ const Price = ({ priceFullDollars, pricePer }) => {
             <p className={styles.priceFullDollars}>{priceFullDollars}</p>
             <p className="font-size-small">
                 <b>Per {pricePer}</b>
-            </p>
-        </div>
-    );
-};
-
-const DevelopmentLicense = () => {
-    return (
-        <div className={classnames(styles.bottom, 'bottom')}>
-            <div className={styles.licenseMeta}>
-                <p className={styles.name}>{DEPLOY_LICENSE_DATA.name}</p>
-                <p className="font-size-small text-secondary">{DEPLOY_LICENSE_DATA.subHeading}</p>
-            </div>
-
-            <Price priceFullDollars={DEPLOY_LICENSE_DATA.priceFullDollars} pricePer={DEPLOY_LICENSE_DATA.pricePer} />
-
-            <p className={classnames(styles.devLicenseRequired, 'font-size-extra-small')}>
-                Required to deploy for external users{' '}
-                <a className={styles.learnMoreLink} href={`#${DEPLOY_LICENSE_DATA.id}`}>
-                    Learn more
-                </a>
             </p>
         </div>
     );
@@ -122,12 +94,10 @@ const License = (props: LicenseData) => {
                             });
                         }}
                     >
-                        Buy now
+                        Configure now
                     </a>
                 </div>
             </div>
-
-            <DevelopmentLicense />
         </>
     );
 };

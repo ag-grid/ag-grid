@@ -17,37 +17,13 @@
         margin: 0;
     }
 
-    .top,
-    .bottom {
-        padding-left: $size-2;
-        padding-right: $size-2;
-    }
-
     .top {
         flex-grow: 1;
         display: grid;
         grid-template-columns: auto auto;
         grid-template-rows: auto auto auto;
         grid-template-areas: 'meta meta' 'price benefits' 'actions actions';
-        padding-top: $size-3;
-        padding-bottom: $size-2;
-    }
-
-    .bottom {
-        flex-grow: 0;
-        align-self: flex-end;
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        grid-template-columns: 1fr 1fr;
-        grid-template-areas: 'meta price' 'required required';
-        width: 100%;
-        padding-top: $size-2;
-        padding-bottom: $size-2;
-        border-top: 1px solid var(--border-color);
-
-        p {
-            font-size: 12px !important;
-        }
+        padding: $size-3 $size-2 $size-2;
     }
 }
 
@@ -71,12 +47,6 @@
         margin-bottom: $size-2;
         text-align: center;
     }
-
-    .bottom & p:last-child {
-        --line-height: $line-height-tight;
-
-        max-width: 13em;
-    }
 }
 
 p.name {
@@ -92,13 +62,6 @@ p.name {
             margin-right: auto;
         }
     }
-
-    .bottom & {
-        font-size: var(--font-size-extra-large) !important; // !important for font-size weirdness
-        line-height: $line-height-ultra-tight;
-        margin-top: $size-half;
-        margin-bottom: $size-half;
-    }
 }
 
 .price {
@@ -113,17 +76,6 @@ p.name {
             min-height: 132px;
         }
     }
-
-    .bottom & {
-        justify-self: end;
-        text-align: right;
-    }
-
-    .bottom & p:last-child {
-        --line-height: $line-height-tight;
-
-        max-width: 13em;
-    }
 }
 
 p.priceFullDollars {
@@ -137,10 +89,6 @@ p.priceFullDollars {
     .top & {
         font-size: 46px !important; // !important for font-size weirdness
         font-weight: var(--font-weight-bold);
-    }
-
-    .bottom & {
-        font-size: 36px !important; // !important for font-size weirdness
     }
 }
 
