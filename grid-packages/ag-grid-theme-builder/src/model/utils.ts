@@ -38,3 +38,8 @@ export const logErrorMessage = (message: string, error?: unknown) => {
     console.error(message);
   }
 };
+
+export const assertNotNull = <T>(value: T | null | undefined): T => {
+  if (value == null) throw new Error('Expected non-null value');
+  return value;
+};

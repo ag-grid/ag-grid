@@ -8,6 +8,7 @@ export const gridBodyFeature: Feature = {
     '--ag-cell-horizontal-border',
     '--ag-cell-horizontal-padding',
     '--ag-cell-widget-spacing',
+    '--ag-row-hover-color',
     '--ag-data-color',
     '--ag-odd-row-background-color',
     '--ag-row-border-color',

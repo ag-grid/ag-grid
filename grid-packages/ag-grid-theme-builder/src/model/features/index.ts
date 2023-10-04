@@ -1,8 +1,11 @@
 import { ColDef, GridApi, GridOptions, Module, ModuleRegistry } from '@ag-grid-community/core';
 import { indexBy } from '../utils';
 import { bordersFeature } from './borders';
+import { columnGroupsFeature } from './columnGroups';
+import { columnHoverFeature } from './columnHover';
 import { columnResizingFeature } from './columnResizing';
 import { columnsToolPanelFeature } from './columnsToolPanel';
+import { contextMenuFeature } from './contextMenu';
 import { coreFeature } from './core';
 import { filtersToolPanelFeature } from './filtersToolPanel';
 import { gridBodyFeature } from './gridBody';
@@ -21,6 +24,7 @@ export type Feature = {
   gridOptions?: GridOptions;
   defaultColDef?: ColDef;
   columnDefs?: ColDef[];
+  addColumnGroups?: boolean;
   // put the grid into a state where this feature is visible so that it can be styled
   show?: (api: GridApi) => unknown;
   // undo `show` if necessary
@@ -43,6 +47,9 @@ export const allFeatures: Feature[] = [
   rowGroupingFeature,
   overlayFeature,
   rowSelectionFeature,
+  columnGroupsFeature,
+  columnHoverFeature,
+  contextMenuFeature,
 ];
 
 const featuresByName = indexBy(allFeatures, 'name');

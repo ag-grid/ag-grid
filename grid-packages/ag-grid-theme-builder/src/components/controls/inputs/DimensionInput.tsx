@@ -44,6 +44,7 @@ export const DimensionInput: Input<'dimension'> = (props) => {
         className={props.error ? 'is-error' : undefined}
         min={props.info.min}
         max={props.info.max}
+        step={props.info.step}
         onChange={(e) => setInputValue(e.target.value)}
         onBlur={() => setInputValue(String(props.value.number))}
       />

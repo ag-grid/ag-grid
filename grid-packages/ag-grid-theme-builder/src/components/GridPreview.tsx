@@ -5,35 +5,11 @@ import { useEnabledFeatures } from 'atoms/enabledFeatures';
 import { useParentTheme } from 'atoms/parentTheme';
 import { useVariableValues } from 'atoms/values';
 import { withErrorBoundary } from 'components/ErrorBoundary';
+import { getColumnDefs, getGroupColumnDefs, getRowData } from 'model/exampleData';
 import { Feature } from 'model/features';
-import { isNotNull } from 'model/utils';
+import { assertNotNull, isNotNull } from 'model/utils';
 import { valueToCss } from 'model/values';
 import { memo, useEffect, useRef, useState } from 'react';
-
-const getColumnDefs = (): ColDef[] => [
-  { field: 'make', flex: 1 },
-  { field: 'model', flex: 1 },
-  { field: 'year', flex: 1 },
-  { field: 'price', flex: 1 },
-];
-
-const rowData = [
-  { make: 'Toyota', model: 'Celica', year: 2001, price: 35000 },
-  { make: 'Toyota', model: 'Celica', year: 2002, price: 36000 },
-  { make: 'Toyota', model: 'Celica', year: 2003, price: 37000 },
-  { make: 'Toyota', model: 'Celica', year: 2004, price: 38000 },
-  { make: 'Toyota', model: 'Celica', year: 2005, price: 39000 },
-  { make: 'Ford', model: 'Mondeo', year: 2001, price: 32000 },
-  { make: 'Ford', model: 'Mondeo', year: 2002, price: 33000 },
-  { make: 'Ford', model: 'Mondeo', year: 2003, price: 34000 },
-  { make: 'Ford', model: 'Mondeo', year: 2004, price: 35000 },
-  { make: 'Ford', model: 'Mondeo', year: 2005, price: 36000 },
-  { make: 'Porsche', model: 'Boxster', year: 2001, price: 73000 },
-  { make: 'Porsche', model: 'Boxster', year: 2002, price: 74000 },
-  { make: 'Porsche', model: 'Boxster', year: 2003, price: 75000 },
-  { make: 'Porsche', model: 'Boxster', year: 2004, price: 76000 },
-  { make: 'Porsche', model: 'Boxster', year: 2005, price: 77000 },
-];
 
 const variablesRequiringRebuild = [
   '--ag-grid-size',
@@ -64,7 +40,6 @@ const GridPreview = () => {
   useEffect(() => {
     const el = wrapperRef.current;
     if (!el) return;
-
     const featureState = featureStateRef.current;
 
     // use the rebuild key to prevent lint errors - actually its job is just to
@@ -72,17 +47,8 @@ const GridPreview = () => {
     // it changes
     void rebuildKey;
 
-    const defaultColDef: ColDef = {};
-    const columnDefs = getColumnDefs();
-    for (const feature of features) {
-      assignOptions(defaultColDef, feature.defaultColDef);
-      feature.columnDefs?.forEach((def, i) => assignOptions(columnDefs[i], def));
-    }
-
     const options: GridOptions = {
-      defaultColDef,
-      columnDefs,
-      rowData,
+      ...buildGridOptions(features),
       onGridReady: ({ api }) => {
         for (const feature of features) {
           const state = featureState[feature.name];
@@ -90,25 +56,17 @@ const GridPreview = () => {
             feature.restoreState?.(api, state);
           }
         }
-      },
-      onFirstDataRendered: ({ api }) => {
         setApi(api);
       },
     };
-    for (const feature of features) {
-      assignOptions(options, feature.gridOptions);
-    }
 
-    const modules = features.flatMap((f) => f.modules || []);
-
-    const grid = new Grid(wrapperRef.current, options, { modules });
+    setApi(null);
+    const grid = new Grid(wrapperRef.current, options);
+    const api = assertNotNull(options.api);
 
     return () => {
-      const api = options.api;
-      if (api) {
-        for (const feature of features) {
-          featureState[feature.name] = feature.getState?.(api);
-        }
+      for (const feature of features) {
+        featureState[feature.name] = feature.getState?.(api);
       }
       grid.destroy();
     };
@@ -140,6 +98,23 @@ const Wrapper = styled('div')`
   width: 100%;
   height: 100%;
 `;
+
+const buildGridOptions = (features: Feature[]): GridOptions => {
+  const defaultColDef: ColDef = {};
+  const columnDefs = getColumnDefs();
+  const options: GridOptions = { defaultColDef, columnDefs };
+  for (const feature of features) {
+    assignOptions(defaultColDef, feature.defaultColDef);
+    feature.columnDefs?.forEach((def, i) => assignOptions(columnDefs[i], def));
+    assignOptions(options, feature.gridOptions);
+  }
+
+  if (features.find((f) => f.addColumnGroups)) {
+    options.columnDefs = getGroupColumnDefs(columnDefs);
+  }
+
+  return { ...options, rowData: getRowData() };
+};
 
 const assignOptions = <T extends object>(a: T, b: T | null | undefined): void => {
   if (!b) return;

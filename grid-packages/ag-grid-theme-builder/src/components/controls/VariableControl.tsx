@@ -30,9 +30,10 @@ const VariableControl = ({ variableName, feature }: VariableControlProps): JSX.E
   const [error, setError] = useState<string | null>(null);
   const [shouldFocus, setShouldFocus] = useState(false);
 
-  const prefix =
-    (variableName === feature.commonVariablePrefix ? null : feature.commonVariablePrefix) ||
-    '--ag-';
+  let prefix = feature.commonVariablePrefix;
+  if (!prefix || variableName === prefix || !variableName.startsWith(prefix)) {
+    prefix = '--ag-';
+  }
   const label = kebabCaseToTitleCase(variableName, prefix);
 
   const renderDefault = () => {

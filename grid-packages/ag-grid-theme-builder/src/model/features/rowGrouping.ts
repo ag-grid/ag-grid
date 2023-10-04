@@ -1,3 +1,4 @@
+import { RowGroupingModule } from '@ag-grid-enterprise/row-grouping';
 import { Feature } from '.';
 
 export const rowGroupingFeature: Feature = {
@@ -25,4 +26,5 @@ export const rowGroupingFeature: Feature = {
     if (!Array.isArray(state)) return;
     api.forEachNode((node, i) => node.setExpanded(!!state[i]));
   },
+  modules: [RowGroupingModule],
 };
