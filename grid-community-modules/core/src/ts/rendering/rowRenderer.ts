@@ -264,17 +264,17 @@ export class RowRenderer extends BeanStub {
         };
 
         const addRangeSelectionListeners = () => {
-            this.addManagedListener(this.eventService, Events.EVENT_RANGE_SELECTION_CHANGED, onRangeSelectionChanged);
-            this.addManagedListener(this.eventService, Events.EVENT_COLUMN_MOVED, onColumnMovedPinnedVisible);
-            this.addManagedListener(this.eventService, Events.EVENT_COLUMN_PINNED, onColumnMovedPinnedVisible);
-            this.addManagedListener(this.eventService, Events.EVENT_COLUMN_VISIBLE, onColumnMovedPinnedVisible);
+            this.eventService.addEventListener(Events.EVENT_RANGE_SELECTION_CHANGED, onRangeSelectionChanged);
+            this.eventService.addEventListener(Events.EVENT_COLUMN_MOVED, onColumnMovedPinnedVisible);
+            this.eventService.addEventListener(Events.EVENT_COLUMN_PINNED, onColumnMovedPinnedVisible);
+            this.eventService.addEventListener(Events.EVENT_COLUMN_VISIBLE, onColumnMovedPinnedVisible);
         };
 
         const removeRangeSelectionListeners = () => {
-            this.removeEventListener(Events.EVENT_RANGE_SELECTION_CHANGED, onRangeSelectionChanged);
-            this.removeEventListener(Events.EVENT_COLUMN_MOVED, onColumnMovedPinnedVisible);
-            this.removeEventListener(Events.EVENT_COLUMN_PINNED, onColumnMovedPinnedVisible);
-            this.removeEventListener(Events.EVENT_COLUMN_VISIBLE, onColumnMovedPinnedVisible);
+            this.eventService.removeEventListener(Events.EVENT_RANGE_SELECTION_CHANGED, onRangeSelectionChanged);
+            this.eventService.removeEventListener(Events.EVENT_COLUMN_MOVED, onColumnMovedPinnedVisible);
+            this.eventService.removeEventListener(Events.EVENT_COLUMN_PINNED, onColumnMovedPinnedVisible);
+            this.eventService.removeEventListener(Events.EVENT_COLUMN_VISIBLE, onColumnMovedPinnedVisible);
         };
         this.addDestroyFunc(() => removeRangeSelectionListeners());
         this.addManagedPropertyListener('enableRangeSelection', (params) => {
