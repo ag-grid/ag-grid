@@ -72,6 +72,7 @@ export class FilterManager extends BeanStub {
         this.addManagedListener(this.eventService, Events.EVENT_COLUMN_VISIBLE, () => this.updateAdvancedFilterColumns());
 
         this.allowShowChangeAfterFilter = this.gridOptionsService.is('allowShowChangeAfterFilter');
+        this.addManagedPropertyListener('allowShowChangeAfterFilter', params => this.allowShowChangeAfterFilter = params.currentValue);
         this.externalFilterPresent = this.isExternalFilterPresentCallback();
         this.addManagedPropertyListeners(['isExternalFilterPresent', 'doesExternalFilterPass'], () => {
             this.onFilterChanged({ source: 'api' });
