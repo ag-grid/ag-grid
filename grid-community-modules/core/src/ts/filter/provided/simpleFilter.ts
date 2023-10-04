@@ -360,6 +360,11 @@ export abstract class SimpleFilter<M extends ISimpleFilterModel, V, E = AgInputT
     }
 
     refresh(newParams: IFilterParams): boolean {
+        const parentRefreshed = super.refresh(newParams);
+        if (!parentRefreshed) {
+            return false;
+        }
+
         const newParamsValue = newParams as TextFilterParams;
         const model: any = this.getModel();
 
