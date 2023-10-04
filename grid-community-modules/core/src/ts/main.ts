@@ -102,7 +102,7 @@ export { RowNode } from "./entities/rowNode";
 export { RowHighlightPosition, RowPinnedType, IRowNode } from "./interfaces/iRowNode";
 
 // filter
-export { IFilterDef, IFilterParams, IFilterOptionDef, IDoesFilterPassParams, ProvidedFilterModel, IFilter, IFilterComp, IFilterType, IFloatingFilterType } from "./interfaces/iFilter";
+export { IFilterDef, IFilterParams, IFilterOptionDef, IDoesFilterPassParams, ProvidedFilterModel, IFilter, IFilterComp, IFilterType, IFloatingFilterType, FilterModel } from "./interfaces/iFilter";
 export { ISetFilter, SetFilterModel, ISetFilterParams, SetFilterParams, SetFilterValues, SetFilterModelValue, SetFilterValuesFunc, SetFilterValuesFuncParams, ISetFilterTreeListTooltipParams } from "./interfaces/iSetFilter";
 export { FilterManager, FilterWrapper, FilterRequestSource } from "./filter/filterManager";
 export { IMultiFilter, IMultiFilterModel, IMultiFilterComp, IMultiFilterParams, MultiFilterParams, IMultiFilterDef } from './interfaces/iMultiFilter';
@@ -345,14 +345,25 @@ export { ValueParserService } from "./valueService/valueParserService";
 
 //state
 export {
-    GridState,
+    AggregationColumnState,
+    AggregationState,
+    ColumnGroupState,
+    ColumnOrderState,
+    ColumnPinningState,
+    ColumnSizeState,
+    ColumnSizingState,
+    ColumnVisibilityState,
     FilterState,
     FocusedCellState,
+    GridState,
     PaginationState,
+    PivotState,
     RangeSelectionCellState,
     RangeSelectionState,
+    RowGroupState,
     ScrollState,
-    SideBarState
+    SideBarState,
+    SortState
 } from "./interfaces/gridState";
 
 // uncatalogued

@@ -204,19 +204,12 @@ export class AdvancedFilterService extends BeanStub implements IAdvancedFilterSe
     }
 
     private onNewColumnsLoaded(event: NewColumnsLoadedEvent): void {
-        if (event.source !== 'gridInitializing') { return; }
+        if (event.source !== 'gridInitializing' || !this.dataTypeService.isPendingInference()) { return; }
 
-        const setModel = () => this.setModel(this.gridOptionsService.get('advancedFilterModel') ?? null);
-
-        if (this.dataTypeService.isPendingInference()) {
-            this.ctrl.setInputDisabled(true);
-            const destroyFunc = this.addManagedListener(this.eventService, Events.EVENT_DATA_TYPES_INFERRED, () => {
-                destroyFunc?.();
-                setModel();
-                this.ctrl.setInputDisabled(false);
-            });
-        } else {
-            setModel();
-        }
-    }
+        this.ctrl.setInputDisabled(true);
+        const destroyFunc = this.addManagedListener(this.eventService, Events.EVENT_DATA_TYPES_INFERRED, () => {
+            destroyFunc?.();
+            this.ctrl.setInputDisabled(false);
+        });
+}
 }

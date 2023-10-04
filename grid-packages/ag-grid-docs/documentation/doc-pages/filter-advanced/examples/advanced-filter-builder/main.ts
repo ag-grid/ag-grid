@@ -49,7 +49,11 @@ const gridOptions: GridOptions<IOlympicData> = {
     resizable: true,
   },
   enableAdvancedFilter: true,
-  advancedFilterModel: advancedFilterModel,
+  initialState: {
+    filter: {
+      advancedFilterModel: advancedFilterModel,
+    },
+  },
   onFirstDataRendered: () => {
     gridOptions.api!.showAdvancedFilterBuilder();
   }

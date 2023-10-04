@@ -61,7 +61,11 @@ const gridOptions: GridOptions<IOlympicData> = {
   },
   enableAdvancedFilter: true,
   popupParent: document.getElementById('wrapper'),
-  advancedFilterModel: advancedFilterModel,
+  initialState: {
+    filter: {
+      advancedFilterModel: advancedFilterModel,
+    },
+  },
   advancedFilterBuilderParams: advancedFilterBuilderParams,
   onAdvancedFilterBuilderVisibleChanged: onAdvancedFilterBuilderVisibleChanged,
   onGridReady: (params: GridReadyEvent) => {

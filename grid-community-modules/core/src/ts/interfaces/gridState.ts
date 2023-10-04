@@ -1,7 +1,13 @@
 import { RowPosition } from "../entities/rowPositionUtils";
+import { SortModelItem } from "../sortController";
+import { AdvancedFilterModel } from "./advancedFilterModel";
+import { FilterModel } from "./iFilter";
 import { CellRangeType } from "./IRangeService";
 
-export interface FilterState { [colId: string]: any; };
+export interface FilterState { 
+    filterModel?: FilterModel
+    advancedFilterModel?: AdvancedFilterModel;
+};
 
 export interface RangeSelectionCellState {
     id?: string;
@@ -39,6 +45,55 @@ export interface PaginationState {
     page: number;
 }
 
+export interface SortState {
+    sortColumns: SortModelItem[];
+}
+
+export interface RowGroupState {
+    groupColumns: string[];
+}
+
+export interface AggregationColumnState {
+    colId: string,
+    aggFunc: string
+}
+
+export interface AggregationState {
+    aggregationColumns: AggregationColumnState[];
+}
+
+export interface PivotState {
+    pivotMode: boolean;
+    pivotColumns: string[];
+}
+
+export interface ColumnPinningState {
+    leftColumns: string[];
+    rightColumns: string[];
+}
+
+export interface ColumnVisibilityState {
+    hiddenColumns: string[];
+}
+
+export interface ColumnSizeState {
+    colId: string;
+    width?: number;
+    flex?: number;
+}
+
+export interface ColumnSizingState {
+    columnSizes: ColumnSizeState[];
+}
+
+export interface ColumnOrderState {
+    columns: string[];
+}
+
+export interface ColumnGroupState {
+    openColumnGroups: string[];
+}
+
 export interface GridState {
     filter?: FilterState;
     rangeSelection?: RangeSelectionState;
@@ -46,4 +101,13 @@ export interface GridState {
     sideBar?: SideBarState;
     focusedCell?: FocusedCellState;
     pagination?: PaginationState;
+    sort?: SortState;
+    rowGroup?: RowGroupState;
+    aggregation?: AggregationState;
+    pivot?: PivotState;
+    columnPinning?: ColumnPinningState;
+    columnVisibility?: ColumnVisibilityState;
+    columnSizing?: ColumnSizingState;
+    columnOrder?: ColumnOrderState;
+    columnGroup?: ColumnGroupState;
 }

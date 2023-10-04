@@ -488,7 +488,7 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     @Input() public excludeChildrenWhenTreeDataFiltering: boolean | undefined = undefined;
     /** Set to true to enable the Advanced Filter. Default: `false`     */
     @Input() public enableAdvancedFilter: boolean | undefined = undefined;
-    /** Allows the state of the Advanced Filter to be set before the grid is loaded.     */
+    /** @deprecated As of v29, use `initialState.filter.advancedFilterModel` instead.     */
     @Input() public advancedFilterModel: AdvancedFilterModel | null | undefined = undefined;
     /** Hidden columns are excluded from the Advanced Filter by default.
          * To include hidden columns, set to `true`.

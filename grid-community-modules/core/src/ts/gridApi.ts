@@ -761,7 +761,7 @@ export class GridApi<TData = any> {
     
     /** Set the state of the Advanced Filter. Used for restoring Advanced Filter state */
     public setAdvancedFilterModel(advancedFilterModel: AdvancedFilterModel | null): void {
-        this.gos.set('advancedFilterModel', advancedFilterModel);
+        this.filterManager.setAdvancedFilterModel(advancedFilterModel);
     }
 
     /** Enable/disable the Advanced Filter */
