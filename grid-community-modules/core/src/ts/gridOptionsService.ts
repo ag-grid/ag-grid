@@ -95,6 +95,7 @@ export class GridOptionsService {
 
     // Store locally to avoid retrieving many times as these are requested for every callback
     public api: GridApi;
+    /** @deprecated v31 ColumnApi has been deprecated and all methods moved to the api. */
     public columnApi: ColumnApi;
     // This is quicker then having code call gridOptionsService.get('context')
     public get context() {
@@ -104,11 +105,11 @@ export class GridOptionsService {
     private propertyEventService: EventService = new EventService();
     private gridOptionLookup: Set<string>;
 
-    private agWire(@Qualifier('gridApi') gridApi: GridApi, @Qualifier('columnApi') columnApi: ColumnApi): void {
+    private agWire(@Qualifier('gridApi') gridApi: GridApi): void {
+        this.columnApi = new ColumnApi(gridApi);
         this.gridOptions.api = gridApi;
-        this.gridOptions.columnApi = columnApi;
+        this.gridOptions.columnApi = this.columnApi;
         this.api = gridApi;
-        this.columnApi = columnApi;
     }
 
     @PostConstruct

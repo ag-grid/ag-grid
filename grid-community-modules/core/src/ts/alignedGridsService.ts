@@ -189,7 +189,7 @@ export class AlignedGridsService extends BeanStub {
                 // so only way to be sure is match the order of all columns using Column State.
                 {
                     const movedEvent = colEvent as ColumnMovedEvent;
-                    const srcColState = colEvent.columnApi.getColumnState();
+                    const srcColState = colEvent.api.getColumnState();
                     const destColState = srcColState.map(s => ({ colId: s.colId }));
                     this.columnModel.applyColumnState(
                         { state: destColState, applyOrder: true }, "alignedGridChanged"
@@ -203,7 +203,7 @@ export class AlignedGridsService extends BeanStub {
                 // so only way to be sure is match the visibility of all columns using Column State.
                 {
                     const visibleEvent = colEvent as ColumnVisibleEvent;
-                    const srcColState = colEvent.columnApi.getColumnState();
+                    const srcColState = colEvent.api.getColumnState();
                     const destColState = srcColState.map(s => ({ colId: s.colId, hide: s.hide }));
                     this.columnModel.applyColumnState({ state: destColState }, "alignedGridChanged");
                     this.logger.log(`onColumnEvent-> processing ${colEvent.type} visible = ${visibleEvent.visible}`);
@@ -212,7 +212,7 @@ export class AlignedGridsService extends BeanStub {
             case Events.EVENT_COLUMN_PINNED:
                 {
                     const pinnedEvent = colEvent as ColumnPinnedEvent;
-                    const srcColState = colEvent.columnApi.getColumnState();
+                    const srcColState = colEvent.api.getColumnState();
                     const destColState = srcColState.map(s => ({ colId: s.colId, pinned: s.pinned }));
                     this.columnModel.applyColumnState({state: destColState}, "alignedGridChanged");
                     this.logger.log(`onColumnEvent-> processing ${colEvent.type} pinned = ${pinnedEvent.pinned}`);

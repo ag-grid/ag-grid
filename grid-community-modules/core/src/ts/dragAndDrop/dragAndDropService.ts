@@ -137,6 +137,7 @@ export interface DraggingEvent {
     dragItem: DragItem;
     fromNudge: boolean;
     api: GridApi;
+    /** @deprecated v31 ColumnApi has been deprecated and all methods moved to the api. */
     columnApi: ColumnApi;
     dropZoneTarget: HTMLElement;
 }
