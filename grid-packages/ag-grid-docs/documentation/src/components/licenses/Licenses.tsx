@@ -2,37 +2,40 @@ import classnames from 'classnames';
 import React, { FunctionComponent } from 'react';
 import { Icon } from '../../components/Icon';
 import { trackBuyButton } from '../../utils/analytics';
+import AGGridLogo from '../../images/inline-svgs/ag-grid-logo.svg';
+import AGChartsLogo from '../../images/inline-svgs/ag-charts-logo.svg';
+
 // @ts-ignore
 import styles from './Licenses.module.scss';
 
 type LicenseData = {
     className: string;
-    name: string;
     id: string;
     subHeading: string;
     licenseBenefits: string[];
     priceFullDollars: string;
     buyLink: string;
+    Logo: any;
 };
 
 const DEV_LICENSE_DATA: LicenseData[] = [
     {
-        className: styles.singleApplicationLicense,
-        name: 'AG Grid',
-        id: 'product',
+        className: styles.gridLicense,
+        id: 'single-application',
         subHeading: 'AG Grid Enterprise',
         priceFullDollars: '999',
         licenseBenefits: ['Perpetual license', '1 year of support', '1 year of updates'],
         buyLink: '/ecommerce/#/ecommerce/?licenseType=single',
+        Logo: AGGridLogo
     },
     {
-        className: styles.multipleApplicationsLicense,
-        name: 'AG Charts',
-        id: 'product',
+        className: styles.chartsLicense,
+        id: 'single-application',
         subHeading: 'AG Charts Enterprise',
-        licenseBenefits: ['Unlimited applications', 'Perpetual license', '1 year of support', '1 year of updates'],
+        licenseBenefits: ['Perpetual license', '1 year of support', '1 year of updates'],
         priceFullDollars: '299',
         buyLink: '/ecommerce/#/ecommerce/?licenseType=multi',
+        Logo: AGChartsLogo
     },
 ];
 
@@ -55,13 +58,13 @@ const Price = ({ priceFullDollars }) => {
 };
 
 const License = (props: LicenseData) => {
-    const { name, id, subHeading, licenseBenefits, priceFullDollars, buyLink } = props;
+    const { id, subHeading, licenseBenefits, priceFullDollars, buyLink, Logo } = props;
 
     return (
         <>
             <div className={classnames(styles.top, 'top')}>
                 <div className={styles.licenseMeta}>
-                    <p className={classnames(styles.name, 'font-size-extra-large', 'bold-text')}>{name}</p>
+                    <Logo className={styles.logo}/>
                     <p className="font-size-small text-secondary">{subHeading}<Icon name="enterprise" /></p>
                 </div>
 
@@ -102,7 +105,7 @@ export const Licenses: FunctionComponent = () => {
         <>
             {DEV_LICENSE_DATA.map((data) => {
                 return (
-                    <div key={data.name} className={classnames(styles.license, data.className, 'card', data.id)}>
+                    <div key={data.name} className={classnames(styles.license, data.className, 'card')}>
                         <License {...data} />
                     </div>
                 );

@@ -7,7 +7,7 @@
 
     @media screen and (min-width: $breakpoint-pricing-medium) {
         max-width: calc(50% - $size-2);
-        max-height: 380px;
+        max-height: 480px;
     }
 
     p {
@@ -24,12 +24,22 @@
     }
 }
 
+.gridLicense {
+    --card-color: #0665cb;
+    --header-tint: 0.9;
+}
+
+.chartsLicense {
+    --card-color: #144dae;
+    --header-tint: 0.9;
+}
+
 .licenseMeta {
     grid-area: meta;
     display: flex;
     flex-direction: column;
 
-    svg {
+    :global(.icon) {
         position: relative;
         top: -1px;
         width: 16px;
@@ -44,6 +54,10 @@
         margin-bottom: $size-2;
         text-align: center;
     }
+}
+
+.logo {
+    height: $size-7;
 }
 
 p.name {
@@ -130,9 +144,4 @@ p.priceFullDollars {
         padding-left: 0.25em;
         transition: transform $default-transition-timing;
     }
-}
-
-.devLicenseRequired {
-    padding-top: $size-2;
-    grid-area: required;
 }
