@@ -1,5 +1,4 @@
 import { AlignedGridsService } from "./alignedGridsService";
-import { ColumnApi } from "./columns/columnApi";
 import { ColumnModel, ISizeColumnsToFitParams } from "./columns/columnModel";
 import { Autowired, Bean, Context, Optional, PostConstruct, PreDestroy } from "./context/context";
 import { CtrlsService } from "./ctrlsService";
@@ -131,28 +130,7 @@ import { LoadSuccessParams } from "./rowNodeCache/rowNodeBlock";
 import { Events } from './eventKeys';
 import { IAdvancedFilterBuilderParams } from "./interfaces/iAdvancedFilterBuilderParams";
 
-export interface DetailGridInfo {
-    /**
-     * Id of the detail grid, the format is `detail_{ROW-ID}`,
-     * where `ROW-ID` is the `id` of the parent row.
-     */
-    id: string;
-    /** Grid api of the detail grid. */
-    api?: GridApi;
-    /** Column api of the detail grid. */
-    columnApi?: ColumnApi;
-}
-
-export interface StartEditingCellParams {
-    /** The row index of the row to start editing */
-    rowIndex: number;
-    /** The column key of the row to start editing */
-    colKey: string | Column;
-    /** Set to `'top'` or `'bottom'` to start editing a pinned row */
-    rowPinned?: RowPinnedType;
-    /** The key to pass to the cell editor */
-    key?: string;
-}
+import { DetailGridInfo, IGridApi, StartEditingCellParams } from './interfaces/iGridApi';
 
 export function unwrapUserComp<T>(comp: T): T {
     const compAsAny = comp as any;
@@ -161,7 +139,7 @@ export function unwrapUserComp<T>(comp: T): T {
 }
 
 @Bean('gridApi')
-export class GridApi<TData = any> {
+export class GridApi<TData = any> implements IGridApi<TData> {
 
     @Optional('immutableService') private immutableService: IImmutableService;
     @Optional('csvCreator') private csvCreator: ICsvCreator;

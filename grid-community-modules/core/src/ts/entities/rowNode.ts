@@ -1,8 +1,6 @@
 import { AgEvent, Events, RowEvent, RowSelectedEvent, SelectionEventSourceType } from "../events";
 import { EventService } from "../eventService";
-import { DetailGridInfo } from "../gridApi";
 import { IClientSideRowModel } from "../interfaces/iClientSideRowModel";
-import { WithoutGridCommon } from "../interfaces/iCommon";
 import { IEventEmitter } from "../interfaces/iEventEmitter";
 import { IServerSideRowModel } from "../interfaces/iServerSideRowModel";
 import { IServerSideStore } from "../interfaces/IServerSideStore";
@@ -13,6 +11,7 @@ import { getAllKeysInObjects } from "../utils/object";
 import { Column } from "./column";
 import { CellChangedEvent, DataChangedEvent, IRowNode, RowHighlightPosition, RowNodeEvent, RowNodeEventType, RowPinnedType, SetSelectedParams } from "../interfaces/iRowNode";
 import { CellEditRequestEvent } from "../events";
+import { DetailGridInfo } from "../interfaces/iGridApi";
 
 export class RowNode<TData = any> implements IEventEmitter, IRowNode<TData> {
 
