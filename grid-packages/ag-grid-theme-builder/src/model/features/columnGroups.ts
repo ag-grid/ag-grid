@@ -1,7 +1,7 @@
 import { Feature } from '.';
 
 export const columnGroupsFeature: Feature = {
-  name: 'column-groups',
+  name: 'columnGroups',
   displayName: 'Column Groups',
   commonVariablePrefix: '--ag-column-select-',
   variableNames: [],

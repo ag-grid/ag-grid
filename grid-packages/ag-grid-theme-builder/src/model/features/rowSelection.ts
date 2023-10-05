@@ -1,7 +1,7 @@
 import { Feature } from '.';
 
 export const rowSelectionFeature: Feature = {
-  name: 'row-selection',
+  name: 'rowSelection',
   displayName: 'Row Selection',
   variableNames: ['--ag-selected-row-background-color'],
   gridOptions: {

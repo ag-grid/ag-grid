@@ -3,7 +3,7 @@ import { ColumnsToolPanelModule } from '@ag-grid-enterprise/column-tool-panel';
 import { Feature } from '.';
 
 export const columnsToolPanelFeature: Feature = {
-  name: 'columns-tool-panel',
+  name: 'columnsToolPanel',
   displayName: 'Columns Tool Panel',
   commonVariablePrefix: '--ag-column-select-',
   variableNames: [

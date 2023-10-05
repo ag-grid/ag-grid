@@ -1,6 +1,8 @@
 import { ColDef, GridApi, GridOptions, Module, ModuleRegistry } from '@ag-grid-community/core';
+import { ComponentType } from 'react';
 import { indexBy } from '../utils';
 import { bordersFeature } from './borders';
+import { checkboxesFeature } from './checkboxes';
 import { columnGroupsFeature } from './columnGroups';
 import { columnHoverFeature } from './columnHover';
 import { columnResizingFeature } from './columnResizing';
@@ -14,6 +16,7 @@ import { overlayFeature } from './overlay';
 import { rangeSelectionFeature } from './rangeSelection';
 import { rowGroupingFeature } from './rowGrouping';
 import { rowSelectionFeature } from './rowSelection';
+import { toggleButtonsFeature } from './toggleButtons';
 
 export type Feature = {
   name: string;
@@ -25,6 +28,7 @@ export type Feature = {
   defaultColDef?: ColDef;
   columnDefs?: ColDef[];
   addColumnGroups?: boolean;
+  previewComponent?: ComponentType;
   // put the grid into a state where this feature is visible so that it can be styled
   show?: (api: GridApi) => unknown;
   // undo `show` if necessary
@@ -50,6 +54,8 @@ export const allFeatures: Feature[] = [
   columnGroupsFeature,
   columnHoverFeature,
   contextMenuFeature,
+  toggleButtonsFeature,
+  checkboxesFeature,
 ];
 
 const featuresByName = indexBy(allFeatures, 'name');

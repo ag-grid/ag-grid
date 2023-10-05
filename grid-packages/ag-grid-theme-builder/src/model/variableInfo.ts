@@ -150,7 +150,7 @@ const variables: Record<string, VariableInfo> = {
   '--ag-set-filter-indent-size': { type: 'dimension', min: 0, max: 100, step: 1 },
   '--ag-side-bar-panel-width': { type: 'dimension', min: 0, max: 1000, step: 10 },
   '--ag-tab-min-width': { type: 'dimension', min: 0, max: 100, step: 1 },
-  '--ag-toggle-button-border-width': { type: 'dimension', min: 0, max: 100, step: 1 },
+  '--ag-toggle-button-border-width': { type: 'dimension', min: 0, max: 10, step: 0.5 },
   '--ag-toggle-button-height': { type: 'dimension', min: 0, max: 100, step: 1 },
   '--ag-toggle-button-width': { type: 'dimension', min: 0, max: 100, step: 1 },
   '--ag-widget-container-horizontal-padding': { type: 'dimension', min: 0, max: 100, step: 1 },

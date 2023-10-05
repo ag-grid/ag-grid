@@ -2,7 +2,7 @@ import { FiltersToolPanelModule } from '@ag-grid-enterprise/filter-tool-panel';
 import { Feature } from '.';
 
 export const filtersToolPanelFeature: Feature = {
-  name: 'filters-tool-panel',
+  name: 'filtersToolPanel',
   displayName: 'Filters Tool Panel',
   commonVariablePrefix: '--ag-filter-tool-panel-',
   variableNames: [

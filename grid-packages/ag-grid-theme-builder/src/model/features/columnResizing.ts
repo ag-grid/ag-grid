@@ -1,7 +1,7 @@
 import { Feature } from '.';
 
 export const columnResizingFeature: Feature = {
-  name: 'column-resizing',
+  name: 'columnResizing',
   displayName: 'Column Resizing',
   commonVariablePrefix: '--ag-header-column-',
   variableNames: [

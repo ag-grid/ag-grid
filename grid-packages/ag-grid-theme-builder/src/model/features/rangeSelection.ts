@@ -3,7 +3,7 @@ import { RangeSelectionModule } from '@ag-grid-enterprise/range-selection';
 import { Feature } from '.';
 
 export const rangeSelectionFeature: Feature = {
-  name: 'range-selection',
+  name: 'rangeSelection',
   displayName: 'Range Selections',
   commonVariablePrefix: '--ag-range-selection-',
   variableNames: [

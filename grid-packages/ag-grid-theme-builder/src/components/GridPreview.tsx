@@ -81,12 +81,21 @@ const GridPreview = () => {
     }
   }, [currentFeature, api]);
 
+  const PreviewComponent = currentFeature?.previewComponent;
+
   return (
-    <Wrapper
-      className={parentTheme.name}
-      ref={wrapperRef}
-      style={{ width: '100%', height: '100%' }}
-    />
+    <>
+      <Wrapper
+        className={parentTheme.name}
+        ref={wrapperRef}
+        style={{ display: PreviewComponent ? 'none' : 'block' }}
+      ></Wrapper>
+      {PreviewComponent && (
+        <Wrapper className={parentTheme.name}>
+          <PreviewComponent />
+        </Wrapper>
+      )}
+    </>
   );
 };
 

@@ -2,7 +2,7 @@ import { RowGroupingModule } from '@ag-grid-enterprise/row-grouping';
 import { Feature } from '.';
 
 export const rowGroupingFeature: Feature = {
-  name: 'row-grouping',
+  name: 'rowGrouping',
   displayName: 'Row Grouping',
   commonVariablePrefix: '--ag-row-group-',
   variableNames: ['--ag-row-group-indent-size'],
