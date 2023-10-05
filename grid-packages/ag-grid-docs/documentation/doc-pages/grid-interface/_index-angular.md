@@ -62,7 +62,6 @@
 | // in onGridReady, store the api for later use
 | onGridReady = (params) => {
 |     this.api = params.api;
-|     this.columnApi = params.columnApi;
 | }
 | @ViewChild('myGrid') grid!: AgGridAngular;
 |

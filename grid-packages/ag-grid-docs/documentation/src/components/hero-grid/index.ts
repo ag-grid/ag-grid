@@ -48,7 +48,7 @@ const gridOptions: GridOptions = {
         let totalWidth: number = 0;
         let hasFilledColumns = false;
         COLUMN_ID_PRIORITIES.forEach((colId) => {
-            const col = params.columnApi.getColumn(colId);
+            const col = params.api.getColumn(colId);
             const minWidth = col?.getMinWidth() || 0;
             const newTotalWidth = totalWidth + minWidth;
 
@@ -62,8 +62,8 @@ const gridOptions: GridOptions = {
         });
 
         // show/hide columns based on current grid width
-        params.columnApi.setColumnsVisible(columnsToShow, true);
-        params.columnApi.setColumnsVisible(columnsToHide, false);
+        params.api.setColumnsVisible(columnsToShow, true);
+        params.api.setColumnsVisible(columnsToHide, false);
 
         const stockFilter: ISetFilter = params.api.getFilterInstance('stock')!;
         const stocks = stockFilter.getFilterValues();

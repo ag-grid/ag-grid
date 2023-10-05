@@ -178,11 +178,11 @@ const mobileDefaultCols = [
         cellClass: 'vAlign',
         checkboxSelection: (params) => {
             // we put checkbox on the name if we are not doing grouping
-            return params.columnApi.getRowGroupColumns().length === 0;
+            return params.api.getRowGroupColumns().length === 0;
         },
         headerCheckboxSelection: (params) => {
             // we put checkbox on the name if we are not doing grouping
-            return params.columnApi.getRowGroupColumns().length === 0;
+            return params.api.getRowGroupColumns().length === 0;
         },
         headerCheckboxSelectionFilteredOnly: true,
     },
@@ -322,11 +322,11 @@ const desktopDefaultCols = [
                 floatingFilterComponent: 'personFloatingFilterComponent',
                 checkboxSelection: (params) => {
                     // we put checkbox on the name if we are not doing grouping
-                    return params.columnApi.getRowGroupColumns().length === 0;
+                    return params.api.getRowGroupColumns().length === 0;
                 },
                 headerCheckboxSelection: (params) => {
                     // we put checkbox on the name if we are not doing grouping
-                    return params.columnApi.getRowGroupColumns().length === 0;
+                    return params.api.getRowGroupColumns().length === 0;
                 },
                 headerCheckboxSelectionFilteredOnly: true,
             },

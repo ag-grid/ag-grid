@@ -49,10 +49,10 @@ The column headers and group headers exported to Excel can be customised using t
 <snippet>
 | gridApi.exportDataAsExcel({
 |     processGroupHeaderCallback(params) {
-|         return `group header: ${params.columnApi.getDisplayNameForColumnGroup(params.columnGroup, null)}`
+|         return `group header: ${params.api.getDisplayNameForColumnGroup(params.columnGroup, null)}`
 |     },
 |     processHeaderCallback(params) {
-|         return `header: ${params.columnApi.getDisplayNameForColumn(params.column, null)}`
+|         return `header: ${params.api.getDisplayNameForColumn(params.column, null)}`
 |     }
 | });
 </snippet>
