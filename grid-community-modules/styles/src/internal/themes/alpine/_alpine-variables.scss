@@ -4,15 +4,10 @@
     // COLOURS
 
     // Active colours - same shade, different opacities
-    --ag-alpine-active-color: #2196f3;
-    --ag-selected-row-background-color: #{color.change(#2196f3, $alpha: 0.3)};
-    --ag-row-hover-color: #{color.change(#2196f3, $alpha: 0.1)};
-    --ag-column-hover-color: #{color.change(#2196f3, $alpha: 0.1)};
-    --ag-input-focus-border-color: #{color.change(#2196f3, $alpha: 0.4)};
-    --ag-range-selection-background-color: #{color.change(#2196f3, $alpha: 0.2)};
-    --ag-range-selection-background-color-2: #{color.change(#2196f3, $alpha: 0.36)};
-    --ag-range-selection-background-color-3: #{color.change(#2196f3, $alpha: 0.49)};
-    --ag-range-selection-background-color-4: #{color.change(#2196f3, $alpha: 0.59)};
+    --ag-active-color: #2196f3;
+    --ag-row-hover-color: color-mix(in srgb, transparent, var(--ag-active-color) 10%);
+    --ag-column-hover-color: color-mix(in srgb, transparent, var(--ag-active-color) 10%);
+    --ag-input-focus-border-color: color-mix(in srgb, transparent, var(--ag-active-color) 40%);
 
     // main colours (overridden by alpine-dark)
     --ag-background-color: #fff;
@@ -31,22 +26,18 @@
     --ag-advanced-filter-option-pill-color: #f3c08b;
     --ag-advanced-filter-value-pill-color: #85c0e4;
     
-    // derived colours (no color blending - these are shared by alpine-dark)
+    // derived colours these are shared by alpine-dark
     --ag-checkbox-background-color: var(--ag-background-color);
-    --ag-checkbox-checked-color: var(--ag-alpine-active-color);
-    --ag-range-selection-border-color: var(--ag-alpine-active-color);
+    --ag-checkbox-checked-color: var(--ag-active-color);
+    --ag-range-selection-border-color: var(--ag-active-color);
     --ag-secondary-foreground-color: var(--ag-foreground-color);
     --ag-input-border-color: var(--ag-border-color);
     --ag-input-border-color-invalid: var(--ag-invalid-color);
     --ag-input-focus-box-shadow: 0 0 2px 0.1rem var(--ag-input-focus-border-color);
-    
-
-    // derived and blended colours (these are static versions of the dynamic colour blends
-    // applied by the Sass API and must be overridden in alpine-dark)
-    --ag-disabled-foreground-color: #{color.change(#181d1f, $alpha: 0.5)};
-    --ag-chip-background-color: #{color.change(#181d1f, $alpha: 0.07)};
-    --ag-input-disabled-border-color: rgba(186, 191, 199, 0.3);
-    --ag-input-disabled-background-color: rgba(186, 191, 199, 0.15);
+    --ag-disabled-foreground-color: color-mix(in srgb, transparent, var(--ag-foreground-color) 50%);
+    --ag-chip-background-color: color-mix(in srgb, transparent, var(--ag-foreground-color) 7%);
+    --ag-input-disabled-border-color: color-mix(in srgb, transparent, var(--ag-border-color) 30%);
+    --ag-input-disabled-background-color: color-mix(in srgb, transparent, var(--ag-border-color) 15%);
 
     // BORDERS
     --ag-borders: solid 1px;
@@ -82,7 +73,7 @@
     --ag-icon-font-family: agGridAlpine;
 
     // MISC
-    --ag-selected-tab-underline-color: var(--ag-alpine-active-color);
+    --ag-selected-tab-underline-color: var(--ag-active-color);
     --ag-selected-tab-underline-width: 2px;
     --ag-selected-tab-underline-transition-speed: 0.3s;
     --ag-tab-min-width: 240px;
@@ -108,11 +99,7 @@
         0 0 2px 0.5px rgba(255, 255, 255, 0.5),
         0 0 4px 3px var(--ag-input-focus-border-color);
     --ag-card-shadow: 0 1px 20px 1px black;
-
-    --ag-disabled-foreground-color: #{color.change(#fff, $alpha: 0.5)};
-    --ag-chip-background-color: #{color.change(#fff, $alpha: 0.07)};
-    --ag-input-disabled-border-color: #{color.change(#68686e, $alpha: 0.3)};
-    --ag-input-disabled-background-color: #{color.change(#68686e, $alpha: 0.07)};
+    --ag-input-disabled-background-color: color-mix(in srgb, transparent, var(--ag-border-color) 7%);
     --ag-advanced-filter-join-pill-color: #7a3a37;
     --ag-advanced-filter-column-pill-color: #355f2d;
     --ag-advanced-filter-option-pill-color: #5a3168;

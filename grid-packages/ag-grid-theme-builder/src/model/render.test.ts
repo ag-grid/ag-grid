@@ -11,46 +11,9 @@ import { display } from './values/display';
 
 const testTheme: Theme = {
   name: 'ag-theme-derived',
-  colorBlends: [
-    {
-      destination: '--blend-destination-should-copy-value',
-      source: '--blend-source',
-    },
-    {
-      destination: '--blend-destination-should-apply-alpha-0.9',
-      source: '--blend-source',
-      alpha: 0.9,
-    },
-    {
-      destination: '--blend-destination-should-overlay-twice',
-      source: '--blend-source',
-      selfOverlay: 2,
-    },
-    {
-      destination: '--provided-value-should-override-blend',
-      source: '--blend-source',
-    },
-    {
-      destination: '--blend-destination-should-be-overridden-in-base',
-      source: '--blend-source',
-      alpha: 1,
-    },
-  ],
   extends: {
     name: 'base',
     extends: null,
-    colorBlends: [
-      {
-        destination: '--blend-destination-should-work-in-base',
-        source: '--blend-source',
-        alpha: 0.1,
-      },
-      {
-        destination: '--blend-destination-should-be-overridden-in-base',
-        source: '--blend-source',
-        alpha: 0.2,
-      },
-    ],
   },
 };
 const testFeature: Feature = {
@@ -81,7 +44,6 @@ test(renderCSS, () => {
         --variable-in-base-theme: #aaaaaa;
         --blend-destination-should-copy-value: #aaaaaa80;
         --blend-destination-should-apply-alpha-0.9: #aaaaaa73;
-        --blend-destination-should-overlay-twice: #aaaaaac0;
         --blend-destination-should-be-overridden-in-base: #aaaaaa80;
         --blend-destination-should-work-in-base: #aaaaaa0d;
     }"

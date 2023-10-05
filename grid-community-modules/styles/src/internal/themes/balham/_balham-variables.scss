@@ -2,7 +2,7 @@
 
 .ag-theme-balham, .ag-theme-balham-dark {
     // main colours (overridden by balham-dark)
-    --ag-balham-active-color: #0091ea;
+    --ag-active-color: #0091ea;
     --ag-foreground-color: #000;
     --ag-background-color: #fff;
     --ag-header-background-color: #f5f7f7;
@@ -23,26 +23,15 @@
     --ag-advanced-filter-option-pill-color: #f3c08b;
     --ag-advanced-filter-value-pill-color: #85c0e4;
 
-    // derived colours (no color blending - these are shared by balham-dark)
+    // derived colours - these are shared by balham-dark
     --ag-input-focus-box-shadow: 0 0 2px 1px var(--ag-input-focus-border-color);
-    --ag-range-selection-border-color: var(--ag-balham-active-color);
-    --ag-checkbox-checked-color: var(--ag-balham-active-color);
     --ag-checkbox-background-color: var(--ag-background-color);
-
-    // derived and blended colours (these are static versions of the dynamic colour blends
-    // applied by the Sass API and must be overridden in balham-dark)
-    --ag-secondary-foreground-color: #{color.change(#000, $alpha: 0.54)};
-    --ag-disabled-foreground-color: #{color.change(#000, $alpha: 0.38)};
-    --ag-subheader-toolbar-background-color: #{color.change(#e2e9eb, $alpha: 0.5)};
-    --ag-row-border-color: #{color.change(#bdc3c7, $alpha: 0.58)};
-    --ag-chip-background-color: #{color.change(#000, $alpha: 0.1)};
-    --ag-range-selection-background-color: #{color.change(#0091ea, $alpha: 0.2)};
-    --ag-range-selection-background-color-2: #{color.change(#0091ea, $alpha: 0.36)};
-    --ag-range-selection-background-color-3: #{color.change(#0091ea, $alpha: 0.49)};
-    --ag-range-selection-background-color-4: #{color.change(#0091ea, $alpha: 0.59)};
-    --ag-selected-row-background-color: #{color.change(#0091ea, $alpha: 0.28)};
-    --ag-header-column-separator-color: #{color.change(#bdc3c7, $alpha: 0.5)};
-    --ag-input-disabled-border-color: #{color.change(#95a5a6, $alpha: 0.3)};
+    --ag-secondary-foreground-color: color-mix(in srgb, transparent, var(--ag-foreground-color) 54%);
+    --ag-disabled-foreground-color: color-mix(in srgb, transparent, var(--ag-foreground-color) 38%);
+    --ag-subheader-toolbar-background-color: color-mix(in srgb, transparent, var(--ag-subheader-background-color) 50%);
+    --ag-row-border-color: color-mix(in srgb, transparent, var(--ag-border-color) 58%);
+    --ag-chip-background-color: color-mix(in srgb, transparent, var(--ag-foreground-color) 10%);
+    --ag-header-column-separator-color: color-mix(in srgb, transparent, var(--ag-border-color) 50%);
 
     --ag-header-column-separator-display: block;
     --ag-header-column-separator-height: 50%;
@@ -70,7 +59,7 @@
 
 .ag-theme-balham-dark {
     // override colours from balham theme
-    --ag-balham-active-color: #00B0FF;
+    --ag-active-color: #00B0FF;
     --ag-foreground-color: #F5F5F5;
     --ag-background-color: #2d3436;
     --ag-header-background-color: #1c1c1c;
@@ -92,20 +81,11 @@
 
     // override blended colors from balham theme
     --ag-secondary-foreground-color: var(--ag-foreground-color);
-    --ag-disabled-foreground-color: #{color.change(#F5F5F5, $alpha: 0.38)};
-    --ag-subheader-toolbar-background-color: #{color.change(#111, $alpha: 0.5)};
     --ag-row-border-color: #5c5c5c;
-    --ag-chip-background-color: #{color.change(#F5F5F5, $alpha: 0.08)};
-    --ag-range-selection-background-color: #{color.change(#00B0FF, $alpha: 0.2)};
-    --ag-range-selection-background-color-2: #{color.change(#00B0FF, $alpha: 0.36)};
-    --ag-range-selection-background-color-3: #{color.change(#00B0FF, $alpha: 0.49)};
-    --ag-range-selection-background-color-4: #{color.change(#00B0FF, $alpha: 0.59)};
-    --ag-selected-row-background-color: #{color.change(#00B0FF, $alpha: 0.28)};
-    --ag-header-column-separator-color: #{color.change(#424242, $alpha: 0.5)};
-    --ag-input-disabled-border-color: #{color.change(#f0f0f0, $alpha: 0.3)};
+    --ag-chip-background-color: color-mix(in srgb, transparent, var(--ag-foreground-color) 8%);
 
     // additional overrides
-    --ag-header-foreground-color: #{color.change(#F5F5F5, $alpha: 0.64)};
+    --ag-header-foreground-color: color-mix(in srgb, transparent, var(--ag-foreground-color) 64%);
     --ag-toggle-button-off-background-color: transparent;
     --ag-toggle-button-off-border-color: var(--ag-foreground-color);
     --ag-range-selection-chart-category-background-color: #{color.change(#1ab14a, $alpha: 0.5)};

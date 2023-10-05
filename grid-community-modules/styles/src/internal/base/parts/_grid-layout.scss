@@ -7,6 +7,7 @@
 
     .ag-root-wrapper {
         border: var(--ag-borders) var(--ag-border-color);
+        border-radius: var(--ag-wrapper-border-radius);
     }
 
     // support 100 levels here because row group indentation is used for tree data which can be quite deep

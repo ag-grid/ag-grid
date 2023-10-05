@@ -18,6 +18,8 @@ const testDefs: TestDef[] = [
       ['rgba(0, 255, 0, 0.5)', color('#00ff0080')],
       ['hsl(120, 100%, 50%)', color('#00ff00')],
       ['hsla(120, 100%, 50%, 0.5)', color('#00ff0080')],
+      ['color(srgb 0 0.5 1)', color('#0080ff')],
+      ['color(srgb 0 0.5 1 / 0.2)', color('#0080ff33')],
     ],
   ],
   [

@@ -41,6 +41,7 @@ export type VariableInfoByType = {
 export type VariableInfo = VariableInfoByType[ValueType];
 
 const colorVariables = [
+  '--ag-active-color',
   '--ag-background-color',
   '--ag-border-color',
   '--ag-checkbox-background-color',
@@ -158,12 +159,9 @@ const variables: Record<string, VariableInfo> = {
   '--ag-widget-horizontal-spacing': { type: 'dimension', min: 0, max: 100, step: 1 },
   '--ag-widget-vertical-spacing': { type: 'dimension', min: 0, max: 100, step: 1 },
 
-  '--ag-alpine-active-color': { type: 'color', specificToTheme: 'ag-theme-alpine' },
-  '--ag-balham-active-color': { type: 'color', specificToTheme: 'ag-theme-balham' },
-  '--ag-material-primary-color': { type: 'color', specificToTheme: 'ag-theme-material' },
-  '--ag-material-accent-color': { type: 'color', specificToTheme: 'ag-theme-material' },
-
   ...Object.fromEntries(colorVariables.map((variableName) => [variableName, { type: 'color' }])),
+
+  '--ag-material-primary-color': { type: 'color', specificToTheme: 'ag-theme-material' },
 };
 
 export const allVariableNames = Object.keys(variables);
