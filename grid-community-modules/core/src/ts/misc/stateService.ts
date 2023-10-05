@@ -24,13 +24,18 @@ import {
     ScrollState,
     SideBarState,
     SortState,
-    ColumnGroupState
+    ColumnGroupState,
+    RowGroupExpansionState
 } from "../interfaces/gridState";
 import { IRangeService } from "../interfaces/IRangeService";
 import { ISideBarService } from "../interfaces/iSideBar";
 import { FilterModel } from "../interfaces/iFilter";
+import { IRowModel } from "../interfaces/iRowModel";
+import { ISelectionService } from "../interfaces/iSelectionService";
+import { ClientSideRowModelSteps, IClientSideRowModel } from "../interfaces/iClientSideRowModel";
 import { PaginationProxy } from "../pagination/paginationProxy";
 import { SortModelItem } from "../sortController";
+import { ServerSideRowGroupSelectionState, RowSelectionState } from "../interfaces/selectionState";
 
 @Bean('stateService')
 export class StateService extends BeanStub {
@@ -41,8 +46,11 @@ export class StateService extends BeanStub {
     @Autowired('focusService') private focusService: FocusService;
     @Autowired('columnModel') private columnModel: ColumnModel;
     @Autowired('paginationProxy') private paginationProxy: PaginationProxy;
+    @Autowired('rowModel') private rowModel: IRowModel;
+    @Autowired('selectionService') private selectionService: ISelectionService;
 
     private hasFirstDataRendered: boolean = false;
+    private hasModelUpdated: boolean = false;
 
     @PostConstruct
     private postConstruct(): void {
@@ -60,6 +68,12 @@ export class StateService extends BeanStub {
                 this.setInitialStateOnRowDataUpdated();
             }
         });
+        this.addManagedListener(this.eventService, Events.EVENT_MODEL_UPDATED, () => {
+            if (!this.hasModelUpdated) {
+                this.hasModelUpdated = true;
+                this.setInitialStateOnModelUpdated();
+            }
+        })
     }
 
     public getState(): GridState {
@@ -71,7 +85,9 @@ export class StateService extends BeanStub {
             scroll: this.getScrollState(),
             sideBar: this.getSideBarState(),
             focusedCell: this.getFocusedCellState(),
-            pagination: this.getPaginationState()
+            pagination: this.getPaginationState(),
+            rowSelection: this.getRowSelectionState(),
+            rowGroupExpansion: this.getRowGroupExpansionState()
         };
     }
 
@@ -88,6 +104,19 @@ export class StateService extends BeanStub {
         const { pagination: paginationState } = this.gridOptionsService.get('initialState') ?? {};
         if (paginationState) {
             this.setPaginationState(paginationState);
+        }
+    }
+
+    private setInitialStateOnModelUpdated(): void {
+        const {
+            rowGroupExpansion: rowGroupExpansionState,
+            rowSelection: rowSelectionState
+        } = this.gridOptionsService.get('initialState') ?? {};
+        if (rowGroupExpansionState) {
+            this.setRowGroupExpansionState(rowGroupExpansionState);
+        }
+        if (rowSelectionState) {
+            this.setRowSelectionState(rowSelectionState);
         }
     }
 
@@ -296,7 +325,7 @@ export class StateService extends BeanStub {
     private setFilterState(filterState: FilterState): void {
         const { filterModel, advancedFilterModel } = filterState;
         if (filterModel) {
-            this.filterManager.setFilterModel(filterModel);
+            this.filterManager.setFilterModel(filterModel, 'columnFilter');
         }
         if (advancedFilterModel) {
             this.filterManager.setAdvancedFilterModel(advancedFilterModel);
@@ -385,5 +414,39 @@ export class StateService extends BeanStub {
 
     private setPaginationState(paginationState: PaginationState): void {
         this.paginationProxy.setPage(paginationState.page);
+    }
+
+    private getRowSelectionState(): RowSelectionState | ServerSideRowGroupSelectionState | undefined {
+        const selectionState = this.selectionService.getSelectionState();
+        return selectionState ?? undefined;
+    }
+
+    private setRowSelectionState(rowSelectionState: RowSelectionState | ServerSideRowGroupSelectionState): void {
+        this.selectionService.setSelectionState(rowSelectionState, 'gridInitializing');
+    }
+
+    private getRowGroupExpansionState(): RowGroupExpansionState | undefined {
+        const expandedRowGroups: string[] = [];
+        this.rowModel.forEachNode(node => {
+            const { expanded, id } = node;
+            if (expanded && id) {
+                expandedRowGroups.push(id);
+            }
+        });
+        return expandedRowGroups.length ? {
+            expandedRowGroups
+        } : undefined;
+    }
+
+    private setRowGroupExpansionState(rowGroupExpansionState: RowGroupExpansionState): void {
+        rowGroupExpansionState.expandedRowGroups.forEach(rowId => {
+            const rowNode = this.rowModel.getRowNode(rowId);
+            if (rowNode) {
+                rowNode.expanded = true;
+            }
+        });
+        if (this.rowModel.getType() === 'clientSide') {
+            (this.rowModel as IClientSideRowModel).refreshModel({ step: ClientSideRowModelSteps.MAP });
+        }
     }
 }

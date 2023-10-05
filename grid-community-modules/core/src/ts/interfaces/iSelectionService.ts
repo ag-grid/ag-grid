@@ -1,11 +1,11 @@
 import { RowNode } from "../entities/rowNode";
 import { SelectionEventSourceType } from "../events";
 import { ChangedPath } from "../utils/changedPath";
-import { IServerSideGroupSelectionState, IServerSideSelectionState } from "./iServerSideSelection";
+import { ServerSideRowGroupSelectionState, RowSelectionState } from "./selectionState";
 
 export interface ISelectionService {
-    getServerSideSelectionState(): IServerSideSelectionState | IServerSideGroupSelectionState | null;
-    setServerSideSelectionState(state: IServerSideSelectionState | IServerSideGroupSelectionState): void;
+    getSelectionState(): RowSelectionState | ServerSideRowGroupSelectionState | null;
+    setSelectionState(state: RowSelectionState | ServerSideRowGroupSelectionState, source: SelectionEventSourceType): void;
     getSelectedNodes(): RowNode<any>[];
     getSelectedRows(): any[];
     getSelectionCount(): number;

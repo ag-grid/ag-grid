@@ -16,6 +16,7 @@ import { WithoutGridCommon } from "./interfaces/iCommon";
 import { PaginationProxy } from "./pagination/paginationProxy";
 import { ISelectionService, ISetNodesSelectedParams } from "./interfaces/iSelectionService";
 import { _ } from "./utils";
+import { ServerSideRowGroupSelectionState, RowSelectionState } from "./interfaces/selectionState";
 
 @Bean('selectionService')
 export class SelectionService extends BeanStub implements ISelectionService {
@@ -437,7 +438,9 @@ export class SelectionService extends BeanStub implements ISelectionService {
         this.eventService.dispatchEvent(event);
     }
 
-    public getSelectAllState(justFiltered?: boolean | undefined, justCurrentPage?: boolean | undefined): boolean | null {
+    private getSelectedCounts(justFiltered?: boolean | undefined, justCurrentPage?: boolean | undefined): {
+        selectedCount: number, notSelectedCount: number
+    } {
         let selectedCount = 0;
         let notSelectedCount = 0;
 
@@ -454,7 +457,11 @@ export class SelectionService extends BeanStub implements ISelectionService {
         };
 
         this.getNodesToSelect(justFiltered, justCurrentPage).forEach(callback);
+        return { selectedCount, notSelectedCount };
+    }
 
+    public getSelectAllState(justFiltered?: boolean | undefined, justCurrentPage?: boolean | undefined): boolean | null {
+        const { selectedCount, notSelectedCount } = this.getSelectedCounts(justFiltered, justCurrentPage);
         // if no rows, always have it unselected
         if (selectedCount === 0 && notSelectedCount === 0) {
             return false;
@@ -545,10 +552,64 @@ export class SelectionService extends BeanStub implements ISelectionService {
         this.eventService.dispatchEvent(event);
     }
 
-    // Used by SSRM
-    public getServerSideSelectionState() {
-        return null;
+    public getSelectionState(): RowSelectionState | null {
+        const { selectedCount, notSelectedCount } = this.getSelectedCounts();
+        const selectAll = selectedCount > notSelectedCount;
+        const toggledNodes: string[] = [];
+        if (selectAll) {
+            this.rowModel.forEachNode(node => {
+                if (node.id && !node.isSelected()) {
+                    toggledNodes.push(node.id);
+                }
+            });
+        } else {
+            Object.values(this.selectedNodes).forEach(node => {
+                if (node?.id) {
+                    toggledNodes.push(node.id);
+                }
+            });
+        }
+        return selectAll || toggledNodes.length ? {
+            selectAll,
+            toggledNodes
+        } : null;
     }
 
-    public setServerSideSelectionState(state: any): void {}
+    public setSelectionState(state: RowSelectionState | ServerSideRowGroupSelectionState, source: SelectionEventSourceType): void {
+        const isRowSelectionState = (
+            state: RowSelectionState | ServerSideRowGroupSelectionState
+        ): state is RowSelectionState => (state as RowSelectionState).selectAll != null;
+
+        if (!isRowSelectionState(state)) {
+            return;
+        }
+
+        const { selectAll, toggledNodes } = state;
+        if (!toggledNodes.length) {
+            if (selectAll) {
+                this.selectAllRowNodes({ source });
+            } else {
+                this.deselectAllRowNodes({ source });
+            }
+        } else {
+            const rowIds = new Set(toggledNodes);
+            const nodes: RowNode[] = [];
+            const addToNodes = selectAll ? (node: RowNode) => {
+                if (!rowIds.has(node.id!)) {
+                    nodes.push(node);
+                }
+            } : (node: RowNode) => {
+                if (rowIds.has(node.id!)) {
+                    nodes.push(node);
+                }
+            }
+            this.rowModel.forEachNode(addToNodes);
+            this.setNodesSelected({
+                newValue: true,
+                nodes,
+                clearSelection: true,
+                source
+            });
+        }
+    }
 }

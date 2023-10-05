@@ -212,13 +212,13 @@ export class Column<TValue = any> implements IHeaderColumn<TValue>, IProvidedCol
     }
 
     // gets called when user provides an alternative colDef, eg
-    public setColDef(colDef: ColDef<TValue>, userProvidedColDef: ColDef<TValue> | null): void {
+    public setColDef(colDef: ColDef<TValue>, userProvidedColDef: ColDef<TValue> | null, source: ColumnEventType = 'api'): void {
         this.colDef = colDef;
         this.userProvidedColDef = userProvidedColDef;
         this.initMinAndMaxWidths();
         this.initDotNotation();
         this.initTooltip();
-        this.eventService.dispatchEvent(this.createColumnEvent('colDefChanged', "api"));
+        this.eventService.dispatchEvent(this.createColumnEvent('colDefChanged', source));
     }
 
     /**

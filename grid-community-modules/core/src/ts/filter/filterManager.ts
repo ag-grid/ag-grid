@@ -60,7 +60,7 @@ export class FilterManager extends BeanStub {
     private aggFiltering: boolean;
 
     // when we're waiting for cell data types to be inferred, we need to defer filter model updates
-    private filterModelUpdateQueue: FilterModel[] = [];
+    private filterModelUpdateQueue: { model: FilterModel, source: FilterChangedEventSourceType }[] = [];
     private advancedFilterModelUpdateQueue: (AdvancedFilterModel | null | undefined)[] = [];
 
     @PostConstruct
@@ -104,14 +104,14 @@ export class FilterManager extends BeanStub {
         return false;
     }
 
-    public setFilterModel(model: FilterModel): void {
+    public setFilterModel(model: FilterModel, source: FilterChangedEventSourceType = 'api'): void {
         if (this.isAdvancedFilterEnabled()) {
             this.warnAdvancedFilters();
             return;
         }
 
         if (this.dataTypeService.isPendingInference()) {
-            this.filterModelUpdateQueue.push(model);
+            this.filterModelUpdateQueue.push({ model, source });
             return;
         }
 
@@ -170,7 +170,7 @@ export class FilterManager extends BeanStub {
             });
 
             if (columns.length > 0) {
-                this.onFilterChanged({ columns, source: 'api' });
+                this.onFilterChanged({ columns, source });
             }
         });
     }
@@ -962,7 +962,7 @@ export class FilterManager extends BeanStub {
     }
 
     private processFilterModelUpdateQueue(): void {
-        this.filterModelUpdateQueue.forEach(model => this.setFilterModel(model));
+        this.filterModelUpdateQueue.forEach(({ model, source }) => this.setFilterModel(model, source));
         this.filterModelUpdateQueue = [];
         this.advancedFilterModelUpdateQueue.forEach(model => this.setAdvancedFilterModel(model));
         this.advancedFilterModelUpdateQueue = [];

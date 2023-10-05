@@ -1119,6 +1119,16 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel 
             rowNodeOrder = this.createRowNodeOrder();
         }
 
+        // - updates filters
+        this.filterManager.onNewRowsLoaded('rowDataUpdated');
+
+        const event: WithoutGridCommon<RowDataUpdatedEvent> = {
+            type: Events.EVENT_ROW_DATA_UPDATED
+        };
+        this.eventService.dispatchEvent(event);
+
+        this.isRowDataLoaded = true;
+
         this.refreshModel({
             step: ClientSideRowModelSteps.EVERYTHING,
             rowNodeTransactions: rowNodeTrans,
@@ -1127,14 +1137,6 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel 
             keepEditingRows: true,
             animate
         });
-
-        // - updates filters
-        this.filterManager.onNewRowsLoaded('rowDataUpdated');
-
-        const event: WithoutGridCommon<RowDataUpdatedEvent> = {
-            type: Events.EVENT_ROW_DATA_UPDATED
-        };
-        this.eventService.dispatchEvent(event);
     }
 
     private doRowsToDisplay() {

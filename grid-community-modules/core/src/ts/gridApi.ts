@@ -870,7 +870,7 @@ export class GridApi<TData = any> {
             return null;
         }
 
-        return this.selectionService.getServerSideSelectionState();
+        return this.selectionService.getSelectionState();
     }
 
     /**
@@ -885,7 +885,7 @@ export class GridApi<TData = any> {
             return;
         }
 
-        this.selectionService.setServerSideSelectionState(state);
+        this.selectionService.setSelectionState(state, 'api');
     }
 
     /**

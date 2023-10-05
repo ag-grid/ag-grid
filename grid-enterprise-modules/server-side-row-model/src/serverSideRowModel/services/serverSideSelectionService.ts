@@ -1,4 +1,20 @@
-import { Autowired, Bean, BeanStub, ChangedPath, Events, IRowModel, ISelectionService, IServerSideSelectionState, IServerSideGroupSelectionState, PostConstruct, RowNode, SelectionChangedEvent, SelectionEventSourceType, WithoutGridCommon, ISetNodesSelectedParams } from "@ag-grid-community/core";
+import {
+    Autowired,
+    Bean,
+    BeanStub,
+    ChangedPath,
+    Events,
+    IRowModel,
+    ISelectionService,
+    PostConstruct,
+    RowNode,
+    SelectionChangedEvent,
+    SelectionEventSourceType,
+    WithoutGridCommon,
+    ISetNodesSelectedParams,
+    ServerSideRowGroupSelectionState,
+    RowSelectionState
+} from "@ag-grid-community/core";
 import { DefaultStrategy } from "./selection/strategies/defaultStrategy";
 import { GroupSelectsChildrenStrategy } from "./selection/strategies/groupSelectsChildrenStrategy";
 import { ISelectionStrategy } from "./selection/strategies/iSelectionStrategy";
@@ -31,17 +47,17 @@ export class ServerSideSelectionService extends BeanStub implements ISelectionSe
         this.selectionStrategy = this.createManagedBean(new StrategyClazz());
     }
  
-    public getServerSideSelectionState() {
+    public getSelectionState(): RowSelectionState | ServerSideRowGroupSelectionState | null {
         return this.selectionStrategy.getSelectedState();
     }
 
-    public setServerSideSelectionState(state: IServerSideSelectionState | IServerSideGroupSelectionState): void {
+    public setSelectionState(state: RowSelectionState | ServerSideRowGroupSelectionState, source: SelectionEventSourceType): void {
         this.selectionStrategy.setSelectedState(state);
         this.shotgunResetNodeSelectionState();
 
         const event: WithoutGridCommon<SelectionChangedEvent> = {
             type: Events.EVENT_SELECTION_CHANGED,
-            source: 'api',
+            source,
         };
         this.eventService.dispatchEvent(event);
     }

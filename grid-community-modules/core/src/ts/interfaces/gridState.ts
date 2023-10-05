@@ -3,6 +3,7 @@ import { SortModelItem } from "../sortController";
 import { AdvancedFilterModel } from "./advancedFilterModel";
 import { FilterModel } from "./iFilter";
 import { CellRangeType } from "./IRangeService";
+import { ServerSideRowGroupSelectionState, RowSelectionState } from "./selectionState";
 
 export interface FilterState { 
     filterModel?: FilterModel
@@ -94,20 +95,26 @@ export interface ColumnGroupState {
     openColumnGroups: string[];
 }
 
+export interface RowGroupExpansionState {
+    expandedRowGroups: string[];
+}
+
 export interface GridState {
+    aggregation?: AggregationState;
+    columnGroup?: ColumnGroupState;
+    columnOrder?: ColumnOrderState;
+    columnPinning?: ColumnPinningState;
+    columnSizing?: ColumnSizingState;
+    columnVisibility?: ColumnVisibilityState;
     filter?: FilterState;
-    rangeSelection?: RangeSelectionState;
-    scroll?: ScrollState;
-    sideBar?: SideBarState;
     focusedCell?: FocusedCellState;
     pagination?: PaginationState;
-    sort?: SortState;
-    rowGroup?: RowGroupState;
-    aggregation?: AggregationState;
     pivot?: PivotState;
-    columnPinning?: ColumnPinningState;
-    columnVisibility?: ColumnVisibilityState;
-    columnSizing?: ColumnSizingState;
-    columnOrder?: ColumnOrderState;
-    columnGroup?: ColumnGroupState;
+    rangeSelection?: RangeSelectionState;
+    rowGroup?: RowGroupState;
+    rowGroupExpansion?: RowGroupExpansionState;
+    rowSelection?: RowSelectionState | ServerSideRowGroupSelectionState;
+    scroll?: ScrollState;
+    sideBar?: SideBarState;
+    sort?: SortState;
 }

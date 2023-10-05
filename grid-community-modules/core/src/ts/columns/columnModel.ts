@@ -4140,11 +4140,11 @@ export class ColumnModel extends BeanStub {
         this.resizeOperationQueue = [];
     }
 
-    public resetColumnDefIntoColumn(column: Column): boolean {
+    public resetColumnDefIntoColumn(column: Column, source: ColumnEventType): boolean {
         const userColDef = column.getUserProvidedColDef();
         if (!userColDef) { return false; }
         const newColDef = this.columnFactory.addColumnDefaultAndTypes(userColDef, column.getColId());
-        column.setColDef(newColDef, userColDef);
+        column.setColDef(newColDef, userColDef, source);
         return true;
     }
 
