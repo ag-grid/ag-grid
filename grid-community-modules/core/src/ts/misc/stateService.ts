@@ -50,11 +50,14 @@ export class StateService extends BeanStub {
     @Autowired('selectionService') private selectionService: ISelectionService;
     @Autowired('expansionService') private expansionService: IExpansionService;
 
+    private isClientSideRowModel: boolean;
     private hasFirstDataRendered: boolean = false;
     private hasModelUpdated: boolean = false;
 
     @PostConstruct
     private postConstruct(): void {
+        this.isClientSideRowModel = this.rowModel.getType() === 'clientSide';
+
         this.addManagedListener(this.eventService, Events.EVENT_NEW_COLUMNS_LOADED, ({ source }: NewColumnsLoadedEvent) => {
             if (source === 'gridInitializing') {
                 this.setInitialStateOnColumnsInitialised();
@@ -359,6 +362,10 @@ export class StateService extends BeanStub {
     }
 
     private getScrollState(): ScrollState | undefined {
+        if (!this.isClientSideRowModel) {
+            // can't restore, so don't provide
+            return undefined;
+        }
         const scrollFeature = this.ctrlsService.getGridBodyCtrl()?.getScrollFeature();
         const { left } = scrollFeature?.getHScrollPosition() ?? { left: 0 };
         const { top } = scrollFeature?.getVScrollPosition() ?? { top: 0 };
@@ -369,6 +376,7 @@ export class StateService extends BeanStub {
     }
 
     private setScrollState(scrollState: ScrollState): void {
+        if (!this.isClientSideRowModel) { return; }
         const { top, left } = scrollState;
         this.ctrlsService.getGridBodyCtrl()?.getScrollFeature().setScrollPosition(top, left);
     }
@@ -386,6 +394,10 @@ export class StateService extends BeanStub {
     }
 
     private getFocusedCellState(): FocusedCellState | undefined {
+        if (!this.isClientSideRowModel) {
+            // can't restore, so don't provide
+            return undefined;
+        }
         const focusedCell = this.focusService.getFocusedCell();
         if (focusedCell) {
             const { column, rowIndex, rowPinned } = focusedCell;
@@ -399,6 +411,7 @@ export class StateService extends BeanStub {
     }
 
     private setFocusedCellState(focusedCellState: FocusedCellState): void {
+        if (!this.isClientSideRowModel) { return; }
         const { colId, rowIndex, rowPinned } = focusedCellState;
         this.focusService.setFocusedCell({
             column: this.columnModel.getGridColumn(colId),
