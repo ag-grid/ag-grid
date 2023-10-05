@@ -1,6 +1,5 @@
 import {
     _,
-    IsServerSideGroupOpenByDefaultParams,
     RowBounds,
     Autowired,
     Bean,
@@ -12,10 +11,10 @@ import {
     ValueService,
     NumberSequence,
     Beans,
-    WithoutGridCommon,
     IRowNode
 } from "@ag-grid-community/core";
 import { NodeManager } from "../nodeManager";
+import { ServerSideExpansionService } from "../services/serverSideExpansionService";
 
 export const GROUP_MISSING_KEY_ID: 'ag-Grid-MissingKey' = 'ag-Grid-MissingKey';
 
@@ -26,6 +25,7 @@ export class BlockUtils extends BeanStub {
     @Autowired('columnModel') private columnModel: ColumnModel;
     @Autowired('ssrmNodeManager') private nodeManager: NodeManager;
     @Autowired('beans') private beans: Beans;
+    @Autowired('expansionService') private readonly expansionService: ServerSideExpansionService;
 
     private rowHeight: number;
 
@@ -391,26 +391,6 @@ export class BlockUtils extends BeanStub {
     }
 
     public checkOpenByDefault(rowNode: RowNode): void {
-        if (!rowNode.isExpandable()) { return; }
-
-        const userFunc = this.gridOptionsService.getCallback('isServerSideGroupOpenByDefault');
-        if (!userFunc) { return; }
-
-        const params: WithoutGridCommon<IsServerSideGroupOpenByDefaultParams> = {
-            data: rowNode.data,
-            rowNode
-        };
-
-        const userFuncRes = userFunc(params);
-
-        if (userFuncRes) {
-            // we do this in a timeout, so that we don't expand a row node while in the middle
-            // of setting up rows, setting up rows is complex enough without another chunk of work
-            // getting added to the call stack. this is also helpful as openByDefault may or may
-            // not happen (so makes setting up rows more deterministic by expands never happening)
-            // and also checkOpenByDefault is shard with both store types, so easier control how it
-            // impacts things by keeping it in new VM turn.
-            window.setTimeout(() => rowNode.setExpanded(true), 0);
-        }
+        return this.expansionService.checkOpenByDefault(rowNode);
     }
 }

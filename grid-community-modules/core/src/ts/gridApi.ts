@@ -132,6 +132,7 @@ import { Events } from './eventKeys';
 import { IAdvancedFilterBuilderParams } from "./interfaces/iAdvancedFilterBuilderParams";
 import { GridState } from "./interfaces/gridState";
 import { StateService } from "./misc/stateService";
+import { IExpansionService } from "./interfaces/iExpansionService";
 
 export interface DetailGridInfo {
     /**
@@ -199,6 +200,7 @@ export class GridApi<TData = any> {
     @Autowired('ctrlsService') private ctrlsService: CtrlsService;
     @Optional('sideBarService') private sideBarService?: ISideBarService;
     @Autowired('stateService') private stateService: StateService;
+    @Autowired('expansionService') private expansionService: IExpansionService;
 
     private overlayWrapperComp: OverlayWrapperComponent;
 
@@ -600,14 +602,7 @@ export class GridApi<TData = any> {
 
     /** Expand or collapse a specific row node, optionally expanding/collapsing all of its parent nodes. */
     public setRowNodeExpanded(rowNode: IRowNode, expanded: boolean, expandParents?: boolean): void {
-        if (rowNode) {
-            // expand all parents recursively, except root node.
-            if (expandParents && rowNode.parent && rowNode.parent.level !== -1) {
-                this.setRowNodeExpanded(rowNode.parent, expanded, expandParents);
-            }
-
-            rowNode.setExpanded(expanded);
-        }
+        this.expansionService.setRowNodeExpanded(rowNode, expanded, expandParents);
     }
 
     /**
@@ -620,11 +615,7 @@ export class GridApi<TData = any> {
             this.logMissingRowModel('onGroupExpandedOrCollapsed', 'clientSide');
             return;
         }
-        // we don't really want the user calling this if only one rowNode was expanded, instead they should be
-        // calling rowNode.setExpanded(boolean) - this way we do a 'keepRenderedRows=false' so that the whole
-        // grid gets refreshed again - otherwise the row with the rowNodes that were changed won't get updated,
-        // and thus the expand icon in the group cell won't get 'opened' or 'closed'.
-        this.clientSideRowModel.refreshModel({ step: ClientSideRowModelSteps.MAP });
+        this.expansionService.onGroupExpandedOrCollapsed();
     }
 
     /**
@@ -672,10 +663,8 @@ export class GridApi<TData = any> {
 
     /** Expand all groups. */
     public expandAll() {
-        if (this.clientSideRowModel) {
-            this.clientSideRowModel.expandOrCollapseAll(true);
-        } else if (this.serverSideRowModel) {
-            this.serverSideRowModel.expandAll(true);
+        if (this.clientSideRowModel || this.serverSideRowModel) {
+            this.expansionService.expandAll(true);
         } else {
             this.logMissingRowModel('expandAll', 'clientSide', 'serverSide');
         }
@@ -683,12 +672,10 @@ export class GridApi<TData = any> {
 
     /** Collapse all groups. */
     public collapseAll() {
-        if (this.clientSideRowModel) {
-            this.clientSideRowModel.expandOrCollapseAll(false);
-        } else if (this.serverSideRowModel) {
-            this.serverSideRowModel.expandAll(false);
+        if (this.clientSideRowModel || this.serverSideRowModel) {
+            this.expansionService.expandAll(false);
         } else {
-            this.logMissingRowModel('expandAll', 'clientSide', 'serverSide');
+            this.logMissingRowModel('collapseAll', 'clientSide', 'serverSide');
         }
     }
 

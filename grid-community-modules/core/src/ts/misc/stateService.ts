@@ -32,10 +32,10 @@ import { ISideBarService } from "../interfaces/iSideBar";
 import { FilterModel } from "../interfaces/iFilter";
 import { IRowModel } from "../interfaces/iRowModel";
 import { ISelectionService } from "../interfaces/iSelectionService";
-import { ClientSideRowModelSteps, IClientSideRowModel } from "../interfaces/iClientSideRowModel";
 import { PaginationProxy } from "../pagination/paginationProxy";
 import { SortModelItem } from "../sortController";
 import { ServerSideRowGroupSelectionState, RowSelectionState } from "../interfaces/selectionState";
+import { IExpansionService } from "../interfaces/iExpansionService";
 
 @Bean('stateService')
 export class StateService extends BeanStub {
@@ -48,6 +48,7 @@ export class StateService extends BeanStub {
     @Autowired('paginationProxy') private paginationProxy: PaginationProxy;
     @Autowired('rowModel') private rowModel: IRowModel;
     @Autowired('selectionService') private selectionService: ISelectionService;
+    @Autowired('expansionService') private expansionService: IExpansionService;
 
     private hasFirstDataRendered: boolean = false;
     private hasModelUpdated: boolean = false;
@@ -315,7 +316,7 @@ export class StateService extends BeanStub {
 
     private getFilterState(): FilterState | undefined {
         let filterModel: FilterModel | undefined = this.filterManager.getFilterModel();
-        if (filterModel === {}) {
+        if (filterModel && Object.keys(filterModel).length === 0) {
             filterModel = undefined;
         }
         const advancedFilterModel = this.filterManager.getAdvancedFilterModel() ?? undefined;
@@ -348,6 +349,7 @@ export class StateService extends BeanStub {
     }
 
     private setRangeSelectionState(rangeSelectionState: RangeSelectionState): void {
+        if (!this.gridOptionsService.is('enableRangeSelection')) { return; }
         const cellRanges = rangeSelectionState.cellRanges.map(cellRange => ({
             ...cellRange,
             columns: cellRange.colIds.map(colId => this.columnModel.getGridColumn(colId)!),
@@ -418,7 +420,13 @@ export class StateService extends BeanStub {
 
     private getRowSelectionState(): RowSelectionState | ServerSideRowGroupSelectionState | undefined {
         const selectionState = this.selectionService.getSelectionState();
-        return selectionState ?? undefined;
+        const noSelections = !selectionState || (
+            (
+                (selectionState as RowSelectionState).selectAll === false ||
+                    (selectionState as ServerSideRowGroupSelectionState).selectAllChildren === false
+            ) && !selectionState?.toggledNodes?.length
+        );
+        return noSelections ? undefined : selectionState;
     }
 
     private setRowSelectionState(rowSelectionState: RowSelectionState | ServerSideRowGroupSelectionState): void {
@@ -426,27 +434,13 @@ export class StateService extends BeanStub {
     }
 
     private getRowGroupExpansionState(): RowGroupExpansionState | undefined {
-        const expandedRowGroups: string[] = [];
-        this.rowModel.forEachNode(node => {
-            const { expanded, id } = node;
-            if (expanded && id) {
-                expandedRowGroups.push(id);
-            }
-        });
+        const expandedRowGroups = this.expansionService.getExpandedRows();
         return expandedRowGroups.length ? {
             expandedRowGroups
         } : undefined;
     }
 
     private setRowGroupExpansionState(rowGroupExpansionState: RowGroupExpansionState): void {
-        rowGroupExpansionState.expandedRowGroups.forEach(rowId => {
-            const rowNode = this.rowModel.getRowNode(rowId);
-            if (rowNode) {
-                rowNode.expanded = true;
-            }
-        });
-        if (this.rowModel.getType() === 'clientSide') {
-            (this.rowModel as IClientSideRowModel).refreshModel({ step: ClientSideRowModelSteps.MAP });
-        }
+        this.expansionService.expandRows(rowGroupExpansionState.expandedRowGroups);
     }
 }

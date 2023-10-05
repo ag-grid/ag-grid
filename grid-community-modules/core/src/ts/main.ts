@@ -176,6 +176,7 @@ export { TabbedLayout, TabbedItem } from "./layout/tabbedLayout";
 export { ResizeObserverService } from "./misc/resizeObserverService";
 export { IImmutableService } from "./interfaces/iImmutableService";
 export { AnimationFrameService } from "./misc/animationFrameService";
+export { ExpansionService } from "./misc/expansionService";
 
 // editing / cellEditors
 export { ICellEditor, ICellEditorComp, ICellEditorParams } from "./interfaces/iCellEditor";
@@ -369,6 +370,7 @@ export {
 // uncatalogued
 export { IRowModel, RowBounds, RowModelType } from "./interfaces/iRowModel";
 export { ISelectionService, ISetNodesSelectedParams } from "./interfaces/iSelectionService";
+export { IExpansionService } from "./interfaces/iExpansionService";
 export { RowSelectionState, ServerSideRowGroupSelectionState } from "./interfaces/selectionState";
 export { IServerSideSelectionState, IServerSideGroupSelectionState } from "./interfaces/iServerSideSelection";
 export { IAggFuncService } from "./interfaces/iAggFuncService";
