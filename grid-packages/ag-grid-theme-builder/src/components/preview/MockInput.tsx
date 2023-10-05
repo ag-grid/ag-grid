@@ -1,7 +1,7 @@
 import { useEffect, useRef } from 'react';
 
-type MockInputProps = {
-  kind: 'checkbox' | 'toggle-button';
+export type MockInputProps = {
+  kind: 'checkbox' | 'toggle-button' | 'radio-button';
   state: 'unchecked' | 'checked' | 'indeterminate';
   focus?: boolean;
   disabled?: boolean;
@@ -37,6 +37,7 @@ export const MockInput = ({ kind, state, focus, disabled }: MockInputProps) => {
         type="checkbox"
         checked={state === 'checked'}
         disabled={disabled}
+        tabIndex={-1}
         readOnly
       />
     </div>

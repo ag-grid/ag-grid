@@ -1,28 +1,59 @@
-import { MockInput } from './MockInput';
-import { PreviewPanel } from './PreviewPanel';
+import {
+  MockInputContent,
+  PreviewDescription,
+  PreviewLabel,
+  PreviewPanel,
+  PreviewRow,
+  PreviewSubtitle,
+  PreviewTable,
+} from './Preview';
 
 export const ToggleButtonPreview = () => (
-  <PreviewPanel
-    description="Toggle buttons are used to enable pivoting in the columns tool panel, and in the chart settings menus."
-    rows={[
-      {
-        title: 'Normal',
-        label: 'Off',
-        preview: <MockInput kind="toggle-button" state="unchecked" />,
-      },
-      {
-        label: 'On',
-        preview: <MockInput kind="toggle-button" state="checked" />,
-      },
-      {
-        title: 'Focussed',
-        label: 'Off',
-        preview: <MockInput kind="toggle-button" state="unchecked" focus />,
-      },
-      {
-        label: 'On',
-        preview: <MockInput kind="toggle-button" state="checked" focus />,
-      },
-    ]}
-  />
+  <PreviewPanel>
+    <PreviewDescription>
+      Toggle buttons are used to enable pivoting in the columns tool panel, and in the chart
+      settings menus
+    </PreviewDescription>
+    <PreviewTable>
+      <PreviewSubtitle>Normal</PreviewSubtitle>
+      <PreviewRow>
+        <PreviewLabel>Off</PreviewLabel>
+        <MockInputContent kind="toggle-button" state="unchecked" />
+      </PreviewRow>
+      <PreviewRow>
+        <PreviewLabel>On</PreviewLabel>
+        <MockInputContent kind="toggle-button" state="checked" />
+      </PreviewRow>
+      <PreviewRow>
+        <PreviewLabel>Indeterminate</PreviewLabel>
+        <MockInputContent kind="toggle-button" state="indeterminate" />
+      </PreviewRow>
+      <PreviewSubtitle>Disabled</PreviewSubtitle>
+      <PreviewRow>
+        <PreviewLabel>Off</PreviewLabel>
+        <MockInputContent kind="toggle-button" state="unchecked" disabled />
+      </PreviewRow>
+      <PreviewRow>
+        <PreviewLabel>On</PreviewLabel>
+        <MockInputContent kind="toggle-button" state="checked" disabled />
+      </PreviewRow>
+      <PreviewRow>
+        <PreviewLabel>Indeterminate</PreviewLabel>
+        <MockInputContent kind="toggle-button" state="indeterminate" disabled />
+      </PreviewRow>
+      <PreviewSubtitle>Focussed / active</PreviewSubtitle>
+      <PreviewRow>
+        <PreviewLabel>Off</PreviewLabel>
+        <MockInputContent kind="toggle-button" state="unchecked" focus />
+      </PreviewRow>
+      <PreviewRow>
+        <PreviewLabel>On</PreviewLabel>
+        <MockInputContent kind="toggle-button" state="checked" focus />
+      </PreviewRow>
+      <PreviewRow>
+        <PreviewLabel>Indeterminate</PreviewLabel>
+        <MockInputContent kind="toggle-button" state="indeterminate" focus />
+      </PreviewRow>
+    </PreviewTable>
+  </PreviewPanel>
 );
