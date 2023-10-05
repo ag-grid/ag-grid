@@ -25,12 +25,12 @@ export class ColumnApi {
     }
 
     /** @deprecated v31 use `api.sizeColumnsToFit()` instead.   */
-    public sizeColumnsToFit(gridWidth: number): void { this.viaApi('sizeColumnsToFit', arguments); }
+    public sizeColumnsToFit(gridWidth: number): void { this.viaApi('sizeColumnsToFit', gridWidth); }
     /** @deprecated v31 use `api.setColumnGroupOpened() instead. */
-    public setColumnGroupOpened(group: ProvidedColumnGroup | string, newValue: boolean): void { this.viaApi('setColumnGroupOpened', arguments) }
+    public setColumnGroupOpened(group: ProvidedColumnGroup | string, newValue: boolean): void { this.viaApi('setColumnGroupOpened', group, newValue) }
 
     /** @deprecated v31 use `api.getColumnGroup() instead. */
-    public getColumnGroup(name: string, instanceId?: number): ColumnGroup | null { return this.viaApi('getColumnGroup', arguments); }
+    public getColumnGroup(name: string, instanceId?: number): ColumnGroup | null { return this.viaApi('getColumnGroup', name, instanceId); }
     /** @deprecated v31 use `api.getProvidedColumnGroup() instead. */
     public getProvidedColumnGroup(name: string): ProvidedColumnGroup | null {return this.viaApi('getProvidedColumnGroup', name);}
 
@@ -63,17 +63,17 @@ export class ColumnApi {
     /** @deprecated v31 use `api.isPinningRight() instead. */
     public isPinningRight(): boolean { return this.viaApi('isPinningRight'); }
     /** @deprecated v31 use `api.getDisplayedColAfter() instead. */
-    public getDisplayedColAfter(col: Column): Column | null { return this.viaApi('getDisplayedColAfter', arguments); }
+    public getDisplayedColAfter(col: Column): Column | null { return this.viaApi('getDisplayedColAfter', col); }
     /** @deprecated v31 use `api.getDisplayedColBefore() instead. */
-    public getDisplayedColBefore(col: Column): Column | null { return this.viaApi('getDisplayedColBefore', arguments); }
+    public getDisplayedColBefore(col: Column): Column | null { return this.viaApi('getDisplayedColBefore', col); }
     /** @deprecated v31 use `api.setColumnVisible() instead. */
-    public setColumnVisible(key: string | Column, visible: boolean): void { this.viaApi('setColumnVisible', arguments); }
+    public setColumnVisible(key: string | Column, visible: boolean): void { this.viaApi('setColumnVisible', key, visible); }
     /** @deprecated v31 use `api.setColumnsVisible() instead. */
-    public setColumnsVisible(keys: (string | Column)[], visible: boolean): void { this.viaApi('setColumnsVisible', arguments); }
+    public setColumnsVisible(keys: (string | Column)[], visible: boolean): void { this.viaApi('setColumnsVisible', keys, visible); }
     /** @deprecated v31 use `api.setColumnPinned() instead. */
-    public setColumnPinned(key: string | Column, pinned: ColumnPinnedType): void { this.viaApi('setColumnPinned', arguments); }
+    public setColumnPinned(key: string | Column, pinned: ColumnPinnedType): void { this.viaApi('setColumnPinned', key, pinned); }
     /** @deprecated v31 use `api.setColumnsPinned() instead. */
-    public setColumnsPinned(keys: (string | Column)[], pinned: ColumnPinnedType): void { this.viaApi('setColumnsPinned', arguments); }
+    public setColumnsPinned(keys: (string | Column)[], pinned: ColumnPinnedType): void { this.viaApi('setColumnsPinned', keys, pinned); }
 
     /** @deprecated v31 use `api.getAllGridColumns() instead. */
     public getAllGridColumns(): Column[] { return this.viaApi('getAllGridColumns'); }
@@ -89,67 +89,67 @@ export class ColumnApi {
     public getAllDisplayedVirtualColumns(): Column[] { return this.viaApi('getAllDisplayedVirtualColumns'); }
 
     /** @deprecated v31 use `api.moveColumn() instead. */
-    public moveColumn(key: string | Column, toIndex: number): void {this.viaApi('moveColumn', arguments);}
+    public moveColumn(key: string | Column, toIndex: number): void {this.viaApi('moveColumn', key, toIndex);}
     /** @deprecated v31 use `api.moveColumnByIndex() instead. */
-    public moveColumnByIndex(fromIndex: number, toIndex: number): void { this.viaApi('moveColumnByIndex', arguments) }
+    public moveColumnByIndex(fromIndex: number, toIndex: number): void { this.viaApi('moveColumnByIndex', fromIndex, toIndex) }
     /** @deprecated v31 use `api.moveColumns() instead. */
-    public moveColumns(columnsToMoveKeys: (string | Column)[], toIndex: number) { this.viaApi('moveColumns', arguments) }
+    public moveColumns(columnsToMoveKeys: (string | Column)[], toIndex: number) { this.viaApi('moveColumns', columnsToMoveKeys, toIndex) }
     /** @deprecated v31 use `api.moveRowGroupColumn() instead. */
-    public moveRowGroupColumn(fromIndex: number, toIndex: number): void { this.viaApi('moveRowGroupColumn', arguments) }
+    public moveRowGroupColumn(fromIndex: number, toIndex: number): void { this.viaApi('moveRowGroupColumn', fromIndex, toIndex) }
     /** @deprecated v31 use `api.setColumnAggFunc() instead. */
-    public setColumnAggFunc(key: string | Column, aggFunc: string | IAggFunc | null | undefined): void { this.viaApi('setColumnAggFunc', arguments) }
+    public setColumnAggFunc(key: string | Column, aggFunc: string | IAggFunc | null | undefined): void { this.viaApi('setColumnAggFunc', key, aggFunc) }
     /** @deprecated v31 use `api.setColumnWidth() instead. */
     public setColumnWidth(key: string | Column, newWidth: number, finished: boolean = true, source?: ColumnEventType): void {
-        this.viaApi('setColumnWidth', arguments);
+        this.viaApi('setColumnWidth', key, newWidth, finished, source);
     }
     /** @deprecated v31 use `api.setColumnWidths() instead. */
     public setColumnWidths(columnWidths: { key: string | Column, newWidth: number }[], finished: boolean = true, source?: ColumnEventType): void {
-        this.viaApi('setColumnWidths', arguments);
+        this.viaApi('setColumnWidths', columnWidths, finished, source);
     }
     /** @deprecated v31 use `api.setPivotMode() instead. */
-    public setPivotMode(pivotMode: boolean): void { this.viaApi('setPivotMode', arguments); }
+    public setPivotMode(pivotMode: boolean): void { this.viaApi('setPivotMode', pivotMode); }
     /** @deprecated v31 use `api.isPivotMode() instead. */
     public isPivotMode(): boolean { return this.viaApi('isPivotMode'); }
 
     /** @deprecated v31 use `api.getPivotResultColumn() instead. */
-    public getPivotResultColumn(pivotKeys: string[], valueColKey: string | Column): Column | null { return this.viaApi('getPivotResultColumn', arguments) }
+    public getPivotResultColumn(pivotKeys: string[], valueColKey: string | Column): Column | null { return this.viaApi('getPivotResultColumn', pivotKeys, valueColKey) }
 
     /** @deprecated v31 use `api.setValueColumns() instead. */
-    public setValueColumns(colKeys: (string | Column)[]): void { this.viaApi('setValueColumns', arguments) }
+    public setValueColumns(colKeys: (string | Column)[]): void { this.viaApi('setValueColumns', colKeys) }
     /** @deprecated v31 use `api.getValueColumns() instead. */
     public getValueColumns(): Column[] { return this.viaApi('getValueColumns'); }
     /** @deprecated v31 use `api.removeValueColumn() instead. */
-    public removeValueColumn(colKey: (string | Column)): void { this.viaApi('removeValueColumn', arguments) }
+    public removeValueColumn(colKey: (string | Column)): void { this.viaApi('removeValueColumn', colKey) }
     /** @deprecated v31 use `api.removeValueColumns() instead. */
-    public removeValueColumns(colKeys: (string | Column)[]): void { this.viaApi('removeValueColumns', arguments) }
+    public removeValueColumns(colKeys: (string | Column)[]): void { this.viaApi('removeValueColumns', colKeys) }
     /** @deprecated v31 use `api.addValueColumn() instead. */
-    public addValueColumn(colKey: (string | Column)): void { this.viaApi('addValueColumn', arguments) }
+    public addValueColumn(colKey: (string | Column)): void { this.viaApi('addValueColumn', colKey) }
     /** @deprecated v31 use `api.addValueColumns() instead. */
-    public addValueColumns(colKeys: (string | Column)[]): void { this.viaApi('addValueColumns', arguments) }
+    public addValueColumns(colKeys: (string | Column)[]): void { this.viaApi('addValueColumns', colKeys) }
 
     /** @deprecated v31 use `api.setRowGroupColumns() instead. */
-    public setRowGroupColumns(colKeys: (string | Column)[]): void { this.viaApi('setRowGroupColumns', arguments) }
+    public setRowGroupColumns(colKeys: (string | Column)[]): void { this.viaApi('setRowGroupColumns', colKeys) }
     /** @deprecated v31 use `api.removeRowGroupColumn() instead. */
-    public removeRowGroupColumn(colKey: string | Column): void { this.viaApi('removeRowGroupColumn', arguments) }
+    public removeRowGroupColumn(colKey: string | Column): void { this.viaApi('removeRowGroupColumn', colKey) }
     /** @deprecated v31 use `api.removeRowGroupColumns() instead. */
-    public removeRowGroupColumns(colKeys: (string | Column)[]): void { this.viaApi('removeRowGroupColumns', arguments) }
+    public removeRowGroupColumns(colKeys: (string | Column)[]): void { this.viaApi('removeRowGroupColumns', colKeys) }
     /** @deprecated v31 use `api.addRowGroupColumn() instead. */
-    public addRowGroupColumn(colKey: string | Column): void { this.viaApi('addRowGroupColumn', arguments) }
+    public addRowGroupColumn(colKey: string | Column): void { this.viaApi('addRowGroupColumn', colKey) }
     /** @deprecated v31 use `api.addRowGroupColumns() instead. */
-    public addRowGroupColumns(colKeys: (string | Column)[]): void { this.viaApi('addRowGroupColumns', arguments) }
+    public addRowGroupColumns(colKeys: (string | Column)[]): void { this.viaApi('addRowGroupColumns', colKeys) }
     /** @deprecated v31 use `api.getRowGroupColumns() instead. */
     public getRowGroupColumns(): Column[] { return  this.viaApi('getRowGroupColumns'); }
 
     /** @deprecated v31 use `api.setPivotColumns() instead. */
-    public setPivotColumns(colKeys: (string | Column)[]): void {this.viaApi('setPivotColumns', arguments); }
+    public setPivotColumns(colKeys: (string | Column)[]): void {this.viaApi('setPivotColumns', colKeys); }
     /** @deprecated v31 use `api.removePivotColumn() instead. */
-    public removePivotColumn(colKey: string | Column): void { this.viaApi('removePivotColumn', arguments) }
+    public removePivotColumn(colKey: string | Column): void { this.viaApi('removePivotColumn', colKey) }
     /** @deprecated v31 use `api.removePivotColumns() instead. */
-    public removePivotColumns(colKeys: (string | Column)[]): void { this.viaApi('removePivotColumns', arguments) }
+    public removePivotColumns(colKeys: (string | Column)[]): void { this.viaApi('removePivotColumns', colKeys) }
     /** @deprecated v31 use `api.addPivotColumn() instead. */
-    public addPivotColumn(colKey: string | Column): void { this.viaApi('addPivotColumn', arguments) }
+    public addPivotColumn(colKey: string | Column): void { this.viaApi('addPivotColumn', colKey) }
     /** @deprecated v31 use `api.addPivotColumns() instead. */
-    public addPivotColumns(colKeys: (string | Column)[]): void { this.viaApi('addPivotColumns', arguments) }
+    public addPivotColumns(colKeys: (string | Column)[]): void { this.viaApi('addPivotColumns', colKeys) }
     /** @deprecated v31 use `api.getPivotColumns() instead. */
     public getPivotColumns(): Column[] { return this.viaApi('getPivotColumns'); }
 
@@ -162,18 +162,18 @@ export class ColumnApi {
     /** @deprecated v31 use `api.getAllDisplayedColumnGroups() instead. */
     public getAllDisplayedColumnGroups(): IHeaderColumn[] | null { return this.viaApi('getAllDisplayedColumnGroups'); }
     /** @deprecated v31 use `api.autoSizeColumn() instead. */
-    public autoSizeColumn(key: string | Column, skipHeader?: boolean): void { return this.viaApi('autoSizeColumn', arguments); }
+    public autoSizeColumn(key: string | Column, skipHeader?: boolean): void { return this.viaApi('autoSizeColumn', key, skipHeader); }
 
     /** @deprecated v31 use `api.autoSizeColumns() instead. */
     public autoSizeColumns(keys: (string | Column)[], skipHeader?: boolean): void {
-        this.viaApi('autoSizeColumns', arguments);
+        this.viaApi('autoSizeColumns', keys, skipHeader);
     }
 
     /** @deprecated v31 use `api.autoSizeAllColumns() instead. */
-    public autoSizeAllColumns(skipHeader?: boolean): void { this.viaApi('autoSizeAllColumns', arguments); }
+    public autoSizeAllColumns(skipHeader?: boolean): void { this.viaApi('autoSizeAllColumns', skipHeader); }
 
     /** @deprecated v31 use `api.setPivotResultColumns() instead. */
-    public setPivotResultColumns(colDefs: (ColDef | ColGroupDef)[]): void { this.viaApi('setPivotResultColumns', arguments); }
+    public setPivotResultColumns(colDefs: (ColDef | ColGroupDef)[]): void { this.viaApi('setPivotResultColumns', colDefs); }
 
     /** @deprecated v31 use `api.getPivotResultColumns() instead. */
     public getPivotResultColumns(): Column[] | null { return this.viaApi('getPivotResultColumns'); }
