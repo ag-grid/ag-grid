@@ -2,13 +2,13 @@
 
 const getPackageInformation = require("./utils/utils").getPackageInformation;
 
-if (process.argv.length < 6) {
+if (process.argv.length < 5) {
     console.log("Usage: node scripts/sanityCheckPackages.js [Grid Version] [Grid Dependency Version] [Chart Version] [Chart Dependency Version]");
     console.log("For example: node scripts/validateAgPackageAndDeps.js 23.0.0 ~23.0.0 1.0.0 ~1.0.0");
     console.log("Note: This script should be run from the root of the monorepo");
     process.exit(1);
 }
-const [exec, scriptPath, gridNewVersion, gridDependencyVersion, chartNewVersion, chartDependencyVersion] = process.argv;
+const [exec, scriptPath, gridNewVersion, gridDependencyVersion, chartDependencyVersion] = process.argv;
 
 const allPackages = getPackageInformation();
 const packageNames = Object.keys(allPackages);

@@ -50,7 +50,7 @@ function onChart1() {
       rowEndIndex: 4,
       columns: ['country', 'gold', 'silver'],
     },
-    chartType: 'groupedColumn',
+    chartType: 'area',
     chartThemeName: 'ag-vivid',
     chartThemeOverrides: {
       common: {

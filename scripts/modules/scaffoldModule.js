@@ -8,7 +8,7 @@ const moduleDirs = (grid, enterprise, packageName) => {
     const moduleName = `@ag-${grid ? 'grid' : 'charts'}-${enterprise ? 'enterprise' : 'community'}/${packageName}`;
     const moduleDirRoot = `${grid ? 'grid' : 'charts'}-${enterprise ? 'enterprise' : 'community'}-modules`;
     const moduleDir = `${moduleDirRoot}/${packageName}`;
-    const exampleDir = grid ? undefined : `charts-examples/ag-charts-enterprise-example/`;
+    const exampleDir = undefined;
 
     return { moduleName, moduleDirRoot, moduleDir, exampleDir };
 };

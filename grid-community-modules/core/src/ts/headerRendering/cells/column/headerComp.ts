@@ -1,4 +1,4 @@
-import { Autowired } from "../../../context/context";
+import {Autowired, PreDestroy} from "../../../context/context";
 import { Column } from "../../../entities/column";
 import { IComponent } from "../../../interfaces/iComponent";
 import { IMenuFactory } from "../../../interfaces/iMenuFactory";
@@ -157,6 +157,7 @@ export class HeaderComp extends Component implements IHeaderComp {
         this.setupSort();
         this.setupFilterIcon();
         this.setDisplayName(params);
+        this.addGridOptionsChangeListener();
     }
 
     private setDisplayName(params: IHeaderParams): void {
@@ -341,6 +342,19 @@ export class HeaderComp extends Component implements IHeaderComp {
 
         this.addManagedListener(this.params.column, Column.EVENT_FILTER_CHANGED, this.onFilterChanged.bind(this));
         this.onFilterChanged();
+    }
+
+    private addGridOptionsChangeListener(): void {
+        this.gridOptionsService.addEventListener(Events.EVENT_SUPPRESS_MENU_HIDE_CHANGED, this.onSuppressMenuHideChange);
+    }
+
+    @PreDestroy
+    private removeGridOptionsChangeListener(): void {
+        this.gridOptionsService.removeEventListener(Events.EVENT_SUPPRESS_MENU_HIDE_CHANGED, this.onSuppressMenuHideChange);
+    }
+
+    private onSuppressMenuHideChange = (): void => {
+        this.setMenu();
     }
 
     private onFilterChanged(): void {

@@ -75,7 +75,7 @@
     "@ag-grid-enterprise/sparklines": "~30.2.0",
     "@ag-grid-enterprise/status-bar": "~30.2.0",
     "@ag-grid-enterprise/viewport-row-model": "~30.2.0",
-    "ag-charts-community": "~8.2.0",
+    "ag-charts-community": "latest",
     "@rollup/plugin-alias": "^2.2.0",
     "@types/node": "12.20.20",
     "ag-grid-community": "~30.2.0",
@@ -95,6 +95,8 @@
     "rollup-plugin-replace": "^2.2.0",
     "rollup-plugin-typescript2": "^0.24.3",
     "typescript": "~4.7.4",
+    "rollup-plugin-commonjs": "10.1.0",
     "rimraf": "3.0.2"
   }
 }
+

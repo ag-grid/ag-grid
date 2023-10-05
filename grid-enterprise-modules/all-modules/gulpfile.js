@@ -89,8 +89,9 @@ const webpackTask = (minify, styles, libraryTarget) => {
             },
             devtool: false,
             resolve: {
+                extensions: ['.mjs', '.js'],
                 alias: {
-                    "ag-charts-community": path.resolve(__dirname, 'node_modules/@ag-grid-enterprise/charts/node_modules/ag-charts-community/dist/esm/es6/main.mjs')
+                    "ag-charts-community": path.resolve(__dirname, 'node_modules/@ag-grid-enterprise/charts/node_modules/ag-charts-community/dist/main.esm.js')
                 }
             },
             output: {

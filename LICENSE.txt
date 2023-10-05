@@ -1,19 +1,18 @@
+> @ag-grid-enterprise/sparklines@30.1.0 build-cjs
+> rimraf dist/tsconfig.cjs.es5.docs.tsbuildinfo && npx tsc -p tsconfig.cjs.es5.json && npx tsc -p tsconfig.cjs.es6.json
 
-This project is made up of many packages. There are two license types: MIT and Commercial.
+src/sparkline/sparkline.ts:149:40 - error TS2345: Argument of type '{ document: Document; }' is not assignable to parameter of type '{ width?: number | undefined; height?: number | undefined; overrideDevicePixelRatio?: number | undefined; } & SceneOptions'.
+  Property 'window' is missing in type '{ document: Document; }' but required in type 'SceneOptions'.
 
-Each package has it's own license file explaining the license for that package.
+149         const scene = new _Scene.Scene({ document });
+                                           ~~~~~~~~~~~~
 
-The following packages are MIT licensed:
-+ ag-grid-community
-+ ag-grid-angular
-+ ag-grid-angular-cli-example
-+ ag-grid-docs
-+ ag-grid-react
-+ ag-grid-react-example
-+ ag-grid-vue
-+ ag-grid-vue-example
+  node_modules/ag-charts-community/dist/src/scene/scene.d.ts:7:5
+    7     window: Window;
+          ~~~~~~
+    'window' is declared here.
 
-The following packages are Commercial licensed:
-+ ag-grid-enterprise
 
-To view the commercial license for ag-grid-enterprise, see the file grid-packages/ag-grid-enterprise/LICENSE.md
+Found 1 error.
+
+

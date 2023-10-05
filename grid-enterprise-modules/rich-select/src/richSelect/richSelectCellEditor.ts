@@ -29,7 +29,6 @@ export class RichSelectCellEditor<TData = any, TValue = any> extends PopupCompon
 
         if (_.missing(values)) {
             console.warn('AG Grid: richSelectCellEditor requires values for it to work');
-            return;
         }
 
         const { params: richSelectParams, valuesPromise } = this.buildRichSelectParams();
@@ -70,7 +69,7 @@ export class RichSelectCellEditor<TData = any, TValue = any> extends PopupCompon
         const { 
             cellRenderer, value, values, formatValue, searchDebounceDelay, 
             valueListGap, valueListMaxHeight, valueListMaxWidth, allowTyping,
-            filterList, searchType, highlightMatch, valuePlaceholder
+            filterList, searchType, highlightMatch, valuePlaceholder, eventKey
         } = this.params;
 
         const ret: RichSelectParams = {
@@ -88,7 +87,8 @@ export class RichSelectCellEditor<TData = any, TValue = any> extends PopupCompon
             highlightMatch,
             maxPickerHeight: valueListMaxHeight,
             maxPickerWidth: valueListMaxWidth,
-            placeholder: valuePlaceholder
+            placeholder: valuePlaceholder,
+            initialInputValue: eventKey?.length === 1 ? eventKey : undefined
         }
 
         let valuesResult;
@@ -97,7 +97,7 @@ export class RichSelectCellEditor<TData = any, TValue = any> extends PopupCompon
         if (typeof values === 'function') {
             valuesResult = values(this.params);
         } else {
-            valuesResult = values;
+            valuesResult = values ?? [];
         }
 
         if (Array.isArray(valuesResult)) {
@@ -141,11 +141,16 @@ export class RichSelectCellEditor<TData = any, TValue = any> extends PopupCompon
             if (!this.isAlive()) { return; }
 
             if (focusAfterAttached) {
-                this.richSelect.getFocusableElement().focus();
+                const focusableEl = this.richSelect.getFocusableElement() as HTMLInputElement;
+                focusableEl.focus();
+                const { allowTyping, eventKey } = this.params;
+                if (allowTyping && (!eventKey || eventKey.length !== 1)) {
+                    focusableEl.select();
+                }
             }
-    
+
             this.richSelect.showPicker();
-    
+
             const { eventKey } = params;
             if (eventKey) {
                 if (eventKey?.length === 1) {

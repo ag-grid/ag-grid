@@ -273,8 +273,7 @@ export class ColumnModel extends BeanStub {
 
         this.addManagedPropertyListeners(['groupDisplayType', 'treeData'], () => this.buildAutoGroupColumns());
         this.addManagedPropertyListener('autoGroupColumnDef', () => this.onAutoGroupColumnDefChanged());
-        this.addManagedPropertyListener('defaultColDef', (params: ColDefPropertyChangedEvent) => this.onSharedColDefChanged(params.source));
-        this.addManagedPropertyListener('columnTypes', (params: ColDefPropertyChangedEvent) => this.onSharedColDefChanged(params.source));
+        this.addManagedPropertyListeners(['defaultColDef', 'columnTypes'], (params: ColDefPropertyChangedEvent) => this.onSharedColDefChanged(params.source));
     }
 
     private buildAutoGroupColumns() {

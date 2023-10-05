@@ -31,7 +31,7 @@
 
             ts: "npm:plugin-typescript@8.0.0/lib/plugin.js",
             tslib: "npm:tslib@2.3.1/tslib.js",
-            typescript: "npm:typescript@4.7.4/lib/typescript.min.js",
+            typescript: "npm:typescript@4.3.5/lib/typescript.min.js",
 
             // appLocation comes from index.html
             app: appLocation,
@@ -43,6 +43,10 @@
             app: {
                 main: "./main.ts",
                 defaultExtension: "ts",
+            },
+            'ag-charts-community': {
+                main: './dist/main.cjs.js',
+                defaultExtension: 'js'
             },
             'ag-grid-community': {
                 main: './dist/ag-grid-community.cjs.js',
@@ -81,11 +85,6 @@
             '@ag-grid-community/infinite-row-model': {
                 main: './dist/cjs/es5/main.js',
                 defaultExtension: 'js'
-            },
-            'ag-charts-community': {
-                main: './dist/cjs/es5/main.js',
-                defaultExtension: 'js',
-                format: 'cjs'
             },
             '@ag-grid-enterprise/advanced-filter': {
                 main: './dist/cjs/es5/main.js',
@@ -164,10 +163,6 @@
                 defaultExtension: 'js'
             },
             '@ag-grid-enterprise/viewport-row-model': {
-                main: './dist/cjs/es5/main.js',
-                defaultExtension: 'js'
-            },
-            'ag-charts-enterprise': {
                 main: './dist/cjs/es5/main.js',
                 defaultExtension: 'js'
             },
