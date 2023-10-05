@@ -1,4 +1,4 @@
-import {Autowired, PreDestroy} from "../../../context/context";
+import { Autowired, PreDestroy } from "../../../context/context";
 import { Column } from "../../../entities/column";
 import { IComponent } from "../../../interfaces/iComponent";
 import { IMenuFactory } from "../../../interfaces/iMenuFactory";

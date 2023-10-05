@@ -22,7 +22,8 @@ export class PrimaryColsListPanelItemDragFeature extends BeanStub {
 
     constructor(
         private readonly comp: PrimaryColsListPanel,
-        private readonly virtualList: VirtualList
+        private readonly virtualList: VirtualList,
+        private preventColsMove: boolean = false,
     ) { super(); }
 
     @PostConstruct
@@ -56,6 +57,10 @@ export class PrimaryColsListPanelItemDragFeature extends BeanStub {
     }
 
     private isMoveBlocked(currentDragValue: Column | ProvidedColumnGroup | null): boolean {
+        if (this.preventColsMove) {
+            return true;
+        }
+
         const currentColumns = this.getCurrentColumns(currentDragValue);
         const hasNotMovable = currentColumns.find(col => {
             const colDef = col.getColDef();
@@ -63,6 +68,14 @@ export class PrimaryColsListPanelItemDragFeature extends BeanStub {
         });
 
         return !!hasNotMovable;
+    }
+
+    public enableColsMove(): void {
+        this.preventColsMove = false;
+    }
+
+    public disableColsMove(): void {
+        this.preventColsMove = true;
     }
 
     private moveItem(
