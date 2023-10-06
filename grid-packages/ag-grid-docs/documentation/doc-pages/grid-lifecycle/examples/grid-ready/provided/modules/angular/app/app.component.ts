@@ -23,7 +23,7 @@ import { getData } from './data';
         </div>
       </div>
       <ag-grid-angular
-        *ngIf="isVisible$"
+        *ngIf="isVisible"
         style="width: 100%; height: 100%;"
         class="ag-theme-alpine"
         [columnDefs]="columnDefs"
@@ -35,7 +35,7 @@ import { getData } from './data';
   `,
 })
 export class AppComponent {
-  private isVisible$ = true
+  public isVisible = true
   private gridApi!: GridApi
   public columnDefs: ColDef[] = [
     { field: "name", headerName: "Athlete", width: 250 },
@@ -50,8 +50,8 @@ export class AppComponent {
   public rowSelection: "single" | "multiple" = "multiple"
 
   reloadGrid() {
-    this.isVisible$ = false
-    setTimeout(() => (this.isVisible$ = true), 1)
+    this.isVisible = false
+    setTimeout(() => (this.isVisible = true), 1)
   }
 
   onGridReady(params: GridReadyEvent) {

@@ -18,11 +18,11 @@ interface ColumnWidth {
     template: `
         <div class="test-container">
             <div class="test-header">
-                <div *ngIf="isVisible$" id="exampleButtons" style="margin-bottom: 1rem;">
+                <div *ngIf="isVisible" id="exampleButtons" style="margin-bottom: 1rem;">
                     <button (click)="updateColumnWidth()">Change Columns Width</button>
                     <button (click)="destroyGrid()">Destroy Grid</button>
                 </div>
-                <div *ngIf="showPreDestroyState$" id="gridPreDestroyedState">
+                <div *ngIf="showPreDestroyState" id="gridPreDestroyedState">
                     State captured on grid pre-destroyed event:<br/>
                     <strong>Column fields and widths</strong>
                     <div className="values">
@@ -37,7 +37,7 @@ interface ColumnWidth {
             </div>
             <ag-grid-angular
                 style="width: 100%; height: 100%;"
-                *ngIf="isVisible$"
+                *ngIf="isVisible"
                 class="ag-theme-alpine"
                 [columnDefs]="columnDefs"
                 [defaultColDef]="defaultColDef"
@@ -50,8 +50,8 @@ interface ColumnWidth {
 })
 
 export class AppComponent {
-    private isVisible$ = true;
-    private showPreDestroyState$ = false;
+    public isVisible = true;
+    public showPreDestroyState = false;
     private gridApi!: GridApi;
     private gridColumnApi!: ColumnApi;
 
@@ -85,7 +85,6 @@ export class AppComponent {
         }));
 
         this.columnsWidthOnPreDestroyed = currentColumnWidths;
-        this.showPreDestroyState$ = true;
     }
 
     updateColumnWidth() {
@@ -99,7 +98,8 @@ export class AppComponent {
     }
 
     destroyGrid() {
-        this.isVisible$ = false;
+        this.isVisible = false;
+        this.showPreDestroyState = true;
     }
 
     reloadGrid() {
@@ -121,8 +121,8 @@ export class AppComponent {
 
         this.columnDefs = updatedColDefs;
         this.columnsWidthOnPreDestroyed = [];
-        this.isVisible$ = true;
-        this.showPreDestroyState$ = false;
+        this.isVisible = true;
+        this.showPreDestroyState = false;
     }
 
     onGridReady(params: GridReadyEvent) {
