@@ -12,8 +12,12 @@
     }
 }
 
+/**
+    Layout
+*/
+
 .section {
-    margin-top: $size-7;
+    margin-top: $size-3;
 }
 
 .sectionInner {
@@ -36,4 +40,55 @@
             width: calc(50% - $size-2 / 2);
         }
     }
+}
+
+/**
+    Card
+*/
+
+.gridContainer { 
+    display: grid;
+    row-gap: 25px;
+}
+
+.cardGroup {
+    display: grid;
+    gap: 25px;
+    grid-auto-flow: column;
+    grid-auto-columns: 1fr;
+
+    @media (max-width: $breakpoint-docs-home-small) {
+        grid-auto-flow: row; /* Change to a single column layout on small screens */
+    }
+}
+
+.card {
+    background: var(--neutral-200);
+    border-radius: 12px;
+    padding: 14px;
+    display: grid;
+}
+
+.cardTitle {
+    font-weight: 500;
+    text-transform: capitalize;
+    display: flex;
+}
+
+.cardIcon { 
+    align-self: center;
+    margin-left: auto;
+}
+
+.cardDivider {
+    margin: 10px 0px 10px 0px;
+    background-color: var(--neutral-300);
+    height: 2px;
+}
+
+.cardLink {
+    font-weight: 700;
+    align-self: flex-end;
+    margin-left: auto;
+    margin: 12px 0px 0px auto;
 }

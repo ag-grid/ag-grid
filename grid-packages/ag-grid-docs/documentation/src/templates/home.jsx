@@ -10,35 +10,205 @@ import tileStyles from '../components/menu-view/Tile.module.scss';
 import supportedFrameworks from '../utils/supported-frameworks';
 import styles from './home.module.scss';
 
-const flatRenderItems = (items, framework) => {
-    return items.reduce((prev, curr) => {
-        let ret = prev;
+const OverviewSection = () => {
+    return(
+        <div className={classnames(styles.gridContainer)}>
+            <div className={classnames(styles.cardGroup)}>
+                <div className={classnames(styles.card)}>
+                    <div className={classnames(styles.cardTitle, 'font-size-extra-large')}>
+                        Introduction
+                        <img className={classnames(styles.cardIcon)} src="TODO" style={{ float: 'right' }}/>
+                    </div>
+                    <hr className={classnames(styles.cardDivider)}/>
+                    <div className={classnames(styles.cardBody)}>
+                        Know you need a Grid, but not sure which ones right for you? Check-out our 
+                        introduction section for an in-depth overview
+                    </div>
+                    <div className={classnames(styles.cardLink)}>
+                        <a>Overview</a>
+                    </div>
+                </div>
+                <div className={classnames(styles.card)}>
+                    <div className={classnames(styles.cardTitle, 'font-size-extra-large')}>
+                        Get Started
+                        <img className={classnames(styles.cardIcon)} src="TODO" style={{ float: 'right' }}/>
+                    </div>
+                    <hr className={classnames(styles.cardDivider)}/>
+                    <div className={classnames(styles.cardBody)}>
+                        Want to try AG Grid for yourself? Take a look at our Getting Started guide to 
+                        install, configure and customise the Grid
+                    </div>
+                    <div className={classnames(styles.cardLink)}>
+                        <a>Installation</a>
+                    </div>
+                </div>
+                <div className={classnames(styles.card)}>
+                    <div className={classnames(styles.cardTitle, 'font-size-extra-large')}>
+                        Quick Start
+                        <img className={classnames(styles.cardIcon)} src="TODO" style={{ float: 'right' }}/>
+                    </div>
+                    <hr className={classnames(styles.cardDivider)}/>
+                    <div className={classnames(styles.cardBody)}>
+                        Already familiar with the Grid or want to see how it works? Browse our Quick Starts 
+                        to kick-start your development
+                    </div>
+                    <div className={classnames(styles.cardLink)}>
+                        <a>Basic Example</a>
+                    </div>
+                </div>
+            </div>
+            <div className={classnames(styles.cardGroup)}>
+                <div className={classnames(styles.card)}>
+                    <div className={classnames(styles.cardTitle, 'font-size-extra-large')}>
+                        Quick Start
+                        <img className={classnames(styles.cardIcon)} src="TODO" style={{ float: 'right' }}/>
+                    </div>
+                    <hr className={classnames(styles.cardDivider)}/>
+                    <div className={classnames(styles.cardBody)}>
+                        Already familiar with the Grid or want to see how it works? Browse our Quick Starts 
+                        to kick-start your development
+                    </div>
+                    <div className={classnames(styles.cardLink)}>
+                        <a>Grid API</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    )
+}
 
-        if (curr.frameworks && curr.frameworks.indexOf(framework) === -1) {
-            return ret;
-        }
+const NeedHelpSection = () => {
+    return(
+        <div className={classnames(styles.cardGroup)}>
+            <div className={classnames(styles.card)}>
+                <div className={classnames(styles.cardTitle, 'font-size-extra-large')}>
+                    GitHub
+                    <img className={classnames(styles.cardIcon)} src="TODO" style={{ float: 'right' }}/>
+                </div>
+                <hr className={classnames(styles.cardDivider)}/>
+                <div className={classnames(styles.cardBody)}>
+                    Browse our source-code, extend & customize the grid, or submit bug reports & feature 
+                    requests through our GitHub
+                </div>
+                <div className={classnames(styles.cardLink)}>
+                    <a>Raise an Issue</a>
+                </div>
+            </div>
+            <div className={classnames(styles.card)}>
+                <div className={classnames(styles.cardTitle, 'font-size-extra-large')}>
+                    StackOverflow
+                    <img className={classnames(styles.cardIcon)} src="TODO" style={{ float: 'right' }}/>
+                </div>
+                <hr className={classnames(styles.cardDivider)}/>
+                <div className={classnames(styles.cardBody)}>
+                    Browse 1000's of questions, support the community and build your profile, or ask your own 
+                    questions with the `ag-grid` tag
+                </div>
+                <div className={classnames(styles.cardLink)}>
+                    <a>Ask a Question</a>
+                </div>
+            </div>
+            <div className={classnames(styles.card)}>
+                <div className={classnames(styles.cardTitle, 'font-size-extra-large')}>
+                    ZenDesk
+                    <img className={classnames(styles.cardIcon)} src="TODO" style={{ float: 'right' }}/>
+                </div>
+                <hr className={classnames(styles.cardDivider)}/>
+                <div className={classnames(styles.cardBody)}>
+                    Enterprise customers can get dedicated support and propritized feature requests by 
+                    submitting tickets through ZenDesk.
+                </div>
+                <div className={classnames(styles.cardLink)}>
+                    <a>Create a Ticket</a>
+                </div>
+            </div>
+        </div>
+    )
+}
 
-        ret = prev.concat(
-            Object.assign({}, { title: curr.title, url: curr.url }, curr.icon ? { icon: curr.icon } : {})
-        );
-
-        if (!curr.items) {
-            return ret;
-        }
-
-        return ret.concat(flatRenderItems(curr.items, framework));
-    }, []);
-};
+const JoinCommunitySection = () => {
+    return(
+        <div className={classnames(styles.gridContainer)}>
+            <div className={classnames(styles.cardGroup)}>
+                <div className={classnames(styles.card)}>
+                    <div className={classnames(styles.cardTitle, 'font-size-extra-large')}>
+                        YouTube
+                        <img className={classnames(styles.cardIcon)} src="TODO" style={{ float: 'right' }}/>
+                    </div>
+                    <hr className={classnames(styles.cardDivider)}/>
+                    <div className={classnames(styles.cardBody)}>
+                        Visual learner? Browse our YouTube.
+                    </div>
+                    <div className={classnames(styles.cardLink)}>
+                        <a>Subscribe</a>
+                    </div>
+                </div>
+                <div className={classnames(styles.card)}>
+                    <div className={classnames(styles.cardTitle, 'font-size-extra-large')}>
+                        Twitter (X)
+                        <img className={classnames(styles.cardIcon)} src="TODO" style={{ float: 'right' }}/>
+                    </div>
+                    <hr className={classnames(styles.cardDivider)}/>
+                    <div className={classnames(styles.cardBody)}>
+                        Join the conversation and on X (Twitter).
+                    </div>
+                    <div className={classnames(styles.cardLink)}>
+                        <a>Follow Us</a>
+                    </div>
+                </div>
+                <div className={classnames(styles.card)}>
+                    <div className={classnames(styles.cardTitle, 'font-size-extra-large')}>
+                        LinkedIn
+                        <img className={classnames(styles.cardIcon)} src="TODO" style={{ float: 'right' }}/>
+                    </div>
+                    <hr className={classnames(styles.cardDivider)}/>
+                    <div className={classnames(styles.cardBody)}>
+                        Network with the AG Grid Professional community.
+                    </div>
+                    <div className={classnames(styles.cardLink)}>
+                        <a>Connect</a>
+                    </div>
+                </div>
+                <div className={classnames(styles.card)}>
+                    <div className={classnames(styles.cardTitle, 'font-size-extra-large')}>
+                        Blog
+                        <img className={classnames(styles.cardIcon)} src="TODO" style={{ float: 'right' }}/>
+                    </div>
+                    <hr className={classnames(styles.cardDivider)}/>
+                    <div className={classnames(styles.cardBody)}>
+                        Read our Blog for the Latest News & Tutorials.
+                    </div>
+                    <div className={classnames(styles.cardLink)}>
+                        <a>Basic Example</a>
+                    </div>
+                </div>
+            </div>
+            <div className={classnames(styles.cardGroup)}>
+                <div className={classnames(styles.card)}>
+                    <div className={classnames(styles.cardTitle, 'font-size-extra-large')}>
+                        Newsletter
+                        <img className={classnames(styles.cardIcon)} src="TODO" style={{ float: 'right' }}/>
+                    </div>
+                    <hr className={classnames(styles.cardDivider)}/>
+                    <div className={classnames(styles.cardBody)}>
+                        Subscribe to our AG Grid Newsletter to be notified of new product and feature releases, 
+                        as well as the latest news & events.
+                    </div>
+                    <div className={classnames(styles.cardLink)}>
+                        <a>Read</a>
+                    </div>
+                </div>
+            </div>
+    </div>
+    )
+}
 
 /**
  * This is the home page for the documentation.
  */
 const HomePage = ({ pageContext: { framework } }) => {
-    const otherFrameworks = () => {
-        const frameworks = supportedFrameworks.filter((f) => {
-            return f !== framework;
-        });
-
+    const listOtherFrameworks = () => {        
+        const frameworks = supportedFrameworks.filter((f) => f !== framework);
         return (
             <span style={{ textTransform: 'capitalize' }}>
                 <a href={`../${frameworks[0]}-data-grid/`}>{frameworks[0]}</a>,{' '}
@@ -50,6 +220,7 @@ const HomePage = ({ pageContext: { framework } }) => {
 
     return (
         <div className={styles.docsHome}>
+
             {/*eslint-disable-next-line react/jsx-pascal-case*/}
             <SEO
                 title="Documentation"
@@ -58,17 +229,40 @@ const HomePage = ({ pageContext: { framework } }) => {
                 pageName="home"
             />
 
-            <div className={classnames(styles.section, styles.introSection, 'font-size-responsive')}>
-                <h1>AG Grid {framework} Documentation</h1>
-                <p className="font-size-extra-large">Start developing with the best JavaScript Grid in the world.</p>
+            {/* Introduction  */}
+            <div className={classnames(styles.section, 'font-size-responsive')}>
+                <h1>AG Grid <span style={{ textTransform: 'capitalize' }}>{framework}</span> Documentation</h1>
                 <p className="font-size-medium">
-                    You can get started with <a href="./getting-started/">a simple sample project and tutorial</a>,
-                    watch our extensive selection of <a href="./videos/">videos</a>, or review the{' '}
-                    <a href="./grid-options/">grid options</a>.
+                    Welcome to our <span style={{ textTransform: 'capitalize' }}>{framework}</span> documentation. 
+                    You can use the menu in the upper-right to switch between {listOtherFrameworks()} Docs.
                 </p>
-                <p className="font-size-medium">
-                    Looking for documentation for another framework? Switch to {otherFrameworks()}.
+            </div>
+
+            {/* Overview */}
+            <div className={classnames(styles.section, 'font-size-responsive')}>
+                <h2>Overview</h2>
+                <p>
+                    Browse this section to find the content you're looking for, whether that's an <a>Introduction</a> to our grid, trying to <a>Get Started</a>, or a <a>Quick-Start</a> template, we've got you covered.
                 </p>
+                <OverviewSection />
+            </div>
+
+            {/* Need Help */}
+            <div className={classnames(styles.section, 'font-size-responsive')}>
+                <h2>Need Help?</h2>
+                <p>
+                    Looking to find an answer to a specific question? Leverage our community on <a href='https://github.com/ag-grid' target={'_blank'}>GitHub</a> and <a href='https://stackoverflow.com/questions/tagged/ag-grid' target={'_blank'}>StackOverflow</a>, or for Enterprise customers, please submit a ticket via <a href='https://ag-grid.zendesk.com/' target={'_blank'}>ZenDesk</a>.
+                </p>
+                <NeedHelpSection />
+            </div>
+
+            {/* Join Our Community */}
+            <div className={classnames(styles.section, 'font-size-responsive')}>
+                <h2>Join Our Community</h2>
+                <p>
+                    Join our community wherever you are to join the conversation and stay up to date with all the latest AG Grid news.
+                </p>
+                <JoinCommunitySection />
             </div>
 
         </div>
