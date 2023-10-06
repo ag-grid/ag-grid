@@ -25,7 +25,7 @@ const OverviewSection = () => {
                         introduction section for an in-depth overview
                     </div>
                     <div className={classnames(styles.cardLink)}>
-                        <a>Overview</a>
+                        <a href='introduction/overview/'>Overview</a>
                     </div>
                 </div>
                 <div className={classnames(styles.card)}>
@@ -39,7 +39,7 @@ const OverviewSection = () => {
                         install, configure and customise the Grid
                     </div>
                     <div className={classnames(styles.cardLink)}>
-                        <a>Installation</a>
+                        <a href='get-started/installation/'>Installation</a>
                     </div>
                 </div>
                 <div className={classnames(styles.card)}>
@@ -53,14 +53,14 @@ const OverviewSection = () => {
                         to kick-start your development
                     </div>
                     <div className={classnames(styles.cardLink)}>
-                        <a>Basic Example</a>
+                        <a href='quick-starts/basic-example/'>Basic Example</a>
                     </div>
                 </div>
             </div>
             <div className={classnames(styles.cardGroup)}>
                 <div className={classnames(styles.card)}>
                     <div className={classnames(styles.cardTitle, 'font-size-extra-large')}>
-                        Quick Start
+                        API Reference
                         <img className={classnames(styles.cardIcon)} src="TODO" style={{ float: 'right' }}/>
                     </div>
                     <hr className={classnames(styles.cardDivider)}/>
@@ -69,7 +69,7 @@ const OverviewSection = () => {
                         to kick-start your development
                     </div>
                     <div className={classnames(styles.cardLink)}>
-                        <a>Grid API</a>
+                        <a href='grid-interface/'>Grid API</a>
                     </div>
                 </div>
             </div>
@@ -91,7 +91,7 @@ const NeedHelpSection = () => {
                     requests through our GitHub
                 </div>
                 <div className={classnames(styles.cardLink)}>
-                    <a>Raise an Issue</a>
+                    <a href='https://github.com/ag-grid/ag-grid/issues' target='_blank'>Raise an Issue</a>
                 </div>
             </div>
             <div className={classnames(styles.card)}>
@@ -105,7 +105,7 @@ const NeedHelpSection = () => {
                     questions with the `ag-grid` tag
                 </div>
                 <div className={classnames(styles.cardLink)}>
-                    <a>Ask a Question</a>
+                    <a href='https://stackoverflow.com/questions/tagged/ag-grid' target='_blank'>Ask a Question</a>
                 </div>
             </div>
             <div className={classnames(styles.card)}>
@@ -119,7 +119,7 @@ const NeedHelpSection = () => {
                     submitting tickets through ZenDesk.
                 </div>
                 <div className={classnames(styles.cardLink)}>
-                    <a>Create a Ticket</a>
+                    <a href='https://ag-grid.zendesk.com/' target='_blank'>Create a Ticket</a>
                 </div>
             </div>
         </div>
@@ -140,7 +140,7 @@ const JoinCommunitySection = () => {
                         Visual learner? Browse our YouTube.
                     </div>
                     <div className={classnames(styles.cardLink)}>
-                        <a>Subscribe</a>
+                        <a href='https://youtube.com/c/ag-grid' target='_blank'>Subscribe</a>
                     </div>
                 </div>
                 <div className={classnames(styles.card)}>
@@ -153,7 +153,7 @@ const JoinCommunitySection = () => {
                         Join the conversation and on X (Twitter).
                     </div>
                     <div className={classnames(styles.cardLink)}>
-                        <a>Follow Us</a>
+                        <a href='https://twitter.com/ag_grid' target='_blank'>Follow Us</a>
                     </div>
                 </div>
                 <div className={classnames(styles.card)}>
@@ -166,7 +166,7 @@ const JoinCommunitySection = () => {
                         Network with the AG Grid Professional community.
                     </div>
                     <div className={classnames(styles.cardLink)}>
-                        <a>Connect</a>
+                        <a href='https://www.linkedin.com/company/ag-grid/' target='_blank'>Connect</a>
                     </div>
                 </div>
                 <div className={classnames(styles.card)}>
@@ -179,7 +179,7 @@ const JoinCommunitySection = () => {
                         Read our Blog for the Latest News & Tutorials.
                     </div>
                     <div className={classnames(styles.cardLink)}>
-                        <a>Basic Example</a>
+                        <a href='https://blog.ag-grid.com' target='_blank'>Read</a>
                     </div>
                 </div>
             </div>
@@ -195,7 +195,7 @@ const JoinCommunitySection = () => {
                         as well as the latest news & events.
                     </div>
                     <div className={classnames(styles.cardLink)}>
-                        <a>Read</a>
+                        <a href='https://blog.ag-grid.com/newsletter/' target='_blank'>Join Mailing List</a>
                     </div>
                 </div>
             </div>
@@ -242,7 +242,7 @@ const HomePage = ({ pageContext: { framework } }) => {
             <div className={classnames(styles.section, 'font-size-responsive')}>
                 <h2>Overview</h2>
                 <p>
-                    Browse this section to find the content you're looking for, whether that's an <a>Introduction</a> to our grid, trying to <a>Get Started</a>, or a <a>Quick-Start</a> template, we've got you covered.
+                    Browse this section to find the content you're looking for, whether that's an <a href='introduction/overview/'>Introduction</a> to our grid, trying to <a href='get-started/installation/'>Get Started</a>, or a <a href='quick-starts/basic-example'>Quick-Start</a> template, we've got you covered.
                 </p>
                 <OverviewSection />
             </div>
