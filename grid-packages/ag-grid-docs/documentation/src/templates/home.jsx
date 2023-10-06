@@ -8,7 +8,6 @@ import menuData from '../../doc-pages/licensing/menu.json';
 import { Icon } from '../components/Icon';
 import tileStyles from '../components/menu-view/Tile.module.scss';
 import supportedFrameworks from '../utils/supported-frameworks';
-import featuredVideos from './featuredVideos.json';
 import styles from './home.module.scss';
 
 const flatRenderItems = (items, framework) => {
@@ -31,47 +30,10 @@ const flatRenderItems = (items, framework) => {
     }, []);
 };
 
-const VideoPanel = ({ videos }) => {
-    const title = `Videos`;
-    return (
-        <div className={styles.section}>
-            <h2>{title}</h2>
-            <div className={styles.sectionInner}>
-                {videos.map((video) => (
-                    <div
-                        className={classnames(tileStyles.tile, tileStyles.videoTile, tileStyles.linkTile)}
-                        key={video.id}
-                    >
-                        <a
-                            href={`https://www.youtube.com/watch?v=${video.id}&list=${video.list}`}
-                            target="_blank"
-                            rel="noreferrer"
-                        >
-                            <img
-                                style={{ height: '100%', width: '100%' }}
-                                alt={video.title || title}
-                                src={`https://i.ytimg.com/vi/${video.id}/mqdefault.jpg`}
-                            />
-                        </a>
-                    </div>
-                ))}
-                <a href="./videos/" className={classnames(tileStyles.tile, tileStyles.linkTile)}>
-                    <div className={styles.allVideosInner}>
-                        <Icon name="playCircle" svgClasses={styles.allVideosIcon} />
-                        <div className={tileStyles.linkTileTitle}>All Videos</div>
-                    </div>
-                </a>
-            </div>
-        </div>
-    );
-};
-
 /**
  * This is the home page for the documentation.
  */
 const HomePage = ({ pageContext: { framework } }) => {
-    const frameworkVideos = featuredVideos[framework];
-
     const otherFrameworks = () => {
         const frameworks = supportedFrameworks.filter((f) => {
             return f !== framework;
@@ -109,9 +71,6 @@ const HomePage = ({ pageContext: { framework } }) => {
                 </p>
             </div>
 
-            {frameworkVideos && frameworkVideos.length > 0 && (
-                <VideoPanel framework={framework} videos={frameworkVideos} />
-            )}
         </div>
     );
 };
