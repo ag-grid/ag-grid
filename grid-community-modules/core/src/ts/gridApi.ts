@@ -1603,7 +1603,7 @@ export class GridApi<TData = any> {
         setTimeout(removeAllReferences.bind(window, this, 'Grid API'), 100);
     }
 
-    /** Returns `true` if the api has been destroyed. */
+    /** Returns `true` if the grid has been destroyed. */
     public isDestroyed(): boolean {
         return this.destroyCalled;
     }
