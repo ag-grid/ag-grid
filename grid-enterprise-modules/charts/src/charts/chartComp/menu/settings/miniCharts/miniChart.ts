@@ -42,7 +42,6 @@ export abstract class MiniChart extends Component {
         this.scene.render()
             .catch((e: Error) => {
                 console.error(`${ERROR_MESSAGE}`, e);
-                // Additional actions on failure can go here.
             });
     }
 
