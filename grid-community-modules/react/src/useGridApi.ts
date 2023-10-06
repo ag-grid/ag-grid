@@ -3,7 +3,7 @@ import { MutableRefObject, useRef } from 'react';
 import { AgGridReact } from './agGridReact';
 
 const buildStub = <T>(stub: T) => {
-    _.removeAllReferences(stub, 'GridApi', (key) =>`AG Grid: api.${key} was called on a destroyed grid (api.isDestroyed() == true) resulting in a no-op.`);
+    _.removeAllReferences(stub, 'GridApi', ['isDestroyed'], (key) =>`AG Grid: api.${key} was called on a destroyed grid (api.isDestroyed() == true) resulting in a no-op.`);
     return stub;
 };
 

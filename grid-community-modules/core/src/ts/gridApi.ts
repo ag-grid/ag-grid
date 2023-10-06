@@ -1600,7 +1600,7 @@ export class GridApi<TData = any> {
         //
         // wait about 100ms before clearing down the references, in case user has some cleanup to do,
         // and needs to deference the API first
-        setTimeout(removeAllReferences.bind(window, this, 'Grid API'), 100);
+        setTimeout(removeAllReferences.bind(window, this, 'Grid API', ['isDestroyed']), 100);
     }
 
     /** Returns `true` if the grid has been destroyed. */

@@ -222,12 +222,12 @@ export function getValueUsingField(data: any, field: string, fieldContainsDots: 
 
 // used by GridAPI to remove all references, so keeping grid in memory resulting in a
 // memory leak if user is not disposing of the GridAPI references
-export function removeAllReferences(obj: any, objectName: string, customMsg?: (key: string) => string): void {
+export function removeAllReferences(obj: any, objectName: string, preserveKeys: string[] = [], customMsg?: (key: string) => string): void {
     Object.keys(obj).forEach(key => {
         const value = obj[key];
         // we want to replace all the @autowired services, which are objects. any simple types (boolean, string etc)
         // we don't care about
-        if (typeof value === 'object') {
+        if (typeof value === 'object' && !preserveKeys.includes(key)) {
             obj[key] = undefined;
         }
     });
@@ -243,7 +243,7 @@ export function removeAllReferences(obj: any, objectName: string, customMsg?: (k
     Object.keys(proto).forEach(key => {
         const value = proto[key];
         // leave all basic types - this is needed for GridAPI to leave the "destroyed: boolean" attribute alone
-        if (typeof value === 'function') {
+        if (typeof value === 'function' && !preserveKeys.includes(key)) {
             const func = () => {
                 console.warn(msgFunc(key));
             };
