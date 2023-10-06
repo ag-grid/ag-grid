@@ -12,7 +12,7 @@ import {
     ViewEncapsulation
 } from "@angular/core";
 
-import { AgPromise, ComponentUtil, Grid, GridOptions, GridParams, Module } from "@ag-grid-community/core";
+import { AgPromise, ComponentUtil, Grid, GridOptions, GridParams, Module, createGrid } from "@ag-grid-community/core";
 
 // @START_IMPORTS@
 import {
@@ -197,8 +197,12 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     // in order to ensure firing of gridReady is deterministic
     private _fullyReady: AgPromise<boolean> = AgPromise.resolve(true);
 
-    // making these public, so they are accessible to people using the ng2 component references
+    /** Grid Api available after onGridReady event has fired. */
     public api: GridApi<TData>;
+    /**
+     * @deprecated v31 - The `columnApi` has been deprecated and all the methods are now present of the `api`.
+     * Please use the `api` instead.
+     */
     public columnApi: ColumnApi;
 
     constructor(elementDef: ElementRef,
@@ -226,14 +230,11 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
             modules: (this.modules || []) as any
         };
 
-        new Grid(this._nativeElement, this.gridOptions, this.gridParams);
+        const api = createGrid(this._nativeElement, this.gridOptions, this.gridParams);
 
-        if (this.gridOptions.api) {
-            this.api = this.gridOptions.api;
-        }
-
-        if (this.gridOptions.columnApi) {
-            this.columnApi = this.gridOptions.columnApi;
+        if (api) {
+            this.api = api;
+            this.columnApi = new ColumnApi(api);
         }
 
         if (this.gridPreDestroyed.observers.length > 0) {
@@ -260,9 +261,8 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
             // need to do this before the destroy, so we know not to emit any events
             // while tearing down the grid.
             this._destroyed = true;
-            if (this.api) {
-                this.api.destroy();
-            }
+             // could be null if grid failed to initialise
+             this.api?.destroy();            
         }
     }
 
