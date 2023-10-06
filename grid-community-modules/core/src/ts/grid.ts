@@ -255,7 +255,7 @@ export class GridCoreCreator {
         Object.defineProperty(gridOptions, 'api', {
             get: () => {
                 warnOnce(msg('api'));
-                return beans.gridApi.destroyed ? undefined : beans.gridApi;
+                return beans.gridApi.isDestroyed() ? undefined : beans.gridApi;
             },
             configurable: true,
             enumerable: true,
@@ -263,7 +263,7 @@ export class GridCoreCreator {
         Object.defineProperty(gridOptions, 'columnApi', {
             get: () => {
                 warnOnce(msg('columnApi'));
-                return beans.gridApi.destroyed ? undefined : beans.columnApi;
+                return beans.gridApi.isDestroyed() ? undefined : beans.columnApi;
             },
             configurable: true,
             enumerable: true,
