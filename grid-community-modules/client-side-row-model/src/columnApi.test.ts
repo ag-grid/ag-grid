@@ -1,6 +1,6 @@
 import { describe, expect, it, xit, xtest, test, jest, beforeEach, afterEach } from '@jest/globals';
 import { ClientSideRowModelModule } from './clientSideRowModelModule';
-import { GridOptions, GridReadyEvent, Grid, ColDef, ColGroupDef } from '@ag-grid-community/core';
+import { GridOptions, GridReadyEvent, Grid, ColDef, ColGroupDef, createGrid } from '@ag-grid-community/core';
 
 const getColNames = (cols: any[] | undefined) => cols?.map(c => c.field ?? c.colId) ?? [];
 
@@ -29,7 +29,7 @@ describe('ColumnApi', () => {
                 done();
             }
         };
-        new Grid(document.createElement('div'), options, {
+        createGrid(document.createElement('div'), options, {
             modules: [ClientSideRowModelModule]
         });
 
@@ -45,7 +45,7 @@ describe('ColumnApi', () => {
                 done();
             }
         };
-        new Grid(document.createElement('div'), options, {
+        createGrid(document.createElement('div'), options, {
             modules: [ClientSideRowModelModule]
         });
 
@@ -65,7 +65,7 @@ describe('ColumnApi', () => {
                 done();
             }
         };
-        new Grid(document.createElement('div'), options, {
+        createGrid(document.createElement('div'), options, {
             modules: [ClientSideRowModelModule]
         });
 
