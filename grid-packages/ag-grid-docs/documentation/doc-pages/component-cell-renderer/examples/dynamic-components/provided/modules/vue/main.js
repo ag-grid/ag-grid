@@ -44,7 +44,6 @@ const VueExample = {
     data: function () {
         return {
             gridApi: null,
-            columnApi: null,
             columnDefs: [
                 {
                     headerName: "Row",

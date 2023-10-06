@@ -179,7 +179,7 @@ export function createAGActionCreator({
                 scrollColumn: action.actionParams?.scrollColumn,
             });
         } else if (actionType === 'resetColumnState') {
-            gridOptions?.columnApi?.resetColumnState();
+            gridOptions?.api?.resetColumnState();
         } else if (actionType === 'dragColumnToRowGroupPanel') {
             const action = agAction as DragColumnToRowGroupPanelAction;
 
@@ -196,7 +196,7 @@ export function createAGActionCreator({
             });
         } else if (actionType === 'focusCell') {
             const action = agAction as FocusCellAction;
-            const firstCol = gridOptions?.columnApi?.getAllDisplayedColumns()[action.actionParams.colIndex];
+            const firstCol = gridOptions?.api?.getAllDisplayedColumns()[action.actionParams.colIndex];
             if (!firstCol) {
                 return;
             }
@@ -219,7 +219,7 @@ export function createAGActionCreator({
             gridOptions?.api?.closeToolPanel();
         } else if (actionType === 'applyColumnState') {
             const action = agAction as ApplyColumnStateAction;
-            gridOptions?.columnApi?.applyColumnState(action.actionParams);
+            gridOptions?.api?.applyColumnState(action.actionParams);
         } else if (actionType === 'addCellRange') {
             const action = agAction as AddCellRangeAction;
             addCellRange({

@@ -61,7 +61,7 @@ Note that a pivot can only be active if pivot mode is on. If pivot mode is off, 
 
 ## Pivot Mode & Visible Columns
 
-When not in pivot mode, only columns that are visible are shown in the grid. To remove a column from the grid, use `columnApi.setColumnVisible(colKey, visible)`. Checking a column in the toolPanel will set the visibility on the column.
+When not in pivot mode, only columns that are visible are shown in the grid. To remove a column from the grid, use `api.setColumnVisible(colKey, visible)`. Checking a column in the toolPanel will set the visibility on the column.
 
 When in pivot mode and not pivoting, only columns that have row group or aggregation active are included in the grid. To add a column to the grid you either add it as a row group column or a value column. Setting visibility on a column has no impact when in pivot mode. Checking a column in the toolPanel will either add the column as a row group (if the column is configured as a dimension) or as an aggregated value (if the columns is configured as a value).
 
@@ -85,13 +85,13 @@ As mentioned above, the Pivot Result Columns in the grid are created by the grid
 
 <snippet>
 | // look up the Column that pivots on country Ireland and aggregates Gold
-| const irelandGoldColumn = gridOptions.columnApi.getPivotResultColumn(['Ireland'],'gold');
+| const irelandGoldColumn = gridOptions.api.getPivotResultColumn(['Ireland'],'gold');
 | 
 | // change the width of the Pivot Result Column
-| gridOptions.columnApi.setColumnWidth(irelandGoldColumn, newWidth);
+| gridOptions.api.setColumnWidth(irelandGoldColumn, newWidth);
 | 
 | // look up the Column that pivots on country SausageKingdom and year 2002 and aggregates silver
-| const sausageKingdomColumn = gridOptions.columnApi.getPivotResultColumn(['SausageKingdom','2002'],'silver');
+| const sausageKingdomColumn = gridOptions.api.getPivotResultColumn(['SausageKingdom','2002'],'silver');
 | 
 | console.log('found column with id ' + sausageKingdomColumn.getId());
 </snippet>
@@ -219,7 +219,7 @@ When pivot mode is enabled, you may also [Filter](/filtering-overview/) on both 
 
 <snippet>
 | const filterNotBlank2000Silvers = () => {
-|   const targetCol = gridOptions.columnApi.getPivotResultColumn(['2000'], 'silver');
+|   const targetCol = gridOptions.api.getPivotResultColumn(['2000'], 'silver');
 |   if (targetCol) {
 |     gridOptions.api.setFilterModel({
 |       [targetCol.getId()]: {
@@ -379,7 +379,7 @@ The example also demonstrates exporting to CSV while using Pivot. Basically what
 
 ## Ordering Pivot Columns
 
-The user is free to drag columns to reorder them and you are able to reorder columns via the columnApi in the normal way. However you may want to change the default order of the pivot columns.
+The user is free to drag columns to reorder them and you are able to reorder columns via the api in the normal way. However you may want to change the default order of the pivot columns.
 
 **Order of Pivot Value Column Groups**<br />
 Pivot value columns are the column groups created by the pivot values - eg if 'Country' is a pivot column, then the Pivot Value Column Groups are 'Ireland', 'UK', etc. These columns are ordered alphabetically by default. To override this, provide `pivotComparator(a,b)` function in the column definition.

@@ -39,7 +39,7 @@ const gridOptions: GridOptions<IOlympicData> = {
 }
 
 function onColumnPinned(event: ColumnPinnedEvent) {
-    const allCols = event.columnApi.getAllGridColumns()
+    const allCols = event.api.getAllGridColumns()
 
     const allFixedCols = allCols.filter(col => col.getColDef().lockPosition)
     const allNonFixedCols = allCols.filter(col => !col.getColDef().lockPosition)
@@ -60,18 +60,18 @@ function onColumnPinned(event: ColumnPinnedEvent) {
     })
 
     if (columnStates.length > 0) {
-        event.columnApi.applyColumnState({ state: columnStates })
+        event.api.applyColumnState({ state: columnStates })
     }
 }
 
 function onPinAthlete() {
-    gridOptions.columnApi!.applyColumnState({
+    gridOptions.api!.applyColumnState({
         state: [{ colId: 'athlete', pinned: 'left' }],
     })
 }
 
 function onUnpinAthlete() {
-    gridOptions.columnApi!.applyColumnState({
+    gridOptions.api!.applyColumnState({
         state: [{ colId: 'athlete', pinned: null }],
     })
 }

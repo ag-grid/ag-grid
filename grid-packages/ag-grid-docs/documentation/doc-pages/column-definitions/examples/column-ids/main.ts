@@ -18,7 +18,7 @@ const gridOptions: GridOptions = {
     ],
     rowData: createRowData(),
     onGridReady: (params: GridReadyEvent) => {
-        var cols = params.columnApi.getColumns()!;
+        var cols = params.api.getColumns()!;
         cols.forEach(function (col) {
             var colDef = col.getColDef();
             console.log(colDef.headerName + ', Column ID = ' + col.getId(), JSON.stringify(colDef));

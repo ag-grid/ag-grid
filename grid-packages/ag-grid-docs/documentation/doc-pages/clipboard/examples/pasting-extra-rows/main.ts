@@ -47,7 +47,7 @@ function processDataFromClipboard(params: ProcessDataFromClipboardParams): strin
       row.forEach((item) => {
         if (!currentColumn) { return; }
         rowObject[currentColumn.colDef.field] = item;
-        currentColumn = params.columnApi!.getDisplayedColAfter(currentColumn);
+        currentColumn = params.api!.getDisplayedColAfter(currentColumn);
       });
 
       rowsToAdd.push(rowObject);

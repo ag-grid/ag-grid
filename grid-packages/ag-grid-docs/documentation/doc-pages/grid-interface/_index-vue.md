@@ -116,6 +116,6 @@
 | this.gridOptions.api.redrawRows();
 |
 | // resize columns in the grid to fit the available space
-| this.gridOptions.columnApi.sizeColumnsToFit();
+| this.gridOptions.api.sizeColumnsToFit();
 </snippet>
 </framework-specific-section>

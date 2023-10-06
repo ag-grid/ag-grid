@@ -61,7 +61,7 @@ export class AppComponent {
     )!
     const shouldPinFirstColumn = checkbox && checkbox.checked
     if (shouldPinFirstColumn) {
-      params.columnApi.applyColumnState({
+      params.api.applyColumnState({
         state: [{ colId: "name", pinned: "left" }],
       })
     }

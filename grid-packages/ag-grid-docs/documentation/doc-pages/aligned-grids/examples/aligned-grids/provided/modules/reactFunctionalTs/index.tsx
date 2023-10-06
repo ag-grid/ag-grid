@@ -55,17 +55,17 @@ const GridExample = () => {
 
     const onCbAthlete = (event: any) => {
         // we only need to update one grid, as the other is a slave
-        topGrid.current!.columnApi.setColumnVisible('athlete', event.target.checked);
+        topGrid.current!.api.setColumnVisible('athlete', event.target.checked);
     }
 
     const onCbAge = (event: any) => {
         // we only need to update one grid, as the other is a slave
-        topGrid.current!.columnApi.setColumnVisible('age', event.target.checked);
+        topGrid.current!.api.setColumnVisible('age', event.target.checked);
     }
 
     const onCbCountry = (event: any) => {
         // we only need to update one grid, as the other is a slave
-        topGrid.current!.columnApi.setColumnVisible('country', event.target.checked);
+        topGrid.current!.api.setColumnVisible('country', event.target.checked);
     }
 
     return (

@@ -31,7 +31,7 @@ md-include:component-interface-angular.md
 md-include:component-interface-react.md
 md-include:component-interface-vue.md
 
-<interface-documentation interfaceName='ILoadingCellRendererParams' names='["api", "columnApi", "context", "node"]' config='{"hideHeader":false, "headerLevel":3}' ></interface-documentation>
+<interface-documentation interfaceName='ILoadingCellRendererParams' names='["api", "context", "node"]' config='{"hideHeader":false, "headerLevel":3}' ></interface-documentation>
 
 ## Dynamic Cell Loading Renderer
 

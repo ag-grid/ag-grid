@@ -68,13 +68,12 @@ function getMyFilter(): IFilterType {
     doesFilterPass(params: IDoesFilterPassParams) {
       filterCallCount++
 
-      const { api, colDef, column, columnApi, context } = this.filterParams;
+      const { api, colDef, column, context } = this.filterParams;
       const { node } = params;
       const value = this.filterParams.valueGetter({
         api,
         colDef,
         column,
-        columnApi,
         context,
         data: node.data,
         getValue: (field) => node.data[field],

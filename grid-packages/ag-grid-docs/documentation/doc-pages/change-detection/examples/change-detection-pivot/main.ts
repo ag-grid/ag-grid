@@ -87,9 +87,9 @@ function createRow() {
 function pivotMode() {
   var pivotModeOn = (document.getElementById('pivot-mode') as HTMLInputElement).checked
 
-  gridOptions.columnApi!.setPivotMode(pivotModeOn)
+  gridOptions.api!.setPivotMode(pivotModeOn)
 
-  gridOptions.columnApi!.applyColumnState({
+  gridOptions.api!.applyColumnState({
     state: [
       { colId: 'yearGroup', rowGroup: pivotModeOn },
       { colId: 'course', pivot: pivotModeOn, pivotIndex: 1 },

@@ -23,8 +23,8 @@ const gridOptions: GridOptions<IOlympicData> = {
 }
 
 function onBtNormal() {
-  gridOptions.columnApi!.setPivotMode(false)
-  gridOptions.columnApi!.applyColumnState({
+  gridOptions.api!.setPivotMode(false)
+  gridOptions.api!.applyColumnState({
     state: [
       { colId: 'country', rowGroup: true },
       { colId: 'year', rowGroup: true },
@@ -37,8 +37,8 @@ function onBtNormal() {
 }
 
 function onBtPivotMode() {
-  gridOptions.columnApi!.setPivotMode(true)
-  gridOptions.columnApi!.applyColumnState({
+  gridOptions.api!.setPivotMode(true)
+  gridOptions.api!.applyColumnState({
     state: [
       { colId: 'country', rowGroup: true },
       { colId: 'year', rowGroup: true },
@@ -51,8 +51,8 @@ function onBtPivotMode() {
 }
 
 function onBtFullPivot() {
-  gridOptions.columnApi!.setPivotMode(true)
-  gridOptions.columnApi!.applyColumnState({
+  gridOptions.api!.setPivotMode(true)
+  gridOptions.api!.applyColumnState({
     state: [
       { colId: 'country', rowGroup: true },
       { colId: 'year', pivot: true },

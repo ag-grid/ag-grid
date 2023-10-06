@@ -31,7 +31,6 @@ import { ColDef, ColumnApi, GridApi, GridReadyEvent, IRowNode } from '@ag-grid-c
 })
 export class AppComponent {
     private gridApi!: GridApi;
-    private gridColumnApi!: ColumnApi;
 
     public columnDefs: ColDef[] = [
         {
@@ -106,7 +105,6 @@ export class AppComponent {
 
     onGridReady(params: GridReadyEvent) {
         this.gridApi = params.api;
-        this.gridColumnApi = params.columnApi;
     }
 
     methodFromParent(cell: any) {

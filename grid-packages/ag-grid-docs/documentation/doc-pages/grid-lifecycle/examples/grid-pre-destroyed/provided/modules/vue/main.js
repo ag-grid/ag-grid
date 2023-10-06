@@ -60,7 +60,6 @@ const VueExample = {
             }],
             columnsWidthOnPreDestroyed: undefined,
             gridApi: null,
-            columnApi: null,
             defaultColDef: {
                 editable: true,
                 resizable: true,
@@ -76,8 +75,8 @@ const VueExample = {
     },
     methods: {
         onGridPreDestroyed(params) {
-            const {columnApi} = params;
-            const allColumns = columnApi.getColumns();
+            const {api} = params;
+            const allColumns = api.getColumns();
             if (!allColumns) {
                 return;
             }
@@ -91,13 +90,13 @@ const VueExample = {
             this.showGridPreDestroyedState = true;
         },
         updateColumnWidth() {
-            if (!this.gridColumnApi) {
+            if (!this.gridApi) {
                 return;
             }
 
-            this.gridColumnApi.getColumns().forEach(column => {
+            this.gridApi.getColumns().forEach(column => {
                 const newRandomWidth = Math.round((150 + Math.random() * 100) * 100) / 100;
-                this.gridColumnApi.setColumnWidth(column, newRandomWidth);
+                this.gridApi.setColumnWidth(column, newRandomWidth);
             });
         },
         destroyGrid() {
@@ -127,8 +126,6 @@ const VueExample = {
         },
         onGridReady(params) {
             this.gridApi = params.api;
-            this.gridColumnApi = params.columnApi;
-
         },
     }
 }

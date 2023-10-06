@@ -41,10 +41,10 @@ const gridOptions: GridOptions<IOlympicData> = {
 
 const getParams: () => ExcelExportParams = () => ({
   processHeaderCallback(params: ProcessHeaderForExportParams): string {
-    return `header: ${params.columnApi.getDisplayNameForColumn(params.column, null)}`
+    return `header: ${params.api.getDisplayNameForColumn(params.column, null)}`
   },
   processGroupHeaderCallback(params: ProcessGroupHeaderForExportParams): string {
-    return `group header: ${params.columnApi.getDisplayNameForColumnGroup(params.columnGroup, null)}`
+    return `group header: ${params.api.getDisplayNameForColumnGroup(params.columnGroup, null)}`
   }
 })
 

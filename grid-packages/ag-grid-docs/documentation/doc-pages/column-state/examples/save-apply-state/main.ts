@@ -33,7 +33,7 @@ const gridOptions: GridOptions<IOlympicData> = {
 }
 
 function saveState() {
-  window.colState = gridOptions.columnApi!.getColumnState()
+  window.colState = gridOptions.api!.getColumnState()
   console.log('column state saved')
 }
 
@@ -42,7 +42,7 @@ function restoreState() {
     console.log('no columns state to restore by, you must save state first')
     return
   }
-  gridOptions.columnApi!.applyColumnState({
+  gridOptions.api!.applyColumnState({
     state: window.colState,
     applyOrder: true,
   })
@@ -50,7 +50,7 @@ function restoreState() {
 }
 
 function resetState() {
-  gridOptions.columnApi!.resetColumnState()
+  gridOptions.api!.resetColumnState()
   console.log('column state reset')
 }
 

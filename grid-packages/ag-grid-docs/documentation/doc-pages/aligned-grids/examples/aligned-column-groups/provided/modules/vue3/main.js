@@ -62,8 +62,6 @@ const VueExample = {
             },
             topGridApi: null,
             bottomGridApi: null,
-            topColumnApi: null,
-            bottomColumnApi: null,
             columnDefs: [
                 {
                     headerName: 'Group 1',
@@ -104,9 +102,7 @@ const VueExample = {
     },
     mounted() {
         this.topGridApi = this.topOptions.api;
-        this.topColumnApi = this.topOptions.columnApi;
         this.bottomGridApi = this.bottomOptions.api;
-        this.bottomColumnApi = this.bottomOptions.columnApi;
 
         this.topOptions.alignedGrids.push(this.bottomOptions);
         this.bottomOptions.alignedGrids.push(this.topOptions);
@@ -117,8 +113,8 @@ const VueExample = {
                 this.rowData = rowData
 
                 // mix up some columns
-                this.topColumnApi.moveColumnByIndex(11, 4);
-                this.topColumnApi.moveColumnByIndex(11, 4);
+                this.topGridApi.moveColumnByIndex(11, 4);
+                this.topGridApi.moveColumnByIndex(11, 4);
             });
     },
     methods: {

@@ -48,7 +48,6 @@ const applyTypes = () => {
         .pipe(replace(new RegExp('(var|const) gridOptions =', 'g'), 'const gridOptions: GridOptions ='))
         .pipe(replace(new RegExp('(var|const) columnDefs =', 'g'), 'const columnDefs: ColDef[] ='))
         .pipe(replace(new RegExp('gridOptions\.api(?!!.)', 'g'), 'gridOptions.api!'))
-        .pipe(replace(new RegExp('gridOptions\.columnApi(?!!.)', 'g'), 'gridOptions.columnApi!'))
         .pipe(gulpIf(containsEvent('onGridReady'), replace(new RegExp('^', 'g'), 'import { GridReadyEvent } from "@ag-grid-community/core";\n\n')))
         .pipe(gulpIf(containsEvent('onFirstDataRendered'), replace(new RegExp('^', 'g'), 'import { FirstDataRenderedEvent } from "@ag-grid-community/core";\n\n')))
         .pipe(gulpIf(containsGridOptions, replace(new RegExp('^', 'g'), 'import { GridOptions } from "@ag-grid-community/core";\n\n')))

@@ -35,7 +35,6 @@ const VueExample = {
         return {
             columnDefs: [],
             gridApi: null,
-            columnApi: null,
             defaultColDef: {
                 width: 100, // resets col widths if manually resized
                 sortable: true,
@@ -58,7 +57,6 @@ const VueExample = {
         },
         onGridReady(params) {
             this.gridApi = params.api;
-            this.gridColumnApi = params.columnApi;
 
 
             const updateData = (data) => {

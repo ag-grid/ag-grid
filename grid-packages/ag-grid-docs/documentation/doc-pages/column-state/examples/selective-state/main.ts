@@ -34,7 +34,7 @@ const gridOptions: GridOptions<IOlympicData> = {
 }
 
 function onBtSaveSortState() {
-  const allState = gridOptions.columnApi!.getColumnState()
+  const allState = gridOptions.api!.getColumnState()
   const sortState = allState.map(state => ({
     colId: state.colId,
     sort: state.sort,
@@ -49,14 +49,14 @@ function onBtRestoreSortState() {
     console.log('no sort state to restore, you must save sort state first')
     return
   }
-  gridOptions.columnApi!.applyColumnState({
+  gridOptions.api!.applyColumnState({
     state: window.sortState,
   })
   console.log('sort state restored')
 }
 
 function onBtSaveOrderAndVisibilityState() {
-  const allState = gridOptions.columnApi!.getColumnState()
+  const allState = gridOptions.api!.getColumnState()
   const orderAndVisibilityState = allState.map(state => ({
     colId: state.colId,
     hide: state.hide,
@@ -72,7 +72,7 @@ function onBtRestoreOrderAndVisibilityState() {
     )
     return
   }
-  gridOptions.columnApi!.applyColumnState({
+  gridOptions.api!.applyColumnState({
     state: window.orderAndVisibilityState,
     applyOrder: true,
   })

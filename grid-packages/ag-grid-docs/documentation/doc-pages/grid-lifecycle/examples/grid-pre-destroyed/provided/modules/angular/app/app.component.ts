@@ -53,7 +53,6 @@ export class AppComponent {
     public isVisible = true;
     public showPreDestroyState = false;
     private gridApi!: GridApi;
-    private gridColumnApi!: ColumnApi;
 
     private gridOptions: GridOptions = {
         onGridPreDestroyed: (params: GridPreDestroyedEvent<TAthlete>) => this.onGridPreDestroyed(params),
@@ -75,7 +74,7 @@ export class AppComponent {
     public rowData: any[] | null = getDataSet()
 
     onGridPreDestroyed(params: GridPreDestroyedEvent<TAthlete>) {
-        const allColumns = params.columnApi?.getColumns();
+        const allColumns = params.api?.getColumns();
         if (!allColumns) {
             return;
         }
@@ -88,12 +87,12 @@ export class AppComponent {
     }
 
     updateColumnWidth() {
-        if (!this.gridColumnApi) {
+        if (!this.gridApi) {
             return;
         }
-        this.gridColumnApi.getColumns()!.forEach(column => {
+        this.gridApi.getColumns()!.forEach(column => {
             const newRandomWidth = Math.round((150 + Math.random() * 100) * 100) / 100;
-            this.gridColumnApi?.setColumnWidth(column, newRandomWidth);
+            this.gridApi?.setColumnWidth(column, newRandomWidth);
         });
     }
 
@@ -127,6 +126,5 @@ export class AppComponent {
 
     onGridReady(params: GridReadyEvent) {
         this.gridApi = params.api;
-        this.gridColumnApi = params.columnApi;
     }
 }

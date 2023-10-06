@@ -183,7 +183,7 @@ function expandAll(expand: boolean) {
   ]
 
   groupNames.forEach(groupId => {
-    gridOptions.columnApi!.setColumnGroupOpened(groupId, expand)
+    gridOptions.api!.setColumnGroupOpened(groupId, expand)
   })
 }
 

@@ -23,23 +23,23 @@ const gridOptions: GridOptions<IOlympicData> = {
 }
 
 function expandAll(expand: boolean) {
-  const state = gridOptions.columnApi!.getColumnGroupState();
+  const state = gridOptions.api!.getColumnGroupState();
   const expandedState = state.map((group) => ({
     groupId: group.groupId,
     open: expand,
   }));
-  gridOptions.columnApi!.setColumnGroupState(expandedState);
+  gridOptions.api!.setColumnGroupState(expandedState);
 }
 
 function expandRoute(route: string[]) {
   const expand = (columnGroup: ColumnGroup) => {
     if (columnGroup) {
       expand(columnGroup.getParent());
-      gridOptions.columnApi!.setColumnGroupOpened(columnGroup.getGroupId(), true);
+      gridOptions.api!.setColumnGroupOpened(columnGroup.getGroupId(), true);
     }
   }
 
-  const targetCol = gridOptions.columnApi!.getPivotResultColumn(route, 'gold');
+  const targetCol = gridOptions.api!.getPivotResultColumn(route, 'gold');
   if (targetCol) {
     expand(targetCol.getParent());
   }

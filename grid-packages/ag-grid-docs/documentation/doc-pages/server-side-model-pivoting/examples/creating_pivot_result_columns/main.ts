@@ -1,4 +1,4 @@
-import { Grid, ColDef, ColGroupDef, ColumnApi, GridOptions, IServerSideDatasource, IServerSideGetRowsRequest } from '@ag-grid-community/core'
+import { Grid, ColDef, ColGroupDef, ColumnApi, GridOptions, IServerSideDatasource, IServerSideGetRowsRequest, GridApi } from '@ag-grid-community/core'
 declare var FakeServer: any;
 const gridOptions: GridOptions<IOlympicData> = {
   columnDefs: [
@@ -56,7 +56,7 @@ function getServerSideDatasource(server: any): IServerSideDatasource {
       const response = server.getData(request)
 
       // add pivot results cols to the grid
-      addPivotResultCols(request, response, params.columnApi)
+      addPivotResultCols(request, response, params.api)
 
       // simulating real server call with a 500ms delay
       setTimeout( () => {
@@ -71,9 +71,9 @@ function getServerSideDatasource(server: any): IServerSideDatasource {
   }
 }
 
-function addPivotResultCols(request: IServerSideGetRowsRequest, response: any, columnApi: ColumnApi) {
+function addPivotResultCols(request: IServerSideGetRowsRequest, response: any, api: GridApi) {
   // check if pivot colDefs already exist
-  const existingPivotColDefs = columnApi.getPivotResultColumns()
+  const existingPivotColDefs = api.getPivotResultColumns()
   if (existingPivotColDefs && existingPivotColDefs.length > 0) {
     return
   }
@@ -82,7 +82,7 @@ function addPivotResultCols(request: IServerSideGetRowsRequest, response: any, c
   const pivotResultColumns = createPivotResultColumns(request, response.pivotFields)
 
   // supply pivot result columns to the grid
-  columnApi.setPivotResultColumns(pivotResultColumns)
+  api.setPivotResultColumns(pivotResultColumns)
 }
 
 function addColDef(colId: string, parts: string[], res: (ColDef | ColGroupDef)[], request: IServerSideGetRowsRequest): (ColDef | ColGroupDef)[] {

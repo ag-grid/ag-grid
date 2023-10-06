@@ -272,11 +272,11 @@ const firstColumn: ColDef = {
     filter: PersonFilter,
     checkboxSelection: (params) => {
         // we put checkbox on the name if we are not doing no grouping
-        return params.columnApi.getRowGroupColumns().length === 0
+        return params.api.getRowGroupColumns().length === 0
     },
     headerCheckboxSelection: (params) => {
         // we put checkbox on the name if we are not doing grouping
-        return params.columnApi.getRowGroupColumns().length === 0
+        return params.api.getRowGroupColumns().length === 0
     },
     headerCheckboxSelectionFilteredOnly: true,
     icons: {
