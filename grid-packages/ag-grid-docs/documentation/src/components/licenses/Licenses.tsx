@@ -24,7 +24,7 @@ const DEV_LICENSE_DATA: LicenseData[] = [
         id: 'single-application',
         subHeading: 'AG Grid Enterprise',
         priceFullDollars: '999',
-        licenseBenefits: ['Perpetual license', '1 year of support', '1 year of updates'],
+        licenseBenefits: ['Perpetual License', '1 Year of Support', '1 Year of Updates'],
         buyLink: '/ecommerce/#/ecommerce/?licenseType=single',
         Logo: AGGridLogo
     },
@@ -32,7 +32,7 @@ const DEV_LICENSE_DATA: LicenseData[] = [
         className: styles.chartsLicense,
         id: 'single-application',
         subHeading: 'AG Charts Enterprise',
-        licenseBenefits: ['Perpetual license', '1 year of support', '1 year of updates'],
+        licenseBenefits: ['Perpetual License', '1 Year of Support', '1 Year of Updates'],
         priceFullDollars: '299',
         buyLink: '/ecommerce/#/ecommerce/?licenseType=multi',
         Logo: AGChartsLogo
@@ -92,7 +92,7 @@ const License = (props: LicenseData) => {
                             });
                         }}
                     >
-                        Configure now
+                        Configure Now
                     </a>
                 </div>
             </div>
