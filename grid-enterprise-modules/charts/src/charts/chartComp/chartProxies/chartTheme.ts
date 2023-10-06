@@ -7,7 +7,7 @@ import {
     AgChartThemeOverrides,
     AgChartThemePalette,
     AgPieSeriesTooltipRendererParams
-} from 'ag-charts-community';
+} from 'ag-charts-enterprise';
 import { ALL_AXIS_TYPES } from '../utils/axisTypeMapper';
 import { getSeriesType } from '../utils/seriesTypeMapper';
 import { ChartProxy, ChartProxyParams } from './chartProxy';

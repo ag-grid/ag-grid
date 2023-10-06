@@ -1,5 +1,5 @@
 import { MiniChart } from "../miniChart";
-import { _Scene } from "ag-charts-community";
+import { _Scene } from "ag-charts-enterprise";
 import { ChartType } from "@ag-grid-community/core";
 
 const toRadians = _Scene.toRadians;
