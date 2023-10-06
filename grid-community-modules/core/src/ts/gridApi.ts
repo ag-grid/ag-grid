@@ -211,7 +211,8 @@ export class GridApi<TData = any> {
 
     private detailGridInfoMap: { [id: string]: DetailGridInfo | undefined; } = {};
 
-    private destroyCalled = false;
+    /** Set to true when the api has been destroyed. */
+    public destroyed = false;
 
     public registerOverlayWrapperComp(overlayWrapperComp: OverlayWrapperComponent): void {
         this.overlayWrapperComp = overlayWrapperComp;
@@ -1575,10 +1576,12 @@ export class GridApi<TData = any> {
     public destroy(): void {
         // this is needed as GridAPI is a bean, and GridAPI.destroy() is called as part
         // of context.destroy(). so we need to stop the infinite loop.
-        if (this.destroyCalled) { return; }
-        this.destroyCalled = true;
-
+        if (this.destroyed) { return; }
+        
         this.dispatchEvent({ type: Events.EVENT_GRID_PRE_DESTROYED });
+        
+        // Set after pre-destroy so user can still use the api in pre-destroy event and it is not marked as destroyed yet.
+        this.destroyed = true;
 
         // destroy the UI first (as they use the services)
         const gridCtrl = this.ctrlsService.getGridCtrl();
@@ -1602,10 +1605,10 @@ export class GridApi<TData = any> {
     }
 
     private warnIfDestroyed(methodName: string): boolean {
-        if (this.destroyCalled) {
+        if (this.destroyed) {
             console.warn(`AG Grid: Grid API method ${methodName} was called on a grid that was destroyed.`);
         }
-        return this.destroyCalled;
+        return this.destroyed;
     }
 
     /** Reset the Quick Filter cache text on every rowNode. */
