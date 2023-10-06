@@ -65,8 +65,7 @@ const OverviewSection = () => {
                     </div>
                     <hr className={classnames(styles.cardDivider)}/>
                     <div className={classnames(styles.cardBody)}>
-                        Already familiar with the Grid or want to see how it works? Browse our Quick Starts 
-                        to kick-start your development
+                        Explore our API reference page to easily access all of our API methods in one place 
                     </div>
                     <div className={classnames(styles.cardLink)}>
                         <a href='grid-interface/'>Grid API</a>
@@ -91,7 +90,7 @@ const NeedHelpSection = () => {
                     requests through our GitHub
                 </div>
                 <div className={classnames(styles.cardLink)}>
-                    <a href='https://github.com/ag-grid/ag-grid/issues' target='_blank'>Raise an Issue</a>
+                    <a href='https://github.com/ag-grid/ag-grid' target='_blank'>View Source</a>
                 </div>
             </div>
             <div className={classnames(styles.card)}>
