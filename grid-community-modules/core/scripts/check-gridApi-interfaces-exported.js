@@ -13,10 +13,9 @@ function checkGridOptionPropertyKeys() {
     })
 
     let publicGridApiTypes = getPublicTypes(gridApiContents);
-    let publicColumnApiTypes = getPublicTypes(columnApiContents);
     let missingPropertyKeys = new Set();
 
-    [...publicGridApiTypes, ...publicColumnApiTypes].forEach(m => {
+    publicGridApiTypes.forEach(m => {
         if (!mainExports.includes(m)) {
             missingPropertyKeys.add(m)
         }
