@@ -64,7 +64,7 @@ export class Events {
     /** @deprecated v28 use EVENT_ROW_DATA_UPDATED instead */
     public static EVENT_ROW_DATA_CHANGED: 'rowDataChanged' = 'rowDataChanged';
 
-    /** The client has updated data for the grid */
+    /** Client-Side Row Model only. The client has updated data for the grid */
     public static EVENT_ROW_DATA_UPDATED: 'rowDataUpdated' = 'rowDataUpdated';
 
     /** The client has set new floating data into the grid */
@@ -251,6 +251,7 @@ export class Events {
     public static EVENT_FILTER_DESTROYED: 'filterDestroyed' = 'filterDestroyed';
 
     public static EVENT_ROW_DATA_UPDATE_STARTED: 'rowDataUpdateStarted' = 'rowDataUpdateStarted';
+    public static EVENT_ROW_COUNT_READY: 'rowCountReady' = 'rowCountReady';
 
     // Advanced Filters
     public static EVENT_ADVANCED_FILTER_ENABLED_CHANGED: 'advancedFilterEnabledChanged' = 'advancedFilterEnabledChanged';

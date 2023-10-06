@@ -51,33 +51,25 @@ export class StateService extends BeanStub {
     @Autowired('expansionService') private expansionService: IExpansionService;
 
     private isClientSideRowModel: boolean;
-    private hasFirstDataRendered: boolean = false;
-    private hasModelUpdated: boolean = false;
 
     @PostConstruct
     private postConstruct(): void {
         this.isClientSideRowModel = this.rowModel.getType() === 'clientSide';
 
-        this.addManagedListener(this.eventService, Events.EVENT_NEW_COLUMNS_LOADED, ({ source }: NewColumnsLoadedEvent) => {
+        const newColumnsLoadedDestroyFunc = this.addManagedListener(this.eventService, Events.EVENT_NEW_COLUMNS_LOADED, ({ source }: NewColumnsLoadedEvent) => {
             if (source === 'gridInitializing') {
+                newColumnsLoadedDestroyFunc?.();
                 this.setInitialStateOnColumnsInitialised();
             }
         });
-        this.addManagedListener(this.eventService, Events.EVENT_FIRST_DATA_RENDERED, () => {
-            this.hasFirstDataRendered = true;
+        const rowCountReadyDestroyFunc = this.addManagedListener(this.eventService, Events.EVENT_ROW_COUNT_READY, () => {
+            rowCountReadyDestroyFunc?.();
+            this.setInitialStateOnRowCountReady();
+        });
+        const firstDataRenderedDestroyFunc = this.addManagedListener(this.eventService, Events.EVENT_FIRST_DATA_RENDERED, () => {
+            firstDataRenderedDestroyFunc?.();
             this.setInitialStateOnFirstDataRendered();
         });
-        this.addManagedListener(this.eventService, Events.EVENT_ROW_DATA_UPDATED, () => {
-            if (!this.hasFirstDataRendered) {
-                this.setInitialStateOnRowDataUpdated();
-            }
-        });
-        this.addManagedListener(this.eventService, Events.EVENT_MODEL_UPDATED, () => {
-            if (!this.hasModelUpdated) {
-                this.hasModelUpdated = true;
-                this.setInitialStateOnModelUpdated();
-            }
-        })
     }
 
     public getState(): GridState {
@@ -104,23 +96,20 @@ export class StateService extends BeanStub {
         }
     }
 
-    private setInitialStateOnRowDataUpdated(): void {
-        const { pagination: paginationState } = this.gridOptionsService.get('initialState') ?? {};
-        if (paginationState) {
-            this.setPaginationState(paginationState);
-        }
-    }
-
-    private setInitialStateOnModelUpdated(): void {
+    private setInitialStateOnRowCountReady(): void {
         const {
             rowGroupExpansion: rowGroupExpansionState,
-            rowSelection: rowSelectionState
+            rowSelection: rowSelectionState,
+            pagination: paginationState
         } = this.gridOptionsService.get('initialState') ?? {};
         if (rowGroupExpansionState) {
             this.setRowGroupExpansionState(rowGroupExpansionState);
         }
         if (rowSelectionState) {
             this.setRowSelectionState(rowSelectionState);
+        }
+        if (paginationState) {
+            this.setPaginationState(paginationState);
         }
     }
 

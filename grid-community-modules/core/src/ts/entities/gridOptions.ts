@@ -1155,7 +1155,7 @@ export interface GridOptions<TData = any> {
     // *** Row Model: Client Side *** //
     /** @deprecated v28 No longer fired, use onRowDataUpdated instead */
     onRowDataChanged?(event: RowDataChangedEvent<TData>): void;
-    /** The client has updated data for the grid by either a) setting new Row Data or b) Applying a Row Transaction. */
+    /** Client-Side Row Model only. The client has updated data for the grid by either a) setting new Row Data or b) Applying a Row Transaction. */
     onRowDataUpdated?(event: RowDataUpdatedEvent<TData>): void;
     /** Async transactions have been applied. Contains a list of all transaction results. */
     onAsyncTransactionsFlushed?(event: AsyncTransactionsFlushed<TData>): void;

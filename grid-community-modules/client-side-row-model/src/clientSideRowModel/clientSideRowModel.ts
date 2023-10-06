@@ -924,6 +924,11 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel 
             }
             this.rootNode.updateHasChildren();
         }
+
+        this.eventService.dispatchEventOnce({
+            type: Events.EVENT_ROW_COUNT_READY
+        });
+
     }
 
     private restoreGroupState(groupState: any): void {

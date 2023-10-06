@@ -52,6 +52,7 @@ export class ComponentUtil {
         Events.EVENT_SUPPRESS_COLUMN_MOVE_CHANGED,
         Events.EVENT_SUPPRESS_MENU_HIDE_CHANGED,
         Events.EVENT_SUPPRESS_FIELD_DOT_NOTATION,
+        Events.EVENT_ROW_COUNT_READY,
     ];
 
     // events that are available for use by users of AG Grid and so should be documented
