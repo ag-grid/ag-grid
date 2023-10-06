@@ -51,7 +51,7 @@ The example below demonstrates saving and restoring column state. Try the follow
 
 The Column State method interfaces are as follows:
 
-<api-documentation source='grid-api/api.json' section='state' names='["getColumnState", "applyColumnState"]'></api-documentation>
+<api-documentation source='column-api/api.json' section='state' names='["getColumnState", "applyColumnState"]'></api-documentation>
 
 ## Partial State
 
@@ -201,7 +201,7 @@ which is whether the group is open or closed.
 To get the state of Column Groups use the API method `api.getColumnGroupState()`. To
 set the Column Group state use the API method `api.setColumnGroupState(stateItems)`.
 
-<api-documentation source='grid-api/api.json' section='state' names='["getColumnGroupState", "setColumnGroupState"]' ></api-documentation>
+<api-documentation source='column-api/api.json' section='state' names='["getColumnGroupState", "setColumnGroupState"]' ></api-documentation>
 
 The example below demonstrates getting and setting Column Group State. Note the following:
 

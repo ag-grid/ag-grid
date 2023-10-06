@@ -131,7 +131,7 @@ but can become complex when column groups are involved.
 Pivot result columns are defined identically to the columns supplied to the grid options: you provide a list of [Column Definitions](/column-definitions/) 
 passing a list of columns and / or column groups using the following column API method:
 
-<api-documentation source='grid-api/api.json' section='Pivoting' names='["setPivotResultColumns"]' ></api-documentation>
+<api-documentation source='column-api/api.json' section='Pivoting' names='["setPivotResultColumns"]' ></api-documentation>
 
 There is no limit or restriction as to the number of columns or groups you pass. However, it's important that the field 
 (or value getter) that you set for the columns match.

@@ -14,112 +14,10 @@
         "setColumnDefs": {},
         "setAutoGroupColumnDef": {},
         "setDefaultColDef": {},
-        "getColumn": {},
-        "getColumns": {},
-        "getAllGridColumns": {}
-    },
-    "columnSizing": {
-        "meta": {
-            "displayName": "Column Sizing",
-            "description": "See [Column Sizing](/column-sizing/)"
-        },
-        "setColumnWidth": {},
-        "setColumnWidths": {},
         "sizeColumnsToFit": {
             "more": {
                 "name": "Size Columns to Fit",
                 "url": "/column-sizing/#size-columns-to-fit"
-            }
-        },
-        "autoSizeColumn": {},
-        "autoSizeColumns": {},
-        "autoSizeAllColumns": {}
-    },
-    "columnMoving":{
-        "meta": {
-            "displayName": "Column Moving",
-            "description": "See [Column Moving](/column-moving/)"
-        },
-        "moveColumn": {},
-        "moveColumns": {},
-        "moveColumnByIndex": {}
-    },
-    "columnPinning": {
-        "meta": {
-            "displayName": "Column Pinning",
-            "description": "See [Column Pinning](/column-pinning/)"
-        },
-        "isPinning": {},
-        "isPinningLeft": {},
-        "isPinningRight": {},
-        "setColumnPinned": {},
-        "setColumnsPinned": {}
-    },
-    "state": {
-        "meta": {
-            "displayName": "Column State",
-            "description": "See [Column State](/column-state/)"
-        },
-        "getColumnState": {},
-        "applyColumnState": {},
-        "resetColumnState": {},
-        "getColumnGroupState": {},
-        "setColumnGroupState": {},
-        "resetColumnGroupState": {}
-    },
-    "colGroups": {
-        "meta": {
-            "displayName": "Column Groups",
-            "description": "See [Column Groups](/column-groups/)"
-        },
-        "getColumnGroup": {
-            "more": {
-                "name": "Column Groups",
-                "url": "/column-groups/"
-            }
-        },
-        "getProvidedColumnGroup": {},
-        "setColumnGroupOpened": {}
-    },
-    "Visibility and Display": {
-        "meta": {
-            "displayName": "Column Display"
-        },
-        "setColumnVisible": {},
-        "setColumnsVisible": {},
-        "getDisplayNameForColumn": {},
-        "getDisplayNameForColumnGroup": {},
-        "getDisplayedColAfter": {},
-        "getDisplayedColBefore": {},
-        "getAllDisplayedVirtualColumns": {},
-        "getAllDisplayedColumns": {},
-        "getDisplayedCenterColumns": {},
-        "getDisplayedLeftColumns": {},
-        "getDisplayedRightColumns": {},
-        "getAllDisplayedColumnGroups": {},
-        "getCenterDisplayedColumnGroups": {},
-        "getLeftDisplayedColumnGroups": {},
-        "getRightDisplayedColumnGroups": {}
-    },
-    "Pivoting": {
-        "meta": {
-            "displayName": "Pivoting",
-            "description": "See [Pivoting](/pivoting/)"
-        },
-        "isPivotMode": {},
-        "setPivotMode": {},
-        "getPivotColumns": {},
-        "setPivotColumns": {},
-        "addPivotColumn": {},
-        "addPivotColumns": {},
-        "removePivotColumn": {},
-        "removePivotColumns": {},
-        "getPivotResultColumn": {},
-        "setPivotResultColumns": {},
-        "getPivotResultColumns": {
-            "more": {
-                "name": "Columns vs Pivot Result Columns",
-                "url": "/pivoting/#columns-vs-pivot-result-columns"
             }
         }
     },
@@ -450,7 +348,7 @@
         "removeGlobalListener": {},
         "addRenderedRowListener": {}
     },
-    "rowGroupsCols": {
+    "rowGroups": {
         "meta": {
             "displayName": "Row Grouping",
             "page": {
@@ -462,21 +360,14 @@
         "collapseAll": {},
         "setRowNodeExpanded": {},
         "onGroupExpandedOrCollapsed": {},
-        "getRowGroupColumns": {},
-        "setRowGroupColumns": {},
-        "addRowGroupColumn": {},
-        "addRowGroupColumns": {},
-        "removeRowGroupColumn": {},
-        "removeRowGroupColumns": {},
-        "moveRowGroupColumn": {},
-        "setGroupIncludeFooter": {},
-        "setGroupIncludeTotalFooter": {},
         "setTreeData": {
             "more": {
                 "name": "Tree Data",
                 "url": "/tree-data/"
             }
-        }
+        },
+        "setGroupIncludeFooter": {},
+        "setGroupIncludeTotalFooter": {}
     },
     "rowDrag": {
         "meta": {
@@ -700,13 +591,6 @@
             "displayName": "Pivot and Aggregation",
             "description": "See [Pivot](/pivoting/) and [Aggregation](/aggregation/) for more information"
         },
-        "getValueColumns": {},
-        "addValueColumn": {},
-        "addValueColumns": {},
-        "removeValueColumn": {},
-        "removeValueColumns": {},
-        "setValueColumns": {},
-        "setColumnAggFunc": {},
         "addAggFunc": {},
         "addAggFuncs": {},
         "clearAggFuncs": {}

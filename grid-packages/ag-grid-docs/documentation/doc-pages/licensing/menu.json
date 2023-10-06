@@ -1689,7 +1689,7 @@
     "group": "API REFERENCE",
     "items": [
       {
-        "title": "Grid",
+        "title": "Grid API",
         "items": [
           {
             "title": "Overview",
@@ -1715,11 +1715,16 @@
             "title": "Grid Lifecycle",
             "url": "/grid-lifecycle/",
             "showInCollapsed": true
+          },
+          {
+            "title": "Row Object",
+            "url": "/row-object/",
+            "showInCollapsed": true
           }
         ]
       },
       {
-        "title": "Column",
+        "title": "Column API",
         "showInCollapsed": true,
         "items": [
           {
@@ -1733,28 +1738,13 @@
             "showInCollapsed": true
           },
           {
+            "title": "Column API",
+            "url": "/column-api/",
+            "showInCollapsed": true
+          },
+          {
             "title": "Column Object",
             "url": "/column-object/",
-            "showInCollapsed": true
-          }
-        ]
-      },
-      {
-        "title": "Row",
-        "items": [
-          {
-            "title": "Row Node",
-            "url": "/row-object/",
-            "showInCollapsed": true
-          },
-          {
-            "title": "Row API",
-            "url": "/row-api/",
-            "showInCollapsed": true
-          },
-          {
-            "title": "Row Events",
-            "url": "/row-events/",
             "showInCollapsed": true
           }
         ]
