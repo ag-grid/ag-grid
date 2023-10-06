@@ -1,4 +1,3 @@
-import { ColumnApi } from "../../../columns/columnApi";
 import { ColumnModel } from "../../../columns/columnModel";
 import { UserCompDetails } from "../../../components/framework/userComponentFactory";
 import { KeyCode } from '../../../constants/keyCode';
@@ -45,7 +44,6 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl {
     @Autowired('dragAndDropService') private readonly dragAndDropService: DragAndDropService;
     @Autowired('resizeObserverService') private readonly resizeObserverService: ResizeObserverService;
     @Autowired('gridApi') private readonly gridApi: GridApi;
-    @Autowired('columnApi') private readonly columnApi: ColumnApi;
 
     private comp: IHeaderCellComp;
 
@@ -173,7 +171,7 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl {
                 this.sortController.setSortForColumn(this.column, sort, !!multiSort, "uiColumnSorted");
             },
             api: this.gridApi,
-            columnApi: this.columnApi,
+            columnApi: this.gridOptionsService.columnApi,
             context: this.gridOptionsService.context,
             eGridHeader: this.getGui()
         } as IHeaderParams;

@@ -220,8 +220,8 @@ export function getValueUsingField(data: any, field: string, fieldContainsDots: 
     return currentObject;
 }
 
-// used by ColumnAPI and GridAPI to remove all references, so keeping grid in memory resulting in a
-// memory leak if user is not disposing of the GridAPI or ColumnApi references
+// used by GridAPI to remove all references, so keeping grid in memory resulting in a
+// memory leak if user is not disposing of the GridAPI references
 export function removeAllReferences(obj: any, objectName: string, customMsg?: (key: string) => string): void {
     Object.keys(obj).forEach(key => {
         const value = obj[key];

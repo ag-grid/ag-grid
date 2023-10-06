@@ -18,7 +18,7 @@ const withGroups: (ColDef | ColGroupDef)[] = [
     { field: 'field2' }
 ];
 
-describe('ColumnApi', () => {
+describe('getColumnDefs', () => {
     test('simple columns', (done) => {
 
         const options = {
