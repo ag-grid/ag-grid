@@ -36,11 +36,11 @@ function sizeToFit() {
 
 function autoSizeAll(skipHeader: boolean) {
   const allColumnIds: string[] = []
-  gridOptions.columnApi!.getColumns()!.forEach(column => {
+  gridOptions.api!.getColumns()!.forEach(column => {
     allColumnIds.push(column.getId())
   })
 
-  gridOptions.columnApi!.autoSizeColumns(allColumnIds, skipHeader)
+  gridOptions.api!.autoSizeColumns(allColumnIds, skipHeader)
 }
 
 // setup the grid after the page has finished loading

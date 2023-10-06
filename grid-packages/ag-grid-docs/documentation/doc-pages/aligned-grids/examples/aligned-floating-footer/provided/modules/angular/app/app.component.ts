@@ -120,6 +120,6 @@ export class AppComponent {
     }
 
     onFirstDataRendered(params: FirstDataRenderedEvent) {
-        params.columnApi.autoSizeAllColumns();
+        params.api.autoSizeAllColumns();
     }
 }

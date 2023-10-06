@@ -28,7 +28,7 @@ export class RichSelectCellEditor<TData = any, TValue = any> extends PopupCompon
         const  { cellStartedEdit, cellHeight, values } = params;
 
         if (_.missing(values)) {
-            console.warn('AG Grid: richSelectCellEditor requires values for it to work');
+            console.warn('AG Grid: agRichSelectCellEditor requires cellEditorParams.values to be set');
         }
 
         const { params: richSelectParams, valuesPromise } = this.buildRichSelectParams();

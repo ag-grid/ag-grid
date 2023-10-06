@@ -12,9 +12,9 @@ interface Params {
 }
 
 export function resetGrid({ gridOptions, scrollRow, scrollColumn }: Params) {
-    gridOptions?.columnApi?.resetColumnState();
-    gridOptions?.columnApi?.resetColumnGroupState();
-    gridOptions?.columnApi?.setColumnsPinned([], null);
+    gridOptions?.api?.resetColumnState();
+    gridOptions?.api?.resetColumnGroupState();
+    gridOptions?.api?.setColumnsPinned([], null);
     if (gridOptions?.api) {
         gridOptions.api.setFilterModel(null);
         gridOptions.api.closeToolPanel();
@@ -32,7 +32,7 @@ export function resetGrid({ gridOptions, scrollRow, scrollColumn }: Params) {
     const rowCount = gridOptions.api?.getModel().getRowCount() || 0;
     if (rowCount > 0) {
         if (scrollColumn !== undefined) {
-            const allColumns = gridOptions.columnApi!.getColumns();
+            const allColumns = gridOptions.api!.getColumns();
             if (allColumns) {
                 const column = allColumns[scrollColumn];
                 if (column) {

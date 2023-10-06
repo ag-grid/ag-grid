@@ -76,7 +76,6 @@ export function getOnGridReadyCode(bindings: any): string {
 
     return `onGridReady(params) {
         this.gridApi = params.api;
-        this.gridColumnApi = params.columnApi;
         ${additionalLines.length > 0 ? `\n\n        ${additionalLines.join('\n        ')}` : ''}
     }`;
 }

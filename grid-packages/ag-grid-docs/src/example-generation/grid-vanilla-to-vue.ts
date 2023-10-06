@@ -118,7 +118,6 @@ const VueExample = {
         return {
             columnDefs: ${columnDefs},
             gridApi: null,
-            columnApi: null,
             ${defaultColDef ? `defaultColDef: ${defaultColDef},` : ''}
             ${propertyVars.join(',\n')}
         }

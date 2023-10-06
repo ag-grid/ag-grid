@@ -30,7 +30,6 @@ const VueExample = {
         return {
             gridOptions: {},
             gridApi: null,
-            columnApi: null,
             columnDefs: [
                 {
                     headerName: "String (editable)",
@@ -80,7 +79,6 @@ const VueExample = {
     },
     mounted() {
         this.gridApi = this.gridOptions.api;
-        this.gridColumnApi = this.gridOptions.columnApi;
     },
     methods: {
         onCellValueChanged(event) {

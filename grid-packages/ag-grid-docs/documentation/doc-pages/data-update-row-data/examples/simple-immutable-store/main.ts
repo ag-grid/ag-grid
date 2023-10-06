@@ -1,4 +1,4 @@
-import { ColumnApi, Grid, GridOptions, GetRowIdParams } from '@ag-grid-community/core'
+import { ColumnApi, Grid, GridOptions, GetRowIdParams, GridApi } from '@ag-grid-community/core'
 
 function getInitialData() {
     const data = [];
@@ -94,19 +94,19 @@ function createItem() {
 }
 
 function onGroupingEnabled(enabled: boolean) {
-    setGroupingEnabled(enabled, gridOptions.columnApi!)
+    setGroupingEnabled(enabled, gridOptions.api!)
 }
 
-function setGroupingEnabled(enabled: boolean, columnApi: ColumnApi) {
+function setGroupingEnabled(enabled: boolean, api: GridApi) {
     if (enabled) {
-        columnApi.applyColumnState({
+        api.applyColumnState({
             state: [
                 { colId: 'group', rowGroup: true, hide: true },
                 { colId: 'symbol', hide: true },
             ],
         })
     } else {
-        columnApi.applyColumnState({
+        api.applyColumnState({
             state: [
                 { colId: 'group', rowGroup: false, hide: false },
                 { colId: 'symbol', hide: false },
@@ -183,7 +183,7 @@ const gridOptions: GridOptions = {
         immutableStore = []
         immutableStore = getInitialData()
         params.api.setRowData(immutableStore)
-        setGroupingEnabled(false, params.columnApi)
+        setGroupingEnabled(false, params.api)
     },
 }
 

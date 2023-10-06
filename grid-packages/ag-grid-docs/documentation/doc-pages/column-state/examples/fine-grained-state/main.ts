@@ -33,13 +33,13 @@ const gridOptions: GridOptions<IOlympicData> = {
 }
 
 function onBtSortAthlete() {
-  gridOptions.columnApi!.applyColumnState({
+  gridOptions.api!.applyColumnState({
     state: [{ colId: 'athlete', sort: 'asc' }],
   })
 }
 
 function onBtSortCountryThenSportClearOthers() {
-  gridOptions.columnApi!.applyColumnState({
+  gridOptions.api!.applyColumnState({
     state: [
       { colId: 'country', sort: 'asc', sortIndex: 0 },
       { colId: 'sport', sort: 'asc', sortIndex: 1 },
@@ -49,13 +49,13 @@ function onBtSortCountryThenSportClearOthers() {
 }
 
 function onBtClearAllSorting() {
-  gridOptions.columnApi!.applyColumnState({
+  gridOptions.api!.applyColumnState({
     defaultState: { sort: null },
   })
 }
 
 function onBtRowGroupCountryThenSport() {
-  gridOptions.columnApi!.applyColumnState({
+  gridOptions.api!.applyColumnState({
     state: [
       { colId: 'country', rowGroupIndex: 0 },
       { colId: 'sport', rowGroupIndex: 1 },
@@ -65,19 +65,19 @@ function onBtRowGroupCountryThenSport() {
 }
 
 function onBtRemoveCountryRowGroup() {
-  gridOptions.columnApi!.applyColumnState({
+  gridOptions.api!.applyColumnState({
     state: [{ colId: 'country', rowGroup: false }],
   })
 }
 
 function onBtClearAllRowGroups() {
-  gridOptions.columnApi!.applyColumnState({
+  gridOptions.api!.applyColumnState({
     defaultState: { rowGroup: false },
   })
 }
 
 function onBtOrderColsMedalsFirst() {
-  gridOptions.columnApi!.applyColumnState({
+  gridOptions.api!.applyColumnState({
     state: [
       { colId: 'gold' },
       { colId: 'silver' },
@@ -95,7 +95,7 @@ function onBtOrderColsMedalsFirst() {
 }
 
 function onBtOrderColsMedalsLast() {
-  gridOptions.columnApi!.applyColumnState({
+  gridOptions.api!.applyColumnState({
     state: [
       { colId: 'athlete' },
       { colId: 'age' },
@@ -113,7 +113,7 @@ function onBtOrderColsMedalsLast() {
 }
 
 function onBtHideMedals() {
-  gridOptions.columnApi!.applyColumnState({
+  gridOptions.api!.applyColumnState({
     state: [
       { colId: 'gold', hide: true },
       { colId: 'silver', hide: true },
@@ -124,7 +124,7 @@ function onBtHideMedals() {
 }
 
 function onBtShowMedals() {
-  gridOptions.columnApi!.applyColumnState({
+  gridOptions.api!.applyColumnState({
     state: [
       { colId: 'gold', hide: false },
       { colId: 'silver', hide: false },

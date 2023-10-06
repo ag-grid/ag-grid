@@ -42,13 +42,13 @@ const gridOptions: GridOptions<IOlympicData> = {
 
 function expand(key?: string, open = false) {
   if (key) {
-    gridOptions.columnApi!.setColumnGroupState([{ groupId: key, open: open }]);
+    gridOptions.api!.setColumnGroupState([{ groupId: key, open: open }]);
     return;
   }
 
-  const existingState = gridOptions.columnApi!.getColumnGroupState();
+  const existingState = gridOptions.api!.getColumnGroupState();
   const expandedState = existingState.map((s: { groupId: string, open: boolean }) => ({ groupId: s.groupId, open: open }));
-  gridOptions.columnApi!.setColumnGroupState(expandedState);
+  gridOptions.api!.setColumnGroupState(expandedState);
 }
 
 // setup the grid after the page has finished loading

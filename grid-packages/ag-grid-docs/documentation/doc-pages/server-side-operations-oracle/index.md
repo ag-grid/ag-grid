@@ -475,7 +475,7 @@ In order for the grid to show these newly created columns an explicit API call i
 
 
 ```js
-gridOptions.columnApi.setPivotResultColumns(pivotResultColDefs);
+gridOptions.api.setPivotResultColumns(pivotResultColDefs);
 ```
 
 ## Infinite Scrolling

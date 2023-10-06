@@ -105,7 +105,7 @@ These can be used to create unique group IDs as shown below:
 |        if (params.data.id != null) {
 |            parentKeysJoined + params.data.id;
 |        }
-|        const rowGroupCols = params.columnApi.getRowGroupColumns();
+|        const rowGroupCols = params.api.getRowGroupColumns();
 |        const thisGroupCol = rowGroupCols[params.level];
 |        parentKeysJoined + params.data[thisGroupCol.getColDef().field];
 |     }

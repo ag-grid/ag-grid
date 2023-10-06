@@ -1,48 +1,69 @@
-import { MockInput } from './MockInput';
-import { PreviewPanel } from './PreviewPanel';
+import {
+  MockInputContent,
+  PreviewContentTitle,
+  PreviewLabel,
+  PreviewPanel,
+  PreviewRow,
+  PreviewSubtitle,
+  PreviewTable,
+} from './Preview';
 
 export const CheckboxPreview = () => (
-  <PreviewPanel
-    rows={[
-      {
-        title: 'Normal',
-        label: 'Off',
-        preview: <MockInput kind="checkbox" state="unchecked" />,
-      },
-      {
-        label: 'On',
-        preview: <MockInput kind="checkbox" state="checked" />,
-      },
-      {
-        label: 'Indeterminate',
-        preview: <MockInput kind="checkbox" state="indeterminate" />,
-      },
-      {
-        title: 'Disabled',
-        label: 'Off',
-        preview: <MockInput kind="checkbox" state="unchecked" disabled />,
-      },
-      {
-        label: 'On',
-        preview: <MockInput kind="checkbox" state="checked" disabled />,
-      },
-      {
-        label: 'Indeterminate',
-        preview: <MockInput kind="checkbox" state="indeterminate" disabled />,
-      },
-      {
-        title: 'Focussed',
-        label: 'Off',
-        preview: <MockInput kind="checkbox" state="unchecked" focus />,
-      },
-      {
-        label: 'On',
-        preview: <MockInput kind="checkbox" state="checked" focus />,
-      },
-      {
-        label: 'Indeterminate',
-        preview: <MockInput kind="checkbox" state="indeterminate" focus />,
-      },
-    ]}
-  />
+  <PreviewPanel>
+    <PreviewTable>
+      <PreviewRow>
+        <PreviewLabel />
+        <PreviewContentTitle>Checkbox style</PreviewContentTitle>
+        <PreviewContentTitle>Radio button style</PreviewContentTitle>
+      </PreviewRow>
+      <PreviewSubtitle>Normal</PreviewSubtitle>
+      <PreviewRow>
+        <PreviewLabel>Off</PreviewLabel>
+        <MockInputContent kind="checkbox" state="unchecked" />
+        <MockInputContent kind="radio-button" state="unchecked" />
+      </PreviewRow>
+      <PreviewRow>
+        <PreviewLabel>On</PreviewLabel>
+        <MockInputContent kind="checkbox" state="checked" />
+        <MockInputContent kind="radio-button" state="checked" />
+      </PreviewRow>
+      <PreviewRow>
+        <PreviewLabel>Indeterminate</PreviewLabel>
+        <MockInputContent kind="checkbox" state="indeterminate" />
+        <MockInputContent kind="radio-button" state="indeterminate" />
+      </PreviewRow>
+      <PreviewSubtitle>Disabled</PreviewSubtitle>
+      <PreviewRow>
+        <PreviewLabel>Off</PreviewLabel>
+        <MockInputContent kind="checkbox" state="unchecked" disabled />
+        <MockInputContent kind="radio-button" state="unchecked" disabled />
+      </PreviewRow>
+      <PreviewRow>
+        <PreviewLabel>On</PreviewLabel>
+        <MockInputContent kind="checkbox" state="checked" disabled />
+        <MockInputContent kind="radio-button" state="checked" disabled />
+      </PreviewRow>
+      <PreviewRow>
+        <PreviewLabel>Indeterminate</PreviewLabel>
+        <MockInputContent kind="checkbox" state="indeterminate" disabled />
+        <MockInputContent kind="radio-button" state="indeterminate" disabled />
+      </PreviewRow>
+      <PreviewSubtitle>Focussed / active</PreviewSubtitle>
+      <PreviewRow>
+        <PreviewLabel>Off</PreviewLabel>
+        <MockInputContent kind="checkbox" state="unchecked" focus />
+        <MockInputContent kind="radio-button" state="unchecked" focus />
+      </PreviewRow>
+      <PreviewRow>
+        <PreviewLabel>On</PreviewLabel>
+        <MockInputContent kind="checkbox" state="checked" focus />
+        <MockInputContent kind="radio-button" state="checked" focus />
+      </PreviewRow>
+      <PreviewRow>
+        <PreviewLabel>Indeterminate</PreviewLabel>
+        <MockInputContent kind="checkbox" state="indeterminate" focus />
+        <MockInputContent kind="radio-button" state="indeterminate" focus />
+      </PreviewRow>
+    </PreviewTable>
+  </PreviewPanel>
 );

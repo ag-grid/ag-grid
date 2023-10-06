@@ -7,6 +7,7 @@ import GridComp from './gridComp';
 
 export interface AgGridSolidRef {
     api: GridApi;
+    /** @deprecated v31 - The `columnApi` has been deprecated and all the methods are now present of the `api`. */
     columnApi: ColumnApi;
 }
 

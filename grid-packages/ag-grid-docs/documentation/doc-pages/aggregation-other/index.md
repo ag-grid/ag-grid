@@ -66,7 +66,7 @@ The following example demonstrates restricting the aggregation functions. Note t
 
 ## Aggregation API
 
-After the grid is initialised aggregations can be applied / retrieved / removed via the `columnApi` with the following methods:
+After the grid is initialised aggregations can be applied / retrieved / removed via the `api` with the following methods:
 
 <api-documentation source='column-api/api.json' section='valueColumns' ></api-documentation>
 

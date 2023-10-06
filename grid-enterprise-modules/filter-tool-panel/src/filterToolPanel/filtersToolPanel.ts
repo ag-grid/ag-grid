@@ -1,10 +1,7 @@
 import {
-    Autowired,
     ColDef,
     ColGroupDef,
-    ColumnApi,
     Component,
-    GridApi,
     IFiltersToolPanel,
     IToolPanelComp,
     IToolPanelParams,
@@ -34,9 +31,6 @@ export class FiltersToolPanel extends Component implements IFiltersToolPanel, IT
 
     @RefSelector('filtersToolPanelListPanel') private filtersToolPanelListPanel: FiltersToolPanelListPanel;
 
-    @Autowired('gridApi') private gridApi: GridApi;
-    @Autowired('columnApi') private columnApi: ColumnApi;
-
     private initialised = false;
     private params: ToolPanelFiltersCompParams;
     private listenerDestroyFuncs: (() => void)[] = [];
@@ -58,8 +52,8 @@ export class FiltersToolPanel extends Component implements IFiltersToolPanel, IT
             suppressExpandAll: false,
             suppressFilterSearch: false,
             suppressSyncLayoutWithGrid: false,
-            api: this.gridApi,
-            columnApi: this.columnApi,
+            api: this.gridOptionsService.api,
+            columnApi: this.gridOptionsService.columnApi,
         };
         this.params = {
             ...defaultParams,

@@ -49,13 +49,11 @@ function getOnGridReadyCode(bindings: any): string {
 
     return `const onGridReady = (params) => {
         gridApi.value = params.api;
-        gridColumnApi.value = params.columnApi;
         ${additionalLines.length > 0 ? `\n\n        ${additionalLines.join('\n        ')}` : ''}
     }`;
 }
 
-const replaceApiThisReference = (code) => code.replaceAll("this.gridApi", 'gridApi.value')
-    .replaceAll("this.gridColumnApi", 'gridColumnApi.value');
+const replaceApiThisReference = (code) => code.replaceAll("this.gridApi", 'gridApi.value');
 
 function getAllMethods(bindings: any): [string[], string[], string[], string[], string[]] {
     const eventHandlers = bindings.eventHandlers
@@ -344,7 +342,6 @@ const VueExample = {
     setup(props) {
         const columnDefs = ref(${columnDefs});
         const gridApi = ref();
-        const gridColumnApi = ref();
         ${defaultColDef ? `const defaultColDef = ref(${defaultColDef});` : ''}
         ${propertyVars.join(';\n')}
         
@@ -362,7 +359,6 @@ const VueExample = {
         return {
             columnDefs,
             gridApi,
-            gridColumnApi,
             ${propertyNames.join(',\n')},
             onGridReady,
             ${functionNames ? functionNames.filter(functionName => !propertyNames.includes(functionName)).join(',\n') : ''}

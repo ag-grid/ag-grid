@@ -30,20 +30,20 @@ const gridOptions: GridOptions = {
     },
     suppressLoadingOverlay: true,
     onGridReady: (params: GridReadyEvent<TAthlete>) => {
-        const column = gridOptions.columnApi?.getColumn('athleteDescription');
+        const column = params.api.getColumn('athleteDescription');
         if (column) {
-            gridOptions.columnApi?.autoSizeColumns([column.getId()]);
+            params.api.autoSizeColumns([column.getId()]);
             setCol1SizeInfoOnGridReady(column.getActualWidth());
         }
 
         console.log('AG Grid: onGridReady event triggered');
     },
     onFirstDataRendered: (params: FirstDataRenderedEvent<TAthlete>) => {
-        const { columnApi } = params;
-        const column = columnApi.getColumn('athleteDescription');
+        const { api } = params;
+        const column = api.getColumn('athleteDescription');
 
         if (column) {
-            columnApi?.autoSizeColumns([column.getId()]);
+            api?.autoSizeColumns([column.getId()]);
             setCol1SizeInfOnFirstDataRendered(column.getActualWidth());
         }
 

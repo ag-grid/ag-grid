@@ -53,17 +53,15 @@
 | const gridRef = useRef();
 |
 | const myListener = ()=> {
-|     // api and columnApi on the gridRef object
-|     const {api, columnApi} = gridRef.current;
+|     // api on the gridRef object
+|     const {api} = gridRef.current;
 |
 |     // api's will be null before grid initialised
-|     if (api==null || columnApi==null) { return; }
+|     if (api==null) { return; }
 |
 |     // access the Grid API
 |     gridRef.api.deselectAll();
 |
-|     // access the Grid Column API
-|     gridRef.columnApi.resetColumnState();
 | }
 |
 | &lt;button click={myListener}>Do Something&lt;/button>
@@ -84,13 +82,13 @@
 | // access API from event object
 | onGridReady = e => {
 |     e.api.sizeColumnsToFit();
-|     e.columnApi.resetColumnState();
+|     e.api.resetColumnState();
 | }
 |
 | // access API from callback params object
 | sendToClipboard = params => {
 |     params.api.sizeColumnsToFit();
-|     params.columnApi.resetColumnState();
+|     params.api.resetColumnState();
 | }
 |
 | &lt;AgGridReact
@@ -158,6 +156,6 @@
 | gridOptions.api.redrawRows();
 |
 | // resize columns in the grid to fit the available space
-| gridOptions.columnApi.sizeColumnsToFit();
+| gridOptions.api.sizeColumnsToFit();
 </snippet>
 </framework-specific-section>

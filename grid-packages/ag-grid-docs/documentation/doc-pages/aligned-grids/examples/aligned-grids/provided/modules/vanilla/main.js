@@ -59,17 +59,17 @@ gridOptionsBottom.alignedGrids.push(gridOptionsTop);
 
 function onCbAthlete(value) {
     // we only need to update one grid, as the other is a slave
-    gridOptionsTop.columnApi.setColumnVisible('athlete', value);
+    gridOptionsTop.api.setColumnVisible('athlete', value);
 }
 
 function onCbAge(value) {
     // we only need to update one grid, as the other is a slave
-    gridOptionsTop.columnApi.setColumnVisible('age', value);
+    gridOptionsTop.api.setColumnVisible('age', value);
 }
 
 function onCbCountry(value) {
     // we only need to update one grid, as the other is a slave
-    gridOptionsTop.columnApi.setColumnVisible('country', value);
+    gridOptionsTop.api.setColumnVisible('country', value);
 }
 
 function setData(rowData) {

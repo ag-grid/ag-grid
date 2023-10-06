@@ -59,7 +59,6 @@ const VueExample = {
             headerName: "Age"
         }]);
         const gridApi = ref();
-        const gridColumnApi = ref();
         const defaultColDef = ref({
             editable: true,
             resizable: true,
@@ -76,8 +75,8 @@ const VueExample = {
         });
 
         const onGridPreDestroyed = (params) => {
-            const {columnApi} = params;
-            const allColumns = columnApi.getColumns();
+            const {api} = params;
+            const allColumns = api.getColumns();
             if (!allColumns) {
                 return;
             }
@@ -91,13 +90,13 @@ const VueExample = {
             showGridPreDestroyedState.value = true;
         };
         const updateColumnWidth = () => {
-            if (!gridColumnApi.value) {
+            if (!gridApi.value) {
                 return;
             }
 
-            gridColumnApi.value.getColumns().forEach(column => {
+            gridApi.value.getColumns().forEach(column => {
                 const newRandomWidth = Math.round((150 + Math.random() * 100) * 100) / 100;
-                gridColumnApi.value.setColumnWidth(column, newRandomWidth);
+                gridApi.value.setColumnWidth(column, newRandomWidth);
             });
         };
         const destroyGrid = () => {
@@ -128,13 +127,11 @@ const VueExample = {
         };
         const onGridReady = (params) => {
             gridApi.value = params.api;
-            gridColumnApi.value = params.columnApi;
         };
 
         return {
             columnDefs,
             gridApi,
-            gridColumnApi,
             defaultColDef,
             rowData,
             columnsWidthOnPreDestroyed,

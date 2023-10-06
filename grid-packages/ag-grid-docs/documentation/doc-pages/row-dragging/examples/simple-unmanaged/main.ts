@@ -40,7 +40,7 @@ var filterActive = false
 
 // listen for change on sort changed
 function onSortChanged() {
-  var colState = gridOptions.columnApi!.getColumnState() || [];
+  var colState = gridOptions.api!.getColumnState() || [];
   sortActive = colState.some(c => c.sort)
   // suppress row drag if either sort or filter is active
   var suppressRowDrag = sortActive || filterActive

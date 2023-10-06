@@ -151,7 +151,7 @@ const gridOptions = {
         {
             field: 'country',
             headerCheckboxSelection: params => {
-                const displayedColumns = params.columnApi.getAllDisplayedColumns();
+                const displayedColumns = params.api.getAllDisplayedColumns();
                 return displayedColumns[0] === params.column;
             }
         },

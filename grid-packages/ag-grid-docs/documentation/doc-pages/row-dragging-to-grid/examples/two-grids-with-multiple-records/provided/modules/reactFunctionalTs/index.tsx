@@ -75,7 +75,6 @@ const defaultColDef: ColDef = {
 
 const GridExample = () => {
     const [leftApi, setLeftApi] = useState<GridApi | null>(null);
-    const [leftColumnApi, setLeftColumnApi] = useState<ColumnApi | null>(null);
     const [rightApi, setRightApi] = useState<GridApi | null>(null);
     const [rawData, setRawData] = useState<any[]>([]);
     const [leftRowData, setLeftRowData] = useState<any[] | null>(null);
@@ -114,11 +113,11 @@ const GridExample = () => {
     }, [rawData, loadGrids]);
 
     useEffect(() => {
-        if (leftColumnApi && leftApi) {
-            leftColumnApi.setColumnVisible('checkbox', checkBoxSelected);
+        if (leftApi) {
+            leftApi.setColumnVisible('checkbox', checkBoxSelected);
             leftApi.setSuppressRowClickSelection(checkBoxSelected);
         }
-    }, [leftColumnApi, leftApi, checkBoxSelected]);
+    }, [leftApi, checkBoxSelected]);
 
     const reset = () => {
         setRadioChecked(0);
@@ -160,7 +159,6 @@ const GridExample = () => {
     const onGridReady = (params: GridReadyEvent, side: number) => {
         if (side === 0) {
             setLeftApi(params.api);
-            setLeftColumnApi(params.columnApi);
         }
 
         if (side === 1) {

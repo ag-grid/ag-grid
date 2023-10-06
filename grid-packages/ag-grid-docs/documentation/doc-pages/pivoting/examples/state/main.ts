@@ -30,21 +30,21 @@ var savedState: ColumnState[];
 var savedPivotMode: boolean;
 
 function printState() {
-  var state = gridOptions.columnApi!.getColumnState()
+  var state = gridOptions.api!.getColumnState()
   console.log(state)
 }
 
 function saveState() {
-  savedState = gridOptions.columnApi!.getColumnState()
-  savedPivotMode = gridOptions.columnApi!.isPivotMode()
+  savedState = gridOptions.api!.getColumnState()
+  savedPivotMode = gridOptions.api!.isPivotMode()
   console.log('column state saved')
 }
 
 function restoreState() {
   if (savedState) {
     // Pivot mode must be set first otherwise the columns we're trying to set state for won't exist yet
-    gridOptions.columnApi!.setPivotMode(savedPivotMode)
-    gridOptions.columnApi!.applyColumnState({ state: savedState, applyOrder: true })
+    gridOptions.api!.setPivotMode(savedPivotMode)
+    gridOptions.api!.applyColumnState({ state: savedState, applyOrder: true })
     console.log('column state restored')
   } else {
     console.log('no previous column state to restore!')
@@ -52,13 +52,13 @@ function restoreState() {
 }
 
 function togglePivotMode() {
-  var pivotMode = gridOptions.columnApi!.isPivotMode()
-  gridOptions.columnApi!.setPivotMode(!pivotMode)
+  var pivotMode = gridOptions.api!.isPivotMode()
+  gridOptions.api!.setPivotMode(!pivotMode)
 }
 
 function resetState() {
-  gridOptions.columnApi!.resetColumnState()
-  gridOptions.columnApi!.setPivotMode(false)
+  gridOptions.api!.resetColumnState()
+  gridOptions.api!.setPivotMode(false)
   console.log('column state reset')
 }
 

@@ -46,7 +46,7 @@ function onFirstDataRendered(params: FirstDataRenderedEvent) {
       params.api.ensureIndexVisible(0);
 
       // scrolls to the first column
-      var firstCol = params.columnApi.getAllDisplayedColumns()[0];
+      var firstCol = params.api.getAllDisplayedColumns()[0];
       params.api.ensureColumnVisible(firstCol);
 
       // sets focus into the first grid cell

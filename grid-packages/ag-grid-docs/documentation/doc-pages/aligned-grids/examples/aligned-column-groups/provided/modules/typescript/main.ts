@@ -80,8 +80,8 @@ function setData(rowData: any[]) {
     gridOptionsTop.api!.sizeColumnsToFit();
 
     // mix up some columns
-    gridOptionsTop.columnApi!.moveColumnByIndex(11, 4);
-    gridOptionsTop.columnApi!.moveColumnByIndex(11, 4);
+    gridOptionsTop.api!.moveColumnByIndex(11, 4);
+    gridOptionsTop.api!.moveColumnByIndex(11, 4);
 }
 
 const gridDivTop = document.querySelector<HTMLElement>('#myGridTop')!;

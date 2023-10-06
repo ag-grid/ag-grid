@@ -85,6 +85,6 @@ document.addEventListener('DOMContentLoaded', () => {
         .then(response => response.json())
         .then(data => {
             gridOptionsTop.api.setRowData(data);
-            gridOptionsTop.columnApi.autoSizeAllColumns();
+            gridOptionsTop.api.autoSizeAllColumns();
         });
 });

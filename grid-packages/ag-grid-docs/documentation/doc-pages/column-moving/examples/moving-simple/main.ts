@@ -20,23 +20,23 @@ const gridOptions: GridOptions<IOlympicData> = {
 }
 
 function onMedalsFirst() {
-  gridOptions.columnApi!.moveColumns(['gold', 'silver', 'bronze', 'total'], 0)
+  gridOptions.api!.moveColumns(['gold', 'silver', 'bronze', 'total'], 0)
 }
 
 function onMedalsLast() {
-  gridOptions.columnApi!.moveColumns(['gold', 'silver', 'bronze', 'total'], 6)
+  gridOptions.api!.moveColumns(['gold', 'silver', 'bronze', 'total'], 6)
 }
 
 function onCountryFirst() {
-  gridOptions.columnApi!.moveColumn('country', 0)
+  gridOptions.api!.moveColumn('country', 0)
 }
 
 function onSwapFirstTwo() {
-  gridOptions.columnApi!.moveColumnByIndex(0, 1)
+  gridOptions.api!.moveColumnByIndex(0, 1)
 }
 
 function onPrintColumns() {
-  const cols = gridOptions.columnApi!.getAllGridColumns()
+  const cols = gridOptions.api!.getAllGridColumns()
   const colToNameFunc = (col: Column, index: number) => index + ' = ' + col.getId()
   const colNames = cols.map(colToNameFunc).join(', ')
   console.log('columns are: ' + colNames)

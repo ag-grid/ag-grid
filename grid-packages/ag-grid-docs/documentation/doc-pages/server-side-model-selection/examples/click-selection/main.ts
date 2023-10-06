@@ -24,7 +24,7 @@ const gridOptions: GridOptions<IOlympicData> = {
     if (params.data.id != null) {
       return 'leaf-' + params.data.id;
     }
-    const rowGroupCols = params.columnApi.getRowGroupColumns();
+    const rowGroupCols = params.api.getRowGroupColumns();
     const rowGroupColIds = rowGroupCols.map(col => col.getId()).join('-');
     const thisGroupCol = rowGroupCols[params.level];
     return 'group-' + rowGroupColIds + '-' + (params.parentKeys || []).join('-') + params.data[thisGroupCol.getColDef().field!];

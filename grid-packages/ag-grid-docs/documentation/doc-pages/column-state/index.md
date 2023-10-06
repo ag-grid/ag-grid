@@ -27,15 +27,15 @@ This section details how such state items can be manipulated without having to u
 
 ## Save and Apply State {#save-and-apply}
 
-There are two API methods provided for getting and setting Column State. `columnApi.getColumnState()` gets the current
-column state and `columnApi.applyColumnState(params)` sets the column state.
+There are two API methods provided for getting and setting Column State. `api.getColumnState()` gets the current
+column state and `api.applyColumnState(params)` sets the column state.
 
 <snippet>
 | // save the column's state
-| const savedState = gridOptions.columnApi.getColumnState();
+| const savedState = gridOptions.api.getColumnState();
 |
 | // restore the column state
-| gridOptions.columnApi.applyColumnState({ state: savedState });
+| gridOptions.api.applyColumnState({ state: savedState });
 </snippet>
 
 The example below demonstrates saving and restoring column state. Try the following:
@@ -75,7 +75,7 @@ examples:
 
 <snippet>
 | // Sort Athlete column ascending
-| gridOptions.columnApi.applyColumnState({
+| gridOptions.api.applyColumnState({
 |     state: [
 |         {
 |             colId: 'athlete',
@@ -84,7 +84,7 @@ examples:
 |     ]
 | });
 | // Sort Athlete column ascending and clear sort on all other columns
-| gridOptions.columnApi.applyColumnState({
+| gridOptions.api.applyColumnState({
 |     state: [
 |         {
 |             colId: 'athlete',
@@ -97,14 +97,14 @@ examples:
 |     }
 | });
 | // Clear sorting on all columns, leave all other attributes untouched
-| gridOptions.columnApi.applyColumnState({
+| gridOptions.api.applyColumnState({
 |     defaultState: {
 |         // important to say 'null' as undefined means 'do nothing'
 |         sort: null
 |     }
 | });
 | // Clear sorting, row group, pivot and pinned on all columns, leave all other attributes untouched
-| gridOptions.columnApi.applyColumnState({
+| gridOptions.api.applyColumnState({
 |     defaultState: {
 |         // important to say 'null' as undefined means 'do nothing'
 |         sort: null,
@@ -114,7 +114,7 @@ examples:
 |     }
 | });
 | // Order columns, but do nothing else
-| gridOptions.columnApi.applyColumnState({
+| gridOptions.api.applyColumnState({
 |     state: [
 |         { colId: 'athlete' },
 |         { colId: 'country' },
@@ -198,8 +198,8 @@ a new tab and observe the dev console.
 Column Group State is concerned with the state of Column Groups. There is only one state attribute for Column Groups,
 which is whether the group is open or closed.
 
-To get the state of Column Groups use the API method `columnApi.getColumnGroupState()`. To
-set the Column Group state use the API method `columnApi.setColumnGroupState(stateItems)`.
+To get the state of Column Groups use the API method `api.getColumnGroupState()`. To
+set the Column Group state use the API method `api.setColumnGroupState(stateItems)`.
 
 <api-documentation source='column-api/api.json' section='state' names='["getColumnGroupState", "setColumnGroupState"]' ></api-documentation>
 

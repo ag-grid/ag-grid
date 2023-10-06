@@ -35,7 +35,6 @@ const VueExample = {
         return {
             columnDefs: [],
             gridApi: null,
-            columnApi: null,
             defaultColDef: {
                 initialWidth: 100,
                 sortable: true,
@@ -56,7 +55,6 @@ const VueExample = {
         },
         onGridReady(params) {
             this.gridApi = params.api;
-            this.gridColumnApi = params.columnApi;
 
 
             const updateData = (data) => {

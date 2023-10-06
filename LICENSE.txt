@@ -1,18 +1,21 @@
-> @ag-grid-enterprise/sparklines@30.1.0 build-cjs
-> rimraf dist/tsconfig.cjs.es5.docs.tsbuildinfo && npx tsc -p tsconfig.cjs.es5.json && npx tsc -p tsconfig.cjs.es6.json
+The MIT License
 
-src/sparkline/sparkline.ts:149:40 - error TS2345: Argument of type '{ document: Document; }' is not assignable to parameter of type '{ width?: number | undefined; height?: number | undefined; overrideDevicePixelRatio?: number | undefined; } & SceneOptions'.
-  Property 'window' is missing in type '{ document: Document; }' but required in type 'SceneOptions'.
+Copyright (c) 2015-2019 AG GRID LTD
 
-149         const scene = new _Scene.Scene({ document });
-                                           ~~~~~~~~~~~~
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
 
-  node_modules/ag-charts-community/dist/src/scene/scene.d.ts:7:5
-    7     window: Window;
-          ~~~~~~
-    'window' is declared here.
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
 
-
-Found 1 error.
-
-
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.

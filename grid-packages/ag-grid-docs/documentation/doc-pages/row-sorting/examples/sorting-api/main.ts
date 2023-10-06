@@ -21,21 +21,21 @@ const gridOptions: GridOptions<IOlympicData> = {
 }
 
 function sortByAthleteAsc() {
-  gridOptions.columnApi!.applyColumnState({
+  gridOptions.api!.applyColumnState({
     state: [{ colId: 'athlete', sort: 'asc' }],
     defaultState: { sort: null },
   })
 }
 
 function sortByAthleteDesc() {
-  gridOptions.columnApi!.applyColumnState({
+  gridOptions.api!.applyColumnState({
     state: [{ colId: 'athlete', sort: 'desc' }],
     defaultState: { sort: null },
   })
 }
 
 function sortByCountryThenSport() {
-  gridOptions.columnApi!.applyColumnState({
+  gridOptions.api!.applyColumnState({
     state: [
       { colId: 'country', sort: 'asc', sortIndex: 0 },
       { colId: 'sport', sort: 'asc', sortIndex: 1 },
@@ -45,7 +45,7 @@ function sortByCountryThenSport() {
 }
 
 function sortBySportThenCountry() {
-  gridOptions.columnApi!.applyColumnState({
+  gridOptions.api!.applyColumnState({
     state: [
       { colId: 'country', sort: 'asc', sortIndex: 1 },
       { colId: 'sport', sort: 'asc', sortIndex: 0 },
@@ -55,7 +55,7 @@ function sortBySportThenCountry() {
 }
 
 function clearSort() {
-  gridOptions.columnApi!.applyColumnState({
+  gridOptions.api!.applyColumnState({
     defaultState: { sort: null },
   })
 }
@@ -63,7 +63,7 @@ function clearSort() {
 var savedSort: any;
 
 function saveSort() {
-  var colState = gridOptions.columnApi!.getColumnState()
+  var colState = gridOptions.api!.getColumnState()
   var sortState = colState
     .filter(function (s) {
       return s.sort != null
@@ -76,7 +76,7 @@ function saveSort() {
 }
 
 function restoreFromSave() {
-  gridOptions.columnApi!.applyColumnState({
+  gridOptions.api!.applyColumnState({
     state: savedSort,
     defaultState: { sort: null },
   })

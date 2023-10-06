@@ -118,7 +118,7 @@ function getRowId(params: GetRowIdParams) {
   if (params.parentKeys && params.parentKeys.length) {
     rowId += params.parentKeys.join('-') + '-';
   }
-  const groupCols = params.columnApi.getRowGroupColumns();
+  const groupCols = params.api.getRowGroupColumns();
   if (groupCols.length > params.level) {
     const thisGroupCol = groupCols[params.level];
     rowId += params.data[thisGroupCol.getColDef().field!] + '-';
@@ -130,7 +130,7 @@ function getRowId(params: GetRowIdParams) {
 };
 
 function onColumnRowGroupChanged(event: ColumnRowGroupChangedEvent) {
-  const colState = event.columnApi.getColumnState();
+  const colState = event.api.getColumnState();
 
   const groupedColumns = colState.filter((state) => state.rowGroup);
   groupedColumns.sort((a, b) => a.rowGroupIndex! - b.rowGroupIndex!);

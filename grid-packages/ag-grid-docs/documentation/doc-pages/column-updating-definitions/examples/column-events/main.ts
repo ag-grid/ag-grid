@@ -123,7 +123,7 @@ function onBtShow() {
 }
 
 function onBtPivotOn() {
-  gridOptions.columnApi!.setPivotMode(true)
+  gridOptions.api!.setPivotMode(true)
 
   const columnDefs: ColDef[] = getColumnDefs()
   columnDefs.forEach(function (colDef) {
@@ -135,7 +135,7 @@ function onBtPivotOn() {
 }
 
 function onBtPivotOff() {
-  gridOptions.columnApi!.setPivotMode(false)
+  gridOptions.api!.setPivotMode(false)
 
   const columnDefs: ColDef[] = getColumnDefs()
   columnDefs.forEach(function (colDef) {

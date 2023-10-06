@@ -30,11 +30,11 @@ const gridOptions: GridOptions<IOlympicData> = {
 }
 
 function clearPinned() {
-  gridOptions.columnApi!.applyColumnState({ defaultState: { pinned: null } })
+  gridOptions.api!.applyColumnState({ defaultState: { pinned: null } })
 }
 
 function resetPinned() {
-  gridOptions.columnApi!.applyColumnState({
+  gridOptions.api!.applyColumnState({
     state: [
       { colId: 'rowNum', pinned: 'left' },
       { colId: 'athlete', pinned: 'left' },
@@ -46,7 +46,7 @@ function resetPinned() {
 }
 
 function pinCountry() {
-  gridOptions.columnApi!.applyColumnState({
+  gridOptions.api!.applyColumnState({
     state: [{ colId: 'country', pinned: 'left' }],
     defaultState: { pinned: null },
   })
@@ -64,7 +64,7 @@ function jumpToCol() {
   }
 
   // it's actually a column the api needs, so look the column up
-  const allColumns = gridOptions.columnApi!.getColumns()
+  const allColumns = gridOptions.api!.getColumns()
   if (allColumns) {
     const column = allColumns[index]
     if (column) {

@@ -1,4 +1,4 @@
-import { _Scene } from 'ag-charts-community';
+import { _Scene } from 'ag-charts-enterprise';
 
 export interface CreateColumnRectsParams {
     stacked: boolean;

@@ -1,6 +1,6 @@
 import { Autowired, Component, PostConstruct } from "@ag-grid-community/core";
 import { ChartTranslationService } from "../../../services/chartTranslationService";
-import { _Scene } from "ag-charts-community";
+import { _Scene } from "ag-charts-enterprise";
 
 export abstract class MiniChart extends Component {
 

@@ -21,7 +21,7 @@ const gridOptions: GridOptions = {
     },
     rowData: getDataSet(),
     onGridPreDestroyed: (params: GridPreDestroyedEvent<TAthlete>) => {
-        const allColumns = params.columnApi?.getColumns();
+        const allColumns = params.api?.getColumns();
         if (!allColumns) {
             return;
         }
@@ -57,13 +57,13 @@ const displayColumnsWidth = (values: ColumnWidth[]) => {
 }
 
 function updateColumnWidth() {
-    if (!gridOptions.columnApi) {
+    if (!gridOptions.api) {
         return;
     }
 
-    gridOptions.columnApi.getColumns()!.forEach(column => {
+    gridOptions.api.getColumns()!.forEach(column => {
         const newRandomWidth = Math.round((150 + Math.random() * 100) * 100) / 100;
-        gridOptions.columnApi?.setColumnWidth(column, newRandomWidth);
+        gridOptions.api?.setColumnWidth(column, newRandomWidth);
     })
 }
 

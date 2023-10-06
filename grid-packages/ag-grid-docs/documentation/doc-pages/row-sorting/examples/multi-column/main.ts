@@ -26,7 +26,7 @@ const gridOptions: GridOptions<IOlympicData> = {
       { colId: 'athlete', sort: 'asc', sortIndex: 1 },
     ]
 
-    params.columnApi.applyColumnState({ state: defaultSortModel })
+    params.api.applyColumnState({ state: defaultSortModel })
   },
 }
 

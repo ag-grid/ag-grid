@@ -59,7 +59,6 @@ const VueExample = {
                 headerName: "Bronze Medals"
             }],
             gridApi: null,
-            columnApi: null,
 
             rowData: null,
             rowSelection: null,
@@ -78,13 +77,12 @@ const VueExample = {
         },
         onGridReady(params) {
             this.gridApi = params.api;
-            this.gridColumnApi = params.columnApi;
 
             const checkbox = document.querySelector('#pinFirstColumnOnLoad');
             const shouldPinFirstColumn = checkbox && checkbox.checked;
 
             if (shouldPinFirstColumn) {
-                params.columnApi.applyColumnState({
+                params.api.applyColumnState({
                     state: [
                         {colId: 'name', pinned: 'left'},
                     ],

@@ -329,7 +329,7 @@ export function createScriptRunner({
     const setPausedState = (scriptIndex: number) => {
         pausedState = {
             scriptIndex,
-            columnState: gridOptions.columnApi?.getColumnState()!,
+            columnState: gridOptions.api?.getColumnState()!,
             rowExpandedState: rowExpandedState.get(),
         };
     };
@@ -345,7 +345,7 @@ export function createScriptRunner({
     const playAgain = () => {
         let pausedScriptIndex;
         if (pausedState) {
-            gridOptions.columnApi?.applyColumnState({
+            gridOptions.api?.applyColumnState({
                 state: pausedState.columnState,
                 applyOrder: true,
             });

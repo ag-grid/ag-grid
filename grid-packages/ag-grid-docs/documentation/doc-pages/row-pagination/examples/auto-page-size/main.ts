@@ -2,11 +2,11 @@ import { Grid, CheckboxSelectionCallbackParams, ColDef, IGroupCellRendererParams
 
 var checkboxSelection = function (params: CheckboxSelectionCallbackParams) {
   // we put checkbox on the name if we are not doing grouping
-  return params.columnApi.getRowGroupColumns().length === 0
+  return params.api.getRowGroupColumns().length === 0
 }
 var headerCheckboxSelection = function (params: HeaderCheckboxSelectionCallbackParams) {
   // we put checkbox on the name if we are not doing grouping
-  return params.columnApi.getRowGroupColumns().length === 0
+  return params.api.getRowGroupColumns().length === 0
 }
 const columnDefs: ColDef[] = [
   {

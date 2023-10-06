@@ -37,7 +37,6 @@ const VueExample = {
             topGridOptions: null,
             bottomGridOptions: null,
             gridApi: null,
-            columnApi: null,
             rowData: null,
             bottomData: null,
             columnDefs: null,
@@ -111,7 +110,6 @@ const VueExample = {
     },
     mounted() {
         this.gridApi = this.topGridOptions.api;
-        this.gridColumnApi = this.topGridOptions.columnApi;
     },
     methods: {
         onGridReady(params) {
@@ -133,7 +131,7 @@ const VueExample = {
         },
 
         onFirstDataRendered() {
-            this.gridColumnApi.autoSizeAllColumns();
+            this.gridApi.autoSizeAllColumns();
         }
     },
 };

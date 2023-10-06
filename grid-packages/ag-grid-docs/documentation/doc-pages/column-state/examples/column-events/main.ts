@@ -65,7 +65,7 @@ const gridOptions: GridOptions<IOlympicData> = {
 }
 
 function onBtSortOn() {
-  gridOptions.columnApi!.applyColumnState({
+  gridOptions.api!.applyColumnState({
     state: [
       { colId: 'age', sort: 'desc' },
       { colId: 'athlete', sort: 'asc' },
@@ -74,13 +74,13 @@ function onBtSortOn() {
 }
 
 function onBtSortOff() {
-  gridOptions.columnApi!.applyColumnState({
+  gridOptions.api!.applyColumnState({
     defaultState: { sort: null },
   })
 }
 
 function onBtWidthNarrow() {
-  gridOptions.columnApi!.applyColumnState({
+  gridOptions.api!.applyColumnState({
     state: [
       { colId: 'age', width: 100 },
       { colId: 'athlete', width: 100 },
@@ -89,7 +89,7 @@ function onBtWidthNarrow() {
 }
 
 function onBtWidthNormal() {
-  gridOptions.columnApi!.applyColumnState({
+  gridOptions.api!.applyColumnState({
     state: [
       { colId: 'age', width: 200 },
       { colId: 'athlete', width: 200 },
@@ -98,7 +98,7 @@ function onBtWidthNormal() {
 }
 
 function onBtHide() {
-  gridOptions.columnApi!.applyColumnState({
+  gridOptions.api!.applyColumnState({
     state: [
       { colId: 'age', hide: true },
       { colId: 'athlete', hide: true },
@@ -107,39 +107,39 @@ function onBtHide() {
 }
 
 function onBtShow() {
-  gridOptions.columnApi!.applyColumnState({
+  gridOptions.api!.applyColumnState({
     defaultState: { hide: false },
   })
 }
 
 function onBtPivotOn() {
-  gridOptions.columnApi!.setPivotMode(true)
-  gridOptions.columnApi!.applyColumnState({
+  gridOptions.api!.setPivotMode(true)
+  gridOptions.api!.applyColumnState({
     state: [{ colId: 'country', pivot: true }],
   })
 }
 
 function onBtPivotOff() {
-  gridOptions.columnApi!.setPivotMode(false)
-  gridOptions.columnApi!.applyColumnState({
+  gridOptions.api!.setPivotMode(false)
+  gridOptions.api!.applyColumnState({
     defaultState: { pivot: false },
   })
 }
 
 function onBtRowGroupOn() {
-  gridOptions.columnApi!.applyColumnState({
+  gridOptions.api!.applyColumnState({
     state: [{ colId: 'sport', rowGroup: true }],
   })
 }
 
 function onBtRowGroupOff() {
-  gridOptions.columnApi!.applyColumnState({
+  gridOptions.api!.applyColumnState({
     defaultState: { rowGroup: false },
   })
 }
 
 function onBtAggFuncOn() {
-  gridOptions.columnApi!.applyColumnState({
+  gridOptions.api!.applyColumnState({
     state: [
       { colId: 'gold', aggFunc: 'sum' },
       { colId: 'silver', aggFunc: 'sum' },
@@ -149,13 +149,13 @@ function onBtAggFuncOn() {
 }
 
 function onBtAggFuncOff() {
-  gridOptions.columnApi!.applyColumnState({
+  gridOptions.api!.applyColumnState({
     defaultState: { aggFunc: null },
   })
 }
 
 function onBtNormalOrder() {
-  gridOptions.columnApi!.applyColumnState({
+  gridOptions.api!.applyColumnState({
     state: [
       { colId: 'athlete' },
       { colId: 'age' },
@@ -170,7 +170,7 @@ function onBtNormalOrder() {
 }
 
 function onBtReverseOrder() {
-  gridOptions.columnApi!.applyColumnState({
+  gridOptions.api!.applyColumnState({
     state: [
       { colId: 'athlete' },
       { colId: 'age' },
@@ -185,7 +185,7 @@ function onBtReverseOrder() {
 }
 
 function onBtPinnedOn() {
-  gridOptions.columnApi!.applyColumnState({
+  gridOptions.api!.applyColumnState({
     state: [
       { colId: 'athlete', pinned: 'left' },
       { colId: 'age', pinned: 'right' },
@@ -194,7 +194,7 @@ function onBtPinnedOn() {
 }
 
 function onBtPinnedOff() {
-  gridOptions.columnApi!.applyColumnState({
+  gridOptions.api!.applyColumnState({
     defaultState: { pinned: null },
   })
 }

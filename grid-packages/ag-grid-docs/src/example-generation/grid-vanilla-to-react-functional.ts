@@ -257,14 +257,9 @@ export function vanillaToReactFunctional(bindings: any, componentFilenames: stri
         const gridInstanceConverter = content => content
             .replace(/params\.api\.setRowData(data)/g, 'setRowData(data)')
             .replace(/params\.api\./g, 'gridRef.current.api.')
-            .replace(/params\.columnApi\./g, "gridRef.current.columnApi.")
             .replace(/gridInstance\.api\./g, "gridRef.current.api.")
-            .replace(/gridInstance\.columnApi\./g, "gridRef.current.columnApi.")
             .replace(/gridApi\./g, "gridRef.current.api.")
-            .replace(/(\s+)columnApi\./g, "$1gridRef.current.columnApi.")
             .replace(/gridApi;/g, "gridRef.current.api;")
-            .replace(/columnApi;/g, "gridRef.current.columnApi;")
-            .replace(/gridColumnApi\./g, "gridRef.current.columnApi.")
             .replace("gridRef.current.api.setRowData", "setRowData")
             .replace("gridApi", "gridRef.current.api")
 

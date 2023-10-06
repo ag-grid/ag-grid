@@ -79,14 +79,14 @@ function setIdText(id: string, value: string | number | undefined) {
 function setPivotOn() {
   document.querySelector('#requiresPivot')!.className = ''
   document.querySelector('#requiresNotPivot')!.className = 'hidden'
-  gridOptions.columnApi!.setPivotMode(true)
+  gridOptions.api!.setPivotMode(true)
   setIdText('pivot', 'on')
 }
 
 function setPivotOff() {
   document.querySelector('#requiresPivot')!.className = 'hidden'
   document.querySelector('#requiresNotPivot')!.className = ''
-  gridOptions.columnApi!.setPivotMode(false)
+  gridOptions.api!.setPivotMode(false)
   setIdText('pivot', 'off')
 }
 

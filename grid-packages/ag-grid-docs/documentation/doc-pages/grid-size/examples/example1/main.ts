@@ -37,7 +37,7 @@ function onGridSizeChanged(params: GridSizeChangedEvent) {
   // iterate over all columns (visible or not) and work out
   // now many columns can fit (based on their minWidth)
   var totalColsWidth = 0
-  var allColumns = params.columnApi.getColumns()
+  var allColumns = params.api.getColumns()
   if (allColumns && allColumns.length > 0) {
     for (var i = 0; i < allColumns.length; i++) {
       var column = allColumns[i]
@@ -51,8 +51,8 @@ function onGridSizeChanged(params: GridSizeChangedEvent) {
   }
 
   // show/hide columns based on current grid width
-  params.columnApi.setColumnsVisible(columnsToShow, true)
-  params.columnApi.setColumnsVisible(columnsToHide, false)
+  params.api.setColumnsVisible(columnsToShow, true)
+  params.api.setColumnsVisible(columnsToHide, false)
 
   // fill out any available space to ensure there are no gaps
   params.api.sizeColumnsToFit()

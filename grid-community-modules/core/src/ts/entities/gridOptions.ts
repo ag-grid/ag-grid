@@ -1030,7 +1030,7 @@ export interface GridOptions<TData = any> {
     onDisplayedColumnsChanged?(event: DisplayedColumnsChangedEvent<TData>): void;
     /** The list of rendered columns changed (only columns in the visible scrolled viewport are rendered by default). */
     onVirtualColumnsChanged?(event: VirtualColumnsChangedEvent<TData>): void;
-    /** Shotgun - gets called when either a) new columns are set or b) `columnApi.applyColumnState()` is used, so everything has changed. */
+    /** Shotgun - gets called when either a) new columns are set or b) `api.applyColumnState()` is used, so everything has changed. */
     onColumnEverythingChanged?(event: ColumnEverythingChangedEvent<TData>): void;
 
     // *** Components *** //
@@ -1209,11 +1209,13 @@ export interface GridOptions<TData = any> {
     onColumnAggFuncChangeRequest?(event: ColumnAggFuncChangeRequestEvent<TData>): void;
 
     /**
+     * @deprecated v31 The `api` should be obtained via framework component / onGridReady or as returned from `createGrid`.
      * The Grid Api for interacting with the grid.
      * Set by the grid on init, set to null on destroy.
      */
     api?: GridApi<TData> | null;
     /**
+     * @deprecated v31 - The `columnApi` has been deprecated and all the methods are now present of the `api`.
      * The Column Api for interacting with the grid columns.
      * Set by the grid on init, set to null on destroy.
      */

@@ -25,7 +25,7 @@ const gridOptions: GridOptions<IOlympicData> = {
 }
 
 function isFirstColumn(params: CheckboxSelectionCallbackParams | HeaderCheckboxSelectionCallbackParams) {
-  var displayedColumns = params.columnApi.getAllDisplayedColumns()
+  var displayedColumns = params.api.getAllDisplayedColumns()
   var thisIsFirstColumn = displayedColumns[0] === params.column
   return thisIsFirstColumn
 }

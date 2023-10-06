@@ -16,7 +16,6 @@ ModuleRegistry.registerModules([ClientSideRowModelModule]);
 
 const GridExample = () => {
     const [gridApi, setGridApi] = useState(null);
-    const [gridColumnApi, setGridColumnApi] = useState(null);
     const [rowData, setRowData] = useState(null);
     const columnDefs = useMemo(() => [
         {
@@ -42,7 +41,6 @@ const GridExample = () => {
 
     const onGridReady = (params) => {
         setGridApi(params.api);
-        setGridColumnApi(params.columnApi);
 
         const updateData = (data) => {
             setRowData(data);
@@ -54,7 +52,7 @@ const GridExample = () => {
     };
 
     useEffect(() => {
-        if (!myInput.current || !gridApi || !gridColumnApi) { return; }
+        if (!myInput.current || !gridApi || !gridApi) { return; }
 
         myInput.current.addEventListener('keydown', function (event) {
             if (event.key !== 'Tab') { return; }
@@ -62,13 +60,13 @@ const GridExample = () => {
             event.preventDefault();
             gridApi.ensureIndexVisible(0);
 
-            const firstCol = gridColumnApi.getAllDisplayedColumns()[0];
+            const firstCol = gridApi.getAllDisplayedColumns()[0];
 
             gridApi.ensureColumnVisible(firstCol);
             gridApi.setFocusedCell(0, firstCol);
         }, true);
 
-    }, [myInput, gridApi, gridColumnApi]);
+    }, [myInput, gridApi, gridApi]);
 
     return (
         <div style={{ width: '100%', height: '100%' }}>

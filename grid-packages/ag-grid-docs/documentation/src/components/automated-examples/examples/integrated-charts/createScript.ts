@@ -135,7 +135,7 @@ export const createScript = ({
                     return; // Chart created, no need for fallback
                 }
 
-                const allColumns = gridOptions.columnApi?.getColumns() || [];
+                const allColumns = gridOptions.api?.getColumns() || [];
                 const colStartIndex = START_CELL_COL_INDEX;
                 const colEndIndex = END_CELL_COL_INDEX;
                 const columnStart = allColumns[colStartIndex];

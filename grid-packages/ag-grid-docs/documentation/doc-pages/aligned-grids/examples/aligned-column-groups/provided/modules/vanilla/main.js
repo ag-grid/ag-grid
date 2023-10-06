@@ -72,8 +72,8 @@ function setData(rowData) {
     gridOptionsTop.api.sizeColumnsToFit();
 
     // mix up some columns
-    gridOptionsTop.columnApi.moveColumnByIndex(11, 4);
-    gridOptionsTop.columnApi.moveColumnByIndex(11, 4);
+    gridOptionsTop.api.moveColumnByIndex(11, 4);
+    gridOptionsTop.api.moveColumnByIndex(11, 4);
 }
 
 // setup the grid after the page has finished loading
