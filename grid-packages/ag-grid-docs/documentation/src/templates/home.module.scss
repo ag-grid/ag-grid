@@ -26,15 +26,6 @@
     }
 }
 
-.introSection {
-    max-width: 54em;
-    margin-top: $size-4;
-
-    h1 {
-        text-transform: capitalize;
-    }
-}
-
 .gettingStartedSection .sectionInner {
     line-height: var(--line-height-tight);
 
@@ -44,14 +35,5 @@
         > a {
             width: calc(50% - $size-2 / 2);
         }
-    }
-}
-
-.gettingStartedLogo {
-    margin-bottom: $size-1;
-
-    img {
-        width: $size-7;
-        height: $size-7;
     }
 }
