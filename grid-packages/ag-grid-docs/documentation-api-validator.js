@@ -88,7 +88,7 @@ validateDocFile('ColDef', './documentation/doc-pages/column-properties/column-op
 
 validateDocFile('RowNode', './documentation/doc-pages/row-object/row-node.AUTO.json',
     [
-        './documentation/doc-pages/row-object/resources/events.json',
-        './documentation/doc-pages/row-object/resources/methods.json',
+        './documentation/doc-pages/row-events/resources/events.json',
+        './documentation/doc-pages/row-api/resources/methods.json',
         './documentation/doc-pages/row-object/resources/reference.json'
     ]);
