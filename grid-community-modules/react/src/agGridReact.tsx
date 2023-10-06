@@ -14,14 +14,14 @@ export class AgGridReact<TData = any> extends Component<AgGridReactProps<TData> 
     public columnApi!: ColumnApi;
     private apiListeners: Array<(params: any) => void> = [];
 
-    public registerApiListener(listener: (params: any) => void) {
+    public registerApiListener(listener: (api: GridApi) => void) {
         this.apiListeners.push(listener);
     }
 
     private setGridApi = (api: GridApi, columnApi: ColumnApi) => {
         this.api = api;
         this.columnApi = columnApi;
-        this.apiListeners.forEach(listener => listener({ api, columnApi }));
+        this.apiListeners.forEach(listener => listener(api));
     }
 
     componentWillUnmount() {

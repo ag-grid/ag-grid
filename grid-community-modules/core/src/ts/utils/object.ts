@@ -222,7 +222,7 @@ export function getValueUsingField(data: any, field: string, fieldContainsDots: 
 
 // used by ColumnAPI and GridAPI to remove all references, so keeping grid in memory resulting in a
 // memory leak if user is not disposing of the GridAPI or ColumnApi references
-export function removeAllReferences(obj: any, objectName: string): void {
+export function removeAllReferences(obj: any, objectName: string, customMsg?: (key: string) => string): void {
     Object.keys(obj).forEach(key => {
         const value = obj[key];
         // we want to replace all the @autowired services, which are objects. any simple types (boolean, string etc)
@@ -234,17 +234,18 @@ export function removeAllReferences(obj: any, objectName: string): void {
     const proto = Object.getPrototypeOf(obj);
     const properties: any = {};
 
+    const msgFunc = (key: string) => customMsg ? customMsg(key) : 
+    `AG Grid: ${objectName} function ${key}() cannot be called as the grid has been destroyed.
+    Please don't call grid API functions on destroyed grids - as a matter of fact you shouldn't
+    be keeping the API reference, your application has a memory leak!
+    Remove the API reference when the grid is destroyed.`
+
     Object.keys(proto).forEach(key => {
         const value = proto[key];
         // leave all basic types - this is needed for GridAPI to leave the "destroyed: boolean" attribute alone
         if (typeof value === 'function') {
             const func = () => {
-                console.warn(
-                    `AG Grid: ${objectName} function ${key}() cannot be called as the grid has been destroyed.
-                     Please don't call grid API functions on destroyed grids - as a matter of fact you shouldn't
-                     be keeping the API reference, your application has a memory leak! Remove the API reference
-                     when the grid is destroyed.`
-                );
+                console.warn(msgFunc(key));
             };
             properties[key] = { value: func, writable: true };
         }
