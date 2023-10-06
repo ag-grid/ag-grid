@@ -106,7 +106,7 @@ Autosizing columns can also be done using the following column API methods. If `
 
 [Column Groups](/column-groups/) are never considered when calculating the column widths.
 
-<api-documentation source='column-api/api.json' section='Sizing' names='["autoSizeColumn", "autoSizeColumns", "autoSizeAllColumns"]'></api-documentation>
+<api-documentation source='grid-api/api.json' section='columnSizing' names='["autoSizeColumn", "autoSizeColumns", "autoSizeAllColumns"]'></api-documentation>
 
 ## Resizing Example
 
