@@ -68,7 +68,7 @@ The following example demonstrates restricting the aggregation functions. Note t
 
 After the grid is initialised aggregations can be applied / retrieved / removed via the `api` with the following methods:
 
-<api-documentation source='column-api/api.json' section='valueColumns' ></api-documentation>
+<api-documentation source='grid-api/api.json' section='rowPivoting' names='["getValueColumns", "addValueColumn", "addValueColumns", "removeValueColumn", "removeValueColumns", "setValueColumns", "setColumnAggFunc"]' ></api-documentation>
 
 When the grid initialises, any column definitions that have `aggFunc` set will be automatically added as a value column.
 
