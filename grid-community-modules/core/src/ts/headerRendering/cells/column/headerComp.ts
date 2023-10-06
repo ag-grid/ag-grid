@@ -291,7 +291,6 @@ export class HeaderComp extends Component implements IHeaderComp {
             return;
         }
 
-        const sortUsingCtrl = this.gridOptionsService.get('multiSortKey') === 'ctrl';
 
         // keep track of last time the moving changed flag was set
         this.addManagedListener(this.params.column, Column.EVENT_MOVING_CHANGED, () => {
@@ -312,6 +311,7 @@ export class HeaderComp extends Component implements IHeaderComp {
                 const columnMoving = moving || movedRecently;
 
                 if (!columnMoving) {
+                    const sortUsingCtrl = this.gridOptionsService.get('multiSortKey') === 'ctrl';
                     const multiSort = sortUsingCtrl ? (event.ctrlKey || event.metaKey) : event.shiftKey;
                     this.params.progressSort(multiSort);
                 }
