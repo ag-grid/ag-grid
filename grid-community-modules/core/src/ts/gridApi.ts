@@ -1603,20 +1603,13 @@ export class GridApi<TData = any> {
         setTimeout(removeAllReferences.bind(window, this, 'Grid API'), 100);
     }
 
+    /** Returns `true` if the api has been destroyed. */
     public isDestroyed(): boolean {
-        return this.destroyCalled;
-    }
-
-    private warnIfDestroyed(methodName: string): boolean {
-        if (this.destroyCalled) {
-            console.warn(`AG Grid: Grid API method ${methodName} was called on a grid that was destroyed.`);
-        }
         return this.destroyCalled;
     }
 
     /** Reset the Quick Filter cache text on every rowNode. */
     public resetQuickFilter(): void {
-        if (this.warnIfDestroyed('resetQuickFilter')) { return; }
         this.filterManager.resetQuickFilterCache();
     }
 
