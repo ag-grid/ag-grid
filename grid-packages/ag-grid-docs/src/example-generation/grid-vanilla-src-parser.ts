@@ -72,8 +72,7 @@ function tsGenerateWithReplacedGridOptions(node, srcFile) {
         // Handle case when api is on a new line 
         //  gridOptions
         //      .api.setRow()
-        .replace(/gridOptions\s*\n?\s*\.api/g, 'this.gridApi')
-        .replace(/gridOptions\s*\n?\s*\.columnApi/g, 'this.gridColumnApi')
+        .replace(/gridOptions\s*\n?\s*\.api/g, 'this.gridApi');
 }
 
 function processColDefsForFunctionalReactOrVue(propertyName: string, exampleType, exampleSettings, providedExamples) {
@@ -196,7 +195,7 @@ function internalParser(examplePath, {
         registered.push(handler);
 
         // one of the event handlers extracted earlier (onclick, onchange etc)
-        // body replaces gridOptions.api/columnApi with this.gridApi/columnApi
+        // body replaces gridOptions.api with this.gridApi
         tsCollectors.push({
             matches: node => tsNodeIsFunctionWithName(node, handler),
             apply: (bindings, node) => {
@@ -585,8 +584,8 @@ function internalParser(examplePath, {
      * components -> name value pair of component name to actual component (ie name: myCustomCell, value: CustomCellRenderer)
      * vuePropertyBindings => vue specific property bindings that can be safely parsed by the vue generators
      * parsedColDefs -> col defs with function values replaced with tokenised strings - for the functional react example generator
-     * utils -> none grid related methods/variables (or methods that don't reference the gridApi/columnApi) (i.e. non-instance)
-     * instanceMethods -> methods that are either marked as "inScope" or ones that reference the gridApi/columnApi
+     * utils -> none grid related methods/variables (or methods that don't reference the gridApi) (i.e. non-instance)
+     * instanceMethods -> methods that are either marked as "inScope" or ones that reference the gridApi
      * onGridReady -> any matching onGridReady method
      * data -> url: dataUrl, callback: callback, http calls etc
      * resizeToFit -> true if sizeColumnsToFit is used

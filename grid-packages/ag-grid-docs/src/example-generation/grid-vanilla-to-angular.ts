@@ -6,7 +6,7 @@ const path = require('path');
 function getOnGridReadyCode(readyCode: string, resizeToFit: boolean,
     data: { url: string, callback: string; },
     rowDataType: string | undefined,
-    hasApi: boolean, hasColApi: boolean): string {
+    hasApi: boolean): string {
     const additionalLines = [];
 
     if (readyCode) {
@@ -28,10 +28,10 @@ function getOnGridReadyCode(readyCode: string, resizeToFit: boolean,
         }
     }
     const gridReadyEventParam = rowDataType !== 'any' ? `<${rowDataType}>` : ''
-    if (hasApi || hasColApi || additionalLines.length > 0) {
+    if (hasApi || additionalLines.length > 0) {
         return `
         onGridReady(params: GridReadyEvent${gridReadyEventParam}) {
-            ${hasApi ? 'this.gridApi = params.api;' : ''}${hasColApi ? 'this.gridColumnApi = params.columnApi;' : ''}${additionalLines.length > 0 ? `\n\n        ${additionalLines.join('\n        ')}` : ''}
+            ${hasApi ? 'this.gridApi = params.api;' : ''}${additionalLines.length > 0 ? `\n\n        ${additionalLines.join('\n        ')}` : ''}
         }`;
     } else {
         return '';
@@ -59,7 +59,7 @@ function addModuleImports(imports: string[], bindings: any, allStylesheets: stri
     bImports.push({
         module: `'@ag-grid-community/core'`,
         isNamespaced: false,
-        imports: [...propertyInterfaces, 'GridReadyEvent', 'ColumnApi', 'GridApi']
+        imports: [...propertyInterfaces, 'GridReadyEvent', 'GridApi']
     })
 
     if (bImports.length > 0) {
@@ -95,7 +95,7 @@ function addPackageImports(imports: string[], bindings: any, allStylesheets: str
     bImports.push({
         module: `'ag-grid-community'`,
         isNamespaced: false,
-        imports: [...propertyInterfaces, 'GridReadyEvent', 'ColumnApi', 'GridApi']
+        imports: [...propertyInterfaces, 'GridReadyEvent', 'GridApi']
     })
 
     if (bImports.length > 0) {
@@ -199,8 +199,7 @@ export function vanillaToAngular(bindings: any, componentFileNames: string[], al
             .join('\n\n');
 
         const hasGridApi = componentForCheckBody.includes('gridApi');
-        const hasGridColumnApi = componentForCheckBody.includes('gridColumnApi');
-        const gridReadyCode = getOnGridReadyCode(bindings.onGridReady, bindings.resizeToFit, data, rowDataType, hasGridApi, hasGridColumnApi);
+        const gridReadyCode = getOnGridReadyCode(bindings.onGridReady, bindings.resizeToFit, data, rowDataType, hasGridApi);
         const additional = [];
 
         if (gridReadyCode) {
@@ -221,8 +220,7 @@ export function vanillaToAngular(bindings: any, componentFileNames: string[], al
             .map(snippet => snippet.trim())
             .join('\n\n')
             // We do not need the non-null assertion in component code as already applied to the declaration for the apis.
-            .replace(/gridApi!\./g, 'gridApi.')
-            .replace(/gridColumnApi!\./g, 'gridColumnApi.');
+            .replace(/gridApi!\./g, 'gridApi.');
 
         let generatedOutput = `
 ${imports.join('\n')}
@@ -235,7 +233,7 @@ ${typeDeclares?.length > 0 ? '\n' + typeDeclares.join('\n') : ''}${interfaces?.l
 })
 
 export class AppComponent {
-${hasGridApi ? `    private gridApi!: GridApi${genericParams};\n` : ''}${hasGridColumnApi ? '    private gridColumnApi!: ColumnApi;\n' : ''}
+${hasGridApi ? `    private gridApi!: GridApi${genericParams};\n` : ''}
     ${propertyVars.join('\n')}
     ${propertyAssignments.join(';\n')}
 
