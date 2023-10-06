@@ -1,217 +1,87 @@
 [
   {
-    "group": "GET STARTED",
+    "group": "OVERVIEW",
     "items": [
       {
-        "title": "Quick Start",
+        "title": "Introduction",
         "items": [
           {
-            "title": "Getting Started",
-            "url": "/getting-started/",
-            "icon": "framework"
+            "title": "Overview",
+            "url": "/introduction/overview"
           },
           {
-            "title": "React Compatibility",
-            "icon": "react",
-            "url": "/react-compatibility",
-            "frameworks": [
-              "react"
-            ]
+            "title": "Features",
+            "url": "/introduction/features"
           },
           {
-            "title": "Rendering",
-            "icon": "react",
-            "url": "/reactui/",
-            "frameworks": [
-              "react"
-            ]
+            "title": "Community Vs. Enterprise",
+            "url": "/introduction/community-vs-enterprise"
           },
           {
-            "title": "Hooks",
-            "icon": "reactHooks",
-            "url": "/react-hooks/",
-            "frameworks": [
-              "react"
-            ]
+            "title": "Lisencing",
+            "url": "/introduction/lisencing"
           },
           {
-            "title": "Video Tutorial",
-            "url": "{video-tutorial}",
-            "icon": "youtube",
-            "menuHide": true,
-            "frameworks": [
-              "javascript"
-            ]
+            "title": "Roadmap",
+            "url": "/introduction/roadmap"
           },
           {
-            "title": "Plunker Example",
-            "url": "{example}",
-            "icon": "plunker",
-            "menuHide": true,
-            "frameworks": [
-              "javascript"
-            ]
-          },
-          {
-            "title": "{example-title}",
-            "url": "{example}",
-            "icon": "{example-icon}",
-            "menuHide": true,
-            "frameworks": [
-              "angular",
-              "react",
-              "vue"
-            ]
-          },
-          {
-            "title": "Thinkster Course",
-            "url": "{thinkster}",
-            "icon": "thinkster",
-            "menuHide": true,
-            "frameworks": [
-              "angular",
-              "react"
-            ]
-          },
-          {
-            "title": "SolidJS",
-            "icon": "solid",
-            "url": "/solidjs",
-            "frameworks": [
-              "react"
-            ]
-          },
-          {
-            "title": "Angular Compatibility",
-            "icon": "angular",
-            "url": "/angular-compatibility",
-            "frameworks": [
-              "angular"
-            ]
-          },
-          {
-            "title": "Vue 2 Tutorial",
-            "icon": "vue",
-            "url": "/vue2/",
-            "frameworks": [
-              "vue"
-            ]
-          },
-          {
-            "title": "Videos",
-            "url": "/videos/"
+            "title": "Support",
+            "url": "/introduction/support"
           }
         ]
       },
       {
-        "title": "Build & Tooling",
+        "title": "Get Started",
         "items": [
           {
-            "title": "Install with NPM",
-            "url": "/npm/",
-            "showInCollapsed": true,
-            "frameworks": [
-              "javascript"
-            ]
+            "title": "Installation",
+            "url": "/get-started/installation"
           },
           {
-            "title": "Download Bundles",
-            "url": "/download/",
-            "showInCollapsed": true,
-            "frameworks": [
-              "javascript"
-            ]
+            "title": "Setting Row Data",
+            "url": "/get-started/set-row-data"
           },
           {
-            "title": "Community & Enterprise",
-            "url": "/licensing/",
-            "enterprise": true,
-            "showInCollapsed": true
+            "title": "Setting Column Definitions",
+            "url": "/get-started/set-column-defs"
           },
           {
-            "title": "Packages vs Modules",
-            "url": "/packages-modules/",
-            "showInCollapsed": true,
-            "items": [
-              {
-                "title": "Packages",
-                "url": "/packages/",
-                "items": [
-                  {
-                    "title": "Using ES Modules",
-                    "url": "/esm-packages/",
-                    "frameworks": [
-                      "javascript"
-                    ]
-                  }
-                ]
-              },
-              {
-                "title": "Modules",
-                "url": "/modules/",
-                "items": [
-                  {
-                    "title": "Using ES Modules",
-                    "url": "/esm-modules/",
-                    "frameworks": [
-                      "javascript"
-                    ]
-                  }
-                ]
-              },
-              {
-                "title": "Modules - Example",
-                "url": "/modules-building/",
-                "frameworks": [
-                  "angular",
-                  "react",
-                  "vue"
-                ]
-              },
-              {
-                "title": "Custom UMD Bundle",
-                "url": "/modules-building/",
-                "frameworks": [
-                  "javascript"
-                ]
-              }
-            ]
+            "title": "Accessing the API",
+            "url": "/get-started/access-api"
           },
           {
-            "title": "Supported Browsers",
-            "url": "/supported-browsers/",
-            "showInCollapsed": true
+            "title": "Consuming Grid Events",
+            "url": "/get-started/consume-grid-events"
           },
           {
-            "title": "Building",
-            "url": "/building/",
-            "showInCollapsed": true,
-            "frameworks": [
-              "javascript"
-            ],
-            "items": [
-              {
-                "title": "Rollup",
-                "url": "/building-rollup/",
-                "frameworks": [
-                  "javascript"
-                ]
-              },
-              {
-                "title": "TypeScript & Webpack",
-                "url": "/building-typescript/",
-                "frameworks": [
-                  "javascript"
-                ]
-              },
-              {
-                "title": "AMD",
-                "url": "/building-amd/",
-                "frameworks": [
-                  "javascript"
-                ]
-              }
-            ]
+            "title": "Themes and Styling",
+            "url": "/get-started/themes-and-styling"
+          }
+        ]
+      },
+      {
+        "title": "Quick Starts",
+        "items": [
+          {
+            "title": "Basic Example",
+            "url": "/quick-starts/basic-example"
+          },
+          {
+            "title": "Custom Cell Renderer",
+            "url": "/quick-starts/custom-cell-renderer-example"
+          },
+          {
+            "title": "Conditional Formatting",
+            "url": "/quick-starts/conditional-formatting-example"
+          },
+          {
+            "title": "Updating the Grid",
+            "url": "/quick-starts/updating-the-grid-example"
+          },
+          {
+            "title": "Value Formatters",
+            "url": "/quick-starts/value-formatter-example"
           }
         ]
       }
