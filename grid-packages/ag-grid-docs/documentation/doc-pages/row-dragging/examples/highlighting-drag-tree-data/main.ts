@@ -1,4 +1,17 @@
-import { CellClassParams, GetRowIdParams, Grid, GridApi, GridOptions, RefreshCellsParams, RowDragEndEvent, RowDragLeaveEvent, RowDragMoveEvent, IRowNode, ValueFormatterParams } from '@ag-grid-community/core';
+import {
+  CellClassParams,
+  GetRowIdParams,
+  GridApi,
+  createGrid,
+  GridApi,
+  GridOptions,
+  RefreshCellsParams,
+  RowDragEndEvent,
+  RowDragLeaveEvent,
+  RowDragMoveEvent,
+  IRowNode,
+  ValueFormatterParams,
+} from '@ag-grid-community/core';
 import { getData } from "./data";
 
 declare var FileCellRenderer: any;
@@ -12,6 +25,8 @@ var cellClassRules = {
     return params.node === potentialParent
   },
 }
+
+let api: GridApi;
 
 const gridOptions: GridOptions = {
   columnDefs: [
@@ -91,10 +106,10 @@ function onRowDragEnd(event: RowDragEndEvent) {
     var updatedRows: any[] = []
     moveToPath(newParentPath, event.node, updatedRows)
 
-    gridOptions.api!.applyTransaction({
+    api!.applyTransaction({
       update: updatedRows,
     })
-    gridOptions.api!.clearFocusedCell()
+    api!.clearFocusedCell()
   }
 
   // clear node to highlight
@@ -197,5 +212,5 @@ document.addEventListener('DOMContentLoaded', function () {
   var eGridDiv = document.querySelector<HTMLElement>('#myGrid')!
 
   // create the grid passing in the div to use together with the columns & data we want to use
-  new Grid(eGridDiv, gridOptions)
+  api = createGrid(eGridDiv, gridOptions);;
 })

@@ -1,4 +1,14 @@
-import { Grid, ColDef, GridOptions, IServerSideDatasource, ISetFilter, SetFilterValuesFuncParams, KeyCreatorParams, ValueFormatterParams } from '@ag-grid-community/core'
+import {
+  GridApi,
+  createGrid,
+  ColDef,
+  GridOptions,
+  IServerSideDatasource,
+  ISetFilter,
+  SetFilterValuesFuncParams,
+  KeyCreatorParams,
+  ValueFormatterParams,
+} from '@ag-grid-community/core';
 
 declare var FakeServer: any;
 const columnDefs: ColDef[] = [
@@ -43,6 +53,8 @@ function countryComparator(a: { name: string, code: string }, b:  { name: string
   return 0;
 }
 
+let api: GridApi<IOlympicData>;
+
 const gridOptions: GridOptions<IOlympicData> = {
   columnDefs: columnDefs,
   defaultColDef: {
@@ -69,14 +81,14 @@ var fakeServer: any;
 var selectedCountries: string[] | null = null
 
 function onFilterChanged() {
-  var countryFilterModel = gridOptions.api!.getFilterModel()['country']
+  var countryFilterModel = api!.getFilterModel()['country']
   var selected = countryFilterModel && countryFilterModel.values
 
   if (!areEqual(selectedCountries, selected)) {
     selectedCountries = selected
 
     console.log('Refreshing sports filter')
-    var sportFilter = gridOptions.api!.getFilterInstance<ISetFilter>('sport');
+    var sportFilter = api!.getFilterInstance<ISetFilter>('sport');
     sportFilter!.refreshFilterValues()
   }
 }
@@ -139,7 +151,7 @@ function getServerSideDatasource(server: any): IServerSideDatasource {
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
   var gridDiv = document.querySelector<HTMLElement>('#myGrid')!
-  new Grid(gridDiv, gridOptions)
+  api = createGrid(gridDiv, gridOptions);;
 
   fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
     .then(response => response.json())
@@ -171,6 +183,6 @@ document.addEventListener('DOMContentLoaded', function () {
       var datasource = getServerSideDatasource(fakeServer)
 
       // register the datasource with the grid
-      gridOptions.api!.setServerSideDatasource(datasource)
+      api!.setServerSideDatasource(datasource)
     })
 })

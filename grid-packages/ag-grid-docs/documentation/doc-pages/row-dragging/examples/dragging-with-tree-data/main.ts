@@ -1,4 +1,12 @@
-import { GetRowIdParams, Grid, GridOptions, RowDragEndEvent, IRowNode, ValueFormatterParams } from '@ag-grid-community/core';
+import {
+  GetRowIdParams,
+  GridApi,
+  createGrid,
+  GridOptions,
+  RowDragEndEvent,
+  IRowNode,
+  ValueFormatterParams,
+} from '@ag-grid-community/core';
 import { getData } from "./data";
 
 declare var FileCellRenderer: any;
@@ -6,6 +14,8 @@ declare var FileCellRenderer: any;
 var valueFormatter = function (params: ValueFormatterParams) {
   return params.value ? params.value + ' MB' : ''
 }
+
+let api: GridApi;
 
 const gridOptions: GridOptions = {
   columnDefs: [
@@ -76,11 +86,11 @@ function onRowDragEnd(event: RowDragEndEvent) {
     var updatedRows: any[] = []
     moveToPath(newParentPath, event.node, updatedRows)
 
-    gridOptions.api!.applyTransaction({
+    api!.applyTransaction({
       update: updatedRows,
     })
 
-    gridOptions.api!.clearFocusedCell()
+    api!.clearFocusedCell()
   }
 }
 
@@ -145,5 +155,5 @@ document.addEventListener('DOMContentLoaded', function () {
   var eGridDiv = document.querySelector<HTMLElement>('#myGrid')!
 
   // create the grid passing in the div to use together with the columns & data we want to use
-  new Grid(eGridDiv, gridOptions)
+  api = createGrid(eGridDiv, gridOptions);;
 })

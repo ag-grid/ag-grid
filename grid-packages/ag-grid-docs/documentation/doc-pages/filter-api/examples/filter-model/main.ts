@@ -1,4 +1,4 @@
-import { Grid, ColDef, GridOptions, IDateFilterParams } from '@ag-grid-community/core'
+import { GridApi, createGrid, ColDef, GridOptions, IDateFilterParams } from '@ag-grid-community/core';
 
 var filterParams: IDateFilterParams = {
   comparator: (filterLocalDateAtMidnight: Date, cellValue: string) => {
@@ -43,6 +43,8 @@ const columnDefs: ColDef[] = [
   { field: 'total', filter: 'agNumberColumnFilter' },
 ]
 
+let api: GridApi<IOlympicData>;
+
 const gridOptions: GridOptions<IOlympicData> = {
   columnDefs: columnDefs,
   defaultColDef: {
@@ -60,11 +62,11 @@ const gridOptions: GridOptions<IOlympicData> = {
 var savedFilterModel: any = null
 
 function clearFilters() {
-  gridOptions.api!.setFilterModel(null)
+  api!.setFilterModel(null)
 }
 
 function saveFilterModel() {
-  savedFilterModel = gridOptions.api!.getFilterModel()
+  savedFilterModel = api!.getFilterModel()
 
   var keys = Object.keys(savedFilterModel)
   var savedFilters: string = keys.length > 0 ? keys.join(', ') : '(none)';
@@ -73,7 +75,7 @@ function saveFilterModel() {
 }
 
 function restoreFilterModel() {
-  gridOptions.api!.setFilterModel(savedFilterModel)
+  api!.setFilterModel(savedFilterModel)
 }
 
 function restoreFromHardCoded() {
@@ -87,19 +89,19 @@ function restoreFromHardCoded() {
     date: { type: 'lessThan', dateFrom: '2010-01-01' },
   }
 
-  gridOptions.api!.setFilterModel(hardcodedFilter)
+  api!.setFilterModel(hardcodedFilter)
 }
 
 function destroyFilter() {
-  gridOptions.api!.destroyFilter('athlete');
+  api!.destroyFilter('athlete');
 }
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
   var gridDiv = document.querySelector<HTMLElement>('#myGrid')!
-  new Grid(gridDiv, gridOptions)
+  api = createGrid(gridDiv, gridOptions);;
 
   fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
     .then(response => response.json())
-    .then((data: IOlympicData[]) => gridOptions.api!.setRowData(data))
+    .then((data: IOlympicData[]) => api!.setRowData(data))
 })

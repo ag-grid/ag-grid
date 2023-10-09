@@ -1,4 +1,6 @@
-import { Grid, ExcelRow, ExcelExportParams, GridOptions } from '@ag-grid-community/core'
+import { GridApi, createGrid, ExcelRow, ExcelExportParams, GridOptions } from '@ag-grid-community/core';
+
+let api: GridApi<IOlympicData>;
 
 const gridOptions: GridOptions<IOlympicData> = {
   columnDefs: [
@@ -61,17 +63,17 @@ const getParams: () => ExcelExportParams = () => ({
 })
 
 function onBtExport() {
-  gridOptions.api!.exportDataAsExcel(getParams())
+  api!.exportDataAsExcel(getParams())
 }
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', () => {
   const gridDiv = document.querySelector<HTMLElement>('#myGrid')!
-  new Grid(gridDiv, gridOptions)
+  api = createGrid(gridDiv, gridOptions);;
 
   fetch('https://www.ag-grid.com/example-assets/small-olympic-winners.json')
     .then(response => response.json())
     .then(data =>
-      gridOptions.api!.setRowData(data.filter((rec: any) => rec.country != null))
+      api!.setRowData(data.filter((rec: any) => rec.country != null))
     )
 })

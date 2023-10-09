@@ -1,10 +1,11 @@
 import {
-  Grid,
+  GridApi,
+  createGrid,
   GridOptions,
   GridReadyEvent,
   AdvancedFilterModel,
   AdvancedFilterBuilderVisibleChangedEvent,
-  IAdvancedFilterBuilderParams
+  IAdvancedFilterBuilderParams,
 } from '@ag-grid-community/core';
 
 const advancedFilterModel: AdvancedFilterModel = {
@@ -41,6 +42,8 @@ const advancedFilterModel: AdvancedFilterModel = {
 const advancedFilterBuilderParams: IAdvancedFilterBuilderParams = {
   showMoveButtons: true,
 };
+
+let api: GridApi<IOlympicData>;
 
 const gridOptions: GridOptions<IOlympicData> = {
   columnDefs: [
@@ -83,20 +86,20 @@ function onAdvancedFilterBuilderVisibleChanged(event: AdvancedFilterBuilderVisib
 }
 
 function onFilterChanged() {
-  const advancedFilterApplied = !!gridOptions.api!.getAdvancedFilterModel();
+  const advancedFilterApplied = !!api!.getAdvancedFilterModel();
   document.getElementById('advancedFilterIcon')!.classList.toggle('filter-icon-disabled', !advancedFilterApplied);
 }
 
 function showBuilder() {
-  gridOptions.api!.showAdvancedFilterBuilder();
+  api!.showAdvancedFilterBuilder();
 }
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', () => {
   const gridDiv = document.querySelector<HTMLElement>('#myGrid')!
-  new Grid(gridDiv, gridOptions)
+  api = createGrid(gridDiv, gridOptions);;
 
   fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
     .then(response => response.json())
-    .then((data: IOlympicData[]) => gridOptions.api!.setRowData(data))
+    .then((data: IOlympicData[]) => api!.setRowData(data))
 })

@@ -1,4 +1,4 @@
-import { Grid, ColDef, GridOptions } from '@ag-grid-community/core'
+import { GridApi, createGrid, ColDef, GridOptions } from '@ag-grid-community/core';
 
 // specify the columns
 const columnDefs: ColDef[] = [
@@ -13,6 +13,8 @@ var rowData = [
   { make: 'Ford', model: 'Mondeo', price: 32000 },
   { make: 'Porsche', model: 'Boxster', price: 72000 },
 ]
+
+let api: GridApi;
 
 // let the grid know which columns and what data to use
 const gridOptions: GridOptions = {
@@ -30,5 +32,5 @@ document.addEventListener('DOMContentLoaded', function () {
   var eGridDiv = document.querySelector<HTMLElement>('#myGrid')!
 
   // create the grid passing in the div to use together with the columns & data we want to use
-  new Grid(eGridDiv, gridOptions)
+  api = createGrid(eGridDiv, gridOptions);;
 })

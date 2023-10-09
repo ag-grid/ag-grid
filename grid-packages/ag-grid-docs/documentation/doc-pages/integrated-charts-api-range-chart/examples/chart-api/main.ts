@@ -1,5 +1,8 @@
-import { CreateRangeChartParams, Grid, GridOptions } from '@ag-grid-community/core';
+import { CreateRangeChartParams, GridApi, createGrid, GridOptions } from '@ag-grid-community/core';
 import { getData } from "./data";
+
+
+let api: GridApi;
 
 
 const gridOptions: GridOptions = {
@@ -62,7 +65,7 @@ function onChart1() {
     },
   }
 
-  gridOptions.api!.createRangeChart(params)
+  api!.createRangeChart(params)
 }
 
 function onChart2() {
@@ -83,12 +86,12 @@ function onChart2() {
     unlinkChart: true,
   }
 
-  gridOptions.api!.createRangeChart(params)
+  api!.createRangeChart(params)
 }
 
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
   var gridDiv = document.querySelector<HTMLElement>('#myGrid')!
-  new Grid(gridDiv, gridOptions)
+  api = createGrid(gridDiv, gridOptions);;
 })

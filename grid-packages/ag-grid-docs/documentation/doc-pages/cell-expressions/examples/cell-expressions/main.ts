@@ -1,4 +1,4 @@
-import { Grid, GridOptions } from "@ag-grid-community/core"
+import { GridApi, createGrid, GridOptions } from "@ag-grid-community/core";
 
 ///// left table
 interface LeftData {
@@ -82,7 +82,7 @@ function cellValueChanged() {
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
   var gridDivLeft = document.querySelector<HTMLElement>('#myGridLeft')!
-  new Grid(gridDivLeft, gridOptionsLeft)
+  api = createGrid(gridDivLeft, gridOptionsLeft);;
   var gridDivRight = document.querySelector<HTMLElement>('#myGridRight')!
-  new Grid(gridDivRight, gridOptionsRight)
+  api = createGrid(gridDivRight, gridOptionsRight);;
 })

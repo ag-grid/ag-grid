@@ -1,4 +1,16 @@
-import { Grid, ChartCreated, ChartDestroyed, ChartRangeSelectionChanged, ColDef, GridApi, GridOptions, ChartOptionsChanged, FirstDataRenderedEvent, CreateRangeChartParams } from '@ag-grid-community/core';
+import {
+  GridApi,
+  createGrid,
+  ChartCreated,
+  ChartDestroyed,
+  ChartRangeSelectionChanged,
+  ColDef,
+  GridApi,
+  GridOptions,
+  ChartOptionsChanged,
+  FirstDataRenderedEvent,
+  CreateRangeChartParams,
+} from '@ag-grid-community/core';
 import { AgChart } from 'ag-charts-community';
 
 const columnDefs: ColDef[] = [
@@ -6,6 +18,8 @@ const columnDefs: ColDef[] = [
   { field: 'Sunshine (hours)', chartDataType: 'series' },
   { field: 'Rainfall (mm)', chartDataType: 'series' },
 ]
+
+let api: GridApi;
 
 const gridOptions: GridOptions = {
   defaultColDef: {
@@ -48,12 +62,12 @@ function onFirstDataRendered(params: FirstDataRenderedEvent) {
 
 function onChartCreated(event: ChartCreated) {
   console.log('Created chart with ID ' + event.chartId);
-  updateTitle(gridOptions.api!, event.chartId);
+  updateTitle(api!, event.chartId);
 }
 
 function onChartRangeSelectionChanged(event: ChartRangeSelectionChanged) {
   console.log('Changed range selection of chart with ID ' + event.chartId);
-  updateTitle(gridOptions.api!, event.chartId);
+  updateTitle(api!, event.chartId);
 }
 
 function updateTitle(api: GridApi, chartId: string) {
@@ -77,11 +91,11 @@ function updateTitle(api: GridApi, chartId: string) {
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
   var gridDiv = document.querySelector<HTMLElement>('#myGrid')!
-  new Grid(gridDiv, gridOptions)
+  api = createGrid(gridDiv, gridOptions);;
 
   fetch('https://www.ag-grid.com/example-assets/weather-se-england.json')
     .then(response => response.json())
     .then(function (data) {
-      gridOptions.api!.setRowData(data)
+      api!.setRowData(data)
     })
 })

@@ -1,4 +1,11 @@
-import { Grid, ColDef, GridOptions, GridReadyEvent, RowDropZoneParams } from '@ag-grid-community/core'
+import {
+  GridApi,
+  createGrid,
+  ColDef,
+  GridOptions,
+  GridReadyEvent,
+  RowDropZoneParams,
+} from '@ag-grid-community/core';
 
 var rowIdSequence = 100
 
@@ -8,6 +15,8 @@ const columnDefs: ColDef[] = [
   { field: 'value1' },
   { field: 'value2' },
 ]
+
+let api: GridApi;
 
 const gridOptions: GridOptions = {
   defaultColDef: {
@@ -101,5 +110,5 @@ function addDropZones(params: GridReadyEvent) {
 document.addEventListener('DOMContentLoaded', function () {
   var gridDiv = document.querySelector<HTMLElement>('#myGrid')!
 
-  new Grid(gridDiv, gridOptions)
+  api = createGrid(gridDiv, gridOptions);;
 })

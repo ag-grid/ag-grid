@@ -1,5 +1,16 @@
-import { ChartCreated, CreateRangeChartParams, FirstDataRenderedEvent, GetChartImageDataUrlParams, Grid, GridOptions } from '@ag-grid-community/core';
+import {
+  ChartCreated,
+  CreateRangeChartParams,
+  FirstDataRenderedEvent,
+  GetChartImageDataUrlParams,
+  GridApi,
+  createGrid,
+  GridOptions,
+} from '@ag-grid-community/core';
 import { getData } from "./data";
+
+
+let api: GridApi;
 
 
 const gridOptions: GridOptions = {
@@ -58,7 +69,7 @@ function downloadChart(dimensions: { width: number, height: number }) {
     return
   }
 
-  gridOptions.api!.downloadChart({
+  api!.downloadChart({
     fileName: 'resizedImage',
     fileFormat: 'image/jpeg',
     chartId,
@@ -72,7 +83,7 @@ function downloadChartImage(fileFormat: string) {
   }
 
   const params: GetChartImageDataUrlParams = { fileFormat, chartId }
-  const imageDataURL = gridOptions.api!.getChartImageDataURL(params)
+  const imageDataURL = api!.getChartImageDataURL(params)
 
   if (imageDataURL) {
     const a = document.createElement('a')
@@ -91,7 +102,7 @@ function openChartImage(fileFormat: string) {
   }
 
   const params: GetChartImageDataUrlParams = { fileFormat, chartId }
-  const imageDataURL = gridOptions.api!.getChartImageDataURL(params)
+  const imageDataURL = api!.getChartImageDataURL(params)
 
   if (imageDataURL) {
     const image = new Image()
@@ -108,5 +119,5 @@ function openChartImage(fileFormat: string) {
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
   var gridDiv = document.querySelector<HTMLElement>('#myGrid')!
-  new Grid(gridDiv, gridOptions)
+  api = createGrid(gridDiv, gridOptions);;
 })

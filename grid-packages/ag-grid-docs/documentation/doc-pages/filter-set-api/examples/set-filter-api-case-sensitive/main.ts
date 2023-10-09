@@ -1,11 +1,16 @@
 import {
-  FirstDataRenderedEvent, Grid,
+  FirstDataRenderedEvent,
+  GridApi,
+  createGrid,
   GridOptions,
   ICellRendererParams,
   ISetFilter,
-  ISetFilterParams
+  ISetFilterParams,
 } from '@ag-grid-community/core';
 import { getData } from "./data";
+
+
+let api: GridApi;
 
 
 const gridOptions: GridOptions = {
@@ -59,30 +64,30 @@ function colourCellRenderer(params: ICellRendererParams) {
 }
 
 function setModel(type: string) {
-  const instance = gridOptions.api!.getFilterInstance(FILTER_TYPES[type])!
+  const instance = api!.getFilterInstance(FILTER_TYPES[type])!
 
   instance.setModel({ values: MANGLED_COLOURS })
-  gridOptions.api!.onFilterChanged()
+  api!.onFilterChanged()
 }
 
 function getModel(type: string) {
-  const instance = gridOptions.api!.getFilterInstance(FILTER_TYPES[type])!
+  const instance = api!.getFilterInstance(FILTER_TYPES[type])!
 
   alert(JSON.stringify(instance.getModel(), null, 2))
 }
 
 function setFilterValues(type: string) {
-  const instance = gridOptions.api!.getFilterInstance<ISetFilter>(
+  const instance = api!.getFilterInstance<ISetFilter>(
     FILTER_TYPES[type]
   )!;
 
   instance.setFilterValues(MANGLED_COLOURS)
   instance.applyModel()
-  gridOptions.api!.onFilterChanged()
+  api!.onFilterChanged()
 }
 
 function getValues(type: string) {
-  const instance = gridOptions.api!.getFilterInstance<ISetFilter>(
+  const instance = api!.getFilterInstance<ISetFilter>(
     FILTER_TYPES[type]
   )!;
 
@@ -90,23 +95,23 @@ function getValues(type: string) {
 }
 
 function reset(type: string) {
-  const instance = gridOptions.api!.getFilterInstance<ISetFilter>(
+  const instance = api!.getFilterInstance<ISetFilter>(
     FILTER_TYPES[type]
   )!;
 
   instance.resetFilterValues()
   instance.setModel(null)
-  gridOptions.api!.onFilterChanged()
+  api!.onFilterChanged()
 }
 
 var MANGLED_COLOURS = ['ReD', 'OrAnGe', 'WhItE', 'YeLlOw']
 
 function onFirstDataRendered(params: FirstDataRenderedEvent) {
-  gridOptions.api!.getToolPanelInstance('filters')!.expandFilters()
+  api!.getToolPanelInstance('filters')!.expandFilters()
 }
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
   var gridDiv = document.querySelector<HTMLElement>('#myGrid')!
-  new Grid(gridDiv, gridOptions)
+  api = createGrid(gridDiv, gridOptions);;
 })

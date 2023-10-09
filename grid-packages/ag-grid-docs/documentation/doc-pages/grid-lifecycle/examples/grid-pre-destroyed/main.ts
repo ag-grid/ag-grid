@@ -1,4 +1,13 @@
-import { Grid, ColDef, GridApi, ColumnApi, GridOptions, GridReadyEvent, GridPreDestroyedEvent } from '@ag-grid-community/core';
+import {
+    GridApi,
+    createGrid,
+    ColDef,
+    GridApi,
+    ColumnApi,
+    GridOptions,
+    GridReadyEvent,
+    GridPreDestroyedEvent,
+} from '@ag-grid-community/core';
 
 import { getDataSet, TAthlete } from './data';
 
@@ -8,6 +17,8 @@ interface ColumnWidth {
 }
 
 var columnWidths: Map<string, number> | undefined = undefined;
+
+let api: GridApi;
 
 const gridOptions: GridOptions = {
     columnDefs: [
@@ -57,22 +68,22 @@ const displayColumnsWidth = (values: ColumnWidth[]) => {
 }
 
 function updateColumnWidth() {
-    if (!gridOptions.api) {
+    if (!api) {
         return;
     }
 
-    gridOptions.api.getColumns()!.forEach(column => {
+    api.getColumns()!.forEach(column => {
         const newRandomWidth = Math.round((150 + Math.random() * 100) * 100) / 100;
-        gridOptions.api?.setColumnWidth(column, newRandomWidth);
+        api?.setColumnWidth(column, newRandomWidth);
     })
 }
 
 function destroyGrid() {
-    if (!gridOptions.api) {
+    if (!api) {
         return;
     }
 
-    gridOptions.api.destroy();
+    api.destroy();
 }
 
 function reloadGrid() {
@@ -97,7 +108,7 @@ function reloadGrid() {
 
     gridOptions.columnDefs = updatedColDefs;
 
-    new Grid(gridDiv, gridOptions);
+    api = createGrid(gridDiv, gridOptions);;
 
     const parentContainer = document.querySelector<HTMLElement>('#gridPreDestroyedState');
     parentContainer!.style.display = 'none';
@@ -108,5 +119,5 @@ function reloadGrid() {
 
 document.addEventListener('DOMContentLoaded', () => {
     const gridDiv = document.querySelector<HTMLElement>('#myGrid')!;
-    new Grid(gridDiv, gridOptions);
+    api = createGrid(gridDiv, gridOptions);;
 });

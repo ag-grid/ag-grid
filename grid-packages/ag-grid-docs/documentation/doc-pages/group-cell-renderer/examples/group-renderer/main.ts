@@ -1,4 +1,4 @@
-import { ColDef, Grid, GridOptions, IGroupCellRendererParams } from '@ag-grid-community/core';
+import { ColDef, GridApi, createGrid, GridOptions, IGroupCellRendererParams } from '@ag-grid-community/core';
 import { getData } from "./data";
 import { SimpleCellRenderer } from './simpleCellRenderer_typescript';
 
@@ -52,6 +52,8 @@ const columnDefs: ColDef[] = [
     { headerName: 'City', field: 'city' },
 ]
 
+let api: GridApi;
+
 const gridOptions: GridOptions = {
     columnDefs: columnDefs,
     defaultColDef: {
@@ -72,5 +74,5 @@ const gridOptions: GridOptions = {
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
     const gridDiv = document.querySelector<HTMLElement>('#myGrid')!;
-    new Grid(gridDiv, gridOptions)
+    api = createGrid(gridDiv, gridOptions);;
 })

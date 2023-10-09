@@ -1,4 +1,4 @@
-import { Grid, ColDef, GridOptions, IDateFilterParams } from '@ag-grid-community/core'
+import { GridApi, createGrid, ColDef, GridOptions, IDateFilterParams } from '@ag-grid-community/core';
 
 const today = new Date();
 const tomorrow = new Date(today.getTime() + (24 * 60 * 60 * 1000));
@@ -41,6 +41,8 @@ const columnDefs: ColDef[] = [
   { field: 'total', filter: false },
 ]
 
+let api: GridApi<IOlympicData>;
+
 const gridOptions: GridOptions<IOlympicData> = {
   columnDefs: columnDefs,
   defaultColDef: {
@@ -54,9 +56,9 @@ const gridOptions: GridOptions<IOlympicData> = {
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
   var gridDiv = document.querySelector<HTMLElement>('#myGrid')!
-  new Grid(gridDiv, gridOptions)
+  api = createGrid(gridDiv, gridOptions);;
 
   fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
     .then(response => response.json())
-    .then((data: IOlympicData[]) => gridOptions.api!.setRowData(data))
+    .then((data: IOlympicData[]) => api!.setRowData(data))
 })

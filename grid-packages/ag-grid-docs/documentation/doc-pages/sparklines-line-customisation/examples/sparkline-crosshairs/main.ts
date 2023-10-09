@@ -1,10 +1,15 @@
 import {
-  Grid,
+  GridApi,
+  createGrid,
   GridOptions,
   LineSparklineOptions,
-  TooltipRendererParams
+  TooltipRendererParams,
 } from '@ag-grid-community/core';
 import { getData } from "./data";
+
+
+
+let api: GridApi;
 
 
 
@@ -92,5 +97,5 @@ function renderer(params: TooltipRendererParams) {
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
   var gridDiv = document.querySelector<HTMLElement>('#myGrid')!;
-  new Grid(gridDiv, gridOptions);
+  api = createGrid(gridDiv, gridOptions);;
 })

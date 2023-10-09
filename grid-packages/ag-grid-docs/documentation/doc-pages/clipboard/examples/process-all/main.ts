@@ -1,6 +1,6 @@
 import { getData } from "./data";
 
-import { Grid, ColDef, GridOptions, ProcessDataFromClipboardParams } from '@ag-grid-community/core'
+import { GridApi, createGrid, ColDef, GridOptions, ProcessDataFromClipboardParams } from '@ag-grid-community/core';
 
 const columnDefs: ColDef[] = [
   { field: 'a' },
@@ -9,6 +9,8 @@ const columnDefs: ColDef[] = [
   { field: 'd' },
   { field: 'e' }
 ]
+
+let api: GridApi;
 
 const gridOptions: GridOptions = {
   rowData: getData(),
@@ -72,5 +74,5 @@ function processDataFromClipboard(params: ProcessDataFromClipboardParams): strin
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
   var gridDiv = document.querySelector<HTMLElement>('#myGrid')!
-  new Grid(gridDiv, gridOptions)
+  api = createGrid(gridDiv, gridOptions);;
 })

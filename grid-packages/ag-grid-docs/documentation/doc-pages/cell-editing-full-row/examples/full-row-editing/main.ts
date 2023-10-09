@@ -1,5 +1,15 @@
-import { Grid, CellValueChangedEvent, GridOptions, ICellEditorComp, ICellEditorParams, RowValueChangedEvent } from '@ag-grid-community/core'
+import {
+  GridApi,
+  createGrid,
+  CellValueChangedEvent,
+  GridOptions,
+  ICellEditorComp,
+  ICellEditorParams,
+  RowValueChangedEvent,
+} from '@ag-grid-community/core';
 declare var NumericCellEditor: ICellEditorComp;
+
+let api: GridApi;
 
 const gridOptions: GridOptions = {
   columnDefs: [
@@ -86,12 +96,12 @@ function getRowData() {
 }
 
 function onBtStopEditing() {
-  gridOptions.api!.stopEditing()
+  api!.stopEditing()
 }
 
 function onBtStartEditing() {
-  gridOptions.api!.setFocusedCell(1, 'make')
-  gridOptions.api!.startEditingCell({
+  api!.setFocusedCell(1, 'make')
+  api!.startEditingCell({
     rowIndex: 1,
     colKey: 'make',
   })
@@ -101,5 +111,5 @@ function onBtStartEditing() {
 // AG Grid will not find the div in the document.
 document.addEventListener('DOMContentLoaded', function () {
   var eGridDiv = document.querySelector<HTMLElement>('#myGrid')!
-  new Grid(eGridDiv, gridOptions)
+  api = createGrid(eGridDiv, gridOptions);;
 })

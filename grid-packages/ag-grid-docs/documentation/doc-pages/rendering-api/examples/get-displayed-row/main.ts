@@ -1,4 +1,6 @@
-import { Grid, GridOptions } from '@ag-grid-community/core'
+import { GridApi, createGrid, GridOptions } from '@ag-grid-community/core';
+
+let api: GridApi<IOlympicData>;
 
 const gridOptions: GridOptions<IOlympicData> = {
   columnDefs: [
@@ -25,29 +27,29 @@ const gridOptions: GridOptions<IOlympicData> = {
 }
 
 function getDisplayedRowAtIndex() {
-  var rowNode = gridOptions.api!.getDisplayedRowAtIndex(0)!
+  var rowNode = api!.getDisplayedRowAtIndex(0)!
   console.log('getDisplayedRowAtIndex(0) => ' + rowNode.data!.athlete + ' ' + rowNode.data!.year)
 }
 
 function getDisplayedRowCount() {
-  var count = gridOptions.api!.getDisplayedRowCount()
+  var count = api!.getDisplayedRowCount()
   console.log('getDisplayedRowCount() => ' + count)
 }
 
 function printAllDisplayedRows() {
-  var count = gridOptions.api!.getDisplayedRowCount()
+  var count = api!.getDisplayedRowCount()
   console.log('## printAllDisplayedRows')
   for (var i = 0; i < count; i++) {
-    var rowNode = gridOptions.api!.getDisplayedRowAtIndex(i)!
+    var rowNode = api!.getDisplayedRowAtIndex(i)!
     console.log('row ' + i + ' is ' + rowNode.data!.athlete)
   }
 }
 
 function printPageDisplayedRows() {
-  var rowCount = gridOptions.api!.getDisplayedRowCount()
+  var rowCount = api!.getDisplayedRowCount()
   var lastGridIndex = rowCount - 1
-  var currentPage = gridOptions.api!.paginationGetCurrentPage()
-  var pageSize = gridOptions.api!.paginationGetPageSize()
+  var currentPage = api!.paginationGetCurrentPage()
+  var pageSize = api!.paginationGetPageSize()
   var startPageIndex = currentPage * pageSize
   var endPageIndex = (currentPage + 1) * pageSize - 1
 
@@ -57,7 +59,7 @@ function printPageDisplayedRows() {
 
   console.log('## printPageDisplayedRows')
   for (var i = startPageIndex; i <= endPageIndex; i++) {
-    var rowNode = gridOptions.api!.getDisplayedRowAtIndex(i)!
+    var rowNode = api!.getDisplayedRowAtIndex(i)!
     console.log('row ' + i + ' is ' + rowNode.data!.athlete)
   }
 }
@@ -65,11 +67,11 @@ function printPageDisplayedRows() {
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
   var gridDiv = document.querySelector<HTMLElement>('#myGrid')!
-  new Grid(gridDiv, gridOptions)
+  api = createGrid(gridDiv, gridOptions);;
 
   fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
     .then(response => response.json())
     .then(function (data) {
-      gridOptions.api!.setRowData(data.slice(0, 100))
+      api!.setRowData(data.slice(0, 100))
     })
 })

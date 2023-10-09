@@ -1,4 +1,4 @@
-import { Grid, ColGroupDef, GridOptions } from '@ag-grid-community/core'
+import { GridApi, createGrid, ColGroupDef, GridOptions } from '@ag-grid-community/core';
 
 const columnDefs: ColGroupDef[] = [
   {
@@ -25,6 +25,8 @@ const columnDefs: ColGroupDef[] = [
     ],
   },
 ]
+
+let api: GridApi;
 
 const gridOptions: GridOptions = {
   columnDefs: columnDefs,
@@ -74,7 +76,7 @@ function getData(count: number) {
 }
 
 function updateRowData(rowCount: number) {
-  gridOptions.api!.setRowData(getData(rowCount));
+  api!.setRowData(getData(rowCount));
 
   document.querySelector('#currentRowCount')!.innerHTML = `${rowCount}`;
 }
@@ -82,16 +84,16 @@ function updateRowData(rowCount: number) {
 function cbFloatingRows() {
   var show = (document.getElementById('floating-rows') as HTMLInputElement).checked
   if (show) {
-    gridOptions.api!.setPinnedTopRowData([createRow(999), createRow(998)])
-    gridOptions.api!.setPinnedBottomRowData([createRow(997), createRow(996)])
+    api!.setPinnedTopRowData([createRow(999), createRow(998)])
+    api!.setPinnedBottomRowData([createRow(997), createRow(996)])
   } else {
-    gridOptions.api!.setPinnedTopRowData()
-    gridOptions.api!.setPinnedBottomRowData()
+    api!.setPinnedTopRowData()
+    api!.setPinnedBottomRowData()
   }
 }
 
 function setAutoHeight() {
-  gridOptions.api!.setDomLayout('autoHeight');
+  api!.setDomLayout('autoHeight');
   // auto height will get the grid to fill the height of the contents,
   // so the grid div should have no height set, the height is dynamic.
   (document.querySelector<HTMLElement>('#myGrid')! as any).style.height = ''
@@ -99,7 +101,7 @@ function setAutoHeight() {
 
 function setFixedHeight() {
   // we could also call setDomLayout() here as normal is the default
-  gridOptions.api!.setDomLayout('normal');
+  api!.setDomLayout('normal');
   // when auto height is off, the grid ahs a fixed height, and then the grid
   // will provide scrollbars if the data does not fit into it.
   (document.querySelector<HTMLElement>('#myGrid')! as any)!.style.height = '400px'
@@ -108,5 +110,5 @@ function setFixedHeight() {
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
   var gridDiv = document.querySelector<HTMLElement>('#myGrid')!
-  new Grid(gridDiv, gridOptions)
+  api = createGrid(gridDiv, gridOptions);;
 })

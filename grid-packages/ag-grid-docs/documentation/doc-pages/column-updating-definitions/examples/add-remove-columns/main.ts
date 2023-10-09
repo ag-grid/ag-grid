@@ -1,4 +1,4 @@
-import { Grid, ColDef, GridOptions } from '@ag-grid-community/core'
+import { GridApi, createGrid, ColDef, GridOptions } from '@ag-grid-community/core';
 
 const columnDefsMedalsIncluded: ColDef[] = [
   { field: 'athlete' },
@@ -22,6 +22,8 @@ const colDefsMedalsExcluded: ColDef[] = [
   { field: 'date' },
 ]
 
+let api: GridApi<IOlympicData>;
+
 const gridOptions: GridOptions<IOlympicData> = {
   columnDefs: columnDefsMedalsIncluded,
   defaultColDef: {
@@ -32,19 +34,19 @@ const gridOptions: GridOptions<IOlympicData> = {
 }
 
 function onBtExcludeMedalColumns() {
-  gridOptions.api!.setColumnDefs(colDefsMedalsExcluded)
+  api!.setColumnDefs(colDefsMedalsExcluded)
 }
 
 function onBtIncludeMedalColumns() {
-  gridOptions.api!.setColumnDefs(columnDefsMedalsIncluded)
+  api!.setColumnDefs(columnDefsMedalsIncluded)
 }
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', () => {
   const gridDiv = document.querySelector<HTMLElement>('#myGrid')!
-  new Grid(gridDiv, gridOptions)
+  api = createGrid(gridDiv, gridOptions);;
 
   fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
     .then(response => response.json())
-    .then((data: IOlympicData[]) => gridOptions.api!.setRowData(data))
+    .then((data: IOlympicData[]) => api!.setRowData(data))
 })

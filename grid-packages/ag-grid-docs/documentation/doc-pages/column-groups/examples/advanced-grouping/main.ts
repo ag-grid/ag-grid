@@ -1,4 +1,4 @@
-import { Grid, ColDef, ColGroupDef, GridOptions, HeaderClassParams } from '@ag-grid-community/core'
+import { GridApi, createGrid, ColDef, ColGroupDef, GridOptions, HeaderClassParams } from '@ag-grid-community/core';
 
 const columnDefs: (ColDef | ColGroupDef)[] = [
   {
@@ -126,6 +126,8 @@ const columnDefs: (ColDef | ColGroupDef)[] = [
   },
 ]
 
+let api: GridApi<IOlympicData>;
+
 const gridOptions: GridOptions<IOlympicData> = {
   // debug: true,
   columnDefs: columnDefs,
@@ -183,16 +185,16 @@ function expandAll(expand: boolean) {
   ]
 
   groupNames.forEach(groupId => {
-    gridOptions.api!.setColumnGroupOpened(groupId, expand)
+    api!.setColumnGroupOpened(groupId, expand)
   })
 }
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', () => {
   const gridDiv = document.querySelector<HTMLElement>('#myGrid')!
-  new Grid(gridDiv, gridOptions)
+  api = createGrid(gridDiv, gridOptions);;
 
   fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
     .then(response => response.json())
-    .then((data: IOlympicData[]) => gridOptions.api!.setRowData(data))
+    .then((data: IOlympicData[]) => api!.setRowData(data))
 })

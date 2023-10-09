@@ -1,4 +1,17 @@
-import { Grid, ColDef, ColumnMovedEvent, ColumnPinnedEvent, ColumnPivotChangedEvent, ColumnResizedEvent, ColumnRowGroupChangedEvent, ColumnValueChangedEvent, ColumnVisibleEvent, GridOptions, SortChangedEvent } from '@ag-grid-community/core'
+import {
+  GridApi,
+  createGrid,
+  ColDef,
+  ColumnMovedEvent,
+  ColumnPinnedEvent,
+  ColumnPivotChangedEvent,
+  ColumnResizedEvent,
+  ColumnRowGroupChangedEvent,
+  ColumnValueChangedEvent,
+  ColumnVisibleEvent,
+  GridOptions,
+  SortChangedEvent,
+} from '@ag-grid-community/core';
 
 function getColumnDefs(): ColDef[] {
   return [
@@ -44,6 +57,8 @@ function onColumnPinned(e: ColumnPinnedEvent) {
   console.log('Event Column Pinned', e)
 }
 
+let api: GridApi<IOlympicData>;
+
 const gridOptions: GridOptions<IOlympicData> = {
   defaultColDef: {
     sortable: true,
@@ -75,7 +90,7 @@ function onBtSortOn() {
       colDef.sort = 'asc'
     }
   })
-  gridOptions.api!.setColumnDefs(columnDefs)
+  api!.setColumnDefs(columnDefs)
 }
 
 function onBtSortOff() {
@@ -83,7 +98,7 @@ function onBtSortOff() {
   columnDefs.forEach(function (colDef) {
     colDef.sort = null
   })
-  gridOptions.api!.setColumnDefs(columnDefs)
+  api!.setColumnDefs(columnDefs)
 }
 
 function onBtWidthNarrow() {
@@ -93,7 +108,7 @@ function onBtWidthNarrow() {
       colDef.width = 100
     }
   })
-  gridOptions.api!.setColumnDefs(columnDefs)
+  api!.setColumnDefs(columnDefs)
 }
 
 function onBtWidthNormal() {
@@ -101,7 +116,7 @@ function onBtWidthNormal() {
   columnDefs.forEach(function (colDef) {
     colDef.width = 200
   })
-  gridOptions.api!.setColumnDefs(columnDefs)
+  api!.setColumnDefs(columnDefs)
 }
 
 function onBtHide() {
@@ -111,7 +126,7 @@ function onBtHide() {
       colDef.hide = true
     }
   })
-  gridOptions.api!.setColumnDefs(columnDefs)
+  api!.setColumnDefs(columnDefs)
 }
 
 function onBtShow() {
@@ -119,11 +134,11 @@ function onBtShow() {
   columnDefs.forEach(function (colDef) {
     colDef.hide = false
   })
-  gridOptions.api!.setColumnDefs(columnDefs)
+  api!.setColumnDefs(columnDefs)
 }
 
 function onBtPivotOn() {
-  gridOptions.api!.setPivotMode(true)
+  api!.setPivotMode(true)
 
   const columnDefs: ColDef[] = getColumnDefs()
   columnDefs.forEach(function (colDef) {
@@ -131,17 +146,17 @@ function onBtPivotOn() {
       colDef.pivot = true
     }
   })
-  gridOptions.api!.setColumnDefs(columnDefs)
+  api!.setColumnDefs(columnDefs)
 }
 
 function onBtPivotOff() {
-  gridOptions.api!.setPivotMode(false)
+  api!.setPivotMode(false)
 
   const columnDefs: ColDef[] = getColumnDefs()
   columnDefs.forEach(function (colDef) {
     colDef.pivot = false
   })
-  gridOptions.api!.setColumnDefs(columnDefs)
+  api!.setColumnDefs(columnDefs)
 }
 
 function onBtRowGroupOn() {
@@ -151,7 +166,7 @@ function onBtRowGroupOn() {
       colDef.rowGroup = true
     }
   })
-  gridOptions.api!.setColumnDefs(columnDefs)
+  api!.setColumnDefs(columnDefs)
 }
 
 function onBtRowGroupOff() {
@@ -159,7 +174,7 @@ function onBtRowGroupOff() {
   columnDefs.forEach(function (colDef) {
     colDef.rowGroup = false
   })
-  gridOptions.api!.setColumnDefs(columnDefs)
+  api!.setColumnDefs(columnDefs)
 }
 
 function onBtAggFuncOn() {
@@ -173,7 +188,7 @@ function onBtAggFuncOn() {
       colDef.aggFunc = 'sum'
     }
   })
-  gridOptions.api!.setColumnDefs(columnDefs)
+  api!.setColumnDefs(columnDefs)
 }
 
 function onBtAggFuncOff() {
@@ -181,7 +196,7 @@ function onBtAggFuncOff() {
   columnDefs.forEach(function (colDef) {
     colDef.aggFunc = null
   })
-  gridOptions.api!.setColumnDefs(columnDefs)
+  api!.setColumnDefs(columnDefs)
 }
 
 function onBtPinnedOn() {
@@ -194,7 +209,7 @@ function onBtPinnedOn() {
       colDef.pinned = 'right'
     }
   })
-  gridOptions.api!.setColumnDefs(columnDefs)
+  api!.setColumnDefs(columnDefs)
 }
 
 function onBtPinnedOff() {
@@ -202,15 +217,15 @@ function onBtPinnedOff() {
   columnDefs.forEach(function (colDef) {
     colDef.pinned = null
   })
-  gridOptions.api!.setColumnDefs(columnDefs)
+  api!.setColumnDefs(columnDefs)
 }
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
   var gridDiv = document.querySelector<HTMLElement>('#myGrid')!
-  new Grid(gridDiv, gridOptions)
+  api = createGrid(gridDiv, gridOptions);;
 
   fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
     .then(response => response.json())
-    .then((data: IOlympicData[]) => gridOptions.api!.setRowData(data))
+    .then((data: IOlympicData[]) => api!.setRowData(data))
 })

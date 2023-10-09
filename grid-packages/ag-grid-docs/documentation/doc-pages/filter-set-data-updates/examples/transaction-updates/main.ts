@@ -1,8 +1,12 @@
 import {
-  FirstDataRenderedEvent, Grid,
+  FirstDataRenderedEvent,
+  GridApi,
+  createGrid,
   GridOptions,
   IFiltersToolPanel,
-} from '@ag-grid-community/core'
+} from '@ag-grid-community/core';
+
+let api: GridApi;
 
 const gridOptions: GridOptions = {
   rowData: getRowData(),
@@ -31,21 +35,21 @@ function getRowData() {
 }
 
 function updateFirstRow() {
-  var firstRow = gridOptions.api!.getDisplayedRowAtIndex(0)
+  var firstRow = api!.getDisplayedRowAtIndex(0)
   if (firstRow) {
     var firstRowData = firstRow.data
     firstRowData['col1'] += 'X'
-    gridOptions.api!.applyTransaction({ update: [firstRowData] })
+    api!.applyTransaction({ update: [firstRowData] })
   }
 }
 
 function addDRow() {
-  gridOptions.api!.applyTransaction({ add: [{ col1: 'D' }] })
+  api!.applyTransaction({ add: [{ col1: 'D' }] })
 }
 
 function reset() {
-  gridOptions.api!.setFilterModel(null);
-  gridOptions.api!.setRowData(getRowData());
+  api!.setFilterModel(null);
+  api!.setRowData(getRowData());
 }
 
 function onFirstDataRendered(params: FirstDataRenderedEvent) {
@@ -55,5 +59,5 @@ function onFirstDataRendered(params: FirstDataRenderedEvent) {
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
   var gridDiv = document.querySelector<HTMLElement>('#myGrid')!
-  new Grid(gridDiv, gridOptions)
+  api = createGrid(gridDiv, gridOptions);;
 })

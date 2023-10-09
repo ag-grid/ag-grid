@@ -1,4 +1,4 @@
-import { Grid, ColDef, GridOptions } from '@ag-grid-community/core'
+import { GridApi, createGrid, ColDef, GridOptions } from '@ag-grid-community/core';
 
 const columnDefs: ColDef[] = [
     { field: 'athlete', sort: 'desc' },
@@ -43,6 +43,8 @@ function monthToComparableNumber(date: string) {
     return yearNumber * 10000 + monthNumber * 100 + dayNumber
 }
 
+let api: GridApi<IOlympicData>;
+
 const gridOptions: GridOptions<IOlympicData> = {
     columnDefs: columnDefs,
     defaultColDef: {
@@ -54,9 +56,9 @@ const gridOptions: GridOptions<IOlympicData> = {
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
     const gridDiv = document.querySelector<HTMLElement>('#myGrid')!;
-    new Grid(gridDiv, gridOptions)
+    api = createGrid(gridDiv, gridOptions);;
 
     fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
         .then(response => response.json())
-        .then((data: IOlympicData[]) => gridOptions.api!.setRowData(data))
+        .then((data: IOlympicData[]) => api!.setRowData(data))
 })

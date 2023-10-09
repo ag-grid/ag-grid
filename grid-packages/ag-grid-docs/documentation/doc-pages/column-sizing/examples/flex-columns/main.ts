@@ -1,4 +1,4 @@
-import { Grid, ColDef, ColGroupDef, ColSpanParams, GridOptions } from '@ag-grid-community/core'
+import { GridApi, createGrid, ColDef, ColGroupDef, ColSpanParams, GridOptions } from '@ag-grid-community/core';
 
 var colSpan = function (params: ColSpanParams) {
   return params.data === 2 ? 3 : 1
@@ -38,6 +38,8 @@ function fillAllCellsWithWidthMeasurement() {
     })
 }
 
+let api: GridApi;
+
 const gridOptions: GridOptions = {
   defaultColDef: {
     resizable: true,
@@ -52,5 +54,5 @@ const gridOptions: GridOptions = {
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
   var gridDiv = document.querySelector<HTMLElement>('#myGrid')!
-  new Grid(gridDiv, gridOptions)
+  api = createGrid(gridDiv, gridOptions);;
 })

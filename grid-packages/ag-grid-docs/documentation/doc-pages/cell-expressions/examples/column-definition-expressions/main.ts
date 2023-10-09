@@ -1,4 +1,4 @@
-import { CellValueChangedEvent, ColDef, Grid, GridOptions } from '@ag-grid-community/core';
+import { CellValueChangedEvent, ColDef, GridApi, createGrid, GridOptions } from '@ag-grid-community/core';
 import { getData } from "./data";
 
 
@@ -42,6 +42,8 @@ const columnDefs: ColDef[] = [
   { headerName: 'A + B', valueGetter: 'data.a + data.b', maxWidth: 120 },
 ]
 
+let api: GridApi;
+
 const gridOptions: GridOptions = {
   columnDefs: columnDefs,
   defaultColDef: {
@@ -62,6 +64,6 @@ function onCellValueChanged(event: CellValueChangedEvent) {
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
   const gridDiv = document.querySelector<HTMLElement>('#myGrid')!
-  new Grid(gridDiv, gridOptions)
-  gridOptions.api!.sizeColumnsToFit()
+  api = createGrid(gridDiv, gridOptions);;
+  api!.sizeColumnsToFit()
 })

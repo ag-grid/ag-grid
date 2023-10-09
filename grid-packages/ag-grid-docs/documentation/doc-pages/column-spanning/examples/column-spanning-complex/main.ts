@@ -1,4 +1,13 @@
-import { CellClassRules, ColDef, ColSpanParams, Grid, GridOptions, GridReadyEvent, RowHeightParams } from '@ag-grid-community/core';
+import {
+  CellClassRules,
+  ColDef,
+  ColSpanParams,
+  GridApi,
+  createGrid,
+  GridOptions,
+  GridReadyEvent,
+  RowHeightParams,
+} from '@ag-grid-community/core';
 import { getData } from "./data";
 
 
@@ -40,6 +49,8 @@ const columnDefs: ColDef[] = [
   { headerName: 'Jun', field: 'jun' },
 ]
 
+let api: GridApi;
+
 const gridOptions: GridOptions = {
   getRowHeight: (params: RowHeightParams) => {
     if (isHeaderRow(params)) {
@@ -70,5 +81,5 @@ function isQuarterRow(params: ColSpanParams) {
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
   var gridDiv = document.querySelector<HTMLElement>('#myGrid')!
-  new Grid(gridDiv, gridOptions)
+  api = createGrid(gridDiv, gridOptions);;
 })

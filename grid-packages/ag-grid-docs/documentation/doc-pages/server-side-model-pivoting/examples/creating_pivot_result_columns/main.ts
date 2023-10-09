@@ -1,5 +1,16 @@
-import { Grid, ColDef, ColGroupDef, ColumnApi, GridOptions, IServerSideDatasource, IServerSideGetRowsRequest, GridApi } from '@ag-grid-community/core'
+import {
+  GridApi,
+  createGrid,
+  ColDef,
+  ColGroupDef,
+  ColumnApi,
+  GridOptions,
+  IServerSideDatasource,
+  IServerSideGetRowsRequest,
+  GridApi,
+} from '@ag-grid-community/core';
 declare var FakeServer: any;
+let api: GridApi<IOlympicData>;
 const gridOptions: GridOptions<IOlympicData> = {
   columnDefs: [
     { field: 'country', rowGroup: true },
@@ -30,7 +41,7 @@ const gridOptions: GridOptions<IOlympicData> = {
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
   const gridDiv = document.querySelector<HTMLElement>('#myGrid')!
-  new Grid(gridDiv, gridOptions)
+  api = createGrid(gridDiv, gridOptions);;
 
   fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
       .then(response => response.json())
@@ -42,7 +53,7 @@ document.addEventListener('DOMContentLoaded', function () {
         const datasource = getServerSideDatasource(fakeServer)
 
         // register the datasource with the grid
-        gridOptions.api!.setServerSideDatasource(datasource)
+        api!.setServerSideDatasource(datasource)
       })
 })
 

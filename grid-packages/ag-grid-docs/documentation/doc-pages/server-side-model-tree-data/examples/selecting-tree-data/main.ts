@@ -1,4 +1,16 @@
-import { Grid, ColDef, GridApi, GridOptions, IServerSideDatasource, IServerSideGetRowsParams, IServerSideGetRowsRequest, IsServerSideGroupOpenByDefaultParams, IRowNode, GetRowIdParams } from '@ag-grid-community/core'
+import {
+  GridApi,
+  createGrid,
+  ColDef,
+  GridApi,
+  GridOptions,
+  IServerSideDatasource,
+  IServerSideGetRowsParams,
+  IServerSideGetRowsRequest,
+  IsServerSideGroupOpenByDefaultParams,
+  IRowNode,
+  GetRowIdParams,
+} from '@ag-grid-community/core';
 
 var fakeServer: {
   getData: (request: IServerSideGetRowsRequest) => void,
@@ -14,6 +26,8 @@ const columnDefs: ColDef[] = [
   { field: 'employmentType' },
   { field: 'startDate' },
 ];
+
+let api: GridApi;
 
 const gridOptions: GridOptions = {
   defaultColDef: {
@@ -51,7 +65,7 @@ const gridOptions: GridOptions = {
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
   var gridDiv = document.querySelector<HTMLElement>('#myGrid')!
-  new Grid(gridDiv, gridOptions)
+  api = createGrid(gridDiv, gridOptions);;
 
   fetch('https://www.ag-grid.com/example-assets/tree-data.json')
     .then(response => response.json())
@@ -66,9 +80,9 @@ document.addEventListener('DOMContentLoaded', function () {
         },
         ...data,
       ];
-      var fakeServer = createFakeServer(adjustedData, gridOptions.api!)
+      var fakeServer = createFakeServer(adjustedData, api!)
       var datasource = createServerSideDatasource(fakeServer)
-      gridOptions.api!.setServerSideDatasource(datasource)
+      api!.setServerSideDatasource(datasource)
     })
 })
 

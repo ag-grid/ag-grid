@@ -1,17 +1,21 @@
 import {
-  ColDef, Grid,
+  ColDef,
+  GridApi,
+  createGrid,
   GridOptions,
   ICellRendererParams,
   IServerSideDatasource,
   IServerSideGetRowsParams,
   IsServerSideGroupOpenByDefaultParams,
-} from '@ag-grid-community/core'
+} from '@ag-grid-community/core';
 const columnDefs: ColDef[] = [
   { field: 'employeeId', hide: true },
   { field: 'employeeName', hide: true },
   { field: 'jobTitle' },
   { field: 'employmentType' },
 ]
+
+let api: GridApi;
 
 const gridOptions: GridOptions = {
   defaultColDef: {
@@ -50,13 +54,13 @@ const gridOptions: GridOptions = {
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
   var gridDiv = document.querySelector<HTMLElement>('#myGrid')!
-  new Grid(gridDiv, gridOptions)
+  api = createGrid(gridDiv, gridOptions);;
 
   fetch('https://www.ag-grid.com/example-assets/tree-data.json')
     .then(response => response.json())
     .then(function (data) {
       var datasource = createServerSideDatasource(data)
-      gridOptions.api!.setServerSideDatasource(datasource)
+      api!.setServerSideDatasource(datasource)
 
       function createServerSideDatasource(data: any) {
         const dataSource: IServerSideDatasource = {
@@ -79,7 +83,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
               const recursivelyPopulateHierarchy = (route: string[], node: any) => {
                 if (node.underlings) {
-                  gridOptions.api!.applyServerSideRowData({
+                  api!.applyServerSideRowData({
                     route,
                     successParams: {
                       rowData: node.underlings,

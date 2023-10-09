@@ -1,4 +1,4 @@
-import { ColDef, Grid, GridOptions, ICellRendererParams } from '@ag-grid-community/core'
+import { ColDef, GridApi, createGrid, GridOptions, ICellRendererParams } from '@ag-grid-community/core';
 import { CountryCellRenderer } from './countryCellRenderer_typescript'
 import { FlagContext } from './interfaces';
 
@@ -23,6 +23,8 @@ const columnDefs: ColDef[] = [
     { field: 'bronze' },
     { field: 'total' },
 ]
+
+let api: GridApi<IOlympicData>;
 
 const gridOptions: GridOptions<IOlympicData> = {
     columnDefs: columnDefs,
@@ -74,11 +76,11 @@ const gridOptions: GridOptions<IOlympicData> = {
 }
 
 function onBtExport() {
-    gridOptions.api!.exportDataAsExcel()
+    api!.exportDataAsExcel()
 }
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
     const gridDiv = document.querySelector<HTMLElement>('#myGrid')!;
-    new Grid(gridDiv, gridOptions)
+    api = createGrid(gridDiv, gridOptions);;
 })

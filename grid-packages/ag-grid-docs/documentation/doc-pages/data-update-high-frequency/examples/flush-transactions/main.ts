@@ -1,4 +1,13 @@
-import { Grid, ColDef, GridApi, GridOptions, ValueFormatterParams, GetRowIdParams, AsyncTransactionsFlushed } from '@ag-grid-community/core'
+import {
+  GridApi,
+  createGrid,
+  ColDef,
+  GridApi,
+  GridOptions,
+  ValueFormatterParams,
+  GetRowIdParams,
+  AsyncTransactionsFlushed,
+} from '@ag-grid-community/core';
 import { getData, globalRowData } from "./data";
 
 var UPDATE_COUNT = 20
@@ -141,8 +150,10 @@ const columnDefs: ColDef[] = [
 function numberCellFormatter(params: ValueFormatterParams) {
   return Math.floor(params.value)
     .toString()
-    .replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,')
+    .replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,');
 }
+
+let api: GridApi;
 
 const gridOptions: GridOptions = {
   columnDefs: columnDefs,
@@ -177,7 +188,7 @@ const gridOptions: GridOptions = {
 }
 
 function onFlushTransactions() {
-  gridOptions.api!.flushAsyncTransactions()
+  api!.flushAsyncTransactions()
 }
 
 function startFeed(api: GridApi) {
@@ -226,5 +237,5 @@ function copyObject(object: any) {
 // after page is loaded, create the grid.
 document.addEventListener('DOMContentLoaded', function () {
   var eGridDiv = document.querySelector<HTMLElement>('#myGrid')!
-  new Grid(eGridDiv, gridOptions)
+  api = createGrid(eGridDiv, gridOptions);;
 })

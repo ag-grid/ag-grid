@@ -1,4 +1,12 @@
-import { ColDef, Grid, GridOptions, ICellRendererFunc, ICellRendererParams, ValueGetterParams } from '@ag-grid-community/core';
+import {
+  ColDef,
+  GridApi,
+  createGrid,
+  GridOptions,
+  ICellRendererFunc,
+  ICellRendererParams,
+  ValueGetterParams,
+} from '@ag-grid-community/core';
 
 const columnDefs: ColDef[] = [
   { headerName: 'Product', field: 'product' },
@@ -19,6 +27,8 @@ const columnDefs: ColDef[] = [
     headerValueGetter: 'ctx.reportingCurrency',
   },
 ]
+
+let api: GridApi;
 
 const gridOptions: GridOptions = {
   columnDefs: columnDefs,
@@ -104,8 +114,8 @@ function getCurrencyCellRenderer(): ICellRendererFunc {
 function currencyChanged() {
   var value = (document.getElementById('currency') as any).value
   gridOptions.context = { reportingCurrency: value }
-  gridOptions.api!.refreshCells()
-  gridOptions.api!.refreshHeader()
+  api!.refreshCells()
+  api!.refreshHeader()
 }
 
 function getData() {
@@ -124,5 +134,5 @@ function getData() {
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
   var gridDiv = document.querySelector<HTMLElement>('#myGrid')!
-  new Grid(gridDiv, gridOptions)
+  api = createGrid(gridDiv, gridOptions);;
 })

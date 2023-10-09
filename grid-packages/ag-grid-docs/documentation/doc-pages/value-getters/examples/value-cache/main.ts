@@ -1,4 +1,12 @@
-import { ColDef, GetRowIdParams, Grid, GridOptions, ValueFormatterParams, ValueGetterParams } from '@ag-grid-community/core';
+import {
+  ColDef,
+  GetRowIdParams,
+  GridApi,
+  createGrid,
+  GridOptions,
+  ValueFormatterParams,
+  ValueGetterParams,
+} from '@ag-grid-community/core';
 import { getData } from "./data";
 
 
@@ -28,6 +36,8 @@ const columnDefs: ColDef[] = [
     },
   },
 ]
+
+let api: GridApi;
 
 const gridOptions: GridOptions = {
   columnDefs: columnDefs,
@@ -68,7 +78,7 @@ function formatNumber(params: ValueFormatterParams) {
   // i pulled this from stack overflow, i have no idea how it works
   return Math.floor(number)
     .toString()
-    .replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,')
+    .replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,');
 }
 
 function onValueCache(valueCacheOn: boolean) {
@@ -77,9 +87,9 @@ function onValueCache(valueCacheOn: boolean) {
 }
 
 function destroyOldGridIfExists() {
-  if (gridOptions.api!) {
+  if (api!) {
     console.log('==========> destroying old grid')
-    gridOptions.api!.destroy()
+    api!.destroy()
   }
 }
 
@@ -90,7 +100,7 @@ function createGrid(valueCacheOn: boolean) {
 
   // then similar to all the other examples, create the grid
   var gridDiv = document.querySelector<HTMLElement>('#myGrid')!
-  new Grid(gridDiv, gridOptions)
+  api = createGrid(gridDiv, gridOptions);;
 }
 
 // setup the grid after the page has finished loading

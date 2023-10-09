@@ -1,4 +1,6 @@
-import { Grid, GridOptions } from '@ag-grid-community/core'
+import { GridApi, createGrid, GridOptions } from '@ag-grid-community/core';
+
+let api: GridApi<IOlympicData>;
 
 const gridOptions: GridOptions<IOlympicData> = {
   columnDefs: [
@@ -56,7 +58,7 @@ function getSheetConfig() {
 function onFormSubmit(e: any) {
   e.preventDefault();
   const { pageSetup, margins } = getSheetConfig()
-  gridOptions.api!.exportDataAsExcel({ pageSetup, margins });
+  api!.exportDataAsExcel({ pageSetup, margins });
 }
 
 // setup the grid after the page has finished loading
@@ -67,11 +69,11 @@ document.addEventListener('DOMContentLoaded', function () {
   form?.addEventListener('submit', (e) => onFormSubmit(e));
 
   if (gridDiv) {
-    new Grid(gridDiv, gridOptions)
+    api = createGrid(gridDiv, gridOptions);;
     fetch('https://www.ag-grid.com/example-assets/small-olympic-winners.json')
       .then(response => response.json())
       .then(data =>
-        gridOptions.api!.setRowData(data.filter((rec: any) => rec.country != null))
+        api!.setRowData(data.filter((rec: any) => rec.country != null))
       )
   }
 })

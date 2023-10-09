@@ -1,5 +1,9 @@
-import { Grid, GridOptions, ICellRendererParams, ValueParserParams } from '@ag-grid-community/core';
+import { GridApi, createGrid, GridOptions, ICellRendererParams, ValueParserParams } from '@ag-grid-community/core';
 import { getData } from "./data";
+
+
+
+let api: GridApi;
 
 
 
@@ -94,5 +98,5 @@ function cityCellRenderer(params: ICellRendererParams) {
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
   const gridDiv = document.querySelector<HTMLElement>('#myGrid')!
-  new Grid(gridDiv, gridOptions)
+  api = createGrid(gridDiv, gridOptions);;
 })

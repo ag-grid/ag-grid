@@ -1,4 +1,12 @@
-import { Grid, GridOptions, HeaderValueGetterParams, ValueGetterParams } from '@ag-grid-community/core'
+import {
+  GridApi,
+  createGrid,
+  GridOptions,
+  HeaderValueGetterParams,
+  ValueGetterParams,
+} from '@ag-grid-community/core';
+
+let api: GridApi<IOlympicData>;
 
 const gridOptions: GridOptions<IOlympicData> = {
   columnDefs: [
@@ -66,16 +74,16 @@ var includeHiddenColumns = false;
 
 function onIncludeHiddenColumnsToggled() {
   includeHiddenColumns = !includeHiddenColumns;
-  gridOptions.api!.setIncludeHiddenColumnsInAdvancedFilter(includeHiddenColumns);
+  api!.setIncludeHiddenColumnsInAdvancedFilter(includeHiddenColumns);
   document.querySelector('#includeHiddenColumns')!.innerHTML = `${includeHiddenColumns ? 'Exclude' : 'Include'} Hidden Columns`;
 }
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', () => {
   const gridDiv = document.querySelector<HTMLElement>('#myGrid')!
-  new Grid(gridDiv, gridOptions)
+  api = createGrid(gridDiv, gridOptions);;
 
   fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
     .then(response => response.json())
-    .then((data: IOlympicData[]) => gridOptions.api!.setRowData(data))
+    .then((data: IOlympicData[]) => api!.setRowData(data))
 })

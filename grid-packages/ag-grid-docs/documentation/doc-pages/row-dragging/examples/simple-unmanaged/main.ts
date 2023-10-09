@@ -1,7 +1,9 @@
-import { Grid, GridOptions, GetRowIdParams, RowDragMoveEvent } from '@ag-grid-community/core'
+import { GridApi, createGrid, GridOptions, GetRowIdParams, RowDragMoveEvent } from '@ag-grid-community/core';
 import { getData } from "./data";
 
 var immutableStore: any[] = getData();
+
+let api: GridApi;
 
 const gridOptions: GridOptions = {
   columnDefs: [
@@ -31,7 +33,7 @@ const gridOptions: GridOptions = {
       data.id = index
     })
 
-    gridOptions.api!.setRowData(immutableStore)
+    api!.setRowData(immutableStore)
   },
 }
 
@@ -40,7 +42,7 @@ var filterActive = false
 
 // listen for change on sort changed
 function onSortChanged() {
-  var colState = gridOptions.api!.getColumnState() || [];
+  var colState = api!.getColumnState() || [];
   sortActive = colState.some(c => c.sort)
   // suppress row drag if either sort or filter is active
   var suppressRowDrag = sortActive || filterActive
@@ -52,12 +54,12 @@ function onSortChanged() {
     ', allowRowDrag = ' +
     suppressRowDrag
   )
-  gridOptions.api!.setSuppressRowDrag(suppressRowDrag)
+  api!.setSuppressRowDrag(suppressRowDrag)
 }
 
 // listen for changes on filter changed
 function onFilterChanged() {
-  filterActive = gridOptions.api!.isAnyFilterPresent()
+  filterActive = api!.isAnyFilterPresent()
   // suppress row drag if either sort or filter is active
   var suppressRowDrag = sortActive || filterActive
   console.log(
@@ -68,7 +70,7 @@ function onFilterChanged() {
     ', allowRowDrag = ' +
     suppressRowDrag
   )
-  gridOptions.api!.setSuppressRowDrag(suppressRowDrag)
+  api!.setSuppressRowDrag(suppressRowDrag)
 }
 
 function getRowId(params: GetRowIdParams) {
@@ -93,9 +95,9 @@ function onRowDragMove(event: RowDragMoveEvent) {
     moveInArray(newStore, fromIndex, toIndex)
 
     immutableStore = newStore
-    gridOptions.api!.setRowData(newStore)
+    api!.setRowData(newStore)
 
-    gridOptions.api!.clearFocusedCell()
+    api!.clearFocusedCell()
   }
 
   function moveInArray(arr: any[], fromIndex: number, toIndex: number) {
@@ -108,5 +110,5 @@ function onRowDragMove(event: RowDragMoveEvent) {
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
   var gridDiv = document.querySelector<HTMLElement>('#myGrid')!
-  new Grid(gridDiv, gridOptions)
+  api = createGrid(gridDiv, gridOptions);;
 })

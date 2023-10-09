@@ -1,4 +1,15 @@
-import { Grid, CellValueChangedEvent, GridOptions, UndoStartedEvent, UndoEndedEvent, RedoStartedEvent, RedoEndedEvent } from '@ag-grid-community/core'
+import {
+  GridApi,
+  createGrid,
+  CellValueChangedEvent,
+  GridOptions,
+  UndoStartedEvent,
+  UndoEndedEvent,
+  RedoStartedEvent,
+  RedoEndedEvent,
+} from '@ag-grid-community/core';
+
+let api: GridApi;
 
 const gridOptions: GridOptions = {
   columnDefs: [
@@ -30,11 +41,11 @@ const gridOptions: GridOptions = {
 }
 
 function undo() {
-  gridOptions.api!.undoCellEditing()
+  api!.undoCellEditing()
 }
 
 function redo() {
-  gridOptions.api!.redoCellEditing()
+  api!.redoCellEditing()
 }
 
 function onFirstDataRendered() {
@@ -101,5 +112,5 @@ function getRows() {
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
   var gridDiv = document.querySelector<HTMLElement>('#myGrid')!
-  new Grid(gridDiv, gridOptions)
+  api = createGrid(gridDiv, gridOptions);;
 })

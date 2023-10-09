@@ -1,4 +1,4 @@
-import { ColDef, Grid, GridOptions, INumberFilterParams } from '@ag-grid-community/core';
+import { ColDef, GridApi, createGrid, GridOptions, INumberFilterParams } from '@ag-grid-community/core';
 import { getData } from "./data";
 import { SliderFloatingFilter } from './sliderFloatingFilter_typescript';
 
@@ -46,6 +46,8 @@ const columnDefs: ColDef[] = [
   },
 ]
 
+let api: GridApi;
+
 const gridOptions: GridOptions = {
   defaultColDef: {
     editable: true,
@@ -63,6 +65,6 @@ const gridOptions: GridOptions = {
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
   var gridDiv = document.querySelector<HTMLElement>('#myGrid')!
-  new Grid(gridDiv, gridOptions)
-  gridOptions.api!.sizeColumnsToFit()
+  api = createGrid(gridDiv, gridOptions);;
+  api!.sizeColumnsToFit()
 })

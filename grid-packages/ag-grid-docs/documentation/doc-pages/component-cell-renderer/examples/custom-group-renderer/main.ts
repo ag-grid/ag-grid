@@ -1,4 +1,11 @@
-import { CellDoubleClickedEvent, CellKeyDownEvent, ColDef, Grid, GridOptions } from '@ag-grid-community/core';
+import {
+    CellDoubleClickedEvent,
+    CellKeyDownEvent,
+    ColDef,
+    GridApi,
+    createGrid,
+    GridOptions,
+} from '@ag-grid-community/core';
 import { CustomGroupCellRenderer } from './customGroupCellRenderer_typescript';
 
 const columnDefs: ColDef[] = [
@@ -25,6 +32,8 @@ const columnDefs: ColDef[] = [
 const autoGroupColumnDef: ColDef = {
     cellRenderer: CustomGroupCellRenderer,
 };
+
+let api: GridApi<IOlympicData>;
 
 const gridOptions: GridOptions<IOlympicData> = {
     columnDefs: columnDefs,
@@ -60,9 +69,9 @@ const gridOptions: GridOptions<IOlympicData> = {
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
     const gridDiv = document.querySelector<HTMLElement>('#myGrid')!;
-    new Grid(gridDiv, gridOptions);
+    api = createGrid(gridDiv, gridOptions);;
 
     fetch('https://www.ag-grid.com/example-assets/small-olympic-winners.json')
         .then(response => response.json())
-        .then((data: IOlympicData[]) => gridOptions.api!.setRowData(data))
+        .then((data: IOlympicData[]) => api!.setRowData(data))
 })

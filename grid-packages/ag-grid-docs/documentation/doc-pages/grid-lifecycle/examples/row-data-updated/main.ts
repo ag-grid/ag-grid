@@ -1,10 +1,18 @@
-import { Grid, GridOptions, FirstDataRenderedEvent, RowDataUpdatedEvent } from '@ag-grid-community/core';
+import {
+    GridApi,
+    createGrid,
+    GridOptions,
+    FirstDataRenderedEvent,
+    RowDataUpdatedEvent,
+} from '@ag-grid-community/core';
 import { getDataSetA, getDataSetB, TAthlete } from './data';
 
 const updateRowCount = (value?: string | number) => {
     const element = document.querySelector('#rowCount > .value');
     element!.innerHTML = value !== undefined ? value.toString() : '-';
 }
+
+let api: GridApi;
 
 const gridOptions: GridOptions = {
     columnDefs: [
@@ -22,14 +30,14 @@ const gridOptions: GridOptions = {
 };
 
 function loadDataSetA() {
-    gridOptions.api!.setRowData(getDataSetA());
+    api!.setRowData(getDataSetA());
 }
 
 function loadDataSetB() {
-    gridOptions.api!.setRowData(getDataSetB());
+    api!.setRowData(getDataSetB());
 }
 
 document.addEventListener('DOMContentLoaded', () => {
     const gridDiv = document.querySelector<HTMLElement>('#myGrid')!;
-    new Grid(gridDiv, gridOptions);
+    api = createGrid(gridDiv, gridOptions);;
 });

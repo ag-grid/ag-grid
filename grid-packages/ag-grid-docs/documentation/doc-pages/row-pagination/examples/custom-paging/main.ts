@@ -1,4 +1,15 @@
-import { Grid, CheckboxSelectionCallbackParams, ColDef, FirstDataRenderedEvent, GridOptions, HeaderCheckboxSelectionCallbackParams, IGroupCellRendererParams, ValueGetterParams, PaginationNumberFormatterParams } from '@ag-grid-community/core'
+import {
+  GridApi,
+  createGrid,
+  CheckboxSelectionCallbackParams,
+  ColDef,
+  FirstDataRenderedEvent,
+  GridOptions,
+  HeaderCheckboxSelectionCallbackParams,
+  IGroupCellRendererParams,
+  ValueGetterParams,
+  PaginationNumberFormatterParams,
+} from '@ag-grid-community/core';
 
 var checkboxSelection = function (params: CheckboxSelectionCallbackParams) {
   // we put checkbox on the name if we are not doing grouping
@@ -45,6 +56,8 @@ var autoGroupColumnDef: ColDef = {
   } as IGroupCellRendererParams,
 }
 
+let api: GridApi<IOlympicData>;
+
 const gridOptions: GridOptions<IOlympicData> = {
   defaultColDef: {
     editable: true,
@@ -79,17 +92,17 @@ function onFirstDataRendered(params: FirstDataRenderedEvent) {
 
 function onPageSizeChanged() {
   var value = (document.getElementById('page-size') as HTMLInputElement).value
-  gridOptions.api!.paginationSetPageSize(Number(value))
+  api!.paginationSetPageSize(Number(value))
 }
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
   var gridDiv = document.querySelector<HTMLElement>('#myGrid')!
-  new Grid(gridDiv, gridOptions)
+  api = createGrid(gridDiv, gridOptions);;
 
   fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
     .then(response => response.json())
     .then(function (data) {
-      gridOptions.api!.setRowData(data)
+      api!.setRowData(data)
     })
 })

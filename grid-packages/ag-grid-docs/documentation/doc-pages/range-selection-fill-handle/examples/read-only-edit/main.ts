@@ -1,4 +1,6 @@
-import { Grid, GridOptions, CellEditRequestEvent, GetRowIdParams } from '@ag-grid-community/core'
+import { GridApi, createGrid, GridOptions, CellEditRequestEvent, GetRowIdParams } from '@ag-grid-community/core';
+
+let api: GridApi<IOlympicDataWithId>;
 
 const gridOptions: GridOptions<IOlympicDataWithId> = {
   columnDefs: [
@@ -44,13 +46,13 @@ function onCellEditRequest(event: CellEditRequestEvent) {
   console.log('onCellEditRequest, updating ' + field + ' to ' + newValue);
 
   rowImmutableStore = rowImmutableStore.map(oldItem => oldItem.id == newItem.id ? newItem : oldItem);
-  gridOptions.api!.setRowData(rowImmutableStore);
+  api!.setRowData(rowImmutableStore);
 }
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', () => {
   const gridDiv = document.querySelector<HTMLElement>('#myGrid')!
-  new Grid(gridDiv, gridOptions)
+  api = createGrid(gridDiv, gridOptions);;
 
   // do http request to get our sample data - not using any framework to keep the example self contained.
   // you will probably use a framework like JQuery, Angular or something else to do your HTTP calls.
@@ -59,6 +61,6 @@ document.addEventListener('DOMContentLoaded', () => {
     .then((data: any[]) => {
       data.forEach((item, index) => item.id = index);
       rowImmutableStore = data;
-      gridOptions.api!.setRowData(rowImmutableStore);
+      api!.setRowData(rowImmutableStore);
     });
 })

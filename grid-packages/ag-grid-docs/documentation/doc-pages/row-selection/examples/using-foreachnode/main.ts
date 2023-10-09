@@ -1,4 +1,6 @@
-import { Grid, GridOptions, IRowNode } from '@ag-grid-community/core'
+import { GridApi, createGrid, GridOptions, IRowNode } from '@ag-grid-community/core';
+
+let api: GridApi<IOlympicData>;
 
 const gridOptions: GridOptions<IOlympicData> = {
   columnDefs: [
@@ -24,23 +26,23 @@ const gridOptions: GridOptions<IOlympicData> = {
 function selectAllAmerican() {
   const selected: IRowNode[] = [];
   const deselected: IRowNode[] = [];
-  gridOptions.api!.forEachNode(function (node) {
+  api!.forEachNode(function (node) {
     if (node.data!.country === 'United States') {
       selected.push(node);
     } else {
       deselected.push(node);
     }
   });
-  gridOptions.api!.setNodesSelected({ nodes: selected, newValue: true });
-  gridOptions.api!.setNodesSelected({ nodes: deselected, newValue: false });
+  api!.setNodesSelected({ nodes: selected, newValue: true });
+  api!.setNodesSelected({ nodes: deselected, newValue: false });
 }
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
   var gridDiv = document.querySelector<HTMLElement>('#myGrid')!
-  new Grid(gridDiv, gridOptions)
+  api = createGrid(gridDiv, gridOptions);;
 
   fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
     .then(response => response.json())
-    .then((data: IOlympicData[]) => gridOptions.api!.setRowData(data))
+    .then((data: IOlympicData[]) => api!.setRowData(data))
 })

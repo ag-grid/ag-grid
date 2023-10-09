@@ -1,4 +1,14 @@
-import { Grid, GridOptions, ISetFilter, ISetFilterParams, KeyCreatorParams, ValueFormatterParams } from '@ag-grid-community/core'
+import {
+    GridApi,
+    createGrid,
+    GridOptions,
+    ISetFilter,
+    ISetFilterParams,
+    KeyCreatorParams,
+    ValueFormatterParams,
+} from '@ag-grid-community/core';
+
+let api: GridApi<IOlympicData>;
 
 const gridOptions: GridOptions<IOlympicData> = {
     columnDefs: [
@@ -50,25 +60,25 @@ function patchData(data: any[]) {
 }
 
 function selectJohnAndKenny() {
-    const instance = gridOptions.api!.getFilterInstance('athlete')!
+    const instance = api!.getFilterInstance('athlete')!
     instance.setModel({ values: ['John Joe Nevin', 'Kenny Egan'] })
-    gridOptions.api!.onFilterChanged()
+    api!.onFilterChanged()
 }
 
 function selectEverything() {
-    const instance = gridOptions.api!.getFilterInstance('athlete')!
+    const instance = api!.getFilterInstance('athlete')!
     instance.setModel(null)
-    gridOptions.api!.onFilterChanged()
+    api!.onFilterChanged()
 }
 
 function selectNothing() {
-    const instance = gridOptions.api!.getFilterInstance('athlete')!
+    const instance = api!.getFilterInstance('athlete')!
     instance.setModel({ values: [] })
-    gridOptions.api!.onFilterChanged()
+    api!.onFilterChanged()
 }
 
 function setCountriesToFranceAustralia() {
-    const instance = gridOptions.api!.getFilterInstance<ISetFilter<{ name: string, code: string }>>('country')!;
+    const instance = api!.getFilterInstance<ISetFilter<{ name: string, code: string }>>('country')!;
     instance.setFilterValues([
         {
             name: 'France',
@@ -80,29 +90,29 @@ function setCountriesToFranceAustralia() {
         }
     ])
     instance.applyModel()
-    gridOptions.api!.onFilterChanged()
+    api!.onFilterChanged()
 }
 
 function setCountriesToAll() {
-    const instance = gridOptions.api!.getFilterInstance<ISetFilter<{ name: string, code: string }>>('country')!;
+    const instance = api!.getFilterInstance<ISetFilter<{ name: string, code: string }>>('country')!;
     instance.resetFilterValues()
     instance.applyModel()
-    gridOptions.api!.onFilterChanged()
+    api!.onFilterChanged()
 }
 
 function onFirstDataRendered() {
-    gridOptions.api!.getToolPanelInstance('filters')!.expandFilters()
+    api!.getToolPanelInstance('filters')!.expandFilters()
 }
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
     const gridDiv = document.querySelector<HTMLElement>('#myGrid')!
-    new Grid(gridDiv, gridOptions)
+    api = createGrid(gridDiv, gridOptions);;
 
     fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
         .then(response => response.json())
         .then(function (data) {
             patchData(data)
-            gridOptions.api!.setRowData(data)
+            api!.setRowData(data)
         })
 })

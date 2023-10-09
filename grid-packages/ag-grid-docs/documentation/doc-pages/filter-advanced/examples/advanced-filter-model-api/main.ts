@@ -1,4 +1,4 @@
-import { Grid, GridOptions, AdvancedFilterModel } from '@ag-grid-community/core'
+import { GridApi, createGrid, GridOptions, AdvancedFilterModel } from '@ag-grid-community/core';
 
 const advancedFilterModel: AdvancedFilterModel =  {
   filterType: 'join',
@@ -31,6 +31,8 @@ const advancedFilterModel: AdvancedFilterModel =  {
   ]
 };
 
+let api: GridApi<IOlympicData>;
+
 const gridOptions: GridOptions<IOlympicData> = {
   columnDefs: [
     { field: 'athlete' },
@@ -55,15 +57,15 @@ const gridOptions: GridOptions<IOlympicData> = {
 var savedFilterModel: AdvancedFilterModel | null = null;
 
 function saveFilterModel() {
-  savedFilterModel = gridOptions.api!.getAdvancedFilterModel();
+  savedFilterModel = api!.getAdvancedFilterModel();
 }
 
 function restoreFilterModel() {
-  gridOptions.api!.setAdvancedFilterModel(savedFilterModel);
+  api!.setAdvancedFilterModel(savedFilterModel);
 }
 
 function restoreFromHardCoded() {
-  gridOptions.api!.setAdvancedFilterModel({
+  api!.setAdvancedFilterModel({
     filterType: 'number',
     colId: 'gold',
     type: 'greaterThanOrEqual',
@@ -72,15 +74,15 @@ function restoreFromHardCoded() {
 }
 
 function clearFilter() {
-  gridOptions.api!.setAdvancedFilterModel(null);
+  api!.setAdvancedFilterModel(null);
 }
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', () => {
   const gridDiv = document.querySelector<HTMLElement>('#myGrid')!
-  new Grid(gridDiv, gridOptions)
+  api = createGrid(gridDiv, gridOptions);;
 
   fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
     .then(response => response.json())
-    .then((data: IOlympicData[]) => gridOptions.api!.setRowData(data))
+    .then((data: IOlympicData[]) => api!.setRowData(data))
 })

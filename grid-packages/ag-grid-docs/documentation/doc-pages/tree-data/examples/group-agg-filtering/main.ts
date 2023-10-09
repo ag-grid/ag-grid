@@ -1,7 +1,17 @@
-import { GetRowIdParams, Grid, GridOptions, ICellRendererComp, ICellRendererParams, IRowNode } from '@ag-grid-community/core';
+import {
+  GetRowIdParams,
+  GridApi,
+  createGrid,
+  GridOptions,
+  ICellRendererComp,
+  ICellRendererParams,
+  IRowNode,
+} from '@ag-grid-community/core';
 import { getData } from "./data";
 
 declare var window: any
+
+let api: GridApi;
 
 const gridOptions: GridOptions = {
   columnDefs: [
@@ -111,5 +121,5 @@ document.addEventListener('DOMContentLoaded', function () {
   var gridDiv = document.querySelector<HTMLElement>('#myGrid')!
 
   // create the grid passing in the div to use together with the columns & data we want to use
-  new Grid(gridDiv, gridOptions)
+  api = createGrid(gridDiv, gridOptions);;
 })

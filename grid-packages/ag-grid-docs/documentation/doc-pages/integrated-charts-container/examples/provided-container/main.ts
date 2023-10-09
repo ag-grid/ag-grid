@@ -1,4 +1,4 @@
-import { Grid, ChartRef, ColDef, GridOptions } from '@ag-grid-community/core'
+import { GridApi, createGrid, ChartRef, ColDef, GridOptions } from '@ag-grid-community/core';
 
 const columnDefs: ColDef[] = [
   { field: 'athlete', width: 150, chartDataType: 'category' },
@@ -7,6 +7,8 @@ const columnDefs: ColDef[] = [
   { field: 'bronze', chartDataType: 'series' },
   { field: 'total', chartDataType: 'series' },
 ]
+
+let api: GridApi;
 
 const gridOptions: GridOptions = {
   defaultColDef: {
@@ -74,11 +76,11 @@ function createChartContainer(chartRef: ChartRef) {
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
   const gridDiv = document.querySelector<HTMLElement>('#myGrid')!
-  new Grid(gridDiv, gridOptions)
+  api = createGrid(gridDiv, gridOptions);;
 
   fetch('https://www.ag-grid.com/example-assets/wide-spread-of-sports.json')
     .then(response => response.json())
     .then(function (data) {
-      gridOptions.api!.setRowData(data)
+      api!.setRowData(data)
     })
 })

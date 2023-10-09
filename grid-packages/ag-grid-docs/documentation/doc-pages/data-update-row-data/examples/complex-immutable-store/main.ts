@@ -1,4 +1,12 @@
-import { Grid, ColDef, GridOptions, ValueFormatterParams, ValueGetterParams, GetRowIdParams } from '@ag-grid-community/core'
+import {
+  GridApi,
+  createGrid,
+  ColDef,
+  GridOptions,
+  ValueFormatterParams,
+  ValueGetterParams,
+  GetRowIdParams,
+} from '@ag-grid-community/core';
 
 const MIN_BOOK_COUNT = 10;
 const MAX_BOOK_COUNT = 20;
@@ -269,7 +277,7 @@ function createTradeRecord(product: any, portfolio: any, book: any, batch: any) 
 function numberCellFormatter(params: ValueFormatterParams) {
   return Math.floor(params.value)
     .toString()
-    .replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,')
+    .replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,');
 }
 
 function createBookName() {
@@ -281,6 +289,8 @@ function createTradeId() {
   nextTradeId++
   return nextTradeId
 }
+
+let api: GridApi;
 
 const gridOptions: GridOptions = {
   columnDefs: columnDefs,
@@ -316,7 +326,7 @@ function updateData() {
   removeSomeItems()
   addSomeItems()
   updateSomeItems()
-  gridOptions.api!.setRowData(globalRowData)
+  api!.setRowData(globalRowData)
 }
 
 function updateSomeItems() {
@@ -394,5 +404,5 @@ function updateImmutableObject(original: any, newValues: any) {
 // after page is loaded, create the grid.
 document.addEventListener('DOMContentLoaded', function () {
   const eGridDiv = document.querySelector<HTMLElement>('#myGrid')!;
-  new Grid(eGridDiv, gridOptions)
+  api = createGrid(eGridDiv, gridOptions);;
 })

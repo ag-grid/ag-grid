@@ -1,5 +1,17 @@
-import { ChartMenuOptions, CreateRangeChartParams, FirstDataRenderedEvent, GetChartToolbarItemsParams, Grid, GridOptions, ValueParserParams } from '@ag-grid-community/core';
+import {
+  ChartMenuOptions,
+  CreateRangeChartParams,
+  FirstDataRenderedEvent,
+  GetChartToolbarItemsParams,
+  GridApi,
+  createGrid,
+  GridOptions,
+  ValueParserParams,
+} from '@ag-grid-community/core';
 import { getData } from "./data";
+
+
+let api: GridApi;
 
 
 const gridOptions: GridOptions = {
@@ -151,5 +163,5 @@ function getChartToolbarItems(params: GetChartToolbarItemsParams): ChartMenuOpti
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
   var gridDiv = document.querySelector<HTMLElement>('#myGrid')!
-  new Grid(gridDiv, gridOptions)
+  api = createGrid(gridDiv, gridOptions);;
 })

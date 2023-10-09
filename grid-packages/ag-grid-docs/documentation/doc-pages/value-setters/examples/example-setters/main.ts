@@ -1,4 +1,12 @@
-import { CellValueChangedEvent, ColDef, Grid, GridOptions, ValueGetterParams, ValueSetterParams } from '@ag-grid-community/core';
+import {
+    CellValueChangedEvent,
+    ColDef,
+    GridApi,
+    createGrid,
+    GridOptions,
+    ValueGetterParams,
+    ValueSetterParams,
+} from '@ag-grid-community/core';
 import { getData } from "./data";
 
 
@@ -94,6 +102,8 @@ const columnDefs: ColDef[] = [
     },
 ]
 
+let api: GridApi;
+
 const gridOptions: GridOptions = {
     defaultColDef: {
         flex: 1,
@@ -112,5 +122,5 @@ function onCellValueChanged(event: CellValueChangedEvent) {
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
     const gridDiv = document.querySelector<HTMLElement>('#myGrid')!
-    new Grid(gridDiv, gridOptions)
+    api = createGrid(gridDiv, gridOptions);;
 })

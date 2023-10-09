@@ -1,4 +1,13 @@
-import { Grid, FirstDataRenderedEvent, GridOptions, IDetailCellRendererParams, RowHeightParams } from '@ag-grid-community/core'
+import {
+  GridApi,
+  createGrid,
+  FirstDataRenderedEvent,
+  GridOptions,
+  IDetailCellRendererParams,
+  RowHeightParams,
+} from '@ag-grid-community/core';
+
+let api: GridApi;
 
 const gridOptions: GridOptions = {
   columnDefs: [
@@ -57,13 +66,13 @@ function onFirstDataRendered(params: FirstDataRenderedEvent) {
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
   var gridDiv = document.querySelector<HTMLElement>('#myGrid')!
-  new Grid(gridDiv, gridOptions)
+  api = createGrid(gridDiv, gridOptions);;
 
   fetch(
     'https://www.ag-grid.com/example-assets/master-detail-dynamic-row-height-data.json'
   )
     .then(response => response.json())
     .then(function (data) {
-      gridOptions.api!.setRowData(data)
+      api!.setRowData(data)
     })
 })

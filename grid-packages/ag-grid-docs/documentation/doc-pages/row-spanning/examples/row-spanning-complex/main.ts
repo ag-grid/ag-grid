@@ -1,4 +1,12 @@
-import { ColDef, Grid, GridOptions, ICellRendererComp, ICellRendererParams, RowSpanParams } from '@ag-grid-community/core';
+import {
+    ColDef,
+    GridApi,
+    createGrid,
+    GridOptions,
+    ICellRendererComp,
+    ICellRendererParams,
+    RowSpanParams,
+} from '@ag-grid-community/core';
 import { getData } from "./data";
 
 
@@ -58,6 +66,8 @@ const columnDefs: ColDef[] = [
     { field: 'e' },
 ]
 
+let api: GridApi;
+
 const gridOptions: GridOptions = {
     columnDefs: columnDefs,
     defaultColDef: {
@@ -71,5 +81,5 @@ const gridOptions: GridOptions = {
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
     const gridDiv = document.querySelector<HTMLElement>('#myGrid')!;
-    new Grid(gridDiv, gridOptions)
+    api = createGrid(gridDiv, gridOptions);;
 })

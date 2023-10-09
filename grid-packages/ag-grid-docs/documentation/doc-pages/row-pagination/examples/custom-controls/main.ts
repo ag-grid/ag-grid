@@ -1,4 +1,4 @@
-import { ColDef, Grid, GridOptions, ValueFormatterParams } from '@ag-grid-community/core'
+import { ColDef, GridApi, createGrid, GridOptions, ValueFormatterParams } from '@ag-grid-community/core';
 
 const columnDefs: ColDef[] = [
     // this row just shows the row index, doesn't use any data from the row
@@ -20,6 +20,8 @@ const columnDefs: ColDef[] = [
     { headerName: 'Bronze', field: 'bronze', width: 100 },
     { headerName: 'Total', field: 'total', width: 100 },
 ]
+
+let api: GridApi<IOlympicData>;
 
 const gridOptions: GridOptions<IOlympicData> = {
     defaultColDef: {
@@ -44,14 +46,14 @@ function onPaginationChanged() {
     console.log('onPaginationPageLoaded')
 
     // Workaround for bug in events order
-    if (gridOptions.api!) {
-        setText('#lbLastPageFound', gridOptions.api!.paginationIsLastPageFound())
-        setText('#lbPageSize', gridOptions.api!.paginationGetPageSize())
+    if (api!) {
+        setText('#lbLastPageFound', api!.paginationIsLastPageFound())
+        setText('#lbPageSize', api!.paginationGetPageSize())
         // we +1 to current page, as pages are zero based
-        setText('#lbCurrentPage', gridOptions.api!.paginationGetCurrentPage() + 1)
-        setText('#lbTotalPages', gridOptions.api!.paginationGetTotalPages())
+        setText('#lbCurrentPage', api!.paginationGetCurrentPage() + 1)
+        setText('#lbTotalPages', api!.paginationGetTotalPages())
 
-        setLastButtonDisabled(!gridOptions.api!.paginationIsLastPageFound())
+        setLastButtonDisabled(!api!.paginationIsLastPageFound())
     }
 }
 
@@ -60,37 +62,37 @@ function setLastButtonDisabled(disabled: boolean) {
 }
 
 function onBtFirst() {
-    gridOptions.api!.paginationGoToFirstPage()
+    api!.paginationGoToFirstPage()
 }
 
 function onBtLast() {
-    gridOptions.api!.paginationGoToLastPage()
+    api!.paginationGoToLastPage()
 }
 
 function onBtNext() {
-    gridOptions.api!.paginationGoToNextPage()
+    api!.paginationGoToNextPage()
 }
 
 function onBtPrevious() {
-    gridOptions.api!.paginationGoToPreviousPage()
+    api!.paginationGoToPreviousPage()
 }
 
 function onBtPageFive() {
     // we say page 4, as the first page is zero
-    gridOptions.api!.paginationGoToPage(4)
+    api!.paginationGoToPage(4)
 }
 
 function onBtPageFifty() {
     // we say page 49, as the first page is zero
-    gridOptions.api!.paginationGoToPage(49)
+    api!.paginationGoToPage(49)
 }
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
     var gridDiv = document.querySelector<HTMLElement>('#myGrid')!
-    new Grid(gridDiv, gridOptions)
+    api = createGrid(gridDiv, gridOptions);;
 
     fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
         .then(response => response.json())
-        .then((data: IOlympicData[]) => gridOptions.api!.setRowData(data))
+        .then((data: IOlympicData[]) => api!.setRowData(data))
 })

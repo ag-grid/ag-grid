@@ -1,5 +1,7 @@
-import { Grid, GridOptions } from '@ag-grid-community/core';
+import { GridApi, createGrid, GridOptions } from '@ag-grid-community/core';
 import { getData } from "./data";
+
+let api: GridApi;
 
 const gridOptions: GridOptions = {
   columnDefs: [
@@ -43,14 +45,14 @@ const gridOptions: GridOptions = {
 function changeSelection(type: string) {
   // normal, single or lowest
   if (type === 'normal') {
-    gridOptions.api!.setGroupRemoveSingleChildren(false)
-    gridOptions.api!.setGroupRemoveLowestSingleChildren(false)
+    api!.setGroupRemoveSingleChildren(false)
+    api!.setGroupRemoveLowestSingleChildren(false)
   } else if (type === 'single') {
-    gridOptions.api!.setGroupRemoveSingleChildren(true)
-    gridOptions.api!.setGroupRemoveLowestSingleChildren(false)
+    api!.setGroupRemoveSingleChildren(true)
+    api!.setGroupRemoveLowestSingleChildren(false)
   } else if (type === 'lowest') {
-    gridOptions.api!.setGroupRemoveLowestSingleChildren(true)
-    gridOptions.api!.setGroupRemoveSingleChildren(false)
+    api!.setGroupRemoveLowestSingleChildren(true)
+    api!.setGroupRemoveSingleChildren(false)
   } else {
     console.log('unknown type: ' + type)
   }
@@ -59,5 +61,5 @@ function changeSelection(type: string) {
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
   var gridDiv = document.querySelector<HTMLElement>('#myGrid')!
-  new Grid(gridDiv, gridOptions)
+  api = createGrid(gridDiv, gridOptions);;
 })

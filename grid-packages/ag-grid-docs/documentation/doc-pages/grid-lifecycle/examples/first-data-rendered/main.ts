@@ -1,4 +1,11 @@
-import { Grid, GridOptions, GridReadyEvent, FirstDataRenderedEvent, ValueGetterParams } from '@ag-grid-community/core';
+import {
+    GridApi,
+    createGrid,
+    GridOptions,
+    GridReadyEvent,
+    FirstDataRenderedEvent,
+    ValueGetterParams,
+} from '@ag-grid-community/core';
 
 import { getData, TAthlete } from './data';
 
@@ -11,6 +18,8 @@ const setCol1SizeInfOnFirstDataRendered = (value?: string | number) => {
     const element = document.querySelector<HTMLElement>('#athleteDescriptionColWidthOnFirstDataRendered');
     element!.innerHTML = value !== undefined ? `${value.toString()}px` : '-';
 };
+
+let api: GridApi;
 
 const gridOptions: GridOptions = {
     columnDefs: [
@@ -52,11 +61,11 @@ const gridOptions: GridOptions = {
 };
 
 function loadGridData() {
-    gridOptions.api?.setRowData(getData());
+    api?.setRowData(getData());
     document.querySelector<HTMLElement>('#loadGridDataButton')!.style.display = 'none';
 }
 
 document.addEventListener('DOMContentLoaded', () => {
     const gridDiv = document.querySelector<HTMLElement>('#myGrid')!;
-    new Grid(gridDiv, gridOptions);
+    api = createGrid(gridDiv, gridOptions);;
 });

@@ -1,5 +1,17 @@
-import { BarFormat, BarFormatterParams, Grid, GridOptions, LabelFormatterParams } from '@ag-grid-community/core';
+import {
+  BarFormat,
+  BarFormatterParams,
+  GridApi,
+  createGrid,
+  GridOptions,
+  LabelFormatterParams,
+} from '@ag-grid-community/core';
 import { getData } from "./data";
+
+
+
+
+let api: GridApi;
 
 
 
@@ -62,5 +74,5 @@ function formatter(params: BarFormatterParams): BarFormat {
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
   var gridDiv = document.querySelector<HTMLElement>('#myGrid')!
-  new Grid(gridDiv, gridOptions)
+  api = createGrid(gridDiv, gridOptions);;
 })

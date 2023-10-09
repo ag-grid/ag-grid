@@ -1,4 +1,4 @@
-import { Grid, ColDef, GridOptions, IRowNode } from '@ag-grid-community/core'
+import { GridApi, createGrid, ColDef, GridOptions, IRowNode } from '@ag-grid-community/core';
 
 const columnDefs: ColDef[] = [
   { field: 'athlete', minWidth: 200 },
@@ -10,6 +10,8 @@ const columnDefs: ColDef[] = [
   { field: 'gold' },
   { field: 'silver' },
 ]
+
+let api: GridApi<IOlympicData>;
 
 const gridOptions: GridOptions<IOlympicData> = {
   defaultColDef: {
@@ -28,34 +30,34 @@ function onBtExport() {
   var spreadsheets: string[] = []
 
   let nodesToExport: IRowNode[] = [];
-  gridOptions.api!.forEachNode((node, index) => {
+  api!.forEachNode((node, index) => {
     nodesToExport.push(node);
 
     if (index % 100 === 99) {
-      gridOptions.api!.setNodesSelected({ nodes: nodesToExport, newValue: true });
+      api!.setNodesSelected({ nodes: nodesToExport, newValue: true });
       spreadsheets.push(
-        gridOptions.api!.getSheetDataForExcel({
+        api!.getSheetDataForExcel({
           onlySelected: true,
         })!
       )
 
-      gridOptions.api!.deselectAll()
+      api!.deselectAll()
       nodesToExport = [];
     }
   })
 
   // check if the last page was exported
 
-  if (gridOptions.api!.getSelectedNodes().length) {
+  if (api!.getSelectedNodes().length) {
     spreadsheets.push(
-      gridOptions.api!.getSheetDataForExcel({
+      api!.getSheetDataForExcel({
         onlySelected: true,
       })!
     )
-    gridOptions.api!.deselectAll()
+    api!.deselectAll()
   }
 
-  gridOptions.api!.exportMultipleSheetsAsExcel({
+  api!.exportMultipleSheetsAsExcel({
     data: spreadsheets,
     fileName: 'ag-grid.xlsx'
   })
@@ -64,9 +66,9 @@ function onBtExport() {
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
   var gridDiv = document.querySelector<HTMLElement>('#myGrid')!
-  new Grid(gridDiv, gridOptions)
+  api = createGrid(gridDiv, gridOptions);;
 
   fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
     .then(response => response.json())
-    .then((data: IOlympicData[]) => gridOptions.api!.setRowData(data))
+    .then((data: IOlympicData[]) => api!.setRowData(data))
 })

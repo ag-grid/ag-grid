@@ -1,15 +1,21 @@
-import { IGroupCellRendererParams, Grid, GridOptions, RowClassParams, ValueFormatterParams } from '@ag-grid-community/core';
+import {
+  IGroupCellRendererParams,
+  GridApi,
+  createGrid,
+  GridOptions,
+  RowClassParams,
+  ValueFormatterParams,
+} from '@ag-grid-community/core';
 import { getData, createNewRowData } from "./data";
 
 
 function poundFormatter(params: ValueFormatterParams) {
-  return (
-    '£' +
-    Math.floor(params.value)
-      .toString()
-      .replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,')
-  )
+  return ('£' + Math.floor(params.value)
+    .toString()
+    .replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,'));
 }
+
+let api: GridApi;
 
 const gridOptions: GridOptions = {
   columnDefs: [
@@ -65,7 +71,7 @@ const gridOptions: GridOptions = {
 
 function getRowData() {
   var rowData: any[] = []
-  gridOptions.api!.forEachNode(function (node) {
+  api!.forEachNode(function (node) {
     rowData.push(node.data)
   })
   console.log('Row Data:')
@@ -74,25 +80,25 @@ function getRowData() {
 
 function onAddRow(category: string) {
   var rowDataItem = createNewRowData(category)
-  gridOptions.api!.applyTransaction({ add: [rowDataItem] })
+  api!.applyTransaction({ add: [rowDataItem] })
 }
 
 function onMoveToGroup(category: string) {
-  var selectedRowData = gridOptions.api!.getSelectedRows()
+  var selectedRowData = api!.getSelectedRows()
   selectedRowData.forEach(function (dataItem) {
     dataItem.category = category
   })
-  gridOptions.api!.applyTransaction({ update: selectedRowData })
+  api!.applyTransaction({ update: selectedRowData })
 }
 
 function onRemoveSelected() {
-  var selectedRowData = gridOptions.api!.getSelectedRows()
-  gridOptions.api!.applyTransaction({ remove: selectedRowData })
+  var selectedRowData = api!.getSelectedRows()
+  api!.applyTransaction({ remove: selectedRowData })
 }
 
 // wait for the document to be loaded, otherwise
 // AG Grid will not find the div in the document.
 document.addEventListener('DOMContentLoaded', function () {
   var eGridDiv = document.querySelector<HTMLElement>('#myGrid')!
-  new Grid(eGridDiv, gridOptions)
+  api = createGrid(eGridDiv, gridOptions);;
 })

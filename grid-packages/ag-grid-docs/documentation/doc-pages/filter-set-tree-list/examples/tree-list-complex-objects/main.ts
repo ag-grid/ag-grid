@@ -1,10 +1,19 @@
-import { Grid, GridOptions, ISetFilterParams, KeyCreatorParams, ValueFormatterParams } from "@ag-grid-community/core";
+import {
+  GridApi,
+  createGrid,
+  GridOptions,
+  ISetFilterParams,
+  KeyCreatorParams,
+  ValueFormatterParams,
+} from "@ag-grid-community/core";
 import { getData } from "./data";
 
 const pathLookup: { [key: string]: string } = getData().reduce((pathMap, row) => {
   pathMap[row.path.key] = row.path.displayValue;
   return pathMap;
 }, {});
+
+let api: GridApi;
 
 const gridOptions: GridOptions = {
   columnDefs: [
@@ -53,5 +62,5 @@ function valueFormatter(params: ValueFormatterParams): string {
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
   var gridDiv = document.querySelector<HTMLElement>('#myGrid')!
-  new Grid(gridDiv, gridOptions)
+  api = createGrid(gridDiv, gridOptions);;
 })

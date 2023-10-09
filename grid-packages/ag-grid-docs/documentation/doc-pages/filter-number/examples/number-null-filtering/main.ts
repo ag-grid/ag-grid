@@ -1,4 +1,4 @@
-import { Grid, ColDef, GridOptions, INumberFilterParams } from '@ag-grid-community/core'
+import { GridApi, createGrid, ColDef, GridOptions, INumberFilterParams } from '@ag-grid-community/core';
 
 const columnDefs: ColDef[] = [
   { field: 'athlete' },
@@ -19,6 +19,8 @@ const columnDefs: ColDef[] = [
     minWidth: 340,
   },
 ]
+
+let api: GridApi;
 
 const gridOptions: GridOptions = {
   columnDefs: columnDefs,
@@ -46,19 +48,19 @@ function changeNull(toChange: string, value: boolean) {
       break
   }
 
-  var filterModel = gridOptions.api!.getFilterModel()
+  var filterModel = api!.getFilterModel()
 
-  gridOptions.api!.setColumnDefs(columnDefs)
-  gridOptions.api!.destroyFilter('age')
-  gridOptions.api!.setFilterModel(filterModel)
+  api!.setColumnDefs(columnDefs)
+  api!.destroyFilter('age')
+  api!.setFilterModel(filterModel)
 }
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
   var gridDiv = document.querySelector<HTMLElement>('#myGrid')!
-  new Grid(gridDiv, gridOptions)
+  api = createGrid(gridDiv, gridOptions);;
 
-  gridOptions.api!.setRowData([
+  api!.setRowData([
     {
       athlete: 'Alberto Gutierrez',
       age: 36,

@@ -1,4 +1,16 @@
-import { Grid, ColDef, ColGroupDef, GridOptions, HeaderPosition, NavigateToNextCellParams, NavigateToNextHeaderParams, TabToNextCellParams, TabToNextHeaderParams, CellPosition } from '@ag-grid-community/core'
+import {
+  GridApi,
+  createGrid,
+  ColDef,
+  ColGroupDef,
+  GridOptions,
+  HeaderPosition,
+  NavigateToNextCellParams,
+  NavigateToNextHeaderParams,
+  TabToNextCellParams,
+  TabToNextHeaderParams,
+  CellPosition,
+} from '@ag-grid-community/core';
 
 const columnDefs: (ColDef | ColGroupDef)[] = [
   {
@@ -28,6 +40,8 @@ const KEY_LEFT = 'ArrowLeft';
 const KEY_UP = 'ArrowUp';
 const KEY_RIGHT = 'ArrowRight';
 const KEY_DOWN = 'ArrowDown';
+
+let api: GridApi<IOlympicData>;
 
 const gridOptions: GridOptions<IOlympicData> = {
   // make all cols editable
@@ -167,9 +181,9 @@ function navigateToNextCell(params: NavigateToNextCellParams): (CellPosition | n
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
   const gridDiv = document.querySelector<HTMLElement>('#myGrid')!;
-  new Grid(gridDiv, gridOptions)
+  api = createGrid(gridDiv, gridOptions);;
 
   fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
     .then(response => response.json())
-    .then((data: IOlympicData[]) => gridOptions.api!.setRowData(data))
+    .then((data: IOlympicData[]) => api!.setRowData(data))
 })
