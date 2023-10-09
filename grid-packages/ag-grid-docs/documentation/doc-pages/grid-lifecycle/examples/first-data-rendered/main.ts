@@ -48,11 +48,10 @@ const gridOptions: GridOptions = {
         console.log('AG Grid: onGridReady event triggered');
     },
     onFirstDataRendered: (params: FirstDataRenderedEvent<TAthlete>) => {
-        const { api } = params;
-        const column = api.getColumn('athleteDescription');
+        const column = params.api.getColumn('athleteDescription');
 
         if (column) {
-            api?.autoSizeColumns([column.getId()]);
+            params.api.autoSizeColumns([column.getId()]);
             setCol1SizeInfOnFirstDataRendered(column.getActualWidth());
         }
 
