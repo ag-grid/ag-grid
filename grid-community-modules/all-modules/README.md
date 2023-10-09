@@ -104,7 +104,7 @@ var gridOptions = {
 
 ```js
 var eGridDiv = document.querySelector('#myGrid');
-new Grid(eGridDiv, this.gridOptions);
+var api = createGrid(eGridDiv, this.gridOptions);
 ```
 
 For more information on how to integrate the grid into your project see [Building AG Grid Applications](https://www.ag-grid.com/javascript-data-grid/building/?utm_source=@ag-grid-community/all-modules-readme&utm_medium=repository&utm_campaign=github).

@@ -30,7 +30,7 @@ npm i --save-dev sass-loader sass style-loader css-loader html-webpack-plugin
 Our application will be a very simple one, consisting of a single class that will render a simple grid:
 
 ```js
-import { Grid, GridOptions, ModuleRegistry } from "@ag-grid-community/core";
+import { createGrid, GridOptions, ModuleRegistry } from "@ag-grid-community/core";
 import { ClientSideRowModelModule } from "@ag-grid-community/client-side-row-model";
 
 // or, if using Enterprise features
@@ -52,7 +52,7 @@ class SimpleGrid {
         };
 
         let eGridDiv:HTMLElement = <HTMLElement>document.querySelector('#myGrid');
-        new Grid(eGridDiv, this.gridOptions);
+        let api = createGrid(eGridDiv, this.gridOptions);
     }
 
     // specify the columns

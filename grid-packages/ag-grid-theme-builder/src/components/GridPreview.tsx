@@ -1,4 +1,4 @@
-import { ColDef, Grid, GridApi, GridOptions } from '@ag-grid-community/core';
+import { ColDef, createGrid, GridApi, GridOptions } from '@ag-grid-community/core';
 import styled from '@emotion/styled';
 import { useCurrentFeature } from 'atoms/currentFeature';
 import { useEnabledFeatures } from 'atoms/enabledFeatures';
@@ -7,7 +7,7 @@ import { useVariableValues } from 'atoms/values';
 import { withErrorBoundary } from 'components/ErrorBoundary';
 import { getColumnDefs, getGroupColumnDefs, getRowData } from 'model/exampleData';
 import { Feature } from 'model/features';
-import { assertNotNull, isNotNull } from 'model/utils';
+import { isNotNull } from 'model/utils';
 import { valueToCss } from 'model/values';
 import { memo, useEffect, useRef, useState } from 'react';
 
@@ -61,14 +61,13 @@ const GridPreview = () => {
     };
 
     setApi(null);
-    const grid = new Grid(wrapperRef.current, options);
-    const api = assertNotNull(options.api);
+    const api = createGrid(wrapperRef.current, options);
 
     return () => {
       for (const feature of features) {
         featureState[feature.name] = feature.getState?.(api);
       }
-      grid.destroy();
+      api.destroy();
     };
   }, [features, rebuildKey]);
 

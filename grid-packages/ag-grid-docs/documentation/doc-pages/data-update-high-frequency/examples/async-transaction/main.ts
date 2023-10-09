@@ -1,4 +1,4 @@
-import { Grid, ColDef, GridOptions, ValueFormatterParams, GetRowIdParams } from '@ag-grid-community/core'
+import { createGrid, ColDef, GridApi, GridOptions, ValueFormatterParams, GetRowIdParams } from '@ag-grid-community/core'
 import { getData, globalRowData } from "./data";
 
 var UPDATE_COUNT = 200
@@ -138,6 +138,7 @@ function numberCellFormatter(params: ValueFormatterParams) {
     .replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,')
 }
 
+let api: GridApi;
 const gridOptions: GridOptions = {
   columnDefs: columnDefs,
   suppressAggFuncInHeader: true,
@@ -165,8 +166,6 @@ function onNormalUpdate() {
   var startMillis = new Date().getTime()
 
   setMessage('Running Transaction')
-
-  var api = gridOptions.api!
 
   for (var i = 0; i < UPDATE_COUNT; i++) {
     setTimeout(function () {
@@ -204,8 +203,6 @@ function onAsyncUpdate() {
   setMessage('Running Async')
 
   var updatedCount = 0
-  var api = gridOptions.api!
-
   for (var i = 0; i < UPDATE_COUNT; i++) {
     setTimeout(function () {
       // pick one index at random
@@ -258,5 +255,5 @@ function copyObject(object: any) {
 // after page is loaded, create the grid.
 document.addEventListener('DOMContentLoaded', function () {
   var eGridDiv = document.querySelector<HTMLElement>('#myGrid')!
-  new Grid(eGridDiv, gridOptions)
+  api = createGrid(eGridDiv, gridOptions)
 })

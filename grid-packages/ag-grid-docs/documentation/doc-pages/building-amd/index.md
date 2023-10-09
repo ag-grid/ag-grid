@@ -56,7 +56,7 @@ requirejs(['agGrid'], function (agGrid) {
     };
 
     var gridDiv = document.querySelector('#myGrid');
-    new agGrid.Grid(gridDiv, gridOptions);
+    var api = agGrid.createGrid(gridDiv, gridOptions);
 });
 ```
 

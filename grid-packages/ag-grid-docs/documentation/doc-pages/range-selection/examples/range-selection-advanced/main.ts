@@ -1,13 +1,15 @@
 import {
-  Grid,
+  createGrid,
   CellRange,
   GridOptions,
   RangeSelectionChangedEvent,
   ProcessCellForExportParams,
   RangeDeleteStartEvent,
-  RangeDeleteEndEvent 
+  RangeDeleteEndEvent, 
+  GridApi
 } from '@ag-grid-community/core'
 
+let api: GridApi;
 const gridOptions: GridOptions<IOlympicData> = {
   columnDefs: [
     { field: 'athlete', minWidth: 150 },
@@ -60,7 +62,7 @@ const gridOptions: GridOptions<IOlympicData> = {
 }
 
 function onAddRange() {
-  gridOptions.api!.addCellRange({
+  api!.addCellRange({
     rowStartIndex: 4,
     rowEndIndex: 8,
     columnStart: 'age',
@@ -69,14 +71,14 @@ function onAddRange() {
 }
 
 function onClearRange() {
-  gridOptions.api!.clearRangeSelection()
+  api!.clearRangeSelection()
 }
 
 function onRangeSelectionChanged(event: RangeSelectionChangedEvent) {
   var lbRangeCount = document.querySelector('#lbRangeCount')!
   var lbEagerSum = document.querySelector('#lbEagerSum')!
   var lbLazySum = document.querySelector('#lbLazySum')!
-  var cellRanges = gridOptions.api!.getCellRanges()
+  var cellRanges = api!.getCellRanges()
 
   // if no selection, clear all the results and do nothing more
   if (!cellRanges || cellRanges.length === 0) {
@@ -89,8 +91,7 @@ function onRangeSelectionChanged(event: RangeSelectionChangedEvent) {
   // set range count to the number of ranges selected
   lbRangeCount.innerHTML = cellRanges.length + ''
 
-  var sum = 0
-  var api = gridOptions.api!
+  var sum = 0;
 
   if (cellRanges) {
     cellRanges.forEach(function (range: CellRange) {
@@ -125,9 +126,9 @@ function onRangeSelectionChanged(event: RangeSelectionChangedEvent) {
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
   var gridDiv = document.querySelector<HTMLElement>('#myGrid')!
-  new Grid(gridDiv, gridOptions)
+  api = createGrid(gridDiv, gridOptions)
 
   fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
     .then(response => response.json())
-    .then((data: IOlympicData[]) => gridOptions.api!.setRowData(data))
+    .then((data: IOlympicData[]) => api.setRowData(data))
 })

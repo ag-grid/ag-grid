@@ -1,4 +1,4 @@
-import { ColDef, Grid, GridOptions, GetRowIdParams, IAggFuncParams, IDoesFilterPassParams, IFilterComp, IFilterParams, IFilterType, IsGroupOpenByDefaultParams } from '@ag-grid-community/core'
+import { ColDef, createGrid, GridOptions, GetRowIdParams, IAggFuncParams, IDoesFilterPassParams, IFilterComp, IFilterParams, IFilterType, IsGroupOpenByDefaultParams, GridApi } from '@ag-grid-community/core'
 
 import { createDataItem, getData } from './data'
 
@@ -91,7 +91,7 @@ function getMyFilter(): IFilterType {
 
 const myFilter = getMyFilter();
 
-
+let api: GridApi;
 const columnDefs: ColDef[] = [
     { field: 'city', rowGroup: true, hide: true },
     { field: 'laptop', rowGroup: true, hide: true },
@@ -109,7 +109,6 @@ function getRowId(params: GetRowIdParams) {
 }
 
 function onBtDuplicate() {
-    const api = gridOptions.api!;
 
     // get the first child of the
     const selectedRows = api.getSelectedRows();
@@ -136,8 +135,6 @@ function onBtDuplicate() {
 }
 
 function onBtUpdate() {
-    const api = gridOptions.api!;
-
     // get the first child of the
     const selectedRows = api.getSelectedRows();
     if (!selectedRows || selectedRows.length === 0) {
@@ -165,8 +162,6 @@ function onBtUpdate() {
 }
 
 function onBtDelete() {
-    const api = gridOptions.api!;
-
     // get the first child of the
     const selectedRows = api.getSelectedRows();
     if (!selectedRows || selectedRows.length === 0) {
@@ -180,12 +175,10 @@ function onBtDelete() {
 }
 
 function onBtClearSelection() {
-    gridOptions.api!.deselectAll()
+    api!.deselectAll()
 }
 
 function onBtUpdateModel() {
-    const api = gridOptions.api!;
-
     timeOperation('Update Model', function () {
         api.refreshClientSideRowModel('filter')
     })
@@ -229,7 +222,7 @@ function isGroupOpenByDefault(params: IsGroupOpenByDefaultParams<IOlympicData, a
 // AG Grid will not find the div in the document.
 document.addEventListener('DOMContentLoaded', function () {
     const eGridDiv = document.querySelector<HTMLElement>('#myGrid')!;
-    new Grid(eGridDiv, gridOptions)
+    api = createGrid(eGridDiv, gridOptions)
 })
 
 function timeOperation(name: string, operation: any) {

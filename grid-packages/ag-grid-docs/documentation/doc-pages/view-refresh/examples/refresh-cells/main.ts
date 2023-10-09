@@ -1,11 +1,11 @@
-import { Grid, GridApi, GridOptions, IRowNode, RefreshCellsParams } from '@ag-grid-community/core'
+import { createGrid, GridApi, GridOptions, IRowNode, RefreshCellsParams } from '@ag-grid-community/core'
 
 // placing in 13 rows, so there are exactly enough rows to fill the grid, makes
 // the row animation look nice when you see all the rows
 var data: any[] = []
 var topRowData: any[] = []
 var bottomRowData: any[] = []
-
+let api: GridApi;
 const gridOptions: GridOptions = {
   columnDefs: [
     { field: 'a', suppressCellFlash: true },
@@ -63,14 +63,13 @@ function scrambleAndRefreshAll() {
     force: isForceRefreshSelected(),
     suppressFlash: isSuppressFlashSelected(),
   }
-  gridOptions.api!.refreshCells(params)
+  api!.refreshCells(params)
 }
 
 function scrambleAndRefreshLeftToRight() {
-  scramble()
+  scramble();
 
-  var api = gridOptions.api!
-    ;['a', 'b', 'c', 'd', 'e', 'f'].forEach(function (col, index) {
+ ['a', 'b', 'c', 'd', 'e', 'f'].forEach(function (col, index) {
       var millis = index * 100
       var params = {
         force: isForceRefreshSelected(),
@@ -88,7 +87,6 @@ function scrambleAndRefreshTopToBottom() {
   var i
   var rowNode
 
-  var api = gridOptions.api!
   for (i = 0; i < api.getPinnedTopRowCount(); i++) {
     rowNode = api.getPinnedTopRow(i)!
     refreshRow(rowNode, api)
@@ -141,5 +139,5 @@ function scrambleItem(item: any) {
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
   var gridDiv = document.querySelector<HTMLElement>('#myGrid')!
-  new Grid(gridDiv, gridOptions)
+  api = createGrid(gridDiv, gridOptions)
 })

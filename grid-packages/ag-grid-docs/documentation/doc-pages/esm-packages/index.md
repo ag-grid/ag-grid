@@ -52,7 +52,7 @@ If however you want to use ES Modules directly in the browser then you can do so
         // setup the grid after the page has finished loading
         document.addEventListener('DOMContentLoaded', () => {
             const gridDiv = document.querySelector('#myGrid');
-            new Grid(gridDiv, gridOptions);
+            const api = createGrid(gridDiv, gridOptions);
         });
     </script>
 </head>
