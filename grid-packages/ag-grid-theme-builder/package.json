@@ -16,7 +16,7 @@
     },
     "scripts": {
         "dev": "vite",
-        "build": "tsc && vite build",
+        "buildx": "tsc && vite build",
         "clean": "rimraf ./dist",
         "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
         "preview": "vite preview",
