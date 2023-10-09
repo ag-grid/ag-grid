@@ -60,7 +60,7 @@
     justify-content: center;
     text-align: center;
     gap: $size-1 $size-2;
-    margin-top: $size-7;
+    margin-top: $size-6;
 
     @media screen and (min-width: $breakpoint-pricing-small) {
         text-align: left;
@@ -95,7 +95,7 @@
     display: flex;
     flex-wrap: wrap;
     width: 100%;
-    gap: 0 $size-4;
+    gap: $size-4;
 }
 
 .buyTogether {
@@ -104,7 +104,6 @@
     
     width: 100%;
     display: flex;
-    margin-top: $size-4;
     border-radius: calc(var(--border-radius) * 2);
     border: 3px solid var(--card-color);
     background-color: var(--card-color);
@@ -112,12 +111,20 @@
 
 .buyTogetherInner {
     display: flex;
+    flex-direction: column;
     gap: $size-3;
     width: 100%;
-    padding: $size-1 $size-1 $size-1 $size-2;
+    padding: $size-2;
+    text-align: center;
     border-radius: var(--border-radius);
     background-color: var(--default-background-color);
     opacity: var(--header-tint);
+
+    @media screen and (min-width: $breakpoint-pricing-medium) {
+        padding: $size-1 $size-1 $size-1 $size-2;
+        flex-direction: row;
+        text-align: left;
+    }
 
     p {
         margin-bottom: 0;
@@ -139,7 +146,9 @@
 }
 
 .pricing {
-    margin-left: auto;
+    @media screen and (min-width: $breakpoint-pricing-medium) {
+        margin-left: auto;
+    }
 
     p {
         font-weight: var(--font-weight-bold);
@@ -154,6 +163,7 @@
 }
 
 .configure button {
+    width: 100%;
     height: 100%;
 }
 
@@ -221,10 +231,10 @@
     svg {
         --text-color: red;
 
-        position: re;
+        position: absolute;
+        margin-top: -4px;
+        margin-left: 4px;
         width: 26px;
-        bottom: 1px;
-        right: 2px;
     }
 }
 
