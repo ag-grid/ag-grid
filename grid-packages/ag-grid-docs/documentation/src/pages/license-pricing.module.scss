@@ -111,16 +111,52 @@
 }
 
 .buyTogetherInner {
+    display: flex;
+    gap: $size-3;
     width: 100%;
     padding: $size-1 $size-1 $size-1 $size-2;
     border-radius: var(--border-radius);
     background-color: var(--default-background-color);
     opacity: var(--header-tint);
 
-    button {
-        margin-left: $size-1;
+    p {
+        margin-bottom: 0;
     }
 }
+
+.info {
+    display: flex;
+    flex-direction: column;
+
+    p {
+        line-height: var(--line-height-tight);
+    }
+}
+
+.products {
+    margin-bottom: auto !important;
+    font-size: var(--font-size-massive);
+}
+
+.pricing {
+    margin-left: auto;
+
+    p {
+        font-weight: var(--font-weight-bold);
+    }
+}
+
+.price {
+    font-size: 46px !important; // !important for font-size weirdness
+    line-height: $line-height-tight;
+    font-weight: var(--font-weight-bold);
+    letter-spacing: -0.05em;
+}
+
+.configure button {
+    height: 100%;
+}
+
 
 .bulkLicenses,
 .communityEnterprise,

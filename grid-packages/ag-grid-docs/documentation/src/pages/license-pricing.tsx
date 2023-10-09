@@ -69,10 +69,24 @@ const LicensePricing = () => {
                     <Licenses />
 
                     <p className={styles.buyTogether}>
-                        <span className={styles.buyTogetherInner}>
-                            Or purchase <b>AG Grid Enterprise</b> & <b>AG Charts Enterprise</b> together: 
-                            <button className='button-secondary'>Configure Now</button>
-                        </span>
+                        <div className={styles.buyTogetherInner}>
+                            <div className={styles.info}>
+                                <p className={styles.products}><b>AG Grid</b> + <b>AG Charts</b></p>
+
+                                <p className='font-size-small'>Limited time launch price</p>
+                                <p className='font-size-small'>Standard price <b>$1298</b></p>
+                            </div>
+
+                            <div className={styles.pricing}>
+                                <p className='font-size-small'>Starting at...</p>
+                                <p className={styles.price}>$1183</p>
+                                <p className='font-size-small'>Per Developer</p>
+                            </div>
+
+                            <div className={styles.configure}>
+                                <button className='button-secondary'>Configure Now</button>
+                            </div>
+                        </div>
                     </p>
                 </div>
             </div>

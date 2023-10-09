@@ -14,6 +14,7 @@ type LicenseData = {
     subHeading: string;
     licenseBenefits: string[];
     priceFullDollars: string;
+    launchPrice?: string;
     buyLink: string;
     Logo: any;
 };
@@ -34,6 +35,7 @@ const DEV_LICENSE_DATA: LicenseData[] = [
         subHeading: 'AG Charts Enterprise',
         licenseBenefits: ['Perpetual License', '1 Year of Support', '1 Year of Updates'],
         priceFullDollars: '299',
+        launchPrice: '184',
         buyLink: '/ecommerce/#/ecommerce/?licenseType=multi',
         Logo: AGChartsLogo
     },
@@ -58,7 +60,7 @@ const Price = ({ priceFullDollars }) => {
 };
 
 const License = (props: LicenseData) => {
-    const { id, subHeading, licenseBenefits, priceFullDollars, buyLink, Logo } = props;
+    const { id, subHeading, licenseBenefits, priceFullDollars, launchPrice, buyLink, Logo } = props;
 
     return (
         <>
@@ -68,7 +70,7 @@ const License = (props: LicenseData) => {
                     <p className="font-size-small">{subHeading}<Icon name="enterprise" /></p>
                 </div>
 
-                <Price priceFullDollars={priceFullDollars} />
+                <Price priceFullDollars={launchPrice ? launchPrice : priceFullDollars} />
 
                 <div className={styles.licenseBenefits}>
                     <ul className="font-size-small list-style-none">
@@ -80,6 +82,16 @@ const License = (props: LicenseData) => {
                     <a className={classnames(styles.learnMoreLink, 'font-size-small')} href={`#${id}`}>
                         Learn more
                     </a>
+                </div>
+
+                
+                <div className={styles.launchExplainer}>
+                    { launchPrice && (
+                        <>
+                            <p className='font-size-small'>Limited time launch price</p>
+                            <p className='font-size-small'>Standard price <b>${priceFullDollars}</b></p>
+                        </>
+                    )}
                 </div>
 
                 <div className={styles.licenseActions}>
