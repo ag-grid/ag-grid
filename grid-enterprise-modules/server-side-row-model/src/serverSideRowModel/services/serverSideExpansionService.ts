@@ -1,6 +1,7 @@
 import {
     Autowired,
     Bean,
+    Events,
     ExpansionService,
     IExpansionService,
     IsServerSideGroupOpenByDefaultParams,
@@ -14,6 +15,13 @@ export class ServerSideExpansionService extends ExpansionService implements IExp
     @Autowired('rowModel') private readonly serverSideRowModel: ServerSideRowModel;
 
     private queuedRowIds: Set<string> = new Set();
+
+    protected postConstruct(): void {
+        super.postConstruct();
+        this.addManagedListener(this.eventService, Events.EVENT_COLUMN_ROW_GROUP_CHANGED, () => {
+            this.queuedRowIds.clear();
+        });
+    }
 
     public checkOpenByDefault(rowNode: RowNode): void {
         if (!rowNode.isExpandable()) { return; }
