@@ -5,7 +5,7 @@
   "main": "lib/main.js",
   "typings": "./lib/main.d.ts",
   "scripts": {
-    "clean": "rimraf bundles lib .hash",
+    "clean": "rimraf bundles lib",
     "build": "npx gulp",
     "build-docs-initial": "npm run build",
     "build-prod": "npm run build",

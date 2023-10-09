@@ -72,7 +72,7 @@ function isServerSideGroupOpenByDefault(params) {
 
 It may also be helpful to use the [Row Node](/row-object/) API `getRoute()` to inspect the route of a row node.
 
-<api-documentation source='row-object/resources/methods.json' section='rowNodeMethods' names='["getRoute"]' ></api-documentation>
+<api-documentation source='row-api/resources/methods.json' section='rowNodeMethods' names='["getRoute"]' ></api-documentation>
 
 Below shows `isServerSideGroupOpenByDefault()` and `getRoute` in action. Note the following:
 

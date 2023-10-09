@@ -29,7 +29,7 @@
   },
   "scripts": {
     "dev": "vite serve dev",
-    "clean": "rimraf bundles dist .hash",
+    "clean": "rimraf bundles dist",
     "build": "npx gulp && rollup -c",
     "build-prod": "npm run build",
     "format": "prettier -w \"src/**/*.{js,ts,json,css,tsx,jsx}\" \"dev/**/*.{js,ts,json,css,tsx,jsx}\"",

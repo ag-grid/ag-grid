@@ -4,6 +4,8 @@ const packageJson = require('./package.json');
 const typescript = require('rollup-plugin-typescript2');
 const alias = require('@rollup/plugin-alias');
 const commonjs = require("rollup-plugin-commonjs");
+const agChartsEnterprise = require('ag-charts-enterprise');
+const agChartsCommunity = require('ag-charts-community');
 
 const banner = ['/**',
     ` * ${packageJson.name} - ${packageJson.description}` +
@@ -50,7 +52,7 @@ function genConfig(name) {
     const opts = builds[name];
     const config = {
         input: opts.entry,
-        external: ['ag-grid-community'],
+        external: ['ag-grid-community', 'ag-charts-enterprise'],
         plugins: [
             // The order of plugins is VERY important here. Do not change unless you know what you're doing
             alias({
@@ -59,9 +61,12 @@ function genConfig(name) {
                     {find: '@ag-grid-community/core', replacement: 'ag-grid-community'}
                 ]
             }),
-            commonjs(),
-            node( ),      // for utils package - defaulting to use index.js
-            // node({format: opts.nodeFormatOverride }),      // for utils package - defaulting to use index.js
+            node({format: opts.nodeFormatOverride }),      // for utils package - defaulting to use index.js
+            commonjs({
+                namedExports: {
+                    '../../grid-enterprise-modules/charts/node_modules/ag-charts-enterprise/dist/main.cjs.js' : Object.keys(agChartsCommunity)
+                }
+            }),
             typescript({
                 tsconfig: "tsconfig.es6.json"
             }),

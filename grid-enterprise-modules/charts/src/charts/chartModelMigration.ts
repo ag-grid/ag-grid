@@ -29,6 +29,7 @@ export function upgradeChartModel(model: ChartModel): ChartModel {
     model = migrateIfBefore('29.1.0', model, migrateV29_1);
     model = migrateIfBefore('29.2.0', model, migrateV29_2);
     model = migrateIfBefore('30.0.0', model, migrateV30);
+    model = migrateIfBefore('31.0.0', model, migrateV31);
     model = cleanup(model);
 
     // Bump version to latest.
@@ -252,6 +253,11 @@ function migrateV30(model: ChartModel) {
     model = jsonAdd('chartOptions.common.legend.enabled', true, model);
     model = jsonBackfill('chartOptions.common.legend.position', 'right', model);
 
+    return model;
+}
+
+function migrateV31(model: ChartModel) {
+    model = jsonRename('chartOptions.column', 'bar', model);
     return model;
 }
 

@@ -22,6 +22,18 @@ export const color = (input: string): ColorValue => {
 
 export const parseCssColor = (css: string): ColorValue | null => {
   try {
+    const match = css.match(/^color\(srgb\s+([\d.]+)\s+([\d.]+)\s+([\d.]+)(?:[\s/]+([\d.]+))?\)$/);
+    if (match) {
+      const r = parseFloat(match[1]);
+      const g = parseFloat(match[2]);
+      const b = parseFloat(match[3]);
+      const a = parseFloat(match[4] || '1');
+      if (isNaN(r) || isNaN(g) || isNaN(b) || isNaN(a)) {
+        return null;
+      }
+      const rgbHex = '#' + float1ToHex255(r) + float1ToHex255(g) + float1ToHex255(b);
+      return a === 1 ? color(rgbHex) : color(rgbHex + float1ToHex255(a));
+    }
     const parsed = ColorLib(css);
     return color(parsed.alpha() === 1 ? parsed.hex() : parsed.hexa());
   } catch {
@@ -31,22 +43,7 @@ export const parseCssColor = (css: string): ColorValue | null => {
 
 export const colorToCss = ({ hex }: ColorValue): string => hex;
 
-export const colorWithAlpha = ({ hex }: ColorValue, newAlpha: number): ColorValue => {
-  const alpha = getAlpha(hex) * newAlpha;
-  const hexAlpha = ('0' + Math.min(255, Math.max(0, Math.round(alpha * 255))).toString(16)).slice(
-    -2,
-  );
-  return { type: 'color', hex: hex.substring(0, 7) + hexAlpha };
-};
-
-export const colorWithSelfOverlay = ({ hex }: ColorValue, times: number): ColorValue => {
-  const overlaidAlpha = 1 - Math.pow(1 - getAlpha(hex), times);
-  return { type: 'color', hex: hex.substring(0, 7) + alphaToHex(overlaidAlpha) };
-};
-
-const getAlpha = (hex: string): number => parseInt(hex.substring(7) || 'ff', 16) / 255;
-
-const alphaToHex = (alpha: number): string =>
+const float1ToHex255 = (alpha: number): string =>
   ('0' + Math.min(255, Math.max(0, Math.round(alpha * 255))).toString(16)).slice(-2);
 
 export const colorIsDarkish = (color: ColorValue) => parseInt(color.hex.substring(3, 5), 16) < 128;

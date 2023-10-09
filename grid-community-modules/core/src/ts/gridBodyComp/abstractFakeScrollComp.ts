@@ -33,12 +33,6 @@ export abstract class AbstractFakeScrollComp extends Component {
         this.addManagedListener(this.eventService, Events.EVENT_SCROLL_VISIBILITY_CHANGED, this.onScrollVisibilityChanged.bind(this));
         this.onScrollVisibilityChanged();
         this.addOrRemoveCssClass('ag-apple-scrollbar', isMacOsUserAgent() || isIOSUserAgent());
-
-        if (this.direction === 'horizontal') {
-            this.addManagedPropertyListeners(['suppressHorizontalScroll'], () => {
-                this.onScrollVisibilityChanged();
-            });
-        }
     }
 
     protected initialiseInvisibleScrollbar(): void {

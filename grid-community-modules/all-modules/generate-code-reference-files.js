@@ -500,10 +500,6 @@ function getGridApi() {
     const gridApiFile = "../core/src/ts/gridApi.ts";
     return getClassProperties(gridApiFile, 'GridApi');
 }
-function getColumnApi() {
-    const colApiFile = "../core/src/ts/columns/columnApi.ts";
-    return getClassProperties(colApiFile, 'ColumnApi');
-}
 function getRowNode() {
     const file = "../core/src/ts/interfaces/iRowNode.ts";
     const srcFile = parseFile(file);
@@ -534,7 +530,6 @@ const generateMetaFiles = () => {
     writeFile('../../grid-packages/ag-grid-docs/documentation/doc-pages/grid-api/', 'grid-api.AUTO.json', getGridApi());
     writeFile('../../grid-packages/ag-grid-docs/documentation/doc-pages/row-object/', 'row-node.AUTO.json', getRowNode());
     writeFile('../../grid-packages/ag-grid-docs/documentation/doc-pages/column-properties/', 'column-options.AUTO.json', getColumnOptions());
-    writeFile('../../grid-packages/ag-grid-docs/documentation/doc-pages/column-api/', 'column-api.AUTO.json', getColumnApi());
     writeFile('../../grid-packages/ag-grid-docs/documentation/doc-pages/column-object/', 'column.AUTO.json', getColumn());
     writeFile('../../grid-packages/ag-grid-docs/documentation/doc-pages/grid-api/', 'doc-interfaces.AUTO.json', buildInterfaceProps(INTERFACE_GLOBS));
 

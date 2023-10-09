@@ -1,20 +1,12 @@
 {
   "_config_": {},
   "variables": {
-    "--ag-alpine-active-color": {
-      "description": "(Alpine theme only) accent colour used for checked checkboxes, range selections, row hover, row selections, selected tab underlines, and input focus outlines in the Alpine theme",
-      "type": "CSS color (e.g. `red` or `#fff`)"
-    },
-    "--ag-balham-active-color": {
-      "description": "(Balham theme only) accent colour used for checked checkboxes, range selections, row selections, and input focus outlines in the Balham theme",
+    "--ag-active-color": {
+      "description": "Accent colour used for UI elements that need to stand out, such as form controls, range selections and focussed elements.",
       "type": "CSS color (e.g. `red` or `#fff`)"
     },
     "--ag-material-primary-color": {
       "description": "(Material theme only) the primary colour as defined in the [Material Design colour system](https://material.io/design/color/). Currently this is used on buttons, range selections and selected tab underlines in the Material theme",
-      "type": "CSS color (e.g. `red` or `#fff`)"
-    },
-    "--ag-material-accent-color": {
-      "description": "(Material theme only) the accent colour as defined in the [Material Design colour system](https://material.io/design/color/). Currently this is used on checked checkboxes in the Material theme",
       "type": "CSS color (e.g. `red` or `#fff`)"
     },
     "--ag-foreground-color": {
@@ -214,7 +206,11 @@
       "type": "a CSS border style and size (e.g. `solid 1px` or `none`)"
     },
     "--ag-border-radius": {
-      "description": "Border radius applied to many elements such as dialogs and form widgets",
+      "description": "Border radius applied to the grid and many UI elements such as popups and form widgets",
+      "type": "CSS length (e.g. `0`, `4px` or `50%`)"
+    },
+    "--ag-wrapper-border-radius": {
+      "description": "Border radius applied to the grid's outer wrapper. Defaults to --ag-border-radius",
       "type": "CSS length (e.g. `0`, `4px` or `50%`)"
     },
     "--ag-invalid-color": {

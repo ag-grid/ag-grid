@@ -14,7 +14,7 @@ exports[`chartModelMigration upgradeChartModel should upgrade 22.1.0 successfull
   },
   "chartId": "id-5pp8g14lddr",
   "chartOptions": {
-    "column": {
+    "bar": {
       "axes": {
         "category": {
           "bottom": {},
@@ -220,7 +220,7 @@ exports[`chartModelMigration upgradeChartModel should upgrade 22.1.0-bar success
   },
   "chartId": "id-f4hx4t276m",
   "chartOptions": {
-    "column": {
+    "bar": {
       "axes": {
         "category": {
           "bottom": {},
@@ -941,7 +941,7 @@ exports[`chartModelMigration upgradeChartModel should upgrade 23.0.0 successfull
   },
   "chartId": "id-hmqegszv8g",
   "chartOptions": {
-    "column": {
+    "bar": {
       "axes": {
         "category": {
           "bottom": {},
@@ -1145,7 +1145,7 @@ exports[`chartModelMigration upgradeChartModel should upgrade 24.0.0 successfull
   },
   "chartId": "id-aozr6zz1t1r",
   "chartOptions": {
-    "column": {
+    "bar": {
       "autoSize": true,
       "axes": {
         "category": {
@@ -1376,7 +1376,7 @@ exports[`chartModelMigration upgradeChartModel should upgrade 25.0.0 successfull
   },
   "chartId": "id-vqj6ysu3ded",
   "chartOptions": {
-    "column": {
+    "bar": {
       "autoSize": true,
       "axes": {
         "category": {
@@ -2128,7 +2128,7 @@ exports[`chartModelMigration upgradeChartModel should upgrade 26.0.0 successfull
   },
   "chartId": "id-703dtchjq3t",
   "chartOptions": {
-    "column": {
+    "bar": {
       "autoSize": true,
       "axes": {
         "category": {
@@ -2598,7 +2598,7 @@ exports[`chartModelMigration upgradeChartModel should upgrade 26.1.0 successfull
   },
   "chartId": "id-l1f4fm2rj1h",
   "chartOptions": {
-    "column": {
+    "bar": {
       "autoSize": true,
       "axes": {
         "category": {
@@ -3224,7 +3224,7 @@ exports[`chartModelMigration upgradeChartModel should upgrade 27.0.0 successfull
   },
   "chartId": "id-euq7obqgu8i",
   "chartOptions": {
-    "column": {
+    "bar": {
       "autoSize": true,
       "axes": {
         "category": {
@@ -3590,7 +3590,7 @@ exports[`chartModelMigration upgradeChartModel should upgrade 28.0.0 successfull
   },
   "chartId": "id-uhym1f2yxi",
   "chartOptions": {
-    "column": {
+    "bar": {
       "axes": {
         "category": {
           "bottom": {},

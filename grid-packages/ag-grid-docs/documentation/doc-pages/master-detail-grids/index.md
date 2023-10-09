@@ -63,7 +63,7 @@ md-include:changing-the-template.md
 
 The Master Grid manages all the Detail Grid instances. You can access the API of the underlying Detail Grids to call API methods directly on those grids. The Master Grid stores references to the Detail Grid API's in Detail Grid Info objects.
 
-The Detail Grid Info objects contain a reference to the underlying [Grid API](/grid-api/) and [Column API](/column-api/) for each detail grid. The interface for Detail Grid Info is as follows:
+The Detail Grid Info objects contain a reference to the underlying [Grid API](/grid-api/) for each detail grid. The interface for Detail Grid Info is as follows:
 
 <interface-documentation interfaceName='DetailGridInfo' ></interface-documentation>
 

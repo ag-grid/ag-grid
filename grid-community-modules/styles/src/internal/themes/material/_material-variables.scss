@@ -3,7 +3,7 @@
 .ag-theme-material {
     // Taking primary and accent from the indigo / pink theme: https://github.com/angular/material2/blob/master/src/lib/core/theming/prebuilt/indigo-pink.scss
     --ag-material-primary-color: #3f51b5;
-    --ag-material-accent-color: #ff4081;
+    --ag-active-color: #ff4081;
 
     // Colors
     --ag-foreground-color: rgba(0, 0, 0, 0.87);
@@ -35,7 +35,7 @@
 
     // derived colours (no color blending)
     --ag-range-selection-border-color: var(--ag-material-primary-color);
-    --ag-checkbox-checked-color: var(--ag-material-accent-color);
+    --ag-checkbox-checked-color: var(--ag-active-color);
 
     // Borders
     --ag-borders: none;
@@ -50,9 +50,7 @@
     --ag-cell-horizontal-padding: calc(var(--ag-grid-size) * 3);
     --ag-list-item-height: calc(var(--ag-grid-size) * 4);
     --ag-row-group-indent-size: calc(var(--ag-grid-size) * 3 + var(--ag-icon-size));
-    --ag-filter-tool-panel-sub-level-row-height: calc(var(--ag-grid-size) * 4);
     --ag-checkbox-border-radius: 2px;
-    --ag-toggle-button-switch-border-width: 2px;
     --ag-toggle-button-height: var(--ag-icon-size);
     --ag-widget-container-horizontal-padding: calc(var(--ag-grid-size) * 1.5);
     --ag-widget-container-vertical-padding: calc(var(--ag-grid-size) * 2);

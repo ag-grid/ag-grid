@@ -33,7 +33,7 @@ const gridOptions: GridOptions = {
         text: 'Medals by Age',
       },
     },
-    column: {
+    bar: {
       axes: {
         category: {
           label: {

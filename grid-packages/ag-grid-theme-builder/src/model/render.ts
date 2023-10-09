@@ -1,8 +1,7 @@
 import { Feature } from './features';
-import { Theme, getThemeChain } from './themes';
+import { Theme } from './themes';
 import { mapPresentObjectValues } from './utils';
 import { VariableValues, valueToCss } from './values';
-import { colorWithAlpha, colorWithSelfOverlay } from './values/color';
 
 export type RenderedTheme = {
   themeName: string;
@@ -12,34 +11,10 @@ export type RenderedTheme = {
 type RenderArgs = { theme: Theme; features: Feature[]; values: VariableValues };
 
 export const renderTheme = (state: RenderArgs): RenderedTheme => {
-  const themes = getThemeChain(state.theme);
-
-  const values: VariableValues = {};
-  for (const variable in state.values) {
-    const value = state.values[variable];
-    if (value) {
-      values[variable] = value;
-    }
-  }
-
-  for (const theme of themes) {
-    for (const blend of theme.colorBlends) {
-      if (!values[blend.destination]) {
-        let value = values[blend.source];
-        if (value && value.type === 'color') {
-          if (blend.alpha) {
-            value = colorWithAlpha(value, blend.alpha);
-          }
-          if (blend.selfOverlay) {
-            value = colorWithSelfOverlay(value, blend.selfOverlay);
-          }
-          values[blend.destination] = value;
-        }
-      }
-    }
-  }
-
-  return { themeName: state.theme.name, values };
+  return {
+    themeName: state.theme.name,
+    values: mapPresentObjectValues(state.values, (v) => v),
+  };
 };
 
 export const renderedThemeToCss = ({
