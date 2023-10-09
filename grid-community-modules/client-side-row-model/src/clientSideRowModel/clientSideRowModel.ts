@@ -76,7 +76,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel 
     private applyAsyncTransactionsTimeout: number | undefined;
 
     /** prevent refresh model from being called via listeners before row data loaded */
-    private isRowDataLoaded: boolean = false;
+    private rowDataLoaded: boolean = false;
 
     @PostConstruct
     public init(): void {
@@ -499,7 +499,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel 
     }
 
     refreshModel(paramsOrStep: RefreshModelParams | ClientSideRowModelStep | undefined): void {
-        if (!this.isRowDataLoaded) { return; }
+        if (!this.rowDataLoaded) { return; }
 
         let params = typeof paramsOrStep === 'object' && "step" in paramsOrStep ? paramsOrStep : this.buildRefreshModelParams(paramsOrStep);
 
@@ -1009,7 +1009,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel 
         };
         this.eventService.dispatchEvent(rowDataUpdatedEvent);
 
-        this.isRowDataLoaded = true;
+        this.rowDataLoaded = true;
 
         this.refreshModel({
             step: ClientSideRowModelSteps.EVERYTHING,
@@ -1132,7 +1132,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel 
         };
         this.eventService.dispatchEvent(event);
 
-        this.isRowDataLoaded = true;
+        this.rowDataLoaded = true;
 
         this.refreshModel({
             step: ClientSideRowModelSteps.EVERYTHING,
@@ -1204,4 +1204,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel 
         this.resetRowHeights();
     }
 
+    public isRowDataLoaded(): boolean {
+        return this.rowDataLoaded;
+    }
 }

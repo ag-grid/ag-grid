@@ -42,7 +42,8 @@ export interface SetValueModelParams<V> {
     valueFormatter?: (params: ValueFormatterParams) => string,
     usingComplexObjects?: boolean,
     treeDataTreeList?: boolean,
-    groupingTreeList?: boolean
+    groupingTreeList?: boolean,
+    addManagedListener: (event: string, listener: (event?: any) => void) => (() => null) | undefined
 }
 
 /** @param V type of value in the Set Filter */
@@ -108,7 +109,8 @@ export class SetValueModel<V> implements IEventEmitter {
             filterParams,
             gridOptionsService,
             valueFormatterService,
-            valueFormatter
+            valueFormatter,
+            addManagedListener
         } = params;
         const {
             column,
@@ -165,7 +167,8 @@ export class SetValueModel<V> implements IEventEmitter {
                 treeDataOrGrouping,
                 !!treeDataTreeList,
                 getDataPath,
-                groupAllowUnbalanced
+                groupAllowUnbalanced,
+                addManagedListener
             );
         }
 
@@ -208,12 +211,17 @@ export class SetValueModel<V> implements IEventEmitter {
      * otherwise the current selection will be preserved.
      */
     public refreshValues(): AgPromise<void> {
-        const currentModel = this.getModel();
+        return new AgPromise<void>(resolve => {
+            // don't get the model until values are resolved, as there could be queued setModel calls
+            this.allValuesPromise.then(() => {
+                const currentModel = this.getModel();
 
-        this.updateAllValues();
+                this.updateAllValues();
 
-        // ensure model is updated for new values
-        return this.setModel(currentModel);
+                // ensure model is updated for new values
+                this.setModel(currentModel).then(() => resolve());
+            });
+        });
     }
 
     /**
@@ -251,8 +259,11 @@ export class SetValueModel<V> implements IEventEmitter {
         this.allValuesPromise = new AgPromise<(string | null)[]>(resolve => {
             switch (this.valuesType) {
                 case SetFilterModelValuesType.TAKEN_FROM_GRID_VALUES:
+                    this.getValuesFromRowsAsync(false).then(values => resolve(this.processAllValues(values)));
+
+                    break;
                 case SetFilterModelValuesType.PROVIDED_LIST: {
-                    resolve(this.processAllKeys(this.valuesType === SetFilterModelValuesType.TAKEN_FROM_GRID_VALUES, this.providedValues as (V | null)[]));
+                    resolve(this.processAllValues(this.uniqueValues(this.validateProvidedValues(this.providedValues as (V | null)[]))));
 
                     break;
                 }
@@ -266,7 +277,7 @@ export class SetValueModel<V> implements IEventEmitter {
                         success: values => {
                             this.setIsLoading(false);
 
-                            resolve(this.processAllKeys(false, values));
+                            resolve(this.processAllValues(this.uniqueValues(this.validateProvidedValues(values))));
                         },
                         colDef,
                         column,
@@ -291,9 +302,7 @@ export class SetValueModel<V> implements IEventEmitter {
         return this.allValuesPromise;
     }
 
-    private processAllKeys(getFromRows: boolean, providedValues: (V | null)[] | null): (string | null)[] {
-        const values = getFromRows ? this.getValuesFromRows(false) : this.uniqueValues(this.validateProvidedValues(providedValues!));
-
+    private processAllValues(values: Map<string | null, V | null> | null): (string | null)[] {
         const sortedKeys = this.sortKeys(values);
 
         this.allValues = values ?? new Map();
@@ -368,15 +377,38 @@ export class SetValueModel<V> implements IEventEmitter {
         return sortedKeys;
     }
 
-    private getValuesFromRows(removeUnavailableValues = false): Map<string | null, V | null> | null {
+    private getParamsForValuesFromRows(removeUnavailableValues = false): {
+        predicate: (node: RowNode) => boolean,
+        existingValues?: Map<string | null, V | null>
+    } | null {
         if (!this.clientSideValuesExtractor) {
-            console.error('AG Grid: Set Filter cannot initialise because you are using a row model that does not contain all rows in the browser. Either use a different filter type, or configure Set Filter such that you provide it with values');
+            _.doOnce(() => {
+                console.error('AG Grid: Set Filter cannot initialise because you are using a row model that does not contain all rows in the browser. Either use a different filter type, or configure Set Filter such that you provide it with values');
+            }, 'setFilterValueNotCSRM');
             return null;
         }
 
         const predicate = (node: RowNode) => (!removeUnavailableValues || this.doesRowPassOtherFilters(node));
 
-        return this.clientSideValuesExtractor.extractUniqueValues(predicate, removeUnavailableValues && !this.caseSensitive ? this.allValues : undefined);
+        const existingValues = removeUnavailableValues && !this.caseSensitive ? this.allValues : undefined;
+
+        return { predicate, existingValues };
+    }
+
+    private getValuesFromRows(removeUnavailableValues = false): Map<string | null, V | null> | null {
+        const params = this.getParamsForValuesFromRows(removeUnavailableValues);
+        if (!params) { return null; }
+
+        return this.clientSideValuesExtractor.extractUniqueValues(params.predicate, params.existingValues);
+    }
+
+    private getValuesFromRowsAsync(removeUnavailableValues = false): AgPromise<Map<string | null, V | null> | null> {
+        const params = this.getParamsForValuesFromRows(removeUnavailableValues);
+        if (!params) {
+            return AgPromise.resolve(null);
+        }
+
+        return this.clientSideValuesExtractor.extractUniqueValuesAsync(params.predicate, params.existingValues);
     }
 
     /** Sets mini filter value. Returns true if it changed from last value, otherwise false. */

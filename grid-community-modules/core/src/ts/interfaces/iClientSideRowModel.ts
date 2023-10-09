@@ -39,6 +39,7 @@ export interface IClientSideRowModel<TData = any> extends IRowModel {
     highlightRowAtPixel(rowNode: RowNode | null, pixel?: number): void;
     getHighlightPosition(pixel: number, rowNode?: RowNode): RowHighlightPosition;
     getLastHighlightedRowNode(): RowNode | null;
+    isRowDataLoaded(): boolean;
 }
 
 export interface RefreshModelParams<TData = any> {
