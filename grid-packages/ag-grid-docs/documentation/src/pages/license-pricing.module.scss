@@ -10,6 +10,7 @@
     flex-wrap: wrap;
     gap: $size-4;
     margin-top: $size-8;
+    margin-bottom: $size-7;
 
     @media screen and (min-width: $breakpoint-pricing-large) {
         flex-wrap: nowrap;
@@ -29,7 +30,7 @@
     text-align: center;
 
     @media screen and (min-width: $breakpoint-pricing-large) {
-        margin-top: $size-8;
+        margin-top: 36px;
         text-align: left;
     }
 

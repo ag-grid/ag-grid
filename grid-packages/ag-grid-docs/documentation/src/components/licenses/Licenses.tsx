@@ -65,7 +65,7 @@ const License = (props: LicenseData) => {
             <div className={classnames(styles.top, 'top')}>
                 <div className={styles.licenseMeta}>
                     <Logo className={styles.logo}/>
-                    <p className="font-size-small text-secondary">{subHeading}<Icon name="enterprise" /></p>
+                    <p className="font-size-small">{subHeading}<Icon name="enterprise" /></p>
                 </div>
 
                 <Price priceFullDollars={priceFullDollars} />
