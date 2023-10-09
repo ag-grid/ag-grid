@@ -62,7 +62,7 @@ export function getOnGridReadyCode(bindings: any): string {
         const { url, callback } = data;
 
         const setRowDataBlock = callback.indexOf('api.setRowData') >= 0 ?
-            callback.replace("params.api.setRowData(data);", "this.rowData = data;") :
+            callback.replace("api.setRowData(data)", "this.rowData = data") :
             callback;
 
         additionalLines.push(`

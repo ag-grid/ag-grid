@@ -21,7 +21,7 @@ function getOnGridReadyCode(readyCode: string, resizeToFit: boolean,
         const { url, callback } = data;
 
         if (callback.indexOf('api!.setRowData') !== -1) {
-            const setRowDataBlock = callback.replace('params.api!.setRowData(data)', 'this.rowData = data');
+            const setRowDataBlock = callback.replace('api!.setRowData(data)', 'this.rowData = data');
             additionalLines.push(`this.http.get<${rowDataType}[]>(${url}).subscribe(data => ${setRowDataBlock});`);
         } else {
             additionalLines.push(`this.http.get<${rowDataType}[]>(${url}).subscribe(data => ${callback});`);

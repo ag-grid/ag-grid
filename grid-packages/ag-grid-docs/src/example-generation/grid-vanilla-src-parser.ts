@@ -72,7 +72,7 @@ function tsGenerateWithReplacedGridOptions(node, srcFile) {
         // Handle case when api is on a new line 
         //  gridOptions
         //      .api.setRow()
-        .replace(/gridOptions\s*\n?\s*\.api/g, 'this.gridApi');
+        .replace(/\sapi/g, 'this.gridApi');
 }
 
 function processColDefsForFunctionalReactOrVue(propertyName: string, exampleType, exampleSettings, providedExamples) {
@@ -273,7 +273,7 @@ function internalParser(examplePath, {
         matches: tsNodeIsHttpOpen,
         apply: (bindings, node) => {
             const url = node.expression.arguments[1].raw;
-            const callback = '{ params.api.setRowData(data); }';
+            const callback = '{ api.setRowData(data); }';
 
             bindings.data = {url, callback};
         }

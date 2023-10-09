@@ -160,7 +160,9 @@ export function tsNodeIsTopLevelVariable(node: ts.Node, registered: string[] = [
         // Is not just a type declaration i.e declare function getData: () => any[];
         if (node.declarations.length > 0) {
             const declaration = node.declarations[0];
-            return !isDeclareStatement(node.parent) && registered.indexOf(declaration.name.getText()) < 0 && ts.isSourceFile(node.parent.parent);
+            // Don't include api declarations as these are handled separately
+            const isLetApi = declaration.name.getText() === 'api';            
+            return !isLetApi && !isDeclareStatement(node.parent) && registered.indexOf(declaration.name.getText()) < 0 && ts.isSourceFile(node.parent.parent);
         }
     }
 }

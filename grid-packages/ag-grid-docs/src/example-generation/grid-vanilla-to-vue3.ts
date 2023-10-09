@@ -35,9 +35,9 @@ function getOnGridReadyCode(bindings: any): string {
         const {url, callback} = data;
 
         const setRowDataBlock = callback.indexOf('api.setRowData') >= 0 ?
-            callback.replace("params.api.setRowData(data);", "rowData.value = data;") :
-            callback;
-
+        callback.replace("api.setRowData(data)", "rowData.value = data") :
+        callback;
+        
         additionalLines.push(`
             const updateData = (data) => ${setRowDataBlock};
             

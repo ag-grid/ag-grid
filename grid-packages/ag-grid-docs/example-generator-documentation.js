@@ -551,6 +551,7 @@ function createExampleGenerator(exampleType, prefix, importTypes, incremental) {
                         let jsFile = readAsJsFile(tsFile);
                         // replace Typescript new Grid( with Javascript new agGrid.Grid(
                         jsFile = jsFile.replace(/new Grid\(/g, 'new agGrid.Grid(');
+                        jsFile = jsFile.replace(/createGrid\(/g, 'agGrid.createGrid(');
 
                         // replace Typescript LicenseManager.setLicenseKey( with Javascript agGrid.LicenseManager.setLicenseKey(
                         jsFile = jsFile.replace(/LicenseManager\.setLicenseKey\(/g, "agGrid.LicenseManager.setLicenseKey(");

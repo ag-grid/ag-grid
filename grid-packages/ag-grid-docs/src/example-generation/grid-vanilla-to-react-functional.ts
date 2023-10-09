@@ -143,6 +143,7 @@ export function vanillaToReactFunctional(bindings: any, componentFilenames: stri
     const callbackDependencies = Object.keys(bindings.callbackDependencies).reduce((acc, callbackName) => {
         acc[callbackName] = bindings.callbackDependencies[callbackName].filter(dependency => !utilMethodNames.includes(dependency))
             .filter(dependency => dependency !== 'gridOptions')
+            .filter(dependency => dependency !== 'api')
             .filter(dependency => !global[dependency]) // exclude things like Number, isNaN etc
         return acc;
     }, {})
@@ -167,7 +168,7 @@ export function vanillaToReactFunctional(bindings: any, componentFilenames: stri
 
         const additionalInReady = [];
         if (data) {
-            const setRowDataBlock = data.callback.replace('params.api.setRowData', 'setRowData');
+            const setRowDataBlock = data.callback.replace('api.setRowData', 'setRowData');
 
             additionalInReady.push(`
                 fetch(${data.url})
@@ -178,7 +179,7 @@ export function vanillaToReactFunctional(bindings: any, componentFilenames: stri
 
         if (onGridReady) {
             const hackedHandler = onGridReady.replace(/^{|}$/g, '')
-                .replace('params.api.setRowData', 'setRowData');
+                .replace('api.setRowData', 'setRowData');
             additionalInReady.push(hackedHandler);
         }
 
@@ -256,7 +257,7 @@ export function vanillaToReactFunctional(bindings: any, componentFilenames: stri
 
         const gridInstanceConverter = content => content
             .replace(/params\.api\.setRowData(data)/g, 'setRowData(data)')
-            .replace(/params\.api\./g, 'gridRef.current.api.')
+            //.replace(/params\.api\./g, 'gridRef.current.api.')
             .replace(/gridInstance\.api\./g, "gridRef.current.api.")
             .replace(/gridApi\./g, "gridRef.current.api.")
             .replace(/gridApi;/g, "gridRef.current.api;")
