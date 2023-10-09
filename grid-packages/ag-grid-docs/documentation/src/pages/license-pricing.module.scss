@@ -92,18 +92,34 @@
 }
 
 .licensesOuter {
-  display: flex;
-  flex-wrap: wrap;
-  width: 100%;
-  gap: 0 $size-4;
+    display: flex;
+    flex-wrap: wrap;
+    width: 100%;
+    gap: 0 $size-4;
 }
 
 .buyTogether {
-  margin-top: $size-2;
+    --card-color: #0665cb;
+    --header-tint: 0.9;
+    
+    width: 100%;
+    display: flex;
+    margin-top: $size-4;
+    border-radius: calc(var(--border-radius) * 2);
+    border: 3px solid var(--card-color);
+    background-color: var(--card-color);
+}
 
-  button {
-    margin-left: $size-1;
-  }
+.buyTogetherInner {
+    width: 100%;
+    padding: $size-1 $size-1 $size-1 $size-2;
+    border-radius: var(--border-radius);
+    background-color: var(--default-background-color);
+    opacity: var(--header-tint);
+
+    button {
+        margin-left: $size-1;
+    }
 }
 
 .bulkLicenses,
