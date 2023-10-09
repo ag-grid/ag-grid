@@ -83,7 +83,7 @@ function formatNumber(params: ValueFormatterParams) {
 
 function onValueCache(valueCacheOn: boolean) {
   destroyOldGridIfExists()
-  createGrid(valueCacheOn)
+  makeGrid(valueCacheOn)
 }
 
 function destroyOldGridIfExists() {
@@ -93,7 +93,7 @@ function destroyOldGridIfExists() {
   }
 }
 
-function createGrid(valueCacheOn: boolean) {
+function makeGrid(valueCacheOn: boolean) {
   console.log('==========> creating grid')
   callCount = 1
   gridOptions.valueCache = valueCacheOn
