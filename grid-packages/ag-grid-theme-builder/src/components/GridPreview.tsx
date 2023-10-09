@@ -1,4 +1,4 @@
-import { ColDef, Grid, GridApi, GridOptions } from '@ag-grid-community/core';
+import { ColDef, GridApi, GridOptions, createGrid } from '@ag-grid-community/core';
 import styled from '@emotion/styled';
 import { useCurrentFeature } from 'atoms/currentFeature';
 import { useEnabledFeatures } from 'atoms/enabledFeatures';
@@ -7,8 +7,7 @@ import { useVariableValues } from 'atoms/values';
 import { withErrorBoundary } from 'components/ErrorBoundary';
 import { getColumnDefs, getGroupColumnDefs, getRowData } from 'model/exampleData';
 import { Feature } from 'model/features';
-import { assertNotNull, isNotNull } from 'model/utils';
-import { valueToCss } from 'model/values';
+import { isNotNull } from 'model/utils';
 import { memo, useEffect, useRef, useState } from 'react';
 
 const variablesRequiringRebuild = [
@@ -32,7 +31,7 @@ const GridPreview = () => {
   const rebuildKey = variablesRequiringRebuild
     .map((variableName) => values[variableName])
     .filter(isNotNull)
-    .map(valueToCss)
+    .map((value) => value.toCss())
     .concat(parentTheme.name)
     .concat(features.map((f) => f.name))
     .join(';');
@@ -60,15 +59,14 @@ const GridPreview = () => {
       },
     };
 
-    setApi(null);
-    const grid = new Grid(wrapperRef.current, options);
-    const api = assertNotNull(options.api);
+    const api = createGrid(wrapperRef.current, options);
+    setApi(api);
 
     return () => {
       for (const feature of features) {
         featureState[feature.name] = feature.getState?.(api);
       }
-      grid.destroy();
+      api.destroy();
     };
   }, [features, rebuildKey]);
 
@@ -108,7 +106,7 @@ const Wrapper = styled('div')`
   height: 100%;
 `;
 
-const buildGridOptions = (features: Feature[]): GridOptions => {
+const buildGridOptions = (features: ReadonlyArray<Feature>): GridOptions => {
   const defaultColDef: ColDef = {};
   const columnDefs = getColumnDefs();
   const options: GridOptions = { defaultColDef, columnDefs };

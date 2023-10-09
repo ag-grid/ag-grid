@@ -1,18 +1,5 @@
 import styled from '@emotion/styled';
-import { ReactElement } from 'react';
 import { MockInput, MockInputProps } from './MockInput';
-
-export type PreviewPanelRow = {
-  columnTitle?: string;
-  subtitle?: string;
-  label: string;
-  preview: ReactElement;
-};
-
-export type PreviewPanelProps = {
-  description?: string;
-  rowSets: PreviewPanelRow[][];
-};
 
 export const PreviewPanel = styled('div')`
   background-color: var(--ag-control-panel-background-color);
