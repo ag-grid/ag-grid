@@ -22,7 +22,7 @@
     "vuejs"
   ],
   "scripts": {
-    "clean": "rimraf lib dist .hash",
+    "clean": "rimraf lib dist",
     "build": "npx gulp copy-from-module-source && NODE_OPTIONS=--openssl-legacy-provider vue-cli-service build --target lib src/AgGridVue.ts && npx tsc && rm ./dist/demo.html",
     "build-docs-initial": "npm run build",
     "build-prod": "NODE_OPTIONS=--openssl-legacy-provider vue-cli-service build --target lib src/AgGridVue.ts && npx tsc --sourceMap false && rm ./dist/demo.html",

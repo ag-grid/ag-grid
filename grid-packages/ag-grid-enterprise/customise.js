@@ -43,7 +43,7 @@ const forceEs5ForCjsBundles = () => {
         apply: () => updateFileContents(
             './node_modules/rollup-plugin-node-resolve/dist/rollup-plugin-node-resolve.cjs.js',
             'if (typeof pkg[field] === \'string\') {',
-            `if (options.format === 'es5-cjs') {
+            `if (!pkg.name.startsWith('ag-charts') && options.format === 'es5-cjs') {
                  pkg['main'] = "./dist/esm/es5/main.js";
              } else if (typeof pkg[field] === 'string') {`
         )

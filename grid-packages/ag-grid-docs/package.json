@@ -3,7 +3,7 @@
   "version": "30.2.0",
   "description": "Documentation for AG Grid",
   "scripts": {
-    "clean": "npm run clean-examples-dir && rimraf dist _dev .cache-loader .hash",
+    "clean": "npm run clean-examples-dir && rimraf dist _dev .cache-loader",
     "generate-doc-files": "cd ../../grid-community-modules/all-modules && npm run generate-doc-files",
     "clean-examples-dir": "cd documentation/doc-pages && find . -type d -name _gen -exec rm -rf {} +",
     "generate-examples": "node new-dev-server.js generate-examples",
@@ -17,7 +17,6 @@
     "tsc": "npx tsc -p tests/config/tsconfig.json",
     "test": "npx jest",
     "test:e2e": "npm run lint-examples && npm run validate-examples && npm run validate-docs",
-    "examples-hash": "sh ../../scripts/hashDirectory.sh \"`pwd`/documentation/doc-pages\" > \"`pwd`/documentation/doc-pages\"/.examplesHash",
     "dev-server": "node dev-server.js",
     "validate-examples": "node example-validator.js validate",
     "validate-docs": "node documentation-api-validator.js",
