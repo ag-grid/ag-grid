@@ -161,7 +161,7 @@ export function tsNodeIsTopLevelVariable(node: ts.Node, registered: string[] = [
         if (node.declarations.length > 0) {
             const declaration = node.declarations[0];
             // Don't include api declarations as these are handled separately
-            const isLetApi = declaration.name.getText() === 'api';            
+            const isLetApi = declaration.name.getText() === 'gridApi';            
             return !isLetApi && !isDeclareStatement(node.parent) && registered.indexOf(declaration.name.getText()) < 0 && ts.isSourceFile(node.parent.parent);
         }
     }

@@ -69,10 +69,6 @@ function tsNodeIsSimpleFetchRequest(node) {
 
 function tsGenerateWithReplacedGridOptions(node, srcFile) {
     return tsGenerate(node, srcFile)
-        // Handle case when api is on a new line 
-        //  gridOptions
-        //      .api.setRow()
-        .replace(/\sapi/g, 'this.gridApi');
 }
 
 function processColDefsForFunctionalReactOrVue(propertyName: string, exampleType, exampleSettings, providedExamples) {
@@ -234,7 +230,7 @@ function internalParser(examplePath, {
     });
 
     // For React we need to identify the external dependencies for callbacks to prevent stale closures
-    const GLOBAL_DEPS = new Set(['console', 'document', 'Error', 'this'])
+    const GLOBAL_DEPS = new Set(['console', 'document', 'Error', 'this', 'gridApi'])
     tsCollectors.push({
         matches: node => tsNodeIsTopLevelFunction(node),
         apply: (bindings, node: ts.SignatureDeclaration) => {

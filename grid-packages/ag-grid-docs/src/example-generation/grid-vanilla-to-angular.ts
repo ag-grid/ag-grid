@@ -219,8 +219,8 @@ export function vanillaToAngular(bindings: any, componentFileNames: string[], al
             .concat(instanceMethods)
             .map(snippet => snippet.trim())
             .join('\n\n')
-            // We do not need the non-null assertion in component code as already applied to the declaration for the apis.
-            .replace(/gridApi!\./g, 'gridApi.');
+            // We do not need the non-null assertion in component code as already applied to the declaration for the apis.            
+            .replace(/gridApi(\??)(!?)\./g, 'this.gridApi.');
 
         let generatedOutput = `
 ${imports.join('\n')}
