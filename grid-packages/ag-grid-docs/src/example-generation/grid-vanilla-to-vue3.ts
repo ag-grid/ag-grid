@@ -34,8 +34,8 @@ function getOnGridReadyCode(bindings: any): string {
     if (data) {
         const {url, callback} = data;
 
-        const setRowDataBlock = callback.indexOf('api.setRowData') >= 0 ?
-        callback.replace("api.setRowData(data)", "rowData.value = data") :
+        const setRowDataBlock = callback.indexOf('gridApi.setRowData') >= 0 ?
+        callback.replace("gridApi.setRowData(data)", "rowData.value = data") :
         callback;
         
         additionalLines.push(`
@@ -215,7 +215,7 @@ function getPropertyBindings(bindings: any, componentFileNames: string[], import
             }
         });
 
-    if (bindings.data && bindings.data.callback.indexOf('api.setRowData') >= 0) {
+    if (bindings.data && bindings.data.callback.indexOf('gridApi.setRowData') >= 0) {
         if (propertyAttributes.filter(item => item.indexOf(':rowData') >= 0).length === 0) {
             propertyAttributes.push(':rowData="rowData"');
             propertyNames.push('rowData');

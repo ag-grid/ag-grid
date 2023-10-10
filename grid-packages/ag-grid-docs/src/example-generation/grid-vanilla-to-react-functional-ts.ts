@@ -300,7 +300,7 @@ export function vanillaToReactFunctionalTs(bindings: any, componentFilenames: st
         const gridReady = additionalInReady.length > 0 ? `
             const onGridReady = useCallback((params: GridReadyEvent) => {
                 ${additionalInReady.join('\n')
-       .replace(/([\s\(!])api(\W)/g, '$1params.api$2')
+       .replace(/([\s\(!])gridApi(\W)/g, '$1params.api$2')
 
             }
             }, []);` : '';

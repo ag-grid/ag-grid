@@ -168,7 +168,7 @@ export function vanillaToReactFunctional(bindings: any, componentFilenames: stri
 
         const additionalInReady = [];
         if (data) {
-            const setRowDataBlock = data.callback.replace('api.setRowData', 'setRowData');
+            const setRowDataBlock = data.callback.replace('gridApi.setRowData', 'setRowData');
 
             additionalInReady.push(`
                 fetch(${data.url})
@@ -179,7 +179,7 @@ export function vanillaToReactFunctional(bindings: any, componentFilenames: stri
 
         if (onGridReady) {
             const hackedHandler = onGridReady.replace(/^{|}$/g, '')
-                .replace('api.setRowData', 'setRowData');
+                .replace('gridApi.setRowData', 'setRowData');
             additionalInReady.push(hackedHandler);
         }
 
@@ -273,7 +273,7 @@ export function vanillaToReactFunctional(bindings: any, componentFilenames: stri
         const gridReady = additionalInReady.length > 0 ? `
             const onGridReady = useCallback((params) => {
                 ${additionalInReady.join('\n')
-                .replace(/([\s\(!])api(\W)/g, '$1params.api$2')
+                .replace(/([\s\(!])gridApi(\W)/g, '$1params.api$2')
 
             }
             }, []);` : '';

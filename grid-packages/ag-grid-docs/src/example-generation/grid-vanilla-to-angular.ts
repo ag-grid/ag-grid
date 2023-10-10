@@ -19,13 +19,8 @@ function getOnGridReadyCode(readyCode: string, resizeToFit: boolean,
 
     if (data) {
         const { url, callback } = data;
-
-        if (callback.indexOf('api!.setRowData') !== -1) {
-            const setRowDataBlock = callback.replace('api!.setRowData(data)', 'this.rowData = data');
-            additionalLines.push(`this.http.get<${rowDataType}[]>(${url}).subscribe(data => ${setRowDataBlock});`);
-        } else {
-            additionalLines.push(`this.http.get<${rowDataType}[]>(${url}).subscribe(data => ${callback});`);
-        }
+        const setRowDataBlock = callback.replace(/gridApi(!?)\.setRowData\(data\)/, 'this.rowData = data');
+        additionalLines.push(`this.http.get<${rowDataType}[]>(${url}).subscribe(data => ${setRowDataBlock});`);
     }
     const gridReadyEventParam = rowDataType !== 'any' ? `<${rowDataType}>` : ''
     if (hasApi || additionalLines.length > 0) {

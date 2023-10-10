@@ -51,7 +51,7 @@ export function getOnGridReadyCode(bindings: any): string {
     const additionalLines = [];
 
     if (onGridReady) {
-        additionalLines.push(onGridReady.trim().replace(/^\{|\}$/g, ''));
+        additionalLines.push(onGridReady.trim().replace(/^\{|\}$/g, '').replace(/([\s\(!])gridApi(\W)/g, '$1params.api$2'));
     }
 
     if (resizeToFit) {
@@ -61,8 +61,8 @@ export function getOnGridReadyCode(bindings: any): string {
     if (data) {
         const { url, callback } = data;
 
-        const setRowDataBlock = callback.indexOf('api.setRowData') >= 0 ?
-            callback.replace("api.setRowData(data)", "this.rowData = data") :
+        const setRowDataBlock = callback.indexOf('gridApi.setRowData') >= 0 ?
+            callback.replace("gridApi.setRowData(data)", "this.rowData = data") :
             callback;
 
         additionalLines.push(`
@@ -180,7 +180,7 @@ export function getPropertyBindings(bindings: any, componentFileNames: string[],
             }
         });
 
-    if (bindings.data && bindings.data.callback.indexOf('api.setRowData') >= 0) {
+    if (bindings.data && bindings.data.callback.indexOf('gridApi.setRowData') >= 0) {
         if (propertyAttributes.filter(item => item.indexOf(':rowData') >= 0).length === 0) {
             propertyAttributes.push(':rowData="rowData"');
         }
