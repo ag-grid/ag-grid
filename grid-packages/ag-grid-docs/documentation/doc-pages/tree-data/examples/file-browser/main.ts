@@ -11,7 +11,7 @@ import { getData } from "./data";
 
 declare var window: any
 
-let api: GridApi;
+let gridApi: GridApi;
 
 const gridOptions: GridOptions = {
   columnDefs: [
@@ -108,17 +108,17 @@ function addNewGroup() {
       size: 58.9,
     },
   ]
-  api!.applyTransaction({ add: newGroupData })
+  gridApi!.applyTransaction({ add: newGroupData })
 }
 
 function removeSelected() {
-  var selectedNode = api!.getSelectedNodes()[0] // single selection
+  var selectedNode = gridApi!.getSelectedNodes()[0] // single selection
   if (!selectedNode) {
     console.warn('No nodes selected!')
     return
   }
 
-  api!.applyTransaction({ remove: getRowsToRemove(selectedNode) })
+  gridApi!.applyTransaction({ remove: getRowsToRemove(selectedNode) })
 }
 
 function getRowsToRemove(node: IRowNode) {
@@ -133,13 +133,13 @@ function getRowsToRemove(node: IRowNode) {
 }
 
 function moveSelectedNodeToTarget(targetRowId: string) {
-  var selectedNode = api!.getSelectedNodes()[0] // single selection
+  var selectedNode = gridApi!.getSelectedNodes()[0] // single selection
   if (!selectedNode) {
     console.warn('No nodes selected!')
     return
   }
 
-  var targetNode = api!.getRowNode(targetRowId)!
+  var targetNode = gridApi!.getRowNode(targetRowId)!
   var invalidMove =
     selectedNode.key === targetNode.key ||
     isSelectionParentOfTarget(selectedNode, targetNode)
@@ -149,7 +149,7 @@ function moveSelectedNodeToTarget(targetRowId: string) {
   }
 
   var rowsToUpdate = getRowsToUpdate(selectedNode, targetNode.data.filePath)
-  api!.applyTransaction({ update: rowsToUpdate })
+  gridApi!.applyTransaction({ update: rowsToUpdate })
 }
 
 function isSelectionParentOfTarget(selectedNode: IRowNode, targetNode: IRowNode) {
@@ -211,5 +211,5 @@ document.addEventListener('DOMContentLoaded', function () {
   var gridDiv = document.querySelector<HTMLElement>('#myGrid')!
 
   // create the grid passing in the div to use together with the columns & data we want to use
-  api = createGrid(gridDiv, gridOptions);;
+  gridApi = createGrid(gridDiv, gridOptions);;
 })

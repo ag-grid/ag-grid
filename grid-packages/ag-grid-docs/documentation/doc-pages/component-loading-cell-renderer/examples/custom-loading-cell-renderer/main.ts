@@ -20,7 +20,7 @@ const columnDefs: ColDef[] = [
   { field: 'bronze' },
 ]
 
-let api: GridApi<IOlympicData>;
+let gridApi: GridApi<IOlympicData>;
 
 const gridOptions: GridOptions<IOlympicData> = {
   defaultColDef: {
@@ -53,7 +53,7 @@ const gridOptions: GridOptions<IOlympicData> = {
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', () => {
   const gridDiv = document.querySelector<HTMLElement>('#myGrid')!
-  api = createGrid(gridDiv, gridOptions);;
+  gridApi = createGrid(gridDiv, gridOptions);;
 
   fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
     .then(response => response.json())
@@ -66,7 +66,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
       const server: any = getFakeServer(data)
       const datasource: IServerSideDatasource = getServerSideDatasource(server)
-      api!.setServerSideDatasource(datasource)
+      gridApi!.setServerSideDatasource(datasource)
     })
 })
 

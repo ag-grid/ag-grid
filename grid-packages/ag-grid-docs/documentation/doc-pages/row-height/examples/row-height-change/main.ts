@@ -6,7 +6,7 @@ var swimmingHeight: number;
 var groupHeight: number;
 var usaHeight: number;
 
-let api: GridApi<IOlympicData>;
+let gridApi: GridApi<IOlympicData>;
 
 const gridOptions: GridOptions<IOlympicData> = {
   columnDefs: [
@@ -45,28 +45,28 @@ function getRowHeight(params: RowHeightParams<IOlympicData>): number | undefined
 
 function setSwimmingHeight(height: number) {
   swimmingHeight = height
-  api!.resetRowHeights()
+  gridApi!.resetRowHeights()
 }
 
 function setGroupHeight(height: number) {
   groupHeight = height
-  api!.resetRowHeights()
+  gridApi!.resetRowHeights()
 }
 
 function setUsaHeight(height: number) {
   // this is used next time resetRowHeights is called
   usaHeight = height
 
-  api!.forEachNode(function (rowNode) {
+  gridApi!.forEachNode(function (rowNode) {
     if (rowNode.data && rowNode.data.country === 'United States') {
       rowNode.setRowHeight(height)
     }
   })
-  api!.onRowHeightChanged()
+  gridApi!.onRowHeightChanged()
 }
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
   var gridDiv = document.querySelector<HTMLElement>('#myGrid')!
-  api = createGrid(gridDiv, gridOptions);;
+  gridApi = createGrid(gridDiv, gridOptions);;
 })

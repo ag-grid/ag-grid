@@ -9,7 +9,7 @@ import {
 import { getData } from "./data";
 
 
-let api: GridApi;
+let gridApi: GridApi;
 
 
 const gridOptions: GridOptions = {
@@ -38,7 +38,7 @@ let chartModel: ChartModel | undefined;
 let currentChartRef: ChartRef | undefined;
 
 function onFirstDataRendered(params: FirstDataRenderedEvent) {
-  currentChartRef = params.api!.createRangeChart({
+  currentChartRef = params.gridApi!.createRangeChart({
     chartType: 'groupedColumn',
     cellRange: {
       columns: ['country', 'sugar', 'fat', 'weight'],
@@ -52,7 +52,7 @@ function onFirstDataRendered(params: FirstDataRenderedEvent) {
 
 
 function saveChart() {
-  const chartModels = api!.getChartModels() || []
+  const chartModels = gridApi!.getChartModels() || []
   if (chartModels.length > 0) {
     chartModel = chartModels[0]
   }
@@ -67,7 +67,7 @@ function clearChart() {
 
 function restoreChart() {
   if (!chartModel) return
-  currentChartRef = api!.restoreChart(chartModel)!
+  currentChartRef = gridApi!.restoreChart(chartModel)!
 }
 
 function createChartContainer(chartRef: ChartRef) {
@@ -86,5 +86,5 @@ function createChartContainer(chartRef: ChartRef) {
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
   const gridDiv = document.querySelector<HTMLElement>('#myGrid')!
-  api = createGrid(gridDiv, gridOptions);;
+  gridApi = createGrid(gridDiv, gridOptions);;
 })

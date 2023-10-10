@@ -1,17 +1,7 @@
 import {
-  GridApi,
-  createGrid,
-  ChartCreated,
-  ChartDestroyed,
-  ChartRangeSelectionChanged,
-  ColDef,
-  GridApi,
-  GridOptions,
-  ChartOptionsChanged,
-  FirstDataRenderedEvent,
-  CreateRangeChartParams,
+  ChartCreated, ChartRangeSelectionChanged,
+  ColDef, createGrid, CreateRangeChartParams, FirstDataRenderedEvent, GridApi, GridOptions
 } from '@ag-grid-community/core';
-import { AgChart } from 'ag-charts-community';
 
 const columnDefs: ColDef[] = [
   { field: 'Month', width: 150, chartDataType: 'category' },
@@ -19,7 +9,7 @@ const columnDefs: ColDef[] = [
   { field: 'Rainfall (mm)', chartDataType: 'series' },
 ]
 
-let api: GridApi;
+let gridApi: GridApi;
 
 const gridOptions: GridOptions = {
   defaultColDef: {
@@ -62,22 +52,22 @@ function onFirstDataRendered(params: FirstDataRenderedEvent) {
 
 function onChartCreated(event: ChartCreated) {
   console.log('Created chart with ID ' + event.chartId);
-  updateTitle(api!, event.chartId);
+  updateTitle(gridApi!, event.chartId);
 }
 
 function onChartRangeSelectionChanged(event: ChartRangeSelectionChanged) {
   console.log('Changed range selection of chart with ID ' + event.chartId);
-  updateTitle(api!, event.chartId);
+  updateTitle(gridApi!, event.chartId);
 }
 
-function updateTitle(api: GridApi, chartId: string) {
-  const cellRange = api.getCellRanges()![1];
+function updateTitle(gridApi: GridApi, chartId: string) {
+  const cellRange = gridApi.getCellRanges()![1];
   if (!cellRange) return;
   const columnCount = cellRange.columns.length;
   const rowCount = cellRange.endRow!.rowIndex - cellRange.startRow!.rowIndex + 1;
   const subtitle = `Using series data from ${columnCount} column(s) and ${rowCount} row(s)`;
 
-  api!.updateChart({
+  gridApi!.updateChart({
     type: 'rangeChartUpdate',
     chartId: chartId,
     chartThemeOverrides: {
@@ -91,11 +81,11 @@ function updateTitle(api: GridApi, chartId: string) {
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
   var gridDiv = document.querySelector<HTMLElement>('#myGrid')!
-  api = createGrid(gridDiv, gridOptions);;
+  gridApi = createGrid(gridDiv, gridOptions);;
 
   fetch('https://www.ag-grid.com/example-assets/weather-se-england.json')
     .then(response => response.json())
     .then(function (data) {
-      api!.setRowData(data)
+      gridApi!.setRowData(data)
     })
 })

@@ -24,7 +24,7 @@ const columnDefs: ColDef[] = [
     { field: 'current' },
 ];
 
-let api: GridApi;
+let gridApi: GridApi;
 
 const gridOptions: GridOptions = {
   columnDefs,
@@ -99,7 +99,7 @@ function deleteAllHybrid() {
     const transaction = {
       remove: [{ portfolio: 'Hybrid' }],
     };
-    const result = api!.applyServerSideTransaction(transaction);
+    const result = gridApi!.applyServerSideTransaction(transaction);
     logResults(transaction, result);
   }
 }
@@ -118,7 +118,7 @@ function createOneAggressive() {
       route: [],
       add: [{ portfolio: 'Aggressive' }],
     };
-    const result = api!.applyServerSideTransaction(transaction);
+    const result = gridApi!.applyServerSideTransaction(transaction);
     logResults(transaction, result);
   } else {
     // if the group already existed, add rows to it
@@ -126,7 +126,7 @@ function createOneAggressive() {
       route: ['Aggressive'],
       add: [serverResponse.newRecord],
     };
-    const result = api!.applyServerSideTransaction(transaction);
+    const result = gridApi!.applyServerSideTransaction(transaction);
     logResults(transaction, result);
   }
 }
@@ -143,7 +143,7 @@ function updateAggressiveToHybrid() {
     remove: [{ portfolio: 'Aggressive' }],
   };
   // aggressive group no longer exists, so delete the group
-  const result = api!.applyServerSideTransaction(transaction);
+  const result = gridApi!.applyServerSideTransaction(transaction);
   logResults(transaction, result);
 
   if (serverResponse.newGroupCreated) {
@@ -152,7 +152,7 @@ function updateAggressiveToHybrid() {
       route: [],
       add: [{ portfolio: 'Hybrid' }],
     };
-    const r = api!.applyServerSideTransaction(t);
+    const r = gridApi!.applyServerSideTransaction(t);
     logResults(t, r);
   } else {
     // hybrid group already existed, add rows to it
@@ -160,7 +160,7 @@ function updateAggressiveToHybrid() {
       route: ['Hybrid'],
       add: serverResponse.updatedRecords,
     };
-    const r = api!.applyServerSideTransaction(t);
+    const r = gridApi!.applyServerSideTransaction(t);
     logResults(t, r);
   }
 }
@@ -168,5 +168,5 @@ function updateAggressiveToHybrid() {
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
   const gridDiv = document.querySelector<HTMLElement>('#myGrid')!;
-  api = createGrid(gridDiv, gridOptions);;
+  gridApi = createGrid(gridDiv, gridOptions);;
 });

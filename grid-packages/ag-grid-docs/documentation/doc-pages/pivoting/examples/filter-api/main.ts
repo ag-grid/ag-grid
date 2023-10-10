@@ -1,5 +1,5 @@
 import { GridApi, createGrid, GridOptions, ColDef } from '@ag-grid-community/core';
-let api: GridApi<IOlympicData>;
+let gridApi: GridApi<IOlympicData>;
 const gridOptions: GridOptions<IOlympicData> = {
   columnDefs: [
     { field: 'country', rowGroup: true, enableRowGroup: true },
@@ -27,12 +27,12 @@ const gridOptions: GridOptions<IOlympicData> = {
 }
 
 function clearFilter() {
-  api!.setFilterModel(null)
+  gridApi!.setFilterModel(null)
 }
 
 function filterUsRussiaAustralia() {
-  api!.setFilterModel({
-    ...api!.getFilterModel(),
+  gridApi!.setFilterModel({
+    ...gridApi!.getFilterModel(),
     country: {
       type: 'set',
       values: ['United States', 'Russia', 'Australia'],
@@ -41,8 +41,8 @@ function filterUsRussiaAustralia() {
 }
 
 function filterCanadaNorwayChinaZimbabweNetherlands() {
-  api!.setFilterModel({
-    ...api!.getFilterModel(),
+  gridApi!.setFilterModel({
+    ...gridApi!.getFilterModel(),
     country: {
       type: 'set',
       values: ['Canada', 'Norway', 'China', 'Zimbabwe', 'Netherlands'],
@@ -51,8 +51,8 @@ function filterCanadaNorwayChinaZimbabweNetherlands() {
 }
 
 function filter20042006() {
-  api!.setFilterModel({
-    ...api!.getFilterModel(),
+  gridApi!.setFilterModel({
+    ...gridApi!.getFilterModel(),
     year: {
       type: 'set',
       values: ['2004', '2006'],
@@ -61,8 +61,8 @@ function filter20042006() {
 }
 
 function filter200820102012() {
-  api!.setFilterModel({
-    ...api!.getFilterModel(),
+  gridApi!.setFilterModel({
+    ...gridApi!.getFilterModel(),
     year: {
       type: 'set',
       values: ['2008', '2010', '2012'],
@@ -71,15 +71,15 @@ function filter200820102012() {
 }
 
 function filterClearYears() {
-  api!.setFilterModel({
-    ...api!.getFilterModel(),
+  gridApi!.setFilterModel({
+    ...gridApi!.getFilterModel(),
     year: undefined,
   })
 }
 
 function filterSwimmingHockey() {
-  api!.setFilterModel({
-    ...api!.getFilterModel(),
+  gridApi!.setFilterModel({
+    ...gridApi!.getFilterModel(),
     sport: {
       type: 'set',
       values: ['Swimming', 'Hockey'],
@@ -88,8 +88,8 @@ function filterSwimmingHockey() {
 }
 
 function filterHockeyIceHockey() {
-  api!.setFilterModel({
-    ...api!.getFilterModel(),
+  gridApi!.setFilterModel({
+    ...gridApi!.getFilterModel(),
     sport: {
       type: 'set',
       values: ['Hockey', 'Ice Hockey'],
@@ -98,7 +98,7 @@ function filterHockeyIceHockey() {
 }
 
 function filterEveryYearGold() {
-  const goldPivotCols = api!.getPivotResultColumns()!.filter(col => col.getColDef().pivotValueColumn!.getColId() === 'gold');
+  const goldPivotCols = gridApi!.getPivotResultColumns()!.filter(col => col.getColDef().pivotValueColumn!.getColId() === 'gold');
   if (goldPivotCols) {
     const newOpts = goldPivotCols.reduce((acc, col) => {
       acc[col.getId()] = {
@@ -107,16 +107,16 @@ function filterEveryYearGold() {
         type: 'greaterThan',
       }
       return acc;
-    }, api!.getFilterModel() || {})
-    api!.setFilterModel(newOpts)
+    }, gridApi!.getFilterModel() || {})
+    gridApi!.setFilterModel(newOpts)
   }
 }
 
 function filter2000Silver() {
-  const targetCol = api!.getPivotResultColumn(['2000'], 'silver');
+  const targetCol = gridApi!.getPivotResultColumn(['2000'], 'silver');
   if (targetCol) {
-    api!.setFilterModel({
-      ...api!.getFilterModel(),
+    gridApi!.setFilterModel({
+      ...gridApi!.getFilterModel(),
       [targetCol.getId()]: {
         filterType: 'number',
         type: 'notBlank'
@@ -128,9 +128,9 @@ function filter2000Silver() {
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
   const gridDiv = document.querySelector<HTMLElement>('#myGrid')!
-  api = createGrid(gridDiv, gridOptions);;
+  gridApi = createGrid(gridDiv, gridOptions);;
 
   fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
     .then(response => response.json())
-    .then((data: IOlympicData[]) => api!.setRowData(data))
+    .then((data: IOlympicData[]) => gridApi!.setRowData(data))
 }) 

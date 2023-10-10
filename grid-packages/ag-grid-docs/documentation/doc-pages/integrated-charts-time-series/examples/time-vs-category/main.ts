@@ -21,7 +21,7 @@ function formatDate(date: Date | number) {
   return Intl.DateTimeFormat('en-GB', { day: '2-digit', month: 'short', year: undefined }).format(new Date(date))
 }
 
-let api: GridApi;
+let gridApi: GridApi;
 
 const gridOptions: GridOptions = {
   columnDefs: getColumnDefs(),
@@ -120,7 +120,7 @@ function toggleAxis() {
     }
   })
 
-  api!.setColumnDefs(columnDefs)
+  gridApi!.setColumnDefs(columnDefs)
 }
 
 
@@ -140,5 +140,5 @@ function getRowData() {
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
   var gridDiv = document.querySelector<HTMLElement>('#myGrid')!
-  api = createGrid(gridDiv, gridOptions);;
+  gridApi = createGrid(gridDiv, gridOptions);;
 })

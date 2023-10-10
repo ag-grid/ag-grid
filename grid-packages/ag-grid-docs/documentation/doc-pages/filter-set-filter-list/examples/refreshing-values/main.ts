@@ -31,7 +31,7 @@ var callbackFilterParams: ISetFilterParams = {
   refreshValuesOnOpen: true,
 }
 
-let api: GridApi;
+let gridApi: GridApi;
 
 const gridOptions: GridOptions = {
   columnDefs: [
@@ -71,7 +71,7 @@ function useList1() {
     valuesArray.push(value)
   })
 
-  var filter = api!.getFilterInstance<ISetFilter>('array')!;
+  var filter = gridApi!.getFilterInstance<ISetFilter>('array')!;
   filter.refreshFilterValues()
 
   valuesCallbackList = list1
@@ -84,7 +84,7 @@ function useList2() {
     valuesArray.push(value)
   })
 
-  var filter = api!.getFilterInstance<ISetFilter>('array')!;
+  var filter = gridApi!.getFilterInstance<ISetFilter>('array')!;
   filter.refreshFilterValues()
 
   valuesCallbackList = list2
@@ -93,5 +93,5 @@ function useList2() {
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
   var gridDiv = document.querySelector<HTMLElement>('#myGrid')!
-  api = createGrid(gridDiv, gridOptions);;
+  gridApi = createGrid(gridDiv, gridOptions);;
 })

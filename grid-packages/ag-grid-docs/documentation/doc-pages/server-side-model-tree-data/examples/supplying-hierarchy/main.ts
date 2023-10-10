@@ -15,7 +15,7 @@ const columnDefs: ColDef[] = [
   { field: 'employmentType' },
 ]
 
-let api: GridApi;
+let gridApi: GridApi;
 
 const gridOptions: GridOptions = {
   defaultColDef: {
@@ -54,13 +54,13 @@ const gridOptions: GridOptions = {
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
   var gridDiv = document.querySelector<HTMLElement>('#myGrid')!
-  api = createGrid(gridDiv, gridOptions);;
+  gridApi = createGrid(gridDiv, gridOptions);;
 
   fetch('https://www.ag-grid.com/example-assets/tree-data.json')
     .then(response => response.json())
     .then(function (data) {
       var datasource = createServerSideDatasource(data)
-      api!.setServerSideDatasource(datasource)
+      gridApi!.setServerSideDatasource(datasource)
 
       function createServerSideDatasource(data: any) {
         const dataSource: IServerSideDatasource = {
@@ -83,7 +83,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
               const recursivelyPopulateHierarchy = (route: string[], node: any) => {
                 if (node.underlings) {
-                  api!.applyServerSideRowData({
+                  gridApi!.applyServerSideRowData({
                     route,
                     successParams: {
                       rowData: node.underlings,

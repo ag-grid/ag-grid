@@ -49,7 +49,7 @@ const columnDefs: ColDef[] = [
   { headerName: 'Jun', field: 'jun' },
 ]
 
-let api: GridApi;
+let gridApi: GridApi;
 
 const gridOptions: GridOptions = {
   getRowHeight: (params: RowHeightParams) => {
@@ -81,5 +81,5 @@ function isQuarterRow(params: ColSpanParams) {
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
   var gridDiv = document.querySelector<HTMLElement>('#myGrid')!
-  api = createGrid(gridDiv, gridOptions);;
+  gridApi = createGrid(gridDiv, gridOptions);;
 })

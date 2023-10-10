@@ -52,7 +52,7 @@ const columnDefs: ColDef[] = [
   { field: 'bronze', aggFunc: 'sum', filter: false, enableValue: true },
 ]
 
-let api: GridApi<IOlympicData>;
+let gridApi: GridApi<IOlympicData>;
 
 const gridOptions: GridOptions<IOlympicData> = {
   defaultColDef: {
@@ -88,7 +88,7 @@ function onFirstDataRendered(params: FirstDataRenderedEvent) {
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
   const gridDiv = document.querySelector<HTMLElement>('#myGrid')!;
-  api = createGrid(gridDiv, gridOptions);;
+  gridApi = createGrid(gridDiv, gridOptions);;
 
   // do http request to get our sample data - not using any framework to keep the example self contained.
   // you will probably use a framework like JQuery, Angular or something else to do your HTTP calls.
@@ -97,7 +97,7 @@ document.addEventListener('DOMContentLoaded', function () {
     .then(function (data) {
       const fakeServer = createFakeServer(data);
       const datasource = createServerSideDatasource(fakeServer, gridOptions);
-      api!.setServerSideDatasource(datasource)
+      gridApi!.setServerSideDatasource(datasource)
     })
 })
 

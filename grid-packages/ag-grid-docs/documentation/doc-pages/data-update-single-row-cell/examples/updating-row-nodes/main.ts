@@ -10,7 +10,7 @@ const rowData = [
   { id: 'gg', make: 'Horse', model: 'Outside', price: 99000 },
 ]
 
-let api: GridApi;
+let gridApi: GridApi;
 
 const gridOptions: GridOptions = {
   columnDefs: [
@@ -33,15 +33,15 @@ const gridOptions: GridOptions = {
 }
 
 function updateSort() {
-  api!.refreshClientSideRowModel('sort')
+  gridApi!.refreshClientSideRowModel('sort')
 }
 
 function updateFilter() {
-  api!.refreshClientSideRowModel('filter')
+  gridApi!.refreshClientSideRowModel('filter')
 }
 
 function setPriceOnToyota() {
-  const rowNode = api!.getRowNode('aa')!
+  const rowNode = gridApi!.getRowNode('aa')!
   const newPrice = Math.floor(Math.random() * 100000)
   rowNode.setDataValue('price', newPrice)
 }
@@ -58,13 +58,13 @@ function generateNewFordData() {
 }
 
 function setDataOnFord() {
-  const rowNode = api!.getRowNode('bb')!;
+  const rowNode = gridApi!.getRowNode('bb')!;
   const newData = generateNewFordData();
   rowNode.setData(newData);
 }
 
 function updateDataOnFord() {
-  const rowNode = api!.getRowNode('bb')!;
+  const rowNode = gridApi!.getRowNode('bb')!;
   const newData = generateNewFordData();
   rowNode.updateData(newData);
 }
@@ -73,5 +73,5 @@ function updateDataOnFord() {
 // AG Grid will not find the div in the document.
 document.addEventListener('DOMContentLoaded', function () {
   const eGridDiv = document.querySelector<HTMLElement>('#myGrid')!
-  api = createGrid(eGridDiv, gridOptions);;
+  gridApi = createGrid(eGridDiv, gridOptions);;
 })

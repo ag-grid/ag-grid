@@ -5,7 +5,7 @@ import { createGrid, GridApi, GridOptions, IRowNode, RefreshCellsParams } from '
 var data: any[] = []
 var topRowData: any[] = []
 var bottomRowData: any[] = []
-let api: GridApi;
+let gridApi: GridApi;
 const gridOptions: GridOptions = {
   columnDefs: [
     { field: 'a', suppressCellFlash: true },
@@ -63,7 +63,7 @@ function scrambleAndRefreshAll() {
     force: isForceRefreshSelected(),
     suppressFlash: isSuppressFlashSelected(),
   }
-  api!.refreshCells(params)
+  gridApi!.refreshCells(params)
 }
 
 function scrambleAndRefreshLeftToRight() {
@@ -76,7 +76,7 @@ function scrambleAndRefreshLeftToRight() {
         suppressFlash: isSuppressFlashSelected(),
         columns: [col],
       }
-      callRefreshAfterMillis(params, millis, api)
+      callRefreshAfterMillis(params, millis, gridApi)
     })
 }
 
@@ -87,22 +87,22 @@ function scrambleAndRefreshTopToBottom() {
   var i
   var rowNode
 
-  for (i = 0; i < api.getPinnedTopRowCount(); i++) {
-    rowNode = api.getPinnedTopRow(i)!
-    refreshRow(rowNode, api)
+  for (i = 0; i < gridApi.getPinnedTopRowCount(); i++) {
+    rowNode = gridApi.getPinnedTopRow(i)!
+    refreshRow(rowNode, gridApi)
   }
 
-  for (i = 0; i < api.getDisplayedRowCount(); i++) {
-    rowNode = api.getDisplayedRowAtIndex(i)!
-    refreshRow(rowNode, api)
+  for (i = 0; i < gridApi.getDisplayedRowCount(); i++) {
+    rowNode = gridApi.getDisplayedRowAtIndex(i)!
+    refreshRow(rowNode, gridApi)
   }
 
-  for (i = 0; i < api.getPinnedBottomRowCount(); i++) {
-    rowNode = api.getPinnedBottomRow(i)!
-    refreshRow(rowNode, api)
+  for (i = 0; i < gridApi.getPinnedBottomRowCount(); i++) {
+    rowNode = gridApi.getPinnedBottomRow(i)!
+    refreshRow(rowNode, gridApi)
   }
 
-  function refreshRow(rowNode: IRowNode, api: GridApi) {
+  function refreshRow(rowNode: IRowNode, gridApi: GridApi) {
     var millis = frame++ * 100
     var rowNodes = [rowNode] // params needs an array
     var params: RefreshCellsParams = {
@@ -110,7 +110,7 @@ function scrambleAndRefreshTopToBottom() {
       suppressFlash: isSuppressFlashSelected(),
       rowNodes: rowNodes,
     }
-    callRefreshAfterMillis(params, millis, api)
+    callRefreshAfterMillis(params, millis, gridApi)
   }
 }
 
@@ -139,5 +139,5 @@ function scrambleItem(item: any) {
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
   var gridDiv = document.querySelector<HTMLElement>('#myGrid')!
-  api = createGrid(gridDiv, gridOptions)
+  gridApi = createGrid(gridDiv, gridOptions)
 })

@@ -26,7 +26,7 @@ const rowData: IRow[] = [
   { value: 'Sad', type: 'mood' },
 ]
 
-let api: GridApi<IRow>;
+let gridApi: GridApi<IRow>;
 
 const gridOptions: GridOptions<IRow> = {
   columnDefs: [
@@ -74,5 +74,5 @@ const gridOptions: GridOptions<IRow> = {
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
   const gridDiv = document.querySelector<HTMLElement>('#myGrid')!
-  api = createGrid(gridDiv, gridOptions);;
+  gridApi = createGrid(gridDiv, gridOptions);;
 })

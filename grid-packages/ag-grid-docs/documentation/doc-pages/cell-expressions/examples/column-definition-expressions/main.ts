@@ -42,7 +42,7 @@ const columnDefs: ColDef[] = [
   { headerName: 'A + B', valueGetter: 'data.a + data.b', maxWidth: 120 },
 ]
 
-let api: GridApi;
+let gridApi: GridApi;
 
 const gridOptions: GridOptions = {
   columnDefs: columnDefs,
@@ -64,6 +64,6 @@ function onCellValueChanged(event: CellValueChangedEvent) {
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
   const gridDiv = document.querySelector<HTMLElement>('#myGrid')!
-  api = createGrid(gridDiv, gridOptions);;
-  api!.sizeColumnsToFit()
+  gridApi = createGrid(gridDiv, gridOptions);;
+  gridApi!.sizeColumnsToFit()
 })

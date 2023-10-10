@@ -89,7 +89,7 @@ const columnDefs: ColDef[] = [
   },
 ]
 
-let api: GridApi;
+let gridApi: GridApi;
 
 const gridOptions: GridOptions = {
   columnDefs: columnDefs,
@@ -120,7 +120,7 @@ const createImageSpan = (imageMultiplier: number, image: string) => {
  */
 function frostierYear(extraDaysFrost: number) {
   // iterate over the rows and make each "days of air frost"
-  api!.forEachNode(rowNode => {
+  gridApi!.forEachNode(rowNode => {
     rowNode.setDataValue(
       'Days of air frost (days)',
       rowNode.data['Days of air frost (days)'] + extraDaysFrost
@@ -131,11 +131,11 @@ function frostierYear(extraDaysFrost: number) {
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', () => {
   const gridDiv = document.querySelector<HTMLElement>('#myGrid')!
-  api = createGrid(gridDiv, gridOptions);;
+  gridApi = createGrid(gridDiv, gridOptions);;
 
   fetch('https://www.ag-grid.com/example-assets/weather-se-england.json')
     .then(response => response.json())
     .then(data => {
-      api!.setRowData(data)
+      gridApi!.setRowData(data)
     })
 })

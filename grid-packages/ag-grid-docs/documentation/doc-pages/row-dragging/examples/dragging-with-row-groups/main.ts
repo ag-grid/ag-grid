@@ -6,7 +6,7 @@ var rowDrag = function (params: RowDragCallbackParams) {
   return !params.node.group
 }
 
-let api: GridApi;
+let gridApi: GridApi;
 
 const gridOptions: GridOptions = {
   columnDefs: [
@@ -28,7 +28,7 @@ const gridOptions: GridOptions = {
   groupDefaultExpanded: 1,
   onRowDragMove: onRowDragMove,
   onGridReady: (params) => {
-    api!.setRowData(getData())
+    gridApi!.setRowData(getData())
   },
 }
 
@@ -52,15 +52,15 @@ function onRowDragMove(event: RowDragEndEvent) {
   if (needToChangeParent) {
     var movingData = movingNode.data
     movingData.country = groupCountry
-    api!.applyTransaction({
+    gridApi!.applyTransaction({
       update: [movingData],
     })
-    api!.clearFocusedCell()
+    gridApi!.clearFocusedCell()
   }
 }
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
   var gridDiv = document.querySelector<HTMLElement>('#myGrid')!
-  api = createGrid(gridDiv, gridOptions);;
+  gridApi = createGrid(gridDiv, gridOptions);;
 })

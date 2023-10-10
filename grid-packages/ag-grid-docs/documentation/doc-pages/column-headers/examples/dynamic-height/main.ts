@@ -61,7 +61,7 @@ const columnDefs: ColGroupDef[] = [
   },
 ]
 
-let api: GridApi<IOlympicData>;
+let gridApi: GridApi<IOlympicData>;
 
 const gridOptions: GridOptions<IOlympicData> = {
   defaultColDef: {
@@ -81,48 +81,48 @@ function setIdText(id: string, value: string | number | undefined) {
 function setPivotOn() {
   document.querySelector('#requiresPivot')!.className = ''
   document.querySelector('#requiresNotPivot')!.className = 'hidden'
-  api!.setPivotMode(true)
+  gridApi!.setPivotMode(true)
   setIdText('pivot', 'on')
 }
 
 function setPivotOff() {
   document.querySelector('#requiresPivot')!.className = 'hidden'
   document.querySelector('#requiresNotPivot')!.className = ''
-  api!.setPivotMode(false)
+  gridApi!.setPivotMode(false)
   setIdText('pivot', 'off')
 }
 
 function setHeaderHeight(value?: number) {
-  api!.setHeaderHeight(value)
+  gridApi!.setHeaderHeight(value)
   setIdText('headerHeight', value)
 }
 
 function setGroupHeaderHeight(value?: number) {
-  api!.setGroupHeaderHeight(value)
+  gridApi!.setGroupHeaderHeight(value)
   setIdText('groupHeaderHeight', value)
 }
 
 function setFloatingFiltersHeight(value?: number) {
-  api!.setFloatingFiltersHeight(value)
+  gridApi!.setFloatingFiltersHeight(value)
   setIdText('floatingFiltersHeight', value)
 }
 
 function setPivotGroupHeaderHeight(value?: number) {
-  api!.setPivotGroupHeaderHeight(value)
+  gridApi!.setPivotGroupHeaderHeight(value)
   setIdText('pivotGroupHeaderHeight', value)
 }
 
 function setPivotHeaderHeight(value?: number) {
-  api!.setPivotHeaderHeight(value)
+  gridApi!.setPivotHeaderHeight(value)
   setIdText('pivotHeaderHeight', value)
 }
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', () => {
   const gridDiv = document.querySelector<HTMLElement>('#myGrid')!
-  api = createGrid(gridDiv, gridOptions);;
+  gridApi = createGrid(gridDiv, gridOptions);;
 
   fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
     .then(response => response.json())
-    .then((data: IOlympicData[]) => api!.setRowData(data))
+    .then((data: IOlympicData[]) => gridApi!.setRowData(data))
 })

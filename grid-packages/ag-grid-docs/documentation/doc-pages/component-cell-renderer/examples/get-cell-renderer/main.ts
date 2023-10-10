@@ -11,7 +11,7 @@ const columnDefs: ColDef[] = [
   { field: 'total', width: 100 },
 ]
 
-let api: GridApi<IOlympicData>;
+let gridApi: GridApi<IOlympicData>;
 
 const gridOptions: GridOptions<IOlympicData> = {
   columnDefs: columnDefs,
@@ -29,7 +29,7 @@ function onCallGold() {
   console.log('=========> calling all gold')
   // pass in list of columns, here it's gold only
   const params = { columns: ['gold'] }
-  const instances = api!.getCellRendererInstances(params) as any[]
+  const instances = gridApi!.getCellRendererInstances(params) as any[]
   instances.forEach(instance => {
     instance.medalUserFunction()
   })
@@ -38,10 +38,10 @@ function onCallGold() {
 function onFirstRowGold() {
   console.log('=========> calling gold row one')
   // pass in one column and one row to identify one cell
-  const firstRowNode = api!.getDisplayedRowAtIndex(0)!
+  const firstRowNode = gridApi!.getDisplayedRowAtIndex(0)!
   const params = { columns: ['gold'], rowNodes: [firstRowNode] }
 
-  const instances = api!.getCellRendererInstances(params) as any[]
+  const instances = gridApi!.getCellRendererInstances(params) as any[]
   instances.forEach(instance => {
     instance.medalUserFunction()
   })
@@ -50,7 +50,7 @@ function onFirstRowGold() {
 function onCallAllCells() {
   console.log('=========> calling everything')
   // no params, goes through all rows and columns where cell renderer exists
-  const instances = api!.getCellRendererInstances() as any[]
+  const instances = gridApi!.getCellRendererInstances() as any[]
   instances.forEach(instance => {
     instance.medalUserFunction()
   })
@@ -59,11 +59,11 @@ function onCallAllCells() {
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', () => {
   const gridDiv = document.querySelector<HTMLElement>('#myGrid')!
-  api = createGrid(gridDiv, gridOptions);;
+  gridApi = createGrid(gridDiv, gridOptions);;
 
   fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
     .then(response => response.json())
     .then(data => {
-      api!.setRowData(data)
+      gridApi!.setRowData(data)
     })
 })

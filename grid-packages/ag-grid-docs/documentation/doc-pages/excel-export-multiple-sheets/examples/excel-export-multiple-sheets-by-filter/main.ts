@@ -11,7 +11,7 @@ const columnDefs: ColDef[] = [
   { field: 'silver' },
 ]
 
-let api: GridApi<IOlympicData>;
+let gridApi: GridApi<IOlympicData>;
 
 const gridOptions: GridOptions<IOlympicData> = {
   defaultColDef: {
@@ -28,7 +28,7 @@ const gridOptions: GridOptions<IOlympicData> = {
 function onBtExport() {
   var sports: Record<string, boolean> = {}
 
-  api!.forEachNode(function (node) {
+  gridApi!.forEachNode(function (node) {
     if (!sports[node.data!.sport]) {
       sports[node.data!.sport] = true
     }
@@ -36,17 +36,17 @@ function onBtExport() {
 
   var spreadsheets = []
 
-  var sportFilterInstance = api!.getFilterInstance('sport')!
+  var sportFilterInstance = gridApi!.getFilterInstance('sport')!
 
   for (var sport in sports) {
     sportFilterInstance.setModel({ values: [sport] })
-    api!.onFilterChanged()
+    gridApi!.onFilterChanged()
 
     if (sportFilterInstance.getModel() == null) {
       throw new Error('Example error: Filter not applied');
     }
 
-    const sheet = api!.getSheetDataForExcel({
+    const sheet = gridApi!.getSheetDataForExcel({
       sheetName: sport,
     });
     if (sheet) {
@@ -55,9 +55,9 @@ function onBtExport() {
   }
 
   sportFilterInstance.setModel(null)
-  api!.onFilterChanged()
+  gridApi!.onFilterChanged()
 
-  api!.exportMultipleSheetsAsExcel({
+  gridApi!.exportMultipleSheetsAsExcel({
     data: spreadsheets,
     fileName: 'ag-grid.xlsx',
   })
@@ -68,9 +68,9 @@ function onBtExport() {
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
   var gridDiv = document.querySelector<HTMLElement>('#myGrid')!
-  api = createGrid(gridDiv, gridOptions);;
+  gridApi = createGrid(gridDiv, gridOptions);;
 
   fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
     .then(response => response.json())
-    .then((data: IOlympicData[]) => api!.setRowData(data))
+    .then((data: IOlympicData[]) => gridApi!.setRowData(data))
 })

@@ -1,12 +1,6 @@
 import {
-  GridApi,
-  createGrid,
-  ColDef,
-  GridApi,
-  GridOptions,
-  ValueFormatterParams,
-  GetRowIdParams,
-  AsyncTransactionsFlushed,
+  AsyncTransactionsFlushed, ColDef, createGrid, GetRowIdParams, GridApi, GridOptions,
+  ValueFormatterParams
 } from '@ag-grid-community/core';
 import { getData, globalRowData } from "./data";
 
@@ -153,7 +147,7 @@ function numberCellFormatter(params: ValueFormatterParams) {
     .replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,');
 }
 
-let api: GridApi;
+let gridApi: GridApi;
 
 const gridOptions: GridOptions = {
   columnDefs: columnDefs,
@@ -176,7 +170,7 @@ const gridOptions: GridOptions = {
   onGridReady: (params) => {
     getData()
     params.api.setRowData(globalRowData)
-    startFeed(params.api)
+    startFeed(params.gridApi)
   },
   onAsyncTransactionsFlushed: (e: AsyncTransactionsFlushed) => {
     console.log(
@@ -188,10 +182,10 @@ const gridOptions: GridOptions = {
 }
 
 function onFlushTransactions() {
-  api!.flushAsyncTransactions()
+  gridApi!.flushAsyncTransactions()
 }
 
-function startFeed(api: GridApi) {
+function startFeed(gridApi: GridApi) {
   var count = 1
 
   setInterval(function () {
@@ -216,7 +210,7 @@ function startFeed(api: GridApi) {
     var resultCallback = function () {
       console.log('transactionApplied() - ' + thisCount)
     }
-    api.applyTransactionAsync({ update: newItems }, resultCallback)
+    gridApi.applyTransactionAsync({ update: newItems }, resultCallback)
     console.log('applyTransactionAsync() - ' + thisCount)
   }, 500)
 }
@@ -237,5 +231,5 @@ function copyObject(object: any) {
 // after page is loaded, create the grid.
 document.addEventListener('DOMContentLoaded', function () {
   var eGridDiv = document.querySelector<HTMLElement>('#myGrid')!
-  api = createGrid(eGridDiv, gridOptions);;
+  gridApi = createGrid(eGridDiv, gridOptions);;
 })

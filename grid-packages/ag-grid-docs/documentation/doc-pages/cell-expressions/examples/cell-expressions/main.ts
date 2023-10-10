@@ -71,18 +71,18 @@ gridOptionsLeft.context.sum = function (field: keyof RightData) {
 // tell Left grid to refresh when number changes
 function onNewNumber(value: string) {
   gridOptionsLeft.context.theNumber = new Number(value)
-  gridOptionsLeft.api!.refreshCells()
+  gridOptionsLeft.gridApi!.refreshCells()
 }
 
 // we want to tell the Left grid to refresh when the Right grid values change
 function cellValueChanged() {
-  gridOptionsLeft.api!.refreshCells()
+  gridOptionsLeft.gridApi!.refreshCells()
 }
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
   var gridDivLeft = document.querySelector<HTMLElement>('#myGridLeft')!
-  api = createGrid(gridDivLeft, gridOptionsLeft);;
+  gridApi = createGrid(gridDivLeft, gridOptionsLeft);;
   var gridDivRight = document.querySelector<HTMLElement>('#myGridRight')!
-  api = createGrid(gridDivRight, gridOptionsRight);;
+  gridApi = createGrid(gridDivRight, gridOptionsRight);;
 })

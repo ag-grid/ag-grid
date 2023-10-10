@@ -11,7 +11,7 @@ const columnDefs: ColDef[] = [
     },
 ]
 
-let api: GridApi;
+let gridApi: GridApi;
 
 const gridOptions: GridOptions = {
     defaultColDef: {
@@ -27,7 +27,7 @@ const gridOptions: GridOptions = {
 }
 
 function onClicked() {
-    api!.getFilterInstance<PartialMatchFilter>('name', function (instance) {
+    gridApi!.getFilterInstance<PartialMatchFilter>('name', function (instance) {
         instance!.componentMethod('Hello World!');
     })
 }
@@ -35,6 +35,6 @@ function onClicked() {
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
     var gridDiv = document.querySelector<HTMLElement>('#myGrid')!
-    api = createGrid(gridDiv, gridOptions);;
-    api!.sizeColumnsToFit()
+    gridApi = createGrid(gridDiv, gridOptions);;
+    gridApi!.sizeColumnsToFit()
 })

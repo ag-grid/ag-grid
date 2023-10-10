@@ -7,7 +7,7 @@ import {
   GetRowIdParams,
 } from '@ag-grid-community/core';
 
-let api: GridApi;
+let gridApi: GridApi;
 
 const gridOptions: GridOptions = {
   masterDetail: true,
@@ -55,14 +55,14 @@ function onFirstDataRendered(params: FirstDataRenderedEvent) {
 }
 
 function onBtClearMilaCalls() {
-  var milaSmithRowNode = api!.getRowNode('177001')!
+  var milaSmithRowNode = gridApi!.getRowNode('177001')!
   var milaSmithData = milaSmithRowNode.data
   milaSmithData.callRecords = []
-  api!.applyTransaction({ update: [milaSmithData] })
+  gridApi!.applyTransaction({ update: [milaSmithData] })
 }
 
 function onBtSetMilaCalls() {
-  var milaSmithRowNode = api!.getRowNode('177001')!
+  var milaSmithRowNode = gridApi!.getRowNode('177001')!
   var milaSmithData = milaSmithRowNode.data
   milaSmithData.callRecords = [
     {
@@ -82,19 +82,19 @@ function onBtSetMilaCalls() {
       number: '(02) 32367069',
     },
   ]
-  api!.applyTransaction({ update: [milaSmithData] })
+  gridApi!.applyTransaction({ update: [milaSmithData] })
 }
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
   var gridDiv = document.querySelector<HTMLElement>('#myGrid')!
-  api = createGrid(gridDiv, gridOptions);;
+  gridApi = createGrid(gridDiv, gridOptions);;
 
   fetch(
     'https://www.ag-grid.com/example-assets/master-detail-dynamic-data.json'
   )
     .then(response => response.json())
     .then(function (data) {
-      api!.setRowData(data)
+      gridApi!.setRowData(data)
     })
 })

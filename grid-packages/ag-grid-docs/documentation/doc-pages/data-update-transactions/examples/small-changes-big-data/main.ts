@@ -68,10 +68,10 @@ function getMyFilter(): IFilterType {
     doesFilterPass(params: IDoesFilterPassParams) {
       filterCallCount++
 
-      const { api, colDef, column, context } = this.filterParams;
+      const { gridApi, colDef, column, context } = this.filterParams;
       const { node } = params;
       const value = this.filterParams.valueGetter({
-        api,
+        gridApi,
         colDef,
         column,
         context,

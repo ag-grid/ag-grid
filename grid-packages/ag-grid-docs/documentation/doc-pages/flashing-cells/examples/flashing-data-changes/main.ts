@@ -8,7 +8,7 @@ function formatNumber(number: number) {
     .replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,');
 }
 
-let api: GridApi;
+let gridApi: GridApi;
 
 const gridOptions: GridOptions = {
   columnDefs: [
@@ -32,11 +32,11 @@ const gridOptions: GridOptions = {
 }
 
 function onUpdateSomeValues() {
-  var rowCount = api!.getDisplayedRowCount()
+  var rowCount = gridApi!.getDisplayedRowCount()
   // pick 20 cells at random to update
   for (var i = 0; i < 20; i++) {
     var row = Math.floor(Math.random() * rowCount)
-    var rowNode = api!.getDisplayedRowAtIndex(row)!
+    var rowNode = gridApi!.getDisplayedRowAtIndex(row)!
     var col = ['a', 'b', 'c', 'd', 'e', 'f'][i % 6]
     rowNode.setDataValue(col, Math.floor(Math.random() * 10000))
   }
@@ -44,28 +44,28 @@ function onUpdateSomeValues() {
 
 function onFlashOneCell() {
   // pick fourth row at random
-  var rowNode = api!.getDisplayedRowAtIndex(4)!
+  var rowNode = gridApi!.getDisplayedRowAtIndex(4)!
   // pick 'c' column
-  api!.flashCells({ rowNodes: [rowNode], columns: ['c'] })
+  gridApi!.flashCells({ rowNodes: [rowNode], columns: ['c'] })
 }
 
 function onFlashTwoColumns() {
   // flash whole column, so leave row selection out
-  api!.flashCells({ columns: ['c', 'd'] })
+  gridApi!.flashCells({ columns: ['c', 'd'] })
 }
 
 function onFlashTwoRows() {
   // pick fourth and fifth row at random
-  var rowNode1 = api!.getDisplayedRowAtIndex(4)!
-  var rowNode2 = api!.getDisplayedRowAtIndex(5)!
+  var rowNode1 = gridApi!.getDisplayedRowAtIndex(4)!
+  var rowNode2 = gridApi!.getDisplayedRowAtIndex(5)!
   // flash whole row, so leave column selection out
-  api!.flashCells({ rowNodes: [rowNode1, rowNode2] })
+  gridApi!.flashCells({ rowNodes: [rowNode1, rowNode2] })
 }
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
   var gridDiv = document.querySelector<HTMLElement>('#myGrid')!
-  api = createGrid(gridDiv, gridOptions);;
+  gridApi = createGrid(gridDiv, gridOptions);;
 })
 
 function createRowData() {

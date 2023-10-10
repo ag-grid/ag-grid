@@ -2,7 +2,6 @@ import {
   GridApi,
   createGrid,
   ColDef,
-  GridApi,
   GridOptions,
   IServerSideDatasource,
   IServerSideGetRowsParams,
@@ -27,7 +26,7 @@ const columnDefs: ColDef[] = [
   { field: 'startDate' },
 ];
 
-let api: GridApi;
+let gridApi: GridApi;
 
 const gridOptions: GridOptions = {
   defaultColDef: {
@@ -65,7 +64,7 @@ const gridOptions: GridOptions = {
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
   var gridDiv = document.querySelector<HTMLElement>('#myGrid')!
-  api = createGrid(gridDiv, gridOptions);;
+  gridApi = createGrid(gridDiv, gridOptions);;
 
   fetch('https://www.ag-grid.com/example-assets/tree-data.json')
     .then(response => response.json())
@@ -80,9 +79,9 @@ document.addEventListener('DOMContentLoaded', function () {
         },
         ...data,
       ];
-      var fakeServer = createFakeServer(adjustedData, api!)
+      var fakeServer = createFakeServer(adjustedData, gridApi!)
       var datasource = createServerSideDatasource(fakeServer)
-      api!.setServerSideDatasource(datasource)
+      gridApi!.setServerSideDatasource(datasource)
     })
 })
 

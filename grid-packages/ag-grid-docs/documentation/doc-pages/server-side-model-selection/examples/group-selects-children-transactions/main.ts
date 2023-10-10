@@ -21,7 +21,7 @@ const columnDefs: ColDef[] = [
     { field: 'current' },
 ];
 
-let api: GridApi;
+let gridApi: GridApi;
 
 const gridOptions: GridOptions = {
   columnDefs,
@@ -103,7 +103,7 @@ function createOneAggressive() {
       route: [],
       add: [{ portfolio: 'Aggressive' }],
     };
-    const result = api!.applyServerSideTransaction(transaction);
+    const result = gridApi!.applyServerSideTransaction(transaction);
     logResults(transaction, result);
   } else {
     // if the group already existed, add rows to it
@@ -111,7 +111,7 @@ function createOneAggressive() {
       route: ['Aggressive'],
       add: [serverResponse.newRecord],
     };
-    const result = api!.applyServerSideTransaction(transaction);
+    const result = gridApi!.applyServerSideTransaction(transaction);
     logResults(transaction, result);
   }
 }
@@ -119,5 +119,5 @@ function createOneAggressive() {
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
   const gridDiv = document.querySelector<HTMLElement>('#myGrid')!;
-  api = createGrid(gridDiv, gridOptions);;
+  gridApi = createGrid(gridDiv, gridOptions);;
 });

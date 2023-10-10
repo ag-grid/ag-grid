@@ -33,7 +33,7 @@ const columnDefs: ColDef[] = [
   },
 ]
 
-let api: GridApi;
+let gridApi: GridApi;
 
 const gridOptions: GridOptions = {
   columnDefs: columnDefs,
@@ -47,7 +47,7 @@ const gridOptions: GridOptions = {
   rowData: getData(),
   onGridReady: (params) => {
     setInterval(() => {
-      const instances = api!.getCellEditorInstances()
+      const instances = gridApi!.getCellEditorInstances()
       if (instances.length > 0) {
         const instance = instances[0] as Partial<MySimpleEditor>;
         if (instance.myCustomFunction) {
@@ -70,5 +70,5 @@ const gridOptions: GridOptions = {
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', () => {
   const gridDiv = document.querySelector<HTMLElement>('#myGrid')!
-  api = createGrid(gridDiv, gridOptions);;
+  gridApi = createGrid(gridDiv, gridOptions);;
 })

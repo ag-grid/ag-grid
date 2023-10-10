@@ -69,7 +69,7 @@ const datasource: IDatasource = {
     },
 };
 
-let api: GridApi;
+let gridApi: GridApi;
 
 const gridOptions: GridOptions = {
     defaultColDef: {
@@ -145,14 +145,14 @@ function insertItemsAt2AndRefresh(count: number) {
     // to 1005, so grid can scroll to the end. the grid does NOT do this for you in the
     // refreshInfiniteCache() method, as this would be assuming you want to do it which
     // is not true, maybe the row count is constant and you just want to refresh the details.
-    const maxRowFound = api!.isLastRowIndexKnown();
+    const maxRowFound = gridApi!.isLastRowIndexKnown();
     if (maxRowFound) {
-        const rowCount = api!.getInfiniteRowCount() || 0;
-        api!.setRowCount(rowCount + count)
+        const rowCount = gridApi!.getInfiniteRowCount() || 0;
+        gridApi!.setRowCount(rowCount + count)
     }
 
     // get grid to refresh the data
-    api!.refreshInfiniteCache()
+    gridApi!.refreshInfiniteCache()
 }
 
 function insertItemsAt2(count: number) {
@@ -167,27 +167,27 @@ function insertItemsAt2(count: number) {
 
 function removeItem(start: number, limit: number) {
     allOfTheData.splice(start, limit)
-    api!.refreshInfiniteCache()
+    gridApi!.refreshInfiniteCache()
 }
 
 function refreshCache() {
-    api!.refreshInfiniteCache()
+    gridApi!.refreshInfiniteCache()
 }
 
 function purgeCache() {
-    api!.purgeInfiniteCache()
+    gridApi!.purgeInfiniteCache()
 }
 
 function setRowCountTo200() {
-    api!.setRowCount(200, false)
+    gridApi!.setRowCount(200, false)
 }
 
 function rowsAndMaxFound() {
     console.log(
-        'getInfiniteRowCount() => ' + api!.getInfiniteRowCount()
+        'getInfiniteRowCount() => ' + gridApi!.getInfiniteRowCount()
     )
     console.log(
-        'isLastRowIndexKnown() => ' + api!.isLastRowIndexKnown()
+        'isLastRowIndexKnown() => ' + gridApi!.isLastRowIndexKnown()
     )
 }
 
@@ -206,16 +206,16 @@ function setPricesLow() {
 
 function jumpTo500() {
     // first up, need to make sure the grid is actually showing 500 or more rows
-    if ((api!.getInfiniteRowCount() || 0) < 501) {
-        api!.setRowCount(501, false)
+    if ((gridApi!.getInfiniteRowCount() || 0) < 501) {
+        gridApi!.setRowCount(501, false)
     }
     // next, we can jump to the row
-    api!.ensureIndexVisible(500)
+    gridApi!.ensureIndexVisible(500)
 }
 
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
     const gridDiv = document.querySelector<HTMLElement>('#myGrid')!;
-    api = createGrid(gridDiv, gridOptions);;
+    gridApi = createGrid(gridDiv, gridOptions);;
 })

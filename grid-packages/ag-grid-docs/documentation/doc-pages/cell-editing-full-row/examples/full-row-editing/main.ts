@@ -9,7 +9,7 @@ import {
 } from '@ag-grid-community/core';
 declare var NumericCellEditor: ICellEditorComp;
 
-let api: GridApi;
+let gridApi: GridApi;
 
 const gridOptions: GridOptions = {
   columnDefs: [
@@ -96,12 +96,12 @@ function getRowData() {
 }
 
 function onBtStopEditing() {
-  api!.stopEditing()
+  gridApi!.stopEditing()
 }
 
 function onBtStartEditing() {
-  api!.setFocusedCell(1, 'make')
-  api!.startEditingCell({
+  gridApi!.setFocusedCell(1, 'make')
+  gridApi!.startEditingCell({
     rowIndex: 1,
     colKey: 'make',
   })
@@ -111,5 +111,5 @@ function onBtStartEditing() {
 // AG Grid will not find the div in the document.
 document.addEventListener('DOMContentLoaded', function () {
   var eGridDiv = document.querySelector<HTMLElement>('#myGrid')!
-  api = createGrid(eGridDiv, gridOptions);;
+  gridApi = createGrid(eGridDiv, gridOptions);;
 })

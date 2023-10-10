@@ -19,7 +19,7 @@ const setCol1SizeInfOnFirstDataRendered = (value?: string | number) => {
     element!.innerHTML = value !== undefined ? `${value.toString()}px` : '-';
 };
 
-let api: GridApi;
+let gridApi: GridApi;
 
 const gridOptions: GridOptions = {
     columnDefs: [
@@ -60,11 +60,11 @@ const gridOptions: GridOptions = {
 };
 
 function loadGridData() {
-    api?.setRowData(getData());
+    gridApi?.setRowData(getData());
     document.querySelector<HTMLElement>('#loadGridDataButton')!.style.display = 'none';
 }
 
 document.addEventListener('DOMContentLoaded', () => {
     const gridDiv = document.querySelector<HTMLElement>('#myGrid')!;
-    api = createGrid(gridDiv, gridOptions);;
+    gridApi = createGrid(gridDiv, gridOptions);;
 });

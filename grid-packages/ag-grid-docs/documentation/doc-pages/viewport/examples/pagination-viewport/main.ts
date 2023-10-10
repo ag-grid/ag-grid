@@ -62,7 +62,7 @@ const columnDefs: ColDef[] = [
   },
 ]
 
-let api: GridApi;
+let gridApi: GridApi;
 
 const gridOptions: GridOptions = {
   columnDefs: columnDefs,
@@ -95,7 +95,7 @@ function numberFormatter(params: ValueFormatterParams) {
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
   var gridDiv = document.querySelector<HTMLElement>('#myGrid')!
-  api = createGrid(gridDiv, gridOptions);;
+  gridApi = createGrid(gridDiv, gridOptions);;
 
   // do http request to get our sample data - not using any framework to keep the example self contained.
   // you will probably use a framework like JQuery, Angular or something else to do your HTTP calls.
@@ -108,10 +108,10 @@ document.addEventListener('DOMContentLoaded', function () {
       mockServer.init(data)
 
       var viewportDatasource = createViewportDatasource(mockServer)
-      api!.setViewportDatasource(viewportDatasource)
+      gridApi!.setViewportDatasource(viewportDatasource)
       // put the 'size cols to fit' into a timeout, so that the scroll is taken into consideration
       setTimeout(function () {
-        api!.sizeColumnsToFit()
+        gridApi!.sizeColumnsToFit()
       }, 100)
     })
 })

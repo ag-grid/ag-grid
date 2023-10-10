@@ -16,7 +16,7 @@ function formatDate(date: Date | number) {
   }).format(new Date(date))
 }
 
-let api: GridApi;
+let gridApi: GridApi;
 
 const gridOptions: GridOptions = {
   columnDefs: [
@@ -77,7 +77,7 @@ const gridOptions: GridOptions = {
 };
 
 function onFirstDataRendered(params: FirstDataRenderedEvent) {
-  params.api!.createRangeChart({
+  params.gridApi!.createRangeChart({
     chartType: 'customCombo',
     cellRange: {
       columns: ['date', 'rain', 'pressure', 'temp'],
@@ -111,5 +111,5 @@ function chartTooltipRenderer({ xValue, yValue }: AgCartesianSeriesTooltipRender
 // set up the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
   const gridDiv = document.querySelector<HTMLElement>('#myGrid')!;
-  api = createGrid(gridDiv, gridOptions);;
+  gridApi = createGrid(gridDiv, gridOptions);;
 });

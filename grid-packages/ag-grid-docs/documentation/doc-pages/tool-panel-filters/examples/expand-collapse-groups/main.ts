@@ -32,7 +32,7 @@ const columnDefs: (ColDef | ColGroupDef)[] = [
   },
 ]
 
-let api: GridApi<IOlympicData>;
+let gridApi: GridApi<IOlympicData>;
 
 const gridOptions: GridOptions<IOlympicData> = {
   columnDefs: columnDefs,
@@ -50,29 +50,29 @@ const gridOptions: GridOptions<IOlympicData> = {
 }
 
 function collapseAll() {
-  api!.getToolPanelInstance('filters')!.collapseFilterGroups()
+  gridApi!.getToolPanelInstance('filters')!.collapseFilterGroups()
 }
 
 function expandAthleteAndCompetition() {
-  api!.getToolPanelInstance('filters')!
+  gridApi!.getToolPanelInstance('filters')!
     .expandFilterGroups(['athleteGroupId', 'competitionGroupId'])
 }
 
 function collapseCompetition() {
-  api!.getToolPanelInstance('filters')!
+  gridApi!.getToolPanelInstance('filters')!
     .collapseFilterGroups(['competitionGroupId'])
 }
 
 function expandAll() {
-  api!.getToolPanelInstance('filters')!.expandFilterGroups()
+  gridApi!.getToolPanelInstance('filters')!.expandFilterGroups()
 }
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
   var gridDiv = document.querySelector<HTMLElement>('#myGrid')!
-  api = createGrid(gridDiv, gridOptions);;
+  gridApi = createGrid(gridDiv, gridOptions);;
 
   fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
     .then(response => response.json())
-    .then((data: IOlympicData[]) => api!.setRowData(data))
+    .then((data: IOlympicData[]) => gridApi!.setRowData(data))
 })

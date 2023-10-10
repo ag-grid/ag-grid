@@ -1,7 +1,7 @@
 import { GridApi, createGrid, GridOptions } from '@ag-grid-community/core';
 import { getData } from "./data";
 
-let api: GridApi;
+let gridApi: GridApi;
 
 const gridOptions: GridOptions = {
   columnDefs: [
@@ -29,7 +29,7 @@ const gridOptions: GridOptions = {
 }
 
 function onFilterTextBoxChanged() {
-  api!.setQuickFilter(
+  gridApi!.setQuickFilter(
     (document.getElementById('filter-text-box') as any).value
   )
 }
@@ -41,5 +41,5 @@ document.addEventListener('DOMContentLoaded', function () {
   var gridDiv = document.querySelector<HTMLElement>('#myGrid')!
 
   // create the grid passing in the div to use together with the columns & data we want to use
-  api = createGrid(gridDiv, gridOptions);;
+  gridApi = createGrid(gridDiv, gridOptions);;
 })

@@ -1,6 +1,6 @@
 import { GridApi, createGrid, GridOptions, IDatasource, SortModelItem } from '@ag-grid-community/core';
 
-let api: GridApi<IOlympicData>;
+let gridApi: GridApi<IOlympicData>;
 
 const gridOptions: GridOptions<IOlympicData> = {
   columnDefs: [
@@ -20,7 +20,7 @@ const gridOptions: GridOptions<IOlympicData> = {
 }
 
 function onBtShowYearColumn() {
-  api!.setColumnDefs([
+  gridApi!.setColumnDefs([
     { field: 'athlete', colId: 'athlete' },
     { field: 'age', colId: 'age' },
     { field: 'country', colId: 'country' },
@@ -30,7 +30,7 @@ function onBtShowYearColumn() {
 }
 
 function onBtHideYearColumn() {
-  api!.setColumnDefs([
+  gridApi!.setColumnDefs([
     { field: 'athlete', colId: 'athlete' },
     { field: 'age', colId: 'age' },
     { field: 'country', colId: 'country' },
@@ -115,7 +115,7 @@ function filterData(filterModel: any, data: any[]) {
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
   var gridDiv = document.querySelector<HTMLElement>('#myGrid')!
-  api = createGrid(gridDiv, gridOptions);;
+  gridApi = createGrid(gridDiv, gridOptions);;
 
   fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
     .then(response => response.json())
@@ -153,6 +153,6 @@ document.addEventListener('DOMContentLoaded', function () {
         },
       }
 
-      api!.setDatasource(dataSource)
+      gridApi!.setDatasource(dataSource)
     })
 })

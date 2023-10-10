@@ -7,7 +7,7 @@ import {
   StoreRefreshedEvent,
 } from '@ag-grid-community/core';
 declare var FakeServer: any;
-let api: GridApi;
+let gridApi: GridApi;
 const gridOptions: GridOptions = {
   columnDefs: [
     { field: 'country' },
@@ -76,7 +76,7 @@ const beginPeriodicallyModifyingData = () => {
 
 function refreshCache(route?: string[]) {
   const purge = !!(document.querySelector('#purge') as HTMLInputElement).checked;
-  api!.refreshServerSide({ route: route, purge: purge })
+  gridApi!.refreshServerSide({ route: route, purge: purge })
 }
 
 const getServerSideDatasource = (server: any): IServerSideDatasource => {
@@ -125,7 +125,7 @@ const getServerSideDatasource = (server: any): IServerSideDatasource => {
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', () => {
   var gridDiv = document.querySelector<HTMLElement>('#myGrid')!
-  api = createGrid(gridDiv, gridOptions);;
+  gridApi = createGrid(gridDiv, gridOptions);;
 
   fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
     .then(response => response.json())
@@ -145,7 +145,7 @@ document.addEventListener('DOMContentLoaded', () => {
       const datasource = getServerSideDatasource(fakeServer);
 
       // register the datasource with the grid
-      api!.setServerSideDatasource(datasource);
+      gridApi!.setServerSideDatasource(datasource);
       beginPeriodicallyModifyingData();
     })
 })

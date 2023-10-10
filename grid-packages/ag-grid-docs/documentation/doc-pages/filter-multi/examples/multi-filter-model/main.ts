@@ -31,7 +31,7 @@ var dateFilterParams: IMultiFilterParams = {
   ],
 }
 
-let api: GridApi<IOlympicData>;
+let gridApi: GridApi<IOlympicData>;
 
 const gridOptions: GridOptions<IOlympicData> = {
   columnDefs: [
@@ -93,31 +93,31 @@ function getDate(value: string) {
 var savedFilterState: Record<string, any>
 
 function printState() {
-  var filterState = api!.getFilterModel()
+  var filterState = gridApi!.getFilterModel()
   console.log('Current filter state: ', filterState)
 }
 
 function saveState() {
-  savedFilterState = api!.getFilterModel()
+  savedFilterState = gridApi!.getFilterModel()
   console.log('Filter state saved')
 }
 
 function restoreState() {
-  api!.setFilterModel(savedFilterState)
+  gridApi!.setFilterModel(savedFilterState)
   console.log('Filter state restored')
 }
 
 function resetState() {
-  api!.setFilterModel(null)
+  gridApi!.setFilterModel(null)
   console.log('Filter state reset')
 }
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
   var gridDiv = document.querySelector<HTMLElement>('#myGrid')!
-  api = createGrid(gridDiv, gridOptions);;
+  gridApi = createGrid(gridDiv, gridOptions);;
 
   fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
     .then(response => response.json())
-    .then((data: IOlympicData[]) => api!.setRowData(data))
+    .then((data: IOlympicData[]) => gridApi!.setRowData(data))
 })

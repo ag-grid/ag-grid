@@ -9,7 +9,7 @@ const columnDefs: ColDef[] = [
   { field: 'version' },
 ]
 
-let api: GridApi;
+let gridApi: GridApi;
 
 const gridOptions: GridOptions = {
   defaultColDef: {
@@ -58,7 +58,7 @@ const getServerSideDatasource = (server: any): IServerSideDatasource => {
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
   var gridDiv = document.querySelector<HTMLElement>('#myGrid')!
-  api = createGrid(gridDiv, gridOptions);;
+  gridApi = createGrid(gridDiv, gridOptions);;
 
   fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
     .then(response => response.json())
@@ -70,14 +70,14 @@ document.addEventListener('DOMContentLoaded', function () {
       var datasource = getServerSideDatasource(fakeServer)
 
       // register the datasource with the grid
-      api!.setServerSideDatasource(datasource)
+      gridApi!.setServerSideDatasource(datasource)
     })
 })
 
 function updateSelectedRows() {
   versionCounter += 1;
   const version = versionCounter + ' - ' + versionCounter + ' - ' + versionCounter;
-  let nodesToUpdate = api!.getSelectedNodes();
+  let nodesToUpdate = gridApi!.getSelectedNodes();
   nodesToUpdate.forEach(node => {
     node.updateData({ ...node.data, version })
   });

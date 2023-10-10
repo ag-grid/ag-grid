@@ -28,7 +28,7 @@ const columnDefs: ColDef[] = [
   },
 ]
 
-let api: GridApi;
+let gridApi: GridApi;
 
 const gridOptions: GridOptions = {
   columnDefs: columnDefs,
@@ -114,8 +114,8 @@ function getCurrencyCellRenderer(): ICellRendererFunc {
 function currencyChanged() {
   var value = (document.getElementById('currency') as any).value
   gridOptions.context = { reportingCurrency: value }
-  api!.refreshCells()
-  api!.refreshHeader()
+  gridApi!.refreshCells()
+  gridApi!.refreshHeader()
 }
 
 function getData() {
@@ -134,5 +134,5 @@ function getData() {
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
   var gridDiv = document.querySelector<HTMLElement>('#myGrid')!
-  api = createGrid(gridDiv, gridOptions);;
+  gridApi = createGrid(gridDiv, gridOptions);;
 })

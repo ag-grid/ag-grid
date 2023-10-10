@@ -7,7 +7,7 @@ import {
   ValueFormatterParams,
 } from '@ag-grid-community/core';
 
-let api: GridApi<IOlympicData>;
+let gridApi: GridApi<IOlympicData>;
 
 const gridOptions: GridOptions<IOlympicData> = {
   columnDefs: [
@@ -46,7 +46,7 @@ function countryValueFormatter(params: ValueFormatterParams) {
 }
 
 function printFilterModel() {
-  var filterModel = api!.getFilterModel()
+  var filterModel = gridApi!.getFilterModel()
   console.log(filterModel)
 }
 
@@ -57,7 +57,7 @@ function onFirstDataRendered(params: FirstDataRenderedEvent) {
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
   var gridDiv = document.querySelector<HTMLElement>('#myGrid')!
-  api = createGrid(gridDiv, gridOptions);;
+  gridApi = createGrid(gridDiv, gridOptions);;
 
   fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
     .then(response => response.json())
@@ -67,7 +67,7 @@ document.addEventListener('DOMContentLoaded', function () {
         return COUNTRY_CODES[d.country]
       })
 
-      api!.setRowData(dataWithFlags)
+      gridApi!.setRowData(dataWithFlags)
     })
 })
 

@@ -51,7 +51,7 @@ var defaultExcelExportParams: ExcelExportParams = {
   fileName: 'ag-grid.xlsx'
 }
 
-let api: GridApi<IAccount>;
+let gridApi: GridApi<IAccount>;
 
 const gridOptions: GridOptions<IAccount> = {
   columnDefs: [
@@ -113,17 +113,17 @@ function cell(text: string, styleId?: string): ExcelCell {
 }
 
 function onBtExport() {
-  api!.exportDataAsExcel()
+  gridApi!.exportDataAsExcel()
 }
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
   var gridDiv = document.querySelector<HTMLElement>('#myGrid')!
-  api = createGrid(gridDiv, gridOptions);;
+  gridApi = createGrid(gridDiv, gridOptions);;
 
   fetch('https://www.ag-grid.com/example-assets/master-detail-data.json')
     .then(response => response.json())
     .then((data: IAccount[]) => {
-      api!.setRowData(data)
+      gridApi!.setRowData(data)
     })
 })

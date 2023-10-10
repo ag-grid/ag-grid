@@ -1,16 +1,9 @@
 import {
-  CellClassParams,
-  GetRowIdParams,
-  GridApi,
-  createGrid,
-  GridApi,
-  GridOptions,
-  RefreshCellsParams,
+  CellClassParams, createGrid, GetRowIdParams,
+  GridApi, GridOptions, IRowNode, RefreshCellsParams,
   RowDragEndEvent,
   RowDragLeaveEvent,
-  RowDragMoveEvent,
-  IRowNode,
-  ValueFormatterParams,
+  RowDragMoveEvent, ValueFormatterParams
 } from '@ag-grid-community/core';
 import { getData } from "./data";
 
@@ -26,7 +19,7 @@ var cellClassRules = {
   },
 }
 
-let api: GridApi;
+let gridApi: GridApi;
 
 const gridOptions: GridOptions = {
   columnDefs: [
@@ -76,12 +69,12 @@ const gridOptions: GridOptions = {
 var potentialParent: any = null
 
 function onRowDragMove(event: RowDragMoveEvent) {
-  setPotentialParentForNode(event.api, event.overNode)
+  setPotentialParentForNode(event.gridApi, event.overNode)
 }
 
 function onRowDragLeave(event: RowDragLeaveEvent) {
   // clear node to highlight
-  setPotentialParentForNode(event.api, null)
+  setPotentialParentForNode(event.gridApi, null)
 }
 
 function onRowDragEnd(event: RowDragEndEvent) {
@@ -106,14 +99,14 @@ function onRowDragEnd(event: RowDragEndEvent) {
     var updatedRows: any[] = []
     moveToPath(newParentPath, event.node, updatedRows)
 
-    api!.applyTransaction({
+    gridApi!.applyTransaction({
       update: updatedRows,
     })
-    api!.clearFocusedCell()
+    gridApi!.clearFocusedCell()
   }
 
   // clear node to highlight
-  setPotentialParentForNode(event.api, null)
+  setPotentialParentForNode(event.gridApi, null)
 }
 
 function moveToPath(newParentPath: string[], node: IRowNode, allUpdatedNodes: any[]) {
@@ -158,7 +151,7 @@ function arePathsEqual(path1: string[], path2: string[]) {
   return equal
 }
 
-function setPotentialParentForNode(api: GridApi, overNode: IRowNode | undefined | null) {
+function setPotentialParentForNode(gridApi: GridApi, overNode: IRowNode | undefined | null) {
   var newPotentialParent
   if (overNode) {
     newPotentialParent =
@@ -188,10 +181,10 @@ function setPotentialParentForNode(api: GridApi, overNode: IRowNode | undefined 
 
   potentialParent = newPotentialParent
 
-  refreshRows(api, rowsToRefresh)
+  refreshRows(gridApi, rowsToRefresh)
 }
 
-function refreshRows(api: GridApi, rowsToRefresh: IRowNode[]) {
+function refreshRows(gridApi: GridApi, rowsToRefresh: IRowNode[]) {
   var params: RefreshCellsParams = {
     // refresh these rows only.
     rowNodes: rowsToRefresh,
@@ -201,7 +194,7 @@ function refreshRows(api: GridApi, rowsToRefresh: IRowNode[]) {
     // which skips change detection.
     force: true,
   }
-  api.refreshCells(params)
+  gridApi.refreshCells(params)
 }
 
 
@@ -212,5 +205,5 @@ document.addEventListener('DOMContentLoaded', function () {
   var eGridDiv = document.querySelector<HTMLElement>('#myGrid')!
 
   // create the grid passing in the div to use together with the columns & data we want to use
-  api = createGrid(eGridDiv, gridOptions);;
+  gridApi = createGrid(eGridDiv, gridOptions);;
 })

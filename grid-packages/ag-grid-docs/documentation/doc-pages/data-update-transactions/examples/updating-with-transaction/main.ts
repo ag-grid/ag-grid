@@ -2,7 +2,7 @@ import { GridApi, createGrid, GridOptions, RowNodeTransaction } from '@ag-grid-c
 import { getData } from "./data";
 
 
-let api: GridApi;
+let gridApi: GridApi;
 
 
 const gridOptions: GridOptions = {
@@ -39,7 +39,7 @@ function createNewRowData() {
 
 function getRowData() {
   const rowData: any[] = []
-  api!.forEachNode(function (node) {
+  gridApi!.forEachNode(function (node) {
     rowData.push(node.data)
   })
   console.log('Row Data:')
@@ -48,10 +48,10 @@ function getRowData() {
 
 function clearData() {
   const rowData: any[] = [];
-  api!.forEachNode(function (node) {
+  gridApi!.forEachNode(function (node) {
     rowData.push(node.data);
   });
-  const res = api!.applyTransaction({
+  const res = gridApi!.applyTransaction({
     remove: rowData,
   })!;
   printResult(res)
@@ -59,7 +59,7 @@ function clearData() {
 
 function addItems(addIndex: number | undefined) {
   const newItems = [createNewRowData(), createNewRowData(), createNewRowData()]
-  const res = api!.applyTransaction({
+  const res = gridApi!.applyTransaction({
     add: newItems,
     addIndex: addIndex,
   })!
@@ -69,7 +69,7 @@ function addItems(addIndex: number | undefined) {
 function updateItems() {
   // update the first 2 items
   const itemsToUpdate: any[] = []
-  api!.forEachNodeAfterFilterAndSort(function (rowNode, index) {
+  gridApi!.forEachNodeAfterFilterAndSort(function (rowNode, index) {
     // only do first 2
     if (index >= 2) {
       return
@@ -79,13 +79,13 @@ function updateItems() {
     data.price = Math.floor(Math.random() * 20000 + 20000)
     itemsToUpdate.push(data)
   })
-  const res = api!.applyTransaction({ update: itemsToUpdate })!
+  const res = gridApi!.applyTransaction({ update: itemsToUpdate })!
   printResult(res)
 }
 
 function onRemoveSelected() {
-  const selectedData = api!.getSelectedRows()
-  const res = api!.applyTransaction({ remove: selectedData })!
+  const selectedData = gridApi!.getSelectedRows()
+  const res = gridApi!.applyTransaction({ remove: selectedData })!
   printResult(res)
 }
 
@@ -112,5 +112,5 @@ function printResult(res: RowNodeTransaction) {
 // AG Grid will not find the div in the document.
 document.addEventListener('DOMContentLoaded', function () {
   const eGridDiv = document.querySelector<HTMLElement>('#myGrid')!
-  api = createGrid(eGridDiv, gridOptions);;
+  gridApi = createGrid(eGridDiv, gridOptions);;
 })

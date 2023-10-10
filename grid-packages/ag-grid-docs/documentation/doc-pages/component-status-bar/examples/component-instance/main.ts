@@ -16,11 +16,11 @@ const columnDefs: ColDef[] = [
 ]
 
 function toggleStatusBarComp() {
-  const statusBarComponent = api!.getStatusPanel<IClickableStatusBar>('statusBarCompKey')!;
+  const statusBarComponent = gridApi!.getStatusPanel<IClickableStatusBar>('statusBarCompKey')!;
   statusBarComponent.setVisible(!statusBarComponent.isVisible())
 }
 
-let api: GridApi;
+let gridApi: GridApi;
 
 const gridOptions: GridOptions = {
   defaultColDef: {
@@ -69,6 +69,6 @@ const gridOptions: GridOptions = {
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', () => {
   const gridDiv = document.querySelector<HTMLElement>('#myGrid')!
-  api = createGrid(gridDiv, gridOptions);;
-  api!.sizeColumnsToFit()
+  gridApi = createGrid(gridDiv, gridOptions);;
+  gridApi!.sizeColumnsToFit()
 })

@@ -1,7 +1,7 @@
 import { GridApi, createGrid, GridOptions, GridReadyEvent } from '@ag-grid-community/core';
 import { getData,TAthlete } from './data';
 
-let api: GridApi;
+let gridApi: GridApi;
 
 const gridOptions: GridOptions = {
     columnDefs: [
@@ -28,16 +28,16 @@ const gridOptions: GridOptions = {
 };
 
 function reloadGrid() {
-  if (api) {
-    api.destroy()
+  if (gridApi) {
+    gridApi.destroy()
   }
 
   setTimeout(() => {
     // Artificial delay to show grid being destroyed and re-created
     const gridDiv = document.querySelector<HTMLElement>("#myGrid")!
-    api = createGrid(gridDiv, gridOptions);;
+    gridApi = createGrid(gridDiv, gridOptions);;
   }, 500)
 }
 
 const gridDiv = document.querySelector<HTMLElement>('#myGrid')!;
-api = createGrid(gridDiv, gridOptions);;
+gridApi = createGrid(gridDiv, gridOptions);;

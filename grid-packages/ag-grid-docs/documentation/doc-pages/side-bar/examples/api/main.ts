@@ -7,7 +7,7 @@ import {
   ToolPanelVisibleChangedEvent,
 } from '@ag-grid-community/core';
 
-let api: GridApi<IOlympicData>;
+let gridApi: GridApi<IOlympicData>;
 
 const gridOptions: GridOptions<IOlympicData> = {
   columnDefs: [
@@ -65,45 +65,45 @@ const gridOptions: GridOptions<IOlympicData> = {
 }
 
 function setSideBarVisible(value: boolean) {
-  api!.setSideBarVisible(value)
+  gridApi!.setSideBarVisible(value)
 }
 
 function isSideBarVisible() {
-  alert(api!.isSideBarVisible())
+  alert(gridApi!.isSideBarVisible())
 }
 
 function openToolPanel(key: string) {
-  api!.openToolPanel(key)
+  gridApi!.openToolPanel(key)
 }
 
 function closeToolPanel() {
-  api!.closeToolPanel()
+  gridApi!.closeToolPanel()
 }
 
 function getOpenedToolPanel() {
-  alert(api!.getOpenedToolPanel())
+  alert(gridApi!.getOpenedToolPanel())
 }
 
 function setSideBar(def: SideBarDef | string | string[] | boolean) {
-  api!.setSideBar(def)
+  gridApi!.setSideBar(def)
 }
 
 function getSideBar() {
-  var sideBar = api!.getSideBar()
+  var sideBar = gridApi!.getSideBar()
   alert(JSON.stringify(sideBar))
   console.log(sideBar)
 }
 
 function setSideBarPosition(position: 'left' | 'right') {
-  api!.setSideBarPosition(position)
+  gridApi!.setSideBarPosition(position)
 }
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
   var gridDiv = document.querySelector<HTMLElement>('#myGrid')!
-  api = createGrid(gridDiv, gridOptions);;
+  gridApi = createGrid(gridDiv, gridOptions);;
 
   fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
     .then(response => response.json())
-    .then((data: IOlympicData[]) => api!.setRowData(data))
+    .then((data: IOlympicData[]) => gridApi!.setRowData(data))
 })

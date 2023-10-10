@@ -1,16 +1,11 @@
 import {
-  GridApi,
-  createGrid,
   ColDef,
-  ColGroupDef,
-  ColumnApi,
-  GridOptions,
+  ColGroupDef, createGrid, GridApi, GridOptions,
   IServerSideDatasource,
-  IServerSideGetRowsRequest,
-  GridApi,
+  IServerSideGetRowsRequest
 } from '@ag-grid-community/core';
 declare var FakeServer: any;
-let api: GridApi<IOlympicData>;
+let gridApi: GridApi<IOlympicData>;
 const gridOptions: GridOptions<IOlympicData> = {
   columnDefs: [
     { field: 'country', rowGroup: true },
@@ -41,7 +36,7 @@ const gridOptions: GridOptions<IOlympicData> = {
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
   const gridDiv = document.querySelector<HTMLElement>('#myGrid')!
-  api = createGrid(gridDiv, gridOptions);;
+  gridApi = createGrid(gridDiv, gridOptions);;
 
   fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
       .then(response => response.json())
@@ -53,7 +48,7 @@ document.addEventListener('DOMContentLoaded', function () {
         const datasource = getServerSideDatasource(fakeServer)
 
         // register the datasource with the grid
-        api!.setServerSideDatasource(datasource)
+        gridApi!.setServerSideDatasource(datasource)
       })
 })
 
@@ -67,7 +62,7 @@ function getServerSideDatasource(server: any): IServerSideDatasource {
       const response = server.getData(request)
 
       // add pivot results cols to the grid
-      addPivotResultCols(request, response, params.api)
+      addPivotResultCols(request, response, params.gridApi)
 
       // simulating real server call with a 500ms delay
       setTimeout( () => {
@@ -79,12 +74,12 @@ function getServerSideDatasource(server: any): IServerSideDatasource {
         }
       }, 500)
     },
-  }
+  };
 }
 
-function addPivotResultCols(request: IServerSideGetRowsRequest, response: any, api: GridApi) {
+function addPivotResultCols(request: IServerSideGetRowsRequest, response: any, gridApi: GridApi) {
   // check if pivot colDefs already exist
-  const existingPivotColDefs = api.getPivotResultColumns()
+  const existingPivotColDefs = gridApi.getPivotResultColumns()
   if (existingPivotColDefs && existingPivotColDefs.length > 0) {
     return
   }
@@ -93,7 +88,7 @@ function addPivotResultCols(request: IServerSideGetRowsRequest, response: any, a
   const pivotResultColumns = createPivotResultColumns(request, response.pivotFields)
 
   // supply pivot result columns to the grid
-  api.setPivotResultColumns(pivotResultColumns)
+  gridApi.setPivotResultColumns(pivotResultColumns)
 }
 
 function addColDef(colId: string, parts: string[], res: (ColDef | ColGroupDef)[], request: IServerSideGetRowsRequest): (ColDef | ColGroupDef)[] {

@@ -8,7 +8,7 @@ function formatNumber(number: number) {
     .replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,');
 }
 
-let api: GridApi;
+let gridApi: GridApi;
 
 const gridOptions: GridOptions = {
   columnDefs: [
@@ -34,11 +34,11 @@ const gridOptions: GridOptions = {
 }
 
 function onUpdateSomeValues() {
-  var rowCount = api!.getDisplayedRowCount()
+  var rowCount = gridApi!.getDisplayedRowCount()
   // pick 20 cells at random to update
   for (var i = 0; i < 20; i++) {
     var row = Math.floor(Math.random() * rowCount)
-    var rowNode = api!.getDisplayedRowAtIndex(row)!
+    var rowNode = gridApi!.getDisplayedRowAtIndex(row)!
     var col = ['a', 'b', 'c', 'd', 'e', 'f'][i % 6]
     rowNode.setDataValue(col, Math.floor(Math.random() * 10000))
   }
@@ -46,10 +46,10 @@ function onUpdateSomeValues() {
 
 function onFlashTwoRows() {
   // pick fourth and fifth row at random
-  var rowNode1 = api!.getDisplayedRowAtIndex(4)!
-  var rowNode2 = api!.getDisplayedRowAtIndex(5)!
+  var rowNode1 = gridApi!.getDisplayedRowAtIndex(4)!
+  var rowNode2 = gridApi!.getDisplayedRowAtIndex(5)!
   // flash whole row, so leave column selection out
-  api!.flashCells({
+  gridApi!.flashCells({
     rowNodes: [rowNode1, rowNode2],
     flashDelay: 3000,
     fadeDelay: 2000,
@@ -76,5 +76,5 @@ function createRowData() {
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
   var gridDiv = document.querySelector<HTMLElement>('#myGrid')!
-  api = createGrid(gridDiv, gridOptions);;
+  gridApi = createGrid(gridDiv, gridOptions);;
 })

@@ -15,7 +15,7 @@ var valueFormatter = function (params: ValueFormatterParams) {
   return params.value ? params.value + ' MB' : ''
 }
 
-let api: GridApi;
+let gridApi: GridApi;
 
 const gridOptions: GridOptions = {
   columnDefs: [
@@ -86,11 +86,11 @@ function onRowDragEnd(event: RowDragEndEvent) {
     var updatedRows: any[] = []
     moveToPath(newParentPath, event.node, updatedRows)
 
-    api!.applyTransaction({
+    gridApi!.applyTransaction({
       update: updatedRows,
     })
 
-    api!.clearFocusedCell()
+    gridApi!.clearFocusedCell()
   }
 }
 
@@ -155,5 +155,5 @@ document.addEventListener('DOMContentLoaded', function () {
   var eGridDiv = document.querySelector<HTMLElement>('#myGrid')!
 
   // create the grid passing in the div to use together with the columns & data we want to use
-  api = createGrid(eGridDiv, gridOptions);;
+  gridApi = createGrid(eGridDiv, gridOptions);;
 })

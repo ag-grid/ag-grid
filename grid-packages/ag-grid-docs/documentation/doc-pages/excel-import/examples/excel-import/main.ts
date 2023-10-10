@@ -1,7 +1,7 @@
 import { GridApi, createGrid, GridOptions } from '@ag-grid-community/core';
 declare var XLSX: any;
 
-let api: GridApi;
+let gridApi: GridApi;
 
 const gridOptions: GridOptions = {
   columnDefs: [
@@ -96,7 +96,7 @@ function populateGrid(workbook: any) {
   }
 
   // finally, set the imported rowData into the grid
-  api!.setRowData(rowData)
+  gridApi!.setRowData(rowData)
 }
 
 function importExcel() {
@@ -123,5 +123,5 @@ document.addEventListener('DOMContentLoaded', function () {
   var eGridDiv = document.querySelector<HTMLElement>('#myGrid')!
 
   // create the grid passing in the div to use together with the columns & data we want to use
-  api = createGrid(eGridDiv, gridOptions);;
+  gridApi = createGrid(eGridDiv, gridOptions);;
 })

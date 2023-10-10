@@ -12,7 +12,7 @@ const generateItem = (id = lastGen++) => {
 
 const getRowData = (rows = 10) => new Array(rows).fill(undefined).map(_ => generateItem());
 
-let api: GridApi;
+let gridApi: GridApi;
 
 const gridOptions: GridOptions = {
     columnDefs: [
@@ -36,9 +36,9 @@ function addDelta() {
         add: getRowData(1).map(row => ({ ...row, updatedBy: 'delta' })),
         update: [{ id: 1, make: 'Delta', updatedBy: 'delta' }],
     };
-    api!.setDeltaSort(true);
+    gridApi!.setDeltaSort(true);
     const startTime = new Date().getTime();
-    api!.applyTransaction(transaction);
+    gridApi!.applyTransaction(transaction);
     document.getElementById('transactionDuration')!.innerText = `${new Date().getTime() - startTime} ms`;
 }
 
@@ -47,14 +47,14 @@ function addDefault() {
         add: getRowData(1).map(row => ({ ...row, updatedBy: 'default' })),
         update: [{ id: 2, make: 'Default', updatedBy: 'default' }],
     };
-    api!.setDeltaSort(false);
+    gridApi!.setDeltaSort(false);
     const startTime = new Date().getTime();
-    api!.applyTransaction(transaction);
+    gridApi!.applyTransaction(transaction);
     document.getElementById('transactionDuration')!.innerText = `${new Date().getTime() - startTime} ms`;
 
 }
 
 document.addEventListener('DOMContentLoaded', function () {
     const eGridDiv = document.querySelector<HTMLElement>('#myGrid')!;
-    api = createGrid(eGridDiv, gridOptions);;
+    gridApi = createGrid(eGridDiv, gridOptions);;
 });

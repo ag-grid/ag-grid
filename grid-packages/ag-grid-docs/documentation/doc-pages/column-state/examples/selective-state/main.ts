@@ -14,7 +14,7 @@ const columnDefs: ColDef[] = [
   { field: 'total' },
 ]
 
-let api: GridApi<IOlympicData>;
+let gridApi: GridApi<IOlympicData>;
 
 const gridOptions: GridOptions<IOlympicData> = {
   defaultColDef: {
@@ -36,7 +36,7 @@ const gridOptions: GridOptions<IOlympicData> = {
 }
 
 function onBtSaveSortState() {
-  const allState = api!.getColumnState()
+  const allState = gridApi!.getColumnState()
   const sortState = allState.map(state => ({
     colId: state.colId,
     sort: state.sort,
@@ -51,14 +51,14 @@ function onBtRestoreSortState() {
     console.log('no sort state to restore, you must save sort state first')
     return
   }
-  api!.applyColumnState({
+  gridApi!.applyColumnState({
     state: window.sortState,
   })
   console.log('sort state restored')
 }
 
 function onBtSaveOrderAndVisibilityState() {
-  const allState = api!.getColumnState()
+  const allState = gridApi!.getColumnState()
   const orderAndVisibilityState = allState.map(state => ({
     colId: state.colId,
     hide: state.hide,
@@ -74,7 +74,7 @@ function onBtRestoreOrderAndVisibilityState() {
     )
     return
   }
-  api!.applyColumnState({
+  gridApi!.applyColumnState({
     state: window.orderAndVisibilityState,
     applyOrder: true,
   })
@@ -84,9 +84,9 @@ function onBtRestoreOrderAndVisibilityState() {
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', () => {
   const gridDiv = document.querySelector<HTMLElement>('#myGrid')!
-  api = createGrid(gridDiv, gridOptions);;
+  gridApi = createGrid(gridDiv, gridOptions);;
 
   fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
     .then(response => response.json())
-    .then((data: IOlympicData[]) => api!.setRowData(data))
+    .then((data: IOlympicData[]) => gridApi!.setRowData(data))
 })

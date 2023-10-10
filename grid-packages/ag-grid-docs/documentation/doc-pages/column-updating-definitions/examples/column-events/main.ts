@@ -57,7 +57,7 @@ function onColumnPinned(e: ColumnPinnedEvent) {
   console.log('Event Column Pinned', e)
 }
 
-let api: GridApi<IOlympicData>;
+let gridApi: GridApi<IOlympicData>;
 
 const gridOptions: GridOptions<IOlympicData> = {
   defaultColDef: {
@@ -90,7 +90,7 @@ function onBtSortOn() {
       colDef.sort = 'asc'
     }
   })
-  api!.setColumnDefs(columnDefs)
+  gridApi!.setColumnDefs(columnDefs)
 }
 
 function onBtSortOff() {
@@ -98,7 +98,7 @@ function onBtSortOff() {
   columnDefs.forEach(function (colDef) {
     colDef.sort = null
   })
-  api!.setColumnDefs(columnDefs)
+  gridApi!.setColumnDefs(columnDefs)
 }
 
 function onBtWidthNarrow() {
@@ -108,7 +108,7 @@ function onBtWidthNarrow() {
       colDef.width = 100
     }
   })
-  api!.setColumnDefs(columnDefs)
+  gridApi!.setColumnDefs(columnDefs)
 }
 
 function onBtWidthNormal() {
@@ -116,7 +116,7 @@ function onBtWidthNormal() {
   columnDefs.forEach(function (colDef) {
     colDef.width = 200
   })
-  api!.setColumnDefs(columnDefs)
+  gridApi!.setColumnDefs(columnDefs)
 }
 
 function onBtHide() {
@@ -126,7 +126,7 @@ function onBtHide() {
       colDef.hide = true
     }
   })
-  api!.setColumnDefs(columnDefs)
+  gridApi!.setColumnDefs(columnDefs)
 }
 
 function onBtShow() {
@@ -134,11 +134,11 @@ function onBtShow() {
   columnDefs.forEach(function (colDef) {
     colDef.hide = false
   })
-  api!.setColumnDefs(columnDefs)
+  gridApi!.setColumnDefs(columnDefs)
 }
 
 function onBtPivotOn() {
-  api!.setPivotMode(true)
+  gridApi!.setPivotMode(true)
 
   const columnDefs: ColDef[] = getColumnDefs()
   columnDefs.forEach(function (colDef) {
@@ -146,17 +146,17 @@ function onBtPivotOn() {
       colDef.pivot = true
     }
   })
-  api!.setColumnDefs(columnDefs)
+  gridApi!.setColumnDefs(columnDefs)
 }
 
 function onBtPivotOff() {
-  api!.setPivotMode(false)
+  gridApi!.setPivotMode(false)
 
   const columnDefs: ColDef[] = getColumnDefs()
   columnDefs.forEach(function (colDef) {
     colDef.pivot = false
   })
-  api!.setColumnDefs(columnDefs)
+  gridApi!.setColumnDefs(columnDefs)
 }
 
 function onBtRowGroupOn() {
@@ -166,7 +166,7 @@ function onBtRowGroupOn() {
       colDef.rowGroup = true
     }
   })
-  api!.setColumnDefs(columnDefs)
+  gridApi!.setColumnDefs(columnDefs)
 }
 
 function onBtRowGroupOff() {
@@ -174,7 +174,7 @@ function onBtRowGroupOff() {
   columnDefs.forEach(function (colDef) {
     colDef.rowGroup = false
   })
-  api!.setColumnDefs(columnDefs)
+  gridApi!.setColumnDefs(columnDefs)
 }
 
 function onBtAggFuncOn() {
@@ -188,7 +188,7 @@ function onBtAggFuncOn() {
       colDef.aggFunc = 'sum'
     }
   })
-  api!.setColumnDefs(columnDefs)
+  gridApi!.setColumnDefs(columnDefs)
 }
 
 function onBtAggFuncOff() {
@@ -196,7 +196,7 @@ function onBtAggFuncOff() {
   columnDefs.forEach(function (colDef) {
     colDef.aggFunc = null
   })
-  api!.setColumnDefs(columnDefs)
+  gridApi!.setColumnDefs(columnDefs)
 }
 
 function onBtPinnedOn() {
@@ -209,7 +209,7 @@ function onBtPinnedOn() {
       colDef.pinned = 'right'
     }
   })
-  api!.setColumnDefs(columnDefs)
+  gridApi!.setColumnDefs(columnDefs)
 }
 
 function onBtPinnedOff() {
@@ -217,15 +217,15 @@ function onBtPinnedOff() {
   columnDefs.forEach(function (colDef) {
     colDef.pinned = null
   })
-  api!.setColumnDefs(columnDefs)
+  gridApi!.setColumnDefs(columnDefs)
 }
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
   var gridDiv = document.querySelector<HTMLElement>('#myGrid')!
-  api = createGrid(gridDiv, gridOptions);;
+  gridApi = createGrid(gridDiv, gridOptions);;
 
   fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
     .then(response => response.json())
-    .then((data: IOlympicData[]) => api!.setRowData(data))
+    .then((data: IOlympicData[]) => gridApi!.setRowData(data))
 })

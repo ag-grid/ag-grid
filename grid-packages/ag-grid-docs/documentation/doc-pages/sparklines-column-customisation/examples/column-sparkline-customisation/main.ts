@@ -2,7 +2,7 @@ import { ColumnSparklineOptions, GridApi, createGrid, GridOptions } from '@ag-gr
 import { getData } from "./data";
 
 
-let api: GridApi;
+let gridApi: GridApi;
 
 
 const gridOptions: GridOptions = {
@@ -43,5 +43,5 @@ const gridOptions: GridOptions = {
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
   var gridDiv = document.querySelector<HTMLElement>('#myGrid')!
-  api = createGrid(gridDiv, gridOptions);;
+  gridApi = createGrid(gridDiv, gridOptions);;
 })

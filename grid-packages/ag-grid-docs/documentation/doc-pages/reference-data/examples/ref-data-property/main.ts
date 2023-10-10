@@ -30,7 +30,7 @@ function extractKeys(mappings: Record<string, string>) {
 const carCodes = extractKeys(carMappings);
 const colourCodes = extractKeys(colourMappings);
 
-let api: GridApi;
+let gridApi: GridApi;
 
 const gridOptions: GridOptions = {
     columnDefs: [
@@ -132,5 +132,5 @@ document.addEventListener('DOMContentLoaded', function () {
     const eGridDiv = document.querySelector<HTMLElement>('#myGrid')!;
 
     // create the grid passing in the div to use together with the columns & data we want to use
-    api = createGrid(eGridDiv, gridOptions);;
+    gridApi = createGrid(eGridDiv, gridOptions);;
 })

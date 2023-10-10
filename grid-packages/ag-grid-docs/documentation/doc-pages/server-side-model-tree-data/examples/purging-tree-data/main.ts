@@ -16,7 +16,7 @@ const columnDefs: ColDef[] = [
   { field: 'startDate' },
 ]
 
-let api: GridApi;
+let gridApi: GridApi;
 
 const gridOptions: GridOptions = {
   defaultColDef: {
@@ -50,20 +50,20 @@ const gridOptions: GridOptions = {
 }
 
 function refreshCache(route: string[]) {
-  api!.refreshServerSide({ route: route, purge: true })
+  gridApi!.refreshServerSide({ route: route, purge: true })
 }
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
   var gridDiv = document.querySelector<HTMLElement>('#myGrid')!
-  api = createGrid(gridDiv, gridOptions);;
+  gridApi = createGrid(gridDiv, gridOptions);;
 
   fetch('https://www.ag-grid.com/example-assets/tree-data.json')
     .then(response => response.json())
     .then(function (data) {
       var fakeServer = createFakeServer(data)
       var datasource = createServerSideDatasource(fakeServer)
-      api!.setServerSideDatasource(datasource)
+      gridApi!.setServerSideDatasource(datasource)
     })
 })
 

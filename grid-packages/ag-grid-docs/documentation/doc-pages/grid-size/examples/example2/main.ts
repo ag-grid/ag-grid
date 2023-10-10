@@ -1,12 +1,9 @@
 import {
-  FirstDataRenderedEvent,
-  GridApi,
-  createGrid,
-  GridApi,
-  GridOptions,
+  createGrid, FirstDataRenderedEvent,
+  GridApi, GridOptions,
   GridReadyEvent,
   GridSizeChangedEvent,
-  RowHeightParams,
+  RowHeightParams
 } from '@ag-grid-community/core';
 import { getData } from "./data";
 
@@ -14,7 +11,7 @@ import { getData } from "./data";
 var minRowHeight = 25
 var currentRowHeight: number;
 
-let api: GridApi;
+let gridApi: GridApi;
 
 const gridOptions: GridOptions = {
   columnDefs: [
@@ -55,7 +52,7 @@ function onGridSizeChanged(params: GridSizeChangedEvent) {
   updateRowHeight(params);
 }
 
-const updateRowHeight = (params: { api: GridApi }) => {
+const updateRowHeight = (params: { gridApi: GridApi }) => {
   // get the height of the grid body - this excludes the height of the headers
   const bodyViewport = document.querySelector('.ag-body-viewport')
   if (!bodyViewport) {
@@ -83,5 +80,5 @@ const updateRowHeight = (params: { api: GridApi }) => {
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
   var gridDiv = document.querySelector<HTMLElement>('#myGrid')!
-  api = createGrid(gridDiv, gridOptions);;
+  gridApi = createGrid(gridDiv, gridOptions);;
 })

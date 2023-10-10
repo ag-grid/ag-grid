@@ -31,7 +31,7 @@ function getColumnDefs() {
     return columnDefs
 }
 
-let api: GridApi;
+let gridApi: GridApi;
 
 const gridOptions: GridOptions = {
     columnDefs: getColumnDefs(),
@@ -83,5 +83,5 @@ function createData(count: number, prefix: string) {
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', () => {
     const gridDiv = document.querySelector<HTMLElement>('#myGrid')!
-    api = createGrid(gridDiv, gridOptions);;
+    gridApi = createGrid(gridDiv, gridOptions);;
 })

@@ -3,7 +3,7 @@ import { GridApi, createGrid, GridOptions, RowClassParams, RowStyle } from '@ag-
 var colorIndex = 0
 var colors = ['#000000', '#000066', '#006600', '#660000']
 
-let api: GridApi;
+let gridApi: GridApi;
 
 const gridOptions: GridOptions = {
   columnDefs: [
@@ -49,21 +49,21 @@ function progressColor() {
 
 function redrawAllRows() {
   progressColor()
-  api!.redrawRows()
+  gridApi!.redrawRows()
 }
 
 function redrawTopRows() {
   progressColor()
   var rows = []
   for (var i = 0; i < 6; i++) {
-    var row = api!.getDisplayedRowAtIndex(i)!
+    var row = gridApi!.getDisplayedRowAtIndex(i)!
     rows.push(row)
   }
-  api!.redrawRows({ rowNodes: rows })
+  gridApi!.redrawRows({ rowNodes: rows })
 }
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
   var gridDiv = document.querySelector<HTMLElement>('#myGrid')!
-  api = createGrid(gridDiv, gridOptions);;
+  gridApi = createGrid(gridDiv, gridOptions);;
 })

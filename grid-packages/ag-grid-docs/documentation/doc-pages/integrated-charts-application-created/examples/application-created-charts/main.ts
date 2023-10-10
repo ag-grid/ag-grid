@@ -34,7 +34,7 @@ const columnDefs: ColDef[] = [
 
 var chartRef: any;
 
-let api: GridApi;
+let gridApi: GridApi;
 
 const gridOptions: GridOptions = {
   columnDefs: columnDefs,
@@ -116,7 +116,7 @@ const gridOptions: GridOptions = {
 }
 
 function updateChart(chartType: ChartType) {
-  api!.updateChart({type: 'rangeChartUpdate', chartId: chartRef.chartId, chartType});
+  gridApi!.updateChart({type: 'rangeChartUpdate', chartId: chartRef.chartId, chartType});
 }
 
 function numberCellFormatter(params: ValueFormatterParams) {
@@ -147,7 +147,7 @@ function tooltipRenderer(params: AgCartesianSeriesTooltipRendererParams) {
 // after page is loaded, create the grid
 document.addEventListener('DOMContentLoaded', function () {
   var eGridDiv = document.querySelector<HTMLElement>('#myGrid')!
-  api = createGrid(eGridDiv, gridOptions);;
+  gridApi = createGrid(eGridDiv, gridOptions);;
 })
 
 var worker: any;
@@ -155,10 +155,10 @@ var worker: any;
   worker = new Worker(__basePath + 'dataUpdateWorker.js')
   worker.onmessage = function (e: any) {
     if (e.data.type === 'setRowData') {
-      api!.setRowData(e.data.records)
+      gridApi!.setRowData(e.data.records)
     }
     if (e.data.type === 'updateData') {
-      api!.applyTransactionAsync({ update: e.data.records })
+      gridApi!.applyTransactionAsync({ update: e.data.records })
     }
   }
 

@@ -11,7 +11,7 @@ const columnDefs: ColDef[] = [
   { field: 'total', hide: true },
 ]
 
-let api: GridApi<IOlympicData>;
+let gridApi: GridApi<IOlympicData>;
 
 const gridOptions: GridOptions<IOlympicData> = {
   defaultColDef: {
@@ -30,7 +30,7 @@ const gridOptions: GridOptions<IOlympicData> = {
 }
 
 function onBtExport() {
-  api!.exportDataAsExcel({
+  gridApi!.exportDataAsExcel({
     onlySelected: (document.querySelector('#selectedOnly') as HTMLInputElement).checked,
   })
 }
@@ -38,10 +38,10 @@ function onBtExport() {
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', () => {
   const gridDiv = document.querySelector<HTMLElement>('#myGrid')!
-  api = createGrid(gridDiv, gridOptions);;
+  gridApi = createGrid(gridDiv, gridOptions);;
   fetch('https://www.ag-grid.com/example-assets/small-olympic-winners.json')
     .then(response => response.json())
     .then(data =>
-      api!.setRowData(data.filter((rec: any) => rec.country != null))
+      gridApi!.setRowData(data.filter((rec: any) => rec.country != null))
     )
 })

@@ -11,7 +11,7 @@ import {
 import { getData } from "./data";
 
 
-let api: GridApi;
+let gridApi: GridApi;
 
 
 const gridOptions: GridOptions = {
@@ -73,13 +73,13 @@ function getPinnedBottomData() {
   ]
 }
 function onBtStopEditing() {
-  api!.stopEditing()
+  gridApi!.stopEditing()
 }
 
 function onBtStartEditing(key?: string, pinned?: RowPinnedType) {
-  api!.setFocusedCell(0, 'lastName', pinned)
+  gridApi!.setFocusedCell(0, 'lastName', pinned)
 
-  api!.startEditingCell({
+  gridApi!.startEditingCell({
     rowIndex: 0,
     colKey: 'lastName',
     // set to 'top', 'bottom' or undefined
@@ -89,15 +89,15 @@ function onBtStartEditing(key?: string, pinned?: RowPinnedType) {
 }
 
 function onBtNextCell() {
-  api!.tabToNextCell()
+  gridApi!.tabToNextCell()
 }
 
 function onBtPreviousCell() {
-  api!.tabToPreviousCell()
+  gridApi!.tabToPreviousCell()
 }
 
 function onBtWhich() {
-  var cellDefs = api!.getEditingCells()
+  var cellDefs = gridApi!.getEditingCells()
   if (cellDefs.length > 0) {
     var cellDef = cellDefs[0]
     console.log(
@@ -116,5 +116,5 @@ function onBtWhich() {
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
   var gridDiv = document.querySelector<HTMLElement>('#myGrid')!
-  api = createGrid(gridDiv, gridOptions);;
+  gridApi = createGrid(gridDiv, gridOptions);;
 })

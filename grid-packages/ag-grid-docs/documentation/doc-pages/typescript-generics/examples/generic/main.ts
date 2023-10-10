@@ -37,7 +37,7 @@ var rowData: ICar[] = [
   { make: 'Porsche', model: 'Boxster', price: 72000 },
 ]
 
-let api: GridApi<ICar>;
+let gridApi: GridApi<ICar>;
 
 // Pass ICar as generic row data type
 const gridOptions: GridOptions<ICar> = {
@@ -65,7 +65,7 @@ const gridOptions: GridOptions<ICar> = {
 
 function onShowSelection() {
   // api.getSelectedRows() : ICar[]
-  const cars: ICar[] = api!.getSelectedRows();
+  const cars: ICar[] = gridApi!.getSelectedRows();
   console.log('Selected cars are', cars.map(c => `${c.make} ${c.model}`))
 }
 
@@ -76,5 +76,5 @@ document.addEventListener('DOMContentLoaded', function () {
   var eGridDiv = document.querySelector<HTMLElement>('#myGrid')!
 
   // create the grid passing in the div to use together with the columns & data we want to use
-  api = createGrid(eGridDiv, gridOptions);;
+  gridApi = createGrid(eGridDiv, gridOptions);;
 })

@@ -59,7 +59,7 @@ const columnDefs: ColDef[] = [
     { field: 'total', suppressMenu: true },
 ]
 
-let api: GridApi<IOlympicData>;
+let gridApi: GridApi<IOlympicData>;
 
 const gridOptions: GridOptions<IOlympicData> = {
     columnDefs: columnDefs,
@@ -168,7 +168,7 @@ function filterData(filterModel: any, data: any[]) {
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
     const gridDiv = document.querySelector<HTMLElement>('#myGrid')!;
-    api = createGrid(gridDiv, gridOptions);;
+    gridApi = createGrid(gridDiv, gridOptions);;
 
     fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
         .then(response => response.json())
@@ -208,6 +208,6 @@ document.addEventListener('DOMContentLoaded', function () {
                 },
             };
 
-            api!.setDatasource(dataSource)
+            gridApi!.setDatasource(dataSource)
         })
 })

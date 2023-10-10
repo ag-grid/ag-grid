@@ -1,6 +1,6 @@
 import { GridApi, createGrid, GridOptions } from '@ag-grid-community/core';
 
-let api: GridApi;
+let gridApi: GridApi;
 
 const gridOptions: GridOptions = {
   defaultColDef: {
@@ -86,11 +86,11 @@ function onBtnExport() {
       'NOTE: you are downloading a file with non-standard quotes or separators - it may not render correctly in Excel.'
     )
   }
-  api!.exportDataAsCsv(params)
+  gridApi!.exportDataAsCsv(params)
 }
 
 function onBtnUpdate() {
-  (document.querySelector('#csvResult') as any).value = api!.getDataAsCsv(
+  (document.querySelector('#csvResult') as any).value = gridApi!.getDataAsCsv(
     getParams()
   )
 }
@@ -98,5 +98,5 @@ function onBtnUpdate() {
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
   var gridDiv = document.querySelector<HTMLElement>('#myGrid')!
-  api = createGrid(gridDiv, gridOptions);;
+  gridApi = createGrid(gridDiv, gridOptions);;
 })

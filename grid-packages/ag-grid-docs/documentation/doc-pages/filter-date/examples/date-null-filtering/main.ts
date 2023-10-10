@@ -44,7 +44,7 @@ const columnDefs: ColDef[] = [
   },
 ]
 
-let api: GridApi;
+let gridApi: GridApi;
 
 const gridOptions: GridOptions = {
   columnDefs: columnDefs,
@@ -72,19 +72,19 @@ function changeNull(toChange: string, value: boolean) {
       break
   }
 
-  var filterModel = api!.getFilterModel()
+  var filterModel = gridApi!.getFilterModel()
 
-  api!.setColumnDefs(columnDefs)
-  api!.destroyFilter('date')
-  api!.setFilterModel(filterModel)
+  gridApi!.setColumnDefs(columnDefs)
+  gridApi!.destroyFilter('date')
+  gridApi!.setFilterModel(filterModel)
 }
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
   var gridDiv = document.querySelector<HTMLElement>('#myGrid')!
-  api = createGrid(gridDiv, gridOptions);;
+  gridApi = createGrid(gridDiv, gridOptions);;
 
-  api!.setRowData([
+  gridApi!.setRowData([
     {
       athlete: 'Alberto Gutierrez',
       date: null,

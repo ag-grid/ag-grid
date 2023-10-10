@@ -59,7 +59,7 @@ const columnDefs: ColDef[] = [
   },
 ]
 
-let api: GridApi;
+let gridApi: GridApi;
 
 const gridOptions: GridOptions = {
   columnDefs: columnDefs,
@@ -106,20 +106,20 @@ function formatNumber(params: ValueFormatterParams) {
 
 function onExpireValueCache() {
   console.log('onInvalidateValueCache -> start')
-  api!.expireValueCache()
+  gridApi!.expireValueCache()
   console.log('onInvalidateValueCache -> end')
 }
 
 function onRefreshCells() {
   console.log('onRefreshCells -> start')
-  api!.refreshClientSideRowModel('aggregate')
-  api!.refreshCells()
+  gridApi!.refreshClientSideRowModel('aggregate')
+  gridApi!.refreshCells()
   console.log('onRefreshCells -> end')
 }
 
 function onUpdateOneValue() {
   var randomId = Math.floor(Math.random() * 10) + '';
-  var rowNode = api!.getRowNode(randomId)
+  var rowNode = gridApi!.getRowNode(randomId)
   if (rowNode) {
     var randomCol = ['q1', 'q2', 'q3', 'q4'][Math.floor(Math.random() * 4)]
     var newValue = Math.floor(Math.random() * 1000)
@@ -132,5 +132,5 @@ function onUpdateOneValue() {
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
   var gridDiv = document.querySelector<HTMLElement>('#myGrid')!
-  api = createGrid(gridDiv, gridOptions);;
+  gridApi = createGrid(gridDiv, gridOptions);;
 })

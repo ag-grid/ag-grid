@@ -13,7 +13,7 @@ const columnDefs: ColDef[] = [
   { field: 'total' },
 ]
 
-let api: GridApi<IOlympicData>;
+let gridApi: GridApi<IOlympicData>;
 
 const gridOptions: GridOptions<IOlympicData> = {
   columnDefs: columnDefs,
@@ -23,21 +23,21 @@ const gridOptions: GridOptions<IOlympicData> = {
 }
 
 function sortByAthleteAsc() {
-  api!.applyColumnState({
+  gridApi!.applyColumnState({
     state: [{ colId: 'athlete', sort: 'asc' }],
     defaultState: { sort: null },
   })
 }
 
 function sortByAthleteDesc() {
-  api!.applyColumnState({
+  gridApi!.applyColumnState({
     state: [{ colId: 'athlete', sort: 'desc' }],
     defaultState: { sort: null },
   })
 }
 
 function sortByCountryThenSport() {
-  api!.applyColumnState({
+  gridApi!.applyColumnState({
     state: [
       { colId: 'country', sort: 'asc', sortIndex: 0 },
       { colId: 'sport', sort: 'asc', sortIndex: 1 },
@@ -47,7 +47,7 @@ function sortByCountryThenSport() {
 }
 
 function sortBySportThenCountry() {
-  api!.applyColumnState({
+  gridApi!.applyColumnState({
     state: [
       { colId: 'country', sort: 'asc', sortIndex: 1 },
       { colId: 'sport', sort: 'asc', sortIndex: 0 },
@@ -57,7 +57,7 @@ function sortBySportThenCountry() {
 }
 
 function clearSort() {
-  api!.applyColumnState({
+  gridApi!.applyColumnState({
     defaultState: { sort: null },
   })
 }
@@ -65,7 +65,7 @@ function clearSort() {
 var savedSort: any;
 
 function saveSort() {
-  var colState = api!.getColumnState()
+  var colState = gridApi!.getColumnState()
   var sortState = colState
     .filter(function (s) {
       return s.sort != null
@@ -78,7 +78,7 @@ function saveSort() {
 }
 
 function restoreFromSave() {
-  api!.applyColumnState({
+  gridApi!.applyColumnState({
     state: savedSort,
     defaultState: { sort: null },
   })
@@ -87,9 +87,9 @@ function restoreFromSave() {
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
   var gridDiv = document.querySelector<HTMLElement>('#myGrid')!
-  api = createGrid(gridDiv, gridOptions);;
+  gridApi = createGrid(gridDiv, gridOptions);;
 
   fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
     .then(response => response.json())
-    .then((data: IOlympicData[]) => api!.setRowData(data))
+    .then((data: IOlympicData[]) => gridApi!.setRowData(data))
 })

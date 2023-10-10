@@ -8,7 +8,7 @@ import {
     ValueFormatterParams,
 } from '@ag-grid-community/core';
 
-let api: GridApi<IOlympicData>;
+let gridApi: GridApi<IOlympicData>;
 
 const gridOptions: GridOptions<IOlympicData> = {
     columnDefs: [
@@ -60,25 +60,25 @@ function patchData(data: any[]) {
 }
 
 function selectJohnAndKenny() {
-    const instance = api!.getFilterInstance('athlete')!
+    const instance = gridApi!.getFilterInstance('athlete')!
     instance.setModel({ values: ['John Joe Nevin', 'Kenny Egan'] })
-    api!.onFilterChanged()
+    gridApi!.onFilterChanged()
 }
 
 function selectEverything() {
-    const instance = api!.getFilterInstance('athlete')!
+    const instance = gridApi!.getFilterInstance('athlete')!
     instance.setModel(null)
-    api!.onFilterChanged()
+    gridApi!.onFilterChanged()
 }
 
 function selectNothing() {
-    const instance = api!.getFilterInstance('athlete')!
+    const instance = gridApi!.getFilterInstance('athlete')!
     instance.setModel({ values: [] })
-    api!.onFilterChanged()
+    gridApi!.onFilterChanged()
 }
 
 function setCountriesToFranceAustralia() {
-    const instance = api!.getFilterInstance<ISetFilter<{ name: string, code: string }>>('country')!;
+    const instance = gridApi!.getFilterInstance<ISetFilter<{ name: string, code: string }>>('country')!;
     instance.setFilterValues([
         {
             name: 'France',
@@ -90,29 +90,29 @@ function setCountriesToFranceAustralia() {
         }
     ])
     instance.applyModel()
-    api!.onFilterChanged()
+    gridApi!.onFilterChanged()
 }
 
 function setCountriesToAll() {
-    const instance = api!.getFilterInstance<ISetFilter<{ name: string, code: string }>>('country')!;
+    const instance = gridApi!.getFilterInstance<ISetFilter<{ name: string, code: string }>>('country')!;
     instance.resetFilterValues()
     instance.applyModel()
-    api!.onFilterChanged()
+    gridApi!.onFilterChanged()
 }
 
 function onFirstDataRendered() {
-    api!.getToolPanelInstance('filters')!.expandFilters()
+    gridApi!.getToolPanelInstance('filters')!.expandFilters()
 }
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
     const gridDiv = document.querySelector<HTMLElement>('#myGrid')!
-    api = createGrid(gridDiv, gridOptions);;
+    gridApi = createGrid(gridDiv, gridOptions);;
 
     fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
         .then(response => response.json())
         .then(function (data) {
             patchData(data)
-            api!.setRowData(data)
+            gridApi!.setRowData(data)
         })
 })

@@ -21,7 +21,7 @@ const columnDefs: ColDef[] = [
     { headerName: 'Total', field: 'total', width: 100 },
 ]
 
-let api: GridApi<IOlympicData>;
+let gridApi: GridApi<IOlympicData>;
 
 const gridOptions: GridOptions<IOlympicData> = {
     defaultColDef: {
@@ -46,14 +46,14 @@ function onPaginationChanged() {
     console.log('onPaginationPageLoaded')
 
     // Workaround for bug in events order
-    if (api!) {
-        setText('#lbLastPageFound', api!.paginationIsLastPageFound())
-        setText('#lbPageSize', api!.paginationGetPageSize())
+    if (gridApi!) {
+        setText('#lbLastPageFound', gridApi!.paginationIsLastPageFound())
+        setText('#lbPageSize', gridApi!.paginationGetPageSize())
         // we +1 to current page, as pages are zero based
-        setText('#lbCurrentPage', api!.paginationGetCurrentPage() + 1)
-        setText('#lbTotalPages', api!.paginationGetTotalPages())
+        setText('#lbCurrentPage', gridApi!.paginationGetCurrentPage() + 1)
+        setText('#lbTotalPages', gridApi!.paginationGetTotalPages())
 
-        setLastButtonDisabled(!api!.paginationIsLastPageFound())
+        setLastButtonDisabled(!gridApi!.paginationIsLastPageFound())
     }
 }
 
@@ -62,37 +62,37 @@ function setLastButtonDisabled(disabled: boolean) {
 }
 
 function onBtFirst() {
-    api!.paginationGoToFirstPage()
+    gridApi!.paginationGoToFirstPage()
 }
 
 function onBtLast() {
-    api!.paginationGoToLastPage()
+    gridApi!.paginationGoToLastPage()
 }
 
 function onBtNext() {
-    api!.paginationGoToNextPage()
+    gridApi!.paginationGoToNextPage()
 }
 
 function onBtPrevious() {
-    api!.paginationGoToPreviousPage()
+    gridApi!.paginationGoToPreviousPage()
 }
 
 function onBtPageFive() {
     // we say page 4, as the first page is zero
-    api!.paginationGoToPage(4)
+    gridApi!.paginationGoToPage(4)
 }
 
 function onBtPageFifty() {
     // we say page 49, as the first page is zero
-    api!.paginationGoToPage(49)
+    gridApi!.paginationGoToPage(49)
 }
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
     var gridDiv = document.querySelector<HTMLElement>('#myGrid')!
-    api = createGrid(gridDiv, gridOptions);;
+    gridApi = createGrid(gridDiv, gridOptions);;
 
     fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
         .then(response => response.json())
-        .then((data: IOlympicData[]) => api!.setRowData(data))
+        .then((data: IOlympicData[]) => gridApi!.setRowData(data))
 })

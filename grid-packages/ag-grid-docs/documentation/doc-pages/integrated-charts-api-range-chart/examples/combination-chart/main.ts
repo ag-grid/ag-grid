@@ -8,7 +8,7 @@ import {
 import { AgAxisCaptionFormatterParams } from 'ag-charts-community';
 import { getData } from "./data";
 
-let api: GridApi;
+let gridApi: GridApi;
 
 const gridOptions: GridOptions = {
   columnDefs: [
@@ -62,7 +62,7 @@ const gridOptions: GridOptions = {
 };
 
 function onFirstDataRendered(params: FirstDataRenderedEvent) {
-  params.api!.createRangeChart({
+  params.gridApi!.createRangeChart({
     chartType: 'customCombo',
     cellRange: {
       columns: ['month', 'rain', 'pressure', 'temp'],
@@ -89,5 +89,5 @@ function numberParser(params: ValueParserParams) {
 // set up the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
   const gridDiv = document.querySelector<HTMLElement>('#myGrid')!;
-  api = createGrid(gridDiv, gridOptions);;
+  gridApi = createGrid(gridDiv, gridOptions);;
 });

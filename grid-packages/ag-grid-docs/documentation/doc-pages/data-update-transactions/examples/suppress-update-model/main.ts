@@ -70,10 +70,10 @@ function getMyFilter(): IFilterType {
         doesFilterPass(params: IDoesFilterPassParams) {
             filterCallCount++
 
-            const { api, colDef, column, context } = this.filterParams;
+            const { gridApi, colDef, column, context } = this.filterParams;
             const { node } = params;
             const value = this.filterParams.valueGetter({
-                api,
+                gridApi,
                 colDef,
                 column,
                 context,
@@ -91,7 +91,7 @@ function getMyFilter(): IFilterType {
 
 const myFilter = getMyFilter();
 
-let api: GridApi;
+let gridApi: GridApi;
 const columnDefs: ColDef[] = [
     { field: 'city', rowGroup: true, hide: true },
     { field: 'laptop', rowGroup: true, hide: true },
@@ -111,7 +111,7 @@ function getRowId(params: GetRowIdParams) {
 function onBtDuplicate() {
 
     // get the first child of the
-    const selectedRows = api.getSelectedRows();
+    const selectedRows = gridApi.getSelectedRows();
     if (!selectedRows || selectedRows.length === 0) {
         console.log('No rows selected!')
         return
@@ -130,13 +130,13 @@ function onBtDuplicate() {
     })
 
     timeOperation('Duplicate', function () {
-        api.applyTransaction({ add: newItems })
+        gridApi.applyTransaction({ add: newItems })
     })
 }
 
 function onBtUpdate() {
     // get the first child of the
-    const selectedRows = api.getSelectedRows();
+    const selectedRows = gridApi.getSelectedRows();
     if (!selectedRows || selectedRows.length === 0) {
         console.log('No rows selected!')
         return
@@ -157,30 +157,30 @@ function onBtUpdate() {
     })
 
     timeOperation('Update', function () {
-        api.applyTransaction({ update: updatedItems })
+        gridApi.applyTransaction({ update: updatedItems })
     })
 }
 
 function onBtDelete() {
     // get the first child of the
-    const selectedRows = api.getSelectedRows();
+    const selectedRows = gridApi.getSelectedRows();
     if (!selectedRows || selectedRows.length === 0) {
         console.log('No rows selected!')
         return
     }
 
     timeOperation('Delete', function () {
-        api.applyTransaction({ remove: selectedRows })
+        gridApi.applyTransaction({ remove: selectedRows })
     })
 }
 
 function onBtClearSelection() {
-    api!.deselectAll()
+    gridApi!.deselectAll()
 }
 
 function onBtUpdateModel() {
     timeOperation('Update Model', function () {
-        api.refreshClientSideRowModel('filter')
+        gridApi.refreshClientSideRowModel('filter')
     })
 }
 
@@ -222,7 +222,7 @@ function isGroupOpenByDefault(params: IsGroupOpenByDefaultParams<IOlympicData, a
 // AG Grid will not find the div in the document.
 document.addEventListener('DOMContentLoaded', function () {
     const eGridDiv = document.querySelector<HTMLElement>('#myGrid')!;
-    api = createGrid(eGridDiv, gridOptions)
+    gridApi = createGrid(eGridDiv, gridOptions)
 })
 
 function timeOperation(name: string, operation: any) {

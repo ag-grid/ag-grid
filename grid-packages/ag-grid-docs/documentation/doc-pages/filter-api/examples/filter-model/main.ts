@@ -43,7 +43,7 @@ const columnDefs: ColDef[] = [
   { field: 'total', filter: 'agNumberColumnFilter' },
 ]
 
-let api: GridApi<IOlympicData>;
+let gridApi: GridApi<IOlympicData>;
 
 const gridOptions: GridOptions<IOlympicData> = {
   columnDefs: columnDefs,
@@ -62,11 +62,11 @@ const gridOptions: GridOptions<IOlympicData> = {
 var savedFilterModel: any = null
 
 function clearFilters() {
-  api!.setFilterModel(null)
+  gridApi!.setFilterModel(null)
 }
 
 function saveFilterModel() {
-  savedFilterModel = api!.getFilterModel()
+  savedFilterModel = gridApi!.getFilterModel()
 
   var keys = Object.keys(savedFilterModel)
   var savedFilters: string = keys.length > 0 ? keys.join(', ') : '(none)';
@@ -75,7 +75,7 @@ function saveFilterModel() {
 }
 
 function restoreFilterModel() {
-  api!.setFilterModel(savedFilterModel)
+  gridApi!.setFilterModel(savedFilterModel)
 }
 
 function restoreFromHardCoded() {
@@ -89,19 +89,19 @@ function restoreFromHardCoded() {
     date: { type: 'lessThan', dateFrom: '2010-01-01' },
   }
 
-  api!.setFilterModel(hardcodedFilter)
+  gridApi!.setFilterModel(hardcodedFilter)
 }
 
 function destroyFilter() {
-  api!.destroyFilter('athlete');
+  gridApi!.destroyFilter('athlete');
 }
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
   var gridDiv = document.querySelector<HTMLElement>('#myGrid')!
-  api = createGrid(gridDiv, gridOptions);;
+  gridApi = createGrid(gridDiv, gridOptions);;
 
   fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
     .then(response => response.json())
-    .then((data: IOlympicData[]) => api!.setRowData(data))
+    .then((data: IOlympicData[]) => gridApi!.setRowData(data))
 })

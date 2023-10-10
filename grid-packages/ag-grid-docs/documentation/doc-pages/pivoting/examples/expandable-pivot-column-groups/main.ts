@@ -1,6 +1,6 @@
 import { GridApi, createGrid, GridOptions, ColumnGroup } from '@ag-grid-community/core';
 
-let api: GridApi<IOlympicData>;
+let gridApi: GridApi<IOlympicData>;
 
 const gridOptions: GridOptions<IOlympicData> = {
   columnDefs: [
@@ -25,23 +25,23 @@ const gridOptions: GridOptions<IOlympicData> = {
 }
 
 function expandAll(expand: boolean) {
-  const state = api!.getColumnGroupState();
+  const state = gridApi!.getColumnGroupState();
   const expandedState = state.map((group) => ({
     groupId: group.groupId,
     open: expand,
   }));
-  api!.setColumnGroupState(expandedState);
+  gridApi!.setColumnGroupState(expandedState);
 }
 
 function expandRoute(route: string[]) {
   const expand = (columnGroup: ColumnGroup) => {
     if (columnGroup) {
       expand(columnGroup.getParent());
-      api!.setColumnGroupOpened(columnGroup.getGroupId(), true);
+      gridApi!.setColumnGroupOpened(columnGroup.getGroupId(), true);
     }
   }
 
-  const targetCol = api!.getPivotResultColumn(route, 'gold');
+  const targetCol = gridApi!.getPivotResultColumn(route, 'gold');
   if (targetCol) {
     expand(targetCol.getParent());
   }
@@ -50,9 +50,9 @@ function expandRoute(route: string[]) {
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
   var gridDiv = document.querySelector<HTMLElement>('#myGrid')!
-  api = createGrid(gridDiv, gridOptions);;
+  gridApi = createGrid(gridDiv, gridOptions);;
 
   fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
     .then(response => response.json())
-    .then((data: IOlympicData[]) => api!.setRowData(data))
+    .then((data: IOlympicData[]) => gridApi!.setRowData(data))
 })

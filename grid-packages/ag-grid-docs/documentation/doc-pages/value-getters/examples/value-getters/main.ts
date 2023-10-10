@@ -23,7 +23,7 @@ function chainValueGetter(params: ValueGetterParams) {
 function constValueGetter() {
   return 99999
 }
-let api: GridApi;
+let gridApi: GridApi;
 const gridOptions: GridOptions = {
   columnDefs: [
     {
@@ -85,5 +85,5 @@ function createRowData() {
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
   var gridDiv = document.querySelector<HTMLElement>('#myGrid')!
-  api = createGrid(gridDiv, gridOptions);;
+  gridApi = createGrid(gridDiv, gridOptions);;
 })

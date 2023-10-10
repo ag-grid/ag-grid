@@ -1,17 +1,14 @@
 import {
-  GetRowIdParams,
-  GridApi,
-  createGrid,
-  GridApi,
-  GridOptions,
+  createGrid, GetRowIdParams,
+  GridApi, GridOptions,
   IRowNode,
-  ValueParserParams,
+  ValueParserParams
 } from '@ag-grid-community/core';
 
 var rowIdCounter = 0
 var callCount = 0
 
-let api: GridApi;
+let gridApi: GridApi;
 
 const gridOptions: GridOptions = {
   columnDefs: [
@@ -80,7 +77,7 @@ const gridOptions: GridOptions = {
     return params.data.id
   },
   onGridReady: (params) => {
-    api!.setRowData(createRowData())
+    gridApi!.setRowData(createRowData())
   },
 }
 
@@ -121,7 +118,7 @@ function numberValueParser(params: ValueParserParams) {
 }
 
 function updateOneRecord() {
-  var rowNodeToUpdate = pickExistingRowNodeAtRandom(api!)
+  var rowNodeToUpdate = pickExistingRowNodeAtRandom(gridApi!)
 
   if (!rowNodeToUpdate) return;
 
@@ -165,7 +162,7 @@ function pickExistingRowNodeAtRandom(gridApi: GridApi): IRowNode | undefined {
 }
 
 function updateUsingTransaction() {
-  var itemToUpdate = pickExistingRowItemAtRandom(api!)
+  var itemToUpdate = pickExistingRowItemAtRandom(gridApi!)
   if (!itemToUpdate) {
     return
   }
@@ -181,11 +178,11 @@ function updateUsingTransaction() {
 
   console.log('updating - after', itemToUpdate)
 
-  api!.applyTransaction(transaction)
+  gridApi!.applyTransaction(transaction)
 }
 
 function removeUsingTransaction() {
-  var itemToRemove = pickExistingRowItemAtRandom(api!)
+  var itemToRemove = pickExistingRowItemAtRandom(gridApi!)
   if (!itemToRemove) {
     return
   }
@@ -196,7 +193,7 @@ function removeUsingTransaction() {
 
   console.log('removing', itemToRemove)
 
-  api!.applyTransaction(transaction)
+  gridApi!.applyTransaction(transaction)
 }
 
 function addUsingTransaction() {
@@ -211,11 +208,11 @@ function addUsingTransaction() {
 
   console.log('adding', newItem)
 
-  api!.applyTransaction(transaction)
+  gridApi!.applyTransaction(transaction)
 }
 
 function changeGroupUsingTransaction() {
-  var itemToUpdate = pickExistingRowItemAtRandom(api!)
+  var itemToUpdate = pickExistingRowItemAtRandom(gridApi!)
   if (!itemToUpdate) {
     return
   }
@@ -228,11 +225,11 @@ function changeGroupUsingTransaction() {
 
   console.log('updating', itemToUpdate)
 
-  api!.applyTransaction(transaction)
+  gridApi!.applyTransaction(transaction)
 }
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
   var gridDiv = document.querySelector<HTMLElement>('#myGrid')!
-  api = createGrid(gridDiv, gridOptions);;
+  gridApi = createGrid(gridDiv, gridOptions);;
 })

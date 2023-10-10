@@ -1,7 +1,7 @@
 import { GridApi, createGrid, GridOptions } from '@ag-grid-community/core';
 import { getData } from "./data";
 
-let api: GridApi;
+let gridApi: GridApi;
 
 const gridOptions: GridOptions = {
   rowData: getData(),
@@ -21,13 +21,13 @@ const gridOptions: GridOptions = {
 }
 
 function setDataValue() {
-  api!.forEachNode(function (rowNode) {
+  gridApi!.forEachNode(function (rowNode) {
     rowNode.setDataValue('sickDays', randomInt())
   })
 }
 
 function setData() {
-  api!.forEachNode(function (rowNode) {
+  gridApi!.forEachNode(function (rowNode) {
     var newData = {
       employee: rowNode.data.employee,
       sickDays: randomInt(),
@@ -38,12 +38,12 @@ function setData() {
 
 function applyTransaction() {
   var itemsToUpdate: any[] = []
-  api!.forEachNode(function (rowNode) {
+  gridApi!.forEachNode(function (rowNode) {
     var data = rowNode.data
     data.sickDays = randomInt()
     itemsToUpdate.push(data)
   })
-  api!.applyTransaction({ update: itemsToUpdate })
+  gridApi!.applyTransaction({ update: itemsToUpdate })
 }
 
 function randomInt() {
@@ -54,5 +54,5 @@ function randomInt() {
 // AG Grid will not find the div in the document.
 document.addEventListener('DOMContentLoaded', function () {
   var eGridDiv = document.querySelector<HTMLElement>('#myGrid')!
-  api = createGrid(eGridDiv, gridOptions);;
+  gridApi = createGrid(eGridDiv, gridOptions);;
 })

@@ -20,7 +20,7 @@ const columnDefs: ColDef[] = [
   { field: 'total', width: 100, pinned: 'right' },
 ]
 
-let api: GridApi<IOlympicData>;
+let gridApi: GridApi<IOlympicData>;
 
 const gridOptions: GridOptions<IOlympicData> = {
   defaultColDef: {
@@ -32,11 +32,11 @@ const gridOptions: GridOptions<IOlympicData> = {
 }
 
 function clearPinned() {
-  api!.applyColumnState({ defaultState: { pinned: null } })
+  gridApi!.applyColumnState({ defaultState: { pinned: null } })
 }
 
 function resetPinned() {
-  api!.applyColumnState({
+  gridApi!.applyColumnState({
     state: [
       { colId: 'rowNum', pinned: 'left' },
       { colId: 'athlete', pinned: 'left' },
@@ -48,7 +48,7 @@ function resetPinned() {
 }
 
 function pinCountry() {
-  api!.applyColumnState({
+  gridApi!.applyColumnState({
     state: [{ colId: 'country', pinned: 'left' }],
     defaultState: { pinned: null },
   })
@@ -66,11 +66,11 @@ function jumpToCol() {
   }
 
   // it's actually a column the api needs, so look the column up
-  const allColumns = api!.getColumns()
+  const allColumns = gridApi!.getColumns()
   if (allColumns) {
     const column = allColumns[index]
     if (column) {
-      api!.ensureColumnVisible(column)
+      gridApi!.ensureColumnVisible(column)
     }
   }
 }
@@ -79,16 +79,16 @@ function jumpToRow() {
   var value = (document.getElementById('row') as HTMLInputElement).value
   const index = Number(value)
   if (typeof index === 'number' && !isNaN(index)) {
-    api!.ensureIndexVisible(index)
+    gridApi!.ensureIndexVisible(index)
   }
 }
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', () => {
   const gridDiv = document.querySelector<HTMLElement>('#myGrid')!
-  api = createGrid(gridDiv, gridOptions);;
+  gridApi = createGrid(gridDiv, gridOptions);;
 
   fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
     .then(response => response.json())
-    .then((data: IOlympicData[]) => api!.setRowData(data))
+    .then((data: IOlympicData[]) => gridApi!.setRowData(data))
 })

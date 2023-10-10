@@ -15,7 +15,7 @@ function poundFormatter(params: ValueFormatterParams) {
     .replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,'));
 }
 
-let api: GridApi;
+let gridApi: GridApi;
 
 const gridOptions: GridOptions = {
   columnDefs: [
@@ -71,7 +71,7 @@ const gridOptions: GridOptions = {
 
 function getRowData() {
   var rowData: any[] = []
-  api!.forEachNode(function (node) {
+  gridApi!.forEachNode(function (node) {
     rowData.push(node.data)
   })
   console.log('Row Data:')
@@ -80,25 +80,25 @@ function getRowData() {
 
 function onAddRow(category: string) {
   var rowDataItem = createNewRowData(category)
-  api!.applyTransaction({ add: [rowDataItem] })
+  gridApi!.applyTransaction({ add: [rowDataItem] })
 }
 
 function onMoveToGroup(category: string) {
-  var selectedRowData = api!.getSelectedRows()
+  var selectedRowData = gridApi!.getSelectedRows()
   selectedRowData.forEach(function (dataItem) {
     dataItem.category = category
   })
-  api!.applyTransaction({ update: selectedRowData })
+  gridApi!.applyTransaction({ update: selectedRowData })
 }
 
 function onRemoveSelected() {
-  var selectedRowData = api!.getSelectedRows()
-  api!.applyTransaction({ remove: selectedRowData })
+  var selectedRowData = gridApi!.getSelectedRows()
+  gridApi!.applyTransaction({ remove: selectedRowData })
 }
 
 // wait for the document to be loaded, otherwise
 // AG Grid will not find the div in the document.
 document.addEventListener('DOMContentLoaded', function () {
   var eGridDiv = document.querySelector<HTMLElement>('#myGrid')!
-  api = createGrid(eGridDiv, gridOptions);;
+  gridApi = createGrid(eGridDiv, gridOptions);;
 })

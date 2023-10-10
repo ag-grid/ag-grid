@@ -23,7 +23,7 @@ const columnDefs: ColDef[] = [
   },
 ]
 
-let api: GridApi;
+let gridApi: GridApi;
 
 const gridOptions: GridOptions = {
   columnDefs: columnDefs,
@@ -53,7 +53,7 @@ const gridOptions: GridOptions = {
     var datasource = getServerSideDatasource(fakeServer)
 
     // register the datasource with the grid
-    api!.setServerSideDatasource(datasource)
+    gridApi!.setServerSideDatasource(datasource)
   },
 
 }
@@ -61,7 +61,7 @@ const gridOptions: GridOptions = {
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
   var gridDiv = document.querySelector<HTMLElement>('#myGrid')!
-  api = createGrid(gridDiv, gridOptions);;
+  gridApi = createGrid(gridDiv, gridOptions);;
 })
 
 function getServerSideDatasource(server: any): IServerSideDatasource {

@@ -12,7 +12,7 @@ const updateRowCount = (value?: string | number) => {
     element!.innerHTML = value !== undefined ? value.toString() : '-';
 }
 
-let api: GridApi;
+let gridApi: GridApi;
 
 const gridOptions: GridOptions = {
     columnDefs: [
@@ -30,14 +30,14 @@ const gridOptions: GridOptions = {
 };
 
 function loadDataSetA() {
-    api!.setRowData(getDataSetA());
+    gridApi!.setRowData(getDataSetA());
 }
 
 function loadDataSetB() {
-    api!.setRowData(getDataSetB());
+    gridApi!.setRowData(getDataSetB());
 }
 
 document.addEventListener('DOMContentLoaded', () => {
     const gridDiv = document.querySelector<HTMLElement>('#myGrid')!;
-    api = createGrid(gridDiv, gridOptions);;
+    gridApi = createGrid(gridDiv, gridOptions);;
 });

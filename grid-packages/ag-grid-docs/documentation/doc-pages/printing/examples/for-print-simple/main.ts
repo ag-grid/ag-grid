@@ -11,7 +11,7 @@ const columnDefs: ColDef[] = [
   { field: 'country' },
 ]
 
-let api: GridApi;
+let gridApi: GridApi;
 
 const gridOptions: GridOptions = {
   columnDefs: columnDefs,
@@ -26,7 +26,7 @@ function onBtPrinterFriendly() {
   eGridDiv.style.width = ''
   eGridDiv.style.height = ''
 
-  api!.setDomLayout('print')
+  gridApi!.setDomLayout('print')
 }
 
 function onBtNormal() {
@@ -35,11 +35,11 @@ function onBtNormal() {
   eGridDiv.style.height = '200px'
 
   // Same as setting to 'normal' as it is the default
-  api!.setDomLayout()
+  gridApi!.setDomLayout()
 }
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
   var gridDiv = document.querySelector<HTMLElement>('#myGrid')!
-  api = createGrid(gridDiv, gridOptions);;
+  gridApi = createGrid(gridDiv, gridOptions);;
 })

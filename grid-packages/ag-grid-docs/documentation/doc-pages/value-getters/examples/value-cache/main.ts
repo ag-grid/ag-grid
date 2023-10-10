@@ -37,7 +37,7 @@ const columnDefs: ColDef[] = [
   },
 ]
 
-let api: GridApi;
+let gridApi: GridApi;
 
 const gridOptions: GridOptions = {
   columnDefs: columnDefs,
@@ -87,9 +87,9 @@ function onValueCache(valueCacheOn: boolean) {
 }
 
 function destroyOldGridIfExists() {
-  if (api!) {
+  if (gridApi!) {
     console.log('==========> destroying old grid')
-    api!.destroy()
+    gridApi!.destroy()
   }
 }
 
@@ -100,7 +100,7 @@ function makeGrid(valueCacheOn: boolean) {
 
   // then similar to all the other examples, create the grid
   var gridDiv = document.querySelector<HTMLElement>('#myGrid')!
-  api = createGrid(gridDiv, gridOptions);;
+  gridApi = createGrid(gridDiv, gridOptions);;
 }
 
 // setup the grid after the page has finished loading

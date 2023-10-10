@@ -41,7 +41,7 @@ const columnDefs: ColDef[] = [
   },
 ]
 
-let api: GridApi;
+let gridApi: GridApi;
 
 const gridOptions: GridOptions = {
   columnDefs: columnDefs,
@@ -70,10 +70,10 @@ function formatNumber(number: number) {
 }
 
 function onUpdateSomeValues() {
-  const rowCount = api!.getDisplayedRowCount()
+  const rowCount = gridApi!.getDisplayedRowCount()
   for (let i = 0; i < 10; i++) {
     const row = Math.floor(Math.random() * rowCount)
-    const rowNode = api!.getDisplayedRowAtIndex(row)!
+    const rowNode = gridApi!.getDisplayedRowAtIndex(row)!
     rowNode.setDataValue('c', Math.floor(Math.random() * 10000))
     rowNode.setDataValue('d', Math.floor(Math.random() * 10000))
   }
@@ -97,8 +97,8 @@ function createRowData() {
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
   const gridDiv = document.querySelector<HTMLElement>('#myGrid')!
-  api = createGrid(gridDiv, gridOptions);;
+  gridApi = createGrid(gridDiv, gridOptions);;
   setTimeout(function () {
-    api!.sizeColumnsToFit()
+    gridApi!.sizeColumnsToFit()
   }, 200)
 })

@@ -10,7 +10,7 @@ import {
 import { getData } from "./data";
 
 
-let api: GridApi;
+let gridApi: GridApi;
 
 
 const gridOptions: GridOptions = {
@@ -64,30 +64,30 @@ function colourCellRenderer(params: ICellRendererParams) {
 }
 
 function setModel(type: string) {
-  const instance = api!.getFilterInstance(FILTER_TYPES[type])!
+  const instance = gridApi!.getFilterInstance(FILTER_TYPES[type])!
 
   instance.setModel({ values: MANGLED_COLOURS })
-  api!.onFilterChanged()
+  gridApi!.onFilterChanged()
 }
 
 function getModel(type: string) {
-  const instance = api!.getFilterInstance(FILTER_TYPES[type])!
+  const instance = gridApi!.getFilterInstance(FILTER_TYPES[type])!
 
   alert(JSON.stringify(instance.getModel(), null, 2))
 }
 
 function setFilterValues(type: string) {
-  const instance = api!.getFilterInstance<ISetFilter>(
+  const instance = gridApi!.getFilterInstance<ISetFilter>(
     FILTER_TYPES[type]
   )!;
 
   instance.setFilterValues(MANGLED_COLOURS)
   instance.applyModel()
-  api!.onFilterChanged()
+  gridApi!.onFilterChanged()
 }
 
 function getValues(type: string) {
-  const instance = api!.getFilterInstance<ISetFilter>(
+  const instance = gridApi!.getFilterInstance<ISetFilter>(
     FILTER_TYPES[type]
   )!;
 
@@ -95,23 +95,23 @@ function getValues(type: string) {
 }
 
 function reset(type: string) {
-  const instance = api!.getFilterInstance<ISetFilter>(
+  const instance = gridApi!.getFilterInstance<ISetFilter>(
     FILTER_TYPES[type]
   )!;
 
   instance.resetFilterValues()
   instance.setModel(null)
-  api!.onFilterChanged()
+  gridApi!.onFilterChanged()
 }
 
 var MANGLED_COLOURS = ['ReD', 'OrAnGe', 'WhItE', 'YeLlOw']
 
 function onFirstDataRendered(params: FirstDataRenderedEvent) {
-  api!.getToolPanelInstance('filters')!.expandFilters()
+  gridApi!.getToolPanelInstance('filters')!.expandFilters()
 }
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
   var gridDiv = document.querySelector<HTMLElement>('#myGrid')!
-  api = createGrid(gridDiv, gridOptions);;
+  gridApi = createGrid(gridDiv, gridOptions);;
 })

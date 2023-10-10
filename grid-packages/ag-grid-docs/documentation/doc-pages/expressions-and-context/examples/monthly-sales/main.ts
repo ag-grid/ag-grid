@@ -102,7 +102,7 @@ const columnDefs: (ColDef | ColGroupDef)[] = [
   },
 ]
 
-let api: GridApi;
+let gridApi: GridApi;
 
 const gridOptions: GridOptions = {
   columnDefs: columnDefs,
@@ -171,23 +171,23 @@ function onChangeMonth(i: number) {
 
   gridOptions.context.month = newMonth
   document.querySelector('#monthName')!.innerHTML = monthNames[newMonth + 1]
-  api!.refreshClientSideRowModel('aggregate')
-  api!.refreshCells()
+  gridApi!.refreshClientSideRowModel('aggregate')
+  gridApi!.refreshCells()
 }
 
 function onQuickFilterChanged(value: any) {
-  api!.setQuickFilter(value)
+  gridApi!.setQuickFilter(value)
 }
 
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
   var gridDiv = document.querySelector<HTMLElement>('#myGrid')!
-  api = createGrid(gridDiv, gridOptions);;
+  gridApi = createGrid(gridDiv, gridOptions);;
 
   fetch('https://www.ag-grid.com/example-assets/monthly-sales.json')
     .then(response => response.json())
     .then(function (data) {
-      api!.setRowData(data)
+      gridApi!.setRowData(data)
     })
 })

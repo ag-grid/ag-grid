@@ -6,7 +6,7 @@ import {
   IFiltersToolPanel,
 } from '@ag-grid-community/core';
 
-let api: GridApi;
+let gridApi: GridApi;
 
 const gridOptions: GridOptions = {
   rowData: getRowData(),
@@ -35,21 +35,21 @@ function getRowData() {
 }
 
 function updateFirstRow() {
-  var firstRow = api!.getDisplayedRowAtIndex(0)
+  var firstRow = gridApi!.getDisplayedRowAtIndex(0)
   if (firstRow) {
     var firstRowData = firstRow.data
     firstRowData['col1'] += 'X'
-    api!.applyTransaction({ update: [firstRowData] })
+    gridApi!.applyTransaction({ update: [firstRowData] })
   }
 }
 
 function addDRow() {
-  api!.applyTransaction({ add: [{ col1: 'D' }] })
+  gridApi!.applyTransaction({ add: [{ col1: 'D' }] })
 }
 
 function reset() {
-  api!.setFilterModel(null);
-  api!.setRowData(getRowData());
+  gridApi!.setFilterModel(null);
+  gridApi!.setRowData(getRowData());
 }
 
 function onFirstDataRendered(params: FirstDataRenderedEvent) {
@@ -59,5 +59,5 @@ function onFirstDataRendered(params: FirstDataRenderedEvent) {
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
   var gridDiv = document.querySelector<HTMLElement>('#myGrid')!
-  api = createGrid(gridDiv, gridOptions);;
+  gridApi = createGrid(gridDiv, gridOptions);;
 })

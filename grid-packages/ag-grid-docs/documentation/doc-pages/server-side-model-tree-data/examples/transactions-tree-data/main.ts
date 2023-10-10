@@ -2,7 +2,6 @@ import {
   GridApi,
   createGrid,
   ColDef,
-  GridApi,
   GridOptions,
   IServerSideDatasource,
   IServerSideGetRowsParams,
@@ -27,7 +26,7 @@ const columnDefs: ColDef[] = [
   { field: 'startDate' },
 ];
 
-let api: GridApi;
+let gridApi: GridApi;
 
 const gridOptions: GridOptions = {
   defaultColDef: {
@@ -66,7 +65,7 @@ function getRouteToNode(rowNode: IRowNode): string[] {
 
 let latestId = 100000;
 function addToSelected() {
-  const selected = api!.getSelectedNodes()[0];
+  const selected = gridApi!.getSelectedNodes()[0];
   if (!selected) {
     console.warn('No row was selected.');
     return;
@@ -83,7 +82,7 @@ function addToSelected() {
 }
 
 function updateSelected() {
-  const selected = api!.getSelectedNodes()[0];
+  const selected = gridApi!.getSelectedNodes()[0];
   if (!selected) {
     console.warn('No row was selected.');
     return;
@@ -94,7 +93,7 @@ function updateSelected() {
 }
 
 function deleteSelected() {
-  const selected = api!.getSelectedNodes()[0];
+  const selected = gridApi!.getSelectedNodes()[0];
   if (!selected) {
     console.warn('No row was selected.');
     return;
@@ -105,7 +104,7 @@ function deleteSelected() {
 }
 
 function moveSelected() {
-  const selected = api!.getSelectedNodes()[0];
+  const selected = gridApi!.getSelectedNodes()[0];
   if (!selected) {
     console.warn('No row was selected.');
     return;
@@ -118,7 +117,7 @@ function moveSelected() {
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
   var gridDiv = document.querySelector<HTMLElement>('#myGrid')!
-  api = createGrid(gridDiv, gridOptions);;
+  gridApi = createGrid(gridDiv, gridOptions);;
 
   fetch('https://www.ag-grid.com/example-assets/tree-data.json')
     .then(response => response.json())
@@ -133,9 +132,9 @@ document.addEventListener('DOMContentLoaded', function () {
         },
         ...data,
       ];
-      var fakeServer = createFakeServer(adjustedData, api!)
+      var fakeServer = createFakeServer(adjustedData, gridApi!)
       var datasource = createServerSideDatasource(fakeServer)
-      api!.setServerSideDatasource(datasource)
+      gridApi!.setServerSideDatasource(datasource)
     })
 })
 

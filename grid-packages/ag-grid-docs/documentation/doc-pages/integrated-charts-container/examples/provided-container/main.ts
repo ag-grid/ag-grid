@@ -8,7 +8,7 @@ const columnDefs: ColDef[] = [
   { field: 'total', chartDataType: 'series' },
 ]
 
-let api: GridApi;
+let gridApi: GridApi;
 
 const gridOptions: GridOptions = {
   defaultColDef: {
@@ -76,11 +76,11 @@ function createChartContainer(chartRef: ChartRef) {
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
   const gridDiv = document.querySelector<HTMLElement>('#myGrid')!
-  api = createGrid(gridDiv, gridOptions);;
+  gridApi = createGrid(gridDiv, gridOptions);;
 
   fetch('https://www.ag-grid.com/example-assets/wide-spread-of-sports.json')
     .then(response => response.json())
     .then(function (data) {
-      api!.setRowData(data)
+      gridApi!.setRowData(data)
     })
 })

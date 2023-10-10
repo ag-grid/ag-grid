@@ -272,7 +272,10 @@ export function vanillaToReactFunctional(bindings: any, componentFilenames: stri
 
         const gridReady = additionalInReady.length > 0 ? `
             const onGridReady = useCallback((params) => {
-                ${additionalInReady.join('\n')}
+                ${additionalInReady.join('\n')
+                .replace(/([\s\(!])api(\W)/g, '$1params.api$2')
+
+            }
             }, []);` : '';
 
 

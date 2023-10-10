@@ -8,7 +8,7 @@ interface IOlympicDataTypes extends IOlympicData {
   };
 }
 
-let api: GridApi<IOlympicDataTypes>;
+let gridApi: GridApi<IOlympicDataTypes>;
 
 const gridOptions: GridOptions<IOlympicDataTypes> = {
   columnDefs: [
@@ -40,11 +40,11 @@ const gridOptions: GridOptions<IOlympicDataTypes> = {
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', () => {
   const gridDiv = document.querySelector<HTMLElement>('#myGrid')!
-  api = createGrid(gridDiv, gridOptions);;
+  gridApi = createGrid(gridDiv, gridOptions);;
 
   fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
     .then(response => response.json())
-    .then((data: IOlympicDataTypes[]) => api!.setRowData(data.map(rowData => {
+    .then((data: IOlympicDataTypes[]) => gridApi!.setRowData(data.map(rowData => {
       const dateParts = rowData.date.split('/');
       return {
         ...rowData,

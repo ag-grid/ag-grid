@@ -212,7 +212,7 @@ const autoGroupColumnDef: ColDef = {
     } as IGroupCellRendererParams,
 };
 
-let api: GridApi;
+let gridApi: GridApi;
 
 const gridOptions: GridOptions = {
     defaultColDef: {
@@ -559,7 +559,7 @@ function createData() {
     loadInstance++
 
     const loadInstanceCopy = loadInstance;
-    api!.showLoadingOverlay()
+    gridApi!.showLoadingOverlay()
 
     const colDefs = createCols();
 
@@ -586,8 +586,8 @@ function createData() {
         if (row >= rowCount) {
             clearInterval(intervalId)
             setTimeout(function () {
-                api!.setColumnDefs(colDefs)
-                api!.setRowData(data)
+                gridApi!.setColumnDefs(colDefs)
+                gridApi!.setRowData(data)
             }, 0)
         }
     }, 0);
@@ -655,7 +655,7 @@ function pseudoRandom() {
 function selectionChanged(event: SelectionChangedEvent) {
     console.log(
         'Callback selectionChanged: selection count = ' +
-        api!.getSelectedNodes().length
+        gridApi!.getSelectedNodes().length
     )
 }
 
@@ -808,6 +808,6 @@ function languageCellRenderer(params: ICellRendererParams) {
 document.addEventListener('DOMContentLoaded', function () {
     const gridDiv = document.querySelector<HTMLElement>('#myGrid')!;
 
-    api = createGrid(gridDiv, gridOptions);;
+    gridApi = createGrid(gridDiv, gridOptions);;
     createData()
 })

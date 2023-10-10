@@ -7,7 +7,7 @@ import {
   ValueFormatterParams,
 } from '@ag-grid-community/core';
 
-let api: GridApi;
+let gridApi: GridApi;
 
 const gridOptions: GridOptions = {
   columnDefs: [
@@ -72,12 +72,12 @@ function groupTreeListFormatter(pathKey: string | null, level: number, _parentPa
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
   var gridDiv = document.querySelector<HTMLElement>('#myGrid')!
-  api = createGrid(gridDiv, gridOptions);;
+  gridApi = createGrid(gridDiv, gridOptions);;
   fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
   .then(response => response.json())
   .then((data: any[]) => {
       const randomDays = [1, 4, 10, 15, 18];
-      api!.setRowData([
+      gridApi!.setRowData([
         {},
         ...data.map(row => {
           // generate pseudo-random dates

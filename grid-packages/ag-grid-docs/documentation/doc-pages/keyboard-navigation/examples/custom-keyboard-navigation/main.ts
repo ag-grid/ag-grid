@@ -41,7 +41,7 @@ const KEY_UP = 'ArrowUp';
 const KEY_RIGHT = 'ArrowRight';
 const KEY_DOWN = 'ArrowDown';
 
-let api: GridApi<IOlympicData>;
+let gridApi: GridApi<IOlympicData>;
 
 const gridOptions: GridOptions<IOlympicData> = {
   // make all cols editable
@@ -120,7 +120,7 @@ function tabToNextCell(params: TabToNextCellParams): (CellPosition | null) {
   const previousCell = params.previousCellPosition;
   const lastRowIndex = previousCell.rowIndex;
   let nextRowIndex = params.backwards ? lastRowIndex - 1 : lastRowIndex + 1;
-  const renderedRowCount = params.api!.getModel().getRowCount();
+  const renderedRowCount = params.gridApi!.getModel().getRowCount();
 
   if (nextRowIndex < 0) {
     nextRowIndex = -1
@@ -160,7 +160,7 @@ function navigateToNextCell(params: NavigateToNextCellParams): (CellPosition | n
     case KEY_UP:
       // return the cell below
       nextRowIndex = previousCell.rowIndex + 1
-      renderedRowCount = params.api!.getModel().getRowCount()
+      renderedRowCount = params.gridApi!.getModel().getRowCount()
       if (nextRowIndex >= renderedRowCount) {
         return null
       } // returning null means don't navigate
@@ -181,9 +181,9 @@ function navigateToNextCell(params: NavigateToNextCellParams): (CellPosition | n
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
   const gridDiv = document.querySelector<HTMLElement>('#myGrid')!;
-  api = createGrid(gridDiv, gridOptions);;
+  gridApi = createGrid(gridDiv, gridOptions);;
 
   fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
     .then(response => response.json())
-    .then((data: IOlympicData[]) => api!.setRowData(data))
+    .then((data: IOlympicData[]) => gridApi!.setRowData(data))
 })

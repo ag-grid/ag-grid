@@ -1,7 +1,7 @@
 import { GridApi, createGrid, GridOptions } from '@ag-grid-community/core';
 import { getData } from "./data";
 
-let api: GridApi;
+let gridApi: GridApi;
 
 const gridOptions: GridOptions = {
   columnDefs: [
@@ -35,7 +35,7 @@ function start() {
 
   const updateData = () => {
     const itemsToUpdate: any[] = []
-    api!.forEachNodeAfterFilterAndSort(function (rowNode) {
+    gridApi!.forEachNodeAfterFilterAndSort(function (rowNode) {
       const data = rowNode.data
       if (!data) {
         return;
@@ -46,7 +46,7 @@ function start() {
       data.change = [...data.change.slice(1, n), v]
       itemsToUpdate.push(data)
     })
-    api!.applyTransaction({ update: itemsToUpdate })
+    gridApi!.applyTransaction({ update: itemsToUpdate })
   };
 
   intervalId = setInterval(updateData, 300)
@@ -64,5 +64,5 @@ function stop() {
 
 document.addEventListener('DOMContentLoaded', function () {
   var gridDiv = document.querySelector<HTMLElement>('#myGrid')!
-  api = createGrid(gridDiv, gridOptions);;
+  gridApi = createGrid(gridDiv, gridOptions);;
 })

@@ -11,7 +11,7 @@ const columnDefs: ColDef[] = [
   { field: 'silver' },
 ]
 
-let api: GridApi<IOlympicData>;
+let gridApi: GridApi<IOlympicData>;
 
 const gridOptions: GridOptions<IOlympicData> = {
   defaultColDef: {
@@ -30,34 +30,34 @@ function onBtExport() {
   var spreadsheets: string[] = []
 
   let nodesToExport: IRowNode[] = [];
-  api!.forEachNode((node, index) => {
+  gridApi!.forEachNode((node, index) => {
     nodesToExport.push(node);
 
     if (index % 100 === 99) {
-      api!.setNodesSelected({ nodes: nodesToExport, newValue: true });
+      gridApi!.setNodesSelected({ nodes: nodesToExport, newValue: true });
       spreadsheets.push(
-        api!.getSheetDataForExcel({
+        gridApi!.getSheetDataForExcel({
           onlySelected: true,
         })!
       )
 
-      api!.deselectAll()
+      gridApi!.deselectAll()
       nodesToExport = [];
     }
   })
 
   // check if the last page was exported
 
-  if (api!.getSelectedNodes().length) {
+  if (gridApi!.getSelectedNodes().length) {
     spreadsheets.push(
-      api!.getSheetDataForExcel({
+      gridApi!.getSheetDataForExcel({
         onlySelected: true,
       })!
     )
-    api!.deselectAll()
+    gridApi!.deselectAll()
   }
 
-  api!.exportMultipleSheetsAsExcel({
+  gridApi!.exportMultipleSheetsAsExcel({
     data: spreadsheets,
     fileName: 'ag-grid.xlsx'
   })
@@ -66,9 +66,9 @@ function onBtExport() {
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
   var gridDiv = document.querySelector<HTMLElement>('#myGrid')!
-  api = createGrid(gridDiv, gridOptions);;
+  gridApi = createGrid(gridDiv, gridOptions);;
 
   fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
     .then(response => response.json())
-    .then((data: IOlympicData[]) => api!.setRowData(data))
+    .then((data: IOlympicData[]) => gridApi!.setRowData(data))
 })

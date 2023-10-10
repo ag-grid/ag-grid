@@ -1,7 +1,7 @@
 import { ColDef, FirstDataRenderedEvent, createGrid, GridApi, GridOptions } from '@ag-grid-community/core';
 import { getData } from "./data";
 
-let api: GridApi;
+let gridApi: GridApi;
 const columnDefs: ColDef[] = [
   { field: 'group', rowGroup: true, hide: true },
   { field: 'id', pinned: 'left', width: 70 },
@@ -32,31 +32,31 @@ function onFirstDataRendered(params: FirstDataRenderedEvent) {
 }
 
 function onBtPrint() {
-  setPrinterFriendly(api)
+  setPrinterFriendly(gridApi)
 
   setTimeout(function () {
     print()
-    setNormal(api)
+    setNormal(gridApi)
   }, 2000)
 }
 
-function setPrinterFriendly(api: GridApi) {
+function setPrinterFriendly(gridApi: GridApi) {
   const eGridDiv = document.querySelector<HTMLElement>('#myGrid')! as any;
   eGridDiv.style.width = ''
   eGridDiv.style.height = ''
-  api.setDomLayout('print')
+  gridApi.setDomLayout('print')
 }
 
-function setNormal(api: GridApi) {
+function setNormal(gridApi: GridApi) {
   const eGridDiv = document.querySelector<HTMLElement>('#myGrid')! as any;
   eGridDiv.style.width = '700px'
   eGridDiv.style.height = '200px'
 
-  api.setDomLayout()
+  gridApi.setDomLayout()
 }
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', () => {
   const gridDiv = document.querySelector<HTMLElement>('#myGrid')!
-  api = createGrid(gridDiv, gridOptions)
+  gridApi = createGrid(gridDiv, gridOptions)
 })

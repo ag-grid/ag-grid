@@ -1,6 +1,6 @@
 import { GridApi, createGrid, GridOptions } from '@ag-grid-community/core';
 
-let api: GridApi<IOlympicData>;
+let gridApi: GridApi<IOlympicData>;
 
 const gridOptions: GridOptions<IOlympicData> = {
   defaultColDef: {
@@ -42,17 +42,17 @@ function onBtExport() {
   const spreadsheets = []
 
   //set a filter condition ensuring no records are returned so only the header content is exported
-  const filterInstance = api!.getFilterInstance('athlete')!
+  const filterInstance = gridApi!.getFilterInstance('athlete')!
 
   filterInstance.setModel({
     values: [],
   })
 
-  api!.onFilterChanged()
+  gridApi!.onFilterChanged()
 
   //export custom content for cover page
   spreadsheets.push(
-    api!.getSheetDataForExcel({
+    gridApi!.getSheetDataForExcel({
       prependContent: [
         {
           cells: [{
@@ -97,11 +97,11 @@ function onBtExport() {
 
   //remove filter condition set above so all the grid data can be exported on a separate sheet
   filterInstance.setModel(null)
-  api!.onFilterChanged()
+  gridApi!.onFilterChanged()
 
-  spreadsheets.push(api!.getSheetDataForExcel()!)
+  spreadsheets.push(gridApi!.getSheetDataForExcel()!)
 
-  api!.exportMultipleSheetsAsExcel({
+  gridApi!.exportMultipleSheetsAsExcel({
     data: spreadsheets,
     fileName: 'ag-grid.xlsx',
   })
@@ -110,11 +110,11 @@ function onBtExport() {
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', () => {
   const gridDiv = document.querySelector<HTMLElement>('#myGrid')!
-  api = createGrid(gridDiv, gridOptions);;
+  gridApi = createGrid(gridDiv, gridOptions);;
 
   fetch('https://www.ag-grid.com/example-assets/small-olympic-winners.json')
     .then(response => response.json())
     .then(data =>
-      api!.setRowData(data.filter((rec: any) => rec.country != null))
+      gridApi!.setRowData(data.filter((rec: any) => rec.country != null))
     )
 })

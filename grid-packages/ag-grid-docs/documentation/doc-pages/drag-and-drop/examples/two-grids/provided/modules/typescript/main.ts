@@ -136,10 +136,10 @@ function gridDrop(event: any, grid: string) {
     // if data missing or data has no it, do nothing
     if (!data || data.id == null) { return; }
 
-    var api = grid == 'left' ? leftApi! : rightApi!;
+    var gridApi = grid == 'left' ? leftApi! : rightApi!;
 
     // do nothing if row is already in the grid, otherwise we would have duplicates
-    var rowAlreadyInGrid = !!api!.getRowNode(data.id);
+    var rowAlreadyInGrid = !!gridApi!.getRowNode(data.id);
     if (rowAlreadyInGrid) {
         console.log('not adding row to avoid duplicates in the grid');
         return;
@@ -148,7 +148,7 @@ function gridDrop(event: any, grid: string) {
     var transaction = {
         add: [data]
     };
-    api.applyTransaction(transaction);
+    gridApi.applyTransaction(transaction);
 }
 
 

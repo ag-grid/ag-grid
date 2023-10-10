@@ -9,7 +9,7 @@ const columnDefs: ColDef[] = [
   { headerName: 'Sport', field: 'sport', width: 110 },
 ];
 
-let api: GridApi;
+let gridApi: GridApi;
 
 const gridOptions: GridOptions = {
   defaultColDef: {
@@ -30,8 +30,8 @@ function processDataFromClipboard(params: ProcessDataFromClipboardParams): strin
     data.splice(data.length - 1, 1);
   }
 
-  const lastIndex = params.api!.getModel().getRowCount() - 1;
-  const focusedCell = params.api!.getFocusedCell();
+  const lastIndex = params.gridApi!.getModel().getRowCount() - 1;
+  const focusedCell = params.gridApi!.getFocusedCell();
   const focusedIndex = focusedCell!.rowIndex;
 
   if (focusedIndex + data.length - 1 > lastIndex) {
@@ -49,13 +49,13 @@ function processDataFromClipboard(params: ProcessDataFromClipboardParams): strin
       row.forEach((item) => {
         if (!currentColumn) { return; }
         rowObject[currentColumn.colDef.field] = item;
-        currentColumn = params.api!.getDisplayedColAfter(currentColumn);
+        currentColumn = params.gridApi!.getDisplayedColAfter(currentColumn);
       });
 
       rowsToAdd.push(rowObject);
     }
 
-    params.api!.applyTransaction({ add: rowsToAdd });
+    params.gridApi!.applyTransaction({ add: rowsToAdd });
   }
 
   return data;
@@ -64,9 +64,9 @@ function processDataFromClipboard(params: ProcessDataFromClipboardParams): strin
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
   var gridDiv = document.querySelector<HTMLElement>('#myGrid')!;
-  api = createGrid(gridDiv, gridOptions);;
+  gridApi = createGrid(gridDiv, gridOptions);;
 
   fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
     .then((response) => response.json())
-    .then((data) => api!.setRowData(data.slice(0,8)));
+    .then((data) => gridApi!.setRowData(data.slice(0,8)));
 });

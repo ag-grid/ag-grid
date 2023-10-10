@@ -15,7 +15,7 @@ const columnDefs: ColDef[] = [
   { field: 'Rainfall (mm)', chartDataType: 'series' },
 ]
 
-let api: GridApi;
+let gridApi: GridApi;
 
 const gridOptions: GridOptions = {
   defaultColDef: {
@@ -58,11 +58,11 @@ function onChartDestroyed(event: ChartDestroyed) {
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
   var gridDiv = document.querySelector<HTMLElement>('#myGrid')!
-  api = createGrid(gridDiv, gridOptions);;
+  gridApi = createGrid(gridDiv, gridOptions);;
 
   fetch('https://www.ag-grid.com/example-assets/weather-se-england.json')
     .then(response => response.json())
     .then(function (data) {
-      api!.setRowData(data)
+      gridApi!.setRowData(data)
     })
 })

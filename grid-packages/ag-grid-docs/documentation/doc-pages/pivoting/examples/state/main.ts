@@ -1,6 +1,6 @@
 import { GridApi, createGrid, ColumnState, GridOptions } from '@ag-grid-community/core';
 
-let api: GridApi<IOlympicData>;
+let gridApi: GridApi<IOlympicData>;
 
 const gridOptions: GridOptions<IOlympicData> = {
   columnDefs: [
@@ -32,21 +32,21 @@ var savedState: ColumnState[];
 var savedPivotMode: boolean;
 
 function printState() {
-  var state = api!.getColumnState()
+  var state = gridApi!.getColumnState()
   console.log(state)
 }
 
 function saveState() {
-  savedState = api!.getColumnState()
-  savedPivotMode = api!.isPivotMode()
+  savedState = gridApi!.getColumnState()
+  savedPivotMode = gridApi!.isPivotMode()
   console.log('column state saved')
 }
 
 function restoreState() {
   if (savedState) {
     // Pivot mode must be set first otherwise the columns we're trying to set state for won't exist yet
-    api!.setPivotMode(savedPivotMode)
-    api!.applyColumnState({ state: savedState, applyOrder: true })
+    gridApi!.setPivotMode(savedPivotMode)
+    gridApi!.applyColumnState({ state: savedState, applyOrder: true })
     console.log('column state restored')
   } else {
     console.log('no previous column state to restore!')
@@ -54,22 +54,22 @@ function restoreState() {
 }
 
 function togglePivotMode() {
-  var pivotMode = api!.isPivotMode()
-  api!.setPivotMode(!pivotMode)
+  var pivotMode = gridApi!.isPivotMode()
+  gridApi!.setPivotMode(!pivotMode)
 }
 
 function resetState() {
-  api!.resetColumnState()
-  api!.setPivotMode(false)
+  gridApi!.resetColumnState()
+  gridApi!.setPivotMode(false)
   console.log('column state reset')
 }
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
   var gridDiv = document.querySelector<HTMLElement>('#myGrid')!
-  api = createGrid(gridDiv, gridOptions);;
+  gridApi = createGrid(gridDiv, gridOptions);;
 
   fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
     .then(response => response.json())
-    .then((data: IOlympicData[]) => api!.setRowData(data))
+    .then((data: IOlympicData[]) => gridApi!.setRowData(data))
 })

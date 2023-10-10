@@ -10,7 +10,7 @@ import {
 import { getData } from "./data";
 
 
-let api: GridApi;
+let gridApi: GridApi;
 
 
 const gridOptions: GridOptions = {
@@ -69,7 +69,7 @@ function downloadChart(dimensions: { width: number, height: number }) {
     return
   }
 
-  api!.downloadChart({
+  gridApi!.downloadChart({
     fileName: 'resizedImage',
     fileFormat: 'image/jpeg',
     chartId,
@@ -83,7 +83,7 @@ function downloadChartImage(fileFormat: string) {
   }
 
   const params: GetChartImageDataUrlParams = { fileFormat, chartId }
-  const imageDataURL = api!.getChartImageDataURL(params)
+  const imageDataURL = gridApi!.getChartImageDataURL(params)
 
   if (imageDataURL) {
     const a = document.createElement('a')
@@ -102,7 +102,7 @@ function openChartImage(fileFormat: string) {
   }
 
   const params: GetChartImageDataUrlParams = { fileFormat, chartId }
-  const imageDataURL = api!.getChartImageDataURL(params)
+  const imageDataURL = gridApi!.getChartImageDataURL(params)
 
   if (imageDataURL) {
     const image = new Image()
@@ -119,5 +119,5 @@ function openChartImage(fileFormat: string) {
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
   var gridDiv = document.querySelector<HTMLElement>('#myGrid')!
-  api = createGrid(gridDiv, gridOptions);;
+  gridApi = createGrid(gridDiv, gridOptions);;
 })

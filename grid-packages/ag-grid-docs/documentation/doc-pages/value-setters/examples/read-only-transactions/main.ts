@@ -1,6 +1,6 @@
 import { GridApi, createGrid, GridOptions, CellEditRequestEvent, GetRowIdParams } from '@ag-grid-community/core';
 
-let api: GridApi<IOlympicDataWithId>;
+let gridApi: GridApi<IOlympicDataWithId>;
 
 const gridOptions: GridOptions<IOlympicDataWithId> = {
   columnDefs: [
@@ -43,7 +43,7 @@ function onCellEditRequest(event: CellEditRequestEvent) {
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', () => {
   const gridDiv = document.querySelector<HTMLElement>('#myGrid')!
-  api = createGrid(gridDiv, gridOptions);;
+  gridApi = createGrid(gridDiv, gridOptions);;
 
   // do http request to get our sample data - not using any framework to keep the example self contained.
   // you will probably use a framework like JQuery, Angular or something else to do your HTTP calls.
@@ -51,6 +51,6 @@ document.addEventListener('DOMContentLoaded', () => {
     .then(response => response.json())
     .then((data: any[]) => {
       data.forEach((item, index) => item.id = index);
-      api!.setRowData(data);
+      gridApi!.setRowData(data);
     });
 })

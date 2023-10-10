@@ -56,7 +56,7 @@ var autoGroupColumnDef: ColDef = {
   } as IGroupCellRendererParams,
 }
 
-let api: GridApi<IOlympicData>;
+let gridApi: GridApi<IOlympicData>;
 
 const gridOptions: GridOptions<IOlympicData> = {
   defaultColDef: {
@@ -92,17 +92,17 @@ function onFirstDataRendered(params: FirstDataRenderedEvent) {
 
 function onPageSizeChanged() {
   var value = (document.getElementById('page-size') as HTMLInputElement).value
-  api!.paginationSetPageSize(Number(value))
+  gridApi!.paginationSetPageSize(Number(value))
 }
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
   var gridDiv = document.querySelector<HTMLElement>('#myGrid')!
-  api = createGrid(gridDiv, gridOptions);;
+  gridApi = createGrid(gridDiv, gridOptions);;
 
   fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
     .then(response => response.json())
     .then(function (data) {
-      api!.setRowData(data)
+      gridApi!.setRowData(data)
     })
 })

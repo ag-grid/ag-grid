@@ -24,7 +24,7 @@ const columnDefs: ColDef[] = [
     { field: 'total' },
 ]
 
-let api: GridApi<IOlympicData>;
+let gridApi: GridApi<IOlympicData>;
 
 const gridOptions: GridOptions<IOlympicData> = {
     columnDefs: columnDefs,
@@ -76,11 +76,11 @@ const gridOptions: GridOptions<IOlympicData> = {
 }
 
 function onBtExport() {
-    api!.exportDataAsExcel()
+    gridApi!.exportDataAsExcel()
 }
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
     const gridDiv = document.querySelector<HTMLElement>('#myGrid')!;
-    api = createGrid(gridDiv, gridOptions);;
+    gridApi = createGrid(gridDiv, gridOptions);;
 })

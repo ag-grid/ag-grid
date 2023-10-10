@@ -77,7 +77,7 @@ const columnDefs: ColDef[] = [
   { field: 'total', filter: false },
 ]
 
-let api: GridApi<IOlympicData>;
+let gridApi: GridApi<IOlympicData>;
 
 const gridOptions: GridOptions<IOlympicData> = {
   columnDefs: columnDefs,
@@ -91,23 +91,23 @@ const gridOptions: GridOptions<IOlympicData> = {
 }
 
 function irelandAndUk() {
-  var countryFilterComponent = api!.getFilterInstance('country')!
+  var countryFilterComponent = gridApi!.getFilterInstance('country')!
   countryFilterComponent.setModel({ values: ['Ireland', 'Great Britain'] })
-  api!.onFilterChanged()
+  gridApi!.onFilterChanged()
 }
 
 function clearCountryFilter() {
-  var countryFilterComponent = api!.getFilterInstance('country')!
+  var countryFilterComponent = gridApi!.getFilterInstance('country')!
   countryFilterComponent.setModel(null)
-  api!.onFilterChanged()
+  gridApi!.onFilterChanged()
 }
 
 function destroyCountryFilter() {
-  api!.destroyFilter('country')
+  gridApi!.destroyFilter('country')
 }
 
 function endingStan() {
-  var countryFilterComponent = api!.getFilterInstance<ISetFilter>('country')!;
+  var countryFilterComponent = gridApi!.getFilterInstance<ISetFilter>('country')!;
   var countriesEndingWithStan = countryFilterComponent
     .getFilterKeys()
     .filter(function (value: any) {
@@ -115,11 +115,11 @@ function endingStan() {
     })
 
   countryFilterComponent.setModel({ values: countriesEndingWithStan })
-  api!.onFilterChanged()
+  gridApi!.onFilterChanged()
 }
 
 function printCountryModel() {
-  var countryFilterComponent = api!.getFilterInstance('country')!
+  var countryFilterComponent = gridApi!.getFilterInstance('country')!
   var model = countryFilterComponent.getModel()
 
   if (model) {
@@ -130,27 +130,27 @@ function printCountryModel() {
 }
 
 function sportStartsWithS() {
-  var sportsFilterComponent = api!.getFilterInstance('sport')!
+  var sportsFilterComponent = gridApi!.getFilterInstance('sport')!
   sportsFilterComponent.setModel({
     type: 'startsWith',
     filter: 's',
   })
 
-  api!.onFilterChanged()
+  gridApi!.onFilterChanged()
 }
 
 function sportEndsWithG() {
-  var sportsFilterComponent = api!.getFilterInstance('sport')!
+  var sportsFilterComponent = gridApi!.getFilterInstance('sport')!
   sportsFilterComponent.setModel({
     type: 'endsWith',
     filter: 'g',
   })
 
-  api!.onFilterChanged()
+  gridApi!.onFilterChanged()
 }
 
 function sportsCombined() {
-  var sportsFilterComponent = api!.getFilterInstance('sport')!
+  var sportsFilterComponent = gridApi!.getFilterInstance('sport')!
   sportsFilterComponent.setModel({
     conditions: [
       {
@@ -165,33 +165,33 @@ function sportsCombined() {
     operator: 'AND',
   })
 
-  api!.onFilterChanged()
+  gridApi!.onFilterChanged()
 }
 
 function ageBelow25() {
-  var ageFilterComponent = api!.getFilterInstance('age')!
+  var ageFilterComponent = gridApi!.getFilterInstance('age')!
   ageFilterComponent.setModel({
     type: 'lessThan',
     filter: 25,
     filterTo: null,
   })
 
-  api!.onFilterChanged()
+  gridApi!.onFilterChanged()
 }
 
 function ageAbove30() {
-  var ageFilterComponent = api!.getFilterInstance('age')!
+  var ageFilterComponent = gridApi!.getFilterInstance('age')!
   ageFilterComponent.setModel({
     type: 'greaterThan',
     filter: 30,
     filterTo: null,
   })
 
-  api!.onFilterChanged()
+  gridApi!.onFilterChanged()
 }
 
 function ageBelow25OrAbove30() {
-  var ageFilterComponent = api!.getFilterInstance('age')!
+  var ageFilterComponent = gridApi!.getFilterInstance('age')!
   ageFilterComponent.setModel({
     conditions: [
       {
@@ -208,50 +208,50 @@ function ageBelow25OrAbove30() {
     operator: 'OR',
   })
 
-  api!.onFilterChanged()
+  gridApi!.onFilterChanged()
 }
 
 function ageBetween25And30() {
-  var ageFilterComponent = api!.getFilterInstance('age')!
+  var ageFilterComponent = gridApi!.getFilterInstance('age')!
   ageFilterComponent.setModel({
     type: 'inRange',
     filter: 25,
     filterTo: 30,
   })
 
-  api!.onFilterChanged()
+  gridApi!.onFilterChanged()
 }
 
 function clearAgeFilter() {
-  var ageFilterComponent = api!.getFilterInstance('age')!
+  var ageFilterComponent = gridApi!.getFilterInstance('age')!
   ageFilterComponent.setModel(null)
-  api!.onFilterChanged()
+  gridApi!.onFilterChanged()
 }
 
 function after2010() {
-  var dateFilterComponent = api!.getFilterInstance('date')!
+  var dateFilterComponent = gridApi!.getFilterInstance('date')!
   dateFilterComponent.setModel({
     type: 'greaterThan',
     dateFrom: '2010-01-01',
     dateTo: null,
   })
 
-  api!.onFilterChanged()
+  gridApi!.onFilterChanged()
 }
 
 function before2012() {
-  var dateFilterComponent = api!.getFilterInstance('date')!
+  var dateFilterComponent = gridApi!.getFilterInstance('date')!
   dateFilterComponent.setModel({
     type: 'lessThan',
     dateFrom: '2012-01-01',
     dateTo: null,
   })
 
-  api!.onFilterChanged()
+  gridApi!.onFilterChanged()
 }
 
 function dateCombined() {
-  var dateFilterComponent = api!.getFilterInstance('date')!
+  var dateFilterComponent = gridApi!.getFilterInstance('date')!
   dateFilterComponent.setModel({
     conditions: [
       {
@@ -268,21 +268,21 @@ function dateCombined() {
     operator: 'OR',
   })
 
-  api!.onFilterChanged()
+  gridApi!.onFilterChanged()
 }
 
 function clearDateFilter() {
-  var dateFilterComponent = api!.getFilterInstance('date')!
+  var dateFilterComponent = gridApi!.getFilterInstance('date')!
   dateFilterComponent.setModel(null)
-  api!.onFilterChanged()
+  gridApi!.onFilterChanged()
 }
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
   var gridDiv = document.querySelector<HTMLElement>('#myGrid')!
-  api = createGrid(gridDiv, gridOptions);;
+  gridApi = createGrid(gridDiv, gridOptions);;
 
   fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
     .then(response => response.json())
-    .then((data: IOlympicData[]) => api!.setRowData(data))
+    .then((data: IOlympicData[]) => gridApi!.setRowData(data))
 })

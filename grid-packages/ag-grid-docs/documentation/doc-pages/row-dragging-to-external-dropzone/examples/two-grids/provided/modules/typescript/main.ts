@@ -92,9 +92,9 @@ function addRecordToGrid(side: string, data: any) {
     // if data missing or data has no it, do nothing
     if (!data || data.id == null) { return; }
 
-    var api = side === 'left' ? leftApi : rightApi,
+    var gridApi = side === 'left' ? leftApi : rightApi,
         // do nothing if row is already in the grid, otherwise we would have duplicates
-        rowAlreadyInGrid = !!api!.getRowNode(data.id),
+        rowAlreadyInGrid = !!gridApi!.getRowNode(data.id),
         transaction;
 
     if (rowAlreadyInGrid) {
@@ -106,7 +106,7 @@ function addRecordToGrid(side: string, data: any) {
         add: [data]
     };
 
-    api!.applyTransaction(transaction);
+    gridApi!.applyTransaction(transaction);
 }
 
 function onFactoryButtonClick(e: any) {

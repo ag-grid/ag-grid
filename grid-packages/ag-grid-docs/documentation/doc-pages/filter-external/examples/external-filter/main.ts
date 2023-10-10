@@ -34,7 +34,7 @@ const columnDefs: ColDef[] = [
   { field: 'bronze', filter: 'agNumberColumnFilter' },
 ]
 
-let api: GridApi<IOlympicData>;
+let gridApi: GridApi<IOlympicData>;
 
 const gridOptions: GridOptions<IOlympicData> = {
   columnDefs: columnDefs,
@@ -80,18 +80,18 @@ function asDate(dateAsString: string) {
 
 function externalFilterChanged(newValue: string) {
   ageType = newValue
-  api!.onFilterChanged()
+  gridApi!.onFilterChanged()
 }
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
   var gridDiv = document.querySelector<HTMLElement>('#myGrid')!
-  api = createGrid(gridDiv, gridOptions);;
+  gridApi = createGrid(gridDiv, gridOptions);;
 
   fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
     .then(response => response.json())
     .then(function (data) {
       (document.querySelector('#everyone') as HTMLInputElement).checked = true
-      api!.setRowData(data)
+      gridApi!.setRowData(data)
     })
 })
