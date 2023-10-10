@@ -321,7 +321,7 @@ export class GridSerializer extends BeanStub {
                 ? this.columnModel.getGridColumns([GROUP_AUTO_COLUMN_ID])
                 : [];
 
-            return columns.concat(this.columnModel.getAllGridColumns() || []);
+            return columns.concat(this.columnModel.getAllGridColumns());
         }
 
         return this.columnModel.getAllDisplayedColumns();
