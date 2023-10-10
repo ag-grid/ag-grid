@@ -120,7 +120,7 @@ function tabToNextCell(params: TabToNextCellParams): (CellPosition | null) {
   const previousCell = params.previousCellPosition;
   const lastRowIndex = previousCell.rowIndex;
   let nextRowIndex = params.backwards ? lastRowIndex - 1 : lastRowIndex + 1;
-  const renderedRowCount = params.gridApi!.getModel().getRowCount();
+  const renderedRowCount = params.api!.getModel().getRowCount();
 
   if (nextRowIndex < 0) {
     nextRowIndex = -1
@@ -160,7 +160,7 @@ function navigateToNextCell(params: NavigateToNextCellParams): (CellPosition | n
     case KEY_UP:
       // return the cell below
       nextRowIndex = previousCell.rowIndex + 1
-      renderedRowCount = params.gridApi!.getModel().getRowCount()
+      renderedRowCount = params.api!.getModel().getRowCount()
       if (nextRowIndex >= renderedRowCount) {
         return null
       } // returning null means don't navigate

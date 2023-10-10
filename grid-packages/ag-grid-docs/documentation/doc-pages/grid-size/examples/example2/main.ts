@@ -52,7 +52,7 @@ function onGridSizeChanged(params: GridSizeChangedEvent) {
   updateRowHeight(params);
 }
 
-const updateRowHeight = (params: { gridApi: GridApi }) => {
+const updateRowHeight = (params: { api: GridApi }) => {
   // get the height of the grid body - this excludes the height of the headers
   const bodyViewport = document.querySelector('.ag-body-viewport')
   if (!bodyViewport) {

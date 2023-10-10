@@ -30,8 +30,8 @@ function processDataFromClipboard(params: ProcessDataFromClipboardParams): strin
     data.splice(data.length - 1, 1);
   }
 
-  const lastIndex = params.gridApi!.getModel().getRowCount() - 1;
-  const focusedCell = params.gridApi!.getFocusedCell();
+  const lastIndex = params.api!.getModel().getRowCount() - 1;
+  const focusedCell = params.api!.getFocusedCell();
   const focusedIndex = focusedCell!.rowIndex;
 
   if (focusedIndex + data.length - 1 > lastIndex) {
@@ -49,13 +49,13 @@ function processDataFromClipboard(params: ProcessDataFromClipboardParams): strin
       row.forEach((item) => {
         if (!currentColumn) { return; }
         rowObject[currentColumn.colDef.field] = item;
-        currentColumn = params.gridApi!.getDisplayedColAfter(currentColumn);
+        currentColumn = params.api!.getDisplayedColAfter(currentColumn);
       });
 
       rowsToAdd.push(rowObject);
     }
 
-    params.gridApi!.applyTransaction({ add: rowsToAdd });
+    params.api!.applyTransaction({ add: rowsToAdd });
   }
 
   return data;

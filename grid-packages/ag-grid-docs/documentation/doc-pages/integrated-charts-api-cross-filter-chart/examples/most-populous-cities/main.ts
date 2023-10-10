@@ -28,8 +28,8 @@ const gridOptions: GridOptions = {
 }
 
 function onFirstDataRendered(params: FirstDataRenderedEvent) {
-  createColumnChart(params.gridApi)
-  createBubbleChart(params.gridApi)
+  createColumnChart(params.api)
+  createBubbleChart(params.api)
 }
 
 function createColumnChart(gridApi: GridApi) {

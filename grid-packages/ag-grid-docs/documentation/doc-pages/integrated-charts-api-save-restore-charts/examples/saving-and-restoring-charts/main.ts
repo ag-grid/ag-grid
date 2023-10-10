@@ -38,7 +38,7 @@ let chartModel: ChartModel | undefined;
 let currentChartRef: ChartRef | undefined;
 
 function onFirstDataRendered(params: FirstDataRenderedEvent) {
-  currentChartRef = params.gridApi!.createRangeChart({
+  currentChartRef = params.api!.createRangeChart({
     chartType: 'groupedColumn',
     cellRange: {
       columns: ['country', 'sugar', 'fat', 'weight'],

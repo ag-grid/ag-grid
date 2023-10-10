@@ -60,7 +60,7 @@ function onBtExport() {
   }
 
   gridApi!.forEachDetailGridInfo(function (node) {
-    const sheet = node.gridApi!.getSheetDataForExcel({
+    const sheet = node.api!.getSheetDataForExcel({
       sheetName: node.id.replace('detail_', ''),
     });
     if (sheet) {

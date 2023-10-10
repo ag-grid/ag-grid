@@ -29,7 +29,7 @@ const gridOptions: GridOptions = {
     },
     rowData: getDataSet(),
     onGridPreDestroyed: (params: GridPreDestroyedEvent<TAthlete>) => {
-        const allColumns = params.gridApi?.getColumns();
+        const allColumns = params.api?.getColumns();
         if (!allColumns) {
             return;
         }

@@ -185,7 +185,7 @@ const gridOptions: GridOptions = {
         immutableStore = []
         immutableStore = getInitialData()
         params.api.setRowData(immutableStore)
-        setGroupingEnabled(false, params.gridApi)
+        setGroupingEnabled(false, params.api)
     },
 }
 

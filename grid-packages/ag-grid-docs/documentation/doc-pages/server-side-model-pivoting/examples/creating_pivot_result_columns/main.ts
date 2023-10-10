@@ -62,7 +62,7 @@ function getServerSideDatasource(server: any): IServerSideDatasource {
       const response = server.getData(request)
 
       // add pivot results cols to the grid
-      addPivotResultCols(request, response, params.gridApi)
+      addPivotResultCols(request, response, params.api)
 
       // simulating real server call with a 500ms delay
       setTimeout( () => {

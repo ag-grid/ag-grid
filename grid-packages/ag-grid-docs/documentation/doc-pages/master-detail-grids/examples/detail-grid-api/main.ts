@@ -63,13 +63,13 @@ function flashMilaSmithOnly() {
   // flash Mila Smith - we know her account is 177001 and we use the account for the row ID
   var detailGrid = gridApi!.getDetailGridInfo('detail_177001')
   if (detailGrid) {
-    detailGrid.gridApi!.flashCells()
+    detailGrid.api!.flashCells()
   }
 }
 
 function flashAll() {
   gridApi!.forEachDetailGridInfo(function (detailGridApi) {
-    detailGridApi.gridApi!.flashCells()
+    detailGridApi.api!.flashCells()
   })
 }
 

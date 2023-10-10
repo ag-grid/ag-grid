@@ -62,7 +62,7 @@ const gridOptions: GridOptions = {
 };
 
 function onFirstDataRendered(params: FirstDataRenderedEvent) {
-  params.gridApi!.createRangeChart({
+  params.api!.createRangeChart({
     chartType: 'customCombo',
     cellRange: {
       columns: ['month', 'rain', 'pressure', 'temp'],

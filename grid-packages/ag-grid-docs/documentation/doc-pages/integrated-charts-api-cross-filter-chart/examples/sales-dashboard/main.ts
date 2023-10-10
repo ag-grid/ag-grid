@@ -51,9 +51,9 @@ const gridOptions: GridOptions = {
 }
 
 function onFirstDataRendered(params: FirstDataRenderedEvent) {
-  createQuarterlySalesChart(params.gridApi)
-  createSalesByRefChart(params.gridApi)
-  createHandsetSalesChart(params.gridApi)
+  createQuarterlySalesChart(params.api)
+  createSalesByRefChart(params.api)
+  createHandsetSalesChart(params.api)
 }
 
 function createQuarterlySalesChart(gridApi: GridApi) {

@@ -69,12 +69,12 @@ const gridOptions: GridOptions = {
 var potentialParent: any = null
 
 function onRowDragMove(event: RowDragMoveEvent) {
-  setPotentialParentForNode(event.gridApi, event.overNode)
+  setPotentialParentForNode(event.api, event.overNode)
 }
 
 function onRowDragLeave(event: RowDragLeaveEvent) {
   // clear node to highlight
-  setPotentialParentForNode(event.gridApi, null)
+  setPotentialParentForNode(event.api, null)
 }
 
 function onRowDragEnd(event: RowDragEndEvent) {
@@ -106,7 +106,7 @@ function onRowDragEnd(event: RowDragEndEvent) {
   }
 
   // clear node to highlight
-  setPotentialParentForNode(event.gridApi, null)
+  setPotentialParentForNode(event.api, null)
 }
 
 function moveToPath(newParentPath: string[], node: IRowNode, allUpdatedNodes: any[]) {

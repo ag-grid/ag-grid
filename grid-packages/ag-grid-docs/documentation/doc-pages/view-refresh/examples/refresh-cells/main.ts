@@ -102,7 +102,7 @@ function scrambleAndRefreshTopToBottom() {
     refreshRow(rowNode, gridApi)
   }
 
-  function refreshRow(rowNode: IRowNode, gridApi: GridApi) {
+  function refreshRow(rowNode: IRowNode, api: GridApi) {
     var millis = frame++ * 100
     var rowNodes = [rowNode] // params needs an array
     var params: RefreshCellsParams = {
@@ -110,13 +110,13 @@ function scrambleAndRefreshTopToBottom() {
       suppressFlash: isSuppressFlashSelected(),
       rowNodes: rowNodes,
     }
-    callRefreshAfterMillis(params, millis, gridApi)
+    callRefreshAfterMillis(params, millis, api)
   }
 }
 
-function callRefreshAfterMillis(params: RefreshCellsParams, millis: number, gridApi: GridApi) {
+function callRefreshAfterMillis(params: RefreshCellsParams, millis: number, api: GridApi) {
   setTimeout(function () {
-    gridApi.refreshCells(params)
+    api.refreshCells(params)
   }, millis)
 }
 
