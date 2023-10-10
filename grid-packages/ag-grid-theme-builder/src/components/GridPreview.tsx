@@ -8,7 +8,6 @@ import { withErrorBoundary } from 'components/ErrorBoundary';
 import { getColumnDefs, getGroupColumnDefs, getRowData } from 'model/exampleData';
 import { Feature } from 'model/features';
 import { isNotNull } from 'model/utils';
-import { valueToCss } from 'model/values';
 import { memo, useEffect, useRef, useState } from 'react';
 
 const variablesRequiringRebuild = [
@@ -32,7 +31,7 @@ const GridPreview = () => {
   const rebuildKey = variablesRequiringRebuild
     .map((variableName) => values[variableName])
     .filter(isNotNull)
-    .map(valueToCss)
+    .map((value) => value.toCss())
     .concat(parentTheme.name)
     .concat(features.map((f) => f.name))
     .join(';');
@@ -60,8 +59,8 @@ const GridPreview = () => {
       },
     };
 
-    setApi(null);
     const api = createGrid(wrapperRef.current, options);
+    setApi(api);
 
     return () => {
       for (const feature of features) {
@@ -107,7 +106,7 @@ const Wrapper = styled('div')`
   height: 100%;
 `;
 
-const buildGridOptions = (features: Feature[]): GridOptions => {
+const buildGridOptions = (features: ReadonlyArray<Feature>): GridOptions => {
   const defaultColDef: ColDef = {};
   const columnDefs = getColumnDefs();
   const options: GridOptions = { defaultColDef, columnDefs };

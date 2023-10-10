@@ -1,90 +1,51 @@
 import { expect, test } from 'vitest';
-import { border, parseCssBorder, splitCssList } from './border';
-import { borderStyle, parseCssBorderStyle } from './borderStyle';
-import { color, parseCssColor } from './color';
-import { dimension, parseCssDimension } from './dimension';
+import { Border } from './Border';
+import { BorderStyle } from './BorderStyle';
+import { Color } from './Color';
+import { Dimension } from './Dimension';
 
-type TestDef = [parser: (value: string) => unknown, [input: string, expectedOutput: unknown][]];
+test(Color, () => {
+  const parse = (input: string) => Color.parseCss(input)?.toCss();
+  expect(parse('#010203')).toMatchInlineSnapshot('"rgb(1, 2, 3)"');
+  expect(parse('#aabbcc')).toMatchInlineSnapshot('"rgb(170, 187, 204)"');
+  expect(parse('#abc')).toMatchInlineSnapshot('"rgb(170, 187, 204)"');
+  expect(parse('#ABC')).toMatchInlineSnapshot('"rgb(170, 187, 204)"');
+  expect(parse('#AAbbcc88')).toMatchInlineSnapshot('"rgba(170, 187, 204, 0.53)"');
+  expect(parse('#abC8')).toMatchInlineSnapshot('"rgba(170, 187, 204, 0.53)"');
+  expect(parse('rgb(0, 255, 0)')).toMatchInlineSnapshot('"rgb(0, 255, 0)"');
+  expect(parse('rgba(0, 255, 0, 0.5)')).toMatchInlineSnapshot('"rgba(0, 255, 0, 0.5)"');
+  expect(parse('hsl(120, 100%, 50%)')).toMatchInlineSnapshot('"rgb(0, 255, 0)"');
+  expect(parse('hsla(120, 100%, 50%, 0.5)')).toMatchInlineSnapshot('"rgba(0, 255, 0, 0.5)"');
+  expect(parse('color(srgb 0 0.5 1)')).toMatchInlineSnapshot('"rgb(0, 128, 255)"');
+  expect(parse('color(srgb 0 0.5 1 / 0.2)')).toMatchInlineSnapshot('"rgba(0, 128, 255, 0.2)"');
+});
 
-const testDefs: TestDef[] = [
-  [
-    parseCssColor,
-    [
-      ['#aaBBcc', color('#aabbcc')],
-      ['#abC', color('#aabbcc')],
-      ['#AAbbcc80', color('#aabbcc80')],
-      ['#abC8', color('#aabbcc88')],
-      ['rgb(0, 255, 0)', color('#00ff00')],
-      ['rgba(0, 255, 0, 0.5)', color('#00ff0080')],
-      ['hsl(120, 100%, 50%)', color('#00ff00')],
-      ['hsla(120, 100%, 50%, 0.5)', color('#00ff0080')],
-      ['color(srgb 0 0.5 1)', color('#0080ff')],
-      ['color(srgb 0 0.5 1 / 0.2)', color('#0080ff33')],
-    ],
-  ],
-  [
-    parseCssDimension,
-    [
-      ['4px', dimension(4, 'px')],
-      ['4.5px', dimension(4.5, 'px')],
-      ['0vh', dimension(0, 'vh')],
-      ['50%', dimension(50, '%')],
-      ['calc(4px*4)', dimension(16, 'px')],
-      ['calc( 4px * 4 )', dimension(16, 'px')],
-      ['calc(3vh)', dimension(3, 'vh')],
-      ['calc(2% * 10)', dimension(20, '%')],
-      ['calc(5em * (1em + 3em))', dimension(20, 'em')],
-      ['calc(calc(6px * 2) + 16px)', dimension(28, 'px')],
-      ['CALC(CALC(6px * 2) + 16px)', dimension(28, 'px')],
-      ['0', dimension(0, '')], // valid - zero without unit
-      ['calc(0)', dimension(0, '')], // valid - zero without unit
-      ['4', null], // invalid - nonzero without unit
-      ['calc(4)', null], // invalid - nonzero without unit
-      ['calc(3vh+5px)', null], // invalid - mixed units
-    ],
-  ],
-  [
-    splitCssList,
-    [
-      ['a', ['a']],
-      ['a b', ['a', 'b']],
-      ['  a   b  ', ['a', 'b']],
-      [' alpha  beta ', ['alpha', 'beta']],
-      ['alpha beta charlie', ['alpha', 'beta', 'charlie']],
-      ['calc( var(--foo) * (3 + 5) )', ['calc( var(--foo) * (3 + 5) )']],
-      ['a calc( var(--foo) * (3 + 5) ) c', ['a', 'calc( var(--foo) * (3 + 5) )', 'c']],
-      ['calc( var(--foo) ) calc( var(--bar) )', ['calc( var(--foo) )', 'calc( var(--bar) )']],
-      ['(3 + 5) ( 4 ) foo()', ['(3 + 5)', '( 4 )', 'foo()']],
-    ],
-  ],
-  [
-    parseCssBorder,
-    [
-      ['solid 1px red', border('solid', dimension(1, 'px'), color('#f00'))],
-      ['1px solid red', border('solid', dimension(1, 'px'), color('#f00'))],
-      ['red 1px solid', border('solid', dimension(1, 'px'), color('#f00'))],
-      ['solid 1px red', border('solid', dimension(1, 'px'), color('#f00'))],
-      ['1px red', border(null, dimension(1, 'px'), color('#f00'))],
-      ['1px red', border(null, dimension(1, 'px'), color('#f00'))],
-      ['solid red', border('solid', null, color('#f00'))],
-      ['solid 1px', border('solid', dimension(1, 'px'), null)],
-      ['solid calc(1px) red', border('solid', dimension(1, 'px'), color('#f00'))],
-      ['solid calc(2px * 4) red', border('solid', dimension(8, 'px'), color('#f00'))],
-      ['solid calc((2px + 4px) * 3) red', border('solid', dimension(18, 'px'), color('#f00'))],
-    ],
-  ],
-  [
-    parseCssBorderStyle,
-    [
-      ['solid', borderStyle('solid')],
-      ['dashed', borderStyle('dashed')],
-      ['invalid-line-type', null],
-    ],
-  ],
-];
+test(Dimension, () => {
+  const parse = (input: string) => Dimension.parseCss(input)?.toCss();
+  expect(parse('4px')).toMatchInlineSnapshot('"4px"');
+  expect(parse('4.5px')).toMatchInlineSnapshot('"4.5px"');
+  expect(parse('0vh')).toMatchInlineSnapshot('"0vh"');
+  expect(parse('50%')).toMatchInlineSnapshot('"50%"');
+  expect(parse('0')).toMatchInlineSnapshot('"0"');
+  expect(parse('4')).toMatchInlineSnapshot('undefined');
+  expect(parse('calc(4px)')).toMatchInlineSnapshot('undefined');
+});
 
-testDefs.forEach(([f, args]) =>
-  test.each(args)(`${f.name}("%s")`, (input, expected) => {
-    expect(f(input)).toEqual(expected);
-  }),
-);
+test(Border, () => {
+  const parse = (input: string) => Border.parseCss(input)?.toCss();
+  expect(parse('solid 1px red')).toMatchInlineSnapshot('"solid 1px rgb(255, 0, 0)"');
+  expect(parse('1px solid red')).toMatchInlineSnapshot('"solid 1px rgb(255, 0, 0)"');
+  expect(parse('red 1px solid')).toMatchInlineSnapshot('"solid 1px rgb(255, 0, 0)"');
+  expect(parse('solid 1px red')).toMatchInlineSnapshot('"solid 1px rgb(255, 0, 0)"');
+  expect(parse('1px red')).toMatchInlineSnapshot('"1px rgb(255, 0, 0)"');
+  expect(parse('1px red')).toMatchInlineSnapshot('"1px rgb(255, 0, 0)"');
+  expect(parse('solid red')).toMatchInlineSnapshot('"solid rgb(255, 0, 0)"');
+  expect(parse('solid 1px')).toMatchInlineSnapshot('"solid 1px"');
+});
+
+test(BorderStyle, () => {
+  const parse = (input: string) => BorderStyle.parseCss(input)?.toCss();
+  expect(parse('solid')).toMatchInlineSnapshot('"solid"');
+  expect(parse('dashed')).toMatchInlineSnapshot('"dashed"');
+  expect(parse('invalid-line-style')).toMatchInlineSnapshot('undefined');
+});

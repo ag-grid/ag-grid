@@ -29,7 +29,7 @@ export const RootContainer = memo(() => {
   return (
     <>
       <style>{renderedThemeCss}</style>
-      <div className={parentTheme.name} id="theme-builder-defaults-computation" />
+      <DefaultsElement className={parentTheme.name} id="theme-builder-defaults-computation" />
       <Container>
         {hasRenderedStyles && (
           <>
@@ -77,6 +77,11 @@ const Container = styled('div')`
   .tooltip {
     max-width: 400px;
   }
+`;
+
+const DefaultsElement = styled('div')`
+  position: absolute;
+  transform: translateY(-10);
 `;
 
 const TopRow = styled('div')`

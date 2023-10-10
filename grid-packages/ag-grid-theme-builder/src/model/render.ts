@@ -1,14 +1,14 @@
 import { Feature } from './features';
 import { Theme } from './themes';
 import { mapPresentObjectValues } from './utils';
-import { VariableValues, valueToCss } from './values';
+import { VariableValues } from './values';
 
 export type RenderedTheme = {
   themeName: string;
   values: VariableValues;
 };
 
-type RenderArgs = { theme: Theme; features: Feature[]; values: VariableValues };
+type RenderArgs = { theme: Theme; features: ReadonlyArray<Feature>; values: VariableValues };
 
 export const renderTheme = (state: RenderArgs): RenderedTheme => {
   return {
@@ -24,7 +24,7 @@ export const renderedThemeToCss = ({
   values: VariableValues;
   themeName: string;
 }) => {
-  const properties = mapPresentObjectValues(values, valueToCss);
+  const properties = mapPresentObjectValues(values, (value) => value.toCss());
   let css = `.${themeName} {\n`;
 
   for (const [key, value] of Object.entries(properties)) {
@@ -33,13 +33,6 @@ export const renderedThemeToCss = ({
     }
   }
   css += '}';
-
-  const borderRadius = properties['--ag-border-radius'];
-  if (borderRadius) {
-    css += `\n.${themeName} .ag-root-wrapper {\n`;
-    css += `    border-radius: ${borderRadius};\n`;
-    css += `}`;
-  }
   return css;
 };
 

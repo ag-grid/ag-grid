@@ -22,6 +22,7 @@ const applyCustomisation = (packageName, expectedVersion, customisation, provide
     } else {
         console.error(`✗ ${customisation.name}`);
         console.error(`Customisation failed: Expected version ${expectedVersion} of ${packageName} but found ${version}. You should test the customisation with the new version and update the expected version number if it works.`);
+        console.error(`Please run rm -rf grid-packages/ag-grid-docs/documentation/node_modules && npm run bootstrap and then re-run your last command.`);
     }
 
     return versionMatches;
@@ -208,7 +209,7 @@ const fixFileLoadingIssue = () => {
 const jsxErrorProcessingIssue = () => {
     // Prevents Gatsby from dying when an JSX error is introduced
 
-    return applyCustomisation('gatsby-cli', '5.12.1', {
+    return applyCustomisation('gatsby-cli', '5.12.2', {
             name: 'JSX Error Processing Issue',
             apply: () => updateFileContents(
                 './node_modules/gatsby-cli/lib/structured-errors/construct-error.js',

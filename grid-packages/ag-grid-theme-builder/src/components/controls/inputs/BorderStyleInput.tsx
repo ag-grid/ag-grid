@@ -1,4 +1,4 @@
-import { BorderStyle, allBorderStyles, borderStyle } from 'model/values/borderStyle';
+import { BorderStyle, BorderStyleToken, allBorderStyles } from 'model/values/BorderStyle';
 import { Input } from './Input';
 import { useFocusInput } from './useFocusInput';
 
@@ -8,7 +8,7 @@ export const BorderStyleInput: Input<'borderStyle'> = ({ value, onValueChange, f
       ref={useFocusInput(focus)}
       value={value.lineStyle}
       onChange={(e) => {
-        onValueChange(borderStyle(e.target.value as BorderStyle));
+        onValueChange(new BorderStyle(e.target.value as BorderStyleToken));
       }}
     >
       {options}
