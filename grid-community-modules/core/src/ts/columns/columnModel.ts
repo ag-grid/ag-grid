@@ -293,6 +293,8 @@ export class ColumnModel extends BeanStub {
     }
 
     private onSharedColDefChanged(source: ColumnEventType = 'api'): void {
+        if (!this.gridColumns) { return; }
+
         // if we aren't going to force, update the auto cols in place
         if (this.groupAutoColumns) {
             this.autoGroupColService.updateAutoGroupColumns(this.groupAutoColumns);
@@ -506,6 +508,8 @@ export class ColumnModel extends BeanStub {
         if (pivotMode === this.pivotMode || !this.isPivotSettingAllowed(this.pivotMode)) { return; }
 
         this.pivotMode = pivotMode;
+
+        if (!this.gridColumns) { return; }
 
         // we need to update grid columns to cover the scenario where user has groupDisplayType = 'custom', as
         // this means we don't use auto group column UNLESS we are in pivot mode (it's mandatory in pivot mode),
@@ -973,7 +977,7 @@ export class ColumnModel extends BeanStub {
         return this.getWidthOfColsInList(this.displayedColumnsRight);
     }
 
-    public updatePrimaryColumnList(
+    private updatePrimaryColumnList(
         keys: (string | Column)[] | null,
         masterList: Column[],
         actionIsAdd: boolean,
@@ -1107,6 +1111,7 @@ export class ColumnModel extends BeanStub {
         columnCallback: (added: boolean, column: Column) => void,
         source: ColumnEventType,
     ): void {
+        if (!this.gridColumns) { return; }
 
         const changes: Map<Column, number> = new Map();
         // store all original cols and their index.
@@ -1458,6 +1463,8 @@ export class ColumnModel extends BeanStub {
     }
 
     public moveRowGroupColumn(fromIndex: number, toIndex: number, source: ColumnEventType = "api"): void {
+        if (this.isRowGroupEmpty()) { return; }
+
         const column = this.rowGroupColumns[fromIndex];
 
         const impactedColumns = this.rowGroupColumns.slice(fromIndex, toIndex);
@@ -1475,6 +1482,8 @@ export class ColumnModel extends BeanStub {
     }
 
     public moveColumns(columnsToMoveKeys: (string | Column)[], toIndex: number, source: ColumnEventType = "api", finished: boolean = true): void {
+        if (!this.gridColumns) { return; }
+
         this.columnAnimationService.start();
 
         if (toIndex > this.gridColumns.length - columnsToMoveKeys.length) {
@@ -1600,6 +1609,8 @@ export class ColumnModel extends BeanStub {
     }
 
     public moveColumnByIndex(fromIndex: number, toIndex: number, source: ColumnEventType = "api"): void {
+        if (!this.gridColumns) { return; }
+
         const column = this.gridColumns[fromIndex];
         this.moveColumn(column, toIndex, source);
     }
@@ -1724,7 +1735,7 @@ export class ColumnModel extends BeanStub {
 
     // + moveColumnController
     public getAllGridColumns(): Column[] {
-        return this.gridColumns;
+        return this.gridColumns ?? [];
     }
 
     public isEmpty(): boolean {
@@ -1757,6 +1768,8 @@ export class ColumnModel extends BeanStub {
     }
 
     public setColumnsPinned(keys: (string | Column)[], pinned: ColumnPinnedType, source: ColumnEventType = "api"): void {
+        if (!this.gridColumns) { return; }
+
         if (this.gridOptionsService.isDomLayout('print')) {
             console.warn(`AG Grid: Changing the column pinning status is not allowed with domLayout='print'`);
             return;
@@ -1971,6 +1984,8 @@ export class ColumnModel extends BeanStub {
     }
 
     public resetColumnState(source: ColumnEventType = "api"): void {
+        if (missingOrEmpty(this.primaryColumns)) { return; }
+
         // NOTE = there is one bug here that no customer has noticed - if a column has colDef.lockPosition,
         // this is ignored  below when ordering the cols. to work, we should always put lockPosition cols first.
         // As a work around, developers should just put lockPosition columns first in their colDef list.
@@ -2617,7 +2632,7 @@ export class ColumnModel extends BeanStub {
     }
 
     private getColumn(key: string | Column, columnList: Column[], columnMap: { [id: string]: Column }): Column | null {
-        if (!key) { return null; }
+        if (!key || !columnMap) { return null; }
 
         // most of the time this method gets called the key is a string, so we put this shortcut in
         // for performance reasons, to see if we can match for ID (it doesn't do auto columns, that's done below)
@@ -2993,6 +3008,8 @@ export class ColumnModel extends BeanStub {
     }
 
     public resetColumnGroupState(source: ColumnEventType = "api"): void {
+        if (!this.primaryColumnTree) { return; }
+
         const stateItems: { groupId: string, open: boolean | undefined; }[] = [];
 
         this.columnUtils.depthFirstOriginalTreeSearch(null, this.primaryColumnTree, child => {
@@ -3010,6 +3027,8 @@ export class ColumnModel extends BeanStub {
     }
 
     public getColumnGroupState(): { groupId: string, open: boolean; }[] {
+        if (!this.gridBalancedTree) { return []; }
+
         const columnGroupState: { groupId: string, open: boolean; }[] = [];
 
         this.columnUtils.depthFirstOriginalTreeSearch(null, this.gridBalancedTree, node => {
@@ -3025,6 +3044,8 @@ export class ColumnModel extends BeanStub {
     }
 
     public setColumnGroupState(stateItems: { groupId: string, open: boolean | undefined; }[], source: ColumnEventType = "api"): void {
+        if (!this.gridBalancedTree) { return; }
+
         this.columnAnimationService.start();
 
         const impactedGroups: ProvidedColumnGroup[] = [];
@@ -3174,6 +3195,8 @@ export class ColumnModel extends BeanStub {
     }
 
     public setSecondaryColumns(colDefs: (ColDef | ColGroupDef)[] | null, source: ColumnEventType = "api"): void {
+        if (!this.gridBalancedTree) { return; }
+
         const newColsPresent = colDefs && colDefs.length > 0;
 
         // if not cols passed, and we had no cols anyway, then do nothing
@@ -4052,10 +4075,6 @@ export class ColumnModel extends BeanStub {
 
     private getWidthOfColsInList(columnList: Column[]) {
         return columnList.reduce((width, col) => width + col.getActualWidth(), 0);
-    }
-
-    public getGridBalancedTree(): IProvidedColumn[] {
-        return this.gridBalancedTree;
     }
 
     public getFirstDisplayedColumn(): Column | null {

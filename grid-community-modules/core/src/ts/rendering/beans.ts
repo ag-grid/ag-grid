@@ -44,6 +44,7 @@ import { GridOptionsService } from "../gridOptionsService";
 import { LocaleService } from "../localeService";
 import { Environment } from "../environment";
 import { ValueParserService } from "../valueService/valueParserService";
+import { SyncService } from "../syncService";
 
 /** Using the IoC has a slight performance consideration, which is no problem most of the
  * time, unless we are trashing objects - which is the case when scrolling and rowComp
@@ -98,6 +99,7 @@ export class Beans {
     @Autowired('rowNodeEventThrottle') public rowNodeEventThrottle: RowNodeEventThrottle;
     @Autowired('localeService') public localeService: LocaleService;
     @Autowired('valueParserService') public valueParserService: ValueParserService;
+    @Autowired('syncService') public syncService: SyncService;
 
     public doingMasterDetail: boolean;
 
