@@ -107,7 +107,7 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl {
         ));
 
         this.addMouseDownListenerIfNeeded(eGui);
-        this.addGridOptionsChangeListener();
+        this.addManagedPropertyListeners(['suppressMovableColumns', 'suppressMenuHide'], this.refreshOnCriticalPropertyChange.bind(this));
 
         this.addManagedListener(this.column, Column.EVENT_COL_DEF_CHANGED, this.onColDefChanged.bind(this));
         this.addManagedListener(this.eventService, Events.EVENT_COLUMN_VALUE_CHANGED, this.onColumnValueChanged.bind(this));
@@ -341,18 +341,9 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl {
         this.refresh();
     }
 
-    private addGridOptionsChangeListener(): void {
-        this.gridOptionsService.addEventListener(Events.EVENT_SUPPRESS_COLUMN_MOVE_CHANGED, this.onSuppressColMoveChange);
-    }
-
-    @PreDestroy
-    private removeGridOptionsChangeListener(): void {
-        this.gridOptionsService.removeEventListener(Events.EVENT_SUPPRESS_COLUMN_MOVE_CHANGED, this.onSuppressColMoveChange);
-    }
-
-    private onSuppressColMoveChange = (): void => {
+    private refreshOnCriticalPropertyChange = (): void => {
         this.updateState();
-        this.refreshHeaderComp();
+        this.refresh();
     }
 
     private updateState(): void {
