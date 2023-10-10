@@ -1,4 +1,4 @@
-import { BorderStyle, BorderStyleToken, allBorderStyles } from 'model/values/BorderStyle';
+import { BorderStyle, BorderStyleToken, allBorderStyles } from 'model/values/_borderStyle';
 import { Input } from './Input';
 import { useFocusInput } from './useFocusInput';
 

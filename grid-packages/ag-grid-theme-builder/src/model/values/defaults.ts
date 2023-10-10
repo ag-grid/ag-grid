@@ -1,10 +1,10 @@
 import { BorderVariableInfo, getVariableInfoOrThrow } from 'model/variableInfo';
 import { Value } from '.';
-import { Border } from './Border';
-import { BorderStyle } from './BorderStyle';
-import { Color } from './Color';
-import { Dimension } from './Dimension';
-import { DisplayValue } from './Display';
+import { Border } from './_border';
+import { BorderStyle } from './_borderStyle';
+import { Color } from './_color';
+import { Dimension } from './_dimension';
+import { DisplayValue } from './_display';
 
 export const colorDefaultValue = new Color(128, 128, 128, 1);
 export const dimensionDefaultValue = new Dimension(1, 'px');

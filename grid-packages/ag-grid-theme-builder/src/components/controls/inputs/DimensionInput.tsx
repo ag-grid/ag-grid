@@ -1,5 +1,5 @@
 import { ResultOrError, clamp } from 'model/utils';
-import { Dimension } from 'model/values/Dimension';
+import { Dimension } from 'model/values/_dimension';
 import { DimensionVariableInfo } from 'model/variableInfo';
 import { useEffect, useRef, useState } from 'react';
 import { Input } from './Input';

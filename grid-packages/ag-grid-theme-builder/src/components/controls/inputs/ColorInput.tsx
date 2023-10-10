@@ -1,5 +1,5 @@
 import { logErrorMessage } from 'model/utils';
-import { Color } from 'model/values/Color';
+import { Color } from 'model/values/_color';
 import { Input } from './Input';
 import { InputElement } from './InputElement';
 import { useFocusInput } from './useFocusInput';

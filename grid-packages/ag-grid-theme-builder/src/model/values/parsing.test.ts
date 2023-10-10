@@ -1,8 +1,8 @@
 import { expect, test } from 'vitest';
-import { Border } from './Border';
-import { BorderStyle } from './BorderStyle';
-import { Color } from './Color';
-import { Dimension } from './Dimension';
+import { Border } from './_border';
+import { BorderStyle } from './_borderStyle';
+import { Color } from './_color';
+import { Dimension } from './_dimension';
 
 test(Color, () => {
   const parse = (input: string) => Color.parseCss(input)?.toCss();

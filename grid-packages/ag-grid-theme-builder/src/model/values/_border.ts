@@ -1,6 +1,6 @@
-import { BorderStyle } from './BorderStyle';
-import { Color } from './Color';
-import { Dimension } from './Dimension';
+import { BorderStyle } from './_borderStyle';
+import { Color } from './_color';
+import { Dimension } from './_dimension';
 
 export class Border {
   readonly type = 'border' as const;
