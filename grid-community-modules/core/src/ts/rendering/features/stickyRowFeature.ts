@@ -56,7 +56,7 @@ export class StickyRowFeature extends BeanStub {
 
             if (this.isClientSide) {
                 let lastAncestor = stickyRow;
-                while (lastAncestor.expanded) {
+                while (lastAncestor.isExpandable() && lastAncestor.expanded) {
                     if (lastAncestor.master) {
                         lastAncestor = lastAncestor.detailNode;
                     } else if (lastAncestor.childrenAfterSort) {
