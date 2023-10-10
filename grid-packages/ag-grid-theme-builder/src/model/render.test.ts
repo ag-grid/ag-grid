@@ -1,11 +1,11 @@
 import { expect, test } from 'vitest';
 import { renderedThemeToCss } from './render';
 import { Value, ValueType } from './values';
-import { Border } from './values/_border';
-import { BorderStyle } from './values/_borderStyle';
-import { Color } from './values/_color';
-import { Dimension } from './values/_dimension';
-import { DisplayValue } from './values/_display';
+import { Border } from './values/Border';
+import { BorderStyle } from './values/BorderStyle';
+import { Color } from './values/Color';
+import { Dimension } from './values/Dimension';
+import { DisplayValue } from './values/Display';
 
 test(renderedThemeToCss, () => {
   const oneOfEachType: Record<ValueType, Value> = {

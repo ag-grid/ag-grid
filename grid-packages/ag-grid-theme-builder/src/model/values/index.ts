@@ -1,9 +1,9 @@
 import { VariableInfo } from 'model/variableInfo';
-import { Border } from './_border';
-import { BorderStyle } from './_borderStyle';
-import { Color } from './_color';
-import { Dimension } from './_dimension';
-import { DisplayValue } from './_display';
+import { Border } from './Border';
+import { BorderStyle } from './BorderStyle';
+import { Color } from './Color';
+import { Dimension } from './Dimension';
+import { DisplayValue } from './Display';
 import { pickRequiredBorderValues } from './defaults';
 
 export type ValueType = 'color' | 'dimension' | 'border' | 'borderStyle' | 'display';

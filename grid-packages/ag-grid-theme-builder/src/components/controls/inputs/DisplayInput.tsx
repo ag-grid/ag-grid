@@ -1,4 +1,4 @@
-import { DisplayValue } from 'model/values/_display';
+import { DisplayValue } from 'model/values/Display';
 import { Input } from './Input';
 import { InputElement } from './InputElement';
 import { useFocusInput } from './useFocusInput';

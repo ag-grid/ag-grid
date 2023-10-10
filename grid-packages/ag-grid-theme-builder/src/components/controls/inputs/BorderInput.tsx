@@ -1,4 +1,4 @@
-import { Border } from 'model/values/_border';
+import { Border } from 'model/values/Border';
 import {
   borderStyleDefaultValue,
   colorDefaultValue,
