@@ -138,7 +138,7 @@ document.addEventListener('DOMContentLoaded', function () {
     })
 })
 
-function createFakeServer(fakeServerData: any[], gridApi: GridApi) {
+function createFakeServer(fakeServerData: any[], api: GridApi) {
   const getDataAtRoute = (route: string[]) => {
     let mutableRoute = [...route];
     let target: any = { underlings: fakeServerData };
@@ -186,7 +186,7 @@ function createFakeServer(fakeServerData: any[], gridApi: GridApi) {
         target.underlings = [newRow];
 
         // update the parent row via transaction
-        gridApi.applyServerSideTransaction({
+        api.applyServerSideTransaction({
           route: route.slice(0, route.length - 1),
           update: [sanitizeRowForGrid(target)],
         });
@@ -194,7 +194,7 @@ function createFakeServer(fakeServerData: any[], gridApi: GridApi) {
         target.underlings.push(newRow);
 
         // add the child row via transaction
-        gridApi.applyServerSideTransaction({
+        api.applyServerSideTransaction({
           route,
           add: [sanitizeRowForGrid(newRow)],
         });
@@ -206,7 +206,7 @@ function createFakeServer(fakeServerData: any[], gridApi: GridApi) {
       target.employmentType = target.employmentType === 'Contract' ? 'Permanent' : 'Contract';
 
       // inform the grid of the changes
-      gridApi.applyServerSideTransaction({
+      api.applyServerSideTransaction({
         route: route.slice(0, route.length - 1),
         update: [sanitizeRowForGrid(target)],
       });
@@ -218,13 +218,13 @@ function createFakeServer(fakeServerData: any[], gridApi: GridApi) {
       parent.underlings = parent.underlings.filter((child: any) => child.employeeName !== target.employeeName);
       if (parent.underlings.length === 0) {
         // update the parent row via transaction, as it's no longer a group
-        gridApi.applyServerSideTransaction({
+        api.applyServerSideTransaction({
           route: route.slice(0, route.length - 2),
           update: [sanitizeRowForGrid(parent)],
         });
       } else {
         // inform the grid of the changes
-        gridApi.applyServerSideTransaction({
+        api.applyServerSideTransaction({
           route: route.slice(0, route.length - 1),
           remove: [sanitizeRowForGrid(target)],
         });

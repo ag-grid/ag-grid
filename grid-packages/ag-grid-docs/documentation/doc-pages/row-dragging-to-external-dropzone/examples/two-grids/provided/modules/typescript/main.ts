@@ -126,11 +126,11 @@ function binDrop(data: any) {
         remove: [data]
     };
 
-    [leftApi, rightApi].forEach(function (gridApi) {
-        var rowsInGrid = !!gridApi!.getRowNode(data.id);
+    [leftApi, rightApi].forEach(function (api) {
+        var rowsInGrid = !!api!.getRowNode(data.id);
 
         if (rowsInGrid) {
-            gridApi!.applyTransaction(transaction);
+            api!.applyTransaction(transaction);
         }
     });
 }

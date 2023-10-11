@@ -34,7 +34,7 @@ const gridOptions: GridOptions<IOlympicData> = {
 // the code below executes an action every 2,000 milliseconds.
 // it's an interval, and each time it runs, it takes the next action
 // from the 'actions' list below
-function startInterval(gridApi: GridApi) {
+function startInterval(api: GridApi) {
   var actionIndex = 0
 
   resetCountdown()
@@ -43,7 +43,7 @@ function startInterval(gridApi: GridApi) {
   function executeAfterXSeconds() {
     setTimeout(function () {
       var action = getActions()[actionIndex]
-      action(gridApi)
+      action(api)
       actionIndex++
       if (actionIndex >= getActions().length) {
         actionIndex = 0
@@ -89,15 +89,15 @@ function setTitleFormatted(apiName: null | string, methodName?: string, paramsNa
 
 function getActions() {
   return [
-    function (gridApi: GridApi) {
-      gridApi.applyColumnState({
+    function (api: GridApi) {
+      api.applyColumnState({
         state: [{ colId: 'country', sort: 'asc' }],
         defaultState: { sort: null },
       })
       setTitleFormatted('api', 'applyColumnState', "country: 'asc'")
     },
-    function (gridApi: GridApi) {
-      gridApi.applyColumnState({
+    function (api: GridApi) {
+      api.applyColumnState({
         state: [
           { colId: 'year', sort: 'asc' },
           { colId: 'country', sort: 'asc' },
@@ -106,8 +106,8 @@ function getActions() {
       })
       setTitleFormatted('api', 'applyColumnState', "year: 'asc', country 'asc'")
     },
-    function (gridApi: GridApi) {
-      gridApi.applyColumnState({
+    function (api: GridApi) {
+      api.applyColumnState({
         state: [
           { colId: 'year', sort: 'asc' },
           { colId: 'country', sort: 'desc' },
@@ -120,8 +120,8 @@ function getActions() {
         "year: 'asc', country: 'desc'"
       )
     },
-    function (gridApi: GridApi) {
-      gridApi.applyColumnState({
+    function (api: GridApi) {
+      api.applyColumnState({
         defaultState: { sort: null },
       })
       setTitleFormatted('api', 'applyColumnState', 'clear sort')

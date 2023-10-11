@@ -151,7 +151,7 @@ function arePathsEqual(path1: string[], path2: string[]) {
   return equal
 }
 
-function setPotentialParentForNode(gridApi: GridApi, overNode: IRowNode | undefined | null) {
+function setPotentialParentForNode(api: GridApi, overNode: IRowNode | undefined | null) {
   var newPotentialParent
   if (overNode) {
     newPotentialParent =
@@ -181,10 +181,10 @@ function setPotentialParentForNode(gridApi: GridApi, overNode: IRowNode | undefi
 
   potentialParent = newPotentialParent
 
-  refreshRows(gridApi, rowsToRefresh)
+  refreshRows(api, rowsToRefresh)
 }
 
-function refreshRows(gridApi: GridApi, rowsToRefresh: IRowNode[]) {
+function refreshRows(api: GridApi, rowsToRefresh: IRowNode[]) {
   var params: RefreshCellsParams = {
     // refresh these rows only.
     rowNodes: rowsToRefresh,
@@ -194,7 +194,7 @@ function refreshRows(gridApi: GridApi, rowsToRefresh: IRowNode[]) {
     // which skips change detection.
     force: true,
   }
-  gridApi.refreshCells(params)
+  api.refreshCells(params)
 }
 
 

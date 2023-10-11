@@ -60,14 +60,14 @@ function onChartRangeSelectionChanged(event: ChartRangeSelectionChanged) {
   updateTitle(gridApi!, event.chartId);
 }
 
-function updateTitle(gridApi: GridApi, chartId: string) {
-  const cellRange = gridApi.getCellRanges()![1];
+function updateTitle(api: GridApi, chartId: string) {
+  const cellRange = api.getCellRanges()![1];
   if (!cellRange) return;
   const columnCount = cellRange.columns.length;
   const rowCount = cellRange.endRow!.rowIndex - cellRange.startRow!.rowIndex + 1;
   const subtitle = `Using series data from ${columnCount} column(s) and ${rowCount} row(s)`;
 
-  gridApi!.updateChart({
+  api!.updateChart({
     type: 'rangeChartUpdate',
     chartId: chartId,
     chartThemeOverrides: {

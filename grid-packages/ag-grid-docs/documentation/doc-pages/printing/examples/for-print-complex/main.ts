@@ -40,19 +40,19 @@ function onBtPrint() {
   }, 2000)
 }
 
-function setPrinterFriendly(gridApi: GridApi) {
+function setPrinterFriendly(api: GridApi) {
   const eGridDiv = document.querySelector<HTMLElement>('#myGrid')! as any;
   eGridDiv.style.width = ''
   eGridDiv.style.height = ''
-  gridApi.setDomLayout('print')
+  api.setDomLayout('print')
 }
 
-function setNormal(gridApi: GridApi) {
+function setNormal(api: GridApi) {
   const eGridDiv = document.querySelector<HTMLElement>('#myGrid')! as any;
   eGridDiv.style.width = '700px'
   eGridDiv.style.height = '200px'
 
-  gridApi.setDomLayout()
+  api.setDomLayout()
 }
 
 // setup the grid after the page has finished loading

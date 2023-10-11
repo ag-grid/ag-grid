@@ -185,7 +185,7 @@ function onFlushTransactions() {
   gridApi!.flushAsyncTransactions()
 }
 
-function startFeed(gridApi: GridApi) {
+function startFeed(api: GridApi) {
   var count = 1
 
   setInterval(function () {
@@ -210,7 +210,7 @@ function startFeed(gridApi: GridApi) {
     var resultCallback = function () {
       console.log('transactionApplied() - ' + thisCount)
     }
-    gridApi.applyTransactionAsync({ update: newItems }, resultCallback)
+    api.applyTransactionAsync({ update: newItems }, resultCallback)
     console.log('applyTransactionAsync() - ' + thisCount)
   }, 500)
 }

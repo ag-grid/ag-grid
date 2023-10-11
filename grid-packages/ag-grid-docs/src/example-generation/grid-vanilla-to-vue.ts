@@ -164,7 +164,7 @@ const VueExample = {
                 .concat(instanceMethods)
                 .map(snippet => `${snippet.trim()},`)
                 .join('\n')            
-                .replace(/gridApi(\??)(!?)\./g, 'this.gridApi.')}
+                .replace(/(?<!this.)gridApi(\??)(!?)/g, 'this.gridApi')}
     }
 }
 

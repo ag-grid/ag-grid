@@ -77,9 +77,9 @@ function getServerSideDatasource(server: any): IServerSideDatasource {
   };
 }
 
-function addPivotResultCols(request: IServerSideGetRowsRequest, response: any, gridApi: GridApi) {
+function addPivotResultCols(request: IServerSideGetRowsRequest, response: any, api: GridApi) {
   // check if pivot colDefs already exist
-  const existingPivotColDefs = gridApi.getPivotResultColumns()
+  const existingPivotColDefs = api.getPivotResultColumns()
   if (existingPivotColDefs && existingPivotColDefs.length > 0) {
     return
   }
@@ -88,7 +88,7 @@ function addPivotResultCols(request: IServerSideGetRowsRequest, response: any, g
   const pivotResultColumns = createPivotResultColumns(request, response.pivotFields)
 
   // supply pivot result columns to the grid
-  gridApi.setPivotResultColumns(pivotResultColumns)
+  api.setPivotResultColumns(pivotResultColumns)
 }
 
 function addColDef(colId: string, parts: string[], res: (ColDef | ColGroupDef)[], request: IServerSideGetRowsRequest): (ColDef | ColGroupDef)[] {

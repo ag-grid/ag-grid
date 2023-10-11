@@ -97,16 +97,16 @@ function onGroupingEnabled(enabled: boolean) {
     setGroupingEnabled(enabled, gridApi!)
 }
 
-function setGroupingEnabled(enabled: boolean, gridApi: GridApi) {
+function setGroupingEnabled(enabled: boolean, api: GridApi) {
     if (enabled) {
-        gridApi.applyColumnState({
+        api.applyColumnState({
             state: [
                 { colId: 'group', rowGroup: true, hide: true },
                 { colId: 'symbol', hide: true },
             ],
         })
     } else {
-        gridApi.applyColumnState({
+        api.applyColumnState({
             state: [
                 { colId: 'group', rowGroup: false, hide: false },
                 { colId: 'symbol', hide: false },

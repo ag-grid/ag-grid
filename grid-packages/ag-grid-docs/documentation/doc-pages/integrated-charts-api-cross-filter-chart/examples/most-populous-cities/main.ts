@@ -32,8 +32,8 @@ function onFirstDataRendered(params: FirstDataRenderedEvent) {
   createBubbleChart(params.api)
 }
 
-function createColumnChart(gridApi: GridApi) {
-  gridApi.createCrossFilterChart({
+function createColumnChart(api: GridApi) {
+  api.createCrossFilterChart({
     chartType: 'column',
     cellRange: {
       columns: ['country', 'population'],
@@ -63,8 +63,8 @@ function createColumnChart(gridApi: GridApi) {
   })
 }
 
-function createBubbleChart(gridApi: GridApi) {
-  gridApi.createCrossFilterChart({
+function createBubbleChart(api: GridApi) {
+  api.createCrossFilterChart({
     chartType: 'bubble',
     cellRange: {
       columns: ['longitude', 'latitude', 'population'],

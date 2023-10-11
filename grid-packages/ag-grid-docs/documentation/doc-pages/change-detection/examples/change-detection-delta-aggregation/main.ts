@@ -142,14 +142,14 @@ function createRandomNumber() {
   return Math.floor(Math.random() * 100)
 }
 
-function pickExistingRowItemAtRandom(gridApi: GridApi) {
-  var rowNode = pickExistingRowNodeAtRandom(gridApi)
+function pickExistingRowItemAtRandom(api: GridApi) {
+  var rowNode = pickExistingRowNodeAtRandom(api)
   return rowNode ? rowNode.data : null
 }
 
-function pickExistingRowNodeAtRandom(gridApi: GridApi): IRowNode | undefined {
+function pickExistingRowNodeAtRandom(api: GridApi): IRowNode | undefined {
   var allItems: IRowNode[] = []
-  gridApi.forEachLeafNode(function (rowNode) {
+  api.forEachLeafNode(function (rowNode) {
     allItems.push(rowNode)
   })
 

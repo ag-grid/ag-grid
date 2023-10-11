@@ -131,9 +131,9 @@ function createRandomNumber() {
   return Math.floor(Math.random() * 100)
 }
 
-function pickExistingRowNodeAtRandom(gridApi: GridApi) {
+function pickExistingRowNodeAtRandom(api: GridApi) {
   var allItems: IRowNode[] = []
-  gridApi.forEachLeafNode(function (rowNode) {
+  api.forEachLeafNode(function (rowNode) {
     allItems.push(rowNode)
   })
 
@@ -145,8 +145,8 @@ function pickExistingRowNodeAtRandom(gridApi: GridApi) {
   return result
 }
 
-function pickExistingRowItemAtRandom(gridApi: GridApi): Student | null {
-  var rowNode = pickExistingRowNodeAtRandom(gridApi)
+function pickExistingRowItemAtRandom(api: GridApi): Student | null {
+  var rowNode = pickExistingRowNodeAtRandom(api)
   return rowNode ? rowNode.data : null
 }
 

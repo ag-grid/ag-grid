@@ -56,8 +56,8 @@ function onFirstDataRendered(params: FirstDataRenderedEvent) {
   createHandsetSalesChart(params.api)
 }
 
-function createQuarterlySalesChart(gridApi: GridApi) {
-  gridApi.createCrossFilterChart({
+function createQuarterlySalesChart(api: GridApi) {
+  api.createCrossFilterChart({
     chartType: 'line',
     cellRange: {
       columns: ['quarter', 'sale'],
@@ -89,8 +89,8 @@ function createQuarterlySalesChart(gridApi: GridApi) {
   })
 }
 
-function createSalesByRefChart(gridApi: GridApi) {
-  gridApi.createCrossFilterChart({
+function createSalesByRefChart(api: GridApi) {
+  api.createCrossFilterChart({
     chartType: 'doughnut',
     cellRange: {
       columns: ['salesRep', 'sale'],
@@ -121,8 +121,8 @@ function createSalesByRefChart(gridApi: GridApi) {
   })
 }
 
-function createHandsetSalesChart(gridApi: GridApi) {
-  gridApi.createCrossFilterChart({
+function createHandsetSalesChart(api: GridApi) {
+  api.createCrossFilterChart({
     chartType: 'area',
     cellRange: {
       columns: ['handset', 'sale'],
