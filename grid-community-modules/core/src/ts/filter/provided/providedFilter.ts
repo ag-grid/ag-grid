@@ -470,14 +470,8 @@ export abstract class ProvidedFilter<M, V> extends Component implements IProvide
         return !!params.buttons && params.buttons.indexOf('apply') >= 0;
     }
 
-    public refresh(newParams: IFilterParams): boolean {
-        const newProvidedFilterParams = newParams as ProvidedFilterParams | undefined;
-        const currentReadonlyParam = this.providedFilterParams.readOnly;
-
-        if (currentReadonlyParam !== newProvidedFilterParams?.readOnly) {
-            this.providedFilterParams.readOnly = newProvidedFilterParams?.readOnly;
-        }
-
+    public refresh(newParams: ProvidedFilterParams): boolean {
+        this.providedFilterParams = newParams;
         return true;
     }
 

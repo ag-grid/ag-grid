@@ -15,7 +15,6 @@ import { ListOption } from '../../widgets/agList';
 import { IFloatingFilterParent } from '../floating/floatingFilter';
 import { doOnce, isFunction } from '../../utils/function';
 import { LocaleService } from '../../localeService';
-import { TextFilterModel, TextFilterParams } from './text/textFilter';
 
 export type JoinOperator = 'AND' | 'OR';
 
@@ -359,51 +358,35 @@ export abstract class SimpleFilter<M extends ISimpleFilterModel, V, E = AgInputT
         return res;
     }
 
-    refresh(newParams: IFilterParams): boolean {
+    refresh(newParams: SimpleFilterParams): boolean {
         const parentRefreshed = super.refresh(newParams);
         if (!parentRefreshed) {
             return false;
         }
 
-        const newParamsValue = newParams as TextFilterParams;
-        const model: any = this.getModel();
-
-        const textFilterModel: TextFilterModel | null = model && !model.conditions ? model : null;
-        const combinedModel: ICombinedSimpleModel<TextFilterModel> | null = model && model.conditions ? model : null;
+        const model = this.getModel();
+        const conditions: ISimpleFilterModel[] = model ? ((<any>model).conditions ?? [model]) : null;
 
         //
         // Check for situations when the filter should be destroyed and recreated
         //
-        // A. For filer with single condition
-        if (textFilterModel) {
-            const typeExistsInNewOptionsList = newParamsValue.filterOptions
-                ?.find(option => option === textFilterModel.type) !== undefined;
 
-            // Case A.1. Do not refresh when existing type is not in new options list
-            if (!typeExistsInNewOptionsList) {
-                return false;
-            }
-        } else {
-            // B. For combined model with multiple conditions
-            if (combinedModel) {
-                const allTypesExistInNewOptionsList = combinedModel.conditions ?
-                    combinedModel.conditions.every(condition => {
-                        return newParamsValue.filterOptions
-                            ?.find(option => option === condition.type) !== undefined;
-                    }) : false;
+        // Do Not refresh when one of the existing types is not in new options list
+        const allTypesExistInNewOptionsList = conditions?.every(condition => {
+            return newParams.filterOptions
+                ?.find(option => option === condition.type) !== undefined;
+        });
 
-                // B.1. Do Not refresh when one of the existing types is not in new options list
-                if (!allTypesExistInNewOptionsList) {
-                    return false;
-                }
-            }
+        if (!allTypesExistInNewOptionsList) {
+            return false;
         }
 
-        // B. Check number of conditions
-        if (typeof newParamsValue.maxNumConditions === 'number') {
-            if (combinedModel && combinedModel.conditions && combinedModel.conditions.length > newParamsValue.maxNumConditions) {
-                return false;
-            }
+        // Check number of conditions vs maxNumConditions
+        if (
+            typeof newParams.maxNumConditions === 'number' &&
+            conditions.length > newParams.maxNumConditions
+        ) {
+            return false;
         }
 
         // No breaking changes new params,
