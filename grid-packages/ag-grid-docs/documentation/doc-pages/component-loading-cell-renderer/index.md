@@ -7,13 +7,6 @@ Loading cell renderers allow you to add your own loading renderers to AG Grid. U
 <note>
 |The loading cell renderer is only used with the [Server-Side Row Model](../row-models/). To customise the [Loading Overlay](../overlays/) used with the Client-Side Row Model, see the [Overlay Component](../component-overlay/) section.
 </note>
-
-## Simple Loading Cell Renderer Component
-
-md-include:simple-renderer-javascript.md
-md-include:simple-renderer-angular.md
-md-include:simple-renderer-react.md 
-md-include:simple-renderer-vue.md
  
 ## Example: Custom Loading Cell Renderer
 
