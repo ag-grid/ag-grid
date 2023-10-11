@@ -1789,7 +1789,7 @@ in your browser of choice.</p>
 <framework-specific-section frameworks="vue">
 | ### Grid Properties
 |
-| Set other [Grid Options](/grid-options/) by adding parameters to `<ag-grid-vue/>` component.
+| Set other [Grid Options](/grid-options/) by adding parameters to `&lt;ag-grid-vue/>` component.
 | This example demonstrates setting `animateRows` and `rowSelection`.
 |
 </framework-specific-section>
