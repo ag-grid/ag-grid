@@ -225,7 +225,7 @@ function internalParser(examplePath, {
     });
 
     // For React we need to identify the external dependencies for callbacks to prevent stale closures
-    const GLOBAL_DEPS = new Set(['console', 'document', 'Error', 'this', 'gridApi'])
+    const GLOBAL_DEPS = new Set(['console', 'document', 'Error', 'this', 'gridApi', 'gridOptions'])
     tsCollectors.push({
         matches: node => tsNodeIsTopLevelFunction(node),
         apply: (bindings, node: ts.SignatureDeclaration) => {

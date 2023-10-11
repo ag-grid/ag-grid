@@ -158,8 +158,6 @@ export function vanillaToReactFunctionalTs(bindings: any, componentFilenames: st
     const utilMethodNames = bindings.utils.map(getFunctionName);
     const callbackDependencies = Object.keys(bindings.callbackDependencies).reduce((acc, callbackName) => {
         acc[callbackName] = bindings.callbackDependencies[callbackName].filter(dependency => !utilMethodNames.includes(dependency))
-            .filter(dependency => dependency !== 'gridOptions')
-            .filter(dependency => dependency !== 'api')
             .filter(dependency => !global[dependency]) // exclude things like Number, isNaN etc
         return acc;
     }, {})
