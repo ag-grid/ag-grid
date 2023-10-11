@@ -33,7 +33,6 @@
         "./shared-types/**/*"
     ],
     "exclude": [
-        "./node_modules",
-        "./doc-pages/integrated-charts*/**",
+        "./node_modules"
     ]
 }
