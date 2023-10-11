@@ -1,5 +1,5 @@
 import { templatePlaceholder } from "./grid-vanilla-src-parser";
-import { addBindingImports, addGenericInterfaceImport, convertFunctionToConstPropertyTs, getFunctionName, getModuleRegistration, getPropertyInterfaces, handleRowGenericInterface, ImportType, isInstanceMethod } from './parser-utils';
+import { addBindingImports, addGenericInterfaceImport, convertFunctionToConstPropertyTs, getFunctionName, getModuleRegistration, getPropertyInterfaces, handleRowGenericInterface, ImportType, isInstanceMethod, preferParamsApi } from './parser-utils';
 import { convertFunctionalTemplate, convertFunctionToConstCallbackTs, getImport, getValueType } from './react-utils';
 const path = require('path');
 
@@ -299,10 +299,7 @@ export function vanillaToReactFunctionalTs(bindings: any, componentFilenames: st
 
         const gridReady = additionalInReady.length > 0 ? `
             const onGridReady = useCallback((params: GridReadyEvent) => {
-                ${additionalInReady.join('\n')
-       .replace(/([\s\(!])gridApi(\W)/g, '$1params.api$2')
-
-            }
+                ${preferParamsApi(additionalInReady.join('\n'))}
             }, []);` : '';
 
 

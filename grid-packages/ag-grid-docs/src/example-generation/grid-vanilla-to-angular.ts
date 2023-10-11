@@ -1,6 +1,6 @@
 import { convertTemplate,getImport,toConst,toInput,toMemberWithValue,toOutput } from './angular-utils';
 import { templatePlaceholder } from "./grid-vanilla-src-parser";
-import { addBindingImports,addGenericInterfaceImport,getPropertyInterfaces,handleRowGenericInterface,ImportType,isInstanceMethod,removeFunctionKeyword, replaceGridReadyRowData } from './parser-utils';
+import { addBindingImports,addGenericInterfaceImport,getPropertyInterfaces,handleRowGenericInterface,ImportType,isInstanceMethod,preferParamsApi,removeFunctionKeyword, replaceGridReadyRowData } from './parser-utils';
 const path = require('path');
 
 function getOnGridReadyCode(
@@ -28,10 +28,10 @@ function getOnGridReadyCode(
     const gridReadyEventParam = rowDataType !== 'any' ? `<${rowDataType}>` : '';
     if (hasApi || additionalLines.length > 0) {
         // use params in gridReady event
-        const additional = (additionalLines.length > 0
+        const additional = preferParamsApi(additionalLines.length > 0
             ? `\n\n        ${additionalLines.join('\n        ')}`
             : ''
-        )//.replace(/([\s\(!])gridApi(\W)/g, '$1params.api$2');
+        );
         return `
         onGridReady(params: GridReadyEvent${gridReadyEventParam}) {
             ${hasApi ? 'this.gridApi = params.api;' : ''}${additional}

@@ -1,4 +1,4 @@
-import { getModuleRegistration, ImportType, replaceGridReadyRowData } from './parser-utils';
+import { getModuleRegistration, ImportType, preferParamsApi, replaceGridReadyRowData } from './parser-utils';
 import { getImport, toOutput } from './vue-utils';
 import { convertDefaultColDef, getAllMethods, getColumnDefs, getPropertyBindings, getTemplate } from "./grid-vanilla-to-vue-common";
 const path = require('path');
@@ -8,7 +8,7 @@ function getOnGridReadyCode(bindings: any): string {
     const additionalLines = [];
 
     if (onGridReady) {
-        additionalLines.push(onGridReady.trim().replace(/^\{|\}$/g, '').replace(/([\s\(!])gridApi(\W)/g, '$1params.api$2'));
+        additionalLines.push(onGridReady.trim().replace(/^\{|\}$/g, ''));
     }
 
     if (resizeToFit) {
@@ -28,10 +28,10 @@ function getOnGridReadyCode(bindings: any): string {
                 .then(data => updateData(data));`
         );
     }
-
+    const additional = preferParamsApi(additionalLines.length > 0 ? `\n\n        ${additionalLines.join('\n        ')}` : '')
     return `onGridReady(params) {
         this.gridApi = params.api;
-        ${additionalLines.length > 0 ? `\n\n        ${additionalLines.join('\n        ')}` : ''}
+        ${additional}
     }`;
 }
 

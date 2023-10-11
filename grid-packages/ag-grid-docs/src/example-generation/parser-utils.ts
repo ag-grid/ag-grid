@@ -684,3 +684,8 @@ export function replaceGridReadyRowData(callback: string, rowDataSetter: string)
     // replace gridApi.setRowData(data.map(...)) with this.rowData = data.map(...)
     .replace(/gridApi(!?)\.setRowData\(data/, `${rowDataSetter} = (data`);
 }
+
+export function preferParamsApi(code: string): string {
+    // use params.api instead of gridApi.api when we have access to the params object
+    return code.replace(/([\s\(!])gridApi(\W)/g, '$1params.api$2');
+}
