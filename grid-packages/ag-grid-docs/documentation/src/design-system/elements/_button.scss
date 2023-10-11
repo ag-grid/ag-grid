@@ -30,8 +30,8 @@ input[type='submit'],
         box-shadow $default-transition-timing;
 
     // do not apply hover colours to .ag-button:hover, otherwise Grid Buttons become transparent on hover
-    &:not(.ag-button):hover,
-    &:not(.ag-button).hover {
+    &:not([class^="ag-"]):hover,
+    &:not([class^="ag-"]).hover {
         background-color: var(--button-hover-color);
         color: var(--button-text-color) !important;
     }
@@ -108,9 +108,9 @@ input[type='submit'],
     border: none;
     background-color: transparent;
     box-shadow: none;
-
-    &:not(.ag-button):hover,
-    &:not(.ag-button):active {
+    
+    &:not([class^="ag-"]):hover,
+    &:not([class^="ag-"]):active {
         color: var(--button-text-color);
         background-color: transparent;
     }

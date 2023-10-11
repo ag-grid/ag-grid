@@ -42,6 +42,10 @@ export type VariableInfo = VariableInfoByType[ValueType];
 
 const colorVariables = [
   '--ag-active-color',
+  '--ag-advanced-filter-join-pill-color',
+  '--ag-advanced-filter-column-pill-color',
+  '--ag-advanced-filter-option-pill-color',
+  '--ag-advanced-filter-value-pill-color',
   '--ag-background-color',
   '--ag-border-color',
   '--ag-checkbox-background-color',

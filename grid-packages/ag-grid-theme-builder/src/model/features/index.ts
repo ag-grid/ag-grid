@@ -1,6 +1,7 @@
 import { ColDef, GridApi, GridOptions, Module, ModuleRegistry } from '@ag-grid-community/core';
 import { ComponentType } from 'react';
 import { indexBy } from '../utils';
+import { advancedFilterFeature } from './advancedFilter';
 import { bordersFeature } from './borders';
 import { checkboxesFeature } from './checkboxes';
 import { columnGroupsFeature } from './columnGroups';
@@ -58,6 +59,7 @@ export const allFeatures: ReadonlyArray<Feature> = [
   toggleButtonsFeature,
   checkboxesFeature,
   inputsFeature,
+  advancedFilterFeature,
 ];
 
 const featuresByName = indexBy(allFeatures, 'name');
