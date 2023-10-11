@@ -75,9 +75,6 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel 
     private lastHighlightedRow: RowNode | null;
     private applyAsyncTransactionsTimeout: number | undefined;
 
-    /** prevent refresh model from being called via listeners before row data loaded */
-    private rowDataLoaded: boolean = false;
-
     @PostConstruct
     public init(): void {
         const refreshEverythingFunc = this.refreshModel.bind(this, { step: ClientSideRowModelSteps.EVERYTHING });
@@ -499,7 +496,6 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel 
     }
 
     refreshModel(paramsOrStep: RefreshModelParams | ClientSideRowModelStep | undefined): void {
-        if (!this.rowDataLoaded) { return; }
 
         let params = typeof paramsOrStep === 'object' && "step" in paramsOrStep ? paramsOrStep : this.buildRefreshModelParams(paramsOrStep);
 
@@ -999,8 +995,6 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel 
 
         // - clears selection
         this.selectionService.reset();
-        // - updates filters
-        this.filterManager.onNewRowsLoaded('rowDataUpdated');
 
         // this event kicks off:
         // - shows 'no rows' overlay if needed
@@ -1008,8 +1002,6 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel 
             type: Events.EVENT_ROW_DATA_UPDATED
         };
         this.eventService.dispatchEvent(rowDataUpdatedEvent);
-
-        this.rowDataLoaded = true;
 
         this.refreshModel({
             step: ClientSideRowModelSteps.EVERYTHING,
@@ -1124,15 +1116,10 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel 
             rowNodeOrder = this.createRowNodeOrder();
         }
 
-        // - updates filters
-        this.filterManager.onNewRowsLoaded('rowDataUpdated');
-
         const event: WithoutGridCommon<RowDataUpdatedEvent> = {
             type: Events.EVENT_ROW_DATA_UPDATED
         };
         this.eventService.dispatchEvent(event);
-
-        this.rowDataLoaded = true;
 
         this.refreshModel({
             step: ClientSideRowModelSteps.EVERYTHING,
@@ -1205,6 +1192,6 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel 
     }
 
     public isRowDataLoaded(): boolean {
-        return this.rowDataLoaded;
+        return this.nodeManager.hasData();
     }
 }
