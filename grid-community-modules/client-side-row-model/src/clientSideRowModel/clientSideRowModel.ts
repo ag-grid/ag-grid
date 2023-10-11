@@ -165,7 +165,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel 
     public start(): void {
         this.hasStarted = true;
         if (this.shouldSkipSettingDataOnStart) {
-            this.updateAfterSetRowData();
+            this.dispatchUpdateEventsAndRefresh();
         } else {
             this.setInitialData();
         }
@@ -978,11 +978,11 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel 
         this.nodeManager.setRowData(rowData);
         
         if (this.hasStarted) {
-            this.updateAfterSetRowData();
+            this.dispatchUpdateEventsAndRefresh();
         }
     }
 
-    private updateAfterSetRowData(): void {
+    private dispatchUpdateEventsAndRefresh(): void {
         // - clears selection
         this.selectionService.reset();
         // - updates filters
