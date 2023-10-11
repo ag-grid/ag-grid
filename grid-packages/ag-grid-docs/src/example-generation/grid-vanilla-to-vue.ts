@@ -163,7 +163,8 @@ const VueExample = {
                 .concat(onGridReady)
                 .concat(instanceMethods)
                 .map(snippet => `${snippet.trim()},`)
-                .join('\n')}
+                .join('\n')            
+                .replace(/gridApi(\??)(!?)\./g, 'this.gridApi.')}
     }
 }
 
