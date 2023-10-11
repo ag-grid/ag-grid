@@ -402,6 +402,7 @@ export class GridApi<TData = any> {
     /** Set new datasource for Server-Side Row Model. */
     public setServerSideDatasource(datasource: IServerSideDatasource) {
         if (this.serverSideRowModel) {
+            this.gos.set('serverSideDatasource', datasource);
             this.serverSideRowModel.setDatasource(datasource);
         } else {
             this.logMissingRowModel('setServerSideDatasource', 'serverSide');
