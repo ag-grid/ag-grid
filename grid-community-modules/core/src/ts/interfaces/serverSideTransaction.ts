@@ -56,5 +56,9 @@ export enum ServerSideTransactionResultStatus {
      * Transaction was cancelled, due to grid.
      * Callback isApplyServerSideTransaction() returning false
      */
-    Cancelled = 'Cancelled'
+    Cancelled = 'Cancelled',
+    /**
+     * Store has not started yet, transaction not applied
+     */
+    StoreNotStarted = "StoreNotStarted"
 }

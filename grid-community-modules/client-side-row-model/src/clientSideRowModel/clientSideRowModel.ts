@@ -74,6 +74,10 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel 
     private rowDataTransactionBatch: BatchTransactionItem[] | null;
     private lastHighlightedRow: RowNode | null;
     private applyAsyncTransactionsTimeout: number | undefined;
+    /** Has the start method been called */
+    private hasStarted: boolean = false;
+    /** Has data been set into the node manager */
+    private hasNodeManagerStarted: boolean = false;
 
     @PostConstruct
     public init(): void {
@@ -94,6 +98,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel 
         this.addManagedListener(this.eventService, Events.EVENT_SORT_CHANGED, this.onSortChanged.bind(this));
         this.addManagedListener(this.eventService, Events.EVENT_COLUMN_PIVOT_MODE_CHANGED, refreshEverythingFunc);
         this.addManagedListener(this.eventService, Events.EVENT_GRID_STYLES_CHANGED, this.onGridStylesChanges.bind(this));
+        this.addManagedListener(this.eventService, Events.EVENT_GRID_READY, () => this.onGridReady());
 
         // doesn't need done if doing full reset
         // Property listeners which call `refreshModel` at different stages
@@ -158,6 +163,16 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel 
     }
 
     public start(): void {
+        this.hasStarted = true;
+        if (this.hasNodeManagerStarted) {
+            this.updateAfterSetRowData();
+        } else {
+            this.setInitialRowData();
+        }
+    }
+
+    private setInitialRowData(): void {
+        this.hasNodeManagerStarted = true;
         const rowData = this.gridOptionsService.get('rowData');
         if (rowData) {
             this.setRowData(rowData);
@@ -496,6 +511,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel 
     }
 
     refreshModel(paramsOrStep: RefreshModelParams | ClientSideRowModelStep | undefined): void {
+        if (!this.hasStarted) { return; }
 
         let params = typeof paramsOrStep === 'object' && "step" in paramsOrStep ? paramsOrStep : this.buildRefreshModelParams(paramsOrStep);
 
@@ -521,7 +537,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel 
 
         switch (params.step) {
             case ClientSideRowModelSteps.EVERYTHING:
-                this.doRowGrouping(params.groupState, params.rowNodeTransactions, params.rowNodeOrder,
+                this.doRowGrouping(params.rowNodeTransactions, params.rowNodeOrder,
                     changedPath, !!params.afterColumnsChanged);
             case ClientSideRowModelSteps.FILTER:
                 this.doFilter(changedPath);
@@ -876,7 +892,6 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel 
     }
 
     private doRowGrouping(
-        groupState: any,
         rowNodeTransactions: RowNodeTransaction[] | undefined,
         rowNodeOrder: { [id: string]: number; } | undefined,
         changedPath: ChangedPath,
@@ -897,8 +912,6 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel 
                     changedPath: changedPath,
                     afterColumnsChanged: afterColumnsChanged
                 });
-                // set open/closed state on groups
-                this.restoreGroupState(groupState);
             }
 
             if (this.gridOptionsService.is('groupSelectsChildren')) {
@@ -922,19 +935,6 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel 
         }
     }
 
-    private restoreGroupState(groupState: any): void {
-        if (!groupState) { return; }
-
-        _.traverseNodesWithKey(this.rootNode.childrenAfterGroup, (node: RowNode, key: string) => {
-            // if the group was open last time, then open it this time. however
-            // if was not open last time, then don't touch the group, so the 'groupDefaultExpanded'
-            // setting will take effect.
-            if (typeof groupState[key] === 'boolean') {
-                node.expanded = groupState[key];
-            }
-        });
-    }
-
     private doFilter(changedPath: ChangedPath) {
         this.filterStage.execute({ rowNode: this.rootNode, changedPath: changedPath });
     }
@@ -943,13 +943,6 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel 
         if (this.pivotStage) {
             this.pivotStage.execute({ rowNode: this.rootNode, changedPath: changedPath });
         }
-    }
-
-    private getGroupState(): any {
-        if (!this.rootNode.childrenAfterGroup || !this.gridOptionsService.is('rememberGroupStateWhenNewData')) { return null; }
-        const result: any = {};
-        _.traverseNodesWithKey(this.rootNode.childrenAfterGroup, (node: RowNode, key: string) => result[key] = node.expanded);
-        return result;
     }
 
     public getCopyOfNodesMap(): { [id: string]: RowNode; } {
@@ -979,15 +972,17 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel 
 
     // rows: the rows to put into the model
     public setRowData(rowData: any[]): void {
-
         // no need to invalidate cache, as the cache is stored on the rowNode,
         // so new rowNodes means the cache is wiped anyway.
-
-        // remember group state, so we can expand groups that should be expanded
-        const groupState = this.getGroupState();
-
+        
         this.nodeManager.setRowData(rowData);
+        
+        if (this.hasStarted) {
+            this.updateAfterSetRowData();
+        }
+    }
 
+    private updateAfterSetRowData(): void {
         // - clears selection
         this.selectionService.reset();
         // - updates filters
@@ -1002,7 +997,6 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel 
 
         this.refreshModel({
             step: ClientSideRowModelSteps.EVERYTHING,
-            groupState: groupState,
             newData: true
         });
     }
@@ -1107,6 +1101,8 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel 
         rowNodeOrder: { [id: string]: number; } | undefined,
         forceRowNodeOrder: boolean
     ): void {
+        if (!this.hasStarted) { return; }
+
         const animate = !this.gridOptionsService.is('suppressAnimationFrame');
 
         if (forceRowNodeOrder) {
@@ -1191,4 +1187,10 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel 
         this.resetRowHeights();
     }
 
+
+    private onGridReady(): void {
+        if (this.hasStarted) { return; }
+
+        this.setInitialRowData();
+    }
 }

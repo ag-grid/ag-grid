@@ -3027,8 +3027,6 @@ export class ColumnModel extends BeanStub {
     }
 
     public getColumnGroupState(): { groupId: string, open: boolean; }[] {
-        if (!this.gridBalancedTree) { return []; }
-
         const columnGroupState: { groupId: string, open: boolean; }[] = [];
 
         this.columnUtils.depthFirstOriginalTreeSearch(null, this.gridBalancedTree, node => {
@@ -3195,7 +3193,7 @@ export class ColumnModel extends BeanStub {
     }
 
     public setSecondaryColumns(colDefs: (ColDef | ColGroupDef)[] | null, source: ColumnEventType = "api"): void {
-        if (!this.gridBalancedTree) { return; }
+        if (!this.gridColumns) { return; }
 
         const newColsPresent = colDefs && colDefs.length > 0;
 
