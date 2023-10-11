@@ -365,25 +365,26 @@ export abstract class SimpleFilter<M extends ISimpleFilterModel, V, E = AgInputT
         }
 
         const model = this.getModel();
-        const conditions: ISimpleFilterModel[] = model ? ((<any>model).conditions ?? [model]) : null;
+        const conditions: ISimpleFilterModel[] | null = model ? ((<any>model).conditions ?? [model]) : null;
 
         //
         // Check for situations when the filter should be destroyed and recreated
         //
 
         // Do Not refresh when one of the existing types is not in new options list
-        const allTypesExistInNewOptionsList = conditions?.every(condition => {
-            return newParams.filterOptions
-                ?.find(option => option === condition.type) !== undefined;
-        });
+        const newOptionsList = newParams.filterOptions?.map(
+            option => typeof option === 'string' ? option : option.displayKey
+        ) ?? this.getDefaultFilterOptions();
 
-        if (!allTypesExistInNewOptionsList) {
+        const allConditionsExistInNewOptionsList = !conditions || conditions.every(condition =>
+            newOptionsList.find(option => option === condition.type) !== undefined);
+        if (!allConditionsExistInNewOptionsList) {
             return false;
         }
 
         // Check number of conditions vs maxNumConditions
         if (
-            typeof newParams.maxNumConditions === 'number' &&
+            conditions && typeof newParams.maxNumConditions === 'number' &&
             conditions.length > newParams.maxNumConditions
         ) {
             return false;
@@ -393,6 +394,8 @@ export abstract class SimpleFilter<M extends ISimpleFilterModel, V, E = AgInputT
         // so safely update the options list and refresh the filter
 
         this.setParams(newParams);
+        this.removeConditionsAndOperators(0);
+        this.createOption();
         this.setModel(model);
 
         return true;
