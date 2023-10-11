@@ -1,10 +1,14 @@
-export class Dimension {
+import { AbstractValue } from './AbstractValue';
+
+export class Dimension extends AbstractValue {
   readonly type = 'dimension' as const;
 
   constructor(
     readonly number: number,
     readonly units: string,
-  ) {}
+  ) {
+    super();
+  }
 
   toCss(): string {
     return this.number + (this.units || '');

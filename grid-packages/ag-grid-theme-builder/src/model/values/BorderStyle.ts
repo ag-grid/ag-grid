@@ -1,22 +1,15 @@
-export const allBorderStyles = [
-  'dotted',
-  'dashed',
-  'solid',
-  'double',
-  'groove',
-  'ridge',
-  'inset',
-  'outset',
-  'none',
-  'hidden',
-] as const;
+import { AbstractValue } from './AbstractValue';
+
+export const allBorderStyles = ['dotted', 'dashed', 'solid', 'none'] as const;
 
 export type BorderStyleToken = (typeof allBorderStyles)[number];
 
-export class BorderStyle {
+export class BorderStyle extends AbstractValue {
   readonly type = 'borderStyle' as const;
 
-  constructor(readonly lineStyle: BorderStyleToken) {}
+  constructor(readonly lineStyle: BorderStyleToken) {
+    super();
+  }
 
   toCss(): string {
     return this.lineStyle;

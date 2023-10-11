@@ -3,7 +3,7 @@ import { Border } from './Border';
 import { BorderStyle } from './BorderStyle';
 import { Color } from './Color';
 import { Dimension } from './Dimension';
-import { DisplayValue } from './Display';
+import { Display } from './Display';
 import { pickRequiredBorderValues } from './defaults';
 
 export type ValueType = 'color' | 'dimension' | 'border' | 'borderStyle' | 'display';
@@ -13,7 +13,7 @@ export type ValueByType = {
   dimension: Dimension;
   border: Border;
   borderStyle: BorderStyle;
-  display: DisplayValue;
+  display: Display;
 };
 
 export type Value = ValueByType[ValueType];
@@ -29,7 +29,7 @@ export const parseCssString = (info: VariableInfo, css: string): Value | null =>
     case 'borderStyle':
       return BorderStyle.parseCss(css);
     case 'display':
-      return DisplayValue.parseCss(css);
+      return Display.parseCss(css);
   }
 };
 

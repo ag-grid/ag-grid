@@ -1,18 +1,28 @@
+import { AbstractValue } from './AbstractValue';
 import { BorderStyle } from './BorderStyle';
 import { Color } from './Color';
 import { Dimension } from './Dimension';
 
-export class Border {
+export class Border extends AbstractValue {
   readonly type = 'border' as const;
   constructor(
     readonly style: BorderStyle | null,
     readonly width: Dimension | null,
     readonly color: Color | null,
-  ) {}
+  ) {
+    super();
+  }
 
   toCss(): string {
     if (this.style?.lineStyle === 'none') return 'none';
     return [this.style?.toCss(), this.width?.toCss(), this.color?.toCss()]
+      .filter(Boolean)
+      .join(' ');
+  }
+
+  describe(): string {
+    if (this.style?.lineStyle === 'none') return 'none';
+    return [this.style?.describe(), this.width?.describe(), this.color?.describe()]
       .filter(Boolean)
       .join(' ');
   }

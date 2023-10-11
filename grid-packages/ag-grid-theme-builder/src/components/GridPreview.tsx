@@ -25,6 +25,7 @@ const GridPreview = () => {
   const wrapperRef = useRef<HTMLDivElement>(null);
 
   const [api, setApi] = useState<GridApi | null>(null);
+  const apiRef = useRef<GridApi | null>(null);
 
   const featureStateRef = useRef<Record<string, unknown>>({});
 
@@ -55,11 +56,11 @@ const GridPreview = () => {
             feature.restoreState?.(api, state);
           }
         }
-        setApi(api);
       },
     };
 
     const api = createGrid(wrapperRef.current, options);
+    apiRef.current = api;
     setApi(api);
 
     return () => {
@@ -72,7 +73,7 @@ const GridPreview = () => {
 
   const previousFeatureRef = useRef<Feature | null>(null);
   useEffect(() => {
-    if (api) {
+    if (api && api === apiRef.current) {
       previousFeatureRef.current?.hide?.(api);
       currentFeature?.show?.(api);
       previousFeatureRef.current = currentFeature;
@@ -107,7 +108,9 @@ const Wrapper = styled('div')`
 `;
 
 const buildGridOptions = (features: ReadonlyArray<Feature>): GridOptions => {
-  const defaultColDef: ColDef = {};
+  const defaultColDef: ColDef = {
+    sortable: true,
+  };
   const columnDefs = getColumnDefs();
   const options: GridOptions = { defaultColDef, columnDefs };
   for (const feature of features) {

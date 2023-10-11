@@ -5,19 +5,18 @@
     --ag-active-color: #0091ea;
     --ag-foreground-color: #000;
     --ag-background-color: #fff;
-    --ag-header-background-color: #f5f7f7;
-    --ag-tooltip-background-color: #cbd0d3;
-    --ag-subheader-background-color: #e2e9eb;
-    --ag-control-panel-background-color: #f5f7f7;
-    --ag-border-color: #bdc3c7;
-    --ag-odd-row-background-color: #fcfdfe;
-    --ag-row-hover-color: #ecf0f1;
-    --ag-column-hover-color: #ecf0f1;
-    --ag-input-border-color: #95a5a6;
-    --ag-invalid-color: #e02525;
-    --ag-input-disabled-background-color: #ebebeb;
-    --ag-checkbox-unchecked-color: #7f8c8d;
-    --ag-input-focus-border-color: #719ECE;
+    --ag-header-background-color: color-mix(in srgb, var(--ag-background-color), var(--ag-foreground-color) 3%);
+    --ag-tooltip-background-color: color-mix(in srgb, var(--ag-background-color), var(--ag-foreground-color) 80%);
+    --ag-subheader-background-color: color-mix(in srgb, var(--ag-background-color), var(--ag-foreground-color) 10%);
+    --ag-control-panel-background-color: color-mix(in srgb, var(--ag-background-color), var(--ag-foreground-color) 3%);
+    --ag-border-color: color-mix(in srgb, var(--ag-background-color), var(--ag-foreground-color) 25%);
+    --ag-odd-row-background-color: color-mix(in srgb, var(--ag-background-color), var(--ag-foreground-color) 1%);
+    --ag-row-hover-color: color-mix(in srgb, transparent, var(--ag-foreground-color) 5%);
+    --ag-column-hover-color: color-mix(in srgb, transparent, var(--ag-foreground-color) 5%);
+    --ag-input-border-color: color-mix(in srgb, var(--ag-background-color), var(--ag-foreground-color) 40%);
+    --ag-input-disabled-background-color: color-mix(in srgb, var(--ag-background-color), var(--ag-foreground-color) 8%);
+    --ag-checkbox-unchecked-color: color-mix(in srgb, var(--ag-background-color), var(--ag-foreground-color) 45%);
+    --ag-input-focus-border-color: color-mix(in srgb, #999, var(--ag-active-color) 55%);
     --ag-advanced-filter-join-pill-color: #f08e8d;
     --ag-advanced-filter-column-pill-color: #a6e194;
     --ag-advanced-filter-option-pill-color: #f3c08b;
@@ -44,7 +43,6 @@
     --ag-list-item-height: calc(var(--ag-grid-size) * 6);
     --ag-row-group-indent-size: calc(var(--ag-grid-size) * 3 + var(--ag-icon-size));
     --ag-cell-horizontal-padding: calc(var(--ag-grid-size) * 3);
-    --ag-input-height: calc(var(--ag-grid-size) * 4);
 
     // Fonts
     --ag-font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;

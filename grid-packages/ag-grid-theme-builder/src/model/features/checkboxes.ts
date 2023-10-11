@@ -1,4 +1,3 @@
-import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
 import { CheckboxPreview } from 'components/preview/CheckboxPreview';
 import { Feature } from '.';
 
@@ -15,5 +14,4 @@ export const checkboxesFeature: Feature = {
     // TODO add '--ag-input-focus-box-shadow' when shadow editor ready
   ],
   previewComponent: CheckboxPreview,
-  modules: [ClientSideRowModelModule],
 };

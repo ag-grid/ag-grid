@@ -7,6 +7,7 @@ export const coreFeature: Feature = {
   alwaysEnabled: true,
   variableNames: [
     '--ag-grid-size',
+    '--ag-font-size',
     '--ag-active-color',
     '--ag-material-primary-color',
     '--ag-foreground-color',

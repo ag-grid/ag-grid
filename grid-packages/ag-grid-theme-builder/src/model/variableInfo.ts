@@ -137,8 +137,7 @@ const variables: Record<string, VariableInfo> = {
   // '--ag-popup-shadow': { type: 'shadow' },
   '--ag-range-selection-border-style': { type: 'border', style: true },
   '--ag-row-border-style': { type: 'border', style: true },
-  // not editable in theme builder
-  // '--ag-row-border-width': { type: 'dimension', min: 0, max: 100, step: 1 },
+  '--ag-row-border-width': { type: 'dimension', min: 0, max: 100, step: 1 },
   '--ag-row-group-indent-size': { type: 'dimension', min: 0, max: 100, step: 1 },
   '--ag-row-height': { type: 'dimension', min: 0, max: 100, step: 1 },
   '--ag-selected-tab-underline-transition-speed': {
