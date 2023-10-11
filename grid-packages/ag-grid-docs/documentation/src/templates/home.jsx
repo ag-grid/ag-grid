@@ -202,6 +202,54 @@ const JoinCommunitySection = () => {
     )
 }
 
+const WhatsNewSection = () => {
+    return(
+        <div className={classnames(styles.gridContainer)}>
+            <div className={classnames(styles.cardGroup)}>
+                <div className={classnames(styles.card)}>
+                    <div className={classnames(styles.cardTitle, 'font-size-extra-large')}>
+                        v30.2.0
+                        <p className={classnames(styles.cardDate, 'font-size-extra-small')}>August 10th</p>
+                    </div>
+                    <hr className={classnames(styles.cardDivider)}/>
+                    <div className={classnames(styles.cardBody)}>
+                        Advanced Filter, Quick Filter, Rich Select Editor, Group Footer Rows
+                    </div>
+                    <div className={classnames(styles.cardLink)}>
+                        <a href='introduction/overview/'>Read More</a>
+                    </div>
+                </div>
+                <div className={classnames(styles.card)}>
+                    <div className={classnames(styles.cardTitle, 'font-size-extra-large')}>
+                        V30.1.0
+                        <p className={classnames(styles.cardDate, 'font-size-extra-small')}>July 4th</p>
+                    </div>
+                    <hr className={classnames(styles.cardDivider)}/>
+                    <div className={classnames(styles.cardBody)}>
+                        Advanced Filter, Quick Filter, Rich Select Editor, Group Footer Rows
+                    </div>
+                    <div className={classnames(styles.cardLink)}>
+                        <a href='introduction/overview/'>Read More</a>
+                    </div>
+                </div>
+                <div className={classnames(styles.card)}>
+                    <div className={classnames(styles.cardTitle, 'font-size-extra-large')}>
+                        V30.0.0
+                        <p className={classnames(styles.cardDate, 'font-size-extra-small')}>May 28th</p>
+                    </div>
+                    <hr className={classnames(styles.cardDivider)}/>
+                    <div className={classnames(styles.cardBody)}>
+                        Advanced Filter, Quick Filter, Rich Select Editor, Group Footer Rows
+                    </div>
+                    <div className={classnames(styles.cardLink)}>
+                        <a href='introduction/overview/'>Read More</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    )
+}
+
 /**
  * This is the home page for the documentation.
  */
@@ -262,6 +310,15 @@ const HomePage = ({ pageContext: { framework } }) => {
                     Join our community wherever you are to join the conversation and stay up to date with all the latest AG Grid news.
                 </p>
                 <JoinCommunitySection />
+            </div>
+
+            {/* Whats New */}
+            <div className={classnames(styles.section, 'font-size-responsive')}>
+                <h2>Whats New?</h2><span style={{float: 'right'}}><a href='https://www.ag-grid.com/changelog/' target='_blank'>View Changelog</a></span>
+                <p>
+                    Check out our latest releases and see what we've been working on
+                </p>
+                <WhatsNewSection />
             </div>
 
         </div>
