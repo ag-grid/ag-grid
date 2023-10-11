@@ -1,1 +1,0 @@
-# Consuming Grid Events
