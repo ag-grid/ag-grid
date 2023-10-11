@@ -107,9 +107,8 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl {
         ));
 
         this.addMouseDownListenerIfNeeded(eGui);
-        this.addGridOptionsChangeListener();
-
-        this.addManagedListener(this.column, Column.EVENT_COL_DEF_CHANGED, this.onColDefChanged.bind(this));
+        this.addManagedPropertyListeners(['suppressMovableColumns', 'suppressMenuHide'], this.refresh.bind(this));
+        this.addManagedListener(this.column, Column.EVENT_COL_DEF_CHANGED, this.refresh.bind(this));
         this.addManagedListener(this.eventService, Events.EVENT_COLUMN_VALUE_CHANGED, this.onColumnValueChanged.bind(this));
         this.addManagedListener(this.eventService, Events.EVENT_COLUMN_ROW_GROUP_CHANGED, this.onColumnRowGroupChanged.bind(this));
         this.addManagedListener(this.eventService, Events.EVENT_COLUMN_PIVOT_CHANGED, this.onColumnPivotChanged.bind(this));
@@ -335,24 +334,6 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl {
             this.dragAndDropService.removeDragSource(this.moveDragSource);
             this.moveDragSource = undefined;
         }
-    }
-
-    private onColDefChanged(): void {
-        this.refresh();
-    }
-
-    private addGridOptionsChangeListener(): void {
-        this.gridOptionsService.addEventListener(Events.EVENT_SUPPRESS_COLUMN_MOVE_CHANGED, this.onSuppressColMoveChange);
-    }
-
-    @PreDestroy
-    private removeGridOptionsChangeListener(): void {
-        this.gridOptionsService.removeEventListener(Events.EVENT_SUPPRESS_COLUMN_MOVE_CHANGED, this.onSuppressColMoveChange);
-    }
-
-    private onSuppressColMoveChange = (): void => {
-        this.updateState();
-        this.refreshHeaderComp();
     }
 
     private updateState(): void {

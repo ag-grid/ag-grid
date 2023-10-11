@@ -1,8 +1,8 @@
 import { indexBy } from './utils';
 
 export type Theme = {
-  name: string;
-  extends: Theme | null;
+  readonly name: string;
+  readonly extends: Theme | null;
 };
 
 export const baseTheme: Theme = {
@@ -35,7 +35,7 @@ export const materialTheme: Theme = {
   extends: baseTheme,
 };
 
-export const allThemes: Theme[] = [
+export const allThemes: ReadonlyArray<Theme> = [
   baseTheme,
   alpineTheme,
   alpineDarkTheme,
@@ -56,7 +56,7 @@ export const getThemeOrThrow = (themeName: string) => {
   return theme;
 };
 
-export const getThemeChain = (theme: Theme): Theme[] => {
+export const getThemeChain = (theme: Theme): ReadonlyArray<Theme> => {
   const result = [theme];
   let parent: Theme | null = theme.extends;
   while (parent) {

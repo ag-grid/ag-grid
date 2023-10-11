@@ -211,7 +211,7 @@ In this section we demonstrate how you can cherry pick modules to provide the fe
 |         // setup the grid after the page has finished loading
 |         document.addEventListener('DOMContentLoaded', function () {
 |             var gridDiv = document.querySelector('#myGrid');
-|             new agGrid.Grid(gridDiv, gridOptions);
+|             var api = agGrid.createGrid(gridDiv, gridOptions);
 |         });
 |     &lt;/script>
 | &lt;/head>

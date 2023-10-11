@@ -25,36 +25,51 @@ export const useResetVariableDefaults = () => {
 const defaultsElementId = 'theme-builder-defaults-computation';
 class ComputedValueGetter {
   private cache: Record<string, Value | null | undefined> = {};
-  private styleMap?: CSSStyleDeclaration;
+
+  private computedStyle?: CSSStyleDeclaration;
 
   getComputedValue(variableName: string): Value | null {
     const element = document.getElementById(defaultsElementId);
     if (!element) {
       throw new Error(`${ComputedValueGetter.name} created before #${defaultsElementId} element`);
     }
-    let styleMap = this.styleMap;
-    if (!styleMap) {
-      this.styleMap = styleMap = getComputedStyle(element);
-    }
+    const computedStyle = this.computedStyle || getComputedStyle(element);
 
     const cachedValue = this.cache[variableName];
     if (cachedValue !== undefined) return cachedValue;
 
     const info = getVariableInfoOrThrow(variableName);
-    let cssValue: string;
-    if (info.type === 'color') {
-      element.style.color = `var(${variableName})`;
-      cssValue = styleMap.color;
-    } else {
-      cssValue = styleMap.getPropertyValue(variableName);
+    const unevaluatedValue = computedStyle.getPropertyValue(variableName);
+    if (!/[()]/.test(unevaluatedValue)) {
+      // values without function calls can be parsed directly
+      return (this.cache[variableName] = parseCssString(info, unevaluatedValue));
     }
-    if (!cssValue) return null;
+
+    // If the value contains function calls like calc() and color-mix(), we need
+    // to get the browser to evaluate these into raw dimension and color values
+    const evaluationProperty = evaluationProperties[info.type];
+    element.style[evaluationProperty] = `var(${variableName})`;
+    const cssValue = computedStyle[evaluationProperty];
+    element.style[evaluationProperty] = '';
+    if (!cssValue) return (this.cache[variableName] = null);
     const parsedValue = parseCssString(info, String(cssValue));
+    element.style.display = 'block';
+    element.style.borderLeft = 'solid 5px red';
     if (parsedValue == null) {
-      logErrorMessage(`Failed to parse color value: "${String(cssValue)}"`);
+      logErrorMessage(
+        `Failed to parse ${info.type} value for ${variableName}: "${String(cssValue)}"`,
+      );
     }
     return (this.cache[variableName] = parsedValue);
   }
 }
 
-const computedValueGetterAtom = atom<ComputedValueGetter>(new ComputedValueGetter());
+const evaluationProperties = {
+  dimension: 'maxWidth',
+  border: 'borderLeft',
+  borderStyle: 'borderLeftStyle',
+  color: 'color',
+  display: 'display',
+} as const;
+
+export const computedValueGetterAtom = atom<ComputedValueGetter>(new ComputedValueGetter());

@@ -1,4 +1,11 @@
-import { Grid, ColDef, GridOptions, IServerSideDatasource, IServerSideGetRowsRequest } from '@ag-grid-community/core'
+import {
+  GridApi,
+  createGrid,
+  ColDef,
+  GridOptions,
+  IServerSideDatasource,
+  IServerSideGetRowsRequest,
+} from '@ag-grid-community/core';
 import { CustomLoadingCellRenderer } from './customLoadingCellRenderer_typescript'
 
 const columnDefs: ColDef[] = [
@@ -12,6 +19,8 @@ const columnDefs: ColDef[] = [
   { field: 'silver' },
   { field: 'bronze' },
 ]
+
+let gridApi: GridApi<IOlympicData>;
 
 const gridOptions: GridOptions<IOlympicData> = {
   defaultColDef: {
@@ -44,7 +53,7 @@ const gridOptions: GridOptions<IOlympicData> = {
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', () => {
   const gridDiv = document.querySelector<HTMLElement>('#myGrid')!
-  new Grid(gridDiv, gridOptions)
+  gridApi = createGrid(gridDiv, gridOptions);;
 
   fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
     .then(response => response.json())
@@ -57,7 +66,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
       const server: any = getFakeServer(data)
       const datasource: IServerSideDatasource = getServerSideDatasource(server)
-      gridOptions.api!.setServerSideDatasource(datasource)
+      gridApi!.setServerSideDatasource(datasource)
     })
 })
 

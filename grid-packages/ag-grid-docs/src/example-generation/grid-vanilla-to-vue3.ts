@@ -3,7 +3,8 @@ import {
     getFunctionName,
     getModuleRegistration,
     ImportType,
-    isInstanceMethod
+    isInstanceMethod,
+    replaceGridReadyRowData
 } from './parser-utils';
 import {getImport, toConst, toInput, toOutput, toRef} from './vue-utils';
 import {
@@ -34,10 +35,8 @@ function getOnGridReadyCode(bindings: any): string {
     if (data) {
         const {url, callback} = data;
 
-        const setRowDataBlock = callback.indexOf('api.setRowData') >= 0 ?
-            callback.replace("params.api.setRowData(data);", "rowData.value = data;") :
-            callback;
-
+        const setRowDataBlock = replaceGridReadyRowData(callback, 'rowData.value');
+        
         additionalLines.push(`
             const updateData = (data) => ${setRowDataBlock};
             
@@ -53,7 +52,7 @@ function getOnGridReadyCode(bindings: any): string {
     }`;
 }
 
-const replaceApiThisReference = (code) => code.replaceAll("this.gridApi", 'gridApi.value');
+const replaceApiThisReference = (code) => code.replaceAll("gridApi", 'gridApi.value');
 
 function getAllMethods(bindings: any): [string[], string[], string[], string[], string[]] {
     const eventHandlers = bindings.eventHandlers
@@ -215,7 +214,7 @@ function getPropertyBindings(bindings: any, componentFileNames: string[], import
             }
         });
 
-    if (bindings.data && bindings.data.callback.indexOf('api.setRowData') >= 0) {
+    if (bindings.data && bindings.data.callback.indexOf('gridApi.setRowData') >= 0) {
         if (propertyAttributes.filter(item => item.indexOf(':rowData') >= 0).length === 0) {
             propertyAttributes.push(':rowData="rowData"');
             propertyNames.push('rowData');

@@ -1,4 +1,11 @@
-import { ColDef, Grid, GridOptions, IsFullWidthRowParams, RowHeightParams } from '@ag-grid-community/core'
+import {
+    ColDef,
+    GridApi,
+    createGrid,
+    GridOptions,
+    IsFullWidthRowParams,
+    RowHeightParams,
+} from '@ag-grid-community/core';
 import { FullWidthCellRenderer } from './fullWidthCellRenderer_typescript'
 
 const rowData = createData(100, 'body');
@@ -21,6 +28,8 @@ function getColumnDefs() {
     })
     return columnDefs
 }
+
+let gridApi: GridApi;
 
 const gridOptions: GridOptions = {
     columnDefs: getColumnDefs(),
@@ -71,5 +80,5 @@ function createData(count: number, prefix: string) {
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', () => {
     const gridDiv = document.querySelector<HTMLElement>('#myGrid')!
-    new Grid(gridDiv, gridOptions)
+    gridApi = createGrid(gridDiv, gridOptions);;
 })

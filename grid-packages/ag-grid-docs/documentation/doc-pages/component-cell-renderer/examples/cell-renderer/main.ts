@@ -1,8 +1,4 @@
-import {
-  ColDef, Grid,
-  GridOptions,
-  ICellRendererParams,
-} from '@ag-grid-community/core'
+import { ColDef, GridApi, createGrid, GridOptions, ICellRendererParams } from '@ag-grid-community/core';
 import { DaysFrostRenderer, ImageCellRendererParams } from './daysFrostRenderer_typescript';
 
 /**
@@ -93,6 +89,8 @@ const columnDefs: ColDef[] = [
   },
 ]
 
+let gridApi: GridApi;
+
 const gridOptions: GridOptions = {
   columnDefs: columnDefs,
   rowData: null,
@@ -122,7 +120,7 @@ const createImageSpan = (imageMultiplier: number, image: string) => {
  */
 function frostierYear(extraDaysFrost: number) {
   // iterate over the rows and make each "days of air frost"
-  gridOptions.api!.forEachNode(rowNode => {
+  gridApi!.forEachNode(rowNode => {
     rowNode.setDataValue(
       'Days of air frost (days)',
       rowNode.data['Days of air frost (days)'] + extraDaysFrost
@@ -133,11 +131,11 @@ function frostierYear(extraDaysFrost: number) {
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', () => {
   const gridDiv = document.querySelector<HTMLElement>('#myGrid')!
-  new Grid(gridDiv, gridOptions)
+  gridApi = createGrid(gridDiv, gridOptions);;
 
   fetch('https://www.ag-grid.com/example-assets/weather-se-england.json')
     .then(response => response.json())
     .then(data => {
-      gridOptions.api!.setRowData(data)
+      gridApi!.setRowData(data)
     })
 })

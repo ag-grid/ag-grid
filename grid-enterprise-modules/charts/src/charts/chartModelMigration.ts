@@ -490,7 +490,5 @@ const merge = (r: {}, n: {}) => ({ ...r, ...n });
 const LEGACY_PALETTES: Record<string, AgChartThemeName> = {
     borneo: 'ag-default',
     material: 'ag-material',
-    pastel: 'ag-pastel',
     bright: 'ag-vivid',
-    flat: 'ag-solar',
 };

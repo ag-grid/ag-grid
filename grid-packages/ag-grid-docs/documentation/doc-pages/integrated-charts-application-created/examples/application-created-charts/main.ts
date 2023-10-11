@@ -1,4 +1,14 @@
-import { Grid, ChartType, ColDef, CreateRangeChartParams, GetRowIdParams, GridOptions, ValueFormatterParams, ChartMenuOptions } from '@ag-grid-community/core'
+import {
+  GridApi,
+  createGrid,
+  ChartType,
+  ColDef,
+  CreateRangeChartParams,
+  GetRowIdParams,
+  GridOptions,
+  ValueFormatterParams,
+  ChartMenuOptions,
+} from '@ag-grid-community/core';
 import { AgAxisLabelFormatterParams, AgCartesianSeriesTooltipRendererParams } from 'ag-charts-community';
 declare var __basePath: string;
 
@@ -23,6 +33,8 @@ const columnDefs: ColDef[] = [
 ]
 
 var chartRef: any;
+
+let gridApi: GridApi;
 
 const gridOptions: GridOptions = {
   columnDefs: columnDefs,
@@ -104,13 +116,13 @@ const gridOptions: GridOptions = {
 }
 
 function updateChart(chartType: ChartType) {
-  gridOptions.api!.updateChart({type: 'rangeChartUpdate', chartId: chartRef.chartId, chartType});
+  gridApi!.updateChart({type: 'rangeChartUpdate', chartId: chartRef.chartId, chartType});
 }
 
 function numberCellFormatter(params: ValueFormatterParams) {
   return Math.floor(params.value)
     .toString()
-    .replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,')
+    .replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,');
 }
 
 function yAxisLabelFormatter(params: AgAxisLabelFormatterParams) {
@@ -135,7 +147,7 @@ function tooltipRenderer(params: AgCartesianSeriesTooltipRendererParams) {
 // after page is loaded, create the grid
 document.addEventListener('DOMContentLoaded', function () {
   var eGridDiv = document.querySelector<HTMLElement>('#myGrid')!
-  new Grid(eGridDiv, gridOptions)
+  gridApi = createGrid(eGridDiv, gridOptions);;
 })
 
 var worker: any;
@@ -143,10 +155,10 @@ var worker: any;
   worker = new Worker(__basePath + 'dataUpdateWorker.js')
   worker.onmessage = function (e: any) {
     if (e.data.type === 'setRowData') {
-      gridOptions.api!.setRowData(e.data.records)
+      gridApi!.setRowData(e.data.records)
     }
     if (e.data.type === 'updateData') {
-      gridOptions.api!.applyTransactionAsync({ update: e.data.records })
+      gridApi!.applyTransactionAsync({ update: e.data.records })
     }
   }
 

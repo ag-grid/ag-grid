@@ -1,4 +1,12 @@
-import { Grid, ColDef, GetMainMenuItemsParams, GridOptions, MenuItemDef, PostProcessPopupParams } from '@ag-grid-community/core'
+import {
+  GridApi,
+  createGrid,
+  ColDef,
+  GetMainMenuItemsParams,
+  GridOptions,
+  MenuItemDef,
+  PostProcessPopupParams,
+} from '@ag-grid-community/core';
 
 const columnDefs: ColDef[] = [
   { field: 'athlete', minWidth: 200 },
@@ -23,6 +31,8 @@ const columnDefs: ColDef[] = [
   { field: 'bronze' },
   { field: 'total' },
 ]
+
+let gridApi: GridApi<IOlympicData>;
 
 const gridOptions: GridOptions<IOlympicData> = {
   columnDefs: columnDefs,
@@ -139,9 +149,9 @@ function getMainMenuItems(params: GetMainMenuItemsParams): (string | MenuItemDef
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', () => {
   const gridDiv = document.querySelector<HTMLElement>('#myGrid')!
-  new Grid(gridDiv, gridOptions)
+  gridApi = createGrid(gridDiv, gridOptions);;
 
   fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
     .then(response => response.json())
-    .then((data: IOlympicData[]) => gridOptions.api!.setRowData(data))
+    .then((data: IOlympicData[]) => gridApi!.setRowData(data))
 })

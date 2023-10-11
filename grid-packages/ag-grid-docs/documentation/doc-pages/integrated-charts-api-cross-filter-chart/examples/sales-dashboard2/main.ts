@@ -1,5 +1,8 @@
-import { FirstDataRenderedEvent, Grid, GridApi, GridOptions } from '@ag-grid-community/core';
+import { FirstDataRenderedEvent, GridApi, createGrid, GridOptions } from '@ag-grid-community/core';
 import { getData } from "./data";
+
+
+let gridApi: GridApi;
 
 
 const gridOptions: GridOptions = {
@@ -53,8 +56,8 @@ function onFirstDataRendered(params: FirstDataRenderedEvent) {
   createHandsetSalesChart(params.api)
 }
 
-function createQuarterlySalesChart(gridApi: GridApi) {
-  gridApi.createCrossFilterChart({
+function createQuarterlySalesChart(api: GridApi) {
+  api.createCrossFilterChart({
     chartType: 'line',
     cellRange: {
       columns: ['quarter', 'sale'],
@@ -86,8 +89,8 @@ function createQuarterlySalesChart(gridApi: GridApi) {
   })
 }
 
-function createSalesByRefChart(gridApi: GridApi) {
-  gridApi.createCrossFilterChart({
+function createSalesByRefChart(api: GridApi) {
+  api.createCrossFilterChart({
     chartType: 'doughnut',
     cellRange: {
       columns: ['salesRep', 'sale'],
@@ -118,8 +121,8 @@ function createSalesByRefChart(gridApi: GridApi) {
   })
 }
 
-function createHandsetSalesChart(gridApi: GridApi) {
-  gridApi.createCrossFilterChart({
+function createHandsetSalesChart(api: GridApi) {
+  api.createCrossFilterChart({
     chartType: 'area',
     cellRange: {
       columns: ['handset', 'sale'],
@@ -140,5 +143,5 @@ function createHandsetSalesChart(gridApi: GridApi) {
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
   var gridDiv = document.querySelector<HTMLElement>('#myGrid')!
-  new Grid(gridDiv, gridOptions)
+  gridApi = createGrid(gridDiv, gridOptions);;
 })

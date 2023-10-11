@@ -8,7 +8,7 @@ import { MenuModule } from '@ag-grid-enterprise/menu';
 import { ExcelExportModule } from '@ag-grid-enterprise/excel-export';
 import { GridChartsModule } from '@ag-grid-enterprise/charts';
 
-import { ColDef, GridOptions, ModuleRegistry, Grid } from '@ag-grid-community/core';
+import { ColDef, GridOptions, ModuleRegistry, createGrid } from '@ag-grid-community/core';
 
 // Register shared Modules globally
 ModuleRegistry.registerModules([
@@ -58,7 +58,7 @@ var rightGridOptions: GridOptions = {
 function loadGrid(side: string) {
     var grid = document.querySelector<HTMLElement>('#e' + side + 'Grid')!;
     let modules = side === 'Left' ? [SetFilterModule, ClipboardModule] : [ExcelExportModule];
-    new Grid(grid, side === 'Left' ? leftGridOptions : rightGridOptions, { modules: modules });
+    createGrid(grid, side === 'Left' ? leftGridOptions : rightGridOptions, { modules: modules });
 }
 
 loadGrid('Left');

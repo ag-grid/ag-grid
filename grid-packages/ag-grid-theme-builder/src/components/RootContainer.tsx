@@ -5,7 +5,7 @@ import '@ag-grid-community/styles/ag-theme-material.css';
 import { TrashCan } from '@carbon/icons-react';
 import styled from '@emotion/styled';
 import { useParentTheme } from 'atoms/parentTheme';
-import { useRenderedThemeCss } from 'atoms/renderedTheme';
+import { useRenderedCss } from 'atoms/renderedCss';
 import { useResetVariableDefaults } from 'atoms/variableDefaults';
 import { Inspector } from 'components/inspector/Inspector';
 import { memo, useLayoutEffect, useState } from 'react';
@@ -17,19 +17,19 @@ import { ParentThemeMenu } from './ParentThemeMenu';
 
 export const RootContainer = memo(() => {
   const parentTheme = useParentTheme();
-  const renderedThemeCss = useRenderedThemeCss();
+  const renderedCss = useRenderedCss();
   const resetVariableDefaults = useResetVariableDefaults();
   const [hasRenderedStyles, setHasRenderedStyles] = useState(false);
 
   useLayoutEffect(() => {
     setHasRenderedStyles(true);
     resetVariableDefaults();
-  }, [renderedThemeCss, resetVariableDefaults]);
+  }, [renderedCss, resetVariableDefaults]);
 
   return (
     <>
-      <style>{renderedThemeCss}</style>
-      <div className={parentTheme.name} id="theme-builder-defaults-computation" />
+      <style>{renderedCss}</style>
+      <DefaultsElement className={parentTheme.name} id="theme-builder-defaults-computation" />
       <Container>
         {hasRenderedStyles && (
           <>
@@ -45,7 +45,7 @@ export const RootContainer = memo(() => {
                   }
                 }}
               />
-              <CopyButton payload={renderedThemeCss} label="Copy CSS" />
+              <CopyButton payload={renderedCss} label="Copy CSS" />
             </TopRow>
             <Columns>
               <LeftColumn>
@@ -77,6 +77,11 @@ const Container = styled('div')`
   .tooltip {
     max-width: 400px;
   }
+`;
+
+const DefaultsElement = styled('div')`
+  position: absolute;
+  transform: translateY(-10);
 `;
 
 const TopRow = styled('div')`

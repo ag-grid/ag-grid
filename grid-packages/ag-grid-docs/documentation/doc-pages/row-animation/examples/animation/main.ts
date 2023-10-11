@@ -1,4 +1,4 @@
-import { Grid, ColDef, GridApi, GridOptions } from '@ag-grid-community/core'
+import { GridApi, createGrid, ColDef, GridOptions } from '@ag-grid-community/core';
 
 var countDownDirection = true
 
@@ -10,6 +10,8 @@ const columnDefs: ColDef[] = [
   { field: 'silver', aggFunc: 'sum' },
   { field: 'bronze', aggFunc: 'sum' },
 ]
+
+let gridApi: GridApi<IOlympicData>;
 
 const gridOptions: GridOptions<IOlympicData> = {
   defaultColDef: {
@@ -124,7 +126,7 @@ function getActions() {
       })
       setTitleFormatted('api', 'applyColumnState', 'clear sort')
     },
-  ]
+  ];
 }
 
 // from actual demo page (/animation/)
@@ -133,12 +135,12 @@ document.addEventListener('DOMContentLoaded', function () {
     document.querySelector<HTMLElement>('#myGrid')! ||
     document.querySelector('#animationGrid')
 
-  new Grid(gridDiv, gridOptions)
+  gridApi = createGrid(gridDiv, gridOptions);;
 
   fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
     .then(response => response.json())
     .then(function (data) {
-      gridOptions.api!.setRowData(data.slice(0, 50))
-      startInterval(gridOptions.api!)
+      gridApi!.setRowData(data.slice(0, 50))
+      startInterval(gridApi!)
     })
 })

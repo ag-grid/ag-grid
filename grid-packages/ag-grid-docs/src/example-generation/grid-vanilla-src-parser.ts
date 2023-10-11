@@ -67,14 +67,6 @@ function tsNodeIsSimpleFetchRequest(node) {
     }
 }
 
-function tsGenerateWithReplacedGridOptions(node, srcFile) {
-    return tsGenerate(node, srcFile)
-        // Handle case when api is on a new line 
-        //  gridOptions
-        //      .api.setRow()
-        .replace(/gridOptions\s*\n?\s*\.api/g, 'this.gridApi');
-}
-
 function processColDefsForFunctionalReactOrVue(propertyName: string, exampleType, exampleSettings, providedExamples) {
     if (propertyName === 'columnDefs') {
         return exampleType === 'generated' ||
@@ -195,14 +187,13 @@ function internalParser(examplePath, {
         registered.push(handler);
 
         // one of the event handlers extracted earlier (onclick, onchange etc)
-        // body replaces gridOptions.api with this.gridApi
         tsCollectors.push({
             matches: node => tsNodeIsFunctionWithName(node, handler),
             apply: (bindings, node) => {
                 bindings.externalEventHandlers.push({
                     name: handler,
                     params: params,
-                    body: tsGenerateWithReplacedGridOptions(node, tsTree)
+                    body: tsGenerate(node, tsTree)
                 });
             }
         });
@@ -212,7 +203,7 @@ function internalParser(examplePath, {
     const unboundInstanceMethods = extractUnboundInstanceMethods(tsTree);
     tsCollectors.push({
         matches: node => tsNodeIsInScope(node, unboundInstanceMethods),
-        apply: (bindings, node) => bindings.instanceMethods.push(removeInScopeJsDoc(tsGenerateWithReplacedGridOptions(node, tsTree)))
+        apply: (bindings, node) => bindings.instanceMethods.push(removeInScopeJsDoc(tsGenerate(node, tsTree)))
     });
 
 
@@ -220,7 +211,7 @@ function internalParser(examplePath, {
     tsCollectors.push({
         matches: node => tsNodeIsUnusedFunction(node, registered, unboundInstanceMethods),
         apply: (bindings, node) => {
-            const util = tsGenerate(node, tsTree).replace(/gridOptions/g, 'gridInstance');
+            const util = tsGenerate(node, tsTree);
             bindings.utils.push(util)
         }
     });
@@ -234,7 +225,7 @@ function internalParser(examplePath, {
     });
 
     // For React we need to identify the external dependencies for callbacks to prevent stale closures
-    const GLOBAL_DEPS = new Set(['console', 'document', 'Error', 'this'])
+    const GLOBAL_DEPS = new Set(['console', 'document', 'Error', 'this', 'gridApi', 'gridOptions'])
     tsCollectors.push({
         matches: node => tsNodeIsTopLevelFunction(node),
         apply: (bindings, node: ts.SignatureDeclaration) => {
@@ -273,7 +264,7 @@ function internalParser(examplePath, {
         matches: tsNodeIsHttpOpen,
         apply: (bindings, node) => {
             const url = node.expression.arguments[1].raw;
-            const callback = '{ params.api.setRowData(data); }';
+            const callback = '{ gridApi.setRowData(data); }';
 
             bindings.data = {url, callback};
         }
@@ -330,7 +321,7 @@ function internalParser(examplePath, {
                 bindings.eventHandlers.push({
                     name: eventName,
                     handlerName: onEventName,
-                    handler: tsGenerateWithReplacedGridOptions(node, tsTree)
+                    handler: tsGenerate(node, tsTree)
                 });
             }
         });
@@ -343,7 +334,7 @@ function internalParser(examplePath, {
             matches: node => tsNodeIsPropertyWithName(node, onEventName) && onEventName !== 'onGridReady',
             apply: (bindings, node: ts.PropertyAssignment) => {
                 // Find any inline arrow functions or functions for events and convert to external function definition
-                const eventHandler = tsGenerateWithReplacedGridOptions(node.initializer, tsTree);
+                const eventHandler = tsGenerate(node.initializer, tsTree);
                 const functionHandler = ts.isArrowFunction(node.initializer)
                     ? eventHandler
                         // (event: RowEditingStoppedEvent) => {  
@@ -367,7 +358,7 @@ function internalParser(examplePath, {
         tsCollectors.push({
             matches: (node: ts.Node) => tsNodeIsFunctionWithName(node, functionName),
             apply: (bindings, node: ts.NamedDeclaration) => {
-                const methodText = tsGenerateWithReplacedGridOptions(node, tsTree);
+                const methodText = tsGenerate(node, tsTree);
                 bindings.instanceMethods.push(methodText);
                 bindings.properties.push({name: functionName, value: null, typings: gridOpsTypeLookup(functionName)});
             }

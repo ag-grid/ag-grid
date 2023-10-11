@@ -1,4 +1,18 @@
-import { Grid, ColDef, Column, ColumnMovedEvent, ColumnPinnedEvent, ColumnPivotChangedEvent, ColumnResizedEvent, ColumnRowGroupChangedEvent, ColumnValueChangedEvent, ColumnVisibleEvent, GridOptions, SortChangedEvent } from '@ag-grid-community/core'
+import {
+  GridApi,
+  createGrid,
+  ColDef,
+  Column,
+  ColumnMovedEvent,
+  ColumnPinnedEvent,
+  ColumnPivotChangedEvent,
+  ColumnResizedEvent,
+  ColumnRowGroupChangedEvent,
+  ColumnValueChangedEvent,
+  ColumnVisibleEvent,
+  GridOptions,
+  SortChangedEvent,
+} from '@ag-grid-community/core';
 
 const columnDefs: ColDef[] = [
   { field: 'athlete' },
@@ -42,6 +56,8 @@ function onColumnPinned(e: ColumnPinnedEvent) {
   console.log('Event Column Pinned', e)
 }
 
+let gridApi: GridApi<IOlympicData>;
+
 const gridOptions: GridOptions<IOlympicData> = {
   defaultColDef: {
     sortable: true,
@@ -65,7 +81,7 @@ const gridOptions: GridOptions<IOlympicData> = {
 }
 
 function onBtSortOn() {
-  gridOptions.api!.applyColumnState({
+  gridApi!.applyColumnState({
     state: [
       { colId: 'age', sort: 'desc' },
       { colId: 'athlete', sort: 'asc' },
@@ -74,13 +90,13 @@ function onBtSortOn() {
 }
 
 function onBtSortOff() {
-  gridOptions.api!.applyColumnState({
+  gridApi!.applyColumnState({
     defaultState: { sort: null },
   })
 }
 
 function onBtWidthNarrow() {
-  gridOptions.api!.applyColumnState({
+  gridApi!.applyColumnState({
     state: [
       { colId: 'age', width: 100 },
       { colId: 'athlete', width: 100 },
@@ -89,7 +105,7 @@ function onBtWidthNarrow() {
 }
 
 function onBtWidthNormal() {
-  gridOptions.api!.applyColumnState({
+  gridApi!.applyColumnState({
     state: [
       { colId: 'age', width: 200 },
       { colId: 'athlete', width: 200 },
@@ -98,7 +114,7 @@ function onBtWidthNormal() {
 }
 
 function onBtHide() {
-  gridOptions.api!.applyColumnState({
+  gridApi!.applyColumnState({
     state: [
       { colId: 'age', hide: true },
       { colId: 'athlete', hide: true },
@@ -107,39 +123,39 @@ function onBtHide() {
 }
 
 function onBtShow() {
-  gridOptions.api!.applyColumnState({
+  gridApi!.applyColumnState({
     defaultState: { hide: false },
   })
 }
 
 function onBtPivotOn() {
-  gridOptions.api!.setPivotMode(true)
-  gridOptions.api!.applyColumnState({
+  gridApi!.setPivotMode(true)
+  gridApi!.applyColumnState({
     state: [{ colId: 'country', pivot: true }],
   })
 }
 
 function onBtPivotOff() {
-  gridOptions.api!.setPivotMode(false)
-  gridOptions.api!.applyColumnState({
+  gridApi!.setPivotMode(false)
+  gridApi!.applyColumnState({
     defaultState: { pivot: false },
   })
 }
 
 function onBtRowGroupOn() {
-  gridOptions.api!.applyColumnState({
+  gridApi!.applyColumnState({
     state: [{ colId: 'sport', rowGroup: true }],
   })
 }
 
 function onBtRowGroupOff() {
-  gridOptions.api!.applyColumnState({
+  gridApi!.applyColumnState({
     defaultState: { rowGroup: false },
   })
 }
 
 function onBtAggFuncOn() {
-  gridOptions.api!.applyColumnState({
+  gridApi!.applyColumnState({
     state: [
       { colId: 'gold', aggFunc: 'sum' },
       { colId: 'silver', aggFunc: 'sum' },
@@ -149,13 +165,13 @@ function onBtAggFuncOn() {
 }
 
 function onBtAggFuncOff() {
-  gridOptions.api!.applyColumnState({
+  gridApi!.applyColumnState({
     defaultState: { aggFunc: null },
   })
 }
 
 function onBtNormalOrder() {
-  gridOptions.api!.applyColumnState({
+  gridApi!.applyColumnState({
     state: [
       { colId: 'athlete' },
       { colId: 'age' },
@@ -170,7 +186,7 @@ function onBtNormalOrder() {
 }
 
 function onBtReverseOrder() {
-  gridOptions.api!.applyColumnState({
+  gridApi!.applyColumnState({
     state: [
       { colId: 'athlete' },
       { colId: 'age' },
@@ -185,7 +201,7 @@ function onBtReverseOrder() {
 }
 
 function onBtPinnedOn() {
-  gridOptions.api!.applyColumnState({
+  gridApi!.applyColumnState({
     state: [
       { colId: 'athlete', pinned: 'left' },
       { colId: 'age', pinned: 'right' },
@@ -194,7 +210,7 @@ function onBtPinnedOn() {
 }
 
 function onBtPinnedOff() {
-  gridOptions.api!.applyColumnState({
+  gridApi!.applyColumnState({
     defaultState: { pinned: null },
   })
 }
@@ -202,9 +218,9 @@ function onBtPinnedOff() {
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', () => {
   const gridDiv = document.querySelector<HTMLElement>('#myGrid')!
-  new Grid(gridDiv, gridOptions)
+  gridApi = createGrid(gridDiv, gridOptions);;
 
   fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
     .then(response => response.json())
-    .then((data: IOlympicData[]) => gridOptions.api!.setRowData(data))
+    .then((data: IOlympicData[]) => gridApi!.setRowData(data))
 })

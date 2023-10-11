@@ -12,17 +12,8 @@ Filter components allow you to add your own filter types to AG Grid. Use them wh
 </video-section>
 </framework-specific-section>
 
-## Simple Filter
-
-md-include:simple-filter-javascript.md
-md-include:simple-filter-angular.md
-md-include:simple-filter-react.md
-md-include:simple-filter-vue.md 
-
-## Custom Filter Example
-
 The example below shows two custom filters. The first is on the `Athlete` column and demonstrates a filter with "fuzzy" matching and the
-second is on the `Year` column and uses the `YearFilter` above.
+second is on the `Year` column with preset options.
 
 <grid-example title='Filter Component' name='custom-filter' type='generated' options='{ "includeNgFormsModule" : true}'></grid-example>
 

@@ -31,9 +31,7 @@ the parent component is rendered. This will result in unexpected behaviour in th
 For applications that set data into the grid (as opposed to showing data statically), it makes sense to favour `useState`
 over `useMemo` as loading data usually aligns with changing state in your application.
 
-All examples in the documentation use `useState` for Row Data. However, all code snippets in the documentation leave 
-these hooks out for easier reading.
-
+All examples in the documentation use `useState` for Row Data. 
 ### Immutable Data
 
 If you are going to be updating Row Data then it is strongly recommended to provide the `getRowId` callback that returns a unique id for each row. The grid is then able to identify Rows between new lists of Row Data. For example, if Rows are selected, and new Row Data is provided such that some Rows are removed, the grid is able to maintain the selection across rows 

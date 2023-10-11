@@ -1,4 +1,11 @@
-import { ColDef, CreateRangeChartParams, FirstDataRenderedEvent, Grid, GridOptions } from '@ag-grid-community/core';
+import {
+  ColDef,
+  CreateRangeChartParams,
+  FirstDataRenderedEvent,
+  GridApi,
+  createGrid,
+  GridOptions,
+} from '@ag-grid-community/core';
 import { getData } from "./data";
 
 const columnDefs: ColDef[] = [
@@ -27,6 +34,8 @@ const columnDefs: ColDef[] = [
     chartDataType: 'series',
   },
 ]
+
+let gridApi: GridApi;
 
 const gridOptions: GridOptions = {
   defaultColDef: {
@@ -173,5 +182,5 @@ function onFirstDataRendered(params: FirstDataRenderedEvent) {
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
   var gridDiv = document.querySelector<HTMLElement>('#myGrid')!
-  new Grid(gridDiv, gridOptions)
+  gridApi = createGrid(gridDiv, gridOptions);;
 })

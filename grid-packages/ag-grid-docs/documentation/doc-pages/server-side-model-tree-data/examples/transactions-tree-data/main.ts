@@ -1,4 +1,15 @@
-import { Grid, ColDef, GridApi, GridOptions, IServerSideDatasource, IServerSideGetRowsParams, IServerSideGetRowsRequest, IsServerSideGroupOpenByDefaultParams, IRowNode, GetRowIdParams } from '@ag-grid-community/core'
+import {
+  GridApi,
+  createGrid,
+  ColDef,
+  GridOptions,
+  IServerSideDatasource,
+  IServerSideGetRowsParams,
+  IServerSideGetRowsRequest,
+  IsServerSideGroupOpenByDefaultParams,
+  IRowNode,
+  GetRowIdParams,
+} from '@ag-grid-community/core';
 
 var fakeServer: {
   getData: (request: IServerSideGetRowsRequest) => void,
@@ -14,6 +25,8 @@ const columnDefs: ColDef[] = [
   { field: 'employmentType' },
   { field: 'startDate' },
 ];
+
+let gridApi: GridApi;
 
 const gridOptions: GridOptions = {
   defaultColDef: {
@@ -52,7 +65,7 @@ function getRouteToNode(rowNode: IRowNode): string[] {
 
 let latestId = 100000;
 function addToSelected() {
-  const selected = gridOptions.api!.getSelectedNodes()[0];
+  const selected = gridApi!.getSelectedNodes()[0];
   if (!selected) {
     console.warn('No row was selected.');
     return;
@@ -69,7 +82,7 @@ function addToSelected() {
 }
 
 function updateSelected() {
-  const selected = gridOptions.api!.getSelectedNodes()[0];
+  const selected = gridApi!.getSelectedNodes()[0];
   if (!selected) {
     console.warn('No row was selected.');
     return;
@@ -80,7 +93,7 @@ function updateSelected() {
 }
 
 function deleteSelected() {
-  const selected = gridOptions.api!.getSelectedNodes()[0];
+  const selected = gridApi!.getSelectedNodes()[0];
   if (!selected) {
     console.warn('No row was selected.');
     return;
@@ -91,7 +104,7 @@ function deleteSelected() {
 }
 
 function moveSelected() {
-  const selected = gridOptions.api!.getSelectedNodes()[0];
+  const selected = gridApi!.getSelectedNodes()[0];
   if (!selected) {
     console.warn('No row was selected.');
     return;
@@ -104,7 +117,7 @@ function moveSelected() {
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
   var gridDiv = document.querySelector<HTMLElement>('#myGrid')!
-  new Grid(gridDiv, gridOptions)
+  gridApi = createGrid(gridDiv, gridOptions);;
 
   fetch('https://www.ag-grid.com/example-assets/tree-data.json')
     .then(response => response.json())
@@ -119,13 +132,13 @@ document.addEventListener('DOMContentLoaded', function () {
         },
         ...data,
       ];
-      var fakeServer = createFakeServer(adjustedData, gridOptions.api!)
+      var fakeServer = createFakeServer(adjustedData, gridApi!)
       var datasource = createServerSideDatasource(fakeServer)
-      gridOptions.api!.setServerSideDatasource(datasource)
+      gridApi!.setServerSideDatasource(datasource)
     })
 })
 
-function createFakeServer(fakeServerData: any[], gridApi: GridApi) {
+function createFakeServer(fakeServerData: any[], api: GridApi) {
   const getDataAtRoute = (route: string[]) => {
     let mutableRoute = [...route];
     let target: any = { underlings: fakeServerData };
@@ -173,7 +186,7 @@ function createFakeServer(fakeServerData: any[], gridApi: GridApi) {
         target.underlings = [newRow];
 
         // update the parent row via transaction
-        gridApi.applyServerSideTransaction({
+        api.applyServerSideTransaction({
           route: route.slice(0, route.length - 1),
           update: [sanitizeRowForGrid(target)],
         });
@@ -181,7 +194,7 @@ function createFakeServer(fakeServerData: any[], gridApi: GridApi) {
         target.underlings.push(newRow);
 
         // add the child row via transaction
-        gridApi.applyServerSideTransaction({
+        api.applyServerSideTransaction({
           route,
           add: [sanitizeRowForGrid(newRow)],
         });
@@ -193,7 +206,7 @@ function createFakeServer(fakeServerData: any[], gridApi: GridApi) {
       target.employmentType = target.employmentType === 'Contract' ? 'Permanent' : 'Contract';
 
       // inform the grid of the changes
-      gridApi.applyServerSideTransaction({
+      api.applyServerSideTransaction({
         route: route.slice(0, route.length - 1),
         update: [sanitizeRowForGrid(target)],
       });
@@ -205,13 +218,13 @@ function createFakeServer(fakeServerData: any[], gridApi: GridApi) {
       parent.underlings = parent.underlings.filter((child: any) => child.employeeName !== target.employeeName);
       if (parent.underlings.length === 0) {
         // update the parent row via transaction, as it's no longer a group
-        gridApi.applyServerSideTransaction({
+        api.applyServerSideTransaction({
           route: route.slice(0, route.length - 2),
           update: [sanitizeRowForGrid(parent)],
         });
       } else {
         // inform the grid of the changes
-        gridApi.applyServerSideTransaction({
+        api.applyServerSideTransaction({
           route: route.slice(0, route.length - 1),
           remove: [sanitizeRowForGrid(target)],
         });

@@ -34,7 +34,7 @@
 
         --ag-odd-row-background-color: var(--ag-background-color);
 
-        --ag-modal-overlay-background-color: rgba(255, 255, 255, 0.66);
+        --ag-modal-overlay-background-color: color-mix(in srgb, transparent, var(--ag-background-color) 66%);
 
         --ag-row-hover-color: transparent;
 
@@ -111,7 +111,7 @@
         --ag-header-column-resize-handle-color: var(--ag-secondary-border-color);
 
 
-        --ag-invalid-color: red;
+        --ag-invalid-color: #e02525;
         --ag-input-disabled-border-color: color-mix(in srgb, transparent, var(--ag-input-border-color) 30%);
         --ag-input-disabled-background-color: transparent;
 
