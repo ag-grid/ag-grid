@@ -211,7 +211,7 @@ function internalParser(examplePath, {
     tsCollectors.push({
         matches: node => tsNodeIsUnusedFunction(node, registered, unboundInstanceMethods),
         apply: (bindings, node) => {
-            const util = tsGenerate(node, tsTree).replace(/gridOptions/g, 'gridInstance');
+            const util = tsGenerate(node, tsTree);
             bindings.utils.push(util)
         }
     });
