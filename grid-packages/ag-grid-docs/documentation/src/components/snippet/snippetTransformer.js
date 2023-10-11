@@ -215,7 +215,7 @@ class ReactTransformer extends SnippetTransformer {
         }
 
         if (isUseMemoProp(propName)) {
-            return `const [${propName}, ${setterPropName}] = useMemo(() => { \n\treturn ${value};\n}, []);`;
+            return `const ${propName} = useMemo(() => { \n\treturn ${value};\n}, []);`;
         }
 
         return `const ${getName(property)} = ${decreaseIndent(value)};`;

@@ -20,7 +20,7 @@ export const DefaultValue = ({ value }: DefaultValueProps) => {
     );
   }
 
-  return <span>{value.toCss()}</span>;
+  return <span>{value.describe()}</span>;
 };
 
 const NoDefault = styled('div')`

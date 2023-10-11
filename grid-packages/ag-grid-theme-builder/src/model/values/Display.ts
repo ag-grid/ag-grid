@@ -1,15 +1,19 @@
-export type Display = 'block' | 'none';
+import { AbstractValue } from './AbstractValue';
 
-export class DisplayValue {
+export type DisplayToken = 'block' | 'none';
+
+export class Display extends AbstractValue {
   readonly type = 'display' as const;
 
-  constructor(readonly display: Display) {}
+  constructor(readonly display: DisplayToken) {
+    super();
+  }
 
   toCss(): string {
     return this.display;
   }
 
-  static parseCss(css: string): DisplayValue | null {
-    return css === 'block' || css === 'none' ? new DisplayValue(css) : null;
+  static parseCss(css: string): Display | null {
+    return css === 'block' || css === 'none' ? new Display(css) : null;
   }
 }

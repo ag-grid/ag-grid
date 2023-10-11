@@ -55,6 +55,7 @@ select {
     }
 
     &:focus:not(:disabled):not([readonly]),
+    &.ag-builder-preview-focus:not(:disabled):not([readonly]),
     &:focus-visible:not(:disabled):not([readonly]) {
         box-shadow: var(--ag-input-focus-box-shadow);
     }
