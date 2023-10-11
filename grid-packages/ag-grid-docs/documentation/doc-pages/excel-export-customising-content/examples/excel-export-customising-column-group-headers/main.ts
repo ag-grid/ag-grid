@@ -1,12 +1,15 @@
 import {
   ExcelExportParams,
-  Grid,
+  GridApi,
+  createGrid,
   GridOptions,
   ProcessCellForExportParams,
   ProcessGroupHeaderForExportParams,
   ProcessHeaderForExportParams,
   ProcessRowGroupForExportParams,
-} from "@ag-grid-community/core"
+} from "@ag-grid-community/core";
+
+let gridApi: GridApi<IOlympicData>;
 
 const gridOptions: GridOptions<IOlympicData> = {
   columnDefs: [
@@ -41,26 +44,26 @@ const gridOptions: GridOptions<IOlympicData> = {
 
 const getParams: () => ExcelExportParams = () => ({
   processHeaderCallback(params: ProcessHeaderForExportParams): string {
-    return `header: ${params.columnApi.getDisplayNameForColumn(params.column, null)}`
+    return `header: ${params.api.getDisplayNameForColumn(params.column, null)}`
   },
   processGroupHeaderCallback(params: ProcessGroupHeaderForExportParams): string {
-    return `group header: ${params.columnApi.getDisplayNameForColumnGroup(params.columnGroup, null)}`
+    return `group header: ${params.api.getDisplayNameForColumnGroup(params.columnGroup, null)}`
   }
 })
 
 function onBtExport() {
-  gridOptions.api!.exportDataAsExcel(getParams())
+  gridApi!.exportDataAsExcel(getParams())
 }
 
 // setup the grid after the page has finished loading
 document.addEventListener("DOMContentLoaded", () => {
   const gridDiv = document.querySelector<HTMLElement>("#myGrid")!
-  new Grid(gridDiv, gridOptions)
+  gridApi = createGrid(gridDiv, gridOptions);;
 
   fetch("https://www.ag-grid.com/example-assets/small-olympic-winners.json")
     .then(response => response.json())
     .then(data =>
-      gridOptions.api!.setRowData(
+      gridApi!.setRowData(
         data.filter((rec: any) => rec.country != null)
       )
     )

@@ -1,5 +1,7 @@
-import { Grid,GridOptions,GridReadyEvent } from '@ag-grid-community/core';
+import { GridApi, createGrid, GridOptions, GridReadyEvent } from '@ag-grid-community/core';
 import { getData,TAthlete } from './data';
+
+let gridApi: GridApi;
 
 const gridOptions: GridOptions = {
     columnDefs: [
@@ -16,7 +18,7 @@ const gridOptions: GridOptions = {
         const checkbox = document.querySelector<HTMLInputElement>('#pinFirstColumnOnLoad')!;
         const shouldPinFirstColumn = checkbox && checkbox.checked;
         if (shouldPinFirstColumn) {
-            params.columnApi.applyColumnState({
+            params.api.applyColumnState({
                 state: [
                     { colId: 'name', pinned: 'left' },
                 ],
@@ -26,16 +28,16 @@ const gridOptions: GridOptions = {
 };
 
 function reloadGrid() {
-  if (gridOptions.api) {
-    gridOptions.api.destroy()
+  if (gridApi) {
+    gridApi.destroy()
   }
 
   setTimeout(() => {
     // Artificial delay to show grid being destroyed and re-created
     const gridDiv = document.querySelector<HTMLElement>("#myGrid")!
-    new Grid(gridDiv, gridOptions)
+    gridApi = createGrid(gridDiv, gridOptions);;
   }, 500)
 }
 
 const gridDiv = document.querySelector<HTMLElement>('#myGrid')!;
-new Grid(gridDiv, gridOptions);
+gridApi = createGrid(gridDiv, gridOptions);;

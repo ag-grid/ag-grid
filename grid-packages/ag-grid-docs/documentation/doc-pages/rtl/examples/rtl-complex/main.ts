@@ -4,15 +4,16 @@ import {
     ColDef,
     ColGroupDef,
     GetContextMenuItemsParams,
-    Grid,
+    GridApi,
+    createGrid,
     GridOptions,
     ICellRendererParams,
     IGroupCellRendererParams,
     MenuItemDef,
     RowSelectedEvent,
     SelectionChangedEvent,
-    ValueSetterParams
-} from '@ag-grid-community/core'
+    ValueSetterParams,
+} from '@ag-grid-community/core';
 
 import { PersonFilter } from './person-filter_typescript'
 import { WinningsFilter } from './winnings-filter_typescript'
@@ -211,6 +212,8 @@ const autoGroupColumnDef: ColDef = {
     } as IGroupCellRendererParams,
 };
 
+let gridApi: GridApi;
+
 const gridOptions: GridOptions = {
     defaultColDef: {
         editable: true,
@@ -272,11 +275,11 @@ const firstColumn: ColDef = {
     filter: PersonFilter,
     checkboxSelection: (params) => {
         // we put checkbox on the name if we are not doing no grouping
-        return params.columnApi.getRowGroupColumns().length === 0
+        return params.api.getRowGroupColumns().length === 0
     },
     headerCheckboxSelection: (params) => {
         // we put checkbox on the name if we are not doing grouping
-        return params.columnApi.getRowGroupColumns().length === 0
+        return params.api.getRowGroupColumns().length === 0
     },
     headerCheckboxSelectionFilteredOnly: true,
     icons: {
@@ -556,7 +559,7 @@ function createData() {
     loadInstance++
 
     const loadInstanceCopy = loadInstance;
-    gridOptions.api!.showLoadingOverlay()
+    gridApi!.showLoadingOverlay()
 
     const colDefs = createCols();
 
@@ -583,8 +586,8 @@ function createData() {
         if (row >= rowCount) {
             clearInterval(intervalId)
             setTimeout(function () {
-                gridOptions.api!.setColumnDefs(colDefs)
-                gridOptions.api!.setRowData(data)
+                gridApi!.setColumnDefs(colDefs)
+                gridApi!.setRowData(data)
             }, 0)
         }
     }, 0);
@@ -652,7 +655,7 @@ function pseudoRandom() {
 function selectionChanged(event: SelectionChangedEvent) {
     console.log(
         'Callback selectionChanged: selection count = ' +
-        gridOptions.api!.getSelectedNodes().length
+        gridApi!.getSelectedNodes().length
     )
 }
 
@@ -729,12 +732,9 @@ function currencyRenderer(params: ICellRendererParams) {
         if (params.node.group && params.column!.getAggFunc() === 'count') {
             return params.value
         } else {
-            return (
-                '&pound;' +
-                Math.floor(params.value)
-                    .toString()
-                    .replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,')
-            )
+            return ('&pound;' + Math.floor(params.value)
+                .toString()
+                .replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,'));
         }
     }
 }
@@ -808,6 +808,6 @@ function languageCellRenderer(params: ICellRendererParams) {
 document.addEventListener('DOMContentLoaded', function () {
     const gridDiv = document.querySelector<HTMLElement>('#myGrid')!;
 
-    new Grid(gridDiv, gridOptions)
+    gridApi = createGrid(gridDiv, gridOptions);;
     createData()
 })

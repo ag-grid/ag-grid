@@ -72,8 +72,8 @@ const GridExample = () => {
 
     const onFirstDataRendered = (params: FirstDataRenderedEvent) => {
         // mix up some columns
-        params.columnApi.moveColumnByIndex(11, 4);
-        params.columnApi.moveColumnByIndex(11, 4);
+        params.api.moveColumnByIndex(11, 4);
+        params.api.moveColumnByIndex(11, 4);
     }
 
     return (

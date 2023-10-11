@@ -2,18 +2,6 @@
     "name": "ag-grid-theme-builder",
     "private": true,
     "version": "1.0.0",
-    "type": "module",
-    "files": [
-        "dist"
-    ],
-    "module": "./dist/theme-builder.js",
-    "types": "./dist/index.d.ts",
-    "exports": {
-        ".": {
-            "import": "./dist/theme-builder.js",
-            "require": "./dist/theme-builder.umd.js"
-        }
-    },
     "scripts": {
         "dev": "vite",
         "build": "tsc && vite build",

@@ -264,8 +264,6 @@ export class Column<TValue = any> implements IHeaderColumn<TValue>, IProvidedCol
         this.initTooltip();
 
         this.validate();
-
-        this.registerGridOptionEventListeners();
     }
 
     private initDotNotation(): void {
@@ -414,22 +412,6 @@ export class Column<TValue = any> implements IHeaderColumn<TValue>, IProvidedCol
     /** Remove event listener from the column. */
     public removeEventListener(eventType: ColumnEventName, listener: Function): void {
         this.eventService.removeEventListener(eventType, listener);
-    }
-
-    private onSuppressFieldDotNotation = () => {
-        this.initDotNotation();
-        this.eventService.dispatchEvent(
-            this.createColumnEvent('colDefChanged', 'api')
-        );
-    };
-
-    private registerGridOptionEventListeners() {
-        this.gridOptionsService.addEventListener(Events.EVENT_SUPPRESS_FIELD_DOT_NOTATION, this.onSuppressFieldDotNotation);
-    }
-
-    @PreDestroy
-    private unregisterGridOptionEventListeners() {
-        this.gridOptionsService.removeEventListener(Events.EVENT_SUPPRESS_FIELD_DOT_NOTATION, this.onSuppressFieldDotNotation);
     }
 
     public createColumnFunctionCallbackParams(rowNode: IRowNode): ColumnFunctionCallbackParams {

@@ -116,7 +116,6 @@ const VueExample = {
                 },
             ],
             gridApi: null,
-            columnApi: null,
             defaultColDef: {
                 editable: true,
                 sortable: true,
@@ -134,7 +133,6 @@ const VueExample = {
     methods: {
         onGridReady(params) {
             this.gridApi = params.api;
-            this.gridColumnApi = params.columnApi;
         },
     },
 };

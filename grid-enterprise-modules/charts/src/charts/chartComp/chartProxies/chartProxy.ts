@@ -7,7 +7,7 @@ import {
     AgChartTheme,
     AgChartThemeOverrides,
     AgChartThemePalette
-} from "ag-charts-community";
+} from "ag-charts-enterprise";
 import { CrossFilteringContext } from "../../chartService";
 import { ChartSeriesType, getSeriesType } from "../utils/seriesTypeMapper";
 import { deproxy } from "../utils/integration";

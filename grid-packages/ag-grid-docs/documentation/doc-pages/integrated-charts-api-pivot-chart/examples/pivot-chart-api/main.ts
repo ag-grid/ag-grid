@@ -1,4 +1,12 @@
-import { Grid, CreatePivotChartParams, FirstDataRenderedEvent, GridOptions } from '@ag-grid-community/core'
+import {
+  GridApi,
+  createGrid,
+  CreatePivotChartParams,
+  FirstDataRenderedEvent,
+  GridOptions,
+} from '@ag-grid-community/core';
+
+let gridApi: GridApi;
 
 const gridOptions: GridOptions = {
   columnDefs: [
@@ -52,11 +60,11 @@ function onFirstDataRendered(event: FirstDataRenderedEvent) {
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
   const gridDiv = document.querySelector<HTMLElement>('#myGrid')!
-  new Grid(gridDiv, gridOptions)
+  gridApi = createGrid(gridDiv, gridOptions);;
 
   fetch('https://www.ag-grid.com/example-assets/wide-spread-of-sports.json')
     .then(response => response.json())
     .then(function (data) {
-      gridOptions.api!.setRowData(data)
+      gridApi!.setRowData(data)
     })
 })

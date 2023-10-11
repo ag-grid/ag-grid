@@ -3,7 +3,8 @@ import {
     getFunctionName,
     getModuleRegistration,
     ImportType,
-    isInstanceMethod
+    isInstanceMethod,
+    replaceGridReadyRowData
 } from './parser-utils';
 import {getImport, toConst, toInput, toOutput, toRef} from './vue-utils';
 import {
@@ -34,10 +35,8 @@ function getOnGridReadyCode(bindings: any): string {
     if (data) {
         const {url, callback} = data;
 
-        const setRowDataBlock = callback.indexOf('api.setRowData') >= 0 ?
-            callback.replace("params.api.setRowData(data);", "rowData.value = data;") :
-            callback;
-
+        const setRowDataBlock = replaceGridReadyRowData(callback, 'rowData.value');
+        
         additionalLines.push(`
             const updateData = (data) => ${setRowDataBlock};
             
@@ -49,13 +48,11 @@ function getOnGridReadyCode(bindings: any): string {
 
     return `const onGridReady = (params) => {
         gridApi.value = params.api;
-        gridColumnApi.value = params.columnApi;
         ${additionalLines.length > 0 ? `\n\n        ${additionalLines.join('\n        ')}` : ''}
     }`;
 }
 
-const replaceApiThisReference = (code) => code.replaceAll("this.gridApi", 'gridApi.value')
-    .replaceAll("this.gridColumnApi", 'gridColumnApi.value');
+const replaceApiThisReference = (code) => code.replaceAll("gridApi", 'gridApi.value');
 
 function getAllMethods(bindings: any): [string[], string[], string[], string[], string[]] {
     const eventHandlers = bindings.eventHandlers
@@ -217,7 +214,7 @@ function getPropertyBindings(bindings: any, componentFileNames: string[], import
             }
         });
 
-    if (bindings.data && bindings.data.callback.indexOf('api.setRowData') >= 0) {
+    if (bindings.data && bindings.data.callback.indexOf('gridApi.setRowData') >= 0) {
         if (propertyAttributes.filter(item => item.indexOf(':rowData') >= 0).length === 0) {
             propertyAttributes.push(':rowData="rowData"');
             propertyNames.push('rowData');
@@ -344,7 +341,6 @@ const VueExample = {
     setup(props) {
         const columnDefs = ref(${columnDefs});
         const gridApi = ref();
-        const gridColumnApi = ref();
         ${defaultColDef ? `const defaultColDef = ref(${defaultColDef});` : ''}
         ${propertyVars.join(';\n')}
         
@@ -362,7 +358,6 @@ const VueExample = {
         return {
             columnDefs,
             gridApi,
-            gridColumnApi,
             ${propertyNames.join(',\n')},
             onGridReady,
             ${functionNames ? functionNames.filter(functionName => !propertyNames.includes(functionName)).join(',\n') : ''}

@@ -7,7 +7,7 @@ You can target updates to a single row or cell. Updating a single row means aski
 Both single row and single cell updates are done by first getting a reference to the row's Row Node and then using the relevant Row Node API method. See [Accessing Data](/accessing-data/) on how to access Row Nodes.
 Once you have access to the required Row Node, you update its data with the following Row Node API methods:
 
-<api-documentation source='row-object/resources/methods.json' section='rowNodeMethods' names='["setData", "updateData", "setDataValue"]'></api-documentation>
+<api-documentation source='row-api/resources/methods.json' section='rowNodeMethods' names='["setData", "updateData", "setDataValue"]'></api-documentation>
 
 ## View Refresh
 

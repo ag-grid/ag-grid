@@ -52,7 +52,6 @@ const VueExample = {
                 headerName: "Age"
             }],
             gridApi: null,
-            columnApi: null,
             athleteDescriptionColWidthOnReady: '-',
             athleteDescriptionColWidthOnFirstDataRendered: '-',
             isLoadDataButtonVisible: true,
@@ -66,10 +65,10 @@ const VueExample = {
     },
     methods: {
         onFirstDataRendered(params) {
-            const {columnApi} = params;
-            const column = columnApi.getColumn('athleteDescription');
+            const {api} = params;
+            const column = api.getColumn('athleteDescription');
             if (column) {
-                columnApi.autoSizeColumns([column.getId()]);
+                api.autoSizeColumns([column.getId()]);
                 this.athleteDescriptionColWidthOnFirstDataRendered = `${column.getActualWidth()}px`;
             }
 
@@ -81,11 +80,10 @@ const VueExample = {
         },
         onGridReady(params) {
             this.gridApi = params.api;
-            this.gridColumnApi = params.columnApi;
 
-            const column = this.gridColumnApi.getColumn('athleteDescription');
+            const column = this.gridApi.getColumn('athleteDescription');
             if (column) {
-                this.gridColumnApi.autoSizeColumns([column.getId()]);
+                this.gridApi.autoSizeColumns([column.getId()]);
                 this.athleteDescriptionColWidthOnReady = `${column.getActualWidth()}px`;
             }
 

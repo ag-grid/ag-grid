@@ -131,7 +131,7 @@ const MySolidApp = ()=> {
         // use grid api
         gridRef.api.selectAll();
         // use grid column api
-        gridRef.columnApi.applyColumnState(...);
+        gridRef.api.applyColumnState(...);
     };
 
     return (

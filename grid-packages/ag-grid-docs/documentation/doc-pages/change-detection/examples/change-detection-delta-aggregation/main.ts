@@ -1,7 +1,14 @@
-import { GetRowIdParams, Grid, GridApi, GridOptions, IRowNode, ValueParserParams } from '@ag-grid-community/core'
+import {
+  createGrid, GetRowIdParams,
+  GridApi, GridOptions,
+  IRowNode,
+  ValueParserParams
+} from '@ag-grid-community/core';
 
 var rowIdCounter = 0
 var callCount = 0
+
+let gridApi: GridApi;
 
 const gridOptions: GridOptions = {
   columnDefs: [
@@ -70,7 +77,7 @@ const gridOptions: GridOptions = {
     return params.data.id
   },
   onGridReady: (params) => {
-    gridOptions.api!.setRowData(createRowData())
+    gridApi!.setRowData(createRowData())
   },
 }
 
@@ -111,7 +118,7 @@ function numberValueParser(params: ValueParserParams) {
 }
 
 function updateOneRecord() {
-  var rowNodeToUpdate = pickExistingRowNodeAtRandom(gridOptions.api!)
+  var rowNodeToUpdate = pickExistingRowNodeAtRandom(gridApi!)
 
   if (!rowNodeToUpdate) return;
 
@@ -135,14 +142,14 @@ function createRandomNumber() {
   return Math.floor(Math.random() * 100)
 }
 
-function pickExistingRowItemAtRandom(gridApi: GridApi) {
-  var rowNode = pickExistingRowNodeAtRandom(gridApi)
+function pickExistingRowItemAtRandom(api: GridApi) {
+  var rowNode = pickExistingRowNodeAtRandom(api)
   return rowNode ? rowNode.data : null
 }
 
-function pickExistingRowNodeAtRandom(gridApi: GridApi): IRowNode | undefined {
+function pickExistingRowNodeAtRandom(api: GridApi): IRowNode | undefined {
   var allItems: IRowNode[] = []
-  gridApi.forEachLeafNode(function (rowNode) {
+  api.forEachLeafNode(function (rowNode) {
     allItems.push(rowNode)
   })
 
@@ -155,7 +162,7 @@ function pickExistingRowNodeAtRandom(gridApi: GridApi): IRowNode | undefined {
 }
 
 function updateUsingTransaction() {
-  var itemToUpdate = pickExistingRowItemAtRandom(gridOptions.api!)
+  var itemToUpdate = pickExistingRowItemAtRandom(gridApi!)
   if (!itemToUpdate) {
     return
   }
@@ -171,11 +178,11 @@ function updateUsingTransaction() {
 
   console.log('updating - after', itemToUpdate)
 
-  gridOptions.api!.applyTransaction(transaction)
+  gridApi!.applyTransaction(transaction)
 }
 
 function removeUsingTransaction() {
-  var itemToRemove = pickExistingRowItemAtRandom(gridOptions.api!)
+  var itemToRemove = pickExistingRowItemAtRandom(gridApi!)
   if (!itemToRemove) {
     return
   }
@@ -186,7 +193,7 @@ function removeUsingTransaction() {
 
   console.log('removing', itemToRemove)
 
-  gridOptions.api!.applyTransaction(transaction)
+  gridApi!.applyTransaction(transaction)
 }
 
 function addUsingTransaction() {
@@ -201,11 +208,11 @@ function addUsingTransaction() {
 
   console.log('adding', newItem)
 
-  gridOptions.api!.applyTransaction(transaction)
+  gridApi!.applyTransaction(transaction)
 }
 
 function changeGroupUsingTransaction() {
-  var itemToUpdate = pickExistingRowItemAtRandom(gridOptions.api!)
+  var itemToUpdate = pickExistingRowItemAtRandom(gridApi!)
   if (!itemToUpdate) {
     return
   }
@@ -218,11 +225,11 @@ function changeGroupUsingTransaction() {
 
   console.log('updating', itemToUpdate)
 
-  gridOptions.api!.applyTransaction(transaction)
+  gridApi!.applyTransaction(transaction)
 }
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
   var gridDiv = document.querySelector<HTMLElement>('#myGrid')!
-  new Grid(gridDiv, gridOptions)
+  gridApi = createGrid(gridDiv, gridOptions);;
 })

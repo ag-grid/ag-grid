@@ -1,16 +1,10 @@
 export const variableDescriptionsFixture = {
   // this is dev fixture data, does not need updating if docs change
-  '--ag-alpine-active-color':
-    '(Alpine theme only) accent colour used for checked checkboxes, range selections, row hover, row selections, selected tab underlines, and input focus outlines in the Alpine theme',
-  // this is dev fixture data, does not need updating if docs change
-  '--ag-balham-active-color':
-    '(Balham theme only) accent colour used for checked checkboxes, range selections, row selections, and input focus outlines in the Balham theme',
+  '--ag-active-color':
+    'Accent colour used for UI elements that need to stand out, such as form controls, range selections and focussed elements',
   // this is dev fixture data, does not need updating if docs change
   '--ag-material-primary-color':
     '(Material theme only) the primary colour as defined in the [Material Design colour system](https://material.io/design/color/). Currently this is used on buttons, range selections and selected tab underlines in the Material theme',
-  // this is dev fixture data, does not need updating if docs change
-  '--ag-material-accent-color':
-    '(Material theme only) the accent colour as defined in the [Material Design colour system](https://material.io/design/color/). Currently this is used on checked checkboxes in the Material theme',
   // this is dev fixture data, does not need updating if docs change
   '--ag-foreground-color': 'Colour of text and icons in primary UI elements like menus',
   // this is dev fixture data, does not need updating if docs change

@@ -1,4 +1,10 @@
-import { Grid, GridOptions, ISetFilterParams, SetFilterValuesFuncParams } from '@ag-grid-community/core'
+import {
+  GridApi,
+  createGrid,
+  GridOptions,
+  ISetFilterParams,
+  SetFilterValuesFuncParams,
+} from '@ag-grid-community/core';
 
 var filterParams: ISetFilterParams = {
   values: (params: SetFilterValuesFuncParams) => {
@@ -7,6 +13,8 @@ var filterParams: ISetFilterParams = {
     }, 3000)
   },
 }
+
+let gridApi: GridApi;
 
 const gridOptions: GridOptions = {
   rowData: [
@@ -35,5 +43,5 @@ const gridOptions: GridOptions = {
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
   var gridDiv = document.querySelector<HTMLElement>('#myGrid')!
-  new Grid(gridDiv, gridOptions)
+  gridApi = createGrid(gridDiv, gridOptions);;
 })

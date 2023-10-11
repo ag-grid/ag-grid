@@ -97,7 +97,6 @@ export class AppComponent {
     leftRowData: any[] = [];
     rightRowData: any[] = []
     leftApi!: GridApi;
-    leftColumnApi!: ColumnApi;
     rightApi!: GridApi;
 
     defaultColDef: ColDef = {
@@ -179,7 +178,6 @@ export class AppComponent {
     onGridReady(params: GridReadyEvent, side: number) {
         if (side === 0) {
             this.leftApi = params.api
-            this.leftColumnApi = params.columnApi;
         }
 
         if (side === 1) {

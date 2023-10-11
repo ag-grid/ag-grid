@@ -1,4 +1,12 @@
-import { Grid, CreateRangeChartParams, FirstDataRenderedEvent, GridOptions } from '@ag-grid-community/core'
+import {
+  GridApi,
+  createGrid,
+  CreateRangeChartParams,
+  FirstDataRenderedEvent,
+  GridOptions,
+} from '@ag-grid-community/core';
+
+let gridApi: GridApi;
 
 const gridOptions: GridOptions = {
   columnDefs: [
@@ -33,7 +41,7 @@ const gridOptions: GridOptions = {
         text: 'Medals by Age',
       },
     },
-    column: {
+    bar: {
       axes: {
         category: {
           label: {
@@ -64,11 +72,11 @@ function onFirstDataRendered(params: FirstDataRenderedEvent) {
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
   var gridDiv = document.querySelector<HTMLElement>('#myGrid')!
-  new Grid(gridDiv, gridOptions)
+  gridApi = createGrid(gridDiv, gridOptions);;
 
   fetch('https://www.ag-grid.com/example-assets/wide-spread-of-sports.json')
     .then(response => response.json())
     .then(function (data) {
-      gridOptions.api!.setRowData(data)
+      gridApi!.setRowData(data)
     })
 })

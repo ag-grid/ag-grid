@@ -1,10 +1,12 @@
-import { Grid, GridOptions, RowDragCallbackParams, RowDragEndEvent } from '@ag-grid-community/core'
+import { GridApi, createGrid, GridOptions, RowDragCallbackParams, RowDragEndEvent } from '@ag-grid-community/core';
 import { getData } from "./data";
 
 var rowDrag = function (params: RowDragCallbackParams) {
   // only rows that are NOT groups should be draggable
   return !params.node.group
 }
+
+let gridApi: GridApi;
 
 const gridOptions: GridOptions = {
   columnDefs: [
@@ -26,7 +28,7 @@ const gridOptions: GridOptions = {
   groupDefaultExpanded: 1,
   onRowDragMove: onRowDragMove,
   onGridReady: (params) => {
-    gridOptions.api!.setRowData(getData())
+    gridApi!.setRowData(getData())
   },
 }
 
@@ -50,15 +52,15 @@ function onRowDragMove(event: RowDragEndEvent) {
   if (needToChangeParent) {
     var movingData = movingNode.data
     movingData.country = groupCountry
-    gridOptions.api!.applyTransaction({
+    gridApi!.applyTransaction({
       update: [movingData],
     })
-    gridOptions.api!.clearFocusedCell()
+    gridApi!.clearFocusedCell()
   }
 }
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
   var gridDiv = document.querySelector<HTMLElement>('#myGrid')!
-  new Grid(gridDiv, gridOptions)
+  gridApi = createGrid(gridDiv, gridOptions);;
 })

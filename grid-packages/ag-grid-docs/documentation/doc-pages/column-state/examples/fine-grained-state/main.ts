@@ -1,4 +1,4 @@
-import { Grid, ColDef, GridOptions } from '@ag-grid-community/core'
+import { GridApi, createGrid, ColDef, GridOptions } from '@ag-grid-community/core';
 
 const columnDefs: ColDef[] = [
   { field: 'athlete' },
@@ -12,6 +12,8 @@ const columnDefs: ColDef[] = [
   { field: 'bronze' },
   { field: 'total' },
 ]
+
+let gridApi: GridApi<IOlympicData>;
 
 const gridOptions: GridOptions<IOlympicData> = {
   defaultColDef: {
@@ -33,13 +35,13 @@ const gridOptions: GridOptions<IOlympicData> = {
 }
 
 function onBtSortAthlete() {
-  gridOptions.columnApi!.applyColumnState({
+  gridApi!.applyColumnState({
     state: [{ colId: 'athlete', sort: 'asc' }],
   })
 }
 
 function onBtSortCountryThenSportClearOthers() {
-  gridOptions.columnApi!.applyColumnState({
+  gridApi!.applyColumnState({
     state: [
       { colId: 'country', sort: 'asc', sortIndex: 0 },
       { colId: 'sport', sort: 'asc', sortIndex: 1 },
@@ -49,13 +51,13 @@ function onBtSortCountryThenSportClearOthers() {
 }
 
 function onBtClearAllSorting() {
-  gridOptions.columnApi!.applyColumnState({
+  gridApi!.applyColumnState({
     defaultState: { sort: null },
   })
 }
 
 function onBtRowGroupCountryThenSport() {
-  gridOptions.columnApi!.applyColumnState({
+  gridApi!.applyColumnState({
     state: [
       { colId: 'country', rowGroupIndex: 0 },
       { colId: 'sport', rowGroupIndex: 1 },
@@ -65,19 +67,19 @@ function onBtRowGroupCountryThenSport() {
 }
 
 function onBtRemoveCountryRowGroup() {
-  gridOptions.columnApi!.applyColumnState({
+  gridApi!.applyColumnState({
     state: [{ colId: 'country', rowGroup: false }],
   })
 }
 
 function onBtClearAllRowGroups() {
-  gridOptions.columnApi!.applyColumnState({
+  gridApi!.applyColumnState({
     defaultState: { rowGroup: false },
   })
 }
 
 function onBtOrderColsMedalsFirst() {
-  gridOptions.columnApi!.applyColumnState({
+  gridApi!.applyColumnState({
     state: [
       { colId: 'gold' },
       { colId: 'silver' },
@@ -95,7 +97,7 @@ function onBtOrderColsMedalsFirst() {
 }
 
 function onBtOrderColsMedalsLast() {
-  gridOptions.columnApi!.applyColumnState({
+  gridApi!.applyColumnState({
     state: [
       { colId: 'athlete' },
       { colId: 'age' },
@@ -113,7 +115,7 @@ function onBtOrderColsMedalsLast() {
 }
 
 function onBtHideMedals() {
-  gridOptions.columnApi!.applyColumnState({
+  gridApi!.applyColumnState({
     state: [
       { colId: 'gold', hide: true },
       { colId: 'silver', hide: true },
@@ -124,7 +126,7 @@ function onBtHideMedals() {
 }
 
 function onBtShowMedals() {
-  gridOptions.columnApi!.applyColumnState({
+  gridApi!.applyColumnState({
     state: [
       { colId: 'gold', hide: false },
       { colId: 'silver', hide: false },
@@ -137,9 +139,9 @@ function onBtShowMedals() {
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', () => {
   const gridDiv = document.querySelector<HTMLElement>('#myGrid')!
-  new Grid(gridDiv, gridOptions)
+  gridApi = createGrid(gridDiv, gridOptions);;
 
   fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
     .then(response => response.json())
-    .then((data: IOlympicData[]) => gridOptions.api!.setRowData(data))
+    .then((data: IOlympicData[]) => gridApi!.setRowData(data))
 })

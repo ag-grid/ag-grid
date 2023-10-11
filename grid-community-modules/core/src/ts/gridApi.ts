@@ -1576,9 +1576,11 @@ export class GridApi<TData = any> {
         // this is needed as GridAPI is a bean, and GridAPI.destroy() is called as part
         // of context.destroy(). so we need to stop the infinite loop.
         if (this.destroyCalled) { return; }
-        this.destroyCalled = true;
-
+        
         this.dispatchEvent({ type: Events.EVENT_GRID_PRE_DESTROYED });
+        
+        // Set after pre-destroy so user can still use the api in pre-destroy event and it is not marked as destroyed yet.
+        this.destroyCalled = true;
 
         // destroy the UI first (as they use the services)
         const gridCtrl = this.ctrlsService.getGridCtrl();
@@ -1598,19 +1600,16 @@ export class GridApi<TData = any> {
         //
         // wait about 100ms before clearing down the references, in case user has some cleanup to do,
         // and needs to deference the API first
-        setTimeout(removeAllReferences.bind(window, this, 'Grid API'), 100);
+        setTimeout(removeAllReferences.bind(window, this, 'Grid API', ['isDestroyed']), 100);
     }
 
-    private warnIfDestroyed(methodName: string): boolean {
-        if (this.destroyCalled) {
-            console.warn(`AG Grid: Grid API method ${methodName} was called on a grid that was destroyed.`);
-        }
+    /** Returns `true` if the grid has been destroyed. */
+    public isDestroyed(): boolean {
         return this.destroyCalled;
     }
 
     /** Reset the Quick Filter cache text on every rowNode. */
     public resetQuickFilter(): void {
-        if (this.warnIfDestroyed('resetQuickFilter')) { return; }
         this.filterManager.resetQuickFilterCache();
     }
 

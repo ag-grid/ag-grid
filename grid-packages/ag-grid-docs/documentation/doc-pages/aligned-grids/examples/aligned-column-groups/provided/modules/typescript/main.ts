@@ -1,5 +1,5 @@
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
-import { ColGroupDef, Grid, GridOptions, ModuleRegistry } from '@ag-grid-community/core';
+import { GridApi, ColGroupDef, createGrid, GridOptions, ModuleRegistry } from '@ag-grid-community/core';
 import '@ag-grid-community/styles/ag-grid.css';
 import "@ag-grid-community/styles/ag-theme-alpine.css";
 
@@ -38,7 +38,8 @@ const columnDefs: ColGroupDef[] = [
         ]
     }
 ];
-
+let topApi: GridApi;
+let bottomApi: GridApi;
 // this is the grid options for the top grid
 const gridOptionsTop: GridOptions = {
     defaultColDef: {
@@ -75,20 +76,20 @@ gridOptionsTop.alignedGrids!.push(gridOptionsBottom);
 gridOptionsBottom.alignedGrids!.push(gridOptionsTop);
 
 function setData(rowData: any[]) {
-    gridOptionsTop.api!.setRowData(rowData);
-    gridOptionsBottom.api!.setRowData(rowData);
-    gridOptionsTop.api!.sizeColumnsToFit();
+    topApi!.setRowData(rowData);
+    bottomApi!.setRowData(rowData);
+    topApi!.sizeColumnsToFit();
 
     // mix up some columns
-    gridOptionsTop.columnApi!.moveColumnByIndex(11, 4);
-    gridOptionsTop.columnApi!.moveColumnByIndex(11, 4);
+    topApi!.moveColumnByIndex(11, 4);
+    topApi!.moveColumnByIndex(11, 4);
 }
 
 const gridDivTop = document.querySelector<HTMLElement>('#myGridTop')!;
-new Grid(gridDivTop, gridOptionsTop);
+topApi = createGrid(gridDivTop, gridOptionsTop);
 
 const gridDivBottom = document.querySelector<HTMLElement>('#myGridBottom')!;
-new Grid(gridDivBottom, gridOptionsBottom);
+bottomApi = createGrid(gridDivBottom, gridOptionsBottom);
 
 fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
     .then(response => response.json())

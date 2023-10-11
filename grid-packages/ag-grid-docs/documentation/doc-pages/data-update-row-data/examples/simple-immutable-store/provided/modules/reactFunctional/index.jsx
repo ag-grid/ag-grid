@@ -53,16 +53,16 @@ function createItem(data) {
     return item;
 }
 
-function setGroupingEnabled(enabled, columnApi) {
+function setGroupingEnabled(enabled, api) {
     if (enabled) {
-        columnApi.applyColumnState({
+        api.applyColumnState({
             state: [
                 { colId: 'group', rowGroup: true, hide: true },
                 { colId: 'symbol', hide: true },
             ],
         });
     } else {
-        columnApi.applyColumnState({
+        api.applyColumnState({
             state: [
                 { colId: 'group', rowGroup: false, hide: false },
                 { colId: 'symbol', hide: false },
@@ -113,7 +113,7 @@ const GridExample = () => {
 
 
     const onGridReady = useCallback((params) => {
-        setGroupingEnabled(false, params.columnApi);
+        setGroupingEnabled(false, params.api);
     }, []);
 
     const addFiveItems = useCallback((append) => {
@@ -178,7 +178,7 @@ const GridExample = () => {
     }, [rowData])
 
     const onGroupingEnabled = useCallback((enabled) => {
-        setGroupingEnabled(enabled, gridRef.current.columnApi);
+        setGroupingEnabled(enabled, gridRef.current.api);
     }, [])
 
     const reverseItems = useCallback(() => {

@@ -37,7 +37,6 @@ const VueExample = {
         return {
             gridOptions: null,
             gridApi: null,
-            columnApi: null,
             defaultColDef: {
                 initialWidth: 100,
                 sortable: true,
@@ -54,7 +53,6 @@ const VueExample = {
     },
     mounted() {
         this.gridApi = this.gridOptions.api;
-        this.gridColumnApi = this.gridOptions.columnApi;
     },
     methods: {
         setHeaderNames() {

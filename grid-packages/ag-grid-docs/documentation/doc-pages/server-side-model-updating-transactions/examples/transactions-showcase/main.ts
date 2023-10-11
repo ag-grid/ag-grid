@@ -1,4 +1,14 @@
-import { Grid, ColDef, GridOptions, GetRowIdParams, IServerSideGetRowsParams, ServerSideTransaction, IsServerSideGroupOpenByDefaultParams, ColumnRowGroupChangedEvent } from '@ag-grid-community/core'
+import {
+  GridApi,
+  createGrid,
+  ColDef,
+  GridOptions,
+  GetRowIdParams,
+  IServerSideGetRowsParams,
+  ServerSideTransaction,
+  IsServerSideGroupOpenByDefaultParams,
+  ColumnRowGroupChangedEvent,
+} from '@ag-grid-community/core';
 
 declare var registerObserver: any;
 declare var FakeServer: any;
@@ -27,6 +37,8 @@ const columnDefs: ColDef[] = [
   { field: 'previous', aggFunc: 'sum' },
   { field: 'current', aggFunc: 'sum' },
 ];
+
+let gridApi: GridApi;
 
 const gridOptions: GridOptions = {
   columnDefs,
@@ -63,7 +75,7 @@ const gridOptions: GridOptions = {
   
     // register interest in data changes
     registerObserver({
-      transactionFunc: (t: ServerSideTransaction) => gridOptions.api!.applyServerSideTransactionAsync(t),
+      transactionFunc: (t: ServerSideTransaction) => gridApi!.applyServerSideTransactionAsync(t),
       groupedFields: ['product', 'portfolio', 'book'],
     });
   }
@@ -118,7 +130,7 @@ function getRowId(params: GetRowIdParams) {
   if (params.parentKeys && params.parentKeys.length) {
     rowId += params.parentKeys.join('-') + '-';
   }
-  const groupCols = params.columnApi.getRowGroupColumns();
+  const groupCols = params.api.getRowGroupColumns();
   if (groupCols.length > params.level) {
     const thisGroupCol = groupCols[params.level];
     rowId += params.data[thisGroupCol.getColDef().field!] + '-';
@@ -127,20 +139,20 @@ function getRowId(params: GetRowIdParams) {
     rowId += params.data.tradeId;
   }
   return rowId;
-};
+}
 
 function onColumnRowGroupChanged(event: ColumnRowGroupChangedEvent) {
-  const colState = event.columnApi.getColumnState();
+  const colState = event.api.getColumnState();
 
   const groupedColumns = colState.filter((state) => state.rowGroup);
   groupedColumns.sort((a, b) => a.rowGroupIndex! - b.rowGroupIndex!);
   const groupedFields = groupedColumns.map((col) => col.colId);
 
   registerObserver({
-    transactionFunc: (t: ServerSideTransaction) => gridOptions.api!.applyServerSideTransactionAsync(t),
+    transactionFunc: (t: ServerSideTransaction) => gridApi!.applyServerSideTransactionAsync(t),
     groupedFields: groupedFields.length === 0 ? undefined : groupedFields,
   });
-};
+}
 
 function isServerSideGroupOpenByDefault(params: IsServerSideGroupOpenByDefaultParams) {
   let route = params.rowNode.getRoute()
@@ -158,5 +170,5 @@ function isServerSideGroupOpenByDefault(params: IsServerSideGroupOpenByDefaultPa
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
   const gridDiv = document.querySelector<HTMLElement>('#myGrid');
-  new Grid(gridDiv!, gridOptions);
+  gridApi = createGrid(gridDiv!, gridOptions);;
 });

@@ -140,8 +140,7 @@ class AngularTransformer extends SnippetTransformer {
         const exprPostfix = variableExpression ? '; ' : '';
         const [start, end] = expression.range;
         return `\n${comment}${exprPrefix}${this.snippet.slice(start, end)}${exprPostfix}`
-            .replace('gridOptions.api', 'this.gridApi')
-            .replace('gridOptions.columnApi', 'this.gridColumnApi');
+            .replace('gridOptions.api', 'this.gridApi');
     }
 
     addFrameworkContext(result) {
@@ -201,8 +200,7 @@ class ReactTransformer extends SnippetTransformer {
         const exprPostfix = variableExpression ? '; ' : '';
         const [start, end] = expression.range;
         return `\n${comment}${exprPrefix}${this.snippet.slice(start, end)}${exprPostfix}`
-            .replace('gridOptions.api', 'gridApi')
-            .replace('gridOptions.columnApi', 'gridColumnApi');
+            .replace('gridOptions.api', 'gridApi');
     }
 
     extractExternalProperty(property) {
@@ -217,7 +215,7 @@ class ReactTransformer extends SnippetTransformer {
         }
 
         if (isUseMemoProp(propName)) {
-            return `const [${propName}, ${setterPropName}] = useMemo(() => { \n\treturn ${value};\n}, []);`;
+            return `const ${propName} = useMemo(() => { \n\treturn ${value};\n}, []);`;
         }
 
         return `const ${getName(property)} = ${decreaseIndent(value)};`;

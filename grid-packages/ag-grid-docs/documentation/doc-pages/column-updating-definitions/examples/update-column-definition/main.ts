@@ -1,4 +1,4 @@
-import { Grid, ColDef, GridOptions } from '@ag-grid-community/core'
+import { GridApi, createGrid, ColDef, GridOptions } from '@ag-grid-community/core';
 
 function getColumnDefs(): ColDef<IOlympicData>[] {
   return [
@@ -15,6 +15,8 @@ function getColumnDefs(): ColDef<IOlympicData>[] {
   ]
 }
 
+let gridApi: GridApi<IOlympicData>;
+
 const gridOptions: GridOptions<IOlympicData> = {
   defaultColDef: {
     initialWidth: 100,
@@ -30,7 +32,7 @@ function setHeaderNames() {
   columnDefs.forEach(function (colDef, index) {
     colDef.headerName = 'C' + index
   })
-  gridOptions.api!.setColumnDefs(columnDefs)
+  gridApi!.setColumnDefs(columnDefs)
 }
 
 function removeHeaderNames() {
@@ -38,7 +40,7 @@ function removeHeaderNames() {
   columnDefs.forEach(function (colDef, index) {
     colDef.headerName = undefined
   })
-  gridOptions.api!.setColumnDefs(columnDefs)
+  gridApi!.setColumnDefs(columnDefs)
 }
 
 function setValueFormatters() {
@@ -48,7 +50,7 @@ function setValueFormatters() {
       return '[ ' + params.value + ' ]'
     }
   })
-  gridOptions.api!.setColumnDefs(columnDefs)
+  gridApi!.setColumnDefs(columnDefs)
 }
 
 function removeValueFormatters() {
@@ -56,17 +58,17 @@ function removeValueFormatters() {
   columnDefs.forEach(function (colDef, index) {
     colDef.valueFormatter = undefined
   })
-  gridOptions.api!.setColumnDefs(columnDefs)
+  gridApi!.setColumnDefs(columnDefs)
 }
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', () => {
   const gridDiv = document.querySelector<HTMLElement>('#myGrid')!
-  new Grid(gridDiv, gridOptions)
+  gridApi = createGrid(gridDiv, gridOptions);;
 
   fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
     .then(response => response.json())
     .then(data => {
-      gridOptions.api!.setRowData(data)
+      gridApi!.setRowData(data)
     })
 })

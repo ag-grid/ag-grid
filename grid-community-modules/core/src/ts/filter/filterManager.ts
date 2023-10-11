@@ -52,7 +52,6 @@ export class FilterManager extends BeanStub {
     // this feature is turned off (hack code to always return false for isSuppressFlashingCellsBecauseFiltering(), put in)
     // 100,000 rows and group by country. then do some filtering. all the cells flash, which is silly.
     private processingFilterChange = false;
-    private allowShowChangeAfterFilter: boolean;
 
     // A cached version of gridOptions.isExternalFilterPresent so its not called for every row
     private externalFilterPresent: boolean;
@@ -71,7 +70,6 @@ export class FilterManager extends BeanStub {
         this.addManagedListener(this.eventService, Events.EVENT_NEW_COLUMNS_LOADED, () => this.updateAdvancedFilterColumns());
         this.addManagedListener(this.eventService, Events.EVENT_COLUMN_VISIBLE, () => this.updateAdvancedFilterColumns());
 
-        this.allowShowChangeAfterFilter = this.gridOptionsService.is('allowShowChangeAfterFilter');
         this.externalFilterPresent = this.isExternalFilterPresentCallback();
         this.addManagedPropertyListeners(['isExternalFilterPresent', 'doesExternalFilterPass'], () => {
             this.onFilterChanged({ source: 'api' });
@@ -423,7 +421,8 @@ export class FilterManager extends BeanStub {
     public isSuppressFlashingCellsBecauseFiltering(): boolean {
         // if user has elected to always flash cell changes, then always return false, otherwise we suppress flashing
         // changes when filtering
-        return !this.allowShowChangeAfterFilter && this.processingFilterChange;
+        const allowShowChangeAfterFilter = this.gridOptionsService.is('allowShowChangeAfterFilter') ?? false;
+        return !allowShowChangeAfterFilter && this.processingFilterChange;
     }
 
     public isQuickFilterPresent(): boolean {

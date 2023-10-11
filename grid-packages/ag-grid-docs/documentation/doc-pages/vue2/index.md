@@ -470,7 +470,6 @@ export default {
      columnDefs: null,
      rowData: null,
 +    gridApi: null,
-+    columnApi: null
    };
  },
  components: {
@@ -490,7 +489,6 @@ export default {
 + methods: {
 +    onGridReady(params) {
 +        this.gridApi = params.api;
-+        this.columnApi = params.columnApi;
 +    },
 +    getSelectedRows() {
 +        const selectedNodes = this.gridApi.getSelectedNodes();
@@ -580,7 +578,6 @@ the `columnDefs` with a `rowGroup`:
                columnDefs: null,
                rowData: null,
                gridApi: null,
-               columnApi: null,
 +               autoGroupColumnDef: {
 +                   headerName: 'Model',
 +                   field: 'model',
@@ -608,7 +605,6 @@ the `columnDefs` with a `rowGroup`:
        methods: {
            onGridReady(params) {
                this.gridApi = params.api;
-               this.columnApi = params.columnApi;
            },
            getSelectedRows() {
                const selectedNodes = this.gridApi.getSelectedNodes();

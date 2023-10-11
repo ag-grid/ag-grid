@@ -1,4 +1,15 @@
-import { Grid, AreaSparklineOptions, ColumnFormatterParams, ColumnSparklineOptions, GridOptions, LineSparklineOptions, BarSparklineOptions, BarFormatterParams, MarkerFormatterParams } from '@ag-grid-community/core'
+import {
+  GridApi,
+  createGrid,
+  AreaSparklineOptions,
+  ColumnFormatterParams,
+  ColumnSparklineOptions,
+  GridOptions,
+  LineSparklineOptions,
+  BarSparklineOptions,
+  BarFormatterParams,
+  MarkerFormatterParams,
+} from '@ag-grid-community/core';
 import { getData } from "./data";
 
 const palette = {
@@ -7,6 +18,8 @@ const palette = {
   green: 'rgb(63,141,119)',
   lightGreen: 'rgba(75,168,142, 0.2)',
 };
+
+let gridApi: GridApi;
 
 const gridOptions: GridOptions = {
   rowHeight: 70,
@@ -156,5 +169,5 @@ function areaMarkerFormatter(params: MarkerFormatterParams) {
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
   var gridDiv = document.querySelector<HTMLElement>('#myGrid')!
-  new Grid(gridDiv, gridOptions)
+  gridApi = createGrid(gridDiv, gridOptions);;
 })

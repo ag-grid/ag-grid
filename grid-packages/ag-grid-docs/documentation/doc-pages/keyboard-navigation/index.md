@@ -153,7 +153,7 @@ You could override this behaviour to focus the first grid cell, if that is a pre
 |     gridApi.ensureIndexVisible(0);
 | 
 |     // scrolls to the first column
-|     const firstCol = columnApi.getAllDisplayedColumns()[0];
+|     const firstCol = api.getAllDisplayedColumns()[0];
 |     gridApi.ensureColumnVisible(firstCol);
 | 
 |     // sets focus into the first grid cell

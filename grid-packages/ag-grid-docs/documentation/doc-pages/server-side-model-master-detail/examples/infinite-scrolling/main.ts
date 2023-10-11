@@ -1,4 +1,13 @@
-import { Grid, GridOptions, IDetailCellRendererParams, IServerSideDatasource, IServerSideGetRowsRequest } from '@ag-grid-community/core'
+import {
+  GridApi,
+  createGrid,
+  GridOptions,
+  IDetailCellRendererParams,
+  IServerSideDatasource,
+  IServerSideGetRowsRequest,
+} from '@ag-grid-community/core';
+
+let gridApi: GridApi;
 
 const gridOptions: GridOptions = {
   columnDefs: [
@@ -94,13 +103,13 @@ function getFakeServer(allData: any) {
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
   var gridDiv = document.querySelector<HTMLElement>('#myGrid')!
-  new Grid(gridDiv, gridOptions)
+  gridApi = createGrid(gridDiv, gridOptions);;
 
   fetch('https://www.ag-grid.com/example-assets/call-data.json')
     .then(response => response.json())
     .then(function (data) {
       var server = getFakeServer(data)
       var datasource = getServerSideDatasource(server)
-      gridOptions.api!.setServerSideDatasource(datasource)
+      gridApi!.setServerSideDatasource(datasource)
     })
 })

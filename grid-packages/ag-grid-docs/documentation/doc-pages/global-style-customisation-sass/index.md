@@ -4,9 +4,8 @@ title: "Sass Styling API"
 
 The Sass Styling API is an optional lightweight wrapper around [Themes](/themes) and [Global Style Customisations](/global-style-customisation) that automates the process of importing CSS files and setting CSS variables.
 
-The Sass API provides a few benefits on top of the CSS API:
+The Sass API provides a couple of benefits on top of the CSS API:
 
-1. **Colour blending.** The Sass API saves you the work of defining multiple related colours. For example with the Alpine theme, if you set `alpine-active-color` to `red` then the `row-hover-colour` will automatically be set to a light pink.
 1. **Validation.** In the Sass API you will get a build error if you accidentally pass an invalid parameter name or value. In CSS this would be silent and lead to incorrect styling.
 2. **Automatic selection of CSS files.** The Sass API ensures that only the necessary CSS files are loaded, only once, in the correct order, and combined into a single file.
 
@@ -73,7 +72,7 @@ The Sass Styling API is a wrapper around the CSS variable API for design customi
 @use "~ag-grid-community/styles" as ag;
 @include ag.grid-styles((
     theme: balham,
-    --ag-balham-active-color: deeppink
+    --ag--active-color: deeppink
 ));
 ```
 
@@ -102,48 +101,6 @@ When you cannot achieve the effect you want with variables, add custom CSS rules
     .ag-header-cell-label {
         font-style: italic;
     }
-}
-```
-
-## Colour blending
-
-The grid relies extensively on transparency to look good. For example when the grid is loading its data and can't be interacted with, it will display a semi-transparent overlay on top of the user interface. In order to match the grid's colour scheme we usually want this overlay to be the same hue as the grid background.
-
-CSS cannot automatically generate a transparent version a colour, so in CSS if you change the background colour of the grid you may also want to set the `--ag-modal-overlay-background-color` variable in order to update the overlay to the new colour scheme.
-
-The Sass Styling API will do this for you. If you define a `background-color` and have not set an explicit value for `modal-overlay-background-color` then it will be set to the background color with an opacity of 66%.
-
-The most important parameters for colour blending are:
-
-- The foreground color (`foreground-color`). Setting this will create a default color for many ordinary elements of the grid such as borders, header text and disabled text styles.
-- The theme active color (`alpine-active-color` for Alpine or `balham-active-color` for Balham). Setting this will create defaults for visual elements that should stand out, such as selected rows, checked checkboxes, and cell range selections.
-
-As an example of color blending in action, the following Sass file:
-
-```scss
-@use "~ag-grid-community/styles" as ag;
-@include ag.grid-styles((
-    theme: alpine,
-    alpine-active-color: red
-));
-```
-
-will compile to this CSS:
-
-```css
-/* ... content of ag-grid.css ... */
-/* ... content of ag-theme-alpine.css ... */
-.ag-theme-alpine {
-  --ag-alpine-active-color: red;
-  --ag-range-selection-border-color: red;
-  --ag-selected-row-background-color: rgba(255, 0, 0, 0.1);
-  --ag-row-hover-color: rgba(255, 0, 0, 0.1);
-  --ag-column-hover-color: rgba(255, 0, 0, 0.1);
-  --ag-input-focus-border-color: rgba(255, 0, 0, 0.4);
-  --ag-range-selection-background-color: rgba(255, 0, 0, 0.2);
-  --ag-range-selection-background-color-2: rgba(255, 0, 0, 0.36);
-  --ag-range-selection-background-color-3: rgba(255, 0, 0, 0.488);
-  --ag-range-selection-background-color-4: rgba(255, 0, 0, 0.5904);
 }
 ```
 

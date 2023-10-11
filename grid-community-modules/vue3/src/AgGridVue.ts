@@ -1,10 +1,10 @@
-import {defineComponent, getCurrentInstance, h, PropType} from 'vue';
-import {markRaw, toRaw} from '@vue/reactivity';
-import { ComponentUtil, Grid, GridOptions, Module, IRowNode, Events } from '@ag-grid-community/core';
+import { defineComponent, getCurrentInstance, h, PropType } from 'vue';
+import { markRaw, toRaw } from '@vue/reactivity';
+import { ComponentUtil, createGrid, Events, GridApi, GridOptions, IRowNode, Module } from '@ag-grid-community/core';
 
-import {VueFrameworkComponentWrapper} from './VueFrameworkComponentWrapper';
 import { getAgGridProperties, Properties } from './Utils';
-import {VueFrameworkOverrides} from './VueFrameworkOverrides';
+import { VueFrameworkComponentWrapper } from './VueFrameworkComponentWrapper';
+import { VueFrameworkOverrides } from './VueFrameworkOverrides';
 
 const ROW_DATA_EVENTS: Set<string> = new Set(['rowDataChanged', 'rowDataUpdated', 'cellValueChanged', 'rowValueChanged']);
 const ALWAYS_SYNC_GLOBAL_EVENTS: Set<string> = new Set([Events.EVENT_GRID_PRE_DESTROYED]);
@@ -42,12 +42,19 @@ export const AgGridVue = defineComponent({
         },
         ...props
     },
-    data() {
+    data() : {
+        api: GridApi | undefined,
+        gridCreated: boolean,
+        isDestroyed: boolean,
+        gridReadyFired: boolean,
+        emitRowModel?: (() => void | null),
+    } {
         return {
+            api: undefined,
             gridCreated: false,
             isDestroyed: false,
             gridReadyFired: false,
-            emitRowModel: undefined as (() => void | null) | undefined
+            emitRowModel: undefined
         }
     },
     watch: {
@@ -91,7 +98,7 @@ export const AgGridVue = defineComponent({
                     currentValue: propertyName === 'rowData' ? (Object.isFrozen(currentValue) ? currentValue : markRaw(toRaw(currentValue))) : currentValue,
                     previousValue,
                 };
-                ComponentUtil.processOnChange(changes, this.gridOptions.api!);
+                ComponentUtil.processOnChange(changes, this.api as any);
             }
         },
         checkForBindingConflicts() {
@@ -103,7 +110,7 @@ export const AgGridVue = defineComponent({
         },
         getRowData(): any[] {
             const rowData: any[] = [];
-            this.gridOptions.api!.forEachNode((rowNode: IRowNode) => {
+            this.api?.forEachNode((rowNode: IRowNode) => {
                 rowData.push(rowNode.data);
             });
             return rowData;
@@ -207,15 +214,12 @@ export const AgGridVue = defineComponent({
             modules: this.modules,
         };
 
-        new Grid(this.$el as HTMLElement, gridOptions, gridParams);
-
+        this.api = createGrid(this.$el as HTMLElement, gridOptions, gridParams);
         this.gridCreated = true;
     },
     unmounted() {
         if (this.gridCreated) {
-            if (this.gridOptions.api) {
-                this.gridOptions.api.destroy();
-            }
+            this.api?.destroy();
             this.isDestroyed = true;
         }
     }

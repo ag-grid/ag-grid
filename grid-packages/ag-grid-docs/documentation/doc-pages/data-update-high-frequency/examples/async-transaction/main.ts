@@ -1,4 +1,4 @@
-import { Grid, ColDef, GridOptions, ValueFormatterParams, GetRowIdParams } from '@ag-grid-community/core'
+import { createGrid, ColDef, GridApi, GridOptions, ValueFormatterParams, GetRowIdParams } from '@ag-grid-community/core'
 import { getData, globalRowData } from "./data";
 
 var UPDATE_COUNT = 200
@@ -135,9 +135,10 @@ const columnDefs: ColDef[] = [
 function numberCellFormatter(params: ValueFormatterParams) {
   return Math.floor(params.value)
     .toString()
-    .replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,')
+    .replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,');
 }
 
+let gridApi: GridApi;
 const gridOptions: GridOptions = {
   columnDefs: columnDefs,
   suppressAggFuncInHeader: true,
@@ -166,8 +167,6 @@ function onNormalUpdate() {
 
   setMessage('Running Transaction')
 
-  var api = gridOptions.api!
-
   for (var i = 0; i < UPDATE_COUNT; i++) {
     setTimeout(function () {
       // pick one index at random
@@ -179,7 +178,7 @@ function onNormalUpdate() {
       // then create new current value
       newItem.current = Math.floor(Math.random() * 100000) + 100
       // do normal update. update is done before method returns
-      api.applyTransaction({ update: [newItem] })
+      gridApi.applyTransaction({ update: [newItem] })
     }, 0)
   }
 
@@ -204,8 +203,6 @@ function onAsyncUpdate() {
   setMessage('Running Async')
 
   var updatedCount = 0
-  var api = gridOptions.api!
-
   for (var i = 0; i < UPDATE_COUNT; i++) {
     setTimeout(function () {
       // pick one index at random
@@ -220,7 +217,7 @@ function onAsyncUpdate() {
       // update using async method. passing the callback is
       // optional, we are doing it here so we know when the update
       // was processed by the grid.
-      api.applyTransactionAsync({ update: [newItem] }, resultCallback)
+      gridApi.applyTransactionAsync({ update: [newItem] }, resultCallback)
     }, 0)
   }
 
@@ -258,5 +255,5 @@ function copyObject(object: any) {
 // after page is loaded, create the grid.
 document.addEventListener('DOMContentLoaded', function () {
   var eGridDiv = document.querySelector<HTMLElement>('#myGrid')!
-  new Grid(eGridDiv, gridOptions)
+  gridApi = createGrid(eGridDiv, gridOptions)
 })

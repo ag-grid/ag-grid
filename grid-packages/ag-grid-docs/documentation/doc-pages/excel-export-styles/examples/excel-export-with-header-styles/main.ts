@@ -1,4 +1,12 @@
-import { Grid, CellClassParams, ColDef, ColGroupDef, GridOptions, GridReadyEvent } from '@ag-grid-community/core'
+import {
+  GridApi,
+  createGrid,
+  CellClassParams,
+  ColDef,
+  ColGroupDef,
+  GridOptions,
+  GridReadyEvent,
+} from '@ag-grid-community/core';
 
 const columnDefs: (ColDef | ColGroupDef)[] = [
   { field: 'athlete' },
@@ -9,6 +17,8 @@ const columnDefs: (ColDef | ColGroupDef)[] = [
     { field: 'bronze', headerClass: 'bronze-header' },
   ]}
 ]
+
+let gridApi: GridApi<IOlympicData>;
 
 const gridOptions: GridOptions<IOlympicData> = {
   defaultColDef: {
@@ -72,15 +82,15 @@ const gridOptions: GridOptions<IOlympicData> = {
 }
 
 function onBtnExportDataAsExcel() {
-  gridOptions.api!.exportDataAsExcel()
+  gridApi!.exportDataAsExcel()
 }
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
   var gridDiv = document.querySelector<HTMLElement>('#myGrid')!
-  new Grid(gridDiv, gridOptions)
+  gridApi = createGrid(gridDiv, gridOptions);;
 
   fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
     .then(response => response.json())
-    .then((data: IOlympicData[]) => gridOptions.api!.setRowData(data))
+    .then((data: IOlympicData[]) => gridApi!.setRowData(data))
 })

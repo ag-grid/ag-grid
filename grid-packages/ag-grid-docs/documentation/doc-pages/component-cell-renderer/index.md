@@ -22,17 +22,9 @@ By default the grid will create the cell values using simple text. If you want m
 </video-section>
 </framework-specific-section>
 
-## Cell Renderer
 
-md-include:simple-renderer-javascript.md 
-md-include:simple-renderer-angular.md
-md-include:simple-renderer-react.md
-md-include:simple-renderer-vue.md
-
-## Cell Renderer Example
-
-The example below shows a simple Cell Renderer in action. It uses a Cell Renderer to render a hash (`#`) symbol for each medal won
-(instead of the medal count), and the `MedalCellRenderer` defined in the code snippet above for the `Total` column:
+The example below uses a Cell Renderer to render a hash (`#`) symbol for each medal won
+(instead of the medal count), and a cell with a button in the `Total` column:
 
 <grid-example title='Simple Cell Renderer' name='simple' type='mixed' options='{ "exampleHeight": 460 }'></grid-example>
 

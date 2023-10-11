@@ -52,7 +52,6 @@ const VueExample = {
         }]);
 
         const gridApi = ref();
-        const gridColumnApi = ref();
         const defaultColDef = ref({
             minWidth: 150,
         });
@@ -64,10 +63,10 @@ const VueExample = {
         const isLoadDataButtonVisible = ref(true);
 
         const onFirstDataRendered = (params) => {
-            const {columnApi} = params;
-            const column = columnApi.getColumn('athleteDescription');
+            const {api} = params;
+            const column = api.getColumn('athleteDescription');
             if (column) {
-                columnApi.autoSizeColumns([column.getId()]);
+                api.autoSizeColumns([column.getId()]);
                 athleteDescriptionColWidthOnFirstDataRendered.value = `${column.getActualWidth()}px`;
             }
 
@@ -78,13 +77,12 @@ const VueExample = {
         };
         const onGridReady = (params) => {
             gridApi.value = params.api;
-            gridColumnApi.value = params.columnApi;
 
-            const column = gridColumnApi.value.getColumn('athleteDescription');
+            const column = gridApi.value.getColumn('athleteDescription');
             console.dir(column);
 
             if (column) {
-                gridColumnApi.value.autoSizeColumns([column.getId()]);
+                gridApi.value.autoSizeColumns([column.getId()]);
                 athleteDescriptionColWidthOnReady.value = `${column.getActualWidth()}px`;
             }
 
@@ -94,7 +92,6 @@ const VueExample = {
         return {
             columnDefs,
             gridApi,
-            gridColumnApi,
             defaultColDef,
             onGridReady,
             onFirstDataRendered,

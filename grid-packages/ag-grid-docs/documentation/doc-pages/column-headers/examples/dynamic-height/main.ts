@@ -1,4 +1,4 @@
-import { Grid, ColGroupDef, GridOptions } from '@ag-grid-community/core'
+import { GridApi, createGrid, ColGroupDef, GridOptions } from '@ag-grid-community/core';
 
 const columnDefs: ColGroupDef[] = [
   {
@@ -61,6 +61,8 @@ const columnDefs: ColGroupDef[] = [
   },
 ]
 
+let gridApi: GridApi<IOlympicData>;
+
 const gridOptions: GridOptions<IOlympicData> = {
   defaultColDef: {
     sortable: true,
@@ -79,48 +81,48 @@ function setIdText(id: string, value: string | number | undefined) {
 function setPivotOn() {
   document.querySelector('#requiresPivot')!.className = ''
   document.querySelector('#requiresNotPivot')!.className = 'hidden'
-  gridOptions.columnApi!.setPivotMode(true)
+  gridApi!.setPivotMode(true)
   setIdText('pivot', 'on')
 }
 
 function setPivotOff() {
   document.querySelector('#requiresPivot')!.className = 'hidden'
   document.querySelector('#requiresNotPivot')!.className = ''
-  gridOptions.columnApi!.setPivotMode(false)
+  gridApi!.setPivotMode(false)
   setIdText('pivot', 'off')
 }
 
 function setHeaderHeight(value?: number) {
-  gridOptions.api!.setHeaderHeight(value)
+  gridApi!.setHeaderHeight(value)
   setIdText('headerHeight', value)
 }
 
 function setGroupHeaderHeight(value?: number) {
-  gridOptions.api!.setGroupHeaderHeight(value)
+  gridApi!.setGroupHeaderHeight(value)
   setIdText('groupHeaderHeight', value)
 }
 
 function setFloatingFiltersHeight(value?: number) {
-  gridOptions.api!.setFloatingFiltersHeight(value)
+  gridApi!.setFloatingFiltersHeight(value)
   setIdText('floatingFiltersHeight', value)
 }
 
 function setPivotGroupHeaderHeight(value?: number) {
-  gridOptions.api!.setPivotGroupHeaderHeight(value)
+  gridApi!.setPivotGroupHeaderHeight(value)
   setIdText('pivotGroupHeaderHeight', value)
 }
 
 function setPivotHeaderHeight(value?: number) {
-  gridOptions.api!.setPivotHeaderHeight(value)
+  gridApi!.setPivotHeaderHeight(value)
   setIdText('pivotHeaderHeight', value)
 }
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', () => {
   const gridDiv = document.querySelector<HTMLElement>('#myGrid')!
-  new Grid(gridDiv, gridOptions)
+  gridApi = createGrid(gridDiv, gridOptions);;
 
   fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
     .then(response => response.json())
-    .then((data: IOlympicData[]) => gridOptions.api!.setRowData(data))
+    .then((data: IOlympicData[]) => gridApi!.setRowData(data))
 })

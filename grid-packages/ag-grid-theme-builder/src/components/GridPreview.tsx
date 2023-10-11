@@ -1,4 +1,4 @@
-import { ColDef, Grid, GridApi, GridOptions } from '@ag-grid-community/core';
+import { ColDef, createGrid, GridApi, GridOptions } from '@ag-grid-community/core';
 import styled from '@emotion/styled';
 import { useCurrentFeature } from 'atoms/currentFeature';
 import { useEnabledFeatures } from 'atoms/enabledFeatures';
@@ -7,8 +7,7 @@ import { useVariableValues } from 'atoms/values';
 import { withErrorBoundary } from 'components/ErrorBoundary';
 import { getColumnDefs, getGroupColumnDefs, getRowData } from 'model/exampleData';
 import { Feature } from 'model/features';
-import { assertNotNull, isNotNull } from 'model/utils';
-import { valueToCss } from 'model/values';
+import { isNotNull } from 'model/utils';
 import { memo, useEffect, useRef, useState } from 'react';
 
 const variablesRequiringRebuild = [
@@ -26,13 +25,14 @@ const GridPreview = () => {
   const wrapperRef = useRef<HTMLDivElement>(null);
 
   const [api, setApi] = useState<GridApi | null>(null);
+  const apiRef = useRef<GridApi | null>(null);
 
   const featureStateRef = useRef<Record<string, unknown>>({});
 
   const rebuildKey = variablesRequiringRebuild
     .map((variableName) => values[variableName])
     .filter(isNotNull)
-    .map(valueToCss)
+    .map((value) => value.toCss())
     .concat(parentTheme.name)
     .concat(features.map((f) => f.name))
     .join(';');
@@ -56,25 +56,24 @@ const GridPreview = () => {
             feature.restoreState?.(api, state);
           }
         }
-        setApi(api);
       },
     };
 
-    setApi(null);
-    const grid = new Grid(wrapperRef.current, options);
-    const api = assertNotNull(options.api);
+    const api = createGrid(wrapperRef.current, options);
+    apiRef.current = api;
+    setApi(api);
 
     return () => {
       for (const feature of features) {
         featureState[feature.name] = feature.getState?.(api);
       }
-      grid.destroy();
+      api.destroy();
     };
   }, [features, rebuildKey]);
 
   const previousFeatureRef = useRef<Feature | null>(null);
   useEffect(() => {
-    if (api) {
+    if (api && api === apiRef.current) {
       previousFeatureRef.current?.hide?.(api);
       currentFeature?.show?.(api);
       previousFeatureRef.current = currentFeature;
@@ -108,8 +107,10 @@ const Wrapper = styled('div')`
   height: 100%;
 `;
 
-const buildGridOptions = (features: Feature[]): GridOptions => {
-  const defaultColDef: ColDef = {};
+const buildGridOptions = (features: ReadonlyArray<Feature>): GridOptions => {
+  const defaultColDef: ColDef = {
+    sortable: true,
+  };
   const columnDefs = getColumnDefs();
   const options: GridOptions = { defaultColDef, columnDefs };
   for (const feature of features) {

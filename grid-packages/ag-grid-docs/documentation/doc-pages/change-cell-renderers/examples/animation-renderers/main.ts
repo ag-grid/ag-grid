@@ -1,4 +1,4 @@
-import { Grid, ColDef, GridOptions, ValueParserParams } from '@ag-grid-community/core'
+import { GridApi, createGrid, ColDef, GridOptions, ValueParserParams } from '@ag-grid-community/core';
 
 const columnDefs: ColDef[] = [
   {
@@ -41,6 +41,8 @@ const columnDefs: ColDef[] = [
   },
 ]
 
+let gridApi: GridApi;
+
 const gridOptions: GridOptions = {
   columnDefs: columnDefs,
   defaultColDef: {
@@ -64,14 +66,14 @@ function formatNumber(number: number) {
   // i pulled this from stack overflow, i have no idea how it works
   return Math.floor(number)
     .toString()
-    .replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,')
+    .replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,');
 }
 
 function onUpdateSomeValues() {
-  const rowCount = gridOptions.api!.getDisplayedRowCount()
+  const rowCount = gridApi!.getDisplayedRowCount()
   for (let i = 0; i < 10; i++) {
     const row = Math.floor(Math.random() * rowCount)
-    const rowNode = gridOptions.api!.getDisplayedRowAtIndex(row)!
+    const rowNode = gridApi!.getDisplayedRowAtIndex(row)!
     rowNode.setDataValue('c', Math.floor(Math.random() * 10000))
     rowNode.setDataValue('d', Math.floor(Math.random() * 10000))
   }
@@ -95,8 +97,8 @@ function createRowData() {
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
   const gridDiv = document.querySelector<HTMLElement>('#myGrid')!
-  new Grid(gridDiv, gridOptions)
+  gridApi = createGrid(gridDiv, gridOptions);;
   setTimeout(function () {
-    gridOptions.api!.sizeColumnsToFit()
+    gridApi!.sizeColumnsToFit()
   }, 200)
 })

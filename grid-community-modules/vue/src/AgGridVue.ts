@@ -1,5 +1,5 @@
 import {Component, Prop, Vue} from 'vue-property-decorator';
-import {Bean, ComponentUtil, Grid, GridOptions, Module, Events} from '@ag-grid-community/core';
+import {Bean, ComponentUtil, GridOptions, Module, Events, GridApi, createGrid, GridParams} from '@ag-grid-community/core';
 import {VueFrameworkComponentWrapper} from './VueFrameworkComponentWrapper';
 import { getAgGridProperties, Properties } from './Utils';
 import {VueFrameworkOverrides} from './VueFrameworkOverrides';
@@ -39,6 +39,7 @@ export class AgGridVue extends Vue {
     private gridReadyFired = false;
 
     private gridOptions!: GridOptions;
+    private api: GridApi | undefined = undefined;
     private emitRowModel: (() => void) | null = null;
 
     // noinspection JSUnusedGlobalSymbols, JSMethodCanBeStatic
@@ -78,7 +79,7 @@ export class AgGridVue extends Vue {
     }
 
     public processChanges(propertyName: string, currentValue: any, previousValue: any) {
-        if (this.gridCreated) {
+        if (this.gridCreated && this.api) {
 
             if (this.skipChange(propertyName, currentValue, previousValue)) {
                 return;
@@ -89,7 +90,7 @@ export class AgGridVue extends Vue {
                 currentValue,
                 previousValue,
             };
-            ComponentUtil.processOnChange(changes, this.gridOptions.api!);
+            ComponentUtil.processOnChange(changes, this.api);
         }
     }
 
@@ -107,7 +108,7 @@ export class AgGridVue extends Vue {
         this.checkForBindingConflicts();
         gridOptions.rowData = this.getRowDataBasedOnBindings();
 
-        const gridParams = {
+        const gridParams: GridParams = {
             globalEventListener: this.globalEventListenerFactory().bind(this),
             globalSyncEventListener: this.globalEventListenerFactory(true).bind(this),
             frameworkOverrides: new VueFrameworkOverrides(this),
@@ -117,17 +118,14 @@ export class AgGridVue extends Vue {
             modules: this.modules,
         };
 
-        new Grid(this.$el as HTMLElement, gridOptions, gridParams);
-
+        this.api = createGrid(this.$el as HTMLElement, gridOptions, gridParams);        
         this.gridCreated = true;
     }
 
     // noinspection JSUnusedGlobalSymbols
     public destroyed() {
         if (this.gridCreated) {
-            if (this.gridOptions.api) {
-                this.gridOptions.api.destroy();
-            }
+            this.api?.destroy();            
             this.isDestroyed = true;
         }
     }
@@ -142,7 +140,7 @@ export class AgGridVue extends Vue {
 
     private getRowData(): any[] {
         const rowData: any[] = [];
-        this.gridOptions.api!.forEachNode((rowNode) => {
+        this.api?.forEachNode((rowNode) => {
             rowData.push(rowNode.data);
         });
         return rowData;
