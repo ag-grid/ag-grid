@@ -162,7 +162,7 @@ export class SetFilter<V = string> extends ProvidedFilter<SetFilterModel, V> imp
     }
 
     private setModelAndRefresh(values: SetFilterModelValue | null): AgPromise<void> {
-        return this.valueModel ? this.valueModel.setModel(values).then(() => this.refresh()) : AgPromise.resolve();
+        return this.valueModel ? this.valueModel.setModel(values).then(() => this.checkAndRefreshVirtualList()) : AgPromise.resolve();
     }
 
     protected resetUiToDefaults(): AgPromise<void> {
@@ -357,7 +357,7 @@ export class SetFilter<V = string> extends ProvidedFilter<SetFilterModel, V> imp
         let promise = this.valueModel.refreshValues();
 
         return promise.then(() => {
-            this.refresh();
+            this.checkAndRefreshVirtualList();
             this.onBtApply(false, true);
         });
     }
@@ -832,7 +832,7 @@ export class SetFilter<V = string> extends ProvidedFilter<SetFilterModel, V> imp
         if (!this.valueModel) { throw new Error('Value model has not been created.'); }
 
         this.valueModel.overrideValues(values).then(() => {
-            this.refresh();
+            this.checkAndRefreshVirtualList();
             this.onUiChanged();
         });
     }
@@ -855,7 +855,7 @@ export class SetFilter<V = string> extends ProvidedFilter<SetFilterModel, V> imp
         if (!this.valueModel.isInitialised()) { return; }
 
         this.valueModel.refreshValues().then(() => {
-            this.refresh();
+            this.checkAndRefreshVirtualList();
             this.onUiChanged();
         });
     }
@@ -869,7 +869,7 @@ export class SetFilter<V = string> extends ProvidedFilter<SetFilterModel, V> imp
 
             this.valueModel.refreshAfterAnyFilterChanged().then(refresh => {
                 if (refresh) {
-                    this.refresh();
+                    this.checkAndRefreshVirtualList();
                     this.showOrHideResults();
                 }
             });
@@ -896,12 +896,12 @@ export class SetFilter<V = string> extends ProvidedFilter<SetFilterModel, V> imp
 
         const { excelMode, readOnly } = this.setFilterParams || {};
         if (excelMode == null || !!readOnly) {
-            this.refresh();
+            this.checkAndRefreshVirtualList();
         } else if (this.valueModel.getMiniFilter() == null) {
             this.resetUiToActiveModel(this.getModel());
         } else {
             this.valueModel.selectAllMatchingMiniFilter(true);
-            this.refresh();
+            this.checkAndRefreshVirtualList();
             this.onUiChanged();
         }
 
@@ -950,7 +950,7 @@ export class SetFilter<V = string> extends ProvidedFilter<SetFilterModel, V> imp
         if (!!readOnly) { throw new Error('Unable to filter in readOnly mode.'); }
 
         this.valueModel.selectAllMatchingMiniFilter(true);
-        this.refresh();
+        this.checkAndRefreshVirtualList();
         this.onUiChanged(false, applyImmediately ? 'immediately' : 'debounce');
         this.showOrHideResults();
     }
@@ -1035,14 +1035,14 @@ export class SetFilter<V = string> extends ProvidedFilter<SetFilterModel, V> imp
 
         this.valueModel!.updateDisplayedValues('expansion');
 
-        this.refresh();
+        this.checkAndRefreshVirtualList();
         this.focusRowIfAlive(focusedRow);
     }
 
     private refreshAfterSelection(): void {
         const focusedRow = this.virtualList!.getLastFocusedRow();
 
-        this.refresh();
+        this.checkAndRefreshVirtualList();
         this.onUiChanged();
         this.focusRowIfAlive(focusedRow);
     }
@@ -1056,7 +1056,7 @@ export class SetFilter<V = string> extends ProvidedFilter<SetFilterModel, V> imp
         return this.valueModel ? this.valueModel.getMiniFilter() : null;
     }
 
-    private refresh() {
+    private checkAndRefreshVirtualList() {
         if (!this.virtualList) { throw new Error('Virtual list has not been created.'); }
 
         this.virtualList.refresh(!this.hardRefreshVirtualList);
@@ -1082,7 +1082,7 @@ export class SetFilter<V = string> extends ProvidedFilter<SetFilterModel, V> imp
         if (this.setFilterParams && this.setFilterParams.refreshValuesOnOpen) {
             this.refreshFilterValues();
         } else {
-            this.refresh();
+            this.checkAndRefreshVirtualList();
         }
     }
 

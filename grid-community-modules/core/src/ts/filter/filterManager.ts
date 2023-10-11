@@ -535,12 +535,7 @@ export class FilterManager extends BeanStub {
 
         if (!filterWrapper) {
             filterWrapper = this.createFilterWrapper(column, source);
-            const colId = column.getColId();
-            this.allColumnFilters.set(colId, filterWrapper);
-            this.allColumnListeners.set(
-                colId,
-                this.addManagedListener(column, Column.EVENT_COL_DEF_CHANGED, () => this.checkDestroyFilter(colId))
-            );
+            this.setColumnFilterWrapper(column, filterWrapper);
         } else if (source !== 'NO_UI') {
             this.putIntoGui(filterWrapper, source);
         }
@@ -598,25 +593,8 @@ export class FilterManager extends BeanStub {
 
         const params: IFilterParams = {
             ...this.createFilterParams(column, colDef),
-            filterModifiedCallback: () => {
-                const event: WithoutGridCommon<FilterModifiedEvent> = {
-                    type: Events.EVENT_FILTER_MODIFIED,
-                    column,
-                    filterInstance
-                };
-
-                this.eventService.dispatchEvent(event);
-            },
-            filterChangedCallback: (additionalEventAttributes?: any) => {
-                const source: FilterChangedEventSourceType = additionalEventAttributes?.source ?? 'api';
-                const params = {
-                    filterInstance,
-                    additionalEventAttributes,
-                    columns: [column],
-                    source,
-                };
-                this.callOnFilterChangedOutsideRenderCycle(params);
-            },
+            filterModifiedCallback: () => this.filterModifiedCallbackFactory(filterInstance, column)(),
+            filterChangedCallback: (additionalEventAttributes?: any) => this.filterChangedCallbackFactory(filterInstance, column)(additionalEventAttributes),
             doesRowPassOtherFilter: node => this.doesRowPassOtherFilters(filterInstance, node),
         };
 
@@ -846,6 +824,31 @@ export class FilterManager extends BeanStub {
         });
     }
 
+    private filterModifiedCallbackFactory(filter: IFilterComp<any>, column: Column<any>) {
+        return () => {
+            const event: WithoutGridCommon<FilterModifiedEvent> = {
+                type: Events.EVENT_FILTER_MODIFIED,
+                column,
+                filterInstance: filter,
+            };
+
+            this.eventService.dispatchEvent(event);
+        }
+    }
+
+    private filterChangedCallbackFactory(filter: IFilterComp<any>, column: Column<any>) {
+        return (additionalEventAttributes?: any) => {
+            const source: FilterChangedEventSourceType = additionalEventAttributes?.source ?? 'api';
+            const params = {
+                filter,
+                additionalEventAttributes,
+                columns: [column],
+                source,
+            };
+            this.callOnFilterChangedOutsideRenderCycle(params);
+        };
+    }
+
     private checkDestroyFilter(colId: string): void {
         const filterWrapper = this.allColumnFilters.get(colId);
         if (!filterWrapper) {
@@ -853,14 +856,52 @@ export class FilterManager extends BeanStub {
         }
 
         const column = filterWrapper.column;
-
         const { compDetails } = column.isFilterAllowed()
             ? this.createFilterInstance(column)
             : { compDetails: null };
 
+        // Case when filter component changes
         if (this.areFilterCompsDifferent(filterWrapper.compDetails, compDetails)) {
             this.destroyFilter(column, 'columnChanged');
+            return;
         }
+
+        // Case when filter params changes
+        const newFilterParams = column.getColDef().filterParams;
+        // When filter wrapper does not have promise to retrieve FilterComp, destroy
+        if (!filterWrapper.filterPromise) {
+            this.destroyFilter(column, 'columnChanged');
+            return;
+        }
+
+        // Otherwise - Check for refresh method before destruction
+        // If refresh() method is implemented - call it and destroy filter if it returns false
+        // Otherwise - do nothing ( filter will not be destroyed - we assume new params are compatible with old ones )
+        filterWrapper.filterPromise.then(filter => {
+            const shouldRefreshFilter = filter?.refresh ? filter.refresh({
+                ...this.createFilterParams(column, column.getColDef()),
+                filterModifiedCallback: this.filterModifiedCallbackFactory(filter, column),
+                filterChangedCallback: this.filterChangedCallbackFactory(filter, column),
+                doesRowPassOtherFilter: node => this.doesRowPassOtherFilters(filter, node),
+                ...newFilterParams,
+            }) : true;
+            if (!shouldRefreshFilter) {
+                this.destroyFilter(column, 'columnChanged');
+            }
+        });
+    }
+
+    private setColumnFilterWrapper(column: Column, filterWrapper: FilterWrapper): void {
+        const colId = column.getColId();
+        this.allColumnFilters.set(colId, filterWrapper);
+        this.allColumnListeners.set(
+            colId,
+            this.addManagedListener(
+                column,
+                Column.EVENT_COL_DEF_CHANGED,
+                () => this.checkDestroyFilter(colId),
+            ),
+        );
     }
 
     public areFilterCompsDifferent(oldCompDetails: UserCompDetails | null, newCompDetails: UserCompDetails | null): boolean {

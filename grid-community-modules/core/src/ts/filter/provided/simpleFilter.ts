@@ -358,6 +358,49 @@ export abstract class SimpleFilter<M extends ISimpleFilterModel, V, E = AgInputT
         return res;
     }
 
+    refresh(newParams: SimpleFilterParams): boolean {
+        const parentRefreshed = super.refresh(newParams);
+        if (!parentRefreshed) {
+            return false;
+        }
+
+        const model = this.getModel();
+        const conditions: ISimpleFilterModel[] | null = model ? ((<any>model).conditions ?? [model]) : null;
+
+        //
+        // Check for situations when the filter should be destroyed and recreated
+        //
+
+        // Do Not refresh when one of the existing types is not in new options list
+        const newOptionsList = newParams.filterOptions?.map(
+            option => typeof option === 'string' ? option : option.displayKey
+        ) ?? this.getDefaultFilterOptions();
+
+        const allConditionsExistInNewOptionsList = !conditions || conditions.every(condition =>
+            newOptionsList.find(option => option === condition.type) !== undefined);
+        if (!allConditionsExistInNewOptionsList) {
+            return false;
+        }
+
+        // Check number of conditions vs maxNumConditions
+        if (
+            conditions && typeof newParams.maxNumConditions === 'number' &&
+            conditions.length > newParams.maxNumConditions
+        ) {
+            return false;
+        }
+
+        // No breaking changes new params,
+        // so safely update the options list and refresh the filter
+
+        this.setParams(newParams);
+        this.removeConditionsAndOperators(0);
+        this.createOption();
+        this.setModel(model);
+
+        return true;
+    }
+
     protected setModelIntoUi(model: ISimpleFilterModel | ICombinedSimpleModel<M>): AgPromise<void> {
         const isCombined = (model as any).operator;
 
