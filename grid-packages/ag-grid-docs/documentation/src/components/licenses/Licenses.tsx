@@ -14,7 +14,7 @@ type LicenseData = {
     subHeading: string;
     licenseBenefits: string[];
     priceFullDollars: string;
-    launchPrice?: string;
+    launchPrice: any;
     buyLink: string;
     Logo: any;
 };
@@ -25,6 +25,7 @@ const DEV_LICENSE_DATA: LicenseData[] = [
         id: 'single-application',
         subHeading: 'AG Grid Enterprise',
         priceFullDollars: '999',
+        launchPrice: null,
         licenseBenefits: ['Perpetual License', '1 Year of Support', '1 Year of Updates'],
         buyLink: '/ecommerce/#/ecommerce/?licenseType=single',
         Logo: AGGridLogo
@@ -47,11 +48,21 @@ const makeNonBreaking = (text: string) => {
     return text.replace(' ', nonBreakingSpace);
 };
 
-const Price = ({ priceFullDollars }) => {
+const Price = ({ priceFullDollars, launchPrice }) => {
     return (
         <div className={styles.price}>
             <p className="font-size-small"><b>Starting at...</b></p>
-            <p className={styles.priceFullDollars}>{priceFullDollars}</p>
+            { launchPrice && (
+                <>
+                    <p className={styles.standardPrice}>
+                        {priceFullDollars}
+                        <svg className={styles.standardPriceCross} viewBox="0 0 100 100" preserveAspectRatio="none">
+                            <path d="m0 0 100 100M100 0 0 100"/>
+                        </svg>
+                    </p>
+                </>
+            )}
+            <p className={styles.priceFullDollars}>{launchPrice ? launchPrice : priceFullDollars}</p>
             <p className="font-size-small">
                 <b>Per Developer</b>
             </p>
@@ -70,7 +81,7 @@ const License = (props: LicenseData) => {
                     <p className="font-size-small">{subHeading}<Icon name="enterprise" /></p>
                 </div>
 
-                <Price priceFullDollars={launchPrice ? launchPrice : priceFullDollars} />
+                <Price priceFullDollars={priceFullDollars} launchPrice={launchPrice} />
 
                 <div className={styles.licenseBenefits}>
                     <ul className="font-size-small list-style-none">

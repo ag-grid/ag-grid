@@ -84,23 +84,42 @@ p.name {
 
     .top & {
         @media screen and (min-width: $breakpoint-pricing-medium) {
-            min-height: 132px;
+            min-height: 152px;
         }
     }
 }
 
-p.priceFullDollars {
+p.standardPrice {
+    align-self: flex-start;
+    position: relative;
+    margin-bottom: -$size-1;
+    font-weight: var(--font-weight-thin);
+    color: var(--secondary-text-color);
+}
+
+.standardPriceCross {
+    position: absolute;
+    width: calc(100% + $size-2);
+    height: calc(100% - $size-2);
+    top: $size-1;
+    left: -$size-half;
+    stroke: var(--secondary-text-color);
+    stroke-width: 4px;
+}
+
+p.priceFullDollars,
+p.standardPrice {
+    font-size: 46px !important; // !important for font-size weirdness
     line-height: $line-height-tight;
     letter-spacing: -0.05em;
 
     &::before {
         content: '$';
     }
+}
 
-    .top & {
-        font-size: 46px !important; // !important for font-size weirdness
-        font-weight: var(--font-weight-bold);
-    }
+p.priceFullDollars {
+    font-weight: var(--font-weight-bold);
 }
 
 .licenseBenefits {
@@ -110,7 +129,7 @@ p.priceFullDollars {
     text-align: right;
 
     @media screen and (min-width: $breakpoint-pricing-medium) and (max-width: $breakpoint-pricing-large) {
-        min-height: 132px;
+        min-height: 152px;
     }
 
     a {
