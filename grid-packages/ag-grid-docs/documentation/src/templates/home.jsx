@@ -22,24 +22,10 @@ const OverviewSection = () => {
                     <hr className={classnames(styles.cardDivider)}/>
                     <div className={classnames(styles.cardBody)}>
                         Know you need a Grid, but not sure which ones right for you? Check-out our 
-                        introduction section for an in-depth overview
+                        introduction section to learn more 
                     </div>
                     <div className={classnames(styles.cardLink)}>
-                        <a href='introduction/overview/'>Overview</a>
-                    </div>
-                </div>
-                <div className={classnames(styles.card)}>
-                    <div className={classnames(styles.cardTitle, 'font-size-extra-large')}>
-                        Get Started
-                        <img className={classnames(styles.cardIcon)} src="TODO" style={{ float: 'right' }}/>
-                    </div>
-                    <hr className={classnames(styles.cardDivider)}/>
-                    <div className={classnames(styles.cardBody)}>
-                        Want to try AG Grid for yourself? Take a look at our Getting Started guide to 
-                        install, configure and customise the Grid
-                    </div>
-                    <div className={classnames(styles.cardLink)}>
-                        <a href='get-started/installation/'>Installation</a>
+                        <a href='introduction/'>Learn More</a>
                     </div>
                 </div>
                 <div className={classnames(styles.card)}>
@@ -49,11 +35,25 @@ const OverviewSection = () => {
                     </div>
                     <hr className={classnames(styles.cardDivider)}/>
                     <div className={classnames(styles.cardBody)}>
-                        Already familiar with the Grid or want to see how it works? Browse our Quick Starts 
+                        Want to try AG Grid for yourself? Take a look at our Quick Start guide to 
+                        install, configure and customise the Grid
+                    </div>
+                    <div className={classnames(styles.cardLink)}>
+                        <a href='get-started/'>Get Started</a>
+                    </div>
+                </div>
+                <div className={classnames(styles.card)}>
+                    <div className={classnames(styles.cardTitle, 'font-size-extra-large')}>
+                        Demos
+                        <img className={classnames(styles.cardIcon)} src="TODO" style={{ float: 'right' }}/>
+                    </div>
+                    <hr className={classnames(styles.cardDivider)}/>
+                    <div className={classnames(styles.cardBody)}>
+                        Already familiar with the Grid or want to see how it in action? Browse our Demos 
                         to kick-start your development
                     </div>
                     <div className={classnames(styles.cardLink)}>
-                        <a href='quick-starts/basic-example/'>Basic Example</a>
+                        <a href='quick-starts/basic-example/'>Explore</a>
                     </div>
                 </div>
             </div>
@@ -289,7 +289,7 @@ const HomePage = ({ pageContext: { framework } }) => {
             <div className={classnames(styles.section, 'font-size-responsive')}>
                 <h2>Overview</h2>
                 <p>
-                    Browse this section to find the content you're looking for, whether that's an <a href='introduction/overview/'>Introduction</a> to our grid, trying to <a href='get-started/installation/'>Get Started</a>, or a <a href='quick-starts/basic-example'>Quick-Start</a> template, we've got you covered.
+                    Browse this section to find the content you're looking for, whether you want to <a href='introduction/'>Learn More</a> about our grid, <a href='get-started/installation/'>Get Started</a>, or explore our <a href='quick-starts/basic-example'>Demos</a>, we've got you covered.
                 </p>
                 <OverviewSection />
             </div>
