@@ -20,7 +20,7 @@
 
         --ag-header-background-color: transparent;
 
-        --ag-tooltip-background-color: transparent;
+        --ag-tooltip-background-color: var(--ag-background-color);
 
         --ag-subheader-background-color: transparent;
 
@@ -186,9 +186,9 @@
 
         --ag-popup-shadow: 5px 5px 10px rgba(0, 0, 0, 0.3);
 
-        --ag-advanced-filter-join-pill-color: #f08e8d;
-        --ag-advanced-filter-column-pill-color: #a6e194;
-        --ag-advanced-filter-option-pill-color: #f3c08b;
-        --ag-advanced-filter-value-pill-color: #85c0e4;
+        --ag-advanced-filter-join-pill-color: rgba(220, 0, 0, 0.43);
+        --ag-advanced-filter-column-pill-color: rgba(44, 189, 0, .43);
+        --ag-advanced-filter-option-pill-color: rgba(228, 117, 0, 0.43);
+        --ag-advanced-filter-value-pill-color: rgba(0, 123, 198, 0.48);
     };
 }

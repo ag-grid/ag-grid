@@ -6,7 +6,7 @@
     --ag-foreground-color: #000;
     --ag-background-color: #fff;
     --ag-header-background-color: color-mix(in srgb, var(--ag-background-color), var(--ag-foreground-color) 3%);
-    --ag-tooltip-background-color: color-mix(in srgb, var(--ag-background-color), var(--ag-foreground-color) 80%);
+    --ag-tooltip-background-color: color-mix(in srgb, var(--ag-background-color), var(--ag-foreground-color) 20%);
     --ag-subheader-background-color: color-mix(in srgb, var(--ag-background-color), var(--ag-foreground-color) 10%);
     --ag-control-panel-background-color: color-mix(in srgb, var(--ag-background-color), var(--ag-foreground-color) 3%);
     --ag-border-color: color-mix(in srgb, var(--ag-background-color), var(--ag-foreground-color) 25%);
@@ -60,33 +60,34 @@
     --ag-active-color: #00B0FF;
     --ag-foreground-color: #F5F5F5;
     --ag-background-color: #2d3436;
-    --ag-header-background-color: #1c1c1c;
-    --ag-tooltip-background-color: #1c1f20;
-    --ag-subheader-background-color: #111;
-    --ag-control-panel-background-color: #202020;
-    --ag-border-color: #424242;
-    --ag-odd-row-background-color: #262c2e;
-    --ag-row-hover-color: #3d4749;
-    --ag-column-hover-color: #3d4749;
-    --ag-input-border-color: #f0f0f0;
-    --ag-input-disabled-background-color: rgba(48, 46, 46, 0.3);
-    --ag-modal-overlay-background-color: rgba(45, 52, 54, 0.66);
+    --ag-header-background-color: color-mix(in srgb, black, var(--ag-background-color) 55%);
+    --ag-tooltip-background-color: color-mix(in srgb, black, var(--ag-background-color) 55%);
+    --ag-subheader-background-color: color-mix(in srgb, black, var(--ag-background-color) 30%);
+    --ag-control-panel-background-color: color-mix(in srgb, black, var(--ag-foreground-color) 13%);
+    --ag-border-color: color-mix(in srgb, black, var(--ag-foreground-color) 27%);
+    --ag-odd-row-background-color: color-mix(in srgb, black, var(--ag-background-color) 85%);
+    --ag-row-hover-color: color-mix(in srgb, transparent, var(--ag-foreground-color) 10%);
+    --ag-column-hover-color: color-mix(in srgb, transparent, var(--ag-foreground-color) 10%);
+    --ag-input-border-color: color-mix(in srgb, var(--ag-background-color), var(--ag-foreground-color) 97%);
+    --ag-input-disabled-background-color: color-mix(in srgb, transparent, var(--ag-background-color) 20%);
     --ag-checkbox-unchecked-color: #ecf0f1;
-    --ag-advanced-filter-join-pill-color: #7a3a37;
-    --ag-advanced-filter-column-pill-color: #355f2d;
-    --ag-advanced-filter-option-pill-color: #5a3168;
-    --ag-advanced-filter-value-pill-color: #374c86;
+    --ag-checkbox-unchecked-color: color-mix(in srgb, var(--ag-background-color), var(--ag-foreground-color) 97%);
+    
+    --ag-advanced-filter-join-pill-color: rgba(200, 50, 50, 0.559);
+    --ag-advanced-filter-column-pill-color: rgba(56, 178, 19, 0.43);
+    --ag-advanced-filter-option-pill-color: rgba(160, 64, 186, 0.43);
+    --ag-advanced-filter-value-pill-color: rgba(0, 123, 198, 0.48);
 
     // override blended colors from balham theme
     --ag-secondary-foreground-color: var(--ag-foreground-color);
-    --ag-row-border-color: #5c5c5c;
+    --ag-row-border-color: color-mix(in srgb, black, var(--ag-foreground-color) 38%);
     --ag-chip-background-color: color-mix(in srgb, transparent, var(--ag-foreground-color) 8%);
 
     // additional overrides
     --ag-header-foreground-color: color-mix(in srgb, transparent, var(--ag-foreground-color) 64%);
     --ag-toggle-button-off-background-color: transparent;
     --ag-toggle-button-off-border-color: var(--ag-foreground-color);
-    --ag-range-selection-chart-category-background-color: #{color.change(#1ab14a, $alpha: 0.5)};
-    --ag-range-selection-chart-background-color: #{color.change(#2da6ff, $alpha: 0.5)};
+    --ag-range-selection-chart-category-background-color: rgba(26, 177, 74, 0.5);
+    --ag-range-selection-chart-background-color: rgba(45, 166, 255, 0.5);
     --ag-input-focus-box-shadow: 0 0 4px 1.5px var(--ag-input-focus-border-color);
 }
