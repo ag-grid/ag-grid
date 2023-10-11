@@ -1,4 +1,12 @@
-import { Grid, ColDef, CreateRangeChartParams, FirstDataRenderedEvent, GridOptions, ValueFormatterParams } from '@ag-grid-community/core'
+import {
+  GridApi,
+  createGrid,
+  ColDef,
+  CreateRangeChartParams,
+  FirstDataRenderedEvent,
+  GridOptions,
+  ValueFormatterParams,
+} from '@ag-grid-community/core';
 
 declare var moment: any;
 
@@ -12,6 +20,8 @@ function getColumnDefs() {
 function formatDate(date: Date | number) {
   return Intl.DateTimeFormat('en-GB', { day: '2-digit', month: 'short', year: undefined }).format(new Date(date))
 }
+
+let gridApi: GridApi;
 
 const gridOptions: GridOptions = {
   columnDefs: getColumnDefs(),
@@ -110,7 +120,7 @@ function toggleAxis() {
     }
   })
 
-  gridOptions.api!.setColumnDefs(columnDefs)
+  gridApi!.setColumnDefs(columnDefs)
 }
 
 
@@ -130,5 +140,5 @@ function getRowData() {
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
   var gridDiv = document.querySelector<HTMLElement>('#myGrid')!
-  new Grid(gridDiv, gridOptions)
+  gridApi = createGrid(gridDiv, gridOptions);;
 })

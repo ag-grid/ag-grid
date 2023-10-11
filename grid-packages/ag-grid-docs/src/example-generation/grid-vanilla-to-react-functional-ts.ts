@@ -1,5 +1,5 @@
 import { templatePlaceholder } from "./grid-vanilla-src-parser";
-import { addBindingImports, addGenericInterfaceImport, convertFunctionToConstPropertyTs, getFunctionName, getModuleRegistration, getPropertyInterfaces, handleRowGenericInterface, ImportType, isInstanceMethod } from './parser-utils';
+import { addBindingImports, addGenericInterfaceImport, convertFunctionToConstPropertyTs, getFunctionName, getModuleRegistration, getPropertyInterfaces, handleRowGenericInterface, ImportType, isInstanceMethod, preferParamsApi } from './parser-utils';
 import { convertFunctionalTemplate, convertFunctionToConstCallbackTs, getImport, getValueType } from './react-utils';
 const path = require('path');
 
@@ -158,7 +158,6 @@ export function vanillaToReactFunctionalTs(bindings: any, componentFilenames: st
     const utilMethodNames = bindings.utils.map(getFunctionName);
     const callbackDependencies = Object.keys(bindings.callbackDependencies).reduce((acc, callbackName) => {
         acc[callbackName] = bindings.callbackDependencies[callbackName].filter(dependency => !utilMethodNames.includes(dependency))
-            .filter(dependency => dependency !== 'gridOptions')
             .filter(dependency => !global[dependency]) // exclude things like Number, isNaN etc
         return acc;
     }, {})
@@ -185,7 +184,7 @@ export function vanillaToReactFunctionalTs(bindings: any, componentFilenames: st
 
         const additionalInReady = [];
         if (data) {
-            const setRowDataBlock = data.callback.replace('params.api!.setRowData', 'setRowData');
+            const setRowDataBlock = data.callback.replace('gridApi!.setRowData', 'setRowData');
 
             additionalInReady.push(`
                 fetch(${data.url})
@@ -196,7 +195,7 @@ export function vanillaToReactFunctionalTs(bindings: any, componentFilenames: st
 
         if (onGridReady) {
             const hackedHandler = onGridReady.replace(/^{|}$/g, '')
-                .replace('params.api!.setRowData', 'setRowData');
+                .replace('gridApi!.setRowData', 'setRowData');
             additionalInReady.push(hackedHandler);
         }
 
@@ -283,8 +282,6 @@ export function vanillaToReactFunctionalTs(bindings: any, componentFilenames: st
 
         const gridInstanceConverter = content => content
             .replace(/params\.api(!?)\.setRowData\(data\)/g, 'setRowData(data)')
-            .replace(/params\.api(!?)\./g, 'gridRef.current!.api.')
-            .replace(/gridInstance\.api(!?)\./g, "gridRef.current!.api.")
             .replace(/gridApi(!?)\./g, "gridRef.current!.api.")
             .replace(/gridApi;/g, "gridRef.current!.api;")
             .replace(/gridRef\.current\.api(!?)\.setRowData/g, "setRowData")
@@ -298,7 +295,7 @@ export function vanillaToReactFunctionalTs(bindings: any, componentFilenames: st
 
         const gridReady = additionalInReady.length > 0 ? `
             const onGridReady = useCallback((params: GridReadyEvent) => {
-                ${additionalInReady.join('\n')}
+                ${preferParamsApi(additionalInReady.join('\n'))}
             }, []);` : '';
 
 

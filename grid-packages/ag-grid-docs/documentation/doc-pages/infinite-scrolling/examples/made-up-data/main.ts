@@ -1,4 +1,12 @@
-import { Grid, ColDef, GridOptions, IDatasource, IGetRowsParams, GetRowIdParams } from '@ag-grid-community/core'
+import {
+  GridApi,
+  createGrid,
+  ColDef,
+  GridOptions,
+  IDatasource,
+  IGetRowsParams,
+  GetRowIdParams,
+} from '@ag-grid-community/core';
 
 var ALPHABET = 'abcdefghijklmnopqrstuvwxyz'.split('')
 
@@ -17,6 +25,8 @@ function getColumnDefs() {
   })
   return columnDefs
 }
+
+let gridApi: GridApi;
 
 const gridOptions: GridOptions = {
   columnDefs: getColumnDefs(),
@@ -63,5 +73,5 @@ function getDataSource(count: number) {
 
 document.addEventListener('DOMContentLoaded', function () {
   var gridDiv = document.querySelector<HTMLElement>('#myGrid')!
-  new Grid(gridDiv, gridOptions)
+  gridApi = createGrid(gridDiv, gridOptions);;
 })

@@ -1,4 +1,4 @@
-import { Grid, ColGroupDef, GridOptions } from '@ag-grid-community/core'
+import { GridApi, createGrid, ColGroupDef, GridOptions } from '@ag-grid-community/core';
 
 function createColSetA(): ColGroupDef[] {
   return [
@@ -66,6 +66,8 @@ function createColSetB(): ColGroupDef[] {
   ]
 }
 
+let gridApi: GridApi<IOlympicData>;
+
 const gridOptions: GridOptions<IOlympicData> = {
   defaultColDef: {
     initialWidth: 100,
@@ -104,21 +106,21 @@ const gridOptions: GridOptions<IOlympicData> = {
 }
 
 function onBtSetA() {
-  gridOptions.api!.setColumnDefs(createColSetA())
+  gridApi!.setColumnDefs(createColSetA())
 }
 
 function onBtSetB() {
-  gridOptions.api!.setColumnDefs(createColSetB())
+  gridApi!.setColumnDefs(createColSetB())
 }
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', () => {
   const gridDiv = document.querySelector<HTMLElement>('#myGrid')!
-  new Grid(gridDiv, gridOptions)
+  gridApi = createGrid(gridDiv, gridOptions);;
 
   fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
     .then(response => response.json())
     .then(data => {
-      gridOptions.api!.setRowData(data)
+      gridApi!.setRowData(data)
     })
 })

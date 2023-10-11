@@ -1,4 +1,10 @@
-import { FirstDataRenderedEvent, Grid, GridOptions, ValueParserParams, } from '@ag-grid-community/core';
+import {
+  FirstDataRenderedEvent,
+  GridApi,
+  createGrid,
+  GridOptions,
+  ValueParserParams,
+} from '@ag-grid-community/core';
 import { AgAxisCaptionFormatterParams, AgCartesianSeriesTooltipRendererParams } from 'ag-charts-community';
 import { getData } from "./data";
 
@@ -9,6 +15,8 @@ function formatDate(date: Date | number) {
     year: undefined,
   }).format(new Date(date))
 }
+
+let gridApi: GridApi;
 
 const gridOptions: GridOptions = {
   columnDefs: [
@@ -103,5 +111,5 @@ function chartTooltipRenderer({ xValue, yValue }: AgCartesianSeriesTooltipRender
 // set up the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
   const gridDiv = document.querySelector<HTMLElement>('#myGrid')!;
-  new Grid(gridDiv, gridOptions);
+  gridApi = createGrid(gridDiv, gridOptions);;
 });

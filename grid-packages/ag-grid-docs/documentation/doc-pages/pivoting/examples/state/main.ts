@@ -1,4 +1,6 @@
-import { Grid, ColumnState, GridOptions } from '@ag-grid-community/core'
+import { GridApi, createGrid, ColumnState, GridOptions } from '@ag-grid-community/core';
+
+let gridApi: GridApi<IOlympicData>;
 
 const gridOptions: GridOptions<IOlympicData> = {
   columnDefs: [
@@ -30,21 +32,21 @@ var savedState: ColumnState[];
 var savedPivotMode: boolean;
 
 function printState() {
-  var state = gridOptions.api!.getColumnState()
+  var state = gridApi!.getColumnState()
   console.log(state)
 }
 
 function saveState() {
-  savedState = gridOptions.api!.getColumnState()
-  savedPivotMode = gridOptions.api!.isPivotMode()
+  savedState = gridApi!.getColumnState()
+  savedPivotMode = gridApi!.isPivotMode()
   console.log('column state saved')
 }
 
 function restoreState() {
   if (savedState) {
     // Pivot mode must be set first otherwise the columns we're trying to set state for won't exist yet
-    gridOptions.api!.setPivotMode(savedPivotMode)
-    gridOptions.api!.applyColumnState({ state: savedState, applyOrder: true })
+    gridApi!.setPivotMode(savedPivotMode)
+    gridApi!.applyColumnState({ state: savedState, applyOrder: true })
     console.log('column state restored')
   } else {
     console.log('no previous column state to restore!')
@@ -52,22 +54,22 @@ function restoreState() {
 }
 
 function togglePivotMode() {
-  var pivotMode = gridOptions.api!.isPivotMode()
-  gridOptions.api!.setPivotMode(!pivotMode)
+  var pivotMode = gridApi!.isPivotMode()
+  gridApi!.setPivotMode(!pivotMode)
 }
 
 function resetState() {
-  gridOptions.api!.resetColumnState()
-  gridOptions.api!.setPivotMode(false)
+  gridApi!.resetColumnState()
+  gridApi!.setPivotMode(false)
   console.log('column state reset')
 }
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
   var gridDiv = document.querySelector<HTMLElement>('#myGrid')!
-  new Grid(gridDiv, gridOptions)
+  gridApi = createGrid(gridDiv, gridOptions);;
 
   fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
     .then(response => response.json())
-    .then((data: IOlympicData[]) => gridOptions.api!.setRowData(data))
+    .then((data: IOlympicData[]) => gridApi!.setRowData(data))
 })

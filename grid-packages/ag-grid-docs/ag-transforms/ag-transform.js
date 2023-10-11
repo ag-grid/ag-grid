@@ -24,7 +24,6 @@ module.exports = function (fileInfo, api) {
     paths.insertAfter(j.importSpecifier(j.identifier('GridApi')));
     paths.remove();
 
-    // replace new Grid() with const api = createGrid()
     const gridCreation = source
         .find(j.NewExpression)
         .filter((path) => path.value.callee.name === 'Grid')

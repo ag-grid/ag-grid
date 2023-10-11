@@ -52,7 +52,7 @@ title: "Get Started with AG Grid"
 |// setup the grid after the page has finished loading
 |document.addEventListener('DOMContentLoaded', () => {
 |  const gridDiv = document.querySelector('#myGrid');
-|  new agGrid.Grid(gridDiv, gridOptions);
+|  const api = agGrid.createGrid(gridDiv, gridOptions);
 |});
 </snippet>
 </framework-specific-section>
@@ -184,14 +184,14 @@ title: "Get Started with AG Grid"
 |        // get div to host the grid
 |        const eGridDiv = document.getElementById("myGrid");
 |        // new grid instance, passing in the hosting DIV and Grid Options
-|        new agGrid.Grid(eGridDiv, gridOptions);
+|        const api = agGrid.createGrid(eGridDiv, gridOptions);
 |
 |        // Fetch data from server
 |        fetch("https://www.ag-grid.com/example-assets/row-data.json")
 |        .then(response => response.json())
 |        .then(data => {
 |          // load fetched data into grid
-|          gridOptions.api.setRowData(data);
+|          api.setRowData(data);
 |        });
 |    &lt;/script>
 |  &lt;/body>
@@ -292,7 +292,7 @@ title: "Get Started with AG Grid"
 <framework-specific-section frameworks="javascript">
 | ### Creating New Grid Instance
 | 
-| The grid instance is created using `new agGrid.Grid()` passing in the DOM
+| The grid instance is created using `agGrid.createGrid()` passing in the DOM
 | element to host the grid and the Grid Options.
 |
 </framework-specific-section>
@@ -302,7 +302,7 @@ title: "Get Started with AG Grid"
 | // get div to host the grid
 | const eGridDiv = document.getElementById("myGrid");
 | // new grid instance, passing in the hosting DIV and Grid Options
-| new agGrid.Grid(eGridDiv, gridOptions);
+| const api = agGrid.createGrid(eGridDiv, gridOptions);
 </snippet>
 </framework-specific-section>
 
@@ -320,7 +320,7 @@ title: "Get Started with AG Grid"
 |   .then(response => response.json())
 |   .then(data => {
 |      // load fetched data into grid
-|      gridOptions.api.setRowData(data);
+|      api.setRowData(data);
 |   });
 </snippet>
 </framework-specific-section>

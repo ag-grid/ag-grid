@@ -1,4 +1,4 @@
-import { ColDef, GridApi, GridOptions, createGrid } from '@ag-grid-community/core';
+import { ColDef, createGrid, GridApi, GridOptions } from '@ag-grid-community/core';
 import styled from '@emotion/styled';
 import { useCurrentFeature } from 'atoms/currentFeature';
 import { useEnabledFeatures } from 'atoms/enabledFeatures';

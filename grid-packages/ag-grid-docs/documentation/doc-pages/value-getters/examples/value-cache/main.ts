@@ -1,4 +1,12 @@
-import { ColDef, GetRowIdParams, Grid, GridOptions, ValueFormatterParams, ValueGetterParams } from '@ag-grid-community/core';
+import {
+  ColDef,
+  GetRowIdParams,
+  GridApi,
+  createGrid,
+  GridOptions,
+  ValueFormatterParams,
+  ValueGetterParams,
+} from '@ag-grid-community/core';
 import { getData } from "./data";
 
 
@@ -28,6 +36,8 @@ const columnDefs: ColDef[] = [
     },
   },
 ]
+
+let gridApi: GridApi;
 
 const gridOptions: GridOptions = {
   columnDefs: columnDefs,
@@ -68,29 +78,29 @@ function formatNumber(params: ValueFormatterParams) {
   // i pulled this from stack overflow, i have no idea how it works
   return Math.floor(number)
     .toString()
-    .replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,')
+    .replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,');
 }
 
 function onValueCache(valueCacheOn: boolean) {
   destroyOldGridIfExists()
-  createGrid(valueCacheOn)
+  makeGrid(valueCacheOn)
 }
 
 function destroyOldGridIfExists() {
-  if (gridOptions.api!) {
+  if (gridApi!) {
     console.log('==========> destroying old grid')
-    gridOptions.api!.destroy()
+    gridApi!.destroy()
   }
 }
 
-function createGrid(valueCacheOn: boolean) {
+function makeGrid(valueCacheOn: boolean) {
   console.log('==========> creating grid')
   callCount = 1
   gridOptions.valueCache = valueCacheOn
 
   // then similar to all the other examples, create the grid
   var gridDiv = document.querySelector<HTMLElement>('#myGrid')!
-  new Grid(gridDiv, gridOptions)
+  gridApi = createGrid(gridDiv, gridOptions);;
 }
 
 // setup the grid after the page has finished loading

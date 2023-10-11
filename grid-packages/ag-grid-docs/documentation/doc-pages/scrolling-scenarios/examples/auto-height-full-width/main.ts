@@ -1,4 +1,11 @@
-import { ColGroupDef, Grid, GridOptions, ICellRendererParams, IsFullWidthRowParams } from '@ag-grid-community/core';
+import {
+    ColGroupDef,
+    GridApi,
+    createGrid,
+    GridOptions,
+    ICellRendererParams,
+    IsFullWidthRowParams,
+} from '@ag-grid-community/core';
 
 const columnDefs: ColGroupDef[] = [
     {
@@ -32,6 +39,8 @@ const columnDefs: ColGroupDef[] = [
 ]
 
 const makes = ['Toyota', 'Ford', 'BMW', 'Phantom', 'Porsche'];
+
+let gridApi: GridApi;
 
 const gridOptions: GridOptions = {
     defaultColDef: {
@@ -113,5 +122,5 @@ function createRowData() {
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
     const gridDiv = document.querySelector<HTMLElement>('#myGrid')!;
-    new Grid(gridDiv, gridOptions)
+    gridApi = createGrid(gridDiv, gridOptions);;
 })

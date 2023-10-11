@@ -1,4 +1,4 @@
-import { Grid, GridOptions, ISetFilterParams } from '@ag-grid-community/core'
+import { GridApi, createGrid, GridOptions, ISetFilterParams } from '@ag-grid-community/core';
 
 var filterParams: ISetFilterParams = {
   comparator: (a: string | null, b: string | null) => {
@@ -8,6 +8,8 @@ var filterParams: ISetFilterParams = {
     return valA > valB ? 1 : -1;
   },
 }
+
+let gridApi: GridApi;
 
 const gridOptions: GridOptions = {
   columnDefs: [
@@ -47,5 +49,5 @@ function getRowData() {
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
   var gridDiv = document.querySelector<HTMLElement>('#myGrid')!
-  new Grid(gridDiv, gridOptions)
+  gridApi = createGrid(gridDiv, gridOptions);;
 })

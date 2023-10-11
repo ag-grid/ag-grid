@@ -1,4 +1,6 @@
-import { Grid, CellValueChangedEvent, GridOptions } from '@ag-grid-community/core'
+import { GridApi, createGrid, CellValueChangedEvent, GridOptions } from '@ag-grid-community/core';
+
+let gridApi: GridApi;
 
 const gridOptions: GridOptions = {
   columnDefs: [
@@ -67,5 +69,5 @@ function getRowData() {
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
   var gridDiv = document.querySelector<HTMLElement>('#myGrid')!
-  new Grid(gridDiv, gridOptions)
+  gridApi = createGrid(gridDiv, gridOptions);;
 })

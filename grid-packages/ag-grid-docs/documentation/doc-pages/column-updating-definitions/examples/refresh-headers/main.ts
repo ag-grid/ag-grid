@@ -1,5 +1,7 @@
-import { ColDef, Grid, GridOptions } from '@ag-grid-community/core'
+import { ColDef, GridApi, createGrid, GridOptions } from '@ag-grid-community/core';
 import { CustomHeader } from './customHeader_typescript'
+
+let gridApi: GridApi<IOlympicData>;
 
 const gridOptions: GridOptions<IOlympicData> = {
     columnDefs: [
@@ -36,7 +38,7 @@ function onBtUpperNames() {
     columnDefs.forEach(function (c) {
         c.headerName = c.field!.toUpperCase()
     })
-    gridOptions.api!.setColumnDefs(columnDefs)
+    gridApi!.setColumnDefs(columnDefs)
 }
 
 function onBtLowerNames() {
@@ -55,7 +57,7 @@ function onBtLowerNames() {
     columnDefs.forEach(function (c) {
         c.headerName = c.field
     })
-    gridOptions.api!.setColumnDefs(columnDefs)
+    gridApi!.setColumnDefs(columnDefs)
 }
 
 function onBtFilterOn() {
@@ -74,7 +76,7 @@ function onBtFilterOn() {
     columnDefs.forEach(function (c) {
         c.filter = true
     })
-    gridOptions.api!.setColumnDefs(columnDefs)
+    gridApi!.setColumnDefs(columnDefs)
 }
 
 function onBtFilterOff() {
@@ -93,7 +95,7 @@ function onBtFilterOff() {
     columnDefs.forEach(function (c) {
         c.filter = false
     })
-    gridOptions.api!.setColumnDefs(columnDefs)
+    gridApi!.setColumnDefs(columnDefs)
 }
 
 function onBtResizeOn() {
@@ -112,7 +114,7 @@ function onBtResizeOn() {
     columnDefs.forEach(function (c) {
         c.resizable = true
     })
-    gridOptions.api!.setColumnDefs(columnDefs)
+    gridApi!.setColumnDefs(columnDefs)
 }
 
 function onBtResizeOff() {
@@ -131,17 +133,17 @@ function onBtResizeOff() {
     columnDefs.forEach(function (c) {
         c.resizable = false
     })
-    gridOptions.api!.setColumnDefs(columnDefs)
+    gridApi!.setColumnDefs(columnDefs)
 }
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
     const gridDiv = document.querySelector<HTMLElement>('#myGrid')!
-    new Grid(gridDiv, gridOptions)
+    gridApi = createGrid(gridDiv, gridOptions);;
 
     fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
         .then(response => response.json())
         .then(function (data) {
-            gridOptions.api!.setRowData(data)
+            gridApi!.setRowData(data)
         })
 })
