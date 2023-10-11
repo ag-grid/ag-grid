@@ -34,7 +34,7 @@ const DEV_LICENSE_DATA: LicenseData[] = [
         id: 'single-application',
         subHeading: 'AG Charts Enterprise',
         licenseBenefits: ['Perpetual License', '1 Year of Support', '1 Year of Updates'],
-        priceFullDollars: '299',
+        priceFullDollars: '399',
         launchPrice: '184',
         buyLink: '/ecommerce/#/ecommerce/?licenseType=multi',
         Logo: AGChartsLogo

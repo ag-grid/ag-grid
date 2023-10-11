@@ -74,12 +74,12 @@ const LicensePricing = () => {
                                 <p className={styles.products}><b>AG Grid</b> + <b>AG Charts</b></p>
 
                                 <p className='font-size-small'>Limited time launch price</p>
-                                <p className='font-size-small'>Standard price <b>$1298</b></p>
+                                <p className='font-size-small'>Standard price <b>$1,398</b></p>
                             </div>
 
                             <div className={styles.pricing}>
                                 <p className='font-size-small'>Starting at...</p>
-                                <p className={styles.price}>$1183</p>
+                                <p className={styles.price}>$1,183</p>
                                 <p className='font-size-small'>Per Developer</p>
                             </div>
 
