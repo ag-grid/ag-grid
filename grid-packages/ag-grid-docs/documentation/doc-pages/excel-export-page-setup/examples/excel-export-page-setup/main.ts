@@ -69,7 +69,7 @@ document.addEventListener('DOMContentLoaded', function () {
   form?.addEventListener('submit', (e) => onFormSubmit(e));
 
   if (gridDiv) {
-    gridApi = createGrid(gridDiv, gridOptions);;
+    gridApi = createGrid(gridDiv, gridOptions);
     fetch('https://www.ag-grid.com/example-assets/small-olympic-winners.json')
       .then(response => response.json())
       .then(data =>

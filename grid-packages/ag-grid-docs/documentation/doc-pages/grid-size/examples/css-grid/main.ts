@@ -25,6 +25,6 @@ const gridOptions: GridOptions = {
 
 document.addEventListener('DOMContentLoaded', function () {
   var eGridDiv = document.querySelector<HTMLElement>('#myGrid')!
-  gridApi = createGrid(eGridDiv, gridOptions);;
+  gridApi = createGrid(eGridDiv, gridOptions);
   gridApi!.sizeColumnsToFit()
 })

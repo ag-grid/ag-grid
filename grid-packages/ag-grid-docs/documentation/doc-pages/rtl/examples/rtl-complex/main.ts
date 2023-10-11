@@ -808,6 +808,6 @@ function languageCellRenderer(params: ICellRendererParams) {
 document.addEventListener('DOMContentLoaded', function () {
     const gridDiv = document.querySelector<HTMLElement>('#myGrid')!;
 
-    gridApi = createGrid(gridDiv, gridOptions);;
+    gridApi = createGrid(gridDiv, gridOptions);
     createData()
 })

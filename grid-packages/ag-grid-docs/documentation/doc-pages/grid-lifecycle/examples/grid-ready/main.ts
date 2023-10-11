@@ -35,9 +35,9 @@ function reloadGrid() {
   setTimeout(() => {
     // Artificial delay to show grid being destroyed and re-created
     const gridDiv = document.querySelector<HTMLElement>("#myGrid")!
-    gridApi = createGrid(gridDiv, gridOptions);;
+    gridApi = createGrid(gridDiv, gridOptions);
   }, 500)
 }
 
 const gridDiv = document.querySelector<HTMLElement>('#myGrid')!;
-gridApi = createGrid(gridDiv, gridOptions);;
+gridApi = createGrid(gridDiv, gridOptions);

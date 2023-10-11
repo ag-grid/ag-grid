@@ -132,7 +132,7 @@ function getEventAndCallbackNames() {
         const isEvent = v.meta?.isEvent && !k.startsWith('on');
         return isCallback || isCallSigInterface || isEvent;
     }).map(([k, v]) => k);
-    return callbacksAndEvents;;
+    return callbacksAndEvents;
 }
 
 export function vanillaToReactFunctional(bindings: any, componentFilenames: string[], allStylesheets: string[]): (importType: ImportType) => string {

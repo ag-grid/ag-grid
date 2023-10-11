@@ -135,7 +135,7 @@ document.addEventListener('DOMContentLoaded', function () {
     document.querySelector<HTMLElement>('#myGrid')! ||
     document.querySelector('#animationGrid')
 
-  gridApi = createGrid(gridDiv, gridOptions);;
+  gridApi = createGrid(gridDiv, gridOptions);
 
   fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
     .then(response => response.json())
