@@ -264,7 +264,7 @@ function internalParser(examplePath, {
         matches: tsNodeIsHttpOpen,
         apply: (bindings, node) => {
             const url = node.expression.arguments[1].raw;
-            const callback = '{ params.api.setRowData(data); }';
+            const callback = '{ gridApi.setRowData(data); }';
 
             bindings.data = {url, callback};
         }
