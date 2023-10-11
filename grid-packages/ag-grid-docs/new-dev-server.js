@@ -850,7 +850,6 @@ module.exports = async (skipFrameworks, skipExampleFormatting, chartsOnly, skipE
                 console.log("Examples Generated");
 
                 console.log("Watch Typescript examples...");
-                // spl todo
                 // await watchValidateExampleTypes();
 
                 console.timeEnd("Generating examples");
