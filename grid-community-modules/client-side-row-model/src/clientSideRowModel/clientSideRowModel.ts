@@ -76,8 +76,8 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel 
     private applyAsyncTransactionsTimeout: number | undefined;
     /** Has the start method been called */
     private hasStarted: boolean = false;
-    /** Has data been set into the node manager */
-    private hasNodeManagerStarted: boolean = false;
+    /** E.g. data has been set into the node manager already */
+    private shouldSkipSettingDataOnStart: boolean = false;
 
     @PostConstruct
     public init(): void {
@@ -164,17 +164,17 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel 
 
     public start(): void {
         this.hasStarted = true;
-        if (this.hasNodeManagerStarted) {
+        if (this.shouldSkipSettingDataOnStart) {
             this.updateAfterSetRowData();
         } else {
-            this.setInitialRowData();
+            this.setInitialData();
         }
     }
 
-    private setInitialRowData(): void {
-        this.hasNodeManagerStarted = true;
+    private setInitialData(): void {
         const rowData = this.gridOptionsService.get('rowData');
         if (rowData) {
+            this.shouldSkipSettingDataOnStart = true;
             this.setRowData(rowData);
         }
     }
@@ -1190,7 +1190,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel 
 
     private onGridReady(): void {
         if (this.hasStarted) { return; }
-
-        this.setInitialRowData();
+        // App can start using API to add transactions, so need to add data into the node manager if not started
+        this.setInitialData();
     }
 }
