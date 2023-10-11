@@ -1805,7 +1805,6 @@ in your browser of choice.</p>
 </framework-specific-section>
 
 <framework-specific-section frameworks="vue">
-<snippet transform={false} language="jsx">
 | ## Getting Started with AG Grid Enterprise
 |
 | We would love for you to try out AG Grid Enterprise. There is no cost to trial.
@@ -1818,8 +1817,6 @@ in your browser of choice.</p>
 |
 | In addition to `ag-grid-community` and `ag-grid-vue3`, AG Grid Enterprise also needs
 | `ag-grid-enterprise`.
-|
-</snippet>
 </framework-specific-section>
 
 <framework-specific-section frameworks="vue">
