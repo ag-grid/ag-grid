@@ -1,4 +1,3 @@
-import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
 import { ToggleButtonPreview } from 'components/preview/ToggleButtonPreview';
 import { Feature } from '.';
 
@@ -19,5 +18,4 @@ export const toggleButtonsFeature: Feature = {
     // TODO add '--ag-input-focus-box-shadow' when shadow editor ready
   ],
   previewComponent: ToggleButtonPreview,
-  modules: [ClientSideRowModelModule],
 };

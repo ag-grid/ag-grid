@@ -1,4 +1,3 @@
-import { useRenderedVariable } from 'atoms/renderedTheme';
 import { useVariableValueAtom } from 'atoms/values';
 import { useGetVariableDefault } from 'atoms/variableDefaults';
 import { useVariableDescription } from 'atoms/variableDescriptions';
@@ -22,7 +21,6 @@ export type VariableControlProps = {
 
 const VariableControl = ({ variableName, feature }: VariableControlProps): JSX.Element => {
   const [value, setValue] = useVariableValueAtom(variableName);
-  const renderedValue = useRenderedVariable(variableName);
   const getVariableDefault = useGetVariableDefault();
   const info = getVariableInfoOrThrow(variableName);
   const description = useVariableDescription(variableName);
@@ -35,9 +33,8 @@ const VariableControl = ({ variableName, feature }: VariableControlProps): JSX.E
     prefix = '--ag-';
   }
   const label = kebabCaseToTitleCase(variableName, prefix);
-
-  const renderDefault = () => {
-    const defaultValue = renderedValue || getVariableDefault(variableName);
+  if (!value) {
+    const defaultValue = getVariableDefault(variableName);
     return (
       <Control
         label={label}
@@ -50,10 +47,6 @@ const VariableControl = ({ variableName, feature }: VariableControlProps): JSX.E
         <DefaultValue value={defaultValue} />
       </Control>
     );
-  };
-
-  if (!value) {
-    return renderDefault();
   }
 
   const renderInput = (): ReactElement => {

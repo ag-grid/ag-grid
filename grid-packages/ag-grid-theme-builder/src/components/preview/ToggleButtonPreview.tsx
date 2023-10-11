@@ -44,15 +44,15 @@ export const ToggleButtonPreview = () => (
       <PreviewSubtitle>Focussed / active</PreviewSubtitle>
       <PreviewRow>
         <PreviewLabel>Off</PreviewLabel>
-        <MockInputContent kind="toggle-button" state="unchecked" focus />
+        <MockInputContent kind="toggle-button" state="unchecked" focussed />
       </PreviewRow>
       <PreviewRow>
         <PreviewLabel>On</PreviewLabel>
-        <MockInputContent kind="toggle-button" state="checked" focus />
+        <MockInputContent kind="toggle-button" state="checked" focussed />
       </PreviewRow>
       <PreviewRow>
         <PreviewLabel>Indeterminate</PreviewLabel>
-        <MockInputContent kind="toggle-button" state="indeterminate" focus />
+        <MockInputContent kind="toggle-button" state="indeterminate" focussed />
       </PreviewRow>
     </PreviewTable>
   </PreviewPanel>

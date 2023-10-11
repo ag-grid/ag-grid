@@ -12,6 +12,7 @@ import { coreFeature } from './core';
 import { filtersToolPanelFeature } from './filtersToolPanel';
 import { gridBodyFeature } from './gridBody';
 import { headerFeature } from './header';
+import { inputsFeature } from './inputs';
 import { overlayFeature } from './overlay';
 import { rangeSelectionFeature } from './rangeSelection';
 import { rowGroupingFeature } from './rowGrouping';
@@ -56,6 +57,7 @@ export const allFeatures: ReadonlyArray<Feature> = [
   contextMenuFeature,
   toggleButtonsFeature,
   checkboxesFeature,
+  inputsFeature,
 ];
 
 const featuresByName = indexBy(allFeatures, 'name');

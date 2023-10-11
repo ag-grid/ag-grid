@@ -12,5 +12,6 @@ export const bordersFeature: Feature = {
     '--ag-secondary-border-color',
     '--ag-row-border-style',
     '--ag-row-border-color',
+    '--ag-cell-horizontal-border',
   ],
 };

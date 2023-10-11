@@ -1,7 +1,8 @@
 import ColorLib from 'color';
 import { clamp } from 'model/utils';
+import { AbstractValue } from './AbstractValue';
 
-export class Color {
+export class Color extends AbstractValue {
   readonly type = 'color' as const;
 
   constructor(
@@ -10,6 +11,7 @@ export class Color {
     readonly b: number,
     readonly a: number,
   ) {
+    super();
     this.r = clamp(r, 0, 1);
     this.g = clamp(g, 0, 1);
     this.b = clamp(b, 0, 1);
@@ -22,6 +24,10 @@ export class Color {
     const b = Math.round(this.b * 255);
     const a = Math.floor(this.a * 100) / 100;
     return a === 1 ? `rgb(${r}, ${g}, ${b})` : `rgba(${r}, ${g}, ${b}, ${a})`;
+  }
+
+  describe(): string {
+    return this.a === 0 ? 'transparent' : this.toCss();
   }
 
   isTransparent() {

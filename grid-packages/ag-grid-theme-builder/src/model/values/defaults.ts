@@ -4,7 +4,7 @@ import { Border } from './Border';
 import { BorderStyle } from './BorderStyle';
 import { Color } from './Color';
 import { Dimension } from './Dimension';
-import { DisplayValue } from './Display';
+import { Display } from './Display';
 
 export const colorDefaultValue = new Color(128, 128, 128, 1);
 export const dimensionDefaultValue = new Dimension(1, 'px');
@@ -14,7 +14,7 @@ export const borderDefaultValue = new Border(
   dimensionDefaultValue,
   colorDefaultValue,
 );
-export const displayDefaultValue = new DisplayValue('block');
+export const displayDefaultValue = new Display('block');
 
 export const pickRequiredBorderValues = (
   info: BorderVariableInfo,
