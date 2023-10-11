@@ -3,7 +3,8 @@ import {
     getFunctionName,
     getModuleRegistration,
     ImportType,
-    isInstanceMethod
+    isInstanceMethod,
+    replaceGridReadyRowData
 } from './parser-utils';
 import {getImport, toConst, toInput, toOutput, toRef} from './vue-utils';
 import {
@@ -34,9 +35,7 @@ function getOnGridReadyCode(bindings: any): string {
     if (data) {
         const {url, callback} = data;
 
-        const setRowDataBlock = callback.indexOf('gridApi.setRowData') >= 0 ?
-        callback.replace("gridApi.setRowData(data)", "rowData.value = data") :
-        callback;
+        const setRowDataBlock = replaceGridReadyRowData(callback, 'rowData.value');
         
         additionalLines.push(`
             const updateData = (data) => ${setRowDataBlock};

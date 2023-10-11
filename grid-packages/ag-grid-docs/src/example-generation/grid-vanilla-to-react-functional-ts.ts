@@ -186,7 +186,7 @@ export function vanillaToReactFunctionalTs(bindings: any, componentFilenames: st
 
         const additionalInReady = [];
         if (data) {
-            const setRowDataBlock = data.callback.replace('api!.setRowData', 'setRowData');
+            const setRowDataBlock = data.callback.replace('gridApi!.setRowData', 'setRowData');
 
             additionalInReady.push(`
                 fetch(${data.url})
@@ -197,7 +197,7 @@ export function vanillaToReactFunctionalTs(bindings: any, componentFilenames: st
 
         if (onGridReady) {
             const hackedHandler = onGridReady.replace(/^{|}$/g, '')
-                .replace('api!.setRowData', 'setRowData');
+                .replace('gridApi!.setRowData', 'setRowData');
             additionalInReady.push(hackedHandler);
         }
 

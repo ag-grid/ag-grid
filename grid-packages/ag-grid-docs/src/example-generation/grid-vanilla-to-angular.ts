@@ -1,12 +1,15 @@
-import { convertTemplate, getImport, toMemberWithValue, toConst, toInput, toOutput } from './angular-utils';
+import { convertTemplate,getImport,toConst,toInput,toMemberWithValue,toOutput } from './angular-utils';
 import { templatePlaceholder } from "./grid-vanilla-src-parser";
-import { addBindingImports, addGenericInterfaceImport, getPropertyInterfaces, handleRowGenericInterface, ImportType, isInstanceMethod, removeFunctionKeyword } from './parser-utils';
+import { addBindingImports,addGenericInterfaceImport,getPropertyInterfaces,handleRowGenericInterface,ImportType,isInstanceMethod,removeFunctionKeyword, replaceGridReadyRowData } from './parser-utils';
 const path = require('path');
 
-function getOnGridReadyCode(readyCode: string, resizeToFit: boolean,
-    data: { url: string, callback: string; },
+function getOnGridReadyCode(
+    readyCode: string,
+    resizeToFit: boolean,
+    data: { url: string; callback: string },
     rowDataType: string | undefined,
-    hasApi: boolean): string {
+    hasApi: boolean
+): string {
     const additionalLines = [];
 
     if (readyCode) {
@@ -19,14 +22,19 @@ function getOnGridReadyCode(readyCode: string, resizeToFit: boolean,
 
     if (data) {
         const { url, callback } = data;
-        const setRowDataBlock = callback.replace(/gridApi(!?)\.setRowData\(data\)/, 'this.rowData = data');
+        const setRowDataBlock = replaceGridReadyRowData(callback, 'this.rowData');        
         additionalLines.push(`this.http.get<${rowDataType}[]>(${url}).subscribe(data => ${setRowDataBlock});`);
     }
-    const gridReadyEventParam = rowDataType !== 'any' ? `<${rowDataType}>` : ''
+    const gridReadyEventParam = rowDataType !== 'any' ? `<${rowDataType}>` : '';
     if (hasApi || additionalLines.length > 0) {
+        // use params in gridReady event
+        const additional = (additionalLines.length > 0
+            ? `\n\n        ${additionalLines.join('\n        ')}`
+            : ''
+        )//.replace(/([\s\(!])gridApi(\W)/g, '$1params.api$2');
         return `
         onGridReady(params: GridReadyEvent${gridReadyEventParam}) {
-            ${hasApi ? 'this.gridApi = params.api;' : ''}${additionalLines.length > 0 ? `\n\n        ${additionalLines.join('\n        ')}` : ''}
+            ${hasApi ? 'this.gridApi = params.api;' : ''}${additional}
         }`;
     } else {
         return '';
@@ -36,7 +44,7 @@ function getOnGridReadyCode(readyCode: string, resizeToFit: boolean,
 function addModuleImports(imports: string[], bindings: any, allStylesheets: string[]): string[] {
     const { gridSettings, imports: bindingImports, properties } = bindings;
 
-    imports.push("// NOTE: Angular CLI does not support component CSS imports: angular-cli/issues/23273");
+    imports.push('// NOTE: Angular CLI does not support component CSS imports: angular-cli/issues/23273');
     imports.push("import '@ag-grid-community/styles/ag-grid.css';");
 
     // to account for the (rare) example that has more than one class...just default to alpine if it does
@@ -45,8 +53,8 @@ function addModuleImports(imports: string[], bindings: any, allStylesheets: stri
     const theme = gridSettings.theme ? gridSettings.theme.replace('-dark', '') : 'ag-theme-alpine';
     imports.push(`import "@ag-grid-community/styles/${theme}.css";`);
 
-    if(allStylesheets && allStylesheets.length > 0) {
-        allStylesheets.forEach(styleSheet => imports.push(`import '../${path.basename(styleSheet)}';`));
+    if (allStylesheets && allStylesheets.length > 0) {
+        allStylesheets.forEach((styleSheet) => imports.push(`import '../${path.basename(styleSheet)}';`));
     }
 
     let propertyInterfaces = getPropertyInterfaces(properties);
@@ -54,14 +62,14 @@ function addModuleImports(imports: string[], bindings: any, allStylesheets: stri
     bImports.push({
         module: `'@ag-grid-community/core'`,
         isNamespaced: false,
-        imports: [...propertyInterfaces, 'GridReadyEvent', 'GridApi']
-    })
+        imports: [...propertyInterfaces, 'GridReadyEvent', 'GridApi'],
+    });
 
     if (bImports.length > 0) {
         addBindingImports(bImports, imports, false, true);
     }
 
-    imports.push('// Required feature modules are registered in app.module.ts')
+    imports.push('// Required feature modules are registered in app.module.ts');
 
     return imports;
 }

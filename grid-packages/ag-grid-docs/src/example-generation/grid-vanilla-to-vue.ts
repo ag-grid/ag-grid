@@ -1,7 +1,39 @@
-import { getModuleRegistration, ImportType } from './parser-utils';
+import { getModuleRegistration, ImportType, replaceGridReadyRowData } from './parser-utils';
 import { getImport, toOutput } from './vue-utils';
-import { convertDefaultColDef, getAllMethods, getColumnDefs, getOnGridReadyCode, getPropertyBindings, getTemplate } from "./grid-vanilla-to-vue-common";
+import { convertDefaultColDef, getAllMethods, getColumnDefs, getPropertyBindings, getTemplate } from "./grid-vanilla-to-vue-common";
 const path = require('path');
+
+function getOnGridReadyCode(bindings: any): string {
+    const { onGridReady, resizeToFit, data } = bindings;
+    const additionalLines = [];
+
+    if (onGridReady) {
+        additionalLines.push(onGridReady.trim().replace(/^\{|\}$/g, '').replace(/([\s\(!])gridApi(\W)/g, '$1params.api$2'));
+    }
+
+    if (resizeToFit) {
+        additionalLines.push('params.api.sizeColumnsToFit();');
+    }
+
+    if (data) {
+        const { url, callback } = data;
+
+        const setRowDataBlock = replaceGridReadyRowData(callback, 'this.rowData');
+
+        additionalLines.push(`
+            const updateData = (data) => ${setRowDataBlock};
+            
+            fetch(${url})
+                .then(resp => resp.json())
+                .then(data => updateData(data));`
+        );
+    }
+
+    return `onGridReady(params) {
+        this.gridApi = params.api;
+        ${additionalLines.length > 0 ? `\n\n        ${additionalLines.join('\n        ')}` : ''}
+    }`;
+}
 
 function getModuleImports(bindings: any, componentFileNames: string[], allStylesheets: string[]): string[] {
     const { gridSettings } = bindings;

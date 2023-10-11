@@ -676,3 +676,11 @@ export function addGenericInterfaceImport(imports: string[], tData: string, bind
         imports.push(`import { ${tData} } from './interfaces'`)
     }
 }
+
+export function replaceGridReadyRowData(callback: string, rowDataSetter: string){
+    return callback
+    // replace gridApi.setRowData(data) with this.rowData = data
+    .replace(/gridApi(!?)\.setRowData\(data\)/, `${rowDataSetter} = data`)
+    // replace gridApi.setRowData(data.map(...)) with this.rowData = data.map(...)
+    .replace(/gridApi(!?)\.setRowData\(data/, `${rowDataSetter} = (data`);
+}
