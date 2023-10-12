@@ -315,22 +315,22 @@ const FeaturesSection = () => {
         {
           'name': 'Pagination',
           'desc': 'Pagination allows the grid to paginate rows, removing the need for a vertical scroll to view more',
-          'img': '/images/temp-images-docs-testing/003-documents.png'
+          'img': ''
         },
         {
           'name': 'Sorting',
           'desc': 'Sort your rows using default options, or build your own custom sorting function',
-          'img': '/images/temp-images-docs-testing/008-sort-up.png'
+          'img': ''
         },
         {
           'name': 'Editing',
           'desc': 'Directly edit cell data within the grid, either by default or based on a condition',
-          'img': '/images/temp-images-docs-testing/009-pen.png'
+          'img': ''
         },
         {
           'name': 'Grouping',
           'desc': 'Enable multiple levels of columns from the colummn header or show/hide columns',
-          'img': '/images/temp-images-docs-testing/002-grouping.png'
+          'img': ''
         }
       ]
     },
@@ -341,22 +341,22 @@ const FeaturesSection = () => {
         {
           'name': 'Master / Detail',
           'desc': 'Top level grid called a Master Grid having rows that expand.',
-          'img': '/'
+          'img': ''
         },
         {
           'name': 'Pivoting',
           'desc': 'Take a columns values and turn them into columns.',
-          'img': '/'
+          'img': ''
         },
         {
           'name': 'Exporting',
           'desc': 'Excel (xlsx) export functionality without any third party libraries',
-          'img': '/'
+          'img': ''
         },
         {
           'name': 'Adv. Filtering',
           'desc': 'Complex filter conditions in a single type-ahead input',
-          'img': '/'
+          'img': ''
         }
       ]
     },
@@ -366,22 +366,22 @@ const FeaturesSection = () => {
         {
           'name': 'Tool Panels',
           'desc': '',
-          'img': '/'
+          'img': ''
         },
         {
           'name': 'Column Menu',
           'desc': '',
-          'img': '/'
+          'img': ''
         },
         {
           'name': 'Column Menu',
           'desc': '',
-          'img': '/'
+          'img': ''
         },
         {
           'name': 'Status Bar',
           'desc': '',
-          'img': '/'
+          'img': ''
         }
       ]
     },
@@ -391,22 +391,22 @@ const FeaturesSection = () => {
         {
           'name': 'Themes',
           'desc': '',
-          'img': '/'
+          'img': ''
         },
         {
           'name': 'Figma Design',
           'desc': '',
-          'img': '/'
+          'img': ''
         },
         {
           'name': 'Cell Renderers',
           'desc': '',
-          'img': '/'
+          'img': ''
         },
         {
           'name': 'Value Formatters',
           'desc': '',
-          'img': '/'
+          'img': ''
         }
       ]
     }
@@ -533,9 +533,9 @@ const HelpAndCommunitySection = () => {
         </div>
         <div className={classnames(styles.cardBody)}>
           <div className={classnames(styles.socialIconsContainer)}>
-            <img src={"/images/temp-images-docs-testing/005-github.png"} className={classnames(styles.socialIcon)} />
-            <img src={"/images/temp-images-docs-testing/007-stack-overflow.png"} className={classnames(styles.socialIcon)} />
-            <img src={"/images/temp-images-docs-testing/004-info.png"} className={classnames(styles.socialIcon)} />
+            <img alt='GitHub' className={classnames(styles.socialIcon)} />
+            <img alt='StackOverflow' className={classnames(styles.socialIcon)} />
+            <img alt='ZenDesk' className={classnames(styles.socialIcon)} />
           </div>
         </div>
       </div>
@@ -545,11 +545,9 @@ const HelpAndCommunitySection = () => {
         </div>
         <div className={classnames(styles.cardBody)}>
           <div className={classnames(styles.socialIconsContainer)}>
-            <img src={"/images/temp-images-docs-testing/001-youtube.png"} className={classnames(styles.socialIcon)} />
-            <img src={"/images/temp-images-docs-testing/010-twitter.png"} className={classnames(styles.socialIcon)} />
-            <img src={"/images/temp-images-docs-testing/002-linkedin.png"} className={classnames(styles.socialIcon)} />
-            <img src={"/images/temp-images-docs-testing/001-blogger.png"} className={classnames(styles.socialIcon)} />
-            <img src={"/images/temp-images-docs-testing/003-newsletter.png"} className={classnames(styles.socialIcon)} />
+            <img alt="Youtube" className={classnames(styles.socialIcon)} />
+            <img alt="Twitter" lassName={classnames(styles.socialIcon)} />
+            <img alt="LinkedIn" className={classnames(styles.socialIcon)} />
           </div>
         </div>
       </div>
@@ -591,9 +589,9 @@ const HomePage = ({ pageContext: { framework } }) => {
             <p className="font-size-large">
               AG Grid is an open-source <span style={{ textTransform: 'capitalize' }}>{framework}</span> data grid with free and enterprise versions. AG Grid can be used with any JS framework and has dedicated support for {listOtherFrameworks()}.
             </p>
-            <button>
-              GET STARTED
-            </button>
+            <a style={{ background: 'var(--button-color)', padding: '12px', borderRadius: '8px', color: 'white'}}>
+              Get Started
+            </a>
             <a style={{ marginLeft: 24, fontSize: 18, color: 'grey', textDecoration: 'underline', cursor: 'pointer' }}>
               API Reference
             </a>
