@@ -70,8 +70,8 @@ input[type='submit']:not([class^="ag-"]),
 
 .button-secondary:not([class^="ag-"]) {
     --button-color: var(--primary-100);
-    --button-hover-color: var(--primary-200);
-    --button-active-color: var(--primary-300);
+    --button-hover-color: var(--primary-300);
+    --button-active-color: var(--primary-400);
     --button-text-color: var(--dark-blue-800);
     --button-focus-box-shadow-color: var(--background-300);
 }

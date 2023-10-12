@@ -12,6 +12,9 @@
 }
 
 .option {
+    --link-color: var(--default-text-color);
+    --link-hover-color: var(--default-text-color);
+
     display: flex;
     position: relative;
     justify-content: center;
@@ -38,8 +41,6 @@
     }
 
     span {
-        --text-color: var(--default-text-color);
-
         display: none;
         margin-left: 4px;
         font-size: var(--font-size);
