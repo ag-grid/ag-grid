@@ -234,8 +234,7 @@ export class FullStore extends RowNodeBlock implements IServerSideStore {
         this.allNodesMap = {};
 
         if (!params.rowData) {
-            const message = 'AG Grid: "params.data" is missing from Server-Side Row Model success() callback. Please use the "data" attribute. If no data is returned, set an empty list.';
-            _.doOnce(() => console.warn(message, params), 'FullStore.noData');
+            _.warnOnce('"params.data" is missing from Server-Side Row Model success() callback. Please use the "data" attribute. If no data is returned, set an empty list.');
         }
 
         this.createOrRecycleNodes(nodesToRecycle, params.rowData);

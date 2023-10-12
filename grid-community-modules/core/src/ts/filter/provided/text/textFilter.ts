@@ -188,7 +188,7 @@ export class TextFilter extends SimpleFilter<TextFilterModel, string> {
     private getTextMatcher(): TextMatcher {
         const legacyComparator = (this.textFilterParams as any).textCustomComparator;
         if (legacyComparator) {
-            _.doOnce(() => console.warn('AG Grid - textCustomComparator is deprecated, use textMatcher instead.'), 'textCustomComparator.deprecated');
+            _.warnOnce('textCustomComparator is deprecated, use textMatcher instead.');
             return ({ filterOption, value, filterText }) => legacyComparator(filterOption, value, filterText);
         }
         return this.textFilterParams.textMatcher || TextFilter.DEFAULT_MATCHER

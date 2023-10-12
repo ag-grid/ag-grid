@@ -5,7 +5,7 @@ import { RefSelector } from '../../../widgets/componentAnnotations';
 import { serialiseDate, parseDateTimeFromString, dateToFormattedString } from '../../../utils/date';
 import { getSafariVersion, isBrowserChrome, isBrowserFirefox, isBrowserSafari } from '../../../utils/browser';
 import { IAfterGuiAttachedParams } from '../../../interfaces/iAfterGuiAttachedParams';
-import { doOnce } from '../../../utils/function';
+import { warnOnce } from '../../../utils/function';
 
 export class DefaultDateComponent extends Component implements IDateComp {
     @RefSelector('eDateInput') private readonly eDateInput: AgInputTextField;
@@ -66,17 +66,11 @@ export class DefaultDateComponent extends Component implements IDateComp {
         } = params.filterParams || {};
 
         if (minValidDate && minValidYear) {
-            doOnce(
-                () => console.warn('AG Grid: DateFilter should not have both minValidDate and minValidYear parameters set at the same time! minValidYear will be ignored.'),
-                'DateFilter.minValidDateAndMinValidYearWarning',
-            );
+            warnOnce('DateFilter should not have both minValidDate and minValidYear parameters set at the same time! minValidYear will be ignored.');
         }
 
         if (maxValidDate && maxValidYear) {
-            doOnce(
-                () => console.warn('AG Grid: DateFilter should not have both maxValidDate and maxValidYear parameters set at the same time! maxValidYear will be ignored.'),
-                'DateFilter.maxValidDateAndMaxValidYearWarning',
-            );
+            warnOnce('DateFilter should not have both maxValidDate and maxValidYear parameters set at the same time! maxValidYear will be ignored.');
         }
 
         if (minValidDate && maxValidDate) {
@@ -84,10 +78,7 @@ export class DefaultDateComponent extends Component implements IDateComp {
                 .map(v => v instanceof Date ? v : parseDateTimeFromString(v));
 
             if (parsedMinValidDate && parsedMaxValidDate && parsedMinValidDate.getTime() > parsedMaxValidDate.getTime()) {
-                doOnce(
-                    () => console.warn('AG Grid: DateFilter parameter minValidDate should always be lower than or equal to parameter maxValidDate.'),
-                    'DateFilter.minValidDateAndMaxValidDateWarning',
-                );
+                warnOnce('DateFilter parameter minValidDate should always be lower than or equal to parameter maxValidDate.');
             }
         }
 

@@ -8,7 +8,7 @@ import { RowModelType } from './interfaces/iRowModel';
 import { ModuleNames } from './modules/moduleNames';
 import { ModuleRegistry } from './modules/moduleRegistry';
 import { PropertyKeys } from './propertyKeys';
-import { doOnce } from './utils/function';
+import { warnOnce } from './utils/function';
 import { fuzzyCheckStrings } from './utils/fuzzyMatch';
 import { iterateObject } from './utils/object';
 
@@ -17,7 +17,7 @@ type DeprecatedReference<T> = { [key: string]: { newProp?: keyof T, version: str
 export function logDeprecation<T extends {}>(version: string, oldProp: keyof T, newProp?: keyof T, message?: string) {
     const newPropMsg = newProp ? `Please use '${newProp.toString()}' instead. ` : '';
     const oldPropStr = oldProp?.toString();
-    doOnce(() => console.warn(`AG Grid: since v${version}, '${oldPropStr}' is deprecated. ${newPropMsg}${message ?? ''}`), `Deprecated_${oldPropStr}`);
+    warnOnce(`since v${version}, '${oldPropStr}' is deprecated. ${newPropMsg}${message ?? ''}`);
 }
 
 // Vue adds these properties to all objects, so we ignore them when checking for invalid properties
@@ -201,12 +201,11 @@ export class GridOptionsValidator {
         );
 
         iterateObject<any>(invalidProperties, (key, value) => {
-
-            doOnce(() => console.warn(`AG Grid: invalid ${containerName} property '${key}' did you mean any of these: ${value.slice(0, 8).join(", ")}`), 'invalidProperty' + containerName + key);
+            warnOnce(`invalid ${containerName} property '${key}' did you mean any of these: ${value.slice(0, 8).join(", ")}`);
         });
 
         if (Object.keys(invalidProperties).length > 0) {
-            doOnce(() => console.warn(`AG Grid: to see all the valid ${containerName} properties please check: ${docsUrl}`), 'invalidProperties' + containerName + docsUrl);
+            warnOnce(`to see all the valid ${containerName} properties please check: ${docsUrl}`);
         }
     }
 

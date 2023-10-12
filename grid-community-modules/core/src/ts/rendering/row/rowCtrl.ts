@@ -16,7 +16,7 @@ import { ModuleRegistry } from "../../modules/moduleRegistry";
 import { setAriaExpanded, setAriaLabel, setAriaRowIndex, setAriaSelected } from "../../utils/aria";
 import { isElementChildOfClass } from "../../utils/dom";
 import { isStopPropagationForAgGrid } from "../../utils/event";
-import { doOnce, executeNextVMTurn } from "../../utils/function";
+import { warnOnce, executeNextVMTurn } from "../../utils/function";
 import { exists, makeNull } from "../../utils/generic";
 import { escapeString } from "../../utils/string";
 import { Beans } from "../beans";
@@ -361,9 +361,7 @@ export class RowCtrl extends BeanStub {
 
     private addRowDraggerToRow(gui: RowGui) {
         if (this.gridOptionsService.is('enableRangeSelection')) {
-            doOnce(() => {
-                console.warn('AG Grid: Setting `rowDragEntireRow: true` in the gridOptions doesn\'t work with `enableRangeSelection: true`');
-            }, 'rowDragAndRangeSelectionEnabled');
+            warnOnce('Setting `rowDragEntireRow: true` in the gridOptions doesn\'t work with `enableRangeSelection: true`');
             return;
         }
         const translate = this.beans.localeService.getLocaleTextFunc();

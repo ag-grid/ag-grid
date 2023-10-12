@@ -76,7 +76,7 @@ export class GridSerializer extends BeanStub {
         const shouldSkipCurrentGroup = node.allChildrenCount === 1 && (skipSingleChildrenGroup || shouldSkipLowestGroup);
 
         if (skipRowGroups && params.skipGroups) {
-            _.doOnce(() => console.warn('AG Grid: Since v25.2 `skipGroups` has been renamed to `skipRowGroups`.'), 'gridSerializer-skipGroups');
+            _.warnOnce('Since v25.2 `skipGroups` has been renamed to `skipRowGroups`.');
         }
 
         if (
@@ -118,7 +118,7 @@ export class GridSerializer extends BeanStub {
             const appendContent = params.customFooter || params.appendContent;
             if (appendContent) {
                 if (params.customFooter) {
-                    _.doOnce(() => console.warn('AG Grid: Since version 25.2.0 the `customFooter` param has been deprecated. Use `appendContent` instead.'), 'gridSerializer-customFooter');
+                    _.warnOnce('Since version 25.2.0 the `customFooter` param has been deprecated. Use `appendContent` instead.');
                 }
                 gridSerializingSession.addCustomContent(appendContent);
             }
@@ -131,7 +131,7 @@ export class GridSerializer extends BeanStub {
             const prependContent = params.customHeader || params.prependContent;
             if (prependContent) {
                 if (params.customHeader) {
-                    _.doOnce(() => console.warn('AG Grid: Since version 25.2.0 the `customHeader` param has been deprecated. Use `prependContent` instead.'), 'gridSerializer-customHeader');
+                    _.warnOnce('Since version 25.2.0 the `customHeader` param has been deprecated. Use `prependContent` instead.');
                 }
                 gridSerializingSession.addCustomContent(prependContent);
             }
@@ -157,7 +157,7 @@ export class GridSerializer extends BeanStub {
                 );
                 this.recursivelyAddHeaderGroups(displayedGroups, gridSerializingSession, params.processGroupHeaderCallback);
             } else if (params.columnGroups) {
-                _.doOnce(() => console.warn('AG Grid: Since v25.2 the `columnGroups` param has deprecated, and groups are exported by default.'), 'gridSerializer-columnGroups');
+                _.warnOnce('Since v25.2 the `columnGroups` param has deprecated, and groups are exported by default.');
             }
             return gridSerializingSession;
         };
@@ -171,7 +171,7 @@ export class GridSerializer extends BeanStub {
                     gridRowIterator.onColumn(column, index, undefined);
                 });
             } else if (params.skipHeader) {
-                _.doOnce(() => console.warn('AG Grid: Since v25.2 the `skipHeader` param has been renamed to `skipColumnHeaders`.'), 'gridSerializer-skipHeader');
+                _.warnOnce('Since v25.2 the `skipHeader` param has been renamed to `skipColumnHeaders`.');
             }
             return gridSerializingSession;
         };

@@ -23,7 +23,7 @@ import { IFloatingFilterParams, IFloatingFilterParentCallback } from './floating
 import { unwrapUserComp } from '../gridApi';
 import { AdvancedFilterModel } from '../interfaces/advancedFilterModel';
 import { IAdvancedFilterService } from '../interfaces/iAdvancedFilterService';
-import { doOnce } from '../utils/function';
+import { warnOnce } from '../utils/function';
 import { DataTypeService } from '../columns/dataTypeService';
 import { QuickFilterService } from './quickFilterService';
 
@@ -980,9 +980,7 @@ export class FilterManager extends BeanStub {
     }
 
     private warnAdvancedFilters(): void {
-        doOnce(() => {
-            console.warn('AG Grid: Column Filter API methods have been disabled as Advanced Filters are enabled.');
-        }, 'advancedFiltersCompatibility');
+        warnOnce('Column Filter API methods have been disabled as Advanced Filters are enabled.');
     }
 
     public setupAdvancedFilterHeaderComp(eCompToInsertBefore: HTMLElement): void {

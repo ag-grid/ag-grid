@@ -149,7 +149,7 @@ export class FillHandle extends AbstractSelectionHandle {
         if (!direction) { return 'xy'; }
 
         if (direction !== 'x' && direction !== 'y' && direction !== 'xy') {
-            _.doOnce(() => console.warn(`AG Grid: valid values for fillHandleDirection are 'x', 'y' and 'xy'. Default to 'xy'.`), 'warn invalid fill direction');
+            _.warnOnce(`valid values for fillHandleDirection are 'x', 'y' and 'xy'. Default to 'xy'.`);
             return 'xy';
         }
 
