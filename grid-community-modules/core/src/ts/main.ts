@@ -361,6 +361,7 @@ export {
     PivotState,
     RangeSelectionCellState,
     RangeSelectionState,
+    RowGroupExpansionState,
     RowGroupState,
     ScrollState,
     SideBarState,

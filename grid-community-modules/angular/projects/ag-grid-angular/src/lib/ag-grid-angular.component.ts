@@ -925,6 +925,7 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     /** @deprecated v29.2     */
     @Input() public functionsPassive: boolean | undefined = undefined;
     @Input() public enableGroupEdit: boolean | undefined = undefined;
+    /** Initial state for the grid. Only read once on initialization. Can be used in conjunction with `api.getState()` to save and restore grid state.     */
     @Input() public initialState: GridState | undefined = undefined;
     /** For customising the context menu.     */
     @Input() public getContextMenuItems: GetContextMenuItems<TData> | undefined = undefined;

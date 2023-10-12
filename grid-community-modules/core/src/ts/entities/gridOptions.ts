@@ -851,6 +851,7 @@ export interface GridOptions<TData = any> {
     functionsPassive?: boolean;
     enableGroupEdit?: boolean;
 
+    /** Initial state for the grid. Only read once on initialization. Can be used in conjunction with `api.getState()` to save and restore grid state. */
     initialState?: GridState;
 
     // *****************************************************************************************************

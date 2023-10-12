@@ -261,5 +261,9 @@ export class Events {
     public static EVENT_FIELD_VALUE_CHANGED: 'fieldValueChanged' = 'fieldValueChanged';
     public static EVENT_FIELD_PICKER_VALUE_SELECTED: 'fieldPickerValueSelected' = 'fieldPickerValueSelected';
 
+    public static EVENT_SIDE_BAR_UPDATED: 'sideBarUpdated' = 'sideBarUpdated';
+
+    public static EVENT_STATE_UPDATED: 'stateUpdated' = 'stateUpdated';
+
     /*****************************  INTERNAL EVENTS: END ******************************************* */
 }

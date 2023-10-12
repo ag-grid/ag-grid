@@ -207,7 +207,14 @@ export class SideBarComp extends Component implements ISideBar {
             wrapper.setResizerSizerSide(resizerSide);
         });
 
+        this.eventService.dispatchEvent({ type: Events.EVENT_SIDE_BAR_UPDATED });
+
         return this;
+    }
+
+    public setDisplayed(displayed: boolean, options?: { skipAriaHidden?: boolean | undefined; } | undefined): void {
+        super.setDisplayed(displayed, options);
+        this.eventService.dispatchEvent({ type: Events.EVENT_SIDE_BAR_UPDATED });
     }
 
     private createToolPanelsAndSideButtons(defs: ToolPanelDef[]): void {

@@ -33,8 +33,10 @@ export interface ScrollState {
 }
 
 export interface SideBarState {
+    /** Is side bar visible */
     visible: boolean;
     position: 'left' | 'right';
+    /** Open tool panel, or null if closed */
     openToolPanel: string | null;
 }
 
@@ -43,38 +45,42 @@ export interface FocusedCellState extends RowPosition {
 }
 
 export interface PaginationState {
+    /** Current page */
     page: number;
 }
 
 export interface SortState {
-    sortColumns: SortModelItem[];
+    /** Sorted columns and directions in order */
+    sortModel: SortModelItem[];
 }
 
 export interface RowGroupState {
-    groupColumns: string[];
+    /** Grouped columns in order */
+    groupColIds: string[];
 }
 
 export interface AggregationColumnState {
     colId: string,
+    /** Only named aggregation functions can be used in state */
     aggFunc: string
 }
 
 export interface AggregationState {
-    aggregationColumns: AggregationColumnState[];
+    aggregationModel: AggregationColumnState[];
 }
 
 export interface PivotState {
     pivotMode: boolean;
-    pivotColumns: string[];
+    pivotColIds: string[];
 }
 
 export interface ColumnPinningState {
-    leftColumns: string[];
-    rightColumns: string[];
+    leftColIds: string[];
+    rightColIds: string[];
 }
 
 export interface ColumnVisibilityState {
-    hiddenColumns: string[];
+    hiddenColIds: string[];
 }
 
 export interface ColumnSizeState {
@@ -84,19 +90,20 @@ export interface ColumnSizeState {
 }
 
 export interface ColumnSizingState {
-    columnSizes: ColumnSizeState[];
+    columnSizingModel: ColumnSizeState[];
 }
 
 export interface ColumnOrderState {
-    columns: string[];
+    /** All colIds in order */
+    orderedColIds: string[];
 }
 
 export interface ColumnGroupState {
-    openColumnGroups: string[];
+    openColumnGroupIds: string[];
 }
 
 export interface RowGroupExpansionState {
-    expandedRowGroups: string[];
+    expandedRowGroupIds: string[];
 }
 
 export interface GridState {
@@ -107,6 +114,7 @@ export interface GridState {
     columnSizing?: ColumnSizingState;
     columnVisibility?: ColumnVisibilityState;
     filter?: FilterState;
+    /** Client-Side Row Model only */
     focusedCell?: FocusedCellState;
     pagination?: PaginationState;
     pivot?: PivotState;
@@ -114,6 +122,7 @@ export interface GridState {
     rowGroup?: RowGroupState;
     rowGroupExpansion?: RowGroupExpansionState;
     rowSelection?: RowSelectionState | ServerSideRowGroupSelectionState;
+    /** Client-Side Row Model only */
     scroll?: ScrollState;
     sideBar?: SideBarState;
     sort?: SortState;

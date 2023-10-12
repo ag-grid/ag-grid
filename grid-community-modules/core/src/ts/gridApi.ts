@@ -2137,6 +2137,7 @@ export class GridApi<TData = any> {
         this.paginationProxy.goToPage(page);
     }
 
+    /** Get the current state of the grid. Can be used in conjunction with the `initialState` grid option to save and restore grid state. */
     public getState(): GridState {
         return this.stateService.getState();
     }

@@ -3,7 +3,7 @@ import { BeanStub } from "../context/beanStub";
 import { Autowired, Bean, Optional, PostConstruct } from "../context/context";
 import { CtrlsService } from "../ctrlsService";
 import { Events } from "../eventKeys";
-import { NewColumnsLoadedEvent } from "../events";
+import { NewColumnsLoadedEvent, PaginationChangedEvent } from "../events";
 import { FilterManager } from "../filter/filterManager";
 import { FocusService } from "../focusService";
 import {
@@ -36,6 +36,7 @@ import { PaginationProxy } from "../pagination/paginationProxy";
 import { SortModelItem } from "../sortController";
 import { ServerSideRowGroupSelectionState, RowSelectionState } from "../interfaces/selectionState";
 import { IExpansionService } from "../interfaces/iExpansionService";
+import { jsonEquals } from "../utils/generic";
 
 @Bean('stateService')
 export class StateService extends BeanStub {
@@ -51,52 +52,88 @@ export class StateService extends BeanStub {
     @Autowired('expansionService') private expansionService: IExpansionService;
 
     private isClientSideRowModel: boolean;
+    private cachedState: GridState;
 
     @PostConstruct
     private postConstruct(): void {
         this.isClientSideRowModel = this.rowModel.getType() === 'clientSide';
 
+        this.cachedState = this.gridOptionsService.get('initialState') ?? {};
+
+        this.ctrlsService.whenReady(() => this.setupStateOnGridReady());
+
         const newColumnsLoadedDestroyFunc = this.addManagedListener(this.eventService, Events.EVENT_NEW_COLUMNS_LOADED, ({ source }: NewColumnsLoadedEvent) => {
             if (source === 'gridInitializing') {
                 newColumnsLoadedDestroyFunc?.();
-                this.setInitialStateOnColumnsInitialised();
+                this.setupStateOnColumnsInitialised();
             }
         });
         const rowCountReadyDestroyFunc = this.addManagedListener(this.eventService, Events.EVENT_ROW_COUNT_READY, () => {
             rowCountReadyDestroyFunc?.();
-            this.setInitialStateOnRowCountReady();
+            this.setupStateOnRowCountReady();
         });
         const firstDataRenderedDestroyFunc = this.addManagedListener(this.eventService, Events.EVENT_FIRST_DATA_RENDERED, () => {
             firstDataRenderedDestroyFunc?.();
-            this.setInitialStateOnFirstDataRendered();
+            this.setupStateOnFirstDataRendered();
         });
     }
 
     public getState(): GridState {
-        return {
-            ...this.getColumnState(),
-            columnGroup: this.getColumnGroupState(),
-            filter: this.getFilterState(),
-            rangeSelection: this.getRangeSelectionState(),
-            scroll: this.getScrollState(),
-            sideBar: this.getSideBarState(),
-            focusedCell: this.getFocusedCellState(),
-            pagination: this.getPaginationState(),
-            rowSelection: this.getRowSelectionState(),
-            rowGroupExpansion: this.getRowGroupExpansionState()
-        };
+        return this.cachedState;
     }
 
-    private setInitialStateOnColumnsInitialised(): void {
+    private setupStateOnGridReady(): void {
+        // sidebar reads the initial state itself, so don't need to set
+
+        this.updateCachedState('sideBar', this.getSideBarState());
+
+        this.addManagedListener(this.eventService, Events.EVENT_TOOL_PANEL_VISIBLE_CHANGED, () => this.updateCachedState('sideBar', this.getSideBarState()));
+        this.addManagedListener(this.eventService, Events.EVENT_SIDE_BAR_UPDATED, () => this.updateCachedState('sideBar', this.getSideBarState()));
+    }
+
+    private setupStateOnColumnsInitialised(): void {
         const initialState = this.gridOptionsService.get('initialState') ?? {};
-        const { filter: filterState } = initialState
+        const {
+            filter: filterState,
+            columnGroup: columnGroupState
+        } = initialState;
         this.setColumnState(initialState);
+        if (columnGroupState) {
+            this.setColumnGroupState(columnGroupState);
+        }
         if (filterState) {
             this.setFilterState(filterState);
         }
+
+        this.updateColumnState();
+        this.updateCachedState('columnGroup', this.getColumnGroupState());
+        this.updateCachedState('filter', this.getFilterState());
+
+        // aggregation
+        this.addManagedListener(this.eventService, Events.EVENT_COLUMN_VALUE_CHANGED, () => this.updateColumnState());
+        // columnOrder
+        this.addManagedListener(this.eventService, Events.EVENT_COLUMN_MOVED, () => this.updateColumnState());
+        // columnPinning
+        this.addManagedListener(this.eventService, Events.EVENT_COLUMN_PINNED, () => this.updateColumnState());
+        // columnSizing
+        this.addManagedListener(this.eventService, Events.EVENT_COLUMN_RESIZED, () => this.updateColumnState());
+        // columnVisibility
+        this.addManagedListener(this.eventService, Events.EVENT_COLUMN_VISIBLE, () => this.updateColumnState());
+        // pivot
+        this.addManagedListener(this.eventService, Events.EVENT_COLUMN_PIVOT_CHANGED, () => this.updateColumnState());
+        // pivot
+        this.addManagedListener(this.eventService, Events.EVENT_COLUMN_PIVOT_MODE_CHANGED, () => this.updateColumnState());
+        // rowGroup
+        this.addManagedListener(this.eventService, Events.EVENT_COLUMN_ROW_GROUP_CHANGED, () => this.updateColumnState());
+        // sort
+        this.addManagedListener(this.eventService, Events.EVENT_SORT_CHANGED, () => this.updateColumnState());
+        // any column
+        this.addManagedListener(this.eventService, Events.EVENT_NEW_COLUMNS_LOADED, () => this.updateColumnState());
+        this.addManagedListener(this.eventService, Events.EVENT_COLUMN_GROUP_OPENED, () => this.updateCachedState('columnGroup', this.getColumnGroupState()));
+        this.addManagedListener(this.eventService, Events.EVENT_FILTER_CHANGED, () => this.updateCachedState('filter', this.getFilterState()));
     }
 
-    private setInitialStateOnRowCountReady(): void {
+    private setupStateOnRowCountReady(): void {
         const {
             rowGroupExpansion: rowGroupExpansionState,
             rowSelection: rowSelectionState,
@@ -111,9 +148,21 @@ export class StateService extends BeanStub {
         if (paginationState) {
             this.setPaginationState(paginationState);
         }
+
+        this.updateCachedState('rowGroupExpansion', this.getRowGroupExpansionState());
+        this.updateCachedState('rowSelection', this.getRowSelectionState());
+        this.updateCachedState('pagination', this.getPaginationState());
+
+        this.addManagedListener(this.eventService, Events.EVENT_ROW_GROUP_OPENED, () => this.updateCachedState('rowGroupExpansion', this.getRowGroupExpansionState()));
+        this.addManagedListener(this.eventService, Events.EVENT_SELECTION_CHANGED, () => this.updateCachedState('rowSelection', this.getRowSelectionState()));
+        this.addManagedListener(this.eventService, Events.EVENT_PAGINATION_CHANGED, (event: PaginationChangedEvent) => {
+            if (event.newPage) {
+                this.updateCachedState('pagination', this.getPaginationState());
+            }
+        });
     }
 
-    private setInitialStateOnFirstDataRendered(): void {
+    private setupStateOnFirstDataRendered(): void {
         const {
             scroll: scrollState,
             rangeSelection: rangeSelectionState,
@@ -128,6 +177,10 @@ export class StateService extends BeanStub {
         if (scrollState) {
             this.setScrollState(scrollState);
         }
+
+        this.addManagedListener(this.eventService, Events.EVENT_CELL_FOCUSED, () => this.updateCachedState('focusedCell', this.getFocusedCellState()));
+        this.addManagedListener(this.eventService, Events.EVENT_RANGE_SELECTION_CHANGED, () => this.updateCachedState('rangeSelection', this.getRangeSelectionState()));
+        this.addManagedListener(this.eventService, Events.EVENT_BODY_SCROLL_END, () => this.updateCachedState('scroll', this.getScrollState()));
     }
 
     private getColumnState(): {
@@ -140,7 +193,7 @@ export class StateService extends BeanStub {
         columnSizing?: ColumnSizingState;
         columnOrder?: ColumnOrderState;
     } {
-        const pivotMode = this.gridOptionsService.is('pivotMode');
+        const pivotMode = this.columnModel.isPivotMode();
         const sortColumns: SortModelItem[] = [];
         const groupColumns: string[] = [];
         const aggregationColumns: AggregationColumnState[] = [];
@@ -192,14 +245,14 @@ export class StateService extends BeanStub {
         }
         
         return {
-            sort: sortColumns.length ? { sortColumns } : undefined,
-            rowGroup: groupColumns.length ? { groupColumns } : undefined,
-            aggregation: aggregationColumns.length ? { aggregationColumns } : undefined,
-            pivot: pivotColumns.length || pivotMode ? { pivotMode, pivotColumns } : undefined,
-            columnPinning: leftColumns.length || rightColumns.length ? { leftColumns, rightColumns } : undefined,
-            columnVisibility: hiddenColumns.length ? { hiddenColumns } : undefined,
-            columnSizing: columnSizes.length ? { columnSizes } : undefined,
-            columnOrder: columns.length ? { columns } : undefined
+            sort: sortColumns.length ? { sortModel: sortColumns } : undefined,
+            rowGroup: groupColumns.length ? { groupColIds: groupColumns } : undefined,
+            aggregation: aggregationColumns.length ? { aggregationModel: aggregationColumns } : undefined,
+            pivot: pivotColumns.length || pivotMode ? { pivotMode, pivotColIds: pivotColumns } : undefined,
+            columnPinning: leftColumns.length || rightColumns.length ? { leftColIds: leftColumns, rightColIds: rightColumns } : undefined,
+            columnVisibility: hiddenColumns.length ? { hiddenColIds: hiddenColumns } : undefined,
+            columnSizing: columnSizes.length ? { columnSizingModel: columnSizes } : undefined,
+            columnOrder: columns.length ? { orderedColIds: columns } : undefined
         };
     }
 
@@ -226,7 +279,7 @@ export class StateService extends BeanStub {
             return columnState;
         }
         if (sortState) {
-            sortState.sortColumns.forEach(({ colId, sort }, sortIndex) => {
+            sortState.sortModel.forEach(({ colId, sort }, sortIndex) => {
                 const columnState = getColumnState(colId);
                 columnState.sort = sort;
                 columnState.sortIndex = sortIndex;
@@ -235,7 +288,7 @@ export class StateService extends BeanStub {
             defaultState.sortIndex = null;
         }
         if (groupState) {
-            groupState.groupColumns.forEach((colId, rowGroupIndex) => {
+            groupState.groupColIds.forEach((colId, rowGroupIndex) => {
                 const columnState = getColumnState(colId);
                 columnState.rowGroup = true;
                 columnState.rowGroupIndex = rowGroupIndex;
@@ -244,13 +297,13 @@ export class StateService extends BeanStub {
             defaultState.rowGroupIndex = null;
         }
         if (aggregationState) {
-            aggregationState.aggregationColumns.forEach(({ colId, aggFunc }) => {
+            aggregationState.aggregationModel.forEach(({ colId, aggFunc }) => {
                 getColumnState(colId).aggFunc = aggFunc;
             });
             defaultState.aggFunc = null;
         }
         if (pivotState) {
-            pivotState.pivotColumns.forEach((colId, pivotIndex) => {
+            pivotState.pivotColIds.forEach((colId, pivotIndex) => {
                 const columnState = getColumnState(colId);
                 columnState.pivot = true;
                 columnState.pivotIndex = pivotIndex;
@@ -260,29 +313,29 @@ export class StateService extends BeanStub {
             this.columnModel.setPivotMode(pivotState.pivotMode);
         }
         if (columnPinningState) {
-            columnPinningState.leftColumns.forEach(colId => {
+            columnPinningState.leftColIds.forEach(colId => {
                 getColumnState(colId).pinned = 'left';
             });
-            columnPinningState.rightColumns.forEach(colId => {
+            columnPinningState.rightColIds.forEach(colId => {
                 getColumnState(colId).pinned = 'right';
             });
             defaultState.pinned = null;
         }
         if (columnVisibilityState) {
-            columnVisibilityState.hiddenColumns.forEach(colId => {
+            columnVisibilityState.hiddenColIds.forEach(colId => {
                 getColumnState(colId).hide = true;
             });
             defaultState.hide = null;
         }
         if (columnSizingState) {
-            columnSizingState.columnSizes.forEach(({ colId, flex, width }) => {
+            columnSizingState.columnSizingModel.forEach(({ colId, flex, width }) => {
                 const columnState = getColumnState(colId);
                 columnState.flex = flex ?? null;
                 columnState.width = width;
             });
             defaultState.flex = null;
         }
-        const columns = columnOrderState?.columns;
+        const columns = columnOrderState?.orderedColIds;
         const applyOrder = !!columns?.length;
         const columnStates = applyOrder ? columns.map(colId => getColumnState(colId)) : Object.values(columnStateMap);
 
@@ -303,7 +356,18 @@ export class StateService extends BeanStub {
                 openColumnGroups.push(groupId);
             }
         });
-        return openColumnGroups.length ? { openColumnGroups } : undefined;
+        return openColumnGroups.length ? { openColumnGroupIds: openColumnGroups } : undefined;
+    }
+
+    private setColumnGroupState(columnGroupState: ColumnGroupState): void {
+        const { openColumnGroupIds: openColumnGroups } = columnGroupState;
+        const openColumnGroupSet = new Set(openColumnGroups);
+        const existingColumnGroupState = this.columnModel.getColumnGroupState();
+        const stateItems = existingColumnGroupState.map(({ groupId }) => ({
+            groupId,
+            open: openColumnGroupSet.has(groupId)
+        }));
+        this.columnModel.setColumnGroupState(stateItems, 'gridInitializing');
     }
 
     private getFilterState(): FilterState | undefined {
@@ -438,11 +502,37 @@ export class StateService extends BeanStub {
     private getRowGroupExpansionState(): RowGroupExpansionState | undefined {
         const expandedRowGroups = this.expansionService.getExpandedRows();
         return expandedRowGroups.length ? {
-            expandedRowGroups
+            expandedRowGroupIds: expandedRowGroups
         } : undefined;
     }
 
     private setRowGroupExpansionState(rowGroupExpansionState: RowGroupExpansionState): void {
-        this.expansionService.expandRows(rowGroupExpansionState.expandedRowGroups);
+        this.expansionService.expandRows(rowGroupExpansionState.expandedRowGroupIds);
+    }
+
+    private updateColumnState(): void {
+        const newColumnState = this.getColumnState();
+        let hasChanged = false;
+        Object.entries(newColumnState).forEach(([key, value]: [keyof GridState, any]) => {
+            if (!jsonEquals(value, this.cachedState[key])) {
+                hasChanged = true;
+            }
+        })
+        Object.assign(this.cachedState, newColumnState);
+        if (hasChanged) {
+            this.dispatchStateUpdateEvent();
+        }
+    }
+
+    private updateCachedState<K extends keyof GridState>(key: K, value: GridState[K]): void {
+        const existingValue = this.cachedState[key];
+        this.cachedState[key] = value;
+        if (!jsonEquals(value, existingValue)) {
+            this.dispatchStateUpdateEvent();
+        }
+    }
+
+    private dispatchStateUpdateEvent(): void {
+        this.eventService.dispatchEvent({ type: Events.EVENT_STATE_UPDATED });
     }
 }
