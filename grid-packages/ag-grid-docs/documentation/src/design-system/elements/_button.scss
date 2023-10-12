@@ -12,7 +12,8 @@ input[type='reset'],
 input[type='submit'],
 .button,
 .button-secondary {
-    &:not([class^="ag"]) {
+    // TODO: need to figure out how to avoid targeting the grid, but not break docs site
+    // &:not([class^="ag"]) {
         appearance: none;
         display: inline-block;
         font-size: var(--font-size);
@@ -67,7 +68,7 @@ input[type='submit'],
             margin: -1em 0.125em -1em 0;
             fill: var(--button-text-color);
         }
-    }
+    // }
 }
 
 .button-secondary {
