@@ -55,7 +55,8 @@ html {
     --color-scheme: light;
 }
 
-html[data-dark-mode='true'] {
+// Create CSS variables for all dark mode colors
+@mixin dark-mode-variables {
     @each $name, $scale in $dark-scales {
         @each $key, $value in map.get($dark-scales, $name) {
             --#{$name}-#{unquote($key)}: #{$value};
@@ -70,19 +71,12 @@ html[data-dark-mode='true'] {
     --color-scheme: dark;
 }
 
+html[data-dark-mode='true'] {
+    @include dark-mode-variables;
+}
+
 @media (prefers-color-scheme: dark) {
     #{$css-variables-root}:not([data-dark-mode='false']) {
-        @each $name, $scale in $dark-scales {
-            @each $key, $value in map.get($dark-scales, $name) {
-                --#{$name}-#{unquote($key)}: #{$value};
-            }
-        }
-
-        // create a CSS variable for every semantic color
-        @each $name, $var-name in $dark-semantic-colors {
-            --#{$name}: var(--#{$var-name});
-        }
-
-        --color-scheme: dark;
+        @include dark-mode-variables;
     }
 }
