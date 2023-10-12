@@ -7,7 +7,7 @@ import { Beans } from "../beans";
 import { BeanStub } from "../../context/beanStub";
 import { Column } from "../../entities/column";
 import { createIconNoSpan } from "../../utils/icon";
-import { doOnce, isFunction } from "../../utils/function";
+import { isFunction, warnOnce } from "../../utils/function";
 
 export interface IRowDragItem extends DragItem {
     /** The default text that would be applied to this Drag Element */
@@ -74,10 +74,7 @@ export class RowDragComp extends Component {
         const treeData = this.gridOptionsService.is('treeData');
 
         if (treeData && managed) {
-            doOnce(() =>
-                console.warn('AG Grid: If using row drag with tree data, you cannot have rowDragManaged=true'),
-                'RowDragComp.managedAndTreeData'
-            );
+            warnOnce('If using row drag with tree data, you cannot have rowDragManaged=true');
         }
     }
 

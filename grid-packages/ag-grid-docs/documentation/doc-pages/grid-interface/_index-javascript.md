@@ -39,7 +39,7 @@
 | gridOptions.api.redrawRows();
 |
 | // resize columns in the grid to fit the available space
-| gridOptions.columnApi.sizeColumnsToFit();
+| gridOptions.api.sizeColumnsToFit();
 </snippet>
 </framework-specific-section>
 

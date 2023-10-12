@@ -22,7 +22,7 @@
     "vuejs"
   ],
   "scripts": {
-    "clean": "rimraf dist lib .hash",
+    "clean": "rimraf dist lib",
     "bundle": "NODE_OPTIONS=--openssl-legacy-provider npx vue-cli-service build --target lib src/AgGridVue.ts",
     "npm": "npx tsc -p tsconfig-lib.json",
     "build": "echo \"module.exports = require('./build')\" > ./node_modules/vue-template-compiler/index.js && npm run npm && npm run bundle && rm ./dist/demo.html",

@@ -40,7 +40,7 @@ const gridOptions = {
 
 Call the Grid Api `api.sizeColumnsToFit(params)` to make the currently visible columns fit the screen. The columns will scale (growing or shrinking) to fit the available width.
 
-<api-documentation source='grid-api/api.json' section='columns' names='["sizeColumnsToFit"]' ></api-documentation>
+<api-documentation source='grid-api/api.json' section='columnSizing' names='["sizeColumnsToFit"]' ></api-documentation>
 
 
 If you don't want a particular column to be included in the auto resize, then set the column definition `suppressSizeToFit=true`. This is helpful if, for example, you want the first column to remain fixed width, but all other columns to fill the width of the table.
@@ -106,7 +106,7 @@ Autosizing columns can also be done using the following column API methods. If `
 
 [Column Groups](/column-groups/) are never considered when calculating the column widths.
 
-<api-documentation source='column-api/api.json' section='Sizing' names='["autoSizeColumn", "autoSizeColumns", "autoSizeAllColumns"]'></api-documentation>
+<api-documentation source='grid-api/api.json' section='columnSizing' names='["autoSizeColumn", "autoSizeColumns", "autoSizeAllColumns"]'></api-documentation>
 
 ## Resizing Example
 
@@ -115,8 +115,8 @@ The example below shows resizing in action. Things to note are as follows:
 
 - Each column can be resized by dragging (or double-clicking or auto resize) the right side of its header.
 - The button 'Size to Fit' calls `api.sizeColumnsToFit()`
-- The button 'Auto-Size All' calls `columnApi.autoSizeColumns([columnIds])`
-- The button 'Auto-Size All (Skip Header)' calls `columnApi.autoSizeColumns([columnIds], true)`
+- The button 'Auto-Size All' calls `api.autoSizeColumns([columnIds])`
+- The button 'Auto-Size All (Skip Header)' calls `api.autoSizeColumns([columnIds], true)`
 - The first column is fixed width (i.e. `suppressSizeToFit = true`), which means its size does not change when `sizeColumnsToFit` is called.
 - The `'age'` column has both a minimum and maximum size set, so resizing the column will be restricted by these, regardless of dragging the header or using any of the API buttons.
 
@@ -185,8 +185,8 @@ When you resize a group, it will distribute the extra room to all columns in the
 ## Resizing Columns When Data Is Rendered
 
 When auto sizing columns, the grid uses the rendered cells to work out the appropriate widths. This means that the result 
-of calling `columnApi.autoSizeColumns()` is dependent on the browser's rendering and may also change depending on 
+of calling `api.autoSizeColumns()` is dependent on the browser's rendering and may also change depending on 
 asynchronous rendering in your framework.
 
-If you intend to call `columnApi.autoSizeColumns()` after creating the grid, in most cases it should be sufficient to wait 
+If you intend to call `api.autoSizeColumns()` after creating the grid, in most cases it should be sufficient to wait 
 for the `firstDataRendered` event before resizing.

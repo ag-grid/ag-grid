@@ -1,5 +1,15 @@
-import { ChartModel, ChartRef, Grid, GridOptions, FirstDataRenderedEvent } from '@ag-grid-community/core';
+import {
+  ChartModel,
+  ChartRef,
+  GridApi,
+  createGrid,
+  GridOptions,
+  FirstDataRenderedEvent,
+} from '@ag-grid-community/core';
 import { getData } from "./data";
+
+
+let gridApi: GridApi;
 
 
 const gridOptions: GridOptions = {
@@ -42,7 +52,7 @@ function onFirstDataRendered(params: FirstDataRenderedEvent) {
 
 
 function saveChart() {
-  const chartModels = gridOptions.api!.getChartModels() || []
+  const chartModels = gridApi!.getChartModels() || []
   if (chartModels.length > 0) {
     chartModel = chartModels[0]
   }
@@ -57,7 +67,7 @@ function clearChart() {
 
 function restoreChart() {
   if (!chartModel) return
-  currentChartRef = gridOptions.api!.restoreChart(chartModel)!
+  currentChartRef = gridApi!.restoreChart(chartModel)!
 }
 
 function createChartContainer(chartRef: ChartRef) {
@@ -76,5 +86,5 @@ function createChartContainer(chartRef: ChartRef) {
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
   const gridDiv = document.querySelector<HTMLElement>('#myGrid')!
-  new Grid(gridDiv, gridOptions)
+  gridApi = createGrid(gridDiv, gridOptions);
 })

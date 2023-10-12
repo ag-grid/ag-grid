@@ -850,7 +850,6 @@ module.exports = async (skipFrameworks, skipExampleFormatting, chartsOnly, skipE
                 console.log("Examples Generated");
 
                 console.log("Watch Typescript examples...");
-                // spl todo
                 // await watchValidateExampleTypes();
 
                 console.timeEnd("Generating examples");
@@ -905,8 +904,8 @@ module.exports = async (skipFrameworks, skipExampleFormatting, chartsOnly, skipE
 };
 
 // *** Don't remove these unused vars! ***
-//     node dev-server.js generate-examples [src directory]
-// eg: node dev-server.js generate-examples javascript-grid-accessing-data
+//     node new-dev-server.js generate-examples [src directory]
+// eg: node new-dev-server.js generate-examples javascript-grid-accessing-data
 const [cmd, script, execFunc, exampleDir, watch] = process.argv;
 
 if (process.argv.length >= 3 && execFunc === 'generate-examples') {

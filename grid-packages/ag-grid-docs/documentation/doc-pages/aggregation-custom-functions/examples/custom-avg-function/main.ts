@@ -1,4 +1,4 @@
-import { Grid, ColDef, GridOptions, IAggFuncParams } from '@ag-grid-community/core'
+import { GridApi, createGrid, ColDef, GridOptions, IAggFuncParams } from '@ag-grid-community/core';
 
 const columnDefs: ColDef[] = [
   { field: 'country', rowGroup: true, hide: true },
@@ -19,6 +19,8 @@ const columnDefs: ColDef[] = [
   },
 ];
 
+let gridApi: GridApi<IOlympicData>;
+
 const gridOptions: GridOptions<IOlympicData> = {
   columnDefs: columnDefs,
   autoGroupColumnDef: {
@@ -32,7 +34,7 @@ function simpleAvg(params: IAggFuncParams) {
   const values = params.values;
   const sum = values.reduce((a: number,b: number) => a + b, 0);
   return sum / values.length;
-};
+}
 
 // the average function is tricky as the multiple levels require weighted averages
 // for the non-leaf node aggregations.
@@ -78,8 +80,8 @@ function avgAggFunction(params: IAggFuncParams) {
 
 // setup the grid after the page has finished loading
 const gridDiv = document.querySelector<HTMLElement>('#myGrid')!;
-new Grid(gridDiv, gridOptions);
+gridApi = createGrid(gridDiv, gridOptions);
 
 fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
   .then((response) => response.json())
-  .then((data: IOlympicData[]) => gridOptions.api!.setRowData(data));
+  .then((data: IOlympicData[]) => gridApi!.setRowData(data));

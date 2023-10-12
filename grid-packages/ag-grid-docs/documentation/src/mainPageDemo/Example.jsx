@@ -626,7 +626,7 @@ const Example = () => {
         if (themeFromURL) {
             setGridTheme(themeFromURL)
         } else {
-            const isDarkMode = document.documentElement.computedStyleMap().get('--color-scheme')?.toString() === 'dark';
+            const isDarkMode = getComputedStyle(document.documentElement).getPropertyValue('--color-scheme') === 'dark';
             setGridTheme(isDarkMode ? 'ag-theme-alpine-dark' : 'ag-theme-alpine');
         }
     }, []);

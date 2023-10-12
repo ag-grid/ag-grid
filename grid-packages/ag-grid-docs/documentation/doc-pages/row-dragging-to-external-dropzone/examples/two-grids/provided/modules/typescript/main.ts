@@ -1,4 +1,4 @@
-import { ModuleRegistry, ColDef, Grid, GridOptions, GridReadyEvent, RowDropZoneParams, GetRowIdParams } from "@ag-grid-community/core";
+import { ModuleRegistry, ColDef, Grid, GridOptions, GridReadyEvent, RowDropZoneParams, GetRowIdParams, GridApi, createGrid } from "@ag-grid-community/core";
 import '@ag-grid-community/styles/ag-grid.css';
 import "@ag-grid-community/styles/ag-theme-alpine.css";
 
@@ -22,7 +22,7 @@ var rightColumnDefs: ColDef[] = [
     { field: "value1" },
     { field: "value2" }
 ];
-
+var leftApi: GridApi;
 var leftGridOptions: GridOptions = {
     defaultColDef: {
         flex: 1,
@@ -47,7 +47,7 @@ var leftGridOptions: GridOptions = {
         addGridDropZone(params, 'Right');
     }
 };
-
+var rightApi: GridApi;
 var rightGridOptions: GridOptions = {
     defaultColDef: {
         flex: 1,
@@ -92,9 +92,9 @@ function addRecordToGrid(side: string, data: any) {
     // if data missing or data has no it, do nothing
     if (!data || data.id == null) { return; }
 
-    var api = side === 'left' ? leftGridOptions.api : rightGridOptions.api,
+    var gridApi = side === 'left' ? leftApi : rightApi,
         // do nothing if row is already in the grid, otherwise we would have duplicates
-        rowAlreadyInGrid = !!api!.getRowNode(data.id),
+        rowAlreadyInGrid = !!gridApi!.getRowNode(data.id),
         transaction;
 
     if (rowAlreadyInGrid) {
@@ -106,7 +106,7 @@ function addRecordToGrid(side: string, data: any) {
         add: [data]
     };
 
-    api!.applyTransaction(transaction);
+    gridApi!.applyTransaction(transaction);
 }
 
 function onFactoryButtonClick(e: any) {
@@ -126,11 +126,11 @@ function binDrop(data: any) {
         remove: [data]
     };
 
-    [leftGridOptions, rightGridOptions].forEach(function (option) {
-        var rowsInGrid = !!option.api!.getRowNode(data.id);
+    [leftApi, rightApi].forEach(function (api) {
+        var rowsInGrid = !!api!.getRowNode(data.id);
 
         if (rowsInGrid) {
-            option.api!.applyTransaction(transaction);
+            api!.applyTransaction(transaction);
         }
     });
 }
@@ -172,7 +172,11 @@ function addGridDropZone(params: GridReadyEvent, side: string) {
 
 function loadGrid(side: string) {
     var grid = document.querySelector<HTMLElement>('#e' + side + 'Grid')!;
-    new Grid(grid, side === 'Left' ? leftGridOptions : rightGridOptions);
+    if(side === 'Left') {
+        leftApi = createGrid(grid, leftGridOptions);
+    }else{
+        rightApi = createGrid(grid, rightGridOptions);
+    }
 }
 
 var buttons = document.querySelectorAll('button.factory');

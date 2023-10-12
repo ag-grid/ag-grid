@@ -148,7 +148,7 @@ export class AdvancedFilterBuilderComp extends Component {
             () => this.addOrRemoveCssClass('ag-advanced-filter-builder-validation', false)
         );
 
-        this.eCancelFilterButton.innerText = this.advancedFilterExpressionService.translate('advancedFilterBuilderCancel');;
+        this.eCancelFilterButton.innerText = this.advancedFilterExpressionService.translate('advancedFilterBuilderCancel');
         this.activateTabIndex([this.eCancelFilterButton]);
         this.addManagedListener(this.eCancelFilterButton, 'click', () => this.close());
     }

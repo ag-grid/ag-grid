@@ -4,8 +4,6 @@ import {
     Autowired,
     Bean,
     BeanStub,
-    ColumnApi,
-    GridApi,
     IServerSideGetRowsParams,
     IServerSideGetRowsRequest,
     StoreRefreshAfterParams,
@@ -21,9 +19,7 @@ import { StoreFactory } from "./storeFactory";
 @Bean('ssrmStoreUtils')
 export class StoreUtils extends BeanStub {
 
-    @Autowired('columnApi') private columnApi: ColumnApi;
     @Autowired('columnModel') private columnModel: ColumnModel;
-    @Autowired('gridApi') private gridApi: GridApi;
     @Autowired('rowModel') private serverSideRowModel: ServerSideRowModel;
     @Autowired('ssrmStoreFactory') private storeFactory: StoreFactory;
 
@@ -62,8 +58,8 @@ export class StoreUtils extends BeanStub {
             fail: p.fail,
             request: request,
             parentNode: p.parentNode,
-            api: this.gridApi,
-            columnApi: this.columnApi,
+            api: this.gridOptionsService.api,
+            columnApi: this.gridOptionsService.columnApi,
             context: this.gridOptionsService.context
         };
 
@@ -136,14 +132,14 @@ export class StoreUtils extends BeanStub {
 
     private assertRowModelIsServerSide(key: keyof GridOptions) {
         if (!this.gridOptionsService.isRowModelType('serverSide')) {
-            _.doOnce(() => console.warn(`AG Grid: The '${key}' property can only be used with the Server Side Row Model.`), key);
+            _.warnOnce(`The '${key}' property can only be used with the Server Side Row Model.`);
             return false;
         }
         return true;
     }
     private assertNotTreeData(key: keyof GridOptions) {
         if (this.gridOptionsService.is('treeData')) {
-            _.doOnce(() => console.warn(`AG Grid: The '${key}' property cannot be used while using tree data.`), key + '_TreeData');
+            _.warnOnce(`The '${key}' property cannot be used while using tree data.`);
             return false;
         }
         return true;

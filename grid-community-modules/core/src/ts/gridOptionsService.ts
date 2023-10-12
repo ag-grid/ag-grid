@@ -107,8 +107,6 @@ export class GridOptionsService {
 
     private agWire(@Qualifier('gridApi') gridApi: GridApi): void {
         this.columnApi = new ColumnApi(gridApi);
-        this.gridOptions.api = gridApi;
-        this.gridOptions.columnApi = this.columnApi;
         this.api = gridApi;
     }
 
@@ -125,12 +123,6 @@ export class GridOptionsService {
     }
     @PreDestroy
     private destroy(): void {
-        // need to remove these, as we don't own the lifecycle of the gridOptions, we need to
-        // remove the references in case the user keeps the grid options, we want the rest
-        // of the grid to be picked up by the garbage collector
-        this.gridOptions.api = null;
-        this.gridOptions.columnApi = null;
-
         this.destroyed = true;
     }
 

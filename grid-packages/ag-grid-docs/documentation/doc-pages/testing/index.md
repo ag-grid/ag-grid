@@ -607,11 +607,9 @@ testing with AG Grid in this section.
 |     };
 |
 |     api: GridApi;
-|     columnApi: ColumnApi;
 |
 |     public onGridReady(params: GridReadyEvent) {
 |         this.api = params.api;
-|         this.columnApi = params.columnApi;
 |     }
 | }
 </snippet>

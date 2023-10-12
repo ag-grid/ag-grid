@@ -1,4 +1,11 @@
-import { Grid, GridOptions, GridReadyEvent, FirstDataRenderedEvent, ValueGetterParams } from '@ag-grid-community/core';
+import {
+    GridApi,
+    createGrid,
+    GridOptions,
+    GridReadyEvent,
+    FirstDataRenderedEvent,
+    ValueGetterParams,
+} from '@ag-grid-community/core';
 
 import { getData, TAthlete } from './data';
 
@@ -11,6 +18,8 @@ const setCol1SizeInfOnFirstDataRendered = (value?: string | number) => {
     const element = document.querySelector<HTMLElement>('#athleteDescriptionColWidthOnFirstDataRendered');
     element!.innerHTML = value !== undefined ? `${value.toString()}px` : '-';
 };
+
+let gridApi: GridApi;
 
 const gridOptions: GridOptions = {
     columnDefs: [
@@ -30,20 +39,19 @@ const gridOptions: GridOptions = {
     },
     suppressLoadingOverlay: true,
     onGridReady: (params: GridReadyEvent<TAthlete>) => {
-        const column = gridOptions.columnApi?.getColumn('athleteDescription');
+        const column = params.api.getColumn('athleteDescription');
         if (column) {
-            gridOptions.columnApi?.autoSizeColumns([column.getId()]);
+            params.api.autoSizeColumns([column.getId()]);
             setCol1SizeInfoOnGridReady(column.getActualWidth());
         }
 
         console.log('AG Grid: onGridReady event triggered');
     },
     onFirstDataRendered: (params: FirstDataRenderedEvent<TAthlete>) => {
-        const { columnApi } = params;
-        const column = columnApi.getColumn('athleteDescription');
+        const column = params.api.getColumn('athleteDescription');
 
         if (column) {
-            columnApi?.autoSizeColumns([column.getId()]);
+            params.api.autoSizeColumns([column.getId()]);
             setCol1SizeInfOnFirstDataRendered(column.getActualWidth());
         }
 
@@ -52,11 +60,11 @@ const gridOptions: GridOptions = {
 };
 
 function loadGridData() {
-    gridOptions.api?.setRowData(getData());
+    gridApi?.setRowData(getData());
     document.querySelector<HTMLElement>('#loadGridDataButton')!.style.display = 'none';
 }
 
 document.addEventListener('DOMContentLoaded', () => {
     const gridDiv = document.querySelector<HTMLElement>('#myGrid')!;
-    new Grid(gridDiv, gridOptions);
+    gridApi = createGrid(gridDiv, gridOptions);
 });

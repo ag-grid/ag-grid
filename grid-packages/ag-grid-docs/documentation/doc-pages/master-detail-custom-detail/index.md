@@ -54,7 +54,6 @@ const detailId = params.node.id;
 const detailGridInfo = {
     id: detailId,
     api: params.api,
-    columnApi: params.columnApi
 };
 
 this.masterGridApi.addDetailGridInfo(detailId, detailGridInfo);

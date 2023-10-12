@@ -89,7 +89,6 @@ const VueExample = {
             leftRowData: null,
             rightRowData: [],
             leftApi: null,
-            leftColumnApi: null,
             rightApi: null,
 
             defaultColDef: {
@@ -183,14 +182,13 @@ const VueExample = {
 
         checkboxSelectChange() {
             const checked = this.$refs.eSelectCheckbox.checked;
-            this.leftColumnApi.setColumnVisible('checkbox', checked);
+            this.leftApi.setColumnVisible('checkbox', checked);
             this.leftApi.setSuppressRowClickSelection(checked);
         },
 
         onGridReady(params, side) {
             if (side === 0) {
                 this.leftApi = params.api
-                this.leftColumnApi = params.columnApi;
             }
 
             if (side === 1) {

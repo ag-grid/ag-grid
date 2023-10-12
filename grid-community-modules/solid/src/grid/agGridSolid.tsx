@@ -7,6 +7,7 @@ import GridComp from './gridComp';
 
 export interface AgGridSolidRef {
     api: GridApi;
+    /** @deprecated v31 - The `columnApi` has been deprecated and all the methods are now present of the `api`. */
     columnApi: ColumnApi;
 }
 
@@ -33,6 +34,7 @@ export interface PortalManager {
 const AgGridSolid = (props: AgGridSolidProps) => {
     let eGui: HTMLDivElement;
     let gridOptions: GridOptions;
+    let api: GridApi;
 
     const [context, setContext] = createSignal<Context>();
     const [getPortals, setPortals] = createSignal<PortalInfo[]>([]);
@@ -71,7 +73,7 @@ const AgGridSolid = (props: AgGridSolidProps) => {
         });
 
         if (changesExist) {
-            ComponentUtil.processOnChange(changes, gridOptions.api!);
+            ComponentUtil.processOnChange(changes, api!);
         }
     });
 
@@ -107,12 +109,12 @@ const AgGridSolid = (props: AgGridSolidProps) => {
                 const refCallback = props.ref && (props.ref as (ref: AgGridSolidRef) => void);
                 if (refCallback) {
                     const gridRef: AgGridSolidRef = {
-                        api: gridOptions.api!,
-                        columnApi: gridOptions.columnApi!
+                        api: api!,
+                        columnApi: new ColumnApi(api!)
                     };
                     refCallback(gridRef);
                 }
-                destroyFuncs.push(() => gridOptions!.api!.destroy());
+                destroyFuncs.push(() => api!.destroy());
             });
         };
 
@@ -121,7 +123,7 @@ const AgGridSolid = (props: AgGridSolidProps) => {
         };
 
         const gridCoreCreator = new GridCoreCreator();
-        gridCoreCreator.create(eGui, gridOptions, createUiCallback, acceptChangesCallback, gridParams);
+        api = gridCoreCreator.create(eGui, gridOptions, createUiCallback, acceptChangesCallback, gridParams);
     });
 
     return (

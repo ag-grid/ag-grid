@@ -1,4 +1,4 @@
-import { Grid, ColDef, GridOptions, IServerSideDatasource } from '@ag-grid-community/core'
+import { GridApi, createGrid, ColDef, GridOptions, IServerSideDatasource } from '@ag-grid-community/core';
 declare var FakeServer: any;
 const columnDefs: ColDef[] = [
   // here we are using a valueGetter to get the country name from the complex object
@@ -13,6 +13,8 @@ const columnDefs: ColDef[] = [
   { field: 'silver', aggFunc: 'sum', enableValue: true },
   { field: 'bronze', aggFunc: 'sum', enableValue: true },
 ]
+
+let gridApi: GridApi<IOlympicData>;
 
 const gridOptions: GridOptions<IOlympicData> = {
   columnDefs: columnDefs,
@@ -68,7 +70,7 @@ function getServerSideDatasource(server: any): IServerSideDatasource {
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
   var gridDiv = document.querySelector<HTMLElement>('#myGrid')!
-  new Grid(gridDiv, gridOptions)
+  gridApi = createGrid(gridDiv, gridOptions);
 
   fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
     .then(response => response.json())
@@ -80,6 +82,6 @@ document.addEventListener('DOMContentLoaded', function () {
       var datasource = getServerSideDatasource(fakeServer)
 
       // register the datasource with the grid
-      gridOptions.api!.setServerSideDatasource(datasource)
+      gridApi!.setServerSideDatasource(datasource)
     })
 })

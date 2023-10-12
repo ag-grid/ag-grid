@@ -151,9 +151,7 @@ export class AdvancedFilterService extends BeanStub implements IAdvancedFilterSe
         const previousValue = this.enabled;
         const isClientSideRowModel = this.rowModel.getType() === 'clientSide';
         if (enabled && !isClientSideRowModel) {
-            _.doOnce(() => {
-                console.warn('AG Grid: Advanced Filter is only supported with the Client-Side Row Model.');
-            }, 'advancedFilterCSRM')
+            _.warnOnce('Advanced Filter is only supported with the Client-Side Row Model.');
         }
         this.enabled = enabled && isClientSideRowModel;
         if (!silent && this.enabled !== previousValue) {

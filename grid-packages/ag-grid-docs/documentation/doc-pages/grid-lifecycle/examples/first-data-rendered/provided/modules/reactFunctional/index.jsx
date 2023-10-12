@@ -37,12 +37,12 @@ const GridExample = () => {
     }, []);
 
     const onGridReady = useCallback((params) => {
-        const {api, columnApi} = params;
+        const {api} = params;
         setGridApi(api);
 
-        const column = columnApi.getColumn('athleteDescription');
+        const column = api.getColumn('athleteDescription');
         if (column) {
-            columnApi.autoSizeColumns([column.getId()]);
+            api.autoSizeColumns([column.getId()]);
             setCol1SizeInfoOnGridReady(`${column.getActualWidth()}px`);
         }
 
@@ -51,12 +51,12 @@ const GridExample = () => {
     }, []);
 
     const onFirstDataRendered = useCallback((params) => {
-        const {columnApi} = params;
-        columnApi.setColumnWidth('athleteDescription', 300);
+        const {api} = params;
+        api.setColumnWidth('athleteDescription', 300);
 
-        const column = columnApi.getColumn('athleteDescription');
+        const column = api.getColumn('athleteDescription');
         if (column) {
-            columnApi.autoSizeColumns([column.getId()]);
+            api.autoSizeColumns([column.getId()]);
             setCol1SizeInfOnFirstDataRendered(`${column.getActualWidth()}px`);
         }
 

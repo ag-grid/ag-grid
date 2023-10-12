@@ -75,7 +75,7 @@ If you pass in `null` or `undefined`, the grid will then calculate the row heigh
 usual way, either using the provided `rowHeight` property or `getRowHeight(params)`
 callback.
 
-<api-documentation source='row-object/resources/methods.json' section='rowNodeMethods' names='["setRowHeight"]' config='{"overrideBottomMargin":"0rem"}' ></api-documentation>
+<api-documentation source='row-api/resources/methods.json' section='rowNodeMethods' names='["setRowHeight"]' config='{"overrideBottomMargin":"0rem"}' ></api-documentation>
 <api-documentation source='grid-api/api.json' section='rendering' names='["onRowHeightChanged"]' ></api-documentation>
 
 

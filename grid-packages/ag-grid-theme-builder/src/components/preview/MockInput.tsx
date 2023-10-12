@@ -1,15 +1,24 @@
 import { useEffect, useRef } from 'react';
 
 export type MockInputProps = {
-  kind: 'checkbox' | 'toggle-button' | 'radio-button';
-  state: 'unchecked' | 'checked' | 'indeterminate';
-  focus?: boolean;
+  kind: 'checkbox' | 'toggle-button' | 'radio-button' | 'text';
+  state?: 'unchecked' | 'checked' | 'indeterminate';
+  focussed?: boolean;
   disabled?: boolean;
+  invalid?: boolean;
 };
 
-export const MockInput = ({ kind, state, focus, disabled }: MockInputProps) => {
+const typeByKind: Record<MockInputProps['kind'], string | undefined> = {
+  checkbox: 'checkbox',
+  'radio-button': 'checkbox',
+  'toggle-button': 'checkbox',
+  text: 'text',
+};
+
+export const MockInput = ({ kind, state, focussed, disabled, invalid }: MockInputProps) => {
   const checked = state === 'checked';
   const indeterminate = state === 'indeterminate';
+  const type = typeByKind[kind];
 
   const inputRef = useRef<HTMLInputElement>(null);
   useEffect(() => {
@@ -24,7 +33,7 @@ export const MockInput = ({ kind, state, focus, disabled }: MockInputProps) => {
         `ag-${kind}-input-wrapper`,
         checked && 'ag-checked',
         indeterminate && 'ag-indeterminate',
-        focus && 'ag-builder-preview-focus',
+        focussed && 'ag-builder-preview-focus',
         disabled && 'ag-disabled',
       ]
         .filter(Boolean)
@@ -33,12 +42,19 @@ export const MockInput = ({ kind, state, focus, disabled }: MockInputProps) => {
     >
       <input
         ref={inputRef}
-        className={`ag-input-field-input ag-${kind}-input`}
-        type="checkbox"
-        checked={state === 'checked'}
+        className={[
+          'ag-input-field-input',
+          `ag-${kind}-input`,
+          focussed && 'ag-builder-preview-focus',
+        ]
+          .filter(Boolean)
+          .join('  ')}
+        type={typeByKind[kind]}
+        checked={type === 'checkbox' ? state === 'checked' : undefined}
         disabled={disabled}
         tabIndex={-1}
-        readOnly
+        onChange={() => undefined}
+        required={invalid}
       />
     </div>
   );

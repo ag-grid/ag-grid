@@ -4,20 +4,11 @@ title: "Cell Editors"
  
 Create your own cell editor by providing a cell editor component.
 
-## Cell Editor
-
-md-include:simple-editor-javascript.md
-md-include:simple-editor-angular.md 
-md-include:simple-editor-react.md
-md-include:simple-editor-vue.md
- 
-## Cell Editor Example
-
 The example below shows a few cell editors in action.
 
 - The `Doubling` Cell Editor will double a given input and reject values over a 1000
 - The `Mood` Cell Editor illustrates a slightly more complicated editor with values changed depending on the smiley chosen
-- The `Numeric` Cell Editor illustrates a slightly more complicated numeric editor to the `Doubling` editor above, with increased input validation
+- The `Numeric` Cell Editor illustrates a slightly more complicated numeric editor to the `Doubling` editor, with increased input validation
 
 <grid-example title='Simple Editor Components' name='component-editor' type='mixed' options='{ "exampleHeight": 370, "includeNgFormsModule" : true }'></grid-example>
 

@@ -1,4 +1,4 @@
-import { ModuleRegistry, ColDef, Grid, GridOptions, GridReadyEvent, ICellRendererComp, ICellRendererParams, GetRowIdParams } from "@ag-grid-community/core";
+import { ModuleRegistry, ColDef, GridOptions, GridReadyEvent, ICellRendererComp, ICellRendererParams, GetRowIdParams, createGrid, GridApi } from "@ag-grid-community/core";
 import '@ag-grid-community/styles/ag-grid.css';
 import "@ag-grid-community/styles/ag-theme-alpine.css";
 
@@ -73,7 +73,7 @@ const rightColumnDefs: ColDef[] = [
         cellRenderer: SportRenderer
     }
 ];
-
+let leftApi: GridApi;
 const leftGridOptions: GridOptions = {
     defaultColDef: {
         flex: 1,
@@ -96,7 +96,7 @@ const leftGridOptions: GridOptions = {
         addGridDropZone(params);
     }
 };
-
+let rightApi: GridApi;
 const rightGridOptions: GridOptions = {
     defaultColDef: {
         flex: 1,
@@ -121,13 +121,13 @@ function addGridDropZone(params: GridReadyEvent) {
             const nodes = params.nodes;
 
             if (moveCheck) {
-                leftGridOptions.api!.applyTransaction({
+                leftApi!.applyTransaction({
                     remove: nodes.map(function (node) {
                         return node.data;
                     })
                 });
             } else if (deselectCheck) {
-                leftGridOptions.api!.setNodesSelected({ nodes, newValue: false });
+                leftApi!.setNodesSelected({ nodes, newValue: false });
             }
         }
     });
@@ -135,15 +135,13 @@ function addGridDropZone(params: GridReadyEvent) {
     params.api.addRowDropZone(dropZoneParams);
 }
 
-function loadGrid(options: GridOptions, side: string, data: any[]) {
+function loadGrid(options: GridOptions, oldApi: GridApi, side: string, data: any[]) {
     const grid = document.querySelector<HTMLElement>('#e' + side + 'Grid')!;
 
-    if (options && options.api) {
-        options.api.destroy();
-    }
+    oldApi?.destroy();
 
     options.rowData = data;
-    new Grid(grid, options);
+    return createGrid(grid, options);
 }
 
 function resetInputs() {
@@ -174,8 +172,8 @@ function loadGrids() {
                 athletes.push(data[pos]);
             }
 
-            loadGrid(leftGridOptions, 'Left', athletes);
-            loadGrid(rightGridOptions, 'Right', []);
+           leftApi = loadGrid(leftGridOptions, leftApi, 'Left', athletes);
+           rightApi = loadGrid(rightGridOptions, rightApi, 'Right', []);
         });
 }
 
@@ -188,8 +186,8 @@ resetBtn.addEventListener('click', function () {
 });
 
 checkboxToggle.addEventListener('change', function () {
-    leftGridOptions.columnApi!.setColumnVisible('checkbox', checkboxToggle.checked);
-    leftGridOptions.api!.setSuppressRowClickSelection(checkboxToggle.checked);
+    leftApi!.setColumnVisible('checkbox', checkboxToggle.checked);
+    leftApi!.setSuppressRowClickSelection(checkboxToggle.checked);
 });
 
 loadGrids();

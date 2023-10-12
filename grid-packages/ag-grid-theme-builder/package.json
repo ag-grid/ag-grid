@@ -2,18 +2,6 @@
     "name": "ag-grid-theme-builder",
     "private": true,
     "version": "1.0.0",
-    "type": "module",
-    "files": [
-        "dist"
-    ],
-    "module": "./dist/theme-builder.js",
-    "types": "./dist/index.d.ts",
-    "exports": {
-        ".": {
-            "import": "./dist/theme-builder.js",
-            "require": "./dist/theme-builder.umd.js"
-        }
-    },
     "scripts": {
         "dev": "vite",
         "build": "tsc && vite build",
@@ -26,6 +14,7 @@
         "@ag-grid-community/client-side-row-model": "~30.2.0",
         "@ag-grid-community/core": "~30.2.0",
         "@ag-grid-community/styles": "~30.2.0",
+        "@ag-grid-enterprise/advanced-filter": "^30.2.0",
         "@ag-grid-enterprise/clipboard": "^30.2.0",
         "@ag-grid-enterprise/column-tool-panel": "^30.2.0",
         "@ag-grid-enterprise/filter-tool-panel": "^30.2.0",

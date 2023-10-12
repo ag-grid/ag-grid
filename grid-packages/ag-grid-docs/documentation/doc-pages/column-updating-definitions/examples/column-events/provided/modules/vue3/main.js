@@ -78,7 +78,6 @@ const VueExample = {
     data: () => ({
         columnDefs: [],
         gridApi: null,
-        columnApi: null,
         defaultColDef: {
             sortable: true,
             resizable: true,
@@ -169,7 +168,7 @@ const VueExample = {
             this.gridApi.setColumnDefs(columnDefs);
         },
         onBtPivotOn() {
-            this.gridColumnApi.setPivotMode(true);
+            this.gridApi.setPivotMode(true);
             const columnDefs = this.getColumnDefs();
             columnDefs.forEach(colDef => {
                 if (colDef.field === 'country') {
@@ -179,7 +178,7 @@ const VueExample = {
             this.gridApi.setColumnDefs(columnDefs);
         },
         onBtPivotOff() {
-            this.gridColumnApi.setPivotMode(false);
+            this.gridApi.setPivotMode(false);
             const columnDefs = this.getColumnDefs();
             columnDefs.forEach(colDef => {
                 colDef.pivot = false;
@@ -239,7 +238,6 @@ const VueExample = {
         },
         onGridReady(params) {
             this.gridApi = params.api;
-            this.gridColumnApi = params.columnApi;
 
 
             const updateData = (data) => {

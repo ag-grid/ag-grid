@@ -2,7 +2,7 @@
   "name": "ag-grid-angular",
   "version": "30.2.0",
   "scripts": {
-    "clean": "rimraf dist .hash",
+    "clean": "rimraf dist",
     "ng": "./node_modules/.bin/ng",
     "start": "./node_modules/.bin/ng serve",
     "build": "npx gulp copy-from-module-source && ./node_modules/.bin/ng build",

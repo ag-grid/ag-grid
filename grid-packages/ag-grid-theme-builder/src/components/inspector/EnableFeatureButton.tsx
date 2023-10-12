@@ -22,11 +22,13 @@ export const EnableFeatureButton = () => {
       }}
     >
       <option value={defaultLabelValue}>Add Feature...</option>
-      {options.map((f) => (
-        <option key={f.name} value={f.name}>
-          {f.displayName}
-        </option>
-      ))}
+      {options
+        .toSorted((a, b) => (a.displayName < b.displayName ? -1 : 1))
+        .map((f) => (
+          <option key={f.name} value={f.name}>
+            {f.displayName}
+          </option>
+        ))}
     </select>
   );
 };

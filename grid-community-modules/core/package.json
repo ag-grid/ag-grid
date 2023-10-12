@@ -13,7 +13,7 @@
     "build-prod": "npm run precheck && npx gulp prod && npx tsc -p tsconfig.typings.json --sourceMap false",
     "test": "npx jest && npm run check-grid-options && npm run check-grid-api-exports",
     "package": "node ../../module-build/rollup/build.js",
-    "clean": "npx rimraf dist typings .hash",
+    "clean": "npx rimraf dist typings",
     "check-grid-options": "npx ts-node -P tsconfig.cjs.es5.json scripts/check-gridOptions-propertyKeys.ts",
     "check-grid-api-exports": "node scripts/check-gridApi-interfaces-exported.js"
   },

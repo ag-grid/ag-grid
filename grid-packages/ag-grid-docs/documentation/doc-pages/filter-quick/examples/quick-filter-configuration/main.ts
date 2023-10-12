@@ -1,4 +1,4 @@
-import { Grid, GridOptions, ICellRendererParams } from '@ag-grid-community/core';
+import { GridApi, createGrid, GridOptions, ICellRendererParams } from '@ag-grid-community/core';
 import { getData } from "./data";
 
 
@@ -12,6 +12,8 @@ const getMedalString = function ({ gold, silver, bronze }: { gold: number, silve
 const MedalRenderer = function (params: ICellRendererParams) {
   return getMedalString(params.value)
 };
+
+let gridApi: GridApi;
 
 const gridOptions: GridOptions = {
   columnDefs: [
@@ -52,18 +54,18 @@ var includeHiddenColumns = false;
 
 function onIncludeHiddenColumnsToggled() {
   includeHiddenColumns = !includeHiddenColumns;
-  gridOptions.api!.setIncludeHiddenColumnsInQuickFilter(includeHiddenColumns);
+  gridApi!.setIncludeHiddenColumnsInQuickFilter(includeHiddenColumns);
   document.querySelector('#includeHiddenColumns')!.innerHTML = `${includeHiddenColumns ? 'Exclude' : 'Include'} Hidden Columns`;
 }
 
 function onFilterTextBoxChanged() {
-  gridOptions.api!.setQuickFilter(
+  gridApi!.setQuickFilter(
     (document.getElementById('filter-text-box') as HTMLInputElement).value
   )
 }
 
 function onPrintQuickFilterTexts() {
-  gridOptions.api!.forEachNode(function (rowNode, index) {
+  gridApi!.forEachNode(function (rowNode, index) {
     console.log(
       'Row ' +
       index +
@@ -109,5 +111,5 @@ function quickFilterMatcher(quickFilterParts: string[], rowQuickFilterAggregateT
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
   var gridDiv = document.querySelector<HTMLElement>('#myGrid')!
-  new Grid(gridDiv, gridOptions)
+  gridApi = createGrid(gridDiv, gridOptions);
 })

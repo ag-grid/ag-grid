@@ -5,7 +5,7 @@ import {createRoot} from 'react-dom/client';
 import {AgGridReact} from '@ag-grid-community/react';
 import '@ag-grid-community/styles/ag-grid.css';
 import '@ag-grid-community/styles/ag-theme-alpine.css';
-import {ModuleRegistry} from '@ag-grid-community/core';
+import {GridApi, ModuleRegistry} from '@ag-grid-community/core';
 import {ClientSideRowModelModule} from '@ag-grid-community/client-side-row-model';
 import { ColDef, ColumnApi, GridPreDestroyedEvent, GridReadyEvent } from '@ag-grid-community/core';
 
@@ -20,12 +20,10 @@ interface ColumnWidth {
 }
 
 const GridExample = () => {
-    const gridRef = useRef<AgGridReact>(null);
     const containerStyle = useMemo(() => ({width: '100%', height: '100%'}), []);
-    const gridStyle = useMemo(() => ({height: '100%', width: '100%'}), []);
     const [gridVisible, setGridVisible] = useState(true);
     const [columnsWidthOnPreDestroyed, setColumnsWidthOnPreDestroyed] = useState<ColumnWidth[]>([]);
-    const [gridColumnApi, setGridColumnApi] = useState<ColumnApi>();
+    const [gridApi, setGridApi] = useState<GridApi>();
     const [rowData, setRowData] = useState<any[]>(getDataSet());
     const [columnDefs, setColumnDefs] = useState<ColDef[]>([
         {field: 'name', headerName: 'Athlete'},
@@ -40,11 +38,11 @@ const GridExample = () => {
     }, []);
 
     const onGridReady = useCallback((params: GridReadyEvent) => {
-        setGridColumnApi(params.columnApi);
+        setGridApi(params.api);
     }, []);
 
     const onGridPreDestroyed = useCallback((params: GridPreDestroyedEvent<TAthlete>) => {
-        const allColumns = gridColumnApi?.getColumns();
+        const allColumns = gridApi?.getColumns();
         if (!allColumns) {
             return;
         }
@@ -55,19 +53,19 @@ const GridExample = () => {
         }));
 
         setColumnsWidthOnPreDestroyed(currentColumnWidths);
-        setGridColumnApi(undefined);
-    }, [gridColumnApi])
+        setGridApi(undefined);
+    }, [gridApi])
 
     const updateColumnWidth = useCallback(() => {
-        if (!gridColumnApi) {
+        if (!gridApi) {
             return;
         }
 
-        gridColumnApi.getColumns()!.forEach(column => {
+        gridApi.getColumns()!.forEach(column => {
             const newRandomWidth = Math.round((150 + Math.random() * 100) * 100) / 100;
-            gridColumnApi.setColumnWidth(column, newRandomWidth);
+            gridApi.setColumnWidth(column, newRandomWidth);
         });
-    }, [gridColumnApi])
+    }, [gridApi])
 
     const destroyGrid = useCallback(() => {
         setGridVisible(false);

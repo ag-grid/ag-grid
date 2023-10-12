@@ -1,4 +1,6 @@
-import { Grid, GridOptions } from '@ag-grid-community/core'
+import { GridApi, createGrid, GridOptions } from '@ag-grid-community/core';
+
+let gridApi: GridApi;
 
 const gridOptions: GridOptions = {
   defaultColDef: {
@@ -21,15 +23,15 @@ const gridOptions: GridOptions = {
 }
 
 function onBtnExport() {
-  gridOptions.api!.exportDataAsCsv()
+  gridApi!.exportDataAsCsv()
 }
 
 function onBtnUpdate() {
-  (document.querySelector('#csvResult') as any).value = gridOptions.api!.getDataAsCsv()
+  (document.querySelector('#csvResult') as any).value = gridApi!.getDataAsCsv()
 }
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
   var gridDiv = document.querySelector<HTMLElement>('#myGrid')!
-  new Grid(gridDiv, gridOptions)
+  gridApi = createGrid(gridDiv, gridOptions);
 })

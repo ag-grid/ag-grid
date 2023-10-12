@@ -1,4 +1,3 @@
-import { ColumnApi } from "../../../columns/columnApi";
 import { ColumnModel } from "../../../columns/columnModel";
 import { UserCompDetails } from "../../../components/framework/userComponentFactory";
 import { KeyCode } from '../../../constants/keyCode';
@@ -13,7 +12,6 @@ import { Column } from "../../../entities/column";
 import { ColumnEventType } from "../../../events";
 import { ColumnGroup } from "../../../entities/columnGroup";
 import { ProvidedColumnGroup } from "../../../entities/providedColumnGroup";
-import { GridApi } from "../../../gridApi";
 import { SetLeftFeature } from "../../../rendering/features/setLeftFeature";
 import { removeFromArray } from "../../../utils/array";
 import { ManagedFocusFeature } from "../../../widgets/managedFocusFeature";
@@ -38,8 +36,6 @@ export class HeaderGroupCellCtrl extends AbstractHeaderCellCtrl {
 
     @Autowired('columnModel') private readonly columnModel: ColumnModel;
     @Autowired('dragAndDropService') private readonly dragAndDropService: DragAndDropService;
-    @Autowired('gridApi') private readonly gridApi: GridApi;
-    @Autowired('columnApi') private columnApi: ColumnApi;
 
     private columnGroup: ColumnGroup;
     private comp: IHeaderGroupCellComp;
@@ -101,8 +97,8 @@ export class HeaderGroupCellCtrl extends AbstractHeaderCellCtrl {
             setExpanded: (expanded: boolean) => {
                 this.columnModel.setColumnGroupOpened(this.columnGroup.getProvidedColumnGroup(), expanded, "gridInitializing");
             },
-            api: this.gridApi,
-            columnApi: this.columnApi,
+            api: this.gridOptionsService.api,
+            columnApi: this.gridOptionsService.columnApi,
             context: this.gridOptionsService.context
         };
 

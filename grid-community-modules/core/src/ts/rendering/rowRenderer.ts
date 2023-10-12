@@ -26,7 +26,7 @@ import { PinnedRowModel } from "../pinnedRowModel/pinnedRowModel";
 import { exists } from "../utils/generic";
 import { getAllValuesInObject, iterateObject } from "../utils/object";
 import { createArrayOfNumbers } from "../utils/number";
-import { doOnce, executeInAWhile } from "../utils/function";
+import { warnOnce, executeInAWhile } from "../utils/function";
 import { CtrlsService } from "../ctrlsService";
 import { GridBodyCtrl } from "../gridBodyComp/gridBodyCtrl";
 import { CellCtrl } from "./cell/cellCtrl";
@@ -140,7 +140,11 @@ export class RowRenderer extends BeanStub {
         this.addManagedPropertyListeners(['suppressMaxRenderedRowRestriction', 'rowBuffer'], this.redraw.bind(this));
         this.addManagedPropertyListeners([
             'rowClass', 'suppressCellFocus', 'getBusinessKeyForNode',
-            'fullWidthCellRenderer', 'fullWidthCellRendererParams', 'groupRowRenderer', // maybe only needs to refresh FW rows...
+            'fullWidthCellRenderer', 'fullWidthCellRendererParams', 'rowClassRules',
+
+            'groupRowRenderer', 'groupRowRendererParams', // maybe only needs to refresh FW rows...
+            'loadingCellRenderer', 'loadingCellRendererParams',
+            'detailCellRenderer', 'detailCellRendererParams',
         ], this.redrawRows.bind(this));
         this.addManagedPropertyListeners(['enableRangeSelection', 'enableCellTextSelection'], this.refreshCells.bind(this));
 
@@ -1189,7 +1193,7 @@ export class RowRenderer extends BeanStub {
 
         if (typeof rowBuffer === 'number') {
             if (rowBuffer < 0) {
-                doOnce(() => console.warn(`AG Grid: rowBuffer should not be negative`), 'warn rowBuffer negative');
+                warnOnce(`rowBuffer should not be negative`);
                 rowBuffer = 0;
                 this.gridOptionsService.set('rowBuffer', 0);
             }

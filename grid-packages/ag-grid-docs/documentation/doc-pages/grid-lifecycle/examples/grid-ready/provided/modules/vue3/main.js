@@ -59,7 +59,6 @@ const VueExample = {
         }]);
 
         const gridApi = ref();
-        const gridColumnApi = ref();
 
         const rowData = ref(null);
         const rowSelection = ref(null);
@@ -76,13 +75,12 @@ const VueExample = {
         };
         const onGridReady = (params) => {
             gridApi.value = params.api;
-            gridColumnApi.value = params.columnApi;
 
             const checkbox = document.querySelector('#pinFirstColumnOnLoad');
             const shouldPinFirstColumn = checkbox && checkbox.checked;
 
             if (shouldPinFirstColumn) {
-                params.columnApi.applyColumnState({
+                params.api.applyColumnState({
                     state: [
                         {colId: 'name', pinned: 'left'},
                     ],
@@ -93,7 +91,6 @@ const VueExample = {
         return {
             columnDefs,
             gridApi,
-            gridColumnApi,
             rowData,
             rowSelection,
             onGridReady,

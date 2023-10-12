@@ -1,4 +1,4 @@
-import { BorderValue } from 'model/values/border';
+import { Border } from 'model/values/Border';
 import {
   borderStyleDefaultValue,
   colorDefaultValue,
@@ -26,8 +26,14 @@ export const BorderInput: Input<'border'> = ({
   onErrorChange,
   focus,
 }) => {
-  const onChange = (change: Partial<BorderValue>) => {
-    onValueChange({ ...value, ...change });
+  const onChange = (change: Partial<Border>) => {
+    onValueChange(
+      new Border(
+        change.style || value.style,
+        change.width || value.width,
+        change.color || value.color,
+      ),
+    );
   };
 
   const focusStyle = focus && !!info.style;

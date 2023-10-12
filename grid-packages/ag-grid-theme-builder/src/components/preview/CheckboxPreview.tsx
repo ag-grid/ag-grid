@@ -51,18 +51,18 @@ export const CheckboxPreview = () => (
       <PreviewSubtitle>Focussed / active</PreviewSubtitle>
       <PreviewRow>
         <PreviewLabel>Off</PreviewLabel>
-        <MockInputContent kind="checkbox" state="unchecked" focus />
-        <MockInputContent kind="radio-button" state="unchecked" focus />
+        <MockInputContent kind="checkbox" state="unchecked" focussed />
+        <MockInputContent kind="radio-button" state="unchecked" focussed />
       </PreviewRow>
       <PreviewRow>
         <PreviewLabel>On</PreviewLabel>
-        <MockInputContent kind="checkbox" state="checked" focus />
-        <MockInputContent kind="radio-button" state="checked" focus />
+        <MockInputContent kind="checkbox" state="checked" focussed />
+        <MockInputContent kind="radio-button" state="checked" focussed />
       </PreviewRow>
       <PreviewRow>
         <PreviewLabel>Indeterminate</PreviewLabel>
-        <MockInputContent kind="checkbox" state="indeterminate" focus />
-        <MockInputContent kind="radio-button" state="indeterminate" focus />
+        <MockInputContent kind="checkbox" state="indeterminate" focussed />
+        <MockInputContent kind="radio-button" state="indeterminate" focussed />
       </PreviewRow>
     </PreviewTable>
   </PreviewPanel>

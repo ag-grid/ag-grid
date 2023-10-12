@@ -4,7 +4,6 @@ function checkGridOptionPropertyKeys() {
     const communityMainFilename = '../../grid-packages/ag-grid-enterprise/src/main.ts';
     const communityMainFileContents = fs.readFileSync(communityMainFilename, 'UTF-8');
     const gridApiContents = fs.readFileSync('./src/ts/gridApi.ts', 'UTF-8');
-    const columnApiContents = fs.readFileSync('./src/ts/columns/columnApi.ts', 'UTF-8');
 
     const matches = [...communityMainFileContents.split('/* COMMUNITY_EXPORTS_START_DO_NOT_DELETE */')[1].matchAll(/(\w)*/g)];
     let mainExports = [];
@@ -14,21 +13,20 @@ function checkGridOptionPropertyKeys() {
     })
 
     let publicGridApiTypes = getPublicTypes(gridApiContents);
-    let publicColumnApiTypes = getPublicTypes(columnApiContents);
     let missingPropertyKeys = new Set();
 
-    [...publicGridApiTypes, ...publicColumnApiTypes].forEach(m => {
+    publicGridApiTypes.forEach(m => {
         if (!mainExports.includes(m)) {
             missingPropertyKeys.add(m)
         }
     })
 
     if (missingPropertyKeys.size > 0) {
-        console.error('check-grid-api-exports - GridApi / ColumnApi are using types that are not publicly exported. Missing the following types:', [...missingPropertyKeys].join(', '));
+        console.error('check-grid-api-exports - GridApi are using types that are not publicly exported. Missing the following types:', [...missingPropertyKeys].join(', '));
         console.error('If running locally and you have added the missing type be sure to run build in "grid-community-modules/core", "grid-packages/ag-grid-community", "grid-packages/ag-grid-enterprise".')
         return 1;
     }
-    console.log('check-grid-api-exports - GridApi / ColumnApi Passed sanity check for missing types.')
+    console.log('check-grid-api-exports - GridApi Passed sanity check for missing types.')
     return 0;
 }
 

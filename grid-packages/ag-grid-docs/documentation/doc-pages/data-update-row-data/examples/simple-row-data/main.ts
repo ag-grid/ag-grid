@@ -1,4 +1,4 @@
-import { Grid, GridOptions, ColDef } from '@ag-grid-community/core'
+import { GridApi, createGrid, GridOptions, ColDef } from '@ag-grid-community/core';
 
 interface ICar {
   make: string;
@@ -27,6 +27,8 @@ const rowDataB: ICar[] = [
   {make: "Aston Martin", model: "DBX", price: 190000}
 ];
 
+let gridApi: GridApi<ICar>;
+
 // let the grid know which columns and what data to use
 const gridOptions: GridOptions<ICar> = {
   columnDefs: columnDefs,
@@ -36,15 +38,15 @@ const gridOptions: GridOptions<ICar> = {
 };
 
 function onRowDataA() {
-  gridOptions.api!.setRowData(rowDataA);
+  gridApi!.setRowData(rowDataA);
 }
 
 function onRowDataB() {
-  gridOptions.api!.setRowData(rowDataB);
+  gridApi!.setRowData(rowDataB);
 }
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
   var gridDiv = document.querySelector<HTMLElement>('#myGrid')!
-  new Grid(gridDiv, gridOptions)
+  gridApi = createGrid(gridDiv, gridOptions);
 });

@@ -18,7 +18,6 @@ export const Layout = ({
     pageContext: { frameworks, framework = 'javascript', layout, pageName, darkMode },
     location: { pathname: path, href },
 }) => {
-    // spl todo: refactor next week!
     // set in gatsby-node.js
     let fullScreenPage = false,
         fullScreenWithFooter = false;

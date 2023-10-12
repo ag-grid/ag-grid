@@ -1,5 +1,7 @@
 import {
-  ColDef, Grid,
+  ColDef,
+  GridApi,
+  createGrid,
   GridOptions,
   IServerSideDatasource,
   ISetFilterParams,
@@ -8,7 +10,7 @@ import {
   SetFilterValuesFuncParams,
   ValueFormatterParams,
   ValueGetterParams,
-} from '@ag-grid-community/core'
+} from '@ag-grid-community/core';
 declare var FakeServer: any;
 const columnDefs: ColDef[] = [
   { field: 'employeeId', hide: true },
@@ -28,6 +30,8 @@ const columnDefs: ColDef[] = [
     } as ISetFilterParams<any, Date>,
   },
 ]
+
+let gridApi: GridApi;
 
 const gridOptions: GridOptions = {
   defaultColDef: {
@@ -129,7 +133,7 @@ function getDatesAsync(params: SetFilterValuesFuncParams<any, Date>) {
   setTimeout(function () {
     params.success(dates)
   }, 500)
-} 
+}
 
 function getEmployeesAsync(params: SetFilterValuesFuncParams<any, string[]>) {
   if (!fakeServer) {
@@ -148,7 +152,7 @@ function getEmployeesAsync(params: SetFilterValuesFuncParams<any, string[]>) {
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
   var gridDiv = document.querySelector<HTMLElement>('#myGrid')!
-  new Grid(gridDiv, gridOptions)
+  gridApi = createGrid(gridDiv, gridOptions);
 
   fetch('https://www.ag-grid.com/example-assets/tree-data.json')
     .then(response => response.json())
@@ -160,6 +164,6 @@ document.addEventListener('DOMContentLoaded', function () {
       var datasource = getServerSideDatasource(fakeServer)
 
       // register the datasource with the grid
-      gridOptions.api!.setServerSideDatasource(datasource)
+      gridApi!.setServerSideDatasource(datasource)
     })
 })

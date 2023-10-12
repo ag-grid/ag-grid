@@ -32,6 +32,7 @@ const columnDefs = [
 ];
 
 // this is the grid options for the top grid
+let topApi;
 const gridOptionsTop = {
     defaultColDef: {
         editable: true,
@@ -48,6 +49,7 @@ const gridOptionsTop = {
 };
 
 // this is the grid options for the bottom grid
+let bottomApi;
 const gridOptionsBottom = {
     defaultColDef: {
         editable: true,
@@ -67,22 +69,22 @@ gridOptionsTop.alignedGrids.push(gridOptionsBottom);
 gridOptionsBottom.alignedGrids.push(gridOptionsTop);
 
 function setData(rowData) {
-    gridOptionsTop.api.setRowData(rowData);
-    gridOptionsBottom.api.setRowData(rowData);
-    gridOptionsTop.api.sizeColumnsToFit();
+    topApi.setRowData(rowData);
+    bottomApi.setRowData(rowData);
+    topApi.sizeColumnsToFit();
 
     // mix up some columns
-    gridOptionsTop.columnApi.moveColumnByIndex(11, 4);
-    gridOptionsTop.columnApi.moveColumnByIndex(11, 4);
+    topApi.moveColumnByIndex(11, 4);
+    topApi.moveColumnByIndex(11, 4);
 }
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', () => {
     const gridDivTop = document.querySelector('#myGridTop');
-    new agGrid.Grid(gridDivTop, gridOptionsTop);
+    topApi = agGrid.createGrid(gridDivTop, gridOptionsTop);
 
     const gridDivBottom = document.querySelector('#myGridBottom');
-    new agGrid.Grid(gridDivBottom, gridOptionsBottom);
+    bottomApi = agGrid.createGrid(gridDivBottom, gridOptionsBottom);
 
     fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
         .then(response => response.json())

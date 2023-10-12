@@ -257,8 +257,6 @@ export class EnterpriseMenu extends BeanStub {
 
     @Autowired('columnModel') private readonly columnModel: ColumnModel;
     @Autowired('filterManager') private readonly filterManager: FilterManager;
-    @Autowired('gridApi') private readonly gridApi: GridApi;
-    @Autowired('columnApi') private readonly columnApi: ColumnApi;
     @Autowired('menuItemMapper') private readonly menuItemMapper: MenuItemMapper;
     @Autowired('rowModel') private readonly rowModel: IRowModel;
     @Autowired('focusService') private readonly focusService: FocusService;
@@ -578,8 +576,8 @@ export class EnterpriseMenu extends BeanStub {
             suppressColumnFilter: !!suppressColumnFilter,
             suppressColumnSelectAll: !!suppressColumnSelectAll,
             suppressSyncLayoutWithGrid: !!columnLayout || !!suppressSyncLayoutWithGrid,
-            api: this.gridApi,
-            columnApi: this.columnApi,
+            api: this.gridOptionsService.api,
+            columnApi: this.gridOptionsService.columnApi,
             context: this.gridOptionsService.context
         }, 'columnMenu');
 
