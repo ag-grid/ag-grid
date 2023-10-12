@@ -6,7 +6,7 @@
   "module": "./dist/ag-grid-enterprise.auto.esm.js",
   "types": "main.d.ts",
   "scripts": {
-    "clean": "rimraf dist main.d.ts .hash",
+    "clean": "rimraf dist main.d.ts",
     "build": "npm run customise && npx gulp && npm run rollup",
     "build-prod": "npm run build",
     "package": "npx gulp copy-umd-files",
@@ -76,6 +76,7 @@
     "@ag-grid-enterprise/status-bar": "~30.2.0",
     "@ag-grid-enterprise/viewport-row-model": "~30.2.0",
     "ag-charts-community": "latest",
+    "ag-charts-enterprise": "latest",
     "@rollup/plugin-alias": "^2.2.0",
     "@types/node": "12.20.20",
     "ag-grid-community": "~30.2.0",

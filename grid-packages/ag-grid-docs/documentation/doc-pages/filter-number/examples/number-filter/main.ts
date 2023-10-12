@@ -1,4 +1,11 @@
-import { ColDef, Grid, GridOptions, INumberFilterParams, ValueFormatterParams } from '@ag-grid-community/core';
+import {
+  ColDef,
+  GridApi,
+  createGrid,
+  GridOptions,
+  INumberFilterParams,
+  ValueFormatterParams,
+} from '@ag-grid-community/core';
 import { getData } from "./data";
 
 
@@ -48,6 +55,8 @@ const columnDefs: ColDef[] = [
   },
 ]
 
+let gridApi: GridApi;
+
 const gridOptions: GridOptions = {
   columnDefs: columnDefs,
   defaultColDef: {
@@ -60,5 +69,5 @@ const gridOptions: GridOptions = {
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
   var gridDiv = document.querySelector<HTMLElement>('#myGrid')!
-  new Grid(gridDiv, gridOptions)
+  gridApi = createGrid(gridDiv, gridOptions);
 })

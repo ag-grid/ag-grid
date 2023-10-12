@@ -12,15 +12,6 @@ Floating Filter Components allow you to add your own floating filter types to AG
 </video-section>
 </framework-specific-section>
 
-This page focuses on writing your own floating filter components. To see general information about floating filters in AG Grid see [floating filters](/floating-filters/).
-
-## Simple Floating Filter 
- 
-md-include:simple-floating-filter-javascript.md 
-md-include:simple-floating-filter-angular.md 
-md-include:simple-floating-filter-react.md 
-md-include:simple-floating-filter-vue.md
-
 ## Example: Custom Floating Filter
 
 In the following example you can see how the Gold, Silver, Bronze and Total columns have a custom floating filter `NumberFloatingFilter`. This filter substitutes the standard floating filter for a input box that the user can change to adjust how many medals of each column to filter by based on a greater than filter.

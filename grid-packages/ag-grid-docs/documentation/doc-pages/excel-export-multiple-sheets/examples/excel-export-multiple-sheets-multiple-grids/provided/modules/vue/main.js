@@ -81,7 +81,6 @@ const VueExample = {
             leftRowData: null,
             rightRowData: null,
             leftApi: null,
-            leftColumnApi: null,
             rightApi: null,
 
             defaultColDef: {
@@ -160,8 +159,7 @@ const VueExample = {
 
         onGridReady(params, side) {
             if (side === 0) {
-                this.leftApi = params.api
-                this.leftColumnApi = params.columnApi;
+                this.leftApi = params.api;
             }
 
             if (side === 1) {

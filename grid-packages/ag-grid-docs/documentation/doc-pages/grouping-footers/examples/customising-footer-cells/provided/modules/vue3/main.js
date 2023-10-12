@@ -51,7 +51,6 @@ const VueExample = {
                 aggFunc: "sum"
             }],
             gridApi: null,
-            columnApi: null,
             defaultColDef: {
                 flex: 1,
                 minWidth: 150,

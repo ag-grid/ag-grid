@@ -1,6 +1,5 @@
 import styled from '@emotion/styled';
-import { Value, valueToCss } from 'model/values';
-import { colorIsDarkish } from 'model/values/color';
+import { Value } from 'model/values';
 
 export type DefaultValueProps = {
   value: Value | null;
@@ -12,19 +11,16 @@ export const DefaultValue = ({ value }: DefaultValueProps) => {
   }
 
   if (value.type === 'color') {
-    return (
+    return value.isTransparent() ? (
+      <>(transparent)</>
+    ) : (
       <ColorSwatchBackground>
-        <ColorSwatch
-          style={{ backgroundColor: value.hex }}
-          className={colorIsDarkish(value) ? 'is-darkish' : undefined}
-        >
-          {value.hex}
-        </ColorSwatch>
+        <ColorSwatch style={{ backgroundColor: value.toCss() }} />
       </ColorSwatchBackground>
     );
   }
 
-  return <span>{valueToCss(value)}</span>;
+  return <span>{value.describe()}</span>;
 };
 
 const NoDefault = styled('div')`
@@ -35,25 +31,52 @@ const NoDefault = styled('div')`
 `;
 
 const ColorSwatch = styled('div')`
+  height: 40px;
+  width: 80px;
   padding: 5px;
   overflow: hidden;
   line-height: 1em;
   color: #000;
-
-  &.is-darkish {
-    color: #fff;
-  }
 `;
 
 const ColorSwatchBackground = styled('div')`
-  background-image: linear-gradient(45deg, #888 25%, transparent 25%),
-    linear-gradient(-45deg, #888 25%, transparent 25%),
-    linear-gradient(45deg, transparent 75%, #888 75%),
-    linear-gradient(-45deg, transparent 75%, #888 75%);
-  background-size: 20px 20px;
   background-position:
-    0 0,
-    0 10px,
-    10px -10px,
-    -10px 0px;
+    0px 0px,
+    10px 10px;
+  background-size: 20px 20px;
+  background-image: linear-gradient(
+      45deg,
+      rgba(0, 0, 0, 0.1) 25%,
+      transparent 25%,
+      transparent 75%,
+      rgba(0, 0, 0, 0.1) 75%,
+      rgba(0, 0, 0, 0.1) 100%
+    ),
+    linear-gradient(
+      45deg,
+      rgba(0, 0, 0, 0.1) 25%,
+      transparent 25%,
+      transparent 75%,
+      rgba(0, 0, 0, 0.1) 75%,
+      rgba(0, 0, 0, 0.1) 100%
+    );
+
+  html[data-dark-mode='true'] & {
+    background-image: linear-gradient(
+        45deg,
+        rgba(255, 255, 255, 0.1) 25%,
+        transparent 25%,
+        transparent 75%,
+        rgba(255, 255, 255, 0.1) 75%,
+        rgba(255, 255, 255, 0.1) 100%
+      ),
+      linear-gradient(
+        45deg,
+        rgba(255, 255, 255, 0.1) 25%,
+        transparent 25%,
+        transparent 75%,
+        rgba(255, 255, 255, 0.1) 75%,
+        rgba(255, 255, 255, 0.1) 100%
+      );
+  }
 `;

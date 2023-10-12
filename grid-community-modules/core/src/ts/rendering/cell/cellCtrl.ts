@@ -30,7 +30,7 @@ import { KeyCode } from "../../constants/keyCode";
 import { UserCompDetails } from "../../components/framework/userComponentFactory";
 import { CheckboxSelectionComponent } from "../checkboxSelectionComponent";
 import { DndSourceComp } from "../dndSourceComp";
-import { doOnce } from "../../utils/function";
+import { warnOnce } from "../../utils/function";
 import { RowDragComp } from "../row/rowDragComp";
 import { getValueUsingField } from "../../utils/object";
 import { getElementSize } from "../../utils/dom";
@@ -1115,16 +1115,12 @@ export class CellCtrl extends BeanStub {
         if (rowDragManaged) {
             // row dragging only available in default row model
             if (!clientSideRowModelActive) {
-                doOnce(() => console.warn('AG Grid: managed row dragging is only allowed in the Client Side Row Model'),
-                    'CellComp.addRowDragging');
-
+                warnOnce('managed row dragging is only allowed in the Client Side Row Model');
                 return;
             }
 
             if (pagination) {
-                doOnce(() => console.warn('AG Grid: managed row dragging is not possible when doing pagination'),
-                    'CellComp.addRowDragging');
-
+                warnOnce('managed row dragging is not possible when doing pagination');
                 return;
             }
         }

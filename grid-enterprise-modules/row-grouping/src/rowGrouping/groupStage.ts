@@ -711,10 +711,7 @@ export class GroupStage extends BeanStub implements IRowNodeStage {
         const keys: string[] | null = details.getDataPath ? details.getDataPath(rowNode.data) : null;
 
         if (keys === null || keys === undefined || keys.length === 0) {
-            _.doOnce(
-                () => console.warn(`AG Grid: getDataPath() should not return an empty path for data`, rowNode.data),
-                'groupStage.getGroupInfoFromCallback'
-            );
+            _.warnOnce(`getDataPath() should not return an empty path for data ${rowNode.data}`);
         }
         const groupInfoMapper = (key: string | null) => ({ key, field: null, rowGroupColumn: null }) as GroupInfo;
         return keys ? keys.map(groupInfoMapper) : [];

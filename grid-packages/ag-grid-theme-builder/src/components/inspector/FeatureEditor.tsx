@@ -4,7 +4,7 @@ import { VariableControl } from 'components/controls/VariableControl';
 import { withErrorBoundary } from 'components/ErrorBoundary';
 import { Feature } from 'model/features';
 import { getThemeChain } from 'model/themes';
-import { getVariableInfoOrThrow } from 'model/variableInfo';
+import { getVariableInfo } from 'model/variableInfo';
 import { memo } from 'react';
 
 export type FeatureEditorProps = {
@@ -18,7 +18,7 @@ const FeatureEditor = ({ feature }: FeatureEditorProps) => {
     <Container>
       {feature.variableNames
         .filter((v) => {
-          const specificToTheme = getVariableInfoOrThrow(v).specificToTheme;
+          const specificToTheme = getVariableInfo(v)?.specificToTheme;
           if (specificToTheme == null) return true;
           return getThemeChain(parentTheme).find((t) => t.name === specificToTheme) != null;
         })

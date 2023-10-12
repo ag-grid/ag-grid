@@ -78,8 +78,6 @@ validateDocFile('GridOptions', './documentation/doc-pages/grid-api/grid-options.
 validateDocFile('ColDef', './documentation/doc-pages/column-properties/column-options.AUTO.json', ['./documentation/doc-pages/column-properties/properties.json'], [
     'pivotKeys', 'pivotValueColumn', 'pivotTotalColumnIds'
 ]);
-validateDocFile('ColumnApi', './documentation/doc-pages/column-api/column-api.AUTO.json', ['./documentation/doc-pages/column-api/api.json']);
-
 
 // So many missing will need to get clarification on this.
 // TODO 
@@ -90,7 +88,7 @@ validateDocFile('ColumnApi', './documentation/doc-pages/column-api/column-api.AU
 
 validateDocFile('RowNode', './documentation/doc-pages/row-object/row-node.AUTO.json',
     [
-        './documentation/doc-pages/row-object/resources/events.json',
-        './documentation/doc-pages/row-object/resources/methods.json',
+        './documentation/doc-pages/row-events/resources/events.json',
+        './documentation/doc-pages/row-api/resources/methods.json',
         './documentation/doc-pages/row-object/resources/reference.json'
     ]);

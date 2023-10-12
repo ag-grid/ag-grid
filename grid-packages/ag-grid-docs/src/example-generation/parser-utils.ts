@@ -160,7 +160,9 @@ export function tsNodeIsTopLevelVariable(node: ts.Node, registered: string[] = [
         // Is not just a type declaration i.e declare function getData: () => any[];
         if (node.declarations.length > 0) {
             const declaration = node.declarations[0];
-            return !isDeclareStatement(node.parent) && registered.indexOf(declaration.name.getText()) < 0 && ts.isSourceFile(node.parent.parent);
+            // Don't include api declarations as these are handled separately
+            const isLetApi = declaration.name.getText() === 'gridApi';            
+            return !isLetApi && !isDeclareStatement(node.parent) && registered.indexOf(declaration.name.getText()) < 0 && ts.isSourceFile(node.parent.parent);
         }
     }
 }
@@ -673,4 +675,17 @@ export function addGenericInterfaceImport(imports: string[], tData: string, bind
         !imports.some(i => i.includes(tData))) {
         imports.push(`import { ${tData} } from './interfaces'`)
     }
+}
+
+export function replaceGridReadyRowData(callback: string, rowDataSetter: string){
+    return callback
+    // replace gridApi.setRowData(data) with this.rowData = data
+    .replace(/gridApi(!?)\.setRowData\(data\)/, `${rowDataSetter} = data`)
+    // replace gridApi.setRowData(data.map(...)) with this.rowData = data.map(...)
+    .replace(/gridApi(!?)\.setRowData\(data/, `${rowDataSetter} = (data`);
+}
+
+export function preferParamsApi(code: string): string {
+    // use params.api instead of gridApi.api when we have access to the params object
+    return code.replace(/([\s\(!])gridApi(\W)/g, '$1params.api$2');
 }

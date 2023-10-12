@@ -6,7 +6,8 @@ Style UI elements that float above the main UI, including menus.
 
 ## Rounding corners
 
-- `--ag-border-radius` sets the radius of most rectangular elements within the grid, but not of the grid itself.
+- `--ag-border-radius` sets the radius of most rectangular elements within the grid, including the grid itself.
+- `--ag-wrapper-border-radius` sets the radius of the grid wrapper, if you want it to be different from `--ag-border-radius`.
 - `--ag-card-radius` sets the radius of floating elements (cards and popups) and defaults to the value of `--ag-border-radius`.
 - `ag-root-wrapper` is the class name applied to the grid's outer element. Apply a border radius using a CSS selector: `.ag-root-wrapper { border-radius: 2px }`.
 

@@ -81,7 +81,6 @@ const VueExample = {
                 type: "numberValue"
             }],
             gridApi: null,
-            columnApi: null,
             defaultColDef: {
                 flex: 1,
                 minWidth: 150,
@@ -118,7 +117,6 @@ const VueExample = {
     methods: {
         onGridReady(params) {
             this.gridApi = params.api;
-            this.gridColumnApi = params.columnApi;
 
         },
     }

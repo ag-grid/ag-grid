@@ -77,7 +77,7 @@ Then depending on your choice of framework you'll need to provide the modules to
 
 <framework-specific-section frameworks="javascript">
 <snippet transform={false}>
-|new Grid(&lt;dom element>, gridOptions, { modules: [ServerSideRowModelModule, RowGroupingModule]});
+|createGrid(&lt;dom element>, gridOptions, { modules: [ServerSideRowModelModule, RowGroupingModule]});
 </snippet>
 </framework-specific-section>
 

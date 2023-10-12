@@ -63,8 +63,6 @@ const VueExample = {
             rightGridOptions: null,
             leftGridApi: null,
             rightGridApi: null,
-            leftColumnApi: null,
-            rightColumnApi: null,
             leftColumnDefs: null,
             rightColumnDefs: null,
             rowClassRules: null,
@@ -125,8 +123,6 @@ const VueExample = {
     mounted() {
         this.leftGridApi = this.leftGridOptions.api;
         this.rightGridApi = this.rightGridOptions.api;
-        this.leftColumnApi = this.leftGridOptions.columnApi;
-        this.rightColumnApi = this.rightGridOptions.columnApi;
     },
 
     methods: {

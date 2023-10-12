@@ -72,7 +72,6 @@ const VueExample = {
                 }
             ],
             gridApi: null,
-            columnApi: null,
             defaultColDef: {
                 flex: 1,
                 cellDataType: false,
@@ -98,7 +97,6 @@ const VueExample = {
         },
         onGridReady(params) {
             this.gridApi = params.api;
-            this.gridColumnApi = params.columnApi;
 
         },
     }

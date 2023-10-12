@@ -1,10 +1,9 @@
-import { BeanStub, Autowired, GridApi, ColumnApi, RowNode, IServerSideGetRowsParams, IServerSideGetRowsRequest, _, PostConstruct, RowNodeBlockLoader, ServerSideGroupLevelParams, LoadSuccessParams } from "@ag-grid-community/core";
+import { BeanStub, Autowired, GridApi, RowNode, IServerSideGetRowsParams, IServerSideGetRowsRequest, _, PostConstruct, RowNodeBlockLoader, ServerSideGroupLevelParams, LoadSuccessParams } from "@ag-grid-community/core";
 import { LazyCache } from "./lazyCache";
 
 export class LazyBlockLoader extends BeanStub {
 
     @Autowired('gridApi') private api: GridApi;
-    @Autowired('columnApi') private columnApi: ColumnApi;
     @Autowired('rowNodeBlockLoader') private rowNodeBlockLoader: RowNodeBlockLoader;
 
     public static DEFAULT_BLOCK_SIZE = 100;
@@ -147,7 +146,7 @@ export class LazyBlockLoader extends BeanStub {
             fail,
             parentNode: this.parentNode,
             api: this.api,
-            columnApi: this.columnApi,
+            columnApi: this.gridOptionsService.columnApi,
             context: this.gridOptionsService.context
         };
 

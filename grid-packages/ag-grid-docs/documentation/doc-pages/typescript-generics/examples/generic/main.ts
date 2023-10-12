@@ -1,4 +1,12 @@
-import { ColDef, GetRowIdParams, Grid, GridOptions, RowSelectedEvent, ValueFormatterParams } from '@ag-grid-community/core';
+import {
+  ColDef,
+  GetRowIdParams,
+  GridApi,
+  createGrid,
+  GridOptions,
+  RowSelectedEvent,
+  ValueFormatterParams,
+} from '@ag-grid-community/core';
 
 interface ICar {
   make: string;
@@ -29,6 +37,8 @@ var rowData: ICar[] = [
   { make: 'Porsche', model: 'Boxster', price: 72000 },
 ]
 
+let gridApi: GridApi<ICar>;
+
 // Pass ICar as generic row data type
 const gridOptions: GridOptions<ICar> = {
   columnDefs: columnDefs,
@@ -55,7 +65,7 @@ const gridOptions: GridOptions<ICar> = {
 
 function onShowSelection() {
   // api.getSelectedRows() : ICar[]
-  const cars: ICar[] = gridOptions.api!.getSelectedRows();
+  const cars: ICar[] = gridApi!.getSelectedRows();
   console.log('Selected cars are', cars.map(c => `${c.make} ${c.model}`))
 }
 
@@ -66,5 +76,5 @@ document.addEventListener('DOMContentLoaded', function () {
   var eGridDiv = document.querySelector<HTMLElement>('#myGrid')!
 
   // create the grid passing in the div to use together with the columns & data we want to use
-  new Grid(eGridDiv, gridOptions)
+  gridApi = createGrid(eGridDiv, gridOptions);
 })

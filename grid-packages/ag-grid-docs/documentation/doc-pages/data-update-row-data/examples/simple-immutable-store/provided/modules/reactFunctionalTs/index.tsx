@@ -10,7 +10,7 @@ import { StatusBarModule } from '@ag-grid-enterprise/status-bar';
 import '@ag-grid-community/styles/ag-grid.css';
 import "@ag-grid-community/styles/ag-theme-alpine.css";
 
-import { ColDef, ColumnApi, GetRowIdParams, GridReadyEvent, ModuleRegistry } from '@ag-grid-community/core';
+import { ColDef, ColumnApi, GetRowIdParams, GridApi, GridReadyEvent, ModuleRegistry } from '@ag-grid-community/core';
 // Register the required feature modules with the Grid
 ModuleRegistry.registerModules([ClientSideRowModelModule, RowGroupingModule, StatusBarModule, RangeSelectionModule]);
 
@@ -53,16 +53,16 @@ function createItem(data: any[]) {
     return item;
 }
 
-function setGroupingEnabled(enabled: boolean, columnApi: ColumnApi) {
+function setGroupingEnabled(enabled: boolean, api: GridApi) {
     if (enabled) {
-        columnApi.applyColumnState({
+        api.applyColumnState({
             state: [
                 { colId: 'group', rowGroup: true, hide: true },
                 { colId: 'symbol', hide: true },
             ],
         });
     } else {
-        columnApi.applyColumnState({
+        api.applyColumnState({
             state: [
                 { colId: 'group', rowGroup: false, hide: false },
                 { colId: 'symbol', hide: false },
@@ -113,7 +113,7 @@ const GridExample = () => {
 
 
     const onGridReady = useCallback((params: GridReadyEvent) => {
-        setGroupingEnabled(false, params.columnApi);
+        setGroupingEnabled(false, params.api);
     }, []);
 
     const addFiveItems = useCallback((append: boolean) => {
@@ -178,7 +178,7 @@ const GridExample = () => {
     }, [rowData])
 
     const onGroupingEnabled = useCallback((enabled: boolean) => {
-        setGroupingEnabled(enabled, gridRef.current!.columnApi);
+        setGroupingEnabled(enabled, gridRef.current!.api);
     }, [])
 
     const reverseItems = useCallback(() => {

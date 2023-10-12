@@ -12,7 +12,10 @@ export const mapPresentObjectValues = <T, U>(
     Object.entries(input).flatMap(([key, value]) => (value != null ? [[key, mapper(value)]] : [])),
   );
 
-export const indexBy = <T, K extends keyof T>(items: T[], keyProperty: K): Record<string, T> =>
+export const indexBy = <T, K extends keyof T>(
+  items: ReadonlyArray<T>,
+  keyProperty: K,
+): Record<string, T> =>
   Object.fromEntries(items.map((item): [string, T] => [String(item[keyProperty]), item]));
 
 export const isNotNull = <T>(value: T | null | undefined): value is T => value != null;

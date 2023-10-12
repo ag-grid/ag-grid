@@ -1,5 +1,7 @@
-import { Grid, GridOptions } from '@ag-grid-community/core';
+import { GridApi, createGrid, GridOptions } from '@ag-grid-community/core';
 import { getData } from "./data";
+
+let gridApi: GridApi;
 
 const gridOptions: GridOptions = {
   columnDefs: [
@@ -18,25 +20,25 @@ const gridOptions: GridOptions = {
 }
 
 function expandAll() {
-  gridOptions.api!.expandAll()
+  gridApi!.expandAll()
 }
 
 function collapseAll() {
-  gridOptions.api!.collapseAll()
+  gridApi!.collapseAll()
 }
 
 function expandCountries() {
-  gridOptions.api!.forEachNode(node => {
+  gridApi!.forEachNode(node => {
     if (node.level === 0) {
-      gridOptions.api!.setRowNodeExpanded(node, true);
+      gridApi!.setRowNodeExpanded(node, true);
     }
   });
 }
 
 function expandAustralia2000() {
-  gridOptions.api!.forEachNode(node => {
+  gridApi!.forEachNode(node => {
     if (node.key === '2000' && node.parent && node.parent.key === 'Australia') {
-      gridOptions.api!.setRowNodeExpanded(node, true, true);
+      gridApi!.setRowNodeExpanded(node, true, true);
     }
   });
 }
@@ -44,5 +46,5 @@ function expandAustralia2000() {
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
   var gridDiv = document.querySelector<HTMLElement>('#myGrid')!
-  new Grid(gridDiv, gridOptions)
+  gridApi = createGrid(gridDiv, gridOptions);
 })

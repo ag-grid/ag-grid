@@ -1,9 +1,8 @@
 import { ResultOrError, clamp } from 'model/utils';
+import { Dimension } from 'model/values/Dimension';
 import { DimensionVariableInfo } from 'model/variableInfo';
 import { useEffect, useRef, useState } from 'react';
 import { Input } from './Input';
-
-import { dimension } from 'model/values/dimension';
 import { InputElement } from './InputElement';
 import { useFocusInput } from './useFocusInput';
 
@@ -20,7 +19,7 @@ export const DimensionInput: Input<'dimension'> = (props) => {
     const props = propsRef.current;
     const parsed = parseInputValue(inputValue, props.info);
     if (parsed.ok && parsed.result !== props.value.number) {
-      props.onValueChange(dimension(parsed.result, props.value.units));
+      props.onValueChange(new Dimension(parsed.result, props.value.units));
     }
     const error = parsed.ok ? null : parsed.error;
     if (error !== props.error) {

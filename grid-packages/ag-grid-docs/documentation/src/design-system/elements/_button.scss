@@ -1,6 +1,6 @@
 @use '../core' as *;
 
-button {
+button:not([class^="ag"]) {
     font-family: var(--font-family);
     font-size: inherit;
     line-height: inherit;
@@ -12,60 +12,61 @@ input[type='reset'],
 input[type='submit'],
 .button,
 .button-secondary {
-    appearance: none;
-    display: inline-block;
-    font-size: var(--font-size);
-    font-weight: $font-weight-bold;
-    padding: 0.375em 1em 0.5em;
-    letter-spacing: 0.025em;
-    white-space: nowrap;
-    border-radius: var(--border-radius);
-    background-color: var(--button-color);
-    color: var(--button-text-color);
-    cursor: pointer;
-    outline: none;
-    border: 2px solid transparent;
-    box-shadow: 0 0 0 4px transparent;
-    transition: background-color $default-transition-timing, border $default-transition-timing,
-        box-shadow $default-transition-timing;
-
-    // do not apply hover colours to .ag-button:hover, otherwise Grid Buttons become transparent on hover
-    &:not(.ag-button):hover,
-    &:not(.ag-button).hover {
-        background-color: var(--button-hover-color);
-        color: var(--button-text-color) !important;
-    }
-
-    &:active {
-        background-color: var(--button-active-color);
-        transition: background-color 0.125s ease-in-out;
-    }
-
-    &:focus-visible {
-        border-color: var(--button-hover-color);
-        box-shadow: 0 0 0 4px var(--button-focus-box-shadow-color);
-    }
-
-    &:disabled,
-    &[disabled],
-    &.disabled {
-        --button-color: var(--neutral-200);
-        --button-hover-color: var(--neutral-200);
-        --button-active-color: var(--neutral-200);
-        --button-text-color: var(--neutral-600);
-        --button-focus-box-shadow-color: transparent;
-
-        cursor: default;
-    }
-
-    .icon {
-        --icon-size: 2em;
-
+    &:not([class^="ag"]) {
+        appearance: none;
         display: inline-block;
-        position: relative;
-        bottom: 0.05em;
-        margin: -1em 0.125em -1em 0;
-        fill: var(--button-text-color);
+        font-size: var(--font-size);
+        font-weight: $font-weight-bold;
+        padding: 0.375em 1em 0.5em;
+        letter-spacing: 0.025em;
+        white-space: nowrap;
+        border-radius: var(--border-radius);
+        background-color: var(--button-color);
+        color: var(--button-text-color);
+        cursor: pointer;
+        outline: none;
+        border: 2px solid transparent;
+        box-shadow: 0 0 0 4px transparent;
+        transition: background-color $default-transition-timing, border $default-transition-timing,
+            box-shadow $default-transition-timing;
+
+        &:hover,
+        &.hover {
+            background-color: var(--button-hover-color);
+            color: var(--button-text-color) !important;
+        }
+
+        &:active {
+            background-color: var(--button-active-color);
+            transition: background-color 0.125s ease-in-out;
+        }
+
+        &:focus-visible {
+            border-color: var(--button-hover-color);
+            box-shadow: 0 0 0 4px var(--button-focus-box-shadow-color);
+        }
+
+        &:disabled,
+        &[disabled],
+        &.disabled {
+            --button-color: var(--neutral-200);
+            --button-hover-color: var(--neutral-200);
+            --button-active-color: var(--neutral-200);
+            --button-text-color: var(--neutral-600);
+            --button-focus-box-shadow-color: transparent;
+
+            cursor: default;
+        }
+
+        .icon {
+            --icon-size: 2em;
+
+            display: inline-block;
+            position: relative;
+            bottom: 0.05em;
+            margin: -1em 0.125em -1em 0;
+            fill: var(--button-text-color);
+        }
     }
 }
 
@@ -108,9 +109,9 @@ input[type='submit'],
     border: none;
     background-color: transparent;
     box-shadow: none;
-
-    &:not(.ag-button):hover,
-    &:not(.ag-button):active {
+    
+    &:not([class^="ag-"]):hover,
+    &:not([class^="ag-"]):active {
         color: var(--button-text-color);
         background-color: transparent;
     }

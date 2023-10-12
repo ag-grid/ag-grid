@@ -3,7 +3,7 @@ import { createRoot } from 'react-dom/client';
 
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
 import { AgGridReact } from './agGridReact';
-import { useGridApiRefs } from './useGridApi';
+import { useGridApi } from './useGridApi';
 
 import '@ag-grid-community/styles/ag-grid.css';
 import '@ag-grid-community/styles/ag-theme-alpine.css';
@@ -16,7 +16,7 @@ interface RowData {
 }
 
 const App = () => {
-    const [gridRef, gridApi, columnApi] = useGridApiRefs<RowData>();
+    const [gridRef, apiRef] = useGridApi<RowData>();
 
     const [rowData] = useState([
         { make: 'Toyota', model: 'Celica', price: 35000 },
@@ -30,9 +30,8 @@ const App = () => {
     ]);
 
     useEffect(() => {
-        console.log(gridApi.current?.setRowData([ { make: 'Toyota', model: 'Celica', price: 35000 } ]));
-        console.log(columnApi);
-    }, [gridApi, columnApi])
+        console.log(apiRef.current?.setRowData([ { make: 'Toyota', model: 'Celica', price: 35000 } ]));
+    }, [])
 
     return (
         <div className="ag-theme-alpine" style={{height: 400, width: 600}}>

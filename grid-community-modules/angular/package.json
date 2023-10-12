@@ -2,7 +2,7 @@
   "name": "@ag-grid-community/angular",
   "version": "30.2.0",
   "scripts": {
-    "clean": "rimraf dist .hash",
+    "clean": "rimraf dist",
     "ng": "./node_modules/.bin/ng",
     "start": "./node_modules/.bin/ng serve",
     "build": "npm run update-angular-components && ./node_modules/.bin/ng build",

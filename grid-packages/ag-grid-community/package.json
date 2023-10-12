@@ -5,7 +5,7 @@
   "main": "./dist/ag-grid-community.cjs.js",
   "module": "./dist/ag-grid-community.auto.esm.js",
   "scripts": {
-    "clean": "rimraf dist main.d.ts src/styles .hash",
+    "clean": "rimraf dist main.d.ts src/styles",
     "build": "npm run customise && npx gulp build && npm run rollup",
     "build-prod": "npm run build",
     "package": "npx gulp package",

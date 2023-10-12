@@ -1,9 +1,11 @@
 import {
-  FirstDataRenderedEvent, Grid,
+  FirstDataRenderedEvent,
+  GridApi,
+  createGrid,
   GridOptions,
   ISetFilter,
   ISetFilterParams,
-  SetFilterValuesFuncParams
+  SetFilterValuesFuncParams,
 } from '@ag-grid-community/core';
 import { getData } from "./data";
 
@@ -28,6 +30,8 @@ var callbackFilterParams: ISetFilterParams = {
   values: valuesCallback,
   refreshValuesOnOpen: true,
 }
+
+let gridApi: GridApi;
 
 const gridOptions: GridOptions = {
   columnDefs: [
@@ -67,7 +71,7 @@ function useList1() {
     valuesArray.push(value)
   })
 
-  var filter = gridOptions.api!.getFilterInstance<ISetFilter>('array')!;
+  var filter = gridApi!.getFilterInstance<ISetFilter>('array')!;
   filter.refreshFilterValues()
 
   valuesCallbackList = list1
@@ -80,7 +84,7 @@ function useList2() {
     valuesArray.push(value)
   })
 
-  var filter = gridOptions.api!.getFilterInstance<ISetFilter>('array')!;
+  var filter = gridApi!.getFilterInstance<ISetFilter>('array')!;
   filter.refreshFilterValues()
 
   valuesCallbackList = list2
@@ -89,5 +93,5 @@ function useList2() {
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
   var gridDiv = document.querySelector<HTMLElement>('#myGrid')!
-  new Grid(gridDiv, gridOptions)
+  gridApi = createGrid(gridDiv, gridOptions);
 })

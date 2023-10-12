@@ -1,4 +1,14 @@
-import { Grid, ColDef, GridOptions, GetRowIdParams, GridReadyEvent, IServerSideGetRowsParams, ServerSideTransaction, ServerSideTransactionResult } from '@ag-grid-community/core'
+import {
+  GridApi,
+  createGrid,
+  ColDef,
+  GridOptions,
+  GetRowIdParams,
+  GridReadyEvent,
+  IServerSideGetRowsParams,
+  ServerSideTransaction,
+  ServerSideTransactionResult,
+} from '@ag-grid-community/core';
 declare var FakeServer: any;
 declare var data: any;
 
@@ -8,6 +18,8 @@ const columnDefs: ColDef[] = [
     { field: 'book' },    
     { field: 'current' },
 ];
+
+let gridApi: GridApi;
 
 const gridOptions: GridOptions = {
   columnDefs,
@@ -58,7 +70,7 @@ function getServerSideDatasource(server: any) {
 }
 
 function addRow() {
-  const selectedRows = gridOptions.api!.getSelectedNodes();
+  const selectedRows = gridApi!.getSelectedNodes();
   if (selectedRows.length === 0) {
     console.warn('[Example] No row selected.');
     return;
@@ -70,12 +82,12 @@ function addRow() {
     add: [createRow()],
   };
 
-  const result = gridOptions.api!.applyServerSideTransaction(transaction);
+  const result = gridApi!.applyServerSideTransaction(transaction);
   logResults(transaction, result);
 }
 
 function updateRow() {
-  const selectedRows = gridOptions.api!.getSelectedNodes();
+  const selectedRows = gridApi!.getSelectedNodes();
   if (selectedRows.length === 0) {
     console.warn('[Example] No row selected.');
     return;
@@ -85,19 +97,19 @@ function updateRow() {
     update: [{ ...selectedRows[0].data, current: getNewValue() }],
   };
 
-  const result = gridOptions.api!.applyServerSideTransaction(transaction);
+  const result = gridApi!.applyServerSideTransaction(transaction);
   logResults(transaction, result);
 }
 
 function removeRow() {
-  const selectedRows = gridOptions.api!.getSelectedNodes();
+  const selectedRows = gridApi!.getSelectedNodes();
   if (selectedRows.length === 0) {
     console.warn('[Example] No row selected.');
     return;
   }
 
   const transaction: ServerSideTransaction = { remove: [selectedRows[0].data] };
-  const result = gridOptions.api!.applyServerSideTransaction(transaction);
+  const result = gridApi!.applyServerSideTransaction(transaction);
   logResults(transaction, result);
 }
 
@@ -123,5 +135,5 @@ function createRow() {
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', () => {
   const gridDiv = document.querySelector<HTMLElement>('#myGrid')!;
-  new Grid(gridDiv, gridOptions);
+  gridApi = createGrid(gridDiv, gridOptions);
 });

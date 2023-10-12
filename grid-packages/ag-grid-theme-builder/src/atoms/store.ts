@@ -2,7 +2,7 @@ import { Atom, WritableAtom, createStore } from 'jotai';
 import { Feature, getFeatureOrThrow } from 'model/features';
 import { Theme, alpineDarkTheme, alpineTheme, getThemeOrThrow } from 'model/themes';
 import { logErrorMessage, mapPresentObjectValues } from 'model/utils';
-import { VariableValues, parseCssString, valueToCss } from 'model/values';
+import { VariableValues, parseCssString } from 'model/values';
 import { getVariableInfoOrThrow } from 'model/variableInfo';
 import { throttle } from 'throttle-debounce';
 import { enabledFeaturesAtom } from './enabledFeatures';
@@ -12,7 +12,7 @@ import { allValueAtoms, valuesAtom } from './values';
 export const initStore = () => {
   const defaultTheme =
     typeof window === 'object' &&
-    window.document.documentElement.computedStyleMap().get('--color-scheme')?.toString() === 'dark'
+    getComputedStyle(window.document.documentElement).getPropertyValue('--color-scheme') === 'dark'
       ? alpineDarkTheme
       : alpineTheme;
 
@@ -93,16 +93,17 @@ const deserializeTheme = (themeName: unknown) => {
   return getThemeOrThrow(themeName);
 };
 
-const serializeEnabledFeatures = (features: Feature[]) => features.map((f) => f.name);
+const serializeEnabledFeatures = (features: ReadonlyArray<Feature>) => features.map((f) => f.name);
 
-const deserializeEnabledFeatures = (featureNames: unknown): Feature[] => {
+const deserializeEnabledFeatures = (featureNames: unknown): ReadonlyArray<Feature> => {
   if (!Array.isArray(featureNames)) {
     throw new Error('expected array');
   }
   return featureNames.map(getFeatureOrThrow);
 };
 
-const serializeValues = (values: VariableValues) => mapPresentObjectValues(values, valueToCss);
+const serializeValues = (values: VariableValues) =>
+  mapPresentObjectValues(values, (value) => value.toCss());
 
 const deserializeValues = (serialized: unknown): VariableValues => {
   if (!serialized || typeof serialized !== 'object' || Array.isArray(serialized)) {

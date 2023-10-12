@@ -549,8 +549,8 @@ function createExampleGenerator(exampleType, prefix, importTypes, incremental) {
                     const tsScripts = getMatchingPaths('*.ts', {ignore: ['**/*_{angular,react,vue,vue3}.ts']});
                     tsScripts.forEach(tsFile => {
                         let jsFile = readAsJsFile(tsFile);
-                        // replace Typescript new Grid( with Javascript new agGrid.Grid(
-                        jsFile = jsFile.replace(/new Grid\(/g, 'new agGrid.Grid(');
+                        // replace Typescript createGrid( with Javascript agGrid.createGrid(
+                        jsFile = jsFile.replace(/createGrid\(/g, 'agGrid.createGrid(');
 
                         // replace Typescript LicenseManager.setLicenseKey( with Javascript agGrid.LicenseManager.setLicenseKey(
                         jsFile = jsFile.replace(/LicenseManager\.setLicenseKey\(/g, "agGrid.LicenseManager.setLicenseKey(");

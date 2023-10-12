@@ -1,4 +1,4 @@
-import { convertFunctionToConstProperty, getFunctionName, getModuleRegistration, ImportType, isInstanceMethod } from './parser-utils';
+import { convertFunctionToConstProperty, getFunctionName, getModuleRegistration, ImportType, isInstanceMethod, preferParamsApi } from './parser-utils';
 import { convertFunctionalTemplate, convertFunctionToConstCallback, getImport, getValueType } from './react-utils';
 import { templatePlaceholder } from "./grid-vanilla-src-parser";
 const path = require('path');
@@ -132,7 +132,7 @@ function getEventAndCallbackNames() {
         const isEvent = v.meta?.isEvent && !k.startsWith('on');
         return isCallback || isCallSigInterface || isEvent;
     }).map(([k, v]) => k);
-    return callbacksAndEvents;;
+    return callbacksAndEvents;
 }
 
 export function vanillaToReactFunctional(bindings: any, componentFilenames: string[], allStylesheets: string[]): (importType: ImportType) => string {
@@ -142,7 +142,6 @@ export function vanillaToReactFunctional(bindings: any, componentFilenames: stri
     const utilMethodNames = bindings.utils.map(getFunctionName);
     const callbackDependencies = Object.keys(bindings.callbackDependencies).reduce((acc, callbackName) => {
         acc[callbackName] = bindings.callbackDependencies[callbackName].filter(dependency => !utilMethodNames.includes(dependency))
-            .filter(dependency => dependency !== 'gridOptions')
             .filter(dependency => !global[dependency]) // exclude things like Number, isNaN etc
         return acc;
     }, {})
@@ -167,7 +166,7 @@ export function vanillaToReactFunctional(bindings: any, componentFilenames: stri
 
         const additionalInReady = [];
         if (data) {
-            const setRowDataBlock = data.callback.replace('params.api.setRowData', 'setRowData');
+            const setRowDataBlock = data.callback.replace('gridApi.setRowData', 'setRowData');
 
             additionalInReady.push(`
                 fetch(${data.url})
@@ -178,7 +177,7 @@ export function vanillaToReactFunctional(bindings: any, componentFilenames: stri
 
         if (onGridReady) {
             const hackedHandler = onGridReady.replace(/^{|}$/g, '')
-                .replace('params.api.setRowData', 'setRowData');
+                .replace('gridApi.setRowData', 'setRowData');
             additionalInReady.push(hackedHandler);
         }
 
@@ -256,15 +255,8 @@ export function vanillaToReactFunctional(bindings: any, componentFilenames: stri
 
         const gridInstanceConverter = content => content
             .replace(/params\.api\.setRowData(data)/g, 'setRowData(data)')
-            .replace(/params\.api\./g, 'gridRef.current.api.')
-            .replace(/params\.columnApi\./g, "gridRef.current.columnApi.")
-            .replace(/gridInstance\.api\./g, "gridRef.current.api.")
-            .replace(/gridInstance\.columnApi\./g, "gridRef.current.columnApi.")
             .replace(/gridApi\./g, "gridRef.current.api.")
-            .replace(/(\s+)columnApi\./g, "$1gridRef.current.columnApi.")
             .replace(/gridApi;/g, "gridRef.current.api;")
-            .replace(/columnApi;/g, "gridRef.current.columnApi;")
-            .replace(/gridColumnApi\./g, "gridRef.current.columnApi.")
             .replace("gridRef.current.api.setRowData", "setRowData")
             .replace("gridApi", "gridRef.current.api")
 
@@ -276,7 +268,7 @@ export function vanillaToReactFunctional(bindings: any, componentFilenames: stri
 
         const gridReady = additionalInReady.length > 0 ? `
             const onGridReady = useCallback((params) => {
-                ${additionalInReady.join('\n')}
+                ${preferParamsApi(additionalInReady.join('\n'))}
             }, []);` : '';
 
 

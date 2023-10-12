@@ -1,28 +1,31 @@
 import { BorderVariableInfo, getVariableInfoOrThrow } from 'model/variableInfo';
 import { Value } from '.';
-import { BorderValue, border } from './border';
-import { borderStyle } from './borderStyle';
-import { color } from './color';
-import { dimension } from './dimension';
-import { display } from './display';
+import { Border } from './Border';
+import { BorderStyle } from './BorderStyle';
+import { Color } from './Color';
+import { Dimension } from './Dimension';
+import { Display } from './Display';
 
-export const colorDefaultValue = color('#888');
-export const dimensionDefaultValue = dimension(1, 'px');
-export const borderDefaultValue = border('solid', dimension(1, 'px'), color('#999'));
-export const borderStyleDefaultValue = borderStyle('solid');
-export const displayDefaultValue = display('block');
+export const colorDefaultValue = new Color(128, 128, 128, 1);
+export const dimensionDefaultValue = new Dimension(1, 'px');
+export const borderStyleDefaultValue = new BorderStyle('solid');
+export const borderDefaultValue = new Border(
+  borderStyleDefaultValue,
+  dimensionDefaultValue,
+  colorDefaultValue,
+);
+export const displayDefaultValue = new Display('block');
 
-export const addBorderValueDefaults = (
+export const pickRequiredBorderValues = (
   info: BorderVariableInfo,
-  value: BorderValue | null,
-): BorderValue | null =>
-  value == null
-    ? null
-    : border(
-        value.style?.lineStyle || (info.style ? borderStyleDefaultValue.lineStyle : null),
-        value.width || (info.width ? dimensionDefaultValue : null),
-        value.color || (info.color ? colorDefaultValue : null),
-      );
+  value: Border | null,
+): Border | null => {
+  return new Border(
+    info.style ? value?.style || borderStyleDefaultValue : null,
+    info.width ? value?.width || dimensionDefaultValue : null,
+    info.color ? value?.color || colorDefaultValue : null,
+  );
+};
 
 export const getVariableDefaultValue = (variableName: string): Value => {
   const info = getVariableInfoOrThrow(variableName);

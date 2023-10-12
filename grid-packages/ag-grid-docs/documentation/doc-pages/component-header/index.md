@@ -9,13 +9,6 @@ There are two types of header components:
 - **Header Component**: For rendering the normal column headers. Configured for columns.
 - **Header Group Component**: For rendering column groups. Configured for column groups.
 
-## Simple Header Component
-
-md-include:simple-header-javascript.md
-md-include:simple-header-angular.md
-md-include:simple-header-react.md
-md-include:simple-header-vue.md
-
 ## Example: Custom Header Component
 
 The example below shows a header component in action. The following can be observed in the demo:

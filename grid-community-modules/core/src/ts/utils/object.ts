@@ -220,37 +220,49 @@ export function getValueUsingField(data: any, field: string, fieldContainsDots: 
     return currentObject;
 }
 
-// used by ColumnAPI and GridAPI to remove all references, so keeping grid in memory resulting in a
-// memory leak if user is not disposing of the GridAPI or ColumnApi references
-export function removeAllReferences(obj: any, objectName: string): void {
-    Object.keys(obj).forEach(key => {
-        const value = obj[key];
-        // we want to replace all the @autowired services, which are objects. any simple types (boolean, string etc)
-        // we don't care about
-        if (typeof value === 'object') {
-            obj[key] = undefined;
+// used by GridAPI to remove all references, so keeping grid in memory resulting in a
+// memory leak if user is not disposing of the GridAPI references
+export function removeAllReferences(obj: any, objectName: string, preserveKeys: string[] = [], customMsg?: (key: string) => string): void {
+    const getReplacementFunction = (key: string) => {
+        return () => {
+            const message = customMsg ? customMsg(key) :
+                `AG Grid: ${objectName} function ${key}() cannot be called as the grid has been destroyed.
+    Please don't call grid API functions on destroyed grids - as a matter of fact you shouldn't
+    be keeping the API reference, your application has a memory leak!
+    Remove the API reference when the grid is destroyed.`;
+            console.warn(message);
         }
-    });
-    const proto = Object.getPrototypeOf(obj);
-    const properties: any = {};
+    }
 
-    Object.keys(proto).forEach(key => {
-        const value = proto[key];
-        // leave all basic types - this is needed for GridAPI to leave the "destroyed: boolean" attribute alone
-        if (typeof value === 'function') {
-            const func = () => {
-                console.warn(
-                    `AG Grid: ${objectName} function ${key}() cannot be called as the grid has been destroyed.
-                     Please don't call grid API functions on destroyed grids - as a matter of fact you shouldn't
-                     be keeping the API reference, your application has a memory leak! Remove the API reference
-                     when the grid is destroyed.`
-                );
-            };
-            properties[key] = { value: func, writable: true };
-        }
-    });
+    // if a class (ie es6)
+    if(obj.constructor) {
+        Object.getOwnPropertyNames(obj.constructor.prototype)
+            .filter(key => !['constructor'].includes(key) && !preserveKeys.includes(key))
+            .forEach(key => {
+                Reflect.defineProperty(obj.constructor.prototype, key, { value: getReplacementFunction(key)})
+            })
+    } else {
+        Object.keys(obj).forEach(key => {
+            const value = obj[key];
+            // we want to replace all the @autowired services, which are objects. any simple types (boolean, string etc)
+            // we don't care about
+            if (typeof value === 'object' && !preserveKeys.includes(key)) {
+                obj[key] = undefined;
+            }
+        });
+        const proto = Object.getPrototypeOf(obj);
+        const properties: any = {};
 
-    Object.defineProperties(obj, properties);
+        Object.keys(proto).forEach(key => {
+            const value = proto[key];
+            // leave all basic types - this is needed for GridAPI to leave the "destroyed: boolean" attribute alone
+            if (typeof value === 'function' && !preserveKeys.includes(key)) {
+                properties[key] = {value: getReplacementFunction(key), writable: true};
+            }
+        });
+
+        Object.defineProperties(obj, properties);
+    }
 }
 
 export function isNonNullObject(value: any): boolean {

@@ -19,7 +19,7 @@
     "format": "prettier --write \"**/*.{js,jsx,ts,tsx,json,md}\"",
     "start": "unset NODE_OPTIONS npm run clean && npm run generate-doc-files && npm run customise && npm run develop",
     "serve": "npx gatsby serve --prefix-paths -H 0.0.0.0",
-    "clean": "npx gatsby clean && rimraf _gen .hash",
+    "clean": "npx gatsby clean && rimraf _gen",
     "test": "npx jest",
     "gulp": "gulp"
   },

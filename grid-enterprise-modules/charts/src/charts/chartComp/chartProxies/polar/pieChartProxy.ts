@@ -1,5 +1,5 @@
 import { ChartProxy, ChartProxyParams, FieldDefinition, UpdateParams } from '../chartProxy';
-import { AgChart, AgPieSeriesOptions, AgPolarChartOptions, AgPolarSeriesOptions, } from 'ag-charts-community';
+import { AgChart, AgPieSeriesOptions, AgPolarChartOptions, AgPolarSeriesOptions, } from 'ag-charts-enterprise';
 import { changeOpacity } from '../../utils/color';
 import { deepMerge } from '../../utils/object';
 

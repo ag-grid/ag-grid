@@ -1,18 +1,22 @@
 import {
-  ColDef, Grid,
+  ColDef,
+  GridApi,
+  createGrid,
   GridOptions,
   ICellRendererParams,
   IServerSideDatasource,
   IServerSideGetRowsParams,
   IServerSideGetRowsRequest,
   IsServerSideGroupOpenByDefaultParams,
-} from '@ag-grid-community/core'
+} from '@ag-grid-community/core';
 const columnDefs: ColDef[] = [
   { field: 'employeeId', hide: true },
   { field: 'employeeName', hide: true },
   { field: 'jobTitle' },
   { field: 'employmentType' },
 ]
+
+let gridApi: GridApi;
 
 const gridOptions: GridOptions = {
   defaultColDef: {
@@ -51,14 +55,14 @@ const gridOptions: GridOptions = {
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
   var gridDiv = document.querySelector<HTMLElement>('#myGrid')!
-  new Grid(gridDiv, gridOptions)
+  gridApi = createGrid(gridDiv, gridOptions);
 
   fetch('https://www.ag-grid.com/example-assets/small-tree-data.json')
     .then(response => response.json())
     .then(function (data) {
       var fakeServer = createFakeServer(data)
       var datasource = createServerSideDatasource(fakeServer)
-      gridOptions.api!.setServerSideDatasource(datasource)
+      gridApi!.setServerSideDatasource(datasource)
     })
 })
 

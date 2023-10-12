@@ -1,4 +1,4 @@
-import { ColDef, ColumnPinnedEvent, ColumnState, Grid, GridOptions } from '@ag-grid-community/core'
+import { ColDef, ColumnPinnedEvent, ColumnState, GridApi, createGrid, GridOptions } from '@ag-grid-community/core';
 import { ControlsCellRenderer } from './controlsCellRenderer_typescript'
 
 const columnDefs: ColDef[] = [
@@ -28,6 +28,8 @@ const columnDefs: ColDef[] = [
     { field: 'total' },
 ]
 
+let gridApi: GridApi<IOlympicData>;
+
 const gridOptions: GridOptions<IOlympicData> = {
     columnDefs: columnDefs,
     defaultColDef: {
@@ -39,7 +41,7 @@ const gridOptions: GridOptions<IOlympicData> = {
 }
 
 function onColumnPinned(event: ColumnPinnedEvent) {
-    const allCols = event.columnApi.getAllGridColumns()
+    const allCols = event.api.getAllGridColumns()
 
     const allFixedCols = allCols.filter(col => col.getColDef().lockPosition)
     const allNonFixedCols = allCols.filter(col => !col.getColDef().lockPosition)
@@ -60,18 +62,18 @@ function onColumnPinned(event: ColumnPinnedEvent) {
     })
 
     if (columnStates.length > 0) {
-        event.columnApi.applyColumnState({ state: columnStates })
+        event.api.applyColumnState({ state: columnStates })
     }
 }
 
 function onPinAthlete() {
-    gridOptions.columnApi!.applyColumnState({
+    gridApi!.applyColumnState({
         state: [{ colId: 'athlete', pinned: 'left' }],
     })
 }
 
 function onUnpinAthlete() {
-    gridOptions.columnApi!.applyColumnState({
+    gridApi!.applyColumnState({
         state: [{ colId: 'athlete', pinned: null }],
     })
 }
@@ -79,9 +81,9 @@ function onUnpinAthlete() {
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', () => {
     const gridDiv = document.querySelector<HTMLElement>('#myGrid')!
-    new Grid(gridDiv, gridOptions)
+    gridApi = createGrid(gridDiv, gridOptions);
 
     fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
         .then(response => response.json())
-        .then((data: IOlympicData[]) => gridOptions.api!.setRowData(data))
+        .then((data: IOlympicData[]) => gridApi!.setRowData(data))
 })

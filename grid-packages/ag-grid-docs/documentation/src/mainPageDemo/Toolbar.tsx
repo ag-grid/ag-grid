@@ -19,7 +19,7 @@ export const Toolbar = ({ gridRef, dataSize, setDataSize, rowCols, gridTheme, se
 
     function onThemeChanged(event) {
         const newTheme = event.target.value || 'ag-theme-none';
-        setCountryColumnPopupEditor(newTheme, gridRef.current.columnApi);
+        setCountryColumnPopupEditor(newTheme, gridRef.current.api);
         setGridTheme(newTheme);
         trackDemoToolbar({
             type: 'theme',

@@ -895,7 +895,13 @@ export class RowNode<TData = any> implements IEventEmitter, IRowNode<TData> {
     * - `false` if the node cannot be expanded
     */
     public isExpandable(): boolean {
-        return (this.hasChildren() && !this.footer) || this.master ? true : false;
+        if (this.footer) { return false; }
+
+        if (this.beans.columnModel.isPivotMode()) {
+            // master detail and leaf groups aren't expandable in pivot mode.
+            return this.hasChildren() && !this.leafGroup;
+        }
+        return this.hasChildren() || !!this.master;
     }
 
     /** Returns:

@@ -1,4 +1,4 @@
-import { Grid, ColDef, GridOptions, ProcessDataFromClipboardParams } from '@ag-grid-community/core'
+import { GridApi, createGrid, ColDef, GridOptions, ProcessDataFromClipboardParams } from '@ag-grid-community/core';
 
 const columnDefs: ColDef[] = [
   { headerName: 'Athlete', field: 'athlete', width: 150 },
@@ -8,6 +8,8 @@ const columnDefs: ColDef[] = [
   { headerName: 'Date', field: 'date', width: 110 },
   { headerName: 'Sport', field: 'sport', width: 110 },
 ];
+
+let gridApi: GridApi;
 
 const gridOptions: GridOptions = {
   defaultColDef: {
@@ -47,7 +49,7 @@ function processDataFromClipboard(params: ProcessDataFromClipboardParams): strin
       row.forEach((item) => {
         if (!currentColumn) { return; }
         rowObject[currentColumn.colDef.field] = item;
-        currentColumn = params.columnApi!.getDisplayedColAfter(currentColumn);
+        currentColumn = params.api!.getDisplayedColAfter(currentColumn);
       });
 
       rowsToAdd.push(rowObject);
@@ -62,9 +64,9 @@ function processDataFromClipboard(params: ProcessDataFromClipboardParams): strin
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
   var gridDiv = document.querySelector<HTMLElement>('#myGrid')!;
-  new Grid(gridDiv, gridOptions);
+  gridApi = createGrid(gridDiv, gridOptions);
 
   fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
     .then((response) => response.json())
-    .then((data) => gridOptions.api!.setRowData(data.slice(0,8)));
+    .then((data) => gridApi!.setRowData(data.slice(0,8)));
 });

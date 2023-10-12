@@ -118,8 +118,8 @@ export class AppComponent {
                 this.rowData = data as any[];
 
                 // mix up some columns
-                this.topGrid.columnApi.moveColumnByIndex(11, 4);
-                this.topGrid.columnApi.moveColumnByIndex(11, 4);
+                this.topGrid.api.moveColumnByIndex(11, 4);
+                this.topGrid.api.moveColumnByIndex(11, 4);
             });
     }
 

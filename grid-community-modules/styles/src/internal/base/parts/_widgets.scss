@@ -56,7 +56,7 @@
             border-color: var(--ag-input-disabled-border-color);
         }
 
-        &:focus {
+        &:focus, &.ag-builder-preview-focus {
             outline: none;
             box-shadow: var(--ag-input-focus-box-shadow);
             border-color: var(--ag-input-focus-border-color);
@@ -81,7 +81,7 @@
     }
 
     input[class^='ag-'][type='button'], button[class^='ag-'] {
-        &:focus {
+        &:focus, &.ag-builder-preview-focus {
             box-shadow: var(--ag-input-focus-box-shadow);
         }
     }
