@@ -112,7 +112,7 @@
 .buyTogetherInner {
     display: flex;
     flex-direction: column;
-    gap: $size-3;
+    gap: $size-4;
     width: 100%;
     padding: $size-2;
     text-align: center;
@@ -121,8 +121,9 @@
     opacity: var(--header-tint);
 
     @media screen and (min-width: $breakpoint-pricing-medium) {
-        padding: $size-1 $size-1 $size-1 $size-2;
+        padding: $size-1 $size-2;
         flex-direction: row;
+        justify-content: space-between;
         text-align: left;
     }
 
@@ -131,9 +132,13 @@
     }
 }
 
-.info {
+.left {
     display: flex;
     flex-direction: column;
+
+    @media screen and (min-width: $breakpoint-pricing-medium) {
+        width: 50%;
+    }
 
     p {
         line-height: var(--line-height-tight);
@@ -145,13 +150,43 @@
     font-size: var(--font-size-massive);
 }
 
-.pricing {
+.right {
     @media screen and (min-width: $breakpoint-pricing-medium) {
-        margin-left: auto;
+        width: 50%;
+        max-width: 340px;
     }
+
+    button {
+        width: 100%;
+        margin-top: $size-1;
+    }
+}
+
+.rightInner {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: $size-1;
+}
+
+.rightInfo {
+    text-align: right;
+}
+
+.rightPrice {
+    text-align: left;
 
     p {
         font-weight: var(--font-weight-bold);
+        line-height: var(--line-height-ultra-tight);
+    }
+
+    p:first-child {
+        margin-bottom: $size-half;
+    }
+
+    p:last-child {
+        margin-top: $size-half;
     }
 }
 

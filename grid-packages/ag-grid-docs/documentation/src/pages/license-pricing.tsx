@@ -70,21 +70,28 @@ const LicensePricing = () => {
 
                     <p className={styles.buyTogether}>
                         <div className={styles.buyTogetherInner}>
-                            <div className={styles.info}>
-                                <p className={styles.products}><b>AG Grid</b> + <b>AG Charts</b></p>
+                            <div className={styles.left}>
+                                <p className={styles.products}><b>AG&nbsp;Grid</b> +<wbr /> <b>AG&nbsp;Charts</b></p>
 
                                 <p className='font-size-small'>Limited time launch price</p>
                                 <p className='font-size-small'>Standard price <b>$1,398</b></p>
                             </div>
 
-                            <div className={styles.pricing}>
-                                <p className='font-size-small'>Starting at...</p>
-                                <p className={styles.price}>$1,183</p>
-                                <p className='font-size-small'>Per Developer</p>
-                            </div>
+                            <div className={styles.right}>
+                                <div className={styles.rightInner}>
+                                    <div className={styles.rightPrice}>
+                                        <p className='font-size-small'>Starting at...</p>
+                                        <p className={styles.price}>$1,183</p>
+                                        <p className='font-size-small'>Per Developer</p>
+                                    </div>
+                                    <div className={styles.rightInfo}>
+                                        <p className='font-size-small'>Perpetual License</p> 
+                                        <p className='font-size-small'>1 Year of Support</p> 
+                                        <p className='font-size-small'>1 Year of Updates</p> 
+                                    </div>
+                                </div>
 
-                            <div className={styles.configure}>
-                                <button className='button-secondary'>Configure Now</button>
+                                <button>Configure Now</button>
                             </div>
                         </div>
                     </p>
