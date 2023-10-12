@@ -4,19 +4,10 @@
     "group": "OVERVIEW",
     "items": [
       {
-        "title": "Introduction",
-        "items": [
-          {
-            "title": "Introduction",
-            "url": "/introduction"
-          }
-        ]
-      },
-      {
         "title": "Quick Start",
         "items": [
           {
-            "title": "Quick Start",
+            "title": "Get Started",
             "url": "/get-started"
           }
         ]

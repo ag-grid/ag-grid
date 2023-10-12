@@ -36,7 +36,7 @@
     @media screen and (max-width: $breakpoint-docs-home-small) {
         gap: $size-2;
 
-        > a {
+        >a {
             width: calc(50% - $size-2 / 2);
         }
     }
@@ -46,7 +46,7 @@
     Card
 */
 
-.gridContainer { 
+.gridContainer {
     display: grid;
     row-gap: 25px;
 }
@@ -58,7 +58,8 @@
     grid-auto-columns: 1fr;
 
     @media (max-width: $breakpoint-docs-home-small) {
-        grid-auto-flow: row; /* Change to a single column layout on small screens */
+        grid-auto-flow: row;
+        /* Change to a single column layout on small screens */
     }
 }
 
@@ -69,23 +70,56 @@
     display: grid;
 }
 
+.cardTransparent:hover {
+    cursor: pointer;
+    transform: scale(1.01);
+}
+
+.cardTransparent {
+    background: transparent;
+    padding: 14px;
+    display: grid;
+}
+
+.cardOutline {
+    border: 2px solid var(--neutral-200);
+    border-radius: 12px;
+    padding: 12px;
+}
+
 .cardTitle {
     font-weight: 500;
     text-transform: capitalize;
     display: flex;
 }
 
-.cardIcon { 
+.cardTitleMiddle {
+    font-weight: 500;
+    text-transform: capitalize;
+    display: flex;
+    align-self: center;
+    margin-left: auto;
+    margin-right: auto;
+    justify-content: center;
+}
+
+.cardIcon {
     align-self: center;
     margin-left: auto;
 }
 
+.cardImage {
+    margin-bottom: 12px;
+}
+
 .cardDate {
+    align-self: center;
     margin-left: auto;
 }
 
 .cardDivider {
-    margin: 10px 0px 10px 0px;
+    margin: 8px 4px 8px 4px;
+    height: 0.5px !important;
     background-color: var(--neutral-300);
     height: 2px;
 }
@@ -95,4 +129,64 @@
     align-self: flex-end;
     margin-left: auto;
     margin: 12px 0px 0px auto;
+}
+
+.socialIconsContainer {
+    margin-left: auto;
+    margin-right: auto;
+    display: flex;
+    flex-wrap: wrap;
+    align-content: center;
+    justify-content: center;
+}
+
+.socialIcon {
+    margin: 12px;
+    max-height: 52px;
+}
+
+/**
+Tabs 
+*/
+
+
+.tab {
+    padding: '15px';
+    cursor: 'pointer';
+    transition: 'background-color 0.3s';
+}
+
+/*
+*/
+
+.timelineContainer {
+    display: flex;
+    flex-wrap: wrap;
+    /* Allow content to wrap to the next line */
+}
+
+.timelineColumn {
+    flex: 1;
+    padding: 20px;
+    text-align: center;
+    margin: 5px;
+    /* Add margin for spacing between columns */
+}
+
+/* Customize styles as needed */
+.column:nth-child(odd) {
+    background-color: #f0f0f0;
+}
+
+/* New row styles */
+.newRow {
+    flex-basis: 100%;
+    /* Take up the full width of the container */
+}
+
+.newColumn {
+    padding: 6px;
+    text-align: center;
+    margin: 5px;
+    /* Add margin for spacing */
 }
