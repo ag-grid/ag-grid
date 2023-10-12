@@ -359,11 +359,6 @@ export abstract class SimpleFilter<M extends ISimpleFilterModel, V, E = AgInputT
     }
 
     refresh(newParams: SimpleFilterParams): boolean {
-        const parentRefreshed = super.refresh(newParams);
-        if (!parentRefreshed) {
-            return false;
-        }
-
         const model = this.getModel();
         const conditions: ISimpleFilterModel[] | null = model ? ((<any>model).conditions ?? [model]) : null;
 
@@ -387,6 +382,12 @@ export abstract class SimpleFilter<M extends ISimpleFilterModel, V, E = AgInputT
             conditions && typeof newParams.maxNumConditions === 'number' &&
             conditions.length > newParams.maxNumConditions
         ) {
+            return false;
+        }
+
+        // Before proceeding, refresh the parent filter
+        const parentRefreshed = super.refresh(newParams);
+        if (!parentRefreshed) {
             return false;
         }
 

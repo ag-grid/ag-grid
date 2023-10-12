@@ -106,7 +106,6 @@ import { ModuleRegistry } from "./modules/moduleRegistry";
 import { PaginationProxy } from "./pagination/paginationProxy";
 import { PinnedRowModel } from "./pinnedRowModel/pinnedRowModel";
 import { ICellRenderer } from "./rendering/cellRenderers/iCellRenderer";
-import { OverlayWrapperComponent } from "./rendering/overlays/overlayWrapperComponent";
 import {
     FlashCellsParams,
     GetCellEditorInstancesParams,
@@ -133,6 +132,7 @@ import { IAdvancedFilterBuilderParams } from "./interfaces/iAdvancedFilterBuilde
 import { IHeaderColumn } from "./interfaces/iHeaderColumn";
 import { ProvidedColumnGroup } from "./entities/providedColumnGroup";
 import { ColumnGroup } from "./entities/columnGroup";
+import { OverlayService } from "./rendering/overlays/overlayService";
 import { GridState } from "./interfaces/gridState";
 import { StateService } from "./misc/stateService";
 import { IExpansionService } from "./interfaces/iExpansionService";
@@ -201,11 +201,10 @@ export class GridApi<TData = any> {
     @Optional('rowNodeBlockLoader') private rowNodeBlockLoader: RowNodeBlockLoader;
     @Optional('ssrmTransactionManager') private serverSideTransactionManager: IServerSideTransactionManager;
     @Autowired('ctrlsService') private ctrlsService: CtrlsService;
+    @Autowired('overlayService') private overlayService: OverlayService;
     @Optional('sideBarService') private sideBarService?: ISideBarService;
     @Autowired('stateService') private stateService: StateService;
     @Autowired('expansionService') private expansionService: IExpansionService;
-
-    private overlayWrapperComp: OverlayWrapperComponent;
 
     private gridBodyCtrl: GridBodyCtrl;
 
@@ -217,10 +216,6 @@ export class GridApi<TData = any> {
     private detailGridInfoMap: { [id: string]: DetailGridInfo | undefined; } = {};
 
     private destroyCalled = false;
-
-    public registerOverlayWrapperComp(overlayWrapperComp: OverlayWrapperComponent): void {
-        this.overlayWrapperComp = overlayWrapperComp;
-    }
 
     @PostConstruct
     private init(): void {
@@ -408,6 +403,7 @@ export class GridApi<TData = any> {
     /** Set new datasource for Server-Side Row Model. */
     public setServerSideDatasource(datasource: IServerSideDatasource) {
         if (this.serverSideRowModel) {
+            this.gos.set('serverSideDatasource', datasource);
             this.serverSideRowModel.setDatasource(datasource);
         } else {
             this.logMissingRowModel('setServerSideDatasource', 'serverSide');
@@ -452,20 +448,11 @@ export class GridApi<TData = any> {
     /** Set the row data. */
     public setRowData(rowData: TData[]) {
         // immutable service is part of the CSRM module, if missing, no CSRM
-        const missingImmutableService = this.immutableService == null;
-
-        if (missingImmutableService) {
+        if (this.immutableService == null) {
             this.logMissingRowModel('setRowData', 'clientSide');
-            return;
         }
 
-        // if no keys provided provided for rows, then we can tread the operation as Immutable
-        if (this.immutableService.isActive()) {
-            this.immutableService.setRowData(rowData);
-        } else {
-            this.selectionService.reset();
-            this.clientSideRowModel.setRowData(rowData);
-        }
+        this.gos.set('rowData', rowData);
     }
 
     /** Set the top pinned rows. Call with no rows / undefined to clear top pinned rows. */
@@ -502,8 +489,6 @@ export class GridApi<TData = any> {
      * Call to set new column definitions. The grid will redraw all the column headers, and then redraw all of the rows.
      */
     public setColumnDefs(colDefs: (ColDef<TData> | ColGroupDef<TData>)[], source: ColumnEventType = "api") {
-        this.columnModel.setColumnDefs(colDefs, source);
-        // Keep gridOptions.columnDefs in sync
         this.gos.set('columnDefs', colDefs, true, { source });
     }
 
@@ -896,17 +881,17 @@ export class GridApi<TData = any> {
 
     /** Show the 'loading' overlay. */
     public showLoadingOverlay(): void {
-        this.overlayWrapperComp.showLoadingOverlay();
+        this.overlayService.showLoadingOverlay();
     }
 
     /** Show the 'no rows' overlay. */
     public showNoRowsOverlay(): void {
-        this.overlayWrapperComp.showNoRowsOverlay();
+        this.overlayService.showNoRowsOverlay();
     }
 
     /** Hides the overlay if showing. */
     public hideOverlay(): void {
-        this.overlayWrapperComp.hideOverlay();
+        this.overlayService.hideOverlay();
     }
 
     /**

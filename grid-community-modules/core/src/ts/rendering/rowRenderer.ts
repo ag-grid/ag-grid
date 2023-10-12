@@ -310,8 +310,6 @@ export class RowRenderer extends BeanStub {
 
         const cols = this.columnModel.getAllGridColumns();
 
-        if (!cols) { return; }
-
         cols.forEach(col => {
             const forEachCellWithThisCol = (callback: (cellCtrl: CellCtrl) => void) => {
                 this.getAllCellCtrls().forEach(cellCtrl => {

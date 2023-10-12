@@ -759,8 +759,6 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     @Input() public rowGroupPanelSuppressSort: boolean | undefined = undefined;
     /** Set to `true` prevent Group Rows from sticking to the top of the grid. Default: `false`     */
     @Input() public suppressGroupRowsSticky: boolean | undefined = undefined;
-    /** @deprecated v24 - no longer needed, transaction updates keep group state     */
-    @Input() public rememberGroupStateWhenNewData: boolean | undefined = undefined;
     /** Data to be displayed as pinned top rows in the grid.     */
     @Input() public pinnedTopRowData: any[] | undefined = undefined;
     /** Data to be displayed as pinned bottom rows in the grid.     */
@@ -1244,7 +1242,6 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     static ngAcceptInputType_suppressAsyncEvents: boolean | null | '';
     static ngAcceptInputType_allowContextMenuWithControlKey: boolean | null | '';
     static ngAcceptInputType_suppressContextMenu: boolean | null | '';
-    static ngAcceptInputType_rememberGroupStateWhenNewData: boolean | null | '';
     static ngAcceptInputType_enableCellChangeFlash: boolean | null | '';
     static ngAcceptInputType_suppressDragLeaveHidesColumns: boolean | null | '';
     static ngAcceptInputType_suppressRowGroupHidesColumns: boolean | null | '';

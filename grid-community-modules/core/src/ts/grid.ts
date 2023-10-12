@@ -26,7 +26,6 @@ import { SortController } from "./sortController";
 import { FocusService } from "./focusService";
 import { MouseEventService } from "./gridBodyComp/mouseEventService";
 import { CellNavigationService } from "./cellNavigationService";
-import { Events, GridReadyEvent } from "./events";
 import { ValueFormatterService } from "./rendering/valueFormatterService";
 import { AgCheckbox } from "./widgets/agCheckbox";
 import { AgRadioButton } from "./widgets/agRadioButton";
@@ -39,7 +38,7 @@ import { ColumnAnimationService } from "./rendering/columnAnimationService";
 import { AutoGroupColService } from "./columns/autoGroupColService";
 import { PaginationProxy } from "./pagination/paginationProxy";
 import { PaginationAutoPageSizeService } from "./pagination/paginationAutoPageSizeService";
-import { IRowModel, RowModelType } from "./interfaces/iRowModel";
+import { RowModelType } from "./interfaces/iRowModel";
 import { ValueCache } from "./valueService/valueCache";
 import { ChangeDetectionService } from "./valueService/changeDetectionService";
 import { AlignedGridsService } from "./alignedGridsService";
@@ -90,7 +89,6 @@ import { RowContainerComp } from "./gridBodyComp/rowContainer/rowContainerComp";
 import { RowNodeEventThrottle } from "./entities/rowNodeEventThrottle";
 import { StandardMenuFactory } from "./headerRendering/cells/column/standardMenu";
 import { SortIndicatorComp } from "./headerRendering/cells/column/sortIndicatorComp";
-import { WithoutGridCommon } from "./interfaces/iCommon";
 import { GridOptionsService } from "./gridOptionsService";
 import { LocaleService } from "./localeService";
 import { GridOptionsValidator } from "./gridOptionsValidator";
@@ -101,6 +99,8 @@ import { ValueParserService } from "./valueService/valueParserService";
 import { AgAutocomplete } from "./widgets/agAutocomplete";
 import { QuickFilterService } from "./filter/quickFilterService";
 import { warnOnce } from "./utils/function";
+import { SyncService } from "./syncService";
+import { OverlayService } from "./rendering/overlays/overlayService";
 import { StateService } from "./misc/stateService";
 import { ExpansionService } from "./misc/expansionService";
 
@@ -231,7 +231,6 @@ export class GridCoreCreator {
             gridId: gridId,
         };
 
-        const logger = new Logger('AG Grid', () => gridOps.debug);
         const contextLogger = new Logger('Context', () => contextParams.debug);
         const context = new Context(contextParams, contextLogger);
         const beans = context.getBean('beans') as Beans;
@@ -242,13 +241,7 @@ export class GridCoreCreator {
 
         createUi(context);
 
-        // we wait until the UI has finished initialising before setting in columns and rows
-        beans.ctrlsService.whenReady(() => {
-            this.setColumnsAndData(beans);
-            this.dispatchGridReadyEvent(beans);
-            const isEnterprise = ModuleRegistry.__isRegistered(ModuleNames.EnterpriseCoreModule, gridId);
-            logger.log(`initialised successfully, enterprise = ${isEnterprise}`);
-        });
+        beans.syncService.start();
 
         if (acceptChanges) { acceptChanges(context); }
 
@@ -426,7 +419,7 @@ export class GridCoreCreator {
             UndoRedoService, AgStackComponentsRegistry, ColumnDefFactory,
             RowCssClassCalculator, RowNodeBlockLoader, RowNodeSorter, CtrlsService,
             PinnedWidthService, RowNodeEventThrottle, CtrlsFactory, DataTypeService, ValueParserService,
-            QuickFilterService, StateService, ExpansionService
+            QuickFilterService, SyncService, OverlayService, StateService, ExpansionService
         ];
 
         const moduleBeans = this.extractModuleEntity(rowModelModules, (module) => module.beans ? module.beans : []);
@@ -447,18 +440,4 @@ export class GridCoreCreator {
     private extractModuleEntity(moduleEntities: any[], extractor: (module: any) => any) {
         return [].concat(...moduleEntities.map(extractor));
     }
-
-    private setColumnsAndData(beans: Beans): void {
-        const columnDefs = beans.gridOptionsService.get('columnDefs');
-        beans.columnModel.setColumnDefs(columnDefs || [], "gridInitializing");
-        beans.rowModel.start();
-    }
-
-    private dispatchGridReadyEvent(beans: Beans): void {
-        const readyEvent: WithoutGridCommon<GridReadyEvent> = {
-            type: Events.EVENT_GRID_READY,
-        };
-        beans.eventService.dispatchEvent(readyEvent);
-    }
-
 }

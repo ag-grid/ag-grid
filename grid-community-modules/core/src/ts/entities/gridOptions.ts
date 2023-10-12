@@ -650,9 +650,6 @@ export interface GridOptions<TData = any> {
     /** Set to `true` prevent Group Rows from sticking to the top of the grid. Default: `false` */
     suppressGroupRowsSticky?: boolean;
 
-    /** @deprecated v24 - no longer needed, transaction updates keep group state */
-    rememberGroupStateWhenNewData?: boolean;
-
     // *** Row Pinning *** //
     /** Data to be displayed as pinned top rows in the grid. */
     pinnedTopRowData?: any[];
