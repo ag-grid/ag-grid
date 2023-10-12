@@ -4,14 +4,12 @@ let gridApi: GridApi<IOlympicData>;
 
 const gridOptions: GridOptions<IOlympicData> = {
   columnDefs: [
-    { headerCheckboxSelection: true,
+    {
+      field: 'athlete',
+      minWidth: 150,
+      headerCheckboxSelection: true,
       checkboxSelection: true,
-      minWidth: 50,
-      maxWidth: 50,
-      lockPosition: 'left',
-      lockVisible: true,
     },
-    { field: 'athlete', minWidth: 150 },
     { field: 'age', maxWidth: 90 },
     { field: 'country', minWidth: 150 },
     { field: 'year', maxWidth: 90 },
@@ -37,6 +35,7 @@ const gridOptions: GridOptions<IOlympicData> = {
   pagination: true,
   rowSelection: 'multiple',
   suppressRowClickSelection: true,
+  suppressColumnMoveAnimation: true,
 }
 
 function reloadGrid() {

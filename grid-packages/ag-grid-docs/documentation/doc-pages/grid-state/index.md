@@ -6,7 +6,7 @@ This section covers saving and restoring the grid state, such as the filter mode
 
 ## Saving and Restoring State
 
-<grid-example title='Grid State' name='grid-state' type='generated' options='{ "enterprise": true, "exampleHeight": 630, "modules": ["clientside", "columnpanel", "filterpanel", "setfilter", "range"] }'></grid-example>
+<grid-example title='Grid State' name='grid-state' type='mixed' options='{ "enterprise": true, "exampleHeight": 630, "modules": ["clientside", "columnpanel", "filterpanel", "setfilter", "range"] }'></grid-example>
 
 The initial state is provided via the grid option `initialState`. It is only read once when the grid is created.
 
