@@ -20,6 +20,8 @@ import { PostConstruct } from "./context/context";
 import { ProvidedColumnGroup } from "./entities/providedColumnGroup";
 import { BeanStub } from "./context/beanStub";
 import { CtrlsService } from "./ctrlsService";
+import { GridApi } from "./gridApi";
+import { warnOnce } from "./utils/function";
 
 @Bean('alignedGridsService')
 export class AlignedGridsService extends BeanStub {
@@ -36,6 +38,24 @@ export class AlignedGridsService extends BeanStub {
 
     private setBeans(@Qualifier('loggerFactory') loggerFactory: LoggerFactory) {
         this.logger = loggerFactory.create('AlignedGridsService');
+    }
+
+    private getAlignedGridApis(): GridApi[]{
+        let alignedGrids = this.gridOptionsService.get('alignedGrids') ?? [];
+        if(typeof alignedGrids === 'function'){
+            alignedGrids = alignedGrids();
+        }
+
+        const apis = alignedGrids.map((alignedGrid) => {
+            if (!alignedGrid) {
+                // We could warn that an aligned action was fired before the aligned grid was ready
+                warnOnce('Aligned grid is not yet initialised so action will not be applied from source grid.');
+                return undefined;
+            }
+            return alignedGrid instanceof GridApi ? alignedGrid : alignedGrid?.api;
+        }).filter(api => !!api && !api.isDestroyed());
+
+        return apis as GridApi[];
     }
 
     @PostConstruct
@@ -57,15 +77,10 @@ export class AlignedGridsService extends BeanStub {
         }
 
         // iterate through the aligned grids, and pass each aligned grid service to the callback
-        const otherGrids = this.gridOptionsService.get('alignedGrids');
-        if (otherGrids) {
-            otherGrids.forEach((otherGridOptions) => {
-                if (otherGridOptions.api) {
-                    const alignedGridService = otherGridOptions.api.__getAlignedGridService();
-                    callback(alignedGridService);
-                }
-            });
-        }
+        this.getAlignedGridApis().forEach((api) => {
+            const alignedGridService = api.__getAlignedGridService();
+            callback(alignedGridService);
+        });        
     }
 
     // common logic across all consume methods. very little common logic, however extracting
@@ -242,14 +257,8 @@ export class AlignedGridsService extends BeanStub {
         }
         const gridBodyCon = this.ctrlsService.getGridBodyCtrl();
         const isVerticalScrollShowing = gridBodyCon.isVerticalScrollShowing();
-        const alignedGrids = this.gridOptionsService.get('alignedGrids');
-
-        if (alignedGrids) {
-            alignedGrids.forEach((grid) => {
-                if (grid.api) {
-                    grid.api.setAlwaysShowVerticalScroll(isVerticalScrollShowing);
-                }
-            });
-        }
+        this.getAlignedGridApis().forEach((api) => {
+            api.setAlwaysShowVerticalScroll(isVerticalScrollShowing);
+        });
     }
 }
