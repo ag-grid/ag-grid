@@ -112,7 +112,7 @@
 .buyTogetherInner {
     display: flex;
     flex-direction: column;
-    gap: $size-4;
+    gap: $size-2;
     width: 100%;
     padding: $size-2;
     text-align: center;
@@ -121,9 +121,10 @@
     opacity: var(--header-tint);
 
     @media screen and (min-width: $breakpoint-pricing-medium) {
-        padding: $size-1 $size-2;
         flex-direction: row;
         justify-content: space-between;
+        gap: $size-4;
+        padding: $size-1 $size-2;
         text-align: left;
     }
 
@@ -146,8 +147,25 @@
 }
 
 .products {
-    margin-bottom: auto !important;
     font-size: var(--font-size-massive);
+}
+
+.enterpriseProducts {
+    margin-top: $size-1;
+    margin-bottom: $size-3;
+    
+    @media screen and (min-width: $breakpoint-pricing-medium) {
+        margin-top: $size-half;
+        margin-bottom: auto;
+    }
+
+    :global(.icon) {
+        --icon-size: #{$size-2};
+
+        margin-top: -1px;
+        margin-left: -1px;
+        opacity: 0.6666;
+    }
 }
 
 .right {

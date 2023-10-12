@@ -72,9 +72,15 @@ const LicensePricing = () => {
                         <div className={styles.buyTogetherInner}>
                             <div className={styles.left}>
                                 <p className={styles.products}><b>AG&nbsp;Grid</b> +<wbr /> <b>AG&nbsp;Charts</b></p>
+                                <div className={classnames(styles.enterpriseProducts, 'font-size-small')}>
+                                    <p>AG Grid Enterprise <Icon name="enterprise"/></p>
+                                    <p>AG Charts Enterprise <Icon name="enterprise"/></p>
+                                </div>
 
-                                <p className='font-size-small'>Limited time launch price</p>
-                                <p className='font-size-small'>Standard price <b>$1,398</b></p>
+                                <div className='font-size-small'>
+                                    <p>Limited time launch price</p>
+                                    <p>Standard price <b>$1,398</b></p>
+                                </div>
                             </div>
 
                             <div className={styles.right}>
