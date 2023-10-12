@@ -105,7 +105,7 @@ function reloadGrid() {
 
     gridOptions.columnDefs = updatedColDefs;
 
-    gridApi = createGrid(gridDiv, gridOptions);;
+    gridApi = createGrid(gridDiv, gridOptions);
 
     const parentContainer = document.querySelector<HTMLElement>('#gridPreDestroyedState');
     parentContainer!.style.display = 'none';
@@ -116,5 +116,5 @@ function reloadGrid() {
 
 document.addEventListener('DOMContentLoaded', () => {
     const gridDiv = document.querySelector<HTMLElement>('#myGrid')!;
-    gridApi = createGrid(gridDiv, gridOptions);;
+    gridApi = createGrid(gridDiv, gridOptions);
 });

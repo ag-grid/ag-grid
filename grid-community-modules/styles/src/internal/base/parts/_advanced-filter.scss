@@ -26,6 +26,9 @@
         align-items: center;
         border: 0;
         background-color: unset;
+        color: var(--ag-foreground-color);
+        font-size: var(--ag-font-size);
+        font-weight: 600;
 
         &:hover:not(:disabled) {
             background-color: var(--ag-row-hover-color);

@@ -4,7 +4,7 @@ import {
     ISimpleFilterModel,
     ISimpleFilterModelType,
     Tuple,
-    SimpleFilterModelFormatter
+    SimpleFilterModelFormatter,
 } from '../simpleFilter';
 import { AgInputTextField } from '../../../widgets/agInputTextField';
 import { makeNull } from '../../../utils/generic';
@@ -19,13 +19,13 @@ export interface TextFilterModel extends ISimpleFilterModel {
     /**
      * The text value associated with the filter.
      * It's optional as custom filters may not have a text value.
-     * */
+     */
     filter?: string | null;
     /**
      * The 2nd text value associated with the filter, if supported.
-     * */
-     filterTo?: string | null;
-    }
+     */
+    filterTo?: string | null;
+}
 
 export interface TextMatcherParams extends BaseColDefParams {
     /**
@@ -188,7 +188,7 @@ export class TextFilter extends SimpleFilter<TextFilterModel, string> {
     private getTextMatcher(): TextMatcher {
         const legacyComparator = (this.textFilterParams as any).textCustomComparator;
         if (legacyComparator) {
-            _.doOnce(() => console.warn('AG Grid - textCustomComparator is deprecated, use textMatcher instead.'), 'textCustomComparator.deprecated');
+            _.warnOnce('textCustomComparator is deprecated, use textMatcher instead.');
             return ({ filterOption, value, filterText }) => legacyComparator(filterOption, value, filterText);
         }
         return this.textFilterParams.textMatcher || TextFilter.DEFAULT_MATCHER

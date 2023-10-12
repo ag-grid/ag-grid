@@ -62,7 +62,7 @@ export class ChartMenuItemMapper extends BeanStub {
 
             const chartConfigGroup = configLookup[group];
             if (chartConfigGroup == undefined) {
-                _.doOnce(() => console.warn(`AG Grid - invalid chartGroupsDef config '${group}'`), `invalid_chartGroupsDef${group}`);
+                _.warnOnce(`invalid chartGroupsDef config '${group}'`);
                 return undefined;
             }
 
@@ -72,7 +72,7 @@ export class ChartMenuItemMapper extends BeanStub {
                     const subMenus = chartTypes.map(chartType => {
                         const itemKey = (chartConfigGroup as any)[chartType];
                         if (itemKey == undefined) {                            
-                            _.doOnce(() => console.warn(`AG Grid - invalid chartGroupsDef config '${group}.${chartType}'`), `invalid_chartGroupsDef${chartType}_${group}`);
+                            _.warnOnce(`invalid chartGroupsDef config '${group}.${chartType}'`);
                             return undefined;
                         }
                         return menuItemLookup[itemKey];

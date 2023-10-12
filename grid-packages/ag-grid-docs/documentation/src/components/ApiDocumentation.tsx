@@ -48,130 +48,129 @@ export const InterfaceDocumentation: React.FC<any> = ({
     wrapNamesAt = null,
     config = {},
 }): any => {
-    // const nodes = useJsonFileNodes();
-    // let codeSrcProvided = [interfacename];
-    // let namesArr = [];
-    // let excludeArr = exclude && exclude.length > 0 ? JSON.parse(exclude) : [];
-    //
-    // if (names && names.length) {
-    //     namesArr = JSON.parse(names);
-    //     config = { overrideBottomMargin: '1rem', ...config };
-    // }
-    //
-    // if (wrapNamesAt) {
-    //     config = { wrapNamesAt: parseFloat(wrapNamesAt), ...config };
-    // }
-    //
-    // const { lookupRoot = 'grid-api' } = config;
-    // const interfaceLookup = getJsonFromFile(nodes, undefined, `${lookupRoot}/interfaces.AUTO.json`);
-    // const codeLookup = getJsonFromFile(nodes, undefined, `${lookupRoot}/doc-interfaces.AUTO.json`);
-    // const htmlLookup = getJsonFromFile(nodes, undefined, `${lookupRoot}/doc-interfaces.HTML.json`);
-    //
-    // for (const ignoreName of config.suppressTypes ?? []) {
-    //     delete interfaceLookup[ignoreName];
-    // }
-    //
-    // const lookups = {
-    //     codeLookup: codeLookup[interfacename],
-    //     interfaces: interfaceLookup,
-    //     htmlLookup: htmlLookup[interfacename],
-    // };
-    // let hideHeader = true;
-    // if (config.hideHeader !== undefined) {
-    //     hideHeader = config.hideHeader;
-    // }
-    // if (config.sortAlphabetically !== undefined) {
-    //     config.sortAlphabetically = String(config.sortAlphabetically).toLowerCase() == 'true';
-    // }
-    // config = { ...config, lookupRoot, lookups, codeSrcProvided, hideHeader };
-    //
-    // const li = interfaceLookup[interfacename];
-    //
-    // if (config.asCode) {
-    //     const interfacesToWrite = getInterfacesToWrite(interfacename, interfacename, config);
-    //     if (interfacesToWrite.length < 1) {
-    //         return (
-    //             <h2 style={{ color: 'red' }}>
-    //                 Could not find interface {interfacename} for interface-documentation component!
-    //             </h2>
-    //         );
-    //     }
-    //     const lines = [];
-    //     lines.push(
-    //         ...writeAllInterfaces(interfacesToWrite.slice(0, 1), framework, {
-    //             lineBetweenProps: config.lineBetweenProps ?? true,
-    //             hideName: config.hideName,
-    //             exclude: excludeArr,
-    //             applyOptionalOrdering: true,
-    //         })
-    //     );
-    //     const escapedLines = escapeGenericCode(lines);
-    //     return <Code code={escapedLines} keepMarkup={true} />;
-    // }
-    //
-    // let props = {};
-    // let overrides = {};
-    // let interfaceOverrides = {};
-    // if (overridesrc) {
-    //     overrides = getJsonFromFile(nodes, undefined, overridesrc);
-    //     interfaceOverrides = overrides[interfacename];
-    //     if (!interfaceOverrides) {
-    //         throw new Error(
-    //             `overrideSrc:${overridesrc} provided but does not contain expected section named: '${interfacename}'!`
-    //         );
-    //     }
-    // }
-    //
-    // const typeProps = Object.entries(li.type);
-    // sortAndFilterProperties(typeProps, framework).forEach(([k, v]) => {
-    //     // interfaces include the ? as part of the name. We want to remove this for the <interface-documentation> component
-    //     // Instead the type will be unioned with undefined as part of the propertyType
-    //     let propNameOnly = k.replace('?', '');
-    //     // for function properties like failCallback(): void; We only want the name failCallback part
-    //     // as this is what is listed in the doc-interfaces.AUTO.json file
-    //     propNameOnly = propNameOnly.split('(')[0];
-    //     if (
-    //         (namesArr.length === 0 || namesArr.includes(propNameOnly)) &&
-    //         (excludeArr.length == 0 || !excludeArr.includes(propNameOnly))
-    //     ) {
-    //         const docs = (li.docs && formatJsDocString(li.docs[k])) || '';
-    //         if (!docs.includes('@deprecated')) {
-    //             props[propNameOnly] = { description: docs || v, ...interfaceOverrides[propNameOnly] };
-    //         }
-    //     }
-    // });
-    //
-    // let orderedProps = {};
-    // const ordered = Object.entries(props).sort(([, v1], [, v2]) => {
-    //     // Put required props at the top as likely to be the most important
-    //     if ((v1 as ChildDocEntry).isRequired == (v2 as ChildDocEntry).isRequired) {
-    //         return 0;
-    //     }
-    //     return (v1 as ChildDocEntry).isRequired ? -1 : 1;
-    // });
-    //
-    // ordered.map(([k, v]) => (orderedProps[k] = v));
-    //
-    // const interfaceDeclaration = getInterfaceWithGenericParams(interfacename, li.meta);
-    // const description =
-    //     config.description != null
-    //         ? config.description
-    //         : `Properties available on the \`${interfaceDeclaration}\` interface.`;
-    // let properties: DocEntryMap = {
-    //     [interfacename]: {
-    //         ...orderedProps,
-    //         meta: {
-    //             displayName: interfacename,
-    //             description,
-    //             ...interfaceOverrides.meta,
-    //         },
-    //     },
-    // };
-    //
-    // return Object.entries(properties).map(([key, value]) => (
-    //     <Section key={key} framework={framework} title={key} properties={value} config={config} />
-    // ));
-    return <div>Hello World</div> // spl todo
+    const nodes = useJsonFileNodes();
+    let codeSrcProvided = [interfacename];
+    let namesArr = [];
+    let excludeArr = exclude && exclude.length > 0 ? JSON.parse(exclude) : [];
+
+    if (names && names.length) {
+        namesArr = JSON.parse(names);
+        config = { overrideBottomMargin: '1rem', ...config };
+    }
+
+    if (wrapNamesAt) {
+        config = { wrapNamesAt: parseFloat(wrapNamesAt), ...config };
+    }
+
+    const { lookupRoot = 'grid-api' } = config;
+    const interfaceLookup = getJsonFromFile(nodes, undefined, `${lookupRoot}/interfaces.AUTO.json`);
+    const codeLookup = getJsonFromFile(nodes, undefined, `${lookupRoot}/doc-interfaces.AUTO.json`);
+    const htmlLookup = getJsonFromFile(nodes, undefined, `${lookupRoot}/doc-interfaces.HTML.json`);
+
+    for (const ignoreName of config.suppressTypes ?? []) {
+        delete interfaceLookup[ignoreName];
+    }
+
+    const lookups = {
+        codeLookup: codeLookup[interfacename],
+        interfaces: interfaceLookup,
+        htmlLookup: htmlLookup[interfacename],
+    };
+    let hideHeader = true;
+    if (config.hideHeader !== undefined) {
+        hideHeader = config.hideHeader;
+    }
+    if (config.sortAlphabetically !== undefined) {
+        config.sortAlphabetically = String(config.sortAlphabetically).toLowerCase() == 'true';
+    }
+    config = { ...config, lookupRoot, lookups, codeSrcProvided, hideHeader };
+
+    const li = interfaceLookup[interfacename];
+
+    if (config.asCode) {
+        const interfacesToWrite = getInterfacesToWrite(interfacename, interfacename, config);
+        if (interfacesToWrite.length < 1) {
+            return (
+                <h2 style={{ color: 'red' }}>
+                    Could not find interface {interfacename} for interface-documentation component!
+                </h2>
+            );
+        }
+        const lines = [];
+        lines.push(
+            ...writeAllInterfaces(interfacesToWrite.slice(0, 1), framework, {
+                lineBetweenProps: config.lineBetweenProps ?? true,
+                hideName: config.hideName,
+                exclude: excludeArr,
+                applyOptionalOrdering: true,
+            })
+        );
+        const escapedLines = escapeGenericCode(lines);
+        return <Code code={escapedLines} keepMarkup={true} />;
+    }
+
+    let props = {};
+    let overrides = {};
+    let interfaceOverrides = {};
+    if (overridesrc) {
+        overrides = getJsonFromFile(nodes, undefined, overridesrc);
+        interfaceOverrides = overrides[interfacename];
+        if (!interfaceOverrides) {
+            throw new Error(
+                `overrideSrc:${overridesrc} provided but does not contain expected section named: '${interfacename}'!`
+            );
+        }
+    }
+
+    const typeProps = Object.entries(li.type);
+    sortAndFilterProperties(typeProps, framework).forEach(([k, v]) => {
+        // interfaces include the ? as part of the name. We want to remove this for the <interface-documentation> component
+        // Instead the type will be unioned with undefined as part of the propertyType
+        let propNameOnly = k.replace('?', '');
+        // for function properties like failCallback(): void; We only want the name failCallback part
+        // as this is what is listed in the doc-interfaces.AUTO.json file
+        propNameOnly = propNameOnly.split('(')[0];
+        if (
+            (namesArr.length === 0 || namesArr.includes(propNameOnly)) &&
+            (excludeArr.length == 0 || !excludeArr.includes(propNameOnly))
+        ) {
+            const docs = (li.docs && formatJsDocString(li.docs[k])) || '';
+            if (!docs.includes('@deprecated')) {
+                props[propNameOnly] = { description: docs || v, ...interfaceOverrides[propNameOnly] };
+            }
+        }
+    });
+
+    let orderedProps = {};
+    const ordered = Object.entries(props).sort(([, v1], [, v2]) => {
+        // Put required props at the top as likely to be the most important
+        if ((v1 as ChildDocEntry).isRequired == (v2 as ChildDocEntry).isRequired) {
+            return 0;
+        }
+        return (v1 as ChildDocEntry).isRequired ? -1 : 1;
+    });
+
+    ordered.map(([k, v]) => (orderedProps[k] = v));
+
+    const interfaceDeclaration = getInterfaceWithGenericParams(interfacename, li.meta);
+    const description =
+        config.description != null
+            ? config.description
+            : `Properties available on the \`${interfaceDeclaration}\` interface.`;
+    let properties: DocEntryMap = {
+        [interfacename]: {
+            ...orderedProps,
+            meta: {
+                displayName: interfacename,
+                description,
+                ...interfaceOverrides.meta,
+            },
+        },
+    };
+
+    return Object.entries(properties).map(([key, value]) => (
+        <Section key={key} framework={framework} title={key} properties={value} config={config} />
+    ));
 };
 
 /**
@@ -255,9 +254,8 @@ export const ApiDocumentation: React.FC<ApiProps> = ({
             current.map((x) => {
                 const prop = x[key];
                 if (!prop) {
-                    //console.warn(`Could not find a prop ${key} under source ${source} and section ${section}!`)
-                    // throw new Error(`Could not find a prop ${key} under source ${source} and section ${section}!`); //spl todo
-                    return 'prop'
+                    console.warn(`Could not find a prop ${key} under source ${source} and section ${section}!`)
+                    throw new Error(`Could not find a prop ${key} under source ${source} and section ${section}!`); //spl todo
                 }
                 return prop;
             }),
@@ -389,17 +387,16 @@ const Section: React.FC<SectionProps> = ({
             }
         });
 
-    // spl todo
-    // if (names.length > 0) {
-    //     // Validate we found properties for each provided name
-    //     names.forEach((n) => {
-    //         if (!processed.has(n)) {
-    //             throw new Error(
-    //                 `Failed to find a property named ${n} that we requested under section ${title}. Check if you passed the correct name or if the name appears in the source json file that you are using.`
-    //             );
-    //         }
-    //     });
-    // }
+    if (names.length > 0) {
+        // Validate we found properties for each provided name
+        names.forEach((n) => {
+            if (!processed.has(n)) {
+                throw new Error(
+                    `Failed to find a property named ${n} that we requested under section ${title}. Check if you passed the correct name or if the name appears in the source json file that you are using.`
+                );
+            }
+        });
+    }
 
     const wrap = !!config.maxLeftColumnWidth;
 

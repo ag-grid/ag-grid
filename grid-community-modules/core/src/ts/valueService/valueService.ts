@@ -8,7 +8,7 @@ import { ValueCache } from "./valueCache";
 import { BeanStub } from "../context/beanStub";
 import { getValueUsingField } from "../utils/object";
 import { missing, exists } from "../utils/generic";
-import { doOnce } from "../utils/function";
+import { warnOnce } from "../utils/function";
 import { IRowNode } from "../interfaces/iRowNode";
 import { RowNode } from "../entities/rowNode";
 import { DataTypeService } from "../columns/dataTypeService";
@@ -376,9 +376,7 @@ export class ValueService extends BeanStub {
         result = String(result);
 
         if (result === '[object Object]') {
-            doOnce(() => {
-                console.warn('AG Grid: a column you are grouping or pivoting by has objects as values. If you want to group by complex objects then either a) use a colDef.keyCreator (se AG Grid docs) or b) to toString() on the object to return a key');
-            }, 'getKeyForNode - warn about [object,object]');
+            warnOnce('a column you are grouping or pivoting by has objects as values. If you want to group by complex objects then either a) use a colDef.keyCreator (se AG Grid docs) or b) to toString() on the object to return a key');
         }
 
         return result;

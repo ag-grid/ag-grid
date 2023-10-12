@@ -237,7 +237,7 @@ export function removeAllReferences(obj: any, objectName: string, preserveKeys: 
     // if a class (ie es6)
     if(obj.constructor) {
         Object.getOwnPropertyNames(obj.constructor.prototype)
-            .filter(key => !['constructor'].includes(key))
+            .filter(key => !['constructor'].includes(key) && !preserveKeys.includes(key))
             .forEach(key => {
                 Reflect.defineProperty(obj.constructor.prototype, key, { value: getReplacementFunction(key)})
             })

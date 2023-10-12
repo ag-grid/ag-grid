@@ -1789,7 +1789,7 @@ in your browser of choice.</p>
 <framework-specific-section frameworks="vue">
 | ### Grid Properties
 |
-| Set other [Grid Options](/grid-options/) by adding parameters to `<ag-grid-vue/>` component.
+| Set other [Grid Options](/grid-options/) by adding parameters to `&lt;ag-grid-vue/>` component.
 | This example demonstrates setting `animateRows` and `rowSelection`.
 |
 </framework-specific-section>
@@ -1805,7 +1805,6 @@ in your browser of choice.</p>
 </framework-specific-section>
 
 <framework-specific-section frameworks="vue">
-<snippet transform={false} language="jsx">
 | ## Getting Started with AG Grid Enterprise
 |
 | We would love for you to try out AG Grid Enterprise. There is no cost to trial.
@@ -1818,8 +1817,6 @@ in your browser of choice.</p>
 |
 | In addition to `ag-grid-community` and `ag-grid-vue3`, AG Grid Enterprise also needs
 | `ag-grid-enterprise`.
-|
-</snippet>
 </framework-specific-section>
 
 <framework-specific-section frameworks="vue">

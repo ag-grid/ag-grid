@@ -147,7 +147,7 @@ function tooltipRenderer(params: AgCartesianSeriesTooltipRendererParams) {
 // after page is loaded, create the grid
 document.addEventListener('DOMContentLoaded', function () {
   var eGridDiv = document.querySelector<HTMLElement>('#myGrid')!
-  gridApi = createGrid(eGridDiv, gridOptions);;
+  gridApi = createGrid(eGridDiv, gridOptions);
 })
 
 var worker: any;

@@ -113,12 +113,7 @@ export class MiniChartsContainer extends Component {
             chartGroupValues!.forEach((chartType: keyof ChartGroupsDef[typeof group]) => {
                 const MiniClass = miniChartMapping[group]?.[chartType] as any;
                 if (!MiniClass) {
-                    if (miniChartMapping[group]) {
-                        _.doOnce(() => console.warn(`AG Grid - invalid chartGroupsDef config '${group}.${chartType}'`), `invalid_chartGroupsDef${chartType}_${group}`);
-                    } else {
-                        _.doOnce(() => console.warn(`AG Grid - invalid chartGroupsDef config '${group}'`), `invalid_chartGroupsDef${group}`);
-
-                    }
+                    _.warnOnce(`invalid chartGroupsDef config '${group}${miniChartMapping[group] ? `.${chartType}` : ''}'`);
                     return;
                 }
 

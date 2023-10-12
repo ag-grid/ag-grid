@@ -26,7 +26,7 @@ import { PinnedRowModel } from "../pinnedRowModel/pinnedRowModel";
 import { exists } from "../utils/generic";
 import { getAllValuesInObject, iterateObject } from "../utils/object";
 import { createArrayOfNumbers } from "../utils/number";
-import { doOnce, executeInAWhile } from "../utils/function";
+import { warnOnce, executeInAWhile } from "../utils/function";
 import { CtrlsService } from "../ctrlsService";
 import { GridBodyCtrl } from "../gridBodyComp/gridBodyCtrl";
 import { CellCtrl } from "./cell/cellCtrl";
@@ -1193,7 +1193,7 @@ export class RowRenderer extends BeanStub {
 
         if (typeof rowBuffer === 'number') {
             if (rowBuffer < 0) {
-                doOnce(() => console.warn(`AG Grid: rowBuffer should not be negative`), 'warn rowBuffer negative');
+                warnOnce(`rowBuffer should not be negative`);
                 rowBuffer = 0;
                 this.gridOptionsService.set('rowBuffer', 0);
             }

@@ -3,5 +3,5 @@ title: "Column API (Deprecated)"
 ---
 
 <note>
-The Column Api was deprecated in v31 and all methods were migrated to the [Grid Api](/grid-api). For previous versions visit our [Archive](https://ag-grid.com/archive/).
+The Column Api was deprecated in v31 and all methods were migrated to the [Grid Api](/grid-api/). For previous versions visit our [Archive](https://ag-grid.com/archive/).
 </note>

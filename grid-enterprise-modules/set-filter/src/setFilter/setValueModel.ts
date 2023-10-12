@@ -316,15 +316,9 @@ export class SetValueModel<V> implements IEventEmitter {
             if (firstValue && typeof firstValue !== 'object' && typeof firstValue !== 'function') {
                 const firstKey = this.createKey(firstValue);
                 if  (firstKey == null) {
-                    _.doOnce(() => console.warn(
-                            'Set Filter Key Creator is returning null for provided values and provided values are primitives. Please provide complex objects or set convertValuesToStrings=true in the filterParams. See https://www.ag-grid.com/javascript-data-grid/filter-set-filter-list/#filter-value-types'
-                        ), 'setFilterComplexObjectsProvidedNull'
-                    );
+                    _.warnOnce('Set Filter Key Creator is returning null for provided values and provided values are primitives. Please provide complex objects or set convertValuesToStrings=true in the filterParams. See https://www.ag-grid.com/javascript-data-grid/filter-set-filter-list/#filter-value-types');
                 } else {
-                    _.doOnce(() => console.warn(
-                            'AG Grid: Set Filter has a Key Creator, but provided values are primitives. Did you mean to provide complex objects or enable convertValuesToStrings?'
-                        ), 'setFilterComplexObjectsProvidedPrimitive'
-                    );
+                    _.warnOnce('Set Filter has a Key Creator, but provided values are primitives. Did you mean to provide complex objects or enable convertValuesToStrings?');
                 }
             }
         }

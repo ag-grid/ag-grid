@@ -82,7 +82,7 @@ function cellValueChanged() {
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
   var gridDivLeft = document.querySelector<HTMLElement>('#myGridLeft')!
-  leftGridApi = createGrid(gridDivLeft, gridOptionsLeft);;
+  leftGridApi = createGrid(gridDivLeft, gridOptionsLeft);
   var gridDivRight = document.querySelector<HTMLElement>('#myGridRight')!
-  rightGridApi = createGrid(gridDivRight, gridOptionsRight);;
+  rightGridApi = createGrid(gridDivRight, gridOptionsRight);
 })

@@ -110,5 +110,5 @@ function addDropZones(params: GridReadyEvent) {
 document.addEventListener('DOMContentLoaded', function () {
   var gridDiv = document.querySelector<HTMLElement>('#myGrid')!
 
-  gridApi = createGrid(gridDiv, gridOptions);;
+  gridApi = createGrid(gridDiv, gridOptions);
 })

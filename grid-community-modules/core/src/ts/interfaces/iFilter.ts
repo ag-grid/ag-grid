@@ -79,6 +79,24 @@ export interface IFilter {
     getModelAsString?(model: any): string;
 
     /**
+     * This method is called when the filter parameters change.
+     * The result returned by this method will determine if the filter should be refreshed and reused,
+     * or if a new filter instance should be created.
+     *
+     * This method should return `true` if the filter should be refreshed and reused instead of being destroyed.
+     * This is useful if the new params passed are compatible with the existing filter instance.
+     *
+     * When `false` is returned, the existing filter will be destroyed and a new filter will be created.
+     * This should be done if the new params passed are not compatible with the existing filter instance.
+     *
+     * @param newParams {IFilterParams} - New filter params.
+     *
+     * @returns {boolean} - `true` means that the filter should be refreshed and kept.
+     * `false` means that the filter will be destroyed and a new filter instance will be created.
+     */
+    refresh?(newParams: IFilterParams): boolean;
+
+    /**
      * A hook to perform any necessary operation just after the GUI for this component has been rendered on the screen.
      * If a parent popup is closed and reopened (e.g. for filters), this method is called each time the component is shown.
      * This is useful for any logic that requires attachment before executing, such as putting focus on a particular DOM element.
