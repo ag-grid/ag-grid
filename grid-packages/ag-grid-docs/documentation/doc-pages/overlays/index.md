@@ -2,22 +2,23 @@
 title: "Overlays"
 ---
 
-At present, there are two overlays for the grid when using the [Client-Side Row Model](/client-side-model/):
+At present, there are two overlays for the grid. These are displayed in the following situations when using the [Client-Side Row Model](/client-side-model/):
 
-- **Loading**: Gets displayed when the grid is loading data.
+- **Loading**: Gets displayed when the grid is loading data or waiting for column definitions.
 - **No Rows**: Gets displayed when loading has completed but there are no rows to show.
 
-The grid manages showing and hiding of the overlays for you. When the table is first initialised, the loading panel is displayed if `rowData` is set to `null` or `undefined`. When the API function `setRowData` is called, the loading panel is hidden.
+The grid manages showing and hiding of the overlays for you. When the table is first initialised, the loading overlay is displayed if `rowData` or `columnDefs` are set to `null` or `undefined`. When these options are updated, or the the API methods `setRowData` / `setColumnDefs` are called, the loading overlay is hidden.
 
 <note>
-|Overlays are not used when using [Row Models](../row-models/) other than the Client-Side Row Model. This is because data is
+|Overlays are generally not used when using [Row Models](../row-models/) other than the Client-Side Row Model. This is because data is
 |loaded differently.
 |
 |The Loading overlay doesn't make sense as rows are loaded in sections. Access to the entire grid shouldn't
-|be blocked as some rows will be loaded while others are loading.
+|be blocked as some rows will be loaded while others are loading. There is an exception to this when column definitions are not loaded.
+|In this case, the loading overlay will be displayed until the columns are loaded.
 |
 |The No Rows overlay doesn't make sense as there could be rows on the server, but a filter could be applied
-|that filters out all rows. This would be equivalent to the Client-Side Row Model and applying a filter to
+|that filters out all rows. This would be equivalent to using the Client-Side Row Model and applying a filter to
 |some data (no overlay would be shown, and a grid with a filter and no rows would be shown).
 </note>
 

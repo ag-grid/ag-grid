@@ -57,7 +57,7 @@ export class ColumnApi {
     public resetColumnGroupState(): void { this.viaApi('resetColumnGroupState') }
 
     /** @deprecated v31 use `api.isPinning() instead. */
-    public isPinning(): boolean { return this.viaApi('getColumnGroup'); }
+    public isPinning(): boolean { return this.viaApi('isPinning'); }
     /** @deprecated v31 use `api.isPinningLeft() instead. */
     public isPinningLeft(): boolean { return this.viaApi('isPinningLeft'); }
     /** @deprecated v31 use `api.isPinningRight() instead. */

@@ -942,7 +942,6 @@ export class FilterManager extends BeanStub {
     public hasFloatingFilters(): boolean {
         if (this.isAdvancedFilterEnabled()) { return false; }
         const gridColumns = this.columnModel.getAllGridColumns();
-        if (!gridColumns) { return false; }
         return gridColumns.some(col => col.getColDef().floatingFilter);
     }
 

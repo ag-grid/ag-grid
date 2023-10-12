@@ -494,15 +494,18 @@ export class ServerSideRowModel extends BeanStub implements IServerSideRowModel 
         rootStore.forEachNodeDeepAfterFilterAndSort(callback, undefined, includeFooterNodes);
     }
 
-    public executeOnStore(route: string[], callback: (cache: IServerSideStore) => void) {
+    /** @return false if store hasn't started */
+    public executeOnStore(route: string[], callback: (cache: IServerSideStore) => void): boolean {
+        if (!this.started) { return false; }
         const rootStore = this.getRootStore();
-        if (!rootStore) { return; }
+        if (!rootStore) { return true; }
 
         const storeToExecuteOn = rootStore.getChildStore(route);
 
         if (storeToExecuteOn) {
             callback(storeToExecuteOn);
         }
+        return true;
     }
 
     public refreshStore(params: RefreshServerSideParams = {}): void {
