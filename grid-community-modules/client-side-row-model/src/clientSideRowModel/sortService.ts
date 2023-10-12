@@ -209,8 +209,7 @@ export class SortService extends BeanStub {
         }
 
         if (this.gridOptionsService.is('treeData')) {
-            const msg = `AG Grid: The property hideOpenParents dose not work with Tree Data. This is because Tree Data has values at the group level, it doesn't make sense to hide them (as opposed to Row Grouping, which only has Aggregated Values at the group level).`;
-            _.doOnce(() => console.warn(msg), 'sortService.hideOpenParentsWithTreeData');
+            _.warnOnce(`The property hideOpenParents dose not work with Tree Data. This is because Tree Data has values at the group level, it doesn't make sense to hide them.`);
             return false;
         }
 

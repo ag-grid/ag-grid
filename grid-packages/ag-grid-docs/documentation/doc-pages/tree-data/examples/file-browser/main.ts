@@ -211,5 +211,5 @@ document.addEventListener('DOMContentLoaded', function () {
   var gridDiv = document.querySelector<HTMLElement>('#myGrid')!
 
   // create the grid passing in the div to use together with the columns & data we want to use
-  gridApi = createGrid(gridDiv, gridOptions);;
+  gridApi = createGrid(gridDiv, gridOptions);
 })

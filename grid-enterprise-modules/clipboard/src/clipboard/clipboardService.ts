@@ -63,6 +63,12 @@ const EXPORT_TYPE_CLIPBOARD = 'clipboard';
 
 enum CellClearType { CellRange, SelectedRows, FocusedCell };
 
+const apiError = (method: string) => `AG Grid: Unable to use the Clipboard API (navigator.clipboard.${method}()). ` +
+'The reason why it could not be used has been logged in the previous line. ' +
+'For this reason the grid has defaulted to using a workaround which doesn\'t perform as well. ' +
+'Either fix why Clipboard API is blocked, OR stop this message from appearing by setting grid ' +
+'property suppressClipboardApi=true (which will default the grid to using the workaround rather than the API.';
+
 @Bean('clipboardService')
 export class ClipboardService extends BeanStub implements IClipboardService {
 
@@ -118,12 +124,7 @@ export class ClipboardService extends BeanStub implements IClipboardService {
                 .catch((e) => {
                     _.doOnce(() => {
                         console.warn(e);
-                        console.warn(
-                            'AG Grid: Unable to use the Clipboard API (navigator.clipboard.readText()). ' +
-                            'The reason why it could not be used has been logged in the previous line. ' +
-                            'For this reason the grid has defaulted to using a workaround which doesn\'t perform as well. ' +
-                            'Either fix why Clipboard API is blocked, OR stop this message from appearing by setting grid ' +
-                            'property suppressClipboardApi=true (which will default the grid to using the workaround rather than the API');
+                        console.warn(apiError('readText'));
                     }, 'clipboardApiError');
                     this.navigatorApiFailed = true;
                     this.pasteFromClipboardLegacy();
@@ -995,12 +996,7 @@ export class ClipboardService extends BeanStub implements IClipboardService {
             navigator.clipboard.writeText(data).catch((e) => {
                 _.doOnce(() => {
                     console.warn(e);
-                    console.warn(
-                        'AG Grid: Unable to use the Clipboard API (navigator.clipboard.writeText()). ' +
-                        'The reason why it could not be used has been logged in the previous line. ' +
-                        'For this reason the grid has defaulted to using a workaround which doesn\'t perform as well. ' +
-                        'Either fix why Clipboard API is blocked, OR stop this message from appearing by setting grid ' +
-                        'property suppressClipboardApi=true (which will default the grid to using the workaround rather than the API.');
+                    console.warn(apiError('writeText'));
                 }, 'clipboardApiError');
                 this.copyDataToClipboardLegacy(data);
             });

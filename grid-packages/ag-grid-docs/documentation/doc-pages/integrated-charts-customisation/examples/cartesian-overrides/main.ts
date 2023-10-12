@@ -69,7 +69,7 @@ const gridOptions: GridOptions = {
             color: '#de7b73',
             padding: 10,
             rotation: 20,
-            formatter: (params) => {
+            formatter: (params:any) => {
               return params.value.toString().toUpperCase()
             },
           },
@@ -106,7 +106,7 @@ const gridOptions: GridOptions = {
             color: '#de7b73',
             padding: 10,
             rotation: -20,
-            formatter: (params) => {
+            formatter: (params:any) => {
               var value = String(params.value)
               return value === 'United Kingdom' ? 'UK' : '(' + value + ')'
             },
@@ -182,5 +182,5 @@ function onFirstDataRendered(params: FirstDataRenderedEvent) {
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
   var gridDiv = document.querySelector<HTMLElement>('#myGrid')!
-  gridApi = createGrid(gridDiv, gridOptions);;
+  gridApi = createGrid(gridDiv, gridOptions);
 })

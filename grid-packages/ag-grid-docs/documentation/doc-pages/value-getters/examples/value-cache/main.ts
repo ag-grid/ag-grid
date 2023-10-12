@@ -100,7 +100,7 @@ function makeGrid(valueCacheOn: boolean) {
 
   // then similar to all the other examples, create the grid
   var gridDiv = document.querySelector<HTMLElement>('#myGrid')!
-  gridApi = createGrid(gridDiv, gridOptions);;
+  gridApi = createGrid(gridDiv, gridOptions);
 }
 
 // setup the grid after the page has finished loading

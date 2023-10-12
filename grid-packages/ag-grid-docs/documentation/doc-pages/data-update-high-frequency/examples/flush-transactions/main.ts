@@ -231,5 +231,5 @@ function copyObject(object: any) {
 // after page is loaded, create the grid.
 document.addEventListener('DOMContentLoaded', function () {
   var eGridDiv = document.querySelector<HTMLElement>('#myGrid')!
-  gridApi = createGrid(eGridDiv, gridOptions);;
+  gridApi = createGrid(eGridDiv, gridOptions);
 })

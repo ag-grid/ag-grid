@@ -73,5 +73,5 @@ function updateDataOnFord() {
 // AG Grid will not find the div in the document.
 document.addEventListener('DOMContentLoaded', function () {
   const eGridDiv = document.querySelector<HTMLElement>('#myGrid')!
-  gridApi = createGrid(eGridDiv, gridOptions);;
+  gridApi = createGrid(eGridDiv, gridOptions);
 })

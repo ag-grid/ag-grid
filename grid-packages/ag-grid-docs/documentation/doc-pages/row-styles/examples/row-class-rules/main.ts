@@ -54,5 +54,5 @@ function randomInt() {
 // AG Grid will not find the div in the document.
 document.addEventListener('DOMContentLoaded', function () {
   var eGridDiv = document.querySelector<HTMLElement>('#myGrid')!
-  gridApi = createGrid(eGridDiv, gridOptions);;
+  gridApi = createGrid(eGridDiv, gridOptions);
 })

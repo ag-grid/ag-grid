@@ -531,18 +531,6 @@
         "meta": {
             "displayName": "Miscellaneous"
         },
-        "api": {
-            "more": {
-                "name": "Grid Api",
-                "url": "/grid-api/"
-            }
-        },
-        "columnApi": {
-            "more": {
-                "name": "Column Api",
-                "url": "/column-api/"
-            }
-        },
         "alignedGrids": {
             "more": {
                 "name": "Aligned Grids",

@@ -6,7 +6,7 @@ import { UserComponentFactory } from "../components/framework/userComponentFacto
 import { exists } from "../utils/generic";
 import { isIOSUserAgent } from "../utils/browser";
 import { WithoutGridCommon } from "../interfaces/iCommon";
-import { doOnce } from "../utils/function";
+import { warnOnce } from "../utils/function";
 import { Events } from "../eventKeys";
 import { TooltipHideEvent, TooltipShowEvent } from "../events";
 
@@ -103,7 +103,7 @@ export class CustomTooltipFeature extends BeanStub {
         const delay = this.gridOptionsService.getNum(delayOption);
         if (exists(delay)) {
             if (delay < 0) {
-                doOnce(() => console.warn(`AG Grid: ${delayOption} should not be lower than 0`), `${delayOption}Warn`);
+                warnOnce(`${delayOption} should not be lower than 0`);
             }
             return Math.max(200, delay);
         }

@@ -8,7 +8,7 @@ import { FilterChangedEvent } from '../../../events';
 import { AgInputTextField, ITextInputField } from '../../../widgets/agInputTextField';
 import { ColumnModel } from '../../../columns/columnModel';
 import { KeyCode } from '../../../constants/keyCode';
-import { TextFilterParams, TextFilter, TextFilterModel, ITextFilterParams } from '../../provided/text/textFilter';
+import { TextFilterParams, TextFilter, TextFilterModel } from '../../provided/text/textFilter';
 import { NumberFilter, NumberFilterModel } from '../../provided/number/numberFilter';
 import { BeanStub } from '../../../context/beanStub';
 import { clearElement } from '../../../utils/dom';
