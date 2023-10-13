@@ -1,12 +1,12 @@
 <framework-specific-section frameworks="vue">
 |
-| ## Properties, Events, Callbacks and APIs
+| ## Properties, Events, Callbacks and API
 |
 | - **Attributes**: attributes are properties, but aren't bound - they are instead provided literal values (e.g. `rowSelection="multiple"`).
 | - **Properties**: properties are bound attributes (e.g. `:columnDefs="columnDefs"`).
 | - **Callbacks**: callbacks are bound in the same as properties are (e.g. `:getRowHeight="myGetRowHeightFunction"`).
 | - **Event Handlers**: event handlers are are bound in the standard way (e.g. `@cell-clicked="onCellClicked"`). Event names must use `kebab-case`.
-| - **API**: the grid API and column API are accessible through the component.
+| - **API**: the grid api is accessible through the component.
 |
 | All of the above (attributes, properties, callbacks and event handlers) are registered using their 'dash' syntax and not camel-case. For example, the property `pivotMode` is bound using `pivot-mode`. The following example shows some bindings:
 |
@@ -38,13 +38,14 @@
 </framework-specific-section>
 
 <framework-specific-section frameworks="vue">
-| ## Access the Grid & Column API
+| ## Access the Grid API
 |
-| When the grid is initialised, it will fire the `gridReady` event. If you want to use the APIs of
-| the grid, you should put an `onGridReady(params)` callback onto the grid and grab the api(s)
-| from the params. You can then call these apis at a later stage to interact with the
+| When the grid is initialised, it will fire the `gridReady` event. If you want to use the `api` of
+| the grid, you should put an `onGridReady(params)` callback onto the grid and grab the api
+| from the params. You can then call the api at a later stage to interact with the
 | grid (on top of the interaction that can be done by setting and changing the properties).
 |
+| The grid api can also be accessed via `this.$refs.myGrid.api` where `ref="myGrid"` is applied to the `ag-grid-vue` component.
 </framework-specific-section>
 
 <framework-specific-section frameworks="vue">
@@ -63,7 +64,7 @@
 </framework-specific-section>
 
 <framework-specific-section frameworks="vue">
-| The APIs are then accessible through the component:
+| The api is then accessible through the component:
 </framework-specific-section>
 
 <framework-specific-section frameworks="vue">
@@ -103,19 +104,5 @@
 | }
 | &lt;ag-grid-vue
 |     :gridOptions="gridOptions"
-</snippet>
-</framework-specific-section>
-
-<framework-specific-section frameworks="vue">
-| Once the grid is initialised, you will also have access to the grid API (`api`) and column API (`columnApi`) on the `gridOptions` object as shown:
-</framework-specific-section>
-
-<framework-specific-section frameworks="vue">
-<snippet transform={false} language="jsx">
-| // refresh the grid
-| this.gridOptions.api.redrawRows();
-|
-| // resize columns in the grid to fit the available space
-| this.gridOptions.api.sizeColumnsToFit();
 </snippet>
 </framework-specific-section>

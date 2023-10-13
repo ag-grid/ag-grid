@@ -9,7 +9,7 @@
 
 <framework-specific-section frameworks="javascript">
 <snippet transform={false}>
-| var gridOptions = {
+| const gridOptions = {
 |     // PROPERTIES
 |     // Objects like myRowData and myColDefs would be created in your application
 |     rowData: myRowData,
@@ -26,32 +26,19 @@
 |     // CALLBACKS
 |     getRowHeight: (params) => 25
 | }
+|
+| // Pass gridOptions to createGrid to build a new Grid
+| const api = createGrid(gridDiv, gridOptions)
 </snippet>
 </framework-specific-section>
 
 <framework-specific-section frameworks="javascript">
-| Once the grid is initialised, you will also have access to the grid API (`api`) and column API (`columnApi`) on the `gridOptions` object as shown:
-</framework-specific-section>
-
-<framework-specific-section frameworks="javascript">
-<snippet transform={false}>
-| // refresh the grid
-| gridOptions.api.redrawRows();
-|
-| // resize columns in the grid to fit the available space
-| gridOptions.api.sizeColumnsToFit();
-</snippet>
-</framework-specific-section>
-
-<framework-specific-section frameworks="javascript">
-| ### Access the Grid & Column API
-|
-| The Grid API (both `api` and `columnApi`) will only be available after the `gridReady` event has been fired.
+| ### Access the Grid API
 |
 | You can access the APIs in the following ways:
 |
-| - Store them from the `gridReady` event - they'll be available via the `params` argument passed into the event
-| - Provide a `gridOptions` object to the grid pre-creation time. Post-creation the APIs will be available on the `gridOptions` object.
+| - Store the `api` when creating the grid via the `createGrid` function 
+| - Store the `api` from the `gridReady` event - it will be available via the `params` argument
 |
 | ## Listening to Events
 |
@@ -66,10 +53,10 @@
 |     console.log('The row was clicked');
 | }
 |
-| // option 1: use the API
+| // option 1: use the gridOptions
 | gridOptions.onRowClicked = myRowClickedHandler;
 |
 | // option 2: register the handler
-| gridOptions.api.addEventListener('rowClicked', myRowClickedHandler);
+| api.addEventListener('rowClicked', myRowClickedHandler);
 </snippet>
 </framework-specific-section>

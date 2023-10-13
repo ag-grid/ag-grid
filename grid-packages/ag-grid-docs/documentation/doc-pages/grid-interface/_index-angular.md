@@ -6,7 +6,7 @@
 | - **Attributes**: attributes are properties that also accept literal values (e.g. `rowSelection="multiple"`).
 | - **Callbacks**: callbacks are bound via @Inputs like properties (e.g. `[getRowHeight]="myGetRowHeight"`).
 | - **Event Handlers**: event handlers are are bound via @Outputs (e.g. `(cellClicked)="onCellClicked($event)"`).
-| - **API**: the grid API and column API are accessible through the component.
+| - **API**: the grid api is accessible through the component.
 |
 </framework-specific-section>
 
@@ -38,13 +38,15 @@
 </framework-specific-section>
 
 <framework-specific-section frameworks="angular">
-| ## Access the Grid & Column API
+| ## Access the Grid API
 |
-| When the grid is initialised, it will fire the `gridReady` event. If you want to use the APIs of
+| When the grid is initialised, it will fire the `gridReady` event. If you want to use the `api` of
 | the grid, you can put an `onGridReady(params)` callback onto the grid and grab the api(s)
-| from the params. Alternatively, you can retrieve the grid component with a `@ViewChild` attribute from within your component.
-| 
-| You can then call these apis at a later stage to interact with the
+| from the params. 
+|
+| Alternatively, you can retrieve the grid component with a `@ViewChild` attribute from within your component. This will be defined after `ngAfterViewInit` has run.
+|
+| You can then call the api at a later stage to interact with the
 | grid (on top of the interaction that can be done by setting and changing the properties).
 |
 </framework-specific-section>
@@ -63,6 +65,8 @@
 | onGridReady = (params) => {
 |     this.api = params.api;
 | }
+|
+| // Reference grid to access api
 | @ViewChild('myGrid') grid!: AgGridAngular;
 |
 | // Then later access api
@@ -71,7 +75,7 @@
 </framework-specific-section>
 
 <framework-specific-section frameworks="angular">
-| The APIs are also accessible through the component. For example in the snippet above the Grid is give the ID of `'#myGrid'` which then allows the API to be accessed as follows:
+| The api is also accessible within the component template. In the snippet above the Grid is given the ID of `'#myGrid'` which allows the API to be accessed as follows:
 </framework-specific-section>
 
 <framework-specific-section frameworks="angular">
@@ -112,19 +116,5 @@
 |
 | &lt;ag-grid-angular
 |     [gridOptions]="gridOptions"
-</snippet>
-</framework-specific-section>
-
-<framework-specific-section frameworks="angular">
-| Once the grid is initialised, you will also have access to the grid API (`api`) and column API (`columnApi`) on the `gridOptions` object as shown:
-</framework-specific-section>
-
-<framework-specific-section frameworks="angular">
-<snippet transform={false}>
-| // refresh the grid
-| this.gridOptions.api.redrawRows();
-|
-| // resize columns in the grid to fit the available space
-| this.gridOptions.api.sizeColumnsToFit();
 </snippet>
 </framework-specific-section>
