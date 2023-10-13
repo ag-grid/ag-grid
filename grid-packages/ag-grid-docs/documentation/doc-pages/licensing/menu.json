@@ -90,6 +90,14 @@
             ]
           },
           {
+            "title": "Vue 3 script/setup",
+            "icon": "vue",
+            "url": "/vue3-script-setup/",
+            "frameworks": [
+              "vue"
+            ]
+          },
+          {
             "title": "Vue 2 Tutorial",
             "icon": "vue",
             "url": "/vue2/",
