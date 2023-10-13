@@ -77,10 +77,7 @@ const LicensePricing = () => {
                                     <p>AG Charts Enterprise <Icon name="enterprise"/></p>
                                 </div>
 
-                                <div className='font-size-small'>
-                                    <p>Limited time launch price</p>
-                                    <p>Standard price <b>$1,398</b></p>
-                                </div>
+                                <p className='font-size-small'>The Ultimate Grid and Charts Combination</p>
                             </div>
 
                             <div className={styles.right}>
@@ -97,7 +94,7 @@ const LicensePricing = () => {
                                     </div>
                                 </div>
 
-                                <button>Configure Now</button>
+                                <a href="/ecommerce/#/ecommerce/?licenseType=single&productType=both" className='button'>Configure Now</a>
                             </div>
                         </div>
                     </p>
