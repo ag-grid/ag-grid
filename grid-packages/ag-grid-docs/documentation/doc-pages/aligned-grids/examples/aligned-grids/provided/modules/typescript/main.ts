@@ -31,7 +31,6 @@ const columnDefs: (ColDef | ColGroupDef)[] = [
     }
 ];
 // this is the grid options for the top grid
-let topApi: GridApi;
 const gridOptionsTop: GridOptions = {
     defaultColDef: {
         editable: true,
@@ -43,12 +42,12 @@ const gridOptionsTop: GridOptions = {
     },
     columnDefs: columnDefs,
     rowData: null,
-    // debug: true,
-    alignedGrids: []
+    alignedGrids: () => [bottomApi]
 };
+const gridDivTop = document.querySelector<HTMLElement>('#myGridTop')!;
+const topApi = createGrid(gridDivTop, gridOptionsTop);
 
 // this is the grid options for the bottom grid
-let bottomApi: GridApi;
 const gridOptionsBottom: GridOptions = {
     defaultColDef: {
         editable: true,
@@ -60,12 +59,10 @@ const gridOptionsBottom: GridOptions = {
     },
     columnDefs: columnDefs,
     rowData: null,
-    // debug: true,
-    alignedGrids: []
+    alignedGrids: () => [topApi]
 };
-
-gridOptionsTop.alignedGrids!.push(gridOptionsBottom);
-gridOptionsBottom.alignedGrids!.push(gridOptionsTop);
+const gridDivBottom = document.querySelector<HTMLElement>('#myGridBottom')!;
+const bottomApi = createGrid(gridDivBottom, gridOptionsBottom);
 
 function onCbAthlete(value: boolean) {
     // we only need to update one grid, as the other is a slave
@@ -87,12 +84,6 @@ function setData(rowData: any[]) {
     bottomApi!.setRowData(rowData);
     topApi!.sizeColumnsToFit();
 }
-
-const gridDivTop = document.querySelector<HTMLElement>('#myGridTop')!;
-topApi = createGrid(gridDivTop, gridOptionsTop);
-
-const gridDivBottom = document.querySelector<HTMLElement>('#myGridBottom')!;
-bottomApi = createGrid(gridDivBottom, gridOptionsBottom);
 
 fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
     .then(response => response.json())

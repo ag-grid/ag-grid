@@ -7,7 +7,7 @@ import "@ag-grid-community/styles/ag-grid.css";
 import "@ag-grid-community/styles/ag-theme-alpine.css";
 import './styles.css';
 
-import { ModuleRegistry, GridOptions, ColDef, ColGroupDef, GridReadyEvent, FirstDataRenderedEvent } from '@ag-grid-community/core';
+import { ModuleRegistry, ColDef, ColGroupDef, GridReadyEvent } from '@ag-grid-community/core';
 // Register the required feature modules with the Grid
 ModuleRegistry.registerModules([ClientSideRowModelModule]);
 
@@ -94,7 +94,7 @@ const GridExample = () => {
             <div className="grid ag-theme-alpine">
                 <AgGridReact
                     ref={topGrid}
-                    alignedGrids={bottomGrid.current ? [bottomGrid.current] : undefined}
+                    alignedGrids={[bottomGrid.current]}
                     rowData={rowData}
                     columnDefs={columnDefs}
                     defaultColDef={defaultColDef}
@@ -105,7 +105,7 @@ const GridExample = () => {
             <div className="grid ag-theme-alpine">
                 <AgGridReact
                     ref={bottomGrid}
-                    alignedGrids={topGrid.current ? [topGrid.current] : undefined}
+                    alignedGrids={[topGrid.current]}
                     rowData={rowData}
                     columnDefs={columnDefs}
                     defaultColDef={defaultColDef}

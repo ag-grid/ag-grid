@@ -47,7 +47,7 @@ export class AppComponent {
     columnDefs!: (ColDef | ColGroupDef)[];
     rowData!: any[];
     topOptions: GridOptions = {
-        alignedGrids: [],
+        alignedGrids: ()=>[this.bottomGrid],
         defaultColDef: {
             editable: true,
             sortable: true,
@@ -58,7 +58,7 @@ export class AppComponent {
         }
     };
     bottomOptions: GridOptions = {
-        alignedGrids: [],
+        alignedGrids: () => [this.topGrid],
         defaultColDef: {
             editable: true,
             sortable: true,
@@ -94,8 +94,6 @@ export class AppComponent {
             }
         ];
 
-        this.topOptions.alignedGrids!.push(this.bottomOptions);
-        this.bottomOptions.alignedGrids!.push(this.topOptions);
     }
 
     ngOnInit() {

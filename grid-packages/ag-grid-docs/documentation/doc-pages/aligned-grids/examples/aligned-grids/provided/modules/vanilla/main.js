@@ -35,8 +35,7 @@ const gridOptionsTop = {
     },
     columnDefs: columnDefs,
     rowData: null,
-    // debug: true,
-    alignedGrids: []
+    alignedGrids: () => [bottomApi]
 };
 
 // this is the grid options for the bottom grid
@@ -52,12 +51,8 @@ const gridOptionsBottom = {
     },
     columnDefs: columnDefs,
     rowData: null,
-    // debug: true,
-    alignedGrids: []
+    alignedGrids: () => [topApi]
 };
-
-gridOptionsTop.alignedGrids.push(gridOptionsBottom);
-gridOptionsBottom.alignedGrids.push(gridOptionsTop);
 
 function onCbAthlete(value) {
     // we only need to update one grid, as the other is a slave
