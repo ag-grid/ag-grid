@@ -30,6 +30,10 @@
           {
             "title": "Changelog",
             "url": "/resources/change-log"
+          },
+          {
+            "title": "Compatibility",
+            "url": "/resources/compatibility"
           }
         ]
       }
