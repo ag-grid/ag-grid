@@ -15,7 +15,7 @@ import { IOlympicData } from './interfaces'
         <div class="example-wrapper">
             <div>
                 <span class="button-group">
-                    <button (click)="reloadGrid()">Recreate Grid</button>
+                    <button (click)="reloadGrid()">Recreate Grid with Current State</button>
                     <button (click)="printState()">Print State</button>
                 </span>
             </div>

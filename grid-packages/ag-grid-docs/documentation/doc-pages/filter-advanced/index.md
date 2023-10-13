@@ -171,7 +171,7 @@ const advancedFilterModel = {
 
 The Advanced Filter Model can be retrieved via the API method `getAdvancedFilterModel`, and set via the API method `setAdvancedFilterModel`.
 
-<api-documentation source='grid-api/api.json' section='filter' names='["getAdvancedFilterModel, setFilterModel"]'></api-documentation>
+<api-documentation source='grid-api/api.json' section='filter' names='["getAdvancedFilterModel", "setAdvancedFilterModel"]'></api-documentation>
 
 The Advanced Filter Model and API methods are demonstrated in the following example:
 - Clicking `Save Advanced Filter Model` will save the current Advanced Filter.

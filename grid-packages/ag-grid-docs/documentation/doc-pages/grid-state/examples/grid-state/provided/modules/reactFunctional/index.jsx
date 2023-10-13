@@ -7,7 +7,7 @@ import { AgGridReact } from '@ag-grid-community/react';
 import '@ag-grid-community/styles/ag-grid.css';
 import '@ag-grid-community/styles/ag-theme-alpine.css';
 import './styles.css';
-import { ColDef, GridReadyEvent, GridState, ModuleRegistry } from '@ag-grid-community/core';
+import { ModuleRegistry } from '@ag-grid-community/core';
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
 import { ColumnsToolPanelModule } from '@ag-grid-enterprise/column-tool-panel';
 import { FiltersToolPanelModule } from '@ag-grid-enterprise/filter-tool-panel';
@@ -77,7 +77,7 @@ const GridExample = () => {
             <div className="example-wrapper">
                 <div>
                     <span className="button-group">
-                        <button onClick={reloadGrid}>Recreate Grid</button>
+                        <button onClick={reloadGrid}>Recreate Grid with Current State</button>
                         <button onClick={printState}>Print State</button>
                     </span>
                 </div>

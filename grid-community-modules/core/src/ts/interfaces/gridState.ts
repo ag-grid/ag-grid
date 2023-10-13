@@ -107,23 +107,38 @@ export interface RowGroupExpansionState {
 }
 
 export interface GridState {
+    /** Includes aggregation functions */
     aggregation?: AggregationState;
+    /** Includes opened groups */
     columnGroup?: ColumnGroupState;
+    /** Includes column ordering */
     columnOrder?: ColumnOrderState;
+    /** Includes left/right pinned columns */
     columnPinning?: ColumnPinningState;
+    /** Includes column width/flex */
     columnSizing?: ColumnSizingState;
+    /** Includes hidden columns */
     columnVisibility?: ColumnVisibilityState;
+    /** Includes Column Filters and Advanced Filter */
     filter?: FilterState;
-    /** Client-Side Row Model only */
+    /** Includes currently focused cell. Works for Client-Side Row Model only */
     focusedCell?: FocusedCellState;
+    /** Includes current page */
     pagination?: PaginationState;
+    /** Includes current pivot mode and pivot columns */
     pivot?: PivotState;
+    /** Includes currently selected cell ranges */
     rangeSelection?: RangeSelectionState;
+    /** Includes current row group columns */
     rowGroup?: RowGroupState;
+    /** Includes currently expanded group rows */
     rowGroupExpansion?: RowGroupExpansionState;
+    /** Includes currently selected rows */
     rowSelection?: RowSelectionState | ServerSideRowGroupSelectionState;
-    /** Client-Side Row Model only */
+    /** Includes current scroll position. Works for Client-Side Row Model only */
     scroll?: ScrollState;
+    /** Includes current Side Bar positioning and opened tool panel */
     sideBar?: SideBarState;
+    /** Includes current sort columns and direction */
     sort?: SortState;
 }

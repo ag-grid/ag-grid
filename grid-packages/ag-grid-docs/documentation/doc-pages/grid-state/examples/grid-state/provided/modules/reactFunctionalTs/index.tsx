@@ -78,7 +78,7 @@ const GridExample = () => {
             <div className="example-wrapper">
                 <div>
                     <span className="button-group">
-                        <button onClick={reloadGrid}>Recreate Grid</button>
+                        <button onClick={reloadGrid}>Recreate Grid with Current State</button>
                         <button onClick={printState}>Print State</button>
                     </span>
                 </div>
