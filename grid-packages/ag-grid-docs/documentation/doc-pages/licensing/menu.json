@@ -1,39 +1,35 @@
 [
 
   {
-    "group": "OVERVIEW",
+    "group": "Introduction",
     "items": [
       {
-        "title": "Quick Start",
+        "title": "Tutorials",
         "items": [
           {
-            "title": "Get Started",
-            "url": "/get-started"
+            "title": "Key Concepts",
+            "url": "/tutorials/."
+          },
+          {
+            "title": "Customizing the Grid",
+            "url": "/tutorials/."
+          },
+          {
+            "title": "Upgrading to Enterprise",
+            "url": "/tutorials/."
           }
         ]
       },
       {
-        "title": "Demos",
+        "title": "Resources",
         "items": [
           {
-            "title": "Basic Example",
-            "url": "/quick-starts/basic-example"
+            "title": "Feature Matrix",
+            "url": "/resources/feature-matrix"
           },
           {
-            "title": "Custom Cell Renderer",
-            "url": "/quick-starts/custom-cell-renderer-example"
-          },
-          {
-            "title": "Conditional Formatting",
-            "url": "/quick-starts/conditional-formatting-example"
-          },
-          {
-            "title": "Updating the Grid",
-            "url": "/quick-starts/updating-the-grid-example"
-          },
-          {
-            "title": "Value Formatters",
-            "url": "/quick-starts/value-formatter-example"
+            "title": "Changelog",
+            "url": "/resources/change-log"
           }
         ]
       }

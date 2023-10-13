@@ -10,7 +10,8 @@ import tileStyles from '../components/menu-view/Tile.module.scss';
 import supportedFrameworks from '../utils/supported-frameworks';
 import styles from './home.module.scss';
 import { useState } from 'react';
-import Note from '../components/Note'
+import Note from '../components/Note';
+import Code from '../components/Code.jsx'
 
 const OverviewSection = () => {
   return (
@@ -581,20 +582,14 @@ const HomePage = ({ pageContext: { framework } }) => {
         pageName="home"
       />
 
-      {/* Introduction  */}
+      {/* Header  */}
       <div className={classnames(styles.section)}>
         <div style={{ display: 'flex' }}>
           <div style={{ flex: 3 }}>
             <h1>AG Grid <span style={{ textTransform: 'capitalize' }}>{framework}</span> Documentation</h1>
             <p className="font-size-large">
-              AG Grid is an open-source <span style={{ textTransform: 'capitalize' }}>{framework}</span> data grid with free and enterprise versions. AG Grid can be used with any JS framework and has dedicated support for {listOtherFrameworks()}.
+              Welcome to our <span style={{ textTransform: 'capitalize' }}>{framework}</span> documentation. Toggle between {listOtherFrameworks()} using the menu in the toolbar.
             </p>
-            <a style={{ background: 'var(--button-color)', padding: '12px', borderRadius: '8px', color: 'white'}}>
-              Get Started
-            </a>
-            <a style={{ marginLeft: 24, fontSize: 18, color: 'grey', textDecoration: 'underline', cursor: 'pointer' }}>
-              API Reference
-            </a>
           </div>
           <div style={{ flex: 1, padding: '16px' }}>
             <iframe height='100%' src="https://www.youtube.com/embed/j-Odsb0EjVo" frameborder="0" allowfullscreen></iframe>
@@ -602,37 +597,60 @@ const HomePage = ({ pageContext: { framework } }) => {
         </div>
       </div>
 
-      {/* Overview */}
+      {/* Introduction */}
       <div className={classnames(styles.section, 'font-size-responsive')}>
-        <h2>Features</h2>
+        <h2>Introduction</h2>
         <p>
-          For an exhaustive list of features, check out our <a href='#'>Feature Matrix</a>
+          1-2 sentance introduction to AG Grid - what is it, what can it do, why should I use it. Very brief.
         </p>
-        <FeaturesSection />
       </div>
 
-      {/* Demos */}
+      {/* Get Started */}
       <div className={classnames(styles.section, 'font-size-responsive')}>
-        <h2>Demos & Tutorials</h2>
+        <h2>Get Started</h2>
         <p>
-          A collection of demos, showcasing AG Grids functionality. All demos are fully editable via CodeSandbox & Plunkr:
+          Learn how to Get Started by creating a Grid in its simplest form. 
         </p>
-        <DemosSection />
+        <h3>Demo</h3>
+        TODO: Basic Demo
+        <h3>Download</h3>
+        <p>
+          AG Grid is available from NPM. The Community library contains core Grid functionality, and the React library has React-specific functionality
+        </p>
+        <Code language={'bash'} lineNumbers={false} code={'npm install ag-grid-community\nnpm install --save ag-grid-react'} />
+        To confirm the libraries have been added successfully, check your <code>package.json</code> has the correct dependencies:
+        <Code language={'js'} lineNumbers={false} code={"'dependencies': { \n\t'ag-grid-community': '30.2.0',\n\t'ag-grid-react': '30.2.0',\n\t...\n}"} />
+        <h3>Import</h3>
+        You'll need to import the React library into your application:
+        <Code language={'bash'} lineNumbers={false} code={"import { AgGridReact } from 'ag-grid-react';"} />
+        You'll also need to include the core CSS.
+        <Code language={'bash'} lineNumbers={false} code={"import 'ag-grid-community/styles/ag-grid.css';"} /> 
+        Lastly, you may choose 1 of 5 <a>pre-made themes</a>, or <a>create your own</a>: 
+        <Code language={'bash'} lineNumbers={false} code={"import 'ag-grid-community/styles/ag-theme-alpine.css';"} /> 
+        <h3>Configure</h3>
+        For a minimum configuration, you need to provide the Grid with Row Data & Column Defintions.
+
+        Row Data is your data, in JSON format:
+        <Code language={'js'} lineNumbers={false} code={"const rowData = [{}]"} /> 
+        Your columns <code>field</code> property should match your rowData:
+        <Code language={'js'} lineNumbers={false} code={"const colDefs = [{}]"} /> 
+        <h3>Display</h3>
+        Finally, create a grid with rowData & ColDefs as props, wrapped in a parent div that contains your theme, as well as the dimensions of the grid
+        <Code language={'html'} lineNumbers={false} code={"<div className='ag-theme-alpine' style={{width: 500, height: 500}}>\n\t<AgGridReact rowData={rowData} columnDefs={columnDefs} />\n</div>"} /> 
+        Note: You must provide dimensions to the Grid container element
       </div>
 
-      {/* Whats New */}
+      {/* Next Steps */}
       <div className={classnames(styles.section, 'font-size-responsive')}>
-        <h2>Whats New?</h2><span style={{ float: 'right' }}><a href='https://www.ag-grid.com/changelog/' target='_blank'>View Changelog</a></span>
+        <h2>Next Steps</h2>
         <p>
           Check out our latest releases and see what we've been working on
         </p>
-        <TimelineSection />
-      </div>
-
-      {/* Need Help */}
-      <div className={classnames(styles.section, 'font-size-responsive')}>
-        <hr style={{ marginBottom: '32px' }} />
-        <HelpAndCommunitySection />
+        <ul>
+          <li>Key Concepts</li>
+          <li>Customise the Grid</li>
+          <li>Upgrade to Enterprise</li>
+        </ul>
       </div>
 
     </div>
