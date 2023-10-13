@@ -157,7 +157,7 @@ export class InfiniteRowModel extends BeanStub implements IInfiniteRowModel {
         const userGeneratingIds = getRowIdFunc != null;
 
         if (!userGeneratingIds) {
-            this.selectionService.reset();
+            this.selectionService.reset('rowDataChanged');
         }
 
         this.resetCache();

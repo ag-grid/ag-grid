@@ -989,7 +989,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel 
 
     private dispatchUpdateEventsAndRefresh(): void {
         // - clears selection
-        this.selectionService.reset();
+        this.selectionService.reset('rowDataChanged');
 
         // this event kicks off:
         // - shows 'no rows' overlay if needed

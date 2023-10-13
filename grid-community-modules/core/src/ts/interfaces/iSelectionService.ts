@@ -13,7 +13,7 @@ export interface ISelectionService {
     filterFromSelection(predicate: (node: RowNode) => boolean): void;
     updateGroupsFromChildrenSelections(source: SelectionEventSourceType, changedPath?: ChangedPath): boolean;
     syncInRowNode(rowNode: RowNode, oldNode: RowNode | null): void;
-    reset(): void;
+    reset(source: SelectionEventSourceType): void;
     getBestCostNodeSelection(): RowNode[] | undefined;
     isEmpty(): boolean;
     /**

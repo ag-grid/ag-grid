@@ -35,7 +35,7 @@ export class SelectionService extends BeanStub implements ISelectionService {
 
     private setBeans(@Qualifier('loggerFactory') loggerFactory: LoggerFactory) {
         this.logger = loggerFactory.create('selectionService');
-        this.reset();
+        this.resetNodes();
     }
 
     @PostConstruct
@@ -343,7 +343,19 @@ export class SelectionService extends BeanStub implements ISelectionService {
         }
     }
 
-    public reset(): void {
+    public reset(source: SelectionEventSourceType): void {
+        const selectionCount = this.getSelectionCount();
+        this.resetNodes();
+        if (selectionCount) {
+            const event: WithoutGridCommon<SelectionChangedEvent> = {
+                type: Events.EVENT_SELECTION_CHANGED,
+                source
+            };
+            this.eventService.dispatchEvent(event);
+        }
+    }
+
+    private resetNodes(): void {
         this.logger.log('reset');
         this.selectedNodes = {};
         this.lastSelectedNode = null;
@@ -422,7 +434,7 @@ export class SelectionService extends BeanStub implements ISelectionService {
                 }
             });
             // this clears down the map (whereas above only sets the items in map to 'undefined')
-            this.reset();
+            this.reset(source);
         }
 
         // the above does not clean up the parent rows if they are selected
