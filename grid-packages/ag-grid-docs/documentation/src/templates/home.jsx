@@ -602,35 +602,34 @@ const HomePage = ({ pageContext: { framework } }) => {
       <div className={classnames(styles.section, 'font-size-responsive')}>
         <h2>Get Started</h2>
         <p>
-          Learn how to Get Started by creating a Grid in its simplest form. Jump to example section to see the Grid in action with live editing.
+          Learn how to Get Started by creating a basic grid, or jump straight into the <a href='#example'>example</a> code.
         </p>
         <h3>Download</h3>
         <p>
-          AG Grid is available from NPM. The Community library contains core Grid functionality, and the React library has React-specific functionality
+          AG Grid is available from NPM. The Community library contains core Grid functionality, and the React library has the React-specific functionality:
         </p>
-        <Code language={'bash'} lineNumbers={false} code={'npm install ag-grid-community\nnpm install --save ag-grid-react'} />
+        <Code language={'bash'} lineNumbers={false} code={'npm install ag-grid-community\nnpm install ag-grid-react'} />
         To confirm the libraries have been added successfully, check your <code>package.json</code> has the correct dependencies:
         <Code language={'js'} lineNumbers={false} code={"'dependencies': { \n\t'ag-grid-community': '30.2.0',\n\t'ag-grid-react': '30.2.0',\n\t...\n}"} />
         <h3>Import</h3>
         You'll need to import the React library into your application:
         <Code language={'bash'} lineNumbers={false} code={"import { AgGridReact } from 'ag-grid-react';"} />
-        You'll also need to include the core CSS.
-        <Code language={'bash'} lineNumbers={false} code={"import 'ag-grid-community/styles/ag-grid.css';"} /> 
-        Lastly, you may choose 1 of 5 <a>pre-made themes</a>, or <a>create your own</a>: 
-        <Code language={'bash'} lineNumbers={false} code={"import 'ag-grid-community/styles/ag-theme-alpine.css';"} /> 
+        You'll also need to include the core CSS & 1 of 5 <a>pre-made themes</a>.
+        <Code language={'bash'} lineNumbers={false} code={"import 'ag-grid-community/styles/ag-grid.css';\nimport 'ag-grid-community/styles/ag-theme-alpine.css';"} /> 
+        <Note>You can customize a pre-made theme, or create a new one entirely</Note> 
         <h3>Configure</h3>
-        For a minimum configuration, you need to provide the Grid with Row Data & Column Defintions.
-
-        Row Data is your data, in JSON format:
-        <Code language={'js'} lineNumbers={false} code={"const rowData = [{}]"} /> 
-        Your columns <code>field</code> property should match your rowData:
-        <Code language={'js'} lineNumbers={false} code={"const colDefs = [{}]"} /> 
+        For a minimum configuration, you need to provide the Grid with Row Data, which is your data in JSON format:
+        <Code language={'js'} lineNumbers={false} code={"const rowData = [\n\t{ make: 'Toyota', model: 'Celica', price: 35000 },\n\t{ make: 'Ford', model: 'Mondeo', price: 32000 },\n\t{ make: 'Porsche', model: 'Boxter', price: 72000 }\n]"} /> 
+        As well as your Column Definitions. Each field in your columns should match a property in your data:
+        <Code language={'js'} lineNumbers={false} code={"const colDefs = [\n\t{ field: 'make' },\n\t{ field: 'model' },\n\t{ field: 'price' }\n]"} /> 
         <h3>Display</h3>
         Finally, create a grid with rowData & ColDefs as props, wrapped in a parent div that contains your theme, as well as the dimensions of the grid
         <Code language={'html'} lineNumbers={false} code={"<div className='ag-theme-alpine' style={{width: 500, height: 500}}>\n\t<AgGridReact rowData={rowData} columnDefs={columnDefs} />\n</div>"} /> 
-        Note: You must provide dimensions to the Grid container element
-        <h3>Example</h3>
-        TODO: Grid w/ Source Code
+        <Note>You must provide dimensions & a theme to the Grid container or the Grid will not be displayed</Note>
+        <h3 id='example'>Example</h3>
+        Bringing this all together, our file should look like:
+        <Code language={'js'} code={"import { AgGridReact } from 'ag-grid-react';\nimport 'ag-grid-community/styles/ag-grid.css';\nimport 'ag-grid-community/styles/ag-theme-alpine.css';\n\nconst rowData = [\n\t{ make: 'Toyota', model: 'Celica', price: 35000 },\n\t{ make: 'Ford', model: 'Mondeo', price: 32000 },\n\t{ make: 'Porsche', model: 'Boxter', price: 72000 }\n]\n\nconst colDefs = [\n\t{ field: 'make' },\n\t{ field: 'model' },\n\t{ field: 'price' }\n]\n\nexport default GridExample = () => {\n\treturn (\n\t\t<div className='ag-theme-alpine' style={{width: 500, height: 500}}>\n\t\t\t<AgGridReact rowData={rowData} columnDefs={colDefs} />\n\t\t</div>\n\t)\n}"}></Code>
+        Which displays a very basic grid: <i>TODO: Add Basic Grid</i>
       </div>
 
       {/* Next Steps */}
@@ -640,9 +639,9 @@ const HomePage = ({ pageContext: { framework } }) => {
           Check out our latest releases and see what we've been working on
         </p>
         <ul>
-          <li>Key Concepts</li>
-          <li>Customise the Grid</li>
-          <li>Upgrade to Enterprise</li>
+          <li><a>Key Concepts</a></li>
+          <li><a>Customise the Grid</a></li>
+          <li><a>Upgrade to Enterprise</a></li>
         </ul>
       </div>
 
