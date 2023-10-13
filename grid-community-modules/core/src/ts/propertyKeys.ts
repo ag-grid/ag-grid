@@ -51,7 +51,7 @@ export class PropertyKeys {
         'rowClassRules', 'detailCellRendererParams', 'loadingCellRendererParams', 'loadingOverlayComponentParams',
         'noRowsOverlayComponentParams', 'popupParent', 'statusBar', 'sideBar', 'chartThemeOverrides',
         'customChartThemes', 'chartToolPanelsDef', 'dataTypeDefinitions', 'advancedFilterModel', 'advancedFilterParent',
-        'advancedFilterBuilderParams', 'initialState'
+        'advancedFilterBuilderParams', 'initialState',
     ];
 
     public static ARRAY_PROPERTIES: KeysOfType<any[]>[] = [

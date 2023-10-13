@@ -322,7 +322,7 @@ export interface GridOptions<TData = any> {
     excludeChildrenWhenTreeDataFiltering?: boolean;
     /** Set to true to enable the Advanced Filter. Default: `false` */
     enableAdvancedFilter?: boolean;
-    /** @deprecated As of v29, use `initialState.filter.advancedFilterModel` instead. */
+    /** @deprecated As of v31, use `initialState.filter.advancedFilterModel` instead. */
     advancedFilterModel?: AdvancedFilterModel | null;
     /**
      * Hidden columns are excluded from the Advanced Filter by default.

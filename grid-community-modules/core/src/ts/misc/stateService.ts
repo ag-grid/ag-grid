@@ -37,19 +37,20 @@ import { SortModelItem } from "../sortController";
 import { ServerSideRowGroupSelectionState, RowSelectionState } from "../interfaces/selectionState";
 import { IExpansionService } from "../interfaces/iExpansionService";
 import { jsonEquals } from "../utils/generic";
+import { AdvancedFilterModel } from "../interfaces/advancedFilterModel";
 
 @Bean('stateService')
 export class StateService extends BeanStub {
-    @Autowired('filterManager') private filterManager: FilterManager;
-    @Optional('rangeService') private rangeService?: IRangeService;
-    @Autowired('ctrlsService') private ctrlsService: CtrlsService;
-    @Optional('sideBarService') private sideBarService?: ISideBarService;
-    @Autowired('focusService') private focusService: FocusService;
-    @Autowired('columnModel') private columnModel: ColumnModel;
-    @Autowired('paginationProxy') private paginationProxy: PaginationProxy;
-    @Autowired('rowModel') private rowModel: IRowModel;
-    @Autowired('selectionService') private selectionService: ISelectionService;
-    @Autowired('expansionService') private expansionService: IExpansionService;
+    @Autowired('filterManager') private readonly filterManager: FilterManager;
+    @Optional('rangeService') private readonly rangeService?: IRangeService;
+    @Autowired('ctrlsService') private readonly ctrlsService: CtrlsService;
+    @Optional('sideBarService') private readonly sideBarService?: ISideBarService;
+    @Autowired('focusService') private readonly focusService: FocusService;
+    @Autowired('columnModel') private readonly columnModel: ColumnModel;
+    @Autowired('paginationProxy') private readonly paginationProxy: PaginationProxy;
+    @Autowired('rowModel') private readonly rowModel: IRowModel;
+    @Autowired('selectionService') private readonly selectionService: ISelectionService;
+    @Autowired('expansionService') private readonly expansionService: IExpansionService;
 
     private isClientSideRowModel: boolean;
     private cachedState: GridState;
@@ -101,8 +102,9 @@ export class StateService extends BeanStub {
         if (columnGroupState) {
             this.setColumnGroupState(columnGroupState);
         }
-        if (filterState) {
-            this.setFilterState(filterState);
+        const advancedFilterModel = this.gridOptionsService.get('advancedFilterModel');
+        if (filterState || advancedFilterModel) {
+            this.setFilterState(filterState, advancedFilterModel);
         }
 
         this.updateColumnState();
@@ -379,8 +381,8 @@ export class StateService extends BeanStub {
         return filterModel || advancedFilterModel ? { filterModel, advancedFilterModel } : undefined;
     }
 
-    private setFilterState(filterState: FilterState): void {
-        const { filterModel, advancedFilterModel } = filterState;
+    private setFilterState(filterState?: FilterState, gridOptionAdvancedFilterModel?: AdvancedFilterModel | null): void {
+        const { filterModel, advancedFilterModel } = filterState ?? { advancedFilterModel: gridOptionAdvancedFilterModel };
         if (filterModel) {
             this.filterManager.setFilterModel(filterModel, 'columnFilter');
         }
