@@ -69,7 +69,7 @@ export class AppComponent {
         enableValue: true,
     };
     public rowSelection: 'single' | 'multiple' = 'multiple';
-    public rowData!: IOlympicData[];
+    public rowData?: IOlympicData[];
     public gridVisible = true;
     public initialState?: GridState;
 
@@ -80,6 +80,7 @@ export class AppComponent {
         this.gridVisible = false;
         this.cdRef.detectChanges();
         this.initialState = state;
+        this.rowData = undefined;
         setTimeout(() => {
             this.gridVisible = true;
             this.cdRef.detectChanges();

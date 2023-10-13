@@ -89,6 +89,7 @@ const VueExample = {
             gridVisible.value = false;
             setTimeout(() => {
                 initialState.value = state;
+                rowData.value = undefined;
                 gridVisible.value = true;
             });
         };

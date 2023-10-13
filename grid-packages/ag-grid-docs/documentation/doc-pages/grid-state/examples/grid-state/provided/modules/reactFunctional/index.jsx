@@ -63,6 +63,7 @@ const GridExample = () => {
         setGridVisible(false);
         setTimeout(() => {
             setInitialState(state);
+            setRowData(undefined);
             setGridVisible(true);
         });
     }, []);
