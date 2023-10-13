@@ -1,5 +1,5 @@
-import { BaseComponentWrapper, WrappableInterface } from '@ag-grid-community/core';
-import { VueComponentFactory } from './VueComponentFactory';
+import {BaseComponentWrapper, WrappableInterface} from '@ag-grid-community/core';
+import {VueComponentFactory} from './VueComponentFactory';
 
 interface VueWrappableInterface extends WrappableInterface {
     overrideProcessing(methodName: string): boolean;
@@ -10,7 +10,7 @@ interface VueWrappableInterface extends WrappableInterface {
 export class VueFrameworkComponentWrapper extends BaseComponentWrapper<WrappableInterface> {
     private parent: any | null;
 
-    private static provides : any;
+    private static provides: any;
 
     constructor(parent: any, provides?: any) {
         super();
@@ -19,7 +19,7 @@ export class VueFrameworkComponentWrapper extends BaseComponentWrapper<Wrappable
 
         // when using master detail things provides to the master (like urlql) will not be available to the child components
         // we capture the parent provides here (the first one will be the parent) - and re-use this when creating child components in VueComponentFactory
-        if(!VueFrameworkComponentWrapper.provides) {
+        if (!VueFrameworkComponentWrapper.provides) {
             VueFrameworkComponentWrapper.provides = provides;
         }
     }
@@ -33,13 +33,22 @@ export class VueFrameworkComponentWrapper extends BaseComponentWrapper<Wrappable
             }
 
             public hasMethod(name: string): boolean {
-                return wrapper.getFrameworkComponentInstance()[name] != null;
+                const componentInstance = wrapper.getFrameworkComponentInstance()
+                if (!componentInstance[name]) {
+                    return componentInstance.$.setupState[name] !== null
+                } else {
+                    return true
+                }
             }
 
             public callMethod(name: string, args: IArguments): any {
                 const componentInstance = this.getFrameworkComponentInstance();
                 const frameworkComponentInstance = wrapper.getFrameworkComponentInstance();
-                return frameworkComponentInstance[name].apply(componentInstance, args);
+                if (frameworkComponentInstance[name]) {
+                    return frameworkComponentInstance[name].apply(componentInstance, args);
+                } else {
+                    return frameworkComponentInstance.$.setupState[name]?.apply(componentInstance, args);
+                }
             }
 
             public addMethod(name: string, callback: () => any): void {
@@ -76,7 +85,7 @@ export class VueFrameworkComponentWrapper extends BaseComponentWrapper<Wrappable
     }
 
     protected createMethodProxy(wrapper: VueWrappableInterface, methodName: string, mandatory: boolean): () => any {
-        return function() {
+        return function () {
             if (wrapper.overrideProcessing(methodName)) {
                 return wrapper.processMethod(methodName, arguments);
             }
@@ -125,7 +134,7 @@ abstract class VueComponent<P, T> {
 
         // the element is the parent div we're forced to created when dynamically creating vnodes
         // the first child is the user supplied component
-        this.element = element.firstElementChild;
+        this.element = element.firstElementChild ?? element;
     }
 
     protected abstract createComponent(params: P): any;

@@ -44,8 +44,6 @@ export interface IClientSideRowModel<TData = any> extends IRowModel {
 export interface RefreshModelParams<TData = any> {
     // how much of the pipeline to execute
     step: ClientSideRowModelSteps;
-    // what state to reset the groups back to after the refresh
-    groupState?: any;
     // if NOT new data, then this flag tells grid to check if rows already
     // exist for the nodes (matching by node id) and reuses the row if it does.
     keepRenderedRows?: boolean;
