@@ -584,24 +584,17 @@ const HomePage = ({ pageContext: { framework } }) => {
 
       {/* Header  */}
       <div className={classnames(styles.section)}>
-        <div style={{ display: 'flex' }}>
-          <div style={{ flex: 3 }}>
             <h1>AG Grid <span style={{ textTransform: 'capitalize' }}>{framework}</span> Documentation</h1>
             <p className="font-size-large">
               Welcome to our <span style={{ textTransform: 'capitalize' }}>{framework}</span> documentation. Toggle between {listOtherFrameworks()} using the menu in the toolbar.
             </p>
-          </div>
-          <div style={{ flex: 1, padding: '16px' }}>
-            <iframe height='100%' src="https://www.youtube.com/embed/j-Odsb0EjVo" frameborder="0" allowfullscreen></iframe>
-          </div>
-        </div>
       </div>
 
       {/* Introduction */}
       <div className={classnames(styles.section, 'font-size-responsive')}>
         <h2>Introduction</h2>
         <p>
-          1-2 sentance introduction to AG Grid - what is it, what can it do, why should I use it. Very brief.
+          AG Grid is an open-source, framework agnostic, JavaScript data grid with both free & paid versions. With over 11,000 Stars on GitHub, and 2.2m Monthly Downloads on NPM, AG Grid is one of the most popular & widely used Grid libraries available. Packed with features from the basic, like Pagination, Filtering, Grouping & Sorting, to more advanced Excel-esque features, such as Master / Detail, Pivoting, and Exporting AG Grid can also seamlessly handle huge data sets. 
         </p>
       </div>
 
@@ -609,10 +602,8 @@ const HomePage = ({ pageContext: { framework } }) => {
       <div className={classnames(styles.section, 'font-size-responsive')}>
         <h2>Get Started</h2>
         <p>
-          Learn how to Get Started by creating a Grid in its simplest form. 
+          Learn how to Get Started by creating a Grid in its simplest form. Jump to example section to see the Grid in action with live editing.
         </p>
-        <h3>Demo</h3>
-        TODO: Basic Demo
         <h3>Download</h3>
         <p>
           AG Grid is available from NPM. The Community library contains core Grid functionality, and the React library has React-specific functionality
@@ -638,6 +629,8 @@ const HomePage = ({ pageContext: { framework } }) => {
         Finally, create a grid with rowData & ColDefs as props, wrapped in a parent div that contains your theme, as well as the dimensions of the grid
         <Code language={'html'} lineNumbers={false} code={"<div className='ag-theme-alpine' style={{width: 500, height: 500}}>\n\t<AgGridReact rowData={rowData} columnDefs={columnDefs} />\n</div>"} /> 
         Note: You must provide dimensions to the Grid container element
+        <h3>Example</h3>
+        TODO: Grid w/ Source Code
       </div>
 
       {/* Next Steps */}
