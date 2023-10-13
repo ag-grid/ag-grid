@@ -200,11 +200,6 @@ export class GridCoreCreator {
 
     public create(eGridDiv: HTMLElement, gridOptions: GridOptions, createUi: (context: Context) => void, acceptChanges?: (context: Context) => void, params?: GridParams): GridApi {
 
-        // Must delete in case user passed in gridOptions that had already been used elsewhere.
-        // Also delete before shallow copy otherwise getters will be called during copy.
-        delete gridOptions.api;
-        delete gridOptions.columnApi;
-
         // Shallow copy to prevent user provided gridOptions from being mutated.
         const gridOps = {...gridOptions};
         const debug = !!gridOps.debug;
@@ -243,27 +238,12 @@ export class GridCoreCreator {
 
         if (acceptChanges) { acceptChanges(context); }
 
-        // For backwards compatibility we mutate the gridOps object with apis if requested.
-        const msg = (apiName: string) => `'Accessing the ${apiName} from gridOptions is deprecated. For more info on how to access the api see: https://ag-grid.com/javascript-data-grid/grid-api/'`;
-        Object.defineProperty(gridOptions, 'api', {
-            get: () => {
-                warnOnce(msg('api'));
-                return beans.gridApi.isDestroyed() ? undefined : beans.gridApi;
-            },
-            configurable: true,
-            enumerable: true,
-        });
-        Object.defineProperty(gridOptions, 'columnApi', {
-            get: () => {
-                warnOnce(msg('columnApi'));
-                return beans.gridApi.isDestroyed() ? undefined : beans.columnApi;
-            },
-            configurable: true,
-            enumerable: true,
-        });
-            beans.gridOptionsService
-
-        return beans.gridApi;
+        // Expose the apis on users gridOptions if their gridOptions is not frozen.
+        if(!Object.isFrozen(gridOptions)) {
+            gridOptions.api = beans.gridApi;
+            gridOptions.columnApi = beans.columnApi;
+        }
+        return beans.gridApi;   
     }
 
     private registerControllers(beans: Beans, registeredModules: Module[]): void {
