@@ -358,20 +358,11 @@ export abstract class SimpleFilter<M extends ISimpleFilterModel, V, E = AgInputT
         return res;
     }
 
-    refresh(newParams: SimpleFilterParams): boolean {
-        const parentRefreshed = super.refresh(newParams);
-        if (!parentRefreshed) {
-            return false;
-        }
-
+    private shouldRefresh(newParams: SimpleFilterParams): boolean {
         const model = this.getModel();
         const conditions: ISimpleFilterModel[] | null = model ? ((<any>model).conditions ?? [model]) : null;
 
-        //
-        // Check for situations when the filter should be destroyed and recreated
-        //
-
-        // Do Not refresh when one of the existing types is not in new options list
+        // Do Not refresh when one of the existing condition options is not in new options list
         const newOptionsList = newParams.filterOptions?.map(
             option => typeof option === 'string' ? option : option.displayKey
         ) ?? this.getDefaultFilterOptions();
@@ -383,20 +374,27 @@ export abstract class SimpleFilter<M extends ISimpleFilterModel, V, E = AgInputT
         }
 
         // Check number of conditions vs maxNumConditions
-        if (
-            conditions && typeof newParams.maxNumConditions === 'number' &&
-            conditions.length > newParams.maxNumConditions
-        ) {
+        if (typeof newParams.maxNumConditions === 'number' && conditions && conditions.length > newParams.maxNumConditions) {
             return false;
         }
 
-        // No breaking changes new params,
-        // so safely update the options list and refresh the filter
+        return true;
+    }
+
+    refresh(newParams: SimpleFilterParams): boolean {
+        if (!this.shouldRefresh(newParams)) {
+            return false;
+        }
+
+        const parentRefreshed = super.refresh(newParams);
+        if (!parentRefreshed) {
+            return false;
+        }
 
         this.setParams(newParams);
         this.removeConditionsAndOperators(0);
         this.createOption();
-        this.setModel(model);
+        this.setModel(this.getModel());
 
         return true;
     }
