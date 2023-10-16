@@ -138,7 +138,7 @@
 .videoTile {
     overflow: hidden;
     aspect-ratio: 16/9;
-    background-color: var(--500);
+    background-color: var(--background-500);
 
     &:hover {
         background-color: var(--link-hover-color);
