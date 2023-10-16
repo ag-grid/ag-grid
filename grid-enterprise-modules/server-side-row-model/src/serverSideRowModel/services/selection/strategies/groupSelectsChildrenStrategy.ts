@@ -23,7 +23,7 @@ export class GroupSelectsChildrenStrategy extends BeanStub implements ISelection
         this.addManagedListener(this.eventService, Events.EVENT_MODEL_UPDATED, () => this.removeRedundantState());
 
         // when the grouping changes, the state no longer makes sense, so reset the state.
-        this.addManagedListener(this.eventService, Events.EVENT_COLUMN_ROW_GROUP_CHANGED, () => this.selectionService.reset());
+        this.addManagedListener(this.eventService, Events.EVENT_COLUMN_ROW_GROUP_CHANGED, () => this.selectionService.reset('rowGroupChanged'));
     }
 
     public getSelectedState() {

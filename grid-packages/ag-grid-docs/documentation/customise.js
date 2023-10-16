@@ -13,6 +13,13 @@ const applyCustomisation = (packageName, expectedVersion, customisation, provide
         return true;
     }
 
+    // nav to dirs and only build docs. bihourly build examples
+
+    // Failed to find a property named sizeColumnsToFit that we requested under section columns. Check if you passed the correct name or if the name appears in the source json file that you
+    // are using.
+
+    // warn Could not find a prop rowGroups under source grid-api/api.json and section rowGroups!
+
     const version = require(packagePath).version;
     const versionMatches = version === expectedVersion;
 

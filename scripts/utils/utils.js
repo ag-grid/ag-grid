@@ -44,7 +44,7 @@ const extractSubAngularProjectDependencies = (packageDirectory, directory) => {
     let agSubAngularChartDeps = null;
     if (directory.includes("angular") && !directory.includes("example")) {
         const angularJson = require(`${CWD}/${packageDirectory}/${directory}/angular.json`);
-        const currentSubProjectPackageJsonFile = require(`${CWD}/${packageDirectory}/${directory}/projects/${angularJson.defaultProject}/package.json`);
+        const currentSubProjectPackageJsonFile = require(`${CWD}/${packageDirectory}/${directory}/${Object.values(angularJson.projects)[0].root}/package.json`);
 
         agSubAngularVersion = currentSubProjectPackageJsonFile.version;
 
@@ -111,6 +111,7 @@ const getPackageInformation = () => {
                         agSubAngularGridDeps,
                         agSubAngularChartDeps
                     }
+
                 });
         });
 

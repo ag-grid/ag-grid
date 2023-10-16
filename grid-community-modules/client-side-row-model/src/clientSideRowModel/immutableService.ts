@@ -118,7 +118,7 @@ export class ImmutableService extends BeanStub implements IImmutableService {
         if (this.isActive()) {
             this.setRowData(rowData);
         } else {
-            this.selectionService.reset();
+            this.selectionService.reset('rowDataChanged');
             this.clientSideRowModel.setRowData(rowData);
         }
     }

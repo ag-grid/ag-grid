@@ -984,7 +984,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel 
 
     private dispatchUpdateEventsAndRefresh(): void {
         // - clears selection
-        this.selectionService.reset();
+        this.selectionService.reset('rowDataChanged');
         // - updates filters
         this.filterManager.onNewRowsLoaded('rowDataUpdated');
 

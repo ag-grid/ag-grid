@@ -2,50 +2,45 @@ import classnames from 'classnames';
 import React, { FunctionComponent } from 'react';
 import { Icon } from '../../components/Icon';
 import { trackBuyButton } from '../../utils/analytics';
+import AGGridLogo from '../../images/inline-svgs/ag-grid-logo.svg';
+import AGChartsLogo from '../../images/inline-svgs/ag-charts-logo.svg';
+
 // @ts-ignore
 import styles from './Licenses.module.scss';
 
 type LicenseData = {
     className: string;
-    name: string;
     id: string;
     subHeading: string;
     licenseBenefits: string[];
     priceFullDollars: string;
-    pricePer: string;
+    launchPrice: any;
     buyLink: string;
+    Logo: any;
 };
 
 const DEV_LICENSE_DATA: LicenseData[] = [
     {
-        className: styles.singleApplicationLicense,
-        name: 'Single Application',
+        className: styles.gridLicense,
         id: 'single-application',
-        subHeading: 'Development License',
+        subHeading: 'AG Grid Enterprise',
         priceFullDollars: '999',
-        licenseBenefits: ['Perpetual license', '1 year of support', '1 year of updates'],
-        pricePer: 'Developer',
-        buyLink: '/ecommerce/#/ecommerce/?licenseType=single',
+        launchPrice: null,
+        licenseBenefits: ['Perpetual License', '1 Year of Support', '1 Year of Updates'],
+        buyLink: '/ecommerce/#/ecommerce/?licenseType=single&productType=aggrid',
+        Logo: AGGridLogo
     },
     {
-        className: styles.multipleApplicationsLicense,
-        name: 'Multiple Application',
-        id: 'multiple-application',
-        subHeading: 'Development License',
-        licenseBenefits: ['Unlimited applications', 'Perpetual license', '1 year of support', '1 year of updates'],
-        priceFullDollars: '1,499',
-        pricePer: 'Developer',
-        buyLink: '/ecommerce/#/ecommerce/?licenseType=multi',
+        className: styles.chartsLicense,
+        id: 'single-application',
+        subHeading: 'AG Charts Enterprise',
+        licenseBenefits: ['Perpetual License', '1 Year of Support', '1 Year of Updates'],
+        priceFullDollars: '399',
+        launchPrice: '184',
+        buyLink: '/ecommerce/#/ecommerce/?licenseType=single&productType=agcharts',
+        Logo: AGChartsLogo
     },
 ];
-
-const DEPLOY_LICENSE_DATA = {
-    name: 'Deployment License',
-    id: 'deployment',
-    subHeading: 'Purchase with Development License',
-    priceFullDollars: '750',
-    pricePer: 'Application Production Environment',
-};
 
 const makeNonBreaking = (text: string) => {
     const nonBreakingSpace = '\u00A0';
@@ -53,52 +48,40 @@ const makeNonBreaking = (text: string) => {
     return text.replace(' ', nonBreakingSpace);
 };
 
-const Price = ({ priceFullDollars, pricePer }) => {
+const Price = ({ priceFullDollars, launchPrice }) => {
     return (
         <div className={styles.price}>
-            <p className={styles.priceFullDollars}>{priceFullDollars}</p>
+            <p className="font-size-small"><b>Starting at...</b></p>
+            { launchPrice && (
+                <>
+                    <p className={styles.standardPrice}>
+                        {priceFullDollars}
+                        <svg className={styles.standardPriceCross} viewBox="0 0 100 100" preserveAspectRatio="none">
+                            <path d="m0 0 100 100M100 0 0 100"/>
+                        </svg>
+                    </p>
+                </>
+            )}
+            <p className={styles.priceFullDollars}>{launchPrice ? launchPrice : priceFullDollars}</p>
             <p className="font-size-small">
-                <b>Per {pricePer}</b>
-            </p>
-        </div>
-    );
-};
-
-const DevelopmentLicense = () => {
-    return (
-        <div className={classnames(styles.bottom, 'bottom')}>
-            <div className={styles.licenseMeta}>
-                <p className={styles.name}>{DEPLOY_LICENSE_DATA.name}</p>
-                <p className="font-size-small text-secondary">{DEPLOY_LICENSE_DATA.subHeading}</p>
-            </div>
-
-            <Price priceFullDollars={DEPLOY_LICENSE_DATA.priceFullDollars} pricePer={DEPLOY_LICENSE_DATA.pricePer} />
-
-            <p className={classnames(styles.devLicenseRequired, 'font-size-extra-small')}>
-                Required to deploy for external users{' '}
-                <a className={styles.learnMoreLink} href={`#${DEPLOY_LICENSE_DATA.id}`}>
-                    Learn more
-                </a>
+                <b>Per Developer</b>
             </p>
         </div>
     );
 };
 
 const License = (props: LicenseData) => {
-    const { name, id, subHeading, licenseBenefits, priceFullDollars, pricePer, buyLink } = props;
+    const { id, subHeading, licenseBenefits, priceFullDollars, launchPrice, buyLink, Logo } = props;
 
     return (
         <>
             <div className={classnames(styles.top, 'top')}>
                 <div className={styles.licenseMeta}>
-                    <p className="font-size-small text-secondary">
-                        AG Grid Enterprise <Icon name="enterprise" />
-                    </p>
-                    <p className={classnames(styles.name, 'font-size-extra-large', 'bold-text')}>{name}</p>
-                    <p className="font-size-small text-secondary">{subHeading}</p>
+                    <Logo className={styles.logo}/>
+                    <p className="font-size-small">{subHeading}<Icon name="enterprise" /></p>
                 </div>
 
-                <Price priceFullDollars={priceFullDollars} pricePer={pricePer} />
+                <Price priceFullDollars={priceFullDollars} launchPrice={launchPrice} />
 
                 <div className={styles.licenseBenefits}>
                     <ul className="font-size-small list-style-none">
@@ -112,6 +95,16 @@ const License = (props: LicenseData) => {
                     </a>
                 </div>
 
+                
+                <div className={styles.launchExplainer}>
+                    { launchPrice && (
+                        <>
+                            <p className='font-size-small'>Limited time launch price</p>
+                            <p className='font-size-small'>Standard price <b>${priceFullDollars}</b></p>
+                        </>
+                    )}
+                </div>
+
                 <div className={styles.licenseActions}>
                     <a
                         className="button"
@@ -122,12 +115,10 @@ const License = (props: LicenseData) => {
                             });
                         }}
                     >
-                        Buy now
+                        Configure Now
                     </a>
                 </div>
             </div>
-
-            <DevelopmentLicense />
         </>
     );
 };
@@ -137,7 +128,7 @@ export const Licenses: FunctionComponent = () => {
         <>
             {DEV_LICENSE_DATA.map((data) => {
                 return (
-                    <div key={data.name} className={classnames(styles.license, data.className, 'card', data.id)}>
+                    <div key={data.name} className={classnames(styles.license, data.className, 'card')}>
                         <License {...data} />
                     </div>
                 );

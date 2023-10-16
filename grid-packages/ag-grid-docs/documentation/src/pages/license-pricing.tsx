@@ -65,27 +65,45 @@ const LicensePricing = () => {
                     </div>
                 </div>
 
-                <Licenses />
-            </div>
+                <div className={styles.licensesOuter}>
+                    <Licenses />
 
-            <div className={styles.bulkLicenses}>
-                <p className="text-secondary">
-                    Bulk pricing discounts available. Use the buy now buttons above to see pricing for up to 10
-                    developers. For more than 10 developers or any questions regarding your purchase, please email us.
-                </p>
+                    <p className={styles.buyTogether}>
+                        <div className={styles.buyTogetherInner}>
+                            <div className={styles.left}>
+                                <p className={styles.products}><b>AG&nbsp;Grid</b> +<wbr /> <b>AG&nbsp;Charts</b></p>
+                                <div className={classnames(styles.enterpriseProducts, 'font-size-small')}>
+                                    <p>AG Grid Enterprise <Icon name="enterprise"/></p>
+                                    <p>AG Charts Enterprise <Icon name="enterprise"/></p>
+                                </div>
 
-                <InfoEmailLink
-                    emailSubject="AG Grid Developer license query"
-                    className="font-size-massive"
-                    trackingType="bulkDiscount"
-                >
-                    info@ag-grid.com
-                </InfoEmailLink>
+                                <p className='font-size-small'>The Ultimate Grid and Charts Combination</p>
+                            </div>
+
+                            <div className={styles.right}>
+                                <div className={styles.rightInner}>
+                                    <div className={styles.rightPrice}>
+                                        <p className='font-size-small'>Starting at...</p>
+                                        <p className={styles.price}>$1,183</p>
+                                        <p className='font-size-small'>Per Developer</p>
+                                    </div>
+                                    <div className={styles.rightInfo}>
+                                        <p className='font-size-small'>Perpetual License</p> 
+                                        <p className='font-size-small'>1 Year of Support</p> 
+                                        <p className='font-size-small'>1 Year of Updates</p> 
+                                    </div>
+                                </div>
+
+                                <a href="/ecommerce/#/ecommerce/?licenseType=single&productType=both" className='button'>Configure Now</a>
+                            </div>
+                        </div>
+                    </p>
+                </div>
             </div>
 
             <div className={styles.communityEnterprise}>
                 <div className={styles.community}>
-                    <h3>AG Grid Community</h3>
+                    <h3>Community Versions</h3>
                     <p>
                         <b>AG Grid Community</b> and <b>AG Charts Community</b> (a.k.a.{' '}
                         <a href={`${hostPrefix}/javascript-charts/overview/`} target="_blank">
@@ -115,9 +133,17 @@ const LicensePricing = () => {
 
                 <div className={styles.enterprise}>
                     <h3>
-                        AG Grid Enterprise <Icon name="enterprise" />
+                        Enterprise Versions <Icon name="enterprise" />
                     </h3>
                     <p>
+                        <b>AG Grid Enterprise</b> and <b>AG Charts Enterprise</b> are commercial products distributed under our{' '}
+                        <a href={`${hostPrefix}/eula/AG-Grid-Enterprise-License-Latest.html`} target="_blank">
+                            EULA
+                        </a>{' '}
+                        and supported by our technical staff.
+                    </p>                    
+                    {/* ////// taking out, until we have an equivalent for Charts Enterprise
+                        <p>
                         <b>AG Grid Enterprise</b> offers advanced functionality like{' '}
                         <a href={`${hostPrefix}/javascript-data-grid/grouping/`} target="_blank">
                             Row Grouping
@@ -143,14 +169,10 @@ const LicensePricing = () => {
                             Integrated Charts
                         </a>
                         , allowing your users to create charts using the grid's UI.
-                    </p>
+                    </p> */}
 
                     <p>
-                        <b>AG Grid Enterprise</b> is a commercial product distributed under our{' '}
-                        <a href={`${hostPrefix}/eula/AG-Grid-Enterprise-License-Latest.html`} target="_blank">
-                            EULA
-                        </a>{' '}
-                        and supported by our technical staff. To evaluate <b>AG Grid Enterprise</b> you don't need our
+                        To evaluate <b>AG Grid Enterprise</b> or <b>AG Charts Enterprise</b> you don't need our
                         permission – all features are unlocked. To temporarily hide the watermark and browser console
                         errors e-mail us to{' '}
                         <InfoEmailLink
@@ -201,7 +223,7 @@ const LicensePricing = () => {
                 <div>
                     <h3 className="font-size-massive">Questions about our licenses? </h3>
                     <p>
-                        Watch our short video for an in-depth look at exactly how each AG Grid license works. Learn
+                        Watch our short video for an in-depth look at exactly how the license works. Learn
                         which license is right for you, how many licenses you need for your team, and exactly when you
                         need a deployment license.
                     </p>
@@ -237,15 +259,15 @@ const LicensePricing = () => {
                     </header>
                     <div className="content">
                         <p>
-                            Licenses one application, developed for internal use, to embed AG Grid Enterprise in
-                            perpetuity.
+                            Licenses one application, developed for internal use, to embed AG Grid Enterprise and / or 
+                            AG Charts Enterprise in perpetuity.
                         </p>
                         <ul>
                             <li>Includes a 1-year subscription to new versions, support and maintenance.</li>
                             <li>For customer-facing applications you will also need a Deployment License add-on.</li>
                             <li>
                                 All concurrent, front-end, JavaScript developers working on the Application would need
-                                to be added to the license count, not just the ones working with AG Grid.
+                                to be added to the license count, not just the ones working with AG Grid and / or AG Charts.
                             </li>
                             <li>
                                 Developers within the Single Application Development License count are unnamed, so long
@@ -269,7 +291,7 @@ const LicensePricing = () => {
                     <div className="content">
                         <p>
                             Licenses unlimited number of applications, developed for internal use, to embed AG Grid
-                            Enterprise in perpetuity.
+                            Enterprise and / or AG Charts Enterprise in perpetuity.
                         </p>
                         <ul>
                             <li>Includes a 1-year subscription to new versions, support and maintenance.</li>
@@ -277,7 +299,7 @@ const LicensePricing = () => {
                             <li>
                                 All concurrent, front-end, JavaScript developers working across the licensed
                                 Applications would need to be added to the license count, not just the ones working with
-                                AG Grid.
+                                AG Grid and / or AG Charts.
                             </li>
                             <li>
                                 Developers within the Multiple Application Development License count are unnamed, so
@@ -293,7 +315,7 @@ const LicensePricing = () => {
                     </header>
                     <div className="content">
                         <p>
-                            Allows licensed developers to sub-license AG Grid for one application on one production
+                            Allows licensed developers to sub-license AG Grid and / or AG Charts for one application on one production
                             environment in perpetuity. Includes a 1-year subscription to new versions, support and
                             maintenance. Only available with a Developer License.
                         </p>

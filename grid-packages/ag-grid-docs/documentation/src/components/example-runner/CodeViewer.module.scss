@@ -39,7 +39,7 @@
         display: none;
     }
 
-    button,
+    button:not([class^="ag-"]),
     span {
         flex-shrink: 0;
     }
