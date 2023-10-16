@@ -36,6 +36,11 @@ export class QuickFilterService extends BeanStub {
 
         this.addManagedPropertyListener('quickFilterText', (e) => this.setQuickFilter(e.currentValue));
         this.addManagedPropertyListener('includeHiddenColumnsInQuickFilter', () => this.onIncludeHiddenColumnsInQuickFilterChanged());
+        this.addManagedPropertyListener('excludeHiddenColumnsFromQuickFilter', () => {
+            // handle deprecated property conversion
+            const excludeHiddenColumnsFromQuickFilter = this.gridOptionsService.is('excludeHiddenColumnsFromQuickFilter');
+            this.gridOptionsService.set('includeHiddenColumnsInQuickFilter', !excludeHiddenColumnsFromQuickFilter);
+        });
 
         this.quickFilter = this.parseQuickFilter(this.gridOptionsService.get('quickFilterText'));
         this.parser = this.gridOptionsService.get('quickFilterParser');

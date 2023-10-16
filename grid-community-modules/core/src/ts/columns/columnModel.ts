@@ -274,6 +274,7 @@ export class ColumnModel extends BeanStub {
         this.addManagedPropertyListeners(['groupDisplayType', 'treeData', 'treeDataDisplayType'], () => this.buildAutoGroupColumns());
         this.addManagedPropertyListener('autoGroupColumnDef', () => this.onAutoGroupColumnDefChanged());
         this.addManagedPropertyListeners(['defaultColDef', 'columnTypes', 'suppressFieldDotNotation'], (params: ColDefPropertyChangedEvent) => this.onSharedColDefChanged(params.source));
+        this.addManagedPropertyListener('pivotMode', () => this.setPivotMode(this.gridOptionsService.is('pivotMode')));
     }
 
     private buildAutoGroupColumns() {
