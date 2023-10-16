@@ -45,12 +45,11 @@ export class ViewportRowModel extends BeanStub implements IRowModel {
     private init(): void {
         this.rowHeight = this.gridOptionsService.getRowHeightAsNumber();
         this.addManagedListener(this.eventService, Events.EVENT_VIEWPORT_CHANGED, this.onViewportChanged.bind(this));
+        this.addManagedPropertyListener('viewportDatasource', () => this.updateDatasource());
     }
 
     public start(): void {
-        if (this.gridOptionsService.get('viewportDatasource')) {
-            this.setViewportDatasource(this.gridOptionsService.get('viewportDatasource')!);
-        }
+        this.updateDatasource();
     }
 
     public isLastRowIndexKnown(): boolean {
@@ -68,6 +67,13 @@ export class ViewportRowModel extends BeanStub implements IRowModel {
         this.rowRenderer.datasourceChanged();
         this.firstRow = -1;
         this.lastRow = -1;
+    }
+
+    private updateDatasource(): void {
+        const datasource = this.gridOptionsService.get('viewportDatasource');
+        if (datasource) {
+            this.setViewportDatasource(datasource);
+        }
     }
 
     private getViewportRowModelPageSize(): number | undefined {

@@ -14,6 +14,7 @@ const VueExample = {
     template: `
         <div style="height: 100%; display: flex; flex-direction: column" class="ag-theme-alpine">
             <ag-grid-vue style="flex: 1 1 auto;"
+                         ref="topGrid"
                          :gridOptions="topGridOptions"
                          @first-data-rendered="onFirstDataRendered"
                          :columnDefs="columnDefs"
@@ -21,6 +22,7 @@ const VueExample = {
                          >
             </ag-grid-vue>
             <ag-grid-vue style="height: 60px; flex: none;"
+                         ref="bottomGrid"
                          :gridOptions="bottomGridOptions"
                          :headerHeight="0"
                          :columnDefs="columnDefs"
@@ -62,7 +64,7 @@ const VueExample = {
         ];
 
         this.topGridOptions = {
-            alignedGrids: [],
+            alignedGrids: () => [this.$refs.bottomGrid],
             defaultColDef: {
                 editable: true,
                 sortable: true,
@@ -74,7 +76,7 @@ const VueExample = {
             suppressHorizontalScroll: true
         };
         this.bottomGridOptions = {
-            alignedGrids: [],
+            alignedGrids: () => [this.$refs.topGrid],
             defaultColDef: {
                 editable: true,
                 sortable: true,
@@ -107,10 +109,7 @@ const VueExample = {
         ];
     },
     mounted() {
-        this.gridApi = this.topGridOptions.api;
-
-        this.topGridOptions.alignedGrids.push(this.bottomGridOptions);
-        this.bottomGridOptions.alignedGrids.push(this.topGridOptions);
+        this.gridApi = this.$refs.topGrid.api;
 
         fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
             .then(resp => resp.json())

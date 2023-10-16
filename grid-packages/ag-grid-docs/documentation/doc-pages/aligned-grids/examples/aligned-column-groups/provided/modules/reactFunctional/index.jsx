@@ -85,7 +85,7 @@ const GridExample = () => {
                     defaultColDef={defaultColDef}
                     onGridReady={onGridReady}
                     onFirstDataRendered={onFirstDataRendered}
-                    alignedGrids={bottomGridRef.current ? [bottomGridRef.current] : undefined}
+                    alignedGrids={[bottomGridRef]}
                 />
             </div>
 
@@ -97,7 +97,7 @@ const GridExample = () => {
                     rowData={rowData}
                     columnDefs={columnDefs}
                     defaultColDef={defaultColDef}
-                    alignedGrids={topGridRef.current ? [topGridRef.current] : undefined}
+                    alignedGrids={[topGridRef]}
                 />
             </div>
         </div>

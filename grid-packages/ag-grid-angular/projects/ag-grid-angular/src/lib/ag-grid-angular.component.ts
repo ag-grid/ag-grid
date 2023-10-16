@@ -20,6 +20,7 @@ import {
     AdvancedFilterModel,
     AgChartTheme,
     AgChartThemeOverrides,
+    AlignedGrid,
     AsyncTransactionsFlushed,
     BodyScrollEndEvent,
     BodyScrollEvent,
@@ -545,8 +546,12 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     @Input() public detailRowAutoHeight: boolean | undefined = undefined;
     /** Provides a context object that is provided to different callbacks the grid uses. Used for passing additional information to the callbacks by your application.     */
     @Input() public context: any = undefined;
-    /** A list of grids to treat as Aligned Grids. If grids are aligned then the columns and horizontal scrolling will be kept in sync.     */
-    @Input() public alignedGrids: { api?: GridApi | null, columnApi?: ColumnApi | null }[] | undefined = undefined;
+    /** 
+         * A list of grids to treat as Aligned Grids. 
+         * Provide a list if the grids / apis already exist or return via a callback to allow the aligned grids to be retrieved asynchronously.
+         * If grids are aligned then the columns and horizontal scrolling will be kept in sync.
+         */
+    @Input() public alignedGrids: (AlignedGrid[] | (() => AlignedGrid[])) | undefined = undefined;
     /** Change this value to set the tabIndex order of the Grid within your application. Default: `0`     */
     @Input() public tabIndex: number | undefined = undefined;
     /** The number of rows rendered outside the viewable area the grid renders.

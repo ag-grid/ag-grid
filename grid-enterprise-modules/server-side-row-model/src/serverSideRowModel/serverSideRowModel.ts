@@ -78,11 +78,7 @@ export class ServerSideRowModel extends BeanStub implements IServerSideRowModel 
 
     public start(): void {
         this.started = true;
-        const datasource = this.gridOptionsService.get('serverSideDatasource');
-
-        if (datasource) {
-            this.setDatasource(datasource);
-        }
+        this.updateDatasource();
     }
 
     @PreDestroy
@@ -115,8 +111,19 @@ export class ServerSideRowModel extends BeanStub implements IServerSideRowModel 
             'treeData', 'isServerSideGroup', 'getServerSideGroupKey',
             'removePivotHeaderRowWhenSingleValueColumn',
             'suppressServerSideInfiniteScroll',
+            'cacheBlockSize',
         ], resetListener);
         this.verifyProps();
+
+        this.addManagedPropertyListener('serverSideDatasource', () => this.updateDatasource());
+    }
+
+    private updateDatasource(): void {
+        const datasource = this.gridOptionsService.get('serverSideDatasource');
+
+        if (datasource) {
+            this.setDatasource(datasource);
+        }
     }
 
     private verifyProps(): void {

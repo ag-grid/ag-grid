@@ -68,6 +68,8 @@ export class SortIndicatorComp extends Component {
         this.addInIcon('sortDescending', this.eSortDesc, column);
         this.addInIcon('sortUnSort', this.eSortNone, column);
 
+        this.addManagedPropertyListener('unSortIcon', () => this.updateIcons());
+
         // Watch global events, as row group columns can effect their display column.
         this.addManagedListener(this.eventService, Events.EVENT_SORT_CHANGED,  () => this.onSortChanged());
         // when grouping changes so can sort indexes and icons

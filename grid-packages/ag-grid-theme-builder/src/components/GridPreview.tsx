@@ -48,6 +48,7 @@ const GridPreview = () => {
     void rebuildKey;
 
     const options: GridOptions = {
+      enableRtl: true,
       ...buildGridOptions(features),
       onGridReady: ({ api }) => {
         for (const feature of features) {

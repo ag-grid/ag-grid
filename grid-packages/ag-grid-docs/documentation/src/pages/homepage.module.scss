@@ -376,7 +376,7 @@ gatsby-fast-refresh {
         display: flex;
         justify-content: space-between;
 
-        button {
+        button:not([class^="ag-"]) {
             padding: $size-half;
             line-height: $line-height-ultra-tight;
         }

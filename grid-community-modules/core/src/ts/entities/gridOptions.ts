@@ -102,6 +102,7 @@ import { IRowNode } from "../interfaces/iRowNode";
 import { DataTypeDefinition } from "./dataType";
 import { AdvancedFilterModel } from "../interfaces/advancedFilterModel";
 import { IAdvancedFilterBuilderParams } from "../interfaces/iAdvancedFilterBuilderParams";
+import { AlignedGrid } from "../interfaces/iAlignedGrid";
 import { GridState } from "../interfaces/gridState";
 
 export interface GridOptions<TData = any> {
@@ -398,8 +399,12 @@ export interface GridOptions<TData = any> {
     // changeable, but no immediate impact
     /** Provides a context object that is provided to different callbacks the grid uses. Used for passing additional information to the callbacks by your application. */
     context?: any;
-    /** A list of grids to treat as Aligned Grids. If grids are aligned then the columns and horizontal scrolling will be kept in sync. */
-    alignedGrids?: { api?: GridApi | null, columnApi?: ColumnApi | null }[];
+    /** 
+     * A list of grids to treat as Aligned Grids. 
+     * Provide a list if the grids / apis already exist or return via a callback to allow the aligned grids to be retrieved asynchronously.
+     * If grids are aligned then the columns and horizontal scrolling will be kept in sync.
+     */
+    alignedGrids?: AlignedGrid[] | (() => AlignedGrid[]);
     /** Change this value to set the tabIndex order of the Grid within your application. Default: `0` */
     tabIndex?: number;
     /**
