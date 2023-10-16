@@ -97,6 +97,7 @@ $abstract-colors: (
     'ghost-blue': #f9fcff,
     // Grays
     'black': #000000,
+    'eerie-black': #181C22,
     'dark-gunmetal-gray': #212529,
     'auro-metal': #6c757d,
     'ag-grid-grey': #b4bebe,
@@ -249,15 +250,15 @@ $dark-scales: (
         '900': #042d6c,
     ),
     'neutral': (
-        '100': #212529,
-        '200': #33383c,
-        '300': #474b4f,
-        '400': #5c6064,
-        '500': #717579,
-        '600': #878b8f,
-        '700': #9ea2a6,
-        '800': #b5b9bd,
-        '900': #cdd1d5,
+        '100': #18191B,
+        '200': #1F1F20,
+        '300': #2B2C2D,
+        '400': #38393B,
+        '500': #444748,
+        '600': #515456,
+        '700': #5D6163,
+        '800': #6A6E71,
+        '900': #848B90,
     ),
     'red': (
         '100': #ffe8e7,
@@ -361,13 +362,13 @@ $semantic-colors: (
 // Semantic colors based on abstract colors
 $dark-semantic-colors: (
     // Background
-    'default-background-color': neutral-100,
+    'default-background-color': eerie-black,
     // Text
-    'default-text-color': neutral-900,
+    'default-text-color': ghost-white,
     'text-color': default-text-color,
     'secondary-text-color': neutral-600,
     // Border
-    'border-color': neutral-200,
+    'border-color': neutral-500,
     // Link
     'link-color': primary-500,
     'link-hover-color': orange-700,
