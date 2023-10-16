@@ -21,7 +21,6 @@ import { ProvidedColumnGroup } from "./entities/providedColumnGroup";
 import { BeanStub } from "./context/beanStub";
 import { CtrlsService } from "./ctrlsService";
 import { GridApi } from "./gridApi";
-import { warnOnce } from "./utils/function";
 
 @Bean('alignedGridsService')
 export class AlignedGridsService extends BeanStub {
@@ -47,12 +46,17 @@ export class AlignedGridsService extends BeanStub {
         }
 
         const apis = alignedGrids.map((alignedGrid) => {
-            if (!alignedGrid) {
-                // We could warn that an aligned action was fired before the aligned grid was ready
-                warnOnce('Aligned grid is not yet initialised so action will not be applied from source grid.');
-                return undefined;
+            if(!alignedGrid){ return; } 
+            if(alignedGrid instanceof GridApi){
+                return alignedGrid;
             }
-            return alignedGrid instanceof GridApi ? alignedGrid : alignedGrid?.api;
+            // Extract the GridApi from a ref or component
+            const refOrComp = alignedGrid;
+            if('current' in refOrComp){
+                return refOrComp.current?.api;
+            }else{
+                return refOrComp.api;
+            }
         }).filter(api => !!api && !api.isDestroyed());
 
         return apis as GridApi[];

@@ -1,9 +1,17 @@
-import { ColumnApi } from "../columns/columnApi";
-import { GridApi } from "../gridApi";
+import { ColumnApi } from '../columns/columnApi';
+import { GridApi } from '../gridApi';
 
+type TypeOrNull<T> = T | null;
+type ApiRef = {
+    /** api of the grid to align with. */
+    api?: TypeOrNull<GridApi>;
+    /** @deprecated v31 ColumnApi is no longer required for aligned grids. */
+    columnApi?: TypeOrNull<ColumnApi>;
+} | null;
 /**
  * Alias for the grid API or an object containing the grid API for linking Aligned Grids.
  */
-export type AlignedGrid = { api?: GridApi | null, columnApi?: ColumnApi | null } | GridApi | null;
-
-//TODO Support React ref out the box???
+export type AlignedGrid =
+    | TypeOrNull<GridApi>
+    | ApiRef
+    | { current: ApiRef };
