@@ -16,7 +16,7 @@ import { WithoutGridCommon } from "./interfaces/iCommon";
 import { PaginationProxy } from "./pagination/paginationProxy";
 import { ISelectionService, ISetNodesSelectedParams } from "./interfaces/iSelectionService";
 import { _ } from "./utils";
-import { ServerSideRowGroupSelectionState, RowSelectionState } from "./interfaces/selectionState";
+import { ServerSideRowGroupSelectionState, ServerSideRowSelectionState } from "./interfaces/selectionState";
 
 @Bean('selectionService')
 export class SelectionService extends BeanStub implements ISelectionService {
@@ -564,64 +564,31 @@ export class SelectionService extends BeanStub implements ISelectionService {
         this.eventService.dispatchEvent(event);
     }
 
-    public getSelectionState(): RowSelectionState | null {
-        const { selectedCount, notSelectedCount } = this.getSelectedCounts();
-        const selectAll = selectedCount > notSelectedCount;
-        const toggledNodes: string[] = [];
-        if (selectAll) {
-            this.rowModel.forEachNode(node => {
-                if (node.id && !node.isSelected()) {
-                    toggledNodes.push(node.id);
-                }
-            });
-        } else {
-            Object.values(this.selectedNodes).forEach(node => {
-                if (node?.id) {
-                    toggledNodes.push(node.id);
-                }
-            });
+    public getSelectionState(): string[] | null {
+        const selectedIds: string[] = [];
+        const selectedNodes = Object.values(this.selectedNodes);
+        for (let i = 0; i < selectedNodes.length; i++) {
+            const node = selectedNodes[i];
+            if (node?.id) {
+                selectedIds.push(node.id);
+            }
         }
-        return selectAll || toggledNodes.length ? {
-            selectAll,
-            toggledNodes
-        } : null;
+        return selectedIds.length ? selectedIds : null;
     }
 
-    public setSelectionState(state: RowSelectionState | ServerSideRowGroupSelectionState, source: SelectionEventSourceType): void {
-        const isRowSelectionState = (
-            state: RowSelectionState | ServerSideRowGroupSelectionState
-        ): state is RowSelectionState => (state as RowSelectionState).selectAll != null;
-
-        if (!isRowSelectionState(state)) {
-            return;
-        }
-
-        const { selectAll, toggledNodes } = state;
-        if (!toggledNodes.length) {
-            if (selectAll) {
-                this.selectAllRowNodes({ source });
-            } else {
-                this.deselectAllRowNodes({ source });
+    public setSelectionState(state: string[] | ServerSideRowSelectionState | ServerSideRowGroupSelectionState, source: SelectionEventSourceType): void {
+        if (!Array.isArray(state)) { return; }
+        const rowIds = new Set(state);
+        const nodes: RowNode[] = [];
+        this.rowModel.forEachNode(node => {
+            if (rowIds.has(node.id!)) {
+                nodes.push(node);
             }
-        } else {
-            const rowIds = new Set(toggledNodes);
-            const nodes: RowNode[] = [];
-            const addToNodes = selectAll ? (node: RowNode) => {
-                if (!rowIds.has(node.id!)) {
-                    nodes.push(node);
-                }
-            } : (node: RowNode) => {
-                if (rowIds.has(node.id!)) {
-                    nodes.push(node);
-                }
-            }
-            this.rowModel.forEachNode(addToNodes);
-            this.setNodesSelected({
-                newValue: true,
-                nodes,
-                clearSelection: true,
-                source
-            });
-        }
+        });
+        this.setNodesSelected({
+            newValue: true,
+            nodes,
+            source
+        });
     }
 }

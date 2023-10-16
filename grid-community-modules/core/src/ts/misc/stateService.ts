@@ -34,7 +34,7 @@ import { IRowModel } from "../interfaces/iRowModel";
 import { ISelectionService } from "../interfaces/iSelectionService";
 import { PaginationProxy } from "../pagination/paginationProxy";
 import { SortModelItem } from "../sortController";
-import { ServerSideRowGroupSelectionState, RowSelectionState } from "../interfaces/selectionState";
+import { ServerSideRowGroupSelectionState, ServerSideRowSelectionState } from "../interfaces/selectionState";
 import { IExpansionService } from "../interfaces/iExpansionService";
 import { jsonEquals } from "../utils/generic";
 import { AdvancedFilterModel } from "../interfaces/advancedFilterModel";
@@ -486,18 +486,19 @@ export class StateService extends BeanStub {
         this.paginationProxy.setPage(paginationState.page);
     }
 
-    private getRowSelectionState(): RowSelectionState | ServerSideRowGroupSelectionState | undefined {
+    private getRowSelectionState(): string[] | ServerSideRowSelectionState | ServerSideRowGroupSelectionState | undefined {
         const selectionState = this.selectionService.getSelectionState();
         const noSelections = !selectionState || (
+            !Array.isArray(selectionState) &&
             (
-                (selectionState as RowSelectionState).selectAll === false ||
+                (selectionState as ServerSideRowSelectionState).selectAll === false ||
                     (selectionState as ServerSideRowGroupSelectionState).selectAllChildren === false
             ) && !selectionState?.toggledNodes?.length
         );
         return noSelections ? undefined : selectionState;
     }
 
-    private setRowSelectionState(rowSelectionState: RowSelectionState | ServerSideRowGroupSelectionState): void {
+    private setRowSelectionState(rowSelectionState: string[] | ServerSideRowSelectionState | ServerSideRowGroupSelectionState): void {
         this.selectionService.setSelectionState(rowSelectionState, 'gridInitializing');
     }
 

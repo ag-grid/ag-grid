@@ -12,8 +12,8 @@ import {
     SelectionEventSourceType,
     WithoutGridCommon,
     ISetNodesSelectedParams,
-    ServerSideRowGroupSelectionState,
-    RowSelectionState
+    ServerSideRowSelectionState,
+    ServerSideRowGroupSelectionState
 } from "@ag-grid-community/core";
 import { DefaultStrategy } from "./selection/strategies/defaultStrategy";
 import { GroupSelectsChildrenStrategy } from "./selection/strategies/groupSelectsChildrenStrategy";
@@ -47,11 +47,12 @@ export class ServerSideSelectionService extends BeanStub implements ISelectionSe
         this.selectionStrategy = this.createManagedBean(new StrategyClazz());
     }
  
-    public getSelectionState(): RowSelectionState | ServerSideRowGroupSelectionState | null {
+    public getSelectionState(): string[] | ServerSideRowSelectionState | ServerSideRowGroupSelectionState | null {
         return this.selectionStrategy.getSelectedState();
     }
 
-    public setSelectionState(state: RowSelectionState | ServerSideRowGroupSelectionState, source: SelectionEventSourceType): void {
+    public setSelectionState(state: string[] | ServerSideRowSelectionState | ServerSideRowGroupSelectionState, source: SelectionEventSourceType): void {
+        if (Array.isArray(state)) { return; }
         this.selectionStrategy.setSelectedState(state);
         this.shotgunResetNodeSelectionState();
 

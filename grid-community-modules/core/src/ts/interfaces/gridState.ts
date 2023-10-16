@@ -3,7 +3,7 @@ import { SortModelItem } from "../sortController";
 import { AdvancedFilterModel } from "./advancedFilterModel";
 import { FilterModel } from "./iFilter";
 import { CellRangeType } from "./IRangeService";
-import { ServerSideRowGroupSelectionState, RowSelectionState } from "./selectionState";
+import { ServerSideRowGroupSelectionState, ServerSideRowSelectionState } from "./selectionState";
 
 export interface FilterState { 
     filterModel?: FilterModel
@@ -133,8 +133,12 @@ export interface GridState {
     rowGroup?: RowGroupState;
     /** Includes currently expanded group rows */
     rowGroupExpansion?: RowGroupExpansionState;
-    /** Includes currently selected rows */
-    rowSelection?: RowSelectionState | ServerSideRowGroupSelectionState;
+    /**
+     * Includes currently selected rows.
+     * For Server-Side Row Model, will be `ServerSideRowSelectionState | ServerSideRowGroupSelectionState`,
+     * for other row models, will be an array of row IDs
+     */
+    rowSelection?: string[] | ServerSideRowSelectionState | ServerSideRowGroupSelectionState;
     /** Includes current scroll position. Works for Client-Side Row Model only */
     scroll?: ScrollState;
     /** Includes current Side Bar positioning and opened tool panel */

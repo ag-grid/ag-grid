@@ -1,6 +1,6 @@
-import { ServerSideRowGroupSelectionState, RowSelectionState } from "./selectionState";
+import { ServerSideRowGroupSelectionState, ServerSideRowSelectionState } from "./selectionState";
 
-export interface IServerSideSelectionState extends RowSelectionState {}
+export interface IServerSideSelectionState extends ServerSideRowSelectionState {}
 
 export interface IServerSideGroupSelectionState extends ServerSideRowGroupSelectionState {
     toggledNodes?: IServerSideGroupSelectionState[];

@@ -845,7 +845,7 @@ export class GridApi<TData = any> {
             return null;
         }
 
-        return this.selectionService.getSelectionState();
+        return this.selectionService.getSelectionState() as IServerSideSelectionState | IServerSideGroupSelectionState | null;
     }
 
     /**

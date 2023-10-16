@@ -614,7 +614,7 @@ export class GroupStage extends BeanStub implements IRowNodeStage {
         this.setGroupData(groupNode, groupInfo, details);
 
         groupNode.key = groupInfo.key;
-        groupNode.id = this.createGroupId(groupNode, parent);
+        groupNode.id = this.createGroupId(groupNode, parent, details.usingTreeData, level);
 
         groupNode.level = level;
         groupNode.leafGroup = details.usingTreeData ? false : level === (details.groupedColCount - 1);
@@ -638,15 +638,25 @@ export class GroupStage extends BeanStub implements IRowNodeStage {
         return groupNode;
     }
 
-    private createGroupId(node: RowNode, parent: RowNode): string {
-        const createGroupId = (node: RowNode, parent: RowNode | null): string => {
-            const parentId = parent ? createGroupId(parent, parent.parent) : null;
-            return `${parentId == null ? '' : parentId + '-'}${node.rowGroupColumn?.getColId() ?? node.field}-${node.key}`;
+    private createGroupId(node: RowNode, parent: RowNode, usingTreeData: boolean, level: number): string {
+        let createGroupId: (node: RowNode, parent: RowNode | null, level: number) => string | null;
+        if (usingTreeData) {
+            createGroupId = (node, parent, level) => {
+                if (level < 0) { return null; } // root node
+                const parentId = parent ? createGroupId(parent, parent.parent, level - 1) : null;
+                return `${parentId == null ? '' : parentId + '-'}${level}-${node.key}`;
+            };
+        } else {
+            createGroupId = (node, parent) => {
+                if (!node.rowGroupColumn) { return null; } // root node
+                const parentId = parent ? createGroupId(parent, parent.parent, 0) : null;
+                return `${parentId == null ? '' : parentId + '-'}${node.rowGroupColumn.getColId()}-${node.key}`;
+            };
         }
 
         // we put 'row-group-' before the group id, so it doesn't clash with standard row id's. we also use 't-' and 'b-'
         // for top pinned and bottom pinned rows.
-        return RowNode.ID_PREFIX_ROW_GROUP + createGroupId(node, parent);
+        return RowNode.ID_PREFIX_ROW_GROUP + createGroupId(node, parent, level);
     }
 
     private setGroupData(groupNode: RowNode, groupInfo: GroupInfo, details: GroupingDetails): void {
