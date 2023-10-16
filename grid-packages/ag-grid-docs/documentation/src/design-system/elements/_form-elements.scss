@@ -16,13 +16,13 @@ legend {
     padding: unset;
 }
 
-label {
+label:not([class^="ag-"]) {
     fieldset & {
         display: block;
     }
 
-    + input,
-    + select {
+    + input:not([class^="ag-"]),
+    + select:not([class^="ag-"]) {
         margin-left: $size-1;
     }
 
@@ -37,7 +37,7 @@ label {
     }
 }
 
-input {
+input:not([class^="ag-"]) {
     font-size: var(--font-size);
 }
 
@@ -47,17 +47,19 @@ input[type='email'],
 input[type='checkbox'],
 input[type='number'],
 select {
-    color: var(--default-text-color);
+    &:not([class^="ag-"]) {
+        color: var(--default-text-color);
 
-    &:disabled,
-    &[readonly] {
-        background-color: var(--neutral-100);
-    }
+        &:disabled,
+        &[readonly] {
+            background-color: var(--neutral-100);
+        }
 
-    &:focus:not(:disabled):not([readonly]),
-    &.ag-builder-preview-focus:not(:disabled):not([readonly]),
-    &:focus-visible:not(:disabled):not([readonly]) {
-        box-shadow: var(--ag-input-focus-box-shadow);
+        &:focus:not(:disabled):not([readonly]),
+        &.ag-builder-preview-focus:not(:disabled):not([readonly]),
+        &:focus-visible:not(:disabled):not([readonly]) {
+            box-shadow: var(--ag-input-focus-box-shadow);
+        }
     }
 }
 
@@ -65,31 +67,25 @@ input[type='text'],
 input[type='search'],
 input[type='email'],
 input[type='number'] {
-    padding: math.div(6em, 16) math.div(12em, 16);
-    line-height: var(--line-height-normal);
-    border-radius: var(--border-radius);
-    background-color: var(--input-background-color);
-    border: 2px solid var(--border-color);
-    outline: none;
-    transition: border-color $default-transition-timing, box-shadow $default-transition-timing;
+    &:not([class^="ag-"]) {
+        padding: math.div(6em, 16) math.div(12em, 16);
+        line-height: var(--line-height-normal);
+        border-radius: var(--border-radius);
+        background-color: var(--input-background-color);
+        border: 2px solid var(--border-color);
+        outline: none;
+        transition: border-color $default-transition-timing, box-shadow $default-transition-timing;
 
-    &::placeholder {
-        font-style: italic;
-        color: var(--secondary-text-color);
-    }
+        &::placeholder {
+            font-style: italic;
+            color: var(--secondary-text-color);
+        }
 
-    &:hover:not(:disabled):not([readonly]),
-    &:focus:not(:disabled):not([readonly]),
-    &:focus-visible:not(:disabled):not([readonly]) {
-        border-color: var(--input-focus-border-color);
-    }
-}
-
-.ag-picker-field-wrapper {
-    transition: border-color $default-transition-timing, box-shadow $default-transition-timing;
-    &:focus-within:not(:disabled):not([readonly]),
-    &.ag-picker-has-focus {
-        border-color: var(--input-focus-border-color);
+        &:hover:not(:disabled):not([readonly]),
+        &:focus:not(:disabled):not([readonly]),
+        &:focus-visible:not(:disabled):not([readonly]) {
+            border-color: var(--input-focus-border-color);
+        }
     }
 }
 

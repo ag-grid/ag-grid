@@ -216,7 +216,7 @@
     letter-spacing: -0.05em;
 }
 
-.configure button {
+.configure button:not([class^="ag-"]) {
     width: 100%;
     height: 100%;
 }

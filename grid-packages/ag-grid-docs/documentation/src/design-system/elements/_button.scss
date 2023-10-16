@@ -1,15 +1,15 @@
 @use '../core' as *;
 
-button {
+button:not([class^="ag-"]) {
     font-family: var(--font-family);
     font-size: inherit;
     line-height: inherit;
     cursor: pointer;
 }
 
-button,
-input[type='reset'],
-input[type='submit'],
+button:not([class^="ag-"]),
+input[type='reset']:not([class^="ag-"]),
+input[type='submit']:not([class^="ag-"]),
 .button,
 .button-secondary {
     appearance: none;
@@ -68,7 +68,7 @@ input[type='submit'],
     }
 }
 
-.button-secondary {
+.button-secondary:not([class^="ag-"]) {
     --button-color: var(--primary-100);
     --button-hover-color: var(--primary-200);
     --button-active-color: var(--primary-300);
@@ -76,7 +76,7 @@ input[type='submit'],
     --button-focus-box-shadow-color: var(--background-300);
 }
 
-.button-input {
+.button-input:not([class^="ag-"]) {
     --button-color: var(--input-background-color);
     --button-hover-color: var(--input-background-color);
     --button-active-color: var(--input-background-color);
@@ -96,8 +96,8 @@ input[type='submit'],
     }
 }
 
-.button-style-none,
-.button-as-link {
+.button-style-none:not([class^="ag-"]),
+.button-as-link:not([class^="ag-"]) {
     --button-text-color: var(--default-text-color);
 
     appearance: none;
@@ -119,7 +119,7 @@ input[type='submit'],
     }
 }
 
-.button-as-link {
+.button-as-link:not([class^="ag-"]) {
     --button-text-color: var(--link-color);
     --text-color: var(--link-color);
     --icon-size: 1.5em;

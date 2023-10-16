@@ -116,7 +116,7 @@ $z-index-splash-contents: 10;
     gap: $size-6;
     margin-top: $size-3;
 
-    button {
+    button:not([class^="ag-"]) {
         margin-left: $size-1;
     }
 }
