@@ -245,10 +245,6 @@ export class GridApi<TData = any> {
         return this.context;
     }
 
-    private getSetterMethod(key: keyof GridOptions) {
-        return `set${key.charAt(0).toUpperCase()}${key.substring(1)}`;
-    }
-
     /** Used internally by grid. Not intended to be used by the client. Interface may change between releases. */
     public __setPropertyOnly<K extends keyof GridOptions>(propertyName: K, value: GridOptions[K]): boolean {
         return this.gos.__setPropertyOnly(propertyName, value);
@@ -260,16 +256,7 @@ export class GridApi<TData = any> {
         force: boolean,
         changeSet: PropertyChangeSet | undefined = undefined
     ) {
-        // Ensure the GridOptions property gets updated and fires the change event as we
-        // cannot assume that the dynamic Api call will updated GridOptions.
         this.gos.set(propertyName, value, force, {}, changeSet);
-        // If the dynamic api does update GridOptions then change detection in the
-        // GridOptionsService will prevent the event being fired twice.
-        const setterName = this.getSetterMethod(propertyName);
-        const dynamicApi = this as any;
-        if (dynamicApi[setterName]) {
-            dynamicApi[setterName](value);
-        }
     }
 
     /** Returns the `gridId` for the current grid as specified via the gridOptions property `gridId` or the auto assigned grid id if none was provided. */
@@ -403,7 +390,6 @@ export class GridApi<TData = any> {
     public setServerSideDatasource(datasource: IServerSideDatasource) {
         if (this.serverSideRowModel) {
             this.gos.set('serverSideDatasource', datasource);
-            this.serverSideRowModel.setDatasource(datasource);
         } else {
             this.logMissingRowModel('setServerSideDatasource', 'serverSide');
         }
@@ -417,7 +403,6 @@ export class GridApi<TData = any> {
     public setCacheBlockSize(blockSize: number) {
         if (this.serverSideRowModel) {
             this.gos.set('cacheBlockSize', blockSize);
-            this.serverSideRowModel.resetRootStore();
         } else {
             this.logMissingRowModel('setCacheBlockSize', 'serverSide');
         }
@@ -426,7 +411,7 @@ export class GridApi<TData = any> {
     /** Set new datasource for Infinite Row Model. */
     public setDatasource(datasource: IDatasource) {
         if (this.gos.isRowModelType('infinite')) {
-            (this.rowModel as IInfiniteRowModel).setDatasource(datasource);
+            this.gos.set('datasource', datasource);
         } else {
             this.logMissingRowModel('setDatasource', 'infinite');
         }
@@ -435,10 +420,7 @@ export class GridApi<TData = any> {
     /** Set new datasource for Viewport Row Model. */
     public setViewportDatasource(viewportDatasource: IViewportDatasource) {
         if (this.gos.isRowModelType('viewport')) {
-            // this is bad coding, because it's using an interface that's exposed in the enterprise.
-            // really we should create an interface in the core for viewportDatasource and let
-            // the enterprise implement it, rather than casting to 'any' here
-            (this.rowModel as any).setViewportDatasource(viewportDatasource);
+            this.gos.set('viewportDatasource', viewportDatasource);
         } else {
             this.logMissingRowModel('setViewportDatasource', 'viewport');
         }
@@ -456,12 +438,12 @@ export class GridApi<TData = any> {
 
     /** Set the top pinned rows. Call with no rows / undefined to clear top pinned rows. */
     public setPinnedTopRowData(rows?: any[]): void {
-        this.pinnedRowModel.setPinnedTopRowData(rows);
+        this.gos.set('pinnedTopRowData', rows);
     }
 
     /** Set the bottom pinned rows. Call with no rows / undefined to clear bottom pinned rows. */
     public setPinnedBottomRowData(rows?: any[]): void {
-        this.pinnedRowModel.setPinnedBottomRowData(rows);
+        this.gos.set('pinnedBottomRowData', rows);
     }
 
     /** Gets the number of top pinned rows. */
@@ -1151,7 +1133,7 @@ export class GridApi<TData = any> {
 
     /** Sets the `enableCellTextSelection` property. */
     public setEnableCellTextSelection(selectable: boolean) {
-        this.gridBodyCtrl.setCellTextSelection(selectable);
+        this.gos.set('enableCellTextSelection', selectable);
     }
 
     /** Sets the preferred direction for the selection fill handle. */
@@ -1180,7 +1162,7 @@ export class GridApi<TData = any> {
     }
 
     public setPivotMode(pivotMode: boolean) {
-        this.columnModel.setPivotMode(pivotMode);
+        this.gos.set('pivotMode', pivotMode);
     }
 
     public setAnimateRows(animateRows: boolean): void {
