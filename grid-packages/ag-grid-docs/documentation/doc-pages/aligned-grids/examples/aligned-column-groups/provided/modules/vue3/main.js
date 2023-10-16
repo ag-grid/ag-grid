@@ -14,7 +14,7 @@ const VueExample = {
             <ag-grid-vue
                 style="width: 100%; height: 45%;"
                 class="ag-theme-alpine"
-                id="myGrid"
+                ref="topGrid"
                 :gridOptions="topOptions"
                 @first-data-rendered="onFirstDataRendered($event)"
                 :columnDefs="columnDefs"
@@ -25,7 +25,7 @@ const VueExample = {
             <ag-grid-vue
                 style="width: 100%; height: 45%;"
                 class="ag-theme-alpine"
-                id="myGrid"
+                ref="bottomGrid"
                 :gridOptions="bottomOptions"
                 :columnDefs="columnDefs"
                 :defaultColDef="defaultColDef"
@@ -39,7 +39,7 @@ const VueExample = {
     data: function () {
         return {
             topOptions: {
-                alignedGrids: [],
+                alignedGrids: () => [this.$refs.bottomGrid],
                 defaultColDef: {
                     editable: true,
                     sortable: true,
@@ -50,7 +50,7 @@ const VueExample = {
                 }
             },
             bottomOptions: {
-                alignedGrids: [],
+                alignedGrids: () => [this.$refs.topGrid],
                 defaultColDef: {
                     editable: true,
                     sortable: true,
@@ -61,7 +61,6 @@ const VueExample = {
                 }
             },
             topGridApi: null,
-            bottomGridApi: null,
             columnDefs: [
                 {
                     headerName: 'Group 1',
@@ -101,11 +100,7 @@ const VueExample = {
         };
     },
     mounted() {
-        this.topGridApi = this.topOptions.api;
-        this.bottomGridApi = this.bottomOptions.api;
-
-        this.topOptions.alignedGrids.push(this.bottomOptions);
-        this.bottomOptions.alignedGrids.push(this.topOptions);
+        this.topGridApi = this.$refs.topGrid.api;
 
         fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
             .then(resp => resp.json())
