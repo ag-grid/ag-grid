@@ -69,7 +69,7 @@ ul.menuInner {
     }
 }
 
-button.sectionHeader {
+button:not([class^="ag-"]).sectionHeader {
     width: 100%;
     padding-top: $size-half;
     padding-bottom: $size-half;

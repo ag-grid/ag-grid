@@ -83,7 +83,7 @@ $z-index-debug-panel: $z-index-debug-canvas + 10;
         margin-top: $size-3;
     }
 
-    button {
+    button:not([class^="ag-"]) {
         margin-left: $size-1;
     }
 }

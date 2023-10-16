@@ -22,13 +22,14 @@ import { useExampleFileNodes } from './use-example-file-nodes';
 export const ExampleRunner = (props) => {
     return (
         <GlobalContextConsumer>
-            {({ exampleImportType, enableVue3, useVue3, useTypescript, set }) => {
+            {({ exampleImportType, enableVue3, useVue3, useTypescript, darkMode }) => {
                 const innerProps = {
                     ...props,
                     // Allow overriding of the global context values per example
                     exampleImportType: props.exampleImportType ?? exampleImportType,
                     useVue3: enableVue3 ? useVue3 : false,
                     useTypescript: props.useTypescript ?? useTypescript,
+                    darkMode
                 };
 
                 return <ExampleRunnerInner {...innerProps} />;
@@ -430,6 +431,7 @@ const ExampleRunnerInner = ({
     exampleImportType,
     useVue3,
     useTypescript,
+    darkMode
 }) => {
     const nodes = useExampleFileNodes();
     const [showCode, setShowCode] = useState(!!(options && options.showCode));
@@ -586,6 +588,7 @@ const ExampleRunnerInner = ({
                                         resultFrameIsVisible={!showCode}
                                         isOnScreen={isVisible}
                                         exampleInfo={exampleInfo}
+                                        darkMode={darkMode}
                                     />
                                 );
                             }}
