@@ -1,12 +1,11 @@
 <framework-specific-section frameworks="vue">
 |
-| ## Properties, Events, Callbacks and API
+| ## Properties, Callbacks, Events
 |
 | - **Attributes**: attributes are properties, but aren't bound - they are instead provided literal values (e.g. `rowSelection="multiple"`).
 | - **Properties**: properties are bound attributes (e.g. `:columnDefs="columnDefs"`).
 | - **Callbacks**: callbacks are bound in the same as properties are (e.g. `:getRowHeight="myGetRowHeightFunction"`).
 | - **Event Handlers**: event handlers are are bound in the standard way (e.g. `@cell-clicked="onCellClicked"`). Event names must use `kebab-case`.
-| - **API**: the grid api is accessible through the component.
 |
 | All of the above (attributes, properties, callbacks and event handlers) are registered using their 'dash' syntax and not camel-case. For example, the property `pivotMode` is bound using `pivot-mode`. The following example shows some bindings:
 |
@@ -51,6 +50,7 @@
 <framework-specific-section frameworks="vue">
 <snippet transform={false} language="jsx">
 | &lt;ag-grid-vue
+|     ref="myGrid"
 |     // provide gridReady callback to the grid
 |     @grid-ready="onGridReady"
 |     // ...
@@ -76,8 +76,7 @@
 <framework-specific-section frameworks="vue">
 | ## Grid Options
 |
-| The `gridOptions` object is a 'one stop shop' for the entire interface into the grid, commonly used if using plain JavaScript.
-| Grid options can however be used instead of, or in addition to, normal framework binding. If an option is set via `gridOptions`, as well as directly on the component, then the component value will take precedence.
+| The `gridOptions` object can be used instead of, or in addition to, normal framework binding. If an option is set via `gridOptions`, as well as directly on the component, then the component value will take precedence.
 |
 | The example below shows the different types of items available on `gridOptions`.
 |
@@ -87,9 +86,6 @@
 <snippet transform={false} language="jsx">
 | const gridOptions = {
 |     // PROPERTIES
-|     // Objects like myRowData and myColDefs would be created in your application
-|     rowData: myRowData,
-|     columnDefs: myColDefs,
 |     pagination: true,
 |     rowSelection: 'single',
 |

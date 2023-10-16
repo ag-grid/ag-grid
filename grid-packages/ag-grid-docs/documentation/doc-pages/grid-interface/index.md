@@ -25,4 +25,4 @@ Where the property is a boolean (`true` or `false`), then `false` (or left blank
 
 ## Next Steps
 
- Find out about all the available [options](/grid-options/), [methods](/grid-api/) and [events](/grid-events/) you can use.
+ Complete references available: [options](/grid-options/), [methods](/grid-api/) and [events](/grid-events/).

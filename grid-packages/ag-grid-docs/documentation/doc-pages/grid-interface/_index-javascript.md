@@ -1,7 +1,7 @@
 <framework-specific-section frameworks="javascript">
 | ## Grid Options
 |
-| The `gridOptions` object is a 'one stop shop' for the entire interface into the grid. The GridOptions interface supports a generic parameter for row data as detailed in [Typescript Generics](/typescript-generics).
+| The `gridOptions` object is used to configure the grid. The GridOptions interface supports a generic parameter for row data as detailed in [Typescript Generics](/typescript-generics).
 |
 | The example below shows the different types of items available on `gridOptions`.
 |
@@ -35,14 +35,14 @@
 <framework-specific-section frameworks="javascript">
 | ### Access the Grid API
 |
-| You can access the APIs in the following ways:
+| You can access the api in the following ways:
 |
-| - Store the `api` when creating the grid via the `createGrid` function 
-| - Store the `api` from the `gridReady` event - it will be available via the `params` argument
+| - Store the `api` when creating the grid via `createGrid`. 
+| - Store the `api` from the `gridReady` event - it will be available on the `params` argument.
 |
 | ## Listening to Events
 |
-| In addition to adding event listeners directly via the `gridOptions` object, it is possible to register for events, similar to registering for events on native DOM elements. This means there are two ways to listen for events: either use the `onXXX()` method on the API (where XXX is replaced with the event name), or register a listener for the event. The latter option allows you to add multiple handlers for the same event. The following example demonstrates the two options:
+| In addition to adding event listeners directly via the `gridOptions` object, it is possible to register for events, similar to registering for events on native DOM elements. This means there are two ways to listen for events: either use the `onXXX()` method on the api (where XXX is replaced with the event name), or register a listener for the event. The latter option allows you to add multiple handlers for the same event. The following example demonstrates the two options:
 |
 </framework-specific-section>
 
