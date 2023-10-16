@@ -6,6 +6,7 @@ import {
     ColumnPanelItemDragStartEvent,
     DragSourceType,
     Events,
+    GridOptionsService,
     ProvidedColumnGroup,
     PostConstruct,
     VirtualList,
@@ -19,6 +20,7 @@ import { ToolPanelColumnComp } from "./toolPanelColumnComp";
 import { ToolPanelColumnGroupComp } from "./toolPanelColumnGroupComp";
 export class PrimaryColsListPanelItemDragFeature extends BeanStub {
     @Autowired('columnModel') private columnModel: ColumnModel;
+    @Autowired('gridOptionsService') protected readonly gridOptionsService: GridOptionsService;
 
     constructor(
         private readonly comp: PrimaryColsListPanel,
@@ -50,7 +52,16 @@ export class PrimaryColsListPanelItemDragFeature extends BeanStub {
                 ) => this.moveItem(currentDragValue, lastHoveredListItem)
             }
         ));
+
+        this.addManagedPropertyListener(
+            Events.EVENT_SUPPRESS_COLUMN_MOVE_CHANGED,
+            this.handleSuppressMovableColumnsUpdate,
+        );
     }
+
+    handleSuppressMovableColumnsUpdate = () => {
+        this.preventColsMove = this.gridOptionsService.is('suppressMovableColumns') ?? false;
+    };
 
     private getCurrentDragValue(listItemDragStartEvent: ColumnPanelItemDragStartEvent): Column | ProvidedColumnGroup {
         return listItemDragStartEvent.column;
@@ -68,14 +79,6 @@ export class PrimaryColsListPanelItemDragFeature extends BeanStub {
         });
 
         return !!hasNotMovable;
-    }
-
-    public enableColsMove(): void {
-        this.preventColsMove = false;
-    }
-
-    public disableColsMove(): void {
-        this.preventColsMove = true;
     }
 
     private moveItem(

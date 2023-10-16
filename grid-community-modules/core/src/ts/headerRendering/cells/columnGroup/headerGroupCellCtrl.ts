@@ -81,7 +81,7 @@ export class HeaderGroupCellCtrl extends AbstractHeaderCellCtrl {
             }
         ));
 
-        this.addGridOptionsChangeListener();
+        this.addManagedPropertyListener(Events.EVENT_SUPPRESS_COLUMN_MOVE_CHANGED, this.onSuppressColMoveChange);
     }
 
     public resizeLeafColumnsToFit(source: ColumnEventType): void {
@@ -220,15 +220,6 @@ export class HeaderGroupCellCtrl extends AbstractHeaderCellCtrl {
         });
 
         listener();
-    }
-
-    private addGridOptionsChangeListener(): void {
-        this.gridOptionsService.addEventListener(Events.EVENT_SUPPRESS_COLUMN_MOVE_CHANGED, this.onSuppressColMoveChange);
-    }
-
-    @PreDestroy
-    private removeGridOptionsChangeListener(): void {
-        this.gridOptionsService.removeEventListener(Events.EVENT_SUPPRESS_COLUMN_MOVE_CHANGED, this.onSuppressColMoveChange);
     }
 
     @PreDestroy
