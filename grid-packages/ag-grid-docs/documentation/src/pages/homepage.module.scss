@@ -128,7 +128,7 @@ gatsby-fast-refresh {
 }
 
 .homepageFrameworks {
-    background-color: var(--background-200);
+    background-color: var(--background-500);
     padding-top: $size-2;
     padding-bottom: $size-6;
 
@@ -149,7 +149,7 @@ gatsby-fast-refresh {
 
 .automatedIntegratedChartsOuter {
     margin-bottom: $size-8;
-    background-color: var(--background-200);
+    background-color: var(--background-500);
 }
 
 .frameworksInner {
@@ -328,7 +328,7 @@ gatsby-fast-refresh {
 
     :global(.disabled) {
         h2 {
-            color: var(--neutral-500);
+            color: var(--secondary-text-color);
 
             &::after {
                 content: ' (disabled)';
@@ -349,7 +349,7 @@ gatsby-fast-refresh {
     :global(.state) {
         &::before {
             content: 'State: ';
-            color: var(--neutral-500);
+            color: var(--secondary-text-color);
         }
     }
 
@@ -368,7 +368,7 @@ gatsby-fast-refresh {
     :global(.paused-state) {
         &::before {
             content: 'Paused at: ';
-            color: var(--neutral-500);
+            color: var(--secondary-text-color);
         }
     }
 
@@ -393,7 +393,7 @@ gatsby-fast-refresh {
 
         &::before {
             content: 'Mouse: ';
-            color: var(--neutral-500);
+            color: var(--secondary-text-color);
         }
     }
 
@@ -404,7 +404,7 @@ gatsby-fast-refresh {
 
         &::before {
             content: 'Manager: ';
-            color: var(--neutral-500);
+            color: var(--secondary-text-color);
         }
     }
 }

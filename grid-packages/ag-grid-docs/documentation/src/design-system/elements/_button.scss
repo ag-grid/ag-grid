@@ -51,7 +51,7 @@ input[type='submit']:not([class^="ag-"]),
         --button-color: var(--neutral-200);
         --button-hover-color: var(--neutral-200);
         --button-active-color: var(--neutral-200);
-        --button-text-color: var(--neutral-600);
+        --button-text-color: var(--neutral-800);
         --button-focus-box-shadow-color: transparent;
 
         cursor: default;
@@ -73,7 +73,7 @@ input[type='submit']:not([class^="ag-"]),
     --button-hover-color: var(--primary-300);
     --button-active-color: var(--primary-400);
     --button-text-color: var(--dark-blue-800);
-    --button-focus-box-shadow-color: var(--background-300);
+    --button-focus-box-shadow-color: var(--900);
 }
 
 .button-input:not([class^="ag-"]) {

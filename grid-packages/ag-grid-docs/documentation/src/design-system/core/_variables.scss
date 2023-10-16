@@ -136,26 +136,26 @@ $color-scales: (
         '900': #002c59,
     ),
     'background': (
-        '100': #f8fbfe,
-        '200': #ebf5ff,
-        '300': #def0ff,
-        '400': #d0eaff,
-        '500': #c2e4ff,
-        '600': #b3dfff,
-        '700': #a4dafe,
-        '800': #93d4fd,
-        '900': #82cffc,
+        '100': #f9fcff,
+        '200': #F6FAFD,
+        '300': #F2F7FB,
+        '400': #EEF4F9,
+        '500': #eaf0f6,
+        '600': #E3EEF9,
+        '700': #DCEBFB,
+        '800': #D4E8FD,
+        '900': #cce5ff,
     ),
     'neutral': (
-        '100': #f8f9fa,
-        '200': #dadbdd,
-        '300': #bcbec0,
-        '400': #a0a2a5,
-        '500': #84878a,
-        '600': #696d70,
-        '700': #505357,
-        '800': #383c3f,
-        '900': #212529,
+        '100': #F8F9FA,
+        '200': #E5E7E9,
+        '300': #D1D4D7,
+        '400': #BDC1C5,
+        '500': #A9AEB3,
+        '600': #959CA2,
+        '700': #81888F,
+        '800': #6c757d,
+        '900': #5C646B,
     ),
     'red': (
         '100': #ffe8e7,
@@ -321,11 +321,11 @@ $semantic-colors: (
     // Background
     'default-background-color': white,
     // Text
-    'default-text-color': neutral-900,
+    'default-text-color': dark-gunmetal-gray,
     'text-color': default-text-color,
-    'secondary-text-color': neutral-500,
+    'secondary-text-color': neutral-800,
     // Border
-    'border-color': neutral-200,
+    'border-color': neutral-300,
     // Link
     'link-color': primary-600,
     'link-hover-color': orange-700,
@@ -340,8 +340,8 @@ $semantic-colors: (
     'code-background-color': neutral-100,
     // Input
     'input-background-color': default-background-color,
-    'input-secondary-background-color': neutral-300,
-    'input-secondary-border-color': neutral-500,
+    'input-secondary-background-color': neutral-400,
+    'input-secondary-border-color': secondary-text-color,
     'input-primary-color': primary-600,
     'input-focus-border-color': primary-200,
     'input-focus-box-shadow-color': primary-100,
@@ -352,7 +352,7 @@ $semantic-colors: (
     'site-header-background': dark-blue-400,
     'site-nav-background': dark-blue-800,
     // Toolbar
-    'toolbar-background': background-200,
+    'toolbar-background': background-500,
     // Warnings
     'warning-background': brown-100,
     'warning-text': brown-700
@@ -383,7 +383,7 @@ $dark-semantic-colors: (
     // Input
     'input-background-color': default-background-color,
     'input-secondary-background-color': neutral-300,
-    'input-secondary-border-color': neutral-500,
+    'input-secondary-border-color': secondary-text-color,
     'input-primary-color': primary-600,
     'input-focus-border-color': primary-500,
     'input-focus-box-shadow-color': background-900,
