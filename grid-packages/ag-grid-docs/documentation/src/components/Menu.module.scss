@@ -21,7 +21,7 @@
         margin-right: var(--right-margin);
         padding-right: var(--menu-horizontal-margin);
         padding-left: var(--horizontal-margin);
-        border-right: solid 1px var(--background-500);
+        border-right: solid 1px var(--secondary-border-color);
 
         @supports (position: sticky) {
             position: sticky;
@@ -55,7 +55,7 @@ ul.menuInner {
         margin-top: $size-2;
         margin-bottom: $size-2;
         height: 1px;
-        background-color: var(--background-500);
+        background-color: var(--secondary-border-color);
     }
 
     h5 {

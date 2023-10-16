@@ -40,7 +40,7 @@ If you want to minimize your bundle size then you should definitely use `modules
         padding: 1rem;
         background-color: var(--ghost-blue);
         border-radius: var(--border-radius);
-        border: 2px solid var(--background-500);
+        border: 2px solid var(--secondary-border-color);
         transition: border-color .25s ease-in-out;
     }
 

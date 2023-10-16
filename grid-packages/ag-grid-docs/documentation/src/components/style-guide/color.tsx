@@ -45,7 +45,7 @@ const COLOR_SCALES = ['primary', 'dark-blue', 'background', 'neutral', 'red', 'p
 const SEMANTIC_COLOR_GROUPS = {
     Background: ['default-background-color'],
     Text: ['default-text-color', 'secondary-text-color'],
-    Border: ['border-color'],
+    Border: ['border-color', 'secondary-border-color'],
     Link: ['link-color', 'link-hover-color'],
     Button: [
         'button-text-color',

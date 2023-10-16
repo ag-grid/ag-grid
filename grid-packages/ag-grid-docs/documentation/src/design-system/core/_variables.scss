@@ -327,6 +327,7 @@ $semantic-colors: (
     'secondary-text-color': neutral-800,
     // Border
     'border-color': neutral-300,
+    'secondary-border-color': background-500,
     // Link
     'link-color': primary-600,
     'link-hover-color': orange-700,
@@ -368,7 +369,8 @@ $dark-semantic-colors: (
     'text-color': default-text-color,
     'secondary-text-color': neutral-600,
     // Border
-    'border-color': neutral-500,
+    'border-color': neutral-400,
+    'secondary-border-color': neutral-200,
     // Link
     'link-color': primary-500,
     'link-hover-color': orange-700,
