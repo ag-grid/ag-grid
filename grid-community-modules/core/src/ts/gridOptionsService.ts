@@ -10,7 +10,7 @@ import { GridApi } from "./gridApi";
 import { AgGridCommon, WithoutGridCommon } from "./interfaces/iCommon";
 import { RowModelType } from "./interfaces/iRowModel";
 import { AnyGridOptions } from "./propertyKeys";
-import { doOnce } from "./utils/function";
+import { warnOnce } from "./utils/function";
 import { exists, missing } from "./utils/generic";
 import { getScrollbarWidth } from './utils/browser';
 import { matchesGroupDisplayType } from "./gridOptionsValidator";
@@ -94,7 +94,7 @@ export class GridOptionsService {
     private static readonly alwaysSyncGlobalEvents: Set<string> = new Set([Events.EVENT_GRID_PRE_DESTROYED]);
 
     // Store locally to avoid retrieving many times as these are requested for every callback
-    public api: GridApi;
+    @Autowired('gridApi') public readonly api: GridApi;
     /** @deprecated v31 ColumnApi has been deprecated and all methods moved to the api. */
     public columnApi: ColumnApi;
     // This is quicker then having code call gridOptionsService.get('context')
@@ -105,13 +105,10 @@ export class GridOptionsService {
     private propertyEventService: EventService = new EventService();
     private gridOptionLookup: Set<string>;
 
-    private agWire(@Qualifier('gridApi') gridApi: GridApi): void {
-        this.columnApi = new ColumnApi(gridApi);
-        this.api = gridApi;
-    }
 
     @PostConstruct
     public init(): void {
+        this.columnApi = new ColumnApi(this.api);
         this.gridOptionLookup = new Set([...ComponentUtil.ALL_PROPERTIES, ...ComponentUtil.EVENT_CALLBACKS]);
         const async = !this.is('suppressAsyncEvents');
         this.eventService.addGlobalListener(this.globalEventHandlerFactory().bind(this), async);
@@ -124,6 +121,7 @@ export class GridOptionsService {
     @PreDestroy
     private destroy(): void {
         this.destroyed = true;
+        this.columnApi = undefined as any;
     }
 
     /**
@@ -341,7 +339,7 @@ export class GridOptionsService {
 
             if (this.isNumeric(height)) {
                 if (height === 0) {
-                    doOnce(() => console.warn('AG Grid: The return of `getRowHeight` cannot be zero. If the intention is to hide rows, use a filter instead.'), 'invalidRowHeight');
+                    warnOnce('The return of `getRowHeight` cannot be zero. If the intention is to hide rows, use a filter instead.');
                 }
                 return { height: Math.max(1, height), estimated: false };
             }

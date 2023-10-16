@@ -176,6 +176,7 @@ export { TabbedLayout, TabbedItem } from "./layout/tabbedLayout";
 export { ResizeObserverService } from "./misc/resizeObserverService";
 export { IImmutableService } from "./interfaces/iImmutableService";
 export { AnimationFrameService } from "./misc/animationFrameService";
+export { AlignedGrid } from "./interfaces/iAlignedGrid";
 
 // editing / cellEditors
 export { ICellEditor, ICellEditorComp, ICellEditorParams } from "./interfaces/iCellEditor";
