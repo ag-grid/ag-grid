@@ -16,13 +16,13 @@ legend {
     padding: unset;
 }
 
-label:not([class^="ag-"]) {
+label#{$exclude-grid-selector} {
     fieldset & {
         display: block;
     }
 
-    + input:not([class^="ag-"]),
-    + select:not([class^="ag-"]) {
+    + input#{$exclude-grid-selector},
+    + select#{$exclude-grid-selector} {
         margin-left: $size-1;
     }
 
@@ -37,7 +37,7 @@ label:not([class^="ag-"]) {
     }
 }
 
-input:not([class^="ag-"]) {
+input#{$exclude-grid-selector} {
     font-size: var(--font-size);
 }
 
@@ -47,7 +47,7 @@ input[type='email'],
 input[type='checkbox'],
 input[type='number'],
 select {
-    &:not([class^="ag-"]) {
+    &#{$exclude-grid-selector} {
         color: var(--default-text-color);
 
         &:disabled,
@@ -67,7 +67,7 @@ input[type='text'],
 input[type='search'],
 input[type='email'],
 input[type='number'] {
-    &:not([class^="ag-"]) {
+    &#{$exclude-grid-selector} {
         padding: math.div(6em, 16) math.div(12em, 16);
         line-height: var(--line-height-normal);
         border-radius: var(--border-radius);

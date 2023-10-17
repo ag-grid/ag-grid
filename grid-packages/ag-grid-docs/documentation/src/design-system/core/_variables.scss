@@ -4,6 +4,7 @@
 // Configuration
 // =============
 $css-variables-root: ':root' !default; // The root level where CSS variables are applied
+$exclude-grid-selector: ":where(:not([class^=ag]))"; // Exclude simple selectors from interfering with grid styles
 
 // Size constants
 // ==============
