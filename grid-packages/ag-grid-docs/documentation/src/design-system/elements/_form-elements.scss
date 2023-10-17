@@ -72,13 +72,9 @@ input[type='number'] {
         line-height: var(--line-height-normal);
         border-radius: var(--border-radius);
         background-color: var(--input-background-color);
-        border: 2px solid var(--border-color);
+        border: 2px solid var(--input-border-color);
         outline: none;
         transition: border-color $default-transition-timing, box-shadow $default-transition-timing;
-
-        #{$darkmode-selector} & {
-            border-color: var(--neutral-700);
-        }
 
         &::placeholder {
             font-style: italic;
@@ -186,13 +182,9 @@ select {
     background-image: $svg-chevron-down;
     background-repeat: no-repeat;
     background-position: center right;
-    border: 2px solid var(--border-color);
+    border: 2px solid var(--input-border-color);
     outline: none;
     transition: border-color $default-transition-timing, box-shadow $default-transition-timing;
-
-    #{$darkmode-selector} & {
-        border-color: var(--neutral-700);
-    }
 
     &:not(:disabled) {
         cursor: pointer;

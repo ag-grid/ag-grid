@@ -344,6 +344,7 @@ $semantic-colors: (
     'code-background-color': neutral-100,
     // Input
     'input-background-color': default-background-color,
+    'input-border-color': border-color,
     'input-secondary-background-color': neutral-400,
     'input-secondary-border-color': secondary-text-color,
     'input-primary-color': primary-600,
@@ -387,6 +388,7 @@ $dark-semantic-colors: (
     'code-background-color': neutral-100,
     // Input
     'input-background-color': default-background-color,
+    'input-border-color': neutral-700,
     'input-secondary-background-color': neutral-400,
     'input-secondary-border-color': secondary-text-color,
     'input-primary-color': primary-600,
