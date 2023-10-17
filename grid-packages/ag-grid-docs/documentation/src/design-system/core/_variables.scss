@@ -101,6 +101,7 @@ $abstract-colors: (
     'eerie-black': #181C22,
     'dark-gunmetal-gray': #212529,
     'auro-metal': #6c757d,
+    'quick-silver': #9ea3a6,
     'ag-grid-grey': #b4bebe,
     'dull-light-gray': #d0d4d6,
     'light-gray': #ced4da,
@@ -368,7 +369,7 @@ $dark-semantic-colors: (
     // Text
     'default-text-color': ghost-white,
     'text-color': default-text-color,
-    'secondary-text-color': neutral-600,
+    'secondary-text-color': quick-silver,
     // Border
     'border-color': neutral-400,
     'secondary-border-color': neutral-300,
