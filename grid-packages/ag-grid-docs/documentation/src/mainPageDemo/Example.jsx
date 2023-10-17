@@ -692,7 +692,7 @@ const Example = () => {
     );
 
     const selectionChanged = (event) => {
-        // console.log('Callback selectionChanged: selection count = ' + gridOptions.api.getSelectedNodes().length);
+        // console.log('Callback selectionChanged: selection count = ' + event.api.getSelectedNodes().length);
     };
 
     const rowSelected = (event) => {

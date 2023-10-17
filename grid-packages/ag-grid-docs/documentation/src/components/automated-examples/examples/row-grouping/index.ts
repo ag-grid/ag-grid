@@ -182,7 +182,7 @@ export function createAutomatedRowGrouping({
         if (additionalContextMenuItems) {
             gridOptions.getContextMenuItems = () => getAdditionalContextMenuItems(additionalContextMenuItems);
         }
-        gridOptions.onGridReady = () => {
+        gridOptions.onGridReady = (params) => {
             if (suppressUpdates) {
                 return;
             }
@@ -220,7 +220,7 @@ export function createAutomatedRowGrouping({
                     onStateChange && onStateChange(state);
                 },
                 tweenGroup,
-                gridOptions,
+                gridApi: params.api,
                 loop: !runOnce,
                 scriptDebugger,
                 defaultEasing: Easing.Quadratic.InOut,
