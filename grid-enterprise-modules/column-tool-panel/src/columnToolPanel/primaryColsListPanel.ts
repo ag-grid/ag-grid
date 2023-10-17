@@ -466,6 +466,7 @@ export class PrimaryColsListPanel extends Component {
     }
 
     private fireSelectionChangedEvent(): void {
+        if (!this.allColsTree) { return; }
         const selectionState = this.getSelectionState();
         this.dispatchEvent({ type: 'selectionChanged', state: selectionState });
     }

@@ -51,7 +51,11 @@ const gridOptions: GridOptions<IOlympicData> = {
     resizable: true,
   },
   enableAdvancedFilter: true,
-  advancedFilterModel: advancedFilterModel,
+  initialState: {
+    filter: {
+      advancedFilterModel: advancedFilterModel,
+    },
+  },
 }
 
 var savedFilterModel: AdvancedFilterModel | null = null;

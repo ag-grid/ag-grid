@@ -103,6 +103,7 @@ import { DataTypeDefinition } from "./dataType";
 import { AdvancedFilterModel } from "../interfaces/advancedFilterModel";
 import { IAdvancedFilterBuilderParams } from "../interfaces/iAdvancedFilterBuilderParams";
 import { AlignedGrid } from "../interfaces/iAlignedGrid";
+import { GridState } from "../interfaces/gridState";
 
 export interface GridOptions<TData = any> {
 
@@ -322,7 +323,7 @@ export interface GridOptions<TData = any> {
     excludeChildrenWhenTreeDataFiltering?: boolean;
     /** Set to true to enable the Advanced Filter. Default: `false` */
     enableAdvancedFilter?: boolean;
-    /** Allows the state of the Advanced Filter to be set before the grid is loaded. */
+    /** @deprecated As of v31, use `initialState.filter.advancedFilterModel` instead. */
     advancedFilterModel?: AdvancedFilterModel | null;
     /**
      * Hidden columns are excluded from the Advanced Filter by default.
@@ -855,6 +856,9 @@ export interface GridOptions<TData = any> {
     functionsPassive?: boolean;
     enableGroupEdit?: boolean;
 
+    /** Initial state for the grid. Only read once on initialization. Can be used in conjunction with `api.getState()` to save and restore grid state. */
+    initialState?: GridState;
+
     // *****************************************************************************************************
     // If you change the callbacks on this interface, you must also update PropertyKeys to be consistent. *
     // *****************************************************************************************************
@@ -1154,7 +1158,7 @@ export interface GridOptions<TData = any> {
     // *** Row Model: Client Side *** //
     /** @deprecated v28 No longer fired, use onRowDataUpdated instead */
     onRowDataChanged?(event: RowDataChangedEvent<TData>): void;
-    /** The client has updated data for the grid by either a) setting new Row Data or b) Applying a Row Transaction. */
+    /** Client-Side Row Model only. The client has updated data for the grid by either a) setting new Row Data or b) Applying a Row Transaction. */
     onRowDataUpdated?(event: RowDataUpdatedEvent<TData>): void;
     /** Async transactions have been applied. Contains a list of all transaction results. */
     onAsyncTransactionsFlushed?(event: AsyncTransactionsFlushed<TData>): void;

@@ -92,7 +92,7 @@ import {
     RefreshServerSideParams
 } from "./interfaces/iServerSideRowModel";
 import { ServerSideGroupLevelState } from "./interfaces/IServerSideStore";
-import { ISideBar, SideBarDef } from "./interfaces/iSideBar";
+import { ISideBarService, SideBarDef } from "./interfaces/iSideBar";
 import { IStatusBarService } from "./interfaces/iStatusBarService";
 import { IStatusPanel } from "./interfaces/iStatusPanel";
 import { IToolPanel } from "./interfaces/iToolPanel";
@@ -133,6 +133,9 @@ import { IHeaderColumn } from "./interfaces/iHeaderColumn";
 import { ProvidedColumnGroup } from "./entities/providedColumnGroup";
 import { ColumnGroup } from "./entities/columnGroup";
 import { OverlayService } from "./rendering/overlays/overlayService";
+import { GridState } from "./interfaces/gridState";
+import { StateService } from "./misc/stateService";
+import { IExpansionService } from "./interfaces/iExpansionService";
 
 export interface DetailGridInfo {
     /**
@@ -199,9 +202,11 @@ export class GridApi<TData = any> {
     @Optional('ssrmTransactionManager') private serverSideTransactionManager: IServerSideTransactionManager;
     @Autowired('ctrlsService') private ctrlsService: CtrlsService;
     @Autowired('overlayService') private overlayService: OverlayService;
+    @Optional('sideBarService') private sideBarService?: ISideBarService;
+    @Autowired('stateService') private stateService: StateService;
+    @Autowired('expansionService') private expansionService: IExpansionService;
 
     private gridBodyCtrl: GridBodyCtrl;
-    private sideBarComp: ISideBar;
 
     private clientSideRowModel: IClientSideRowModel;
     private infiniteRowModel: IInfiniteRowModel;
@@ -211,10 +216,6 @@ export class GridApi<TData = any> {
     private detailGridInfoMap: { [id: string]: DetailGridInfo | undefined; } = {};
 
     private destroyCalled = false;
-
-    public registerSideBarComp(sideBarComp: ISideBar): void {
-        this.sideBarComp = sideBarComp;
-    }
 
     @PostConstruct
     private init(): void {
@@ -571,14 +572,7 @@ export class GridApi<TData = any> {
 
     /** Expand or collapse a specific row node, optionally expanding/collapsing all of its parent nodes. */
     public setRowNodeExpanded(rowNode: IRowNode, expanded: boolean, expandParents?: boolean): void {
-        if (rowNode) {
-            // expand all parents recursively, except root node.
-            if (expandParents && rowNode.parent && rowNode.parent.level !== -1) {
-                this.setRowNodeExpanded(rowNode.parent, expanded, expandParents);
-            }
-
-            rowNode.setExpanded(expanded);
-        }
+        this.expansionService.setRowNodeExpanded(rowNode, expanded, expandParents);
     }
 
     /**
@@ -591,11 +585,7 @@ export class GridApi<TData = any> {
             this.logMissingRowModel('onGroupExpandedOrCollapsed', 'clientSide');
             return;
         }
-        // we don't really want the user calling this if only one rowNode was expanded, instead they should be
-        // calling rowNode.setExpanded(boolean) - this way we do a 'keepRenderedRows=false' so that the whole
-        // grid gets refreshed again - otherwise the row with the rowNodes that were changed won't get updated,
-        // and thus the expand icon in the group cell won't get 'opened' or 'closed'.
-        this.clientSideRowModel.refreshModel({ step: ClientSideRowModelSteps.MAP });
+        this.expansionService.onGroupExpandedOrCollapsed();
     }
 
     /**
@@ -643,10 +633,8 @@ export class GridApi<TData = any> {
 
     /** Expand all groups. */
     public expandAll() {
-        if (this.clientSideRowModel) {
-            this.clientSideRowModel.expandOrCollapseAll(true);
-        } else if (this.serverSideRowModel) {
-            this.serverSideRowModel.expandAll(true);
+        if (this.clientSideRowModel || this.serverSideRowModel) {
+            this.expansionService.expandAll(true);
         } else {
             this.logMissingRowModel('expandAll', 'clientSide', 'serverSide');
         }
@@ -654,12 +642,10 @@ export class GridApi<TData = any> {
 
     /** Collapse all groups. */
     public collapseAll() {
-        if (this.clientSideRowModel) {
-            this.clientSideRowModel.expandOrCollapseAll(false);
-        } else if (this.serverSideRowModel) {
-            this.serverSideRowModel.expandAll(false);
+        if (this.clientSideRowModel || this.serverSideRowModel) {
+            this.expansionService.expandAll(false);
         } else {
-            this.logMissingRowModel('expandAll', 'clientSide', 'serverSide');
+            this.logMissingRowModel('collapseAll', 'clientSide', 'serverSide');
         }
     }
 
@@ -732,7 +718,7 @@ export class GridApi<TData = any> {
     
     /** Set the state of the Advanced Filter. Used for restoring Advanced Filter state */
     public setAdvancedFilterModel(advancedFilterModel: AdvancedFilterModel | null): void {
-        this.gos.set('advancedFilterModel', advancedFilterModel);
+        this.filterManager.setAdvancedFilterModel(advancedFilterModel);
     }
 
     /** Enable/disable the Advanced Filter */
@@ -841,7 +827,7 @@ export class GridApi<TData = any> {
             return null;
         }
 
-        return this.selectionService.getServerSideSelectionState();
+        return this.selectionService.getSelectionState() as IServerSideSelectionState | IServerSideGroupSelectionState | null;
     }
 
     /**
@@ -856,7 +842,7 @@ export class GridApi<TData = any> {
             return;
         }
 
-        this.selectionService.setServerSideSelectionState(state);
+        this.selectionService.setSelectionState(state, 'api');
     }
 
     /**
@@ -1337,41 +1323,41 @@ export class GridApi<TData = any> {
 
     /** Returns `true` if the side bar is visible. */
     public isSideBarVisible(): boolean {
-        return this.assertSideBarLoaded('isSideBarVisible') && this.sideBarComp.isDisplayed();
+        return this.assertSideBarLoaded('isSideBarVisible') && this.sideBarService!.getSideBarComp().isDisplayed();
     }
 
     /** Show/hide the entire side bar, including any visible panel and the tab buttons. */
     public setSideBarVisible(show: boolean) {
         if (this.assertSideBarLoaded('setSideBarVisible')) {
-            this.sideBarComp.setDisplayed(show);
+            this.sideBarService!.getSideBarComp().setDisplayed(show);
         }
     }
 
     /** Sets the side bar position relative to the grid. Possible values are `'left'` or `'right'`. */
     public setSideBarPosition(position: 'left' | 'right') {
         if (this.assertSideBarLoaded('setSideBarPosition')) {
-            this.sideBarComp.setSideBarPosition(position);
+            this.sideBarService!.getSideBarComp().setSideBarPosition(position);
         }
     }
 
     /** Opens a particular tool panel. Provide the ID of the tool panel to open. */
     public openToolPanel(key: string) {
         if (this.assertSideBarLoaded('openToolPanel')) {
-            this.sideBarComp.openToolPanel(key, 'api');
+            this.sideBarService!.getSideBarComp().openToolPanel(key, 'api');
         }
     }
 
     /** Closes the currently open tool panel (if any). */
     public closeToolPanel() {
         if (this.assertSideBarLoaded('closeToolPanel')) {
-            this.sideBarComp.close('api');
+            this.sideBarService!.getSideBarComp().close('api');
         }
     }
 
     /** Returns the ID of the currently shown tool panel if any, otherwise `null`. */
     public getOpenedToolPanel(): string | null {
         if (this.assertSideBarLoaded('getOpenedToolPanel')) {
-            return this.sideBarComp.openedItem()
+            return this.sideBarService!.getSideBarComp().openedItem()
         }
         return null;
     }
@@ -1379,13 +1365,13 @@ export class GridApi<TData = any> {
     /** Force refresh all tool panels by calling their `refresh` method. */
     public refreshToolPanel(): void {
         if (this.assertSideBarLoaded('refreshToolPanel')) {
-            this.sideBarComp.refresh();
+            this.sideBarService!.getSideBarComp().refresh();
         }
     }
 
     /** Returns `true` if the tool panel is showing, otherwise `false`. */
     public isToolPanelShowing(): boolean {
-        return this.assertSideBarLoaded('isToolPanelShowing') && this.sideBarComp.isToolPanelShowing();
+        return this.assertSideBarLoaded('isToolPanelShowing') && this.sideBarService!.getSideBarComp().isToolPanelShowing();
     }
 
     public getToolPanelInstance(id: 'columns'): IColumnToolPanel | undefined;
@@ -1395,7 +1381,7 @@ export class GridApi<TData = any> {
     /** Gets the tool panel instance corresponding to the supplied `id`. */
     public getToolPanelInstance<TToolPanel = IToolPanel>(id: string): TToolPanel | undefined {
         if (this.assertSideBarLoaded('getToolPanelInstance')) {
-            const comp = this.sideBarComp.getToolPanelInstance(id);
+            const comp = this.sideBarService!.getSideBarComp().getToolPanelInstance(id);
             return unwrapUserComp(comp) as any;
         }
     }
@@ -1403,7 +1389,7 @@ export class GridApi<TData = any> {
     /** Returns the current side bar configuration. If a shortcut was used, returns the detailed long form. */
     public getSideBar(): SideBarDef | undefined {
         if (this.assertSideBarLoaded('getSideBar')) {
-            return this.sideBarComp.getDef();
+            return this.sideBarService!.getSideBarComp().getDef();
         }
         return undefined;
     }
@@ -2131,6 +2117,11 @@ export class GridApi<TData = any> {
     /** Goes to the specified page. If the page requested doesn't exist, it will go to the last page. */
     public paginationGoToPage(page: number): void {
         this.paginationProxy.goToPage(page);
+    }
+
+    /** Get the current state of the grid. Can be used in conjunction with the `initialState` grid option to save and restore grid state. */
+    public getState(): GridState {
+        return this.stateService.getState();
     }
 
     // Methods migrated from old ColumnApi

@@ -32,6 +32,8 @@ export class ClientSideNodeManager {
     // when user is provide the id's, we also keep a map of ids to row nodes for convenience
     private allNodesMap: { [id: string]: RowNode } = {};
 
+    private dataLoaded: boolean = false;
+
     constructor(rootNode: RowNode, gridOptionsService: GridOptionsService, eventService: EventService,
         columnModel: ColumnModel, selectionService: ISelectionService, beans: Beans) {
         this.rootNode = rootNode;
@@ -65,6 +67,7 @@ export class ClientSideNodeManager {
             return;
         }
 
+        this.dataLoaded = true;
         this.dispatchRowDataUpdateStartedEvent(rowData);
 
         const rootNode = this.rootNode;
@@ -101,6 +104,7 @@ export class ClientSideNodeManager {
     }
 
     public updateRowData(rowDataTran: RowDataTransaction, rowNodeOrder: { [id: string]: number } | null | undefined): RowNodeTransaction {
+        this.dataLoaded = true;
         this.dispatchRowDataUpdateStartedEvent(rowDataTran.add);
 
         const rowNodeTransaction: RowNodeTransaction = {
@@ -122,6 +126,10 @@ export class ClientSideNodeManager {
         }
 
         return rowNodeTransaction;
+    }
+
+    public hasData(): boolean {
+        return this.dataLoaded;
     }
 
     private dispatchRowDataUpdateStartedEvent(rowData?: any[] | null): void {

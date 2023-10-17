@@ -535,6 +535,13 @@ export class GridBodyScrollFeature extends BeanStub {
         this.animationFrameService.flushAllFrames();
     }
 
+    public setScrollPosition(top: number, left: number): void {
+        this.centerRowContainerCtrl.setCenterViewportScrollLeft(left);
+        this.setVerticalScrollPosition(top);
+        this.rowRenderer.redraw({ afterScroll: true });
+        this.animationFrameService.flushAllFrames();
+    }
+
     private getPositionedHorizontalScroll(column: Column, position: 'auto' | 'start' | 'middle' | 'end'): number | null {
         const { columnBeforeStart, columnAfterEnd } = this.isColumnOutsideViewport(column);
 

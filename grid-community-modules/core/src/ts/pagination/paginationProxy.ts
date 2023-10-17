@@ -228,6 +228,11 @@ export class PaginationProxy extends BeanStub {
         return this.totalPages;
     }
 
+    /** This is only for state setting before data has been loaded */
+    public setPage(page: number): void {
+        this.currentPage = page;
+    }
+
     private setPageSize(): void {
         // show put this into super class
         this.pageSize = this.gridOptionsService.getNum('paginationPageSize')!;

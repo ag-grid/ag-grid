@@ -76,7 +76,11 @@ export class LazyStore extends BeanStub implements IServerSideStore {
     private init() {
         let numberOfRows = 1;
         if (this.level === 0) {
-            numberOfRows = this.storeUtils.getServerSideInitialRowCount();
+            numberOfRows = this.storeUtils.getServerSideInitialRowCount() ?? 1;
+
+            this.eventService.dispatchEventOnce({
+                type: Events.EVENT_ROW_COUNT_READY
+            });
         }
         this.cache = this.createManagedBean(new LazyCache(this, numberOfRows, this.storeParams));
 

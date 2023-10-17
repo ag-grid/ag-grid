@@ -287,6 +287,10 @@ export class ViewportRowModel extends BeanStub implements IRowModel {
 
         this.rowCount = rowCount;
 
+        this.eventService.dispatchEventOnce({
+            type: Events.EVENT_ROW_COUNT_READY
+        });
+
         const event: WithoutGridCommon<ModelUpdatedEvent> = {
             type: Events.EVENT_MODEL_UPDATED,
             newData: false,

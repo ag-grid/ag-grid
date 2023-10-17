@@ -6,7 +6,7 @@ import { Column } from '../entities/column';
 import { Autowired, Bean, Optional, PostConstruct } from '../context/context';
 import { IRowModel } from '../interfaces/iRowModel';
 import { ColumnEventType, Events, FilterChangedEvent, FilterModifiedEvent, FilterOpenedEvent, FilterDestroyedEvent, AdvancedFilterEnabledChangedEvent, FilterChangedEventSourceType } from '../events';
-import { IFilterComp, IFilter, IFilterParams } from '../interfaces/iFilter';
+import { IFilterComp, IFilter, IFilterParams, FilterModel } from '../interfaces/iFilter';
 import { ColDef } from '../entities/colDef';
 import { UserCompDetails, UserComponentFactory } from '../components/framework/userComponentFactory';
 import { ModuleNames } from '../modules/moduleNames';
@@ -59,7 +59,8 @@ export class FilterManager extends BeanStub {
     private aggFiltering: boolean;
 
     // when we're waiting for cell data types to be inferred, we need to defer filter model updates
-    private filterModelUpdateQueue: { [key: string]: any; }[] = [];
+    private filterModelUpdateQueue: { model: FilterModel, source: FilterChangedEventSourceType }[] = [];
+    private advancedFilterModelUpdateQueue: (AdvancedFilterModel | null | undefined)[] = [];
 
     @PostConstruct
     public init(): void {
@@ -69,6 +70,7 @@ export class FilterManager extends BeanStub {
         this.addManagedListener(this.eventService, Events.EVENT_COLUMN_PIVOT_MODE_CHANGED, () => this.refreshFiltersForAggregations());
         this.addManagedListener(this.eventService, Events.EVENT_NEW_COLUMNS_LOADED, () => this.updateAdvancedFilterColumns());
         this.addManagedListener(this.eventService, Events.EVENT_COLUMN_VISIBLE, () => this.updateAdvancedFilterColumns());
+        this.addManagedListener(this.eventService, Events.EVENT_ROW_DATA_UPDATED, () => this.onNewRowsLoaded('rowDataUpdated'));
 
         this.externalFilterPresent = this.isExternalFilterPresentCallback();
         this.addManagedPropertyListeners(['isExternalFilterPresent', 'doesExternalFilterPass'], () => {
@@ -102,14 +104,14 @@ export class FilterManager extends BeanStub {
         return false;
     }
 
-    public setFilterModel(model: { [key: string]: any; }): void {
+    public setFilterModel(model: FilterModel, source: FilterChangedEventSourceType = 'api'): void {
         if (this.isAdvancedFilterEnabled()) {
             this.warnAdvancedFilters();
             return;
         }
 
         if (this.dataTypeService.isPendingInference()) {
-            this.filterModelUpdateQueue.push(model);
+            this.filterModelUpdateQueue.push({ model, source });
             return;
         }
 
@@ -168,7 +170,7 @@ export class FilterManager extends BeanStub {
             });
 
             if (columns.length > 0) {
-                this.onFilterChanged({ columns, source: 'api' });
+                this.onFilterChanged({ columns, source });
             }
         });
     }
@@ -186,8 +188,8 @@ export class FilterManager extends BeanStub {
         });
     }
 
-    public getFilterModel(): { [key: string]: any; } {
-        const result: { [key: string]: any; } = {};
+    public getFilterModel(): FilterModel {
+        const result: FilterModel = {};
 
         this.allColumnFilters.forEach((filterWrapper, key) => {
             // because user can provide filters, we provide useful error checking and messages
@@ -923,6 +925,10 @@ export class FilterManager extends BeanStub {
 
     public setAdvancedFilterModel(expression: AdvancedFilterModel | null | undefined): void {
         if (!this.isAdvancedFilterEnabled()) { return; }
+        if (this.dataTypeService.isPendingInference()) {
+            this.advancedFilterModelUpdateQueue.push(expression);
+            return;
+        }
         this.advancedFilterService.setModel(expression ?? null);
         this.onFilterChanged({ source: 'advancedFilter' });
     }
@@ -995,8 +1001,10 @@ export class FilterManager extends BeanStub {
     }
 
     private processFilterModelUpdateQueue(): void {
-        this.filterModelUpdateQueue.forEach(model => this.setFilterModel(model));
+        this.filterModelUpdateQueue.forEach(({ model, source }) => this.setFilterModel(model, source));
         this.filterModelUpdateQueue = [];
+        this.advancedFilterModelUpdateQueue.forEach(model => this.setAdvancedFilterModel(model));
+        this.advancedFilterModelUpdateQueue = [];
     }
 
     protected destroy() {

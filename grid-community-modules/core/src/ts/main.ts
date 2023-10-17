@@ -102,7 +102,7 @@ export { RowNode } from "./entities/rowNode";
 export { RowHighlightPosition, RowPinnedType, IRowNode } from "./interfaces/iRowNode";
 
 // filter
-export { IFilterDef, IFilterParams, IFilterOptionDef, IDoesFilterPassParams, ProvidedFilterModel, IFilter, IFilterComp, IFilterType, IFloatingFilterType } from "./interfaces/iFilter";
+export { IFilterDef, IFilterParams, IFilterOptionDef, IDoesFilterPassParams, ProvidedFilterModel, IFilter, IFilterComp, IFilterType, IFloatingFilterType, FilterModel } from "./interfaces/iFilter";
 export { ISetFilter, SetFilterModel, ISetFilterParams, SetFilterParams, SetFilterValues, SetFilterModelValue, SetFilterValuesFunc, SetFilterValuesFuncParams, ISetFilterTreeListTooltipParams } from "./interfaces/iSetFilter";
 export { FilterManager, FilterWrapper, FilterRequestSource } from "./filter/filterManager";
 export { IMultiFilter, IMultiFilterModel, IMultiFilterComp, IMultiFilterParams, MultiFilterParams, IMultiFilterDef } from './interfaces/iMultiFilter';
@@ -177,6 +177,7 @@ export { ResizeObserverService } from "./misc/resizeObserverService";
 export { IImmutableService } from "./interfaces/iImmutableService";
 export { AnimationFrameService } from "./misc/animationFrameService";
 export { AlignedGrid } from "./interfaces/iAlignedGrid";
+export { ExpansionService } from "./misc/expansionService";
 
 // editing / cellEditors
 export { ICellEditor, ICellEditorComp, ICellEditorParams } from "./interfaces/iCellEditor";
@@ -246,7 +247,7 @@ export { IServerSideDatasource, IServerSideGetRowsParams, IServerSideGetRowsRequ
 export { IServerSideRowModel, IServerSideTransactionManager, RefreshStoreParams, RefreshServerSideParams } from "./interfaces/iServerSideRowModel";
 export { IServerSideStore, StoreRefreshAfterParams, ServerSideGroupState, ServerSideGroupLevelState } from "./interfaces/IServerSideStore";
 
-export { ISideBar, SideBarDef, ToolPanelDef } from "./interfaces/iSideBar";
+export { ISideBarService, ISideBar, SideBarDef, ToolPanelDef } from "./interfaces/iSideBar";
 export { IGetRowsParams, IDatasource } from "./interfaces/iDatasource";
 
 //styling
@@ -344,9 +345,35 @@ export { ValueCache } from "./valueService/valueCache";
 export { ExpressionService } from "./valueService/expressionService";
 export { ValueParserService } from "./valueService/valueParserService";
 
+//state
+export {
+    AggregationColumnState,
+    AggregationState,
+    ColumnGroupState,
+    ColumnOrderState,
+    ColumnPinningState,
+    ColumnSizeState,
+    ColumnSizingState,
+    ColumnVisibilityState,
+    FilterState,
+    FocusedCellState,
+    GridState,
+    PaginationState,
+    PivotState,
+    RangeSelectionCellState,
+    RangeSelectionState,
+    RowGroupExpansionState,
+    RowGroupState,
+    ScrollState,
+    SideBarState,
+    SortState
+} from "./interfaces/gridState";
+
 // uncatalogued
 export { IRowModel, RowBounds, RowModelType } from "./interfaces/iRowModel";
 export { ISelectionService, ISetNodesSelectedParams } from "./interfaces/iSelectionService";
+export { IExpansionService } from "./interfaces/iExpansionService";
+export { ServerSideRowSelectionState, ServerSideRowGroupSelectionState } from "./interfaces/selectionState";
 export { IServerSideSelectionState, IServerSideGroupSelectionState } from "./interfaces/iServerSideSelection";
 export { IAggFuncService } from "./interfaces/iAggFuncService";
 export { IClipboardService, IClipboardCopyParams, IClipboardCopyRowsParams } from "./interfaces/iClipboardService";

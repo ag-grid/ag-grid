@@ -109,6 +109,7 @@ export interface PinnedRowDataChangedEvent<TData = any, TContext = any> extends 
  * - `uiSelectAll` - select all in header clicked
  * - `uiSelectAllFiltered` - select all in header clicked when `headerCheckboxSelectionFilteredOnly = true`
  * - `uiSelectAllCurrentPage` - select all in header clicked when `headerCheckboxSelectionCurrentPageOnly = true`
+ * - 'gridInitializing' - set as part of initial state while the grid is initializing
  */
 export type SelectionEventSourceType =
     'api' |
@@ -123,7 +124,8 @@ export type SelectionEventSourceType =
     'spaceKey' |
     'uiSelectAll' |
     'uiSelectAllFiltered' |
-    'uiSelectAllCurrentPage';
+    'uiSelectAllCurrentPage' |
+    'gridInitializing';
 
 export interface SelectionChangedEvent<TData = any, TContext = any> extends AgGridEvent<TData, TContext> {
     source: SelectionEventSourceType;
