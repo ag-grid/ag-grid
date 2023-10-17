@@ -219,11 +219,11 @@ $color-scales: (
 
 $dark-scales: (
     'primary': (
-        '100': #cce5ff,
-        '200': #a8d2ff,
-        '300': #84beff,
-        '400': #60aaff,
-        '500': #3b93ff,
+        '100': color-mix(in srgb, #007bff calc(100% / 6 * 1), var(--default-background-color)),
+        '200': color-mix(in srgb, #007bff calc(100% / 6 * 2), var(--default-background-color)),
+        '300': color-mix(in srgb, #007bff calc(100% / 6 * 3), var(--default-background-color)),
+        '400': color-mix(in srgb, #007bff calc(100% / 6 * 4), var(--default-background-color)),
+        '500': color-mix(in srgb, #007bff calc(100% / 6 * 5), var(--default-background-color)),
         '600': #007bff,
         '700': #005ffd,
         '800': #003bfa,

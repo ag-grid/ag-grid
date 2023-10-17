@@ -74,6 +74,14 @@ input[type='submit']#{$exclude-grid-selector},
     --button-active-color: var(--primary-400);
     --button-text-color: var(--dark-blue-800);
     --button-focus-box-shadow-color: var(--900);
+
+    #{$darkmode-selector} & {
+        --button-color: var(--primary-300);
+        --button-hover-color: var(--primary-400);
+        --button-active-color: var(--primary-500);
+        --button-text-color: var(--default-text-color);
+        --button-focus-box-shadow-color: var(--900);
+    }
 }
 
 .button-input#{$exclude-grid-selector} {
