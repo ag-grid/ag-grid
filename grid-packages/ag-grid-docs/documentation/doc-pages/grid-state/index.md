@@ -31,7 +31,11 @@ const gridOptions = {
 }
 </snippet>
 
-The current grid state can be retrieved via `api.getState()`.
+The current grid state can be retrieved by listening to the state updated event, which is fired with the latest state when it changes, or via `api.getState()`.
+
+The state is also passed in the [Grid Pre-Destroyed Event](/grid-lifecycle/#grid-pre-destroyed), which can be used to get the state when the grid is destroyed.
+
+<api-documentation source='grid-events/events.json' section='miscellaneous' names='["stateUpdated", "gridPreDestroyed"]'></api-documentation>
 
 ## State Contents
 

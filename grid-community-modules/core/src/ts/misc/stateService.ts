@@ -3,7 +3,7 @@ import { BeanStub } from "../context/beanStub";
 import { Autowired, Bean, Optional, PostConstruct } from "../context/context";
 import { CtrlsService } from "../ctrlsService";
 import { Events } from "../eventKeys";
-import { NewColumnsLoadedEvent, PaginationChangedEvent } from "../events";
+import { NewColumnsLoadedEvent, PaginationChangedEvent, RangeSelectionChangedEvent, StateUpdatedEvent } from "../events";
 import { FilterManager } from "../filter/filterManager";
 import { FocusService } from "../focusService";
 import {
@@ -38,6 +38,8 @@ import { ServerSideRowGroupSelectionState, ServerSideRowSelectionState } from ".
 import { IExpansionService } from "../interfaces/iExpansionService";
 import { jsonEquals } from "../utils/generic";
 import { AdvancedFilterModel } from "../interfaces/advancedFilterModel";
+import { WithoutGridCommon } from "../interfaces/iCommon";
+import { debounce } from "../utils/function";
 
 @Bean('stateService')
 export class StateService extends BeanStub {
@@ -54,6 +56,9 @@ export class StateService extends BeanStub {
 
     private isClientSideRowModel: boolean;
     private cachedState: GridState;
+    private suppressEvents = true;
+    private queuedUpdateSources: Set<(keyof GridState | 'gridInitializing')> = new Set();
+    private dispatchStateUpdateEventDebounced = debounce(() => this.dispatchQueuedStateUpdateEvents(), 0);
 
     @PostConstruct
     private postConstruct(): void {
@@ -76,6 +81,8 @@ export class StateService extends BeanStub {
         const firstDataRenderedDestroyFunc = this.addManagedListener(this.eventService, Events.EVENT_FIRST_DATA_RENDERED, () => {
             firstDataRenderedDestroyFunc?.();
             this.setupStateOnFirstDataRendered();
+            this.suppressEvents = false;
+            this.dispatchStateUpdateEvent(['gridInitializing']);
         });
     }
 
@@ -107,30 +114,34 @@ export class StateService extends BeanStub {
             this.setFilterState(filterState, advancedFilterModel);
         }
 
-        this.updateColumnState();
+        this.updateColumnState([
+            'aggregation', 'columnOrder', 'columnPinning', 'columnSizing', 'columnVisibility', 'pivot', 'pivot', 'rowGroup', 'sort'
+        ]);
         this.updateCachedState('columnGroup', this.getColumnGroupState());
         this.updateCachedState('filter', this.getFilterState());
 
         // aggregation
-        this.addManagedListener(this.eventService, Events.EVENT_COLUMN_VALUE_CHANGED, () => this.updateColumnState());
+        this.addManagedListener(this.eventService, Events.EVENT_COLUMN_VALUE_CHANGED, () => this.updateColumnState(['aggregation']));
         // columnOrder
-        this.addManagedListener(this.eventService, Events.EVENT_COLUMN_MOVED, () => this.updateColumnState());
+        this.addManagedListener(this.eventService, Events.EVENT_COLUMN_MOVED, () => this.updateColumnState(['columnOrder']));
         // columnPinning
-        this.addManagedListener(this.eventService, Events.EVENT_COLUMN_PINNED, () => this.updateColumnState());
+        this.addManagedListener(this.eventService, Events.EVENT_COLUMN_PINNED, () => this.updateColumnState(['columnPinning']));
         // columnSizing
-        this.addManagedListener(this.eventService, Events.EVENT_COLUMN_RESIZED, () => this.updateColumnState());
+        this.addManagedListener(this.eventService, Events.EVENT_COLUMN_RESIZED, () => this.updateColumnState(['columnSizing']));
         // columnVisibility
-        this.addManagedListener(this.eventService, Events.EVENT_COLUMN_VISIBLE, () => this.updateColumnState());
+        this.addManagedListener(this.eventService, Events.EVENT_COLUMN_VISIBLE, () => this.updateColumnState(['columnVisibility']));
         // pivot
-        this.addManagedListener(this.eventService, Events.EVENT_COLUMN_PIVOT_CHANGED, () => this.updateColumnState());
+        this.addManagedListener(this.eventService, Events.EVENT_COLUMN_PIVOT_CHANGED, () => this.updateColumnState(['pivot']));
         // pivot
-        this.addManagedListener(this.eventService, Events.EVENT_COLUMN_PIVOT_MODE_CHANGED, () => this.updateColumnState());
+        this.addManagedListener(this.eventService, Events.EVENT_COLUMN_PIVOT_MODE_CHANGED, () => this.updateColumnState(['pivot']));
         // rowGroup
-        this.addManagedListener(this.eventService, Events.EVENT_COLUMN_ROW_GROUP_CHANGED, () => this.updateColumnState());
+        this.addManagedListener(this.eventService, Events.EVENT_COLUMN_ROW_GROUP_CHANGED, () => this.updateColumnState(['rowGroup']));
         // sort
-        this.addManagedListener(this.eventService, Events.EVENT_SORT_CHANGED, () => this.updateColumnState());
+        this.addManagedListener(this.eventService, Events.EVENT_SORT_CHANGED, () => this.updateColumnState(['sort']));
         // any column
-        this.addManagedListener(this.eventService, Events.EVENT_NEW_COLUMNS_LOADED, () => this.updateColumnState());
+        this.addManagedListener(this.eventService, Events.EVENT_NEW_COLUMNS_LOADED, () => this.updateColumnState([
+            'aggregation', 'columnOrder', 'columnPinning', 'columnSizing', 'columnVisibility', 'pivot', 'pivot', 'rowGroup', 'sort'
+        ]));
         this.addManagedListener(this.eventService, Events.EVENT_COLUMN_GROUP_OPENED, () => this.updateCachedState('columnGroup', this.getColumnGroupState()));
         this.addManagedListener(this.eventService, Events.EVENT_FILTER_CHANGED, () => this.updateCachedState('filter', this.getFilterState()));
     }
@@ -181,7 +192,11 @@ export class StateService extends BeanStub {
         }
 
         this.addManagedListener(this.eventService, Events.EVENT_CELL_FOCUSED, () => this.updateCachedState('focusedCell', this.getFocusedCellState()));
-        this.addManagedListener(this.eventService, Events.EVENT_RANGE_SELECTION_CHANGED, () => this.updateCachedState('rangeSelection', this.getRangeSelectionState()));
+        this.addManagedListener(this.eventService, Events.EVENT_RANGE_SELECTION_CHANGED, (event: RangeSelectionChangedEvent) => {
+            if (event.finished) {
+                this.updateCachedState('rangeSelection', this.getRangeSelectionState());
+            }
+        });
         this.addManagedListener(this.eventService, Events.EVENT_BODY_SCROLL_END, () => this.updateCachedState('scroll', this.getScrollState()));
     }
 
@@ -513,29 +528,48 @@ export class StateService extends BeanStub {
         this.expansionService.expandRows(rowGroupExpansionState.expandedRowGroupIds);
     }
 
-    private updateColumnState(): void {
+    private updateColumnState(features: (keyof GridState)[]): void {
         const newColumnState = this.getColumnState();
         let hasChanged = false;
         Object.entries(newColumnState).forEach(([key, value]: [keyof GridState, any]) => {
             if (!jsonEquals(value, this.cachedState[key])) {
                 hasChanged = true;
             }
-        })
-        Object.assign(this.cachedState, newColumnState);
+        });
+        this.cachedState = {
+            ...this.cachedState,
+            ...newColumnState
+        }
         if (hasChanged) {
-            this.dispatchStateUpdateEvent();
+            this.dispatchStateUpdateEvent(features);
         }
     }
 
     private updateCachedState<K extends keyof GridState>(key: K, value: GridState[K]): void {
         const existingValue = this.cachedState[key];
-        this.cachedState[key] = value;
+        this.cachedState = {
+            ...this.cachedState,
+            [key]: value
+        }
         if (!jsonEquals(value, existingValue)) {
-            this.dispatchStateUpdateEvent();
+            this.dispatchStateUpdateEvent([key]);
         }
     }
 
-    private dispatchStateUpdateEvent(): void {
-        this.eventService.dispatchEvent({ type: Events.EVENT_STATE_UPDATED });
+    private dispatchStateUpdateEvent(sources: (keyof GridState | 'gridInitializing')[]): void {
+        if (this.suppressEvents) { return; }
+        sources.forEach(source => this.queuedUpdateSources.add(source));
+        this.dispatchStateUpdateEventDebounced();
+    }
+
+    private dispatchQueuedStateUpdateEvents(): void {
+        const sources = Array.from(this.queuedUpdateSources);
+        this.queuedUpdateSources.clear();
+        const event: WithoutGridCommon<StateUpdatedEvent> = {
+            type: Events.EVENT_STATE_UPDATED,
+            sources,
+            state: this.cachedState
+        }
+        this.eventService.dispatchEvent(event);
     }
 }

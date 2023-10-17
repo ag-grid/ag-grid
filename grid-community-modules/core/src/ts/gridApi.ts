@@ -42,7 +42,7 @@ import {
     TabToNextHeaderParams
 } from "./interfaces/iCallbackParams";
 import { IRowNode, RowPinnedType } from "./interfaces/iRowNode";
-import { AgEvent, ColumnEventType, FilterChangedEventSourceType, SelectionEventSourceType } from "./events";
+import { AgEvent, ColumnEventType, FilterChangedEventSourceType, GridPreDestroyedEvent, SelectionEventSourceType } from "./events";
 import { EventService } from "./eventService";
 import { FilterManager } from "./filter/filterManager";
 import { FocusService } from "./focusService";
@@ -136,6 +136,7 @@ import { OverlayService } from "./rendering/overlays/overlayService";
 import { GridState } from "./interfaces/gridState";
 import { StateService } from "./misc/stateService";
 import { IExpansionService } from "./interfaces/iExpansionService";
+import { WithoutGridCommon } from "./interfaces/iCommon";
 
 export interface DetailGridInfo {
     /**
@@ -1530,7 +1531,11 @@ export class GridApi<TData = any> {
         // of context.destroy(). so we need to stop the infinite loop.
         if (this.destroyCalled) { return; }
         
-        this.dispatchEvent({ type: Events.EVENT_GRID_PRE_DESTROYED });
+        const event: WithoutGridCommon<GridPreDestroyedEvent<TData>> = {
+            type: Events.EVENT_GRID_PRE_DESTROYED,
+            state: this.getState()
+        };
+        this.dispatchEvent(event);
         
         // Set after pre-destroy so user can still use the api in pre-destroy event and it is not marked as destroyed yet.
         this.destroyCalled = true;

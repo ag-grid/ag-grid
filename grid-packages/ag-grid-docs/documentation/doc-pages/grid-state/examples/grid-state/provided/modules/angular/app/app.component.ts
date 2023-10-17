@@ -5,7 +5,7 @@ import { HttpClient } from '@angular/common/http';
 import '@ag-grid-community/styles/ag-grid.css';
 import "@ag-grid-community/styles/ag-theme-alpine.css";
 import '../styles.css';
-import { ColDef, ColGroupDef, GridApi, GridOptions, GridReadyEvent, SideBarDef, createGrid, GridState } from '@ag-grid-community/core';
+import { ColDef, ColGroupDef, GridApi, GridOptions, GridReadyEvent, SideBarDef, createGrid, GridState, GridPreDestroyedEvent } from '@ag-grid-community/core';
 // Required feature modules are registered in app.module.ts
 import { IOlympicData } from './interfaces'
 
@@ -32,6 +32,7 @@ import { IOlympicData } from './interfaces'
                 [suppressColumnMoveAnimation]="true"
                 [rowData]="rowData"
                 [initialState]="initialState"
+                [gridOptions]="gridOptions"
                 (gridReady)="onGridReady($event)"
             ></ag-grid-angular>
         </div>
@@ -72,10 +73,15 @@ export class AppComponent {
     public rowData?: IOlympicData[];
     public gridVisible = true;
     public initialState?: GridState;
+    public gridOptions: GridOptions = {
+        onGridPreDestroyed: (params: GridPreDestroyedEvent<IOlympicData>) => {
+            console.log('Grid state on destroy (can be persisted)', params.state)
+        }
+    };
 
     constructor(private http: HttpClient, private cdRef: ChangeDetectorRef) {}
 
-    reloadGrid() {
+    reloadGrid(): void {
         const state = this.gridApi.getState();
         this.gridVisible = false;
         this.cdRef.detectChanges();
@@ -87,11 +93,11 @@ export class AppComponent {
         });
     }
 
-    printState() {
+    printState(): void {
         console.log('Grid state', this.gridApi.getState());
     }
 
-    onGridReady(params: GridReadyEvent<IOlympicData>) {
+    onGridReady(params: GridReadyEvent<IOlympicData>): void {
         this.gridApi = params.api;
         this.http.get<IOlympicData[]>('https://www.ag-grid.com/example-assets/olympic-winners.json').subscribe(data => this.rowData = data);
     }

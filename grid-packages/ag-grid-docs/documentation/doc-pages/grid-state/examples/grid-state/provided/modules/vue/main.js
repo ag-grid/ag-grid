@@ -39,6 +39,7 @@ const VueExample = {
                     :suppressColumnMoveAnimation="true"
                     :rowData="rowData"
                     :initialState="initialState"
+                    @grid-pre-destroyed="onGridPreDestroyed"
                 ></ag-grid-vue>
             </div>
         </div>
@@ -107,6 +108,9 @@ const VueExample = {
                 .then(resp => resp.json())
                 .then(data => updateData(data));
         },
+        onGridPreDestroyed(params) {
+            console.log('Grid state on destroy (can be persisted)', params.state);
+        }
     }
 }
 
