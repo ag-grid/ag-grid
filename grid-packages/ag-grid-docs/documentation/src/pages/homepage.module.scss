@@ -32,6 +32,10 @@ gatsby-fast-refresh {
     @media screen and (min-width: $breakpoint-hero-large) {
         padding-top: $size-8;
     }
+
+    #{$darkmode-selector} & {
+        background-color: var(--background-400);
+    }
 }
 
 .heroHeadings {
@@ -135,6 +139,10 @@ gatsby-fast-refresh {
     @media screen and (min-width: 640px) {
         padding-top: $size-6;
     }
+
+    #{$darkmode-selector} & {
+        background-color: var(--background-200);
+    }
 }
 
 .homepageExample {
@@ -150,6 +158,10 @@ gatsby-fast-refresh {
 .automatedIntegratedChartsOuter {
     margin-bottom: $size-8;
     background-color: var(--background-500);
+
+    #{$darkmode-selector} & {
+        background-color: var(--background-100);
+    }
 }
 
 .frameworksInner {

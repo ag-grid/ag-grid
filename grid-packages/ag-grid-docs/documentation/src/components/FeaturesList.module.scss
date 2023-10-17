@@ -65,7 +65,7 @@
         height: 100%;
     }
 
-    [data-dark-mode='dark'] & {
-        fill: var(--primary-200);
+    #{$darkmode-selector} & {
+        fill: var(--primary-400);
     }
 }
