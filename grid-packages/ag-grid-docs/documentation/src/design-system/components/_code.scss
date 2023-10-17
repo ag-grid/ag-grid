@@ -25,8 +25,8 @@ pre.code code {
     hyphens: none;
 
     #{$darkmode-selector} & {
-        -webkit-font-smoothing: subpixel-antialiased;
-
+        -webkit-font-smoothing: antialiased;
+        
         color: var(--default-text-color);
     }
 }
@@ -244,6 +244,37 @@ code[class*='language-css'] {
 
 .language-css .token.property {
     color: var(--tag-color);
+}
+
+.token.atrule,
+.token.attr-name,
+.token.attr-value,
+.token.boolean,
+.token.builtin,
+.token.cdata,
+.token.class-name,
+.token.comment,
+.token.constant,
+.token.deleted,
+.token.doctype,
+.token.entity,
+.token.inserted,
+.token.keyword,
+.token.namespace,
+.token.number,
+.token.operator,
+.token.prolog,
+.token.property,
+.token.regex,
+.token.selector,
+.token.string,
+.token.symbol,
+.token.tag,
+.token.url,
+.token.variable {
+    #{$darkmode-selector} & {
+        -webkit-font-smoothing: subpixel-antialiased;
+    }
 }
 
 .line-numbers .line-numbers-rows {

@@ -31,8 +31,9 @@ code {
     border: 1px solid rgba(black, 0.1);
 
     #{$darkmode-selector} & {
+        -webkit-font-smoothing: subpixel-antialiased;
+
         font-size: 1em;
-        font-weight: 600;
         border: none;
         background-color: transparent;
         color: var(--pink-900);

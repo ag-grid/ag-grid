@@ -29,6 +29,10 @@
 
     #{$darkmode-selector} & {
         --alert-background-color: var(--background-600);
+
+        a {
+            -webkit-font-smoothing: subpixel-antialiased;
+        }
     }
 }
 
