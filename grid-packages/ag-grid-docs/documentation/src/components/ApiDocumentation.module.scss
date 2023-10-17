@@ -117,6 +117,10 @@
     font-size: var(--font-size-small);
     font-family: var(--monospace-font-family);
     color: var(--code-text-color);
+
+    #{$darkmode-selector} & {
+        font-weight: 600;
+    }
 }
 
 .description {

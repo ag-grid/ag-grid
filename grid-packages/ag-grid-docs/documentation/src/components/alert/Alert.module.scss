@@ -2,7 +2,7 @@
 @use '../../design-system/' as *;
 
 .alert {
-    --alert-background-color: var(--background-300);
+    --alert-background-color: var(--background-500);
     --icon-size: 3em;
 
     display: flex;
@@ -29,6 +29,10 @@
 
     #{$darkmode-selector} & {
         --alert-background-color: var(--background-600);
+
+        a {
+            -webkit-font-smoothing: subpixel-antialiased;
+        }
     }
 }
 
@@ -46,6 +50,10 @@
 
         bottom: 0.125em;
     }
+
+    #{$darkmode-selector} & :global(.icon) {
+        --text-color: var(--orange-900);
+    }
 }
 
 .alert.warning {
@@ -57,7 +65,7 @@
     }
 
     #{$darkmode-selector} & {
-        --alert-background-color: var(--orange-800);
+        --alert-background-color: var(--orange-200);
         --text-color: var(--white);
 
         :global(.icon) {

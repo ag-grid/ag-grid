@@ -1,15 +1,15 @@
 @use '../core' as *;
 
-button:not([class^="ag-"]) {
+button#{$exclude-grid-selector} {
     font-family: var(--font-family);
     font-size: inherit;
     line-height: inherit;
     cursor: pointer;
 }
 
-button:not([class^="ag-"]),
-input[type='reset']:not([class^="ag-"]),
-input[type='submit']:not([class^="ag-"]),
+button#{$exclude-grid-selector},
+input[type='reset']#{$exclude-grid-selector},
+input[type='submit']#{$exclude-grid-selector},
 .button,
 .button-secondary {
     appearance: none;
@@ -51,7 +51,7 @@ input[type='submit']:not([class^="ag-"]),
         --button-color: var(--neutral-200);
         --button-hover-color: var(--neutral-200);
         --button-active-color: var(--neutral-200);
-        --button-text-color: var(--neutral-600);
+        --button-text-color: var(--neutral-800);
         --button-focus-box-shadow-color: transparent;
 
         cursor: default;
@@ -68,15 +68,23 @@ input[type='submit']:not([class^="ag-"]),
     }
 }
 
-.button-secondary:not([class^="ag-"]) {
+.button-secondary#{$exclude-grid-selector} {
     --button-color: var(--primary-100);
-    --button-hover-color: var(--primary-200);
-    --button-active-color: var(--primary-300);
+    --button-hover-color: var(--primary-300);
+    --button-active-color: var(--primary-400);
     --button-text-color: var(--dark-blue-800);
-    --button-focus-box-shadow-color: var(--background-300);
+    --button-focus-box-shadow-color: var(--900);
+
+    #{$darkmode-selector} & {
+        --button-color: var(--primary-300);
+        --button-hover-color: var(--primary-400);
+        --button-active-color: var(--primary-500);
+        --button-text-color: var(--default-text-color);
+        --button-focus-box-shadow-color: var(--900);
+    }
 }
 
-.button-input:not([class^="ag-"]) {
+.button-input#{$exclude-grid-selector} {
     --button-color: var(--input-background-color);
     --button-hover-color: var(--input-background-color);
     --button-active-color: var(--input-background-color);
@@ -96,8 +104,8 @@ input[type='submit']:not([class^="ag-"]),
     }
 }
 
-.button-style-none:not([class^="ag-"]),
-.button-as-link:not([class^="ag-"]) {
+.button-style-none#{$exclude-grid-selector},
+.button-as-link#{$exclude-grid-selector} {
     --button-text-color: var(--default-text-color);
 
     appearance: none;
@@ -119,7 +127,7 @@ input[type='submit']:not([class^="ag-"]),
     }
 }
 
-.button-as-link:not([class^="ag-"]) {
+.button-as-link#{$exclude-grid-selector} {
     --button-text-color: var(--link-color);
     --text-color: var(--link-color);
     --icon-size: 1.5em;

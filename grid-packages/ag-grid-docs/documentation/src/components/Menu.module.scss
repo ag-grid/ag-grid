@@ -21,7 +21,7 @@
         margin-right: var(--right-margin);
         padding-right: var(--menu-horizontal-margin);
         padding-left: var(--horizontal-margin);
-        border-right: solid 1px var(--bright-blue-gray);
+        border-right: solid 1px var(--secondary-border-color);
 
         @supports (position: sticky) {
             position: sticky;
@@ -34,6 +34,10 @@
 
     @media screen and (min-width: $breakpoint-docs-nav-large) {
         padding-left: var(--menu-horizontal-margin);
+    }
+
+    #{$darkmode-selector} & {
+        border-bottom: none;
     }
 }
 
@@ -55,7 +59,7 @@ ul.menuInner {
         margin-top: $size-2;
         margin-bottom: $size-2;
         height: 1px;
-        background-color: var(--bright-blue-gray);
+        background-color: var(--secondary-border-color);
     }
 
     h5 {
@@ -85,7 +89,7 @@ button:not([class^="ag-"]).sectionHeader {
     }
 
     &:focus-visible {
-        border-color: var(--background-300);
+        border-color: var(--700);
     }
 
     &:hover .sectionIcon {
