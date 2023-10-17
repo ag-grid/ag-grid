@@ -30,7 +30,7 @@ To lookup a Row Node use `getRowNode()` on the Grid API as follows:
 
 <snippet>
 | // get the row node with ID 55
-| const rowNode = gridOptions.api.getRowNode('55');
+| const rowNode = api.getRowNode('55');
 |
 | // do something with the row, e.g. select it
 | rowNode.setSelected(true);
@@ -42,22 +42,22 @@ Sometimes you may want to iterate through all the Row Nodes in the grid. This ca
 
 <snippet>
 | // iterate through every node in the grid
-| gridOptions.api.forEachNode((rowNode, index) => {
+| api.forEachNode((rowNode, index) => {
 |     console.log('node ' + rowNode.data.athlete + ' is in the grid');
 | });
 |
 | // iterate only nodes that pass the filter
-| gridOptions.api.forEachNodeAfterFilter((rowNode, index) => {
+| api.forEachNodeAfterFilter((rowNode, index) => {
 |     console.log('node ' + rowNode.data.athlete + ' passes the filter');
 | });
 |
 | // iterate only nodes that pass the filter and ordered by the sort order
-| gridOptions.api.forEachNodeAfterFilterAndSort((rowNode, index) => {
+| api.forEachNodeAfterFilterAndSort((rowNode, index) => {
 |     console.log('node ' + rowNode.data.athlete + ' passes the filter and is in this order');
 | });
 |
 | // iterate through every leaf node in the grid
-| gridOptions.api.forEachLeafNode((rowNode, index) => {
+| api.forEachLeafNode((rowNode, index) => {
 |     console.log('node ' + rowNode.data.athlete + ' is not a group!');
 | });
 </snippet>

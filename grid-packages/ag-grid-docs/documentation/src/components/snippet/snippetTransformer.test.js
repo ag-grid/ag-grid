@@ -138,13 +138,13 @@ const myValueFormatter = params => {
     describe('given api statements', () => {
         runSnippetFrameworkTests(
 `// save the columns state
-const savedState = gridOptions.api.getColumnState();
+const savedState = api.getColumnState();
 
 // restore the column state
-gridOptions.api.applyColumnState({ state: savedState });
+api.applyColumnState({ state: savedState });
 
 // get the row node with ID 55
-const rowNode = gridOptions.api.getRowNode('55');`
+const rowNode = api.getRowNode('55');`
         );
     });
 

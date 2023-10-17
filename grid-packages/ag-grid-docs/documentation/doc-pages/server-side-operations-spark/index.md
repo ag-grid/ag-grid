@@ -437,7 +437,7 @@ In order for the grid to show these newly created columns an explicit API call i
 
 
 ```js
-gridOptions.api.setPivotResultColumns(pivotResultColumns);
+api.setPivotResultColumns(pivotResultColumns);
 ```
 
 ## Aggregation

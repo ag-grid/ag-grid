@@ -10,7 +10,7 @@ This section shows how Range Charts can be created via the Grid API.
 Range Charts can be created through `gridApi.createRangeChart()` as shown below:
 
 <snippet>
-| gridOptions.api.createRangeChart({
+| api.createRangeChart({
 |     chartType: 'groupedColumn',
 |     cellRange: {
 |         rowStartIndex: 0,

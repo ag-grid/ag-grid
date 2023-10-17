@@ -72,9 +72,9 @@ When more custom behaviour is required, obtain a reference to the rowNode and th
 For example, to expand a group with the name 'United States' would be done as follows:
 
 <snippet>
-| gridOptions.api.forEachNode(node => {
+| api.forEachNode(node => {
 |     if (node.key === 'United States') {
-|         gridOptions.api.setRowNodeExpanded(node, true);
+|         api.setRowNodeExpanded(node, true);
 |     }
 | });
 </snippet>

@@ -53,16 +53,16 @@ Below is a code example of using the editing API methods.
 
 <snippet>
 | // start editing country cell on first row
-| gridOptions.api.startEditingCell({
+| api.startEditingCell({
 |     rowIndex: 0,
 |     colKey: 'country'
 | });
 | 
 | // stop editing
-| gridOptions.api.stopEditing();
+| api.stopEditing();
 | 
 | // print details of editing cell
-| const cellDefs = gridOptions.api.getEditingCells();
+| const cellDefs = api.getEditingCells();
 | cellDefs.forEach(cellDef => {
 |     console.log(cellDef.rowIndex);
 |     console.log(cellDef.column.getId());

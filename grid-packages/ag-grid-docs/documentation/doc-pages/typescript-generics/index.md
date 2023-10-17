@@ -47,7 +47,7 @@ Set the row data type on the grid options interface via `GridOptions<ICar>`. The
 |// Grid Api methods use ICar interface
 |function onSelection() {
 |  // api.getSelectedRows() : ICar[]
-|  const cars: ICar[] = gridOptions.api!.getSelectedRows();  
+|  const cars: ICar[] = api!.getSelectedRows();  
 |}
 </snippet>
 

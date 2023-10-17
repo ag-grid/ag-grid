@@ -108,10 +108,10 @@ It is possible to expand and collapse all group rows using the `expandAll()` and
 
 <snippet>
 | // Expand all group rows
-| gridOptions.api.expandAll();
+| api.expandAll();
 |
 | // Collapse all group rows
-| gridOptions.api.collapseAll();
+| api.collapseAll();
 </snippet>
 
 Calling `expandAll()` and `collapseAll()` will impact **all loaded group nodes**, including those not visible due to their containing group been closed. This means there could potentially be a huge number of groups expanded, so this method should be used very wisely to not create massive amount of server requests and loading a large amount of data.
@@ -122,7 +122,7 @@ To open only specific groups, e.g. only groups at the top level, then use the `f
 
 <snippet>
 | // Expand all top level row nodes
-| gridOptions.api.forEachNode(node => {
+| api.forEachNode(node => {
 |     if (node.group && node.level == 0) {
 |         node.setExpanded(true);
 |     }

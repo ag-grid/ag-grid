@@ -40,7 +40,7 @@ gridOptions.rowModelType = 'infinite';
 gridOptions.datasource = myDataSource;
 
 // after grid initialised, you can set or change the datasource
-gridOptions.api.setDatasource(myDataSource);
+api.setDatasource(myDataSource);
 ```
 
 ## Datasource
@@ -54,7 +54,7 @@ property or using the grid API.
 gridOptions.datasource = myDatasource;
 
 // or use the api after the grid is initialised
-gridOptions.api.setDatasource(myDatasource);
+api.setDatasource(myDatasource);
 ```
 
 ### Changing the Datasource

@@ -165,9 +165,9 @@ An example of getting the cell renderer for exactly one cell is as follows:
 
 <snippet transform={false}>
 |// example - get cell renderer for first row and column 'gold'
-|const firstRowNode = gridOptions.api.getDisplayedRowAtIndex(0);
+|const firstRowNode = api.getDisplayedRowAtIndex(0);
 |const params = { columns: ['gold'], rowNodes: [firstRowNode] };
-|const instances = gridOptions.api.getCellRendererInstances(params);
+|const instances = api.getCellRendererInstances(params);
 |
 |if (instances.length > 0) {
 |    // got it, user must be scrolled so that it exists

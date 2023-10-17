@@ -78,7 +78,7 @@ const gridOptions = {
 Alternatively, the datasource can be registered via the grid API:
 
 <snippet>
-gridOptions.api.setServerSideDatasource(myDatasource);
+api.setServerSideDatasource(myDatasource);
 </snippet>
 
 The example below demonstrates loading rows using a simple SSRM Datasource. Note the following:

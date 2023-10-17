@@ -78,13 +78,13 @@ const VueExample = {
         };
     },
     mounted() {
-        this.gridApi = this.gridOptions.api;
     },
     methods: {
         onCellValueChanged(event) {
             console.log('data after changes is: ', event.data);
         },
         onGridReady(params) {
+            this.gridApi = params.api;
             params.api.sizeColumnsToFit();
         },
         createRowData() {
