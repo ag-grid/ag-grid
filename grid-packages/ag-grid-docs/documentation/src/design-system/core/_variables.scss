@@ -274,15 +274,15 @@ $dark-scales: (
         '900': #c50000,
     ),
     'pink': (
-        '100': #fce8f2,
-        '200': #fbcfe4,
-        '300': #f9b5d5,
-        '400': #f69bc4,
-        '500': #f37fb3,
-        '600': #ee62a0,
-        '700': #e83e8d,
-        '800': #e10079,
-        '900': #d90064,
+        '100': color-mix(in srgb, #d90064 calc(100% / 7 * 1), var(--default-background-color)),
+        '200': color-mix(in srgb, #d90064 calc(100% / 7 * 2), var(--default-background-color)),
+        '300': color-mix(in srgb, #d90064 calc(100% / 7 * 3), var(--default-background-color)),
+        '400': color-mix(in srgb, #d90064 calc(100% / 7 * 4), var(--default-background-color)),
+        '500': color-mix(in srgb, #d90064 calc(100% / 7 * 5), var(--default-background-color)),
+        '600': color-mix(in srgb, #d90064 calc(100% / 7 * 6), var(--default-background-color)),
+        '700': #d90064,
+        '800': color-mix(in srgb, #d90064, #ff0f7d),
+        '900': #ff0f7d,
     ),
     'orange': (
         '100': color-mix(in srgb, #fd5c00 calc(100% / 7 * 1), var(--default-background-color)),
@@ -383,7 +383,7 @@ $dark-semantic-colors: (
     'button-active-color': primary-900,
     'button-focus-box-shadow-color': primary-100,
     // Code
-    'code-text-color': pink-600,
+    'code-text-color': pink-900,
     'code-background-color': neutral-100,
     // Input
     'input-background-color': default-background-color,
