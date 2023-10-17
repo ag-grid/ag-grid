@@ -370,7 +370,7 @@ $dark-semantic-colors: (
     'secondary-text-color': neutral-600,
     // Border
     'border-color': neutral-400,
-    'secondary-border-color': neutral-200,
+    'secondary-border-color': neutral-300,
     // Link
     'link-color': primary-500,
     'link-hover-color': orange-700,
@@ -385,14 +385,14 @@ $dark-semantic-colors: (
     'code-background-color': neutral-100,
     // Input
     'input-background-color': default-background-color,
-    'input-secondary-background-color': neutral-300,
+    'input-secondary-background-color': neutral-400,
     'input-secondary-border-color': secondary-text-color,
     'input-primary-color': primary-600,
     'input-focus-border-color': primary-500,
     'input-focus-box-shadow-color': background-900,
-    'input-error-color': red-500,
+    'input-error-color': red-600,
     // Table
-    'table-odd-row-background-color': background-200,
+    'table-odd-row-background-color': background-100,
     // Site header
     'site-header-background': dark-blue-400,
     'site-nav-background': dark-blue-800,

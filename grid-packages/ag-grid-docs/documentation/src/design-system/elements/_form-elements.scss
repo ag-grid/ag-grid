@@ -76,9 +76,17 @@ input[type='number'] {
         outline: none;
         transition: border-color $default-transition-timing, box-shadow $default-transition-timing;
 
+        #{$darkmode-selector} & {
+            border-color: var(--neutral-700);
+        }
+
         &::placeholder {
             font-style: italic;
             color: var(--secondary-text-color);
+
+            #{$darkmode-selector} & {
+                color: var(--neutral-800);
+            }
         }
 
         &:hover:not(:disabled):not([readonly]),
@@ -181,6 +189,10 @@ select {
     border: 2px solid var(--border-color);
     outline: none;
     transition: border-color $default-transition-timing, box-shadow $default-transition-timing;
+
+    #{$darkmode-selector} & {
+        border-color: var(--neutral-700);
+    }
 
     &:not(:disabled) {
         cursor: pointer;
