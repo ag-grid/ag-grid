@@ -53,20 +53,20 @@ pre.code {
     overflow-y: auto !important;
 
     #{$darkmode-selector} & {
-        --comment-color: hsl(120, 30%, 40%);
-        --tag-color: var(--red-500);
-        --string-color: var(--pink-700);
+        --comment-color: #4db345;
+        --tag-color: #ff3c7c;
+        --string-color: #ff3d97;
         --punctuation-color: var(--default-text-color);
         --keyword-color: var(--primary-500);
-        --symbol-color: #36acaa;
+        --symbol-color: #36d8d6;
         --function-color: var(--default-text-color);
         --deleted-color: #9a050f;
-        --selector-color: #00009f;
+        --selector-color: #36d8d6;
         --important-color: #e90;
         --class-name-color: #2b91af;
         --property-color: var(--primary-700);
 
-        border: none;
+        border-color: var(--neutral-300);
     }
 }
 
@@ -74,6 +74,7 @@ pre.code > code {
     position: relative;
     display: inline-block;
     min-width: 100%;
+    margin-bottom: -6px;
     padding: $vertical-padding $size-2;
     font-size: 0.9375em;
     background-color: var(--default-background-color);
@@ -89,6 +90,8 @@ pre.code > code {
 
     #{$darkmode-selector} & {
         --default-background-color: var(--background-100);
+
+        background-image: linear-gradient(color-mix(in srgb, var(--background-200) 75%, var(--background-100)) 50%, var(--background-100) 50%);
     }
 }
 
@@ -245,9 +248,18 @@ code[class*='language-css'] {
 
 .line-numbers .line-numbers-rows {
     border-right: 1px solid var(--background-700);
+
+
+    #{$darkmode-selector} & {
+        border-right-color: var(--neutral-300);
+    }
 }
 
 .line-numbers-rows > span:before {
     color: var(--dark-blue-200);
     opacity: .33;
+
+    #{$darkmode-selector} & {
+        color: var(--neutral-900);
+    }
 }
