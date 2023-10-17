@@ -50,6 +50,7 @@ export interface SetValueModelParams<V> {
 export class SetValueModel<V> implements IEventEmitter {
     public static EVENT_AVAILABLE_VALUES_CHANGED = 'availableValuesChanged';
 
+    private readonly gridOptionsService: GridOptionsService;
     private readonly localEventService = new EventService();
     private readonly formatter: TextFormatter;
     private readonly clientSideValuesExtractor: ClientSideValuesExtractor<V>;
@@ -129,6 +130,7 @@ export class SetValueModel<V> implements IEventEmitter {
         } = filterParams;
 
         this.filterParams = filterParams;
+        this.gridOptionsService = gridOptionsService;
         this.setIsLoading = params.setIsLoading;
         this.translate = params.translate;
         this.caseFormat = params.caseFormat;
@@ -272,7 +274,8 @@ export class SetValueModel<V> implements IEventEmitter {
                     this.setIsLoading(true);
 
                     const callback = this.providedValues as SetFilterValuesFunc<any, V>;
-                    const { columnApi, api, context, column, colDef } = this.filterParams;
+                    const { columnApi, api, column, colDef } = this.filterParams;
+                    const { context } = this.gridOptionsService;
                     const params: SetFilterValuesFuncParams<any, V> = {
                         success: values => {
                             this.setIsLoading(false);
