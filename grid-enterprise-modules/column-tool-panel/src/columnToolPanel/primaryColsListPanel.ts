@@ -129,13 +129,11 @@ export class PrimaryColsListPanel extends Component {
             this.onColumnsChanged();
         }
 
+        if (this.params.suppressColumnMove) { return; }
+        
         this.colsListPanelItemDragFeature = this.createManagedBean(
-            new PrimaryColsListPanelItemDragFeature(this, this.virtualList, this.isColumnMoveSuppressed())
+            new PrimaryColsListPanelItemDragFeature(this, this.virtualList)
         );
-    }
-
-    private isColumnMoveSuppressed(): boolean {
-        return this.params.suppressColumnMove || this.gridOptionsService.is('suppressMovableColumns');
     }
 
     private createComponentFromItem(item: ColumnModelItem, listItemElement: HTMLElement): Component {

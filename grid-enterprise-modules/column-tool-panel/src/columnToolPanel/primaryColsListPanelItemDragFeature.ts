@@ -25,7 +25,6 @@ export class PrimaryColsListPanelItemDragFeature extends BeanStub {
     constructor(
         private readonly comp: PrimaryColsListPanel,
         private readonly virtualList: VirtualList,
-        private preventColsMove: boolean = false,
     ) { super(); }
 
     @PostConstruct
@@ -52,23 +51,15 @@ export class PrimaryColsListPanelItemDragFeature extends BeanStub {
                 ) => this.moveItem(currentDragValue, lastHoveredListItem)
             }
         ));
-
-        this.addManagedPropertyListener(
-            Events.EVENT_SUPPRESS_COLUMN_MOVE_CHANGED,
-            this.handleSuppressMovableColumnsUpdate,
-        );
     }
-
-    handleSuppressMovableColumnsUpdate = () => {
-        this.preventColsMove = this.gridOptionsService.is('suppressMovableColumns') ?? false;
-    };
 
     private getCurrentDragValue(listItemDragStartEvent: ColumnPanelItemDragStartEvent): Column | ProvidedColumnGroup {
         return listItemDragStartEvent.column;
     }
 
     private isMoveBlocked(currentDragValue: Column | ProvidedColumnGroup | null): boolean {
-        if (this.preventColsMove) {
+        const preventMoving = this.gridOptionsService.is('suppressMovableColumns');
+        if (preventMoving) {
             return true;
         }
 
