@@ -333,7 +333,7 @@ export class HeaderGroupCellCtrl extends AbstractHeaderCellCtrl {
         };
     }
 
-    public isSuppressMoving(): boolean {
+    private isSuppressMoving(): boolean {
         // if any child is fixed, then don't allow moving
         let childSuppressesMoving = false;
         this.columnGroup.getLeafColumns().forEach((column: Column) => {
