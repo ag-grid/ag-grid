@@ -26,12 +26,18 @@
 
 .gridLicense {
     --card-color: #0665cb;
-    --header-tint: 0.9;
+    --header-tint: 90%;
 }
 
 .chartsLicense {
     --card-color: #144dae;
-    --header-tint: 0.9;
+    --header-tint: 90%;
+}
+
+.product{
+    --card-color: #0f5bce;
+    --header-tint: 90%;
+    --content-tint: 96%;
 }
 
 .licenseMeta {
@@ -58,6 +64,12 @@
 
 .logo {
     height: $size-7;
+
+    #{$darkmode-selector} & {
+        :global(#LogoType) * {
+            fill: var(--default-text-color) !important;
+        }
+    }
 }
 
 p.name {

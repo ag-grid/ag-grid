@@ -358,6 +358,30 @@
         margin-bottom: $size-half;
     }
 
+    .singleApplicationLicense {
+        --card-color: #0f5bce;
+        --header-tint: 90%;
+        --content-tint: 96%;
+
+        #{$darkmode-selector} & {
+            --card-color: #16325c;
+            --header-tint: 66%;
+            --content-tint: 88%;
+        }
+    }
+
+    .multipleApplicationsLicense {
+        --card-color: #2aaa33;
+        --header-tint: 91%;
+        --content-tint: 97%;
+
+        #{$darkmode-selector} & {
+            --card-color: #175a1b;
+            --header-tint: 72%;
+            --content-tint: 88%;
+        }
+    }
+
     .singleApplicationLicense,
     .multipleApplicationsLicense {
         @media screen and (min-width: $breakpoint-pricing-large) {
