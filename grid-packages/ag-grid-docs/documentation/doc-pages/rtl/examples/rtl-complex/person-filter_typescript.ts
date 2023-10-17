@@ -1,13 +1,13 @@
 import { IDoesFilterPassParams, IFilterComp, IFilterParams } from "@ag-grid-community/core";
 
 export class PersonFilter implements IFilterComp {
-    params!: IFilterParams;
+    filterParams!: IFilterParams;
     filterText!: string | null;
     gui!: HTMLDivElement;
     eFilterText: any;
 
     init(params: IFilterParams) {
-        this.params = params;
+        this.filterParams = params;
         this.filterText = null
         this.setupGui(params)
     }
@@ -40,15 +40,11 @@ export class PersonFilter implements IFilterComp {
     }
 
     doesFilterPass(params: IDoesFilterPassParams) {
-        const { api, colDef, column, columnApi, context } = this.params;
+        
         const { node } = params;
 
-        const value = this.params.valueGetter({
-            api,
-            colDef,
-            column,
-            columnApi,
-            context,
+        const value = this.filterParams.valueGetter({
+            ...this.filterParams,
             data: node.data,
             getValue: (field) => node.data[field],
             node,

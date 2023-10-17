@@ -70,14 +70,9 @@ function getMyFilter(): IFilterType {
         doesFilterPass(params: IDoesFilterPassParams) {
             filterCallCount++
 
-            const { api, columnApi, colDef, column, context } = this.filterParams;
             const { node } = params;
             const value = this.filterParams.valueGetter({
-                api,
-                columnApi,
-                colDef,
-                column,
-                context,
+                ...this.filterParams,
                 data: node.data,
                 getValue: (field) => node.data[field],
                 node,
