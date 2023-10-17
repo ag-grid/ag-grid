@@ -132,6 +132,10 @@
         --font-size: var(--font-size-extra-large);
         --x-padding: 20px;
     }
+
+    #{$darkmode-selector} & {
+        background-color: var(--background-500);
+    }
 }
 
 .frameworkSelector.fullWidth .option {
