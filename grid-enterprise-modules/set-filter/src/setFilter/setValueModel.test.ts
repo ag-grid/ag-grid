@@ -53,7 +53,8 @@ function createSetValueModel(opts: Partial<typeof DEFAULT_OPTS> = DEFAULT_OPTS) 
             for (const value of values) {
                 callback(({ data: { value } } as any));
             }
-        }
+        },
+        isRowDataLoaded: () => true,
     } as IClientSideRowModel;
 
     const valueFormatterService = mock<ValueFormatterService>('formatValue');
@@ -88,7 +89,8 @@ function createSetValueModel(opts: Partial<typeof DEFAULT_OPTS> = DEFAULT_OPTS) 
         valueFormatter: params => _.toStringOrNull(params.value)!,
         gridOptionsService,
         columnModel,
-        valueService
+        valueService,
+        addManagedListener: () => undefined
     });
 }
 
