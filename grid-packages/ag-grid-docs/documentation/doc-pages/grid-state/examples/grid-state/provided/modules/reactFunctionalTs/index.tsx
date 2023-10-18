@@ -75,6 +75,7 @@ const GridExample = () => {
     }, []);
 
     const onStateUpdated = useCallback((params: StateUpdatedEvent<IOlympicData>) => {
+        console.log('State updated', params.state);
         setCurrentState(params.state);
     }, []);
 

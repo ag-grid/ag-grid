@@ -5,7 +5,7 @@ import { HttpClient } from '@angular/common/http';
 import '@ag-grid-community/styles/ag-grid.css';
 import "@ag-grid-community/styles/ag-theme-alpine.css";
 import '../styles.css';
-import { ColDef, ColGroupDef, GridApi, GridOptions, GridReadyEvent, SideBarDef, createGrid, GridState, GridPreDestroyedEvent } from '@ag-grid-community/core';
+import { ColDef, ColGroupDef, GridApi, GridOptions, GridReadyEvent, SideBarDef, createGrid, GridState, GridPreDestroyedEvent, StateUpdatedEvent } from '@ag-grid-community/core';
 // Required feature modules are registered in app.module.ts
 import { IOlympicData } from './interfaces'
 
@@ -33,6 +33,7 @@ import { IOlympicData } from './interfaces'
                 [rowData]="rowData"
                 [initialState]="initialState"
                 [gridOptions]="gridOptions"
+                (stateUpdated)="onStateUpdated($event)"
                 (gridReady)="onGridReady($event)"
             ></ag-grid-angular>
         </div>
@@ -95,6 +96,10 @@ export class AppComponent {
 
     printState(): void {
         console.log('Grid state', this.gridApi.getState());
+    }
+
+    onStateUpdated(params: StateUpdatedEvent<IOlympicData>): void {
+        console.log('State updated', params.state);
     }
 
     onGridReady(params: GridReadyEvent<IOlympicData>): void {

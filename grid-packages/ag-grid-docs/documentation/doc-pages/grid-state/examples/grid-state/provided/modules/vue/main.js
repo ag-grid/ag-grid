@@ -40,6 +40,7 @@ const VueExample = {
                     :rowData="rowData"
                     :initialState="initialState"
                     @grid-pre-destroyed="onGridPreDestroyed"
+                    @state-updated="onStateUpdated"
                 ></ag-grid-vue>
             </div>
         </div>
@@ -110,6 +111,9 @@ const VueExample = {
         },
         onGridPreDestroyed(params) {
             console.log('Grid state on destroy (can be persisted)', params.state);
+        },
+        onStateUpdated(params) {
+            console.log('State updated', params.state);
         }
     }
 }

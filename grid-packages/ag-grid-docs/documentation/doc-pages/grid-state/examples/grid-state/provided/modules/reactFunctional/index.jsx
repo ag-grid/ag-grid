@@ -66,6 +66,7 @@ const GridExample = () => {
     }, []);
 
     const onStateUpdated = useCallback(params => {
+        console.log('State updated', params.state);
         setCurrentState(params.state);
     }, []);
 

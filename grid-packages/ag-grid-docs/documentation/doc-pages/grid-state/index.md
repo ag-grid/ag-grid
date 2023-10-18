@@ -59,4 +59,6 @@ The following is captured in the grid state:
 - [Side Bar](/side-bar/)
 - [Sort](/row-sorting/)
 
+Note that all the state properties are optional, so a property can be excluded if you do not want to restore it.
+
 <interface-documentation interfaceName='GridState'></interface-documentation>
