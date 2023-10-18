@@ -58,6 +58,7 @@
     }
 }
 
+<<<<<<< HEAD
 
 
 html {
@@ -66,6 +67,8 @@ html {
 
 
 
+=======
+>>>>>>> 1b23d27fab (AG-9397 - Minor Sass refactor)
 // Create CSS variables for all dark mode colors
 @mixin dark-mode-variables {
     @each $name, $scale in $dark-scales {
