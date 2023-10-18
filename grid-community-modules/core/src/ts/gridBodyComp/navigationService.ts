@@ -373,7 +373,7 @@ export class NavigationService extends BeanStub {
             const { rowIndex, rowPinned } = previous.getRowPosition();
             const firstRow = rowPinned ? rowIndex === 0 : rowIndex === this.paginationProxy.getPageFirstRow();
             if (firstRow) {
-                if (this.gridOptionsService.getNum('headerHeight') === 0) {
+                if (this.gridOptionsService.get('headerHeight') === 0) {
                     this.focusService.focusNextGridCoreContainer(true, true);
                 } else {
                     keyboardEvent.preventDefault();
@@ -668,7 +668,7 @@ export class NavigationService extends BeanStub {
             // if the current cell is spanning across multiple columns, we need to move
             // our current position to be the last cell on the right before finding the
             // the next target.
-            if (this.gridOptionsService.is('enableRtl')) {
+            if (this.gridOptionsService.get('enableRtl')) {
                 if (key === KeyCode.LEFT) {
                     nextCell = this.getLastCellOfColSpan(nextCell);
                 }

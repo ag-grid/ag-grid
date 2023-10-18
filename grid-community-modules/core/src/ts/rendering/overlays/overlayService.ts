@@ -36,7 +36,7 @@ export class OverlayService extends BeanStub {
     }
 
     public showLoadingOverlay(): void {
-        if (this.gridOptionsService.is('suppressLoadingOverlay')) { return; }
+        if (this.gridOptionsService.get('suppressLoadingOverlay')) { return; }
 
         const params: WithoutGridCommon<ILoadingOverlayParams> = {};
 
@@ -45,7 +45,7 @@ export class OverlayService extends BeanStub {
     }
 
     public showNoRowsOverlay(): void {
-        if (this.gridOptionsService.is('suppressNoRowsOverlay')) { return; }
+        if (this.gridOptionsService.get('suppressNoRowsOverlay')) { return; }
 
         const params: WithoutGridCommon<INoRowsOverlayParams> = {};
 
@@ -67,7 +67,7 @@ export class OverlayService extends BeanStub {
 
     private showOrHideOverlay(): void {
         const isEmpty = this.paginationProxy.isEmpty();
-        const isSuppressNoRowsOverlay = this.gridOptionsService.is('suppressNoRowsOverlay');
+        const isSuppressNoRowsOverlay = this.gridOptionsService.get('suppressNoRowsOverlay');
         if (isEmpty && !isSuppressNoRowsOverlay) {
             this.showNoRowsOverlay();
         } else {

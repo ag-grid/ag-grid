@@ -104,7 +104,7 @@ export class GridCtrl extends BeanStub {
     }
 
     private addRtlSupport(): void {
-        const cssClass = this.gridOptionsService.is('enableRtl') ? 'ag-rtl' : 'ag-ltr';
+        const cssClass = this.gridOptionsService.get('enableRtl') ? 'ag-rtl' : 'ag-ltr';
         this.view.setRtlClass(cssClass);
     }
 
@@ -151,7 +151,7 @@ export class GridCtrl extends BeanStub {
             if (this.focusService.focusGridView(lastColumn, true)) { return true; }
         }
         
-        if (this.gridOptionsService.getNum('headerHeight') === 0) {
+        if (this.gridOptionsService.get('headerHeight') === 0) {
             return this.focusService.focusGridView(allColumns[0]);
         }
 

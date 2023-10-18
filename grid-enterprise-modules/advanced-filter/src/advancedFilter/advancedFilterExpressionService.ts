@@ -154,7 +154,7 @@ export class AdvancedFilterExpressionService extends BeanStub {
         }
         const columns = this.columnModel.getAllPrimaryColumns() ?? [];
         const entries: AutocompleteEntry[] = [];
-        const includeHiddenColumns = this.gridOptionsService.is('includeHiddenColumnsInAdvancedFilter');
+        const includeHiddenColumns = this.gridOptionsService.get('includeHiddenColumnsInAdvancedFilter');
         columns.forEach(column => {
             if (column.getColDef().filter && (includeHiddenColumns || column.isVisible() || column.isRowGroupActive())) {
                 entries.push({

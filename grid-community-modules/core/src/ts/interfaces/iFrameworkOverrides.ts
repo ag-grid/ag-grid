@@ -36,4 +36,9 @@ export interface IFrameworkOverrides {
      * Which rendering engine is used for the grid components. Can be either 'vanilla' or 'react'.
      */
     renderingEngine: 'vanilla' | 'react';
+
+    /**
+     * Which framework is being used. Used for logging documentation URLs.
+     */
+    frameworkName: 'javascript' | 'angular' | 'react' | 'vue' | 'solid';
 }

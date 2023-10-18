@@ -113,7 +113,7 @@ export class FilterAggregatesStage extends BeanStub implements IRowNodeStage {
             return;
         }
 
-        if (this.gridOptionsService.is('treeData')) {
+        if (this.gridOptionsService.get('treeData')) {
             this.setAllChildrenCountTreeData(rowNode);
         } else {
             this.setAllChildrenCountGridGrouping(rowNode);

@@ -196,17 +196,17 @@ export class InfiniteRowModel extends BeanStub implements IInfiniteRowModel {
             // properties - this way we take a snapshot of them, so if user changes any, they will be
             // used next time we create a new cache, which is generally after a filter or sort change,
             // or a new datasource is set
-            initialRowCount: this.defaultIfInvalid(this.gridOptionsService.getNum('infiniteInitialRowCount'), 1),
-            maxBlocksInCache: this.gridOptionsService.getNum('maxBlocksInCache'),
+            initialRowCount: this.gridOptionsService.get('infiniteInitialRowCount'),
+            maxBlocksInCache: this.gridOptionsService.get('maxBlocksInCache'),
             rowHeight: this.gridOptionsService.getRowHeightAsNumber(),
 
             // if user doesn't provide overflow, we use default overflow of 1, so user can scroll past
             // the current page and request first row of next page
-            overflowSize: this.defaultIfInvalid(this.gridOptionsService.getNum('cacheOverflowSize'), 1),
+            overflowSize: this.gridOptionsService.get('cacheOverflowSize'),
 
             // page size needs to be 1 or greater. having it at 1 would be silly, as you would be hitting the
             // server for one page at a time. so the default if not specified is 100.
-            blockSize: this.defaultIfInvalid(this.gridOptionsService.getNum('cacheBlockSize'), 100),
+            blockSize: this.gridOptionsService.get('cacheBlockSize'),
 
             // the cache could create this, however it is also used by the pages, so handy to create it
             // here as the settings are also passed to the pages
@@ -218,10 +218,6 @@ export class InfiniteRowModel extends BeanStub implements IInfiniteRowModel {
         this.eventService.dispatchEventOnce({
             type: Events.EVENT_ROW_COUNT_READY
         });
-    }
-
-    private defaultIfInvalid(value: number | undefined, defaultValue: number): number {
-        return value! > 0 ? value! : defaultValue;
     }
 
     private destroyCache(): void {

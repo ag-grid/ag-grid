@@ -116,7 +116,7 @@ export abstract class AbstractHeaderCellCtrl<TComp = any, TColumn = any, TFeatur
 
         if (!isLeftOrRight) { return; }
         
-        const isLeft = (e.key === KeyCode.LEFT) !== this.gridOptionsService.is('enableRtl');
+        const isLeft = (e.key === KeyCode.LEFT) !== this.gridOptionsService.get('enableRtl');
         const direction = HorizontalDirection[isLeft ? 'Left' : 'Right' ];
 
         if (e.altKey) {

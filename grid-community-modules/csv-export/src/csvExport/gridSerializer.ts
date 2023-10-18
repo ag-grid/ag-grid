@@ -63,13 +63,13 @@ export class GridSerializer extends BeanStub {
         const context = this.gridOptionsService.context;
         const api = this.gridOptionsService.api;
         const columnApi = this.gridOptionsService.columnApi;
-        const skipSingleChildrenGroup = this.gridOptionsService.is('groupRemoveSingleChildren');
-        const skipLowestSingleChildrenGroup = this.gridOptionsService.is('groupRemoveLowestSingleChildren');
+        const skipSingleChildrenGroup = this.gridOptionsService.get('groupRemoveSingleChildren');
+        const skipLowestSingleChildrenGroup = this.gridOptionsService.get('groupRemoveLowestSingleChildren');
         // if onlySelected, we ignore groupHideOpenParents as the user has explicitly selected the rows they wish to export.
         // similarly, if specific rowNodes are provided we do the same. (the clipboard service uses rowNodes to define which rows to export)
         const isClipboardExport = params.rowPositions != null;
         const isExplicitExportSelection = isClipboardExport || !!params.onlySelected;
-        const hideOpenParents = this.gridOptionsService.is('groupHideOpenParents') && !isExplicitExportSelection;
+        const hideOpenParents = this.gridOptionsService.get('groupHideOpenParents') && !isExplicitExportSelection;
         const isLeafNode = this.columnModel.isPivotMode() ? node.leafGroup : !node.group;
         const isFooter = !!node.footer;
         const skipRowGroups = params.skipGroups || params.skipRowGroups;
@@ -316,7 +316,7 @@ export class GridSerializer extends BeanStub {
             return this.columnModel.getGridColumns(columnKeys);
         }
 
-        const isTreeData = this.gridOptionsService.is('treeData');
+        const isTreeData = this.gridOptionsService.get('treeData');
 
         let columnsToExport: Column[] = [];
 

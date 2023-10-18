@@ -22,7 +22,7 @@ export class AgSelect extends AgPickerField<string | null, IPickerFieldParams, A
     protected postConstruct(): void {
         super.postConstruct();
         this.createListComponent();
-        this.eWrapper.tabIndex = this.gridOptionsService.getNum('tabIndex') ?? 0;
+        this.eWrapper.tabIndex = this.gridOptionsService.get('tabIndex');
     }
 
     private createListComponent(): void {

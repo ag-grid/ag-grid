@@ -26,7 +26,7 @@ export class ServerSideSelectionService extends BeanStub implements ISelectionSe
 
     @PostConstruct
     private init(): void {
-        const groupSelectsChildren = this.gridOptionsService.is('groupSelectsChildren');
+        const groupSelectsChildren = this.gridOptionsService.get('groupSelectsChildren');
         this.addManagedPropertyListener('groupSelectsChildren', (propChange) => {
             this.destroyBean(this.selectionStrategy);
 

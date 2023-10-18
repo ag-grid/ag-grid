@@ -60,7 +60,7 @@ export class HeaderRowCtrl extends BeanStub {
     @PostConstruct
     private postConstruct(): void {
         this.isPrintLayout = this.gridOptionsService.isDomLayout('print');
-        this.isEnsureDomOrder = this.gridOptionsService.is('ensureDomOrder');
+        this.isEnsureDomOrder = this.gridOptionsService.get('ensureDomOrder');
     }
 
 

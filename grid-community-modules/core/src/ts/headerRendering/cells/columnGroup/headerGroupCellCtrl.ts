@@ -94,7 +94,7 @@ export class HeaderGroupCellCtrl extends AbstractHeaderCellCtrl<IHeaderGroupCell
 
     protected moveHeader(hDirection: HorizontalDirection): void {
         const { column, columnModel, gridOptionsService, ctrlsService } = this;
-        const isRtl = gridOptionsService.is('enableRtl');
+        const isRtl = gridOptionsService.get('enableRtl');
         const isLeft = hDirection === HorizontalDirection.Left;
 
         const displayedLeafColumns = column.getDisplayedLeafColumns();
@@ -310,7 +310,7 @@ export class HeaderGroupCellCtrl extends AbstractHeaderCellCtrl<IHeaderGroupCell
 
         const { column, columnModel, displayName, gridOptionsService, dragAndDropService } = this;
         const allLeafColumns = column.getProvidedColumnGroup().getLeafColumns();
-        let hideColumnOnExit = !gridOptionsService.is('suppressDragLeaveHidesColumns');
+        let hideColumnOnExit = !gridOptionsService.get('suppressDragLeaveHidesColumns');
 
         const dragSource = this.dragSource = {
             type: DragSourceType.HeaderCell,
@@ -320,7 +320,7 @@ export class HeaderGroupCellCtrl extends AbstractHeaderCellCtrl<IHeaderGroupCell
             // we add in the original group leaf columns, so we move both visible and non-visible items
             getDragItem: () => this.getDragItemForGroup(column),
             onDragStarted: () => {
-                hideColumnOnExit = !gridOptionsService.is('suppressDragLeaveHidesColumns');
+                hideColumnOnExit = !gridOptionsService.get('suppressDragLeaveHidesColumns');
                 allLeafColumns.forEach(col => col.setMoving(true, "uiColumnDragged"));
             },
             onDragStopped: () => allLeafColumns.forEach(col => col.setMoving(false, "uiColumnDragged")),
@@ -377,7 +377,7 @@ export class HeaderGroupCellCtrl extends AbstractHeaderCellCtrl<IHeaderGroupCell
             }
         });
 
-        const result = childSuppressesMoving || this.gridOptionsService.is('suppressMovableColumns');
+        const result = childSuppressesMoving || this.gridOptionsService.get('suppressMovableColumns');
 
         return result;
     }

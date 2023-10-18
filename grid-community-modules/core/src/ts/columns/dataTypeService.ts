@@ -77,9 +77,9 @@ export class DataTypeService extends BeanStub {
 
     @PostConstruct
     public init(): void {
-        this.groupHideOpenParents = this.gridOptionsService.is('groupHideOpenParents');
+        this.groupHideOpenParents = this.gridOptionsService.get('groupHideOpenParents');
         this.addManagedPropertyListener('groupHideOpenParents', () => {
-            this.groupHideOpenParents = this.gridOptionsService.is('groupHideOpenParents');
+            this.groupHideOpenParents = this.gridOptionsService.get('groupHideOpenParents');
         });
         this.processDataTypeDefinitions();
 
@@ -258,7 +258,7 @@ export class DataTypeService extends BeanStub {
 
                 // we don't want to double format the value
                 // as this is already formatted by using the valueFormatter as the keyCreator
-                if (!this.gridOptionsService.is('suppressGroupMaintainValueType')) {
+                if (!this.gridOptionsService.get('suppressGroupMaintainValueType')) {
                     return undefined as any;
                 }
             } else if (this.groupHideOpenParents && params.column.isRowGroupActive()) {
@@ -270,7 +270,7 @@ export class DataTypeService extends BeanStub {
 
                 // we don't want to double format the value
                 // as this is already formatted by using the valueFormatter as the keyCreator
-                if (!this.gridOptionsService.is('suppressGroupMaintainValueType')) {
+                if (!this.gridOptionsService.get('suppressGroupMaintainValueType')) {
                     return undefined as any;
                 }
             }
@@ -389,7 +389,7 @@ export class DataTypeService extends BeanStub {
         let value: any;
         const initialData = this.getInitialData();
         if (initialData) {
-            const fieldContainsDots = field.indexOf('.') >= 0 && !this.gridOptionsService.is('suppressFieldDotNotation');
+            const fieldContainsDots = field.indexOf('.') >= 0 && !this.gridOptionsService.get('suppressFieldDotNotation');
             value = getValueUsingField(initialData, field, fieldContainsDots);
         } else {
             this.initWaitForRowData(colId);

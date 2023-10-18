@@ -199,7 +199,7 @@ export class ColumnMoveHelper {
         columnModel: ColumnModel
     }): number[] {
         const { movingCols, draggingRight, xPosition, pinned, gridOptionsService, columnModel } = params;
-        const isMoveBlocked = gridOptionsService.is('suppressMovableColumns') || movingCols.some(col => col.getColDef().suppressMovable);
+        const isMoveBlocked = gridOptionsService.get('suppressMovableColumns') || movingCols.some(col => col.getColDef().suppressMovable);
 
         if (isMoveBlocked) { return []; }
         // this is the list of cols on the screen, so it's these we use when comparing the x mouse position
@@ -316,7 +316,7 @@ export class ColumnMoveHelper {
         const eContainer = ctrlsService.getRowContainerCtrl(pinned).getContainerElement();
 
         // flip the coordinate if doing RTL
-        if (gridOptionsService.is('enableRtl')) {
+        if (gridOptionsService.get('enableRtl')) {
             const clientWidth = eContainer.clientWidth;
             x = clientWidth - x;
         }

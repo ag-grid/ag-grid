@@ -470,7 +470,7 @@ export abstract class ProvidedFilter<M, V> extends Component implements IProvide
         if (isFloatingFilter) {
             positionableFeature.restoreLastSize();
             positionableFeature.setResizable(
-                gridOptionsService.is('enableRtl')
+                gridOptionsService.get('enableRtl')
                     ? { bottom: true, bottomLeft: true, left: true }
                     : { bottom: true, bottomRight: true, right: true }
             );

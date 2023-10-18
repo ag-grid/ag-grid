@@ -58,7 +58,7 @@ export class PrimaryColsListPanelItemDragFeature extends BeanStub {
     }
 
     private isMoveBlocked(currentDragValue: Column | ProvidedColumnGroup | null): boolean {
-        const preventMoving = this.gridOptionsService.is('suppressMovableColumns');
+        const preventMoving = this.gridOptionsService.get('suppressMovableColumns');
         if (preventMoving) {
             return true;
         }

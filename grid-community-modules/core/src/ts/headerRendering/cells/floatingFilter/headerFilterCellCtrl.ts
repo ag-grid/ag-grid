@@ -222,7 +222,7 @@ export class HeaderFilterCellCtrl extends AbstractHeaderCellCtrl<IHeaderFilterCe
         this.createManagedBean(new HoverFeature([this.column], this.eGui));
 
         const listener = () => {
-            if (!this.gridOptionsService.is('columnHoverHighlight')) { return; }
+            if (!this.gridOptionsService.get('columnHoverHighlight')) { return; }
             const hovered = this.columnHoverService.isHovered(this.column);
             this.comp.addOrRemoveCssClass('ag-column-hover', hovered);
         };

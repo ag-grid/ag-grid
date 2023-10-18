@@ -115,7 +115,7 @@ export class GridChartComp extends Component {
             seriesChartTypes: this.params.seriesChartTypes,
         };
 
-        const isRtl = this.gridOptionsService.is('enableRtl');
+        const isRtl = this.gridOptionsService.get('enableRtl');
 
         this.addCssClass(isRtl ? 'ag-rtl' : 'ag-ltr');
 
@@ -504,7 +504,7 @@ export class GridChartComp extends Component {
             }
 
             // updating the `chartThemes` grid option will cause the chart to reactively update!
-            this.gridOptionsService.set('chartThemes', modifiedThemes);
+            this.gridOptionsService.updateGridOptions({ options: { chartThemes: modifiedThemes } });
         };
 
         const handleColorSchemeChange = (event: CustomEvent<{ darkMode: boolean }>): void => {

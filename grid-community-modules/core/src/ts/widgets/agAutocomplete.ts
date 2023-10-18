@@ -253,7 +253,7 @@ export class AgAutocomplete extends Component {
             type: 'autocomplete',
             eventSource: this.getGui(),
             position: 'under',
-            alignSide: this.gridOptionsService.is('enableRtl') ? 'right' : 'left',
+            alignSide: this.gridOptionsService.get('enableRtl') ? 'right' : 'left',
             keepWithinBounds: true
         };
 
