@@ -2127,20 +2127,13 @@ export class GridApi<TData = any> {
     // Methods migrated from old ColumnApi
 
     /**
-     * Sets columns to adjust in size to fit the grid horizontally. If inferring cell data types with custom column types
+     * Sets columns to adjust in size to fit the grid horizontally.
+     * Can provide params or a fixed pixel width to control how the columns are resized.
+     * If inferring cell data types with custom column types
      * and row data is provided asynchronously, the column sizing will happen asynchronously when row data is added.
      * To always perform this synchronously, set `cellDataType = false` on the default column definition.
      **/
-    public sizeColumnsToFit(params?: ISizeColumnsToFitParams): void;
-    /**
-     * Gets the grid to size the columns to the specified width in pixels, e.g. `sizeColumnsToFit(900)`.
-     * To have the grid fit the columns to the grid's width, use the Grid API `gridApi.sizeColumnsToFit()` instead.
-     * If inferring cell data types with custom column types and row data is provided asynchronously,
-     * the column sizing will happen asynchronously when row data is added.
-     * To always perform this synchronously, set `cellDataType = false` on the default column definition.
-     */
-    public sizeColumnsToFit(gridWidth: number): void;
-    sizeColumnsToFit(paramsOrGridWidth?: ISizeColumnsToFitParams | number){
+    public sizeColumnsToFit(paramsOrGridWidth?: ISizeColumnsToFitParams | number){
         if(typeof paramsOrGridWidth === 'number'){
             this.columnModel.sizeColumnsToFit(paramsOrGridWidth, 'api');
         }else{
