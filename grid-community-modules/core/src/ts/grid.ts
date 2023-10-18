@@ -263,7 +263,6 @@ export class GridCoreCreator {
             configurable: true,
             enumerable: true,
         });
-            beans.gridOptionsService
 
         return beans.gridApi;
     }
