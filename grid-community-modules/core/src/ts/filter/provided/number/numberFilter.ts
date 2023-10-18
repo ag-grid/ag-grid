@@ -94,6 +94,14 @@ export class NumberFilter extends ScalarFilter<NumberFilterModel, number> {
         super('numberFilter');
     }
 
+    refresh(params: NumberFilterParams): boolean {
+        if (this.numberFilterParams.allowedCharPattern !== params.allowedCharPattern) {
+            return false;
+        }
+
+        return super.refresh(params);
+    }
+
     protected mapValuesFromModel(filterModel: NumberFilterModel | null): Tuple<number> {
         const { filter, filterTo, type } = filterModel || {};
         return [
