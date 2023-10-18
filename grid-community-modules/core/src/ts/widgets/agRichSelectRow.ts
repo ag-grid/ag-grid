@@ -12,6 +12,7 @@ import { escapeString } from "../utils/string";
 import { exists } from "../utils/generic";
 import { setAriaActiveDescendant, setAriaSelected } from "../utils/aria";
 import { VirtualList } from "./virtualList";
+import { padStartWidthZeros } from "../utils/number";
 
 export class RichSelectRow<TValue> extends Component {
 
@@ -48,7 +49,9 @@ export class RichSelectRow<TValue> extends Component {
 
         if (this.params.cellRenderer || !exists(parsedValue)) { return; }
 
-        if (exists(matchString)) {
+        let hasMatch = exists(matchString);
+
+        if (hasMatch) {
             const index = parsedValue?.toLocaleLowerCase().indexOf(matchString.toLocaleLowerCase());
             if (index >= 0) {
                 const highlightEndIndex = index + matchString.length;
@@ -56,8 +59,12 @@ export class RichSelectRow<TValue> extends Component {
                 const highlightedPart = escapeString(parsedValue.slice(index, highlightEndIndex), true);
                 const endPart = escapeString(parsedValue.slice(highlightEndIndex));
                 this.renderValueWithoutRenderer(`${startPart}<span class="ag-rich-select-row-text-highlight">${highlightedPart}</span>${endPart}`);
+            } else {
+                hasMatch = false;
             }
-        } else {
+        }
+
+        if (!hasMatch) {
             this.renderValueWithoutRenderer(parsedValue);
         }
     }

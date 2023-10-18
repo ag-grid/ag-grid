@@ -460,9 +460,6 @@ export class AgRichSelect<TValue = any> extends AgPickerField<TValue, RichSelect
         if (suggestions.length) {
             const topSuggestionIndex = shouldFilter ? 0 : searchStrings.indexOf(suggestions[0]);
             this.selectListItem(topSuggestionIndex);
-            if (highlightMatch && searchType !== 'fuzzy') {
-                this.highlightFilterMatch();
-            }
         } else {
             this.highlightSelectedValue(-1);
             
@@ -475,6 +472,10 @@ export class AgRichSelect<TValue = any> extends AgPickerField<TValue, RichSelect
                     setAriaActiveDescendant(eListAriaEl, null);
                 }
             }
+        }
+
+        if (highlightMatch && searchType !== 'fuzzy') {
+            this.highlightFilterMatch();
         }
 
         this.displayOrHidePicker();
