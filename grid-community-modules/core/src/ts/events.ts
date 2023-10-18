@@ -10,6 +10,7 @@ import { RowNodeTransaction } from "./interfaces/rowNodeTransaction";
 import { AgChartThemeOverrides } from './interfaces/iAgChartOptions';
 import { AgGridCommon } from './interfaces/iCommon';
 import { RowPinnedType, IRowNode } from './interfaces/iRowNode';
+import { GridState } from './interfaces/gridState';
 export { Events } from './eventKeys';
 
 export interface ModelUpdatedEvent<TData = any, TContext = any> extends AgGridEvent<TData, TContext> {
@@ -194,7 +195,10 @@ export interface SortChangedEvent<TData = any, TContext = any> extends AgGridEve
 }
 
 export interface GridReadyEvent<TData = any, TContext = any> extends AgGridEvent<TData, TContext> { }
-export interface GridPreDestroyedEvent<TData = any, TContext = any> extends AgGridEvent<TData, TContext> { }
+export interface GridPreDestroyedEvent<TData = any, TContext = any> extends AgGridEvent<TData, TContext> {
+    /** Current state of the grid */
+    state: GridState;
+}
 
 export interface DisplayedColumnsWidthChangedEvent<TData = any, TContext = any> extends AgGridEvent<TData, TContext> { } // not documented
 export interface ColumnHoverChangedEvent<TData = any, TContext = any> extends AgGridEvent<TData, TContext> { } // not documented
@@ -668,6 +672,13 @@ export interface ColumnAggFuncChangeRequestEvent<TData = any, TContext = any> ex
 export interface StoreRefreshedEvent<TData = any, TContext = any> extends AgGridEvent<TData, TContext> {
     /** The route of the store which has finished refreshing, undefined if root level */
     route?: string[];
+}
+
+export interface StateUpdatedEvent<TData = any, TContext = any> extends AgGridEvent<TData, TContext> {
+    /** Which parts of the state triggered the update, or `gridInitializing` when the state has been created during grid initialization */
+    sources: (keyof GridState | 'gridInitializing')[];
+    /** The updated state */
+    state: GridState;
 }
 
 export interface ScrollVisibilityChangedEvent<TData = any, TContext = any> extends AgGridEvent<TData, TContext> { } // not documented

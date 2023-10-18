@@ -203,6 +203,8 @@ export class Events {
     /** Only used by the SSRM, called when the grid has no more rows to refresh */
     public static EVENT_STORE_REFRESHED: 'storeRefreshed' = 'storeRefreshed';
 
+    public static EVENT_STATE_UPDATED: 'stateUpdated' = 'stateUpdated';
+
     /*****************************  INTERNAL EVENTS: START ******************************************* */
 
     /** Please remember to add to ComponentUtil.EXCLUDED_INTERNAL_EVENTS to not have these events exposed to framework components. */
@@ -262,8 +264,6 @@ export class Events {
     public static EVENT_FIELD_PICKER_VALUE_SELECTED: 'fieldPickerValueSelected' = 'fieldPickerValueSelected';
 
     public static EVENT_SIDE_BAR_UPDATED: 'sideBarUpdated' = 'sideBarUpdated';
-
-    public static EVENT_STATE_UPDATED: 'stateUpdated' = 'stateUpdated';
 
     /*****************************  INTERNAL EVENTS: END ******************************************* */
 }

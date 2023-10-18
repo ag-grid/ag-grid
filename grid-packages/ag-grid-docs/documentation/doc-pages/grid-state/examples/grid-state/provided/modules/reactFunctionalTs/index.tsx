@@ -8,7 +8,7 @@ import '@ag-grid-community/styles/ag-grid.css';
 import '@ag-grid-community/styles/ag-theme-alpine.css';
 import './styles.css';
 import { IOlympicData } from './interfaces'
-import { ColDef, GridReadyEvent, GridState, ModuleRegistry } from '@ag-grid-community/core';
+import { ColDef, GridPreDestroyedEvent, GridReadyEvent, GridState, ModuleRegistry, StateUpdatedEvent } from '@ag-grid-community/core';
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
 import { ColumnsToolPanelModule } from '@ag-grid-enterprise/column-tool-panel';
 import { FiltersToolPanelModule } from '@ag-grid-enterprise/filter-tool-panel';
@@ -51,27 +51,37 @@ const GridExample = () => {
         enableValue: true,
     } }, []);
     const [initialState, setInitialState] = useState<GridState>();
+    const [currentState, setCurrentState] = useState<GridState>();
     const [gridVisible, setGridVisible] = useState(true);
 
-    const onGridReady = useCallback((params: GridReadyEvent) => {            
+    const onGridReady = useCallback((params: GridReadyEvent<IOlympicData>) => {            
         fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
         .then(resp => resp.json())
         .then((data: IOlympicData[]) => setRowData(data));
     }, []);
 
     const reloadGrid = useCallback(() => {
-        const state = gridRef.current!.api.getState();
         setGridVisible(false);
         setTimeout(() => {
-            setInitialState(state);
             setRowData(undefined);
             setGridVisible(true);
         });
     }, []);
 
-    const printState = useCallback(() => {
-        console.log('Grid state', gridRef.current!.api.getState());
+    const onGridPreDestroyed = useCallback((params: GridPreDestroyedEvent<IOlympicData>) => {
+        const { state } = params;
+        console.log('Grid state on destroy (can be persisted)', state);
+        setInitialState(state);
     }, []);
+
+    const onStateUpdated = useCallback((params: StateUpdatedEvent<IOlympicData>) => {
+        console.log('State updated', params.state);
+        setCurrentState(params.state);
+    }, []);
+
+    const printState = useCallback(() => {
+        console.log('Grid state', currentState);
+    }, [currentState]);
 
     return  (
         <div style={containerStyle}>
@@ -96,6 +106,8 @@ const GridExample = () => {
                         suppressColumnMoveAnimation={true}
                         initialState={initialState}
                         onGridReady={onGridReady}
+                        onGridPreDestroyed={onGridPreDestroyed}
+                        onStateUpdated={onStateUpdated}
                     />}
                 </div>
             </div>

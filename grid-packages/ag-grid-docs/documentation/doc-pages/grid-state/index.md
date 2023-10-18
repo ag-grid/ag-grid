@@ -31,7 +31,11 @@ const gridOptions = {
 }
 </snippet>
 
-The current grid state can be retrieved via `api.getState()`.
+The current grid state can be retrieved by listening to the state updated event, which is fired with the latest state when it changes, or via `api.getState()`.
+
+The state is also passed in the [Grid Pre-Destroyed Event](/grid-lifecycle/#grid-pre-destroyed), which can be used to get the state when the grid is destroyed.
+
+<api-documentation source='grid-events/events.json' section='miscellaneous' names='["stateUpdated", "gridPreDestroyed"]'></api-documentation>
 
 ## State Contents
 
@@ -54,5 +58,7 @@ The following is captured in the grid state:
 - [Scroll Position](/scrolling-scenarios/) ([Client-Side Row Model](/row-models/) only)
 - [Side Bar](/side-bar/)
 - [Sort](/row-sorting/)
+
+Note that all the state properties are optional, so a property can be excluded if you do not want to restore it.
 
 <interface-documentation interfaceName='GridState'></interface-documentation>

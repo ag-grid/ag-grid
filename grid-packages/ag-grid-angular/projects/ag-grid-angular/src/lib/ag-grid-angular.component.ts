@@ -156,6 +156,7 @@ import {
     SideBarDef,
     SortChangedEvent,
     SortDirection,
+    StateUpdatedEvent,
     StatusPanelDef,
     StoreRefreshedEvent,
     TabToNextCellParams,
@@ -1142,6 +1143,8 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     @Output() public dragStarted: EventEmitter<DragStartedEvent<TData>> = new EventEmitter<DragStartedEvent<TData>>();
     /** When dragging stops. This could be any action that uses the grid's Drag and Drop service, e.g. Column Moving, Column Resizing, Range Selection, Fill Handle, etc.     */
     @Output() public dragStopped: EventEmitter<DragStoppedEvent<TData>> = new EventEmitter<DragStoppedEvent<TData>>();
+    /** Grid state has been updated.     */
+    @Output() public stateUpdated: EventEmitter<StateUpdatedEvent<TData>> = new EventEmitter<StateUpdatedEvent<TData>>();
     /** Triggered every time the paging state changes. Some of the most common scenarios for this event to be triggered are:
          *
          *  - The page size changes.

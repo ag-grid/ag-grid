@@ -75,7 +75,8 @@ import {
     UndoStartedEvent,
     ViewportChangedEvent,
     VirtualColumnsChangedEvent,
-    VirtualRowRemovedEvent
+    VirtualRowRemovedEvent,
+    StateUpdatedEvent
 } from "../events";
 import { GridApi } from "../gridApi";
 import { HeaderPosition } from "../headerRendering/common/headerPosition";
@@ -1124,6 +1125,8 @@ export interface GridOptions<TData = any> {
     onDragStarted?(event: DragStartedEvent<TData>): void;
     /** When dragging stops. This could be any action that uses the grid's Drag and Drop service, e.g. Column Moving, Column Resizing, Range Selection, Fill Handle, etc. */
     onDragStopped?(event: DragStoppedEvent<TData>): void;
+    /** Grid state has been updated. */
+    onStateUpdated?(event: StateUpdatedEvent<TData>): void;
 
     // *** Pagination *** //
     /**

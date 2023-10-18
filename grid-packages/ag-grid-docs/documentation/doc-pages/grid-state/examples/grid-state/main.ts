@@ -1,4 +1,4 @@
-import { GridApi, createGrid, GridOptions } from '@ag-grid-community/core';
+import { GridApi, createGrid, GridOptions, GridPreDestroyedEvent, StateUpdatedEvent } from '@ag-grid-community/core';
 
 let gridApi: GridApi<IOlympicData>;
 
@@ -36,6 +36,16 @@ const gridOptions: GridOptions<IOlympicData> = {
   rowSelection: 'multiple',
   suppressRowClickSelection: true,
   suppressColumnMoveAnimation: true,
+  onGridPreDestroyed: onGridPreDestroyed,
+  onStateUpdated: onStateUpdated,
+}
+
+function onGridPreDestroyed(event: GridPreDestroyedEvent<IOlympicData>): void {
+  console.log('Grid state on destroy (can be persisted)', event.state);
+}
+
+function onStateUpdated(event: StateUpdatedEvent<IOlympicData>): void {
+  console.log('State updated', event.state);
 }
 
 function reloadGrid() {

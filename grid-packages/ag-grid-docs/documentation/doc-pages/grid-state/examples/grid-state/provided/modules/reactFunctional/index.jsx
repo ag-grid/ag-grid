@@ -50,6 +50,7 @@ const GridExample = () => {
         enableValue: true,
     } }, []);
     const [initialState, setInitialState] = useState();
+    const [currentState, setCurrentState] = useState();
     const [gridVisible, setGridVisible] = useState(true);
 
     const onGridReady = useCallback((params) => {            
@@ -58,19 +59,28 @@ const GridExample = () => {
         .then((data) => setRowData(data));
     }, []);
 
+    const onGridPreDestroyed = useCallback(params => {
+        const { state } = params;
+        console.log('Grid state on destroy (can be persisted)', state);
+        setInitialState(state);
+    }, []);
+
+    const onStateUpdated = useCallback(params => {
+        console.log('State updated', params.state);
+        setCurrentState(params.state);
+    }, []);
+
     const reloadGrid = useCallback(() => {
-        const state = gridRef.current.api.getState();
         setGridVisible(false);
         setTimeout(() => {
-            setInitialState(state);
             setRowData(undefined);
             setGridVisible(true);
         });
     }, []);
 
     const printState = useCallback(() => {
-        console.log('Grid state', gridRef.current.api.getState());
-    }, []);
+        console.log('Grid state', currentState);
+    }, [currentState]);
 
     return  (
         <div style={containerStyle}>
@@ -95,6 +105,8 @@ const GridExample = () => {
                         suppressColumnMoveAnimation={true}
                         initialState={initialState}
                         onGridReady={onGridReady}
+                        onGridPreDestroyed={onGridPreDestroyed}
+                        onStateUpdated={onStateUpdated}
                     />}
                 </div>
             </div>
