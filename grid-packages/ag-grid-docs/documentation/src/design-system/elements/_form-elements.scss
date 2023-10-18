@@ -172,6 +172,8 @@ input[type='radio'] {
 select {
     $svg-chevron-down: url('data:image/svg+xml;utf8,<svg fill="none" stroke="%23212529" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 26 30"><path d="m7.5 13.688 5.25 4.125L18 13.688"/></svg>');
 
+    $svg-chevron-down-dark: url('data:image/svg+xml;utf8,<svg fill="none" stroke="%23f8f9fa" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 26 30"><path d="m7.5 13.688 5.25 4.125L18 13.688"/></svg>');
+
     appearance: none;
     padding: math.div(6em, 16) math.div(36em, 16) math.div(6em, 16) math.div(12em, 16);
     font-size: 1rem;
@@ -198,6 +200,10 @@ select {
     &:focus:not(:disabled):not([readonly]),
     &:focus-visible:not(:disabled):not([readonly]) {
         border-color: var(--input-focus-border-color);
+    }
+
+    #{$darkmode-selector} & {
+        background-image: $svg-chevron-down-dark;
     }
 }
 
