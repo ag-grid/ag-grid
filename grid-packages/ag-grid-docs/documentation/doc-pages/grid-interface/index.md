@@ -15,6 +15,13 @@ md-include:index-angular.md
 md-include:index-react.md
 md-include:index-vue.md
 
+## Access the Grid API
+
+md-include:api-javascript.md
+md-include:api-angular.md
+md-include:api-react.md
+md-include:api-vue.md
+
 ## Events Are Asynchronous
  
 Grid events are asynchronous so that the state of the grid will be settled by the time your event callback gets invoked.
