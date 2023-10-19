@@ -1,4 +1,4 @@
-import { GridApi, createGrid, GridOptions, GetGroupIncludeFooterParams } from '@ag-grid-community/core';
+import { GridApi, createGrid, GridOptions, GetGroupIncludeFooterParams, FirstDataRenderedEvent } from '@ag-grid-community/core';
 
 let gridApi: GridApi;
 
@@ -27,10 +27,10 @@ const gridOptions: GridOptions = {
     return false;
   },
   animateRows: true,
-  onFirstDataRendered: () => {
-    gridApi!.forEachNode((node) => {
+  onFirstDataRendered: (params: FirstDataRenderedEvent) => {
+    params.api.forEachNode((node) => {
       if (node.key === 'France' || node.key === 'South Korea') {
-        gridApi!.setRowNodeExpanded(node, true);
+        params.api.setRowNodeExpanded(node, true);
       }
     });
   }
