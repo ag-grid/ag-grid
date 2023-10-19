@@ -27,7 +27,6 @@
 }
 
 .introSection {
-    max-width: 54em;
     margin-top: $size-4;
 
     h1 {
@@ -44,33 +43,5 @@
         > a {
             width: calc(50% - $size-2 / 2);
         }
-    }
-}
-
-.gettingStartedLogo {
-    margin-bottom: $size-1;
-
-    img {
-        width: $size-7;
-        height: $size-7;
-    }
-}
-
-.allVideosInner {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    min-height: 100%;
-}
-
-.allVideosIcon {
-    --icon-size: #{$size-7};
-    --text-color: var(--link-color);
-
-    transition: fill 0.2s ease-in-out;
-
-    a:hover & {
-        --text-color: var(--link-hover-color);
     }
 }
