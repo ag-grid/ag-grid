@@ -140,8 +140,9 @@ export function createGrid<TData>(eGridDiv: HTMLElement, gridOptions: GridOption
         console.error('AG Grid: no gridOptions provided to createGrid');
         return {} as GridApi;
     }   
-
-    const api = new GridCoreCreator().create(eGridDiv, gridOptions, context => {
+    // Ensure we do not mutate the provided gridOptions
+    const shallowCopy = {...gridOptions};
+    const api = new GridCoreCreator().create(eGridDiv, shallowCopy, context => {
         const gridComp = new GridComp(eGridDiv);
         context.createBean(gridComp);
     }, undefined, params);
@@ -149,13 +150,17 @@ export function createGrid<TData>(eGridDiv: HTMLElement, gridOptions: GridOption
     return api;
 }
 
+//Only used for deprecated new Grid so that we can still add the apis to the gridOptions
+// for JS users. TS users will have to cast the gridOptions to allow accessing apis.
+type LegacyGridOptions = GridOptions & { api?: GridApi, columnApi?: ColumnApi };
+
 /**
  * @deprecated v31 use createGrid() instead
  */
 export class Grid {
     protected logger: Logger;
 
-    private readonly gridOptions: GridOptions;
+    private readonly gridOptions: LegacyGridOptions;
 
     constructor(eGridDiv: HTMLElement, gridOptions: GridOptions, params?: GridParams) {
       warnOnce('new Grid(...) is deprecated, please use `const api = createGrid(...)` instead.');
@@ -165,9 +170,9 @@ export class Grid {
             return;
         }
 
-        this.gridOptions = gridOptions;
+        this.gridOptions = gridOptions as LegacyGridOptions;
 
-        new GridCoreCreator().create(
+        const api = new GridCoreCreator().create(
             eGridDiv,
             gridOptions,
             (context) => {
@@ -180,6 +185,10 @@ export class Grid {
             undefined,
             params
         );
+        
+        // Maintain existing behaviour by mutating gridOptions with the apis for deprecated new Grid()
+        this.gridOptions.api = api;
+        this.gridOptions.columnApi = new ColumnApi(api);
     }
 
     public destroy(): void {
@@ -202,20 +211,14 @@ export class GridCoreCreator {
 
     public create(eGridDiv: HTMLElement, gridOptions: GridOptions, createUi: (context: Context) => void, acceptChanges?: (context: Context) => void, params?: GridParams): GridApi {
 
-        // Must delete in case user passed in gridOptions that had already been used elsewhere.
-        // Also delete before shallow copy otherwise getters will be called during copy.
-        delete gridOptions.api;
-        delete gridOptions.columnApi;
-
         // Shallow copy to prevent user provided gridOptions from being mutated.
-        const gridOps = {...gridOptions};
-        const debug = !!gridOps.debug;
-        const gridId = gridOps.gridId ?? String(nextGridId++);
+        const debug = !!gridOptions.debug;
+        const gridId = gridOptions.gridId ?? String(nextGridId++);
 
         const registeredModules = this.getRegisteredModules(params, gridId);
 
-        const beanClasses = this.createBeansList(gridOps.rowModelType, registeredModules, gridId);
-        const providedBeanInstances = this.createProvidedBeans(eGridDiv, gridOps, params);
+        const beanClasses = this.createBeansList(gridOptions.rowModelType, registeredModules, gridId);
+        const providedBeanInstances = this.createProvidedBeans(eGridDiv, gridOptions, params);
 
         if (!beanClasses) { 
             // Detailed error message will have been printed by createBeansList
@@ -245,24 +248,6 @@ export class GridCoreCreator {
 
         if (acceptChanges) { acceptChanges(context); }
 
-        // For backwards compatibility we mutate the gridOps object with apis if requested.
-        const msg = (apiName: string) => `'Accessing the ${apiName} from gridOptions is deprecated. For more info on how to access the api see: https://ag-grid.com/javascript-data-grid/grid-api/'`;
-        Object.defineProperty(gridOptions, 'api', {
-            get: () => {
-                warnOnce(msg('api'));
-                return beans.gridApi.isDestroyed() ? undefined : beans.gridApi;
-            },
-            configurable: true,
-            enumerable: true,
-        });
-        Object.defineProperty(gridOptions, 'columnApi', {
-            get: () => {
-                warnOnce(msg('columnApi'));
-                return beans.gridApi.isDestroyed() ? undefined : beans.columnApi;
-            },
-            configurable: true,
-            enumerable: true,
-        });
 
         return beans.gridApi;
     }

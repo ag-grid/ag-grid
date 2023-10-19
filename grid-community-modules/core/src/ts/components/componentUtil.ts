@@ -134,14 +134,15 @@ export class ComponentUtil {
             : Object.keys(component);
     }
 
-    public static copyAttributesToGridOptions(gridOptions: GridOptions | undefined, component: any, isVue: boolean = false): GridOptions {
+    /** Combines component props / attributes with the provided gridOptions returning a new combined gridOptions object */
+    public static combineAttributesAndGridOptions(gridOptions: GridOptions | undefined, component: any, isVue: boolean = false): GridOptions {
 
         // create empty grid options if none were passed
         if (typeof gridOptions !== 'object') {
             gridOptions = {} as GridOptions;
         }
-        // to allow array style lookup in TypeScript, take type away from 'this' and 'gridOptions'
-        const pGridOptions = gridOptions as any;
+        // shallow copy (so we don't change the provided object)
+        const mergedOptions = {...gridOptions} as any;
         const keys = ComponentUtil.getGridOptionKeys(component, isVue);
         // Loop through component props, if they are not undefined and a valid gridOption copy to gridOptions
         keys.forEach(key => {
@@ -149,11 +150,11 @@ export class ComponentUtil {
             if (typeof value !== 'undefined') {
                 const coercedValue = ComponentUtil.getValue(key, value);
                 if (coercedValue !== undefined) {
-                    pGridOptions[key] = coercedValue;
+                    mergedOptions[key] = coercedValue;
                 }
             }
         })
-        return gridOptions;
+        return mergedOptions;
     }
 
 

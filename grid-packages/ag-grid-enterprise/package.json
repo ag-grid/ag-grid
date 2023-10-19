@@ -77,8 +77,8 @@
     "@ag-grid-enterprise/sparklines": "~30.2.0",
     "@ag-grid-enterprise/status-bar": "~30.2.0",
     "@ag-grid-enterprise/viewport-row-model": "~30.2.0",
-    "ag-charts-community": "latest",
-    "ag-charts-enterprise": "latest",
+    "ag-charts-community": "9.0.0-beta.20231009",
+    "ag-charts-enterprise": "9.0.0-beta.20231009",
     "@rollup/plugin-alias": "^2.2.0",
     "@types/node": "12.20.20",
     "gulp": "^4.0.0",
@@ -101,4 +101,3 @@
     "rimraf": "3.0.2"
   }
 }
-

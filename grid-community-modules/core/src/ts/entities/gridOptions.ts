@@ -1216,18 +1216,6 @@ export interface GridOptions<TData = any> {
     /** @deprecated v29.2 */
     onColumnAggFuncChangeRequest?(event: ColumnAggFuncChangeRequestEvent<TData>): void;
 
-    /**
-     * @deprecated v31 The `api` should be obtained via framework component / onGridReady or as returned from `createGrid`.
-     * The Grid Api for interacting with the grid.
-     * Set by the grid on init, set to null on destroy.
-     */
-    api?: GridApi<TData> | null;
-    /**
-     * @deprecated v31 - The `columnApi` has been deprecated and all the methods are now present of the `api`.
-     * The Column Api for interacting with the grid columns.
-     * Set by the grid on init, set to null on destroy.
-     */
-    columnApi?: ColumnApi | null;
 }
 
 export type RowGroupingDisplayType = 'singleColumn' | 'multipleColumns' | 'groupRows' | 'custom';
