@@ -127,7 +127,7 @@ const LicensePricing = () => {
                         href="https://www.npmjs.com/package/ag-charts-community"
                         className={classnames(styles.NpmButton, 'button-secondary')}
                     >
-                        <NPMIcon /> Get AG Grid Charts at NPM
+                        <NPMIcon /> Get AG Charts Community at NPM
                     </a>
                 </div>
 
