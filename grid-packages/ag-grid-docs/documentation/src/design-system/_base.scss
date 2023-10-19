@@ -21,4 +21,18 @@ html {
     @media (min-width: $breakpoint-docs-nav-medium) {
         scroll-padding-top: 92px;
     }
+  
+}
+
+#{$darkmode-selector} {
+
+    nav::-webkit-scrollbar {
+        background-color: var(--background-100);
+    }
+    nav::-webkit-scrollbar-thumb {
+        background-color: #354856;
+        border-radius: 10px;
+        border: 4px solid #0A161F;
+    }
+
 }

@@ -48,6 +48,12 @@
     display: flex;
     gap: 0 $size-1;
     transition: color $default-transition-timing;
+
+    span {
+        #{$darkmode-selector} & {
+            color: var(--link-color);
+        }
+    }
 }
 
 .icon {
@@ -66,6 +72,6 @@
     }
 
     #{$darkmode-selector} & {
-        fill: var(--primary-400);
+        fill: var(--ghost-white);
     }
 }

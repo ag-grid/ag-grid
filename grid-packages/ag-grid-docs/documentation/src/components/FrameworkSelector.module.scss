@@ -9,6 +9,12 @@
     width: 100%;
     border-radius: var(--border-radius);
     background-color: var(--input-background-color);
+
+    #{$darkmode-selector} & {
+        background-color: var(--background-100);
+        border: 1px solid #354856;
+    }
+    
 }
 
 .option {
@@ -55,6 +61,10 @@
 
 .frameworkSelector.showSelected {
     border: 2px solid var(--input-border-color);
+
+    #{$darkmode-selector} & {
+        border: 1px solid #354856;
+    }
 
     @media screen and (min-width: $breakpoint-docs-search-medium) {
         width: auto;
@@ -134,7 +144,7 @@
     }
 
     #{$darkmode-selector} & {
-        background-color: var(--background-500);
+        background-color: var(--background-300);
     }
 }
 

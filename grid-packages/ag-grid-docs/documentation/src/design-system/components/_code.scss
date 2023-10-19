@@ -53,20 +53,22 @@ pre.code {
     overflow-y: auto !important;
 
     #{$darkmode-selector} & {
-        --comment-color: #4db345;
-        --tag-color: #ff3c7c;
-        --string-color: #ff3d97;
+        color-scheme: dark;
+        --comment-color: #AAABB3;
+        --tag-color: #BF9FEA;
+        --string-color: #BFDA7F;
         --punctuation-color: var(--default-text-color);
-        --keyword-color: var(--primary-500);
+        --keyword-color: #7AC1D1;
         --symbol-color: #36d8d6;
         --function-color: var(--default-text-color);
         --deleted-color: #9a050f;
         --selector-color: #36d8d6;
         --important-color: #e90;
         --class-name-color: #2b91af;
-        --property-color: var(--primary-700);
+        --property-color: #7AC1D1;
 
         border-color: var(--neutral-300);
+        border: 1px solid #354856;
     }
 }
 
@@ -89,9 +91,10 @@ pre.code > code {
     overflow-x: auto !important;
 
     #{$darkmode-selector} & {
-        --default-background-color: var(--background-100);
-
-        background-image: linear-gradient(color-mix(in srgb, var(--background-200) 75%, var(--background-100)) 50%, var(--background-100) 50%);
+        background: var(--background-200);
+        box-shadow: inset 0px 0px;
+        
+        // background-image: linear-gradient(color-mix(in srgb, var(--background-200) 75%, var(--background-100)) 50%, var(--background-100) 50%);
     }
 }
 
@@ -291,6 +294,6 @@ code[class*='language-css'] {
     opacity: .33;
 
     #{$darkmode-selector} & {
-        color: var(--neutral-900);
+        color: var(--default-text-color);
     }
 }

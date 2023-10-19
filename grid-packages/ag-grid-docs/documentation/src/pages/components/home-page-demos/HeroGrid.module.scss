@@ -21,13 +21,13 @@
     --input-focus-box-shadow-color: rgba(255, 255, 255, 0.25);
 
     #{$darkmode-selector} & {
-        --ag-background-color: #0a2548;
-        --ag-odd-row-background-color: #0d2a50;
+        --ag-background-color: #051D31
+        --ag-odd-row-background-color: #081A27
 
         --ag-foreground-color: #e6f1fc;
         
         --ag-header-background-color: #0d2a50;
-        --ag-header-foreground-color: #577090;
+        --ag-header-foreground-color: #BDD8EC
     }
 
     @media screen and (max-width: $breakpoint-hero-small) {
