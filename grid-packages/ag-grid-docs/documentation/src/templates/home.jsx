@@ -1,90 +1,49 @@
 import classnames from 'classnames';
-import { convertUrl } from 'components/documentation-helpers';
-import MenuView from 'components/menu-view/MenuView';
 import { SEO } from 'components/SEO';
-import logos from 'images/logos';
 import React from 'react';
-import menuData from '../../doc-pages/licensing/menu.json';
-import { Icon } from '../components/Icon';
-import tileStyles from '../components/menu-view/Tile.module.scss';
-import supportedFrameworks from '../utils/supported-frameworks';
-import featuredVideos from './featuredVideos.json';
 import styles from './home.module.scss';
+import Code from '../components/Code.jsx';
+import { Link } from 'gatsby';
 
-const flatRenderItems = (items, framework) => {
-    return items.reduce((prev, curr) => {
-        let ret = prev;
-
-        if (curr.frameworks && curr.frameworks.indexOf(framework) === -1) {
-            return ret;
-        }
-
-        ret = prev.concat(
-            Object.assign({}, { title: curr.title, url: curr.url }, curr.icon ? { icon: curr.icon } : {})
-        );
-
-        if (!curr.items) {
-            return ret;
-        }
-
-        return ret.concat(flatRenderItems(curr.items, framework));
-    }, []);
-};
-
-const VideoPanel = ({ videos }) => {
-    const title = `Videos`;
+const ReactQuickStart = () => {
     return (
-        <div className={styles.section}>
-            <h2>{title}</h2>
-            <div className={styles.sectionInner}>
-                {videos.map((video) => (
-                    <div
-                        className={classnames(tileStyles.tile, tileStyles.videoTile, tileStyles.linkTile)}
-                        key={video.id}
-                    >
-                        <a
-                            href={`https://www.youtube.com/watch?v=${video.id}&list=${video.list}`}
-                            target="_blank"
-                            rel="noreferrer"
-                        >
-                            <img
-                                style={{ height: '100%', width: '100%' }}
-                                alt={video.title || title}
-                                src={`https://i.ytimg.com/vi/${video.id}/mqdefault.jpg`}
-                            />
-                        </a>
-                    </div>
-                ))}
-                <a href="./videos/" className={classnames(tileStyles.tile, tileStyles.linkTile)}>
-                    <div className={styles.allVideosInner}>
-                        <Icon name="playCircle" svgClasses={styles.allVideosIcon} />
-                        <div className={tileStyles.linkTileTitle}>All Videos</div>
-                    </div>
-                </a>
-            </div>
-        </div>
-    );
-};
+        <>
+            {/* Download from NPM */}
+            <h2>Download</h2>
+            <p>
+                Install the required dependencies:
+            </p>
+            <Code language={'bash'} lineNumbers={false} code={'npm install ag-grid-react'} />
+            <p>
+                <i>For more information on installation, refer to our detailed <a>installation guide</a>.</i>
+            </p>
+
+            {/* Create the Grid */}
+            <h2>Create</h2>
+            <p>
+                Create a basic grid:
+            </p>
+            <Code language={'jsx'} lineNumbers={true} code={"import { AgGridReact } from 'ag-grid-react'; // Grid Component\nimport 'ag-grid-community/styles/ag-grid.css'; // Core CSS;\nimport 'ag-grid-community/styles/ag-theme-alpine.css'; // Alpine Theme\n\nconst GridExample = () => {\n\t// Data to be displayed within the grid\n\tconst [rowData] = useState([\n\t\t{ make: 'Toyota', model: 'Celica', price: 35000 },\n\t\t{ make: 'Ford', model: 'Mondeo', price: 32000 },\n\t\t{ make: 'Porsche', model: 'Boxter', price: 72000 }\n\t]);\n\t\n\t// Columns (Should match properties in rowData)\n\tconst [columnDefs] = useState([\n\t\t{ field: 'make' },\n\t\t{ field: 'model' },\n\t\t{ field: 'price' }\n\t]);\n\n\treturn (\n\t\t// Grid container which sets the theme & dimensions of the grid\n\t\t<div className='ag-theme-alpine' style={{width: 600, height: 500}}>\n\t\t\t<AgGridReact rowData={rowData} columnDefs={columnDefs} />\n\t\t</div>\n\t)\n}"} />
+        </>
+    )
+}
 
 /**
  * This is the home page for the documentation.
  */
 const HomePage = ({ pageContext: { framework } }) => {
-    const frameworkVideos = featuredVideos[framework];
-
-    const otherFrameworks = () => {
-        const frameworks = supportedFrameworks.filter((f) => {
-            return f !== framework;
-        });
-
-        return (
-            <span style={{ textTransform: 'capitalize' }}>
-                <a href={`../${frameworks[0]}-data-grid/`}>{frameworks[0]}</a>,{' '}
-                <a href={`../${frameworks[1]}-data-grid/`}>{frameworks[1]}</a>, or{' '}
-                <a href={`../${frameworks[2]}-data-grid/`}>{frameworks[2]}</a>
-            </span>
-        );
-    };
+    const getQuickstartForFramework = () => {
+        switch (framework) {
+            case "javascript":
+                return <></>
+            case "react":
+                return <ReactQuickStart />;
+            case "angular":
+                return <></>
+            case "vue":
+                return <></>
+        }
+    }
 
     return (
         <div className={styles.docsHome}>
@@ -96,22 +55,27 @@ const HomePage = ({ pageContext: { framework } }) => {
                 pageName="home"
             />
 
+            {/* Introduction / Heading */}
             <div className={classnames(styles.section, styles.introSection, 'font-size-responsive')}>
-                <h1>AG Grid {framework} Documentation</h1>
-                <p className="font-size-extra-large">Start developing with the best JavaScript Grid in the world.</p>
-                <p className="font-size-medium">
-                    You can get started with <a href="./getting-started/">a simple sample project and tutorial</a>,
-                    watch our extensive selection of <a href="./videos/">videos</a>, or review the{' '}
-                    <a href="./grid-options/">grid options</a>.
-                </p>
-                <p className="font-size-medium">
-                    Looking for documentation for another framework? Switch to {otherFrameworks()}.
-                </p>
+                <h1>{framework} Quick Start</h1>
+                <p className="font-size-extra-large">Display your data in a Grid in 60 seconds.</p>
             </div>
 
-            {frameworkVideos && frameworkVideos.length > 0 && (
-                <VideoPanel framework={framework} videos={frameworkVideos} />
-            )}
+            {/* Quick Start Guide */}
+            <div className={classnames(styles.section, styles.introSection, 'font-size-responsive')}>
+                {getQuickstartForFramework()}
+            </div>
+
+            {/* Next Steps */}
+            <div className={classnames(styles.section, styles.introSection, 'font-size-responsive')}>
+                <h2>Next Steps</h2>
+                <p>
+                    Read our introductory tutorial to learn how to use AG Grid
+                </p>
+                <ul>
+                    <li><Link to='/'>Introduction to the Grid</Link></li>
+                </ul>
+            </div>
         </div>
     );
 };
