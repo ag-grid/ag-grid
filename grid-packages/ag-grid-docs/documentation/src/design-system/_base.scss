@@ -28,6 +28,10 @@ html {
 
 #{$darkmode-selector} {
 
+    #doc-content a {
+        color: #3893F9;
+    }
+
     nav::-webkit-scrollbar {
         background-color: var(--background-100);
     }
