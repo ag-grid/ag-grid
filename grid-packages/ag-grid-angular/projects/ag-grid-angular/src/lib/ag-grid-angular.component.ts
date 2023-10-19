@@ -12,7 +12,7 @@ import {
     ViewEncapsulation
 } from "@angular/core";
 
-import { AgPromise, ComponentUtil, Grid, GridOptions, GridParams, Module, createGrid } from "ag-grid-community";
+import { AgPromise, ComponentUtil, GridApi, ColumnApi, GridOptions, GridParams, Module, createGrid } from "ag-grid-community";
 
 // @START_IMPORTS@
 import {
@@ -46,7 +46,6 @@ import {
     ColDef,
     ColGroupDef,
     ColumnAggFuncChangeRequestEvent,
-    ColumnApi,
     ColumnEverythingChangedEvent,
     ColumnGroupOpenedEvent,
     ColumnMovedEvent,
@@ -87,7 +86,6 @@ import {
     GetRowIdFunc,
     GetServerSideGroupKey,
     GetServerSideGroupLevelParamsParams,
-    GridApi,
     GridColumnsChangedEvent,
     GridPreDestroyedEvent,
     GridReadyEvent,
@@ -222,7 +220,7 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
         this.frameworkComponentWrapper.setComponentFactoryResolver(this.componentFactoryResolver);
         this.angularFrameworkOverrides.setEmitterUsedCallback(this.isEmitterUsed.bind(this));
 
-         this.gridOptions = ComponentUtil.copyAttributesToGridOptions(this.gridOptions, this);
+        const mergedGridOps = ComponentUtil.combineAttributesAndGridOptions(this.gridOptions, this);
 
         this.gridParams = {
             globalEventListener: this.globalEventListener.bind(this),
@@ -233,7 +231,7 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
             modules: (this.modules || []) as any
         };
 
-        const api = createGrid(this._nativeElement, this.gridOptions, this.gridParams);
+        const api = createGrid(this._nativeElement, mergedGridOps, this.gridParams);
 
         if (api) {
             this.api = api;
@@ -304,6 +302,7 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
         }
     }
 
+     /** Provided an initial gridOptions configuration to the component. If a property is specified in both gridOptions and via component binding the component binding takes precedence.  */
      @Input() public gridOptions: GridOptions<TData> | undefined;
      /**
      * Used to register AG Grid Modules directly with this instance of the grid. 

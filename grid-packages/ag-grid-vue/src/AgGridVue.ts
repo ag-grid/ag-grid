@@ -103,7 +103,7 @@ export class AgGridVue extends Vue {
         }, 20);
 
         const frameworkComponentWrapper = new VueFrameworkComponentWrapper(this);
-        const gridOptions = ComponentUtil.copyAttributesToGridOptions(this.gridOptions, this, true);
+        const gridOptions = ComponentUtil.combineAttributesAndGridOptions(this.gridOptions, this, true);
 
         this.checkForBindingConflicts();
         gridOptions.rowData = this.getRowDataBasedOnBindings();

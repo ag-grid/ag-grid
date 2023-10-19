@@ -85,7 +85,7 @@ export const AgGridReactUi = <TData,>(props: AgReactUiProps<TData>) => {
             frameworkOverrides: new ReactFrameworkOverrides(),
         };
 
-        const mergedGridOps = ComponentUtil.copyAttributesToGridOptions(props.gridOptions || {}, props);
+        const mergedGridOps = ComponentUtil.combineAttributesAndGridOptions(props.gridOptions, props);
 
         checkForDeprecations(props);
 

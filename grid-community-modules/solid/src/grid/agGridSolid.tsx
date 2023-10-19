@@ -33,7 +33,6 @@ export interface PortalManager {
 
 const AgGridSolid = (props: AgGridSolidProps) => {
     let eGui: HTMLDivElement;
-    let gridOptions: GridOptions;
     let api: GridApi;
 
     const [context, setContext] = createSignal<Context>();
@@ -98,8 +97,7 @@ const AgGridSolid = (props: AgGridSolidProps) => {
             frameworkOverrides: new SolidFrameworkOverrides()
         };
 
-        gridOptions = props.gridOptions || {};
-        ComponentUtil.copyAttributesToGridOptions(gridOptions, props);
+        const gridOptions = ComponentUtil.combineAttributesAndGridOptions(props.gridOptions, props);
 
         const createUiCallback = (context: Context) => {
             setContext(context);
