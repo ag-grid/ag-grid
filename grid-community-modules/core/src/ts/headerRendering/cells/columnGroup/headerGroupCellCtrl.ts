@@ -91,13 +91,23 @@ export class HeaderGroupCellCtrl extends AbstractHeaderCellCtrl {
         this.groupResizeFeature.resizeLeafColumnsToFit(source);
     }
 
-    private createParams() {
+    private setupUserComp(): void {
         let displayName = this.displayName;
+
+        const params: IHeaderGroupParams = {
+            displayName: this.displayName!,
+            columnGroup: this.columnGroup,
+            setExpanded: (expanded: boolean) => {
+                this.columnModel.setColumnGroupOpened(this.columnGroup.getProvidedColumnGroup(), expanded, "gridInitializing");
+            },
+            api: this.gridOptionsService.api,
+            columnApi: this.gridOptionsService.columnApi,
+            context: this.gridOptionsService.context
+        };
 
         if (!displayName) {
             let columnGroup = this.columnGroup;
             const leafCols = columnGroup.getLeafColumns();
-
             // find the top most column group that represents the same columns. so if we are dragging a group, we also
             // want to visually show the parent groups dragging for the same column set. for example imaging 5 levels
             // of grouping, with each group only containing the next group, and the last group containing three columns,
@@ -106,38 +116,15 @@ export class HeaderGroupCellCtrl extends AbstractHeaderCellCtrl {
             while (columnGroup.getParent() && columnGroup.getParent().getLeafColumns().length === leafCols.length) {
                 columnGroup = columnGroup.getParent();
             }
-
             const colGroupDef = columnGroup.getColGroupDef();
-
             if (colGroupDef) {
                 displayName = colGroupDef.headerName!;
             }
-
             if (!displayName) {
                 displayName = leafCols ? this.columnModel.getDisplayNameForColumn(leafCols[0], 'header', true)! : '';
             }
         }
 
-        const params: IHeaderGroupParams = {
-            displayName: displayName,
-            columnGroup: this.columnGroup,
-            setExpanded: (expanded: boolean) => {
-                this.columnModel.setColumnGroupOpened(
-                    this.columnGroup.getProvidedColumnGroup(),
-                    expanded,
-                    "gridInitializing"
-                );
-            },
-            api: this.gridOptionsService.api,
-            columnApi: this.gridOptionsService.columnApi,
-            context: this.gridOptionsService.context
-        };
-
-        return params;
-    }
-
-    private setupUserComp(): void {
-        const params = this.createParams();
         const compDetails = this.userComponentFactory.getHeaderGroupCompDetails(params)!;
         this.comp.setUserCompDetails(compDetails);
     }
