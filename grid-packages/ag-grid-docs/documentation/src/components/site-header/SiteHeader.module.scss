@@ -6,6 +6,11 @@
     align-items: center;
     position: relative;
     background-color: var(--site-header-background);
+
+    #{$darkmode-selector} & {
+        background-color: var(--background-100);
+    }
+    
 }
 
 .headerInner {

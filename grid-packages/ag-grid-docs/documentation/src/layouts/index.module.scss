@@ -25,4 +25,8 @@ main {
     @media (min-width: $breakpoint-docs-nav-medium) {
         flex-direction: row;
     }
+
+    #{$darkmode-selector} & {
+        background-color: var(--background-100);
+    }
 }
