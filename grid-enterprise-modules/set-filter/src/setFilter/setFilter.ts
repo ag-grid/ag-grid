@@ -161,6 +161,35 @@ export class SetFilter<V = string> extends ProvidedFilter<SetFilterModel, V> imp
         return super.setModel(model);
     }
 
+    refresh(params: SetFilterParams<any, V>): boolean {
+        if(!super.refresh(params)) {
+            return false;
+        }
+
+        // Those params have a large impact on SetFilter and SetFilterValuesModel
+        // and should trigger a reload of the filter when they change.
+        const paramsThatForceReload: (keyof SetFilterParams<any, V>)[] = [
+            'treeList', 'treeListFormatter', 'treeListPathGetter', 'keyCreator', 'convertValuesToStrings',
+            'caseSensitive', 'valueFormatter', 'cellRenderer', 'comparator',
+        ];
+
+        if (paramsThatForceReload.some(param => params[param] !== this.setFilterParams?.[param])) {
+            return false;
+        }
+
+        this.setFilterParams = params;
+        this.applyExcelModeOptions(params);
+        super.updateParams(params);
+        this.updateSetFilterOnParamsChange(params);
+        this.updateMiniFilter();
+
+        if (this.valueModel) {
+            this.valueModel.updateOnParamsChange(params);
+        }
+
+        return true;
+    }
+
     private setModelAndRefresh(values: SetFilterModelValue | null): AgPromise<void> {
         return this.valueModel ? this.valueModel.setModel(values).then(() => this.checkAndRefreshVirtualList()) : AgPromise.resolve();
     }
@@ -203,21 +232,27 @@ export class SetFilter<V = string> extends ProvidedFilter<SetFilterModel, V> imp
         return a != null && b != null && _.areEqual(a.values, b.values);
     }
 
+    private updateSetFilterOnParamsChange = (newParams: SetFilterParams<any, V>) => {
+        this.setFilterParams = newParams;
+        this.convertValuesToStrings = !!newParams.convertValuesToStrings;
+        this.caseSensitive = !!newParams.caseSensitive;
+        const keyCreator = newParams.keyCreator ?? newParams.colDef.keyCreator;
+        this.setValueFormatter(newParams.valueFormatter, keyCreator, this.convertValuesToStrings, !!newParams.treeList, !!newParams.colDef.refData);
+        const isGroupCol = newParams.column.getId().startsWith(GROUP_AUTO_COLUMN_ID);
+        this.treeDataTreeList = this.gridOptionsService.is('treeData') && !!newParams.treeList && isGroupCol;
+        this.getDataPath = this.gridOptionsService.get('getDataPath');
+        this.groupingTreeList = !!this.columnModel.getRowGroupColumns().length && !!newParams.treeList && isGroupCol;
+        this.createKey = this.generateCreateKey(keyCreator, this.convertValuesToStrings, this.treeDataTreeList || this.groupingTreeList);
+    }
+
     public setParams(params: SetFilterParams<any, V>): void {
         this.applyExcelModeOptions(params);
 
         super.setParams(params);
 
-        this.setFilterParams = params;
-        this.convertValuesToStrings = !!params.convertValuesToStrings;
-        this.caseSensitive = !!params.caseSensitive;
-        let keyCreator = params.keyCreator ?? params.colDef.keyCreator;
-        this.setValueFormatter(params.valueFormatter, keyCreator, this.convertValuesToStrings, !!params.treeList, !!params.colDef.refData);
-        const isGroupCol = params.column.getId().startsWith(GROUP_AUTO_COLUMN_ID);
-        this.treeDataTreeList = this.gridOptionsService.is('treeData') && !!params.treeList && isGroupCol;
-        this.getDataPath = this.gridOptionsService.get('getDataPath');
-        this.groupingTreeList = !!this.columnModel.getRowGroupColumns().length && !!params.treeList && isGroupCol;
-        this.createKey = this.generateCreateKey(keyCreator, this.convertValuesToStrings, this.treeDataTreeList || this.groupingTreeList);
+        this.updateSetFilterOnParamsChange(params);
+
+        const keyCreator = params.keyCreator ?? params.colDef.keyCreator;
 
         this.valueModel = new SetValueModel({
             filterParams: params,
@@ -626,6 +661,22 @@ export class SetFilter<V = string> extends ProvidedFilter<SetFilterModel, V> imp
         eMiniFilter.setInputAriaLabel(translate('ariaSearchFilterValues', 'Search filter values'));
 
         this.addManagedListener(eMiniFilter.getInputElement(), 'keydown', e => this.onMiniFilterKeyDown(e));
+    }
+
+    private updateMiniFilter() {
+        if (!this.setFilterParams) { throw new Error('Set filter params have not been provided.'); }
+        if (!this.valueModel) { throw new Error('Value model has not been created.'); }
+
+        const { eMiniFilter } = this;
+
+        if (eMiniFilter.isDisplayed() !== !this.setFilterParams.suppressMiniFilter) {
+            eMiniFilter.setDisplayed(!this.setFilterParams.suppressMiniFilter);
+        }
+
+        const miniFilterValue = this.valueModel.getMiniFilter();
+        if (eMiniFilter.getValue() !== miniFilterValue) {
+            eMiniFilter.setValue(miniFilterValue);
+        }
     }
 
     // we need to have the GUI attached before we can draw the virtual rows, as the

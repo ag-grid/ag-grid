@@ -197,10 +197,19 @@ export abstract class ProvidedFilter<M, V> extends Component implements IProvide
 
     protected setParams(params: ProvidedFilterParams): void {
         this.providedFilterParams = params;
-
         this.applyActive = ProvidedFilter.isUseApplyButton(params);
 
         this.resetButtonsPanel();
+    }
+
+    protected updateParams(params: ProvidedFilterParams): void {
+        this.providedFilterParams = params;
+        this.applyActive = ProvidedFilter.isUseApplyButton(params);
+
+        this.resetUiToActiveModel(this.getModel(), () => {
+            this.updateUiVisibility();
+            this.setupOnBtApplyDebounce();
+        });
     }
 
     private resetButtonsPanel(): void {

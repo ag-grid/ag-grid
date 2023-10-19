@@ -52,17 +52,17 @@ export class SetValueModel<V> implements IEventEmitter {
 
     private readonly gridOptionsService: GridOptionsService;
     private readonly localEventService = new EventService();
-    private readonly formatter: TextFormatter;
+    private formatter: TextFormatter;
+    private suppressSorting: boolean;
     private readonly clientSideValuesExtractor: ClientSideValuesExtractor<V>;
     private readonly doesRowPassOtherFilters: (node: RowNode) => boolean;
-    private readonly suppressSorting: boolean;
     private readonly keyComparator: (a: string | null, b: string | null) => number;
     private readonly entryComparator: (a: [string | null, V | null], b: [string | null, V | null]) => number;
     private readonly compareByValue: boolean;
     private readonly convertValuesToStrings: boolean;
     private readonly caseSensitive: boolean;
-    private readonly displayValueModel: ISetDisplayValueModel<V>;
-    private readonly filterParams: SetFilterParams<any, V>;
+    private displayValueModel: ISetDisplayValueModel<V>;
+    private filterParams: SetFilterParams<any, V>;
     private readonly setIsLoading: (loading: boolean) => void;
     private readonly translate: (key: keyof ISetFilterLocaleText) => string;
     private readonly caseFormat: <T extends string | null>(valueToFormat: T) => typeof valueToFormat;
@@ -205,6 +205,28 @@ export class SetValueModel<V> implements IEventEmitter {
 
     public removeEventListener(eventType: string, listener: Function, async?: boolean): void {
         this.localEventService.removeEventListener(eventType, listener, async);
+    }
+
+    public updateOnParamsChange(filterParams: SetFilterParams<any, V>) {
+        const {
+            values,
+            textFormatter,
+            suppressSorting,
+        } = filterParams;
+
+        this.filterParams = filterParams;
+        this.formatter = textFormatter || TextFilter.DEFAULT_FORMATTER;
+        this.suppressSorting = suppressSorting || false;
+
+        if (values == null) {
+            this.valuesType = SetFilterModelValuesType.TAKEN_FROM_GRID_VALUES;
+        } else {
+            this.valuesType = Array.isArray(values) ?
+                SetFilterModelValuesType.PROVIDED_LIST :
+                SetFilterModelValuesType.PROVIDED_CALLBACK;
+
+            this.providedValues = values;
+        }
     }
 
     /**
