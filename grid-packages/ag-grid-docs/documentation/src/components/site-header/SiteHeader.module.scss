@@ -173,8 +173,13 @@
 }
 
 .navItem {
+
     &:not(:last-child) {
         border-bottom: 1px solid var(--site-header-background);
+    }
+
+    #{$darkmode-selector} & {
+        border-bottom: 1px solid var(--background-100) !important
     }
 
     @media screen and (min-width: $breakpoint-site-header-small) {
