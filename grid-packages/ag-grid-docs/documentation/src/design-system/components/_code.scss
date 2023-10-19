@@ -91,8 +91,8 @@ pre.code > code {
     overflow-x: auto !important;
 
     #{$darkmode-selector} & {
-        background: #121f29;
-        box-shadow: 0 0 0 1px #121f29;
+        background: var(--background-200);
+        box-shadow: inset 0px 0px;
     }
 }
 
