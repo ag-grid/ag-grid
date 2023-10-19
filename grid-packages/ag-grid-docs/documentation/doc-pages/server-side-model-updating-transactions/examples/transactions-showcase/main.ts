@@ -75,7 +75,7 @@ const gridOptions: GridOptions = {
   
     // register interest in data changes
     registerObserver({
-      transactionFunc: (t: ServerSideTransaction) => gridApi!.applyServerSideTransactionAsync(t),
+      transactionFunc: (t: ServerSideTransaction) => params.api.applyServerSideTransactionAsync(t),
       groupedFields: ['product', 'portfolio', 'book'],
     });
   }
