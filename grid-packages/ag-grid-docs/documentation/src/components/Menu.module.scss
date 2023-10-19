@@ -145,7 +145,7 @@ button:not([class^="ag-"]).sectionHeader {
 
     .enterpriseIcon {
         --icon-size: 1.15em;
-        --text-color: red;
+        --text-color: red !important;
 
         position: relative;
         margin-left: 2px;
