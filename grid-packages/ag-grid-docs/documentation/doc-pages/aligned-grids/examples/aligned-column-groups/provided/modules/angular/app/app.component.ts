@@ -19,14 +19,12 @@ ModuleRegistry.registerModules([ClientSideRowModelModule])
         <ag-grid-angular
                 style='width: 100%; height: 45%'
                 #topGrid
-                class='ag-theme-alpine'
-                (firstDataRendered)='onFirstDataRendered($event)'
-                [defaultColDef]='{
-                    resizable: true
-                }'
+                class='ag-theme-alpine'                
                 [rowData]='rowData'
                 [gridOptions]='topOptions'
-                [columnDefs]='columnDefs'>
+                [columnDefs]='columnDefs'
+                [alignedGrids]="[bottomGrid]"
+                (firstDataRendered)='onFirstDataRendered($event)'>
         </ag-grid-angular>
 
         <div style='height: 5%'></div>
@@ -35,13 +33,11 @@ ModuleRegistry.registerModules([ClientSideRowModelModule])
                 style='width: 100%; height: 45%'
                 #bottomGrid
                 class='ag-theme-alpine'
-                (firstDataRendered)='onFirstDataRendered($event)'
-                [defaultColDef]='{
-                    resizable: true
-                }'
                 [rowData]='rowData'
                 [gridOptions]='bottomOptions'
-                [columnDefs]='columnDefs'>
+                [columnDefs]='columnDefs'
+                [alignedGrids]="[topGrid]"
+                (firstDataRendered)='onFirstDataRendered($event)'>
         </ag-grid-angular>
     `
 })
@@ -49,30 +45,23 @@ export class AppComponent {
     columnDefs!: (ColDef | ColGroupDef)[];
     rowData!: any[];
     topOptions: GridOptions = {
-        alignedGrids: [],
         defaultColDef: {
-            editable: true,
             sortable: true,
             resizable: true,
-            filter: true,
             flex: 1,
             minWidth: 100
         }
     };
     bottomOptions: GridOptions = {
-        alignedGrids: [],
         defaultColDef: {
-            editable: true,
             sortable: true,
             resizable: true,
-            filter: true,
             flex: 1,
             minWidth: 100
         }
     };
 
-    @ViewChild('topGrid') topGrid!: AgGridAngular<IOlympicData>;
-    @ViewChild('bottomGrid') bottomGrid!: AgGridAngular<IOlympicData>;
+    @ViewChild('topGrid') topGrid!: AgGridAngular;
 
     constructor(private http: HttpClient) {
         this.columnDefs = [
@@ -107,9 +96,6 @@ export class AppComponent {
                 ]
             }
         ];
-
-        this.topOptions.alignedGrids!.push(this.bottomOptions);
-        this.bottomOptions.alignedGrids!.push(this.topOptions);
     }
 
     ngOnInit() {
@@ -118,8 +104,8 @@ export class AppComponent {
                 this.rowData = data as any[];
 
                 // mix up some columns
-                this.topGrid.columnApi.moveColumnByIndex(11, 4);
-                this.topGrid.columnApi.moveColumnByIndex(11, 4);
+                this.topGrid.api.moveColumnByIndex(11, 4);
+                this.topGrid.api.moveColumnByIndex(11, 4);
             });
     }
 

@@ -1,16 +1,9 @@
 ---
-title: "Status Bar Panels (Components)"
+title: "Status Bar Panel"
 enterprise: true
 ---
 
-Status Bar Panels allow you to add your own components to the grid's Status Bar. Use this when the provided status bar components do not meet your requirements.
-
-## Simple Status Bar Component
-
-md-include:simple-status-bar-javascript.md
-md-include:simple-status-bar-angular.md
-md-include:simple-status-bar-react.md
-md-include:simple-status-bar-vue.md
+The Status Bar Panel allows you to add your own components to the grid's Status Bar. Use this when the provided status bar components do not meet your requirements.
 
 <grid-example title='Status Bar Panel' name='simple-component' type='generated' options='{ "enterprise": true, "modules": ["clientside", "statusbar", "range"] }'></grid-example>
 

@@ -1,6 +1,6 @@
 import '@ag-grid-community/styles/ag-grid.css';
 import "@ag-grid-community/styles/ag-theme-alpine.css";
-import { ColDef, ColGroupDef, Grid, GridOptions } from '@ag-grid-community/core';
+import { ColDef, ColGroupDef, createGrid, Grid, GridApi, GridOptions } from '@ag-grid-community/core';
 import { ModuleRegistry } from '@ag-grid-community/core';
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
 
@@ -30,7 +30,6 @@ const columnDefs: (ColDef | ColGroupDef)[] = [
         ]
     }
 ];
-
 // this is the grid options for the top grid
 const gridOptionsTop: GridOptions = {
     defaultColDef: {
@@ -43,9 +42,10 @@ const gridOptionsTop: GridOptions = {
     },
     columnDefs: columnDefs,
     rowData: null,
-    // debug: true,
-    alignedGrids: []
+    alignedGrids: () => [bottomApi]
 };
+const gridDivTop = document.querySelector<HTMLElement>('#myGridTop')!;
+const topApi = createGrid(gridDivTop, gridOptionsTop);
 
 // this is the grid options for the bottom grid
 const gridOptionsBottom: GridOptions = {
@@ -59,39 +59,31 @@ const gridOptionsBottom: GridOptions = {
     },
     columnDefs: columnDefs,
     rowData: null,
-    // debug: true,
-    alignedGrids: []
+    alignedGrids: () => [topApi]
 };
-
-gridOptionsTop.alignedGrids!.push(gridOptionsBottom);
-gridOptionsBottom.alignedGrids!.push(gridOptionsTop);
+const gridDivBottom = document.querySelector<HTMLElement>('#myGridBottom')!;
+const bottomApi = createGrid(gridDivBottom, gridOptionsBottom);
 
 function onCbAthlete(value: boolean) {
     // we only need to update one grid, as the other is a slave
-    gridOptionsTop.columnApi!.setColumnVisible('athlete', value);
+    topApi!.setColumnVisible('athlete', value);
 }
 
 function onCbAge(value: boolean) {
     // we only need to update one grid, as the other is a slave
-    gridOptionsTop.columnApi!.setColumnVisible('age', value);
+    topApi!.setColumnVisible('age', value);
 }
 
 function onCbCountry(value: boolean) {
     // we only need to update one grid, as the other is a slave
-    gridOptionsTop.columnApi!.setColumnVisible('country', value);
+    topApi!.setColumnVisible('country', value);
 }
 
 function setData(rowData: any[]) {
-    gridOptionsTop.api!.setRowData(rowData);
-    gridOptionsBottom.api!.setRowData(rowData);
-    gridOptionsTop.api!.sizeColumnsToFit();
+    topApi!.setRowData(rowData);
+    bottomApi!.setRowData(rowData);
+    topApi!.sizeColumnsToFit();
 }
-
-const gridDivTop = document.querySelector<HTMLElement>('#myGridTop')!;
-new Grid(gridDivTop, gridOptionsTop);
-
-const gridDivBottom = document.querySelector<HTMLElement>('#myGridBottom')!;
-new Grid(gridDivBottom, gridOptionsBottom);
 
 fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
     .then(response => response.json())

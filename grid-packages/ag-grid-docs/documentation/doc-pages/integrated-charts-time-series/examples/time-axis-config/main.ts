@@ -1,4 +1,10 @@
-import { Grid, CreateRangeChartParams, FirstDataRenderedEvent, GridOptions } from '@ag-grid-community/core'
+import {
+  GridApi,
+  createGrid,
+  CreateRangeChartParams,
+  FirstDataRenderedEvent,
+  GridOptions,
+} from '@ag-grid-community/core';
 
 function formatTime(date: Date | number) {
   return Intl.DateTimeFormat("en-GB", {
@@ -7,6 +13,8 @@ function formatTime(date: Date | number) {
     second: "2-digit",
   }).format(new Date(date))
 }
+
+let gridApi: GridApi;
 
 const gridOptions: GridOptions = {
   columnDefs: [
@@ -81,7 +89,7 @@ function onFirstDataRendered(params: FirstDataRenderedEvent) {
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
   let gridDiv = document.querySelector<HTMLElement>('#myGrid')!
-  new Grid(gridDiv, gridOptions)
+  gridApi = createGrid(gridDiv, gridOptions);
 })
 
 function getRowData() {

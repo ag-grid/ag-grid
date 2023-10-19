@@ -143,7 +143,7 @@ Note if you hover over a header group, all columns in the group will be highligh
 
 <grid-example title='Highlight Rows And Columns' name='highlight-rows-and-columns' type='generated'></grid-example>
 
-In this example both Rows and Columns are not highlighted by setting.
+In this example Column highlighting is disabled by default and Row highlighting has been disabled using `suppressRowHoverHighlight=true`.
 
 <grid-example title='No Highlighting Rows And Columns' name='highlight-nothing' type='generated'></grid-example>
 

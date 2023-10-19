@@ -151,7 +151,7 @@ const gridOptions = {
         {
             field: 'country',
             headerCheckboxSelection: params => {
-                const displayedColumns = params.columnApi.getAllDisplayedColumns();
+                const displayedColumns = params.api.getAllDisplayedColumns();
                 return displayedColumns[0] === params.column;
             }
         },
@@ -261,7 +261,7 @@ There are two events with regards to selection:<br/>
 
 To select rows programmatically, use the `node.setSelected(params)` method.
 
-<api-documentation source='row-object/resources/methods.json' section='rowNodeMethods' names='["setSelected", "isSelected"]'></api-documentation>
+<api-documentation source='row-api/resources/methods.json' section='rowNodeMethods' names='["setSelected", "isSelected"]'></api-documentation>
 
 <snippet>
 | // set selected, keep any other selections
@@ -290,10 +290,10 @@ If you want to select only the filtered rows, you could do this using the follow
 <snippet transform={false}>
 |// loop through each node after filter
 |const nodes = [];
-|gridOptions.api.forEachNodeAfterFilter(node => {
+|api.forEachNodeAfterFilter(node => {
 |    nodes.push(node);
 |});
-|gridOptions.api.setNodesSelected({ nodes, newValue: true });
+|api.setNodesSelected({ nodes, newValue: true });
 </snippet>
 
 ### Example: Using forEachNode

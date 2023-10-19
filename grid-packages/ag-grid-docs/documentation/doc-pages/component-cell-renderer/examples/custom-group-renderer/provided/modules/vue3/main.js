@@ -43,7 +43,6 @@ const VueExample = {
                 { field: 'total', aggFunc: 'sum' },
             ],
             gridApi: null,
-            columnApi: null,
             defaultColDef: {
                 flex: 1,
                 minWidth: 120,
@@ -63,7 +62,6 @@ const VueExample = {
     methods: {
         onGridReady(params) {
             this.gridApi = params.api;
-            this.gridColumnApi = params.columnApi;
 
             const updateData = (data) => params.api.setRowData(data);
 

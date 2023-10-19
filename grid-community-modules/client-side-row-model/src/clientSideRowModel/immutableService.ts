@@ -1,7 +1,10 @@
 import {
     Autowired,
-    Bean, BeanStub, IImmutableService,
+    Bean,
+    BeanStub,
+    IImmutableService,
     IRowModel,
+    ISelectionService,
     PostConstruct,
     RowDataTransaction,
     RowNode, RowRenderer, _
@@ -14,6 +17,7 @@ export class ImmutableService extends BeanStub implements IImmutableService {
 
     @Autowired('rowModel') private rowModel: IRowModel;
     @Autowired('rowRenderer') private rowRenderer: RowRenderer;
+    @Autowired('selectionService') private selectionService: ISelectionService;
 
     private clientSideRowModel: ClientSideRowModel;
 
@@ -21,6 +25,8 @@ export class ImmutableService extends BeanStub implements IImmutableService {
     private postConstruct(): void {
         if (this.rowModel.getType() === 'clientSide') {
             this.clientSideRowModel = this.rowModel as ClientSideRowModel;
+
+            this.addManagedPropertyListener('rowData', () => this.onRowDataUpdated());
         }
     }
 
@@ -105,4 +111,15 @@ export class ImmutableService extends BeanStub implements IImmutableService {
         return [transaction, orderMap];
     }
 
+    private onRowDataUpdated(): void {
+        const rowData = this.gridOptionsService.get('rowData');
+        if (!rowData) { return; }
+
+        if (this.isActive()) {
+            this.setRowData(rowData);
+        } else {
+            this.selectionService.reset('rowDataChanged');
+            this.clientSideRowModel.setRowData(rowData);
+        }
+    }
 }

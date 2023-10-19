@@ -1,5 +1,14 @@
-import { Grid, GridOptions, GetRowIdParams, IsServerSideGroupOpenByDefaultParams, IServerSideDatasource, IRowNode } from '@ag-grid-community/core'
+import {
+  GridApi,
+  createGrid,
+  GridOptions,
+  GetRowIdParams,
+  IsServerSideGroupOpenByDefaultParams,
+  IServerSideDatasource,
+  IRowNode,
+} from '@ag-grid-community/core';
 declare var FakeServer: any;
+let gridApi: GridApi<IOlympicData>;
 const gridOptions: GridOptions<IOlympicData> = {
   columnDefs: [
     { field: 'country', enableRowGroup: true, rowGroup: true, hide: true },
@@ -21,7 +30,7 @@ const gridOptions: GridOptions<IOlympicData> = {
     if (params.data.id != null) {
       return 'leaf-' + params.data.id;
     }
-    const rowGroupCols = params.columnApi.getRowGroupColumns();
+    const rowGroupCols = params.api.getRowGroupColumns();
     const rowGroupColIds = rowGroupCols.map(col => col.getId()).join('-');
     const thisGroupCol = rowGroupCols[params.level];
     return 'group-' + rowGroupColIds + '-' + (params.parentKeys || []).join('-') + params.data[thisGroupCol.getColDef().field!];
@@ -79,7 +88,7 @@ function getServerSideDatasource(server: any): IServerSideDatasource {
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
   var gridDiv = document.querySelector<HTMLElement>('#myGrid')!
-  new Grid(gridDiv, gridOptions)
+  gridApi = createGrid(gridDiv, gridOptions);
 
   fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
     .then(response => response.json())
@@ -96,6 +105,6 @@ document.addEventListener('DOMContentLoaded', function () {
       var datasource = getServerSideDatasource(fakeServer)
 
       // register the datasource with the grid
-      gridOptions.api!.setServerSideDatasource(datasource)
+      gridApi!.setServerSideDatasource(datasource)
     })
 })

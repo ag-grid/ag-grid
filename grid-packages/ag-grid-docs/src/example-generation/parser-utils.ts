@@ -160,7 +160,9 @@ export function tsNodeIsTopLevelVariable(node: ts.Node, registered: string[] = [
         // Is not just a type declaration i.e declare function getData: () => any[];
         if (node.declarations.length > 0) {
             const declaration = node.declarations[0];
-            return !isDeclareStatement(node.parent) && registered.indexOf(declaration.name.getText()) < 0 && ts.isSourceFile(node.parent.parent);
+            // Don't include api declarations as these are handled separately
+            const isLetApi = declaration.name.getText() === 'gridApi';            
+            return !isLetApi && !isDeclareStatement(node.parent) && registered.indexOf(declaration.name.getText()) < 0 && ts.isSourceFile(node.parent.parent);
         }
     }
 }
@@ -449,7 +451,7 @@ export function findAllAccessedProperties(node) {
     } else if (ts.isCallExpression(node) || ts.isPropertyAccessExpression(node)) {
         // When there are chained accesses we need to recurse to the lowest identifier as this is the first in the statement,
         // and will be the true accessed variable.
-        // i.e gridOptions.api!.getModel().getRowCount() we need to recurse down the tree to extract gridOptions
+        // i.e api!.getModel().getRowCount() we need to recurse down the tree to extract gridOptions
         const exp = getLowestExpression(node.expression);
 
         if (ts.isArrayLiteralExpression(exp)) {
@@ -468,7 +470,7 @@ export function findAllAccessedProperties(node) {
         // so for binary expressions we only check the right hand branch
         // function setSwimmingHeight(height: number) {
         //      swimmingHeight = height
-        //      gridOptions.api!.resetRowHeights()
+        //      api!.resetRowHeights()
         // }
         const rightProps = findAllAccessedProperties(node.right);
         if (rightProps.length > 0) {
@@ -673,4 +675,17 @@ export function addGenericInterfaceImport(imports: string[], tData: string, bind
         !imports.some(i => i.includes(tData))) {
         imports.push(`import { ${tData} } from './interfaces'`)
     }
+}
+
+export function replaceGridReadyRowData(callback: string, rowDataSetter: string){
+    return callback
+    // replace gridApi.setRowData(data) with this.rowData = data
+    .replace(/gridApi(!?)\.setRowData\(data\)/, `${rowDataSetter} = data`)
+    // replace gridApi.setRowData(data.map(...)) with this.rowData = data.map(...)
+    .replace(/gridApi(!?)\.setRowData\(data/, `${rowDataSetter} = (data`);
+}
+
+export function preferParamsApi(code: string): string {
+    // use params.api instead of gridApi.api when we have access to the params object
+    return code.replace(/([\s\(!])gridApi(\W)/g, '$1params.api$2');
 }

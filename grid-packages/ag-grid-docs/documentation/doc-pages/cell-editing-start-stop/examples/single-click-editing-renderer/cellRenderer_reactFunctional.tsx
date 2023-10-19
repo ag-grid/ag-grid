@@ -4,7 +4,7 @@ import { ICellRendererParams } from "@ag-grid-community/core";
 export default function cellRenderer(props: ICellRendererParams) {
   const handleClick = () => {
     props.api.startEditingCell({
-      rowIndex: props.rowIndex,
+      rowIndex: props.node.rowIndex!,
       colKey: props.column!.getId(),
     });
   };

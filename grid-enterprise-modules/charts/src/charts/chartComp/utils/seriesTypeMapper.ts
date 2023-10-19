@@ -25,6 +25,16 @@ export const VALID_SERIES_TYPES: ChartSeriesType[] = [
     'scatter',
 ];
 
+const horizontalChartTypes = new Set(['groupedBar', 'stackedBar', 'normalizedBar']);
+export function isHorizontal(chartType: ChartType): boolean {
+    return horizontalChartTypes.has(chartType);
+}
+
+const stackedChartTypes = new Set(['stackedColumn', 'normalizedColumn', 'stackedBar', 'normalizedBar']);
+export function isStacked(chartType: ChartType): boolean {
+    return stackedChartTypes.has(chartType);
+}
+
 export function getSeriesType(chartType: ChartType): ChartSeriesType {
     switch (chartType) {
         case 'bar':
@@ -36,7 +46,7 @@ export function getSeriesType(chartType: ChartType): ChartSeriesType {
         case 'groupedColumn':
         case 'stackedColumn':
         case 'normalizedColumn':
-            return 'column';
+            return 'bar';
         case 'line':
             return 'line';
         case 'area':

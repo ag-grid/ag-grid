@@ -52,7 +52,9 @@ The above two (pinning and floating) can be thought of as follows: if you have a
 
 ## Range Selection Changed Event
 
-The `rangeSelectionChanged` event tells you that the range selection has changed. The event has two properties, `started` and `finished`, which are `true` when the selection is starting or finishing. For example, if selecting a range of 10 cells in a row, the user will click the first cell and drag to the last cell. This will result in up to 11 events. The first event will have `started=true`, the last will have `finished=true`, and all the intermediary events will have both of these values as `false`.
+The `rangeSelectionChanged` event tells you that the range selection has changed. The event has two properties, `started` and `finished`, which are `true` when the selection is starting or finishing. 
+
+For example, if selecting a range of 5 cells in a row, the user will click the first cell and drag to the last cell. This will result in up to 7 events. The first and last cell in the range will cause two events each. This is due to the first cell firing an event with `started=true, finished=true` upon mousedown with an additional event `started=true, finished=false` while in the range, and the last cell firing an event `started=false, finished=false` as soon as it is in the range and then again `started=false, finished=true` upon the end of range selection. All the intermediary events will have one event with both `started` and `finished` as `false`. 
 
 <api-documentation source='grid-events/events.json' section='selection' names='["rangeSelectionChanged"]' ></api-documentation>
 
@@ -102,6 +104,6 @@ This will also emit the following events, which can be seen in the [Advanced Ran
 
 The example below demonstrates a more complex range selection scenario. The example listens for the `rangeSelectionChanged` event and creates a sum of all the number values that are in the range (it ignores all non-number values). The `finished` flag is used to update the eager and lazy figures separately.
 
-The example also shows use of the `processCellForClipboard` and `processCellFromClipboard` [callbacks](/clipboard/#processing-clipboard-data) by making all the athlete names uppercase when copying into the clipboard and lowercase when copying from the clipboard.
+The example also shows use of the `processCellForClipboard` and `processCellFromClipboard` [callbacks](clipboard/#processing-pasted-data) by making all the athlete names uppercase when copying into the clipboard and lowercase when copying from the clipboard.
 
 <grid-example title='Advanced Range Selection' name='range-selection-advanced' type='generated' options='{ "enterprise": true, "exampleHeight": 700, "modules": ["clientside", "range", "menu", "clipboard"] }'></grid-example>

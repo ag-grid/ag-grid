@@ -63,7 +63,7 @@ export interface ColGroupDef<TData = any> extends AbstractColDef<TData> {
 
     /**
     * The custom header group component to be used for rendering the component header. If none specified the default AG Grid is used.
-    * See [Header Group Component](https://www.ag-grid.com/javascript-data-grid/component-header/#header-group-components/) for framework specific implementation details.
+    * See [Header Group Component](https://www.ag-grid.com/javascript-data-grid/component-header/#header-group-components) for framework specific implementation details.
     */
     headerGroupComponent?: any;
     /** The params used to configure the `headerGroupComponent`. */
@@ -102,11 +102,18 @@ export interface ToolPanelClassParams<TData = any, TValue = any> extends AgGridC
 }
 export type ToolPanelClass<TData = any, TValue = any> = string | string[] | ((params: ToolPanelClassParams<TData, TValue>) => string | string[] | undefined);
 
+// Used to stop recursion in ColDefField and then just return Prefix.any
+// so that we do not run into infinite recursion Typescript error
+type Digit = 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9;
+type NextDigit = [1, 2, 3, 4, 5, 6, 7, 'STOP'];
+type Inc<T> = T extends Digit ? NextDigit[T] : 'STOP'; 
+
+
 type StringOrNumKeys<TObj> = keyof TObj & (string | number);
-type NestedPath<TValue, Prefix extends string, TValueNestedChild> =
+type NestedPath<TValue, Prefix extends string, TValueNestedChild, TDepth> = 
     TValue extends object
-    ? `${Prefix}.${NestedFieldPaths<TValue, TValueNestedChild>}`
-    : never;
+        ? `${Prefix}.${ TDepth extends 'STOP' ? any : NestedFieldPaths<TValue, TValueNestedChild, TDepth>}`
+        : never;
 
 // This type wrapper is needed for correct handling of union types in ColDefField
 // If a user provides a union type for TData = {a: string} | { b: string} then ColDefField<TData> will be "a" | "b"
@@ -114,15 +121,15 @@ type NestedPath<TValue, Prefix extends string, TValueNestedChild> =
 /**
  * Returns a union of all possible paths to nested fields in `TData`.
  */
-export type ColDefField<TData = any, TValue = any> = TData extends any ? NestedFieldPaths<TData, TValue> : never;
+export type ColDefField<TData = any, TValue = any> = TData extends any ? NestedFieldPaths<TData, TValue, 1> : never;
 
 /**
  * Returns a union of all possible paths to nested fields in `TData`.
  */
-export type NestedFieldPaths<TData = any, TValue = any> = {
+export type NestedFieldPaths<TData = any, TValue = any, TDepth = 0> = {
     [TKey in StringOrNumKeys<TData>]:
         | (TData[TKey] extends TValue ? `${TKey}` : never)
-        | NestedPath<TData[TKey], `${TKey}`, TValue>;
+        | NestedPath<TData[TKey], `${TKey}`, TValue, Inc<TDepth>>;
 }[StringOrNumKeys<TData>];
 
 
@@ -179,7 +186,7 @@ export interface ColDef<TData = any, TValue = any> extends AbstractColDef<TData,
      */
     equals?: (valueA: TValue | null | undefined, valueB: TValue | null | undefined) => boolean;
     /** The field of the tooltip to apply to the cell. */
-    tooltipField?: NestedFieldPaths<TData>;
+    tooltipField?: ColDefField<TData>;
     /**
      * Callback that should return the string to use for a tooltip, `tooltipField` takes precedence if set.
      * If using a custom `tooltipComponent` you may return any custom value to be passed to your tooltip component.

@@ -23,13 +23,6 @@ export class SortService extends BeanStub {
     @Autowired('columnModel') private columnModel: ColumnModel;
     @Autowired('rowNodeSorter') private rowNodeSorter: RowNodeSorter;
 
-    private postSortFunc: ((params: WithoutGridCommon<PostSortRowsParams>) => void) | undefined;
-
-    @PostConstruct
-    public init(): void {
-        this.postSortFunc = this.gridOptionsService.getCallback('postSortRows');
-    }
-
     public sort(
         sortOptions: SortOption[],
         sortActive: boolean,
@@ -47,6 +40,7 @@ export class SortService extends BeanStub {
         }
 
         const isPivotMode = this.columnModel.isPivotMode();
+        const postSortFunc = this.gridOptionsService.getCallback('postSortRows');
 
         const callback = (rowNode: RowNode) => {
             // we clear out the 'pull down open parents' first, as the values mix up the sorting
@@ -84,9 +78,9 @@ export class SortService extends BeanStub {
 
             this.updateChildIndexes(rowNode);
 
-            if (this.postSortFunc) {
+            if (postSortFunc) {
                 const params: WithoutGridCommon<PostSortRowsParams> = { nodes: rowNode.childrenAfterSort };
-                this.postSortFunc(params);
+                postSortFunc(params);
             }
         };
 
@@ -214,9 +208,8 @@ export class SortService extends BeanStub {
             return;
         }
 
-        if (this.gridOptionsService.isTreeData()) {
-            const msg = `AG Grid: The property hideOpenParents dose not work with Tree Data. This is because Tree Data has values at the group level, it doesn't make sense to hide them (as opposed to Row Grouping, which only has Aggregated Values at the group level).`;
-            _.doOnce(() => console.warn(msg), 'sortService.hideOpenParentsWithTreeData');
+        if (this.gridOptionsService.is('treeData')) {
+            _.warnOnce(`The property hideOpenParents dose not work with Tree Data. This is because Tree Data has values at the group level, it doesn't make sense to hide them.`);
             return false;
         }
 

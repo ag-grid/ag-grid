@@ -159,6 +159,7 @@ export class InfiniteBlock extends RowNodeBlock {
                 this.rowNodes[index] = new RowNode(this.beans);
                 this.rowNodes[index].setRowIndex(rowNode.rowIndex!);
                 this.rowNodes[index].setRowTop(rowNode.rowTop!);
+                this.rowNodes[index].setRowHeight(rowNode.rowHeight!);
 
                 // clean up the old row
                 rowNode.clearRowTopAndRowIndex();

@@ -63,7 +63,7 @@ md-include:changing-the-template.md
 
 The Master Grid manages all the Detail Grid instances. You can access the API of the underlying Detail Grids to call API methods directly on those grids. The Master Grid stores references to the Detail Grid API's in Detail Grid Info objects.
 
-The Detail Grid Info objects contain a reference to the underlying [Grid API](/grid-api/) and [Column API](/column-api/) for each detail grid. The interface for Detail Grid Info is as follows:
+The Detail Grid Info objects contain a reference to the underlying [Grid API](/grid-api/) for each detail grid. The interface for Detail Grid Info is as follows:
 
 <interface-documentation interfaceName='DetailGridInfo' ></interface-documentation>
 
@@ -73,7 +73,7 @@ The Detail Grid Info objects are accessed via the Master Grid's API via the foll
 
 <snippet>
 // lookup a specific DetailGridInfo by id, and then call stopEditing() on it
-const detailGridInfo = gridOptions.api.getDetailGridInfo('detail_someId');
+const detailGridInfo = api.getDetailGridInfo('detail_someId');
 detailGridInfo.api.flashCells();
 </snippet>
 
@@ -83,7 +83,7 @@ The grid generates IDs for detail grids by prefixing the parent row's ID with `d
 
 <snippet>
 // iterate over all DetailGridInfos, and call stopEditing() on each one
-| gridOptions.api.forEachDetailGridInfo(detailGridInfo => {
+| api.forEachDetailGridInfo(detailGridInfo => {
 |     detailGridInfo.api.flashCells();
 | });
 </snippet>

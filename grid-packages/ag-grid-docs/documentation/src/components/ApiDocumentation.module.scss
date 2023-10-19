@@ -53,7 +53,7 @@
 
     tr:nth-child(even),
     tr:nth-child(even) td {
-        background-color: white;
+        background-color: var(--default-background-color);
     }
 
     pre:global(.code) {
@@ -117,6 +117,10 @@
     font-size: var(--font-size-small);
     font-family: var(--monospace-font-family);
     color: var(--code-text-color);
+
+    #{$darkmode-selector} & {
+        font-weight: 600;
+    }
 }
 
 .description {

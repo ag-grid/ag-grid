@@ -59,6 +59,7 @@ Check out the [developer documentation](https://www.ag-grid.com/documentation/?u
 * [Get Started with Angular](https://www.ag-grid.com/angular-data-grid/getting-started/?utm_source=ag-grid-readme&utm_medium=repository&utm_campaign=github)
 * [Get Started with React](https://www.ag-grid.com/react-data-grid/getting-started/?utm_source=ag-grid-readme&utm_medium=repository&utm_campaign=github)
 * [Get Started with Vue](https://www.ag-grid.com/vue-data-grid/getting-started/?utm_source=ag-grid-readme&utm_medium=repository&utm_campaign=github)
+* [Get Started with Solid](https://www.ag-grid.com/react-data-grid/solidjs/?utm_source=ag-grid-readme&utm_medium=repository&utm_campaign=github)
 
 ## Getting started
 
@@ -103,8 +104,8 @@ var gridOptions = {
 ### Initialise the grid
 
 ```js
-var eGridDiv = document.querySelector('#myGrid');
-new Grid(eGridDiv, this.gridOptions);
+const eGridDiv = document.querySelector('#myGrid');
+const api = createGrid(eGridDiv, this.gridOptions);
 ```
 
 For more information on how to integrate the grid into your project see [Building AG Grid Applications](https://www.ag-grid.com/javascript-data-grid/building/?utm_source=ag-grid-readme&utm_medium=repository&utm_campaign=github).

@@ -1,4 +1,4 @@
-import { Component, Grid, GridOptions, ICellRenderer, RefSelector, _, GridApi, IDetailCellRenderer, IDetailCellRendererParams, ModuleRegistry } from "@ag-grid-community/core";
+import { Component, Grid, GridOptions, ICellRenderer, RefSelector, _, GridApi, IDetailCellRenderer, IDetailCellRendererParams, ModuleRegistry, createGrid, GridParams, ColumnApi } from "@ag-grid-community/core";
 import { DetailCellRendererCtrl } from "./detailCellRendererCtrl";
 
 export class DetailCellRenderer extends Component implements ICellRenderer {
@@ -94,24 +94,20 @@ export class DetailCellRenderer extends Component implements ICellRenderer {
         const frameworkComponentWrapper = this.context.getBean('frameworkComponentWrapper');
         const frameworkOverrides = this.getFrameworkOverrides();
 
-        // tslint:disable-next-line
-        new Grid(this.eDetailGrid, gridOptions, {
+        const api = createGrid(this.eDetailGrid, gridOptions, {
             frameworkOverrides,
             providedBeanInstances: {
                 agGridReact: agGridReactCloned,
-                frameworkComponentWrapper: frameworkComponentWrapper
+                frameworkComponentWrapper: frameworkComponentWrapper,
             },
-            modules: ModuleRegistry.__getGridRegisteredModules(this.params.api.getGridId())
-        });
+            modules: ModuleRegistry.__getGridRegisteredModules(this.params.api.getGridId()),
+        } as GridParams);
 
-        this.detailApi = gridOptions.api!;
-
-        this.ctrl.registerDetailWithMaster(gridOptions.api!, gridOptions.columnApi!);
+        this.detailApi = api;
+        this.ctrl.registerDetailWithMaster(api, new ColumnApi(api));
 
         this.addDestroyFunc(() => {
-            if (gridOptions.api) {
-                gridOptions.api.destroy();
-            }
+            api?.destroy();
         });
     }
 

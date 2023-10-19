@@ -4,7 +4,7 @@ import { Events } from '../events';
 import { BeanStub } from "../context/beanStub";
 import { getAbsoluteHeight, getAbsoluteWidth, getElementRectWithOffset } from '../utils/dom';
 import { last } from '../utils/array';
-import { isElementInEventPath } from '../utils/event';
+import { isElementInEventPath, isStopPropagationForAgGrid } from '../utils/event';
 import { KeyCode } from '../constants/keyCode';
 import { FocusService } from "../focusService";
 import { GridCtrl } from "../gridComp/gridCtrl";
@@ -517,7 +517,7 @@ export class PopupService extends BeanStub {
 
             const key = event.key;
 
-            if (key === KeyCode.ESCAPE) {
+            if (key === KeyCode.ESCAPE && !isStopPropagationForAgGrid(event)) {
                 removeListeners({ keyboardEvent: event });
             }
         };
@@ -531,8 +531,6 @@ export class PopupService extends BeanStub {
                 // we don't hide popup if the event was on the child, or any
                 // children of this child
                 this.isEventFromCurrentPopup({ mouseEvent, touchEvent }, popupEl) ||
-                // if the event to close is actually the open event, then ignore it
-                this.isEventSameChainAsOriginalEvent({ originalMouseEvent: pointerEvent, mouseEvent, touchEvent }) ||
                 // this method should only be called once. the client can have different
                 // paths, each one wanting to close, so this method may be called multiple times.
                 popupHidden
@@ -728,41 +726,6 @@ export class PopupService extends BeanStub {
                 return true;
             }
             el = el.parentElement;
-        }
-
-        return false;
-    }
-
-    // in some browsers, the context menu event can be fired before the click event, which means
-    // the context menu event could open the popup, but then the click event closes it straight away.
-    private isEventSameChainAsOriginalEvent(params: PopupEventParams): boolean {
-        const { originalMouseEvent, mouseEvent, touchEvent } = params;
-        // we check the coordinates of the event, to see if it's the same event. there is a 1 / 1000 chance that
-        // the event is a different event, however that is an edge case that is not very relevant (the user clicking
-        // twice on the same location isn't a normal path).
-
-        // event could be mouse event or touch event.
-        let mouseEventOrTouch: MouseEvent | Touch | null = null;
-
-        if (mouseEvent) {
-            // mouse event can be used direction, it has coordinates
-            mouseEventOrTouch = mouseEvent;
-        } else if (touchEvent) {
-            // touch event doesn't have coordinates, need it's touch object
-            mouseEventOrTouch = touchEvent.touches[0];
-        }
-        if (mouseEventOrTouch && originalMouseEvent) {
-            // for x, allow 4px margin, to cover iPads, where touch (which opens menu) is followed
-            // by browser click (when you finger up, touch is interrupted as click in browser)
-            const screenX = mouseEvent ? mouseEvent.screenX : 0;
-            const screenY = mouseEvent ? mouseEvent.screenY : 0;
-
-            const xMatch = Math.abs(originalMouseEvent.screenX - screenX) < 5;
-            const yMatch = Math.abs(originalMouseEvent.screenY - screenY) < 5;
-
-            if (xMatch && yMatch) {
-                return true;
-            }
         }
 
         return false;

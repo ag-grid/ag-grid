@@ -103,6 +103,7 @@ export class GridBodyCtrl extends BeanStub {
         this.eStickyTop = eStickyTop;
 
         this.setCellTextSelection(this.gridOptionsService.is('enableCellTextSelection'));
+        this.addManagedPropertyListener('enableCellTextSelection', (props) => this.setCellTextSelection(props.currentValue));
 
         this.createManagedBean(new LayoutFeature(this.comp));
         this.bodyScrollFeature = this.createManagedBean(new GridBodyScrollFeature(this.eBodyViewport));
@@ -186,7 +187,7 @@ export class GridBodyCtrl extends BeanStub {
 
     private onGridColumnsChanged(): void {
         const columns = this.columnModel.getAllGridColumns();
-        this.comp.setColumnCount(columns ? columns.length : 0);
+        this.comp.setColumnCount(columns.length);
     }
 
     // if we do not do this, then the user can select a pic in the grid (eg an image in a custom cell renderer)

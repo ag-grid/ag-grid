@@ -40,11 +40,11 @@ export class DropZoneColumnComp extends Component {
         </span>`;
 
     @Autowired('dragAndDropService') private readonly dragAndDropService: DragAndDropService;
-    @Autowired('columnModel')  private readonly  columnModel: ColumnModel;
-    @Autowired('popupService')  private readonly popupService: PopupService;
+    @Autowired('columnModel') private readonly columnModel: ColumnModel;
+    @Autowired('popupService') private readonly popupService: PopupService;
     @Optional('aggFuncService') private readonly aggFuncService: IAggFuncService;
     @Autowired('sortController') private readonly sortController: SortController;
-    
+
     @RefSelector('eText') private eText: HTMLElement;
     @RefSelector('eDragHandle') private eDragHandle: HTMLElement;
     @RefSelector('eButton') private eButton: HTMLElement;
@@ -59,7 +59,7 @@ export class DropZoneColumnComp extends Component {
         private dragSourceDropTarget: DropTarget,
         private ghost: boolean,
         private dropZonePurpose: TDropZone,
-        private horizontal: boolean
+        private horizontal: boolean,
     ) {
         super();
     }
@@ -76,6 +76,7 @@ export class DropZoneColumnComp extends Component {
         this.addElementClasses(this.eButton, 'button');
 
         this.eDragHandle.appendChild(_.createIconNoSpan('columnDrag', this.gridOptionsService)!);
+
         this.eButton.appendChild(_.createIconNoSpan('cancel', this.gridOptionsService)!);
 
         this.setupSort();
@@ -95,6 +96,16 @@ export class DropZoneColumnComp extends Component {
 
         this.setupTooltip();
         this.activateTabIndex();
+
+
+        const checkColumnLock = () => {
+            const isLocked = this.columnModel.isColumnGroupingLocked(this.column);
+            _.setDisplayed(this.eButton, !isLocked && !this.gridOptionsService.is('functionsReadOnly'));
+            this.eDragHandle.classList.toggle('ag-column-select-column-readonly', isLocked);
+        }
+        checkColumnLock();
+        this.addManagedPropertyListener('groupLockGroupColumns', () => checkColumnLock());
+        
     }
 
     private setupAria() {
@@ -102,7 +113,7 @@ export class DropZoneColumnComp extends Component {
         const { name, aggFuncName } = this.getColumnAndAggFuncName();
 
         const aggSeparator = translate('ariaDropZoneColumnComponentAggFuncSeparator', ' of ');
-        const sortDirection =  {
+        const sortDirection = {
             asc: translate('ariaDropZoneColumnComponentSortAscending', 'ascending'),
             desc: translate('ariaDropZoneColumnComponentSortDescending', 'descending'),
         };
@@ -160,7 +171,7 @@ export class DropZoneColumnComp extends Component {
                 const multiSort = sortUsingCtrl ? (event.ctrlKey || event.metaKey) : event.shiftKey;
                 this.sortController.progressSort(this.column, multiSort, 'uiColumnSorted');
             };
-    
+
             this.addGuiEventListener('click', performSort);
             this.addGuiEventListener('keydown', (e: KeyboardEvent) => {
                 const isEnter = e.key === KeyCode.ENTER;
@@ -175,7 +186,7 @@ export class DropZoneColumnComp extends Component {
         const dragSource: DragSource = {
             type: DragSourceType.ToolPanel,
             eElement: this.eDragHandle,
-            defaultIconName: DragAndDropService.ICON_HIDE,
+            getDefaultIconName: () => DragAndDropService.ICON_HIDE,
             getDragItem: () => this.createDragItem(),
             dragItemName: this.displayName,
             dragSourceDropTarget: this.dragSourceDropTarget
@@ -207,7 +218,8 @@ export class DropZoneColumnComp extends Component {
     }
 
     private setupRemove(): void {
-        _.setDisplayed(this.eButton, !this.gridOptionsService.is('functionsReadOnly'));
+        const isLocked = this.columnModel.isColumnGroupingLocked(this.column);
+        _.setDisplayed(this.eButton, !isLocked && !this.gridOptionsService.is('functionsReadOnly'));
 
         const agEvent: ColumnRemoveEvent = { type: DropZoneColumnComp.EVENT_COLUMN_REMOVE };
 
@@ -272,8 +284,8 @@ export class DropZoneColumnComp extends Component {
         const virtualListGui = virtualList.getGui();
 
         virtualList.setModel({
-            getRow: function(index: number) { return rows[index]; },
-            getRowCount: function() { return rows.length; }
+            getRow: function (index: number) { return rows[index]; },
+            getRowCount: function () { return rows.length; }
         });
 
         this.getContext().createBean(virtualList);

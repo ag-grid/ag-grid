@@ -5,8 +5,9 @@ import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-mod
 
 import "@ag-grid-community/styles/ag-grid.css";
 import "@ag-grid-community/styles/ag-theme-alpine.css";
+import './styles.css';
 
-import { ModuleRegistry, GridOptions, ColDef, ColGroupDef, GridReadyEvent, FirstDataRenderedEvent } from '@ag-grid-community/core';
+import { ModuleRegistry, ColDef, ColGroupDef, GridReadyEvent } from '@ag-grid-community/core';
 // Register the required feature modules with the Grid
 ModuleRegistry.registerModules([ClientSideRowModelModule]);
 
@@ -54,17 +55,17 @@ const GridExample = () => {
 
     const onCbAthlete = (event: any) => {
         // we only need to update one grid, as the other is a slave
-        topGrid.current!.columnApi.setColumnVisible('athlete', event.target.checked);
+        topGrid.current!.api.setColumnVisible('athlete', event.target.checked);
     }
 
     const onCbAge = (event: any) => {
         // we only need to update one grid, as the other is a slave
-        topGrid.current!.columnApi.setColumnVisible('age', event.target.checked);
+        topGrid.current!.api.setColumnVisible('age', event.target.checked);
     }
 
     const onCbCountry = (event: any) => {
         // we only need to update one grid, as the other is a slave
-        topGrid.current!.columnApi.setColumnVisible('country', event.target.checked);
+        topGrid.current!.api.setColumnVisible('country', event.target.checked);
     }
 
     return (
@@ -93,7 +94,7 @@ const GridExample = () => {
             <div className="grid ag-theme-alpine">
                 <AgGridReact
                     ref={topGrid}
-                    alignedGrids={bottomGrid.current ? [bottomGrid.current] : undefined}
+                    alignedGrids={[bottomGrid]}
                     rowData={rowData}
                     columnDefs={columnDefs}
                     defaultColDef={defaultColDef}
@@ -104,7 +105,7 @@ const GridExample = () => {
             <div className="grid ag-theme-alpine">
                 <AgGridReact
                     ref={bottomGrid}
-                    alignedGrids={topGrid.current ? [topGrid.current] : undefined}
+                    alignedGrids={[topGrid]}
                     rowData={rowData}
                     columnDefs={columnDefs}
                     defaultColDef={defaultColDef}

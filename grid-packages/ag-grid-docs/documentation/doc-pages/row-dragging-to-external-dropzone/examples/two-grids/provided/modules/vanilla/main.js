@@ -83,7 +83,7 @@ function addRecordToGrid(side, data) {
     // if data missing or data has no it, do nothing
     if (!data || data.id == null) { return; }
 
-    var api = side === 'left' ? leftGridOptions.api : rightGridOptions.api,
+    var api = side === 'left' ? leftApi : rightApi,
         // do nothing if row is already in the grid, otherwise we would have duplicates
         rowAlreadyInGrid = !!api.getRowNode(data.id),
         transaction;
@@ -163,7 +163,7 @@ function addGridDropZone(params, side) {
 
 function loadGrid(side) {
     var grid = document.querySelector('#e' + side + 'Grid');
-    new agGrid.Grid(grid, side === 'Left' ? leftGridOptions : rightGridOptions);
+    return agGrid.createGrid(grid, side === 'Left' ? leftGridOptions : rightGridOptions);
 }
 
 // setup the grid after the page has finished loading
@@ -174,6 +174,6 @@ document.addEventListener('DOMContentLoaded', function () {
         buttons[i].addEventListener('click', onFactoryButtonClick);
     }
 
-    loadGrid('Left');
-    loadGrid('Right');
+    leftApi = loadGrid('Left');
+    rightApi = loadGrid('Right');
 });

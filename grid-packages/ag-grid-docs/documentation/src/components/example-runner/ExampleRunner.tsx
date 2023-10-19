@@ -9,7 +9,7 @@ import { OpenInCTA } from '../OpenInCTA';
 import CodeViewer from './CodeViewer';
 import styles from './ExampleRunner.module.scss';
 import ExampleRunnerResult from './ExampleRunnerResult';
-import { getExampleInfo, getIndexHtmlUrl, openPlunker } from './helpers';
+import { getExampleInfo, getIndexHtmlUrl, openPlunker, openCodeSandbox } from './helpers';
 import { getIndexHtml } from './index-html-helper';
 import { trackExampleRunnerEvent } from './track-example-runner-event';
 import { useExampleFileNodes } from './use-example-file-nodes';
@@ -22,14 +22,14 @@ import { useExampleFileNodes } from './use-example-file-nodes';
 export const ExampleRunner = (props) => {
     return (
         <GlobalContextConsumer>
-            {({ exampleImportType, useFunctionalReact, enableVue3, useVue3, useTypescript, set }) => {
+            {({ exampleImportType, enableVue3, useVue3, useTypescript, darkMode }) => {
                 const innerProps = {
                     ...props,
                     // Allow overriding of the global context values per example
                     exampleImportType: props.exampleImportType ?? exampleImportType,
-                    useFunctionalReact,
                     useVue3: enableVue3 ? useVue3 : false,
                     useTypescript: props.useTypescript ?? useTypescript,
+                    darkMode
                 };
 
                 return <ExampleRunnerInner {...innerProps} />;
@@ -47,7 +47,6 @@ const saveGridIndexHtmlPermutations = (
     type,
     options,
     framework,
-    useFunctionalReact,
     useVue3,
     exampleImportType
 ) => {
@@ -66,7 +65,6 @@ const saveGridIndexHtmlPermutations = (
             type,
             options,
             framework,
-            useFunctionalReact,
             useVue3,
             false,
             alternativeImport
@@ -85,7 +83,6 @@ const saveGridIndexHtmlPermutations = (
                 type,
                 options,
                 framework,
-                !useFunctionalReact,
                 useVue3,
                 true,
                 'modules'
@@ -102,7 +99,6 @@ const saveGridIndexHtmlPermutations = (
                 type,
                 options,
                 framework,
-                !useFunctionalReact,
                 useVue3,
                 true,
                 'packages'
@@ -122,7 +118,6 @@ const saveGridIndexHtmlPermutations = (
                 type,
                 options,
                 framework,
-                !useFunctionalReact,
                 useVue3,
                 false,
                 'modules'
@@ -138,7 +133,6 @@ const saveGridIndexHtmlPermutations = (
                 type,
                 options,
                 framework,
-                !useFunctionalReact,
                 useVue3,
                 false,
                 'packages'
@@ -146,7 +140,6 @@ const saveGridIndexHtmlPermutations = (
             writeIndexHtmlFile(alternativeStylePackagesExampleInfo);
 
             // Add the typescript versions for functional
-            if (useFunctionalReact) {
                 const reactTsStyleModules = getExampleInfo(
                     nodes,
                     library,
@@ -156,7 +149,6 @@ const saveGridIndexHtmlPermutations = (
                     type,
                     options,
                     framework,
-                    useFunctionalReact,
                     useVue3,
                     true,
                     'modules'
@@ -172,13 +164,11 @@ const saveGridIndexHtmlPermutations = (
                     type,
                     options,
                     framework,
-                    useFunctionalReact,
                     useVue3,
                     true,
                     'packages'
                 );
                 writeIndexHtmlFile(reactTsStylePackages);
-            }
         }
 
         // 4. For Vue, also copy html file for Vue 3
@@ -192,7 +182,6 @@ const saveGridIndexHtmlPermutations = (
                 type,
                 options,
                 framework,
-                !useFunctionalReact,
                 true,
                 false,
                 'modules'
@@ -209,7 +198,6 @@ const saveGridIndexHtmlPermutations = (
                 type,
                 options,
                 framework,
-                !useFunctionalReact,
                 true,
                 false,
                 'packages'
@@ -228,7 +216,6 @@ const saveGridIndexHtmlPermutations = (
             type,
             options,
             framework,
-            !useFunctionalReact,
             useVue3,
             true
         );
@@ -245,14 +232,12 @@ const saveGridIndexHtmlPermutations = (
             type,
             options,
             framework,
-            !useFunctionalReact,
             useVue3,
             false
         );
         writeIndexHtmlFile(functionalExampleInfo);
 
         // Add the typescript versions for functional
-        if (useFunctionalReact) {
             const reactTsStyle = getExampleInfo(
                 nodes,
                 library,
@@ -262,12 +247,10 @@ const saveGridIndexHtmlPermutations = (
                 type,
                 options,
                 framework,
-                useFunctionalReact,
                 useVue3,
                 true
             );
             writeIndexHtmlFile(reactTsStyle);
-        }
     } else if (type === 'multi' && framework === 'vue') {
         // Also generate the alternative React style
         const functionalExampleInfo = getExampleInfo(
@@ -279,7 +262,6 @@ const saveGridIndexHtmlPermutations = (
             type,
             options,
             framework,
-            useFunctionalReact,
             !useVue3,
             false
         );
@@ -297,7 +279,6 @@ const saveChartIndexHtmlPermutations = (
     type,
     options,
     framework,
-    useFunctionalReact,
     useVue3
 ) => {
     if (isGeneratedExample(type)) {
@@ -314,7 +295,6 @@ const saveChartIndexHtmlPermutations = (
                 type,
                 options,
                 framework,
-                !useFunctionalReact,
                 true,
                 true,
                 'packages'
@@ -334,7 +314,6 @@ const saveChartIndexHtmlPermutations = (
                 type,
                 options,
                 framework,
-                !useFunctionalReact,
                 true,
                 false,
                 'packages'
@@ -354,7 +333,6 @@ const saveChartIndexHtmlPermutations = (
                 type,
                 options,
                 framework,
-                !useFunctionalReact,
                 useVue3,
                 false,
                 'packages'
@@ -362,7 +340,7 @@ const saveChartIndexHtmlPermutations = (
             writeIndexHtmlFile(alternativeStylePackagesExampleInfo);
 
             // Add the typescript versions for functional
-            if (useFunctionalReact) {
+
                 const reactTsStylePackages = getExampleInfo(
                     nodes,
                     library,
@@ -372,13 +350,11 @@ const saveChartIndexHtmlPermutations = (
                     type,
                     options,
                     framework,
-                    useFunctionalReact,
                     useVue3,
                     true,
                     'packages'
                 );
                 writeIndexHtmlFile(reactTsStylePackages);
-            }
         }
     } else if (type === 'multi' && framework === 'vue') {
         const vue3ExampleInfo = getExampleInfo(
@@ -406,7 +382,6 @@ const saveChartIndexHtmlPermutations = (
             type,
             options,
             framework,
-            !useFunctionalReact,
             true,
             true
         );
@@ -423,14 +398,12 @@ const saveChartIndexHtmlPermutations = (
             type,
             options,
             framework,
-            !useFunctionalReact,
             useVue3,
             false
         );
         writeIndexHtmlFile(functionalExampleInfo);
 
         // Add the typescript versions for functional
-        if (useFunctionalReact) {
             const reactTsStyle = getExampleInfo(
                 nodes,
                 library,
@@ -440,12 +413,10 @@ const saveChartIndexHtmlPermutations = (
                 type,
                 options,
                 framework,
-                useFunctionalReact,
                 useVue3,
                 true
             );
             writeIndexHtmlFile(reactTsStyle);
-        }
     }
 };
 
@@ -458,9 +429,9 @@ const ExampleRunnerInner = ({
     options,
     library,
     exampleImportType,
-    useFunctionalReact,
     useVue3,
     useTypescript,
+    darkMode
 }) => {
     const nodes = useExampleFileNodes();
     const [showCode, setShowCode] = useState(!!(options && options.showCode));
@@ -475,7 +446,6 @@ const ExampleRunnerInner = ({
                 type,
                 options,
                 framework,
-                useFunctionalReact,
                 useVue3,
                 useTypescript,
                 exampleImportType
@@ -489,7 +459,6 @@ const ExampleRunnerInner = ({
             type,
             options,
             framework,
-            useFunctionalReact,
             useVue3,
             useTypescript,
             exampleImportType,
@@ -522,7 +491,6 @@ const ExampleRunnerInner = ({
                 type,
                 options,
                 framework,
-                useFunctionalReact,
                 useVue3,
                 exampleImportType
             );
@@ -536,7 +504,6 @@ const ExampleRunnerInner = ({
                 type,
                 options,
                 framework,
-                useFunctionalReact,
                 useVue3
             );
         }
@@ -592,6 +559,11 @@ const ExampleRunnerInner = ({
                             <li>
                                 <OpenInCTA type="newTab" href={getIndexHtmlUrl(exampleInfo)} />
                             </li>
+                            {!exampleInfo.options.noCodeSandbox && (
+                                <li>
+                                    <OpenInCTA type="codesandbox" onClick={() => openCodeSandbox(exampleInfo)} />
+                                </li>
+                            )}
                             {!exampleInfo.options.noPlunker && (
                                 <li>
                                     <OpenInCTA type="plunker" onClick={() => openPlunker(exampleInfo)} />
@@ -616,6 +588,7 @@ const ExampleRunnerInner = ({
                                         resultFrameIsVisible={!showCode}
                                         isOnScreen={isVisible}
                                         exampleInfo={exampleInfo}
+                                        darkMode={darkMode}
                                     />
                                 );
                             }}
@@ -632,9 +605,9 @@ const isGeneratedExample = (type) => ['generated', 'mixed', 'typescript'].includ
 
 const writeIndexHtmlFile = (exampleInfo) => {
     const { appLocation, type } = exampleInfo;
-    const indexHtml = getIndexHtml(exampleInfo, true);
+    const { plunkerIndexHtml, codesandboxIndexHtml } = getIndexHtml(exampleInfo, true);
 
-    fs.writeFileSync(`public${appLocation}index.html`, indexHtml);
+    fs.writeFileSync(`public${appLocation}index.html`, plunkerIndexHtml);
 
     const templateIndexHtmlPath = `public${appLocation}../../index.html`;
 

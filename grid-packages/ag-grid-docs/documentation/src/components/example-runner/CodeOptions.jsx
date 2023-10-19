@@ -47,21 +47,18 @@ const ReactStyleSelector = ({ id, tracking }) => {
     const formId = `${id}-react-style-selector`;
     return isServerSideRendering() ? null : (
         <GlobalContextConsumer>
-            {({ useFunctionalReact, useTypescript, set }) => {
+            {({ useTypescript, set }) => {
                 const onChange = (event) => {
                     const value = event.target.value;
-                    switch (value) {
-                        case 'classes':
-                            set({ useFunctionalReact: false, useTypescript: false });
-                            break;
+                    switch (value) {                        
                         case 'hooks':
-                            set({ useFunctionalReact: true, useTypescript: false });
+                            set({ useTypescript: false });
                             break;
                         case 'hooksTs':
-                            set({ useFunctionalReact: true, useTypescript: true });
+                            set({ useTypescript: true });
                             break;
                         default:
-                            set({ useFunctionalReact: true, useTypescript: true });
+                            set({ useTypescript: true });
                             break;
                     }
                 };
@@ -74,16 +71,15 @@ const ReactStyleSelector = ({ id, tracking }) => {
                         <select
                             className={styles.simpleSelect}
                             id={formId}
-                            value={useFunctionalReact ? (useTypescript ? 'hooksTs' : 'hooks') : 'classes'}
+                            value={useTypescript ? 'hooksTs' : 'hooks'}
                             onChange={(event) => {
                                 onChange(event);
                                 tracking(event.target.value);
                             }}
                             onBlur={onChange}
                         >
-                            <option value="classes">Classes</option>
-                            <option value="hooks">Hooks</option>
-                            <option value="hooksTs">Hooks TS</option>
+                            <option value="hooks">Javascript</option>
+                            <option value="hooksTs">Typescript</option>
                         </select>
                     </>
                 );
@@ -184,7 +180,6 @@ const CodeOptions = ({ exampleInfo }) => {
                 <div>
                     <ReactStyleSelector
                         id={exampleInfo.linkId}
-                        useFunctionalReact={exampleInfo.useFunctionalReact}
                         useTypescript={exampleInfo.useTypescript}
                         tracking={(value) => {
                             trackExampleRunnerEvent({

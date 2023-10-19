@@ -52,7 +52,7 @@ title: "Get Started with AG Grid"
 |// setup the grid after the page has finished loading
 |document.addEventListener('DOMContentLoaded', () => {
 |  const gridDiv = document.querySelector('#myGrid');
-|  new agGrid.Grid(gridDiv, gridOptions);
+|  const api = agGrid.createGrid(gridDiv, gridOptions);
 |});
 </snippet>
 </framework-specific-section>
@@ -154,11 +154,6 @@ title: "Get Started with AG Grid"
 |    &lt;!-- The gid will be the size that this element is given. -->
 |    &lt;div id="myGrid" class="ag-theme-alpine" style="height: 500px">&lt;/div>
 |    &lt;script type="text/javascript">
-|        // Function to demonstrate calling grid's API
-|        function deselect(){
-|            gridOptions.api.deselectAll()
-|        }
-|
 |        // Grid Options are properties passed to the grid
 |        const gridOptions = {
 |
@@ -184,14 +179,19 @@ title: "Get Started with AG Grid"
 |        // get div to host the grid
 |        const eGridDiv = document.getElementById("myGrid");
 |        // new grid instance, passing in the hosting DIV and Grid Options
-|        new agGrid.Grid(eGridDiv, gridOptions);
+|        const api = agGrid.createGrid(eGridDiv, gridOptions);
+|
+|        // Function to demonstrate calling grid's API
+|        function deselect(){
+|            api.deselectAll()
+|        }
 |
 |        // Fetch data from server
 |        fetch("https://www.ag-grid.com/example-assets/row-data.json")
 |        .then(response => response.json())
 |        .then(data => {
 |          // load fetched data into grid
-|          gridOptions.api.setRowData(data);
+|          api.setRowData(data);
 |        });
 |    &lt;/script>
 |  &lt;/body>
@@ -292,8 +292,8 @@ title: "Get Started with AG Grid"
 <framework-specific-section frameworks="javascript">
 | ### Creating New Grid Instance
 | 
-| The grid instance is created using `new agGrid.Grid()` passing in the DOM
-| element to host the grid and the Grid Options.
+| The grid instance is created using `agGrid.createGrid()` passing in the DOM
+| element to host the grid and the Grid Options and returns the grid api.
 |
 </framework-specific-section>
 
@@ -302,7 +302,7 @@ title: "Get Started with AG Grid"
 | // get div to host the grid
 | const eGridDiv = document.getElementById("myGrid");
 | // new grid instance, passing in the hosting DIV and Grid Options
-| new agGrid.Grid(eGridDiv, gridOptions);
+| const api = agGrid.createGrid(eGridDiv, gridOptions);
 </snippet>
 </framework-specific-section>
 
@@ -320,7 +320,7 @@ title: "Get Started with AG Grid"
 |   .then(response => response.json())
 |   .then(data => {
 |      // load fetched data into grid
-|      gridOptions.api.setRowData(data);
+|      api.setRowData(data);
 |   });
 </snippet>
 </framework-specific-section>
@@ -328,8 +328,7 @@ title: "Get Started with AG Grid"
 <framework-specific-section frameworks="javascript">
 | ### Accessing Grid's API
 | 
-| Once created, the grid places an API object on the Grid Options.
-| This can then be accessed to use the grid's API.
+| The grid api is returned from the `createGrid` function that can then be stored for later use.
 |
 </framework-specific-section>
 
@@ -337,7 +336,7 @@ title: "Get Started with AG Grid"
 <snippet transform={false}>
 | // Function to demonstrate calling grid's API
 | function deselect(){
-|     gridOptions.api.deselectAll()
+|     api.deselectAll()
 | }
 </snippet>
 </framework-specific-section>
@@ -345,7 +344,7 @@ title: "Get Started with AG Grid"
 <framework-specific-section frameworks="javascript">
 | ### Consuming Grid Events
 |
-| Listen to [Grid Events](../grid-events/) by adding a callback to the appropriate `on[eventName]` onto
+| Listen to [Grid Events](/grid-events/) by adding a callback to the appropriate `on[eventName]` onto
 | the Grid Options. This example demonstrates consuming the `cellClicked` event.
 </framework-specific-section>
 
@@ -476,7 +475,7 @@ title: "Get Started with AG Grid"
 </div>
 </tabs>
 <note>
-| Please refer to our [Compatibility Guide](/angular-compatibility/) for Supported Versions of
+| Please refer to our [Compatibility Guide](../angular-compatibility/) for Supported Versions of
 | Angular & AG Grid.
 </note>
 </framework-specific-section>
@@ -786,7 +785,7 @@ pointing to <a href="http://localhost:4200">localhost:4200</a>.</p>
 |
 | ### Setting Column Definitions
 |
-| Columns are defined by setting [Column definitions](../column-definitions/). Each Column Definition
+| Columns are defined by setting [Column Definitions](/column-definitions/). Each Column Definition
 | defines one Column. Properties can be set for all Columns using the Default Column Definition.
 </framework-specific-section>
 
@@ -852,7 +851,7 @@ pointing to <a href="http://localhost:4200">localhost:4200</a>.</p>
 |
 | ### Grid Properties
 |
-| Set other [Grid Options](../grid-options/) by adding parameters to `&lt;ag-grid-angular/>` component.
+| Set other [Grid Options](/grid-options/) by adding parameters to `&lt;ag-grid-angular/>` component.
 | This example demonstrates setting `animateRows` and `rowSelection`.
 </framework-specific-section>
 
@@ -951,38 +950,34 @@ pointing to <a href="http://localhost:4200">localhost:4200</a>.</p>
 
 <framework-specific-section frameworks="react">
 <snippet transform={false} language="jsx" lineNumbers="true">
-|import React, { useState } from 'react';
-|import { createRoot } from 'react-dom/client';
-|import { AgGridReact } from 'ag-grid-react';
+|import { useState } from "react";
+|import { render } from "react-dom";
+|import { AgGridReact } from "ag-grid-react";
 |
-|import 'ag-grid-community/styles/ag-grid.css';
-|import 'ag-grid-community/styles/ag-theme-alpine.css';
+|import "ag-grid-community/styles/ag-grid.css";
+|import "ag-grid-community/styles/ag-theme-alpine.css";
 |
 |const App = () => {
-|    const [rowData] = useState([
-|        {make: "Toyota", model: "Celica", price: 35000},
-|        {make: "Ford", model: "Mondeo", price: 32000},
-|        {make: "Porsche", model: "Boxster", price: 72000}
-|    ]);
-|    
-|    const [columnDefs] = useState([
-|        { field: 'make' },
-|        { field: 'model' },
-|        { field: 'price' }
-|    ]);
+|  const [rowData] = useState([
+|    { make: "Toyota", model: "Celica", price: 35000 },
+|    { make: "Ford", model: "Mondeo", price: 32000 },
+|    { make: "Porsche", model: "Boxter", price: 72000 }
+|  ]);
 |
-|    return (
-|        &lt;div className="ag-theme-alpine" style={{height: 400, width: 600}}>
-|            &lt;AgGridReact
-|                rowData={rowData}
-|                columnDefs={columnDefs}>
-|            &lt;/AgGridReact>
-|        &lt;/div>
-|    );
+|  const [columnDefs] = useState([
+|    { field: "make" },
+|    { field: "model" },
+|    { field: "price" }
+|  ]);
+|
+|  return (
+|    &lt;div className="ag-theme-alpine" style={{ height: 400, width: 600 }}>
+|      &lt;AgGridReact rowData={rowData} columnDefs={columnDefs}>&lt;/AgGridReact>
+|    &lt;/div>
+|  );
 |};
 |
-|const root = createRoot(document.getElementById('root'));
-|root.render(&lt;GridExample />);
+|export default App;
 </snippet>
 </framework-specific-section>
 
@@ -1277,7 +1272,7 @@ pointing to <a href="http://localhost:3000">localhost:3000</a>.</p>
 <framework-specific-section frameworks="react">
 | ### Consuming Grid Events
 |
-| Listen to [Grid Events](../grid-events/) by adding a callback to the appropriate `on[eventName]` property.
+| Listen to [Grid Events](/grid-events/) by adding a callback to the appropriate `on[eventName]` property.
 | This example demonstrates consuming the `cellClicked` event.
 </framework-specific-section>
 
@@ -1293,7 +1288,7 @@ pointing to <a href="http://localhost:3000">localhost:3000</a>.</p>
 <framework-specific-section frameworks="react">
 | ### Grid Properties
 |
-| Set other [Grid Options](../grid-options/) by adding parameters to `&lt;AgGridReact/>` component.
+| Set other [Grid Options](/grid-options/) by adding parameters to `&lt;AgGridReact/>` component.
 | This example demonstrates setting `animateRows` and `rowSelection`.
 |
 </framework-specific-section>
@@ -1512,7 +1507,7 @@ pointing to <a href="http://localhost:3000">localhost:3000</a>.</p>
 <framework-specific-section frameworks="vue">
 | If you are unsure between Package Import and Module Import, you should use the Package Import
 | (i.e. `ag-grid-vue`/ `ag-grid-vue3`). For more information on import types please refer to the 
-| documentation [here.](../modules/)
+| [Modules](/modules/) documentation.
 |
 | This tutorial covers the use of Vue 3 with AG Grid - for the Vue 2 version of this tutorial please see the documentation [here.](/vue2/)
 |
@@ -1686,7 +1681,7 @@ in your browser of choice.</p>
 </framework-specific-section>
 
 <framework-specific-section frameworks="vue">
-| You can select from any of the [Grid Provided Themes](../themes/). If you don't like the provided themes you can [Customise the Provided Theme](/themes/) or do not use a Theme and style the grid yourself from scratch.
+| You can select from any of the [Grid Provided Themes](/themes/). If you don't like the provided themes you can [Customise the Provided Theme](/themes/) or do not use a Theme and style the grid yourself from scratch.
 |
 | The dimension of the Grid is also set on the grid's element `style="height: 500px"`.
 |
@@ -1720,7 +1715,7 @@ in your browser of choice.</p>
 <framework-specific-section frameworks="vue">
 | ### Setting Column Definitions
 |
-| Columns are defined by setting [Column definitions](../column-definitions/). Each Column Definition
+| Columns are defined by setting [Column Definitions](/column-definitions/). Each Column Definition
 | defines one Column. Properties can be set for all Columns using the Default Column Definition.
 |
 </framework-specific-section>
@@ -1778,7 +1773,7 @@ in your browser of choice.</p>
 <framework-specific-section frameworks="vue">
 | ### Consuming Grid Events
 |
-| Listen to [Grid Events](../grid-events/) by adding a callback to the appropriate `@[event-name]` property.
+| Listen to [Grid Events](/grid-events/) by adding a callback to the appropriate `@[event-name]` property.
 | This example demonstrates consuming the Cell Clicked event via the `@cell-clicked` property.
 |
 </framework-specific-section>
@@ -1793,7 +1788,7 @@ in your browser of choice.</p>
 <framework-specific-section frameworks="vue">
 | ### Grid Properties
 |
-| Set other [Grid Options](/grid-options/) by adding parameters to `<ag-grid-vue/>` component.
+| Set other [Grid Options](/grid-options/) by adding parameters to `&lt;ag-grid-vue/>` component.
 | This example demonstrates setting `animateRows` and `rowSelection`.
 |
 </framework-specific-section>
@@ -1809,7 +1804,6 @@ in your browser of choice.</p>
 </framework-specific-section>
 
 <framework-specific-section frameworks="vue">
-<snippet transform={false} language="jsx">
 | ## Getting Started with AG Grid Enterprise
 |
 | We would love for you to try out AG Grid Enterprise. There is no cost to trial.
@@ -1822,8 +1816,6 @@ in your browser of choice.</p>
 |
 | In addition to `ag-grid-community` and `ag-grid-vue3`, AG Grid Enterprise also needs
 | `ag-grid-enterprise`.
-|
-</snippet>
 </framework-specific-section>
 
 <framework-specific-section frameworks="vue">

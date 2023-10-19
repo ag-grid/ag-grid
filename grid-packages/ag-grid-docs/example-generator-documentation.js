@@ -3,9 +3,9 @@ const {window, document} = new JSDOM('<!DOCTYPE html><html lang="en"></html>');
 const sucrase = require("sucrase");
 
 const agGridVersion = "^" + require('../../grid-community-modules/core/package.json').version;
-const agChartsVersion = "^" + require('../../charts-community-modules/ag-charts-community/package.json').version;
-const agChartsAngularVersion = "^" + require('../../charts-community-modules/ag-charts-angular/package.json').version;
-const agChartsReactVersion = "^" + require('../../charts-community-modules/ag-charts-react/package.json').version;
+const agChartsVersion = "^" + require('./node_modules/ag-charts-community/package.json').version;
+const agChartsAngularVersion = "^" + require('./node_modules/ag-charts-angular/package.json').version;
+const agChartsReactVersion = "^" + require('./node_modules/ag-charts-react/package.json').version;
 const agGridEnterpriseVersion = "^" + require('../../grid-enterprise-modules/core/package.json').version;
 const agGridReactVersion = "^" + require('../../grid-community-modules/react/package.json').version;
 const agGridAngularVersion = "^" + require('../../grid-community-modules/angular/package.json').version;
@@ -214,7 +214,7 @@ function readAsJsFile(tsFilePath) {
         // Remove export statement
         .replace(/export /g, "")
 
-    let jsFile = sucrase.transform(tsFile, {transforms: ["typescript"]}).code;
+    let jsFile = sucrase.transform(tsFile, {transforms: ["typescript"], disableESTransforms: true}).code;
 
     return jsFile;
 }
@@ -232,7 +232,7 @@ const skipPackages = () => {
 }
 
 function createExampleGenerator(exampleType, prefix, importTypes, incremental) {
-    const [parser, vanillaToVue, vanillaToVue3, vanillaToReact, vanillaToReactFunctional, vanillaToReactFunctionalTs, vanillaToAngular, vanillaToTypescript] = getGeneratorCode(prefix);
+    const [parser, vanillaToVue, vanillaToVue3, vanillaToReactFunctional, vanillaToReactFunctionalTs, vanillaToAngular, vanillaToTypescript] = getGeneratorCode(prefix);
     const appModuleAngular = new Map();
 
     importTypes.forEach(importType => {
@@ -398,24 +398,6 @@ function createExampleGenerator(exampleType, prefix, importTypes, incremental) {
             // When the type == typescript we only want to generate the vanilla option and so skip all other frameworks
 
             if (!skipFramework('react')) {
-                if (type === 'mixed' && providedExamples['react']) {
-                    importTypes.forEach(importType => copyProvidedExample(importType, 'react', providedExamples['react']));
-                } else {
-                    const reactScripts = getMatchingPaths('*_react.*', {ignore: ['**/*.tsx']});
-                    let reactConfigs = new Map();
-
-                    try {
-                        const getSource = vanillaToReact(deepCloneObject(bindings), extractComponentFileNames(reactScripts, '_react'), allStylesheets);
-                        importTypes.forEach(importType => reactConfigs.set(importType, {'index.jsx': getSource(importType)}));
-                        reactConfigs = addRawScripts(reactConfigs, true)
-                    } catch (e) {
-                        console.error(`Failed to process React example in ${examplePath}`, e);
-                        throw e;
-                    }
-
-                    importTypes.forEach(importType => writeExampleFiles(importType, 'react', 'react', reactScripts, reactConfigs.get(importType)));
-                }
-
                 if (type === 'mixed' && providedExamples['reactFunctional']) {
                     importTypes.forEach(importType => copyProvidedExample(importType, 'reactFunctional', providedExamples['reactFunctional']));
                 } else {
@@ -423,8 +405,7 @@ function createExampleGenerator(exampleType, prefix, importTypes, incremental) {
                     let reactDeclarativeConfigs = new Map();
 
                     if (vanillaToReactFunctional && options.reactFunctional !== false) {
-                        const hasFunctionalScripts = getMatchingPaths('*_reactFunctional.*', {ignore: ['**/*.tsx']}).length > 0;
-                        const reactScriptPostfix = hasFunctionalScripts ? 'reactFunctional' : 'react';
+                        const reactScriptPostfix = 'reactFunctional';
 
                         reactDeclarativeScripts = getMatchingPaths(`*_${reactScriptPostfix}.*`, {ignore: ['**/*.tsx']});
 
@@ -448,8 +429,7 @@ function createExampleGenerator(exampleType, prefix, importTypes, incremental) {
                     let reactDeclarativeConfigs = new Map();
 
                     if (vanillaToReactFunctionalTs && options.reactFunctional !== false) {
-                        const hasFunctionalScripts = getMatchingPaths('*_reactFunctional.tsx').length > 0;
-                        const reactScriptPostfix = hasFunctionalScripts ? 'reactFunctional' : 'react';
+                        const reactScriptPostfix = 'reactFunctional';
 
                         reactDeclarativeScripts = getMatchingPaths(`*_${reactScriptPostfix}.tsx`);
 
@@ -569,18 +549,8 @@ function createExampleGenerator(exampleType, prefix, importTypes, incremental) {
                     const tsScripts = getMatchingPaths('*.ts', {ignore: ['**/*_{angular,react,vue,vue3}.ts']});
                     tsScripts.forEach(tsFile => {
                         let jsFile = readAsJsFile(tsFile);
-                        // replace Typescript new Grid( with Javascript new agGrid.Grid(
-                        jsFile = jsFile.replace(/new Grid\(/g, 'new agGrid.Grid(');
-
-                        // Chart classes that need scoping
-                        const chartImports = typedBindings.imports.find(i => i.module.includes('ag-charts-community') || i.module.includes('ag-charts-enterprise'));
-                        if (chartImports) {
-                            chartImports.imports.forEach(i => {
-                                const toReplace = `(?<!\\.)${i}([\\s\/.])`
-                                const reg = new RegExp(toReplace, "g");
-                                jsFile = jsFile.replace(reg, `${options && options.enterprise ? 'agChartsEnterprise' : 'agCharts'}.${i}$1`);
-                            })
-                        }
+                        // replace Typescript createGrid( with Javascript agGrid.createGrid(
+                        jsFile = jsFile.replace(/createGrid\(/g, 'agGrid.createGrid(');
 
                         // replace Typescript LicenseManager.setLicenseKey( with Javascript agGrid.LicenseManager.setLicenseKey(
                         jsFile = jsFile.replace(/LicenseManager\.setLicenseKey\(/g, "agGrid.LicenseManager.setLicenseKey(");
@@ -637,10 +607,10 @@ const modules = moduleMapping
     .filter(moduleConfig => !moduleConfig.framework)
     .map(moduleConfig => moduleConfig.module);
 
-/** If you provide a package.json file to plunker it will load the types and provide JsDocs and type checking. */
+/** Used for type checking in plunker, and type checking & dep installation with codesandbox */
 function addPackageJson(type, framework, importType, basePath) {
 
-    const supportedFrameworks = new Set(['angular', 'typescript', 'reactFunctionalTs', 'vanilla'])
+    const supportedFrameworks = new Set(['angular', 'typescript', 'reactFunctional', 'reactFunctionalTs', 'vanilla'])
     if (!supportedFrameworks.has(framework)) {
         return;
     }
@@ -660,7 +630,11 @@ function addPackageJson(type, framework, importType, basePath) {
         addDependency('@angular/platform-browser', "^14");
     }
 
-    if (framework === 'reactFunctionalTs') {
+    function isFrameworkReact() {
+        return new Set(['reactFunctional', 'reactFunctionalTs']).has(framework);
+    }
+
+    if (isFrameworkReact()) {
         addDependency('react', '18');
         addDependency('react-dom', '18');
 
@@ -672,7 +646,7 @@ function addPackageJson(type, framework, importType, basePath) {
         if (type === 'grid' && framework === 'angular') {
             addDependency('@ag-grid-community/angular', agGridAngularVersion);
         }
-        if (type === 'grid' && framework === 'reactFunctionalTs') {
+        if (type === 'grid' && isFrameworkReact()) {
             addDependency('@ag-grid-community/react', agGridReactVersion);
         }
         modules.forEach(m => addDependency(m, agGridVersion));
@@ -681,20 +655,11 @@ function addPackageJson(type, framework, importType, basePath) {
             if (framework === 'angular') {
                 addDependency('ag-grid-angular', agGridAngularVersion);
             }
-            if (framework === 'reactFunctionalTs') {
+            if (isFrameworkReact()) {
                 addDependency('ag-grid-react', agGridReactVersion);
             }
             addDependency('ag-grid-community', agGridVersion);
             addDependency('ag-grid-enterprise', agGridEnterpriseVersion);
-        }
-        if (type === 'chart') {
-            addDependency('ag-charts-community', agChartsVersion);
-            if (framework === 'angular') {
-                addDependency('ag-charts-angular', agChartsAngularVersion);
-            }
-            if (framework === 'reactFunctionalTs') {
-                addDependency('ag-charts-react', agChartsReactVersion);
-            }
         }
     }
 
@@ -705,13 +670,12 @@ function getGeneratorCode(prefix) {
     const {parser} = require(`${prefix}vanilla-src-parser.ts`);
     const {vanillaToVue} = require(`${prefix}vanilla-to-vue.ts`);
     const {vanillaToTypescript} = require(`${prefix}vanilla-to-typescript.ts`);
-    const {vanillaToReact} = require(`${prefix}vanilla-to-react.ts`);
     const {vanillaToVue3} = require(`${prefix}vanilla-to-vue3.ts`);
     const {vanillaToReactFunctional} = require(`${prefix}vanilla-to-react-functional.ts`);
     const {vanillaToReactFunctionalTs} = require(`${prefix}vanilla-to-react-functional-ts.ts`);
     const {vanillaToAngular} = require(`${prefix}vanilla-to-angular.ts`);
 
-    return [parser, vanillaToVue, vanillaToVue3, vanillaToReact, vanillaToReactFunctional, vanillaToReactFunctionalTs, vanillaToAngular, vanillaToTypescript];
+    return [parser, vanillaToVue, vanillaToVue3, vanillaToReactFunctional, vanillaToReactFunctionalTs, vanillaToAngular, vanillaToTypescript];
 }
 
 function generateExamples(type, importTypes, scope, trigger, done) {
@@ -741,21 +705,6 @@ module.exports.generateGridExamples = (scope, trigger, done, tsRegistered = fals
     }
 };
 
-module.exports.generateChartExamples = (scope, trigger, done, tsRegistered = false) => {
-    try {
-        if (!tsRegistered) {
-            require('ts-node').register();
-        }
-        generateExamples('chart', ['packages'], scope, trigger, done);
-    } catch (e) {
-        console.error('Failed to generate chart examples', e);
-
-        if (done) {
-            done(e);
-        }
-    }
-};
-
 module.exports.generateDocumentationExamples = async (chartsOnly, scope, trigger) => {
     require('ts-node').register();
     if (trigger) {
@@ -767,8 +716,5 @@ module.exports.generateDocumentationExamples = async (chartsOnly, scope, trigger
         console.log(`\u27F3 Generating all documentation examples...`);
     }
 
-    return new Promise(resolve => {
-        module.exports.generateChartExamples(scope, trigger, chartsOnly ? () => resolve() :
-            () => module.exports.generateGridExamples(scope, trigger, () => resolve(), true), true)
-    });
+    return new Promise(resolve => module.exports.generateGridExamples(scope, trigger, () => resolve(), true));
 };

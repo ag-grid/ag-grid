@@ -1,8 +1,8 @@
-import { Component, ViewChild } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
-import { ExcelExportModule, exportMultipleSheetsAsExcel } from '@ag-grid-enterprise/excel-export';
-import { ModuleRegistry, ColDef, ColumnApi, GetRowIdParams, GridApi, GridReadyEvent, ICellRendererComp, ICellRendererParams } from '@ag-grid-community/core';
 import { ICellRendererAngularComp } from '@ag-grid-community/angular';
+import { ColDef, GetRowIdParams, GridApi, GridReadyEvent, ICellRendererParams, ModuleRegistry } from '@ag-grid-community/core';
+import { ExcelExportModule, exportMultipleSheetsAsExcel } from '@ag-grid-enterprise/excel-export';
+import { HttpClient } from '@angular/common/http';
+import { Component, ViewChild } from '@angular/core';
 
 import "@ag-grid-community/styles/ag-grid.css";
 import "@ag-grid-community/styles/ag-theme-alpine.css";
@@ -97,7 +97,6 @@ export class AppComponent {
     leftRowData: any[] = [];
     rightRowData: any[] = []
     leftApi!: GridApi;
-    leftColumnApi!: ColumnApi;
     rightApi!: GridApi;
 
     defaultColDef: ColDef = {
@@ -179,7 +178,6 @@ export class AppComponent {
     onGridReady(params: GridReadyEvent, side: number) {
         if (side === 0) {
             this.leftApi = params.api
-            this.leftColumnApi = params.columnApi;
         }
 
         if (side === 1) {

@@ -63,7 +63,6 @@ export class DetailCellRenderer implements ICellRendererAngularComp {
         var gridInfo = {
             id: this.rowId,
             api: params.api,
-            columnApi: params.columnApi
         };
 
         console.log("adding detail grid info with id: ", this.rowId);

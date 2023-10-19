@@ -1,29 +1,29 @@
-import { withPrefix } from 'gatsby';
-import { stringify } from 'query-string';
-import { agGridVersion, localPrefix } from 'utils/consts';
+import {withPrefix} from 'gatsby';
+import {stringify} from 'query-string';
+import {getParameters} from "codesandbox/lib/api/define";
+import {agGridVersion, localPrefix} from 'utils/consts';
 import isDevelopment from 'utils/is-development';
-import { ParameterConfig } from '../../pages/example-runner';
-import { getIndexHtml } from './index-html-helper';
+import {getIndexHtml} from './index-html-helper';
 
 /**
  * The "internalFramework" is the framework name we use inside the example runner depending on which options the
  * user has selected. It can be one of the following:
  *
  * - 'vanilla' (JavaScript)
- * - 'react' (React Classes)
  * - 'reactFunctional' (React Hooks)
+ * - 'reactFunctionalTs' (React Hooks with Typescript)
  * - 'angular' (Angular)
  * - 'vue' (Vue)
  * - 'vue3' (Vue 3)
  */
-const getInternalFramework = (framework, useFunctionalReact, useVue3, useTypescript) => {
+const getInternalFramework = (framework, useVue3, useTypescript) => {
     switch (framework) {
         case 'vue':
             return useVue3 ? 'vue3' : 'vue';
         case 'javascript':
             return useTypescript ? 'typescript' : 'vanilla';
         case 'react':
-            return useFunctionalReact ? (useTypescript ? 'reactFunctionalTs' : 'reactFunctional') : 'react';
+            return useTypescript ? 'reactFunctionalTs' : 'reactFunctional';
         default:
             return framework;
     }
@@ -38,7 +38,6 @@ export const getExampleInfo = (
     type,
     options = {},
     framework = 'javascript',
-    useFunctionalReact = false,
     useVue3 = false,
     useTypescript = false,
     importType = 'modules',
@@ -49,7 +48,7 @@ export const getExampleInfo = (
         importType = 'packages';
     }
 
-    const internalFramework = getInternalFramework(framework, useFunctionalReact, useVue3, useTypescript);
+    const internalFramework = getInternalFramework(framework, useVue3, useTypescript);
 
     let boilerPlateFramework;
     switch (framework) {
@@ -145,7 +144,7 @@ const getFrameworkFiles = (framework, internalFramework) => {
 };
 
 export const getExampleFiles = (exampleInfo, forPlunker = false) => {
-    const { sourcePath, framework, internalFramework, boilerplatePath, library } = exampleInfo;
+    const {sourcePath, framework, internalFramework, boilerplatePath, library} = exampleInfo;
 
     const filesForExample = exampleInfo.getFiles().map((node) => ({
         path: node.relativePath.replace(sourcePath, ''),
@@ -162,7 +161,10 @@ export const getExampleFiles = (exampleInfo, forPlunker = false) => {
         })
     );
 
-    const files = {};
+    const files = {
+        plunker: {},
+        csb: {}
+    };
     const promises = [];
 
     filesForExample
@@ -176,7 +178,8 @@ export const getExampleFiles = (exampleInfo, forPlunker = false) => {
             }
         })
         .forEach((f) => {
-            files[f.path] = null; // preserve ordering
+            files.plunker[f.path] = null;   // preserve ordering
+            files.csb[f.path] = null;       // preserve ordering
 
             const sourcePromise = f.content ?? fetch(f.publicURL).then((response) => response.text());
             const promise = sourcePromise.then((source) => {
@@ -199,24 +202,32 @@ export const getExampleFiles = (exampleInfo, forPlunker = false) => {
                     }
                 }
 
-                files[f.path] = { source, isFramework: f.isFramework };
+                files.plunker[f.path] = {source, isFramework: f.isFramework};
+                files.csb[f.path] = {source, isFramework: f.isFramework};
             });
 
             promises.push(promise);
         });
 
-    files['index.html'] = {
-        source: getIndexHtml(exampleInfo),
-        isFramework: false,
+    const { plunkerIndexHtml, codeSandBoxIndexHtml } = getIndexHtml(exampleInfo);
+
+    files.plunker['index.html'] = {
+        source: plunkerIndexHtml,
+        isFramework: false
+    };
+    files.csb['index.html'] = {
+        source: codeSandBoxIndexHtml,
+        isFramework: false
     };
 
     return Promise.all(promises).then(() => files);
 };
 
 export const openPlunker = (exampleInfo) => {
-    const { title, framework, internalFramework } = exampleInfo;
+    const {title, framework, internalFramework} = exampleInfo;
 
-    getExampleFiles(exampleInfo, true).then((files) => {
+    getExampleFiles(exampleInfo, true).then((exampleFiles) => {
+        const files = exampleFiles.plunker;
         // Let's open the grid configuration file by default
         const fileToOpen = getEntryFile(framework, internalFramework);
 
@@ -240,9 +251,111 @@ export const openPlunker = (exampleInfo) => {
         addHiddenInput('private', true);
         addHiddenInput('description', title);
 
-        Object.keys(files).forEach((key) => {
+        const supportedFrameworks = new Set(['angular', 'typescript', 'reactFunctionalTs', 'vanilla'])
+        const include = key => {
+            if (key === 'package.json' && !supportedFrameworks.has(framework)) {
+                return false;
+            }
+
+            return true;
+        }
+
+        Object.keys(files)
+            .filter(include)
+            .forEach((key) => {
             addHiddenInput(`files[${key}]`, files[key].source);
         });
+
+        document.body.appendChild(form);
+        form.submit();
+        document.body.removeChild(form);
+    });
+};
+
+export const openCodeSandbox = (exampleInfo) => {
+    const {title, framework, internalFramework} = exampleInfo;
+
+    getExampleFiles(exampleInfo, true).then((exampleFiles) => {
+        const files = exampleFiles.csb;
+
+        const form = document.createElement('form');
+        form.method = 'post';
+        form.style.display = 'none';
+        form.action = `//codesandbox.io/api/v1/sandboxes/define`;
+        form.target = '_blank';
+
+        function isFrameworkReact() {
+            return new Set(['react', 'reactFunctional', 'reactFunctionalTs']).has(internalFramework);
+        }
+
+        const getTemplateForInternalFramework = () => {
+            switch (internalFramework) {
+                case 'react':
+                case 'reactFunctional':
+                    return 'create-react-app';
+                case 'reactFunctionalTs':
+                    return 'create-react-app-typescript';
+                default:
+                    return 'static';
+            }
+        }
+
+        const getPathForFile = file => {
+            if (!isFrameworkReact()) {
+                return file;
+            }
+
+            if (file === 'index.html') {
+                return `public/index.html`
+            }
+
+            if (/([a-zA-Z0-9\\s_.])+(.js|.jsx|.tsx|.ts|.css)$/.test(file)) {
+                if(file.endsWith(".js")) {
+                    return `public/${file}`;
+                }
+
+                if(file.startsWith('index.')) {
+                    return `src/${file === 'index.jsx' ? 'index.js' : file}`;
+                }
+
+                if(file === 'styles.css') {
+                    return `src/styles.css`
+                }
+                return `src/${file}`;
+            }
+
+            return file;
+        }
+
+        const exclude = key => isFrameworkReact() && ['systemjs.config.js', 'systemjs.config.dev.js', 'css.js'].includes(key)
+
+        const filesToSubmit = {};
+        Object.keys(files)
+            .filter((key) => !exclude(key))
+            .forEach((key) => {
+                filesToSubmit[getPathForFile(key)] = {content: files[key].source};
+            });
+
+        const parameters = getParameters({
+            files: filesToSubmit,
+            template: getTemplateForInternalFramework()
+        });
+
+
+        const addHiddenInput = (name, value) => {
+            const input = document.createElement('input');
+            input.type = 'hidden';
+            input.name = name;
+            input.value = value;
+
+            form.appendChild(input);
+        };
+
+        addHiddenInput('tags[0]', 'ag-grid');
+        addHiddenInput('tags[1]', 'example');
+        addHiddenInput('private', true);
+        addHiddenInput('description', title);
+        addHiddenInput('parameters', parameters);
 
         document.body.appendChild(form);
         form.submit();
@@ -283,7 +396,6 @@ export const getIndexHtmlUrl = (exampleInfo) => {
             pageName,
             library,
             framework,
-            useFunctionalReact,
             useVue3,
             importType,
             name,
@@ -296,7 +408,6 @@ export const getIndexHtmlUrl = (exampleInfo) => {
             pageName: encodeURIComponent(pageName),
             library: encodeURIComponent(library),
             framework: encodeURIComponent(framework),
-            useFunctionalReact: encodeURIComponent(useFunctionalReact),
             useVue3: encodeURIComponent(useVue3),
             importType: encodeURIComponent(importType),
             name: encodeURIComponent(name),

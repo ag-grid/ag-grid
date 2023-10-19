@@ -1,4 +1,5 @@
 @use "sass:math";
+@use "sass:map";
 
 // Transform pixel values to rems
 @function px-to-rem($px) {

@@ -1,4 +1,13 @@
-import { Grid, ColDef, GridOptions, GetRowIdParams, GridReadyEvent, IServerSideGetRowsParams, ServerSideTransaction } from '@ag-grid-community/core'
+import {
+  GridApi,
+  createGrid,
+  ColDef,
+  GridOptions,
+  GetRowIdParams,
+  GridReadyEvent,
+  IServerSideGetRowsParams,
+  ServerSideTransaction,
+} from '@ag-grid-community/core';
 
 declare var FakeServer: any;
 declare var dataObservers: any;
@@ -27,6 +36,8 @@ const columnDefs: ColDef[] = [
     { field: 'updateCount' },
 ];
 
+let gridApi: GridApi;
+
 const gridOptions: GridOptions = {
   columnDefs,
   defaultColDef: {
@@ -43,7 +54,7 @@ const gridOptions: GridOptions = {
     if (params.parentKeys && params.parentKeys.length) {
       rowId += params.parentKeys.join('-') + '-';
     }
-    const groupCols = params.columnApi.getRowGroupColumns();
+    const groupCols = params.api.getRowGroupColumns();
     if (groupCols.length > params.level) {
       const thisGroupCol = groupCols[params.level];
       rowId += params.data[thisGroupCol.getColDef().field!] + '-';
@@ -96,7 +107,7 @@ function getServerSideDatasource(server: any) {
   };
 }
 
-let interval: number;
+let interval: any;
 
 function startUpdates() {
   interval = setInterval(() => randomUpdates({ numUpdate: 10, numAdd: 1, numRemove: 1 }), 10);
@@ -119,5 +130,5 @@ function disable(id: string, disabled: boolean) {
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
   const gridDiv = document.querySelector<HTMLElement>('#myGrid')!;
-  new Grid(gridDiv, gridOptions);
+  gridApi = createGrid(gridDiv, gridOptions);
 });

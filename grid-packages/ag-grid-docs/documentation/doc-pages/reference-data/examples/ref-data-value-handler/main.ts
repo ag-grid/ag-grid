@@ -1,9 +1,11 @@
 import {
     CellValueChangedEvent,
-    Grid,
-    GridOptions, ISetFilterParams,
+    GridApi,
+    createGrid,
+    GridOptions,
+    ISetFilterParams,
     ValueFormatterParams,
-    ValueSetterParams
+    ValueSetterParams,
 } from '@ag-grid-community/core';
 import { ColourCellRenderer } from './colourCellRenderer_typescript';
 import { getData } from "./data";
@@ -28,6 +30,8 @@ function extractKeys(mappings: Record<string, string>) {
 
 const carCodes = extractKeys(carMappings);
 const colourCodes = extractKeys(colourMappings);
+
+let gridApi: GridApi;
 
 const gridOptions: GridOptions = {
     columnDefs: [
@@ -153,7 +157,7 @@ function currencyFormatter(params: ValueFormatterParams) {
         return ''
     }
 
-    return '£' + value.toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,')
+    return '£' + value.toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,');
 }
 
 function numberValueSetter(params: ValueSetterParams) {
@@ -173,5 +177,5 @@ document.addEventListener('DOMContentLoaded', function () {
     const eGridDiv = document.querySelector<HTMLElement>('#myGrid')!;
 
     // create the grid passing in the div to use together with the columns & data we want to use
-    new Grid(eGridDiv, gridOptions)
+    gridApi = createGrid(eGridDiv, gridOptions);
 })

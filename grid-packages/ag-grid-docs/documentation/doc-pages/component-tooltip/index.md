@@ -4,14 +4,6 @@ title: "Tooltip Component"
   
 Tooltip components allow you to add your own tooltips to the grid's column headers and cells. Use these when the provided tooltip component or the default browser tooltip do not meet your requirements.
 
-## Simple Tooltip Component
-
-md-include:simple-tooltip-javascript.md
-md-include:simple-tooltip-angular.md
-md-include:simple-tooltip-react.md
-md-include:simple-tooltip-vue.md
-
-## Example: Custom Tooltip
 
 The example below demonstrates how to provide custom tooltips to the grid. Notice the following:
 

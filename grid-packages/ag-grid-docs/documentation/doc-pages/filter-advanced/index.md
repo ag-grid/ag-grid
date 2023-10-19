@@ -1,8 +1,9 @@
 ---
 title: "Advanced Filter"
+enterprise: true
 ---
 
-The Advanced Filter allows for complex filter conditions to be entered across columns in a single type-ahead input.
+The Advanced Filter allows for complex filter conditions to be entered across columns in a single type-ahead input, as well as within a hierarchical visual builder.
 
 ## Enabling Advanced Filter
 
@@ -27,6 +28,21 @@ The following example demonstrates the Advanced Filter:
 <grid-example title='Advanced Filter' name='advanced-filter' type='generated' options='{ "enterprise": true, "modules": ["clientside", "menu", "advancedfilter"] }'></grid-example>
 
 <note>Advanced Filter and Column Filters cannot be active at the same time. Enabling Advanced Filter will disable Column Filters.</note>
+
+## Advanced Filter Builder
+
+As well as typing into the Advanced Filter input, Advanced Filters can also be set by using the Advanced Filter Builder. This displays a hierarchical view of the filter, and allows the different filter parts to be set using dropdowns and inputs. It also allows for filter conditions to be added, deleted and reordered.
+
+The Advanced Filter Builder can be launched by clicking the `Builder` button next to the Advanced Filter input.
+
+The following example demonstrates the Advanced Filter Builder:
+- Click on any of the dropdown pills to change the join operators, columns and filter options.
+- Click on the value pills to change the filter values.
+- Use the drag handles to move the filter conditions or groups around.
+- Use the add and remove buttons to create new conditions or delete existing ones.
+- If the filter is valid (and does not match the already applied filter), click the `Apply` button to apply the filter.
+
+<grid-example title='Advanced Filter Builder' name='advanced-filter-builder' type='generated' options='{ "enterprise": true, "modules": ["clientside", "menu", "advancedfilter"] }'></grid-example>
 
 ## Configuring Columns
 
@@ -153,16 +169,11 @@ const advancedFilterModel = {
 };
 ```
 
-The Advanced Filter Model can be retrieved via the API method `getAdvancedFilterModel`, and set via the grid option `advancedFilterModel` or via the API method `setAdvancedFilterModel`.
+The Advanced Filter Model can be retrieved via the API method `getAdvancedFilterModel`, and set via the API method `setAdvancedFilterModel`.
 
-<api-documentation source='grid-api/api.json' section='filter' names='["getAdvancedFilterModel"]'></api-documentation>
-
-<api-documentation source='grid-options/properties.json' section='filter' names='["advancedFilterModel"]'></api-documentation>
-
-<api-documentation source='grid-api/api.json' section='filter' names='["setAdvancedFilterModel"]'></api-documentation>
+<api-documentation source='grid-api/api.json' section='filter' names='["getAdvancedFilterModel", "setAdvancedFilterModel"]'></api-documentation>
 
 The Advanced Filter Model and API methods are demonstrated in the following example:
-- The grid option `advancedFilterModel` is set so the Advanced Filter is automatically populated, and the grid is filtered.
 - Clicking `Save Advanced Filter Model` will save the current Advanced Filter.
 - Clicking `Restore Advanced Filter Model` will restore the previously saved Advanced Filter.
 - Clicking `Set Custom Advanced Filter Model` will set `[Gold] >= 1`.
@@ -187,6 +198,44 @@ The following example demonstrates displaying the Advanced Filter outside of the
 - Popup Parent is set to an element containing both the grid and the Advanced Filter parent.
 
 <grid-example title='External Parent' name='external-parent' type='generated' options='{ "enterprise": true, "modules": ["clientside", "menu", "advancedfilter"] }'></grid-example>
+
+## Configuring Advanced Filter Builder
+
+The Advanced Filter Builder can be configured using the `IAdvancedFilterBuilderParams` interface:
+
+<interface-documentation interfaceName='IAdvancedFilterBuilderParams' config='{"description":"", "sortAlphabetically":"true"}'></interface-documentation>
+
+The params can be set via the grid option `advancedFilterBuilderParams`, or using the grid API method `setAdvancedFilterBuilderParams`:
+
+<api-documentation source='grid-options/properties.json' section='filter' names='["advancedFilterBuilderParams"]'></api-documentation>
+
+<api-documentation source='grid-api/api.json' section='filter' names='["setAdvancedFilterBuilderParams"]'></api-documentation>
+
+As well as using the button in the Advanced Filter, it's possible to launch the Advanced Filter Builder via the `showAdvancedFilterBuilder` grid API method:
+
+<api-documentation source='grid-api/api.json' section='filter' names='["showAdvancedFilterBuilder"]'></api-documentation>
+
+When the Advanced Filter Builder is shown or hidden, the `advancedFilterBuilderVisibleChanged` event is fired:
+
+<api-documentation source='grid-events/events.json' section='filter' names='["advancedFilterBuilderVisibleChanged"]'></api-documentation>
+
+The following example demonstrates configuring the Advanced Filter Builder:
+- The `Advanced Filter Builder` button displays the Advanced Filter Builder via the API method `showAdvancedFilterBuilder`.
+- The `advancedFilterBuilderVisibleChanged` event is used to toggle the disabled status of the `Advanced Filter Builder` button.
+- The `showMoveButtons` param is set in the `advancedFilterBuilderParams`, which displays buttons allowing the filter rows to be moved up and down (including via keyboard navigation).
+
+<grid-example title='Configuring Advanced Filter Builder' name='configuring-advanced-filter-builder' type='generated' options='{ "enterprise": true, "modules": ["clientside", "menu", "advancedfilter"], "extras": ["fontawesome"] }'></grid-example>
+
+## Cell Data Type Handling
+
+All of the [Cell Data Types](/cell-data-types) are supported in the Advanced Filter. The behaviour of each is described below.
+
+- **Text** - The value in the input is compared against the cell value before any [Value Formatters](/value-formatters/) are applied (similar to the [Text Filter](/filter-text/)). To change the value being compared against, a [Filter Value Getter](/value-getters/#filter-value-getters) can be used.
+- **Number** - The value in the input is compared against the cell value (like in the [Number Filter](/filter-number/)).
+- **Boolean** - No values are displayed for booleans as the filter option is used instead.
+- **Date** - The value in the input is converted to a `Date` via the [Value Parser](/value-parsers/#value-parser).
+- **Date String** - The value in the input is converted to a `Date` using the [Value Parser](/value-parsers/#value-parser) and the [Date Parser](/cell-data-types/#date-as-string-data-type-definition). This is compared against the cell values, which are also converted using the Date Parser.
+- **Object** - The value in the input is compared against the values returned by the [Filter Value Getter](/value-getters/#filter-value-getters) if one is provided. Otherwise, the cell values are converted using the [Value Formatter](/value-formatters/).
 
 ## Aggregation / Pivoting
 

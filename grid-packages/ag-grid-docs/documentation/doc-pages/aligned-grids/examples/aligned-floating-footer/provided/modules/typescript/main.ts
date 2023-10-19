@@ -1,4 +1,4 @@
-import { ColDef, Grid, GridOptions } from "@ag-grid-community/core";
+import { ColDef, createGrid, Grid, GridApi, GridOptions } from "@ag-grid-community/core";
 import '@ag-grid-community/styles/ag-grid.css';
 import '@ag-grid-community/styles/ag-theme-alpine.css';
 
@@ -41,8 +41,9 @@ const dataForBottomGrid = [
         bronze: 12
     }
 ];
-
 // this is the grid options for the top grid
+let topApi: GridApi;
+let bottomApi: GridApi;
 const gridOptionsTop: GridOptions = {
     defaultColDef: {
         editable: true,
@@ -57,7 +58,7 @@ const gridOptionsTop: GridOptions = {
     // debug: true,
     // don't show the horizontal scrollbar on the top grid
     suppressHorizontalScroll: true,
-    alignedGrids: []
+    alignedGrids: ()=>[bottomApi]
 };
 
 // this is the grid options for the bottom grid
@@ -77,21 +78,18 @@ const gridOptionsBottom: GridOptions = {
     rowClass: 'bold-row',
     // hide the header on the bottom grid
     headerHeight: 0,
-    alignedGrids: []
+    alignedGrids: () => [topApi],
 };
 
-gridOptionsTop.alignedGrids!.push(gridOptionsBottom);
-gridOptionsBottom.alignedGrids!.push(gridOptionsTop);
-
 const gridDivTop = document.querySelector<HTMLElement>('#myGridTop')!;
-new Grid(gridDivTop, gridOptionsTop);
+topApi = createGrid(gridDivTop, gridOptionsTop);
 
 const gridDivBottom = document.querySelector<HTMLElement>('#myGridBottom')!;
-new Grid(gridDivBottom, gridOptionsBottom);
+bottomApi = createGrid(gridDivBottom, gridOptionsBottom);
 
 fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
     .then(response => response.json())
     .then(data => {
-        gridOptionsTop.api!.setRowData(data);
-        gridOptionsTop.columnApi!.autoSizeAllColumns();
+        topApi!.setRowData(data);
+        topApi!.autoSizeAllColumns();
     });

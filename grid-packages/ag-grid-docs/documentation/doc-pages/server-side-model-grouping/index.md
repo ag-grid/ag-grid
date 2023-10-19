@@ -72,7 +72,7 @@ function isServerSideGroupOpenByDefault(params) {
 
 It may also be helpful to use the [Row Node](/row-object/) API `getRoute()` to inspect the route of a row node.
 
-<api-documentation source='row-object/resources/methods.json' section='rowNodeMethods' names='["getRoute"]' ></api-documentation>
+<api-documentation source='row-api/resources/methods.json' section='rowNodeMethods' names='["getRoute"]' ></api-documentation>
 
 Below shows `isServerSideGroupOpenByDefault()` and `getRoute` in action. Note the following:
 
@@ -98,7 +98,7 @@ To enable [Row Group Footers](/grouping-footers/), set the `groupIncludeFooter` 
 
 <grid-example title='Group Footers' name='group-footer' type='generated' options='{ "enterprise": true, "extras": ["alasql"], "modules": ["serverside"] }'></grid-example>
 
-Row group footers can also be used with `groupDisplayType='multipleColumns`, as demonstrated in the example below.
+Row group footers can also be used with `groupDisplayType='multipleColumns'`, as demonstrated in the example below.
 
 <grid-example title='Multiple Group Columns and Footers' name='group-footer-multiple-cols' type='generated' options='{ "enterprise": true, "extras": ["alasql"], "modules": ["serverside"] }'></grid-example>
 
@@ -108,10 +108,10 @@ It is possible to expand and collapse all group rows using the `expandAll()` and
 
 <snippet>
 | // Expand all group rows
-| gridOptions.api.expandAll();
+| api.expandAll();
 |
 | // Collapse all group rows
-| gridOptions.api.collapseAll();
+| api.collapseAll();
 </snippet>
 
 Calling `expandAll()` and `collapseAll()` will impact **all loaded group nodes**, including those not visible due to their containing group been closed. This means there could potentially be a huge number of groups expanded, so this method should be used very wisely to not create massive amount of server requests and loading a large amount of data.
@@ -122,7 +122,7 @@ To open only specific groups, e.g. only groups at the top level, then use the `f
 
 <snippet>
 | // Expand all top level row nodes
-| gridOptions.api.forEachNode(node => {
+| api.forEachNode(node => {
 |     if (node.group && node.level == 0) {
 |         node.setExpanded(true);
 |     }

@@ -1,4 +1,4 @@
-import { Grid, ColDef, GridOptions } from '@ag-grid-community/core'
+import { GridApi, createGrid, ColDef, GridOptions } from '@ag-grid-community/core';
 import { ClickableStatusBarComponent } from './clickableStatusBarComponent_typescript'
 
 const columnDefs: ColDef[] = [
@@ -9,6 +9,8 @@ const columnDefs: ColDef[] = [
     field: 'name',
   },
 ]
+
+let gridApi: GridApi;
 
 const gridOptions: GridOptions = {
   defaultColDef: {
@@ -46,5 +48,5 @@ const gridOptions: GridOptions = {
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', () => {
   const gridDiv = document.querySelector<HTMLElement>('#myGrid')!
-  new Grid(gridDiv, gridOptions)
+  gridApi = createGrid(gridDiv, gridOptions);
 })

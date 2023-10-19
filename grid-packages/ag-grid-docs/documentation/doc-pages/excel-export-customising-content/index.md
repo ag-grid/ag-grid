@@ -37,7 +37,7 @@ Row group column cells are also cells. This means that each row group column cel
 </note>
 
 <note>
-When using row grouping while [hiding open parents](/grouping-multiple-group-columns/#hide-open-parents) (`groupHideOpenParents=true`), export to Excel doesn't export the group rows as collapsible groups in Excel. Instead, all exported rows are on the same level and cannot be expanded/collapsed in Excel.
+When using row grouping while [hiding open parents](../grouping-multiple-group-columns/#hide-open-parents) (`groupHideOpenParents=true`), export to Excel doesn't export the group rows as collapsible groups in Excel. Instead, all exported rows are on the same level and cannot be expanded/collapsed in Excel.
 </note>
 
 <grid-example title='Excel Export - Customising Row Groups' name='excel-export-customising-row-groups' type='generated' options='{ "enterprise": true, "modules": ["clientside", "rowgrouping", "csv", "excel", "menu", "setfilter"]}'></grid-example>
@@ -49,10 +49,10 @@ The column headers and group headers exported to Excel can be customised using t
 <snippet>
 | gridApi.exportDataAsExcel({
 |     processGroupHeaderCallback(params) {
-|         return `group header: ${params.columnApi.getDisplayNameForColumnGroup(params.columnGroup, null)}`
+|         return `group header: ${params.api.getDisplayNameForColumnGroup(params.columnGroup, null)}`
 |     },
 |     processHeaderCallback(params) {
-|         return `header: ${params.columnApi.getDisplayNameForColumn(params.column, null)}`
+|         return `header: ${params.api.getDisplayNameForColumn(params.column, null)}`
 |     }
 | });
 </snippet>

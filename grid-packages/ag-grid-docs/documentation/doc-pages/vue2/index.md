@@ -104,9 +104,9 @@ new Vue({
 | If you unsure what import type to use you should use the package import type
 | (i.e. `ag-grid-vue`/ `ag-grid-vue3`).
 |
-| For more information on import types please refer to the documentation [here.](/modules/)
+| For more information on import types please refer to the [Modules](../modules/) documentation.
 |
-| For the Vue 3 version of this tutorial please see the documentation [here.](/getting-started/)
+| For the Vue 3 version of this tutorial please see the [Getting Started](../getting-started/) documentation.
 |
 </note>
 
@@ -470,7 +470,6 @@ export default {
      columnDefs: null,
      rowData: null,
 +    gridApi: null,
-+    columnApi: null
    };
  },
  components: {
@@ -490,7 +489,6 @@ export default {
 + methods: {
 +    onGridReady(params) {
 +        this.gridApi = params.api;
-+        this.columnApi = params.columnApi;
 +    },
 +    getSelectedRows() {
 +        const selectedNodes = this.gridApi.getSelectedNodes();
@@ -580,7 +578,6 @@ the `columnDefs` with a `rowGroup`:
                columnDefs: null,
                rowData: null,
                gridApi: null,
-               columnApi: null,
 +               autoGroupColumnDef: {
 +                   headerName: 'Model',
 +                   field: 'model',
@@ -608,7 +605,6 @@ the `columnDefs` with a `rowGroup`:
        methods: {
            onGridReady(params) {
                this.gridApi = params.api;
-               this.columnApi = params.columnApi;
            },
            getSelectedRows() {
                const selectedNodes = this.gridApi.getSelectedNodes();

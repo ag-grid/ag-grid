@@ -56,14 +56,10 @@ Toggle Buttons, such as the "Pivot Mode" toggle in the above example, are specia
 
 <api-documentation source='global-style-customisation-variables/resources/variables.json' section='variables' names='["--ag-toggle-button-off-border-color", "--ag-toggle-button-off-background-color", "--ag-toggle-button-on-border-color", "--ag-toggle-button-on-background-color", "--ag-toggle-button-switch-background-color", "--ag-toggle-button-switch-border-color", "--ag-toggle-button-border-width", "--ag-toggle-button-height", "--ag-toggle-button-width"]' config='{"maxLeftColumnWidth": 35, "hideHeader": true}'></api-documentation>
 
-## Using or Browser Native Checkboxes or Creating Your Own
+## Using Browser Native Checkboxes or Creating Your Own
 
 The default styles in `ag-grid.css` contain many CSS rules to implement the `--ag-checkbox-*` and `--ag-toggle-button-*` variables described above. If you want to use the browser's default UI or create your own then it's easier to start from a blank slate rather than attempting to override the default styles.
 
 To achieve this, use the `ag-grid-no-native-widgets.css` CSS file instead of `ag-grid.css`.
 
 Users of the Sass API can pass `suppress-native-widget-styling: true` to accomplish this.
-
-
-
-

@@ -1,5 +1,5 @@
 import {Component, Prop, Vue} from 'vue-property-decorator';
-import {Bean, ComponentUtil, Grid, GridOptions, Module} from 'ag-grid-community';
+import {Bean, ComponentUtil, GridOptions, Module, Events, GridApi, createGrid, GridParams} from 'ag-grid-community';
 import {VueFrameworkComponentWrapper} from './VueFrameworkComponentWrapper';
 import { getAgGridProperties, Properties } from './Utils';
 import {VueFrameworkOverrides} from './VueFrameworkOverrides';
@@ -14,7 +14,8 @@ const [props, watch, model] = getAgGridProperties();
 })
 export class AgGridVue extends Vue {
 
-    private static ROW_DATA_EVENTS = ['rowDataChanged', 'rowDataUpdated', 'cellValueChanged', 'rowValueChanged'];
+    private static ROW_DATA_EVENTS: Set<string> = new Set(['rowDataChanged', 'rowDataUpdated', 'cellValueChanged', 'rowValueChanged']);
+    private static ALWAYS_SYNC_GLOBAL_EVENTS: Set<string> = new Set([Events.EVENT_GRID_PRE_DESTROYED]);
 
     private static kebabProperty(property: string) {
         return property.replace(/([a-z])([A-Z])/g, '$1-$2').toLowerCase();
@@ -38,6 +39,7 @@ export class AgGridVue extends Vue {
     private gridReadyFired = false;
 
     private gridOptions!: GridOptions;
+    private api: GridApi | undefined = undefined;
     private emitRowModel: (() => void) | null = null;
 
     // noinspection JSUnusedGlobalSymbols, JSMethodCanBeStatic
@@ -45,29 +47,39 @@ export class AgGridVue extends Vue {
         return h('div');
     }
 
-    public globalEventListener(eventType: string, event: any) {
-        if (this.isDestroyed) {
-            return;
-        }
+    // It forces events defined in AgGridVue.ALWAYS_SYNC_GLOBAL_EVENTS to be fired synchronously.
+    // This is required for events such as GridPreDestroyed.
+    // Other events are fired can be fired asynchronously or synchronously depending on config.
+    public globalEventListenerFactory (restrictToSyncOnly?: boolean) {
+        return (eventType: string, event: any) => {
+            if (this.isDestroyed) {
+                return;
+            }
 
-        if (eventType === 'gridReady') {
-            this.gridReadyFired = true;
-        }
+            if (eventType === 'gridReady') {
+                this.gridReadyFired = true;
+            }
 
-        this.updateModelIfUsed(eventType);
+            const alwaysSync = AgGridVue.ALWAYS_SYNC_GLOBAL_EVENTS.has(eventType);
+            if ((alwaysSync && !restrictToSyncOnly) || (!alwaysSync && restrictToSyncOnly)) {
+                return;
+            }
 
-        // only emit if someone is listening
-        // we allow both kebab and camelCase event listeners, so check for both
-        const kebabName = AgGridVue.kebabProperty(eventType);
-        if (this.$listeners[kebabName]) {
-            this.$emit(kebabName, event);
-        } else if (this.$listeners[eventType]) {
-            this.$emit(eventType, event);
-        }
+            this.updateModelIfUsed(eventType);
+
+            // only emit if someone is listening
+            // we allow both kebab and camelCase event listeners, so check for both
+            const kebabName = AgGridVue.kebabProperty(eventType);
+            if (this.$listeners[kebabName]) {
+                this.$emit(kebabName, event);
+            } else if (this.$listeners[eventType]) {
+                this.$emit(eventType, event);
+            }
+        };
     }
 
     public processChanges(propertyName: string, currentValue: any, previousValue: any) {
-        if (this.gridCreated) {
+        if (this.gridCreated && this.api) {
 
             if (this.skipChange(propertyName, currentValue, previousValue)) {
                 return;
@@ -78,7 +90,7 @@ export class AgGridVue extends Vue {
                 currentValue,
                 previousValue,
             };
-            ComponentUtil.processOnChange(changes, this.gridOptions.api!);
+            ComponentUtil.processOnChange(changes, this.api);
         }
     }
 
@@ -96,8 +108,9 @@ export class AgGridVue extends Vue {
         this.checkForBindingConflicts();
         gridOptions.rowData = this.getRowDataBasedOnBindings();
 
-        const gridParams = {
-            globalEventListener: this.globalEventListener.bind(this),
+        const gridParams: GridParams = {
+            globalEventListener: this.globalEventListenerFactory().bind(this),
+            globalSyncEventListener: this.globalEventListenerFactory(true).bind(this),
             frameworkOverrides: new VueFrameworkOverrides(this),
             providedBeanInstances: {
                 frameworkComponentWrapper,
@@ -105,17 +118,14 @@ export class AgGridVue extends Vue {
             modules: this.modules,
         };
 
-        new Grid(this.$el as HTMLElement, gridOptions, gridParams);
-
+        this.api = createGrid(this.$el as HTMLElement, gridOptions, gridParams);        
         this.gridCreated = true;
     }
 
     // noinspection JSUnusedGlobalSymbols
     public destroyed() {
         if (this.gridCreated) {
-            if (this.gridOptions.api) {
-                this.gridOptions.api.destroy();
-            }
+            this.api?.destroy();            
             this.isDestroyed = true;
         }
     }
@@ -130,7 +140,7 @@ export class AgGridVue extends Vue {
 
     private getRowData(): any[] {
         const rowData: any[] = [];
-        this.gridOptions.api!.forEachNode((rowNode) => {
+        this.api?.forEachNode((rowNode) => {
             rowData.push(rowNode.data);
         });
         return rowData;
@@ -139,7 +149,7 @@ export class AgGridVue extends Vue {
     private updateModelIfUsed(eventType: string) {
         if (this.gridReadyFired &&
             this.$listeners['data-model-changed'] &&
-            AgGridVue.ROW_DATA_EVENTS.indexOf(eventType) !== -1) {
+            AgGridVue.ROW_DATA_EVENTS.has(eventType)) {
 
             if (this.emitRowModel) {
                 this.emitRowModel();

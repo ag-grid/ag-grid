@@ -14,7 +14,7 @@ const VueExample = {
           <ag-grid-vue
               style="width: 100%; height: 45%;"
               class="ag-theme-alpine"
-              id="myGrid"
+              ref="topGrid"
               :gridOptions="topOptions"
               @first-data-rendered="onFirstDataRendered($event)"
               :columnDefs="columnDefs"
@@ -25,7 +25,7 @@ const VueExample = {
           <ag-grid-vue
               style="width: 100%; height: 45%;"
               class="ag-theme-alpine"
-              id="myGrid"
+              ref="bottomGrid"
               :gridOptions="bottomOptions"
               :columnDefs="columnDefs"
               :defaultColDef="defaultColDef"
@@ -39,7 +39,7 @@ const VueExample = {
     data: function () {
         return {
             topOptions: {
-                alignedGrids: [],
+                alignedGrids: () => [this.$refs.bottomGrid],
                 defaultColDef: {
                     editable: true,
                     sortable: true,
@@ -50,7 +50,7 @@ const VueExample = {
                 }
             },
             bottomOptions: {
-                alignedGrids: [],
+                alignedGrids: () => [this.$refs.topGrid],
                 defaultColDef: {
                     editable: true,
                     sortable: true,
@@ -62,8 +62,6 @@ const VueExample = {
             },
             topGridApi: null,
             bottomGridApi: null,
-            topColumnApi: null,
-            bottomColumnApi: null,
             columnDefs: [
                 {
                     headerName: 'Group 1',
@@ -103,13 +101,8 @@ const VueExample = {
         };
     },
     mounted() {
-        this.topGridApi = this.topOptions.api;
-        this.topColumnApi = this.topOptions.columnApi;
-        this.bottomGridApi = this.bottomOptions.api;
-        this.bottomColumnApi = this.bottomOptions.columnApi;
-
-        this.topOptions.alignedGrids.push(this.bottomOptions);
-        this.bottomOptions.alignedGrids.push(this.topOptions);
+        this.topGridApi = this.$refs.topGrid.api;
+        this.bottomGridApi = this.$refs.bottomGrid.api;
 
         fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
             .then(resp => resp.json())
@@ -117,8 +110,8 @@ const VueExample = {
                 this.rowData = rowData
 
                 // mix up some columns
-                this.topColumnApi.moveColumnByIndex(11, 4);
-                this.topColumnApi.moveColumnByIndex(11, 4);
+                this.topGridApi.moveColumnByIndex(11, 4);
+                this.topGridApi.moveColumnByIndex(11, 4);
             });
     },
     methods: {

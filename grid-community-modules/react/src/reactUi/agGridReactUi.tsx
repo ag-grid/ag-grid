@@ -1,9 +1,9 @@
 import {
-    BaseComponentWrapper, ComponentType,
+    BaseComponentWrapper, ColumnApi, ComponentType,
     ComponentUtil,
     Context, CtrlsService, FrameworkComponentWrapper,
+    GridApi,
     GridCoreCreator,
-    GridOptions,
     GridParams,
     WrappableInterface,
     _
@@ -24,7 +24,7 @@ function debug(msg: string, obj?: any) {
 }
 
 export const AgGridReactUi = <TData,>(props: AgReactUiProps<TData>) => {
-    const gridOptionsRef = useRef<GridOptions | null>(null);
+    const apiRef = useRef<GridApi<TData>>();
     const eGui = useRef<HTMLDivElement | null>(null);
     const portalManager = useRef<PortalManager | null>(null);
     const destroyFuncs = useRef<(() => void)[]>([]);
@@ -82,11 +82,10 @@ export const AgGridReactUi = <TData,>(props: AgReactUiProps<TData>) => {
                 frameworkComponentWrapper: new ReactFrameworkComponentWrapper(portalManager.current),
             },
             modules,
-            frameworkOverrides: new ReactFrameworkOverrides(true),
+            frameworkOverrides: new ReactFrameworkOverrides(),
         };
 
-        gridOptionsRef.current = props.gridOptions || {};
-        gridOptionsRef.current = ComponentUtil.copyAttributesToGridOptions(gridOptionsRef.current, props);
+        const mergedGridOps = ComponentUtil.copyAttributesToGridOptions(props.gridOptions || {}, props);
 
         checkForDeprecations(props);
 
@@ -106,12 +105,10 @@ export const AgGridReactUi = <TData,>(props: AgReactUiProps<TData>) => {
                     return;
                 }
 
-                if (gridOptionsRef.current) {
-                    const api = gridOptionsRef.current.api;
-                    if (api) {
-                        if (props.setGridApi) {
-                            props.setGridApi(api, gridOptionsRef.current.columnApi!);
-                        }
+                const api = apiRef.current;
+                if (api) {
+                    if (props.setGridApi) {
+                        props.setGridApi(api, new ColumnApi(api));
                     }
                 }
             });
@@ -131,9 +128,9 @@ export const AgGridReactUi = <TData,>(props: AgReactUiProps<TData>) => {
         };
 
         const gridCoreCreator = new GridCoreCreator();
-        gridCoreCreator.create(
+        apiRef.current = gridCoreCreator.create(
             eGui.current,
-            gridOptionsRef.current,
+            mergedGridOps,
             createUiCallback,
             acceptChangesCallback,
             gridParams
@@ -163,8 +160,8 @@ export const AgGridReactUi = <TData,>(props: AgReactUiProps<TData>) => {
         extractGridPropertyChanges(prevProps.current, props, changes);
         prevProps.current = props;
         processWhenReady(() => {
-            if (gridOptionsRef.current?.api) {
-                ComponentUtil.processOnChange(changes, gridOptionsRef.current.api)
+            if (apiRef.current) {
+                ComponentUtil.processOnChange(changes, apiRef.current)
             }
         });
     }, [props]);

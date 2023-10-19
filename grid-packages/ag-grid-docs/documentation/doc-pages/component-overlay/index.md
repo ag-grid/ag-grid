@@ -4,19 +4,11 @@ title: "Overlay Component"
  
 Overlay components allow you to add your own overlays to AG Grid. Use these when the provided overlays do not meet your requirements.
 
-## Simple Loading Overlay Component
 
-md-include:simple-loading-overlay-javascript.md
-md-include:simple-loading-overlay-angular.md
-md-include:simple-loading-overlay-react.md
-md-include:simple-loading-overlay-vue.md
-  
-## Simple No-Rows Overlay Component
-md-include:simple-no-rows-overlay-javascript.md
-md-include:simple-no-rows-overlay-angular.md
-md-include:simple-no-rows-overlay-react.md
-md-include:simple-no-rows-overlay-vue.md
+There are two types of overlay components:
 
+- **Loading Overlay**: Overlay for when the grid is loading data.
+- **No Rows**: Overlay for when the grid has loaded an empty array of rows.
 ## Example: Custom Overlay Components
 
 The example below demonstrates how to provide custom overlay components to the grid. Notice the following:

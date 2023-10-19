@@ -1,4 +1,15 @@
-import { Column, ColumnModel, GetDataPath, IClientSideRowModel, SetFilterParams, RowNode, ValueService, _ } from '@ag-grid-community/core';
+import {
+    AgPromise,
+    Column,
+    ColumnModel,
+    Events,
+    GetDataPath,
+    IClientSideRowModel,
+    SetFilterParams,
+    RowNode,
+    ValueService,
+    _
+} from '@ag-grid-community/core';
 
 /** @param V type of value in the Set Filter */
 export class ClientSideValuesExtractor<V> {
@@ -12,8 +23,22 @@ export class ClientSideValuesExtractor<V> {
         private readonly treeDataOrGrouping: boolean,
         private readonly treeData: boolean,
         private readonly getDataPath: GetDataPath | undefined,
-        private readonly groupAllowUnbalanced: boolean
+        private readonly groupAllowUnbalanced: boolean,
+        private readonly addManagedListener: (event: string, listener: (event?: any) => void) => (() => null) | undefined
     ) {
+    }
+
+    public extractUniqueValuesAsync(predicate: (node: RowNode) => boolean, existingValues?: Map<string | null, V | null>): AgPromise<Map<string | null, V | null>> {
+        return new AgPromise(resolve => {
+            if (this.rowModel.isRowDataLoaded()) {
+                resolve(this.extractUniqueValues(predicate, existingValues));
+            } else {
+                const destroyFunc = this.addManagedListener(Events.EVENT_ROW_COUNT_READY, () => {
+                    destroyFunc?.();
+                    resolve(this.extractUniqueValues(predicate, existingValues));
+                });
+            }
+        });
     }
 
     public extractUniqueValues(predicate: (node: RowNode) => boolean, existingValues?: Map<string | null, V | null>): Map<string | null, V | null> {

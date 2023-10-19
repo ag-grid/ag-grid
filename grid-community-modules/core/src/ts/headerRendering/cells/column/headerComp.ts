@@ -1,4 +1,4 @@
-import { Autowired } from "../../../context/context";
+import { Autowired, PreDestroy } from "../../../context/context";
 import { Column } from "../../../entities/column";
 import { IComponent } from "../../../interfaces/iComponent";
 import { IMenuFactory } from "../../../interfaces/iMenuFactory";
@@ -112,6 +112,7 @@ export class HeaderComp extends Component implements IHeaderComp {
     private currentDisplayName: string;
     private currentTemplate: string | null | undefined;
     private currentShowMenu: boolean;
+    private currentSuppressMenuHide: boolean;
     private currentSort: boolean | undefined;
 
     // this is a user component, and IComponent has "public destroy()" as part of the interface.
@@ -129,6 +130,7 @@ export class HeaderComp extends Component implements IHeaderComp {
         if (this.workOutTemplate() != this.currentTemplate) { return false; }
         if (this.workOutShowMenu() != this.currentShowMenu) { return false; }
         if (this.workOutSort() != this.currentSort) { return false; }
+        if (this.shouldSuppressMenuHide() != this.currentSuppressMenuHide) { return false; }
 
         this.setDisplayName(params);
 
@@ -236,6 +238,10 @@ export class HeaderComp extends Component implements IHeaderComp {
         return showMenu;
     }
 
+    private shouldSuppressMenuHide(): boolean {
+        return this.gridOptionsService.is('suppressMenuHide');
+    }
+
     private setMenu(): void {
         // if no menu provided in template, do nothing
         if (!this.eMenu) {
@@ -248,9 +254,9 @@ export class HeaderComp extends Component implements IHeaderComp {
             return;
         }
 
-        const suppressMenuHide = this.gridOptionsService.is('suppressMenuHide');
+        this.currentSuppressMenuHide = this.shouldSuppressMenuHide();
         this.addManagedListener(this.eMenu, 'click', () => this.showMenu(this.eMenu));
-        this.eMenu.classList.toggle('ag-header-menu-always-show', suppressMenuHide);
+        this.eMenu.classList.toggle('ag-header-menu-always-show', this.currentSuppressMenuHide);
     }
 
     public showMenu(eventSource?: HTMLElement) {
@@ -290,7 +296,6 @@ export class HeaderComp extends Component implements IHeaderComp {
             return;
         }
 
-        const sortUsingCtrl = this.gridOptionsService.get('multiSortKey') === 'ctrl';
 
         // keep track of last time the moving changed flag was set
         this.addManagedListener(this.params.column, Column.EVENT_MOVING_CHANGED, () => {
@@ -311,6 +316,7 @@ export class HeaderComp extends Component implements IHeaderComp {
                 const columnMoving = moving || movedRecently;
 
                 if (!columnMoving) {
+                    const sortUsingCtrl = this.gridOptionsService.get('multiSortKey') === 'ctrl';
                     const multiSort = sortUsingCtrl ? (event.ctrlKey || event.metaKey) : event.shiftKey;
                     this.params.progressSort(multiSort);
                 }

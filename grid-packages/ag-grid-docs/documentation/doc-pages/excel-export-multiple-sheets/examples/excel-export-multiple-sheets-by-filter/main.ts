@@ -1,4 +1,4 @@
-import { Grid, ColDef, GridOptions } from '@ag-grid-community/core'
+import { GridApi, createGrid, ColDef, GridOptions } from '@ag-grid-community/core';
 
 const columnDefs: ColDef[] = [
   { field: 'athlete', minWidth: 200 },
@@ -10,6 +10,8 @@ const columnDefs: ColDef[] = [
   { field: 'gold' },
   { field: 'silver' },
 ]
+
+let gridApi: GridApi<IOlympicData>;
 
 const gridOptions: GridOptions<IOlympicData> = {
   defaultColDef: {
@@ -26,7 +28,7 @@ const gridOptions: GridOptions<IOlympicData> = {
 function onBtExport() {
   var sports: Record<string, boolean> = {}
 
-  gridOptions.api!.forEachNode(function (node) {
+  gridApi!.forEachNode(function (node) {
     if (!sports[node.data!.sport]) {
       sports[node.data!.sport] = true
     }
@@ -34,17 +36,17 @@ function onBtExport() {
 
   var spreadsheets = []
 
-  var sportFilterInstance = gridOptions.api!.getFilterInstance('sport')!
+  var sportFilterInstance = gridApi!.getFilterInstance('sport')!
 
   for (var sport in sports) {
     sportFilterInstance.setModel({ values: [sport] })
-    gridOptions.api!.onFilterChanged()
+    gridApi!.onFilterChanged()
 
     if (sportFilterInstance.getModel() == null) {
       throw new Error('Example error: Filter not applied');
     }
 
-    const sheet = gridOptions.api!.getSheetDataForExcel({
+    const sheet = gridApi!.getSheetDataForExcel({
       sheetName: sport,
     });
     if (sheet) {
@@ -53,9 +55,9 @@ function onBtExport() {
   }
 
   sportFilterInstance.setModel(null)
-  gridOptions.api!.onFilterChanged()
+  gridApi!.onFilterChanged()
 
-  gridOptions.api!.exportMultipleSheetsAsExcel({
+  gridApi!.exportMultipleSheetsAsExcel({
     data: spreadsheets,
     fileName: 'ag-grid.xlsx',
   })
@@ -66,9 +68,9 @@ function onBtExport() {
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
   var gridDiv = document.querySelector<HTMLElement>('#myGrid')!
-  new Grid(gridDiv, gridOptions)
+  gridApi = createGrid(gridDiv, gridOptions);
 
   fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
     .then(response => response.json())
-    .then((data: IOlympicData[]) => gridOptions.api!.setRowData(data))
+    .then((data: IOlympicData[]) => gridApi!.setRowData(data))
 })

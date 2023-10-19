@@ -43,6 +43,8 @@ export class FakeHScrollComp extends AbstractFakeScrollComp {
 
         this.ctrlsService.registerFakeHScrollComp(this);
         this.createManagedBean(new CenterWidthFeature(width => this.eContainer.style.width = `${width}px`));
+
+        this.addManagedPropertyListeners(['suppressHorizontalScroll'], this.onScrollVisibilityChanged.bind(this));
     }
 
     protected initialiseInvisibleScrollbar(): void {

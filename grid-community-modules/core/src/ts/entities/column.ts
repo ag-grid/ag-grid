@@ -12,16 +12,16 @@ import {
     SortDirection
 } from "./colDef";
 import { EventService } from "../eventService";
-import { Autowired, PostConstruct } from "../context/context";
+import { Autowired, PostConstruct, PreDestroy } from "../context/context";
 import { ColumnUtils } from "../columns/columnUtils";
 import { IEventEmitter } from "../interfaces/iEventEmitter";
-import { AgEvent, ColumnEvent, ColumnEventType } from "../events";
+import { AgEvent, ColumnEvent, ColumnEventType, Events } from "../events";
 import { ColumnGroup, ColumnGroupShowType } from "./columnGroup";
 import { ProvidedColumnGroup } from "./providedColumnGroup";
 import { ModuleNames } from "../modules/moduleNames";
 import { ModuleRegistry } from "../modules/moduleRegistry";
 import { attrToNumber, attrToBoolean, exists, missing } from "../utils/generic";
-import { doOnce } from "../utils/function";
+import { warnOnce } from "../utils/function";
 import { mergeDeep } from "../utils/object";
 import { GridOptionsService } from "../gridOptionsService";
 import { ColumnHoverService } from "../rendering/columnHoverService";
@@ -212,12 +212,13 @@ export class Column<TValue = any> implements IHeaderColumn<TValue>, IProvidedCol
     }
 
     // gets called when user provides an alternative colDef, eg
-    public setColDef(colDef: ColDef<TValue>, userProvidedColDef: ColDef<TValue> | null): void {
+    public setColDef(colDef: ColDef<TValue>, userProvidedColDef: ColDef<TValue> | null, source: ColumnEventType = 'api'): void {
         this.colDef = colDef;
         this.userProvidedColDef = userProvidedColDef;
         this.initMinAndMaxWidths();
         this.initDotNotation();
-        this.eventService.dispatchEvent(this.createColumnEvent('colDefChanged', "api"));
+        this.initTooltip();
+        this.eventService.dispatchEvent(this.createColumnEvent('colDefChanged', source));
     }
 
     /**
@@ -333,16 +334,6 @@ export class Column<TValue = any> implements IHeaderColumn<TValue>, IProvidedCol
 
         const colDefAny = this.colDef as any;
 
-        function warnOnce(msg: string, key: string, obj?: any) {
-            doOnce(() => {
-                if (obj) {
-                    console.warn(msg, obj);
-                } else {
-                    doOnce(() => console.warn(msg), key);
-                }
-            }, key);
-        }
-
         const usingCSRM = this.gridOptionsService.isRowModelType('clientSide');
         if (usingCSRM && !ModuleRegistry.__isRegistered(ModuleNames.RowGroupingModule, this.gridOptionsService.getGridId())) {
             const rowGroupingItems: (keyof ColDef)[] = ['enableRowGroup', 'rowGroup', 'rowGroupIndex', 'enablePivot', 'enableValue', 'pivot', 'pivotIndex', 'aggFunc'];
@@ -356,11 +347,11 @@ export class Column<TValue = any> implements IHeaderColumn<TValue>, IProvidedCol
             ModuleRegistry.__assertRegistered(ModuleNames.RichSelectModule, this.colDef.cellEditor, this.gridOptionsService.getGridId());
         }
 
-        if (this.gridOptionsService.isTreeData()) {
+        if (this.gridOptionsService.is('treeData')) {
             const itemsNotAllowedWithTreeData: (keyof ColDef)[] = ['rowGroup', 'rowGroupIndex', 'pivot', 'pivotIndex'];
             const itemsUsed = itemsNotAllowedWithTreeData.filter(x => exists(colDefAny[x]));
             if (itemsUsed.length > 0) {
-                warnOnce(`AG Grid: ${itemsUsed.join()} is not possible when doing tree data, your column definition should not have ${itemsUsed.join()}`, 'TreeDataCannotRowGroup');
+                warnOnce(`${itemsUsed.join()} is not possible when doing tree data, your column definition should not have ${itemsUsed.join()}`);
             }
         }
 
@@ -378,11 +369,11 @@ export class Column<TValue = any> implements IHeaderColumn<TValue>, IProvidedCol
 
                 colDefAny.menuTabs.forEach((tab: ColumnMenuTab) => {
                     if (!enterpriseMenuTabs.includes(tab) && !communityMenuTabs.includes(tab)) {
-                        warnOnce(`AG Grid: '${tab}' is not valid for 'colDef.menuTabs'. Valid values are: ${[...communityMenuTabs, ...enterpriseMenuTabs].map(t => `'${t}'`).join()}.`, 'wrongValue_menuTabs_' + tab);
+                        warnOnce(`'${tab}' is not valid for 'colDef.menuTabs'. Valid values are: ${[...communityMenuTabs, ...enterpriseMenuTabs].map(t => `'${t}'`).join()}.`);
                     }
                 });
             } else {
-                warnOnce(`AG Grid: The typeof 'colDef.menuTabs' should be an array not:` + typeof colDefAny.menuTabs, 'wrongType_menuTabs');
+                warnOnce(`The typeof 'colDef.menuTabs' should be an array not:` + typeof colDefAny.menuTabs);
             }
         }
 
@@ -395,11 +386,11 @@ export class Column<TValue = any> implements IHeaderColumn<TValue>, IProvidedCol
         }
 
         if (exists(this.colDef.width) && typeof this.colDef.width !== 'number') {
-            warnOnce('AG Grid: colDef.width should be a number, not ' + typeof this.colDef.width, 'ColumnCheck');
+            warnOnce('colDef.width should be a number, not ' + typeof this.colDef.width);
         }
 
         if (exists(colDefAny.columnGroupShow) && colDefAny.columnGroupShow !== 'closed' && colDefAny.columnGroupShow !== 'open') {
-            warnOnce(`AG Grid: '${colDefAny.columnGroupShow}' is not valid for columnGroupShow. Valid values are 'open', 'closed', undefined, null`, 'columnGroupShow_invalid');
+            warnOnce(`'${colDefAny.columnGroupShow}' is not valid for columnGroupShow. Valid values are 'open', 'closed', undefined, null`);
         }
     }
 

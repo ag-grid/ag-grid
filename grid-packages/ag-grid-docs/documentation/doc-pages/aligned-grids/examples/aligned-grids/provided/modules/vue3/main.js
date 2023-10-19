@@ -66,7 +66,7 @@ const VueExample = {
             ],
             rowData: [],
             topOptions: {
-                alignedGrids: [],
+                alignedGrids: () => [this.$refs.bottomGrid],
                 defaultColDef: {
                     editable: true,
                     sortable: true,
@@ -77,7 +77,7 @@ const VueExample = {
                 }
             },
             bottomOptions: {
-                alignedGrids: [],
+                alignedGrids: () => [this.$refs.topGrid],
                 defaultColDef: {
                     editable: true,
                     sortable: true,
@@ -90,9 +90,6 @@ const VueExample = {
         };
     },
     mounted() {
-        this.topOptions.alignedGrids.push(this.bottomOptions);
-        this.bottomOptions.alignedGrids.push(this.topOptions);
-
         fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
             .then(resp => resp.json())
             .then(rowData => this.rowData = rowData);
@@ -100,22 +97,21 @@ const VueExample = {
     methods: {
         onCbAthlete(value) {
             // we only need to update one grid, as the other is a slave
-            this.topGridColumnApi.setColumnVisible('athlete', value);
+            this.topGridApi.setColumnVisible('athlete', value);
         },
 
         onCbAge(value) {
             // we only need to update one grid, as the other is a slave
-            this.topGridColumnApi.setColumnVisible('age', value);
+            this.topGridApi.setColumnVisible('age', value);
         },
 
         onCbCountry(value) {
             // we only need to update one grid, as the other is a slave
-            this.topGridColumnApi.setColumnVisible('country', value);
+            this.topGridApi.setColumnVisible('country', value);
         },
 
         onFirstDataRendered(params) {
             this.topGridApi = params.api;
-            this.topGridColumnApi = params.columnApi;
 
             this.topGridApi.sizeColumnsToFit();
         }

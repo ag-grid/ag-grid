@@ -4,7 +4,7 @@
     $top-bar-height: 58px;
 
     --menu-width: min(30vw, 320px);
-    --font-size: var(--font-size-medium);
+    --font-size: 16px;
 
     border-bottom: 1px solid var(--border-color);
 
@@ -21,7 +21,7 @@
         margin-right: var(--right-margin);
         padding-right: var(--menu-horizontal-margin);
         padding-left: var(--horizontal-margin);
-        border-right: solid 1px var(--bright-blue-gray);
+        border-right: solid 1px var(--secondary-border-color);
 
         @supports (position: sticky) {
             position: sticky;
@@ -34,6 +34,10 @@
 
     @media screen and (min-width: $breakpoint-docs-nav-large) {
         padding-left: var(--menu-horizontal-margin);
+    }
+
+    #{$darkmode-selector} & {
+        border-bottom: none;
     }
 }
 
@@ -51,12 +55,25 @@ ul.menuInner {
         margin-bottom: 0 !important;
     }
 
+    hr {
+        margin-top: $size-2;
+        margin-bottom: $size-2;
+        height: 1px;
+        background-color: var(--secondary-border-color);
+    }
+
+    h5 {
+        padding-left: 6px;
+        font-weight: var(--font-weight-bold);
+        color: var(--secondary-text-color);
+    }
+
     @media screen and (min-width: $breakpoint-docs-nav-medium) {
         display: block !important;
     }
 }
 
-button.sectionHeader {
+button:not([class^="ag-"]).sectionHeader {
     width: 100%;
     padding-top: $size-half;
     padding-bottom: $size-half;
@@ -72,7 +89,7 @@ button.sectionHeader {
     }
 
     &:focus-visible {
-        border-color: var(--bright-blue-gray);
+        border-color: var(--700);
     }
 
     &:hover .sectionIcon {
@@ -105,7 +122,7 @@ button.sectionHeader {
 }
 
 .menuGroup {
-    --first-indent-size: 4px;
+    --first-indent-size: 6px;
     --indent-size: 12px;
 
     line-height: var(--line-height-tight);
@@ -159,11 +176,11 @@ button.sectionHeader {
     &::before {
         content: '';
         position: absolute;
-        width: 0.375em;
-        height: 0.375em;
-        transform: translate(-0.625em, 0.45em);
+        width: 6px;
+        height: 6px;
+        transform: translate(-9px, 7px);
         border-radius: 50%;
-        background-color: var(--white);
+        background-color: transparent;
         transition: background-color $default-transition-timing;
     }
 

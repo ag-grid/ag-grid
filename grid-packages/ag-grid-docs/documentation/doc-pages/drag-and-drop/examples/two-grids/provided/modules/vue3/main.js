@@ -14,7 +14,7 @@ const VueExample = {
             <div style="height: 100%" class="inner-col" v-on:dragover="gridDragOver($event)" v-on:drop="gridDrop($event, 'left')">
                 <ag-grid-vue
                     style="height: 100%; width: 100%;"
-                    id="eLeftGrid"
+                    ref="leftGrid"
                     :gridOptions="leftGridOptions"
                     :columnDefs="leftColumnDefs"
                     :rowClassRules="rowClassRules"
@@ -44,7 +44,7 @@ const VueExample = {
             <div style="height: 100%" class="inner-col" v-on:dragover="gridDragOver($event)" v-on:drop="gridDrop($event, 'right')">
                 <ag-grid-vue
                     style="height: 100%; width: 100%"
-                    id="eRightGrid"
+                    ref="rightGrid"
                     :gridOptions="rightGridOptions"
                     :columnDefs ="rightColumnDefs"
                     :rowClassRules="rowClassRules"
@@ -64,8 +64,6 @@ const VueExample = {
             rightGridOptions: null,
             leftGridApi: null,
             rightGridApi: null,
-            leftColumnApi: null,
-            rightColumnApi: null,
             leftColumnDefs: null,
             rightColumnDefs: null,
             rowClassRules: null,
@@ -124,10 +122,8 @@ const VueExample = {
     },
 
     mounted() {
-        this.leftGridApi = this.leftGridOptions.api;
-        this.rightGridApi = this.rightGridOptions.api;
-        this.leftColumnApi = this.leftGridOptions.columnApi;
-        this.rightColumnApi = this.rightGridOptions.columnApi;
+        this.leftGridApi = this.$refs.leftGrid.api;
+        this.rightGridApi = this.$refs.rightGrid.api;
     },
 
     methods: {

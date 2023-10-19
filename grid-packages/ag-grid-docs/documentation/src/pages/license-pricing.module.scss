@@ -10,6 +10,7 @@
     flex-wrap: wrap;
     gap: $size-4;
     margin-top: $size-8;
+    margin-bottom: $size-7;
 
     @media screen and (min-width: $breakpoint-pricing-large) {
         flex-wrap: nowrap;
@@ -29,7 +30,7 @@
     text-align: center;
 
     @media screen and (min-width: $breakpoint-pricing-large) {
-        margin-top: $size-8;
+        margin-top: 36px;
         text-align: left;
     }
 
@@ -59,7 +60,7 @@
     justify-content: center;
     text-align: center;
     gap: $size-1 $size-2;
-    margin-top: $size-7;
+    margin-top: $size-6;
 
     @media screen and (min-width: $breakpoint-pricing-small) {
         text-align: left;
@@ -89,6 +90,137 @@
         border-radius: var(--border-radius);
     }
 }
+
+.licensesOuter {
+    display: flex;
+    flex-wrap: wrap;
+    width: 100%;
+    gap: $size-4;
+}
+
+.buyTogether {
+    --card-color: #0665cb;
+    --header-tint: 0.9;
+    
+    width: 100%;
+    display: flex;
+    border-radius: calc(var(--border-radius) * 2);
+    border: 3px solid var(--card-color);
+    background-color: var(--card-color);
+}
+
+.buyTogetherInner {
+    display: flex;
+    flex-direction: column;
+    gap: $size-2;
+    width: 100%;
+    padding: $size-2;
+    text-align: center;
+    border-radius: var(--border-radius);
+    background-color: var(--default-background-color);
+    opacity: var(--header-tint);
+
+    @media screen and (min-width: $breakpoint-pricing-medium) {
+        flex-direction: row;
+        justify-content: space-between;
+        gap: $size-4;
+        padding: $size-1 $size-2;
+        text-align: left;
+    }
+
+    p {
+        margin-bottom: 0;
+    }
+}
+
+.left {
+    display: flex;
+    flex-direction: column;
+
+    @media screen and (min-width: $breakpoint-pricing-medium) {
+        width: 50%;
+    }
+
+    p {
+        line-height: var(--line-height-tight);
+    }
+}
+
+.products {
+    font-size: var(--font-size-massive);
+}
+
+.enterpriseProducts {
+    margin-top: $size-1;
+    margin-bottom: $size-3;
+    
+    @media screen and (min-width: $breakpoint-pricing-medium) {
+        margin-top: $size-half;
+        margin-bottom: auto;
+    }
+
+    :global(.icon) {
+        --icon-size: #{$size-2};
+
+        margin-top: -1px;
+        margin-left: -1px;
+        opacity: 0.6666;
+    }
+}
+
+.right {
+    @media screen and (min-width: $breakpoint-pricing-medium) {
+        width: 50%;
+        max-width: 340px;
+    }
+
+    :global(.button) {
+        width: 100%;
+        margin-top: $size-1;
+        text-align: center;
+    }
+}
+
+.rightInner {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: $size-1;
+}
+
+.rightInfo {
+    text-align: right;
+}
+
+.rightPrice {
+    text-align: left;
+
+    p {
+        font-weight: var(--font-weight-bold);
+        line-height: var(--line-height-ultra-tight);
+    }
+
+    p:first-child {
+        margin-bottom: $size-half;
+    }
+
+    p:last-child {
+        margin-top: $size-half;
+    }
+}
+
+.price {
+    font-size: 46px !important; // !important for font-size weirdness
+    line-height: $line-height-tight;
+    font-weight: var(--font-weight-bold);
+    letter-spacing: -0.05em;
+}
+
+.configure button:not([class^="ag-"]) {
+    width: 100%;
+    height: 100%;
+}
+
 
 .bulkLicenses,
 .communityEnterprise,
@@ -153,10 +285,10 @@
     svg {
         --text-color: red;
 
-        position: re;
+        position: absolute;
+        margin-top: -4px;
+        margin-left: 4px;
         width: 26px;
-        bottom: 1px;
-        right: 2px;
     }
 }
 
@@ -224,6 +356,30 @@
 
     li:not(:last-child) {
         margin-bottom: $size-half;
+    }
+
+    .singleApplicationLicense {
+        --card-color: #0f5bce;
+        --header-tint: 90%;
+        --content-tint: 96%;
+
+        #{$darkmode-selector} & {
+            --card-color: #16325c;
+            --header-tint: 66%;
+            --content-tint: 88%;
+        }
+    }
+
+    .multipleApplicationsLicense {
+        --card-color: #2aaa33;
+        --header-tint: 91%;
+        --content-tint: 97%;
+
+        #{$darkmode-selector} & {
+            --card-color: #175a1b;
+            --header-tint: 72%;
+            --content-tint: 88%;
+        }
     }
 
     .singleApplicationLicense,

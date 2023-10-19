@@ -117,7 +117,6 @@ const VueExample = {
         ]);
 
         const gridApi = ref();
-        const gridColumnApi = ref();
         const defaultColDef = ref({
             sortable: true,
             filter: true,
@@ -135,7 +134,6 @@ const VueExample = {
 
         const onGridReady = (params) => {
             gridApi.value = params.api;
-            gridColumnApi.value = params.columnApi;
 
             const updateData = (data) => params.api.setRowData(data.filter((rec) => rec.country != null));
 
@@ -153,7 +151,6 @@ const VueExample = {
         return {
             columnDefs,
             gridApi,
-            gridColumnApi,
             defaultColDef,
             popupParent,
             rowData,

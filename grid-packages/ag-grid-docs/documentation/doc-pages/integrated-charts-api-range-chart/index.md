@@ -10,7 +10,7 @@ This section shows how Range Charts can be created via the Grid API.
 Range Charts can be created through `gridApi.createRangeChart()` as shown below:
 
 <snippet>
-| gridOptions.api.createRangeChart({
+| api.createRangeChart({
 |     chartType: 'groupedColumn',
 |     cellRange: {
 |         rowStartIndex: 0,
@@ -48,7 +48,7 @@ location other than the grid's popup window. Note the following:
 
 ## Hiding Chart Ranges
 
-In some cases it may be desirable to hide the chart ranges in the grid, see [Combination Charts](/integrated-charts-api-range-chart/#example-combination-chart).
+In some cases it may be desirable to hide the chart ranges in the grid, see [Combination Charts](/integrated-charts-api-range-chart/#combination-charts).
 
 To hide the chart ranges simply enable `suppressChartRanges=true` on the `ChartRangeParams`.
 

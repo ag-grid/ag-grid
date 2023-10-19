@@ -1,4 +1,4 @@
-import { ColDef, Grid, GridOptions, GetRowIdParams, IAggFuncParams, IDoesFilterPassParams, IFilterComp, IFilterParams, IFilterType, IsGroupOpenByDefaultParams } from '@ag-grid-community/core'
+import { ColDef, createGrid, GridOptions, GetRowIdParams, IAggFuncParams, IDoesFilterPassParams, IFilterComp, IFilterParams, IFilterType, IsGroupOpenByDefaultParams, GridApi } from '@ag-grid-community/core'
 
 import { createDataItem, getData } from './data'
 
@@ -70,14 +70,9 @@ function getMyFilter(): IFilterType {
         doesFilterPass(params: IDoesFilterPassParams) {
             filterCallCount++
 
-            const { api, colDef, column, columnApi, context } = this.filterParams;
             const { node } = params;
             const value = this.filterParams.valueGetter({
-                api,
-                colDef,
-                column,
-                columnApi,
-                context,
+                ...this.filterParams,
                 data: node.data,
                 getValue: (field) => node.data[field],
                 node,
@@ -92,7 +87,7 @@ function getMyFilter(): IFilterType {
 
 const myFilter = getMyFilter();
 
-
+let gridApi: GridApi;
 const columnDefs: ColDef[] = [
     { field: 'city', rowGroup: true, hide: true },
     { field: 'laptop', rowGroup: true, hide: true },
@@ -110,10 +105,9 @@ function getRowId(params: GetRowIdParams) {
 }
 
 function onBtDuplicate() {
-    const api = gridOptions.api!;
 
     // get the first child of the
-    const selectedRows = api.getSelectedRows();
+    const selectedRows = gridApi.getSelectedRows();
     if (!selectedRows || selectedRows.length === 0) {
         console.log('No rows selected!')
         return
@@ -132,15 +126,13 @@ function onBtDuplicate() {
     })
 
     timeOperation('Duplicate', function () {
-        api.applyTransaction({ add: newItems })
+        gridApi.applyTransaction({ add: newItems })
     })
 }
 
 function onBtUpdate() {
-    const api = gridOptions.api!;
-
     // get the first child of the
-    const selectedRows = api.getSelectedRows();
+    const selectedRows = gridApi.getSelectedRows();
     if (!selectedRows || selectedRows.length === 0) {
         console.log('No rows selected!')
         return
@@ -161,34 +153,30 @@ function onBtUpdate() {
     })
 
     timeOperation('Update', function () {
-        api.applyTransaction({ update: updatedItems })
+        gridApi.applyTransaction({ update: updatedItems })
     })
 }
 
 function onBtDelete() {
-    const api = gridOptions.api!;
-
     // get the first child of the
-    const selectedRows = api.getSelectedRows();
+    const selectedRows = gridApi.getSelectedRows();
     if (!selectedRows || selectedRows.length === 0) {
         console.log('No rows selected!')
         return
     }
 
     timeOperation('Delete', function () {
-        api.applyTransaction({ remove: selectedRows })
+        gridApi.applyTransaction({ remove: selectedRows })
     })
 }
 
 function onBtClearSelection() {
-    gridOptions.api!.deselectAll()
+    gridApi!.deselectAll()
 }
 
 function onBtUpdateModel() {
-    const api = gridOptions.api!;
-
     timeOperation('Update Model', function () {
-        api.refreshClientSideRowModel('filter')
+        gridApi.refreshClientSideRowModel('filter')
     })
 }
 
@@ -230,7 +218,7 @@ function isGroupOpenByDefault(params: IsGroupOpenByDefaultParams<IOlympicData, a
 // AG Grid will not find the div in the document.
 document.addEventListener('DOMContentLoaded', function () {
     const eGridDiv = document.querySelector<HTMLElement>('#myGrid')!;
-    new Grid(eGridDiv, gridOptions)
+    gridApi = createGrid(eGridDiv, gridOptions)
 })
 
 function timeOperation(name: string, operation: any) {

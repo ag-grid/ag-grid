@@ -7,7 +7,7 @@ import { SquareRenderer } from './square-renderer.component';
 
 import "@ag-grid-community/styles/ag-grid.css";
 import "@ag-grid-community/styles/ag-theme-alpine.css";
-import { ColDef, ColumnApi, GridApi, GridReadyEvent, IRowNode } from '@ag-grid-community/core';
+import { ColDef, GridApi, GridReadyEvent, IRowNode } from '@ag-grid-community/core';
 
 @Component({
     selector: 'my-app',
@@ -31,7 +31,6 @@ import { ColDef, ColumnApi, GridApi, GridReadyEvent, IRowNode } from '@ag-grid-c
 })
 export class AppComponent {
     private gridApi!: GridApi;
-    private gridColumnApi!: ColumnApi;
 
     public columnDefs: ColDef[] = [
         {
@@ -106,7 +105,6 @@ export class AppComponent {
 
     onGridReady(params: GridReadyEvent) {
         this.gridApi = params.api;
-        this.gridColumnApi = params.columnApi;
     }
 
     methodFromParent(cell: any) {

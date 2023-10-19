@@ -92,6 +92,7 @@ export {
 export { RowDropZoneParams, RowDropZoneEvents } from "./gridBodyComp/rowDragFeature";
 export { DragService, DragListenerParams } from "./dragAndDrop/dragService";
 export { IRowDragItem } from "./rendering/row/rowDragComp";
+export { VirtualListDragFeature, VirtualListDragItem, VirtualListDragParams } from "./dragAndDrop/virtualListDragFeature";
 
 // entities
 export { Column, ColumnPinnedType } from "./entities/column";
@@ -101,7 +102,7 @@ export { RowNode } from "./entities/rowNode";
 export { RowHighlightPosition, RowPinnedType, IRowNode } from "./interfaces/iRowNode";
 
 // filter
-export { IFilterDef, IFilterParams, IFilterOptionDef, IDoesFilterPassParams, ProvidedFilterModel, IFilter, IFilterComp, IFilterType, IFloatingFilterType } from "./interfaces/iFilter";
+export { IFilterDef, IFilterParams, IFilterOptionDef, IDoesFilterPassParams, ProvidedFilterModel, IFilter, IFilterComp, IFilterType, IFloatingFilterType, FilterModel } from "./interfaces/iFilter";
 export { ISetFilter, SetFilterModel, ISetFilterParams, SetFilterParams, SetFilterValues, SetFilterModelValue, SetFilterValuesFunc, SetFilterValuesFuncParams, ISetFilterTreeListTooltipParams } from "./interfaces/iSetFilter";
 export { FilterManager, FilterWrapper, FilterRequestSource } from "./filter/filterManager";
 export { IMultiFilter, IMultiFilterModel, IMultiFilterComp, IMultiFilterParams, MultiFilterParams, IMultiFilterDef } from './interfaces/iMultiFilter';
@@ -135,6 +136,7 @@ export {
     BooleanAdvancedFilterModelType
 }  from './interfaces/advancedFilterModel';
 export { IAdvancedFilterCtrl } from './interfaces/iAdvancedFilterCtrl';
+export { IAdvancedFilterBuilderParams } from './interfaces/iAdvancedFilterBuilderParams';
 export { IAdvancedFilterService } from './interfaces/iAdvancedFilterService';
 
 // gridPanel
@@ -171,10 +173,11 @@ export { StandardMenuFactory } from "./headerRendering/cells/column/standardMenu
 export { TabbedLayout, TabbedItem } from "./layout/tabbedLayout";
 
 // misc
-export { simpleHttpRequest } from "./misc/simpleHttpRequest";
 export { ResizeObserverService } from "./misc/resizeObserverService";
 export { IImmutableService } from "./interfaces/iImmutableService";
 export { AnimationFrameService } from "./misc/animationFrameService";
+export { AlignedGrid } from "./interfaces/iAlignedGrid";
+export { ExpansionService } from "./misc/expansionService";
 
 // editing / cellEditors
 export { ICellEditor, ICellEditorComp, ICellEditorParams } from "./interfaces/iCellEditor";
@@ -185,7 +188,7 @@ export { TextCellEditor, ITextCellEditorParams } from "./rendering/cellEditors/t
 export { NumberCellEditor, INumberCellEditorParams } from "./rendering/cellEditors/numberCellEditor";
 export { DateCellEditor, IDateCellEditorParams } from "./rendering/cellEditors/dateCellEditor";
 export { DateStringCellEditor, IDateStringCellEditorParams } from "./rendering/cellEditors/dateStringCellEditor";
-export { IRichCellEditorParams, RichCellEditorParams } from "./interfaces/iRichCellEditorParams";
+export { IRichCellEditorParams, RichCellEditorValuesCallback, RichCellEditorParams } from "./interfaces/iRichCellEditorParams";
 export { CheckboxCellEditor } from "./rendering/cellEditors/checkboxCellEditor";
 
 
@@ -244,7 +247,7 @@ export { IServerSideDatasource, IServerSideGetRowsParams, IServerSideGetRowsRequ
 export { IServerSideRowModel, IServerSideTransactionManager, RefreshStoreParams, RefreshServerSideParams } from "./interfaces/iServerSideRowModel";
 export { IServerSideStore, StoreRefreshAfterParams, ServerSideGroupState, ServerSideGroupLevelState } from "./interfaces/IServerSideStore";
 
-export { ISideBar, SideBarDef, ToolPanelDef } from "./interfaces/iSideBar";
+export { ISideBarService, ISideBar, SideBarDef, ToolPanelDef } from "./interfaces/iSideBar";
 export { IGetRowsParams, IDatasource } from "./interfaces/iDatasource";
 
 //styling
@@ -320,7 +323,7 @@ export { VanillaFrameworkOverrides } from "./vanillaFrameworkOverrides";
 export { CellNavigationService } from "./cellNavigationService";
 export { AlignedGridsService } from "./alignedGridsService";
 export { KeyCode } from "./constants/keyCode";
-export { Grid, GridParams, GridCoreCreator } from "./grid";
+export { Grid, GridParams, Params, GridCoreCreator, createGrid } from "./grid";
 export { GridApi, DetailGridInfo, StartEditingCellParams } from "./gridApi";
 export { Events } from "./eventKeys";
 export { FocusService } from "./focusService";
@@ -342,9 +345,35 @@ export { ValueCache } from "./valueService/valueCache";
 export { ExpressionService } from "./valueService/expressionService";
 export { ValueParserService } from "./valueService/valueParserService";
 
+//state
+export {
+    AggregationColumnState,
+    AggregationState,
+    ColumnGroupState,
+    ColumnOrderState,
+    ColumnPinningState,
+    ColumnSizeState,
+    ColumnSizingState,
+    ColumnVisibilityState,
+    FilterState,
+    FocusedCellState,
+    GridState,
+    PaginationState,
+    PivotState,
+    RangeSelectionCellState,
+    RangeSelectionState,
+    RowGroupExpansionState,
+    RowGroupState,
+    ScrollState,
+    SideBarState,
+    SortState
+} from "./interfaces/gridState";
+
 // uncatalogued
 export { IRowModel, RowBounds, RowModelType } from "./interfaces/iRowModel";
 export { ISelectionService, ISetNodesSelectedParams } from "./interfaces/iSelectionService";
+export { IExpansionService } from "./interfaces/iExpansionService";
+export { ServerSideRowSelectionState, ServerSideRowGroupSelectionState } from "./interfaces/selectionState";
 export { IServerSideSelectionState, IServerSideGroupSelectionState } from "./interfaces/iServerSideSelection";
 export { IAggFuncService } from "./interfaces/iAggFuncService";
 export { IClipboardService, IClipboardCopyParams, IClipboardCopyRowsParams } from "./interfaces/iClipboardService";
@@ -457,7 +486,8 @@ export {
     TreeDataDisplayType,
     LoadingCellRendererSelectorFunc,
     LoadingCellRendererSelectorResult,
-    DomLayoutType
+    DomLayoutType,
+    UseGroupFooter
 } from "./entities/gridOptions";
 
 export {
@@ -488,6 +518,7 @@ export {
     PostSortRowsParams,
     GetLocaleTextParams,
     GetGroupAggFilteringParams,
+    GetGroupIncludeFooterParams
 } from "./interfaces/iCallbackParams";
 export {
     WithoutGridCommon
@@ -511,6 +542,7 @@ export { WrappableInterface, BaseComponentWrapper, FrameworkComponentWrapper } f
 export { IFrameworkOverrides } from "./interfaces/iFrameworkOverrides";
 export { Environment } from "./environment";
 export { ITooltipComp, ITooltipParams, TooltipLocation } from "./rendering/tooltipComponent";
+export { TooltipFeature } from "./widgets/tooltipFeature";
 export { CustomTooltipFeature } from "./widgets/customTooltipFeature";
 export { IAggregationStage } from "./interfaces/iAggregationStage";
 

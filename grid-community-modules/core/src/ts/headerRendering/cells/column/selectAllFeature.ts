@@ -1,21 +1,16 @@
-import { AgCheckbox } from "../../../widgets/agCheckbox";
 import { BeanStub } from "../../../context/beanStub";
 import { Autowired } from "../../../context/context";
-import { ColumnApi } from "../../../columns/columnApi";
-import { GridApi } from "../../../gridApi";
+import { HeaderCheckboxSelectionCallbackParams } from "../../../entities/colDef";
+import { Column } from "../../../entities/column";
 import { Events, SelectionEventSourceType } from "../../../events";
 import { IRowModel } from "../../../interfaces/iRowModel";
-import { Column } from "../../../entities/column";
-import { RowNode } from "../../../entities/rowNode";
 import { ISelectionService } from "../../../interfaces/iSelectionService";
-import { HeaderCellCtrl } from "./headerCellCtrl";
 import { setAriaHidden, setAriaRole } from "../../../utils/aria";
-import { HeaderCheckboxSelectionCallbackParams } from "../../../entities/colDef";
+import { AgCheckbox } from "../../../widgets/agCheckbox";
+import { HeaderCellCtrl } from "./headerCellCtrl";
 
 export class SelectAllFeature extends BeanStub {
 
-    @Autowired('gridApi') private gridApi: GridApi;
-    @Autowired('columnApi') private columnApi: ColumnApi;
     @Autowired('rowModel') private rowModel: IRowModel;
     @Autowired('selectionService') private selectionService: ISelectionService;
 
@@ -77,6 +72,8 @@ export class SelectAllFeature extends BeanStub {
         if (this.cbSelectAllVisible) {
             // in case user is trying this feature with the wrong model type
             this.checkRightRowModelType('selectAllCheckbox');
+            // in case user is trying this feature with the wrong model type
+            this.checkSelectionType('selectAllCheckbox');
             // make sure checkbox is showing the right state
             this.updateStateOfCheckbox();
         }
@@ -123,6 +120,16 @@ export class SelectAllFeature extends BeanStub {
         this.headerCellCtrl.refreshAriaDescription();
     }
 
+    private checkSelectionType(feature: string): boolean {
+        const isMultiSelect = this.gridOptionsService.get('rowSelection') === 'multiple';
+
+        if (!isMultiSelect) {
+            console.warn(`AG Grid: ${feature} is only available if using 'multiple' rowSelection.`);
+            return false;
+        }
+        return true;
+    }
+
     private checkRightRowModelType(feature: string): boolean {
         const rowModelType = this.rowModel.getType();
         const rowModelMatches = rowModelType === 'clientSide' || rowModelType === 'serverSide';
@@ -164,15 +171,15 @@ export class SelectAllFeature extends BeanStub {
             const params: HeaderCheckboxSelectionCallbackParams = {
                 column: this.column,
                 colDef: this.column.getColDef(),
-                columnApi: this.columnApi,
-                api: this.gridApi,
+                columnApi: this.gridOptionsService.columnApi,
+                api: this.gridOptionsService.api,
                 context: this.gridOptionsService.context
             };
             result = func(params);
         }
 
         if (result) {
-            return this.checkRightRowModelType('headerCheckboxSelection');
+            return this.checkRightRowModelType('headerCheckboxSelection') && this.checkSelectionType('headerCheckboxSelection');
         }
 
         return false;

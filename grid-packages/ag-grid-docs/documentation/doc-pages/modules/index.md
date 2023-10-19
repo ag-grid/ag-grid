@@ -197,7 +197,7 @@ The steps required are:
 Using the same real-world example from above the `package.json` dependencies will be the same but how we register the modules is different.
 
 <framework-specific-section frameworks="javascript">
-| We pass the modules to the new grid via the `modules` property of the `GridParams`.
+| We pass the modules to createGrid via the `modules` property of the `Params`.
 </framework-specific-section>
 
 <framework-specific-section frameworks="javascript">
@@ -207,7 +207,7 @@ Using the same real-world example from above the `package.json` dependencies wil
 |import { ExcelExportModule } from "@ag-grid-enterprise/excel-export";
 |import { MasterDetailModule } from "@ag-grid-enterprise/master-detail"; 
 |
-|new Grid(&lt;dom element>, gridOptions, { modules: [
+|createGrid(&lt;dom element>, gridOptions, { modules: [
 |    ClientSideRowModelModule,
 |    CsvExportModule,
 |    ExcelExportModule,
@@ -344,7 +344,7 @@ If we have the following modules specified:
 We can then assume the `core` packages are available implicitly and import from them:
 
 <snippet transform={false}>
-|import { ColumnApi, GridApi } from "@ag-grid-community/core";
+|import { GridApi } from "@ag-grid-community/core";
 |import { LicenseManager } from "@ag-grid-enterprise/core";
 |
 |LicenseManager.setLicenseKey(...your key...);

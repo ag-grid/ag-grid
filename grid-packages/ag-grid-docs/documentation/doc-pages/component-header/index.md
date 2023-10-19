@@ -9,13 +9,6 @@ There are two types of header components:
 - **Header Component**: For rendering the normal column headers. Configured for columns.
 - **Header Group Component**: For rendering column groups. Configured for column groups.
 
-## Simple Header Component
-
-md-include:simple-header-javascript.md
-md-include:simple-header-angular.md
-md-include:simple-header-react.md
-md-include:simple-header-vue.md
-
 ## Example: Custom Header Component
 
 The example below shows a header component in action. The following can be observed in the demo:
@@ -59,17 +52,19 @@ A Header Component allows customising the inside part of the header. The compone
 |&lt;!-- column moving and resize logic is put on this element by the grid -->
 |&lt;div class="ag-header-cell">
 |
-|&lt;!-- AG Grid will also always provide a resize bar (if column resizing
-|is enabled) and take care of all the resize logic. the grid usually
-|floats this element to the right.-->
-|&lt;div class="ag-header-cell-resize">&lt;/div>
+|    &lt;!-- AG Grid will also always provide a resize bar (if column resizing
+|        is enabled) and take care of all the resize logic. the grid usually
+|        floats this element to the right.-->
+|    &lt;div class="ag-header-cell-resize">&lt;/div>
 |
-|&lt;!-- checkbox for selection, if turned on.
-|the grid usually floats this element to the left. -->
-|&lt;div class="ag-header-select-all">&lt;/div>
+|    &lt;!-- checkbox for selection, if turned on.
+|        the grid usually floats this element to the left. -->
+|    &lt;div class="ag-header-select-all">&lt;/div>
 |
-|&lt;!-- the header component - this is the piece that you can customise -->
-|&lt;div class="ag-header-component">&lt;/div>
+|    &lt;!-- the header component - this is the piece that you can customise -->
+|    &lt;div class="ag-header-cell-comp-wrapper">&lt;/div>
+|
+|&lt;/div>
 </snippet>
 
 The grid is always responsible for the following:

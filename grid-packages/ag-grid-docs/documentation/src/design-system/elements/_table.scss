@@ -5,6 +5,10 @@ table {
     margin-bottom: $size-2;
     border-collapse: collapse;
     border-bottom: 1px solid var(--border-color);
+
+    #{$darkmode-selector} & {
+        border-color: var(--neutral-500);
+    }
 }
 
 thead,
@@ -18,6 +22,10 @@ tbody {
 
 tr {
     border-top: 1px solid var(--border-color);
+
+    #{$darkmode-selector} & {
+        border-top-color: var(--neutral-500);
+    }
 }
 
 th,

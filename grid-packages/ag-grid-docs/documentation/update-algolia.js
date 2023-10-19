@@ -197,9 +197,9 @@ const createRecords = async (browser, url, framework, breadcrumb, rank, loadFrom
 const readFromAgGrid = url => url === '/grid-options/' ||
     url === '/grid-api/' ||
     url === '/grid-events/' ||
+    url === '/grid-lifecycle/' ||
     url === '/row-object/' ||
     url === '/column-properties/' ||
-    url === '/column-api/' ||
     url === '/column-object/';
 
 const processIndexForFramework = async framework => {

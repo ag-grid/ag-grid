@@ -1,4 +1,4 @@
-import {Grid, GridOptions} from "ag-grid-community";
+import {createGrid, GridOptions} from "ag-grid-community";
 
 import "ag-grid-enterprise";
 
@@ -14,7 +14,7 @@ export class SimpleGrid {
         };
 
         let eGridDiv: HTMLElement = <HTMLElement>document.querySelector(selector);
-        new Grid(eGridDiv, this.gridOptions, { modules: [gridModule]});
+        createGrid(eGridDiv, this.gridOptions, { modules: [gridModule]});
     }
 
     // specify the columns

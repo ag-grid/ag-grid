@@ -6,7 +6,7 @@
 // to prevent AG Grid from loading the code twice
 
 import { Easing, Group } from '@tweenjs/tween.js';
-import { ColDef, GridOptions, MenuItemDef } from 'ag-grid-community';
+import { ColDef, GridOptions, MenuItemDef, GridApi } from 'ag-grid-community';
 import { CATEGORIES, PORTFOLIOS } from '../../data/constants';
 import { createDataWorker } from '../../data/createDataWorker';
 import { ROW_GROUPING_ID } from '../../lib/constants';
@@ -82,7 +82,7 @@ const columnDefs: ColDef[] = [
     { field: 'dealType', enableRowGroup: true },
     { field: 'portfolio', enableRowGroup: true },
 ];
-
+let api: GridApi
 const gridOptions: GridOptions = {
     columnDefs,
     defaultColDef: {
@@ -127,14 +127,14 @@ function initWorker() {
         },
     });
     dataWorker.onmessage = function (e) {
-        if (!gridOptions || !gridOptions.api) {
+        if (!api) {
             return;
         }
 
         if (e.data.type === 'setRowData') {
-            gridOptions.api.setRowData(e.data.records);
+            api.setRowData(e.data.records);
         } else if (e.data.type === 'updateData') {
-            gridOptions.api.applyTransactionAsync({ update: e.data.records });
+            api.applyTransactionAsync({ update: e.data.records });
         }
     };
 }
@@ -182,7 +182,7 @@ export function createAutomatedRowGrouping({
         if (additionalContextMenuItems) {
             gridOptions.getContextMenuItems = () => getAdditionalContextMenuItems(additionalContextMenuItems);
         }
-        gridOptions.onGridReady = () => {
+        gridOptions.onGridReady = (params) => {
             if (suppressUpdates) {
                 return;
             }
@@ -220,13 +220,13 @@ export function createAutomatedRowGrouping({
                     onStateChange && onStateChange(state);
                 },
                 tweenGroup,
-                gridOptions,
+                gridApi: params.api,
                 loop: !runOnce,
                 scriptDebugger,
                 defaultEasing: Easing.Quadratic.InOut,
             });
         };
-        new globalThis.agGrid.Grid(gridDiv, gridOptions);
+       api = globalThis.agGrid.createGrid(gridDiv, gridOptions);
     };
 
     const setUpdateFrequency = (value: number) => {
@@ -270,7 +270,7 @@ export function cleanUp() {
 
     stopWorkerMessages();
     dataWorker?.terminate();
-    gridOptions.api?.destroy();
+    api?.destroy();
 }
 
 /**

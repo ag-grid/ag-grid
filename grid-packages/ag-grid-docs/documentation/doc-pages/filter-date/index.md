@@ -38,6 +38,17 @@ The example below shows the Date Filter in action:
 
 <grid-example title='Date Picker' name='date-filter' type='generated' options='{ "exampleHeight": 520 }'></grid-example>
 
+## Example: Setting Range For Date Filter
+
+The example below demonstrates configuring date range filtering in the Date Filter with minimum and maximum validation dates:
+
+- The `minValidDate` parameter is set to `2008-01-08` using a string.
+- The `maxValidDate` is dynamically set to tomorrow's date using JavaScript's Date object.
+- Together, `minValidDate` and `maxValidDate` restrict the selectable date range.
+- Any manually entered or selected dates outside the valid range will invalid.
+
+<grid-example title='Setting Date Range For Filter' name='range-for-date-filter' type='generated' options='{ "exampleHeight": 520 }'></grid-example>
+
 ## Date Filter Parameters
 
 Date Filters are configured though the `filterParams` attribute of the column definition (`IDateFilterParams` interface):

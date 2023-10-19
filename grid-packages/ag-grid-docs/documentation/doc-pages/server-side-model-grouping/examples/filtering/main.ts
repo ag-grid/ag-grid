@@ -1,13 +1,14 @@
-import { Grid, GridOptions, IServerSideDatasource } from '@ag-grid-community/core'
+import { GridApi, createGrid, GridOptions, IServerSideDatasource } from '@ag-grid-community/core';
 declare var FakeServer: any;
+let gridApi: GridApi<IOlympicData>;
 const gridOptions: GridOptions<IOlympicData> = {
   columnDefs: [
     { field: 'country', rowGroup: true, hide: true },
     { field: 'sport', rowGroup: true, hide: true },
     { field: 'year', minWidth: 100, filter: 'agNumberColumnFilter', floatingFilter: true },
-    { field: 'gold', aggFunc: 'sum', filter: 'agNumberColumnFilter', floatingFilter: true },
-    { field: 'silver', aggFunc: 'sum', filter: 'agNumberColumnFilter', floatingFilter: true },
-    { field: 'bronze', aggFunc: 'sum', filter: 'agNumberColumnFilter', floatingFilter: true },
+    { field: 'gold', aggFunc: 'sum', filter: 'agNumberColumnFilter', floatingFilter: true, enableValue: true },
+    { field: 'silver', aggFunc: 'sum', filter: 'agNumberColumnFilter', floatingFilter: true, enableValue: true },
+    { field: 'bronze', aggFunc: 'sum', filter: 'agNumberColumnFilter', floatingFilter: true, enableValue: true },
   ],
   defaultColDef: {
     flex: 1,
@@ -24,8 +25,6 @@ const gridOptions: GridOptions<IOlympicData> = {
 
   // use the server-side row model
   rowModelType: 'serverSide',
-
-  suppressAggFuncInHeader: true,
 
   cacheBlockSize: 5,
 
@@ -56,7 +55,7 @@ function getServerSideDatasource(server: any): IServerSideDatasource {
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
   var gridDiv = document.querySelector<HTMLElement>('#myGrid')!
-  new Grid(gridDiv, gridOptions)
+  gridApi = createGrid(gridDiv, gridOptions);
 
   fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
     .then(response => response.json())
@@ -68,6 +67,6 @@ document.addEventListener('DOMContentLoaded', function () {
       var datasource = getServerSideDatasource(fakeServer)
 
       // register the datasource with the grid
-      gridOptions.api!.setServerSideDatasource(datasource)
+      gridApi!.setServerSideDatasource(datasource)
     })
 })

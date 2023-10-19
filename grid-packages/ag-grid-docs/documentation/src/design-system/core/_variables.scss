@@ -4,6 +4,7 @@
 // Configuration
 // =============
 $css-variables-root: ':root' !default; // The root level where CSS variables are applied
+$exclude-grid-selector: ":where(:not([class^=ag]))"; // Exclude simple selectors from interfering with grid styles
 
 // Size constants
 // ==============
@@ -72,6 +73,13 @@ $icon-size: 2em;
 
 // Color constants
 // ===========================================
+
+// Darkmode selector. To be used as an interpolated Sass parent selector
+// #{$darkmode-selector} & {
+//     [DARKMODE STYLES]
+// }
+$darkmode-selector: "[data-dark-mode='true']";
+
 // Names from color-name.com
 $abstract-colors: (
     // Brand (from logo)
@@ -90,8 +98,10 @@ $abstract-colors: (
     'ghost-blue': #f9fcff,
     // Grays
     'black': #000000,
+    'eerie-black': #181C22,
     'dark-gunmetal-gray': #212529,
     'auro-metal': #6c757d,
+    'quick-silver': #9ea3a6,
     'ag-grid-grey': #b4bebe,
     'dull-light-gray': #d0d4d6,
     'light-gray': #ced4da,
@@ -105,42 +115,296 @@ $abstract-colors: (
     'pineapple': #5c3508
 );
 
-// Semantic colors based on abstract colors
+$color-scales: (
+    'primary': (
+        '100': #cce5ff,
+        '200': #a8d2ff,
+        '300': #84beff,
+        '400': #60aaff,
+        '500': #3b93ff,
+        '600': #007bff,
+        '700': #005ffd,
+        '800': #003bfa,
+        '900': #0000f7,
+    ),
+    'dark-blue': (
+        '100': #0d5fb8,
+        '200': #0958ac,
+        '300': #06519f,
+        '400': #044b93,
+        '500': #024587,
+        '600': #013e7b,
+        '700': #00386f,
+        '800': #003264,
+        '900': #002c59,
+    ),
+    'background': (
+        '100': #f9fcff,
+        '200': #F6FAFD,
+        '300': #F2F7FB,
+        '400': #EEF4F9,
+        '500': #eaf0f6,
+        '600': #E3EEF9,
+        '700': #DCEBFB,
+        '800': #D4E8FD,
+        '900': #cce5ff,
+    ),
+    'neutral': (
+        '100': #F8F9FA,
+        '200': #E5E7E9,
+        '300': #D1D4D7,
+        '400': #BDC1C5,
+        '500': #A9AEB3,
+        '600': #959CA2,
+        '700': #81888F,
+        '800': #6c757d,
+        '900': #5C646B,
+    ),
+    'red': (
+        '100': #ffe8e7,
+        '200': #fdcdcb,
+        '300': #fab2b0,
+        '400': #f49695,
+        '500': #ee7a7a,
+        '600': #e55b60,
+        '700': #dc3545,
+        '800': #d10028,
+        '900': #c50000,
+    ),
+    'pink': (
+        '100': #fce8f2,
+        '200': #fbcfe4,
+        '300': #f9b5d5,
+        '400': #f69bc4,
+        '500': #f37fb3,
+        '600': #ee62a0,
+        '700': #e83e8d,
+        '800': #e10079,
+        '900': #d90064,
+    ),
+    'orange': (
+        '100': #fff4e6,
+        '200': #ffe5c7,
+        '300': #ffd5a8,
+        '400': #ffc589,
+        '500': #ffb369,
+        '600': #ffa045,
+        '700': #ff8c00,
+        '800': #fe7600,
+        '900': #fd5c00,
+    ),
+    'green': (
+        '100': #dafbe2,
+        '200': #c0f4cc,
+        '300': #a6ecb5,
+        '400': #8be49d,
+        '500': #6edb83,
+        '600': #4ed268,
+        '700': #1dc948,
+        '800': #00bf15,
+        '900': #00b500,
+    ),
+    'brown': (
+        '100': #ffeed9,
+        '200': #e2cdb4,
+        '300': #c6ad91,
+        '400': #aa8d6e,
+        '500': #906f4d,
+        '600': #76512d,
+        '700': #5c3508,
+        '800': #431900,
+        '900': #2a0000,
+    ),
+);
+
+$dark-scales: (
+    'primary': (
+        '100': color-mix(in srgb, #007bff calc(100% / 6 * 1), var(--default-background-color)),
+        '200': color-mix(in srgb, #007bff calc(100% / 6 * 2), var(--default-background-color)),
+        '300': color-mix(in srgb, #007bff calc(100% / 6 * 3), var(--default-background-color)),
+        '400': color-mix(in srgb, #007bff calc(100% / 6 * 4), var(--default-background-color)),
+        '500': color-mix(in srgb, #007bff calc(100% / 6 * 5), var(--default-background-color)),
+        '600': #007bff,
+        '700': #005ffd,
+        '800': #003bfa,
+        '900': #0000f7,
+    ),
+    'dark-blue': (
+        '100': #1c3a59,
+        '200': #173655,
+        '300': #133251,
+        '400': #0f2e4d,
+        '500': #0b2a49,
+        '600': #062645,
+        '700': #032341,
+        '800': #001f3d,
+        '900': #001b39,
+    ),
+    'background': (
+        '100': #0a161f,
+        '200': #081a28,
+        '300': #051d31,
+        '400': #03203a,
+        '500': #012343,
+        '600': #00264d,
+        '700': #002957,
+        '800': #012b61,
+        '900': #042d6c,
+    ),
+    'neutral': (
+        '100': #18191B,
+        '200': #1F1F20,
+        '300': #2B2C2D,
+        '400': #38393B,
+        '500': #444748,
+        '600': #515456,
+        '700': #5D6163,
+        '800': #6A6E71,
+        '900': #848B90,
+    ),
+    'red': (
+        '100': #ffe8e7,
+        '200': #fdcdcb,
+        '300': #fab2b0,
+        '400': #f49695,
+        '500': #ee7a7a,
+        '600': #e55b60,
+        '700': #dc3545,
+        '800': #d10028,
+        '900': #c50000,
+    ),
+    'pink': (
+        '100': color-mix(in srgb, #d90064 calc(100% / 7 * 1), var(--default-background-color)),
+        '200': color-mix(in srgb, #d90064 calc(100% / 7 * 2), var(--default-background-color)),
+        '300': color-mix(in srgb, #d90064 calc(100% / 7 * 3), var(--default-background-color)),
+        '400': color-mix(in srgb, #d90064 calc(100% / 7 * 4), var(--default-background-color)),
+        '500': color-mix(in srgb, #d90064 calc(100% / 7 * 5), var(--default-background-color)),
+        '600': color-mix(in srgb, #d90064 calc(100% / 7 * 6), var(--default-background-color)),
+        '700': #d90064,
+        '800': color-mix(in srgb, #d90064, #ff0f7d),
+        '900': #ff0f7d,
+    ),
+    'orange': (
+        '100': color-mix(in srgb, #fd5c00 calc(100% / 7 * 1), var(--default-background-color)),
+        '200': color-mix(in srgb, #fd5c00 calc(100% / 7 * 2), var(--default-background-color)),
+        '300': color-mix(in srgb, #fd5c00 calc(100% / 7 * 3), var(--default-background-color)),
+        '400': color-mix(in srgb, #fd5c00 calc(100% / 7 * 4), var(--default-background-color)),
+        '500': color-mix(in srgb, #fd5c00 calc(100% / 7 * 5), var(--default-background-color)),
+        '600': color-mix(in srgb, #fd5c00 calc(100% / 7 * 6), var(--default-background-color)),
+        '700': #fd5c00,
+        '800': color-mix(in srgb, #fd5c00, #ffb400),
+        '900': #ffb400,
+    ),
+    'green': (
+        '100': #dafbe2,
+        '200': #c0f4cc,
+        '300': #a6ecb5,
+        '400': #8be49d,
+        '500': #6edb83,
+        '600': #4ed268,
+        '700': #1dc948,
+        '800': #00bf15,
+        '900': #00b500,
+    ),
+    'brown': (
+        '100': #ffeed9,
+        '200': #e2cdb4,
+        '300': #c6ad91,
+        '400': #aa8d6e,
+        '500': #906f4d,
+        '600': #76512d,
+        '700': #5c3508,
+        '800': #431900,
+        '900': #2a0000,
+    ),
+);
+
+// Semantic colors based on abstract colors & color scales
 $semantic-colors: (
+    // Background
+    'default-background-color': white,
     // Text
-    'text-color': dark-gunmetal-gray,
-    'secondary-text-color': auro-metal,
+    'default-text-color': dark-gunmetal-gray,
+    'text-color': default-text-color,
+    'secondary-text-color': neutral-800,
     // Border
-    'border-color': light-gray,
+    'border-color': neutral-300,
+    'secondary-border-color': background-500,
     // Link
-    'link-color': azure-blue,
-    'link-hover-color': ag-grid-orange,
+    'link-color': primary-600,
+    'link-hover-color': orange-700,
     // Button
     'button-text-color': white,
-    'button-color': azure-blue,
-    'button-hover-color': medium-electric-blue,
-    'button-active-color': dark-cerulean-blue,
-    'button-focus-box-shadow-color': water-blue,
-    // Inline
-    'inline-element-background-color': ghost-white,
+    'button-color': primary-600,
+    'button-hover-color': dark-blue-400,
+    'button-active-color': dark-blue-800,
+    'button-focus-box-shadow-color': primary-100,
     // Code
-    'code-text-color': cerise-pink,
+    'code-text-color': pink-700,
+    'code-background-color': neutral-100,
     // Input
-    'input-background-color': white,
-    'input-secondary-background-color': ag-grid-grey,
-    'input-secondary-border-color': auro-metal,
-    'input-primary-color': azure-blue,
-    'input-focus-border-color': sky-blue,
-    'input-focus-box-shadow-color': water-blue,
-    'input-error-color': danger-red,
+    'input-background-color': default-background-color,
+    'input-border-color': border-color,
+    'input-secondary-background-color': neutral-400,
+    'input-secondary-border-color': secondary-text-color,
+    'input-primary-color': primary-600,
+    'input-focus-border-color': primary-200,
+    'input-focus-box-shadow-color': primary-100,
+    'input-error-color': red-700,
     // Table
-    'table-odd-row-background-color': ghost-blue,
+    'table-odd-row-background-color': background-100,
     // Site header
-    'site-header-background': medium-electric-blue,
-    'site-nav-background': ag-grid-dark-blue,
+    'site-header-background': dark-blue-400,
+    'site-nav-background': dark-blue-800,
     // Toolbar
-    'toolbar-background': bright-blue-gray,
+    'toolbar-background': background-500,
     // Warnings
-    'warning-background': papaya-whip,
-    'warning-text': pineapple
+    'warning-background': brown-100,
+    'warning-text': brown-700
+);
+
+// Semantic colors based on abstract colors
+$dark-semantic-colors: (
+    // Background
+    'default-background-color': eerie-black,
+    // Text
+    'default-text-color': ghost-white,
+    'text-color': default-text-color,
+    'secondary-text-color': quick-silver,
+    // Border
+    'border-color': neutral-400,
+    'secondary-border-color': neutral-300,
+    // Link
+    'link-color': primary-600,
+    'link-hover-color': orange-800,
+    // Button
+    'button-text-color': white,
+    'button-color': primary-600,
+    'button-hover-color': primary-800,
+    'button-active-color': primary-900,
+    'button-focus-box-shadow-color': primary-100,
+    // Code
+    'code-text-color': pink-900,
+    'code-background-color': neutral-100,
+    // Input
+    'input-background-color': default-background-color,
+    'input-border-color': neutral-700,
+    'input-secondary-background-color': neutral-400,
+    'input-secondary-border-color': secondary-text-color,
+    'input-primary-color': primary-600,
+    'input-focus-border-color': primary-500,
+    'input-focus-box-shadow-color': primary-100,
+    'input-error-color': red-600,
+    // Table
+    'table-odd-row-background-color': background-100,
+    // Site header
+    'site-header-background': primary-100,
+    'site-nav-background': dark-blue-800,
+    // Toolbar
+    'toolbar-background': background-300,
+    // Warnings
+    'warning-background': brown-100,
+    'warning-text': brown-700,
+    // Not semantic
+    'bright-blue-gray': neutral-200
 );

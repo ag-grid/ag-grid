@@ -6,7 +6,7 @@ import { IComponent } from "../../../interfaces/iComponent";
 import { AgGridCommon } from "../../../interfaces/iCommon";
 import { setDisplayed } from "../../../utils/dom";
 import { isStopPropagationForAgGrid, stopPropagationForAgGrid } from "../../../utils/event";
-import { doOnce } from "../../../utils/function";
+import { warnOnce } from "../../../utils/function";
 import { exists } from "../../../utils/generic";
 import { createIconNoSpan } from "../../../utils/icon";
 import { escapeString } from "../../../utils/string";
@@ -70,8 +70,7 @@ export class HeaderGroupComp extends Component implements IHeaderGroupComp {
         const paramsAny = this.params as any;
 
         if (paramsAny.template) {
-            const message = `AG Grid: A template was provided for Header Group Comp - templates are only supported for Header Comps (not groups)`;
-            doOnce(() => console.warn(message), 'HeaderGroupComp.templateNotSupported');
+            warnOnce(`A template was provided for Header Group Comp - templates are only supported for Header Comps (not groups)`);
         }
     }
 

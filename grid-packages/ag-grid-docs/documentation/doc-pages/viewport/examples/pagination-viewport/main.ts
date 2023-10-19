@@ -1,4 +1,14 @@
-import { Grid, ColDef, GridOptions, IViewportDatasource, ValueFormatterParams, ICellRendererParams, ICellRendererComp, GetRowIdParams } from '@ag-grid-community/core'
+import {
+  GridApi,
+  createGrid,
+  ColDef,
+  GridOptions,
+  IViewportDatasource,
+  ValueFormatterParams,
+  ICellRendererParams,
+  ICellRendererComp,
+  GetRowIdParams,
+} from '@ag-grid-community/core';
 declare function createMockServer(): any;
 declare function createViewportDatasource(mockServer: any): IViewportDatasource;
 
@@ -6,7 +16,7 @@ class RowIndexRenderer implements ICellRendererComp {
   eGui!: HTMLDivElement;
   init(params: ICellRendererParams) {
     this.eGui = document.createElement('div');
-    this.eGui.innerHTML = '' + params.rowIndex;
+    this.eGui.innerHTML = '' + params.node.rowIndex;
 
   }
   refresh(params: ICellRendererParams): boolean {
@@ -52,6 +62,8 @@ const columnDefs: ColDef[] = [
   },
 ]
 
+let gridApi: GridApi;
+
 const gridOptions: GridOptions = {
   columnDefs: columnDefs,
   defaultColDef: {
@@ -83,7 +95,7 @@ function numberFormatter(params: ValueFormatterParams) {
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
   var gridDiv = document.querySelector<HTMLElement>('#myGrid')!
-  new Grid(gridDiv, gridOptions)
+  gridApi = createGrid(gridDiv, gridOptions);
 
   // do http request to get our sample data - not using any framework to keep the example self contained.
   // you will probably use a framework like JQuery, Angular or something else to do your HTTP calls.
@@ -96,10 +108,10 @@ document.addEventListener('DOMContentLoaded', function () {
       mockServer.init(data)
 
       var viewportDatasource = createViewportDatasource(mockServer)
-      gridOptions.api!.setViewportDatasource(viewportDatasource)
+      gridApi!.setViewportDatasource(viewportDatasource)
       // put the 'size cols to fit' into a timeout, so that the scroll is taken into consideration
       setTimeout(function () {
-        gridOptions.api!.sizeColumnsToFit()
+        gridApi!.sizeColumnsToFit()
       }, 100)
     })
 })

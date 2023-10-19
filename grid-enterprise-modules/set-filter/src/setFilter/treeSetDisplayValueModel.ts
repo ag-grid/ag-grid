@@ -22,6 +22,16 @@ export class TreeSetDisplayValueModel<V> implements ISetDisplayValueModel<V> {
         parentTreeKeys: []
     };
 
+    private readonly addSelectionToFilterItem: SetFilterModelTreeItem = {
+        depth: 0,
+        filterPasses: true,
+        available: true,
+        treeKey: SetFilterDisplayValue.ADD_SELECTION_TO_FILTER,
+        expanded: true,
+        key: SetFilterDisplayValue.ADD_SELECTION_TO_FILTER,
+        parentTreeKeys: []
+    };
+
     constructor(
         private readonly formatter: TextFormatter,
         private readonly treeListPathGetter?: (value: V | null) => string[] | null,
@@ -129,10 +139,7 @@ export class TreeSetDisplayValueModel<V> implements ISetDisplayValueModel<V> {
         if (isDate) {
             return TreeSetDisplayValueModel.DATE_TREE_LIST_PATH_GETTER as any;
         }
-        _.doOnce(
-            () => console.warn('AG Grid: property treeList=true for Set Filter params, but you did not provide a treeListPathGetter or values of type Date.'),
-            'getTreeListPathGetter'
-        );
+        _.warnOnce('property treeList=true for Set Filter params, but you did not provide a treeListPathGetter or values of type Date.');
         return value => [String(value)];
     }
 
@@ -193,6 +200,10 @@ export class TreeSetDisplayValueModel<V> implements ISetDisplayValueModel<V> {
         return this.selectAllItem;
     }
  
+    public getAddSelectionToFilterItem(): string | SetFilterModelTreeItem {
+        return this.addSelectionToFilterItem;
+    }
+
     public getDisplayedKeys(): (string | null)[] {
         const displayedKeys: (string | null)[] = [];
         this.forEachDisplayedKey((key) => displayedKeys.push(key));

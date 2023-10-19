@@ -5,7 +5,7 @@ import { RowNode } from '../entities/rowNode';
 import { RowHighlightPosition } from '../interfaces/iRowNode';
 import { ChangedPath } from '../utils/changedPath';
 
-export type ClientSideRowModelStep = 'everything' | 'group' | 'filter' | 'pivot' | 'aggregate' | 'sort' | 'map';
+export type ClientSideRowModelStep = `${ClientSideRowModelSteps}`;
 export enum ClientSideRowModelSteps {
     EVERYTHING = 'group',
     FILTER = 'filter',
@@ -39,13 +39,12 @@ export interface IClientSideRowModel<TData = any> extends IRowModel {
     highlightRowAtPixel(rowNode: RowNode | null, pixel?: number): void;
     getHighlightPosition(pixel: number, rowNode?: RowNode): RowHighlightPosition;
     getLastHighlightedRowNode(): RowNode | null;
+    isRowDataLoaded(): boolean;
 }
 
 export interface RefreshModelParams<TData = any> {
     // how much of the pipeline to execute
     step: ClientSideRowModelSteps;
-    // what state to reset the groups back to after the refresh
-    groupState?: any;
     // if NOT new data, then this flag tells grid to check if rows already
     // exist for the nodes (matching by node id) and reuses the row if it does.
     keepRenderedRows?: boolean;

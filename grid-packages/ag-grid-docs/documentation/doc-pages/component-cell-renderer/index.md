@@ -22,17 +22,9 @@ By default the grid will create the cell values using simple text. If you want m
 </video-section>
 </framework-specific-section>
 
-## Cell Renderer
 
-md-include:simple-renderer-javascript.md 
-md-include:simple-renderer-angular.md
-md-include:simple-renderer-react.md
-md-include:simple-renderer-vue.md
-
-## Cell Renderer Example
-
-The example below shows a simple Cell Renderer in action. It uses a Cell Renderer to render a hash (`#`) symbol for each medal won
-(instead of the medal count), and the `MedalCellRenderer` defined in the code snippet above for the `Total` column:
+The example below uses a Cell Renderer to render a hash (`#`) symbol for each medal won
+(instead of the medal count), and a cell with a button in the `Total` column:
 
 <grid-example title='Simple Cell Renderer' name='simple' type='mixed' options='{ "exampleHeight": 460 }'></grid-example>
 
@@ -61,9 +53,9 @@ Component Refresh needs a bit more explanation. Here we go through some of the f
 |
 | - Calling `rowNode.setDataValue(colKey, value)` to set a value directly onto the `rowNode`. This is the preferred API way to change one value from outside of the grid.
 | - When editing a cell and editing is stopped, so that cell displays new value after editing.
-| - Calling `api.refreshCells()` to inform grid data has changed (see [Refresh](../view-refresh/)).
+| - Calling `api.refreshCells()` to inform grid data has changed (see [Refresh](/view-refresh/)).
 |
-| If any of the above occur and the grid confirms the data has changed via [Change Detection](../change-detection/), then the `refresh()` method will be called.
+| If any of the above occur and the grid confirms the data has changed via [Change Detection](/change-detection/), then the `refresh()` method will be called.
 |
 | The following will **not** result in the cell renderer's refresh method being called:
 |
@@ -173,9 +165,9 @@ An example of getting the cell renderer for exactly one cell is as follows:
 
 <snippet transform={false}>
 |// example - get cell renderer for first row and column 'gold'
-|const firstRowNode = gridOptions.api.getDisplayedRowAtIndex(0);
+|const firstRowNode = api.getDisplayedRowAtIndex(0);
 |const params = { columns: ['gold'], rowNodes: [firstRowNode] };
-|const instances = gridOptions.api.getCellRendererInstances(params);
+|const instances = api.getCellRendererInstances(params);
 |
 |if (instances.length > 0) {
 |    // got it, user must be scrolled so that it exists

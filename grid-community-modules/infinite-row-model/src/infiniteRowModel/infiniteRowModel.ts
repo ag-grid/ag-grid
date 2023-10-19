@@ -65,8 +65,7 @@ export class InfiniteRowModel extends BeanStub implements IInfiniteRowModel {
 
     private verifyProps(): void {
         if (this.gridOptionsService.exists('initialGroupOrderComparator')) {
-            const message = `AG Grid: initialGroupOrderComparator cannot be used with Infinite Row Model. If using Infinite Row Model, then sorting is done on the server side, nothing to do with the client.`;
-            _.doOnce(() => console.warn(message), 'IRM.InitialGroupOrderComparator');
+            _.warnOnce('initialGroupOrderComparator cannot be used with Infinite Row Model as sorting is done on the server side');
         }
     }
 
@@ -88,6 +87,7 @@ export class InfiniteRowModel extends BeanStub implements IInfiniteRowModel {
         this.addManagedListener(this.eventService, Events.EVENT_SORT_CHANGED, this.onSortChanged.bind(this));
         this.addManagedListener(this.eventService, Events.EVENT_NEW_COLUMNS_LOADED, this.onColumnEverything.bind(this));
         this.addManagedListener(this.eventService, Events.EVENT_STORE_UPDATED, this.onCacheUpdated.bind(this));
+        this.addManagedPropertyListener('datasource', () => this.setDatasource(this.gridOptionsService.get('datasource')));
     }
 
     private onFilterChanged(): void {
@@ -158,7 +158,7 @@ export class InfiniteRowModel extends BeanStub implements IInfiniteRowModel {
         const userGeneratingIds = getRowIdFunc != null;
 
         if (!userGeneratingIds) {
-            this.selectionService.reset();
+            this.selectionService.reset('rowDataChanged');
         }
 
         this.resetCache();
@@ -214,6 +214,10 @@ export class InfiniteRowModel extends BeanStub implements IInfiniteRowModel {
         } as InfiniteCacheParams;
 
         this.infiniteCache = this.createBean(new InfiniteCache(this.cacheParams));
+
+        this.eventService.dispatchEventOnce({
+            type: Events.EVENT_ROW_COUNT_READY
+        });
     }
 
     private defaultIfInvalid(value: number | undefined, defaultValue: number): number {

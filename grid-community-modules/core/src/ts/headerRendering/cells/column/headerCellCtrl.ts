@@ -1,4 +1,3 @@
-import { ColumnApi } from "../../../columns/columnApi";
 import { ColumnModel } from "../../../columns/columnModel";
 import { UserCompDetails } from "../../../components/framework/userComponentFactory";
 import { KeyCode } from '../../../constants/keyCode';
@@ -45,7 +44,6 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl {
     @Autowired('dragAndDropService') private readonly dragAndDropService: DragAndDropService;
     @Autowired('resizeObserverService') private readonly resizeObserverService: ResizeObserverService;
     @Autowired('gridApi') private readonly gridApi: GridApi;
-    @Autowired('columnApi') private readonly columnApi: ColumnApi;
 
     private comp: IHeaderCellComp;
 
@@ -109,8 +107,8 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl {
         ));
 
         this.addMouseDownListenerIfNeeded(eGui);
-
-        this.addManagedListener(this.column, Column.EVENT_COL_DEF_CHANGED, this.onColDefChanged.bind(this));
+        this.addManagedPropertyListeners(['suppressMovableColumns', 'suppressMenuHide'], this.refresh.bind(this));
+        this.addManagedListener(this.column, Column.EVENT_COL_DEF_CHANGED, this.refresh.bind(this));
         this.addManagedListener(this.eventService, Events.EVENT_COLUMN_VALUE_CHANGED, this.onColumnValueChanged.bind(this));
         this.addManagedListener(this.eventService, Events.EVENT_COLUMN_ROW_GROUP_CHANGED, this.onColumnRowGroupChanged.bind(this));
         this.addManagedListener(this.eventService, Events.EVENT_COLUMN_PIVOT_CHANGED, this.onColumnPivotChanged.bind(this));
@@ -172,7 +170,7 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl {
                 this.sortController.setSortForColumn(this.column, sort, !!multiSort, "uiColumnSorted");
             },
             api: this.gridApi,
-            columnApi: this.columnApi,
+            columnApi: this.gridOptionsService.columnApi,
             context: this.gridOptionsService.context,
             eGridHeader: this.getGui()
         } as IHeaderParams;
@@ -291,14 +289,17 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl {
 
         if (!this.draggable) { return; }
 
-        const hideColumnOnExit = !this.gridOptionsService.is('suppressDragLeaveHidesColumns');
+        let hideColumnOnExit = !this.gridOptionsService.is('suppressDragLeaveHidesColumns');
         this.moveDragSource = {
             type: DragSourceType.HeaderCell,
             eElement: eSource,
-            defaultIconName: hideColumnOnExit ? DragAndDropService.ICON_HIDE : DragAndDropService.ICON_NOT_ALLOWED,
+            getDefaultIconName: () => hideColumnOnExit ? DragAndDropService.ICON_HIDE : DragAndDropService.ICON_NOT_ALLOWED,
             getDragItem: () => this.createDragItem(),
             dragItemName: this.displayName,
-            onDragStarted: () => this.column.setMoving(true, "uiColumnMoved"),
+            onDragStarted: () => {
+                hideColumnOnExit = !this.gridOptionsService.is('suppressDragLeaveHidesColumns');
+                this.column.setMoving(true, "uiColumnMoved");
+            },
             onDragStopped: () => this.column.setMoving(false, "uiColumnMoved"),
             onGridEnter: (dragItem) => {
                 if (hideColumnOnExit) {
@@ -333,10 +334,6 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl {
             this.dragAndDropService.removeDragSource(this.moveDragSource);
             this.moveDragSource = undefined;
         }
-    }
-
-    private onColDefChanged(): void {
-        this.refresh();
     }
 
     private updateState(): void {

@@ -1,4 +1,12 @@
-import { Grid, ColDef, GridOptions, IDoesFilterPassParams, IFilterComp, IFilterParams, } from '@ag-grid-community/core'
+import {
+    GridApi,
+    createGrid,
+    ColDef,
+    GridOptions,
+    IDoesFilterPassParams,
+    IFilterComp,
+    IFilterParams,
+} from '@ag-grid-community/core';
 
 const isNumeric = (n: string) =>
     !isNaN(parseFloat(n)) && isFinite(parseFloat(n))
@@ -49,14 +57,9 @@ class NumberFilter implements IFilterComp {
             return false;
         }
 
-        const { api, colDef, column, columnApi, context } = this.filterParams;
         const { node } = params;
         const value = this.filterParams.valueGetter({
-            api,
-            colDef,
-            column,
-            columnApi,
-            context,
+            ...this.filterParams,
             data: node.data,
             getValue: (field) => node.data[field],
             node,
@@ -123,6 +126,8 @@ const columnDefs: ColDef[] = [
     },
 ]
 
+let gridApi: GridApi<IOlympicData>;
+
 const gridOptions: GridOptions<IOlympicData> = {
     defaultColDef: {
         editable: true,
@@ -140,11 +145,11 @@ const gridOptions: GridOptions<IOlympicData> = {
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', () => {
     const gridDiv = document.querySelector<HTMLElement>('#myGrid')!
-    new Grid(gridDiv, gridOptions)
+    gridApi = createGrid(gridDiv, gridOptions);
 
     fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
         .then(response => response.json())
         .then(data => {
-            gridOptions.api!.setRowData(data)
+            gridApi!.setRowData(data)
         })
 })

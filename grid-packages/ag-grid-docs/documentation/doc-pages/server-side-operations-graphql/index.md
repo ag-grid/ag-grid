@@ -123,7 +123,7 @@ input RowGroup {
 }
 ```
 
-The input types defined in the schema directly map to the [IServerSideGetRowsRequest](/server-side-model-datasource/#datasource-interface). We will discuss these mappings in detail in the following sections.
+The input types defined in the schema directly map to the [IServerSideGetRowsRequest](/server-side-model-datasource/#registering-the-datasource). We will discuss these mappings in detail in the following sections.
 
 The corresponding `rows` resolver function is implemented as follows:
 
@@ -284,7 +284,7 @@ The `ServerSideDatasource` is then registered with the grid via the grid API as 
 // client/index.js
 
 const datasource = new ServerSideDatasource(gridOptions);
-gridOptions.api.setServerSideDatasource(datasource);
+api.setServerSideDatasource(datasource);
 ```
 
 ## Conclusion

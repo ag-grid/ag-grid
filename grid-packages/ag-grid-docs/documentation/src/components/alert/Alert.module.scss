@@ -2,7 +2,7 @@
 @use '../../design-system/' as *;
 
 .alert {
-    --alert-background-color: var(--bright-blue-gray);
+    --alert-background-color: var(--background-500);
     --icon-size: 3em;
 
     display: flex;
@@ -11,6 +11,7 @@
     padding: $size-2;
     background-color: var(--alert-background-color);
     border-radius: var(--border-radius);
+    color: var(--text-color);
 
     :global(.icon) {
         align-self: flex-start;
@@ -25,19 +26,33 @@
     kbd {
         margin: 0;
     }
+
+    #{$darkmode-selector} & {
+        --alert-background-color: var(--background-600);
+
+        a {
+            -webkit-font-smoothing: subpixel-antialiased;
+        }
+    }
 }
 
 .alert.info {
-    --text-color: var(--medium-electric-blue);
+    --text-color: var(--dark-blue-300);
 
-    color: var(--text-color);
+    #{$darkmode-selector} & {
+        --text-color: var(--white);
+    }
 }
 
 .alert.idea {
     :global(.icon) {
-        --text-color: hsl(33, 100%, 65%);
+        --text-color: var(--orange-500);
 
         bottom: 0.125em;
+    }
+
+    #{$darkmode-selector} & :global(.icon) {
+        --text-color: var(--orange-900);
     }
 }
 
@@ -45,9 +60,16 @@
     --alert-background-color: var(--warning-background);
     --text-color: var(--warning-text);
 
-    color: var(--text-color);
-
     :global(.icon) {
-        --text-color: var(--ag-grid-orange);
+        --text-color: var(--orange-700);
+    }
+
+    #{$darkmode-selector} & {
+        --alert-background-color: var(--orange-200);
+        --text-color: var(--white);
+
+        :global(.icon) {
+            --text-color: var(--white);
+        }
     }
 }

@@ -70,7 +70,7 @@ var gridOptions = {
 var eGridDiv = document.querySelector('#myGrid');
 
 // create the grid passing in the div to use together with the columns & data we want to use
-new Grid(eGridDiv, gridOptions);
+var api = createGrid(eGridDiv, gridOptions);
 ```
 
 ```html

@@ -3,7 +3,6 @@ import {
     ColumnModel,
     Component,
     Events,
-    FilterManager,
     FocusService,
     HeaderNavigationService,
     KeyCode,
@@ -13,7 +12,6 @@ import {
 import { AdvancedFilterComp } from "./advancedFilterComp";
 
 export class AdvancedFilterHeaderComp extends Component {
-    @Autowired('filterManager') private filterManager: FilterManager;
     @Autowired('columnModel') private columnModel: ColumnModel;
     @Autowired('focusService') private focusService: FocusService;
     @Autowired('headerNavigationService') private headerNavigationService: HeaderNavigationService;
@@ -94,7 +92,7 @@ export class AdvancedFilterHeaderComp extends Component {
     }
     
     private setAriaColumnCount(eAdvancedFilterGui: HTMLElement): void {
-        _.setAriaColSpan(eAdvancedFilterGui, this.columnModel.getAllGridColumns()?.length ?? 0);
+        _.setAriaColSpan(eAdvancedFilterGui, this.columnModel.getAllGridColumns().length);
     }
 
     private setAriaRowIndex(): void {

@@ -42,7 +42,7 @@ By default the grid will infer cell data types the first time that row data is p
 
 For inference to work for a column, it must contain non-null values and have the `field` property set. The resolved column definition (including the default column definition and column types) must also not have the Value Getter, Value Parser or reference data properties set, or be using [Sparklines](/sparklines-overview/). If these conditions are not met, no cell data type will be set (it will need to be defined directly on the column if desired).
 
-Data type inference can be disabled by setting `cellDataType = false` on an individual column, or for all columns on the [Default Column Definition](/column-definitions/#custom-column-types).
+Data type inference can be disabled by setting `cellDataType = false` on an individual column, or for all columns on the [Default Column Definition](/column-definitions/#default-column-definitions).
 
 Note that where inference is possible but it does not match any of the pre-defined cell data types, it will default to `object`.
 
@@ -54,9 +54,9 @@ Inferring cell data types only works for the Client-Side Row Model. For other ro
 
 Each of the pre-defined cell data types work by setting specific column definition properties with default values/callbacks. This enables the different grid features to work correctly for that data type.
 
-The column definition properties that are set based on the cell data type will override any in the [Default Column Definition](/column-definitions/#custom-column-types), but will be overridden by any [Column Type](/column-definitions/#custom-column-types) properties as well as properties set directly on individual column definitions. Note that for `filterParams`, only nested properties on the default column definition will be overridden (rather than the entire object).
+The column definition properties that are set based on the cell data type will override any in the [Default Column Definition](/column-definitions/#default-column-definitions), but will be overridden by any [Column Type](/column-definitions/#default-column-definitions) properties as well as properties set directly on individual column definitions. Note that for `filterParams`, only nested properties on the default column definition will be overridden (rather than the entire object).
 
-If you wish to override one of the properties set below for all types, you can do so by creating a [Column Type](/column-definitions/#custom-column-types), and assigning the column type to the [Default Column Definition](/column-definitions/#custom-column-types).
+If you wish to override one of the properties set below for all types, you can do so by creating a [Column Type](/column-definitions/#default-column-definitions), and assigning the column type to the [Default Column Definition](/column-definitions/#default-column-definitions).
 
 All the cell data types set the following (unless specified):
 - A [Value Parser](/value-parsers/) to convert from `string` to the relevant data type.
@@ -167,7 +167,7 @@ Each custom data type definition must have a `baseDataType` of one of the six [P
 
 Data type definitions support inheritance via the `extendsDataType` property. Each custom cell data type must either extend one of the pre-defined types, or another custom type. Any non-overridden properties are inherited from the parent definition. To prevent inheriting properties from the parent definition, `suppressDefaultProperties = true` can be set on the definition.
 
-[Column Types](/column-definitions/#custom-column-types) can be set via the `columnTypes` property to allow other column definition properties to be set for the data type. By default these will replace any column types against the parent definition. To allow these to be appended to the parent definition column types, `appendColumnTypes = true` can be set.
+[Column Types](/column-definitions/#default-column-definitions) can be set via the `columnTypes` property to allow other column definition properties to be set for the data type. By default these will replace any column types against the parent definition. To allow these to be appended to the parent definition column types, `appendColumnTypes = true` can be set.
 
 To allow [Inferring Cell Data Types](#inferring-cell-data-types) to work for custom types, the `dataTypeMatcher` property can be set. This returns `true` if the value is of the correct type. Note that the data type matchers will be called in the order they are provided in `dataTypeDefinitions` (for custom only), and then the pre-defined data type matchers will be called.
 

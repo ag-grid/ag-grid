@@ -2,8 +2,8 @@
 
 .card {
     --card-color: var(--border-color);
-    --header-tint: 0.775;
-    --content-tint: 0.95;
+    --header-tint: 77.5%;
+    --content-tint: 95%;
 
     display: flex;
     flex-direction: column;
@@ -16,26 +16,14 @@
     .header,
     .top {
         padding: $size-1 $size-2;
-        background-color: rgba(255, 255, 255, var(--header-tint));
+        background-color: color-mix(in srgb, var(--default-background-color) var(--header-tint), var(--card-color));
     }
 
     .content,
     .bottom {
         flex-grow: 1;
         padding: $size-2;
-        background-color: rgba(255, 255, 255, var(--content-tint));
-    }
-
-    &.single-application {
-        --card-color: #0f5bce;
-        --header-tint: 0.9;
-        --content-tint: 0.96;
-    }
-
-    &.multiple-application {
-        --card-color: #2aaa33;
-        --header-tint: 0.91;
-        --content-tint: 0.97;
+        background-color: color-mix(in srgb, var(--default-background-color) var(--content-tint), var(--card-color));
     }
 }
 
@@ -50,7 +38,7 @@
         border-top: 2px solid var(--border-color);
         border-right: 2px solid var(--border-color);
         border-left: 2px solid var(--border-color);
-        box-shadow: inset 0 -2px 0 0 var(--bright-blue-gray);
+        box-shadow: inset 0 -2px 0 0 var(--secondary-border-color);
         overflow-x: auto;
     }
 

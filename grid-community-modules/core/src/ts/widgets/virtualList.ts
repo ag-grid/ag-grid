@@ -8,6 +8,7 @@ import { waitUntil } from '../utils/function';
 import { TabGuardComp } from './tabGuardComp';
 import { Events } from '../eventKeys';
 import { stopPropagationForAgGrid } from '../utils/event';
+import { AnimationFrameService } from '../misc/animationFrameService';
 
 export interface VirtualListModel {
     getRowCount(): number;
@@ -23,19 +24,20 @@ interface VirtualListParams {
     listName?: string;
 }
 
-export class VirtualList extends TabGuardComp {
+export class VirtualList<C extends Component = Component> extends TabGuardComp {
     private readonly cssIdentifier: string;
     private readonly ariaRole: string;
     private listName?: string;
 
     private model: VirtualListModel;
-    private renderedRows = new Map<number, { rowComponent: Component; eDiv: HTMLDivElement; value: any; }>();
-    private componentCreator: (value: any, listItemElement: HTMLElement) => Component;
-    private componentUpdater: (value: any, component: Component) => void;
+    private renderedRows = new Map<number, { rowComponent: C; eDiv: HTMLDivElement; value: any; }>();
+    private componentCreator: (value: any, listItemElement: HTMLElement) => C;
+    private componentUpdater: (value: any, component: C) => void;
     private rowHeight = 20;
     private lastFocusedRowIndex: number | null;
 
     @Autowired('resizeObserverService') private readonly resizeObserverService: ResizeObserverService;
+    @Autowired('animationFrameService') private readonly animationFrameService: AnimationFrameService;
     @RefSelector('eContainer') private readonly eContainer: HTMLElement;
 
     constructor(params?: VirtualListParams) {
@@ -81,7 +83,8 @@ export class VirtualList extends TabGuardComp {
     }
 
     private addResizeObserver(): void {
-        const listener = () => this.drawVirtualRows();
+        // do this in an animation frame to prevent loops
+        const listener = () => this.animationFrameService.requestAnimationFrame(() => this.drawVirtualRows());
         const destroyObserver = this.resizeObserverService.observeResize(this.getGui(), listener);
         this.addDestroyFunc(destroyObserver);
     }
@@ -158,13 +161,13 @@ export class VirtualList extends TabGuardComp {
         }, 10);
     }
 
-    public getComponentAt(rowIndex: number): Component | undefined {
+    public getComponentAt(rowIndex: number): C | undefined {
         const comp = this.renderedRows.get(rowIndex);
 
         return comp && comp.rowComponent;
     }
 
-    public forEachRenderedRow(func: (comp: Component, idx: number) => void): void {
+    public forEachRenderedRow(func: (comp: C, idx: number) => void): void {
         this.renderedRows.forEach((value, key)  => func(value.rowComponent, key));
     }
 
@@ -180,12 +183,15 @@ export class VirtualList extends TabGuardComp {
         return this.environment.getListItemHeight();
     }
 
-    public ensureIndexVisible(index: number): void {
+    /**
+     * Returns true if the view had to be scrolled, otherwise, false.
+     */
+    public ensureIndexVisible(index: number, scrollPartialIntoView: boolean = true): boolean {
         const lastRow = this.model.getRowCount();
 
         if (typeof index !== 'number' || index < 0 || index >= lastRow) {
             console.warn('AG Grid: invalid row index for ensureIndexVisible: ' + index);
-            return;
+            return false;
         }
 
         const rowTopPixel = index * this.rowHeight;
@@ -196,24 +202,31 @@ export class VirtualList extends TabGuardComp {
         const viewportHeight = eGui.offsetHeight;
         const viewportBottomPixel = viewportTopPixel + viewportHeight;
 
-        const viewportScrolledPastRow = viewportTopPixel > rowTopPixel;
-        const viewportScrolledBeforeRow = viewportBottomPixel < rowBottomPixel;
+        const diff = scrollPartialIntoView ? 0 : this.rowHeight;
+        const viewportScrolledPastRow = viewportTopPixel > rowTopPixel + diff;
+        const viewportScrolledBeforeRow = viewportBottomPixel < rowBottomPixel - diff;
 
         if (viewportScrolledPastRow) {
             // if row is before, scroll up with row at top
             eGui.scrollTop = rowTopPixel;
-        } else if (viewportScrolledBeforeRow) {
+            return true;
+        }
+        
+        if (viewportScrolledBeforeRow) {
             // if row is below, scroll down with row at bottom
             const newScrollPosition = rowBottomPixel - viewportHeight;
             eGui.scrollTop = newScrollPosition;
+            return true;
         }
+
+        return false;
     }
 
-    public setComponentCreator(componentCreator: (value: any, listItemElement: HTMLElement) => Component): void {
+    public setComponentCreator(componentCreator: (value: any, listItemElement: HTMLElement) => C): void {
         this.componentCreator = componentCreator;
     }
 
-    public setComponentUpdater(componentUpdater: (value: any, component: Component) => void): void {
+    public setComponentUpdater(componentUpdater: (value: any, component: C) => void): void {
         this.componentUpdater = componentUpdater;
     }
 

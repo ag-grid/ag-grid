@@ -247,15 +247,16 @@ export class ColumnFactory extends BeanStub {
         const groupId = columnKeyCreator.getUniqueKey(colGroupDefMerged.groupId || null, null);
         const providedGroup = new ProvidedColumnGroup(colGroupDefMerged, groupId, false, level);
         this.createBean(providedGroup);
-        const existingGroup = this.findExistingGroup(colGroupDef, existingGroups);
+        const existingGroupAndIndex = this.findExistingGroup(colGroupDef, existingGroups);
         // make sure we remove, so if user provided duplicate id, then we don't have more than
         // one column instance for colDef with common id
-        if (existingGroup) {
-            removeFromArray(existingGroups, existingGroup);
+        if (existingGroupAndIndex) {
+            existingGroups.splice(existingGroupAndIndex.idx, 1);
         }
 
-        if (existingGroup && existingGroup.isExpanded()) {
-            providedGroup.setExpanded(true);
+        let existingGroup = existingGroupAndIndex?.group;
+        if (existingGroup) {
+            providedGroup.setExpanded(existingGroup.isExpanded());
         }
 
         const children = this.recursivelyCreateColumns(colGroupDefMerged.children,
@@ -281,14 +282,15 @@ export class ColumnFactory extends BeanStub {
         columnKeyCreator: ColumnKeyCreator
     ): Column {
         // see if column already exists
-        let column = this.findExistingColumn(colDef, existingColsCopy);
+        const existingColAndIndex = this.findExistingColumn(colDef, existingColsCopy);
 
         // make sure we remove, so if user provided duplicate id, then we don't have more than
         // one column instance for colDef with common id
-        if (existingColsCopy && column) {
-            removeFromArray(existingColsCopy, column);
+        if (existingColAndIndex) {
+            existingColsCopy?.splice(existingColAndIndex.idx, 1);
         }
-
+    
+        let column = existingColAndIndex?.column;
         if (!column) {
             // no existing column, need to create one
             const colId = columnKeyCreator.getUniqueKey(colDef.colId, colDef.field);
@@ -355,7 +357,7 @@ export class ColumnFactory extends BeanStub {
         }
     }
 
-    private findExistingColumn(newColDef: ColDef, existingColsCopy: Column[] | null): Column | undefined {
+    private findExistingColumn(newColDef: ColDef, existingColsCopy: Column[] | null): { idx: number, column: Column } | undefined {
         if (!existingColsCopy) return undefined;
 
         for (let i = 0; i < existingColsCopy.length; i++) {
@@ -365,7 +367,7 @@ export class ColumnFactory extends BeanStub {
             const newHasId = newColDef.colId != null;
             if (newHasId) {
                 if (existingColsCopy[i].getId() === newColDef.colId) {
-                    return existingColsCopy[i];
+                    return { idx: i, column: existingColsCopy[i] };
                 }
                 continue;
             }
@@ -373,32 +375,34 @@ export class ColumnFactory extends BeanStub {
             const newHasField = newColDef.field != null;
             if (newHasField) {
                 if (def.field === newColDef.field) {
-                    return existingColsCopy[i];
+                    return { idx: i, column: existingColsCopy[i] };
                 }
                 continue;
             }
 
             if (def === newColDef) {
-                return existingColsCopy[i];
+                return { idx: i, column: existingColsCopy[i] };
+            }
+        }
+        return  undefined;
+    }
+
+    private findExistingGroup(newGroupDef: ColGroupDef, existingGroups: ProvidedColumnGroup[]): { idx: number, group: ProvidedColumnGroup } | undefined {
+        const newHasId = newGroupDef.groupId != null;
+        if (!newHasId) {
+            return undefined;
+        }
+        
+        for (let i = 0; i < existingGroups.length; i++) {
+            const existingGroup = existingGroups[i];
+            const existingDef = existingGroup.getColGroupDef();
+            if (!existingDef) { continue; }
+
+            if(existingGroup.getId() === newGroupDef.groupId) {
+                return { idx: i, group: existingGroup};
             }
         }
         return undefined;
-    }
-
-    private findExistingGroup(newGroupDef: ColGroupDef, existingGroups: ProvidedColumnGroup[]): ProvidedColumnGroup | undefined {
-        return existingGroups.find(existingGroup => {
-
-            const existingDef = existingGroup.getColGroupDef();
-            if (!existingDef) { return false; }
-
-            const newHasId = newGroupDef.groupId != null;
-
-            if (newHasId) {
-                return existingGroup.getId() === newGroupDef.groupId;
-            }
-
-            return false;
-        });
     }
 
     public addColumnDefaultAndTypes(colDef: ColDef, colId: string): ColDef {

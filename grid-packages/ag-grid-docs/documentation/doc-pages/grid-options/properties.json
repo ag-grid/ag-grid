@@ -115,7 +115,7 @@
         "columnTypes": {
             "more": {
                 "name": "Custom Column Types",
-                "url": "/column-definitions/#custom-column-types"
+                "url": "/column-definitions/#default-column-definitions"
             }
         },
         "dataTypeDefinitions": {
@@ -328,6 +328,18 @@
                 "url": "/filter-quick/#include-hidden-columns"
             }
         },
+        "quickFilterParser": {
+            "more": {
+                "name": "Quick Filter Parser",
+                "url": "/filter-quick/#quick-filter-parser"
+            }
+        },
+        "quickFilterMatcher": {
+            "more": {
+                "name": "Quick Filter Matcher",
+                "url": "/filter-quick/#quick-filter-matcher"
+            }
+        },
         "isExternalFilterPresent": {
             "more": {
                 "name": "External Filter",
@@ -352,12 +364,6 @@
                 "url": "/filter-advanced/"
             }
         },
-        "advancedFilterModel": {
-            "more": {
-                "name": "Advanced Filter",
-                "url": "/filter-advanced/#filter-model--    api"
-            }
-        },
         "includeHiddenColumnsInAdvancedFilter": {
             "more": {
                 "name": "Advanced Filter",
@@ -368,6 +374,12 @@
             "more": {
                 "name": "Advanced Filter",
                 "url": "/filter-advanced/#advanced-filter-parent"
+            }
+        },
+        "advancedFilterBuilderParams": {
+            "more": {
+                "name": "Advanced Filter",
+                "url": "/filter-advanced/#configuring-advanced-filter-builder"
             }
         }
     },
@@ -388,7 +400,7 @@
         "suppressChartToolPanelsButton": {
             "more": {
                 "name": "Suppress Chart Tool Panels Button",
-                "url": "/integrated-charts-chart-tool-panels/#showing-legacy-chart-toolbar"
+                "url": "/integrated-charts-chart-tool-panels/"
             }
         },
         "getChartToolbarItems": {
@@ -424,7 +436,7 @@
         "chartToolPanelsDef": {
             "more": {
                 "name": "Chart Tool Panel customisation",
-                "url": "/integrated-charts-toolbar/#chart-tool-panel-customisation"
+                "url": "/integrated-charts-toolbar/#toolbar-customisation"
             }
         }
     },
@@ -513,18 +525,6 @@
         "meta": {
             "displayName": "Miscellaneous"
         },
-        "api": {
-            "more": {
-                "name": "Grid Api",
-                "url": "/grid-api/"
-            }
-        },
-        "columnApi": {
-            "more": {
-                "name": "Column Api",
-                "url": "/column-api/"
-            }
-        },
         "alignedGrids": {
             "more": {
                 "name": "Aligned Grids",
@@ -558,7 +558,6 @@
             }
         },
         "getDocument": {},
-        "suppressParentsInRowNodes": {},
         "suppressTouch": {
             "more": {
                 "name": "Touch Support",
@@ -585,7 +584,7 @@
             "description": "Provide a custom loading overlay component.",
             "more": {
                 "name": "Loading Overlay Component",
-                "url": "/component-overlay/#loading-rows-overlay-interface"
+                "url": "/component-overlay/#simple-loading-overlay-component"
             }
         },
         "loadingOverlayComponentParams": {},
@@ -595,7 +594,7 @@
             "description": "Provide a custom no rows overlay component.",
             "more": {
                 "name": "No Rows Overlay Component",
-                "url": "/component-overlay/#no-rows-overlay-interface"
+                "url": "/component-overlay/#simple-no-rows-overlay-component"
             }
         },
         "noRowsOverlayComponentParams": {},
@@ -698,13 +697,13 @@
         "aggFuncs": {
             "more": {
                 "name": "Custom Aggregation Functions",
-                "url": "/aggregation/#custom-aggregation-functions"
+                "url": "/aggregation-custom-functions/#custom-aggregation-functions"
             }
         },
         "getGroupRowAgg": {
             "more": {
                 "name": "Custom Full Row Aggregation",
-                "url": "/aggregation/#custom-full-row-aggregation"
+                "url": "/aggregation/"
             }
         },
         "suppressAggFuncInHeader": {},
@@ -718,7 +717,7 @@
         "suppressAggFilteredOnly": {
             "more": {
                 "name": "Custom Aggregation Functions",
-                "url": "/aggregation/#filtering"
+                "url": "/aggregation-custom-functions/#custom-aggregation-functions"
             }
         },
         "groupAggFiltering": {},
@@ -811,7 +810,7 @@
         "rowDragText": {
             "more": {
                 "name": "Custom Row Drag Text",
-                "url": "row-dragging/#custom-row-drag-text"
+                "url": "/row-dragging/#custom-row-drag-text"
             }
         }
     },
@@ -870,6 +869,12 @@
                 "url": "/row-selection/#group-selection"
             }
         },
+        "groupLockGroupColumns": {
+            "more": {
+                "name": "Group Lock Group Columns",
+                "url": "/grouping-locking-group-columns"
+            }
+        },
         "groupIncludeFooter": {
             "more": {
                 "name": "Enabling Group Footers",
@@ -899,7 +904,7 @@
         "initialGroupOrderComparator": {
             "more": {
                 "name": "Initial Group Order",
-                "url": "/grouping-group-order/#default-group-order"
+                "url": "/grouping-group-order/#initial-group-order"
             }
         },
         "groupRemoveSingleChildren": {
@@ -942,7 +947,7 @@
             "description": "Provide the Cell Renderer to use when `groupDisplayType = 'groupRows'`.",
             "more": {
                 "name": "Group Row Cell Renderer",
-                "url": "/grouping-group-rows/#providing-cell-renderer/"
+                "url": "/grouping-group-rows/#providing-cell-renderer"
             }
         },
         "groupRowRendererParams": {},
@@ -1060,8 +1065,8 @@
         },
         "serverSidePivotResultFieldSeparator": {
             "more": {
-                "name": "Providing Pivot Result Fields",
-                "url": "/server-side-model-pivoting/#providing-pivot-result-fields-simple"
+                "name": "Supplying Pivot Result Fields",
+                "url": "/server-side-model-pivoting/#supplying-pivot-result-fields-simple"
             }
         },
         "serverSideSortAllLevels": {},
@@ -1144,13 +1149,13 @@
         "debounceVerticalScrollbar": {
             "more": {
                 "name": "Debounce Vertical Scroll",
-                "url": "/scrolling-performance/#8-debounce-vertical-scroll"
+                "url": "/scrolling-performance/#debounce-vertical-scroll"
             }
         },
         "suppressHorizontalScroll": {
             "more": {
                 "name": "Aligned Grid as Footer",
-                "url": "/aligned-grids/#example-aligned-floating-footer"
+                "url": "/aligned-grids/#example-aligned-grid-as-footer"
             }
         },
         "suppressScrollOnNewData": {},
@@ -1198,7 +1203,12 @@
                 "url": "/range-selection/#suppress-multi-range-selection"
             }
         },
-        "enableCellTextSelection": {},
+        "enableCellTextSelection": {
+            "more":{
+                "name": "Using Cell Text Selection",
+                "url":"/clipboard/#using-the-browsers-text-selection"
+            }
+        },
         "enableRangeSelection": {
             "more": {
                 "name": "Range Selection",
@@ -1244,7 +1254,7 @@
         "unSortIcon": {
             "more": {
                 "name": "Example Custom Sorting",
-                "url": "/row-sorting/#example-custom-sorting"
+                "url": "/row-sorting/#custom-sorting-example"
             }
         },
         "suppressMultiSort": {},

@@ -216,7 +216,7 @@ public class ServerSideGetRowsResponse {
 }
 ```
 
-We will discuss these in detail throughout this guide, however for more details see: [Server-Side Datasource](/server-side-model/#server-side-datasource)
+We will discuss these in detail throughout this guide, however for more details see: [Server-Side Datasource](/server-side-model-datasource/)
 
 
 ## Service Controller
@@ -245,12 +245,12 @@ public class TradeController {
 }
 ```
 
-The `TradeController` makes use of the [Spring Controller](https://docs.spring.io/spring/docs/current/spring-framework-reference/web.html#mvc-controller) to handle HTTP and JSON Serialisation.
+The `TradeController` makes use of the [Spring Controller](https://docs.spring.io/spring-framework/reference/web/webmvc/mvc-controller.html) to handle HTTP and JSON Serialisation.
 
 
 ## Data Access
 
-The `OracleSqlQueryBuilder` dynamically generates SQL based on the supplied request. We will query the `Trade` table with our generated SQL using the [Spring JDBC Template](https://docs.spring.io/spring/docs/current/spring-framework-reference/data-access.html).
+The `OracleSqlQueryBuilder` dynamically generates SQL based on the supplied request. We will query the `Trade` table with our generated SQL using the [Spring JDBC Template](https://docs.spring.io/spring-framework/reference/data-access.html).
 
 Here is the implementation of our `TradeDao`:
 
@@ -475,7 +475,7 @@ In order for the grid to show these newly created columns an explicit API call i
 
 
 ```js
-gridOptions.columnApi.setPivotResultColumns(pivotResultColDefs);
+api.setPivotResultColumns(pivotResultColDefs);
 ```
 
 ## Infinite Scrolling

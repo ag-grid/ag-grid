@@ -104,6 +104,8 @@ export const ICON_MAP = {
     maximize: maximizeIcon,
     minimize: minimizeIcon,
     idea: CarbonIcon.DataEnrichment,
+    sun: CarbonIcon.Sun,
+    moon: CarbonIcon.Moon,
     ...SOCIALS_ICON_MAP,
     ...DOCS_CATEGORIES_ICON_MAP,
     ...HOMEPAGE_FEATURES_ICON_MAP,

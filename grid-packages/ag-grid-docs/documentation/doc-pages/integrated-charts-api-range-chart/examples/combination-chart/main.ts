@@ -1,6 +1,14 @@
-import { FirstDataRenderedEvent, Grid, GridOptions, ValueParserParams } from '@ag-grid-community/core';
+import {
+  FirstDataRenderedEvent,
+  GridApi,
+  createGrid,
+  GridOptions,
+  ValueParserParams,
+} from '@ag-grid-community/core';
 import { AgAxisCaptionFormatterParams } from 'ag-charts-community';
 import { getData } from "./data";
+
+let gridApi: GridApi;
 
 const gridOptions: GridOptions = {
   columnDefs: [
@@ -81,5 +89,5 @@ function numberParser(params: ValueParserParams) {
 // set up the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
   const gridDiv = document.querySelector<HTMLElement>('#myGrid')!;
-  new Grid(gridDiv, gridOptions);
+  gridApi = createGrid(gridDiv, gridOptions);
 });

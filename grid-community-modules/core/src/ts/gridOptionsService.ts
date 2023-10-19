@@ -2,7 +2,7 @@ import { ColumnApi } from "./columns/columnApi";
 import { ComponentUtil } from "./components/componentUtil";
 import { Autowired, Bean, PostConstruct, PreDestroy, Qualifier } from "./context/context";
 import { DomLayoutType, GridOptions } from "./entities/gridOptions";
-import { GetGroupAggFilteringParams, GetRowIdParams, RowHeightParams } from "./interfaces/iCallbackParams";
+import { GetGroupAggFilteringParams, GetGroupIncludeFooterParams, RowHeightParams } from "./interfaces/iCallbackParams";
 import { Environment } from "./environment";
 import { AgEvent, Events } from "./events";
 import { EventService } from "./eventService";
@@ -10,11 +10,9 @@ import { GridApi } from "./gridApi";
 import { AgGridCommon, WithoutGridCommon } from "./interfaces/iCommon";
 import { RowModelType } from "./interfaces/iRowModel";
 import { AnyGridOptions } from "./propertyKeys";
-import { doOnce } from "./utils/function";
+import { warnOnce } from "./utils/function";
 import { exists, missing } from "./utils/generic";
 import { getScrollbarWidth } from './utils/browser';
-import { ModuleRegistry } from "./modules/moduleRegistry";
-import { ModuleNames } from "./modules/moduleNames";
 import { matchesGroupDisplayType } from "./gridOptionsValidator";
 import { IRowNode } from "./interfaces/iRowNode";
 
@@ -39,13 +37,33 @@ type NonPrimitiveProps = Exclude<keyof GridOptions, BooleanProps | NumberProps |
 type ExtractParamsFromCallback<TCallback> = TCallback extends (params: infer PA) => any ? PA : never;
 type ExtractReturnTypeFromCallback<TCallback> = TCallback extends (params: AgGridCommon<any, any>) => infer RT ? RT : never;
 type WrappedCallback<K extends CallbackProps, OriginalCallback extends GridOptions[K]> = undefined | ((params: WithoutGridCommon<ExtractParamsFromCallback<OriginalCallback>>) => ExtractReturnTypeFromCallback<OriginalCallback>)
+export interface PropertyChangeSet {
+    /** Unique id which can be used to link changes of multiple properties that were updated together.
+     * i.e a user updated multiple properties at the same time.
+     */
+    id: number;
+    /** All the properties that have been updated in this change set */
+    properties: (keyof GridOptions)[];
+}
 export interface PropertyChangedEvent extends AgEvent {
-    type: keyof GridOptions,
-    currentValue: any;
-    previousValue: any;
+    type: 'gridPropertyChanged',
+    changeSet: PropertyChangeSet | undefined;
 }
 
-export type PropertyChangedListener<T extends PropertyChangedEvent> = (event: T) => void
+/**
+ * For boolean properties the changed value will have been coerced to a boolean, so we do not want the type to include the undefined value.
+ */
+type GridOptionsOrBooleanCoercedValue<K extends keyof GridOptions> = K extends BooleanProps ? boolean : GridOptions[K];
+
+export interface PropertyValueChangedEvent<K extends keyof GridOptions> extends AgEvent {
+    type: K;
+    changeSet: PropertyChangeSet | undefined;
+    currentValue: GridOptionsOrBooleanCoercedValue<K>;
+    previousValue: GridOptionsOrBooleanCoercedValue<K>;
+}
+
+export type PropertyChangedListener = (event: PropertyChangedEvent) => void
+export type PropertyValueChangedListener<K extends keyof GridOptions> = (event: PropertyValueChangedEvent<K>) => void
 
 function toNumber(value: any): number | undefined {
     if (typeof value == 'number') {
@@ -73,9 +91,11 @@ export class GridOptionsService {
     // we store this locally, so we are not calling getScrollWidth() multiple times as it's an expensive operation
     private scrollbarWidth: number;
     private domDataKey = '__AG_' + Math.random().toString();
+    private static readonly alwaysSyncGlobalEvents: Set<string> = new Set([Events.EVENT_GRID_PRE_DESTROYED]);
 
     // Store locally to avoid retrieving many times as these are requested for every callback
-    public api: GridApi;
+    @Autowired('gridApi') public readonly api: GridApi;
+    /** @deprecated v31 ColumnApi has been deprecated and all methods moved to the api. */
     public columnApi: ColumnApi;
     // This is quicker then having code call gridOptionsService.get('context')
     public get context() {
@@ -85,18 +105,14 @@ export class GridOptionsService {
     private propertyEventService: EventService = new EventService();
     private gridOptionLookup: Set<string>;
 
-    private agWire(@Qualifier('gridApi') gridApi: GridApi, @Qualifier('columnApi') columnApi: ColumnApi): void {
-        this.gridOptions.api = gridApi;
-        this.gridOptions.columnApi = columnApi;
-        this.api = gridApi;
-        this.columnApi = columnApi;
-    }
 
     @PostConstruct
     public init(): void {
+        this.columnApi = new ColumnApi(this.api);
         this.gridOptionLookup = new Set([...ComponentUtil.ALL_PROPERTIES, ...ComponentUtil.EVENT_CALLBACKS]);
         const async = !this.is('suppressAsyncEvents');
-        this.eventService.addGlobalListener(this.globalEventHandler.bind(this), async);
+        this.eventService.addGlobalListener(this.globalEventHandlerFactory().bind(this), async);
+        this.eventService.addGlobalListener(this.globalEventHandlerFactory(true).bind(this), false);
 
         // sets an initial calculation for the scrollbar width
         this.getScrollbarWidth();
@@ -104,13 +120,8 @@ export class GridOptionsService {
     }
     @PreDestroy
     private destroy(): void {
-        // need to remove these, as we don't own the lifecycle of the gridOptions, we need to
-        // remove the references in case the user keeps the grid options, we want the rest
-        // of the grid to be picked up by the garbage collector
-        this.gridOptions.api = null;
-        this.gridOptions.columnApi = null;
-
         this.destroyed = true;
+        this.columnApi = undefined as any;
     }
 
     /**
@@ -175,47 +186,86 @@ export class GridOptionsService {
     }
 
     /**
+     * DO NOT USE - only for use for ComponentUtil applyChanges via GridApi.
+     * Use `set` method instead.
+     * Only update the property value, don't fire any events. This enables all properties
+     * that have been updated together to be updated before any events get triggered to avoid
+     * out of sync issues.
+     * @param key - key of the GridOption property to update
+     * @param newValue - new value for this property
+     * @returns The `true` if the previous value is not equal to the new value.
+     */
+    public __setPropertyOnly<K extends keyof GridOptions>(
+        key: K,
+        newValue: GridOptions[K]
+    ): boolean {
+        const previousValue = this.gridOptions[key];
+        if (this.gridOptionLookup.has(key)) {
+            this.gridOptions[key] = newValue;
+        }
+        return previousValue !== newValue;
+    }
+
+    /**
      *
      * @param key - key of the GridOption property to update
      * @param newValue - new value for this property
      * @param force - force the property change Event to be fired even if the value has not changed
      * @param eventParams - additional params to merge into the property changed event
+     * @param changeSetId - Change set id used to identify keys that have been updated in the same framework lifecycle update. 
      */
-    public set<K extends keyof GridOptions>(key: K, newValue: GridOptions[K], force = false, eventParams: object = {}): void {
+    public set<K extends keyof GridOptions>(
+        key: K,
+        newValue: GridOptions[K],
+        force = false,
+        eventParams: object = {},
+        changeSet: PropertyChangeSet | undefined = undefined 
+    ): void {
         if (this.gridOptionLookup.has(key)) {
             const previousValue = this.gridOptions[key];
             if (force || previousValue !== newValue) {
                 this.gridOptions[key] = newValue;
-                const event: PropertyChangedEvent = {
+                const event: PropertyValueChangedEvent<K> = {
                     type: key,
                     currentValue: newValue,
-                    previousValue: previousValue,
-                    ...eventParams
+                    previousValue,
+                    changeSet,
+                    ...eventParams,
                 };
                 this.propertyEventService.dispatchEvent(event);
             }
         }
     }
 
-    addEventListener<T extends PropertyChangedEvent>(key: keyof GridOptions, listener: PropertyChangedListener<T>): void {
+    addEventListener<K extends keyof GridOptions>(key: K, listener: PropertyValueChangedListener<K>): void {
         this.propertyEventService.addEventListener(key, listener);
     }
-    removeEventListener<T extends PropertyChangedEvent>(key: keyof GridOptions, listener: PropertyChangedListener<T>): void {
+    removeEventListener<K extends keyof GridOptions>(key: K, listener: PropertyValueChangedListener<K>): void {
         this.propertyEventService.removeEventListener(key, listener);
     }
 
     // responsible for calling the onXXX functions on gridOptions
-    globalEventHandler(eventName: string, event?: any): void {
-        // prevent events from being fired _after_ the grid has been destroyed
-        if (this.destroyed) {
-            return;
-        }
+    // It forces events defined in GridOptionsService.alwaysSyncGlobalEvents to be fired synchronously.
+    // This is required for events such as GridPreDestroyed.
+    // Other events can be fired asynchronously or synchronously depending on config.
+    globalEventHandlerFactory = (restrictToSyncOnly?: boolean) => {
+        return (eventName: string, event?: any) => {
+            // prevent events from being fired _after_ the grid has been destroyed
+            if (this.destroyed) {
+                return;
+            }
 
-        const callbackMethodName = ComponentUtil.getCallbackForEvent(eventName);
-        if (typeof (this.gridOptions as any)[callbackMethodName] === 'function') {
-            (this.gridOptions as any)[callbackMethodName](event);
+            const alwaysSync = GridOptionsService.alwaysSyncGlobalEvents.has(eventName);
+            if ((alwaysSync && !restrictToSyncOnly) || (!alwaysSync && restrictToSyncOnly)) {
+                return;
+            }
+
+            const callbackMethodName = ComponentUtil.getCallbackForEvent(eventName);
+            if (typeof (this.gridOptions as any)[callbackMethodName] === 'function') {
+                (this.gridOptions as any)[callbackMethodName](event);
+            }
         }
-    }
+    };
 
     // *************** Helper methods ************************** //
     // Methods to share common GridOptions related logic that goes above accessing a single property
@@ -289,7 +339,7 @@ export class GridOptionsService {
 
             if (this.isNumeric(height)) {
                 if (height === 0) {
-                    doOnce(() => console.warn('AG Grid: The return of `getRowHeight` cannot be zero. If the intention is to hide rows, use a filter instead.'), 'invalidRowHeight');
+                    warnOnce('The return of `getRowHeight` cannot be zero. If the intention is to hide rows, use a filter instead.');
                 }
                 return { height: Math.max(1, height), estimated: false };
             }
@@ -408,20 +458,10 @@ export class GridOptionsService {
         return true;
     }
 
-    public isTreeData(): boolean {
-        return this.is('treeData') && ModuleRegistry.__assertRegistered(ModuleNames.RowGroupingModule, 'Tree Data', this.api.getGridId());
-    }
-    public isMasterDetail() {
-        return this.is('masterDetail') && ModuleRegistry.__assertRegistered(ModuleNames.MasterDetailModule, 'masterDetail', this.api.getGridId());
-    }
-    public isEnableRangeSelection(): boolean {
-        return this.is('enableRangeSelection') && ModuleRegistry.__isRegistered(ModuleNames.RangeSelectionModule, this.api.getGridId());
-    }
-
     public isColumnsSortingCoupledToGroup(): boolean {
         const autoGroupColumnDef = this.gridOptions.autoGroupColumnDef;
         const isClientSideRowModel = this.isRowModelType('clientSide');
-        return isClientSideRowModel && !autoGroupColumnDef?.comparator && !this.isTreeData();
+        return isClientSideRowModel && !autoGroupColumnDef?.comparator && !this.is('treeData');
     }
 
     public getGroupAggFiltering(): ((params: WithoutGridCommon<GetGroupAggFilteringParams>) => boolean) | undefined {
@@ -437,6 +477,26 @@ export class GridOptionsService {
 
         return undefined;
     }
+
+    public isGroupIncludeFooterTrueOrCallback(): boolean{
+        const userValue = this.gridOptions.groupIncludeFooter;
+        return isTrue(userValue) || typeof userValue === 'function';
+    }
+
+    public getGroupIncludeFooter(): (params: WithoutGridCommon<GetGroupIncludeFooterParams>) => boolean{
+        const userValue = this.gridOptions.groupIncludeFooter;
+
+        if (typeof userValue === 'function') {
+            return this.getCallback('groupIncludeFooter' as any) as any;
+        }
+
+        if (isTrue(userValue)) {
+            return () => true; 
+        }
+
+        return () => false;
+    }
+
     public isGroupMultiAutoColumn() {
         if (this.gridOptions.groupDisplayType) {
             return matchesGroupDisplayType('multipleColumns', this.gridOptions.groupDisplayType);

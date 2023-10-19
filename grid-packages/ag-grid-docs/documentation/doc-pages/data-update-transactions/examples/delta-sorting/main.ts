@@ -1,4 +1,4 @@
-import { GetRowIdParams, Grid, GridOptions } from '@ag-grid-community/core'
+import { GetRowIdParams, GridApi, createGrid, GridOptions } from '@ag-grid-community/core';
 
 let lastGen = 0;
 const generateItem = (id = lastGen++) => {
@@ -11,6 +11,8 @@ const generateItem = (id = lastGen++) => {
 };
 
 const getRowData = (rows = 10) => new Array(rows).fill(undefined).map(_ => generateItem());
+
+let gridApi: GridApi;
 
 const gridOptions: GridOptions = {
     columnDefs: [
@@ -34,25 +36,25 @@ function addDelta() {
         add: getRowData(1).map(row => ({ ...row, updatedBy: 'delta' })),
         update: [{ id: 1, make: 'Delta', updatedBy: 'delta' }],
     };
-    gridOptions.api!.setDeltaSort(true);
+    gridApi!.setDeltaSort(true);
     const startTime = new Date().getTime();
-    gridOptions.api!.applyTransaction(transaction);
+    gridApi!.applyTransaction(transaction);
     document.getElementById('transactionDuration')!.innerText = `${new Date().getTime() - startTime} ms`;
-};
+}
 
 function addDefault() {
     const transaction = {
         add: getRowData(1).map(row => ({ ...row, updatedBy: 'default' })),
         update: [{ id: 2, make: 'Default', updatedBy: 'default' }],
     };
-    gridOptions.api!.setDeltaSort(false);
+    gridApi!.setDeltaSort(false);
     const startTime = new Date().getTime();
-    gridOptions.api!.applyTransaction(transaction);
+    gridApi!.applyTransaction(transaction);
     document.getElementById('transactionDuration')!.innerText = `${new Date().getTime() - startTime} ms`;
 
-};
+}
 
 document.addEventListener('DOMContentLoaded', function () {
     const eGridDiv = document.querySelector<HTMLElement>('#myGrid')!;
-    new Grid(eGridDiv, gridOptions);
+    gridApi = createGrid(eGridDiv, gridOptions);
 });

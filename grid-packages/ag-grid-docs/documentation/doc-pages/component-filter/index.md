@@ -12,17 +12,8 @@ Filter components allow you to add your own filter types to AG Grid. Use them wh
 </video-section>
 </framework-specific-section>
 
-## Simple Filter
-
-md-include:simple-filter-javascript.md
-md-include:simple-filter-angular.md
-md-include:simple-filter-react.md
-md-include:simple-filter-vue.md 
-
-## Custom Filter Example
-
 The example below shows two custom filters. The first is on the `Athlete` column and demonstrates a filter with "fuzzy" matching and the
-second is on the `Year` column and uses the `YearFilter` above.
+second is on the `Year` column with preset options.
 
 <grid-example title='Filter Component' name='custom-filter' type='generated' options='{ "includeNgFormsModule" : true}'></grid-example>
 
@@ -57,7 +48,7 @@ There are two ways you can get fix this problem:
 
 - Add a mouse click listener to your floating element and set it to `preventDefault()`. This way, the click event will not bubble up to the grid.
   This is the best solution, but you can only do this if you are writing the component yourself.
-- Add the `ag-custom-component-popup` CSS class to your floating element. An example of this usage can be found here: [Custom Date Component](/component-date/#example-custom-date)
+- Add the `ag-custom-component-popup` CSS class to your floating element. An example of this usage can be found here: [Custom Date Component](/component-date/#example-custom-date-component)
 
 <framework-specific-section frameworks="angular">
 | ## Accessing the Angular Component Instance
@@ -107,23 +98,29 @@ There are two ways you can get fix this problem:
 
 <framework-specific-section frameworks="react">
 <snippet transform={false} language="ts">
-| // let's assume a React component as follows
-| class NameFilter extends React.Component {
-|     ... // standard filter methods hidden
+|// let's assume a React component as follows
+|export default forwardRef((props, ref) => {
+|    useImperativeHandle(ref, () => {
+|        return {
+|            ... // required filter methods
 |
-|     // put a custom method on the filter
-|     myMethod() {
-|         // does something
-|     }
-| }
+|            // put a custom method on the filter
+|            myMethod() {
+|                // does something
+|            }
+|        }
+|    });
 |
-| // later in your app, if you want to execute myMethod()...
-| laterOnInYourApplicationSomewhere() {
-|     // get reference to the AG Grid Filter component on name column
-|     api.getFilterInstance('name', filterInstance => {
-|         filterInstance.myMethod();
-|     });
-| }
+|    ... // rest of component
+|}
+|
+|// later in your app, if you want to execute myMethod()...
+|laterOnInYourApplicationSomewhere() {
+|    // get reference to the AG Grid Filter component on name column
+|    api.getFilterInstance('name', filterInstance => {
+|        filterInstance.myMethod();
+|    });
+|}
 </snippet>
 </framework-specific-section>
 

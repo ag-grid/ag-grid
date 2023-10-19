@@ -1,3 +1,4 @@
+import { GridOptions } from "../entities/gridOptions";
 import { RowNode } from "../entities/rowNode";
 import { ChangedPath } from "../utils/changedPath";
 import { RowNodeTransaction } from "./rowNodeTransaction";
@@ -15,4 +16,5 @@ export interface StageExecuteParams<TData = any> {
 
 export interface IRowNodeStage<TData = any> {
     execute(params: StageExecuteParams<TData>): any;
+    getImpactingGridOptions(): (keyof GridOptions)[];
 }

@@ -1,4 +1,6 @@
-import { Grid, GridOptions } from '@ag-grid-community/core'
+import { GridApi, createGrid, GridOptions } from '@ag-grid-community/core';
+
+let gridApi: GridApi<IOlympicData>;
 
 const gridOptions: GridOptions<IOlympicData> = {
   columnDefs: [
@@ -31,22 +33,22 @@ const gridOptions: GridOptions<IOlympicData> = {
 }
 
 function turnOffPivotMode() {
-  gridOptions.columnApi!.setPivotMode(false)
+  gridApi!.setPivotMode(false)
 }
 
 function turnOnPivotMode() {
-  gridOptions.columnApi!.setPivotMode(true)
+  gridApi!.setPivotMode(true)
 }
 
 function addPivotColumn() {
-  gridOptions.columnApi!.applyColumnState({
+  gridApi!.applyColumnState({
     state: [{ colId: 'country', pivot: true }],
     defaultState: { pivot: false },
   })
 }
 
 function addPivotColumns() {
-  gridOptions.columnApi!.applyColumnState({
+  gridApi!.applyColumnState({
     state: [
       { colId: 'year', pivot: true },
       { colId: 'country', pivot: true },
@@ -56,27 +58,27 @@ function addPivotColumns() {
 }
 
 function removePivotColumn() {
-  gridOptions.columnApi!.applyColumnState({
+  gridApi!.applyColumnState({
     state: [{ colId: 'country', pivot: false }],
   })
 }
 
 function emptyPivotColumns() {
-  gridOptions.columnApi!.applyColumnState({
+  gridApi!.applyColumnState({
     defaultState: { pivot: false },
   })
 }
 
 function exportToCsv() {
-  gridOptions.api!.exportDataAsCsv()
+  gridApi!.exportDataAsCsv()
 }
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
   var gridDiv = document.querySelector<HTMLElement>('#myGrid')!
-  new Grid(gridDiv, gridOptions)
+  gridApi = createGrid(gridDiv, gridOptions);
 
   fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
     .then(response => response.json())
-    .then((data: IOlympicData[]) => gridOptions.api!.setRowData(data))
+    .then((data: IOlympicData[]) => gridApi!.setRowData(data))
 })

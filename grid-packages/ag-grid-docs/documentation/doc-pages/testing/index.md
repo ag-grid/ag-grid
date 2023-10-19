@@ -57,7 +57,7 @@ testing with AG Grid in this section.
 </framework-specific-section>
 
 <framework-specific-section frameworks="javascript">
-| Once the API is ready, we can then invoke Grid `API` and `ColumnApi` methods:
+| Once the API is ready, we can then invoke Grid `API` methods:
 </framework-specific-section>
 
 <framework-specific-section frameworks="javascript">
@@ -436,9 +436,10 @@ testing with AG Grid in this section.
 </framework-specific-section>
 
 <framework-specific-section frameworks="angular">
-| We will walk through how you can use testing AG Grid as part of your Angular application,
-| using default build tools provided when using the [Angular CLI](https://cli.angular.io/).
-|
+<p>We will walk through how you can use testing AG Grid as part of your Angular application, using default build tools provided when using the <a href="https://cli.angular.io/">Angular CLI</a>.</p>
+</framework-specific-section>
+
+<framework-specific-section frameworks="angular">
 | ## Configuring the Test Module
 |
 | The first thing we need to do is to add AG Grid's `AgGridModule` to the `TestBed.configureTestingModule`:
@@ -606,11 +607,9 @@ testing with AG Grid in this section.
 |     };
 |
 |     api: GridApi;
-|     columnApi: ColumnApi;
 |
 |     public onGridReady(params: GridReadyEvent) {
 |         this.api = params.api;
-|         this.columnApi = params.columnApi;
 |     }
 | }
 </snippet>
@@ -673,7 +672,7 @@ testing with AG Grid in this section.
 <framework-specific-section frameworks="angular">
 |## Next Up
 |
-|Continue to the next section to learn about [Testing with FakeAsync](../testing-async/) parts of the grid.
+|Continue to the next section to learn about [Testing Async](/testing-async/).
 </framework-specific-section>
 
 <framework-specific-section frameworks="react">
@@ -986,15 +985,16 @@ testing with AG Grid in this section.
 
 
 <framework-specific-section frameworks="react">
-Note that we're accessing exposed `getApi` method via the `ref`:  `componentRef.current.getApi()`.
-
-A full working example can be found in the following <a href="https://github.com/seanlandsman/ag-grid-react-hook-testing">GitHub Repo</a>.
+|Note that we're accessing exposed `getApi` method via the `ref`:  `componentRef.current.getApi()`.
+|
+|A full working example can be found in the following <a href="https://github.com/seanlandsman/ag-grid-react-hook-testing">GitHub Repo</a>.
 </framework-specific-section>
 
 <framework-specific-section frameworks="vue">
-| We will walk through how you can use testing AG Grid as part of your Vue application, using default
-| build tools provided when using the [Vue CLI](https://cli.vuejs.org/) utility.
-|
+<p>We will walk through how you can use testing AG Grid as part of your Vue application, using default build tools provided when using the <a href="https://cli.vuejs.org/">Vue CLI</a> utility.</p>
+</framework-specific-section>
+
+<framework-specific-section frameworks="vue">
 | ## Waiting for the Grid to be Initialised
 |
 | Due to the asynchronous nature of React we cannot simply mount the Grid and assume it'll be ready

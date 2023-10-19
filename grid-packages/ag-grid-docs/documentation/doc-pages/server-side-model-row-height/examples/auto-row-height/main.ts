@@ -1,4 +1,4 @@
-import { Grid, ColDef, GridOptions, IServerSideDatasource } from '@ag-grid-community/core'
+import { GridApi, createGrid, ColDef, GridOptions, IServerSideDatasource } from '@ag-grid-community/core';
 import { getData } from "./data";
 
 declare var FakeServer: any;
@@ -22,6 +22,8 @@ const columnDefs: ColDef[] = [
     aggFunc: 'last',
   },
 ]
+
+let gridApi: GridApi;
 
 const gridOptions: GridOptions = {
   columnDefs: columnDefs,
@@ -51,7 +53,7 @@ const gridOptions: GridOptions = {
     var datasource = getServerSideDatasource(fakeServer)
 
     // register the datasource with the grid
-    gridOptions.api!.setServerSideDatasource(datasource)
+    params.api.setServerSideDatasource(datasource)
   },
 
 }
@@ -59,7 +61,7 @@ const gridOptions: GridOptions = {
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
   var gridDiv = document.querySelector<HTMLElement>('#myGrid')!
-  new Grid(gridDiv, gridOptions)
+  gridApi = createGrid(gridDiv, gridOptions);
 })
 
 function getServerSideDatasource(server: any): IServerSideDatasource {

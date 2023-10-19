@@ -12,6 +12,9 @@
 }
 
 .option {
+    --link-color: var(--default-text-color);
+    --link-hover-color: var(--default-text-color);
+
     display: flex;
     position: relative;
     justify-content: center;
@@ -41,7 +44,6 @@
         display: none;
         margin-left: 4px;
         font-size: var(--font-size);
-        color: #212529;
         transition: opacity $default-transition-timing;
     }
 
@@ -52,7 +54,7 @@
 }
 
 .frameworkSelector.showSelected {
-    border: 2px solid var(--border-color);
+    border: 2px solid var(--input-border-color);
 
     @media screen and (min-width: $breakpoint-docs-search-medium) {
         width: auto;
@@ -129,6 +131,10 @@
         --icon-size: #{$size-5};
         --font-size: var(--font-size-extra-large);
         --x-padding: 20px;
+    }
+
+    #{$darkmode-selector} & {
+        background-color: var(--background-500);
     }
 }
 

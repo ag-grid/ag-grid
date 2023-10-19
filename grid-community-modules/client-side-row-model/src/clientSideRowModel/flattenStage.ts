@@ -7,11 +7,33 @@ import {
     IRowNodeStage,
     RowNode,
     StageExecuteParams,
-    Beans
+    Beans,
+    WithoutGridCommon,
+    GetGroupIncludeFooterParams,
+    GridOptions
 } from "@ag-grid-community/core";
+
+interface FlattenDetails {
+    hideOpenParents: boolean;
+    groupRemoveSingleChildren: boolean;
+    groupRemoveLowestSingleChildren: boolean;
+    groupIncludeTotalFooter: boolean;
+    isGroupMultiAutoColumn: boolean;
+    getGroupIncludeFooter: (params: WithoutGridCommon<GetGroupIncludeFooterParams<any, any>>) => boolean;
+}
 
 @Bean('flattenStage')
 export class FlattenStage extends BeanStub implements IRowNodeStage {
+    getImpactingGridOptions(): (keyof GridOptions<any>)[] {
+        return [
+            'groupRemoveSingleChildren',
+            'groupRemoveLowestSingleChildren',
+            'groupHideOpenParents',
+            'groupIncludeFooter',
+            'groupIncludeTotalFooter',
+            'groupDisplayType',
+        ];
+    }
 
     @Autowired('columnModel') private columnModel: ColumnModel;
     @Autowired('beans') private beans: Beans;
@@ -22,15 +44,15 @@ export class FlattenStage extends BeanStub implements IRowNodeStage {
         // even if not doing grouping, we do the mapping, as the client might
         // of passed in data that already has a grouping in it somewhere
         const result: RowNode[] = [];
-        // putting value into a wrapper so it's passed by reference
-        const nextRowTop: NumberWrapper = {value: 0};
         const skipLeafNodes = this.columnModel.isPivotMode();
         // if we are reducing, and not grouping, then we want to show the root node, as that
         // is where the pivot values are
         const showRootNode = skipLeafNodes && rootNode.leafGroup;
         const topList = showRootNode ? [rootNode] : rootNode.childrenAfterSort;
 
-        this.recursivelyAddToRowsToDisplay(topList, result, nextRowTop, skipLeafNodes, 0);
+        const details = this.getFlattenDetails();
+
+        this.recursivelyAddToRowsToDisplay(details, topList, result, skipLeafNodes, 0);
 
         // we do not want the footer total if the gris is empty
         const atLeastOneRowPresent = result.length > 0;
@@ -38,29 +60,41 @@ export class FlattenStage extends BeanStub implements IRowNodeStage {
         const includeGroupTotalFooter = !showRootNode
             // don't show total footer when showRootNode is true (i.e. in pivot mode and no groups)
             && atLeastOneRowPresent
-            && this.gridOptionsService.is('groupIncludeTotalFooter');
+            && details.groupIncludeTotalFooter;
 
         if (includeGroupTotalFooter) {
             rootNode.createFooter();
-            this.addRowNodeToRowsToDisplay(rootNode.sibling, result, nextRowTop, 0);
+            this.addRowNodeToRowsToDisplay(details, rootNode.sibling, result, 0);
         }
 
         return result;
     }
 
-    private recursivelyAddToRowsToDisplay(
-        rowsToFlatten: RowNode[] | null,
-        result: RowNode[],
-        nextRowTop: NumberWrapper,
-        skipLeafNodes: boolean,
-        uiLevel: number
-    ) {
-        if (_.missingOrEmpty(rowsToFlatten)) { return; }
-
-        const hideOpenParents = this.gridOptionsService.is('groupHideOpenParents');
+    private getFlattenDetails(): FlattenDetails {
         // these two are mutually exclusive, so if first set, we don't set the second
         const groupRemoveSingleChildren = this.gridOptionsService.is('groupRemoveSingleChildren');
         const groupRemoveLowestSingleChildren = !groupRemoveSingleChildren && this.gridOptionsService.is('groupRemoveLowestSingleChildren');
+
+        return {
+            groupRemoveLowestSingleChildren,
+            groupRemoveSingleChildren,
+            isGroupMultiAutoColumn: this.gridOptionsService.isGroupMultiAutoColumn(),
+            hideOpenParents : this.gridOptionsService.is('groupHideOpenParents'),
+            groupIncludeTotalFooter : this.gridOptionsService.is('groupIncludeTotalFooter'),
+            getGroupIncludeFooter : this.gridOptionsService.getGroupIncludeFooter(),
+        };
+    }
+
+    private recursivelyAddToRowsToDisplay(
+        details: FlattenDetails,
+        rowsToFlatten: RowNode[] | null,
+        result: RowNode[],
+        skipLeafNodes: boolean,
+        uiLevel: number
+    ) {
+        if (_.missingOrEmpty(rowsToFlatten)) {
+            return;
+        }
 
         for (let i = 0; i < rowsToFlatten!.length; i++) {
             const rowNode = rowsToFlatten![i];
@@ -69,11 +103,11 @@ export class FlattenStage extends BeanStub implements IRowNodeStage {
 
             const isSkippedLeafNode = skipLeafNodes && !isParent;
 
-            const isRemovedSingleChildrenGroup = groupRemoveSingleChildren &&
-                isParent &&
-                rowNode.childrenAfterGroup!.length === 1;
+            const isRemovedSingleChildrenGroup =
+                details.groupRemoveSingleChildren && isParent && rowNode.childrenAfterGroup!.length === 1;
 
-            const isRemovedLowestSingleChildrenGroup = groupRemoveLowestSingleChildren &&
+            const isRemovedLowestSingleChildrenGroup =
+                details.groupRemoveLowestSingleChildren &&
                 isParent &&
                 rowNode.leafGroup &&
                 rowNode.childrenAfterGroup!.length === 1;
@@ -83,13 +117,13 @@ export class FlattenStage extends BeanStub implements IRowNodeStage {
             // the UI will never allow expanding leaf  groups, however the user might via the API (or menu option 'expand all row groups')
             const neverAllowToExpand = skipLeafNodes && rowNode.leafGroup;
 
-            const isHiddenOpenParent = hideOpenParents && rowNode.expanded && !rowNode.master && (!neverAllowToExpand);
+            const isHiddenOpenParent = details.hideOpenParents && rowNode.expanded && !rowNode.master && !neverAllowToExpand;
 
             const thisRowShouldBeRendered = !isSkippedLeafNode && !isHiddenOpenParent &&
                 !isRemovedSingleChildrenGroup && !isRemovedLowestSingleChildrenGroup;
 
             if (thisRowShouldBeRendered) {
-                this.addRowNodeToRowsToDisplay(rowNode, result, nextRowTop, uiLevel);
+                this.addRowNodeToRowsToDisplay(details, rowNode, result, uiLevel);
             }
 
             // if we are pivoting, we never map below the leaf group
@@ -103,27 +137,41 @@ export class FlattenStage extends BeanStub implements IRowNodeStage {
                 if (rowNode.expanded || excludedParent) {
                     // if the parent was excluded, then ui level is that of the parent
                     const uiLevelForChildren = excludedParent ? uiLevel : uiLevel + 1;
-                    this.recursivelyAddToRowsToDisplay(rowNode.childrenAfterSort, result,
-                        nextRowTop, skipLeafNodes, uiLevelForChildren);
+                    this.recursivelyAddToRowsToDisplay(
+                        details,
+                        rowNode.childrenAfterSort,
+                        result,
+                        skipLeafNodes,
+                        uiLevelForChildren
+                    );
 
                     // put a footer in if user is looking for it
-                    if (this.gridOptionsService.is('groupIncludeFooter')) {
-                        this.addRowNodeToRowsToDisplay(rowNode.sibling, result, nextRowTop, uiLevelForChildren);
+                    const doesRowShowFooter = details.getGroupIncludeFooter({ node: rowNode });
+                    if (doesRowShowFooter) {
+                        // ensure node is available.
+                        rowNode.createFooter();
+                        this.addRowNodeToRowsToDisplay(details, rowNode.sibling, result, uiLevelForChildren);
+                    } else {
+                        // remove node if it's unnecessary.
+                        rowNode.destroyFooter();
                     }
                 }
             } else if (rowNode.master && rowNode.expanded) {
                 const detailNode = this.createDetailNode(rowNode);
-                this.addRowNodeToRowsToDisplay(detailNode, result, nextRowTop, uiLevel);
+                this.addRowNodeToRowsToDisplay(details, detailNode, result, uiLevel);
             }
         }
     }
 
     // duplicated method, it's also in floatingRowModel
-    private addRowNodeToRowsToDisplay(rowNode: RowNode, result: RowNode[], nextRowTop: NumberWrapper, uiLevel: number): void {
-        const isGroupMultiAutoColumn = this.gridOptionsService.isGroupMultiAutoColumn();
-
+    private addRowNodeToRowsToDisplay(
+        details: FlattenDetails,
+        rowNode: RowNode,
+        result: RowNode[],
+        uiLevel: number
+    ): void {
         result.push(rowNode);
-        rowNode.setUiLevel(isGroupMultiAutoColumn ? 0 : uiLevel);
+        rowNode.setUiLevel(details.isGroupMultiAutoColumn ? 0 : uiLevel);
     }
 
     private createDetailNode(masterNode: RowNode): RowNode {
@@ -145,8 +193,4 @@ export class FlattenStage extends BeanStub implements IRowNodeStage {
 
         return detailNode;
     }
-}
-
-interface NumberWrapper {
-    value: number;
 }

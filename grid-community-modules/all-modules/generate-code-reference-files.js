@@ -25,9 +25,6 @@ const INTERFACE_GLOBS = [
     ...buildGlob('../angular/projects/ag-grid-angular/src/lib'),
     ...buildGlob('../react/src/shared'),
 ];
-const CHARTS_INTERFACE_GLOBS = [
-    ...buildGlob('../../charts-community-modules/ag-charts-community/src'),
-];
 
 const TEST_INTERFACE_GLOBS = [
     ...buildGlob('../../grid-packages/ag-grid-docs/documentation/src/components/expandable-snippet'),
@@ -503,10 +500,6 @@ function getGridApi() {
     const gridApiFile = "../core/src/ts/gridApi.ts";
     return getClassProperties(gridApiFile, 'GridApi');
 }
-function getColumnApi() {
-    const colApiFile = "../core/src/ts/columns/columnApi.ts";
-    return getClassProperties(colApiFile, 'ColumnApi');
-}
 function getRowNode() {
     const file = "../core/src/ts/interfaces/iRowNode.ts";
     const srcFile = parseFile(file);
@@ -531,26 +524,15 @@ function getColumn() {
     return getClassProperties(file, 'Column');
 }
 
-function getChartInterfaces() {
-    return getInterfaces(CHARTS_INTERFACE_GLOBS);
-}
-
-function getChartInterfaceProps() {
-    return buildInterfaceProps(CHARTS_INTERFACE_GLOBS);
-}
-
 const generateMetaFiles = () => {
     writeFile('../../grid-packages/ag-grid-docs/documentation/doc-pages/grid-api/', 'grid-options.AUTO.json', getGridOptions());
     writeFile('../../grid-packages/ag-grid-docs/documentation/doc-pages/grid-api/', 'interfaces.AUTO.json', getInterfaces(INTERFACE_GLOBS));
     writeFile('../../grid-packages/ag-grid-docs/documentation/doc-pages/grid-api/', 'grid-api.AUTO.json', getGridApi());
     writeFile('../../grid-packages/ag-grid-docs/documentation/doc-pages/row-object/', 'row-node.AUTO.json', getRowNode());
     writeFile('../../grid-packages/ag-grid-docs/documentation/doc-pages/column-properties/', 'column-options.AUTO.json', getColumnOptions());
-    writeFile('../../grid-packages/ag-grid-docs/documentation/doc-pages/column-api/', 'column-api.AUTO.json', getColumnApi());
     writeFile('../../grid-packages/ag-grid-docs/documentation/doc-pages/column-object/', 'column.AUTO.json', getColumn());
     writeFile('../../grid-packages/ag-grid-docs/documentation/doc-pages/grid-api/', 'doc-interfaces.AUTO.json', buildInterfaceProps(INTERFACE_GLOBS));
-    // Charts.
-    writeFile('../../grid-packages/ag-grid-docs/documentation/doc-pages/charts-api/', 'interfaces.AUTO.json', getChartInterfaces());
-    writeFile('../../grid-packages/ag-grid-docs/documentation/doc-pages/charts-api/', 'doc-interfaces.AUTO.json', getChartInterfaceProps());
+
     // Tests.
     writeFile('../../grid-packages/ag-grid-docs/documentation/src/components/expandable-snippet/', 'test-interfaces.AUTO.json', getInterfaces(TEST_INTERFACE_GLOBS));
     writeFile('../../grid-packages/ag-grid-docs/documentation/src/components/expandable-snippet/', 'test-doc-interfaces.AUTO.json', buildInterfaceProps(TEST_INTERFACE_GLOBS));

@@ -8,15 +8,16 @@ import { RowModelType } from './interfaces/iRowModel';
 import { ModuleNames } from './modules/moduleNames';
 import { ModuleRegistry } from './modules/moduleRegistry';
 import { PropertyKeys } from './propertyKeys';
-import { doOnce } from './utils/function';
+import { warnOnce } from './utils/function';
 import { fuzzyCheckStrings } from './utils/fuzzyMatch';
 import { iterateObject } from './utils/object';
 
 type DeprecatedReference<T> = { [key: string]: { newProp?: keyof T, version: string, message?: string, copyToNewProp?: true, newPropValue?: any } }
 
 export function logDeprecation<T extends {}>(version: string, oldProp: keyof T, newProp?: keyof T, message?: string) {
-    const newPropMsg = newProp ? `Please use '${newProp}' instead. ` : '';
-    doOnce(() => console.warn(`AG Grid: since v${version}, '${oldProp}' is deprecated. ${newPropMsg}${message ?? ''}`), `Deprecated_${oldProp}`);
+    const newPropMsg = newProp ? `Please use '${newProp.toString()}' instead. ` : '';
+    const oldPropStr = oldProp?.toString();
+    warnOnce(`since v${version}, '${oldPropStr}' is deprecated. ${newPropMsg}${message ?? ''}`);
 }
 
 // Vue adds these properties to all objects, so we ignore them when checking for invalid properties
@@ -88,6 +89,9 @@ export class GridOptionsValidator {
         validateRegistered('getContextMenuItems', ModuleNames.MenuModule);
         validateRegistered('allowContextMenuWithControlKey', ModuleNames.MenuModule);
         validateRegistered('enableAdvancedFilter', ModuleNames.AdvancedFilterModule);
+        validateRegistered('treeData', ModuleNames.RowGroupingModule);
+        validateRegistered('enableRangeSelection', ModuleNames.RangeSelectionModule);
+        validateRegistered('masterDetail', ModuleNames.MasterDetailModule);
     }
 
     private checkColumnDefProperties() {
@@ -126,14 +130,25 @@ export class GridOptionsValidator {
             serverSide: ['headerCheckboxSelectionFilteredOnly', 'headerCheckboxSelectionCurrentPageOnly'],
             clientSide: [],
         };
-        
+
         const unsupportedProperties = unsupportedPropertiesMap[rowModel];
 
-        if (!unsupportedProperties?.length) {
+        if (!unsupportedProperties) {
             return;
         }
 
+        const isMultiSelect = this.gridOptionsService.get('rowSelection') === 'multiple';
+        const multiSelectDependencies = ['headerCheckboxSelection', 'headerCheckboxSelectionFilteredOnly', 'headerCheckboxSelectionCurrentPageOnly'];
+
         const validateColDef = (colDef: ColDef | ColGroupDef) => {
+            if (!isMultiSelect) {
+                multiSelectDependencies.forEach(property => {
+                    if (property in colDef && !!(colDef as any)[property]) {
+                        console.warn(`AG Grid: Column property ${property} is not supported unless rowSelection='multiple'.`);
+                    }
+                });
+            }
+
             unsupportedProperties.forEach(property => {
                 if (property in colDef && !!(colDef as any)[property]) {
                     console.warn(`AG Grid: Column property ${property} is not supported with the row model type ${rowModel}.`);
@@ -186,18 +201,15 @@ export class GridOptionsValidator {
         );
 
         iterateObject<any>(invalidProperties, (key, value) => {
-
-            doOnce(() => console.warn(`AG Grid: invalid ${containerName} property '${key}' did you mean any of these: ${value.slice(0, 8).join(", ")}`), 'invalidProperty' + containerName + key);
+            warnOnce(`invalid ${containerName} property '${key}' did you mean any of these: ${value.slice(0, 8).join(", ")}`);
         });
 
         if (Object.keys(invalidProperties).length > 0) {
-            doOnce(() => console.warn(`AG Grid: to see all the valid ${containerName} properties please check: ${docsUrl}`), 'invalidProperties' + containerName + docsUrl);
+            warnOnce(`to see all the valid ${containerName} properties please check: ${docsUrl}`);
         }
     }
 
     private deprecatedProperties: DeprecatedReference<GridOptions> = {
-        rememberGroupStateWhenNewData: { version: '24', message: 'Now that transaction updates are possible and they keep group state, this feature is no longer needed.' },
-
         serverSideFilteringAlwaysResets: { version: '28.0', newProp: 'serverSideOnlyRefreshFilteredGroups', copyToNewProp: true, },
         serverSideSortingAlwaysResets: { version: '28.0', newProp: 'serverSideSortAllLevels', copyToNewProp: true, },
         suppressReactUi: { version: '28', message: 'The legacy React rendering engine is deprecated and will be removed in the next major version of the grid.' },
@@ -218,6 +230,9 @@ export class GridOptionsValidator {
         excludeHiddenColumnsFromQuickFilter: { version: '30', message: 'Hidden columns are now excluded from the Quick Filter by default. This can be toggled using `includeHiddenColumnsInQuickFilter`.' },
         enterMovesDown: { version: '30', newProp: 'enterNavigatesVertically', copyToNewProp: true },
         enterMovesDownAfterEdit: { version: '30', newProp: 'enterNavigatesVerticallyAfterEdit', copyToNewProp: true },
+        suppressParentsInRowNodes: { version: '30.2', message: 'Using suppressParentsInRowNodes is no longer recommended. To serialize nodes it is now recommended to instead remove the parent node reference before serialization.'},
+
+        advancedFilterModel: { version: '31', message: 'Use `initialState.filter.advancedFilterModel` instead.'},
     }
 
     private checkForDeprecated() {

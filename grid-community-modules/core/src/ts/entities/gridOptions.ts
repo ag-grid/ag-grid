@@ -3,6 +3,7 @@
  ************************************************************************************************/
 import { ColumnApi } from "../columns/columnApi";
 import {
+    AdvancedFilterBuilderVisibleChangedEvent,
     AsyncTransactionsFlushed, BodyScrollEndEvent, BodyScrollEvent, CellClickedEvent,
     CellContextMenuEvent,
     CellDoubleClickedEvent,
@@ -39,7 +40,10 @@ import {
     DragStoppedEvent,
     ExpandCollapseAllEvent, FilterChangedEvent,
     FilterModifiedEvent, FilterOpenedEvent, FirstDataRenderedEvent, FullWidthCellKeyDownEvent, GridColumnsChangedEvent,
-    GridReadyEvent, GridSizeChangedEvent, ModelUpdatedEvent,
+    GridReadyEvent,
+    GridPreDestroyedEvent,
+    GridSizeChangedEvent,
+    ModelUpdatedEvent,
     NewColumnsLoadedEvent,
     PaginationChangedEvent,
     PasteEndEvent,
@@ -71,7 +75,8 @@ import {
     UndoStartedEvent,
     ViewportChangedEvent,
     VirtualColumnsChangedEvent,
-    VirtualRowRemovedEvent
+    VirtualRowRemovedEvent,
+    StateUpdatedEvent
 } from "../events";
 import { GridApi } from "../gridApi";
 import { HeaderPosition } from "../headerRendering/common/headerPosition";
@@ -92,11 +97,14 @@ import { IRowDragItem } from "../rendering/row/rowDragComp";
 import { ILoadingCellRendererParams } from "../rendering/cellRenderers/loadingCellRenderer";
 import { CellPosition } from "./cellPositionUtils";
 import { ColDef, ColGroupDef, IAggFunc, SortDirection } from "./colDef";
-import { FillOperationParams, GetChartToolbarItemsParams, GetContextMenuItemsParams, GetGroupRowAggParams, GetLocaleTextParams, GetMainMenuItemsParams, GetRowIdParams, GetServerSideGroupLevelParamsParams, InitialGroupOrderComparatorParams, IsApplyServerSideTransactionParams, IsExternalFilterPresentParams, IsFullWidthRowParams, IsGroupOpenByDefaultParams, IsServerSideGroupOpenByDefaultParams, NavigateToNextCellParams, NavigateToNextHeaderParams, PaginationNumberFormatterParams, PostProcessPopupParams, PostSortRowsParams, ProcessDataFromClipboardParams, ProcessRowParams, RowHeightParams, SendToClipboardParams, TabToNextCellParams, TabToNextHeaderParams, GetGroupAggFilteringParams } from "../interfaces/iCallbackParams";
+import { FillOperationParams, GetChartToolbarItemsParams, GetContextMenuItemsParams, GetGroupRowAggParams, GetLocaleTextParams, GetMainMenuItemsParams, GetRowIdParams, GetServerSideGroupLevelParamsParams, InitialGroupOrderComparatorParams, IsApplyServerSideTransactionParams, IsExternalFilterPresentParams, IsFullWidthRowParams, IsGroupOpenByDefaultParams, IsServerSideGroupOpenByDefaultParams, NavigateToNextCellParams, NavigateToNextHeaderParams, PaginationNumberFormatterParams, PostProcessPopupParams, PostSortRowsParams, ProcessDataFromClipboardParams, ProcessRowParams, RowHeightParams, SendToClipboardParams, TabToNextCellParams, TabToNextHeaderParams, GetGroupAggFilteringParams, GetGroupIncludeFooterParams } from "../interfaces/iCallbackParams";
 import { SideBarDef } from "../interfaces/iSideBar";
 import { IRowNode } from "../interfaces/iRowNode";
 import { DataTypeDefinition } from "./dataType";
 import { AdvancedFilterModel } from "../interfaces/advancedFilterModel";
+import { IAdvancedFilterBuilderParams } from "../interfaces/iAdvancedFilterBuilderParams";
+import { AlignedGrid } from "../interfaces/iAlignedGrid";
+import { GridState } from "../interfaces/gridState";
 
 export interface GridOptions<TData = any> {
 
@@ -241,11 +249,6 @@ export interface GridOptions<TData = any> {
     /** A map of component names to components. */
     components?: { [p: string]: any; };
 
-    /** @deprecated Set to true to enable the experimental React UI. Works with React framework only.
-     * It is planned the next major release of the grid will drop support of the legacy React engine,
-     * hence this property is deprecated as will be removed in the next major release. */
-    suppressReactUi?: boolean;
-
     // *** Editing *** //
     /** Set to `'fullRow'` to enable Full Row Editing. Otherwise leave blank to edit one cell at a time. */
     editType?: 'fullRow';
@@ -313,11 +316,15 @@ export interface GridOptions<TData = any> {
      * Default: `false`
      */
     includeHiddenColumnsInQuickFilter?: boolean;
+    /** Changes how the Quick Filter splits the Quick Filter text into search terms. */
+    quickFilterParser?: (quickFilter: string) => string[];
+    /** Changes the matching logic for whether a row passes the Quick Filter. */
+    quickFilterMatcher?: (quickFilterParts: string[], rowQuickFilterAggregateText: string) => boolean;
     /** Set to `true` to override the default tree data filtering behaviour to instead exclude child nodes from filter results. Default: `false` */
     excludeChildrenWhenTreeDataFiltering?: boolean;
     /** Set to true to enable the Advanced Filter. Default: `false` */
     enableAdvancedFilter?: boolean;
-    /** Allows the state of the Advanced Filter to be set before the grid is loaded. */
+    /** @deprecated As of v31, use `initialState.filter.advancedFilterModel` instead. */
     advancedFilterModel?: AdvancedFilterModel | null;
     /**
      * Hidden columns are excluded from the Advanced Filter by default.
@@ -330,6 +337,8 @@ export interface GridOptions<TData = any> {
      * Set to `null` or `undefined` to appear inside the grid.
      */
     advancedFilterParent?: HTMLElement | null;
+    /** Customise the parameters passed to the Advanced Filter Builder. */
+    advancedFilterBuilderParams?: IAdvancedFilterBuilderParams;
 
     // *** Integrated Charts *** //
     /** Set to `true` to Enable Charts. Default: `false` */
@@ -391,8 +400,12 @@ export interface GridOptions<TData = any> {
     // changeable, but no immediate impact
     /** Provides a context object that is provided to different callbacks the grid uses. Used for passing additional information to the callbacks by your application. */
     context?: any;
-    /** A list of grids to treat as Aligned Grids. If grids are aligned then the columns and horizontal scrolling will be kept in sync. */
-    alignedGrids?: { api?: GridApi | null, columnApi?: ColumnApi | null }[];
+    /** 
+     * A list of grids to treat as Aligned Grids. 
+     * Provide a list if the grids / apis already exist or return via a callback to allow the aligned grids to be retrieved asynchronously.
+     * If grids are aligned then the columns and horizontal scrolling will be kept in sync.
+     */
+    alignedGrids?: AlignedGrid[] | (() => AlignedGrid[]);
     /** Change this value to set the tabIndex order of the Grid within your application. Default: `0` */
     tabIndex?: number;
     /**
@@ -408,7 +421,7 @@ export interface GridOptions<TData = any> {
     /** Set to `true` to allow cell expressions. Default: `false` */
     enableCellExpressions?: boolean;
     /**
-     * If `true`, row nodes do not have their parents set.
+     * @deprecated v30.2 If `true`, row nodes do not have their parents set.
      * The grid doesn't use the parent reference, but it is included to help the client code navigate the node tree if it wants by providing bi-direction navigation up and down the tree.
      * If this is a problem (e.g. if you need to convert the tree to JSON, which does not allow cyclic dependencies) then set this to `true`.
      * Default: `false`
@@ -595,6 +608,8 @@ export interface GridOptions<TData = any> {
     groupMaintainOrder?: boolean;
     /** When `true`, if you select a group, the children of the group will also be selected. Default: `false` */
     groupSelectsChildren?: boolean;
+    /** If grouping, locks the group settings of a number of columns, e.g. `0` for no group locking. `1` for first group column locked, `-1` for all group columns locked. Default: `0` */
+    groupLockGroupColumns?: number;
     /** Set to determine whether filters should be applied on aggregated group values. Default: `false` */
     groupAggFiltering?: boolean | IsRowFilterable<TData>;
     /**
@@ -602,9 +617,10 @@ export interface GridOptions<TData = any> {
      * If `true`, then by default, the footer will contain aggregate data (if any) when shown and the header will be blank.
      * When closed, the header will contain the aggregate data regardless of this setting (as the footer is hidden anyway).
      * This is handy for 'total' rows, that are displayed below the data when the group is open, and alongside the group when it is closed.
+     * If a callback function is provided, it can used to select which groups will have a footer added. 
      * Default: `false`
      */
-    groupIncludeFooter?: boolean;
+    groupIncludeFooter?: boolean | UseGroupFooter<TData>;
     /** Set to `true` to show a 'grand total' group footer across all groups. Default: `false` */
     groupIncludeTotalFooter?: boolean;
     /** If `true`, and showing footer, aggregate data will always be displayed at both the header and footer levels. This stops the possibly undesirable behaviour of the header details 'jumping' to the footer on expand. Default: `false` */
@@ -641,9 +657,6 @@ export interface GridOptions<TData = any> {
 
     /** Set to `true` prevent Group Rows from sticking to the top of the grid. Default: `false` */
     suppressGroupRowsSticky?: boolean;
-
-    /** @deprecated v24 - no longer needed, transaction updates keep group state */
-    rememberGroupStateWhenNewData?: boolean;
 
     // *** Row Pinning *** //
     /** Data to be displayed as pinned top rows in the grid. */
@@ -787,7 +800,7 @@ export interface GridOptions<TData = any> {
     /**
      * Set to `true` to be able to select the text within cells.
      *
-     * **Note:** When this is set to `true`, the clipboard service is disabled.
+     * **Note:** When this is set to `true`, the clipboard service is disabled and only selected text is copied.
      * Default: `false`
      */
     enableCellTextSelection?: boolean;
@@ -845,6 +858,9 @@ export interface GridOptions<TData = any> {
     /** @deprecated v29.2 */
     functionsPassive?: boolean;
     enableGroupEdit?: boolean;
+
+    /** Initial state for the grid. Only read once on initialization. Can be used in conjunction with `api.getState()` to save and restore grid state. */
+    initialState?: GridState;
 
     // *****************************************************************************************************
     // If you change the callbacks on this interface, you must also update PropertyKeys to be consistent. *
@@ -1020,7 +1036,7 @@ export interface GridOptions<TData = any> {
     onDisplayedColumnsChanged?(event: DisplayedColumnsChangedEvent<TData>): void;
     /** The list of rendered columns changed (only columns in the visible scrolled viewport are rendered by default). */
     onVirtualColumnsChanged?(event: VirtualColumnsChangedEvent<TData>): void;
-    /** Shotgun - gets called when either a) new columns are set or b) `columnApi.applyColumnState()` is used, so everything has changed. */
+    /** Shotgun - gets called when either a) new columns are set or b) `api.applyColumnState()` is used, so everything has changed. */
     onColumnEverythingChanged?(event: ColumnEverythingChangedEvent<TData>): void;
 
     // *** Components *** //
@@ -1069,6 +1085,8 @@ export interface GridOptions<TData = any> {
     onFilterChanged?(event: FilterChangedEvent<TData>): void;
     /** Filter was modified but not applied. Used when filters have 'Apply' buttons. */
     onFilterModified?(event: FilterModifiedEvent<TData>): void;
+    /** Advanced Filter Builder visibility has changed (opened or closed). */
+    onAdvancedFilterBuilderVisibleChanged?(event: AdvancedFilterBuilderVisibleChangedEvent<TData>): void;
 
     // *** Integrated Charts *** //
     /** A chart has been created. */
@@ -1087,6 +1105,8 @@ export interface GridOptions<TData = any> {
     // *** Miscellaneous *** //
     /** The grid has initialised and is ready for most api calls, but may not be fully rendered yet  */
     onGridReady?(event: GridReadyEvent<TData>): void;
+    /** Invoked immediately before the grid is destroyed. This is useful for cleanup logic that needs to run before the grid is torn down. */
+    onGridPreDestroyed?(event: GridPreDestroyedEvent<TData>): void;
     /** Fired the first time data is rendered into the grid. Use this event if you want to auto resize columns based on their contents */
     onFirstDataRendered?(event: FirstDataRenderedEvent<TData>): void;
     /** The size of the grid `div` has changed. In other words, the grid was resized. */
@@ -1105,6 +1125,8 @@ export interface GridOptions<TData = any> {
     onDragStarted?(event: DragStartedEvent<TData>): void;
     /** When dragging stops. This could be any action that uses the grid's Drag and Drop service, e.g. Column Moving, Column Resizing, Range Selection, Fill Handle, etc. */
     onDragStopped?(event: DragStoppedEvent<TData>): void;
+    /** Grid state has been updated. */
+    onStateUpdated?(event: StateUpdatedEvent<TData>): void;
 
     // *** Pagination *** //
     /**
@@ -1127,7 +1149,7 @@ export interface GridOptions<TData = any> {
     onRowDragEnd?(event: RowDragEvent<TData>): void;
 
     // *** Row Grouping *** //
-    /** A row group column was added or removed. */
+    /** A row group column was added, removed or reordered. */
     onColumnRowGroupChanged?(event: ColumnRowGroupChangedEvent<TData>): void;
     /** A row group was opened or closed. */
     onRowGroupOpened?(event: RowGroupOpenedEvent<TData>): void;
@@ -1141,7 +1163,7 @@ export interface GridOptions<TData = any> {
     // *** Row Model: Client Side *** //
     /** @deprecated v28 No longer fired, use onRowDataUpdated instead */
     onRowDataChanged?(event: RowDataChangedEvent<TData>): void;
-    /** The client has updated data for the grid by either a) setting new Row Data or b) Applying a Row Transaction. */
+    /** Client-Side Row Model only. The client has updated data for the grid by either a) setting new Row Data or b) Applying a Row Transaction. */
     onRowDataUpdated?(event: RowDataUpdatedEvent<TData>): void;
     /** Async transactions have been applied. Contains a list of all transaction results. */
     onAsyncTransactionsFlushed?(event: AsyncTransactionsFlushed<TData>): void;
@@ -1195,11 +1217,13 @@ export interface GridOptions<TData = any> {
     onColumnAggFuncChangeRequest?(event: ColumnAggFuncChangeRequestEvent<TData>): void;
 
     /**
+     * @deprecated v31 The `api` should be obtained via framework component / onGridReady or as returned from `createGrid`.
      * The Grid Api for interacting with the grid.
      * Set by the grid on init, set to null on destroy.
      */
     api?: GridApi<TData> | null;
     /**
+     * @deprecated v31 - The `columnApi` has been deprecated and all the methods are now present of the `api`.
      * The Column Api for interacting with the grid columns.
      * Set by the grid on init, set to null on destroy.
      */
@@ -1220,6 +1244,11 @@ export interface IsServerSideGroup {
 export interface IsRowFilterable<TData = any> {
     (params: GetGroupAggFilteringParams<TData>): boolean;
 }
+
+export interface UseGroupFooter<TData = any> {
+    (params: GetGroupIncludeFooterParams<TData>): boolean;
+}
+
 export interface IsApplyServerSideTransaction {
     (params: IsApplyServerSideTransactionParams): boolean;
 }

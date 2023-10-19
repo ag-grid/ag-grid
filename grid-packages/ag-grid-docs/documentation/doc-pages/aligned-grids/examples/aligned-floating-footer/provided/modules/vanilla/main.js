@@ -33,6 +33,8 @@ const dataForBottomGrid = [
 ];
 
 // this is the grid options for the top grid
+let topApi;
+let bottomApi;
 const gridOptionsTop = {
     defaultColDef: {
         editable: true,
@@ -47,7 +49,7 @@ const gridOptionsTop = {
     // debug: true,
     // don't show the horizontal scrollbar on the top grid
     suppressHorizontalScroll: true,
-    alignedGrids: []
+    alignedGrids: () => [bottomApi],
 };
 
 // this is the grid options for the bottom grid
@@ -67,24 +69,21 @@ const gridOptionsBottom = {
     rowClass: 'bold-row',
     // hide the header on the bottom grid
     headerHeight: 0,
-    alignedGrids: []
+    alignedGrids: () => [topApi],
 };
-
-gridOptionsTop.alignedGrids.push(gridOptionsBottom);
-gridOptionsBottom.alignedGrids.push(gridOptionsTop);
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', () => {
     const gridDivTop = document.querySelector('#myGridTop');
-    new agGrid.Grid(gridDivTop, gridOptionsTop);
+    topApi = agGrid.createGrid(gridDivTop, gridOptionsTop);
 
     const gridDivBottom = document.querySelector('#myGridBottom');
-    new agGrid.Grid(gridDivBottom, gridOptionsBottom);
+    bottomApi = agGrid.createGrid(gridDivBottom, gridOptionsBottom);
 
     fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
         .then(response => response.json())
         .then(data => {
-            gridOptionsTop.api.setRowData(data);
-            gridOptionsTop.columnApi.autoSizeAllColumns();
+            topApi.setRowData(data);
+            topApi.autoSizeAllColumns();
         });
 });

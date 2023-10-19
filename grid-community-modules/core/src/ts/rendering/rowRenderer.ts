@@ -26,7 +26,7 @@ import { PinnedRowModel } from "../pinnedRowModel/pinnedRowModel";
 import { exists } from "../utils/generic";
 import { getAllValuesInObject, iterateObject } from "../utils/object";
 import { createArrayOfNumbers } from "../utils/number";
-import { doOnce, executeInAWhile } from "../utils/function";
+import { warnOnce, executeInAWhile } from "../utils/function";
 import { CtrlsService } from "../ctrlsService";
 import { GridBodyCtrl } from "../gridBodyComp/gridBodyCtrl";
 import { CellCtrl } from "./cell/cellCtrl";
@@ -136,8 +136,17 @@ export class RowRenderer extends BeanStub {
         this.addManagedListener(this.eventService, Events.EVENT_BODY_SCROLL, this.onBodyScroll.bind(this));
         this.addManagedListener(this.eventService, Events.EVENT_BODY_HEIGHT_CHANGED, this.redraw.bind(this));
 
-        this.addManagedPropertyListener('domLayout', this.onDomLayoutChanged.bind(this));
-        this.addManagedPropertyListener('rowClass', this.redrawRows.bind(this));
+        this.addManagedPropertyListeners(['domLayout', 'embedFullWidthRows'], this.onDomLayoutChanged.bind(this));
+        this.addManagedPropertyListeners(['suppressMaxRenderedRowRestriction', 'rowBuffer'], this.redraw.bind(this));
+        this.addManagedPropertyListeners([
+            'rowClass', 'suppressCellFocus', 'getBusinessKeyForNode',
+            'fullWidthCellRenderer', 'fullWidthCellRendererParams', 'rowClassRules',
+
+            'groupRowRenderer', 'groupRowRendererParams', // maybe only needs to refresh FW rows...
+            'loadingCellRenderer', 'loadingCellRendererParams',
+            'detailCellRenderer', 'detailCellRendererParams',
+        ], this.redrawRows.bind(this));
+        this.addManagedPropertyListeners(['enableRangeSelection', 'enableCellTextSelection'], this.refreshCells.bind(this));
 
         if (this.gridOptionsService.isGroupRowsSticky()) {
             const rowModelType = this.rowModel.getType();
@@ -239,23 +248,7 @@ export class RowRenderer extends BeanStub {
             }
         });
 
-        const rangeSelectionEnabled = this.gridOptionsService.isEnableRangeSelection();
-        if (rangeSelectionEnabled) {
-
-            this.addManagedListener(this.eventService, Events.EVENT_RANGE_SELECTION_CHANGED, () => {
-                this.getAllCellCtrls().forEach(cellCtrl => cellCtrl.onRangeSelectionChanged());
-            });
-            this.addManagedListener(this.eventService, Events.EVENT_COLUMN_MOVED, () => {
-                this.getAllCellCtrls().forEach(cellCtrl => cellCtrl.updateRangeBordersIfRangeCount());
-            });
-            this.addManagedListener(this.eventService, Events.EVENT_COLUMN_PINNED, () => {
-                this.getAllCellCtrls().forEach(cellCtrl => cellCtrl.updateRangeBordersIfRangeCount());
-            });
-            this.addManagedListener(this.eventService, Events.EVENT_COLUMN_VISIBLE, () => {
-                this.getAllCellCtrls().forEach(cellCtrl => cellCtrl.updateRangeBordersIfRangeCount());
-            });
-
-        }
+        this.setupRangeSelectionListeners();
 
         // add listeners to the grid columns
         this.refreshListenersToColumnsForCellComps();
@@ -263,6 +256,43 @@ export class RowRenderer extends BeanStub {
         this.addManagedListener(this.eventService, Events.EVENT_GRID_COLUMNS_CHANGED, this.refreshListenersToColumnsForCellComps.bind(this));
 
         this.addDestroyFunc(this.removeGridColumnListeners.bind(this));
+    }
+
+    private setupRangeSelectionListeners = () => {
+        const onRangeSelectionChanged = () => {
+            this.getAllCellCtrls().forEach(cellCtrl => cellCtrl.onRangeSelectionChanged());
+        };
+
+        const onColumnMovedPinnedVisible = () => {
+            this.getAllCellCtrls().forEach(cellCtrl => cellCtrl.updateRangeBordersIfRangeCount());
+        };
+
+        const addRangeSelectionListeners = () => {
+            this.eventService.addEventListener(Events.EVENT_RANGE_SELECTION_CHANGED, onRangeSelectionChanged);
+            this.eventService.addEventListener(Events.EVENT_COLUMN_MOVED, onColumnMovedPinnedVisible);
+            this.eventService.addEventListener(Events.EVENT_COLUMN_PINNED, onColumnMovedPinnedVisible);
+            this.eventService.addEventListener(Events.EVENT_COLUMN_VISIBLE, onColumnMovedPinnedVisible);
+        };
+
+        const removeRangeSelectionListeners = () => {
+            this.eventService.removeEventListener(Events.EVENT_RANGE_SELECTION_CHANGED, onRangeSelectionChanged);
+            this.eventService.removeEventListener(Events.EVENT_COLUMN_MOVED, onColumnMovedPinnedVisible);
+            this.eventService.removeEventListener(Events.EVENT_COLUMN_PINNED, onColumnMovedPinnedVisible);
+            this.eventService.removeEventListener(Events.EVENT_COLUMN_VISIBLE, onColumnMovedPinnedVisible);
+        };
+        this.addDestroyFunc(() => removeRangeSelectionListeners());
+        this.addManagedPropertyListener('enableRangeSelection', (params) => {
+            const isEnabled = params.currentValue;
+            if (isEnabled) {
+                addRangeSelectionListeners();
+            } else {
+                removeRangeSelectionListeners();
+            }
+        });
+        const rangeSelectionEnabled = this.gridOptionsService.is('enableRangeSelection');
+        if (rangeSelectionEnabled) {
+            addRangeSelectionListeners();
+        }
     }
 
     // executes all functions in destroyFuncsForColumnListeners and then clears the list
@@ -279,8 +309,6 @@ export class RowRenderer extends BeanStub {
         this.removeGridColumnListeners();
 
         const cols = this.columnModel.getAllGridColumns();
-
-        if (!cols) { return; }
 
         cols.forEach(col => {
             const forEachCellWithThisCol = (callback: (cellCtrl: CellCtrl) => void) => {
@@ -1163,7 +1191,7 @@ export class RowRenderer extends BeanStub {
 
         if (typeof rowBuffer === 'number') {
             if (rowBuffer < 0) {
-                doOnce(() => console.warn(`AG Grid: rowBuffer should not be negative`), 'warn rowBuffer negative');
+                warnOnce(`rowBuffer should not be negative`);
                 rowBuffer = 0;
                 this.gridOptionsService.set('rowBuffer', 0);
             }

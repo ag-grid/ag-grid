@@ -78,3 +78,26 @@ $colorFlowBreakpoint: 1050px;
         opacity: calc(1 / 3);
     }
 }
+
+.colorScale {
+    > div {
+        display: flex;
+        align-items: center;
+        width: 100%;
+        border-radius: 4px;
+        overflow: hidden;
+    }
+
+    > div:first-of-type span {
+        min-height: 2em;
+    }
+
+    > div:last-child span {
+        margin: 2px 0;
+        text-align: center;
+    }
+
+    span {
+        width: 100%;
+    }
+}

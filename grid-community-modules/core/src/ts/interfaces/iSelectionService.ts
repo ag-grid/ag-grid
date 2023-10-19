@@ -1,11 +1,11 @@
 import { RowNode } from "../entities/rowNode";
 import { SelectionEventSourceType } from "../events";
 import { ChangedPath } from "../utils/changedPath";
-import { IServerSideGroupSelectionState, IServerSideSelectionState } from "./iServerSideSelection";
+import { ServerSideRowGroupSelectionState, ServerSideRowSelectionState } from "./selectionState";
 
 export interface ISelectionService {
-    getServerSideSelectionState(): IServerSideSelectionState | IServerSideGroupSelectionState | null;
-    setServerSideSelectionState(state: IServerSideSelectionState | IServerSideGroupSelectionState): void;
+    getSelectionState(): string[] | ServerSideRowSelectionState | ServerSideRowGroupSelectionState | null;
+    setSelectionState(state: string[] | ServerSideRowSelectionState | ServerSideRowGroupSelectionState, source: SelectionEventSourceType): void;
     getSelectedNodes(): RowNode<any>[];
     getSelectedRows(): any[];
     getSelectionCount(): number;
@@ -13,7 +13,7 @@ export interface ISelectionService {
     filterFromSelection(predicate: (node: RowNode) => boolean): void;
     updateGroupsFromChildrenSelections(source: SelectionEventSourceType, changedPath?: ChangedPath): boolean;
     syncInRowNode(rowNode: RowNode, oldNode: RowNode | null): void;
-    reset(): void;
+    reset(source: SelectionEventSourceType): void;
     getBestCostNodeSelection(): RowNode[] | undefined;
     isEmpty(): boolean;
     /**

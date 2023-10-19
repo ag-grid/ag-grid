@@ -5,6 +5,8 @@ import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-mod
 
 import "@ag-grid-community/styles/ag-grid.css";
 import "@ag-grid-community/styles/ag-theme-alpine.css";
+import './styles.css';
+
 
 import { ModuleRegistry } from '@ag-grid-community/core';
 // Register the required feature modules with the Grid
@@ -69,8 +71,8 @@ const GridExample = () => {
 
     const onFirstDataRendered = (params) => {
         // mix up some columns
-        params.columnApi.moveColumnByIndex(11, 4);
-        params.columnApi.moveColumnByIndex(11, 4);
+        params.api.moveColumnByIndex(11, 4);
+        params.api.moveColumnByIndex(11, 4);
     }
 
     return (
@@ -83,7 +85,7 @@ const GridExample = () => {
                     defaultColDef={defaultColDef}
                     onGridReady={onGridReady}
                     onFirstDataRendered={onFirstDataRendered}
-                    alignedGrids={bottomGridRef.current ? [bottomGridRef.current] : undefined}
+                    alignedGrids={[bottomGridRef]}
                 />
             </div>
 
@@ -95,7 +97,7 @@ const GridExample = () => {
                     rowData={rowData}
                     columnDefs={columnDefs}
                     defaultColDef={defaultColDef}
-                    alignedGrids={topGridRef.current ? [topGridRef.current] : undefined}
+                    alignedGrids={[topGridRef]}
                 />
             </div>
         </div>

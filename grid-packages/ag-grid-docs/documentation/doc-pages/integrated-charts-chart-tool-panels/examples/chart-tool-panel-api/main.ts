@@ -1,5 +1,16 @@
-import { ChartCreated, CreateRangeChartParams, FirstDataRenderedEvent, ChartToolPanelName, Grid, GridOptions } from '@ag-grid-community/core';
+import {
+  ChartCreated,
+  CreateRangeChartParams,
+  FirstDataRenderedEvent,
+  ChartToolPanelName,
+  GridApi,
+  createGrid,
+  GridOptions,
+} from '@ag-grid-community/core';
 import { getData } from "./data";
+
+
+let gridApi: GridApi;
 
 
 const gridOptions: GridOptions = {
@@ -58,7 +69,7 @@ function openChartToolPanel(panel?: ChartToolPanelName) {
     return
   }
 
-  gridOptions.api!.openChartToolPanel({
+  gridApi!.openChartToolPanel({
     chartId,
     panel
   })
@@ -69,11 +80,11 @@ function closeChartToolPanel() {
     return
   }
 
-  gridOptions.api!.closeChartToolPanel({ chartId })
+  gridApi!.closeChartToolPanel({ chartId })
 }
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
   var gridDiv = document.querySelector<HTMLElement>('#myGrid')!
-  new Grid(gridDiv, gridOptions)
+  gridApi = createGrid(gridDiv, gridOptions);
 })

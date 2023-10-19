@@ -6,7 +6,7 @@ import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-mod
 import "@ag-grid-community/styles/ag-grid.css";
 import "@ag-grid-community/styles/ag-theme-alpine.css";
 
-import { ModuleRegistry, GridOptions, ColDef, GridReadyEvent } from '@ag-grid-community/core';
+import { ModuleRegistry, ColDef, GridReadyEvent } from '@ag-grid-community/core';
 // Register the required feature modules with the Grid
 ModuleRegistry.registerModules([ClientSideRowModelModule]);
 
@@ -70,7 +70,7 @@ const GridExample = () => {
             <div style={{ flex: '1 1 auto' }} >
                 <AgGridReact
                     ref={topGrid}
-                    alignedGrids={bottomGrid.current ? [bottomGrid.current] : undefined}
+                    alignedGrids={[bottomGrid]}
                     rowData={rowData}
                     defaultColDef={defaultColDef}
                     columnDefs={columnDefs}
@@ -82,7 +82,7 @@ const GridExample = () => {
             <div style={{ flex: 'none', height: '60px' }}>
                 <AgGridReact
                     ref={bottomGrid}
-                    alignedGrids={topGrid.current ? [topGrid.current] : undefined}
+                    alignedGrids={[topGrid]}
                     rowData={bottomData}
                     defaultColDef={defaultColDef}
                     columnDefs={columnDefs}

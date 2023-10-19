@@ -21,7 +21,18 @@ The example below demonstrates using the different buttons. It also demonstrates
 - The **Athlete** and **Age** columns have filters with Apply and Reset buttons, but different orders.
 - The **Country** column has a filter with Apply and Clear buttons.
 - The **Year** column has a filter with Apply and Cancel buttons.
-- The **Age** and **Year** columns have `closeOnApply` set to `true`, so the filter popup will be closed immediately when the filter is applied, reset or cancelled. Pressing <kbd>Enter</kbd> will also apply the filter and close the popup.
+- The **Age** and **Year** columns have `closeOnApply` set to `true`, so the filter popup will be closed immediately when the filter is applied or cancelled. Pressing <kbd>Enter</kbd> will also apply the filter and close the popup.
+- In the **Age** column, Reset will close the filter popup due to the presence of Apply button. 
+
+Note the expected behaviour when clicking the filter popup buttons:
+
+- Apply closes popup only when `closeOnApply` set to `true`.
+- Reset closes popup only when `closeOnApply` set to `true` and Apply button is present.
+- Cancel closes popup only when `closeOnApply `set to `true`.
+- Clear never closes popup.
+
+Note the following about filter events:
+
 - `onFilterOpened` is called when the filter is opened.
 - `onFilterModified` is called when the filter changes regardless of whether the Apply button is present.
 - `onFilterChanged` is called only after a new filter is applied.
@@ -41,13 +52,13 @@ Applying the model is then typically followed by calling `gridApi.onFilterChange
 
 <snippet>
 | // Get a reference to the 'name' filter instance
-| const filterInstance = gridOptions.api.getFilterInstance('name');
+| const filterInstance = api.getFilterInstance('name');
 | 
 | // Apply the model to ensure any changes in the UI or via API methods are recognised
 | filterInstance.applyModel();
 | 
 | // Tell grid to run filter operation again
-| gridOptions.api.onFilterChanged();
+| api.onFilterChanged();
 </snippet>
 
 If no call is made to `filterInstance.applyModel()` then the filter UI will show any changes that have been made, but they won't be reflected in the filter model and therefore won't be reflected in the filtering. This will appear as if the user never hit the Apply button (regardless of whether the Apply button is active or not).

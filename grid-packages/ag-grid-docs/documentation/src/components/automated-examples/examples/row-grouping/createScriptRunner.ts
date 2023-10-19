@@ -1,5 +1,5 @@
 import { Group } from '@tweenjs/tween.js';
-import { GridOptions } from 'ag-grid-community';
+import { GridApi } from 'ag-grid-community';
 import { Mouse } from '../../lib/createMouse';
 import { removeDragAndDropHandles } from '../../lib/scriptActions/removeDragAndDropHandles';
 import { ScriptDebugger } from '../../lib/scriptDebugger';
@@ -15,7 +15,7 @@ interface Params {
     getOverlay: () => HTMLElement;
     onStateChange?: (state: RunScriptState) => void;
     tweenGroup: Group;
-    gridOptions: GridOptions;
+    gridApi: GridApi;
     loop?: boolean;
     scriptDebugger?: ScriptDebugger;
     defaultEasing?: EasingFunction;
@@ -29,7 +29,7 @@ export function createScriptRunner({
     mouse,
     onStateChange,
     tweenGroup,
-    gridOptions,
+    gridApi,
     loop,
     scriptDebugger,
     defaultEasing,
@@ -48,7 +48,7 @@ export function createScriptRunner({
         getOverlay,
         mouse,
         script,
-        gridOptions,
+        gridApi,
         loop,
         tweenGroup,
         onStateChange: (state) => {

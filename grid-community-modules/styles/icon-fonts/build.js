@@ -61,6 +61,10 @@ const codepoints = {
     "tree-indeterminate": 0xf131,
     "tree-open": 0xf132,
     "unlinked": 0xf133,
+    "up": 0xf134,
+    "down": 0xf135,
+    "plus": 0xf136,
+    "minus": 0xf137,
 }
 
 

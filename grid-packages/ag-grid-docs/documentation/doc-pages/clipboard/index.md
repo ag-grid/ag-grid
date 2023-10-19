@@ -75,7 +75,7 @@ The below example has range selection, row selection and `suppressCopySingleCell
 
 <grid-example title='Copying Mixed Ranges & Rows' name='copy-mixed' type='generated' options='{ "enterprise": true, "modules": ["clientside", "menu", "range", "clipboard"] }'></grid-example>
 
-## Custom clipboard interaction
+## Custom Clipboard Interaction
 
 If you want to do the copy to clipboard yourself (i.e. not use the grid's clipboard interaction) then implement the callback `sendToClipboard(params)`. Use this if you are in a non-standard web container that has a bespoke API for interacting with the clipboard. The callback gets the data to go into the clipboard, it's your job to call the bespoke API.
 
@@ -176,7 +176,7 @@ The following example shows custom code to process the data from the clipboard:
 
 <grid-example title='Example Process Data' name='process-all' type='generated' options='{ "enterprise": true, "modules": ["clientside", "menu", "range", "clipboard"] }'></grid-example>
 
-### Pasting new rows at the bottom of the Grid
+### Pasting New Rows at the Bottom of the Grid
 
 By default, when pasting multiple rows near the last record shown in the grid, any rows exceeding the total number of rows shown in the grid will not be pasted.
 
@@ -205,13 +205,26 @@ The example below will show how to update cell value combining the `Clipboard` w
 
 By default, the grid will use `\t` (tab) as the field delimiter. This is to keep the copy / paste compatible with Excel. If you want another delimiter then you can set the property `gridOptions.clipboardDelimiter` to a value of your choosing.
 
-## Using the browser's text selection
+## Using the Browser's Text Selection
 
-The grid's selection and copy features replace the built-in browser behaviour for selecting and copying text. If you want to use the normal browser behaviour instead, you should set `enableCellTextSelection=true` in the gridOptions. It's important to mention that this config should be combined with `ensureDomOrder=true` also in the gridOptions.
+The grid's selection and copy features replace the built-in browser behaviour for selecting and copying text. If you want to use the normal browser behaviour instead, you should set `enableCellTextSelection=true` in the gridOptions. Note the following:
+
+* When `enableCellTextSelection=true`, pressing <kbd>CTRL</kbd>+<kbd>C</kbd> doesn’t copy the focused cell value, but only the selected text inside the grid cell. When using AG Grid Enterprise, the user can copy the entire cell value by right-clicking the grid cell to show the [context menu](/context-menu/#top) and clicking the any of the Copy menu items. 
+
+* When `enableCellTextSelection=true`, the option `ensureDomOrder=true` needs to be set for correct accessibility support. See [Ensure DOM Element order](/accessibility/#ensure-dom-element-order).
 
 <note>
 This is not an enterprise config and can be used at any time to enable cell text selection.
 </note>
+
+
+See this behavior shown in the example below:
+
+* Focus a grid cell and press <kbd>CTRL</kbd>+<kbd>C</kbd>. The cell value will not be copied because no text is selected.
+
+* Click a cell and drag across its value to select the text. Press <kbd>CTRL</kbd>+<kbd>C</kbd> and the value will be copied.
+
+* This sample is using AG Grid Community version, so the context menu is not available to copy the focused cell value. In AG Grid Enterprise the context menu will be available to copy the entire focused cell value without having to select it as text.
 
 <grid-example title='Using Browser text selection' name='cellTextSelection' type='generated'></grid-example>
 

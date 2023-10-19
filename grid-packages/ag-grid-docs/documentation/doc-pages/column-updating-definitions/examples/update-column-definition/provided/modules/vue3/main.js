@@ -37,7 +37,6 @@ const VueExample = {
         return {
             gridOptions: null,
             gridApi: null,
-            columnApi: null,
             defaultColDef: {
                 initialWidth: 100,
                 sortable: true,
@@ -53,8 +52,6 @@ const VueExample = {
         this.columnDefs = this.getColumnDefs();
     },
     mounted() {
-        this.gridApi = this.gridOptions.api;
-        this.gridColumnApi = this.gridOptions.columnApi;
     },
     methods: {
         setHeaderNames() {
@@ -102,6 +99,7 @@ const VueExample = {
             ];
         },
         onGridReady(params) {
+            this.gridApi = params.api;
             const updateData = (data) => {
                 this.rowData = data;
             };

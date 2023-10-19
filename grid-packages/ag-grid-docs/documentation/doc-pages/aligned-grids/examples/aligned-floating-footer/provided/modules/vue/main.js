@@ -14,6 +14,7 @@ const VueExample = {
     template: `
         <div style="height: 100%; display: flex; flex-direction: column" class="ag-theme-alpine">
             <ag-grid-vue style="flex: 1 1 auto;"
+                         ref="topGrid"
                          :gridOptions="topGridOptions"
                          @grid-ready="onGridReady"
                          @first-data-rendered="onFirstDataRendered"
@@ -21,6 +22,7 @@ const VueExample = {
                          :rowData="rowData"
             ></ag-grid-vue>
             <ag-grid-vue style="height: 60px; flex: none;"
+                         ref="bottomGrid"
                          :gridOptions="bottomGridOptions"
                          :headerHeight="0"
                          :columnDefs="columnDefs"
@@ -37,7 +39,6 @@ const VueExample = {
             topGridOptions: null,
             bottomGridOptions: null,
             gridApi: null,
-            columnApi: null,
             rowData: null,
             bottomData: null,
             columnDefs: null,
@@ -63,7 +64,7 @@ const VueExample = {
         ];
 
         this.topGridOptions = {
-            alignedGrids: [],
+            alignedGrids: () => [this.$refs.bottomGrid],
             defaultColDef: {
                 editable: true,
                 sortable: true,
@@ -75,7 +76,7 @@ const VueExample = {
             suppressHorizontalScroll: true
         };
         this.bottomGridOptions = {
-            alignedGrids: [],
+            alignedGrids: () => [this.$refs.topGrid],
             defaultColDef: {
                 editable: true,
                 sortable: true,
@@ -85,8 +86,6 @@ const VueExample = {
                 minWidth: 100
             }
         };
-        this.topGridOptions.alignedGrids.push(this.bottomGridOptions);
-        this.bottomGridOptions.alignedGrids.push(this.topGridOptions);
 
         this.columnDefs = [
             { field: 'athlete', width: 200, hide: !this.athleteVisible },
@@ -110,8 +109,7 @@ const VueExample = {
         ];
     },
     mounted() {
-        this.gridApi = this.topGridOptions.api;
-        this.gridColumnApi = this.topGridOptions.columnApi;
+        this.gridApi = this.$refs.topGrid.api;
     },
     methods: {
         onGridReady(params) {
@@ -133,7 +131,7 @@ const VueExample = {
         },
 
         onFirstDataRendered() {
-            this.gridColumnApi.autoSizeAllColumns();
+            this.gridApi.autoSizeAllColumns();
         }
     },
 };

@@ -1,8 +1,7 @@
-import { ColumnApi } from "../../../columns/columnApi";
 import { ColumnModel } from "../../../columns/columnModel";
 import { UserCompDetails } from "../../../components/framework/userComponentFactory";
 import { KeyCode } from '../../../constants/keyCode';
-import { Autowired } from "../../../context/context";
+import { Autowired, PreDestroy } from "../../../context/context";
 import {
     DragAndDropService,
     DragItem,
@@ -10,10 +9,9 @@ import {
     DragSourceType
 } from "../../../dragAndDrop/dragAndDropService";
 import { Column } from "../../../entities/column";
-import { ColumnEventType } from "../../../events";
+import { ColumnEventType, Events } from "../../../events";
 import { ColumnGroup } from "../../../entities/columnGroup";
 import { ProvidedColumnGroup } from "../../../entities/providedColumnGroup";
-import { GridApi } from "../../../gridApi";
 import { SetLeftFeature } from "../../../rendering/features/setLeftFeature";
 import { removeFromArray } from "../../../utils/array";
 import { ManagedFocusFeature } from "../../../widgets/managedFocusFeature";
@@ -24,7 +22,7 @@ import { CssClassApplier } from "../cssClassApplier";
 import { HoverFeature } from "../hoverFeature";
 import { GroupResizeFeature } from "./groupResizeFeature";
 import { GroupWidthFeature } from "./groupWidthFeature";
-import { IHeaderGroupParams } from "./headerGroupComp";
+import { IHeaderGroupComp, IHeaderGroupParams } from "./headerGroupComp";
 
 export interface IHeaderGroupCellComp extends IAbstractHeaderCellComp {
     addOrRemoveCssClass(cssClassName: string, on: boolean): void;
@@ -32,14 +30,13 @@ export interface IHeaderGroupCellComp extends IAbstractHeaderCellComp {
     setWidth(width: string): void;
     setAriaExpanded(expanded: 'true' | 'false' | undefined): void;
     setUserCompDetails(compDetails: UserCompDetails): void;
+    getUserCompInstance(): IHeaderGroupComp | undefined;
 }
 
 export class HeaderGroupCellCtrl extends AbstractHeaderCellCtrl {
 
     @Autowired('columnModel') private readonly columnModel: ColumnModel;
     @Autowired('dragAndDropService') private readonly dragAndDropService: DragAndDropService;
-    @Autowired('gridApi') private readonly gridApi: GridApi;
-    @Autowired('columnApi') private columnApi: ColumnApi;
 
     private columnGroup: ColumnGroup;
     private comp: IHeaderGroupCellComp;
@@ -47,6 +44,7 @@ export class HeaderGroupCellCtrl extends AbstractHeaderCellCtrl {
     private expandable: boolean;
     private displayName: string | null;
     private groupResizeFeature: GroupResizeFeature;
+    private dragSource: DragSource | null = null;
 
     constructor(columnGroup: ColumnGroup, parentRowCtrl: HeaderRowCtrl) {
         super(columnGroup, parentRowCtrl);
@@ -82,6 +80,8 @@ export class HeaderGroupCellCtrl extends AbstractHeaderCellCtrl {
                 onFocusIn: this.onFocusIn.bind(this)
             }
         ));
+
+        this.addManagedPropertyListener(Events.EVENT_SUPPRESS_COLUMN_MOVE_CHANGED, this.onSuppressColMoveChange);
     }
 
     public resizeLeafColumnsToFit(source: ColumnEventType): void {
@@ -91,20 +91,8 @@ export class HeaderGroupCellCtrl extends AbstractHeaderCellCtrl {
         this.groupResizeFeature.resizeLeafColumnsToFit(source);
     }
 
-    private setupUserComp(): void {
-
+    private createParams() {
         let displayName = this.displayName;
-
-        const params: IHeaderGroupParams = {
-            displayName: this.displayName!,
-            columnGroup: this.columnGroup,
-            setExpanded: (expanded: boolean) => {
-                this.columnModel.setColumnGroupOpened(this.columnGroup.getProvidedColumnGroup(), expanded, "gridInitializing");
-            },
-            api: this.gridApi,
-            columnApi: this.columnApi,
-            context: this.gridOptionsService.context
-        };
 
         if (!displayName) {
             let columnGroup = this.columnGroup;
@@ -130,8 +118,27 @@ export class HeaderGroupCellCtrl extends AbstractHeaderCellCtrl {
             }
         }
 
-        const compDetails = this.userComponentFactory.getHeaderGroupCompDetails(params)!;
+        const params: IHeaderGroupParams = {
+            displayName: displayName,
+            columnGroup: this.columnGroup,
+            setExpanded: (expanded: boolean) => {
+                this.columnModel.setColumnGroupOpened(
+                    this.columnGroup.getProvidedColumnGroup(),
+                    expanded,
+                    "gridInitializing"
+                );
+            },
+            api: this.gridOptionsService.api,
+            columnApi: this.gridOptionsService.columnApi,
+            context: this.gridOptionsService.context
+        };
 
+        return params;
+    }
+
+    private setupUserComp(): void {
+        const params = this.createParams();
+        const compDetails = this.userComponentFactory.getHeaderGroupCompDetails(params)!;
         this.comp.setUserCompDetails(compDetails);
     }
 
@@ -215,6 +222,25 @@ export class HeaderGroupCellCtrl extends AbstractHeaderCellCtrl {
         listener();
     }
 
+    @PreDestroy
+    private removeDragSource() {
+        if (this.dragSource) {
+            this.dragAndDropService.removeDragSource(this.dragSource);
+            this.dragSource = null;
+        }
+    }
+
+    private onSuppressColMoveChange = () => {
+        if (this.isSuppressMoving()) {
+            this.removeDragSource();
+        } else {
+            if (!this.dragSource) {
+                const eGui = this.getGui();
+                this.setDragSource(eGui);
+            }
+        }
+    }
+
     private onFocusIn(e: FocusEvent) {
         if (!this.eGui.contains(e.relatedTarget as HTMLElement)) {
             const rowIndex = this.getRowIndex();
@@ -240,19 +266,28 @@ export class HeaderGroupCellCtrl extends AbstractHeaderCellCtrl {
     // unlike columns, this will only get called once, as we don't react on props on column groups
     // (we will always destroy and recreate this comp if something changes)
     public setDragSource(eHeaderGroup: HTMLElement): void {
+        if (this.isSuppressMoving()) {
+            return;
+        }
 
-        if (this.isSuppressMoving()) { return; }
+        this.removeDragSource();
+        if (!eHeaderGroup) {
+            return;
+        }
 
         const allLeafColumns = this.columnGroup.getProvidedColumnGroup().getLeafColumns();
-        const hideColumnOnExit = !this.gridOptionsService.is('suppressDragLeaveHidesColumns');
-        const dragSource: DragSource = {
+        let hideColumnOnExit = !this.gridOptionsService.is('suppressDragLeaveHidesColumns');
+        this.dragSource = {
             type: DragSourceType.HeaderCell,
             eElement: eHeaderGroup,
-            defaultIconName: hideColumnOnExit ? DragAndDropService.ICON_HIDE : DragAndDropService.ICON_NOT_ALLOWED,
+            getDefaultIconName: () => hideColumnOnExit ? DragAndDropService.ICON_HIDE : DragAndDropService.ICON_NOT_ALLOWED,
             dragItemName: this.displayName,
             // we add in the original group leaf columns, so we move both visible and non-visible items
             getDragItem: this.getDragItemForGroup.bind(this),
-            onDragStarted: () => allLeafColumns.forEach(col => col.setMoving(true, "uiColumnDragged")),
+            onDragStarted: () => {
+                hideColumnOnExit = !this.gridOptionsService.is('suppressDragLeaveHidesColumns');
+                allLeafColumns.forEach(col => col.setMoving(true, "uiColumnDragged"));
+            },
             onDragStopped: () => allLeafColumns.forEach(col => col.setMoving(false, "uiColumnDragged")),
             onGridEnter: (dragItem) => {
                 if (hideColumnOnExit) {
@@ -268,8 +303,7 @@ export class HeaderGroupCellCtrl extends AbstractHeaderCellCtrl {
             },
         };
 
-        this.dragAndDropService.addDragSource(dragSource, true);
-        this.addDestroyFunc(() => this.dragAndDropService.removeDragSource(dragSource));
+        this.dragAndDropService.addDragSource(this.dragSource, true);
     }
 
     // when moving the columns, we want to move all the columns (contained within the DragItem) in this group in one go,

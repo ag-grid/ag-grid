@@ -247,19 +247,19 @@ $-theme-fonts: (
     $params: -param-default($params, --ag-background-color,            #fff);
     $params: -param-default($params, --ag-foreground-color,            #181d1f);
     $params: -param-default($params, --ag-subheader-background-color,  #fff);
-    $params: -param-default($params, --ag-alpine-active-color,         #2196f3);
-    $params: -param-default($params, --ag-range-selection-border-color, --ag-alpine-active-color);
+    $params: -param-default($params, --ag-active-color,                #2196f3);
+    $params: -param-default($params, --ag-range-selection-border-color, --ag-active-color);
 
     // Blended defaults
     $params: -param-default($params, --ag-subheader-toolbar-background-color, --ag-subheader-background-color, $alpha: 0.5);
-    $params: -param-default($params, --ag-selected-row-background-color,      --ag-alpine-active-color,        $alpha: 0.1);
-    $params: -param-default($params, --ag-row-hover-color,                    --ag-alpine-active-color,        $alpha: 0.1);
-    $params: -param-default($params, --ag-column-hover-color,                 --ag-alpine-active-color,        $alpha: 0.1);
+    $params: -param-default($params, --ag-selected-row-background-color,      --ag-active-color,               $alpha: 0.1);
+    $params: -param-default($params, --ag-row-hover-color,                    --ag-active-color,               $alpha: 0.1);
+    $params: -param-default($params, --ag-column-hover-color,                 --ag-active-color,               $alpha: 0.1);
     $params: -param-default($params, --ag-chip-background-color,              --ag-foreground-color,           $alpha: 0.07);
     $params: -param-default($params, --ag-input-disabled-background-color,    --ag-border-color,               $alpha: 0.15);
     $params: -param-default($params, --ag-input-disabled-border-color,        --ag-border-color,               $alpha: 0.3);
     $params: -param-default($params, --ag-disabled-foreground-color,          --ag-foreground-color,           $alpha: 0.5);
-    $params: -param-default($params, --ag-input-focus-border-color,           --ag-alpine-active-color,        $alpha: 0.4);
+    $params: -param-default($params, --ag-input-focus-border-color,           --ag-active-color,               $alpha: 0.4);
     @return $params;
 }
 
@@ -278,8 +278,8 @@ $-theme-fonts: (
     $params: -param-default($params, --ag-foreground-color,             #000);
     $params: -param-default($params, --ag-border-color,                 #bdc3c7);
     $params: -param-default($params, --ag-subheader-background-color,   #e2e9eb);
-    $params: -param-default($params, --ag-balham-active-color,          #0091ea);
-    $params: -param-default($params, --ag-range-selection-border-color, --ag-balham-active-color);
+    $params: -param-default($params, --ag-active-color,                 #0091ea);
+    $params: -param-default($params, --ag-range-selection-border-color, --ag-active-color);
 
     // Blended defaults
     $params: -param-default($params, --ag-secondary-foreground-color,         --ag-foreground-color,           $alpha: 0.54);
@@ -287,7 +287,7 @@ $-theme-fonts: (
     $params: -param-default($params, --ag-subheader-toolbar-background-color, --ag-subheader-background-color, $alpha: 0.5);
     $params: -param-default($params, --ag-row-border-color,                   --ag-border-color,               $alpha: 0.58);
     $params: -param-default($params, --ag-chip-background-color,              --ag-foreground-color,           $alpha: 0.1);
-    $params: -param-default($params, --ag-selected-row-background-color,      --ag-balham-active-color,        $alpha: 0.28);
+    $params: -param-default($params, --ag-selected-row-background-color,      --ag-active-color,               $alpha: 0.28);
     $params: -param-default($params, --ag-header-column-separator-color,      --ag-border-color,               $alpha: 0.5);
     @return $params;
 }
@@ -297,7 +297,7 @@ $-theme-fonts: (
     $params: -param-default($params, --ag-foreground-color,           #fff);
     $params: -param-default($params, --ag-border-color,               #424242);
     $params: -param-default($params, --ag-subheader-background-color, #000);
-    $params: -param-default($params, --ag-balham-active-color,        #00B0FF);
+    $params: -param-default($params, --ag-active-color,               #00B0FF);
 
     $params: -param-default($params, --ag-disabled-foreground-color, --ag-foreground-color, $alpha: 0.38);
     $params: -param-default($params, --ag-header-foreground-color,   --ag-foreground-color, $alpha: 0.64);
@@ -367,6 +367,7 @@ $-param-type-descriptions: (
 
 // params that are copied to --ag-param-name variables
 $-variable-param-types: (
+    --ag-active-color: "color",
     --ag-foreground-color: "color",
     --ag-data-color: "color",
     --ag-secondary-foreground-color: "color",
@@ -461,6 +462,7 @@ $-variable-param-types: (
     --ag-list-item-height: "length",
     --ag-column-select-indent-size: "length",
     --ag-set-filter-indent-size: "length",
+    --ag-advanced-filter-builder-indent-size: "length",
     --ag-row-group-indent-size: "length",
     --ag-filter-tool-panel-group-indent: "length",
     --ag-tab-min-width: "length",
@@ -471,10 +473,7 @@ $-variable-param-types: (
     --ag-card-radius: "length",
     --ag-card-shadow: "any",
     --ag-popup-shadow: "any",
-    --ag-alpine-active-color: "color",
-    --ag-balham-active-color: "color",
     --ag-material-primary-color: "color",
-    --ag-material-accent-color: "color",
     --ag-icon-font-family: "any"
 );
 

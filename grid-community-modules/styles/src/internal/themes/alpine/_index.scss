@@ -32,7 +32,7 @@
         flex: 1 1 auto;
     }
     .ag-tab-selected {
-        color: var(--ag-alpine-active-color);
+        color: var(--ag-active-color);
     }
 
     .ag-menu {
@@ -108,20 +108,20 @@
         -webkit-appearance: none;
         border-radius: var(--ag-border-radius);
         border: 1px solid;
-        border-color: var(--ag-alpine-active-color);
-        color: var(--ag-alpine-active-color);
+        border-color: var(--ag-active-color);
+        color: var(--ag-active-color);
         background-color: var(--ag-background-color);
         font-weight: 600;
         padding: var(--ag-grid-size) calc(var(--ag-grid-size) * 2);
 
         &:hover {
-            border-color: var(--ag-alpine-active-color);
+            border-color: var(--ag-active-color);
             background-color: var(--ag-row-hover-color);
         }
 
         &:active {
-            border-color: var(--ag-alpine-active-color);
-            background-color: var(--ag-alpine-active-color);
+            border-color: var(--ag-active-color);
+            background-color: var(--ag-active-color);
             color: var(--ag-background-color);
         }
 
@@ -193,7 +193,7 @@
     .ag-chart-menu-icon,
     .ag-chart-menu-close {
         &:hover {
-            color: var(--ag-alpine-active-color);
+            color: var(--ag-active-color);
         }
     }
 
@@ -202,7 +202,7 @@
     }
 
     .ag-chart-menu-close:hover .ag-icon {
-        border-color: var(--ag-alpine-active-color);
+        border-color: var(--ag-active-color);
     }
 
     .ag-chart-menu-close .ag-icon {
@@ -222,17 +222,13 @@
         ));
     }
 
-    .ag-filter-toolpanel-group-container {
-        @include ag.theme-rtl((padding-left: var(--ag-grid-size)));
-    }
-
     .ag-filter-toolpanel-instance-filter {
         border: none;
         background-color: var(--ag-control-panel-background-color);
         @include ag.theme-rtl((
             border-left: dashed 1px,
             border-left-color: var(--ag-border-color),
-            margin-left: calc(var(--ag-icon-size) * 0.5)
+            margin-left: calc(var(--ag-grid-size) * 2)
         ))
     }
 
@@ -242,7 +238,7 @@
     }
 
     .ag-layout-auto-height, .ag-layout-print {
-        .ag-center-cols-clipper, .ag-center-cols-container {
+        .ag-center-cols-viewport, .ag-center-cols-container {
             min-height: 150px;
         }
     }
@@ -252,7 +248,12 @@
     }
 
     .ag-date-time-list-page-entry-is-current {
-        background-color: var(--ag-alpine-active-color);
+        background-color: var(--ag-active-color);
+    }
+
+    .ag-advanced-filter-builder-button {
+        padding: var(--ag-grid-size);
+        font-weight: 600;
     }
 }
 

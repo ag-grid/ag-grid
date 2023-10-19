@@ -12,7 +12,7 @@ defined on the underlying columns directly in the group columns. When there are 
 column, a dropdown is provided to switch between the different column filters.
 
 <note>
-The Group Column Filter will not work with the [Group Rows](/grouping-group-rows/) display type as there are no group columns.
+The Group Column Filter will not work with the [Group Rows](../grouping-group-rows/) display type as there are no group columns.
 </note>
 
 ## Enabling Group Column Filter

@@ -1,5 +1,8 @@
-import { FirstDataRenderedEvent, Grid, GridApi, GridOptions } from '@ag-grid-community/core';
+import { FirstDataRenderedEvent, GridApi, createGrid, GridOptions } from '@ag-grid-community/core';
 import { getData } from "./data";
+
+
+let gridApi: GridApi;
 
 
 const gridOptions: GridOptions = {
@@ -29,8 +32,8 @@ function onFirstDataRendered(params: FirstDataRenderedEvent) {
   createBubbleChart(params.api)
 }
 
-function createColumnChart(gridApi: GridApi) {
-  gridApi.createCrossFilterChart({
+function createColumnChart(api: GridApi) {
+  api.createCrossFilterChart({
     chartType: 'column',
     cellRange: {
       columns: ['country', 'population'],
@@ -60,8 +63,8 @@ function createColumnChart(gridApi: GridApi) {
   })
 }
 
-function createBubbleChart(gridApi: GridApi) {
-  gridApi.createCrossFilterChart({
+function createBubbleChart(api: GridApi) {
+  api.createCrossFilterChart({
     chartType: 'bubble',
     cellRange: {
       columns: ['longitude', 'latitude', 'population'],
@@ -84,5 +87,5 @@ function createBubbleChart(gridApi: GridApi) {
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
   var gridDiv = document.querySelector<HTMLElement>('#myGrid')!
-  new Grid(gridDiv, gridOptions)
+  gridApi = createGrid(gridDiv, gridOptions);
 })

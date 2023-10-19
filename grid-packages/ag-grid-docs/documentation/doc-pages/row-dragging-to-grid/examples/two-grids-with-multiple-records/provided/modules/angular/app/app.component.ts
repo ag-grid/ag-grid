@@ -4,7 +4,7 @@ import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-mod
 
 import "@ag-grid-community/styles/ag-grid.css";
 import "@ag-grid-community/styles/ag-theme-alpine.css";
-import { ModuleRegistry, ColDef, ColumnApi, GetRowIdParams, GridApi, GridReadyEvent, ICellRendererParams } from '@ag-grid-community/core';
+import { ModuleRegistry, ColDef, GetRowIdParams, GridApi, GridReadyEvent, ICellRendererParams } from '@ag-grid-community/core';
 import { ICellRendererAngularComp } from '@ag-grid-community/angular';
 
 // Register the required feature modules with the Grid
@@ -99,7 +99,6 @@ export class AppComponent {
     leftRowData: any[] = [];
     rightRowData: any[] = []
     leftApi!: GridApi;
-    leftColumnApi!: ColumnApi;
     rightApi!: GridApi;
 
     defaultColDef: ColDef = {
@@ -195,7 +194,7 @@ export class AppComponent {
 
     checkboxSelectChange = () => {
         const checked = this.eSelectCheckbox.nativeElement.checked;
-        this.leftColumnApi.setColumnVisible('checkbox', checked);
+        this.leftApi.setColumnVisible('checkbox', checked);
         this.leftApi.setSuppressRowClickSelection(checked);
     }
 
@@ -204,7 +203,6 @@ export class AppComponent {
     onGridReady(params: GridReadyEvent, side: number) {
         if (side === 0) {
             this.leftApi = params.api
-            this.leftColumnApi = params.columnApi;
         }
 
         if (side === 1) {

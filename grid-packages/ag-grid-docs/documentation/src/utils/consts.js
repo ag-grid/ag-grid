@@ -9,10 +9,10 @@ export const agGridAngularVersion = require('../../../../../grid-community-modul
 export const agGridVueVersion = require('../../../../../grid-community-modules/vue/package.json').version;
 export const agGridVue3Version = require('../../../../../grid-community-modules/vue3/package.json').version;
 
-export const agChartsVersion = require('../../../../../charts-community-modules/ag-charts-community/package.json').version;
-export const agChartsReactVersion = require('../../../../../charts-community-modules/ag-charts-react/package.json').version;
-export const agChartsAngularVersion = require('../../../../../charts-community-modules/ag-charts-angular/package.json').version;
-export const agChartsVueVersion = require('../../../../../charts-community-modules/ag-charts-vue/package.json').version;
+export const agChartsVersion = require('../../../node_modules/ag-charts-community/package.json').version;
+export const agChartsReactVersion = require('../../../node_modules/ag-charts-react/package.json').version;
+export const agChartsAngularVersion = require('../../../node_modules/ag-charts-angular/package.json').version;
+export const agChartsVueVersion = require('../../../node_modules//ag-charts-vue/package.json').version;
 
 export const rootLocalPrefix = `//${isDevelopment() && !IS_SSR && window.location ? `${window.location.hostname}:8080` : process.env.GATSBY_HOST}${process.env.GATSBY_ROOT_DIRECTORY || ''}`;
 export const localPrefix = `//${isDevelopment() && !IS_SSR && window.location ? `${window.location.hostname}:8080` : process.env.GATSBY_HOST}${process.env.GATSBY_ROOT_DIRECTORY || ''}/dev`;

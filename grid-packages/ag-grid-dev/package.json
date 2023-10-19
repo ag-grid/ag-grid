@@ -1,6 +1,6 @@
 {
   "name": "ag-grid-dev",
-  "version": "30.1.0",
+  "version": "30.2.0",
   "description": "AG Grid Package Tests",
   "main": "index.js",
   "private": true,
@@ -18,7 +18,7 @@
   },
   "homepage": "https://github.com/seanlandsman/ag-grid-modules-test#readme",
   "devDependencies": {
-    "typescript": "~4.3.5"
+    "typescript": "~4.7.4"
   },
   "dependencies": {}
 }

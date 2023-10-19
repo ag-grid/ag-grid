@@ -8,12 +8,12 @@ export class SetHeightFeature extends BeanStub {
     @Autowired("rowContainerHeightService") private maxDivHeightScaler: RowContainerHeightService;
 
     private eContainer: HTMLElement;
-    private eWrapper: HTMLElement | undefined;
+    private eViewport: HTMLElement | undefined;
 
-    constructor(eContainer: HTMLElement, eWrapper?: HTMLElement) {
+    constructor(eContainer: HTMLElement, eViewport?: HTMLElement) {
         super();
         this.eContainer = eContainer;
-        this.eWrapper = eWrapper;
+        this.eViewport = eViewport;
     }
 
     @PostConstruct
@@ -26,8 +26,8 @@ export class SetHeightFeature extends BeanStub {
         const heightString = height != null ? `${height}px` : ``;
 
         this.eContainer.style.height = heightString;
-        if (this.eWrapper) {
-            this.eWrapper.style.height = heightString;
+        if (this.eViewport) {
+            this.eViewport.style.height = heightString;
         }
     }
 }

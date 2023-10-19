@@ -21,26 +21,21 @@ import { IDoesFilterPassParams, IFilterParams } from "@ag-grid-community/core";
     `
 })
 export class PersonFilter implements IFilterAngularComp {
-    params!: IFilterParams;
+    filterParams!: IFilterParams;
     filterText = '';
 
     agInit(params: IFilterParams): void {
-        this.params = params;
+        this.filterParams = params;
     }
 
     doesFilterPass(params: IDoesFilterPassParams) {
         // make sure each word passes separately, ie search for firstname, lastname
         let passed = true;
-        const { api, colDef, column, columnApi, context } = this.params;
         const { node } = params;
 
         this.filterText.toLowerCase().split(' ').forEach(filterWord => {
-            const value = this.params.valueGetter({
-                api,
-                colDef,
-                column,
-                columnApi,
-                context,
+            const value = this.filterParams.valueGetter({
+                ...this.filterParams,
                 data: node.data,
                 getValue: (field) => node.data[field],
                 node,
@@ -69,6 +64,6 @@ export class PersonFilter implements IFilterAngularComp {
     }
 
     onInputChanged() {
-        this.params.filterChangedCallback();
+        this.filterParams.filterChangedCallback();
     }
 }

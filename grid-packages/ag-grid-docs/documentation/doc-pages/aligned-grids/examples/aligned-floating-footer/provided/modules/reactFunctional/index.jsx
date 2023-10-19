@@ -71,7 +71,7 @@ const GridExample = () => {
             <div style={{ flex: '1 1 auto' }} >
                 <AgGridReact
                     ref={topGrid}
-                    alignedGrids={bottomGrid.current ? [bottomGrid.current] : undefined}
+                    alignedGrids={[bottomGrid]}
                     rowData={rowData}
                     defaultColDef={defaultColDef}
                     columnDefs={columnDefs}
@@ -83,7 +83,7 @@ const GridExample = () => {
             <div style={{ flex: 'none', height: '60px' }}>
                 <AgGridReact
                     ref={bottomGrid}
-                    alignedGrids={topGrid.current ? [topGrid.current] : undefined}
+                    alignedGrids={[topGrid]}
                     rowData={bottomData}
                     defaultColDef={defaultColDef}
                     columnDefs={columnDefs}

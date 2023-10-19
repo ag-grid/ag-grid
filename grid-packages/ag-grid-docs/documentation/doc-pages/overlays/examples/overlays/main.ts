@@ -1,4 +1,6 @@
-import {Grid, GridOptions} from '@ag-grid-community/core'
+import { GridApi, createGrid, GridOptions } from '@ag-grid-community/core';
+
+let gridApi: GridApi<IOlympicData>;
 
 const gridOptions: GridOptions<IOlympicData> = {
     columnDefs: [
@@ -24,29 +26,29 @@ const gridOptions: GridOptions<IOlympicData> = {
     // custom loading template. the class ag-overlay-loading-center is part of the grid,
     // it gives a white background and rounded border
     overlayLoadingTemplate:
-        '<span class="ag-overlay-loading-center">Please wait while your rows are loading</span>',
+        '<object style="position:absolute;top:50%;left:50%;transform:translate(-50%, -50%) scale(2)" type="image/svg+xml" data="https://ag-grid.com/images/ag-grid-loading-spinner.svg" aria-label="loading"></object>',
     overlayNoRowsTemplate:
         '<span style="padding: 10px; border: 2px solid #444; background: lightgoldenrodyellow;">This is a custom \'no rows\' overlay</span>',
 }
 
 function onBtShowLoading() {
-    gridOptions.api!.showLoadingOverlay()
+    gridApi!.showLoadingOverlay()
 }
 
 function onBtShowNoRows() {
-    gridOptions.api!.showNoRowsOverlay()
+    gridApi!.showNoRowsOverlay()
 }
 
 function onBtHide() {
-    gridOptions.api!.hideOverlay()
+    gridApi!.hideOverlay()
 }
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
     var gridDiv = document.querySelector<HTMLElement>('#myGrid')!
-    new Grid(gridDiv, gridOptions)
+    gridApi = createGrid(gridDiv, gridOptions);
 
     fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
         .then(response => response.json())
-        .then((data: IOlympicData[]) => gridOptions.api!.setRowData(data))
+        .then((data: IOlympicData[]) => gridApi!.setRowData(data))
 })

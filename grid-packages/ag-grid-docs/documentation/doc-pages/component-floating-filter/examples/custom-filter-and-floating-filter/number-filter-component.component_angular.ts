@@ -15,25 +15,20 @@ import { IDoesFilterPassParams, IFilterParams } from "@ag-grid-community/core";
     `
 })
 export class NumberFilterComponent implements IFilterAngularComp {
-    params!: IFilterParams;
+    filterParams!: IFilterParams;
     filterText: number | null | string = null;
 
     agInit(params: IFilterParams): void {
-        this.params = params;
+        this.filterParams = params;
     }
 
     doesFilterPass(params: IDoesFilterPassParams) {
         if (!this.isFilterActive()) { return true; }
 
-        var { api, colDef, column, columnApi, context, valueGetter } = this.params;
         var { node } = params;
 
-        var value = valueGetter({
-            api,
-            colDef,
-            column,
-            columnApi,
-            context,
+        var value = this.filterParams.valueGetter({
+            ...this.filterParams,
             data: node.data,
             getValue: (field) => node.data[field],
             node,
@@ -60,15 +55,15 @@ export class NumberFilterComponent implements IFilterAngularComp {
 
     setModel(model: any) {
         this.filterText = model;
-        this.params.filterChangedCallback();
+        this.filterParams.filterChangedCallback();
     }
 
     myMethodForTakingValueFromFloatingFilter(value: any) {
         this.filterText = value;
-        this.params.filterChangedCallback();
+        this.filterParams.filterChangedCallback();
     }
 
     onInputBoxChanged() {
-        this.params.filterChangedCallback();
+        this.filterParams.filterChangedCallback();
     }
 }

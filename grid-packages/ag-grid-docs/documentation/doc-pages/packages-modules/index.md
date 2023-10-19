@@ -38,9 +38,9 @@ If you want to minimize your bundle size then you should definitely use `modules
         align-items: center;
         width: 14rem;
         padding: 1rem;
-        background-color: var(--ghost-blue);
+        background-color: var(--background-100);
         border-radius: var(--border-radius);
-        border: 2px solid var(--bright-blue-gray);
+        border: 2px solid var(--secondary-border-color);
         transition: border-color .25s ease-in-out;
     }
 
@@ -53,6 +53,10 @@ If you want to minimize your bundle size then you should definitely use `modules
         max-width: 6rem;
         margin-top: 3rem;
         margin-bottom: 3rem;
+    }
+
+    [data-dark-mode='true'] .pm-outer img {
+        filter: invert(1);
     }
 
     .pm-outer .button {

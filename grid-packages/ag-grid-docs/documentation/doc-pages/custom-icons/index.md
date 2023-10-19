@@ -24,14 +24,16 @@ The grid exposes a number of CSS variables to control the icon font:
 
 - `--ag-icon-font-family` sets the icon font to use.
 - `--ag-icon-font-code-{icon-name}` sets the character within the icon font for the `{icon-name}` icon. You can get the icon names from the [Provided Icons list](#provided-icons) below.
+- `--ag-icon-font-weight` sets the font-weight on icon element, because some icon fonts require you to use bold weight.
 - `--ag-icon-size` sets the height of icons in pixels. Width is automatic depending on the character in the icon font.
 
 If you intend to replace every icon in the grid using the same font then you can set these variables using a CSS selector targeting the theme name, as you would any other CSS variable:
 
 ```css
 /* replace all icons in the grid with icons from Font Awesome */
-.ag-theme-alpine .ag-icon-pin {
+.ag-theme-alpine {
   --ag-icon-font-family: "Font Awesome 5 Free";
+  --ag-icon-font-weight: bold; /* Font Awesome required bold weight */
   --ag-icon-font-code-aggregation: "\f247";
   --ag-icon-font-code-arrows: "\f0b2";
   --ag-icon-font-code-asc: "\f062";
@@ -199,7 +201,21 @@ sortAscending: 'asc'
 // show on column header when column is sorted descending
 sortDescending: 'desc'
 // show on column header when column has no sort, only when enabled with gridOptions.unSortIcon=true
-sortUnSort: 'none'
+sortUnSort: 'none',
+// Builder button in Advanced Filter
+advancedFilterBuilder: 'group',
+// drag handle used to pick up Advanced Filter Builder rows
+advancedFilterBuilderDrag: 'grip',
+// Advanced Filter Builder row validation error
+advancedFilterBuilderInvalid: 'not-allowed',
+// shown on Advanced Filter Builder rows to move them up
+advancedFilterBuilderMoveUp: 'up',
+// shown on Advanced Filter Builder rows to move them down
+advancedFilterBuilderMoveDown: 'down',
+// shown on Advanced Filter Builder rows to add new rows
+advancedFilterBuilderAdd: 'plus',
+// shown on Advanced Filter Builder rows to remove row
+advancedFilterBuilderRemove: 'minus',
 ```
 
 ## Provided Icons

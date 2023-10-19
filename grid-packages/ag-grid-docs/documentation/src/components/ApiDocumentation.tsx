@@ -254,8 +254,8 @@ export const ApiDocumentation: React.FC<ApiProps> = ({
             current.map((x) => {
                 const prop = x[key];
                 if (!prop) {
-                    //console.warn(`Could not find a prop ${key} under source ${source} and section ${section}!`)
-                    throw new Error(`Could not find a prop ${key} under source ${source} and section ${section}!`);
+                    console.warn(`Could not find a prop ${key} under source ${source} and section ${section}!`)
+                    throw new Error(`Could not find a prop ${key} under source ${source} and section ${section}!`); //spl todo
                 }
                 return prop;
             }),
@@ -404,7 +404,7 @@ const Section: React.FC<SectionProps> = ({
         <div className={styles.apiReferenceOuter}>
             {header}
             <table
-                className={classnames(styles.reference, styles.apiReference)}
+                className={classnames(styles.reference, styles.apiReference, 'no-zebra')}
                 style={config.overrideBottomMargin ? { marginBottom: config.overrideBottomMargin } : {}}
             >
                 <colgroup>
@@ -549,11 +549,11 @@ const Property: React.FC<PropertyCall> = ({ framework, id, name, definition, con
         displayNameSplit = displayName;
     } else {
         displayNameSplit = displayName
-        .split(/(?=[A-Z])/)
-        .reverse()
-        .reduce((acc, cv) => {
-            return `${cv}<wbr />` + acc;
-        });
+            .split(/(?=[A-Z])/)
+            .reverse()
+            .reduce((acc, cv) => {
+                return `${cv}<wbr />` + acc;
+            });
     }
 
     const formattedDefaultValue = Array.isArray(defaultValue)

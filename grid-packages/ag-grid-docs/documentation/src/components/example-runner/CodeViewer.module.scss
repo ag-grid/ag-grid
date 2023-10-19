@@ -31,7 +31,7 @@
     gap: 0 $size-2;
     height: var(--mobile-header-height);
     padding: 0 $size-2;
-    border-bottom: 2px solid var(--bright-blue-gray);
+    border-bottom: 2px solid var(--secondary-border-color);
     overflow-x: auto;
     overflow-y: hidden;
 
@@ -39,7 +39,7 @@
         display: none;
     }
 
-    button,
+    button:not([class^="ag-"]),
     span {
         flex-shrink: 0;
     }
@@ -65,7 +65,7 @@
     overflow-x: hidden;
     padding: $size-1 0 $size-1 $size-1;
     color: var(--secondary-text-color);
-    box-shadow: inset -2px 0 0 0 var(--bright-blue-gray);
+    box-shadow: inset -2px 0 0 0 var(--secondary-border-color);
 
     @container (width < 640px) {
         width: var(--files-min-width);
@@ -109,7 +109,7 @@
         width: var(--border-radius);
         height: var(--border-radius);
         right: 0;
-        border-right: 2px solid var(--bright-blue-gray);
+        border-right: 2px solid var(--secondary-border-color);
         opacity: 0;
         transition: opacity $default-transition-timing;
     }
@@ -117,22 +117,22 @@
     &::before {
         top: -4px;
         border-bottom-right-radius: var(--border-radius);
-        border-bottom: 2px solid var(--bright-blue-gray);
-        box-shadow: 2px 2px 0 0 var(--ghost-blue);
+        border-bottom: 2px solid var(--secondary-border-color);
+        box-shadow: 2px 2px 0 0 var(--background-100);
     }
 
     &::after {
         bottom: -4px;
         border-top-right-radius: var(--border-radius);
-        border-top: 2px solid var(--bright-blue-gray);
-        box-shadow: 2px -2px 0 0 var(--ghost-blue);
+        border-top: 2px solid var(--secondary-border-color);
+        box-shadow: 2px -2px 0 0 var(--background-100);
     }
 
     &.isActive {
-        --file-border-color: var(--bright-blue-gray);
+        --file-border-color: var(--secondary-border-color);
 
         color: var(--text-color);
-        background-color: var(--ghost-blue);
+        background-color: var(--background-100);
 
         &::before,
         &::after {

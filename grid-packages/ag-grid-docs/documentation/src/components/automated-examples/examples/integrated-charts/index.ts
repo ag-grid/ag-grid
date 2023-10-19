@@ -6,7 +6,7 @@
 // to prevent AG Grid from loading the code twice
 
 import { Easing, Group } from '@tweenjs/tween.js';
-import { ColDef, GridOptions, MenuItemDef } from 'ag-grid-community';
+import { ColDef, GridOptions, GridApi, MenuItemDef } from 'ag-grid-community';
 import { createPeopleData } from '../../data/createPeopleData';
 import { INTEGRATED_CHARTS_ID } from '../../lib/constants';
 import { createMouse } from '../../lib/createMouse';
@@ -77,7 +77,7 @@ const columnDefs: ColDef[] = [
     { field: 'dec', type: ['measure', 'numericColumn'], enableRowGroup: true },
     { field: 'totalWinnings', type: ['measure', 'numericColumn'], enableRowGroup: true },
 ];
-
+let api: GridApi;
 const gridOptions: GridOptions = {
     columnDefs,
     defaultColDef: {
@@ -137,7 +137,7 @@ export function createAutomatedIntegratedCharts({
         gridOptions.onGridReady = () => {
             onGridReady && onGridReady();
         };
-        gridOptions.onFirstDataRendered = () => {
+        gridOptions.onFirstDataRendered = (e) => {
             if (suppressUpdates) {
                 return;
             }
@@ -162,14 +162,14 @@ export function createAutomatedIntegratedCharts({
                 mouse,
                 onStateChange,
                 tweenGroup,
-                gridOptions,
+                gridApi: e.api,
                 loop: !runOnce,
                 scriptDebugger,
                 defaultEasing: Easing.Quadratic.InOut,
             });
         };
 
-        new globalThis.agGrid.Grid(gridDiv, gridOptions);
+        api = globalThis.agGrid.createGrid(gridDiv, gridOptions);
     };
 
     const loadGrid = function () {
@@ -200,7 +200,7 @@ export function cleanUp() {
         scriptRunner.stop();
     }
 
-    gridOptions.api?.destroy();
+    api?.destroy();
 }
 
 /**

@@ -6,7 +6,7 @@ import { UserComponentFactory } from "../components/framework/userComponentFacto
 import { exists } from "../utils/generic";
 import { isIOSUserAgent } from "../utils/browser";
 import { WithoutGridCommon } from "../interfaces/iCommon";
-import { doOnce } from "../utils/function";
+import { warnOnce } from "../utils/function";
 import { Events } from "../eventKeys";
 import { TooltipHideEvent, TooltipShowEvent } from "../events";
 
@@ -33,9 +33,6 @@ export class CustomTooltipFeature extends BeanStub {
 
     @Autowired('popupService') private popupService: PopupService;
     @Autowired('userComponentFactory') private userComponentFactory: UserComponentFactory;
-
-    private tooltipShowDelay: number;
-    private tooltipHideDelay: number;
 
     private showTooltipTimeoutId: number | undefined;
     private hideTooltipTimeoutId: number | undefined;
@@ -80,8 +77,6 @@ export class CustomTooltipFeature extends BeanStub {
         }
 
         this.tooltipTrigger = this.getTooltipTrigger();
-        this.tooltipShowDelay = this.getTooltipDelay('show');
-        this.tooltipHideDelay = this.getTooltipDelay('hide');
         this.tooltipMouseTrack = this.gridOptionsService.is('tooltipMouseTrack');
 
         const el = this.parentComp.getGui();
@@ -108,7 +103,7 @@ export class CustomTooltipFeature extends BeanStub {
         const delay = this.gridOptionsService.getNum(delayOption);
         if (exists(delay)) {
             if (delay < 0) {
-                doOnce(() => console.warn(`AG Grid: ${delayOption} should not be lower than 0`), `${delayOption}Warn`);
+                warnOnce(`${delayOption} should not be lower than 0`);
             }
             return Math.max(200, delay);
         }
@@ -225,7 +220,7 @@ export class CustomTooltipFeature extends BeanStub {
         // if another tooltip was hidden very recently, we only wait 200ms to show, not the normal waiting time
         let delay = 0;
         if (mouseEvent) {
-            delay = this.isLastTooltipHiddenRecently() ? 200 : this.tooltipShowDelay;
+            delay = this.isLastTooltipHiddenRecently() ? 200 : this.getTooltipDelay('show');
         }
 
         this.lastMouseEvent = mouseEvent || null;
@@ -474,7 +469,7 @@ export class CustomTooltipFeature extends BeanStub {
 
     private startHideTimeout(): void {
         this.clearHideTimeout();
-        this.hideTooltipTimeoutId = window.setTimeout(this.hideTooltip.bind(this), this.tooltipHideDelay);
+        this.hideTooltipTimeoutId = window.setTimeout(this.hideTooltip.bind(this), this.getTooltipDelay('hide'));
     }
 
     private clearShowTimeout(): void {

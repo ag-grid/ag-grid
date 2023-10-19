@@ -175,7 +175,13 @@
         },
         "filterOpened": {},
         "filterChanged": {},
-        "filterModified": {}
+        "filterModified": {},
+        "advancedFilterBuilderVisibleChanged": {
+            "more": {
+                "name": "Advanced Filter",
+                "url": "/filter-advanced/#configuring-advanced-filter-builder"
+            }
+        }
     },
     "sort": {
         "meta": {
@@ -235,6 +241,7 @@
             "displayName": "Miscellaneous"
         },
         "gridReady": {},
+        "gridPreDestroyed": {},
         "firstDataRendered": {},
         "gridSizeChanged": {},
         "modelUpdated": {},
@@ -243,7 +250,13 @@
         "bodyScroll": {},
         "bodyScrollEnd": {},
         "dragStarted": {},
-        "dragStopped": {}
+        "dragStopped": {},
+        "stateUpdated": {
+            "more": {
+                "name": "Grid State",
+                "url": "/grid-state/"
+            }
+        }
     },
     "clientRowModel": {
         "meta": {

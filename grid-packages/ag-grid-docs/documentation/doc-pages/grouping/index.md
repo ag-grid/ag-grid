@@ -43,7 +43,7 @@ The example below demonstrates the default row grouping behaviour. Note the foll
 
 ## Row Grouping Customisations
 
-The previous example demonstrated the [Default Row Grouping](../grouping/#example-default-row-grouping) behavior, 
+The previous example demonstrated the [Default Row Grouping](../grouping/#enabling-default-row-grouping) behavior, 
 however extensive Row Grouping customisations are also possible as summarised below:
 
 - **[Display Types](../grouping-display-types/)** - compares the different ways row groups can be displayed in the grid.
@@ -52,6 +52,7 @@ however extensive Row Grouping customisations are also possible as summarised be
     - ***[Group Rows](../grouping-group-rows/)*** - group rows are automatically added by the grid containing the row groups instead of group columns.
     - ***[Custom Group Columns](../grouping-custom-group-columns/)*** - customise how row groups are displayed without using the built-in display types.
 - **[Row Group Panel](../grouping-group-panel/)** - add a panel above the grid to allow users control which columns the rows are grouped by.
+- **[Locking Group Columns](../grouping-locking-group-columns/)** - Lock Group Columns to prevent ungrouping and rearranging of group columns by user.
 - **[Group Order](../grouping-group-order/)** - control how row groups are ordered.
 - **[Sorting Groups](../grouping-sorting/)** - configure and customise how row groups are sorted.
 - **[Filtering Groups](../grouping-filtering/)** - configure and customise how row groups are filtered.

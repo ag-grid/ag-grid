@@ -22,7 +22,6 @@ class NumericCellEditor {
         this.eInput = document.createElement('input')
         this.eInput.classList.add('ag-input-field-input');
         this.eInput.style.width = '100%'
-        this.eInput.style.height = '100%'
         this.eInput.value = (isCharNumeric(params.eventKey))
             ? params.eventKey
             : params.value

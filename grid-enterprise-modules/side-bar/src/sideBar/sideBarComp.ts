@@ -10,28 +10,29 @@ import {
     RefSelector,
     SideBarDef,
     ToolPanelDef,
-    GridApi,
     ToolPanelVisibleChangedEvent,
     Autowired,
     ManagedFocusFeature,
     FocusService,
     KeyCode,
     WithoutGridCommon,
-    FilterManager
+    FilterManager,
+    SideBarState
 } from "@ag-grid-community/core";
 import { SideBarButtonClickedEvent, SideBarButtonsComp } from "./sideBarButtonsComp";
 import { SideBarDefParser } from "./sideBarDefParser";
+import { SideBarService } from "./sideBarService";
 import { ToolPanelWrapper } from "./toolPanelWrapper";
 
 export class SideBarComp extends Component implements ISideBar {
-
-    @Autowired('gridApi') private gridApi: GridApi;
     @Autowired('focusService') private focusService: FocusService;
     @Autowired('filterManager') private filterManager: FilterManager;
+    @Autowired('sideBarService') private sideBarService: SideBarService;
     @RefSelector('sideBarButtons') private sideBarButtonsComp: SideBarButtonsComp;
 
     private toolPanelWrappers: ToolPanelWrapper[] = [];
     private sideBar: SideBarDef | undefined;
+    private position: 'left' | 'right';
 
     private static readonly TEMPLATE = /* html */
         `<div class="ag-side-bar ag-unselectable">
@@ -45,14 +46,16 @@ export class SideBarComp extends Component implements ISideBar {
     @PostConstruct
     private postConstruct(): void {
         this.sideBarButtonsComp.addEventListener(SideBarButtonsComp.EVENT_SIDE_BAR_BUTTON_CLICKED, this.onToolPanelButtonClicked.bind(this));
-        this.setSideBarDef();
+        const { sideBar: sideBarState } = this.gridOptionsService.get('initialState') ?? {};
+        this.setSideBarDef(sideBarState);
 
         this.addManagedPropertyListener('sideBar', () => {
             this.clearDownUi();
+            // don't re-assign initial state
             this.setSideBarDef();
         });
 
-        this.gridApi.registerSideBarComp(this);
+        this.sideBarService.registerSideBarComp(this);
         this.createManagedBean(new ManagedFocusFeature(
             this.getFocusableElement(),
             {
@@ -151,7 +154,7 @@ export class SideBarComp extends Component implements ISideBar {
         this.destroyToolPanelWrappers();
     }
 
-    private setSideBarDef(): void {
+    private setSideBarDef(sideBarState?: SideBarState): void {
         // initially hide side bar
         this.setDisplayed(false);
 
@@ -163,13 +166,20 @@ export class SideBarComp extends Component implements ISideBar {
             this.createToolPanelsAndSideButtons(toolPanelDefs);
             if (!this.toolPanelWrappers.length) { return; }
 
-            const shouldDisplaySideBar = !this.sideBar.hiddenByDefault;
+            const shouldDisplaySideBar = sideBarState ? sideBarState.visible : !this.sideBar.hiddenByDefault;
             this.setDisplayed(shouldDisplaySideBar);
 
-            this.setSideBarPosition(this.sideBar.position);
+            this.setSideBarPosition(sideBarState ? sideBarState.position : this.sideBar.position);
 
-            if (!this.sideBar.hiddenByDefault) {
-                this.openToolPanel(this.sideBar.defaultToolPanel, 'sideBarInitializing');
+            if (shouldDisplaySideBar) {
+                if (sideBarState) {
+                    const { openToolPanel } = sideBarState;
+                    if (openToolPanel) {
+                        this.openToolPanel(openToolPanel, 'sideBarInitializing');
+                    }
+                } else {
+                    this.openToolPanel(this.sideBar.defaultToolPanel, 'sideBarInitializing');
+                }
             }
         }
     }
@@ -178,8 +188,14 @@ export class SideBarComp extends Component implements ISideBar {
         return this.sideBar;
     }
 
+    public getSideBarPosition(): 'left' | 'right' {
+        return this.position;
+    }
+
     public setSideBarPosition(position?: 'left' | 'right'): this {
         if (!position) { position = 'right'; }
+
+        this.position = position;
 
         const isLeft =  position === 'left';
         const resizerSide = isLeft ? 'right' : 'left';
@@ -191,7 +207,14 @@ export class SideBarComp extends Component implements ISideBar {
             wrapper.setResizerSizerSide(resizerSide);
         });
 
+        this.eventService.dispatchEvent({ type: Events.EVENT_SIDE_BAR_UPDATED });
+
         return this;
+    }
+
+    public setDisplayed(displayed: boolean, options?: { skipAriaHidden?: boolean | undefined; } | undefined): void {
+        super.setDisplayed(displayed, options);
+        this.eventService.dispatchEvent({ type: Events.EVENT_SIDE_BAR_UPDATED });
     }
 
     private createToolPanelsAndSideButtons(defs: ToolPanelDef[]): void {
@@ -218,9 +241,7 @@ export class SideBarComp extends Component implements ISideBar {
                 !ModuleRegistry.__assertRegistered(ModuleNames.FiltersToolPanelModule, 'Filters Tool Panel', this.context.getGridId());
             if (moduleMissing) { return false; }
             if (this.filterManager.isAdvancedFilterEnabled()) {
-                _.doOnce(() => {
-                    console.warn('AG Grid: Advanced Filter does not work with Filters Tool Panel. Filters Tool Panel has been disabled.');
-                }, 'advancedFilterToolPanel');
+                _.warnOnce('Advanced Filter does not work with Filters Tool Panel. Filters Tool Panel has been disabled.');                
                 return false;
             }
         }

@@ -1,15 +1,15 @@
 @use '../core' as *;
 
-button {
+button#{$exclude-grid-selector} {
     font-family: var(--font-family);
     font-size: inherit;
     line-height: inherit;
     cursor: pointer;
 }
 
-button,
-input[type='reset'],
-input[type='submit'],
+button#{$exclude-grid-selector},
+input[type='reset']#{$exclude-grid-selector},
+input[type='submit']#{$exclude-grid-selector},
 .button,
 .button-secondary {
     appearance: none;
@@ -29,9 +29,8 @@ input[type='submit'],
     transition: background-color $default-transition-timing, border $default-transition-timing,
         box-shadow $default-transition-timing;
 
-    // do not apply hover colours to .ag-button:hover, otherwise Grid Buttons become transparent on hover
-    &:not(.ag-button):hover,
-    &:not(.ag-button).hover {
+    &:hover,
+    &.hover {
         background-color: var(--button-hover-color);
         color: var(--button-text-color) !important;
     }
@@ -49,11 +48,11 @@ input[type='submit'],
     &:disabled,
     &[disabled],
     &.disabled {
-        --button-color: var(--platinum-gray);
-        --button-hover-color: var(--platinum-gray);
-        --button-active-color: var(--platinum-gray);
-        --button-text-color: var(--auro-metal);
-        --button-focus-box-shadow-color: var(--platinum-gray);
+        --button-color: var(--neutral-200);
+        --button-hover-color: var(--neutral-200);
+        --button-active-color: var(--neutral-200);
+        --button-text-color: var(--neutral-800);
+        --button-focus-box-shadow-color: transparent;
 
         cursor: default;
     }
@@ -69,20 +68,28 @@ input[type='submit'],
     }
 }
 
-.button-secondary {
-    --button-color: var(--water-blue);
-    --button-hover-color: var(--sky-blue);
-    --button-active-color: var(--azure-blue);
-    --button-text-color: var(--ag-grid-dark-blue);
-    --button-focus-box-shadow-color: var(--light-water-blue);
+.button-secondary#{$exclude-grid-selector} {
+    --button-color: var(--primary-100);
+    --button-hover-color: var(--primary-300);
+    --button-active-color: var(--primary-400);
+    --button-text-color: var(--dark-blue-800);
+    --button-focus-box-shadow-color: var(--900);
+
+    #{$darkmode-selector} & {
+        --button-color: var(--primary-300);
+        --button-hover-color: var(--primary-400);
+        --button-active-color: var(--primary-500);
+        --button-text-color: var(--default-text-color);
+        --button-focus-box-shadow-color: var(--900);
+    }
 }
 
-.button-input {
-    --button-color: var(--white);
-    --button-hover-color: var(--white);
-    --button-active-color: var(--white);
-    --button-text-color: var(--text-color);
-    --button-focus-box-shadow-color: var(--light-water-blue);
+.button-input#{$exclude-grid-selector} {
+    --button-color: var(--input-background-color);
+    --button-hover-color: var(--input-background-color);
+    --button-active-color: var(--input-background-color);
+    --button-text-color: var(--default-text-color);
+    --button-focus-box-shadow-color: var(--input-focus-box-shadow-color);
 
     border: 2px solid var(--border-color);
     transition: border-color $default-transition-timing, box-shadow $default-transition-timing;
@@ -97,21 +104,20 @@ input[type='submit'],
     }
 }
 
-.button-style-none,
-.button-as-link {
-    --button-text-color: var(--text-color);
+.button-style-none#{$exclude-grid-selector},
+.button-as-link#{$exclude-grid-selector} {
+    --button-text-color: var(--default-text-color);
 
     appearance: none;
     padding: 0;
     text-align: left;
     font-weight: var(--font-weight-normal);
     border: none;
-    color: var(--button-text-color);
     background-color: transparent;
     box-shadow: none;
-
-    &:not(.ag-button):hover,
-    &:not(.ag-button):active {
+    
+    &:hover,
+    &:active {
         color: var(--button-text-color);
         background-color: transparent;
     }
@@ -121,7 +127,7 @@ input[type='submit'],
     }
 }
 
-.button-as-link {
+.button-as-link#{$exclude-grid-selector} {
     --button-text-color: var(--link-color);
     --text-color: var(--link-color);
     --icon-size: 1.5em;

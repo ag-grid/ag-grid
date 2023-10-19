@@ -8,9 +8,9 @@ import { getExampleInfo } from 'components/example-runner/helpers';
 /* eslint-disable limited-exports-page-templates */
 const ExampleRunnerPage = ({location}) => {
     const nodes = useExampleFileNodes();
-    const { pageName, library, framework, useFunctionalReact, useVue3, importType, name, title, type, options = {}} = queryString.parse(location.search);
+    const { pageName, library, framework, useVue3, importType, name, title, type, options = {}} = queryString.parse(location.search);
 
-    const exampleInfo = getExampleInfo(nodes, library, pageName, name, title, type, options, framework, useFunctionalReact, useVue3, importType);
+    const exampleInfo = getExampleInfo(nodes, library, pageName, name, title, type, options, framework, useVue3, importType);
 
     return <div style={{ height: '100vh', width: '100%' }}>
         <Helmet title={title}>

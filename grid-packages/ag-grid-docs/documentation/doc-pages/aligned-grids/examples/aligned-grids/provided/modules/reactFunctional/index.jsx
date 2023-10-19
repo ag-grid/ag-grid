@@ -5,6 +5,7 @@ import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-mod
 
 import "@ag-grid-community/styles/ag-grid.css";
 import "@ag-grid-community/styles/ag-theme-alpine.css";
+import './styles.css';
 
 import { ModuleRegistry } from '@ag-grid-community/core';
 // Register the required feature modules with the Grid
@@ -56,21 +57,21 @@ const GridExample = () => {
     const onCbAthlete = (event) => {
         // we only need to update one grid, as the other is a slave
         if (topGrid.current) {
-            topGrid.current.columnApi.setColumnVisible('athlete', event.target.checked);
+            topGrid.current.api.setColumnVisible('athlete', event.target.checked);
         }
     }
 
     const onCbAge = (event) => {
         // we only need to update one grid, as the other is a slave
         if (topGrid.current){
-            topGrid.current.columnApi.setColumnVisible('age', event.target.checked);
+            topGrid.current.api.setColumnVisible('age', event.target.checked);
         }
     }
 
     const onCbCountry = (event) => {
         // we only need to update one grid, as the other is a slave
         if (topGrid.current) {
-            topGrid.current.columnApi.setColumnVisible('country', event.target.checked);
+            topGrid.current.api.setColumnVisible('country', event.target.checked);
         }
     }
 
@@ -100,7 +101,7 @@ const GridExample = () => {
             <div className="grid ag-theme-alpine">
                 <AgGridReact
                     ref={topGrid}
-                    alignedGrids={bottomGrid.current ? [bottomGrid.current] : undefined}
+                    alignedGrids={[bottomGrid]}
                     rowData={rowData}
                     defaultColDef={defaultColDef}
                     columnDefs={columnDefs}
@@ -111,7 +112,7 @@ const GridExample = () => {
             <div className="grid ag-theme-alpine">
                 <AgGridReact
                     ref={bottomGrid}
-                    alignedGrids={topGrid.current ? [topGrid.current] : undefined}
+                    alignedGrids={[topGrid]}
                     rowData={rowData}
                     defaultColDef={defaultColDef}
                     columnDefs={columnDefs}

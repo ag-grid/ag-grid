@@ -2,7 +2,7 @@
 title: "Grid Events"
 ---
 
-This is a list of the events that the grid raises.
+This is a list of all the events that the grid raises.
 
 <framework-specific-section frameworks="javascript">
 |You register callbacks for these events through the `GridOptions` interface.
@@ -20,7 +20,7 @@ This is a list of the events that the grid raises.
 
 <framework-specific-section frameworks="javascript">
 <note>
-| TypeScript users can take advantage of the events' interfaces. You can construct the interface name by suffixing the event name with `Event`. For example, the `cellClicked` event uses the interface `CellClickedEvent`. All events support generics. See [Typescript Generics](/typescript-generics) for more details.
+| TypeScript users can take advantage of the events' interfaces. You can construct the interface name by suffixing the event name with `Event`. For example, the `cellClicked` event uses the interface `CellClickedEvent`. All events support generics. See [Typescript Generics](../typescript-generics) for more details.
 </note>
 </framework-specific-section>
 
@@ -70,7 +70,7 @@ This is a list of the events that the grid raises.
 |
 |## Registering via Grid Options
 |
-|Registering the event onto the grid component as shown above is the recommendey way. However additionally a callback can be put on the [Grid Options](/grid-interface/#grid-options-3), if you are using a Grid Options object.
+|Registering the event onto the grid component as shown above is the recommended way. However additionally a callback can be put on the [Grid Options](/grid-interface/), if you are using a Grid Options object.
 |The name of the callback is constructed by prefixing the event name with `on`. For example, the callback for the `cellClicked` event is `gridOptions.onCellClicked`.
 |
 </framework-specific-section>

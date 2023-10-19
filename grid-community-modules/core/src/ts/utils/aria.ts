@@ -93,6 +93,10 @@ export function setAriaHidden(element: Element, hidden: boolean): void {
     toggleAriaAttribute(element, 'hidden', hidden);
 }
 
+export function setAriaActiveDescendant(element: Element, descendantId: string | null): void {
+    toggleAriaAttribute(element, 'activedescendant', descendantId);
+}
+
 export function setAriaExpanded(element: Element, expanded: boolean): void {
     setAriaAttribute(element, 'expanded', expanded);
 }
@@ -153,6 +157,7 @@ export function setAriaControls(controllerElement: Element, controlledElement: E
     toggleAriaAttribute(controllerElement, 'controls', controlledElement.id);
     setAriaLabelledBy(controlledElement, controllerElement.id);
 }
+
 
 export function getAriaCheckboxStateName(translate: (key: string, defaultValue: string, variableValues?: string[]) => string, state?: boolean): string {
     return state === undefined

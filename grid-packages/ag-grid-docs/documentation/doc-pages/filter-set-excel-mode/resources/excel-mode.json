@@ -63,7 +63,10 @@
         {
             "behaviour": "Combine selected values from different searches before applying",
             "agGrid": true,
-            "windowsExcel": false,
+            "windowsExcel": [
+                true,
+                "when \"Add current selection to filter\" is checked"
+            ],
             "macExcel": false
         },
         {

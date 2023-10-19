@@ -49,7 +49,6 @@ const VueExample = {
                 valueFormatter: "x.toLocaleString() + 'm'"
             }],
             gridApi: null,
-            columnApi: null,
             defaultColDef: { flex: 1 },
             detailRowHeight: null,
             detailCellRenderer: null,
@@ -81,7 +80,6 @@ const VueExample = {
         },
         onGridReady(params) {
             this.gridApi = params.api;
-            this.gridColumnApi = params.columnApi;
 
 
             const updateData = (data) => {

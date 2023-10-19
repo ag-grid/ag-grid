@@ -15,10 +15,9 @@ import styles from './index.module.scss';
  */
 export const Layout = ({
     children,
-    pageContext: { frameworks, framework = 'javascript', layout, pageName },
+    pageContext: { frameworks, framework = 'javascript', layout, pageName, darkMode },
     location: { pathname: path, href },
 }) => {
-    // spl todo: refactor next week!
     // set in gatsby-node.js
     let fullScreenPage = false,
         fullScreenWithFooter = false;
@@ -41,6 +40,7 @@ export const Layout = ({
             </Helmet>
             <div className={styles.mainContainer}>
                 <Helmet htmlAttributes={{ lang: 'en' }} />
+
                 <SiteHeader path={path} />
 
                 {!fullScreen && <TopBar frameworks={frameworks} currentFramework={framework} path={path} />}

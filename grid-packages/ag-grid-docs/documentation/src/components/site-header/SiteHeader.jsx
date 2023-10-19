@@ -9,7 +9,10 @@ import { useWindowSize } from '../../utils/use-window-size';
 import { Collapsible } from '../Collapsible';
 import { Icon } from '../Icon';
 import LogoMark from '../LogoMark';
+import { DarkModeToggle } from './DarkModeToggle';
 import styles from './SiteHeader.module.scss';
+
+const IS_SSR = typeof window === 'undefined';
 
 const SITE_HEADER_SMALL_WIDTH = parseInt(breakpoints['site-header-small'], 10);
 
@@ -22,6 +25,10 @@ const links = [
         name: 'Documentation',
         url: withPrefix('/documentation/'),
     },
+    // {
+    //     name: 'Theme Builder',
+    //     url: '/theme-builder',
+    // },
     {
         name: 'Pricing',
         url: '/license-pricing',
@@ -54,44 +61,40 @@ const getCurrentPageName = (path) => {
 };
 
 const HeaderLinks = ({ path, isOpen, toggleIsOpen }) => {
-    return (
-        <ul className={classnames(styles.navItemList, 'list-style-none')}>
-            {links.map((link) => {
-                const linkClasses = classnames(styles.navItem, {
-                    [styles.navItemActive]: link.name === getCurrentPageName(path),
-                    [styles[link.cssClass]]: link.cssClass,
-                });
+    return links.map((link) => {
+        const linkClasses = classnames(styles.navItem, {
+            [styles.navItemActive]: link.name === getCurrentPageName(path),
+            [styles[link.cssClass]]: link.cssClass,
+        });
 
-                return (
-                    <li key={link.name.toLocaleLowerCase()} className={linkClasses}>
-                        <a
-                            className={styles.navLink}
-                            href={link.url}
-                            onClick={() => {
-                                if (isOpen) {
-                                    toggleIsOpen();
-                                }
-                            }}
-                            aria-label={`AG Grid ${link.name}`}
-                        >
-                            {link.icon}
-                            <span>{link.name}</span>
-                        </a>
-                    </li>
-                );
-            })}
-        </ul>
-    );
+        return (
+            <li key={link.name.toLocaleLowerCase()} className={linkClasses}>
+                <a
+                    className={styles.navLink}
+                    href={link.url}
+                    onClick={() => {
+                        if (isOpen) {
+                            toggleIsOpen();
+                        }
+                    }}
+                    aria-label={`AG Grid ${link.name}`}
+                >
+                    {link.icon}
+                    <span>{link.name}</span>
+                </a>
+            </li>
+        );
+    });
 };
 
 const HeaderExpandButton = ({ isOpen, toggleIsOpen }) => (
     <button
         className={styles.mobileMenuButton}
         type="button"
-        aria-controls="main-nav"
+        aria-controls={styles.mainNav}
         aria-expanded={isOpen.toString()}
         aria-label="Toggle navigation"
-        onClick={() => toggleIsOpen()}
+        onClick={() => toggleIsOpen && toggleIsOpen()}
     >
         <MenuIcon className={styles.menuIcon} />
     </button>
@@ -111,9 +114,13 @@ const HeaderNav = ({ path }) => {
     return (
         <>
             <HeaderExpandButton isOpen={isOpen} toggleIsOpen={toggleIsOpen} />
+            
             <Collapsible id="main-nav" isDisabled={isDesktop} isOpen={isOpen}>
-                <nav id={isDesktop ? 'main-nav' : undefined}>
-                    <HeaderLinks path={path} isOpen={isOpen} toggleIsOpen={toggleIsOpen} />
+                <nav id={isDesktop ? 'main-nav' : undefined} className={styles.mainNav}>
+                    <ul className={classnames(styles.navItemList, 'list-style-none')}>
+                        <HeaderLinks path={path} isOpen={isOpen} toggleIsOpen={toggleIsOpen} />
+                        <DarkModeToggle />
+                    </ul>
                 </nav>
             </Collapsible>
         </>

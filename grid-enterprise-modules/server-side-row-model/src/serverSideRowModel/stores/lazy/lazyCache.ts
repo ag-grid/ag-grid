@@ -91,7 +91,7 @@ export class LazyCache extends BeanStub {
         this.defaultNodeIdPrefix = this.blockUtils.createNodeIdPrefix(this.store.getParentNode());
         this.rowLoader = this.createManagedBean(new LazyBlockLoader(this, this.store.getParentNode(), this.storeParams));
         this.getRowIdFunc = this.gridOptionsService.getCallback('getRowId');
-        this.isMasterDetail = this.gridOptionsService.isMasterDetail();
+        this.isMasterDetail = this.gridOptionsService.is('masterDetail');
     }
 
     @PreDestroy
@@ -896,7 +896,7 @@ export class LazyCache extends BeanStub {
     public updateRowNodes(updates: any[]): RowNode[] {
         if (this.getRowIdFunc == null) {
             // throw error, as this is type checked in the store. User likely abusing internal apis if here.
-            throw new Error('AG Grid: Insert transactions can only be applied when row ids are supplied.');
+            throw new Error('AG Grid: Transactions can only be applied when row ids are supplied.');
         }
         
         const updatedNodes: RowNode[] = [];
@@ -912,17 +912,20 @@ export class LazyCache extends BeanStub {
     }
 
     public insertRowNodes(inserts: any[], indexToAdd?: number): RowNode[] {
+        // adjust row count to allow for footer row
+        const realRowCount = this.store.getRowCount() - (this.store.getParentNode().sibling ? 1 : 0);
+
         // if missing and we know the last row, we're inserting at the end
-        const addIndex = indexToAdd == null && this.isLastRowKnown ? this.store.getRowCount() : indexToAdd;
+        const addIndex = indexToAdd == null && this.isLastRowKnown ? realRowCount : indexToAdd;
 
         // can't insert nodes past the end of the store
-        if(addIndex == null || this.store.getRowCount() < addIndex) {
+        if(addIndex == null || realRowCount < addIndex) {
             return [];
         }
 
         if (this.getRowIdFunc == null) {
             // throw error, as this is type checked in the store. User likely abusing internal apis if here.
-            throw new Error('AG Grid: Insert transactions can only be applied when row ids are supplied.');
+            throw new Error('AG Grid: Transactions can only be applied when row ids are supplied.');
         }
 
         const uniqueInsertsMap: { [id: string]: any } = {};
@@ -975,7 +978,7 @@ export class LazyCache extends BeanStub {
     public removeRowNodes(idsToRemove: string[]): RowNode[] {
         if (this.getRowIdFunc == null) {
             // throw error, as this is type checked in the store. User likely abusing internal apis if here.
-            throw new Error('AG Grid: Insert transactions can only be applied when row ids are supplied.');
+            throw new Error('AG Grid: Transactions can only be applied when row ids are supplied.');
         }
 
         const removedNodes: RowNode[] = [];

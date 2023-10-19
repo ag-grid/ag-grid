@@ -7,6 +7,7 @@
 
     .ag-root-wrapper {
         border: var(--ag-borders) var(--ag-border-color);
+        border-radius: var(--ag-wrapper-border-radius);
     }
 
     // support 100 levels here because row group indentation is used for tree data which can be quite deep
@@ -69,7 +70,13 @@
         height: var(--ag-row-height);
         background-color: var(--ag-background-color);
         color: var(--ag-data-color);
-        border-bottom: var(--ag-row-border-style) var(--ag-row-border-color) var(--ag-row-border-width);
+
+        &::after {
+            content: "";
+            border-bottom: var(--ag-row-border-style) var(--ag-row-border-color) var(--ag-row-border-width);
+            display: block;
+            margin-top: calc(var(--ag-row-height) - var(--ag-row-border-width));
+        }
     }
 
     .ag-row-highlight-above::after, .ag-row-highlight-below::after {
@@ -167,20 +174,20 @@
         --ag-internal-calculated-line-height: var(--ag-line-height, calc(var(--ag-row-height) - var(--ag-row-border-width)));
         --ag-internal-padded-row-height: calc(var(--ag-row-height) - var(--ag-row-border-width));
         // draw a transparent border so that the cell size doesn't change when we add a range border
-        border: 1px solid transparent;
+        border: var(--ag-row-border-width) solid transparent;
         // adjust for transparent border
         // Needed to capitalize min, because it clashes with old versions of Sass
         line-height: Min(var(--ag-internal-calculated-line-height), var(--ag-internal-padded-row-height));
-        padding-left: calc(var(--ag-cell-horizontal-padding) - 1px);
-        padding-right: calc(var(--ag-cell-horizontal-padding) - 1px);
+        padding-left: calc(var(--ag-cell-horizontal-padding) - var(--ag-row-border-width));
+        padding-right: calc(var(--ag-cell-horizontal-padding) - var(--ag-row-border-width));
         -webkit-font-smoothing: subpixel-antialiased;
     }
 
     // in full width rows, a cell renderer is rendered directly into a row with no cell in between,
     // in which case we need to apply the padding to the cell renderer's wrapper.
     .ag-row > .ag-cell-wrapper {
-        padding-left: calc(var(--ag-cell-horizontal-padding) - 1px);
-        padding-right: calc(var(--ag-cell-horizontal-padding) - 1px);
+        padding-left: calc(var(--ag-cell-horizontal-padding) - var(--ag-row-border-width));
+        padding-right: calc(var(--ag-cell-horizontal-padding) - var(--ag-row-border-width));
     }
 
     .ag-row-dragging {
@@ -189,7 +196,7 @@
     }
 
     .ag-cell-inline-editing {
-        border: 1px solid var(--ag-border-color);
+        border: var(--ag-row-border-width) solid var(--ag-border-color);
         border-radius: var(--ag-card-radius);
         box-shadow: var(--ag-card-shadow);
         padding: 0;
@@ -220,7 +227,7 @@
     }
 
     .ag-layout-auto-height, .ag-layout-print {
-        .ag-center-cols-clipper, .ag-center-cols-container {
+        .ag-center-cols-viewport, .ag-center-cols-container {
             min-height: 50px;
         }
     }

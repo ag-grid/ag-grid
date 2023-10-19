@@ -157,7 +157,7 @@ The example below presents a simple grid layout with the following properties en
 
 The grid has default ARIA labels for areas like `rows`, `group cells`, `filters`, `search fields` and so on. If there is a need to
 customise these labels, this could be achieved by changing the [localisation variables](/localisation/#creating-a-locale) for ARIA.
-See the [localisation example](/localisation/#example--localisation), inspect the items or use a screen reader to see the
+See the [localisation example](/localisation/#installing-a-locale), inspect the items or use a screen reader to see the
 customisation in action.
 
 ## Known Limitations

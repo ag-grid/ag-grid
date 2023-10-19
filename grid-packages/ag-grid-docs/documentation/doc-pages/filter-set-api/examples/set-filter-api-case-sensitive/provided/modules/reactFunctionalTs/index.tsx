@@ -9,6 +9,8 @@ import { MenuModule } from '@ag-grid-enterprise/menu';
 import { FiltersToolPanelModule } from '@ag-grid-enterprise/filter-tool-panel';
 import '@ag-grid-community/styles/ag-grid.css';
 import "@ag-grid-community/styles/ag-theme-alpine.css";
+import './styles.css';
+
 import { getData } from "./data";
 import { ColDef, FirstDataRenderedEvent, ICellRendererParams, IFiltersToolPanel, ISetFilter, ModuleRegistry } from '@ag-grid-community/core';
 

@@ -20,7 +20,7 @@ import {
     WithoutGridCommon,
     UpdateChartParams,
 } from "@ag-grid-community/core";
-import { AgChartInstance, AgChartThemeOverrides, AgChartThemePalette } from "ag-charts-community";
+import { AgChartInstance, AgChartThemeOverrides, AgChartThemePalette } from "ag-charts-enterprise";
 import { ChartMenu } from "./menu/chartMenu";
 import { TitleEdit } from "./chartTitle/titleEdit";
 import { ChartController, DEFAULT_THEMES } from "./chartController";

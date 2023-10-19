@@ -113,8 +113,8 @@
                 }
             },
             'ag-grid-angular': {
-                main: './dist/ag-grid-angular/fesm2015/ag-grid-angular.js',
-                defaultExtension: 'js'
+                main: './dist/ag-grid-angular/fesm2015/ag-grid-angular.mjs',
+                defaultExtension: 'mjs'
             },
             'ag-grid-community': {
                 main: './dist/ag-grid-community.cjs.js',
@@ -125,8 +125,12 @@
                 defaultExtension: 'js'
             },
             "@ag-grid-community/angular": {
-                main: "./dist/ag-grid-angular/fesm2015/ag-grid-community-angular.js",
-                defaultExtension: "js"
+                main: "./dist/ag-grid-angular/fesm2015/ag-grid-community-angular.mjs",
+                defaultExtension: "mjs"
+            },
+            'ag-charts-community': {
+                main: './dist/main.cjs.js',
+                defaultExtension: 'js'
             },
             // these are a little different in that they're in a directory and sjs doesn't default to the index.js inside...
             '@ag-grid-community/core/dist/cjs/es5/utils': {
@@ -157,11 +161,6 @@
             '@ag-grid-community/infinite-row-model': {
                 main: './dist/cjs/es5/main.js',
                 defaultExtension: 'js'
-            },
-            'ag-charts-community': {
-                main: './dist/cjs/es5/main.js',
-                defaultExtension: 'js',
-                format: 'cjs'
             },
             '@ag-grid-enterprise/advanced-filter': {
                 main: './dist/cjs/es5/main.js',
@@ -240,10 +239,6 @@
                 defaultExtension: 'js'
             },
             '@ag-grid-enterprise/viewport-row-model': {
-                main: './dist/cjs/es5/main.js',
-                defaultExtension: 'js'
-            },
-            'ag-charts-enterprise': {
                 main: './dist/cjs/es5/main.js',
                 defaultExtension: 'js'
             },

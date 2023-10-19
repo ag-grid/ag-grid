@@ -2,7 +2,7 @@ import { Component } from '@angular/core';
 
 import "@ag-grid-community/styles/ag-grid.css";
 import "@ag-grid-community/styles/ag-theme-alpine.css";
-import { ColDef, FirstDataRenderedEvent, GridOptions } from '@ag-grid-community/core';
+import { ColDef, FirstDataRenderedEvent, GridApi, GridOptions, GridReadyEvent } from '@ag-grid-community/core';
 
 import { ModuleRegistry } from '@ag-grid-community/core';
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
@@ -21,6 +21,7 @@ ModuleRegistry.registerModules([ClientSideRowModelModule])
                         class="ag-theme-alpine"
                         [gridOptions]="leftGridOptions"
                         [columnDefs]="columnDefs"
+                        (gridReady)="onGridReady($event,'left')"
                         (firstDataRendered)="onFirstDataRendered($event)">
                 </ag-grid-angular>
             </div>
@@ -51,6 +52,7 @@ ModuleRegistry.registerModules([ClientSideRowModelModule])
                         class="ag-theme-alpine"
                         [gridOptions]="rightGridOptions"
                         [columnDefs]="columnDefs"
+                        (gridReady)="onGridReady($event,'right')"
                         (firstDataRendered)="onFirstDataRendered($event)">
                 </ag-grid-angular>
             </div>
@@ -58,6 +60,10 @@ ModuleRegistry.registerModules([ClientSideRowModelModule])
     `
 })
 export class AppComponent {
+    
+    private leftGridApi!: GridApi<IOlympicData>;
+    private rightGridApi!: GridApi<IOlympicData>;
+    
     rowIdSequence = 100;
 
     columnDefs: ColDef[] = [
@@ -146,14 +152,14 @@ export class AppComponent {
             remove: [data]
         };
 
-        var rowIsInLeftGrid = !!this.leftGridOptions.api!.getRowNode(data.id);
+        var rowIsInLeftGrid = !!this.leftGridApi.getRowNode(data.id);
         if (rowIsInLeftGrid) {
-            this.leftGridOptions.api!.applyTransaction(transaction);
+            this.leftGridApi.applyTransaction(transaction);
         }
 
-        var rowIsInRightGrid = !!this.rightGridOptions.api!.getRowNode(data.id);
+        var rowIsInRightGrid = !!this.rightGridApi.getRowNode(data.id);
         if (rowIsInRightGrid) {
-            this.rightGridOptions.api!.applyTransaction(transaction);
+            this.rightGridApi.applyTransaction(transaction);
         }
     }
 
@@ -183,7 +189,7 @@ export class AppComponent {
             return;
         }
 
-        var gridApi = grid == 'left' ? this.leftGridOptions.api : this.rightGridOptions.api;
+        var gridApi = grid == 'left' ? this.leftGridApi : this.rightGridApi;
 
         // do nothing if row is already in the grid, otherwise we would have duplicates
         var rowAlreadyInGrid = !!gridApi!.getRowNode(data.id);
@@ -200,6 +206,14 @@ export class AppComponent {
 
     onFirstDataRendered(params: FirstDataRenderedEvent) {
         params.api.sizeColumnsToFit();
+    }
+
+    onGridReady(params: GridReadyEvent, grid: 'left' | 'right'){
+        if (grid === 'left') {
+            this.leftGridApi = params.api;
+        } else {
+            this.rightGridApi = params.api;
+        }
     }
 
 }

@@ -1,6 +1,7 @@
 /* replace the icons with fontswesome */
 .ag-theme-alpine {
     --ag-icon-font-family: "Font Awesome 5 Free";
+    --ag-icon-font-weight: bold;
     --ag-icon-font-code-aggregation: "\f247";
     --ag-icon-font-code-arrows: "\f0b2";
     --ag-icon-font-code-asc: "\f062";
@@ -47,13 +48,6 @@
     --ag-icon-font-code-unlinked: "\f127";
     --ag-icon-font-code-checkbox-checked: "\f00c";
     --ag-icon-font-code-checkbox-unchecked: "\f00d";
-}
-
-.ag-theme-alpine .ag-icon,
-.ag-theme-alpine .ag-checkbox-input-wrapper,
-.ag-theme-alpine .ag-radio-button-input-wrapper {
-    /* Font Awesome requires bold on all icon elements */
-    font-weight: bold;
 }
 
 /* selectively replace the group and aggregation icons with Material Design Icons */

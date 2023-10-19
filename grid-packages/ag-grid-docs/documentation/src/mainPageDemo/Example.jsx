@@ -24,6 +24,7 @@ import { StatusBarModule } from '@ag-grid-enterprise/status-bar';
 import classnames from 'classnames';
 import React, { memo, useEffect, useMemo, useRef, useState } from 'react';
 import { Helmet } from 'react-helmet';
+import LocalStorage from '../utils/local-storage';
 import { booleanValues, colNames, countries, COUNTRY_CODES, firstNames, games, lastNames, months } from './consts';
 import { CountryFloatingFilterComponent } from './CountryFloatingFilterComponent';
 import styles from './Example.module.scss';
@@ -177,11 +178,11 @@ const mobileDefaultCols = [
         cellClass: 'vAlign',
         checkboxSelection: (params) => {
             // we put checkbox on the name if we are not doing grouping
-            return params.columnApi.getRowGroupColumns().length === 0;
+            return params.api.getRowGroupColumns().length === 0;
         },
         headerCheckboxSelection: (params) => {
             // we put checkbox on the name if we are not doing grouping
-            return params.columnApi.getRowGroupColumns().length === 0;
+            return params.api.getRowGroupColumns().length === 0;
         },
         headerCheckboxSelectionFilteredOnly: true,
     },
@@ -254,6 +255,10 @@ const mobileDefaultCols = [
         field: 'game.name',
         width: 180,
         editable: true,
+        cellEditor: 'agRichSelectCellEditor',
+        cellEditorParams: {
+            values: [...games].sort()
+        },
         filter: 'agSetColumnFilter',
         cellClass: () => 'alphabet',
     },
@@ -317,11 +322,11 @@ const desktopDefaultCols = [
                 floatingFilterComponent: 'personFloatingFilterComponent',
                 checkboxSelection: (params) => {
                     // we put checkbox on the name if we are not doing grouping
-                    return params.columnApi.getRowGroupColumns().length === 0;
+                    return params.api.getRowGroupColumns().length === 0;
                 },
                 headerCheckboxSelection: (params) => {
                     // we put checkbox on the name if we are not doing grouping
-                    return params.columnApi.getRowGroupColumns().length === 0;
+                    return params.api.getRowGroupColumns().length === 0;
                 },
                 headerCheckboxSelectionFilteredOnly: true,
             },
@@ -466,6 +471,14 @@ const desktopDefaultCols = [
                 width: 180,
                 editable: true,
                 filter: 'agMultiColumnFilter',
+                cellEditor: 'agRichSelectCellEditor',
+                cellEditorParams: {
+                    values: [...games].sort(),
+                    allowTyping: true,
+                    searchType: 'matchAny',
+                    filterList: true,
+                    highlightMatch: true
+                },
                 tooltipField: 'game.name',
                 // wrapText: true,
                 // autoHeight: true,
@@ -609,14 +622,13 @@ const Example = () => {
     const loadInstance = useRef(0);
     const [gridTheme, setGridTheme] = useState(null);
     useEffect(() => {
-        const params = new URLSearchParams(window.location.search);
-        const theme = params.get('theme') || 'ag-theme-alpine';
-
-        const participantGroup = desktopDefaultCols.find(group => group.headerName === 'Participant');
-        const countryColumn = participantGroup.children.find(column => column.field === 'country')
-        countryColumn['cellEditorPopup'] = theme.includes('material') ? true : false;
-
-        setGridTheme(theme);
+        const themeFromURL = new URLSearchParams(window.location.search).get('theme');
+        if (themeFromURL) {
+            setGridTheme(themeFromURL)
+        } else {
+            const isDarkMode = getComputedStyle(document.documentElement).getPropertyValue('--color-scheme') === 'dark';
+            setGridTheme(isDarkMode ? 'ag-theme-alpine-dark' : 'ag-theme-alpine');
+        }
     }, []);
     const [base64Flags, setBase64Flags] = useState();
     const [defaultCols, setDefaultCols] = useState();
@@ -680,7 +692,7 @@ const Example = () => {
     );
 
     const selectionChanged = (event) => {
-        // console.log('Callback selectionChanged: selection count = ' + gridOptions.api.getSelectedNodes().length);
+        // console.log('Callback selectionChanged: selection count = ' + event.api.getSelectedNodes().length);
     };
 
     const rowSelected = (event) => {
@@ -1411,11 +1423,10 @@ const Example = () => {
         }
     }, [dataSize]);
 
-    useEffect(() => {
-        if (!gridTheme) return;
-        const isDark = gridTheme.indexOf('dark') >= 0;
+    const isDarkTheme = gridTheme?.indexOf('dark')  >= 0;
 
-        if (isDark) {
+    useEffect(() => {
+        if (isDarkTheme) {
             gridOptions.chartThemes = [
                 'ag-default-dark',
                 'ag-material-dark',
@@ -1434,7 +1445,7 @@ const Example = () => {
                 <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.6.3/css/all.css" />
                 {helmet.map((entry) => entry)}
             </Helmet>
-            <div className={classnames(styles.exampleWrapper)}>
+            <div className={classnames(styles.exampleWrapper, isDarkTheme && styles.exampleWrapperDark)}>
                 <Toolbar
                     gridRef={gridRef}
                     dataSize={dataSize}

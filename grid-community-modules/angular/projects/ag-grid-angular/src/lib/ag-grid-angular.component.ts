@@ -12,13 +12,15 @@ import {
     ViewEncapsulation
 } from "@angular/core";
 
-import { AgPromise, ComponentUtil, Grid, GridOptions, GridParams, Module } from "@ag-grid-community/core";
+import { AgPromise, ComponentUtil, Grid, GridOptions, GridParams, Module, createGrid } from "@ag-grid-community/core";
 
 // @START_IMPORTS@
 import {
+    AdvancedFilterBuilderVisibleChangedEvent,
     AdvancedFilterModel,
     AgChartTheme,
     AgChartThemeOverrides,
+    AlignedGrid,
     AsyncTransactionsFlushed,
     BodyScrollEndEvent,
     BodyScrollEvent,
@@ -87,9 +89,12 @@ import {
     GetServerSideGroupLevelParamsParams,
     GridApi,
     GridColumnsChangedEvent,
+    GridPreDestroyedEvent,
     GridReadyEvent,
     GridSizeChangedEvent,
+    GridState,
     HeaderPosition,
+    IAdvancedFilterBuilderParams,
     IAggFunc,
     IDatasource,
     IRowDragItem,
@@ -151,6 +156,7 @@ import {
     SideBarDef,
     SortChangedEvent,
     SortDirection,
+    StateUpdatedEvent,
     StatusPanelDef,
     StoreRefreshedEvent,
     TabToNextCellParams,
@@ -162,6 +168,7 @@ import {
     TreeDataDisplayType,
     UndoEndedEvent,
     UndoStartedEvent,
+    UseGroupFooter,
     ViewportChangedEvent,
     VirtualColumnsChangedEvent,
     VirtualRowRemovedEvent
@@ -193,8 +200,12 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     // in order to ensure firing of gridReady is deterministic
     private _fullyReady: AgPromise<boolean> = AgPromise.resolve(true);
 
-    // making these public, so they are accessible to people using the ng2 component references
+    /** Grid Api available after onGridReady event has fired. */
     public api: GridApi<TData>;
+    /**
+     * @deprecated v31 - The `columnApi` has been deprecated and all the methods are now present of the `api`.
+     * Please use the `api` instead.
+     */
     public columnApi: ColumnApi;
 
     constructor(elementDef: ElementRef,
@@ -222,14 +233,16 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
             modules: (this.modules || []) as any
         };
 
-        new Grid(this._nativeElement, this.gridOptions, this.gridParams);
+        const api = createGrid(this._nativeElement, this.gridOptions, this.gridParams);
 
-        if (this.gridOptions.api) {
-            this.api = this.gridOptions.api;
+        if (api) {
+            this.api = api;
+            this.columnApi = new ColumnApi(api);
         }
 
-        if (this.gridOptions.columnApi) {
-            this.columnApi = this.gridOptions.columnApi;
+        if (this.gridPreDestroyed.observers.length > 0) {
+            console.warn('AG Grid: gridPreDestroyed event listener registered via (gridPreDestroyed)="method($event)" will be ignored! ' +
+                'Please assign via gridOptions.gridPreDestroyed and pass to the grid as [gridOptions]="gridOptions"');
         }
 
         this._initialised = true;
@@ -251,9 +264,8 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
             // need to do this before the destroy, so we know not to emit any events
             // while tearing down the grid.
             this._destroyed = true;
-            if (this.api) {
-                this.api.destroy();
-            }
+             // could be null if grid failed to initialise
+             this.api?.destroy();            
         }
     }
 
@@ -470,11 +482,15 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
          * Default: `false`
          */
     @Input() public includeHiddenColumnsInQuickFilter: boolean | undefined = undefined;
+    /** Changes how the Quick Filter splits the Quick Filter text into search terms.     */
+    @Input() public quickFilterParser: ((quickFilter: string) => string[]) | undefined = undefined;
+    /** Changes the matching logic for whether a row passes the Quick Filter.     */
+    @Input() public quickFilterMatcher: ((quickFilterParts: string[], rowQuickFilterAggregateText: string) => boolean) | undefined = undefined;
     /** Set to `true` to override the default tree data filtering behaviour to instead exclude child nodes from filter results. Default: `false`     */
     @Input() public excludeChildrenWhenTreeDataFiltering: boolean | undefined = undefined;
     /** Set to true to enable the Advanced Filter. Default: `false`     */
     @Input() public enableAdvancedFilter: boolean | undefined = undefined;
-    /** Allows the state of the Advanced Filter to be set before the grid is loaded.     */
+    /** @deprecated As of v31, use `initialState.filter.advancedFilterModel` instead.     */
     @Input() public advancedFilterModel: AdvancedFilterModel | null | undefined = undefined;
     /** Hidden columns are excluded from the Advanced Filter by default.
          * To include hidden columns, set to `true`.
@@ -485,6 +501,8 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
          * Set to `null` or `undefined` to appear inside the grid.
          */
     @Input() public advancedFilterParent: HTMLElement | null | undefined = undefined;
+    /** Customise the parameters passed to the Advanced Filter Builder.     */
+    @Input() public advancedFilterBuilderParams: IAdvancedFilterBuilderParams | undefined = undefined;
     /** Set to `true` to Enable Charts. Default: `false`     */
     @Input() public enableCharts: boolean | undefined = undefined;
     /** The list of chart themes that a user can chose from in the chart settings panel.
@@ -529,8 +547,12 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     @Input() public detailRowAutoHeight: boolean | undefined = undefined;
     /** Provides a context object that is provided to different callbacks the grid uses. Used for passing additional information to the callbacks by your application.     */
     @Input() public context: any = undefined;
-    /** A list of grids to treat as Aligned Grids. If grids are aligned then the columns and horizontal scrolling will be kept in sync.     */
-    @Input() public alignedGrids: { api?: GridApi | null, columnApi?: ColumnApi | null }[] | undefined = undefined;
+    /** 
+         * A list of grids to treat as Aligned Grids. 
+         * Provide a list if the grids / apis already exist or return via a callback to allow the aligned grids to be retrieved asynchronously.
+         * If grids are aligned then the columns and horizontal scrolling will be kept in sync.
+         */
+    @Input() public alignedGrids: (AlignedGrid[] | (() => AlignedGrid[])) | undefined = undefined;
     /** Change this value to set the tabIndex order of the Grid within your application. Default: `0`     */
     @Input() public tabIndex: number | undefined = undefined;
     /** The number of rows rendered outside the viewable area the grid renders.
@@ -544,7 +566,7 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     @Input() public valueCacheNeverExpires: boolean | undefined = undefined;
     /** Set to `true` to allow cell expressions. Default: `false`     */
     @Input() public enableCellExpressions: boolean | undefined = undefined;
-    /** If `true`, row nodes do not have their parents set.
+    /** @deprecated v30.2 If `true`, row nodes do not have their parents set.
          * The grid doesn't use the parent reference, but it is included to help the client code navigate the node tree if it wants by providing bi-direction navigation up and down the tree.
          * If this is a problem (e.g. if you need to convert the tree to JSON, which does not allow cyclic dependencies) then set this to `true`.
          * Default: `false`
@@ -701,15 +723,18 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     @Input() public groupMaintainOrder: boolean | undefined = undefined;
     /** When `true`, if you select a group, the children of the group will also be selected. Default: `false`     */
     @Input() public groupSelectsChildren: boolean | undefined = undefined;
+    /** If grouping, locks the group settings of a number of columns, e.g. `0` for no group locking. `1` for first group column locked, `-1` for all group columns locked. Default: `0`     */
+    @Input() public groupLockGroupColumns: number | undefined = undefined;
     /** Set to determine whether filters should be applied on aggregated group values. Default: `false`     */
     @Input() public groupAggFiltering: boolean | IsRowFilterable<TData> | undefined = undefined;
     /** If grouping, this controls whether to show a group footer when the group is expanded.
          * If `true`, then by default, the footer will contain aggregate data (if any) when shown and the header will be blank.
          * When closed, the header will contain the aggregate data regardless of this setting (as the footer is hidden anyway).
          * This is handy for 'total' rows, that are displayed below the data when the group is open, and alongside the group when it is closed.
+         * If a callback function is provided, it can used to select which groups will have a footer added. 
          * Default: `false`
          */
-    @Input() public groupIncludeFooter: boolean | undefined = undefined;
+    @Input() public groupIncludeFooter: boolean | UseGroupFooter<TData> | undefined = undefined;
     /** Set to `true` to show a 'grand total' group footer across all groups. Default: `false`     */
     @Input() public groupIncludeTotalFooter: boolean | undefined = undefined;
     /** If `true`, and showing footer, aggregate data will always be displayed at both the header and footer levels. This stops the possibly undesirable behaviour of the header details 'jumping' to the footer on expand. Default: `false`     */
@@ -742,8 +767,6 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     @Input() public rowGroupPanelSuppressSort: boolean | undefined = undefined;
     /** Set to `true` prevent Group Rows from sticking to the top of the grid. Default: `false`     */
     @Input() public suppressGroupRowsSticky: boolean | undefined = undefined;
-    /** @deprecated v24 - no longer needed, transaction updates keep group state     */
-    @Input() public rememberGroupStateWhenNewData: boolean | undefined = undefined;
     /** Data to be displayed as pinned top rows in the grid.     */
     @Input() public pinnedTopRowData: any[] | undefined = undefined;
     /** Data to be displayed as pinned bottom rows in the grid.     */
@@ -859,7 +882,7 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     @Input() public suppressMultiRangeSelection: boolean | undefined = undefined;
     /** Set to `true` to be able to select the text within cells.
          *
-         *     **Note:** When this is set to `true`, the clipboard service is disabled.
+         *     **Note:** When this is set to `true`, the clipboard service is disabled and only selected text is copied.
          * Default: `false`
          */
     @Input() public enableCellTextSelection: boolean | undefined = undefined;
@@ -910,6 +933,8 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     /** @deprecated v29.2     */
     @Input() public functionsPassive: boolean | undefined = undefined;
     @Input() public enableGroupEdit: boolean | undefined = undefined;
+    /** Initial state for the grid. Only read once on initialization. Can be used in conjunction with `api.getState()` to save and restore grid state.     */
+    @Input() public initialState: GridState | undefined = undefined;
     /** For customising the context menu.     */
     @Input() public getContextMenuItems: GetContextMenuItems<TData> | undefined = undefined;
     /** For customising the main 'column header' menu.     */
@@ -1043,7 +1068,7 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     @Output() public displayedColumnsChanged: EventEmitter<DisplayedColumnsChangedEvent<TData>> = new EventEmitter<DisplayedColumnsChangedEvent<TData>>();
     /** The list of rendered columns changed (only columns in the visible scrolled viewport are rendered by default).     */
     @Output() public virtualColumnsChanged: EventEmitter<VirtualColumnsChangedEvent<TData>> = new EventEmitter<VirtualColumnsChangedEvent<TData>>();
-    /** Shotgun - gets called when either a) new columns are set or b) `columnApi.applyColumnState()` is used, so everything has changed.     */
+    /** Shotgun - gets called when either a) new columns are set or b) `api.applyColumnState()` is used, so everything has changed.     */
     @Output() public columnEverythingChanged: EventEmitter<ColumnEverythingChangedEvent<TData>> = new EventEmitter<ColumnEverythingChangedEvent<TData>>();
     /** Only used by Angular, React and VueJS AG Grid components (not used if doing plain JavaScript).
          * If the grid receives changes due to bound properties, this event fires after the grid has finished processing the change.
@@ -1084,6 +1109,8 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     @Output() public filterChanged: EventEmitter<FilterChangedEvent<TData>> = new EventEmitter<FilterChangedEvent<TData>>();
     /** Filter was modified but not applied. Used when filters have 'Apply' buttons.     */
     @Output() public filterModified: EventEmitter<FilterModifiedEvent<TData>> = new EventEmitter<FilterModifiedEvent<TData>>();
+    /** Advanced Filter Builder visibility has changed (opened or closed).     */
+    @Output() public advancedFilterBuilderVisibleChanged: EventEmitter<AdvancedFilterBuilderVisibleChangedEvent<TData>> = new EventEmitter<AdvancedFilterBuilderVisibleChangedEvent<TData>>();
     /** A chart has been created.     */
     @Output() public chartCreated: EventEmitter<ChartCreated<TData>> = new EventEmitter<ChartCreated<TData>>();
     /** The data range for the chart has been changed.     */
@@ -1096,6 +1123,8 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     @Output() public cellKeyDown: EventEmitter<CellKeyDownEvent<TData> | FullWidthCellKeyDownEvent<TData>> = new EventEmitter<CellKeyDownEvent<TData> | FullWidthCellKeyDownEvent<TData>>();
     /** The grid has initialised and is ready for most api calls, but may not be fully rendered yet      */
     @Output() public gridReady: EventEmitter<GridReadyEvent<TData>> = new EventEmitter<GridReadyEvent<TData>>();
+    /** Invoked immediately before the grid is destroyed. This is useful for cleanup logic that needs to run before the grid is torn down.     */
+    @Output() public gridPreDestroyed: EventEmitter<GridPreDestroyedEvent<TData>> = new EventEmitter<GridPreDestroyedEvent<TData>>();
     /** Fired the first time data is rendered into the grid. Use this event if you want to auto resize columns based on their contents     */
     @Output() public firstDataRendered: EventEmitter<FirstDataRenderedEvent<TData>> = new EventEmitter<FirstDataRenderedEvent<TData>>();
     /** The size of the grid `div` has changed. In other words, the grid was resized.     */
@@ -1114,6 +1143,8 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     @Output() public dragStarted: EventEmitter<DragStartedEvent<TData>> = new EventEmitter<DragStartedEvent<TData>>();
     /** When dragging stops. This could be any action that uses the grid's Drag and Drop service, e.g. Column Moving, Column Resizing, Range Selection, Fill Handle, etc.     */
     @Output() public dragStopped: EventEmitter<DragStoppedEvent<TData>> = new EventEmitter<DragStoppedEvent<TData>>();
+    /** Grid state has been updated.     */
+    @Output() public stateUpdated: EventEmitter<StateUpdatedEvent<TData>> = new EventEmitter<StateUpdatedEvent<TData>>();
     /** Triggered every time the paging state changes. Some of the most common scenarios for this event to be triggered are:
          *
          *  - The page size changes.
@@ -1129,7 +1160,7 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     @Output() public rowDragLeave: EventEmitter<RowDragEvent<TData>> = new EventEmitter<RowDragEvent<TData>>();
     /** The drag has finished over the grid.     */
     @Output() public rowDragEnd: EventEmitter<RowDragEvent<TData>> = new EventEmitter<RowDragEvent<TData>>();
-    /** A row group column was added or removed.     */
+    /** A row group column was added, removed or reordered.     */
     @Output() public columnRowGroupChanged: EventEmitter<ColumnRowGroupChangedEvent<TData>> = new EventEmitter<ColumnRowGroupChangedEvent<TData>>();
     /** A row group was opened or closed.     */
     @Output() public rowGroupOpened: EventEmitter<RowGroupOpenedEvent<TData>> = new EventEmitter<RowGroupOpenedEvent<TData>>();
@@ -1139,7 +1170,7 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     @Output() public pinnedRowDataChanged: EventEmitter<PinnedRowDataChangedEvent<TData>> = new EventEmitter<PinnedRowDataChangedEvent<TData>>();
     /** @deprecated v28 No longer fired, use onRowDataUpdated instead     */
     @Output() public rowDataChanged: EventEmitter<RowDataChangedEvent<TData>> = new EventEmitter<RowDataChangedEvent<TData>>();
-    /** The client has updated data for the grid by either a) setting new Row Data or b) Applying a Row Transaction.     */
+    /** Client-Side Row Model only. The client has updated data for the grid by either a) setting new Row Data or b) Applying a Row Transaction.     */
     @Output() public rowDataUpdated: EventEmitter<RowDataUpdatedEvent<TData>> = new EventEmitter<RowDataUpdatedEvent<TData>>();
     /** Async transactions have been applied. Contains a list of all transaction results.     */
     @Output() public asyncTransactionsFlushed: EventEmitter<AsyncTransactionsFlushed<TData>> = new EventEmitter<AsyncTransactionsFlushed<TData>>();
@@ -1197,7 +1228,6 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     static ngAcceptInputType_enableBrowserTooltips: boolean | null | '';
     static ngAcceptInputType_enableCellExpressions: boolean | null | '';
     static ngAcceptInputType_groupSelectsChildren: boolean | null | '';
-    static ngAcceptInputType_groupIncludeFooter: boolean | null | '';
     static ngAcceptInputType_groupIncludeTotalFooter: boolean | null | '';
     static ngAcceptInputType_groupSuppressBlankHeader: boolean | null | '';
     static ngAcceptInputType_suppressMenuHide: boolean | null | '';
@@ -1223,7 +1253,6 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     static ngAcceptInputType_suppressAsyncEvents: boolean | null | '';
     static ngAcceptInputType_allowContextMenuWithControlKey: boolean | null | '';
     static ngAcceptInputType_suppressContextMenu: boolean | null | '';
-    static ngAcceptInputType_rememberGroupStateWhenNewData: boolean | null | '';
     static ngAcceptInputType_enableCellChangeFlash: boolean | null | '';
     static ngAcceptInputType_suppressDragLeaveHidesColumns: boolean | null | '';
     static ngAcceptInputType_suppressRowGroupHidesColumns: boolean | null | '';
@@ -1320,7 +1349,6 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     static ngAcceptInputType_maintainColumnOrder: boolean | null | '';
     static ngAcceptInputType_groupMaintainOrder: boolean | null | '';
     static ngAcceptInputType_columnHoverHighlight: boolean | null | '';
-    static ngAcceptInputType_suppressReactUi: boolean | null | '';
     static ngAcceptInputType_readOnlyEdit: boolean | null | '';
     static ngAcceptInputType_suppressRowVirtualisation: boolean | null | '';
     static ngAcceptInputType_enableCellEditingOnBackspace: boolean | null | '';

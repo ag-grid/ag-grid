@@ -2,21 +2,31 @@ import {
     _,
     Autowired,
     Bean,
-    ColumnModel,
     SortController,
     StageExecuteParams,
     BeanStub,
-    SortOption
+    SortOption,
+    IRowNodeStage,
+    GridOptions
 } from "@ag-grid-community/core";
 
 import { SortService } from "./sortService";
 
 @Bean('sortStage')
-export class SortStage extends BeanStub {
+export class SortStage extends BeanStub implements IRowNodeStage {
+    getImpactingGridOptions(): (keyof GridOptions<any>)[] {
+        return [
+            // 'deltaSort', // don't return this, as it shouldn't trigger a new sort.
+            // 'postSortRows', // don't return this, as don't want to trigger sort.
+            'treeData',
+            'groupHideOpenParents',
+            'groupDisplayType',
+            'accentedSort',
+        ]
+    }
 
     @Autowired('sortService') private sortService: SortService;
     @Autowired('sortController') private sortController: SortController;
-    @Autowired('columnModel') private columnModel: ColumnModel;
 
     public execute(params: StageExecuteParams): void {
         const sortOptions: SortOption[] = this.sortController.getSortOptions();
@@ -30,7 +40,14 @@ export class SortStage extends BeanStub {
             // rolling out to everyone.
             && this.gridOptionsService.is('deltaSort');
 
-        const sortContainsGroupColumns = sortOptions.some(opt => !!this.columnModel.getGroupDisplayColumnForGroup(opt.column.getId()));
+
+        const sortContainsGroupColumns = sortOptions.some(opt => {
+            const isSortingCoupled = this.gridOptionsService.isColumnsSortingCoupledToGroup();
+            if (isSortingCoupled) {
+                return opt.column.isPrimary() && opt.column.isRowGroupActive();
+            }
+            return !!opt.column.getColDef().showRowGroup;
+        });
         this.sortService.sort(sortOptions, sortActive, deltaSort, params.rowNodeTransactions, params.changedPath, sortContainsGroupColumns);
     }
 }

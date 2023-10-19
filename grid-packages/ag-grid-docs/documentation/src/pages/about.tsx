@@ -102,6 +102,11 @@ const AboutPage = () => {
                                 <p>Developer, Grid Core</p>
                             </div>
                             <div>
+                                <img src="../images/team/alexW.jpg" alt="Alex Wilton, Developer" />
+                                <h3>Alex Wilton</h3>
+                                <p>Developer, Grid Core</p>
+                            </div>
+                            <div>
                                 <img src="../images/team/alanT.jpg" alt="Alan Treadway, Developer" />
                                 <h3>Alan Treadway</h3>
                                 <p>Lead Developer, Data Visualisation</p>
@@ -114,6 +119,16 @@ const AboutPage = () => {
                             <div>
                                 <img src="../images/team/alex.png" alt="Alex Shutau, Developer" />
                                 <h3>Alex Shutau</h3>
+                                <p>Developer, Data Visualisation</p>
+                            </div>
+                            <div>
+                                <img src="../images/team/ido.jpg" alt="Ido Moshe, Developer" />
+                                <h3>Ido Moshe</h3>
+                                <p>Developer, Data Visualisation</p>
+                            </div>
+                            <div>
+                                <img src="../images/team/oli.jpg" alt="Oli Legat, Developer" />
+                                <h3>Oli Legat</h3>
                                 <p>Developer, Data Visualisation</p>
                             </div>
                             <div>
@@ -140,6 +155,11 @@ const AboutPage = () => {
                                 <p>Technical Product Analyst</p>
                             </div>
                             <div>
+                                <img src="../images/team/adam.jpg" alt="Adam Wang, Technical Product Analyst" />
+                                <h3>Adam Wang</h3>
+                                <p>Technical Product Analyst</p>
+                            </div>
+                            <div>
                                 <img src="../images/team/viqas.jpg" alt="Viqas Hussain, Lead Developer" />
                                 <h3>Viqas Hussain</h3>
                                 <p>Lead Developer, E-commerce</p>
@@ -148,6 +168,11 @@ const AboutPage = () => {
                                 <img src="../images/team/mark.jpg" alt="Mark Durrant, Lead UX Designer" />
                                 <h3>Mark Durrant</h3>
                                 <p>Lead UX Designer</p>
+                            </div>
+                            <div>
+                                <img src="../images/team/james.jpg" alt="James Swinton-Bland, Developer relations lead" />
+                                <h3>James Swinton-Bland</h3>
+                                <p>Developer Relations Lead</p>
                             </div>
                         </article>
                     </section>
@@ -174,15 +199,15 @@ const AboutPage = () => {
                             <div>
                                 <img
                                     src="../images/team/victoria.jpeg"
-                                    alt="Victoria Tennant, Business Development Manager"
+                                    alt="Victoria Tennant, Head of Renewals Department"
                                 />
                                 <h3>Victoria Tennant</h3>
-                                <p>Renewals Team Manager</p>
+                                <p>Head of Renewals Department</p>
                             </div>
                             <div>
-                                <img src="../images/team/dimple.jpg" alt="Dimple Unalkat, Customer Experience Team" />
+                                <img src="../images/team/dimple.jpg" alt="Dimple Unalkat, Head of Initials Department" />
                                 <h3>Dimple Unalkat</h3>
-                                <p>Initials Team Manager</p>
+                                <p>Head of Initials Department</p>
                             </div>
                             <div>
                                 <img
@@ -209,16 +234,16 @@ const AboutPage = () => {
                                 <p>Key Account Manager </p>
                             </div>
                             <div>
-                                <img src="../images/team/robD.jpg" alt="Rob Dunkiert, Customer Experience Manager" />
-                                <h3>Rob Dunkiert</h3>
-                                <p>Customer Experience Manager</p>
-                            </div>
-                            <div>
                                 <img
                                     src="../images/team/seweety.jpeg"
-                                    alt="Seweety Kumar, Customer Experience Manager"
+                                    alt="Seweety Kumar, Renewals Team Lead"
                                 />
                                 <h3>Seweety Kumar</h3>
+                                <p>Renewals Team Lead</p>
+                            </div>
+                            <div>
+                                <img src="../images/team/robD.jpg" alt="Rob Dunkiert, Customer Experience Manager" />
+                                <h3>Rob Dunkiert</h3>
                                 <p>Customer Experience Manager</p>
                             </div>
                             <div>
@@ -244,6 +269,11 @@ const AboutPage = () => {
                             <div>
                                 <img src="../images/team/alexR.jpg" alt="Alex Russell, Customer Experience Manager" />
                                 <h3>Alex Russell</h3>
+                                <p>Customer Experience Manager</p>
+                            </div>
+                            <div>
+                                <img src="../images/team/lex.jpg" alt="Alex Openshaw, Customer Experience Manager" />
+                                <h3>Alex Openshaw</h3>
                                 <p>Customer Experience Manager</p>
                             </div>
                             <div>

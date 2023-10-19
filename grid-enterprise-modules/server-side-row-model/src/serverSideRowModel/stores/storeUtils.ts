@@ -4,8 +4,6 @@ import {
     Autowired,
     Bean,
     BeanStub,
-    ColumnApi,
-    GridApi,
     IServerSideGetRowsParams,
     IServerSideGetRowsRequest,
     StoreRefreshAfterParams,
@@ -15,14 +13,15 @@ import {
     ColumnModel,
     GridOptions
 } from "@ag-grid-community/core";
-import { SSRMParams } from "../serverSideRowModel";
+import { SSRMParams, ServerSideRowModel } from "../serverSideRowModel";
+import { StoreFactory } from "./storeFactory";
 
 @Bean('ssrmStoreUtils')
 export class StoreUtils extends BeanStub {
 
-    @Autowired('columnApi') private columnApi: ColumnApi;
     @Autowired('columnModel') private columnModel: ColumnModel;
-    @Autowired('gridApi') private gridApi: GridApi;
+    @Autowired('rowModel') private serverSideRowModel: ServerSideRowModel;
+    @Autowired('ssrmStoreFactory') private storeFactory: StoreFactory;
 
     public loadFromDatasource(p: {
         storeParams: SSRMParams,
@@ -59,8 +58,8 @@ export class StoreUtils extends BeanStub {
             fail: p.fail,
             request: request,
             parentNode: p.parentNode,
-            api: this.gridApi,
-            columnApi: this.columnApi,
+            api: this.gridOptionsService.api,
+            columnApi: this.gridOptionsService.columnApi,
             context: this.gridOptionsService.context
         };
 
@@ -81,6 +80,13 @@ export class StoreUtils extends BeanStub {
         const nextNode = findNodeFunc(nextKey);
 
         if (nextNode) {
+            // if we have the final node, but not the final store, we create it to allow
+            // early population of data
+            if (keys.length === 1 && !nextNode.childStore) {
+                const storeParams = this.serverSideRowModel.getParams();
+                nextNode.childStore = this.createBean(this.storeFactory.createStore(storeParams, nextNode));
+            }
+
             const keyListForNextLevel = keys.slice(1, keys.length);
             const nextStore = nextNode.childStore;
             return nextStore ? nextStore.getChildStore(keyListForNextLevel) : null;
@@ -116,24 +122,24 @@ export class StoreUtils extends BeanStub {
         return affectedGroupCols;
     }
 
-    public getServerSideInitialRowCount(): number {
+    public getServerSideInitialRowCount(): number | null {
         const rowCount = this.gridOptionsService.getNum('serverSideInitialRowCount');
         if (typeof rowCount === 'number' && rowCount > 0) {
             return rowCount;
         }
-        return 1;
+        return null;
     }
 
     private assertRowModelIsServerSide(key: keyof GridOptions) {
         if (!this.gridOptionsService.isRowModelType('serverSide')) {
-            _.doOnce(() => console.warn(`AG Grid: The '${key}' property can only be used with the Server Side Row Model.`), key);
+            _.warnOnce(`The '${key}' property can only be used with the Server Side Row Model.`);
             return false;
         }
         return true;
     }
     private assertNotTreeData(key: keyof GridOptions) {
         if (this.gridOptionsService.is('treeData')) {
-            _.doOnce(() => console.warn(`AG Grid: The '${key}' property cannot be used while using tree data.`), key + '_TreeData');
+            _.warnOnce(`The '${key}' property cannot be used while using tree data.`);
             return false;
         }
         return true;

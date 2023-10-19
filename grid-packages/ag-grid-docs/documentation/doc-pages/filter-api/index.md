@@ -14,10 +14,10 @@ individual filters.
 
 <snippet>
 | // Gets filter model via the grid API
-| const model = gridOptions.api.getFilterModel();
+| const model = api.getFilterModel();
 | 
 | // Sets the filter model via the grid API
-| gridOptions.api.setFilterModel(model);
+| api.setFilterModel(model);
 </snippet>
 
 The filter model represents the state of filters for all columns and has the following structure:
@@ -45,7 +45,7 @@ This is useful if you want to save the global filter state and apply it at a lat
 You can reset all filters by doing the following:
 
 <snippet>
-gridOptions.api.setFilterModel(null);
+api.setFilterModel(null);
 </snippet>
 
 ### Example: Get / Set All Filter Models
@@ -70,7 +70,7 @@ It is also possible to access the filter components directly if you want to inte
 
 <snippet>
 // Get a reference to the 'name' filter instance
-const filterInstance = gridOptions.api.getFilterInstance('name');
+const filterInstance = api.getFilterInstance('name');
 </snippet>
 
 All of the methods of the filter are available on the instance. If using a custom filter, any other methods you have added will also be present, allowing bespoke behaviour to be added to your filter. Both provided and custom filters implement `IFilter` and have the following common methods:
@@ -81,7 +81,7 @@ For filters that are created asynchronously, including React 16+ components, `ge
 
 <snippet>
 | // Get a reference to an asynchronously created filter instance
-| gridOptions.api.getFilterInstance('name', filterInstance => {
+| api.getFilterInstance('name', filterInstance => {
 |     // ... use filterInstance here
 | });
 </snippet>
@@ -92,7 +92,7 @@ After filters have been changed via their API, you must ensure the method `gridA
 
 <snippet>
 | // Get a reference to the filter instance
-| const filterInstance = gridOptions.api.getFilterInstance('name');
+| const filterInstance = api.getFilterInstance('name');
 |
 | // Set the filter model
 | filterInstance.setModel({
@@ -102,7 +102,7 @@ After filters have been changed via their API, you must ensure the method `gridA
 | });
 |
 | // Tell grid to run filter operation again
-| gridOptions.api.onFilterChanged();
+| api.onFilterChanged();
 </snippet>
 
 ### Reset Individual Filters
@@ -111,13 +111,13 @@ You can reset a filter to its original state by getting the filter instance and 
 
 <snippet>
 | // Get a reference to the filter instance
-| const filterInstance = gridOptions.api.getFilterInstance('name');
+| const filterInstance = api.getFilterInstance('name');
 | 
 | // Set the model to null
 | filterInstance.setModel(null);
 | 
 | // Tell grid to run filter operation again
-| gridOptions.api.onFilterChanged();
+| api.onFilterChanged();
 </snippet>
 
 ### Example: Accessing Individual Filters
@@ -169,7 +169,7 @@ The following example demonstrates all of the Provided Filters with `readOnly: t
 
 Filtering causes the following events to be emitted:
 
-<api-documentation source='grid-events/events.json' section='filter'></api-documentation>
+<api-documentation source='grid-events/events.json' section='filter' names='["filterOpened", "filterChanged", "filterModified"]'></api-documentation>
 
 ## Next Up
 

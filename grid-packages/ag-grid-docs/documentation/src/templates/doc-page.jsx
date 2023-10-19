@@ -1,7 +1,5 @@
 import classnames from 'classnames';
 import { ApiDocumentation, InterfaceDocumentation } from 'components/ApiDocumentation';
-import ChartGallery from 'components/chart-gallery/ChartGallery';
-import ChartsApiExplorer from 'components/charts-api-explorer/ChartsApiExplorer';
 import ExampleRunner from 'components/example-runner/ExampleRunner';
 import { ExpandableSnippet } from 'components/expandable-snippet/ExpandableSnippet';
 import FrameworkSpecificSection from 'components/FrameworkSpecificSection';
@@ -24,6 +22,7 @@ import rehypeReact from 'rehype-react';
 import { getProductType } from 'utils/page-header';
 import stripHtml from 'utils/strip-html';
 import DocumentationLink from '../components/DocumentationLink';
+import DownloadDSButton from 'components/DownloadDSButton';
 import LearningVideos from '../components/LearningVideos';
 import { trackApiDocumentation } from '../utils/analytics';
 import styles from './doc-page.module.scss';
@@ -33,9 +32,7 @@ import styles from './doc-page.module.scss';
  */
 const DocPageTemplate = ({ data, pageContext: { framework, exampleIndexData, pageName } }) => {
     const { markdownRemark: page } = data;
-    const [showSideMenu, setShowSideMenu] = useState(
-        page.frontmatter.sideMenu === null ? true : page.frontmatter.sideMenu
-    );
+    const [showSideMenu, setShowSideMenu] = useState(true);
 
     if (!page) {
         return null;
@@ -47,7 +44,7 @@ const DocPageTemplate = ({ data, pageContext: { framework, exampleIndexData, pag
         if (!!value) {
             return value === 'true';
         }
-        return undefined
+        return undefined;
     };
 
     const getExampleRunnerProps = (props, library) => ({
@@ -70,7 +67,6 @@ const DocPageTemplate = ({ data, pageContext: { framework, exampleIndexData, pag
             gif: (props) =>
                 Gif({ ...props, pageName, autoPlay: props.autoPlay != null ? JSON.parse(props.autoPlay) : false }),
             'grid-example': (props) => <ExampleRunner {...getExampleRunnerProps(props, 'grid')} />,
-            'chart-example': (props) => <ExampleRunner {...getExampleRunnerProps(props, 'charts')} />,
             'api-documentation': (props) =>
                 ApiDocumentation({
                     ...props,
@@ -117,16 +113,13 @@ const DocPageTemplate = ({ data, pageContext: { framework, exampleIndexData, pag
             warning: Warning,
             'framework-specific-section': (props) =>
                 FrameworkSpecificSection({ ...props, currentFramework: framework }),
-            'chart-gallery': (props) => <ChartGallery {...props} />,
-            'charts-api-explorer': (props) => (
-                <ChartsApiExplorer {...props} framework={framework} exampleIndexData={exampleIndexData} />
-            ),
             'open-in-cta': OpenInCTA,
             pre: ({ children, className, ...otherProps }) => (
                 <pre className={classnames('code', className)} {...otherProps}>
                     {children}
                 </pre>
             ),
+            'download-ds-button': DownloadDSButton,
         },
     }).Compiler;
 
@@ -150,7 +143,7 @@ const DocPageTemplate = ({ data, pageContext: { framework, exampleIndexData, pag
                 <span className={styles.headerFramework}>SolidJS Data Grid:</span>
             ) : (
                 <span className={styles.headerFramework}>
-                    {getProductType(framework, pageName.startsWith('charts-'), version)}
+                    {getProductType(framework, false, version)}
                 </span>
             )}
             <span>{title}</span>
@@ -204,8 +197,7 @@ export const pageQuery = graphql`
             frontmatter {
                 title
                 version
-                enterprise
-                sideMenu
+                enterprise                
                 description
             }
             headings {

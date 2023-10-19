@@ -100,8 +100,6 @@ export class GroupCellRendererCtrl extends BeanStub {
     // be the parent who's details we are actually showing if the data was pulled down.
     private displayedGroupNode: RowNode;
 
-    private cellIsBlank: boolean;
-
     private eGui: HTMLElement;
     private eExpanded: HTMLElement;
     private eContracted: HTMLElement;
@@ -123,30 +121,38 @@ export class GroupCellRendererCtrl extends BeanStub {
         this.comp = comp;
         this.compClass = compClass;
 
+
+        const { node, value, colDef } = params;
         const topLevelFooter = this.isTopLevelFooter();
 
-        const embeddedRowMismatch = this.isEmbeddedRowMismatch();
-        // This allows for empty strings to appear as groups since
-        // it will only return for null or undefined.
-        const isNullValueAndNotMaster = params.value == null && !params.node.master;
-        let skipCell = false;
+        // logic for skipping cells follows, never skip top level footer cell.
+        if (!topLevelFooter) {
+            const embeddedRowMismatch = this.isEmbeddedRowMismatch();
+            if (embeddedRowMismatch) {
+                return;
+            }
 
-        // if the groupCellRenderer is inside of a footer and groupHideOpenParents is true
-        // we should only display the groupCellRenderer if the current column is the rowGroupedColumn
-        if (this.gridOptionsService.is('groupIncludeFooter') && this.gridOptionsService.is('groupHideOpenParents')) {
-            const node = params.node;
-
-            if (node.footer) {
-                const showRowGroup = params.colDef && params.colDef.showRowGroup;
+            // when group column is multiple group columns, don't render for empty checkboxes
+            // as UX becomes overloaded with empty cells including checkboxes.
+            const isSingleGroupColumn = colDef?.showRowGroup === true;
+            const isNullValueAndNotMaster = value == null && !node.master;
+            if (!isSingleGroupColumn && isNullValueAndNotMaster) {
+                return;
+            }
+            
+            // this footer should only be non-top level. Don't need to check groupIncludeFooter
+            // as we won't have footer rows in that instance.
+            if (node.footer && this.gridOptionsService.is('groupHideOpenParents')) {
+                const showRowGroup = colDef && colDef.showRowGroup;
                 const rowGroupColumnId = node.rowGroupColumn && node.rowGroupColumn.getColId();
 
-                skipCell = showRowGroup !== rowGroupColumnId;
+                // if the groupCellRenderer is inside of a footer and groupHideOpenParents is true
+                // we should only display the groupCellRenderer if the current column is the rowGroupedColumn
+                if(showRowGroup !== rowGroupColumnId) {
+                    return;
+                }
             }
         }
-
-        this.cellIsBlank = topLevelFooter ? false : (embeddedRowMismatch || (isNullValueAndNotMaster && !params.node.master) || skipCell);
-
-        if (this.cellIsBlank) { return; }
 
         this.setupShowingValueForOpenedParent();
         this.findDisplayedGroupNode();
@@ -459,7 +465,7 @@ export class GroupCellRendererCtrl extends BeanStub {
     }
 
     private isShowRowGroupForThisRow(): boolean {
-        if (this.gridOptionsService.isTreeData()) { return true; }
+        if (this.gridOptionsService.is('treeData')) { return true; }
 
         const rowGroupColumn = this.displayedGroupNode.rowGroupColumn;
 
@@ -624,7 +630,7 @@ export class GroupCellRendererCtrl extends BeanStub {
         const rowNode: IRowNode = params.node;
         // if we are only showing one group column, we don't want to be indenting based on level
         const fullWithRow = !!params.colDef;
-        const treeData = this.gridOptionsService.isTreeData();
+        const treeData = this.gridOptionsService.is('treeData');
         const manyDimensionThisColumn = !fullWithRow || treeData || params.colDef!.showRowGroup === true;
         const paddingCount = manyDimensionThisColumn ? rowNode.uiLevel : 0;
 
@@ -667,7 +673,7 @@ export class GroupCellRendererCtrl extends BeanStub {
             this.getContext().createBean(cbSelectionComponent);
 
             cbSelectionComponent.init({
-                rowNode: rowNode,
+                rowNode: this.params.node as RowNode, // when groupHideOpenParents = true and group expanded, we want the checkbox to refer to leaf node state (not group node state)
                 column: this.params.column,
                 overrides: {
                     isVisible: this.params.checkbox,

@@ -58,7 +58,10 @@ const gridOptions = {
                 allowedCharPattern: '\\d\\-\\,',
                 numberParser: text => {
                     return text == null ? null : parseFloat(text.replace(',', '.'));
-                }
+                },
+                numberFormatter: value => {
+                    return value == null ? null : value.toString().replace('.', ',');
+                },
             }
         }
     ]
@@ -68,6 +71,8 @@ const gridOptions = {
 The `allowedCharPattern` is a regex of all the characters that are allowed to be typed. This is surrounded by square brackets `[]` and used as a character class to be compared against each typed character individually and prevent the character from appearing in the input if it does not match (in supported browsers).
 
 The `numberParser` should take the user-entered text and return either a number if one can be interpreted, or `null` if not.
+
+The `numberFormatter` should take a number (e.g. from the Filter Model) and convert it into the formatted text to be displayed, or `null` if no value.
 
 Custom number support can be seen in the [Number Filter Example](#example-number-filter) above.
 

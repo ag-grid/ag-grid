@@ -89,8 +89,10 @@ const webpackTask = (minify, styles, libraryTarget) => {
             },
             devtool: false,
             resolve: {
+                extensions: ['.mjs', '.js'],
                 alias: {
-                    "ag-charts-community": path.resolve(__dirname, 'node_modules/@ag-grid-enterprise/charts/node_modules/ag-charts-community/dist/esm/es6/main.mjs')
+                    "ag-charts-community": path.resolve(__dirname, 'node_modules/@ag-grid-enterprise/charts/node_modules/ag-charts-community/dist/main.esm.js'),
+                    "ag-charts-enterprise": path.resolve(__dirname, 'node_modules/@ag-grid-enterprise/charts/node_modules/ag-charts-enterprise/dist/main.esm.js')
                 }
             },
             output: {
@@ -124,6 +126,7 @@ const webpackTask = (minify, styles, libraryTarget) => {
                                         plugins: () => [
                                             require('cssnano')({
                                                 preset: ['default', {
+                                                    convertValues: false,
                                                     discardComments: {
                                                         removeAll: true,
                                                     },

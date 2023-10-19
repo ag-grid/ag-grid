@@ -64,7 +64,7 @@ Note the following:
 
 ## Prepend Images
 
-This example uses the [prepend content](../excel-export-extra-content/#example-excel-export-prepend-append) to add a custom logo to the export.
+This example uses the [prepend content](../excel-export-extra-content/#prepending-and-appending-custom-content) to add a custom logo to the export.
 
 Note the following: 
 - The first row has a larger height as set in the `rowHeight` callback.

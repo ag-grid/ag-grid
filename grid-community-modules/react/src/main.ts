@@ -1,4 +1,4 @@
 export { AgGridReact } from './agGridReact';
-export { AgGridReactLegacy } from './legacy/agGridReactLegacy'
+export { useGridApi } from './useGridApi';
 export { AgGridReactUi as AgGridReactFire } from './reactUi/agGridReactUi'
 export * from './shared/interfaces';

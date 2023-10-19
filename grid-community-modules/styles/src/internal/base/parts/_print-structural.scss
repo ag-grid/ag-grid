@@ -7,16 +7,10 @@
             height: unset;
         }
 
-        &.ag-body-clipper {
-            height: unset;
-        }
-
         &.ag-root-wrapper {
-            display: inline-flex;
-        }
-
-        .ag-center-cols-clipper {
-            min-width: 100%;
+            // this has to be inline-block otherwise the grid gets constrained by the viewport (AG-5616)
+            // and other values like `inline-flex` will add a small gap at the top (AG-9296)
+            display: inline-block;
         }
 
         .ag-body-vertical-scroll {
@@ -40,7 +34,6 @@
             .ag-body-viewport,
             .ag-center-cols-container,
             .ag-center-cols-viewport,
-            .ag-center-cols-clipper,
             .ag-body-horizontal-scroll-viewport,
             .ag-virtual-list-viewport {
                 // Need auto height because 100% height elements with overflow hidden cause printing issues in Edge

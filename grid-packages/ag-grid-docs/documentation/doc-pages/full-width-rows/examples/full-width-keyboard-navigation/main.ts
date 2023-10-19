@@ -1,9 +1,10 @@
 import {
-  Grid,
+  GridApi,
+  createGrid,
   GridOptions,
   IsFullWidthRowParams,
   SuppressKeyboardEventParams,
-} from "@ag-grid-community/core"
+} from "@ag-grid-community/core";
 import { getData } from "./data"
 import { FullWidthCellRenderer } from "./fullWidthCellRenderer_typescript"
 
@@ -92,6 +93,8 @@ function suppressKeyboardEvent({ event }: SuppressKeyboardEventParams<any>) {
   return suppressEvent
 }
 
+let gridApi: GridApi;
+
 const gridOptions: GridOptions = {
   columnDefs: [
     { field: "name" },
@@ -121,5 +124,5 @@ function isFullWidth(data: any) {
 // setup the grid after the page has finished loading
 document.addEventListener("DOMContentLoaded", function () {
   const gridDiv = document.querySelector<HTMLElement>("#myGrid")!
-  new Grid(gridDiv, gridOptions)
+  gridApi = createGrid(gridDiv, gridOptions);
 })
