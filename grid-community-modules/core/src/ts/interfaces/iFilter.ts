@@ -187,3 +187,5 @@ export interface IFilterParams<TData = any, TContext = any> extends AgGridCommon
      */
     doesRowPassOtherFilter: (rowNode: IRowNode<TData>) => boolean; // TODO: this method should be "doesRowPassOtherFilters"
 }
+
+export interface FilterModel { [colId: string]: any; };

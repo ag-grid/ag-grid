@@ -57,7 +57,7 @@ The code snippet below shows how to expand and collapse filter groups using the 
 
 <snippet>
 | // lookup Filters Tool Panel instance by id, in this case using the default filter instance id
-| const filtersToolPanel = gridOptions.api.getToolPanelInstance('filters');
+| const filtersToolPanel = api.getToolPanelInstance('filters');
 | 
 | // expands all filter groups in the Filters Tool Panel
 | filtersToolPanel.expandFilterGroups();
@@ -100,7 +100,7 @@ The code snippet below shows how to expand and collapse filters using the Filter
 
 <snippet>
 | // lookup Filters Tool Panel instance by id, in this case using the default filter instance id
-| const filtersToolPanel = gridOptions.api.getToolPanelInstance('filters');
+| const filtersToolPanel = api.getToolPanelInstance('filters');
 | 
 | // expands all filters in the Filters Tool Panel
 | filtersToolPanel.expandFilters();
@@ -156,7 +156,7 @@ const gridOptions = {
 
 <snippet>
 | // lookup Filters Tool Panel instance by id, in this case using the default columns instance id
-| const filtersToolPanel = gridOptions.api.getToolPanelInstance('filters');
+| const filtersToolPanel = api.getToolPanelInstance('filters');
 | 
 | // set custom Filters Tool Panel layout
 | filtersToolPanel.setFilterLayout([

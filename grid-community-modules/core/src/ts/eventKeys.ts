@@ -64,7 +64,7 @@ export class Events {
     /** @deprecated v28 use EVENT_ROW_DATA_UPDATED instead */
     public static EVENT_ROW_DATA_CHANGED: 'rowDataChanged' = 'rowDataChanged';
 
-    /** The client has updated data for the grid */
+    /** Client-Side Row Model only. The client has updated data for the grid */
     public static EVENT_ROW_DATA_UPDATED: 'rowDataUpdated' = 'rowDataUpdated';
 
     /** The client has set new floating data into the grid */
@@ -203,6 +203,8 @@ export class Events {
     /** Only used by the SSRM, called when the grid has no more rows to refresh */
     public static EVENT_STORE_REFRESHED: 'storeRefreshed' = 'storeRefreshed';
 
+    public static EVENT_STATE_UPDATED: 'stateUpdated' = 'stateUpdated';
+
     /*****************************  INTERNAL EVENTS: START ******************************************* */
 
     /** Please remember to add to ComponentUtil.EXCLUDED_INTERNAL_EVENTS to not have these events exposed to framework components. */
@@ -251,6 +253,7 @@ export class Events {
     public static EVENT_FILTER_DESTROYED: 'filterDestroyed' = 'filterDestroyed';
 
     public static EVENT_ROW_DATA_UPDATE_STARTED: 'rowDataUpdateStarted' = 'rowDataUpdateStarted';
+    public static EVENT_ROW_COUNT_READY: 'rowCountReady' = 'rowCountReady';
 
     // Advanced Filters
     public static EVENT_ADVANCED_FILTER_ENABLED_CHANGED: 'advancedFilterEnabledChanged' = 'advancedFilterEnabledChanged';
@@ -259,6 +262,8 @@ export class Events {
     // Widgets
     public static EVENT_FIELD_VALUE_CHANGED: 'fieldValueChanged' = 'fieldValueChanged';
     public static EVENT_FIELD_PICKER_VALUE_SELECTED: 'fieldPickerValueSelected' = 'fieldPickerValueSelected';
+
+    public static EVENT_SIDE_BAR_UPDATED: 'sideBarUpdated' = 'sideBarUpdated';
 
     /*****************************  INTERNAL EVENTS: END ******************************************* */
 }

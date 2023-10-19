@@ -73,7 +73,7 @@ The Detail Grid Info objects are accessed via the Master Grid's API via the foll
 
 <snippet>
 // lookup a specific DetailGridInfo by id, and then call stopEditing() on it
-const detailGridInfo = gridOptions.api.getDetailGridInfo('detail_someId');
+const detailGridInfo = api.getDetailGridInfo('detail_someId');
 detailGridInfo.api.flashCells();
 </snippet>
 
@@ -83,7 +83,7 @@ The grid generates IDs for detail grids by prefixing the parent row's ID with `d
 
 <snippet>
 // iterate over all DetailGridInfos, and call stopEditing() on each one
-| gridOptions.api.forEachDetailGridInfo(detailGridInfo => {
+| api.forEachDetailGridInfo(detailGridInfo => {
 |     detailGridInfo.api.flashCells();
 | });
 </snippet>

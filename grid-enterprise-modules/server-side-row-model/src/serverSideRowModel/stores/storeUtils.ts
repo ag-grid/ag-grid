@@ -122,12 +122,12 @@ export class StoreUtils extends BeanStub {
         return affectedGroupCols;
     }
 
-    public getServerSideInitialRowCount(): number {
+    public getServerSideInitialRowCount(): number | null {
         const rowCount = this.gridOptionsService.getNum('serverSideInitialRowCount');
         if (typeof rowCount === 'number' && rowCount > 0) {
             return rowCount;
         }
-        return 1;
+        return null;
     }
 
     private assertRowModelIsServerSide(key: keyof GridOptions) {

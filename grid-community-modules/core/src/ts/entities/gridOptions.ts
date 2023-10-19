@@ -75,7 +75,8 @@ import {
     UndoStartedEvent,
     ViewportChangedEvent,
     VirtualColumnsChangedEvent,
-    VirtualRowRemovedEvent
+    VirtualRowRemovedEvent,
+    StateUpdatedEvent
 } from "../events";
 import { GridApi } from "../gridApi";
 import { HeaderPosition } from "../headerRendering/common/headerPosition";
@@ -102,6 +103,8 @@ import { IRowNode } from "../interfaces/iRowNode";
 import { DataTypeDefinition } from "./dataType";
 import { AdvancedFilterModel } from "../interfaces/advancedFilterModel";
 import { IAdvancedFilterBuilderParams } from "../interfaces/iAdvancedFilterBuilderParams";
+import { AlignedGrid } from "../interfaces/iAlignedGrid";
+import { GridState } from "../interfaces/gridState";
 
 export interface GridOptions<TData = any> {
 
@@ -321,7 +324,7 @@ export interface GridOptions<TData = any> {
     excludeChildrenWhenTreeDataFiltering?: boolean;
     /** Set to true to enable the Advanced Filter. Default: `false` */
     enableAdvancedFilter?: boolean;
-    /** Allows the state of the Advanced Filter to be set before the grid is loaded. */
+    /** @deprecated As of v31, use `initialState.filter.advancedFilterModel` instead. */
     advancedFilterModel?: AdvancedFilterModel | null;
     /**
      * Hidden columns are excluded from the Advanced Filter by default.
@@ -397,8 +400,12 @@ export interface GridOptions<TData = any> {
     // changeable, but no immediate impact
     /** Provides a context object that is provided to different callbacks the grid uses. Used for passing additional information to the callbacks by your application. */
     context?: any;
-    /** A list of grids to treat as Aligned Grids. If grids are aligned then the columns and horizontal scrolling will be kept in sync. */
-    alignedGrids?: { api?: GridApi | null, columnApi?: ColumnApi | null }[];
+    /** 
+     * A list of grids to treat as Aligned Grids. 
+     * Provide a list if the grids / apis already exist or return via a callback to allow the aligned grids to be retrieved asynchronously.
+     * If grids are aligned then the columns and horizontal scrolling will be kept in sync.
+     */
+    alignedGrids?: AlignedGrid[] | (() => AlignedGrid[]);
     /** Change this value to set the tabIndex order of the Grid within your application. Default: `0` */
     tabIndex?: number;
     /**
@@ -601,6 +608,8 @@ export interface GridOptions<TData = any> {
     groupMaintainOrder?: boolean;
     /** When `true`, if you select a group, the children of the group will also be selected. Default: `false` */
     groupSelectsChildren?: boolean;
+    /** If grouping, locks the group settings of a number of columns, e.g. `0` for no group locking. `1` for first group column locked, `-1` for all group columns locked. Default: `0` */
+    groupLockGroupColumns?: number;
     /** Set to determine whether filters should be applied on aggregated group values. Default: `false` */
     groupAggFiltering?: boolean | IsRowFilterable<TData>;
     /**
@@ -849,6 +858,9 @@ export interface GridOptions<TData = any> {
     /** @deprecated v29.2 */
     functionsPassive?: boolean;
     enableGroupEdit?: boolean;
+
+    /** Initial state for the grid. Only read once on initialization. Can be used in conjunction with `api.getState()` to save and restore grid state. */
+    initialState?: GridState;
 
     // *****************************************************************************************************
     // If you change the callbacks on this interface, you must also update PropertyKeys to be consistent. *
@@ -1113,6 +1125,8 @@ export interface GridOptions<TData = any> {
     onDragStarted?(event: DragStartedEvent<TData>): void;
     /** When dragging stops. This could be any action that uses the grid's Drag and Drop service, e.g. Column Moving, Column Resizing, Range Selection, Fill Handle, etc. */
     onDragStopped?(event: DragStoppedEvent<TData>): void;
+    /** Grid state has been updated. */
+    onStateUpdated?(event: StateUpdatedEvent<TData>): void;
 
     // *** Pagination *** //
     /**
@@ -1149,7 +1163,7 @@ export interface GridOptions<TData = any> {
     // *** Row Model: Client Side *** //
     /** @deprecated v28 No longer fired, use onRowDataUpdated instead */
     onRowDataChanged?(event: RowDataChangedEvent<TData>): void;
-    /** The client has updated data for the grid by either a) setting new Row Data or b) Applying a Row Transaction. */
+    /** Client-Side Row Model only. The client has updated data for the grid by either a) setting new Row Data or b) Applying a Row Transaction. */
     onRowDataUpdated?(event: RowDataUpdatedEvent<TData>): void;
     /** Async transactions have been applied. Contains a list of all transaction results. */
     onAsyncTransactionsFlushed?(event: AsyncTransactionsFlushed<TData>): void;

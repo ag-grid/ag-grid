@@ -1,4 +1,4 @@
-import { HeaderGroupCellCtrl, IHeaderGroupCellComp, UserCompDetails } from '@ag-grid-community/core';
+import { HeaderGroupCellCtrl, IHeaderGroupCellComp, IHeaderGroupComp, UserCompDetails } from '@ag-grid-community/core';
 import React, { memo, useCallback, useContext, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import { BeansContext } from '../beansContext';
 import { showJsComp } from '../jsComp';
@@ -18,6 +18,7 @@ const HeaderGroupCellComp = (props: {ctrl: HeaderGroupCellCtrl}) => {
 
     const eGui = useRef<HTMLDivElement | null>(null);
     const eResize = useRef<HTMLDivElement>(null);
+    const userCompRef = useRef<IHeaderGroupComp>();
 
 
     const setRef = useCallback((e: HTMLDivElement) => {
@@ -37,7 +38,8 @@ const HeaderGroupCellComp = (props: {ctrl: HeaderGroupCellCtrl}) => {
                 setResizableCssClasses(prev => prev.setClass('ag-hidden', !displayed))
                 setResizableAriaHidden(!displayed ? "true" : "false");
             },
-            setAriaExpanded: expanded => setAriaExpanded(expanded)
+            setAriaExpanded: expanded => setAriaExpanded(expanded),
+            getUserCompInstance: () => userCompRef.current || undefined,
         };
 
         ctrl.setComp(compProxy, eGui.current, eResize.current!);
@@ -63,7 +65,7 @@ const HeaderGroupCellComp = (props: {ctrl: HeaderGroupCellCtrl}) => {
     return (
         <div ref={setRef} className={className} col-id={colId} 
                     role="columnheader" tabIndex={-1} aria-expanded={ariaExpanded}>
-            { reactUserComp && <UserCompClass { ...userCompDetails!.params } /> }
+            { reactUserComp && <UserCompClass { ...userCompDetails!.params } ref={ userCompRef } /> }
             <div ref={eResize} aria-hidden={resizableAriaHidden} className={resizableClassName}></div>
         </div>
     );

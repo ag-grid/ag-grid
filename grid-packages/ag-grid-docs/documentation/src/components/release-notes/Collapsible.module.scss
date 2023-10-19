@@ -2,9 +2,9 @@
 
 .showHideButton {
     --button-text-color: var(--link-color);
-    --button-color: var(--bright-blue-gray);
-    --button-active-color: var(--bright-blue-gray);
-    --button-hover-color: var(--bright-blue-gray);
+    --button-color: var(--background-500);
+    --button-active-color: var(--background-500);
+    --button-hover-color: var(--background-500);
 
     display: flex;
     align-items: center;
@@ -24,7 +24,7 @@
     &:disabled {
         cursor: default;
         color: black;
-        background-color: var(--bright-blue-gray);
+        background-color: var(--background-500);
     }
 
     svg {

@@ -43,6 +43,7 @@ const dataForBottomGrid = [
 ];
 // this is the grid options for the top grid
 let topApi: GridApi;
+let bottomApi: GridApi;
 const gridOptionsTop: GridOptions = {
     defaultColDef: {
         editable: true,
@@ -57,11 +58,10 @@ const gridOptionsTop: GridOptions = {
     // debug: true,
     // don't show the horizontal scrollbar on the top grid
     suppressHorizontalScroll: true,
-    alignedGrids: []
+    alignedGrids: ()=>[bottomApi]
 };
 
 // this is the grid options for the bottom grid
-let bottomApi: GridApi;
 const gridOptionsBottom: GridOptions = {
     defaultColDef: {
         editable: true,
@@ -78,11 +78,8 @@ const gridOptionsBottom: GridOptions = {
     rowClass: 'bold-row',
     // hide the header on the bottom grid
     headerHeight: 0,
-    alignedGrids: []
+    alignedGrids: () => [topApi],
 };
-
-gridOptionsTop.alignedGrids!.push(gridOptionsBottom);
-gridOptionsBottom.alignedGrids!.push(gridOptionsTop);
 
 const gridDivTop = document.querySelector<HTMLElement>('#myGridTop')!;
 topApi = createGrid(gridDivTop, gridOptionsTop);

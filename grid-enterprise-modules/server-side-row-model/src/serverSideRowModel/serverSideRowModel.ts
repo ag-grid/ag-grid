@@ -16,7 +16,6 @@ import {
     PostConstruct,
     PreDestroy,
     RowBounds,
-    RowDataChangedEvent,
     RowNode,
     RowRenderer,
     StoreRefreshAfterParams,
@@ -79,11 +78,7 @@ export class ServerSideRowModel extends BeanStub implements IServerSideRowModel 
 
     public start(): void {
         this.started = true;
-        const datasource = this.gridOptionsService.get('serverSideDatasource');
-
-        if (datasource) {
-            this.setDatasource(datasource);
-        }
+        this.updateDatasource();
     }
 
     @PreDestroy
@@ -116,8 +111,19 @@ export class ServerSideRowModel extends BeanStub implements IServerSideRowModel 
             'treeData', 'isServerSideGroup', 'getServerSideGroupKey',
             'removePivotHeaderRowWhenSingleValueColumn',
             'suppressServerSideInfiniteScroll',
+            'cacheBlockSize',
         ], resetListener);
         this.verifyProps();
+
+        this.addManagedPropertyListener('serverSideDatasource', () => this.updateDatasource());
+    }
+
+    private updateDatasource(): void {
+        const datasource = this.gridOptionsService.get('serverSideDatasource');
+
+        if (datasource) {
+            this.setDatasource(datasource);
+        }
     }
 
     private verifyProps(): void {
@@ -267,12 +273,6 @@ export class ServerSideRowModel extends BeanStub implements IServerSideRowModel 
             this.columnModel.setSecondaryColumns(null);
             this.managingPivotResultColumns = false;
         }
-
-        // this event shows/hides 'no rows' overlay
-        const rowDataChangedEvent: WithoutGridCommon<RowDataChangedEvent> = {
-            type: Events.EVENT_ROW_DATA_UPDATED
-        };
-        this.eventService.dispatchEvent(rowDataChangedEvent);
 
         // this gets the row to render rows (or remove the previously rendered rows, as it's blank to start).
         // important to NOT pass in an event with keepRenderedRows or animate, as we want the renderer

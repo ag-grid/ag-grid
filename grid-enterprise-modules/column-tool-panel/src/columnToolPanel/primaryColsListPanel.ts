@@ -59,6 +59,7 @@ export class PrimaryColsListPanel extends Component {
     private groupsExist: boolean;
 
     private virtualList: VirtualList;
+    private colsListPanelItemDragFeature: PrimaryColsListPanelItemDragFeature;
 
     private allColsTree: ColumnModelItem[];
     private displayedColsList: ColumnModelItem[];
@@ -128,9 +129,11 @@ export class PrimaryColsListPanel extends Component {
             this.onColumnsChanged();
         }
 
-        if (!params.suppressColumnMove && !this.gridOptionsService.is('suppressMovableColumns')) {
-            this.createManagedBean(new PrimaryColsListPanelItemDragFeature(this, this.virtualList));
-        }
+        if (this.params.suppressColumnMove) { return; }
+        
+        this.colsListPanelItemDragFeature = this.createManagedBean(
+            new PrimaryColsListPanelItemDragFeature(this, this.virtualList)
+        );
     }
 
     private createComponentFromItem(item: ColumnModelItem, listItemElement: HTMLElement): Component {
@@ -466,6 +469,7 @@ export class PrimaryColsListPanel extends Component {
     }
 
     private fireSelectionChangedEvent(): void {
+        if (!this.allColsTree) { return; }
         const selectionState = this.getSelectionState();
         this.dispatchEvent({ type: 'selectionChanged', state: selectionState });
     }

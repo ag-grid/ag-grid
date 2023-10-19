@@ -16,13 +16,13 @@ legend {
     padding: unset;
 }
 
-label {
+label#{$exclude-grid-selector} {
     fieldset & {
         display: block;
     }
 
-    + input,
-    + select {
+    + input#{$exclude-grid-selector},
+    + select#{$exclude-grid-selector} {
         margin-left: $size-1;
     }
 
@@ -37,7 +37,7 @@ label {
     }
 }
 
-input:not([class^="ag"]) {
+input#{$exclude-grid-selector} {
     font-size: var(--font-size);
 }
 
@@ -47,7 +47,7 @@ input[type='email'],
 input[type='checkbox'],
 input[type='number'],
 select {
-    &:not([class^="ag"]) {
+    &#{$exclude-grid-selector} {
         color: var(--default-text-color);
 
         &:disabled,
@@ -55,10 +55,9 @@ select {
             background-color: var(--neutral-100);
         }
 
-        &:focus:not(:disabled):not([readonly]),
         &.ag-builder-preview-focus:not(:disabled):not([readonly]),
         &:focus-visible:not(:disabled):not([readonly]) {
-            box-shadow: var(--ag-input-focus-box-shadow);
+            box-shadow: 0 0 0 3px var(--input-focus-box-shadow-color);
         }
     }
 }
@@ -67,18 +66,22 @@ input[type='text'],
 input[type='search'],
 input[type='email'],
 input[type='number'] {
-    &:not([class^="ag"]) {
+    &#{$exclude-grid-selector} {
         padding: math.div(6em, 16) math.div(12em, 16);
         line-height: var(--line-height-normal);
         border-radius: var(--border-radius);
         background-color: var(--input-background-color);
-        border: 2px solid var(--border-color);
+        border: 2px solid var(--input-border-color);
         outline: none;
         transition: border-color $default-transition-timing, box-shadow $default-transition-timing;
 
         &::placeholder {
             font-style: italic;
             color: var(--secondary-text-color);
+
+            #{$darkmode-selector} & {
+                color: var(--neutral-800);
+            }
         }
 
         &:hover:not(:disabled):not([readonly]),
@@ -89,16 +92,8 @@ input[type='number'] {
     }
 }
 
-.ag-picker-field-wrapper {
-    transition: border-color $default-transition-timing, box-shadow $default-transition-timing;
-    &:focus-within:not(:disabled):not([readonly]),
-    &.ag-picker-has-focus {
-        border-color: var(--input-focus-border-color);
-    }
-}
-
-input[type='checkbox']:not([class^="ag"]),
-input[type='radio']:not([class^="ag"]) {
+input[type='checkbox'],
+input[type='radio'] {
     $square-size: 1.25em;
 
     appearance: none;
@@ -117,7 +112,7 @@ input[type='radio']:not([class^="ag"]) {
     }
 }
 
-input[type='checkbox']:not(.switch):not([class^="ag"]) {
+input[type='checkbox']:not(.switch) {
     $svg-tick: url('data:image/svg+xml;utf8,<svg fill="none" stroke="%23fff" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 30 30"><path d="m9 15 3.75 3.75L21 10.5"/></svg>');
 
     border-radius: var(--border-radius);
@@ -134,7 +129,7 @@ input[type='checkbox']:not(.switch):not([class^="ag"]) {
     }
 }
 
-input[type='checkbox']:not([class^="ag"]).switch {
+input[type='checkbox'].switch {
     $height: 1.25em;
 
     width: 2em;
@@ -156,7 +151,7 @@ input[type='checkbox']:not([class^="ag"]).switch {
     }
 }
 
-input[type='radio']:not([class^="ag"]) {
+input[type='radio'] {
     border-radius: 50%;
     box-shadow: inset 0 0 0 0.125em var(--input-secondary-border-color),
         inset 0 0 0 0.25em var(--input-background-color);
@@ -174,7 +169,7 @@ input[type='radio']:not([class^="ag"]) {
     }
 }
 
-select:not([class^="ag"]) {
+select {
     $svg-chevron-down: url('data:image/svg+xml;utf8,<svg fill="none" stroke="%23212529" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 26 30"><path d="m7.5 13.688 5.25 4.125L18 13.688"/></svg>');
 
     appearance: none;
@@ -186,7 +181,7 @@ select:not([class^="ag"]) {
     background-image: $svg-chevron-down;
     background-repeat: no-repeat;
     background-position: center right;
-    border: 2px solid var(--border-color);
+    border: 2px solid var(--input-border-color);
     outline: none;
     transition: border-color $default-transition-timing, box-shadow $default-transition-timing;
 
@@ -206,7 +201,7 @@ select:not([class^="ag"]) {
     }
 }
 
-input[type='range']:not([class^="ag"]) {
+input[type='range'] {
     @mixin track {
         height: math.div(4em, 16);
         background-color: var(--input-secondary-background-color);

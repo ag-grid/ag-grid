@@ -52,7 +52,6 @@ The following variables are available to the expression with the following param
 - `columnGroup` => params.columnGroup
 - `getValue` => params.getValue
 - `api` => params.api
-- `columnApi` => params.columnApi
 - `ctx` => params.context
 
 For example, for `valueFormatter`'s, you can access to the value via the 'x' and 'value' attributes. However in `valueGetter`'s, the 'x' and 'value' will be undefined as these are not part of the `valueGetter` params.
@@ -107,7 +106,7 @@ When you provide an expression to the grid, the grid converts the expression int
 colDef.valueGetter = 'data.firstName';
 
 // the grid will then compile the above to this:
-___compiledValueGetter = (node, data, colDef, column, api, columnApi, context, getValue) => {
+___compiledValueGetter = (node, data, colDef, column, api, context, getValue) => {
     return data.firstName;
 }
 ```

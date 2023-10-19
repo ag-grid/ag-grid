@@ -4,7 +4,7 @@ import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-mod
 
 import "@ag-grid-community/styles/ag-grid.css";
 import "@ag-grid-community/styles/ag-theme-alpine.css";
-import { ModuleRegistry, ColDef, ColumnApi, GetRowIdParams, GridApi, GridReadyEvent, ICellRendererParams } from '@ag-grid-community/core';
+import { ModuleRegistry, ColDef, GetRowIdParams, GridApi, GridReadyEvent, ICellRendererParams } from '@ag-grid-community/core';
 import { ICellRendererAngularComp } from '@ag-grid-community/angular';
 
 // Register the required feature modules with the Grid
@@ -99,7 +99,6 @@ export class AppComponent {
     leftRowData: any[] = [];
     rightRowData: any[] = []
     leftApi!: GridApi;
-    leftColumnApi!: ColumnApi;
     rightApi!: GridApi;
 
     defaultColDef: ColDef = {

@@ -32,7 +32,7 @@ let virtualList: jest.Mocked<VirtualList>;
 let setValueModel: jest.Mocked<SetValueModel<string>>;
 
 beforeEach(() => {
-    rowModel = mock<IClientSideRowModel>('getType', 'forEachLeafNode');
+    rowModel = mock<IClientSideRowModel>('getType', 'forEachLeafNode', 'isRowDataLoaded');
     rowModel.getType.mockReturnValue('clientSide');
 
     eventService = mock<EventService>('addEventListener');

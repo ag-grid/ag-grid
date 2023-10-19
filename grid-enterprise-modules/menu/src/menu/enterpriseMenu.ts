@@ -169,7 +169,7 @@ export class EnterpriseMenuFactory extends BeanStub implements IMenuFactory {
 
     private addStopAnchoring(
         stopAnchoringPromise: AgPromise<() => void>,
-        column: Column, 
+        column: Column,
         closedFuncsArr: (() => void)[]
     ) {
         stopAnchoringPromise.then((stopAnchoringFunc: () => void) => {
@@ -216,7 +216,7 @@ export class EnterpriseMenuFactory extends BeanStub implements IMenuFactory {
 
                 if (columnToFocus) {
                     this.focusService.focusHeaderPosition({
-                        headerPosition:{
+                        headerPosition: {
                             headerRowIndex: headerPosition.headerRowIndex,
                             column: columnToFocus
                         }
@@ -417,7 +417,6 @@ export class EnterpriseMenu extends BeanStub {
         const rowGroupCount = this.columnModel.getRowGroupColumns().length;
         const doingGrouping = rowGroupCount > 0;
 
-        const groupedByThisColumn = this.columnModel.getRowGroupColumns().indexOf(this.column) >= 0;
         const allowValue = this.column.isAllowValue();
         const allowRowGroup = this.column.isAllowRowGroup();
         const isPrimary = this.column.isPrimary();
@@ -449,13 +448,23 @@ export class EnterpriseMenu extends BeanStub {
         result.push('autoSizeAll');
         result.push(EnterpriseMenu.MENU_ITEM_SEPARATOR);
 
-        if (!!this.column.getColDef().showRowGroup) {
-            result.push('rowUnGroup');
-        }
-
-        if (allowRowGroup && this.column.isPrimary()) {
-            if (groupedByThisColumn) {
+        const showRowGroup = this.column.getColDef().showRowGroup;
+        if (showRowGroup === true) {
+            const groupLockedCols = this.gridOptionsService.getNum('groupLockGroupColumns');
+            if (groupLockedCols == null || (groupLockedCols !== -1 && groupLockedCols < this.columnModel.getRowGroupColumns().length)) {
                 result.push('rowUnGroup');
+            }
+        } else if (showRowGroup) {
+            const rowGroupCol = this.columnModel.getPrimaryColumn(showRowGroup);
+            if (rowGroupCol && this.columnModel.isColumnGroupingLocked(rowGroupCol)) {
+                result.push('rowUnGroup');
+            }
+        } else if (allowRowGroup && this.column.isPrimary()) {
+            if (this.column.isRowGroupActive()) {
+                const groupLocked = this.columnModel.isColumnGroupingLocked(this.column);
+                if (!groupLocked) {
+                    result.push('rowUnGroup');
+                }
             } else {
                 result.push('rowGroup');
             }

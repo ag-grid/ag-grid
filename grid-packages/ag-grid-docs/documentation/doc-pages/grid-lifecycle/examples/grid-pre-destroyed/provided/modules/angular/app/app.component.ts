@@ -2,7 +2,7 @@ import {Component} from '@angular/core';
 // NOTE: Angular CLI does not support component CSS imports: angular-cli/issues/23273
 import '@ag-grid-community/styles/ag-grid.css';
 import "@ag-grid-community/styles/ag-theme-alpine.css";
-import {ColDef, ColumnApi, GridApi, GridOptions, GridPreDestroyedEvent, GridReadyEvent} from '@ag-grid-community/core';
+import {ColDef, GridApi, GridOptions, GridPreDestroyedEvent, GridReadyEvent} from '@ag-grid-community/core';
 import {TAthlete, getDataSet} from './data';
 import '../styles.css';
 

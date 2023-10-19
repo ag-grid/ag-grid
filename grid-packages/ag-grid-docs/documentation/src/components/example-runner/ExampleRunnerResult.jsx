@@ -11,7 +11,8 @@ import isDevelopment from 'utils/is-development';
 const ExampleRunnerResult = ({ isOnScreen = true, resultFrameIsVisible = true, exampleInfo, darkMode }) => {
     const [isExecuting, setExecuting] = useState(isOnScreen && resultFrameIsVisible);
     const { pageName, name, internalFramework, importType } = exampleInfo;
-    const [htmlVersion, setHtmlVersion] = useState(0);
+    const [hasSetHtml, setHasSetHtml] = useState(false);
+    const [showIframe, setShowIframe] = useState(false);
 
     useEffect(() => {
         // trigger the example to execute when it is on screen and the result pane is visible
@@ -43,37 +44,49 @@ const ExampleRunnerResult = ({ isOnScreen = true, resultFrameIsVisible = true, e
             iframeDoc.close();
         } else {
             iframe.src = isExecuting ? getIndexHtmlUrl(exampleInfo) : '';
+            // setting the src causes a new document object to be created at
+            // some point in the future, with no event to track it, so expire
+            // the document and we poll until there's a new one
+            iframeDoc._expired = true;
         }
-        setHtmlVersion((v) => v + 1);
+        if (isExecuting) {
+            setHasSetHtml(true);
+        }
     }, [isExecuting, exampleInfo]); // eslint-disable-line react-hooks/exhaustive-deps
 
     useEffect(() => {
-        if (darkMode == null) return;
-        let handler;
-        const innerDocument = iframeRef.current?.contentDocument;
-        if (innerDocument) {
-            if (innerDocument.readyState === "loading") {
-                handler = () => {
-                    applyExampleDarkMode(innerDocument, darkMode);
-                    innerDocument.removeEventListener('DOMContentLoaded', handler);
-                };
-                innerDocument.addEventListener('DOMContentLoaded', handler);
-            } else {
-                applyExampleDarkMode(innerDocument, darkMode);
-            }
+        if (darkMode == null || !hasSetHtml) return;
+        const apply = () => {
+            const innerDocument = iframeRef.current?.contentDocument;
+            if (!innerDocument || innerDocument.readyState !== "complete" || innerDocument._expired) return false;
+            applyExampleDarkMode(innerDocument, darkMode);
+            setShowIframe(true);
+            return true;
         }
-        if (handler) {
-            return () => {
-                innerDocument.removeEventListener('DOMContentLoaded', handler);
+        if (!apply()) {
+            let interval = null;
+            const poll = () => {
+                if (apply()) {
+                    stopPolling();
+                }
             }
+            const stopPolling = () => {
+                clearInterval(interval)
+            }
+            interval = setInterval(poll, 10);
+            return stopPolling;
         }
-    }, [htmlVersion, darkMode]);
+    }, [hasSetHtml, darkMode]);
 
     return <iframe
         key={`${pageName}_${name}_${internalFramework}_${importType}`}
         ref={iframeRef}
         title={name}
-        className={classnames(styles.exampleRunnerResult, { [styles.hidden]: !resultFrameIsVisible })} />;
+        className={classnames(styles.exampleRunnerResult, { [styles.hidden]: !resultFrameIsVisible })}
+        style={{
+            visibility: showIframe ? 'visible' : 'hidden'
+        }}
+        />;
 };
 
 export default ExampleRunnerResult;
@@ -86,7 +99,8 @@ const themes = {
 }
 
 const applyExampleDarkMode = (document, darkMode) => {
-    for (const el of document.querySelectorAll("[class*='ag-theme-']") || []) {
+    document.querySelector("html").style.colorScheme = darkMode ? 'dark' : 'light';
+    for (const el of document.querySelectorAll("[class*='ag-theme-']")) {
         for (const className of Array.from(el.classList.values())) {
             const theme = themes[className];
             if (theme && theme.dark !== darkMode) {

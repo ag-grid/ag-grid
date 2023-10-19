@@ -209,11 +209,9 @@ By default, the grid will use `\t` (tab) as the field delimiter. This is to keep
 
 The grid's selection and copy features replace the built-in browser behaviour for selecting and copying text. If you want to use the normal browser behaviour instead, you should set `enableCellTextSelection=true` in the gridOptions. Note the following:
 
-* When `enableCellTextSelection=true`, the grid clipboard service is disabled and only the selected text is when pressing <kbd>CTRL</kbd>+<kbd>C</kbd>, not the focused cell value. This means that in order for any value to be copied, the user needs to select it as text by clicking and dragging over it first.
+* When `enableCellTextSelection=true`, pressing <kbd>CTRL</kbd>+<kbd>C</kbd> doesn’t copy the focused cell value, but only the selected text inside the grid cell. When using AG Grid Enterprise, the user can copy the entire cell value by right-clicking the grid cell to show the [context menu](/context-menu/#top) and clicking the any of the Copy menu items. 
 
-* When `enableCellTextSelection=true`,  the option `ensureDomOrder=true` needs to be set for correct accessibility support. See [Ensure DOM Element order](/accessibility/#ensure-dom-element-order).
-
-* When `enableCellTextSelection=true`,  you can only copy the entire cell value without selecting it by using the [context menu](/context-menu/#top) which is part of the enterprise version.
+* When `enableCellTextSelection=true`, the option `ensureDomOrder=true` needs to be set for correct accessibility support. See [Ensure DOM Element order](/accessibility/#ensure-dom-element-order).
 
 <note>
 This is not an enterprise config and can be used at any time to enable cell text selection.
@@ -224,9 +222,9 @@ See this behavior shown in the example below:
 
 * Focus a grid cell and press <kbd>CTRL</kbd>+<kbd>C</kbd>. The cell value will not be copied because no text is selected.
 
-* Click a cell and drag across its value to select the text. Press <kbd>CTRL</kbd>+<kbd>C</kbd> and the value will be copied
+* Click a cell and drag across its value to select the text. Press <kbd>CTRL</kbd>+<kbd>C</kbd> and the value will be copied.
 
-* Context menu is not enabled here to copy the focused cell value without selecting it as text because this sample is using the community version.
+* This sample is using AG Grid Community version, so the context menu is not available to copy the focused cell value. In AG Grid Enterprise the context menu will be available to copy the entire focused cell value without having to select it as text.
 
 <grid-example title='Using Browser text selection' name='cellTextSelection' type='generated'></grid-example>
 

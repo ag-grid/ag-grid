@@ -25,6 +25,7 @@ ModuleRegistry.registerModules([ClientSideRowModelModule])
                     class="ag-theme-alpine"
                     [rowData]="rowData"
                     [gridOptions]="topOptions"
+                    [alignedGrids]="[bottomGrid]"
                     (firstDataRendered)='onFirstDataRendered($event)'
                     [columnDefs]="columnDefs">
             </ag-grid-angular>
@@ -35,8 +36,7 @@ ModuleRegistry.registerModules([ClientSideRowModelModule])
                     class="ag-theme-alpine"
                     [rowData]="bottomData"
                     [gridOptions]="bottomOptions"
-                    [headerHeight]="0"
-                    [rowStyle]="{ fontWeight: 'bold' }"
+                    [alignedGrids]="[topGrid]"
                     [columnDefs]="columnDefs">
             </ag-grid-angular>
         </div>
@@ -46,7 +46,6 @@ export class AppComponent {
     columnDefs!: (ColDef | ColGroupDef)[];
     rowData!: any[];
     topOptions: GridOptions = {
-        alignedGrids: [],
         defaultColDef: {
             editable: true,
             sortable: true,
@@ -59,7 +58,8 @@ export class AppComponent {
         suppressHorizontalScroll: true
     };
     bottomOptions: GridOptions = {
-        alignedGrids: [],
+        headerHeight: 0,
+        rowStyle: { fontWeight: 'bold' },
         defaultColDef: {
             editable: true,
             sortable: true,
@@ -69,9 +69,6 @@ export class AppComponent {
             minWidth: 100
         }
     };
-
-    @ViewChild('topGrid') topGrid!: AgGridAngular<IOlympicData>;
-    @ViewChild('bottomGrid') bottomGrid!: AgGridAngular<IOlympicData>;
 
     bottomData = [
         {
@@ -108,8 +105,6 @@ export class AppComponent {
             { field: 'bronze', width: 100 }
         ];
 
-        this.topOptions.alignedGrids!.push(this.bottomOptions);
-        this.bottomOptions.alignedGrids!.push(this.topOptions);
     }
 
     ngOnInit() {

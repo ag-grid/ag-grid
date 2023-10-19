@@ -52,8 +52,7 @@ const gridOptionsTop: GridOptions = {
     },
     columnDefs: columnDefs,
     rowData: null,
-    // debug: true,
-    alignedGrids: []
+    alignedGrids: () => [bottomApi],
 };
 
 // this is the grid options for the bottom grid
@@ -68,12 +67,8 @@ const gridOptionsBottom: GridOptions = {
     },
     columnDefs: columnDefs,
     rowData: null,
-    // debug: true,
-    alignedGrids: []
+    alignedGrids: () => [topApi],
 };
-
-gridOptionsTop.alignedGrids!.push(gridOptionsBottom);
-gridOptionsBottom.alignedGrids!.push(gridOptionsTop);
 
 function setData(rowData: any[]) {
     topApi!.setRowData(rowData);

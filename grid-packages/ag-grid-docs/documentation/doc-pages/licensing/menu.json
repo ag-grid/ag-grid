@@ -656,6 +656,12 @@
                 "showInCollapsed": false
               },
               {
+                "title": "Locking Group Columns",
+                "url": "/grouping-locking-group-columns/",
+                "enterprise": true,
+                "showInCollapsed": false
+              },
+              {
                 "title": "Group Order",
                 "url": "/grouping-group-order/",
                 "enterprise": true,
@@ -1717,6 +1723,11 @@
           {
             "title": "Grid Events",
             "url": "/grid-events/",
+            "showInCollapsed": true
+          },
+          {
+            "title": "Grid State",
+            "url": "/grid-state/",
             "showInCollapsed": true
           },
           {

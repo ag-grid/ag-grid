@@ -124,22 +124,23 @@ export class MenuItemMapper extends BeanStub {
             case 'rowUnGroup':
                 const icon = _.createIconNoSpan('menuRemoveRowGroup', this.gridOptionsService, null);
                 const showRowGroup = column?.getColDef().showRowGroup;
+                const lockedGroups = this.gridOptionsService.getNum('groupLockGroupColumns') ?? 0;
                 // Handle single auto group column
                 if (showRowGroup === true) {
                     return {
                         name: localeTextFunc('ungroupAll', 'Un-Group All'),
-                        disabled: !column?.getColDef().showRowGroup,
+                        disabled: lockedGroups === -1 || lockedGroups >= this.columnModel.getRowGroupColumns().length,
                         action: () => this.columnModel.setRowGroupColumns([], "contextMenu"),
                         icon: icon
                     };
                 }
                 // Handle multiple auto group columns
                 if (typeof showRowGroup === 'string') {
-                    const underlyingColumn = this.columnModel.getSourceColumnsForGroupColumn(column!)?.[0];
+                    const underlyingColumn = this.columnModel.getPrimaryColumn(showRowGroup);
                     const ungroupByName = (underlyingColumn != null) ? _.escapeString(this.columnModel.getDisplayNameForColumn(underlyingColumn, 'header')) : showRowGroup;
                     return {
                         name: localeTextFunc('ungroupBy', 'Un-Group by') + ' ' + ungroupByName,
-                        disabled: !column?.getColDef().showRowGroup,
+                        disabled: underlyingColumn != null && this.columnModel.isColumnGroupingLocked(underlyingColumn),
                         action: () => this.columnModel.removeRowGroupColumn(showRowGroup, "contextMenu"),
                         icon: icon
                     };
@@ -147,7 +148,7 @@ export class MenuItemMapper extends BeanStub {
                 // Handle primary column
                 return {
                     name: localeTextFunc('ungroupBy', 'Un-Group by') + ' ' + _.escapeString(this.columnModel.getDisplayNameForColumn(column, 'header')),
-                    disabled: !column?.isRowGroupActive() || !column?.getColDef().enableRowGroup,
+                    disabled: !column?.isRowGroupActive() || !column?.getColDef().enableRowGroup || this.columnModel.isColumnGroupingLocked(column),
                     action: () => this.columnModel.removeRowGroupColumn(column, "contextMenu"),
                     icon: icon
                 };

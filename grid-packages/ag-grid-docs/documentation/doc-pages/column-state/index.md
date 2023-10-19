@@ -32,10 +32,10 @@ column state and `api.applyColumnState(params)` sets the column state.
 
 <snippet>
 | // save the column's state
-| const savedState = gridOptions.api.getColumnState();
+| const savedState = api.getColumnState();
 |
 | // restore the column state
-| gridOptions.api.applyColumnState({ state: savedState });
+| api.applyColumnState({ state: savedState });
 </snippet>
 
 The example below demonstrates saving and restoring column state. Try the following:
@@ -75,7 +75,7 @@ examples:
 
 <snippet>
 | // Sort Athlete column ascending
-| gridOptions.api.applyColumnState({
+| api.applyColumnState({
 |     state: [
 |         {
 |             colId: 'athlete',
@@ -84,7 +84,7 @@ examples:
 |     ]
 | });
 | // Sort Athlete column ascending and clear sort on all other columns
-| gridOptions.api.applyColumnState({
+| api.applyColumnState({
 |     state: [
 |         {
 |             colId: 'athlete',
@@ -97,14 +97,14 @@ examples:
 |     }
 | });
 | // Clear sorting on all columns, leave all other attributes untouched
-| gridOptions.api.applyColumnState({
+| api.applyColumnState({
 |     defaultState: {
 |         // important to say 'null' as undefined means 'do nothing'
 |         sort: null
 |     }
 | });
 | // Clear sorting, row group, pivot and pinned on all columns, leave all other attributes untouched
-| gridOptions.api.applyColumnState({
+| api.applyColumnState({
 |     defaultState: {
 |         // important to say 'null' as undefined means 'do nothing'
 |         sort: null,
@@ -114,7 +114,7 @@ examples:
 |     }
 | });
 | // Order columns, but do nothing else
-| gridOptions.api.applyColumnState({
+| api.applyColumnState({
 |     state: [
 |         { colId: 'athlete' },
 |         { colId: 'country' },

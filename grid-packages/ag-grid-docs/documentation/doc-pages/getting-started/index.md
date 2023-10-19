@@ -154,11 +154,6 @@ title: "Get Started with AG Grid"
 |    &lt;!-- The gid will be the size that this element is given. -->
 |    &lt;div id="myGrid" class="ag-theme-alpine" style="height: 500px">&lt;/div>
 |    &lt;script type="text/javascript">
-|        // Function to demonstrate calling grid's API
-|        function deselect(){
-|            gridOptions.api.deselectAll()
-|        }
-|
 |        // Grid Options are properties passed to the grid
 |        const gridOptions = {
 |
@@ -185,6 +180,11 @@ title: "Get Started with AG Grid"
 |        const eGridDiv = document.getElementById("myGrid");
 |        // new grid instance, passing in the hosting DIV and Grid Options
 |        const api = agGrid.createGrid(eGridDiv, gridOptions);
+|
+|        // Function to demonstrate calling grid's API
+|        function deselect(){
+|            api.deselectAll()
+|        }
 |
 |        // Fetch data from server
 |        fetch("https://www.ag-grid.com/example-assets/row-data.json")
@@ -293,7 +293,7 @@ title: "Get Started with AG Grid"
 | ### Creating New Grid Instance
 | 
 | The grid instance is created using `agGrid.createGrid()` passing in the DOM
-| element to host the grid and the Grid Options.
+| element to host the grid and the Grid Options and returns the grid api.
 |
 </framework-specific-section>
 
@@ -328,8 +328,7 @@ title: "Get Started with AG Grid"
 <framework-specific-section frameworks="javascript">
 | ### Accessing Grid's API
 | 
-| Once created, the grid places an API object on the Grid Options.
-| This can then be accessed to use the grid's API.
+| The grid api is returned from the `createGrid` function that can then be stored for later use.
 |
 </framework-specific-section>
 
@@ -337,7 +336,7 @@ title: "Get Started with AG Grid"
 <snippet transform={false}>
 | // Function to demonstrate calling grid's API
 | function deselect(){
-|     gridOptions.api.deselectAll()
+|     api.deselectAll()
 | }
 </snippet>
 </framework-specific-section>

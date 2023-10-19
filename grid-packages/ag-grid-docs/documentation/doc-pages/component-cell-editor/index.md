@@ -130,7 +130,7 @@ If you are doing normal editing, then only one cell is editable at any given tim
 An example of calling `getCellEditorInstances()` is as follows:
 
 <snippet transform={false}>
-const instances = gridOptions.api.getCellEditorInstances(params);
+const instances = api.getCellEditorInstances(params);
 if (instances.length > 0) {
     const instance = instances[0];
 }

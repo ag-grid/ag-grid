@@ -53,7 +53,7 @@ const gridOptions: GridOptions = {
     var datasource = getServerSideDatasource(fakeServer)
 
     // register the datasource with the grid
-    gridApi!.setServerSideDatasource(datasource)
+    params.api.setServerSideDatasource(datasource)
   },
 
 }

@@ -232,7 +232,8 @@ export class SetFilter<V = string> extends ProvidedFilter<SetFilterModel, V> imp
             columnModel: this.columnModel,
             valueService: this.valueService,
             treeDataTreeList: this.treeDataTreeList,
-            groupingTreeList: this.groupingTreeList
+            groupingTreeList: this.groupingTreeList,
+            addManagedListener: (event, listener) => this.addManagedListener(this.eventService, event, listener)
         });
 
         this.initialiseFilterBodyUi();

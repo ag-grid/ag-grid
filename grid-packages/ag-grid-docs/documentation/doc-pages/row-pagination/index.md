@@ -110,7 +110,7 @@ This is because both of these features remove top level rows (group rows and mas
 
 <api-documentation source='grid-options/properties.json' section='pagination'></api-documentation>
 
-The following methods compose the pagination API are all available from `gridOptions.api`
+The following methods compose the pagination API are all available from `api`
 
 ## Pagination API
 

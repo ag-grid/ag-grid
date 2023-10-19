@@ -71,10 +71,11 @@
         background-color: var(--ag-background-color);
         color: var(--ag-data-color);
 
-        &:after {
+        &::after {
             content: "";
             border-bottom: var(--ag-row-border-style) var(--ag-row-border-color) var(--ag-row-border-width);
             display: block;
+            margin-top: calc(var(--ag-row-height) - var(--ag-row-border-width));
         }
     }
 
@@ -134,7 +135,7 @@
         background-color: var(--ag-row-hover-color);
         display: block;
         position: absolute;
-        top: var(--ag-row-border-width);
+        top: 0;
         left: 0;
         right: 0;
         bottom: 0;

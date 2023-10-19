@@ -81,7 +81,7 @@ export class ToolPanelContextMenu extends Component {
 
         this.menuItemMap = new Map<MenuItemName, MenuItemProperty>();
         this.menuItemMap.set('rowGroup', {
-            allowedFunction: (col: Column) => col.isPrimary() && col.isAllowRowGroup(),
+            allowedFunction: (col: Column) => col.isPrimary() && col.isAllowRowGroup() && !this.columnModel.isColumnGroupingLocked(col),
             activeFunction: (col: Column) => col.isRowGroupActive(),
             activateLabel: () => `${localeTextFunc('groupBy', 'Group by')} ${this.displayName}`,
             deactivateLabel: () => `${localeTextFunc('ungroupBy', 'Un-Group by')} ${this.displayName}`,
@@ -186,7 +186,6 @@ export class ToolPanelContextMenu extends Component {
 
     private getMappedMenuItems(): MenuItemDef[] {
         const ret: MenuItemDef[] = [];
-
         for (const val of this.menuItemMap.values()) {
             const isInactive = this.columns.some(col => val.allowedFunction(col) && !val.activeFunction(col));
             const isActive = this.columns.some(col => val.allowedFunction(col) && val.activeFunction(col));

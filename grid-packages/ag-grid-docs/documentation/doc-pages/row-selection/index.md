@@ -290,10 +290,10 @@ If you want to select only the filtered rows, you could do this using the follow
 <snippet transform={false}>
 |// loop through each node after filter
 |const nodes = [];
-|gridOptions.api.forEachNodeAfterFilter(node => {
+|api.forEachNodeAfterFilter(node => {
 |    nodes.push(node);
 |});
-|gridOptions.api.setNodesSelected({ nodes, newValue: true });
+|api.setNodesSelected({ nodes, newValue: true });
 </snippet>
 
 ### Example: Using forEachNode

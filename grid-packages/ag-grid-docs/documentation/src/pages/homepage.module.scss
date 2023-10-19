@@ -23,7 +23,7 @@ gatsby-fast-refresh {
     --text-color: var(--white);
 
     padding-top: $size-5;
-    background-color: var(--dark-blue-500);
+    background-color: var(--dark-blue-600);
 
     @media screen and (min-width: $breakpoint-hero-small) {
         padding-top: $size-7;
@@ -31,6 +31,10 @@ gatsby-fast-refresh {
 
     @media screen and (min-width: $breakpoint-hero-large) {
         padding-top: $size-8;
+    }
+
+    #{$darkmode-selector} & {
+        background-color: var(--background-400);
     }
 }
 
@@ -128,12 +132,16 @@ gatsby-fast-refresh {
 }
 
 .homepageFrameworks {
-    background-color: var(--background-200);
+    background-color: var(--background-500);
     padding-top: $size-2;
     padding-bottom: $size-6;
 
     @media screen and (min-width: 640px) {
         padding-top: $size-6;
+    }
+
+    #{$darkmode-selector} & {
+        background-color: var(--background-200);
     }
 }
 
@@ -149,7 +157,11 @@ gatsby-fast-refresh {
 
 .automatedIntegratedChartsOuter {
     margin-bottom: $size-8;
-    background-color: var(--background-200);
+    background-color: var(--background-500);
+
+    #{$darkmode-selector} & {
+        background-color: var(--background-100);
+    }
 }
 
 .frameworksInner {
@@ -328,7 +340,7 @@ gatsby-fast-refresh {
 
     :global(.disabled) {
         h2 {
-            color: var(--neutral-500);
+            color: var(--secondary-text-color);
 
             &::after {
                 content: ' (disabled)';
@@ -349,7 +361,7 @@ gatsby-fast-refresh {
     :global(.state) {
         &::before {
             content: 'State: ';
-            color: var(--neutral-500);
+            color: var(--secondary-text-color);
         }
     }
 
@@ -368,7 +380,7 @@ gatsby-fast-refresh {
     :global(.paused-state) {
         &::before {
             content: 'Paused at: ';
-            color: var(--neutral-500);
+            color: var(--secondary-text-color);
         }
     }
 
@@ -376,7 +388,7 @@ gatsby-fast-refresh {
         display: flex;
         justify-content: space-between;
 
-        button {
+        button:not([class^="ag-"]) {
             padding: $size-half;
             line-height: $line-height-ultra-tight;
         }
@@ -393,7 +405,7 @@ gatsby-fast-refresh {
 
         &::before {
             content: 'Mouse: ';
-            color: var(--neutral-500);
+            color: var(--secondary-text-color);
         }
     }
 
@@ -404,7 +416,7 @@ gatsby-fast-refresh {
 
         &::before {
             content: 'Manager: ';
-            color: var(--neutral-500);
+            color: var(--secondary-text-color);
         }
     }
 }

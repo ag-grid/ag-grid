@@ -6,40 +6,115 @@ Aligning two or more grids means columns will be kept aligned in all grids. In o
 
 ## Configuration
 
+Configure via the gridOptions property `alignedGrids`.
+
+<api-documentation source='grid-options/properties.json' section='miscellaneous' names='["alignedGrids"]' ></api-documentation>
+
 <framework-specific-section frameworks="react">
-To have one (the first) grid react to column changes in another grid (the second), provide the second grid with a reference to the first grid.
+
+To link two grids provide `alignedGrids` with an array of corresponding grid refs.
 
 <snippet language="jsx" transform={false}>
 |const gridOne = useRef&lt;AgGridReact>(null);
+|const gridTwo = useRef&lt;AgGridReact>(null);
 |
 |return (
 |   &lt;>
-|       &lt;AgGridReact ref={gridOne} />
-|       &lt;AgGridReact alignedGrids={gridOne.current ? [gridOne.current] : undefined} />    
+|       &lt;AgGridReact ref={gridOne} alignedGrids={[gridTwo]} />
+|       &lt;AgGridReact ref={gridTwo} alignedGrids={[gridOne]} />    
 |   &lt;/>
 |);
 </snippet>
 </framework-specific-section>
 
 
-<framework-specific-section frameworks="javascript,angular,vue">
+<framework-specific-section frameworks="javascript">
 
-To have one (the first) grid reflect column changes in another (the second), place the first grid's options in `alignedGrids` property of the second grids.
+To link two grids provide `alignedGrids` with callbacks that return the corresponding grid apis.
 
 <snippet transform={false}>
 |gridOptionsFirst = {
-|    // some grid options here
-|        ...
+|    alignedGrids: () => [secondApi]
+|    ...
 |};
 |
 |gridOptionsSecond = {
-|    // register first grid to receive events from the second
-|    alignedGrids: [gridOptionsFirst]
-|
-|    // other grid options here
+|    alignedGrids: () => [firstApi]
 |    ...
 |}
+|firstApi = createGrid(gridDiv1, gridOptionsFirst);
+|secondApi = createGrid(gridDiv2, gridOptionsSecond);
 </snippet>
+</framework-specific-section>
+
+<framework-specific-section frameworks="angular">
+
+Align grids in your component by providing the `alignedGrids` property with the other grids `GridApi`.
+
+<snippet transform={false}>
+|const firstApi: GridApi;
+|
+|gridOptionsSecond = {
+|    alignedGrids: () => [this.firstApi],
+|}
+</snippet>
+
+Align grids in your component by providing `alignedGrids` with a template reference to the other `AgGridAngular` component.
+
+<snippet transform={false}>
+|@ViewChild('firstGrid') firstGrid!: AgGridAngular;
+|
+|gridOptionsSecond = {
+|    // Configure via callback as ViewChild only set after ngAfterViewInit
+|    alignedGrids: () => [this.firstGrid],
+|}
+</snippet>
+
+Alternatively it is possible to align grids via template variables in your component template.
+
+<snippet transform={false}>
+| // Link using template variables
+|&lt;ag-grid-angular #firstGrid [alignedGrids]="[secondGrid]" ...>
+|&lt;ag-grid-angular #secondGrid [alignedGrids]="[firstGrid]" ...>
+|
+</snippet>
+
+</framework-specific-section>
+
+<framework-specific-section frameworks="vue">
+
+Align grids in your component by providing the `alignedGrids` property with the other grids `GridApi`.
+
+<snippet transform={false}>
+|gridOptionsSecond = {
+|    alignedGrids: () => [this.firstApi],
+|}
+</snippet>
+
+Align grids in your component by providing `alignedGrids` with a reference to the other `AgGridVue` component.
+
+<snippet transform={false}>
+|// Annotate with a template reference
+|&lt;ag-grid-vue ref="firstGrid"
+|
+|gridOptionsSecond = {
+|    // register first grid to receive events from the second
+|    alignedGrids: () => [this.$refs.firstGrid],
+|}
+</snippet>
+
+
+Alternatively it is possible to align grids via refs in your component template.
+
+<snippet transform={false}>
+| // Link using template variables
+|&lt;ag-grid-vue 
+|   ref="firstGrid" :alignedGrids="[this.$refs.secondGrid]" ...>
+|&lt;ag-grid-vue 
+|   ref="secondGrid" :alignedGrids="[this.$refs.firstGrid]" ...>
+|
+</snippet>
+
 </framework-specific-section>
 
 ## Example: Aligned Grids
@@ -51,7 +126,6 @@ Below shows two grids, both aligned with the other (so any column change to one 
 - When a column is resized on either grid, the other grid follows.
 - When a column group is opened on either grid, the other grid follows.
 
-The grids don't serve much purpose (why would you show the same grid twice???) however it demonstrates the features in an easy to understand way.
 
 <grid-example title='Aligned Grids' name='aligned-grids' type='mixed'></grid-example>
 

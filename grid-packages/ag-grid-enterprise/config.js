@@ -52,7 +52,7 @@ function genConfig(name) {
     const opts = builds[name];
     const config = {
         input: opts.entry,
-        external: ['ag-grid-community', 'ag-charts-enterprise'],
+        external: ['ag-grid-community'],
         plugins: [
             // The order of plugins is VERY important here. Do not change unless you know what you're doing
             alias({

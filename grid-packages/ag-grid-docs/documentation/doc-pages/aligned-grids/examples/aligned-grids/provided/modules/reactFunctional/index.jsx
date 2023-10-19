@@ -101,7 +101,7 @@ const GridExample = () => {
             <div className="grid ag-theme-alpine">
                 <AgGridReact
                     ref={topGrid}
-                    alignedGrids={bottomGrid.current ? [bottomGrid.current] : undefined}
+                    alignedGrids={[bottomGrid]}
                     rowData={rowData}
                     defaultColDef={defaultColDef}
                     columnDefs={columnDefs}
@@ -112,7 +112,7 @@ const GridExample = () => {
             <div className="grid ag-theme-alpine">
                 <AgGridReact
                     ref={bottomGrid}
-                    alignedGrids={topGrid.current ? [topGrid.current] : undefined}
+                    alignedGrids={[topGrid]}
                     rowData={rowData}
                     defaultColDef={defaultColDef}
                     columnDefs={columnDefs}

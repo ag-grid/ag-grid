@@ -7,7 +7,7 @@ import { SquareRenderer } from './square-renderer.component';
 
 import "@ag-grid-community/styles/ag-grid.css";
 import "@ag-grid-community/styles/ag-theme-alpine.css";
-import { ColDef, ColumnApi, GridApi, GridReadyEvent, IRowNode } from '@ag-grid-community/core';
+import { ColDef, GridApi, GridReadyEvent, IRowNode } from '@ag-grid-community/core';
 
 @Component({
     selector: 'my-app',

@@ -2,7 +2,7 @@
 title: "Typescript Generics"
 ---
 
-AG Grid supports Typescript [Generics](https://www.typescriptlang.org/docs/handbook/2/generics.html) for row data and cell values. This leads to greatly improved developer experience via code completion and compile time validation of row data and cell value properties.
+AG Grid supports Typescript [Generics](https://www.typescriptlang.org/docs/handbook/2/generics.html) for row data, cell values and grid context. This leads to greatly improved developer experience via code completion and compile time validation of row data and cell value properties.
 
 ## Row Data: \<TData\>
 
@@ -47,7 +47,7 @@ Set the row data type on the grid options interface via `GridOptions<ICar>`. The
 |// Grid Api methods use ICar interface
 |function onSelection() {
 |  // api.getSelectedRows() : ICar[]
-|  const cars: ICar[] = gridOptions.api!.getSelectedRows();  
+|  const cars: ICar[] = api!.getSelectedRows();  
 |}
 </snippet>
 
@@ -112,12 +112,10 @@ function onRowSelected(event: RowSelectedEvent&lt;ICar>) {
 </framework-specific-section>
 
 <framework-specific-section frameworks="react">
-<snippet transform={false} language="ts">
 |### Configure via Component
 |
 |The `&lt;AgGridReact>` component accepts a generic parameter as `&lt;AgGridReact&lt;ICar>>`.
 |
-</snippet>
 </framework-specific-section>
 
 <framework-specific-section frameworks="react">
@@ -126,8 +124,7 @@ function onRowSelected(event: RowSelectedEvent&lt;ICar>) {
 |    ref={gridRef}
 |    rowData={rowData}
 |    onRowSelected={onRowSelected}
-|>
-|&lt;/AgGridReact>
+|/>
 </snippet>
 </framework-specific-section>
 

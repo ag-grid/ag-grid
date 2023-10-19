@@ -33,6 +33,7 @@ const columnDefs = [
 
 // this is the grid options for the top grid
 let topApi;
+let bottomApi;
 const gridOptionsTop = {
     defaultColDef: {
         editable: true,
@@ -44,12 +45,10 @@ const gridOptionsTop = {
     },
     columnDefs: columnDefs,
     rowData: null,
-    // debug: true,
-    alignedGrids: []
+    alignedGrids: () => [bottomApi],
 };
 
 // this is the grid options for the bottom grid
-let bottomApi;
 const gridOptionsBottom = {
     defaultColDef: {
         editable: true,
@@ -61,12 +60,8 @@ const gridOptionsBottom = {
     },
     columnDefs: columnDefs,
     rowData: null,
-    // debug: true,
-    alignedGrids: []
+    alignedGrids: () => [topApi],
 };
-
-gridOptionsTop.alignedGrids.push(gridOptionsBottom);
-gridOptionsBottom.alignedGrids.push(gridOptionsTop);
 
 function setData(rowData) {
     topApi.setRowData(rowData);

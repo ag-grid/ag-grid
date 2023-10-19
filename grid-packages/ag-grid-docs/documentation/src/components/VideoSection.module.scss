@@ -19,7 +19,7 @@
 .ytIframe {
     aspect-ratio: 16/9;
     border-radius: var(--border-radius);
-    border: 2px solid var(--bright-blue-gray);
+    border: 2px solid var(--secondary-border-color);
 
     @media screen and (min-width: $breakpoint-docs-home-small) {
         max-width: 16rem;

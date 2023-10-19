@@ -6,6 +6,7 @@ import {
     ColumnPanelItemDragStartEvent,
     DragSourceType,
     Events,
+    GridOptionsService,
     ProvidedColumnGroup,
     PostConstruct,
     VirtualList,
@@ -19,10 +20,11 @@ import { ToolPanelColumnComp } from "./toolPanelColumnComp";
 import { ToolPanelColumnGroupComp } from "./toolPanelColumnGroupComp";
 export class PrimaryColsListPanelItemDragFeature extends BeanStub {
     @Autowired('columnModel') private columnModel: ColumnModel;
+    @Autowired('gridOptionsService') protected readonly gridOptionsService: GridOptionsService;
 
     constructor(
         private readonly comp: PrimaryColsListPanel,
-        private readonly virtualList: VirtualList
+        private readonly virtualList: VirtualList,
     ) { super(); }
 
     @PostConstruct
@@ -56,6 +58,11 @@ export class PrimaryColsListPanelItemDragFeature extends BeanStub {
     }
 
     private isMoveBlocked(currentDragValue: Column | ProvidedColumnGroup | null): boolean {
+        const preventMoving = this.gridOptionsService.is('suppressMovableColumns');
+        if (preventMoving) {
+            return true;
+        }
+
         const currentColumns = this.getCurrentColumns(currentDragValue);
         const hasNotMovable = currentColumns.find(col => {
             const colDef = col.getColDef();
