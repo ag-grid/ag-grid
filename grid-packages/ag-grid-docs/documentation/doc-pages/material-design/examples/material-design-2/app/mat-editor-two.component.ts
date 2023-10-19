@@ -23,7 +23,7 @@ import { ClientSideRowModelModule } from "@ag-grid-community/client-side-row-mod
     </div>
     `
 })
-export class MatEditorComponentTwo implements AfterViewInit {
+export class MatEditorComponentTwo {
     public gridOptions: GridOptions;
     private gridApi!: GridApi;
     public onOffColumnAlignment = "left";
@@ -37,6 +37,7 @@ export class MatEditorComponentTwo implements AfterViewInit {
             onGridReady: (params) => {
                 params.api!.sizeColumnsToFit();
                 this.gridApi = params.api;
+                this.randomRefreshOfRows(params.api);
             },
             rowHeight: 48, // recommended row height for material design data grids,
             headerHeight: 48
@@ -61,11 +62,11 @@ export class MatEditorComponentTwo implements AfterViewInit {
         return Math.floor(Math.random() * upper);
     }
 
-    ngAfterViewInit() {
-        this.gridApi!.forEachNode(rowNode => {
+    randomRefreshOfRows(api: GridApi) {
+        api!.forEachNode(rowNode => {
             window.setTimeout(() => {
                 rowNode.setDataValue("random_col", this.randomNumberUpTo(100));
-                this.gridApi.refreshCells({
+                api.refreshCells({
                     rowNodes: [rowNode],
                     columns: ["random_col"]
                 });
