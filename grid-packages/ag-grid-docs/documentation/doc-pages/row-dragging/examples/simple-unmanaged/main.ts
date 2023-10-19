@@ -27,13 +27,13 @@ const gridOptions: GridOptions = {
   getRowId: getRowId,
   onSortChanged: onSortChanged,
   onFilterChanged: onFilterChanged,
-  onGridReady: function onGridReady() {
+  onGridReady: (params) => {
     // add id to each item, needed for immutable store to work
     immutableStore.forEach(function (data, index) {
       data.id = index
     })
 
-    gridApi!.setRowData(immutableStore)
+    params.api.setRowData(immutableStore)
   },
 }
 

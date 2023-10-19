@@ -1,14 +1,4 @@
-import {
-  GridApi,
-  createGrid,
-  ColDef,
-  ColGroupDef,
-  ColumnApi,
-  GridOptions,
-  IServerSideDatasource,
-  IServerSideGetRowsRequest,
-  ColumnGroup,
-} from '@ag-grid-community/core';
+import { ColDef, createGrid, GridApi, GridOptions, IServerSideDatasource } from '@ag-grid-community/core';
 declare var FakeServer: any;
 let gridApi: GridApi<IOlympicData>;
 const gridOptions: GridOptions<IOlympicData> = {

@@ -250,7 +250,13 @@
         "bodyScroll": {},
         "bodyScrollEnd": {},
         "dragStarted": {},
-        "dragStopped": {}
+        "dragStopped": {},
+        "stateUpdated": {
+            "more": {
+                "name": "Grid State",
+                "url": "/grid-state/"
+            }
+        }
     },
     "clientRowModel": {
         "meta": {

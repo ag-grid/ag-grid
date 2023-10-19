@@ -36,6 +36,10 @@ pre {
     background-color: var(--neutral-200);
     padding: $size-1 $size-2;
     border-radius: var(--border-radius);
+
+    #{$darkmode-selector} & {
+        background-color: var(--background-100);
+    }
 }
 
 hr {

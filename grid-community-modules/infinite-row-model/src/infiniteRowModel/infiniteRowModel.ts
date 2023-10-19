@@ -214,6 +214,10 @@ export class InfiniteRowModel extends BeanStub implements IInfiniteRowModel {
         } as InfiniteCacheParams;
 
         this.infiniteCache = this.createBean(new InfiniteCache(this.cacheParams));
+
+        this.eventService.dispatchEventOnce({
+            type: Events.EVENT_ROW_COUNT_READY
+        });
     }
 
     private defaultIfInvalid(value: number | undefined, defaultValue: number): number {

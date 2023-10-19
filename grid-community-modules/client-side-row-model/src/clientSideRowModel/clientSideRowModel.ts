@@ -933,6 +933,11 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel 
             }
             this.rootNode.updateHasChildren();
         }
+
+        this.eventService.dispatchEventOnce({
+            type: Events.EVENT_ROW_COUNT_READY
+        });
+
     }
 
     private doFilter(changedPath: ChangedPath) {
@@ -985,8 +990,6 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel 
     private dispatchUpdateEventsAndRefresh(): void {
         // - clears selection
         this.selectionService.reset('rowDataChanged');
-        // - updates filters
-        this.filterManager.onNewRowsLoaded('rowDataUpdated');
 
         // this event kicks off:
         // - shows 'no rows' overlay if needed
@@ -1109,6 +1112,11 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel 
             rowNodeOrder = this.createRowNodeOrder();
         }
 
+        const event: WithoutGridCommon<RowDataUpdatedEvent> = {
+            type: Events.EVENT_ROW_DATA_UPDATED
+        };
+        this.eventService.dispatchEvent(event);
+
         this.refreshModel({
             step: ClientSideRowModelSteps.EVERYTHING,
             rowNodeTransactions: rowNodeTrans,
@@ -1117,14 +1125,6 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel 
             keepEditingRows: true,
             animate
         });
-
-        // - updates filters
-        this.filterManager.onNewRowsLoaded('rowDataUpdated');
-
-        const event: WithoutGridCommon<RowDataUpdatedEvent> = {
-            type: Events.EVENT_ROW_DATA_UPDATED
-        };
-        this.eventService.dispatchEvent(event);
     }
 
     private doRowsToDisplay() {
@@ -1187,10 +1187,13 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel 
         this.resetRowHeights();
     }
 
-
     private onGridReady(): void {
         if (this.hasStarted) { return; }
         // App can start using API to add transactions, so need to add data into the node manager if not started
         this.setInitialData();
+    }
+
+    public isRowDataLoaded(): boolean {
+        return this.nodeManager.hasData();
     }
 }

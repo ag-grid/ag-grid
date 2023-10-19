@@ -57,7 +57,7 @@ testing with AG Grid in this section.
 </framework-specific-section>
 
 <framework-specific-section frameworks="javascript">
-| Once the API is ready, we can then invoke Grid `API` and `ColumnApi` methods:
+| Once the API is ready, we can then invoke Grid `API` methods:
 </framework-specific-section>
 
 <framework-specific-section frameworks="javascript">

@@ -364,12 +364,6 @@
                 "url": "/filter-advanced/"
             }
         },
-        "advancedFilterModel": {
-            "more": {
-                "name": "Advanced Filter",
-                "url": "/filter-advanced/#filter-model--api"
-            }
-        },
         "includeHiddenColumnsInAdvancedFilter": {
             "more": {
                 "name": "Advanced Filter",
@@ -873,6 +867,12 @@
             "more": {
                 "name": "Group Selection",
                 "url": "/row-selection/#group-selection"
+            }
+        },
+        "groupLockGroupColumns": {
+            "more": {
+                "name": "Group Lock Group Columns",
+                "url": "/grouping-locking-group-columns"
             }
         },
         "groupIncludeFooter": {

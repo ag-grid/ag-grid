@@ -16,7 +16,6 @@ import {
     PostConstruct,
     PreDestroy,
     RowBounds,
-    RowDataChangedEvent,
     RowNode,
     RowRenderer,
     StoreRefreshAfterParams,
@@ -274,12 +273,6 @@ export class ServerSideRowModel extends BeanStub implements IServerSideRowModel 
             this.columnModel.setSecondaryColumns(null);
             this.managingPivotResultColumns = false;
         }
-
-        // this event shows/hides 'no rows' overlay
-        const rowDataChangedEvent: WithoutGridCommon<RowDataChangedEvent> = {
-            type: Events.EVENT_ROW_DATA_UPDATED
-        };
-        this.eventService.dispatchEvent(rowDataChangedEvent);
 
         // this gets the row to render rows (or remove the previously rendered rows, as it's blank to start).
         // important to NOT pass in an event with keepRenderedRows or animate, as we want the renderer

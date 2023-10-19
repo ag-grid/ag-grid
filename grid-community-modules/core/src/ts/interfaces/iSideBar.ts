@@ -1,8 +1,13 @@
 import { IToolPanel } from "./iToolPanel";
 
+export interface ISideBarService {
+    getSideBarComp(): ISideBar;
+}
+
 export interface ISideBar {
     refresh(): void;
     setDisplayed(show:boolean): void;
+    getSideBarPosition(): 'left' | 'right';
     setSideBarPosition(position?: 'left' | 'right'): void;
     isToolPanelShowing(): boolean;
     openToolPanel(key: string, source?: 'sideBarButtonClicked' | 'sideBarInitializing' | 'api'): void;

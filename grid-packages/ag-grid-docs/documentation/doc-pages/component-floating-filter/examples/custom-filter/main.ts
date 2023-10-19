@@ -57,14 +57,9 @@ class NumberFilter implements IFilterComp {
             return false;
         }
 
-        const { api, colDef, column, columnApi, context } = this.filterParams;
         const { node } = params;
         const value = this.filterParams.valueGetter({
-            api,
-            colDef,
-            column,
-            columnApi,
-            context,
+            ...this.filterParams,
             data: node.data,
             getValue: (field) => node.data[field],
             node,

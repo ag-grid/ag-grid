@@ -16,7 +16,7 @@ The enterprise version of the grid provides an 'Excel Export' option via the gri
 Excel export is also possible via the [Grid API](../grid-api/) using the following method: 
 
 <snippet>
- gridOptions.api.exportDataAsExcel();
+ api.exportDataAsExcel();
 </snippet>
 
 No special configurations or third party libraries are required for either approach.

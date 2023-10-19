@@ -52,7 +52,6 @@ const VueExample = {
         this.columnDefs = this.getColumnDefs();
     },
     mounted() {
-        this.gridApi = this.gridOptions.api;
     },
     methods: {
         setHeaderNames() {
@@ -100,6 +99,7 @@ const VueExample = {
             ];
         },
         onGridReady(params) {
+            this.gridApi = params.api;
             const updateData = (data) => {
                 this.rowData = data;
             };

@@ -125,7 +125,7 @@ export abstract class BaseDropZonePanel extends Component {
         ));
 
         this.addManagedListener(this.beans.eventService, Events.EVENT_NEW_COLUMNS_LOADED, this.refreshGui.bind(this));
-        this.addManagedPropertyListeners(['functionsReadOnly', 'rowGroupPanelSuppressSort'], this.refreshGui.bind(this));
+        this.addManagedPropertyListeners(['functionsReadOnly', 'rowGroupPanelSuppressSort', 'groupLockGroupColumns'], this.refreshGui.bind(this));
 
         this.setupDropTarget();
 
@@ -190,6 +190,16 @@ export abstract class BaseDropZonePanel extends Component {
         return type === DragSourceType.HeaderCell || type === DragSourceType.ToolPanel;
     }
 
+
+    private minimumAllowedNewInsertIndex(): number {
+        const numberOfLockedCols = this.gridOptionsService.getNum('groupLockGroupColumns') ?? 0;
+        const numberOfGroupCols = this.colModel.getRowGroupColumns().length;
+        if (numberOfLockedCols === -1) {
+            return numberOfGroupCols;
+        }
+        return Math.min(numberOfLockedCols, numberOfGroupCols);
+    }
+
     private checkInsertIndex(draggingEvent: DraggingEvent): boolean {
         const newIndex = this.getNewInsertIndex(draggingEvent);
 
@@ -198,10 +208,13 @@ export abstract class BaseDropZonePanel extends Component {
             return false;
         }
 
-        const changed = newIndex !== this.insertIndex;
+        const minimumAllowedIndex = this.minimumAllowedNewInsertIndex();
+        const newAdjustedIndex = Math.max(minimumAllowedIndex, newIndex);
+
+        const changed = newAdjustedIndex !== this.insertIndex;
 
         if (changed) {
-            this.insertIndex = newIndex;
+            this.insertIndex = newAdjustedIndex;
         }
 
         return changed;

@@ -114,7 +114,7 @@ const rightGridOptions: GridOptions = {
 };
 
 function addGridDropZone(params: GridReadyEvent) {
-    const dropZoneParams = rightGridOptions.api!.getRowDropZoneParams({
+    const dropZoneParams = rightApi!.getRowDropZoneParams({
         onDragStop: (params) => {
             const deselectCheck = (document.querySelector('input#deselect') as HTMLInputElement).checked;
             const moveCheck = (document.querySelector('input#move') as HTMLInputElement).checked;

@@ -194,7 +194,7 @@ The code snippet below shows how to expand and collapse column groups using the 
 
 <snippet>
 | // lookup Columns Tool Panel instance by id, in this case using the default columns instance id
-| const columnsToolPanel = gridOptions.api.getToolPanelInstance('columns');
+| const columnsToolPanel = api.getToolPanelInstance('columns');
 | 
 | // expands all column groups in the Columns Tool Panel
 | columnsToolPanel.expandColumnGroups();
@@ -249,7 +249,7 @@ const gridOptions = {
 
 <snippet>
 | // lookup Columns Tool Panel instance by id, in this case using the default columns instance id
-| const columnsToolPanel = gridOptions.api.getToolPanelInstance('columns');
+| const columnsToolPanel = api.getToolPanelInstance('columns');
 | 
 | // set custom Columns Tool Panel layout
 | columnsToolPanel.setColumnLayout([

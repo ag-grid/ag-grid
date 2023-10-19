@@ -19,7 +19,7 @@ Cross-Filter charts are created programmatically using `createCrossFilterChart(p
 The following snippet shows how a cross-filtering pie chart can be created:
 
 <snippet>
-| gridOptions.api.createCrossFilterChart({
+| api.createCrossFilterChart({
 |     chartType: 'pie',
 |     cellRange: {
 |         columns: ['salesRep', 'sale'],

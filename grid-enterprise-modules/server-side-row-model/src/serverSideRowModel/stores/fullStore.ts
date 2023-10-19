@@ -106,7 +106,7 @@ export class FullStore extends RowNodeBlock implements IServerSideStore {
         let initialRowCount = 1;
         const isRootStore = this.parentRowNode.level === -1;
         const userInitialRowCount = this.storeUtils.getServerSideInitialRowCount();
-        if (isRootStore && userInitialRowCount !== undefined) {
+        if (isRootStore && userInitialRowCount != null) {
             initialRowCount = userInitialRowCount;
         }
         this.initialiseRowNodes(initialRowCount);
@@ -116,6 +116,12 @@ export class FullStore extends RowNodeBlock implements IServerSideStore {
 
 
         this.postSortFunc = this.gridOptionsService.getCallback('postSortRows');
+
+        if (userInitialRowCount != null) {
+            this.eventService.dispatchEventOnce({
+                type: Events.EVENT_ROW_COUNT_READY
+            });
+        }
     }
 
     @PreDestroy
@@ -241,6 +247,12 @@ export class FullStore extends RowNodeBlock implements IServerSideStore {
 
         if (nodesToRecycle) {
             this.blockUtils.destroyRowNodes(_.getAllValuesInObject(nodesToRecycle));
+        }
+
+        if (this.level === 0) {
+            this.eventService.dispatchEventOnce({
+                type: Events.EVENT_ROW_COUNT_READY
+            });
         }
 
         this.filterAndSortNodes();

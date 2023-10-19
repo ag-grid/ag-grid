@@ -4156,12 +4156,27 @@ export class ColumnModel extends BeanStub {
         this.resizeOperationQueue = [];
     }
 
-    public resetColumnDefIntoColumn(column: Column): boolean {
+    public resetColumnDefIntoColumn(column: Column, source: ColumnEventType): boolean {
         const userColDef = column.getUserProvidedColDef();
         if (!userColDef) { return false; }
         const newColDef = this.columnFactory.addColumnDefaultAndTypes(userColDef, column.getColId());
-        column.setColDef(newColDef, userColDef);
+        column.setColDef(newColDef, userColDef, source);
         return true;
+    }
+
+    public isColumnGroupingLocked(column: Column): boolean {
+        const groupLockGroupColumns = this.gridOptionsService.getNum('groupLockGroupColumns') ?? 0;
+        const autoColumns = this.getGroupAutoColumns();
+        if (!autoColumns?.length || !column.isRowGroupActive() || groupLockGroupColumns === 0) {
+            return false;
+        }
+
+        if (groupLockGroupColumns === -1) {
+            return true;
+        }
+
+        const colIndex = this.rowGroupColumns.findIndex(groupCol => groupCol.getColId() === column.getColId());
+        return groupLockGroupColumns > colIndex;
     }
 
     public generateColumnStateForRowGroupAndPivotIndexes(

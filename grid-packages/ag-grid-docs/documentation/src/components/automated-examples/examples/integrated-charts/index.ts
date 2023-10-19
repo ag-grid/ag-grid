@@ -137,7 +137,7 @@ export function createAutomatedIntegratedCharts({
         gridOptions.onGridReady = () => {
             onGridReady && onGridReady();
         };
-        gridOptions.onFirstDataRendered = () => {
+        gridOptions.onFirstDataRendered = (e) => {
             if (suppressUpdates) {
                 return;
             }
@@ -162,7 +162,7 @@ export function createAutomatedIntegratedCharts({
                 mouse,
                 onStateChange,
                 tweenGroup,
-                gridOptions,
+                gridApi: e.api,
                 loop: !runOnce,
                 scriptDebugger,
                 defaultEasing: Easing.Quadratic.InOut,

@@ -29,8 +29,8 @@ export class MatEditorComponentOne {
         this.gridOptions = {
             rowData: this.createRowData(),
             columnDefs: this.createColumnDefs(),
-            onGridReady: () => {
-                this.gridOptions.api!.sizeColumnsToFit();
+            onGridReady: (params) => {
+                params.api.sizeColumnsToFit();
             },
             defaultColDef: {
                 wrapHeaderText: true,

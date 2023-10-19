@@ -9,7 +9,6 @@ import {
     GetDataPath,
     IRowNodeStage,
     IsGroupOpenByDefaultParams,
-    NumberSequence,
     RowNode,
     RowNodeTransaction,
     SelectableService,
@@ -67,11 +66,6 @@ export class GroupStage extends BeanStub implements IRowNodeStage {
     @Autowired('valueService') private valueService: ValueService;
     @Autowired('beans') private beans: Beans;
     @Autowired('selectionService') private selectionService: ISelectionService;
-
-    // we use a sequence variable so that each time we do a grouping, we don't
-    // reuse the ids - otherwise the rowRenderer will confuse rowNodes between redraws
-    // when it tries to animate between rows.
-    private groupIdSequence = new NumberSequence();
 
     // when grouping, these items are of note:
     // rowNode.parent: RowNode: set to the parent
@@ -619,10 +613,8 @@ export class GroupStage extends BeanStub implements IRowNodeStage {
 
         this.setGroupData(groupNode, groupInfo, details);
 
-        // we put 'row-group-' before the group id, so it doesn't clash with standard row id's. we also use 't-' and 'b-'
-        // for top pinned and bottom pinned rows.
-        groupNode.id = RowNode.ID_PREFIX_ROW_GROUP + this.groupIdSequence.next();
         groupNode.key = groupInfo.key;
+        groupNode.id = this.createGroupId(groupNode, parent, details.usingTreeData, level);
 
         groupNode.level = level;
         groupNode.leafGroup = details.usingTreeData ? false : level === (details.groupedColCount - 1);
@@ -644,6 +636,27 @@ export class GroupStage extends BeanStub implements IRowNodeStage {
         this.setExpandedInitialValue(details, groupNode);
 
         return groupNode;
+    }
+
+    private createGroupId(node: RowNode, parent: RowNode, usingTreeData: boolean, level: number): string {
+        let createGroupId: (node: RowNode, parent: RowNode | null, level: number) => string | null;
+        if (usingTreeData) {
+            createGroupId = (node, parent, level) => {
+                if (level < 0) { return null; } // root node
+                const parentId = parent ? createGroupId(parent, parent.parent, level - 1) : null;
+                return `${parentId == null ? '' : parentId + '-'}${level}-${node.key}`;
+            };
+        } else {
+            createGroupId = (node, parent) => {
+                if (!node.rowGroupColumn) { return null; } // root node
+                const parentId = parent ? createGroupId(parent, parent.parent, 0) : null;
+                return `${parentId == null ? '' : parentId + '-'}${node.rowGroupColumn.getColId()}-${node.key}`;
+            };
+        }
+
+        // we put 'row-group-' before the group id, so it doesn't clash with standard row id's. we also use 't-' and 'b-'
+        // for top pinned and bottom pinned rows.
+        return RowNode.ID_PREFIX_ROW_GROUP + createGroupId(node, parent, level);
     }
 
     private setGroupData(groupNode: RowNode, groupInfo: GroupInfo, details: GroupingDetails): void {

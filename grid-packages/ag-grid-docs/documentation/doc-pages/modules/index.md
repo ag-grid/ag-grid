@@ -344,7 +344,7 @@ If we have the following modules specified:
 We can then assume the `core` packages are available implicitly and import from them:
 
 <snippet transform={false}>
-|import { ColumnApi, GridApi } from "@ag-grid-community/core";
+|import { GridApi } from "@ag-grid-community/core";
 |import { LicenseManager } from "@ag-grid-enterprise/core";
 |
 |LicenseManager.setLicenseKey(...your key...);

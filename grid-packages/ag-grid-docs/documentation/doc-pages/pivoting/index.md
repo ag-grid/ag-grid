@@ -85,13 +85,13 @@ As mentioned above, the Pivot Result Columns in the grid are created by the grid
 
 <snippet>
 | // look up the Column that pivots on country Ireland and aggregates Gold
-| const irelandGoldColumn = gridOptions.api.getPivotResultColumn(['Ireland'],'gold');
+| const irelandGoldColumn = api.getPivotResultColumn(['Ireland'],'gold');
 | 
 | // change the width of the Pivot Result Column
-| gridOptions.api.setColumnWidth(irelandGoldColumn, newWidth);
+| api.setColumnWidth(irelandGoldColumn, newWidth);
 | 
 | // look up the Column that pivots on country SausageKingdom and year 2002 and aggregates silver
-| const sausageKingdomColumn = gridOptions.api.getPivotResultColumn(['SausageKingdom','2002'],'silver');
+| const sausageKingdomColumn = api.getPivotResultColumn(['SausageKingdom','2002'],'silver');
 | 
 | console.log('found column with id ' + sausageKingdomColumn.getId());
 </snippet>
@@ -219,9 +219,9 @@ When pivot mode is enabled, you may also [Filter](/filtering-overview/) on both 
 
 <snippet>
 | const filterNotBlank2000Silvers = () => {
-|   const targetCol = gridOptions.api.getPivotResultColumn(['2000'], 'silver');
+|   const targetCol = api.getPivotResultColumn(['2000'], 'silver');
 |   if (targetCol) {
-|     gridOptions.api.setFilterModel({
+|     api.setFilterModel({
 |       [targetCol.getId()]: {
 |         filterType: 'number',
 |         type: 'notBlank'

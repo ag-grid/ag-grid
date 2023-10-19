@@ -169,16 +169,11 @@ const advancedFilterModel = {
 };
 ```
 
-The Advanced Filter Model can be retrieved via the API method `getAdvancedFilterModel`, and set via the grid option `advancedFilterModel` or via the API method `setAdvancedFilterModel`.
+The Advanced Filter Model can be retrieved via the API method `getAdvancedFilterModel`, and set via the API method `setAdvancedFilterModel`.
 
-<api-documentation source='grid-api/api.json' section='filter' names='["getAdvancedFilterModel"]'></api-documentation>
-
-<api-documentation source='grid-options/properties.json' section='filter' names='["advancedFilterModel"]'></api-documentation>
-
-<api-documentation source='grid-api/api.json' section='filter' names='["setAdvancedFilterModel"]'></api-documentation>
+<api-documentation source='grid-api/api.json' section='filter' names='["getAdvancedFilterModel", "setAdvancedFilterModel"]'></api-documentation>
 
 The Advanced Filter Model and API methods are demonstrated in the following example:
-- The grid option `advancedFilterModel` is set so the Advanced Filter is automatically populated, and the grid is filtered.
 - Clicking `Save Advanced Filter Model` will save the current Advanced Filter.
 - Clicking `Restore Advanced Filter Model` will restore the previously saved Advanced Filter.
 - Clicking `Set Custom Advanced Filter Model` will set `[Gold] >= 1`.

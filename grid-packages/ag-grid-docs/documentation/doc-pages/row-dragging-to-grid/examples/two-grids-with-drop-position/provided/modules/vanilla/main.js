@@ -13,7 +13,7 @@ var rightColumnDefs = [
     { field: "value1" },
     { field: "value2" }
 ];
-
+var leftApi;
 var leftGridOptions = {
     defaultColDef: {
         flex: 1,
@@ -39,6 +39,7 @@ var leftGridOptions = {
     }
 };
 
+var rightApi;
 var rightGridOptions = {
     defaultColDef: {
         flex: 1,
@@ -91,7 +92,7 @@ function addRecordToGrid(side, data) {
     // if data missing or data has no it, do nothing
     if (!data || data.id == null) { return; }
 
-    var api = side === 'left' ? leftGridOptions.api : rightGridOptions.api,
+    var api = side === 'left' ? leftApi : rightApi,
         // do nothing if row is already in the grid, otherwise we would have duplicates
         rowAlreadyInGrid = !!api.getRowNode(data.id),
         transaction;

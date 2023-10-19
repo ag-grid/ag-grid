@@ -8,7 +8,7 @@ import {
   IAdvancedFilterBuilderParams,
 } from '@ag-grid-community/core';
 
-const advancedFilterModel: AdvancedFilterModel = {
+const initialAdvancedFilterModel: AdvancedFilterModel = {
   filterType: 'join',
   type: 'AND',
   conditions: [
@@ -64,7 +64,11 @@ const gridOptions: GridOptions<IOlympicData> = {
   },
   enableAdvancedFilter: true,
   popupParent: document.getElementById('wrapper'),
-  advancedFilterModel: advancedFilterModel,
+  initialState: {
+    filter: {
+      advancedFilterModel: initialAdvancedFilterModel,
+    },
+  },
   advancedFilterBuilderParams: advancedFilterBuilderParams,
   onAdvancedFilterBuilderVisibleChanged: onAdvancedFilterBuilderVisibleChanged,
   onGridReady: (params: GridReadyEvent) => {

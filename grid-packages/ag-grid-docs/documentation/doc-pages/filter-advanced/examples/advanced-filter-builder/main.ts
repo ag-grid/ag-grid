@@ -1,6 +1,6 @@
 import { GridApi, createGrid, GridOptions, AdvancedFilterModel } from '@ag-grid-community/core';
 
-const advancedFilterModel: AdvancedFilterModel = {
+const initialAdvancedFilterModel: AdvancedFilterModel = {
   filterType: 'join',
     type: 'AND',
     conditions: [
@@ -51,7 +51,11 @@ const gridOptions: GridOptions<IOlympicData> = {
     resizable: true,
   },
   enableAdvancedFilter: true,
-  advancedFilterModel: advancedFilterModel,
+  initialState: {
+    filter: {
+      advancedFilterModel: initialAdvancedFilterModel,
+    },
+  },
   onFirstDataRendered: () => {
     gridApi!.showAdvancedFilterBuilder();
   }

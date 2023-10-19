@@ -90,7 +90,7 @@ When using selection where all selected rows may not have been loaded, it is ins
 The below snippet demonstrates how to set all nodes as selected, except for the row which has the ID `United States`, and the row with the ID `United States2004`.
 
 <snippet spaceBetweenProperties="true">
-| gridOptions.api.setServerSideSelectionState({
+| api.setServerSideSelectionState({
 |     selectAll: true,
 |     toggledNodes: ['United States', 'United States2004'],
 | });

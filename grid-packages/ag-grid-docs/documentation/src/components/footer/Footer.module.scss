@@ -10,6 +10,11 @@
     background-color: var(--dark-blue-500);
     color: var(--text-color);
 
+    #{$darkmode-selector} & {
+        background-color: var(--default-background-color);
+        border-top: 1px solid var(--neutral-400);
+    }
+
     h4,
     p {
         opacity: 0.6666;

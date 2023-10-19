@@ -92,6 +92,7 @@ import {
     GridPreDestroyedEvent,
     GridReadyEvent,
     GridSizeChangedEvent,
+    GridState,
     HeaderPosition,
     IAdvancedFilterBuilderParams,
     IAggFunc,
@@ -155,6 +156,7 @@ import {
     SideBarDef,
     SortChangedEvent,
     SortDirection,
+    StateUpdatedEvent,
     StatusPanelDef,
     StoreRefreshedEvent,
     TabToNextCellParams,
@@ -488,7 +490,7 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     @Input() public excludeChildrenWhenTreeDataFiltering: boolean | undefined = undefined;
     /** Set to true to enable the Advanced Filter. Default: `false`     */
     @Input() public enableAdvancedFilter: boolean | undefined = undefined;
-    /** Allows the state of the Advanced Filter to be set before the grid is loaded.     */
+    /** @deprecated As of v31, use `initialState.filter.advancedFilterModel` instead.     */
     @Input() public advancedFilterModel: AdvancedFilterModel | null | undefined = undefined;
     /** Hidden columns are excluded from the Advanced Filter by default.
          * To include hidden columns, set to `true`.
@@ -721,6 +723,8 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     @Input() public groupMaintainOrder: boolean | undefined = undefined;
     /** When `true`, if you select a group, the children of the group will also be selected. Default: `false`     */
     @Input() public groupSelectsChildren: boolean | undefined = undefined;
+    /** If grouping, locks the group settings of a number of columns, e.g. `0` for no group locking. `1` for first group column locked, `-1` for all group columns locked. Default: `0`     */
+    @Input() public groupLockGroupColumns: number | undefined = undefined;
     /** Set to determine whether filters should be applied on aggregated group values. Default: `false`     */
     @Input() public groupAggFiltering: boolean | IsRowFilterable<TData> | undefined = undefined;
     /** If grouping, this controls whether to show a group footer when the group is expanded.
@@ -929,6 +933,8 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     /** @deprecated v29.2     */
     @Input() public functionsPassive: boolean | undefined = undefined;
     @Input() public enableGroupEdit: boolean | undefined = undefined;
+    /** Initial state for the grid. Only read once on initialization. Can be used in conjunction with `api.getState()` to save and restore grid state.     */
+    @Input() public initialState: GridState | undefined = undefined;
     /** For customising the context menu.     */
     @Input() public getContextMenuItems: GetContextMenuItems<TData> | undefined = undefined;
     /** For customising the main 'column header' menu.     */
@@ -1137,6 +1143,8 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     @Output() public dragStarted: EventEmitter<DragStartedEvent<TData>> = new EventEmitter<DragStartedEvent<TData>>();
     /** When dragging stops. This could be any action that uses the grid's Drag and Drop service, e.g. Column Moving, Column Resizing, Range Selection, Fill Handle, etc.     */
     @Output() public dragStopped: EventEmitter<DragStoppedEvent<TData>> = new EventEmitter<DragStoppedEvent<TData>>();
+    /** Grid state has been updated.     */
+    @Output() public stateUpdated: EventEmitter<StateUpdatedEvent<TData>> = new EventEmitter<StateUpdatedEvent<TData>>();
     /** Triggered every time the paging state changes. Some of the most common scenarios for this event to be triggered are:
          *
          *  - The page size changes.
@@ -1162,7 +1170,7 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     @Output() public pinnedRowDataChanged: EventEmitter<PinnedRowDataChangedEvent<TData>> = new EventEmitter<PinnedRowDataChangedEvent<TData>>();
     /** @deprecated v28 No longer fired, use onRowDataUpdated instead     */
     @Output() public rowDataChanged: EventEmitter<RowDataChangedEvent<TData>> = new EventEmitter<RowDataChangedEvent<TData>>();
-    /** The client has updated data for the grid by either a) setting new Row Data or b) Applying a Row Transaction.     */
+    /** Client-Side Row Model only. The client has updated data for the grid by either a) setting new Row Data or b) Applying a Row Transaction.     */
     @Output() public rowDataUpdated: EventEmitter<RowDataUpdatedEvent<TData>> = new EventEmitter<RowDataUpdatedEvent<TData>>();
     /** Async transactions have been applied. Contains a list of all transaction results.     */
     @Output() public asyncTransactionsFlushed: EventEmitter<AsyncTransactionsFlushed<TData>> = new EventEmitter<AsyncTransactionsFlushed<TData>>();

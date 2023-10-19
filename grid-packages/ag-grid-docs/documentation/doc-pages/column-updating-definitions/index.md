@@ -209,7 +209,7 @@ The current column definitions can be retrieved with `getColumnDefs`:
 
 <framework-specific-section frameworks="javascript">
 <snippet transform={false}>
-| gridOptions.api.getColumnDefs();
+| api.getColumnDefs();
 </snippet>
 </framework-specific-section>
 

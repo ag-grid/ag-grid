@@ -10,7 +10,7 @@ This section shows how Pivot Charts can be created via the Grid API.
 Pivot Charts can be created through `gridApi.createPivotChart()` as shown below:
 
 <snippet>
-| gridOptions.api.createPivotChart({
+| api.createPivotChart({
 |     chartType: 'groupedColumn',
 |     // other options...
 | });
