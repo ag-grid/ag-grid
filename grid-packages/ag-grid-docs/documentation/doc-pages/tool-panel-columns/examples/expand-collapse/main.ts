@@ -52,7 +52,7 @@ const gridOptions: GridOptions<IOlympicData> = {
   },
   sideBar: 'columns',
   onGridReady: (params) => {
-    var columnToolPanel = gridApi!.getToolPanelInstance('columns')!;
+    var columnToolPanel = params.api.getToolPanelInstance('columns')!;
     columnToolPanel.collapseColumnGroups()
   },
 }

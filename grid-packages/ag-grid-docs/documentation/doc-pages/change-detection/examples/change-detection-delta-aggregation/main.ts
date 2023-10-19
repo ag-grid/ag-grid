@@ -77,7 +77,7 @@ const gridOptions: GridOptions = {
     return params.data.id
   },
   onGridReady: (params) => {
-    gridApi!.setRowData(createRowData())
+    params.api.setRowData(createRowData())
   },
 }
 
