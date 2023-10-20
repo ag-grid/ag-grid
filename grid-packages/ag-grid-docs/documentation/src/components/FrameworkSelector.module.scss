@@ -56,10 +56,6 @@
 .frameworkSelector.showSelected {
     border: 2px solid var(--input-border-color);
 
-    #{$darkmode-selector} & {
-        border: 1px solid #354856;
-    }
-
     @media screen and (min-width: $breakpoint-docs-search-medium) {
         width: auto;
     }
