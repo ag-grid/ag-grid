@@ -8,13 +8,7 @@
     display: flex;
     width: 100%;
     border-radius: var(--border-radius);
-    background-color: var(--input-background-color);
-
-    #{$darkmode-selector} & {
-        background-color: var(--background-100);
-        border: 1px solid #354856;
-    }
-    
+    background-color: var(--input-background-color);    
 }
 
 .option {

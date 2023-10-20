@@ -84,14 +84,15 @@ input[type='number'] {
         }
     }
 
-    &:hover:not(:disabled):not([readonly]),
-    &:focus:not(:disabled):not([readonly]),
-    &:focus-visible:not(:disabled):not([readonly]) {
-        border-color: var(--input-focus-border-color);
-    }
+        &:hover:not(:disabled):not([readonly]),
+        &:focus:not(:disabled):not([readonly]),
+        &:focus-visible:not(:disabled):not([readonly]) {
+            border-color: var(--input-focus-border-color);
+        }
 
-    #{$darkmode-selector} & {
-        border-width: 1px;
+        #{$darkmode-selector} & {
+            border-width: 1px;
+        }
     }
 }
 
