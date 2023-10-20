@@ -39,7 +39,7 @@
     --text-color: var(--dark-blue-300);
 
     #{$darkmode-selector} & {
-        --text-color: var(--white);
+        --text-color: var(--default-text-color);
     }
 }
 
@@ -65,10 +65,10 @@
 
     #{$darkmode-selector} & {
         --alert-background-color: var(--orange-200);
-        --text-color: var(--white);
+        --text-color: var(--default-text-color);
 
         :global(.icon) {
-            --text-color: var(--white);
+            --text-color: var(--default-text-color);
         }
     }
 }

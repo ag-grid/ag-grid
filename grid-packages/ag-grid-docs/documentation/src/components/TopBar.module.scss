@@ -13,10 +13,6 @@
         top: 0;
         z-index: 3;
     }
-
-    #{$darkmode-selector} & {
-        background: var(--background-100);
-    }
 }
 
 .topBar input {

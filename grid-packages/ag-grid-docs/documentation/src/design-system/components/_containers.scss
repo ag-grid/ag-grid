@@ -46,7 +46,6 @@
             border-top-right-radius: 8px;
             border-top-left-radius: 8px;
             border: 1px solid #121f29;
-            // border-bottom: 1px solid #394755;
             border-right: 1px solid #121f29;
             border-left: 1px solid #121f29;
             box-shadow: inset 0 0px 0 0;
@@ -131,8 +130,7 @@
         padding: $size-2;
 
         #{$darkmode-selector} & {
-            background-color: var(--background-100);
-
+            background-color: var(--default-background-color);
             border-right: 1px solid #0d161e;
             border-bottom: 1px solid #0d161e;
             border-left: 1px solid #0d161e;
