@@ -13,8 +13,7 @@ const ExampleStyle = ({ rootId }) => <style media="only screen">
                 -webkit-overflow-scrolling: touch;
             }
 
-            
-            #myGrid {
+            #myGrid.ag-theme-alpine-dark {
                 --ag-background-color: var(--background-200);
                 --ag-odd-row-background-color: #151F28
                 --ag-foreground-color: #e6f1fc; 
