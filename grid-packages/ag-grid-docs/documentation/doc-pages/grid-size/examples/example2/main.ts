@@ -32,10 +32,12 @@ const gridOptions: GridOptions = {
   },
 
   rowData: getData(),
+  autoSizeStrategy: {
+    type: 'fitGridWidth'
+  },
   onGridReady: (params: GridReadyEvent) => {
     minRowHeight = params.api.getSizesForCurrentTheme().rowHeight
     currentRowHeight = minRowHeight
-    params.api.sizeColumnsToFit()
   },
   onFirstDataRendered: onFirstDataRendered,
   onGridSizeChanged: onGridSizeChanged,

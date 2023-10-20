@@ -6,7 +6,7 @@ import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-mod
 import "@ag-grid-community/styles/ag-grid.css";
 import "@ag-grid-community/styles/ag-theme-alpine.css";
 
-import { ModuleRegistry, ColDef, GridReadyEvent } from '@ag-grid-community/core';
+import { ModuleRegistry, ColDef, GridReadyEvent, SizeColumnsToContentStrategy } from '@ag-grid-community/core';
 // Register the required feature modules with the Grid
 ModuleRegistry.registerModules([ClientSideRowModelModule]);
 
@@ -59,6 +59,10 @@ const GridExample = () => {
         { field: 'bronze', width: 100 }
     ]), []);
 
+    const autoSizeStrategy = useMemo<SizeColumnsToContentStrategy>(() => ({
+        type: 'fitCellContents'
+    }), []);
+
     const onGridReady = (params: GridReadyEvent) => {
         fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
             .then(resp => resp.json())
@@ -76,6 +80,7 @@ const GridExample = () => {
                     columnDefs={columnDefs}
                     onGridReady={onGridReady}
                     suppressHorizontalScroll
+                    autoSizeStrategy={autoSizeStrategy}
                 />
             </div>
 

@@ -26,7 +26,7 @@ const VueExample = {
                          :rowData="rowData"
                          
                          :gridOptions="topOptions"
-                         @first-data-rendered="onFirstDataRendered($event)">
+                         @grid-ready="onGridReady($event)">
             </ag-grid-vue>
 
             <ag-grid-vue style="flex: 1 1 auto;"
@@ -74,7 +74,10 @@ const VueExample = {
                     filter: true,
                     flex: 1,
                     minWidth: 100
-                }
+                },
+                autoSizeStrategy: {
+                    type: 'fitGridWidth'
+                },
             },
             bottomOptions: {
                 alignedGrids: () => [this.$refs.topGrid],
@@ -110,9 +113,8 @@ const VueExample = {
             this.topGridApi.setColumnVisible('country', value);
         },
 
-        onFirstDataRendered(params) {
+        onGridReady(params) {
             this.topGridApi = params.api;
-            this.topGridApi.sizeColumnsToFit();
         }
     }
 };

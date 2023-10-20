@@ -13,18 +13,18 @@ const gridOptions: GridOptions = {
   columnDefs: [{ field: 'make' }, { field: 'model' }, { field: 'price' }],
   rowData: rowData,
   onGridReady: (params) => {
-    params.api.sizeColumnsToFit()
-
     window.addEventListener('resize', function () {
       setTimeout(function () {
         params.api.sizeColumnsToFit()
       })
     })
   },
+  autoSizeStrategy: {
+    type: 'fitGridWidth'
+  },
 }
 
 document.addEventListener('DOMContentLoaded', function () {
   var eGridDiv = document.querySelector<HTMLElement>('#myGrid')!
   gridApi = createGrid(eGridDiv, gridOptions);
-  gridApi!.sizeColumnsToFit()
 })

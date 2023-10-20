@@ -30,10 +30,9 @@ const gridOptions: GridOptions<IOlympicData> = {
   onColumnResized: (params: ColumnResizedEvent) => {
     console.log(params)
   },
-}
-
-function sizeToFit() {
-  gridApi!.sizeColumnsToFit()
+  autoSizeStrategy: {
+    type: 'fitCellContents',
+  },
 }
 
 function autoSizeAll(skipHeader: boolean) {

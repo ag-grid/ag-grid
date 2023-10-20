@@ -109,10 +109,6 @@ document.addEventListener('DOMContentLoaded', function () {
 
       var viewportDatasource = createViewportDatasource(mockServer)
       gridApi!.setViewportDatasource(viewportDatasource)
-      // put the 'size cols to fit' into a timeout, so that the scroll is taken into consideration
-      setTimeout(function () {
-        gridApi!.sizeColumnsToFit()
-      }, 100)
     })
 })
 

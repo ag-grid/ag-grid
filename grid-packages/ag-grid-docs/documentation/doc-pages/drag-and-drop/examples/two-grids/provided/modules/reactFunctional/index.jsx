@@ -13,7 +13,7 @@ import { ModuleRegistry } from '@ag-grid-community/core';
 ModuleRegistry.registerModules([ClientSideRowModelModule]);
 
 const baseDefaultColDef = {
-    width: 80,
+    flex: 1,
     sortable: true,
     filter: true,
     resizable: true

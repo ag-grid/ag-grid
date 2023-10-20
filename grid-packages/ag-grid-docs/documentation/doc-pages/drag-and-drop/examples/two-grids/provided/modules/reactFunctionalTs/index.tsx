@@ -13,7 +13,7 @@ import { ColDef, GridApi, GridOptions, GridReadyEvent, ModuleRegistry } from '@a
 ModuleRegistry.registerModules([ClientSideRowModelModule]);
 
 const baseDefaultColDef: ColDef = {
-    width: 80,
+    flex: 1,
     sortable: true,
     filter: true,
     resizable: true

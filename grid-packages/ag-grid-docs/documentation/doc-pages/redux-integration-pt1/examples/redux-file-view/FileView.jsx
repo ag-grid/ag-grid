@@ -12,10 +12,15 @@ import "@ag-grid-community/styles/ag-grid.css";
 import "@ag-grid-community/styles/ag-theme-alpine.css";
 
 import { ModuleRegistry } from '@ag-grid-community/core';
+import { useMemo } from 'react';
 // Register the required feature modules with the Grid
 ModuleRegistry.registerModules([ClientSideRowModelModule, RowGroupingModule, MenuModule]);
 
 class FileView extends Component {
+  defaultColDef = {
+    flex: 1
+  };
+
   colDefs = [
     { field: "file" },
     { field: "folder", rowGroup: true, hide: true },
@@ -35,12 +40,12 @@ class FileView extends Component {
     return (
       <div id='myGrid' style={{ flex: 1 }} className="ag-theme-alpine">
         <AgGridReact
+          defaultColDef={this.defaultColDef}
           columnDefs={this.colDefs}
           rowData={this.props.files}
           getRowId={params => params.data.id}
           autoGroupColumnDef={this.autoGroupColumnDef}
           groupDefaultExpanded={-1}
-          onFirstDataRendered={params => params.api.sizeColumnsToFit()}
           getContextMenuItems={this.getContextMenuItems} />
       </div>
     )

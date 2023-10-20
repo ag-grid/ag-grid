@@ -152,7 +152,7 @@ This example is a bit more useful. In the bottom grid, we show a summary row. Al
 
 - The top grid has no horizontal scroll bar, suppressed via a grid option*.
 - The bottom grid has no header, suppressed via a grid option.
-- sizeColumnsToFit is only called on the top grid, the bottom grid receives the new column widths from the top grid.
+- `autoSizeStrategy` is only passed to the top grid, the bottom grid receives the new column widths from the top grid.
 
 <grid-example title='Aligned Grid as Footer' name='aligned-floating-footer' type='mixed'></grid-example>
 

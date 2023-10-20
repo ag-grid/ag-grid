@@ -183,22 +183,28 @@
         "colResizeDefault": {
             "description": "Set to `'shift'` to have shift-resize as the default resize operation (same as user holding down <kbd>Shift</kbd> while resizing)."
         },
+        "autoSizeStrategy": {
+            "more": {
+                "name": "Auto-Sizing Columns",
+                "url": "/column-sizing/#auto-sizing-columns"
+            }
+        },
         "suppressAutoSize": {
             "more": {
-                "name": "Auto-sizing Columns",
-                "url": "/column-sizing/#auto-size-columns"
+                "name": "Auto-Size Columns to Fit Cell Contents",
+                "url": "/column-sizing/#auto-size-columns-to-fit-cell-contents"
             }
         },
         "autoSizePadding": {
             "more": {
-                "name": "Auto-sizing Columns",
-                "url": "/column-sizing/#auto-size-columns"
+                "name": "Auto-Size Columns to Fit Cell Contents",
+                "url": "/column-sizing/#auto-size-columns-to-fit-cell-contents"
             }
         },
         "skipHeaderOnAutoSize": {
             "more": {
-                "name": "Resizing Example",
-                "url": "/column-sizing/#resizing-example"
+                "name": "Auto-Size Columns to Fit Cell Contents",
+                "url": "/column-sizing/#auto-size-columns-to-fit-cell-contents"
             }
         }
     },

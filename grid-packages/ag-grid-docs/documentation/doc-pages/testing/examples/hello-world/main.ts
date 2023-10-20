@@ -1,5 +1,7 @@
 import { GridApi, createGrid, ColDef, GridOptions } from '@ag-grid-community/core';
 
+const defaultColDef: ColDef = { flex: 1 };
+
 // specify the columns
 const columnDefs: ColDef[] = [
   { headerName: 'Make', field: 'make' },
@@ -18,11 +20,9 @@ let gridApi: GridApi;
 
 // let the grid know which columns and what data to use
 const gridOptions: GridOptions = {
+  defaultColDef: defaultColDef,
   columnDefs: columnDefs,
   rowData: rowData,
-  onGridReady: (params) => {
-    params.api.sizeColumnsToFit()
-  },
 }
 
 // wait for the document to be loaded, otherwise

@@ -17,7 +17,6 @@ const VueExample = {
                          ref="topGrid"
                          :gridOptions="topGridOptions"
                          @grid-ready="onGridReady"
-                         @first-data-rendered="onFirstDataRendered"
                          :columnDefs="columnDefs"
                          :rowData="rowData"
             ></ag-grid-vue>
@@ -73,7 +72,10 @@ const VueExample = {
                 flex: 1,
                 minWidth: 100
             },
-            suppressHorizontalScroll: true
+            suppressHorizontalScroll: true,
+            autoSizeStrategy: {
+                type: 'fitCellContents'
+            },
         };
         this.bottomGridOptions = {
             alignedGrids: () => [this.$refs.topGrid],
@@ -129,10 +131,6 @@ const VueExample = {
                 }
             };
         },
-
-        onFirstDataRendered() {
-            this.gridApi.autoSizeAllColumns();
-        }
     },
 };
 

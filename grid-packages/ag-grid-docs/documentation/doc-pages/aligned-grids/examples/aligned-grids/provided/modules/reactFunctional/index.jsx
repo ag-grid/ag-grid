@@ -48,6 +48,10 @@ const GridExample = () => {
 
     const [rowData, setRowData] = useState();
 
+    const autoSizeStrategy = useMemo(() => ({
+        type: 'fitGridWidth'
+    }), []);
+
     const onGridReady = (params) => {
         fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
             .then(resp => resp.json())
@@ -105,6 +109,7 @@ const GridExample = () => {
                     rowData={rowData}
                     defaultColDef={defaultColDef}
                     columnDefs={columnDefs}
+                    autoSizeStrategy={autoSizeStrategy}
                     onGridReady={onGridReady}
                 />
             </div>

@@ -16,7 +16,6 @@ const VueExample = {
                 class="ag-theme-alpine"
                 ref="topGrid"
                 :gridOptions="topOptions"
-                @first-data-rendered="onFirstDataRendered($event)"
                 :columnDefs="columnDefs"
                 :defaultColDef="defaultColDef"
                 :rowData="rowData">
@@ -47,7 +46,10 @@ const VueExample = {
                     filter: true,
                     flex: 1,
                     minWidth: 100
-                }
+                },
+                autoSizeStrategy: {
+                    type: 'fitGridWidth'
+                },
             },
             bottomOptions: {
                 alignedGrids: () => [this.$refs.topGrid],
@@ -112,11 +114,6 @@ const VueExample = {
                 this.topGridApi.moveColumnByIndex(11, 4);
             });
     },
-    methods: {
-        onFirstDataRendered(params) {
-            this.topGridApi.sizeColumnsToFit();
-        }
-    }
 };
 
 createApp(VueExample).mount('#app');

@@ -35,7 +35,10 @@ const gridOptionsTop = {
     },
     columnDefs: columnDefs,
     rowData: null,
-    alignedGrids: () => [bottomApi]
+    alignedGrids: () => [bottomApi],
+    autoSizeStrategy: {
+        type: 'fitGridWidth'
+    },
 };
 
 // this is the grid options for the bottom grid
@@ -72,7 +75,6 @@ function onCbCountry(value) {
 function setData(rowData) {
     topApi.setRowData(rowData);
     bottomApi.setRowData(rowData);
-    topApi.sizeColumnsToFit();
 }
 
 // setup the grid after the page has finished loading

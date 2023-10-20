@@ -1,4 +1,4 @@
-import { GridApi, createGrid, FirstDataRenderedEvent, GridOptions } from '@ag-grid-community/core';
+import { GridApi, createGrid, GridOptions } from '@ag-grid-community/core';
 
 let gridApi: GridApi<IOlympicData>;
 
@@ -19,12 +19,9 @@ const gridOptions: GridOptions<IOlympicData> = {
   defaultColDef: {
     resizable: true,
   },
-
-  onFirstDataRendered: onFirstDataRendered,
-}
-
-function onFirstDataRendered(params: FirstDataRenderedEvent) {
-  params.api.sizeColumnsToFit()
+  autoSizeStrategy: {
+    type: 'fitGridWidth'
+  },
 }
 
 // setup the grid after the page has finished loading

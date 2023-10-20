@@ -21,8 +21,7 @@ ModuleRegistry.registerModules([ClientSideRowModelModule])
                         class="ag-theme-alpine"
                         [gridOptions]="leftGridOptions"
                         [columnDefs]="columnDefs"
-                        (gridReady)="onGridReady($event,'left')"
-                        (firstDataRendered)="onFirstDataRendered($event)">
+                        (gridReady)="onGridReady($event,'left')">
                 </ag-grid-angular>
             </div>
 
@@ -52,8 +51,7 @@ ModuleRegistry.registerModules([ClientSideRowModelModule])
                         class="ag-theme-alpine"
                         [gridOptions]="rightGridOptions"
                         [columnDefs]="columnDefs"
-                        (gridReady)="onGridReady($event,'right')"
-                        (firstDataRendered)="onFirstDataRendered($event)">
+                        (gridReady)="onGridReady($event,'right')">
                 </ag-grid-angular>
             </div>
         </div>
@@ -75,7 +73,7 @@ export class AppComponent {
 
     leftGridOptions: GridOptions = {
         defaultColDef: {
-            width: 80,
+            flex: 1,
             sortable: true,
             filter: true,
             resizable: true
@@ -95,7 +93,7 @@ export class AppComponent {
 
     rightGridOptions: GridOptions = {
         defaultColDef: {
-            width: 80,
+            flex: 1,
             sortable: true,
             filter: true,
             resizable: true
@@ -202,10 +200,6 @@ export class AppComponent {
             add: [data]
         };
         gridApi!.applyTransaction(transaction);
-    }
-
-    onFirstDataRendered(params: FirstDataRenderedEvent) {
-        params.api.sizeColumnsToFit();
     }
 
     onGridReady(params: GridReadyEvent, grid: 'left' | 'right'){

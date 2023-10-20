@@ -60,6 +60,10 @@ const GridExample = () => {
         { field: 'bronze', width: 100 }
     ], []);
 
+    const autoSizeStrategy = useMemo(() => ({
+        type: 'fitCellContents'
+    }), []);
+
     const onGridReady = (params) => {
         fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
             .then(resp => resp.json())
@@ -77,6 +81,7 @@ const GridExample = () => {
                     columnDefs={columnDefs}
                     onGridReady={onGridReady}
                     suppressHorizontalScroll
+                    autoSizeStrategy={autoSizeStrategy}
                 />
             </div>
 

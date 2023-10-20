@@ -4271,4 +4271,44 @@ export class ColumnModel extends BeanStub {
         return Object.values(existingColumnStateUpdates);
     }
 
+    public onColumnsReady(): void {
+        const autoSizeStrategy = this.gridOptionsService.get('autoSizeStrategy');
+        if (!autoSizeStrategy) { return; }
+
+        const { type } = autoSizeStrategy;
+        // ensure things like aligned grids have linked first
+        setTimeout(() => {
+            if (type === 'fitGridWidth') {
+                const columnLimits = autoSizeStrategy.columnLimits?.map(columnLimit => ({
+                    ...columnLimit,
+                    key: columnLimit.colId 
+                }));
+                this.ctrlsService.getGridBodyCtrl().sizeColumnsToFit({
+                    ...autoSizeStrategy,
+                    columnLimits
+                });
+            } else if (type === 'fitProvidedWidth') {
+                this.sizeColumnsToFit(autoSizeStrategy.width, 'sizeColumnsToFit');
+            }
+        });
+    }
+
+    public onFirstDataRendered(): void {
+        const autoSizeStrategy = this.gridOptionsService.get('autoSizeStrategy');
+        if (!autoSizeStrategy || autoSizeStrategy.type !== 'fitCellContents') { return; }
+
+        const { colIds, skipHeader } = autoSizeStrategy;
+        // ensure render has finished
+        setTimeout(() => {
+            if (colIds) {
+                this.autoSizeColumns({
+                    columns: colIds,
+                    skipHeader,
+                    source: 'gridInitializing'
+                });
+            } else {
+                this.autoSizeAllColumns(skipHeader, 'autosizeColumns');
+            }
+        });
+    }
 }

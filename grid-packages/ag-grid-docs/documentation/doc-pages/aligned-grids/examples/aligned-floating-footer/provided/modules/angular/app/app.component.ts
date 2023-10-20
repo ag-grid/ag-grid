@@ -1,13 +1,12 @@
-import { Component, ViewChild } from '@angular/core';
+import { Component } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 
 import "@ag-grid-community/styles/ag-grid.css";
 import "@ag-grid-community/styles/ag-theme-alpine.css";
-import { ColDef, ColGroupDef, FirstDataRenderedEvent, GridOptions } from '@ag-grid-community/core';
+import { ColDef, ColGroupDef, GridOptions } from '@ag-grid-community/core';
 
 import { ModuleRegistry } from '@ag-grid-community/core';
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
-import { AgGridAngular } from '@ag-grid-community/angular';
 
 // Register the required feature modules with the Grid
 ModuleRegistry.registerModules([ClientSideRowModelModule])
@@ -26,7 +25,6 @@ ModuleRegistry.registerModules([ClientSideRowModelModule])
                     [rowData]="rowData"
                     [gridOptions]="topOptions"
                     [alignedGrids]="[bottomGrid]"
-                    (firstDataRendered)='onFirstDataRendered($event)'
                     [columnDefs]="columnDefs">
             </ag-grid-angular>
 
@@ -55,7 +53,10 @@ export class AppComponent {
             minWidth: 100
         }
         ,
-        suppressHorizontalScroll: true
+        suppressHorizontalScroll: true,
+        autoSizeStrategy: {
+            type: 'fitCellContents'
+        },
     };
     bottomOptions: GridOptions = {
         headerHeight: 0,
@@ -112,9 +113,5 @@ export class AppComponent {
             .subscribe(data => {
                 this.rowData = data as any[];
             });
-    }
-
-    onFirstDataRendered(params: FirstDataRenderedEvent) {
-        params.api.autoSizeAllColumns();
     }
 }

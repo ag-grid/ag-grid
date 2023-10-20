@@ -50,6 +50,9 @@ const gridOptionsTop = {
     // don't show the horizontal scrollbar on the top grid
     suppressHorizontalScroll: true,
     alignedGrids: () => [bottomApi],
+    autoSizeStrategy: {
+        type: 'fitCellContents'
+    },
 };
 
 // this is the grid options for the bottom grid
@@ -84,6 +87,5 @@ document.addEventListener('DOMContentLoaded', () => {
         .then(response => response.json())
         .then(data => {
             topApi.setRowData(data);
-            topApi.autoSizeAllColumns();
         });
 });

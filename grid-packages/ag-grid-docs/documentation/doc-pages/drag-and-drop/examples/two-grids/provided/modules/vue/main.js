@@ -73,7 +73,7 @@ const VueExample = {
     },
     beforeMount() {
         const baseDefaultColDef = {
-            width: 80,
+            flex: 1,
             sortable: true,
             filter: true,
             resizable: true

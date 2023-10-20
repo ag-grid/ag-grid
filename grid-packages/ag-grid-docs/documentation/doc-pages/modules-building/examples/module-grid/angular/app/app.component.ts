@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 
-import { ModuleRegistry, GridApi, ColDef, GridReadyEvent } from '@ag-grid-community/core';
+import { ModuleRegistry, ColDef } from '@ag-grid-community/core';
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
 import { MenuModule } from '@ag-grid-enterprise/menu';
 import { ExcelExportModule } from '@ag-grid-enterprise/excel-export';
@@ -17,8 +17,7 @@ import "@ag-grid-community/styles/ag-theme-alpine.css";
                 style="width: 100%; height: 100%;"
                 class="ag-theme-alpine"
                 [rowData]="rowData"
-                [columnDefs]="columnDefs"
-                (gridReady)="onGridReady($event)">
+                [columnDefs]="columnDefs">
         </ag-grid-angular>
     `
 })
@@ -34,8 +33,4 @@ export class AppComponent {
         { make: 'Ford', model: 'Mondeo', price: 32000 },
         { make: 'Porsche', model: 'Boxster', price: 72000 }
     ];
-
-    onGridReady(params: GridReadyEvent) {
-        params.api!.sizeColumnsToFit();
-    }
 }

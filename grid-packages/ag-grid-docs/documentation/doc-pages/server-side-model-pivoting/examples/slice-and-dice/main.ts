@@ -2,14 +2,8 @@ import {
   GridApi,
   createGrid,
   ColDef,
-  FirstDataRenderedEvent,
   GridOptions,
-  IDoesFilterPassParams,
-  IFilterComp,
-  IFilterParams,
   IServerSideDatasource,
-  AgPromise,
-  IAfterGuiAttachedParams,
 } from '@ag-grid-community/core';
 declare var CustomAgeFilter: any;
 declare function createFakeServer(data: any): any;
@@ -78,11 +72,6 @@ const gridOptions: GridOptions<IOlympicData> = {
   maxConcurrentDatasourceRequests: 1,
   maxBlocksInCache: 2,
   purgeClosedRowNodes: true,
-  onFirstDataRendered: onFirstDataRendered,
-}
-
-function onFirstDataRendered(params: FirstDataRenderedEvent) {
-  params.api.sizeColumnsToFit()
 }
 
 // setup the grid after the page has finished loading

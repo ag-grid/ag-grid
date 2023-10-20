@@ -109,6 +109,7 @@ const GridExample = () => {
     const defaultColDef = useMemo(() => {
         return {
             resizable: true,
+            flex: 1,
         }
     }, []);
     const getRowId = useCallback(function (params) {

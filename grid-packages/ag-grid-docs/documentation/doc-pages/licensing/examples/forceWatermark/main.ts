@@ -22,7 +22,7 @@ const gridOptions: GridOptions<IOlympicData> = {
   ],
 
   defaultColDef: {
-    width: 150,
+    flex: 1,
   },
 
   // default ColGroupDef, get applied to every column group
@@ -35,10 +35,6 @@ const gridOptions: GridOptions<IOlympicData> = {
   },
 
   rowData: null,
-
-  onGridReady: (params) => {
-    params.api.sizeColumnsToFit()
-  },
 }
 
 // setup the grid after the page has finished loading

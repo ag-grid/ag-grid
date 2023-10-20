@@ -5,7 +5,7 @@ import { createRoot } from 'react-dom/client';
 import { AgGridReact } from '@ag-grid-community/react';
 import '@ag-grid-community/styles/ag-grid.css';
 import '@ag-grid-community/styles/ag-theme-alpine.css';
-import { ColDef, ColGroupDef, GridReadyEvent } from '@ag-grid-community/core';
+import { ColDef, ColGroupDef } from '@ag-grid-community/core';
 import PartialMatchFilter from './partialMatchFilter';
 import { ModuleRegistry } from '@ag-grid-community/core';
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
@@ -37,11 +37,6 @@ const GridExample = () => {
         }
     }, []);
 
-
-    const onGridReady = useCallback((params: GridReadyEvent) => {
-        gridRef.current!.api.sizeColumnsToFit();
-    }, []);
-
     const onClicked = useCallback(() => {
         gridRef.current!.api.getFilterInstance('name', function (instance: any) {
             instance?.componentMethod('Hello World!');
@@ -60,7 +55,6 @@ const GridExample = () => {
                         rowData={rowData}
                         columnDefs={columnDefs}
                         defaultColDef={defaultColDef}
-                        onGridReady={onGridReady}
                     />
                 </div>
             </div>

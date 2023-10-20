@@ -70,5 +70,4 @@ const gridOptions: GridOptions = {
 document.addEventListener('DOMContentLoaded', () => {
   const gridDiv = document.querySelector<HTMLElement>('#myGrid')!
   gridApi = createGrid(gridDiv, gridOptions);
-  gridApi!.sizeColumnsToFit()
 })

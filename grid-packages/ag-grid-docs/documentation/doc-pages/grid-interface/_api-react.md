@@ -35,13 +35,11 @@
 <snippet transform={false} language="jsx">
 | // access api from the event
 | onGridReady = event => {
-|     event.api.sizeColumnsToFit();
 |     event.api.resetColumnState();
 | }
 |
 | // access api from callback params
 | sendToClipboard = params => {
-|     params.api.sizeColumnsToFit();
 |     params.api.resetColumnState();
 | }
 |
