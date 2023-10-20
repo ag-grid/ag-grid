@@ -85,6 +85,7 @@ pre.code > code {
     background-origin: content-box;
     background-attachment: local;
     border: none;
+    border-radius: 0;
     box-shadow:
         inset 0 $vertical-padding 0 0 var(--default-background-color),
         inset 0 $vertical-padding * -1 0 0 var(--default-background-color);
