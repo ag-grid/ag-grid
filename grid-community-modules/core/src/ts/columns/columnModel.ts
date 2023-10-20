@@ -275,6 +275,7 @@ export class ColumnModel extends BeanStub {
         this.addManagedPropertyListener('autoGroupColumnDef', () => this.onAutoGroupColumnDefChanged());
         this.addManagedPropertyListeners(['defaultColDef', 'columnTypes', 'suppressFieldDotNotation'], (params: ColDefPropertyChangedEvent) => this.onSharedColDefChanged(params.source));
         this.addManagedPropertyListener('pivotMode', () => this.setPivotMode(this.gridOptionsService.is('pivotMode')));
+        this.addManagedListener(this.eventService, Events.EVENT_FIRST_DATA_RENDERED, () => this.onFirstDataRendered());
     }
 
     private buildAutoGroupColumns() {
@@ -407,6 +408,9 @@ export class ColumnModel extends BeanStub {
         };
 
         this.eventService.dispatchEvent(newColumnsLoadedEvent);
+        if (source === 'gridInitializing') {
+            this.onColumnsReady();
+        }
     }
 
     // this event is legacy, no grid code listens to it. instead the grid listens to New Columns Loaded
@@ -4271,7 +4275,7 @@ export class ColumnModel extends BeanStub {
         return Object.values(existingColumnStateUpdates);
     }
 
-    public onColumnsReady(): void {
+    private onColumnsReady(): void {
         const autoSizeStrategy = this.gridOptionsService.get('autoSizeStrategy');
         if (!autoSizeStrategy) { return; }
 
@@ -4279,12 +4283,15 @@ export class ColumnModel extends BeanStub {
         // ensure things like aligned grids have linked first
         setTimeout(() => {
             if (type === 'fitGridWidth') {
-                const columnLimits = autoSizeStrategy.columnLimits?.map(columnLimit => ({
-                    ...columnLimit,
-                    key: columnLimit.colId 
+                const { columnLimits: propColumnLimits, defaultMinWidth, defaultMaxWidth } = autoSizeStrategy;
+                const columnLimits = propColumnLimits?.map(({ colId: key, minWidth, maxWidth }) => ({
+                    key,
+                    minWidth,
+                    maxWidth
                 }));
                 this.ctrlsService.getGridBodyCtrl().sizeColumnsToFit({
-                    ...autoSizeStrategy,
+                    defaultMinWidth,
+                    defaultMaxWidth,
                     columnLimits
                 });
             } else if (type === 'fitProvidedWidth') {
@@ -4293,18 +4300,18 @@ export class ColumnModel extends BeanStub {
         });
     }
 
-    public onFirstDataRendered(): void {
+    private onFirstDataRendered(): void {
         const autoSizeStrategy = this.gridOptionsService.get('autoSizeStrategy');
-        if (!autoSizeStrategy || autoSizeStrategy.type !== 'fitCellContents') { return; }
+        if (autoSizeStrategy?.type !== 'fitCellContents') { return; }
 
-        const { colIds, skipHeader } = autoSizeStrategy;
+        const { colIds: columns, skipHeader } = autoSizeStrategy;
         // ensure render has finished
         setTimeout(() => {
-            if (colIds) {
+            if (columns) {
                 this.autoSizeColumns({
-                    columns: colIds,
+                    columns,
                     skipHeader,
-                    source: 'gridInitializing'
+                    source: 'autosizeColumns'
                 });
             } else {
                 this.autoSizeAllColumns(skipHeader, 'autosizeColumns');

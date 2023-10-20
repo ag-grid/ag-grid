@@ -11,29 +11,18 @@ import { GridReadyEvent } from "./events";
 import { Events } from "./eventKeys";
 import { PropertyValueChangedEvent } from "./gridOptionsService";
 import { ColDef, ColGroupDef } from "./entities/colDef";
-import { StateService } from "./misc/stateService";
 
 @Bean('syncService')
 export class SyncService extends BeanStub {
     @Autowired('ctrlsService') private readonly ctrlsService: CtrlsService;
     @Autowired('columnModel') private readonly columnModel: ColumnModel;
     @Autowired('rowModel') private readonly rowModel: IRowModel;
-    @Autowired('stateService') private readonly stateService: StateService;
 
     private waitingForColumns: boolean = false;
 
     @PostConstruct
     private postConstruct(): void {
         this.addManagedPropertyListener('columnDefs', (event) => this.setColumnDefs(event));
-
-        const rowCountReadyDestroyFunc = this.addManagedListener(this.eventService, Events.EVENT_ROW_COUNT_READY, () => {
-            rowCountReadyDestroyFunc?.();
-            this.onRowCountReady();
-        });
-        const firstDataRenderedDestroyFunc = this.addManagedListener(this.eventService, Events.EVENT_FIRST_DATA_RENDERED, () => {
-            firstDataRenderedDestroyFunc?.();
-            this.onFirstDataRendered();
-        });
     }
 
     public start(): void {
@@ -51,7 +40,6 @@ export class SyncService extends BeanStub {
 
     private setColumnsAndData(columnDefs:  (ColDef | ColGroupDef)[]): void {
         this.columnModel.setColumnDefs(columnDefs ?? [], "gridInitializing");
-        this.onColumnsReady();
         this.rowModel.start();
     }
     
@@ -81,19 +69,5 @@ export class SyncService extends BeanStub {
 
         const source = (event as any).source ?? 'api';
         this.columnModel.setColumnDefs(columnDefs, source);
-    }
-
-    private onColumnsReady(): void {
-        this.stateService.onColumnsReady();
-        this.columnModel.onColumnsReady();
-    }
-    
-    private onRowCountReady(): void {
-        this.stateService.onRowCountReady();
-    }
-    
-    private onFirstDataRendered(): void {
-        this.stateService.onFirstDataRendered();
-        this.columnModel.onFirstDataRendered();
     }
 }

@@ -67,24 +67,27 @@ export class StateService extends BeanStub {
         this.cachedState = this.gridOptionsService.get('initialState') ?? {};
 
         this.ctrlsService.whenReady(() => this.setupStateOnGridReady());
+
+        const newColumnsLoadedDestroyFunc = this.addManagedListener(this.eventService, Events.EVENT_NEW_COLUMNS_LOADED, ({ source }: NewColumnsLoadedEvent) => {
+            if (source === 'gridInitializing') {
+                newColumnsLoadedDestroyFunc?.();
+                this.setupStateOnColumnsInitialised();
+            }
+        });
+        const rowCountReadyDestroyFunc = this.addManagedListener(this.eventService, Events.EVENT_ROW_COUNT_READY, () => {
+            rowCountReadyDestroyFunc?.();
+            this.setupStateOnRowCountReady();
+        });
+        const firstDataRenderedDestroyFunc = this.addManagedListener(this.eventService, Events.EVENT_FIRST_DATA_RENDERED, () => {
+            firstDataRenderedDestroyFunc?.();
+            this.setupStateOnFirstDataRendered();
+            this.suppressEvents = false;
+            this.dispatchStateUpdateEvent(['gridInitializing']);
+        });
     }
 
     public getState(): GridState {
         return this.cachedState;
-    }
-
-    public onColumnsReady(): void {
-        this.setupStateOnColumnsInitialised();
-    }
-
-    public onRowCountReady(): void {
-        this.setupStateOnRowCountReady();
-    }
-
-    public onFirstDataRendered(): void {
-        this.setupStateOnFirstDataRendered();
-        this.suppressEvents = false;
-        this.dispatchStateUpdateEvent(['gridInitializing']);
     }
 
     private setupStateOnGridReady(): void {
