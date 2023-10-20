@@ -15,13 +15,6 @@
     }
 }
 
-.topBar input {
-    #{$darkmode-selector} & {
-        background: var(--background-100);
-        border: 1px solid #354856;
-    }
-}
-
 .topBarInner {
     position: relative;
     display: flex;

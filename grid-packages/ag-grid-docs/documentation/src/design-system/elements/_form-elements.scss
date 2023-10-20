@@ -91,6 +91,10 @@ input[type='number'] {
         &:focus-visible:not(:disabled):not([readonly]) {
             border-color: var(--input-focus-border-color);
         }
+
+        #{$darkmode-selector} & {
+            border-width: 1px;
+        }
     }
 }
 
