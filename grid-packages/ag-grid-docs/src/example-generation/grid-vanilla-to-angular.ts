@@ -138,7 +138,6 @@ function getTemplate(bindings: any, attributes: string[]): string {
     const agGridTag = `<ag-grid-angular
     ${style}
     ${gridSettings.myGridReference ? 'id="myGrid"' : ''}
-    class="${gridSettings.theme}"
     ${attributes.join('\n    ')}
     ></ag-grid-angular>`;
 
@@ -191,9 +190,11 @@ export function vanillaToAngular(bindings: any, componentFileNames: string[], al
         }
 
         if (!propertyAssignments.find(item => item.indexOf('rowData') >= 0)) {
-
             propertyAssignments.push(`public rowData!: ${rowDataType}[];`);
         }
+        
+        propertyAttributes.push('[class]="themeClass"');
+        propertyAssignments.push(`public themeClass: string = document.documentElement?.dataset.defaultTheme || '${bindings.gridSettings.theme}';`);
 
         const componentForCheckBody = eventHandlers
             .concat(externalEventHandlers)

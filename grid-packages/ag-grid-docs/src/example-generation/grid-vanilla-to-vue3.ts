@@ -360,6 +360,7 @@ const VueExample = {
             gridApi,
             ${propertyNames.join(',\n')},
             onGridReady,
+            themeClass: document.documentElement.dataset.defaultTheme || '${bindings.gridSettings.theme}',
             ${functionNames ? functionNames.filter(functionName => !propertyNames.includes(functionName)).join(',\n') : ''}
         }        
     }

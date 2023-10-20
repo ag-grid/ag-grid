@@ -86,7 +86,7 @@ function getImports(bindings: any, componentFileNames: string[], importType: Imp
 function getTemplate(bindings: any, componentAttributes: string[]): string {
     const { gridSettings } = bindings;
     const agGridTag = `
-        <div ${gridSettings.myGridReference ? 'id="myGrid"' : ''} style={gridStyle} className="${gridSettings.theme}">             
+        <div ${gridSettings.myGridReference ? 'id="myGrid"' : ''} style={gridStyle} className={document.documentElement.dataset.defaultTheme || "${gridSettings.theme}"}>
             <AgGridReact
                 ref={gridRef}
                 ${componentAttributes.join('\n')}
