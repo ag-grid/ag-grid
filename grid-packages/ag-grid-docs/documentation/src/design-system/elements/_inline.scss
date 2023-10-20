@@ -1,5 +1,5 @@
 @use '../core' as *;
-@use "sass:map";
+@use 'sass:map';
 
 a {
     text-decoration: none;
@@ -33,13 +33,11 @@ code {
     #{$darkmode-selector} & {
         -webkit-font-smoothing: subpixel-antialiased;
 
-        // font-size: 1em;
         border: 1px solid #83483257;
         background-color: transparent;
-        color: #E3794D;
-        background-color: #34201D;
+        color: #e3794d;
+        background-color: #34201d;
         padding: 1px 4px;
-
     }
 }
 

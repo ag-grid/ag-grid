@@ -23,11 +23,9 @@ html {
     @media (min-width: $breakpoint-docs-nav-medium) {
         scroll-padding-top: 92px;
     }
-  
 }
 
 #{$darkmode-selector} {
-
     #doc-content a {
         color: #3893F9;
     }

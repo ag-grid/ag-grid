@@ -1,5 +1,5 @@
-@use "sass:map";
-@use "sass:math";
+@use 'sass:map';
+@use 'sass:math';
 @use '../core' as *;
 
 $vertical-padding: $size-1;
@@ -26,7 +26,7 @@ pre.code code {
 
     #{$darkmode-selector} & {
         -webkit-font-smoothing: antialiased;
-        
+
         color: var(--default-text-color);
     }
 }
@@ -54,21 +54,21 @@ pre.code {
 
     #{$darkmode-selector} & {
         color-scheme: dark;
-        --comment-color: #AAABB3;
-        --tag-color: #BF9FEA;
-        --string-color: #BFDA7F;
+        --comment-color: #aaabb3;
+        --tag-color: #bf9fea;
+        --string-color: #bfda7f;
         --punctuation-color: var(--default-text-color);
-        --keyword-color: #7AC1D1;
+        --keyword-color: #7ac1d1;
         --symbol-color: #36d8d6;
         --function-color: var(--default-text-color);
         --deleted-color: #9a050f;
         --selector-color: #36d8d6;
         --important-color: #e90;
         --class-name-color: #2b91af;
-        --property-color: #7AC1D1;
+        --property-color: #7ac1d1;
 
         border-color: var(--neutral-300);
-        border: 1px solid #0D161E;
+        border: 1px solid #0d161e;
     }
 }
 
@@ -86,14 +86,15 @@ pre.code > code {
     background-attachment: local;
     border: none;
     border-radius: 0;
-    box-shadow: inset 0 $vertical-padding 0 0 var(--default-background-color),
+    box-shadow:
+        inset 0 $vertical-padding 0 0 var(--default-background-color),
         inset 0 $vertical-padding * -1 0 0 var(--default-background-color);
     overflow-x: auto !important;
 
     #{$darkmode-selector} & {
         background: var(--background-200);
         box-shadow: inset 0px 0px;
-        
+
         // background-image: linear-gradient(color-mix(in srgb, var(--background-200) 75%, var(--background-100)) 50%, var(--background-100) 50%);
     }
 }
@@ -283,7 +284,6 @@ code[class*='language-css'] {
 .line-numbers .line-numbers-rows {
     border-right: 1px solid var(--background-700);
 
-
     #{$darkmode-selector} & {
         border-right-color: var(--neutral-300);
     }
@@ -291,7 +291,7 @@ code[class*='language-css'] {
 
 .line-numbers-rows > span:before {
     color: var(--dark-blue-200);
-    opacity: .33;
+    opacity: 0.33;
 
     #{$darkmode-selector} & {
         color: var(--default-text-color);
