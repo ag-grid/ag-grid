@@ -1,123 +1,140 @@
 [
   {
-    "group": "GET STARTED",
+    "group": "OVERVIEW",
     "items": [
       {
-        "title": "Quick Start",
+        "title": "Get Started",
         "items": [
           {
-            "title": "Getting Started",
+            "title": "Quick Start",
             "url": "/getting-started/",
             "icon": "framework"
           },
           {
-            "title": "React Compatibility",
-            "icon": "react",
-            "url": "/react-compatibility",
-            "frameworks": [
-              "react"
-            ]
+            "title": "Deep Dive",
+            "url": "/deep-dive/",
+            "icon": "framework"
           },
           {
-            "title": "Rendering",
-            "icon": "react",
-            "url": "/reactui/",
-            "frameworks": [
-              "react"
-            ]
-          },
-          {
-            "title": "Hooks",
-            "icon": "reactHooks",
-            "url": "/react-hooks/",
-            "frameworks": [
-              "react"
-            ]
-          },
-          {
-            "title": "Video Tutorial",
-            "url": "{video-tutorial}",
-            "icon": "youtube",
-            "menuHide": true,
-            "frameworks": [
-              "javascript"
-            ]
-          },
-          {
-            "title": "Plunker Example",
-            "url": "{example}",
-            "icon": "plunker",
-            "menuHide": true,
-            "frameworks": [
-              "javascript"
-            ]
-          },
-          {
-            "title": "{example-title}",
-            "url": "{example}",
-            "icon": "{example-icon}",
-            "menuHide": true,
-            "frameworks": [
-              "angular",
-              "react",
-              "vue"
-            ]
-          },
-          {
-            "title": "Thinkster Course",
-            "url": "{thinkster}",
-            "icon": "thinkster",
-            "menuHide": true,
-            "frameworks": [
-              "angular",
-              "react"
-            ]
-          },
-          {
-            "title": "SolidJS",
-            "icon": "solid",
-            "url": "/solidjs",
-            "frameworks": [
-              "react"
-            ]
-          },
-          {
-            "title": "Angular Compatibility",
-            "icon": "angular",
-            "url": "/angular-compatibility",
-            "frameworks": [
-              "angular"
-            ]
-          },
-          {
-            "title": "Vue 3 script/setup",
-            "icon": "vue",
-            "url": "/vue3-script-setup/",
-            "frameworks": [
-              "vue"
-            ]
-          },
-          {
-            "title": "Vue 2 Tutorial",
-            "icon": "vue",
-            "url": "/vue2/",
-            "frameworks": [
-              "vue"
-            ]
-          },
-          {
-            "title": "Videos",
+            "title": "Video Tutorials",
             "url": "/videos/"
           }
         ]
       },
       {
-        "title": "Build & Tooling",
+        "title": "Guides",
+        "items": [
+          {
+            "title": "Guide 1 (Basic)",
+            "url": "/guide1/",
+            "icon": "framework"
+          },
+          {
+            "title": "Guide 2 (Intermediate)",
+            "url": "/guide2/",
+            "icon": "framework"
+          },
+          {
+            "title": "Guide 3 (Advanced)",
+            "url": "/guide3/",
+            "icon": "framework"
+          },
+          {
+            "title": "Unidirectional Data Flow",
+            "url": "/framework-data-flow/",
+            "showInCollapsed": true,
+            "frameworks": [
+              "vue"
+            ]
+          },
+          {
+            "title": "Redux Integration Part 1",
+            "url": "/redux-integration-pt1/",
+            "showInCollapsed": true,
+            "frameworks": [
+              "react"
+            ]
+          },
+          {
+            "title": "Redux Integration Part 2",
+            "url": "/redux-integration-pt2/",
+            "showInCollapsed": true,
+            "frameworks": [
+              "react"
+            ]
+          },
+          {
+            "title": "Material UI Components",
+            "url": "/material-design/",
+            "showInCollapsed": true,
+            "frameworks": [
+              "angular"
+            ]
+          },
+          {
+            "title": "Miscellaneous",
+            "url": "/framework-misc/",
+            "showInCollapsed": true,
+            "frameworks": [
+              "vue"
+            ]
+          }
+        ]
+      },
+      {
+        "title": "Resources",
+        "items": [
+          {
+            "title": "Changelog",
+            "url": "/changelog/",
+            "icon": "framework"
+          },
+          {
+            "title": "Pipeline",
+            "url": "/pipeline/",
+            "icon": "framework"
+          },
+          {
+            "title": "Support",
+            "url": "/support/",
+            "icon": "framework"
+          },
+          {
+            "title": "Community vs Enterprise",
+            "url": "/licensing/"
+          },
+          {
+            "title": "Supported Browsers",
+            "url": "/supported-browsers/"
+          },
+          {
+            "title": "Testing",
+            "url": "/testing/"
+          },
+          {
+            "title": "Testing Async",
+            "url": "/testing-async/",
+            "frameworks": [
+              "angular"
+            ]
+          },
+          {
+            "title": "Security",
+            "url": "/security/"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "group": "INSTALLATION",
+    "items": [
+      {
+        "title": "Packages & Modules",
         "items": [
           {
             "title": "Install with NPM",
             "url": "/npm/",
-            "showInCollapsed": true,
             "frameworks": [
               "javascript"
             ]
@@ -125,60 +142,21 @@
           {
             "title": "Download Bundles",
             "url": "/download/",
-            "showInCollapsed": true,
             "frameworks": [
               "javascript"
             ]
-          },
-          {
-            "title": "Community & Enterprise",
-            "url": "/licensing/",
-            "enterprise": true,
-            "showInCollapsed": true
           },
           {
             "title": "Packages vs Modules",
-            "url": "/packages-modules/",
-            "showInCollapsed": true,
+            "url": "/packages-modules/"
+          },
+          {
+            "title": "Packages",
+            "url": "/packages/",
             "items": [
               {
-                "title": "Packages",
-                "url": "/packages/",
-                "items": [
-                  {
-                    "title": "Using ES Modules",
-                    "url": "/esm-packages/",
-                    "frameworks": [
-                      "javascript"
-                    ]
-                  }
-                ]
-              },
-              {
-                "title": "Modules",
-                "url": "/modules/",
-                "items": [
-                  {
-                    "title": "Using ES Modules",
-                    "url": "/esm-modules/",
-                    "frameworks": [
-                      "javascript"
-                    ]
-                  }
-                ]
-              },
-              {
-                "title": "Modules - Example",
-                "url": "/modules-building/",
-                "frameworks": [
-                  "angular",
-                  "react",
-                  "vue"
-                ]
-              },
-              {
-                "title": "Custom UMD Bundle",
-                "url": "/modules-building/",
+                "title": "Using ES Modules",
+                "url": "/esm-packages/",
                 "frameworks": [
                   "javascript"
                 ]
@@ -186,39 +164,63 @@
             ]
           },
           {
-            "title": "Supported Browsers",
-            "url": "/supported-browsers/",
-            "showInCollapsed": true
-          },
-          {
-            "title": "Building",
-            "url": "/building/",
-            "showInCollapsed": true,
-            "frameworks": [
-              "javascript"
-            ],
+            "title": "Modules",
+            "url": "/modules/",
             "items": [
               {
-                "title": "Rollup",
-                "url": "/building-rollup/",
-                "frameworks": [
-                  "javascript"
-                ]
-              },
-              {
-                "title": "TypeScript & Webpack",
-                "url": "/building-typescript/",
-                "frameworks": [
-                  "javascript"
-                ]
-              },
-              {
-                "title": "AMD",
-                "url": "/building-amd/",
+                "title": "Using ES Modules",
+                "url": "/esm-modules/",
                 "frameworks": [
                   "javascript"
                 ]
               }
+            ]
+          },
+          {
+            "title": "Modules - Example",
+            "url": "/modules-building/",
+            "frameworks": [
+              "angular",
+              "react",
+              "vue"
+            ]
+          },
+          {
+            "title": "Custom UMD Bundle",
+            "url": "/modules-building/",
+            "frameworks": [
+              "javascript"
+            ]
+          }
+        ]
+      },
+      {
+        "title": "Building",
+        "url": "/building/",
+        "showInCollapsed": true,
+        "frameworks": [
+          "javascript"
+        ],
+        "items": [
+          {
+            "title": "Rollup",
+            "url": "/building-rollup/",
+            "frameworks": [
+              "javascript"
+            ]
+          },
+          {
+            "title": "TypeScript & Webpack",
+            "url": "/building-typescript/",
+            "frameworks": [
+              "javascript"
+            ]
+          },
+          {
+            "title": "AMD",
+            "url": "/building-amd/",
+            "frameworks": [
+              "javascript"
             ]
           }
         ]
@@ -226,7 +228,129 @@
     ]
   },
   {
-    "group": "BASICS",
+    "group": "LAYOUT & STYLING",
+    "items": [
+      {
+        "title": "Design System",
+        "items": [
+          {
+            "title": "Getting Started",
+            "url": "/ag-grid-design-system/",
+            "showInCollapsed": true
+          }
+        ]
+      },
+      {
+        "title": "Theming",
+        "items": [
+          {
+            "title": "Overview",
+            "url": "/global-style/",
+            "showInCollapsed": true
+          },
+          {
+            "title": "Themes",
+            "url": "/themes/",
+            "showInCollapsed": true
+          },
+          {
+            "title": "Customisation",
+            "url": "/global-style-customisation/",
+            "showInCollapsed": true,
+            "items": [
+              {
+                "title": "Variable Reference",
+                "url": "/global-style-customisation-variables/",
+                "showInCollapsed": false
+              },
+              {
+                "title": "Colours & Fonts",
+                "url": "/global-style-customisation-colours/",
+                "showInCollapsed": false
+              },
+              {
+                "title": "Compactness & Row Height",
+                "url": "/global-style-customisation-compactness/",
+                "showInCollapsed": false
+              },
+              {
+                "title": "Selections",
+                "url": "/global-style-customisation-selections/",
+                "showInCollapsed": false
+              },
+              {
+                "title": "Headers",
+                "url": "/global-style-customisation-headers/",
+                "showInCollapsed": false
+              },
+              {
+                "title": "Borders",
+                "url": "/global-style-customisation-borders/",
+                "showInCollapsed": false
+              },
+              {
+                "title": "Icons",
+                "url": "/custom-icons/",
+                "showInCollapsed": false
+              },
+              {
+                "title": "Tool Panels",
+                "url": "/global-style-customisation-tool-panels/",
+                "showInCollapsed": false
+              },
+              {
+                "title": "Inputs & Widgets",
+                "url": "/global-style-customisation-widgets/",
+                "showInCollapsed": false
+              },
+              {
+                "title": "Menus & Popups",
+                "url": "/global-style-customisation-popups/",
+                "showInCollapsed": false
+              },
+              {
+                "title": "Advanced CSS",
+                "url": "/global-style-customisation-css/",
+                "showInCollapsed": false
+              }
+            ]
+          },
+          {
+            "title": "Sass",
+            "url": "/global-style-customisation-sass/",
+            "showInCollapsed": false
+          }
+        ]
+      },
+      {
+        "title": "Styling",
+        "items": [
+          {
+            "title": "Styling Rows",
+            "url": "/row-styles/",
+            "showInCollapsed": true
+          },
+          {
+            "title": "Styling Cells",
+            "url": "/cell-styles/",
+            "showInCollapsed": true
+          },
+          {
+            "title": "Grid Size",
+            "url": "/grid-size/",
+            "showInCollapsed": true
+          },
+          {
+            "title": "Printing",
+            "url": "/printing/",
+            "showInCollapsed": true
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "group": "CORE FEATURES",
     "items": [
       {
         "title": "Columns",
@@ -603,11 +727,81 @@
             "showInCollapsed": true
           }
         ]
+      },
+      {
+        "title": "Scrolling",
+        "items": [
+          {
+            "title": "DOM Virtualisation",
+            "url": "/dom-virtualisation/",
+            "showInCollapsed": true
+          },
+          {
+            "title": "Row Pagination",
+            "url": "/row-pagination/",
+            "showInCollapsed": true
+          },
+          {
+            "title": "Aligned Grids",
+            "url": "/aligned-grids/",
+            "showInCollapsed": true
+          },
+          {
+            "title": "Massive Row Count",
+            "url": "/massive-row-count/",
+            "showInCollapsed": true
+          },
+          {
+            "title": "Scrolling Performance",
+            "url": "/scrolling-performance/",
+            "showInCollapsed": true
+          },
+          {
+            "title": "See Also",
+            "url": "",
+            "items": [
+              {
+                "title": "Scrolling Scenarios",
+                "url": "/scrolling-scenarios/"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "title": "Interactivity",
+        "items": [
+          {
+            "title": "Keyboard Navigation",
+            "url": "/keyboard-navigation/",
+            "showInCollapsed": true
+          },
+          {
+            "title": "Touch",
+            "url": "/touch/",
+            "showInCollapsed": true
+          },
+          {
+            "title": "Accessibility (ARIA)",
+            "url": "/accessibility/",
+            "showInCollapsed": true
+          },
+          {
+            "title": "RTL Text Direction",
+            "url": "/rtl/",
+            "showInCollapsed": true
+          },
+          {
+            "title": "Localisation",
+            "url": "/localisation/",
+            "showInCollapsed": true
+          }
+        ]
       }
     ]
   },
   {
-    "group": "ADVANCED",
+    "group": "ADVANCED FEATURES",
     "items": [
       {
         "title": "Group & Pivot",
@@ -1114,12 +1308,7 @@
             ]
           }
         ]
-      }
-    ]
-  },
-  {
-    "group": "EXTENSIONS",
-    "items": [
+      },
       {
         "title": "Accessories",
         "level-2-display-style-forced": "block",
@@ -1427,273 +1616,6 @@
             "title": "Chart Image Export",
             "url": "/integrated-charts-api-downloading-image/",
             "enterprise": true
-          }
-        ]
-      }
-    ]
-  },
-  {
-    "group": "LAYOUT & STYLING",
-    "items": [
-      {
-        "title": "Design System",
-        "items": [
-          {
-            "title": "Getting Started",
-            "url": "/ag-grid-design-system/",
-            "showInCollapsed": true
-          }
-        ]
-      },
-      {
-        "title": "Theming",
-        "items": [
-          {
-            "title": "Overview",
-            "url": "/global-style/",
-            "showInCollapsed": true
-          },
-          {
-            "title": "Themes",
-            "url": "/themes/",
-            "showInCollapsed": true
-          },
-          {
-            "title": "Customisation",
-            "url": "/global-style-customisation/",
-            "showInCollapsed": true,
-            "items": [
-              {
-                "title": "Variable Reference",
-                "url": "/global-style-customisation-variables/",
-                "showInCollapsed": false
-              },
-              {
-                "title": "Colours & Fonts",
-                "url": "/global-style-customisation-colours/",
-                "showInCollapsed": false
-              },
-              {
-                "title": "Compactness & Row Height",
-                "url": "/global-style-customisation-compactness/",
-                "showInCollapsed": false
-              },
-              {
-                "title": "Selections",
-                "url": "/global-style-customisation-selections/",
-                "showInCollapsed": false
-              },
-              {
-                "title": "Headers",
-                "url": "/global-style-customisation-headers/",
-                "showInCollapsed": false
-              },
-              {
-                "title": "Borders",
-                "url": "/global-style-customisation-borders/",
-                "showInCollapsed": false
-              },
-              {
-                "title": "Icons",
-                "url": "/custom-icons/",
-                "showInCollapsed": false
-              },
-              {
-                "title": "Tool Panels",
-                "url": "/global-style-customisation-tool-panels/",
-                "showInCollapsed": false
-              },
-              {
-                "title": "Inputs & Widgets",
-                "url": "/global-style-customisation-widgets/",
-                "showInCollapsed": false
-              },
-              {
-                "title": "Menus & Popups",
-                "url": "/global-style-customisation-popups/",
-                "showInCollapsed": false
-              },
-              {
-                "title": "Advanced CSS",
-                "url": "/global-style-customisation-css/",
-                "showInCollapsed": false
-              }
-            ]
-          },
-          {
-            "title": "Sass",
-            "url": "/global-style-customisation-sass/",
-            "showInCollapsed": false
-          }
-        ]
-      },
-      {
-        "title": "Styling",
-        "items": [
-          {
-            "title": "Styling Rows",
-            "url": "/row-styles/",
-            "showInCollapsed": true
-          },
-          {
-            "title": "Styling Cells",
-            "url": "/cell-styles/",
-            "showInCollapsed": true
-          },
-          {
-            "title": "Grid Size",
-            "url": "/grid-size/",
-            "showInCollapsed": true
-          },
-          {
-            "title": "Printing",
-            "url": "/printing/",
-            "showInCollapsed": true
-          }
-        ]
-      }
-    ]
-  },
-  {
-    "group": "OTHER",
-    "items": [
-      {
-        "title": "Scrolling",
-        "items": [
-          {
-            "title": "DOM Virtualisation",
-            "url": "/dom-virtualisation/",
-            "showInCollapsed": true
-          },
-          {
-            "title": "Row Pagination",
-            "url": "/row-pagination/",
-            "showInCollapsed": true
-          },
-          {
-            "title": "Aligned Grids",
-            "url": "/aligned-grids/",
-            "showInCollapsed": true
-          },
-          {
-            "title": "Massive Row Count",
-            "url": "/massive-row-count/",
-            "showInCollapsed": true
-          },
-          {
-            "title": "Scrolling Performance",
-            "url": "/scrolling-performance/",
-            "showInCollapsed": true
-          },
-          {
-            "title": "See Also",
-            "url": "",
-            "items": [
-              {
-                "title": "Scrolling Scenarios",
-                "url": "/scrolling-scenarios/"
-              }
-            ]
-          }
-        ]
-      },
-      {
-        "title": "Interactivity",
-        "items": [
-          {
-            "title": "Keyboard Navigation",
-            "url": "/keyboard-navigation/",
-            "showInCollapsed": true
-          },
-          {
-            "title": "Touch",
-            "url": "/touch/",
-            "showInCollapsed": true
-          },
-          {
-            "title": "Accessibility (ARIA)",
-            "url": "/accessibility/",
-            "showInCollapsed": true
-          },
-          {
-            "title": "RTL Text Direction",
-            "url": "/rtl/",
-            "showInCollapsed": true
-          },
-          {
-            "title": "Localisation",
-            "url": "/localisation/",
-            "showInCollapsed": true
-          }
-        ]
-      },
-      {
-        "title": "Testing & Security",
-        "level-2-display-style-forced": "block",
-        "items": [
-          {
-            "title": "Testing",
-            "url": "/testing/",
-            "showInCollapsed": true
-          },
-          {
-            "title": "Testing Async",
-            "url": "/testing-async/",
-            "showInCollapsed": true,
-            "frameworks": [
-              "angular"
-            ]
-          },
-          {
-            "title": "Security",
-            "url": "/security/",
-            "showInCollapsed": true
-          }
-        ]
-      },
-      {
-        "title": "Miscellaneous",
-        "level-2-display-style-forced": "block",
-        "items": [
-          {
-            "title": "Unidirectional Data Flow",
-            "url": "/framework-data-flow/",
-            "showInCollapsed": true,
-            "frameworks": [
-              "vue"
-            ]
-          },
-          {
-            "title": "Redux Integration Part 1",
-            "url": "/redux-integration-pt1/",
-            "showInCollapsed": true,
-            "frameworks": [
-              "react"
-            ]
-          },
-          {
-            "title": "Redux Integration Part 2",
-            "url": "/redux-integration-pt2/",
-            "showInCollapsed": true,
-            "frameworks": [
-              "react"
-            ]
-          },
-          {
-            "title": "Material UI Components",
-            "url": "/material-design/",
-            "showInCollapsed": true,
-            "frameworks": [
-              "angular"
-            ]
-          },
-          {
-            "title": "Miscellaneous",
-            "url": "/framework-misc/",
-            "showInCollapsed": true,
-            "frameworks": [
-              "vue"
-            ]
           }
         ]
       }
