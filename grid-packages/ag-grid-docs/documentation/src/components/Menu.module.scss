@@ -32,7 +32,7 @@
         }
     }
 
-    @media screen and (min-width: $breakpoint-docs-nav-large) {
+    @media screen and (min-width: $breakpoint-docs-nav-medium) {
         padding-left: var(--menu-horizontal-margin);
     }
 
