@@ -704,7 +704,8 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     @Input() public fullWidthCellRendererParams: any = undefined;
     /** Set to `true` to have the Full Width Rows embedded in grid's main container so they can be scrolled horizontally .     */
     @Input() public embedFullWidthRows: boolean | undefined = undefined;
-    /** When enabled, the grid will cast group values to string type. Default: `false`     */
+    /** @deprecated v31
+         * When enabled, the grid will cast group values to string type. Default: `false`     */
     @Input() public suppressGroupMaintainValueType: boolean | undefined = undefined;
     /** Specifies how the results of row grouping should be displayed.
          *
