@@ -243,16 +243,6 @@ const getInternalIPAddress = () => {
 };
 
 const createHomePages = createPage => {
-    const homePage = path.resolve('src/templates/home.jsx');
-
-    supportedFrameworks.forEach(framework => {
-        createPage({
-            path: `/${framework}-data-grid/`,
-            component: homePage,
-            context: {frameworks: supportedFrameworks, framework, pageName: `${framework}-data-grid`}
-        });
-    });
-
     createPage({
         path: `/documentation/`,
         component: path.resolve('src/pages/loading.jsx'),
