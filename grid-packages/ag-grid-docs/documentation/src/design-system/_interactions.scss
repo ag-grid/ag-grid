@@ -8,3 +8,8 @@
     overflow: hidden;
     transition: height 0.35s ease;
 }
+
+.no-transitions,
+.no-transitions * {
+    transition: none !important;
+}

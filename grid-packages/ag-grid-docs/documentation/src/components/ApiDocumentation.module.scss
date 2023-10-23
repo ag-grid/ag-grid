@@ -51,11 +51,6 @@
         height: 1px; // needed for divs to fit table cell heights correctly
     }
 
-    tr:nth-child(even),
-    tr:nth-child(even) td {
-        background-color: var(--default-background-color);
-    }
-
     pre:global(.code) {
         margin-top: $size-2;
         margin-bottom: $size-1;

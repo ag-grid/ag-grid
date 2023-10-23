@@ -38,7 +38,7 @@ pre {
     border-radius: var(--border-radius);
 
     #{$darkmode-selector} & {
-        background-color: var(--background-100);
+        background-color: var(--background-200);
     }
 }
 

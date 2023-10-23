@@ -74,6 +74,10 @@
     @media screen and (min-width: $breakpoint-site-header-small) {
         display: none !important;
     }
+
+    #{$darkmode-selector} & {
+        --button-active-color: var(--background-300);
+    }
 }
 
 .menuIcon {
@@ -174,6 +178,10 @@
             opacity: 0.5;
             transform: scaleX(1);
         }
+    }
+
+    #{$darkmode-selector} & {
+        border-bottom: 1px solid var(--background-100) !important
     }
 }
 

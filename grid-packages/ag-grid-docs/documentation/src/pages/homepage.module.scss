@@ -34,7 +34,7 @@ gatsby-fast-refresh {
     }
 
     #{$darkmode-selector} & {
-        background-color: var(--background-400);
+        background-color: var(--default-background-color);
     }
 }
 
@@ -141,7 +141,7 @@ gatsby-fast-refresh {
     }
 
     #{$darkmode-selector} & {
-        background-color: var(--background-200);
+        background-color: var(--default-background-color);
     }
 }
 
@@ -160,7 +160,7 @@ gatsby-fast-refresh {
     background-color: var(--background-500);
 
     #{$darkmode-selector} & {
-        background-color: var(--background-100);
+        background-color: var(--default-background-color);
     }
 }
 
@@ -237,6 +237,7 @@ gatsby-fast-refresh {
         gap: 0 $size-6;
     }
 
+
     img {
         height: $size-1 * 7;
 
@@ -246,7 +247,7 @@ gatsby-fast-refresh {
 
         // WIP darkmode adjustment for customer logos
         #{$darkmode-selector} & {
-            filter: grayscale(100%) invert(1) brightness(1.25);
+            filter: invert(0.5) sepia(13%) saturate(534%) hue-rotate(173deg) brightness(92%) contrast(88%);
         }
     }
 }

@@ -51,10 +51,6 @@
     --icon-size: #{$icon-size};
 }
 
-html {
-    --color-scheme: light;
-}
-
 // Create CSS variables for all dark mode colors
 @mixin dark-mode-variables {
     @each $name, $scale in $dark-scales {
@@ -67,7 +63,6 @@ html {
     @each $name, $var-name in $dark-semantic-colors {
         --#{$name}: var(--#{$var-name});
     }
-
     --color-scheme: dark;
 }
 
