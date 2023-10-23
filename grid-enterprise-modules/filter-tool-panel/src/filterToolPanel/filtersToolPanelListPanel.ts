@@ -9,7 +9,8 @@ import {
     Events,
     GridApi,
     ProvidedColumnGroup,
-    IProvidedColumn
+    IProvidedColumn,
+    FiltersToolPanelState
 } from "@ag-grid-community/core";
 
 import { ToolPanelFilterComp } from "./toolPanelFilterComp";
@@ -28,6 +29,8 @@ export class FiltersToolPanelListPanel extends Component {
     @Autowired('columnModel') private columnModel: ColumnModel;
 
     private initialised = false;
+    private hasLoadedInitialState = false;
+    private isInitialState = false;
 
     private params: ToolPanelFiltersCompParams;
     private filterGroupComps: ToolPanelFilterGroupComp[] = [];
@@ -42,7 +45,7 @@ export class FiltersToolPanelListPanel extends Component {
     public init(params: ToolPanelFiltersCompParams): void {
         this.initialised = true;
 
-        const defaultParams: ToolPanelFiltersCompParams = {
+        const defaultParams: Partial<ToolPanelFiltersCompParams> = {
             suppressExpandAll: false,
             suppressFilterSearch: false,
             suppressSyncLayoutWithGrid: false,
@@ -51,7 +54,7 @@ export class FiltersToolPanelListPanel extends Component {
             context: this.gridOptionsService.context
         };
         _.mergeDeep(defaultParams, params);
-        this.params = defaultParams;
+        this.params = defaultParams as ToolPanelFiltersCompParams;
 
         if (!this.params.suppressSyncLayoutWithGrid) {
             this.addManagedListener(this.eventService, Events.EVENT_COLUMN_MOVED, () => this.onColumnsChanged());
@@ -97,6 +100,11 @@ export class FiltersToolPanelListPanel extends Component {
         // We can therefore restore focus if an element in the filter tool panel was focused.
         const activeElement = this.gridOptionsService.getDocument().activeElement as HTMLElement;
 
+        if (!this.hasLoadedInitialState) {
+            this.hasLoadedInitialState = true;
+            this.isInitialState = !!this.params.initialState;
+        }
+
         // Want to restore the expansion state where possible.
         const expansionState = this.getExpansionState();
 
@@ -125,6 +133,8 @@ export class FiltersToolPanelListPanel extends Component {
         if (this.getGui().contains(activeElement)) {
             activeElement.focus();
         }
+
+        this.isInitialState = false;
     }
 
     private recursivelyAddComps(tree: IProvidedColumn[], depth: number, expansionState: Map<string, boolean>): ToolPanelFilterGroupComp[] {
@@ -138,7 +148,7 @@ export class FiltersToolPanelListPanel extends Component {
             if (!this.shouldDisplayFilter(column)) { return []; }
 
             const hideFilterCompHeader = depth === 0;
-            const filterComp = new ToolPanelFilterComp(hideFilterCompHeader);
+            const filterComp = new ToolPanelFilterComp(hideFilterCompHeader, () => this.onFilterExpanded());
             this.createBean(filterComp);
 
             filterComp.setColumn(column);
@@ -179,8 +189,9 @@ export class FiltersToolPanelListPanel extends Component {
 
         this.createBean(filterGroupComp);
         filterGroupComp.addCssClassToTitleBar('ag-filter-toolpanel-header');
-        if (expansionState.get(filterGroupComp.getFilterGroupId()) === false) {
-            // Default state on creation is expanded. Desired initial state is expanded. Only collapse if collapsed before.
+        const expansionStateValue = expansionState.get(filterGroupComp.getFilterGroupId());
+        if ((this.isInitialState && !expansionStateValue) || expansionStateValue === false) {
+            // Default state on creation is expanded. Desired initial state is expanded. Only collapse if collapsed before or using initial state.
             filterGroupComp.collapse();
         }
         return [filterGroupComp];
@@ -203,6 +214,13 @@ export class FiltersToolPanelListPanel extends Component {
 
     private getExpansionState(): Map<string, boolean> {
         const expansionState: Map<string, boolean> = new Map();
+
+        if (this.isInitialState) {
+            const { expandedColIds, expandedGroupIds } = this.params.initialState as FiltersToolPanelState;
+            expandedColIds.forEach(id => expansionState.set(id, true));
+            expandedGroupIds.forEach(id => expansionState.set(id, true));
+            return expansionState;
+        }
 
         const recursiveGetExpansionState = (filterGroupComp: ToolPanelFilterGroupComp) => {
             expansionState.set(filterGroupComp.getFilterGroupId(), filterGroupComp.isExpanded());
@@ -317,6 +335,10 @@ export class FiltersToolPanelListPanel extends Component {
         this.fireExpandedEvent();
     }
 
+    private onFilterExpanded(): void {
+        this.dispatchEvent({ type: 'filterExpanded' });
+    }
+
     private fireExpandedEvent(): void {
         let expandedCount = 0;
         let notExpandedCount = 0;
@@ -429,6 +451,29 @@ export class FiltersToolPanelListPanel extends Component {
 
     private refreshFilters(isDisplayed: boolean) {
         this.filterGroupComps.forEach(filterGroupComp => filterGroupComp.refreshFilters(isDisplayed));
+    }
+
+    public getExpandedFiltersAndGroups(): { expandedGroupIds: string[], expandedColIds: string[] } {
+        const expandedGroupIds: string[] = [];
+        const expandedColIds: Set<string> = new Set();
+
+        const getExpandedFiltersAndGroups = (filterComp: ToolPanelFilterGroupComp | ToolPanelFilterComp) => {
+            if (filterComp instanceof ToolPanelFilterGroupComp) {
+                filterComp.getChildren().forEach(child => getExpandedFiltersAndGroups(child));
+                const groupId = filterComp.getFilterGroupId();
+                if (filterComp.isExpanded() && !expandedColIds.has(groupId)) {
+                    expandedGroupIds.push(groupId);
+                }
+            } else {
+                if (filterComp.isExpanded()) {
+                    expandedColIds.add(filterComp.getColumn().getColId());
+                }
+            }
+        };
+
+        this.filterGroupComps.forEach(getExpandedFiltersAndGroups);
+
+        return { expandedGroupIds, expandedColIds: Array.from(expandedColIds) };
     }
 
     private destroyFilters() {

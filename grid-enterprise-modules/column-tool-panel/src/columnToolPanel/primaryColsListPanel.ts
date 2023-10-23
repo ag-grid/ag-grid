@@ -13,7 +13,8 @@ import {
     ToolPanelColumnCompParams,
     VirtualList,
     VirtualListModel,
-    PreDestroy
+    PreDestroy,
+    ColumnToolPanelState
 } from "@ag-grid-community/core";
 import { PrimaryColsListPanelItemDragFeature } from './primaryColsListPanelItemDragFeature';
 import { ToolPanelColumnGroupComp } from "./toolPanelColumnGroupComp";
@@ -64,6 +65,8 @@ export class PrimaryColsListPanel extends Component {
     private allColsTree: ColumnModelItem[];
     private displayedColsList: ColumnModelItem[];
     private destroyColumnItemFuncs: (() => void)[] = [];
+    private hasLoadedInitialState: boolean = false;
+    private isInitialState: boolean = false;
 
     constructor() {
         super(PrimaryColsListPanel.TEMPLATE);
@@ -151,6 +154,11 @@ export class PrimaryColsListPanel extends Component {
     }
 
     public onColumnsChanged(): void {
+        if (!this.hasLoadedInitialState) {
+            this.hasLoadedInitialState = true;
+            this.isInitialState = !!this.params.initialState;
+        }
+
         const expandedStates = this.getExpandedStates();
 
         const pivotModeActive = this.columnModel.isPivotMode();
@@ -166,16 +174,27 @@ export class PrimaryColsListPanel extends Component {
 
         this.markFilteredColumns();
         this.flattenAndFilterModel();
+
+        this.isInitialState = false;
     }
 
     public getDisplayedColsList(): ColumnModelItem[] {
         return this.displayedColsList;
     }
 
-    private getExpandedStates(): {[key:string]:boolean} {
+    private getExpandedStates(): {[key:string]:boolean} {        
+        const res: {[id:string]:boolean} = {};
+        
+        if (this.isInitialState) {
+            const { expandedGroupIds } = this.params.initialState as ColumnToolPanelState;
+            expandedGroupIds.forEach(id => {
+                res[id] = true;
+            });
+            return res;
+        }
+
         if (!this.allColsTree) { return {}; }
 
-        const res: {[id:string]:boolean} = {};
         this.forEachItem(item => {
             if (!item.isGroup()) { return; }
             const colGroup = item.getColumnGroup();
@@ -190,14 +209,15 @@ export class PrimaryColsListPanel extends Component {
     private setExpandedStates(states: {[key:string]:boolean}): void {
         if (!this.allColsTree) { return; }
 
+        const { isInitialState } = this;
         this.forEachItem(item => {
             if (!item.isGroup()) { return; }
             const colGroup = item.getColumnGroup();
             if (colGroup) { // group should always exist, this is defensive
                 const expanded = states[colGroup.getId()];
                 const groupExistedLastTime = expanded != null;
-                if (groupExistedLastTime) {
-                    item.setExpanded(expanded);
+                if (groupExistedLastTime || isInitialState) {
+                    item.setExpanded(!!expanded);
                 }
             }
         });
@@ -474,4 +494,15 @@ export class PrimaryColsListPanel extends Component {
         this.dispatchEvent({ type: 'selectionChanged', state: selectionState });
     }
 
+    public getExpandedGroups(): string[] {
+        const expandedGroupIds: string[] = [];
+
+        this.forEachItem(item => {
+            if (item.isGroup() && item.isExpanded()) {
+                expandedGroupIds.push(item.getColumnGroup().getId());
+            }
+        });
+
+        return expandedGroupIds;
+    }
 }

@@ -41,13 +41,11 @@ export class ToolPanelWrapper extends Component {
         return this.toolPanelId;
     }
 
-    public setToolPanelDef(toolPanelDef: ToolPanelDef): void {
+    public setToolPanelDef(toolPanelDef: ToolPanelDef, params: WithoutGridCommon<IToolPanelParams>): void {
         const { id, minWidth, maxWidth, width } = toolPanelDef;
 
         this.toolPanelId = id;
         this.width = width;
-
-        const params: WithoutGridCommon<IToolPanelParams> = {};
 
         const compDetails = this.userComponentFactory.getToolPanelCompDetails(toolPanelDef, params);
         const componentPromise = compDetails.newAgStackInstance();

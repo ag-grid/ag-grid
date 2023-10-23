@@ -3,10 +3,18 @@ import { ColumnEventType } from "../events";
 import { IComponent } from "./iComponent";
 import { AgGridCommon } from "./iCommon";
 
-export interface IToolPanelParams<TData = any, TContext = any> extends AgGridCommon<TData, TContext> { }
+export interface IToolPanelParams<TData = any, TContext = any> extends AgGridCommon<TData, TContext> {
+    /** The tool-panel-specific initial state as provided in grid options if applicable */
+    initialState?: any;
+    /** If tool panel is saving and restoring state, this should be called after the state is updated */
+    onStateUpdated: () => void;
+}
 
 export interface IToolPanel {
     refresh(): void;
+
+    /** If saving and restoring state, this should return the current state */
+    getState?(): any;
 }
 
 export interface IToolPanelComp extends IToolPanel, IComponent<IToolPanelParams> { }

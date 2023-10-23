@@ -191,6 +191,12 @@ export class StateService extends BeanStub {
             this.setScrollState(scrollState);
         }
 
+        // reset sidebar as it could have updated when columns changed
+        this.updateCachedState('sideBar', this.getSideBarState());
+        this.updateCachedState('focusedCell', this.getFocusedCellState())
+        this.updateCachedState('rangeSelection', this.getRangeSelectionState());
+        this.updateCachedState('scroll', this.getScrollState());
+
         this.addManagedListener(this.eventService, Events.EVENT_CELL_FOCUSED, () => this.updateCachedState('focusedCell', this.getFocusedCellState()));
         this.addManagedListener(this.eventService, Events.EVENT_RANGE_SELECTION_CHANGED, (event: RangeSelectionChangedEvent) => {
             if (event.finished) {
@@ -452,15 +458,7 @@ export class StateService extends BeanStub {
     }
 
     private getSideBarState(): SideBarState | undefined {
-        const sideBarComp = this.sideBarService?.getSideBarComp();
-        if (sideBarComp) {
-            return {
-                visible: sideBarComp.isDisplayed(),
-                position: sideBarComp.getSideBarPosition(),
-                openToolPanel: sideBarComp.openedItem()
-            };
-        }
-        return undefined;
+        return this.sideBarService?.getSideBarComp()?.getState();
     }
 
     private getFocusedCellState(): FocusedCellState | undefined {
