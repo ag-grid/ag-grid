@@ -40,7 +40,8 @@ export class GridSerializer extends BeanStub {
     @Autowired('sortController') private sortController: SortController;
 
     public serialize<T>(gridSerializingSession: GridSerializingSession<T>, params: ExportParams<T> = {}): string {
-        const columnsToExport = this.getColumnsToExport(params.allColumns, params.columnKeys);
+        const { allColumns, columnKeys, skipRowGroups } = params;
+        const columnsToExport = this.getColumnsToExport(allColumns, skipRowGroups, columnKeys);
 
         const serializeChain = _.compose(
             // first pass, put in the header names of the cols
@@ -308,23 +309,33 @@ export class GridSerializer extends BeanStub {
         };
     }
 
-    private getColumnsToExport(allColumns: boolean = false, columnKeys?: (string | Column)[]): Column[] {
+    private getColumnsToExport(allColumns: boolean = false, skipRowGroups: boolean = false, columnKeys?: (string | Column)[]): Column[] {
         const isPivotMode = this.columnModel.isPivotMode();
 
         if (columnKeys && columnKeys.length) {
             return this.columnModel.getGridColumns(columnKeys);
         }
 
+        const isTreeData = this.gridOptionsService.is('treeData');
+
+        let columnsToExport: Column[] = [];
+
         if (allColumns && !isPivotMode) {
             // add auto group column for tree data
-            const columns = this.gridOptionsService.is('treeData')
+            const columns = isTreeData
                 ? this.columnModel.getGridColumns([GROUP_AUTO_COLUMN_ID])
                 : [];
 
-            return columns.concat(this.columnModel.getAllGridColumns());
+            columnsToExport =  columns.concat(this.columnModel.getAllGridColumns());
+        } else {
+            columnsToExport = this.columnModel.getAllDisplayedColumns();
         }
 
-        return this.columnModel.getAllDisplayedColumns();
+        if (skipRowGroups && !isTreeData) {
+            columnsToExport = columnsToExport.filter(column => column.getColId() !== GROUP_AUTO_COLUMN_ID)
+        }
+
+        return columnsToExport;
     }
 
     private recursivelyAddHeaderGroups<T>(displayedGroups: IHeaderColumn[], gridSerializingSession: GridSerializingSession<T>, processGroupHeaderCallback: ProcessGroupHeaderCallback | undefined): void {
