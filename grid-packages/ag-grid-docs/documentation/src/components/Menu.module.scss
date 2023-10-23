@@ -60,6 +60,11 @@ ul.menuInner {
         margin-bottom: $size-2;
         height: 1px;
         background-color: var(--secondary-border-color);
+
+        #{$darkmode-selector} & {
+            background-color: #394755;
+        }
+        
     }
 
     h5 {

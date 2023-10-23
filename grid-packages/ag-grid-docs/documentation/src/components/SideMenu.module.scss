@@ -53,6 +53,11 @@
     padding-top: $size-1;
     padding-bottom: $size-6;
     box-shadow: inset 2px 0 0 0 var(--secondary-border-color);
+
+    #{$darkmode-selector} & {
+        box-shadow: inset 1px 0 0 0 #394755;
+    }
+
 }
 
 .sideNav li {

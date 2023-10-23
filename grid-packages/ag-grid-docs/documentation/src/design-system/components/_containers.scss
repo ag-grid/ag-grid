@@ -130,7 +130,6 @@
         padding: $size-2;
 
         #{$darkmode-selector} & {
-            background-color: var(--default-background-color);
             border-right: 1px solid #0d161e;
             border-bottom: 1px solid #0d161e;
             border-left: 1px solid #0d161e;
