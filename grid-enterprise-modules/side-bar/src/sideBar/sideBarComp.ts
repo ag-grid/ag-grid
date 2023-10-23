@@ -163,7 +163,7 @@ export class SideBarComp extends Component implements ISideBar {
 
         if (!!this.sideBar && !!this.sideBar.toolPanels) {
             const toolPanelDefs = this.sideBar.toolPanels as ToolPanelDef[];
-            this.createToolPanelsAndSideButtons(toolPanelDefs);
+            this.createToolPanelsAndSideButtons(toolPanelDefs, sideBarState);
             if (!this.toolPanelWrappers.length) { return; }
 
             const shouldDisplaySideBar = sideBarState ? sideBarState.visible : !this.sideBar.hiddenByDefault;
@@ -186,10 +186,6 @@ export class SideBarComp extends Component implements ISideBar {
 
     public getDef() {
         return this.sideBar;
-    }
-
-    public getSideBarPosition(): 'left' | 'right' {
-        return this.position;
     }
 
     public setSideBarPosition(position?: 'left' | 'right'): this {
@@ -217,9 +213,22 @@ export class SideBarComp extends Component implements ISideBar {
         this.eventService.dispatchEvent({ type: Events.EVENT_SIDE_BAR_UPDATED });
     }
 
-    private createToolPanelsAndSideButtons(defs: ToolPanelDef[]): void {
+    public getState(): SideBarState {
+        const toolPanels: { [id: string]: any } = {};
+        this.toolPanelWrappers.forEach(wrapper => {
+            toolPanels[wrapper.getToolPanelId()] = wrapper.getToolPanelInstance().getState?.();
+        });
+        return {
+            visible: this.isDisplayed(),
+            position: this.position,
+            openToolPanel: this.openedItem(),
+            toolPanels
+        };
+    }
+
+    private createToolPanelsAndSideButtons(defs: ToolPanelDef[], sideBarState?: SideBarState): void {
         for (const def of defs) {
-            this.createToolPanelAndSideButton(def);
+            this.createToolPanelAndSideButton(def, sideBarState?.toolPanels?.[def.id]);
         }
     }
 
@@ -250,12 +259,15 @@ export class SideBarComp extends Component implements ISideBar {
 
     }
 
-    private createToolPanelAndSideButton(def: ToolPanelDef): void {
+    private createToolPanelAndSideButton(def: ToolPanelDef, initialState?: any): void {
         if (!this.validateDef(def)) { return; }
         const button = this.sideBarButtonsComp.addButtonComp(def);
         const wrapper = this.getContext().createBean(new ToolPanelWrapper());
 
-        wrapper.setToolPanelDef(def);
+        wrapper.setToolPanelDef(def, {
+            initialState,
+            onStateUpdated: () => this.eventService.dispatchEvent({ type: Events.EVENT_SIDE_BAR_UPDATED })
+        });
         wrapper.setDisplayed(false);
 
         const wrapperGui = wrapper.getGui();

@@ -11,7 +11,8 @@ import {
     IToolPanelComp,
     ToolPanelColumnCompParams,
     ModuleNames,
-    ModuleRegistry
+    ModuleRegistry,
+    ColumnToolPanelState
 } from "@ag-grid-community/core";
 import { PivotModePanel } from "./pivotModePanel";
 import { PivotDropZonePanel, RowGroupDropZonePanel, ValuesDropZonePanel } from "@ag-grid-enterprise/row-grouping";
@@ -48,7 +49,7 @@ export class ColumnToolPanel extends Component implements IColumnToolPanel, IToo
     }
 
     public init(params: ToolPanelColumnCompParams): void {
-        const defaultParams: Omit<ToolPanelColumnCompParams, 'context'> = {
+        const defaultParams: Partial<ToolPanelColumnCompParams> = {
             suppressColumnMove: false,
             suppressColumnSelectAll: false,
             suppressColumnFilter: false,
@@ -238,6 +239,12 @@ export class ColumnToolPanel extends Component implements IColumnToolPanel, IToo
     public refresh(): void {
         this.destroyChildren();
         this.init(this.params);
+    }
+
+    public getState(): ColumnToolPanelState {
+        return {
+            expandedGroupIds: this.primaryColsPanel.getExpandedGroups()
+        };
     }
 
     // this is a user component, and IComponent has "public destroy()" as part of the interface.

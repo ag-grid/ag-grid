@@ -32,12 +32,26 @@ export interface ScrollState {
     left: number;
 }
 
+export interface FiltersToolPanelState {
+    expandedGroupIds: string[];
+    expandedColIds: string[];
+}
+
+export interface ColumnToolPanelState {
+    expandedGroupIds: string[];
+}
+
 export interface SideBarState {
     /** Is side bar visible */
     visible: boolean;
     position: 'left' | 'right';
     /** Open tool panel, or null if closed */
     openToolPanel: string | null;
+    /** State for each tool panel */
+    toolPanels: {
+        [id: string]: any;
+    };
+
 }
 
 export interface FocusedCellState extends RowPosition {

@@ -1,3 +1,4 @@
+import { SideBarState } from "./gridState";
 import { IToolPanel } from "./iToolPanel";
 
 export interface ISideBarService {
@@ -7,7 +8,6 @@ export interface ISideBarService {
 export interface ISideBar {
     refresh(): void;
     setDisplayed(show:boolean): void;
-    getSideBarPosition(): 'left' | 'right';
     setSideBarPosition(position?: 'left' | 'right'): void;
     isToolPanelShowing(): boolean;
     openToolPanel(key: string, source?: 'sideBarButtonClicked' | 'sideBarInitializing' | 'api'): void;
@@ -16,6 +16,7 @@ export interface ISideBar {
     openedItem(): string | null;
     isDisplayed(): boolean;
     getDef(): SideBarDef | undefined;
+    getState(): SideBarState;
 }
 
 

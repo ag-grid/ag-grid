@@ -2,6 +2,7 @@ import {
     ColDef,
     ColGroupDef,
     Component,
+    FiltersToolPanelState,
     IFiltersToolPanel,
     IToolPanelComp,
     IToolPanelParams,
@@ -48,7 +49,7 @@ export class FiltersToolPanel extends Component implements IFiltersToolPanel, IT
 
         this.initialised = true;
 
-        const defaultParams: Omit<ToolPanelFiltersCompParams, 'context'> = {
+        const defaultParams: Partial<ToolPanelFiltersCompParams> = {
             suppressExpandAll: false,
             suppressFilterSearch: false,
             suppressSyncLayoutWithGrid: false,
@@ -76,6 +77,7 @@ export class FiltersToolPanel extends Component implements IFiltersToolPanel, IT
             this.addManagedListener(this.filtersToolPanelHeaderPanel, 'expandAll', this.onExpandAll.bind(this))!,
             this.addManagedListener(this.filtersToolPanelHeaderPanel, 'collapseAll', this.onCollapseAll.bind(this))!,
             this.addManagedListener(this.filtersToolPanelHeaderPanel, 'searchChanged', this.onSearchChanged.bind(this))!,
+            this.addManagedListener(this.filtersToolPanelListPanel, 'filterExpanded', this.onFilterExpanded.bind(this))!,
             this.addManagedListener(this.filtersToolPanelListPanel, 'groupExpanded', this.onGroupExpanded.bind(this))!
         );
     }
@@ -104,8 +106,13 @@ export class FiltersToolPanel extends Component implements IFiltersToolPanel, IT
         this.filtersToolPanelListPanel.setFiltersLayout(colDefs);
     }
 
+    private onFilterExpanded(): void {
+        this.params.onStateUpdated();
+    }
+
     private onGroupExpanded(event: any): void {
         this.filtersToolPanelHeaderPanel.setExpandState(event.state);
+        this.params.onStateUpdated();
     }
 
     public expandFilterGroups(groupIds?: string[]): void {
@@ -130,6 +137,10 @@ export class FiltersToolPanel extends Component implements IFiltersToolPanel, IT
 
     public refresh(): void {
         this.init(this.params);
+    }
+
+    public getState(): FiltersToolPanelState {
+        return this.filtersToolPanelListPanel.getExpandedFiltersAndGroups();
     }
 
     // this is a user component, and IComponent has "public destroy()" as part of the interface.
