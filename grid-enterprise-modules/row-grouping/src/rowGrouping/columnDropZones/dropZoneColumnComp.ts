@@ -99,12 +99,15 @@ export class DropZoneColumnComp extends Component {
 
 
         const checkColumnLock = () => {
-            const isLocked = this.columnModel.isColumnGroupingLocked(this.column);
+            const isLocked = this.isGroupingAndLocked();
             _.setDisplayed(this.eButton, !isLocked && !this.gridOptionsService.is('functionsReadOnly'));
             this.eDragHandle.classList.toggle('ag-column-select-column-readonly', isLocked);
+            this.setupAria();
         }
         checkColumnLock();
-        this.addManagedPropertyListener('groupLockGroupColumns', () => checkColumnLock());
+        if (this.isGroupingZone()) {
+            this.addManagedPropertyListener('groupLockGroupColumns', () => checkColumnLock());
+        }
         
     }
 
@@ -139,8 +142,10 @@ export class DropZoneColumnComp extends Component {
             ariaInstructions.push(sortProgressAria);
         }
 
-        const deleteAria = translate('ariaDropZoneColumnComponentDescription', 'Press DELETE to remove');
-        ariaInstructions.push(deleteAria);
+        if (!this.isGroupingAndLocked()) {
+            const deleteAria = translate('ariaDropZoneColumnComponentDescription', 'Press DELETE to remove');
+            ariaInstructions.push(deleteAria);
+        }
 
         _.setAriaLabel(this.getGui(), ariaInstructions.join('. '));
     }
@@ -217,9 +222,12 @@ export class DropZoneColumnComp extends Component {
         }
     }
 
+    private isGroupingAndLocked(): boolean {
+        return this.isGroupingZone() && this.columnModel.isColumnGroupingLocked(this.column);
+    }
+
     private setupRemove(): void {
-        const isLocked = this.columnModel.isColumnGroupingLocked(this.column);
-        _.setDisplayed(this.eButton, !isLocked && !this.gridOptionsService.is('functionsReadOnly'));
+        _.setDisplayed(this.eButton, !this.isGroupingAndLocked() && !this.gridOptionsService.is('functionsReadOnly'));
 
         const agEvent: ColumnRemoveEvent = { type: DropZoneColumnComp.EVENT_COLUMN_REMOVE };
 
@@ -228,8 +236,10 @@ export class DropZoneColumnComp extends Component {
             const isDelete = e.key === KeyCode.DELETE;
 
             if (isDelete) {
-                e.preventDefault();
-                this.dispatchEvent(agEvent);
+                if (!this.isGroupingAndLocked()) {
+                    e.preventDefault();
+                    this.dispatchEvent(agEvent);
+                }
             }
 
             if (isEnter && this.isAggregationZone() && !this.gridOptionsService.is('functionsReadOnly')) {

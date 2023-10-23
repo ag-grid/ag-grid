@@ -130,7 +130,7 @@ export class MenuItemMapper extends BeanStub {
                     return {
                         name: localeTextFunc('ungroupAll', 'Un-Group All'),
                         disabled: lockedGroups === -1 || lockedGroups >= this.columnModel.getRowGroupColumns().length,
-                        action: () => this.columnModel.setRowGroupColumns([], "contextMenu"),
+                        action: () => this.columnModel.setRowGroupColumns(this.columnModel.getRowGroupColumns().slice(0, lockedGroups), "contextMenu"),
                         icon: icon
                     };
                 }
