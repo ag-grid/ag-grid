@@ -54,10 +54,11 @@ select {
         &[readonly] {
             background-color: var(--neutral-100);
         }
-
-    &:focus:not(:disabled):not([readonly]),
-    &:focus-visible:not(:disabled):not([readonly]) {
-        box-shadow: var(--ag-input-focus-box-shadow);
+        
+        &:focus:not(:disabled):not([readonly]),
+        &:focus-visible:not(:disabled):not([readonly]) {
+            box-shadow: var(--ag-input-focus-box-shadow);
+        }
     }
 }
 
