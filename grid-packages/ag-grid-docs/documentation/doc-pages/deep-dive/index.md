@@ -1,12 +1,8 @@
 ---
-title: "Deep Dive"
+title: "Creating a Basic Grid"
 ---
 
-An introduction to the key concepts and features of AG Grid.
-
-## Pre-requisities
-
-Before starting this tutorial, make sure you have either completed our [Quick Start](/getting-started/) ___or___ forked our [Plunkr Example](https://plunkr.com/).
+Following the [Quick Start](/getting-started/), this tutorial provides an introduction to the key concepts and features of AG Grid.
 
 ## Overview
 
@@ -17,17 +13,15 @@ In this tutorial you will:
 3. Configure basic features
 4. Hook into grid events
 
-Once complete, you will have an interactive grid, populated with data from an external source that responds to user-interaction:
+Once complete, you will have an interactive grid, populated with data from an external source that responds to user-interaction. Try resizing columns or clicking on a cell in the example below to see the grid in action:
 
-***TODO: Create Inline Demo***
+<grid-example title='Complete Example' name='complete-example' type='generated' options='{ "exampleHeight": 550 }'></grid-example>
+
+## Introduction
+
+Our Quick Start provides a _very_ basic implementation of the grid. We'll start by breaking down this example into its individual parts, which we will then use as the foundation for this tutorial.
 
 <framework-specific-section frameworks="react">
-
-## Hello World
-
-Our Quick Start & Plunkr examples provide a _Hello World_ implementation of the grid; we'll start by breaking down this example into its individual parts. 
-
-___If you're comfortable with the concepts introduced in the quick-start, jump to [Updating Row Data](#updating-row-data)___
 
 ### Row Data
 
@@ -57,7 +51,7 @@ The `colDefs` array defines the columns that we want the grid to display. The `f
 
 ### Creating the Grid
 
-To create the grid, we wrap the `AgGridReact` component in a parent container, which is used to define the dimension and theme for the grid. We can then pass our `rowData` and `columnDefs` variables as props to the `AgGridReact` component, which will be used to render the grid:
+To create the grid, we first wrap the `AgGridReact` component in a parent container, which is used to define the dimension and theme for the grid. We can then pass our `rowData` and `columnDefs` variables as props to the `AgGridReact` component, which will be used to render the grid:
 
 <snippet transform={false} language="jsx">
 |return (
@@ -67,43 +61,21 @@ To create the grid, we wrap the `AgGridReact` component in a parent container, w
 |);
 </snippet>
 
-_Note: You can use a [pre-made theme](/themes/) or create your own. For more information on themeing, read our [Theming & Styling The Grid]() guide._
+Running our code at this point will display a basic grid, with three rows:
 
-Bringing this all together creates a grid in its simplest form:
+</framework-specific-section>
 
-<snippet transform={false} language="jsx">
-|import { useState } from 'react';
-|import { AgGridReact } from 'ag-grid-react'; // Core Grid Logic
-|import "ag-grid-community/styles/ag-grid.css"; // Core CSS
-|import "ag-grid-community/styles/ag-theme-alpine.css"; // Theme
-| 
-|function GridExample() {
-|  // Set Row Data
-|  const [rowData, setRowData] = useState([
-|    { make: 'Toyota', model: 'Celica', price: 35000 },
-|    { make: 'Ford', model: 'Mondeo', price: 32000 },
-|    { make: 'Porsche', model: 'Boxter', price: 72000 }
-|  ]);
-|  
-|  // Define Columns (Should match properties in rowData)
-|  const [colDefs] = useState([
-|    { field: "make" },
-|    { field: "model" },
-|    { field: "price" }
-|  ]);
-|  
-|  // Wrap the grid component in a parent container to set the theme & dimensions
-|  return (
-|    &lt;div className="ag-theme-alpine" style={{ width: 600, height: 500 }}>
-|      &lt;AgGridReact rowData={rowData} columnDefs={colDefs} />
-|    &lt;/div>
-|  );
-|}
-</snippet>
+<grid-example title='Basic Example' name='basic-example' type='generated' options='{ "exampleHeight": 215 }'></grid-example>
+
+_Note: You can use a [pre-made theme](/themes/) or create your own. Read our [Theming & Styling The Grid]() guide for more information._
+
+<!--- Updating Row Data Section -->
 
 ## Updating Row Data
 
-`rowData` is a reactive property, which means that to update the data within the grid, we simply need to update the state of our `rowData` variable. Let's test this by fetching some data from an external server and updating our `rowData` with the response:
+<framework-specific-section frameworks="react">
+
+`rowData` is a reactive property which means that to update the data within the grid all we need to do is update the state of our `rowData` variable. Let's test this by fetching some data from an external server and updating our `rowData` with the response:
 
 <snippet transform={false} language="jsx">
 |useEffect(() => {
@@ -113,11 +85,17 @@ Bringing this all together creates a grid in its simplest form:
 |}, [])
 </snippet>
 
+</framework-specific-section>
+
 When we run our application, we should see a grid with ~3,000 rows:
 
-***TODO: Show grid at this point***
+<grid-example title='Updating Example' name='updating-example' type='generated' options='{ "exampleHeight": 550 }'></grid-example>
 
-## Configuring a Single Column
+<!--- Configuring Columns Section -->
+
+## Defining Columns
+
+<framework-specific-section frameworks="react">
 
 Now that we have a basic grid with some arbitrary data, we can start to configure the grid by using ___Column Properties___.
 
@@ -131,15 +109,19 @@ Column Properties are propreties that can be set on one or more columns to enabl
 |]);
 </snippet>
 
-***TODO: Show grid current state***
+</framework-specific-version>
 
-We should now be able to drag & resize the price column.
+We should now be able to drag & resize the 'make' column:
+
+<grid-example title='Configuring Columns Example' name='configure-columns-example' type='generated' options='{ "exampleHeight": 550 }'></grid-example>
 
 _Note: Column properties can be used to configure a wide-range of features; refer to our [Column Properties](/column-properties/) page for a full list of features._
 
-### Configuring All Columns
+### Default Column Definitions
 
-The example above demonstrates how to configure a single column. To apply this configuration to across all columns we can use ___Default Column Definitions___. To configure Default Column Definitions, create a `defaultColDefs` object, set the `resizeable: true`, and pass then this to the grid via the `defaultColDef` prop:
+<framework-specific-section frameworks="react">
+
+The example above demonstrates how to configure a single column. To apply this configuration across all columns we can use ___Default Column Definitions___ instead. Let's make all of our columns resizeable by creating a `defaultColDefs` object, setting `resizeable: true`, and passing this to the grid via the `defaultColDef` prop:
 
 <snippet transform={false} language="jsx">
 |const defaultColDefs = useMemo(() => ({
@@ -151,9 +133,13 @@ The example above demonstrates how to configure a single column. To apply this c
 |&lt;/div>
 </snippet>
 
+</framework-specific-section>
+
 The grid should now allow re-sizing on all columns:
 
-***TODO: Show grid current state***
+<grid-example title='Default Column Definitions Example' name='default-columns-example' type='generated' options='{ "exampleHeight": 550 }'></grid-example>
+
+<framework-specific-section frameworks="react">
 
 When using Default Column Definitions, we can selectively turn features off for specific columns by overriding the property in our `colDef` array:
 
