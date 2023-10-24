@@ -20,7 +20,8 @@ export const Layout = ({
 }) => {
     // set in gatsby-node.js
     let fullScreenPage = false,
-        fullScreenWithFooter = false;
+        fullScreenWithFooter = false,
+        suppressFrameworkSelector = false;
     if (layout === 'bare') {
         // only for on the fly example runner
         return children;
@@ -28,6 +29,8 @@ export const Layout = ({
         fullScreenPage = true;
     } else if (layout === 'fullScreenPageWithFooter') {
         fullScreenWithFooter = true;
+    } else if(layout === 'suppressFrameworkSelector') {
+        suppressFrameworkSelector = true;
     }
 
     const fullScreen = fullScreenPage || fullScreenWithFooter;
@@ -43,7 +46,7 @@ export const Layout = ({
 
                 <SiteHeader path={path} />
 
-                {!fullScreen && <TopBar frameworks={frameworks} currentFramework={framework} path={path} />}
+                {!fullScreen && <TopBar frameworks={frameworks} currentFramework={framework} path={path} suppressFrameworkSelector={suppressFrameworkSelector} />}
 
                 <div className={classnames(styles.contentContainer, !fullScreen && styles.fullScreenPage)}>
                     <div className={styles.contentViewport}>
