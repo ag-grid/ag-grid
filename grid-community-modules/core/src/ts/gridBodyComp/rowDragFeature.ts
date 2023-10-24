@@ -2,8 +2,7 @@ import {
     DragAndDropService,
     DraggingEvent,
     DragSourceType,
-    DropTarget,
-    VerticalDirection
+    DropTarget
 } from "../dragAndDrop/dragAndDropService";
 import { Autowired, Optional, PostConstruct } from "../context/context";
 import { ColumnModel } from "../columns/columnModel";
@@ -26,6 +25,7 @@ import { warnOnce } from "../utils/function";
 import { PaginationProxy } from "../pagination/paginationProxy";
 import { CtrlsService } from "../ctrlsService";
 import { AutoScrollService } from "../autoScrollService";
+import { VerticalDirection } from "../constants/direction";
 
 export interface RowDropZoneEvents {
     /** Callback function that will be executed when the rowDrag enters the target. */

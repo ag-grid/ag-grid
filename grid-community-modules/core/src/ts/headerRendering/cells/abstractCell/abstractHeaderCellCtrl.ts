@@ -8,19 +8,22 @@ import { KeyCode } from "../.././../constants/keyCode";
 import { Beans } from "../../../rendering/beans";
 import { UserComponentFactory } from '../../../components/framework/userComponentFactory';
 import { ColumnPinnedType } from "../../../entities/column";
+import { CtrlsService } from "../../../ctrlsService";
+import { HorizontalDirection } from "../../../constants/direction";
 
 let instanceIdSequence = 0;
 
 export interface IAbstractHeaderCellComp {
 }
 
-export class AbstractHeaderCellCtrl extends BeanStub {
+export abstract class AbstractHeaderCellCtrl extends BeanStub {
 
     public static DOM_DATA_KEY_HEADER_CTRL = 'headerCtrl';
 
     @Autowired('focusService') protected readonly focusService: FocusService;
     @Autowired('beans') protected readonly beans: Beans;
     @Autowired('userComponentFactory') protected readonly userComponentFactory: UserComponentFactory;
+    @Autowired('ctrlsService') protected readonly ctrlsService: CtrlsService;
 
     private instanceId: string;
 
@@ -31,6 +34,9 @@ export class AbstractHeaderCellCtrl extends BeanStub {
     protected eGui: HTMLElement;
 
     public lastFocusEvent: KeyboardEvent | null = null;
+
+    protected abstract resizeHeader(direction: HorizontalDirection, shiftKey: boolean): void;
+    protected abstract moveHeader(direction: HorizontalDirection): void;
 
     constructor(columnGroupChild: IHeaderColumn, parentRowCtrl: HeaderRowCtrl) {
         super();
@@ -60,9 +66,37 @@ export class AbstractHeaderCellCtrl extends BeanStub {
         return activeEl === this.eGui;
     }
 
-    protected setGui(eGui: HTMLElement): void {
+    protected setGui(eGui: HTMLElement, skipKeyDownListener?: boolean): void {
         this.eGui = eGui;
         this.addDomData();
+
+        if (!skipKeyDownListener) {
+            this.addManagedListener(eGui, 'keydown', this.onGuiKeyDown.bind(this));
+        }
+    }
+
+    private onGuiKeyDown(e: KeyboardEvent): void {
+        const eDocument = this.gridOptionsService.getDocument();
+        const activeEl = eDocument.activeElement;
+
+        if (
+            // if elements within the header are focused, we don't process the event
+            activeEl !== this.eGui ||
+            // if shiftKey and altKey are not pressed, it's cell navigation so we don't process the event
+            (!e.shiftKey && !e.altKey) ||
+            // only process LEFT and RIGHT
+            (e.key !== KeyCode.LEFT && e.key !== KeyCode.RIGHT)
+        ) { return; }
+
+        e.preventDefault();
+        e.stopImmediatePropagation();
+        
+        const direction = HorizontalDirection[e.key === KeyCode.LEFT ? 'Left' : 'Right' ];
+        if (e.altKey) {
+            this.resizeHeader(direction, e.shiftKey);
+        } else {
+            this.moveHeader(direction);
+        }
     }
 
     protected handleKeyDown(e: KeyboardEvent): void {

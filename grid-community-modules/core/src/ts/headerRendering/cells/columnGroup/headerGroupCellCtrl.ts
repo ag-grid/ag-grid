@@ -13,7 +13,7 @@ import { ColumnEventType, Events } from "../../../events";
 import { ColumnGroup } from "../../../entities/columnGroup";
 import { ProvidedColumnGroup } from "../../../entities/providedColumnGroup";
 import { SetLeftFeature } from "../../../rendering/features/setLeftFeature";
-import { removeFromArray } from "../../../utils/array";
+import { last, removeFromArray } from "../../../utils/array";
 import { ManagedFocusFeature } from "../../../widgets/managedFocusFeature";
 import { ITooltipFeatureCtrl, TooltipFeature } from "../../../widgets/tooltipFeature";
 import { HeaderRowCtrl } from "../../row/headerRowCtrl";
@@ -23,6 +23,8 @@ import { HoverFeature } from "../hoverFeature";
 import { GroupResizeFeature } from "./groupResizeFeature";
 import { GroupWidthFeature } from "./groupWidthFeature";
 import { IHeaderGroupComp, IHeaderGroupParams } from "./headerGroupComp";
+import { HorizontalDirection } from "../../../constants/direction";
+import { ColumnMoveHelper } from "../../columnMoveHelper";
 
 export interface IHeaderGroupCellComp extends IAbstractHeaderCellComp {
     addOrRemoveCssClass(cssClassName: string, on: boolean): void;
@@ -52,7 +54,7 @@ export class HeaderGroupCellCtrl extends AbstractHeaderCellCtrl {
     }
 
     public setComp(comp: IHeaderGroupCellComp, eGui: HTMLElement, eResize: HTMLElement): void {
-        super.setGui(eGui);
+        this.setGui(eGui);
         this.comp = comp;
 
         this.displayName = this.columnModel.getDisplayNameForColumnGroup(this.columnGroup, 'header');
@@ -82,6 +84,37 @@ export class HeaderGroupCellCtrl extends AbstractHeaderCellCtrl {
         ));
 
         this.addManagedPropertyListener(Events.EVENT_SUPPRESS_COLUMN_MOVE_CHANGED, this.onSuppressColMoveChange);
+    }
+
+    protected resizeHeader(direction: HorizontalDirection, shiftKey: boolean): void {
+        // if (!this.column.isResizable()) { return; }
+        // const minWidth = this.column.getMinWidth();
+        // const maxWidth = this.column.getMaxWidth();
+        // const newWidth = Math.min(Math.max(this.column.getActualWidth() + direction, minWidth ?? 0), maxWidth || Number.MAX_SAFE_INTEGER);
+        // this.columnModel.setColumnWidths([{ key: this.column, newWidth }], shiftKey, true);
+    }
+
+    protected moveHeader(direction: HorizontalDirection): void {
+        const displayedLeafColumns = this.columnGroup.getDisplayedLeafColumns();
+        const isLeft = direction === HorizontalDirection.Left
+        const targetColumn = isLeft ? displayedLeafColumns[0] : last(displayedLeafColumns);
+        const columnLeft = targetColumn.getLeft()!;
+        const columnWidth = targetColumn.getActualWidth();
+
+        const xPosition = isLeft ? columnLeft - 1 : columnLeft + columnWidth + 1;
+        ColumnMoveHelper.attemptMoveColumns({
+            allMovingColumns: this.columnGroup.getLeafColumns(),
+            isFromHeader: true,
+            hDirection: direction,
+            xPosition,
+            pinned: this.columnGroup.getPinned(),
+            fromEnter: false,
+            fakeEvent: false,
+            gridOptionsService: this.gridOptionsService,
+            columnModel: this.columnModel
+        });
+
+        this.ctrlsService.getGridBodyCtrl().getScrollFeature().ensureColumnVisible(targetColumn, 'auto');
     }
 
     public resizeLeafColumnsToFit(source: ColumnEventType): void {

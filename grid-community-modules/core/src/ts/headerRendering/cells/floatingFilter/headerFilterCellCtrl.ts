@@ -54,7 +54,7 @@ export class HeaderFilterCellCtrl extends AbstractHeaderCellCtrl {
     }
 
     public setComp(comp: IHeaderFilterCellComp, eGui: HTMLElement, eButtonShowMainFilter: HTMLElement, eFloatingFilterBody: HTMLElement): void {
-        super.setGui(eGui);
+        this.setGui(eGui, true);
         this.comp = comp;
         this.eButtonShowMainFilter = eButtonShowMainFilter;
         this.eFloatingFilterBody = eFloatingFilterBody;
@@ -75,6 +75,11 @@ export class HeaderFilterCellCtrl extends AbstractHeaderCellCtrl {
         this.setupFilterChangedListener();
         this.addManagedListener(this.column, Column.EVENT_COL_DEF_CHANGED, this.onColDefChanged.bind(this));
     }
+
+    // empty abstract method
+    protected resizeHeader(): void {}
+    // empty abstract method
+    protected moveHeader(): void {}
 
     private setupActive(): void {
         const colDef = this.column.getColDef();

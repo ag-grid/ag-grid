@@ -25,6 +25,8 @@ import { ResizeObserverService } from "../../../misc/resizeObserverService";
 import { SortDirection } from "../../../entities/colDef";
 import { isBrowserSafari } from "../../../utils/browser";
 import { FocusService } from "../../../focusService";
+import { ColumnMoveHelper } from "../../columnMoveHelper";
+import { HorizontalDirection } from "../../../constants/direction";
 
 export interface IHeaderCellComp extends IAbstractHeaderCellComp {
     setWidth(width: string): void;
@@ -72,7 +74,7 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl {
     }
 
     public setComp(comp: IHeaderCellComp, eGui: HTMLElement, eResize: HTMLElement, eHeaderCompWrapper: HTMLElement): void {
-        super.setGui(eGui);
+        this.setGui(eGui);
         this.comp = comp;
 
         this.updateState();
@@ -106,7 +108,7 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl {
             }
         ));
 
-        this.addMouseDownListenerIfNeeded(eGui);
+        this.addMouseDownListenerIfNeeded();
         this.addManagedPropertyListeners(['suppressMovableColumns', 'suppressMenuHide'], this.refresh.bind(this));
         this.addManagedListener(this.column, Column.EVENT_COL_DEF_CHANGED, this.refresh.bind(this));
         this.addManagedListener(this.eventService, Events.EVENT_COLUMN_VALUE_CHANGED, this.onColumnValueChanged.bind(this));
@@ -116,13 +118,14 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl {
         this.addManagedListener(this.eventService, Events.EVENT_DISPLAYED_COLUMNS_CHANGED, this.onHeaderHeightChanged.bind(this));
     }
 
-    private addMouseDownListenerIfNeeded(eGui: HTMLElement): void {
+    private addMouseDownListenerIfNeeded(): void {
         // we add a preventDefault in the DragService for Safari only
         // so we need to make sure we don't prevent focus on mousedown
         if (!isBrowserSafari()) { return; }
 
         const events = ['mousedown', 'touchstart'];
         const eDocument = this.gridOptionsService.getDocument();
+        const eGui = this.eGui;
         events.forEach(eventName => {
             this.addManagedListener(eGui, eventName, (e: MouseEvent | TouchEvent) => {
                 const activeEl = eDocument.activeElement;
@@ -133,6 +136,36 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl {
                 }
             });
         })
+    }
+
+    protected resizeHeader(direction: HorizontalDirection, shiftKey: boolean): void {
+        if (!this.column.isResizable()) { return; }
+        const minWidth = this.column.getMinWidth();
+        const maxWidth = this.column.getMaxWidth();
+        const diff = direction === HorizontalDirection.Left ? -1 : 1;
+        const newWidth = Math.min(Math.max(this.column.getActualWidth() + diff, minWidth ?? 0), maxWidth || Number.MAX_SAFE_INTEGER);
+        this.columnModel.setColumnWidths([{ key: this.column, newWidth }], shiftKey, true);
+    }
+
+    protected moveHeader(direction: HorizontalDirection): void {
+        const { column } = this;
+        const left = column.getLeft()!;
+        const width = column.getActualWidth();
+        const xPosition = direction === HorizontalDirection.Left ? (left - 1) : (left + width + 1);
+
+        ColumnMoveHelper.attemptMoveColumns({
+            allMovingColumns: [this.column],
+            isFromHeader: true,
+            hDirection: direction,
+            xPosition,
+            pinned: this.column.getPinned(),
+            fromEnter: false,
+            fakeEvent: false,
+            gridOptionsService: this.gridOptionsService,
+            columnModel: this.columnModel
+        });
+
+        this.ctrlsService.getGridBodyCtrl().getScrollFeature().ensureColumnVisible(this.column, 'auto');
     }
 
     private setupUserComp(): void {
