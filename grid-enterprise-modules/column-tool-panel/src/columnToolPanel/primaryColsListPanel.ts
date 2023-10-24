@@ -497,6 +497,8 @@ export class PrimaryColsListPanel extends Component {
     public getExpandedGroups(): string[] {
         const expandedGroupIds: string[] = [];
 
+        if (!this.allColsTree) { return expandedGroupIds; }
+
         this.forEachItem(item => {
             if (item.isGroup() && item.isExpanded()) {
                 expandedGroupIds.push(item.getColumnGroup().getId());
