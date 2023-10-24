@@ -23,6 +23,10 @@ const ExampleStyle = ({ rootId }) => <style media="only screen">
                 --ag-header-column-resize-handle-color: color-mix(in srgb, var(--ag-background-color), var(--ag-foreground-color) 15%);
             }
 
+            #myGrid.ag-theme-alpine-dark .ag-header-cell {
+                font-size: 14px;
+            }
+
             html {
                 position: absolute;
                 top: 0;
