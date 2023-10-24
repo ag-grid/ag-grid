@@ -251,14 +251,23 @@ export class DataTypeService extends BeanStub {
                     }
                 }
 
-                return undefined as any;
+                // we don't want to double format the value
+                // as this is already formatted by using the valueFormatter as the keyCreator
+                if (!this.gridOptionsService.is('suppressGroupMaintainValueType')) {
+                    return undefined as any;
+                }
             } else if (this.groupHideOpenParents && params.column.isRowGroupActive()) {
                 // `groupHideOpenParents` passes leaf values in the group column, so need to format still.
                 // If it's not a string, we know it hasn't been formatted. Otherwise check the data type matcher.
                 if (typeof params.value !== 'string' || dataTypeDefinition.dataTypeMatcher?.(params.value)) {
                     return dataTypeDefinition.valueFormatter!(params);
                 }
-                return undefined as any;
+
+                // we don't want to double format the value
+                // as this is already formatted by using the valueFormatter as the keyCreator
+                if (!this.gridOptionsService.is('suppressGroupMaintainValueType')) {
+                    return undefined as any;
+                }
             }
             return dataTypeDefinition.valueFormatter!(params);
         };
@@ -727,6 +736,7 @@ export class DataTypeService extends BeanStub {
                 valueFormatter: (params: ValueFormatterLiteParams<any, number>) => {
                     if (params.value == null) { return ''; }
                     if (typeof params.value !== 'number' || isNaN(params.value)) {
+                        console.log('was', typeof params.value, params.value, params);
                         return translate('invalidNumber', 'Invalid Number');
                     }
                     return String(params.value);
