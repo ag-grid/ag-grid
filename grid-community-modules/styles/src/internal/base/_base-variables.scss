@@ -6,21 +6,19 @@
     [class*="ag-theme-"] {
         --ag-foreground-color: #000;
 
-        --ag-active-color: var(--ag-foreground-color);
-
         --ag-data-color: var(--ag-foreground-color);
 
         --ag-secondary-foreground-color: var(--ag-foreground-color);
 
         --ag-header-foreground-color: var(--ag-secondary-foreground-color);
 
-        --ag-disabled-foreground-color: color-mix(in srgb, transparent, var(--ag-foreground-color) 50%);
+        --ag-disabled-foreground-color: rgba(0, 0, 0, 0.5);
 
         --ag-background-color: #fff;
 
         --ag-header-background-color: transparent;
 
-        --ag-tooltip-background-color: var(--ag-background-color);
+        --ag-tooltip-background-color: transparent;
 
         --ag-subheader-background-color: transparent;
 
@@ -30,22 +28,25 @@
 
         --ag-side-button-selected-background-color: var(--ag-control-panel-background-color);
 
-        --ag-selected-row-background-color: color-mix(in srgb, transparent, var(--ag-active-color) 30%);
+        --ag-selected-row-background-color: #BBB;
 
         --ag-odd-row-background-color: var(--ag-background-color);
 
-        --ag-modal-overlay-background-color: color-mix(in srgb, transparent, var(--ag-background-color) 66%);
+        --ag-modal-overlay-background-color: rgba(255, 255, 255, 0.66);
 
         --ag-row-hover-color: transparent;
 
         --ag-column-hover-color: transparent;
 
+        --ag-range-selection-border-color: var(--ag-foreground-color);
+
         --ag-range-selection-border-style: solid;
-        --ag-range-selection-border-color: var(--ag-active-color);
-        --ag-range-selection-background-color: color-mix(in srgb, transparent, var(--ag-range-selection-border-color) 20%);
-        --ag-range-selection-background-color-2: color-mix(in srgb, transparent, var(--ag-range-selection-border-color) 36%);
-        --ag-range-selection-background-color-3: color-mix(in srgb, transparent, var(--ag-range-selection-border-color) 49%);
-        --ag-range-selection-background-color-4: color-mix(in srgb, transparent, var(--ag-range-selection-border-color) 59%);
+
+        --ag-range-selection-background-color: rgba(0, 0, 0, 0.2);
+
+        --ag-range-selection-background-color-2: var(--ag-range-selection-background-color);
+        --ag-range-selection-background-color-3: var(--ag-range-selection-background-color);
+        --ag-range-selection-background-color-4: var(--ag-range-selection-background-color);
 
         --ag-range-selection-highlight-color: var(--ag-range-selection-border-color);
 
@@ -71,7 +72,7 @@
 
         --ag-borders: solid 1px;
 
-        --ag-border-color: color-mix(in srgb, transparent, var(--ag-border-color) 25%);
+        --ag-border-color: rgba(0, 0, 0, 0.25);
 
         --ag-borders-critical: var(--ag-borders);
 
@@ -96,7 +97,6 @@
         --ag-borders-side-button: var(--ag-borders);
 
         --ag-border-radius: 0px;
-        --ag-wrapper-border-radius: var(--ag-border-radius);
 
         --ag-row-border-color: var(--ag-secondary-border-color);
 
@@ -111,13 +111,13 @@
         --ag-header-column-resize-handle-color: var(--ag-secondary-border-color);
 
 
-        --ag-invalid-color: #e02525;
-        --ag-input-disabled-border-color: color-mix(in srgb, transparent, var(--ag-input-border-color) 30%);
+        --ag-invalid-color: red;
+        --ag-input-disabled-border-color: var(--ag-input-border-color);
         --ag-input-disabled-background-color: transparent;
 
         --ag-checkbox-background-color: transparent;
         --ag-checkbox-border-radius: var(--ag-border-radius);
-        --ag-checkbox-checked-color: var(--ag-active-color);
+        --ag-checkbox-checked-color: var(--ag-foreground-color);
         --ag-checkbox-unchecked-color: var(--ag-foreground-color);
         --ag-checkbox-indeterminate-color: var(--ag-checkbox-unchecked-color);
 
@@ -132,7 +132,7 @@
         --ag-toggle-button-width: calc(var(--ag-toggle-button-height) * 2);
 
         --ag-input-focus-box-shadow: none;
-        --ag-input-focus-border-color: var(--ag-input-border-color);
+        --ag-input-focus-border-color: none;
 
 
         --ag-minichart-selected-chart-color: var(--ag-checkbox-checked-color);
@@ -142,8 +142,6 @@
 
         --ag-grid-size: 4px;
 
-        --ag-icon-font-family: agGridAlpine;
-        --ag-icon-font-weight: normal;
         --ag-icon-size: 12px;
 
         --ag-widget-container-horizontal-padding: calc(var(--ag-grid-size) * 1.5);
@@ -169,7 +167,7 @@
 
         --ag-row-group-indent-size: calc(var(--ag-cell-widget-spacing) + var(--ag-icon-size));
 
-        --ag-filter-tool-panel-group-indent: var(--ag-grid-size);
+        --ag-filter-tool-panel-group-indent: 16px;
 
         --ag-tab-min-width: 220px;
 
@@ -186,9 +184,9 @@
 
         --ag-popup-shadow: 5px 5px 10px rgba(0, 0, 0, 0.3);
 
-        --ag-advanced-filter-join-pill-color: rgba(220, 0, 0, 0.43);
-        --ag-advanced-filter-column-pill-color: rgba(44, 189, 0, .43);
-        --ag-advanced-filter-option-pill-color: rgba(228, 117, 0, 0.43);
-        --ag-advanced-filter-value-pill-color: rgba(0, 123, 198, 0.48);
+        --ag-advanced-filter-join-pill-color: #f08e8d;
+        --ag-advanced-filter-column-pill-color: #a6e194;
+        --ag-advanced-filter-option-pill-color: #f3c08b;
+        --ag-advanced-filter-value-pill-color: #85c0e4;
     };
 }

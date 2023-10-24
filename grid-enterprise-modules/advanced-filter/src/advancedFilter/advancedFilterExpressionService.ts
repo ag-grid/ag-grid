@@ -308,5 +308,6 @@ export class AdvancedFilterExpressionService extends BeanStub {
     public resetColumnCaches(): void {
         this.columnAutocompleteEntries = null;
         this.columnNameToIdMap = {};
+        this.expressionEvaluatorParams = {};
     }
 }

@@ -28,6 +28,7 @@ import {
     Optional,
     IPivotColDefService,
     LoadSuccessParams,
+    SortController,
 } from "@ag-grid-community/core";
 
 import { NodeManager } from "./nodeManager";
@@ -53,6 +54,7 @@ export class ServerSideRowModel extends BeanStub implements IServerSideRowModel 
 
     @Autowired('columnModel') private columnModel: ColumnModel;
     @Autowired('filterManager') private filterManager: FilterManager;
+    @Autowired('sortController') private sortController: SortController;
     @Autowired('rowRenderer') private rowRenderer: RowRenderer;
     @Autowired('ssrmSortService') private sortListener: SortListener;
     @Autowired('ssrmNodeManager') private nodeManager: NodeManager;
@@ -200,7 +202,7 @@ export class ServerSideRowModel extends BeanStub implements IServerSideRowModel 
             return allColsUnchanged && !missingCols;
         }
 
-        const sortModelDifferent = !_.jsonEquals(this.storeParams.sortModel, this.sortListener.extractSortModel());
+        const sortModelDifferent = !_.jsonEquals(this.storeParams.sortModel, this.sortController.getSortModel());
         const rowGroupDifferent = !areColsSame({
             oldCols: this.storeParams.rowGroupCols,
             newCols: rowGroupColumnVos,
@@ -306,7 +308,7 @@ export class ServerSideRowModel extends BeanStub implements IServerSideRowModel 
 
             // sort and filter model
             filterModel: this.filterManager.getFilterModel(),
-            sortModel: this.sortListener.extractSortModel(),
+            sortModel: this.sortController.getSortModel(),
 
             datasource: this.datasource,
             lastAccessedSequence: new NumberSequence(),

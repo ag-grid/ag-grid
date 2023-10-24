@@ -26,6 +26,7 @@ interface GroupInfo {
     key: string; // e.g. 'Ireland'
     field: string | null; // e.g. 'country'
     rowGroupColumn: Column | null;
+    leafNode?: RowNode;
 }
 
 interface GroupingDetails {
@@ -44,6 +45,7 @@ interface GroupingDetails {
     initialGroupOrderComparator: (params: WithoutGridCommon<InitialGroupOrderComparatorParams>) => number;
     
     usingTreeData: boolean;
+    suppressGroupMaintainValueType: boolean;
     getDataPath: GetDataPath | undefined;
 }
 
@@ -148,6 +150,7 @@ export class GroupStage extends BeanStub implements IRowNodeStage {
             isGroupOpenByDefault: this.gridOptionsService.getCallback('isGroupOpenByDefault') as any,
             initialGroupOrderComparator: this.gridOptionsService.getCallback('initialGroupOrderComparator') as any,
             usingTreeData: usingTreeData,
+            suppressGroupMaintainValueType: this.gridOptionsService.is('suppressGroupMaintainValueType'),
             getDataPath: usingTreeData ? this.gridOptionsService.get('getDataPath') : undefined
         };
 
@@ -446,7 +449,8 @@ export class GroupStage extends BeanStub implements IRowNodeStage {
                 const groupInfo: GroupInfo = {
                     field: rowNode.field,
                     key: rowNode.key!,
-                    rowGroupColumn: rowNode.rowGroupColumn
+                    rowGroupColumn: rowNode.rowGroupColumn,
+                    leafNode: rowNode.allLeafChildren[0],
                 };
                 this.setGroupData(rowNode, groupInfo, details);
                 recurse(rowNode.childrenAfterGroup);
@@ -665,9 +669,21 @@ export class GroupStage extends BeanStub implements IRowNodeStage {
         groupDisplayCols.forEach(col => {
             // newGroup.rowGroupColumn=null when working off GroupInfo, and we always display the group in the group column
             // if rowGroupColumn is present, then it's grid row grouping and we only include if configuration says so
-            const displayGroupForCol = details.usingTreeData || (groupNode.rowGroupColumn ? col.isRowGroupDisplayed(groupNode.rowGroupColumn.getId()) : false);
-            if (displayGroupForCol) {
+            const isTreeData = details.usingTreeData;
+            if (isTreeData) {
                 groupNode.groupData![col.getColId()] = groupInfo.key;
+                return;
+            }
+
+            const groupColumn = groupNode.rowGroupColumn;
+            const isRowGroupDisplayed = groupColumn !== null && col.isRowGroupDisplayed(groupColumn.getId());
+            if (isRowGroupDisplayed) {
+                if (details.suppressGroupMaintainValueType) {
+                    groupNode.groupData![col.getColId()] = groupInfo.key;
+                } else {
+                    // if maintain group value type, get the value from any leaf node.
+                    groupNode.groupData![col.getColId()] = this.valueService.getValue(groupColumn, groupInfo.leafNode);
+                }
             }
         });
     }
@@ -749,7 +765,8 @@ export class GroupStage extends BeanStub implements IRowNodeStage {
                 const item = {
                     key: key,
                     field: groupCol.getColDef().field,
-                    rowGroupColumn: groupCol
+                    rowGroupColumn: groupCol,
+                    leafNode: rowNode,
                 } as GroupInfo;
                 res.push(item);
             }

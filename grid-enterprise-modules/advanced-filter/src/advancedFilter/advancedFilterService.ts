@@ -193,10 +193,8 @@ export class AdvancedFilterService extends BeanStub implements IAdvancedFilterSe
 
         const updatedValidity = isValid !== this.isValid;
 
-        if (updatedValidity) {
-            this.applyExpressionFromParser(expressionParser);
-            this.ctrl.refreshComp();
-        }
+        this.applyExpressionFromParser(expressionParser);
+        this.ctrl.refreshComp();
         this.ctrl.refreshBuilderComp();
         return updatedValidity;
     }
