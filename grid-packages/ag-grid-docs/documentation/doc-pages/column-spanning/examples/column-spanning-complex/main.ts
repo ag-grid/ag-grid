@@ -5,7 +5,6 @@ import {
   GridApi,
   createGrid,
   GridOptions,
-  GridReadyEvent,
   RowHeightParams,
 } from '@ag-grid-community/core';
 import { getData } from "./data";
@@ -62,8 +61,8 @@ const gridOptions: GridOptions = {
   defaultColDef: {
     width: 100,
   },
-  onGridReady: (params: GridReadyEvent) => {
-    params.api.sizeColumnsToFit()
+  autoSizeStrategy: {
+    type: 'fitGridWidth'
   },
 }
 

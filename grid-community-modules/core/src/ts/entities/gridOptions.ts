@@ -105,6 +105,7 @@ import { AdvancedFilterModel } from "../interfaces/advancedFilterModel";
 import { IAdvancedFilterBuilderParams } from "../interfaces/iAdvancedFilterBuilderParams";
 import { AlignedGrid } from "../interfaces/iAlignedGrid";
 import { GridState } from "../interfaces/gridState";
+import { SizeColumnsToContentStrategy, SizeColumnsToFitProvidedWidthStrategy, SizeColumnsToFitGridStrategy } from "../interfaces/autoSizeStrategy";
 
 export interface GridOptions<TData = any> {
 
@@ -237,13 +238,15 @@ export interface GridOptions<TData = any> {
     /** Suppresses auto-sizing columns for columns. In other words, double clicking a column's header's edge will not auto-size. Default: `false` */
     suppressAutoSize?: boolean;
     /**
-     * Number of pixels to add to a column width after the [auto-sizing](/column-sizing/#auto-size-columns) calculation.
+     * Number of pixels to add to a column width after the [auto-sizing](/column-sizing/#auto-size-columns-to-fit-cell-contents) calculation.
      * Set this if you want to add extra room to accommodate (for example) sort icons, or some other dynamic nature of the header.
      * Default: `20`
      */
     autoSizePadding?: number;
     /** Set this to `true` to skip the `headerName` when `autoSize` is called by default. Default: `false` */
     skipHeaderOnAutoSize?: boolean;
+    /** Auto-size the columns when the grid is loaded. Can size to fit the grid width, fit a provided width, or fit the cell contents. */
+    autoSizeStrategy?: SizeColumnsToFitGridStrategy | SizeColumnsToFitProvidedWidthStrategy | SizeColumnsToContentStrategy;
 
     // *** Components *** //
     /** A map of component names to components. */

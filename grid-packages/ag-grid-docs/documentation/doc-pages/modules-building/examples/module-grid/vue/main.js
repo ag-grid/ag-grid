@@ -16,8 +16,7 @@ const VueExample = {
         <ag-grid-vue style="width: 100%; height: 100%;"
                      class="ag-theme-alpine"
                      :columnDefs="columnDefs"
-                     :rowData="rowData"
-                     @grid-ready="onGridReady">
+                     :rowData="rowData">
         </ag-grid-vue>
     `,
     components: {
@@ -42,11 +41,6 @@ const VueExample = {
             { make: 'Porsche', model: 'Boxster', price: 72000 }
         ];
     },
-    methods: {
-        onGridReady(params) {
-            params.api.sizeColumnsToFit();
-        }
-    }
 };
 
 new Vue({

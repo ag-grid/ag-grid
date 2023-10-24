@@ -15,18 +15,18 @@ const gridOptions: GridOptions = {
   rowData: rowData,
 
   onGridReady: (params: GridReadyEvent) => {
-    params.api.sizeColumnsToFit()
-
     window.addEventListener('resize', function () {
       setTimeout(function () {
         params.api.sizeColumnsToFit()
       })
     })
   },
+  autoSizeStrategy: {
+    type: 'fitGridWidth'
+  },
 }
 
 document.addEventListener('DOMContentLoaded', function () {
   var eGridDiv = document.querySelector<HTMLElement>('#myGrid')!
   gridApi = createGrid(eGridDiv, gridOptions);
-  gridApi!.sizeColumnsToFit()
 })

@@ -65,5 +65,4 @@ function onCellValueChanged(event: CellValueChangedEvent) {
 document.addEventListener('DOMContentLoaded', function () {
   const gridDiv = document.querySelector<HTMLElement>('#myGrid')!
   gridApi = createGrid(gridDiv, gridOptions);
-  gridApi!.sizeColumnsToFit()
 })

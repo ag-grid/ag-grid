@@ -58,7 +58,10 @@ const gridOptionsTop: GridOptions = {
     // debug: true,
     // don't show the horizontal scrollbar on the top grid
     suppressHorizontalScroll: true,
-    alignedGrids: ()=>[bottomApi]
+    alignedGrids: ()=>[bottomApi],
+    autoSizeStrategy: {
+        type: 'fitCellContents'
+    },
 };
 
 // this is the grid options for the bottom grid
@@ -91,5 +94,4 @@ fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
     .then(response => response.json())
     .then(data => {
         topApi!.setRowData(data);
-        topApi!.autoSizeAllColumns();
     });

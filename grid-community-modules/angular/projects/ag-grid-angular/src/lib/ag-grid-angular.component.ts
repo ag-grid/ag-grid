@@ -152,6 +152,9 @@ import {
     ServerSideGroupLevelParams,
     ServerSideStoreType,
     SideBarDef,
+    SizeColumnsToContentStrategy,
+    SizeColumnsToFitGridStrategy,
+    SizeColumnsToFitProvidedWidthStrategy,
     SortChangedEvent,
     SortDirection,
     StateUpdatedEvent,
@@ -417,13 +420,15 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     @Input() public colResizeDefault: 'shift' | undefined = undefined;
     /** Suppresses auto-sizing columns for columns. In other words, double clicking a column's header's edge will not auto-size. Default: `false`     */
     @Input() public suppressAutoSize: boolean | undefined = undefined;
-    /** Number of pixels to add to a column width after the [auto-sizing](/column-sizing/#auto-size-columns) calculation.
+    /** Number of pixels to add to a column width after the [auto-sizing](/column-sizing/#auto-size-columns-to-fit-cell-contents) calculation.
          * Set this if you want to add extra room to accommodate (for example) sort icons, or some other dynamic nature of the header.
          * Default: `20`
          */
     @Input() public autoSizePadding: number | undefined = undefined;
     /** Set this to `true` to skip the `headerName` when `autoSize` is called by default. Default: `false`     */
     @Input() public skipHeaderOnAutoSize: boolean | undefined = undefined;
+    /** Auto-size the columns when the grid is loaded. Can size to fit the grid width, fit a provided width, or fit the cell contents.     */
+    @Input() public autoSizeStrategy: SizeColumnsToFitGridStrategy | SizeColumnsToFitProvidedWidthStrategy | SizeColumnsToContentStrategy | undefined = undefined;
     /** A map of component names to components.     */
     @Input() public components: { [p: string]: any; } | undefined = undefined;
     /** Set to `'fullRow'` to enable Full Row Editing. Otherwise leave blank to edit one cell at a time.     */

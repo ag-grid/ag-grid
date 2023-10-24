@@ -53,6 +53,9 @@ const gridOptionsTop: GridOptions = {
     columnDefs: columnDefs,
     rowData: null,
     alignedGrids: () => [bottomApi],
+    autoSizeStrategy: {
+        type: 'fitGridWidth'
+    },
 };
 
 // this is the grid options for the bottom grid
@@ -73,7 +76,6 @@ const gridOptionsBottom: GridOptions = {
 function setData(rowData: any[]) {
     topApi!.setRowData(rowData);
     bottomApi!.setRowData(rowData);
-    topApi!.sizeColumnsToFit();
 
     // mix up some columns
     topApi!.moveColumnByIndex(11, 4);

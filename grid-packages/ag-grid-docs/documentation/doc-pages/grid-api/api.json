@@ -27,13 +27,28 @@
         "setColumnWidths": {},
         "sizeColumnsToFit": {
             "more": {
-                "name": "Size Columns to Fit",
-                "url": "/column-sizing/#size-columns-to-fit"
+                "name": "Auto-Size Columns to Fit Grid",
+                "url": "/column-sizing/#auto-size-columns-to-fit-grid"
             }
         },
-        "autoSizeColumn": {},
-        "autoSizeColumns": {},
-        "autoSizeAllColumns": {}
+        "autoSizeColumn": {
+            "more": {
+                "name": "Auto-Size Columns to Fit Cell Contents",
+                "url": "/column-sizing/#auto-size-columns-to-fit-cell-contents"
+            }
+        },
+        "autoSizeColumns": {
+            "more": {
+                "name": "Auto-Size Columns to Fit Cell Contents",
+                "url": "/column-sizing/#auto-size-columns-to-fit-cell-contents"
+            }
+        },
+        "autoSizeAllColumns": {
+            "more": {
+                "name": "Auto-Size Columns to Fit Cell Contents",
+                "url": "/column-sizing/#auto-size-columns-to-fit-cell-contents"
+            }
+        }
     },
     "columnMoving":{
         "meta": {

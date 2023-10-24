@@ -85,7 +85,6 @@ const VueExample = {
         },
         onGridReady(params) {
             this.gridApi = params.api;
-            params.api.sizeColumnsToFit();
         },
         createRowData() {
             const rowData = [];

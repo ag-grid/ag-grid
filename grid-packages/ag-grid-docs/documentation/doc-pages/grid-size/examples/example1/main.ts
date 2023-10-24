@@ -1,7 +1,6 @@
 import {
   GridApi,
   createGrid,
-  FirstDataRenderedEvent,
   GridOptions,
   GridSizeChangedEvent,
 } from '@ag-grid-community/core';
@@ -25,13 +24,10 @@ const gridOptions: GridOptions<IOlympicData> = {
   defaultColDef: {
     resizable: true,
   },
-
-  onFirstDataRendered: onFirstDataRendered,
+  autoSizeStrategy: {
+    type: 'fitGridWidth'
+  },
   onGridSizeChanged: onGridSizeChanged,
-}
-
-function onFirstDataRendered(params: FirstDataRenderedEvent) {
-  params.api.sizeColumnsToFit()
 }
 
 function onGridSizeChanged(params: GridSizeChangedEvent) {

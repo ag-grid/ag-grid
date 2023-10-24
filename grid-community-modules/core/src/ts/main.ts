@@ -16,6 +16,12 @@ export { ColumnUtils } from "./columns/columnUtils";
 export { DisplayedGroupCreator } from "./columns/displayedGroupCreator";
 export { GroupInstanceIdCreator } from "./columns/groupInstanceIdCreator";
 export { GROUP_AUTO_COLUMN_ID } from "./columns/autoGroupColService";
+export {
+    SizeColumnsToFitGridColumnLimits,
+    SizeColumnsToContentStrategy,
+    SizeColumnsToFitProvidedWidthStrategy,
+    SizeColumnsToFitGridStrategy
+} from "./interfaces/autoSizeStrategy";
 
 // components
 export { ComponentUtil } from "./components/componentUtil";

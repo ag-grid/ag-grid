@@ -16,7 +16,7 @@ var rightColumnDefs = [
 var leftApi;
 var leftGridOptions = {
     defaultColDef: {
-        width: 80,
+        flex: 1,
         sortable: true,
         filter: true,
         resizable: true
@@ -35,7 +35,7 @@ var leftGridOptions = {
 var rightApi;
 var rightGridOptions = {
     defaultColDef: {
-        width: 80,
+        flex: 1,
         sortable: true,
         filter: true,
         resizable: true

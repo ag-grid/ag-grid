@@ -3,7 +3,7 @@ import { HttpClient } from '@angular/common/http';
 
 import "@ag-grid-community/styles/ag-grid.css";
 import "@ag-grid-community/styles/ag-theme-alpine.css";
-import { ColDef, ColGroupDef, FirstDataRenderedEvent, GridOptions } from '@ag-grid-community/core';
+import { ColDef, ColGroupDef, GridOptions } from '@ag-grid-community/core';
 
 import { ModuleRegistry } from '@ag-grid-community/core';
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
@@ -29,8 +29,7 @@ ModuleRegistry.registerModules([ClientSideRowModelModule])
                 [rowData]="rowData"
                 [gridOptions]="topOptions"
                 [alignedGrids]="[bottomGrid]"
-                [columnDefs]="columnDefs"
-                (firstDataRendered)="onFirstDataRendered($event)">
+                [columnDefs]="columnDefs">
         </ag-grid-angular>
 
         <ag-grid-angular
@@ -40,8 +39,7 @@ ModuleRegistry.registerModules([ClientSideRowModelModule])
                 [rowData]="rowData"
                 [gridOptions]="bottomOptions"
                 [alignedGrids]="[topGrid]"
-                [columnDefs]="columnDefs"
-                (firstDataRendered)="onFirstDataRendered($event)">
+                [columnDefs]="columnDefs">
         </ag-grid-angular>
     `
 })
@@ -56,7 +54,10 @@ export class AppComponent {
             filter: true,
             flex: 1,
             minWidth: 100
-        }
+        },
+        autoSizeStrategy: {
+            type: 'fitGridWidth'
+        },
     };
     bottomOptions: GridOptions = {
         defaultColDef: {
@@ -116,9 +117,4 @@ export class AppComponent {
         // we only need to update one grid, as the other is a slave
         this.topGrid.api.setColumnVisible('country', value);
     }
-
-    onFirstDataRendered(params: FirstDataRenderedEvent) {
-        this.topGrid.api.sizeColumnsToFit();
-    }
-
 }

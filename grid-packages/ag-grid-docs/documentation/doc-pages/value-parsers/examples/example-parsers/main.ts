@@ -37,5 +37,4 @@ function numberParser(params: ValueParserParams) {
 document.addEventListener('DOMContentLoaded', function () {
   var gridDiv = document.querySelector<HTMLElement>('#myGrid')!
   gridApi = createGrid(gridDiv, gridOptions);
-  gridApi!.sizeColumnsToFit()
 })

@@ -35,6 +35,7 @@ const Changelog = ({ location }) => {
     const [fixVersion, setFixVersion] = useState(extractFixVersionParameter(location) || ALL_FIX_VERSIONS);
     const URLFilterItemKey = useState(extractFilterTerm(location))[0];
     const searchBarEl = useRef(null);
+    const autoSizeStrategy = useMemo(() => ({ type: 'fitGridWidth' }), []);
 
     const components = useMemo(() => {
         return {
@@ -113,7 +114,6 @@ const Changelog = ({ location }) => {
             setGridApi(params.api);
             searchBarEl.current.value = URLFilterItemKey;
             params.api.setQuickFilter(URLFilterItemKey);
-            params.api.sizeColumnsToFit();
         },
         [URLFilterItemKey]
     );
@@ -345,6 +345,7 @@ const Changelog = ({ location }) => {
                                     detailCellRenderer={'myDetailCellRenderer'}
                                     isRowMaster={isRowMaster}
                                     masterDetail
+                                    autoSizeStrategy={autoSizeStrategy}
                                     onGridReady={gridReady}
                                     onFirstDataRendered={() => {
                                         applyFixVersionFilter();

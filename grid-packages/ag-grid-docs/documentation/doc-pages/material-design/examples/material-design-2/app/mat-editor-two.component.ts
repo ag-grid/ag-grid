@@ -32,10 +32,12 @@ export class MatEditorComponentTwo {
 
     constructor(private columnAlignmentService: ColumnAlignmentService) {
         this.gridOptions = {
+            defaultColDef: {
+                flex: 1,
+            },
             rowData: this.createRowData(),
             columnDefs: this.createColumnDefs(),
             onGridReady: (params) => {
-                params.api!.sizeColumnsToFit();
                 this.gridApi = params.api;
                 this.randomRefreshOfRows(params.api);
             },

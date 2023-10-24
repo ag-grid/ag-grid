@@ -42,7 +42,10 @@ const gridOptionsTop: GridOptions = {
     },
     columnDefs: columnDefs,
     rowData: null,
-    alignedGrids: () => [bottomApi]
+    alignedGrids: () => [bottomApi],
+    autoSizeStrategy: {
+        type: 'fitGridWidth'
+    },
 };
 const gridDivTop = document.querySelector<HTMLElement>('#myGridTop')!;
 const topApi = createGrid(gridDivTop, gridOptionsTop);
@@ -82,7 +85,6 @@ function onCbCountry(value: boolean) {
 function setData(rowData: any[]) {
     topApi!.setRowData(rowData);
     bottomApi!.setRowData(rowData);
-    topApi!.sizeColumnsToFit();
 }
 
 fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')

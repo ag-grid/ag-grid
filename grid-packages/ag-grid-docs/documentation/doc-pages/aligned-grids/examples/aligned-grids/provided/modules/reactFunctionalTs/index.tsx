@@ -7,7 +7,7 @@ import "@ag-grid-community/styles/ag-grid.css";
 import "@ag-grid-community/styles/ag-theme-alpine.css";
 import './styles.css';
 
-import { ModuleRegistry, ColDef, ColGroupDef, GridReadyEvent } from '@ag-grid-community/core';
+import { ModuleRegistry, ColDef, ColGroupDef, GridReadyEvent, SizeColumnsToFitGridStrategy } from '@ag-grid-community/core';
 // Register the required feature modules with the Grid
 ModuleRegistry.registerModules([ClientSideRowModelModule]);
 
@@ -46,6 +46,10 @@ const GridExample = () => {
     }), []);
 
     const [rowData, setRowData] = useState([]);
+
+    const autoSizeStrategy = useMemo<SizeColumnsToFitGridStrategy>(() => ({
+        type: 'fitGridWidth'
+    }), []);
 
     const onGridReady = (params: GridReadyEvent) => {
         fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
@@ -98,6 +102,7 @@ const GridExample = () => {
                     rowData={rowData}
                     columnDefs={columnDefs}
                     defaultColDef={defaultColDef}
+                    autoSizeStrategy={autoSizeStrategy}
                     onGridReady={onGridReady}
                 />
             </div>
