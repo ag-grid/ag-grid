@@ -214,18 +214,29 @@ export class SetValueModel<V> implements IEventEmitter {
             suppressSorting,
         } = filterParams;
 
+        const currentProvidedValues = this.providedValues;
+        const currentSuppressSorting = this.suppressSorting;
+
         this.filterParams = filterParams;
         this.formatter = textFormatter || TextFilter.DEFAULT_FORMATTER;
         this.suppressSorting = suppressSorting || false;
 
-        if (values == null) {
-            this.valuesType = SetFilterModelValuesType.TAKEN_FROM_GRID_VALUES;
-        } else {
-            this.valuesType = Array.isArray(values) ?
-                SetFilterModelValuesType.PROVIDED_LIST :
-                SetFilterModelValuesType.PROVIDED_CALLBACK;
+        // Rebuild values when values or their sort order changes
+        if (values !== currentProvidedValues || suppressSorting !== currentSuppressSorting) {
+            if (!values || values.length === 0) {
+                this.valuesType = SetFilterModelValuesType.TAKEN_FROM_GRID_VALUES;
+                this.providedValues = null;
+            } else {
+                const isArrayOfCallback = Array.isArray(values) && values.length > 0 && typeof values[0] === 'function';
+                this.valuesType = isArrayOfCallback ?
+                    SetFilterModelValuesType.PROVIDED_CALLBACK :
+                    SetFilterModelValuesType.PROVIDED_LIST;
 
-            this.providedValues = values;
+                this.providedValues = values;
+            }
+
+            this.updateAllValues();
+            this.resetSelectionState(this.displayValueModel.getDisplayedKeys());
         }
     }
 

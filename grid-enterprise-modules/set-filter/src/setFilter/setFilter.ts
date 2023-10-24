@@ -166,11 +166,10 @@ export class SetFilter<V = string> extends ProvidedFilter<SetFilterModel, V> imp
             return false;
         }
 
-        // Those params have a large impact on SetFilter and SetFilterValuesModel
-        // and should trigger a reload of the filter when they change.
+        // Those params have a large impact and should trigger a reload when they change.
         const paramsThatForceReload: (keyof SetFilterParams<any, V>)[] = [
             'treeList', 'treeListFormatter', 'treeListPathGetter', 'keyCreator', 'convertValuesToStrings',
-            'caseSensitive', 'valueFormatter', 'cellRenderer', 'comparator',
+            'caseSensitive', 'valueFormatter', 'cellRenderer', 'comparator', 'suppressSelectAll', 'excelMode'
         ];
 
         if (paramsThatForceReload.some(param => params[param] !== this.setFilterParams?.[param])) {
@@ -178,7 +177,6 @@ export class SetFilter<V = string> extends ProvidedFilter<SetFilterModel, V> imp
         }
 
         this.setFilterParams = params;
-        this.applyExcelModeOptions(params);
         super.updateParams(params);
         this.updateSetFilterOnParamsChange(params);
         this.updateMiniFilter();
