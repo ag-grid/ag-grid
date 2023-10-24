@@ -203,13 +203,19 @@ export abstract class ProvidedFilter<M, V> extends Component implements IProvide
     private createButtonPanel(): void {
         const { buttons } = this.providedFilterParams;
 
+        const eButtonsPanelClass = 'ag-filter-apply-panel';
+        const existingButtonsPanel = this.getGui().querySelector(`:scope > .${eButtonsPanelClass}`);
+        if (existingButtonsPanel) {
+            existingButtonsPanel.remove();
+        }
+
         if (!buttons || buttons.length < 1 || this.isReadOnly()) {
             return;
         }
 
         const eButtonsPanel = document.createElement('div');
 
-        eButtonsPanel.classList.add('ag-filter-apply-panel');
+        eButtonsPanel.classList.add(eButtonsPanelClass);
 
         const addButton = (type: FilterButtonType): void => {
             let text;
@@ -248,8 +254,8 @@ export abstract class ProvidedFilter<M, V> extends Component implements IProvide
                 </button>`
             );
 
+            button.addEventListener('click', clickListener);
             eButtonsPanel.appendChild(button);
-            this.addManagedListener(button, 'click', clickListener);
         };
 
         convertToSet(buttons).forEach(type => addButton(type));
