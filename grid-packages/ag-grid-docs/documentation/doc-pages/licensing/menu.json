@@ -16,6 +16,11 @@
             "icon": "framework"
           },
           {
+            "title": "Deeper Dive",
+            "url": "/deeper-dive/",
+            "icon": "framework"
+          },
+          {
             "title": "Video Tutorials",
             "url": "/videos/"
           }
@@ -121,6 +126,13 @@
           {
             "title": "Security",
             "url": "/security/"
+          },
+          {
+            "title": "Best Practices",
+            "url": "/react-hooks/",
+            "frameworks": [
+              "react"
+            ]
           }
         ]
       }
