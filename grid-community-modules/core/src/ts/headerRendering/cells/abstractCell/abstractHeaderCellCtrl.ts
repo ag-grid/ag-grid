@@ -10,13 +10,18 @@ import { UserComponentFactory } from '../../../components/framework/userComponen
 import { ColumnPinnedType } from "../../../entities/column";
 import { CtrlsService } from "../../../ctrlsService";
 import { HorizontalDirection } from "../../../constants/direction";
+import { DragAndDropService, DragSource } from "../../../dragAndDrop/dragAndDropService";
 
 let instanceIdSequence = 0;
 
 export interface IAbstractHeaderCellComp {
 }
 
-export abstract class AbstractHeaderCellCtrl extends BeanStub {
+export interface IHeaderResizeFeature {
+    toggleColumnResizing(resizing: boolean): void;
+}
+
+export abstract class AbstractHeaderCellCtrl<TComp = any, TColumn = any, TFeature extends IHeaderResizeFeature = any> extends BeanStub {
 
     public static DOM_DATA_KEY_HEADER_CTRL = 'headerCtrl';
 
@@ -24,16 +29,24 @@ export abstract class AbstractHeaderCellCtrl extends BeanStub {
     @Autowired('beans') protected readonly beans: Beans;
     @Autowired('userComponentFactory') protected readonly userComponentFactory: UserComponentFactory;
     @Autowired('ctrlsService') protected readonly ctrlsService: CtrlsService;
+    @Autowired('dragAndDropService') protected readonly dragAndDropService: DragAndDropService;
 
     private instanceId: string;
-
     private columnGroupChild: IHeaderColumn;
-
     private parentRowCtrl: HeaderRowCtrl;
+    
+    private isResizing: boolean;
+    private resizeToggleTimeout = 0;
+    protected resizeMultiplier = 1;
 
     protected eGui: HTMLElement;
+    protected resizeFeature: TFeature | null = null;
+    protected comp: TComp;
+    protected column: TColumn;
 
     public lastFocusEvent: KeyboardEvent | null = null;
+
+    protected dragSource: DragSource | null = null;
 
     protected abstract resizeHeader(direction: HorizontalDirection, shiftKey: boolean): void;
     protected abstract moveHeader(direction: HorizontalDirection): void;
@@ -66,13 +79,16 @@ export abstract class AbstractHeaderCellCtrl extends BeanStub {
         return activeEl === this.eGui;
     }
 
-    protected setGui(eGui: HTMLElement, skipKeyDownListener?: boolean): void {
+    protected setGui(eGui: HTMLElement): void {
         this.eGui = eGui;
         this.addDomData();
+    }
 
-        if (!skipKeyDownListener) {
-            this.addManagedListener(eGui, 'keydown', this.onGuiKeyDown.bind(this));
-        }
+    protected addResizeAndMoveKeyboardListeners(): void {
+        if (!this.resizeFeature) { return; }
+
+        this.addManagedListener(this.eGui, 'keydown', this.onGuiKeyDown.bind(this));
+        this.addManagedListener(this.eGui, 'keyup', this.onGuiKeyUp.bind(this));
     }
 
     private onGuiKeyDown(e: KeyboardEvent): void {
@@ -93,10 +109,28 @@ export abstract class AbstractHeaderCellCtrl extends BeanStub {
         
         const direction = HorizontalDirection[e.key === KeyCode.LEFT ? 'Left' : 'Right' ];
         if (e.altKey) {
+            this.isResizing = true;
+            this.resizeMultiplier += 1;
             this.resizeHeader(direction, e.shiftKey);
+            this.resizeFeature?.toggleColumnResizing(true);
         } else {
             this.moveHeader(direction);
         }
+    }
+
+    private onGuiKeyUp(): void {
+        if (!this.isResizing) { return; }
+        if (this.resizeToggleTimeout) {
+            window.clearTimeout(this.resizeToggleTimeout);
+            this.resizeToggleTimeout = 0;
+        }
+
+        this.isResizing = false;
+        this.resizeMultiplier = 1;
+
+        this.resizeToggleTimeout = setTimeout(() => {
+            this.resizeFeature?.toggleColumnResizing(false);
+        }, 150);
     }
 
     protected handleKeyDown(e: KeyboardEvent): void {
@@ -149,5 +183,25 @@ export abstract class AbstractHeaderCellCtrl extends BeanStub {
 
     public getColumnGroupChild(): IHeaderColumn {
         return this.columnGroupChild;
+    }
+
+    protected removeDragSource(): void {
+        if (this.dragSource) {
+            this.dragAndDropService.removeDragSource(this.dragSource);
+            this.dragSource = null;
+        }
+    }
+
+    protected destroy(): void {
+        super.destroy();
+
+        this.removeDragSource();
+        (this.comp as any) = null;
+        (this.column as any) = null;
+        (this.resizeFeature as any) = null;
+        (this.lastFocusEvent as any) = null;
+        (this.columnGroupChild as any) = null;
+        (this.parentRowCtrl as any) = null;
+        (this.eGui as any) = null;
     }
 }

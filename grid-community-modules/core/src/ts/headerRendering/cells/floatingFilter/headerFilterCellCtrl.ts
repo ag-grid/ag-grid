@@ -27,15 +27,11 @@ export interface IHeaderFilterCellComp extends IAbstractHeaderCellComp {
     setMenuIcon(icon: HTMLElement): void;
 }
 
-export class HeaderFilterCellCtrl extends AbstractHeaderCellCtrl {
+export class HeaderFilterCellCtrl extends AbstractHeaderCellCtrl<IHeaderFilterCellComp, Column> {
 
     @Autowired('filterManager') private readonly filterManager: FilterManager;
     @Autowired('columnHoverService') private readonly columnHoverService: ColumnHoverService;
     @Autowired('menuFactory') private readonly menuFactory: IMenuFactory;
-
-    private comp: IHeaderFilterCellComp;
-
-    private column: Column;
 
     private eButtonShowMainFilter: HTMLElement;
     private eFloatingFilterBody: HTMLElement;
@@ -54,7 +50,7 @@ export class HeaderFilterCellCtrl extends AbstractHeaderCellCtrl {
     }
 
     public setComp(comp: IHeaderFilterCellComp, eGui: HTMLElement, eButtonShowMainFilter: HTMLElement, eFloatingFilterBody: HTMLElement): void {
-        this.setGui(eGui, true);
+        this.setGui(eGui);
         this.comp = comp;
         this.eButtonShowMainFilter = eButtonShowMainFilter;
         this.eFloatingFilterBody = eFloatingFilterBody;
@@ -366,5 +362,15 @@ export class HeaderFilterCellCtrl extends AbstractHeaderCellCtrl {
                 floatingFilter.onParamsUpdated(params)
             }
         })
+    }
+
+    protected destroy(): void {
+        super.destroy();
+
+        (this.eButtonShowMainFilter as any) = null;
+        (this.eFloatingFilterBody as any) = null;
+        (this.userCompDetails as any) = null;
+        (this.destroySyncListener as any) = null;
+        (this.destroyFilterChangedListener as any) = null;
     }
 }

@@ -1,7 +1,7 @@
 import { ColumnModel } from "../../../columns/columnModel";
 import { UserCompDetails } from "../../../components/framework/userComponentFactory";
 import { KeyCode } from '../../../constants/keyCode';
-import { Autowired, PreDestroy } from "../../../context/context";
+import { Autowired } from "../../../context/context";
 import { DragAndDropService, DragItem, DragSource, DragSourceType } from "../../../dragAndDrop/dragAndDropService";
 import { Column } from "../../../entities/column";
 import { Events } from "../../../eventKeys";
@@ -37,25 +37,17 @@ export interface IHeaderCellComp extends IAbstractHeaderCellComp {
     getUserCompInstance(): IHeader | undefined;
 }
 
-export class HeaderCellCtrl extends AbstractHeaderCellCtrl {
+export class HeaderCellCtrl extends AbstractHeaderCellCtrl<IHeaderCellComp, Column, ResizeFeature> {
 
     @Autowired('columnModel') private readonly columnModel: ColumnModel;
     @Autowired('columnHoverService') private readonly columnHoverService: ColumnHoverService;
     @Autowired('sortController') private readonly sortController: SortController;
     @Autowired('menuFactory') private readonly menuFactory: IMenuFactory;
-    @Autowired('dragAndDropService') private readonly dragAndDropService: DragAndDropService;
     @Autowired('resizeObserverService') private readonly resizeObserverService: ResizeObserverService;
     @Autowired('gridApi') private readonly gridApi: GridApi;
 
-    private comp: IHeaderCellComp;
-
-    private column: Column;
-
     private refreshFunctions: (() => void)[] = [];
-
     private selectAllFeature: SelectAllFeature;
-
-    private moveDragSource: DragSource | undefined;
 
     private sortable: boolean | null | undefined;
     private displayName: string | null;
@@ -94,7 +86,7 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl {
         this.setupUserComp();
         this.refreshAria();
 
-        this.createManagedBean(new ResizeFeature(this.getPinned(), this.column, eResize, comp, this));
+        this.resizeFeature = this.createManagedBean(new ResizeFeature(this.getPinned(), this.column, eResize, comp, this));
         this.createManagedBean(new HoverFeature([this.column], eGui));
         this.createManagedBean(new SetLeftFeature(this.column, eGui, this.beans));
         this.createManagedBean(new ManagedFocusFeature(
@@ -109,6 +101,8 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl {
         ));
 
         this.addMouseDownListenerIfNeeded();
+        this.addResizeAndMoveKeyboardListeners();
+
         this.addManagedPropertyListeners(['suppressMovableColumns', 'suppressMenuHide'], this.refresh.bind(this));
         this.addManagedListener(this.column, Column.EVENT_COL_DEF_CHANGED, this.refresh.bind(this));
         this.addManagedListener(this.eventService, Events.EVENT_COLUMN_VALUE_CHANGED, this.onColumnValueChanged.bind(this));
@@ -142,7 +136,7 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl {
         if (!this.column.isResizable()) { return; }
         const minWidth = this.column.getMinWidth();
         const maxWidth = this.column.getMaxWidth();
-        const diff = direction === HorizontalDirection.Left ? -1 : 1;
+        const diff = (direction === HorizontalDirection.Left ? -1 : 1) * this.resizeMultiplier;
         const newWidth = Math.min(Math.max(this.column.getActualWidth() + diff, minWidth ?? 0), maxWidth || Number.MAX_SAFE_INTEGER);
         this.columnModel.setColumnWidths([{ key: this.column, newWidth }], shiftKey, true);
     }
@@ -323,7 +317,7 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl {
         if (!this.draggable) { return; }
 
         let hideColumnOnExit = !this.gridOptionsService.is('suppressDragLeaveHidesColumns');
-        this.moveDragSource = {
+        this.dragSource = {
             type: DragSourceType.HeaderCell,
             eElement: eSource,
             getDefaultIconName: () => hideColumnOnExit ? DragAndDropService.ICON_HIDE : DragAndDropService.ICON_NOT_ALLOWED,
@@ -348,7 +342,7 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl {
             },
         };
 
-        this.dragAndDropService.addDragSource(this.moveDragSource, true);
+        this.dragAndDropService.addDragSource(this.dragSource, true);
     }
 
     private createDragItem(): DragItem {
@@ -359,14 +353,6 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl {
             columns: [this.column],
             visibleState: visibleState
         };
-    }
-
-    @PreDestroy
-    public removeDragSource(): void {
-        if (this.moveDragSource) {
-            this.dragAndDropService.removeDragSource(this.moveDragSource);
-            this.moveDragSource = undefined;
-        }
     }
 
     private updateState(): void {
@@ -707,5 +693,16 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl {
 
     private setActiveHeader(active: boolean): void {
         this.comp.addOrRemoveCssClass('ag-header-active', active);
+    }
+
+    protected destroy(): void {
+        super.destroy();
+
+        (this.refreshFunctions as any) = null;
+        (this.selectAllFeature as any) = null;
+        (this.dragSourceElement as any) = null;
+        (this.userCompDetails as any) = null;
+        (this.userHeaderClasses as any) = null;
+        (this.ariaDescriptionProperties as any) = null;
     }
 }
