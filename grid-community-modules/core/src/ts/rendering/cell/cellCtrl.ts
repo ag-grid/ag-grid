@@ -375,7 +375,7 @@ export class CellCtrl extends BeanStub {
         return res;
     }
 
-    public refreshShouldDestroy(): boolean {
+    private refreshShouldDestroy(): boolean {
         const colDef = this.column.getColDef();
         const selectionChanged = this.includeSelection != this.isIncludeControl(colDef.checkboxSelection);
         const rowDragChanged = this.includeRowDrag != this.isIncludeControl(colDef.rowDrag);
@@ -597,6 +597,14 @@ export class CellCtrl extends BeanStub {
 
         if (eventImpactsThisCell) {
             this.refreshCell({});
+        }
+    }
+
+    public refreshOrDestroyCell(params?: { suppressFlash?: boolean, newData?: boolean, forceRefresh?: boolean; }): void {
+        if (this.refreshShouldDestroy()) {
+            this.rowCtrl?.refreshCell(this);
+        } else {
+            this.refreshCell(params);
         }
     }
 
@@ -1024,7 +1032,9 @@ export class CellCtrl extends BeanStub {
 
         const isTooltipEnabled = this.column.isTooltipEnabled();
         if (isTooltipEnabled) {
+            this.disableTooltipFeature();
             this.enableTooltipFeature();
+            this.tooltipFeature?.setComp(this.eGui);
         } else {
             this.disableTooltipFeature();
         }
@@ -1032,7 +1042,7 @@ export class CellCtrl extends BeanStub {
         this.setWrapText();
 
         if (!this.editing) {
-            this.refreshCell({forceRefresh: true, suppressFlash: true});
+            this.refreshOrDestroyCell({ forceRefresh: true, suppressFlash: true });
         }
     }
 
