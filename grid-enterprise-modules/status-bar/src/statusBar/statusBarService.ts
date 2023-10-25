@@ -14,6 +14,14 @@ export class StatusBarService extends BeanStub implements IStatusBarService {
         this.allComponents[key] = component;
     }
 
+    public unregisterStatusPanel(key: string): void {
+        delete this.allComponents[key];
+    }
+
+    public unregisterAllComponents(): void {
+        this.allComponents = {};
+    }
+
     public getStatusPanel(key: string): IStatusPanelComp {
         return this.allComponents[key];
     }
