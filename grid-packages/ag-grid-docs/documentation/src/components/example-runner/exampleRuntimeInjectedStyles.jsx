@@ -63,8 +63,18 @@ html[data-color-scheme='dark'] select:not(#myGrid select) {
     border-radius: 4px;
     height: 36px;
     min-width: 36px;
+}
+
+html[data-color-scheme='dark'] input:not(#myGrid input) {
+    appearance: none;
+    background-color: #202A34;
+    border: 1px solid rgb(255,255,255,0.1);
+    border-radius: 4px;
+    height: 36px;
+    min-width: 36px;
 
 }
+
 
 html[data-color-scheme='dark'] body:not(#myGrid body) {
   color: #fff;
