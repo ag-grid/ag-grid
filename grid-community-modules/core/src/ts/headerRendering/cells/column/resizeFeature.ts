@@ -5,9 +5,11 @@ import { Column, ColumnPinnedType } from "../../../entities/column";
 import { setDisplayed } from "../../../utils/dom";
 import { TouchListener } from "../../../widgets/touchListener";
 import { HorizontalResizeService } from "../../common/horizontalResizeService";
+import { IHeaderResizeFeature } from "../abstractCell/abstractHeaderCellCtrl";
 import { HeaderCellCtrl, IHeaderCellComp } from "./headerCellCtrl";
 
-export class ResizeFeature extends BeanStub {
+
+export class ResizeFeature extends BeanStub implements IHeaderResizeFeature {
 
     @Autowired('horizontalResizeService') private horizontalResizeService: HorizontalResizeService;
     @Autowired('columnModel') private columnModel: ColumnModel;
@@ -106,7 +108,7 @@ export class ResizeFeature extends BeanStub {
         this.columnModel.setColumnWidths(columnWidths, this.resizeWithShiftKey, finished, "uiColumnResized");
 
         if (finished) {
-            this.comp.addOrRemoveCssClass('ag-column-resizing', false);
+            this.toggleColumnResizing(false);
         }
     }
 
@@ -114,7 +116,11 @@ export class ResizeFeature extends BeanStub {
         this.resizeStartWidth = this.column.getActualWidth();
         this.resizeWithShiftKey = shiftKey;
 
-        this.comp.addOrRemoveCssClass('ag-column-resizing', true);
+        this.toggleColumnResizing(true);
+    }
+
+    public toggleColumnResizing(resizing: boolean): void {
+        this.comp.addOrRemoveCssClass('ag-column-resizing', resizing);
     }
 
     // optionally inverts the drag, depending on pinned and RTL
