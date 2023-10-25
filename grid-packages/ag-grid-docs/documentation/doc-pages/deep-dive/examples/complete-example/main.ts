@@ -3,39 +3,36 @@ import { createGrid, GridApi, GridOptions } from '@ag-grid-community/core';
 let gridApi: GridApi;
 
 const gridOptions: GridOptions = {
-
+    // Data to be displayed
     rowData: [
         { make: 'Toyota', model: 'Celica', price: 35000 },
         { make: 'Ford', model: 'Mondeo', price: 32000 },
         { make: 'Porsche', model: 'Boxter', price: 72000 }
     ],
-
+    // Columns to be displayed (Should match rowData properties)
     columnDefs: [
-        { field: 'make' },
+        { field: 'make', resizable: false },
         { field: 'model' },
-        { field: 'price', resizable: false }
+        { field: 'price' }
     ],
-
+    // Configurations applied to all columns
     defaultColDef: {
-        filter: true, // TBC, remove if default to true change is implemented
-        sortable: true, // TBC, remove if default to true change is implemented
+        filter: true,
+        sortable: true,
         resizable: true
     },
-
+    // Grid Options & Callbacks
     pagination: true,
     rowSelection: 'single',
     onSelectionChanged: (event) => { 
-        let selectedRow = JSON.stringify(event.api.getSelectedRows())
-        alert(selectedRow) 
+        alert('Row Selected!') 
     }
-
 }
 
 document.addEventListener('DOMContentLoaded', function () {
-    const gridDiv = document.querySelector<HTMLElement>('#myGrid')!;
+    var gridDiv = document.querySelector<HTMLElement>('#myGrid')!;
     gridApi = createGrid(gridDiv, gridOptions);
     gridApi.sizeColumnsToFit();
-
     fetch('https://www.ag-grid.com/example-assets/row-data.json')
         .then(response => response.json())
         .then((data: any) => gridApi.setRowData(data))

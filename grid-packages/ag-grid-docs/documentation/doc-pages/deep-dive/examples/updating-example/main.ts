@@ -13,7 +13,7 @@ const gridOptions: GridOptions = {
     columnDefs: [
         { field: 'make' },
         { field: 'model' },
-        { field: 'price', resizable: false }
+        { field: 'price' }
     ],
 
 }

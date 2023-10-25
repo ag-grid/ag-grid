@@ -11,7 +11,7 @@ const gridOptions: GridOptions = {
     ],
 
     columnDefs: [
-        { field: 'make' },
+        { field: 'make', resizable: false },
         { field: 'model' },
         { field: 'price' }
     ],
@@ -20,7 +20,9 @@ const gridOptions: GridOptions = {
         filter: true, // TBC, remove if default to true change is implemented
         sortable: true, // TBC, remove if default to true change is implemented
         resizable: true
-    }
+    },
+
+    pagination: true
 
 }
 
