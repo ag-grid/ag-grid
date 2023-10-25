@@ -75,7 +75,7 @@ Example below shows the following:
 - When the **Year** column is not sorted, it shows a custom icon (up/down arrow).
 - The **Date** column has strings as the row data, but has a custom comparator so that when you sort this column it sorts as dates, not as strings.
 
-<grid-example title='Custom Sorting' name='custom-sorting' type='generated'></grid-example>
+<grid-example title='Custom Sorting' name='custom-sorting' type='generated' options='{ "enterprise": true, "exampleHeight": 300 }'></grid-example>
 
 ### Custom Sorting Groups Example
 

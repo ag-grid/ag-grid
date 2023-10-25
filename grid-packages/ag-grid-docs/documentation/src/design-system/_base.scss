@@ -29,6 +29,12 @@ html {
     #doc-content a {
         color: #3893F9;
     }
+    
+    #doc-content a:hover {
+        color: var(--link-hover-color);
+    }
+
+    
 
     nav::-webkit-scrollbar {
         background-color: var(--background-100);

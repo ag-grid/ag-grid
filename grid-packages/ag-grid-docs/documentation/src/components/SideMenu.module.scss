@@ -79,6 +79,13 @@
         color: var(--text-color);
         opacity: 1;
         cursor: default;
+        font-weight: $font-weight-bold;
+       
+
+        #{$darkmode-selector} & {
+            color: #3893F9;
+          
+        }
     }
 
     &:not(:global(.active)):hover {
@@ -96,17 +103,37 @@
         background-color: var(--secondary-text-color);
         opacity: 0;
         transition: background-color 0.33s ease-in-out, opacity 0.33s ease-in-out;
+
+        #{$darkmode-selector} & {
+            background-color: #3892f917;
+            width: 100%;
+            border-left: 2px solid #3893F9;
+            border-radius: 4px;
+        }
+
     }
 
     &:not(:global(.active)):hover::before {
         background-color: var(--link-color);
         opacity: 0.5;
+
+
+        #{$darkmode-selector} & {
+            background-color: var(--link-color);
+            opacity: 0.1;
+        }
+
     }
 
     &:global(.active)::before {
         opacity: 1;
     }
 }
+
+
+
+
+
 
 .sideNav .level1 {
     font-size: var(--font-size-large);
