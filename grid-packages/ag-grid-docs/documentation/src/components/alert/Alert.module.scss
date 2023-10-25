@@ -1,15 +1,16 @@
 @use '../../design-system/' as *;
 
+
 .alert {
     --alert-background-color: var(--background-500);
-    --icon-size: 3em;
+    --icon-size: 1.5rem;
 
-    display: flex;
+    
     gap: $size-2;
     align-items: center;
     padding: $size-2;
     background-color: var(--alert-background-color);
-    border-radius: var(--border-radius);
+    border-radius: 8px;
     color: var(--text-color);
 
     :global(.icon) {
@@ -24,10 +25,29 @@
 
     kbd {
         margin: 0;
-    }
+       
 
+    }
+    #{$darkmode-selector} & { 
+   
+    code {
+        -webkit-font-smoothing: subpixel-antialiased;
+        border: 1px solid rgba(131, 72, 50, 0.3411764706);
+        background-color: transparent;
+        color: #ffffff;
+        background-color: #202f3d;
+        padding: 1px 4px;
+        font-size: 14px;
+    }
+    
+
+}
     #{$darkmode-selector} & {
-        --alert-background-color: var(--background-600);
+        :global(.icon) {
+            opacity: 0.6;
+        }
+        --alert-background-color: #121f29;
+        border: 1px solid rgb(255,255,255,0.15);
 
         a {
             -webkit-font-smoothing: subpixel-antialiased;
@@ -35,8 +55,11 @@
     }
 }
 
+
+
 .alert.info {
     --text-color: var(--dark-blue-300);
+    display: flex;
 
     #{$darkmode-selector} & {
         --text-color: var(--default-text-color);
@@ -58,17 +81,29 @@
 .alert.warning {
     --alert-background-color: var(--warning-background);
     --text-color: var(--warning-text);
+    border: 1px solid rgba(209, 142, 0, 0.3);
 
+    display: flex;
     :global(.icon) {
-        --text-color: var(--orange-700);
+        --text-color: : #F4C000;
     }
 
     #{$darkmode-selector} & {
-        --alert-background-color: var(--orange-200);
+        --alert-background-color: #262119;
         --text-color: var(--default-text-color);
 
-        :global(.icon) {
-            --text-color: var(--default-text-color);
+        p {
+            color: rgb(255, 249, 235);
+            font-size: 16px;
+        }
+
+       svg {
+            fill : #F4C000;
+            opacity: 1;
         }
     }
+}
+
+.alert p {
+    font-size: 16px !important;
 }

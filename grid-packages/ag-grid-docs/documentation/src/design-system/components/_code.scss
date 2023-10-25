@@ -85,7 +85,7 @@ pre.code > code {
     background-origin: content-box;
     background-attachment: local;
     border: none;
-    border-radius: 0;
+    border-radius: 8px;
     box-shadow:
         inset 0 $vertical-padding 0 0 var(--default-background-color),
         inset 0 $vertical-padding * -1 0 0 var(--default-background-color);
@@ -94,6 +94,7 @@ pre.code > code {
     #{$darkmode-selector} & {
         background: #121f29;
         box-shadow: inset 0px 0px;
+        border: 1px solid rgb(255,255,255,0.1)
     }
 }
 

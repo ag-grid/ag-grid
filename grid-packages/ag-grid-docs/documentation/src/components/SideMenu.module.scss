@@ -56,6 +56,7 @@
 
     #{$darkmode-selector} & {
         box-shadow: inset 1px 0 0 0 #394755;
+        -webkit-font-smoothing: auto;
     }
 
 }
@@ -79,7 +80,6 @@
         color: var(--text-color);
         opacity: 1;
         cursor: default;
-        font-weight: $font-weight-bold;
        
 
         #{$darkmode-selector} & {
@@ -108,7 +108,7 @@
             background-color: #3892f917;
             width: 100%;
             border-left: 2px solid #3893F9;
-            border-radius: 4px;
+           
         }
 
     }
@@ -141,17 +141,17 @@
 }
 
 .sideNav .level2 {
-    margin-bottom: var(--item-gap) !important;
+    margin-bottom: var(--item-gap ) !important;
 }
 
 .sideNav .level3 {
-    margin-bottom: calc(var(--item-gap) / 2) !important;
+    margin-bottom: calc(var(--item-gap) / 1.75) !important;
     padding-left: $size-4;
 }
 
 .sideNav .level1 + .level3,
 .sideNav .level2 + .level3 {
-    margin-top: calc(var(--item-gap) * -0.6);
+    margin-top: calc(var(--item-gap) * -0.4);
 }
 
 .sideNav .level3 + .level2 {

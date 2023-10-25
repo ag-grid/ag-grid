@@ -103,6 +103,13 @@ button:not([class^="ag-"]).sectionHeader {
 
     &.active {
         transition: color $default-transition-timing;
+        
+        #{$darkmode-selector} & {
+            svg {
+                fill: #007BFF;
+            }
+        }
+
     }
 
     li:first-child & {
@@ -125,6 +132,11 @@ button:not([class^="ag-"]).sectionHeader {
         }
     }
 }
+// .menuGroup a {
+//   margin-left: 24px;
+// }
+
+
 
 .menuGroup {
     --first-indent-size: 6px;
@@ -147,11 +159,11 @@ button:not([class^="ag-"]).sectionHeader {
     ul ul ul .groupLabel {
         margin-left: calc(var(--first-indent-size) + var(--indent-size) * 3);
     }
-
+    
+   
     .enterpriseIcon {
         --icon-size: 1.15em;
         --text-color: red !important;
-
         position: relative;
         margin-left: 2px;
         color: transparent;
@@ -172,21 +184,25 @@ button:not([class^="ag-"]).sectionHeader {
     padding-left: $size-2;
     margin-left: var(--first-indent-size);
     outline: none;
-    border-radius: var(--border-radius);
-    border: 2px solid transparent;
+    
     color: var(--secondary-text-color);
     font-weight: var(--font-weight-bold);
     transition: color $default-transition-timing, border-color $default-transition-timing;
 
+    #{$darkmode-selector} & {
+        border-radius: 0px;
+        border: 0px solid transparent;
+    }
+
     &::before {
-        content: '';
-        position: absolute;
-        width: 6px;
-        height: 6px;
-        transform: translate(-9px, 7px);
-        border-radius: 50%;
-        background-color: transparent;
-        transition: background-color $default-transition-timing;
+        // content: '';
+        // position: absolute;
+        // width: 6px;
+        // height: 6px;
+        // transform: translate(-9px, 7px);
+        // border-radius: 50%;
+        // background-color: transparent;
+        // transition: background-color $default-transition-timing;
     }
 
     &:focus-visible {
@@ -216,6 +232,32 @@ button:not([class^="ag-"]).sectionHeader {
         &::before {
             background-color: var(--text-color);
         }
+
+        #{$darkmode-selector} & {
+            background: rgb(0 123 255 / 4%);
+            height: 32px;
+            display: flex;
+            align-content: center;
+            justify-content: left;
+            align-items: center;
+            border-radius: 0;
+            border-left: 1px solid #007BFF;
+            color: #007BFF;
+        }
+        
+
+
+    }
+}
+
+.menuGroup li a {
+    #{$darkmode-selector} & {
+        height: 32px;
+        display: flex;
+        align-content: center;
+        justify-content: left;
+        align-items: center;
+        border-left: 1px solid #39475592;
     }
 }
 

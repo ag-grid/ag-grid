@@ -38,6 +38,7 @@ code {
         color: #e3794d;
         background-color: #34201d;
         padding: 1px 4px;
+        font-size: 14px;
     }
 }
 
@@ -50,7 +51,7 @@ kbd {
     border-radius: var(--border-radius);
     background-color: var(--default-background-color);
     border: 1px solid var(--border-color);
-    box-shadow: 0 1px 0 var(--neutral-200);
+    box-shadow: inset 0 -2px 0 #4e4e4f;
 
     #{$darkmode-selector} & {
         background-color: #121f29;
