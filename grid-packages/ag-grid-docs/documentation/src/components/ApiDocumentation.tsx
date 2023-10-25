@@ -632,7 +632,7 @@ const Property: React.FC<PropertyCall> = ({ framework, id, name, definition, con
                 <div className={styles.actions}>
                     {showAdditionalDetails && (
                         <button
-                            className={classnames(styles.seeMore, 'button-style-none')}
+                            className={classnames(styles.seeMore, 'button-as-link')}
                             onClick={() => {
                                 setExpanded(!isExpanded);
                                 trackApiDocumentation({

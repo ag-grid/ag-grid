@@ -21,7 +21,7 @@
         margin-right: var(--right-margin);
         padding-right: var(--menu-horizontal-margin);
         padding-left: var(--horizontal-margin);
-        border-right: solid 1px var(--secondary-border-color);
+        border-right: solid 0.5px #394755;
 
         @supports (position: sticky) {
             position: sticky;
@@ -104,11 +104,6 @@ button:not([class^="ag-"]).sectionHeader {
     &.active {
         transition: color $default-transition-timing;
         
-        #{$darkmode-selector} & {
-            svg {
-                fill: #007BFF;
-            }
-        }
 
     }
 
@@ -138,26 +133,27 @@ button:not([class^="ag-"]).sectionHeader {
 
 
 
+
 .menuGroup {
-    --first-indent-size: 6px;
-    --indent-size: 12px;
+    --first-indent-size: 12px;
+    --indent-size: 20px;
 
     line-height: var(--line-height-tight);
     font-size: var(--font-size-small);
 
     ul a,
     ul .groupLabel {
-        margin-left: calc(var(--first-indent-size) + var(--indent-size));
+        padding-left: calc(var(--first-indent-size) + var(--indent-size));
     }
 
     ul ul a,
     ul ul .groupLabel {
-        margin-left: calc(var(--first-indent-size) + var(--indent-size) * 2);
+        padding-left: calc(var(--first-indent-size) + var(--indent-size) * 2);
     }
 
     ul ul ul a,
     ul ul ul .groupLabel {
-        margin-left: calc(var(--first-indent-size) + var(--indent-size) * 3);
+        padding-left: calc(var(--first-indent-size) + var(--indent-size) * 3);
     }
     
    
@@ -242,11 +238,8 @@ button:not([class^="ag-"]).sectionHeader {
             align-items: center;
             border-radius: 0;
             border-left: 1px solid #007BFF;
-            color: #007BFF;
+            color: #3893F9;
         }
-        
-
-
     }
 }
 

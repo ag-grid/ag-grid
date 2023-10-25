@@ -6,6 +6,11 @@
     align-items: center;
     position: relative;
     background-color: var(--site-header-background);
+
+    #{$darkmode-selector} & {
+background: #121f29;
+    }
+
 }
 
 .headerInner {
@@ -185,7 +190,7 @@
     }
 
     #{$darkmode-selector} & {
-        border-bottom: 1px solid var(--background-100) !important
+        border-bottom: 1px solid #121f29 !important
     }
 }
 
