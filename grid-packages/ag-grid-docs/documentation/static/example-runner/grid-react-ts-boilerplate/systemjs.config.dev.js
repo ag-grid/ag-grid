@@ -83,6 +83,10 @@
                 main: './dist/main.cjs.js',
                 defaultExtension: 'js'
             },
+            'ag-charts-enterprise': {
+                main: './dist/main.cjs.js',
+                defaultExtension: 'js'
+            },
             // these are a little different in that they're in a directory and sjs doesn't default to the index.js inside...
             '@ag-grid-community/core/dist/cjs/es5/utils': {
                 main: './index.js',

@@ -14,6 +14,7 @@ import { loadTemplate, clearElement, getElementRectWithOffset } from "../utils/d
 import { isFunction } from "../utils/function";
 import { IRowNode } from "../interfaces/iRowNode";
 import { IAggFunc } from "../entities/colDef";
+import { HorizontalDirection, VerticalDirection } from "../constants/direction";
 
 export interface DragItem {
     /**
@@ -123,9 +124,6 @@ export interface DropTarget {
     onDragStop?(params: DraggingEvent): void;
     external?: boolean;
 }
-
-export enum VerticalDirection { Up, Down }
-export enum HorizontalDirection { Left, Right }
 
 export interface DraggingEvent {
     event: MouseEvent;

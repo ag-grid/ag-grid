@@ -157,7 +157,12 @@ export class DataTypeService extends BeanStub {
         }
 
         if (dataTypeDefinition.extendsDataType === dataTypeDefinition.baseDataType) {
-            const baseDataTypeDefinition = defaultDataTypes[extendsCellDataType];
+            let baseDataTypeDefinition = defaultDataTypes[extendsCellDataType];
+            const overriddenBaseDataTypeDefinition = dataTypeDefinitions[extendsCellDataType];
+            if (baseDataTypeDefinition && overriddenBaseDataTypeDefinition) {
+                // only if it's valid do we override with a provided one
+                baseDataTypeDefinition = overriddenBaseDataTypeDefinition;
+            }
             if (!this.validateDataTypeDefinition(dataTypeDefinition, baseDataTypeDefinition, extendsCellDataType)) {
                 return undefined;
             }

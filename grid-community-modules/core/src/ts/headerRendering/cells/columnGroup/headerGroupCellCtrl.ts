@@ -1,7 +1,7 @@
 import { ColumnModel } from "../../../columns/columnModel";
 import { UserCompDetails } from "../../../components/framework/userComponentFactory";
 import { KeyCode } from '../../../constants/keyCode';
-import { Autowired, PreDestroy } from "../../../context/context";
+import { Autowired } from "../../../context/context";
 import {
     DragAndDropService,
     DragItem,
@@ -13,7 +13,7 @@ import { ColumnEventType, Events } from "../../../events";
 import { ColumnGroup } from "../../../entities/columnGroup";
 import { ProvidedColumnGroup } from "../../../entities/providedColumnGroup";
 import { SetLeftFeature } from "../../../rendering/features/setLeftFeature";
-import { removeFromArray } from "../../../utils/array";
+import { last, removeFromArray } from "../../../utils/array";
 import { ManagedFocusFeature } from "../../../widgets/managedFocusFeature";
 import { ITooltipFeatureCtrl, TooltipFeature } from "../../../widgets/tooltipFeature";
 import { HeaderRowCtrl } from "../../row/headerRowCtrl";
@@ -23,6 +23,8 @@ import { HoverFeature } from "../hoverFeature";
 import { GroupResizeFeature } from "./groupResizeFeature";
 import { GroupWidthFeature } from "./groupWidthFeature";
 import { IHeaderGroupComp, IHeaderGroupParams } from "./headerGroupComp";
+import { HorizontalDirection } from "../../../constants/direction";
+import { ColumnMoveHelper } from "../../columnMoveHelper";
 
 export interface IHeaderGroupCellComp extends IAbstractHeaderCellComp {
     addOrRemoveCssClass(cssClassName: string, on: boolean): void;
@@ -33,29 +35,23 @@ export interface IHeaderGroupCellComp extends IAbstractHeaderCellComp {
     getUserCompInstance(): IHeaderGroupComp | undefined;
 }
 
-export class HeaderGroupCellCtrl extends AbstractHeaderCellCtrl {
+export class HeaderGroupCellCtrl extends AbstractHeaderCellCtrl<IHeaderGroupCellComp, ColumnGroup, GroupResizeFeature> {
 
     @Autowired('columnModel') private readonly columnModel: ColumnModel;
-    @Autowired('dragAndDropService') private readonly dragAndDropService: DragAndDropService;
-
-    private columnGroup: ColumnGroup;
-    private comp: IHeaderGroupCellComp;
 
     private expandable: boolean;
     private displayName: string | null;
-    private groupResizeFeature: GroupResizeFeature;
-    private dragSource: DragSource | null = null;
 
     constructor(columnGroup: ColumnGroup, parentRowCtrl: HeaderRowCtrl) {
         super(columnGroup, parentRowCtrl);
-        this.columnGroup = columnGroup;
+        this.column = columnGroup;
     }
 
     public setComp(comp: IHeaderGroupCellComp, eGui: HTMLElement, eResize: HTMLElement): void {
-        super.setGui(eGui);
+        this.setGui(eGui);
         this.comp = comp;
 
-        this.displayName = this.columnModel.getDisplayNameForColumnGroup(this.columnGroup, 'header');
+        this.displayName = this.columnModel.getDisplayNameForColumnGroup(this.column, 'header');
 
         this.addClasses();
         this.setupMovingCss();
@@ -64,12 +60,12 @@ export class HeaderGroupCellCtrl extends AbstractHeaderCellCtrl {
         this.setupUserComp();
 
         const pinned = this.getParentRowCtrl().getPinned();
-        const leafCols = this.columnGroup.getProvidedColumnGroup().getLeafColumns();
+        const leafCols = this.column.getProvidedColumnGroup().getLeafColumns();
 
         this.createManagedBean(new HoverFeature(leafCols, eGui));
-        this.createManagedBean(new SetLeftFeature(this.columnGroup, eGui, this.beans));
-        this.createManagedBean(new GroupWidthFeature(comp, this.columnGroup));
-        this.groupResizeFeature = this.createManagedBean(new GroupResizeFeature(comp, eResize, pinned, this.columnGroup));
+        this.createManagedBean(new SetLeftFeature(this.column, eGui, this.beans));
+        this.createManagedBean(new GroupWidthFeature(comp, this.column));
+        this.resizeFeature = this.createManagedBean(new GroupResizeFeature(comp, eResize, pinned, this.column));
 
         this.createManagedBean(new ManagedFocusFeature(
             eGui,
@@ -82,21 +78,55 @@ export class HeaderGroupCellCtrl extends AbstractHeaderCellCtrl {
         ));
 
         this.addManagedPropertyListener(Events.EVENT_SUPPRESS_COLUMN_MOVE_CHANGED, this.onSuppressColMoveChange);
+        this.addResizeAndMoveKeyboardListeners();
+    }
+
+    protected resizeHeader(direction: HorizontalDirection, shiftKey: boolean): void {
+        // check to avoid throwing when a component has not been setup yet (React 18)
+        if (!this.resizeFeature) { return; }
+
+        const diff = (direction === HorizontalDirection.Left ? -1 : 1) * this.resizeMultiplier;
+
+        const initialValues = this.resizeFeature.getInitialValues(shiftKey);
+        this.resizeFeature.resizeColumns(initialValues, initialValues.resizeStartWidth + diff, 'uiColumnResized', true);
+    }
+
+    protected moveHeader(direction: HorizontalDirection): void {
+        const displayedLeafColumns = this.column.getDisplayedLeafColumns();
+        const isLeft = direction === HorizontalDirection.Left
+        const targetColumn = isLeft ? displayedLeafColumns[0] : last(displayedLeafColumns);
+        const columnLeft = targetColumn.getLeft()!;
+        const columnWidth = targetColumn.getActualWidth();
+
+        const xPosition = isLeft ? columnLeft - 1 : columnLeft + columnWidth + 1;
+        ColumnMoveHelper.attemptMoveColumns({
+            allMovingColumns: this.column.getLeafColumns(),
+            isFromHeader: true,
+            hDirection: direction,
+            xPosition,
+            pinned: this.column.getPinned(),
+            fromEnter: false,
+            fakeEvent: false,
+            gridOptionsService: this.gridOptionsService,
+            columnModel: this.columnModel
+        });
+
+        this.ctrlsService.getGridBodyCtrl().getScrollFeature().ensureColumnVisible(targetColumn, 'auto');
     }
 
     public resizeLeafColumnsToFit(source: ColumnEventType): void {
         // check to avoid throwing when a component has not been setup yet (React 18)
-        if (!this.groupResizeFeature) { return; }
+        if (!this.resizeFeature) { return; }
 
-        this.groupResizeFeature.resizeLeafColumnsToFit(source);
+        this.resizeFeature.resizeLeafColumnsToFit(source);
     }
 
     private setupUserComp(): void {
         const params: IHeaderGroupParams = {
             displayName: this.displayName!,
-            columnGroup: this.columnGroup,
+            columnGroup: this.column,
             setExpanded: (expanded: boolean) => {
-                this.columnModel.setColumnGroupOpened(this.columnGroup.getProvidedColumnGroup(), expanded, "gridInitializing");
+                this.columnModel.setColumnGroupOpened(this.column.getProvidedColumnGroup(), expanded, "gridInitializing");
             },
             api: this.gridOptionsService.api,
             columnApi: this.gridOptionsService.columnApi,
@@ -109,10 +139,10 @@ export class HeaderGroupCellCtrl extends AbstractHeaderCellCtrl {
 
     private setupTooltip(): void {
 
-        const colGroupDef = this.columnGroup.getColGroupDef();
+        const colGroupDef = this.column.getColGroupDef();
 
         const tooltipCtrl: ITooltipFeatureCtrl = {
-            getColumn: () => this.columnGroup,
+            getColumn: () => this.column,
             getGui: () => this.eGui,
             getLocation: () => 'headerGroup',
             getTooltipValue: () => colGroupDef && colGroupDef.headerTooltip
@@ -128,7 +158,7 @@ export class HeaderGroupCellCtrl extends AbstractHeaderCellCtrl {
     }
 
     private setupExpandable(): void {
-        const providedColGroup = this.columnGroup.getProvidedColumnGroup();
+        const providedColGroup = this.column.getProvidedColumnGroup();
 
         this.refreshExpanded();
 
@@ -137,7 +167,7 @@ export class HeaderGroupCellCtrl extends AbstractHeaderCellCtrl {
     }
 
     private refreshExpanded(): void {
-        const column = this.columnGroup as ColumnGroup;
+        const column = this.column as ColumnGroup;
         this.expandable = column.isExpandable();
         const expanded = column.isExpanded();
 
@@ -149,18 +179,18 @@ export class HeaderGroupCellCtrl extends AbstractHeaderCellCtrl {
     }
 
     public getColId() {
-        return this.columnGroup.getUniqueId();
+        return this.column.getUniqueId();
     }
 
     private addClasses(): void {
-        const colGroupDef = this.columnGroup.getColGroupDef();
-        const classes = CssClassApplier.getHeaderClassesFromColDef(colGroupDef, this.gridOptionsService, null, this.columnGroup);
+        const colGroupDef = this.column.getColGroupDef();
+        const classes = CssClassApplier.getHeaderClassesFromColDef(colGroupDef, this.gridOptionsService, null, this.column);
 
         // having different classes below allows the style to not have a bottom border
         // on the group header, if no group is specified
-        if (this.columnGroup.isPadding()) {
+        if (this.column.isPadding()) {
             classes.push('ag-header-group-cell-no-group');
-            const leafCols = this.columnGroup.getLeafColumns();
+            const leafCols = this.column.getLeafColumns();
             if (leafCols.every(col => col.isSpanHeaderHeight())) {
                 classes.push('ag-header-span-height');
             }
@@ -172,27 +202,19 @@ export class HeaderGroupCellCtrl extends AbstractHeaderCellCtrl {
     }
 
     private setupMovingCss(): void {
-        const providedColumnGroup = this.columnGroup.getProvidedColumnGroup();
+        const providedColumnGroup = this.column.getProvidedColumnGroup();
         const leafColumns = providedColumnGroup.getLeafColumns();
 
         // this function adds or removes the moving css, based on if the col is moving.
         // this is what makes the header go dark when it is been moved (gives impression to
         // user that the column was picked up).
-        const listener = () => this.comp.addOrRemoveCssClass('ag-header-cell-moving', this.columnGroup.isMoving());
+        const listener = () => this.comp.addOrRemoveCssClass('ag-header-cell-moving', this.column.isMoving());
 
         leafColumns.forEach(col => {
             this.addManagedListener(col, Column.EVENT_MOVING_CHANGED, listener);
         });
 
         listener();
-    }
-
-    @PreDestroy
-    private removeDragSource() {
-        if (this.dragSource) {
-            this.dragAndDropService.removeDragSource(this.dragSource);
-            this.dragSource = null;
-        }
     }
 
     private onSuppressColMoveChange = () => {
@@ -209,7 +231,7 @@ export class HeaderGroupCellCtrl extends AbstractHeaderCellCtrl {
     private onFocusIn(e: FocusEvent) {
         if (!this.eGui.contains(e.relatedTarget as HTMLElement)) {
             const rowIndex = this.getRowIndex();
-            this.beans.focusService.setFocusedHeader(rowIndex, this.columnGroup);
+            this.beans.focusService.setFocusedHeader(rowIndex, this.column);
         }
     }
 
@@ -221,7 +243,7 @@ export class HeaderGroupCellCtrl extends AbstractHeaderCellCtrl {
         if (!this.expandable || !wrapperHasFocus) { return; }
 
         if (e.key === KeyCode.ENTER) {
-            const column = this.columnGroup;
+            const column = this.column;
             const newExpandedValue = !column.isExpanded();
 
             this.columnModel.setColumnGroupOpened(column.getProvidedColumnGroup(), newExpandedValue, "uiColumnExpanded");
@@ -240,7 +262,7 @@ export class HeaderGroupCellCtrl extends AbstractHeaderCellCtrl {
             return;
         }
 
-        const allLeafColumns = this.columnGroup.getProvidedColumnGroup().getLeafColumns();
+        const allLeafColumns = this.column.getProvidedColumnGroup().getLeafColumns();
         let hideColumnOnExit = !this.gridOptionsService.is('suppressDragLeaveHidesColumns');
         this.dragSource = {
             type: DragSourceType.HeaderCell,
@@ -274,7 +296,7 @@ export class HeaderGroupCellCtrl extends AbstractHeaderCellCtrl {
     // when moving the columns, we want to move all the columns (contained within the DragItem) in this group in one go,
     // and in the order they are currently in the screen.
     public getDragItemForGroup(): DragItem {
-        const allColumnsOriginalOrder = this.columnGroup.getProvidedColumnGroup().getLeafColumns();
+        const allColumnsOriginalOrder = this.column.getProvidedColumnGroup().getLeafColumns();
 
         // capture visible state, used when re-entering grid to dictate which columns should be visible
         const visibleState: { [key: string]: boolean; } = {};
@@ -301,7 +323,7 @@ export class HeaderGroupCellCtrl extends AbstractHeaderCellCtrl {
     private isSuppressMoving(): boolean {
         // if any child is fixed, then don't allow moving
         let childSuppressesMoving = false;
-        this.columnGroup.getLeafColumns().forEach((column: Column) => {
+        this.column.getLeafColumns().forEach((column: Column) => {
             if (column.getColDef().suppressMovable || column.getColDef().lockPosition) {
                 childSuppressesMoving = true;
             }
