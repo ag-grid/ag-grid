@@ -2,7 +2,7 @@ import { ColumnModel } from "../../../columns/columnModel";
 import { UserCompDetails } from "../../../components/framework/userComponentFactory";
 import { KeyCode } from '../../../constants/keyCode';
 import { Autowired } from "../../../context/context";
-import { DragAndDropService, DragItem, DragSource, DragSourceType } from "../../../dragAndDrop/dragAndDropService";
+import { DragAndDropService, DragItem, DragSourceType } from "../../../dragAndDrop/dragAndDropService";
 import { Column } from "../../../entities/column";
 import { Events } from "../../../eventKeys";
 import { GridApi } from "../../../gridApi";

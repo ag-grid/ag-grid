@@ -1,7 +1,7 @@
 import { ColumnModel } from "../../../columns/columnModel";
 import { UserCompDetails } from "../../../components/framework/userComponentFactory";
 import { KeyCode } from '../../../constants/keyCode';
-import { Autowired, PreDestroy } from "../../../context/context";
+import { Autowired } from "../../../context/context";
 import {
     DragAndDropService,
     DragItem,
