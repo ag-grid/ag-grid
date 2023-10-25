@@ -207,37 +207,43 @@ export class SetValueModel<V> implements IEventEmitter {
         this.localEventService.removeEventListener(eventType, listener, async);
     }
 
-    public updateOnParamsChange(filterParams: SetFilterParams<any, V>) {
-        const {
-            values,
-            textFormatter,
-            suppressSorting,
-        } = filterParams;
+    public updateOnParamsChange(filterParams: SetFilterParams<any, V>): AgPromise<void> {
+        return new AgPromise<void>(resolve => {
+            const {
+                values,
+                textFormatter,
+                suppressSorting,
+            } = filterParams;
 
-        const currentProvidedValues = this.providedValues;
-        const currentSuppressSorting = this.suppressSorting;
+            const currentProvidedValues = this.providedValues;
+            const currentSuppressSorting = this.suppressSorting;
 
-        this.filterParams = filterParams;
-        this.formatter = textFormatter || TextFilter.DEFAULT_FORMATTER;
-        this.suppressSorting = suppressSorting || false;
+            this.filterParams = filterParams;
+            this.formatter = textFormatter || TextFilter.DEFAULT_FORMATTER;
 
-        // Rebuild values when values or their sort order changes
-        if (values !== currentProvidedValues || suppressSorting !== currentSuppressSorting) {
-            if (!values || values.length === 0) {
-                this.valuesType = SetFilterModelValuesType.TAKEN_FROM_GRID_VALUES;
-                this.providedValues = null;
+            this.suppressSorting = suppressSorting || false;
+            this.providedValues = values ?? null;
+
+            // Rebuild values when values or their sort order changes
+            if (this.providedValues !== currentProvidedValues || this.suppressSorting !== currentSuppressSorting) {
+                if (!values || values.length === 0) {
+                    this.valuesType = SetFilterModelValuesType.TAKEN_FROM_GRID_VALUES;
+                    this.providedValues = null;
+                } else {
+                    const isArrayOfCallback = Array.isArray(values) && values.length > 0 && typeof values[0] === 'function';
+                    this.valuesType = isArrayOfCallback ?
+                        SetFilterModelValuesType.PROVIDED_CALLBACK :
+                        SetFilterModelValuesType.PROVIDED_LIST;
+                }
+
+                const currentModel = this.getModel();
+                this.updateAllValues().then((updatedKeys) => {
+                    this.setModel(currentModel).then(() => resolve());
+                });
             } else {
-                const isArrayOfCallback = Array.isArray(values) && values.length > 0 && typeof values[0] === 'function';
-                this.valuesType = isArrayOfCallback ?
-                    SetFilterModelValuesType.PROVIDED_CALLBACK :
-                    SetFilterModelValuesType.PROVIDED_LIST;
-
-                this.providedValues = values;
+                resolve();
             }
-
-            this.updateAllValues();
-            this.resetSelectionState(this.displayValueModel.getDisplayedKeys());
-        }
+        });
     }
 
     /**

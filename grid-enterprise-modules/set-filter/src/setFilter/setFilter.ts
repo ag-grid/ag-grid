@@ -169,21 +169,27 @@ export class SetFilter<V = string> extends ProvidedFilter<SetFilterModel, V> imp
         // Those params have a large impact and should trigger a reload when they change.
         const paramsThatForceReload: (keyof SetFilterParams<any, V>)[] = [
             'treeList', 'treeListFormatter', 'treeListPathGetter', 'keyCreator', 'convertValuesToStrings',
-            'caseSensitive', 'valueFormatter', 'cellRenderer', 'comparator', 'suppressSelectAll', 'excelMode'
+            'caseSensitive', 'comparator', 'suppressSelectAll', 'excelMode'
         ];
 
         if (paramsThatForceReload.some(param => params[param] !== this.setFilterParams?.[param])) {
             return false;
         }
 
-        this.setFilterParams = params;
         super.updateParams(params);
         this.updateSetFilterOnParamsChange(params);
         this.updateMiniFilter();
 
-        if (this.valueModel) {
-            this.valueModel.updateOnParamsChange(params);
+        if (params.cellRenderer !== this.setFilterParams?.cellRenderer ||
+            params.valueFormatter !== this.setFilterParams?.valueFormatter) {
+            this.checkAndRefreshVirtualList();
         }
+
+        this.valueModel?.updateOnParamsChange(params).then(() => {
+            if (this.valueModel?.hasSelections()) {
+                this.refreshFilterValues();
+            }
+        });
 
         return true;
     }
