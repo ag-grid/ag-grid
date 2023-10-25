@@ -53,7 +53,15 @@
             '@ag-grid-community/vue': {
                 main: './lib/AgGridVue.js',
                 defaultExtension: 'js'
-            }
+            },
+            'ag-charts-community': {
+                main: './dist/main.cjs.js',
+                defaultExtension: 'js'
+            },
+            'ag-charts-enterprise': {
+                main: './dist/main.cjs.js',
+                defaultExtension: 'js'
+            },
         },
         meta: {
             '*.js': {
