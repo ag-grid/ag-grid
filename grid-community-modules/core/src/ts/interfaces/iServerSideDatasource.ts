@@ -6,6 +6,8 @@ import { LoadSuccessParams } from "../rowNodeCache/rowNodeBlock";
 import { SortModelItem } from "../sortController";
 import { AgGridCommon } from "./iCommon";
 import { IRowNode } from "./iRowNode";
+import { FilterModel } from "./iFilter";
+import { AdvancedFilterModel } from "./advancedFilterModel";
 
 export interface IServerSideGetRowsRequest {
     /** First row requested or undefined for all rows. */
@@ -22,8 +24,12 @@ export interface IServerSideGetRowsRequest {
     pivotMode: boolean;
     /** What groups the user is viewing.  */
     groupKeys: string[];
-    /** If filtering, what the filter model is.  */
-    filterModel: any;
+    /**
+     * If filtering, what the filter model is.
+     * If Advanced Filter is enabled, will be of type `AdvancedFilterModel | null`.
+     * If Advanced Filter is disabled, will be of type `FilterModel`.
+     */
+    filterModel: FilterModel | AdvancedFilterModel | null;
     /** If sorting, what the sort model is.  */
     sortModel: SortModelItem[];
 }
