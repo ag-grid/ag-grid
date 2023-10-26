@@ -257,6 +257,9 @@ export class RowCtrl extends BeanStub {
         const gos = this.gridOptionsService;
 
         this.listenOnDomOrder(gui);
+        if (this.beans.columnModel.wasAutoRowHeightEverActive()) {
+            this.rowNode.checkAutoHeights();
+        }
         this.onRowHeightChanged(gui);
         this.updateRowIndexes(gui);
         this.setFocusedClasses(gui);
