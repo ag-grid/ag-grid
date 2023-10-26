@@ -242,3 +242,7 @@ All of the [Cell Data Types](/cell-data-types) are supported in the Advanced Fil
 The Advanced Filter will only work on leaf-level rows when using [Aggregation](/aggregation/). The `groupAggFiltering` property will be ignored.
 
 When [Pivoting](/pivoting/), Pivot Result Columns will not appear in the Advanced Filter. However, primary columns (including underlying group and pivot columns) will be shown in the Advanced Filter.
+
+## Server-Side Row Model
+
+In addition to the Client-Side Row Model, the Advanced Filter can be used with the [Server-Side Row Model](/row-models/). See the [SSRM Advanced Filter Example](/server-side-model-filtering/#advanced-filter) for more information.

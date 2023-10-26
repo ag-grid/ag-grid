@@ -29,6 +29,8 @@ import {
     IPivotColDefService,
     LoadSuccessParams,
     SortController,
+    FilterModel,
+    AdvancedFilterModel,
 } from "@ag-grid-community/core";
 
 import { NodeManager } from "./nodeManager";
@@ -39,7 +41,7 @@ import { LazyStore } from "./stores/lazy/lazyStore";
 
 export interface SSRMParams {
     sortModel: SortModelItem[];
-    filterModel: any;
+    filterModel: FilterModel | AdvancedFilterModel | null;
     lastAccessedSequence: NumberSequence;
     dynamicRowHeight: boolean;
     rowGroupCols: ColumnVO[];
@@ -307,7 +309,9 @@ export class ServerSideRowModel extends BeanStub implements IServerSideRowModel 
             pivotMode: this.columnModel.isPivotMode(),
 
             // sort and filter model
-            filterModel: this.filterManager.getFilterModel(),
+            filterModel: this.filterManager.isAdvancedFilterEnabled()
+                ? this.filterManager.getAdvancedFilterModel()
+                : this.filterManager.getFilterModel(),
             sortModel: this.sortController.getSortModel(),
 
             datasource: this.datasource,
@@ -395,7 +399,7 @@ export class ServerSideRowModel extends BeanStub implements IServerSideRowModel 
         this.onStoreUpdated();
     }
 
-    public refreshAfterFilter(newFilterModel: any, params: StoreRefreshAfterParams): void {
+    public refreshAfterFilter(newFilterModel: FilterModel | AdvancedFilterModel | null, params: StoreRefreshAfterParams): void {
         if (this.storeParams) {
             this.storeParams.filterModel = newFilterModel;
         }

@@ -3,6 +3,7 @@ import {
     Component,
     UserComponentFactory,
     PostConstruct,
+    PreDestroy,
     AgPromise,
     RefSelector,
     IStatusPanelComp,
@@ -27,12 +28,19 @@ export class StatusBar extends Component {
     @RefSelector('eStatusBarCenter') private eStatusBarCenter: HTMLElement;
     @RefSelector('eStatusBarRight') private eStatusBarRight: HTMLElement;
 
+    private compDestroyFunctions: (() => void)[] = [];
+
     constructor() {
         super(StatusBar.TEMPLATE);
     }
 
     @PostConstruct
     private postConstruct(): void {
+        this.processStatusPanels();
+        this.addManagedPropertyListeners(['statusBar'], this.handleStatusBarChanged.bind(this));
+    }
+
+    private processStatusPanels() {
         const statusPanels = this.gridOptionsService.get('statusBar')?.statusPanels;
         if (statusPanels) {
             const leftStatusPanelComponents = statusPanels
@@ -49,6 +57,32 @@ export class StatusBar extends Component {
         } else {
             this.setDisplayed(false);
         }
+    }
+
+    private handleStatusBarChanged() {
+        const statusPanels = this.gridOptionsService.get('statusBar')?.statusPanels;
+        const validStatusBarPanelsProvided = Array.isArray(statusPanels) && statusPanels.length > 0;
+        this.setDisplayed(validStatusBarPanelsProvided);
+
+        this.resetStatusBar();
+        if (validStatusBarPanelsProvided) {
+            this.processStatusPanels();
+        }
+    }
+
+    resetStatusBar() {
+        this.eStatusBarLeft.innerHTML = '';
+        this.eStatusBarCenter.innerHTML = '';
+        this.eStatusBarRight.innerHTML = '';
+
+        this.destroyComponents();
+        this.statusBarService.unregisterAllComponents();
+    }
+
+    @PreDestroy
+    private destroyComponents() {
+        this.compDestroyFunctions.forEach((func) => func());
+        this.compDestroyFunctions = [];
     }
 
     private createAndRenderComponents(statusBarComponents: any[], ePanelComponent: HTMLElement) {
@@ -80,7 +114,7 @@ export class StatusBar extends Component {
                         if (this.isAlive()) {
                             this.statusBarService.registerStatusPanel(componentDetail.key, component);
                             ePanelComponent.appendChild(component.getGui());
-                            this.addDestroyFunc(destroyFunc);
+                            this.compDestroyFunctions.push(destroyFunc);
                         } else {
                             destroyFunc();
                         }
