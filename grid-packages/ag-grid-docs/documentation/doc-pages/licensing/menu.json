@@ -11,13 +11,13 @@
             "icon": "framework"
           },
           {
-            "title": "Deep Dive",
+            "title": "Creating a Basic Grid",
             "url": "/deep-dive/",
             "icon": "framework"
           },
           {
-            "title": "Deeper Dive",
-            "url": "/deeper-dive/",
+            "title": "Customising the Grid",
+            "url": "/customising-the-grid/",
             "icon": "framework"
           },
           {
