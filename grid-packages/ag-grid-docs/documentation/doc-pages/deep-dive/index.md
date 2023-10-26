@@ -13,9 +13,17 @@ In this tutorial you will:
 3. Configure basic features
 4. Hook into grid events
 
-Once complete, you will have an interactive grid, populated with data from an external source that responds to user-interaction. Try resizing columns or clicking on a cell in the example below to see the grid in action:
+Once complete, you'll have an interactive grid, populated with data from an external source that responds to user-interaction. Try it our for yourself by:
 
-<grid-example title='Complete Example' name='complete-example' type='generated' options='{ "exampleHeight": 550 }'></grid-example>
+1. Clicking Column Headers to sort
+2. Clicking hamburger menu on Column Headers to filter
+3. Draging Column Header Dividers to resize columns
+4. Clicking cells to select them (hold 'ctrl' to select multiple rows)
+5. Switching pages with the pagination controls
+
+<grid-example title='Testing Example' name='testing-example' type='generated' options='{ "exampleHeight": 550 }'></grid-example>
+
+---
 
 ## Introduction
 
@@ -35,7 +43,7 @@ The `rowData` array contains the data we want to display within the grid:
 |]);
 </snippet>
 
-### Configure Columns
+### Define Columns
 
 The `colDefs` array defines the columns that we want the grid to display. The `field` property is used to match the column with the data from our `rowData` array:
 
@@ -49,7 +57,7 @@ The `colDefs` array defines the columns that we want the grid to display. The `f
 
 _Note: We've wrapped our `rowData` and `colDefs` arrays in a `useState` hook. We recommend `useState` if the data is mutable, otherwise `useMemo` is preferable. Read our [Best Practices](/react-hooks/) guide to learn more about using React hooks with AG Grid._
 
-### Creating the Grid
+### Create the Grid
 
 To create the grid, we first wrap the `AgGridReact` component in a parent container, which is used to define the dimension and theme for the grid. We can then pass our `rowData` and `columnDefs` variables as props to the `AgGridReact` component, which will render the grid:
 
@@ -67,11 +75,13 @@ Running our code at this point will display a basic grid, with three rows:
 
 <grid-example title='Basic Example' name='basic-example' type='generated' options='{ "exampleHeight": 215 }'></grid-example>
 
-_Note: Themes & Styling are covered in the next tutorial, [Customising the Grid](/deeper-dive/)._
+_Note: Themes & Styling are covered in the next tutorial, [Customising the Grid](/customising-the-grid/)._
+
+---
 
 <!--- Updating Row Data Section -->
 
-## Updating Row Data
+## Load New Data
 
 <framework-specific-section frameworks="react">
 
@@ -91,9 +101,11 @@ When we run our application, we should see a grid with ~3,000 rows:
 
 <grid-example title='Updating Example' name='updating-example' type='generated' options='{ "exampleHeight": 550 }'></grid-example>
 
+---
+
 <!--- Configuring Columns Section -->
 
-## Defining Columns
+## Configure Columns
 
 <framework-specific-section frameworks="react">
 
@@ -155,7 +167,9 @@ Resizing should now be disabled for the "make" column only:
 
 <grid-example title='Exclude Default Column Definitions Example' name='override-default-columns-example' type='generated' options='{ "exampleHeight": 550 }'></grid-example>
 
-## Configuring The Grid
+---
+
+## Configure The Grid
 
 So far we've covered creating a grid, updating the data within the grid, and configuring columns. This section introduces __Grid Options__, which control functionality that extends across both rows & columns, such as Pagination and Row Selection.
 
@@ -176,29 +190,61 @@ We should now see Pagination has been enabled on the grid:
 
 _Refer to our detailed [Grid Options](/grid-options/) documentation for a full list of options._
 
-## Hooking into Grid Events
+---
+
+## Handle Grid Events
 
 In the last section of this tutorial we're going to hook into events raised by the grid using ___Grid Events___.
 
-To hook into a grid event we need to add the relevant `on[EventName]` property on the grid component. Let's try this out by enabling row selection and hooking into the `onSelectionChanged` event to display an alert:
+To be notified of when an event is raised by the grid we need to add the relevant `on[EventName]` property on the grid component. Let's try this out by setting `editable: true` and hooking into the `onCellValueChanged` event to log the new value to the console:
 
 <snippet transform={false} language="jsx">
+|const defaultColDefs = useMemo(() => ({
+|  editable: true // Enable editing on all columns
+|}))
+|
 |&lt;div className="ag-theme-alpine" style={{ width: 600, height: 500 }}>
 |  &lt;AgGridReact
 |    ...
-|    rowSelection='single' // Enable row selection
-|    onSelectionChanged={event => alert('Row Selected!')} // Display an alert when a row is selected
+|    {/* Log new value to console when cell value is changed */}
+|    onCellValueChanged={event => console.log(`New Cell Value: ${event.value}`)}
 |  />
 |&lt;/div>
 </snippet>
 
-Now, when we click on a row, we should see an alert pop-up:
+Now, when we click on a cell we should be able to edit it and see the new value logged to the console:
 
 <grid-example title='Complete Example' name='complete-example' type='generated' options='{ "exampleHeight": 550 }'></grid-example>
 
 _Refer to our [Grid Events](/grid-events/) documentation for a full list of events raised by the grid_
 
+---
+
 </framework-specific-section>
+
+## Test Your Knowledge
+
+Let's put what you've learned so far into action by modifying the grid:
+
+1. Add an new column to the start of the grid
+
+   _Hint: Modify the column definitons array to include an empty object at the start_
+
+2. Enable Checkbox Selection on the new empty column
+
+   _Hint: `checkboxSelection` is a Column Definiton property_
+
+3. Allow multiple row selection
+
+   _Hint: `rowSelection` is a Grid Option property_
+
+4. Log a message to the console when a row selection is changed
+
+   _Hint: `onSelectionChanged` is a Grid Event_
+
+Once complete, your grid should look like the example below. If you're stuck, check out the source code to see how its done:
+
+<grid-example title='Testing Example' name='testing-example' type='generated' options='{ "exampleHeight": 550 }'></grid-example>
 
 ## Summary
 
@@ -218,6 +264,7 @@ By now, you should be familiar with the key concepts of AG Grid:
 
 ## Next Steps
 
-Read our next tutorial to learn how to customise and extend the grid with your own design, components and logic:
+Read our next tutorial to learn how to customise and extend the grid with your own design, components and logic, or jump straight into our advanced tutorial
 
-- [Customising The Grid](/deeper-dive/)
+- [Customising The Grid](/customising-the-grid/)
+- TBC
