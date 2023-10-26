@@ -17,7 +17,6 @@ export default /* css */ `
         background-color: #151F28;
     }
       
-
     --ag-border-radius: 8px;
     --ag-background-color: #0A161F;
     --ag-odd-row-background-color: #151F28;
@@ -26,7 +25,6 @@ export default /* css */ `
     --ag-header-foreground-color: #fff;
     --ag-border-color: color-mix(in srgb, var(--ag-background-color), var(--ag-foreground-color) 12%);
     --ag-header-column-resize-handle-color: color-mix(in srgb, var(--ag-background-color), var(--ag-foreground-color) 15%);
-   
 }
 
 .ag-theme-alpine-dark .ag-header-cell {
@@ -36,7 +34,6 @@ export default /* css */ `
 html[data-color-scheme='dark'] body > * {
     color-scheme: dark;
 }
-
 
 html[data-color-scheme='dark'] button:not(#myGrid button) {
     appearance: none;
@@ -75,12 +72,7 @@ html[data-color-scheme='dark'] input:not(#myGrid input) {
 
 }
 
-
 html[data-color-scheme='dark'] body:not(#myGrid body) {
   color: #fff;
 }
-
-
-
-
 `;

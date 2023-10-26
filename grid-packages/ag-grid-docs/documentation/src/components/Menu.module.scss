@@ -197,10 +197,6 @@ button:not([class^='ag-']).sectionHeader {
 
     &.activeItemParent {
         color: color-mix(in oklch, var(--default-text-color) 66.66%, var(--secondary-text-color));
-
-        // #{$darkmode-selector} & {
-        //     color: ;
-        // }
     }
 
     &:hover,
@@ -230,7 +226,7 @@ button:not([class^='ag-']).sectionHeader {
     border-left: 1px solid var(--border-color);
     color: var(--neutral-600);
     transition: color $default-transition-timing;
-    
+
     #{$darkmode-selector} & {
         color: var(--neutral-800);
     }
