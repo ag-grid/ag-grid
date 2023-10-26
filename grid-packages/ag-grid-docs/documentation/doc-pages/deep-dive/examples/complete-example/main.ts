@@ -19,13 +19,13 @@ const gridOptions: GridOptions = {
     defaultColDef: {
         filter: true,
         sortable: true,
+        editable: true,
         resizable: true
     },
     // Grid Options & Callbacks
     pagination: true,
-    rowSelection: 'single',
-    onSelectionChanged: (event) => { 
-        alert('Row Selected!') 
+    onCellValueChanged: (event) => { 
+        console.log(`New Cell Value: ${event.value}`)
     }
 }
 
