@@ -2,7 +2,7 @@ import { IDoesFilterPassParams, IFilter, IFilterComp, IFilterParams } from '../.
 import { Autowired, PostConstruct } from '../../context/context';
 import { IRowModel } from '../../interfaces/iRowModel';
 import { ContainerType, IAfterGuiAttachedParams } from '../../interfaces/iAfterGuiAttachedParams';
-import { loadTemplate, setDisabled } from '../../utils/dom';
+import { clearElement, loadTemplate, removeFromParent, setDisabled } from '../../utils/dom';
 import { debounce } from '../../utils/function';
 import { AgPromise } from '../../utils/promise';
 import { PopupEventParams } from '../../widgets/popupService';
@@ -106,6 +106,9 @@ export abstract class ProvidedFilter<M, V> extends Component implements IProvide
 
     @RefSelector('eFilterBody') protected readonly eFilterBody: HTMLElement;
 
+    private eButtonsPanel: HTMLElement;
+    private buttonListeners: ((() => null) | undefined)[] = [];
+
     constructor(private readonly filterNameKey: keyof IFilterTitleLocaleText) {
         super();
     }
@@ -197,19 +200,41 @@ export abstract class ProvidedFilter<M, V> extends Component implements IProvide
 
         this.applyActive = ProvidedFilter.isUseApplyButton(params);
 
-        this.createButtonPanel();
+        this.resetButtonsPanel();
     }
 
-    private createButtonPanel(): void {
+    private resetButtonsPanel(): void {
         const { buttons } = this.providedFilterParams;
+        const hasButtons = buttons && buttons.length > 0 && !this.isReadOnly();
 
-        if (!buttons || buttons.length < 1 || this.isReadOnly()) {
+        if (!this.eButtonsPanel) {
+            // Only create the buttons panel if we need to
+            if (hasButtons) {
+                this.eButtonsPanel = document.createElement('div');
+                this.eButtonsPanel.classList.add('ag-filter-apply-panel');
+            }
+        } else {
+            // Always empty the buttons panel before adding new buttons
+            clearElement(this.eButtonsPanel);
+            this.buttonListeners.forEach(destroyFunc => destroyFunc?.());
+            this.buttonListeners = [];
+
+        }
+
+        if (!hasButtons) {
+            // The case when we need to hide the buttons panel because there are no buttons
+            if (this.eButtonsPanel) {
+                removeFromParent(this.eButtonsPanel);
+            }
+
             return;
         }
 
-        const eButtonsPanel = document.createElement('div');
+        // At this point we know we have a buttons and a buttons panel has been created.
 
-        eButtonsPanel.classList.add('ag-filter-apply-panel');
+        // Instead of appending each button to the DOM individually, we create a fragment and append that
+        // to the DOM once. This is much faster than appending each button individually.
+        const fragment = document.createDocumentFragment();
 
         const addButton = (type: FilterButtonType): void => {
             let text;
@@ -248,13 +273,14 @@ export abstract class ProvidedFilter<M, V> extends Component implements IProvide
                 </button>`
             );
 
-            eButtonsPanel.appendChild(button);
-            this.addManagedListener(button, 'click', clickListener);
+            this.buttonListeners.push(this.addManagedListener(button, 'click', clickListener));
+            fragment.append(button);
         };
 
         convertToSet(buttons).forEach(type => addButton(type));
 
-        this.getGui().appendChild(eButtonsPanel);
+        this.eButtonsPanel.append(fragment);
+        this.getGui().append(this.eButtonsPanel);
     }
 
     // subclasses can override this to provide alternative debounce defaults
@@ -403,8 +429,10 @@ export abstract class ProvidedFilter<M, V> extends Component implements IProvide
 
         if (this.applyActive && !this.isReadOnly()) {
             const isValid = this.isModelValid(this.getModelFromUi()!);
-
-            setDisabled(this.getRefElement('applyFilterButton'), !isValid);
+            const applyFilterButton = this.getRefElement('applyFilterButton');
+            if (applyFilterButton) {
+                setDisabled(applyFilterButton, !isValid);
+            }
         }
 
         if ((fromFloatingFilter && !apply) || apply === 'immediately') {
