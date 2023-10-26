@@ -18,7 +18,8 @@ import {
     ISelectionService,
     WithoutGridCommon,
     InitialGroupOrderComparatorParams,
-    GridOptions
+    GridOptions,
+    KeyCreatorParams
 } from "@ag-grid-community/core";
 import { BatchRemover } from "./batchRemover";
 
@@ -47,6 +48,7 @@ interface GroupingDetails {
     usingTreeData: boolean;
     suppressGroupMaintainValueType: boolean;
     getDataPath: GetDataPath | undefined;
+    keyCreators: (((params: KeyCreatorParams) => string) | undefined)[];
 }
 
 @Bean('groupStage')
@@ -151,7 +153,8 @@ export class GroupStage extends BeanStub implements IRowNodeStage {
             initialGroupOrderComparator: this.gridOptionsService.getCallback('initialGroupOrderComparator') as any,
             usingTreeData: usingTreeData,
             suppressGroupMaintainValueType: this.gridOptionsService.is('suppressGroupMaintainValueType'),
-            getDataPath: usingTreeData ? this.gridOptionsService.get('getDataPath') : undefined
+            getDataPath: usingTreeData ? this.gridOptionsService.get('getDataPath') : undefined,
+            keyCreators: groupedCols?.map(column => column.getColDef().keyCreator) ?? []
         };
 
         return details;
@@ -436,7 +439,7 @@ export class GroupStage extends BeanStub implements IRowNodeStage {
     private areGroupColsEqual(d1: GroupingDetails, d2: GroupingDetails): boolean {
         if (d1 == null || d2 == null || d1.pivotMode !== d2.pivotMode) { return false; }
 
-        return _.areEqual(d1.groupedCols, d2.groupedCols);
+        return _.areEqual(d1.groupedCols, d2.groupedCols) && _.areEqual(d1.keyCreators, d2.keyCreators);
     }
 
     private checkAllGroupDataAfterColsChanged(details: GroupingDetails): void {
