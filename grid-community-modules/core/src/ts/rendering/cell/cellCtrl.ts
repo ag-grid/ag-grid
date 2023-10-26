@@ -101,6 +101,7 @@ export class CellCtrl extends BeanStub {
     private includeRowDrag: boolean;
     private colIdSanitised: string;
     private tabIndex: number | undefined;
+    private isAutoHeight: boolean;
 
     private suppressRefreshCell = false;
 
@@ -236,9 +237,7 @@ export class CellCtrl extends BeanStub {
         this.onColumnHover();
         this.setupControlComps();
 
-        if (eCellWrapper) {
-            this.setupAutoHeight(eCellWrapper);
-        }
+        this.setupAutoHeight(eCellWrapper);
 
         this.setAriaColIndex();
 
@@ -261,8 +260,9 @@ export class CellCtrl extends BeanStub {
         }
     }
 
-    private setupAutoHeight(eCellWrapper: HTMLElement): void {
-        if (!this.column.isAutoHeight()) { return; }
+    private setupAutoHeight(eCellWrapper?: HTMLElement): void {
+        this.isAutoHeight = this.column.isAutoHeight();
+        if (!this.isAutoHeight || !eCellWrapper) { return; }
 
         const eParentCell = eCellWrapper.parentElement!;
         // taking minRowHeight from getRowHeightForNode means the getRowHeight() callback is used,
@@ -1029,6 +1029,12 @@ export class CellCtrl extends BeanStub {
 
     public onColDefChanged(): void {
         if (!this.cellComp) { return; }
+
+        const isAutoHeight = this.column.isAutoHeight();
+        if (isAutoHeight !== this.isAutoHeight) {
+            // auto height uses wrappers, so need to destroy
+            this.rowCtrl?.refreshCell(this);
+        }
 
         const isTooltipEnabled = this.column.isTooltipEnabled();
         if (isTooltipEnabled) {
