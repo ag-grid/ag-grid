@@ -29,7 +29,6 @@ import {
     IPivotColDefService,
     LoadSuccessParams,
     SortController,
-    IServerSideGetRowsRequest,
     FilterModel,
     AdvancedFilterModel,
 } from "@ag-grid-community/core";
@@ -40,11 +39,17 @@ import { StoreFactory } from "./stores/storeFactory";
 import { FullStore } from "./stores/fullStore";
 import { LazyStore } from "./stores/lazy/lazyStore";
 
-export type SSRMParams = Omit<IServerSideGetRowsRequest, 'startRow' | 'endRow' | 'groupKeys'> & {
+export interface SSRMParams {
+    sortModel: SortModelItem[];
+    filterModel: FilterModel | AdvancedFilterModel | null;
     lastAccessedSequence: NumberSequence;
     dynamicRowHeight: boolean;
+    rowGroupCols: ColumnVO[];
+    valueCols: ColumnVO[];
+    pivotCols: ColumnVO[];
+    pivotMode: boolean;
     datasource?: IServerSideDatasource;
-};
+}
 
 @Bean('rowModel')
 export class ServerSideRowModel extends BeanStub implements IServerSideRowModel {
