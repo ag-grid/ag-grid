@@ -497,7 +497,10 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl<IHeaderCellComp, Colu
 
     private refreshSpanHeaderHeight() {
         const { eGui, column, comp, columnModel, gridOptionsService } = this;
-        if (!column.isSpanHeaderHeight()) { return; }
+        if (!column.isSpanHeaderHeight()) {
+            eGui.style.removeProperty('height');
+            return;
+        }
 
         const { numberOfParents, isSpanningTotal } = this.getColumnGroupPaddingInfo();
 
