@@ -26,7 +26,7 @@ html {
 }
 
 #{$darkmode-selector} {
-    #doc-content a {
+    #doc-content a:not(.button) {
         color: #3893F9;
     }
     

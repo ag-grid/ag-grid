@@ -49,6 +49,10 @@
     img {
         display: block;
         height: 32px;
+
+        #{$darkmode-selector} & {
+            filter: invert(1);
+        }
     }
 
     p.iconName {
