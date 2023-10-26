@@ -41,8 +41,6 @@ export class ResizeFeature extends BeanStub implements IHeaderResizeFeature {
 
     @PostConstruct
     private postConstruct(): void {
-        const colDef = this.column.getColDef();
-
         const destroyResizeFuncs: (() => void)[] = [];
 
         let canResize: boolean;
@@ -72,7 +70,7 @@ export class ResizeFeature extends BeanStub implements IHeaderResizeFeature {
                 const touchListener: TouchListener = new TouchListener(this.eResize);
                 touchListener.addEventListener(TouchListener.EVENT_DOUBLE_TAP, autoSizeColListener);
 
-                this.addDestroyFunc(() => {
+                destroyResizeFuncs.push(() => {
                     this.eResize.removeEventListener('dblclick', autoSizeColListener);
                     touchListener.removeEventListener(TouchListener.EVENT_DOUBLE_TAP, autoSizeColListener);
                     touchListener.destroy();
@@ -87,7 +85,7 @@ export class ResizeFeature extends BeanStub implements IHeaderResizeFeature {
 
         const refresh = () => {
             const resize = this.column.isResizable();
-            const autoSize = !this.gridOptionsService.is('suppressAutoSize') && !colDef.suppressAutoSize;
+            const autoSize = !this.gridOptionsService.is('suppressAutoSize') && !this.column.getColDef().suppressAutoSize;
             const propertyChange = resize !== canResize || autoSize !== canAutosize;
             if (propertyChange) {
                 canResize = resize;

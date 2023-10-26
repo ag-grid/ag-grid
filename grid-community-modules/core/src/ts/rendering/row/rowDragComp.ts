@@ -101,7 +101,6 @@ export class RowDragComp extends Component {
         // if this is changing the drag element, delete the previous dragSource
         if (this.dragSource) { this.removeDragSource(); }
 
-        const rowDragText = this.getRowDragText(this.column);
         const translate = this.localeService.getLocaleTextFunc();
 
         this.dragSource = {
@@ -111,6 +110,7 @@ export class RowDragComp extends Component {
                 const dragItem = this.getDragItem();
                 const dragItemCount = dragItem.rowNodes?.length || 1;
 
+                const rowDragText = this.getRowDragText(this.column);
                 if (rowDragText) {
                     return rowDragText(dragItem, dragItemCount);
                 }

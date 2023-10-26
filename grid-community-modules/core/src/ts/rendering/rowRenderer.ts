@@ -705,16 +705,7 @@ export class RowRenderer extends BeanStub {
             suppressFlash: params.suppressFlash
         };
         this.getCellCtrls(params.rowNodes, params.columns)
-            .forEach(cellCtrl => {
-                if (cellCtrl.refreshShouldDestroy()) {
-                    const rowCtrl = cellCtrl.getRowCtrl();
-                    if (rowCtrl) {
-                        rowCtrl.refreshCell(cellCtrl);
-                    }
-                } else {
-                    cellCtrl.refreshCell(refreshCellParams);
-                }
-            });
+            .forEach(cellCtrl => cellCtrl.refreshOrDestroyCell(refreshCellParams));
 
         if (params.rowNodes) {
             // refresh the full width rows too

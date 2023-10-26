@@ -167,6 +167,7 @@ export class RowCssClassCalculator {
         };
 
         this.stylingService.processClassRules(
+            undefined,
             this.gridOptionsService.get('rowClassRules'),
             rowClassParams,
             onApplicableClass,

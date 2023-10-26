@@ -19,18 +19,11 @@ export class SelectAllFeature extends BeanStub {
     private column: Column;
     private headerCellCtrl: HeaderCellCtrl;
 
-    private filteredOnly: boolean;
-    private currentPageOnly: boolean;
-
     private cbSelectAll: AgCheckbox;
 
     constructor(column: Column) {
         super();
         this.column = column;
-
-        const colDef = column.getColDef();
-        this.filteredOnly = !!colDef?.headerCheckboxSelectionFilteredOnly;
-        this.currentPageOnly = !!colDef?.headerCheckboxSelectionCurrentPageOnly;
     }
 
     public onSpaceKeyDown(e: KeyboardEvent): void {
@@ -104,7 +97,10 @@ export class SelectAllFeature extends BeanStub {
 
         this.processingEventFromCheckbox = true;
 
-        const allSelected = this.selectionService.getSelectAllState(this.filteredOnly, this.currentPageOnly);
+        const allSelected = this.selectionService.getSelectAllState(
+            this.isFilteredOnly(),
+            this.isCurrentPageOnly()
+        );
 
         this.cbSelectAll.setValue(allSelected!);
         this.refreshSelectAllLabel();
@@ -155,15 +151,20 @@ export class SelectAllFeature extends BeanStub {
         if (!this.cbSelectAllVisible) { return; }
 
         const value = this.cbSelectAll.getValue();
+        const justFiltered = this.isFilteredOnly();
+        const justCurrentPage = this.isCurrentPageOnly();
 
         let source: SelectionEventSourceType = 'uiSelectAll';
-        if (this.currentPageOnly) source = 'uiSelectAllCurrentPage';
-        else if (this.filteredOnly) source = 'uiSelectAllFiltered';
+        if (justCurrentPage) {
+            source = 'uiSelectAllCurrentPage';
+        } else if (justFiltered) {
+            source = 'uiSelectAllFiltered';
+        }
 
         const params = {
             source,
-            justFiltered: this.filteredOnly,
-            justCurrentPage: this.currentPageOnly,
+            justFiltered,
+            justCurrentPage,
         };
         if (value) {
             this.selectionService.selectAllRowNodes(params);
@@ -194,6 +195,13 @@ export class SelectAllFeature extends BeanStub {
         return false;
     }
 
+    private isFilteredOnly(): boolean {
+        return !!this.column.getColDef().headerCheckboxSelectionFilteredOnly;
+    }
+
+    private isCurrentPageOnly(): boolean {
+        return !!this.column.getColDef().headerCheckboxSelectionCurrentPageOnly;
+    }
 }
 
 interface SelectionCount {

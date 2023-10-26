@@ -41,6 +41,8 @@ export class CellPositionFeature extends BeanStub {
 
     private setupRowSpan(): void {
         this.rowSpan = this.column.getRowSpan(this.rowNode);
+
+        this.addManagedListener(this.beans.eventService, Events.EVENT_NEW_COLUMNS_LOADED, () => this.onNewColumnsLoaded())
     }
 
     public setComp(eGui: HTMLElement): void {
@@ -48,6 +50,14 @@ export class CellPositionFeature extends BeanStub {
         this.onLeftChanged();
         this.onWidthChanged();
         this.applyRowSpan();
+    }
+
+    private onNewColumnsLoaded(): void {
+        const rowSpan = this.column.getRowSpan(this.rowNode);
+        if (this.rowSpan === rowSpan) { return; }
+
+        this.rowSpan = rowSpan;
+        this.applyRowSpan(true);
     }
 
     private onDisplayColumnsChanged(): void {
@@ -149,9 +159,9 @@ export class CellPositionFeature extends BeanStub {
         return leftWidth + (leftPosition || 0);
     }
 
-    private applyRowSpan(): void {
+    private applyRowSpan(force?: boolean): void {
 
-        if (this.rowSpan === 1) { return; }
+        if (this.rowSpan === 1 && !force) { return; }
 
         const singleRowHeight = this.beans.gridOptionsService.getRowHeightAsNumber();
         const totalRowHeight = singleRowHeight * this.rowSpan;
