@@ -28,9 +28,9 @@ _For more information, read our detailed [installation guide](/packages-modules/
 |function GridExample() {
 |  // Set Row Data
 |  const [rowData, setRowData] = useState([
-|    { make: 'Toyota', model: 'Celica', price: 35000 },
+|    { make: 'Toyota', model: 'Prius', price: 35000 },
 |    { make: 'Ford', model: 'Mondeo', price: 32000 },
-|    { make: 'Porsche', model: 'Boxter', price: 72000 }
+|    { make: 'Porsche', model: 'Boxster', price: 72000 }
 |  ]);
 |  
 |  // Define Columns (Should match properties in rowData)
@@ -52,4 +52,8 @@ _For more information, read our detailed [installation guide](/packages-modules/
 
 ## Next Steps
 
-To learn more about the Grid, read our [Deep Dive](/deep-dive/) tutorial.
+To learn more about the Grid, read our tutorial series:
+
+1. [Creating a Basic Grid](/deep-dive/)
+2. [Customising the Grid](/customing-the-grid/)
+3. TBC...
