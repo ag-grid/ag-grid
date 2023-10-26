@@ -64,18 +64,9 @@ export class StatusBar extends Component {
         const validStatusBarPanelsProvided = Array.isArray(statusPanels) && statusPanels.length > 0;
         this.setDisplayed(validStatusBarPanelsProvided);
 
-        if (!validStatusBarPanelsProvided && this.isDisplayed()) {
-            this.setDisplayed(false);
-        }
-
         this.resetStatusBar();
-
         if (validStatusBarPanelsProvided) {
             this.processStatusPanels();
-
-            if (!this.isDisplayed()) {
-                this.setDisplayed(true);
-            }
         }
     }
 
