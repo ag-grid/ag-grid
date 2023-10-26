@@ -280,7 +280,7 @@ export abstract class ProvidedFilter<M, V> extends Component implements IProvide
         convertToSet(buttons).forEach(type => addButton(type));
 
         this.eButtonsPanel.append(fragment);
-        this.getGui().append(this.eButtonsPanel);
+        this.getGui().appendChild(this.eButtonsPanel);
     }
 
     // subclasses can override this to provide alternative debounce defaults
