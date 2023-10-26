@@ -124,12 +124,6 @@ button:not([class^="ag-"]).sectionHeader {
         }
     }
 }
-// .menuGroup a {
-//   margin-left: 24px;
-// }
-
-
-
 
 .menuGroup {
     --first-indent-size: 12px;
@@ -156,7 +150,8 @@ button:not([class^="ag-"]).sectionHeader {
    
     .enterpriseIcon {
         --icon-size: 1.15em;
-        --text-color: red !important;
+        --text-color: var(--enterprise-icon-color);
+
         position: relative;
         margin-left: 2px;
         color: transparent;
