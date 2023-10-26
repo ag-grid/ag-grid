@@ -301,14 +301,10 @@ async function regenerateDocumentationExamplesForFileChange(file, chartsOnly) {
 }
 
 async function watchAndGenerateExamples(chartsOnly) {
-    if (moduleChanged('.')) {
-        await generateDocumentationExamples(chartsOnly);
+    await generateDocumentationExamples(chartsOnly);
 
-        const npm = 'npm';
-        cp.spawnSync(npm, ['run', 'hash']);
-    } else {
-        console.log("Docs contents haven't changed - skipping example generation");
-    }
+    const npm = 'npm';
+    cp.spawnSync(npm, ['run', 'hash']);
 
     chokidar
         .watch([`./documentation/doc-pages/**/examples/**/*.{html,css,js,jsx,ts}`], {ignored: ['**/_gen/**/*']})
@@ -542,23 +538,6 @@ const buildCoreModules = async (exitOnError, skipFrameworks, chartsOnly) => {
         console.log("Changed Packages Rebuilt");
     }
 };
-
-function moduleChanged(moduleRoot) {
-    let changed = true;
-
-    const resolvedPath = resolve(moduleRoot);
-
-    const checkResult = cp.spawnSync('sh', ['../../scripts/hashChanged.sh', resolvedPath], {
-        stdio: 'pipe',
-        encoding: 'utf-8'
-    });
-
-    if (checkResult && checkResult.status !== 1) {
-        changed = checkResult.output[1].trim() === '1';
-    }
-
-    return changed;
-}
 
 function updateSystemJsBoilerplateMappingsForFrameworks(gridCommunityModules, gridEnterpriseModules, chartsCommunityModules, chartEnterpriseModules) {
     console.log("Updating framework SystemJS boilerplate config with modules...");

@@ -35,8 +35,15 @@ const LicensePricing = () => {
                     <h1>AG Grid Licences</h1>
 
                     <p className="font-size-large">
-                        Get in touch and start a conversation. We can provide quotes, give bulk pricing, and answer any
-                        sales or contract-related questions you may have.
+                        Email
+                        <InfoEmailLink
+                            emailSubject="AG Grid Developer license query"
+                            trackingType="headerLink"
+                        >
+                            info@ag-grid.com
+                        </InfoEmailLink>{' '}
+                        and start a conversation. We can provide quotes, give bulk pricing, and answer any sales or
+                        contract-related questions you may have.
                     </p>
 
                     <p className={styles.salesEmail}>
@@ -71,30 +78,41 @@ const LicensePricing = () => {
                     <p className={styles.buyTogether}>
                         <div className={styles.buyTogetherInner}>
                             <div className={styles.left}>
-                                <p className={styles.products}><b>AG&nbsp;Grid</b> +<wbr /> <b>AG&nbsp;Charts</b></p>
+                                <p className={styles.products}>
+                                    <b>AG&nbsp;Grid</b> +<wbr /> <b>AG&nbsp;Charts</b>
+                                </p>
                                 <div className={classnames(styles.enterpriseProducts, 'font-size-small')}>
-                                    <p>AG Grid Enterprise <Icon name="enterprise"/></p>
-                                    <p>AG Charts Enterprise <Icon name="enterprise"/></p>
+                                    <p>
+                                        AG Grid Enterprise <Icon name="enterprise" />
+                                    </p>
+                                    <p>
+                                        AG Charts Enterprise <Icon name="enterprise" />
+                                    </p>
                                 </div>
 
-                                <p className='font-size-small'>The Ultimate Grid and Charts Combination</p>
+                                <p className="font-size-small">The Ultimate Grid and Charts Combination</p>
                             </div>
 
                             <div className={styles.right}>
                                 <div className={styles.rightInner}>
                                     <div className={styles.rightPrice}>
-                                        <p className='font-size-small'>Starting at...</p>
+                                        <p className="font-size-small">Starting at...</p>
                                         <p className={styles.price}>$1,183</p>
-                                        <p className='font-size-small'>Per Developer</p>
+                                        <p className="font-size-small">Per Developer</p>
                                     </div>
                                     <div className={styles.rightInfo}>
-                                        <p className='font-size-small'>Perpetual License</p> 
-                                        <p className='font-size-small'>1 Year of Support</p> 
-                                        <p className='font-size-small'>1 Year of Updates</p> 
+                                        <p className="font-size-small">Perpetual License</p>
+                                        <p className="font-size-small">1 Year of Support</p>
+                                        <p className="font-size-small">1 Year of Updates</p>
                                     </div>
                                 </div>
 
-                                <a href="/ecommerce/#/ecommerce/?licenseType=single&productType=both" className='button'>Configure Now</a>
+                                <a
+                                    href="/ecommerce/#/ecommerce/?licenseType=single&productType=both"
+                                    className="button"
+                                >
+                                    Configure Now
+                                </a>
                             </div>
                         </div>
                     </p>
@@ -136,12 +154,13 @@ const LicensePricing = () => {
                         Enterprise Versions <Icon name="enterprise" />
                     </h3>
                     <p>
-                        <b>AG Grid Enterprise</b> and <b>AG Charts Enterprise</b> are commercial products distributed under our{' '}
+                        <b>AG Grid Enterprise</b> and <b>AG Charts Enterprise</b> are commercial products distributed
+                        under our{' '}
                         <a href={`${hostPrefix}/eula/AG-Grid-Enterprise-License-Latest.html`} target="_blank">
                             EULA
                         </a>{' '}
                         and supported by our technical staff.
-                    </p>                    
+                    </p>
                     {/* ////// taking out, until we have an equivalent for Charts Enterprise
                         <p>
                         <b>AG Grid Enterprise</b> offers advanced functionality like{' '}
@@ -223,9 +242,9 @@ const LicensePricing = () => {
                 <div>
                     <h3 className="font-size-massive">Questions about our licenses? </h3>
                     <p>
-                        Watch our short video for an in-depth look at exactly how the license works. Learn
-                        which license is right for you, how many licenses you need for your team, and exactly when you
-                        need a deployment license.
+                        Watch our short video for an in-depth look at exactly how the license works. Learn which license
+                        is right for you, how many licenses you need for your team, and exactly when you need a
+                        deployment license.
                     </p>
                     <p>
                         If you have any other questions, or want to investigate volume pricing please{' '}
@@ -259,7 +278,7 @@ const LicensePricing = () => {
                     </header>
                     <div className="content">
                         <p>
-                            Licenses one application, developed for internal use, to embed AG Grid Enterprise and / or 
+                            Licenses one application, developed for internal use, to embed AG Grid Enterprise and / or
                             AG Charts Enterprise in perpetuity.
                         </p>
                         <ul>
@@ -267,7 +286,8 @@ const LicensePricing = () => {
                             <li>For customer-facing applications you will also need a Deployment License add-on.</li>
                             <li>
                                 All concurrent, front-end, JavaScript developers working on the Application would need
-                                to be added to the license count, not just the ones working with AG Grid and / or AG Charts.
+                                to be added to the license count, not just the ones working with AG Grid and / or AG
+                                Charts.
                             </li>
                             <li>
                                 Developers within the Single Application Development License count are unnamed, so long
@@ -315,9 +335,9 @@ const LicensePricing = () => {
                     </header>
                     <div className="content">
                         <p>
-                            Allows licensed developers to sub-license AG Grid and / or AG Charts for one application on one production
-                            environment in perpetuity. Includes a 1-year subscription to new versions, support and
-                            maintenance. Only available with a Developer License.
+                            Allows licensed developers to sub-license AG Grid and / or AG Charts for one application on
+                            one production environment in perpetuity. Includes a 1-year subscription to new versions,
+                            support and maintenance. Only available with a Developer License.
                         </p>
                         <ul>
                             <li>

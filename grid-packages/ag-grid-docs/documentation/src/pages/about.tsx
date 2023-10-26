@@ -98,7 +98,7 @@ const AboutPage = () => {
                             </div>
                             <div>
                                 <img src="../images/team/salmen.jpg" alt="Salmen Hichri, Developer" />
-                                <h3>Salmen Hichris</h3>
+                                <h3>Salmen Hichri</h3>
                                 <p>Developer, Grid Core</p>
                             </div>
                             <div>
