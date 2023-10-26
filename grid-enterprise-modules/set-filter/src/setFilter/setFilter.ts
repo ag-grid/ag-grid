@@ -24,6 +24,7 @@ import {
     GetDataPath,
     GROUP_AUTO_COLUMN_ID,
     IRowNode,
+    ColDef,
 } from '@ag-grid-community/core';
 import { SetFilterModelValuesType, SetValueModel } from './setValueModel';
 import { SetFilterListItem, SetFilterListItemExpandedChangedEvent, SetFilterListItemParams, SetFilterListItemSelectionChangedEvent } from './setFilterListItem';
@@ -176,6 +177,10 @@ export class SetFilter<V = string> extends ProvidedFilter<SetFilterModel, V> imp
             return false;
         }
 
+        if (this.haveColDefParamsChanged(params.colDef)) {
+            return false;
+        }
+
         super.updateParams(params);
         this.updateSetFilterOnParamsChange(params);
         this.updateMiniFilter();
@@ -192,6 +197,14 @@ export class SetFilter<V = string> extends ProvidedFilter<SetFilterModel, V> imp
         });
 
         return true;
+    }
+
+    private haveColDefParamsChanged(colDef: ColDef): boolean {
+        const paramsThatForceReload: (keyof ColDef)[] = [
+            'keyCreator', 'filterValueGetter',
+        ];
+        const existingColDef = this.setFilterParams?.colDef;
+        return paramsThatForceReload.some(param => colDef[param] !== existingColDef?.[param]);
     }
 
     private setModelAndRefresh(values: SetFilterModelValue | null): AgPromise<void> {
