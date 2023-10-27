@@ -817,20 +817,18 @@ export class FilterManager extends BeanStub {
 
     private disposeFilterWrapper(filterWrapper: FilterWrapper, source: 'api' | 'columnChanged' | 'gridDestroyed' | 'advancedFilterEnabled'): void {
         filterWrapper.filterPromise!.then(filter => {
-            (filter!.setModel(null) || AgPromise.resolve()).then(() => {
-                this.getContext().destroyBean(filter);
+            this.getContext().destroyBean(filter);
 
-                filterWrapper.column.setFilterActive(false, 'filterDestroyed');
+            filterWrapper.column.setFilterActive(false, 'filterDestroyed');
 
-                this.allColumnFilters.delete(filterWrapper.column.getColId());
+            this.allColumnFilters.delete(filterWrapper.column.getColId());
 
-                const event: WithoutGridCommon<FilterDestroyedEvent> = {
-                    type: Events.EVENT_FILTER_DESTROYED,
-                    source,
-                    column: filterWrapper.column,
-                };
-                this.eventService.dispatchEvent(event);
-            });
+            const event: WithoutGridCommon<FilterDestroyedEvent> = {
+                type: Events.EVENT_FILTER_DESTROYED,
+                source,
+                column: filterWrapper.column,
+            };
+            this.eventService.dispatchEvent(event);
         });
     }
 
