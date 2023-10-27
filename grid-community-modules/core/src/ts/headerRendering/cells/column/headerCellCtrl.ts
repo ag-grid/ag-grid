@@ -134,10 +134,19 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl<IHeaderCellComp, Colu
 
     protected resizeHeader(direction: HorizontalDirection, shiftKey: boolean): void {
         if (!this.column.isResizable()) { return; }
-        const minWidth = this.column.getMinWidth();
-        const maxWidth = this.column.getMaxWidth();
-        const diff = (direction === HorizontalDirection.Left ? -1 : 1) * this.resizeMultiplier;
-        const newWidth = Math.min(Math.max(this.column.getActualWidth() + diff, minWidth ?? 0), maxWidth || Number.MAX_SAFE_INTEGER);
+
+        const isLeft = direction === HorizontalDirection.Left;
+        const isRtl = this.gridOptionsService.is('enableRtl');
+
+        const actualWidth = this.column.getActualWidth();
+        const minWidth = this.column.getMinWidth() ?? 0;
+        const maxWidth = this.column.getMaxWidth() ?? Number.MAX_SAFE_INTEGER;
+        
+        const isNegative  = isLeft !== isRtl;
+        const diff = (isNegative ? -1 : 1) * this.resizeMultiplier;
+
+        const newWidth = Math.min(Math.max(actualWidth + diff, minWidth), maxWidth);
+
         this.columnModel.setColumnWidths([{ key: this.column, newWidth }], shiftKey, true);
     }
 
