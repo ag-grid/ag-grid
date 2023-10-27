@@ -50,9 +50,19 @@
 }
 
 .sideNav ul {
+    --nav-line-color: var(--neutral-300);
+
+    position: relative;
     padding-top: $size-1;
     padding-bottom: $size-6;
-    box-shadow: inset 2px 0 0 0 var(--secondary-border-color);
+    box-shadow: inset 1px 0 0 0 var(--nav-line-color);
+    z-index: -2;
+
+    #{$darkmode-selector} & {
+        --nav-line-color: #394755;
+
+        -webkit-font-smoothing: auto;
+    }
 }
 
 .sideNav li {
@@ -64,42 +74,56 @@
 }
 
 .sideNav a {
+    --active-color: var(--primary-700);
+    --active-border: var(--primary-600);
+    --hover-background: var(--background-200);
+    --active-background: var(--background-300);
+
     display: inline-block;
     padding: 0;
-    color: var(--secondary-text-color);
-    opacity: 0.75;
-    transition: opacity $default-transition-timing, color $default-transition-timing;
+    color: var(--neutral-500);
+    transition: color $default-transition-timing;
 
-    &:global(.active) {
-        color: var(--text-color);
-        opacity: 1;
-        cursor: default;
+    #{$darkmode-selector} & {
+        --active-color: #007bff;
+        --active-border: #3893f9;
+        --hover-background: rgba(56, 146, 249, 0.06);
+        --active-background: rgba(56, 146, 249, 0.09);
+
+        color: var(--neutral-800);
     }
 
-    &:not(:global(.active)):hover {
-        color: var(--link-color);
-        opacity: 1;
+    &:hover,
+    &:global(.active) {
+        color: var(--active-color);
+    }
+
+    &:global(.active) {
+        cursor: default;
     }
 
     &::before {
         content: '';
         position: absolute;
-        width: 2px;
+        width: 100%;
         top: -$size-half;
         bottom: -$size-half;
         left: 0;
-        background-color: var(--secondary-text-color);
+        border-left: 1px solid var(--nav-line-color);
         opacity: 0;
-        transition: background-color 0.33s ease-in-out, opacity 0.33s ease-in-out;
+        z-index: -1;
+        transition: color 0.33s ease-in-out, border-color 0.33s ease-in-out, background-color 0.33s ease-in-out;
     }
 
-    &:not(:global(.active)):hover::before {
-        background-color: var(--link-color);
-        opacity: 0.5;
+    &:hover::before {
+        opacity: 1;
+        background-color: var(--hover-background);
     }
 
     &:global(.active)::before {
         opacity: 1;
+        border-left-color: var(--active-border);
+        background-color: var(--active-background);
     }
 }
 
@@ -113,13 +137,13 @@
 }
 
 .sideNav .level3 {
-    margin-bottom: calc(var(--item-gap) / 2) !important;
+    margin-bottom: calc(var(--item-gap) / 1.75) !important;
     padding-left: $size-4;
 }
 
 .sideNav .level1 + .level3,
 .sideNav .level2 + .level3 {
-    margin-top: calc(var(--item-gap) * -0.6);
+    margin-top: calc(var(--item-gap) * -0.4);
 }
 
 .sideNav .level3 + .level2 {

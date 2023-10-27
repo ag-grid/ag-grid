@@ -283,7 +283,7 @@
     padding-right: 32px;
 
     svg {
-        --text-color: red;
+        --text-color: var(--enterprise-icon-color);
 
         position: absolute;
         margin-top: -4px;

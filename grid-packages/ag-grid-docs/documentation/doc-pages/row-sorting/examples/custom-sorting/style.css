@@ -1,21 +1,8 @@
 body {
-    background: #0C1A27;
-    padding: 1rem;
-    padding-top: 1.5rem;
     /* border: 1px solid #394755; */
     border-top: 0px;
     border-bottom-right-radius: 8px;
     border-bottom-left-radius: 8px;
 }
 
-#myGrid {
-    --ag-background-color: var(--background-200);
-    --ag-odd-row-background-color: #151F28;
-
-    --ag-foreground-color: #e6f1fc;
-    
-    --ag-header-background-color: #1B2938;
-    --ag-header-foreground-color: #fff
-
-}
  

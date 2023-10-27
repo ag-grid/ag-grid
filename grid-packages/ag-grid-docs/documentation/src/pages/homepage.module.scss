@@ -35,6 +35,8 @@ gatsby-fast-refresh {
 
     #{$darkmode-selector} & {
         background-color: var(--default-background-color);
+        background-color: var(--background-100);
+        background-color: var(--default-background-color);
     }
 }
 

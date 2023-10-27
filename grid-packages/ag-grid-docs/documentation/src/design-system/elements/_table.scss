@@ -7,7 +7,7 @@ table {
     border-bottom: 1px solid var(--border-color);
 
     #{$darkmode-selector} & {
-        border-color: var(--neutral-500);
+        border-color: #394755;
     }
 }
 
@@ -24,7 +24,7 @@ tr {
     border-top: 1px solid var(--border-color);
 
     #{$darkmode-selector} & {
-        border-top-color: var(--neutral-500);
+        border-top-color: #394755;
     }
 }
 

@@ -21,7 +21,7 @@
         margin-right: var(--right-margin);
         padding-right: var(--menu-horizontal-margin);
         padding-left: var(--horizontal-margin);
-        border-right: solid 1px var(--secondary-border-color);
+        border-right: solid 0.5px var(--secondary-border-color);
 
         @supports (position: sticky) {
             position: sticky;
@@ -37,6 +37,8 @@
     }
 
     #{$darkmode-selector} & {
+        --secondary-border-color: #394755;
+
         border-bottom: none;
     }
 }
@@ -73,7 +75,7 @@ ul.menuInner {
     }
 }
 
-button:not([class^="ag-"]).sectionHeader {
+button:not([class^='ag-']).sectionHeader {
     width: 100%;
     padding-top: $size-half;
     padding-bottom: $size-half;
@@ -122,30 +124,30 @@ button:not([class^="ag-"]).sectionHeader {
 }
 
 .menuGroup {
-    --first-indent-size: 6px;
-    --indent-size: 12px;
+    --first-indent-size: 12px;
+    --indent-size: 20px;
 
     line-height: var(--line-height-tight);
     font-size: var(--font-size-small);
 
     ul a,
     ul .groupLabel {
-        margin-left: calc(var(--first-indent-size) + var(--indent-size));
+        padding-left: calc(var(--first-indent-size) + var(--indent-size));
     }
 
     ul ul a,
     ul ul .groupLabel {
-        margin-left: calc(var(--first-indent-size) + var(--indent-size) * 2);
+        padding-left: calc(var(--first-indent-size) + var(--indent-size) * 2);
     }
 
     ul ul ul a,
     ul ul ul .groupLabel {
-        margin-left: calc(var(--first-indent-size) + var(--indent-size) * 3);
+        padding-left: calc(var(--first-indent-size) + var(--indent-size) * 3);
     }
 
     .enterpriseIcon {
         --icon-size: 1.15em;
-        --text-color: red !important;
+        --text-color: var(--enterprise-icon-color);
 
         position: relative;
         margin-left: 2px;
@@ -160,58 +162,59 @@ button:not([class^="ag-"]).sectionHeader {
 }
 
 .menuGroup a {
+    --active-color: var(--primary-700);
+    --active-border: var(--primary-600);
+    --hover-background: var(--background-200);
+    --active-background: var(--background-300);
+
     position: relative;
     display: block;
+    margin-left: var(--first-indent-size);
     padding-top: 3px;
     padding-bottom: 3px;
     padding-left: $size-2;
-    margin-left: var(--first-indent-size);
-    outline: none;
-    border-radius: var(--border-radius);
-    border: 2px solid transparent;
     color: var(--secondary-text-color);
-    font-weight: var(--font-weight-bold);
-    transition: color $default-transition-timing, border-color $default-transition-timing;
+    border-left: 1px solid transparent;
+    outline: none;
+    transition: color 0.33s ease-in-out, border-color 0.33s ease-in-out, background-color 0.33s ease-in-out;
 
-    &::before {
-        content: '';
-        position: absolute;
-        width: 6px;
-        height: 6px;
-        transform: translate(-9px, 7px);
-        border-radius: 50%;
-        background-color: transparent;
-        transition: background-color $default-transition-timing;
+    #{$darkmode-selector} & {
+        --active-color: #007bff;
+        --active-border: #3893f9;
+        --hover-background: rgba(56, 146, 249, 0.06);
+        --active-background: rgba(56, 146, 249, 0.09);
+
+        -webkit-font-smoothing: auto;
+    }
+
+    &:hover {
+        background-color: var(--hover-background);
     }
 
     &:focus-visible {
         border-color: var(--input-focus-border-color);
-
-        &::before {
-            background-color: var(--input-focus-border-color);
-        }
     }
 
     &.activeItemParent {
-        color: var(--text-color);
+        color: color-mix(in oklch, var(--default-text-color) 66.66%, var(--secondary-text-color));
     }
 
-    &:hover {
-        color: var(--link-color);
-
-        &::before {
-            background-color: var(--link-color) !important;
-        }
+    &:hover,
+    &.activeMenuItem {
+        color: var(--active-color);
     }
 
     &.activeMenuItem {
         pointer-events: none;
-        color: var(--text-color);
-
-        &::before {
-            background-color: var(--text-color);
-        }
+        background-color: var(--active-background);
+        border-left-color: var(--active-border);
     }
+}
+
+.menuGroup li a {
+    padding-top: 7px;
+    padding-bottom: 7px;
+    border-left: 1px solid var(--border-color);
 }
 
 .menuGroup .groupLabel {
@@ -220,7 +223,13 @@ button:not([class^="ag-"]).sectionHeader {
     padding-top: 5px;
     padding-bottom: 5px;
     padding-left: $size-2 + 2px;
+    border-left: 1px solid var(--border-color);
+    color: var(--neutral-600);
     transition: color $default-transition-timing;
+
+    #{$darkmode-selector} & {
+        color: var(--neutral-800);
+    }
 
     &.activeItemParent {
         color: var(--text-color);
