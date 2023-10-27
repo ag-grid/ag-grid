@@ -59,6 +59,11 @@ html[data-color-scheme='dark'] button:not(#myGrid button) {
     white-space: nowrap;
     margin-right: 6px;
     margin-bottom: 8px;
+    transition: background-color .25s ease-in-out;
+}
+
+html[data-color-scheme='dark'] button:not(#myGrid button):hover {
+    background-color: #293949;
 }
 
 html[data-color-scheme='dark'] select:not(#myGrid select) {
@@ -68,6 +73,11 @@ html[data-color-scheme='dark'] select:not(#myGrid select) {
     border-radius: 4px;
     height: 36px;
     min-width: 36px;
+    transition: background-color .25s ease-in-out;
+}
+
+html[data-color-scheme='dark'] select:not(#myGrid select):hover {
+    background-color: #293949;
 }
 
 html[data-color-scheme='dark'] input:not(#myGrid input) {
@@ -77,7 +87,6 @@ html[data-color-scheme='dark'] input:not(#myGrid input) {
     border-radius: 4px;
     height: 36px;
     min-width: 36px;
-
 }
 
 html[data-color-scheme='dark'] body:not(#myGrid body) {
