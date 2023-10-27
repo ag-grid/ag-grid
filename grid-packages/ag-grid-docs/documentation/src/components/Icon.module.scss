@@ -2,4 +2,5 @@
     fill: var(--text-color);
     width: var(--icon-size);
     height: var(--icon-size);
+    opacity: 0.99; // "Fix" for terrible Chrome SVG rendering
 }
