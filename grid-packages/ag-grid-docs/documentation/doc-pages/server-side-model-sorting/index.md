@@ -49,7 +49,7 @@ The example below demonstrates sorting using the SSRM. Note the following:
 - All columns have sorting enabled via `defaultColDef.sortable = true`.
 - The server uses the metadata contained in the `sortModel` to sort the rows.
 - Open the browser's dev console to view the `sortModel` supplied in the request to the datasource.
-- Try single / multi-column (using <kbd>Shift</kbd> key) sorting by clicking on column headers.
+- Try single / multi-column (using <kbd>⇧ Shift</kbd> key) sorting by clicking on column headers.
 
 <grid-example title='Server Side Sorting' name='server-side-sorting' type='generated' options='{ "enterprise": true, "extras": ["alasql"], "modules": ["serverside"] }'></grid-example>
 

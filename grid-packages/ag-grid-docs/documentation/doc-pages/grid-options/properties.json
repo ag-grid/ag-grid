@@ -44,7 +44,7 @@
         },
         "preventDefaultOnContextMenu": {},
         "allowContextMenuWithControlKey": {
-            "description": "Allows context menu to show, even when <kbd>Ctrl</kbd> key is held down. Default: `false`"
+            "description": "Allows context menu to show, even when <kbd>^ Ctrl</kbd> key is held down. Default: `false`"
         },
         "getMainMenuItems": {
             "more": {
@@ -75,10 +75,10 @@
             }
         },
         "copyHeadersToClipboard": {
-            "description": "Set to `true` to also include headers when copying to clipboard using <kbd>Ctrl</kbd>+<kbd>C</kbd> clipboard. Default: `false`"
+            "description": "Set to `true` to also include headers when copying to clipboard using <kbd>^ Ctrl</kbd>+<kbd>C</kbd> clipboard. Default: `false`"
         },
         "copyGroupHeadersToClipboard": {
-            "description": "Set to `true` to also include group headers when copying to clipboard using <kbd>Ctrl</kbd>+<kbd>C</kbd> clipboard. Default: `false`"
+            "description": "Set to `true` to also include group headers when copying to clipboard using <kbd>^ Ctrl</kbd>+<kbd>C</kbd> clipboard. Default: `false`"
         },
         "clipboardDelimiter": {},
         "suppressCutToClipboard": {},
@@ -181,7 +181,7 @@
             }
         },
         "colResizeDefault": {
-            "description": "Set to `'shift'` to have shift-resize as the default resize operation (same as user holding down <kbd>Shift</kbd> while resizing)."
+            "description": "Set to `'shift'` to have shift-resize as the default resize operation (same as user holding down <kbd>⇧ Shift</kbd> while resizing)."
         },
         "autoSizeStrategy": {
             "more": {
@@ -251,14 +251,14 @@
             }
         },
         "enterNavigatesVertically": {
-            "description": "Set to `true` along with `enterNavigatesVerticallyAfterEdit` to have Excel-style behaviour for the <kbd>Enter</kbd> key, i.e. pressing the <kbd>Enter</kbd> key will move down to the cell beneath. Default: `false` ",
+            "description": "Set to `true` along with `enterNavigatesVerticallyAfterEdit` to have Excel-style behaviour for the <kbd>↵ Enter</kbd> key, i.e. pressing the <kbd>↵ Enter</kbd> key will move down to the cell beneath. Default: `false` ",
             "more": {
                 "name": "Enter Key Navigation",
                 "url": "/cell-editing-start-stop/#enter-key-navigation"
             }
         },
         "enterNavigatesVerticallyAfterEdit": {
-            "description": "Set to `true` along with `enterNavigatesVertically` to have Excel-style behaviour for the <kbd>Enter</kbd> key, i.e. pressing the <kbd>Enter</kbd> key will move down to the cell beneath. Default: `false` ",
+            "description": "Set to `true` along with `enterNavigatesVertically` to have Excel-style behaviour for the <kbd>↵ Enter</kbd> key, i.e. pressing the <kbd>↵ Enter</kbd> key will move down to the cell beneath. Default: `false` ",
             "more": {
                 "name": "Enter Key Navigation",
                 "url": "/cell-editing-start-stop/#enter-key-navigation"
@@ -616,11 +616,11 @@
         },
         "navigateToNextHeader": {},
         "tabToNextHeader": {
-            "description": "Allows overriding the default behaviour for when user hits <kbd>Tab</kbd> key when a header is focused."
+            "description": "Allows overriding the default behaviour for when user hits <kbd>⇥ Tab</kbd> key when a header is focused."
         },
         "navigateToNextCell": {},
         "tabToNextCell": {
-            "description": "Allows overriding the default behaviour for when user hits <kbd>Tab</kbd> key when a cell is focused."
+            "description": "Allows overriding the default behaviour for when user hits <kbd>⇥ Tab</kbd> key when a cell is focused."
         }
     },
     "pagination": {
@@ -1199,7 +1199,7 @@
             }
         },
         "suppressRowDeselection": {
-            "description": "If `true`, rows will not be deselected if you hold down <kbd>Ctrl</kbd> and click the row or press <kbd>Space</kbd>. Default: `false`"
+            "description": "If `true`, rows will not be deselected if you hold down <kbd>^ Ctrl</kbd> and click the row or press <kbd>␣ Space</kbd>. Default: `false`"
         },
         "suppressRowClickSelection": {},
         "suppressCellFocus": {},
@@ -1266,7 +1266,7 @@
         "suppressMultiSort": {},
         "alwaysMultiSort": {},
         "multiSortKey": {
-            "description": "Set to `'ctrl'` to have multi sorting work using the <kbd>Ctrl</kbd> (or <kbd>Command ⌘</kbd> for Mac) key.",
+            "description": "Set to `'ctrl'` to have multi sorting work using the <kbd>^ Ctrl</kbd> (or <kbd>Command ⌘</kbd> for Mac) key.",
             "more": {
                 "name": "Multi Column Sorting",
                 "url": "/row-sorting/#multi-column-sorting"

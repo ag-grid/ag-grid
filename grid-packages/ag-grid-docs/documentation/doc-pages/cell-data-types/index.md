@@ -87,7 +87,7 @@ The `'boolean'` cell data type is used for `boolean` values.
 The following properties are set:
 - The [Checkbox Cell Renderer](/cell-rendering/#checkbox-cell-renderer) is used for rendering, which displays a checkbox.
 - The [Checkbox Cell Editor](/provided-cell-editors/#checkbox-cell-editor) is used for editing (similar to the renderer).
-- `suppressKeyboardEvent` is set to enable the <kbd>Space</kbd> key to toggle the renderer value.
+- `suppressKeyboardEvent` is set to enable the <kbd>␣ Space</kbd> key to toggle the renderer value.
 - For AG Grid Community, the [Text Filter](/filter-text/) is used, and `filterParams` is set to display a single dropdown with `'True'`/`'False'` (or equivalents with [Localisation](/localisation/)).
 - For AG Grid Enterprise, `filterParams.valueFormatter` is set to show `'True'`/`'False'` (or equivalents with [Localisation](/localisation/)).
 

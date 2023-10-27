@@ -46,7 +46,7 @@ export interface IGroupCellRendererParams<TData = any, TValue = any> {
     suppressPadding?: boolean;
     /** Set to `true` to suppress expand on double click. */
     suppressDoubleClickExpand?: boolean;
-    /** Set to `true` to suppress expand on <kbd>Enter</kbd> */
+    /** Set to `true` to suppress expand on <kbd>↵ Enter</kbd> */
     suppressEnterExpand?: boolean;
     /** The value getter for the footer text. Can be a function or expression. */
     footerValueGetter?: string | FooterValueGetterFunc;

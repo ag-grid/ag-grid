@@ -17,10 +17,10 @@ const gridOptions = {
 
 The following example demonstrates the Advanced Filter:
 - Start typing `athlete` into the Advanced Filter input. As you type, the list of suggested column names will be filtered down.
-- Select the `Athlete` entry by pressing <kbd>Enter</kbd> or <kbd>Tab</kbd>, or using the mouse to click on the entry.
+- Select the `Athlete` entry by pressing <kbd>↵ Enter</kbd> or <kbd>⇥ Tab</kbd>, or using the mouse to click on the entry.
 - Select the `contains` entry in a similar way.
 - After the quote, type `michael` followed by an end quote (`"`).
-- Press <kbd>Enter</kbd> or click the `Apply` button to execute the filter.
+- Press <kbd>↵ Enter</kbd> or click the `Apply` button to execute the filter.
 - The rows are now filtered to contain only **Athlete**s with names containing `michael`.
 - Try out each of the columns to see how the different [Cell Data Types](/cell-data-types/) are handled.
 - Complex filter expressions can be built up by using `AND` and `OR` along with brackets - `(` and `)`.

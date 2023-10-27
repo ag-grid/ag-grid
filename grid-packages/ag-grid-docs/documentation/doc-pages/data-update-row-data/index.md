@@ -40,7 +40,7 @@ Note the following:
 
 - Note that if a grid sort is applied, the grid sorting order gets preference to the order of the data in the provided list.
 
-- **Remove Selected**: Removes the selected items. Try selecting multiple rows (<kbd>Ctrl</kbd> + click for multiple, or <kbd>Shift</kbd> + click for range) and remove multiple rows at the same time. Notice how the remaining rows animate to new positions.
+- **Remove Selected**: Removes the selected items. Try selecting multiple rows (<kbd>^ Ctrl</kbd> + click for multiple, or <kbd>⇧ Shift</kbd> + click for range) and remove multiple rows at the same time. Notice how the remaining rows animate to new positions.
 
 - **Update Prices**: Updates all the prices. Try ordering by price and notice the order change as the prices change. Also try highlighting a range on prices and see the aggregations appear in the status bar. As you update the prices, the aggregation values recalculate.
 

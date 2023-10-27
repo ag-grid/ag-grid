@@ -229,4 +229,4 @@ columnDefs: [
 <grid-example title='Checkbox Cell Renderer' name='checkbox-cell-renderer' type='generated'></grid-example>
 
 
-Note that if [Row Selection](/row-selection/) is enabled, it is recommended to set `suppressKeyboardEvent` on the column definition to prevent the <kbd>Space</kbd> key from triggering both row selection and toggling the checkbox. This is shown in the example above.
+Note that if [Row Selection](/row-selection/) is enabled, it is recommended to set `suppressKeyboardEvent` on the column definition to prevent the <kbd>␣ Space</kbd> key from triggering both row selection and toggling the checkbox. This is shown in the example above.

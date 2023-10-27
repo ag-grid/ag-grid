@@ -98,13 +98,13 @@ var gridOptions = {
 ## Multi Column Sorting
 
 It is possible to sort by multiple columns. The default action for multiple column sorting is for
-the user to hold down <kbd>Shift</kbd> while clicking the column header. To change the default action to use
-the <kbd>Ctrl</kbd> key (or <kbd>Command</kbd> key on Apple) instead set the property `multiSortKey='ctrl'`.
+the user to hold down <kbd>⇧ Shift</kbd> while clicking the column header. To change the default action to use
+the <kbd>^ Ctrl</kbd> key (or <kbd>Command</kbd> key on Apple) instead set the property `multiSortKey='ctrl'`.
 
 The example below demonstrates the following:
 
 - The grid sorts by **Country** then **Athlete** by default.
-- The property `multiSortKey='ctrl'` is set so multiple column sorting is achieved by holding down <kbd>Ctrl</kbd> (or <kbd>Command</kbd> on Apple) and selecting multiple columns.
+- The property `multiSortKey='ctrl'` is set so multiple column sorting is achieved by holding down <kbd>^ Ctrl</kbd> (or <kbd>Command</kbd> on Apple) and selecting multiple columns.
 
 <grid-example title='Multi Column Sort' name='multi-column' type='generated'></grid-example>
 

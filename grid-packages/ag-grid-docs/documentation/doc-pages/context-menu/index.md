@@ -9,7 +9,7 @@ The user can bring up the context menu by right clicking on a cell. By default, 
 The 'paste' operation in the context menu is not possible and hence always disabled.
 It is not possible because of a browser security restriction that JavaScript cannot
 take data from the clipboard without the user explicitly doing a paste command from the browser
-(e.g. <kbd>Ctrl</kbd>+<kbd>V</kbd> or from the browser menu). If JavaScript could do this, then websites could steal
+(e.g. <kbd>^ Ctrl</kbd>+<kbd>V</kbd> or from the browser menu). If JavaScript could do this, then websites could steal
 data from the client by accessing the clipboard maliciously. The reason why the grid keeps
 the disabled paste option in the menu is to indicate to the user that paste is possible and it provides
 the keyboard shortcut as a hint to the user.
@@ -50,7 +50,7 @@ The following is a list of all the default built in menu items with the rules ab
 
 ## Default Context Menu
 
-One drawback of using the AG Grid context menu is that you may want to show the browser's context menu when debugging, for example in order to access your browser's dev tools. If you want the grid to do nothing (and hence allow the browser to display its context menu) then hold down the <kbd>Ctrl</kbd> key while clicking for the context menu. If you always want the grid's context menu, even when <kbd>Ctrl</kbd> is pressed, then set `allowContextMenuWithControlKey=true`.
+One drawback of using the AG Grid context menu is that you may want to show the browser's context menu when debugging, for example in order to access your browser's dev tools. If you want the grid to do nothing (and hence allow the browser to display its context menu) then hold down the <kbd>^ Ctrl</kbd> key while clicking for the context menu. If you always want the grid's context menu, even when <kbd>^ Ctrl</kbd> is pressed, then set `allowContextMenuWithControlKey=true`.
 
 ## Hiding the Context Menu
 

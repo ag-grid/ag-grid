@@ -64,7 +64,7 @@ The example below shows a Status Bar with a simple configuration. Note the follo
 
 ### Configuring the Aggregation Panel
 
-If you have multiple ranges selected (by holding down <kbd>Ctrl</kbd> while dragging) and a cell is in multiple ranges, the cell will be only included once in the aggregation.
+If you have multiple ranges selected (by holding down <kbd>^ Ctrl</kbd> while dragging) and a cell is in multiple ranges, the cell will be only included once in the aggregation.
 
 If the cell does not contain a simple number value, then it will not be included in average, min max or sum, however it will still be included in count.
 
