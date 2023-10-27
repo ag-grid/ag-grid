@@ -86,7 +86,7 @@ export class AgRichSelect<TValue = any> extends AgPickerField<TValue, RichSelect
             this.cellRowHeight = cellRowHeight;
         }
 
-        if (value != null) {
+        if (value !== undefined) {
             this.value = value;
         }
 
