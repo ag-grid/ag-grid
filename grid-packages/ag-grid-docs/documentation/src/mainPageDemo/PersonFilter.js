@@ -44,19 +44,9 @@ export class PersonFilter {
     }
 
     doesFilterPass(params) {
-        const {api, colDef, column, columnApi, context} = this.params;
         const {node} = params;
 
-        const value = this.params.valueGetter({
-            api,
-            colDef,
-            column,
-            columnApi,
-            context,
-            data: node.data,
-            getValue: (field) => node.data[field],
-            node,
-        }).toString().toLowerCase();
+        const value = this.params.getValue(node).toString().toLowerCase();
 
         // make sure each word passes separately, ie search for firstname, lastname
         return this.filterText

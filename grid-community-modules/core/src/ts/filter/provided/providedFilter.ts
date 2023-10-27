@@ -533,18 +533,8 @@ export abstract class ProvidedFilter<M, V> extends Component implements IProvide
         return translate(key, DEFAULT_FILTER_LOCALE_TEXT[key]);
     }
 
-    protected getCellValue(rowNode: IRowNode): V {
-        const { api, colDef, column, columnApi, context } = this.providedFilterParams;
-        return this.providedFilterParams.valueGetter({
-            api,
-            colDef,
-            column,
-            columnApi,
-            context,
-            data: rowNode.data,
-            getValue: (field) => rowNode.data[field],
-            node: rowNode,
-        });
+    protected getCellValue(rowNode: IRowNode): V | null | undefined {
+        return this.providedFilterParams.getValue(rowNode);
     }
 
     // override to control positionable feature

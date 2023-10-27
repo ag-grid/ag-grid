@@ -54,7 +54,7 @@ export class SetFilter<V = string> extends ProvidedFilter<SetFilterModel, V> imp
     private hardRefreshVirtualList = false;
     private noValueFormatterSupplied = false;
 
-    private createKey: (value: V | null, node?: IRowNode | null) => string | null;
+    private createKey: (value: V | null | undefined, node?: IRowNode | null) => string | null;
 
     private valueFormatter?: (params: ValueFormatterParams) => string;
     private readonly filterModelFormatter = new SetFilterModelFormatter();
@@ -323,7 +323,7 @@ export class SetFilter<V = string> extends ProvidedFilter<SetFilterModel, V> imp
         keyCreator: ((params: KeyCreatorParams<any, any>) => string) | undefined,
         convertValuesToStrings: boolean,
         treeDataOrGrouping: boolean
-    ): (value: V | null, node?: IRowNode | null) => string | null {
+    ): (value: V | null | undefined, node?: IRowNode | null) => string | null {
         if (treeDataOrGrouping && !keyCreator) {
             throw new Error('AG Grid: Must supply a Key Creator in Set Filter params when `treeList = true` on a group column, and Tree Data or Row Grouping is enabled.');
         }
@@ -788,10 +788,10 @@ export class SetFilter<V = string> extends ProvidedFilter<SetFilterModel, V> imp
             return this.doesFilterPassForTreeData(node, data);
         }
         if (this.groupingTreeList) {
-            return this.doesFilterPassForGrouping(node, data);
+            return this.doesFilterPassForGrouping(node);
         }
 
-        let value = this.getValueFromNode(node, data);
+        let value = this.getValueFromNode(node);
 
         if (this.convertValuesToStrings) {
             // for backwards compatibility - keeping separate as it will eventually be removed
@@ -808,7 +808,7 @@ export class SetFilter<V = string> extends ProvidedFilter<SetFilterModel, V> imp
         return this.isInAppliedModel(this.createKey(value, node));
     }
 
-    private doesFilterPassForConvertValuesToString(node: IRowNode, value: V | null) {
+    private doesFilterPassForConvertValuesToString(node: IRowNode, value: V | null | undefined) {
         const key = this.createKey(value, node);
         if (key != null && Array.isArray(key)) {
             if (key.length === 0) {
@@ -828,9 +828,9 @@ export class SetFilter<V = string> extends ProvidedFilter<SetFilterModel, V> imp
         return this.isInAppliedModel(this.createKey(this.checkMakeNullDataPath(this.getDataPath!(data)) as any) as any);
     }
 
-    private doesFilterPassForGrouping(node: IRowNode, data: any): boolean {
+    private doesFilterPassForGrouping(node: IRowNode): boolean {
         const dataPath = this.columnModel.getRowGroupColumns().map(groupCol => this.valueService.getKeyForNode(groupCol, node));
-        dataPath.push(this.getValueFromNode(node, data));
+        dataPath.push(this.getValueFromNode(node));
         return this.isInAppliedModel(this.createKey(this.checkMakeNullDataPath(dataPath) as any) as any);
         
     }
@@ -849,22 +849,11 @@ export class SetFilter<V = string> extends ProvidedFilter<SetFilterModel, V> imp
         return this.valueModel!.hasAppliedModelKey(key);
     }
 
-    private getValueFromNode(node: IRowNode, data: any): V | null {
-        const { valueGetter, api, colDef, column, columnApi, context } = this.setFilterParams!;
-
-        return valueGetter({
-            api,
-            colDef,
-            column,
-            columnApi,
-            context,
-            data: data,
-            getValue: (field) => data[field],
-            node: node,
-        });
+    private getValueFromNode(node: IRowNode): V | null | undefined {
+        return this.setFilterParams!.getValue(node);
     }
 
-    private getKeyCreatorParams(value: V | null, node: IRowNode | null = null): KeyCreatorParams {
+    private getKeyCreatorParams(value: V | null | undefined, node: IRowNode | null = null): KeyCreatorParams {
         return {
             value,
             colDef: this.setFilterParams!.colDef,

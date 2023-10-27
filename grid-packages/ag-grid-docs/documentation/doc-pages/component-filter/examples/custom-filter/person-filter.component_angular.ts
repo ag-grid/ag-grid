@@ -34,12 +34,7 @@ export class PersonFilter implements IFilterAngularComp {
         const { node } = params;
 
         this.filterText.toLowerCase().split(' ').forEach(filterWord => {
-            const value = this.filterParams.valueGetter({
-                ...this.filterParams,
-                data: node.data,
-                getValue: (field) => node.data[field],
-                node,
-            });
+            const value = this.filterParams.getValue(node);
 
             if (value.toString().toLowerCase().indexOf(filterWord) < 0) {
                 passed = false;

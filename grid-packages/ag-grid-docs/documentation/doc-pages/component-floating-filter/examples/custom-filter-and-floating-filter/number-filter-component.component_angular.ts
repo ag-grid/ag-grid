@@ -27,12 +27,7 @@ export class NumberFilterComponent implements IFilterAngularComp {
 
         var { node } = params;
 
-        var value = this.filterParams.valueGetter({
-            ...this.filterParams,
-            data: node.data,
-            getValue: (field) => node.data[field],
-            node,
-        });
+        var value = this.filterParams.getValue(node);
 
         if (value == null) return false;
         return Number(value) > Number(this.filterText);

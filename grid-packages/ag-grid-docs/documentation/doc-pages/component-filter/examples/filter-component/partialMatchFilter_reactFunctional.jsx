@@ -16,18 +16,8 @@ export default forwardRef((props, ref) => {
             },
 
             doesFilterPass(params) {
-                const { api, colDef, column, columnApi, context, valueGetter } = props;
                 const { node } = params;
-                const value = valueGetter({
-                    api,
-                    colDef,
-                    column,
-                    columnApi,
-                    context,
-                    data: node.data,
-                    getValue: (field) => node.data[field],
-                    node,
-                }).toString().toLowerCase();
+                const value = props.getValue(node).toString().toLowerCase();
         
                 return text.toLowerCase()
                     .split(' ')

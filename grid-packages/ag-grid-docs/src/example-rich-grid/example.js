@@ -4431,19 +4431,9 @@ function createRowData() {
     };
 
     ProficiencyFilter.prototype.doesFilterPass = function (params) {
-        var {api, colDef, column, columnApi, context} = this.params;
         var {node} = params;
 
-        var value = this.params.valueGetter({
-            api,
-            colDef,
-            column,
-            columnApi,
-            context,
-            data: node.data,
-            getValue: (field) => node.data[field],
-            node,
-        });
+        var value = this.params.getValue(node);
 
         var valueAsNumber = parseFloat(value);
 

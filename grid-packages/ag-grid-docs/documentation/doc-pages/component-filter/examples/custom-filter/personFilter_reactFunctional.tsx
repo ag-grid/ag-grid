@@ -1,4 +1,4 @@
-import React, { forwardRef, useEffect, useImperativeHandle, useState, useRef } from 'react';
+import React, { forwardRef, useEffect, useImperativeHandle, useState } from 'react';
 import { IDoesFilterPassParams, IFilterParams } from "@ag-grid-community/core";
 
 export default forwardRef((props: IFilterParams, ref) => {
@@ -8,23 +8,13 @@ export default forwardRef((props: IFilterParams, ref) => {
     useImperativeHandle(ref, () => {
         return {
             doesFilterPass(params: IDoesFilterPassParams) {
-                const { api, colDef, column, columnApi, context } = props;
                 const { node } = params;
 
                 // make sure each word passes separately, ie search for firstname, lastname
                 let passed = true;
                 if (filterText) {
                     filterText.toLowerCase().split(' ').forEach(filterWord => {
-                        const value = props.valueGetter({
-                            api,
-                            colDef,
-                            column,
-                            columnApi,
-                            context,
-                            data: node.data,
-                            getValue: (field) => node.data[field],
-                            node,
-                        });
+                        const value = props.getValue(node);
 
                         if (value.toString().toLowerCase().indexOf(filterWord) < 0) {
                             passed = false;

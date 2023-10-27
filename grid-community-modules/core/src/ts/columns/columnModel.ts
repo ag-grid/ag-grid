@@ -2623,7 +2623,7 @@ export class ColumnModel extends BeanStub {
         return this.getColumn(key, this.primaryColumns, this.primaryColumnsMap);
     }
 
-    public getGridColumn(key: string | Column): Column | null {
+    public getGridColumn(key: string | ColDef | Column): Column | null {
         return this.getColumn(key, this.gridColumns, this.gridColumnsMap);
     }
 
@@ -2636,7 +2636,7 @@ export class ColumnModel extends BeanStub {
         return this.getColumn(key, this.secondaryColumns, this.secondaryColumnsMap);
     }
 
-    private getColumn(key: string | Column, columnList: Column[], columnMap: { [id: string]: Column }): Column | null {
+    private getColumn(key: string | ColDef | Column, columnList: Column[], columnMap: { [id: string]: Column }): Column | null {
         if (!key || !columnMap) { return null; }
 
         // most of the time this method gets called the key is a string, so we put this shortcut in
@@ -2668,7 +2668,7 @@ export class ColumnModel extends BeanStub {
         return column ? [column] : null;
     }
 
-    private getAutoColumn(key: string | Column): Column | null {
+    private getAutoColumn(key: string | ColDef | Column): Column | null {
         if (
             !this.groupAutoColumns ||
             !exists(this.groupAutoColumns) ||
@@ -2678,7 +2678,7 @@ export class ColumnModel extends BeanStub {
         return this.groupAutoColumns.find(groupCol => this.columnsMatch(groupCol, key)) || null;
     }
 
-    private columnsMatch(column: Column, key: string | Column): boolean {
+    private columnsMatch(column: Column, key: string | ColDef | Column): boolean {
         const columnMatches = column === key;
         const colDefMatches = column.getColDef() === key;
         const idMatches = column.getColId() == key;

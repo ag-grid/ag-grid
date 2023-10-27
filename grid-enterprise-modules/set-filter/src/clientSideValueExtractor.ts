@@ -16,7 +16,7 @@ export class ClientSideValuesExtractor<V> {
     constructor(
         private readonly rowModel: IClientSideRowModel,
         private readonly filterParams: SetFilterParams<any, V>,
-        private readonly createKey: (value: V | null, node?: RowNode) => string | null,
+        private readonly createKey: (value: V | null | undefined, node?: RowNode) => string | null,
         private readonly caseFormat: <T extends string | null>(valueToFormat: T) => typeof valueToFormat,
         private readonly columnModel: ColumnModel,
         private readonly valueService: ValueService,
@@ -48,7 +48,7 @@ export class ClientSideValuesExtractor<V> {
         const treeData = this.treeData && !!this.getDataPath;
         const groupedCols = this.columnModel.getRowGroupColumns();
 
-        const addValue = (unformattedKey: string | null, value: V | null) => {
+        const addValue = (unformattedKey: string | null, value: V | null | undefined) => {
             const formattedKey = this.caseFormat(unformattedKey);
             if (!formattedKeys.has(formattedKey)) {
                 formattedKeys.add(formattedKey);
@@ -96,7 +96,7 @@ export class ClientSideValuesExtractor<V> {
         return values;
     }
 
-    private addValueForConvertValuesToString(node: RowNode, value: V | null, addValue: (unformattedKey: string | null, value: V | null) => void): void {
+    private addValueForConvertValuesToString(node: RowNode, value: V | null | undefined, addValue: (unformattedKey: string | null, value: V | null) => void): void {
         const key = this.createKey(value, node);
         if (key != null && Array.isArray(key)) {
             key.forEach(part => {
@@ -129,18 +129,8 @@ export class ClientSideValuesExtractor<V> {
         addValue(this.createKey(dataPath as any), dataPath as any);
     }
 
-    private getValue(node: RowNode): V | null {
-        const {api, colDef, column, columnApi, context} = this.filterParams;
-        return this.filterParams.valueGetter({
-            api,
-            colDef,
-            column,
-            columnApi,
-            context,
-            data: node.data,
-            getValue: (field) => node.data[field],
-            node,
-        });
+    private getValue(node: RowNode): V | null | undefined {
+        return this.filterParams.getValue(node);
     }
 
     private extractExistingFormattedKeys(existingValues?: Map<string | null, V | null>): Map<string | null, string | null> | null {

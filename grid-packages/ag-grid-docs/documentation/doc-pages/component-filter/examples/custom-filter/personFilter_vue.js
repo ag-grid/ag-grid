@@ -30,16 +30,7 @@ export default {
             // make sure each word passes separately, ie search for firstname, lastname
             let passed = true;
             this.filterText.toLowerCase().split(' ').forEach(filterWord => {
-                const value = this.params.valueGetter({
-                    api,
-                    colDef,
-                    column,
-                    columnApi,
-                    context,
-                    data: node.data,
-                    getValue: (field) => node.data[field],
-                    node,
-                });
+                const value = this.params.getValue(node);
 
                 if (value.toString().toLowerCase().indexOf(filterWord) < 0) {
                     passed = false;

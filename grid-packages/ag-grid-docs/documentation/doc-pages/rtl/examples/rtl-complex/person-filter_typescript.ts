@@ -43,12 +43,7 @@ export class PersonFilter implements IFilterComp {
         
         const { node } = params;
 
-        const value = this.filterParams.valueGetter({
-            ...this.filterParams,
-            data: node.data,
-            getValue: (field) => node.data[field],
-            node,
-        }).toString().toLowerCase();
+        const value = this.filterParams.getValue(node).toString().toLowerCase();
 
         // make sure each word passes separately, ie search for firstname, lastname
         return this.filterText!
