@@ -95,17 +95,26 @@ export abstract class AbstractHeaderCellCtrl<TComp = any, TColumn = any, TFeatur
         const eDocument = this.gridOptionsService.getDocument();
         const activeEl = eDocument.activeElement;
 
+        const isLeftOrRight = e.key === KeyCode.LEFT || e.key === KeyCode.RIGHT;
+
+        if (this.isResizing) {
+            e.preventDefault();
+            e.stopImmediatePropagation();
+        }
+
         if (
             // if elements within the header are focused, we don't process the event
             activeEl !== this.eGui ||
             // if shiftKey and altKey are not pressed, it's cell navigation so we don't process the event
-            (!e.shiftKey && !e.altKey) ||
-            // only process LEFT and RIGHT
-            (e.key !== KeyCode.LEFT && e.key !== KeyCode.RIGHT)
+            (!e.shiftKey && !e.altKey)
         ) { return; }
 
-        e.preventDefault();
-        e.stopImmediatePropagation();
+        if (this.isResizing || isLeftOrRight) {
+            e.preventDefault();
+            e.stopImmediatePropagation();
+        }
+
+        if (!isLeftOrRight) { return; }
         
         const direction = HorizontalDirection[e.key === KeyCode.LEFT ? 'Left' : 'Right' ];
         if (e.altKey) {
