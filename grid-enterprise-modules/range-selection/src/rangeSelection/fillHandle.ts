@@ -252,10 +252,10 @@ export class FillHandle extends AbstractSelectionHandle {
                     const cellValue = this.valueService.getValue(col, rowNode);
 
                     if (!fromUserFunction) {
-                        if (sourceCol?.getColDef()?.useValueFormatterForExport) {
+                        if (sourceCol && sourceCol.getColDef()?.useValueFormatterForExport !== false) {
                             currentValue = this.valueFormatterService.formatValue(sourceCol, sourceRowNode!, currentValue) ?? currentValue;
                         }
-                        if (col.getColDef().useValueParserForImport) {
+                        if (col.getColDef().useValueParserForImport !== false) {
                             currentValue = this.valueParserService.parseValue(
                                 col,
                                 rowNode,

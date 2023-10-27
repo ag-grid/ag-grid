@@ -61,8 +61,6 @@ If you wish to override one of the properties set below for all types, you can d
 All the cell data types set the following (unless specified):
 - A [Value Parser](/value-parsers/) to convert from `string` to the relevant data type.
 - A [Value Formatter](/value-formatters/) to convert from the relevant data type to `string` (except for `'text'`).
-- `useValueParserForImport = true` to [Use the Value Parser with Other Grid Features](/value-parsers/#use-value-parser-for-import).
-- `useValueFormatterForExport = true` to [Use the Value Formatter with Other Grid Features](/value-formatters/#use-value-formatter-for-export).
 - A [Key Creator](/grouping-complex-objects/#creating-group-keys-from-complex-objects) which uses the Value Formatter to allow Row Grouping to work (except for `'number'` and `'text'`).
 
 Note that when using cell data types, the Value Formatter will not run for values in group columns (as they have already been formatted), or for aggregated values where the data type can differ. To apply custom formatting in these cases, cell data types will need to be disabled for the underlying columns.
