@@ -35,6 +35,14 @@ html[data-color-scheme='dark'] body > * {
     color-scheme: dark;
 }
 
+html[data-color-scheme='dark'] body {
+    padding: 16px 0 0;
+}
+
+html[data-color-scheme='dark'] div + #myGrid {
+    margin-top: -8px;
+}
+
 html[data-color-scheme='dark'] button:not(#myGrid button) {
     appearance: none;
     background-color: #202A34;

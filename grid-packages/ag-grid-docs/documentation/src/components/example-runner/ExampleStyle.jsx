@@ -23,7 +23,7 @@ const ExampleStyle = ({ rootId }) => <style media="only screen">
             }
 
             body {
-                padding-top: 16px;
+                padding: 16px;
                 overflow: auto;
                 background-color: transparent
             }
