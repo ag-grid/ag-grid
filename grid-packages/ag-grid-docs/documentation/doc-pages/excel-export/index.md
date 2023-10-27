@@ -28,7 +28,8 @@ The default Excel export behaviour will export the grid as it is currently rende
 Note that the raw values, and not the result from a cell renderer will be used, meaning the results from:
 
 - Value Getters will be used. 
-- Cell Renderers / Formatters will **NOT** be used, unless [Use Value Formatter for Export](/value-formatters/#use-value-formatter-for-export) is enabled.
+- Cell Renderers will **NOT** be used.
+- Value Formatters will be used by default via the [Use Value Formatter for Export](/value-formatters/#use-value-formatter-for-export) feature.
 - Cell styles will **NOT** be exported by default. 
 
 In the following example reorder some columns and apply some filter and sort operations - then export from the 'Excel Export' option 

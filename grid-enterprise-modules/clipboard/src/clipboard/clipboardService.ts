@@ -972,9 +972,9 @@ export class ClipboardService extends BeanStub implements IClipboardService {
 
             return func(params);
         }
-        if (canParse && column.getColDef().useValueParserForImport) {
+        if (canParse && column.getColDef().useValueParserForImport !== false) {
             return this.valueParserService.parseValue(column, rowNode ?? null, value, this.valueService.getValue(column, rowNode));
-        } else if (canFormat && column.getColDef().useValueFormatterForExport) {
+        } else if (canFormat && column.getColDef().useValueFormatterForExport !== false) {
             return this.valueFormatterService.formatValue(column, rowNode ?? null, value) ?? value as any;
         }
 

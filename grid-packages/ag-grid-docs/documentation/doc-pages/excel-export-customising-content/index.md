@@ -5,7 +5,9 @@ enterprise: true
 
 ## Customising Cell and Row Group values
 
-The grid cell and row group values exported to Excel can be customised using the following function params for a call to `exportDataAsExcel` API method or in the `defaultExcelExportParams`.
+By default, the values exported to Excel will be formatted via the [Using the Value Formatter for Export](/value-formatters/#use-value-formatter-for-export) feature.
+
+The grid cell and row group values can be customised specifically for Excel export using the following function params for a call to `exportDataAsExcel` API method or in the `defaultExcelExportParams`.
 
 <snippet>
 | gridApi.exportDataAsExcel({
@@ -24,8 +26,6 @@ The grid cell and row group values exported to Excel can be customised using the
     names='["processRowGroupCallback", "processCellCallback"]'
     config='{"description":"See below the functions on the `ExcelExportParams` interface to customise exported grid cell and row group values."}'>
 </interface-documentation>
-
-Note that it is also possible to format the values by [Using the Value Formatter for Export](/value-formatters/#use-value-formatter-for-export).
 
 The following example shows Excel customisations where the exported document has the following:
 

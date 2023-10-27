@@ -588,8 +588,6 @@ export class DataTypeService extends BeanStub {
                 ...params
             } : params;
         }
-        colDef.useValueFormatterForExport = true;
-        colDef.useValueParserForImport = true;
         switch (dataTypeDefinition.baseDataType) {
             case 'number': {
                 colDef.cellEditor = 'agNumberCellEditor';

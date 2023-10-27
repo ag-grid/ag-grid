@@ -142,7 +142,9 @@ Or you can disable pasting for a specific column or cell by setting the property
 
 ## Processing Pasted Data
 
-It is possible to process clipboard data before pasting it into the grid. This can be done either on individual cells or the whole paste operation.
+The clipboard data will be processed by default [Using the Value Formatter for Export](/value-formatters/#use-value-formatter-for-export) to format the cells when copied, and [Using the Value Parser for Import](/value-parsers/#use-value-parser-for-import) to format the cells when pasted.
+
+It is possible to override this behaviour specifically for the clipboard. This can be done either on individual cells or the whole paste operation.
 
 ### Processing Individual Cells
 
@@ -158,8 +160,6 @@ These three callbacks above are demonstrated in the example below. Note the foll
 - When group headers are copied to the clipboard, values are prefixed with 'GH-'. Headers can be copied by using the context menu.
 
 <grid-example title='Example Process' name='process' type='generated' options='{ "enterprise": true, "modules": ["clientside", "menu", "range", "clipboard"] }'></grid-example>
-
-It is also possible to process the data by [Using the Value Formatter for Export](/value-formatters/#use-value-formatter-for-export) to format the cells when copied, and  [Using the Value Parser for Import](/value-parsers/#use-value-parser-for-import) to format the cells when pasted.
 
 ### Processing Data from Clipboard
 
