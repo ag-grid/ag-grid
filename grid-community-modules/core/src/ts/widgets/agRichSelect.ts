@@ -577,10 +577,18 @@ export class AgRichSelect<TValue = any> extends AgPickerField<TValue, RichSelect
     }
 
     protected onEnterKeyDown(e: KeyboardEvent): void {
-        if (!this.isPickerDisplayed) { return; }
-        e.preventDefault();
+        this.selectListValueFromKeyDown(e, true);
+    }
 
-        this.onListValueSelected(this.currentList[this.highlightedItem], true);
+    private onTabKeyDown(e: KeyboardEvent): void {
+        this.selectListValueFromKeyDown(e, false);
+    }
+
+    private selectListValueFromKeyDown(e: KeyboardEvent, preventDefault: boolean): void {
+        if (!this.isPickerDisplayed) { return; }
+        if (preventDefault) { e.preventDefault() ;}
+
+        this.onListValueSelected(this.currentList[this.highlightedItem], true)
     }
 
     private onListValueSelected(value: TValue, fromEnterKey: boolean): void {
@@ -643,6 +651,9 @@ export class AgRichSelect<TValue = any> extends AgPickerField<TValue, RichSelect
                 break;
             case KeyCode.ENTER:
                 this.onEnterKeyDown(event);
+                break;
+            case KeyCode.TAB:
+                this.onTabKeyDown(event);
                 break;
             default:
                 if (!allowTyping) {
