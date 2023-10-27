@@ -32,20 +32,8 @@ export class WinningsFilter {
         return this.eGui;
     }
 
-    doesFilterPass(node) {
-        var { api, colDef, column, columnApi, context } = this.params;
-        // var { node } = this.params;
-
-        var value = this.params.valueGetter({
-            api,
-            colDef,
-            column,
-            columnApi,
-            context,
-            data: node.data,
-            getValue: (field) => node.data[field],
-            node,
-        })
+    doesFilterPass(params) {
+        var value = this.params.getValue(params.node);
 
         if (this.cbNoFilter.checked) { return true; }
         if (this.cbPositive.checked) { return value >= 0; }

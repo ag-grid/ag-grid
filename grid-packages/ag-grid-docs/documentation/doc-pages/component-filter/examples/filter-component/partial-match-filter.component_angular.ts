@@ -40,12 +40,7 @@ export class PartialMatchFilter implements IFilterAngularComp {
 
     doesFilterPass(params: IDoesFilterPassParams): boolean {
         const { node } = params;
-        const value = this.filterParams.valueGetter({
-            ...this.filterParams,
-            data: node.data,
-            getValue: (field) => node.data[field],
-            node,
-        }).toString().toLowerCase();
+        const value = this.filterParams.getValue(node).toString().toLowerCase();
 
         return this.text.toLowerCase()
             .split(' ')

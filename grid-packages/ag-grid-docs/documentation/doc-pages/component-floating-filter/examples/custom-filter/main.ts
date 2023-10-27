@@ -58,12 +58,7 @@ class NumberFilter implements IFilterComp {
         }
 
         const { node } = params;
-        const value = this.filterParams.valueGetter({
-            ...this.filterParams,
-            data: node.data,
-            getValue: (field) => node.data[field],
-            node,
-        });
+        const value = this.filterParams.getValue(node);
 
         const filterValue = this.filterText;
 

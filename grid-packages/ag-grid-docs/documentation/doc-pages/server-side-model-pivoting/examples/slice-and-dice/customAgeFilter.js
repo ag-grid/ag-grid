@@ -49,18 +49,8 @@ class CustomAgeFilter {
   
     doesFilterPass(params) {
       // not needed for server side filtering
-      const { api, colDef, column, columnApi, context } = this.params;
       const { node } = params;
-      const value = this.params.valueGetter({
-        api,
-        colDef,
-        column,
-        columnApi,
-        context,
-        data: node.data,
-        getValue: (field) => node.data[field],
-        node,
-      });
+      const value = this.params.getValue(node);
       return value == this.filterValue
     }
   

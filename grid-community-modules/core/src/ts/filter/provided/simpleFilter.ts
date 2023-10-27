@@ -1064,7 +1064,7 @@ export abstract class SimpleFilter<M extends ISimpleFilterModel, V, E = AgInputT
     protected evaluateCustomFilter(
         customFilterOption: IFilterOptionDef | undefined,
         values: Tuple<V>,
-        cellValue: V,
+        cellValue: V | null | undefined,
     ): boolean | undefined {
         if (customFilterOption == null) {
             return;

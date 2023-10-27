@@ -38,7 +38,7 @@ export interface SetValueModelParams<V> {
     setIsLoading: (loading: boolean) => void,
     translate: (key: keyof ISetFilterLocaleText) => string,
     caseFormat: <T extends string | null>(valueToFormat: T) => typeof valueToFormat,
-    createKey: (value: V | null, node?: RowNode) => string | null,
+    createKey: (value: V | null | undefined, node?: RowNode) => string | null,
     valueFormatter?: (params: ValueFormatterParams) => string,
     usingComplexObjects?: boolean,
     treeDataTreeList?: boolean,
@@ -66,7 +66,7 @@ export class SetValueModel<V> implements IEventEmitter {
     private readonly setIsLoading: (loading: boolean) => void;
     private readonly translate: (key: keyof ISetFilterLocaleText) => string;
     private readonly caseFormat: <T extends string | null>(valueToFormat: T) => typeof valueToFormat;
-    private readonly createKey: (value: V | null, node?: RowNode) => string | null;
+    private readonly createKey: (value: V | null | undefined, node?: RowNode) => string | null;
     private readonly usingComplexObjects: boolean;
 
     private valuesType: SetFilterModelValuesType;

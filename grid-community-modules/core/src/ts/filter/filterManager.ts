@@ -512,6 +512,13 @@ export class FilterManager extends BeanStub {
         return ({ node }) => this.valueService.getValue(column, node as RowNode, true);
     }
 
+    private createGetValue(filterColumn: Column): IFilterParams['getValue'] {
+        return (rowNode, column) => {
+            const columnToUse = column ? this.columnModel.getGridColumn(column) : filterColumn;
+            return columnToUse ? this.valueService.getValue(columnToUse, rowNode, true) : undefined;
+        };
+    }
+
     public getFilterComponent(column: Column, source: FilterRequestSource, createIfDoesNotExist = true): AgPromise<IFilterComp> | null {
         if (createIfDoesNotExist) {
             return this.getOrCreateFilterWrapper(column, source)?.filterPromise || null;
@@ -622,6 +629,7 @@ export class FilterManager extends BeanStub {
             filterChangedCallback: () => { },
             filterModifiedCallback: () => { },
             valueGetter: this.createValueGetter(column),
+            getValue: this.createGetValue(column),
             doesRowPassOtherFilter: () => true,
             api: this.gridOptionsService.api,
             columnApi: this.gridOptionsService.columnApi,

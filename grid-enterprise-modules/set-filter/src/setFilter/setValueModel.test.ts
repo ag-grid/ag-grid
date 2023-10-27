@@ -63,6 +63,7 @@ function createSetValueModel(opts: Partial<typeof DEFAULT_OPTS> = DEFAULT_OPTS) 
     const svmParams: SetFilterParams = {
         rowModel,
         valueGetter: ({node}) => node.data.value,
+        getValue: (node) => node.data.value,
         colDef: {},
         doesRowPassOtherFilter: doesRowPassOtherFilters,
         suppressSorting,
