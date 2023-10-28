@@ -89,7 +89,6 @@ export class GridChartComp extends Component {
 
     private chartProxy: ChartProxy;
     private chartType: ChartType;
-    private chartThemeName?: string;
 
     private readonly params: GridChartParams;
 
@@ -100,23 +99,11 @@ export class GridChartComp extends Component {
 
     @PostConstruct
     public init(): void {
-        const availableChartThemes = this.gridOptionsService.get('chartThemes') || DEFAULT_THEMES;
-
-        if (availableChartThemes.length < 1) {
-            throw new Error('Cannot create chart: no chart themes are available to be used.');
-        }
-
-        let { chartThemeName } = this.params;
-
-        if (!_.includes(availableChartThemes, chartThemeName)) {
-            chartThemeName = availableChartThemes[0];
-        }
-
         const modelParams: ChartModelParams = {
             chartId: this.params.chartId,
             pivotChart: this.params.pivotChart,
             chartType: this.params.chartType,
-            chartThemeName: chartThemeName!,
+            chartThemeName: this.getThemeName(),
             aggFunc: this.params.aggFunc,
             cellRange: this.params.cellRange,
             suppressChartRanges: this.params.suppressChartRanges,
@@ -148,6 +135,8 @@ export class GridChartComp extends Component {
         this.addManagedListener(this.getGui(), 'focusin', this.setActiveChartCellRange.bind(this));
         this.addManagedListener(this.chartController, ChartController.EVENT_CHART_MODEL_UPDATE, this.update.bind(this));
 
+        this.addManagedPropertyListeners(['chartThemeOverrides', 'chartThemes'], this.reactivePropertyUpdate.bind(this));
+
         if (this.chartMenu) {
             // chart menu may not exist, i.e. cross filtering
             this.addManagedListener(this.chartMenu, ChartMenu.EVENT_DOWNLOAD_CHART, () => this.downloadChart());
@@ -155,19 +144,6 @@ export class GridChartComp extends Component {
 
         this.update();
         this.raiseChartCreatedEvent();
-    }
-
-    private validateCustomThemes() {
-        const suppliedThemes = this.getChartThemes();
-        const customChartThemes = this.gridOptionsService.get('customChartThemes');
-        if (customChartThemes) {
-            _.getAllKeysInObjects([customChartThemes]).forEach(customThemeName => {
-                if (!_.includes(suppliedThemes, customThemeName)) {
-                    console.warn("AG Grid: a custom chart theme with the name '" + customThemeName + "' has been " +
-                        "supplied but not added to the 'chartThemes' list");
-                }
-            });
-        }
     }
 
     private createChart(): void {
@@ -212,7 +188,6 @@ export class GridChartComp extends Component {
 
         // set local state used to detect when chart changes
         this.chartType = chartType;
-        this.chartThemeName = this.chartController.getChartThemeName();
 
         this.chartProxy = GridChartComp.createChartProxy(chartProxyParams);
         if (!this.chartProxy) {
@@ -455,6 +430,47 @@ export class GridChartComp extends Component {
 
         this.chartController.setChartRange(true);
         (this.gridApi as any).focusService.clearFocusedCell();
+    }
+
+    private getThemeName(): string {
+        const availableChartThemes = this.gridOptionsService.get('chartThemes') || DEFAULT_THEMES;
+
+        if (availableChartThemes.length === 0) {
+            throw new Error('Cannot create chart: no chart themes available.');
+        }
+
+        const { chartThemeName } = this.params;
+        return _.includes(availableChartThemes, chartThemeName) ? chartThemeName! : availableChartThemes[0];
+    }
+
+    private validateCustomThemes() {
+        const suppliedThemes = this.getChartThemes();
+        const customChartThemes = this.gridOptionsService.get('customChartThemes');
+        if (customChartThemes) {
+            _.getAllKeysInObjects([customChartThemes]).forEach(customThemeName => {
+                if (!_.includes(suppliedThemes, customThemeName)) {
+                    console.warn("AG Grid: a custom chart theme with the name '" + customThemeName + "' has been " +
+                        "supplied but not added to the 'chartThemes' list");
+                }
+            });
+        }
+    }
+
+    private reactivePropertyUpdate(): void {
+        // switch to the first theme if the current theme is unavailable
+        this.chartController.setChartThemeName(this.getThemeName(), true);
+
+        const chartId = this.getChartId();
+        const chartThemeOverrides = this.gridOptionsService.get('chartThemeOverrides');
+        const modelType = this.chartController.isCrossFilterChart()
+            ? 'crossFilter'
+            : this.getChartModel().modelType;
+
+        this.update({
+            type: `${modelType}ChartUpdate`,
+            chartId,
+            chartThemeOverrides
+        });
     }
 
     private raiseChartCreatedEvent(): void {
