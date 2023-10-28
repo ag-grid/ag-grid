@@ -4,6 +4,7 @@ import {
   CreateRangeChartParams,
   FirstDataRenderedEvent,
   GridOptions,
+  ChartRef
 } from '@ag-grid-community/core';
 
 let gridApi: GridApi;
@@ -34,6 +35,7 @@ const gridOptions: GridOptions = {
   popupParent: document.body,
   enableRangeSelection: true,
   enableCharts: true,
+  chartThemes: ['ag-default', 'ag-default-dark'],
   chartThemeOverrides: {
     common: {
       title: {
@@ -66,7 +68,34 @@ function onFirstDataRendered(params: FirstDataRenderedEvent) {
     aggFunc: 'sum',
   }
 
-  params.api.createRangeChart(createRangeChartParams)
+  const chart = params.api.createRangeChart(createRangeChartParams)!;
+
+  toggleDarkMode(chart);
+  document.addEventListener('color-scheme-change', (e: any) => {
+    toggleDarkMode(chart, e.detail.darkMode);
+  });
+}
+
+function toggleDarkMode(chart: ChartRef, darkMode?: boolean) {
+  const gridDiv = document.querySelector<HTMLElement>('#myGrid')!
+
+  if (darkMode == null) {
+    darkMode = false;
+
+    for (const cls of gridDiv.classList.values()) {
+      if (cls.indexOf('dark') !== -1) { darkMode = true; break; }
+    }
+  }
+
+  changeChartTheme(darkMode, chart);
+}
+
+function changeChartTheme(darkMode: boolean, chart: ChartRef) {
+  gridApi.updateChart({
+    type: 'rangeChartUpdate',
+    chartId: chart!.chartId,
+    chartThemeName: darkMode ? 'ag-default-dark' : 'ag-default',
+  });
 }
 
 // setup the grid after the page has finished loading

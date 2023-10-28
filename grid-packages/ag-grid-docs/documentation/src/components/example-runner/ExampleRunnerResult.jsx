@@ -103,6 +103,10 @@ const applyExampleDarkMode = (document, darkMode) => {
     document.documentElement.dataset.colorScheme = darkMode ? 'dark' : 'light';
     document.documentElement.dataset.defaultTheme = darkMode ? 'ag-theme-alpine-dark' : 'ag-theme-alpine';
     injectStylesheet(document);
+
+    const event = new CustomEvent('color-scheme-change', { detail: { darkMode } });
+    document.dispatchEvent(event);
+
     for (const el of document.querySelectorAll("[class*='ag-theme-']")) {
         for (const className of Array.from(el.classList.values())) {
             const theme = themes[className];
