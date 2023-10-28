@@ -103,21 +103,6 @@ export class MoveColumnFeature implements DropListener {
         this.lastMovedInfo = null;
     }
 
-    private normaliseX(x: number): number {
-        // flip the coordinate if doing RTL
-        if (this.gridOptionsService.is('enableRtl')) {
-            const clientWidth = this.eContainer.clientWidth;
-            x = clientWidth - x;
-        }
-
-        // adjust for scroll only if centre container (the pinned containers don't scroll)
-        if (this.centerContainer) {
-            x += this.ctrlsService.getCenterRowContainerCtrl().getCenterViewportScrollLeft();
-        }
-
-        return x;
-    }
-
     private checkCenterForScrolling(xAdjustedForScroll: number): void {
         if (this.centerContainer) {
             // scroll if the mouse has gone outside the grid (or just outside the scrollable part if pinning)
@@ -156,7 +141,13 @@ export class MoveColumnFeature implements DropListener {
             return;
         }
 
-        const mouseX = this.normaliseX(draggingEvent.x);
+        const mouseX = ColumnMoveHelper.normaliseX(
+            draggingEvent.x,
+            this.pinned,
+            true,
+            this.gridOptionsService,
+            this.ctrlsService
+        );
 
         // if the user is dragging into the panel, ie coming from the side panel into the main grid,
         // we don't want to scroll the grid this time, it would appear like the table is jumping

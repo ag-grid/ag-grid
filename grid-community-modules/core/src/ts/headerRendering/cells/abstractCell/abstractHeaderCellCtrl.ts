@@ -116,7 +116,9 @@ export abstract class AbstractHeaderCellCtrl<TComp = any, TColumn = any, TFeatur
 
         if (!isLeftOrRight) { return; }
         
-        const direction = HorizontalDirection[e.key === KeyCode.LEFT ? 'Left' : 'Right' ];
+        const isLeft = (e.key === KeyCode.LEFT) !== this.gridOptionsService.is('enableRtl');
+        const direction = HorizontalDirection[isLeft ? 'Left' : 'Right' ];
+
         if (e.altKey) {
             this.isResizing = true;
             this.resizeMultiplier += 1;

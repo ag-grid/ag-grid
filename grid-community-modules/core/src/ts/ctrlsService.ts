@@ -290,6 +290,18 @@ export class CtrlsService extends BeanStub {
         return [this.leftHeaderRowContainerCtrl, this.rightHeaderRowContainerCtrl, this.centerHeaderRowContainerCtrl];
     }
 
+    public getRowContainerCtrl(pinned?: ColumnPinnedType): RowContainerCtrl {
+        if (pinned === 'left') {
+            return this.leftRowContainerCtrl;
+        }
+
+        if (pinned === 'right') {
+            return this.rightRowContainerCtrl;
+        }
+
+        return this.centerRowContainerCtrl;
+    }
+
     public getHeaderRowContainerCtrl(pinned?: ColumnPinnedType): HeaderRowContainerCtrl {
         switch (pinned) {
             case 'left': return this.leftHeaderRowContainerCtrl;

@@ -8,7 +8,6 @@ import { Autowired } from "../context/context";
 import { AgEvent } from "../events";
 import { last } from "../utils/array";
 import { GridOptionsService } from "../gridOptionsService";
-import { logDeprecation } from "../gridOptionsValidator";
 
 export type ColumnGroupShowType = 'open' | 'closed';
 

@@ -135,40 +135,47 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl<IHeaderCellComp, Colu
     protected resizeHeader(direction: HorizontalDirection, shiftKey: boolean): void {
         if (!this.column.isResizable()) { return; }
 
-        const isLeft = direction === HorizontalDirection.Left;
-        const isRtl = this.gridOptionsService.is('enableRtl');
-
         const actualWidth = this.column.getActualWidth();
         const minWidth = this.column.getMinWidth() ?? 0;
         const maxWidth = this.column.getMaxWidth() ?? Number.MAX_SAFE_INTEGER;
-        
-        const isNegative  = isLeft !== isRtl;
-        const diff = (isNegative ? -1 : 1) * this.resizeMultiplier;
+    
+        const isLeft = direction === HorizontalDirection.Left;
+        const diff = (isLeft ? -1 : 1) * this.resizeMultiplier;
 
         const newWidth = Math.min(Math.max(actualWidth + diff, minWidth), maxWidth);
 
         this.columnModel.setColumnWidths([{ key: this.column, newWidth }], shiftKey, true);
     }
 
-    protected moveHeader(direction: HorizontalDirection): void {
-        const { column } = this;
+    protected moveHeader(hDirection: HorizontalDirection): void {
+        const { column, columnModel, gridOptionsService, ctrlsService } = this;
+        const pinned = this.getPinned();
         const left = column.getLeft()!;
         const width = column.getActualWidth();
-        const xPosition = direction === HorizontalDirection.Left ? (left - 1) : (left + width + 1);
+        const isRtl = gridOptionsService.is('enableRtl');
+
+        const isLeft = hDirection === HorizontalDirection.Left !== isRtl;
+        const xPosition = ColumnMoveHelper.normaliseX(
+            isLeft ? (left - 1) : (left + width + 1),
+            pinned,
+            false,
+            gridOptionsService,
+            ctrlsService
+        );
 
         ColumnMoveHelper.attemptMoveColumns({
-            allMovingColumns: [this.column],
+            allMovingColumns: [column],
             isFromHeader: true,
-            hDirection: direction,
+            hDirection,
             xPosition,
-            pinned: this.column.getPinned(),
+            pinned,
             fromEnter: false,
             fakeEvent: false,
-            gridOptionsService: this.gridOptionsService,
-            columnModel: this.columnModel
+            gridOptionsService,
+            columnModel
         });
 
-        this.ctrlsService.getGridBodyCtrl().getScrollFeature().ensureColumnVisible(this.column, 'auto');
+        ctrlsService.getGridBodyCtrl().getScrollFeature().ensureColumnVisible(column, 'auto');
     }
 
     private setupUserComp(): void {
@@ -188,7 +195,6 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl<IHeaderCellComp, Colu
     }
 
     private createParams(): IHeaderParams {
-
         const colDef = this.column.getColDef();
 
         const params: IHeaderParams = {
@@ -321,45 +327,45 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl<IHeaderCellComp, Colu
         this.dragSourceElement = eSource;
         this.removeDragSource();
 
-        if (!eSource) { return; }
+        if (!eSource || !this.draggable) { return; }
 
-        if (!this.draggable) { return; }
+        const { column, columnModel, displayName, dragAndDropService, gridOptionsService } = this;
 
         let hideColumnOnExit = !this.gridOptionsService.is('suppressDragLeaveHidesColumns');
-        this.dragSource = {
+        const dragSource = this.dragSource = {
             type: DragSourceType.HeaderCell,
             eElement: eSource,
             getDefaultIconName: () => hideColumnOnExit ? DragAndDropService.ICON_HIDE : DragAndDropService.ICON_NOT_ALLOWED,
-            getDragItem: () => this.createDragItem(),
-            dragItemName: this.displayName,
+            getDragItem: () => this.createDragItem(column),
+            dragItemName: displayName,
             onDragStarted: () => {
-                hideColumnOnExit = !this.gridOptionsService.is('suppressDragLeaveHidesColumns');
-                this.column.setMoving(true, "uiColumnMoved");
+                hideColumnOnExit = !gridOptionsService.is('suppressDragLeaveHidesColumns');
+                column.setMoving(true, "uiColumnMoved");
             },
-            onDragStopped: () => this.column.setMoving(false, "uiColumnMoved"),
+            onDragStopped: () => column.setMoving(false, "uiColumnMoved"),
             onGridEnter: (dragItem) => {
                 if (hideColumnOnExit) {
                     const unlockedColumns = dragItem?.columns?.filter(col => !col.getColDef().lockVisible) || [];
-                    this.columnModel.setColumnsVisible(unlockedColumns, true, "uiColumnMoved");
+                    columnModel.setColumnsVisible(unlockedColumns, true, "uiColumnMoved");
                 }
             },
             onGridExit: (dragItem) => {
                 if (hideColumnOnExit) {
                     const unlockedColumns = dragItem?.columns?.filter(col => !col.getColDef().lockVisible) || [];
-                    this.columnModel.setColumnsVisible(unlockedColumns, false, "uiColumnMoved");
+                    columnModel.setColumnsVisible(unlockedColumns, false, "uiColumnMoved");
                 }
             },
         };
 
-        this.dragAndDropService.addDragSource(this.dragSource, true);
+        dragAndDropService.addDragSource(dragSource, true);
     }
 
-    private createDragItem(): DragItem {
+    private createDragItem(column: Column): DragItem {
         const visibleState: { [key: string]: boolean; } = {};
-        visibleState[this.column.getId()] = this.column.isVisible();
+        visibleState[column.getId()] = column.isVisible();
 
         return {
-            columns: [this.column],
+            columns: [column],
             visibleState: visibleState
         };
     }
