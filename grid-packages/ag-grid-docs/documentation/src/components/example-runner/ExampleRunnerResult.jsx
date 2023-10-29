@@ -87,10 +87,8 @@ const ExampleRunnerResult = ({ isOnScreen = true, resultFrameIsVisible = true, e
         style={{
             visibility: showIframe ? 'visible' : 'hidden'
         }}
-        />;
+    />;
 };
-
-export default ExampleRunnerResult;
 
 const themes = {
     "ag-theme-alpine": {dark: false, other: "ag-theme-alpine-dark"},
@@ -100,9 +98,11 @@ const themes = {
 }
 
 const applyExampleDarkMode = (document, darkMode) => {
+    document.documentElement.dataset.appIdentifier = 'AG-GRID-EXAMPLE-RUNNER'; // used by Integrated Charts
     document.documentElement.dataset.colorScheme = darkMode ? 'dark' : 'light';
     document.documentElement.dataset.defaultTheme = darkMode ? 'ag-theme-alpine-dark' : 'ag-theme-alpine';
     injectStylesheet(document);
+
     for (const el of document.querySelectorAll("[class*='ag-theme-']")) {
         for (const className of Array.from(el.classList.values())) {
             const theme = themes[className];
@@ -112,6 +112,9 @@ const applyExampleDarkMode = (document, darkMode) => {
             }
         }
     }
+
+    // dispatch 'color-scheme-change' event for Integrated Charts to update dark mode theme
+    document.dispatchEvent(new CustomEvent('color-scheme-change', { detail: { darkMode } }));
 }
 
 export const injectStylesheet = (document) => {
@@ -123,5 +126,6 @@ export const injectStylesheet = (document) => {
       document.body.insertBefore(style, document.body.firstChild);
     }
     style.textContent = exampleRuntimeInjectedStyles;
-  };
-  
+};
+
+export default ExampleRunnerResult;

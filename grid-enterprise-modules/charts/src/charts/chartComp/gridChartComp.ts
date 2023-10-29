@@ -92,6 +92,9 @@ export class GridChartComp extends Component {
 
     private readonly params: GridChartParams;
 
+    // function to clean up the 'color-scheme-change' event listener
+    private onDestroyColorSchemeChangeListener: () => void;
+
     constructor(params: GridChartParams) {
         super(GridChartComp.TEMPLATE);
         this.params = params;
@@ -142,6 +145,7 @@ export class GridChartComp extends Component {
             this.addManagedListener(this.chartMenu, ChartMenu.EVENT_DOWNLOAD_CHART, () => this.downloadChart());
         }
 
+        this.initWebsiteDarkMode();
         this.update();
         this.raiseChartCreatedEvent();
     }
@@ -473,6 +477,43 @@ export class GridChartComp extends Component {
         });
     }
 
+    private initWebsiteDarkMode(): void {
+        const eDocument = this.gridOptionsService.getDocument();
+
+        // exit if not in example runner to prevent side effects
+        if (!eDocument.querySelector('[data-app-identifier="AG-GRID-EXAMPLE-RUNNER"]')) return;
+
+        const isInitialModeDark = (): boolean =>
+            eDocument.documentElement?.getAttribute('data-default-theme')?.endsWith('-dark') ?? false;
+
+        const applyThemeSuffix = (theme: string, isDark: boolean, suffix: string): string =>
+            isDark ? (theme.endsWith(suffix) ? theme : `${theme}${suffix}`) : theme.replace(suffix, '');
+
+        const updateChartThemes = (isDark: boolean): void => {
+            const themes = this.chartController.getThemes();
+            const modifiedThemes = themes.map(theme => applyThemeSuffix(theme, isDark, '-dark'));
+
+            // updating the `chartThemes` grid option will cause the chart to reactively update!
+            this.gridOptionsService.set('chartThemes', modifiedThemes);
+        };
+
+        const handleColorSchemeChange = (event: CustomEvent<{ darkMode: boolean }>): void => {
+            const { darkMode } = event.detail;
+            updateChartThemes(darkMode);
+        };
+
+        // update chart themes when example first loads
+        updateChartThemes(isInitialModeDark());
+
+        // listen for user-triggered dark mode changes
+        eDocument.addEventListener('color-scheme-change', handleColorSchemeChange);
+
+        // store event listener to remove when the chart is destroyed
+        this.onDestroyColorSchemeChangeListener = () => {
+            eDocument.removeEventListener('color-scheme-change', handleColorSchemeChange);
+        };
+    }
+
     private raiseChartCreatedEvent(): void {
         const event: WithoutGridCommon<ChartCreated> = {
             type: Events.EVENT_CHART_CREATED,
@@ -507,6 +548,8 @@ export class GridChartComp extends Component {
         if (this.chartDialog && this.chartDialog.isAlive()) {
             this.destroyBean(this.chartDialog);
         }
+
+        this.onDestroyColorSchemeChangeListener?.();
 
         // if the user is providing containers for the charts, we need to clean up, otherwise the old chart
         // data will still be visible although the chart is no longer bound to the grid
