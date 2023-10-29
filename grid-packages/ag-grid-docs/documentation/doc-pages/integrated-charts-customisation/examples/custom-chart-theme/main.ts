@@ -1,5 +1,5 @@
 import {createGrid, FirstDataRenderedEvent, GridApi, GridOptions, GridReadyEvent,} from '@ag-grid-community/core';
-import {getData} from "./data";
+import {getData, deepMerge} from "./data";
 
 let gridApi: GridApi;
 
@@ -187,23 +187,6 @@ function onFirstDataRendered(params: FirstDataRenderedEvent) {
     chartType: 'groupedBar',
   });
 }
-
-function deepMerge(obj1: any, obj2: any): any {
-  const output = { ...obj1 };
-
-  for (const key in obj2) {
-    if (obj2.hasOwnProperty(key)) {
-      if (typeof obj2[key] === 'object' && obj2[key] !== null && !Array.isArray(obj2[key])) {
-        output[key] = deepMerge(obj1[key] || {}, obj2[key]);
-      } else {
-        output[key] = obj2[key];
-      }
-    }
-  }
-
-  return output;
-}
-
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {

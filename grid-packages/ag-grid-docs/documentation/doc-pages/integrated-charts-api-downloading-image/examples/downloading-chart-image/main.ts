@@ -68,10 +68,7 @@ function onChartCreated(event: ChartCreated) {
 }
 
 function downloadChart(dimensions: { width: number, height: number }) {
-  if (!chartId) {
-    return;
-  }
-
+  if (!chartId) return;
   gridApi!.downloadChart({
     fileName: 'resizedImage',
     fileFormat: 'image/jpeg',
@@ -81,38 +78,33 @@ function downloadChart(dimensions: { width: number, height: number }) {
 }
 
 function downloadChartImage(fileFormat: string) {
-  handleImageData(fileFormat, (imageDataURL) => {
-    const a = document.createElement('a');
-    a.href = imageDataURL;
-    a.download = 'image';
-    a.style.display = 'none';
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-  });
+  if (!chartId) return;
+  const params: GetChartImageDataUrlParams = { fileFormat, chartId }
+  const imageDataURL = gridApi!.getChartImageDataURL(params)
+
+  if (imageDataURL) {
+    const a = document.createElement('a')
+    a.href = imageDataURL
+    a.download = 'image'
+    a.style.display = 'none'
+    document.body.appendChild(a)
+    a.click()
+    document.body.removeChild(a)
+  }
 }
 
 function openChartImage(fileFormat: string) {
-  handleImageData(fileFormat, (imageDataURL) => {
-    const image = new Image();
-    image.src = imageDataURL;
-
-    const w = window.open('')!;
-    w.document.write(image.outerHTML);
-    w.document.close();
-  });
-}
-
-function handleImageData(fileFormat: string, callback: (url: string) => void) {
-  if (!chartId) {
-    return;
-  }
-
-  const params: GetChartImageDataUrlParams = { fileFormat, chartId };
-  const imageDataURL = gridApi!.getChartImageDataURL(params);
+  if (!chartId) return;
+  const params: GetChartImageDataUrlParams = { fileFormat, chartId }
+  const imageDataURL = gridApi!.getChartImageDataURL(params)
 
   if (imageDataURL) {
-    callback(imageDataURL);
+    const image = new Image()
+    image.src = imageDataURL
+
+    const w = window.open('')!
+    w.document.write(image.outerHTML)
+    w.document.close()
   }
 }
 
