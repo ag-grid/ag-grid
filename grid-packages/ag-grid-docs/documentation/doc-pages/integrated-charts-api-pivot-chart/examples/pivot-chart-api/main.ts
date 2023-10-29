@@ -28,7 +28,7 @@ const gridOptions: GridOptions = {
     minWidth: 200,
   },
   pivotMode: true,
-  onFirstDataRendered: onFirstDataRendered,
+  onFirstDataRendered,
   popupParent: document.body,
 }
 
@@ -38,7 +38,6 @@ function onFirstDataRendered(event: FirstDataRenderedEvent) {
   const params: CreatePivotChartParams = {
     chartType: 'groupedColumn',
     chartContainer: chartContainer,
-    chartThemeName: 'ag-vivid',
     chartThemeOverrides: {
       common: {
         navigator: {

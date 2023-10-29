@@ -1,174 +1,160 @@
 import {
   GridApi,
   createGrid,
-  ChartType,
   ColDef,
   CreateRangeChartParams,
   GetRowIdParams,
   GridOptions,
   ValueFormatterParams,
   ChartMenuOptions,
+  ChartType
 } from '@ag-grid-community/core';
-import { AgAxisLabelFormatterParams, AgCartesianSeriesTooltipRendererParams } from 'ag-charts-community';
+import { AgAxisLabelFormatterParams } from 'ag-charts-community';
+
 declare var __basePath: string;
 
-const columnDefs: ColDef[] = [
-  { field: 'product', chartDataType: 'category', minWidth: 90 },
-  { field: 'book', chartDataType: 'category', minWidth: 90 },
+const MIN_WIDTH = 110;
 
-  { field: 'current', type: 'measure' },
-  { field: 'previous', type: 'measure' },
-  { headerName: 'PL 1', field: 'pl1', type: 'measure' },
-  { headerName: 'PL 2', field: 'pl2', type: 'measure' },
-  { headerName: 'Gain-DX', field: 'gainDx', type: 'measure' },
-  { headerName: 'SX / PX', field: 'sxPx', type: 'measure' },
+// Types
+interface WorkerMessage {
+  type: string;
+  records?: any[];
+}
 
-  { field: 'trade', type: 'measure' },
-  { field: 'submitterID', type: 'measure' },
-  { field: 'submitterDealID', type: 'measure' },
-
-  { field: 'portfolio' },
-  { field: 'dealType' },
-  { headerName: 'Bid', field: 'bidFlag' },
-]
-
-var chartRef: any;
-
+// Global variables
+let chartRef: any;
 let gridApi: GridApi;
+let worker: Worker;
 
+// Column Definitions
+function getColumnDefs(): ColDef[] {
+  return [
+    { field: 'product', chartDataType: 'category', minWidth: MIN_WIDTH },
+    { field: 'book', chartDataType: 'category', minWidth: MIN_WIDTH },
+    { field: 'current', type: 'measure' },
+    { field: 'previous', type: 'measure' },
+    { headerName: 'PL 1', field: 'pl1', type: 'measure' },
+    { headerName: 'PL 2', field: 'pl2', type: 'measure' },
+    { headerName: 'Gain-DX', field: 'gainDx', type: 'measure' },
+    { headerName: 'SX / PX', field: 'sxPx', type: 'measure' },
+
+    { field: 'trade', type: 'measure' },
+    { field: 'submitterID', type: 'measure' },
+    { field: 'submitterDealID', type: 'measure' },
+
+    { field: 'portfolio' },
+    { field: 'dealType' },
+    { headerName: 'Bid', field: 'bidFlag' },
+  ];
+}
+
+// Grid Options
 const gridOptions: GridOptions = {
-  columnDefs: columnDefs,
-  defaultColDef: {
-    editable: true,
-    sortable: true,
-    flex: 1,
-    minWidth: 115,
-    filter: true,
-    resizable: true,
-  },
-  columnTypes: {
-    measure: {
-      chartDataType: 'series',
-      cellClass: 'number',
-      valueFormatter: numberCellFormatter,
-      cellRenderer: 'agAnimateShowChangeCellRenderer',
+    columnDefs: getColumnDefs(),
+    defaultColDef: {
+      editable: true,
+      sortable: true,
+      flex: 1,
+      minWidth: 140,
+      filter: true,
+      resizable: true,
     },
-  },
-  animateRows: true,
-  enableCharts: true,
-  suppressAggFuncInHeader: true,
-  getRowId: (params: GetRowIdParams) => {
-    return params.data.trade
-  },
-  onFirstDataRendered: (params) => {
-    var createRangeChartParams: CreateRangeChartParams = {
-      cellRange: {
-        columns: [
-          'product',
-          'current',
-          'previous',
-          'pl1',
-          'pl2',
-          'gainDx',
-          'sxPx',
-        ]
+    columnTypes: {
+      measure: {
+        chartDataType: 'series',
+        cellClass: 'number',
+        valueFormatter: numberCellFormatter,
+        cellRenderer: 'agAnimateShowChangeCellRenderer',
       },
-      chartType: 'groupedColumn',
-      chartContainer: document.querySelector('#myChart') as any,
-      suppressChartRanges: true,
-      aggFunc: 'sum',
-    }
+    },
+    animateRows: true,
+    enableCharts: true,
+    suppressAggFuncInHeader: true,
+    suppressChartToolPanelsButton: true,
+    chartThemeOverrides: {
+      common: {
+          animation: {
+            enabled: false
+          },
+          zoom: {
+            enabled: false
+          }
+      },
+    },
+    getRowId: (params: GetRowIdParams) => params.data.trade,
+    getChartToolbarItems: (): ChartMenuOptions[] => [],
+    onFirstDataRendered,
+}
 
-    chartRef = params.api.createRangeChart(createRangeChartParams)
-  },
-  chartThemes: ['ag-pastel-dark'],
-  chartThemeOverrides: {
-    column: {
-      axes: {
-        number: {
-          label: {
-            formatter: yAxisLabelFormatter,
-          },
-        },
-        category: {
-          label: {
-            rotation: 0,
-          },
-        },
-      },
-      series: {
-        tooltip: {
-          renderer: tooltipRenderer,
-        },
-      },
+// Initial Chart Creation
+function onFirstDataRendered(params: any) {
+  const createRangeChartParams: CreateRangeChartParams = {
+    cellRange: {
+      columns: [
+        'product',
+        'current',
+        'previous',
+        'pl1',
+        'pl2',
+        'gainDx',
+        'sxPx',
+      ],
     },
-    line: {
-      series: {
-        tooltip: {
-          renderer: tooltipRenderer,
-        },
-      },
-    },
-  },
-  getChartToolbarItems: function (): ChartMenuOptions[] {
-    return [] // hide toolbar items
-  },
+    chartType: 'groupedColumn',
+    chartContainer: document.querySelector('#myChart') as any,
+    suppressChartRanges: true,
+    aggFunc: 'sum',
+  };
+  chartRef = params.api.createRangeChart(createRangeChartParams);
 }
 
 function updateChart(chartType: ChartType) {
   gridApi!.updateChart({type: 'rangeChartUpdate', chartId: chartRef.chartId, chartType});
 }
 
+// Utility Functions
 function numberCellFormatter(params: ValueFormatterParams) {
   return Math.floor(params.value)
-    .toString()
-    .replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,');
+      .toString()
+      .replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,');
 }
 
 function yAxisLabelFormatter(params: AgAxisLabelFormatterParams) {
-  var n = params.value
-  if (n < 1e3) return n
-  if (n >= 1e3 && n < 1e6) return +(n / 1e3).toFixed(1) + 'K'
-  if (n >= 1e6 && n < 1e9) return +(n / 1e6).toFixed(1) + 'M'
-  if (n >= 1e9 && n < 1e12) return +(n / 1e9).toFixed(1) + 'B'
-  if (n >= 1e12) return +(n / 1e12).toFixed(1) + 'T'
+  const n = params.value;
+  return n.toLocaleString(); // replace with more complex logic if needed
 }
 
-function tooltipRenderer(params: AgCartesianSeriesTooltipRendererParams) {
-  var value =
-    '$' +
-    params.datum[params.yKey]
-      .toString()
-      .replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,')
-  var title = params.title || params.yName
-  return '<div style="padding: 5px"><b>' + title + '</b>: ' + value + '</div>'
+function startWorker(): void {
+  worker = new Worker(`${__basePath}dataUpdateWorker.js`);
+  worker.addEventListener('message', handleWorkerMessage);
+  worker.postMessage('start');
+}
+
+function handleWorkerMessage(e: any): void {
+  if (e.data.type === 'setRowData') {
+    gridApi!.setRowData(e.data.records);
+  }
+  if (e.data.type === 'updateData') {
+    gridApi!.applyTransactionAsync({ update: e.data.records });
+  }
 }
 
 // after page is loaded, create the grid
 document.addEventListener('DOMContentLoaded', function () {
   var eGridDiv = document.querySelector<HTMLElement>('#myGrid')!
   gridApi = createGrid(eGridDiv, gridOptions);
-})
+});
 
-var worker: any;
-(function startWorker() {
-  worker = new Worker(__basePath + 'dataUpdateWorker.js')
-  worker.onmessage = function (e: any) {
-    if (e.data.type === 'setRowData') {
-      gridApi!.setRowData(e.data.records)
-    }
-    if (e.data.type === 'updateData') {
-      gridApi!.applyTransactionAsync({ update: e.data.records })
-    }
-  }
+// IIFE
+(function () {
+  startWorker();
+})();
 
-  worker.postMessage('start')
-})()
-
-function onStartLoad() {
-  worker.postMessage('start')
+// Worker Commands
+function onStartLoad(): void {
+  worker.postMessage('start');
 }
 
-function onStopMessages() {
-  worker.postMessage('stop')
+function onStopMessages(): void {
+  worker.postMessage('stop');
 }

@@ -1,13 +1,17 @@
 import {
   ColDef,
+  createGrid,
   CreateRangeChartParams,
   FirstDataRenderedEvent,
   GridApi,
-  createGrid,
   GridOptions,
+  GridReadyEvent,
 } from '@ag-grid-community/core';
 import { getData } from "./data";
 
+let gridApi: GridApi;
+
+// Define Column Definitions
 const columnDefs: ColDef[] = [
   { field: 'country', width: 150, chartDataType: 'category' },
   { field: 'gold', chartDataType: 'series' },
@@ -35,8 +39,7 @@ const columnDefs: ColDef[] = [
   },
 ]
 
-let gridApi: GridApi;
-
+// Grid Options
 const gridOptions: GridOptions = {
   defaultColDef: {
     editable: true,
@@ -46,12 +49,11 @@ const gridOptions: GridOptions = {
     filter: true,
     resizable: true,
   },
+  columnDefs,
   popupParent: document.body,
-  columnDefs: columnDefs,
-  rowData: getData(),
   enableRangeSelection: true,
   enableCharts: true,
-  onFirstDataRendered: onFirstDataRendered,
+  chartThemes: ['myCustomTheme', 'ag-pastel', 'ag-vivid'],
   customChartThemes: {
     myCustomTheme: {
       palette: {
@@ -93,7 +95,7 @@ const gridOptions: GridOptions = {
             },
           },
         },
-        cartesian: {
+        bar: {
           axes: {
             number: {
               bottom: {
@@ -114,26 +116,31 @@ const gridOptions: GridOptions = {
       },
     },
   },
-  chartThemes: ['myCustomTheme', 'ag-pastel', 'ag-vivid'],
+  onGridReady,
+  onFirstDataRendered,
+};
+
+function onGridReady(params: GridReadyEvent) {
+  getData().then(rowData => params.api.setRowData(rowData));
 }
 
 function onFirstDataRendered(params: FirstDataRenderedEvent) {
-  var cellRange = {
+  const cellRange = {
     rowStartIndex: 0,
     rowEndIndex: 4,
     columns: ['country', 'gold', 'silver', 'bronze'],
-  }
+  };
 
-  var createRangeChartParams: CreateRangeChartParams = {
-    cellRange: cellRange,
+  const chartParams: CreateRangeChartParams = {
+    cellRange,
     chartType: 'groupedBar',
-  }
+  };
 
-  params.api.createRangeChart(createRangeChartParams)
+  params.api.createRangeChart(chartParams);
 }
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
-  var gridDiv = document.querySelector<HTMLElement>('#myGrid')!
+  const gridDiv = document.querySelector<HTMLElement>('#myGrid')!
   gridApi = createGrid(gridDiv, gridOptions);
 })

@@ -5,6 +5,7 @@ import {
   GridApi,
   createGrid,
   GridOptions,
+  GridReadyEvent
 } from '@ag-grid-community/core';
 import { getData } from "./data";
 
@@ -22,8 +23,6 @@ const gridOptions: GridOptions = {
     flex: 1,
   },
   columnDefs: columnDefs,
-  rowData: getData(),
-  onFirstDataRendered: onFirstDataRendered,
   popupParent: document.body,
   enableRangeSelection: true,
   enableCharts: true,
@@ -31,6 +30,12 @@ const gridOptions: GridOptions = {
     defaultToolPanel: 'data',
     panels: ['data', 'settings'],
   },
+  onGridReady,
+  onFirstDataRendered,
+};
+
+function onGridReady(params: GridReadyEvent) {
+  getData().then(rowData => params.api.setRowData(rowData));
 }
 
 function onFirstDataRendered(params: FirstDataRenderedEvent) {
@@ -48,6 +53,5 @@ function onFirstDataRendered(params: FirstDataRenderedEvent) {
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
-  var gridDiv = document.querySelector<HTMLElement>('#myGrid')!
-  gridApi = createGrid(gridDiv, gridOptions);
+  gridApi = createGrid(document.querySelector<HTMLElement>('#myGrid')!, gridOptions);
 })

@@ -1,12 +1,13 @@
 import {
+  createGrid,
   FirstDataRenderedEvent,
   GridApi,
-  createGrid,
   GridOptions,
+  GridReadyEvent,
   ValueParserParams,
 } from '@ag-grid-community/core';
-import { AgAxisCaptionFormatterParams } from 'ag-charts-community';
-import { getData } from "./data";
+import {AgAxisCaptionFormatterParams} from 'ag-charts-community';
+import {getData} from "./data";
 
 let gridApi: GridApi;
 
@@ -27,10 +28,7 @@ const gridOptions: GridOptions = {
     filter: true,
     resizable: true,
   },
-  rowData: getData(),
-  onFirstDataRendered: onFirstDataRendered,
   enableRangeSelection: true,
-  chartThemes: ['ag-pastel', 'ag-vivid'],
   enableCharts: true,
   popupParent: document.body,
   chartThemeOverrides: {
@@ -46,7 +44,7 @@ const gridOptions: GridOptions = {
         }
       }
     },
-    column: {
+    bar: {
       series: {
         strokeWidth: 2,
         fillOpacity: 0.8,
@@ -59,10 +57,16 @@ const gridOptions: GridOptions = {
       },
     },
   },
+  onGridReady,
+  onFirstDataRendered,
 };
 
+function onGridReady(params: GridReadyEvent) {
+  getData().then(rowData => params.api.setRowData(rowData));
+}
+
 function onFirstDataRendered(params: FirstDataRenderedEvent) {
-  params.api!.createRangeChart({
+  params.api.createRangeChart({
     chartType: 'customCombo',
     cellRange: {
       columns: ['month', 'rain', 'pressure', 'temp'],
@@ -88,6 +92,5 @@ function numberParser(params: ValueParserParams) {
 
 // set up the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
-  const gridDiv = document.querySelector<HTMLElement>('#myGrid')!;
-  gridApi = createGrid(gridDiv, gridOptions);
+  gridApi = createGrid(document.querySelector<HTMLElement>('#myGrid')!, gridOptions);
 });

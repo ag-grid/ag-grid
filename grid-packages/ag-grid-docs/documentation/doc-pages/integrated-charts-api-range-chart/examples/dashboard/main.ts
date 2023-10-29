@@ -1,18 +1,15 @@
 import {
-  ChartMenuOptions,
+  createGrid,
   CreateRangeChartParams,
   FirstDataRenderedEvent,
-  GetChartToolbarItemsParams,
   GridApi,
-  createGrid,
   GridOptions,
+  GridReadyEvent,
   ValueParserParams,
 } from '@ag-grid-community/core';
-import { getData } from "./data";
-
+import {getData} from "./data";
 
 let gridApi: GridApi;
-
 
 const gridOptions: GridOptions = {
   columnDefs: [
@@ -69,38 +66,47 @@ const gridOptions: GridOptions = {
     filter: true,
     resizable: true,
   },
-  rowData: getData(),
   enableRangeSelection: true,
   enableCharts: true,
-  onFirstDataRendered: onFirstDataRendered,
-  getChartToolbarItems: getChartToolbarItems,
   chartToolPanelsDef: {
     panels: []
   },
   popupParent: document.body,
+  onGridReady,
+  onFirstDataRendered,
+  getChartToolbarItems:  () => [],
+}
+
+function onGridReady(params: GridReadyEvent) {
+  getData().then(rowData => params.api.setRowData(rowData));
 }
 
 function onFirstDataRendered(event: FirstDataRenderedEvent) {
-  var eContainer1 = document.querySelector('#chart1') as any;
-  var params1: CreateRangeChartParams = {
+  createGroupedBarChart(event, '#chart1', ['country', 'gold', 'silver']);
+  createPieChart(event, '#chart2', ['group', 'gold']);
+  createPieChart(event, '#chart3', ['group', 'silver']);
+}
+
+function createGroupedBarChart(event: FirstDataRenderedEvent, selector: string, columns: string[]) {
+  const container = document.querySelector(selector) as any;
+  const params: CreateRangeChartParams = {
     cellRange: {
       rowStartIndex: 0,
       rowEndIndex: 4,
-      columns: ['country', 'gold', 'silver'],
+      columns,
     },
     chartType: 'groupedBar',
-    chartContainer: eContainer1,
-  }
+    chartContainer: container,
+  };
+  event.api.createRangeChart(params);
+}
 
-  event.api.createRangeChart(params1)
-
-  var eContainer2 = document.querySelector('#chart2') as any;
-  var params2: CreateRangeChartParams = {
-    cellRange: {
-      columns: ['group', 'gold'],
-    },
+function createPieChart(event: FirstDataRenderedEvent, selector: string, columns: string[]) {
+  const container = document.querySelector(selector) as any;
+  const params: CreateRangeChartParams = {
+    cellRange: { columns },
     chartType: 'pie',
-    chartContainer: eContainer2,
+    chartContainer: container,
     aggFunc: 'sum',
     chartThemeOverrides: {
       common: {
@@ -115,53 +121,15 @@ function onFirstDataRendered(event: FirstDataRenderedEvent) {
         },
       },
     },
-  }
-
-  event.api.createRangeChart(params2)
-
-  var eContainer3 = document.querySelector('#chart3') as any
-  var params3: CreateRangeChartParams = {
-    cellRange: {
-      columns: ['group', 'silver'],
-    },
-    chartType: 'pie',
-    chartContainer: eContainer3,
-    aggFunc: 'sum',
-    chartThemeOverrides: {
-      common: {
-        padding: {
-          top: 20,
-          left: 10,
-          bottom: 30,
-          right: 10,
-        },
-        legend: {
-          position: 'right',
-        },
-      },
-    },
-  }
-
-  event.api.createRangeChart(params3)
+  };
+  event.api.createRangeChart(params);
 }
 
 function numberValueParser(params: ValueParserParams) {
-  var res = Number.parseInt(params.newValue)
-
-  if (isNaN(res)) {
-    return undefined
-  }
-
-  return res
+  return isNaN(Number(params.newValue)) ? undefined : Number(params.newValue);
 }
 
-function getChartToolbarItems(params: GetChartToolbarItemsParams): ChartMenuOptions[] {
-  return []
-}
-
-
-// setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
-  var gridDiv = document.querySelector<HTMLElement>('#myGrid')!
+  const gridDiv = document.querySelector<HTMLElement>('#myGrid')!;
   gridApi = createGrid(gridDiv, gridOptions);
-})
+});

@@ -1,38 +1,40 @@
 import {
     ChartMenuOptions,
-    ColDef,
+    createGrid,
     CreateRangeChartParams,
     FirstDataRenderedEvent,
     GridApi,
-    createGrid,
     GridOptions,
+    GridReadyEvent
 } from '@ag-grid-community/core';
-import { getData } from "./data";
-
-const columnDefs: ColDef[] = [
-    { field: 'country', width: 150, chartDataType: 'category' },
-    { field: 'gold', chartDataType: 'series' },
-    { field: 'silver', chartDataType: 'series' },
-    { field: 'bronze', chartDataType: 'series' },
-]
+import {getData} from "./data";
 
 let gridApi: GridApi;
 
 const gridOptions: GridOptions = {
+    columnDefs: [
+        {field: 'country', width: 150, chartDataType: 'category'},
+        {field: 'gold', chartDataType: 'series'},
+        {field: 'silver', chartDataType: 'series'},
+        {field: 'bronze', chartDataType: 'series'},
+    ],
     defaultColDef: {
         flex: 1,
     },
-    columnDefs: columnDefs,
-    rowData: getData(),
-    onFirstDataRendered: onFirstDataRendered,
     popupParent: document.body,
     enableRangeSelection: true,
     enableCharts: true,
-    getChartToolbarItems: getChartToolbarItems,
-}
+    getChartToolbarItems,
+    onGridReady,
+    onFirstDataRendered,
+};
 
 function getChartToolbarItems(): ChartMenuOptions[] {
-    return ['chartDownload']
+    return ['chartDownload'];
+}
+
+function onGridReady(params: GridReadyEvent) {
+    getData().then(rowData => params.api.setRowData(rowData));
 }
 
 function onFirstDataRendered(params: FirstDataRenderedEvent) {
@@ -45,7 +47,7 @@ function onFirstDataRendered(params: FirstDataRenderedEvent) {
         chartType: 'groupedColumn'
     }
 
-    params.api.createRangeChart(createRangeChartParams)
+    params.api.createRangeChart(createRangeChartParams);
 }
 
 // setup the grid after the page has finished loading

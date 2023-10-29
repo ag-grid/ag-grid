@@ -1,17 +1,17 @@
 import {
   ChartCreated,
+  createGrid,
   CreateRangeChartParams,
   FirstDataRenderedEvent,
   GetChartImageDataUrlParams,
   GridApi,
-  createGrid,
   GridOptions,
+  GridReadyEvent,
 } from '@ag-grid-community/core';
-import { getData } from "./data";
-
+import { getData } from './data';
 
 let gridApi: GridApi;
-
+let chartId: string | undefined;
 
 const gridOptions: GridOptions = {
   columnDefs: [
@@ -28,12 +28,11 @@ const gridOptions: GridOptions = {
     filter: true,
     resizable: true,
   },
-  rowData: getData(),
   enableRangeSelection: true,
   popupParent: document.body,
   enableCharts: true,
   chartThemeOverrides: {
-    cartesian: {
+    bar: {
       axes: {
         category: {
           label: {
@@ -43,8 +42,13 @@ const gridOptions: GridOptions = {
       },
     },
   },
-  onFirstDataRendered: onFirstDataRendered,
-  onChartCreated: onChartCreated,
+  onGridReady,
+  onFirstDataRendered,
+  onChartCreated,
+};
+
+function onGridReady(params: GridReadyEvent) {
+  getData().then(rowData => params.api.setRowData(rowData));
 }
 
 function onFirstDataRendered(params: FirstDataRenderedEvent) {
@@ -54,19 +58,18 @@ function onFirstDataRendered(params: FirstDataRenderedEvent) {
     },
     chartType: 'groupedColumn',
     chartContainer: document.querySelector('#myChart') as any,
-  }
+  };
 
-  params.api.createRangeChart(createRangeChartParams)
+  params.api.createRangeChart(createRangeChartParams);
 }
 
-var chartId: string | undefined;
 function onChartCreated(event: ChartCreated) {
-  chartId = event.chartId
+  chartId = event.chartId;
 }
 
 function downloadChart(dimensions: { width: number, height: number }) {
   if (!chartId) {
-    return
+    return;
   }
 
   gridApi!.downloadChart({
@@ -78,46 +81,42 @@ function downloadChart(dimensions: { width: number, height: number }) {
 }
 
 function downloadChartImage(fileFormat: string) {
-  if (!chartId) {
-    return
-  }
-
-  const params: GetChartImageDataUrlParams = { fileFormat, chartId }
-  const imageDataURL = gridApi!.getChartImageDataURL(params)
-
-  if (imageDataURL) {
-    const a = document.createElement('a')
-    a.href = imageDataURL
-    a.download = 'image'
-    a.style.display = 'none'
-    document.body.appendChild(a)
-    a.click()
-    document.body.removeChild(a)
-  }
+  handleImageData(fileFormat, (imageDataURL) => {
+    const a = document.createElement('a');
+    a.href = imageDataURL;
+    a.download = 'image';
+    a.style.display = 'none';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+  });
 }
 
 function openChartImage(fileFormat: string) {
+  handleImageData(fileFormat, (imageDataURL) => {
+    const image = new Image();
+    image.src = imageDataURL;
+
+    const w = window.open('')!;
+    w.document.write(image.outerHTML);
+    w.document.close();
+  });
+}
+
+function handleImageData(fileFormat: string, callback: (url: string) => void) {
   if (!chartId) {
-    return
+    return;
   }
 
-  const params: GetChartImageDataUrlParams = { fileFormat, chartId }
-  const imageDataURL = gridApi!.getChartImageDataURL(params)
+  const params: GetChartImageDataUrlParams = { fileFormat, chartId };
+  const imageDataURL = gridApi!.getChartImageDataURL(params);
 
   if (imageDataURL) {
-    const image = new Image()
-    image.src = imageDataURL
-
-    const w = window.open('')!
-    w.document.write(image.outerHTML)
-    w.document.close()
+    callback(imageDataURL);
   }
 }
 
-
-
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
-  var gridDiv = document.querySelector<HTMLElement>('#myGrid')!
-  gridApi = createGrid(gridDiv, gridOptions);
+  gridApi = createGrid(document.querySelector<HTMLElement>('#myGrid')!, gridOptions);
 })
