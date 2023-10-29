@@ -1,15 +1,7 @@
-import {
-  CreateRangeChartParams,
-  FirstDataRenderedEvent,
-  GridApi,
-  createGrid,
-  GridOptions,
-} from '@ag-grid-community/core';
-import { getData } from "./data";
-
+import {createGrid, FirstDataRenderedEvent, GridApi, GridOptions, GridReadyEvent} from '@ag-grid-community/core';
+import {getData} from "./data";
 
 let gridApi: GridApi;
-
 
 const gridOptions: GridOptions = {
   columnDefs: [
@@ -19,17 +11,12 @@ const gridOptions: GridOptions = {
     { field: 'bronze' },
   ],
   defaultColDef: {
-    editable: true,
-    sortable: true,
     flex: 1,
     minWidth: 100,
-    filter: true,
-    resizable: true,
   },
   popupParent: document.body,
   enableRangeSelection: true,
   enableCharts: true,
-  chartThemes: ['ag-pastel', 'ag-material-dark', 'ag-vivid-dark', 'ag-solar'],
   chartThemeOverrides: {
     bar: {
       axes: {
@@ -41,12 +28,16 @@ const gridOptions: GridOptions = {
       },
     },
   },
-  rowData: getData(),
+  onGridReady,
   onFirstDataRendered,
+};
+
+function onGridReady(params: GridReadyEvent) {
+  getData().then(rowData => params.api.setRowData(rowData));
 }
 
 function onFirstDataRendered(params: FirstDataRenderedEvent) {
-  var createRangeChartParams: CreateRangeChartParams = {
+  params.api.createRangeChart({
     cellRange: {
       rowStartIndex: 0,
       rowEndIndex: 79,
@@ -55,13 +46,11 @@ function onFirstDataRendered(params: FirstDataRenderedEvent) {
     chartType: 'groupedColumn',
     chartContainer: document.querySelector('#myChart') as any,
     aggFunc: 'sum',
-  }
-
-  params.api.createRangeChart(createRangeChartParams)
+  });
 }
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
-  var gridDiv = document.querySelector<HTMLElement>('#myGrid')!
+  const gridDiv = document.querySelector<HTMLElement>('#myGrid')!
   gridApi = createGrid(gridDiv, gridOptions);
 })

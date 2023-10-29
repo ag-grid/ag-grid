@@ -490,8 +490,18 @@ export class GridChartComp extends Component {
             isDark ? (theme.endsWith(suffix) ? theme : `${theme}${suffix}`) : theme.replace(suffix, '');
 
         const updateChartThemes = (isDark: boolean): void => {
+            const suffix = isDark ? '-dark' : '-light';
+            const customThemeName = `my-custom-theme${suffix}`;
+
             const themes = this.chartController.getThemes();
-            const modifiedThemes = themes.map(theme => applyThemeSuffix(theme, isDark, '-dark'));
+            const modifiedThemes = Array.from(new Set(themes.map(theme => {
+                if (theme.startsWith('my-custom-theme-')) return customThemeName;
+                return applyThemeSuffix(theme, isDark, '-dark');
+            })));
+
+            if (!modifiedThemes.includes(customThemeName)) {
+                modifiedThemes.push(customThemeName);
+            }
 
             // updating the `chartThemes` grid option will cause the chart to reactively update!
             this.gridOptionsService.set('chartThemes', modifiedThemes);
