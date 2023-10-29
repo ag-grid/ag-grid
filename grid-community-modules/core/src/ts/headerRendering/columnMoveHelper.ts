@@ -1,5 +1,6 @@
 import { ColumnModel } from "../columns/columnModel";
 import { HorizontalDirection } from "../constants/direction";
+import { CtrlsService } from "../ctrlsService";
 import { Column, ColumnPinnedType } from "../entities/column";
 import { ColumnGroup } from "../entities/columnGroup";
 import { ProvidedColumnGroup } from "../entities/providedColumnGroup";
@@ -309,5 +310,22 @@ export class ColumnMoveHelper {
         }
 
         return validMoves;
+    }
+
+    public static normaliseX(x: number, pinned: ColumnPinnedType, fromMouse: boolean, gridOptionsService: GridOptionsService, ctrlsService: CtrlsService): number {
+        const eContainer = ctrlsService.getRowContainerCtrl(pinned).getContainerElement();
+
+        // flip the coordinate if doing RTL
+        if (gridOptionsService.is('enableRtl')) {
+            const clientWidth = eContainer.clientWidth;
+            x = clientWidth - x;
+        }
+
+        // adjust for scroll only if centre container (the pinned containers don't scroll)
+        if (fromMouse && pinned == null) {
+            x += ctrlsService.getCenterRowContainerCtrl().getCenterViewportScrollLeft();
+        }
+
+        return x;
     }
 }
