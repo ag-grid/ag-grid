@@ -1,11 +1,4 @@
-import {
-  createGrid,
-  FirstDataRenderedEvent,
-  GridApi,
-  GridOptions,
-  GridReadyEvent,
-  ValueParserParams,
-} from '@ag-grid-community/core';
+import {createGrid, FirstDataRenderedEvent, GridApi, GridOptions, GridReadyEvent,} from '@ag-grid-community/core';
 import {AgAxisCaptionFormatterParams} from 'ag-charts-community';
 import {getData} from "./data";
 
@@ -15,10 +8,10 @@ const gridOptions: GridOptions = {
   columnDefs: [
     { field: 'day', maxWidth: 90 },
     { field: 'month', chartDataType: 'category' },
-    { field: 'rain', chartDataType: 'series', valueParser: numberParser },
-    { field: 'pressure', chartDataType: 'series', valueParser: numberParser },
-    { field: 'temp', chartDataType: 'series', valueParser: numberParser },
-    { field: 'wind', chartDataType: 'series', valueParser: numberParser },
+    { field: 'rain', chartDataType: 'series' },
+    { field: 'pressure', chartDataType: 'series' },
+    { field: 'temp', chartDataType: 'series' },
+    { field: 'wind', chartDataType: 'series' },
   ],
   defaultColDef: {
     flex: 1,
@@ -80,14 +73,6 @@ function onFirstDataRendered(params: FirstDataRenderedEvent) {
     suppressChartRanges: true,
     chartContainer: document.querySelector('#myChart') as any,
   });
-}
-
-function numberParser(params: ValueParserParams) {
-  const value = params.newValue;
-  if (value === null || value === undefined || value === '') {
-    return null;
-  }
-  return parseFloat(value);
 }
 
 // set up the grid after the page has finished loading

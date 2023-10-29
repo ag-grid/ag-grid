@@ -18,17 +18,10 @@ const gridOptions: GridOptions = {
     { field: 'pressure', chartDataType: 'series', valueParser: numberParser },
     { field: 'temp', chartDataType: 'series', valueParser: numberParser },
   ],
-  defaultColDef: {
-    flex: 1,
-    minWidth: 100,
-    editable: true,
-    sortable: true,
-    filter: true,
-    resizable: true,
-  },
+  defaultColDef: { flex: 1 },
   enableRangeSelection: true,
-  enableCharts: true,
   popupParent: document.body,
+  enableCharts: true,
   chartThemeOverrides: {
     common: {
       padding: {
@@ -74,18 +67,18 @@ function onGridReady(params: GridReadyEvent) {
 
 function onFirstDataRendered(params: FirstDataRenderedEvent) {
   params.api.createRangeChart({
-    chartType: 'customCombo',
+    chartContainer: document.querySelector('#myChart') as HTMLElement,
     cellRange: {
       columns: ['date', 'rain', 'pressure', 'temp'],
     },
+    suppressChartRanges: true,
     seriesChartTypes: [
       { colId: 'rain', chartType: 'groupedColumn', secondaryAxis: false },
       { colId: 'pressure', chartType: 'line', secondaryAxis: true },
       { colId: 'temp', chartType: 'line', secondaryAxis: true },
     ],
+    chartType: 'customCombo',
     aggFunc: 'sum',
-    suppressChartRanges: true,
-    chartContainer: document.querySelector('#myChart') as HTMLElement,
   });
 }
 

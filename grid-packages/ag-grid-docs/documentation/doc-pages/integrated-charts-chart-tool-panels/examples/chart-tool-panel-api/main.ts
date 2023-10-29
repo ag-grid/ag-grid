@@ -2,7 +2,6 @@ import {
   ChartCreated,
   ChartToolPanelName,
   createGrid,
-  CreateRangeChartParams,
   FirstDataRenderedEvent,
   GridApi,
   GridOptions,
@@ -10,10 +9,9 @@ import {
 } from '@ag-grid-community/core';
 import {getData} from './data';
 
-// Store a reference to the Grid API
 let gridApi: GridApi;
+let chartId: string | undefined;
 
-// Grid options configuration
 const gridOptions: GridOptions = {
   columnDefs: [
     { field: 'country', chartDataType: 'category' },
@@ -22,16 +20,12 @@ const gridOptions: GridOptions = {
     { field: 'weight', chartDataType: 'series' },
   ],
   defaultColDef: {
-    editable: true,
-    sortable: true,
     flex: 1,
     minWidth: 100,
-    filter: true,
-    resizable: true,
   },
+  enableCharts: true,
   enableRangeSelection: true,
   popupParent: document.body,
-  enableCharts: true,
   onGridReady,
   onFirstDataRendered,
   onChartCreated,
@@ -41,20 +35,15 @@ function onGridReady(params: GridReadyEvent) {
   getData().then(rowData => params.api.setRowData(rowData));
 }
 
-
 function onFirstDataRendered(params: FirstDataRenderedEvent) {
-  const createRangeChartParams: CreateRangeChartParams = {
+  params.api.createRangeChart({
+    chartContainer: document.querySelector('#myChart') as HTMLElement,
     cellRange: {
       columns: ['country', 'sugar', 'fat', 'weight'],
     },
     chartType: 'groupedColumn',
-    chartContainer: document.querySelector('#myChart') as any,
-  };
-
-  params.api.createRangeChart(createRangeChartParams);
+  });
 }
-
-let chartId: string | undefined;
 
 function onChartCreated(event: ChartCreated) {
   chartId = event.chartId;

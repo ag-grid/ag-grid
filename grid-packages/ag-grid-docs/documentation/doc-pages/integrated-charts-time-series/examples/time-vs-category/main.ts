@@ -1,7 +1,6 @@
 import {
   ColDef,
   createGrid,
-  CreateRangeChartParams,
   FirstDataRenderedEvent,
   GridApi,
   GridOptions,
@@ -24,10 +23,7 @@ function getColumnDefs() {
 
 const gridOptions: GridOptions = {
   columnDefs: getColumnDefs(),
-  defaultColDef: {
-    flex: 1,
-    resizable: true,
-  },
+  defaultColDef: { flex: 1 },
   enableRangeSelection: true,
   enableCharts: true,
   chartThemeOverrides: {
@@ -92,15 +88,14 @@ function onFirstDataRendered(params: FirstDataRenderedEvent) {
     currentChartRef.destroyChart()
   }
 
-  const createRangeChartParams: CreateRangeChartParams = {
-    chartContainer: document.querySelector('#myChart') as any,
-    suppressChartRanges: true,
+  currentChartRef = params.api.createRangeChart({
+    chartContainer: document.querySelector('#myChart') as HTMLElement,
     cellRange: {
       columns: ['date', 'avgTemp'],
     },
+    suppressChartRanges: true,
     chartType: 'line',
-  }
-  currentChartRef = params.api.createRangeChart(createRangeChartParams)
+  });
 }
 
 function dateFormatter(params: ValueFormatterParams) {

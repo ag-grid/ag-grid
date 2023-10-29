@@ -1,19 +1,15 @@
 import {
-  GridApi,
-  createGrid,
-  ColDef,
-  CreateRangeChartParams,
-  GetRowIdParams,
-  GridOptions,
-  ValueFormatterParams,
   ChartMenuOptions,
-  ChartType
+  ChartType,
+  ColDef,
+  createGrid,
+  GetRowIdParams,
+  GridApi,
+  GridOptions,
+  ValueFormatterParams
 } from '@ag-grid-community/core';
-import { AgAxisLabelFormatterParams } from 'ag-charts-community';
 
 declare var __basePath: string;
-
-const MIN_WIDTH = 110;
 
 // Types
 interface WorkerMessage {
@@ -29,8 +25,8 @@ let worker: Worker;
 // Column Definitions
 function getColumnDefs(): ColDef[] {
   return [
-    { field: 'product', chartDataType: 'category', minWidth: MIN_WIDTH },
-    { field: 'book', chartDataType: 'category', minWidth: MIN_WIDTH },
+    { field: 'product', chartDataType: 'category', minWidth: 110 },
+    { field: 'book', chartDataType: 'category', minWidth: 100 },
     { field: 'current', type: 'measure' },
     { field: 'previous', type: 'measure' },
     { headerName: 'PL 1', field: 'pl1', type: 'measure' },
@@ -88,40 +84,25 @@ const gridOptions: GridOptions = {
 
 // Initial Chart Creation
 function onFirstDataRendered(params: any) {
-  const createRangeChartParams: CreateRangeChartParams = {
-    cellRange: {
-      columns: [
-        'product',
-        'current',
-        'previous',
-        'pl1',
-        'pl2',
-        'gainDx',
-        'sxPx',
-      ],
-    },
-    chartType: 'groupedColumn',
+  chartRef = params.api.createRangeChart({
     chartContainer: document.querySelector('#myChart') as any,
+    cellRange: {
+      columns: ['product', 'current', 'previous', 'pl1', 'pl2', 'gainDx', 'sxPx'],
+    },
     suppressChartRanges: true,
+    chartType: 'groupedColumn',
     aggFunc: 'sum',
-  };
-  chartRef = params.api.createRangeChart(createRangeChartParams);
+  });
 }
 
 function updateChart(chartType: ChartType) {
   gridApi!.updateChart({type: 'rangeChartUpdate', chartId: chartRef.chartId, chartType});
 }
 
-// Utility Functions
 function numberCellFormatter(params: ValueFormatterParams) {
   return Math.floor(params.value)
       .toString()
       .replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,');
-}
-
-function yAxisLabelFormatter(params: AgAxisLabelFormatterParams) {
-  const n = params.value;
-  return n.toLocaleString(); // replace with more complex logic if needed
 }
 
 function startWorker(): void {

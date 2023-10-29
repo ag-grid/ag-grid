@@ -17,9 +17,5 @@ function generateData(): any[] {
         gold: Math.floor(((index + 1 / 7) * 333) % 100),
         silver: Math.floor(((index + 1 / 3) * 555) % 100),
         bronze: Math.floor(((index + 1 / 7.3) * 777) % 100),
-        a: Math.floor(Math.random() * 1000),
-        b: Math.floor(Math.random() * 1000),
-        c: Math.floor(Math.random() * 1000),
-        d: Math.floor(Math.random() * 1000)
     }));
 }

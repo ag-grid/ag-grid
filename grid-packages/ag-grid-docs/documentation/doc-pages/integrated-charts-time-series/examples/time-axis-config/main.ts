@@ -1,20 +1,5 @@
-import {
-  createGrid,
-  CreateRangeChartParams,
-  FirstDataRenderedEvent,
-  GridApi,
-  GridOptions,
-  GridReadyEvent
-} from '@ag-grid-community/core';
+import {createGrid, FirstDataRenderedEvent, GridApi, GridOptions, GridReadyEvent} from '@ag-grid-community/core';
 import {getData} from './data';
-
-function formatTime(date: Date | number) {
-  return Intl.DateTimeFormat("en-GB", {
-    hour: "2-digit",
-    minute: "2-digit",
-    second: "2-digit",
-  }).format(new Date(date))
-}
 
 let gridApi: GridApi;
 
@@ -23,12 +8,9 @@ const gridOptions: GridOptions = {
     { field: 'timestamp', chartDataType: 'time' },
     { field: 'cpuUsage' },
   ],
-  defaultColDef: {
-    flex: 1,
-    resizable: true,
-  },
-  popupParent: document.body,
+  defaultColDef: { flex: 1 },
   enableRangeSelection: true,
+  popupParent: document.body,
   enableCharts: true,
   chartThemeOverrides: {
     area: {
@@ -80,16 +62,22 @@ function onGridReady(params: GridReadyEvent) {
 }
 
 function onFirstDataRendered(params: FirstDataRenderedEvent) {
-  const createRangeChartParams: CreateRangeChartParams = {
+  params.api.createRangeChart({
     chartContainer: document.querySelector('#myChart') as HTMLElement,
-    suppressChartRanges: true,
     cellRange: {
       columns: ['timestamp', 'cpuUsage'],
     },
+    suppressChartRanges: true,
     chartType: 'area',
-  }
+  });
+}
 
-  params.api.createRangeChart(createRangeChartParams)
+function formatTime(date: Date | number) {
+  return Intl.DateTimeFormat("en-GB", {
+    hour: "2-digit",
+    minute: "2-digit",
+    second: "2-digit",
+  }).format(new Date(date))
 }
 
 // setup the grid after the page has finished loading

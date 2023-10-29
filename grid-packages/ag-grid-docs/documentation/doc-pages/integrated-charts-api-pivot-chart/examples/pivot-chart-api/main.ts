@@ -1,10 +1,4 @@
-import {
-  GridApi,
-  createGrid,
-  CreatePivotChartParams,
-  FirstDataRenderedEvent,
-  GridOptions,
-} from '@ag-grid-community/core';
+import {createGrid, FirstDataRenderedEvent, GridApi, GridOptions,} from '@ag-grid-community/core';
 
 let gridApi: GridApi;
 
@@ -32,12 +26,10 @@ const gridOptions: GridOptions = {
   popupParent: document.body,
 }
 
-function onFirstDataRendered(event: FirstDataRenderedEvent) {
-  const chartContainer = document.querySelector('#myChart') as HTMLElement;
-
-  const params: CreatePivotChartParams = {
+function onFirstDataRendered(params: FirstDataRenderedEvent) {
+  params.api.createPivotChart( {
     chartType: 'groupedColumn',
-    chartContainer: chartContainer,
+    chartContainer: document.querySelector('#myChart') as HTMLElement,
     chartThemeOverrides: {
       common: {
         navigator: {
@@ -46,14 +38,10 @@ function onFirstDataRendered(event: FirstDataRenderedEvent) {
         },
       },
     },
-  }
-
-  event.api.createPivotChart(params)
+  });
 
   // expand one row for demonstration purposes
-  setTimeout(function () {
-    event.api.getDisplayedRowAtIndex(2)!.setExpanded(true)
-  }, 0)
+  setTimeout( () => params.api.getDisplayedRowAtIndex(2)!.setExpanded(true), 0);
 }
 
 // setup the grid after the page has finished loading

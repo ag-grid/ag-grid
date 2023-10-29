@@ -1,27 +1,18 @@
-import {
-    ColDef,
-    createGrid,
-    FirstDataRenderedEvent,
-    GridApi,
-    GridOptions,
-    GridReadyEvent
-} from '@ag-grid-community/core';
+import {createGrid, FirstDataRenderedEvent, GridApi, GridOptions, GridReadyEvent} from '@ag-grid-community/core';
 import {getData} from './data';
-
-const columnDefs: ColDef[] = [
-    { field: 'country', width: 150, chartDataType: 'category' },
-    { field: 'gold', chartDataType: 'series' },
-    { field: 'silver', chartDataType: 'series' },
-    { field: 'bronze', chartDataType: 'series' },
-];
 
 let gridApi: GridApi;
 
 const gridOptions: GridOptions = {
-    defaultColDef: { flex: 1 },
-    columnDefs,
-    popupParent: document.body,
+    columnDefs: [
+        {field: 'country', chartDataType: 'category', width: 150},
+        {field: 'gold', chartDataType: 'series'},
+        {field: 'silver', chartDataType: 'series'},
+        {field: 'bronze', chartDataType: 'series'},
+    ],
+    defaultColDef: {flex: 1},
     enableRangeSelection: true,
+    popupParent: document.body,
     enableCharts: true,
     chartToolPanelsDef: {
         defaultToolPanel: 'settings',
@@ -40,6 +31,7 @@ const gridOptions: GridOptions = {
 function onGridReady(params: GridReadyEvent) {
     getData().then(rowData => params.api.setRowData(rowData));
 }
+
 function onFirstDataRendered(params: FirstDataRenderedEvent) {
     params.api.createRangeChart({
         cellRange: {

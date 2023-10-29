@@ -1,12 +1,4 @@
-import {
-  createGrid,
-  CreateRangeChartParams,
-  FirstDataRenderedEvent,
-  GridApi,
-  GridOptions,
-  GridReadyEvent,
-  ValueParserParams,
-} from '@ag-grid-community/core';
+import {createGrid, FirstDataRenderedEvent, GridApi, GridOptions, GridReadyEvent,} from '@ag-grid-community/core';
 import {getData} from "./data";
 
 let gridApi: GridApi;
@@ -15,48 +7,9 @@ const gridOptions: GridOptions = {
   columnDefs: [
     { field: 'country', width: 150, chartDataType: 'category' },
     { field: 'group', chartDataType: 'category' },
-    {
-      field: 'gold',
-      chartDataType: 'series',
-      editable: true,
-      valueParser: numberValueParser,
-    },
-    {
-      field: 'silver',
-      chartDataType: 'series',
-      editable: true,
-      valueParser: numberValueParser,
-    },
-    {
-      field: 'bronze',
-      chartDataType: 'series',
-      editable: true,
-      valueParser: numberValueParser,
-    },
-    {
-      field: 'a',
-      chartDataType: 'series',
-      editable: true,
-      valueParser: numberValueParser,
-    },
-    {
-      field: 'b',
-      chartDataType: 'series',
-      editable: true,
-      valueParser: numberValueParser,
-    },
-    {
-      field: 'c',
-      chartDataType: 'series',
-      editable: true,
-      valueParser: numberValueParser,
-    },
-    {
-      field: 'd',
-      chartDataType: 'series',
-      editable: true,
-      valueParser: numberValueParser,
-    },
+    { field: 'gold', chartDataType: 'series' },
+    { field: 'silver', chartDataType: 'series' },
+    { field: 'bronze', chartDataType: 'series' },
   ],
   defaultColDef: {
     editable: true,
@@ -68,9 +21,7 @@ const gridOptions: GridOptions = {
   },
   enableRangeSelection: true,
   enableCharts: true,
-  chartToolPanelsDef: {
-    panels: []
-  },
+  chartToolPanelsDef: { panels: []},
   popupParent: document.body,
   onGridReady,
   onFirstDataRendered,
@@ -87,26 +38,25 @@ function onFirstDataRendered(event: FirstDataRenderedEvent) {
   createPieChart(event, '#chart3', ['group', 'silver']);
 }
 
-function createGroupedBarChart(event: FirstDataRenderedEvent, selector: string, columns: string[]) {
-  const container = document.querySelector(selector) as any;
-  const params: CreateRangeChartParams = {
+function createGroupedBarChart(params: FirstDataRenderedEvent, selector: string, columns: string[]) {
+  params.api.createRangeChart({
+    chartContainer: document.querySelector(selector) as HTMLElement,
     cellRange: {
       rowStartIndex: 0,
       rowEndIndex: 4,
       columns,
     },
+    suppressChartRanges: true,
     chartType: 'groupedBar',
-    chartContainer: container,
-  };
-  event.api.createRangeChart(params);
+  });
 }
 
-function createPieChart(event: FirstDataRenderedEvent, selector: string, columns: string[]) {
-  const container = document.querySelector(selector) as any;
-  const params: CreateRangeChartParams = {
-    cellRange: { columns },
+function createPieChart(params: FirstDataRenderedEvent, selector: string, columns: string[]) {
+  params.api.createRangeChart({
+    chartContainer: document.querySelector(selector) as HTMLElement,
+    cellRange: {columns},
+    suppressChartRanges: true,
     chartType: 'pie',
-    chartContainer: container,
     aggFunc: 'sum',
     chartThemeOverrides: {
       common: {
@@ -121,12 +71,7 @@ function createPieChart(event: FirstDataRenderedEvent, selector: string, columns
         },
       },
     },
-  };
-  event.api.createRangeChart(params);
-}
-
-function numberValueParser(params: ValueParserParams) {
-  return isNaN(Number(params.newValue)) ? undefined : Number(params.newValue);
+  });
 }
 
 document.addEventListener('DOMContentLoaded', function () {

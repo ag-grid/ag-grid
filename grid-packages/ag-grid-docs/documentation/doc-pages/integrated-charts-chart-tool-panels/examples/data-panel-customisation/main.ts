@@ -1,27 +1,18 @@
-import {
-  ColDef,
-  createGrid,
-  FirstDataRenderedEvent,
-  GridApi,
-  GridOptions,
-  GridReadyEvent
-} from '@ag-grid-community/core';
+import {createGrid, FirstDataRenderedEvent, GridApi, GridOptions, GridReadyEvent} from '@ag-grid-community/core';
 import {getData} from './data';
-
-const columnDefs: ColDef[] = [
-  { field: 'country', width: 150, chartDataType: 'category' },
-  { field: 'gold', chartDataType: 'series' },
-  { field: 'silver', chartDataType: 'series' },
-  { field: 'bronze', chartDataType: 'series' },
-];
 
 let gridApi: GridApi;
 
 const gridOptions: GridOptions = {
+  columnDefs: [
+    { field: 'country', chartDataType: 'category', width: 150 },
+    { field: 'gold', chartDataType: 'series' },
+    { field: 'silver', chartDataType: 'series' },
+    { field: 'bronze', chartDataType: 'series' },
+  ],
   defaultColDef: { flex: 1 },
-  columnDefs,
-  popupParent: document.body,
   enableRangeSelection: true,
+  popupParent: document.body,
   enableCharts: true,
   chartToolPanelsDef: {
     defaultToolPanel: 'data',

@@ -42,14 +42,13 @@ function onGridReady(params: GridReadyEvent) {
 
 function onFirstDataRendered(params: FirstDataRenderedEvent) {
   currentChartRef = params.api.createRangeChart({
-    chartType: 'groupedColumn',
+    chartContainer: document.querySelector('#myChart') as any,
     cellRange: {
       columns: ['country', 'sugar', 'fat', 'weight'],
       rowStartIndex: 0,
       rowEndIndex: 2
     },
-       
-    chartContainer: document.querySelector('#myChart') as any,
+    chartType: 'groupedColumn',
   });
 }
 

@@ -1,7 +1,6 @@
 import {
     ChartMenuOptions,
     createGrid,
-    CreateRangeChartParams,
     FirstDataRenderedEvent,
     GridApi,
     GridOptions,
@@ -18,11 +17,9 @@ const gridOptions: GridOptions = {
         {field: 'silver', chartDataType: 'series'},
         {field: 'bronze', chartDataType: 'series'},
     ],
-    defaultColDef: {
-        flex: 1,
-    },
-    popupParent: document.body,
+    defaultColDef: {flex: 1},
     enableRangeSelection: true,
+    popupParent: document.body,
     enableCharts: true,
     getChartToolbarItems,
     onGridReady,
@@ -38,20 +35,18 @@ function onGridReady(params: GridReadyEvent) {
 }
 
 function onFirstDataRendered(params: FirstDataRenderedEvent) {
-    const createRangeChartParams: CreateRangeChartParams = {
+    params.api.createRangeChart({
         cellRange: {
             rowStartIndex: 0,
             rowEndIndex: 4,
             columns: ['country', 'gold', 'silver', 'bronze'],
         },
         chartType: 'groupedColumn'
-    }
-
-    params.api.createRangeChart(createRangeChartParams);
+    });
 }
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
-    var gridDiv = document.querySelector<HTMLElement>('#myGrid')!
+    const gridDiv = document.querySelector<HTMLElement>('#myGrid')!
     gridApi = createGrid(gridDiv, gridOptions);
 })
