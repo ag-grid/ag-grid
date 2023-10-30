@@ -123,11 +123,7 @@ const LicensePricing = () => {
                 <div className={styles.community}>
                     <h3>Community Versions</h3>
                     <p>
-                        <b>AG Grid Community</b> and <b>AG Charts Community</b> (a.k.a.{' '}
-                        <a href={`${hostPrefix}/javascript-charts/overview/`} target="_blank">
-                            Standalone Charts
-                        </a>
-                        ) are free and open source products distributed under the{' '}
+                        <b>AG Grid Community</b> and <b>AG Charts Community</b> are free and open source products distributed under the{' '}
                         <a href={`${hostPrefix}/eula/AG-Grid-Community-License.html`} target="_blank">
                             MIT License
                         </a>
