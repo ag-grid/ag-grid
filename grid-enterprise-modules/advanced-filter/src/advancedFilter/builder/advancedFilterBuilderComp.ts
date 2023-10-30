@@ -467,7 +467,7 @@ export class AdvancedFilterBuilderComp extends Component {
             const { colId } = filterModel;
             const hasColumn = this.advancedFilterExpressionService.getColumnAutocompleteEntries().find(({ key }) => key === colId);
             const columnDetails = this.advancedFilterExpressionService.getColumnDetails(filterModel.colId);
-            if (!hasColumn || !columnDetails) {
+            if (!hasColumn || !columnDetails.column) {
                 item.valid = false;
                 filterModel.colId = undefined as any;
                 clearOperator(filterModel);

@@ -144,6 +144,8 @@ In addition to Column Filters, the [Advanced Filter](/filter-advanced/) can also
 
 <grid-example title='Advanced Filter' name='advanced-filter' type='generated' options='{ "enterprise": true, "modules": ["serverside", "menu", "advancedfilter"], "extras": ["alasql"] }'></grid-example>
 
+Note that [Cell Data Types](/cell-data-types/) must be supplied in order for the Advanced Filter to display the correct filter options, otherwise only `'text'` options will be displayed.
+
 ## Next Up
 
 Continue to the next section to learn about [SSRM Row Grouping](/server-side-model-grouping/).

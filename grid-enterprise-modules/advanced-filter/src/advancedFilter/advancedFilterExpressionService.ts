@@ -267,11 +267,9 @@ export class AdvancedFilterExpressionService extends BeanStub {
         return params;
     }
 
-    public getColumnDetails(colId: string): { column: Column, baseCellDataType: BaseCellDataType } | null {
-        const column = this.columnModel.getPrimaryColumn(colId);
-        if (!column) { return null; }
-        const baseCellDataType = this.dataTypeService.getBaseDataType(column);
-        if (!baseCellDataType) { return null; }
+    public getColumnDetails(colId: string): { column?: Column, baseCellDataType: BaseCellDataType } {
+        const column = this.columnModel.getPrimaryColumn(colId) ?? undefined;
+        const baseCellDataType = (column ? this.dataTypeService.getBaseDataType(column) : undefined) ?? 'text';
         return { column, baseCellDataType };
     }
 
