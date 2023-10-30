@@ -4,12 +4,12 @@ ul#{$exclude-grid-selector},
 ol#{$exclude-grid-selector} {
     padding-left: 2.25em;
 
-    &:not(:last-child) {
+    &:where(:not(:last-child)) {
         margin-bottom: $size-2;
     }
 }
 
-li:not(:last-child) {
+li:where(:not(:last-child)) {
     margin-bottom: $size-1;
 }
 

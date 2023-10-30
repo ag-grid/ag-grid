@@ -1,8 +1,24 @@
 @use "../../design-system/" as *;
 
+.exampleOuter {
+    --example-border-color: color-mix(in srgb, var(--secondary-border-color), var(--border-color));
+
+    margin-bottom: $size-2;
+
+    #{$darkmode-selector} & {
+        --example-border-color: color-mix(in srgb, var(--default-background-color), white 10%);
+    }
+}
+
 .tabsContainer {
     container-type: inline-size;
-    margin-bottom: $size-2;
+}
+
+.header {
+    display: flex;
+    border: 1px solid var(--example-border-color);
+    border-bottom-left-radius: $size-1;
+    border-bottom-right-radius: $size-1;
 }
 
 .externalLinks {

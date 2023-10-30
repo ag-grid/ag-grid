@@ -514,10 +514,35 @@ const ExampleRunnerInner = ({
     exampleInfo.linkId = `example-${name}`;
 
     return (
-        <div id={exampleInfo.linkId} style={{ minHeight: `${exampleHeight + 48}px` }}>
+        <div id={exampleInfo.linkId} className={styles.exampleOuter} style={{ minHeight: `${exampleHeight + 48}px` }}>
             {hasWindow && (
-                <div className={classnames('tabs-outer', styles.tabsContainer)}>
-                    <header className={classnames('tabs-header', styles.header)}>
+                <div className={styles.tabsContainer}>
+                    <div
+                        className={styles.content}
+                        role="tabpanel"
+                        aria-labelledby={`${showCode ? 'Preview' : 'Code'} tab`}
+                        style={{ height: exampleHeight, width: '100%' }}
+                    >
+                        <VisibilitySensor partialVisibility={true}>
+                            {({ isVisible }) => {
+                                if (isVisible) {
+                                    trackExampleRunnerEvent({ type: 'isVisible', exampleInfo, trackOnce: true });
+                                }
+
+                                return (
+                                    <ExampleRunnerResult
+                                        resultFrameIsVisible={!showCode}
+                                        isOnScreen={isVisible}
+                                        exampleInfo={exampleInfo}
+                                        darkMode={darkMode}
+                                    />
+                                );
+                            }}
+                        </VisibilitySensor>
+                        <CodeViewer isActive={showCode} exampleInfo={exampleInfo} />
+                    </div>
+
+                    <header className={styles.header}>
                         <ul className="tabs-nav-list" role="tablist">
                             {/* eslint-disable-line */}
                             <li className="tabs-nav-item" role="presentation">
@@ -571,30 +596,6 @@ const ExampleRunnerInner = ({
                             )}
                         </ul>
                     </header>
-                    <div
-                        className={classnames('tabs-content', styles.content)}
-                        role="tabpanel"
-                        aria-labelledby={`${showCode ? 'Preview' : 'Code'} tab`}
-                        style={{ height: exampleHeight, width: '100%' }}
-                    >
-                        <VisibilitySensor partialVisibility={true}>
-                            {({ isVisible }) => {
-                                if (isVisible) {
-                                    trackExampleRunnerEvent({ type: 'isVisible', exampleInfo, trackOnce: true });
-                                }
-
-                                return (
-                                    <ExampleRunnerResult
-                                        resultFrameIsVisible={!showCode}
-                                        isOnScreen={isVisible}
-                                        exampleInfo={exampleInfo}
-                                        darkMode={darkMode}
-                                    />
-                                );
-                            }}
-                        </VisibilitySensor>
-                        <CodeViewer isActive={showCode} exampleInfo={exampleInfo} />
-                    </div>
                 </div>
             )}
         </div>

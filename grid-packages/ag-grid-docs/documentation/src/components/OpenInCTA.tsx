@@ -21,7 +21,7 @@ type Props = ButtonProps | LinkProps;
 const COPY_TEXT: Record<CtaType, ReactNode> = {
     newTab: (
         <>
-            <span className='verbs'></span> Open Tab <Icon name="docs-import-export" />
+            <span className='verbs'></span> New Tab <Icon name="docs-import-export" />
         </>
     ),
     plunker: (
