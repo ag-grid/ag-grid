@@ -257,6 +257,9 @@ export class GridOptionsService {
         });
 
         events.forEach(event => {
+            if (this.gridOptions.debug) {
+                console.log(`AGGrid: Updated property ${event.type} from ${String(event.previousValue)} to ${String(event.currentValue)}.`);
+            }
             this.propertyEventService.dispatchEvent(event);
         });
     }

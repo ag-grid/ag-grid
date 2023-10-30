@@ -78,17 +78,16 @@ export class ComponentUtil {
     public static ALL_PROPERTIES = PropertyKeys.ALL_PROPERTIES;
     public static ALL_PROPERTIES_SET = new Set(PropertyKeys.ALL_PROPERTIES);
 
+    public static ALL_PROPERTIES_AND_CALLBACKS = [...this.ALL_PROPERTIES, ...this.EVENT_CALLBACKS];
 
-    private static getGridOptionKeys(component: any, isVue: boolean) {
+    private static getGridOptionKeys() {
         // Vue does not have keys in prod so instead need to run through all the 
         // gridOptions checking for presence of a gridOption key.
-        return isVue
-            ? this.ALL_PROPERTIES
-            : Object.keys(component);
+        return this.ALL_PROPERTIES_AND_CALLBACKS;
     }
 
     /** Combines component props / attributes with the provided gridOptions returning a new combined gridOptions object */
-    public static combineAttributesAndGridOptions(gridOptions: GridOptions | undefined, component: any, isVue: boolean = false): GridOptions {
+    public static combineAttributesAndGridOptions(gridOptions: GridOptions | undefined, component: any): GridOptions {
 
         // create empty grid options if none were passed
         if (typeof gridOptions !== 'object') {
@@ -96,7 +95,7 @@ export class ComponentUtil {
         }
         // shallow copy (so we don't change the provided object)
         const mergedOptions = {...gridOptions} as any;
-        const keys = ComponentUtil.getGridOptionKeys(component, isVue);
+        const keys = ComponentUtil.getGridOptionKeys();
         // Loop through component props, if they are not undefined and a valid gridOption copy to gridOptions
         keys.forEach(key => {
             const value = component[key];

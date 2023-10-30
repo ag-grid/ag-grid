@@ -84,13 +84,7 @@ export class AgGridVue extends Vue {
             if (this.skipChange(propertyName, currentValue, previousValue)) {
                 return;
             }
-
-            const changes: Properties = {};
-            changes[propertyName] = {
-                currentValue,
-                previousValue,
-            };
-            ComponentUtil.processOnChange(changes, this.api);
+            ComponentUtil.processOnChange({ [propertyName]: currentValue }, this.api);
         }
     }
 
@@ -103,7 +97,7 @@ export class AgGridVue extends Vue {
         }, 20);
 
         const frameworkComponentWrapper = new VueFrameworkComponentWrapper(this);
-        const gridOptions = ComponentUtil.combineAttributesAndGridOptions(this.gridOptions, this, true);
+        const gridOptions = ComponentUtil.combineAttributesAndGridOptions(this.gridOptions, this);
 
         this.checkForBindingConflicts();
         gridOptions.rowData = this.getRowDataBasedOnBindings();

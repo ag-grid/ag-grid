@@ -256,7 +256,11 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
 
     public ngOnChanges(changes: any): void {
         if (this._initialised) {
-             ComponentUtil.processOnChange(changes, this.api);
+          const gridOptions: GridOptions = {};
+          Object.entries(changes).forEach(([key, value]: [string, any]) => {
+               gridOptions[key as keyof GridOptions] = value.currentValue;
+          });
+          ComponentUtil.processOnChange(gridOptions, this.api);
         }
     }
 

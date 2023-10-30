@@ -56,7 +56,7 @@ beforeEach(() => {
     eSelectAll = mock<AgCheckbox>('setValue', 'getInputElement', 'onValueChange', 'setLabel');
     eSelectAll.getInputElement.mockImplementation(() => mock<HTMLInputElement>('addEventListener'));
 
-    gridOptionsService = mock<GridOptionsService>('is', 'get', 'addEventListener');
+    gridOptionsService = mock<GridOptionsService>('get', 'addEventListener');
 
     columnModel = mock<ColumnModel>('getRowGroupColumns');
     columnModel.getRowGroupColumns.mockImplementation(() => []);
