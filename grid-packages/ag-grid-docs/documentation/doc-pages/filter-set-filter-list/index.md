@@ -218,7 +218,7 @@ The following example demonstrates loading set filter values asynchronously. Not
 
 ### Refreshing Values
 
-When values are initially passed to the set filter, they are only loaded once when the set filter is initially created. When those values are updated, the set filter will automatically update to reflect the new values.
+When values are initially passed to the set filter, they are only loaded once when the set filter is initially created. When those values are updated via `filterParams.values`, the set filter will automatically update to reflect the new values.
 
 It may be desirable to refresh the values at a later point, for example to reflect other filtering that has occurred in the grid. To achieve this, you can call `refreshFilterValues` on the relevant filter that you would like to refresh. This will cause the values used in the filter to be refreshed from the original source, whether that is by looking at the provided `values` array again, or by re-executing the `values` callback. For example, you might use something like the following:
 
