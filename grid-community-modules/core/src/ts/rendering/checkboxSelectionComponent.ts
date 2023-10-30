@@ -89,7 +89,7 @@ export class CheckboxSelectionComponent extends Component {
             // would possibly get selected twice
             stopPropagationForAgGrid(event);
 
-            const groupSelectsFiltered = this.gridOptionsService.is('groupSelectsFiltered');
+            const groupSelectsFiltered = this.gridOptionsService.get('groupSelectsFiltered');
             const isSelected = this.eCheckbox.getValue();
 
             if (this.shouldHandleIndeterminateState(isSelected, groupSelectsFiltered)) {

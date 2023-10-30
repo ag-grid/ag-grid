@@ -74,7 +74,7 @@ export abstract class BaseGridSerializingSession<T> implements GridSerializingSe
         node: RowNode
     ): { value: any, valueFormatted?: string | null } {
         // we render the group summary text e.g. "-> Parent -> Child"...
-        const hideOpenParents = this.gridOptionsService.is('groupHideOpenParents');
+        const hideOpenParents = this.gridOptionsService.get('groupHideOpenParents');
         const value = ((!hideOpenParents || node.footer) && this.shouldRenderGroupSummaryCell(node, column, index))
             ? this.createValueForGroupNode(node)
             : this.valueService.getValue(column, node);

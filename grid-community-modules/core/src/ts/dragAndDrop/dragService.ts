@@ -66,7 +66,7 @@ export class DragService extends BeanStub {
 
         let touchListener: ((touchEvent: TouchEvent) => void) | null = null;
 
-        const suppressTouch = this.gridOptionsService.is('suppressTouch');
+        const suppressTouch = this.gridOptionsService.get('suppressTouch');
 
         if (includeTouch && !suppressTouch) {
             touchListener = (touchEvent: TouchEvent) => {
@@ -259,7 +259,7 @@ export class DragService extends BeanStub {
     }
 
     private shouldPreventMouseEvent(mouseEvent: MouseEvent): boolean {
-        const isEnableCellTextSelect = this.gridOptionsService.is('enableCellTextSelection');
+        const isEnableCellTextSelect = this.gridOptionsService.get('enableCellTextSelection');
         const isSafari = isBrowserSafari();
         const isMouseMove = mouseEvent.type === 'mousemove';
 

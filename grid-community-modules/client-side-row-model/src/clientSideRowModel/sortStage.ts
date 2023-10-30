@@ -38,7 +38,7 @@ export class SortStage extends BeanStub implements IRowNodeStage {
             // on if transactions are present. it's off for now so that we can
             // selectively turn it on and test it with some select users before
             // rolling out to everyone.
-            && this.gridOptionsService.is('deltaSort');
+            && this.gridOptionsService.get('deltaSort');
 
 
         const sortContainsGroupColumns = sortOptions.some(opt => {

@@ -73,7 +73,6 @@ export interface RedrawRowsParams<TData = any> {
     rowNodes?: IRowNode<TData>[];
 }
 
-const DEFAULT_KEEP_DETAIL_ROW_COUNT = 10;
 @Bean("rowRenderer")
 export class RowRenderer extends BeanStub {
 
@@ -139,8 +138,10 @@ export class RowRenderer extends BeanStub {
         this.addManagedPropertyListeners(['domLayout', 'embedFullWidthRows'], this.onDomLayoutChanged.bind(this));
         this.addManagedPropertyListeners(['suppressMaxRenderedRowRestriction', 'rowBuffer'], this.redraw.bind(this));
         this.addManagedPropertyListeners([
-            'rowClass', 'suppressCellFocus', 'getBusinessKeyForNode',
-            'fullWidthCellRenderer', 'fullWidthCellRendererParams', 'rowClassRules',
+            'suppressCellFocus', 'getBusinessKeyForNode',
+            'fullWidthCellRenderer', 'fullWidthCellRendererParams',
+            'rowStyle', 'getRowStyle',
+            'rowClass', 'getRowClass', 'rowClassRules',
 
             'groupRowRenderer', 'groupRowRendererParams', // maybe only needs to refresh FW rows...
             'loadingCellRenderer', 'loadingCellRendererParams',
@@ -162,26 +163,21 @@ export class RowRenderer extends BeanStub {
 
         this.initialiseCache();
         this.printLayout = this.gridOptionsService.isDomLayout('print');
-        this.embedFullWidthRows = this.printLayout || this.gridOptionsService.is('embedFullWidthRows');
+        this.embedFullWidthRows = this.printLayout || this.gridOptionsService.get('embedFullWidthRows');
 
         this.redrawAfterModelUpdate();
     }
 
     private initialiseCache(): void {
-        if (this.gridOptionsService.is('keepDetailRows')) {
+        if (this.gridOptionsService.get('keepDetailRows')) {
             const countProp = this.getKeepDetailRowsCount();
             const count = countProp != null ? countProp : 3;
             this.cachedRowCtrls = new RowCtrlCache(count);
         }
     }
 
-    private getKeepDetailRowsCount(): number | undefined {
-        const keepDetailRowsCount = this.gridOptionsService.getNum('keepDetailRowsCount');
-        if (exists(keepDetailRowsCount) && keepDetailRowsCount > 0) {
-            return keepDetailRowsCount;
-        }
-
-        return DEFAULT_KEEP_DETAIL_ROW_COUNT;
+    private getKeepDetailRowsCount(): number {
+        return this.gridOptionsService.get('keepDetailRowsCount');
     }
 
     public getStickyTopRowCtrls(): RowCtrl[] {
@@ -191,7 +187,7 @@ export class RowRenderer extends BeanStub {
     }
     private updateAllRowCtrls(): void {
         const liveList = getAllValuesInObject(this.rowCtrlsByRowIndex);
-        const isEnsureDomOrder = this.gridOptionsService.is('ensureDomOrder');
+        const isEnsureDomOrder = this.gridOptionsService.get('ensureDomOrder');
         const isPrintLayout = this.gridOptionsService.isDomLayout('print');
 
         if (isEnsureDomOrder || isPrintLayout) {
@@ -289,7 +285,7 @@ export class RowRenderer extends BeanStub {
                 removeRangeSelectionListeners();
             }
         });
-        const rangeSelectionEnabled = this.gridOptionsService.is('enableRangeSelection');
+        const rangeSelectionEnabled = this.gridOptionsService.get('enableRangeSelection');
         if (rangeSelectionEnabled) {
             addRangeSelectionListeners();
         }
@@ -353,7 +349,7 @@ export class RowRenderer extends BeanStub {
 
     private onDomLayoutChanged(): void {
         const printLayout = this.gridOptionsService.isDomLayout('print');
-        const embedFullWidthRows = printLayout || this.gridOptionsService.is('embedFullWidthRows');
+        const embedFullWidthRows = printLayout || this.gridOptionsService.get('embedFullWidthRows');
 
         // if moving towards or away from print layout, means we need to destroy all rows, as rows are not laid
         // out using absolute positioning when doing print layout
@@ -578,7 +574,7 @@ export class RowRenderer extends BeanStub {
 
     private scrollToTopIfNewData(params: RefreshViewParams): void {
         const scrollToTop = params.newData || params.newPage;
-        const suppressScrollToTop = this.gridOptionsService.is('suppressScrollOnNewData');
+        const suppressScrollToTop = this.gridOptionsService.get('suppressScrollOnNewData');
 
         if (scrollToTop && !suppressScrollToTop) {
             this.gridBodyCtrl.getScrollFeature().scrollToTop();
@@ -1031,7 +1027,7 @@ export class RowRenderer extends BeanStub {
         });
 
         if (rowsToRecycle) {
-            const useAnimationFrame = afterScroll && !this.gridOptionsService.is('suppressAnimationFrame') && !this.printLayout;
+            const useAnimationFrame = afterScroll && !this.gridOptionsService.get('suppressAnimationFrame') && !this.printLayout;
             if (useAnimationFrame) {
                 this.beans.animationFrameService.addDestroyTask(() => {
                     this.destroyRowCtrls(rowsToRecycle, animate);
@@ -1178,19 +1174,7 @@ export class RowRenderer extends BeanStub {
     }
 
     private getRowBuffer(): number {
-        let rowBuffer = this.gridOptionsService.getNum('rowBuffer');
-
-        if (typeof rowBuffer === 'number') {
-            if (rowBuffer < 0) {
-                warnOnce(`rowBuffer should not be negative`);
-                rowBuffer = 0;
-                this.gridOptionsService.set('rowBuffer', 0);
-            }
-        } else {
-            rowBuffer = 10;
-        }
-
-        return rowBuffer;
+        return this.gridOptionsService.get('rowBuffer');
     }
 
     private getRowBufferInPixels() {
@@ -1215,7 +1199,7 @@ export class RowRenderer extends BeanStub {
         } else {
             const bufferPixels = this.getRowBufferInPixels();
             const gridBodyCtrl = this.ctrlsService.getGridBodyCtrl();
-            const suppressRowVirtualisation = this.gridOptionsService.is('suppressRowVirtualisation');
+            const suppressRowVirtualisation = this.gridOptionsService.get('suppressRowVirtualisation');
 
             let rowHeightsChanged = false;
             let firstPixel: number;
@@ -1268,7 +1252,7 @@ export class RowRenderer extends BeanStub {
         // killing the browser, we limit the number of rows. just in case some use case we didn't think
         // of, we also have a property to not do this operation.
         const rowLayoutNormal = this.gridOptionsService.isDomLayout('normal');
-        const suppressRowCountRestriction = this.gridOptionsService.is('suppressMaxRenderedRowRestriction');
+        const suppressRowCountRestriction = this.gridOptionsService.get('suppressMaxRenderedRowRestriction');
         const rowBufferMaxSize = Math.max(this.getRowBuffer(), 500);
 
         if (rowLayoutNormal && !suppressRowCountRestriction) {
@@ -1385,7 +1369,7 @@ export class RowRenderer extends BeanStub {
         // we only do the animation frames after scrolling, as this is where we want the smooth user experience.
         // having animation frames for other times makes the grid look 'jumpy'.
 
-        const suppressAnimationFrame = this.gridOptionsService.is('suppressAnimationFrame');
+        const suppressAnimationFrame = this.gridOptionsService.get('suppressAnimationFrame');
         const useAnimationFrameForCreate = afterScroll && !suppressAnimationFrame && !this.printLayout;
 
         const res = new RowCtrl(

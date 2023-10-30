@@ -180,7 +180,7 @@ export class ClientSideNodeManager {
             const len = allLeafChildren.length;
             let normalisedAddIndex = addIndex;
 
-            const isTreeData = this.gridOptionsService.is('treeData');
+            const isTreeData = this.gridOptionsService.get('treeData');
             if (isTreeData && addIndex > 0 && len > 0) {
                 for (let i = 0; i < len; i++) {
                     if (allLeafChildren[i]?.rowIndex == addIndex - 1) { normalisedAddIndex = i + 1; break; }
@@ -287,7 +287,7 @@ export class ClientSideNodeManager {
         node.group = false;
         this.setMasterForRow(node, dataItem, level, true);
 
-        const suppressParentsInRowNodes = this.gridOptionsService.is('suppressParentsInRowNodes');
+        const suppressParentsInRowNodes = this.gridOptionsService.get('suppressParentsInRowNodes');
         if (parent && !suppressParentsInRowNodes) {
             node.parent = parent;
         }
@@ -305,14 +305,14 @@ export class ClientSideNodeManager {
     }
 
     private setMasterForRow(rowNode: RowNode, data: any, level: number, setExpanded: boolean): void {
-        const isTreeData = this.gridOptionsService.is('treeData');
+        const isTreeData = this.gridOptionsService.get('treeData');
         if (isTreeData) {
             rowNode.setMaster(false);
             if (setExpanded) {
                 rowNode.expanded = false;
             }
         } else {
-            const masterDetail = this.gridOptionsService.is('masterDetail');
+            const masterDetail = this.gridOptionsService.get('masterDetail');
             // this is the default, for when doing grid data
             if (masterDetail) {
                 // if we are doing master detail, then the
@@ -340,10 +340,10 @@ export class ClientSideNodeManager {
     }
 
     private isExpanded(level: any) {
-        const expandByDefault = this.gridOptionsService.getNum('groupDefaultExpanded');
+        const expandByDefault = this.gridOptionsService.get('groupDefaultExpanded');
         if (expandByDefault === -1) {
             return true;
         }
-        return level < expandByDefault!;
+        return level < expandByDefault;
     }
 }

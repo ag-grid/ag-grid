@@ -85,7 +85,7 @@ export class HeaderNavigationService extends BeanStub {
     public navigateHorizontally(direction: HeaderNavigationDirection, fromTab: boolean = false, event: KeyboardEvent): boolean {
         const focusedHeader = this.focusService.getFocusedHeader()!;
         const isLeft = direction === HeaderNavigationDirection.LEFT;
-        const isRtl = this.gridOptionsService.is('enableRtl');
+        const isRtl = this.gridOptionsService.get('enableRtl');
         let nextHeader: HeaderPosition;
         let normalisedDirection: 'Before' |  'After';
 

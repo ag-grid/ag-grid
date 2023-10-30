@@ -134,7 +134,7 @@ export class CellPositionFeature extends BeanStub {
     private getCellLeft(): number | null {
         let mostLeftCol: Column;
 
-        if (this.beans.gridOptionsService.is('enableRtl') && this.colsSpanning) {
+        if (this.beans.gridOptionsService.get('enableRtl') && this.colsSpanning) {
             mostLeftCol = last(this.colsSpanning);
         } else {
             mostLeftCol = this.column;

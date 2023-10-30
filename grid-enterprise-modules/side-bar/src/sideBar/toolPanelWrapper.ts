@@ -83,7 +83,7 @@ export class ToolPanelWrapper extends Component {
     }
 
     public setResizerSizerSide(side: 'right' | 'left') {
-        const isRtl = this.gridOptionsService.is('enableRtl');
+        const isRtl = this.gridOptionsService.get('enableRtl');
         const isLeft = side === 'left';
         const inverted = isRtl ? isLeft : !isLeft;
 

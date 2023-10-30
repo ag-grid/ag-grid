@@ -68,7 +68,7 @@ export class DropZoneColumnComp extends Component {
     public init(): void {
         this.setTemplate(DropZoneColumnComp.TEMPLATE);
         const eGui = this.getGui();
-        const isFunctionsReadOnly = this.gridOptionsService.is('functionsReadOnly');
+        const isFunctionsReadOnly = this.gridOptionsService.get('functionsReadOnly');
 
         this.addElementClasses(eGui);
         this.addElementClasses(this.eDragHandle, 'drag-handle');
@@ -100,7 +100,7 @@ export class DropZoneColumnComp extends Component {
 
         const checkColumnLock = () => {
             const isLocked = this.isGroupingAndLocked();
-            _.setDisplayed(this.eButton, !isLocked && !this.gridOptionsService.is('functionsReadOnly'));
+            _.setDisplayed(this.eButton, !isLocked && !this.gridOptionsService.get('functionsReadOnly'));
             this.eDragHandle.classList.toggle('ag-column-select-column-readonly', isLocked);
             this.setupAria();
         }
@@ -121,7 +121,7 @@ export class DropZoneColumnComp extends Component {
             desc: translate('ariaDropZoneColumnComponentSortDescending', 'descending'),
         };
         const columnSort = this.column.getSort();
-        const isSortSuppressed = this.gridOptionsService.is('rowGroupPanelSuppressSort');
+        const isSortSuppressed = this.gridOptionsService.get('rowGroupPanelSuppressSort');
 
         const ariaInstructions = [
             [
@@ -131,7 +131,7 @@ export class DropZoneColumnComp extends Component {
             ].filter(part => !!part).join(''),
         ];
 
-        const isFunctionsReadOnly = this.gridOptionsService.is('functionsReadOnly')
+        const isFunctionsReadOnly = this.gridOptionsService.get('functionsReadOnly')
         if (this.isAggregationZone() && !isFunctionsReadOnly) {
             const aggregationMenuAria = translate('ariaDropZoneColumnValueItemDescription', 'Press ENTER to change the aggregation type');
             ariaInstructions.push(aggregationMenuAria);
@@ -168,7 +168,7 @@ export class DropZoneColumnComp extends Component {
             return;
         }
 
-        if (!this.gridOptionsService.is('rowGroupPanelSuppressSort')) {
+        if (!this.gridOptionsService.get('rowGroupPanelSuppressSort')) {
             this.eSortIndicator.setupSort(this.column, true);
             const performSort = (event: MouseEvent | KeyboardEvent) => {
                 event.preventDefault();
@@ -217,7 +217,7 @@ export class DropZoneColumnComp extends Component {
             this.addCssClass('ag-column-drop-cell-ghost');
         }
 
-        if (this.isAggregationZone() && !this.gridOptionsService.is('functionsReadOnly')) {
+        if (this.isAggregationZone() && !this.gridOptionsService.get('functionsReadOnly')) {
             this.addGuiEventListener('click', this.onShowAggFuncSelection.bind(this));
         }
     }
@@ -227,7 +227,7 @@ export class DropZoneColumnComp extends Component {
     }
 
     private setupRemove(): void {
-        _.setDisplayed(this.eButton, !this.isGroupingAndLocked() && !this.gridOptionsService.is('functionsReadOnly'));
+        _.setDisplayed(this.eButton, !this.isGroupingAndLocked() && !this.gridOptionsService.get('functionsReadOnly'));
 
         const agEvent: ColumnRemoveEvent = { type: DropZoneColumnComp.EVENT_COLUMN_REMOVE };
 
@@ -242,7 +242,7 @@ export class DropZoneColumnComp extends Component {
                 }
             }
 
-            if (isEnter && this.isAggregationZone() && !this.gridOptionsService.is('functionsReadOnly')) {
+            if (isEnter && this.isAggregationZone() && !this.gridOptionsService.get('functionsReadOnly')) {
                 e.preventDefault();
                 this.onShowAggFuncSelection();
             }
@@ -376,7 +376,7 @@ export class DropZoneColumnComp extends Component {
 
         const itemSelected = () => {
             hidePopup();
-            if (this.gridOptionsService.is('functionsPassive')) {
+            if (this.gridOptionsService.get('functionsPassive')) {
                 const event: WithoutGridCommon<ColumnAggFuncChangeRequestEvent> = {
                     type: Events.EVENT_COLUMN_AGG_FUNC_CHANGE_REQUEST,
                     columns: [this.column],

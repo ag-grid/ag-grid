@@ -184,7 +184,7 @@ export class AdvancedFilterCtrl extends BeanStub implements IAdvancedFilterCtrl 
                 eAdvancedFilterCompGui.classList.add(...allThemes);
             }
             
-            eAdvancedFilterCompGui.classList.add(this.gridOptionsService.is('enableRtl') ? 'ag-rtl' : 'ag-ltr');
+            eAdvancedFilterCompGui.classList.add(this.gridOptionsService.get('enableRtl') ? 'ag-rtl' : 'ag-ltr');
 
             if (this.focusService.isKeyboardMode()) {
                 eAdvancedFilterCompGui.classList.add(FocusService.AG_KEYBOARD_FOCUS);

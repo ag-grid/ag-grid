@@ -21,7 +21,7 @@ const HeaderRowComp = (props: {ctrl: HeaderRowCtrl}) => {
 
     const setCellCtrlsMaintainOrder = (next: AbstractHeaderCellCtrl[]) => {
         const prev = getCellCtrls();
-        const isEnsureDomOrder = gridOptionsService.is('ensureDomOrder');
+        const isEnsureDomOrder = gridOptionsService.get('ensureDomOrder');
         const isPrintLayout = gridOptionsService.isDomLayout('print');
 
         // if we are ensuring dom order, we set the ctrls into the dom in the same order they appear on screen

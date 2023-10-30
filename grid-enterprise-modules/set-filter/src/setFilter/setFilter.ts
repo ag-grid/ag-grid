@@ -256,7 +256,7 @@ export class SetFilter<V = string> extends ProvidedFilter<SetFilterModel, V> imp
         const keyCreator = newParams.keyCreator ?? newParams.colDef.keyCreator;
         this.setValueFormatter(newParams.valueFormatter, keyCreator, this.convertValuesToStrings, !!newParams.treeList, !!newParams.colDef.refData);
         const isGroupCol = newParams.column.getId().startsWith(GROUP_AUTO_COLUMN_ID);
-        this.treeDataTreeList = this.gridOptionsService.is('treeData') && !!newParams.treeList && isGroupCol;
+        this.treeDataTreeList = this.gridOptionsService.get('treeData') && !!newParams.treeList && isGroupCol;
         this.getDataPath = this.gridOptionsService.get('getDataPath');
         this.groupingTreeList = !!this.columnModel.getRowGroupColumns().length && !!newParams.treeList && isGroupCol;
         this.createKey = this.generateCreateKey(keyCreator, this.convertValuesToStrings, this.treeDataTreeList || this.groupingTreeList);

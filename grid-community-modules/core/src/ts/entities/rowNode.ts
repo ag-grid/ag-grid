@@ -349,7 +349,7 @@ export class RowNode<TData = any> implements IEventEmitter, IRowNode<TData> {
                 this.eventService.dispatchEvent(this.createLocalRowEvent(RowNode.EVENT_SELECTABLE_CHANGED));
             }
 
-            const isGroupSelectsChildren = this.beans.gridOptionsService.is('groupSelectsChildren');
+            const isGroupSelectsChildren = this.beans.gridOptionsService.get('groupSelectsChildren');
             if (isGroupSelectsChildren) {
                 const selected = this.calculateSelectedFromChildren();
                 this.setSelectedParams({
@@ -738,7 +738,7 @@ export class RowNode<TData = any> implements IEventEmitter, IRowNode<TData> {
         const column = getColumnFromKey()!;
         const oldValue = this.getValueFromValueService(column);
 
-        if (this.beans.gridOptionsService.is('readOnlyEdit')) {
+        if (this.beans.gridOptionsService.get('readOnlyEdit')) {
             this.dispatchEventForSaveValueReadOnly(column, oldValue, newValue, eventSource);
             return false;
         }
@@ -765,7 +765,7 @@ export class RowNode<TData = any> implements IEventEmitter, IRowNode<TData> {
         const groupFootersEnabled = getGroupIncludeFooter({ node: this });
 
         // if doing footers, we normally don't show agg data at group level when group is open
-        const groupAlwaysShowAggData = this.beans.gridOptionsService.is('groupSuppressBlankHeader');
+        const groupAlwaysShowAggData = this.beans.gridOptionsService.get('groupSuppressBlankHeader');
 
         // if doing grouping and footers, we don't want to include the agg value
         // in the header when the group is open
@@ -843,7 +843,7 @@ export class RowNode<TData = any> implements IEventEmitter, IRowNode<TData> {
 
         const isSsrm = this.beans.gridOptionsService.isRowModelType('serverSide');
         if (isSsrm) {
-            const isTreeData = this.beans.gridOptionsService.is('treeData');
+            const isTreeData = this.beans.gridOptionsService.get('treeData');
             const isGroupFunc = this.beans.gridOptionsService.get('isServerSideGroup');
             // stubs and footers can never have children, as they're grid rows. if tree data the presence of children
             // is determined by the isServerSideGroup callback, if not tree data then the rows group property will be set.

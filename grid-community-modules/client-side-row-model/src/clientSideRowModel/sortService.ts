@@ -31,7 +31,7 @@ export class SortService extends BeanStub {
         changedPath: ChangedPath | undefined,
         sortContainsGroupColumns: boolean,
     ): void {
-        const groupMaintainOrder = this.gridOptionsService.is('groupMaintainOrder');
+        const groupMaintainOrder = this.gridOptionsService.get('groupMaintainOrder');
         const groupColumnsPresent = this.columnModel.getAllGridColumns().some(c => c.isRowGroupActive());
 
         let allDirtyNodes: { [key: string]: true } = {};
@@ -204,11 +204,11 @@ export class SortService extends BeanStub {
     }
 
     private updateGroupDataForHideOpenParents(changedPath?: ChangedPath) {
-        if (!this.gridOptionsService.is('groupHideOpenParents')) {
+        if (!this.gridOptionsService.get('groupHideOpenParents')) {
             return;
         }
 
-        if (this.gridOptionsService.is('treeData')) {
+        if (this.gridOptionsService.get('treeData')) {
             _.warnOnce(`The property hideOpenParents dose not work with Tree Data. This is because Tree Data has values at the group level, it doesn't make sense to hide them.`);
             return false;
         }
@@ -229,7 +229,7 @@ export class SortService extends BeanStub {
     }
 
     private pullDownGroupDataForHideOpenParents(rowNodes: RowNode[] | null, clearOperation: boolean) {
-        if (!this.gridOptionsService.is('groupHideOpenParents') || _.missing(rowNodes)) { return; }
+        if (!this.gridOptionsService.get('groupHideOpenParents') || _.missing(rowNodes)) { return; }
 
         rowNodes.forEach(childRowNode => {
             const groupDisplayCols = this.columnModel.getGroupDisplayColumns();

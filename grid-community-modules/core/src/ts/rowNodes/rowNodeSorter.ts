@@ -29,7 +29,7 @@ export class RowNodeSorter extends BeanStub {
 
     @PostConstruct
     public init(): void {
-        this.isAccentedSort = this.gridOptionsService.is('accentedSort');
+        this.isAccentedSort = this.gridOptionsService.get('accentedSort');
         this.primaryColumnsSortGroups = this.gridOptionsService.isColumnsSortingCoupledToGroup();
 
         this.addManagedPropertyListener('accentedSort', (propChange) => this.isAccentedSort = propChange.currentValue);

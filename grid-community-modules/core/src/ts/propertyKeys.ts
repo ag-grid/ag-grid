@@ -105,7 +105,7 @@ export class PropertyKeys {
         'detailCellRenderer', 'quickFilterParser', 'quickFilterMatcher'
     ];
 
-
+    /** These callbacks extend AgGridCommon interface */
     public static CALLBACK_PROPERTIES: CallbackKeys[] = [
         'getLocaleText', 'isExternalFilterPresent', 'getRowHeight', 'getRowClass', 'getRowStyle', 'getContextMenuItems', 'getMainMenuItems',
         'processRowPostCreate', 'processCellForClipboard', 'getGroupRowAgg', 'isFullWidthRow',

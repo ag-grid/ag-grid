@@ -53,7 +53,7 @@ export class StoreFactory {
 
         const maxBlocksInCache = (userStoreParams && userStoreParams.maxBlocksInCache != null)
             ? userStoreParams.maxBlocksInCache
-            : this.gridOptionsService.getNum('maxBlocksInCache');
+            : this.gridOptionsService.get('maxBlocksInCache');
 
         const maxBlocksActive = maxBlocksInCache != null && maxBlocksInCache >= 0;
 
@@ -83,7 +83,7 @@ export class StoreFactory {
 
         const blockSize = (userStoreParams && userStoreParams.cacheBlockSize != null)
             ? userStoreParams.cacheBlockSize
-            : this.gridOptionsService.getNum('cacheBlockSize');
+            : this.gridOptionsService.get('cacheBlockSize');
 
         if (blockSize != null && blockSize > 0) {
             return blockSize;
@@ -121,6 +121,6 @@ export class StoreFactory {
     }
 
     private isSuppressServerSideInfiniteScroll(): boolean {
-        return this.gridOptionsService.is('suppressServerSideInfiniteScroll');
+        return this.gridOptionsService.get('suppressServerSideInfiniteScroll');
     }
 }

@@ -69,8 +69,8 @@ export class AggregationStage extends BeanStub implements IRowNodeStage {
         const pivotColumns = pivotActive ? this.columnModel.getPivotColumns() : [];
 
         const aggDetails: AggregationDetails = {
-            alwaysAggregateAtRootLevel: this.gridOptionsService.is('alwaysAggregateAtRootLevel'),
-            groupIncludeTotalFooter: this.gridOptionsService.is('groupIncludeTotalFooter'),
+            alwaysAggregateAtRootLevel: this.gridOptionsService.get('alwaysAggregateAtRootLevel'),
+            groupIncludeTotalFooter: this.gridOptionsService.get('groupIncludeTotalFooter'),
             changedPath: params.changedPath!,
             valueColumns: measureColumns,
             pivotColumns: pivotColumns,
@@ -83,7 +83,7 @@ export class AggregationStage extends BeanStub implements IRowNodeStage {
 
     private isSuppressAggFilteredOnly() {
         const isGroupAggFiltering = this.gridOptionsService.getGroupAggFiltering() !== undefined;
-        return isGroupAggFiltering || this.gridOptionsService.is('suppressAggFilteredOnly');
+        return isGroupAggFiltering || this.gridOptionsService.get('suppressAggFilteredOnly');
     }
 
     private recursivelyCreateAggData(aggDetails: AggregationDetails) {

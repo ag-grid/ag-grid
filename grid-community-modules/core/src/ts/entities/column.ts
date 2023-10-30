@@ -262,12 +262,10 @@ export class Column<TValue = any> implements IHeaderColumn<TValue>, IProvidedCol
         this.initDotNotation();
 
         this.initTooltip();
-
-        this.validate();
     }
 
     private initDotNotation(): void {
-        const suppressDotNotation = this.gridOptionsService.is('suppressFieldDotNotation');
+        const suppressDotNotation = this.gridOptionsService.get('suppressFieldDotNotation');
         this.fieldContainsDots = exists(this.colDef.field) && this.colDef.field.indexOf('.') >= 0 && !suppressDotNotation;
         this.tooltipFieldContainsDots = exists(this.colDef.tooltipField) && this.colDef.tooltipField.indexOf('.') >= 0 && !suppressDotNotation;
     }
@@ -330,70 +328,6 @@ export class Column<TValue = any> implements IHeaderColumn<TValue>, IProvidedCol
         return this.tooltipFieldContainsDots;
     }
 
-    private validate(): void {
-
-        const colDefAny = this.colDef as any;
-
-        const usingCSRM = this.gridOptionsService.isRowModelType('clientSide');
-        if (usingCSRM && !ModuleRegistry.__isRegistered(ModuleNames.RowGroupingModule, this.gridOptionsService.getGridId())) {
-            const rowGroupingItems: (keyof ColDef)[] = ['enableRowGroup', 'rowGroup', 'rowGroupIndex', 'enablePivot', 'enableValue', 'pivot', 'pivotIndex', 'aggFunc'];
-            const itemsUsed = rowGroupingItems.filter(x => exists(colDefAny[x]));
-            if (itemsUsed.length > 0) {
-                ModuleRegistry.__assertRegistered(ModuleNames.RowGroupingModule, itemsUsed.map(i => 'colDef.' + i).join(', '), this.gridOptionsService.getGridId());
-            }
-        }
-
-        if (this.colDef.cellEditor === 'agRichSelect' || this.colDef.cellEditor === 'agRichSelectCellEditor') {
-            ModuleRegistry.__assertRegistered(ModuleNames.RichSelectModule, this.colDef.cellEditor, this.gridOptionsService.getGridId());
-        }
-
-        if (this.gridOptionsService.is('treeData')) {
-            const itemsNotAllowedWithTreeData: (keyof ColDef)[] = ['rowGroup', 'rowGroupIndex', 'pivot', 'pivotIndex'];
-            const itemsUsed = itemsNotAllowedWithTreeData.filter(x => exists(colDefAny[x]));
-            if (itemsUsed.length > 0) {
-                warnOnce(`${itemsUsed.join()} is not possible when doing tree data, your column definition should not have ${itemsUsed.join()}`);
-            }
-        }
-
-        if (exists(colDefAny.menuTabs)) {
-
-            if (Array.isArray(colDefAny.menuTabs)) {
-
-                const communityMenuTabs: ColumnMenuTab[] = ['filterMenuTab'];
-
-                const enterpriseMenuTabs: ColumnMenuTab[] = ['columnsMenuTab', 'generalMenuTab'];
-                const itemsUsed = enterpriseMenuTabs.filter(x => colDefAny.menuTabs.includes(x));
-                if (itemsUsed.length > 0) {
-                    ModuleRegistry.__assertRegistered(ModuleNames.MenuModule, `menuTab(s): ${itemsUsed.map(t => `'${t}'`).join()}`, this.gridOptionsService.getGridId());
-                }
-
-                colDefAny.menuTabs.forEach((tab: ColumnMenuTab) => {
-                    if (!enterpriseMenuTabs.includes(tab) && !communityMenuTabs.includes(tab)) {
-                        warnOnce(`'${tab}' is not valid for 'colDef.menuTabs'. Valid values are: ${[...communityMenuTabs, ...enterpriseMenuTabs].map(t => `'${t}'`).join()}.`);
-                    }
-                });
-            } else {
-                warnOnce(`The typeof 'colDef.menuTabs' should be an array not:` + typeof colDefAny.menuTabs);
-            }
-        }
-
-        if (exists(colDefAny.columnsMenuParams)) {
-            ModuleRegistry.__assertRegistered(ModuleNames.MenuModule, 'columnsMenuParams', this.gridOptionsService.getGridId());
-        }
-
-        if (exists(colDefAny.columnsMenuParams)) {
-            ModuleRegistry.__assertRegistered(ModuleNames.ColumnsToolPanelModule, 'columnsMenuParams', this.gridOptionsService.getGridId());
-        }
-
-        if (exists(this.colDef.width) && typeof this.colDef.width !== 'number') {
-            warnOnce('colDef.width should be a number, not ' + typeof this.colDef.width);
-        }
-
-        if (exists(colDefAny.columnGroupShow) && colDefAny.columnGroupShow !== 'closed' && colDefAny.columnGroupShow !== 'open') {
-            warnOnce(`'${colDefAny.columnGroupShow}' is not valid for columnGroupShow. Valid values are 'open', 'closed', undefined, null`);
-        }
-    }
-
     /** Add an event listener to the column. */
     public addEventListener(eventType: ColumnEventName, listener: Function): void {
         this.eventService.addEventListener(eventType, listener);
@@ -437,7 +371,7 @@ export class Column<TValue = any> implements IHeaderColumn<TValue>, IProvidedCol
      */
     public isCellEditable(rowNode: IRowNode): boolean {
         // only allow editing of groups if the user has this option enabled
-        if (rowNode.group && !this.gridOptionsService.is('enableGroupEdit')) {
+        if (rowNode.group && !this.gridOptionsService.get('enableGroupEdit')) {
             return false;
         }
 

@@ -219,7 +219,7 @@ export class Environment extends BeanStub {
 
     public refreshRowHeightVariable(): number {
         const oldRowHeight = this.eGridDiv.style.getPropertyValue('--ag-line-height').trim();
-        const height = this.gridOptionsService.getNum('rowHeight');
+        const height = this.gridOptionsService.get('rowHeight');
 
         if (height == null || isNaN(height) || !isFinite(height)) { return -1; }
 

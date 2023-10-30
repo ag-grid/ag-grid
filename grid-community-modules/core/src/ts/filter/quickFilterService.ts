@@ -29,18 +29,13 @@ export class QuickFilterService extends BeanStub {
         this.addManagedListener(this.eventService, Events.EVENT_NEW_COLUMNS_LOADED, () => this.resetQuickFilterCache());
         this.addManagedListener(this.eventService, Events.EVENT_COLUMN_ROW_GROUP_CHANGED, () => this.resetQuickFilterCache());
         this.addManagedListener(this.eventService, Events.EVENT_COLUMN_VISIBLE, () => {
-            if (!this.gridOptionsService.is('includeHiddenColumnsInQuickFilter')) {
+            if (!this.gridOptionsService.get('includeHiddenColumnsInQuickFilter')) {
                 this.resetQuickFilterCache();
             }
         });
 
         this.addManagedPropertyListener('quickFilterText', (e) => this.setQuickFilter(e.currentValue));
         this.addManagedPropertyListener('includeHiddenColumnsInQuickFilter', () => this.onIncludeHiddenColumnsInQuickFilterChanged());
-        this.addManagedPropertyListener('excludeHiddenColumnsFromQuickFilter', () => {
-            // handle deprecated property conversion
-            const excludeHiddenColumnsFromQuickFilter = this.gridOptionsService.is('excludeHiddenColumnsFromQuickFilter');
-            this.gridOptionsService.set('includeHiddenColumnsInQuickFilter', !excludeHiddenColumnsFromQuickFilter);
-        });
 
         this.quickFilter = this.parseQuickFilter(this.gridOptionsService.get('quickFilterText'));
         this.parser = this.gridOptionsService.get('quickFilterParser');
@@ -55,7 +50,7 @@ export class QuickFilterService extends BeanStub {
     }
 
     public doesRowPassQuickFilter(node: RowNode): boolean {
-        const usingCache = this.gridOptionsService.is('cacheQuickFilter');
+        const usingCache = this.gridOptionsService.get('cacheQuickFilter');
 
         if (this.matcher) {
             return this.doesRowPassQuickFilterMatcher(usingCache, node);

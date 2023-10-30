@@ -321,7 +321,7 @@ export class CellComp extends Component implements TooltipParentComp {
         // never use task service if animation frame service is turned off.
         // and lastly we never use it if doing auto-height, as the auto-height service checks the
         // row height directly after the cell is created, it doesn't wait around for the tasks to complete        
-        const suppressAnimationFrame = this.beans.gridOptionsService.is('suppressAnimationFrame');
+        const suppressAnimationFrame = this.beans.gridOptionsService.get('suppressAnimationFrame');
         const useTaskService = !suppressAnimationFrame;
 
         const displayComponentVersionCopy = this.rendererVersion;
@@ -472,7 +472,7 @@ export class CellComp extends Component implements TooltipParentComp {
 
         const popupService = this.beans.popupService;
 
-        const useModelPopup = this.beans.gridOptionsService.is('stopEditingWhenCellsLoseFocus');
+        const useModelPopup = this.beans.gridOptionsService.get('stopEditingWhenCellsLoseFocus');
 
         // see if position provided by colDef, if not then check old way of method on cellComp
         const positionToUse: 'over' | 'under' | undefined = position != null 
@@ -480,7 +480,7 @@ export class CellComp extends Component implements TooltipParentComp {
             : cellEditor.getPopupPosition 
                 ? cellEditor.getPopupPosition() 
                 : 'over';
-        const isRtl = this.beans.gridOptionsService.is('enableRtl');
+        const isRtl = this.beans.gridOptionsService.get('enableRtl');
 
         const positionParams = {
             ePopup: ePopupGui,

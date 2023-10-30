@@ -157,7 +157,7 @@ export class ToolPanelColumnGroupComp extends Component {
     private onContextMenu(e: MouseEvent): void {
         const { columnGroup, gridOptionsService } = this;
 
-        if (gridOptionsService.is('functionsReadOnly')) { return; }
+        if (gridOptionsService.get('functionsReadOnly')) { return; }
 
         const contextMenu = this.createBean(new ToolPanelContextMenu(columnGroup, e, this.focusWrapper));
         this.addDestroyFunc(() => {
@@ -182,7 +182,7 @@ export class ToolPanelColumnGroupComp extends Component {
             return;
         }
 
-        let hideColumnOnExit = !this.gridOptionsService.is('suppressDragLeaveHidesColumns');
+        let hideColumnOnExit = !this.gridOptionsService.get('suppressDragLeaveHidesColumns');
         const dragSource: DragSource = {
             type: DragSourceType.ToolPanel,
             eElement: this.eDragHandle,
@@ -190,7 +190,7 @@ export class ToolPanelColumnGroupComp extends Component {
             getDefaultIconName: () => hideColumnOnExit ? DragAndDropService.ICON_HIDE : DragAndDropService.ICON_NOT_ALLOWED,
             getDragItem: () => this.createDragItem(),
             onDragStarted: () => {
-                hideColumnOnExit = !this.gridOptionsService.is('suppressDragLeaveHidesColumns');
+                hideColumnOnExit = !this.gridOptionsService.get('suppressDragLeaveHidesColumns');
                 const event: WithoutGridCommon<ColumnPanelItemDragStartEvent> = {
                     type: Events.EVENT_COLUMN_PANEL_ITEM_DRAG_START,
                     column: this.columnGroup

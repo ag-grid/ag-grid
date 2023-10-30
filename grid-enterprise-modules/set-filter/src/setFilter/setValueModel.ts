@@ -156,7 +156,7 @@ export class SetValueModel<V> implements IEventEmitter {
         this.keyComparator = keyComparator as any ?? _.defaultComparator;
         this.caseSensitive = !!caseSensitive
         const getDataPath = gridOptionsService.get('getDataPath');
-        const groupAllowUnbalanced = gridOptionsService.is('groupAllowUnbalanced');
+        const groupAllowUnbalanced = gridOptionsService.get('groupAllowUnbalanced');
 
         if (rowModel.getType() === 'clientSide') {
             this.clientSideValuesExtractor = new ClientSideValuesExtractor(

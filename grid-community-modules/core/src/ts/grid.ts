@@ -91,7 +91,6 @@ import { StandardMenuFactory } from "./headerRendering/cells/column/standardMenu
 import { SortIndicatorComp } from "./headerRendering/cells/column/sortIndicatorComp";
 import { GridOptionsService } from "./gridOptionsService";
 import { LocaleService } from "./localeService";
-import { GridOptionsValidator } from "./gridOptionsValidator";
 import { FakeVScrollComp } from "./gridBodyComp/fakeVScrollComp";
 import { DataTypeService } from "./columns/dataTypeService";
 import { AgInputDateField } from "./widgets/agInputDateField";
@@ -103,6 +102,7 @@ import { SyncService } from "./syncService";
 import { OverlayService } from "./rendering/overlays/overlayService";
 import { StateService } from "./misc/stateService";
 import { ExpansionService } from "./misc/expansionService";
+import { ValidationService } from "./validation/validationService";
 
 export interface GridParams {
     // INTERNAL - used by Web Components
@@ -141,7 +141,7 @@ export function createGrid<TData>(eGridDiv: HTMLElement, gridOptions: GridOption
         return {} as GridApi;
     }   
     // Ensure we do not mutate the provided gridOptions
-    const shallowCopy = {...gridOptions};
+    const shallowCopy = GridOptionsService.getCoercedGridOptions(gridOptions);
     const api = new GridCoreCreator().create(eGridDiv, shallowCopy, context => {
         const gridComp = new GridComp(eGridDiv);
         context.createBean(gridComp);
@@ -391,7 +391,7 @@ export class GridCoreCreator {
             Beans, RowPositionUtils, CellPositionUtils, HeaderPositionUtils,
             PaginationAutoPageSizeService, GridApi, UserComponentRegistry, AgComponentUtils,
             ComponentMetadataProvider, ResizeObserverService, UserComponentFactory,
-            RowContainerHeightService, HorizontalResizeService, LocaleService, GridOptionsValidator,
+            RowContainerHeightService, HorizontalResizeService, LocaleService, ValidationService,
             PinnedRowModel, DragService, DisplayedGroupCreator, EventService, GridOptionsService,
             PopupService, SelectionService, FilterManager, ColumnModel, HeaderNavigationService,
             PaginationProxy, RowRenderer, ExpressionService, ColumnFactory, TemplateService,
