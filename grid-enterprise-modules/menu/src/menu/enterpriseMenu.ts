@@ -48,6 +48,7 @@ export class EnterpriseMenuFactory extends BeanStub implements IMenuFactory {
     @Autowired('headerNavigationService') private readonly headerNavigationService: HeaderNavigationService;
     @Autowired('ctrlsService') private readonly ctrlsService: CtrlsService;
     @Autowired('columnModel') private readonly columnModel: ColumnModel;
+    @Autowired('filterManager') private readonly filterManager: FilterManager;
 
     private lastSelectedTab: string;
     private activeMenu: EnterpriseMenu | null;
@@ -242,7 +243,13 @@ export class EnterpriseMenuFactory extends BeanStub implements IMenuFactory {
     }
 
     public isMenuEnabled(column: Column): boolean {
-        return column.getMenuTabs(EnterpriseMenu.TABS_DEFAULT).length > 0;
+        // Determine whether there are any tabs to show in the menu, given that the filter tab may be hidden
+        const isFilterDisabled = !this.filterManager.isFilterAllowed(column);
+        const tabs = column.getMenuTabs(EnterpriseMenu.TABS_DEFAULT);
+        const numActiveTabs = isFilterDisabled && tabs.includes(EnterpriseMenu.TAB_FILTER)
+            ? tabs.length - 1
+            : tabs.length;
+        return numActiveTabs > 0;
     }
 }
 
