@@ -58,12 +58,11 @@ export class DateFloatingFilter extends SimpleFloatingFilter {
 
         this.updateDateComponent();
         this.filterModelFormatter.updateParams({ optionsFactory: this.optionsFactory, dateFilterParams: this.filterParams })
-        this.updateCompOnModelChange();
+        this.updateCompOnModelChange(params.currentParentModel());
     }
 
-    private updateCompOnModelChange(): void {
+    private updateCompOnModelChange(model: any): void {
         // Update the read-only text field
-        const model = this.params.currentParentModel();
         const allowEditing = !this.isReadOnly() && this.canWeEditAfterModelFromParentFilter(model);
         this.setEditable(allowEditing);
 
@@ -95,7 +94,7 @@ export class DateFloatingFilter extends SimpleFloatingFilter {
         if (this.isEventFromFloatingFilter(event) || this.isEventFromDataChange(event)) { return; }
 
         super.setLastTypeFromModel(model);
-        this.updateCompOnModelChange();
+        this.updateCompOnModelChange(model);
     }
 
     private onDateChanged(): void {
