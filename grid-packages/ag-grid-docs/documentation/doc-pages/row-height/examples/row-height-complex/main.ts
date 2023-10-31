@@ -39,6 +39,6 @@ document.addEventListener('DOMContentLoaded', function () {
       })
 
       // now set the data into the grid
-      gridApi!.setRowData(data)
+      gridApi!.updateGridOption('rowData', data)
     })
 })

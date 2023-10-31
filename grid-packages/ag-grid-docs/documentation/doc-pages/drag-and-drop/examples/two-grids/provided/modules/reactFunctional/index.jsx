@@ -60,11 +60,11 @@ const GridExample = () => {
     const rightGridRef = useRef(null);
 
     const onLeftGridReady = (params) => {
-        params.api.setRowData(createLeftRowData());
+        params.api.updateGridOption('rowData', createLeftRowData());
     }
 
     const onRightGridReady = (params) => {
-        params.api.setRowData([]);
+        params.api.updateGridOption('rowData', []);
     }
 
     const createLeftRowData = () => ['Red', 'Green', 'Blue'].map(createDataItem);

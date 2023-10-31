@@ -81,39 +81,39 @@ function setIdText(id: string, value: string | number | undefined) {
 function setPivotOn() {
   document.querySelector('#requiresPivot')!.className = ''
   document.querySelector('#requiresNotPivot')!.className = 'hidden'
-  gridApi!.setPivotMode(true)
+  gridApi!.updateGridOption('pivotMode', true)
   setIdText('pivot', 'on')
 }
 
 function setPivotOff() {
   document.querySelector('#requiresPivot')!.className = 'hidden'
   document.querySelector('#requiresNotPivot')!.className = ''
-  gridApi!.setPivotMode(false)
+  gridApi!.updateGridOption('pivotMode', false)
   setIdText('pivot', 'off')
 }
 
 function setHeaderHeight(value?: number) {
-  gridApi!.setHeaderHeight(value)
+  gridApi!.updateGridOption('headerHeight', value);
   setIdText('headerHeight', value)
 }
 
 function setGroupHeaderHeight(value?: number) {
-  gridApi!.setGroupHeaderHeight(value)
+  gridApi!.updateGridOption('groupHeaderHeight', value);
   setIdText('groupHeaderHeight', value)
 }
 
 function setFloatingFiltersHeight(value?: number) {
-  gridApi!.setFloatingFiltersHeight(value)
+  gridApi!.updateGridOption('floatingFiltersHeight', value);
   setIdText('floatingFiltersHeight', value)
 }
 
 function setPivotGroupHeaderHeight(value?: number) {
-  gridApi!.setPivotGroupHeaderHeight(value)
+  gridApi!.updateGridOption('pivotGroupHeaderHeight', value);
   setIdText('pivotGroupHeaderHeight', value)
 }
 
 function setPivotHeaderHeight(value?: number) {
-  gridApi!.setPivotHeaderHeight(value)
+  gridApi!.updateGridOption('pivotHeaderHeight', value);
   setIdText('pivotHeaderHeight', value)
 }
 
@@ -124,5 +124,5 @@ document.addEventListener('DOMContentLoaded', () => {
 
   fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
     .then(response => response.json())
-    .then((data: IOlympicData[]) => gridApi!.setRowData(data))
+    .then((data: IOlympicData[]) => gridApi!.updateGridOption('rowData', data))
 })

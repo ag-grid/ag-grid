@@ -45,14 +45,14 @@ const gridOptions: GridOptions = {
 function changeSelection(type: string) {
   // normal, single or lowest
   if (type === 'normal') {
-    gridApi!.setGroupRemoveSingleChildren(false)
-    gridApi!.setGroupRemoveLowestSingleChildren(false)
+    gridApi!.updateGridOption('groupRemoveSingleChildren', false);
+    gridApi!.updateGridOption('groupRemoveLowestSingleChildren', false);
   } else if (type === 'single') {
-    gridApi!.setGroupRemoveSingleChildren(true)
-    gridApi!.setGroupRemoveLowestSingleChildren(false)
+    gridApi!.updateGridOption('groupRemoveSingleChildren', true);
+    gridApi!.updateGridOption('groupRemoveLowestSingleChildren', false);
   } else if (type === 'lowest') {
-    gridApi!.setGroupRemoveLowestSingleChildren(true)
-    gridApi!.setGroupRemoveSingleChildren(false)
+    gridApi!.updateGridOption('groupRemoveSingleChildren', false);
+    gridApi!.updateGridOption('groupRemoveLowestSingleChildren', true);
   } else {
     console.log('unknown type: ' + type)
   }

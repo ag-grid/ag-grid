@@ -141,7 +141,7 @@ const VueExample = {
         onGridReady(params) {
             this.gridApi = params.api;
 
-            const updateData = (data) => params.api.setRowData(data.filter((rec) => rec.country != null));
+            const updateData = (data) => params.api.updateGridOption('rowData', data.filter((rec) => rec.country != null));
 
             fetch('https://www.ag-grid.com/example-assets/small-olympic-winners.json')
                 .then(resp => resp.json())

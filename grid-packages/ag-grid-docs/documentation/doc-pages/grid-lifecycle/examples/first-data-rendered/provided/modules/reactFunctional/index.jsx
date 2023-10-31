@@ -67,7 +67,7 @@ const GridExample = () => {
     }, []);
 
     const loadGridData = useCallback(() => {
-        gridApi.setRowData(getData());
+        gridApi.updateGridOption('rowData', getData());
     }, [gridApi])
 
     return (

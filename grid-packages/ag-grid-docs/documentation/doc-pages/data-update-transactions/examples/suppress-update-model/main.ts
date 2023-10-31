@@ -199,7 +199,7 @@ const gridOptions: GridOptions = {
         })
 
         timeOperation('Initialisation', function () {
-            params.api.setRowData(getData())
+            params.api.updateGridOption('rowData', getData())
         })
     },
     isGroupOpenByDefault: isGroupOpenByDefault

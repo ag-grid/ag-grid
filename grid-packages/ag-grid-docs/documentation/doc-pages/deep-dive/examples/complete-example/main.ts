@@ -35,5 +35,5 @@ document.addEventListener('DOMContentLoaded', function () {
     gridApi.sizeColumnsToFit();
     fetch('https://www.ag-grid.com/example-assets/row-data.json')
         .then(response => response.json())
-        .then((data: any) => gridApi.setRowData(data))
+        .then((data: any) => gridApi.updateGridOption('rowData', data))
 })

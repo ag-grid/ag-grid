@@ -90,7 +90,7 @@ function onBtSortOn() {
       colDef.sort = 'asc'
     }
   })
-  gridApi!.setColumnDefs(columnDefs)
+  gridApi!.updateGridOption('columnDefs', columnDefs)
 }
 
 function onBtSortOff() {
@@ -98,7 +98,7 @@ function onBtSortOff() {
   columnDefs.forEach(function (colDef) {
     colDef.sort = null
   })
-  gridApi!.setColumnDefs(columnDefs)
+  gridApi!.updateGridOption('columnDefs', columnDefs)
 }
 
 function onBtWidthNarrow() {
@@ -108,7 +108,7 @@ function onBtWidthNarrow() {
       colDef.width = 100
     }
   })
-  gridApi!.setColumnDefs(columnDefs)
+  gridApi!.updateGridOption('columnDefs', columnDefs)
 }
 
 function onBtWidthNormal() {
@@ -116,7 +116,7 @@ function onBtWidthNormal() {
   columnDefs.forEach(function (colDef) {
     colDef.width = 200
   })
-  gridApi!.setColumnDefs(columnDefs)
+  gridApi!.updateGridOption('columnDefs', columnDefs)
 }
 
 function onBtHide() {
@@ -126,7 +126,7 @@ function onBtHide() {
       colDef.hide = true
     }
   })
-  gridApi!.setColumnDefs(columnDefs)
+  gridApi!.updateGridOption('columnDefs', columnDefs)
 }
 
 function onBtShow() {
@@ -134,11 +134,11 @@ function onBtShow() {
   columnDefs.forEach(function (colDef) {
     colDef.hide = false
   })
-  gridApi!.setColumnDefs(columnDefs)
+  gridApi!.updateGridOption('columnDefs', columnDefs)
 }
 
 function onBtPivotOn() {
-  gridApi!.setPivotMode(true)
+  gridApi!.updateGridOption('pivotMode', true)
 
   const columnDefs: ColDef[] = getColumnDefs()
   columnDefs.forEach(function (colDef) {
@@ -146,17 +146,17 @@ function onBtPivotOn() {
       colDef.pivot = true
     }
   })
-  gridApi!.setColumnDefs(columnDefs)
+  gridApi!.updateGridOption('columnDefs', columnDefs)
 }
 
 function onBtPivotOff() {
-  gridApi!.setPivotMode(false)
+  gridApi!.updateGridOption('pivotMode', false)
 
   const columnDefs: ColDef[] = getColumnDefs()
   columnDefs.forEach(function (colDef) {
     colDef.pivot = false
   })
-  gridApi!.setColumnDefs(columnDefs)
+  gridApi!.updateGridOption('columnDefs', columnDefs)
 }
 
 function onBtRowGroupOn() {
@@ -166,7 +166,7 @@ function onBtRowGroupOn() {
       colDef.rowGroup = true
     }
   })
-  gridApi!.setColumnDefs(columnDefs)
+  gridApi!.updateGridOption('columnDefs', columnDefs)
 }
 
 function onBtRowGroupOff() {
@@ -174,7 +174,7 @@ function onBtRowGroupOff() {
   columnDefs.forEach(function (colDef) {
     colDef.rowGroup = false
   })
-  gridApi!.setColumnDefs(columnDefs)
+  gridApi!.updateGridOption('columnDefs', columnDefs)
 }
 
 function onBtAggFuncOn() {
@@ -188,7 +188,7 @@ function onBtAggFuncOn() {
       colDef.aggFunc = 'sum'
     }
   })
-  gridApi!.setColumnDefs(columnDefs)
+  gridApi!.updateGridOption('columnDefs', columnDefs)
 }
 
 function onBtAggFuncOff() {
@@ -196,7 +196,7 @@ function onBtAggFuncOff() {
   columnDefs.forEach(function (colDef) {
     colDef.aggFunc = null
   })
-  gridApi!.setColumnDefs(columnDefs)
+  gridApi!.updateGridOption('columnDefs', columnDefs)
 }
 
 function onBtPinnedOn() {
@@ -209,7 +209,7 @@ function onBtPinnedOn() {
       colDef.pinned = 'right'
     }
   })
-  gridApi!.setColumnDefs(columnDefs)
+  gridApi!.updateGridOption('columnDefs', columnDefs)
 }
 
 function onBtPinnedOff() {
@@ -217,7 +217,7 @@ function onBtPinnedOff() {
   columnDefs.forEach(function (colDef) {
     colDef.pinned = null
   })
-  gridApi!.setColumnDefs(columnDefs)
+  gridApi!.updateGridOption('columnDefs', columnDefs)
 }
 
 // setup the grid after the page has finished loading
@@ -227,5 +227,5 @@ document.addEventListener('DOMContentLoaded', function () {
 
   fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
     .then(response => response.json())
-    .then((data: IOlympicData[]) => gridApi!.setRowData(data))
+    .then((data: IOlympicData[]) => gridApi!.updateGridOption('rowData', data))
 })

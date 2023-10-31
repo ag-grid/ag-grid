@@ -40,7 +40,7 @@ const gridOptions: GridOptions = {
     const datasource = getServerSideDatasource(server);
   
     // register the datasource with the grid
-    params.api.setServerSideDatasource(datasource);
+    params.api.updateGridOption('serverSideDatasource', datasource);
   },
   enableCellChangeFlash: true,
   rowSelection: 'single',

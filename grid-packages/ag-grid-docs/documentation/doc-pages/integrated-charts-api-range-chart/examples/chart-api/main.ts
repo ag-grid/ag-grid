@@ -25,7 +25,7 @@ const gridOptions: GridOptions = {
 };
 
 function onGridReady(params: GridReadyEvent) {
-  getData().then(rowData => params.api.setRowData(rowData));
+  getData().then(rowData => params.api.updateGridOption('rowData', rowData));
 }
 
 function onChart1() {

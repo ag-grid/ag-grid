@@ -318,7 +318,7 @@ const gridOptions: GridOptions = {
   },
   onGridReady: (params) => {
     createRowData()
-    params.api.setRowData(globalRowData)
+    params.api.updateGridOption('rowData', globalRowData)
   },
 }
 
@@ -326,7 +326,7 @@ function updateData() {
   removeSomeItems()
   addSomeItems()
   updateSomeItems()
-  gridApi!.setRowData(globalRowData)
+  gridApi!.updateGridOption('rowData', globalRowData)
 }
 
 function updateSomeItems() {

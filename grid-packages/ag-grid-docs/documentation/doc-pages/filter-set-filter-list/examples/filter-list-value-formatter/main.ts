@@ -67,7 +67,7 @@ document.addEventListener('DOMContentLoaded', function () {
         return COUNTRY_CODES[d.country]
       })
 
-      gridApi!.setRowData(dataWithFlags)
+      gridApi!.updateGridOption('rowData', dataWithFlags)
     })
 })
 

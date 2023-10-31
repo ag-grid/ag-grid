@@ -73,8 +73,8 @@ function onCbCountry(value) {
 }
 
 function setData(rowData) {
-    topApi.setRowData(rowData);
-    bottomApi.setRowData(rowData);
+    topApi.updateGridOption('rowData', rowData);
+    bottomApi.updateGridOption('rowData', rowData);
 }
 
 // setup the grid after the page has finished loading

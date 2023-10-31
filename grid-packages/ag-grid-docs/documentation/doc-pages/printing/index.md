@@ -21,9 +21,9 @@ Print layout can be turned on by setting the property `domLayout='print'` or by 
 
 <snippet>
 // setting the grid layout to 'print'
-api.setDomLayout('print');
+api.updateGridOption('domLayout', 'print');
 // resetting the layout back to normal
-api.setDomLayout();
+api.updateGridOption('domLayout', undefined);
 </snippet>
 
 ## Toggling Grid Size

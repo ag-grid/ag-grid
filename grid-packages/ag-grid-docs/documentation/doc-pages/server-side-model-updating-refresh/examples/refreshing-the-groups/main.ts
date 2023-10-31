@@ -149,7 +149,7 @@ document.addEventListener('DOMContentLoaded', () => {
       const datasource = getServerSideDatasource(fakeServer);
 
       // register the datasource with the grid
-      gridApi!.setServerSideDatasource(datasource);
+      gridApi!.updateGridOption('serverSideDatasource', datasource);
       beginPeriodicallyModifyingData();
     })
 })
