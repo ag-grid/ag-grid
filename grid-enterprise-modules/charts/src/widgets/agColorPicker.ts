@@ -38,6 +38,7 @@ export class AgColorPicker extends AgPickerField<string, IPickerFieldParams, AgD
         const colorDialog = this.createBean(new AgDialog({
             closable: false,
             modal: true,
+            alwaysOnTop: true,
             hideTitleBar: true,
             minWidth: 190,
             width: 190,
