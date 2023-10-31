@@ -156,6 +156,8 @@ This can also be performed on demand via the following API methods:
 
 <api-documentation source='grid-api/api.json' section='columnSizing' names='["autoSizeColumn", "autoSizeColumns", "autoSizeAllColumns"]'></api-documentation>
 
+Note that using `autoSizeStrategy` to fit cell contents only works for the Client-Side Row Model and Server-Side Row Model, but the API methods work for all row models.
+
 By default the grid will also resize the column to fit the header. If you do not want the headers to be included in the auto-size calculation, set the grid property `skipHeaderOnAutoSize = true`, or pass `skipHeader = true` to the `autoSizeStrategy` params or the API method.
 
 [Column Groups](/column-groups/) are never considered when calculating the column widths.

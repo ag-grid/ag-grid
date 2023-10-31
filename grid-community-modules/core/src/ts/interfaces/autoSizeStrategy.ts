@@ -24,7 +24,10 @@ export interface SizeColumnsToFitProvidedWidthStrategy {
     width: number;
 }
 
-/** Auto-size columns to fit their cell contents. */
+/**
+ * Auto-size columns to fit their cell contents.
+ * Only works for Client-Side Row Model and Server-Side Row Model.
+ */
 export interface SizeColumnsToContentStrategy {
     type: 'fitCellContents';
     /** If true, the header won't be included when calculating the column widths. */
