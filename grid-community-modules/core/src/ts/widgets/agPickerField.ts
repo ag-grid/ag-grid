@@ -142,7 +142,14 @@ export abstract class AgPickerField<TValue, TConfig extends IPickerFieldParams =
         super.refreshLabel();
     }
 
-    private onLabelOrWrapperMouseDown(): void {
+    private onLabelOrWrapperMouseDown(e?: MouseEvent): void {
+        if (e) {
+            // this prevents a BUG where MouseDown causes the element to be focused
+            // after the picker is shown and focus ends up being lost.
+            e.preventDefault();
+            this.getFocusableElement().focus();
+        }
+
         if (this.skipClick) {
             this.skipClick = false;
             return;
