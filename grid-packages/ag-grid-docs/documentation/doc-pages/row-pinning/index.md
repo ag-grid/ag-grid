@@ -12,9 +12,6 @@ and `api.updateGridOption('pinnedBottomRowData', rows)`.
 
 <api-documentation source='grid-options/properties.json' section='rowPinning' names='["pinnedTopRowData", "pinnedBottomRowData"]' ></api-documentation>
 
-
-<api-documentation source='grid-api/api.json' section='pinned' names='["setPinnedTopRowData", "setPinnedBottomRowData"]'></api-documentation>
-
 ## Cell Editing
 
 Cell editing can take place as normal on pinned rows.

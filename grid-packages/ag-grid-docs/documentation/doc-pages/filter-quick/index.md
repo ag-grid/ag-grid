@@ -146,4 +146,4 @@ Quick Filters only make sense with client-side data (i.e. when using the [Client
 
 ### Grid API Methods
 
-<api-documentation source='grid-api/api.json' section='filter' names='["isQuickFilterPresent", "getQuickFilter", "setQuickFilter", "setIncludeHiddenColumnsInQuickFilter", "setQuickFilterParser", "setQuickFilterMatcher"]'></api-documentation>
+<api-documentation source='grid-api/api.json' section='filter' names='["isQuickFilterPresent", "getQuickFilter"]'></api-documentation>

@@ -225,7 +225,7 @@ This example configures the Columns Tool Panel. See the [Columns Tool Panel](/to
 
 The list below details all the API methods relevant to the Tool Panel.
 
-<api-documentation source='grid-api/api.json' section='accessories' names='["setSideBar","getSideBar","setSideBarVisible","isSideBarVisible","setSideBarPosition","openToolPanel","closeToolPanel","getOpenedToolPanel","isToolPanelShowing","refreshToolPanel", "getToolPanelInstance"]'></api-documentation>
+<api-documentation source='grid-api/api.json' section='accessories' names='["getSideBar","setSideBarVisible","isSideBarVisible","setSideBarPosition","openToolPanel","closeToolPanel","getOpenedToolPanel","isToolPanelShowing","refreshToolPanel", "getToolPanelInstance"]'></api-documentation>
 
 The example below demonstrates different usages of the Tool Panel API methods. The following can be noted:
 

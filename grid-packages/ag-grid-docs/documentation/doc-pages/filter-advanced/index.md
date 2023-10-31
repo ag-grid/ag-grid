@@ -167,9 +167,10 @@ const advancedFilterModel = {
 };
 ```
 
-The Advanced Filter Model can be retrieved via the API method `getAdvancedFilterModel`, and set via the API method `setAdvancedFilterModel`.
+The Advanced Filter Model can be retrieved via the API method `getAdvancedFilterModel`, and set via the grid option `advancedFilterModel`.
 
-<api-documentation source='grid-api/api.json' section='filter' names='["getAdvancedFilterModel", "setAdvancedFilterModel"]'></api-documentation>
+<api-documentation source='grid-api/api.json' section='filter' names='["getAdvancedFilterModel"]'></api-documentation>
+<api-documentation source='grid-options/properties.json' section='filter' names='["advancedFilterModel"]'></api-documentation>
 
 The Advanced Filter Model and API methods are demonstrated in the following example:
 - Clicking `Save Advanced Filter Model` will save the current Advanced Filter.
@@ -183,11 +184,9 @@ The Advanced Filter Model and API methods are demonstrated in the following exam
 
 By default the Advanced Filter is displayed underneath the Column Headers, where the Floating Filters would normally appear.
 
-It is possible to instead display the Advanced Filter outside of the grid (such as above it). This can be done by setting the grid option `advancedFilterParent` and providing it with a DOM element to contain the filter. It is also possible to call the API method `setAdvancedFilterParent`.
+It is possible to instead display the Advanced Filter outside of the grid (such as above it). This can be done by setting the grid option `advancedFilterParent` and providing it with a DOM element to contain the filter.
 
 <api-documentation source='grid-options/properties.json' section='filter' names='["advancedFilterParent"]'></api-documentation>
-
-<api-documentation source='grid-api/api.json' section='filter' names='["setAdvancedFilterParent"]'></api-documentation>
 
 The [Popup Parent](https://localhost:8000/javascript-data-grid/context-menu/#popup-parent) must also be set to an element that contains both the Advanced Filter parent and the grid.
 
@@ -203,11 +202,9 @@ The Advanced Filter Builder can be configured using the `IAdvancedFilterBuilderP
 
 <interface-documentation interfaceName='IAdvancedFilterBuilderParams' config='{"description":"", "sortAlphabetically":"true"}'></interface-documentation>
 
-The params can be set via the grid option `advancedFilterBuilderParams`, or using the grid API method `setAdvancedFilterBuilderParams`:
+The params can be set via the grid option `advancedFilterBuilderParams`:
 
 <api-documentation source='grid-options/properties.json' section='filter' names='["advancedFilterBuilderParams"]'></api-documentation>
-
-<api-documentation source='grid-api/api.json' section='filter' names='["setAdvancedFilterBuilderParams"]'></api-documentation>
 
 As well as using the button in the Advanced Filter, it's possible to launch the Advanced Filter Builder via the `showAdvancedFilterBuilder` grid API method:
 

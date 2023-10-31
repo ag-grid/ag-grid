@@ -57,10 +57,9 @@ If this behaviour for decreasing selection needs to be prevented, the flag `supp
 
 ## Fill Handle Axis
 
-By the default, the Fill Handle can be dragged horizontally or vertically. If dragging only vertically, or only horizontally is a requirement, the `gridOptions` property `fillHandleDirection` property can be set or set via the API using `setFillHandleDirection`. This default value is `xy`.
+By the default, the Fill Handle can be dragged horizontally or vertically. If dragging only vertically, or only horizontally is a requirement, the `gridOptions` property `fillHandleDirection` property can be set. This default value is `xy`.
 
 <api-documentation source='grid-options/properties.json' section='selection' names='["fillHandleDirection"]' config='{"overrideBottomMargin":"0"}'></api-documentation>
-<api-documentation source='grid-api/api.json' section='selection' names='["setFillHandleDirection"]'></api-documentation>
 
 <snippet>
 | const gridOptions = {

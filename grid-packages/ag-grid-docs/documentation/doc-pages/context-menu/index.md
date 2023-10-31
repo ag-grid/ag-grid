@@ -79,10 +79,9 @@ This will lead to a bad user experience which is demonstrated in the following e
 
 <grid-example title='Small Grid Problem' name='popup-parent-problem' type='generated' options='{ "enterprise": true, "modules": ["clientside", "menu", "excel", "clipboard"], "exampleHeight": 400 }'></grid-example>
 
-The solution is to set the `popupParent` element which can be set in the following ways:
+The solution is to set the `popupParent` element:
 
 <api-documentation source='grid-options/properties.json' section='accessories' names='["popupParent"]' config='{"overrideBottomMargin":"0rem"}' ></api-documentation>
-<api-documentation source='grid-api/api.json' section='accessories' names='["setPopupParent"]'></api-documentation>
 
 Each mechanism allows you to set the popup parent to any HTML DOM element. The element must:
 
