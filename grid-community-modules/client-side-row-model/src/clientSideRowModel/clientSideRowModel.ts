@@ -82,7 +82,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel 
     @PostConstruct
     public init(): void {
         const refreshEverythingFunc = this.refreshModel.bind(this, { step: ClientSideRowModelSteps.EVERYTHING });
-        const animate = !this.gridOptionsService.is('suppressAnimationFrame');
+        const animate = !this.gridOptionsService.get('suppressAnimationFrame');
         const refreshEverythingAfterColsChangedFunc = this.refreshModel.bind(this, {
             step: ClientSideRowModelSteps.EVERYTHING, // after cols change, row grouping (the first stage) could of changed
             afterColumnsChanged: true,
@@ -154,7 +154,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel 
                 const { step, module } = orderedStages[i];
                 const impactsStage = module.getImpactingGridOptions().some(prop => propertySet.has(prop));
                 if (impactsStage) {
-                    const animate = !this.gridOptionsService.is('suppressAnimationFrame');
+                    const animate = !this.gridOptionsService.get('suppressAnimationFrame');
                     this.refreshModel({ step, keepRenderedRows: true, animate });
                     return;
                 }
@@ -291,7 +291,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel 
     public ensureRowsAtPixel(rowNodes: RowNode[], pixel: number, increment: number = 0): boolean {
         const indexAtPixelNow = this.getRowIndexAtPixel(pixel);
         const rowNodeAtPixelNow = this.getRow(indexAtPixelNow);
-        const animate = !this.gridOptionsService.is('suppressAnimationFrame');
+        const animate = !this.gridOptionsService.get('suppressAnimationFrame');
 
         if (rowNodeAtPixelNow === rowNodes[0]) {
             return false;
@@ -387,7 +387,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel 
 
         let rowNode = this.rootNode.childrenAfterSort![topLevelIndex];
 
-        if (this.gridOptionsService.is('groupHideOpenParents')) {
+        if (this.gridOptionsService.get('groupHideOpenParents')) {
             // if hideOpenParents, and this row open, then this row is now displayed at this index, first child is
             while (rowNode.expanded && rowNode.childrenAfterSort && rowNode.childrenAfterSort.length > 0) {
                 rowNode = rowNode.childrenAfterSort[0];
@@ -459,7 +459,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel 
 
         const changedPath = new ChangedPath(false, this.rootNode);
 
-        if (noTransactions || this.gridOptionsService.is('treeData')) {
+        if (noTransactions || this.gridOptionsService.get('treeData')) {
             changedPath.setInactive();
         }
 
@@ -467,7 +467,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel 
     }
 
     private isSuppressModelUpdateAfterUpdateTransaction(params: RefreshModelParams): boolean {
-        if (!this.gridOptionsService.is('suppressModelUpdateAfterUpdateTransaction')) { return false; }
+        if (!this.gridOptionsService.get('suppressModelUpdateAfterUpdateTransaction')) { return false; }
 
         // return true if we are only doing update transactions
         if (params.rowNodeTransactions == null) { return false; }
@@ -500,7 +500,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel 
             console.error(`AG Grid: invalid step ${step}, available steps are ${Object.keys(stepsMapped).join(', ')}`);
             return undefined;
         }
-        const animate = !this.gridOptionsService.is('suppressAnimationFrame');
+        const animate = !this.gridOptionsService.get('suppressAnimationFrame');
         const modelParams: RefreshModelParams = {
             step: paramsStep,
             keepRenderedRows: true,
@@ -586,7 +586,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel 
 
         const result: RowNode[] = [];
 
-        const groupsSelectChildren = this.gridOptionsService.is('groupSelectsChildren');
+        const groupsSelectChildren = this.gridOptionsService.get('groupSelectsChildren');
 
         this.forEachNodeAfterFilterAndSort(rowNode => {
             // range has been closed, skip till end
@@ -803,7 +803,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel 
 
         const isRootNode = parentNode === this.rootNode;
         if (isRootNode) {
-            const totalFooters = this.gridOptionsService.is('groupIncludeTotalFooter');
+            const totalFooters = this.gridOptionsService.get('groupIncludeTotalFooter');
             if (!totalFooters) return index;
         } else {
             const isGroupIncludeFooter = this.gridOptionsService.getGroupIncludeFooter();
@@ -835,7 +835,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel 
     // + gridApi.expandAll()
     // + gridApi.collapseAll()
     public expandOrCollapseAll(expand: boolean): void {
-        const usingTreeData = this.gridOptionsService.is('treeData');
+        const usingTreeData = this.gridOptionsService.get('treeData');
         const usingPivotMode = this.columnModel.isPivotActive();
 
         const recursiveExpandOrCollapse = (rowNodes: RowNode[] | null): void => {
@@ -914,7 +914,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel 
                 });
             }
 
-            if (this.gridOptionsService.is('groupSelectsChildren')) {
+            if (this.gridOptionsService.get('groupSelectsChildren')) {
                 const selectionChanged = this.selectionService.updateGroupsFromChildrenSelections('rowGroupChanged', changedPath);
 
                 if (selectionChanged) {
@@ -1083,7 +1083,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel 
     }
 
     private createRowNodeOrder(): { [id: string]: number; } | undefined {
-        const suppressSortOrder = this.gridOptionsService.is('suppressMaintainUnsortedOrder');
+        const suppressSortOrder = this.gridOptionsService.get('suppressMaintainUnsortedOrder');
         if (suppressSortOrder) { return; }
 
         const orderMap: { [id: string]: number } = {};
@@ -1106,7 +1106,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel 
     ): void {
         if (!this.hasStarted) { return; }
 
-        const animate = !this.gridOptionsService.is('suppressAnimationFrame');
+        const animate = !this.gridOptionsService.get('suppressAnimationFrame');
 
         if (forceRowNodeOrder) {
             rowNodeOrder = this.createRowNodeOrder();

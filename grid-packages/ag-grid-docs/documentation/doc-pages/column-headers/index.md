@@ -10,12 +10,6 @@ These properties can be used to change the different heights used in the headers
 
 <api-documentation source="grid-options/properties.json" section="headers"></api-documentation>
 
-<br>
-
-All these properties also have setter methods that can be called from the API and will change the header heights dynamically.
-
-<api-documentation source="grid-api/api.json" section="headers"></api-documentation>
-
 ## Text Orientation
 
 By default, the text label for the header is display horizontally, i.e. as normal readable text. To display the text in another orientation you have to provide your own CSS to change the orientation and also provide the adequate header heights using the appropriate grid property.

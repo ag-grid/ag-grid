@@ -30,9 +30,6 @@ export const AgGridReactUi = <TData,>(props: AgReactUiProps<TData>) => {
     const destroyFuncs = useRef<(() => void)[]>([]);
     const whenReadyFuncs = useRef<(() => void)[]>([]);
 
-    //prevProps
-    const prevProps = useRef<AgReactUiProps<any>>(props);
-
     const ready = useRef<boolean>(false);
 
     const [context, setContext] = useState<Context | undefined>(undefined);
@@ -156,12 +153,9 @@ export const AgGridReactUi = <TData,>(props: AgReactUiProps<TData>) => {
     }, []);
 
     useEffect(() => {
-        const changes = {};
-        extractGridPropertyChanges(prevProps.current, props, changes);
-        prevProps.current = props;
         processWhenReady(() => {
             if (apiRef.current) {
-                ComponentUtil.processOnChange(changes, apiRef.current)
+                ComponentUtil.processOnChange(props, apiRef.current)
             }
         });
     }, [props]);
@@ -187,36 +181,4 @@ class ReactFrameworkComponentWrapper
     createWrapper(UserReactComponent: { new(): any }, componentType: ComponentType): WrappableInterface {
         return new NewReactComponent(UserReactComponent, this.parent as any, componentType);
     }
-}
-
-function extractGridPropertyChanges(prevProps: any, nextProps: any, changes: any) {
-    const debugLogging = !!nextProps.debug;
-
-    Object.keys(nextProps).forEach((propKey) => {
-        if (ComponentUtil.ALL_PROPERTIES_SET.has(propKey as any)) {
-            if (prevProps[propKey] !== nextProps[propKey]) {
-                if (debugLogging) {
-                    console.log(` agGridReact: [${propKey}] property changed`);
-                }
-
-                changes[propKey] = {
-                    previousValue: prevProps[propKey],
-                    currentValue: nextProps[propKey],
-                };
-            }
-        }
-    });
-
-    ComponentUtil.EVENT_CALLBACKS.forEach((funcName) => {
-        if (prevProps[funcName] !== nextProps[funcName]) {
-            if (debugLogging) {
-                console.log(`agGridReact: [${funcName}] event callback changed`);
-            }
-
-            changes[funcName] = {
-                previousValue: prevProps[funcName],
-                currentValue: nextProps[funcName],
-            };
-        }
-    });
 }

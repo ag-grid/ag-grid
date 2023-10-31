@@ -38,7 +38,7 @@ export class PaginationComp extends Component {
 
     @PostConstruct
     protected postConstruct(): void {
-        const isRtl = this.gridOptionsService.is('enableRtl');
+        const isRtl = this.gridOptionsService.get('enableRtl');
         this.setTemplate(this.getTemplate());
 
         const { btFirst, btPrevious, btNext, btLast } = this;
@@ -57,8 +57,8 @@ export class PaginationComp extends Component {
     }
 
     private onPaginationChanged(): void {
-        const isPaging = this.gridOptionsService.is('pagination');
-        const paginationPanelEnabled = isPaging && !this.gridOptionsService.is('suppressPaginationPanel');
+        const isPaging = this.gridOptionsService.get('pagination');
+        const paginationPanelEnabled = isPaging && !this.gridOptionsService.get('suppressPaginationPanel');
 
         this.setDisplayed(paginationPanelEnabled);
         if (!paginationPanelEnabled) {

@@ -46,7 +46,7 @@ export class SyncService extends BeanStub {
     private gridReady(): void {
         this.dispatchGridReadyEvent();
         const isEnterprise = ModuleRegistry.__isRegistered(ModuleNames.EnterpriseCoreModule, this.context.getGridId());
-        const logger = new Logger('AG Grid', () => this.gridOptionsService.is('debug'));
+        const logger = new Logger('AG Grid', () => this.gridOptionsService.get('debug'));
         logger.log(`initialised successfully, enterprise = ${isEnterprise}`);
     }
 

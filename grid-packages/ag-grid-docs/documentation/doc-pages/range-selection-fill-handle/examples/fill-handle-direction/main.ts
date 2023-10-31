@@ -37,7 +37,7 @@ function fillHandleAxis(direction: 'x' | 'y' | 'xy') {
   })
 
   button.classList.add('selected')
-  gridApi!.setFillHandleDirection(direction)
+  gridApi!.updateGridOption('fillHandleDirection', direction)
 }
 
 // setup the grid after the page has finished loading
@@ -47,5 +47,5 @@ document.addEventListener('DOMContentLoaded', function () {
 
   fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
     .then(response => response.json())
-    .then((data: IOlympicData[]) => gridApi!.setRowData(data))
+    .then((data: IOlympicData[]) => gridApi!.updateGridOption('rowData', data))
 })

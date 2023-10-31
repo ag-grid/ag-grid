@@ -36,7 +36,7 @@ function addDelta() {
         add: getRowData(1).map(row => ({ ...row, updatedBy: 'delta' })),
         update: [{ id: 1, make: 'Delta', updatedBy: 'delta' }],
     };
-    gridApi!.setDeltaSort(true);
+    gridApi!.updateGridOption('deltaSort', true);
     const startTime = new Date().getTime();
     gridApi!.applyTransaction(transaction);
     document.getElementById('transactionDuration')!.innerText = `${new Date().getTime() - startTime} ms`;
@@ -47,7 +47,7 @@ function addDefault() {
         add: getRowData(1).map(row => ({ ...row, updatedBy: 'default' })),
         update: [{ id: 2, make: 'Default', updatedBy: 'default' }],
     };
-    gridApi!.setDeltaSort(false);
+    gridApi!.updateGridOption('deltaSort', false);
     const startTime = new Date().getTime();
     gridApi!.applyTransaction(transaction);
     document.getElementById('transactionDuration')!.innerText = `${new Date().getTime() - startTime} ms`;

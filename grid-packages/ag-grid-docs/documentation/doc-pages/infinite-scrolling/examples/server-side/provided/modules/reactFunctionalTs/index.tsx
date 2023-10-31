@@ -185,7 +185,7 @@ const GridExample = () => {
                         }, 500);
                     },
                 };
-                params.api.setDatasource(dataSource);
+                params.api.updateGridOption('datasource', dataSource);
             });
     }, []);
 

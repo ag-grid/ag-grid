@@ -49,7 +49,7 @@ function addDRow() {
 
 function reset() {
   gridApi!.setFilterModel(null);
-  gridApi!.setRowData(getRowData());
+  gridApi!.updateGridOption('rowData', getRowData());
 }
 
 function onFirstDataRendered(params: FirstDataRenderedEvent) {

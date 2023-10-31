@@ -115,7 +115,7 @@ const GridExample = () => {
     useEffect(() => {
         if (leftApi) {
             leftApi.setColumnVisible('checkbox', checkBoxSelected);
-            leftApi.setSuppressRowClickSelection(checkBoxSelected);
+            leftApi.updateGridOption('suppressRowClickSelection', checkBoxSelected);
         }
     }, [leftApi, checkBoxSelected]);
 

@@ -83,8 +83,8 @@ function onCbCountry(value: boolean) {
 }
 
 function setData(rowData: any[]) {
-    topApi!.setRowData(rowData);
-    bottomApi!.setRowData(rowData);
+    topApi!.updateGridOption('rowData', rowData);
+    bottomApi!.updateGridOption('rowData', rowData);
 }
 
 fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')

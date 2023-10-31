@@ -76,7 +76,7 @@ function getData(count: number) {
 }
 
 function updateRowData(rowCount: number) {
-  gridApi!.setRowData(getData(rowCount));
+  gridApi!.updateGridOption('rowData', getData(rowCount));
 
   document.querySelector('#currentRowCount')!.innerHTML = `${rowCount}`;
 }
@@ -84,16 +84,16 @@ function updateRowData(rowCount: number) {
 function cbFloatingRows() {
   var show = (document.getElementById('floating-rows') as HTMLInputElement).checked
   if (show) {
-    gridApi!.setPinnedTopRowData([createRow(999), createRow(998)])
-    gridApi!.setPinnedBottomRowData([createRow(997), createRow(996)])
+    gridApi!.updateGridOption('pinnedTopRowData', [createRow(999), createRow(998)]);
+    gridApi!.updateGridOption('pinnedBottomRowData', [createRow(997), createRow(996)]);
   } else {
-    gridApi!.setPinnedTopRowData()
-    gridApi!.setPinnedBottomRowData()
+    gridApi!.updateGridOption('pinnedTopRowData', undefined);
+    gridApi!.updateGridOption('pinnedBottomRowData', undefined);
   }
 }
 
 function setAutoHeight() {
-  gridApi!.setDomLayout('autoHeight');
+  gridApi!.updateGridOption('domLayout', 'autoHeight');
   // auto height will get the grid to fill the height of the contents,
   // so the grid div should have no height set, the height is dynamic.
   (document.querySelector<HTMLElement>('#myGrid')! as any).style.height = ''
@@ -101,7 +101,7 @@ function setAutoHeight() {
 
 function setFixedHeight() {
   // we could also call setDomLayout() here as normal is the default
-  gridApi!.setDomLayout('normal');
+  gridApi!.updateGridOption('domLayout', 'normal');
   // when auto height is off, the grid ahs a fixed height, and then the grid
   // will provide scrollbars if the data does not fit into it.
   (document.querySelector<HTMLElement>('#myGrid')! as any)!.style.height = '400px'

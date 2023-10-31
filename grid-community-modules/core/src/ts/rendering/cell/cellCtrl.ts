@@ -122,7 +122,7 @@ export class CellCtrl extends BeanStub {
 
         const colDef = this.column.getColDef();
         this.colIdSanitised = escapeString(this.column.getId())!;
-        if (!this.beans.gridOptionsService.is('suppressCellFocus')) {
+        if (!this.beans.gridOptionsService.get('suppressCellFocus')) {
             this.tabIndex = -1;
         }
         this.isCellRenderer = colDef.cellRenderer != null || colDef.cellRendererSelector != null;
@@ -155,7 +155,7 @@ export class CellCtrl extends BeanStub {
             this.addDestroyFunc(() => { this.disableTooltipFeature(); });
         }
 
-        const rangeSelectionEnabled = this.beans.rangeService && this.beans.gridOptionsService.is('enableRangeSelection');
+        const rangeSelectionEnabled = this.beans.rangeService && this.beans.gridOptionsService.get('enableRangeSelection');
         if (rangeSelectionEnabled) {
             this.cellRangeFeature = new CellRangeFeature(this.beans, this);
             this.addDestroyFunc(() => { this.cellRangeFeature?.destroy(); this.cellRangeFeature = null; });
@@ -363,7 +363,7 @@ export class CellCtrl extends BeanStub {
 
     public isForceWrapper(): boolean {
         // text selection requires the value to be wrapped in another element
-        const forceWrapper = this.beans.gridOptionsService.is('enableCellTextSelection') || this.column.isAutoHeight();
+        const forceWrapper = this.beans.gridOptionsService.get('enableCellTextSelection') || this.column.isAutoHeight();
         return forceWrapper;
     }
 
@@ -650,7 +650,7 @@ export class CellCtrl extends BeanStub {
             const processingFilterChange = this.beans.filterManager.isSuppressFlashingCellsBecauseFiltering();
 
             const flashCell = !suppressFlash && !processingFilterChange &&
-                (this.beans.gridOptionsService.is('enableCellChangeFlash') || colDef.enableCellChangeFlash);
+                (this.beans.gridOptionsService.get('enableCellChangeFlash') || colDef.enableCellChangeFlash);
 
             if (flashCell) {
                 this.flashCell();
@@ -679,7 +679,7 @@ export class CellCtrl extends BeanStub {
     }
 
     private navigateAfterEdit(shiftKey: boolean): void {
-        const enterNavigatesVerticallyAfterEdit = this.beans.gridOptionsService.is('enterNavigatesVerticallyAfterEdit');
+        const enterNavigatesVerticallyAfterEdit = this.beans.gridOptionsService.get('enterNavigatesVerticallyAfterEdit');
 
         if (enterNavigatesVerticallyAfterEdit) {
             const key = shiftKey ? KeyCode.UP : KeyCode.DOWN;
@@ -703,11 +703,11 @@ export class CellCtrl extends BeanStub {
         const { gridOptionsService } = this.beans;
 
         if (!flashDelay) {
-            flashDelay = gridOptionsService.getNum('cellFlashDelay') ?? 500;
+            flashDelay = gridOptionsService.get('cellFlashDelay');
         }
 
         if (!exists(fadeDelay)) {
-            fadeDelay = gridOptionsService.getNum('cellFadeDelay') ?? 1000;
+            fadeDelay = gridOptionsService.get('cellFadeDelay');
         }
 
         // we want to highlight the cells, without any animation
@@ -966,7 +966,7 @@ export class CellCtrl extends BeanStub {
     }
 
     public onCellFocused(event?: CellFocusedEvent): void {
-        if(this.beans.gridOptionsService.is('suppressCellFocus')){
+        if(this.beans.gridOptionsService.get('suppressCellFocus')){
             return;
         }
         const cellFocused = this.beans.focusService.isCellFocused(this.cellPosition);
@@ -1021,7 +1021,7 @@ export class CellCtrl extends BeanStub {
 
     public onColumnHover(): void {
         if (!this.cellComp) { return; }
-        if (!this.beans.gridOptionsService.is('columnHoverHighlight')) { return; }
+        if (!this.beans.gridOptionsService.get('columnHoverHighlight')) { return; }
 
         const isHovered = this.beans.columnHoverService.isHovered(this.column);
         this.cellComp.addOrRemoveCssClass(CSS_COLUMN_HOVER, isHovered);
@@ -1124,8 +1124,8 @@ export class CellCtrl extends BeanStub {
         dragStartPixels?: number,
         suppressVisibilityChange?: boolean
     ): RowDragComp | undefined {
-        const pagination = this.beans.gridOptionsService.is('pagination');
-        const rowDragManaged = this.beans.gridOptionsService.is('rowDragManaged');
+        const pagination = this.beans.gridOptionsService.get('pagination');
+        const rowDragManaged = this.beans.gridOptionsService.get('rowDragManaged');
         const clientSideRowModelActive = this.beans.gridOptionsService.isRowModelType('clientSide');
 
         if (rowDragManaged) {

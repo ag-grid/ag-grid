@@ -428,7 +428,7 @@ export class StateService extends BeanStub {
     }
 
     private setRangeSelectionState(rangeSelectionState: RangeSelectionState): void {
-        if (!this.gridOptionsService.is('enableRangeSelection')) { return; }
+        if (!this.gridOptionsService.get('enableRangeSelection')) { return; }
         const cellRanges = rangeSelectionState.cellRanges.map(cellRange => ({
             ...cellRange,
             columns: cellRange.colIds.map(colId => this.columnModel.getGridColumn(colId)!),

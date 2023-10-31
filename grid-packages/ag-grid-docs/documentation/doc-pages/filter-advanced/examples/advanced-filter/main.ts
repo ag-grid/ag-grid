@@ -44,7 +44,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
     .then(response => response.json())
-    .then((data: IOlympicDataTypes[]) => gridApi!.setRowData(data.map(rowData => {
+    .then((data: IOlympicDataTypes[]) => gridApi!.updateGridOption('rowData', data.map(rowData => {
       const dateParts = rowData.date.split('/');
       return {
         ...rowData,

@@ -160,7 +160,7 @@ export class AppComponent {
     onGridReady(params: any) {
         this.gridApi = params.api;
 
-        this.http.get('https://www.ag-grid.com/example-assets/weather-se-england.json').subscribe(data => params.api.setRowData(data));
+        this.http.get('https://www.ag-grid.com/example-assets/weather-se-england.json').subscribe(data => params.api.updateGridOption('rowData', data));
     }
 }
 

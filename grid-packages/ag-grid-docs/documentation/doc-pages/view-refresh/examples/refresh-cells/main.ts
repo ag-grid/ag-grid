@@ -28,9 +28,9 @@ const gridOptions: GridOptions = {
     data = createData(14)
     topRowData = createData(2)
     bottomRowData = createData(2)
-    params.api.setRowData(data)
-    params.api.setPinnedTopRowData(topRowData)
-    params.api.setPinnedBottomRowData(bottomRowData)
+    params.api.updateGridOption('rowData', data)
+    params.api.updateGridOption('pinnedTopRowData', topRowData)
+    params.api.updateGridOption('pinnedBottomRowData', bottomRowData)
   },
 }
 

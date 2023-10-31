@@ -80,7 +80,7 @@ export class GroupFilter extends TabGuardComp implements IFilterComp {
 
     private getSourceColumns(): Column[] {
         this.groupColumn = this.params.column;
-        if (this.gridOptionsService.is('treeData')) {
+        if (this.gridOptionsService.get('treeData')) {
             _.warnOnce('Group Column Filter does not work with Tree Data enabled. Please disable Tree Data, or use a different filter.');
             return [];
         }

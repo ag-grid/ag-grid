@@ -23,11 +23,11 @@ const gridOptions: GridOptions<IOlympicData> = {
 }
 
 function onBtSuppressRowDrag() {
-  gridApi!.setSuppressRowDrag(true)
+  gridApi!.updateGridOption('suppressRowDrag', true)
 }
 
 function onBtShowRowDrag() {
-  gridApi!.setSuppressRowDrag(false)
+  gridApi!.updateGridOption('suppressRowDrag', false)
 }
 
 // setup the grid after the page has finished loading
@@ -37,5 +37,5 @@ document.addEventListener('DOMContentLoaded', function () {
 
   fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
     .then(response => response.json())
-    .then((data: IOlympicData[]) => gridApi!.setRowData(data))
+    .then((data: IOlympicData[]) => gridApi!.updateGridOption('rowData', data))
 })

@@ -85,7 +85,7 @@ document.addEventListener('DOMContentLoaded', function () {
             // Empty data used to demonstrate custom (Blanks) handling in filter cell renderer
             dataWithFlags[0].country = '';
 
-            gridApi!.setRowData(dataWithFlags)
+            gridApi!.updateGridOption('rowData', dataWithFlags)
         })
 })
 

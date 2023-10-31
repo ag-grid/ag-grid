@@ -102,17 +102,10 @@ export interface ToolPanelClassParams<TData = any, TValue = any> extends AgGridC
 }
 export type ToolPanelClass<TData = any, TValue = any> = string | string[] | ((params: ToolPanelClassParams<TData, TValue>) => string | string[] | undefined);
 
-// Used to stop recursion in ColDefField and then just return Prefix.any
-// so that we do not run into infinite recursion Typescript error
-type Digit = 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9;
-type NextDigit = [1, 2, 3, 4, 5, 6, 7, 'STOP'];
-type Inc<T> = T extends Digit ? NextDigit[T] : 'STOP'; 
-
-
 type StringOrNumKeys<TObj> = keyof TObj & (string | number);
-type NestedPath<TValue, Prefix extends string, TValueNestedChild, TDepth> = 
+type NestedPath<TValue, Prefix extends string, TValueNestedChild, TDepth extends any[]> = 
     TValue extends object
-        ? `${Prefix}.${ TDepth extends 'STOP' ? any : NestedFieldPaths<TValue, TValueNestedChild, TDepth>}`
+        ? `${Prefix}.${ TDepth['length'] extends 7 ? any : NestedFieldPaths<TValue, TValueNestedChild, TDepth>}`
         : never;
 
 // This type wrapper is needed for correct handling of union types in ColDefField
@@ -121,15 +114,17 @@ type NestedPath<TValue, Prefix extends string, TValueNestedChild, TDepth> =
 /**
  * Returns a union of all possible paths to nested fields in `TData`.
  */
-export type ColDefField<TData = any, TValue = any> = TData extends any ? NestedFieldPaths<TData, TValue, 1> : never;
+export type ColDefField<TData = any, TValue = any> = TData extends any ? NestedFieldPaths<TData, TValue, []> : never;
 
 /**
  * Returns a union of all possible paths to nested fields in `TData`.
  */
-export type NestedFieldPaths<TData = any, TValue = any, TDepth = 0> = {
+export type NestedFieldPaths<TData = any, TValue = any, TDepth extends any[] = []> = {
     [TKey in StringOrNumKeys<TData>]:
-        | (TData[TKey] extends TValue ? `${TKey}` : never)
-        | NestedPath<TData[TKey], `${TKey}`, TValue, Inc<TDepth>>;
+        TData[TKey] extends Function | undefined ? never // ignore functions
+            : TData[TKey] extends any[] | undefined 
+                ? (TData[TKey] extends TValue ? `${TKey}` : never) | `${TKey}.${number}` // arrays support index access
+                : (TData[TKey] extends TValue ? `${TKey}` : never) | NestedPath<TData[TKey], `${TKey}`, TValue, [...TDepth, any]>;
 }[StringOrNumKeys<TData>];
 
 

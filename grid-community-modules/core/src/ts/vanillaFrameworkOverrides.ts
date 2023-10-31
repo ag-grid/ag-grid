@@ -10,6 +10,8 @@ export class VanillaFrameworkOverrides implements IFrameworkOverrides {
 
     public renderingEngine: 'vanilla' | 'react' = "vanilla";
 
+    constructor(public frameworkName: 'javascript' | 'angular' | 'react' | 'vue' | 'solid' = 'javascript') {}
+
     // for Vanilla JS, we use simple timeout
     public setTimeout(action: any, timeout?: any): void {
         window.setTimeout(action, timeout);

@@ -110,7 +110,7 @@ export class MoveColumnFeature implements DropListener {
             const firstVisiblePixel = this.ctrlsService.getCenterRowContainerCtrl().getCenterViewportScrollLeft();
             const lastVisiblePixel = firstVisiblePixel + this.ctrlsService.getCenterRowContainerCtrl().getCenterWidth();
 
-            if (this.gridOptionsService.is('enableRtl')) {
+            if (this.gridOptionsService.get('enableRtl')) {
                 this.needToMoveRight = xAdjustedForScroll < (firstVisiblePixel + 50);
                 this.needToMoveLeft = xAdjustedForScroll > (lastVisiblePixel - 50);
             } else {
@@ -188,7 +188,7 @@ export class MoveColumnFeature implements DropListener {
     }
 
     private normaliseDirection(hDirection: HorizontalDirection): HorizontalDirection | undefined {
-        if (this.gridOptionsService.is('enableRtl')) {
+        if (this.gridOptionsService.get('enableRtl')) {
             switch (hDirection) {
                 case HorizontalDirection.Left: return HorizontalDirection.Right;
                 case HorizontalDirection.Right: return HorizontalDirection.Left;

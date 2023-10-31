@@ -60,7 +60,7 @@ export class ResizeFeature extends BeanStub implements IHeaderResizeFeature {
             destroyResizeFuncs.push(finishedWithResizeFunc);
 
             if (canAutosize) {
-                const skipHeaderOnAutoSize = this.gridOptionsService.is('skipHeaderOnAutoSize');
+                const skipHeaderOnAutoSize = this.gridOptionsService.get('skipHeaderOnAutoSize');
 
                 const autoSizeColListener = () => {
                     this.columnModel.autoSizeColumn(this.column, skipHeaderOnAutoSize, "uiColumnResized");
@@ -85,7 +85,7 @@ export class ResizeFeature extends BeanStub implements IHeaderResizeFeature {
 
         const refresh = () => {
             const resize = this.column.isResizable();
-            const autoSize = !this.gridOptionsService.is('suppressAutoSize') && !this.column.getColDef().suppressAutoSize;
+            const autoSize = !this.gridOptionsService.get('suppressAutoSize') && !this.column.getColDef().suppressAutoSize;
             const propertyChange = resize !== canResize || autoSize !== canAutosize;
             if (propertyChange) {
                 canResize = resize;
@@ -129,7 +129,7 @@ export class ResizeFeature extends BeanStub implements IHeaderResizeFeature {
         const notPinningLeft = this.pinned !== 'left';
         const pinningRight = this.pinned === 'right';
 
-        if (this.gridOptionsService.is('enableRtl')) {
+        if (this.gridOptionsService.get('enableRtl')) {
             // for RTL, dragging left makes the col bigger, except when pinning left
             if (notPinningLeft) {
                 result *= -1;

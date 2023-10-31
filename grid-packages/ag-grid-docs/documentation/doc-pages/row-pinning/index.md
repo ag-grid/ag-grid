@@ -7,8 +7,8 @@ This feature in other grids is also known as **Frozen Rows** or **Floating Rows*
 
 To put pinned rows into your grid, set `pinnedTopRowData` or `pinnedBottomRowData`
 in the same way as you would set normal data into `rowData`.
-After the grid is created, you can update the pinned rows by calling `api.setPinnedTopRowData(rows)`
-and `setPinnedBottomRowData(rows)`.
+After the grid is created, you can update the pinned rows by calling `api.updateGridOption('pinnedTopRowData', rows)`
+and `api.updateGridOption('pinnedBottomRowData', rows)`.
 
 <api-documentation source='grid-options/properties.json' section='rowPinning' names='["pinnedTopRowData", "pinnedBottomRowData"]' ></api-documentation>
 

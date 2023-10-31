@@ -34,5 +34,5 @@ document.addEventListener('DOMContentLoaded', () => {
 
   fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
     .then(response => response.json())
-    .then((data: IOlympicData[]) => gridApi!.setRowData(data.slice(0, 600)))
+    .then((data: IOlympicData[]) => gridApi!.updateGridOption('rowData', data.slice(0, 600)))
 })

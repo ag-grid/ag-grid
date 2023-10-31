@@ -49,8 +49,7 @@ import { FocusService } from "./focusService";
 import { GridBodyCtrl } from "./gridBodyComp/gridBodyCtrl";
 import { NavigationService } from "./gridBodyComp/navigationService";
 import { RowDropZoneEvents, RowDropZoneParams } from "./gridBodyComp/rowDragFeature";
-import { PropertyChangeSet, GridOptionsService } from "./gridOptionsService";
-import { logDeprecation } from "./gridOptionsValidator";
+import { GridOptionsService } from "./gridOptionsService";
 import { HeaderPosition } from "./headerRendering/common/headerPosition";
 import { CsvExportParams, ProcessCellForExportParams } from "./interfaces/exportParams";
 import { IAggFuncService } from "./interfaces/iAggFuncService";
@@ -137,6 +136,7 @@ import { GridState } from "./interfaces/gridState";
 import { StateService } from "./misc/stateService";
 import { IExpansionService } from "./interfaces/iExpansionService";
 import { WithoutGridCommon } from "./interfaces/iCommon";
+import { warnOnce } from "./utils/function";
 
 export interface DetailGridInfo {
     /**
@@ -247,20 +247,6 @@ export class GridApi<TData = any> {
         return this.context;
     }
 
-    /** Used internally by grid. Not intended to be used by the client. Interface may change between releases. */
-    public __setPropertyOnly<K extends keyof GridOptions>(propertyName: K, value: GridOptions[K]): boolean {
-        return this.gos.__setPropertyOnly(propertyName, value);
-    }
-    /** Used internally by grid. Not intended to be used by the client. Interface may change between releases. */
-    public __updateProperty<K extends keyof GridOptions>(
-        propertyName: K,
-        value: GridOptions[K],
-        force: boolean,
-        changeSet: PropertyChangeSet | undefined = undefined
-    ) {
-        this.gos.set(propertyName, value, force, {}, changeSet);
-    }
-
     /** Returns the `gridId` for the current grid as specified via the gridOptions property `gridId` or the auto assigned grid id if none was provided. */
     public getGridId(): string {
         return this.context.getGridId();
@@ -359,11 +345,6 @@ export class GridApi<TData = any> {
         }
     }
 
-    /** Sets the `treeData` property. */
-    public setTreeData(newTreeData: boolean): void {
-        this.gos.set('treeData', newTreeData);
-    }
-
     /**
      * Sets an ARIA property in the grid panel (element with `role=\"grid\"`), and removes an ARIA property when the value is null.
      *
@@ -388,66 +369,6 @@ export class GridApi<TData = any> {
         console.error(`AG Grid: api.${apiMethod} can only be called when gridOptions.rowModelType is ${requiredRowModels.join(' or ')}`);
     }
 
-    /** Set new datasource for Server-Side Row Model. */
-    public setServerSideDatasource(datasource: IServerSideDatasource) {
-        if (this.serverSideRowModel) {
-            this.gos.set('serverSideDatasource', datasource);
-        } else {
-            this.logMissingRowModel('setServerSideDatasource', 'serverSide');
-        }
-    }
-
-    /**
-     * Updates the `cacheBlockSize` when requesting data from the server if `suppressServerSideInfiniteScroll` is not enabled.
-     * 
-     * Note this purges all the cached data and reloads all the rows of the grid.
-     * */
-    public setCacheBlockSize(blockSize: number) {
-        if (this.serverSideRowModel) {
-            this.gos.set('cacheBlockSize', blockSize);
-        } else {
-            this.logMissingRowModel('setCacheBlockSize', 'serverSide');
-        }
-    }
-
-    /** Set new datasource for Infinite Row Model. */
-    public setDatasource(datasource: IDatasource) {
-        if (this.gos.isRowModelType('infinite')) {
-            this.gos.set('datasource', datasource);
-        } else {
-            this.logMissingRowModel('setDatasource', 'infinite');
-        }
-    }
-
-    /** Set new datasource for Viewport Row Model. */
-    public setViewportDatasource(viewportDatasource: IViewportDatasource) {
-        if (this.gos.isRowModelType('viewport')) {
-            this.gos.set('viewportDatasource', viewportDatasource);
-        } else {
-            this.logMissingRowModel('setViewportDatasource', 'viewport');
-        }
-    }
-
-    /** Set the row data. */
-    public setRowData(rowData: TData[]) {
-        // immutable service is part of the CSRM module, if missing, no CSRM
-        if (this.immutableService == null) {
-            this.logMissingRowModel('setRowData', 'clientSide');
-        }
-
-        this.gos.set('rowData', rowData);
-    }
-
-    /** Set the top pinned rows. Call with no rows / undefined to clear top pinned rows. */
-    public setPinnedTopRowData(rows?: any[]): void {
-        this.gos.set('pinnedTopRowData', rows);
-    }
-
-    /** Set the bottom pinned rows. Call with no rows / undefined to clear bottom pinned rows. */
-    public setPinnedBottomRowData(rows?: any[]): void {
-        this.gos.set('pinnedBottomRowData', rows);
-    }
-
     /** Gets the number of top pinned rows. */
     public getPinnedTopRowCount(): number {
         return this.pinnedRowModel.getPinnedTopRowCount();
@@ -466,28 +387,6 @@ export class GridApi<TData = any> {
     /** Gets the bottom pinned row with the specified index. */
     public getPinnedBottomRow(index: number): IRowNode | undefined {
         return this.pinnedRowModel.getPinnedBottomRow(index);
-    }
-
-    /**
-     * Call to set new column definitions. The grid will redraw all the column headers, and then redraw all of the rows.
-     */
-    public setColumnDefs(colDefs: (ColDef<TData> | ColGroupDef<TData>)[], source: ColumnEventType = "api") {
-        this.gos.set('columnDefs', colDefs, true, { source });
-    }
-
-    /** Call to set new auto group column definition. The grid will recreate any auto-group columns if present. */
-    public setAutoGroupColumnDef(colDef: ColDef<TData>, source: ColumnEventType = "api") {
-        this.gos.set('autoGroupColumnDef', colDef, true, { source });
-    }
-
-    /** Call to set new Default Column Definition. */
-    public setDefaultColDef(colDef: ColDef<TData>, source: ColumnEventType = "api") {
-        this.gos.set('defaultColDef', colDef, true, { source });
-    }
-
-    /** Call to set new Column Types. */
-    public setColumnTypes(columnTypes: { string: ColDef<TData> }, source: ColumnEventType = "api") {
-        this.gos.set('columnTypes', columnTypes, true, { source });
     }
 
     public expireValueCache(): void {
@@ -512,16 +411,6 @@ export class GridApi<TData = any> {
         return this.gridBodyCtrl.getScrollFeature().getHScrollPosition();
     }
 
-    /** If `true`, the horizontal scrollbar will always be present, even if not required. Otherwise, it will only be displayed when necessary. */
-    public setAlwaysShowHorizontalScroll(show: boolean) {
-        this.gos.set('alwaysShowHorizontalScroll', show);
-    }
-
-    /** If `true`, the vertical scrollbar will always be present, even if not required. Otherwise it will only be displayed when necessary. */
-    public setAlwaysShowVerticalScroll(show: boolean) {
-        this.gos.set('alwaysShowVerticalScroll', show);
-    }
-
     /** Performs change detection on all cells, refreshing cells where required. */
     public refreshCells(params: RefreshCellsParams<TData> = {}): void {
         this.rowRenderer.refreshCells(params);
@@ -536,10 +425,6 @@ export class GridApi<TData = any> {
     public redrawRows(params: RedrawRowsParams<TData> = {}): void {
         const rowNodes = params ? params.rowNodes : undefined;
         this.rowRenderer.redrawRows(rowNodes);
-    }
-
-    public setFunctionsReadOnly(readOnly: boolean) {
-        this.gos.set('functionsReadOnly', readOnly);
     }
 
     /** Redraws the header. Useful if a column name changes, or something else that changes how the column header is displayed. */
@@ -666,48 +551,6 @@ export class GridApi<TData = any> {
         return this.gos.get('quickFilterText');
     }
 
-    /** Pass a Quick Filter text into the grid for filtering. */
-    public setQuickFilter(newFilter: string): void {
-        this.gos.set('quickFilterText', newFilter);
-    }
-
-    /** 
-     * @deprecated As of v30, hidden columns are excluded from the Quick Filter by default. To include hidden columns, use `setIncludeHiddenColumnsInQuickFilter` instead.
-     */
-    public setExcludeHiddenColumnsFromQuickFilter(value: boolean): void {
-        logDeprecation<GridApi>(
-            '30',
-            'setExcludeHiddenColumnsFromQuickFilter',
-            undefined,
-            'Hidden columns are now excluded from the Quick Filter by default. This can be toggled using `setIncludeHiddenColumnsInQuickFilter`'
-        );
-        this.setIncludeHiddenColumnsInQuickFilter(!value);
-    }
-
-    /** 
-     * Updates the `includeHiddenColumnsInQuickFilter` grid option.
-     * By default hidden columns are excluded from the Quick Filter.
-     * Set to `true` to include them.
-     */
-    public setIncludeHiddenColumnsInQuickFilter(value: boolean): void {
-        this.gos.set('includeHiddenColumnsInQuickFilter', value);
-    }
-
-    /**
-     * Updates the `quickFilterParser` grid option,
-     * which changes how the Quick Filter splits the Quick Filter text into search terms.
-     */
-    public setQuickFilterParser(quickFilterParser?: (quickFilter: string) => string[]): void {
-        this.gos.set('quickFilterParser', quickFilterParser);
-    }
-
-    /**
-     * Updates the `quickFilterMatcher` grid option,
-     * which changes the matching logic for whether a row passes the Quick Filter.
-     */
-    public setQuickFilterMatcher(quickFilterMatcher?: (quickFilterParts: string[], rowQuickFilterAggregateText: string) => boolean): void {
-        this.gos.set('quickFilterMatcher', quickFilterMatcher);
-    }
 
     /** Get the state of the Advanced Filter. Used for saving Advanced Filter state */
     public getAdvancedFilterModel(): AdvancedFilterModel | null {
@@ -715,38 +558,6 @@ export class GridApi<TData = any> {
             return this.filterManager.getAdvancedFilterModel();
         }
         return null;
-    }
-    
-    /** Set the state of the Advanced Filter. Used for restoring Advanced Filter state */
-    public setAdvancedFilterModel(advancedFilterModel: AdvancedFilterModel | null): void {
-        this.filterManager.setAdvancedFilterModel(advancedFilterModel);
-    }
-
-    /** Enable/disable the Advanced Filter */
-    public setEnableAdvancedFilter(enabled: boolean): void {
-        this.gos.set('enableAdvancedFilter', enabled);
-    }
-
-    /** 
-     * Updates the `includeHiddenColumnsInAdvancedFilter` grid option.
-     * By default hidden columns are excluded from the Advanced Filter.
-     * Set to `true` to include them.
-     */
-    public setIncludeHiddenColumnsInAdvancedFilter(value: boolean): void {
-        this.gos.set('includeHiddenColumnsInAdvancedFilter', value);
-    }
-
-    /**
-     * DOM element to use as the parent for the Advanced Filter, to allow it to appear outside of the grid.
-     * Set to `null` to appear inside the grid.
-     */
-    public setAdvancedFilterParent(advancedFilterParent: HTMLElement | null): void {
-        this.gos.set('advancedFilterParent', advancedFilterParent);
-    }
-
-    /** Updates the Advanced Filter Builder parameters. */
-    public setAdvancedFilterBuilderParams(params?: IAdvancedFilterBuilderParams): void {
-        this.gos.set('advancedFilterBuilderParams', params);
     }
 
     /** Open the Advanced Filter Builder dialog (if enabled). */
@@ -1071,21 +882,6 @@ export class GridApi<TData = any> {
         this.focusService.setFocusedCell({ rowIndex, column: colKey, rowPinned, forceBrowserFocus: true });
     }
 
-    /** Sets the `suppressRowDrag` property. */
-    public setSuppressRowDrag(value: boolean): void {
-        this.gos.set('suppressRowDrag', value);
-    }
-
-    /** Sets the `suppressMoveWhenRowDragging` property. */
-    public setSuppressMoveWhenRowDragging(value: boolean): void {
-        this.gos.set('suppressMoveWhenRowDragging', value);
-    }
-
-    /** Sets the `suppressRowClickSelection` property. */
-    public setSuppressRowClickSelection(value: boolean): void {
-        this.gos.set('suppressRowClickSelection', value);
-    }
-
     /** Adds a drop zone outside of the grid where rows can be dropped. */
     public addRowDropZone(params: RowDropZoneParams): void {
         this.gridBodyCtrl.getRowDragFeature().addRowDropZone(params);
@@ -1103,219 +899,6 @@ export class GridApi<TData = any> {
     /** Returns the `RowDropZoneParams` to be used by another grid's `addRowDropZone` method. */
     public getRowDropZoneParams(events?: RowDropZoneEvents): RowDropZoneParams {
         return this.gridBodyCtrl.getRowDragFeature().getRowDropZone(events);
-    }
-
-    /** Sets the height in pixels for the row containing the column label header. */
-    public setHeaderHeight(headerHeight?: number) {
-        this.gos.set('headerHeight', headerHeight);
-    }
-
-    /**
-     * Switch between layout options: `normal`, `autoHeight`, `print`.
-     * Defaults to `normal` if no domLayout provided.
-     */
-    public setDomLayout(domLayout?: DomLayoutType) {
-        this.gos.set('domLayout', domLayout);
-    }
-
-    /** Sets the `enableCellTextSelection` property. */
-    public setEnableCellTextSelection(selectable: boolean) {
-        this.gos.set('enableCellTextSelection', selectable);
-    }
-
-    /** Sets the preferred direction for the selection fill handle. */
-    public setFillHandleDirection(direction: 'x' | 'y' | 'xy') {
-        this.gos.set('fillHandleDirection', direction);
-    }
-
-    /** Sets the height in pixels for the rows containing header column groups. */
-    public setGroupHeaderHeight(headerHeight?: number) {
-        this.gos.set('groupHeaderHeight', headerHeight);
-    }
-
-    /** Sets the height in pixels for the row containing the floating filters. */
-    public setFloatingFiltersHeight(headerHeight?: number) {
-        this.gos.set('floatingFiltersHeight', headerHeight);
-    }
-
-    /** Sets the height in pixels for the row containing the columns when in pivot mode. */
-    public setPivotHeaderHeight(headerHeight?: number) {
-        this.gos.set('pivotHeaderHeight', headerHeight);
-    }
-
-    /** Sets the height in pixels for the row containing header column groups when in pivot mode. */
-    public setPivotGroupHeaderHeight(headerHeight?: number) {
-        this.gos.set('pivotGroupHeaderHeight', headerHeight);
-    }
-
-    public setPivotMode(pivotMode: boolean) {
-        this.gos.set('pivotMode', pivotMode);
-    }
-
-    public setAnimateRows(animateRows: boolean): void {
-        this.gos.set('animateRows', animateRows);
-    }
-
-    public setIsExternalFilterPresent(isExternalFilterPresentFunc: () => boolean): void {
-        this.gos.set('isExternalFilterPresent', isExternalFilterPresentFunc);
-    }
-
-    public setDoesExternalFilterPass(doesExternalFilterPassFunc: (node: IRowNode) => boolean): void {
-        this.gos.set('doesExternalFilterPass', doesExternalFilterPassFunc);
-    }
-
-    public setNavigateToNextCell(navigateToNextCellFunc: (params: NavigateToNextCellParams) => (CellPosition | null)): void {
-        this.gos.set('navigateToNextCell', navigateToNextCellFunc);
-    }
-
-    public setTabToNextCell(tabToNextCellFunc: (params: TabToNextCellParams) => (CellPosition | null)): void {
-        this.gos.set('tabToNextCell', tabToNextCellFunc);
-    }
-
-    public setTabToNextHeader(tabToNextHeaderFunc: (params: TabToNextHeaderParams) => (HeaderPosition | null)): void {
-        this.gos.set('tabToNextHeader', tabToNextHeaderFunc);
-    }
-
-    public setNavigateToNextHeader(navigateToNextHeaderFunc: (params: NavigateToNextHeaderParams) => (HeaderPosition | null)): void {
-        this.gos.set('navigateToNextHeader', navigateToNextHeaderFunc);
-    }
-
-    public setRowGroupPanelShow(rowGroupPanelShow: 'always' | 'onlyWhenGrouping' | 'never'): void {
-        this.gos.set('rowGroupPanelShow', rowGroupPanelShow);
-    }
-
-    public setGetGroupRowAgg(getGroupRowAggFunc: (params: GetGroupRowAggParams) => any): void {
-        this.gos.set('getGroupRowAgg', getGroupRowAggFunc);
-    }
-
-    public setGetBusinessKeyForNode(getBusinessKeyForNodeFunc: (nodes: IRowNode) => string): void {
-        this.gos.set('getBusinessKeyForNode', getBusinessKeyForNodeFunc);
-    }
-
-    public setGetChildCount(getChildCountFunc: (dataItem: any) => number): void {
-        this.gos.set('getChildCount', getChildCountFunc);
-    }
-
-    public setProcessRowPostCreate(processRowPostCreateFunc: (params: ProcessRowParams) => void): void {
-        this.gos.set('processRowPostCreate', processRowPostCreateFunc);
-    }
-
-    public setGetRowId(getRowIdFunc: GetRowIdFunc): void {
-        this.gos.set('getRowId', getRowIdFunc);
-    }
-
-    public setGetRowClass(rowClassFunc: (params: RowClassParams) => string | string[]): void {
-        this.gos.set('getRowClass', rowClassFunc);
-    }
-
-    public setIsFullWidthRow(isFullWidthRowFunc: (params: IsFullWidthRowParams) => boolean): void {
-        this.gos.set('isFullWidthRow', isFullWidthRowFunc);
-    }
-
-    public setIsRowSelectable(isRowSelectableFunc: IsRowSelectable): void {
-        this.gos.set('isRowSelectable', isRowSelectableFunc);
-    }
-
-    public setIsRowMaster(isRowMasterFunc: IsRowMaster): void {
-        this.gos.set('isRowMaster', isRowMasterFunc);
-    }
-
-    public setPostSortRows(postSortRowsFunc: (params: PostSortRowsParams) => void): void {
-        this.gos.set('postSortRows', postSortRowsFunc);
-    }
-
-    public setGetDocument(getDocumentFunc: () => Document): void {
-        this.gos.set('getDocument', getDocumentFunc);
-    }
-
-    public setGetContextMenuItems(getContextMenuItemsFunc: GetContextMenuItems): void {
-        this.gos.set('getContextMenuItems', getContextMenuItemsFunc);
-    }
-
-    public setGetMainMenuItems(getMainMenuItemsFunc: GetMainMenuItems): void {
-        this.gos.set('getMainMenuItems', getMainMenuItemsFunc);
-    }
-
-    public setProcessCellForClipboard(processCellForClipboardFunc: (params: ProcessCellForExportParams) => any): void {
-        this.gos.set('processCellForClipboard', processCellForClipboardFunc);
-    }
-
-    public setSendToClipboard(sendToClipboardFunc: (params: { data: string }) => void): void {
-        this.gos.set('sendToClipboard', sendToClipboardFunc);
-    }
-
-    public setProcessCellFromClipboard(processCellFromClipboardFunc: (params: ProcessCellForExportParams) => any): void {
-        this.gos.set('processCellFromClipboard', processCellFromClipboardFunc);
-    }
-
-    /** @deprecated v28 use `setProcessPivotResultColDef` instead */
-    public setProcessSecondaryColDef(processSecondaryColDefFunc: (colDef: ColDef) => void): void {
-        logDeprecation<GridApi>('28.0', 'setProcessSecondaryColDef', 'setProcessPivotResultColDef')
-        this.setProcessPivotResultColDef(processSecondaryColDefFunc);
-    }
-
-    /** @deprecated v28 use `setProcessPivotResultColGroupDef` instead */
-    public setProcessSecondaryColGroupDef(processSecondaryColGroupDefFunc: (colDef: ColDef) => void): void {
-        logDeprecation<GridApi>('28.0', 'setProcessSecondaryColGroupDef', 'setProcessPivotResultColGroupDef')
-        this.setProcessPivotResultColGroupDef(processSecondaryColGroupDefFunc);
-    }
-
-    public setProcessPivotResultColDef(processPivotResultColDefFunc: (colDef: ColDef) => void): void {
-        this.gos.set('processPivotResultColDef', processPivotResultColDefFunc);
-    }
-
-    public setProcessPivotResultColGroupDef(processPivotResultColGroupDefFunc: (colDef: ColDef) => void): void {
-        this.gos.set('processPivotResultColGroupDef', processPivotResultColGroupDefFunc);
-    }
-
-    public setPostProcessPopup(postProcessPopupFunc: (params: PostProcessPopupParams) => void): void {
-        this.gos.set('postProcessPopup', postProcessPopupFunc);
-    }
-
-    public setInitialGroupOrderComparator(initialGroupOrderComparatorFunc: (params: InitialGroupOrderComparatorParams) => number): void {
-        this.gos.set('initialGroupOrderComparator', initialGroupOrderComparatorFunc);
-    }
-
-    public setGetChartToolbarItems(getChartToolbarItemsFunc: GetChartToolbarItems): void {
-        this.gos.set('getChartToolbarItems', getChartToolbarItemsFunc);
-    }
-
-    public setPaginationNumberFormatter(paginationNumberFormatterFunc: (params: PaginationNumberFormatterParams) => string): void {
-        this.gos.set('paginationNumberFormatter', paginationNumberFormatterFunc);
-    }
-
-    /** @deprecated v28 use setGetServerSideGroupLevelParams instead */
-    public setGetServerSideStoreParams(getServerSideStoreParamsFunc: (params: GetServerSideGroupLevelParamsParams) => ServerSideGroupLevelParams): void {
-        logDeprecation<GridApi>('28.0', 'setGetServerSideStoreParams', 'setGetServerSideGroupLevelParams');
-        this.setGetServerSideGroupLevelParams(getServerSideStoreParamsFunc);
-    }
-
-    public setGetServerSideGroupLevelParams(getServerSideGroupLevelParamsFunc: (params: GetServerSideGroupLevelParamsParams) => ServerSideGroupLevelParams): void {
-        this.gos.set('getServerSideGroupLevelParams', getServerSideGroupLevelParamsFunc);
-    }
-
-    public setIsServerSideGroupOpenByDefault(isServerSideGroupOpenByDefaultFunc: (params: IsServerSideGroupOpenByDefaultParams) => boolean): void {
-        this.gos.set('isServerSideGroupOpenByDefault', isServerSideGroupOpenByDefaultFunc);
-    }
-
-    public setIsApplyServerSideTransaction(isApplyServerSideTransactionFunc: IsApplyServerSideTransaction): void {
-        this.gos.set('isApplyServerSideTransaction', isApplyServerSideTransactionFunc);
-    }
-
-    public setIsServerSideGroup(isServerSideGroupFunc: IsServerSideGroup): void {
-        this.gos.set('isServerSideGroup', isServerSideGroupFunc);
-    }
-
-    public setGetServerSideGroupKey(getServerSideGroupKeyFunc: GetServerSideGroupKey): void {
-        this.gos.set('getServerSideGroupKey', getServerSideGroupKeyFunc);
-    }
-
-    public setGetRowStyle(rowStyleFunc: (params: RowClassParams) => {}): void {
-        this.gos.set('getRowStyle', rowStyleFunc);
-    }
-
-    public setGetRowHeight(rowHeightFunc: (params: RowHeightParams) => number): void {
-        this.gos.set('getRowHeight', rowHeightFunc);
     }
 
     private assertSideBarLoaded(apiMethod: keyof GridApi): boolean {
@@ -1395,15 +978,6 @@ export class GridApi<TData = any> {
         return undefined;
     }
 
-    /** Resets the side bar to the provided configuration. The parameter is the same as the sideBar grid property. The side bar is re-created from scratch with the new config. */
-    public setSideBar(def: SideBarDef | string | string[] | boolean): void {
-        this.gos.set('sideBar', def);
-    }
-
-    public setSuppressClipboardPaste(value: boolean): void {
-        this.gos.set('suppressClipboardPaste', value);
-    }
-
     /** Tells the grid to recalculate the row heights. */
     public resetRowHeights() {
         if (exists(this.clientSideRowModel)) {
@@ -1415,39 +989,6 @@ export class GridApi<TData = any> {
         }
     }
 
-    public setGroupRemoveSingleChildren(value: boolean) {
-        this.gos.set('groupRemoveSingleChildren', value);
-    }
-
-    public setGroupRemoveLowestSingleChildren(value: boolean) {
-        this.gos.set('groupRemoveLowestSingleChildren', value);
-    }
-
-    public setGroupDisplayType(value: RowGroupingDisplayType) {
-        this.gos.set('groupDisplayType', value);
-    }
-
-    /**
-     * Sets the `groupIncludeFooter` property
-     */
-    public setGroupIncludeFooter(value: boolean | UseGroupFooter<TData>) {
-        this.gos.set('groupIncludeFooter', value);
-    }
-
-    /**
-     * Sets the `groupIncludeTotalFooter` property
-     */
-    public setGroupIncludeTotalFooter(value: boolean) {
-        this.gos.set('groupIncludeTotalFooter', value);
-    }
-
-    public setRowClass(className: string | undefined): void {
-        this.gos.set('rowClass', className);
-    }
-    /** Sets the `deltaSort` property */
-    public setDeltaSort(enable: boolean): void {
-        this.gos.set('deltaSort', enable);
-    }
     /**
      * Sets the `rowCount` and `maxRowFound` properties.
      * The second parameter, `maxRowFound`, is optional and if left out, only `rowCount` is set.
@@ -1464,7 +1005,7 @@ export class GridApi<TData = any> {
             console.error('AG Grid: setRowCount cannot be used while using row grouping.');
             return;
         }
-        
+
         if (this.infiniteRowModel) {
             this.infiniteRowModel.setRowCount(rowCount, maxRowFound);
             return;
@@ -1530,13 +1071,9 @@ export class GridApi<TData = any> {
         // this is needed as GridAPI is a bean, and GridAPI.destroy() is called as part
         // of context.destroy(). so we need to stop the infinite loop.
         if (this.destroyCalled) { return; }
-        
-        const event: WithoutGridCommon<GridPreDestroyedEvent<TData>> = {
-            type: Events.EVENT_GRID_PRE_DESTROYED,
-            state: this.getState()
-        };
-        this.dispatchEvent(event);
-        
+
+        this.dispatchEvent({ type: Events.EVENT_GRID_PRE_DESTROYED });
+
         // Set after pre-destroy so user can still use the api in pre-destroy event and it is not marked as destroyed yet.
         this.destroyCalled = true;
 
@@ -1593,7 +1130,7 @@ export class GridApi<TData = any> {
     /** Clears the selected ranges. */
     public clearRangeSelection(): void {
         if (this.rangeService) {
-            this.rangeService.removeAllCellRanges();    
+            this.rangeService.removeAllCellRanges();
         }
         ModuleRegistry.__assertRegistered(ModuleNames.RangeSelectionModule, 'gridApi.clearRangeSelection', this.context.getGridId());
     }
@@ -1768,11 +1305,6 @@ export class GridApi<TData = any> {
         this.menuFactory.hideActiveMenu();
     }
 
-    /** DOM element to use as the popup parent for grid popups (context menu, column menu etc). */
-    public setPopupParent(ePopupParent: HTMLElement): void {
-        this.gos.set('popupParent', ePopupParent);
-    }
-
     /** Navigates the grid focus to the next cell, as if tabbing. */
     public tabToNextCell(event?: KeyboardEvent): boolean {
         return this.navigationService.tabToNextCell(false, event);
@@ -1884,7 +1416,7 @@ export class GridApi<TData = any> {
             console.warn(`AG Grid: invalid value ${params.startRow} for startRow, the value should be >= 0`);
             return;
         }
-    
+
         if (this.serverSideRowModel) {
             this.serverSideRowModel.applyRowData(params.successParams, startRow, route);
         } else {
@@ -1939,10 +1471,6 @@ export class GridApi<TData = any> {
         this.clientSideRowModel.flushAsyncTransactions();
     }
 
-    public setSuppressModelUpdateAfterUpdateTransaction(value: boolean) {
-        this.gos.set('suppressModelUpdateAfterUpdateTransaction', value);
-    }
-
     /**
      * Marks all the currently loaded blocks in the cache for reload.
      * If you have 10 blocks in the cache, all 10 will be marked for reload.
@@ -1986,13 +1514,13 @@ export class GridApi<TData = any> {
 
     /** @deprecated v28 use `refreshServerSide` instead */
     public refreshServerSideStore(params?: RefreshServerSideParams): void {
-        logDeprecation<GridApi>('28.0', 'refreshServerSideStore', 'refreshServerSide');
+        warnOnce('refreshServerSideStore is deprecated since v28, please use refreshServerSide instead.')
         return this.refreshServerSide(params);
     }
 
     /** @deprecated v28 use `getServerSideGroupLevelState` instead */
     public getServerSideStoreState(): ServerSideGroupLevelState[] {
-        logDeprecation<GridApi>('28.0', 'getServerSideStoreState', 'getServerSideGroupLevelState');
+        warnOnce('getServerSideStoreState is deprecated since v28, please use getServerSideGroupLevelState instead.')
         return this.getServerSideGroupLevelState();
     }
 
@@ -2050,21 +1578,7 @@ export class GridApi<TData = any> {
         return this.rowModel.getRowCount();
     }
 
-    /** Resets the data type definitions. This will update the columns in the grid. */
-    public setDataTypeDefinitions(dataTypeDefinitions: {
-        [cellDataType: string]: DataTypeDefinition<TData>;
-    }): void {
-        this.gos.set('dataTypeDefinitions', dataTypeDefinitions);
-    }
 
-    /**
-     * Set whether the grid paginates the data or not.
-     *  - `true` to enable pagination
-     *  - `false` to disable pagination
-     */
-    public setPagination(value: boolean) {
-        this.gos.set('pagination', value);
-    }
     /**
      * Returns `true` when the last page is known.
      * This will always be `true` if you are using the Client-Side Row Model for pagination.
@@ -2077,11 +1591,6 @@ export class GridApi<TData = any> {
     /** Returns how many rows are being shown per page. */
     public paginationGetPageSize(): number {
         return this.paginationProxy.getPageSize();
-    }
-
-    /** Sets the `paginationPageSize`, then re-paginates the grid so the changes are applied immediately. */
-    public paginationSetPageSize(size?: number): void {
-        this.gos.set('paginationPageSize', size);
     }
 
     /** Returns the 0-based index of the page which is showing. */
@@ -2122,11 +1631,6 @@ export class GridApi<TData = any> {
     /** Goes to the specified page. If the page requested doesn't exist, it will go to the last page. */
     public paginationGoToPage(page: number): void {
         this.paginationProxy.goToPage(page);
-    }
-
-    /** Get the current state of the grid. Can be used in conjunction with the `initialState` grid option to save and restore grid state. */
-    public getState(): GridState {
-        return this.stateService.getState();
     }
 
     // Methods migrated from old ColumnApi
@@ -2233,7 +1737,7 @@ export class GridApi<TData = any> {
     public setColumnWidths(columnWidths: { key: string | Column, newWidth: number }[], finished: boolean = true, source?: ColumnEventType): void {
         this.columnModel.setColumnWidths(columnWidths, false, finished, source);
     }
-    
+
     /** Get the pivot mode. */
     public isPivotMode(): boolean { return this.columnModel.isPivotMode(); }
 
@@ -2316,5 +1820,724 @@ export class GridApi<TData = any> {
     /** Returns the grid's pivot result columns. */
     public getPivotResultColumns(): Column[] | null { return this.columnModel.getSecondaryColumns(); }
 
+    /** Get the current state of the grid. Can be used in conjunction with the `initialState` grid option to save and restore grid state. */
+    public getState(): GridState {
+        return this.stateService.getState();
+    }
 
+    /**
+     * Updates a single gridOption to the new value provided.
+     * If updating multiple options, it is recommended to instead use `api.updateGridOptions()` which batches update logic.
+     */
+    public updateGridOption<Key extends keyof GridOptions>(key: Key, value: GridOptions[Key]): void {
+        this.updateGridOptions({ [key]: value });
+    }
+
+    /**
+     * Updates the provided subset of gridOptions with the provided values.
+     */
+    public updateGridOptions(options: Partial<GridOptions>, source: 'api' | 'gridOptionsChanged' = 'api'): void {
+        this.gos.updateGridOptions({
+            options,
+            source,
+        });
+    }
+
+    private deprecatedUpdateGridOption<K extends keyof GridOptions>(key: K, value: GridOptions[K]) {
+        warnOnce(`set${key.charAt(0).toUpperCase()}${key.slice(1, key.length)} is deprecated. Please use 'api.updateGridOptions()' or 'api.updateGridOption()' instead.`);
+        this.updateGridOption(key, value);
+    }
+
+    /**
+     * @deprecated v31 Use `api.updateGridOptions` or `api.updateGridOption` instead.
+     * Set the top pinned rows. Call with no rows / undefined to clear top pinned rows. 
+     **/
+    public setPivotMode(pivotMode: boolean) {
+        this.deprecatedUpdateGridOption('pivotMode', pivotMode);
+    }
+
+    /**
+     * @deprecated v31 Use `api.updateGridOptions` or `api.updateGridOption` instead.
+     * Set the top pinned rows. Call with no rows / undefined to clear top pinned rows. 
+     **/
+    public setPinnedTopRowData(rows?: any[]): void {
+        this.deprecatedUpdateGridOption('pinnedTopRowData', rows);
+    }
+
+    /**
+     * @deprecated v31 Use `api.updateGridOptions` or `api.updateGridOption` instead.
+     * Set the bottom pinned rows. Call with no rows / undefined to clear bottom pinned rows.
+     * */
+    public setPinnedBottomRowData(rows?: any[]): void {
+        this.deprecatedUpdateGridOption('pinnedBottomRowData', rows);
+    }
+
+    /**
+     * @deprecated v31 Use `api.updateGridOptions` or `api.updateGridOption` instead.
+     * DOM element to use as the popup parent for grid popups (context menu, column menu etc).
+     * */
+    public setPopupParent(ePopupParent: HTMLElement): void {
+        this.deprecatedUpdateGridOption('popupParent', ePopupParent);
+    }
+
+    /**
+     * @deprecated v31 Use `api.updateGridOptions` or `api.updateGridOption` instead.
+     */
+    public setSuppressModelUpdateAfterUpdateTransaction(value: boolean) {
+        this.deprecatedUpdateGridOption('suppressModelUpdateAfterUpdateTransaction', value);
+    }
+
+    /**
+     * @deprecated v31 Use `api.updateGridOptions` or `api.updateGridOption` instead.
+     * Resets the data type definitions. This will update the columns in the grid.
+     * */
+    public setDataTypeDefinitions(dataTypeDefinitions: {
+        [cellDataType: string]: DataTypeDefinition<TData>;
+    }): void {
+        this.deprecatedUpdateGridOption('dataTypeDefinitions', dataTypeDefinitions);
+    }
+
+    /**
+     * @deprecated v31 Use `api.updateGridOptions` or `api.updateGridOption` instead.
+     * Set whether the grid paginates the data or not.
+     *  - `true` to enable pagination
+     *  - `false` to disable pagination
+     */
+    public setPagination(value: boolean) {
+        this.deprecatedUpdateGridOption('pagination', value);
+    }
+
+    /**
+     * @deprecated v31 Use `api.updateGridOptions` or `api.updateGridOption` instead.
+     * Sets the `paginationPageSize`, then re-paginates the grid so the changes are applied immediately.
+     * */
+    public paginationSetPageSize(size?: number): void {
+        this.deprecatedUpdateGridOption('paginationPageSize', size);
+    }
+
+    /**
+     * @deprecated v31 Use `api.updateGridOptions` or `api.updateGridOption` instead.
+     * Resets the side bar to the provided configuration. The parameter is the same as the sideBar grid property. The side bar is re-created from scratch with the new config.
+     * */
+    public setSideBar(def: SideBarDef | string | string[] | boolean): void {
+        this.deprecatedUpdateGridOption('sideBar', def);
+    }
+
+    /**
+     * @deprecated v31 Use `api.updateGridOptions` or `api.updateGridOption` instead.
+     */
+    public setSuppressClipboardPaste(value: boolean): void {
+        this.deprecatedUpdateGridOption('suppressClipboardPaste', value);
+    }
+
+    /**
+     * @deprecated v31 Use `api.updateGridOptions` or `api.updateGridOption` instead.
+     */
+    public setGroupRemoveSingleChildren(value: boolean) {
+        this.deprecatedUpdateGridOption('groupRemoveSingleChildren', value);
+    }
+
+    /**
+     * @deprecated v31 Use `api.updateGridOptions` or `api.updateGridOption` instead.
+     */
+    public setGroupRemoveLowestSingleChildren(value: boolean) {
+        this.deprecatedUpdateGridOption('groupRemoveLowestSingleChildren', value);
+    }
+
+    /**
+     * @deprecated v31 Use `api.updateGridOptions` or `api.updateGridOption` instead.
+     */
+    public setGroupDisplayType(value: RowGroupingDisplayType) {
+        this.deprecatedUpdateGridOption('groupDisplayType', value);
+    }
+
+    /**
+     * @deprecated v31 Use `api.updateGridOptions` or `api.updateGridOption` instead.
+     * Sets the `groupIncludeFooter` property
+     */
+    public setGroupIncludeFooter(value: boolean | UseGroupFooter<TData>) {
+        this.deprecatedUpdateGridOption('groupIncludeFooter', value);
+    }
+
+    /**
+     * @deprecated v31 Use `api.updateGridOptions` or `api.updateGridOption` instead.
+     * Sets the `groupIncludeTotalFooter` property
+     */
+    public setGroupIncludeTotalFooter(value: boolean) {
+        this.deprecatedUpdateGridOption('groupIncludeTotalFooter', value);
+    }
+
+    /**
+     * @deprecated v31 Use `api.updateGridOptions` or `api.updateGridOption` instead.
+     */
+    public setRowClass(className: string | undefined): void {
+        this.deprecatedUpdateGridOption('rowClass', className);
+    }
+
+    /**
+     * @deprecated v31 Use `api.updateGridOptions` or `api.updateGridOption` instead.
+     * Sets the `deltaSort` property
+     * */
+    public setDeltaSort(enable: boolean): void {
+        this.deprecatedUpdateGridOption('deltaSort', enable);
+    }
+
+    /**
+     * @deprecated v31 Use `api.updateGridOptions` or `api.updateGridOption` instead.
+     * Sets the `suppressRowDrag` property.
+     * */
+    public setSuppressRowDrag(value: boolean): void {
+        this.deprecatedUpdateGridOption('suppressRowDrag', value);
+    }
+
+    /**
+     * @deprecated v31 Use `api.updateGridOptions` or `api.updateGridOption` instead.
+     * Sets the `suppressMoveWhenRowDragging` property.
+     * */
+    public setSuppressMoveWhenRowDragging(value: boolean): void {
+        this.deprecatedUpdateGridOption('suppressMoveWhenRowDragging', value);
+    }
+
+    /**
+     * @deprecated v31 Use `api.updateGridOptions` or `api.updateGridOption` instead.
+     * Sets the `suppressRowClickSelection` property.
+     * */
+    public setSuppressRowClickSelection(value: boolean): void {
+        this.deprecatedUpdateGridOption('suppressRowClickSelection', value);
+    }
+
+    /**
+     * @deprecated v31 Use `api.updateGridOptions` or `api.updateGridOption` instead.
+     * Set the state of the Advanced Filter. Used for restoring Advanced Filter state
+     * */
+    public setAdvancedFilterModel(advancedFilterModel: AdvancedFilterModel | null): void {
+        this.deprecatedUpdateGridOption('advancedFilterModel', advancedFilterModel);
+    }
+
+    /**
+     * @deprecated v31 Use `api.updateGridOptions` or `api.updateGridOption` instead.
+     * Enable/disable the Advanced Filter
+     * */
+    public setEnableAdvancedFilter(enabled: boolean): void {
+        this.deprecatedUpdateGridOption('enableAdvancedFilter', enabled);
+    }
+
+    /** 
+     * @deprecated v31 Use `api.updateGridOptions` or `api.updateGridOption` instead.
+     * Updates the `includeHiddenColumnsInAdvancedFilter` grid option.
+     * By default hidden columns are excluded from the Advanced Filter.
+     * Set to `true` to include them.
+     */
+    public setIncludeHiddenColumnsInAdvancedFilter(value: boolean): void {
+        this.deprecatedUpdateGridOption('includeHiddenColumnsInAdvancedFilter', value);
+    }
+
+    /**
+     * @deprecated v31 Use `api.updateGridOptions` or `api.updateGridOption` instead.
+     * DOM element to use as the parent for the Advanced Filter, to allow it to appear outside of the grid.
+     * Set to `null` to appear inside the grid.
+     */
+    public setAdvancedFilterParent(advancedFilterParent: HTMLElement | null): void {
+        this.deprecatedUpdateGridOption('advancedFilterParent', advancedFilterParent);
+    }
+
+    /**
+     * @deprecated v31 Use `api.updateGridOptions` or `api.updateGridOption` instead.
+     * Updates the Advanced Filter Builder parameters.
+     * */
+    public setAdvancedFilterBuilderParams(params?: IAdvancedFilterBuilderParams): void {
+        this.deprecatedUpdateGridOption('advancedFilterBuilderParams', params);
+    }
+
+
+    /**
+     * @deprecated v31 Use `api.updateGridOptions` or `api.updateGridOption` instead.
+     * Pass a Quick Filter text into the grid for filtering.
+     * */
+    public setQuickFilter(newFilter: string): void {
+        this.deprecatedUpdateGridOption('quickFilterText', newFilter);
+    }
+
+    /** 
+     * @deprecated As of v30, hidden columns are excluded from the Quick Filter by default. To include hidden columns, use `setIncludeHiddenColumnsInQuickFilter` instead.
+     */
+    public setExcludeHiddenColumnsFromQuickFilter(value: boolean): void {
+        this.deprecatedUpdateGridOption('includeHiddenColumnsInQuickFilter', !value);
+    }
+
+    /** 
+     * @deprecated v31 Use `api.updateGridOptions` or `api.updateGridOption` instead.
+     * Updates the `includeHiddenColumnsInQuickFilter` grid option.
+     * By default hidden columns are excluded from the Quick Filter.
+     * Set to `true` to include them.
+     */
+    public setIncludeHiddenColumnsInQuickFilter(value: boolean): void {
+        this.deprecatedUpdateGridOption('includeHiddenColumnsInQuickFilter', value);
+    }
+
+    /**
+     * @deprecated v31 Use `api.updateGridOptions` or `api.updateGridOption` instead.
+     * Updates the `quickFilterParser` grid option,
+     * which changes how the Quick Filter splits the Quick Filter text into search terms.
+     */
+    public setQuickFilterParser(quickFilterParser?: (quickFilter: string) => string[]): void {
+        this.deprecatedUpdateGridOption('quickFilterParser', quickFilterParser);
+    }
+
+    /**
+     * @deprecated v31 Use `api.updateGridOptions` or `api.updateGridOption` instead.
+     * Updates the `quickFilterMatcher` grid option,
+     * which changes the matching logic for whether a row passes the Quick Filter.
+     */
+    public setQuickFilterMatcher(quickFilterMatcher?: (quickFilterParts: string[], rowQuickFilterAggregateText: string) => boolean): void {
+        this.deprecatedUpdateGridOption('quickFilterMatcher', quickFilterMatcher);
+    }
+
+
+    /**
+     * @deprecated v31 Use `api.updateGridOptions` or `api.updateGridOption` instead.
+     * If `true`, the horizontal scrollbar will always be present, even if not required. Otherwise, it will only be displayed when necessary.
+     * */
+    public setAlwaysShowHorizontalScroll(show: boolean) {
+        this.deprecatedUpdateGridOption('alwaysShowHorizontalScroll', show);
+    }
+
+    /**
+     * @deprecated v31 Use `api.updateGridOptions` or `api.updateGridOption` instead.
+     * If `true`, the vertical scrollbar will always be present, even if not required. Otherwise it will only be displayed when necessary.
+     * */
+    public setAlwaysShowVerticalScroll(show: boolean) {
+        this.deprecatedUpdateGridOption('alwaysShowVerticalScroll', show);
+    }
+
+    /**
+     * @deprecated v31 Use `api.updateGridOptions` or `api.updateGridOption` instead.
+     */
+    public setFunctionsReadOnly(readOnly: boolean) {
+        this.deprecatedUpdateGridOption('functionsReadOnly', readOnly);
+    }
+
+    /**
+     * @deprecated v31 Use `api.updateGridOptions` or `api.updateGridOption` instead.
+     * Call to set new column definitions. The grid will redraw all the column headers, and then redraw all of the rows.
+     */
+    public setColumnDefs(colDefs: (ColDef<TData> | ColGroupDef<TData>)[], source: ColumnEventType = "api") {
+        this.gos.updateGridOptions({
+            options: { columnDefs: colDefs },
+            source,
+        });
+    }
+
+    /**
+     * @deprecated v31 Use `api.updateGridOptions` or `api.updateGridOption` instead.
+     * Call to set new auto group column definition. The grid will recreate any auto-group columns if present.
+     * */
+    public setAutoGroupColumnDef(colDef: ColDef<TData>, source: ColumnEventType = "api") {
+        this.gos.updateGridOptions({
+            options: { autoGroupColumnDef: colDef },
+            source,
+        });
+    }
+
+    /**
+     * @deprecated v31 Use `api.updateGridOptions` or `api.updateGridOption` instead.
+     * Call to set new Default Column Definition.
+     * */
+    public setDefaultColDef(colDef: ColDef<TData>, source: ColumnEventType = "api") {
+        this.gos.updateGridOptions({
+            options: { defaultColDef: colDef },
+            source,
+        });
+    }
+
+    /**
+     * @deprecated v31 Use `api.updateGridOptions` or `api.updateGridOption` instead.
+     * Call to set new Column Types.
+     * */
+    public setColumnTypes(columnTypes: { string: ColDef<TData> }, source: ColumnEventType = "api") {
+        this.gos.updateGridOptions({
+            options: { columnTypes: columnTypes },
+            source,
+        });
+    }
+
+    /**
+     * @deprecated v31 Use `api.updateGridOptions` or `api.updateGridOption` instead.
+     * Sets the `treeData` property.
+     * */
+    public setTreeData(newTreeData: boolean): void {
+        this.deprecatedUpdateGridOption('treeData', newTreeData);
+    }
+
+    /**
+     * @deprecated v31 Use `api.updateGridOptions` or `api.updateGridOption` instead.
+     * Set new datasource for Server-Side Row Model.
+     * */
+    public setServerSideDatasource(datasource: IServerSideDatasource) {
+        this.deprecatedUpdateGridOption('serverSideDatasource', datasource);
+    }
+
+    /**
+     * @deprecated v31 Use `api.updateGridOptions` or `api.updateGridOption` instead.
+     * Updates the `cacheBlockSize` when requesting data from the server if `suppressServerSideInfiniteScroll` is not enabled.
+     * 
+     * Note this purges all the cached data and reloads all the rows of the grid.
+     * */
+    public setCacheBlockSize(blockSize: number) {
+        this.deprecatedUpdateGridOption('cacheBlockSize', blockSize);
+    }
+
+    /** Set new datasource for Infinite Row Model. */
+    public setDatasource(datasource: IDatasource) {
+        this.deprecatedUpdateGridOption('datasource', datasource);
+    }
+
+    /** Set new datasource for Viewport Row Model. */
+    public setViewportDatasource(viewportDatasource: IViewportDatasource) {
+        this.deprecatedUpdateGridOption('viewportDatasource', viewportDatasource);
+    }
+
+    /**
+     * @deprecated v31 Use `api.updateGridOptions` or `api.updateGridOption` instead.
+     * Set the row data.
+     * */
+    public setRowData(rowData: TData[]) {
+        this.deprecatedUpdateGridOption('rowData', rowData);
+    }
+
+    /**
+     * @deprecated v31 Use `api.updateGridOptions` or `api.updateGridOption` instead.
+     * Sets the `enableCellTextSelection` property.
+     * */
+    public setEnableCellTextSelection(selectable: boolean) {
+        this.deprecatedUpdateGridOption('enableCellTextSelection', selectable);
+    }
+
+    /**
+     * @deprecated v31 Use `api.updateGridOptions` or `api.updateGridOption` instead.
+     * Sets the height in pixels for the row containing the column label header.
+     * */
+    public setHeaderHeight(headerHeight?: number) {
+        this.deprecatedUpdateGridOption('headerHeight', headerHeight);
+    }
+
+    /**
+     * @deprecated v31 Use `api.updateGridOptions` or `api.updateGridOption` instead.
+     * Switch between layout options: `normal`, `autoHeight`, `print`.
+     * Defaults to `normal` if no domLayout provided.
+     */
+    public setDomLayout(domLayout?: DomLayoutType) {
+        this.deprecatedUpdateGridOption('domLayout', domLayout);
+    }
+
+    /**
+     * @deprecated v31 Use `api.updateGridOptions` or `api.updateGridOption` instead.
+     * Sets the preferred direction for the selection fill handle.
+     * */
+    public setFillHandleDirection(direction: 'x' | 'y' | 'xy') {
+        this.deprecatedUpdateGridOption('fillHandleDirection', direction);
+    }
+
+    /**
+     * @deprecated v31 Use `api.updateGridOptions` or `api.updateGridOption` instead.
+     * Sets the height in pixels for the rows containing header column groups.
+     * */
+    public setGroupHeaderHeight(headerHeight?: number) {
+        this.deprecatedUpdateGridOption('groupHeaderHeight', headerHeight);
+    }
+
+    /**
+     * @deprecated v31 Use `api.updateGridOptions` or `api.updateGridOption` instead.
+     * Sets the height in pixels for the row containing the floating filters.
+     * */
+    public setFloatingFiltersHeight(headerHeight?: number) {
+        this.deprecatedUpdateGridOption('floatingFiltersHeight', headerHeight);
+    }
+
+    /**
+     * @deprecated v31 Use `api.updateGridOptions` or `api.updateGridOption` instead.
+     * Sets the height in pixels for the row containing the columns when in pivot mode.
+     * */
+    public setPivotHeaderHeight(headerHeight?: number) {
+        this.deprecatedUpdateGridOption('pivotHeaderHeight', headerHeight);
+    }
+
+    /**
+     * @deprecated v31 Use `api.updateGridOptions` or `api.updateGridOption` instead.
+     * Sets the height in pixels for the row containing header column groups when in pivot mode.
+     * */
+    public setPivotGroupHeaderHeight(headerHeight?: number) {
+        this.deprecatedUpdateGridOption('pivotGroupHeaderHeight', headerHeight);
+    }
+
+    /**
+     * @deprecated v31 Use `api.updateGridOptions` or `api.updateGridOption` instead.
+     *  */
+    public setAnimateRows(animateRows: boolean): void {
+        this.deprecatedUpdateGridOption('animateRows', animateRows);
+    }
+
+    /**
+     * @deprecated v31 Use `api.updateGridOptions` or `api.updateGridOption` instead.
+     *  */
+    public setIsExternalFilterPresent(isExternalFilterPresentFunc: () => boolean): void {
+        this.deprecatedUpdateGridOption('isExternalFilterPresent', isExternalFilterPresentFunc);
+    }
+
+    /**
+     * @deprecated v31 Use `api.updateGridOptions` or `api.updateGridOption` instead.
+     *  */
+    public setDoesExternalFilterPass(doesExternalFilterPassFunc: (node: IRowNode) => boolean): void {
+        this.deprecatedUpdateGridOption('doesExternalFilterPass', doesExternalFilterPassFunc);
+    }
+
+    /**
+     * @deprecated v31 Use `api.updateGridOptions` or `api.updateGridOption` instead.
+     *  */
+    public setNavigateToNextCell(navigateToNextCellFunc: (params: NavigateToNextCellParams) => (CellPosition | null)): void {
+        this.deprecatedUpdateGridOption('navigateToNextCell', navigateToNextCellFunc);
+    }
+
+    /**
+     * @deprecated v31 Use `api.updateGridOptions` or `api.updateGridOption` instead.
+     *  */
+    public setTabToNextCell(tabToNextCellFunc: (params: TabToNextCellParams) => (CellPosition | null)): void {
+        this.deprecatedUpdateGridOption('tabToNextCell', tabToNextCellFunc);
+    }
+
+    /**
+     * @deprecated v31 Use `api.updateGridOptions` or `api.updateGridOption` instead.
+     *  */
+    public setTabToNextHeader(tabToNextHeaderFunc: (params: TabToNextHeaderParams) => (HeaderPosition | null)): void {
+        this.deprecatedUpdateGridOption('tabToNextHeader', tabToNextHeaderFunc);
+    }
+
+    /**
+     * @deprecated v31 Use `api.updateGridOptions` or `api.updateGridOption` instead.
+     *  */
+    public setNavigateToNextHeader(navigateToNextHeaderFunc: (params: NavigateToNextHeaderParams) => (HeaderPosition | null)): void {
+        this.deprecatedUpdateGridOption('navigateToNextHeader', navigateToNextHeaderFunc);
+    }
+
+    public setRowGroupPanelShow(rowGroupPanelShow: 'always' | 'onlyWhenGrouping' | 'never'): void {
+        this.deprecatedUpdateGridOption('rowGroupPanelShow', rowGroupPanelShow);
+    }
+
+    /**
+     * @deprecated v31 Use `api.updateGridOptions` or `api.updateGridOption` instead.
+     *  */
+    public setGetGroupRowAgg(getGroupRowAggFunc: (params: GetGroupRowAggParams) => any): void {
+        this.deprecatedUpdateGridOption('getGroupRowAgg', getGroupRowAggFunc);
+    }
+
+    /**
+     * @deprecated v31 Use `api.updateGridOptions` or `api.updateGridOption` instead.
+     *  */
+    public setGetBusinessKeyForNode(getBusinessKeyForNodeFunc: (nodes: IRowNode) => string): void {
+        this.deprecatedUpdateGridOption('getBusinessKeyForNode', getBusinessKeyForNodeFunc);
+    }
+
+    /**
+     * @deprecated v31 Use `api.updateGridOptions` or `api.updateGridOption` instead.
+     *  */
+    public setGetChildCount(getChildCountFunc: (dataItem: any) => number): void {
+        this.deprecatedUpdateGridOption('getChildCount', getChildCountFunc);
+    }
+
+    /**
+     * @deprecated v31 Use `api.updateGridOptions` or `api.updateGridOption` instead.
+     *  */
+    public setProcessRowPostCreate(processRowPostCreateFunc: (params: ProcessRowParams) => void): void {
+        this.deprecatedUpdateGridOption('processRowPostCreate', processRowPostCreateFunc);
+    }
+
+    /**
+     * @deprecated v31 Use `api.updateGridOptions` or `api.updateGridOption` instead.
+     *  */
+    public setGetRowId(getRowIdFunc: GetRowIdFunc): void {
+        this.deprecatedUpdateGridOption('getRowId', getRowIdFunc);
+    }
+
+    /**
+     * @deprecated v31 Use `api.updateGridOptions` or `api.updateGridOption` instead.
+     *  */
+    public setGetRowClass(rowClassFunc: (params: RowClassParams) => string | string[]): void {
+        this.deprecatedUpdateGridOption('getRowClass', rowClassFunc);
+    }
+
+    /**
+     * @deprecated v31 Use `api.updateGridOptions` or `api.updateGridOption` instead.
+     *  */
+    public setIsFullWidthRow(isFullWidthRowFunc: (params: IsFullWidthRowParams) => boolean): void {
+        this.deprecatedUpdateGridOption('isFullWidthRow', isFullWidthRowFunc);
+    }
+
+    /**
+     * @deprecated v31 Use `api.updateGridOptions` or `api.updateGridOption` instead.
+     *  */
+    public setIsRowSelectable(isRowSelectableFunc: IsRowSelectable): void {
+        this.deprecatedUpdateGridOption('isRowSelectable', isRowSelectableFunc);
+    }
+
+    /**
+     * @deprecated v31 Use `api.updateGridOptions` or `api.updateGridOption` instead.
+     *  */
+    public setIsRowMaster(isRowMasterFunc: IsRowMaster): void {
+        this.deprecatedUpdateGridOption('isRowMaster', isRowMasterFunc);
+    }
+
+    /**
+     * @deprecated v31 Use `api.updateGridOptions` or `api.updateGridOption` instead.
+     *  */
+    public setPostSortRows(postSortRowsFunc: (params: PostSortRowsParams) => void): void {
+        this.deprecatedUpdateGridOption('postSortRows', postSortRowsFunc);
+    }
+
+    /**
+     * @deprecated v31 Use `api.updateGridOptions` or `api.updateGridOption` instead.
+     *  */
+    public setGetDocument(getDocumentFunc: () => Document): void {
+        this.deprecatedUpdateGridOption('getDocument', getDocumentFunc);
+    }
+
+    /**
+     * @deprecated v31 Use `api.updateGridOptions` or `api.updateGridOption` instead.
+     *  */
+    public setGetContextMenuItems(getContextMenuItemsFunc: GetContextMenuItems): void {
+        this.deprecatedUpdateGridOption('getContextMenuItems', getContextMenuItemsFunc);
+    }
+
+    /**
+     * @deprecated v31 Use `api.updateGridOptions` or `api.updateGridOption` instead.
+     *  */
+    public setGetMainMenuItems(getMainMenuItemsFunc: GetMainMenuItems): void {
+        this.deprecatedUpdateGridOption('getMainMenuItems', getMainMenuItemsFunc);
+    }
+
+    /**
+     * @deprecated v31 Use `api.updateGridOptions` or `api.updateGridOption` instead.
+     *  */
+    public setProcessCellForClipboard(processCellForClipboardFunc: (params: ProcessCellForExportParams) => any): void {
+        this.deprecatedUpdateGridOption('processCellForClipboard', processCellForClipboardFunc);
+    }
+
+    /**
+     * @deprecated v31 Use `api.updateGridOptions` or `api.updateGridOption` instead.
+     *  */
+    public setSendToClipboard(sendToClipboardFunc: (params: { data: string }) => void): void {
+        this.deprecatedUpdateGridOption('sendToClipboard', sendToClipboardFunc);
+    }
+
+    /**
+     * @deprecated v31 Use `api.updateGridOptions` or `api.updateGridOption` instead.
+     *  */
+    public setProcessCellFromClipboard(processCellFromClipboardFunc: (params: ProcessCellForExportParams) => any): void {
+        this.deprecatedUpdateGridOption('processCellFromClipboard', processCellFromClipboardFunc);
+    }
+
+    /** @deprecated v28 use `setProcessPivotResultColDef` instead */
+    public setProcessSecondaryColDef(processSecondaryColDefFunc: (colDef: ColDef) => void): void {
+        this.setProcessPivotResultColDef(processSecondaryColDefFunc);
+    }
+
+    /** @deprecated v28 use `setProcessPivotResultColGroupDef` instead */
+    public setProcessSecondaryColGroupDef(processSecondaryColGroupDefFunc: (colDef: ColDef) => void): void {
+        this.setProcessPivotResultColGroupDef(processSecondaryColGroupDefFunc);
+    }
+
+    /**
+     * @deprecated v31 Use `api.updateGridOptions` or `api.updateGridOption` instead.
+     *  */
+    public setProcessPivotResultColDef(processPivotResultColDefFunc: (colDef: ColDef) => void): void {
+        this.deprecatedUpdateGridOption('processPivotResultColDef', processPivotResultColDefFunc);
+    }
+
+    /**
+     * @deprecated v31 Use `api.updateGridOptions` or `api.updateGridOption` instead.
+     *  */
+    public setProcessPivotResultColGroupDef(processPivotResultColGroupDefFunc: (colDef: ColDef) => void): void {
+        this.deprecatedUpdateGridOption('processPivotResultColGroupDef', processPivotResultColGroupDefFunc);
+    }
+
+    /**
+     * @deprecated v31 Use `api.updateGridOptions` or `api.updateGridOption` instead.
+     *  */
+    public setPostProcessPopup(postProcessPopupFunc: (params: PostProcessPopupParams) => void): void {
+        this.deprecatedUpdateGridOption('postProcessPopup', postProcessPopupFunc);
+    }
+
+    /**
+     * @deprecated v31 Use `api.updateGridOptions` or `api.updateGridOption` instead.
+     *  */
+    public setInitialGroupOrderComparator(initialGroupOrderComparatorFunc: (params: InitialGroupOrderComparatorParams) => number): void {
+        this.deprecatedUpdateGridOption('initialGroupOrderComparator', initialGroupOrderComparatorFunc);
+    }
+
+    /**
+     * @deprecated v31 Use `api.updateGridOptions` or `api.updateGridOption` instead.
+     *  */
+    public setGetChartToolbarItems(getChartToolbarItemsFunc: GetChartToolbarItems): void {
+        this.deprecatedUpdateGridOption('getChartToolbarItems', getChartToolbarItemsFunc);
+    }
+
+    /**
+     * @deprecated v31 Use `api.updateGridOptions` or `api.updateGridOption` instead.
+     *  */
+    public setPaginationNumberFormatter(paginationNumberFormatterFunc: (params: PaginationNumberFormatterParams) => string): void {
+        this.deprecatedUpdateGridOption('paginationNumberFormatter', paginationNumberFormatterFunc);
+    }
+
+    /** @deprecated v28 use setGetServerSideGroupLevelParams instead */
+    public setGetServerSideStoreParams(getServerSideStoreParamsFunc: (params: GetServerSideGroupLevelParamsParams) => ServerSideGroupLevelParams): void {
+        this.setGetServerSideGroupLevelParams(getServerSideStoreParamsFunc);
+    }
+
+    /**
+     * @deprecated v31 Use `api.updateGridOptions` or `api.updateGridOption` instead.
+     *  */
+    public setGetServerSideGroupLevelParams(getServerSideGroupLevelParamsFunc: (params: GetServerSideGroupLevelParamsParams) => ServerSideGroupLevelParams): void {
+        this.deprecatedUpdateGridOption('getServerSideGroupLevelParams', getServerSideGroupLevelParamsFunc);
+    }
+
+    /**
+     * @deprecated v31 Use `api.updateGridOptions` or `api.updateGridOption` instead.
+     *  */
+    public setIsServerSideGroupOpenByDefault(isServerSideGroupOpenByDefaultFunc: (params: IsServerSideGroupOpenByDefaultParams) => boolean): void {
+        this.deprecatedUpdateGridOption('isServerSideGroupOpenByDefault', isServerSideGroupOpenByDefaultFunc);
+    }
+
+    /**
+     * @deprecated v31 Use `api.updateGridOptions` or `api.updateGridOption` instead.
+     *  */
+    public setIsApplyServerSideTransaction(isApplyServerSideTransactionFunc: IsApplyServerSideTransaction): void {
+        this.deprecatedUpdateGridOption('isApplyServerSideTransaction', isApplyServerSideTransactionFunc);
+    }
+
+    /**
+     * @deprecated v31 Use `api.updateGridOptions` or `api.updateGridOption` instead.
+     *  */
+    public setIsServerSideGroup(isServerSideGroupFunc: IsServerSideGroup): void {
+        this.deprecatedUpdateGridOption('isServerSideGroup', isServerSideGroupFunc);
+    }
+
+    /**
+     * @deprecated v31 Use `api.updateGridOptions` or `api.updateGridOption` instead.
+     *  */
+    public setGetServerSideGroupKey(getServerSideGroupKeyFunc: GetServerSideGroupKey): void {
+        this.deprecatedUpdateGridOption('getServerSideGroupKey', getServerSideGroupKeyFunc);
+    }
+
+    /**
+     * @deprecated v31 Use `api.updateGridOptions` or `api.updateGridOption` instead.
+     *  */
+    public setGetRowStyle(rowStyleFunc: (params: RowClassParams) => {}): void {
+        this.deprecatedUpdateGridOption('getRowStyle', rowStyleFunc);
+    }
+
+    /**
+     * @deprecated v31 Use `api.updateGridOptions` or `api.updateGridOption` instead.
+     *  */
+    public setGetRowHeight(rowHeightFunc: (params: RowHeightParams) => number): void {
+        this.deprecatedUpdateGridOption('getRowHeight', rowHeightFunc);
+    }
 }

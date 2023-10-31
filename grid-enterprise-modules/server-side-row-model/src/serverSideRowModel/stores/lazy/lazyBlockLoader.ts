@@ -198,7 +198,7 @@ export class LazyBlockLoader extends BeanStub {
                 this.loaderTimeout = undefined;
                 this.attemptLoad(startRow, endRow);
                 this.nextBlockToLoad = undefined;
-            }, this.gridOptionsService.getNum('blockLoadDebounceMillis') ?? 0);
+            }, this.gridOptionsService.get('blockLoadDebounceMillis'));
         }
     }
 

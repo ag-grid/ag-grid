@@ -7,7 +7,7 @@ export class AngularFrameworkOverrides extends VanillaFrameworkOverrides {
     private isEmitterUsed: (eventType: string) => boolean;
 
     constructor(private _ngZone: NgZone) {
-        super();
+        super('angular');
     }
 
     setEmitterUsedCallback(isEmitterUsed: (eventType: string) => boolean) {

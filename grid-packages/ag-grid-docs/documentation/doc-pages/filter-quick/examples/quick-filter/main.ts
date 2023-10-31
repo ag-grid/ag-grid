@@ -18,7 +18,8 @@ const gridOptions: GridOptions = {
 }
 
 function onFilterTextBoxChanged() {
-  gridApi!.setQuickFilter(
+  gridApi!.updateGridOption(
+    'quickFilterText',
     (document.getElementById('filter-text-box') as HTMLInputElement).value
   )
 }
@@ -30,5 +31,5 @@ document.addEventListener('DOMContentLoaded', function () {
 
   fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
     .then(response => response.json())
-    .then((data: IOlympicData[]) => gridApi!.setRowData(data));
+    .then((data: IOlympicData[]) => gridApi!.updateGridOption('rowData', data));
 })

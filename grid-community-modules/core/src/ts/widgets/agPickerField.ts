@@ -126,7 +126,7 @@ export abstract class AgPickerField<TValue, TConfig extends IPickerFieldParams =
     protected setupAria(): void {
         const ariaEl = this.getAriaElement();
         
-        ariaEl.setAttribute('tabindex', (this.gridOptionsService.getNum('tabIndex') || 0).toString());
+        ariaEl.setAttribute('tabindex', (this.gridOptionsService.get('tabIndex')).toString());
 
         setAriaExpanded(ariaEl, false);
 
@@ -199,7 +199,7 @@ export abstract class AgPickerField<TValue, TConfig extends IPickerFieldParams =
         const eDocument = this.gridOptionsService.getDocument();
         const ePicker = this.pickerComponent!.getGui();
 
-        if (!this.gridOptionsService.is('suppressScrollWhenPopupsAreOpen')) {
+        if (!this.gridOptionsService.get('suppressScrollWhenPopupsAreOpen')) {
             this.destroyMouseWheelFunc = this.addManagedListener(this.eventService, Events.EVENT_BODY_SCROLL, () => {
                 this.hidePicker();
             });
@@ -256,7 +256,7 @@ export abstract class AgPickerField<TValue, TConfig extends IPickerFieldParams =
         const { pickerType } = this.config;
         const { pickerGap } = this;
 
-        const alignSide = this.gridOptionsService.is('enableRtl') ? 'right' : 'left';
+        const alignSide = this.gridOptionsService.get('enableRtl') ? 'right' : 'left';
 
         this.popupService.positionPopupByComponent({
             type: pickerType,

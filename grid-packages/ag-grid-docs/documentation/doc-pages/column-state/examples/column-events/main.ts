@@ -129,14 +129,14 @@ function onBtShow() {
 }
 
 function onBtPivotOn() {
-  gridApi!.setPivotMode(true)
+  gridApi!.updateGridOption('pivotMode', true)
   gridApi!.applyColumnState({
     state: [{ colId: 'country', pivot: true }],
   })
 }
 
 function onBtPivotOff() {
-  gridApi!.setPivotMode(false)
+  gridApi!.updateGridOption('pivotMode', false)
   gridApi!.applyColumnState({
     defaultState: { pivot: false },
   })
@@ -222,5 +222,5 @@ document.addEventListener('DOMContentLoaded', () => {
 
   fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
     .then(response => response.json())
-    .then((data: IOlympicData[]) => gridApi!.setRowData(data))
+    .then((data: IOlympicData[]) => gridApi!.updateGridOption('rowData', data))
 })

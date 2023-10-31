@@ -37,5 +37,5 @@ document.addEventListener('DOMContentLoaded', () => {
   // you will probably use a framework like JQuery, Angular or something else to do your HTTP calls.
   fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
     .then(response => response.json())
-    .then((data: IOlympicData[]) => gridApi!.setRowData(data))
+    .then((data: IOlympicData[]) => gridApi!.updateGridOption('rowData', data))
 })

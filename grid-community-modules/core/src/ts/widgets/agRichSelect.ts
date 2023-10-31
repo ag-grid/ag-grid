@@ -116,7 +116,7 @@ export class AgRichSelect<TValue = any> extends AgPickerField<TValue, RichSelect
             this.eInput.setDisplayed(false);
         }
 
-        this.eWrapper.tabIndex = this.gridOptionsService.getNum('tabIndex') ?? 0;
+        this.eWrapper.tabIndex = this.gridOptionsService.get('tabIndex');
 
         const { searchDebounceDelay = 300 } = this.config;
         this.clearSearchString = debounce(this.clearSearchString, searchDebounceDelay);

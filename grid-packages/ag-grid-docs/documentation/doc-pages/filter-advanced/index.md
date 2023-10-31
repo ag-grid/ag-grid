@@ -128,6 +128,8 @@ For `number`, `date` and `dateString` Cell Data Types, the following properties 
 - `includeBlanksInLessThan = true`
 - `includeBlanksInGreaterThan = true`
 
+These settings only apply when using the Client-Side Row Model. You need to implement support for these in your server-side filtering logic when using the Server-Side Row Model.
+
 ## Filter Model / API
 
 The Advanced Filter model describes the current state of the Advanced Filter. This is represented by an `AdvancedFilterModel`, which is either a `ColumnAdvancedFilterModel` for a single condition, or a `JoinAdvancedFilterModel` for multiple conditions:

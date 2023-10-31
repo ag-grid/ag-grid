@@ -35,6 +35,6 @@ document.addEventListener('DOMContentLoaded', function () {
   fetch('https://www.ag-grid.com/example-assets/master-detail-data.json')
     .then(response => response.json())
     .then((data: IAccount[]) => {
-      gridApi!.setRowData(data)
+      gridApi!.updateGridOption('rowData', data)
     })
 })

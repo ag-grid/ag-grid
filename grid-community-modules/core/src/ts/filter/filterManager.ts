@@ -423,7 +423,7 @@ export class FilterManager extends BeanStub {
     public isSuppressFlashingCellsBecauseFiltering(): boolean {
         // if user has elected to always flash cell changes, then always return false, otherwise we suppress flashing
         // changes when filtering
-        const allowShowChangeAfterFilter = this.gridOptionsService.is('allowShowChangeAfterFilter') ?? false;
+        const allowShowChangeAfterFilter = this.gridOptionsService.get('allowShowChangeAfterFilter') ?? false;
         return !allowShowChangeAfterFilter && this.processingFilterChange;
     }
 

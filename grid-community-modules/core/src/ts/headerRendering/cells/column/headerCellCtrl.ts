@@ -152,7 +152,7 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl<IHeaderCellComp, Colu
         const pinned = this.getPinned();
         const left = column.getLeft()!;
         const width = column.getActualWidth();
-        const isRtl = gridOptionsService.is('enableRtl');
+        const isRtl = gridOptionsService.get('enableRtl');
 
         const isLeft = hDirection === HorizontalDirection.Left !== isRtl;
         const xPosition = ColumnMoveHelper.normaliseX(
@@ -331,7 +331,7 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl<IHeaderCellComp, Colu
 
         const { column, columnModel, displayName, dragAndDropService, gridOptionsService } = this;
 
-        let hideColumnOnExit = !this.gridOptionsService.is('suppressDragLeaveHidesColumns');
+        let hideColumnOnExit = !this.gridOptionsService.get('suppressDragLeaveHidesColumns');
         const dragSource = this.dragSource = {
             type: DragSourceType.HeaderCell,
             eElement: eSource,
@@ -339,7 +339,7 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl<IHeaderCellComp, Colu
             getDragItem: () => this.createDragItem(column),
             dragItemName: displayName,
             onDragStarted: () => {
-                hideColumnOnExit = !gridOptionsService.is('suppressDragLeaveHidesColumns');
+                hideColumnOnExit = !gridOptionsService.get('suppressDragLeaveHidesColumns');
                 column.setMoving(true, "uiColumnMoved");
             },
             onDragStopped: () => column.setMoving(false, "uiColumnMoved"),
@@ -434,7 +434,7 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl<IHeaderCellComp, Colu
 
     private workOutDraggable(): boolean {
         const colDef = this.column.getColDef();
-        const isSuppressMovableColumns = this.gridOptionsService.is('suppressMovableColumns');
+        const isSuppressMovableColumns = this.gridOptionsService.get('suppressMovableColumns');
 
         const colCanMove = !isSuppressMovableColumns && !colDef.suppressMovable && !colDef.lockPosition;
 
@@ -540,7 +540,7 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl<IHeaderCellComp, Colu
 
         comp.addOrRemoveCssClass('ag-header-span-total', isSpanningTotal);
 
-        const pivotMode = gridOptionsService.is('pivotMode');
+        const pivotMode = gridOptionsService.get('pivotMode');
         const groupHeaderHeight = pivotMode
             ? columnModel.getPivotGroupHeaderHeight()
             : columnModel.getGroupHeaderHeight();
@@ -689,7 +689,7 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl<IHeaderCellComp, Colu
 
     private addColumnHoverListener(): void {
         const listener = () => {
-            if (!this.gridOptionsService.is('columnHoverHighlight')) { return; }
+            if (!this.gridOptionsService.get('columnHoverHighlight')) { return; }
             const isHovered = this.columnHoverService.isHovered(this.column);
             this.comp.addOrRemoveCssClass('ag-column-hover', isHovered);
         };

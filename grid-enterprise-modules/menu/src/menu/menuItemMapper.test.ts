@@ -25,7 +25,7 @@ describe('isValidChartType', () => {
     it('Test selection of options', () => {
         const mixedCharts: ChartGroupsDef = { scatterGroup: ['scatter'], lineGroup: ['line'], barGroup: ['bar', 'normalizedBar'] };
         (menuItemMapper as any).gridOptionsService = {
-            is: () => true,
+            get: () => true,
         }
 
         const chartMenuItemMapper = new ChartMenuItemMapper();

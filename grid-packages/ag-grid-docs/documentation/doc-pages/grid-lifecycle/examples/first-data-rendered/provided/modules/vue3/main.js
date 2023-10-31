@@ -77,7 +77,7 @@ const VueExample = {
             console.log('AG Grid: onFirstDataRendered event triggered');
         };
         const loadGridData = () => {
-            gridApi.value.setRowData(getData());
+            gridApi.value.updateGridOption('rowData', getData());
         };
         const onGridReady = (params) => {
             gridApi.value = params.api;

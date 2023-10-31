@@ -91,14 +91,14 @@ export const AgGridVue = defineComponent({
                     return;
                 }
 
-                const changes: Properties = {};
-                changes[propertyName] = {
-                    // decouple the row data - if we don't when the grid changes row data directly that'll trigger this component to react to rowData changes,
-                    // which can reset grid state (ie row selection)
-                    currentValue: propertyName === 'rowData' ? (Object.isFrozen(currentValue) ? currentValue : markRaw(toRaw(currentValue))) : currentValue,
-                    previousValue,
+                const options: Properties = {
+                    [propertyName]: propertyName === 'rowData' ? (
+                            Object.isFrozen(currentValue) ? currentValue : markRaw(toRaw(currentValue))
+                        ) : currentValue,
                 };
-                ComponentUtil.processOnChange(changes, this.api as any);
+                // decouple the row data - if we don't when the grid changes row data directly that'll trigger this component to react to rowData changes,
+                // which can reset grid state (ie row selection)
+                ComponentUtil.processOnChange(options, this.api as any);
             }
         },
         checkForBindingConflicts() {
@@ -197,7 +197,7 @@ export const AgGridVue = defineComponent({
 
         // the gridOptions we pass to the grid don't need to be reactive (and shouldn't be - it'll cause issues
         // with mergeDeep for example
-        const gridOptions = markRaw(ComponentUtil.combineAttributesAndGridOptions(toRaw(this.gridOptions), this, true));
+        const gridOptions = markRaw(ComponentUtil.combineAttributesAndGridOptions(toRaw(this.gridOptions), this));
 
         this.checkForBindingConflicts();
 

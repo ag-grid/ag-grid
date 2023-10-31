@@ -2,6 +2,13 @@
     "_config_": {
         "codeSrc": "grid-api/grid-api.AUTO.json"
     },
+    "gridOptions": {
+        "meta": {
+            "displayName": "Grid Options"
+        },
+        "updateGridOption": {},
+        "updateGridOptions": {}
+    },
     "columns": {
         "meta": {
             "displayName": "Column Definitions",
@@ -11,9 +18,6 @@
             }
         },
         "getColumnDefs": {},
-        "setColumnDefs": {},
-        "setAutoGroupColumnDef": {},
-        "setDefaultColDef": {},
         "getColumn": {},
         "getColumns": {},
         "getAllGridColumns": {}
@@ -122,7 +126,6 @@
             "description": "See [Pivoting](/pivoting/)"
         },
         "isPivotMode": {},
-        "setPivotMode": {},
         "getPivotColumns": {},
         "setPivotColumns": {},
         "addPivotColumn": {},
@@ -146,8 +149,6 @@
                 "url": "/row-pinning/"
             }
         },
-        "setPinnedTopRowData": {},
-        "setPinnedBottomRowData": {},
         "getPinnedTopRowCount": {},
         "getPinnedBottomRowCount": {},
         "getPinnedTopRow": {},
@@ -222,20 +223,7 @@
         "getBestCostNodeSelection": {},
         "getCellRanges": {},
         "addCellRange": {},
-        "clearRangeSelection": {},
-        "setSuppressRowClickSelection": {},
-        "setEnableCellTextSelection": {
-            "more": {
-                "name": "Cell Text Selection",
-                "url": "/selection-overview/#cell-text-selection"
-            }
-        },
-        "setFillHandleDirection": {
-            "more": {
-                "name": "Fill Handle",
-                "url": "/range-selection-fill-handle/"
-            }
-        }
+        "clearRangeSelection": {}
     },
     "refresh": {
         "meta": {
@@ -273,13 +261,7 @@
                 "url": "/row-sorting/"
             }
         },
-        "onSortChanged": {},
-        "setDeltaSort": {
-            "more": {
-                "name": "Delta sorting",
-                "url": "/data-update-transactions/#delta-sorting"
-            }
-        }
+        "onSortChanged": {}
     },
     "filter": {
         "meta": {
@@ -295,12 +277,6 @@
                 "url": "/filter-quick/#checking-the-quick-filter"
             }
         },
-        "setQuickFilter": {
-            "more": {
-                "name": "Setting the Quick Filter",
-                "url": "/filter-quick/#setting-the-quick-filter"
-            }
-        },
         "resetQuickFilter": {
             "more": {
                 "name": "Reset Cache Text",
@@ -311,24 +287,6 @@
             "more": {
                 "name": "Checking the Quick Filter",
                 "url": "/filter-quick/#checking-the-quick-filter"
-            }
-        },
-        "setIncludeHiddenColumnsInQuickFilter": {
-            "more": {
-                "name": "Include Hidden Columns",
-                "url": "/filter-quick/#include-hidden-columns"
-            }
-        },
-        "setQuickFilterParser": {
-            "more": {
-                "name": "Quick Filter Parser",
-                "url": "/filter-quick/#quick-filter-parser"
-            }
-        },
-        "setQuickFilterMatcher": {
-            "more": {
-                "name": "Quick Filter Matcher",
-                "url": "/filter-quick/#quick-filter-matcher"
             }
         },
         "isColumnFilterPresent": {},
@@ -347,36 +305,6 @@
             "more": {
                 "name": "Advanced Filter",
                 "url": "/filter-advanced/#filter-model--api"
-            }
-        },
-        "setAdvancedFilterModel":  {
-            "more": {
-                "name": "Advanced Filter",
-                "url": "/filter-advanced/#filter-model--api"
-            }
-        },
-        "setEnableAdvancedFilter":  {
-            "more": {
-                "name": "Advanced Filter",
-                "url": "/filter-advanced/"
-            }
-        },
-        "setIncludeHiddenColumnsInAdvancedFilter":  {
-            "more": {
-                "name": "Advanced Filter",
-                "url": "/filter-advanced/#including-hidden-columns"
-            }
-        },
-        "setAdvancedFilterParent":  {
-            "more": {
-                "name": "Advanced Filter",
-                "url": "/filter-advanced/#advanced-filter-parent"
-            }
-        },
-        "setAdvancedFilterBuilderParams":  {
-            "more": {
-                "name": "Advanced Filter",
-                "url": "/filter-advanced/#configuring-advanced-filter-builder"
             }
         },
         "showAdvancedFilterBuilder":  {
@@ -483,15 +411,7 @@
         "addRowGroupColumns": {},
         "removeRowGroupColumn": {},
         "removeRowGroupColumns": {},
-        "moveRowGroupColumn": {},
-        "setGroupIncludeFooter": {},
-        "setGroupIncludeTotalFooter": {},
-        "setTreeData": {
-            "more": {
-                "name": "Tree Data",
-                "url": "/tree-data/"
-            }
-        }
+        "moveRowGroupColumn": {}
     },
     "rowDrag": {
         "meta": {
@@ -499,18 +419,6 @@
             "page": {
                 "name": "Row Dragging",
                 "url": "/row-dragging/"
-            }
-        },
-        "setSuppressRowDrag": {
-            "more": {
-                "name": "Suppress Row Drag",
-                "url": "/row-dragging/#suppress-row-drag"
-            }
-        },
-        "setSuppressMoveWhenRowDragging": {
-            "more": {
-                "name": "Suppress Move When Dragging",
-                "url": "/row-dragging/#suppress-move-when-dragging"
             }
         },
         "addRowDropZone": {
@@ -582,8 +490,6 @@
                 "url": "/scrolling-scenarios/"
             }
         },
-        "setAlwaysShowHorizontalScroll": {},
-        "setAlwaysShowVerticalScroll": {},
         "ensureIndexVisible": {
             "more": {
                 "name": "firstDataRendered event",
@@ -613,7 +519,6 @@
                 "url": "/infinite-scrolling/"
             }
         },
-        "setDatasource": {},
         "refreshInfiniteCache": {},
         "purgeInfiniteCache": {},
         "getInfiniteRowCount": {},
@@ -668,12 +573,10 @@
                 "url": "/row-pagination"
             }
         },
-        "setPagination": {},
         "paginationIsLastPageFound": {
             "description": "Returns `true` when the last page is known; this will always be the case if you are using the [Client-Side Row Model](/client-side-model/) for pagination. Returns `false` when the last page is not known; this only happens when using [Infinite Row Model](/infinite-scrolling/)."
         },
         "paginationGetPageSize": {},
-        "paginationSetPageSize": {},
         "paginationGetCurrentPage": {},
         "paginationGetTotalPages": {},
         "paginationGetRowCount": {},
@@ -682,20 +585,6 @@
         "paginationGoToPreviousPage": {},
         "paginationGoToFirstPage": {},
         "paginationGoToLastPage": {}
-    },
-    "headers": {
-        "meta": {
-            "displayName": "Column Headers",
-            "page": {
-                "name": "Column Headers",
-                "url": "/column-headers/"
-            }
-        },
-        "setHeaderHeight": {},
-        "setGroupHeaderHeight": {},
-        "setFloatingFiltersHeight": {},
-        "setPivotHeaderHeight": {},
-        "setPivotGroupHeaderHeight": {}
     },
     "UndoRedo": {
         "meta": {
@@ -730,28 +619,10 @@
         "meta": {
             "displayName": "Accessories"
         },
-        "setPopupParent": {
-            "more": {
-                "name": "Popup Parent",
-                "url": "/context-menu/#popup-parent"
-            }
-        },
         "showColumnMenuAfterButtonClick": {},
         "showColumnMenuAfterMouseClick": {},
         "hidePopupMenu": {
             "description": "Hides any visible [context menu](/context-menu/) or [column menu](/column-menu/)."
-        },
-        "setSideBar": {
-            "interfaceHierarchyOverrides": {
-                "exclude": [
-                    "ToolPanelDef"
-                ],
-                "include": []
-            },
-            "more": {
-                "name": "Side Bar",
-                "url": "/side-bar/"
-            }
         },
         "getSideBar": {
             "interfaceHierarchyOverrides": {
@@ -905,12 +776,6 @@
             "displayName": "Miscellaneous"
         },
         "getValue": {},
-        "setDomLayout": {
-            "more": {
-                "name": "DOM Layout",
-                "url": "/grid-size/#dom-layout"
-            }
-        },
         "destroy": {},
         "isDestroyed": {},
         "setGridAriaProperty": {
@@ -937,7 +802,6 @@
                 "url": "/client-side-model/"
             }
         },
-        "setRowData": {},
         "applyTransaction": {},
         "applyTransactionAsync": {},
         "flushAsyncTransactions": {},
@@ -951,8 +815,6 @@
                 "url": "/server-side-model/"
             }
         },
-        "setServerSideDatasource": {},
-        "setCacheBlockSize": {},
         "setRowCount": {},
         "refreshServerSide": {
             "more": {

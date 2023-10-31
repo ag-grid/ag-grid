@@ -44,7 +44,7 @@ function setPrinterFriendly(api: GridApi) {
   const eGridDiv = document.querySelector<HTMLElement>('#myGrid')! as any;
   eGridDiv.style.width = ''
   eGridDiv.style.height = ''
-  api.setDomLayout('print')
+  api.updateGridOption('domLayout', 'print')
 }
 
 function setNormal(api: GridApi) {
@@ -52,7 +52,7 @@ function setNormal(api: GridApi) {
   eGridDiv.style.width = '700px'
   eGridDiv.style.height = '200px'
 
-  api.setDomLayout()
+  api.updateGridOption('domLayout', undefined)
 }
 
 // setup the grid after the page has finished loading

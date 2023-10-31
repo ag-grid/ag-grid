@@ -98,5 +98,5 @@ document.addEventListener('DOMContentLoaded', function () {
 
   fetch('https://www.ag-grid.com/example-assets/tree-data.json')
     .then(response => response.json())
-    .then((data) => gridApi!.setRowData(processData(data)))
+    .then((data) => gridApi!.updateGridOption('rowData', processData(data)))
 })

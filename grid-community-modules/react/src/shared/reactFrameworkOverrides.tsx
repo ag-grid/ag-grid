@@ -5,8 +5,8 @@ import DetailCellRenderer from "../reactUi/cellRenderer/detailCellRenderer";
 export class ReactFrameworkOverrides extends VanillaFrameworkOverrides {
 
     constructor() {
-        super();
-        this.renderingEngine = 'react';;
+        super('react');
+        this.renderingEngine = 'react';
     }
 
     private frameworkComponents: any = {

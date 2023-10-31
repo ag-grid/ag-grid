@@ -131,15 +131,15 @@ export class GroupStage extends BeanStub implements IRowNodeStage {
     private createGroupingDetails(params: StageExecuteParams): GroupingDetails {
         const { rowNode, changedPath, rowNodeTransactions, rowNodeOrder } = params;
 
-        const usingTreeData = this.gridOptionsService.is('treeData');
+        const usingTreeData = this.gridOptionsService.get('treeData');
 
         const groupedCols = usingTreeData ? null : this.columnModel.getRowGroupColumns();
 
         const details: GroupingDetails = {
             // someone complained that the parent attribute was causing some change detection
             // to break in an angular add-on.  Taking the parent out breaks a cyclic dependency, hence this flag got introduced.
-            includeParents: !this.gridOptionsService.is('suppressParentsInRowNodes'),
-            expandByDefault: this.gridOptionsService.getNum('groupDefaultExpanded')!,
+            includeParents: !this.gridOptionsService.get('suppressParentsInRowNodes'),
+            expandByDefault: this.gridOptionsService.get('groupDefaultExpanded'),
             groupedCols: groupedCols!,
             rootNode: rowNode,
             pivotMode: this.columnModel.isPivotMode(),
@@ -148,11 +148,11 @@ export class GroupStage extends BeanStub implements IRowNodeStage {
             transactions: rowNodeTransactions!,
             // if no transaction, then it's shotgun, changed path would be 'not active' at this point anyway
             changedPath: changedPath!,
-            groupAllowUnbalanced:  this.gridOptionsService.is('groupAllowUnbalanced'),
+            groupAllowUnbalanced:  this.gridOptionsService.get('groupAllowUnbalanced'),
             isGroupOpenByDefault: this.gridOptionsService.getCallback('isGroupOpenByDefault') as any,
             initialGroupOrderComparator: this.gridOptionsService.getCallback('initialGroupOrderComparator') as any,
             usingTreeData: usingTreeData,
-            suppressGroupMaintainValueType: this.gridOptionsService.is('suppressGroupMaintainValueType'),
+            suppressGroupMaintainValueType: this.gridOptionsService.get('suppressGroupMaintainValueType'),
             getDataPath: usingTreeData ? this.gridOptionsService.get('getDataPath') : undefined,
             keyCreators: groupedCols?.map(column => column.getColDef().keyCreator) ?? []
         };

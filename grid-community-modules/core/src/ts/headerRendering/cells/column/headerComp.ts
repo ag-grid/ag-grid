@@ -188,10 +188,10 @@ export class HeaderComp extends Component implements IHeaderComp {
     private setupTap(): void {
         const { gridOptionsService } = this;
 
-        if (gridOptionsService.is('suppressTouch')) { return; }
+        if (gridOptionsService.get('suppressTouch')) { return; }
 
         const touchListener = new TouchListener(this.getGui(), true);
-        const suppressMenuHide = gridOptionsService.is('suppressMenuHide');
+        const suppressMenuHide = gridOptionsService.get('suppressMenuHide');
         const tapMenuButton = suppressMenuHide && exists(this.eMenu);
         const menuTouchListener = tapMenuButton ? new TouchListener(this.eMenu, true) : touchListener;
 
@@ -230,7 +230,7 @@ export class HeaderComp extends Component implements IHeaderComp {
         // However if suppressMenuHide is set to true the menu will be displayed alwasys, so it's ok
         // to show it on iPad in this case (as hover isn't needed). If suppressMenuHide
         // is false (default) user will need to use longpress to display the menu.
-        const menuHides = !this.gridOptionsService.is('suppressMenuHide');
+        const menuHides = !this.gridOptionsService.get('suppressMenuHide');
 
         const onIpadAndMenuHides = isIOSUserAgent() && menuHides;
         const showMenu = this.params.enableMenu && !onIpadAndMenuHides;
@@ -239,7 +239,7 @@ export class HeaderComp extends Component implements IHeaderComp {
     }
 
     private shouldSuppressMenuHide(): boolean {
-        return this.gridOptionsService.is('suppressMenuHide');
+        return this.gridOptionsService.get('suppressMenuHide');
     }
 
     private setMenu(): void {

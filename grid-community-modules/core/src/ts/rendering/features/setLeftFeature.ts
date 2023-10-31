@@ -38,7 +38,7 @@ export class SetLeftFeature extends BeanStub {
     }
 
     public getColumnOrGroup(): IHeaderColumn {
-        if (this.beans.gridOptionsService.is('enableRtl') && this.colsSpanning) {
+        if (this.beans.gridOptionsService.get('enableRtl') && this.colsSpanning) {
             return last(this.colsSpanning);
         }
         return this.columnOrGroup;
@@ -58,7 +58,7 @@ export class SetLeftFeature extends BeanStub {
     }
 
     private setLeftFirstTime(): void {
-        const suppressMoveAnimation = this.beans.gridOptionsService.is('suppressColumnMoveAnimation');
+        const suppressMoveAnimation = this.beans.gridOptionsService.get('suppressColumnMoveAnimation');
         const oldLeftExists = exists(this.columnOrGroup.getOldLeft());
         const animateColumnMove = this.beans.columnAnimationService.isActive() && oldLeftExists && !suppressMoveAnimation;
         if (animateColumnMove) {
