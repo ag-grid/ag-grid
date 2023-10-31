@@ -307,6 +307,12 @@
                 "url": "/filter-advanced/#filter-model--api"
             }
         },
+        "setAdvancedFilterModel":  {
+            "more": {
+                "name": "Advanced Filter",
+                "url": "/filter-advanced/#filter-model--api"
+            }
+        },        
         "showAdvancedFilterBuilder":  {
             "more": {
                 "name": "Advanced Filter",

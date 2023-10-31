@@ -212,7 +212,7 @@ export const ApiDocumentation: React.FC<ApiProps> = ({
     let codeSrcProvided = [];
     configs.forEach((c) => {
         if (c == undefined) {
-            console.warn(`_config_ property missing from source ${source || (sources || []).join()}.`);
+            console.warn(`<api-documentation>: _config_ property missing from source ${source || (sources || []).join()}.`);
             return;
         }
         if (c.codeSrc) {
@@ -254,8 +254,8 @@ export const ApiDocumentation: React.FC<ApiProps> = ({
             current.map((x) => {
                 const prop = x[key];
                 if (!prop) {
-                    console.warn(`Could not find a prop ${key} under source ${source} and section ${section}!`)
-                    throw new Error(`Could not find a prop ${key} under source ${source} and section ${section}!`); //spl todo
+                    console.warn(`<api-documentation>: Could not find a prop ${key} under source ${source} and section ${section}!`)
+                    throw new Error(`<api-documentation>: Could not find a prop ${key} under source ${source} and section ${section}!`); //spl todo
                 }
                 return prop;
             }),
@@ -392,7 +392,7 @@ const Section: React.FC<SectionProps> = ({
         names.forEach((n) => {
             if (!processed.has(n)) {
                 throw new Error(
-                    `Failed to find a property named ${n} that we requested under section ${title}. Check if you passed the correct name or if the name appears in the source json file that you are using.`
+                    `<api-documentation>: Failed to find a property named ${n} that we requested under section ${title}. Check if you passed the correct name or if the name appears in the source json file that you are using.`
                 );
             }
         });
@@ -493,8 +493,8 @@ const Property: React.FC<PropertyCall> = ({ framework, id, name, definition, con
             type = gridParams.type;
 
             if (gridParams.description && gridParams.description.includes('@deprecated')) {
-                console.warn(`Docs include a property: ${name} that has been marked as deprecated.`);
-                console.warn(gridParams.description);
+                console.warn(`<api-documentation>: Docs include a property: ${name} that has been marked as deprecated.`);
+                console.warn('<api-documentation>: ' + gridParams.description);
             }
 
             const anyInterfaces = extractInterfaces(
@@ -783,7 +783,7 @@ function isCallSig(gridProp: InterfaceEntry): gridProp is ICallSignature {
 
 const FunctionCodeSample: React.FC<FunctionCode> = ({ framework, name, type, config }) => {
     if (typeof type == 'string') {
-        console.log('type is a string!', type);
+        console.log('<api-documentation>: type is a string!', type);
     }
 
     type = type || {};

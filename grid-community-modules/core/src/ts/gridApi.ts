@@ -560,6 +560,11 @@ export class GridApi<TData = any> {
         return null;
     }
 
+    /** Set the state of the Advanced Filter. Used for restoring Advanced Filter state */
+    public setAdvancedFilterModel(advancedFilterModel: AdvancedFilterModel | null): void {
+        this.filterManager.setAdvancedFilterModel(advancedFilterModel);
+    }
+
     /** Open the Advanced Filter Builder dialog (if enabled). */
     public showAdvancedFilterBuilder(): void {
         if (ModuleRegistry.__assertRegistered(ModuleNames.AdvancedFilterModule, 'api.setAdvancedFilterModel', this.context.getGridId())) {
@@ -2004,14 +2009,6 @@ export class GridApi<TData = any> {
      * */
     public setSuppressRowClickSelection(value: boolean): void {
         this.deprecatedUpdateGridOption('suppressRowClickSelection', value);
-    }
-
-    /**
-     * @deprecated v31 Use `api.updateGridOptions` or `api.updateGridOption` instead.
-     * Set the state of the Advanced Filter. Used for restoring Advanced Filter state
-     * */
-    public setAdvancedFilterModel(advancedFilterModel: AdvancedFilterModel | null): void {
-        this.deprecatedUpdateGridOption('advancedFilterModel', advancedFilterModel);
     }
 
     /**
