@@ -117,6 +117,8 @@ export interface ColDefPropertyChangedEvent extends PropertyValueChangedEvent<an
     source?: ColumnEventType;
 }
 
+export type ColKey<TData = any, TValue = any> = string | ColDef<TData, TValue> | Column<TValue>;
+
 @Bean('columnModel')
 export class ColumnModel extends BeanStub {
 
@@ -529,7 +531,7 @@ export class ColumnModel extends BeanStub {
         this.eventService.dispatchEvent(event);
     }
 
-    public getSecondaryPivotColumn(pivotKeys: string[], valueColKey: Column | string): Column | null {
+    public getSecondaryPivotColumn(pivotKeys: string[], valueColKey: ColKey): Column | null {
         if (missing(this.secondaryColumns)) { return null; }
 
         const valueColumnToFind = this.getPrimaryColumn(valueColKey);
@@ -574,7 +576,7 @@ export class ColumnModel extends BeanStub {
     }
 
     public autoSizeColumns(params: {
-        columns: (string | Column)[];
+        columns: ColKey[];
         skipHeader?: boolean;
         skipHeaderGroups?: boolean;
         stopAtGroup?: ColumnGroup;
@@ -719,13 +721,13 @@ export class ColumnModel extends BeanStub {
         this.eventService.dispatchEvent(event);
     }
 
-    public autoSizeColumn(key: string | Column | null, skipHeader?: boolean, source: ColumnEventType = "api"): void {
+    public autoSizeColumn(key: ColKey | null, skipHeader?: boolean, source: ColumnEventType = "api"): void {
         if (key) {
             this.autoSizeColumns({ columns: [key], skipHeader, skipHeaderGroups: true, source });
         }
     }
 
-    private autoSizeColumnGroupsByColumns(keys: (string | Column)[], source: ColumnEventType, stopAtGroup?: ColumnGroup): Column[] {
+    private autoSizeColumnGroupsByColumns(keys: ColKey[], source: ColumnEventType, stopAtGroup?: ColumnGroup): Column[] {
         const columnGroups: Set<ColumnGroup> = new Set();
         const columns = this.getGridColumns(keys);
 
@@ -982,7 +984,7 @@ export class ColumnModel extends BeanStub {
     }
 
     private updatePrimaryColumnList(
-        keys: (string | Column)[] | null,
+        keys: ColKey[] | null,
         masterList: Column[],
         actionIsAdd: boolean,
         columnCallback: (column: Column) => void,
@@ -1028,7 +1030,7 @@ export class ColumnModel extends BeanStub {
         this.eventService.dispatchEvent(event);
     }
 
-    public setRowGroupColumns(colKeys: (string | Column)[], source: ColumnEventType = "api"): void {
+    public setRowGroupColumns(colKeys: ColKey[], source: ColumnEventType = "api"): void {
         this.autoGroupsNeedBuilding = true;
         this.setPrimaryColumnList(colKeys, this.rowGroupColumns,
             Events.EVENT_COLUMN_ROW_GROUP_CHANGED, true,
@@ -1049,11 +1051,11 @@ export class ColumnModel extends BeanStub {
         }
     }
 
-    public addRowGroupColumn(key: string | Column | null, source: ColumnEventType = "api"): void {
+    public addRowGroupColumn(key: ColKey | null, source: ColumnEventType = "api"): void {
         if (key) { this.addRowGroupColumns([key], source); }
     }
 
-    public addRowGroupColumns(keys: (string | Column)[], source: ColumnEventType = "api"): void {
+    public addRowGroupColumns(keys: ColKey[], source: ColumnEventType = "api"): void {
         this.autoGroupsNeedBuilding = true;
         this.updatePrimaryColumnList(keys, this.rowGroupColumns, true,
             this.setRowGroupActive.bind(this, true),
@@ -1062,7 +1064,7 @@ export class ColumnModel extends BeanStub {
         );
     }
 
-    public removeRowGroupColumns(keys: (string | Column)[] | null, source: ColumnEventType = "api"): void {
+    public removeRowGroupColumns(keys: ColKey[] | null, source: ColumnEventType = "api"): void {
         this.autoGroupsNeedBuilding = true;
         this.updatePrimaryColumnList(keys, this.rowGroupColumns, false,
             this.setRowGroupActive.bind(this, false),
@@ -1070,17 +1072,17 @@ export class ColumnModel extends BeanStub {
             source);
     }
 
-    public removeRowGroupColumn(key: string | Column | null, source: ColumnEventType = "api"): void {
+    public removeRowGroupColumn(key: ColKey | null, source: ColumnEventType = "api"): void {
         if (key) { this.removeRowGroupColumns([key], source); }
     }
 
-    public addPivotColumns(keys: (string | Column)[], source: ColumnEventType = "api"): void {
+    public addPivotColumns(keys: ColKey[], source: ColumnEventType = "api"): void {
         this.updatePrimaryColumnList(keys, this.pivotColumns, true,
             column => column.setPivotActive(true, source),
             Events.EVENT_COLUMN_PIVOT_CHANGED, source);
     }
 
-    public setPivotColumns(colKeys: (string | Column)[], source: ColumnEventType = "api"): void {
+    public setPivotColumns(colKeys: ColKey[], source: ColumnEventType = "api"): void {
         this.setPrimaryColumnList(colKeys, this.pivotColumns, Events.EVENT_COLUMN_PIVOT_CHANGED, true,
             (added: boolean, column: Column) => {
                 column.setPivotActive(added, source);
@@ -1088,11 +1090,11 @@ export class ColumnModel extends BeanStub {
         );
     }
 
-    public addPivotColumn(key: string | Column, source: ColumnEventType = "api"): void {
+    public addPivotColumn(key: ColKey, source: ColumnEventType = "api"): void {
         this.addPivotColumns([key], source);
     }
 
-    public removePivotColumns(keys: (string | Column)[], source: ColumnEventType = "api"): void {
+    public removePivotColumns(keys: ColKey[], source: ColumnEventType = "api"): void {
         this.updatePrimaryColumnList(
             keys,
             this.pivotColumns,
@@ -1103,12 +1105,12 @@ export class ColumnModel extends BeanStub {
         );
     }
 
-    public removePivotColumn(key: string | Column, source: ColumnEventType = "api"): void {
+    public removePivotColumn(key: ColKey, source: ColumnEventType = "api"): void {
         this.removePivotColumns([key], source);
     }
 
     private setPrimaryColumnList(
-        colKeys: (string | Column)[],
+        colKeys: ColKey[],
         masterList: Column[],
         eventName: string,
         detectOrderChange: boolean,
@@ -1164,7 +1166,7 @@ export class ColumnModel extends BeanStub {
         this.dispatchColumnChangedEvent(eventName, [...changes.keys()], source);
     }
 
-    public setValueColumns(colKeys: (string | Column)[], source: ColumnEventType = "api"): void {
+    public setValueColumns(colKeys: ColKey[], source: ColumnEventType = "api"): void {
         this.setPrimaryColumnList(colKeys, this.valueColumns,
             Events.EVENT_COLUMN_VALUE_CHANGED,
             false,
@@ -1184,7 +1186,7 @@ export class ColumnModel extends BeanStub {
         }
     }
 
-    public addValueColumns(keys: (string | Column)[], source: ColumnEventType = "api"): void {
+    public addValueColumns(keys: ColKey[], source: ColumnEventType = "api"): void {
         this.updatePrimaryColumnList(keys, this.valueColumns, true,
             this.setValueActive.bind(this, true),
             Events.EVENT_COLUMN_VALUE_CHANGED,
@@ -1192,15 +1194,15 @@ export class ColumnModel extends BeanStub {
         );
     }
 
-    public addValueColumn(colKey: (string | Column) | null | undefined, source: ColumnEventType = "api"): void {
+    public addValueColumn(colKey: ColKey | null | undefined, source: ColumnEventType = "api"): void {
         if (colKey) { this.addValueColumns([colKey], source); }
     }
 
-    public removeValueColumn(colKey: (string | Column), source: ColumnEventType = "api"): void {
+    public removeValueColumn(colKey: ColKey, source: ColumnEventType = "api"): void {
         this.removeValueColumns([colKey], source);
     }
 
-    public removeValueColumns(keys: (string | Column)[], source: ColumnEventType = "api"): void {
+    public removeValueColumns(keys: ColKey[], source: ColumnEventType = "api"): void {
         this.updatePrimaryColumnList(keys, this.valueColumns, false,
             this.setValueActive.bind(this, false),
             Events.EVENT_COLUMN_VALUE_CHANGED,
@@ -1224,7 +1226,7 @@ export class ColumnModel extends BeanStub {
         return newWidth;
     }
 
-    private getPrimaryOrGridColumn(key: string | Column): Column | null {
+    private getPrimaryOrGridColumn(key: ColKey): Column | null {
         const column = this.getPrimaryColumn(key);
 
         return column || this.getGridColumn(key);
@@ -1232,7 +1234,7 @@ export class ColumnModel extends BeanStub {
 
     public setColumnWidths(
         columnWidths: {
-            key: string | Column, // @key - the column who's size we want to change
+            key: ColKey, // @key - the column who's size we want to change
             newWidth: number; // @newWidth - width in pixels
         }[],
         shiftKey: boolean, // @takeFromAdjacent - if user has 'shift' pressed, then pixels are taken from adjacent column
@@ -1455,7 +1457,7 @@ export class ColumnModel extends BeanStub {
         }
     }
 
-    public setColumnAggFunc(key: string | Column | null | undefined, aggFunc: string | IAggFunc | null | undefined, source: ColumnEventType = "api"): void {
+    public setColumnAggFunc(key: ColKey | null | undefined, aggFunc: string | IAggFunc | null | undefined, source: ColumnEventType = "api"): void {
         if (!key) { return; }
 
         const column = this.getPrimaryColumn(key);
@@ -1485,7 +1487,7 @@ export class ColumnModel extends BeanStub {
         this.eventService.dispatchEvent(event);
     }
 
-    public moveColumns(columnsToMoveKeys: (string | Column)[], toIndex: number, source: ColumnEventType = "api", finished: boolean = true): void {
+    public moveColumns(columnsToMoveKeys: ColKey[], toIndex: number, source: ColumnEventType = "api", finished: boolean = true): void {
         if (!this.gridColumns) { return; }
 
         this.columnAnimationService.start();
@@ -1608,7 +1610,7 @@ export class ColumnModel extends BeanStub {
         return rulePassed;
     }
 
-    public moveColumn(key: string | Column, toIndex: number, source: ColumnEventType = "api") {
+    public moveColumn(key: ColKey, toIndex: number, source: ColumnEventType = "api") {
         this.moveColumns([key], toIndex, source);
     }
 
@@ -1765,13 +1767,13 @@ export class ColumnModel extends BeanStub {
         }, source);
     }
 
-    public setColumnPinned(key: string | Column | null, pinned: ColumnPinnedType, source: ColumnEventType = "api"): void {
+    public setColumnPinned(key: ColKey | null, pinned: ColumnPinnedType, source: ColumnEventType = "api"): void {
         if (key) {
             this.setColumnsPinned([key], pinned, source);
         }
     }
 
-    public setColumnsPinned(keys: (string | Column)[], pinned: ColumnPinnedType, source: ColumnEventType = "api"): void {
+    public setColumnsPinned(keys: ColKey[], pinned: ColumnPinnedType, source: ColumnEventType = "api"): void {
         if (!this.gridColumns) { return; }
 
         if (this.gridOptionsService.isDomLayout('print')) {
@@ -1814,7 +1816,7 @@ export class ColumnModel extends BeanStub {
     // with either one column (if it was just one col) or a list of columns
     // used by: autoResize, setVisible, setPinned
     private actionOnGridColumns(// the column keys this action will be on
-        keys: (string | Column)[],
+        keys: ColKey[],
         // the action to do - if this returns false, the column was skipped
         // and won't be included in the event
         action: (column: Column) => boolean,
@@ -1826,7 +1828,7 @@ export class ColumnModel extends BeanStub {
 
         const updatedColumns: Column[] = [];
 
-        keys.forEach((key: string | Column) => {
+        keys.forEach(key => {
             const column = this.getGridColumn(key);
             if (!column) { return; }
 
@@ -2584,15 +2586,15 @@ export class ColumnModel extends BeanStub {
         }
     }
 
-    public getGridColumns(keys: (string | Column)[]): Column[] {
+    public getGridColumns(keys: ColKey[]): Column[] {
         return this.getColumns(keys, this.getGridColumn.bind(this));
     }
 
-    private getColumns(keys: (string | Column)[], columnLookupCallback: (key: string | Column) => Column): Column[] {
+    private getColumns(keys: ColKey[], columnLookupCallback: (key: ColKey) => Column): Column[] {
         const foundColumns: Column[] = [];
 
         if (keys) {
-            keys.forEach((key: (string | Column)) => {
+            keys.forEach((key: ColKey) => {
                 const column = columnLookupCallback(key);
                 if (column) {
                     foundColumns.push(column);
@@ -2604,7 +2606,7 @@ export class ColumnModel extends BeanStub {
     }
 
     // used by growGroupPanel
-    public getColumnWithValidation(key: string | Column | undefined): Column | null {
+    public getColumnWithValidation(key: ColKey | undefined): Column | null {
         if (key == null) { return null; }
 
         const column = this.getGridColumn(key);
@@ -2616,13 +2618,13 @@ export class ColumnModel extends BeanStub {
         return column;
     }
 
-    public getPrimaryColumn(key: string | Column): Column | null {
+    public getPrimaryColumn(key: ColKey): Column | null {
         if (!this.primaryColumns) { return null; }
 
         return this.getColumn(key, this.primaryColumns, this.primaryColumnsMap);
     }
 
-    public getGridColumn(key: string | ColDef | Column): Column | null {
+    public getGridColumn(key: ColKey): Column | null {
         return this.getColumn(key, this.gridColumns, this.gridColumnsMap);
     }
 
@@ -2630,12 +2632,12 @@ export class ColumnModel extends BeanStub {
         return this.gridColumnsMap[key];
     }
 
-    private getSecondaryColumn(key: string | Column): Column | null {
+    private getSecondaryColumn(key: ColKey): Column | null {
         if (!this.secondaryColumns) { return null; }
         return this.getColumn(key, this.secondaryColumns, this.secondaryColumnsMap);
     }
 
-    private getColumn(key: string | ColDef | Column, columnList: Column[], columnMap: { [id: string]: Column }): Column | null {
+    private getColumn(key: ColKey, columnList: Column[], columnMap: { [id: string]: Column }): Column | null {
         if (!key || !columnMap) { return null; }
 
         // most of the time this method gets called the key is a string, so we put this shortcut in
@@ -2667,7 +2669,7 @@ export class ColumnModel extends BeanStub {
         return column ? [column] : null;
     }
 
-    private getAutoColumn(key: string | ColDef | Column): Column | null {
+    private getAutoColumn(key: ColKey): Column | null {
         if (
             !this.groupAutoColumns ||
             !exists(this.groupAutoColumns) ||
@@ -2677,7 +2679,7 @@ export class ColumnModel extends BeanStub {
         return this.groupAutoColumns.find(groupCol => this.columnsMatch(groupCol, key)) || null;
     }
 
-    private columnsMatch(column: Column, key: string | ColDef | Column): boolean {
+    private columnsMatch(column: Column, key: ColKey): boolean {
         const columnMatches = column === key;
         const colDefMatches = column.getColDef() === key;
         const idMatches = column.getColId() == key;
