@@ -16,9 +16,32 @@
 
 .header {
     display: flex;
+    margin-top: $size-1;
+}
+
+.tabsNavList {
     border: 1px solid var(--example-border-color);
-    border-bottom-left-radius: $size-1;
-    border-bottom-right-radius: $size-1;
+    border-radius: $size-1;
+    padding: 0;
+    overflow: hidden;
+
+    li {
+        padding: 0 $size-2;
+        border-radius: $size-half;
+        transition: background-color .25s ease-in-out;
+    }
+
+    li:global(.active) {
+        background-color: var(--background-300);
+
+        #{$darkmode-selector} & {
+            background-color: #202A34;
+        }
+    }
+
+    button {
+        padding: 8px 4px;
+    }
 }
 
 .externalLinks {
@@ -27,7 +50,6 @@
     gap: $size-2;
     flex-shrink: 0;
     margin-left: auto;
-    padding-right: $size-2;
 
     li {
         margin-bottom: 0.125em !important;

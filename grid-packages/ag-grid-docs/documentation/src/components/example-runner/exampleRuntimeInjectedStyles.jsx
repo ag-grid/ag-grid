@@ -32,7 +32,7 @@ export default /* css */ `
 }
 
 body {
-    padding: 0 0 8px;
+    padding: 0;
 }
 
 /* This should be refactored and fixed at the place where .test-header is defined */

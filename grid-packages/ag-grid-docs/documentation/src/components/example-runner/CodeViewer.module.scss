@@ -6,11 +6,8 @@
 
     height: 100%;
     container-type: inline-size;
-    border-top: 1px solid var(--example-border-color);
-    border-right: 1px solid var(--example-border-color);
-    border-left: 1px solid var(--example-border-color);
-    border-top-left-radius: $size-1;
-    border-top-right-radius: $size-1;
+    border: 1px solid var(--example-border-color);
+    border-radius: $size-1;
     overflow: hidden;
 }
 

@@ -543,11 +543,11 @@ const ExampleRunnerInner = ({
                     </div>
 
                     <header className={styles.header}>
-                        <ul className="tabs-nav-list" role="tablist">
+                        <ul className={classnames(styles.tabsNavList, "tabs-nav-list")} role="tablist">
                             {/* eslint-disable-line */}
-                            <li className="tabs-nav-item" role="presentation">
+                            <li className={classnames({ active: !showCode }, "tabs-nav-item")} role="presentation">
                                 <button
-                                    className={classnames('button-style-none', 'tabs-nav-link', { active: !showCode })}
+                                    className={classnames({ active: !showCode }, 'button-style-none', 'tabs-nav-link')}
                                     onClick={(e) => {
                                         setShowCode(false);
                                         e.preventDefault();
@@ -559,13 +559,13 @@ const ExampleRunnerInner = ({
                                     Preview <Icon name="executableProgram" />
                                 </button>
                             </li>
-                            <li className="tabs-nav-item" role="presentation">
+                            <li className={classnames({ active: showCode }, "tabs-nav-item")} role="presentation">
                                 <button
                                     className={classnames(
                                         'button-style-none',
                                         'tabs-nav-link',
+                                        styles.codeTabButton,
                                         { active: showCode },
-                                        styles.codeTabButton
                                     )}
                                     onClick={(e) => {
                                         setShowCode(true);
