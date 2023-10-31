@@ -6,8 +6,6 @@ Display your data in a Grid in 60 seconds.
 
 ## Install
 
-Install the required dependencies:
-
 <framework-specific-section frameworks="react">
 <snippet transform={false} language="bash">
 npm install ag-grid-react
@@ -56,4 +54,4 @@ To learn more about the Grid, read our tutorial series:
 
 1. [Creating a Basic Grid](/deep-dive/)
 2. [Customising the Grid](/customing-the-grid/)
-3. TBC...
+3. [Advanced Features](/advanced-features/)

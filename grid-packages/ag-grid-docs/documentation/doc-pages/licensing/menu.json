@@ -21,6 +21,11 @@
             "icon": "framework"
           },
           {
+            "title": "Advanced Features",
+            "url": "/advanced-features/",
+            "icon": "framework"
+          },
+          {
             "title": "Video Tutorials",
             "url": "/videos/"
           }
