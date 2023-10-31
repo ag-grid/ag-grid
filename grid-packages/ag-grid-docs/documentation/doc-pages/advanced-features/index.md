@@ -4,12 +4,16 @@ title: 'Advanced Features'
 
 ## Overview
 
-## Master / Detail
+## Grouping, Aggregating & Pivoting
 
-## Integrated Charts
+## Visualisation
+
+### Sparklines
+
+### Integrated Charts
 
 ## Summary
 
 ## Next Steps
 
-- Join Community...
+- Join Community...ß
