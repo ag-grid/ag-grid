@@ -129,7 +129,7 @@ export class CellCtrl extends BeanStub {
 
         this.createCellPosition();
         this.addFeatures();
-        this.updateAndFormatValue(true);
+        this.updateAndFormatValue(false);
     }
 
     public shouldRestoreFocus(): boolean {
@@ -491,7 +491,7 @@ export class CellCtrl extends BeanStub {
         this.setEditing(false);
         this.cellComp.setEditDetails(); // passing nothing stops editing
 
-        this.updateAndFormatValue();
+        this.updateAndFormatValue(false);
         this.refreshCell({ forceRefresh: true, suppressFlash: true });
         this.dispatchEditingStoppedEvent(oldValue, newValue, !cancel && !!valueChanged);
 
@@ -589,10 +589,6 @@ export class CellCtrl extends BeanStub {
     }
 
     public onCellChanged(event: CellChangedEvent): void {
-        // because of async in React, the cellComp may not be set yet, if no cellComp then we are
-        // yet to initialise the cell, so no need to refresh.
-        if (!this.cellComp) { return; }
-
         const eventImpactsThisCell = event.column === this.column;
 
         if (eventImpactsThisCell) {
@@ -618,11 +614,6 @@ export class CellCtrl extends BeanStub {
         // if we are in the middle of 'stopEditing', then we don't refresh here, as refresh gets called explicitly
         if (this.suppressRefreshCell || this.editing) { return; }
 
-        // In React, due to async, it's possible a refresh was asked for before the CellComp
-        // has been set. If this happens, we skip the refresh, as the cell is going to be
-        // initialised anyway once the CellComp is set.
-        if (!this.cellComp) { return; }
-
         const colDef = this.column.getColDef();
         const newData = params != null && !!params.newData;
         const suppressFlash = (params != null && !!params.suppressFlash) || !!colDef.suppressCellFlash;
@@ -635,8 +626,16 @@ export class CellCtrl extends BeanStub {
         const noValueProvided = colDef.field == null && colDef.valueGetter == null && colDef.showRowGroup == null;
         const forceRefresh = (params && params.forceRefresh) || noValueProvided || newData;
 
-        const valuesDifferent = this.updateAndFormatValue();
+        const isCellCompReady = !!this.cellComp;
+        // Only worth comparing values if the cellComp is ready
+        const valuesDifferent = this.updateAndFormatValue(isCellCompReady);
         const dataNeedsUpdating = forceRefresh || valuesDifferent;
+
+        // In React, due to async, it's possible a refresh was asked for before the CellComp was created and calls setComp()
+        // So we do not run the cell comp refresh logic at this point in time.
+        if (!isCellCompReady) {
+            return;
+        }
 
         if (dataNeedsUpdating) {
 
@@ -755,17 +754,17 @@ export class CellCtrl extends BeanStub {
         return this.beans.valueFormatterService.formatValue(this.column, this.rowNode, value);
     }
 
-    private updateAndFormatValue(force = false): boolean {
+    private updateAndFormatValue(compareValues: boolean): boolean {
         const oldValue = this.value;
         const oldValueFormatted = this.valueFormatted;
 
         this.value = this.rowNode.getValueFromValueService(this.column);
         this.valueFormatted = this.callValueFormatter(this.value);
 
-        const valuesDifferent = force ? true :
-            !this.valuesAreEqual(oldValue, this.value) || this.valueFormatted != oldValueFormatted;
-
-        return valuesDifferent;
+        if(compareValues){
+            return !this.valuesAreEqual(oldValue, this.value) || this.valueFormatted != oldValueFormatted;
+        }
+        return true;
     }
 
     private valuesAreEqual(val1: any, val2: any): boolean {
