@@ -24,6 +24,7 @@ import stripHtml from 'utils/strip-html';
 import DocumentationLink from '../components/DocumentationLink';
 import DownloadDSButton from 'components/DownloadDSButton';
 import LearningVideos from '../components/LearningVideos';
+import NextStepTiles from '../components/NextStepTiles';
 import { trackApiDocumentation } from '../utils/analytics';
 import styles from './doc-page.module.scss';
 
@@ -120,6 +121,7 @@ const DocPageTemplate = ({ data, pageContext: { framework, exampleIndexData, pag
                 </pre>
             ),
             'download-ds-button': DownloadDSButton,
+            'next-step-tiles': (props) => NextStepTiles({...props})
         },
     }).Compiler;
 

@@ -50,8 +50,6 @@ _For more information, read our detailed [installation guide](/packages-modules/
 
 ## Next Steps
 
-To learn more about the Grid, read our tutorial series:
+To learn more about the Grid, read our tutorials:
 
-1. [Creating a Basic Grid](/deep-dive/)
-2. [Customising the Grid](/customing-the-grid/)
-3. [Advanced Features](/advanced-features/)
+<next-step-tiles tutorial1="true" tutorial2="true" tutorial3="true"/>
