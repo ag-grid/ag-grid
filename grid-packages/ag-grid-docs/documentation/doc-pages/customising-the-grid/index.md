@@ -17,7 +17,7 @@ In this tutorial you will:
 
 Once complete, you will have a custom styled grid, with formatted currency values and manufacturer logos in place of names in the make column:
 
-***TODO: Add grid example***
+<grid-example title='Full Example' name='fully-customised-example' type='generated' options='{ "exampleHeight": 550 }'></grid-example>
 
 ## Theming & Styling
 
@@ -258,7 +258,7 @@ Now, when we run the grid, we should see a manufacturer logo in place of to name
 
 ***TODO: Cell Renderer Example***
 
-## Handling Cell Editing (?)
+## Custom Tooltips
 
 ## Summary
 

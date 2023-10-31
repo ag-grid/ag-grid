@@ -1,0 +1,65 @@
+.ag-theme-custom {
+    --ag-foreground-color: #fff !important;
+    --ag-secondary-foreground-color: #c6c6c6 !important;
+    --ag-header-foreground-color: #fff !important;
+    --ag-background-color: #313131 !important;
+    --ag-header-background-color: #313131 !important;
+    --ag-column-hover-color:#15266b !important;
+    --ag-row-hover-color: #6750A4 !important;
+    --ag-odd-row-background-color: #313131 !important;
+    --ag-header-cell-hover-background-color: #313131 !important;
+    --ag-control-panel-background-color: #515151 !important;
+  }
+  
+  .successful-mission {
+    --ag-row-hover-color: green !important;
+    /* --ag-background-color: green !important;
+    --ag-odd-row-background-color: green !important; */
+  }
+  
+  .unsucessful-mission {
+    --ag-row-hover-color: red !important;
+    /* --ag-background-color: red !important;
+    --ag-odd-row-background-color: red !important; */
+  }
+  
+  .very-low-cost {
+    background: linear-gradient(to right, #03682995 30%, #313131 1%);
+    border-right: #313131 !important;
+  }
+  
+  .low-cost {
+    background: linear-gradient(to right, #03682995 45%, #313131 1%);
+    border-right: #313131 !important;
+  }
+  
+  .medium-cost {
+    background: linear-gradient(to right, #FFA50095 60%, #313131 1%);
+    border-right: #313131 !important;
+  }
+  
+  .high-cost {
+    background: linear-gradient(to right, #FF000095 75%, #313131 1%);
+    border-right: #313131 !important;
+  }
+  
+  .very-high-cost {
+    background: linear-gradient(to right, #FF000095 90%, #313131 1%);
+    border-right: #313131 !important;
+  }
+
+  .custom-tooltip {
+    overflow: visible !important;
+    border: 1px solid cornflowerblue !important;
+    background-color: white !important;
+    color: black !important;
+  }
+  
+  .custom-tooltip p {
+    margin: 5px !important;
+    white-space: nowrap !important;
+  }
+  
+  .custom-tooltip p:first-of-type {
+    font-weight: bold !important;
+  }
