@@ -27,7 +27,11 @@ Once complete, you'll have an interactive grid, populated with data from an exte
 
 ## Introduction
 
-This tutorial uses the Quick Start as a starting point. If you haven't already, complete the [Quick Start](/getting-started/) to install the grid.
+If you haven't already, install the grid on a new project:
+
+<snippet transform={false} language="bash">
+npm install ag-grid-react
+</snippet>
 
 <framework-specific-section frameworks="react">
 
@@ -37,9 +41,9 @@ The `rowData` array contains the data we want to display within the grid:
 
 <snippet transform={false} language="jsx">
 |const [rowData, setRowData] = useState([
-|  { make: 'Toyota', model: 'Celica', price: 35000 },
-|  { make: 'Ford', model: 'Mondeo', price: 32000 },
-|  { make: 'Porsche', model: 'Boxter', price: 72000 }
+|  { company: "RVSN USSR", country: "Kazakhstan", date: "1957-10-04", mission: "Sputnik-1", price: 9550000, successful: true },
+|  { company: "RVSN USSR", country: "Kazakhstan", date: "1957-11-03", mission: "Sputnik-2", price: 8990000, successful: true },
+|  { company: "US Navy", country: "USA", date: "1957-12-06", mission: "Vanguard TV3", price: 6860000, successful: false }
 |]);
 </snippet>
 
@@ -49,9 +53,12 @@ The `colDefs` array defines the columns that we want the grid to display. The `f
 
 <snippet transform={false} language="jsx">
 |const [colDefs] = useState([
-|  { field: "make" },
-|  { field: "model" },
-|  { field: "price" }
+|  { field: "mission" },
+|  { field: "country" },
+|  { field: "successful" },
+|  { field: "date" },
+|  { field: "price" },
+|  { field: "company" }
 |]);
 </snippet>
 
@@ -89,7 +96,7 @@ _Note: Themes & Styling are covered in the next tutorial, [Customising the Grid]
 
 <snippet transform={false} language="jsx">
 |useEffect(() => {
-|  fetch('https://www.ag-grid.com/example-assets/row-data.json') // Fetch data from server
+|  fetch('https://www.ag-grid.com/example-assets/space_mission_data.json') // Fetch data from server
 |    .then(result => result.json()) // Convert to JSON
 |    .then(rowData => setRowData(rowData)) // Update state of `rowData`
 |}, [])
@@ -97,7 +104,7 @@ _Note: Themes & Styling are covered in the next tutorial, [Customising the Grid]
 
 </framework-specific-section>
 
-When we run our application, we should see a grid with ~3,000 rows:
+When we run our application, we should see a grid with ~4,000 rows:
 
 <grid-example title='Updating Example' name='updating-example' type='generated' options='{ "exampleHeight": 550 }'></grid-example>
 
@@ -111,19 +118,22 @@ When we run our application, we should see a grid with ~3,000 rows:
 
 Now that we have a basic grid with some arbitrary data, we can start to configure the grid by using ___Column Properties___.
 
-Column Properties are propreties that can be set on one or more columns to enable/disable column-specific features, like resizing. Let's try this by setting the `resizeable` property of the price column to __true__:
+Column Properties are propreties that can be set on one or more columns to enable/disable column-specific features, like resizing. Let's try this by setting the `resizeable` property of the 'mission' column to __true__:
 
 <snippet transform={false} language="jsx">
 |const [colDefs] = useState([
-|  { field: "make", resizeable: true }, // Enable resizing on this column
-|  { field: "model" },
-|  { field: "price" }
+|  { field: "mission", resizable: true },
+|  { field: "country" },
+|  { field: "successful" },
+|  { field: "date" },
+|  { field: "price" },
+|  { field: "company" }
 |]);
 </snippet>
 
 </framework-specific-version>
 
-We should now be able to drag & resize the 'make' column:
+We should now be able to drag & resize the 'mission' column:
 
 <grid-example title='Configuring Columns Example' name='configure-columns-example' type='generated' options='{ "exampleHeight": 550 }'></grid-example>
 
@@ -157,13 +167,16 @@ When using Default Column Definitions, we can selectively enable/disable feature
 
 <snippet transform={false} language="jsx">
 |const [colDefs] = useState([
-|  { field: "make", resizable: false }, // Override Default Column Definition configuration
-|  { field: "model" },
-|  { field: "price" }
+|  { field: "mission", resizable: false }, // Override default column definition
+|  { field: "country" },
+|  { field: "successful" },
+|  { field: "date" },
+|  { field: "price" },
+|  { field: "company" }
 |]);
 </snippet>
 
-Resizing should now be disabled for the "make" column only:
+Resizing should now be disabled for the "mission" column only:
 
 <grid-example title='Exclude Default Column Definitions Example' name='override-default-columns-example' type='generated' options='{ "exampleHeight": 550 }'></grid-example>
 
@@ -214,7 +227,7 @@ To be notified of when an event is raised by the grid we need to add the relevan
 
 Now, when we click on a cell we should be able to edit it and see the new value logged to the console:
 
-<grid-example title='Complete Example' name='complete-example' type='generated' options='{ "exampleHeight": 550 }'></grid-example>
+<grid-example title='Complete Example' name='grid-events-example' type='generated' options='{ "exampleHeight": 550 }'></grid-example>
 
 _Refer to our [Grid Events](/grid-events/) documentation for a full list of events raised by the grid_
 
@@ -226,25 +239,23 @@ _Refer to our [Grid Events](/grid-events/) documentation for a full list of even
 
 Let's put what you've learned so far into action by modifying the grid:
 
-1. Add an new column to the start of the grid
-
-   _Hint: Modify the column definitons array to include an empty object at the start_
-
-2. Enable Checkbox Selection on the new empty column
-
-   _Hint: `checkboxSelection` is a Column Definiton property_
-
-3. Allow multiple row selection
+1. Enable multiple row selection
 
    _Hint: `rowSelection` is a Grid Option property_
 
-4. Log a message to the console when a row selection is changed
+2. Enable Checkbox Selection on the 'mission' column
+
+   _Hint: `checkboxSelection` is a Column Definiton property_
+
+3. Log a message to the console when a row selection is changed
 
    _Hint: `onSelectionChanged` is a Grid Event_
 
 Once complete, your grid should look like the example below. If you're stuck, check out the source code to see how its done:
 
 <grid-example title='Testing Example' name='testing-example' type='generated' options='{ "exampleHeight": 550 }'></grid-example>
+
+---
 
 ## Summary
 
@@ -267,4 +278,4 @@ By now, you should be familiar with the key concepts of AG Grid:
 Read our next tutorial to learn how to customise and extend the grid with your own design, components and logic, or jump straight into our advanced tutorial
 
 - [Customising The Grid](/customising-the-grid/)
-- TBC
+- [Advanced Features](/advanced-features/)

@@ -3,17 +3,33 @@ import { createGrid, GridApi, GridOptions } from '@ag-grid-community/core';
 let gridApi: GridApi;
 
 const gridOptions: GridOptions = {
-
+    // Data to be displayed
     rowData: [
-        { make: 'Toyota', model: 'Celica', price: 35000 },
-        { make: 'Ford', model: 'Mondeo', price: 32000 },
-        { make: 'Porsche', model: 'Boxter', price: 72000 }
+        { company: "RVSN USSR", country: "Kazakhstan", date: "1957-10-04", mission: "Sputnik-1", price: 9550000, successful: true },
+        { company: "RVSN USSR", country: "Kazakhstan", date: "1957-11-03", mission: "Sputnik-2", price: 8990000, successful: true },
+        { company: "US Navy", country: "USA", date: "1957-12-06", mission: "Vanguard TV3", price: 6860000, successful: false }
     ],
-
+    // Columns to be displayed (Should match rowData properties)
     columnDefs: [
-        { field: 'make', resizable: true },
-        { field: 'model' },
-        { field: 'price' }
+        {
+            field: "mission", 
+            resizable: true
+        },
+        {
+            field: "country"
+        },
+        {
+            field: "successful"
+        },
+        {
+            field: "date"
+        },
+        {
+            field: "price"
+        },
+        {
+            field: "company"
+        }
     ],
 
 }
@@ -21,9 +37,7 @@ const gridOptions: GridOptions = {
 document.addEventListener('DOMContentLoaded', function () {
     const gridDiv = document.querySelector<HTMLElement>('#myGrid')!;
     gridApi = createGrid(gridDiv, gridOptions);
-    gridApi.sizeColumnsToFit();
-
-    fetch('https://www.ag-grid.com/example-assets/row-data.json')
+    fetch('https://www.ag-grid.com/example-assets/space_mission_data.json')
         .then(response => response.json())
         .then((data: any) => gridApi.setRowData(data))
 })
