@@ -269,6 +269,10 @@ export class HeaderRowContainerCtrl extends BeanStub {
         return ctrl.focusHeader(column, event);
     }
 
+    public getViewport(): HTMLElement {
+        return this.eViewport;
+    }
+
     public getRowCount(): number {
         return this.groupsRowCtrls.length + (this.columnsRowCtrl ? 1 : 0) + (this.filtersRowCtrl ? 1 : 0);    
     }

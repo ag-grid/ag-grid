@@ -148,17 +148,16 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl<IHeaderCellComp, Colu
     }
 
     protected moveHeader(hDirection: HorizontalDirection): void {
-        const { column, columnModel, gridOptionsService, ctrlsService } = this;
+        const { eGui, column, columnModel, gridOptionsService, ctrlsService } = this;
         const pinned = this.getPinned();
-        const left = column.getLeft()!;
+        const left = eGui.getBoundingClientRect().left;
         const width = column.getActualWidth();
         const isRtl = gridOptionsService.get('enableRtl');
-
         const isLeft = hDirection === HorizontalDirection.Left !== isRtl;
+
         const xPosition = ColumnMoveHelper.normaliseX(
-            isLeft ? (left - 1) : (left + width + 1),
+            isLeft ? (left - 20) : (left + width + 20),
             pinned,
-            false,
             gridOptionsService,
             ctrlsService
         );

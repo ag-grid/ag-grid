@@ -93,20 +93,18 @@ export class HeaderGroupCellCtrl extends AbstractHeaderCellCtrl<IHeaderGroupCell
     }
 
     protected moveHeader(hDirection: HorizontalDirection): void {
-        const { column, columnModel, gridOptionsService, ctrlsService } = this;
+        const { eGui, column, columnModel, gridOptionsService, ctrlsService } = this;
         const isRtl = gridOptionsService.get('enableRtl');
         const isLeft = hDirection === HorizontalDirection.Left;
 
-        const displayedLeafColumns = column.getDisplayedLeafColumns();
-        const targetColumn = isLeft ? displayedLeafColumns[0] : last(displayedLeafColumns);
-        const columnLeft = targetColumn.getLeft()!;
-        const columnWidth = targetColumn.getActualWidth();
         const pinned = this.getPinned();
+        const rect = eGui.getBoundingClientRect();
+        const left = rect.left;
+        const width = rect.width;
 
         const xPosition = ColumnMoveHelper.normaliseX(
-            isLeft !== isRtl ? columnLeft - 1 : columnLeft + columnWidth + 1,
+            isLeft ? (left - 20) : (left + width + 20),
             pinned,
-            false,
             gridOptionsService,
             ctrlsService
         );
@@ -125,6 +123,9 @@ export class HeaderGroupCellCtrl extends AbstractHeaderCellCtrl<IHeaderGroupCell
             gridOptionsService: gridOptionsService,
             columnModel
         });
+
+        const displayedLeafColumns = column.getDisplayedLeafColumns();
+        const targetColumn = isLeft ? displayedLeafColumns[0] : last(displayedLeafColumns);
 
         this.ctrlsService.getGridBodyCtrl().getScrollFeature().ensureColumnVisible(targetColumn, 'auto');
 

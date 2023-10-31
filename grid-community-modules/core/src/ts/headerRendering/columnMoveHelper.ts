@@ -312,17 +312,17 @@ export class ColumnMoveHelper {
         return validMoves;
     }
 
-    public static normaliseX(x: number, pinned: ColumnPinnedType, fromMouse: boolean, gridOptionsService: GridOptionsService, ctrlsService: CtrlsService): number {
-        const eContainer = ctrlsService.getRowContainerCtrl(pinned).getContainerElement();
+    public static normaliseX(x: number, pinned: ColumnPinnedType, gridOptionsService: GridOptionsService, ctrlsService: CtrlsService): number {
+        const eViewport = ctrlsService.getHeaderRowContainerCtrl(pinned).getViewport();
 
         // flip the coordinate if doing RTL
         if (gridOptionsService.get('enableRtl')) {
-            const clientWidth = eContainer.clientWidth;
+            const clientWidth = eViewport.clientWidth;
             x = clientWidth - x;
         }
 
         // adjust for scroll only if centre container (the pinned containers don't scroll)
-        if (fromMouse && pinned == null) {
+        if (pinned == null) {
             x += ctrlsService.getCenterRowContainerCtrl().getCenterViewportScrollLeft();
         }
 
