@@ -21,22 +21,22 @@ type Props = ButtonProps | LinkProps;
 const COPY_TEXT: Record<CtaType, ReactNode> = {
     newTab: (
         <>
-            <span className='verbs'></span> New Tab <Icon name="docs-import-export" />
+            <span className={styles.tooltip}>New Tab</span><Icon name="newTab" />
         </>
     ),
     plunker: (
         <>
-            <span className='verbs'></span> Plunker <Icon name="plunker" />
+            <span className={styles.tooltip}>Plunker</span><Icon name="plunker" />
         </>
     ),
     stackblitz: (
         <>
-            <span className='verbs'>Edit on</span> StackBlitz <Icon name="stackblitz" />
+            <span className={styles.tooltip}>StackBlitz</span><Icon name="stackblitz" />
         </>
     ),
     codesandbox: (
         <>
-            <span className='verbs'></span> CodeSandbox <Icon name="codesandbox" />
+            <span className={styles.tooltip}>CodeSandbox</span><Icon name="codesandbox" />
         </>
     ),
 };

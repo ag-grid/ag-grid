@@ -3,17 +3,77 @@
 .cta {
     --button-text-color: var(--link-color);
 
-    transition: color $default-transition-timing;
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: $size-5;
+    height: $size-5;
+    border-radius: var(--border-radius);
+    transition: color $default-transition-timing, background-color $default-transition-timing;
 
     &:hover {
-        --button-text-color: var(--link-hover-color);
+        --button-text-color: var(--link-color);
+
+        background-color: var(--background-400);
+
+        svg {
+            --text-color: var(--link-color);
+        }
+
+        #{$darkmode-selector} & {
+            background-color: color-mix(in srgb, var(--primary-100), var(--default-background-color));
+        }
     }
 
     svg {
         --icon-size: 1.25em;
 
-        position: relative;
-        bottom: 0.125em;
+        transform: translate(1px, 0.75px);
         transition: fill $default-transition-timing;
+    }
+
+    li:first-child & svg {
+        --icon-size: 1.35em;
+    }
+}
+
+.tooltip {
+    --tooltip-background: var(--background-600);
+
+    position: absolute;
+    display: block;
+    color: var(--default-text-color);
+    top: -$size-5;
+    padding: $size-half $size-2;
+    white-space: nowrap;
+    background-color: var(--tooltip-background);
+    border-radius: var(--border-radius);
+    opacity: 0;
+    transform: scale(0.25);
+    transform-origin: center bottom;
+    pointer-events: none;
+    transition: opacity $default-transition-timing, transform $default-transition-timing;
+
+    &::before {
+        $pointer-size: $size-half;
+
+        content: '';
+        position: absolute;
+        background-color: var(--tooltip-background);
+        width: $pointer-size * 2;
+        height: $pointer-size * 2;
+        transform: rotate(45deg);
+        bottom: $pointer-size * -1.1;
+        left: calc(50% - $pointer-size);
+    }
+
+    .cta:hover & {
+        opacity: 1;
+        transform: scale(1);
+    }
+
+    #{$darkmode-selector} & {
+        --tooltip-background: #314253;
     }
 }

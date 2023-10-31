@@ -543,20 +543,20 @@ const ExampleRunnerInner = ({
                     </div>
 
                     <header className={styles.header}>
-                        <ul className={classnames(styles.tabsNavList, "tabs-nav-list")} role="tablist">
+                        <ul className={classnames(styles.tabsNavList, "tabs-nav-list")} role="tablist"
+                            onClick={(e) => {
+                                setShowCode(!showCode);
+                                e.preventDefault();
+                            }}>
                             {/* eslint-disable-line */}
                             <li className={classnames({ active: !showCode }, "tabs-nav-item")} role="presentation">
                                 <button
                                     className={classnames({ active: !showCode }, 'button-style-none', 'tabs-nav-link')}
-                                    onClick={(e) => {
-                                        setShowCode(false);
-                                        e.preventDefault();
-                                    }}
                                     role="tab"
                                     title="Run example"
                                     disabled={!showCode}
                                 >
-                                    Preview <Icon name="executableProgram" />
+                                    <Icon name="eye" /> Preview
                                 </button>
                             </li>
                             <li className={classnames({ active: showCode }, "tabs-nav-item")} role="presentation">
@@ -567,15 +567,11 @@ const ExampleRunnerInner = ({
                                         styles.codeTabButton,
                                         { active: showCode },
                                     )}
-                                    onClick={(e) => {
-                                        setShowCode(true);
-                                        e.preventDefault();
-                                    }}
                                     role="tab"
                                     title="View Example Source Code"
                                     disabled={showCode}
                                 >
-                                    Code <Icon name="code" />
+                                    <Icon name="code" /> Code
                                 </button>
                             </li>
                         </ul>

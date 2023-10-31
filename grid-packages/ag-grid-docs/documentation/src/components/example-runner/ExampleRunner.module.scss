@@ -16,23 +16,30 @@
 
 .header {
     display: flex;
+    align-items: center;
     margin-top: $size-1;
 }
 
 .tabsNavList {
-    border: 1px solid var(--example-border-color);
-    border-radius: $size-1;
     padding: 0;
-    overflow: hidden;
+    cursor: pointer;
+
+    &:hover li:not(:global(.active)) button {
+        --button-text-color: var(--link-color);
+    }
 
     li {
-        padding: 0 $size-2;
-        border-radius: $size-half;
+        padding: 0 12px 0 8px;
+        border-radius: $size-1;
         transition: background-color .25s ease-in-out;
+
+        &:not(:last-child) {
+            margin-right: $size-half;
+        }
     }
 
     li:global(.active) {
-        background-color: var(--background-300);
+        background-color: var(--background-600);
 
         #{$darkmode-selector} & {
             background-color: #202A34;
@@ -40,25 +47,28 @@
     }
 
     button {
+        --button-text-color: var(--default-text-color);
+
         padding: 8px 4px;
+    }
+
+    button::after {
+        display: none;
+    }
+
+    svg {
+        margin-right: $size-half;
     }
 }
 
 .externalLinks {
     display: flex;
     align-items: center;
-    gap: $size-2;
     flex-shrink: 0;
     margin-left: auto;
 
     li {
         margin-bottom: 0.125em !important;
-    }
-
-    @container (max-width: 780px) {
-        :global(.verbs) {
-            display: none;
-        }
     }
 }
 
