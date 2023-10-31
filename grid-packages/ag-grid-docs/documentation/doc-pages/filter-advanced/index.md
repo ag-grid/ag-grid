@@ -64,11 +64,7 @@ The different properties that can be set for each column are explained in the se
 
 By default, hidden columns do not appear in the Advanced Filter. To make hidden columns appear, set `includeHiddenColumnsInAdvancedFilter = true`.
 
-This can also be set via the API method `setIncludeHiddenColumnsInAdvancedFilter`.
-
 <api-documentation source='grid-options/properties.json' section='filter' names='["includeHiddenColumnsInAdvancedFilter"]'></api-documentation>
-
-<api-documentation source='grid-api/api.json' section='filter' names='["setIncludeHiddenColumnsInAdvancedFilter"]'></api-documentation>
 
 ### Row Grouping
 
