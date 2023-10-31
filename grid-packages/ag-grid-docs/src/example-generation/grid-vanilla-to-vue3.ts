@@ -214,7 +214,7 @@ function getPropertyBindings(bindings: any, componentFileNames: string[], import
             }
         });
 
-    if (bindings.data && bindings.data.callback.indexOf('gridApi.setRowData') >= 0) {
+    if (bindings.data && bindings.data.callback.indexOf('gridApi.updateGridOption(\'rowData\',') >= 0) {
         if (propertyAttributes.filter(item => item.indexOf(':rowData') >= 0).length === 0) {
             propertyAttributes.push(':rowData="rowData"');
             propertyNames.push('rowData');
