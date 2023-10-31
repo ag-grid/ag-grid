@@ -42,9 +42,9 @@ Column Headers can be:
 - Moved by pressing <kbd>⇧ Shift</kbd> + <kbd>←</kbd> / <kbd>→</kbd>.
 - Resized by pressing <kbd>⌥ Alt</kbd> + <kbd>←</kbd> / <kbd>→</kbd>.
 
-### Group Column Headers
+### Column Group Headers
 
-While navigating Group Column Headers, if the current Group Column is expandable, pressing <kbd>↵ Enter</kbd> will toggle the expanded state of the group.
+While navigating Column Groups Headers, if the current Column Group is expandable, pressing <kbd>↵ Enter</kbd> will toggle the expanded state of the group.
 
 ### Normal Column Headers
 
@@ -56,9 +56,9 @@ Regular Column Headers may have selection checkboxes, sorting functions and menu
 - Press <kbd>^ Ctrl</kbd>+<kbd>↵ Enter</kbd> to open the menu for the focused Column Header.
 - When a menu is open, simply press <kbd>⎋ Esc</kbd> to close it and the focus will return to the Column Header.
 
-### Floating Filters
+### Floating Filter Headers
 
-While navigation the Floating Filter Columns Headers with the keyboard pressing <kbd>←</kbd> <kbd>→</kbd> the focus will move from one Column Header to the next, if you wish to navigate within the Floating Filter Cell, press <kbd>↵ Enter</kbd> to focus the first enabled element within the current Floating Filter Cell, and press <kbd>⎋ Esc</kbd> to return the focus to the Floating Filter Column Header.
+While navigating the Floating Filter Columns Headers with the keyboard, pressing <kbd>←</kbd> <kbd>→</kbd> will move focus from one Column Header to the next. If you wish to navigate within the Floating Filter Cell, press <kbd>↵ Enter</kbd> to focus the first enabled element within the current Floating Filter Cell, and press <kbd>⎋ Esc</kbd> to return focus to the Floating Filter Column Header.
 
 ## Example
 
