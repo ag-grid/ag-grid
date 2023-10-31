@@ -60,8 +60,6 @@
 
     #{$darkmode-selector} & {
         --nav-line-color: #394755;
-
-        -webkit-font-smoothing: auto;
     }
 }
 
@@ -81,7 +79,7 @@
 
     display: inline-block;
     padding: 0;
-    color: var(--neutral-500);
+    color: var(--neutral-600);
     transition: color $default-transition-timing;
 
     #{$darkmode-selector} & {
@@ -90,7 +88,7 @@
         --hover-background: rgba(56, 146, 249, 0.06);
         --active-background: rgba(56, 146, 249, 0.09);
 
-        color: var(--neutral-800);
+        color: var(--secondary-text-color);
     }
 
     &:hover,

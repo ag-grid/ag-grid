@@ -45,18 +45,21 @@ code {
 kbd {
     display: inline-block;
     margin: 0.1em 0.1em;
-    padding: 0.1em 0.6em;
+    padding: 0.1em 0.6em 0.15em;
     font-size: 0.875em;
     font-family: var(--font-family);
     border-radius: var(--border-radius);
     background-color: var(--default-background-color);
     border: 1px solid var(--border-color);
-    box-shadow: inset 0 -2px 0 #4e4e4f;
+    box-shadow: inset 0 -2px 0 var(--neutral-200);
 
     #{$darkmode-selector} & {
-        background-color: #121f29;
+        background-color: var(--neutral-300);
+        text-shadow: -1px -1px var(--neutral-100);
+        border: 1px solid var(--neutral-500);
+        border-bottom: 1px solid var(--neutral-400);
+        box-shadow: inset 0 -2px 0 var(--neutral-100);
     }
-
 }
 
 img,
