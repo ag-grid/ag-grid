@@ -30,9 +30,6 @@ export const AgGridReactUi = <TData,>(props: AgReactUiProps<TData>) => {
     const destroyFuncs = useRef<(() => void)[]>([]);
     const whenReadyFuncs = useRef<(() => void)[]>([]);
 
-    //prevProps
-    const prevProps = useRef<AgReactUiProps<any>>(props);
-
     const ready = useRef<boolean>(false);
 
     const [context, setContext] = useState<Context | undefined>(undefined);
