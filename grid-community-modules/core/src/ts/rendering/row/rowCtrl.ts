@@ -1512,6 +1512,9 @@ export class RowCtrl extends BeanStub {
     public destroySecondPass(): void {
         this.allRowGuis.length = 0;
 
+        // if we are editing, destroying the row will stop editing
+        this.stopEditing();
+
         const destroyCellCtrls = (ctrls: CellCtrlListAndMap): CellCtrlListAndMap => {
             ctrls.list.forEach(c => c.destroy());
             return { list: [], map: {} };
