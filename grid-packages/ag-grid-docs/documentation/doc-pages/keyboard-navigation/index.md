@@ -33,32 +33,32 @@ Pressing the <kbd>␣ Space</kbd> key on a cell will select the cells row, or de
 If you want keyboard navigation turned off, then set `suppressCellFocus=true` in the gridOptions.
 
 
-## Header Navigation
+## Column Header Navigation
 
-The grid header supports full keyboard navigation, however the behaviour may differ based on the type of header that is currently focused.
+The grid header supports full keyboard navigation, however the behaviour may differ based on the type of Column Header that is currently focused.
 
-Headers can be:
+Column Headers can be:
 
 - Moved by pressing <kbd>⇧ Shift</kbd> + <kbd>←</kbd> / <kbd>→</kbd>.
 - Resized by pressing <kbd>⌥ Alt</kbd> + <kbd>←</kbd> / <kbd>→</kbd>.
 
-### Grouped Headers
+### Group Column Headers
 
-While navigating grouped headers, if the current grouped header is expandable, pressing <kbd>↵ Enter</kbd> will toggle the expanded state of the group.
+While navigating Group Column Headers, if the current Group Column is expandable, pressing <kbd>↵ Enter</kbd> will toggle the expanded state of the group.
 
-### Normal Headers
+### Normal Column Headers
 
-Regular headers may have selection checkboxes, sorting functions and menus, so to access all these functions while focusing a header, you can do the following:
+Regular Column Headers may have selection checkboxes, sorting functions and menus, so to access all these functions while focusing a Column Header, you can do the following:
 
-- Press <kbd>␣ Space</kbd> to toggle the header checkbox selection.
+- Press <kbd>␣ Space</kbd> to toggle the Column Header checkbox selection.
 - Press <kbd>↵ Enter</kbd> to toggle the sorting state of that column.
 - Press <kbd>⇧ Shift</kbd>+<kbd>↵ Enter</kbd> to toggle multi-sort for that column.
-- Press <kbd>^ Ctrl</kbd>+<kbd>↵ Enter</kbd> to open the menu for the focused header.
-- When a menu is open, simply press <kbd>⎋ Esc</kbd> to close it and the focus will return to the header.
+- Press <kbd>^ Ctrl</kbd>+<kbd>↵ Enter</kbd> to open the menu for the focused Column Header.
+- When a menu is open, simply press <kbd>⎋ Esc</kbd> to close it and the focus will return to the Column Header.
 
 ### Floating Filters
 
-While navigation the floating filters header with the keyboard pressing left/right the focus will move from header cell to header cell, if you wish to navigate within the cell, press <kbd>↵ Enter</kbd> to focus the first enabled element within the current floating filter cell, and press <kbd>⎋ Esc</kbd> to return the focus to the floating filter cell.
+While navigation the Floating Filter Columns Headers with the keyboard pressing <kbd>←</kbd> <kbd>→</kbd> the focus will move from one Column Header to the next, if you wish to navigate within the Floating Filter Cell, press <kbd>↵ Enter</kbd> to focus the first enabled element within the current Floating Filter Cell, and press <kbd>⎋ Esc</kbd> to return the focus to the Floating Filter Column Header.
 
 ## Example
 
