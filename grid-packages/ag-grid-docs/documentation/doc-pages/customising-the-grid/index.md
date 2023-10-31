@@ -10,12 +10,13 @@ _Note: We recommend completing the [introductory tutorial](/deep-dive) first._
 
 In this tutorial you will:
 
-- Customise the look and feel of the grid
-- Format grid values
-- Customise cell content
-- Handle cell editing ___(Not sure if this fits here...)___
+1. Pick a theme
+2. Customise row & cell styles
+3. Format grid values
+4. Customise cell content
+5. Implement custom tooltips
 
-Once complete, you will have a custom styled grid, with formatted currency values and manufacturer logos in place of names in the make column:
+Once complete, you will have a grid with formatted price & date values, and custom styles applied to rows & cells. Try it out for yourself by editing the country, success, price or date columns and watch the styles update in real-time:
 
 <grid-example title='Full Example' name='fully-customised-example' type='generated' options='{ "exampleHeight": 550 }'></grid-example>
 
@@ -37,40 +38,7 @@ To use a theme, set the classname of the grid's parent div to the name of the th
 |&lt;/div>
 </snippet>
 
-### Customising Themes
-
-All themes can be customised by modifying CSS variables. Let's explore this by creating a new `ag-theme-custom.css` file with the following variables:
-
-<snippet transform={false} language=css>
-|.ag-theme-custom {
-|  --ag-foreground-color: #fff !important;
-|  --ag-secondary-foreground-color: #c6c6c6 !important;
-|  --ag-header-foreground-color: #fff !important;
-|  --ag-background-color: #313131 !important;
-|  --ag-header-background-color: #313131 !important;
-|  --ag-column-hover-color:#15266b !important;
-|  --ag-row-hover-color: #6750A4 !important;
-|  --ag-header-cell-hover-background-color: #313131 !important;
-|}
-</snippet>
-
-_Note: The file must be named `ag-theme-*` or it will not be picked up by the grid. Read more in our [Customisation Guide](/global-style-customisation/#creating-a-reusable-package-of-design-customisations)_
-
-We can then add this class to our grid to modify the existing theme:
-
-<snippet transform={false} language=jsx>
-|return (
-|  &lt;div className="ag-theme-custom" style={{ width: 600, height: 500 }}>
-|    &lt;AgGridReact ... />
-|  &lt;/div>
-|);
-</snippet>
-
-We should now have a dark grid, with a purple highlight when hovering rows, that still uses the base Material theme:
-
-***TODO: Example of grid w/ custom CSS***
-
-_Note: Refer to our [documentation](#) for a full list of CSS variables_
+_Note: All theme can be customised by creating a new `ag-theme-*.css` file and overriding the relevant [CSS variables](/global-style-customisation-variables/)._
 
 ### Styling Rows & Cells
 
@@ -188,16 +156,18 @@ We have several tools to help modify the look and feel of the grid:
 
 ## Formatting Grid Values
 
-The data displayed within a grid usually requires some formatting to help improve UX. We can easily format our `rowData` using Value Formatters. Let's explore this by formatting the price column so that it displays the currency. Value Formatters are a property within the `colDefs` array, so in order to format the price column, we need to add a `valueFormatter` to our price property within `colDefs`, like so:
+The data supplied to the grid usually requires some degree of formatting. To achieve this, we can use __Value Formatters__.
+
+__Value Formatters__ are basic functions which take the value of the cell, apply some basic formatting, and return the new value which will be displayed by the grid. Let's try this by adding the valueFormatter property to our 'price' column within our 'colDefs' array and returning the value prefixed with a '£':
 
 <snippet transform={false} language=jsx>
 |const [colDefs] = useState([
-|  { field: "make" },
-|  { field: "model" },
+|  ...
 |  {
 |    field: "price",
-|    valueFormatter: params => return '£' + params.value;
+|    valueFormatter: params => return '£' + params.value.toLocaleString();
 |  }
+|  ...
 |]);
 |
 |return (
@@ -259,6 +229,14 @@ Now, when we run the grid, we should see a manufacturer logo in place of to name
 ***TODO: Cell Renderer Example***
 
 ## Custom Tooltips
+
+## Test Your Knowledge
+
+1. Format the Date column
+
+_Hint:_
+
+2. ...
 
 ## Summary
 

@@ -13,13 +13,7 @@ In this tutorial you will:
 3. Configure basic features
 4. Hook into grid events
 
-Once complete, you'll have an interactive grid, populated with data from an external source that responds to user-interaction. Try it our for yourself by:
-
-1. Clicking Column Headers to sort
-2. Clicking hamburger menu on Column Headers to filter
-3. Draging Column Header Dividers to resize columns
-4. Clicking cells to select them (hold 'ctrl' to select multiple rows)
-5. Switching pages with the pagination controls
+Once complete, you'll have an interactive grid, populated with data from an external source that responds to user-interaction. Try it out for yourself by __sorting__, __filtering__, __resizing__, __selecting__, or __editing__ data in the grid.
 
 <grid-example title='Testing Example' name='testing-example' type='generated' options='{ "exampleHeight": 550 }'></grid-example>
 
@@ -259,9 +253,7 @@ Once complete, your grid should look like the example below. If you're stuck, ch
 
 ## Summary
 
-Congratulations! You've completed the tutorial and built your first grid.
-
-By now, you should be familiar with the key concepts of AG Grid:
+Congratulations! You've completed the tutorial and built your first grid. By now, you should be familiar with the key concepts of AG Grid:
 
 - __Row Data:__ Your data, in JSON format, that you want the grid to display.
 
@@ -277,5 +269,4 @@ By now, you should be familiar with the key concepts of AG Grid:
 
 Read our next tutorial to learn how to customise and extend the grid with your own design, components and logic, or jump straight into our advanced tutorial
 
-- [Customising The Grid](/customising-the-grid/)
-- [Advanced Features](/advanced-features/)
+<next-step-tiles tutorial1="false" tutorial2="false" tutorial3="true"/>
