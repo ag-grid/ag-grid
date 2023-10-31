@@ -27,6 +27,7 @@ export class GridHeaderDropZones extends Component {
         this.addManagedListener(this.eventService, Events.EVENT_COLUMN_ROW_GROUP_CHANGED, this.onRowGroupChanged.bind(this));
         this.addManagedListener(this.eventService, Events.EVENT_NEW_COLUMNS_LOADED, this.onRowGroupChanged.bind(this));
         this.addManagedPropertyListener('rowGroupPanelShow', this.onRowGroupChanged.bind(this));
+        this.addManagedPropertyListener('pivotPanelShow', this.onPivotPanelShow.bind(this));
 
         this.onRowGroupChanged();
     }
@@ -78,4 +79,20 @@ export class GridHeaderDropZones extends Component {
         }
     }
 
+    private onPivotPanelShow = () => {
+        if (!this.pivotComp) {
+            return;
+        }
+
+        const pivotPanelShow = this.gridOptionsService.get('pivotPanelShow');
+
+        if (pivotPanelShow === 'always') {
+            this.pivotComp.setDisplayed(true);
+        } else if (pivotPanelShow === 'onlyWhenPivoting') {
+            const pivoting = this.columnModel.isPivotActive();
+            this.pivotComp.setDisplayed(pivoting);
+        } else {
+            this.pivotComp.setDisplayed(false);
+        }
+    };
 }
