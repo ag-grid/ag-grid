@@ -71,11 +71,7 @@ It is up to the Detail Cell Renderer whether it wants to act on the refresh or n
 
 This pattern is similar to how refresh works for normal grid Cell Renderers.
 
-The example below shows how components can optionally refresh on updates. The example refreshes the first row every one second. The `refresh()` method gets called on all Detail Cell Renderers after the transaction is applied. Only the first Detail Cell Renderer returns `false` so it is the only one that updates.
-
-The creation time is printed to each Detail Cell Renderer so it can be noted when it was last created.
-
-In this simple example, it would be possible for the components to just update themselves and not rely on the grid destroying and re-creating the components. However the example is contrived to demonstrate returning `true` vs `false` from the refresh method.
+The example below shows how components can refresh on updates. The example refreshes the first row every one second. The `refresh()` method gets called on the corresponding Detail Cell Renderer after the transaction is applied. The Detail Cell Renderer refresh method reads the latest call count from the params, and the last updated time is also changed.
 
 <grid-example title='Custom Detail with Refresh' name='custom-detail-with-refresh' type='generated' options='{ "enterprise": true, "exampleHeight": 545, "modules": ["clientside", "masterdetail", "menu", "columnpanel"] }'></grid-example>
 
