@@ -106,8 +106,6 @@ export class ComponentUtil {
         return mergedOptions;
     }
 
-
-
     public static processOnChange(changes: any, api: GridApi): void {
         if (!changes || Object.keys(changes).length === 0) {
             return;
