@@ -16,12 +16,10 @@
 .cardTitle {
     color: var(--default-text-color);
     display: flex;
-    justify-content: center;
     margin-bottom: 24px;
 }
 
 .cardBody {
-    display: flex;
     margin-bottom: 12px;
     justify-content: center;
     margin-bottom: 24px;
@@ -47,7 +45,7 @@
     padding: 4px 12px;
     border: 1px solid #55B2C6;
     border-radius: 50px;
-    color: #fff;
+    color: var(--default-text-color);
     text-align: center;
     text-decoration: none;
     font-size: 14px !important;

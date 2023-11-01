@@ -16,6 +16,7 @@ const NextStepTiles = (props) => {
                         </div>
                     </Link>
                     <div className={styles.cardBody}>
+                        <p>An introduction to the key concepts of the grid</p>
                         <img className={styles.exampleImg} src='https://downloads.jamesswinton.com/create-a-basic-grid-example.png' />
                     </div>
                     <hr></hr>
@@ -36,6 +37,7 @@ const NextStepTiles = (props) => {
                             Customising the Grid
                         </div>
                     </Link>
+                    <p>Customise, style and extend the grid</p>
                     <div className={styles.cardBody}>
                         <img className={styles.exampleImg} src='https://downloads.jamesswinton.com/customising-the-grid.png' />
                     </div>
@@ -56,6 +58,7 @@ const NextStepTiles = (props) => {
                             Advanced Features
                         </div>
                     </Link>
+                    <p>Implement advanced, enterprise features of the grid</p>
                     <div className={styles.cardBody}>
                         <img className={styles.exampleImg} src='https://downloads.jamesswinton.com/customising-the-grid.png' />
                     </div>
