@@ -463,7 +463,7 @@ export class EnterpriseMenu extends BeanStub {
             }
         } else if (showRowGroup) {
             const rowGroupCol = this.columnModel.getPrimaryColumn(showRowGroup);
-            if (rowGroupCol && this.columnModel.isColumnGroupingLocked(rowGroupCol)) {
+            if (rowGroupCol && !this.columnModel.isColumnGroupingLocked(rowGroupCol)) {
                 result.push('rowUnGroup');
             }
         } else if (allowRowGroup && this.column.isPrimary()) {

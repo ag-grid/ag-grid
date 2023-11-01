@@ -60,7 +60,10 @@ export class ToolPanelContextMenu extends Component {
 
         if (this.isActive()) {
             this.mouseEvent.preventDefault();
-            this.displayContextMenu();
+            const menuItemsMapped: MenuItemDef[] = this.getMappedMenuItems();
+            if (menuItemsMapped.length === 0) { return; }
+            
+            this.displayContextMenu(menuItemsMapped);
         }
     }
 
@@ -140,10 +143,9 @@ export class ToolPanelContextMenu extends Component {
         return columnList.filter(col => this.columns.indexOf(col) === -1);
     }
 
-    private displayContextMenu(): void {
+    private displayContextMenu(menuItemsMapped: MenuItemDef[]): void {
         const eGui = this.getGui();
         const menuList = this.createBean(new AgMenuList());
-        const menuItemsMapped: MenuItemDef[] = this.getMappedMenuItems();
         const localeTextFunc = this.localeService.getLocaleTextFunc();
 
         let hideFunc = () => {};
