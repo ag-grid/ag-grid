@@ -317,7 +317,7 @@
                     logStressResults(e.messageCount, e.updateCount);
                     break;
                 case "setRowData":
-                    api.setRowData(e.records);
+                    api.updateGridOption('rowData', e.records);
                     break;
                 case "updateData":
                     api.applyTransactionAsync({update: e.records});
