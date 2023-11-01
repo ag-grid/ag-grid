@@ -17,8 +17,8 @@
     background-color: #67b168 !important;
 }
 
-.ag-keyboard-focus .column-group-g:focus::after,
-.ag-keyboard-focus .column-group-c:focus::after {
+.column-group-g:focus-visible::after,
+.column-group-c:focus-visible::after {
     border-color: azure;
 }
 

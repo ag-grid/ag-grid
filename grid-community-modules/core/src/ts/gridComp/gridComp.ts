@@ -36,8 +36,6 @@ export class GridComp extends TabGuardComp {
                 () => this.destroyBean(this),
             setRtlClass:
                 (cssClass: string) => this.addCssClass(cssClass),
-            addOrRemoveKeyboardFocusClass:
-                (addOrRemove: boolean) => this.addOrRemoveCssClass(FocusService.AG_KEYBOARD_FOCUS, addOrRemove),
             forceFocusOutOfContainer: this.forceFocusOutOfContainer.bind(this),
             updateLayoutClasses: this.updateLayoutClasses.bind(this),
             getFocusableContainers: this.getFocusableContainers.bind(this),

@@ -64,8 +64,6 @@ const GridComp = ({ context }: GridCompProps) => {
             destroyGridUi:
                 () => {}, // do nothing, as framework users destroy grid by removing the comp
             setRtlClass: setRtlClass,
-            addOrRemoveKeyboardFocusClass:
-                (addOrRemove: boolean) => setKeyboardFocusClass(addOrRemove ? FocusService.AG_KEYBOARD_FOCUS : ''),
             forceFocusOutOfContainer: () => {
                 tabGuardRef.current?.forceFocusOutOfContainer();
             },

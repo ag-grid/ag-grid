@@ -432,7 +432,7 @@
         cursor: default;
         height: var(--ag-list-item-height);
 
-        .ag-keyboard-focus &:focus::after {
+        &:focus-visible::after {
             content: none
         }
 
@@ -470,7 +470,7 @@
         cursor: default;
         height: var(--ag-list-item-height);
 
-        .ag-keyboard-focus &:focus::after {
+        &:focus-visible::after {
             content: none
         }
 
