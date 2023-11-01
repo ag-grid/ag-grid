@@ -35,8 +35,10 @@ export default (props: GroupFlagCellRendererParams) => {
         props.api.addEventListener('filterChanged', dataChangedListener);
 
         return () => {
-            props.api.removeEventListener('cellValueChanged', dataChangedListener);
-            props.api.removeEventListener('filterChanged', dataChangedListener);
+            if (!props.api.isDestroyed()) {
+                props.api.removeEventListener('cellValueChanged', dataChangedListener);
+                props.api.removeEventListener('filterChanged', dataChangedListener);
+            }
         }
     }, [])
 
