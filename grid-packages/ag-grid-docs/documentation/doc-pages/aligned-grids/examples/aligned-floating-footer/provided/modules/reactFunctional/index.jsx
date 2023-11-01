@@ -31,7 +31,6 @@ const GridExample = () => {
     const bottomGrid = useRef(null);
 
     const defaultColDef = useMemo(() => ({
-        editable: true,
         sortable: true,
         resizable: true,
         filter: true,
@@ -46,12 +45,9 @@ const GridExample = () => {
         { field: 'year', width: 120 },
         { field: 'date', width: 150 },
         { field: 'sport', width: 150 },
-        // in the total col, we have a value getter, which usually means we don't need to provide a field
-        // however the master/slave depends on the column id (which is derived from the field if provided) in
-        // order ot match up the columns
         {
             headerName: 'Total',
-            field: 'total',
+            colId: 'total',
             valueGetter: 'data.gold + data.silver + data.bronze',
             width: 200
         },
@@ -81,6 +77,7 @@ const GridExample = () => {
                     columnDefs={columnDefs}
                     onGridReady={onGridReady}
                     suppressHorizontalScroll
+                    alwaysShowVerticalScroll
                     autoSizeStrategy={autoSizeStrategy}
                 />
             </div>
@@ -93,6 +90,7 @@ const GridExample = () => {
                     defaultColDef={defaultColDef}
                     columnDefs={columnDefs}
                     headerHeight="0"
+                    alwaysShowVerticalScroll
                     rowStyle={{ fontWeight: 'bold' }}
                 />
             </div>

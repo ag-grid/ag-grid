@@ -45,29 +45,21 @@ ModuleRegistry.registerModules([ClientSideRowModelModule])
 })
 export class AppComponent {
     columnDefs!: (ColDef | ColGroupDef)[];
+    defaultColDef: ColDef = {
+        sortable: true,
+        resizable: true,
+        filter: true,
+        minWidth: 100
+    };
     rowData!: any[];
     topOptions: GridOptions = {
-        defaultColDef: {
-            editable: true,
-            sortable: true,
-            resizable: true,
-            filter: true,
-            flex: 1,
-            minWidth: 100
-        },
+        defaultColDef: this.defaultColDef,
         autoSizeStrategy: {
             type: 'fitGridWidth'
         },
     };
     bottomOptions: GridOptions = {
-        defaultColDef: {
-            editable: true,
-            sortable: true,
-            resizable: true,
-            filter: true,
-            flex: 1,
-            minWidth: 100
-        }
+        defaultColDef: this.defaultColDef,
     };
 
     @ViewChild('topGrid') topGrid!: AgGridAngular;
@@ -78,13 +70,12 @@ export class AppComponent {
             { field: 'age' },
             { field: 'country' },
             { field: 'year' },
-            { field: 'date' },
             { field: 'sport' },
             {
                 headerName: 'Medals',
                 children: [
                     {
-                        columnGroupShow: 'closed', field: "total",
+                        columnGroupShow: 'closed', colId: "total",
                         valueGetter: "data.gold + data.silver + data.bronze", width: 200
                     },
                     { columnGroupShow: 'open', field: "gold", width: 100 },

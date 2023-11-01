@@ -17,11 +17,9 @@ const GridExample = () => {
     const bottomGrid = useRef(null);
 
     const defaultColDef = useMemo(() => ({
-        editable: true,
         sortable: true,
         resizable: true,
         filter: true,
-        flex: 1,
         minWidth: 100
     }));
 
@@ -29,14 +27,13 @@ const GridExample = () => {
         { field: 'athlete' },
         { field: 'age' },
         { field: 'country' },
-        { field: 'year' },
         { field: 'date' },
         { field: 'sport' },
         {
             headerName: 'Medals',
             children: [
                 {
-                    columnGroupShow: 'closed', field: "total",
+                    columnGroupShow: 'closed', colId: "total",
                     valueGetter: "data.gold + data.silver + data.bronze", width: 200
                 },
                 { columnGroupShow: 'open', field: "gold", width: 100 },
