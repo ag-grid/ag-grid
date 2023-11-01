@@ -36,9 +36,10 @@ export interface IFrameworkOverrides {
      * Which rendering engine is used for the grid components. Can be either 'vanilla' or 'react'.
      */
     renderingEngine: 'vanilla' | 'react';
-
+    
     /**
-     * Which framework is being used. Used for logging documentation URLs.
+     * Returns the framework specific url for linking to a documentation page.
+     * @param path Optional path to append to the base url. i.e 'aligned-grids' Does not need the leading `/`
      */
-    frameworkName: 'javascript' | 'angular' | 'react' | 'vue' | 'solid';
+    getDocLink(path?: string): string;
 }

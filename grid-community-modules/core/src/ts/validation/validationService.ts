@@ -175,9 +175,8 @@ export class ValidationService extends BeanStub {
         });
 
         if (Object.keys(invalidProperties).length > 0 && docsUrl) {
-            const framework = this.getFrameworkOverrides().frameworkName;
-            const domain = `https://www.ag-grid.com/${framework}-data-grid`;
-            warnOnce(`to see all the valid ${containerName} properties please check: ${domain}${docsUrl}`);
+            const url = this.getFrameworkOverrides().getDocLink(docsUrl);            
+            warnOnce(`to see all the valid ${containerName} properties please check: ${url}`);
         }
     }
 }
