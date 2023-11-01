@@ -27,7 +27,7 @@
     &:hover li:not(:global(.active)) {
         border: 1px solid var(--background-600);
 
-        #{$darkmode-selector} {
+        #{$darkmode-selector} & {
             border: 1px solid #202a34;
         }
     }
