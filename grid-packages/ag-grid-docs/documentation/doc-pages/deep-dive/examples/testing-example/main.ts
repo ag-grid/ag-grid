@@ -51,7 +51,7 @@ const gridOptions: GridOptions = {
 document.addEventListener('DOMContentLoaded', () => {
     var gridDiv = document.querySelector<HTMLElement>('#myGrid')!;
     gridApi = createGrid(gridDiv, gridOptions);
-    fetch('https://www.ag-grid.com/example-assets/space_mission_data.json')
+    fetch('https://www.ag-grid.com/example-assets/space-mission-data.json')
         .then(response => response.json())
         .then((data: any) => gridApi.updateGridOption('rowData', data))
 })

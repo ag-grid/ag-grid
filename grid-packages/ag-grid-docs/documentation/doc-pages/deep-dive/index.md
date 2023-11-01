@@ -90,7 +90,7 @@ _Note: Themes & Styling are covered in the next tutorial, [Customising the Grid]
 
 <snippet transform={false} language="jsx">
 |useEffect(() => {
-|  fetch('https://www.ag-grid.com/example-assets/space_mission_data.json') // Fetch data from server
+|  fetch('https://www.ag-grid.com/example-assets/space-mission-data.json') // Fetch data from server
 |    .then(result => result.json()) // Convert to JSON
 |    .then(rowData => setRowData(rowData)) // Update state of `rowData`
 |}, [])
