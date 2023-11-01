@@ -43,7 +43,7 @@ html[data-color-scheme='dark'] div + #myGrid {
     margin-top: -8px;
 }
 
-html[data-color-scheme='dark'] button:not(#myGrid button, #myChart button) {
+html[data-color-scheme='dark'] button:not(#myGrid button, #myChart button, button[class*='ag-']) {
     appearance: none;
     background-color: #202A34;
     border: 1px solid rgb(255,255,255,0.1);
@@ -62,11 +62,11 @@ html[data-color-scheme='dark'] button:not(#myGrid button, #myChart button) {
     transition: background-color .25s ease-in-out;
 }
 
-html[data-color-scheme='dark'] button:not(#myGrid button, #myChart button):hover {
+html[data-color-scheme='dark'] button:not(#myGrid button, #myChart button, button[class*='ag-']):hover {
     background-color: #293949;
 }
 
-html[data-color-scheme='dark'] select:not(#myGrid select, #myChart select) {
+html[data-color-scheme='dark'] select:not(#myGrid select, #myChart select, select[class*='ag-']) {
     appearance: none;
     background-color: #202A34;
     border: 1px solid rgb(255,255,255,0.1);
@@ -76,11 +76,11 @@ html[data-color-scheme='dark'] select:not(#myGrid select, #myChart select) {
     transition: background-color .25s ease-in-out;
 }
 
-html[data-color-scheme='dark'] select:not(#myGrid select, #myChart select):hover {
+html[data-color-scheme='dark'] select:not(#myGrid select, #myChart select, select[class*='ag-']):hover {
     background-color: #293949;
 }
 
-html[data-color-scheme='dark'] input:not(#myGrid input, #myChart input) {
+html[data-color-scheme='dark'] input:not(#myGrid input, #myChart input, input[class*='ag-']) {
     appearance: none;
     background-color: #202A34;
     border: 1px solid rgb(255,255,255,0.1);
