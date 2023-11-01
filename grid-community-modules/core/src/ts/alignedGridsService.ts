@@ -21,6 +21,7 @@ import { ProvidedColumnGroup } from "./entities/providedColumnGroup";
 import { BeanStub } from "./context/beanStub";
 import { CtrlsService } from "./ctrlsService";
 import { GridApi } from "./gridApi";
+import { errorOnce } from "./utils/function";
 
 @Bean('alignedGridsService')
 export class AlignedGridsService extends BeanStub {
@@ -41,12 +42,21 @@ export class AlignedGridsService extends BeanStub {
 
     private getAlignedGridApis(): GridApi[]{
         let alignedGrids = this.gridOptionsService.get('alignedGrids') ?? [];
+        const isCallbackConfig = typeof alignedGrids === 'function';
         if(typeof alignedGrids === 'function'){
             alignedGrids = alignedGrids();
         }
-
+        const seeUrl = () => `See ${this.getFrameworkOverrides().getDocLink('aligned-grids')}`
         const apis = alignedGrids.map((alignedGrid) => {
-            if(!alignedGrid){ return; } 
+            if(!alignedGrid){
+                errorOnce(`alignedGrids contains an undefined option.`);
+                if(!isCallbackConfig){
+                    errorOnce(`You may want to configure via a callback to avoid setup race conditions:
+                     "alignedGrids: () => [linkedGrid]"`);
+                }
+                errorOnce(seeUrl())
+                return; 
+            } 
             if(alignedGrid instanceof GridApi){
                 return alignedGrid;
             }
@@ -55,6 +65,9 @@ export class AlignedGridsService extends BeanStub {
             if('current' in refOrComp){
                 return refOrComp.current?.api;
             }else{
+                if(!refOrComp.api){
+                    errorOnce(`alignedGrids - No api found on the linked grid. If you are passing gridOptions to alignedGrids since v31 this is no longer valid. ${seeUrl()}`);
+                }
                 return refOrComp.api;
             }
         }).filter(api => !!api && !api.isDestroyed());
