@@ -50,8 +50,10 @@ export class GroupRowInnerRenderer implements ICellRendererComp {
     }
 
     destroy() {
-        this.params.api.removeEventListener('cellValueChanged', this.dataChangedListener);
-        this.params.api.removeEventListener('filterChanged', this.dataChangedListener);
+        if (!this.params.api.isDestroyed()) {
+            this.params.api.removeEventListener('cellValueChanged', this.dataChangedListener);
+            this.params.api.removeEventListener('filterChanged', this.dataChangedListener);
+        }
     }
 
     getGui() {

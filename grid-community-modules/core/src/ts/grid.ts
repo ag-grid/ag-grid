@@ -103,6 +103,7 @@ import { OverlayService } from "./rendering/overlays/overlayService";
 import { StateService } from "./misc/stateService";
 import { ExpansionService } from "./misc/expansionService";
 import { ValidationService } from "./validation/validationService";
+import { ApiEventService } from "./misc/apiEventService";
 
 export interface GridParams {
     // INTERNAL - used by Web Components
@@ -403,7 +404,8 @@ export class GridCoreCreator {
             UndoRedoService, AgStackComponentsRegistry, ColumnDefFactory,
             RowCssClassCalculator, RowNodeBlockLoader, RowNodeSorter, CtrlsService,
             PinnedWidthService, RowNodeEventThrottle, CtrlsFactory, DataTypeService, ValueParserService,
-            QuickFilterService, SyncService, OverlayService, StateService, ExpansionService
+            QuickFilterService, SyncService, OverlayService, StateService, ExpansionService,
+            ApiEventService,
         ];
 
         const moduleBeans = this.extractModuleEntity(rowModelModules, (module) => module.beans ? module.beans : []);

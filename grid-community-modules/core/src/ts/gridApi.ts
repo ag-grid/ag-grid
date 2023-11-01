@@ -137,6 +137,7 @@ import { StateService } from "./misc/stateService";
 import { IExpansionService } from "./interfaces/iExpansionService";
 import { WithoutGridCommon } from "./interfaces/iCommon";
 import { warnOnce } from "./utils/function";
+import { ApiEventService } from "./misc/apiEventService";
 
 export interface DetailGridInfo {
     /**
@@ -206,6 +207,7 @@ export class GridApi<TData = any> {
     @Optional('sideBarService') private sideBarService?: ISideBarService;
     @Autowired('stateService') private stateService: StateService;
     @Autowired('expansionService') private expansionService: IExpansionService;
+    @Autowired('apiEventService') private apiEventService: ApiEventService;
 
     private gridBodyCtrl: GridBodyCtrl;
 
@@ -1043,28 +1045,31 @@ export class GridApi<TData = any> {
         return this.valueService.getValue(column, rowNode);
     }
 
-    /** Add an event listener for the specified `eventType`. Works similar to `addEventListener` for a browser DOM element. */
+    /**
+     * Add an event listener for the specified `eventType`.
+     * Works similar to `addEventListener` for a browser DOM element.
+     * Listeners will be automatically removed when the grid is destroyed.
+     */
     public addEventListener(eventType: string, listener: Function): void {
-        const async = this.gos.useAsyncEvents();
-        this.eventService.addEventListener(eventType, listener, async);
+        this.apiEventService.addEventListener(eventType, listener);
     }
 
-    /** Add an event listener for all event types coming from the grid. */
+    /**
+     * Add an event listener for all event types coming from the grid.
+     * Listeners will be automatically removed when the grid is destroyed.
+     */
     public addGlobalListener(listener: Function): void {
-        const async = this.gos.useAsyncEvents();
-        this.eventService.addGlobalListener(listener, async);
+        this.apiEventService.addGlobalListener(listener);
     }
 
     /** Remove an event listener. */
     public removeEventListener(eventType: string, listener: Function): void {
-        const async = this.gos.useAsyncEvents();
-        this.eventService.removeEventListener(eventType, listener, async);
+        this.apiEventService.removeEventListener(eventType, listener);
     }
 
     /** Remove a global event listener. */
     public removeGlobalListener(listener: Function): void {
-        const async = this.gos.useAsyncEvents();
-        this.eventService.removeGlobalListener(listener, async);
+        this.apiEventService.removeGlobalListener(listener);
     }
 
     public dispatchEvent(event: AgEvent): void {
