@@ -4,11 +4,12 @@ import {VueFrameworkComponentWrapper} from './VueFrameworkComponentWrapper';
 import { getAgGridProperties, Properties } from './Utils';
 import {VueFrameworkOverrides} from './VueFrameworkOverrides';
 
-const [props, watch, model] = getAgGridProperties();
+const [props, computed, watch, model] = getAgGridProperties();
 
 @Bean('agGridVue')
 @Component({
     props,
+    computed,
     watch,
     model,
 })
@@ -76,16 +77,6 @@ export class AgGridVue extends Vue {
                 this.$emit(eventType, event);
             }
         };
-    }
-
-    public processChanges(propertyName: string, currentValue: any, previousValue: any) {
-        if (this.gridCreated && this.api) {
-
-            if (this.skipChange(propertyName, currentValue, previousValue)) {
-                return;
-            }
-            ComponentUtil.processOnChange({ [propertyName]: currentValue }, this.api);
-        }
     }
 
     // noinspection JSUnusedGlobalSymbols
@@ -157,34 +148,6 @@ export class AgGridVue extends Vue {
         const rowDataModel = thisAsAny.rowDataModel;
         return rowDataModel ? rowDataModel :
             thisAsAny.rowData ? thisAsAny.rowData : thisAsAny.gridOptions.rowData;
-    }
-
-    /*
-     * Prevents an infinite loop when using v-model for the rowData
-     */
-    private skipChange(propertyName: string, currentValue: any, previousValue: any) {
-        if (this.gridReadyFired &&
-            propertyName === 'rowData' &&
-            this.$listeners['data-model-changed']) {
-            if (currentValue === previousValue) {
-                return true;
-            }
-
-            if (currentValue && previousValue) {
-                const currentRowData = currentValue as any[];
-                const previousRowData = previousValue as any[];
-                if (currentRowData.length === previousRowData.length) {
-                    for (let i = 0; i < currentRowData.length; i++) {
-                        if (currentRowData[i] !== previousRowData[i]) {
-                            return false;
-                        }
-                    }
-                    return true;
-                }
-            }
-        }
-
-        return false;
     }
 
     private debounce(func: () => void, delay: number) {

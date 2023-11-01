@@ -11,7 +11,7 @@ const ALWAYS_SYNC_GLOBAL_EVENTS: Set<string> = new Set([Events.EVENT_GRID_PRE_DE
 const DATA_MODEL_ATTR_NAME = 'onUpdate:modelValue'; // emit name would be update:ModelValue
 const DATA_MODEL_EMIT_NAME = 'update:modelValue';
 
-const [props, watch] = getAgGridProperties();
+const [props, computed, watch] = getAgGridProperties();
 
 export const AgGridVue = defineComponent({
     render() {
@@ -57,15 +57,8 @@ export const AgGridVue = defineComponent({
             emitRowModel: undefined
         }
     },
-    watch: {
-        modelValue: {
-            handler(currentValue: any, previousValue: any) {
-                this.processChanges('rowData', currentValue, previousValue);
-            },
-            deep: true
-        },
-        ...watch
-    },
+    computed,
+    watch,
     methods: {
         globalEventListenerFactory(restrictToSyncOnly?: boolean) {
             return (eventType: string, event: any) => {
