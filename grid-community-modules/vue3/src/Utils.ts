@@ -24,12 +24,12 @@ export const getAgGridProperties = (): [Properties, Properties, Properties] => {
 
     const computed: Properties = {
         props() {
-            const props: { [key: string]: any } = {};
+            const options: { [key: string]: any } = {};
             ComponentUtil.ALL_PROPERTIES.forEach((propertyName: string) => {
-                props[propertyName] = this[propertyName];
+                options[propertyName] = this[propertyName] ?? this.gridOptions[propertyName];
             });
-            return props;
-        }
+            return options;
+        },
     };
     const watch: Properties = {
         modelValue: {
@@ -58,7 +58,7 @@ export const getAgGridProperties = (): [Properties, Properties, Properties] => {
                 ComponentUtil.processOnChange(currentValue, this.api);
             },
             deep: true,
-        }
+        },
     };
     ComponentUtil.ALL_PROPERTIES
         .filter((propertyName: string) => propertyName != 'gridOptions') // dealt with in AgGridVue itself

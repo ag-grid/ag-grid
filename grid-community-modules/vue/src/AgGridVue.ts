@@ -51,7 +51,7 @@ export class AgGridVue extends Vue {
     // It forces events defined in AgGridVue.ALWAYS_SYNC_GLOBAL_EVENTS to be fired synchronously.
     // This is required for events such as GridPreDestroyed.
     // Other events are fired can be fired asynchronously or synchronously depending on config.
-    public globalEventListenerFactory (restrictToSyncOnly?: boolean) {
+    public globalEventListenerFactory(restrictToSyncOnly?: boolean) {
         return (eventType: string, event: any) => {
             if (this.isDestroyed) {
                 return;
@@ -103,14 +103,14 @@ export class AgGridVue extends Vue {
             modules: this.modules,
         };
 
-        this.api = createGrid(this.$el as HTMLElement, gridOptions, gridParams);        
+        this.api = createGrid(this.$el as HTMLElement, gridOptions, gridParams);
         this.gridCreated = true;
     }
 
     // noinspection JSUnusedGlobalSymbols
     public destroyed() {
         if (this.gridCreated) {
-            this.api?.destroy();            
+            this.api?.destroy();
             this.isDestroyed = true;
         }
     }
