@@ -33,8 +33,6 @@ export interface SharedProps<TData = any> extends GridOptions<TData> {
     setGridApi?: (gridApi: GridApi<TData>, columnApi: ColumnApi) => void;
     componentWrappingElement?: string; // only used when putting React into JS
     maxComponentCreationTimeMs?: number; // only used when putting React into JS
-    /** @deprecated v29 ChangeDetectionStrategyType has been deprecated. IdentityCheck will always be used now for a more consistent approach. */
-    rowDataChangeDetectionStrategy?: ChangeDetectionStrategyType;
     children?: any;
 }
 
