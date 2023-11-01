@@ -55,10 +55,10 @@ const VueExample = {
     },
     methods: {
         onBtExcludeMedalColumns() {
-            this.gridApi.setGridOption('columnDefs', this.getColDefsMedalsExcluded());
+            this.gridApi.updateGridOption('columnDefs', this.getColDefsMedalsExcluded());
         },
         onBtIncludeMedalColumns() {
-            this.gridApi.setGridOption('columnDefs', this.getColDefsMedalsIncluded());
+            this.gridApi.updateGridOption('columnDefs', this.getColDefsMedalsIncluded());
         },
         onGridReady(params) {
             this.gridApi = params.api;
