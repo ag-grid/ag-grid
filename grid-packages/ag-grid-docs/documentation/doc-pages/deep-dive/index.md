@@ -4,6 +4,8 @@ title: "Creating a Basic Grid"
 
 This tutorial provides an introduction to the key concepts of AG Grid.
 
+<note disableMarkdown='true'>To follow this tutorial <a href='#'>Clone our Starter Template</a> or <a href='#'>Fork the CodeSandbox Example</a>.</note>
+
 ## Overview
 
 In this tutorial you will:
@@ -13,39 +15,31 @@ In this tutorial you will:
 3. Configure basic features
 4. Hook into grid events
 
-Once complete, you'll have an interactive grid, populated with data from an external source that responds to user-interaction. Try it out for yourself by __sorting__, __filtering__, __resizing__, __selecting__, or __editing__ data in the grid.
+Once complete, you'll have an interactive grid, populated with data from an external source that responds to user-interaction. 
+
+Try it out for yourself by __sorting__, __filtering__, __resizing__, __selecting__, or __editing__ data in the grid.
 
 <grid-example title='Testing Example' name='testing-example' type='generated' options='{ "exampleHeight": 550 }'></grid-example>
 
----
-
-## Introduction
-
-If you haven't already, install the grid on a new project:
-
-<snippet transform={false} language="bash">
-npm install ag-grid-react
-</snippet>
-
 <framework-specific-section frameworks="react">
 
-### Load Rows
+## Grid Basics
 
-The `rowData` array contains the data we want to display within the grid:
+In its simplest form, a grid is made up of three things:
+
+- __Row Data:__ An array which contains the data we want to display within the grid.
+- __Column Definitions:__ An array that defines the columns that we want the grid to display.
+- __Grid Component:__ The grid itself with `rowData` and `colDefs` as props, wrapped in a parent container which controls the dimension and theme of the grid.
 
 <snippet transform={false} language="jsx">
+|// Row Data
 |const [rowData, setRowData] = useState([
 |  { company: "RVSN USSR", country: "Kazakhstan", date: "1957-10-04", mission: "Sputnik-1", price: 9550000, successful: true },
 |  { company: "RVSN USSR", country: "Kazakhstan", date: "1957-11-03", mission: "Sputnik-2", price: 8990000, successful: true },
 |  { company: "US Navy", country: "USA", date: "1957-12-06", mission: "Vanguard TV3", price: 6860000, successful: false }
 |]);
-</snippet>
-
-### Define Columns
-
-The `colDefs` array defines the columns that we want the grid to display. The `field` property is used to match the column with the data from our `rowData` array:
-
-<snippet transform={false} language="jsx">
+|
+|// Column Definitions
 |const [colDefs] = useState([
 |  { field: "mission" },
 |  { field: "country" },
@@ -54,15 +48,8 @@ The `colDefs` array defines the columns that we want the grid to display. The `f
 |  { field: "price" },
 |  { field: "company" }
 |]);
-</snippet>
-
-_Note: We've wrapped our `rowData` and `colDefs` arrays in a `useState` hook. We recommend `useState` if the data is mutable, otherwise `useMemo` is preferable. Read our [Best Practices](/react-hooks/) guide to learn more about using React hooks with AG Grid._
-
-### Create the Grid
-
-To create the grid, we first wrap the `AgGridReact` component in a parent container, which is used to define the dimension and theme for the grid. We can then pass our `rowData` and `columnDefs` variables as props to the `AgGridReact` component, which will render the grid:
-
-<snippet transform={false} language="jsx">
+|
+|// Container & Grid Component
 |return (
 |  &lt;div className="ag-theme-alpine" style={{ width: 600, height: 500 }}>
 |    &lt;AgGridReact rowData={rowData} columnDefs={colDefs} />
@@ -70,13 +57,13 @@ To create the grid, we first wrap the `AgGridReact` component in a parent contai
 |);
 </snippet>
 
+_Note: We've wrapped our `rowData` and `colDefs` arrays in a `useState` hook. We recommend `useState` if the data is mutable, otherwise `useMemo` is preferable. Read our [Best Practices](/react-hooks/) guide to learn more about using React hooks with AG Grid._
+
 Running our code at this point will display a basic grid, with three rows:
 
 </framework-specific-section>
 
-<grid-example title='Basic Example' name='basic-example' type='generated' options='{ "exampleHeight": 215 }'></grid-example>
-
-_Note: Themes & Styling are covered in the next tutorial, [Customising the Grid](/customising-the-grid/)._
+<grid-example title='Basic Example' name='basic-example' type='generated' options='{ "exampleHeight": 201 }'></grid-example>
 
 ---
 
