@@ -1,4 +1,4 @@
-import { createGrid, GridApi, GridOptions, SelectionChangedEvent, CellValueChangedEvent } from '@ag-grid-community/core';
+import { createGrid, GridApi, GridOptions, CellValueChangedEvent } from '@ag-grid-community/core';
 
 let gridApi: GridApi;
 

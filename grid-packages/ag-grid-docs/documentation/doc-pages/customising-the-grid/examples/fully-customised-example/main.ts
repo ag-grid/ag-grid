@@ -1,21 +1,15 @@
-import { CellClassParams, createGrid, GridApi, GridOptions, RowClassParams, ValueFormatterParams } from '@ag-grid-community/core';
+import { CellClassParams, createGrid, GridApi, GridOptions, RowClassParams, ValueFormatterParams, CellValueChangedEvent } from '@ag-grid-community/core';
 import { CountryFlagCellRenderer } from './CountryFlagCellRenderer';
 import { CustomTooltip } from './CustomTooltip';
 
 let gridApi: GridApi;
 
-const priceCellClass = (p: CellClassParams) => {
-    if (p.value < 2500000) {
-        return 'very-low-cost';
-    } else if (p.value < 5000000) {
-        return 'low-cost';
-    } else if (p.value < 7500000) {
-        return 'medium-cost';
-    } else if (p.value < 9000000) {
-        return 'high-cost';
-    } else {
-        return 'very-high-cost';
-    }
+const cellClassRules = {
+    'very-low-cost': (p: CellClassParams) => { return p.value < 2500000},
+    'low-cost': (p: CellClassParams) => { return p.value > 2500000 && p.value < 5000000},
+    'medium-cost': (p: CellClassParams) => { return p.value > 5000000 && p.value < 7500000},
+    'high-cost': (p: CellClassParams) => { return p.value > 7500000 && p.value < 9000000},
+    'very-high-cost': (p: CellClassParams) => { return p.value >= 9000000},
 }
 
 const rowClassRules = {
@@ -42,8 +36,11 @@ const gridOptions: GridOptions = {
     columnDefs: [
         {
             field: "mission",
+            resizable: false,
             checkboxSelection: true,
-            tooltipField: 'mission'
+            tooltipField: 'mission',
+            tooltipComponent: CustomTooltip,
+            cellClass: 'mission-cell'
         },
         {
             field: "country",
@@ -61,7 +58,7 @@ const gridOptions: GridOptions = {
             field: "price",
             width: 130,
             valueFormatter: currencyFormatter,
-            cellClass: priceCellClass
+            cellClassRules: cellClassRules
         },
         {
             field: "company"
@@ -72,16 +69,16 @@ const gridOptions: GridOptions = {
         filter: true,
         sortable: true,
         editable: true,
-        resizable: true,
-        tooltipComponent: CustomTooltip
+        resizable: true
     },
     // Grid Options & Callbacks
     pagination: true,
+    rowClass: 'row',
     rowSelection: 'multiple',
     rowClassRules: rowClassRules,
     tooltipShowDelay: 0,
     tooltipHideDelay: 2000,
-    onCellValueChanged: (event) => {
+    onCellValueChanged: (event: CellValueChangedEvent) => { 
         console.log(`New Cell Value: ${event.value}`)
     }
 }

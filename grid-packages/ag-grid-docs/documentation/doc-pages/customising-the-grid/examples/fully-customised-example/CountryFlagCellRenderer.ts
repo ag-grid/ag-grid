@@ -4,10 +4,8 @@ export class CountryFlagCellRenderer implements ICellRendererComp{
     eGui!: HTMLImageElement;
 
     init(params: ICellRendererParams) {
-        let flagIcon = this.getFlagForCountry(params.value);
-        console.log(flagIcon);
         this.eGui = document.createElement('img');
-        this.eGui.src = flagIcon;
+        this.eGui.src = this.getFlagForCountry(params.value);
     }
 
     getGui() { 
@@ -18,7 +16,7 @@ export class CountryFlagCellRenderer implements ICellRendererComp{
         return false
     }
 
-    getFlagForCountry = (country: String): String => {
+    getFlagForCountry = (country: string): string => {
         if (country === 'USA') {
             return 'https://www.ag-grid.com/example-assets/flags/us-flag.png'
         }
