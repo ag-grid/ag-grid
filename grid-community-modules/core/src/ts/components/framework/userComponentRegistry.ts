@@ -165,6 +165,6 @@ export class UserComponentRegistry extends BeanStub {
         if (suggestions.length > 0) {
             console.warn(`         Did you mean: [${suggestions.slice(0, 3)}]?`);
         }
-        console.warn(`If using a custom component check it has been registered as described in: https://ag-grid.com/javascript-data-grid/components/`);
+        console.warn(`If using a custom component check it has been registered as described in: ${this.getFrameworkOverrides().getDocLink('components/')}`);
     }
 }

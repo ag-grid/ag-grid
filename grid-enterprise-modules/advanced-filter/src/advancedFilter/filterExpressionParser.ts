@@ -48,7 +48,7 @@ export class FilterExpressionParser {
     }
 
     public updateExpression(position: number, updateEntry: AutocompleteEntry, type?: string): AutocompleteUpdate {
-        return this.joinExpressionParser.updateExpression(position, updateEntry, type);
+        return this.joinExpressionParser.updateExpression(position, updateEntry, type)!;
     }
 
     public getModel(): AdvancedFilterModel | null {

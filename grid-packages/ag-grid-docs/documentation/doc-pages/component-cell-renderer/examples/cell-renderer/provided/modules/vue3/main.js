@@ -152,7 +152,7 @@ const VueExample = {
         onGridReady(params) {
             this.gridApi = params.api;
 
-            const updateData = (data) => this.gridApi.updateGridOption('rowData', data);
+            const updateData = (data) => this.gridApi.setGridOption('rowData', data);
 
             fetch('https://www.ag-grid.com/example-assets/weather-se-england.json')
                 .then(resp => resp.json())

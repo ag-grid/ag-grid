@@ -1,32 +1,26 @@
 const columnDefs = [
     {
         headerName: 'Group 1',
-        headerClass: 'blue',
         groupId: 'Group1',
         children: [
-            { field: 'athlete', pinned: true, width: 100 },
-            { field: 'age', pinned: true, columnGroupShow: 'open', width: 100 },
-            { field: 'country', width: 100 },
-            { field: 'year', columnGroupShow: 'open', width: 100 },
-            { field: 'date', width: 100 },
-            { field: 'sport', columnGroupShow: 'open', width: 100 },
-            { field: 'date', width: 100 },
-            { field: 'sport', columnGroupShow: 'open', width: 100 }
+            { field: 'athlete', pinned: true, },
+            { field: 'age', pinned: true, columnGroupShow: 'open', },
+            { field: 'country', },
+            { field: 'year', columnGroupShow: 'open', },
+            { field: 'date', },
+            { field: 'sport', columnGroupShow: 'open', },
         ]
     },
     {
         headerName: 'Group 2',
-        headerClass: 'green',
         groupId: 'Group2',
         children: [
-            { field: 'athlete', pinned: true, width: 100 },
-            { field: 'age', pinned: true, columnGroupShow: 'open', width: 100 },
-            { field: 'country', width: 100 },
-            { field: 'year', columnGroupShow: 'open', width: 100 },
-            { field: 'date', width: 100 },
-            { field: 'sport', columnGroupShow: 'open', width: 100 },
-            { field: 'date', width: 100 },
-            { field: 'sport', columnGroupShow: 'open', width: 100 }
+            { field: 'athlete', pinned: true, },
+            { field: 'age', pinned: true, columnGroupShow: 'open', },
+            { field: 'country', },
+            { field: 'year', columnGroupShow: 'open', },
+            { field: 'date', },
+            { field: 'sport', columnGroupShow: 'open', },
         ]
     }
 ];
@@ -36,12 +30,11 @@ let topApi;
 let bottomApi;
 const gridOptionsTop = {
     defaultColDef: {
-        editable: true,
         sortable: true,
         resizable: true,
         filter: true,
         flex: 1,
-        minWidth: 100
+        minWidth: 120
     },
     columnDefs: columnDefs,
     rowData: null,
@@ -54,12 +47,11 @@ const gridOptionsTop = {
 // this is the grid options for the bottom grid
 const gridOptionsBottom = {
     defaultColDef: {
-        editable: true,
         sortable: true,
         resizable: true,
         filter: true,
         flex: 1,
-        minWidth: 100
+        minWidth: 120
     },
     columnDefs: columnDefs,
     rowData: null,
@@ -67,8 +59,8 @@ const gridOptionsBottom = {
 };
 
 function setData(rowData) {
-    topApi.updateGridOption('rowData', rowData);
-    bottomApi.updateGridOption('rowData', rowData);
+    topApi.setGridOption('rowData', rowData);
+    bottomApi.setGridOption('rowData', rowData);
 
     // mix up some columns
     topApi.moveColumnByIndex(11, 4);

@@ -70,7 +70,7 @@ const COLUMN_DEFINITION_VALIDATIONS: Validations<ColDef | ColGroupDef> = {
 export const COL_DEF_VALIDATORS: OptionsValidator<ColDef | ColGroupDef> = {
     objectName: 'colDef',
     allProperties: ColDefUtil.ALL_PROPERTIES,
-    docsUrl: '/column-properties/',
+    docsUrl: 'column-properties/',
     deprecations: COLUMN_DEFINITION_DEPRECATIONS,
     validations: COLUMN_DEFINITION_VALIDATIONS,
 };

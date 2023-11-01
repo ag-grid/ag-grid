@@ -74,7 +74,7 @@ var includeHiddenColumns = false;
 
 function onIncludeHiddenColumnsToggled() {
   includeHiddenColumns = !includeHiddenColumns;
-  gridApi!.updateGridOption('includeHiddenColumnsInAdvancedFilter', includeHiddenColumns);
+  gridApi!.setGridOption('includeHiddenColumnsInAdvancedFilter', includeHiddenColumns);
   document.querySelector('#includeHiddenColumns')!.innerHTML = `${includeHiddenColumns ? 'Exclude' : 'Include'} Hidden Columns`;
 }
 
@@ -85,5 +85,5 @@ document.addEventListener('DOMContentLoaded', () => {
 
   fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
     .then(response => response.json())
-    .then((data: IOlympicData[]) => gridApi!.updateGridOption('rowData', data))
+    .then((data: IOlympicData[]) => gridApi!.setGridOption('rowData', data))
 })

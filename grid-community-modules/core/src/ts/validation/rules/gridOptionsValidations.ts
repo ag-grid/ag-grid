@@ -328,7 +328,7 @@ export const GRID_OPTIONS_VALIDATORS: OptionsValidator<GridOptions> = {
         ...ComponentUtil.EVENT_CALLBACKS,
     ],
     propertyExceptions: ['api', 'columnApi'],
-    docsUrl: '/grid-options/',
+    docsUrl: 'grid-options/',
     deprecations: GRID_OPTION_DEPRECATIONS,
     validations: GRID_OPTION_VALIDATIONS,
 };

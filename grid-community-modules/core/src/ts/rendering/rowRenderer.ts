@@ -135,8 +135,8 @@ export class RowRenderer extends BeanStub {
         this.addManagedListener(this.eventService, Events.EVENT_BODY_SCROLL, this.onBodyScroll.bind(this));
         this.addManagedListener(this.eventService, Events.EVENT_BODY_HEIGHT_CHANGED, this.redraw.bind(this));
 
-        this.addManagedPropertyListeners(['domLayout', 'embedFullWidthRows'], this.onDomLayoutChanged.bind(this));
-        this.addManagedPropertyListeners(['suppressMaxRenderedRowRestriction', 'rowBuffer'], this.redraw.bind(this));
+        this.addManagedPropertyListeners(['domLayout', 'embedFullWidthRows'], () => this.onDomLayoutChanged());
+        this.addManagedPropertyListeners(['suppressMaxRenderedRowRestriction', 'rowBuffer'], () => this.redraw());
         this.addManagedPropertyListeners([
             'suppressCellFocus', 'getBusinessKeyForNode',
             'fullWidthCellRenderer', 'fullWidthCellRendererParams',
@@ -146,8 +146,8 @@ export class RowRenderer extends BeanStub {
             'groupRowRenderer', 'groupRowRendererParams', // maybe only needs to refresh FW rows...
             'loadingCellRenderer', 'loadingCellRendererParams',
             'detailCellRenderer', 'detailCellRendererParams',
-        ], this.redrawRows.bind(this));
-        this.addManagedPropertyListeners(['enableRangeSelection', 'enableCellTextSelection'], this.refreshCells.bind(this));
+        ], () => this.redrawRows());
+        this.addManagedPropertyListeners(['enableRangeSelection', 'enableCellTextSelection'], () => this.refreshCells());
 
         if (this.gridOptionsService.isGroupRowsSticky()) {
             const rowModelType = this.rowModel.getType();

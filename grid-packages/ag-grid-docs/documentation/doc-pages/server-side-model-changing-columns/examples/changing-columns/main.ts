@@ -107,7 +107,7 @@ function onBtApply() {
     cols.push(colDefBronze)
   }
 
-  gridApi!.updateGridOption('columnDefs', cols)
+  gridApi!.setGridOption('columnDefs', cols)
 }
 
 function getBooleanValue(cssSelector: string) {
@@ -152,6 +152,6 @@ document.addEventListener('DOMContentLoaded', function () {
       var datasource: IServerSideDatasource = getServerSideDatasource(fakeServer)
 
       // register the datasource with the grid
-      gridApi!.updateGridOption('serverSideDatasource', datasource)
+      gridApi!.setGridOption('serverSideDatasource', datasource)
     })
 })

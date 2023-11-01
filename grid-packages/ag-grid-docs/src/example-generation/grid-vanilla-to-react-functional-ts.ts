@@ -184,7 +184,7 @@ export function vanillaToReactFunctionalTs(bindings: any, componentFilenames: st
 
         const additionalInReady = [];
         if (data) {
-            const setRowDataBlock = data.callback.replace('gridApi!.setRowData', 'setRowData');
+            const setRowDataBlock = data.callback.replace('gridApi!.setGridOption(\'rowData\',', 'setRowData(');
 
             additionalInReady.push(`
                 fetch(${data.url})
@@ -195,7 +195,7 @@ export function vanillaToReactFunctionalTs(bindings: any, componentFilenames: st
 
         if (onGridReady) {
             const hackedHandler = onGridReady.replace(/^{|}$/g, '')
-                .replace('gridApi!.setRowData', 'setRowData');
+                .replace('gridApi!.setGridOption(\'rowData\',', 'setRowData(');
             additionalInReady.push(hackedHandler);
         }
 
@@ -281,10 +281,10 @@ export function vanillaToReactFunctionalTs(bindings: any, componentFilenames: st
         const thisReferenceConverter = content => content.replace(/this\./g, "");
 
         const gridInstanceConverter = content => content
-            .replace(/params\.api(!?)\.setRowData\(data\)/g, 'setRowData(data)')
+            .replace(/params\.api(!?)\.setGridOption\('rowData', data\)/g, 'setRowData(data)')
             .replace(/gridApi(!?)\./g, "gridRef.current!.api.")
             .replace(/gridApi;/g, "gridRef.current!.api;")
-            .replace(/gridRef\.current\.api(!?)\.setRowData/g, "setRowData")
+            .replace(/gridRef\.current\.api(!?)\.setGridOption\(\'rowData\',/g, "setRowData(")
             .replace(/gridApi/g, "gridRef.current!.api")
 
         const template = getTemplate(bindings, componentProps.map(thisReferenceConverter), rowDataGeneric);

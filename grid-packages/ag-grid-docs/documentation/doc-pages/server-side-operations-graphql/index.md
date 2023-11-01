@@ -284,7 +284,7 @@ The `ServerSideDatasource` is then registered with the grid via the grid API as 
 // client/index.js
 
 const datasource = new ServerSideDatasource(gridOptions);
-api.updateGridOption('serverSideDatasource', datasource);
+api.setGridOption('serverSideDatasource', datasource);
 ```
 
 ## Conclusion

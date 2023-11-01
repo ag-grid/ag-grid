@@ -44,7 +44,7 @@ function addCheckboxListener(params: GridReadyEvent) {
   var checkbox = document.querySelector('input[type=checkbox]')! as any;
 
   checkbox.addEventListener('change', function () {
-    params.api.updateGridOption('suppressMoveWhenRowDragging', checkbox.checked)
+    params.api.setGridOption('suppressMoveWhenRowDragging', checkbox.checked)
   })
 }
 

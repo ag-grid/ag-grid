@@ -4,6 +4,7 @@ import {
     getModuleRegistration,
     ImportType,
     isInstanceMethod,
+    preferParamsApi,
     replaceGridReadyRowData
 } from './parser-utils';
 import {getImport, toConst, toInput, toOutput, toRef} from './vue-utils';
@@ -46,9 +47,10 @@ function getOnGridReadyCode(bindings: any): string {
         );
     }
 
+    const additional = preferParamsApi(additionalLines.length > 0 ? `\n\n        ${additionalLines.join('\n        ')}` : '')
     return `const onGridReady = (params) => {
         gridApi.value = params.api;
-        ${additionalLines.length > 0 ? `\n\n        ${additionalLines.join('\n        ')}` : ''}
+        ${additional}
     }`;
 }
 
@@ -214,7 +216,7 @@ function getPropertyBindings(bindings: any, componentFileNames: string[], import
             }
         });
 
-    if (bindings.data && bindings.data.callback.indexOf('gridApi.setRowData') >= 0) {
+    if (bindings.data && bindings.data.callback.indexOf('gridApi.setGridOption(\'rowData\',') >= 0) {
         if (propertyAttributes.filter(item => item.indexOf(':rowData') >= 0).length === 0) {
             propertyAttributes.push(':rowData="rowData"');
             propertyNames.push('rowData');

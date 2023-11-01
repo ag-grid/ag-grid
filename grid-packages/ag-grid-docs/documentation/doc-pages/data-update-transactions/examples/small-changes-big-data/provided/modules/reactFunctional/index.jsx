@@ -134,7 +134,7 @@ const GridExample = () => {
             value: { value: '50' },
         });
         timeOperation('Initialisation', function () {
-            params.api.updateGridOption('rowData', getData());
+            params.api.setGridOption('rowData', getData());
         });
 
     }, []);

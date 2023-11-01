@@ -20,7 +20,7 @@ const gridOptions: GridOptions<IOlympicData> = {
 }
 
 function onBtShowYearColumn() {
-  gridApi!.updateGridOption('columnDefs', [
+  gridApi!.setGridOption('columnDefs', [
     { field: 'athlete', colId: 'athlete' },
     { field: 'age', colId: 'age' },
     { field: 'country', colId: 'country' },
@@ -30,7 +30,7 @@ function onBtShowYearColumn() {
 }
 
 function onBtHideYearColumn() {
-  gridApi!.updateGridOption('columnDefs', [
+  gridApi!.setGridOption('columnDefs', [
     { field: 'athlete', colId: 'athlete' },
     { field: 'age', colId: 'age' },
     { field: 'country', colId: 'country' },
@@ -153,6 +153,6 @@ document.addEventListener('DOMContentLoaded', function () {
         },
       }
 
-      gridApi!.updateGridOption('datasource', dataSource)
+      gridApi!.setGridOption('datasource', dataSource)
     })
 })

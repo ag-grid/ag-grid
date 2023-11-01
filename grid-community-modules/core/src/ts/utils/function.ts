@@ -15,6 +15,9 @@ export function doOnce(func: () => void, key: string) {
 export function warnOnce(msg: string) {
     doOnce(() => console.warn("AG Grid: " + msg), msg);
 }
+export function errorOnce(msg: string) {
+    doOnce(() => console.error("AG Grid: " + msg), msg);
+}
 
 export function getFunctionName(funcConstructor: any) {
     // for every other browser in the world

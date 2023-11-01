@@ -47,7 +47,7 @@ export class AppComponent {
             sortable: true,
             resizable: true,
             flex: 1,
-            minWidth: 100
+            minWidth: 120
         },
         autoSizeStrategy: {
             type: 'fitGridWidth'
@@ -58,7 +58,7 @@ export class AppComponent {
             sortable: true,
             resizable: true,
             flex: 1,
-            minWidth: 100
+            minWidth: 120
         }
     };
 
@@ -68,7 +68,6 @@ export class AppComponent {
         this.columnDefs = [
             {
                 headerName: 'Group 1',
-                headerClass: 'blue',
                 groupId: 'Group1',
                 children: [
                     { field: 'athlete', pinned: true, width: 100 },
@@ -83,7 +82,6 @@ export class AppComponent {
             },
             {
                 headerName: 'Group 2',
-                headerClass: 'green',
                 groupId: 'Group2',
                 children: [
                     { field: 'athlete', pinned: true, width: 100 },

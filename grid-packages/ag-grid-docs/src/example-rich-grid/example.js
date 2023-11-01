@@ -4245,7 +4245,7 @@ function createRowData() {
             btDestroyGrid.disabled = false;
         }
 
-        api.setRowData(createRowData());
+        api.setGridOption('rowData', createRowData());
     }
 
     function onBtDestroyGrid() {

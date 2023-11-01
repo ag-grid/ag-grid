@@ -9,7 +9,7 @@ The update actions that cause the Detail Rows to refresh are as follows:
 
 - A change to [Row Data](/data-update-row-data/) updates the parent row and [Row IDs](/row-ids/) are provided*.
 - A [Transaction Update](/data-update-transactions/) updates the parent row.
-- The method `rowNode.updateGridOption('rowData', data)` is called on the parent row's [Row Node](/row-object/).
+- The method `rowNode.setGridOption('rowData', data)` is called on the parent row's [Row Node](/row-object/).
 
 <note>
 *If Row ID's are not provided, the grid will not match rows and treat the new Row Data as a new set. In this case, all rows are destroyed and re-created.

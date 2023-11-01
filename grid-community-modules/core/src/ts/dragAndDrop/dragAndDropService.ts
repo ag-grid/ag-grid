@@ -521,24 +521,27 @@ export class DragAndDropService extends BeanStub {
         this.eGhost.style.left = '20px';
 
         const eDocument = this.gridOptionsService.getDocument();
+        let rootNode: Document | ShadowRoot | HTMLElement | null = null;
         let targetEl: HTMLElement | ShadowRoot | null = null;
 
         try {
-            targetEl = eDocument.fullscreenElement as HTMLElement | null;
+            rootNode = eDocument.fullscreenElement as HTMLElement;
         } catch (e) {
             // some environments like SalesForce will throw errors
             // simply by trying to read the fullscreenElement property
         } finally {
-            if (!targetEl) {
-                const rootNode = this.gridOptionsService.getRootNode();
-                const body = rootNode.querySelector('body');
-                if (body) {
-                    targetEl = body;
-                } else if (rootNode instanceof ShadowRoot) {
-                    targetEl = rootNode;
-                } else {
-                    targetEl = rootNode?.documentElement;
-                }
+            if (!rootNode) {
+                rootNode = this.gridOptionsService.getRootNode();
+            }
+            const body = rootNode.querySelector('body');
+            if (body) {
+                targetEl = body;
+            } else if (rootNode instanceof ShadowRoot) {
+                targetEl = rootNode;
+            } else if (rootNode instanceof Document) {
+                targetEl = rootNode?.documentElement;
+            } else {
+                targetEl = rootNode;
             }
         }
 

@@ -208,6 +208,6 @@ document.addEventListener('DOMContentLoaded', function () {
                 },
             };
 
-            gridApi!.updateGridOption('datasource', dataSource)
+            gridApi!.setGridOption('datasource', dataSource)
         })
 })

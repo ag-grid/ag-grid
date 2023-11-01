@@ -6,7 +6,8 @@
         "meta": {
             "displayName": "Grid Options"
         },
-        "updateGridOption": {},
+        "getGridOption": {},
+        "setGridOption": {},
         "updateGridOptions": {}
     },
     "columns": {

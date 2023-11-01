@@ -29,7 +29,7 @@ const gridOptions: GridOptions = {
 }
 
 function onFilterTextBoxChanged() {
-  gridApi!.updateGridOption(
+  gridApi!.setGridOption(
     'quickFilterText',
     (document.getElementById('filter-text-box') as any).value
   )

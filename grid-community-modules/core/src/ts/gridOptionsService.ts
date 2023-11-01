@@ -232,13 +232,13 @@ export class GridOptionsService {
     }
 
     private static changeSetId = 0;
-    public updateGridOptions({ options, source = 'api' }: { options: Partial<GridOptions>, source?: string }): void {
+    public updateGridOptions({ options, source = 'api' }: { options: Partial<GridOptions>, source?: 'api' | 'gridOptionsUpdated' }): void {
         const changeSet: PropertyChangeSet = { id: GridOptionsService.changeSetId++, properties: Object.keys(options) as (keyof GridOptions)[] };
         // all events are fired after grid options has finished updating.
         const events: PropertyValueChangedEvent<keyof GridOptions>[] = [];
         Object.entries(options).forEach(([key, value]) => {
             const coercedValue = GridOptionsService.getCoercedValue(key as keyof GridOptions, value);
-            const shouldForce = (typeof coercedValue) === 'object'; // force objects as they could have been mutated.
+            const shouldForce = (typeof coercedValue) === 'object' && source === 'api'; // force objects as they could have been mutated.
 
             if (this.gridOptionLookup.has(key)) {
                 const previousValue = this.gridOptions[key as keyof GridOptions];

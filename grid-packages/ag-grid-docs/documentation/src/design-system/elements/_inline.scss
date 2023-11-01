@@ -1,7 +1,7 @@
 @use '../core' as *;
 @use 'sass:map';
 
-a {
+a#{$exclude-grid-selector} {
     text-decoration: none;
     color: var(--link-color);
     transition: color $default-transition-timing;
@@ -20,7 +20,7 @@ a {
     }
 }
 
-code {
+code#{$exclude-grid-selector} {
     font-size: 0.875em;
     padding: 0 0.2em;
     font-family: var(--monospace-font-family);
@@ -42,7 +42,7 @@ code {
     }
 }
 
-kbd {
+kbd#{$exclude-grid-selector} {
     display: inline-block;
     margin: 0.1em 0.1em;
     padding: 0.1em 0.6em 0.15em;
@@ -62,11 +62,11 @@ kbd {
     }
 }
 
-img,
-svg {
+img#{$exclude-grid-selector},
+svg#{$exclude-grid-selector} {
     vertical-align: middle;
 }
 
-svg {
+svg#{$exclude-grid-selector} {
     overflow: hidden;
 }

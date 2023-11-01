@@ -169,7 +169,7 @@ const gridOptions: GridOptions = {
   },
   onGridReady: (params) => {
     getData()
-    params.api.updateGridOption('rowData', globalRowData)
+    params.api.setGridOption('rowData', globalRowData)
     startFeed(params.api)
   },
   onAsyncTransactionsFlushed: (e: AsyncTransactionsFlushed) => {

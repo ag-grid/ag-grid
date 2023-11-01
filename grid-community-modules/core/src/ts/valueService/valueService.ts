@@ -38,11 +38,11 @@ export class ValueService extends BeanStub {
 
         // We listen to our own event and use it to call the columnSpecific callback,
         // this way the handler calls are correctly interleaved with other global events
-        this.eventService.addEventListener(
-            Events.EVENT_CELL_VALUE_CHANGED,
-            (event: CellValueChangedEvent) => this.callColumnCellValueChangedHandler(event),
-            this.gridOptionsService.useAsyncEvents(),
-        );
+        const listener = (event: CellValueChangedEvent) => this.callColumnCellValueChangedHandler(event);
+        const async = this.gridOptionsService.useAsyncEvents();
+        this.eventService.addEventListener(Events.EVENT_CELL_VALUE_CHANGED, listener, async);
+        this.addDestroyFunc(() => this.eventService.removeEventListener(Events.EVENT_CELL_VALUE_CHANGED, listener, async));
+
         this.addManagedPropertyListener('treeData', (propChange) => this.isTreeData = propChange.currentValue);
     }
 

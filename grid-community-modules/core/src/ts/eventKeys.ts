@@ -245,9 +245,6 @@ export class Events {
     public static EVENT_COLUMN_VALUE_CHANGE_REQUEST: 'columnValueChangeRequest' = 'columnValueChangeRequest';
     public static EVENT_COLUMN_AGG_FUNC_CHANGE_REQUEST: 'columnAggFuncChangeRequest' = 'columnAggFuncChangeRequest';
 
-    public static EVENT_KEYBOARD_FOCUS: 'keyboardFocus' = 'keyboardFocus';
-    public static EVENT_MOUSE_FOCUS: 'mouseFocus' = 'mouseFocus';
-
     public static EVENT_STORE_UPDATED: 'storeUpdated' = 'storeUpdated';
 
     public static EVENT_FILTER_DESTROYED: 'filterDestroyed' = 'filterDestroyed';

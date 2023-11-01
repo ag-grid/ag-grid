@@ -85,7 +85,7 @@ function getOpenedToolPanel() {
 }
 
 function setSideBar(def: SideBarDef | string | string[] | boolean) {
-  gridApi!.updateGridOption('sideBar', def)
+  gridApi!.setGridOption('sideBar', def)
 }
 
 function getSideBar() {
@@ -105,5 +105,5 @@ document.addEventListener('DOMContentLoaded', function () {
 
   fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
     .then(response => response.json())
-    .then((data: IOlympicData[]) => gridApi!.updateGridOption('rowData', data))
+    .then((data: IOlympicData[]) => gridApi!.setGridOption('rowData', data))
 })

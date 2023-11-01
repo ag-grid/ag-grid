@@ -4,7 +4,7 @@ export interface Properties {
     [propertyName: string]: any;
 }
 
-export const getAgGridProperties = (): [Properties, Properties, {}] => {
+export const getAgGridProperties = (): [Properties, Properties, Properties, {}] => {
     const props: Properties = {
         gridOptions: {
             default() {
@@ -13,18 +13,46 @@ export const getAgGridProperties = (): [Properties, Properties, {}] => {
         },
         rowDataModel: undefined,
     };
-    const watch: Properties = {
-        rowDataModel(currentValue: any, previousValue: any) {
-            this.processChanges('rowData', currentValue, previousValue);
+
+    const computed: Properties = {
+        props() {
+            const options: { [key: string]: any } = {};
+            ComponentUtil.ALL_PROPERTIES.forEach((propertyName: string) => {
+                options[propertyName] = this[propertyName] ?? this.gridOptions[propertyName];
+            });
+            return options;
         },
     };
 
-    ComponentUtil.ALL_PROPERTIES.forEach((propertyName) => {
-        props[propertyName] = {};
+    const watch: Properties = {
+        rowDataModel(currentValue: any, previousValue: any) {
+            if (!this.gridCreated || !this.api) { return; }
 
-        watch[propertyName] = function(currentValue: any, previousValue: any) {
-            this.processChanges(propertyName, currentValue, previousValue);
-        };
+            /*
+             * Prevents an infinite loop when using v-model for the rowData
+             */
+            if (currentValue === previousValue) { return; }
+            if (currentValue && previousValue) {
+                if (currentValue.length === previousValue.length) {
+                    if (currentValue.every((item: any, index: number) => item === previousValue[index])) {
+                        return;
+                    }
+                }
+            }
+
+            ComponentUtil.processOnChange({ rowData: currentValue }, this.api);
+        },
+        props: {
+            handler(currentValue: any, previousValue: any) {
+                if (!this.gridCreated || !this.api) { return; }
+                ComponentUtil.processOnChange(currentValue, this.api);
+            },
+            deep: true,
+        },
+    };
+
+    ComponentUtil.ALL_PROPERTIES.forEach((propertyName: string) => {
+        props[propertyName] = {};
     });
 
     const model: { prop: string, event: string } = {
@@ -32,6 +60,6 @@ export const getAgGridProperties = (): [Properties, Properties, {}] => {
         event: 'data-model-changed',
     };
 
-    return [props, watch, model];
+    return [props, computed, watch, model];
 };
 

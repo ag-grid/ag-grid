@@ -60,7 +60,7 @@ document.addEventListener('DOMContentLoaded', function () {
     .then(response => response.json())
     .then(function (data) {
       var datasource = createServerSideDatasource(data)
-      gridApi!.updateGridOption('serverSideDatasource', datasource)
+      gridApi!.setGridOption('serverSideDatasource', datasource)
 
       function createServerSideDatasource(data: any) {
         const dataSource: IServerSideDatasource = {

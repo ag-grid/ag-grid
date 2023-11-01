@@ -6,7 +6,7 @@ export interface OptionsValidator<T extends {}> {
     objectName: string;
     allProperties?: string[];
     propertyExceptions?: string[];
-    docsUrl?: `/${string}/`,
+    docsUrl?: `${string}/`,
     deprecations: Deprecations<T>;
     validations: Validations<T>;
 }

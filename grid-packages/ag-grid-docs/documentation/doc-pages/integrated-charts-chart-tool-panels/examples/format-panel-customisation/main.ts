@@ -30,7 +30,7 @@ const gridOptions: GridOptions = {
 };
 
 function onGridReady(params: GridReadyEvent) {
-  getData().then(rowData => params.api.updateGridOption('rowData', rowData));
+  getData().then(rowData => params.api.setGridOption('rowData', rowData));
 }
 
 function onFirstDataRendered(params: FirstDataRenderedEvent) {

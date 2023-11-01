@@ -66,7 +66,7 @@ const GridExample = () => {
     }, [])
 
     const loadGridData = useCallback(() => {
-        gridApi?.updateGridOption('rowData', getData());
+        gridApi?.setGridOption('rowData', getData());
         document.querySelector<HTMLElement>('#loadGridDataButton')!.style.display = 'none';
     }, [gridApi])
 

@@ -76,11 +76,11 @@ export function findStartPosition(expression: string, position: number, endPosit
     return startPosition;
 }
 
-export function findEndPosition(expression: string, position: number) {
+export function findEndPosition(expression: string, position: number, includeCloseBracket?: boolean) {
     let endPosition = position;
     while (endPosition < expression.length) {
         const char = expression[endPosition];
-        if (char === ' ') {
+        if (char === ' ' || (includeCloseBracket && char === ')')) {
             endPosition = endPosition - 1;
             break;
         }

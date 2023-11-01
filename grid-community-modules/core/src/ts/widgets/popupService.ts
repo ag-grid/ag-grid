@@ -105,12 +105,6 @@ export class PopupService extends BeanStub {
     private postConstruct(): void {
         this.ctrlsService.whenReady(p => {
             this.gridCtrl = p.gridCtrl;
-            this.addManagedListener(this.gridCtrl, Events.EVENT_KEYBOARD_FOCUS, () => {
-                this.popupList.forEach(popup => popup.element.classList.add(FocusService.AG_KEYBOARD_FOCUS));
-            });
-            this.addManagedListener(this.gridCtrl, Events.EVENT_MOUSE_FOCUS, () => {
-                this.popupList.forEach(popup => popup.element.classList.remove(FocusService.AG_KEYBOARD_FOCUS));
-            });
         });
     }
 
@@ -485,10 +479,6 @@ export class PopupService extends BeanStub {
         }
 
         setAriaLabel(element, ariaLabel);
-
-        if (this.focusService.isKeyboardMode()) {
-            element.classList.add(FocusService.AG_KEYBOARD_FOCUS);
-        }
 
         eWrapper.appendChild(element);
         ePopupParent.appendChild(eWrapper);

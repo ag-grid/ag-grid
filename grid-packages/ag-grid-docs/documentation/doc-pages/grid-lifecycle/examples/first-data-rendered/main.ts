@@ -62,7 +62,7 @@ const gridOptions: GridOptions = {
 };
 
 function loadGridData() {
-    gridApi?.updateGridOption('rowData', getData());
+    gridApi?.setGridOption('rowData', getData());
     document.querySelector<HTMLElement>('#loadGridDataButton')!.style.display = 'none';
 }
 

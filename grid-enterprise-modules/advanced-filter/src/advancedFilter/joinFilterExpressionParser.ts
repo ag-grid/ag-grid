@@ -103,9 +103,10 @@ class OperatorParser {
                 ).updatedValue;
             }
         }
-        const startPosition = this.operatorStartPositions.length > operatorIndex ? this.operatorStartPositions[operatorIndex] : expression.length;
+        // if we don't have a start position, haven't typed anything yet, so use current position
+        const startPosition = this.operatorStartPositions.length > operatorIndex ? this.operatorStartPositions[operatorIndex] : position;
         const endPosition = (this.operatorEndPositions.length > operatorIndex ? this.operatorEndPositions[operatorIndex] : undefined)
-            ?? findEndPosition(expression, position);
+            ?? findEndPosition(expression, position, true);
         return updateExpression(
             expression,
             startPosition,
@@ -313,7 +314,7 @@ export class JoinFilterExpressionParser {
         return autocompleteType;
     }
 
-    public updateExpression(position: number, updateEntry: AutocompleteEntry, type?: string): AutocompleteUpdate {
+    public updateExpression(position: number, updateEntry: AutocompleteEntry, type?: string): AutocompleteUpdate | null {
         const expression = this.params.expression;
 
         const expressionParserIndex = this.getExpressionParserIndex(position);
@@ -339,7 +340,9 @@ export class JoinFilterExpressionParser {
                     expression.length - 1,
                     this.params.advancedFilterExpressionService.getColumnValue(updateEntry),
                     true
-                ); 
+                );
+            } else if (this.endPosition != null && position > this.endPosition + 1) {
+                return null;
             } else {
                 return this.operatorParser.updateExpression(position, updateEntry, expressionParserIndex);
             }

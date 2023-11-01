@@ -73,6 +73,10 @@ Component Refresh needs a bit more explanation. Here we go through some of the f
 md-include:component-refresh-react.md
 </framework-specific-section>
 
+<framework-specific-section frameworks="react">
+<grid-example title='Component Refresh' name='react-refresh' type='mixed'></grid-example>
+</framework-specific-section>
+
 ### Change Detection
 
 As mentioned in the section on [Change Detection](/change-detection/), the refresh of the Cell will not take place if the value getting rendered has not changed.

@@ -34,18 +34,6 @@ export const AgGridReactUi = <TData,>(props: AgReactUiProps<TData>) => {
 
     const [context, setContext] = useState<Context | undefined>(undefined);
 
-    const checkForDeprecations = useCallback((props: any) => {
-        if (props.rowDataChangeDetectionStrategy) {
-            _.doOnce(
-                () =>
-                    console.warn(
-                        'AG Grid: Since v29 rowDataChangeDetectionStrategy has been deprecated. Row data property changes will be compared by reference via triple equals ===. See https://ag-grid.com/react-data-grid/react-hooks/'
-                    ),
-                'rowDataChangeDetectionStrategy_Deprecation'
-            );
-        }
-    }, []);
-
     // Hook to enable Portals to be displayed via the PortalManager
     const [, setPortalRefresher] = useState(0);
 
@@ -83,8 +71,6 @@ export const AgGridReactUi = <TData,>(props: AgReactUiProps<TData>) => {
         };
 
         const mergedGridOps = ComponentUtil.combineAttributesAndGridOptions(props.gridOptions, props);
-
-        checkForDeprecations(props);
 
         const createUiCallback = (context: Context) => {
             setContext(context);

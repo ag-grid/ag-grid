@@ -1,6 +1,6 @@
 @use '../core' as *;
 
-table {
+table#{$exclude-grid-selector} {
     width: 100%;
     margin-bottom: $size-2;
     border-collapse: collapse;
@@ -11,16 +11,16 @@ table {
     }
 }
 
-thead,
-table:not(.no-zebra) tr:nth-child(even) {
+thead#{$exclude-grid-selector},
+table:not(.no-zebra) tr:nth-child(even)#{$exclude-grid-selector} {
     background-color: var(--table-odd-row-background-color);
 }
 
-tbody {
+tbody#{$exclude-grid-selector} {
     vertical-align: top;
 }
 
-tr {
+tr#{$exclude-grid-selector} {
     border-top: 1px solid var(--border-color);
 
     #{$darkmode-selector} & {
@@ -28,8 +28,8 @@ tr {
     }
 }
 
-th,
-td {
+th#{$exclude-grid-selector},
+td#{$exclude-grid-selector} {
     padding: $size-1 $size-2;
     text-align: left;
 }

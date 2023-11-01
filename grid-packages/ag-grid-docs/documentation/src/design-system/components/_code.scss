@@ -67,8 +67,8 @@ pre.code {
         --class-name-color: #2b91af;
         --property-color: #7ac1d1;
 
-        border-color: var(--neutral-300);
-        border: 1px solid #0d161e;
+        border-radius: $size-1;
+        border: 1px solid rgb(255,255,255,0.1);
     }
 }
 
@@ -85,7 +85,6 @@ pre.code > code {
     background-origin: content-box;
     background-attachment: local;
     border: none;
-    border-radius: 8px;
     box-shadow:
         inset 0 $vertical-padding 0 0 var(--default-background-color),
         inset 0 $vertical-padding * -1 0 0 var(--default-background-color);
@@ -93,8 +92,7 @@ pre.code > code {
 
     #{$darkmode-selector} & {
         background: #121f29;
-        box-shadow: inset 0px 0px;
-        border: 1px solid rgb(255,255,255,0.1)
+        box-shadow: 0 0 0 1px #121f29;
     }
 }
 

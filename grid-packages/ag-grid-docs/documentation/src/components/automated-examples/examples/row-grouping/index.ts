@@ -132,7 +132,7 @@ function initWorker() {
         }
 
         if (e.data.type === 'setRowData') {
-            api.updateGridOption('rowData', e.data.records);
+            api.setGridOption('rowData', e.data.records);
         } else if (e.data.type === 'updateData') {
             api.applyTransactionAsync({ update: e.data.records });
         }

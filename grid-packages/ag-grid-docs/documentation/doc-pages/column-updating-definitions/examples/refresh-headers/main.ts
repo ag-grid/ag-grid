@@ -38,7 +38,7 @@ function onBtUpperNames() {
     columnDefs.forEach(function (c) {
         c.headerName = c.field!.toUpperCase()
     })
-    gridApi!.updateGridOption('columnDefs', columnDefs)
+    gridApi!.setGridOption('columnDefs', columnDefs)
 }
 
 function onBtLowerNames() {
@@ -57,7 +57,7 @@ function onBtLowerNames() {
     columnDefs.forEach(function (c) {
         c.headerName = c.field
     })
-    gridApi!.updateGridOption('columnDefs', columnDefs)
+    gridApi!.setGridOption('columnDefs', columnDefs)
 }
 
 function onBtFilterOn() {
@@ -76,7 +76,7 @@ function onBtFilterOn() {
     columnDefs.forEach(function (c) {
         c.filter = true
     })
-    gridApi!.updateGridOption('columnDefs', columnDefs)
+    gridApi!.setGridOption('columnDefs', columnDefs)
 }
 
 function onBtFilterOff() {
@@ -95,7 +95,7 @@ function onBtFilterOff() {
     columnDefs.forEach(function (c) {
         c.filter = false
     })
-    gridApi!.updateGridOption('columnDefs', columnDefs)
+    gridApi!.setGridOption('columnDefs', columnDefs)
 }
 
 function onBtResizeOn() {
@@ -114,7 +114,7 @@ function onBtResizeOn() {
     columnDefs.forEach(function (c) {
         c.resizable = true
     })
-    gridApi!.updateGridOption('columnDefs', columnDefs)
+    gridApi!.setGridOption('columnDefs', columnDefs)
 }
 
 function onBtResizeOff() {
@@ -133,7 +133,7 @@ function onBtResizeOff() {
     columnDefs.forEach(function (c) {
         c.resizable = false
     })
-    gridApi!.updateGridOption('columnDefs', columnDefs)
+    gridApi!.setGridOption('columnDefs', columnDefs)
 }
 
 // setup the grid after the page has finished loading
@@ -144,6 +144,6 @@ document.addEventListener('DOMContentLoaded', function () {
     fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
         .then(response => response.json())
         .then(function (data) {
-            gridApi!.updateGridOption('rowData', data)
+            gridApi!.setGridOption('rowData', data)
         })
 })

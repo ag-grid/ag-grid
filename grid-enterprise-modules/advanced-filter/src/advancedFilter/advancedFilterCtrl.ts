@@ -186,21 +186,6 @@ export class AdvancedFilterCtrl extends BeanStub implements IAdvancedFilterCtrl 
             
             eAdvancedFilterCompGui.classList.add(this.gridOptionsService.get('enableRtl') ? 'ag-rtl' : 'ag-ltr');
 
-            if (this.focusService.isKeyboardMode()) {
-                eAdvancedFilterCompGui.classList.add(FocusService.AG_KEYBOARD_FOCUS);
-            }
-            const gridCtrl = this.ctrlsService.getGridCtrl();
-            eAdvancedFilterComp.addManagedListener(
-                gridCtrl,
-                Events.EVENT_KEYBOARD_FOCUS,
-                () => eAdvancedFilterCompGui.classList.add(FocusService.AG_KEYBOARD_FOCUS)
-            );
-            eAdvancedFilterComp.addManagedListener(
-                gridCtrl,
-                Events.EVENT_MOUSE_FOCUS,
-                () => eAdvancedFilterCompGui.classList.remove(FocusService.AG_KEYBOARD_FOCUS)
-            );
-
             advancedFilterParent.appendChild(eAdvancedFilterCompGui);
 
             this.eFilterComp = eAdvancedFilterComp;

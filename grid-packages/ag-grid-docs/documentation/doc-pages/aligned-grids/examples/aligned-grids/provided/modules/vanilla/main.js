@@ -3,16 +3,13 @@ const columnDefs = [
     { field: "age" },
     { field: "country" },
     { field: "year" },
-    { field: "date" },
     { field: "sport" },
-    // in the total col, we have a value getter, which usually means we don't need to provide a field
-    // however the master/slave depends on the column id (which is derived from the field if provided) in
-    // order to match up the columns
     {
         headerName: 'Medals',
         children: [
             {
-                columnGroupShow: 'closed', field: "total",
+                colId: 'total',
+                columnGroupShow: 'closed',
                 valueGetter: "data.gold + data.silver + data.bronze"
             },
             { columnGroupShow: 'open', field: "gold" },
@@ -21,19 +18,18 @@ const columnDefs = [
         ]
     }
 ];
+const defaultColDef = {
+    sortable: true,
+    resizable: true,
+    filter: true,
+    minWidth: 100
+}
 
 // this is the grid options for the top grid
 let topApi;
 const gridOptionsTop = {
-    defaultColDef: {
-        editable: true,
-        sortable: true,
-        resizable: true,
-        filter: true,
-        flex: 1,
-        minWidth: 100
-    },
-    columnDefs: columnDefs,
+    defaultColDef,
+    columnDefs,
     rowData: null,
     alignedGrids: () => [bottomApi],
     autoSizeStrategy: {
@@ -44,17 +40,13 @@ const gridOptionsTop = {
 // this is the grid options for the bottom grid
 let bottomApi;
 const gridOptionsBottom = {
-    defaultColDef: {
-        editable: true,
-        sortable: true,
-        resizable: true,
-        filter: true,
-        flex: 1,
-        minWidth: 100
-    },
-    columnDefs: columnDefs,
+    defaultColDef,
+    columnDefs,
     rowData: null,
-    alignedGrids: () => [topApi]
+    alignedGrids: () => [topApi],
+    autoSizeStrategy: {
+        type: 'fitGridWidth'
+    },
 };
 
 function onCbAthlete(value) {
@@ -73,8 +65,8 @@ function onCbCountry(value) {
 }
 
 function setData(rowData) {
-    topApi.updateGridOption('rowData', rowData);
-    bottomApi.updateGridOption('rowData', rowData);
+    topApi.setGridOption('rowData', rowData);
+    bottomApi.setGridOption('rowData', rowData);
 }
 
 // setup the grid after the page has finished loading

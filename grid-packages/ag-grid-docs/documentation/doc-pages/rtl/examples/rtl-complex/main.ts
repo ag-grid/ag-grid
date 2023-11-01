@@ -586,8 +586,8 @@ function createData() {
         if (row >= rowCount) {
             clearInterval(intervalId)
             setTimeout(function () {
-                gridApi!.updateGridOption('columnDefs', colDefs)
-                gridApi!.updateGridOption('rowData', data)
+                gridApi!.setGridOption('columnDefs', colDefs)
+                gridApi!.setGridOption('rowData', data)
             }, 0)
         }
     }, 0);

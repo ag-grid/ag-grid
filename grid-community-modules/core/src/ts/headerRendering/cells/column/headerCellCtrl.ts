@@ -126,7 +126,6 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl<IHeaderCellComp, Colu
     
                 if (activeEl !== eGui && !eGui.contains(activeEl)) {
                     eGui.focus();
-                    FocusService.toggleKeyboardMode(e)
                 }
             });
         })

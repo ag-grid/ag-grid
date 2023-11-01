@@ -141,7 +141,7 @@ const datasource = {
 };
 
 // register datasource with the grid
-api.updateGridOption('serverSideDatasource', datasource);
+api.setGridOption('serverSideDatasource', datasource);
 ```
 
 ## Server Endpoint

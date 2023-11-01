@@ -60,11 +60,11 @@ const GridExample = () => {
     const rightGridRef = useRef<AgGridReact>(null);
 
     const onLeftGridReady = (params: GridReadyEvent) => {
-        params.api.updateGridOption('rowData', createLeftRowData());
+        params.api.setGridOption('rowData', createLeftRowData());
     }
 
     const onRightGridReady = (params: GridReadyEvent) => {
-        params.api.updateGridOption('rowData', []);
+        params.api.setGridOption('rowData', []);
     }
 
     const createLeftRowData = () => ['Red', 'Green', 'Blue'].map(createDataItem);

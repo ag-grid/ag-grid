@@ -113,7 +113,7 @@ function startWorker(): void {
 
 function handleWorkerMessage(e: any): void {
   if (e.data.type === 'setRowData') {
-    gridApi!.updateGridOption('rowData', e.data.records);
+    gridApi!.setGridOption('rowData', e.data.records);
   }
   if (e.data.type === 'updateData') {
     gridApi!.applyTransactionAsync({ update: e.data.records });

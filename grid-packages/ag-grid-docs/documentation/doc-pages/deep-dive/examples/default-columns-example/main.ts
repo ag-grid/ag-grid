@@ -43,5 +43,5 @@ document.addEventListener('DOMContentLoaded', function () {
     gridApi = createGrid(gridDiv, gridOptions);
     fetch('https://www.ag-grid.com/example-assets/space-mission-data.json')
         .then(response => response.json())
-        .then((data: any) => gridApi.updateGridOption('rowData', data))
+        .then((data: any) => gridApi.setGridOption('rowData', data))
 })

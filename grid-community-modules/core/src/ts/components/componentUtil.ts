@@ -29,8 +29,6 @@ export class ComponentUtil {
         Events.EVENT_RIGHT_PINNED_WIDTH_CHANGED,
         Events.EVENT_ROW_CONTAINER_HEIGHT_CHANGED,
         Events.EVENT_POPUP_TO_FRONT,
-        Events.EVENT_KEYBOARD_FOCUS,
-        Events.EVENT_MOUSE_FOCUS,
         Events.EVENT_STORE_UPDATED,
         Events.EVENT_COLUMN_PANEL_ITEM_DRAG_START,
         Events.EVENT_COLUMN_PANEL_ITEM_DRAG_END,
@@ -106,14 +104,12 @@ export class ComponentUtil {
         return mergedOptions;
     }
 
-
-
     public static processOnChange(changes: any, api: GridApi): void {
         if (!changes || Object.keys(changes).length === 0) {
             return;
         }
-        
-        api.updateGridOptions(changes, 'gridOptionsChanged');
+
+        api.__internalUpdateGridOptions(changes);
 
         // copy changes into an event for dispatch
         const event: WithoutGridCommon<ComponentStateChangedEvent> = {

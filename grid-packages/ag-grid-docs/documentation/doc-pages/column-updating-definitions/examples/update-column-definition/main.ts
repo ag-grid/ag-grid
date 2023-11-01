@@ -32,7 +32,7 @@ function setHeaderNames() {
   columnDefs.forEach(function (colDef, index) {
     colDef.headerName = 'C' + index
   })
-  gridApi!.updateGridOption('columnDefs', columnDefs)
+  gridApi!.setGridOption('columnDefs', columnDefs)
 }
 
 function removeHeaderNames() {
@@ -40,7 +40,7 @@ function removeHeaderNames() {
   columnDefs.forEach(function (colDef, index) {
     colDef.headerName = undefined
   })
-  gridApi!.updateGridOption('columnDefs', columnDefs)
+  gridApi!.setGridOption('columnDefs', columnDefs)
 }
 
 function setValueFormatters() {
@@ -50,7 +50,7 @@ function setValueFormatters() {
       return '[ ' + params.value + ' ]'
     }
   })
-  gridApi!.updateGridOption('columnDefs', columnDefs)
+  gridApi!.setGridOption('columnDefs', columnDefs)
 }
 
 function removeValueFormatters() {
@@ -58,7 +58,7 @@ function removeValueFormatters() {
   columnDefs.forEach(function (colDef, index) {
     colDef.valueFormatter = undefined
   })
-  gridApi!.updateGridOption('columnDefs', columnDefs)
+  gridApi!.setGridOption('columnDefs', columnDefs)
 }
 
 // setup the grid after the page has finished loading
@@ -69,6 +69,6 @@ document.addEventListener('DOMContentLoaded', () => {
   fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
     .then(response => response.json())
     .then(data => {
-      gridApi!.updateGridOption('rowData', data)
+      gridApi!.setGridOption('rowData', data)
     })
 })

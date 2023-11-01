@@ -43,7 +43,7 @@ In this example the default pagination settings are changed. Note the following:
 
 - `paginationPageSize` is set to 10
 - `api.paginationGoToPage(4)` is called to go to page 4 (0 based, so the 5th page)
-- A dropdown to change the page size dynamically is available. This makes a call to `paginationSetPageSize(newPageSize)`
+- A dropdown to change the page size dynamically is available. This makes a call to `setGridOption('paginationPageSize', newPageSize)`
 - The numbers in the pagination panel are formatted differently using the grid callback `paginationNumberFormatter` and putting the numbers into square brackets i.e. [x].
 
 <grid-example title='Custom Paging' name='custom-paging' type='generated' options='{ "enterprise": true, "modules": ["clientside", "rowgrouping" ] }'></grid-example>

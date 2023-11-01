@@ -95,6 +95,6 @@ document.addEventListener('DOMContentLoaded', function () {
   )
     .then(response => response.json())
     .then(function (data) {
-      gridApi!.updateGridOption('rowData', data)
+      gridApi!.setGridOption('rowData', data)
     })
 })
