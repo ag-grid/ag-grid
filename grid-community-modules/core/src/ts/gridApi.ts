@@ -1836,6 +1836,13 @@ export class GridApi<TData = any> {
     }
 
     /**
+     * Returns the grid option value for a provided key.
+     */
+    public getGridOption<Key extends keyof GridOptions>(key: Key): GridOptions[Key] {
+        return this.gos.get(key);
+    }
+
+    /**
      * Updates a single gridOption to the new value provided.
      * If updating multiple options, it is recommended to instead use `api.updateGridOptions()` which batches update logic.
      */

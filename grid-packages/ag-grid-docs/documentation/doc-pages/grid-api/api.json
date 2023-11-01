@@ -6,6 +6,7 @@
         "meta": {
             "displayName": "Grid Options"
         },
+        "getGridOption": {},
         "setGridOption": {},
         "updateGridOptions": {}
     },
