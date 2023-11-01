@@ -78,6 +78,22 @@ export class AgList extends Component {
         return this;
     }
 
+    public clearOptions(): this {
+        this.options = [];
+        this.itemEls = [];
+        this.getGui().innerHTML = '';
+
+        if (this.value !== null) {
+            this.value = null;
+            this.fireChangeEvent();
+        }
+
+        this.displayValue = null;
+        this.clearHighlighted();
+
+        return this;
+    }
+
     private updateIndices(): void {
         const options = this.getGui().querySelectorAll('.ag-list-item');
         options.forEach((option: HTMLElement, idx) => {

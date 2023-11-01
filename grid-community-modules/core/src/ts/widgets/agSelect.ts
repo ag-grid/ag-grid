@@ -88,6 +88,15 @@ export class AgSelect extends AgPickerField<string | null, IPickerFieldParams, A
         return this;
     }
 
+    public resetOptions(options?: ListOption[]): this {
+        this.listComponent!.clearOptions();
+        if (options) {
+            this.listComponent!.addOptions(options);
+        }
+
+        return this;
+    }
+
     public setValue(value?: string | null , silent?: boolean, fromPicker?: boolean): this {
         if (this.value === value || !this.listComponent) { return this; }
 
@@ -104,7 +113,7 @@ export class AgSelect extends AgPickerField<string | null, IPickerFieldParams, A
         return super.setValue(value, silent);
     }
 
-    protected destroy(): void {
+    public destroy(): void {
         if (this.listComponent) {
             this.destroyBean(this.listComponent);
             this.listComponent = undefined;

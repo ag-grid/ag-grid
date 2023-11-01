@@ -489,6 +489,14 @@ export interface GridOptions<TData = any> {
      */
     suppressPaginationPanel?: boolean;
 
+    /**
+     * Parameters used for pagination bar's page size dropdown.
+     */
+    paginationParams?: {
+        showPageSizeSelector?: boolean;
+        pageSizeSelectorValues?: number[];
+    }
+
     // *** Pivot and Aggregation *** //
     /** Set to `true` to enable pivot mode. Default: `false` */
     pivotMode?: boolean;
