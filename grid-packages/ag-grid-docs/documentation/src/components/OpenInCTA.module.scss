@@ -22,7 +22,7 @@
         }
 
         #{$darkmode-selector} & {
-            background-color: color-mix(in srgb, var(--primary-100), var(--default-background-color));
+            background-color: var(--primary-100);
         }
     }
 
@@ -39,21 +39,21 @@
 }
 
 .tooltip {
-    --tooltip-background: var(--background-600);
+    --tooltip-background: var(--default-text-color);
 
     position: absolute;
     display: block;
-    color: var(--default-text-color);
+    color: var(--default-background-color);
     top: -$size-5;
     padding: $size-half $size-2;
     white-space: nowrap;
     background-color: var(--tooltip-background);
     border-radius: var(--border-radius);
+    transform: translateY($size-half);
     opacity: 0;
-    transform: scale(0.25);
-    transform-origin: center bottom;
     pointer-events: none;
-    transition: opacity $default-transition-timing, transform $default-transition-timing;
+    transition-delay: 0;
+    transition: opacity 0.165s ease-in, transform 0.165s ease-in;
 
     &::before {
         $pointer-size: $size-half;
@@ -70,10 +70,15 @@
 
     .cta:hover & {
         opacity: 1;
-        transform: scale(1);
+        transform: translateY(0);
+        transition: opacity 0.33s ease-in, transform 0.33s ease-in;
+        transition-delay: 0.165s;
     }
 
     #{$darkmode-selector} & {
-        --tooltip-background: #314253;
+        --tooltip-background: #202A34;
+        
+        color: var(--default-text-color);
+        box-shadow: 0 -4px 16px 0 rgba(0, 0, 0, 0.4);
     }
 }
