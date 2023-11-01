@@ -95,7 +95,7 @@ function createRow() {
 function pivotMode() {
   var pivotModeOn = (document.getElementById('pivot-mode') as HTMLInputElement).checked
 
-  gridApi!.updateGridOption('pivotMode', pivotModeOn);
+  gridApi!.setGridOption('pivotMode', pivotModeOn);
 
   gridApi!.applyColumnState({
     state: [

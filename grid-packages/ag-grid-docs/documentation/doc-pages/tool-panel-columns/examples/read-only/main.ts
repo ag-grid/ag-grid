@@ -86,7 +86,7 @@ const gridOptions: GridOptions<IOlympicData> = {
 }
 
 function setReadOnly() {
-  gridApi!.updateGridOption(
+  gridApi!.setGridOption(
     'functionsReadOnly',
     (document.getElementById('read-only') as HTMLInputElement).checked
   )
@@ -99,5 +99,5 @@ document.addEventListener('DOMContentLoaded', function () {
 
   fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
     .then(response => response.json())
-    .then((data: IOlympicData[]) => gridApi!.updateGridOption('rowData', data))
+    .then((data: IOlympicData[]) => gridApi!.setGridOption('rowData', data))
 })

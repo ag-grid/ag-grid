@@ -25,7 +25,7 @@ const gridOptions: GridOptions<IOlympicData> = {
 }
 
 function onBtNormal() {
-  gridApi!.updateGridOption('pivotMode', false)
+  gridApi!.setGridOption('pivotMode', false)
   gridApi!.applyColumnState({
     state: [
       { colId: 'country', rowGroup: true },
@@ -39,7 +39,7 @@ function onBtNormal() {
 }
 
 function onBtPivotMode() {
-  gridApi!.updateGridOption('pivotMode', true)
+  gridApi!.setGridOption('pivotMode', true)
   gridApi!.applyColumnState({
     state: [
       { colId: 'country', rowGroup: true },
@@ -53,7 +53,7 @@ function onBtPivotMode() {
 }
 
 function onBtFullPivot() {
-  gridApi!.updateGridOption('pivotMode', true)
+  gridApi!.setGridOption('pivotMode', true)
   gridApi!.applyColumnState({
     state: [
       { colId: 'country', rowGroup: true },
@@ -73,5 +73,5 @@ document.addEventListener('DOMContentLoaded', function () {
 
   fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
     .then(response => response.json())
-    .then((data: IOlympicData[]) => gridApi!.updateGridOption('rowData', data))
+    .then((data: IOlympicData[]) => gridApi!.setGridOption('rowData', data))
 })

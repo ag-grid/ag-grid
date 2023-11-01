@@ -79,7 +79,7 @@ const GridExample = () => {
                         }, 500);
                     },
                 };
-                params.api.updateGridOption('datasource', dataSource);
+                params.api.setGridOption('datasource', dataSource);
             });
     }, []);
 

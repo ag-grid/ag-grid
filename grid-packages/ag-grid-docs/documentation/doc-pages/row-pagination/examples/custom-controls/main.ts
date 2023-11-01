@@ -94,5 +94,5 @@ document.addEventListener('DOMContentLoaded', function () {
 
     fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
         .then(response => response.json())
-        .then((data: IOlympicData[]) => gridApi!.updateGridOption('rowData', data))
+        .then((data: IOlympicData[]) => gridApi!.setGridOption('rowData', data))
 })

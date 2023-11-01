@@ -75,7 +75,7 @@ const gridOptions: GridOptions<IOlympicData> = {
     // Could also be provided via grid option `advancedFilterParent`.
     // Setting the parent removes the Advanced Filter input from the grid,
     // allowing the Advanced Filter to be edited only via the Builder, launched via the API.
-    params.api.updateGridOption('advancedFilterParent', document.getElementById('advancedFilterParent'));
+    params.api.setGridOption('advancedFilterParent', document.getElementById('advancedFilterParent'));
   },
   onFilterChanged: onFilterChanged,
 }
@@ -105,5 +105,5 @@ document.addEventListener('DOMContentLoaded', () => {
 
   fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
     .then(response => response.json())
-    .then((data: IOlympicData[]) => gridApi!.updateGridOption('rowData', data))
+    .then((data: IOlympicData[]) => gridApi!.setGridOption('rowData', data))
 })

@@ -65,14 +65,14 @@ function onPinnedRowTopCount() {
   var headerRowsToFloat = (document.getElementById('top-row-count') as any).value
   var count = Number(headerRowsToFloat)
   var rows = createData(count, 'Top')
-  gridApi!.updateGridOption('pinnedTopRowData', rows)
+  gridApi!.setGridOption('pinnedTopRowData', rows)
 }
 
 function onPinnedRowBottomCount() {
   var footerRowsToFloat = (document.getElementById('bottom-row-count') as any).value
   var count = Number(footerRowsToFloat)
   var rows = createData(count, 'Bottom')
-  gridApi!.updateGridOption('pinnedBottomRowData', rows)
+  gridApi!.setGridOption('pinnedBottomRowData', rows)
 }
 
 function createData(count: number, prefix: string): any[] {
@@ -97,5 +97,5 @@ document.addEventListener('DOMContentLoaded', function () {
 
   fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
     .then(response => response.json())
-    .then((data: IOlympicData[]) => gridApi!.updateGridOption('rowData', data))
+    .then((data: IOlympicData[]) => gridApi!.setGridOption('rowData', data))
 })

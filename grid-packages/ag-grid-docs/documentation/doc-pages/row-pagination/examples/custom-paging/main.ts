@@ -92,7 +92,7 @@ function onFirstDataRendered(params: FirstDataRenderedEvent) {
 
 function onPageSizeChanged() {
   var value = (document.getElementById('page-size') as HTMLInputElement).value
-  gridApi!.paginationSetPageSize(Number(value))
+  gridApi!.setGridOption('paginationPageSize', Number(value))
 }
 
 // setup the grid after the page has finished loading
@@ -103,6 +103,6 @@ document.addEventListener('DOMContentLoaded', function () {
   fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
     .then(response => response.json())
     .then(function (data) {
-      gridApi!.updateGridOption('rowData', data)
+      gridApi!.setGridOption('rowData', data)
     })
 })

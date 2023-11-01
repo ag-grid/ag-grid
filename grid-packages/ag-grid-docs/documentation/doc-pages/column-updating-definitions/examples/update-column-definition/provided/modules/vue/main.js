@@ -59,14 +59,14 @@ const VueExample = {
             columnDefs.forEach(function (colDef, index) {
                 colDef.headerName = 'C' + index;
             });
-            this.gridApi.updateGridOption('columnDefs', columnDefs);
+            this.gridApi.setGridOption('columnDefs', columnDefs);
         },
         removeHeaderNames() {
             const columnDefs = this.getColumnDefs();
             columnDefs.forEach(function (colDef, index) {
                 colDef.headerName = undefined;
             });
-            this.gridApi.updateGridOption('columnDefs', columnDefs);
+            this.gridApi.setGridOption('columnDefs', columnDefs);
         },
         setValueFormatters() {
             const columnDefs = this.getColumnDefs();
@@ -75,14 +75,14 @@ const VueExample = {
                     return '[ ' + params.value + ' ]';
                 };
             });
-            this.gridApi.updateGridOption('columnDefs', columnDefs);
+            this.gridApi.setGridOption('columnDefs', columnDefs);
         },
         removeValueFormatters() {
             const columnDefs = this.getColumnDefs();
             columnDefs.forEach(function (colDef, index) {
                 colDef.valueFormatter = undefined;
             });
-            this.gridApi.updateGridOption('columnDefs', columnDefs);
+            this.gridApi.setGridOption('columnDefs', columnDefs);
         },
         getColumnDefs() {
             return [

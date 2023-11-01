@@ -113,6 +113,6 @@ export class DetailCellRenderer extends Component implements ICellRenderer {
 
     private setRowData(rowData: any[]): void {
         // ensure detail grid api still exists (grid may be destroyed when async call tries to set data)
-        this.detailApi && this.detailApi.updateGridOption('rowData', rowData);
+        this.detailApi && this.detailApi.setGridOption('rowData', rowData);
     }
 }

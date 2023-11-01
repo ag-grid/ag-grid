@@ -55,7 +55,7 @@ document.addEventListener('DOMContentLoaded', function () {
       var datasource = createServerSideDatasource(fakeServer)
 
       // register the datasource with the grid
-      gridApi!.updateGridOption('serverSideDatasource', datasource)
+      gridApi!.setGridOption('serverSideDatasource', datasource)
     })
 })
 

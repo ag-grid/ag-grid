@@ -36,12 +36,12 @@ function setNewData() {
     { col1: 'D' },
     { col1: 'E' },
   ]
-  gridApi!.updateGridOption('rowData', newData)
+  gridApi!.setGridOption('rowData', newData)
 }
 
 function reset() {
   gridApi!.setFilterModel(null);
-  gridApi!.updateGridOption('rowData', getRowData());
+  gridApi!.setGridOption('rowData', getRowData());
 }
 
 function onFirstDataRendered(params: FirstDataRenderedEvent) {

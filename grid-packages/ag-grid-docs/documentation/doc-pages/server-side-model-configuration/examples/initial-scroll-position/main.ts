@@ -44,7 +44,7 @@ document.addEventListener('DOMContentLoaded', function () {
       var datasource = createServerSideDatasource(fakeServer);
 
       // register the datasource with the grid
-      gridApi!.updateGridOption('serverSideDatasource', datasource);
+      gridApi!.setGridOption('serverSideDatasource', datasource);
 
       // scroll the grid down until row 5000 is at the top of the viewport
       gridApi!.ensureIndexVisible(5000, 'top');

@@ -74,8 +74,8 @@ const gridOptionsBottom: GridOptions = {
 };
 
 function setData(rowData: any[]) {
-    topApi!.updateGridOption('rowData', rowData);
-    bottomApi!.updateGridOption('rowData', rowData);
+    topApi!.setGridOption('rowData', rowData);
+    bottomApi!.setGridOption('rowData', rowData);
 
     // mix up some columns
     topApi!.moveColumnByIndex(11, 4);

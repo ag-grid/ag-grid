@@ -50,7 +50,7 @@ function changeNull(toChange: string, value: boolean) {
 
   var filterModel = gridApi!.getFilterModel()
 
-  gridApi!.updateGridOption('columnDefs', columnDefs)
+  gridApi!.setGridOption('columnDefs', columnDefs)
   gridApi!.destroyFilter('age')
   gridApi!.setFilterModel(filterModel)
 }
@@ -60,7 +60,7 @@ document.addEventListener('DOMContentLoaded', function () {
   var gridDiv = document.querySelector<HTMLElement>('#myGrid')!
   gridApi = createGrid(gridDiv, gridOptions);
 
-  gridApi!.updateGridOption('rowData', [
+  gridApi!.setGridOption('rowData', [
     {
       athlete: 'Alberto Gutierrez',
       age: 36,

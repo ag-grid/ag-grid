@@ -30,7 +30,7 @@ const App = () => {
     ]);
 
     useEffect(() => {
-        console.log(apiRef.current?.updateGridOption('rowData', [ { make: 'Toyota', model: 'Celica', price: 35000 } ]));
+        console.log(apiRef.current?.setGridOption('rowData', [ { make: 'Toyota', model: 'Celica', price: 35000 } ]));
     }, [])
 
     return (

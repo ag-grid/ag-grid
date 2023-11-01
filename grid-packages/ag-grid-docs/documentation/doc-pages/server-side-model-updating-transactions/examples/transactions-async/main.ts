@@ -74,7 +74,7 @@ const gridOptions: GridOptions = {
     const datasource = getServerSideDatasource(server);
   
     // register the datasource with the grid
-    params.api.updateGridOption('serverSideDatasource', datasource);
+    params.api.setGridOption('serverSideDatasource', datasource);
   
     // register interest in data changes
     dataObservers.push((t: ServerSideTransaction) => {

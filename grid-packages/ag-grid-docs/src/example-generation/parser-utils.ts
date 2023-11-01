@@ -679,10 +679,10 @@ export function addGenericInterfaceImport(imports: string[], tData: string, bind
 
 export function replaceGridReadyRowData(callback: string, rowDataSetter: string){
     return callback
-    // replace gridApi.updateGridOption('rowData', data) with this.rowData = data
-    .replace(/gridApi(!?)\.updateGridOption\('rowData', data\)/, `${rowDataSetter} = data`)
-    // replace gridApi.updateGridOption('rowData', data.map(...)) with this.rowData = data.map(...)
-    .replace(/gridApi(!?)\.updateGridOption\('rowData', data/, `${rowDataSetter} = (data`);
+    // replace gridApi.setGridOption('rowData', data) with this.rowData = data
+    .replace(/gridApi(!?)\.setGridOption\('rowData', data\)/, `${rowDataSetter} = data`)
+    // replace gridApi.setGridOption('rowData', data.map(...)) with this.rowData = data.map(...)
+    .replace(/gridApi(!?)\.setGridOption\('rowData', data/, `${rowDataSetter} = (data`);
 }
 
 export function preferParamsApi(code: string): string {

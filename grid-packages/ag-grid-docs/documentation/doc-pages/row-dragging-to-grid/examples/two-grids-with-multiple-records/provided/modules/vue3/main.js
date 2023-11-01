@@ -183,7 +183,7 @@ const VueExample = {
         checkboxSelectChange() {
             const checked = this.$refs.eSelectCheckbox.checked;
             this.api.setColumnVisible('checkbox', checked);
-            this.leftApi.updateGridOption('suppressRowClickSelection', checked);
+            this.leftApi.setGridOption('suppressRowClickSelection', checked);
         },
 
         onGridReady(params, side) {

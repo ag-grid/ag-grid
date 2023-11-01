@@ -179,7 +179,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
     checkboxToggle.addEventListener('change', function () {
         leftApi.setColumnVisible('checkbox', checkboxToggle.checked);
-        leftApi.updateGridOption('suppressRowClickSelection', checkboxToggle.checked);
+        leftApi.setGridOption('suppressRowClickSelection', checkboxToggle.checked);
     });
 
     loadGrids();

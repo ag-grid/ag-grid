@@ -262,7 +262,7 @@ export class AlignedGridsService extends BeanStub {
         const gridBodyCon = this.ctrlsService.getGridBodyCtrl();
         const isVerticalScrollShowing = gridBodyCon.isVerticalScrollShowing();
         this.getAlignedGridApis().forEach((api) => {
-            api.updateGridOption('alwaysShowVerticalScroll', isVerticalScrollShowing);
+            api.setGridOption('alwaysShowVerticalScroll', isVerticalScrollShowing);
         });
     }
 }

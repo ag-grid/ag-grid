@@ -136,6 +136,6 @@ document.addEventListener('DOMContentLoaded', () => {
   fetch('https://www.ag-grid.com/example-assets/weather-se-england.json')
     .then(response => response.json())
     .then(data => {
-      gridApi!.updateGridOption('rowData', data)
+      gridApi!.setGridOption('rowData', data)
     })
 })

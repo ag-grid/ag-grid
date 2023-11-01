@@ -48,10 +48,10 @@ const VueExample = {
     },
     methods: {
         onBtWithDefault() {
-            this.gridApi.updateGridOption('columnDefs', this.getColumnDefs());
+            this.gridApi.setGridOption('columnDefs', this.getColumnDefs());
         },
         onBtRemove() {
-            this.gridApi.updateGridOption('columnDefs', []);
+            this.gridApi.setGridOption('columnDefs', []);
         },
         onGridReady(params) {
             this.gridApi = params.api;

@@ -57,7 +57,7 @@ const gridOptions: GridOptions<IOlympicData> = {
   onGridReady: params => {
     fetch('https://www.ag-grid.com/example-assets/small-olympic-winners.json')
       .then(response => response.json())
-      .then(data => params.api.updateGridOption('rowData', data))
+      .then(data => params.api.setGridOption('rowData', data))
   },
 }
 

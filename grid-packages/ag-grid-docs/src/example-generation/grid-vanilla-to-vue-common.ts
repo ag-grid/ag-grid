@@ -146,7 +146,7 @@ export function getPropertyBindings(bindings: any, componentFileNames: string[],
             }
         });
 
-    if (bindings.data && bindings.data.callback.indexOf('gridApi.updateGridOption(\'rowData\',') >= 0) {
+    if (bindings.data && bindings.data.callback.indexOf('gridApi.setGridOption(\'rowData\',') >= 0) {
         if (propertyAttributes.filter(item => item.indexOf(':rowData') >= 0).length === 0) {
             propertyAttributes.push(':rowData="rowData"');
         }

@@ -37,7 +37,7 @@ function onBtNoGroups() {
     { field: 'silver', colId: 'silver' },
     { field: 'bronze', colId: 'bronze' },
   ]
-  gridApi!.updateGridOption('columnDefs', columnDefs)
+  gridApi!.setGridOption('columnDefs', columnDefs)
 }
 
 function onMedalsInGroupOnly() {
@@ -58,7 +58,7 @@ function onMedalsInGroupOnly() {
       ],
     },
   ]
-  gridApi!.updateGridOption('columnDefs', columnDefs)
+  gridApi!.setGridOption('columnDefs', columnDefs)
 }
 
 function onParticipantInGroupOnly() {
@@ -79,7 +79,7 @@ function onParticipantInGroupOnly() {
     { field: 'silver', colId: 'silver' },
     { field: 'bronze', colId: 'bronze' },
   ]
-  gridApi!.updateGridOption('columnDefs', columnDefs)
+  gridApi!.setGridOption('columnDefs', columnDefs)
 }
 
 function onParticipantAndMedalsInGroups() {
@@ -106,7 +106,7 @@ function onParticipantAndMedalsInGroups() {
       ],
     },
   ]
-  gridApi!.updateGridOption('columnDefs', columnDefs)
+  gridApi!.setGridOption('columnDefs', columnDefs)
 }
 
 // setup the grid after the page has finished loading
@@ -116,5 +116,5 @@ document.addEventListener('DOMContentLoaded', () => {
 
   fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
     .then(response => response.json())
-    .then((data: IOlympicData[]) => gridApi!.updateGridOption('rowData', data))
+    .then((data: IOlympicData[]) => gridApi!.setGridOption('rowData', data))
 })

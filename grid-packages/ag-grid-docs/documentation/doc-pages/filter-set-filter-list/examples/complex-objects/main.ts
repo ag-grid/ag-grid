@@ -91,6 +91,6 @@ document.addEventListener('DOMContentLoaded', function () {
         }
       })
 
-      gridApi!.updateGridOption('rowData', newData)
+      gridApi!.setGridOption('rowData', newData)
     })
 })

@@ -46,7 +46,7 @@ function onCellEditRequest(event: CellEditRequestEvent) {
   console.log('onCellEditRequest, updating ' + field + ' to ' + newValue);
 
   rowImmutableStore = rowImmutableStore.map(oldItem => oldItem.id == newItem.id ? newItem : oldItem);
-  gridApi!.updateGridOption('rowData', rowImmutableStore);
+  gridApi!.setGridOption('rowData', rowImmutableStore);
 }
 
 // setup the grid after the page has finished loading
@@ -61,6 +61,6 @@ document.addEventListener('DOMContentLoaded', () => {
     .then((data: any[]) => {
       data.forEach((item, index) => item.id = index);
       rowImmutableStore = data;
-      gridApi!.updateGridOption('rowData', rowImmutableStore);
+      gridApi!.setGridOption('rowData', rowImmutableStore);
     });
 })
