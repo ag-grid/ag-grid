@@ -1846,11 +1846,13 @@ export class GridApi<TData = any> {
     /**
      * Updates the provided subset of gridOptions with the provided values.
      */
-    public updateGridOptions(options: Partial<GridOptions>, source: 'api' | 'gridOptionsChanged' = 'api'): void {
-        this.gos.updateGridOptions({
-            options,
-            source,
-        });
+    public updateGridOptions(options: Partial<GridOptions>): void {
+        this.gos.updateGridOptions({ options });
+    }
+
+    /** Used internally by grid. Not intended to be used by the client. Interface may change between releases. */
+    public __internalUpdateGridOptions(options: Partial<GridOptions>): void {
+        this.gos.updateGridOptions({ options, source: 'gridOptionsUpdated' });
     }
 
     private deprecatedUpdateGridOption<K extends keyof GridOptions>(key: K, value: GridOptions[K]) {
@@ -2126,7 +2128,7 @@ export class GridApi<TData = any> {
     public setColumnDefs(colDefs: (ColDef<TData> | ColGroupDef<TData>)[], source: ColumnEventType = "api") {
         this.gos.updateGridOptions({
             options: { columnDefs: colDefs },
-            source,
+            source: source as any,
         });
     }
 
@@ -2137,7 +2139,7 @@ export class GridApi<TData = any> {
     public setAutoGroupColumnDef(colDef: ColDef<TData>, source: ColumnEventType = "api") {
         this.gos.updateGridOptions({
             options: { autoGroupColumnDef: colDef },
-            source,
+            source: source as any,
         });
     }
 
@@ -2148,7 +2150,7 @@ export class GridApi<TData = any> {
     public setDefaultColDef(colDef: ColDef<TData>, source: ColumnEventType = "api") {
         this.gos.updateGridOptions({
             options: { defaultColDef: colDef },
-            source,
+            source: source as any,
         });
     }
 
@@ -2159,7 +2161,7 @@ export class GridApi<TData = any> {
     public setColumnTypes(columnTypes: { string: ColDef<TData> }, source: ColumnEventType = "api") {
         this.gos.updateGridOptions({
             options: { columnTypes: columnTypes },
-            source,
+            source: source as any,
         });
     }
 

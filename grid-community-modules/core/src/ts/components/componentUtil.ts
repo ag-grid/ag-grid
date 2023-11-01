@@ -110,8 +110,8 @@ export class ComponentUtil {
         if (!changes || Object.keys(changes).length === 0) {
             return;
         }
-        
-        api.updateGridOptions(changes, 'gridOptionsChanged');
+
+        api.__internalUpdateGridOptions(changes);
 
         // copy changes into an event for dispatch
         const event: WithoutGridCommon<ComponentStateChangedEvent> = {
