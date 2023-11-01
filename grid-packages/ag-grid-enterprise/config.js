@@ -4,8 +4,8 @@ const packageJson = require('./package.json');
 const typescript = require('rollup-plugin-typescript2');
 const alias = require('@rollup/plugin-alias');
 const commonjs = require("rollup-plugin-commonjs");
-const agChartsEnterprise = require('ag-charts-enterprise');
 const agChartsCommunity = require('ag-charts-community');
+// const analyze = require('rollup-plugin-analyzer')
 
 const banner = ['/**',
     ` * ${packageJson.name} - ${packageJson.description}` +
@@ -61,7 +61,7 @@ function genConfig(name) {
                     {find: '@ag-grid-community/core', replacement: 'ag-grid-community'}
                 ]
             }),
-            node({format: opts.nodeFormatOverride }),      // for utils package - defaulting to use index.js
+            node({dedupe: ['ag-charts-community'], format: opts.nodeFormatOverride }),      // for utils package - defaulting to use index.js
             commonjs({
                 namedExports: {
                     '../../grid-enterprise-modules/charts/node_modules/ag-charts-enterprise/dist/main.cjs.js' : Object.keys(agChartsCommunity)
@@ -70,6 +70,7 @@ function genConfig(name) {
             typescript({
                 tsconfig: "tsconfig.es6.json"
             }),
+            // analyze({summaryOnly: true}),
         ].concat(opts.plugins || []),
         output: {
             file: opts.dest,
