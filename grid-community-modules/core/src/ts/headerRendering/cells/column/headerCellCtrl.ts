@@ -157,6 +157,7 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl<IHeaderCellComp, Colu
         const xPosition = ColumnMoveHelper.normaliseX(
             isLeft ? (left - 20) : (left + width + 20),
             pinned,
+            true,
             gridOptionsService,
             ctrlsService
         );

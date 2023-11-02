@@ -312,8 +312,12 @@ export class ColumnMoveHelper {
         return validMoves;
     }
 
-    public static normaliseX(x: number, pinned: ColumnPinnedType, gridOptionsService: GridOptionsService, ctrlsService: CtrlsService): number {
+    public static normaliseX(x: number, pinned: ColumnPinnedType, fromKeyboard: boolean, gridOptionsService: GridOptionsService, ctrlsService: CtrlsService): number {
         const eViewport = ctrlsService.getHeaderRowContainerCtrl(pinned).getViewport();
+
+        if (fromKeyboard) {
+            x -= eViewport.getBoundingClientRect().left;
+        }
 
         // flip the coordinate if doing RTL
         if (gridOptionsService.get('enableRtl')) {

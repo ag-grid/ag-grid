@@ -144,6 +144,7 @@ export class MoveColumnFeature implements DropListener {
         const mouseX = ColumnMoveHelper.normaliseX(
             draggingEvent.x,
             this.pinned,
+            false,
             this.gridOptionsService,
             this.ctrlsService
         );
