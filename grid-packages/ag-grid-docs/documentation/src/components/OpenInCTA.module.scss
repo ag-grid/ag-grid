@@ -11,6 +11,7 @@
     height: $size-5;
     border-radius: var(--border-radius);
     transition: color $default-transition-timing, background-color $default-transition-timing;
+    cursor: pointer;
 
     &:hover {
         --button-text-color: var(--link-color);
@@ -44,19 +45,21 @@
     position: absolute;
     display: block;
     color: var(--default-background-color);
-    top: -$size-5;
+    top: -44px;
     padding: $size-half $size-2;
     white-space: nowrap;
+    font-weight: 600;
     background-color: var(--tooltip-background);
-    border-radius: var(--border-radius);
+    border-radius: 6px;
     transform: translateY($size-half);
     opacity: 0;
     pointer-events: none;
     transition-delay: 0;
     transition: opacity 0.165s ease-in, transform 0.165s ease-in;
+    z-index: 1;
 
     &::before {
-        $pointer-size: $size-half;
+        $pointer-size: 8px;
 
         content: '';
         position: absolute;
@@ -64,8 +67,10 @@
         width: $pointer-size * 2;
         height: $pointer-size * 2;
         transform: rotate(45deg);
-        bottom: $pointer-size * -1.1;
+        bottom: -7px;
         left: calc(50% - $pointer-size);
+        border-radius: 3px;
+        z-index: -1;
     }
 
     .cta:hover & {

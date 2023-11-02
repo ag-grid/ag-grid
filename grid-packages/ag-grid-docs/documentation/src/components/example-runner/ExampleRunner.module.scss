@@ -25,29 +25,54 @@
     cursor: pointer;
 
     &:hover li:not(:global(.active)) {
-        border: 1px solid var(--background-600);
+        background: var(--background-400);
+        color: var(--dark-blue-800);
 
         #{$darkmode-selector} & {
-            border: 1px solid #202a34;
+            background-color: color-mix(in srgb, #202a34, var(--default-background-color));
+
+            button {
+                color: var(--default-text-color);
+            }
+
+            svg {
+                fill: var(--default-text-color);
+            }
         }
     }
 
     li {
         padding: 0 12px 0 8px;
         border-radius: $size-1;
-        border: 1px solid transparent;
-        transition: background-color $default-transition-timing, border-color $default-transition-timing;
+        transition: color $default-transition-timing, background-color $default-transition-timing,
+            border-color $default-transition-timing;
 
         &:not(:last-child) {
-            margin-right: $size-half;
+            margin-right: $size-1;
         }
     }
 
     li:global(.active) {
-        background-color: var(--background-600);
+        background-color: var(--primary-100);
+
+        button {
+            color: var(--dark-blue-800);
+        }
+
+        svg {
+            fill: var(--dark-blue-800);
+        }
 
         #{$darkmode-selector} & {
             background-color: #202a34;
+
+            button {
+                color: var(--default-text-color);
+            }
+    
+            svg {
+                fill: var(--default-text-color);
+            }
         }
     }
 
@@ -55,7 +80,12 @@
         --link-color: var(--default-text-color);
         --button-text-color: var(--default-text-color);
 
-        padding: 8px 4px;
+        padding: 8px 4px 7px;
+        font-weight: 500;
+
+        #{$darkmode-selector} & {
+            color: color-mix(in srgb, var(--default-text-color) 66%, var(--default-background-color));
+        }
     }
 
     button::after {
@@ -63,7 +93,11 @@
     }
 
     svg {
-        margin-right: $size-half;
+        margin-right: 4px;
+
+        #{$darkmode-selector} & {
+            fill: color-mix(in srgb, var(--default-text-color) 66%, var(--default-background-color));
+        }
     }
 }
 
@@ -72,6 +106,7 @@
     align-items: center;
     flex-shrink: 0;
     margin-left: auto;
+    margin-right: -10px;
 
     li {
         margin-bottom: 0.125em !important;
