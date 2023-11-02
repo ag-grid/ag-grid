@@ -49,15 +49,15 @@
     text-align: center;
     text-decoration: none;
     font-size: 14px !important;
-}
 
-.feature:hover {
-    cursor: pointer;
-    background-color: #397785;
-    transform: scale(1.05);
+    &:hover {
+        cursor: pointer;
+        background-color: #397785;
+        transform: scale(1.05);
+    }
 }
 
 .cardLink {
     display: flex;
-    justify-content: end;
+    justify-content: flex-end;
 }
