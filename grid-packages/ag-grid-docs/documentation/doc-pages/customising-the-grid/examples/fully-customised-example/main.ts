@@ -57,8 +57,8 @@ const gridOptions: GridOptions = {
         {
             field: "price",
             width: 130,
-            valueFormatter: currencyFormatter,
-            cellClassRules: cellClassRules
+            cellClassRules: cellClassRules,
+            valueFormatter: currencyFormatter
         },
         {
             field: "company"
@@ -85,7 +85,7 @@ const gridOptions: GridOptions = {
 document.addEventListener('DOMContentLoaded', function () {
     var gridDiv = document.querySelector<HTMLElement>('#myGrid')!;
     gridApi = createGrid(gridDiv, gridOptions);
-    fetch('https://www.ag-grid.com/example-assets/space-mission-data.json')
+    fetch('https://downloads.jamesswinton.com/space-mission-data.json')
         .then(response => response.json())
         .then((data: any) => gridApi.setRowData(data))
 })
