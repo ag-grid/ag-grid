@@ -42,7 +42,7 @@ export class AgRichSelect extends AgPickerField {
         if (cellRowHeight != null) {
             this.cellRowHeight = cellRowHeight;
         }
-        if (value != null) {
+        if (value !== undefined) {
             this.value = value;
         }
         if (valueList != null) {
@@ -460,6 +460,12 @@ export class AgRichSelect extends AgPickerField {
         e.preventDefault();
         this.onListValueSelected(this.currentList[this.highlightedItem], true);
     }
+    onTabKeyDown() {
+        if (!this.isPickerDisplayed) {
+            return;
+        }
+        this.setValue(this.currentList[this.highlightedItem], false, true);
+    }
     onListValueSelected(value, fromEnterKey) {
         this.setValue(value, false, true);
         this.dispatchPickerEvent(value, fromEnterKey);
@@ -509,6 +515,9 @@ export class AgRichSelect extends AgPickerField {
                 break;
             case KeyCode.ENTER:
                 this.onEnterKeyDown(event);
+                break;
+            case KeyCode.TAB:
+                this.onTabKeyDown();
                 break;
             default:
                 if (!allowTyping) {

@@ -45,7 +45,7 @@ class AgRichSelect extends agPickerField_1.AgPickerField {
         if (cellRowHeight != null) {
             this.cellRowHeight = cellRowHeight;
         }
-        if (value != null) {
+        if (value !== undefined) {
             this.value = value;
         }
         if (valueList != null) {
@@ -463,6 +463,12 @@ class AgRichSelect extends agPickerField_1.AgPickerField {
         e.preventDefault();
         this.onListValueSelected(this.currentList[this.highlightedItem], true);
     }
+    onTabKeyDown() {
+        if (!this.isPickerDisplayed) {
+            return;
+        }
+        this.setValue(this.currentList[this.highlightedItem], false, true);
+    }
     onListValueSelected(value, fromEnterKey) {
         this.setValue(value, false, true);
         this.dispatchPickerEvent(value, fromEnterKey);
@@ -512,6 +518,9 @@ class AgRichSelect extends agPickerField_1.AgPickerField {
                 break;
             case keyCode_1.KeyCode.ENTER:
                 this.onEnterKeyDown(event);
+                break;
+            case keyCode_1.KeyCode.TAB:
+                this.onTabKeyDown();
                 break;
             default:
                 if (!allowTyping) {

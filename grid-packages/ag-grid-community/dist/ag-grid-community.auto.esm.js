@@ -12893,7 +12893,13 @@ var AgPickerField = /** @class */ (function (_super) {
         setAriaLabelledBy(ariaEl, (_a = this.getLabelId()) !== null && _a !== void 0 ? _a : '');
         _super.prototype.refreshLabel.call(this);
     };
-    AgPickerField.prototype.onLabelOrWrapperMouseDown = function () {
+    AgPickerField.prototype.onLabelOrWrapperMouseDown = function (e) {
+        if (e) {
+            // this prevents a BUG where MouseDown causes the element to be focused
+            // after the picker is shown and focus ends up being lost.
+            e.preventDefault();
+            this.getFocusableElement().focus();
+        }
         if (this.skipClick) {
             this.skipClick = false;
             return;
@@ -41853,7 +41859,7 @@ var AgRichSelect = /** @class */ (function (_super) {
         if (cellRowHeight != null) {
             _this.cellRowHeight = cellRowHeight;
         }
-        if (value != null) {
+        if (value !== undefined) {
             _this.value = value;
         }
         if (valueList != null) {
@@ -42277,6 +42283,12 @@ var AgRichSelect = /** @class */ (function (_super) {
         e.preventDefault();
         this.onListValueSelected(this.currentList[this.highlightedItem], true);
     };
+    AgRichSelect.prototype.onTabKeyDown = function () {
+        if (!this.isPickerDisplayed) {
+            return;
+        }
+        this.setValue(this.currentList[this.highlightedItem], false, true);
+    };
     AgRichSelect.prototype.onListValueSelected = function (value, fromEnterKey) {
         this.setValue(value, false, true);
         this.dispatchPickerEvent(value, fromEnterKey);
@@ -42326,6 +42338,9 @@ var AgRichSelect = /** @class */ (function (_super) {
                 break;
             case KeyCode.ENTER:
                 this.onEnterKeyDown(event);
+                break;
+            case KeyCode.TAB:
+                this.onTabKeyDown();
                 break;
             default:
                 if (!allowTyping) {

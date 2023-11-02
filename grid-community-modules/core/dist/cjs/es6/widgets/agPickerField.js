@@ -82,7 +82,13 @@ class AgPickerField extends agAbstractField_1.AgAbstractField {
         aria_1.setAriaLabelledBy(ariaEl, (_a = this.getLabelId()) !== null && _a !== void 0 ? _a : '');
         super.refreshLabel();
     }
-    onLabelOrWrapperMouseDown() {
+    onLabelOrWrapperMouseDown(e) {
+        if (e) {
+            // this prevents a BUG where MouseDown causes the element to be focused
+            // after the picker is shown and focus ends up being lost.
+            e.preventDefault();
+            this.getFocusableElement().focus();
+        }
         if (this.skipClick) {
             this.skipClick = false;
             return;

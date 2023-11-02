@@ -64,7 +64,7 @@ var AgRichSelect = /** @class */ (function (_super) {
         if (cellRowHeight != null) {
             _this.cellRowHeight = cellRowHeight;
         }
-        if (value != null) {
+        if (value !== undefined) {
             _this.value = value;
         }
         if (valueList != null) {
@@ -489,6 +489,12 @@ var AgRichSelect = /** @class */ (function (_super) {
         e.preventDefault();
         this.onListValueSelected(this.currentList[this.highlightedItem], true);
     };
+    AgRichSelect.prototype.onTabKeyDown = function () {
+        if (!this.isPickerDisplayed) {
+            return;
+        }
+        this.setValue(this.currentList[this.highlightedItem], false, true);
+    };
     AgRichSelect.prototype.onListValueSelected = function (value, fromEnterKey) {
         this.setValue(value, false, true);
         this.dispatchPickerEvent(value, fromEnterKey);
@@ -538,6 +544,9 @@ var AgRichSelect = /** @class */ (function (_super) {
                 break;
             case keyCode_1.KeyCode.ENTER:
                 this.onEnterKeyDown(event);
+                break;
+            case keyCode_1.KeyCode.TAB:
+                this.onTabKeyDown();
                 break;
             default:
                 if (!allowTyping) {

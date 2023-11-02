@@ -14970,7 +14970,13 @@ class AgPickerField extends _agAbstractField_mjs__WEBPACK_IMPORTED_MODULE_0__["A
         Object(_utils_aria_mjs__WEBPACK_IMPORTED_MODULE_2__["setAriaLabelledBy"])(ariaEl, (_a = this.getLabelId()) !== null && _a !== void 0 ? _a : '');
         super.refreshLabel();
     }
-    onLabelOrWrapperMouseDown() {
+    onLabelOrWrapperMouseDown(e) {
+        if (e) {
+            // this prevents a BUG where MouseDown causes the element to be focused
+            // after the picker is shown and focus ends up being lost.
+            e.preventDefault();
+            this.getFocusableElement().focus();
+        }
         if (this.skipClick) {
             this.skipClick = false;
             return;
@@ -41713,7 +41719,7 @@ class AgRichSelect extends _agPickerField_mjs__WEBPACK_IMPORTED_MODULE_11__["AgP
         if (cellRowHeight != null) {
             this.cellRowHeight = cellRowHeight;
         }
-        if (value != null) {
+        if (value !== undefined) {
             this.value = value;
         }
         if (valueList != null) {
@@ -42131,6 +42137,12 @@ class AgRichSelect extends _agPickerField_mjs__WEBPACK_IMPORTED_MODULE_11__["AgP
         e.preventDefault();
         this.onListValueSelected(this.currentList[this.highlightedItem], true);
     }
+    onTabKeyDown() {
+        if (!this.isPickerDisplayed) {
+            return;
+        }
+        this.setValue(this.currentList[this.highlightedItem], false, true);
+    }
     onListValueSelected(value, fromEnterKey) {
         this.setValue(value, false, true);
         this.dispatchPickerEvent(value, fromEnterKey);
@@ -42180,6 +42192,9 @@ class AgRichSelect extends _agPickerField_mjs__WEBPACK_IMPORTED_MODULE_11__["AgP
                 break;
             case _constants_keyCode_mjs__WEBPACK_IMPORTED_MODULE_0__["KeyCode"].ENTER:
                 this.onEnterKeyDown(event);
+                break;
+            case _constants_keyCode_mjs__WEBPACK_IMPORTED_MODULE_0__["KeyCode"].TAB:
+                this.onTabKeyDown();
                 break;
             default:
                 if (!allowTyping) {

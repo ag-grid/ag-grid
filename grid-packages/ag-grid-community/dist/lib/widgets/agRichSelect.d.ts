@@ -62,6 +62,7 @@ export declare class AgRichSelect<TValue = any> extends AgPickerField<TValue, Ri
     private onPickerMouseMove;
     private onNavigationKeyDown;
     protected onEnterKeyDown(e: KeyboardEvent): void;
+    private onTabKeyDown;
     private onListValueSelected;
     private dispatchPickerEvent;
     getFocusableElement(): HTMLElement;

@@ -89,7 +89,13 @@ var AgPickerField = /** @class */ (function (_super) {
         setAriaLabelledBy(ariaEl, (_a = this.getLabelId()) !== null && _a !== void 0 ? _a : '');
         _super.prototype.refreshLabel.call(this);
     };
-    AgPickerField.prototype.onLabelOrWrapperMouseDown = function () {
+    AgPickerField.prototype.onLabelOrWrapperMouseDown = function (e) {
+        if (e) {
+            // this prevents a BUG where MouseDown causes the element to be focused
+            // after the picker is shown and focus ends up being lost.
+            e.preventDefault();
+            this.getFocusableElement().focus();
+        }
         if (this.skipClick) {
             this.skipClick = false;
             return;
