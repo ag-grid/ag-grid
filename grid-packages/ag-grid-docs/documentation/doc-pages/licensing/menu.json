@@ -21,13 +21,125 @@
             "icon": "framework"
           },
           {
-            "title": "Advanced Features",
+            "title": "Advanced Features (?)",
             "url": "/advanced-features/",
             "icon": "framework"
+          }
+        ]
+      },
+      {
+        "title": "Installation",
+        "items": [
+          {
+            "title": "Install with NPM",
+            "url": "/npm/",
+            "frameworks": [
+              "javascript"
+            ]
           },
           {
-            "title": "Video Tutorials",
-            "url": "/videos/"
+            "title": "Download Bundles",
+            "url": "/download/",
+            "frameworks": [
+              "javascript"
+            ]
+          },
+          {
+            "title": "Packages vs Modules",
+            "url": "/packages-modules/",
+            "items": [
+              {
+                "title": "Packages",
+                "url": "/packages/",
+                "items": [
+                  {
+                    "title": "Using ES Modules",
+                    "url": "/esm-packages/",
+                    "frameworks": [
+                      "javascript"
+                    ]
+                  }
+                ]
+              },
+              {
+                "title": "Modules",
+                "url": "/modules/",
+                "items": [
+                  {
+                    "title": "Using ES Modules",
+                    "url": "/esm-modules/",
+                    "frameworks": [
+                      "javascript"
+                    ]
+                  }
+                ]
+              },
+              {
+                "title": "Modules - Example",
+                "url": "/modules-building/",
+                "frameworks": [
+                  "angular",
+                  "react",
+                  "vue"
+                ]
+              },
+              {
+                "title": "Custom UMD Bundle",
+                "url": "/modules-building/",
+                "frameworks": [
+                  "javascript"
+                ]
+              }
+            ]
+          },
+          {
+            "title": "Building",
+            "url": "/building/",
+            "frameworks": [
+              "javascript"
+            ],
+            "items": [
+              {
+                "title": "Rollup",
+                "url": "/building-rollup/"
+              },
+              {
+                "title": "TypeScript & Webpack",
+                "url": "/building-typescript/",
+                "frameworks": [
+                  "javascript"
+                ]
+              },
+              {
+                "title": "AMD",
+                "url": "/building-amd/",
+                "frameworks": [
+                  "javascript"
+                ]
+              }
+            ]
+          },
+          {
+            "title": "Compatibility",
+            "url": "/react-compatibility/",
+            "frameworks": [
+              "react"
+            ]
+          },
+          {
+            "title": "Compatibility",
+            "url": "/angular-compatibility/",
+            "frameworks": [
+              "angular"
+            ]
+          },
+          {
+            "title": "Supported Browsers",
+            "url": "/supported-browsers/"
+          },
+          {
+            "title": "Upgrading to Enterprise",
+            "url": "/licensing/"
           }
         ]
       },
@@ -35,26 +147,32 @@
         "title": "Guides",
         "items": [
           {
-            "title": "Guide 1 (Basic)",
-            "url": "/guide1/",
-            "icon": "framework"
+            "title": "Testing",
+            "url": "/testing/"
           },
           {
-            "title": "Guide 2 (Intermediate)",
-            "url": "/guide2/",
-            "icon": "framework"
-          },
-          {
-            "title": "Guide 3 (Advanced)",
-            "url": "/guide3/",
-            "icon": "framework"
-          },
-          {
-            "title": "Unidirectional Data Flow",
-            "url": "/framework-data-flow/",
-            "showInCollapsed": true,
+            "title": "Testing Async",
+            "url": "/testing-async/",
             "frameworks": [
-              "vue"
+              "angular"
+            ]
+          },
+          {
+            "title": "Security",
+            "url": "/security/"
+          },
+          {
+            "title": "Using Hooks",
+            "url": "/react-hooks/",
+            "frameworks": [
+              "react"
+            ]
+          },
+          {
+            "title": "Rendering",
+            "url": "/reactui/",
+            "frameworks": [
+              "react"
             ]
           },
           {
@@ -82,17 +200,41 @@
             ]
           },
           {
+            "title": "Vue2 Tutorial",
+            "url": "/vue2/",
+            "showInCollapsed": true,
+            "frameworks": [
+              "vue"
+            ]
+          },
+          {
+            "title": "Unidirectional Data Flow",
+            "url": "/framework-data-flow/",
+            "showInCollapsed": true,
+            "frameworks": [
+              "vue"
+            ]
+          },
+          {
             "title": "Miscellaneous",
             "url": "/framework-misc/",
             "showInCollapsed": true,
             "frameworks": [
               "vue"
             ]
+          },
+          {
+            "title": "Video Tutorials",
+            "url": "/videos/"
+          },
+          {
+            "title": "Support (?)",
+            "url": "/support/"
           }
         ]
       },
       {
-        "title": "Resources",
+        "title": "Updates",
         "items": [
           {
             "title": "Changelog",
@@ -103,142 +245,6 @@
             "title": "Pipeline",
             "url": "/pipeline/",
             "icon": "framework"
-          },
-          {
-            "title": "Support",
-            "url": "/support/",
-            "icon": "framework"
-          },
-          {
-            "title": "Community vs Enterprise",
-            "url": "/licensing/"
-          },
-          {
-            "title": "Supported Browsers",
-            "url": "/supported-browsers/"
-          },
-          {
-            "title": "Testing",
-            "url": "/testing/"
-          },
-          {
-            "title": "Testing Async",
-            "url": "/testing-async/",
-            "frameworks": [
-              "angular"
-            ]
-          },
-          {
-            "title": "Security",
-            "url": "/security/"
-          },
-          {
-            "title": "Best Practices",
-            "url": "/react-hooks/",
-            "frameworks": [
-              "react"
-            ]
-          }
-        ]
-      }
-    ]
-  },
-  {
-    "group": "INSTALLATION",
-    "items": [
-      {
-        "title": "Packages & Modules",
-        "items": [
-          {
-            "title": "Install with NPM",
-            "url": "/npm/",
-            "frameworks": [
-              "javascript"
-            ]
-          },
-          {
-            "title": "Download Bundles",
-            "url": "/download/",
-            "frameworks": [
-              "javascript"
-            ]
-          },
-          {
-            "title": "Packages vs Modules",
-            "url": "/packages-modules/"
-          },
-          {
-            "title": "Packages",
-            "url": "/packages/",
-            "items": [
-              {
-                "title": "Using ES Modules",
-                "url": "/esm-packages/",
-                "frameworks": [
-                  "javascript"
-                ]
-              }
-            ]
-          },
-          {
-            "title": "Modules",
-            "url": "/modules/",
-            "items": [
-              {
-                "title": "Using ES Modules",
-                "url": "/esm-modules/",
-                "frameworks": [
-                  "javascript"
-                ]
-              }
-            ]
-          },
-          {
-            "title": "Modules - Example",
-            "url": "/modules-building/",
-            "frameworks": [
-              "angular",
-              "react",
-              "vue"
-            ]
-          },
-          {
-            "title": "Custom UMD Bundle",
-            "url": "/modules-building/",
-            "frameworks": [
-              "javascript"
-            ]
-          }
-        ]
-      },
-      {
-        "title": "Building",
-        "url": "/building/",
-        "showInCollapsed": true,
-        "frameworks": [
-          "javascript"
-        ],
-        "items": [
-          {
-            "title": "Rollup",
-            "url": "/building-rollup/",
-            "frameworks": [
-              "javascript"
-            ]
-          },
-          {
-            "title": "TypeScript & Webpack",
-            "url": "/building-typescript/",
-            "frameworks": [
-              "javascript"
-            ]
-          },
-          {
-            "title": "AMD",
-            "url": "/building-amd/",
-            "frameworks": [
-              "javascript"
-            ]
           }
         ]
       }
