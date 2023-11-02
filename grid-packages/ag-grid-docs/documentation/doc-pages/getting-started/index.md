@@ -24,23 +24,24 @@ _For more information, read our detailed [installation guide](/packages-modules/
 |import "ag-grid-community/styles/ag-theme-alpine.css"; // Theme
 | 
 |function GridExample() {
-|  // Set Row Data
+|  // Row Data: The data to be displayed.
 |  const [rowData, setRowData] = useState([
 |    { make: 'Toyota', model: 'Prius', price: 35000 },
 |    { make: 'Ford', model: 'Mondeo', price: 32000 },
 |    { make: 'Porsche', model: 'Boxster', price: 72000 }
 |  ]);
 |  
-|  // Define Columns (Should match properties in rowData)
+|  // Column Definitions: Defines & controls grid columns.
 |  const [colDefs] = useState([
 |    { field: "make" },
 |    { field: "model" },
 |    { field: "price" }
 |  ]);
 |  
-|  // Wrap the grid component in a parent container to set the theme & dimensions
+|  // Container: Defines the grid's theme & dimensions.
 |  return (
 |    &lt;div className="ag-theme-alpine" style={{ width: 600, height: 500 }}>
+|      {/* The AG Grid component, with Row Data & Column Definiton props */}
 |      &lt;AgGridReact rowData={rowData} columnDefs={colDefs} />
 |    &lt;/div>
 |  );
@@ -52,4 +53,4 @@ _For more information, read our detailed [installation guide](/packages-modules/
 
 To learn more about the Grid, read our tutorials:
 
-<next-step-tiles tutorial1="true" tutorial2="true" tutorial3="true"/>
+<next-step-tiles tutorial1="true" tutorial2="false" tutorial3="false"/>

@@ -4,18 +4,17 @@ title: "Creating a Basic Grid"
 
 This tutorial provides an introduction to the key concepts of AG Grid.
 
-<note disableMarkdown='true'>To follow this tutorial <a href='#'>Clone our Starter Template</a> or <a href='#'>Fork the CodeSandbox Example</a>.</note>
-
 ## Overview
 
 In this tutorial you will:
 
-1. Create a basic grid
-2. Populate the grid with data from a server
-3. Configure basic features
-4. Hook into grid events
+1. [Create a basic grid](/deep-dive/#create-a-basic-grid)
+2. [Load external data into the grid](/deep-dive/#load-new-data)
+3. [Configure columns](/deep-dive/#configure-columns)
+4. [Configure grid features](/deep-dive/#configure-the-grid)
+5. [Hook into grid events](/deep-dive/#handle-grid-events)
 
-Once complete, you'll have an interactive grid, populated with data from an external source that responds to user-interaction. 
+Once complete, you'll have an interactive grid, populated with data from an external source that responds to user-interaction.
 
 Try it out for yourself by __sorting__, __filtering__, __resizing__, __selecting__, or __editing__ data in the grid.
 
@@ -23,47 +22,26 @@ Try it out for yourself by __sorting__, __filtering__, __resizing__, __selecting
 
 <framework-specific-section frameworks="react">
 
-## Grid Basics
+## Setup
 
-In its simplest form, a grid is made up of three things:
+<note disableMarkdown='true'>To follow this tutorial <a href='#'>Clone our Quick Start</a> or <a href='#'>Fork the CodeSandbox Example</a>.</note>
 
-- __Row Data:__ An array which contains the data we want to display within the grid.
-- __Column Definitions:__ An array that defines the columns that we want the grid to display.
-- __Grid Component:__ The grid itself with `rowData` and `colDefs` as props, wrapped in a parent container which controls the dimension and theme of the grid.
+## Create a Basic Grid
 
-<snippet transform={false} language="jsx">
-|// Row Data
-|const [rowData, setRowData] = useState([
-|  { company: "RVSN USSR", country: "Kazakhstan", date: "1957-10-04", mission: "Sputnik-1", price: 9550000, successful: true },
-|  { company: "RVSN USSR", country: "Kazakhstan", date: "1957-11-03", mission: "Sputnik-2", price: 8990000, successful: true },
-|  { company: "US Navy", country: "USA", date: "1957-12-06", mission: "Vanguard TV3", price: 6860000, successful: false }
-|]);
-|
-|// Column Definitions
-|const [colDefs] = useState([
-|  { field: "mission" },
-|  { field: "country" },
-|  { field: "successful" },
-|  { field: "date" },
-|  { field: "price" },
-|  { field: "company" }
-|]);
-|
-|// Container & Grid Component
-|return (
-|  &lt;div className="ag-theme-alpine" style={{ width: 600, height: 500 }}>
-|    &lt;AgGridReact rowData={rowData} columnDefs={colDefs} />
-|  &lt;/div>
-|);
-</snippet>
+The [Quick Start](#) shows how to create a basic grid, made up of four things:
 
-_Note: We've wrapped our `rowData` and `colDefs` arrays in a `useState` hook. We recommend `useState` if the data is mutable, otherwise `useMemo` is preferable. Read our [Best Practices](/react-hooks/) guide to learn more about using React hooks with AG Grid._
+1. __Row Data:__ The data to be displayed.
+2. __Column Definition:__ Defines & controls grid columns.
+3. __Container:__ A `div` that contains and defines the grid's theme & dimensions.
+4. __Grid Component:__ The `AgGridReact` component with __Row Data__ and __Column Definition__ props.
 
-Running our code at this point will display a basic grid, with three rows:
+Putting these things together creates basic grid:
 
 </framework-specific-section>
 
-<grid-example title='Basic Example' name='basic-example' type='generated' options='{ "exampleHeight": 201 }'></grid-example>
+<grid-example title='Basic Example' name='basic-example' type='generated' options='{ "exampleHeight": 550 }'></grid-example>
+
+_Note: `rowData` and `colDefs` arrays use a `useState` hook. We recommend `useState` if the data is mutable, otherwise `useMemo` is preferable. Read our [Best Practices](/react-hooks/) guide to learn more about using React hooks with AG Grid._
 
 ---
 
@@ -73,11 +51,11 @@ Running our code at this point will display a basic grid, with three rows:
 
 <framework-specific-section frameworks="react">
 
-`rowData` is a reactive property which means that to update the data within the grid all we need to do is update the state of our `rowData` variable. Let's test this by fetching some data from an external server and updating our `rowData` with the response:
+As `rowData` is a reactive property, any updates to its state will be refelcted in the grid. Let's test this by fetching some data from an external server and updating `rowData` with the response:
 
 <snippet transform={false} language="jsx">
 |useEffect(() => {
-|  fetch('https://www.ag-grid.com/example-assets/space-mission-data.json') // Fetch data from server
+|  fetch('https://downloads.jamesswinton.com/space-mission-data.json') // Fetch data from server
 |    .then(result => result.json()) // Convert to JSON
 |    .then(rowData => setRowData(rowData)) // Update state of `rowData`
 |}, [])
@@ -99,7 +77,7 @@ When we run our application, we should see a grid with ~4,000 rows:
 
 Now that we have a basic grid with some arbitrary data, we can start to configure the grid by using ___Column Properties___.
 
-Column Properties are propreties that can be set on one or more columns to enable/disable column-specific features, like resizing. Let's try this by setting the `resizeable` property of the 'mission' column to __true__:
+Column Properties can be added to one or more columns to enable/disable column-specific features. Let's try this by adding the `resizable: true` property to the 'mission' column:
 
 <snippet transform={false} language="jsx">
 |const [colDefs] = useState([
@@ -256,4 +234,4 @@ Congratulations! You've completed the tutorial and built your first grid. By now
 
 Read our next tutorial to learn how to customise and extend the grid with your own design, components and logic, or jump straight into our advanced tutorial
 
-<next-step-tiles tutorial1="false" tutorial2="false" tutorial3="true"/>
+<next-step-tiles tutorial1="false" tutorial2="true" tutorial3="false"/>

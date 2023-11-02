@@ -4,8 +4,6 @@ title: "Customising the Grid"
 
 This tutorial demonstrates how to style, customise and extend the grid.
 
-<note disableMarkdown='true'>To follow this tutorial <a href='#'>Clone our Starter Template</a> or <a href='#'>Fork the CodeSandbox Example</a>.</note>
-
 ## Overview
 
 In this tutorial you will:
@@ -14,13 +12,17 @@ In this tutorial you will:
 2. [Style rows & cells](/customising-the-grid/#styling-rows--cells)
 3. [Apply styles dynamically](/customising-the-grid/#applying-styles-dynamically)
 4. [Format grid values](/customising-the-grid/#formatting-cell-values)
-5. [Add custom content to Cells](/customising-the-grid/#custom-cell-content)
+5. [Add custom components to Cells](/customising-the-grid/#custom-cell-components)
 
-Once complete, you will have a grid with formatted price & date values, component in place of the country values and custom styles applied to rows & cells. 
+Once complete, you will have a grid with formatted price & date values, a component in place of the country values and custom styles applied to rows & cells.
 
 Try it out for yourself by editing the country, success, price or date columns to see the styles update in real-time:
 
-<grid-example title='Full Example' name='fully-customised-example' type='generated' options='{ "exampleHeight": 450 }'></grid-example>
+<grid-example title='Full Example' name='fully-customised-example' type='generated' options='{ "exampleHeight": 550 }'></grid-example>
+
+## Setup
+
+<note disableMarkdown='true'>To follow this tutorial <a href='#'>clone our Basic Grid Template</a> or <a href='#'>fork the CodeSandbox example</a>.</note>
 
 ## Theming & Styling
 
@@ -44,9 +46,9 @@ _Note: Themes can be customised by overriding [CSS variables](/global-style-cust
 
 ### Styling Rows & Cells
 
-CSS classes can be applied to rows or cells by using __Row Classes__ and __Cell Classes__.
+CSS classes can be applied to rows with __Row Classes__ and cells with __Cell Classes__.
 
-__Row Classes__ are defined using the `rowClass` prop, with our CSS classname as the value. Let's test this out by creating a new `styles.css` file with a `.row` selector to control the font of our rows:
+__Row Classes__ are defined using the `rowClass` prop, with a CSS classname as the value. Let's try this by creating a new `styles.css` file with a `.row` selector to control the font of our rows:
 
 <snippet transform={false} language="css">
 .row {
@@ -64,9 +66,9 @@ And then setting the value of the `rowClass` prop to the `.row` selector:
 
 All rows should now use the <span style="font-family: 'Courier New'">Courier New</span> font:
 
-***TODO: Add example w/ row fonts***
+<grid-example title='Row Class Example' name='row-class-example' type='generated' options='{ "exampleHeight": 550 }'></grid-example>
 
-Cell Styles work in the same way but are applied via colDefs so that we can control the cells which the styles are applied to. Let's add a new selector to `styles.css` to control the font of the 'Mission' column:
+__Cell Classes__ work in the same way but are applied by adding a `cellClass` property to the column we want the styles to apply to. Let's try this by adding a new selector to `styles.css` to control the font of the 'Mission' column:
 
 <snippet transform={false} language="css">
 .mission-cell {
@@ -89,13 +91,13 @@ And then setting the value of the `cellClass` prop on the 'Mission' column to th
 
 We should now see our mission column with a heavy font-weight:
 
-***TODO: Add example w/ cell font weight***
+<grid-example title='Cell Class Example' name='cell-class-example' type='generated' options='{ "exampleHeight": 550 }'></grid-example>
 
 ### Applying Styles Dynamically
 
-Styles can be dynamically applied to rows or cells using __Row Class Rules__ and __Cell Class Rules__, respectively. 
+Styles can also be dynamically applied to rows with __Row Class Rules__ and cells with __Cell Class Rules__.
 
-Class Rules are applied in the same way as classes, but rather than supplying the selector name, we provide a JavaScript map where the keys are the selectors and the values are functions that describe when the selectors should be applied.
+__Row Class Rules__ are configured by providing a JavaScript map to the `rowClassRules` prop where the keys are the css selectors and the values are functions that describe when the selectors should be applied.
 
 Let's try this out by adding a few new selectors to our `styles.css` file to control the colour of the row when hovered:
 
@@ -124,9 +126,9 @@ And then creating a map to apply these classes based on the value of the 'Sucess
 
 We should now see that rows are either green or red when hovered, depending on the value of the 'succesful' column:
 
-***TODO: Example using row class rules***
+<grid-example title='Row Class Rule Example' name='row-class-rule-example' type='generated' options='{ "exampleHeight": 550 }'></grid-example>
 
-As with Cell Classes, __Cell Class Rules__ work in the same way as __Row Class Rules__ but are applied via the `colDefs` array instead, so that we can control the cells that the rules are applied to.
+__Cell Class Rules__ work in the same way as __Row Class Rules__ but are applied via the `colDefs` array, to determine which cells the rules are applied to.
 
 Let's try this out by adding a few new selectors to our `styles.css` file to control the style of the 'price' column:
 
@@ -179,7 +181,7 @@ And then creating another map which we can then set as the value for our `cellCl
 
 We should now see our price column formatted based on its value:
 
-***TODO: Cell Class Rules Example***
+<grid-example title='Cell Class Rule Example' name='cell-class-rule-example' type='generated' options='{ "exampleHeight": 550 }'></grid-example>
 
 ---
 
@@ -187,14 +189,14 @@ We should now see our price column formatted based on its value:
 
 The data supplied to the grid usually requires some degree of formatting. To achieve this, we can use __Value Formatters__.
 
-__Value Formatters__ are basic functions which take the value of the cell, apply some basic formatting, and return a new value to be displayed by the grid. Let's try this by adding the valueFormatter property to our 'price' column to return the formatted value:
+__Value Formatters__ are basic functions which take the value of the cell, apply some basic formatting, and return a new value to be displayed by the grid. Let's try this by adding the `valueFormatter` property to our 'price' column and returning the formatted value:
 
 <snippet transform={false} language=jsx>
 |const [colDefs] = useState([
 |  ...
 |  {
 |    field: "price",
-|    valueFormatter: params => return '£' + params.value.toLocaleString();
+|    valueFormatter: params => return '£' + params.value.toLocaleString(); // Function which returns a formatted string
 |  }
 |  ...
 |]);
@@ -208,42 +210,38 @@ __Value Formatters__ are basic functions which take the value of the cell, apply
 
 The grid should now display a nicely formatted value in the 'price' column:
 
-***TODO: Grid Example Value Formatter***
+<grid-example title='Value Formatter Example' name='value-formatter-example' type='generated' options='{ "exampleHeight": 550 }'></grid-example>
 
-## Custom Cell Content
+## Custom Cell Components
 
-Value Formatters are for text formatting, but what if we require more complex control over the cell content? This is where Cell Renderers come in, which can be used to include HTML markup, and functionality, within a cell.
+__Value Formatters__ are useful for basic formatting, but for more advanced use-cases we can use __Cell Renderers__ instead.
 
-Cell Renderers, like Value Formatters, are set via the `colDef` array with the `cellRenderer` property. Cell renderers can be any of the following types:
+__Cell Renderers__ allow you to provide your own React components to the grid and are configured by setting the value of the `cellRenderer` prop to the component name.
 
-- __Undefined:__ Value is rendered as a string
-- __String:__ Name of cell renderer component
-- __Class:__  Direct reference to cell renderer component
-- __Function:__ A function that returns a HTML String or DOM element
-
-In the interest of brevity, we'll be using ...
-
-Let's demonstrate this by creating a custom Cell Renderer that replaces the manufacturer string with their logo. First, we need to create our Cell Renderer component, which should accept a `props` variable, which contains information about the cell:
+Let's try this by creating a new component to display a flag in the 'country' column. First, we need to create a component that accepts a single prop (which contains information about the cell) and returns the flag in an `<img>` element:
 
 <snippet transform={false} language=jsx>
-|// Define Cell Renderer
-|const ManufacturerLogoCellRenderer = (props) => {
+|const CountryFlagCellRenderer = (props) => {
+|  {* Return flag based on cell value *}
 |  return (
 |    &lt;span>
-|      { props.value === 'Ford' && &lt;img src='/ford-logo.jpeg' height={30}>&lt;/img> }
-|      { props.value === 'Toyota' && &lt;img src='/toyota-logo-svg-vector.svg' height={30}>&lt;/img> }
-|      { props.value === 'Porsche' && &lt;img src='/porsche-logo.png' height={30}>&lt;/img> }
+|      { props.value === 'usa' && &lt;img src='https://downloads.jamesswinton.com/flags/us-flag.png)' height={30}>&lt;/img> }
+|      { props.value === 'china' && &lt;img src='https://downloads.jamesswinton.com/flags/cn-flag.png)' height={30}>&lt;/img> }
+|      { props.value === 'Kazakhstan' && &lt;img src='https://downloads.jamesswinton.com/flags/kz-flag.png)' height={30}>&lt;/img> }
 |    &lt;/span>
 |  );
 |}
-|
+</snippet>
+
+And then adding the `cellRenderer` prop on our 'country' column, referencing our component:
+
+<snippet transform={false} language=jsx>
 |const [colDefs] = useState([
 |  {
-|    field: "make",
-|    cellRenderer: ManufacturerLogoCellRenderer // Add CellRenderer to 'make' column
+|    field: "country",
+|    cellRenderer: 'CountryFlagCellRenderer' // Use 'CountryFlagCellRenderer' for this column
 |  },
-|  { field: "model" },
-|  { field: "price" }
+|  ...
 |]);
 |
 |return (
@@ -253,165 +251,47 @@ Let's demonstrate this by creating a custom Cell Renderer that replaces the manu
 |);
 </snippet>
 
-Now, when we run the grid, we should see a manufacturer logo in place of to name:
+Now, when we run the grid, we should see a country flag in place of the name:
 
-***TODO: Cell Renderer Example***
+<grid-example title='Cell Renderer Example' name='cell-renderer-example' type='generated' options='{ "exampleHeight": 550 }'></grid-example>
 
 ---
 
 ## Test Your Knowledge
 
-1. Format the Date column
+Let's put what you've learned so far into action by modifying the grid:
 
-_Hint:_
+1. Format the Date column using `.toLocaleDateString()`;
 
-2. Modify the cell style on the mission column so that the cursor becomes a pointer
+    _Hint 1: `valueFormatter` is a Column Property_
 
-_Hint:_
+2. Apply a CSS Class to the 'mission' column that sets `cursor: pointer`.
 
-3. Implement a custom tool tip?
+    _Hint: `cellClass` is a Column Property_
 
-_Hint:_
+3. Implement a Custom Tooltip on the 'mission' column.
+
+    _Hint: `customTooltip` is a Column Property_
+
+Once complete, your grid should look like the example below. If you're stuck, check out the source code to see how its done:
+
+<grid-example title='Full Example' name='fully-customised-example' type='generated' options='{ "exampleHeight": 550 }'></grid-example>
 
 ---
 
 ## Summary
 
+Congratulations! You've completed the tutorial and customised, styled, & extended your grid. By now, you should be familiar with several concepts:
+
+- __Themes:__ CSS Classes that control the look and feel of the entire grid. Choose from and customise 5 pre-made themes, or create your own.
+- __Styles:__ Apply CSS Classes to rows & cells directly, either by default or based on arbirary data in the grid.
+- __Value Formatters:__ Format basic text values into more human readable content
+- __Cell Renderers:__ Add your own custom components to change the look & feel and extend the capabilities of the grid.
+
 ---
 
 ## Next Steps
 
-<!-- ## Theming & Styling
+Take a look at our final tutorial in the series which introduces some of the more advanced features of the grid:
 
-Themes are simply CSS classes and there are currently five themes to choose from:
-
-- [Alpine](https://www.ag-grid.com/example/?theme=ag-theme-alpine)
-- [Alpine Dark](https://www.ag-grid.com/example/?theme=ag-theme-alpine-dark)
-- [Balham](https://www.ag-grid.com/example/?theme=ag-theme-balham)
-- [Balham Dark](https://www.ag-grid.com/example/?theme=ag-theme-balham-dark)
-- [Material](https://www.ag-grid.com/example/?theme=ag-theme-material)
-
-To use a theme, set the classname of the grid's parent div to the name of the theme, as outlined in the [first tutorial](/deep-dive/). For example, to use the `ag-theme-material` theme:
-
-<snippet transform={false} language="jsx">
-|&lt;div className="ag-theme-material" style={{ width: 600, height: 500 }}>
-|  &lt;AgGridReact ... />
-|&lt;/div>
-</snippet>
-
-_Note: Themes can be customised by creating a new `ag-theme-*.css` file and overriding the relevant [CSS variables](/global-style-customisation-variables/). Learn more in our [Creating Your Own Theme](/themes/#creating-your-own-theme) guide_
-
-### Styling Rows & Cells
-
-Themes are used to configure the default look and feel of the grid. We can also style rows & cells directly, in one of three ways:
-
-- __Styles:__ Apply CSS to the row / cell directly ___(not recommended)___
-- __Classes:__ Apply CSS to the row / cell via classes
-- __Class Rules:__ Conditionally apply CSS based on arbitrary conditions
-  
-Rows & Cells are styled in the same way, however, Row Styles are applied directly to the grid via the `rowStyle`, `rowClass` and `rowClassRules` props, whereas Cell Styles are applied via `cellStyle`, `cellClass` and `cellClassrules` properties within the `colDefs` array.
-
-First, let's take a look at applying Styles & Classes to Rows:
-
-<snippet transform={false} language=jsx>
-|const rowStyle = { background: 'red' }; // Apply Styles Directly
-|const rowClass = 'my-green-class'; // Apply CSS Class
-|
-|return (
-|  &lt;div className="ag-theme-custom" style={{ width: 600, height: 500 }}>
-|    &lt;AgGridReact rowStyle={rowStyle} rowClass={rowClass} />
-|  &lt;/div>
-|);
-</snippet>
-
-And the same with Cells:
-
-<snippet transform={false} language=jsx>
-|const [colDefs] = useState([
-|  { field: "make" },
-|  {
-|    field: "model",
-|    cellClass: 'my-class' // Apply CSS Class
-|  },
-|  {
-|    field: "price",
-|    cellStyle: { background: 'red' } // Apply Styles Directly
-|  }
-|]);
-|
-|return (
-|  &lt;div className="ag-theme-custom" style={{ width: 600, height: 500 }}>
-|    &lt;AgGridReact colDefs={colDefs} />
-|  &lt;/div>
-|);
-</snippet>
-
-_Note: Refer to our documentation for more detail on [Row Styles]() / [Row Classes]() and [Cell Styles]() / [Cell Classes]()_
-
-Styles & Classes are the easiest way to configure rows & cells, but we can also use Class Rules to conditionally format the grid.
-
-Class Rules are JavaScript maps where the keys are classnames and the values are functions that describe when the classnames should be applied. The functions should accept a `RowClassParams` / `CellClassParams` object that can then be used to conditionally format the row, based on the data contained within it.
-
-We'll start with Row Class Rules, which are passed directly to the grid via the `rowClassRules` prop. Let's start by creating our `rowClassRules` object which contains the logic for the CSS classes and passing this to the grid:
-
-<snippet transform={false} language=jsx>
-|const rowClassRules = {
-|  'rag-green-outer': (params) => { return params.data.make === 'Ford'; },
-|  'rag-amber-outer': (params) => { return params.data.make === 'Toyota'; }
-|};
-|
-|return (
-|  &lt;div className="ag-theme-custom" style={{ width: 600, height: 500 }}>
-|    &lt;AgGridReact rowClassRules={rowClassRules} />
-|  &lt;/div>
-|);
-</snippet>
-
-In this example, we're using the params.data.make property to conditionally format the row based on the data within the make column.
-
-_Note: Refer to our [Row Class Rules](/row-styles/#row-class-rules) documentation for a full list of properties available on the `RowClassParams` object._
-
-We then need to add the `rag-green-outer` and `rag-amber-outer` styles to our `ag-theme-custom.css` file:
-
-<snippet transform={false} language=css>
-|.rag-green-outer {
-|  background-color: blue !important;
-|}
-|
-|.rag-amber-outer {
-|  background-color: red !important;
-|}
-</snippet>
-
-Cell Class Rules are used in a similar way, but are passed to the grid via the Column Defs prop. Let's apply the same logic using the slightly different approach for Cell Class Rules:
-
-<snippet transform={false} language=jsx>
-|const [colDefs] = useState([
-|  { field: "make" },
-|  { field: "model" },
-|  {
-|    field: "price",
-|    cellClassrules: {
-|      'rag-green-outer': params => return params.data.price > 20000,
-|      'rag-amber-outer': params => return params.data.price < 20000
-|    }
-|]);
-|
-|return (
-|  &lt;div className="ag-theme-custom" style={{ width: 600, height: 500 }}>
-|    &lt;AgGridReact colDefs={colDefs} />
-|  &lt;/div>
-|);
-</snippet>
-
-Putting this all together, we should have a grid that applies CSS to rows & cells directly and, where appropriate, styles rows/cells based on their values:
-
-***TODO: Grid Example, styles, classes and class rules***
-
-### Design Tools
-
-We have several tools to help modify the look and feel of the grid:
-
-- __Figma Design System:__ ...
-- __Theme Builder:__ ... -->
-
+<next-step-tiles tutorial1="false" tutorial2="false" tutorial3="true"/>
