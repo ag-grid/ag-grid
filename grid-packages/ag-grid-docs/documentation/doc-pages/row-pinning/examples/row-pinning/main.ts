@@ -48,6 +48,7 @@ const gridOptions: GridOptions<IOlympicData> = {
     sortable: true,
     filter: true,
     resizable: true,
+    cellDataType: false,
   },
   columnDefs: columnDefs,
   rowData: null,
