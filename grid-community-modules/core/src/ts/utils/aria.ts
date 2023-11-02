@@ -81,6 +81,14 @@ export function setAriaLive(element: Element, live?: 'polite' | 'assertive' | 'o
     toggleAriaAttribute(element, 'live', live);
 }
 
+export function setAriaAtomic(element: Element, atomic: boolean | null) {
+    toggleAriaAttribute(element, 'atomic', atomic);
+}
+
+export function setAriaRelevant(element: Element, relevant:  'additions' | 'additions text' | 'all' | 'removals' | 'text' | null) {
+    toggleAriaAttribute(element, 'relevant', relevant);
+}
+
 export function setAriaLevel(element: Element, level: number): void {
     toggleAriaAttribute(element, 'level', level);
 }

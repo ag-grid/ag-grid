@@ -110,16 +110,17 @@ export class PrimaryColsListPanel extends Component {
 
         this.expandGroupsByDefault = !this.params.contractColumnSelection;
 
-        const translate = this.localeService.getLocaleTextFunc();
-        const columnListName = translate('ariaColumnList', 'Column List');
-
         this.virtualList = this.createManagedBean(new VirtualList({
             cssIdentifier: 'column-select',
             ariaRole: 'tree',
-            listName: columnListName
         }));
 
         this.appendChild(this.virtualList.getGui());
+
+        const ariaEl = this.virtualList.getAriaElement() 
+        _.setAriaLive(ariaEl, 'assertive');
+        _.setAriaAtomic(ariaEl, false);
+        _.setAriaRelevant(ariaEl, 'text');
 
         this.virtualList.setComponentCreator(
             (item: ColumnModelItem, listItemElement: HTMLElement) => {
@@ -182,7 +183,7 @@ export class PrimaryColsListPanel extends Component {
         return this.displayedColsList;
     }
 
-    private getExpandedStates(): {[key:string]:boolean} {        
+    private getExpandedStates(): {[key:string]:boolean} {
         const res: {[id:string]:boolean} = {};
         
         if (this.isInitialState) {
@@ -323,6 +324,17 @@ export class PrimaryColsListPanel extends Component {
         }
 
         this.notifyListeners();
+
+        this.refreshAriaLabel();
+    }
+
+    private refreshAriaLabel(): void {
+        const translate = this.localeService.getLocaleTextFunc();
+        const columnListName = translate('ariaColumnList', 'Column List');
+        const localeColumns = translate('columns', 'Columns');
+        const items = this.displayedColsList.length;
+
+        _.setAriaLabel(this.virtualList.getAriaElement(), `${columnListName} - ${items} ${localeColumns}`);
     }
 
     private focusRowIfAlive(rowIndex: number): void {
