@@ -135,9 +135,6 @@ export interface GetServerSideGroupLevelParamsParams extends AgGridCommon<any, a
     pivotMode: boolean;
 }
 
-/** @deprecated use GetServerSideGroupLevelParamsParams instead */
-export interface GetServerSideStoreParamsParams extends GetServerSideGroupLevelParamsParams { }
-
 export interface IsServerSideGroupOpenByDefaultParams extends AgGridCommon<any, any> {
     data: any;
     rowNode: IRowNode;
@@ -148,8 +145,6 @@ export interface IsApplyServerSideTransactionParams extends AgGridCommon<any, an
     transaction: ServerSideTransaction;
     /** The parent RowNode, if transaction is applied to a group. */
     parentNode: IRowNode;
-    /** @deprecated use groupLevelInfo instead */
-    storeInfo: any;
     /** Store info, if any, as passed via the success() callback when loading data. */
     groupLevelInfo: any;
 }

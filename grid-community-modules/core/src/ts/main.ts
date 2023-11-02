@@ -248,8 +248,8 @@ export { IInfiniteRowModel } from "./interfaces/iInfiniteRowModel";
 export { ColumnVO } from "./interfaces/iColumnVO";
 
 export { IServerSideDatasource, IServerSideGetRowsParams, IServerSideGetRowsRequest } from "./interfaces/iServerSideDatasource";
-export { IServerSideRowModel, IServerSideTransactionManager, RefreshStoreParams, RefreshServerSideParams } from "./interfaces/iServerSideRowModel";
-export { IServerSideStore, StoreRefreshAfterParams, ServerSideGroupState, ServerSideGroupLevelState } from "./interfaces/IServerSideStore";
+export { IServerSideRowModel, IServerSideTransactionManager, RefreshServerSideParams } from "./interfaces/iServerSideRowModel";
+export { IServerSideStore, StoreRefreshAfterParams, ServerSideGroupLevelState } from "./interfaces/IServerSideStore";
 
 export { ISideBarService, ISideBar, SideBarDef, ToolPanelDef } from "./interfaces/iSideBar";
 export { IGetRowsParams, IDatasource } from "./interfaces/iDatasource";
@@ -294,7 +294,7 @@ export { AutocompleteEntry, AutocompleteListParams } from "./widgets/autocomplet
 
 // range
 export {
-    CellRange, CellRangeParams, CellRangeType, RangeSelection, AddRangeSelectionParams, IRangeService,
+    CellRange, CellRangeParams, CellRangeType, IRangeService,
     ISelectionHandle, SelectionHandleType, ISelectionHandleFactory, ClearCellRangeParams
 } from "./interfaces/IRangeService";
 export {
@@ -446,9 +446,6 @@ export {
     KeyCreatorParams,
     SortDirection,
     NestedFieldPaths,
-    // deprecated params
-    IsColumnFunc,
-    IsColumnFuncParams
 } from "./entities/colDef";
 export {
     DataTypeDefinition,
@@ -483,7 +480,6 @@ export {
     RowClassRules,
     RowStyle,
     RowClassParams,
-    ServerSideStoreType,
     ServerSideGroupLevelParams,
     ServerSideStoreParams,
     GetServerSideGroupKey,
@@ -506,7 +502,6 @@ export {
     IsApplyServerSideTransactionParams,
     IsGroupOpenByDefaultParams,
     GetServerSideGroupLevelParamsParams,
-    GetServerSideStoreParamsParams,
     PaginationNumberFormatterParams,
     ProcessDataFromClipboardParams,
     SendToClipboardParams,

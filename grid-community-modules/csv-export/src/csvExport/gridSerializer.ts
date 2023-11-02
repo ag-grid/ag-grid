@@ -72,13 +72,9 @@ export class GridSerializer extends BeanStub {
         const hideOpenParents = this.gridOptionsService.get('groupHideOpenParents') && !isExplicitExportSelection;
         const isLeafNode = this.columnModel.isPivotMode() ? node.leafGroup : !node.group;
         const isFooter = !!node.footer;
-        const skipRowGroups = params.skipGroups || params.skipRowGroups;
+        const skipRowGroups = params.skipRowGroups;
         const shouldSkipLowestGroup = skipLowestSingleChildrenGroup && node.leafGroup;
         const shouldSkipCurrentGroup = node.allChildrenCount === 1 && (skipSingleChildrenGroup || shouldSkipLowestGroup);
-
-        if (skipRowGroups && params.skipGroups) {
-            _.warnOnce('Since v25.2 `skipGroups` has been renamed to `skipRowGroups`.');
-        }
 
         if (
             (!isLeafNode && !isFooter && (params.skipRowGroups || shouldSkipCurrentGroup || hideOpenParents)) ||
@@ -116,11 +112,8 @@ export class GridSerializer extends BeanStub {
 
     private appendContent<T>(params: ExportParams<T>): (gridSerializingSession: GridSerializingSession<T>) => GridSerializingSession<T> {
         return (gridSerializingSession: GridSerializingSession<T>) => {
-            const appendContent = params.customFooter || params.appendContent;
+            const appendContent = params.appendContent;
             if (appendContent) {
-                if (params.customFooter) {
-                    _.warnOnce('Since version 25.2.0 the `customFooter` param has been deprecated. Use `appendContent` instead.');
-                }
                 gridSerializingSession.addCustomContent(appendContent);
             }
             return gridSerializingSession;
@@ -129,11 +122,8 @@ export class GridSerializer extends BeanStub {
 
     private prependContent<T>(params: ExportParams<T>): (gridSerializingSession: GridSerializingSession<T>) => GridSerializingSession<T> {
         return (gridSerializingSession: GridSerializingSession<T>) => {
-            const prependContent = params.customHeader || params.prependContent;
+            const prependContent = params.prependContent;
             if (prependContent) {
-                if (params.customHeader) {
-                    _.warnOnce('Since version 25.2.0 the `customHeader` param has been deprecated. Use `prependContent` instead.');
-                }
                 gridSerializingSession.addCustomContent(prependContent);
             }
             return gridSerializingSession;
@@ -157,8 +147,6 @@ export class GridSerializer extends BeanStub {
                     null
                 );
                 this.recursivelyAddHeaderGroups(displayedGroups, gridSerializingSession, params.processGroupHeaderCallback);
-            } else if (params.columnGroups) {
-                _.warnOnce('Since v25.2 the `columnGroups` param has deprecated, and groups are exported by default.');
             }
             return gridSerializingSession;
         };
@@ -166,13 +154,11 @@ export class GridSerializer extends BeanStub {
 
     private exportHeaders<T>(params: ExportParams<T>, columnsToExport: Column[]): (gridSerializingSession: GridSerializingSession<T>) => GridSerializingSession<T> {
         return (gridSerializingSession) => {
-            if (!params.skipHeader && !params.skipColumnHeaders) {
+            if (!params.skipColumnHeaders) {
                 const gridRowIterator = gridSerializingSession.onNewHeaderRow();
                 columnsToExport.forEach((column, index) => {
                     gridRowIterator.onColumn(column, index, undefined);
                 });
-            } else if (params.skipHeader) {
-                _.warnOnce('Since v25.2 the `skipHeader` param has been renamed to `skipColumnHeaders`.');
             }
             return gridSerializingSession;
         };

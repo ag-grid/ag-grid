@@ -15,7 +15,7 @@ const [props, computed, watch, model] = getAgGridProperties();
 })
 export class AgGridVue extends Vue {
 
-    private static ROW_DATA_EVENTS: Set<string> = new Set(['rowDataChanged', 'rowDataUpdated', 'cellValueChanged', 'rowValueChanged']);
+    private static ROW_DATA_EVENTS: Set<string> = new Set(['rowDataUpdated', 'cellValueChanged', 'rowValueChanged']);
     private static ALWAYS_SYNC_GLOBAL_EVENTS: Set<string> = new Set([Events.EVENT_GRID_PRE_DESTROYED]);
 
     private static kebabProperty(property: string) {

@@ -11,12 +11,6 @@ import { ComponentUtil } from "../../components/componentUtil";
  * If the property was simply renamed, use the `renamed` property. The value will be implicitly copied to the new property.
  */
 const GRID_OPTION_DEPRECATIONS: Deprecations<GridOptions> = {
-    serverSideFilteringAlwaysResets: { version: '28.0', message: `'serverSideFilteringAlwaysResets' is now default. It can be suppressed by enabling 'serverSideOnlyRefreshFilteredGroups'` },
-    serverSideSortingAlwaysResets: { version: '28.0', renamed: 'serverSideSortAllLevels' },
-
-    processSecondaryColDef: { version: '28', renamed: 'processPivotResultColDef' },
-    processSecondaryColGroupDef: { version: '28', renamed: 'processPivotResultColGroupDef' },
-    getServerSideStoreParams: { version: '28', renamed: 'getServerSideGroupLevelParams' },
 
     enableChartToolPanelsButton: { version: '29', message: 'The Chart Tool Panels button is now enabled by default. To hide the Chart Tool Panels button and display the hamburger button instead, set suppressChartToolPanelsButton=true.' },
     functionsPassive: { version: '29.2' },

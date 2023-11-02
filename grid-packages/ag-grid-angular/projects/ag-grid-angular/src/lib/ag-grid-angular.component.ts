@@ -134,7 +134,6 @@ import {
     RowClassParams,
     RowClassRules,
     RowClickedEvent,
-    RowDataChangedEvent,
     RowDataUpdatedEvent,
     RowDoubleClickedEvent,
     RowDragEvent,
@@ -150,7 +149,6 @@ import {
     SelectionChangedEvent,
     SendToClipboardParams,
     ServerSideGroupLevelParams,
-    ServerSideStoreType,
     SideBarDef,
     SizeColumnsToContentStrategy,
     SizeColumnsToFitGridStrategy,
@@ -804,11 +802,6 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
          * Default: `1`
          */
     @Input() public serverSideInitialRowCount: number | undefined = undefined;
-    /** @deprecated v28 Whether to use Full Store or Partial Store for storing rows. Default: `partial`.
-         * Deprecated in favour of suppressServerSideInfiniteScroll. When false, Partial Store is used. When true,
-         * Full Store is used.
-         */
-    @Input() public serverSideStoreType: ServerSideStoreType | undefined = undefined;
     /** When `true`, the Server-side Row Model will suppress Infinite Scrolling and load all the data at the current level.
          * Default: `false`
          */
@@ -845,10 +838,6 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
          * Default: `false`
          */
     @Input() public serverSideFilterOnServer: boolean | undefined = undefined;
-    /** @deprecated v28 This property has been deprecated. Use `serverSideSortAllLevels` instead.     */
-    @Input() public serverSideSortingAlwaysResets: boolean | undefined = undefined;
-    /** @deprecated v28 This property has been deprecated. Use `serverSideOnlyRefreshFilteredGroups` instead.     */
-    @Input() public serverSideFilteringAlwaysResets: boolean | undefined = undefined;
     /** Used to split pivot field strings for generating pivot result columns when `pivotResultFields` is provided as part of a `getRows` success.
          * Default: `_`
          */
@@ -992,10 +981,6 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     @Input() public isGroupOpenByDefault: ((params: IsGroupOpenByDefaultParams<TData>) => boolean) | undefined = undefined;
     /** Allows default sorting of groups.     */
     @Input() public initialGroupOrderComparator: ((params: InitialGroupOrderComparatorParams<TData>) => number) | undefined = undefined;
-    /** @deprecated v28 - Use `processPivotResultColDef` instead     */
-    @Input() public processSecondaryColDef: ((colDef: ColDef<TData>) => void) | undefined = undefined;
-    /** @deprecated v28 - Use `processPivotResultColGroupDef` instead     */
-    @Input() public processSecondaryColGroupDef: ((colGroupDef: ColGroupDef<TData>) => void) | undefined = undefined;
     /** Callback to be used with pivoting, to allow changing the second column definition.     */
     @Input() public processPivotResultColDef: ((colDef: ColDef<TData>) => void) | undefined = undefined;
     /** Callback to be used with pivoting, to allow changing the second column group definition.     */
@@ -1006,8 +991,6 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     @Input() public getChildCount: ((dataItem: any) => number) | undefined = undefined;
     /** Allows providing different params for different levels of grouping.     */
     @Input() public getServerSideGroupLevelParams: ((params: GetServerSideGroupLevelParamsParams) => ServerSideGroupLevelParams) | undefined = undefined;
-    /** @deprecated v28 Use `getServerSideGroupLevelParams` instead.     */
-    @Input() public getServerSideStoreParams: ((params: GetServerSideGroupLevelParamsParams) => ServerSideGroupLevelParams) | undefined = undefined;
     /** Allows groups to be open by default.     */
     @Input() public isServerSideGroupOpenByDefault: ((params: IsServerSideGroupOpenByDefaultParams) => boolean) | undefined = undefined;
     /** Allows cancelling transactions.     */
@@ -1179,8 +1162,6 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     @Output() public expandOrCollapseAll: EventEmitter<ExpandCollapseAllEvent<TData>> = new EventEmitter<ExpandCollapseAllEvent<TData>>();
     /** The client has set new pinned row data into the grid.     */
     @Output() public pinnedRowDataChanged: EventEmitter<PinnedRowDataChangedEvent<TData>> = new EventEmitter<PinnedRowDataChangedEvent<TData>>();
-    /** @deprecated v28 No longer fired, use onRowDataUpdated instead     */
-    @Output() public rowDataChanged: EventEmitter<RowDataChangedEvent<TData>> = new EventEmitter<RowDataChangedEvent<TData>>();
     /** Client-Side Row Model only. The client has updated data for the grid by either a) setting new Row Data or b) Applying a Row Transaction.     */
     @Output() public rowDataUpdated: EventEmitter<RowDataUpdatedEvent<TData>> = new EventEmitter<RowDataUpdatedEvent<TData>>();
     /** Async transactions have been applied. Contains a list of all transaction results.     */
@@ -1345,9 +1326,7 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     static ngAcceptInputType_suppressExpandablePivotGroups: boolean | null | '';
     static ngAcceptInputType_debounceVerticalScrollbar: boolean | null | '';
     static ngAcceptInputType_detailRowAutoHeight: boolean | null | '';
-    static ngAcceptInputType_serverSideFilteringAlwaysResets: boolean | null | '';
     static ngAcceptInputType_serverSideFilterAllLevels: boolean | null | '';
-    static ngAcceptInputType_serverSideSortingAlwaysResets: boolean | null | '';
     static ngAcceptInputType_serverSideSortAllLevels: boolean | null | '';
     static ngAcceptInputType_serverSideOnlyRefreshFilteredGroups: boolean | null | '';
     static ngAcceptInputType_serverSideSortOnServer: boolean | null | '';

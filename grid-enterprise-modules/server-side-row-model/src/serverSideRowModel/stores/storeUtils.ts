@@ -27,8 +27,6 @@ export class StoreUtils extends BeanStub {
         storeParams: SSRMParams,
         parentNode: RowNode,
         parentBlock: RowNodeBlock,
-        successCallback: () => void,
-        failCallback: () => void,
         success: () => void,
         fail: () => void,
         startRow?: number,
@@ -52,9 +50,7 @@ export class StoreUtils extends BeanStub {
         };
 
         const getRowsParams: IServerSideGetRowsParams = {
-            successCallback: p.successCallback,
             success: p.success,
-            failCallback: p.failCallback,
             fail: p.fail,
             request: request,
             parentNode: p.parentNode,
@@ -66,7 +62,7 @@ export class StoreUtils extends BeanStub {
         window.setTimeout(() => {
             if (!storeParams.datasource || !parentBlock.isAlive()) {
                 // failCallback() is important, to reduce the 'RowNodeBlockLoader.activeBlockLoadsCount' count
-                p.failCallback();
+                p.fail();
                 return;
             }
             storeParams.datasource.getRows(getRowsParams);

@@ -55,7 +55,6 @@ import {
     RedoEndedEvent,
     RedoStartedEvent,
     RowClickedEvent,
-    RowDataChangedEvent,
     RowDataUpdatedEvent,
     RowDoubleClickedEvent,
     RowDragEvent,
@@ -702,12 +701,7 @@ export interface GridOptions<TData = any> {
      * Default: `1`
      */
     serverSideInitialRowCount?: number;
-    /**
-     * @deprecated v28 Whether to use Full Store or Partial Store for storing rows. Default: `partial`.
-     * Deprecated in favour of suppressServerSideInfiniteScroll. When false, Partial Store is used. When true,
-     * Full Store is used.
-     */
-    serverSideStoreType?: ServerSideStoreType;
+
     /**
      * When `true`, the Server-side Row Model will suppress Infinite Scrolling and load all the data at the current level.
      * Default: `false`
@@ -750,10 +744,6 @@ export interface GridOptions<TData = any> {
      * Default: `false`
      */
     serverSideFilterOnServer?: boolean;
-    /** @deprecated v28 This property has been deprecated. Use `serverSideSortAllLevels` instead. */
-    serverSideSortingAlwaysResets?: boolean;
-    /** @deprecated v28 This property has been deprecated. Use `serverSideOnlyRefreshFilteredGroups` instead. */
-    serverSideFilteringAlwaysResets?: boolean;
 
     /**
      * Used to split pivot field strings for generating pivot result columns when `pivotResultFields` is provided as part of a `getRows` success.
@@ -936,10 +926,6 @@ export interface GridOptions<TData = any> {
     isGroupOpenByDefault?: (params: IsGroupOpenByDefaultParams<TData>) => boolean;
     /** Allows default sorting of groups. */
     initialGroupOrderComparator?: (params: InitialGroupOrderComparatorParams<TData>) => number;
-    /** @deprecated v28 - Use `processPivotResultColDef` instead */
-    processSecondaryColDef?: (colDef: ColDef<TData>) => void;
-    /** @deprecated v28 - Use `processPivotResultColGroupDef` instead */
-    processSecondaryColGroupDef?: (colGroupDef: ColGroupDef<TData>) => void;
     /** Callback to be used with pivoting, to allow changing the second column definition. */
     processPivotResultColDef?: (colDef: ColDef<TData>) => void;
     /** Callback to be used with pivoting, to allow changing the second column group definition. */
@@ -952,8 +938,6 @@ export interface GridOptions<TData = any> {
     getChildCount?: (dataItem: any) => number;
     /** Allows providing different params for different levels of grouping. */
     getServerSideGroupLevelParams?: (params: GetServerSideGroupLevelParamsParams) => ServerSideGroupLevelParams;
-    /** @deprecated v28 Use `getServerSideGroupLevelParams` instead. */
-    getServerSideStoreParams?: (params: GetServerSideGroupLevelParamsParams) => ServerSideGroupLevelParams;
     /** Allows groups to be open by default. */
     isServerSideGroupOpenByDefault?: (params: IsServerSideGroupOpenByDefaultParams) => boolean;
     /** Allows cancelling transactions. */
@@ -1168,8 +1152,6 @@ export interface GridOptions<TData = any> {
     onPinnedRowDataChanged?(event: PinnedRowDataChangedEvent<TData>): void;
 
     // *** Row Model: Client Side *** //
-    /** @deprecated v28 No longer fired, use onRowDataUpdated instead */
-    onRowDataChanged?(event: RowDataChangedEvent<TData>): void;
     /** Client-Side Row Model only. The client has updated data for the grid by either a) setting new Row Data or b) Applying a Row Transaction. */
     onRowDataUpdated?(event: RowDataUpdatedEvent<TData>): void;
     /** Async transactions have been applied. Contains a list of all transaction results. */
@@ -1328,18 +1310,7 @@ export interface ChartRef {
 
 export interface ChartRefParams<TData = any> extends AgGridCommon<TData, any>, ChartRef { }
 
-export type ServerSideStoreType = 'full' | 'partial';
-
 export interface ServerSideGroupLevelParams {
-    /**
-     * @deprecated
-     * What store type to use.
-     * If missing, then defaults to grid option `serverSideStoreType`.
-     * Deprecated in favor of infiniteScroll.
-     * If suppressInfiniteScroll==false, then Partial Store is used.
-     * If suppressInfiniteScroll==false, then Full Store is used.
-     *  */
-    storeType?: ServerSideStoreType;
     /**
      * Whether to have infinite scroll active or not for the level.
      */

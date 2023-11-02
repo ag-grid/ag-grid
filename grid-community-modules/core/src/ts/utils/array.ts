@@ -35,7 +35,6 @@ export function areEqual<T>(a?: T[] | null, b?: T[] | null, comparator?: (a: T, 
         a.every((value, index) => comparator ? comparator(value, b[index]) : b[index] === value);
 }
 
-/** @deprecated */
 export function shallowCompare(arr1: any[], arr2: any[]): boolean {
     return areEqual(arr1, arr2);
 }

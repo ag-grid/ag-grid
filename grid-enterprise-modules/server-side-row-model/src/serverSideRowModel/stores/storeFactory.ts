@@ -106,10 +106,7 @@ export class StoreFactory {
         };
 
         const res = callback(params);
-        if (res.storeType!=null) {
-            res.suppressInfiniteScroll = res.storeType!=="partial";
-        }
-
+        
         return res;
     }
 

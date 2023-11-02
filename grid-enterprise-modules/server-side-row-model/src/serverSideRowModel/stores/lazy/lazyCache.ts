@@ -731,7 +731,7 @@ export class LazyCache extends BeanStub {
     public onLoadSuccess(firstRowIndex: number, numberOfRowsExpected: number, response: LoadSuccessParams) {
         if (!this.live) return;
 
-        const info = response.groupLevelInfo ?? response.storeInfo;
+        const info = response.groupLevelInfo;
         this.store.setStoreInfo(info);
     
         if (this.getRowIdFunc != null) {

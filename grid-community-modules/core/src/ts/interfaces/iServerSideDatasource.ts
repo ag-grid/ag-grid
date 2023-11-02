@@ -47,18 +47,10 @@ export interface IServerSideGetRowsParams<TData = any, TContext = any> extends A
     parentNode: IRowNode;
 
     /**
-     * @deprecated Use `success` method instead and return result as a `LoadSuccessParams` object.
-     */
-    successCallback(rowsThisPage: any[], lastRow: number): void;
-    /**
      * Success callback, pass the rows back to the grid that were requested.
      */
     success(params: LoadSuccessParams): void;
 
-    /**
-     * @deprecated Use `fail` instead.
-     */
-    failCallback(): void;
     /**
      * Fail callback, tell the grid the call failed so it can adjust it's state.
      */

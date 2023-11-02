@@ -265,11 +265,6 @@ export function clearElement(el: HTMLElement): void {
     while (el && el.firstChild) { el.removeChild(el.firstChild); }
 }
 
-/** @deprecated */
-export function removeElement(parent: HTMLElement, cssSelector: string) {
-    removeFromParent(parent.querySelector(cssSelector));
-}
-
 export function removeFromParent(node: Element | null) {
     if (node && node.parentNode) {
         node.parentNode.removeChild(node);
@@ -303,17 +298,6 @@ export function appendHtml(eContainer: HTMLElement, htmlTemplate: string) {
     } else {
         eContainer.innerHTML = htmlTemplate;
     }
-}
-
-/** @deprecated */
-export function getElementAttribute(element: any, attributeName: string): string | null {
-    if (element.attributes && element.attributes[attributeName]) {
-        const attribute = element.attributes[attributeName];
-
-        return attribute.value;
-    }
-
-    return null;
 }
 
 export function offsetHeight(element: HTMLElement) {
@@ -381,15 +365,6 @@ export function insertWithDomOrder(
             // otherwise eContainer is empty, so just append it
             eContainer.appendChild(eToInsert);
         }
-    }
-}
-
-/** @deprecated */
-export function prependDC(parent: HTMLElement, documentFragment: DocumentFragment): void {
-    if (exists(parent.firstChild)) {
-        parent.insertBefore(documentFragment, parent.firstChild);
-    } else {
-        parent.appendChild(documentFragment);
     }
 }
 

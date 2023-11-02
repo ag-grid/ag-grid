@@ -970,8 +970,8 @@ const Example = () => {
                 // lots and lots of times (especially if user does ctrl+a to copy everything, then paste)
                 // console.log("Callback onCellValueChanged:", params);
             },
-            onRowDataChanged: (params) => {
-                // console.log('Callback onRowDataChanged: ');
+            onRowDataUpdated: (params) => {
+                // console.log('Callback onRowDataUpdated: ');
             },
             // callback when cell double clicked
             onCellDoubleClicked: (params) => {

@@ -1522,18 +1522,6 @@ export class GridApi<TData = any> {
         this.serverSideRowModel.refreshStore(params);
     }
 
-    /** @deprecated v28 use `refreshServerSide` instead */
-    public refreshServerSideStore(params?: RefreshServerSideParams): void {
-        warnOnce('refreshServerSideStore is deprecated since v28, please use refreshServerSide instead.')
-        return this.refreshServerSide(params);
-    }
-
-    /** @deprecated v28 use `getServerSideGroupLevelState` instead */
-    public getServerSideStoreState(): ServerSideGroupLevelState[] {
-        warnOnce('getServerSideStoreState is deprecated since v28, please use getServerSideGroupLevelState instead.')
-        return this.getServerSideGroupLevelState();
-    }
-
     /** Returns info on all server side group levels. */
     public getServerSideGroupLevelState(): ServerSideGroupLevelState[] {
         if (!this.serverSideRowModel) {
@@ -2452,16 +2440,6 @@ export class GridApi<TData = any> {
         this.deprecatedUpdateGridOption('processCellFromClipboard', processCellFromClipboardFunc);
     }
 
-    /** @deprecated v28 use `setProcessPivotResultColDef` instead */
-    public setProcessSecondaryColDef(processSecondaryColDefFunc: (colDef: ColDef) => void): void {
-        this.setProcessPivotResultColDef(processSecondaryColDefFunc);
-    }
-
-    /** @deprecated v28 use `setProcessPivotResultColGroupDef` instead */
-    public setProcessSecondaryColGroupDef(processSecondaryColGroupDefFunc: (colDef: ColDef) => void): void {
-        this.setProcessPivotResultColGroupDef(processSecondaryColGroupDefFunc);
-    }
-
     /**
      * @deprecated v31 Use `api.setGridOption` or `api.updateGridOptions` instead.
      *  */
@@ -2502,11 +2480,6 @@ export class GridApi<TData = any> {
      *  */
     public setPaginationNumberFormatter(paginationNumberFormatterFunc: (params: PaginationNumberFormatterParams) => string): void {
         this.deprecatedUpdateGridOption('paginationNumberFormatter', paginationNumberFormatterFunc);
-    }
-
-    /** @deprecated v28 use setGetServerSideGroupLevelParams instead */
-    public setGetServerSideStoreParams(getServerSideStoreParamsFunc: (params: GetServerSideGroupLevelParamsParams) => ServerSideGroupLevelParams): void {
-        this.setGetServerSideGroupLevelParams(getServerSideStoreParamsFunc);
     }
 
     /**

@@ -27,8 +27,6 @@ export class PivotStage extends BeanStub implements IRowNodeStage {
             'pivotDefaultExpanded',
             'processPivotResultColDef',
             'processPivotResultColGroupDef',
-            'processSecondaryColDef',
-            'processSecondaryColGroupDef',
         ];
     }
 

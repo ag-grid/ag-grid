@@ -60,6 +60,3 @@ export interface ServerSideGroupLevelState {
      */
     cacheBlockSize?: number;
 }
-
-/** @deprecated use ServerSideGroupLevelState instead  */
-export interface ServerSideGroupState extends ServerSideGroupLevelState {}

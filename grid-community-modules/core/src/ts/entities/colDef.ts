@@ -575,20 +575,6 @@ export interface HeaderCheckboxSelectionCallback<TData = any, TValue = any> {
     (params: HeaderCheckboxSelectionCallbackParams<TData, TValue>): boolean;
 }
 
-/**
- * @deprecated
- * No longer in use. Replaced with (params: ColumnFunctionCallbackParams) => boolean.
- */
-export interface IsColumnFunc<TData = any> {
-    (params: IsColumnFuncParams<TData>): boolean;
-}
-
-/**
- * @deprecated
- * Replaced with ColumnFunctionCallbackParams
- */
-export interface IsColumnFuncParams<TData = any> extends ColumnFunctionCallbackParams<TData> { }
-
 export interface GetQuickFilterTextParams<TData = any, TValue = any> extends AgGridCommon<TData, any> {
     /** Value for the cell. */
     value: TValue | null | undefined;

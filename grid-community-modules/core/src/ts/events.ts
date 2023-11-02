@@ -85,9 +85,6 @@ export interface GridColumnsChangedEvent<TData = any, TContext = any> extends Ag
 
 export interface DisplayedColumnsChangedEvent<TData = any, TContext = any> extends AgGridEvent<TData, TContext> { }
 
-/** @deprecated v28 use RowDataUpdatedEvent instead */
-export interface RowDataChangedEvent<TData = any, TContext = any> extends AgGridEvent<TData, TContext> { }
-
 export interface RowDataUpdatedEvent<TData = any, TContext = any> extends AgGridEvent<TData, TContext> { }
 
 export interface RowDataUpdateStartedEvent<TData = any, TContext = any> extends AgGridEvent<TData, TContext> {
