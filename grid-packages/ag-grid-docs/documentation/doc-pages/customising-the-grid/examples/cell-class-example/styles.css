@@ -1,0 +1,16 @@
+/*
+  Row Styles
+*/
+
+.row {
+  font-family: 'Courier New';
+}
+
+/*
+  Cell Styles
+*/
+
+.mission-cell {
+  font-weight: 900;
+  cursor: pointer;
+}
