@@ -1,4 +1,4 @@
-// @ag-grid-community/react v30.2.0
+// @ag-grid-community/react v30.2.1
 /* import { describe, expect, xtest, test, jest, beforeEach, afterEach } from '@jest/globals';
 
 import { getNextValueIfDifferent } from './utils.mjs';

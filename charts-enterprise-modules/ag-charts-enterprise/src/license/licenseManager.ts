@@ -10,7 +10,7 @@ function exists(value: any, allowEmptyString = false): boolean {
 }
 
 export class LicenseManager {
-    private static RELEASE_INFORMATION: string = 'MTY5NTU0ODUwMjk2NQ==';
+    private static RELEASE_INFORMATION: string = 'MTY5ODkxNzc1MzgxNA==';
     private static licenseKey: string;
     private watermarkMessage: string | undefined = undefined;
 

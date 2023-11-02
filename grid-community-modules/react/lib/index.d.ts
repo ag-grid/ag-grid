@@ -1,3 +1,3 @@
-// @ag-grid-community/react v30.2.0
+// @ag-grid-community/react v30.2.1
 import '@ag-grid-community/styles/ag-grid.css';
 import '@ag-grid-community/styles/ag-theme-alpine.css';

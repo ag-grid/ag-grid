@@ -1,4 +1,4 @@
-// ag-charts-react v8.2.0
+// ag-charts-react v8.2.1
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.AgChartsReact = void 0;

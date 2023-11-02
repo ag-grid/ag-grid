@@ -1,4 +1,4 @@
-// ag-charts-react v8.2.0
+// ag-charts-react v8.2.1
 "use strict";
 var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
     if (k2 === undefined) k2 = k;

@@ -1,4 +1,4 @@
-// @ag-grid-community/react v30.2.0
+// @ag-grid-community/react v30.2.1
 import ReactDOM from "react-dom";
 export const classesList = (...list) => {
     const filtered = list.filter(s => s != null && s !== '');

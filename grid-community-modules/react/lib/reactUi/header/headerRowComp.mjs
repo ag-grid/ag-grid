@@ -1,4 +1,4 @@
-// @ag-grid-community/react v30.2.0
+// @ag-grid-community/react v30.2.1
 import { HeaderRowType } from '@ag-grid-community/core';
 import React, { memo, useCallback, useMemo, useRef, useState } from 'react';
 import HeaderCellComp from './headerCellComp.mjs';

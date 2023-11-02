@@ -1,10 +1,10 @@
 /**
  * @ag-grid-community/all-modules - Advanced Data Grid / Data Table supporting Javascript / Typescript / React / Angular / Vue
- * @version v30.2.0
+ * @version v30.2.1
  * @link https://www.ag-grid.com/
  * @license MIT
  */
-// @ag-grid-community/all-modules v30.2.0
+// @ag-grid-community/all-modules v30.2.1
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
 		module.exports = factory();
@@ -742,7 +742,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _events_mjs__WEBPACK_IMPORTED_MODULE_166__ = __webpack_require__(21);
 /* empty/unused harmony star reexport *//**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / Typescript / React / Angular / Vue
- * @version v30.2.0
+ * @version v30.2.1
  * @link https://www.ag-grid.com/
  * @license MIT
  */
@@ -54556,7 +54556,7 @@ ImmutableService = __decorate([
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "VERSION", function() { return VERSION; });
 // DO NOT UPDATE MANUALLY: Generated from script during build time
-const VERSION = '30.2.0';
+const VERSION = '30.2.1';
 
 
 /***/ }),
@@ -55410,7 +55410,7 @@ GridSerializer = __decorate([
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "VERSION", function() { return VERSION; });
 // DO NOT UPDATE MANUALLY: Generated from script during build time
-const VERSION = '30.2.0';
+const VERSION = '30.2.1';
 
 
 /***/ }),
@@ -56447,7 +56447,7 @@ __decorate([
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "VERSION", function() { return VERSION; });
 // DO NOT UPDATE MANUALLY: Generated from script during build time
-const VERSION = '30.2.0';
+const VERSION = '30.2.1';
 
 
 /***/ }),

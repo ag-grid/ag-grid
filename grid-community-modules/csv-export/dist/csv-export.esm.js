@@ -1,5 +1,5 @@
 /**
-          * @ag-grid-community/csv-export - Advanced Data Grid / Data Table supporting Javascript / Typescript / React / Angular / Vue * @version v30.2.0
+          * @ag-grid-community/csv-export - Advanced Data Grid / Data Table supporting Javascript / Typescript / React / Angular / Vue * @version v30.2.1
           * @link https://www.ag-grid.com/
           * @license MIT
           */
@@ -46499,7 +46499,7 @@ var BarColumnLabelPlacement;
 
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / Typescript / React / Angular / Vue
- * @version v30.2.0
+ * @version v30.2.1
  * @link https://www.ag-grid.com/
  * @license MIT
  */
@@ -47088,7 +47088,7 @@ GridSerializer = __decorate([
 ], GridSerializer);
 
 // DO NOT UPDATE MANUALLY: Generated from script during build time
-const VERSION = '30.2.0';
+const VERSION = '30.2.1';
 
 const CsvExportModule = {
     version: VERSION,

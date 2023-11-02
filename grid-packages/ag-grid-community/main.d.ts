@@ -1,4 +1,4 @@
-// Type definitions for ag-grid-community v30.2.0
+// Type definitions for ag-grid-community v30.2.1
 // Project: https://www.ag-grid.com/
 // Definitions by: Niall Crosby <https://github.com/ag-grid/>
 export * from "./dist/lib/main";

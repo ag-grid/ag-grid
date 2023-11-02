@@ -268,7 +268,7 @@ const UserComp = p => {
   })())];
 };
 
-const _tmpl$$e = /*#__PURE__*/template(`<span><span></span><span></span><span></span><span class="ag-group-value"></span><span class="ag-group-child-count">`);
+const _tmpl$$e = /*#__PURE__*/template(`<span><span></span><span></span><span></span><span class=ag-group-value></span><span class=ag-group-child-count>`);
 const GroupCellRenderer = props => {
   const context = useContext(BeansContext).context;
   let eGui;
@@ -390,7 +390,7 @@ class SolidFrameworkOverrides extends VanillaFrameworkOverrides {
   }
 }
 
-const _tmpl$$d = /*#__PURE__*/template(`<div class="ag-header-cell" role="columnheader" tabindex="-1"><div class="ag-header-cell-resize" role="presentation"></div><div class="ag-header-cell-comp-wrapper" role="presentation">`);
+const _tmpl$$d = /*#__PURE__*/template(`<div class=ag-header-cell role=columnheader tabindex=-1><div class=ag-header-cell-resize role=presentation></div><div class=ag-header-cell-comp-wrapper role=presentation>`);
 const HeaderCellComp = props => {
   const {
     ctrl
@@ -478,7 +478,7 @@ const HeaderCellComp = props => {
   })();
 };
 
-const _tmpl$$c = /*#__PURE__*/template(`<div role="gridcell" tabindex="-1"><div role="presentation"></div><div role="presentation"><button type="button" class="ag-button ag-floating-filter-button-button" tabindex="-1">`);
+const _tmpl$$c = /*#__PURE__*/template(`<div role=gridcell tabindex=-1><div role=presentation></div><div role=presentation><button type=button class="ag-button ag-floating-filter-button-button"tabindex=-1>`);
 const HeaderFilterCellComp = props => {
   const [getCssClasses, setCssClasses] = createSignal(new CssClasses());
   const [getCssBodyClasses, setBodyCssClasses] = createSignal(new CssClasses());
@@ -582,7 +582,7 @@ const HeaderFilterCellComp = props => {
   })();
 };
 
-const _tmpl$$b = /*#__PURE__*/template(`<div role="columnheader" tabindex="-1"><div>`);
+const _tmpl$$b = /*#__PURE__*/template(`<div role=columnheader tabindex=-1><div>`);
 const HeaderGroupCellComp = props => {
   const {
     ctrl
@@ -664,7 +664,7 @@ const HeaderGroupCellComp = props => {
   })();
 };
 
-const _tmpl$$a = /*#__PURE__*/template(`<div role="row">`);
+const _tmpl$$a = /*#__PURE__*/template(`<div role=row>`);
 const HeaderRowComp = props => {
   const {
     gridOptionsService
@@ -757,8 +757,8 @@ const HeaderRowComp = props => {
   })();
 };
 
-const _tmpl$$9 = /*#__PURE__*/template(`<div role="presentation">`),
-  _tmpl$2$2 = /*#__PURE__*/template(`<div role="presentation"><div class="ag-header-container" role="rowgroup">`);
+const _tmpl$$9 = /*#__PURE__*/template(`<div role=presentation>`),
+  _tmpl$2$2 = /*#__PURE__*/template(`<div role=presentation><div class=ag-header-container role=rowgroup>`);
 const HeaderRowContainerComp = props => {
   const [getCssClasses, setCssClasses] = createSignal(new CssClasses());
   const [getAriaHidden, setAriaHidden] = createSignal(false);
@@ -869,7 +869,7 @@ const HeaderRowContainerComp = props => {
   })()];
 };
 
-const _tmpl$$8 = /*#__PURE__*/template(`<div role="presentation">`);
+const _tmpl$$8 = /*#__PURE__*/template(`<div role=presentation>`);
 const GridHeaderComp = () => {
   const [getCssClasses, setCssClasses] = createSignal(new CssClasses());
   const [getHeight, setHeight] = createSignal();
@@ -1021,7 +1021,7 @@ const ShowEditDetails = props => {
   })];
 };
 
-const _tmpl$$7 = /*#__PURE__*/template(`<span role="presentation" class="ag-cell-value">`);
+const _tmpl$$7 = /*#__PURE__*/template(`<span role=presentation class=ag-cell-value>`);
 const ToolsComp = props => {
   const {
     context
@@ -1113,8 +1113,8 @@ const ShowRenderDetails = props => {
   })())];
 };
 
-const _tmpl$$6 = /*#__PURE__*/template(`<div role="gridcell"> `),
-  _tmpl$2$1 = /*#__PURE__*/template(`<div class="ag-cell-wrapper" role="presentation">`);
+const _tmpl$$6 = /*#__PURE__*/template(`<div role=gridcell> `),
+  _tmpl$2$1 = /*#__PURE__*/template(`<div class=ag-cell-wrapper role=presentation>`);
 const checkCellEditorDeprecations = (popup, cellEditor, cellCtrl) => {
   const col = cellCtrl.getColumn();
 
@@ -1342,7 +1342,7 @@ const CellComp = props => {
   })();
 };
 
-const _tmpl$$5 = /*#__PURE__*/template(`<div role="row">`);
+const _tmpl$$5 = /*#__PURE__*/template(`<div role=row>`);
 const maintainOrderOnColumns = (prev, next, domOrder) => {
   if (domOrder) {
     const res = {
@@ -1527,7 +1527,7 @@ const RowComp = params => {
 };
 
 const _tmpl$$4 = /*#__PURE__*/template(`<div>`),
-  _tmpl$2 = /*#__PURE__*/template(`<div role="presentation">`);
+  _tmpl$2 = /*#__PURE__*/template(`<div role=presentation>`);
 const RowContainerComp = props => {
   const {
     context
@@ -1633,7 +1633,7 @@ const RowContainerComp = props => {
   })() : buildContainer());
 };
 
-const _tmpl$$3 = /*#__PURE__*/template(`<div role="treegrid"><div role="presentation"></div><div role="presentation"><div role="presentation"></div></div><div role="presentation"></div><div role="presentation">`);
+const _tmpl$$3 = /*#__PURE__*/template(`<div role=treegrid><div role=presentation></div><div role=presentation><div role=presentation></div></div><div role=presentation></div><div role=presentation>`);
 const GridBodyComp = () => {
   const {
     context,
@@ -1885,7 +1885,7 @@ const GridBodyComp = () => {
   })();
 };
 
-const _tmpl$$2 = /*#__PURE__*/template(`<div role="presentation">`);
+const _tmpl$$2 = /*#__PURE__*/template(`<div role=presentation>`);
 const TabGuardComp = props => {
   const {
     children,
