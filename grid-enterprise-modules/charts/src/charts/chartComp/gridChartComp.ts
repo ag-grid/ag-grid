@@ -465,10 +465,12 @@ export class GridChartComp extends Component {
         this.chartController.setChartThemeName(this.getThemeName(), true);
 
         const chartId = this.getChartId();
-        const chartThemeOverrides = this.gridOptionsService.get('chartThemeOverrides');
         const modelType = this.chartController.isCrossFilterChart()
             ? 'crossFilter'
             : this.getChartModel().modelType;
+
+        // standalone requires that `undefined` / `null` values are supplied as `{}`
+        const chartThemeOverrides = this.gridOptionsService.get('chartThemeOverrides') || {};
 
         this.update({
             type: `${modelType}ChartUpdate`,
