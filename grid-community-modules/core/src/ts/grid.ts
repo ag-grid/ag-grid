@@ -97,7 +97,7 @@ import { AgInputDateField } from "./widgets/agInputDateField";
 import { ValueParserService } from "./valueService/valueParserService";
 import { AgAutocomplete } from "./widgets/agAutocomplete";
 import { QuickFilterService } from "./filter/quickFilterService";
-import { warnOnce } from "./utils/function";
+import { warnOnce, errorOnce } from "./utils/function";
 import { SyncService } from "./syncService";
 import { OverlayService } from "./rendering/overlays/overlayService";
 import { StateService } from "./misc/stateService";
@@ -138,7 +138,7 @@ export interface Params {
 export function createGrid<TData>(eGridDiv: HTMLElement, gridOptions: GridOptions<TData>, params?: Params): GridApi<TData>{
 
     if (!gridOptions) {
-        console.error('AG Grid: no gridOptions provided to createGrid');
+        errorOnce('No gridOptions provided to createGrid');
         return {} as GridApi;
     }   
     // Ensure we do not mutate the provided gridOptions
@@ -150,28 +150,23 @@ export function createGrid<TData>(eGridDiv: HTMLElement, gridOptions: GridOption
     
     return api;
 }
-
-//Only used for deprecated new Grid so that we can still add the apis to the gridOptions
-// for JS users. TS users will have to cast the gridOptions to allow accessing apis.
-type LegacyGridOptions = GridOptions & { api?: GridApi, columnApi?: ColumnApi };
-
 /**
  * @deprecated v31 use createGrid() instead
  */
 export class Grid {
     protected logger: Logger;
 
-    private readonly gridOptions: LegacyGridOptions;
+    private readonly gridOptions: any; // Not typed to enable setting api / columnApi for backwards compatibility
 
     constructor(eGridDiv: HTMLElement, gridOptions: GridOptions, params?: GridParams) {
-      warnOnce('new Grid(...) is deprecated, please use `const api = createGrid(...)` instead.');
+      warnOnce('Since v31 new Grid(...) is deprecated. Use createGrid instead: `const gridApi = createGrid(...)`. The grid api is returned from createGrid and will not be available on gridOptions.');
 
         if (!gridOptions) {
-            console.error('AG Grid: no gridOptions provided to the grid');
+            errorOnce('No gridOptions provided to the grid');
             return;
         }
 
-        this.gridOptions = gridOptions as LegacyGridOptions;
+        this.gridOptions = gridOptions as any;
 
         const api = new GridCoreCreator().create(
             eGridDiv,
@@ -223,7 +218,7 @@ export class GridCoreCreator {
 
         if (!beanClasses) { 
             // Detailed error message will have been printed by createBeansList
-            console.error('AG Grid: Failed to create grid.');
+            errorOnce('Failed to create grid.');
             // Break typing so that the normal return type does not have to handle undefined.
             return undefined as any; 
         } 
@@ -379,7 +374,7 @@ export class GridCoreCreator {
         };
 
         if (!rowModelModuleNames[rowModelType]) {
-            console.error('AG Grid: could not find row model for rowModelType = ' + rowModelType);
+            errorOnce('Could not find row model for rowModelType = ' + rowModelType);
             return;
         }
 
