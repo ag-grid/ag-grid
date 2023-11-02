@@ -106,6 +106,15 @@
     transition: color $default-transition-timing, background-color $default-transition-timing,
         border-color $default-transition-timing;
 
+    &:focus-visible {
+        border-color: var(--primary-300);
+
+        #{$darkmode-selector} & {
+            border-color: var(--primary-200);
+            background-color: #121f29;
+        }
+    }
+
     &.isActive {
         --file-border-color: var(--example-border-color);
 
