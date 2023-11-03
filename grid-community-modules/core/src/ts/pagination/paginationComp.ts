@@ -54,7 +54,7 @@ export class PaginationComp extends Component {
 
         this.addManagedPropertyListener('pagination', this.onPaginationChanged.bind(this));
         this.addManagedPropertyListener('suppressPaginationPanel', this.onPaginationChanged.bind(this));
-        this.addManagedPropertyListener('paginationParams', () => this.onPaginationParamsChange());
+        this.addManagedPropertyListener('paginationPageSizeSelector', () => this.onPaginationPageSizeSelectorChange());
 
         this.onPaginationChanged();
     }
@@ -76,14 +76,13 @@ export class PaginationComp extends Component {
         this.setTotalLabels();
     }
 
-    private onPaginationParamsChange(): void {
-        const paginationParams = this.gridOptionsService.get('paginationParams');
-        const showPageSizeSelector = paginationParams?.showPageSizeSelector ?? false;
+    private onPaginationPageSizeSelectorChange(): void {
+        const paginationPageSizeSelector = this.gridOptionsService.get('paginationPageSizeSelector');
 
-        if (showPageSizeSelector) {
-            this.ePageSizeContainer.show();
-        } else {
+        if (!paginationPageSizeSelector) {
             this.ePageSizeContainer.hide();
+        } else {
+            this.ePageSizeContainer.show();
         }
     }
 

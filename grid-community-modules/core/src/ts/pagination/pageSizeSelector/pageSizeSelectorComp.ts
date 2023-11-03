@@ -6,8 +6,6 @@ import {PaginationProxy} from "../paginationProxy";
 import {AgSelect} from "../../main";
 import {clearElement} from "../../utils/dom";
 
-const defaultPageSizeSelectorValues = [10, 25, 50, 100];
-
 export class PageSizeSelectorComp extends Component {
 
     @Autowired('localeService') protected readonly localeService: LocaleService;
@@ -17,11 +15,6 @@ export class PageSizeSelectorComp extends Component {
     private eSelectPageSize: AgSelect | undefined;
     private ePageSizeLabel: HTMLElement | undefined;
 
-    private paginationParams: {
-        showPageSizeSelector?: boolean;
-        pageSizeSelectorValues?: number[];
-    } | undefined;
-
     constructor() {
         super(
             `<span class="ag-paging-page-size-comp"></span>`
@@ -30,16 +23,19 @@ export class PageSizeSelectorComp extends Component {
 
     @PostConstruct
     private init() {
-        this.paginationParams = this.gridOptionsService.get('paginationParams');
-        this.addManagedPropertyListener('paginationParams', () => this.handlePaginationParamsChange());
+        const paginationPageSizeSelector = this.gridOptionsService.get('paginationPageSizeSelector');
+        this.addManagedPropertyListener(
+            'paginationPageSizeSelector',
+            () => this.onPageSizeSelectorValuesChange(),
+        );
 
-        if (this.paginationParams?.showPageSizeSelector) {
+        if (paginationPageSizeSelector) {
             this.show();
         }
     }
 
-    public get isMounted() {
-        return typeof this.eSelectPageSize !== 'undefined';
+    private get isSelectorVisible() {
+        return this.eSelectPageSize !== undefined;
     }
 
     private handlePageSizeItemSelected = (): void => {
@@ -58,7 +54,7 @@ export class PageSizeSelectorComp extends Component {
     };
 
     public show(): void {
-        if (this.isMounted) {
+        if (this.isSelectorVisible) {
             return;
         }
 
@@ -88,7 +84,7 @@ export class PageSizeSelectorComp extends Component {
         clearElement(this.getGui());
 
         if (this.eSelectPageSize) {
-            this.eSelectPageSize.destroy();
+            this.eSelectPageSize.destroyBean();
             this.eSelectPageSize = undefined;
         }
 
@@ -97,14 +93,7 @@ export class PageSizeSelectorComp extends Component {
         }
     }
 
-    private handlePaginationParamsChange(): void {
-        const oldPaginationParams = this.paginationParams;
-        if (this.paginationParams?.pageSizeSelectorValues !== oldPaginationParams?.pageSizeSelectorValues) {
-            this.handlePageSizeSelectorValuesChange();
-        }
-    }
-
-    private handlePageSizeSelectorValuesChange(): void {
+    private onPageSizeSelectorValuesChange(): void {
         if (!this.eSelectPageSize) {
             return;
         }
@@ -125,8 +114,13 @@ export class PageSizeSelectorComp extends Component {
     }
 
     private getPageSizeSelectorValues(): number[] {
-        const paginationParams = this.gridOptionsService.get('paginationParams');
-        return paginationParams?.pageSizeSelectorValues ?? defaultPageSizeSelectorValues;
+        const paginationPageSizeSelector = this.gridOptionsService.get('paginationPageSizeSelector');
+        if (Array.isArray(paginationPageSizeSelector)) {
+            return paginationPageSizeSelector;
+        } else {
+            // Default page sizes when user provides `true` in the config.
+            return [10, 25, 50, 100];
+        }
     }
 
     public destroy() {

@@ -51,11 +51,12 @@ export class PropertyKeys {
         'rowClassRules', 'detailCellRendererParams', 'loadingCellRendererParams', 'loadingOverlayComponentParams',
         'noRowsOverlayComponentParams', 'popupParent', 'statusBar', 'sideBar', 'chartThemeOverrides',
         'customChartThemes', 'chartToolPanelsDef', 'dataTypeDefinitions', 'advancedFilterModel', 'advancedFilterParent',
-        'advancedFilterBuilderParams', 'initialState', 'autoSizeStrategy', 'paginationParams',
+        'advancedFilterBuilderParams', 'initialState', 'autoSizeStrategy',
     ];
 
     public static ARRAY_PROPERTIES: KeysOfType<any[]>[] = [
         'sortingOrder', 'alignedGrids', 'rowData', 'columnDefs', 'excelStyles', 'pinnedTopRowData', 'pinnedBottomRowData', 'chartThemes', 'rowClass',
+        'paginationPageSizeSelector',
     ];
 
     public static NUMBER_PROPERTIES: KeysOfType<number>[] = [

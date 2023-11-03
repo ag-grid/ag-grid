@@ -113,7 +113,7 @@ export class AgSelect extends AgPickerField<string | null, IPickerFieldParams, A
         return super.setValue(value, silent);
     }
 
-    public destroy(): void {
+    protected destroy(): void {
         if (this.listComponent) {
             this.destroyBean(this.listComponent);
             this.listComponent = undefined;

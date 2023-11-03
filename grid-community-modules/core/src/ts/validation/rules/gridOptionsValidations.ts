@@ -98,6 +98,7 @@ export const GRID_OPTION_DEFAULTS = {
     suppressNoRowsOverlay: false,
     pagination: false,
     paginationPageSize: 100,
+    paginationPageSizeSelector: true,
     paginationAutoPageSize: false,
     paginateChildRows: false,
     suppressPaginationPanel: false,
