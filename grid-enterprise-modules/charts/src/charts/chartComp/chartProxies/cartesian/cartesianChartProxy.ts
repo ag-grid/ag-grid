@@ -47,7 +47,7 @@ export abstract class CartesianChartProxy extends ChartProxy {
 
     protected getXAxisType(params: UpdateParams) {
         if (params.grouping) {
-            return 'groupedCategory';
+            return 'grouped-category';
         } else if (CartesianChartProxy.isTimeAxis(params)) {
             return 'time';
         }

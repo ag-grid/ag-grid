@@ -115,7 +115,7 @@ export class ChartOptionsService extends BeanStub {
 
     private getUpdateAxisOptions<T = string>(chartAxis: ChartAxis, expression: string, value: T): AgChartOptions {
         const seriesType = getSeriesType(this.getChartType());
-        const validAxisTypes: AgCartesianAxisType[] = ['number', 'category', 'time', 'groupedCategory'];
+        const validAxisTypes: AgCartesianAxisType[] = ['number', 'category', 'time', 'grouped-category'];
 
         if (!validAxisTypes.includes(chartAxis.type)) {
             return {};
