@@ -13,11 +13,10 @@ export class PageSizeSelectorComp extends Component {
     @Autowired('paginationProxy') private paginationProxy: PaginationProxy;
 
     private eSelectPageSize: AgSelect | undefined;
-    private ePageSizeLabel: HTMLElement | undefined;
 
     constructor() {
         super(
-            `<span class="ag-paging-page-size-comp"></span>`
+            `<span class="ag-paging-page-size"></span>`
         );
     }
 
@@ -55,62 +54,70 @@ export class PageSizeSelectorComp extends Component {
 
     public show(): void {
         if (this.isSelectorVisible) {
-            return;
+            this.reset();
         }
 
-        const pageSizesList = this.getPageSizeSelectorValues();
-        const currentPageSize = this.paginationProxy.getPageSize();
-
-        const localeTextFunc = this.localeService.getLocaleTextFunc();
-        const strPage = localeTextFunc('pageSizeShowLabel', 'Show');
-
-        this.ePageSizeLabel = document.createElement('span');
-        this.ePageSizeLabel.appendChild(document.createTextNode(strPage));
-
-        this.eSelectPageSize = this.createManagedBean(new AgSelect());
-        this.eSelectPageSize
-            .onValueChange(() => this.handlePageSizeItemSelected())
-            .resetOptions(pageSizesList.map(
-                value => ({ value: String(value), text: String(value) })
-            ));
-
-        this.eSelectPageSize.setValue(String(currentPageSize));
-
-        this.getGui().appendChild(this.ePageSizeLabel);
-        this.getGui().appendChild(this.eSelectPageSize.getGui());
-    }
-
-    public hide(): void {
-        clearElement(this.getGui());
-
-        if (this.eSelectPageSize) {
-            this.eSelectPageSize.destroyBean();
-            this.eSelectPageSize = undefined;
-        }
-
-        if (this.ePageSizeLabel) {
-            this.ePageSizeLabel = undefined;
-        }
-    }
-
-    private onPageSizeSelectorValuesChange(): void {
+        this.reloadPageSizesSelector();
         if (!this.eSelectPageSize) {
             return;
         }
 
-        const pageSizesList = this.getPageSizeSelectorValues();
-        const currentPageSize = this.paginationProxy.getPageSize();
-        this.eSelectPageSize.resetOptions(pageSizesList.map(
-            value => ({ value: String(value), text: String(value) })
-        ));
+        this.getGui().appendChild(this.eSelectPageSize.getGui());
+    }
 
-        if (pageSizesList.includes(currentPageSize)) {
-            this.eSelectPageSize.setValue(String(currentPageSize));
-        } else {
-            const newPageSize = pageSizesList[0];
-            this.paginationProxy.setPageSize(newPageSize);
-            this.eSelectPageSize.setValue(String(newPageSize));
+    public hide(): void {
+        if (!this.isSelectorVisible) {
+            return;
         }
+
+        this.reset();
+    }
+
+    private reset(): void {
+        clearElement(this.getGui());
+
+        if (this.eSelectPageSize) {
+            this.destroyBean(this.eSelectPageSize);
+            this.eSelectPageSize = undefined;
+        }
+    }
+
+    private onPageSizeSelectorValuesChange(): void {
+        if (!this.isSelectorVisible) {
+            return;
+        }
+
+        this.reloadPageSizesSelector();
+    }
+
+    private reloadPageSizesSelector(): void {
+        const pageSizesList = this.getPageSizeSelectorValues();
+
+        let currentPageSize = this.paginationProxy.getPageSize();
+        if (!currentPageSize || !pageSizesList.includes(currentPageSize)) {
+            currentPageSize = pageSizesList[0];
+            this.paginationProxy.setPageSize(currentPageSize);
+        }
+
+        const options = pageSizesList.map(
+            value => ({ value: String(value), text: String(value) })
+        );
+
+        if (this.eSelectPageSize) {
+            this.destroyBean(this.eSelectPageSize);
+            this.eSelectPageSize = undefined;
+        }
+
+        const localeTextFunc = this.localeService.getLocaleTextFunc();
+        const localisedLabel = localeTextFunc('pageSizeShowLabel', 'Show');
+
+        this.eSelectPageSize = this.createManagedBean(new AgSelect());
+        this.eSelectPageSize.addOptions(options)
+            .setValue(String(currentPageSize))
+            .setLabel(localisedLabel)
+            .setLabelAlignment('left')
+            .setAriaLabel(localisedLabel)
+            .onValueChange(() => this.handlePageSizeItemSelected());
     }
 
     private getPageSizeSelectorValues(): number[] {

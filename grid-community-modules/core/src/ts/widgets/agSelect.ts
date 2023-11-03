@@ -88,15 +88,6 @@ export class AgSelect extends AgPickerField<string | null, IPickerFieldParams, A
         return this;
     }
 
-    public resetOptions(options?: ListOption[]): this {
-        this.listComponent!.clearOptions();
-        if (options) {
-            this.listComponent!.addOptions(options);
-        }
-
-        return this;
-    }
-
     public setValue(value?: string | null , silent?: boolean, fromPicker?: boolean): this {
         if (this.value === value || !this.listComponent) { return this; }
 
