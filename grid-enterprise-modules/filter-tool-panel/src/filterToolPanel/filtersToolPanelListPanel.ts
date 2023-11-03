@@ -110,7 +110,7 @@ export class FiltersToolPanelListPanel extends Component {
 
         this.destroyFilters();
 
-        this.filterGroupComps = this.recursivelyAddComps(columnTree, 0, expansionState);
+        this.filterGroupComps = this.recursivelyAddComps(columnTree, 0, expansionState) as ToolPanelFilterGroupComp[];
 
         const len = this.filterGroupComps.length;
 
@@ -137,7 +137,7 @@ export class FiltersToolPanelListPanel extends Component {
         this.isInitialState = false;
     }
 
-    private recursivelyAddComps(tree: IProvidedColumn[], depth: number, expansionState: Map<string, boolean>): ToolPanelFilterGroupComp[] {
+    private recursivelyAddComps(tree: IProvidedColumn[], depth: number, expansionState: Map<string, boolean>): (ToolPanelFilterGroupComp | ToolPanelFilterComp)[] {
         return _.flatten(tree.map(child => {
             if (child instanceof ProvidedColumnGroup) {
                 return _.flatten(this.recursivelyAddFilterGroupComps(child, depth, expansionState)!);
@@ -173,7 +173,7 @@ export class FiltersToolPanelListPanel extends Component {
         columnGroup: ProvidedColumnGroup,
         depth: number,
         expansionState: Map<string, boolean>
-    ): ToolPanelFilterGroupComp[] | undefined {
+    ): (ToolPanelFilterGroupComp | ToolPanelFilterComp)[] | undefined {
         if (!this.filtersExistInChildren(columnGroup.getChildren())) { return; }
 
         const colGroupDef = columnGroup.getColGroupDef();
