@@ -28,7 +28,7 @@ export class PaginationComp extends Component {
     @RefSelector('lbCurrent') private lbCurrent: any;
     @RefSelector('lbTotal') private lbTotal: any;
 
-    @RefSelector('ePageSizeContainer') private ePageSizeContainer: PageSizeSelectorComp;
+    @RefSelector('pageSizeComp') private pageSizeComp: PageSizeSelectorComp;
 
     private previousAndFirstButtonsDisabled = false;
     private nextButtonDisabled = false;
@@ -44,7 +44,7 @@ export class PaginationComp extends Component {
         const isRtl = this.gridOptionsService.get('enableRtl');
         this.setTemplate(this.getTemplate());
 
-        const { btFirst, btPrevious, btNext, btLast, ePageSizeContainer } = this;
+        const { btFirst, btPrevious, btNext, btLast, pageSizeComp } = this;
         this.activateTabIndex([btFirst, btPrevious, btNext, btLast])
 
         btFirst.insertAdjacentElement('afterbegin', createIconNoSpan(isRtl ? 'last' : 'first', this.gridOptionsService)!);
@@ -78,12 +78,7 @@ export class PaginationComp extends Component {
 
     private onPaginationPageSizeSelectorChange(): void {
         const paginationPageSizeSelector = this.gridOptionsService.get('paginationPageSizeSelector');
-
-        if (!paginationPageSizeSelector) {
-            this.ePageSizeContainer.hide();
-        } else {
-            this.ePageSizeContainer.show();
-        }
+        this.pageSizeComp.toggleSelectDisplay(!!paginationPageSizeSelector);
     }
 
     private setupListeners() {
@@ -151,7 +146,7 @@ export class PaginationComp extends Component {
         const compId = this.getCompId();
 
         return /* html */`<div class="ag-paging-panel ag-unselectable" id="ag-${compId}">
-                <ag-page-size-selector ref="ePageSizeContainer"></ag-page-size-selector>
+                <ag-page-size-selector ref="pageSizeComp"></ag-page-size-selector>
                 <span class="ag-paging-row-summary-panel" role="status">
                     <span id="ag-${compId}-first-row" ref="lbFirstRowOnPage" class="ag-paging-row-summary-panel-number"></span>
                     <span id="ag-${compId}-to">${strTo}</span>
