@@ -56,6 +56,7 @@ export class PropertyKeys {
 
     public static ARRAY_PROPERTIES: KeysOfType<any[]>[] = [
         'sortingOrder', 'alignedGrids', 'rowData', 'columnDefs', 'excelStyles', 'pinnedTopRowData', 'pinnedBottomRowData', 'chartThemes', 'rowClass',
+        'paginationPageSizeSelector',
     ];
 
     public static NUMBER_PROPERTIES: KeysOfType<number>[] = [

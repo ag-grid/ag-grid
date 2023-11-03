@@ -104,6 +104,7 @@ import { StateService } from "./misc/stateService";
 import { ExpansionService } from "./misc/expansionService";
 import { ValidationService } from "./validation/validationService";
 import { ApiEventService } from "./misc/apiEventService";
+import { PageSizeSelectorComp } from "./pagination/pageSizeSelector/pageSizeSelectorComp";
 
 export interface GridParams {
     // INTERNAL - used by Web Components
@@ -363,6 +364,7 @@ export class GridCoreCreator {
             { componentName: 'AgHeaderRoot', componentClass: GridHeaderComp },
             { componentName: 'AgSortIndicator', componentClass: SortIndicatorComp },
             { componentName: 'AgPagination', componentClass: PaginationComp },
+            { componentName: 'AgPageSizeSelector', componentClass: PageSizeSelectorComp },
             { componentName: 'AgOverlayWrapper', componentClass: OverlayWrapperComponent },
             { componentName: 'AgGroupComponent', componentClass: AgGroupComponent },
             { componentName: 'AgPanel', componentClass: AgPanel },
