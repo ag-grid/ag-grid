@@ -1,40 +1,59 @@
 <framework-specific-section frameworks="angular">
 |
-| When the grid is initialised, it will fire the `gridReady` event. If you want to use the `api` of
-| the grid, you can put an `onGridReady(params)` callback onto the grid and grab the api(s)
-| from the params. 
-|
-| Alternatively, you can retrieve the grid component with a `@ViewChild` attribute from within your component. This will be defined after `ngAfterViewInit` has run.
-|
-| You can then call the api at a later stage to interact with the grid.
+| The api can be accessed from the `AgGridAngular` component via a `@ViewChild` decorator from within your component. This will be defined after `ngAfterViewInit` has run.
 |
 </framework-specific-section>
 
 <framework-specific-section frameworks="angular">
 <snippet transform={false}>
 | &lt;ag-grid-angular
-|    #myGrid // assign an angular ID to the grid - optional
+|    #myGrid // assign a template reference
+|    // ...
+| />
 |
+| // Select grid via template reference
+| @ViewChild('myGrid') grid!: AgGridAngular;
+|
+| onClick() {
+|    // Use the api
+|    this.grid.api.deselectRows();
+| }
+</snippet>
+</framework-specific-section>
+
+<framework-specific-section frameworks="angular">
+| ### API within Events and Callbacks
+|
+| The `api` is also provided on the params for all grid events and callbacks.
+|
+| The first event fired is the `gridReady` event and that can be used to store a reference to the api within your component as an alternative to using a `ViewChild`.
+|
+</framework-specific-section>
+
+<framework-specific-section frameworks="angular">
+<snippet transform={false}>
+| &lt;ag-grid-angular
 |    // provide gridReady callback to the grid
 |    (gridReady)="onGridReady($event)"
 |    // ...
 | />
 |
+| private api!: GridApi;
+|
 | // in onGridReady, store the api for later use
-| onGridReady = (params) => {
-|     this.api = params.api;
+| onGridReady = (event: GridReadyEvent) => {
+|     this.api = event.api;
 | }
 |
-| // Reference grid to access api
-| @ViewChild('myGrid') grid!: AgGridAngular;
-|
-| // Then later access api
-| this.grid.api.deselectRows();
+| onClick() {
+|    // Use the api
+|    this.api.deselectRows();
+| }
 </snippet>
 </framework-specific-section>
 
 <framework-specific-section frameworks="angular">
-| The api is also accessible within the component template. In the snippet above the Grid is given the ID of `'#myGrid'` which allows the API to be accessed as follows:
+| The api is also accessible within the component template. If the Grid is given the template reference of `'#myGrid'` the api can be accessed as follows:
 </framework-specific-section>
 
 <framework-specific-section frameworks="angular">
