@@ -147,6 +147,27 @@ export function createGrid<TData>(eGridDiv: HTMLElement, gridOptions: GridOption
         const gridComp = new GridComp(eGridDiv);
         context.createBean(gridComp);
     }, undefined, params);
+
+    // @deprecated v31 api / columnApi no longer mutated onto the provided gridOptions
+    // Instead we place a getter that will log an error when accessed and direct users to the docs
+    // Only apply for direct usages of createGrid, not for frameworks
+    if(!Object.isFrozen(gridOptions) && !(params as GridParams)?.frameworkOverrides) {
+        const apiUrl = 'https://ag-grid.com/javascript-data-grid/grid-interface/#access-the-grid-api';
+        Object.defineProperty(gridOptions, 'api', {
+            get: () => {
+                errorOnce(`gridOptions.api is no longer supported. See ${apiUrl}.`);
+                return undefined;
+            },
+            configurable: true,
+        },);
+        Object.defineProperty(gridOptions, 'columnApi', {
+            get: () => {
+                errorOnce(`gridOptions.columnApi is no longer supported and all methods moved to the grid api. See ${apiUrl}.`);
+                return undefined;
+            },
+            configurable: true,
+        });
+    }
     
     return api;
 }
