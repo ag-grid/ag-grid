@@ -104,7 +104,7 @@ import { StateService } from "./misc/stateService";
 import { ExpansionService } from "./misc/expansionService";
 import { ValidationService } from "./validation/validationService";
 import { ApiEventService } from "./misc/apiEventService";
-import {PageSizeSelectorComp} from "./pagination/pageSizeSelector/pageSizeSelectorComp";
+import { PageSizeSelectorComp } from "./pagination/pageSizeSelector/pageSizeSelectorComp";
 
 export interface GridParams {
     // INTERNAL - used by Web Components
