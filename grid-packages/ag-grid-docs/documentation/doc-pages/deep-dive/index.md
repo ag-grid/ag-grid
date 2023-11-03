@@ -63,7 +63,7 @@ As `rowData` is a reactive property, any updates to its state will be refelcted 
 
 </framework-specific-section>
 
-When we run our application, we should see a grid with ~4,000 rows:
+When we run our application, we should see a grid with ~2,500 rows:
 
 <grid-example title='Updating Example' name='updating-example' type='generated' options='{ "exampleHeight": 550 }'></grid-example>
 

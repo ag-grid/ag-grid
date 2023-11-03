@@ -14,15 +14,15 @@ In this tutorial you will:
 4. [Format grid values](/customising-the-grid/#formatting-cell-values)
 5. [Add custom components to Cells](/customising-the-grid/#custom-cell-components)
 
-Once complete, you will have a grid with formatted price & date values, a component in place of the country values and custom styles applied to rows & cells.
+Once complete, you will have a grid with custom styles applied to rows & cells, formatted price & date values, and a component in place of the country values.
 
-Try it out for yourself by editing the country, success, price or date columns to see the styles update in real-time:
+Try it out by editing the country, success, price or date columns to see the styles update in real-time:
 
 <grid-example title='Full Example' name='fully-customised-example' type='generated' options='{ "exampleHeight": 550 }'></grid-example>
 
 ## Setup
 
-<note disableMarkdown='true'>To follow this tutorial <a href='#'>clone our Basic Grid Template</a> or <a href='#'>fork the CodeSandbox example</a>.</note>
+<note disableMarkdown='true'>To follow this tutorial clone our <a href='#'>Basic Grid Template</a> or fork the <a href='#'>CodeSandbox Example</a>.</note>
 
 ## Theming & Styling
 
@@ -34,7 +34,9 @@ There are three ways to style the grid:
 
 ### Choosing a Theme
 
-All grids require a theme and we provide 5 themes out-of-the-box: [Alpine](https://www.ag-grid.com/example/?theme=ag-theme-alpine), [Alpine Dark](https://www.ag-grid.com/example/?theme=ag-theme-alpine-dark), [Balham](https://www.ag-grid.com/example/?theme=ag-theme-balham), [Balham Dark](https://www.ag-grid.com/example/?theme=ag-theme-balham-dark), and [Material](https://www.ag-grid.com/example/?theme=ag-theme-material). To use a theme, set the classname of the div that contains the grid to the name of the theme:
+All grids require a theme and we provide 5 themes out-of-the-box: [Alpine](https://www.ag-grid.com/example/?theme=ag-theme-alpine), [Alpine Dark](https://www.ag-grid.com/example/?theme=ag-theme-alpine-dark), [Balham](https://www.ag-grid.com/example/?theme=ag-theme-balham), [Balham Dark](https://www.ag-grid.com/example/?theme=ag-theme-balham-dark), and [Material](https://www.ag-grid.com/example/?theme=ag-theme-material).
+
+To use a theme, set the classname of the div that contains the grid to the name of the theme. Let's try this out by adding `ag-theme-material` to our container div:
 
 <snippet transform={false} language="jsx">
 |&lt;div className="ag-theme-material" style={{ width: 600, height: 500 }}>
@@ -46,7 +48,7 @@ _Note: Themes can be customised by overriding [CSS variables](/global-style-cust
 
 ### Styling Rows & Cells
 
-CSS classes can be applied to rows with __Row Classes__ and cells with __Cell Classes__.
+In addition to themes, CSS classes can be applied to rows with __Row Classes__ and to cells with __Cell Classes__.
 
 __Row Classes__ are defined using the `rowClass` prop, with a CSS classname as the value. Let's try this by creating a new `styles.css` file with a `.row` selector to control the font of our rows:
 
@@ -68,7 +70,7 @@ All rows should now use the <span style="font-family: 'Courier New'">Courier New
 
 <grid-example title='Row Class Example' name='row-class-example' type='generated' options='{ "exampleHeight": 550 }'></grid-example>
 
-__Cell Classes__ work in the same way but are applied by adding a `cellClass` property to the column we want the styles to apply to. Let's try this by adding a new selector to `styles.css` to control the font of the 'Mission' column:
+__Cell Classes__ work in the same way but are applied by adding a `cellClass` property to the column we want the styles to apply to. Let's try this by adding a new selector to `styles.css` to set the font-weight of the 'Mission' column:
 
 <snippet transform={false} language="css">
 .mission-cell {
@@ -95,9 +97,9 @@ We should now see our mission column with a heavy font-weight:
 
 ### Applying Styles Dynamically
 
-Styles can also be dynamically applied to rows with __Row Class Rules__ and cells with __Cell Class Rules__.
+Styles can also be dynamically applied to rows with __Row Class Rules__ and to cells with __Cell Class Rules__.
 
-__Row Class Rules__ are configured by providing a JavaScript map to the `rowClassRules` prop where the keys are the css selectors and the values are functions that describe when the selectors should be applied.
+__Row Class Rules__ are configured by providing a JavaScript map to the `rowClassRules` prop where the keys are the CSS classnames and the values are functions that describe when the selectors should be applied.
 
 Let's try this out by adding a few new selectors to our `styles.css` file to control the colour of the row when hovered:
 
@@ -128,7 +130,7 @@ We should now see that rows are either green or red when hovered, depending on t
 
 <grid-example title='Row Class Rule Example' name='row-class-rule-example' type='generated' options='{ "exampleHeight": 550 }'></grid-example>
 
-__Cell Class Rules__ work in the same way as __Row Class Rules__ but are applied via the `colDefs` array, to determine which cells the rules are applied to.
+__Cell Class Rules__ work in the same but are applied by adding a `cellClassRules` property to the column we want the styles to apply to.
 
 Let's try this out by adding a few new selectors to our `styles.css` file to control the style of the 'price' column:
 
@@ -159,7 +161,7 @@ Let's try this out by adding a few new selectors to our `styles.css` file to con
 |}
 </snippet>
 
-And then creating another map which we can then set as the value for our `cellClassRules` prop on our 'price' column:
+And then creating another map and setting it as the value for our `cellClassRules` prop on otheur 'Price' column:
 
 <snippet transform={false} language="jsx">
 |const cellClassRules = {
@@ -187,7 +189,7 @@ We should now see our price column formatted based on its value:
 
 ## Formatting Cell Values
 
-The data supplied to the grid usually requires some degree of formatting. To achieve this, we can use __Value Formatters__.
+The data supplied to the grid usually requires some degree of formatting. For basic text formatting we can use __Value Formatters__.
 
 __Value Formatters__ are basic functions which take the value of the cell, apply some basic formatting, and return a new value to be displayed by the grid. Let's try this by adding the `valueFormatter` property to our 'price' column and returning the formatted value:
 
@@ -216,9 +218,9 @@ The grid should now display a nicely formatted value in the 'price' column:
 
 __Value Formatters__ are useful for basic formatting, but for more advanced use-cases we can use __Cell Renderers__ instead.
 
-__Cell Renderers__ allow you to provide your own React components to the grid and are configured by setting the value of the `cellRenderer` prop to the component name.
+__Cell Renderers__ allow you to provide your own React components to the grid and are configured by setting the value of the `cellRenderer` prop to the component name on the relevant column.
 
-Let's try this by creating a new component to display a flag in the 'country' column. First, we need to create a component that accepts a single prop (which contains information about the cell) and returns the flag in an `<img>` element:
+Let's try this by creating a new component to display a flag in the 'country' column. First, we need to create a component that accepts a single prop (which contains information about the cell) and returns an `<img>` element with the correct flag:
 
 <snippet transform={false} language=jsx>
 |const CountryFlagCellRenderer = (props) => {
@@ -263,15 +265,15 @@ Let's put what you've learned so far into action by modifying the grid:
 
 1. Format the Date column using `.toLocaleDateString()`;
 
-    _Hint 1: `valueFormatter` is a Column Property_
+    _Hint: Use a `valueFormatter` on the 'Date' column to format its value_
 
 2. Apply a CSS Class to the 'mission' column that sets `cursor: pointer`.
 
-    _Hint: `cellClass` is a Column Property_
+    _Hint: Use the `cellClass` property on the 'Mission' column to provide a CSS class to the cells_
 
-3. Implement a Custom Tooltip on the 'mission' column.
+3. Implement a Custom Tooltip on the 'Mission' column.
 
-    _Hint: `customTooltip` is a Column Property_
+    _Hint: Use the `customTooltip` property on the 'Mission' Column to provide a custom Tooltip component_
 
 Once complete, your grid should look like the example below. If you're stuck, check out the source code to see how its done:
 
