@@ -6,6 +6,9 @@
 
     height: 100%;
     container-type: inline-size;
+    border: 1px solid var(--example-border-color);
+    border-radius: $size-1;
+    overflow: hidden;
 }
 
 .inner {
@@ -31,7 +34,7 @@
     gap: 0 $size-2;
     height: var(--mobile-header-height);
     padding: 0 $size-2;
-    border-bottom: 2px solid var(--secondary-border-color);
+    border-bottom: 1px solid var(--secondary-border-color);
     overflow-x: auto;
     overflow-y: hidden;
 
@@ -65,7 +68,7 @@
     overflow-x: hidden;
     padding: $size-1 0 $size-1 $size-1;
     color: var(--secondary-text-color);
-    box-shadow: inset -2px 0 0 0 var(--secondary-border-color);
+    box-shadow: inset -1px 0 0 0 var(--example-border-color);
 
     @container (width < 640px) {
         width: var(--files-min-width);
@@ -87,56 +90,39 @@
 .file {
     --file-border-color: transparent;
 
-    position: relative;
     width: 100%;
     padding: 0 $size-2 2px $size-half;
     font-size: var(--font-size-small);
     font-weight: var(--font-weight-bold);
     overflow: hidden;
     text-overflow: ellipsis;
-    border-top: 2px solid var(--file-border-color);
-    border-left: 2px solid var(--file-border-color);
-    border-bottom: 2px solid var(--file-border-color);
-    border-top-left-radius: var(--border-radius);
+    border-top: 1px solid var(--file-border-color);
+    border-left: 1px solid var(--file-border-color);
+    border-bottom: 1px solid var(--file-border-color);
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
     border-bottom-left-radius: var(--border-radius);
+    border-top-left-radius: var(--border-radius);
     transition: color $default-transition-timing, background-color $default-transition-timing,
         border-color $default-transition-timing;
 
-    &::before,
-    &::after {
-        content: '';
-        position: absolute;
-        width: var(--border-radius);
-        height: var(--border-radius);
-        right: 0;
-        border-right: 2px solid var(--secondary-border-color);
-        opacity: 0;
-        transition: opacity $default-transition-timing;
-    }
+    &:focus-visible {
+        border-color: var(--primary-300);
 
-    &::before {
-        top: -4px;
-        border-bottom-right-radius: var(--border-radius);
-        border-bottom: 2px solid var(--secondary-border-color);
-        box-shadow: 2px 2px 0 0 var(--background-100);
-    }
-
-    &::after {
-        bottom: -4px;
-        border-top-right-radius: var(--border-radius);
-        border-top: 2px solid var(--secondary-border-color);
-        box-shadow: 2px -2px 0 0 var(--background-100);
+        #{$darkmode-selector} & {
+            border-color: var(--primary-200);
+            background-color: #121f29;
+        }
     }
 
     &.isActive {
-        --file-border-color: var(--secondary-border-color);
+        --file-border-color: var(--example-border-color);
 
         color: var(--text-color);
-        background-color: var(--background-100);
+        background-color: var(--default-background-color);
 
-        &::before,
-        &::after {
-            opacity: 1;
+        #{$darkmode-selector} & {
+            background-color: #121f29;
         }
     }
 }
@@ -153,6 +139,11 @@
         height: 100%;
         margin-bottom: 0;
         border-radius: 0;
-        border: none;
+        border: none !important;
+    }
+
+    pre > code {
+        border-radius: 0;
+        border: none !important;
     }
 }

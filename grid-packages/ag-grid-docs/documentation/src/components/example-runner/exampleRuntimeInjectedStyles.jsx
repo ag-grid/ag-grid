@@ -31,12 +31,17 @@ export default /* css */ `
     font-size: 14px;
 }
 
-html[data-color-scheme='dark'] body > * {
-    color-scheme: dark;
+body {
+    padding: 0;
 }
 
-html[data-color-scheme='dark'] body {
-    padding: 16px 0 0;
+/* This should be refactored and fixed at the place where .test-header is defined */
+.test-header {
+    margin-bottom: 0 !important;
+}
+
+html[data-color-scheme='dark'] body > * {
+    color-scheme: dark;
 }
 
 html[data-color-scheme='dark'] div + #myGrid {

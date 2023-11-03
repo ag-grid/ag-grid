@@ -1,26 +1,53 @@
 @use "../../design-system/" as *;
 
+.exampleOuter {
+    --example-border-color: color-mix(in srgb, var(--secondary-border-color), var(--border-color));
+
+    margin-bottom: $size-2;
+
+    #{$darkmode-selector} & {
+        --example-border-color: color-mix(in srgb, var(--default-background-color), white 10%);
+    }
+}
+
 .tabsContainer {
     container-type: inline-size;
-    margin-bottom: $size-2;
+}
+
+.header {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    margin-top: $size-2;
+}
+
+.previewCodeToggle {
+    padding: 4px 12px 6px;
+    font-weight: 500;
+    border-radius: $size-1;
+
+    svg {
+        --icon-size: #{$size-3} !important;
+
+        position: absolute;
+    }
+
+    #{$darkmode-selector} & {
+        --button-color: #202a34;
+        --button-hover-color: #293949;
+        --button-active-color: #293949;
+    }
 }
 
 .externalLinks {
     display: flex;
     align-items: center;
-    gap: $size-2;
     flex-shrink: 0;
-    margin-left: auto;
-    padding-right: $size-2;
+    margin-left: $size-2;
+    margin-right: -10px;
 
     li {
         margin-bottom: 0.125em !important;
-    }
-
-    @container (max-width: 780px) {
-        :global(.verbs) {
-            display: none;
-        }
     }
 }
 

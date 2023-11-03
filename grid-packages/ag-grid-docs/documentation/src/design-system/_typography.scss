@@ -111,10 +111,10 @@ h6:not(:last-child) {
     margin-bottom: $size-1;
 }
 
-p:not(:last-child),
-ul:not(:last-child),
-ol:not(:last-child),
-blockquote:not(:last-child) {
+p:where(:not(:last-child)),
+ul:where(:not(:last-child)),
+ol:where(:not(:last-child)),
+blockquote:where(:not(:last-child)) {
     margin-bottom: $size-2;
 }
 
