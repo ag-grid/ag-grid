@@ -17,87 +17,25 @@
 .header {
     display: flex;
     align-items: center;
+    justify-content: flex-end;
     margin-top: $size-2;
 }
 
-.tabsNavList {
-    padding: 0;
-    cursor: pointer;
-
-    &:hover li:not(:global(.active)) {
-        background: var(--background-400);
-        color: var(--dark-blue-800);
-
-        #{$darkmode-selector} & {
-            background-color: color-mix(in srgb, #202a34, var(--default-background-color));
-
-            button {
-                color: var(--default-text-color);
-            }
-
-            svg {
-                fill: var(--default-text-color);
-            }
-        }
-    }
-
-    li {
-        padding: 0 12px 0 8px;
-        border-radius: $size-1;
-        transition: color $default-transition-timing, background-color $default-transition-timing,
-            border-color $default-transition-timing;
-
-        &:not(:last-child) {
-            margin-right: $size-1;
-        }
-    }
-
-    li:global(.active) {
-        background-color: var(--primary-100);
-
-        button {
-            color: var(--dark-blue-800);
-        }
-
-        svg {
-            fill: var(--dark-blue-800);
-        }
-
-        #{$darkmode-selector} & {
-            background-color: #202a34;
-
-            button {
-                color: var(--default-text-color);
-            }
-    
-            svg {
-                fill: var(--default-text-color);
-            }
-        }
-    }
-
-    button {
-        --link-color: var(--default-text-color);
-        --button-text-color: var(--default-text-color);
-
-        padding: 8px 4px 7px;
-        font-weight: 500;
-
-        #{$darkmode-selector} & {
-            color: color-mix(in srgb, var(--default-text-color) 66%, var(--default-background-color));
-        }
-    }
-
-    button::after {
-        display: none;
-    }
+.previewCodeToggle {
+    padding: 4px 12px 6px;
+    font-weight: 500;
+    border-radius: $size-1;
 
     svg {
-        margin-right: 4px;
+        --icon-size: #{$size-3} !important;
 
-        #{$darkmode-selector} & {
-            fill: color-mix(in srgb, var(--default-text-color) 66%, var(--default-background-color));
-        }
+        position: absolute;
+    }
+
+    #{$darkmode-selector} & {
+        --button-color: #202a34;
+        --button-hover-color: #293949;
+        --button-active-color: #293949;
     }
 }
 
@@ -105,7 +43,7 @@
     display: flex;
     align-items: center;
     flex-shrink: 0;
-    margin-left: auto;
+    margin-left: $size-2;
     margin-right: -10px;
 
     li {

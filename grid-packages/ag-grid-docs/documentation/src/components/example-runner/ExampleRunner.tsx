@@ -543,38 +543,23 @@ const ExampleRunnerInner = ({
                     </div>
 
                     <header className={styles.header}>
-                        <ul className={classnames(styles.tabsNavList, "tabs-nav-list")} role="tablist"
+                        <button
+                            className={classnames(styles.previewCodeToggle, 'button-secondary')}
                             onClick={(e) => {
                                 setShowCode(!showCode);
-                                e.preventDefault();
-                            }}>
-                            {/* eslint-disable-line */}
-                            <li className={classnames({ active: !showCode }, "tabs-nav-item")} role="presentation">
-                                <button
-                                    className={classnames({ active: !showCode }, 'button-style-none', 'tabs-nav-link')}
-                                    role="tab"
-                                    title="Run example"
-                                    disabled={!showCode}
-                                >
+                            }}
+                        >
+                            {showCode && (
+                                <span>
                                     <Icon name="eye" /> Preview
-                                </button>
-                            </li>
-                            <li className={classnames({ active: showCode }, "tabs-nav-item")} role="presentation">
-                                <button
-                                    className={classnames(
-                                        'button-style-none',
-                                        'tabs-nav-link',
-                                        styles.codeTabButton,
-                                        { active: showCode },
-                                    )}
-                                    role="tab"
-                                    title="View Example Source Code"
-                                    disabled={showCode}
-                                >
+                                </span>
+                            )}
+                            {!showCode && (
+                                <span>
                                     <Icon name="code" /> Code
-                                </button>
-                            </li>
-                        </ul>
+                                </span>
+                            )}
+                        </button>
 
                         <ul className={classnames('list-style-none', styles.externalLinks)}>
                             <li>
