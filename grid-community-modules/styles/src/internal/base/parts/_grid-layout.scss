@@ -6,6 +6,7 @@
     }
 
     .ag-root-wrapper {
+        border-radius: var(--ag-wrapper-border-radius);
         border: var(--ag-borders) var(--ag-border-color);
     }
 
@@ -69,7 +70,13 @@
         height: var(--ag-row-height);
         background-color: var(--ag-background-color);
         color: var(--ag-data-color);
-        border-bottom: var(--ag-row-border-style) var(--ag-row-border-color) var(--ag-row-border-width);
+
+        &::after {
+            content: "";
+            border-bottom: var(--ag-row-border-style) var(--ag-row-border-color) var(--ag-row-border-width);
+            display: block;
+            margin-top: calc(var(--ag-row-height) - var(--ag-row-border-width));
+        }
     }
 
     .ag-row-highlight-above::after, .ag-row-highlight-below::after {

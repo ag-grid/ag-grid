@@ -150,6 +150,7 @@ $-loaded-css-files: ();
 }
 
 $-theme-variables: (
+    "quartz": (active-color: "color"),
     "alpine": (alpine-active-color: "color"),
     "alpine-dark": (alpine-active-color: "color"),
     "balham": (balham-active-color: "color"),
@@ -158,6 +159,7 @@ $-theme-variables: (
 );
 
 $-theme-css-files: (
+    "quartz": "ag-theme-quartz-no-font.css",
     "alpine": "ag-theme-alpine-no-font.css",
     "alpine-dark": "ag-theme-alpine-no-font.css",
     "balham": "ag-theme-balham-no-font.css",
@@ -166,6 +168,7 @@ $-theme-css-files: (
 );
 
 $-theme-fonts: (
+    "quartz": "agGridQuartz",
     "alpine": "agGridAlpine",
     "alpine-dark": "agGridAlpine",
     "balham": "agGridBalham",
@@ -206,7 +209,7 @@ $-theme-fonts: (
     }
     
     @if list.length($themes) == 0 {
-        $themes: (alpine: ());
+        $themes: (quartz: ());
     }
 
     $params: map.remove($params, "theme", "themes");
@@ -472,6 +475,7 @@ $-variable-param-types: (
     --ag-card-radius: "length",
     --ag-card-shadow: "any",
     --ag-popup-shadow: "any",
+    --ag-active-color: "color",
     --ag-alpine-active-color: "color",
     --ag-balham-active-color: "color",
     --ag-material-primary-color: "color",

@@ -29,7 +29,7 @@ export const Toolbar = ({ gridRef, dataSize, setDataSize, rowCols, gridTheme, se
         if (!IS_SSR) {
             let url = window.location.href;
             if (url.indexOf('?theme=') !== -1) {
-                url = url.replace(/\?theme=[\w-]+/, `?theme=${newTheme}`);
+                url = url.replace(/\?theme=[\w:-]+/, `?theme=${newTheme}`);
             } else {
                 const sep = url.indexOf('?') === -1 ? '?' : '&';
                 url += `${sep}theme=${newTheme}`;
@@ -67,11 +67,13 @@ export const Toolbar = ({ gridRef, dataSize, setDataSize, rowCols, gridTheme, se
 
                     <label htmlFor="grid-theme">Theme:</label>
                     <select id="grid-theme" onChange={onThemeChanged} value={gridTheme || ''}>
-                        <option value="ag-theme-none">-none-</option>
-                        <option value="ag-theme-alpine">Alpine</option>
-                        <option value="ag-theme-alpine-dark">Alpine Dark</option>
-                        <option value="ag-theme-balham">Balham</option>
-                        <option value="ag-theme-balham-dark">Balham Dark</option>
+                        <option value="ag-theme-quartz:light">Quartz (light)</option>
+                        <option value="ag-theme-quartz:dark">Quartz (dark)</option>
+                        <option value="ag-theme-quartz:darkblue">Quartz (dark blue)</option>
+                        <option value="ag-theme-alpine:light">Alpine (light)</option>
+                        <option value="ag-theme-alpine:dark">Alpine (dark)</option>
+                        <option value="ag-theme-balham:light">Balham (light)</option>
+                        <option value="ag-theme-balham:dark">Balham (dark)</option>
                         <option value="ag-theme-material">Material</option>
                     </select>
 

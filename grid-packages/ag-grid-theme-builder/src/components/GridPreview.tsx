@@ -48,7 +48,8 @@ const GridPreview = () => {
     void rebuildKey;
 
     const options: GridOptions = {
-      enableRtl: true,
+      colorScheme: 'darkblue',
+      pagination: true,
       ...buildGridOptions(features),
       onGridReady: ({ api }) => {
         for (const feature of features) {

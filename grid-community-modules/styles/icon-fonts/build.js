@@ -5,7 +5,7 @@ const webfontsGenerator = require('@vusion/webfonts-generator');
 const fontDataFolder = path.join(__dirname, "../src/internal/ag/generated");
 const iconMapFolder = path.join(__dirname, "..");
 
-const fonts = fs.readdirSync(path.join(__dirname, 'fonts'));
+const fonts = fs.readdirSync(path.join(__dirname, 'fonts')).filter(f => !f.startsWith("."));
 
 // NOTE: this map of icon names to codepoints is documented and customers may
 // depend on it not changing. Add new codepoints but don't alter existing ones.
@@ -67,12 +67,9 @@ const codepoints = {
     "minus": 0xf137,
 }
 
-
 function generateFontFile(fontName) {
     const sourceFolder = path.join(__dirname, `fonts/${fontName}`);
-    const files = fs.readdirSync(sourceFolder)
-        .filter(file => file.endsWith(".svg"))
-        .map(file => path.join(sourceFolder, file));
+    const files = Object.keys(codepoints).map(name => path.join(sourceFolder, name + '.svg'))
         
     webfontsGenerator(
         {

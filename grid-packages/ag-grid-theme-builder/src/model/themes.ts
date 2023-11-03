@@ -10,6 +10,11 @@ export const baseTheme: Theme = {
   extends: null,
 };
 
+export const quartzTheme: Theme = {
+  name: 'ag-theme-quartz',
+  extends: baseTheme,
+};
+
 export const alpineTheme: Theme = {
   name: 'ag-theme-alpine',
   extends: baseTheme,
@@ -37,6 +42,7 @@ export const materialTheme: Theme = {
 
 export const allThemes: ReadonlyArray<Theme> = [
   baseTheme,
+  quartzTheme,
   alpineTheme,
   alpineDarkTheme,
   balhamTheme,

@@ -342,6 +342,13 @@ export interface GridOptions<TData = any> {
     /** Customise the parameters passed to the Advanced Filter Builder. */
     advancedFilterBuilderParams?: IAdvancedFilterBuilderParams;
 
+    /**
+     * Set the theme color scheme. All themes support 'dark' and 'light' color schemes. 'auto'
+     * Uses the CSS 'prefers-color-scheme' media feature to determine the user's preference.
+     * Some themes support additional colour schemes.
+     */
+    colorScheme?: 'dark' | 'light' | 'auto' | string;
+
     // *** Integrated Charts *** //
     /** Set to `true` to Enable Charts. Default: `false` */
     enableCharts?: boolean;
