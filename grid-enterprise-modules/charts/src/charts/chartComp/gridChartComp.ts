@@ -154,7 +154,7 @@ export class GridChartComp extends Component {
         // if chart already exists, destroy it and remove it from DOM
         let chartInstance: AgChartInstance | undefined = undefined;
         if (this.chartProxy) {
-            chartInstance = this.chartProxy.destroy({ keepChartInstance: true });
+            chartInstance = this.chartProxy.destroy({ keepChartInstance: false });
         }
 
         const crossFilterCallback = (event: any, reset: boolean) => {
@@ -325,6 +325,8 @@ export class GridChartComp extends Component {
         }
 
         const chartTypeChanged = this.chartTypeChanged(params);
+
+        console.log("chartTypeChanged: ", chartTypeChanged)
 
         // recreate chart if chart type has changed
         if (chartTypeChanged) this.createChart();
