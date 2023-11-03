@@ -110,7 +110,9 @@ const AG_GRID_LOCALE_EN = {
 
     // Side Bar
     columns: 'Columns',
+    ariaColumnPanelList: 'Column List',
     filters: 'Filters',
+    ariaFilterPanelList: 'Filter List',
 
     // columns tool panel
     pivotMode: 'Pivot Mode',
@@ -351,7 +353,6 @@ const AG_GRID_LOCALE_EN = {
     ariaChecked: 'checked',
     ariaColumn: 'Column',
     ariaColumnGroup: 'Column Group',
-    ariaColumnList: 'Column List',
     ariaColumnSelectAll: 'Toggle Select All Columns',
     ariaDateFilterInput: 'Date Filter Input',
     ariaDefaultListName: 'List',
@@ -378,6 +379,9 @@ const AG_GRID_LOCALE_EN = {
     ariaUnchecked: 'unchecked',
     ariaVisible: 'visible',
     ariaSearchFilterValues: 'Search filter values',
+
+
+    // Side bar
 
     // ARIA Labels for Drop Zones
 

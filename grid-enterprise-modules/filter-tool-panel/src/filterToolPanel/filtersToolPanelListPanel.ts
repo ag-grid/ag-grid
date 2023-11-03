@@ -73,16 +73,23 @@ export class FiltersToolPanelListPanel extends Component {
         if (this.columnModel.isReady()) {
             this.onColumnsChanged();
         }
+
+        const ariaEl = this.getAriaElement() 
+        _.setAriaLive(ariaEl, 'assertive');
+        _.setAriaAtomic(ariaEl, false);
+        _.setAriaRelevant(ariaEl, 'text');
     }
 
     public onColumnsChanged(): void {
         const pivotModeActive = this.columnModel.isPivotMode();
         const shouldSyncColumnLayoutWithGrid = !this.params.suppressSyncLayoutWithGrid && !pivotModeActive;
         shouldSyncColumnLayoutWithGrid ? this.syncFilterLayout() : this.buildTreeFromProvidedColumnDefs();
+        this.refreshAriaLabel();
     }
 
     public syncFilterLayout(): void {
         this.toolPanelColDefService.syncLayoutWithGrid(this.setFiltersLayout.bind(this));
+        this.refreshAriaLabel();
     }
 
     private buildTreeFromProvidedColumnDefs(): void {
@@ -135,6 +142,7 @@ export class FiltersToolPanelListPanel extends Component {
         }
 
         this.isInitialState = false;
+        this.refreshAriaLabel();
     }
 
     private recursivelyAddComps(tree: IProvidedColumn[], depth: number, expansionState: Map<string, boolean>): (ToolPanelFilterGroupComp | ToolPanelFilterComp)[] {
@@ -167,6 +175,23 @@ export class FiltersToolPanelListPanel extends Component {
             }
             return filterGroupComp;
         }));
+    }
+
+    private refreshAriaLabel(): void {
+        const translate = this.localeService.getLocaleTextFunc();
+        const filterListName = translate('ariaFilterPanelList', 'Filter List');
+        const localeFilters = translate('filters', 'Filters');
+
+        const eGui = this.getGui();
+        const groupSelector = '.ag-filter-toolpanel-group-wrapper';
+        const itemSelector = '.ag-filter-toolpanel-group-item';
+        const hiddenSelector = '.ag-hidden';
+        const visibleItems = eGui.querySelectorAll(`${itemSelector}:not(${groupSelector}, ${hiddenSelector})`);
+
+        const totalVisibleItems = visibleItems.length;
+
+        _.setAriaLabel(this.getAriaElement(), `${filterListName} ${totalVisibleItems} ${localeFilters}`);
+
     }
 
     private recursivelyAddFilterGroupComps(
@@ -385,7 +410,6 @@ export class FiltersToolPanelListPanel extends Component {
             }
 
             const children = filterItem.getChildren();
-
             const groupNamePasses = passesFilter(filterItem.getFilterGroupName());
 
             // if group or parent already passed - ensure this group and all children are visible
@@ -433,6 +457,7 @@ export class FiltersToolPanelListPanel extends Component {
         });
 
         this.setFirstAndLastVisible(firstVisible, lastVisible);
+        this.refreshAriaLabel();
     }
 
     private setFirstAndLastVisible(firstIdx?: number, lastIdx?: number) {

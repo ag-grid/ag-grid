@@ -330,11 +330,11 @@ export class PrimaryColsListPanel extends Component {
 
     private refreshAriaLabel(): void {
         const translate = this.localeService.getLocaleTextFunc();
-        const columnListName = translate('ariaColumnList', 'Column List');
+        const columnListName = translate('ariaColumnPanelList', 'Column List');
         const localeColumns = translate('columns', 'Columns');
         const items = this.displayedColsList.length;
 
-        _.setAriaLabel(this.virtualList.getAriaElement(), `${columnListName} - ${items} ${localeColumns}`);
+        _.setAriaLabel(this.virtualList.getAriaElement(), `${columnListName} ${items} ${localeColumns}`);
     }
 
     private focusRowIfAlive(rowIndex: number): void {
