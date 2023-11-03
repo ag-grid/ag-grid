@@ -110,9 +110,7 @@ const AG_GRID_LOCALE_EN = {
 
     // Side Bar
     columns: 'Columns',
-    ariaColumnPanelList: 'Column List',
     filters: 'Filters',
-    ariaFilterPanelList: 'Filter List',
 
     // columns tool panel
     pivotMode: 'Pivot Mode',
@@ -380,9 +378,6 @@ const AG_GRID_LOCALE_EN = {
     ariaVisible: 'visible',
     ariaSearchFilterValues: 'Search filter values',
 
-
-    // Side bar
-
     // ARIA Labels for Drop Zones
 
     ariaRowGroupDropZonePanelLabel: 'Row Groups',
@@ -411,6 +406,10 @@ const AG_GRID_LOCALE_EN = {
     ariaLabelAdvancedFilterBuilderColumnSelectField: 'Advanced Filter Builder Column Select Field',
     ariaLabelAdvancedFilterBuilderOptionSelectField: 'Advanced Filter Builder Option Select Field',
     ariaLabelAdvancedFilterBuilderJoinSelectField: 'Advanced Filter Builder Join Operator Select Field',
+
+    // ARIA Labels for the Side Bar
+    ariaColumnPanelList: 'Column List',
+    ariaFilterPanelList: 'Filter List',
 
     // Number Format (Status Bar, Pagination Panel)
     thousandSeparator: ',',
