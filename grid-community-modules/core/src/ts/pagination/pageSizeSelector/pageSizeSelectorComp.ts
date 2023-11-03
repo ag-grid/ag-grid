@@ -1,10 +1,10 @@
-import {Component} from "../../widgets/component";
-import {Autowired, PostConstruct} from "../../context/context";
-import {LocaleService} from "../../localeService";
-import {GridOptionsService} from "../../gridOptionsService";
-import {PaginationProxy} from "../paginationProxy";
-import {AgSelect} from "../../main";
-import {clearElement} from "../../utils/dom";
+import { Component } from "../../widgets/component";
+import { Autowired, PostConstruct } from "../../context/context";
+import { LocaleService } from "../../localeService";
+import { GridOptionsService } from "../../gridOptionsService";
+import { PaginationProxy } from "../paginationProxy";
+import { AgSelect } from "../../main";
+import { clearElement } from "../../utils/dom";
 
 export class PageSizeSelectorComp extends Component {
 
