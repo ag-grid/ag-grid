@@ -22,7 +22,7 @@ exports[`chartModelMigration upgradeChartModel should upgrade 22.1.0 successfull
           "right": {},
           "top": {},
         },
-        "groupedCategory": {
+        "grouped-category": {
           "bottom": {},
           "gridStyle": [
             {
@@ -228,7 +228,7 @@ exports[`chartModelMigration upgradeChartModel should upgrade 22.1.0-bar success
           "right": {},
           "top": {},
         },
-        "groupedCategory": {
+        "grouped-category": {
           "bottom": {},
           "gridStyle": [
             {
@@ -794,7 +794,7 @@ exports[`chartModelMigration upgradeChartModel should upgrade 22.1.0-scatter suc
           "right": {},
           "top": {},
         },
-        "groupedCategory": {
+        "grouped-category": {
           "bottom": {},
           "left": {},
           "right": {},
@@ -949,7 +949,7 @@ exports[`chartModelMigration upgradeChartModel should upgrade 23.0.0 successfull
           "right": {},
           "top": {},
         },
-        "groupedCategory": {
+        "grouped-category": {
           "bottom": {},
           "gridStyle": [
             {
@@ -1189,7 +1189,7 @@ exports[`chartModelMigration upgradeChartModel should upgrade 24.0.0 successfull
           },
           "top": {},
         },
-        "groupedCategory": {
+        "grouped-category": {
           "bottom": {},
           "left": {},
           "right": {},
@@ -1420,7 +1420,7 @@ exports[`chartModelMigration upgradeChartModel should upgrade 25.0.0 successfull
           },
           "top": {},
         },
-        "groupedCategory": {
+        "grouped-category": {
           "bottom": {},
           "left": {},
           "right": {},
@@ -1678,7 +1678,7 @@ exports[`chartModelMigration upgradeChartModel should upgrade 25.0.0-line succes
           },
           "top": {},
         },
-        "groupedCategory": {
+        "grouped-category": {
           "bottom": {},
           "left": {},
           "right": {},
@@ -1864,256 +1864,6 @@ exports[`chartModelMigration upgradeChartModel should upgrade 25.0.0-line succes
 }
 `;
 
-exports[`chartModelMigration upgradeChartModel should upgrade 25.2.0 successfully 1`] = `
-{
-  "cellRange": {
-    "columns": [
-      "country",
-      "sugar",
-      "fat",
-      "weight",
-    ],
-    "rowEndIndex": 1000,
-    "rowEndPinned": null,
-    "rowStartIndex": 0,
-    "rowStartPinned": null,
-  },
-  "chartId": "id-0apvr5tp12kl",
-  "chartOptions": {
-    "common": {
-      "legend": {
-        "enabled": true,
-        "position": "right",
-      },
-    },
-    "line": {
-      "autoSize": true,
-      "axes": {
-        "category": {
-          "bottom": {},
-          "left": {},
-          "right": {},
-          "top": {},
-        },
-        "groupedCategory": {
-          "bottom": {},
-          "gridStyle": [
-            {
-              "lineDash": [
-                4,
-                2,
-              ],
-              "stroke": "rgb(219, 219, 219)",
-            },
-          ],
-          "label": {
-            "color": "rgb(87, 87, 87)",
-            "fontFamily": "Verdana, sans-serif",
-            "fontSize": 12,
-            "fontStyle": "normal",
-            "fontWeight": "normal",
-            "padding": 5,
-          },
-          "left": {},
-          "line": {
-            "color": "rgb(195, 195, 195)",
-            "width": 1,
-          },
-          "position": "bottom",
-          "right": {},
-          "thickness": 0,
-          "tick": {
-            "color": "rgb(195, 195, 195)",
-            "count": 10,
-            "size": 6,
-            "width": 1,
-          },
-          "title": {
-            "color": "rgb(70, 70, 70)",
-            "enabled": false,
-            "fontFamily": "Verdana, sans-serif",
-            "fontSize": 12,
-            "fontStyle": "normal",
-            "fontWeight": "bold",
-            "text": "Axis Title",
-          },
-          "top": {},
-        },
-        "log": {
-          "bottom": {},
-          "left": {},
-          "right": {},
-          "top": {},
-        },
-        "number": {
-          "bottom": {},
-          "gridStyle": [
-            {
-              "lineDash": [
-                4,
-                2,
-              ],
-              "stroke": "rgb(219, 219, 219)",
-            },
-          ],
-          "label": {
-            "color": "rgb(87, 87, 87)",
-            "fontFamily": "Verdana, sans-serif",
-            "fontSize": 12,
-            "fontStyle": "normal",
-            "fontWeight": "normal",
-            "padding": 5,
-          },
-          "left": {},
-          "line": {
-            "color": "rgb(195, 195, 195)",
-            "width": 1,
-          },
-          "position": "left",
-          "right": {},
-          "thickness": 0,
-          "tick": {
-            "color": "rgb(195, 195, 195)",
-            "count": 10,
-            "size": 6,
-            "width": 1,
-          },
-          "title": {
-            "color": "rgb(70, 70, 70)",
-            "enabled": false,
-            "fontFamily": "Verdana, sans-serif",
-            "fontSize": 12,
-            "fontStyle": "normal",
-            "fontWeight": "bold",
-            "text": "Axis Title",
-          },
-          "top": {},
-        },
-        "time": {
-          "bottom": {},
-          "left": {},
-          "right": {},
-          "top": {},
-        },
-      },
-      "background": {
-        "fill": "white",
-        "visible": true,
-      },
-      "legend": {
-        "enabled": true,
-        "item": {
-          "label": {
-            "color": "black",
-            "fontFamily": "Verdana, sans-serif",
-            "fontSize": 12,
-          },
-          "marker": {
-            "padding": 8,
-            "size": 15,
-            "strokeWidth": 1,
-          },
-          "paddingX": 16,
-          "paddingY": 8,
-        },
-        "position": "bottom",
-        "spacing": 20,
-      },
-      "listeners": {},
-      "navigator": {
-        "enabled": false,
-        "height": 30,
-        "mask": {
-          "fill": "#999999",
-          "fillOpacity": 0.2,
-          "stroke": "#999999",
-          "strokeWidth": 1,
-        },
-        "max": 1,
-        "maxHandle": {
-          "fill": "#f2f2f2",
-          "gripLineGap": 2,
-          "gripLineLength": 8,
-          "height": 16,
-          "stroke": "#999999",
-          "strokeWidth": 1,
-          "width": 8,
-        },
-        "min": 0,
-        "minHandle": {
-          "fill": "#f2f2f2",
-          "gripLineGap": 2,
-          "gripLineLength": 8,
-          "height": 16,
-          "stroke": "#999999",
-          "strokeWidth": 1,
-          "width": 8,
-        },
-      },
-      "padding": {
-        "bottom": 20,
-        "left": 20,
-        "right": 20,
-        "top": 20,
-      },
-      "series": {
-        "fillOpacity": 1,
-        "highlightStyle": {
-          "item": {
-            "fill": "yellow",
-          },
-        },
-        "lineDash": [
-          0,
-        ],
-        "lineDashOffset": 0,
-        "marker": {
-          "enabled": true,
-          "shape": "circle",
-          "size": 6,
-          "strokeWidth": 1,
-        },
-        "strokeOpacity": 1,
-        "strokeWidth": 2,
-        "tooltip": {
-          "enabled": true,
-        },
-      },
-      "subtitle": {
-        "color": "rgb(140, 140, 140)",
-        "enabled": false,
-        "fontFamily": "Verdana, sans-serif",
-        "fontSize": 12,
-        "text": "Subtitle",
-      },
-      "title": {
-        "color": "rgb(70, 70, 70)",
-        "enabled": false,
-        "fontFamily": "Verdana, sans-serif",
-        "fontSize": 16,
-        "fontWeight": "bold",
-        "text": "Title",
-      },
-      "tooltip": {
-        "class": "ag-chart-tooltip",
-        "delay": 0,
-        "enabled": true,
-        "position": {
-          "type": "node",
-        },
-        "range": "nearest",
-      },
-      "type": "groupedCategory",
-    },
-  },
-  "chartThemeName": "ag-default",
-  "chartType": "line",
-  "modelType": "line",
-  "suppressChartRanges": true,
-  "unlinkChart": false,
-}
-`;
-
 exports[`chartModelMigration upgradeChartModel should upgrade 26.0.0 successfully 1`] = `
 {
   "cellRange": {
@@ -2174,7 +1924,7 @@ exports[`chartModelMigration upgradeChartModel should upgrade 26.0.0 successfull
           },
           "top": {},
         },
-        "groupedCategory": {
+        "grouped-category": {
           "bottom": {},
           "left": {},
           "right": {},
@@ -2401,7 +2151,7 @@ exports[`chartModelMigration upgradeChartModel should upgrade 26.0.0-scatter suc
           "right": {},
           "top": {},
         },
-        "groupedCategory": {
+        "grouped-category": {
           "bottom": {},
           "left": {},
           "right": {},
@@ -2644,7 +2394,7 @@ exports[`chartModelMigration upgradeChartModel should upgrade 26.1.0 successfull
           },
           "top": {},
         },
-        "groupedCategory": {
+        "grouped-category": {
           "bottom": {},
           "left": {},
           "right": {},

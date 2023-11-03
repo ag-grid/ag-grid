@@ -326,8 +326,6 @@ export class GridChartComp extends Component {
 
         const chartTypeChanged = this.chartTypeChanged(params);
 
-        console.log("chartTypeChanged: ", chartTypeChanged)
-
         // recreate chart if chart type has changed
         if (chartTypeChanged) this.createChart();
 

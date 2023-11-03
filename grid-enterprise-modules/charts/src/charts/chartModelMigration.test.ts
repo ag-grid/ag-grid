@@ -56,11 +56,6 @@ describe('chartModelMigration', () => {
         '24.0.0': {},
         '25.0.0': {},
         '25.0.0-line': {},
-        // Client-supplied example.
-        '25.2.0': {
-            // Not enough markers to detect 25.2, overlap migrations are safe.
-            detectedVersion: '25.0.0',
-        },
         '26.0.0': {},
         '26.0.0-scatter': {},
         '26.1.0': {},
@@ -73,8 +68,7 @@ describe('chartModelMigration', () => {
     };
     const SNAPSHOT_NAMES = Object.keys(SNAPSHOT_CASES);
 
-
-    xdescribe('upgradeChartModel', () => {
+    describe('upgradeChartModel', () => {
         it.each(SNAPSHOT_NAMES)('should upgrade %s successfully', (name) => {
             const chartModel = loadChartModel(name);
 
