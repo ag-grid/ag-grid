@@ -616,6 +616,13 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     @Input() public pagination: boolean | undefined = undefined;
     /** How many rows to load per page. If `paginationAutoPageSize` is specified, this property is ignored. Default: `100`     */
     @Input() public paginationPageSize: number | undefined = undefined;
+    /** Determines if the page size selector is shown in the pagination panel or not.
+         * Set to an array of values to show the page size selector with custom list of possible page sizes.
+         * Set to `true` to show the page size selector with the default page sizes `[10, 25, 50, 100]`
+         * Set to `false` to hide the page size selector.
+         * Default: `true`
+         */
+    @Input() public paginationPageSizeSelector: number[] | boolean | undefined = undefined;
     /** Set to `true` so that the number of rows to load per page is automatically adjusted by the grid so each page shows enough rows to just fill the area designated for the grid. If `false`, `paginationPageSize` is used. Default: `false`     */
     @Input() public paginationAutoPageSize: boolean | undefined = undefined;
     /** Set to `true` to have pages split children of groups when using Row Grouping or detail rows with Master Detail. Default: `false`     */
