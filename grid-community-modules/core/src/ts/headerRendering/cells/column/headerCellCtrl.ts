@@ -23,8 +23,6 @@ import { SelectAllFeature } from "./selectAllFeature";
 import { getElementSize } from "../../../utils/dom";
 import { ResizeObserverService } from "../../../misc/resizeObserverService";
 import { SortDirection } from "../../../entities/colDef";
-import { isBrowserSafari } from "../../../utils/browser";
-import { FocusService } from "../../../focusService";
 import { ColumnMoveHelper } from "../../columnMoveHelper";
 import { HorizontalDirection } from "../../../constants/direction";
 
@@ -100,7 +98,6 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl<IHeaderCellComp, Colu
             }
         ));
 
-        this.addMouseDownListenerIfNeeded();
         this.addResizeAndMoveKeyboardListeners();
 
         this.addManagedPropertyListeners(['suppressMovableColumns', 'suppressMenuHide'], this.refresh.bind(this));
@@ -110,25 +107,6 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl<IHeaderCellComp, Colu
         this.addManagedListener(this.eventService, Events.EVENT_COLUMN_PIVOT_CHANGED, this.onColumnPivotChanged.bind(this));
         this.addManagedListener(this.eventService, Events.EVENT_HEADER_HEIGHT_CHANGED, this.onHeaderHeightChanged.bind(this));
         this.addManagedListener(this.eventService, Events.EVENT_DISPLAYED_COLUMNS_CHANGED, this.onDisplayedColumnsChanged.bind(this));
-    }
-
-    private addMouseDownListenerIfNeeded(): void {
-        // we add a preventDefault in the DragService for Safari only
-        // so we need to make sure we don't prevent focus on mousedown
-        if (!isBrowserSafari()) { return; }
-
-        const events = ['mousedown', 'touchstart'];
-        const eDocument = this.gridOptionsService.getDocument();
-        const eGui = this.eGui;
-        events.forEach(eventName => {
-            this.addManagedListener(eGui, eventName, (e: MouseEvent | TouchEvent) => {
-                const activeEl = eDocument.activeElement;
-    
-                if (activeEl !== eGui && !eGui.contains(activeEl)) {
-                    eGui.focus();
-                }
-            });
-        })
     }
 
     protected resizeHeader(direction: HorizontalDirection, shiftKey: boolean): void {

@@ -251,6 +251,11 @@ export class DragService extends BeanStub {
     // only gets called after a mouse down - as this is only added after mouseDown
     // and is removed when mouseUp happens
     private onMouseMove(mouseEvent: MouseEvent, el: Element): void {
+        if (isBrowserSafari()) {
+            const eDocument = this.gridOptionsService.getDocument();
+            eDocument.getSelection()?.removeAllRanges();
+        }
+
         if (this.shouldPreventMouseEvent(mouseEvent)) {
             mouseEvent.preventDefault();
         }
@@ -260,15 +265,12 @@ export class DragService extends BeanStub {
 
     private shouldPreventMouseEvent(mouseEvent: MouseEvent): boolean {
         const isEnableCellTextSelect = this.gridOptionsService.get('enableCellTextSelection');
-        const isSafari = isBrowserSafari();
         const isMouseMove = mouseEvent.type === 'mousemove';
 
         return (
             // when `isEnableCellTextSelect` is `true`, we need to preventDefault on mouseMove
             // to avoid the grid text being selected while dragging components.
-            // Note: Safari also has an issue, where `user-select: none` is not being respected, so also
-            // prevent it on MouseDown.
-            ((isEnableCellTextSelect && isMouseMove) || isSafari) &&
+            ((isEnableCellTextSelect && isMouseMove)) &&
             mouseEvent.cancelable &&
             this.mouseEventService.isEventFromThisGrid(mouseEvent) &&
             !this.isOverFormFieldElement(mouseEvent)
