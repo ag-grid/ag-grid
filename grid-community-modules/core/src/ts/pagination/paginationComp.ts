@@ -10,6 +10,7 @@ import { KeyCode } from '../constants/keyCode';
 import { RowNodeBlockLoader } from "../rowNodeCache/rowNodeBlockLoader";
 import { PaginationNumberFormatterParams } from "../interfaces/iCallbackParams";
 import { WithoutGridCommon } from "../interfaces/iCommon";
+import { PageSizeSelectorComp } from "./pageSizeSelector/pageSizeSelectorComp";
 
 export class PaginationComp extends Component {
 
@@ -27,6 +28,8 @@ export class PaginationComp extends Component {
     @RefSelector('lbCurrent') private lbCurrent: any;
     @RefSelector('lbTotal') private lbTotal: any;
 
+    @RefSelector('pageSizeComp') private pageSizeComp: PageSizeSelectorComp;
+
     private previousAndFirstButtonsDisabled = false;
     private nextButtonDisabled = false;
     private lastButtonDisabled = false;
@@ -41,8 +44,7 @@ export class PaginationComp extends Component {
         const isRtl = this.gridOptionsService.get('enableRtl');
         this.setTemplate(this.getTemplate());
 
-        const { btFirst, btPrevious, btNext, btLast } = this;
-
+        const { btFirst, btPrevious, btNext, btLast, pageSizeComp } = this;
         this.activateTabIndex([btFirst, btPrevious, btNext, btLast])
 
         btFirst.insertAdjacentElement('afterbegin', createIconNoSpan(isRtl ? 'last' : 'first', this.gridOptionsService)!);
@@ -52,6 +54,7 @@ export class PaginationComp extends Component {
 
         this.addManagedPropertyListener('pagination', this.onPaginationChanged.bind(this));
         this.addManagedPropertyListener('suppressPaginationPanel', this.onPaginationChanged.bind(this));
+        this.addManagedPropertyListener('paginationPageSizeSelector', () => this.onPaginationPageSizeSelectorChange());
 
         this.onPaginationChanged();
     }
@@ -71,6 +74,11 @@ export class PaginationComp extends Component {
         this.updateRowLabels();
         this.setCurrentPageLabel();
         this.setTotalLabels();
+    }
+
+    private onPaginationPageSizeSelectorChange(): void {
+        const paginationPageSizeSelector = this.gridOptionsService.get('paginationPageSizeSelector');
+        this.pageSizeComp.toggleSelectDisplay(!!paginationPageSizeSelector);
     }
 
     private setupListeners() {
@@ -138,6 +146,7 @@ export class PaginationComp extends Component {
         const compId = this.getCompId();
 
         return /* html */`<div class="ag-paging-panel ag-unselectable" id="ag-${compId}">
+                <ag-page-size-selector ref="pageSizeComp"></ag-page-size-selector>
                 <span class="ag-paging-row-summary-panel" role="status">
                     <span id="ag-${compId}-first-row" ref="lbFirstRowOnPage" class="ag-paging-row-summary-panel-number"></span>
                     <span id="ag-${compId}-to">${strTo}</span>
