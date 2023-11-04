@@ -10,7 +10,8 @@ const {JSDOM} = require('jsdom');
 const algoliasearch = require('algoliasearch');
 const commander = require("commander");
 
-const menu = require('./doc-pages/licensing/menu.json');
+const learnMenu = require('./doc-pages/licensing/menu.json');
+const apiMenu = require('./doc-pages/licensing/api-menu.json');
 const supportedFrameworks = require('./src/utils/supported-frameworks');
 const convertToFrameworkUrl = require('./src/utils/convert-to-framework-url');
 const puppeteer = require("puppeteer-core");
@@ -245,9 +246,9 @@ const processIndexForFramework = async framework => {
         }
     };
 
-    for (const item of menu) {
+    const combinedMenu = [...learnMenu, ...apiMenu];
+    for (const item of combinedMenu) {
         if (filter(item)) continue;
-
         await iterateItems(item.items);
     }
 

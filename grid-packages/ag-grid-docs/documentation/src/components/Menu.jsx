@@ -4,7 +4,6 @@ import {Link} from 'gatsby';
 import {Icon} from 'components/Icon';
 import convertToFrameworkUrl from 'utils/convert-to-framework-url';
 import {Collapsible} from './Collapsible';
-import menuData from '../../doc-pages/licensing/menu.json';
 import styles from './Menu.module.scss';
 import {toElementId, getActiveParentItems, getFilteredMenuData} from './menuUtils';
 
@@ -13,14 +12,22 @@ const useDocsButtonState = () => {
     return [isDocsButtonOpen, setIsDocsButtonOpen];
 };
 
-const Menu = ({currentFramework, path}) => {
+const Menu = ({ currentFramework, path, menuData, expandAllGroups = true, hideChevrons = true }) => {
     const [isDocsButtonOpen, setIsDocsButtonOpen] = useDocsButtonState();
-    const [activeSections, setActiveSections] = useState(new Set());
-    const activeParentItems = getActiveParentItems(menuData, path);
-    const filteredMenuData = getFilteredMenuData(menuData, currentFramework);
+
+    const defaultActiveSections = expandAllGroups
+        ? new Set(menuData.map(group => group.items.map(item => item.title)).flat())
+        : new Set();
+
+    const [activeSections, setActiveSections] = useState(defaultActiveSections);
+
+    const activeParentItems = useMemo(() => getActiveParentItems(menuData, path), [menuData, path]);
+    const filteredMenuData = useMemo(() => getFilteredMenuData(menuData, currentFramework, path), [menuData, currentFramework, path]);
 
     const toggleActive = (title) => {
-        setActiveSections((prev) => prev.has(title) ? new Set() : new Set([title]));
+        setActiveSections(prev =>
+            prev.has(title) ? new Set([...prev].filter(item => item !== title)) : new Set([...prev, title])
+        );
     };
 
     return (
@@ -41,6 +48,7 @@ const Menu = ({currentFramework, path}) => {
                                 activeSections={activeSections}
                                 isDocsButtonOpen={isDocsButtonOpen}
                                 setIsDocsButtonOpen={setIsDocsButtonOpen}
+                                hideChevrons={hideChevrons}
                             />
                         ))}
                         {index < filteredMenuData.length - 1 && <hr/>}
@@ -51,7 +59,7 @@ const Menu = ({currentFramework, path}) => {
     );
 };
 
-const MenuSection = ({title, items, currentFramework, activeParentItems, toggleActive, activeSections, setActiveSections}) => {
+const MenuSection = ({title, items, currentFramework, activeParentItems, toggleActive, activeSections, setActiveSections, hideChevrons}) => {
     const [shouldAutoExpand, setShouldAutoExpand] = useState(false);
     const [isDocsButtonOpen, setIsDocsButtonOpen] = useDocsButtonState();
 
@@ -80,7 +88,7 @@ const MenuSection = ({title, items, currentFramework, activeParentItems, toggleA
         <li className={styles.menuSection}>
             <button onClick={toggleActive} tabIndex="0" className={buttonClasses} aria-expanded={isActive}
                     aria-controls={`#${elementId}`}>
-                <Icon name="chevronRight" svgClasses={iconClasses}/>
+                {!hideChevrons && <Icon name="chevronRight" svgClasses={iconClasses}/>}
                 {title}
             </button>
             <MenuGroup

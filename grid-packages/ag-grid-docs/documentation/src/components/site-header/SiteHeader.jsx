@@ -1,7 +1,6 @@
 import classnames from 'classnames';
 import { withPrefix } from 'gatsby';
 import React, { useState } from 'react';
-import supportedFrameworks from 'utils/supported-frameworks.js';
 import breakpoints from '../../design-system/breakpoint.module.scss';
 import LogoType from '../../images/inline-svgs/ag-grid-logotype.svg';
 import MenuIcon from '../../images/inline-svgs/menu-icon.svg';
@@ -11,6 +10,8 @@ import { Icon } from '../Icon';
 import LogoMark from '../LogoMark';
 import { DarkModeToggle } from './DarkModeToggle';
 import styles from './SiteHeader.module.scss';
+import menuData from '../../../doc-pages/licensing/menu.json';
+import apiMenuData from '../../../doc-pages/licensing/api-menu.json';
 
 const IS_SSR = typeof window === 'undefined';
 
@@ -19,51 +20,54 @@ const SITE_HEADER_SMALL_WIDTH = parseInt(breakpoints['site-header-small'], 10);
 const links = [
     {
         name: 'Demo',
-        url: '/example',
+        url: '/example/',
+        docsLink: false,
     },
     {
-        name: 'Documentation',
+        name: 'Learn',
         url: withPrefix('/documentation/'),
+        docsLink: true,
     },
-    // {
-    //     name: 'Theme Builder',
-    //     url: '/theme-builder',
-    // },
     {
-        name: 'Pricing',
-        url: '/license-pricing',
+        name: 'API',
+        url: withPrefix('/api/'),
+        docsLink: true,
     },
     {
         name: 'Blog',
         url: 'https://blog.ag-grid.com/',
+        docsLink: false,
+    },
+    {
+        name: 'Pricing',
+        url: '/license-pricing',
+        docsLink: false,
     },
     {
         name: 'Github',
         url: 'https://github.com/ag-grid/ag-grid',
         icon: <Icon name="github" />,
         cssClass: 'github-item',
+        docsLink: false,
     },
 ];
 
-const getCurrentPageName = (path) => {
-    const rawPath = path.split('/')[1];
-
-    const allLinks = [
-        ...links,
-        ...supportedFrameworks.map((framework) => ({ name: 'Documentation', url: `/${framework}-data-grid` })),
-    ];
-
-    const match = allLinks.filter((link) => link.url.includes(rawPath));
-
-    if (match && match.length === 1) {
-        return match[0].name;
+const isLinkSelected = (name, path) => {
+    const link = links.find(l => l.name === name);
+    if (link?.docsLink) {
+        const menuToCheck = name === "API" ? apiMenuData : name === "Learn" ? menuData : [];
+        return menuToCheck.some(({ items }) =>
+            items.some(({ items }) => items?.some(({ url }) => url && path.endsWith(url)))
+        );
     }
+
+    return link?.url.startsWith('http') ? path === link.url : path.startsWith(link.url || '');
 };
 
 const HeaderLinks = ({ path, isOpen, toggleIsOpen }) => {
     return links.map((link) => {
         const linkClasses = classnames(styles.navItem, {
-            [styles.navItemActive]: link.name === getCurrentPageName(path),
+            [styles.navItemActive]: isLinkSelected(link.name, path),
             [styles[link.cssClass]]: link.cssClass,
         });
 
@@ -152,3 +156,11 @@ export const SiteHeader = ({ path }) => {
         </header>
     );
 };
+
+
+const isPathInApiMenu = (path, menuData) =>
+    menuData.some(group =>
+        group.items.some(item =>
+            item.items && item.items.some(subItem => path.endsWith(subItem.url))
+        )
+    );

@@ -138,16 +138,11 @@ const DocPageTemplate = ({ data, pageContext: { framework, exampleIndexData, pag
         }
     }
 
-    // solidjs is still tactical and "lives" under react - make a bit of an exception here so the title makes sense
     const pageTitle = (
         <>
-            {pageName === 'solidjs' ? (
-                <span className={styles.headerFramework}>SolidJS Data Grid:</span>
-            ) : (
-                <span className={styles.headerFramework}>
-                    {getProductType(framework, false, version)}
-                </span>
-            )}
+            <span className={styles.headerFramework}>
+                {getProductType(framework, false, version)}
+            </span>
             <span>{title}</span>
         </>
     );
