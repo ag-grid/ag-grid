@@ -1,5 +1,30 @@
 @use '../design-system' as *;
 
+.whatsNewLink {
+    margin-top: $size-2;
+    margin-bottom: $size-1;
+
+    a {
+        display: block;
+        position: relative;
+        font-weight: 500;
+        font-size: var(--font-size-medium);
+        color: var(--text-color);
+        text-decoration: none;
+        padding: 4px 8px;
+        border-radius: var(--border-radius);
+        background-color: rgba(56, 146, 249, 0.09);
+
+        &:hover, &:focus {
+            color: var(--link-color);
+        }
+    }
+
+    .whatsNewLinkActive {
+        color: var(--link-color);
+    }
+}
+
 .menu {
     $top-bar-height: 58px;
 
@@ -46,7 +71,7 @@
 ul.menuInner {
     flex-basis: auto;
     flex-direction: column;
-    padding-top: $size-3;
+    padding-top: 0;
     padding-bottom: $size-7;
 
     li {

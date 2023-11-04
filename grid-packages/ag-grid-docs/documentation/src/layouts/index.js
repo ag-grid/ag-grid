@@ -70,12 +70,14 @@ export const Layout = ({
 
                 <div className={classnames(styles.contentContainer, !fullScreen && styles.fullScreenPage)}>
                     <div className={styles.contentViewport}>
-                        {!fullScreen && <Menu currentFramework={framework}
-                                              currentPage={pageName}
-                                              path={path}
-                                              menuData={selectedMenuData}
-                                              expandAllGroups={isApiMenu}
-                                              hideChevrons={isApiMenu}/>}
+                        {!fullScreen &&
+                            <Menu currentFramework={framework}
+                                  currentPage={pageName}
+                                  path={path}
+                                  menuData={selectedMenuData}
+                                  expandAllGroups={isApiMenu}
+                                  hideChevrons={isApiMenu}/>
+                        }
                         <main is="div">{children}</main>
                     </div>
                 </div>

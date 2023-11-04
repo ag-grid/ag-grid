@@ -13,8 +13,6 @@ import styles from './SiteHeader.module.scss';
 import menuData from '../../../doc-pages/licensing/menu.json';
 import apiMenuData from '../../../doc-pages/licensing/api-menu.json';
 
-const IS_SSR = typeof window === 'undefined';
-
 const SITE_HEADER_SMALL_WIDTH = parseInt(breakpoints['site-header-small'], 10);
 
 const links = [
@@ -54,14 +52,20 @@ const links = [
 
 const isLinkSelected = (name, path) => {
     const link = links.find(l => l.name === name);
-    if (link?.docsLink) {
-        const menuToCheck = name === "API" ? apiMenuData : name === "Learn" ? menuData : [];
-        return menuToCheck.some(({ items }) =>
-            items.some(({ items }) => items?.some(({ url }) => url && path.endsWith(url)))
-        );
+    if (!link) return false;
+
+    if (!link.docsLink) {
+        return link.url.startsWith('http') ? path === link.url : path.startsWith(link.url);
     }
 
-    return link?.url.startsWith('http') ? path === link.url : path.startsWith(link.url || '');
+    const checkItemsRecursive = items => items.some(item =>
+        item.url && path.endsWith(item.url) || (item.items && checkItemsRecursive(item.items))
+    );
+
+    const menuToCheck = link.docsLink ? (name === "API" ? apiMenuData : menuData) : [];
+    const whatsNewLink = name === "Learn" ? menuToCheck.find(item => item.title === "What's New") : null;
+
+    return checkItemsRecursive(menuToCheck) || (whatsNewLink && path.endsWith(whatsNewLink.url));
 };
 
 const HeaderLinks = ({ path, isOpen, toggleIsOpen }) => {

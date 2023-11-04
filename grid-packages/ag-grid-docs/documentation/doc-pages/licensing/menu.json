@@ -1,5 +1,10 @@
 [
   {
+    "title": "Latest Updates",
+    "url": "/whats-new/",
+    "whatsNewLink": true
+  },
+  {
     "group": "OVERVIEW",
     "items": [
       {
@@ -19,6 +24,10 @@
             "title": "Customising the Grid",
             "url": "/customising-the-grid/",
             "icon": "framework"
+          },
+          {
+            "title": "Video Tutorials",
+            "url": "/videos/"
           }
         ]
       },
@@ -217,14 +226,6 @@
             "frameworks": [
               "vue"
             ]
-          },
-          {
-            "title": "Video Tutorials",
-            "url": "/videos/"
-          },
-          {
-            "title": "Support (?)",
-            "url": "/support/"
           }
         ]
       },
@@ -240,6 +241,10 @@
             "title": "Pipeline",
             "url": "/pipeline/",
             "icon": "framework"
+          },
+          {
+            "title": "Support",
+            "url": "/support/"
           }
         ]
       }
@@ -836,13 +841,13 @@
                 "enterprise": true,
                 "items": [
                   {
-                    "title": "Single Group Column",
+                    "title": "Single Column",
                     "url": "/grouping-single-group-column/",
                     "enterprise": true,
                     "showInCollapsed": false
                   },
                   {
-                    "title": "Multiple Group Columns",
+                    "title": "Multiple Columns",
                     "url": "/grouping-multiple-group-columns/",
                     "enterprise": true,
                     "showInCollapsed": false
@@ -854,7 +859,7 @@
                     "showInCollapsed": false
                   },
                   {
-                    "title": "Custom Group Columns",
+                    "title": "Custom Group",
                     "url": "/grouping-custom-group-columns/",
                     "enterprise": true,
                     "showInCollapsed": false
@@ -898,7 +903,7 @@
                     "showInCollapsed": false
                   },
                   {
-                    "title": "Custom Group Filtering",
+                    "title": "Custom Filtering",
                     "url": "/grouping-custom-filtering/",
                     "enterprise": true,
                     "showInCollapsed": false
