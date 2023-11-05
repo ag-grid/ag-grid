@@ -7,21 +7,20 @@
     a {
         display: block;
         position: relative;
-        font-weight: 500;
         font-size: var(--font-size-medium);
-        color: var(--text-color);
+        color: var(--link-hover-color);
         text-decoration: none;
-        padding: 4px 8px;
         border-radius: var(--border-radius);
-        background-color: rgba(56, 146, 249, 0.09);
+        padding: 4px 8px;
+        -webkit-font-smoothing: auto;
 
         &:hover, &:focus {
-            color: var(--link-color);
+            background-color: rgba(56, 146, 249, 0.09);
         }
     }
 
     .whatsNewLinkActive {
-        color: var(--link-color);
+        background-color: rgba(56, 146, 249, 0.09);
     }
 }
 
