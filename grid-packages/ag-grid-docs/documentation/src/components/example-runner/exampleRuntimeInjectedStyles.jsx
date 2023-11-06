@@ -66,7 +66,7 @@ html[data-color-scheme='dark'] button:not(#myGrid button, #myChart button, butto
 }
 
 html[data-color-scheme='dark'] button:not(#myGrid button, #myChart button, button[class*='ag-']):hover {
-    background-color: #293949;
+    background-color: #2a343e;
 }
 
 html[data-color-scheme='dark'] select:not(#myGrid select, #myChart select, select[class*='ag-']) {
@@ -80,7 +80,7 @@ html[data-color-scheme='dark'] select:not(#myGrid select, #myChart select, selec
 }
 
 html[data-color-scheme='dark'] select:not(#myGrid select, #myChart select, select[class*='ag-']):hover {
-    background-color: #293949;
+    background-color: #2a343e;
 }
 
 html[data-color-scheme='dark'] input:not(#myGrid input, #myChart input, input[class*='ag-']) {

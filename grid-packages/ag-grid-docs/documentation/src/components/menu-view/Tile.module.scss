@@ -154,6 +154,11 @@
     --icon-size: 1rem !important;
     --text-color: var(--enterprise-icon-color);
 
+    #{$darkmode-selector} & {
+    --text-color: var(--active-color);
+    }
+
+
     margin-left: 0.2em;
     margin-top: -0.1em;
 }

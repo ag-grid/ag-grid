@@ -55,7 +55,8 @@
         --text-color: var(--default-text-color);
 
         :global(.icon) {
-            --text-color: #249fff;
+            --text-color: var(--default-text-color);
+
         }
     }
 }

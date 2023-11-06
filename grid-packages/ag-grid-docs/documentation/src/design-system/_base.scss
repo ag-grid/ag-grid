@@ -46,6 +46,14 @@ html {
     #doc-content a:not(.button) {
         color: #3893F9;
     }
+
+    #doc-content h1, h2, h3, h4, h5, h6 {
+        color: var(--default-text-color);
+    }
+
+    #doc-content {
+        color: #c3cad3;
+    }
     
     #doc-content a:hover {
         color: var(--link-hover-color);
@@ -68,7 +76,16 @@ html {
 #{$darkmode-selector} {
     #doc-content a {
         color: #3893F9;
+        text-decoration: underline;
+        text-underline-offset: 2px;
+        text-decoration-color: #3892f977;
     }
+
+    #doc-content a:hover {
+        color: #3893F9;
+        text-decoration-color: #60aafe;
+    }
+
 
     nav::-webkit-scrollbar {
         background-color: var(--background-100);

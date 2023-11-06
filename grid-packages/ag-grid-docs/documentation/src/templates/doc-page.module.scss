@@ -162,7 +162,11 @@
 
     :global(.icon) {
         --icon-size: 1.25em;
-        --text-color: var(--enterprise-icon-color) !important;
+        --text-color: var(--enterprise-icon-color) ;
+
+        #{$darkmode-selector} & {
+            --text-color: #3893f9;
+            }
 
         position: relative;
         margin-left: $size-half;
@@ -199,7 +203,7 @@
 
     > h3,
     > h4 {
-        margin-top: $size-4;
+        margin-top: $size-5;
     }
 
     p,
