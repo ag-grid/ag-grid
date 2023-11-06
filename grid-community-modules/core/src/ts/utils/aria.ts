@@ -4,7 +4,7 @@ export type ColumnSortState = 'ascending' | 'descending' | 'other' | 'none';
 
 // ARIA HELPER FUNCTIONS
 function toggleAriaAttribute(element: Element, attribute: string, value?: number | boolean | string | null) {
-    if (value == null || value == '') {
+    if (value == null || (typeof value === 'string' && value == '')) {
         removeAriaAttribute(element, attribute);
     } else {
         setAriaAttribute(element, attribute, value);

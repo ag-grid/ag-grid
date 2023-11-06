@@ -532,6 +532,8 @@ export class SetFilter<V = string> extends ProvidedFilter<SetFilterModel, V> imp
         return listItem;
     }
 
+    
+
     private newSetTreeItemAttributes(item: SetFilterModelTreeItem, isTree: boolean): ({
         value: V | string | (() => string) | null,
         depth?: number | undefined,
@@ -1266,10 +1268,6 @@ class ModelWrapper<V> implements VirtualListModel {
         return this.model.getDisplayedItem(index) as any;
     }
 
-    public isRowSelected(index: number): boolean {
-        return this.model.isKeySelected(this.getRow(index));
-    }
-
     public areRowsEqual(oldRow: string | null, newRow: string | null): boolean {
         return oldRow === newRow;
     }
@@ -1299,18 +1297,6 @@ class ModelWrapperWithSelectAll<V> implements VirtualListModel {
         }
 
         return this.model.getDisplayedItem(index - outboundItems) as any;
-    }
-
-    public isRowSelected(index: number): boolean | undefined {
-        if (index === 0) {
-            return this.isSelectAllSelected();
-        }
-
-        if (index === 1 && this.model.showAddCurrentSelectionToFilter()) {
-            return this.model.isAddCurrentSelectionToFilterChecked();
-        }
-
-        return this.model.isKeySelected(this.getRow(index));
     }
 
     public areRowsEqual(oldRow: string | null, newRow: string | null): boolean {

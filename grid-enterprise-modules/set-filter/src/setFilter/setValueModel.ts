@@ -634,9 +634,9 @@ export class SetValueModel<V> implements IEventEmitter {
                     ...Array.from(this.selectedKeys).filter(key => !filteringKeys.has(key)),
                 ]);
                 return Array.from(modelKeys);
-            } else {
-                return Array.from(filteringKeys);
             }
+
+            return Array.from(filteringKeys);
         }
 
         // No extra filtering keys are present - so just return the selected keys
