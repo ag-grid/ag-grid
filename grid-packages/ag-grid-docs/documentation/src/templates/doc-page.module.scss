@@ -29,9 +29,14 @@
     content: 'e';
 }
 
-.doc-page p, li {
+.doc-page p {
     font-size: 17px !important;
 }
+
+.doc-page li {
+    font-size: 17px !important;
+}
+
 .doc-page {
     flex: 1 1 0px;
     min-width: 0px;

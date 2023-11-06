@@ -12,6 +12,9 @@
     border-radius: 8px;
     color: var(--text-color);
 
+    margin-top: $size-5 !important;
+    margin-bottom: $size-5;
+
     :global(.icon) {
         align-self: flex-start;
         position: relative;
