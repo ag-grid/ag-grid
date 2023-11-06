@@ -5,12 +5,15 @@ import { GridOptionsService } from "../../gridOptionsService";
 import { PaginationProxy } from "../paginationProxy";
 import { AgSelect } from "../../main";
 import { clearElement } from "../../utils/dom";
+import {warnOnce} from "../../utils/function";
 
 export class PageSizeSelectorComp extends Component {
 
     @Autowired('localeService') protected readonly localeService: LocaleService;
     @Autowired('gridOptionsService') protected readonly gridOptionsService: GridOptionsService;
     @Autowired('paginationProxy') private paginationProxy: PaginationProxy;
+
+    static defaultPageSizeOptions =  [20, 50, 100];
 
     private selectPageSizeComp: AgSelect | undefined;
 
@@ -111,10 +114,37 @@ export class PageSizeSelectorComp extends Component {
     private getPageSizeSelectorValues(): number[] {
         const paginationPageSizeSelector = this.gridOptionsService.get('paginationPageSizeSelector');
         if (Array.isArray(paginationPageSizeSelector)) {
-            return paginationPageSizeSelector;
+            if (paginationPageSizeSelector.length === 0) {
+                warnOnce('ag-grid: The paginationPageSizeSelector grid option is an empty array. This is most likely a mistake. ' +
+                    'If you want to hide the page size selector, please set the paginationPageSizeSelector to false or undefined.');
+                return PageSizeSelectorComp.defaultPageSizeOptions;
+            }
+
+            const hasInvalidValues = paginationPageSizeSelector.some(value => {
+                const isNumber = typeof value === 'number';
+                const isPositive = value > 0;
+
+                if (!isNumber) {
+                    warnOnce('ag-grid: The paginationPageSizeSelector grid option contains a non-numeric value. ' +
+                        'Please make sure that all values in the paginationPageSizeSelector array are numbers.');
+                }
+
+                if (!isPositive) {
+                    warnOnce('ag-grid: The paginationPageSizeSelector grid option contains a negative number or zero. ' +
+                        'Please make sure that all values in the paginationPageSizeSelector array are positive.');
+                }
+
+                return !isNumber || !isPositive;
+            });
+
+            if (hasInvalidValues) {
+                return PageSizeSelectorComp.defaultPageSizeOptions;
+            }
+
+            return paginationPageSizeSelector.sort((a, b) => a - b);
         }
 
-        return [20, 50, 100];
+        return PageSizeSelectorComp.defaultPageSizeOptions;
     }
 
     public destroy() {
