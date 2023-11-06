@@ -90,7 +90,8 @@ export class PaginationComp extends Component {
     }
 
     private onPaginationPageSizeChanged(): void {
-        this.paginationProxy.setPageSize(this.gridOptionsService.get('paginationPageSize'));
+        const paginationPageSize = this.gridOptionsService.get('paginationPageSize');
+        this.paginationProxy.setPageSize(paginationPageSize);
     }
 
     private setupListeners() {
