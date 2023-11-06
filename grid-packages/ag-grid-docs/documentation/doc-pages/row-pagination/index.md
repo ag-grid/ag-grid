@@ -37,6 +37,11 @@ rows with different heights) then the page height will be calculated using the d
 the actual row heights. Therefore the rows will not fit perfectly into the page if these features are mixed.
 </note>
 
+<note>
+When `paginationAutoPageSize` is used, the grid will not show the page size dropdown selector in the pagination panel,
+and the option `paginationPageSizeSelector` will be ignored.
+</note>
+
 ## Example: Customising Pagination
 
 In this example the default pagination settings are changed. Note the following:
