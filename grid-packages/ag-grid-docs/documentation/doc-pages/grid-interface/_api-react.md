@@ -92,5 +92,5 @@
 </framework-specific-section>
 
 <framework-specific-section frameworks="react">
-| Note the if using Grid Options, the grid will not react to property changes. For example `gridOptions.pagination` will only get used once when the grid is initialised, not if you change `gridOptions.pagination` after the grid is initialised. For this reason, while using React, it's best only use Grid Options for properties that do not change.
+| Note the if using Grid Options, the grid will not react to property changes. For example `gridOptions.pagination` will only get used once when the grid is initialised, not if you change `gridOptions.pagination` after the grid is initialised. For this reason, while using React, it's best to only use Grid Options for properties that do not change.
 </framework-specific-section>
