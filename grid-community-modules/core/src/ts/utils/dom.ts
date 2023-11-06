@@ -272,8 +272,9 @@ export function removeFromParent(node: Element | null) {
 }
 
 export function isVisible(element: HTMLElement) {
-    if (element.checkVisibility as any) {
-        return element.checkVisibility({ checkOpacity: true, checkVisibilityCSS: true })
+    const el = element as any;
+    if (el.checkVisibility) {
+        return el.checkVisibility({ checkOpacity: true, checkVisibilityCSS: true })
     }
 
     const isHidden = !element.offsetParent || window.getComputedStyle(element).visibility !== 'visible';
