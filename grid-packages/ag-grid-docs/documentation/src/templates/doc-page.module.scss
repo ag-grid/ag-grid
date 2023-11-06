@@ -29,6 +29,9 @@
     content: 'e';
 }
 
+.doc-page p, li {
+    font-size: 17px !important;
+}
 .doc-page {
     flex: 1 1 0px;
     min-width: 0px;
@@ -36,7 +39,8 @@
     padding-bottom: $size-7;
 
     @media screen and (min-width: $breakpoint-docs-nav-large) {
-        padding-right: $size-7;
+        padding-right: $size-6;
+        padding-left: $size-6;
         max-width: var(--docs-page-max-width);
     }
 
