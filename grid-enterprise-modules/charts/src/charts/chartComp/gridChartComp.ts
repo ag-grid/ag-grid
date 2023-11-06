@@ -145,7 +145,7 @@ export class GridChartComp extends Component {
             this.addManagedListener(this.chartMenu, ChartMenu.EVENT_DOWNLOAD_CHART, () => this.downloadChart());
         }
 
-        this.initWebsiteDarkMode();
+        // this.initWebsiteDarkMode();
         this.update();
         this.raiseChartCreatedEvent();
     }
