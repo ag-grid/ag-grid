@@ -487,7 +487,7 @@ export interface GridOptions<TData = any> {
     /**
      * Determines if the page size selector is shown in the pagination panel or not.
      * Set to an array of values to show the page size selector with custom list of possible page sizes.
-     * Set to `true` to show the page size selector with the default page sizes `[10, 25, 50, 100]`
+     * Set to `true` to show the page size selector with the default page sizes `[20, 50, 100]`.
      * Set to `false` to hide the page size selector.
      * Default: `true`
      */

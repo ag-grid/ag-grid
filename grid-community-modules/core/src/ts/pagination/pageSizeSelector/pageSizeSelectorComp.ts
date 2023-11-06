@@ -119,7 +119,7 @@ export class PageSizeSelectorComp extends Component {
             return paginationPageSizeSelector;
         }
 
-        return [10, 25, 50, 100];
+        return [20, 50, 100];
     }
 
     public destroy() {

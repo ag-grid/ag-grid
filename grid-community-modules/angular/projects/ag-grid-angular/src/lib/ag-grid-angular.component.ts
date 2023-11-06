@@ -268,7 +268,7 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
             // while tearing down the grid.
             this._destroyed = true;
              // could be null if grid failed to initialise
-             this.api?.destroy();            
+             this.api?.destroy();
         }
     }
 
@@ -310,8 +310,8 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
      /** Provided an initial gridOptions configuration to the component. If a property is specified in both gridOptions and via component binding the component binding takes precedence.  */
      @Input() public gridOptions: GridOptions<TData> | undefined;
      /**
-     * Used to register AG Grid Modules directly with this instance of the grid. 
-     * See [Providing Modules To Individual Grids](https://www.ag-grid.com/angular-data-grid/modules/#providing-modules-to-individual-grids) for more information. 
+     * Used to register AG Grid Modules directly with this instance of the grid.
+     * See [Providing Modules To Individual Grids](https://www.ag-grid.com/angular-data-grid/modules/#providing-modules-to-individual-grids) for more information.
      */
      @Input() public modules: Module[] | undefined;
 
@@ -511,7 +511,7 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     @Input() public advancedFilterBuilderParams: IAdvancedFilterBuilderParams | undefined = undefined;
     /** Set the theme color scheme. All themes support 'dark' and 'light' color schemes. 'auto'
          * Uses the CSS 'prefers-color-scheme' media feature to determine the user's preference.
-         * SOme themes support additional colour schemes.
+         * Some themes support additional colour schemes.
          */
     @Input() public colorScheme: 'dark' | 'light' | 'auto' | string | undefined = undefined;
     /** Set to `true` to Enable Charts. Default: `false`     */
@@ -623,7 +623,7 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     @Input() public paginationPageSize: number | undefined = undefined;
     /** Determines if the page size selector is shown in the pagination panel or not.
          * Set to an array of values to show the page size selector with custom list of possible page sizes.
-         * Set to `true` to show the page size selector with the default page sizes `[10, 25, 50, 100]`
+         * Set to `true` to show the page size selector with the default page sizes `[20, 50, 100]`.
          * Set to `false` to hide the page size selector.
          * Default: `true`
          */

@@ -638,6 +638,12 @@
                 "url": "/row-pagination/#example-customising-pagination"
             }
         },
+        "paginationPageSizeSelector": {
+            "more": {
+                "name": "Customising Pagination",
+                "url": "/row-pagination/#example-customising-pagination"
+            }
+        },
         "paginationNumberFormatter": {},
         "paginationAutoPageSize": {
             "more": {
