@@ -511,7 +511,7 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     @Input() public advancedFilterBuilderParams: IAdvancedFilterBuilderParams | undefined = undefined;
     /** Set the theme color scheme. All themes support 'dark' and 'light' color schemes. 'auto'
          * Uses the CSS 'prefers-color-scheme' media feature to determine the user's preference.
-         * SOme themes support additional colour schemes.
+         * Some themes support additional colour schemes.
          */
     @Input() public colorScheme: 'dark' | 'light' | 'auto' | string | undefined = undefined;
     /** Set to `true` to Enable Charts. Default: `false`     */
