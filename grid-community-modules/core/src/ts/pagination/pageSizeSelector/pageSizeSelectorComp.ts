@@ -92,8 +92,8 @@ export class PageSizeSelectorComp extends Component {
         let currentPageSize: number | string = this.gridOptionsService.get('paginationPageSize');
         const shouldAddAndSelectEmptyOption = !currentPageSize || !pageSizeOptions.includes(currentPageSize)
         if (shouldAddAndSelectEmptyOption) {
-            // When the user selected page size is not in the list of page size options, we add it an empty entry to the
-            // list of page size options and select it.
+            // When the paginationPageSize option is set to a value that is not in the list of page size options,
+            // 
             pageSizeOptions = ['', ...pageSizeOptions];
             currentPageSize = '';
 
@@ -126,18 +126,18 @@ export class PageSizeSelectorComp extends Component {
     }
 
     private getPageSizeSelectorValues(): number[] {
-        const paginationPageSizeSelector = this.gridOptionsService.get('paginationPageSizeSelector');
-        if (!Array.isArray(paginationPageSizeSelector)) {
+        const paginationPageSizeSelectorValues = this.gridOptionsService.get('paginationPageSizeSelector');
+        if (!Array.isArray(paginationPageSizeSelectorValues)) {
             return PageSizeSelectorComp.defaultPageSizeOptions;
         }
 
-        if (paginationPageSizeSelector.length === 0) {
+        if (paginationPageSizeSelectorValues.length === 0) {
             warnOnce('The paginationPageSizeSelector grid option is an empty array. This is most likely a mistake. ' +
                 'If you want to hide the page size selector, please set the paginationPageSizeSelector to false.');
             return PageSizeSelectorComp.defaultPageSizeOptions;
         }
 
-        const hasInvalidValues = paginationPageSizeSelector.some(value => {
+        const hasInvalidValues = paginationPageSizeSelectorValues.some(value => {
             const isNumber = typeof value === 'number';
             const isPositive = value > 0;
 
@@ -158,7 +158,7 @@ export class PageSizeSelectorComp extends Component {
             return PageSizeSelectorComp.defaultPageSizeOptions;
         }
 
-        return paginationPageSizeSelector.sort((a, b) => a - b);
+        return paginationPageSizeSelectorValues.sort((a, b) => a - b);
     }
 
     public destroy() {
