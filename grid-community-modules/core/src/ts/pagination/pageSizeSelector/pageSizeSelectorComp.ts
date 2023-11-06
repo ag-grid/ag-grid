@@ -22,15 +22,10 @@ export class PageSizeSelectorComp extends Component {
 
     @PostConstruct
     private init() {
-        const paginationPageSizeSelector = this.gridOptionsService.get('paginationPageSizeSelector');
         this.addManagedPropertyListener(
             'paginationPageSizeSelector',
             () => this.onPageSizeSelectorValuesChange(),
         );
-
-        if (paginationPageSizeSelector) {
-            this.toggleSelectDisplay(true);
-        }
     }
 
     private get isSelectorVisible() {
@@ -49,7 +44,7 @@ export class PageSizeSelectorComp extends Component {
         if (isNaN(newPageSize) || newPageSize < 1) { return; }
         if (newPageSize === this.paginationProxy.getPageSize()) { return; }
 
-        this.paginationProxy.setPageSize(newPageSize);
+        this.gridOptionsService.updateGridOptions({ options: { paginationPageSize: newPageSize } });
     };
 
     public toggleSelectDisplay(show: boolean) {

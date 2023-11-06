@@ -54,7 +54,14 @@ export class PaginationComp extends Component {
 
         this.addManagedPropertyListener('pagination', this.onPaginationChanged.bind(this));
         this.addManagedPropertyListener('suppressPaginationPanel', this.onPaginationChanged.bind(this));
-        this.addManagedPropertyListener('paginationPageSizeSelector', () => this.onPaginationPageSizeSelectorChange());
+        this.addManagedPropertyListeners(['paginationPageSizeSelector', 'paginationAutoPageSize'],
+            () => this.onPageSizeRelatedOptionsChange(),
+        );
+        this.addManagedPropertyListener('paginationPageSize', () => this.onPaginationPageSizeChanged());
+
+        const paginationPageSizeSelector = this.gridOptionsService.get('paginationPageSizeSelector');
+        const paginationAutoPageSize = this.gridOptionsService.get('paginationAutoPageSize');
+        this.pageSizeComp.toggleSelectDisplay(!!paginationPageSizeSelector && !paginationAutoPageSize);
 
         this.onPaginationChanged();
     }
@@ -76,9 +83,14 @@ export class PaginationComp extends Component {
         this.setTotalLabels();
     }
 
-    private onPaginationPageSizeSelectorChange(): void {
+    private onPageSizeRelatedOptionsChange(): void {
         const paginationPageSizeSelector = this.gridOptionsService.get('paginationPageSizeSelector');
-        this.pageSizeComp.toggleSelectDisplay(!!paginationPageSizeSelector);
+        const paginationAutoPageSize = this.gridOptionsService.get('paginationAutoPageSize');
+        this.pageSizeComp.toggleSelectDisplay(!!paginationPageSizeSelector && !paginationAutoPageSize);
+    }
+
+    private onPaginationPageSizeChanged(): void {
+        this.paginationProxy.setPageSize(this.gridOptionsService.get('paginationPageSize'));
     }
 
     private setupListeners() {
