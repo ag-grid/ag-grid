@@ -456,16 +456,8 @@ export class EnterpriseMenu extends BeanStub {
         result.push(EnterpriseMenu.MENU_ITEM_SEPARATOR);
 
         const showRowGroup = this.column.getColDef().showRowGroup;
-        if (showRowGroup === true) {
-            const groupLockedCols = this.gridOptionsService.get('groupLockGroupColumns');
-            if (groupLockedCols == null || (groupLockedCols !== -1 && groupLockedCols < this.columnModel.getRowGroupColumns().length)) {
-                result.push('rowUnGroup');
-            }
-        } else if (showRowGroup) {
-            const rowGroupCol = this.columnModel.getPrimaryColumn(showRowGroup);
-            if (rowGroupCol && !this.columnModel.isColumnGroupingLocked(rowGroupCol)) {
-                result.push('rowUnGroup');
-            }
+        if (showRowGroup) {
+            result.push('rowUnGroup');
         } else if (allowRowGroup && this.column.isPrimary()) {
             if (this.column.isRowGroupActive()) {
                 const groupLocked = this.columnModel.isColumnGroupingLocked(this.column);
