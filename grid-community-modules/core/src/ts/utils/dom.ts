@@ -32,7 +32,7 @@ export function radioCssClass(element: HTMLElement, elementClass: string | null,
 }
 
 export const FOCUSABLE_SELECTOR = '[tabindex], input, select, button, textarea, [href]';
-export const FOCUSABLE_EXCLUDE = '.ag-hidden, .ag-hidden *, [disabled], .ag-disabled:not(.ag-button), .ag-disabled *';
+export const FOCUSABLE_EXCLUDE = '[disabled], .ag-disabled:not(.ag-button), .ag-disabled *';
 
 export function isFocusableFormField(element: HTMLElement): boolean {
     const matches: (str: string) => boolean =
@@ -272,7 +272,12 @@ export function removeFromParent(node: Element | null) {
 }
 
 export function isVisible(element: HTMLElement) {
-    return element.offsetParent !== null;
+    if (element.checkVisibility as any) {
+        return element.checkVisibility({ checkOpacity: true, checkVisibilityCSS: true })
+    }
+
+    const isHidden = !element.offsetParent || window.getComputedStyle(element).visibility !== 'visible';
+    return !isHidden;
 }
 
 /**

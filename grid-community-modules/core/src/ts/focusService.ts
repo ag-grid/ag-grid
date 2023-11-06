@@ -23,7 +23,7 @@ import { AbstractHeaderCellCtrl } from "./headerRendering/cells/abstractCell/abs
 import { last } from "./utils/array";
 import { NavigateToNextHeaderParams, TabToNextHeaderParams } from "./interfaces/iCallbackParams";
 import { WithoutGridCommon } from "./interfaces/iCommon";
-import { FOCUSABLE_EXCLUDE, FOCUSABLE_SELECTOR } from "./utils/dom";
+import { FOCUSABLE_EXCLUDE, FOCUSABLE_SELECTOR, isVisible } from "./utils/dom";
 import { TabGuardClassNames } from "./widgets/tabGuardCtrl";
 import { FilterManager } from "./filter/filterManager";
 import { IAdvancedFilterService } from "./interfaces/iAdvancedFilterService";
@@ -409,9 +409,8 @@ export class FocusService extends BeanStub {
     public focusPreviousFromFirstCell(event?: KeyboardEvent): boolean {
         if (this.filterManager.isAdvancedFilterHeaderActive()) {
             return this.focusAdvancedFilter(null);
-        } else {
-            return this.focusLastHeader(event);
         }
+        return this.focusLastHeader(event);
     }
 
     public isAnyCellFocused(): boolean {
@@ -436,7 +435,9 @@ export class FocusService extends BeanStub {
             excludeString += ', [tabindex="-1"]';
         }
 
-        const nodes = Array.prototype.slice.apply(rootNode.querySelectorAll(focusableString)) as HTMLElement[];
+        const nodes = Array.prototype.slice.apply(rootNode.querySelectorAll(focusableString)).filter((node: HTMLElement ) => {
+            return isVisible(node);
+        }) as HTMLElement[];
         const excludeNodes = Array.prototype.slice.apply(rootNode.querySelectorAll(excludeString)) as HTMLElement[];
 
         if (!excludeNodes.length) {
