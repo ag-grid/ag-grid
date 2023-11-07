@@ -16,7 +16,7 @@
 
         display: block;
         position: relative;
-        font-size: var(--font-size-medium);
+        font-size: var(--font-size-small);
         color: var(--link-hover-color);
         text-decoration: none;
         border-radius: var(--border-radius);
@@ -97,7 +97,7 @@ ul.menuInner {
         margin-top: $size-2;
         margin-bottom: $size-2;
         height: 1px;
-        background-color: var(--secondary-border-color);
+        background-color: var(--border-color);
     }
 
     h5 {

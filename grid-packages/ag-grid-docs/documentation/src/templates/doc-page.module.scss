@@ -27,14 +27,10 @@
     background-position-y: center;
     background-repeat: no-repeat;
     content: 'e';
-}
 
-.doc-page p {
-    font-size: 17px !important;
-}
-
-.doc-page li {
-    font-size: 17px !important;
+    #{$darkmode-selector} & {
+        --text-color: var(--active-color);
+        }
 }
 
 .doc-page {
@@ -45,7 +41,7 @@
 
     @media screen and (min-width: $breakpoint-docs-nav-large) {
         padding-right: $size-6;
-        padding-left: $size-6;
+        padding-left: $size-3;
         max-width: var(--docs-page-max-width);
     }
 
@@ -95,6 +91,11 @@
 
     enterprise-icon::after {
         @extend %enterprise-icon;
+
+        #{$darkmode-selector} & {
+            --text-color: var(--active-color);
+            }
+        
 
         width: 1rem;
         margin-left: 0.25rem;

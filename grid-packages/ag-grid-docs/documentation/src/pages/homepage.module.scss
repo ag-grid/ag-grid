@@ -109,6 +109,10 @@ gatsby-fast-refresh {
     border-top-left-radius: 4px;
     border-top-right-radius: 4px;
 
+    #{$darkmode-selector} & {
+        background-color: #121f29;
+    }
+
     @media screen and (min-width: $breakpoint-hero-large) {
         width: 860px;
         height: 416px;
