@@ -620,16 +620,17 @@ const desktopDefaultCols = [
 const Example = () => {
     const gridRef = useRef(null);
     const loadInstance = useRef(0);
-    const [gridTheme, setGridTheme] = useState(null);
+    const [themeAndColorScheme, setThemeAndColorScheme] = useState(null);
     useEffect(() => {
         const themeFromURL = new URLSearchParams(window.location.search).get('theme');
         if (themeFromURL) {
-            setGridTheme(themeFromURL)
+            setThemeAndColorScheme(themeFromURL)
         } else {
             const isDarkMode = getComputedStyle(document.documentElement).getPropertyValue('--color-scheme') === 'dark';
-            setGridTheme(isDarkMode ? 'ag-theme-quartz-dark' : 'ag-theme-quartz');
+            setThemeAndColorScheme(isDarkMode ? 'quartz:dark' : 'quartz:light');
         }
     }, []);
+    const [gridTheme, colorScheme] = themeAndColorScheme?.split(':') || [null, null];
     const [base64Flags, setBase64Flags] = useState();
     const [defaultCols, setDefaultCols] = useState();
     const [isSmall, setIsSmall] = useState(false);
@@ -1423,7 +1424,7 @@ const Example = () => {
         }
     }, [dataSize]);
 
-    const isDarkTheme = gridTheme?.indexOf('dark')  >= 0;
+    const isDarkTheme = colorScheme?.indexOf('dark')  >= 0;
 
     useEffect(() => {
         if (isDarkTheme) {
@@ -1437,7 +1438,7 @@ const Example = () => {
         } else {
             gridOptions.chartThemes = null;
         }
-    }, [isDarkTheme]);
+    }, [gridTheme]);
 
     return (
         <>
@@ -1451,8 +1452,8 @@ const Example = () => {
                     dataSize={dataSize}
                     setDataSize={setDataSize}
                     rowCols={rowCols}
-                    gridTheme={gridTheme}
-                    setGridTheme={setGridTheme}
+                    gridTheme={themeAndColorScheme}
+                    setGridTheme={setThemeAndColorScheme}
                     setCountryColumnPopupEditor={setCountryColumnPopupEditor}
                 />
                 <span className={classnames({ [styles.messages]: true, [styles.show]: showMessage })}>
@@ -1461,7 +1462,7 @@ const Example = () => {
                 </span>
                 <section className={styles.gridWrapper} style={{ padding: '1rem', paddingTop: 0 }}>
                     {gridTheme && (
-                        <div id="myGrid" style={{ flex: '1 1 auto', overflow: 'hidden' }} className={gridTheme}>
+                        <div id="myGrid" style={{ flex: '1 1 auto', overflow: 'hidden' }} className={`ag-theme-${gridTheme} ag-color-scheme-${colorScheme}`}>
                             <AgGridReactMemo
                                 key={gridTheme}
                                 ref={gridRef}

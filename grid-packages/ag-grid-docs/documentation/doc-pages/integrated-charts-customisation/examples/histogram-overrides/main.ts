@@ -19,7 +19,8 @@ const gridOptions: GridOptions = {
   enableCharts: true,
   chartThemeOverrides: {
     histogram: {
-      series: {
+    series: {
+        // @ts-ignore charts typing
         bins: [
           [0, 10],
           [10, 40],
@@ -64,8 +65,10 @@ const gridOptions: GridOptions = {
                 binSize +
                 (binSize >= 2 ? ' countries' : ' country') +
                 ' got between ' +
+                  // @ts-ignore charts typing
                 params.xValue[0] +
                 ' and ' +
+                  // @ts-ignore charts typing
                 params.xValue[1] +
                 ' ' +
                 medalColour +
@@ -100,3 +103,29 @@ document.addEventListener('DOMContentLoaded', function () {
   const gridDiv = document.querySelector<HTMLElement>('#myGrid')!
   gridApi = createGrid(gridDiv, gridOptions);
 })
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

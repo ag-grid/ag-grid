@@ -1,6 +1,6 @@
 @use "sass:color";
 
-.ag-theme-alpine, .ag-theme-alpine-light, .ag-theme-alpine-dark {
+.ag-theme-alpine, .ag-theme-alpine-dark {
     // COLOURS
 
     // Active colours - same shade, different opacities
@@ -118,15 +118,17 @@
     --ag-advanced-filter-column-pill-color: #355f2d;
     --ag-advanced-filter-option-pill-color: #5a3168;
     --ag-advanced-filter-value-pill-color: #374c86;
+
+    color-scheme: dark;
 }
 
 
-.ag-theme-alpine-dark {
+.ag-theme-alpine-dark, .ag-theme-alpine.ag-color-scheme-dark {
     @include -dark-vars();
 }
 
 @media (prefers-color-scheme: dark) {
-    .ag-theme-alpine-auto {
+    .ag-theme-alpine.ag-color-scheme-auto {
         @include -dark-vars();
     }
 }

@@ -5,11 +5,11 @@ import { createRoot } from 'react-dom/client';
 import { AgGridReact } from '@ag-grid-community/react';
 import '@ag-grid-community/styles/ag-grid.css';
 import '@ag-grid-community/styles/ag-theme-alpine.css';
-import { ModuleRegistry } from '@ag-grid-community/core';
+import { ModuleRegistry, ColDef } from '@ag-grid-community/core';
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
 import { IOlympicData } from './interfaces'
-import MedalCellRenderer from './medalCellRenderer.tsx';
-import UpdateCellRenderer from './updateCellRenderer.tsx';
+import MedalCellRenderer from './medalCellRenderer';
+import UpdateCellRenderer from './updateCellRenderer';
 
 // Register the required feature modules with the Grid
 ModuleRegistry.registerModules([ClientSideRowModelModule])
@@ -52,5 +52,5 @@ const GridExample = () => {
     );
 }
 
-const root = createRoot(document.getElementById('root'));
+const root = createRoot(document.getElementById('root') as HTMLElement);
 root.render(<StrictMode><GridExample /></StrictMode>);

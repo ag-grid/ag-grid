@@ -49,8 +49,8 @@
 
         @supports (position: sticky) {
             position: sticky;
-            top: $top-bar-height;
-            height: calc(100vh - #{$top-bar-height});
+            top: $site-header-height + $top-bar-height;
+            height: calc(100vh - #{$site-header-height + $top-bar-height});
             overflow: hidden;
             overflow-y: auto;
         }

@@ -7,10 +7,15 @@
     position: relative;
     background-color: var(--site-header-background);
 
-    #{$darkmode-selector} & {
-background: #121f29;
+    @media screen and (min-width: $breakpoint-docs-nav-medium) {
+        position: sticky;
+        top: 0;
+        z-index: 4;
     }
 
+    #{$darkmode-selector} & {
+        background: #121f29;
+    }
 }
 
 .headerInner {
@@ -190,7 +195,7 @@ background: #121f29;
     }
 
     #{$darkmode-selector} & {
-        border-bottom: 1px solid #121f29 !important
+        border-bottom: 1px solid #121f29 !important;
     }
 }
 

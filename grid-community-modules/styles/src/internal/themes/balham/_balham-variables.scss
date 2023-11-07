@@ -1,6 +1,6 @@
 @use "sass:color";
 
-.ag-theme-balham, .ag-theme-balham-light, .ag-theme-balham-dark {
+.ag-theme-balham, .ag-theme-balham-dark {
     // main colours (overridden by balham-dark)
     --ag-balham-active-color: #0091ea;
     --ag-foreground-color: #000;
@@ -111,15 +111,17 @@
     --ag-range-selection-chart-category-background-color: #{color.change(#1ab14a, $alpha: 0.5)};
     --ag-range-selection-chart-background-color: #{color.change(#2da6ff, $alpha: 0.5)};
     --ag-input-focus-box-shadow: 0 0 4px 1.5px var(--ag-input-focus-border-color);
+
+    color-scheme: dark;
 }
 
 
-.ag-theme-balham-dark {
+.ag-theme-balham-dark, .ag-theme-balham.ag-color-scheme-dark {
     @include -dark-vars();
 }
 
 @media (prefers-color-scheme: dark) {
-    .ag-theme-balham-auto {
+    .ag-theme-balham.ag-color-scheme-auto {
         @include -dark-vars();
     }
 }

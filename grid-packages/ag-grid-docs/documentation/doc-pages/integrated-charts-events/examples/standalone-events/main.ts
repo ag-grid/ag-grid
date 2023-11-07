@@ -22,6 +22,7 @@ const gridOptions: GridOptions = {
           legendItemClick: (e: AgChartLegendClickEvent) => console.log('legendItemClick', e)
         }
       },
+      // @ts-ignore charts typing
       listeners: {
         seriesNodeClick: (e: AgSeriesNodeClickParams<any>) => console.log('seriesNodeClick', e)
       },

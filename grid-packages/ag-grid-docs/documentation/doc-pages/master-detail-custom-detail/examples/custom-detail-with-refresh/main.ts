@@ -25,11 +25,6 @@ const gridOptions: GridOptions<IAccount> = {
 let allRowData: any[];
 
 function onFirstDataRendered(params: FirstDataRenderedEvent) {
-  // arbitrarily expand a row for presentational purposes
-  setTimeout(function () {
-    params.api.getDisplayedRowAtIndex(0)!.setExpanded(true)
-  }, 0);
-
   setInterval(function () {
     if (!allRowData) {
       return
