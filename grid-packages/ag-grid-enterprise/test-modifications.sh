@@ -1,7 +1,6 @@
 #!/bin/bash
 
 CHANGES=`git diff HEAD --name-only | grep -v package.json |  wc -l`
-echo $CHANGES
 if [ $CHANGES -ne 0 ]
 then
     echo "ERROR Local file modifications found for ag-grid-enterprise." >&2
