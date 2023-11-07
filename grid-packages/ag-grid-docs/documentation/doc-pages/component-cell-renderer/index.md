@@ -74,7 +74,7 @@ md-include:component-refresh-react.md
 </framework-specific-section>
 
 <framework-specific-section frameworks="react">
-<grid-example title='Component Refresh' name='react-refresh' type='mixed'></grid-example>
+<grid-example title='Component Refresh' name='react-refresh' type='react'></grid-example>
 </framework-specific-section>
 
 ### Change Detection
