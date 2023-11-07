@@ -186,7 +186,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
                     // At this point in your code, you would call the server.
                     // To make the demo look real, wait for 500ms before returning
-                    setTimeout(function () {
+                    setTimeout(() => {
                         // take a slice of the total rows
                         const dataAfterSortingAndFiltering = sortAndFilter(
                             data,

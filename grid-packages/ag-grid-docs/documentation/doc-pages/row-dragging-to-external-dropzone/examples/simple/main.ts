@@ -43,7 +43,7 @@ const gridOptions: GridOptions = {
 function addCheckboxListener(params: GridReadyEvent) {
   var checkbox = document.querySelector('input[type=checkbox]')! as any;
 
-  checkbox.addEventListener('change', function () {
+  checkbox.addEventListener('change', () => {
     params.api.setGridOption('suppressMoveWhenRowDragging', checkbox.checked)
   })
 }
@@ -60,7 +60,7 @@ function createRowData() {
     'Red',
     'Green',
     'Blue',
-  ].forEach(function (color) {
+  ].forEach((color) => {
     var newDataItem = {
       id: rowIdSequence++,
       color: color,

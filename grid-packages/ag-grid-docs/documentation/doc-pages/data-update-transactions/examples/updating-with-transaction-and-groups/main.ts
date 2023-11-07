@@ -85,7 +85,7 @@ function onAddRow(category: string) {
 
 function onMoveToGroup(category: string) {
   var selectedRowData = gridApi!.getSelectedRows()
-  selectedRowData.forEach(function (dataItem) {
+  selectedRowData.forEach((dataItem) => {
     dataItem.category = category
   })
   gridApi!.applyTransaction({ update: selectedRowData })

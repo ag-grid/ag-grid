@@ -82,7 +82,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
                     // At this point in your code, you would call the server.
                     // To make the demo look real, wait for 500ms before returning
-                    setTimeout(function () {
+                    setTimeout(() => {
                         // take a slice of the total rows
                         const rowsThisPage = data.slice(params.startRow, params.endRow);
                         // if on or after the last page, work out the last row.

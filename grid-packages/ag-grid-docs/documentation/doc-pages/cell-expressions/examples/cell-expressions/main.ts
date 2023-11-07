@@ -62,7 +62,7 @@ const gridOptionsRight: GridOptions<RightData> = {
 
 gridOptionsLeft.context.sum = function (field: keyof RightData) {
   var result = 0
-  rowDataRight.forEach(function (item) {
+  rowDataRight.forEach((item) => {
     result += item[field]
   })
   return result

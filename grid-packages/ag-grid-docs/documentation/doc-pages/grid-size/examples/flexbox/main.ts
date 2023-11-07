@@ -15,8 +15,8 @@ const gridOptions: GridOptions = {
   rowData: rowData,
 
   onGridReady: (params: GridReadyEvent) => {
-    window.addEventListener('resize', function () {
-      setTimeout(function () {
+    window.addEventListener('resize', () => {
+      setTimeout(() => {
         params.api.sizeColumnsToFit()
       })
     })

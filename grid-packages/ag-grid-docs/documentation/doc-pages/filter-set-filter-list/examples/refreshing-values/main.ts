@@ -17,7 +17,7 @@ var valuesArray = list1.slice()
 var valuesCallbackList = list1
 
 function valuesCallback(params: SetFilterValuesFuncParams) {
-  setTimeout(function () {
+  setTimeout(() => {
     params.success(valuesCallbackList)
   }, 1000)
 }
@@ -67,7 +67,7 @@ function onFirstDataRendered(params: FirstDataRenderedEvent) {
 function useList1() {
   console.log('Updating values to ' + list1)
   valuesArray.length = 0
-  list1.forEach(function (value) {
+  list1.forEach((value) => {
     valuesArray.push(value)
   })
 
@@ -80,7 +80,7 @@ function useList1() {
 function useList2() {
   console.log('Updating values to ' + list2)
   valuesArray.length = 0
-  list2.forEach(function (value) {
+  list2.forEach((value) => {
     valuesArray.push(value)
   })
 

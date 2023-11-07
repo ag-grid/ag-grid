@@ -47,7 +47,7 @@ const datasource: IDatasource = {
         console.log('asking for ' + params.startRow + ' to ' + params.endRow)
         // At this point in your code, you would call the server.
         // To make the demo look real, wait for 500ms before returning
-        setTimeout(function () {
+        setTimeout(() => {
             // take a slice of the total rows
             const rowsThisPage = allOfTheData.slice(params.startRow, params.endRow);
             // make a copy of each row - this is what would happen if taking data from server
@@ -189,13 +189,13 @@ function rowsAndMaxFound() {
 
 // function just gives new prices to the row data, it does not update the grid
 function setPricesHigh() {
-    allOfTheData.forEach(function (dataItem) {
+    allOfTheData.forEach((dataItem) => {
         dataItem.price = Math.round(55500 + 400 * (0.5 + Math.random()))
     })
 }
 
 function setPricesLow() {
-    allOfTheData.forEach(function (dataItem) {
+    allOfTheData.forEach((dataItem) => {
         dataItem.price = Math.round(1000 + 100 * (0.5 + Math.random()))
     })
 }

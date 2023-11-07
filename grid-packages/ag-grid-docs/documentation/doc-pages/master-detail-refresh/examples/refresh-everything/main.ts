@@ -71,11 +71,11 @@ let allRowData: any[];
 
 function onFirstDataRendered(params: FirstDataRenderedEvent) {
   // arbitrarily expand a row for presentational purposes
-  setTimeout(function () {
+  setTimeout(() => {
     params.api.getDisplayedRowAtIndex(0)!.setExpanded(true)
   }, 0)
 
-  setInterval(function () {
+  setInterval(() => {
     if (!allRowData) {
       return
     }

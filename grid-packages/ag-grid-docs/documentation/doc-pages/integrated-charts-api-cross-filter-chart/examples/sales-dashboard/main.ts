@@ -43,12 +43,10 @@ const gridOptions: GridOptions = {
       },
     },
   },
-  onGridReady,
+  onGridReady : (params: GridReadyEvent) => {
+    getData().then(rowData => params.api.setGridOption('rowData', rowData));
+  },
   onFirstDataRendered,
-}
-
-function onGridReady(params: GridReadyEvent) {
-  getData().then(rowData => params.api.setGridOption('rowData', rowData));
 }
 
 function onFirstDataRendered(params: FirstDataRenderedEvent) {

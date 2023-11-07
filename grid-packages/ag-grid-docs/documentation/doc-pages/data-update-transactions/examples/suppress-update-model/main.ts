@@ -109,7 +109,7 @@ function onBtDuplicate() {
     }
 
     const newItems: any[] = [];
-    selectedRows.forEach(function (selectedRow) {
+    selectedRows.forEach((selectedRow) => {
         const newItem = createDataItem(
             selectedRow.name,
             selectedRow.distro,
@@ -120,7 +120,7 @@ function onBtDuplicate() {
         newItems.push(newItem)
     })
 
-    timeOperation('Duplicate', function () {
+    timeOperation('Duplicate', () => {
         gridApi.applyTransaction({ add: newItems })
     })
 }
@@ -134,7 +134,7 @@ function onBtUpdate() {
     }
 
     const updatedItems: any[] = [];
-    selectedRows.forEach(function (oldItem) {
+    selectedRows.forEach((oldItem) => {
         const newValue = Math.floor(Math.random() * 100) + 10;
         const newItem = createDataItem(
             oldItem.name,
@@ -147,7 +147,7 @@ function onBtUpdate() {
         updatedItems.push(newItem)
     })
 
-    timeOperation('Update', function () {
+    timeOperation('Update', () => {
         gridApi.applyTransaction({ update: updatedItems })
     })
 }
@@ -160,7 +160,7 @@ function onBtDelete() {
         return
     }
 
-    timeOperation('Delete', function () {
+    timeOperation('Delete', () => {
         gridApi.applyTransaction({ remove: selectedRows })
     })
 }
@@ -170,7 +170,7 @@ function onBtClearSelection() {
 }
 
 function onBtUpdateModel() {
-    timeOperation('Update Model', function () {
+    timeOperation('Update Model', () => {
         gridApi.refreshClientSideRowModel('filter')
     })
 }
@@ -198,7 +198,7 @@ const gridOptions: GridOptions = {
             value: { value: '50' },
         })
 
-        timeOperation('Initialisation', function () {
+        timeOperation('Initialisation', () => {
             params.api.setGridOption('rowData', getData())
         })
     },

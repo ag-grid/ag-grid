@@ -82,7 +82,7 @@ const gridOptions: GridOptions<IOlympicData> = {
 
 function onBtSortOn() {
   const columnDefs: ColDef[] = getColumnDefs()
-  columnDefs.forEach(function (colDef) {
+  columnDefs.forEach((colDef) => {
     if (colDef.field === 'age') {
       colDef.sort = 'desc'
     }
@@ -95,7 +95,7 @@ function onBtSortOn() {
 
 function onBtSortOff() {
   const columnDefs: ColDef[] = getColumnDefs()
-  columnDefs.forEach(function (colDef) {
+  columnDefs.forEach((colDef) => {
     colDef.sort = null
   })
   gridApi!.setGridOption('columnDefs', columnDefs)
@@ -103,7 +103,7 @@ function onBtSortOff() {
 
 function onBtWidthNarrow() {
   const columnDefs: ColDef[] = getColumnDefs()
-  columnDefs.forEach(function (colDef) {
+  columnDefs.forEach((colDef) => {
     if (colDef.field === 'age' || colDef.field === 'athlete') {
       colDef.width = 100
     }
@@ -113,7 +113,7 @@ function onBtWidthNarrow() {
 
 function onBtWidthNormal() {
   const columnDefs: ColDef[] = getColumnDefs()
-  columnDefs.forEach(function (colDef) {
+  columnDefs.forEach((colDef) => {
     colDef.width = 200
   })
   gridApi!.setGridOption('columnDefs', columnDefs)
@@ -121,7 +121,7 @@ function onBtWidthNormal() {
 
 function onBtHide() {
   const columnDefs: ColDef[] = getColumnDefs()
-  columnDefs.forEach(function (colDef) {
+  columnDefs.forEach((colDef) => {
     if (colDef.field === 'age' || colDef.field === 'athlete') {
       colDef.hide = true
     }
@@ -131,7 +131,7 @@ function onBtHide() {
 
 function onBtShow() {
   const columnDefs: ColDef[] = getColumnDefs()
-  columnDefs.forEach(function (colDef) {
+  columnDefs.forEach((colDef) => {
     colDef.hide = false
   })
   gridApi!.setGridOption('columnDefs', columnDefs)
@@ -141,7 +141,7 @@ function onBtPivotOn() {
   gridApi!.setGridOption('pivotMode', true)
 
   const columnDefs: ColDef[] = getColumnDefs()
-  columnDefs.forEach(function (colDef) {
+  columnDefs.forEach((colDef) => {
     if (colDef.field === 'country') {
       colDef.pivot = true
     }
@@ -153,7 +153,7 @@ function onBtPivotOff() {
   gridApi!.setGridOption('pivotMode', false)
 
   const columnDefs: ColDef[] = getColumnDefs()
-  columnDefs.forEach(function (colDef) {
+  columnDefs.forEach((colDef) => {
     colDef.pivot = false
   })
   gridApi!.setGridOption('columnDefs', columnDefs)
@@ -161,7 +161,7 @@ function onBtPivotOff() {
 
 function onBtRowGroupOn() {
   const columnDefs: ColDef[] = getColumnDefs()
-  columnDefs.forEach(function (colDef) {
+  columnDefs.forEach((colDef) => {
     if (colDef.field === 'sport') {
       colDef.rowGroup = true
     }
@@ -171,7 +171,7 @@ function onBtRowGroupOn() {
 
 function onBtRowGroupOff() {
   const columnDefs: ColDef[] = getColumnDefs()
-  columnDefs.forEach(function (colDef) {
+  columnDefs.forEach((colDef) => {
     colDef.rowGroup = false
   })
   gridApi!.setGridOption('columnDefs', columnDefs)
@@ -179,7 +179,7 @@ function onBtRowGroupOff() {
 
 function onBtAggFuncOn() {
   const columnDefs: ColDef[] = getColumnDefs()
-  columnDefs.forEach(function (colDef) {
+  columnDefs.forEach((colDef) => {
     if (
       colDef.field === 'gold' ||
       colDef.field === 'silver' ||
@@ -193,7 +193,7 @@ function onBtAggFuncOn() {
 
 function onBtAggFuncOff() {
   const columnDefs: ColDef[] = getColumnDefs()
-  columnDefs.forEach(function (colDef) {
+  columnDefs.forEach((colDef) => {
     colDef.aggFunc = null
   })
   gridApi!.setGridOption('columnDefs', columnDefs)
@@ -201,7 +201,7 @@ function onBtAggFuncOff() {
 
 function onBtPinnedOn() {
   const columnDefs: ColDef[] = getColumnDefs()
-  columnDefs.forEach(function (colDef) {
+  columnDefs.forEach((colDef) => {
     if (colDef.field === 'athlete') {
       colDef.pinned = 'left'
     }
@@ -214,7 +214,7 @@ function onBtPinnedOn() {
 
 function onBtPinnedOff() {
   const columnDefs: ColDef[] = getColumnDefs()
-  columnDefs.forEach(function (colDef) {
+  columnDefs.forEach((colDef) => {
     colDef.pinned = null
   })
   gridApi!.setGridOption('columnDefs', columnDefs)

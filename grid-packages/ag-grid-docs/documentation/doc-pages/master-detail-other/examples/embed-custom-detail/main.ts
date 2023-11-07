@@ -25,7 +25,7 @@ const gridOptions: GridOptions<IAccount> = {
 }
 
 function onFirstDataRendered(params: FirstDataRenderedEvent) {
-  setTimeout(function () {
+  setTimeout(() => {
     params.api.forEachNode(function (node) {
       node.setExpanded(node.id === '1')
     })

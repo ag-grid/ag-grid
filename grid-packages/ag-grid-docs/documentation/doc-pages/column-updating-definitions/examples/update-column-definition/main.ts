@@ -29,7 +29,7 @@ const gridOptions: GridOptions<IOlympicData> = {
 
 function setHeaderNames() {
   const columnDefs = getColumnDefs()
-  columnDefs.forEach(function (colDef, index) {
+  columnDefs.forEach((colDef, index) => {
     colDef.headerName = 'C' + index
   })
   gridApi!.setGridOption('columnDefs', columnDefs)
@@ -37,7 +37,7 @@ function setHeaderNames() {
 
 function removeHeaderNames() {
   const columnDefs = getColumnDefs()
-  columnDefs.forEach(function (colDef, index) {
+  columnDefs.forEach((colDef, index) => {
     colDef.headerName = undefined
   })
   gridApi!.setGridOption('columnDefs', columnDefs)
@@ -45,7 +45,7 @@ function removeHeaderNames() {
 
 function setValueFormatters() {
   const columnDefs = getColumnDefs()
-  columnDefs.forEach(function (colDef, index) {
+  columnDefs.forEach((colDef, index) => {
     colDef.valueFormatter = function (params) {
       return '[ ' + params.value + ' ]'
     }
@@ -55,7 +55,7 @@ function setValueFormatters() {
 
 function removeValueFormatters() {
   const columnDefs = getColumnDefs()
-  columnDefs.forEach(function (colDef, index) {
+  columnDefs.forEach((colDef, index) => {
     colDef.valueFormatter = undefined
   })
   gridApi!.setGridOption('columnDefs', columnDefs)

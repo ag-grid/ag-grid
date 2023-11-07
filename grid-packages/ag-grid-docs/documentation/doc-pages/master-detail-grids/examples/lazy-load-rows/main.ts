@@ -29,7 +29,7 @@ const gridOptions: GridOptions<IAccount> = {
     },
     getDetailRowData: (params) => {
       // simulate delayed supply of data to the detail pane
-      setTimeout(function () {
+      setTimeout(() => {
         params.successCallback(params.data.callRecords)
       }, 1000)
     },

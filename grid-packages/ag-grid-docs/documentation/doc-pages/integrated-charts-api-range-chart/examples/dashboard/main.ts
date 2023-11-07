@@ -23,14 +23,14 @@ const gridOptions: GridOptions = {
   enableCharts: true,
   chartToolPanelsDef: { panels: []},
   popupParent: document.body,
-  onGridReady,
+  onGridReady : (params: GridReadyEvent) => {
+    getData().then(rowData => params.api.setGridOption('rowData', rowData));
+  },
   onFirstDataRendered,
   getChartToolbarItems:  () => [],
 }
 
-function onGridReady(params: GridReadyEvent) {
-  getData().then(rowData => params.api.setGridOption('rowData', rowData));
-}
+
 
 function onFirstDataRendered(event: FirstDataRenderedEvent) {
   createGroupedBarChart(event, '#chart1', ['country', 'gold', 'silver']);

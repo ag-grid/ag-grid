@@ -84,7 +84,7 @@ function fullWidthCellRenderer(params: ICellRendererParams) {
     eDiv.innerHTML = `<div class="${cssClass}"><button>Click</button> ${message}</div>`
 
     const eButton = eDiv.querySelector('button')!;
-    eButton.addEventListener('click', function () {
+    eButton.addEventListener('click', () => {
         alert('button clicked')
     })
 
