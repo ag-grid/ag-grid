@@ -20,7 +20,6 @@ import {
 } from '@ag-grid-community/core';
 import { SetFilterModelTreeItem } from './iSetDisplayValueModel';
 import { ISetFilterLocaleText } from './localeText';
-import { setAriaRowIndex } from '@ag-grid-community/core/dist/cjs/es5/utils/aria';
 
 export interface SetFilterListItemSelectionChangedEvent<
     I extends SetFilterModelTreeItem | string | null = SetFilterModelTreeItem | string | null
@@ -148,7 +147,7 @@ export class SetFilterListItem<V> extends Component {
             _.setAriaLevel(this.getFocusableElement(), this.depth + 1)
         }
 
-        this.refreshAriaSelected();
+        this.refreshAriaChecked();
 
         if (!!this.params.readOnly) {
             // Don't add event listeners if we're read-only.
@@ -221,7 +220,7 @@ export class SetFilterListItem<V> extends Component {
 
         this.dispatchEvent(event);
         this.refreshVariableAriaLabels();
-        this.refreshAriaSelected();
+        this.refreshAriaChecked();
     }
 
     public toggleSelected(): void {
@@ -233,7 +232,7 @@ export class SetFilterListItem<V> extends Component {
     private setSelected(isSelected: boolean | undefined, silent?: boolean) {
         this.isSelected = isSelected;
         this.eCheckbox.setValue(isSelected, silent);
-        this.refreshAriaSelected();
+        this.refreshAriaChecked();
     }
 
     private refreshVariableAriaLabels(): void {
@@ -257,11 +256,9 @@ export class SetFilterListItem<V> extends Component {
         _.setAriaDescribedBy(ariaEl, this.eCheckbox.getInputElement().id);
     }
 
-    private refreshAriaSelected(): void {
+    private refreshAriaChecked(): void {
         const ariaEl = this.getAriaElement();
-        const isSelected = this.isSelected;
 
-        _.setAriaSelected(ariaEl, !!isSelected);
         _.setAriaChecked(ariaEl, this.eCheckbox.getValue());
     }
 
