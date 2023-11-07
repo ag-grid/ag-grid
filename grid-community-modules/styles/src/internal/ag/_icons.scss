@@ -6,6 +6,7 @@
 @use "./generated/agGridAlpine";
 @use "./generated/agGridBalham";
 @use "./generated/agGridMaterial";
+@use "./generated/agGridQuartz";
 @use "./generated/agGridClassic";
 
 $-fonts-emitted: ();
@@ -32,7 +33,7 @@ $-fonts-emitted: ();
     font-size: var(--ag-icon-size);
     line-height: var(--ag-icon-size);
     font-style: normal;
-    font-weight: var(--ag-icon-font-weight);
+    font-weight: normal;
     font-variant: normal;
     text-transform: none;
     

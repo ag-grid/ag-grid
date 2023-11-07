@@ -190,22 +190,23 @@ const FULL_SCREEN_WITH_FOOTER_PAGES = [
     'license-pricing',
     'about',
     'cookies',
-    'changelog',
-    'pipeline',
     'privacy',
     'style-guide',
 ];
 
-const isFullScreenPage = path => path === '/' || FULL_SCREEN_PAGES.some(page => {
+const SUPPRESS_FRAMEWORK_SELECTOR_PAGES = [
+    'pipeline',
+    'changelog'
+];
+
+function matchesPath(page, path) {
     const regex = new RegExp(page, 'g');
     return path.match(regex)
-});
+}
 
-const isFullScreenPageWithFooter = path => FULL_SCREEN_WITH_FOOTER_PAGES.some(page => {
-    const regex = new RegExp(page, 'g');
-    return path.match(regex)
-});
-
+const isFullScreenPage = path => path === '/' || FULL_SCREEN_PAGES.some(page => matchesPath(page, path));
+const isFullScreenPageWithFooter = path => FULL_SCREEN_WITH_FOOTER_PAGES.some(page => matchesPath(page, path));
+const isSuppressFrameworkSelector = path => SUPPRESS_FRAMEWORK_SELECTOR_PAGES.some(page => matchesPath(page, path));
 
 /**
  * This is called when pages are created. We override the default layout for certain pages e.g. the example-runner page.
@@ -220,6 +221,9 @@ exports.onCreatePage = ({page, actions: {createPage}}) => {
         createPage(page);
     } else if (isFullScreenPageWithFooter(page.path)) {
         page.context.layout = 'fullScreenPageWithFooter';
+        createPage(page);
+    } else if (isSuppressFrameworkSelector(page.path)) {
+        page.context.layout = 'suppressFrameworkSelector';
         createPage(page);
     }
 };
@@ -243,16 +247,6 @@ const getInternalIPAddress = () => {
 };
 
 const createHomePages = createPage => {
-    const homePage = path.resolve('src/templates/home.jsx');
-
-    supportedFrameworks.forEach(framework => {
-        createPage({
-            path: `/${framework}-data-grid/`,
-            component: homePage,
-            context: {frameworks: supportedFrameworks, framework, pageName: `${framework}-data-grid`}
-        });
-    });
-
     createPage({
         path: `/documentation/`,
         component: path.resolve('src/pages/loading.jsx'),

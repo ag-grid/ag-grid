@@ -67,13 +67,13 @@ export class ValuesDropZonePanel extends BaseDropZonePanel {
 
     protected isColumnDroppable(column: Column): boolean {
         // we never allow grouping of secondary columns
-        if (this.gridOptionsService.is('functionsReadOnly') || !column.isPrimary()) { return false; }
+        if (this.gridOptionsService.get('functionsReadOnly') || !column.isPrimary()) { return false; }
 
         return column.isAllowValue() && !column.isValueActive();
     }
 
     protected updateColumns(columns: Column[]): void {
-        if (this.gridOptionsService.is('functionsPassive')) {
+        if (this.gridOptionsService.get('functionsPassive')) {
             const event: WithoutGridCommon<ColumnValueChangeRequestEvent> = {
                 type: Events.EVENT_COLUMN_VALUE_CHANGE_REQUEST,
                 columns: columns

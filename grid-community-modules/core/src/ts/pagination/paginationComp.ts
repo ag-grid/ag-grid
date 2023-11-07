@@ -10,6 +10,7 @@ import { KeyCode } from '../constants/keyCode';
 import { RowNodeBlockLoader } from "../rowNodeCache/rowNodeBlockLoader";
 import { PaginationNumberFormatterParams } from "../interfaces/iCallbackParams";
 import { WithoutGridCommon } from "../interfaces/iCommon";
+import { PageSizeSelectorComp } from "./pageSizeSelector/pageSizeSelectorComp";
 
 export class PaginationComp extends Component {
 
@@ -27,6 +28,8 @@ export class PaginationComp extends Component {
     @RefSelector('lbCurrent') private lbCurrent: any;
     @RefSelector('lbTotal') private lbTotal: any;
 
+    @RefSelector('pageSizeComp') private pageSizeComp: PageSizeSelectorComp;
+
     private previousAndFirstButtonsDisabled = false;
     private nextButtonDisabled = false;
     private lastButtonDisabled = false;
@@ -38,11 +41,10 @@ export class PaginationComp extends Component {
 
     @PostConstruct
     protected postConstruct(): void {
-        const isRtl = this.gridOptionsService.is('enableRtl');
+        const isRtl = this.gridOptionsService.get('enableRtl');
         this.setTemplate(this.getTemplate());
 
-        const { btFirst, btPrevious, btNext, btLast } = this;
-
+        const { btFirst, btPrevious, btNext, btLast, pageSizeComp } = this;
         this.activateTabIndex([btFirst, btPrevious, btNext, btLast])
 
         btFirst.insertAdjacentElement('afterbegin', createIconNoSpan(isRtl ? 'last' : 'first', this.gridOptionsService)!);
@@ -52,13 +54,21 @@ export class PaginationComp extends Component {
 
         this.addManagedPropertyListener('pagination', this.onPaginationChanged.bind(this));
         this.addManagedPropertyListener('suppressPaginationPanel', this.onPaginationChanged.bind(this));
+        this.addManagedPropertyListeners(['paginationPageSizeSelector', 'paginationAutoPageSize'],
+            () => this.onPageSizeRelatedOptionsChange(),
+        );
+        this.addManagedPropertyListener('paginationPageSize', () => this.onPaginationPageSizeChanged());
+
+        const paginationPageSizeSelector = this.gridOptionsService.get('paginationPageSizeSelector');
+        const paginationAutoPageSize = this.gridOptionsService.get('paginationAutoPageSize');
+        this.pageSizeComp.toggleSelectDisplay(!!paginationPageSizeSelector && !paginationAutoPageSize);
 
         this.onPaginationChanged();
     }
 
     private onPaginationChanged(): void {
-        const isPaging = this.gridOptionsService.is('pagination');
-        const paginationPanelEnabled = isPaging && !this.gridOptionsService.is('suppressPaginationPanel');
+        const isPaging = this.gridOptionsService.get('pagination');
+        const paginationPanelEnabled = isPaging && !this.gridOptionsService.get('suppressPaginationPanel');
 
         this.setDisplayed(paginationPanelEnabled);
         if (!paginationPanelEnabled) {
@@ -71,6 +81,17 @@ export class PaginationComp extends Component {
         this.updateRowLabels();
         this.setCurrentPageLabel();
         this.setTotalLabels();
+    }
+
+    private onPageSizeRelatedOptionsChange(): void {
+        const paginationPageSizeSelector = this.gridOptionsService.get('paginationPageSizeSelector');
+        const paginationAutoPageSize = this.gridOptionsService.get('paginationAutoPageSize');
+        this.pageSizeComp.toggleSelectDisplay(!!paginationPageSizeSelector && !paginationAutoPageSize);
+    }
+
+    private onPaginationPageSizeChanged(): void {
+        const paginationPageSize = this.gridOptionsService.get('paginationPageSize');
+        this.paginationProxy.setPageSize(paginationPageSize);
     }
 
     private setupListeners() {
@@ -138,6 +159,7 @@ export class PaginationComp extends Component {
         const compId = this.getCompId();
 
         return /* html */`<div class="ag-paging-panel ag-unselectable" id="ag-${compId}">
+                <ag-page-size-selector ref="pageSizeComp"></ag-page-size-selector>
                 <span class="ag-paging-row-summary-panel" role="status">
                     <span id="ag-${compId}-first-row" ref="lbFirstRowOnPage" class="ag-paging-row-summary-panel-number"></span>
                     <span id="ag-${compId}-to">${strTo}</span>

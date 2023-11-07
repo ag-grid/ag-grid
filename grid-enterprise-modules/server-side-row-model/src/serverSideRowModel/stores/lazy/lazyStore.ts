@@ -84,7 +84,7 @@ export class LazyStore extends BeanStub implements IServerSideStore {
         }
         this.cache = this.createManagedBean(new LazyCache(this, numberOfRows, this.storeParams));
 
-        const usingTreeData = this.gridOptionsService.is('treeData');
+        const usingTreeData = this.gridOptionsService.get('treeData');
 
         if (!usingTreeData && this.group) {
             const groupColVo = this.ssrmParams.rowGroupCols[this.level];
@@ -131,7 +131,6 @@ export class LazyStore extends BeanStub implements IServerSideStore {
             const params: WithoutGridCommon<IsApplyServerSideTransactionParams> = {
                 transaction: transaction,
                 parentNode: this.parentRowNode,
-                storeInfo: this.info,
                 groupLevelInfo: this.info
             };
             const apply = applyCallback(params);

@@ -146,7 +146,7 @@ export function getPropertyBindings(bindings: any, componentFileNames: string[],
             }
         });
 
-    if (bindings.data && bindings.data.callback.indexOf('gridApi.setRowData') >= 0) {
+    if (bindings.data && bindings.data.callback.indexOf('gridApi.setGridOption(\'rowData\',') >= 0) {
         if (propertyAttributes.filter(item => item.indexOf(':rowData') >= 0).length === 0) {
             propertyAttributes.push(':rowData="rowData"');
         }
@@ -166,7 +166,7 @@ export function getTemplate(bindings: any, attributes: string[]): string {
     const agGridTag = `<ag-grid-vue
     ${bindings.gridSettings.myGridReference ? 'id="myGrid"' : ''}
     ${style}
-    class="${gridSettings.theme}"
+    :class="themeClass"
     :columnDefs="columnDefs"
     @grid-ready="onGridReady"
     ${attributes.join('\n    ')}></ag-grid-vue>`;

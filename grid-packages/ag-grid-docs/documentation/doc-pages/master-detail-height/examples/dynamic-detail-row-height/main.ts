@@ -35,7 +35,7 @@ const gridOptions: GridOptions = {
       },
       onGridReady: (params) => {
         // using auto height to fit the height of the the detail grid
-        params.api.setDomLayout('autoHeight')
+        params.api.setGridOption('domLayout', 'autoHeight')
       },
     },
     getDetailRowData: (params) => {
@@ -73,6 +73,6 @@ document.addEventListener('DOMContentLoaded', function () {
   )
     .then(response => response.json())
     .then(function (data) {
-      gridApi!.setRowData(data)
+      gridApi!.setGridOption('rowData', data)
     })
 })

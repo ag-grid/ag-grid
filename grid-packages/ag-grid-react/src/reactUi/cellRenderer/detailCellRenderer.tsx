@@ -59,7 +59,7 @@ const DetailCellRenderer = (props: IDetailCellRendererParams, ref: any) => {
 
         ctrlRef.current = ctrl;
 
-        if (gridOptionsService.is('detailRowAutoHeight')) {
+        if (gridOptionsService.get('detailRowAutoHeight')) {
             const checkRowSizeFunc = () => {
                 // when disposed, current is null, so nothing to do, and the resize observer will
                 // be disposed of soon

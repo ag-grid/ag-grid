@@ -6,12 +6,12 @@ The grid data can be exported to CSV with an API call, or using the right-click 
 
 ## What Gets Exported
 
-The same data that is in the grid gets exported, but none of the GUI representation of the data will be. What this means is:
+The same data that is in the grid gets exported, with some of the GUI representation of the data. What this means is:
 
 - The raw values, and not the result of cell renderer will get used, meaning:
     - Value Getters will be used.
     - Cell Renderers will **NOT** be used.
-    - Cell Formatters will **NOT** be used (use `processCellCallback` instead), unless [Use Value Formatter for Export](/value-formatters/#use-value-formatter-for-export) is enabled.
+    - Cell Formatters will be used by default via the [Use Value Formatter for Export](/value-formatters/#use-value-formatter-for-export) feature.
 
 - Cell styles are not exported.
 - If row grouping:

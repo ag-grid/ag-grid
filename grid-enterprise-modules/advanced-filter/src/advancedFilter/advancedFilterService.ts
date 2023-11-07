@@ -49,7 +49,7 @@ export class AdvancedFilterService extends BeanStub implements IAdvancedFilterSe
 
     @PostConstruct
     private postConstruct(): void {
-        this.setEnabled(this.gridOptionsService.is('enableAdvancedFilter'), true);
+        this.setEnabled(this.gridOptionsService.get('enableAdvancedFilter'), true);
 
         this.ctrl = this.createManagedBean(new AdvancedFilterCtrl(this.enabled));
 
@@ -149,11 +149,12 @@ export class AdvancedFilterService extends BeanStub implements IAdvancedFilterSe
 
     private setEnabled(enabled: boolean, silent?: boolean): void {
         const previousValue = this.enabled;
-        const isClientSideRowModel = this.rowModel.getType() === 'clientSide';
-        if (enabled && !isClientSideRowModel) {
-            _.warnOnce('Advanced Filter is only supported with the Client-Side Row Model.');
+        const rowModelType = this.rowModel.getType();
+        const isValidRowModel = rowModelType === 'clientSide' || rowModelType === 'serverSide';
+        if (enabled && !rowModelType) {
+            _.warnOnce('Advanced Filter is only supported with the Client-Side Row Model or Server-Side Row Model.');
         }
-        this.enabled = enabled && isClientSideRowModel;
+        this.enabled = enabled && isValidRowModel;
         if (!silent && this.enabled !== previousValue) {
             const event: WithoutGridCommon<AdvancedFilterEnabledChangedEvent> = {
                 type: Events.EVENT_ADVANCED_FILTER_ENABLED_CHANGED,
@@ -193,10 +194,8 @@ export class AdvancedFilterService extends BeanStub implements IAdvancedFilterSe
 
         const updatedValidity = isValid !== this.isValid;
 
-        if (updatedValidity) {
-            this.applyExpressionFromParser(expressionParser);
-            this.ctrl.refreshComp();
-        }
+        this.applyExpressionFromParser(expressionParser);
+        this.ctrl.refreshComp();
         this.ctrl.refreshBuilderComp();
         return updatedValidity;
     }

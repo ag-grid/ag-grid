@@ -12,7 +12,7 @@ import {
     ViewEncapsulation
 } from "@angular/core";
 
-import { AgPromise, ComponentUtil, Grid, GridOptions, GridParams, Module, createGrid } from "@ag-grid-community/core";
+import { AgPromise, ComponentUtil, GridApi, ColumnApi, GridOptions, GridParams, Module, createGrid } from "@ag-grid-community/core";
 
 // @START_IMPORTS@
 import {
@@ -46,7 +46,6 @@ import {
     ColDef,
     ColGroupDef,
     ColumnAggFuncChangeRequestEvent,
-    ColumnApi,
     ColumnEverythingChangedEvent,
     ColumnGroupOpenedEvent,
     ColumnMovedEvent,
@@ -87,7 +86,6 @@ import {
     GetRowIdFunc,
     GetServerSideGroupKey,
     GetServerSideGroupLevelParamsParams,
-    GridApi,
     GridColumnsChangedEvent,
     GridPreDestroyedEvent,
     GridReadyEvent,
@@ -136,7 +134,6 @@ import {
     RowClassParams,
     RowClassRules,
     RowClickedEvent,
-    RowDataChangedEvent,
     RowDataUpdatedEvent,
     RowDoubleClickedEvent,
     RowDragEvent,
@@ -152,8 +149,10 @@ import {
     SelectionChangedEvent,
     SendToClipboardParams,
     ServerSideGroupLevelParams,
-    ServerSideStoreType,
     SideBarDef,
+    SizeColumnsToContentStrategy,
+    SizeColumnsToFitGridStrategy,
+    SizeColumnsToFitProvidedWidthStrategy,
     SortChangedEvent,
     SortDirection,
     StateUpdatedEvent,
@@ -222,7 +221,7 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
         this.frameworkComponentWrapper.setComponentFactoryResolver(this.componentFactoryResolver);
         this.angularFrameworkOverrides.setEmitterUsedCallback(this.isEmitterUsed.bind(this));
 
-         this.gridOptions = ComponentUtil.copyAttributesToGridOptions(this.gridOptions, this);
+        const mergedGridOps = ComponentUtil.combineAttributesAndGridOptions(this.gridOptions, this);
 
         this.gridParams = {
             globalEventListener: this.globalEventListener.bind(this),
@@ -233,7 +232,7 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
             modules: (this.modules || []) as any
         };
 
-        const api = createGrid(this._nativeElement, this.gridOptions, this.gridParams);
+        const api = createGrid(this._nativeElement, mergedGridOps, this.gridParams);
 
         if (api) {
             this.api = api;
@@ -255,7 +254,11 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
 
     public ngOnChanges(changes: any): void {
         if (this._initialised) {
-             ComponentUtil.processOnChange(changes, this.api);
+          const gridOptions: GridOptions = {};
+          Object.entries(changes).forEach(([key, value]: [string, any]) => {
+               gridOptions[key as keyof GridOptions] = value.currentValue;
+          });
+          ComponentUtil.processOnChange(gridOptions, this.api);
         }
     }
 
@@ -265,7 +268,7 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
             // while tearing down the grid.
             this._destroyed = true;
              // could be null if grid failed to initialise
-             this.api?.destroy();            
+             this.api?.destroy();
         }
     }
 
@@ -304,10 +307,11 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
         }
     }
 
+     /** Provided an initial gridOptions configuration to the component. If a property is specified in both gridOptions and via component binding the component binding takes precedence.  */
      @Input() public gridOptions: GridOptions<TData> | undefined;
      /**
-     * Used to register AG Grid Modules directly with this instance of the grid. 
-     * See [Providing Modules To Individual Grids](https://www.ag-grid.com/angular-data-grid/modules/#providing-modules-to-individual-grids) for more information. 
+     * Used to register AG Grid Modules directly with this instance of the grid.
+     * See [Providing Modules To Individual Grids](https://www.ag-grid.com/angular-data-grid/modules/#providing-modules-to-individual-grids) for more information.
      */
      @Input() public modules: Module[] | undefined;
 
@@ -418,13 +422,15 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     @Input() public colResizeDefault: 'shift' | undefined = undefined;
     /** Suppresses auto-sizing columns for columns. In other words, double clicking a column's header's edge will not auto-size. Default: `false`     */
     @Input() public suppressAutoSize: boolean | undefined = undefined;
-    /** Number of pixels to add to a column width after the [auto-sizing](/column-sizing/#auto-size-columns) calculation.
+    /** Number of pixels to add to a column width after the [auto-sizing](/column-sizing/#auto-size-columns-to-fit-cell-contents) calculation.
          * Set this if you want to add extra room to accommodate (for example) sort icons, or some other dynamic nature of the header.
          * Default: `20`
          */
     @Input() public autoSizePadding: number | undefined = undefined;
     /** Set this to `true` to skip the `headerName` when `autoSize` is called by default. Default: `false`     */
     @Input() public skipHeaderOnAutoSize: boolean | undefined = undefined;
+    /** Auto-size the columns when the grid is loaded. Can size to fit the grid width, fit a provided width, or fit the cell contents.     */
+    @Input() public autoSizeStrategy: SizeColumnsToFitGridStrategy | SizeColumnsToFitProvidedWidthStrategy | SizeColumnsToContentStrategy | undefined = undefined;
     /** A map of component names to components.     */
     @Input() public components: { [p: string]: any; } | undefined = undefined;
     /** Set to `'fullRow'` to enable Full Row Editing. Otherwise leave blank to edit one cell at a time.     */
@@ -503,6 +509,11 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     @Input() public advancedFilterParent: HTMLElement | null | undefined = undefined;
     /** Customise the parameters passed to the Advanced Filter Builder.     */
     @Input() public advancedFilterBuilderParams: IAdvancedFilterBuilderParams | undefined = undefined;
+    /** Set the theme color scheme. All themes support 'dark' and 'light' color schemes. 'auto'
+         * Uses the CSS 'prefers-color-scheme' media feature to determine the user's preference.
+         * Some themes support additional colour schemes.
+         */
+    @Input() public colorScheme: 'dark' | 'light' | 'auto' | string | undefined = undefined;
     /** Set to `true` to Enable Charts. Default: `false`     */
     @Input() public enableCharts: boolean | undefined = undefined;
     /** The list of chart themes that a user can chose from in the chart settings panel.
@@ -610,6 +621,13 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     @Input() public pagination: boolean | undefined = undefined;
     /** How many rows to load per page. If `paginationAutoPageSize` is specified, this property is ignored. Default: `100`     */
     @Input() public paginationPageSize: number | undefined = undefined;
+    /** Determines if the page size selector is shown in the pagination panel or not.
+         * Set to an array of values to show the page size selector with custom list of possible page sizes.
+         * Set to `true` to show the page size selector with the default page sizes `[20, 50, 100]`.
+         * Set to `false` to hide the page size selector.
+         * Default: `true`
+         */
+    @Input() public paginationPageSizeSelector: number[] | boolean | undefined = undefined;
     /** Set to `true` so that the number of rows to load per page is automatically adjusted by the grid so each page shows enough rows to just fill the area designated for the grid. If `false`, `paginationPageSize` is used. Default: `false`     */
     @Input() public paginationAutoPageSize: boolean | undefined = undefined;
     /** Set to `true` to have pages split children of groups when using Row Grouping or detail rows with Master Detail. Default: `false`     */
@@ -705,6 +723,9 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     @Input() public fullWidthCellRendererParams: any = undefined;
     /** Set to `true` to have the Full Width Rows embedded in grid's main container so they can be scrolled horizontally .     */
     @Input() public embedFullWidthRows: boolean | undefined = undefined;
+    /** @deprecated v31
+         * When enabled, the grid will cast group values to string type. Default: `false`     */
+    @Input() public suppressGroupMaintainValueType: boolean | undefined = undefined;
     /** Specifies how the results of row grouping should be displayed.
          *
          *  The options are:
@@ -793,11 +814,6 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
          * Default: `1`
          */
     @Input() public serverSideInitialRowCount: number | undefined = undefined;
-    /** @deprecated v28 Whether to use Full Store or Partial Store for storing rows. Default: `partial`.
-         * Deprecated in favour of suppressServerSideInfiniteScroll. When false, Partial Store is used. When true,
-         * Full Store is used.
-         */
-    @Input() public serverSideStoreType: ServerSideStoreType | undefined = undefined;
     /** When `true`, the Server-side Row Model will suppress Infinite Scrolling and load all the data at the current level.
          * Default: `false`
          */
@@ -834,10 +850,6 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
          * Default: `false`
          */
     @Input() public serverSideFilterOnServer: boolean | undefined = undefined;
-    /** @deprecated v28 This property has been deprecated. Use `serverSideSortAllLevels` instead.     */
-    @Input() public serverSideSortingAlwaysResets: boolean | undefined = undefined;
-    /** @deprecated v28 This property has been deprecated. Use `serverSideOnlyRefreshFilteredGroups` instead.     */
-    @Input() public serverSideFilteringAlwaysResets: boolean | undefined = undefined;
     /** Used to split pivot field strings for generating pivot result columns when `pivotResultFields` is provided as part of a `getRows` success.
          * Default: `_`
          */
@@ -981,10 +993,6 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     @Input() public isGroupOpenByDefault: ((params: IsGroupOpenByDefaultParams<TData>) => boolean) | undefined = undefined;
     /** Allows default sorting of groups.     */
     @Input() public initialGroupOrderComparator: ((params: InitialGroupOrderComparatorParams<TData>) => number) | undefined = undefined;
-    /** @deprecated v28 - Use `processPivotResultColDef` instead     */
-    @Input() public processSecondaryColDef: ((colDef: ColDef<TData>) => void) | undefined = undefined;
-    /** @deprecated v28 - Use `processPivotResultColGroupDef` instead     */
-    @Input() public processSecondaryColGroupDef: ((colGroupDef: ColGroupDef<TData>) => void) | undefined = undefined;
     /** Callback to be used with pivoting, to allow changing the second column definition.     */
     @Input() public processPivotResultColDef: ((colDef: ColDef<TData>) => void) | undefined = undefined;
     /** Callback to be used with pivoting, to allow changing the second column group definition.     */
@@ -995,8 +1003,6 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     @Input() public getChildCount: ((dataItem: any) => number) | undefined = undefined;
     /** Allows providing different params for different levels of grouping.     */
     @Input() public getServerSideGroupLevelParams: ((params: GetServerSideGroupLevelParamsParams) => ServerSideGroupLevelParams) | undefined = undefined;
-    /** @deprecated v28 Use `getServerSideGroupLevelParams` instead.     */
-    @Input() public getServerSideStoreParams: ((params: GetServerSideGroupLevelParamsParams) => ServerSideGroupLevelParams) | undefined = undefined;
     /** Allows groups to be open by default.     */
     @Input() public isServerSideGroupOpenByDefault: ((params: IsServerSideGroupOpenByDefaultParams) => boolean) | undefined = undefined;
     /** Allows cancelling transactions.     */
@@ -1168,8 +1174,6 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     @Output() public expandOrCollapseAll: EventEmitter<ExpandCollapseAllEvent<TData>> = new EventEmitter<ExpandCollapseAllEvent<TData>>();
     /** The client has set new pinned row data into the grid.     */
     @Output() public pinnedRowDataChanged: EventEmitter<PinnedRowDataChangedEvent<TData>> = new EventEmitter<PinnedRowDataChangedEvent<TData>>();
-    /** @deprecated v28 No longer fired, use onRowDataUpdated instead     */
-    @Output() public rowDataChanged: EventEmitter<RowDataChangedEvent<TData>> = new EventEmitter<RowDataChangedEvent<TData>>();
     /** Client-Side Row Model only. The client has updated data for the grid by either a) setting new Row Data or b) Applying a Row Transaction.     */
     @Output() public rowDataUpdated: EventEmitter<RowDataUpdatedEvent<TData>> = new EventEmitter<RowDataUpdatedEvent<TData>>();
     /** Async transactions have been applied. Contains a list of all transaction results.     */
@@ -1334,9 +1338,7 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     static ngAcceptInputType_suppressExpandablePivotGroups: boolean | null | '';
     static ngAcceptInputType_debounceVerticalScrollbar: boolean | null | '';
     static ngAcceptInputType_detailRowAutoHeight: boolean | null | '';
-    static ngAcceptInputType_serverSideFilteringAlwaysResets: boolean | null | '';
     static ngAcceptInputType_serverSideFilterAllLevels: boolean | null | '';
-    static ngAcceptInputType_serverSideSortingAlwaysResets: boolean | null | '';
     static ngAcceptInputType_serverSideSortAllLevels: boolean | null | '';
     static ngAcceptInputType_serverSideOnlyRefreshFilteredGroups: boolean | null | '';
     static ngAcceptInputType_serverSideSortOnServer: boolean | null | '';
@@ -1362,5 +1364,6 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     static ngAcceptInputType_suppressCutToClipboard: boolean | null | '';
     static ngAcceptInputType_enableAdvancedFilter: boolean | null | '';
     static ngAcceptInputType_includeHiddenColumnsInAdvancedFilter: boolean | null | '';
+    static ngAcceptInputType_suppressGroupMaintainValueType: boolean | null | '';
     // @END@
 }

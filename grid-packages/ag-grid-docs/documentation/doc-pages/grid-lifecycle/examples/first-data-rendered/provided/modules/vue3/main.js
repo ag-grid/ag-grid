@@ -28,6 +28,7 @@ const VueExample = {
                     @grid-ready="onGridReady"
                     :defaultColDef="defaultColDef"
                     :suppressLoadingOverlay="true"
+                    :autoSizeStrategy="autoSizeStrategy"
                     @first-data-rendered="onFirstDataRendered"></ag-grid-vue>
             </div>
         </div>
@@ -61,19 +62,22 @@ const VueExample = {
         const athleteDescriptionColWidthOnReady = ref('-');
         const athleteDescriptionColWidthOnFirstDataRendered = ref('-');
         const isLoadDataButtonVisible = ref(true);
+        const autoSizeStrategy = ref({
+            type: 'fitCellContents',
+            colIds: ['athleteDescription']
+        });
 
         const onFirstDataRendered = (params) => {
             const {api} = params;
             const column = api.getColumn('athleteDescription');
             if (column) {
-                api.autoSizeColumns([column.getId()]);
                 athleteDescriptionColWidthOnFirstDataRendered.value = `${column.getActualWidth()}px`;
             }
 
             console.log('AG Grid: onFirstDataRendered event triggered');
         };
         const loadGridData = () => {
-            gridApi.value.setRowData(getData());
+            gridApi.value.setGridOption('rowData', getData());
         };
         const onGridReady = (params) => {
             gridApi.value = params.api;
@@ -82,7 +86,6 @@ const VueExample = {
             console.dir(column);
 
             if (column) {
-                gridApi.value.autoSizeColumns([column.getId()]);
                 athleteDescriptionColWidthOnReady.value = `${column.getActualWidth()}px`;
             }
 
@@ -98,6 +101,7 @@ const VueExample = {
             isLoadDataButtonVisible,
             athleteDescriptionColWidthOnReady,
             athleteDescriptionColWidthOnFirstDataRendered,
+            autoSizeStrategy,
             loadGridData
         }
     }

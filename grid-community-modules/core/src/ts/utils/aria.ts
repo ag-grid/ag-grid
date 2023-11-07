@@ -4,7 +4,7 @@ export type ColumnSortState = 'ascending' | 'descending' | 'other' | 'none';
 
 // ARIA HELPER FUNCTIONS
 function toggleAriaAttribute(element: Element, attribute: string, value?: number | boolean | string | null) {
-    if (value == null || value == '') {
+    if (value == null || (typeof value === 'string' && value == '')) {
         removeAriaAttribute(element, attribute);
     } else {
         setAriaAttribute(element, attribute, value);
@@ -79,6 +79,14 @@ export function setAriaDescribedBy(element: Element, describedby?: string): void
 
 export function setAriaLive(element: Element, live?: 'polite' | 'assertive' | 'off' | null) {
     toggleAriaAttribute(element, 'live', live);
+}
+
+export function setAriaAtomic(element: Element, atomic: boolean | null) {
+    toggleAriaAttribute(element, 'atomic', atomic);
+}
+
+export function setAriaRelevant(element: Element, relevant:  'additions' | 'additions text' | 'all' | 'removals' | 'text' | null) {
+    toggleAriaAttribute(element, 'relevant', relevant);
 }
 
 export function setAriaLevel(element: Element, level: number): void {

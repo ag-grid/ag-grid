@@ -1,0 +1,63 @@
+@use '../design-system' as *;
+
+.tilesContainer {
+    display: flex;
+}
+
+.card {
+    margin: 10px;
+    padding: 20px;
+    border: 1px solid #ddd;
+    border-radius: 12px;
+    box-shadow: 0 4px 8px rgba(237, 228, 228, 0.1);
+    background-color: var(--background-200);
+}
+
+.cardTitle {
+    color: var(--default-text-color);
+    display: flex;
+    margin-bottom: 24px;
+}
+
+.cardBody {
+    margin-bottom: 12px;
+    justify-content: center;
+    margin-bottom: 24px;
+}
+
+.exampleImg {
+    max-height: 100%;
+    max-width: 100%;
+}
+
+.cardFeaturesTitle {
+    margin: 10px;
+}
+
+.cardFeatures {
+    justify-content: center;
+    margin-top: 22px;
+}
+
+.feature {
+    display: inline-block;
+    margin: 4px;
+    padding: 4px 12px;
+    border: 1px solid #55B2C6;
+    border-radius: 50px;
+    color: var(--default-text-color);
+    text-align: center;
+    text-decoration: none;
+    font-size: 14px !important;
+
+    &:hover {
+        cursor: pointer;
+        background-color: #397785;
+        transform: scale(1.05);
+    }
+}
+
+.cardLink {
+    display: flex;
+    justify-content: flex-end;
+}

@@ -1,16 +1,17 @@
 import {
   ChartModel,
   ChartRef,
-  GridApi,
   createGrid,
-  GridOptions,
   FirstDataRenderedEvent,
+  GridApi,
+  GridOptions,
+  GridReadyEvent
 } from '@ag-grid-community/core';
-import { getData } from "./data";
-
+import {getData} from "./data";
 
 let gridApi: GridApi;
-
+let chartModel: ChartModel | undefined;
+let currentChartRef: ChartRef | undefined;
 
 const gridOptions: GridOptions = {
   columnDefs: [
@@ -27,29 +28,40 @@ const gridOptions: GridOptions = {
     filter: true,
     resizable: true,
   },
-  rowData: getData(),
   enableRangeSelection: true,
   popupParent: document.body,
   enableCharts: true,
+  onGridReady,
+  onFirstDataRendered,
   createChartContainer,
-  onFirstDataRendered: onFirstDataRendered,
+};
+
+function onGridReady(params: GridReadyEvent) {
+  getData().then(rowData => params.api.setGridOption('rowData', rowData));
 }
-let chartModel: ChartModel | undefined;
-let currentChartRef: ChartRef | undefined;
 
 function onFirstDataRendered(params: FirstDataRenderedEvent) {
-  currentChartRef = params.api!.createRangeChart({
-    chartType: 'groupedColumn',
+  currentChartRef = params.api.createRangeChart({
+    chartContainer: document.querySelector('#myChart') as any,
     cellRange: {
       columns: ['country', 'sugar', 'fat', 'weight'],
       rowStartIndex: 0,
       rowEndIndex: 2
     },
-       
-    chartContainer: document.querySelector('#myChart') as any,
+    chartType: 'groupedColumn',
   });
 }
 
+function createChartContainer(chartRef: ChartRef) {
+  if (currentChartRef) {
+    currentChartRef.destroyChart();
+  }
+
+  const eChart = chartRef.chartElement;
+  const eParent = document.querySelector<HTMLElement>('#myChart')!;
+  eParent.appendChild(eChart);
+  currentChartRef = chartRef;
+}
 
 function saveChart() {
   const chartModels = gridApi!.getChartModels() || []
@@ -69,19 +81,6 @@ function restoreChart() {
   if (!chartModel) return
   currentChartRef = gridApi!.restoreChart(chartModel)!
 }
-
-function createChartContainer(chartRef: ChartRef) {
-  // destroy existing chart
-  if (currentChartRef) {
-    currentChartRef.destroyChart()
-  }
-
-  const eChart = chartRef.chartElement
-  const eParent = document.querySelector('#myChart') as any;
-  eParent.appendChild(eChart)
-  currentChartRef = chartRef
-}
-
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {

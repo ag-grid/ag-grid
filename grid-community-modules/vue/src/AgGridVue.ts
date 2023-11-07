@@ -4,17 +4,18 @@ import {VueFrameworkComponentWrapper} from './VueFrameworkComponentWrapper';
 import { getAgGridProperties, Properties } from './Utils';
 import {VueFrameworkOverrides} from './VueFrameworkOverrides';
 
-const [props, watch, model] = getAgGridProperties();
+const [props, computed, watch, model] = getAgGridProperties();
 
 @Bean('agGridVue')
 @Component({
     props,
+    computed,
     watch,
     model,
 })
 export class AgGridVue extends Vue {
 
-    private static ROW_DATA_EVENTS: Set<string> = new Set(['rowDataChanged', 'rowDataUpdated', 'cellValueChanged', 'rowValueChanged']);
+    private static ROW_DATA_EVENTS: Set<string> = new Set(['rowDataUpdated', 'cellValueChanged', 'rowValueChanged']);
     private static ALWAYS_SYNC_GLOBAL_EVENTS: Set<string> = new Set([Events.EVENT_GRID_PRE_DESTROYED]);
 
     private static kebabProperty(property: string) {
@@ -50,7 +51,7 @@ export class AgGridVue extends Vue {
     // It forces events defined in AgGridVue.ALWAYS_SYNC_GLOBAL_EVENTS to be fired synchronously.
     // This is required for events such as GridPreDestroyed.
     // Other events are fired can be fired asynchronously or synchronously depending on config.
-    public globalEventListenerFactory (restrictToSyncOnly?: boolean) {
+    public globalEventListenerFactory(restrictToSyncOnly?: boolean) {
         return (eventType: string, event: any) => {
             if (this.isDestroyed) {
                 return;
@@ -78,22 +79,6 @@ export class AgGridVue extends Vue {
         };
     }
 
-    public processChanges(propertyName: string, currentValue: any, previousValue: any) {
-        if (this.gridCreated && this.api) {
-
-            if (this.skipChange(propertyName, currentValue, previousValue)) {
-                return;
-            }
-
-            const changes: Properties = {};
-            changes[propertyName] = {
-                currentValue,
-                previousValue,
-            };
-            ComponentUtil.processOnChange(changes, this.api);
-        }
-    }
-
     // noinspection JSUnusedGlobalSymbols
     public mounted() {
         // we debounce the model update to prevent a flood of updates in the event there are many individual
@@ -103,7 +88,7 @@ export class AgGridVue extends Vue {
         }, 20);
 
         const frameworkComponentWrapper = new VueFrameworkComponentWrapper(this);
-        const gridOptions = ComponentUtil.copyAttributesToGridOptions(this.gridOptions, this, true);
+        const gridOptions = ComponentUtil.combineAttributesAndGridOptions(this.gridOptions, this);
 
         this.checkForBindingConflicts();
         gridOptions.rowData = this.getRowDataBasedOnBindings();
@@ -118,14 +103,14 @@ export class AgGridVue extends Vue {
             modules: this.modules,
         };
 
-        this.api = createGrid(this.$el as HTMLElement, gridOptions, gridParams);        
+        this.api = createGrid(this.$el as HTMLElement, gridOptions, gridParams);
         this.gridCreated = true;
     }
 
     // noinspection JSUnusedGlobalSymbols
     public destroyed() {
         if (this.gridCreated) {
-            this.api?.destroy();            
+            this.api?.destroy();
             this.isDestroyed = true;
         }
     }
@@ -163,34 +148,6 @@ export class AgGridVue extends Vue {
         const rowDataModel = thisAsAny.rowDataModel;
         return rowDataModel ? rowDataModel :
             thisAsAny.rowData ? thisAsAny.rowData : thisAsAny.gridOptions.rowData;
-    }
-
-    /*
-     * Prevents an infinite loop when using v-model for the rowData
-     */
-    private skipChange(propertyName: string, currentValue: any, previousValue: any) {
-        if (this.gridReadyFired &&
-            propertyName === 'rowData' &&
-            this.$listeners['data-model-changed']) {
-            if (currentValue === previousValue) {
-                return true;
-            }
-
-            if (currentValue && previousValue) {
-                const currentRowData = currentValue as any[];
-                const previousRowData = previousValue as any[];
-                if (currentRowData.length === previousRowData.length) {
-                    for (let i = 0; i < currentRowData.length; i++) {
-                        if (currentRowData[i] !== previousRowData[i]) {
-                            return false;
-                        }
-                    }
-                    return true;
-                }
-            }
-        }
-
-        return false;
     }
 
     private debounce(func: () => void, delay: number) {

@@ -42,11 +42,7 @@ const Default = () => {
         {
             name: 'vue',
             url: '/vue-data-grid/',
-        },
-        {
-            name: 'solid',
-            url: '/react-data-grid/solidjs/',
-        },
+        }
     ];
     let debugValue, debugLogLevel, isCI, runAutomatedExamplesOnce;
 

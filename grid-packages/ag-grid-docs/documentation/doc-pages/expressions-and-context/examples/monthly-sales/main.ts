@@ -176,7 +176,7 @@ function onChangeMonth(i: number) {
 }
 
 function onQuickFilterChanged(value: any) {
-  gridApi!.setQuickFilter(value)
+  gridApi!.setGridOption('quickFilterText', value);
 }
 
 
@@ -188,6 +188,6 @@ document.addEventListener('DOMContentLoaded', function () {
   fetch('https://www.ag-grid.com/example-assets/monthly-sales.json')
     .then(response => response.json())
     .then(function (data) {
-      gridApi!.setRowData(data)
+      gridApi!.setGridOption('rowData', data)
     })
 })

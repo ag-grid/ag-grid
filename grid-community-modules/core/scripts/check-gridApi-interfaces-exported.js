@@ -6,20 +6,24 @@ function checkGridOptionPropertyKeys() {
     const gridApiContents = fs.readFileSync('./src/ts/gridApi.ts', 'UTF-8');
 
     const matches = [...communityMainFileContents.split('/* COMMUNITY_EXPORTS_START_DO_NOT_DELETE */')[1].matchAll(/(\w)*/g)];
-    let mainExports = [];
+    let mainExports = new Set();
     matches.forEach(m => {
         const split = m[0].split(/\W/).map(i => i.trim()).filter(i => !!i);
-        mainExports = [...mainExports, ...split]
+        split.forEach(s => {
+            mainExports.add(s);
+        });
     })
 
     let publicGridApiTypes = getPublicTypes(gridApiContents);
     let missingPropertyKeys = new Set();
 
+    const excludedTypescriptExports = new Set(['Partial', 'Required', 'Readonly', 'Record', 'Pick', 'Omit', 'Exclude', 'Extract', 'NonNullable', 'Uppercase', 'Lowercase', 'Capitalize', 'Uncapitalize', 'Parameters', 'ConstructorParameters', 'ReturnType', 'InstanceType']);
+
     publicGridApiTypes.forEach(m => {
-        if (!mainExports.includes(m)) {
+        if (!mainExports.has(m) && !excludedTypescriptExports.has(m)) {
             missingPropertyKeys.add(m)
         }
-    })
+    });
 
     if (missingPropertyKeys.size > 0) {
         console.error('check-grid-api-exports - GridApi are using types that are not publicly exported. Missing the following types:', [...missingPropertyKeys].join(', '));

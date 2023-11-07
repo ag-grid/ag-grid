@@ -102,17 +102,10 @@ export interface ToolPanelClassParams<TData = any, TValue = any> extends AgGridC
 }
 export type ToolPanelClass<TData = any, TValue = any> = string | string[] | ((params: ToolPanelClassParams<TData, TValue>) => string | string[] | undefined);
 
-// Used to stop recursion in ColDefField and then just return Prefix.any
-// so that we do not run into infinite recursion Typescript error
-type Digit = 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9;
-type NextDigit = [1, 2, 3, 4, 5, 6, 7, 'STOP'];
-type Inc<T> = T extends Digit ? NextDigit[T] : 'STOP'; 
-
-
 type StringOrNumKeys<TObj> = keyof TObj & (string | number);
-type NestedPath<TValue, Prefix extends string, TValueNestedChild, TDepth> = 
+type NestedPath<TValue, Prefix extends string, TValueNestedChild, TDepth extends any[]> = 
     TValue extends object
-        ? `${Prefix}.${ TDepth extends 'STOP' ? any : NestedFieldPaths<TValue, TValueNestedChild, TDepth>}`
+        ? `${Prefix}.${ TDepth['length'] extends 7 ? any : NestedFieldPaths<TValue, TValueNestedChild, TDepth>}`
         : never;
 
 // This type wrapper is needed for correct handling of union types in ColDefField
@@ -121,15 +114,17 @@ type NestedPath<TValue, Prefix extends string, TValueNestedChild, TDepth> =
 /**
  * Returns a union of all possible paths to nested fields in `TData`.
  */
-export type ColDefField<TData = any, TValue = any> = TData extends any ? NestedFieldPaths<TData, TValue, 1> : never;
+export type ColDefField<TData = any, TValue = any> = TData extends any ? NestedFieldPaths<TData, TValue, []> : never;
 
 /**
  * Returns a union of all possible paths to nested fields in `TData`.
  */
-export type NestedFieldPaths<TData = any, TValue = any, TDepth = 0> = {
+export type NestedFieldPaths<TData = any, TValue = any, TDepth extends any[] = []> = {
     [TKey in StringOrNumKeys<TData>]:
-        | (TData[TKey] extends TValue ? `${TKey}` : never)
-        | NestedPath<TData[TKey], `${TKey}`, TValue, Inc<TDepth>>;
+        TData[TKey] extends Function | undefined ? never // ignore functions
+            : TData[TKey] extends any[] | undefined 
+                ? (TData[TKey] extends TValue ? `${TKey}` : never) | `${TKey}.${number}` // arrays support index access
+                : (TData[TKey] extends TValue ? `${TKey}` : never) | NestedPath<TData[TKey], `${TKey}`, TValue, [...TDepth, any]>;
 }[StringOrNumKeys<TData>];
 
 
@@ -227,10 +222,11 @@ export interface ColDef<TData = any, TValue = any> extends AbstractColDef<TData,
     /** Set to `true` if you do not want this column to be movable via dragging. Default: `false` */
     suppressMovable?: boolean;
     /**
-     * Set to true to format values using the column's `valueFormatter` when exporting data from the grid.
+     * By default, values are formatted using the column's `valueFormatter` when exporting data from the grid.
      * This applies to CSV and Excel export, as well as clipboard operations and the fill handle.
-     * If custom handling is provided for the export operation, this property will be ignored.
-     * Default: `false`
+     * Set to `false` to prevent values from being formatted for these operations.
+     * Regardless of this option, if custom handling is provided for the export operation, the value formatter will not be used.
+     * Default: `true`
      */
     useValueFormatterForExport?: boolean;
 
@@ -267,10 +263,11 @@ export interface ColDef<TData = any, TValue = any> extends AbstractColDef<TData,
      * Default: `over`. */
     cellEditorPopupPosition?: 'over' | 'under';
     /**
-     * Set to true to parse values using the column's `valueParser` when importing data to the grid.
+     * By default, values are parsed using the column's `valueParser` when importing data to the grid.
      * This applies to clipboard operations and the fill handle.
-     * If custom handling is provided for the import operation, this property will be ignored.
-     * Default: `false`
+     * Set to `false` to prevent values from being parsed for these operations.
+     * Regardless of this option, if custom handling is provided for the import operation, the value parser will not be used.
+     * Default: `true`
      */
     useValueParserForImport?: boolean;
 
@@ -577,20 +574,6 @@ export interface HeaderCheckboxSelectionCallbackParams<TData = any, TValue = any
 export interface HeaderCheckboxSelectionCallback<TData = any, TValue = any> {
     (params: HeaderCheckboxSelectionCallbackParams<TData, TValue>): boolean;
 }
-
-/**
- * @deprecated
- * No longer in use. Replaced with (params: ColumnFunctionCallbackParams) => boolean.
- */
-export interface IsColumnFunc<TData = any> {
-    (params: IsColumnFuncParams<TData>): boolean;
-}
-
-/**
- * @deprecated
- * Replaced with ColumnFunctionCallbackParams
- */
-export interface IsColumnFuncParams<TData = any> extends ColumnFunctionCallbackParams<TData> { }
 
 export interface GetQuickFilterTextParams<TData = any, TValue = any> extends AgGridCommon<TData, any> {
     /** Value for the cell. */

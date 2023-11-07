@@ -51,6 +51,6 @@ document.addEventListener('DOMContentLoaded', () => {
     .then(response => response.json())
     .then((data: any[]) => {
       data.forEach((item, index) => item.id = index);
-      gridApi!.setRowData(data);
+      gridApi!.setGridOption('rowData', data);
     });
 })

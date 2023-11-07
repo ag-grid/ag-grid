@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg width="100%" height="100%" viewBox="0 0 32 32" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2;">
+    <g id="eye">
+        <path id="Combined-Shape" d="M16.5,23C21.124,23 25.206,20.177 26.852,16C25.206,11.823 21.124,9 16.5,9C11.876,9 7.794,11.823 6.148,16C7.794,20.177 11.876,23 16.5,23ZM4.119,15.667C5.958,10.515 10.892,7 16.5,7C22.108,7 27.042,10.515 28.881,15.667L29,16L28.881,16.333C27.042,21.485 22.108,25 16.5,25C10.892,25 5.958,21.485 4.119,16.333L4,16L4.119,15.667ZM16.5,21C19.289,21 21.549,18.761 21.549,16C21.549,13.239 19.289,11 16.5,11C13.711,11 11.451,13.239 11.451,16C11.451,18.761 13.711,21 16.5,21Z" style="fill-rule:nonzero;"/>
+    </g>
+</svg>

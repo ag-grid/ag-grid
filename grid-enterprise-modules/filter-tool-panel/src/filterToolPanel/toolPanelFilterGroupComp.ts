@@ -33,12 +33,17 @@ export class ToolPanelFilterGroupComp extends Component {
     private readonly depth: number;
     private readonly columnGroup: IProvidedColumn;
     private readonly showingColumn: boolean;
-    private childFilterComps: ToolPanelFilterItem[];
+    private childFilterComps: (ToolPanelFilterGroupComp | ToolPanelFilterComp)[];
     private expandedCallback: () => void;
     private filterGroupName: string | null;
 
-    constructor(columnGroup: IProvidedColumn, childFilterComps: ToolPanelFilterItem[],
-        expandedCallback: () => void, depth: number, showingColumn: boolean) {
+    constructor(
+        columnGroup: IProvidedColumn,
+        childFilterComps: (ToolPanelFilterGroupComp | ToolPanelFilterComp)[],
+        expandedCallback: () => void,
+        depth: number, 
+        showingColumn: boolean
+    ) {
         super();
         this.columnGroup = columnGroup;
         this.childFilterComps = childFilterComps;

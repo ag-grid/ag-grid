@@ -109,6 +109,6 @@ document.addEventListener('DOMContentLoaded', function () {
     .then(response => response.json())
     .then((data: IAccount[]) => {
       allRowData = data
-      gridApi!.setRowData(data)
+      gridApi!.setGridOption('rowData', data)
     })
 })

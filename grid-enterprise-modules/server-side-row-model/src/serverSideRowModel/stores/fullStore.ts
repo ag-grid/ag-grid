@@ -93,7 +93,7 @@ export class FullStore extends RowNodeBlock implements IServerSideStore {
 
     @PostConstruct
     private postConstruct(): void {
-        this.usingTreeData = this.gridOptionsService.is('treeData');
+        this.usingTreeData = this.gridOptionsService.get('treeData');
         this.nodeIdPrefix = this.blockUtils.createNodeIdPrefix(this.parentRowNode);
 
         if (!this.usingTreeData && this.groupLevel) {
@@ -166,9 +166,7 @@ export class FullStore extends RowNodeBlock implements IServerSideStore {
             parentBlock: this,
             parentNode: this.parentRowNode,
             storeParams: this.ssrmParams,
-            successCallback: this.pageLoaded.bind(this, this.getVersion()),
             success: this.success.bind(this, this.getVersion()),
-            failCallback: this.pageLoadFailed.bind(this, this.getVersion()),
             fail: this.pageLoadFailed.bind(this, this.getVersion())
         });
     }
@@ -223,7 +221,7 @@ export class FullStore extends RowNodeBlock implements IServerSideStore {
     public processServerResult(params: LoadSuccessParams): void {
         if (!this.isAlive()) { return; }
 
-        const info = params.storeInfo || params.groupLevelInfo;
+        const info = params.groupLevelInfo;
         if (info) {
             Object.assign(this.info, info);
         }
@@ -553,7 +551,6 @@ export class FullStore extends RowNodeBlock implements IServerSideStore {
             const params: WithoutGridCommon<IsApplyServerSideTransactionParams> = {
                 transaction: transaction,
                 parentNode: this.parentRowNode,
-                storeInfo: this.info,
                 groupLevelInfo: this.info
             };
             const apply = applyCallback(params);

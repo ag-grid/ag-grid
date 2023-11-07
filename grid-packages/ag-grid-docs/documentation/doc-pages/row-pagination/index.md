@@ -37,14 +37,19 @@ rows with different heights) then the page height will be calculated using the d
 the actual row heights. Therefore the rows will not fit perfectly into the page if these features are mixed.
 </note>
 
+<note>
+When `paginationAutoPageSize` is used, the grid will not show the page size dropdown selector in the pagination panel,
+and the option `paginationPageSizeSelector` will be ignored.
+</note>
+
 ## Example: Customising Pagination
 
 In this example the default pagination settings are changed. Note the following:
 
-- `paginationPageSize` is set to 10
-- `api.paginationGoToPage(4)` is called to go to page 4 (0 based, so the 5th page)
-- A dropdown to change the page size dynamically is available. This makes a call to `paginationSetPageSize(newPageSize)`
+- `paginationPageSizeSelector` is set to `[200, 500, 1000]`
+- `paginationPageSize` is set to `500`
 - The numbers in the pagination panel are formatted differently using the grid callback `paginationNumberFormatter` and putting the numbers into square brackets i.e. [x].
+- `api.paginationGoToPage(4)` is called to go to page 4 (0 based, so the 5th page)
 
 <grid-example title='Custom Paging' name='custom-paging' type='generated' options='{ "enterprise": true, "modules": ["clientside", "rowgrouping" ] }'></grid-example>
 

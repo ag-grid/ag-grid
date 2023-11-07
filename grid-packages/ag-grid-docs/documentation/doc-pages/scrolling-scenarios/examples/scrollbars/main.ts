@@ -22,9 +22,6 @@ const gridOptions: GridOptions = {
   alwaysShowVerticalScroll: true,
   columnDefs: columnDefs,
   rowData: rowData,
-  onGridReady: (params) => {
-    params.api.sizeColumnsToFit()
-  },
   defaultColDef: {
     editable: true,
     sortable: true,

@@ -36,7 +36,7 @@ function getRowData() {
 
 function reset() {
   gridApi!.setFilterModel(null);
-  gridApi!.setRowData(getRowData());
+  gridApi!.setGridOption('rowData', getRowData());
 }
 
 function onFirstDataRendered(params: FirstDataRenderedEvent) {

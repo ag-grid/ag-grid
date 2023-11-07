@@ -51,14 +51,14 @@ export class ContextMenuFactory extends BeanStub implements IContextMenuFactory 
         if (_.exists(node) && ModuleRegistry.__isRegistered(ModuleNames.ClipboardModule, this.context.getGridId())) {
             if (column) {
                 // only makes sense if column exists, could have originated from a row
-                if (!this.gridOptionsService.is('suppressCutToClipboard')) {
+                if (!this.gridOptionsService.get('suppressCutToClipboard')) {
                     defaultMenuOptions.push('cut');
                 }
                 defaultMenuOptions.push('copy', 'copyWithHeaders', 'copyWithGroupHeaders', 'paste', 'separator');
             }
         }
 
-        if (this.gridOptionsService.is('enableCharts') && ModuleRegistry.__isRegistered(ModuleNames.GridChartsModule, this.context.getGridId())) {
+        if (this.gridOptionsService.get('enableCharts') && ModuleRegistry.__isRegistered(ModuleNames.GridChartsModule, this.context.getGridId())) {
             if (this.columnModel.isPivotMode()) {
                 defaultMenuOptions.push('pivotChart');
             }
@@ -72,8 +72,8 @@ export class ContextMenuFactory extends BeanStub implements IContextMenuFactory 
             // if user clicks a cell
             const csvModuleMissing = !ModuleRegistry.__isRegistered(ModuleNames.CsvExportModule, this.context.getGridId());
             const excelModuleMissing = !ModuleRegistry.__isRegistered(ModuleNames.ExcelExportModule, this.context.getGridId());
-            const suppressExcel = this.gridOptionsService.is('suppressExcelExport') || excelModuleMissing;
-            const suppressCsv = this.gridOptionsService.is('suppressCsvExport') || csvModuleMissing;
+            const suppressExcel = this.gridOptionsService.get('suppressExcelExport') || excelModuleMissing;
+            const suppressCsv = this.gridOptionsService.get('suppressCsvExport') || csvModuleMissing;
             const onIPad = _.isIOSUserAgent();
             const anyExport: boolean = !onIPad && (!suppressExcel || !suppressCsv);
             if (anyExport) {
@@ -99,7 +99,7 @@ export class ContextMenuFactory extends BeanStub implements IContextMenuFactory 
     public onContextMenu(mouseEvent: MouseEvent | null, touchEvent: TouchEvent | null, rowNode: RowNode | null, column: Column | null, value: any, anchorToElement: HTMLElement): void {
         // to allow us to debug in chrome, we ignore the event if ctrl is pressed.
         // not everyone wants this, so first 'if' below allows to turn this hack off.
-        if (!this.gridOptionsService.is('allowContextMenuWithControlKey')) {
+        if (!this.gridOptionsService.get('allowContextMenuWithControlKey')) {
             // then do the check
             if (mouseEvent && (mouseEvent.ctrlKey || mouseEvent.metaKey)) { return; }
         }
@@ -110,7 +110,7 @@ export class ContextMenuFactory extends BeanStub implements IContextMenuFactory 
             this.blockMiddleClickScrollsIfNeeded(mouseEvent);
         }
 
-        if (this.gridOptionsService.is('suppressContextMenu')) { return; }
+        if (this.gridOptionsService.get('suppressContextMenu')) { return; }
 
         const eventOrTouch: (MouseEvent | Touch) = mouseEvent ? mouseEvent : touchEvent!.touches[0];
         if (this.showMenu(rowNode, column, value, eventOrTouch, anchorToElement)) {
@@ -127,7 +127,7 @@ export class ContextMenuFactory extends BeanStub implements IContextMenuFactory 
         const { gridOptionsService } = this;
         const { which } = mouseEvent;
 
-        if (gridOptionsService.is('suppressMiddleClickScrolls') && which === 2) {
+        if (gridOptionsService.get('suppressMiddleClickScrolls') && which === 2) {
             mouseEvent.preventDefault();
         }
     }
@@ -166,7 +166,7 @@ export class ContextMenuFactory extends BeanStub implements IContextMenuFactory 
             },
             click: mouseEvent,
             positionCallback: () => {
-                const isRtl = this.gridOptionsService.is('enableRtl');
+                const isRtl = this.gridOptionsService.get('enableRtl');
                 this.popupService.positionPopupUnderMouseEvent({
                     ...positionParams,
                     nudgeX: isRtl ? (eMenuGui.offsetWidth + 1) * -1 : 1

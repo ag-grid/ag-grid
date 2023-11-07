@@ -100,6 +100,7 @@ $abstract-colors: (
     'black': #000000,
     'eerie-black': #181C22,
     'dark-gunmetal-gray': #212529,
+    'charcoal': #354856,
     'auro-metal': #6c757d,
     'quick-silver': #9ea3a6,
     'ag-grid-grey': #b4bebe,
@@ -360,13 +361,15 @@ $semantic-colors: (
     'toolbar-background': background-500,
     // Warnings
     'warning-background': brown-100,
-    'warning-text': brown-700
+    'warning-text': brown-700,
+    // Enterprise 
+    'enterprise-icon-color': red-700
 );
 
 // Semantic colors based on abstract colors
 $dark-semantic-colors: (
     // Background
-    'default-background-color': eerie-black,
+    'default-background-color': background-100,
     // Text
     'default-text-color': ghost-white,
     'text-color': default-text-color,
@@ -388,7 +391,7 @@ $dark-semantic-colors: (
     'code-background-color': neutral-100,
     // Input
     'input-background-color': default-background-color,
-    'input-border-color': neutral-700,
+    'input-border-color': charcoal,
     'input-secondary-background-color': neutral-400,
     'input-secondary-border-color': secondary-text-color,
     'input-primary-color': primary-600,
@@ -398,13 +401,15 @@ $dark-semantic-colors: (
     // Table
     'table-odd-row-background-color': background-100,
     // Site header
-    'site-header-background': primary-100,
-    'site-nav-background': dark-blue-800,
+    'site-header-background': default-background-color,
+    'site-nav-background': background-200,
     // Toolbar
-    'toolbar-background': background-300,
+    'toolbar-background': default-background-color,
     // Warnings
     'warning-background': brown-100,
     'warning-text': brown-700,
     // Not semantic
-    'bright-blue-gray': neutral-200
+    'bright-blue-gray': neutral-200,
+    // Enterprise 
+    'enterprise-icon-color': red-700
 );

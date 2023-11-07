@@ -48,6 +48,7 @@ const gridOptions: GridOptions<IOlympicData> = {
     sortable: true,
     filter: true,
     resizable: true,
+    cellDataType: false,
   },
   columnDefs: columnDefs,
   rowData: null,
@@ -65,14 +66,14 @@ function onPinnedRowTopCount() {
   var headerRowsToFloat = (document.getElementById('top-row-count') as any).value
   var count = Number(headerRowsToFloat)
   var rows = createData(count, 'Top')
-  gridApi!.setPinnedTopRowData(rows)
+  gridApi!.setGridOption('pinnedTopRowData', rows)
 }
 
 function onPinnedRowBottomCount() {
   var footerRowsToFloat = (document.getElementById('bottom-row-count') as any).value
   var count = Number(footerRowsToFloat)
   var rows = createData(count, 'Bottom')
-  gridApi!.setPinnedBottomRowData(rows)
+  gridApi!.setGridOption('pinnedBottomRowData', rows)
 }
 
 function createData(count: number, prefix: string): any[] {
@@ -97,5 +98,5 @@ document.addEventListener('DOMContentLoaded', function () {
 
   fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
     .then(response => response.json())
-    .then((data: IOlympicData[]) => gridApi!.setRowData(data))
+    .then((data: IOlympicData[]) => gridApi!.setGridOption('rowData', data))
 })

@@ -15,7 +15,7 @@ Server-Side Row Selection requires [Row IDs](../server-side-model-configuration/
 Row selection can be enabled in the grid by setting the `rowSelection` property to `single` or `multiple`. The below example demonstrates this property configured as `multiple`, note the following:
 
 - Selecting a single row can be achieved by clicking it. Clicking another row selects it and de-selects any other rows.
-- Selecting multiple rows can be achieved by holding down <kbd>Ctrl</kbd> and mouse clicking the rows. A range of fully loaded rows can be selected by using <kbd>Shift</kbd>.
+- Selecting multiple rows can be achieved by holding down <kbd>^ Ctrl</kbd> and mouse clicking the rows. A range of fully loaded rows can be selected by using <kbd>⇧ Shift</kbd>.
 - The selected rows are preserved when the grid is sorted or filtered and are displayed as selected when scrolled into view.  Select a row, apply a column filter so that the selected row is in the filter results and it will appear as selected in the filter results. If a selected row doesn’t match the applied filter, it will still be selected when the filter is removed.
 
 <grid-example title='Click Selection' name='click-selection' type='generated' options='{ "enterprise": true, "exampleHeight": 590, "extras": ["alasql"], "modules": ["serverside", "rowgrouping"] }'></grid-example>

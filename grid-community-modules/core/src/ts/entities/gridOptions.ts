@@ -55,7 +55,6 @@ import {
     RedoEndedEvent,
     RedoStartedEvent,
     RowClickedEvent,
-    RowDataChangedEvent,
     RowDataUpdatedEvent,
     RowDoubleClickedEvent,
     RowDragEvent,
@@ -105,6 +104,7 @@ import { AdvancedFilterModel } from "../interfaces/advancedFilterModel";
 import { IAdvancedFilterBuilderParams } from "../interfaces/iAdvancedFilterBuilderParams";
 import { AlignedGrid } from "../interfaces/iAlignedGrid";
 import { GridState } from "../interfaces/gridState";
+import { SizeColumnsToContentStrategy, SizeColumnsToFitProvidedWidthStrategy, SizeColumnsToFitGridStrategy } from "../interfaces/autoSizeStrategy";
 
 export interface GridOptions<TData = any> {
 
@@ -237,13 +237,15 @@ export interface GridOptions<TData = any> {
     /** Suppresses auto-sizing columns for columns. In other words, double clicking a column's header's edge will not auto-size. Default: `false` */
     suppressAutoSize?: boolean;
     /**
-     * Number of pixels to add to a column width after the [auto-sizing](/column-sizing/#auto-size-columns) calculation.
+     * Number of pixels to add to a column width after the [auto-sizing](/column-sizing/#auto-size-columns-to-fit-cell-contents) calculation.
      * Set this if you want to add extra room to accommodate (for example) sort icons, or some other dynamic nature of the header.
      * Default: `20`
      */
     autoSizePadding?: number;
     /** Set this to `true` to skip the `headerName` when `autoSize` is called by default. Default: `false` */
     skipHeaderOnAutoSize?: boolean;
+    /** Auto-size the columns when the grid is loaded. Can size to fit the grid width, fit a provided width, or fit the cell contents. */
+    autoSizeStrategy?: SizeColumnsToFitGridStrategy | SizeColumnsToFitProvidedWidthStrategy | SizeColumnsToContentStrategy;
 
     // *** Components *** //
     /** A map of component names to components. */
@@ -339,6 +341,13 @@ export interface GridOptions<TData = any> {
     advancedFilterParent?: HTMLElement | null;
     /** Customise the parameters passed to the Advanced Filter Builder. */
     advancedFilterBuilderParams?: IAdvancedFilterBuilderParams;
+
+    /**
+     * Set the theme color scheme. All themes support 'dark' and 'light' color schemes. 'auto'
+     * Uses the CSS 'prefers-color-scheme' media feature to determine the user's preference.
+     * Some themes support additional colour schemes.
+     */
+    colorScheme?: 'dark' | 'light' | 'auto' | string;
 
     // *** Integrated Charts *** //
     /** Set to `true` to Enable Charts. Default: `false` */
@@ -475,6 +484,14 @@ export interface GridOptions<TData = any> {
     pagination?: boolean;
     /** How many rows to load per page. If `paginationAutoPageSize` is specified, this property is ignored. Default: `100` */
     paginationPageSize?: number;
+    /**
+     * Determines if the page size selector is shown in the pagination panel or not.
+     * Set to an array of values to show the page size selector with custom list of possible page sizes.
+     * Set to `true` to show the page size selector with the default page sizes `[20, 50, 100]`.
+     * Set to `false` to hide the page size selector.
+     * Default: `true`
+     */
+    paginationPageSizeSelector?: number[] | boolean;
     /** Set to `true` so that the number of rows to load per page is automatically adjusted by the grid so each page shows enough rows to just fill the area designated for the grid. If `false`, `paginationPageSize` is used. Default: `false` */
     paginationAutoPageSize?: boolean;
     /** Set to `true` to have pages split children of groups when using Row Grouping or detail rows with Master Detail. Default: `false` */
@@ -590,6 +607,10 @@ export interface GridOptions<TData = any> {
     // *** Row Grouping *** //
 
     /**
+     * @deprecated v31
+     * When enabled, the grid will cast group values to string type. Default: `false` */
+    suppressGroupMaintainValueType?: boolean;
+    /**
      * Specifies how the results of row grouping should be displayed.
      *
      *  The options are:
@@ -695,12 +716,7 @@ export interface GridOptions<TData = any> {
      * Default: `1`
      */
     serverSideInitialRowCount?: number;
-    /**
-     * @deprecated v28 Whether to use Full Store or Partial Store for storing rows. Default: `partial`.
-     * Deprecated in favour of suppressServerSideInfiniteScroll. When false, Partial Store is used. When true,
-     * Full Store is used.
-     */
-    serverSideStoreType?: ServerSideStoreType;
+
     /**
      * When `true`, the Server-side Row Model will suppress Infinite Scrolling and load all the data at the current level.
      * Default: `false`
@@ -743,10 +759,6 @@ export interface GridOptions<TData = any> {
      * Default: `false`
      */
     serverSideFilterOnServer?: boolean;
-    /** @deprecated v28 This property has been deprecated. Use `serverSideSortAllLevels` instead. */
-    serverSideSortingAlwaysResets?: boolean;
-    /** @deprecated v28 This property has been deprecated. Use `serverSideOnlyRefreshFilteredGroups` instead. */
-    serverSideFilteringAlwaysResets?: boolean;
 
     /**
      * Used to split pivot field strings for generating pivot result columns when `pivotResultFields` is provided as part of a `getRows` success.
@@ -929,10 +941,6 @@ export interface GridOptions<TData = any> {
     isGroupOpenByDefault?: (params: IsGroupOpenByDefaultParams<TData>) => boolean;
     /** Allows default sorting of groups. */
     initialGroupOrderComparator?: (params: InitialGroupOrderComparatorParams<TData>) => number;
-    /** @deprecated v28 - Use `processPivotResultColDef` instead */
-    processSecondaryColDef?: (colDef: ColDef<TData>) => void;
-    /** @deprecated v28 - Use `processPivotResultColGroupDef` instead */
-    processSecondaryColGroupDef?: (colGroupDef: ColGroupDef<TData>) => void;
     /** Callback to be used with pivoting, to allow changing the second column definition. */
     processPivotResultColDef?: (colDef: ColDef<TData>) => void;
     /** Callback to be used with pivoting, to allow changing the second column group definition. */
@@ -945,8 +953,6 @@ export interface GridOptions<TData = any> {
     getChildCount?: (dataItem: any) => number;
     /** Allows providing different params for different levels of grouping. */
     getServerSideGroupLevelParams?: (params: GetServerSideGroupLevelParamsParams) => ServerSideGroupLevelParams;
-    /** @deprecated v28 Use `getServerSideGroupLevelParams` instead. */
-    getServerSideStoreParams?: (params: GetServerSideGroupLevelParamsParams) => ServerSideGroupLevelParams;
     /** Allows groups to be open by default. */
     isServerSideGroupOpenByDefault?: (params: IsServerSideGroupOpenByDefaultParams) => boolean;
     /** Allows cancelling transactions. */
@@ -1161,8 +1167,6 @@ export interface GridOptions<TData = any> {
     onPinnedRowDataChanged?(event: PinnedRowDataChangedEvent<TData>): void;
 
     // *** Row Model: Client Side *** //
-    /** @deprecated v28 No longer fired, use onRowDataUpdated instead */
-    onRowDataChanged?(event: RowDataChangedEvent<TData>): void;
     /** Client-Side Row Model only. The client has updated data for the grid by either a) setting new Row Data or b) Applying a Row Transaction. */
     onRowDataUpdated?(event: RowDataUpdatedEvent<TData>): void;
     /** Async transactions have been applied. Contains a list of all transaction results. */
@@ -1216,18 +1220,10 @@ export interface GridOptions<TData = any> {
     /** @deprecated v29.2 */
     onColumnAggFuncChangeRequest?(event: ColumnAggFuncChangeRequestEvent<TData>): void;
 
-    /**
-     * @deprecated v31 The `api` should be obtained via framework component / onGridReady or as returned from `createGrid`.
-     * The Grid Api for interacting with the grid.
-     * Set by the grid on init, set to null on destroy.
-     */
-    api?: GridApi<TData> | null;
-    /**
-     * @deprecated v31 - The `columnApi` has been deprecated and all the methods are now present of the `api`.
-     * The Column Api for interacting with the grid columns.
-     * Set by the grid on init, set to null on destroy.
-     */
-    columnApi?: ColumnApi | null;
+    /** @deprecated Since v31 api is no longer attached to GridOptions. See https://ag-grid.com/javascript-data-grid/grid-interface/#access-the-grid-api for how to access the api in your framework. */
+    api?: never;
+    /** @deprecated Since v31 `columnApi` is deprecated and all methods are now on the grid `api`. See https://ag-grid.com/javascript-data-grid/grid-interface/#access-the-grid-api for how to access the api in your framework. */
+    columnApi?: never;
 }
 
 export type RowGroupingDisplayType = 'singleColumn' | 'multipleColumns' | 'groupRows' | 'custom';
@@ -1333,18 +1329,7 @@ export interface ChartRef {
 
 export interface ChartRefParams<TData = any> extends AgGridCommon<TData, any>, ChartRef { }
 
-export type ServerSideStoreType = 'full' | 'partial';
-
 export interface ServerSideGroupLevelParams {
-    /**
-     * @deprecated
-     * What store type to use.
-     * If missing, then defaults to grid option `serverSideStoreType`.
-     * Deprecated in favor of infiniteScroll.
-     * If suppressInfiniteScroll==false, then Partial Store is used.
-     * If suppressInfiniteScroll==false, then Full Store is used.
-     *  */
-    storeType?: ServerSideStoreType;
     /**
      * Whether to have infinite scroll active or not for the level.
      */

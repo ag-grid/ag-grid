@@ -17,19 +17,16 @@ const GridExample = () => {
     const bottomGridRef = useRef(null);
 
     const defaultColDef = useMemo(() => ({
-        editable: true,
         sortable: true,
         resizable: true,
         filter: true,
         flex: 1,
-        minWidth: 100,
-        width: 100,
+        minWidth: 120,
     }), []);
 
     const columnDefs = useMemo(() => [
         {
             headerName: 'Group 1',
-            headerClass: 'blue',
             groupId: 'Group1',
             children: [
                 { field: 'athlete', pinned: true },
@@ -38,13 +35,10 @@ const GridExample = () => {
                 { field: 'year', columnGroupShow: 'open' },
                 { field: 'date' },
                 { field: 'sport', columnGroupShow: 'open' },
-                { field: 'date' },
-                { field: 'sport', columnGroupShow: 'open' }
             ]
         },
         {
             headerName: 'Group 2',
-            headerClass: 'green',
             groupId: 'Group2',
             children: [
                 { field: 'athlete', pinned: true },
@@ -53,13 +47,15 @@ const GridExample = () => {
                 { field: 'year', columnGroupShow: 'open' },
                 { field: 'date' },
                 { field: 'sport', columnGroupShow: 'open' },
-                { field: 'date' },
-                { field: 'sport', columnGroupShow: 'open' }
             ]
         }
     ], []);
 
     const [rowData, setRowData] = useState([]);
+
+    const autoSizeStrategy = useMemo(() => ({
+        type: 'fitGridWidth'
+    }), []);
 
     const onGridReady = (params) => {
         fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
@@ -86,6 +82,7 @@ const GridExample = () => {
                     onGridReady={onGridReady}
                     onFirstDataRendered={onFirstDataRendered}
                     alignedGrids={[bottomGridRef]}
+                    autoSizeStrategy={autoSizeStrategy}
                 />
             </div>
 

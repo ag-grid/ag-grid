@@ -18,6 +18,7 @@ import { ModuleRegistry } from '@ag-grid-community/core';
 ModuleRegistry.registerModules([ClientSideRowModelModule, RowGroupingModule, MenuModule]);
 
 class FileBrowser extends Component {
+  defaultColDef = { flex: 1 };
 
   colDefs = [{ field: "dateModified" }, { field: "size" }];
 
@@ -36,13 +37,13 @@ class FileBrowser extends Component {
     return (
       <div style={{ height: '100%' }} className="ag-theme-alpine">
         <AgGridReact
+          defaultColDef={this.defaultColDef}
           columnDefs={this.colDefs}
           rowData={this.props.files}
           treeData={true}
           groupDefaultExpanded={-1}
           getDataPath={data => data.filePath}
           autoGroupColumnDef={this.autoGroupColumnDef}
-          onGridReady={params => params.api.sizeColumnsToFit()}
           getContextMenuItems={this.getContextMenuItems}
           getRowId={params => params.data.id}
           onRowDragEnd={this.onRowDragEnd}

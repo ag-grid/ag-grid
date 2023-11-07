@@ -10,6 +10,8 @@ export class VanillaFrameworkOverrides implements IFrameworkOverrides {
 
     public renderingEngine: 'vanilla' | 'react' = "vanilla";
 
+    constructor(private frameworkName: 'javascript' | 'angular' | 'react' | 'vue' | 'solid' = 'javascript') {}
+
     // for Vanilla JS, we use simple timeout
     public setTimeout(action: any, timeout?: any): void {
         window.setTimeout(action, timeout);
@@ -44,5 +46,10 @@ export class VanillaFrameworkOverrides implements IFrameworkOverrides {
 
     isFrameworkComponent(comp: any): boolean {
         return false;
+    }
+
+    getDocLink(path?: string): string {
+        const framework = this.frameworkName === 'solid' ? 'react' : this.frameworkName;
+        return `https://www.ag-grid.com/${framework}-data-grid${path ? `/${path}` : ''}`;
     }
 }

@@ -112,7 +112,7 @@ export class TabGuardCtrl extends BeanStub {
     }
 
     private activateTabGuards(): void {
-        const tabIndex = this.gridOptionsService.getNum('tabIndex') || 0;
+        const tabIndex = this.gridOptionsService.get('tabIndex');
         this.comp.setTabIndex(tabIndex.toString());
     }
 

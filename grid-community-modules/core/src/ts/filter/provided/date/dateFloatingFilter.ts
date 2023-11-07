@@ -58,6 +58,27 @@ export class DateFloatingFilter extends SimpleFloatingFilter {
 
         this.updateDateComponent();
         this.filterModelFormatter.updateParams({ optionsFactory: this.optionsFactory, dateFilterParams: this.filterParams })
+        this.updateCompOnModelChange(params.currentParentModel());
+    }
+
+    private updateCompOnModelChange(model: any): void {
+        // Update the read-only text field
+        const allowEditing = !this.isReadOnly() && this.canWeEditAfterModelFromParentFilter(model);
+        this.setEditable(allowEditing);
+
+        if (allowEditing) {
+            if (model) {
+                const dateModel = model as DateFilterModel;
+                this.dateComp.setDate(parseDateTimeFromString(dateModel.dateFrom));
+            } else {
+                this.dateComp.setDate(null);
+            }
+
+            this.eReadOnlyText.setValue('');
+        } else {
+            this.eReadOnlyText.setValue(this.filterModelFormatter.getModelAsString(model));
+            this.dateComp.setDate(null);
+        }
     }
 
     protected setEditable(editable: boolean): void {
@@ -73,26 +94,7 @@ export class DateFloatingFilter extends SimpleFloatingFilter {
         if (this.isEventFromFloatingFilter(event) || this.isEventFromDataChange(event)) { return; }
 
         super.setLastTypeFromModel(model);
-
-        const allowEditing = !this.isReadOnly() &&
-            this.canWeEditAfterModelFromParentFilter(model);
-
-        this.setEditable(allowEditing);
-
-        if (allowEditing) {
-            if (model) {
-                const dateModel = model as DateFilterModel;
-
-                this.dateComp.setDate(parseDateTimeFromString(dateModel.dateFrom));
-            } else {
-                this.dateComp.setDate(null);
-            }
-
-            this.eReadOnlyText.setValue('');
-        } else {
-            this.eReadOnlyText.setValue(this.filterModelFormatter.getModelAsString(model));
-            this.dateComp.setDate(null);
-        }
+        this.updateCompOnModelChange(model);
     }
 
     private onDateChanged(): void {

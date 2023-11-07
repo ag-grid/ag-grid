@@ -23,7 +23,7 @@ const gridOptions: GridOptions = {
         resizable: true,
     },
     columnDefs: columnDefs,
-    rowData: getData()
+    rowData: getData(),
 }
 
 function onClicked() {
@@ -36,5 +36,4 @@ function onClicked() {
 document.addEventListener('DOMContentLoaded', function () {
     var gridDiv = document.querySelector<HTMLElement>('#myGrid')!
     gridApi = createGrid(gridDiv, gridOptions);
-    gridApi!.sizeColumnsToFit()
 })

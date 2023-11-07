@@ -26,7 +26,7 @@ const VueExample = {
                          :rowData="rowData"
                          
                          :gridOptions="topOptions"
-                         @first-data-rendered="onFirstDataRendered($event)">
+                         @grid-ready="onGridReady($event)">
             </ag-grid-vue>
 
             <ag-grid-vue style="flex: 1 1 auto;"
@@ -49,13 +49,12 @@ const VueExample = {
                 { field: 'age' },
                 { field: 'country' },
                 { field: 'year' },
-                { field: 'date' },
                 { field: 'sport' },
                 {
                     headerName: 'Medals',
                     children: [
                         {
-                            columnGroupShow: 'closed', field: "total",
+                            columnGroupShow: 'closed', colId: "total",
                             valueGetter: "data.gold + data.silver + data.bronze", width: 200
                         },
                         { columnGroupShow: 'open', field: "gold", width: 100 },
@@ -68,22 +67,21 @@ const VueExample = {
             topOptions: {
                 alignedGrids: () => [this.$refs.bottomGrid],
                 defaultColDef: {
-                    editable: true,
                     sortable: true,
                     resizable: true,
                     filter: true,
-                    flex: 1,
                     minWidth: 100
-                }
+                },
+                autoSizeStrategy: {
+                    type: 'fitGridWidth'
+                },
             },
             bottomOptions: {
                 alignedGrids: () => [this.$refs.topGrid],
                 defaultColDef: {
-                    editable: true,
                     sortable: true,
                     resizable: true,
                     filter: true,
-                    flex: 1,
                     minWidth: 100
                 }
             }
@@ -110,9 +108,8 @@ const VueExample = {
             this.topGridApi.setColumnVisible('country', value);
         },
 
-        onFirstDataRendered(params) {
+        onGridReady(params) {
             this.topGridApi = params.api;
-            this.topGridApi.sizeColumnsToFit();
         }
     }
 };

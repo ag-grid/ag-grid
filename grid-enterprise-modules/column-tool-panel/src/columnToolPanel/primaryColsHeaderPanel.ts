@@ -59,7 +59,9 @@ export class PrimaryColsHeaderPanel extends Component {
 
         this.addManagedListener(this.eSelect.getInputElement(), 'click', this.onSelectClicked.bind(this));
 
-        this.eFilterTextField.onValueChange(() => this.onFilterTextChanged());
+        this.eFilterTextField
+            .setAutoComplete(false)
+            .onValueChange(() => this.onFilterTextChanged());
 
         this.addManagedListener(
             this.eFilterTextField.getInputElement(),

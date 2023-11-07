@@ -54,12 +54,7 @@ export class WinningsFilter implements IFilterComp {
     doesFilterPass(params: IDoesFilterPassParams) {
         var { node } = params;
 
-        var value = this.filterParams.valueGetter({
-            ...this.filterParams,
-            data: node.data,
-            getValue: (field) => node.data[field],
-            node,
-        })
+        var value = this.filterParams.getValue(node)
 
         if (this.cbNoFilter.checked) {
             return true

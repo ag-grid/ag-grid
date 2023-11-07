@@ -17,12 +17,12 @@ ModuleRegistry.registerModules([
     GridChartsModule,
 ]);
 
-var columnDefs: ColDef[] = [
+const columnDefs: ColDef[] = [
     { field: "id" },
     { field: "color" },
     { field: "value1" }
 ];
-var defaultColDef = {
+const defaultColDef = {
     flex: 1,
     minWidth: 100,
     sortable: true,
@@ -31,7 +31,7 @@ var defaultColDef = {
     resizable: true
 };
 
-var rowIdSequence = 100;
+let rowIdSequence = 100;
 function createRowBlock() {
     return ['Red', 'Green', 'Blue'].map((color) =>
     ({
@@ -42,21 +42,26 @@ function createRowBlock() {
     )
 }
 
-var leftGridOptions: GridOptions = {
+const baseGridOptions: GridOptions = {
     defaultColDef: defaultColDef,
+    columnDefs: columnDefs,
+    enableCharts: true,
+    enableRangeSelection: true,
+}
+
+const leftGridOptions: GridOptions = {
+   ...baseGridOptions,
     rowData: createRowBlock(),
-    columnDefs: [...columnDefs]
 };
 
-var rightGridOptions: GridOptions = {
-    defaultColDef: defaultColDef,
+const rightGridOptions: GridOptions = {
+    ...baseGridOptions,
     rowData: createRowBlock(),
-    columnDefs: [...columnDefs]
 };
 
 
 function loadGrid(side: string) {
-    var grid = document.querySelector<HTMLElement>('#e' + side + 'Grid')!;
+    const grid = document.querySelector<HTMLElement>('#e' + side + 'Grid')!;
     let modules = side === 'Left' ? [SetFilterModule, ClipboardModule] : [ExcelExportModule];
     createGrid(grid, side === 'Left' ? leftGridOptions : rightGridOptions, { modules: modules });
 }

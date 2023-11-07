@@ -22,7 +22,7 @@ const gridOptions: GridOptions<IOlympicData> = {
   ],
 
   defaultColDef: {
-    width: 150,
+    flex: 1,
   },
 
   // default ColGroupDef, get applied to every column group
@@ -35,10 +35,6 @@ const gridOptions: GridOptions<IOlympicData> = {
   },
 
   rowData: null,
-
-  onGridReady: (params) => {
-    params.api.sizeColumnsToFit()
-  },
 }
 
 // setup the grid after the page has finished loading
@@ -48,5 +44,5 @@ document.addEventListener('DOMContentLoaded', function () {
 
   fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
     .then(response => response.json())
-    .then((data: IOlympicData[]) => gridApi!.setRowData(data))
+    .then((data: IOlympicData[]) => gridApi!.setGridOption('rowData', data))
 })

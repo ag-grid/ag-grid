@@ -7,8 +7,12 @@ $toolbar-width: 1024px;
     width: 100%;
     position: relative;
 
-    background: var(--toolbar-background);
-    border-bottom: 1px solid var(--border-color);
+    background-color: var(--toolbar-background);
+    
+    #{$darkmode-selector} {
+        background: #121f29;
+        border-bottom: 0.5px solid #394755;
+    }
 }
 
 .controlsContainer {

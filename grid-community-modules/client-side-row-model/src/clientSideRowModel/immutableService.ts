@@ -34,7 +34,7 @@ export class ImmutableService extends BeanStub implements IImmutableService {
         const getRowIdProvided = this.gridOptionsService.exists('getRowId');        
         // this property is a backwards compatibility property, for those who want
         // the old behaviour of Row ID's but NOT Immutable Data.
-        const resetRowDataOnUpdate = this.gridOptionsService.is('resetRowDataOnUpdate');
+        const resetRowDataOnUpdate = this.gridOptionsService.get('resetRowDataOnUpdate');
 
         if (resetRowDataOnUpdate) { return false; }
         return getRowIdProvided;
@@ -70,7 +70,7 @@ export class ImmutableService extends BeanStub implements IImmutableService {
 
         const existingNodesMap: { [id: string]: RowNode | undefined } = this.clientSideRowModel.getCopyOfNodesMap();
 
-        const suppressSortOrder = this.gridOptionsService.is('suppressMaintainUnsortedOrder');
+        const suppressSortOrder = this.gridOptionsService.get('suppressMaintainUnsortedOrder');
         const orderMap: { [id: string]: number } | undefined = suppressSortOrder ? undefined : {};
 
         if (_.exists(rowData)) {

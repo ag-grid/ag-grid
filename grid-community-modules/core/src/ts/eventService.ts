@@ -132,7 +132,11 @@ export class EventService implements IEventEmitter {
             }
         }
 
-        const processEventListeners = (listeners: Set<Function>) => listeners.forEach(listener => {
+        const processEventListeners = (listeners: Set<Function>, originalListeners: Set<Function>) => listeners.forEach(listener => {
+            if (!originalListeners.has(listener)) {
+                // A listener could have been removed by a previously processed listener. In this case we don't want to call 
+                return;
+            }
             if (async) {
                 this.dispatchAsync(() => listener(event));
             } else {
@@ -140,10 +144,11 @@ export class EventService implements IEventEmitter {
             }
         });
 
+        const originalListeners = this.getListeners(eventType, async, false) ?? new Set();
         // create a shallow copy to prevent listeners cyclically adding more listeners to capture this event
-        const listeners = new Set(this.getListeners(eventType, async, false));
+        const listeners = new Set(originalListeners);
         if (listeners.size > 0) {
-            processEventListeners(listeners);
+            processEventListeners(listeners, originalListeners);
         }
 
         const globalListeners = new Set(async ? this.globalAsyncListeners : this.globalSyncListeners);

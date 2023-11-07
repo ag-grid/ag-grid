@@ -6,6 +6,7 @@ import {
     ISetFilterParams,
     KeyCreatorParams,
     ValueFormatterParams,
+    FirstDataRenderedEvent,
 } from '@ag-grid-community/core';
 
 let gridApi: GridApi<IOlympicData>;
@@ -100,8 +101,8 @@ function setCountriesToAll() {
     gridApi!.onFilterChanged()
 }
 
-function onFirstDataRendered() {
-    gridApi!.getToolPanelInstance('filters')!.expandFilters()
+function onFirstDataRendered(params: FirstDataRenderedEvent) {
+    params.api.getToolPanelInstance('filters')!.expandFilters()
 }
 
 // setup the grid after the page has finished loading
@@ -113,6 +114,6 @@ document.addEventListener('DOMContentLoaded', function () {
         .then(response => response.json())
         .then(function (data) {
             patchData(data)
-            gridApi!.setRowData(data)
+            gridApi!.setGridOption('rowData', data)
         })
 })

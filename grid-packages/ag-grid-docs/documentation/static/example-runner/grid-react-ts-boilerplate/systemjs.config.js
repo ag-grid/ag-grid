@@ -78,6 +78,14 @@
                 main: './lib/main.mjs',
                 defaultExtension: 'mjs',
             },
+            'ag-charts-community': {
+                main: './dist/main.cjs.js',
+                defaultExtension: 'js'
+            },
+            'ag-charts-enterprise': {
+                main: './dist/main.cjs.js',
+                defaultExtension: 'js'
+            },
         },
         meta: {
             typescript: {

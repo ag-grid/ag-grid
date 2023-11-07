@@ -24,16 +24,16 @@ export class GridHeaderDropZones extends Component {
     private postConstruct(): void {
         this.setGui(this.createNorthPanel());
 
-        this.addManagedListener(this.eventService, Events.EVENT_COLUMN_ROW_GROUP_CHANGED, this.onRowGroupChanged.bind(this));
-        this.addManagedListener(this.eventService, Events.EVENT_NEW_COLUMNS_LOADED, this.onRowGroupChanged.bind(this));
-        this.addManagedPropertyListener('rowGroupPanelShow', this.onRowGroupChanged.bind(this));
+        this.addManagedListener(this.eventService, Events.EVENT_COLUMN_ROW_GROUP_CHANGED, () => this.onRowGroupChanged());
+        this.addManagedListener(this.eventService, Events.EVENT_NEW_COLUMNS_LOADED, () => this.onRowGroupChanged());
+        this.addManagedPropertyListener('rowGroupPanelShow', () => this.onRowGroupChanged());
+        this.addManagedPropertyListener('pivotPanelShow', () => this.onPivotPanelShow());
 
         this.onRowGroupChanged();
     }
 
     private createNorthPanel(): HTMLElement {
         const topPanelGui = document.createElement('div');
-        const dropPanelVisibleListener = this.onDropPanelVisible.bind(this);
 
         topPanelGui.classList.add('ag-column-drop-wrapper');
         _.setAriaRole(topPanelGui, 'presentation');
@@ -47,8 +47,8 @@ export class GridHeaderDropZones extends Component {
         topPanelGui.appendChild(this.rowGroupComp.getGui());
         topPanelGui.appendChild(this.pivotComp.getGui());
 
-        this.addManagedListener(this.rowGroupComp, Component.EVENT_DISPLAYED_CHANGED, dropPanelVisibleListener);
-        this.addManagedListener(this.pivotComp, Component.EVENT_DISPLAYED_CHANGED, dropPanelVisibleListener);
+        this.addManagedListener(this.rowGroupComp, Component.EVENT_DISPLAYED_CHANGED, () => this.onDropPanelVisible());
+        this.addManagedListener(this.pivotComp, Component.EVENT_DISPLAYED_CHANGED, () => this.onDropPanelVisible());
 
         this.onDropPanelVisible();
 
@@ -78,4 +78,20 @@ export class GridHeaderDropZones extends Component {
         }
     }
 
+    private onPivotPanelShow() {
+        if (!this.pivotComp) {
+            return;
+        }
+
+        const pivotPanelShow = this.gridOptionsService.get('pivotPanelShow');
+
+        if (pivotPanelShow === 'always') {
+            this.pivotComp.setDisplayed(true);
+        } else if (pivotPanelShow === 'onlyWhenPivoting') {
+            const pivoting = this.columnModel.isPivotActive();
+            this.pivotComp.setDisplayed(pivoting);
+        } else {
+            this.pivotComp.setDisplayed(false);
+        }
+    }
 }

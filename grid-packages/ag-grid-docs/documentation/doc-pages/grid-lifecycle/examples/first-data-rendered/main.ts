@@ -38,10 +38,13 @@ const gridOptions: GridOptions = {
         minWidth: 150,
     },
     suppressLoadingOverlay: true,
+    autoSizeStrategy: {
+        type: 'fitCellContents',
+        colIds: ['athleteDescription']
+    },
     onGridReady: (params: GridReadyEvent<TAthlete>) => {
         const column = params.api.getColumn('athleteDescription');
         if (column) {
-            params.api.autoSizeColumns([column.getId()]);
             setCol1SizeInfoOnGridReady(column.getActualWidth());
         }
 
@@ -51,7 +54,6 @@ const gridOptions: GridOptions = {
         const column = params.api.getColumn('athleteDescription');
 
         if (column) {
-            params.api.autoSizeColumns([column.getId()]);
             setCol1SizeInfOnFirstDataRendered(column.getActualWidth());
         }
 
@@ -60,7 +62,7 @@ const gridOptions: GridOptions = {
 };
 
 function loadGridData() {
-    gridApi?.setRowData(getData());
+    gridApi?.setGridOption('rowData', getData());
     document.querySelector<HTMLElement>('#loadGridDataButton')!.style.display = 'none';
 }
 

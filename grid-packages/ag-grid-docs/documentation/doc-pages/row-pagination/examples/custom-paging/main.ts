@@ -78,7 +78,8 @@ const gridOptions: GridOptions<IOlympicData> = {
   pivotPanelShow: 'always',
   columnDefs: columnDefs,
   pagination: true,
-  paginationPageSize: 10,
+  paginationPageSize: 500,
+  paginationPageSizeSelector: [200, 500, 1000],
   autoGroupColumnDef: autoGroupColumnDef,
   onFirstDataRendered: onFirstDataRendered,
   paginationNumberFormatter: (params: PaginationNumberFormatterParams) => {
@@ -90,11 +91,6 @@ function onFirstDataRendered(params: FirstDataRenderedEvent) {
   params.api.paginationGoToPage(4)
 }
 
-function onPageSizeChanged() {
-  var value = (document.getElementById('page-size') as HTMLInputElement).value
-  gridApi!.paginationSetPageSize(Number(value))
-}
-
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
   var gridDiv = document.querySelector<HTMLElement>('#myGrid')!
@@ -103,6 +99,6 @@ document.addEventListener('DOMContentLoaded', function () {
   fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
     .then(response => response.json())
     .then(function (data) {
-      gridApi!.setRowData(data)
+      gridApi!.setGridOption('rowData', data)
     })
 })

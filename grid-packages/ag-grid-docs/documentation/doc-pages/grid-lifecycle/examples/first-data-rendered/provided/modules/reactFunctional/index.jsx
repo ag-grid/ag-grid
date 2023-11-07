@@ -36,13 +36,17 @@ const GridExample = () => {
         }
     }, []);
 
+    const autoSizeStrategy = useMemo(() => ({
+        type: 'fitCellContents',
+        colIds: ['athleteDescription']
+    }), []);
+
     const onGridReady = useCallback((params) => {
         const {api} = params;
         setGridApi(api);
 
         const column = api.getColumn('athleteDescription');
         if (column) {
-            api.autoSizeColumns([column.getId()]);
             setCol1SizeInfoOnGridReady(`${column.getActualWidth()}px`);
         }
 
@@ -56,7 +60,6 @@ const GridExample = () => {
 
         const column = api.getColumn('athleteDescription');
         if (column) {
-            api.autoSizeColumns([column.getId()]);
             setCol1SizeInfOnFirstDataRendered(`${column.getActualWidth()}px`);
         }
 
@@ -64,7 +67,7 @@ const GridExample = () => {
     }, []);
 
     const loadGridData = useCallback(() => {
-        gridApi.setRowData(getData());
+        gridApi.setGridOption('rowData', getData());
     }, [gridApi])
 
     return (
@@ -83,6 +86,7 @@ const GridExample = () => {
                         columnDefs={columnDefs}
                         defaultColDef={defaultColDef}
                         suppressLoadingOverlay={true}
+                        autoSizeStrategy={autoSizeStrategy}
                         onGridReady={onGridReady}
                         onFirstDataRendered={onFirstDataRendered}
                     />

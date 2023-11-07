@@ -1,4 +1,4 @@
-import { GridApi, createGrid, GridOptions, GetGroupIncludeFooterParams } from '@ag-grid-community/core';
+import { GridApi, createGrid, GridOptions, GetGroupIncludeFooterParams, FirstDataRenderedEvent } from '@ag-grid-community/core';
 
 let gridApi: GridApi;
 
@@ -27,10 +27,10 @@ const gridOptions: GridOptions = {
     return false;
   },
   animateRows: true,
-  onFirstDataRendered: () => {
-    gridApi!.forEachNode((node) => {
+  onFirstDataRendered: (params: FirstDataRenderedEvent) => {
+    params.api.forEachNode((node) => {
       if (node.key === 'France' || node.key === 'South Korea') {
-        gridApi!.setRowNodeExpanded(node, true);
+        params.api.setRowNodeExpanded(node, true);
       }
     });
   }
@@ -43,5 +43,5 @@ document.addEventListener('DOMContentLoaded', function () {
 
   fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
     .then(response => response.json())
-    .then((data: IOlympicData[]) => gridApi!.setRowData(data))
+    .then((data: IOlympicData[]) => gridApi!.setGridOption('rowData', data))
 })

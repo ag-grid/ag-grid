@@ -45,18 +45,20 @@ Below shows an example using value parsers. The following can be noted:
 
 ## Use Value Parser for Import
 
-Sometimes you may want to use the value parser when performing other grid operations apart from editing that can update values. This is possible by setting the column definition property `useValueParserForImport = true`.
+By default, the grid uses the value parser when performing other grid operations that can update values.
+
+This behaviour can be prevented by setting the column definition property `useValueParserForImport = false` (note this does not apply to editing).
 
 <api-documentation source='column-properties/properties.json' section="editing" names='["useValueParserForImport"]' ></api-documentation>
 
-This applies to the following features:
+Using the value parser for import applies to the following features:
 - [Paste](/clipboard/#processing-pasted-data)
 - [Fill Handle](/range-selection-fill-handle/)
 - [Copy Range Down](/range-selection/#copy-range-down)
 
-If `useValueParserForImport` is enabled, it is recommended to also [Use a Value Formatter for Export](/value-formatters/#use-value-formatter-for-export), where a [Value Formatter](/value-formatters/) is defined that does the reverse of the value parser.
+Using a value parser for import is normally used in conjunction with [Using a Value Formatter for Export](/value-formatters/#use-value-formatter-for-export), where a [Value Formatter](/value-formatters/) is defined that does the reverse of the value parser.
 
-The following example demonstrates using the value parser for import with each of the supported features mentioned above. `useValueFormatterForExport` is also enabled to ensure the features work as expected.
+The following example demonstrates using the value parser for import with each of the supported features mentioned above.
 
 <grid-example title='Use Value Parser for Import' name='use-value-parser-for-import' type='generated' options='{ "enterprise": true, "modules": ["clientside", "range", "clipboard"] }'></grid-example>
 

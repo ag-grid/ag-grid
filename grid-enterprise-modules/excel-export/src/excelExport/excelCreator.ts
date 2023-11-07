@@ -237,6 +237,7 @@ export class ExcelCreator extends BaseCreator<ExcelRow[], SerializingSession, Ex
             gridOptionsService,
             valueFormatterService,
             valueParserService,
+            suppressRowOutline: params.suppressRowOutline || params.skipRowGroups,
             headerRowHeight: params.headerRowHeight || params.rowHeight,
             baseExcelStyles: this.gridOptionsService.get('excelStyles') || [],
             styleLinker: this.styleLinker.bind(this)
@@ -306,7 +307,7 @@ export class ExcelCreator extends BaseCreator<ExcelRow[], SerializingSession, Ex
     }
 
     public isExportSuppressed():boolean {
-        return this.gridOptionsService.is('suppressExcelExport');
+        return this.gridOptionsService.get('suppressExcelExport');
     }
 
     private setExportMode(exportMode: string): void {

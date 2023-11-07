@@ -41,13 +41,11 @@ export class ToolPanelWrapper extends Component {
         return this.toolPanelId;
     }
 
-    public setToolPanelDef(toolPanelDef: ToolPanelDef): void {
+    public setToolPanelDef(toolPanelDef: ToolPanelDef, params: WithoutGridCommon<IToolPanelParams>): void {
         const { id, minWidth, maxWidth, width } = toolPanelDef;
 
         this.toolPanelId = id;
         this.width = width;
-
-        const params: WithoutGridCommon<IToolPanelParams> = {};
 
         const compDetails = this.userComponentFactory.getToolPanelCompDetails(toolPanelDef, params);
         const componentPromise = compDetails.newAgStackInstance();
@@ -85,7 +83,7 @@ export class ToolPanelWrapper extends Component {
     }
 
     public setResizerSizerSide(side: 'right' | 'left') {
-        const isRtl = this.gridOptionsService.is('enableRtl');
+        const isRtl = this.gridOptionsService.get('enableRtl');
         const isLeft = side === 'left';
         const inverted = isRtl ? isLeft : !isLeft;
 

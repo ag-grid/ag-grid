@@ -5,9 +5,11 @@ import { Column, ColumnPinnedType } from "../../../entities/column";
 import { setDisplayed } from "../../../utils/dom";
 import { TouchListener } from "../../../widgets/touchListener";
 import { HorizontalResizeService } from "../../common/horizontalResizeService";
+import { IHeaderResizeFeature } from "../abstractCell/abstractHeaderCellCtrl";
 import { HeaderCellCtrl, IHeaderCellComp } from "./headerCellCtrl";
 
-export class ResizeFeature extends BeanStub {
+
+export class ResizeFeature extends BeanStub implements IHeaderResizeFeature {
 
     @Autowired('horizontalResizeService') private horizontalResizeService: HorizontalResizeService;
     @Autowired('columnModel') private columnModel: ColumnModel;
@@ -39,8 +41,6 @@ export class ResizeFeature extends BeanStub {
 
     @PostConstruct
     private postConstruct(): void {
-        const colDef = this.column.getColDef();
-
         const destroyResizeFuncs: (() => void)[] = [];
 
         let canResize: boolean;
@@ -60,7 +60,7 @@ export class ResizeFeature extends BeanStub {
             destroyResizeFuncs.push(finishedWithResizeFunc);
 
             if (canAutosize) {
-                const skipHeaderOnAutoSize = this.gridOptionsService.is('skipHeaderOnAutoSize');
+                const skipHeaderOnAutoSize = this.gridOptionsService.get('skipHeaderOnAutoSize');
 
                 const autoSizeColListener = () => {
                     this.columnModel.autoSizeColumn(this.column, skipHeaderOnAutoSize, "uiColumnResized");
@@ -70,7 +70,7 @@ export class ResizeFeature extends BeanStub {
                 const touchListener: TouchListener = new TouchListener(this.eResize);
                 touchListener.addEventListener(TouchListener.EVENT_DOUBLE_TAP, autoSizeColListener);
 
-                this.addDestroyFunc(() => {
+                destroyResizeFuncs.push(() => {
                     this.eResize.removeEventListener('dblclick', autoSizeColListener);
                     touchListener.removeEventListener(TouchListener.EVENT_DOUBLE_TAP, autoSizeColListener);
                     touchListener.destroy();
@@ -85,7 +85,7 @@ export class ResizeFeature extends BeanStub {
 
         const refresh = () => {
             const resize = this.column.isResizable();
-            const autoSize = !this.gridOptionsService.is('suppressAutoSize') && !colDef.suppressAutoSize;
+            const autoSize = !this.gridOptionsService.get('suppressAutoSize') && !this.column.getColDef().suppressAutoSize;
             const propertyChange = resize !== canResize || autoSize !== canAutosize;
             if (propertyChange) {
                 canResize = resize;
@@ -106,7 +106,7 @@ export class ResizeFeature extends BeanStub {
         this.columnModel.setColumnWidths(columnWidths, this.resizeWithShiftKey, finished, "uiColumnResized");
 
         if (finished) {
-            this.comp.addOrRemoveCssClass('ag-column-resizing', false);
+            this.toggleColumnResizing(false);
         }
     }
 
@@ -114,7 +114,11 @@ export class ResizeFeature extends BeanStub {
         this.resizeStartWidth = this.column.getActualWidth();
         this.resizeWithShiftKey = shiftKey;
 
-        this.comp.addOrRemoveCssClass('ag-column-resizing', true);
+        this.toggleColumnResizing(true);
+    }
+
+    public toggleColumnResizing(resizing: boolean): void {
+        this.comp.addOrRemoveCssClass('ag-column-resizing', resizing);
     }
 
     // optionally inverts the drag, depending on pinned and RTL
@@ -125,7 +129,7 @@ export class ResizeFeature extends BeanStub {
         const notPinningLeft = this.pinned !== 'left';
         const pinningRight = this.pinned === 'right';
 
-        if (this.gridOptionsService.is('enableRtl')) {
+        if (this.gridOptionsService.get('enableRtl')) {
             // for RTL, dragging left makes the col bigger, except when pinning left
             if (notPinningLeft) {
                 result *= -1;

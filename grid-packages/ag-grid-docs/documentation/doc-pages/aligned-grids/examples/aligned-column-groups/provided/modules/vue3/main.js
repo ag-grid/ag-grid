@@ -16,7 +16,6 @@ const VueExample = {
                 class="ag-theme-alpine"
                 ref="topGrid"
                 :gridOptions="topOptions"
-                @first-data-rendered="onFirstDataRendered($event)"
                 :columnDefs="columnDefs"
                 :defaultColDef="defaultColDef"
                 :rowData="rowData">
@@ -41,55 +40,50 @@ const VueExample = {
             topOptions: {
                 alignedGrids: () => [this.$refs.bottomGrid],
                 defaultColDef: {
-                    editable: true,
                     sortable: true,
                     resizable: true,
                     filter: true,
                     flex: 1,
-                    minWidth: 100
-                }
+                    minWidth: 120
+                },
+                autoSizeStrategy: {
+                    type: 'fitGridWidth'
+                },
             },
             bottomOptions: {
                 alignedGrids: () => [this.$refs.topGrid],
                 defaultColDef: {
-                    editable: true,
                     sortable: true,
                     resizable: true,
                     filter: true,
                     flex: 1,
-                    minWidth: 100
+                    minWidth: 120
                 }
             },
             topGridApi: null,
             columnDefs: [
                 {
                     headerName: 'Group 1',
-                    headerClass: 'blue',
                     groupId: 'Group1',
                     children: [
-                        { field: 'athlete', pinned: true, width: 100 },
-                        { field: 'age', pinned: true, columnGroupShow: 'open', width: 100 },
-                        { field: 'country', width: 100 },
-                        { field: 'year', columnGroupShow: 'open', width: 100 },
-                        { field: 'date', width: 100 },
-                        { field: 'sport', columnGroupShow: 'open', width: 100 },
-                        { field: 'date', width: 100 },
-                        { field: 'sport', columnGroupShow: 'open', width: 100 }
+                        { field: 'athlete', pinned: true, },
+                        { field: 'age', pinned: true, columnGroupShow: 'open', },
+                        { field: 'country', },
+                        { field: 'year', columnGroupShow: 'open', },
+                        { field: 'date', },
+                        { field: 'sport', columnGroupShow: 'open', },
                     ]
                 },
                 {
                     headerName: 'Group 2',
-                    headerClass: 'green',
                     groupId: 'Group2',
                     children: [
-                        { field: 'athlete', pinned: true, width: 100 },
-                        { field: 'age', pinned: true, columnGroupShow: 'open', width: 100 },
-                        { field: 'country', width: 100 },
-                        { field: 'year', columnGroupShow: 'open', width: 100 },
-                        { field: 'date', width: 100 },
-                        { field: 'sport', columnGroupShow: 'open', width: 100 },
-                        { field: 'date', width: 100 },
-                        { field: 'sport', columnGroupShow: 'open', width: 100 }
+                        { field: 'athlete', pinned: true, },
+                        { field: 'age', pinned: true, columnGroupShow: 'open', },
+                        { field: 'country', },
+                        { field: 'year', columnGroupShow: 'open', },
+                        { field: 'date', },
+                        { field: 'sport', columnGroupShow: 'open', },
                     ]
                 }
             ],
@@ -112,11 +106,6 @@ const VueExample = {
                 this.topGridApi.moveColumnByIndex(11, 4);
             });
     },
-    methods: {
-        onFirstDataRendered(params) {
-            this.topGridApi.sizeColumnsToFit();
-        }
-    }
 };
 
 createApp(VueExample).mount('#app');

@@ -211,10 +211,12 @@ export class ChartController extends BeanStub {
         this.raiseChartOptionsChangedEvent();
     }
 
-    public setChartThemeName(chartThemeName: string): void {
+    public setChartThemeName(chartThemeName: string, silent?: boolean): void {
         this.model.chartThemeName = chartThemeName;
-        this.raiseChartModelUpdateEvent();
-        this.raiseChartOptionsChangedEvent();
+        if (!silent) {
+            this.raiseChartModelUpdateEvent();
+            this.raiseChartOptionsChangedEvent();
+        }
     }
 
     public getChartThemeName(): string {
@@ -233,7 +235,7 @@ export class ChartController extends BeanStub {
         return this.model.isGrouping();
     }
 
-    private isCrossFilterChart(): boolean {
+    public isCrossFilterChart(): boolean {
         return this.model.crossFiltering;
     }
 

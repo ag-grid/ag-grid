@@ -63,7 +63,7 @@ document.addEventListener("DOMContentLoaded", () => {
   fetch("https://www.ag-grid.com/example-assets/small-olympic-winners.json")
     .then(response => response.json())
     .then(data =>
-      gridApi!.setRowData(
+      gridApi!.setGridOption('rowData', 
         data.filter((rec: any) => rec.country != null)
       )
     )

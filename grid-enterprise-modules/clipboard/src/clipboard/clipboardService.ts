@@ -114,7 +114,7 @@ export class ClipboardService extends BeanStub implements IClipboardService {
         this.logger.log('pasteFromClipboard');
 
         // Method 1 - native clipboard API, available in modern chrome browsers
-        const allowNavigator = !this.gridOptionsService.is('suppressClipboardApi');
+        const allowNavigator = !this.gridOptionsService.get('suppressClipboardApi');
         // Some browsers (Firefox) do not allow Web Applications to read from
         // the clipboard so verify if not only the ClipboardAPI is available,
         // but also if the `readText` method is public.
@@ -195,7 +195,7 @@ export class ClipboardService extends BeanStub implements IClipboardService {
 
         if (parsedData == null) { return; }
 
-        if (this.gridOptionsService.is('suppressLastEmptyLineOnPaste')) {
+        if (this.gridOptionsService.get('suppressLastEmptyLineOnPaste')) {
             this.removeLastLineIfBlank(parsedData!);
         }
 
@@ -316,7 +316,7 @@ export class ClipboardService extends BeanStub implements IClipboardService {
         let changedPath: ChangedPath | undefined;
 
         if (this.clientSideRowModel) {
-            const onlyChangedColumns = this.gridOptionsService.is('aggregateOnlyChangedColumns');
+            const onlyChangedColumns = this.gridOptionsService.get('aggregateOnlyChangedColumns');
             changedPath = new ChangedPath(onlyChangedColumns, this.clientSideRowModel.getRootNode());
         }
 
@@ -561,7 +561,7 @@ export class ClipboardService extends BeanStub implements IClipboardService {
 
         // if doing CSRM and NOT tree data, then it means groups are aggregates, which are read only,
         // so we should skip them when doing paste operations.
-        const skipGroupRows = this.clientSideRowModel != null && !this.gridOptionsService.is('enableGroupEdit') && !this.gridOptionsService.is('treeData');
+        const skipGroupRows = this.clientSideRowModel != null && !this.gridOptionsService.get('enableGroupEdit') && !this.gridOptionsService.get('treeData');
 
         const getNextGoodRowNode = () => {
             while (true) {
@@ -629,7 +629,7 @@ export class ClipboardService extends BeanStub implements IClipboardService {
     }
 
     public cutToClipboard(params: IClipboardCopyParams = {}, source: 'api' | 'ui' | 'contextMenu' = 'api'): void {
-        if (this.gridOptionsService.is('suppressCutToClipboard')) { return; }
+        if (this.gridOptionsService.get('suppressCutToClipboard')) { return; }
 
         const startEvent: WithoutGridCommon<CutStartEvent> = {
             type: Events.EVENT_CUT_START,
@@ -653,15 +653,15 @@ export class ClipboardService extends BeanStub implements IClipboardService {
 
         // don't override 'includeHeaders' if it has been explicitly set to 'false'
         if (includeHeaders == null) {
-            includeHeaders = this.gridOptionsService.is('copyHeadersToClipboard');
+            includeHeaders = this.gridOptionsService.get('copyHeadersToClipboard');
         }
 
         if (includeGroupHeaders == null) {
-            includeGroupHeaders = this.gridOptionsService.is('copyGroupHeadersToClipboard');
+            includeGroupHeaders = this.gridOptionsService.get('copyGroupHeadersToClipboard');
         }
 
         const copyParams = { includeHeaders, includeGroupHeaders };
-        const shouldCopyRows = !this.gridOptionsService.is('suppressCopyRowsToClipboard');
+        const shouldCopyRows = !this.gridOptionsService.get('suppressCopyRowsToClipboard');
 
 
         let cellClearType: CellClearType | null = null;
@@ -717,7 +717,7 @@ export class ClipboardService extends BeanStub implements IClipboardService {
     }
 
     private shouldSkipSingleCellRange(): boolean {
-        return this.gridOptionsService.is('suppressCopySingleCellRanges') && !this.rangeService.isMoreThanOneCell();
+        return this.gridOptionsService.get('suppressCopySingleCellRanges') && !this.rangeService.isMoreThanOneCell();
     }
 
     private iterateActiveRanges(onlyFirst: boolean, rowCallback: RowCallback, columnCallback?: ColumnCallback): void {
@@ -972,9 +972,9 @@ export class ClipboardService extends BeanStub implements IClipboardService {
 
             return func(params);
         }
-        if (canParse && column.getColDef().useValueParserForImport) {
+        if (canParse && column.getColDef().useValueParserForImport !== false) {
             return this.valueParserService.parseValue(column, rowNode ?? null, value, this.valueService.getValue(column, rowNode));
-        } else if (canFormat && column.getColDef().useValueFormatterForExport) {
+        } else if (canFormat && column.getColDef().useValueFormatterForExport !== false) {
             return this.valueFormatterService.formatValue(column, rowNode ?? null, value) ?? value as any;
         }
 
@@ -991,7 +991,7 @@ export class ClipboardService extends BeanStub implements IClipboardService {
         }
 
         // method 2 - native clipboard API, available in modern chrome browsers
-        const allowNavigator = !this.gridOptionsService.is('suppressClipboardApi');
+        const allowNavigator = !this.gridOptionsService.get('suppressClipboardApi');
         if (allowNavigator && navigator.clipboard) {
             navigator.clipboard.writeText(data).catch((e) => {
                 _.doOnce(() => {

@@ -3,7 +3,7 @@ import { HttpClient } from '@angular/common/http';
 
 import "@ag-grid-community/styles/ag-grid.css";
 import "@ag-grid-community/styles/ag-theme-alpine.css";
-import { ColDef, ColGroupDef, FirstDataRenderedEvent, GridOptions } from '@ag-grid-community/core';
+import { ColDef, ColGroupDef, GridOptions } from '@ag-grid-community/core';
 
 
 import { ModuleRegistry } from '@ag-grid-community/core';
@@ -23,8 +23,7 @@ ModuleRegistry.registerModules([ClientSideRowModelModule])
                 [rowData]='rowData'
                 [gridOptions]='topOptions'
                 [columnDefs]='columnDefs'
-                [alignedGrids]="[bottomGrid]"
-                (firstDataRendered)='onFirstDataRendered($event)'>
+                [alignedGrids]="[bottomGrid]">
         </ag-grid-angular>
 
         <div style='height: 5%'></div>
@@ -36,8 +35,7 @@ ModuleRegistry.registerModules([ClientSideRowModelModule])
                 [rowData]='rowData'
                 [gridOptions]='bottomOptions'
                 [columnDefs]='columnDefs'
-                [alignedGrids]="[topGrid]"
-                (firstDataRendered)='onFirstDataRendered($event)'>
+                [alignedGrids]="[topGrid]">
         </ag-grid-angular>
     `
 })
@@ -49,15 +47,18 @@ export class AppComponent {
             sortable: true,
             resizable: true,
             flex: 1,
-            minWidth: 100
-        }
+            minWidth: 120
+        },
+        autoSizeStrategy: {
+            type: 'fitGridWidth'
+        },
     };
     bottomOptions: GridOptions = {
         defaultColDef: {
             sortable: true,
             resizable: true,
             flex: 1,
-            minWidth: 100
+            minWidth: 120
         }
     };
 
@@ -67,7 +68,6 @@ export class AppComponent {
         this.columnDefs = [
             {
                 headerName: 'Group 1',
-                headerClass: 'blue',
                 groupId: 'Group1',
                 children: [
                     { field: 'athlete', pinned: true, width: 100 },
@@ -82,7 +82,6 @@ export class AppComponent {
             },
             {
                 headerName: 'Group 2',
-                headerClass: 'green',
                 groupId: 'Group2',
                 children: [
                     { field: 'athlete', pinned: true, width: 100 },
@@ -107,9 +106,5 @@ export class AppComponent {
                 this.topGrid.api.moveColumnByIndex(11, 4);
                 this.topGrid.api.moveColumnByIndex(11, 4);
             });
-    }
-
-    onFirstDataRendered(params: FirstDataRenderedEvent) {
-        this.topGrid.api.sizeColumnsToFit();
     }
 }

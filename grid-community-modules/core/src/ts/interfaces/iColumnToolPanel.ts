@@ -1,4 +1,5 @@
 import { ColDef, ColGroupDef } from '../entities/colDef';
+import { ColumnToolPanelState } from './gridState';
 import { IToolPanel } from './iToolPanel';
 
 export interface IColumnToolPanel extends IToolPanel {
@@ -10,4 +11,5 @@ export interface IColumnToolPanel extends IToolPanel {
     setRowGroupsSectionVisible(visible: boolean): void;
     setValuesSectionVisible(visible: boolean): void;
     setPivotSectionVisible(visible: boolean): void;
+    getState(): ColumnToolPanelState;
 }

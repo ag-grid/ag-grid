@@ -91,18 +91,20 @@ import { StandardMenuFactory } from "./headerRendering/cells/column/standardMenu
 import { SortIndicatorComp } from "./headerRendering/cells/column/sortIndicatorComp";
 import { GridOptionsService } from "./gridOptionsService";
 import { LocaleService } from "./localeService";
-import { GridOptionsValidator } from "./gridOptionsValidator";
 import { FakeVScrollComp } from "./gridBodyComp/fakeVScrollComp";
 import { DataTypeService } from "./columns/dataTypeService";
 import { AgInputDateField } from "./widgets/agInputDateField";
 import { ValueParserService } from "./valueService/valueParserService";
 import { AgAutocomplete } from "./widgets/agAutocomplete";
 import { QuickFilterService } from "./filter/quickFilterService";
-import { warnOnce } from "./utils/function";
+import { warnOnce, errorOnce } from "./utils/function";
 import { SyncService } from "./syncService";
 import { OverlayService } from "./rendering/overlays/overlayService";
 import { StateService } from "./misc/stateService";
 import { ExpansionService } from "./misc/expansionService";
+import { ValidationService } from "./validation/validationService";
+import { ApiEventService } from "./misc/apiEventService";
+import { PageSizeSelectorComp } from "./pagination/pageSizeSelector/pageSizeSelectorComp";
 
 export interface GridParams {
     // INTERNAL - used by Web Components
@@ -137,37 +139,58 @@ export interface Params {
 export function createGrid<TData>(eGridDiv: HTMLElement, gridOptions: GridOptions<TData>, params?: Params): GridApi<TData>{
 
     if (!gridOptions) {
-        console.error('AG Grid: no gridOptions provided to createGrid');
+        errorOnce('No gridOptions provided to createGrid');
         return {} as GridApi;
     }   
-
-    const api = new GridCoreCreator().create(eGridDiv, gridOptions, context => {
+    // Ensure we do not mutate the provided gridOptions
+    const shallowCopy = GridOptionsService.getCoercedGridOptions(gridOptions);
+    const api = new GridCoreCreator().create(eGridDiv, shallowCopy, context => {
         const gridComp = new GridComp(eGridDiv);
         context.createBean(gridComp);
     }, undefined, params);
+
+    // @deprecated v31 api / columnApi no longer mutated onto the provided gridOptions
+    // Instead we place a getter that will log an error when accessed and direct users to the docs
+    // Only apply for direct usages of createGrid, not for frameworks
+    if(!Object.isFrozen(gridOptions) && !(params as GridParams)?.frameworkOverrides) {
+        const apiUrl = 'https://ag-grid.com/javascript-data-grid/grid-interface/#access-the-grid-api';
+        Object.defineProperty(gridOptions, 'api', {
+            get: () => {
+                errorOnce(`gridOptions.api is no longer supported. See ${apiUrl}.`);
+                return undefined;
+            },
+            configurable: true,
+        },);
+        Object.defineProperty(gridOptions, 'columnApi', {
+            get: () => {
+                errorOnce(`gridOptions.columnApi is no longer supported and all methods moved to the grid api. See ${apiUrl}.`);
+                return undefined;
+            },
+            configurable: true,
+        });
+    }
     
     return api;
 }
-
 /**
  * @deprecated v31 use createGrid() instead
  */
 export class Grid {
     protected logger: Logger;
 
-    private readonly gridOptions: GridOptions;
+    private readonly gridOptions: any; // Not typed to enable setting api / columnApi for backwards compatibility
 
     constructor(eGridDiv: HTMLElement, gridOptions: GridOptions, params?: GridParams) {
-      warnOnce('new Grid(...) is deprecated, please use `const api = createGrid(...)` instead.');
+      warnOnce('Since v31 new Grid(...) is deprecated. Use createGrid instead: `const gridApi = createGrid(...)`. The grid api is returned from createGrid and will not be available on gridOptions.');
 
         if (!gridOptions) {
-            console.error('AG Grid: no gridOptions provided to the grid');
+            errorOnce('No gridOptions provided to the grid');
             return;
         }
 
-        this.gridOptions = gridOptions;
+        this.gridOptions = gridOptions as any;
 
-        new GridCoreCreator().create(
+        const api = new GridCoreCreator().create(
             eGridDiv,
             gridOptions,
             (context) => {
@@ -180,6 +203,10 @@ export class Grid {
             undefined,
             params
         );
+        
+        // Maintain existing behaviour by mutating gridOptions with the apis for deprecated new Grid()
+        this.gridOptions.api = api;
+        this.gridOptions.columnApi = new ColumnApi(api);
     }
 
     public destroy(): void {
@@ -202,24 +229,18 @@ export class GridCoreCreator {
 
     public create(eGridDiv: HTMLElement, gridOptions: GridOptions, createUi: (context: Context) => void, acceptChanges?: (context: Context) => void, params?: GridParams): GridApi {
 
-        // Must delete in case user passed in gridOptions that had already been used elsewhere.
-        // Also delete before shallow copy otherwise getters will be called during copy.
-        delete gridOptions.api;
-        delete gridOptions.columnApi;
-
         // Shallow copy to prevent user provided gridOptions from being mutated.
-        const gridOps = {...gridOptions};
-        const debug = !!gridOps.debug;
-        const gridId = gridOps.gridId ?? String(nextGridId++);
+        const debug = !!gridOptions.debug;
+        const gridId = gridOptions.gridId ?? String(nextGridId++);
 
         const registeredModules = this.getRegisteredModules(params, gridId);
 
-        const beanClasses = this.createBeansList(gridOps.rowModelType, registeredModules, gridId);
-        const providedBeanInstances = this.createProvidedBeans(eGridDiv, gridOps, params);
+        const beanClasses = this.createBeansList(gridOptions.rowModelType, registeredModules, gridId);
+        const providedBeanInstances = this.createProvidedBeans(eGridDiv, gridOptions, params);
 
         if (!beanClasses) { 
             // Detailed error message will have been printed by createBeansList
-            console.error('AG Grid: Failed to create grid.');
+            errorOnce('Failed to create grid.');
             // Break typing so that the normal return type does not have to handle undefined.
             return undefined as any; 
         } 
@@ -245,24 +266,6 @@ export class GridCoreCreator {
 
         if (acceptChanges) { acceptChanges(context); }
 
-        // For backwards compatibility we mutate the gridOps object with apis if requested.
-        const msg = (apiName: string) => `'Accessing the ${apiName} from gridOptions is deprecated. For more info on how to access the api see: https://ag-grid.com/javascript-data-grid/grid-api/'`;
-        Object.defineProperty(gridOptions, 'api', {
-            get: () => {
-                warnOnce(msg('api'));
-                return beans.gridApi.isDestroyed() ? undefined : beans.gridApi;
-            },
-            configurable: true,
-            enumerable: true,
-        });
-        Object.defineProperty(gridOptions, 'columnApi', {
-            get: () => {
-                warnOnce(msg('columnApi'));
-                return beans.gridApi.isDestroyed() ? undefined : beans.columnApi;
-            },
-            configurable: true,
-            enumerable: true,
-        });
 
         return beans.gridApi;
     }
@@ -361,6 +364,7 @@ export class GridCoreCreator {
             { componentName: 'AgHeaderRoot', componentClass: GridHeaderComp },
             { componentName: 'AgSortIndicator', componentClass: SortIndicatorComp },
             { componentName: 'AgPagination', componentClass: PaginationComp },
+            { componentName: 'AgPageSizeSelector', componentClass: PageSizeSelectorComp },
             { componentName: 'AgOverlayWrapper', componentClass: OverlayWrapperComponent },
             { componentName: 'AgGroupComponent', componentClass: AgGroupComponent },
             { componentName: 'AgPanel', componentClass: AgPanel },
@@ -393,7 +397,7 @@ export class GridCoreCreator {
         };
 
         if (!rowModelModuleNames[rowModelType]) {
-            console.error('AG Grid: could not find row model for rowModelType = ' + rowModelType);
+            errorOnce('Could not find row model for rowModelType = ' + rowModelType);
             return;
         }
 
@@ -406,7 +410,7 @@ export class GridCoreCreator {
             Beans, RowPositionUtils, CellPositionUtils, HeaderPositionUtils,
             PaginationAutoPageSizeService, GridApi, UserComponentRegistry, AgComponentUtils,
             ComponentMetadataProvider, ResizeObserverService, UserComponentFactory,
-            RowContainerHeightService, HorizontalResizeService, LocaleService, GridOptionsValidator,
+            RowContainerHeightService, HorizontalResizeService, LocaleService, ValidationService,
             PinnedRowModel, DragService, DisplayedGroupCreator, EventService, GridOptionsService,
             PopupService, SelectionService, FilterManager, ColumnModel, HeaderNavigationService,
             PaginationProxy, RowRenderer, ExpressionService, ColumnFactory, TemplateService,
@@ -418,7 +422,8 @@ export class GridCoreCreator {
             UndoRedoService, AgStackComponentsRegistry, ColumnDefFactory,
             RowCssClassCalculator, RowNodeBlockLoader, RowNodeSorter, CtrlsService,
             PinnedWidthService, RowNodeEventThrottle, CtrlsFactory, DataTypeService, ValueParserService,
-            QuickFilterService, SyncService, OverlayService, StateService, ExpansionService
+            QuickFilterService, SyncService, OverlayService, StateService, ExpansionService,
+            ApiEventService,
         ];
 
         const moduleBeans = this.extractModuleEntity(rowModelModules, (module) => module.beans ? module.beans : []);

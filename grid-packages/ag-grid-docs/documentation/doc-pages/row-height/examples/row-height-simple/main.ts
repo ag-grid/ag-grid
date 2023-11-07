@@ -42,6 +42,6 @@ document.addEventListener('DOMContentLoaded', function () {
       data.forEach(function (dataItem: any, index: number) {
         dataItem.rowHeight = differentHeights[index % 4]
       })
-      gridApi!.setRowData(data)
+      gridApi!.setGridOption('rowData', data)
     })
 })

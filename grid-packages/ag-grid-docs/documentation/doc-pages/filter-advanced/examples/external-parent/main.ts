@@ -23,7 +23,7 @@ const gridOptions: GridOptions<IOlympicData> = {
   popupParent: document.getElementById('wrapper'),
   onGridReady: (params: GridReadyEvent) => {
     // could also be provided via grid option `advancedFilterParent`
-    params.api.setAdvancedFilterParent(document.getElementById('advancedFilterParent'));
+    params.api.setGridOption('advancedFilterParent', document.getElementById('advancedFilterParent'));
   }
 }
 
@@ -34,5 +34,5 @@ document.addEventListener('DOMContentLoaded', () => {
 
   fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
     .then(response => response.json())
-    .then((data: IOlympicData[]) => gridApi!.setRowData(data))
+    .then((data: IOlympicData[]) => gridApi!.setGridOption('rowData', data))
 })

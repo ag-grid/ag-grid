@@ -328,10 +328,10 @@ When using custom header renderers, the custom header renderer is responsible fo
 
 Adding support for keyboard navigation and focus requires a custom `suppressHeaderKeyboardEvent` function in grid options. See [Suppress Keyboard Events](/keyboard-navigation/#suppress-keyboard-events).
 
-An example of this is shown below, enabling keyboard navigation through the custom header elements when pressing <kbd>Tab</kbd> and <kbd>Shift</kbd>+<kbd>Tab</kbd>:
+An example of this is shown below, enabling keyboard navigation through the custom header elements when pressing <kbd>⇥ Tab</kbd> and <kbd>⇧ Shift</kbd>+<kbd>⇥ Tab</kbd>:
 
-- Click on the top left `Athlete` header, press the <kbd>Tab</kbd> key and notice that the button, textbox and link in the `Country` header can be tabbed into. At the end of the cell elements, the tab focus moves to the next `Age` header cell
-- Use <kbd>Shift</kbd>+<kbd>Tab</kbd> to navigate in the reverse direction
+- Click on the top left `Athlete` header, press the <kbd>⇥ Tab</kbd> key and notice that the button, textbox and link in the `Country` header can be tabbed into. At the end of the cell elements, the tab focus moves to the next `Age` header cell
+- Use <kbd>⇧ Shift</kbd>+<kbd>⇥ Tab</kbd> to navigate in the reverse direction
 
 The `suppressHeaderKeyboardEvent` callback is used to capture tab events and determine if the user is tabbing forward or backwards. It also suppresses the default behaviour of moving to the next cell if tabbing within the child elements. 
 

@@ -40,8 +40,8 @@ export class PropertyKeys {
         'rowSelection', 'overlayLoadingTemplate', 'overlayNoRowsTemplate', 'gridId',
         'quickFilterText', 'rowModelType', 'editType', 'domLayout', 'clipboardDelimiter', 'rowGroupPanelShow',
         'multiSortKey', 'pivotColumnGroupTotals', 'pivotRowTotals', 'pivotPanelShow', 'fillHandleDirection',
-        'serverSideStoreType', 'groupDisplayType', 'treeDataDisplayType', 'colResizeDefault', 'tooltipTrigger',
-        'serverSidePivotResultFieldSeparator',
+        'groupDisplayType', 'treeDataDisplayType', 'colResizeDefault', 'tooltipTrigger',
+        'serverSidePivotResultFieldSeparator', 'colorScheme',
     ];
 
     public static OBJECT_PROPERTIES: KeysLike<object | HTMLElement>[] = [
@@ -51,11 +51,12 @@ export class PropertyKeys {
         'rowClassRules', 'detailCellRendererParams', 'loadingCellRendererParams', 'loadingOverlayComponentParams',
         'noRowsOverlayComponentParams', 'popupParent', 'statusBar', 'sideBar', 'chartThemeOverrides',
         'customChartThemes', 'chartToolPanelsDef', 'dataTypeDefinitions', 'advancedFilterModel', 'advancedFilterParent',
-        'advancedFilterBuilderParams', 'initialState',
+        'advancedFilterBuilderParams', 'initialState', 'autoSizeStrategy',
     ];
 
     public static ARRAY_PROPERTIES: KeysOfType<any[]>[] = [
         'sortingOrder', 'alignedGrids', 'rowData', 'columnDefs', 'excelStyles', 'pinnedTopRowData', 'pinnedBottomRowData', 'chartThemes', 'rowClass',
+        'paginationPageSizeSelector',
     ];
 
     public static NUMBER_PROPERTIES: KeysOfType<number>[] = [
@@ -88,31 +89,31 @@ export class PropertyKeys {
         'suppressChartToolPanelsButton', 'suppressMaintainUnsortedOrder', 'enableCellTextSelection', 'suppressBrowserResizeObserver', 'suppressMaxRenderedRowRestriction',
         'excludeChildrenWhenTreeDataFiltering', 'tooltipMouseTrack', 'tooltipInteraction', 'keepDetailRows', 'paginateChildRows', 'preventDefaultOnContextMenu',
         'undoRedoCellEditing', 'allowDragFromColumnsToolPanel', 'pivotSuppressAutoColumn', 'suppressExpandablePivotGroups', 'debounceVerticalScrollbar', 'detailRowAutoHeight',
-        'serverSideFilteringAlwaysResets', 'serverSideFilterAllLevels', 'serverSideSortingAlwaysResets', 'serverSideSortAllLevels', 'serverSideOnlyRefreshFilteredGroups',
+        'serverSideFilterAllLevels', 'serverSideSortAllLevels', 'serverSideOnlyRefreshFilteredGroups',
         'serverSideSortOnServer', 'serverSideFilterOnServer', 'suppressAggFilteredOnly', 'showOpenedGroup', 'suppressClipboardApi', 'suppressModelUpdateAfterUpdateTransaction',
         'stopEditingWhenCellsLoseFocus', 'maintainColumnOrder', 'groupMaintainOrder', 'columnHoverHighlight', 'readOnlyEdit', 'suppressRowVirtualisation',
         'enableCellEditingOnBackspace', 'resetRowDataOnUpdate', 'removePivotHeaderRowWhenSingleValueColumn', 'suppressCopySingleCellRanges', 'suppressGroupRowsSticky',
         'suppressServerSideInfiniteScroll', 'rowGroupPanelSuppressSort', 'allowShowChangeAfterFilter', 'suppressCutToClipboard', 'enableAdvancedFilter',
-        'includeHiddenColumnsInAdvancedFilter',
+        'includeHiddenColumnsInAdvancedFilter', 'suppressGroupMaintainValueType',
     ];
 
     /** You do not need to include event callbacks in this list, as they are generated automatically. */
     public static FUNCTIONAL_PROPERTIES: FunctionKeys[] = [
-        'doesExternalFilterPass', 'processSecondaryColDef', 'processSecondaryColGroupDef', 'processPivotResultColDef',
+        'doesExternalFilterPass', 'processPivotResultColDef',
         'processPivotResultColGroupDef', 'getBusinessKeyForNode', 'isRowSelectable', 'rowDragText',
         'groupRowRenderer', 'fullWidthCellRenderer',
         'loadingCellRenderer', 'loadingOverlayComponent', 'noRowsOverlayComponent',
         'detailCellRenderer', 'quickFilterParser', 'quickFilterMatcher'
     ];
 
-
+    /** These callbacks extend AgGridCommon interface */
     public static CALLBACK_PROPERTIES: CallbackKeys[] = [
         'getLocaleText', 'isExternalFilterPresent', 'getRowHeight', 'getRowClass', 'getRowStyle', 'getContextMenuItems', 'getMainMenuItems',
         'processRowPostCreate', 'processCellForClipboard', 'getGroupRowAgg', 'isFullWidthRow',
         'sendToClipboard', 'navigateToNextHeader', 'tabToNextHeader', 'navigateToNextCell',
         'tabToNextCell', 'processCellFromClipboard', 'getDocument', 'postProcessPopup', 'getChildCount', 'getDataPath', 'isRowMaster', 'postSortRows', 'processHeaderForClipboard',
         'processGroupHeaderForClipboard', 'paginationNumberFormatter', 'processDataFromClipboard', 'getServerSideGroupKey', 'isServerSideGroup',
-        'createChartContainer', 'getChartToolbarItems', 'fillOperation', 'isApplyServerSideTransaction', 'getServerSideStoreParams', 'getServerSideGroupLevelParams',
+        'createChartContainer', 'getChartToolbarItems', 'fillOperation', 'isApplyServerSideTransaction','getServerSideGroupLevelParams',
         'isServerSideGroupOpenByDefault', 'isGroupOpenByDefault', 'initialGroupOrderComparator', 'groupIncludeFooter',
         'loadingCellRendererSelector', 'getRowId', 'groupAggFiltering'
     ];

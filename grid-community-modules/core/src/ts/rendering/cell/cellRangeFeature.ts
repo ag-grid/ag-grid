@@ -107,7 +107,7 @@ export class CellRangeFeature {
         bottom: boolean,
         left: boolean;
     } {
-        const isRtl = this.beans.gridOptionsService.is('enableRtl');
+        const isRtl = this.beans.gridOptionsService.get('enableRtl');
 
         let top = false;
         let right = false;
@@ -196,8 +196,8 @@ export class CellRangeFeature {
 
         const cellRange = last(cellRanges);
         const cellPosition = this.cellCtrl.getCellPosition();
-        const isFillHandleAvailable = gridOptionsService.is('enableFillHandle') && !this.cellCtrl.isSuppressFillHandle();
-        const isRangeHandleAvailable = gridOptionsService.is('enableRangeHandle');
+        const isFillHandleAvailable = gridOptionsService.get('enableFillHandle') && !this.cellCtrl.isSuppressFillHandle();
+        const isRangeHandleAvailable = gridOptionsService.get('enableRangeHandle');
 
         let handleIsAvailable = rangesLen === 1 && !this.cellCtrl.isEditing() && (
             isFillHandleAvailable || isRangeHandleAvailable
@@ -220,7 +220,7 @@ export class CellRangeFeature {
     private addSelectionHandle() {
         const { gridOptionsService, rangeService } = this.beans;
         const cellRangeType = last(rangeService.getCellRanges()).type;
-        const selectionHandleFill = gridOptionsService.is('enableFillHandle') && missing(cellRangeType);
+        const selectionHandleFill = gridOptionsService.get('enableFillHandle') && missing(cellRangeType);
         const type = selectionHandleFill ? SelectionHandleType.FILL : SelectionHandleType.RANGE;
 
         if (this.selectionHandle && this.selectionHandle.getType() !== type) {

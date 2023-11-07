@@ -28,7 +28,7 @@ const gridOptions: GridOptions = {
   groupDefaultExpanded: 1,
   onRowDragMove: onRowDragMove,
   onGridReady: (params) => {
-    params.api.setRowData(getData())
+    params.api.setGridOption('rowData', getData())
   },
 }
 

@@ -1,0 +1,24 @@
+/*
+  Row Styles
+*/
+
+.row {
+  font-family: 'Courier New';
+}
+
+.successful-mission:hover {
+  background: green;
+}
+
+.unsucessful-mission:hover {
+  background: red;
+}
+
+/*
+  Cell Styles
+*/
+
+.mission-cell {
+  font-weight: 900;
+  cursor: pointer;
+}

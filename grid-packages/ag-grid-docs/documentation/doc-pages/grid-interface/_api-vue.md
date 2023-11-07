@@ -1,17 +1,34 @@
 <framework-specific-section frameworks="vue">
 |
-| When the grid is initialised, it will fire the `gridReady` event. If you want to use the `api` of
-| the grid, you should put an `onGridReady(params)` callback onto the grid and grab the api
-| from the params. You can then call the api at a later stage to interact with the
-| grid (on top of the interaction that can be done by setting and changing the properties).
-|
-| The grid api can also be accessed via `this.$refs.myGrid.api` where `ref="myGrid"` is applied to the `ag-grid-vue` component.
+| The grid api can be accessed via `this.$refs.myGrid.api` where `ref="myGrid"` is applied to the `ag-grid-vue` component. This will only be defined after the grid has been initialised.
 </framework-specific-section>
 
 <framework-specific-section frameworks="vue">
 <snippet transform={false} language="jsx">
 | &lt;ag-grid-vue
 |     ref="myGrid"
+|     // ...
+| />
+|
+| // methods
+| onClick() {
+|     this.$refs.myGrid.api.deselectAll();
+| },
+</snippet>
+</framework-specific-section>
+
+<framework-specific-section frameworks="vue">
+| ### API within Events and Callbacks
+|
+| The `api` is also provided on the params for all grid events and callbacks.
+|
+| The first event fired is the `gridReady` event and that can be used to store a reference to the api within your component as an alternative to using `$refs`.
+|
+</framework-specific-section>
+
+<framework-specific-section frameworks="vue">
+<snippet transform={false} language="jsx">
+| &lt;ag-grid-vue
 |     // provide gridReady callback to the grid
 |     @grid-ready="onGridReady"
 |     // ...
@@ -21,16 +38,6 @@
 | onGridReady = (params) => {
 |     this.api = params.api;
 | }
-</snippet>
-</framework-specific-section>
-
-<framework-specific-section frameworks="vue">
-| The api is then accessible through the component:
-</framework-specific-section>
-
-<framework-specific-section frameworks="vue">
-<snippet transform={false} language="html">
-| &lt;button @click="this.api.deselectAll()">Clear Selection&lt;/button>
 </snippet>
 </framework-specific-section>
 

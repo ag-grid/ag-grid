@@ -17,18 +17,8 @@ export default {
         },
 
         doesFilterPass(params) {
-            const { api, colDef, column, columnApi, context, valueGetter } = this.params;
             const { node } = params;
-            const value = valueGetter({
-                api,
-                colDef,
-                column,
-                columnApi,
-                context,
-                data: node.data,
-                getValue: (field) => node.data[field],
-                node,
-            }).toString().toLowerCase();
+            const value = this.params.getValue(node).toString().toLowerCase();
 
             return !this.text || this.text.toLowerCase()
                 .split(" ")

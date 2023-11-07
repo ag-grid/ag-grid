@@ -1,20 +1,20 @@
 @use '../core' as *;
 
-ul,
-ol {
+ul#{$exclude-grid-selector},
+ol#{$exclude-grid-selector} {
     padding-left: 2.25em;
 
-    &:not(:last-child) {
+    &:where(:not(:last-child)) {
         margin-bottom: $size-2;
     }
 }
 
-li:not(:last-child) {
+li:where(:not(:last-child)) {
     margin-bottom: $size-1;
 }
 
-li > ol,
-li > ul {
+li > ol#{$exclude-grid-selector},
+li > ul#{$exclude-grid-selector} {
     padding-left: 1.5em;
 }
 
@@ -30,7 +30,7 @@ ol.list-style-none,
     }
 }
 
-pre {
+pre#{$exclude-grid-selector} {
     --font-family: #{$monospace-font-family};
 
     background-color: var(--neutral-200);
@@ -38,18 +38,18 @@ pre {
     border-radius: var(--border-radius);
 
     #{$darkmode-selector} & {
-        background-color: var(--background-100);
+        background-color: var(--background-200);
     }
 }
 
-hr {
+hr#{$exclude-grid-selector} {
     height: 2px;
     border-radius: 1px;
     background-color: var(--border-color);
     border: 0;
 }
 
-address {
+address#{$exclude-grid-selector} {
     font-style: inherit;
     line-height: inherit;
 }

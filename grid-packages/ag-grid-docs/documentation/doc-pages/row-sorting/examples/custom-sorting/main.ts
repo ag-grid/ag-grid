@@ -4,13 +4,9 @@ const columnDefs: ColDef[] = [
     { field: 'athlete', sort: 'desc' },
     { field: 'age', width: 90 },
     { field: 'country' },
-    { field: 'year', width: 90, unSortIcon: true },
+    { field: 'year', width: 120, unSortIcon: true },
     { field: 'date', comparator: dateComparator },
-    { field: 'sport' },
-    { field: 'gold' },
-    { field: 'silver' },
-    { field: 'bronze' },
-    { field: 'total' },
+    { field: 'sport' }
 ]
 
 function dateComparator(date1: string, date2: string) {
@@ -35,7 +31,6 @@ function monthToComparableNumber(date: string) {
     if (date === undefined || date === null || date.length !== 10) {
         return null
     }
-
     const yearNumber = Number.parseInt(date.substring(6, 10));
     const monthNumber = Number.parseInt(date.substring(3, 5));
     const dayNumber = Number.parseInt(date.substring(0, 2));
@@ -49,7 +44,7 @@ const gridOptions: GridOptions<IOlympicData> = {
     columnDefs: columnDefs,
     defaultColDef: {
         width: 170,
-        sortable: true,
+        sortable: true
     },
 }
 
@@ -60,5 +55,5 @@ document.addEventListener('DOMContentLoaded', function () {
 
     fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
         .then(response => response.json())
-        .then((data: IOlympicData[]) => gridApi!.setRowData(data))
+        .then((data: IOlympicData[]) => gridApi!.setGridOption('rowData', data.slice(5,10)))
 })

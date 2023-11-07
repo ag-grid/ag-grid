@@ -84,13 +84,6 @@ export interface BaseExportParams {
      * A callback function invoked once per row group. Return a `string` to be displayed in the group cell.
      */
     processRowGroupCallback?(params: ProcessRowGroupForExportParams): string;
-
-    /** @deprecated */
-    columnGroups?: boolean;
-    /** @deprecated */
-    skipGroups?: boolean;
-    /** @deprecated */
-    skipHeader?: boolean;
 }
 
 export interface ExportParams<T> extends BaseExportParams {
@@ -102,14 +95,7 @@ export interface ExportParams<T> extends BaseExportParams {
      * Content to put at the bottom of the exported sheet.
      */
     appendContent?: T;
-    /**
-     * @deprecated Use prependContent
-     */
-    customHeader?: T;
-    /**
-     * @deprecated Use appendContent
-     */
-    customFooter?: T;
+        
     /** A callback function to return content to be inserted below a row in the export. */
     getCustomContentBelowRow?: (params: ProcessRowGroupForExportParams) => T | undefined;
 }

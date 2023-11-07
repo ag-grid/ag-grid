@@ -17,10 +17,10 @@ const gridOptions = {
 
 The following example demonstrates the Advanced Filter:
 - Start typing `athlete` into the Advanced Filter input. As you type, the list of suggested column names will be filtered down.
-- Select the `Athlete` entry by pressing <kbd>Enter</kbd> or <kbd>Tab</kbd>, or using the mouse to click on the entry.
+- Select the `Athlete` entry by pressing <kbd>↵ Enter</kbd> or <kbd>⇥ Tab</kbd>, or using the mouse to click on the entry.
 - Select the `contains` entry in a similar way.
 - After the quote, type `michael` followed by an end quote (`"`).
-- Press <kbd>Enter</kbd> or click the `Apply` button to execute the filter.
+- Press <kbd>↵ Enter</kbd> or click the `Apply` button to execute the filter.
 - The rows are now filtered to contain only **Athlete**s with names containing `michael`.
 - Try out each of the columns to see how the different [Cell Data Types](/cell-data-types/) are handled.
 - Complex filter expressions can be built up by using `AND` and `OR` along with brackets - `(` and `)`.
@@ -64,11 +64,7 @@ The different properties that can be set for each column are explained in the se
 
 By default, hidden columns do not appear in the Advanced Filter. To make hidden columns appear, set `includeHiddenColumnsInAdvancedFilter = true`.
 
-This can also be set via the API method `setIncludeHiddenColumnsInAdvancedFilter`.
-
 <api-documentation source='grid-options/properties.json' section='filter' names='["includeHiddenColumnsInAdvancedFilter"]'></api-documentation>
-
-<api-documentation source='grid-api/api.json' section='filter' names='["setIncludeHiddenColumnsInAdvancedFilter"]'></api-documentation>
 
 ### Row Grouping
 
@@ -128,6 +124,8 @@ For `number`, `date` and `dateString` Cell Data Types, the following properties 
 - `includeBlanksInLessThan = true`
 - `includeBlanksInGreaterThan = true`
 
+These settings only apply when using the Client-Side Row Model. You need to implement support for these in your server-side filtering logic when using the Server-Side Row Model.
+
 ## Filter Model / API
 
 The Advanced Filter model describes the current state of the Advanced Filter. This is represented by an `AdvancedFilterModel`, which is either a `ColumnAdvancedFilterModel` for a single condition, or a `JoinAdvancedFilterModel` for multiple conditions:
@@ -185,11 +183,9 @@ The Advanced Filter Model and API methods are demonstrated in the following exam
 
 By default the Advanced Filter is displayed underneath the Column Headers, where the Floating Filters would normally appear.
 
-It is possible to instead display the Advanced Filter outside of the grid (such as above it). This can be done by setting the grid option `advancedFilterParent` and providing it with a DOM element to contain the filter. It is also possible to call the API method `setAdvancedFilterParent`.
+It is possible to instead display the Advanced Filter outside of the grid (such as above it). This can be done by setting the grid option `advancedFilterParent` and providing it with a DOM element to contain the filter.
 
 <api-documentation source='grid-options/properties.json' section='filter' names='["advancedFilterParent"]'></api-documentation>
-
-<api-documentation source='grid-api/api.json' section='filter' names='["setAdvancedFilterParent"]'></api-documentation>
 
 The [Popup Parent](https://localhost:8000/javascript-data-grid/context-menu/#popup-parent) must also be set to an element that contains both the Advanced Filter parent and the grid.
 
@@ -205,11 +201,9 @@ The Advanced Filter Builder can be configured using the `IAdvancedFilterBuilderP
 
 <interface-documentation interfaceName='IAdvancedFilterBuilderParams' config='{"description":"", "sortAlphabetically":"true"}'></interface-documentation>
 
-The params can be set via the grid option `advancedFilterBuilderParams`, or using the grid API method `setAdvancedFilterBuilderParams`:
+The params can be set via the grid option `advancedFilterBuilderParams`:
 
 <api-documentation source='grid-options/properties.json' section='filter' names='["advancedFilterBuilderParams"]'></api-documentation>
-
-<api-documentation source='grid-api/api.json' section='filter' names='["setAdvancedFilterBuilderParams"]'></api-documentation>
 
 As well as using the button in the Advanced Filter, it's possible to launch the Advanced Filter Builder via the `showAdvancedFilterBuilder` grid API method:
 
@@ -242,3 +236,7 @@ All of the [Cell Data Types](/cell-data-types) are supported in the Advanced Fil
 The Advanced Filter will only work on leaf-level rows when using [Aggregation](/aggregation/). The `groupAggFiltering` property will be ignored.
 
 When [Pivoting](/pivoting/), Pivot Result Columns will not appear in the Advanced Filter. However, primary columns (including underlying group and pivot columns) will be shown in the Advanced Filter.
+
+## Server-Side Row Model
+
+In addition to the Client-Side Row Model, the Advanced Filter can be used with the [Server-Side Row Model](/row-models/). See the [SSRM Advanced Filter Example](/server-side-model-filtering/#advanced-filter) for more information.

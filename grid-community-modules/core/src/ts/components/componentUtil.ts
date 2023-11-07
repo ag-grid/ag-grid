@@ -29,8 +29,6 @@ export class ComponentUtil {
         Events.EVENT_RIGHT_PINNED_WIDTH_CHANGED,
         Events.EVENT_ROW_CONTAINER_HEIGHT_CHANGED,
         Events.EVENT_POPUP_TO_FRONT,
-        Events.EVENT_KEYBOARD_FOCUS,
-        Events.EVENT_MOUSE_FOCUS,
         Events.EVENT_STORE_UPDATED,
         Events.EVENT_COLUMN_PANEL_ITEM_DRAG_START,
         Events.EVENT_COLUMN_PANEL_ITEM_DRAG_END,
@@ -78,128 +76,40 @@ export class ComponentUtil {
     public static ALL_PROPERTIES = PropertyKeys.ALL_PROPERTIES;
     public static ALL_PROPERTIES_SET = new Set(PropertyKeys.ALL_PROPERTIES);
 
-    private static changeSetId = 0;
+    public static ALL_PROPERTIES_AND_CALLBACKS = [...this.ALL_PROPERTIES, ...this.EVENT_CALLBACKS];
 
-    private static getCoercionLookup() {
-        let coercionLookup = {} as any;
-
-        [
-            ...ComponentUtil.ARRAY_PROPERTIES,
-            ...ComponentUtil.OBJECT_PROPERTIES,
-            ...ComponentUtil.STRING_PROPERTIES,
-            ...ComponentUtil.FUNCTION_PROPERTIES,
-            ...ComponentUtil.EVENT_CALLBACKS,
-        ]
-            .forEach((key: keyof GridOptions) => coercionLookup[key] = 'none');
-        ComponentUtil.BOOLEAN_PROPERTIES
-            .forEach(key => coercionLookup[key] = 'boolean');
-        ComponentUtil.NUMBER_PROPERTIES
-            .forEach(key => coercionLookup[key] = 'number');
-        return coercionLookup;
-    }
-    private static coercionLookup: Record<keyof GridOptions, 'number' | 'boolean' | 'none'> = ComponentUtil.getCoercionLookup();
-
-    private static getValue(key: string, rawValue: any) {
-        const coercionStep = ComponentUtil.coercionLookup[key as keyof GridOptions];
-
-        if (coercionStep) {
-            let newValue = rawValue;
-            switch (coercionStep) {
-                case 'number': {
-                    newValue = ComponentUtil.toNumber(rawValue);
-                    break;
-                }
-                case 'boolean': {
-                    newValue = ComponentUtil.toBoolean(rawValue);
-                    break;
-                }
-                case 'none': {
-                    // if groupAggFiltering exists and isn't a function, handle as a boolean.
-                    if (key === 'groupAggFiltering' && typeof rawValue !== 'function') {
-                        newValue = ComponentUtil.toBoolean(rawValue);
-                    }
-                    break;
-                }
-            }
-            return newValue;
-        }
-        return undefined;
-    }
-
-    private static getGridOptionKeys(component: any, isVue: boolean) {
+    private static getGridOptionKeys() {
         // Vue does not have keys in prod so instead need to run through all the 
         // gridOptions checking for presence of a gridOption key.
-        return isVue
-            ? Object.keys(ComponentUtil.coercionLookup)
-            : Object.keys(component);
+        return this.ALL_PROPERTIES_AND_CALLBACKS;
     }
 
-    public static copyAttributesToGridOptions(gridOptions: GridOptions | undefined, component: any, isVue: boolean = false): GridOptions {
+    /** Combines component props / attributes with the provided gridOptions returning a new combined gridOptions object */
+    public static combineAttributesAndGridOptions(gridOptions: GridOptions | undefined, component: any): GridOptions {
 
         // create empty grid options if none were passed
         if (typeof gridOptions !== 'object') {
             gridOptions = {} as GridOptions;
         }
-        // to allow array style lookup in TypeScript, take type away from 'this' and 'gridOptions'
-        const pGridOptions = gridOptions as any;
-        const keys = ComponentUtil.getGridOptionKeys(component, isVue);
+        // shallow copy (so we don't change the provided object)
+        const mergedOptions = {...gridOptions} as any;
+        const keys = ComponentUtil.getGridOptionKeys();
         // Loop through component props, if they are not undefined and a valid gridOption copy to gridOptions
         keys.forEach(key => {
             const value = component[key];
             if (typeof value !== 'undefined') {
-                const coercedValue = ComponentUtil.getValue(key, value);
-                if (coercedValue !== undefined) {
-                    pGridOptions[key] = coercedValue;
-                }
+                mergedOptions[key] = value;
             }
         })
-        return gridOptions;
+        return mergedOptions;
     }
-
-
 
     public static processOnChange(changes: any, api: GridApi): void {
         if (!changes || Object.keys(changes).length === 0) {
             return;
         }
-        this.changeSetId++;
-        const changesToApply = { ...changes };
 
-        // We manually call these updates so that we can provide a different source of gridOptionsChanged
-        // We do not call setProperty as this will be called by the grid api methods
-        if (changesToApply.columnTypes) {
-            api.setColumnTypes(changesToApply.columnTypes.currentValue, "gridOptionsChanged");
-            delete changesToApply.columnTypes;
-        }
-        if (changesToApply.autoGroupColumnDef) {
-            api.setAutoGroupColumnDef(changesToApply.autoGroupColumnDef.currentValue, "gridOptionsChanged");
-            delete changesToApply.autoGroupColumnDef;
-        }
-        if (changesToApply.defaultColDef) {
-            api.setDefaultColDef(changesToApply.defaultColDef.currentValue, "gridOptionsChanged");
-            delete changesToApply.defaultColDef;
-        }
-        if (changesToApply.columnDefs) {
-            api.setColumnDefs(changesToApply.columnDefs.currentValue, "gridOptionsChanged");
-            delete changesToApply.columnDefs;
-        }
-
-        // Update all the properties on GridOptions first so that we can optimise updates
-        // and so that any update logic triggered off events is only run after all the
-        // props have been updated. This avoids potential sync issues
-        const updates = Object.keys(changesToApply).map(key => {
-            const gridKey = key as keyof GridOptions;
-            const coercedValue = ComponentUtil.getValue(gridKey, changesToApply[gridKey].currentValue);
-            // Use isChanged to control event via force option as by the time we call __updateProperty the gridOptions[key] will already contain the new value.
-            const isChanged = api.__setPropertyOnly(gridKey, coercedValue);
-            return {gridKey, coercedValue, isChanged}
-        })
-        // Only include properties that have changed
-        .filter(u => u.isChanged);
-
-        // Then cause any property change event listeners to be fired.
-        const updatedKeys = updates.map(u => u.gridKey);
-        updates.forEach((u) => api.__updateProperty(u.gridKey, u.coercedValue, u.isChanged, {id: this.changeSetId, properties: updatedKeys }));
+        api.__internalUpdateGridOptions(changes);
 
         // copy changes into an event for dispatch
         const event: WithoutGridCommon<ComponentStateChangedEvent> = {
@@ -211,29 +121,5 @@ export class ComponentUtil {
         });
 
         api.dispatchEvent(event);
-    }
-
-    public static toBoolean(value: any): boolean {
-        if (typeof value === 'boolean') {
-            return value;
-        }
-
-        if (typeof value === 'string') {
-            // for boolean, compare to empty String to allow attributes appearing with
-            // no value to be treated as 'true'
-            return value.toUpperCase() === 'TRUE' || value == '';
-        }
-
-        return false;
-    }
-
-    public static toNumber(value: any): number | undefined {
-        if (typeof value === 'number') {
-            return value;
-        }
-
-        if (typeof value === 'string') {
-            return Number(value);
-        }
     }
 }

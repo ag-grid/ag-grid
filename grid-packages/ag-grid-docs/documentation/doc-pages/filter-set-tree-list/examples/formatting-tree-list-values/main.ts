@@ -77,7 +77,7 @@ document.addEventListener('DOMContentLoaded', function () {
   .then(response => response.json())
   .then((data: any[]) => {
       const randomDays = [1, 4, 10, 15, 18];
-      gridApi!.setRowData([
+      gridApi!.setGridOption('rowData', [
         {},
         ...data.map(row => {
           // generate pseudo-random dates

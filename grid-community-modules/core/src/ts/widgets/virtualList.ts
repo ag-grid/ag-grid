@@ -13,7 +13,6 @@ import { AnimationFrameService } from '../misc/animationFrameService';
 export interface VirtualListModel {
     getRowCount(): number;
     getRow(index: number): any;
-    isRowSelected?(index: number): boolean | undefined;
     /** Required if using soft refresh. If rows are equal, componentUpdater will be called instead of remove/create */
     areRowsEqual?(oldRow: any, newRow: any): boolean;
 }
@@ -317,13 +316,6 @@ export class VirtualList<C extends Component = Component> extends TabGuardComp {
         setAriaSetSize(eDiv, this.model.getRowCount());
         setAriaPosInSet(eDiv, rowIndex + 1);
         eDiv.setAttribute('tabindex', '-1');
-
-        if (typeof this.model.isRowSelected === 'function') {
-            const isSelected = this.model.isRowSelected(rowIndex);
-
-            setAriaSelected(eDiv, !!isSelected);
-            setAriaChecked(eDiv, isSelected);
-        }
 
         eDiv.style.height = `${this.rowHeight}px`;
         eDiv.style.top = `${this.rowHeight * rowIndex}px`;

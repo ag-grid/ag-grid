@@ -71,17 +71,8 @@ const getMyFilter = () => {
         }
         doesFilterPass(params) {
             filterCallCount++;
-            const { api, colDef, column, context } = this.filterParams;
             const { node } = params;
-            const value = this.filterParams.valueGetter({
-                api,
-                colDef,
-                column,
-                context,
-                data: node.data,
-                getValue: (field) => node.data[field],
-                node,
-            });
+            const value = this.filterParams.getValue(node);
             return value > (this.filterValue || 0);
         }
     }
@@ -143,7 +134,7 @@ const GridExample = () => {
             value: { value: '50' },
         });
         timeOperation('Initialisation', function () {
-            params.api.setRowData(getData());
+            params.api.setGridOption('rowData', getData());
         });
 
     }, []);

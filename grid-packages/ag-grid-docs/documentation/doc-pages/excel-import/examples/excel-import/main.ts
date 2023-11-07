@@ -96,7 +96,7 @@ function populateGrid(workbook: any) {
   }
 
   // finally, set the imported rowData into the grid
-  gridApi!.setRowData(rowData)
+  gridApi!.setGridOption('rowData', rowData)
 }
 
 function importExcel() {

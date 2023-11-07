@@ -126,14 +126,14 @@ const VueExample = {
                     colDef.sort = 'asc';
                 }
             });
-            this.gridApi.setColumnDefs(columnDefs);
+            this.gridApi.setGridOption('columnDefs', columnDefs);
         },
         onBtSortOff() {
             const columnDefs = this.getColumnDefs();
             columnDefs.forEach(colDef => {
                 colDef.sort = null;
             });
-            this.gridApi.setColumnDefs(columnDefs);
+            this.gridApi.setGridOption('columnDefs', columnDefs);
         },
         onBtWidthNarrow() {
             const columnDefs = this.getColumnDefs();
@@ -142,14 +142,14 @@ const VueExample = {
                     colDef.width = 100;
                 }
             });
-            this.gridApi.setColumnDefs(columnDefs);
+            this.gridApi.setGridOption('columnDefs', columnDefs);
         },
         onBtWidthNormal() {
             const columnDefs = this.getColumnDefs();
             columnDefs.forEach(colDef => {
                 colDef.width = 200;
             });
-            this.gridApi.setColumnDefs(columnDefs);
+            this.gridApi.setGridOption('columnDefs', columnDefs);
         },
         onBtHide() {
             const columnDefs = this.getColumnDefs();
@@ -158,14 +158,14 @@ const VueExample = {
                     colDef.hide = true;
                 }
             });
-            this.gridApi.setColumnDefs(columnDefs);
+            this.gridApi.setGridOption('columnDefs', columnDefs);
         },
         onBtShow() {
             const columnDefs = this.getColumnDefs();
             columnDefs.forEach(colDef => {
                 colDef.hide = false;
             });
-            this.gridApi.setColumnDefs(columnDefs);
+            this.gridApi.setGridOption('columnDefs', columnDefs);
         },
         onBtPivotOn() {
             this.gridApi.setPivotMode(true);
@@ -175,7 +175,7 @@ const VueExample = {
                     colDef.pivot = true;
                 }
             });
-            this.gridApi.setColumnDefs(columnDefs);
+            this.gridApi.setGridOption('columnDefs', columnDefs);
         },
         onBtPivotOff() {
             this.gridApi.setPivotMode(false);
@@ -183,7 +183,7 @@ const VueExample = {
             columnDefs.forEach(colDef => {
                 colDef.pivot = false;
             });
-            this.gridApi.setColumnDefs(columnDefs);
+            this.gridApi.setGridOption('columnDefs', columnDefs);
         },
         onBtRowGroupOn() {
             const columnDefs = this.getColumnDefs();
@@ -192,14 +192,14 @@ const VueExample = {
                     colDef.rowGroup = true;
                 }
             });
-            this.gridApi.setColumnDefs(columnDefs);
+            this.gridApi.setGridOption('columnDefs', columnDefs);
         },
         onBtRowGroupOff() {
             const columnDefs = this.getColumnDefs();
             columnDefs.forEach(colDef => {
                 colDef.rowGroup = false;
             });
-            this.gridApi.setColumnDefs(columnDefs);
+            this.gridApi.setGridOption('columnDefs', columnDefs);
         },
         onBtAggFuncOn() {
             const columnDefs = this.getColumnDefs();
@@ -208,14 +208,14 @@ const VueExample = {
                     colDef.aggFunc = 'sum';
                 }
             });
-            this.gridApi.setColumnDefs(columnDefs);
+            this.gridApi.setGridOption('columnDefs', columnDefs);
         },
         onBtAggFuncOff() {
             const columnDefs = this.getColumnDefs();
             columnDefs.forEach(colDef => {
                 colDef.aggFunc = null;
             });
-            this.gridApi.setColumnDefs(columnDefs);
+            this.gridApi.setGridOption('columnDefs', columnDefs);
         },
         onBtPinnedOn() {
             const columnDefs = this.getColumnDefs();
@@ -227,14 +227,14 @@ const VueExample = {
                     colDef.pinned = 'right';
                 }
             });
-            this.gridApi.setColumnDefs(columnDefs);
+            this.gridApi.setGridOption('columnDefs', columnDefs);
         },
         onBtPinnedOff() {
             const columnDefs = this.getColumnDefs();
             columnDefs.forEach(colDef => {
                 colDef.pinned = null;
             });
-            this.gridApi.setColumnDefs(columnDefs);
+            this.gridApi.setGridOption('columnDefs', columnDefs);
         },
         onGridReady(params) {
             this.gridApi = params.api;

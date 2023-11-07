@@ -41,7 +41,7 @@ export class ToolPanelFilterComp extends Component {
     private expanded: boolean = false;
     private underlyingFilter: IFilterComp | null;
 
-    constructor(hideHeader = false) {
+    constructor(hideHeader: boolean, private readonly expandedCallback: () => void) {
         super(ToolPanelFilterComp.TEMPLATE);
         this.hideHeader = hideHeader;
     }
@@ -136,6 +136,8 @@ export class ToolPanelFilterComp extends Component {
         _.setDisplayed(this.eExpandUnchecked, false);
 
         this.addFilterElement();
+
+        this.expandedCallback();
     }
 
     private addFilterElement(): void {
@@ -176,6 +178,8 @@ export class ToolPanelFilterComp extends Component {
         _.setDisplayed(this.eExpandUnchecked, true);
 
         this.underlyingFilter?.afterGuiDetached?.();
+
+        this.expandedCallback();
     }
 
     private removeFilterElement(): void {

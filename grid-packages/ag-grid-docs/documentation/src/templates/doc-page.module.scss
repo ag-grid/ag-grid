@@ -150,7 +150,7 @@
 
     :global(.icon) {
         --icon-size: 1.25em;
-        --text-color: red;
+        --text-color: var(--enterprise-icon-color) !important;
 
         position: relative;
         margin-left: $size-half;

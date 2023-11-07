@@ -32,7 +32,7 @@ const gridOptions: GridOptions<IOlympicData> = {
 }
 
 function onQuickFilterChanged() {
-  gridApi!.setQuickFilter((document.getElementById('quickFilter') as HTMLInputElement).value)
+  gridApi!.setGridOption('quickFilterText', (document.getElementById('quickFilter') as HTMLInputElement).value)
 }
 
 // setup the grid after the page has finished loading
@@ -42,5 +42,5 @@ document.addEventListener('DOMContentLoaded', function () {
 
   fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
     .then(response => response.json())
-    .then((data: IOlympicData[]) => gridApi!.setRowData(data))
+    .then((data: IOlympicData[]) => gridApi!.setGridOption('rowData', data))
 })

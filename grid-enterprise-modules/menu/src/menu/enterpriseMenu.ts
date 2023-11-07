@@ -48,6 +48,7 @@ export class EnterpriseMenuFactory extends BeanStub implements IMenuFactory {
     @Autowired('headerNavigationService') private readonly headerNavigationService: HeaderNavigationService;
     @Autowired('ctrlsService') private readonly ctrlsService: CtrlsService;
     @Autowired('columnModel') private readonly columnModel: ColumnModel;
+    @Autowired('filterManager') private readonly filterManager: FilterManager;
 
     private lastSelectedTab: string;
     private activeMenu: EnterpriseMenu | null;
@@ -77,7 +78,7 @@ export class EnterpriseMenuFactory extends BeanStub implements IMenuFactory {
         let multiplier = -1;
         let alignSide: 'left' | 'right' = 'left';
 
-        if (this.gridOptionsService.is('enableRtl')) {
+        if (this.gridOptionsService.get('enableRtl')) {
             multiplier = 1;
             alignSide = 'right';
         }
@@ -242,7 +243,13 @@ export class EnterpriseMenuFactory extends BeanStub implements IMenuFactory {
     }
 
     public isMenuEnabled(column: Column): boolean {
-        return column.getMenuTabs(EnterpriseMenu.TABS_DEFAULT).length > 0;
+        // Determine whether there are any tabs to show in the menu, given that the filter tab may be hidden
+        const isFilterDisabled = !this.filterManager.isFilterAllowed(column);
+        const tabs = column.getMenuTabs(EnterpriseMenu.TABS_DEFAULT);
+        const numActiveTabs = isFilterDisabled && tabs.includes(EnterpriseMenu.TAB_FILTER)
+            ? tabs.length - 1
+            : tabs.length;
+        return numActiveTabs > 0;
     }
 }
 
@@ -424,7 +431,7 @@ export class EnterpriseMenu extends BeanStub {
 
         const isInMemoryRowModel = this.rowModel.getType() === 'clientSide';
 
-        const usingTreeData = this.gridOptionsService.is('treeData');
+        const usingTreeData = this.gridOptionsService.get('treeData');
 
         const allowValueAgg =
             // if primary, then only allow aggValue if grouping and it's a value columns
@@ -449,16 +456,8 @@ export class EnterpriseMenu extends BeanStub {
         result.push(EnterpriseMenu.MENU_ITEM_SEPARATOR);
 
         const showRowGroup = this.column.getColDef().showRowGroup;
-        if (showRowGroup === true) {
-            const groupLockedCols = this.gridOptionsService.getNum('groupLockGroupColumns');
-            if (groupLockedCols == null || (groupLockedCols !== -1 && groupLockedCols < this.columnModel.getRowGroupColumns().length)) {
-                result.push('rowUnGroup');
-            }
-        } else if (showRowGroup) {
-            const rowGroupCol = this.columnModel.getPrimaryColumn(showRowGroup);
-            if (rowGroupCol && this.columnModel.isColumnGroupingLocked(rowGroupCol)) {
-                result.push('rowUnGroup');
-            }
+        if (showRowGroup) {
+            result.push('rowUnGroup');
         } else if (allowRowGroup && this.column.isPrimary()) {
             if (this.column.isRowGroupActive()) {
                 const groupLocked = this.columnModel.isColumnGroupingLocked(this.column);
@@ -587,7 +586,8 @@ export class EnterpriseMenu extends BeanStub {
             suppressSyncLayoutWithGrid: !!columnLayout || !!suppressSyncLayoutWithGrid,
             api: this.gridOptionsService.api,
             columnApi: this.gridOptionsService.columnApi,
-            context: this.gridOptionsService.context
+            context: this.gridOptionsService.context,
+            onStateUpdated: () => {}
         }, 'columnMenu');
 
         if (columnLayout) {

@@ -8,7 +8,6 @@ import { Autowired } from "../context/context";
 import { AgEvent } from "../events";
 import { last } from "../utils/array";
 import { GridOptionsService } from "../gridOptionsService";
-import { logDeprecation } from "../gridOptionsValidator";
 
 export type ColumnGroupShowType = 'open' | 'closed';
 
@@ -89,7 +88,7 @@ export class ColumnGroup implements IHeaderColumn {
 
         // set our left based on first displayed column
         if (this.displayedChildren!.length > 0) {
-            if (this.gridOptionsService.is('enableRtl')) {
+            if (this.gridOptionsService.get('enableRtl')) {
                 const lastChild = last(this.displayedChildren!);
                 const lastChildLeft = lastChild.getLeft();
                 this.setLeft(lastChildLeft);

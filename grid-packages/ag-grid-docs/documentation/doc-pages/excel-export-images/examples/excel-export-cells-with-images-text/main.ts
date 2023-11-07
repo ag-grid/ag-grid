@@ -71,7 +71,7 @@ const gridOptions: GridOptions<IOlympicData> = {
     onGridReady: params => {
         fetch('https://www.ag-grid.com/example-assets/small-olympic-winners.json')
             .then(data => createBase64FlagsFromResponse(data, countryCodes, base64flags))
-            .then(data => params.api.setRowData(data));
+            .then(data => params.api.setGridOption('rowData', data));
     },
 }
 

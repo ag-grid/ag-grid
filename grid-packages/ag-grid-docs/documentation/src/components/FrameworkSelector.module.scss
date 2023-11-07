@@ -8,7 +8,7 @@
     display: flex;
     width: 100%;
     border-radius: var(--border-radius);
-    background-color: var(--input-background-color);
+    background-color: var(--input-background-color);    
 }
 
 .option {
@@ -58,6 +58,10 @@
 
     @media screen and (min-width: $breakpoint-docs-search-medium) {
         width: auto;
+    }
+
+    #{$darkmode-selector} & {
+        border: 1px solid #354856;
     }
 }
 
@@ -134,7 +138,7 @@
     }
 
     #{$darkmode-selector} & {
-        background-color: var(--background-500);
+        background-color: var(--background-300);
     }
 }
 

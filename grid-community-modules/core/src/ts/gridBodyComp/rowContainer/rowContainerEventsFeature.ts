@@ -292,7 +292,7 @@ export class RowContainerEventsFeature extends BeanStub {
     }
 
     private onCtrlAndC(event: KeyboardEvent): void {
-        if (!this.clipboardService || this.gridOptionsService.is('enableCellTextSelection')) { return; }
+        if (!this.clipboardService || this.gridOptionsService.get('enableCellTextSelection')) { return; }
 
         const { cellCtrl, rowCtrl } = this.getControlsForEventTarget(event.target);
 
@@ -305,8 +305,8 @@ export class RowContainerEventsFeature extends BeanStub {
     private onCtrlAndX(event: KeyboardEvent): void {
         if (
             !this.clipboardService ||
-            this.gridOptionsService.is('enableCellTextSelection') ||
-            this.gridOptionsService.is('suppressCutToClipboard')
+            this.gridOptionsService.get('enableCellTextSelection') ||
+            this.gridOptionsService.get('suppressCutToClipboard')
         ) { return; }
 
         const { cellCtrl, rowCtrl } = this.getControlsForEventTarget(event.target);
@@ -322,20 +322,20 @@ export class RowContainerEventsFeature extends BeanStub {
         const { cellCtrl, rowCtrl } = this.getControlsForEventTarget(event.target);
 
         if (cellCtrl?.isEditing() || rowCtrl?.isEditing()) { return; }
-        if (this.clipboardService && !this.gridOptionsService.is('suppressClipboardPaste')) {
+        if (this.clipboardService && !this.gridOptionsService.get('suppressClipboardPaste')) {
             this.clipboardService.pasteFromClipboard();
         }
     }
 
     private onCtrlAndD(event: KeyboardEvent): void {
-        if (this.clipboardService && !this.gridOptionsService.is('suppressClipboardPaste')) {
+        if (this.clipboardService && !this.gridOptionsService.get('suppressClipboardPaste')) {
             this.clipboardService.copyRangeDown();
         }
         event.preventDefault();
     }
 
     private onCtrlAndZ(event: KeyboardEvent): void {
-        if (!this.gridOptionsService.is('undoRedoCellEditing')) { return; }
+        if (!this.gridOptionsService.get('undoRedoCellEditing')) { return; }
         event.preventDefault();
 
         if (event.shiftKey) {

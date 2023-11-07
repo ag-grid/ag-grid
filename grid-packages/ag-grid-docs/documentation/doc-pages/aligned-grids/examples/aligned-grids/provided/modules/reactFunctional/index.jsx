@@ -17,11 +17,9 @@ const GridExample = () => {
     const bottomGrid = useRef(null);
 
     const defaultColDef = useMemo(() => ({
-        editable: true,
         sortable: true,
         resizable: true,
         filter: true,
-        flex: 1,
         minWidth: 100
     }));
 
@@ -29,14 +27,13 @@ const GridExample = () => {
         { field: 'athlete' },
         { field: 'age' },
         { field: 'country' },
-        { field: 'year' },
         { field: 'date' },
         { field: 'sport' },
         {
             headerName: 'Medals',
             children: [
                 {
-                    columnGroupShow: 'closed', field: "total",
+                    columnGroupShow: 'closed', colId: "total",
                     valueGetter: "data.gold + data.silver + data.bronze", width: 200
                 },
                 { columnGroupShow: 'open', field: "gold", width: 100 },
@@ -47,6 +44,10 @@ const GridExample = () => {
     ], []);
 
     const [rowData, setRowData] = useState();
+
+    const autoSizeStrategy = useMemo(() => ({
+        type: 'fitGridWidth'
+    }), []);
 
     const onGridReady = (params) => {
         fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
@@ -105,6 +106,7 @@ const GridExample = () => {
                     rowData={rowData}
                     defaultColDef={defaultColDef}
                     columnDefs={columnDefs}
+                    autoSizeStrategy={autoSizeStrategy}
                     onGridReady={onGridReady}
                 />
             </div>

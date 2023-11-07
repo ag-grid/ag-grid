@@ -13,7 +13,7 @@ import { ColDef, GridApi, GridOptions, GridReadyEvent, ModuleRegistry } from '@a
 ModuleRegistry.registerModules([ClientSideRowModelModule]);
 
 const baseDefaultColDef: ColDef = {
-    width: 80,
+    flex: 1,
     sortable: true,
     filter: true,
     resizable: true
@@ -60,11 +60,11 @@ const GridExample = () => {
     const rightGridRef = useRef<AgGridReact>(null);
 
     const onLeftGridReady = (params: GridReadyEvent) => {
-        params.api.setRowData(createLeftRowData());
+        params.api.setGridOption('rowData', createLeftRowData());
     }
 
     const onRightGridReady = (params: GridReadyEvent) => {
-        params.api.setRowData([]);
+        params.api.setGridOption('rowData', []);
     }
 
     const createLeftRowData = () => ['Red', 'Green', 'Blue'].map(createDataItem);

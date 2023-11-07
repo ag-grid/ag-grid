@@ -30,10 +30,9 @@ const gridOptions: GridOptions<IOlympicData> = {
   onColumnResized: (params: ColumnResizedEvent) => {
     console.log(params)
   },
-}
-
-function sizeToFit() {
-  gridApi!.sizeColumnsToFit()
+  autoSizeStrategy: {
+    type: 'fitCellContents',
+  },
 }
 
 function autoSizeAll(skipHeader: boolean) {
@@ -52,5 +51,5 @@ document.addEventListener('DOMContentLoaded', () => {
 
   fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
     .then(response => response.json())
-    .then((data: IOlympicData[]) => gridApi!.setRowData(data))
+    .then((data: IOlympicData[]) => gridApi!.setGridOption('rowData', data))
 })

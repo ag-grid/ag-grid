@@ -1,5 +1,5 @@
 import { BeanStub } from "../../context/beanStub";
-import { CellClassParams } from "../../entities/colDef";
+import { CellClassParams, CellClassRules } from "../../entities/colDef";
 import { CellCtrl, ICellComp } from "./cellCtrl";
 import { Column } from "../../entities/column";
 import { RowNode } from "../../entities/rowNode";
@@ -15,6 +15,8 @@ export class CellCustomStyleFeature extends BeanStub {
     private staticClasses: string[] = [];
 
     private cellComp: ICellComp;
+
+    private cellClassRules?: CellClassRules;
 
     constructor(ctrl: CellCtrl, beans: Beans) {
         super();
@@ -36,6 +38,7 @@ export class CellCustomStyleFeature extends BeanStub {
 
     public applyCellClassRules(): void {
         const colDef = this.column.getColDef();
+        const { cellClassRules } = colDef;
         const cellClassParams: CellClassParams = {
             value: this.cellCtrl.getValue(),
             data: this.rowNode.data,
@@ -49,11 +52,14 @@ export class CellCustomStyleFeature extends BeanStub {
         };
 
         this.beans.stylingService.processClassRules(
-            colDef.cellClassRules,
+            // if current was previous, skip
+            cellClassRules === this.cellClassRules ? undefined : this.cellClassRules,
+            cellClassRules,
             cellClassParams,
             className => this.cellComp.addOrRemoveCssClass(className, true),
             className => this.cellComp.addOrRemoveCssClass(className, false)
         );
+        this.cellClassRules = cellClassRules;
     }
 
     public applyUserStyles() {

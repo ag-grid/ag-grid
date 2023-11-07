@@ -126,7 +126,7 @@ export class ScatterChartProxy extends CartesianChartProxy {
 
             let alteredSizeKey = {};
             if (series.type === 'bubble') {
-                alteredSizeKey = { sizeKey: filteredOutKey(series.sizeKey) };
+                alteredSizeKey = { sizeKey: filteredOutKey(series.sizeKey!) };
             }
 
             return {

@@ -3,6 +3,7 @@ import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-mod
 import { CsvExportModule } from '@ag-grid-community/csv-export';
 import { AgGridReact } from '@ag-grid-community/react';
 import '@ag-grid-community/styles/ag-grid.css';
+import '@ag-grid-community/styles/ag-theme-quartz.css';
 import '@ag-grid-community/styles/ag-theme-alpine.css';
 import '@ag-grid-community/styles/ag-theme-balham.css';
 import '@ag-grid-community/styles/ag-theme-material.css';
@@ -24,7 +25,6 @@ import { StatusBarModule } from '@ag-grid-enterprise/status-bar';
 import classnames from 'classnames';
 import React, { memo, useEffect, useMemo, useRef, useState } from 'react';
 import { Helmet } from 'react-helmet';
-import LocalStorage from '../utils/local-storage';
 import { booleanValues, colNames, countries, COUNTRY_CODES, firstNames, games, lastNames, months } from './consts';
 import { CountryFloatingFilterComponent } from './CountryFloatingFilterComponent';
 import styles from './Example.module.scss';
@@ -620,16 +620,17 @@ const desktopDefaultCols = [
 const Example = () => {
     const gridRef = useRef(null);
     const loadInstance = useRef(0);
-    const [gridTheme, setGridTheme] = useState(null);
+    const [themeAndColorScheme, setThemeAndColorScheme] = useState(null);
     useEffect(() => {
         const themeFromURL = new URLSearchParams(window.location.search).get('theme');
         if (themeFromURL) {
-            setGridTheme(themeFromURL)
+            setThemeAndColorScheme(themeFromURL)
         } else {
             const isDarkMode = getComputedStyle(document.documentElement).getPropertyValue('--color-scheme') === 'dark';
-            setGridTheme(isDarkMode ? 'ag-theme-alpine-dark' : 'ag-theme-alpine');
+            setThemeAndColorScheme(isDarkMode ? 'ag-theme-quartz:dark' : 'ag-theme-quartz:light');
         }
     }, []);
+    const [gridTheme, colorScheme] = themeAndColorScheme?.split(':') || [null, null];
     const [base64Flags, setBase64Flags] = useState();
     const [defaultCols, setDefaultCols] = useState();
     const [isSmall, setIsSmall] = useState(false);
@@ -970,8 +971,8 @@ const Example = () => {
                 // lots and lots of times (especially if user does ctrl+a to copy everything, then paste)
                 // console.log("Callback onCellValueChanged:", params);
             },
-            onRowDataChanged: (params) => {
-                // console.log('Callback onRowDataChanged: ');
+            onRowDataUpdated: (params) => {
+                // console.log('Callback onRowDataUpdated: ');
             },
             // callback when cell double clicked
             onCellDoubleClicked: (params) => {
@@ -1197,7 +1198,7 @@ const Example = () => {
                         indent: 4,
                     },
                 },
-            ],
+            ]
         }),
         [isSmall]
     );
@@ -1423,7 +1424,7 @@ const Example = () => {
         }
     }, [dataSize]);
 
-    const isDarkTheme = gridTheme?.indexOf('dark')  >= 0;
+    const isDarkTheme = colorScheme?.indexOf('dark')  >= 0;
 
     useEffect(() => {
         if (isDarkTheme) {
@@ -1451,8 +1452,8 @@ const Example = () => {
                     dataSize={dataSize}
                     setDataSize={setDataSize}
                     rowCols={rowCols}
-                    gridTheme={gridTheme}
-                    setGridTheme={setGridTheme}
+                    gridTheme={themeAndColorScheme}
+                    setGridTheme={setThemeAndColorScheme}
                     setCountryColumnPopupEditor={setCountryColumnPopupEditor}
                 />
                 <span className={classnames({ [styles.messages]: true, [styles.show]: showMessage })}>
@@ -1467,6 +1468,7 @@ const Example = () => {
                                 ref={gridRef}
                                 modules={modules}
                                 gridOptions={gridOptions}
+                                colorScheme={colorScheme}
                                 columnDefs={columnDefs}
                                 rowData={rowData}
                                 defaultCsvExportParams={defaultExportParams}

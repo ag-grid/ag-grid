@@ -28,6 +28,9 @@ import {
     Optional,
     IPivotColDefService,
     LoadSuccessParams,
+    SortController,
+    FilterModel,
+    AdvancedFilterModel,
 } from "@ag-grid-community/core";
 
 import { NodeManager } from "./nodeManager";
@@ -38,7 +41,7 @@ import { LazyStore } from "./stores/lazy/lazyStore";
 
 export interface SSRMParams {
     sortModel: SortModelItem[];
-    filterModel: any;
+    filterModel: FilterModel | AdvancedFilterModel | null;
     lastAccessedSequence: NumberSequence;
     dynamicRowHeight: boolean;
     rowGroupCols: ColumnVO[];
@@ -53,6 +56,7 @@ export class ServerSideRowModel extends BeanStub implements IServerSideRowModel 
 
     @Autowired('columnModel') private columnModel: ColumnModel;
     @Autowired('filterManager') private filterManager: FilterManager;
+    @Autowired('sortController') private sortController: SortController;
     @Autowired('rowRenderer') private rowRenderer: RowRenderer;
     @Autowired('ssrmSortService') private sortListener: SortListener;
     @Autowired('ssrmNodeManager') private nodeManager: NodeManager;
@@ -200,7 +204,7 @@ export class ServerSideRowModel extends BeanStub implements IServerSideRowModel 
             return allColsUnchanged && !missingCols;
         }
 
-        const sortModelDifferent = !_.jsonEquals(this.storeParams.sortModel, this.sortListener.extractSortModel());
+        const sortModelDifferent = !_.jsonEquals(this.storeParams.sortModel, this.sortController.getSortModel());
         const rowGroupDifferent = !areColsSame({
             oldCols: this.storeParams.rowGroupCols,
             newCols: rowGroupColumnVos,
@@ -305,8 +309,10 @@ export class ServerSideRowModel extends BeanStub implements IServerSideRowModel 
             pivotMode: this.columnModel.isPivotMode(),
 
             // sort and filter model
-            filterModel: this.filterManager.getFilterModel(),
-            sortModel: this.sortListener.extractSortModel(),
+            filterModel: this.filterManager.isAdvancedFilterEnabled()
+                ? this.filterManager.getAdvancedFilterModel()
+                : this.filterManager.getFilterModel(),
+            sortModel: this.sortController.getSortModel(),
 
             datasource: this.datasource,
             lastAccessedSequence: new NumberSequence(),
@@ -393,7 +399,7 @@ export class ServerSideRowModel extends BeanStub implements IServerSideRowModel 
         this.onStoreUpdated();
     }
 
-    public refreshAfterFilter(newFilterModel: any, params: StoreRefreshAfterParams): void {
+    public refreshAfterFilter(newFilterModel: FilterModel | AdvancedFilterModel | null, params: StoreRefreshAfterParams): void {
         if (this.storeParams) {
             this.storeParams.filterModel = newFilterModel;
         }

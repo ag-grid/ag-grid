@@ -31,7 +31,11 @@ export default (props: IToolPanelParams) => {
     useEffect(() => {
         props.api.addEventListener('modelUpdated', updateTotals);
 
-        return () => props.api.removeEventListener('modelUpdated', updateTotals);
+        return () => {
+            if (!props.api.isDestroyed()) {
+                props.api.removeEventListener('modelUpdated', updateTotals);
+            }
+        };
     }, []);
 
     return (

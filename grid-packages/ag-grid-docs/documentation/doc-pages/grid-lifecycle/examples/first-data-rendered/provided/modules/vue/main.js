@@ -28,6 +28,7 @@ const VueExample = {
                     @grid-ready="onGridReady"
                     :defaultColDef="defaultColDef"
                     :suppressLoadingOverlay="true"
+                    :autoSizeStrategy="autoSizeStrategy"
                     @first-data-rendered="onFirstDataRendered"></ag-grid-vue>
             </div>
         </div>
@@ -58,6 +59,10 @@ const VueExample = {
             defaultColDef: {
                 minWidth: 150,
             },
+            autoSizeStrategy: {
+                type: 'fitCellContents',
+                colIds: ['athleteDescription']
+            },
 
         }
     },
@@ -68,14 +73,13 @@ const VueExample = {
             const {api} = params;
             const column = api.getColumn('athleteDescription');
             if (column) {
-                api.autoSizeColumns([column.getId()]);
                 this.athleteDescriptionColWidthOnFirstDataRendered = `${column.getActualWidth()}px`;
             }
 
             console.log('AG Grid: onFirstDataRendered event triggered');
         },
         loadGridData() {
-            this.gridApi.setRowData(getData());
+            this.gridApi.setGridOption('rowData', getData());
             this.isLoadDataButtonVisible = false;
         },
         onGridReady(params) {
@@ -83,7 +87,6 @@ const VueExample = {
 
             const column = this.gridApi.getColumn('athleteDescription');
             if (column) {
-                this.gridApi.autoSizeColumns([column.getId()]);
                 this.athleteDescriptionColWidthOnReady = `${column.getActualWidth()}px`;
             }
 

@@ -98,12 +98,7 @@ const AboutPage = () => {
                             </div>
                             <div>
                                 <img src="../images/team/salmen.jpg" alt="Salmen Hichri, Developer" />
-                                <h3>Salmen Hichris</h3>
-                                <p>Developer, Grid Core</p>
-                            </div>
-                            <div>
-                                <img src="../images/team/alexW.jpg" alt="Alex Wilton, Developer" />
-                                <h3>Alex Wilton</h3>
+                                <h3>Salmen Hichri</h3>
                                 <p>Developer, Grid Core</p>
                             </div>
                             <div>
@@ -114,11 +109,6 @@ const AboutPage = () => {
                             <div>
                                 <img src="../images/team/mana.jpeg" alt="Mana Peirov, Developer" />
                                 <h3>Mana Peirov</h3>
-                                <p>Developer, Data Visualisation</p>
-                            </div>
-                            <div>
-                                <img src="../images/team/alex.png" alt="Alex Shutau, Developer" />
-                                <h3>Alex Shutau</h3>
                                 <p>Developer, Data Visualisation</p>
                             </div>
                             <div>

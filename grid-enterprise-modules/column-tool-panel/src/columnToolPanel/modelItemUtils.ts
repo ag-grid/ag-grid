@@ -80,7 +80,7 @@ export class ModelItemUtils {
     }
 
     private setAllPivot(columns: Column[], value: boolean, eventType: ColumnEventType): void {
-        if (this.gridOptionsService.is('functionsPassive')) {
+        if (this.gridOptionsService.get('functionsPassive')) {
             this.setAllPivotPassive(columns, value);
         } else {
             this.setAllPivotActive(columns, value, eventType);

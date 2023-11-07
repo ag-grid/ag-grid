@@ -1,20 +1,13 @@
 import {
+  createGrid,
   FirstDataRenderedEvent,
   GridApi,
-  createGrid,
   GridOptions,
+  GridReadyEvent,
   ValueParserParams,
 } from '@ag-grid-community/core';
-import { AgAxisCaptionFormatterParams, AgCartesianSeriesTooltipRendererParams } from 'ag-charts-community';
-import { getData } from "./data";
-
-function formatDate(date: Date | number) {
-  return Intl.DateTimeFormat("en-GB", {
-    day: "2-digit",
-    month: "short",
-    year: undefined,
-  }).format(new Date(date))
-}
+import {AgAxisCaptionFormatterParams, AgCartesianSeriesTooltipRendererParams} from 'ag-charts-community';
+import {getData} from "./data";
 
 let gridApi: GridApi;
 
@@ -25,20 +18,10 @@ const gridOptions: GridOptions = {
     { field: 'pressure', chartDataType: 'series', valueParser: numberParser },
     { field: 'temp', chartDataType: 'series', valueParser: numberParser },
   ],
-  defaultColDef: {
-    flex: 1,
-    minWidth: 100,
-    editable: true,
-    sortable: true,
-    filter: true,
-    resizable: true,
-  },
-  rowData: getData(),
-  onFirstDataRendered: onFirstDataRendered,
+  defaultColDef: { flex: 1 },
   enableRangeSelection: true,
-  chartThemes: ['ag-pastel', 'ag-vivid'],
-  enableCharts: true,
   popupParent: document.body,
+  enableCharts: true,
   chartThemeOverrides: {
     common: {
       padding: {
@@ -55,7 +38,7 @@ const gridOptions: GridOptions = {
         },
       },
     },
-    column: {
+    bar: {
       series: {
         strokeWidth: 2,
         fillOpacity: 0.8,
@@ -74,22 +57,28 @@ const gridOptions: GridOptions = {
       },
     },
   },
+  onGridReady,
+  onFirstDataRendered,
 };
 
+function onGridReady(params: GridReadyEvent) {
+  getData().then(rowData => params.api.setGridOption('rowData', rowData));
+}
+
 function onFirstDataRendered(params: FirstDataRenderedEvent) {
-  params.api!.createRangeChart({
-    chartType: 'customCombo',
+  params.api.createRangeChart({
+    chartContainer: document.querySelector('#myChart') as HTMLElement,
     cellRange: {
       columns: ['date', 'rain', 'pressure', 'temp'],
     },
+    suppressChartRanges: true,
     seriesChartTypes: [
       { colId: 'rain', chartType: 'groupedColumn', secondaryAxis: false },
       { colId: 'pressure', chartType: 'line', secondaryAxis: true },
       { colId: 'temp', chartType: 'line', secondaryAxis: true },
     ],
+    chartType: 'customCombo',
     aggFunc: 'sum',
-    suppressChartRanges: true,
-    chartContainer: document.querySelector('#myChart') as HTMLElement,
   });
 }
 
@@ -108,8 +97,15 @@ function chartTooltipRenderer({ xValue, yValue }: AgCartesianSeriesTooltipRender
   };
 }
 
+function formatDate(date: Date | number) {
+  return Intl.DateTimeFormat("en-GB", {
+    day: "2-digit",
+    month: "short",
+    year: undefined,
+  }).format(new Date(date))
+}
+
 // set up the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
-  const gridDiv = document.querySelector<HTMLElement>('#myGrid')!;
-  gridApi = createGrid(gridDiv, gridOptions);
+  gridApi = createGrid(document.querySelector<HTMLElement>('#myGrid')!, gridOptions);
 });

@@ -26,7 +26,7 @@ function onBtPrinterFriendly() {
   eGridDiv.style.width = ''
   eGridDiv.style.height = ''
 
-  gridApi!.setDomLayout('print')
+  gridApi!.setGridOption('domLayout', 'print')
 }
 
 function onBtNormal() {
@@ -35,7 +35,7 @@ function onBtNormal() {
   eGridDiv.style.height = '200px'
 
   // Same as setting to 'normal' as it is the default
-  gridApi!.setDomLayout()
+  gridApi!.setGridOption('domLayout', undefined);
 }
 
 // setup the grid after the page has finished loading

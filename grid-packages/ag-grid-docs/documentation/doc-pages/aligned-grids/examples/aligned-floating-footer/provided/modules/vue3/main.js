@@ -16,7 +16,6 @@ const VueExample = {
             <ag-grid-vue style="flex: 1 1 auto;"
                          ref="topGrid"
                          :gridOptions="topGridOptions"
-                         @first-data-rendered="onFirstDataRendered"
                          :columnDefs="columnDefs"
                          :rowData="rowData"
                          >
@@ -66,25 +65,28 @@ const VueExample = {
         this.topGridOptions = {
             alignedGrids: () => [this.$refs.bottomGrid],
             defaultColDef: {
-                editable: true,
                 sortable: true,
                 resizable: true,
                 filter: true,
                 flex: 1,
                 minWidth: 100
             },
-            suppressHorizontalScroll: true
+            suppressHorizontalScroll: true,
+            alwaysShowVerticalScroll: true,
+            autoSizeStrategy: {
+                type: 'fitCellContents'
+            },
         };
         this.bottomGridOptions = {
             alignedGrids: () => [this.$refs.topGrid],
             defaultColDef: {
-                editable: true,
                 sortable: true,
                 resizable: true,
                 filter: true,
                 flex: 1,
                 minWidth: 100
-            }
+            },
+            alwaysShowVerticalScroll: true,
         };
 
         this.columnDefs = [
@@ -94,12 +96,9 @@ const VueExample = {
             { field: 'year', width: 120 },
             { field: 'date', width: 150 },
             { field: 'sport', width: 150 },
-            // in the total col, we have a value getter, which usually means we don't need to provide a field
-            // however the master/slave depends on the column id (which is derived from the field if provided) in
-            // order ot match up the columns
             {
                 headerName: 'Total',
-                field: 'total',
+                colId: 'total',
                 valueGetter: 'data.gold + data.silver + data.bronze',
                 width: 200
             },
@@ -114,11 +113,6 @@ const VueExample = {
         fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
             .then(resp => resp.json())
             .then(rowData => this.rowData = rowData);
-    },
-    methods: {
-        onFirstDataRendered() {
-            this.gridApi.autoSizeAllColumns();
-        }
     },
 };
 

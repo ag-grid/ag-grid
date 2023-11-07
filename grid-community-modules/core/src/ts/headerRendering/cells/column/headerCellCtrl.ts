@@ -1,8 +1,8 @@
 import { ColumnModel } from "../../../columns/columnModel";
 import { UserCompDetails } from "../../../components/framework/userComponentFactory";
 import { KeyCode } from '../../../constants/keyCode';
-import { Autowired, PreDestroy } from "../../../context/context";
-import { DragAndDropService, DragItem, DragSource, DragSourceType } from "../../../dragAndDrop/dragAndDropService";
+import { Autowired } from "../../../context/context";
+import { DragAndDropService, DragItem, DragSourceType } from "../../../dragAndDrop/dragAndDropService";
 import { Column } from "../../../entities/column";
 import { Events } from "../../../eventKeys";
 import { GridApi } from "../../../gridApi";
@@ -23,8 +23,8 @@ import { SelectAllFeature } from "./selectAllFeature";
 import { getElementSize } from "../../../utils/dom";
 import { ResizeObserverService } from "../../../misc/resizeObserverService";
 import { SortDirection } from "../../../entities/colDef";
-import { isBrowserSafari } from "../../../utils/browser";
-import { FocusService } from "../../../focusService";
+import { ColumnMoveHelper } from "../../columnMoveHelper";
+import { HorizontalDirection } from "../../../constants/direction";
 
 export interface IHeaderCellComp extends IAbstractHeaderCellComp {
     setWidth(width: string): void;
@@ -35,25 +35,17 @@ export interface IHeaderCellComp extends IAbstractHeaderCellComp {
     getUserCompInstance(): IHeader | undefined;
 }
 
-export class HeaderCellCtrl extends AbstractHeaderCellCtrl {
+export class HeaderCellCtrl extends AbstractHeaderCellCtrl<IHeaderCellComp, Column, ResizeFeature> {
 
     @Autowired('columnModel') private readonly columnModel: ColumnModel;
     @Autowired('columnHoverService') private readonly columnHoverService: ColumnHoverService;
     @Autowired('sortController') private readonly sortController: SortController;
     @Autowired('menuFactory') private readonly menuFactory: IMenuFactory;
-    @Autowired('dragAndDropService') private readonly dragAndDropService: DragAndDropService;
     @Autowired('resizeObserverService') private readonly resizeObserverService: ResizeObserverService;
     @Autowired('gridApi') private readonly gridApi: GridApi;
 
-    private comp: IHeaderCellComp;
-
-    private column: Column;
-
     private refreshFunctions: (() => void)[] = [];
-
     private selectAllFeature: SelectAllFeature;
-
-    private moveDragSource: DragSource | undefined;
 
     private sortable: boolean | null | undefined;
     private displayName: string | null;
@@ -72,7 +64,7 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl {
     }
 
     public setComp(comp: IHeaderCellComp, eGui: HTMLElement, eResize: HTMLElement, eHeaderCompWrapper: HTMLElement): void {
-        super.setGui(eGui);
+        this.setGui(eGui);
         this.comp = comp;
 
         this.updateState();
@@ -92,7 +84,7 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl {
         this.setupUserComp();
         this.refreshAria();
 
-        this.createManagedBean(new ResizeFeature(this.getPinned(), this.column, eResize, comp, this));
+        this.resizeFeature = this.createManagedBean(new ResizeFeature(this.getPinned(), this.column, eResize, comp, this));
         this.createManagedBean(new HoverFeature([this.column], eGui));
         this.createManagedBean(new SetLeftFeature(this.column, eGui, this.beans));
         this.createManagedBean(new ManagedFocusFeature(
@@ -106,33 +98,61 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl {
             }
         ));
 
-        this.addMouseDownListenerIfNeeded(eGui);
+        this.addResizeAndMoveKeyboardListeners();
+
         this.addManagedPropertyListeners(['suppressMovableColumns', 'suppressMenuHide'], this.refresh.bind(this));
         this.addManagedListener(this.column, Column.EVENT_COL_DEF_CHANGED, this.refresh.bind(this));
         this.addManagedListener(this.eventService, Events.EVENT_COLUMN_VALUE_CHANGED, this.onColumnValueChanged.bind(this));
         this.addManagedListener(this.eventService, Events.EVENT_COLUMN_ROW_GROUP_CHANGED, this.onColumnRowGroupChanged.bind(this));
         this.addManagedListener(this.eventService, Events.EVENT_COLUMN_PIVOT_CHANGED, this.onColumnPivotChanged.bind(this));
         this.addManagedListener(this.eventService, Events.EVENT_HEADER_HEIGHT_CHANGED, this.onHeaderHeightChanged.bind(this));
-        this.addManagedListener(this.eventService, Events.EVENT_DISPLAYED_COLUMNS_CHANGED, this.onHeaderHeightChanged.bind(this));
+        this.addManagedListener(this.eventService, Events.EVENT_DISPLAYED_COLUMNS_CHANGED, this.onDisplayedColumnsChanged.bind(this));
     }
 
-    private addMouseDownListenerIfNeeded(eGui: HTMLElement): void {
-        // we add a preventDefault in the DragService for Safari only
-        // so we need to make sure we don't prevent focus on mousedown
-        if (!isBrowserSafari()) { return; }
+    protected resizeHeader(direction: HorizontalDirection, shiftKey: boolean): void {
+        if (!this.column.isResizable()) { return; }
 
-        const events = ['mousedown', 'touchstart'];
-        const eDocument = this.gridOptionsService.getDocument();
-        events.forEach(eventName => {
-            this.addManagedListener(eGui, eventName, (e: MouseEvent | TouchEvent) => {
-                const activeEl = eDocument.activeElement;
+        const actualWidth = this.column.getActualWidth();
+        const minWidth = this.column.getMinWidth() ?? 0;
+        const maxWidth = this.column.getMaxWidth() ?? Number.MAX_SAFE_INTEGER;
     
-                if (activeEl !== eGui && !eGui.contains(activeEl)) {
-                    eGui.focus();
-                    FocusService.toggleKeyboardMode(e)
-                }
-            });
-        })
+        const isLeft = direction === HorizontalDirection.Left;
+        const diff = (isLeft ? -1 : 1) * this.resizeMultiplier;
+
+        const newWidth = Math.min(Math.max(actualWidth + diff, minWidth), maxWidth);
+
+        this.columnModel.setColumnWidths([{ key: this.column, newWidth }], shiftKey, true);
+    }
+
+    protected moveHeader(hDirection: HorizontalDirection): void {
+        const { eGui, column, columnModel, gridOptionsService, ctrlsService } = this;
+        const pinned = this.getPinned();
+        const left = eGui.getBoundingClientRect().left;
+        const width = column.getActualWidth();
+        const isRtl = gridOptionsService.get('enableRtl');
+        const isLeft = hDirection === HorizontalDirection.Left !== isRtl;
+
+        const xPosition = ColumnMoveHelper.normaliseX(
+            isLeft ? (left - 20) : (left + width + 20),
+            pinned,
+            true,
+            gridOptionsService,
+            ctrlsService
+        );
+
+        ColumnMoveHelper.attemptMoveColumns({
+            allMovingColumns: [column],
+            isFromHeader: true,
+            hDirection,
+            xPosition,
+            pinned,
+            fromEnter: false,
+            fakeEvent: false,
+            gridOptionsService,
+            columnModel
+        });
+
+        ctrlsService.getGridBodyCtrl().getScrollFeature().ensureColumnVisible(column, 'auto');
     }
 
     private setupUserComp(): void {
@@ -152,7 +172,6 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl {
     }
 
     private createParams(): IHeaderParams {
-
         const colDef = this.column.getColDef();
 
         const params: IHeaderParams = {
@@ -285,55 +304,47 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl {
         this.dragSourceElement = eSource;
         this.removeDragSource();
 
-        if (!eSource) { return; }
+        if (!eSource || !this.draggable) { return; }
 
-        if (!this.draggable) { return; }
+        const { column, columnModel, displayName, dragAndDropService, gridOptionsService } = this;
 
-        let hideColumnOnExit = !this.gridOptionsService.is('suppressDragLeaveHidesColumns');
-        this.moveDragSource = {
+        let hideColumnOnExit = !this.gridOptionsService.get('suppressDragLeaveHidesColumns');
+        const dragSource = this.dragSource = {
             type: DragSourceType.HeaderCell,
             eElement: eSource,
             getDefaultIconName: () => hideColumnOnExit ? DragAndDropService.ICON_HIDE : DragAndDropService.ICON_NOT_ALLOWED,
-            getDragItem: () => this.createDragItem(),
-            dragItemName: this.displayName,
+            getDragItem: () => this.createDragItem(column),
+            dragItemName: displayName,
             onDragStarted: () => {
-                hideColumnOnExit = !this.gridOptionsService.is('suppressDragLeaveHidesColumns');
-                this.column.setMoving(true, "uiColumnMoved");
+                hideColumnOnExit = !gridOptionsService.get('suppressDragLeaveHidesColumns');
+                column.setMoving(true, "uiColumnMoved");
             },
-            onDragStopped: () => this.column.setMoving(false, "uiColumnMoved"),
+            onDragStopped: () => column.setMoving(false, "uiColumnMoved"),
             onGridEnter: (dragItem) => {
                 if (hideColumnOnExit) {
                     const unlockedColumns = dragItem?.columns?.filter(col => !col.getColDef().lockVisible) || [];
-                    this.columnModel.setColumnsVisible(unlockedColumns, true, "uiColumnMoved");
+                    columnModel.setColumnsVisible(unlockedColumns, true, "uiColumnMoved");
                 }
             },
             onGridExit: (dragItem) => {
                 if (hideColumnOnExit) {
                     const unlockedColumns = dragItem?.columns?.filter(col => !col.getColDef().lockVisible) || [];
-                    this.columnModel.setColumnsVisible(unlockedColumns, false, "uiColumnMoved");
+                    columnModel.setColumnsVisible(unlockedColumns, false, "uiColumnMoved");
                 }
             },
         };
 
-        this.dragAndDropService.addDragSource(this.moveDragSource, true);
+        dragAndDropService.addDragSource(dragSource, true);
     }
 
-    private createDragItem(): DragItem {
+    private createDragItem(column: Column): DragItem {
         const visibleState: { [key: string]: boolean; } = {};
-        visibleState[this.column.getId()] = this.column.isVisible();
+        visibleState[column.getId()] = column.isVisible();
 
         return {
-            columns: [this.column],
+            columns: [column],
             visibleState: visibleState
         };
-    }
-
-    @PreDestroy
-    public removeDragSource(): void {
-        if (this.moveDragSource) {
-            this.dragAndDropService.removeDragSource(this.moveDragSource);
-            this.moveDragSource = undefined;
-        }
     }
 
     private updateState(): void {
@@ -400,7 +411,7 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl {
 
     private workOutDraggable(): boolean {
         const colDef = this.column.getColDef();
-        const isSuppressMovableColumns = this.gridOptionsService.is('suppressMovableColumns');
+        const isSuppressMovableColumns = this.gridOptionsService.get('suppressMovableColumns');
 
         const colCanMove = !isSuppressMovableColumns && !colDef.suppressMovable && !colDef.lockPosition;
 
@@ -472,13 +483,24 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl {
         this.addRefreshFunction(listener);
     }
 
+    private onDisplayedColumnsChanged(): void {
+        if (!this.isAlive()) { return; }
+        this.onHeaderHeightChanged();
+    }
+
     private onHeaderHeightChanged() {
         this.refreshSpanHeaderHeight();
     }
 
     private refreshSpanHeaderHeight() {
         const { eGui, column, comp, columnModel, gridOptionsService } = this;
-        if (!column.isSpanHeaderHeight()) { return; }
+        if (!column.isSpanHeaderHeight()) {
+            eGui.style.removeProperty('top');
+            eGui.style.removeProperty('height');
+            comp.addOrRemoveCssClass('ag-header-span-height', false);
+            comp.addOrRemoveCssClass('ag-header-span-total', false);
+            return;
+        }
 
         const { numberOfParents, isSpanningTotal } = this.getColumnGroupPaddingInfo();
 
@@ -495,7 +517,7 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl {
 
         comp.addOrRemoveCssClass('ag-header-span-total', isSpanningTotal);
 
-        const pivotMode = gridOptionsService.is('pivotMode');
+        const pivotMode = gridOptionsService.get('pivotMode');
         const groupHeaderHeight = pivotMode
             ? columnModel.getPivotGroupHeaderHeight()
             : columnModel.getGroupHeaderHeight();
@@ -644,7 +666,7 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl {
 
     private addColumnHoverListener(): void {
         const listener = () => {
-            if (!this.gridOptionsService.is('columnHoverHighlight')) { return; }
+            if (!this.gridOptionsService.get('columnHoverHighlight')) { return; }
             const isHovered = this.columnHoverService.isHovered(this.column);
             this.comp.addOrRemoveCssClass('ag-column-hover', isHovered);
         };
@@ -674,5 +696,16 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl {
 
     private setActiveHeader(active: boolean): void {
         this.comp.addOrRemoveCssClass('ag-header-active', active);
+    }
+
+    protected destroy(): void {
+        super.destroy();
+
+        (this.refreshFunctions as any) = null;
+        (this.selectAllFeature as any) = null;
+        (this.dragSourceElement as any) = null;
+        (this.userCompDetails as any) = null;
+        (this.userHeaderClasses as any) = null;
+        (this.ariaDescriptionProperties as any) = null;
     }
 }

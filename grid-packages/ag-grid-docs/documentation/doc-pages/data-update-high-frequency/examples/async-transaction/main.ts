@@ -158,7 +158,7 @@ const gridOptions: GridOptions = {
   },
   onGridReady: (params) => {
     getData();
-    params.api.setRowData(globalRowData)
+    params.api.setGridOption('rowData', globalRowData)
   },
 }
 

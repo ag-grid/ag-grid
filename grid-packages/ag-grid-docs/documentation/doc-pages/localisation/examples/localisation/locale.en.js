@@ -187,6 +187,7 @@ const AG_GRID_LOCALE_EN = {
     lastPage: 'Last Page',
     firstPage: 'First Page',
     previousPage: 'Previous Page',
+    pageSizeShowLabel: 'Show',
 
     // Pivoting
     pivotColumnGroupTotals: 'Total',
@@ -350,7 +351,6 @@ const AG_GRID_LOCALE_EN = {
     ariaChecked: 'checked',
     ariaColumn: 'Column',
     ariaColumnGroup: 'Column Group',
-    ariaColumnList: 'Column List',
     ariaColumnSelectAll: 'Toggle Select All Columns',
     ariaDateFilterInput: 'Date Filter Input',
     ariaDefaultListName: 'List',
@@ -406,6 +406,10 @@ const AG_GRID_LOCALE_EN = {
     ariaLabelAdvancedFilterBuilderColumnSelectField: 'Advanced Filter Builder Column Select Field',
     ariaLabelAdvancedFilterBuilderOptionSelectField: 'Advanced Filter Builder Option Select Field',
     ariaLabelAdvancedFilterBuilderJoinSelectField: 'Advanced Filter Builder Join Operator Select Field',
+
+    // ARIA Labels for the Side Bar
+    ariaColumnPanelList: 'Column List',
+    ariaFilterPanelList: 'Filter List',
 
     // Number Format (Status Bar, Pagination Panel)
     thousandSeparator: ',',

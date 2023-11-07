@@ -105,12 +105,6 @@ export class PopupService extends BeanStub {
     private postConstruct(): void {
         this.ctrlsService.whenReady(p => {
             this.gridCtrl = p.gridCtrl;
-            this.addManagedListener(this.gridCtrl, Events.EVENT_KEYBOARD_FOCUS, () => {
-                this.popupList.forEach(popup => popup.element.classList.add(FocusService.AG_KEYBOARD_FOCUS));
-            });
-            this.addManagedListener(this.gridCtrl, Events.EVENT_MOUSE_FOCUS, () => {
-                this.popupList.forEach(popup => popup.element.classList.remove(FocusService.AG_KEYBOARD_FOCUS));
-            });
         });
     }
 
@@ -145,7 +139,7 @@ export class PopupService extends BeanStub {
         // to the right, unless it doesn't fit and we then put it to the left. for RTL it's the other way around,
         // we try place it first to the left, and then if not to the right.
         let x: number;
-        if (this.gridOptionsService.is('enableRtl')) {
+        if (this.gridOptionsService.get('enableRtl')) {
             // for RTL, try left first
             x = xLeftPosition();
             if (x < 0) {
@@ -476,7 +470,7 @@ export class PopupService extends BeanStub {
 
         eWrapper.classList.add('ag-popup');
         element.classList.add(
-            this.gridOptionsService.is('enableRtl') ? 'ag-rtl' : 'ag-ltr',
+            this.gridOptionsService.get('enableRtl') ? 'ag-rtl' : 'ag-ltr',
             'ag-popup-child'
         );
 
@@ -485,10 +479,6 @@ export class PopupService extends BeanStub {
         }
 
         setAriaLabel(element, ariaLabel);
-
-        if (this.focusService.isKeyboardMode()) {
-            element.classList.add(FocusService.AG_KEYBOARD_FOCUS);
-        }
 
         eWrapper.appendChild(element);
         ePopupParent.appendChild(eWrapper);

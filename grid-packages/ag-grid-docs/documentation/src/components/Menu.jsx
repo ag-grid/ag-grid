@@ -1,10 +1,9 @@
 import classnames from 'classnames';
-import React, {useState, useEffect, useMemo} from 'react';
+import React, {useState, useEffect, useMemo, useCallback} from 'react';
 import {Link} from 'gatsby';
 import {Icon} from 'components/Icon';
 import convertToFrameworkUrl from 'utils/convert-to-framework-url';
 import {Collapsible} from './Collapsible';
-import menuData from '../../doc-pages/licensing/menu.json';
 import styles from './Menu.module.scss';
 import {toElementId, getActiveParentItems, getFilteredMenuData} from './menuUtils';
 
@@ -13,21 +12,46 @@ const useDocsButtonState = () => {
     return [isDocsButtonOpen, setIsDocsButtonOpen];
 };
 
-const Menu = ({currentFramework, path}) => {
+const Menu = ({ currentFramework, path, menuData, expandAllGroups = false, hideChevrons = false }) => {
     const [isDocsButtonOpen, setIsDocsButtonOpen] = useDocsButtonState();
-    const [activeSections, setActiveSections] = useState(new Set());
+
+    const defaultActiveSections = expandAllGroups
+        ? new Set(menuData.map(group => group.items.map(item => item.title)).flat())
+        : new Set();
+
+    const whatsNewLink = menuData.find(item => item.whatsNewLink);
+    menuData = menuData.filter(item => !item.whatsNewLink);
+
+    const [activeSections, setActiveSections] = useState(defaultActiveSections);
     const activeParentItems = getActiveParentItems(menuData, path);
-    const filteredMenuData = getFilteredMenuData(menuData, currentFramework);
+    const filteredMenuData = getFilteredMenuData(menuData, currentFramework, path);
 
     const toggleActive = (title) => {
         setActiveSections((prev) => prev.has(title) ? new Set() : new Set([title]));
     };
 
+    const collapseAllGroups = useCallback(() => {
+        setActiveSections(new Set());
+    }, []);
+
     return (
         <nav className={classnames(styles.menu, 'font-size-responsive')}>
+            {whatsNewLink && (
+                <div className={styles.whatsNewLink}>
+                    <Link
+                        to={convertToFrameworkUrl(whatsNewLink.url, currentFramework)}
+                        activeClassName={styles.whatsNewLinkActive}
+                        onClick={collapseAllGroups}
+                    >
+                        {whatsNewLink.title}
+                    </Link>
+                </div>
+            )}
+
             <ul id="side-nav" className={classnames(styles.menuInner, 'list-style-none', 'collapse')}>
                 {filteredMenuData.map(({group, items}, index) => (
                     <React.Fragment key={group}>
+
                         <h5>{group}</h5>
                         {items.map(({title, items: childItems}) => (
                             <MenuSection
@@ -41,6 +65,7 @@ const Menu = ({currentFramework, path}) => {
                                 activeSections={activeSections}
                                 isDocsButtonOpen={isDocsButtonOpen}
                                 setIsDocsButtonOpen={setIsDocsButtonOpen}
+                                hideChevrons={hideChevrons}
                             />
                         ))}
                         {index < filteredMenuData.length - 1 && <hr/>}
@@ -51,7 +76,7 @@ const Menu = ({currentFramework, path}) => {
     );
 };
 
-const MenuSection = ({title, items, currentFramework, activeParentItems, toggleActive, activeSections, setActiveSections}) => {
+const MenuSection = ({title, items, currentFramework, activeParentItems, toggleActive, activeSections, setActiveSections, hideChevrons}) => {
     const [shouldAutoExpand, setShouldAutoExpand] = useState(false);
     const [isDocsButtonOpen, setIsDocsButtonOpen] = useDocsButtonState();
 
@@ -76,11 +101,17 @@ const MenuSection = ({title, items, currentFramework, activeParentItems, toggleA
         }
     }, [shouldAutoExpand]);
 
+    const handleToggle = () => {
+        if (!hideChevrons) {
+            toggleActive(title);
+        }
+    };
+
     return (
         <li className={styles.menuSection}>
-            <button onClick={toggleActive} tabIndex="0" className={buttonClasses} aria-expanded={isActive}
+            <button onClick={handleToggle} tabIndex="0" className={buttonClasses} aria-expanded={isActive}
                     aria-controls={`#${elementId}`}>
-                <Icon name="chevronRight" svgClasses={iconClasses}/>
+                {!hideChevrons && <Icon name="chevronRight" svgClasses={iconClasses}/>}
                 {title}
             </button>
             <MenuGroup

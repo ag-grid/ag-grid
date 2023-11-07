@@ -42,7 +42,7 @@ export class DragListenerFeature extends BeanStub {
 
         this.addDestroyFunc(() => this.disableFeature());
 
-        const isRangeSelection = this.gridOptionsService.is('enableRangeSelection');
+        const isRangeSelection = this.gridOptionsService.get('enableRangeSelection');
         if (isRangeSelection) {
             this.enableFeature();
         }

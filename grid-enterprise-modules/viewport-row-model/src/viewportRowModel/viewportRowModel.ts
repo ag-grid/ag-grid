@@ -18,9 +18,6 @@ import {
     RowModelType
 } from "@ag-grid-community/core";
 
-
-const DEFAULT_VIEWPORT_ROW_MODEL_PAGE_SIZE = 5;
-const DEFAULT_VIEWPORT_ROW_MODEL_BUFFER_SIZE = 5;
 @Bean('rowModel')
 export class ViewportRowModel extends BeanStub implements IRowModel {
 
@@ -77,11 +74,11 @@ export class ViewportRowModel extends BeanStub implements IRowModel {
     }
 
     private getViewportRowModelPageSize(): number | undefined {
-        return _.oneOrGreater(this.gridOptionsService.getNum('viewportRowModelPageSize'), DEFAULT_VIEWPORT_ROW_MODEL_PAGE_SIZE);
+        return this.gridOptionsService.get('viewportRowModelPageSize');
     }
 
     private getViewportRowModelBufferSize(): number {
-        return _.zeroOrGreater(this.gridOptionsService.getNum('viewportRowModelBufferSize'), DEFAULT_VIEWPORT_ROW_MODEL_BUFFER_SIZE);
+        return this.gridOptionsService.get('viewportRowModelBufferSize');
     }
 
     private calculateFirstRow(firstRenderedRow: number): number {

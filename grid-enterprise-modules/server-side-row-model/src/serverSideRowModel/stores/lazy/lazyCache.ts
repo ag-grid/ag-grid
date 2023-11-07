@@ -91,7 +91,7 @@ export class LazyCache extends BeanStub {
         this.defaultNodeIdPrefix = this.blockUtils.createNodeIdPrefix(this.store.getParentNode());
         this.rowLoader = this.createManagedBean(new LazyBlockLoader(this, this.store.getParentNode(), this.storeParams));
         this.getRowIdFunc = this.gridOptionsService.getCallback('getRowId');
-        this.isMasterDetail = this.gridOptionsService.is('masterDetail');
+        this.isMasterDetail = this.gridOptionsService.get('masterDetail');
     }
 
     @PreDestroy
@@ -731,7 +731,7 @@ export class LazyCache extends BeanStub {
     public onLoadSuccess(firstRowIndex: number, numberOfRowsExpected: number, response: LoadSuccessParams) {
         if (!this.live) return;
 
-        const info = response.groupLevelInfo ?? response.storeInfo;
+        const info = response.groupLevelInfo;
         this.store.setStoreInfo(info);
     
         if (this.getRowIdFunc != null) {

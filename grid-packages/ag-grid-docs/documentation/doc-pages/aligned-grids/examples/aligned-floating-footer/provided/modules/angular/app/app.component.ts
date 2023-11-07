@@ -1,13 +1,12 @@
-import { Component, ViewChild } from '@angular/core';
+import { Component } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 
 import "@ag-grid-community/styles/ag-grid.css";
 import "@ag-grid-community/styles/ag-theme-alpine.css";
-import { ColDef, ColGroupDef, FirstDataRenderedEvent, GridOptions } from '@ag-grid-community/core';
+import { ColDef, ColGroupDef, GridOptions } from '@ag-grid-community/core';
 
 import { ModuleRegistry } from '@ag-grid-community/core';
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
-import { AgGridAngular } from '@ag-grid-community/angular';
 
 // Register the required feature modules with the Grid
 ModuleRegistry.registerModules([ClientSideRowModelModule])
@@ -26,7 +25,6 @@ ModuleRegistry.registerModules([ClientSideRowModelModule])
                     [rowData]="rowData"
                     [gridOptions]="topOptions"
                     [alignedGrids]="[bottomGrid]"
-                    (firstDataRendered)='onFirstDataRendered($event)'
                     [columnDefs]="columnDefs">
             </ag-grid-angular>
 
@@ -47,7 +45,6 @@ export class AppComponent {
     rowData!: any[];
     topOptions: GridOptions = {
         defaultColDef: {
-            editable: true,
             sortable: true,
             resizable: true,
             filter: true,
@@ -55,19 +52,23 @@ export class AppComponent {
             minWidth: 100
         }
         ,
-        suppressHorizontalScroll: true
+        suppressHorizontalScroll: true,
+        alwaysShowVerticalScroll: true,
+        autoSizeStrategy: {
+            type: 'fitCellContents'
+        },
     };
     bottomOptions: GridOptions = {
         headerHeight: 0,
         rowStyle: { fontWeight: 'bold' },
         defaultColDef: {
-            editable: true,
             sortable: true,
             resizable: true,
             filter: true,
             flex: 1,
             minWidth: 100
-        }
+        },
+        alwaysShowVerticalScroll: true,
     };
 
     bottomData = [
@@ -91,12 +92,9 @@ export class AppComponent {
             { field: 'country', width: 150 },
             { field: 'year', width: 120 },
             { field: 'sport', width: 200 },
-            // in the total col, we have a value getter, which usually means we don't need to provide a field
-            // however the master/slave depends on the column id (which is derived from the field if provided) in
-            // order ot match up the columns
             {
                 headerName: 'Total',
-                field: 'total',
+                colId: 'total',
                 valueGetter: 'data.gold + data.silver + data.bronze',
                 width: 200
             },
@@ -112,9 +110,5 @@ export class AppComponent {
             .subscribe(data => {
                 this.rowData = data as any[];
             });
-    }
-
-    onFirstDataRendered(params: FirstDataRenderedEvent) {
-        params.api.autoSizeAllColumns();
     }
 }

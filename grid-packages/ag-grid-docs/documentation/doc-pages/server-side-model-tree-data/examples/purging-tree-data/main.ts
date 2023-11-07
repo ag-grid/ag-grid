@@ -63,7 +63,7 @@ document.addEventListener('DOMContentLoaded', function () {
     .then(function (data) {
       var fakeServer = createFakeServer(data)
       var datasource = createServerSideDatasource(fakeServer)
-      gridApi!.setServerSideDatasource(datasource)
+      gridApi!.setGridOption('serverSideDatasource', datasource)
     })
 })
 

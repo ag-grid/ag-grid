@@ -71,12 +71,7 @@ function getMyFilter(): IFilterType {
             filterCallCount++
 
             const { node } = params;
-            const value = this.filterParams.valueGetter({
-                ...this.filterParams,
-                data: node.data,
-                getValue: (field) => node.data[field],
-                node,
-            });
+            const value = this.filterParams.getValue(node);
             return value > (this.filterValue || 0)
         }
     }
@@ -204,7 +199,7 @@ const gridOptions: GridOptions = {
         })
 
         timeOperation('Initialisation', function () {
-            params.api.setRowData(getData())
+            params.api.setGridOption('rowData', getData())
         })
     },
     isGroupOpenByDefault: isGroupOpenByDefault

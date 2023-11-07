@@ -69,11 +69,11 @@ const gridOptions: GridOptions<IOlympicData> = {
 }
 
 function onBtExcludeMedalColumns() {
-  gridApi!.setColumnDefs(getColDefsMedalsExcluded())
+  gridApi!.setGridOption('columnDefs', getColDefsMedalsExcluded())
 }
 
 function onBtIncludeMedalColumns() {
-  gridApi!.setColumnDefs(getColDefsMedalsIncluded())
+  gridApi!.setGridOption('columnDefs', getColDefsMedalsIncluded())
 }
 
 // setup the grid after the page has finished loading
@@ -83,5 +83,5 @@ document.addEventListener('DOMContentLoaded', function () {
 
   fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
     .then(response => response.json())
-    .then((data: IOlympicData[]) => gridApi!.setRowData(data))
+    .then((data: IOlympicData[]) => gridApi!.setGridOption('rowData', data))
 })

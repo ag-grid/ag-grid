@@ -21,8 +21,6 @@ const gridOptions: GridOptions = {
     resizable: true,
     cellDataType: false,
     editable: true,
-    useValueFormatterForExport: true,
-    useValueParserForImport: true,
   },
   rowData: createRowData(),
   enableRangeSelection: true,

@@ -23,7 +23,7 @@ import { AbstractHeaderCellCtrl } from "./headerRendering/cells/abstractCell/abs
 import { last } from "./utils/array";
 import { NavigateToNextHeaderParams, TabToNextHeaderParams } from "./interfaces/iCallbackParams";
 import { WithoutGridCommon } from "./interfaces/iCommon";
-import { FOCUSABLE_EXCLUDE, FOCUSABLE_SELECTOR } from "./utils/dom";
+import { FOCUSABLE_EXCLUDE, FOCUSABLE_SELECTOR, isVisible } from "./utils/dom";
 import { TabGuardClassNames } from "./widgets/tabGuardCtrl";
 import { FilterManager } from "./filter/filterManager";
 import { IAdvancedFilterService } from "./interfaces/iAdvancedFilterService";
@@ -43,8 +43,6 @@ export class FocusService extends BeanStub {
     @Autowired('filterManager') public filterManager: FilterManager;
     @Optional('advancedFilterService') public advancedFilterService: IAdvancedFilterService;
 
-    public static AG_KEYBOARD_FOCUS: string = 'ag-keyboard-focus';
-
     private gridCtrl: GridCtrl;
     private focusedCellPosition: CellPosition | null;
     private restoredFocusedCellPosition: CellPosition | null;
@@ -53,62 +51,22 @@ export class FocusService extends BeanStub {
     private advancedFilterFocusColumn: Column | undefined;
 
     private static keyboardModeActive: boolean = false;
-    private static instancesMonitored: Map<Document, GridCtrl[]> = new Map();
+    private static instanceCount: number = 0;
 
-    /**
-     * Adds a gridCore to the list of the gridCores monitoring Keyboard Mode
-     * in a specific HTMLDocument.
-     *
-     * @param doc {Document} - The Document containing the gridCore.
-     * @param gridCore {GridComp} - The GridCore to be monitored.
-     */
-    private static addKeyboardModeEvents(doc: Document, controller: GridCtrl): void {
-        const docControllers = FocusService.instancesMonitored.get(doc);
-
-        if (docControllers && docControllers.length > 0) {
-            if (docControllers.indexOf(controller) === -1) {
-                docControllers.push(controller);
-            }
-        } else {
-            FocusService.instancesMonitored.set(doc, [controller]);
-            doc.addEventListener('keydown', FocusService.toggleKeyboardMode);
-            doc.addEventListener('mousedown', FocusService.toggleKeyboardMode);
-        }
+    private static addKeyboardModeEvents(doc: Document): void {
+        if (this.instanceCount > 0) { return; }
+        doc.addEventListener('keydown', FocusService.toggleKeyboardMode);
+        doc.addEventListener('mousedown', FocusService.toggleKeyboardMode);
     }
 
-    /**
-     * Removes a gridCore from the list of the gridCores monitoring Keyboard Mode
-     * in a specific HTMLDocument.
-     *
-     * @param doc {Document} - The Document containing the gridCore.
-     * @param gridCore {GridComp} - The GridCore to be removed.
-     */
-    private static removeKeyboardModeEvents(doc: Document, controller: GridCtrl): void {
-        const docControllers = FocusService.instancesMonitored.get(doc);
 
-        let newControllers: GridCtrl[] = [];
-
-        if (docControllers && docControllers.length) {
-            newControllers = [...docControllers].filter(
-                currentGridCore => currentGridCore !== controller
-            );
-            FocusService.instancesMonitored.set(doc, newControllers);
-        }
-
-        if (newControllers.length === 0) {
-            doc.removeEventListener('keydown', FocusService.toggleKeyboardMode);
-            doc.removeEventListener('mousedown', FocusService.toggleKeyboardMode);
-        }
+    private static removeKeyboardModeEvents(doc: Document): void {
+        if (this.instanceCount > 0) return; 
+        doc.addEventListener('keydown', FocusService.toggleKeyboardMode);
+        doc.addEventListener('mousedown', FocusService.toggleKeyboardMode);
     }
 
-    /**
-     * This method will be called by `keydown` and `mousedown` events on all Documents monitoring
-     * KeyboardMode. It will then fire a KEYBOARD_FOCUS, MOUSE_FOCUS on each gridCore present in
-     * the Document allowing each gridCore to maintain a state for KeyboardMode.
-     *
-     * @param event {KeyboardEvent | MouseEvent | TouchEvent} - The event triggered.
-     */
-    public static toggleKeyboardMode(event: KeyboardEvent | MouseEvent | TouchEvent): void {
+    private static toggleKeyboardMode(event: KeyboardEvent | MouseEvent | TouchEvent): void {
         const isKeyboardActive = FocusService.keyboardModeActive;
         const isKeyboardEvent = event.type === 'keydown';
 
@@ -117,20 +75,13 @@ export class FocusService extends BeanStub {
             if (event.ctrlKey || event.metaKey || event.altKey) { return; }
         }
 
-        if (isKeyboardActive && isKeyboardEvent || !isKeyboardActive && !isKeyboardEvent) { return; }
+        if (isKeyboardActive === isKeyboardEvent) { return; }
 
         FocusService.keyboardModeActive = isKeyboardEvent;
-        const doc = (event.target as HTMLElement).ownerDocument;
+    }
 
-        if (!doc) { return; }
-
-        const controllersForDoc = FocusService.instancesMonitored.get(doc);
-
-        if (controllersForDoc) {
-            controllersForDoc.forEach(controller => {
-                controller.dispatchEvent({ type: isKeyboardEvent ? Events.EVENT_KEYBOARD_FOCUS : Events.EVENT_MOUSE_FOCUS });
-            });
-        }
+    private static unregisterGridCompController(doc: Document): void {
+        FocusService.removeKeyboardModeEvents(doc);
     }
 
     @PostConstruct
@@ -141,19 +92,23 @@ export class FocusService extends BeanStub {
         this.addManagedListener(this.eventService, Events.EVENT_NEW_COLUMNS_LOADED, this.onColumnEverythingChanged.bind(this));
         this.addManagedListener(this.eventService, Events.EVENT_COLUMN_GROUP_OPENED, clearFocusedCellListener);
         this.addManagedListener(this.eventService, Events.EVENT_COLUMN_ROW_GROUP_CHANGED, clearFocusedCellListener);
+        this.registerKeyboardFocusEvents();
+        
 
         this.ctrlsService.whenReady(p => {
             this.gridCtrl = p.gridCtrl;
-            const doc = this.gridOptionsService.getDocument();
-            FocusService.addKeyboardModeEvents(doc, this.gridCtrl);
-            this.addDestroyFunc(() => this.unregisterGridCompController(this.gridCtrl));
         });
     }
 
-    public unregisterGridCompController(gridCompController: GridCtrl): void {
-        const doc = this.gridOptionsService.getDocument();
+    private registerKeyboardFocusEvents(): void {
+        const eDocument = this.gridOptionsService.getDocument();
+        FocusService.addKeyboardModeEvents(eDocument);
 
-        FocusService.removeKeyboardModeEvents(doc, gridCompController);
+        FocusService.instanceCount++;
+        this.addDestroyFunc(() => {
+            FocusService.instanceCount--;
+            FocusService.unregisterGridCompController(eDocument);
+        });
     }
 
     public onColumnEverythingChanged(): void {
@@ -182,7 +137,7 @@ export class FocusService extends BeanStub {
     // however the browser focus will have moved somewhere else.
     public getFocusCellToUseAfterRefresh(): CellPosition | null {
         const eDocument = this.gridOptionsService.getDocument();
-        if (this.gridOptionsService.is('suppressFocusAfterRefresh') || !this.focusedCellPosition) {
+        if (this.gridOptionsService.get('suppressFocusAfterRefresh') || !this.focusedCellPosition) {
             return null;
         }
 
@@ -198,7 +153,7 @@ export class FocusService extends BeanStub {
 
     public getFocusHeaderToUseAfterRefresh(): HeaderPosition | null {
         const eDocument = this.gridOptionsService.getDocument();
-        if (this.gridOptionsService.is('suppressFocusAfterRefresh') || !this.focusedHeaderPosition) {
+        if (this.gridOptionsService.get('suppressFocusAfterRefresh') || !this.focusedHeaderPosition) {
             return null;
         }
 
@@ -454,9 +409,8 @@ export class FocusService extends BeanStub {
     public focusPreviousFromFirstCell(event?: KeyboardEvent): boolean {
         if (this.filterManager.isAdvancedFilterHeaderActive()) {
             return this.focusAdvancedFilter(null);
-        } else {
-            return this.focusLastHeader(event);
         }
+        return this.focusLastHeader(event);
     }
 
     public isAnyCellFocused(): boolean {
@@ -481,7 +435,9 @@ export class FocusService extends BeanStub {
             excludeString += ', [tabindex="-1"]';
         }
 
-        const nodes = Array.prototype.slice.apply(rootNode.querySelectorAll(focusableString)) as HTMLElement[];
+        const nodes = Array.prototype.slice.apply(rootNode.querySelectorAll(focusableString)).filter((node: HTMLElement ) => {
+            return isVisible(node);
+        }) as HTMLElement[];
         const excludeNodes = Array.prototype.slice.apply(rootNode.querySelectorAll(excludeString)) as HTMLElement[];
 
         if (!excludeNodes.length) {
@@ -578,7 +534,7 @@ export class FocusService extends BeanStub {
         // if suppressCellFocus is `true`, it means the user does not want to
         // navigate between the cells using tab. Instead, we put focus on either
         // the header or after the grid, depending on whether tab or shift-tab was pressed.
-        if (this.gridOptionsService.is('suppressCellFocus')) {
+        if (this.gridOptionsService.get('suppressCellFocus')) {
 
             if (backwards) {
                 return this.focusLastHeader();

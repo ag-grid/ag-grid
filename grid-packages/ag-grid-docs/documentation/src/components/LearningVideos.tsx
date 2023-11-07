@@ -22,9 +22,10 @@ const Video = ({ title, url, thumbnail, keyPoints, runningTime }: VideoData) => 
             <img alt={thumbnail.altText} src={`${hostPrefix}/videos/${thumbnail.image}`} />
 
             <div className={styles.body}>
-                <h2>
-                    {title} ({runningTime})
-                </h2>
+                <div className={styles.titleDurationWrapper}>
+                    <span className={styles.title}>{title}</span>
+                    <span className={styles.duration}>{runningTime}</span>
+                </div>
                 <ul>
                     {keyPoints?.map((keyPoint: string) => (
                         <li key={keyPoint}>{keyPoint}</li>
@@ -34,6 +35,8 @@ const Video = ({ title, url, thumbnail, keyPoints, runningTime }: VideoData) => 
         </a>
     );
 };
+
+
 const LearningVideos = ({ framework }: { framework: string }) => {
     const [videos, setVideos] = useState<{ [framework: string]: VideoData[] }>({});
     useEffect(() => {

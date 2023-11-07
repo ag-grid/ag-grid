@@ -25,12 +25,12 @@
         MenuModule,
         GridChartsModule,
     ]);
-    var columnDefs = [
+    const columnDefs = [
         { field: "id" },
         { field: "color" },
         { field: "value1" }
     ];
-    var defaultColDef = {
+    const defaultColDef = {
         flex: 1,
         minWidth: 100,
         sortable: true,
@@ -39,7 +39,7 @@
         resizable: true
     };
 
-    var rowIdSequence = 100;
+    let rowIdSequence = 100;
     function createRowBlock() {
         return ['Red', 'Green', 'Blue'].map((color) =>
         ({
@@ -50,21 +50,26 @@
         )
     }
 
-    var leftGridOptions = {
-        defaultColDef: defaultColDef,
-        rowData: createRowBlock(),
-        columnDefs: [...columnDefs]
-    };
+        const baseGridOptions = {
+            defaultColDef: defaultColDef,
+            columnDefs: columnDefs,
+            enableCharts: true,
+            enableRangeSelection: true,
+        }
 
-    var rightGridOptions = {
-        defaultColDef: defaultColDef,
-        rowData: createRowBlock(),
-        columnDefs: [...columnDefs]
-    };
+        const leftGridOptions = {
+            ...baseGridOptions,
+            rowData: createRowBlock(),
+        };
+
+        const rightGridOptions = {
+            ...baseGridOptions,
+            rowData: createRowBlock(),
+        };
 
 
     function loadGrid(side) {
-        var grid = document.querySelector('#e' + side + 'Grid');
+        const grid = document.querySelector('#e' + side + 'Grid');
         let modules = side === 'Left' ? [SetFilterModule, ClipboardModule] : [ExcelExportModule];
         createGrid(grid, side === 'Left' ? leftGridOptions : rightGridOptions, { modules: modules });
     }

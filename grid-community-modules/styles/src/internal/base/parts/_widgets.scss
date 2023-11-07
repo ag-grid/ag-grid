@@ -56,7 +56,7 @@
             border-color: var(--ag-input-disabled-border-color);
         }
 
-        &:focus, &.ag-builder-preview-focus {
+        &:focus {
             outline: none;
             box-shadow: var(--ag-input-focus-box-shadow);
             border-color: var(--ag-input-focus-border-color);
@@ -81,7 +81,7 @@
     }
 
     input[class^='ag-'][type='button'], button[class^='ag-'] {
-        &:focus, &.ag-builder-preview-focus {
+        &:focus {
             box-shadow: var(--ag-input-focus-box-shadow);
         }
     }
@@ -120,10 +120,9 @@
     }
 
     .ag-select-list-item {
-        padding-left: 4px;
-        padding-right: 4px;
-        cursor: default;
+        @include ag.unthemed-rtl(( padding-left: calc(var(--ag-cell-horizontal-padding) / 2) ));
         @include ag.selectable(none);
+        cursor: default;
         span {
             white-space: nowrap;
             text-overflow: ellipsis;
@@ -365,6 +364,8 @@
         .ag-picker-field-wrapper {
             background-color: var(--ag-background-color);
             min-height: var(--ag-list-item-height);
+            @include ag.unthemed-rtl(( padding-left: calc(var(--ag-cell-horizontal-padding) / 2) ));
+            @include ag.unthemed-rtl(( padding-right: var(--ag-grid-size) ));
             cursor: default;
         }
 
@@ -377,7 +378,6 @@
         }
 
         .ag-picker-field-display {
-            margin: 4px;
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
@@ -415,7 +415,7 @@
         border-bottom: var(--ag-borders-secondary) var(--ag-secondary-border-color);
         padding-top: 0;
         padding-bottom: 0;
-        @include ag.unthemed-rtl(( padding-left: var(--ag-cell-horizontal-padding) ));
+        @include ag.unthemed-rtl(( padding-left: calc(var(--ag-cell-horizontal-padding) / 2) ));
         @include ag.unthemed-rtl(( padding-right: var(--ag-grid-size) ));
     }
 
@@ -432,7 +432,7 @@
         cursor: default;
         height: var(--ag-list-item-height);
 
-        .ag-keyboard-focus &:focus::after {
+        &:focus-visible::after {
             content: none
         }
 
@@ -442,7 +442,7 @@
     }
 
     .ag-rich-select-row {
-        @include ag.unthemed-rtl(( padding-left: var(--ag-cell-horizontal-padding) ));
+        @include ag.unthemed-rtl(( padding-left: calc(var(--ag-cell-horizontal-padding) / 2) ));
     }
 
     .ag-rich-select-row-selected {
@@ -470,7 +470,7 @@
         cursor: default;
         height: var(--ag-list-item-height);
 
-        .ag-keyboard-focus &:focus::after {
+        &:focus-visible::after {
             content: none
         }
 

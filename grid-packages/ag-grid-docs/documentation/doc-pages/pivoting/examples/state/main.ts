@@ -45,7 +45,7 @@ function saveState() {
 function restoreState() {
   if (savedState) {
     // Pivot mode must be set first otherwise the columns we're trying to set state for won't exist yet
-    gridApi!.setPivotMode(savedPivotMode)
+    gridApi!.setGridOption('pivotMode', savedPivotMode)
     gridApi!.applyColumnState({ state: savedState, applyOrder: true })
     console.log('column state restored')
   } else {
@@ -55,12 +55,12 @@ function restoreState() {
 
 function togglePivotMode() {
   var pivotMode = gridApi!.isPivotMode()
-  gridApi!.setPivotMode(!pivotMode)
+  gridApi!.setGridOption('pivotMode', !pivotMode)
 }
 
 function resetState() {
   gridApi!.resetColumnState()
-  gridApi!.setPivotMode(false)
+  gridApi!.setGridOption('pivotMode', false)
   console.log('column state reset')
 }
 
@@ -71,5 +71,5 @@ document.addEventListener('DOMContentLoaded', function () {
 
   fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
     .then(response => response.json())
-    .then((data: IOlympicData[]) => gridApi!.setRowData(data))
+    .then((data: IOlympicData[]) => gridApi!.setGridOption('rowData', data))
 })

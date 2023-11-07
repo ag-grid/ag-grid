@@ -91,13 +91,17 @@ export abstract class SimpleFloatingFilter extends Component implements IFloatin
     }
 
     public init(params: IFloatingFilterParams): void {
-       this.setSimpleParams(params);
+       this.setSimpleParams(params, false);
     }
 
-    private setSimpleParams(params: IFloatingFilterParams): void {
+    private setSimpleParams(params: IFloatingFilterParams, update: boolean = true): void {
         this.optionsFactory = new OptionsFactory();
         this.optionsFactory.init(params.filterParams as ScalarFilterParams, this.getDefaultFilterOptions());
-        this.lastType = this.optionsFactory.getDefaultOption();
+
+        // Initial call
+        if (!update) {
+            this.lastType = this.optionsFactory.getDefaultOption();
+        }
 
         // readOnly is a property of ProvidedFilterParams - we need to find a better (type-safe)
         // way to support reading this in the future.

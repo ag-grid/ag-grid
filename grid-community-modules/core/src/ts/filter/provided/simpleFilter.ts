@@ -756,9 +756,9 @@ export abstract class SimpleFilter<M extends ISimpleFilterModel, V, E = AgInputT
         super.afterGuiDetached();
 
         const appliedModel = this.getModel();
-        if (!this.areModelsEqual(appliedModel!, this.getModelFromUi()!) || this.hasInvalidInputs()) {
-            this.resetUiToActiveModel(appliedModel);
-        }
+
+        // Reset temporary UI state that was applied to the DOM but not committed to the model
+        this.resetUiToActiveModel(appliedModel);
 
         // remove incomplete positions
         let lastUiCompletePosition = -1;
@@ -1064,7 +1064,7 @@ export abstract class SimpleFilter<M extends ISimpleFilterModel, V, E = AgInputT
     protected evaluateCustomFilter(
         customFilterOption: IFilterOptionDef | undefined,
         values: Tuple<V>,
-        cellValue: V,
+        cellValue: V | null | undefined,
     ): boolean | undefined {
         if (customFilterOption == null) {
             return;

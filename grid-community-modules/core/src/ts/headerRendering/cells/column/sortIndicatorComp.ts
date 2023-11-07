@@ -69,6 +69,7 @@ export class SortIndicatorComp extends Component {
         this.addInIcon('sortUnSort', this.eSortNone, column);
 
         this.addManagedPropertyListener('unSortIcon', () => this.updateIcons());
+        this.addManagedListener(this.eventService, Events.EVENT_NEW_COLUMNS_LOADED,  () => this.updateIcons());
 
         // Watch global events, as row group columns can effect their display column.
         this.addManagedListener(this.eventService, Events.EVENT_SORT_CHANGED,  () => this.onSortChanged());
@@ -108,7 +109,7 @@ export class SortIndicatorComp extends Component {
         }
 
         if (this.eSortNone) {
-            const alwaysHideNoSort = !this.column.getColDef().unSortIcon && !this.gridOptionsService.is('unSortIcon');
+            const alwaysHideNoSort = !this.column.getColDef().unSortIcon && !this.gridOptionsService.get('unSortIcon');
             const isNone = sortDirection === null || sortDirection === undefined;
             setDisplayed(this.eSortNone, !alwaysHideNoSort && isNone, { skipAriaHidden: true });
         }

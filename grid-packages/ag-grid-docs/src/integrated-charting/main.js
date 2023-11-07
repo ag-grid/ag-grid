@@ -250,7 +250,7 @@
     function startWorker() {
         MyWorker(function(e) {
             if (e.type === 'setRowData') {
-                api.setRowData(e.records);
+                api.setGridOption('rowData', e.records);
             }
             if (e.type === 'updateData') {
                 api.applyTransactionAsync({ update: e.records });

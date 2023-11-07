@@ -181,7 +181,7 @@ export class FillHandle extends AbstractSelectionHandle {
 
         // if the range is being reduced in size, all we need to do is
         // clear the cells that are no longer part of the range
-        if (this.isReduce && !this.gridOptionsService.is('suppressClearOnFillReduction')) {
+        if (this.isReduce && !this.gridOptionsService.get('suppressClearOnFillReduction')) {
             const columns = isVertical
                 ? initialRange.columns
                 : initialRange.columns.filter(col => finalRange.columns.indexOf(col) < 0);
@@ -252,10 +252,10 @@ export class FillHandle extends AbstractSelectionHandle {
                     const cellValue = this.valueService.getValue(col, rowNode);
 
                     if (!fromUserFunction) {
-                        if (sourceCol?.getColDef()?.useValueFormatterForExport) {
+                        if (sourceCol && sourceCol.getColDef()?.useValueFormatterForExport !== false) {
                             currentValue = this.valueFormatterService.formatValue(sourceCol, sourceRowNode!, currentValue) ?? currentValue;
                         }
-                        if (col.getColDef().useValueParserForImport) {
+                        if (col.getColDef().useValueParserForImport !== false) {
                             currentValue = this.valueParserService.parseValue(
                                 col,
                                 rowNode,

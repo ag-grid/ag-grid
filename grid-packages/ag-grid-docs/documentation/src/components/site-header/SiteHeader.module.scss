@@ -6,6 +6,11 @@
     align-items: center;
     position: relative;
     background-color: var(--site-header-background);
+
+    #{$darkmode-selector} & {
+background: #121f29;
+    }
+
 }
 
 .headerInner {
@@ -31,6 +36,10 @@
 
     @media screen and (min-width: $breakpoint-page-margin-padding) {
         margin-left: calc(var(--horizontal-margin) - 16px);
+    }
+
+    @media screen and (min-width: $breakpoint-site-header-small) {
+        width: 100%;
     }
 }
 
@@ -73,6 +82,10 @@
 
     @media screen and (min-width: $breakpoint-site-header-small) {
         display: none !important;
+    }
+
+    #{$darkmode-selector} & {
+        --button-active-color: var(--background-300);
     }
 }
 
@@ -174,6 +187,10 @@
             opacity: 0.5;
             transform: scaleX(1);
         }
+    }
+
+    #{$darkmode-selector} & {
+        border-bottom: 1px solid #121f29 !important
     }
 }
 

@@ -32,17 +32,17 @@ export class ValueService extends BeanStub {
     @PostConstruct
     public init(): void {
         this.isSsrm = this.gridOptionsService.isRowModelType('serverSide');
-        this.cellExpressions = this.gridOptionsService.is('enableCellExpressions');
-        this.isTreeData = this.gridOptionsService.is('treeData');
+        this.cellExpressions = this.gridOptionsService.get('enableCellExpressions');
+        this.isTreeData = this.gridOptionsService.get('treeData');
         this.initialised = true;
 
         // We listen to our own event and use it to call the columnSpecific callback,
         // this way the handler calls are correctly interleaved with other global events
-        this.eventService.addEventListener(
-            Events.EVENT_CELL_VALUE_CHANGED,
-            (event: CellValueChangedEvent) => this.callColumnCellValueChangedHandler(event),
-            this.gridOptionsService.useAsyncEvents(),
-        );
+        const listener = (event: CellValueChangedEvent) => this.callColumnCellValueChangedHandler(event);
+        const async = this.gridOptionsService.useAsyncEvents();
+        this.eventService.addEventListener(Events.EVENT_CELL_VALUE_CHANGED, listener, async);
+        this.addDestroyFunc(() => this.eventService.removeEventListener(Events.EVENT_CELL_VALUE_CHANGED, listener, async));
+
         this.addManagedPropertyListener('treeData', (propChange) => this.isTreeData = propChange.currentValue);
     }
 
@@ -117,7 +117,7 @@ export class ValueService extends BeanStub {
 
     private getOpenedGroup(rowNode: IRowNode, column: Column): any {
 
-        if (!this.gridOptionsService.is('showOpenedGroup')) { return; }
+        if (!this.gridOptionsService.get('showOpenedGroup')) { return; }
 
         const colDef = column.getColDef();
         if (!colDef.showRowGroup) { return; }

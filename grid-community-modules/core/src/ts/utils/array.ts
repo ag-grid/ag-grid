@@ -35,7 +35,6 @@ export function areEqual<T>(a?: T[] | null, b?: T[] | null, comparator?: (a: T, 
         a.every((value, index) => comparator ? comparator(value, b[index]) : b[index] === value);
 }
 
-/** @deprecated */
 export function shallowCompare(arr1: any[], arr2: any[]): boolean {
     return areEqual(arr1, arr2);
 }
@@ -114,7 +113,7 @@ export function includes<T>(array: T[], value: T): boolean {
     return array.indexOf(value) > -1;
 }
 
-export function flatten(arrayOfArrays: any[]): any[] {
+export function flatten<T>(arrayOfArrays: (T | T[])[]): T[] {
     return [].concat.apply([], arrayOfArrays);
 }
 

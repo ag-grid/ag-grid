@@ -260,7 +260,7 @@
         }
     }
 
-    .ag-keyboard-focus .ag-advanced-filter-builder-virtual-list-item-highlight .ag-advanced-filter-builder-item-button,
+    .ag-advanced-filter-builder-virtual-list-item-highlight .ag-advanced-filter-builder-item-button:focus-visible,
     .ag-advanced-filter-builder-validation .ag-advanced-filter-builder-invalid {
         opacity: 100%;
     }

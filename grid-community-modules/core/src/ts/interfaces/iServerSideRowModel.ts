@@ -39,6 +39,3 @@ export interface RefreshServerSideParams {
      */
     purge?: boolean;
 }
-
-/** @deprecated use RefreshServerSideParams instead  */
-export interface RefreshStoreParams extends RefreshServerSideParams {}

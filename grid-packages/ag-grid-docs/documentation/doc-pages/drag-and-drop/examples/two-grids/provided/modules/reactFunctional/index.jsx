@@ -13,7 +13,7 @@ import { ModuleRegistry } from '@ag-grid-community/core';
 ModuleRegistry.registerModules([ClientSideRowModelModule]);
 
 const baseDefaultColDef = {
-    width: 80,
+    flex: 1,
     sortable: true,
     filter: true,
     resizable: true
@@ -60,11 +60,11 @@ const GridExample = () => {
     const rightGridRef = useRef(null);
 
     const onLeftGridReady = (params) => {
-        params.api.setRowData(createLeftRowData());
+        params.api.setGridOption('rowData', createLeftRowData());
     }
 
     const onRightGridReady = (params) => {
-        params.api.setRowData([]);
+        params.api.setGridOption('rowData', []);
     }
 
     const createLeftRowData = () => ['Red', 'Green', 'Blue'].map(createDataItem);

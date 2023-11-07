@@ -154,7 +154,7 @@ export class AdvancedFilterExpressionService extends BeanStub {
         }
         const columns = this.columnModel.getAllPrimaryColumns() ?? [];
         const entries: AutocompleteEntry[] = [];
-        const includeHiddenColumns = this.gridOptionsService.is('includeHiddenColumnsInAdvancedFilter');
+        const includeHiddenColumns = this.gridOptionsService.get('includeHiddenColumnsInAdvancedFilter');
         columns.forEach(column => {
             if (column.getColDef().filter && (includeHiddenColumns || column.isVisible() || column.isRowGroupActive())) {
                 entries.push({
@@ -267,11 +267,9 @@ export class AdvancedFilterExpressionService extends BeanStub {
         return params;
     }
 
-    public getColumnDetails(colId: string): { column: Column, baseCellDataType: BaseCellDataType } | null {
-        const column = this.columnModel.getPrimaryColumn(colId);
-        if (!column) { return null; }
-        const baseCellDataType = this.dataTypeService.getBaseDataType(column);
-        if (!baseCellDataType) { return null; }
+    public getColumnDetails(colId: string): { column?: Column, baseCellDataType: BaseCellDataType } {
+        const column = this.columnModel.getPrimaryColumn(colId) ?? undefined;
+        const baseCellDataType = (column ? this.dataTypeService.getBaseDataType(column) : undefined) ?? 'text';
         return { column, baseCellDataType };
     }
 
@@ -308,5 +306,6 @@ export class AdvancedFilterExpressionService extends BeanStub {
     public resetColumnCaches(): void {
         this.columnAutocompleteEntries = null;
         this.columnNameToIdMap = {};
+        this.expressionEvaluatorParams = {};
     }
 }

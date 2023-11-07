@@ -126,7 +126,7 @@ export abstract class AgPickerField<TValue, TConfig extends IPickerFieldParams =
     protected setupAria(): void {
         const ariaEl = this.getAriaElement();
         
-        ariaEl.setAttribute('tabindex', (this.gridOptionsService.getNum('tabIndex') || 0).toString());
+        ariaEl.setAttribute('tabindex', (this.gridOptionsService.get('tabIndex')).toString());
 
         setAriaExpanded(ariaEl, false);
 
@@ -143,7 +143,14 @@ export abstract class AgPickerField<TValue, TConfig extends IPickerFieldParams =
         super.refreshLabel();
     }
 
-    private onLabelOrWrapperMouseDown(): void {
+    private onLabelOrWrapperMouseDown(e?: MouseEvent): void {
+        if (e) {
+            // this prevents a BUG where MouseDown causes the element to be focused
+            // after the picker is shown and focus ends up being lost.
+            e.preventDefault();
+            this.getFocusableElement().focus();
+        }
+
         if (this.skipClick) {
             this.skipClick = false;
             return;
@@ -199,7 +206,7 @@ export abstract class AgPickerField<TValue, TConfig extends IPickerFieldParams =
         const eDocument = this.gridOptionsService.getDocument();
         const ePicker = this.pickerComponent!.getGui();
 
-        if (!this.gridOptionsService.is('suppressScrollWhenPopupsAreOpen')) {
+        if (!this.gridOptionsService.get('suppressScrollWhenPopupsAreOpen')) {
             this.destroyMouseWheelFunc = this.addManagedListener(this.eventService, Events.EVENT_BODY_SCROLL, () => {
                 this.hidePicker();
             });
@@ -256,7 +263,7 @@ export abstract class AgPickerField<TValue, TConfig extends IPickerFieldParams =
         const { pickerType } = this.config;
         const { pickerGap } = this;
 
-        const alignSide = this.gridOptionsService.is('enableRtl') ? 'right' : 'left';
+        const alignSide = this.gridOptionsService.get('enableRtl') ? 'right' : 'left';
 
         this.popupService.positionPopupByComponent({
             type: pickerType,

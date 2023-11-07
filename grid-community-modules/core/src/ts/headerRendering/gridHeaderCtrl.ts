@@ -123,7 +123,7 @@ export class GridHeaderCtrl extends BeanStub {
     }
 
     protected onTabKeyDown(e: KeyboardEvent): void {
-        const isRtl = this.gridOptionsService.is('enableRtl');
+        const isRtl = this.gridOptionsService.get('enableRtl');
         const direction = e.shiftKey !== isRtl
             ? HeaderNavigationDirection.LEFT
             : HeaderNavigationDirection.RIGHT;

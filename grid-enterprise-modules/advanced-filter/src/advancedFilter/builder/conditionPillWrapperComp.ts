@@ -68,8 +68,8 @@ export class ConditionPillWrapperComp extends Component {
 
     private setupColumnCondition(filterModel: ColumnAdvancedFilterModel): void {
         const columnDetails = this.advancedFilterExpressionService.getColumnDetails(filterModel.colId);
-        this.baseCellDataType = columnDetails?.baseCellDataType ?? 'text';
-        this.column = columnDetails?.column;
+        this.baseCellDataType = columnDetails.baseCellDataType;
+        this.column = columnDetails.column;
         this.numOperands = this.getNumOperands(this.getOperatorKey());
 
         this.eColumnPill = this.createPill({
@@ -161,8 +161,8 @@ export class ConditionPillWrapperComp extends Component {
         }
 
         const newColumnDetails = this.advancedFilterExpressionService.getColumnDetails(colId);
-        this.column = newColumnDetails?.column;
-        const newBaseCellDataType = newColumnDetails?.baseCellDataType ?? 'text';
+        this.column = newColumnDetails.column;
+        const newBaseCellDataType = newColumnDetails.baseCellDataType;
         if (this.baseCellDataType !== newBaseCellDataType) {
             this.baseCellDataType = newBaseCellDataType;
 

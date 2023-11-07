@@ -77,9 +77,9 @@ export class DataTypeService extends BeanStub {
 
     @PostConstruct
     public init(): void {
-        this.groupHideOpenParents = this.gridOptionsService.is('groupHideOpenParents');
+        this.groupHideOpenParents = this.gridOptionsService.get('groupHideOpenParents');
         this.addManagedPropertyListener('groupHideOpenParents', () => {
-            this.groupHideOpenParents = this.gridOptionsService.is('groupHideOpenParents');
+            this.groupHideOpenParents = this.gridOptionsService.get('groupHideOpenParents');
         });
         this.processDataTypeDefinitions();
 
@@ -157,7 +157,12 @@ export class DataTypeService extends BeanStub {
         }
 
         if (dataTypeDefinition.extendsDataType === dataTypeDefinition.baseDataType) {
-            const baseDataTypeDefinition = defaultDataTypes[extendsCellDataType];
+            let baseDataTypeDefinition = defaultDataTypes[extendsCellDataType];
+            const overriddenBaseDataTypeDefinition = dataTypeDefinitions[extendsCellDataType];
+            if (baseDataTypeDefinition && overriddenBaseDataTypeDefinition) {
+                // only if it's valid do we override with a provided one
+                baseDataTypeDefinition = overriddenBaseDataTypeDefinition;
+            }
             if (!this.validateDataTypeDefinition(dataTypeDefinition, baseDataTypeDefinition, extendsCellDataType)) {
                 return undefined;
             }
@@ -251,14 +256,23 @@ export class DataTypeService extends BeanStub {
                     }
                 }
 
-                return undefined as any;
+                // we don't want to double format the value
+                // as this is already formatted by using the valueFormatter as the keyCreator
+                if (!this.gridOptionsService.get('suppressGroupMaintainValueType')) {
+                    return undefined as any;
+                }
             } else if (this.groupHideOpenParents && params.column.isRowGroupActive()) {
                 // `groupHideOpenParents` passes leaf values in the group column, so need to format still.
                 // If it's not a string, we know it hasn't been formatted. Otherwise check the data type matcher.
                 if (typeof params.value !== 'string' || dataTypeDefinition.dataTypeMatcher?.(params.value)) {
                     return dataTypeDefinition.valueFormatter!(params);
                 }
-                return undefined as any;
+
+                // we don't want to double format the value
+                // as this is already formatted by using the valueFormatter as the keyCreator
+                if (!this.gridOptionsService.get('suppressGroupMaintainValueType')) {
+                    return undefined as any;
+                }
             }
             return dataTypeDefinition.valueFormatter!(params);
         };
@@ -375,7 +389,7 @@ export class DataTypeService extends BeanStub {
         let value: any;
         const initialData = this.getInitialData();
         if (initialData) {
-            const fieldContainsDots = field.indexOf('.') >= 0 && !this.gridOptionsService.is('suppressFieldDotNotation');
+            const fieldContainsDots = field.indexOf('.') >= 0 && !this.gridOptionsService.get('suppressFieldDotNotation');
             value = getValueUsingField(initialData, field, fieldContainsDots);
         } else {
             this.initWaitForRowData(colId);
@@ -574,8 +588,6 @@ export class DataTypeService extends BeanStub {
                 ...params
             } : params;
         }
-        colDef.useValueFormatterForExport = true;
-        colDef.useValueParserForImport = true;
         switch (dataTypeDefinition.baseDataType) {
             case 'number': {
                 colDef.cellEditor = 'agNumberCellEditor';
@@ -727,6 +739,7 @@ export class DataTypeService extends BeanStub {
                 valueFormatter: (params: ValueFormatterLiteParams<any, number>) => {
                     if (params.value == null) { return ''; }
                     if (typeof params.value !== 'number' || isNaN(params.value)) {
+                        console.log('was', typeof params.value, params.value, params);
                         return translate('invalidNumber', 'Invalid Number');
                     }
                     return String(params.value);

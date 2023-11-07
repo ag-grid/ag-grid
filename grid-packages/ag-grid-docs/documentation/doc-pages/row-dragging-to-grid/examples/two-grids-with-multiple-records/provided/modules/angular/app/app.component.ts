@@ -195,7 +195,7 @@ export class AppComponent {
     checkboxSelectChange = () => {
         const checked = this.eSelectCheckbox.nativeElement.checked;
         this.leftApi.setColumnVisible('checkbox', checked);
-        this.leftApi.setSuppressRowClickSelection(checked);
+        this.leftApi.setGridOption('suppressRowClickSelection', checked);
     }
 
     getRowId = (params: GetRowIdParams) => params.data.athlete;

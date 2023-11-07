@@ -30,24 +30,9 @@ export const AgGridReactUi = <TData,>(props: AgReactUiProps<TData>) => {
     const destroyFuncs = useRef<(() => void)[]>([]);
     const whenReadyFuncs = useRef<(() => void)[]>([]);
 
-    //prevProps
-    const prevProps = useRef<AgReactUiProps<any>>(props);
-
     const ready = useRef<boolean>(false);
 
     const [context, setContext] = useState<Context | undefined>(undefined);
-
-    const checkForDeprecations = useCallback((props: any) => {
-        if (props.rowDataChangeDetectionStrategy) {
-            _.doOnce(
-                () =>
-                    console.warn(
-                        'AG Grid: Since v29 rowDataChangeDetectionStrategy has been deprecated. Row data property changes will be compared by reference via triple equals ===. See https://ag-grid.com/react-data-grid/react-hooks/'
-                    ),
-                'rowDataChangeDetectionStrategy_Deprecation'
-            );
-        }
-    }, []);
 
     // Hook to enable Portals to be displayed via the PortalManager
     const [, setPortalRefresher] = useState(0);
@@ -85,9 +70,7 @@ export const AgGridReactUi = <TData,>(props: AgReactUiProps<TData>) => {
             frameworkOverrides: new ReactFrameworkOverrides(),
         };
 
-        const mergedGridOps = ComponentUtil.copyAttributesToGridOptions(props.gridOptions || {}, props);
-
-        checkForDeprecations(props);
+        const mergedGridOps = ComponentUtil.combineAttributesAndGridOptions(props.gridOptions, props);
 
         const createUiCallback = (context: Context) => {
             setContext(context);
@@ -156,12 +139,9 @@ export const AgGridReactUi = <TData,>(props: AgReactUiProps<TData>) => {
     }, []);
 
     useEffect(() => {
-        const changes = {};
-        extractGridPropertyChanges(prevProps.current, props, changes);
-        prevProps.current = props;
         processWhenReady(() => {
             if (apiRef.current) {
-                ComponentUtil.processOnChange(changes, apiRef.current)
+                ComponentUtil.processOnChange(props, apiRef.current)
             }
         });
     }, [props]);
@@ -187,36 +167,4 @@ class ReactFrameworkComponentWrapper
     createWrapper(UserReactComponent: { new(): any }, componentType: ComponentType): WrappableInterface {
         return new NewReactComponent(UserReactComponent, this.parent as any, componentType);
     }
-}
-
-function extractGridPropertyChanges(prevProps: any, nextProps: any, changes: any) {
-    const debugLogging = !!nextProps.debug;
-
-    Object.keys(nextProps).forEach((propKey) => {
-        if (ComponentUtil.ALL_PROPERTIES_SET.has(propKey as any)) {
-            if (prevProps[propKey] !== nextProps[propKey]) {
-                if (debugLogging) {
-                    console.log(` agGridReact: [${propKey}] property changed`);
-                }
-
-                changes[propKey] = {
-                    previousValue: prevProps[propKey],
-                    currentValue: nextProps[propKey],
-                };
-            }
-        }
-    });
-
-    ComponentUtil.EVENT_CALLBACKS.forEach((funcName) => {
-        if (prevProps[funcName] !== nextProps[funcName]) {
-            if (debugLogging) {
-                console.log(`agGridReact: [${funcName}] event callback changed`);
-            }
-
-            changes[funcName] = {
-                previousValue: prevProps[funcName],
-                currentValue: nextProps[funcName],
-            };
-        }
-    });
 }

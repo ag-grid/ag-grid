@@ -1,7 +1,7 @@
 @use '../core' as *;
-@use "sass:map";
+@use 'sass:map';
 
-a {
+a#{$exclude-grid-selector} {
     text-decoration: none;
     color: var(--link-color);
     transition: color $default-transition-timing;
@@ -20,7 +20,7 @@ a {
     }
 }
 
-code {
+code#{$exclude-grid-selector} {
     font-size: 0.875em;
     padding: 0 0.2em;
     font-family: var(--monospace-font-family);
@@ -33,30 +33,40 @@ code {
     #{$darkmode-selector} & {
         -webkit-font-smoothing: subpixel-antialiased;
 
-        font-size: 1em;
-        border: none;
+        border: 1px solid #83483257;
         background-color: transparent;
-        color: var(--pink-900);
+        color: #e3794d;
+        background-color: #34201d;
+        padding: 1px 4px;
+        font-size: 14px;
     }
 }
 
-kbd {
+kbd#{$exclude-grid-selector} {
     display: inline-block;
     margin: 0.1em 0.1em;
-    padding: 0.1em 0.6em;
+    padding: 0.1em 0.6em 0.15em;
     font-size: 0.875em;
     font-family: var(--font-family);
     border-radius: var(--border-radius);
     background-color: var(--default-background-color);
     border: 1px solid var(--border-color);
-    box-shadow: 0 1px 0 var(--neutral-200);
+    box-shadow: inset 0 -2px 0 var(--neutral-200);
+
+    #{$darkmode-selector} & {
+        background-color: var(--neutral-300);
+        text-shadow: -1px -1px var(--neutral-100);
+        border: 1px solid var(--neutral-500);
+        border-bottom: 1px solid var(--neutral-400);
+        box-shadow: inset 0 -2px 0 var(--neutral-100);
+    }
 }
 
-img,
-svg {
+img#{$exclude-grid-selector},
+svg#{$exclude-grid-selector} {
     vertical-align: middle;
 }
 
-svg {
+svg#{$exclude-grid-selector} {
     overflow: hidden;
 }

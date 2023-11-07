@@ -138,6 +138,14 @@ When the filter for the **Country** column is changed, the values for the **Spor
 
 <grid-example title='Set Filter Server Side Filtering' name='infinite-set' type='generated' options='{ "enterprise": true, "extras": ["alasql"], "modules": ["serverside", "setfilter", "menu"] }'></grid-example>
 
+## Advanced Filter
+
+In addition to Column Filters, the [Advanced Filter](/filter-advanced/) can also be used with the Server-Side Row Model. In this case, the `filterModel` in the request will be an [Advanced Filter Model](/filter-advanced/#filter-model--api) of type `AdvancedFilterModel | null`.
+
+<grid-example title='Advanced Filter' name='advanced-filter' type='generated' options='{ "enterprise": true, "modules": ["serverside", "menu", "advancedfilter"], "extras": ["alasql"] }'></grid-example>
+
+Note that [Cell Data Types](/cell-data-types/) must be supplied in order for the Advanced Filter to display the correct filter options, otherwise only `'text'` options will be displayed.
+
 ## Next Up
 
 Continue to the next section to learn about [SSRM Row Grouping](/server-side-model-grouping/).

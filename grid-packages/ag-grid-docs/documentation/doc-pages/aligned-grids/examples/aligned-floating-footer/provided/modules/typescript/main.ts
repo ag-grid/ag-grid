@@ -14,12 +14,9 @@ const columnDefs: ColDef[] = [
     { field: 'country', width: 150 },
     { field: 'year', width: 120 },
     { field: 'sport', width: 200 },
-    // in the total col, we have a value getter, which usually means we don't need to provide a field
-    // however the master/slave depends on the column id (which is derived from the field if provided) in
-    // order ot match up the columns
     {
         headerName: 'Total',
-        field: 'total',
+        colId: 'total',
         valueGetter: 'data.gold + data.silver + data.bronze',
         width: 200
     },
@@ -46,7 +43,6 @@ let topApi: GridApi;
 let bottomApi: GridApi;
 const gridOptionsTop: GridOptions = {
     defaultColDef: {
-        editable: true,
         sortable: true,
         resizable: true,
         filter: true,
@@ -55,16 +51,18 @@ const gridOptionsTop: GridOptions = {
     },
     columnDefs,
     rowData: null,
-    // debug: true,
     // don't show the horizontal scrollbar on the top grid
     suppressHorizontalScroll: true,
-    alignedGrids: ()=>[bottomApi]
+    alwaysShowVerticalScroll: true,
+    alignedGrids: ()=>[bottomApi],
+    autoSizeStrategy: {
+        type: 'fitCellContents'
+    },
 };
 
 // this is the grid options for the bottom grid
 const gridOptionsBottom: GridOptions = {
     defaultColDef: {
-        editable: true,
         sortable: true,
         resizable: true,
         filter: true,
@@ -74,10 +72,10 @@ const gridOptionsBottom: GridOptions = {
     columnDefs: columnDefs,
     // we are hard coding the data here, it's just for demo purposes
     rowData: dataForBottomGrid,
-    // debug: true,
     rowClass: 'bold-row',
     // hide the header on the bottom grid
     headerHeight: 0,
+    alwaysShowVerticalScroll: true,
     alignedGrids: () => [topApi],
 };
 
@@ -90,6 +88,5 @@ bottomApi = createGrid(gridDivBottom, gridOptionsBottom);
 fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
     .then(response => response.json())
     .then(data => {
-        topApi!.setRowData(data);
-        topApi!.autoSizeAllColumns();
+        topApi!.setGridOption('rowData', data);
     });

@@ -24,6 +24,7 @@ import stripHtml from 'utils/strip-html';
 import DocumentationLink from '../components/DocumentationLink';
 import DownloadDSButton from 'components/DownloadDSButton';
 import LearningVideos from '../components/LearningVideos';
+import NextStepTiles from '../components/NextStepTiles';
 import { trackApiDocumentation } from '../utils/analytics';
 import styles from './doc-page.module.scss';
 
@@ -120,6 +121,7 @@ const DocPageTemplate = ({ data, pageContext: { framework, exampleIndexData, pag
                 </pre>
             ),
             'download-ds-button': DownloadDSButton,
+            'next-step-tiles': (props) => NextStepTiles({...props})
         },
     }).Compiler;
 
@@ -136,16 +138,11 @@ const DocPageTemplate = ({ data, pageContext: { framework, exampleIndexData, pag
         }
     }
 
-    // solidjs is still tactical and "lives" under react - make a bit of an exception here so the title makes sense
     const pageTitle = (
         <>
-            {pageName === 'solidjs' ? (
-                <span className={styles.headerFramework}>SolidJS Data Grid:</span>
-            ) : (
-                <span className={styles.headerFramework}>
-                    {getProductType(framework, false, version)}
-                </span>
-            )}
+            <span className={styles.headerFramework}>
+                {getProductType(framework, false, version)}
+            </span>
             <span>{title}</span>
         </>
     );

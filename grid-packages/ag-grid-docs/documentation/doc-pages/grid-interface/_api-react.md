@@ -1,25 +1,23 @@
 <framework-specific-section frameworks="react">
-| The api of the grid can be accessed via a ref defined in your component when passed to the grid's ref: `&lt;AgGridReact ref={gridRef}`.
+| The api of the grid can be accessed via a ref passed to the `AgGridReact` component.
 </framework-specific-section>
 
 <framework-specific-section frameworks="react">
 <snippet transform={false} language="jsx">
-| // React reference
+| // Create a ref to pass to the grid
 | const gridRef = useRef();
 |
-| const myListener = useCallback(()=> {
-|     // api on the gridRef object
-|     const {api} = gridRef.current;
+| const onClick = useCallback(()=> {
+|     
+|    // gridRef.current will be undefined until the grid is initialised
+|    if (!gridRef.current) { return; }
 |
-|     // api will be null before grid initialised
-|     if (api == null) { return; }
-|
-|     // access the Grid API
-|     gridRef.api.deselectAll();
+|     // use the Grid API
+|     gridRef.current.api.deselectAll();
 |
 | }, []);
 |
-| &lt;button click={myListener}>Do Something&lt;/button>
+| &lt;button click={onClick}>Deselect Rows&lt;/button>
 | &lt;AgGridReact
 |     ref={gridRef}
 |     //...
@@ -28,26 +26,26 @@
 </framework-specific-section>
 
 <framework-specific-section frameworks="react">
-| The `api` is also provided on the params for all grid events and callbacks for easy access to the api.
+| ### API within Events and Callbacks
+|
+| The `api` is also provided on the params for all grid events and callbacks.
 </framework-specific-section>
 
 <framework-specific-section frameworks="react">
 <snippet transform={false} language="jsx">
 | // access api from the event
-| onGridReady = event => {
-|     event.api.sizeColumnsToFit();
+| onGridReady = useCallback((event: GridReadyEvent) => {
 |     event.api.resetColumnState();
-| }
+| },[]);
 |
 | // access api from callback params
-| sendToClipboard = params => {
-|     params.api.sizeColumnsToFit();
+| sendToClipboard = useCallback((params) => {
 |     params.api.resetColumnState();
-| }
+| }, []);
 |
 | &lt;AgGridReact
-|     onGridReady={onGridReady} // register event listener
-|     sendToClipboard={sendToClipboard} // register callback
+|     onGridReady={onGridReady}
+|     sendToClipboard={sendToClipboard}
 |     //...
 | />
 </snippet>
@@ -55,7 +53,7 @@
 
 <framework-specific-section frameworks="react">
 <note>
-| The gridRef value will not be defined until after the AgGridReact component has been initialised.
+| The gridRef.current value will not be defined until after the AgGridReact component has been initialised.
 | If you want to access the api as soon as it's available (ie do initialisation
 | work), consider listening to the `gridReady` event.
 </note>
@@ -94,5 +92,5 @@
 </framework-specific-section>
 
 <framework-specific-section frameworks="react">
-| Note the if using Grid Options, the grid will not react to property changes. For example `gridOptions.pagination` will only get used once when the grid is initialised, not if you change `gridOptions.pagination` after the grid is initialised. For this reason, while using React, it's best only use Grid Options for properties that do not change.
+| Note the if using Grid Options, the grid will not react to property changes. For example `gridOptions.pagination` will only get used once when the grid is initialised, not if you change `gridOptions.pagination` after the grid is initialised. For this reason, while using React, it's best to only use Grid Options for properties that do not change.
 </framework-specific-section>

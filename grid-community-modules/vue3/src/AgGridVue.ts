@@ -6,12 +6,12 @@ import { getAgGridProperties, Properties } from './Utils';
 import { VueFrameworkComponentWrapper } from './VueFrameworkComponentWrapper';
 import { VueFrameworkOverrides } from './VueFrameworkOverrides';
 
-const ROW_DATA_EVENTS: Set<string> = new Set(['rowDataChanged', 'rowDataUpdated', 'cellValueChanged', 'rowValueChanged']);
+const ROW_DATA_EVENTS: Set<string> = new Set(['rowDataUpdated', 'cellValueChanged', 'rowValueChanged']);
 const ALWAYS_SYNC_GLOBAL_EVENTS: Set<string> = new Set([Events.EVENT_GRID_PRE_DESTROYED]);
 const DATA_MODEL_ATTR_NAME = 'onUpdate:modelValue'; // emit name would be update:ModelValue
 const DATA_MODEL_EMIT_NAME = 'update:modelValue';
 
-const [props, watch] = getAgGridProperties();
+const [props, computed, watch] = getAgGridProperties();
 
 export const AgGridVue = defineComponent({
     render() {
@@ -57,15 +57,8 @@ export const AgGridVue = defineComponent({
             emitRowModel: undefined
         }
     },
-    watch: {
-        modelValue: {
-            handler(currentValue: any, previousValue: any) {
-                this.processChanges('rowData', currentValue, previousValue);
-            },
-            deep: true
-        },
-        ...watch
-    },
+    computed,
+    watch,
     methods: {
         globalEventListenerFactory(restrictToSyncOnly?: boolean) {
             return (eventType: string, event: any) => {
@@ -91,14 +84,14 @@ export const AgGridVue = defineComponent({
                     return;
                 }
 
-                const changes: Properties = {};
-                changes[propertyName] = {
-                    // decouple the row data - if we don't when the grid changes row data directly that'll trigger this component to react to rowData changes,
-                    // which can reset grid state (ie row selection)
-                    currentValue: propertyName === 'rowData' ? (Object.isFrozen(currentValue) ? currentValue : markRaw(toRaw(currentValue))) : currentValue,
-                    previousValue,
+                const options: Properties = {
+                    [propertyName]: propertyName === 'rowData' ? (
+                            Object.isFrozen(currentValue) ? currentValue : markRaw(toRaw(currentValue))
+                        ) : currentValue,
                 };
-                ComponentUtil.processOnChange(changes, this.api as any);
+                // decouple the row data - if we don't when the grid changes row data directly that'll trigger this component to react to rowData changes,
+                // which can reset grid state (ie row selection)
+                ComponentUtil.processOnChange(options, this.api as any);
             }
         },
         checkForBindingConflicts() {
@@ -197,7 +190,7 @@ export const AgGridVue = defineComponent({
 
         // the gridOptions we pass to the grid don't need to be reactive (and shouldn't be - it'll cause issues
         // with mergeDeep for example
-        const gridOptions = markRaw(ComponentUtil.copyAttributesToGridOptions(toRaw(this.gridOptions), this, true));
+        const gridOptions = markRaw(ComponentUtil.combineAttributesAndGridOptions(toRaw(this.gridOptions), this));
 
         this.checkForBindingConflicts();
 

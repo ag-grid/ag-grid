@@ -1,4 +1,4 @@
-import { GridApi, createGrid, GridOptions, AdvancedFilterModel } from '@ag-grid-community/core';
+import { GridApi, createGrid, GridOptions, AdvancedFilterModel, FirstDataRenderedEvent } from '@ag-grid-community/core';
 
 const initialAdvancedFilterModel: AdvancedFilterModel = {
   filterType: 'join',
@@ -56,8 +56,8 @@ const gridOptions: GridOptions<IOlympicData> = {
       advancedFilterModel: initialAdvancedFilterModel,
     },
   },
-  onFirstDataRendered: () => {
-    gridApi!.showAdvancedFilterBuilder();
+  onFirstDataRendered: (params: FirstDataRenderedEvent) => {
+    params.api.showAdvancedFilterBuilder();
   }
 }
 
@@ -68,5 +68,5 @@ document.addEventListener('DOMContentLoaded', () => {
 
   fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
     .then(response => response.json())
-    .then((data: IOlympicData[]) => gridApi!.setRowData(data))
+    .then((data: IOlympicData[]) => gridApi!.setGridOption('rowData', data))
 })

@@ -38,11 +38,11 @@ const gridOptions: GridOptions<ICar> = {
 };
 
 function onRowDataA() {
-  gridApi!.setRowData(rowDataA);
+  gridApi!.setGridOption('rowData', rowDataA);
 }
 
 function onRowDataB() {
-  gridApi!.setRowData(rowDataB);
+  gridApi!.setGridOption('rowData', rowDataB);
 }
 
 // setup the grid after the page has finished loading

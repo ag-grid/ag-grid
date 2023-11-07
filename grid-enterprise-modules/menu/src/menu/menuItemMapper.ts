@@ -63,7 +63,7 @@ export class MenuItemMapper extends BeanStub {
 
     private getStockMenuItem(key: string, column: Column | null): MenuItemDef | string | null {
         const localeTextFunc = this.localeService.getLocaleTextFunc();
-        const skipHeaderOnAutoSize = this.gridOptionsService.is('skipHeaderOnAutoSize');
+        const skipHeaderOnAutoSize = this.gridOptionsService.get('skipHeaderOnAutoSize');
 
         switch (key) {
             case 'pinSubMenu':
@@ -124,13 +124,13 @@ export class MenuItemMapper extends BeanStub {
             case 'rowUnGroup':
                 const icon = _.createIconNoSpan('menuRemoveRowGroup', this.gridOptionsService, null);
                 const showRowGroup = column?.getColDef().showRowGroup;
-                const lockedGroups = this.gridOptionsService.getNum('groupLockGroupColumns') ?? 0;
+                const lockedGroups = this.gridOptionsService.get('groupLockGroupColumns');
                 // Handle single auto group column
                 if (showRowGroup === true) {
                     return {
                         name: localeTextFunc('ungroupAll', 'Un-Group All'),
                         disabled: lockedGroups === -1 || lockedGroups >= this.columnModel.getRowGroupColumns().length,
-                        action: () => this.columnModel.setRowGroupColumns([], "contextMenu"),
+                        action: () => this.columnModel.setRowGroupColumns(this.columnModel.getRowGroupColumns().slice(0, lockedGroups), "contextMenu"),
                         icon: icon
                     };
                 }
@@ -209,7 +209,7 @@ export class MenuItemMapper extends BeanStub {
                         name: localeTextFunc('cut', 'Cut'),
                         shortcut: localeTextFunc('ctrlX', 'Ctrl+X'),
                         icon: _.createIconNoSpan('clipboardCut', this.gridOptionsService, null),
-                        disabled: !isEditable || this.gridOptionsService.is('suppressCutToClipboard'),
+                        disabled: !isEditable || this.gridOptionsService.get('suppressCutToClipboard'),
                         action: () => this.clipboardService.cutToClipboard(undefined, 'contextMenu')
                     };
                 } else {
@@ -233,10 +233,10 @@ export class MenuItemMapper extends BeanStub {
                 const csvModuleLoaded = ModuleRegistry.__isRegistered(ModuleNames.CsvExportModule, this.context.getGridId());
                 const excelModuleLoaded = ModuleRegistry.__isRegistered(ModuleNames.ExcelExportModule, this.context.getGridId());
 
-                if (!this.gridOptionsService.is('suppressCsvExport') && csvModuleLoaded) {
+                if (!this.gridOptionsService.get('suppressCsvExport') && csvModuleLoaded) {
                     exportSubMenuItems.push('csvExport');
                 }
-                if (!this.gridOptionsService.is('suppressExcelExport') && excelModuleLoaded) {
+                if (!this.gridOptionsService.get('suppressExcelExport') && excelModuleLoaded) {
                     exportSubMenuItems.push('excelExport');
                 }
                 return {

@@ -33,11 +33,11 @@ const gridOptions: GridOptions<IOlympicData> = {
 }
 
 function turnOffPivotMode() {
-  gridApi!.setPivotMode(false)
+  gridApi!.setGridOption('pivotMode', false)
 }
 
 function turnOnPivotMode() {
-  gridApi!.setPivotMode(true)
+  gridApi!.setGridOption('pivotMode', true)
 }
 
 function addPivotColumn() {
@@ -80,5 +80,5 @@ document.addEventListener('DOMContentLoaded', function () {
 
   fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
     .then(response => response.json())
-    .then((data: IOlympicData[]) => gridApi!.setRowData(data))
+    .then((data: IOlympicData[]) => gridApi!.setGridOption('rowData', data))
 })

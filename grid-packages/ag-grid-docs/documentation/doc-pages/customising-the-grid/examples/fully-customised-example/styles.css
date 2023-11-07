@@ -1,0 +1,69 @@
+/*
+  Row Styles
+*/
+
+.row {
+  font-family: 'Courier New';
+}
+
+.successful-mission:hover {
+  background: green;
+}
+
+.unsucessful-mission:hover {
+  background: red;
+}
+
+/*
+  Cell Styles
+*/
+
+.mission-cell {
+  font-weight: 900;
+  cursor: pointer;
+}
+
+.very-low-cost {
+  background: linear-gradient(to right, #03682995 30%, #313131 1%);
+  border-right: #313131 !important;
+}
+
+.low-cost {
+  background: linear-gradient(to right, #03682995 45%, #313131 1%);
+  border-right: #313131 !important;
+}
+
+.medium-cost {
+  background: linear-gradient(to right, #FFA50095 60%, #313131 1%);
+  border-right: #313131 !important;
+}
+
+.high-cost {
+  background: linear-gradient(to right, #FF000095 75%, #313131 1%);
+  border-right: #313131 !important;
+}
+
+.very-high-cost {
+  background: linear-gradient(to right, #FF000095 90%, #313131 1%);
+  border-right: #313131 !important;
+}
+
+/*
+  Tooltip Styles
+*/
+
+.custom-tooltip {
+  overflow: visible !important;
+  border: 1px solid cornflowerblue !important;
+  background-color: white !important;
+  color: black !important;
+}
+
+.custom-tooltip p {
+  margin: 5px !important;
+  white-space: nowrap !important;
+}
+
+.custom-tooltip p:first-of-type {
+  font-weight: bold !important;
+}

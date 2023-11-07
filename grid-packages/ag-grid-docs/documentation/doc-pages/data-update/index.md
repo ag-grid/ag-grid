@@ -31,7 +31,7 @@ Updating data in the grid can be done in the following ways:
 
 ### Row Data
 
-The easiest way to update data inside the grid is to replace the data you gave it with a fresh set of data. This is done by either updating the `rowData` bound property (if using a framework) or calling `api.setRowData(newData)`.
+The easiest way to update data inside the grid is to replace the data you gave it with a fresh set of data. This is done by either updating the `rowData` bound property (if using a framework) or calling `api.setGridOption('rowData', newData)`.
 
 See [Updating Row Data](/data-update-row-data/) for more details.
 

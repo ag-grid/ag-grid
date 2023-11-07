@@ -32,7 +32,7 @@ const App = () => {
         <AgGridReact
             columnDefs={columnDefs}
             rowData={rowData}
-            onGridReady={params => params.api.sizeColumnsToFit()} />
+        />
 
     </div>;
 };

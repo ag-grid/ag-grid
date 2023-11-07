@@ -32,13 +32,13 @@ The default Fill Handle behaviour will be as close as possible to other spreadsh
 ### Single Cell
 
 - When a single cell is selected and the range is increased, the value of that cell will be copied to the cells added to the range.
-- When a single cell containing a **number** value is selected and the range is increased while pressing the <kbd>Alt</kbd>/<kbd>Option</kbd> key, that value will be incremented (or decremented if dragging to the left or up) by the value of one until all new cells have been filled.
+- When a single cell containing a **number** value is selected and the range is increased while pressing the <kbd>⌥ Esc</kbd>/<kbd>Option</kbd> key, that value will be incremented (or decremented if dragging to the left or up) by the value of one until all new cells have been filled.
 
 ### Multi Cell
 
 - When a range of numbers is selected and that range is extended, the Grid will detect the linear progression of the selected items and fill the extra cells with calculated values.
 - When a range of strings or a mix of strings and numbers are selected and that range is extended, the range items will be copied in order until all new cells have been properly filled.
-- When a range of numbers is selected and the range is increased while pressing the <kbd>Alt</kbd>/<kbd>Option</kbd> key, the behaviour will be the same as when a range of strings or mixed values is selected.
+- When a range of numbers is selected and the range is increased while pressing the <kbd>⌥ Esc</kbd>/<kbd>Option</kbd> key, the behaviour will be the same as when a range of strings or mixed values is selected.
 
 ### Range Reduction
 
@@ -57,10 +57,9 @@ If this behaviour for decreasing selection needs to be prevented, the flag `supp
 
 ## Fill Handle Axis
 
-By the default, the Fill Handle can be dragged horizontally or vertically. If dragging only vertically, or only horizontally is a requirement, the `gridOptions` property `fillHandleDirection` property can be set or set via the API using `setFillHandleDirection`. This default value is `xy`.
+By the default, the Fill Handle can be dragged horizontally or vertically. If dragging only vertically, or only horizontally is a requirement, the `gridOptions` property `fillHandleDirection` property can be set. This default value is `xy`.
 
 <api-documentation source='grid-options/properties.json' section='selection' names='["fillHandleDirection"]' config='{"overrideBottomMargin":"0"}'></api-documentation>
-<api-documentation source='grid-api/api.json' section='selection' names='["setFillHandleDirection"]'></api-documentation>
 
 <snippet>
 | const gridOptions = {

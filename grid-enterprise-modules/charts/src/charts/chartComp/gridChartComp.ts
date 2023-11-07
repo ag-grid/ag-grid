@@ -89,9 +89,11 @@ export class GridChartComp extends Component {
 
     private chartProxy: ChartProxy;
     private chartType: ChartType;
-    private chartThemeName?: string;
 
     private readonly params: GridChartParams;
+
+    // function to clean up the 'color-scheme-change' event listener
+    private onDestroyColorSchemeChangeListener: () => void;
 
     constructor(params: GridChartParams) {
         super(GridChartComp.TEMPLATE);
@@ -100,23 +102,11 @@ export class GridChartComp extends Component {
 
     @PostConstruct
     public init(): void {
-        const availableChartThemes = this.gridOptionsService.get('chartThemes') || DEFAULT_THEMES;
-
-        if (availableChartThemes.length < 1) {
-            throw new Error('Cannot create chart: no chart themes are available to be used.');
-        }
-
-        let { chartThemeName } = this.params;
-
-        if (!_.includes(availableChartThemes, chartThemeName)) {
-            chartThemeName = availableChartThemes[0];
-        }
-
         const modelParams: ChartModelParams = {
             chartId: this.params.chartId,
             pivotChart: this.params.pivotChart,
             chartType: this.params.chartType,
-            chartThemeName: chartThemeName!,
+            chartThemeName: this.getThemeName(),
             aggFunc: this.params.aggFunc,
             cellRange: this.params.cellRange,
             suppressChartRanges: this.params.suppressChartRanges,
@@ -125,7 +115,7 @@ export class GridChartComp extends Component {
             seriesChartTypes: this.params.seriesChartTypes,
         };
 
-        const isRtl = this.gridOptionsService.is('enableRtl');
+        const isRtl = this.gridOptionsService.get('enableRtl');
 
         this.addCssClass(isRtl ? 'ag-rtl' : 'ag-ltr');
 
@@ -148,33 +138,23 @@ export class GridChartComp extends Component {
         this.addManagedListener(this.getGui(), 'focusin', this.setActiveChartCellRange.bind(this));
         this.addManagedListener(this.chartController, ChartController.EVENT_CHART_MODEL_UPDATE, this.update.bind(this));
 
+        this.addManagedPropertyListeners(['chartThemeOverrides', 'chartThemes'], this.reactivePropertyUpdate.bind(this));
+
         if (this.chartMenu) {
             // chart menu may not exist, i.e. cross filtering
             this.addManagedListener(this.chartMenu, ChartMenu.EVENT_DOWNLOAD_CHART, () => this.downloadChart());
         }
 
+        this.initWebsiteDarkMode();
         this.update();
         this.raiseChartCreatedEvent();
-    }
-
-    private validateCustomThemes() {
-        const suppliedThemes = this.getChartThemes();
-        const customChartThemes = this.gridOptionsService.get('customChartThemes');
-        if (customChartThemes) {
-            _.getAllKeysInObjects([customChartThemes]).forEach(customThemeName => {
-                if (!_.includes(suppliedThemes, customThemeName)) {
-                    console.warn("AG Grid: a custom chart theme with the name '" + customThemeName + "' has been " +
-                        "supplied but not added to the 'chartThemes' list");
-                }
-            });
-        }
     }
 
     private createChart(): void {
         // if chart already exists, destroy it and remove it from DOM
         let chartInstance: AgChartInstance | undefined = undefined;
         if (this.chartProxy) {
-            chartInstance = this.chartProxy.destroy({ keepChartInstance: true });
+            chartInstance = this.chartProxy.destroy({ keepChartInstance: false });
         }
 
         const crossFilterCallback = (event: any, reset: boolean) => {
@@ -212,7 +192,6 @@ export class GridChartComp extends Component {
 
         // set local state used to detect when chart changes
         this.chartType = chartType;
-        this.chartThemeName = this.chartController.getChartThemeName();
 
         this.chartProxy = GridChartComp.createChartProxy(chartProxyParams);
         if (!this.chartProxy) {
@@ -457,6 +436,96 @@ export class GridChartComp extends Component {
         (this.gridApi as any).focusService.clearFocusedCell();
     }
 
+    private getThemeName(): string {
+        const availableChartThemes = this.gridOptionsService.get('chartThemes') || DEFAULT_THEMES;
+
+        if (availableChartThemes.length === 0) {
+            throw new Error('Cannot create chart: no chart themes available.');
+        }
+
+        const { chartThemeName } = this.params;
+        return _.includes(availableChartThemes, chartThemeName) ? chartThemeName! : availableChartThemes[0];
+    }
+
+    private validateCustomThemes() {
+        const suppliedThemes = this.getChartThemes();
+        const customChartThemes = this.gridOptionsService.get('customChartThemes');
+        if (customChartThemes) {
+            _.getAllKeysInObjects([customChartThemes]).forEach(customThemeName => {
+                if (!_.includes(suppliedThemes, customThemeName)) {
+                    console.warn("AG Grid: a custom chart theme with the name '" + customThemeName + "' has been " +
+                        "supplied but not added to the 'chartThemes' list");
+                }
+            });
+        }
+    }
+
+    private reactivePropertyUpdate(): void {
+        // switch to the first theme if the current theme is unavailable
+        this.chartController.setChartThemeName(this.getThemeName(), true);
+
+        const chartId = this.getChartId();
+        const modelType = this.chartController.isCrossFilterChart()
+            ? 'crossFilter'
+            : this.getChartModel().modelType;
+
+        // standalone requires that `undefined` / `null` values are supplied as `{}`
+        const chartThemeOverrides = this.gridOptionsService.get('chartThemeOverrides') || {};
+
+        this.update({
+            type: `${modelType}ChartUpdate`,
+            chartId,
+            chartThemeOverrides
+        });
+    }
+
+    private initWebsiteDarkMode(): void {
+        const eDocument = this.gridOptionsService.getDocument();
+
+        // exit if not in example runner to prevent side effects
+        if (!eDocument.querySelector('[data-app-identifier="AG-GRID-EXAMPLE-RUNNER"]')) return;
+
+        const isInitialModeDark = (): boolean =>
+            eDocument.documentElement?.getAttribute('data-default-theme')?.endsWith('-dark') ?? false;
+
+        const applyThemeSuffix = (theme: string, isDark: boolean, suffix: string): string =>
+            isDark ? (theme.endsWith(suffix) ? theme : `${theme}${suffix}`) : theme.replace(suffix, '');
+
+        const updateChartThemes = (isDark: boolean): void => {
+            const suffix = isDark ? '-dark' : '-light';
+            const customThemeName = `my-custom-theme${suffix}`;
+
+            const themes = this.chartController.getThemes();
+            const modifiedThemes = Array.from(new Set(themes.map(theme => {
+                if (theme.startsWith('my-custom-theme-')) return customThemeName;
+                return applyThemeSuffix(theme, isDark, '-dark');
+            })));
+
+            if (!modifiedThemes.includes(customThemeName)) {
+                modifiedThemes.push(customThemeName);
+            }
+
+            // updating the `chartThemes` grid option will cause the chart to reactively update!
+            this.gridOptionsService.updateGridOptions({ options: { chartThemes: modifiedThemes } });
+        };
+
+        const handleColorSchemeChange = (event: CustomEvent<{ darkMode: boolean }>): void => {
+            const { darkMode } = event.detail;
+            updateChartThemes(darkMode);
+        };
+
+        // update chart themes when example first loads
+        updateChartThemes(isInitialModeDark());
+
+        // listen for user-triggered dark mode changes
+        eDocument.addEventListener('color-scheme-change', handleColorSchemeChange);
+
+        // store event listener to remove when the chart is destroyed
+        this.onDestroyColorSchemeChangeListener = () => {
+            eDocument.removeEventListener('color-scheme-change', handleColorSchemeChange);
+        };
+    }
+
     private raiseChartCreatedEvent(): void {
         const event: WithoutGridCommon<ChartCreated> = {
             type: Events.EVENT_CHART_CREATED,
@@ -491,6 +560,8 @@ export class GridChartComp extends Component {
         if (this.chartDialog && this.chartDialog.isAlive()) {
             this.destroyBean(this.chartDialog);
         }
+
+        this.onDestroyColorSchemeChangeListener?.();
 
         // if the user is providing containers for the charts, we need to clean up, otherwise the old chart
         // data will still be visible although the chart is no longer bound to the grid

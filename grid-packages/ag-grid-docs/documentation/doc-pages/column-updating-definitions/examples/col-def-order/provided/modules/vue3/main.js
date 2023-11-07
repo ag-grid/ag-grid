@@ -51,13 +51,13 @@ const VueExample = {
     },
     methods: {
         setColsA() {
-            this.gridApi.setColumnDefs(this.getColumnDefsA());
+            this.gridApi.setGridOption('columnDefs', this.getColumnDefsA());
         },
         setColsB() {
-            this.gridApi.setColumnDefs(this.getColumnDefsB());
+            this.gridApi.setGridOption('columnDefs', this.getColumnDefsB());
         },
         clearColDefs() {
-            this.gridApi.setColumnDefs([]);
+            this.gridApi.setGridOption('columnDefs', []);
         },
         onGridReady(params) {
             this.gridApi = params.api;

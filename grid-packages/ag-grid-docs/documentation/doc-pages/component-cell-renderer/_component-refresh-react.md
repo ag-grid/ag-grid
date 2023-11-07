@@ -29,4 +29,6 @@
 |If you choose to implement the `refresh` method, then note that this method returns a boolean value. If you do not
 |want to handle the refresh in the cell renderer, just return `false` from an otherwise empty method. This will
 |indicate to the grid that you did not refresh and the grid will instead destroy the component and create another instance of your component from scratch instead.
+|
+|The example below demonstrates this, where the Gold, Silver and Bronze column cell renderers refresh when the Update Data button is clicked.
 </framework-specific-section>

@@ -98,7 +98,4 @@ function createRowData() {
 document.addEventListener('DOMContentLoaded', function () {
   const gridDiv = document.querySelector<HTMLElement>('#myGrid')!
   gridApi = createGrid(gridDiv, gridOptions);
-  setTimeout(function () {
-    gridApi!.sizeColumnsToFit()
-  }, 200)
 })

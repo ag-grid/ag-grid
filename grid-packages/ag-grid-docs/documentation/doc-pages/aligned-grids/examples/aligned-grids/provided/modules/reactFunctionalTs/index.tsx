@@ -7,7 +7,7 @@ import "@ag-grid-community/styles/ag-grid.css";
 import "@ag-grid-community/styles/ag-theme-alpine.css";
 import './styles.css';
 
-import { ModuleRegistry, ColDef, ColGroupDef, GridReadyEvent } from '@ag-grid-community/core';
+import { ModuleRegistry, ColDef, ColGroupDef, GridReadyEvent, SizeColumnsToFitGridStrategy } from '@ag-grid-community/core';
 // Register the required feature modules with the Grid
 ModuleRegistry.registerModules([ClientSideRowModelModule]);
 
@@ -20,13 +20,12 @@ const GridExample = () => {
         { field: 'age' },
         { field: 'country' },
         { field: 'year' },
-        { field: 'date' },
         { field: 'sport' },
         {
             headerName: 'Medals',
             children: [
                 {
-                    columnGroupShow: 'closed', field: "total",
+                    columnGroupShow: 'closed', colId: "total",
                     valueGetter: "data.gold + data.silver + data.bronze", width: 200
                 },
                 { columnGroupShow: 'open', field: "gold", width: 100 },
@@ -37,15 +36,17 @@ const GridExample = () => {
     ], []);
 
     const defaultColDef = useMemo<ColDef>(() => ({
-        editable: true,
         sortable: true,
         resizable: true,
         filter: true,
-        flex: 1,
         minWidth: 100
     }), []);
 
     const [rowData, setRowData] = useState([]);
+
+    const autoSizeStrategy = useMemo<SizeColumnsToFitGridStrategy>(() => ({
+        type: 'fitGridWidth'
+    }), []);
 
     const onGridReady = (params: GridReadyEvent) => {
         fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
@@ -98,6 +99,7 @@ const GridExample = () => {
                     rowData={rowData}
                     columnDefs={columnDefs}
                     defaultColDef={defaultColDef}
+                    autoSizeStrategy={autoSizeStrategy}
                     onGridReady={onGridReady}
                 />
             </div>

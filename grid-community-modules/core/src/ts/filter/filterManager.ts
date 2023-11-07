@@ -423,7 +423,7 @@ export class FilterManager extends BeanStub {
     public isSuppressFlashingCellsBecauseFiltering(): boolean {
         // if user has elected to always flash cell changes, then always return false, otherwise we suppress flashing
         // changes when filtering
-        const allowShowChangeAfterFilter = this.gridOptionsService.is('allowShowChangeAfterFilter') ?? false;
+        const allowShowChangeAfterFilter = this.gridOptionsService.get('allowShowChangeAfterFilter') ?? false;
         return !allowShowChangeAfterFilter && this.processingFilterChange;
     }
 
@@ -510,6 +510,13 @@ export class FilterManager extends BeanStub {
 
     private createValueGetter(column: Column): IFilterParams['valueGetter'] {
         return ({ node }) => this.valueService.getValue(column, node as RowNode, true);
+    }
+
+    private createGetValue(filterColumn: Column): IFilterParams['getValue'] {
+        return (rowNode, column) => {
+            const columnToUse = column ? this.columnModel.getGridColumn(column) : filterColumn;
+            return columnToUse ? this.valueService.getValue(columnToUse, rowNode, true) : undefined;
+        };
     }
 
     public getFilterComponent(column: Column, source: FilterRequestSource, createIfDoesNotExist = true): AgPromise<IFilterComp> | null {
@@ -622,6 +629,7 @@ export class FilterManager extends BeanStub {
             filterChangedCallback: () => { },
             filterModifiedCallback: () => { },
             valueGetter: this.createValueGetter(column),
+            getValue: this.createGetValue(column),
             doesRowPassOtherFilter: () => true,
             api: this.gridOptionsService.api,
             columnApi: this.gridOptionsService.columnApi,
@@ -809,20 +817,18 @@ export class FilterManager extends BeanStub {
 
     private disposeFilterWrapper(filterWrapper: FilterWrapper, source: 'api' | 'columnChanged' | 'gridDestroyed' | 'advancedFilterEnabled'): void {
         filterWrapper.filterPromise!.then(filter => {
-            (filter!.setModel(null) || AgPromise.resolve()).then(() => {
-                this.getContext().destroyBean(filter);
+            this.getContext().destroyBean(filter);
 
-                filterWrapper.column.setFilterActive(false, 'filterDestroyed');
+            filterWrapper.column.setFilterActive(false, 'filterDestroyed');
 
-                this.allColumnFilters.delete(filterWrapper.column.getColId());
+            this.allColumnFilters.delete(filterWrapper.column.getColId());
 
-                const event: WithoutGridCommon<FilterDestroyedEvent> = {
-                    type: Events.EVENT_FILTER_DESTROYED,
-                    source,
-                    column: filterWrapper.column,
-                };
-                this.eventService.dispatchEvent(event);
-            });
+            const event: WithoutGridCommon<FilterDestroyedEvent> = {
+                type: Events.EVENT_FILTER_DESTROYED,
+                source,
+                column: filterWrapper.column,
+            };
+            this.eventService.dispatchEvent(event);
         });
     }
 

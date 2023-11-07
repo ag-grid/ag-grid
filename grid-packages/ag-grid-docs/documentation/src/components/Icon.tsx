@@ -14,6 +14,7 @@ import IntegratedChartsIcon from '../images/inline-svgs/integrated-chart.svg';
 import maximizeIcon from '../images/inline-svgs/maximize.svg';
 import minimizeIcon from '../images/inline-svgs/minimize.svg';
 import PlunkerIcon from '../images/inline-svgs/plunker.svg';
+import NewTabIcon from '../images/inline-svgs/new-tab.svg';
 import ReplayDemoIcon from '../images/inline-svgs/replay-demo-icon.svg';
 import RowsIcon from '../images/inline-svgs/rows.svg';
 import StackBlitzIcon from '../images/inline-svgs/stack-blitz.svg';
@@ -73,8 +74,8 @@ const HOMEPAGE_FEATURES_ICON_MAP = {
 };
 
 export const ICON_MAP = {
-    info: CarbonIcon.Information,
-    warning: CarbonIcon.WarningAlt,
+    info: CarbonIcon.InformationFilled,
+    warning: CarbonIcon.WarningAltFilled,
     email: CarbonIcon.Email,
     creditCard: CarbonIcon.Purchase,
     lightBulb: CarbonIcon.Idea,
@@ -94,7 +95,7 @@ export const ICON_MAP = {
     takeControl: TakeControlIcon,
     playCircle: CarbonIcon.PlayFilled,
     download: CarbonIcon.Download,
-    executableProgram: CarbonIcon.ExecutableProgram,
+    eye: CarbonIcon.View,
     code: CarbonIcon.Code,
     tick: TickIcon,
     cross: CrossIcon,
@@ -106,6 +107,7 @@ export const ICON_MAP = {
     idea: CarbonIcon.DataEnrichment,
     sun: CarbonIcon.Sun,
     moon: CarbonIcon.Moon,
+    newTab: NewTabIcon,
     ...SOCIALS_ICON_MAP,
     ...DOCS_CATEGORIES_ICON_MAP,
     ...HOMEPAGE_FEATURES_ICON_MAP,

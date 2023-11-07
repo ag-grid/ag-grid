@@ -1,14 +1,18 @@
 import {
-  GridApi,
-  createGrid,
   ColDef,
-  CreateRangeChartParams,
+  createGrid,
   FirstDataRenderedEvent,
+  GridApi,
   GridOptions,
-  ValueFormatterParams,
+  GridReadyEvent,
+  ValueFormatterParams
 } from '@ag-grid-community/core';
+import {getData} from './data';
 
 declare var moment: any;
+
+let gridApi: GridApi;
+let currentChartRef: any;
 
 function getColumnDefs() {
   return [
@@ -17,19 +21,9 @@ function getColumnDefs() {
   ]
 }
 
-function formatDate(date: Date | number) {
-  return Intl.DateTimeFormat('en-GB', { day: '2-digit', month: 'short', year: undefined }).format(new Date(date))
-}
-
-let gridApi: GridApi;
-
 const gridOptions: GridOptions = {
   columnDefs: getColumnDefs(),
-  defaultColDef: {
-    flex: 1,
-    resizable: true,
-  },
-  rowData: getRowData(),
+  defaultColDef: { flex: 1 },
   enableRangeSelection: true,
   enableCharts: true,
   chartThemeOverrides: {
@@ -81,25 +75,27 @@ const gridOptions: GridOptions = {
   chartToolPanelsDef: {
     panels: ['data', 'format']
   },
-  onFirstDataRendered: onFirstDataRendered,
-}
+  onGridReady,
+  onFirstDataRendered,
+};
 
-var currentChartRef: any;
+function onGridReady(params: GridReadyEvent) {
+  getData().then(rowData => params.api.setGridOption('rowData', rowData));
+}
 
 function onFirstDataRendered(params: FirstDataRenderedEvent) {
   if (currentChartRef) {
     currentChartRef.destroyChart()
   }
 
-  const createRangeChartParams: CreateRangeChartParams = {
-    chartContainer: document.querySelector('#myChart') as any,
-    suppressChartRanges: true,
+  currentChartRef = params.api.createRangeChart({
+    chartContainer: document.querySelector('#myChart') as HTMLElement,
     cellRange: {
       columns: ['date', 'avgTemp'],
     },
+    suppressChartRanges: true,
     chartType: 'line',
-  }
-  currentChartRef = params.api.createRangeChart(createRangeChartParams)
+  });
 }
 
 function dateFormatter(params: ValueFormatterParams) {
@@ -120,25 +116,15 @@ function toggleAxis() {
     }
   })
 
-  gridApi!.setColumnDefs(columnDefs)
+  gridApi!.setGridOption('columnDefs', columnDefs)
 }
 
-
-function getRowData() {
-  return [
-    { date: new Date(2019, 0, 1), avgTemp: 8.27 },
-    { date: new Date(2019, 0, 5), avgTemp: 7.22 },
-    { date: new Date(2019, 0, 8), avgTemp: 11.54 },
-    { date: new Date(2019, 0, 11), avgTemp: 8.44 },
-    { date: new Date(2019, 0, 22), avgTemp: 12.03 },
-    { date: new Date(2019, 0, 23), avgTemp: 9.68 },
-    { date: new Date(2019, 0, 24), avgTemp: 9.9 },
-    { date: new Date(2019, 0, 25), avgTemp: 8.74 },
-  ]
+function formatDate(date: Date | number) {
+  return Intl.DateTimeFormat('en-GB', { day: '2-digit', month: 'short', year: undefined }).format(new Date(date))
 }
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
-  var gridDiv = document.querySelector<HTMLElement>('#myGrid')!
+  const gridDiv = document.querySelector<HTMLElement>('#myGrid')!
   gridApi = createGrid(gridDiv, gridOptions);
 })

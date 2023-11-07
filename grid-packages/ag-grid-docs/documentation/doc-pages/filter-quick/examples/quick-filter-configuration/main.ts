@@ -54,12 +54,13 @@ var includeHiddenColumns = false;
 
 function onIncludeHiddenColumnsToggled() {
   includeHiddenColumns = !includeHiddenColumns;
-  gridApi!.setIncludeHiddenColumnsInQuickFilter(includeHiddenColumns);
+  gridApi!.setGridOption('includeHiddenColumnsInQuickFilter', includeHiddenColumns);
   document.querySelector('#includeHiddenColumns')!.innerHTML = `${includeHiddenColumns ? 'Exclude' : 'Include'} Hidden Columns`;
 }
 
 function onFilterTextBoxChanged() {
-  gridApi!.setQuickFilter(
+  gridApi!.setGridOption(
+    'quickFilterText',
     (document.getElementById('filter-text-box') as HTMLInputElement).value
   )
 }

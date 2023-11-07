@@ -1,17 +1,16 @@
 import {
   ChartCreated,
-  CreateRangeChartParams,
-  FirstDataRenderedEvent,
   ChartToolPanelName,
-  GridApi,
   createGrid,
+  FirstDataRenderedEvent,
+  GridApi,
   GridOptions,
+  GridReadyEvent
 } from '@ag-grid-community/core';
-import { getData } from "./data";
-
+import {getData} from './data';
 
 let gridApi: GridApi;
-
+let chartId: string | undefined;
 
 const gridOptions: GridOptions = {
   columnDefs: [
@@ -21,70 +20,50 @@ const gridOptions: GridOptions = {
     { field: 'weight', chartDataType: 'series' },
   ],
   defaultColDef: {
-    editable: true,
-    sortable: true,
     flex: 1,
     minWidth: 100,
-    filter: true,
-    resizable: true,
   },
-  rowData: getData(),
+  enableCharts: true,
   enableRangeSelection: true,
   popupParent: document.body,
-  enableCharts: true,
-  chartThemeOverrides: {
-    cartesian: {
-      axes: {
-        category: {
-          label: {
-            rotation: 335,
-          },
-        },
-      },
-    },
-  },
-  onFirstDataRendered: onFirstDataRendered,
-  onChartCreated: onChartCreated,
+  onGridReady,
+  onFirstDataRendered,
+  onChartCreated,
+};
+
+function onGridReady(params: GridReadyEvent) {
+  getData().then(rowData => params.api.setGridOption('rowData', rowData));
 }
 
 function onFirstDataRendered(params: FirstDataRenderedEvent) {
-  const createRangeChartParams: CreateRangeChartParams = {
+  params.api.createRangeChart({
+    chartContainer: document.querySelector('#myChart') as HTMLElement,
     cellRange: {
       columns: ['country', 'sugar', 'fat', 'weight'],
     },
     chartType: 'groupedColumn',
-    chartContainer: document.querySelector('#myChart') as any,
-  }
-
-  params.api.createRangeChart(createRangeChartParams)
+  });
 }
 
-var chartId: string | undefined;
 function onChartCreated(event: ChartCreated) {
-  chartId = event.chartId
+  chartId = event.chartId;
 }
 
 function openChartToolPanel(panel?: ChartToolPanelName) {
-  if (!chartId) {
-    return
-  }
-
-  gridApi!.openChartToolPanel({
+  if (!chartId || !gridApi) return;
+  gridApi.openChartToolPanel({
     chartId,
-    panel
-  })
+    panel,
+  });
 }
 
 function closeChartToolPanel() {
-  if (!chartId) {
-    return
-  }
-
-  gridApi!.closeChartToolPanel({ chartId })
+  if (!chartId || !gridApi) return;
+  gridApi.closeChartToolPanel({ chartId });
 }
 
-// setup the grid after the page has finished loading
-document.addEventListener('DOMContentLoaded', function () {
-  var gridDiv = document.querySelector<HTMLElement>('#myGrid')!
+// Initialise the grid after the DOM is fully loaded
+document.addEventListener('DOMContentLoaded', () => {
+  const gridDiv = document.querySelector<HTMLElement>('#myGrid')!;
   gridApi = createGrid(gridDiv, gridOptions);
-})
+});

@@ -28,7 +28,7 @@ function onFirstDataRendered(params: FirstDataRenderedEvent) {
   // arbitrarily expand a row for presentational purposes
   setTimeout(function () {
     params.api.getDisplayedRowAtIndex(0)!.setExpanded(true)
-  }, 0)
+  }, 0);
 
   setInterval(function () {
     if (!allRowData) {
@@ -69,6 +69,6 @@ document.addEventListener('DOMContentLoaded', function () {
     .then(response => response.json())
     .then((data: IAccount[]) => {
       allRowData = data
-      gridApi!.setRowData(allRowData)
+      gridApi!.setGridOption('rowData', allRowData)
     })
 })

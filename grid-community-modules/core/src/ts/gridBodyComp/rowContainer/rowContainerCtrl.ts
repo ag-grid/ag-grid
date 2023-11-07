@@ -173,7 +173,7 @@ export class RowContainerCtrl extends BeanStub {
 
     @PostConstruct
     private postConstruct(): void {
-        this.enableRtl = this.gridOptionsService.is('enableRtl');
+        this.enableRtl = this.gridOptionsService.get('enableRtl');
 
         this.forContainers([RowContainerName.CENTER],
             () => this.viewportSizeFeature = this.createManagedBean(new ViewportSizeFeature(this)));
@@ -271,7 +271,7 @@ export class RowContainerCtrl extends BeanStub {
         }
 
         const listener = () => {
-            const isEnsureDomOrder = this.gridOptionsService.is('ensureDomOrder');
+            const isEnsureDomOrder = this.gridOptionsService.get('ensureDomOrder');
             const isPrintLayout = this.gridOptionsService.isDomLayout('print');
             this.comp.setDomOrder(isEnsureDomOrder || isPrintLayout);
         };
@@ -343,7 +343,7 @@ export class RowContainerCtrl extends BeanStub {
     }
 
     public isHorizontalScrollShowing(): boolean {
-        const isAlwaysShowHorizontalScroll = this.gridOptionsService.is('alwaysShowHorizontalScroll');
+        const isAlwaysShowHorizontalScroll = this.gridOptionsService.get('alwaysShowHorizontalScroll');
         return isAlwaysShowHorizontalScroll || isHorizontalScrollShowing(this.eViewport);
     }
 
@@ -384,7 +384,7 @@ export class RowContainerCtrl extends BeanStub {
     private onDisplayedRowsChanged(useFlushSync: boolean = false): void {
         if (this.visible) {
             const printLayout = this.gridOptionsService.isDomLayout('print');
-            const embedFullWidthRows = this.gridOptionsService.is('embedFullWidthRows');
+            const embedFullWidthRows = this.gridOptionsService.get('embedFullWidthRows');
             const embedFW = embedFullWidthRows || printLayout;
             // this just justifies if the ctrl is in the correct place, this will be fed with zombie rows by the
             // row renderer, so should not block them as they still need to animate -  the row renderer

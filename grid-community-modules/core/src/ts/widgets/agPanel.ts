@@ -1,7 +1,7 @@
 import { RefSelector } from "./componentAnnotations";
 import { PostConstruct } from "../context/context";
 import { Component } from "./component";
-import { getInnerHeight, getInnerWidth, setDisplayed } from "../utils/dom";
+import { getInnerHeight, getInnerWidth, isVisible, setDisplayed } from "../utils/dom";
 import { createIconNoSpan } from "../utils/icon";
 import { PositionableFeature, PositionableOptions, ResizableStructure } from "../rendering/features/positionableFeature";
 
@@ -213,7 +213,7 @@ export class AgPanel extends Component {
 
         const eGui = this.getGui();
 
-        if (eGui && eGui.offsetParent) {
+        if (eGui && isVisible(eGui)) {
             this.close();
         }
 

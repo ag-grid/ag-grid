@@ -14,11 +14,14 @@
     padding: $size-1 $size-1 $size-1 $size-2;
     text-align: left;
     font-weight: $font-weight-bold;
-    border: 1px solid var(--border-color);
     transition: color $default-transition-timing !important;
 
     &:hover {
         --button-text-color: var(--dark-blue-300);
+
+        #{$darkmode-selector} & {
+            --button-text-color: var(--primary-800);
+        }
     }
 
     &:disabled {
@@ -27,11 +30,21 @@
         background-color: var(--background-500);
     }
 
+    &:not(:disabled) {
+        border-bottom-right-radius: 0;
+        border-bottom-left-radius: 0;
+    }
+
     svg {
         width: 20px;
         height: 20px;
         fill: var(--button-text-color);
         transition: fill $default-transition-timing, transform $default-transition-timing;
+    }
+
+    #{$darkmode-selector} & {
+        background-color: #121f29;
+        border: 1px solid rgb(255, 255, 255, 0.15);
     }
 }
 

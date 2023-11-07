@@ -47,7 +47,7 @@ document.addEventListener('DOMContentLoaded', () => {
   // you will probably use a framework like JQuery, Angular or something else to do your HTTP calls.
   fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
     .then(response => response.json())
-    .then((data: IOlympicDataTypes[]) => gridApi!.setRowData(data.map(rowData => {
+    .then((data: IOlympicDataTypes[]) => gridApi!.setGridOption('rowData', data.map(rowData => {
       const dateParts = rowData.date.split('/');
       return {
         ...rowData,

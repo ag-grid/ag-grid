@@ -27,8 +27,6 @@ export class StoreUtils extends BeanStub {
         storeParams: SSRMParams,
         parentNode: RowNode,
         parentBlock: RowNodeBlock,
-        successCallback: () => void,
-        failCallback: () => void,
         success: () => void,
         fail: () => void,
         startRow?: number,
@@ -52,9 +50,7 @@ export class StoreUtils extends BeanStub {
         };
 
         const getRowsParams: IServerSideGetRowsParams = {
-            successCallback: p.successCallback,
             success: p.success,
-            failCallback: p.failCallback,
             fail: p.fail,
             request: request,
             parentNode: p.parentNode,
@@ -66,7 +62,7 @@ export class StoreUtils extends BeanStub {
         window.setTimeout(() => {
             if (!storeParams.datasource || !parentBlock.isAlive()) {
                 // failCallback() is important, to reduce the 'RowNodeBlockLoader.activeBlockLoadsCount' count
-                p.failCallback();
+                p.fail();
                 return;
             }
             storeParams.datasource.getRows(getRowsParams);
@@ -123,11 +119,7 @@ export class StoreUtils extends BeanStub {
     }
 
     public getServerSideInitialRowCount(): number | null {
-        const rowCount = this.gridOptionsService.getNum('serverSideInitialRowCount');
-        if (typeof rowCount === 'number' && rowCount > 0) {
-            return rowCount;
-        }
-        return null;
+        return this.gridOptionsService.get('serverSideInitialRowCount');
     }
 
     private assertRowModelIsServerSide(key: keyof GridOptions) {
@@ -138,7 +130,7 @@ export class StoreUtils extends BeanStub {
         return true;
     }
     private assertNotTreeData(key: keyof GridOptions) {
-        if (this.gridOptionsService.is('treeData')) {
+        if (this.gridOptionsService.get('treeData')) {
             _.warnOnce(`The '${key}' property cannot be used while using tree data.`);
             return false;
         }
@@ -146,16 +138,16 @@ export class StoreUtils extends BeanStub {
     }
 
     public isServerSideSortAllLevels() {
-        return this.gridOptionsService.is('serverSideSortAllLevels') && this.assertRowModelIsServerSide('serverSideSortAllLevels');
+        return this.gridOptionsService.get('serverSideSortAllLevels') && this.assertRowModelIsServerSide('serverSideSortAllLevels');
     }
     public isServerSideOnlyRefreshFilteredGroups() {
-        return this.gridOptionsService.is('serverSideOnlyRefreshFilteredGroups') && this.assertRowModelIsServerSide('serverSideOnlyRefreshFilteredGroups');
+        return this.gridOptionsService.get('serverSideOnlyRefreshFilteredGroups') && this.assertRowModelIsServerSide('serverSideOnlyRefreshFilteredGroups');
     }
     public isServerSideSortOnServer() {
-        return this.gridOptionsService.is('serverSideSortOnServer') && this.assertRowModelIsServerSide('serverSideSortOnServer') && this.assertNotTreeData('serverSideSortOnServer');
+        return this.gridOptionsService.get('serverSideSortOnServer') && this.assertRowModelIsServerSide('serverSideSortOnServer') && this.assertNotTreeData('serverSideSortOnServer');
     }
     public isServerSideFilterOnServer() {
-        return this.gridOptionsService.is('serverSideFilterOnServer') && this.assertRowModelIsServerSide('serverSideFilterOnServer') && this.assertNotTreeData('serverSideFilterOnServer');
+        return this.gridOptionsService.get('serverSideFilterOnServer') && this.assertRowModelIsServerSide('serverSideFilterOnServer') && this.assertNotTreeData('serverSideFilterOnServer');
     }
 
 }

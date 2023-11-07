@@ -19,7 +19,7 @@ When [row selection](/row-selection/) is enabled, you can set the color of selec
 
 ## Range Selections
 
-[Range selections](/range-selection/) can be created by clicking and dragging on the grid. Multiple overlapping range selections can be made by holding <kbd>Ctrl</kbd> while creating a new range outside the existing range. Copying from a selection will briefly highlight the range of cells (<kbd>Ctrl + C</kbd>). There are several variables to control the selection and highlight style:
+[Range selections](/range-selection/) can be created by clicking and dragging on the grid. Multiple overlapping range selections can be made by holding <kbd>^ Ctrl</kbd> while creating a new range outside the existing range. Copying from a selection will briefly highlight the range of cells (<kbd>Ctrl + C</kbd>). There are several variables to control the selection and highlight style:
 
 ```css
 .ag-theme-alpine {

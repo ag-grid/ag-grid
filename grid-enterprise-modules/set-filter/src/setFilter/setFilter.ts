@@ -24,6 +24,7 @@ import {
     GetDataPath,
     GROUP_AUTO_COLUMN_ID,
     IRowNode,
+    ColDef,
 } from '@ag-grid-community/core';
 import { SetFilterModelValuesType, SetValueModel } from './setValueModel';
 import { SetFilterListItem, SetFilterListItemExpandedChangedEvent, SetFilterListItemParams, SetFilterListItemSelectionChangedEvent } from './setFilterListItem';
@@ -53,7 +54,7 @@ export class SetFilter<V = string> extends ProvidedFilter<SetFilterModel, V> imp
     private hardRefreshVirtualList = false;
     private noValueFormatterSupplied = false;
 
-    private createKey: (value: V | null, node?: IRowNode | null) => string | null;
+    private createKey: (value: V | null | undefined, node?: IRowNode | null) => string | null;
 
     private valueFormatter?: (params: ValueFormatterParams) => string;
     private readonly filterModelFormatter = new SetFilterModelFormatter();
@@ -161,6 +162,51 @@ export class SetFilter<V = string> extends ProvidedFilter<SetFilterModel, V> imp
         return super.setModel(model);
     }
 
+    refresh(params: SetFilterParams<any, V>): boolean {
+        if(!super.refresh(params)) {
+            return false;
+        }
+
+        // Those params have a large impact and should trigger a reload when they change.
+        const paramsThatForceReload: (keyof SetFilterParams<any, V>)[] = [
+            'treeList', 'treeListFormatter', 'treeListPathGetter', 'keyCreator', 'convertValuesToStrings',
+            'caseSensitive', 'comparator', 'suppressSelectAll', 'excelMode'
+        ];
+
+        if (paramsThatForceReload.some(param => params[param] !== this.setFilterParams?.[param])) {
+            return false;
+        }
+
+        if (this.haveColDefParamsChanged(params.colDef)) {
+            return false;
+        }
+
+        super.updateParams(params);
+        this.updateSetFilterOnParamsChange(params);
+        this.updateMiniFilter();
+
+        if (params.cellRenderer !== this.setFilterParams?.cellRenderer ||
+            params.valueFormatter !== this.setFilterParams?.valueFormatter) {
+            this.checkAndRefreshVirtualList();
+        }
+
+        this.valueModel?.updateOnParamsChange(params).then(() => {
+            if (this.valueModel?.hasSelections()) {
+                this.refreshFilterValues();
+            }
+        });
+
+        return true;
+    }
+
+    private haveColDefParamsChanged(colDef: ColDef): boolean {
+        const paramsThatForceReload: (keyof ColDef)[] = [
+            'keyCreator', 'filterValueGetter',
+        ];
+        const existingColDef = this.setFilterParams?.colDef;
+        return paramsThatForceReload.some(param => colDef[param] !== existingColDef?.[param]);
+    }
+
     private setModelAndRefresh(values: SetFilterModelValue | null): AgPromise<void> {
         return this.valueModel ? this.valueModel.setModel(values).then(() => this.checkAndRefreshVirtualList()) : AgPromise.resolve();
     }
@@ -203,21 +249,27 @@ export class SetFilter<V = string> extends ProvidedFilter<SetFilterModel, V> imp
         return a != null && b != null && _.areEqual(a.values, b.values);
     }
 
+    private updateSetFilterOnParamsChange = (newParams: SetFilterParams<any, V>) => {
+        this.setFilterParams = newParams;
+        this.convertValuesToStrings = !!newParams.convertValuesToStrings;
+        this.caseSensitive = !!newParams.caseSensitive;
+        const keyCreator = newParams.keyCreator ?? newParams.colDef.keyCreator;
+        this.setValueFormatter(newParams.valueFormatter, keyCreator, this.convertValuesToStrings, !!newParams.treeList, !!newParams.colDef.refData);
+        const isGroupCol = newParams.column.getId().startsWith(GROUP_AUTO_COLUMN_ID);
+        this.treeDataTreeList = this.gridOptionsService.get('treeData') && !!newParams.treeList && isGroupCol;
+        this.getDataPath = this.gridOptionsService.get('getDataPath');
+        this.groupingTreeList = !!this.columnModel.getRowGroupColumns().length && !!newParams.treeList && isGroupCol;
+        this.createKey = this.generateCreateKey(keyCreator, this.convertValuesToStrings, this.treeDataTreeList || this.groupingTreeList);
+    }
+
     public setParams(params: SetFilterParams<any, V>): void {
         this.applyExcelModeOptions(params);
 
         super.setParams(params);
 
-        this.setFilterParams = params;
-        this.convertValuesToStrings = !!params.convertValuesToStrings;
-        this.caseSensitive = !!params.caseSensitive;
-        let keyCreator = params.keyCreator ?? params.colDef.keyCreator;
-        this.setValueFormatter(params.valueFormatter, keyCreator, this.convertValuesToStrings, !!params.treeList, !!params.colDef.refData);
-        const isGroupCol = params.column.getId().startsWith(GROUP_AUTO_COLUMN_ID);
-        this.treeDataTreeList = this.gridOptionsService.is('treeData') && !!params.treeList && isGroupCol;
-        this.getDataPath = this.gridOptionsService.get('getDataPath');
-        this.groupingTreeList = !!this.columnModel.getRowGroupColumns().length && !!params.treeList && isGroupCol;
-        this.createKey = this.generateCreateKey(keyCreator, this.convertValuesToStrings, this.treeDataTreeList || this.groupingTreeList);
+        this.updateSetFilterOnParamsChange(params);
+
+        const keyCreator = params.keyCreator ?? params.colDef.keyCreator;
 
         this.valueModel = new SetValueModel({
             filterParams: params,
@@ -271,7 +323,7 @@ export class SetFilter<V = string> extends ProvidedFilter<SetFilterModel, V> imp
         keyCreator: ((params: KeyCreatorParams<any, any>) => string) | undefined,
         convertValuesToStrings: boolean,
         treeDataOrGrouping: boolean
-    ): (value: V | null, node?: IRowNode | null) => string | null {
+    ): (value: V | null | undefined, node?: IRowNode | null) => string | null {
         if (treeDataOrGrouping && !keyCreator) {
             throw new Error('AG Grid: Must supply a Key Creator in Set Filter params when `treeList = true` on a group column, and Tree Data or Row Grouping is enabled.');
         }
@@ -480,6 +532,8 @@ export class SetFilter<V = string> extends ProvidedFilter<SetFilterModel, V> imp
         return listItem;
     }
 
+    
+
     private newSetTreeItemAttributes(item: SetFilterModelTreeItem, isTree: boolean): ({
         value: V | string | (() => string) | null,
         depth?: number | undefined,
@@ -628,6 +682,22 @@ export class SetFilter<V = string> extends ProvidedFilter<SetFilterModel, V> imp
         this.addManagedListener(eMiniFilter.getInputElement(), 'keydown', e => this.onMiniFilterKeyDown(e));
     }
 
+    private updateMiniFilter() {
+        if (!this.setFilterParams) { throw new Error('Set filter params have not been provided.'); }
+        if (!this.valueModel) { throw new Error('Value model has not been created.'); }
+
+        const { eMiniFilter } = this;
+
+        if (eMiniFilter.isDisplayed() !== !this.setFilterParams.suppressMiniFilter) {
+            eMiniFilter.setDisplayed(!this.setFilterParams.suppressMiniFilter);
+        }
+
+        const miniFilterValue = this.valueModel.getMiniFilter();
+        if (eMiniFilter.getValue() !== miniFilterValue) {
+            eMiniFilter.setValue(miniFilterValue);
+        }
+    }
+
     // we need to have the GUI attached before we can draw the virtual rows, as the
     // virtual row logic needs info about the GUI state
     public afterGuiAttached(params?: IAfterGuiAttachedParams): void {
@@ -720,10 +790,10 @@ export class SetFilter<V = string> extends ProvidedFilter<SetFilterModel, V> imp
             return this.doesFilterPassForTreeData(node, data);
         }
         if (this.groupingTreeList) {
-            return this.doesFilterPassForGrouping(node, data);
+            return this.doesFilterPassForGrouping(node);
         }
 
-        let value = this.getValueFromNode(node, data);
+        let value = this.getValueFromNode(node);
 
         if (this.convertValuesToStrings) {
             // for backwards compatibility - keeping separate as it will eventually be removed
@@ -740,7 +810,7 @@ export class SetFilter<V = string> extends ProvidedFilter<SetFilterModel, V> imp
         return this.isInAppliedModel(this.createKey(value, node));
     }
 
-    private doesFilterPassForConvertValuesToString(node: IRowNode, value: V | null) {
+    private doesFilterPassForConvertValuesToString(node: IRowNode, value: V | null | undefined) {
         const key = this.createKey(value, node);
         if (key != null && Array.isArray(key)) {
             if (key.length === 0) {
@@ -760,9 +830,9 @@ export class SetFilter<V = string> extends ProvidedFilter<SetFilterModel, V> imp
         return this.isInAppliedModel(this.createKey(this.checkMakeNullDataPath(this.getDataPath!(data)) as any) as any);
     }
 
-    private doesFilterPassForGrouping(node: IRowNode, data: any): boolean {
+    private doesFilterPassForGrouping(node: IRowNode): boolean {
         const dataPath = this.columnModel.getRowGroupColumns().map(groupCol => this.valueService.getKeyForNode(groupCol, node));
-        dataPath.push(this.getValueFromNode(node, data));
+        dataPath.push(this.getValueFromNode(node));
         return this.isInAppliedModel(this.createKey(this.checkMakeNullDataPath(dataPath) as any) as any);
         
     }
@@ -781,22 +851,11 @@ export class SetFilter<V = string> extends ProvidedFilter<SetFilterModel, V> imp
         return this.valueModel!.hasAppliedModelKey(key);
     }
 
-    private getValueFromNode(node: IRowNode, data: any): V | null {
-        const { valueGetter, api, colDef, column, columnApi, context } = this.setFilterParams!;
-
-        return valueGetter({
-            api,
-            colDef,
-            column,
-            columnApi,
-            context,
-            data: data,
-            getValue: (field) => data[field],
-            node: node,
-        });
+    private getValueFromNode(node: IRowNode): V | null | undefined {
+        return this.setFilterParams!.getValue(node);
     }
 
-    private getKeyCreatorParams(value: V | null, node: IRowNode | null = null): KeyCreatorParams {
+    private getKeyCreatorParams(value: V | null | undefined, node: IRowNode | null = null): KeyCreatorParams {
         return {
             value,
             colDef: this.setFilterParams!.colDef,
@@ -1209,10 +1268,6 @@ class ModelWrapper<V> implements VirtualListModel {
         return this.model.getDisplayedItem(index) as any;
     }
 
-    public isRowSelected(index: number): boolean {
-        return this.model.isKeySelected(this.getRow(index));
-    }
-
     public areRowsEqual(oldRow: string | null, newRow: string | null): boolean {
         return oldRow === newRow;
     }
@@ -1242,18 +1297,6 @@ class ModelWrapperWithSelectAll<V> implements VirtualListModel {
         }
 
         return this.model.getDisplayedItem(index - outboundItems) as any;
-    }
-
-    public isRowSelected(index: number): boolean | undefined {
-        if (index === 0) {
-            return this.isSelectAllSelected();
-        }
-
-        if (index === 1 && this.model.showAddCurrentSelectionToFilter()) {
-            return this.model.isAddCurrentSelectionToFilterChecked();
-        }
-
-        return this.model.isKeySelected(this.getRow(index));
     }
 
     public areRowsEqual(oldRow: string | null, newRow: string | null): boolean {

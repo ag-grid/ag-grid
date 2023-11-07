@@ -22,7 +22,7 @@ function addFiveItems(append: boolean) {
         }
     }
     immutableStore = newStore
-    gridApi!.setRowData(immutableStore)
+    gridApi!.setGridOption('rowData', immutableStore)
 }
 
 function removeSelected() {
@@ -33,7 +33,7 @@ function removeSelected() {
     immutableStore = immutableStore.filter(function (dataItem) {
         return selectedIds.indexOf(dataItem.symbol) < 0
     })
-    gridApi!.setRowData(immutableStore)
+    gridApi!.setGridOption('rowData', immutableStore)
 }
 
 function setSelectedToGroup(newGroup: string) {
@@ -55,7 +55,7 @@ function setSelectedToGroup(newGroup: string) {
             return dataItem
         }
     })
-    gridApi!.setRowData(immutableStore)
+    gridApi!.setGridOption('rowData', immutableStore)
 }
 
 function updatePrices() {
@@ -71,7 +71,7 @@ function updatePrices() {
         })
     })
     immutableStore = newStore
-    gridApi!.setRowData(immutableStore)
+    gridApi!.setGridOption('rowData', immutableStore)
 }
 
 function filter(list: any[], callback: any) {
@@ -149,7 +149,7 @@ function createUniqueRandomSymbol() {
 
 function reverseItems() {
     immutableStore.reverse()
-    gridApi!.setRowData(immutableStore)
+    gridApi!.setGridOption('rowData', immutableStore)
 }
 
 let gridApi: GridApi;
@@ -184,7 +184,7 @@ const gridOptions: GridOptions = {
     onGridReady: (params) => {
         immutableStore = []
         immutableStore = getInitialData()
-        params.api.setRowData(immutableStore)
+        params.api.setGridOption('rowData', immutableStore)
         setGroupingEnabled(false, params.api)
     },
 }

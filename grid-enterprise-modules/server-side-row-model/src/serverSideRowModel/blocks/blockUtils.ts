@@ -138,7 +138,7 @@ export class BlockUtils extends BeanStub {
     public updateDataIntoRowNode(rowNode: RowNode, data: any): void {
         rowNode.updateData(data);
 
-        if (this.gridOptionsService.is('treeData')) {
+        if (this.gridOptionsService.get('treeData')) {
             this.setTreeGroupInfo(rowNode);
             this.setChildCountIntoRowNode(rowNode);
         } else if (rowNode.group) {
@@ -161,7 +161,7 @@ export class BlockUtils extends BeanStub {
             // it's not possible for a node to change whether it's a group or not
             // when doing row grouping (as only rows at certain levels are groups),
             // so nothing to do here
-        } else if (this.gridOptionsService.is('masterDetail')) {
+        } else if (this.gridOptionsService.get('masterDetail')) {
             // this should be implemented, however it's not the use case i'm currently
             // programming, so leaving for another day. to test this, create an example
             // where whether a master row is expandable or not is dynamic
@@ -170,7 +170,7 @@ export class BlockUtils extends BeanStub {
 
     public setDataIntoRowNode(rowNode: RowNode, data: any, defaultId: string, cachedRowHeight: number | undefined): void {
         rowNode.stub = false;
-        const treeData = this.gridOptionsService.is('treeData');
+        const treeData = this.gridOptionsService.get('treeData');
 
         if (_.exists(data)) {
             rowNode.setDataAndId(data, defaultId);
@@ -179,7 +179,7 @@ export class BlockUtils extends BeanStub {
                 this.setTreeGroupInfo(rowNode);
             } else if (rowNode.group) {
                 this.setRowGroupInfo(rowNode);
-            } else if (this.gridOptionsService.is('masterDetail')) {
+            } else if (this.gridOptionsService.get('masterDetail')) {
                 this.setMasterDetailInfo(rowNode);
             }
 
@@ -211,7 +211,7 @@ export class BlockUtils extends BeanStub {
     private setGroupDataIntoRowNode(rowNode: RowNode): void {
         const groupDisplayCols: Column[] = this.columnModel.getGroupDisplayColumns();
 
-        const usingTreeData = this.gridOptionsService.is('treeData');
+        const usingTreeData = this.gridOptionsService.get('treeData');
 
         groupDisplayCols.forEach(col => {
             if (rowNode.groupData == null) {

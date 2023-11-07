@@ -171,13 +171,15 @@ export interface IFilterParams<TData = any, TContext = any> extends AgGridCommon
     filterModifiedCallback: () => void;
 
     /**
-     * A function callback for the filter to get cell values from provided row data. Called with a
-     * `ValueGetterParams` to get the value for this filter's column for the provided row data.
-     *
-     * The callback takes care of selecting the right column definition and deciding whether to use
-     * the column `valueGetter` or raw field etc.
+     * @deprecated v31 Use `getValue` instead
      */
     valueGetter: ValueGetterFunc<TData>;
+
+    /**
+     * Get the cell value for the given row node and column, which can be the column ID, definition, or `Column` object.
+     * If no column is provided, the column this filter is on will be used.
+     */
+    getValue: <TValue = any>(node: IRowNode<TData>, column?: string | ColDef<TData, TValue> | Column<TValue>) => TValue | null | undefined;
 
     /**
      * A function callback, call with a node to be told whether the node passes all filters except the current filter.

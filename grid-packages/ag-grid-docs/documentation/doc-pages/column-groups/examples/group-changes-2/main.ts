@@ -48,11 +48,11 @@ function createExtraColDefs(): (ColDef | ColGroupDef)[] {
 }
 
 function onBtNormalCols() {
-  gridApi!.setColumnDefs(createNormalColDefs())
+  gridApi!.setGridOption('columnDefs', createNormalColDefs())
 }
 
 function onBtExtraCols() {
-  gridApi!.setColumnDefs(createExtraColDefs())
+  gridApi!.setGridOption('columnDefs', createExtraColDefs())
 }
 
 let gridApi: GridApi<IOlympicData>;
@@ -74,5 +74,5 @@ document.addEventListener('DOMContentLoaded', () => {
 
   fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
     .then(response => response.json())
-    .then((data: IOlympicData[]) => gridApi!.setRowData(data))
+    .then((data: IOlympicData[]) => gridApi!.setGridOption('rowData', data))
 })

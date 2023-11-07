@@ -58,12 +58,7 @@ class NumberFilter implements IFilterComp {
         }
 
         const { node } = params;
-        const value = this.filterParams.valueGetter({
-            ...this.filterParams,
-            data: node.data,
-            getValue: (field) => node.data[field],
-            node,
-        });
+        const value = this.filterParams.getValue(node);
 
         const filterValue = this.filterText;
 
@@ -150,6 +145,6 @@ document.addEventListener('DOMContentLoaded', () => {
     fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
         .then(response => response.json())
         .then(data => {
-            gridApi!.setRowData(data)
+            gridApi!.setGridOption('rowData', data)
         })
 })

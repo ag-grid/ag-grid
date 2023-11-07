@@ -61,9 +61,6 @@ export class Events {
     /** A row group was opened / closed */
     public static EVENT_ROW_GROUP_OPENED: 'rowGroupOpened' = 'rowGroupOpened';
 
-    /** @deprecated v28 use EVENT_ROW_DATA_UPDATED instead */
-    public static EVENT_ROW_DATA_CHANGED: 'rowDataChanged' = 'rowDataChanged';
-
     /** Client-Side Row Model only. The client has updated data for the grid */
     public static EVENT_ROW_DATA_UPDATED: 'rowDataUpdated' = 'rowDataUpdated';
 
@@ -244,9 +241,6 @@ export class Events {
     public static EVENT_COLUMN_PIVOT_CHANGE_REQUEST: 'columnPivotChangeRequest' = 'columnPivotChangeRequest';
     public static EVENT_COLUMN_VALUE_CHANGE_REQUEST: 'columnValueChangeRequest' = 'columnValueChangeRequest';
     public static EVENT_COLUMN_AGG_FUNC_CHANGE_REQUEST: 'columnAggFuncChangeRequest' = 'columnAggFuncChangeRequest';
-
-    public static EVENT_KEYBOARD_FOCUS: 'keyboardFocus' = 'keyboardFocus';
-    public static EVENT_MOUSE_FOCUS: 'mouseFocus' = 'mouseFocus';
 
     public static EVENT_STORE_UPDATED: 'storeUpdated' = 'storeUpdated';
 

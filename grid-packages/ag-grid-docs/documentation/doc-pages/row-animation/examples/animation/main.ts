@@ -140,7 +140,7 @@ document.addEventListener('DOMContentLoaded', function () {
   fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
     .then(response => response.json())
     .then(function (data) {
-      gridApi!.setRowData(data.slice(0, 50))
+      gridApi!.setGridOption('rowData', data.slice(0, 50))
       startInterval(gridApi!)
     })
 })

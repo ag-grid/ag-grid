@@ -25,7 +25,7 @@ export function createAgChartTheme(chartProxyParams: ChartProxyParams, proxy: Ch
     const apiThemeOverrides = chartProxyParams.apiChartThemeOverrides;
 
     const standaloneChartType = getSeriesType(chartProxyParams.chartType);
-    const crossFilterThemeOverridePoint = standaloneChartType === 'pie' ? 'polar' : 'cartesian';
+    const crossFilterThemeOverridePoint = standaloneChartType === 'pie' ? 'pie' : 'cartesian';
     const crossFilteringOverrides = chartProxyParams.crossFiltering
         ? createCrossFilterThemeOverrides(proxy, chartProxyParams, crossFilterThemeOverridePoint)
         : undefined;
@@ -94,7 +94,7 @@ export function isStockTheme(themeName: string): boolean {
 function createCrossFilterThemeOverrides(
     proxy: ChartProxy,
     chartProxyParams: ChartProxyParams,
-    overrideType: 'cartesian' | 'polar'
+    overrideType: 'cartesian' | 'pie'
 ): AgChartThemeOverrides {
     const legend = {
         listeners: {
@@ -109,7 +109,7 @@ function createCrossFilterThemeOverrides(
     };
 
     const series: AgChartThemeOverrides = {};
-    if (overrideType === 'polar') {
+    if (overrideType === 'pie') {
         series: {
             tooltip: {
                 renderer: ({
@@ -117,12 +117,12 @@ function createCrossFilterThemeOverrides(
                                datum,
                                calloutLabelKey,
                                radiusKey,
-                               angleValue,
+                               angleKey,
                            }: AgPieSeriesTooltipRendererParams) => {
                     const title = angleName;
                     const label = datum[calloutLabelKey as string];
                     const ratio = datum[radiusKey as string];
-                    const totalValue = angleValue;
+                    const totalValue = datum[angleKey as string];
                     return {title, content: `${label}: ${totalValue * ratio}`};
                 }
             }

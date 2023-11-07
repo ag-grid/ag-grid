@@ -11,7 +11,6 @@ import {
     ValueFormatterParams,
     GetRowIdParams,
     GridReadyEvent,
-    FirstDataRenderedEvent,
 } from '@ag-grid-community/core';
 
 const valueFormatter = function (params: ValueFormatterParams) {
@@ -74,6 +73,7 @@ let gridApi: GridApi;
 const gridOptions: GridOptions = {
     defaultColDef: {
         resizable: true,
+        flex: 1,
     },
     rowSelection: 'multiple',
     columnDefs: columnDefs,
@@ -94,10 +94,6 @@ const gridOptions: GridOptions = {
         for (let i = 0; i < 1000; i++) {
             allOfTheData.push(createRowData(sequenceId++))
         }
-    },
-
-    onFirstDataRendered: (params: FirstDataRenderedEvent) => {
-        params.api.sizeColumnsToFit()
     },
 
     getRowStyle: (params: RowClassParams): RowStyle | undefined => {

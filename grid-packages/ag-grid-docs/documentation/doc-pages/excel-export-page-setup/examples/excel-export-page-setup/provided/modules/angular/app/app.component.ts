@@ -108,7 +108,7 @@ private gridApi!: GridApi;
 constructor(private http: HttpClient) {}
     onGridReady(params: GridReadyEvent<IOlympicData>) {
         this.gridApi = params.api;
-        this.http.get<IOlympicData[]>('https://www.ag-grid.com/example-assets/small-olympic-winners.json').subscribe(data => params.api!.setRowData(data.filter((rec: any) => rec.country != null)));
+        this.http.get<IOlympicData[]>('https://www.ag-grid.com/example-assets/small-olympic-winners.json').subscribe(data => params.api!.setGridOption('rowData', data.filter((rec: any) => rec.country != null)));
     }
 
     onFormSubmit(e: any) {

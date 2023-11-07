@@ -1,76 +1,54 @@
-import { GridApi, createGrid, ChartRef, ColDef, GridOptions } from '@ag-grid-community/core';
-
-const columnDefs: ColDef[] = [
-  { field: 'athlete', width: 150, chartDataType: 'category' },
-  { field: 'gold', chartDataType: 'series' },
-  { field: 'silver', chartDataType: 'series' },
-  { field: 'bronze', chartDataType: 'series' },
-  { field: 'total', chartDataType: 'series' },
-]
+import { ChartRef, createGrid, GridApi, GridOptions } from '@ag-grid-community/core';
 
 let gridApi: GridApi;
 
 const gridOptions: GridOptions = {
-  defaultColDef: {
-    editable: true,
-    sortable: true,
-    flex: 1,
-    minWidth: 100,
-    filter: true,
-    resizable: true,
-  },
-  columnDefs: columnDefs,
+  columnDefs: [
+    { field: 'athlete', width: 150, chartDataType: 'category' },
+    { field: 'gold', chartDataType: 'series' },
+    { field: 'silver', chartDataType: 'series' },
+    { field: 'bronze', chartDataType: 'series' },
+    { field: 'total', chartDataType: 'series' },
+  ],
+  defaultColDef: { flex: 1 },
   enableRangeSelection: true,
   enableCharts: true,
-  createChartContainer: createChartContainer,
   popupParent: document.body,
-}
+  createChartContainer,
+};
 
-var chartPanelTemplate =
-  '<div class="chart-wrapper ag-theme-alpine">' +
-  '<div class="chart-wrapper-top">' +
-  '<h2 class="chart-wrapper-title"></h2>' +
-  '<button class="chart-wrapper-close">Destroy Chart</button>' +
-  '</div>' +
-  '<div class="chart-wrapper-body"></div>' +
-  '</div>'
-
-function appendTitle(el: Element) {
-  const formatter = new Intl.DateTimeFormat('en', {
-    weekday: 'long',
-    year: 'numeric',
-    month: 'long',
-    hour: 'numeric',
-    minute: 'numeric',
-    second: 'numeric',
-    hour12: true,
-    timeZone: 'UTC'
-  });
-  const date = formatter.format();
-  el.innerHTML = `Chart created ${date}`;
-}
-
-function createChartContainer(chartRef: ChartRef) {
-  const eChart = chartRef.chartElement
-
-  const eTemp = document.createElement('div')
-  eTemp.innerHTML = chartPanelTemplate
-  const eChartWrapper = eTemp.firstChild as HTMLElement;
-
+// Function for creating the chart container
+function createChartContainer(chartRef: ChartRef): void {
+  const eChart = chartRef.chartElement;
+  const themeName = document.documentElement?.getAttribute('data-default-theme') || 'ag-theme-alpine';
   const eParent = document.querySelector('#container') as HTMLElement;
 
-  eParent.appendChild(eChartWrapper);
+  const chartWrapperHTML = `
+    <div class="chart-wrapper ${themeName}">
+      <div class="chart-wrapper-top">
+        <h2 class="chart-wrapper-title">Chart created ${getFormattedDate()}</h2>
+        <button class="chart-wrapper-close">Destroy Chart</button>
+      </div>
+      <div class="chart-wrapper-body"></div>
+    </div>
+  `;
 
-  eChartWrapper.querySelector('.chart-wrapper-body')!.appendChild(eChart)
+  eParent.insertAdjacentHTML('beforeend', chartWrapperHTML);
+  const eChartWrapper = eParent.lastElementChild as HTMLElement;
 
-  appendTitle(eChartWrapper.querySelector('.chart-wrapper-title')!);
+  eChartWrapper.querySelector('.chart-wrapper-body')!.appendChild(eChart);
+  eChartWrapper.querySelector('.chart-wrapper-close')!.addEventListener('click', () => {
+    chartRef.destroyChart();
+    eParent.removeChild(eChartWrapper);
+  });
+}
 
-  eChartWrapper
-    .querySelector('.chart-wrapper-close')!
-    .addEventListener('click', function () {
-      chartRef.destroyChart()
-      eParent.removeChild(eChartWrapper)
-    })
+function getFormattedDate(): string {
+  return new Intl.DateTimeFormat('en', {
+    weekday: 'long', year: 'numeric', month: 'long',
+    hour: 'numeric', minute: 'numeric', second: 'numeric',
+    hour12: true, timeZone: 'UTC'
+  }).format(new Date());
 }
 
 // setup the grid after the page has finished loading
@@ -81,6 +59,6 @@ document.addEventListener('DOMContentLoaded', function () {
   fetch('https://www.ag-grid.com/example-assets/wide-spread-of-sports.json')
     .then(response => response.json())
     .then(function (data) {
-      gridApi!.setRowData(data)
+      gridApi!.setGridOption('rowData', data)
     })
 })

@@ -9,6 +9,8 @@ import { Helmet } from 'react-helmet';
 import '../design-system/design-system.scss';
 import favIcons from '../images/favicons';
 import styles from './index.module.scss';
+import menuData from '../../doc-pages/licensing/menu.json';
+import apiMenuData from '../../doc-pages/licensing/api-menu.json';
 
 /**
  * This controls the layout template for all pages.
@@ -18,19 +20,40 @@ export const Layout = ({
     pageContext: { frameworks, framework = 'javascript', layout, pageName, darkMode },
     location: { pathname: path, href },
 }) => {
-    // set in gatsby-node.js
-    let fullScreenPage = false,
-        fullScreenWithFooter = false;
-    if (layout === 'bare') {
-        // only for on the fly example runner
-        return children;
-    } else if (layout === 'fullScreenPage') {
-        fullScreenPage = true;
-    } else if (layout === 'fullScreenPageWithFooter') {
-        fullScreenWithFooter = true;
+
+    // prevent rendering Menu on documentation or API paths to prevent consistency
+    const isDocumentationOrApiPath = ["/documentation/", "/api/"].includes(path);
+    if (isDocumentationOrApiPath) {
+        return null;
     }
 
+    // define the layout effects
+    const layoutEffects = {
+        bare: () => children, // Function that returns children for 'bare' layout
+        fullScreenPage: { fullScreenPage: true },
+        fullScreenPageWithFooter: { fullScreenWithFooter: true },
+        suppressFrameworkSelector: { suppressFrameworkSelector: true },
+    };
+
+    // apply the layout effect based on the current layout
+    const effect = layoutEffects[layout];
+    if (typeof effect === 'function') {
+        return effect(); // If it's a function, invoke it
+    }
+
+    let fullScreenPage = false;
+    let fullScreenWithFooter = false;
+    let suppressFrameworkSelector = false;
+    if (effect) {
+        ({ fullScreenPage, fullScreenWithFooter, suppressFrameworkSelector } = effect);
+    }
+
+    // determine if the layout is full screen
     const fullScreen = fullScreenPage || fullScreenWithFooter;
+
+    // select appropriate menu data based on the path (now that there are Documentation and API headers)
+    const isApiMenu = isPathInApiMenu(path, apiMenuData);
+    const selectedMenuData = isApiMenu ? apiMenuData : menuData;
 
     return (
         <GlobalContextProvider>
@@ -43,12 +66,18 @@ export const Layout = ({
 
                 <SiteHeader path={path} />
 
-                {!fullScreen && <TopBar frameworks={frameworks} currentFramework={framework} path={path} />}
+                {!fullScreen && <TopBar frameworks={frameworks} currentFramework={framework} path={path} suppressFrameworkSelector={suppressFrameworkSelector} />}
 
                 <div className={classnames(styles.contentContainer, !fullScreen && styles.fullScreenPage)}>
                     <div className={styles.contentViewport}>
-                        {!fullScreen && <Menu currentFramework={framework} currentPage={pageName} path={path} />}
-
+                        {!fullScreen &&
+                            <Menu currentFramework={framework}
+                                  currentPage={pageName}
+                                  path={path}
+                                  menuData={selectedMenuData}
+                                  expandAllGroups={isApiMenu}
+                                  hideChevrons={isApiMenu}/>
+                        }
                         <main is="div">{children}</main>
                     </div>
                 </div>
@@ -67,5 +96,12 @@ const getAppleTouchIcons = () =>
     [180, 167, 152].map((size) => (
         <link key={size} rel="apple-touch-icon" sizes={`${size}x${size}`} href={favIcons[`favIcon${size}Touch`]} />
     ));
+
+const isPathInApiMenu = (path, menuData) =>
+    menuData.some(group =>
+        group.items.some(item =>
+            item.items && item.items.some(subItem => path.endsWith(subItem.url))
+        )
+    );
 
 export default Layout;

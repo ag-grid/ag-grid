@@ -27,11 +27,11 @@ const gridOptions: GridOptions<IOlympicData> = {
 }
 
 function onBtWithDefault() {
-  gridApi!.setColumnDefs(getColumnDefs())
+  gridApi!.setGridOption('columnDefs', getColumnDefs())
 }
 
 function onBtRemove() {
-  gridApi!.setColumnDefs([])
+  gridApi!.setGridOption('columnDefs', [])
 }
 
 // setup the grid after the page has finished loading
@@ -41,5 +41,5 @@ document.addEventListener('DOMContentLoaded', () => {
 
   fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
     .then(response => response.json())
-    .then((data: IOlympicData[]) => gridApi!.setRowData(data))
+    .then((data: IOlympicData[]) => gridApi!.setGridOption('rowData', data))
 })

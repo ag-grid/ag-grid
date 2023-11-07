@@ -150,6 +150,7 @@ const VueExample = {
         return {
             columnDefs: ${columnDefs},
             gridApi: null,
+            themeClass: document.documentElement.dataset.defaultTheme || '${bindings.gridSettings.theme}',
             ${defaultColDef ? `defaultColDef: ${defaultColDef},` : ''}
             ${propertyVars.join(',\n')}
         }

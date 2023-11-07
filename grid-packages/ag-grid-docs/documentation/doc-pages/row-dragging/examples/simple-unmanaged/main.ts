@@ -33,7 +33,7 @@ const gridOptions: GridOptions = {
       data.id = index
     })
 
-    params.api.setRowData(immutableStore)
+    params.api.setGridOption('rowData', immutableStore)
   },
 }
 
@@ -54,7 +54,7 @@ function onSortChanged() {
     ', allowRowDrag = ' +
     suppressRowDrag
   )
-  gridApi!.setSuppressRowDrag(suppressRowDrag)
+  gridApi!.setGridOption('suppressRowDrag', suppressRowDrag)
 }
 
 // listen for changes on filter changed
@@ -70,7 +70,7 @@ function onFilterChanged() {
     ', allowRowDrag = ' +
     suppressRowDrag
   )
-  gridApi!.setSuppressRowDrag(suppressRowDrag)
+  gridApi!.setGridOption('suppressRowDrag', suppressRowDrag)
 }
 
 function getRowId(params: GetRowIdParams) {
@@ -95,7 +95,7 @@ function onRowDragMove(event: RowDragMoveEvent) {
     moveInArray(newStore, fromIndex, toIndex)
 
     immutableStore = newStore
-    gridApi!.setRowData(newStore)
+    gridApi!.setGridOption('rowData', newStore)
 
     gridApi!.clearFocusedCell()
   }

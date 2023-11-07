@@ -30,11 +30,11 @@ const gridOptions: GridOptions = {
 };
 
 function loadDataSetA() {
-    gridApi!.setRowData(getDataSetA());
+    gridApi!.setGridOption('rowData', getDataSetA());
 }
 
 function loadDataSetB() {
-    gridApi!.setRowData(getDataSetB());
+    gridApi!.setGridOption('rowData', getDataSetB());
 }
 
 document.addEventListener('DOMContentLoaded', () => {

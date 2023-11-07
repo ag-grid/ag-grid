@@ -1,4 +1,4 @@
-import { GridApi, createGrid, GridOptions, KeyCreatorParams, ValueGetterParams } from '@ag-grid-community/core';
+import { GridApi, createGrid, GridOptions, KeyCreatorParams, ValueGetterParams, ValueFormatterParams } from '@ag-grid-community/core';
 
 let gridApi: GridApi<IOlympicData>;
 
@@ -14,6 +14,7 @@ const gridOptions: GridOptions<IOlympicData> = {
       field: 'country',
       rowGroup: true,
       hide: true,
+      valueFormatter: countryValueFormatter,
       valueGetter: countryValueGetter,
       keyCreator: countryKeyCreator,
     },
@@ -29,6 +30,13 @@ const gridOptions: GridOptions<IOlympicData> = {
   autoGroupColumnDef: {
     minWidth: 200,
   },
+}
+
+function countryValueFormatter(params: ValueFormatterParams) {
+  if (!params.value) {
+    return '';
+  }
+  return `[${params.value.code}] ${params.value.name}`;
 }
 
 function countryKeyCreator(params: KeyCreatorParams) {
@@ -53,5 +61,5 @@ document.addEventListener('DOMContentLoaded', function () {
 
   fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
     .then(response => response.json())
-    .then((data: IOlympicData[]) => gridApi!.setRowData(data))
+    .then((data: IOlympicData[]) => gridApi!.setGridOption('rowData', data))
 })

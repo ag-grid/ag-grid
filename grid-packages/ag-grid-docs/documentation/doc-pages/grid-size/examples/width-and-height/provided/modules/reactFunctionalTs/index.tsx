@@ -31,12 +31,6 @@ const GridExample = () => {
         width: '100%'
     });
 
-    useEffect(() => {
-        if (gridRef.current && rowData) {
-            gridRef.current.api.sizeColumnsToFit();
-        }
-    }, [rowData]);
-
     const onGridReady = (params: GridReadyEvent) => {
         fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
             .then(resp => resp.json())

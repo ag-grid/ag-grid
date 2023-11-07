@@ -140,9 +140,7 @@ export class LazyBlockLoader extends BeanStub {
 
         const params: IServerSideGetRowsParams = {
             request,
-            successCallback: (rowData: any[], rowCount: number) => success({ rowData, rowCount }),
             success,
-            failCallback: fail,
             fail,
             parentNode: this.parentNode,
             api: this.api,
@@ -198,7 +196,7 @@ export class LazyBlockLoader extends BeanStub {
                 this.loaderTimeout = undefined;
                 this.attemptLoad(startRow, endRow);
                 this.nextBlockToLoad = undefined;
-            }, this.gridOptionsService.getNum('blockLoadDebounceMillis') ?? 0);
+            }, this.gridOptionsService.get('blockLoadDebounceMillis'));
         }
     }
 

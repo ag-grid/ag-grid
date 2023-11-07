@@ -189,6 +189,8 @@ render() {
     return (
         <div className="ag-theme-alpine">
             <AgGridReact
+                {/* shared column definition */}
+                defaultColDef={this.defaultColDef}
                 {/* provide column definitions */}
                 columnDefs={this.colDefs}
                 {/* specify auto group column definition */}
@@ -201,8 +203,6 @@ render() {
                 getDataPath={data => data.filePath}
                 {/* expand tree by default */}
                 groupDefaultExpanded={-1}
-                {/* fit grid columns */}
-                onGridReady={params => params.api.sizeColumnsToFit()}
                 {/* provide context menu callback */}
                 getContextMenuItems={this.getContextMenuItems}
                 {/* provide row drag end callback */}

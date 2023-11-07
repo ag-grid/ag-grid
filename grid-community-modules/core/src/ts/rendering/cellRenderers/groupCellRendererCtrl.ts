@@ -46,7 +46,7 @@ export interface IGroupCellRendererParams<TData = any, TValue = any> {
     suppressPadding?: boolean;
     /** Set to `true` to suppress expand on double click. */
     suppressDoubleClickExpand?: boolean;
-    /** Set to `true` to suppress expand on <kbd>Enter</kbd> */
+    /** Set to `true` to suppress expand on <kbd>↵ Enter</kbd> */
     suppressEnterExpand?: boolean;
     /** The value getter for the footer text. Can be a function or expression. */
     footerValueGetter?: string | FooterValueGetterFunc;
@@ -142,7 +142,7 @@ export class GroupCellRendererCtrl extends BeanStub {
             
             // this footer should only be non-top level. Don't need to check groupIncludeFooter
             // as we won't have footer rows in that instance.
-            if (node.footer && this.gridOptionsService.is('groupHideOpenParents')) {
+            if (node.footer && this.gridOptionsService.get('groupHideOpenParents')) {
                 const showRowGroup = colDef && colDef.showRowGroup;
                 const rowGroupColumnId = node.rowGroupColumn && node.rowGroupColumn.getColId();
 
@@ -192,7 +192,7 @@ export class GroupCellRendererCtrl extends BeanStub {
     }
 
     private isTopLevelFooter(): boolean {
-        if (!this.gridOptionsService.is('groupIncludeTotalFooter')) { return false; }
+        if (!this.gridOptionsService.get('groupIncludeTotalFooter')) { return false; }
 
         if (this.params.value != null || this.params.node.level != -1) { return false; }
 
@@ -219,13 +219,13 @@ export class GroupCellRendererCtrl extends BeanStub {
     // in the body, or if pinning in the pinned section, or if pinning and RTL,
     // in the right section. otherwise we would have the cell repeated in each section.
     private isEmbeddedRowMismatch(): boolean {
-        if (!this.params.fullWidth || !this.gridOptionsService.is('embedFullWidthRows')) { return false; }
+        if (!this.params.fullWidth || !this.gridOptionsService.get('embedFullWidthRows')) { return false; }
 
         const pinnedLeftCell = this.params.pinned === 'left';
         const pinnedRightCell = this.params.pinned === 'right';
         const bodyCell = !pinnedLeftCell && !pinnedRightCell;
 
-        if (this.gridOptionsService.is('enableRtl')) {
+        if (this.gridOptionsService.get('enableRtl')) {
             if (this.columnModel.isPinningLeft()) {
                 return !pinnedRightCell;
             }
@@ -267,7 +267,7 @@ export class GroupCellRendererCtrl extends BeanStub {
         const rowNode = this.params.node;
         const column = this.params.column as Column;
 
-        if (!this.gridOptionsService.is('groupHideOpenParents')) {
+        if (!this.gridOptionsService.get('groupHideOpenParents')) {
             this.showingValueForOpenedParent = false;
             return;
         }
@@ -465,7 +465,7 @@ export class GroupCellRendererCtrl extends BeanStub {
     }
 
     private isShowRowGroupForThisRow(): boolean {
-        if (this.gridOptionsService.is('treeData')) { return true; }
+        if (this.gridOptionsService.get('treeData')) { return true; }
 
         const rowGroupColumn = this.displayedGroupNode.rowGroupColumn;
 
@@ -494,7 +494,7 @@ export class GroupCellRendererCtrl extends BeanStub {
         const eGroupCell = params.eGridCell;
 
         // if editing groups, then double click is to start editing
-        const isDoubleClickEdit = this.params.column?.isCellEditable(params.node) && this.gridOptionsService.is('enableGroupEdit');
+        const isDoubleClickEdit = this.params.column?.isCellEditable(params.node) && this.gridOptionsService.get('enableGroupEdit');
         if (!isDoubleClickEdit && this.isExpandable() && !params.suppressDoubleClickExpand) {
             this.addManagedListener(eGroupCell, 'dblclick', this.onCellDblClicked.bind(this));
         }
@@ -624,13 +624,13 @@ export class GroupCellRendererCtrl extends BeanStub {
     }
 
     private setIndent(): void {
-        if (this.gridOptionsService.is('groupHideOpenParents')) { return; }
+        if (this.gridOptionsService.get('groupHideOpenParents')) { return; }
 
         const params = this.params;
         const rowNode: IRowNode = params.node;
         // if we are only showing one group column, we don't want to be indenting based on level
         const fullWithRow = !!params.colDef;
-        const treeData = this.gridOptionsService.is('treeData');
+        const treeData = this.gridOptionsService.get('treeData');
         const manyDimensionThisColumn = !fullWithRow || treeData || params.colDef!.showRowGroup === true;
         const paddingCount = manyDimensionThisColumn ? rowNode.uiLevel : 0;
 
