@@ -7,7 +7,6 @@ import {
     Column,
     ColumnModel,
     GridOptions,
-    GridOptionsService,
     IRowNodeStage,
     RowNode,
     StageExecuteParams,
@@ -18,17 +17,6 @@ import { PivotColDefService } from "./pivotColDefService";
 
 @Bean('pivotStage')
 export class PivotStage extends BeanStub implements IRowNodeStage {
-    getImpactingGridOptions(): (keyof GridOptions<any>)[] {
-        return [
-            'removePivotHeaderRowWhenSingleValueColumn',
-            'pivotRowTotals',
-            'pivotColumnGroupTotals',
-            'suppressExpandablePivotGroups',
-            'pivotDefaultExpanded',
-            'processPivotResultColDef',
-            'processPivotResultColGroupDef',
-        ];
-    }
 
     // these should go into the pivot column creator
     @Autowired('valueService') private valueService: ValueService;
@@ -41,9 +29,14 @@ export class PivotStage extends BeanStub implements IRowNodeStage {
 
     private aggregationColumnsHashLastTime: string | null;
     private aggregationFuncsHashLastTime: string;
-    private optionsLastTime: string;
 
     private groupColumnsHashLastTime: string | null;
+
+    private pivotRowTotalsLastTime: GridOptions['pivotRowTotals'];
+    private pivotColumnGroupTotalsLastTime: GridOptions['pivotColumnGroupTotals'];
+    private suppressExpandablePivotGroupsLastTime: GridOptions['suppressExpandablePivotGroups'];
+    private removePivotHeaderRowWhenSingleValueColumnLastTime: GridOptions['removePivotHeaderRowWhenSingleValueColumn'];
+
 
     public execute(params: StageExecuteParams): void {
         const changedPath = params.changedPath;
@@ -83,12 +76,22 @@ export class PivotStage extends BeanStub implements IRowNodeStage {
         const groupColumnsChanged = groupColumnsHash !== this.groupColumnsHashLastTime;
         this.groupColumnsHashLastTime = groupColumnsHash;
 
-        const optionsHash = this.getImpactingGridOptions()
-            .map(option => this.gridOptionsService.get(option as any)).join('#');
-        const optionsChanged = optionsHash !== this.optionsLastTime;
-        this.optionsLastTime = optionsHash;
+        const pivotRowTotals = this.gridOptionsService.get('pivotRowTotals');
+        const pivotColumnGroupTotals = this.gridOptionsService.get('pivotColumnGroupTotals');
+        const suppressExpandablePivotGroups = this.gridOptionsService.get('suppressExpandablePivotGroups');
+        const removePivotHeaderRowWhenSingleValueColumn = this.gridOptionsService.get('removePivotHeaderRowWhenSingleValueColumn');
 
-        if (uniqueValuesChanged || aggregationColumnsChanged || groupColumnsChanged || aggregationFuncsChanged || optionsChanged) {
+        const anyGridOptionsChanged = (
+            pivotRowTotals !== this.pivotRowTotalsLastTime || pivotColumnGroupTotals !== this.pivotColumnGroupTotalsLastTime ||
+            suppressExpandablePivotGroups !== this.suppressExpandablePivotGroupsLastTime || removePivotHeaderRowWhenSingleValueColumn !== this.removePivotHeaderRowWhenSingleValueColumnLastTime
+        );
+
+        this.pivotRowTotalsLastTime = pivotRowTotals;
+        this.pivotColumnGroupTotalsLastTime = pivotColumnGroupTotals;
+        this.suppressExpandablePivotGroupsLastTime = suppressExpandablePivotGroups;
+        this.removePivotHeaderRowWhenSingleValueColumnLastTime = removePivotHeaderRowWhenSingleValueColumn;
+
+        if (uniqueValuesChanged || aggregationColumnsChanged || groupColumnsChanged || aggregationFuncsChanged || anyGridOptionsChanged) {
             const {pivotColumnGroupDefs, pivotColumnDefs} = this.pivotColDefService.createPivotColumnDefs(this.uniqueValues);
             this.pivotColumnDefs = pivotColumnDefs;
             this.columnModel.setSecondaryColumns(pivotColumnGroupDefs, "rowModelUpdated");

@@ -14,16 +14,6 @@ import { SortService } from "./sortService";
 
 @Bean('sortStage')
 export class SortStage extends BeanStub implements IRowNodeStage {
-    getImpactingGridOptions(): (keyof GridOptions<any>)[] {
-        return [
-            // 'deltaSort', // don't return this, as it shouldn't trigger a new sort.
-            // 'postSortRows', // don't return this, as don't want to trigger sort.
-            'treeData',
-            'groupHideOpenParents',
-            'groupDisplayType',
-            'accentedSort',
-        ]
-    }
 
     @Autowired('sortService') private sortService: SortService;
     @Autowired('sortController') private sortController: SortController;

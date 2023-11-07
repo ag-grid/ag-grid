@@ -24,16 +24,6 @@ interface FlattenDetails {
 
 @Bean('flattenStage')
 export class FlattenStage extends BeanStub implements IRowNodeStage {
-    getImpactingGridOptions(): (keyof GridOptions<any>)[] {
-        return [
-            'groupRemoveSingleChildren',
-            'groupRemoveLowestSingleChildren',
-            'groupHideOpenParents',
-            'groupIncludeFooter',
-            'groupIncludeTotalFooter',
-            'groupDisplayType',
-        ];
-    }
 
     @Autowired('columnModel') private columnModel: ColumnModel;
     @Autowired('beans') private beans: Beans;
