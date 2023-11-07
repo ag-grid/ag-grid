@@ -90,7 +90,8 @@ function numberParser(params: ValueParserParams) {
   return parseFloat(value);
 }
 
-function chartTooltipRenderer({ xValue, yValue }: AgCartesianSeriesTooltipRendererParams) {
+// @ts-ignore charts typing
+function chartTooltipRenderer({ xValue, yValue }: any) {
   xValue = xValue instanceof Date ? xValue : new Date(xValue);
   return {
     content: `${formatDate(xValue)}: ${yValue}`,

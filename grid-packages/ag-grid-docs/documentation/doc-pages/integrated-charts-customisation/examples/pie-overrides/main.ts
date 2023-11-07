@@ -64,6 +64,7 @@ const gridOptions: GridOptions = {
                 '<b>' +
                 params.angleName!.toUpperCase() +
                 ':</b> ' +
+                  // @ts-ignore charts typing
                 params.angleValue +
                 '<br>' +
                 '<b>' +

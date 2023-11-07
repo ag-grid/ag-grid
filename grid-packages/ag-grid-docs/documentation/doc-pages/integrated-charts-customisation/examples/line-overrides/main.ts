@@ -41,11 +41,13 @@ const gridOptions: GridOptions = {
                 '<b>' +
                 params.xName!.toUpperCase() +
                 ':</b> ' +
+                  // @ts-ignore charts typing
                 params.xValue +
                 '<br/>' +
                 '<b>' +
                 params.yName!.toUpperCase() +
                 ':</b> ' +
+                  // @ts-ignore charts typing
                 params.yValue,
             }
           },

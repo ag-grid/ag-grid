@@ -13,6 +13,7 @@ const gridOptions: GridOptions = {
     columnDefs: [
         {
             field: "mission",
+            // @ts-ignore charts typing
             reiszeable: false
         },
         {

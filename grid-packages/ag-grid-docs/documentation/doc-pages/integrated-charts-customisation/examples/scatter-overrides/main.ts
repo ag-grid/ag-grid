@@ -31,6 +31,7 @@ const gridOptions: GridOptions = {
           enabled: true,
           shape: 'square',
           size: 5,
+          // @ts-ignore charts typing
           maxSize: 12,
           strokeWidth: 4,
           fillOpacity: 0.7,
@@ -39,6 +40,7 @@ const gridOptions: GridOptions = {
         tooltip: {
           renderer: (params) => {
             var label = params.datum[params.labelKey!]
+            // @ts-ignore charts typing
             var size = params.datum[params.sizeKey!]
 
             return {
@@ -53,13 +55,16 @@ const gridOptions: GridOptions = {
                 '<b>' +
                 params.xName!.toUpperCase() +
                 ':</b> ' +
+                  // @ts-ignore charts typing
                 params.xValue +
                 '<br/>' +
                 '<b>' +
                 params.yName!.toUpperCase() +
                 ':</b> ' +
+                  // @ts-ignore charts typing
                 params.yValue +
                 (size != null
+                    // @ts-ignore charts typing
                   ? '<br/><b>' + params.sizeName!.toUpperCase() + ':</b> ' + size
                   : ''),
             }

@@ -62,6 +62,7 @@ const gridOptions: GridOptions = {
       },
       series: {
         tooltip: {
+          // @ts-ignore charts typing
           renderer: ({ xValue, yValue }) => {
             xValue = xValue instanceof Date ? xValue : new Date(xValue);
             return {

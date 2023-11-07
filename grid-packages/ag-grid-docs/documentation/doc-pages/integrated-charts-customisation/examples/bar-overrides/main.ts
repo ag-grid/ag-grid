@@ -49,17 +49,20 @@ const gridOptions: GridOptions = {
         },
         tooltip: {
           renderer: (params) => {
+            // @ts-ignore
             return {
               content:
                 '<b>' +
                 params.xName!.toUpperCase() +
                 ':</b> ' +
-                params.xValue +
+                  // @ts-ignore charts typing
+                  params.xValue +
                 '<br/>' +
                 '<b>' +
                 params.yName!.toUpperCase() +
                 ':</b> ' +
-                params.yValue,
+                  // @ts-ignore charts typing
+                  params.yValue,
             }
           },
         },
