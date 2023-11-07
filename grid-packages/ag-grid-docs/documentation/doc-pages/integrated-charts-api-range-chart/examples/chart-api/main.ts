@@ -21,12 +21,12 @@ const gridOptions: GridOptions = {
   enableRangeSelection: true,
   enableCharts: true,
   popupParent: document.body,
-  onGridReady,
+  onGridReady : (params: GridReadyEvent) => {
+    getData().then(rowData => params.api.setGridOption('rowData', rowData));
+  },
 };
 
-function onGridReady(params: GridReadyEvent) {
-  getData().then(rowData => params.api.setGridOption('rowData', rowData));
-}
+
 
 function onChart1() {
   gridApi.createRangeChart({

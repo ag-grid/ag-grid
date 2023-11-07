@@ -22,16 +22,14 @@ const gridOptions: GridOptions = {
     popupParent: document.body,
     enableCharts: true,
     getChartToolbarItems,
-    onGridReady,
+    onGridReady : (params: GridReadyEvent) => {
+    getData().then(rowData => params.api.setGridOption('rowData', rowData));
+  },
     onFirstDataRendered,
 };
 
 function getChartToolbarItems(): ChartMenuOptions[] {
     return ['chartDownload'];
-}
-
-function onGridReady(params: GridReadyEvent) {
-    getData().then(rowData => params.api.setGridOption('rowData', rowData));
 }
 
 function onFirstDataRendered(params: FirstDataRenderedEvent) {
