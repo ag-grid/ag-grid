@@ -5,6 +5,7 @@ import '@ag-grid-community/styles/ag-theme-material.css';
 import '@ag-grid-community/styles/ag-theme-quartz.css';
 import { TrashCan } from '@carbon/icons-react';
 import styled from '@emotion/styled';
+import { useColorScheme } from 'atoms/colorScheme';
 import { useParentTheme } from 'atoms/parentTheme';
 import { useRenderedCss } from 'atoms/renderedCss';
 import { useResetVariableDefaults } from 'atoms/variableDefaults';
@@ -19,6 +20,7 @@ import { ParentThemeMenu } from './ParentThemeMenu';
 
 export const RootContainer = memo(() => {
   const parentTheme = useParentTheme();
+  const colorScheme = useColorScheme();
   const renderedCss = useRenderedCss();
   const resetVariableDefaults = useResetVariableDefaults();
   const [hasRenderedStyles, setHasRenderedStyles] = useState(false);
@@ -31,7 +33,7 @@ export const RootContainer = memo(() => {
   return (
     <>
       <style>{renderedCss}</style>
-      <DefaultsElement className={parentTheme.name} id="theme-builder-defaults-computation" />
+      <DefaultsElement className={`${parentTheme.name}-${colorScheme}`} id="theme-builder-defaults-computation" />
       <Container>
         {hasRenderedStyles && (
           <>

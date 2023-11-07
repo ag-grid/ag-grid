@@ -51,7 +51,6 @@ const GridPreview = () => {
     void rebuildKey;
 
     const options: GridOptions = {
-      colorScheme,
       pagination: true,
       ...buildGridOptions(features),
       onGridReady: ({ api }) => {
@@ -90,12 +89,12 @@ const GridPreview = () => {
   return (
     <>
       <Wrapper
-        className={parentTheme.name}
+        className={`${parentTheme.name}-${colorScheme}`}
         ref={wrapperRef}
         style={{ display: PreviewComponent ? 'none' : 'block' }}
       ></Wrapper>
       {PreviewComponent && (
-        <Wrapper className={parentTheme.name}>
+        <Wrapper className={`${parentTheme.name}-${colorScheme}`}>
           <PreviewComponent />
         </Wrapper>
       )}

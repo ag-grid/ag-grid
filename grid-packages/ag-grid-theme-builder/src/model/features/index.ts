@@ -16,6 +16,7 @@ import { headerFeature } from './header';
 import { inputsFeature } from './inputs';
 import { overlayFeature } from './overlay';
 import { rangeSelectionFeature } from './rangeSelection';
+import { rowDragFeature } from './rowDrag';
 import { rowGroupingFeature } from './rowGrouping';
 import { rowSelectionFeature } from './rowSelection';
 import { toggleButtonsFeature } from './toggleButtons';
@@ -42,24 +43,25 @@ export type Feature = {
 };
 
 export const allFeatures: ReadonlyArray<Feature> = [
-  coreFeature,
-  rangeSelectionFeature,
+  advancedFilterFeature,
   bordersFeature,
-  gridBodyFeature,
-  headerFeature,
-  columnResizingFeature,
-  columnsToolPanelFeature,
-  filtersToolPanelFeature,
-  rowGroupingFeature,
-  overlayFeature,
-  rowSelectionFeature,
+  checkboxesFeature,
   columnGroupsFeature,
   columnHoverFeature,
+  columnResizingFeature,
+  columnsToolPanelFeature,
   contextMenuFeature,
-  toggleButtonsFeature,
-  checkboxesFeature,
+  coreFeature,
+  filtersToolPanelFeature,
+  gridBodyFeature,
+  headerFeature,
   inputsFeature,
-  advancedFilterFeature,
+  overlayFeature,
+  rangeSelectionFeature,
+  rowDragFeature,
+  rowGroupingFeature,
+  rowSelectionFeature,
+  toggleButtonsFeature,
 ];
 
 const featuresByName = indexBy(allFeatures, 'name');

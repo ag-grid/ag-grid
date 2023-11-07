@@ -620,17 +620,16 @@ const desktopDefaultCols = [
 const Example = () => {
     const gridRef = useRef(null);
     const loadInstance = useRef(0);
-    const [themeAndColorScheme, setThemeAndColorScheme] = useState(null);
+    const [gridTheme, setGridTheme] = useState(null);
     useEffect(() => {
         const themeFromURL = new URLSearchParams(window.location.search).get('theme');
         if (themeFromURL) {
-            setThemeAndColorScheme(themeFromURL)
+            setGridTheme(themeFromURL)
         } else {
             const isDarkMode = getComputedStyle(document.documentElement).getPropertyValue('--color-scheme') === 'dark';
-            setThemeAndColorScheme(isDarkMode ? 'ag-theme-quartz:dark' : 'ag-theme-quartz:light');
+            setGridTheme(isDarkMode ? 'ag-theme-quartz-dark' : 'ag-theme-quartz');
         }
     }, []);
-    const [gridTheme, colorScheme] = themeAndColorScheme?.split(':') || [null, null];
     const [base64Flags, setBase64Flags] = useState();
     const [defaultCols, setDefaultCols] = useState();
     const [isSmall, setIsSmall] = useState(false);
@@ -1424,7 +1423,7 @@ const Example = () => {
         }
     }, [dataSize]);
 
-    const isDarkTheme = colorScheme?.indexOf('dark')  >= 0;
+    const isDarkTheme = gridTheme?.indexOf('dark')  >= 0;
 
     useEffect(() => {
         if (isDarkTheme) {
@@ -1438,7 +1437,7 @@ const Example = () => {
         } else {
             gridOptions.chartThemes = null;
         }
-    }, [gridTheme]);
+    }, [isDarkTheme]);
 
     return (
         <>
@@ -1452,8 +1451,8 @@ const Example = () => {
                     dataSize={dataSize}
                     setDataSize={setDataSize}
                     rowCols={rowCols}
-                    gridTheme={themeAndColorScheme}
-                    setGridTheme={setThemeAndColorScheme}
+                    gridTheme={gridTheme}
+                    setGridTheme={setGridTheme}
                     setCountryColumnPopupEditor={setCountryColumnPopupEditor}
                 />
                 <span className={classnames({ [styles.messages]: true, [styles.show]: showMessage })}>
@@ -1468,7 +1467,6 @@ const Example = () => {
                                 ref={gridRef}
                                 modules={modules}
                                 gridOptions={gridOptions}
-                                colorScheme={colorScheme}
                                 columnDefs={columnDefs}
                                 rowData={rowData}
                                 defaultCsvExportParams={defaultExportParams}
