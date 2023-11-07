@@ -5,6 +5,10 @@
     border-radius: 8px;
     border: 1px solid var(--border-color);
 
+    #{$darkmode-selector} & {
+        background: rgb(18, 31, 41);
+}
+
     header {
         display: flex;
         flex-direction: column;
@@ -13,17 +17,31 @@
         b {
             font-size: 1.25rem;
             font-weight: 600;
+            color: var(--default-text-color)
         }
 
         span {
-            font-size: 1.25rem;
-            color: var(--secondary-color);
+            font-size: 1rem;
+            color: var(--secondary-text);
+            opacity: 0.7;
+            
+            #{$darkmode-selector} & {
+                color: #c3cad3;
+                opacity: 1;
+            }
         }
+
+        
 
         a {
             text-decoration: none;
             color: var(--link-color);
             font-size: 1rem;
+
+            #{$darkmode-selector} & {
+                color: rgb(56, 147, 249)
+            }
+            
 
             &:hover {
                 text-decoration: underline;
@@ -34,24 +52,35 @@
     p {
         margin-top: 8px;
         margin-bottom: 4px;
-        font-size: 0.875rem;
+        font-size: 1rem;
         color: var(--text-color);
+
+        #{$darkmode-selector} & {
+            color: #c3cad3;
+        }
     }
 
     ul {
+        padding-top: 0.75rem;
+        padding-bottom: 0.75rem;
         list-style: none;
         padding-left: 0;
         margin-bottom: 16px;
 
         li::before {
             content: '• ';
-            color: var(--link-color);
+            color: #c3cad3;
             font-weight: bold;
         }
 
         a {
             color: var(--link-color);
             text-decoration: none;
+            font-size: 1rem;
+
+            #{$darkmode-selector} & {
+                color: rgb(56, 147, 249)
+            }
 
             &:hover {
                 text-decoration: underline;
@@ -61,20 +90,65 @@
 
     a {
         font-size: 0.875rem;
+
     }
 }
 
+.line {
+    border-bottom: 1px solid var(--border-color);
+}
 
 .versions {
+    max-width: 1250px;
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
     grid-gap: 16px;
     margin-top: 32px;
     margin-bottom: 32px;
+
+
+}
+
+.heading {
+    padding-top: 32px;
 }
 
 @media (max-width: 400px) {
     .versions {
         grid-template-columns: 1fr;
     }
+}
+
+.description {
+    font-size: 18px;
+}
+
+
+.changelog {
+        width: 100%;
+        display: flex;
+        justify-content: center;
+        
+
+        #{$darkmode-selector} & {
+            background: #2a343e;
+        }
+ 
+}
+
+.bloglink {
+    width: 100%;
+    display: flex;
+    justify-content: left;
+    padding-top: 0.5rem;
+    padding-bottom: 0.5rem;
+    font-size: 17px;
+
+   
+    color: var(--link-color);
+ 
+
+    #{$darkmode-selector} & {
+        color: #c3cad3;
+}
 }
