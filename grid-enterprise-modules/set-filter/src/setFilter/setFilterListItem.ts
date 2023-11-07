@@ -144,7 +144,7 @@ export class SetFilterListItem<V> extends Component {
                 }
             }
 
-            _.setAriaLevel(this.getFocusableElement(), this.depth + 1)
+            _.setAriaLevel(this.getAriaElement(), this.depth + 1)
         }
 
         this.refreshAriaChecked();
@@ -160,8 +160,6 @@ export class SetFilterListItem<V> extends Component {
     public getFocusableElement(): HTMLElement {
         return this.focusWrapper;
     }
-
-    
 
     private setupExpansion(): void {
         this.eGroupClosedIcon.appendChild(_.createIcon('setFilterGroupClosed', this.gridOptionsService, null));
@@ -251,7 +249,7 @@ export class SetFilterListItem<V> extends Component {
         if (!this.isTree) { return; }
         const translate = this.localeService.getLocaleTextFunc();
         const itemLabel = translate('ariaFilterValue', 'Filter Value');
-        const ariaEl = this.getFocusableElement();
+        const ariaEl = this.getAriaElement();
         _.setAriaLabel(ariaEl, `${value} ${itemLabel}`);
         _.setAriaDescribedBy(ariaEl, this.eCheckbox.getInputElement().id);
     }
@@ -263,7 +261,7 @@ export class SetFilterListItem<V> extends Component {
     }
 
     private refreshAriaExpanded(): void {
-        _.setAriaExpanded(this.getFocusableElement(), !!this.isExpanded);
+        _.setAriaExpanded(this.getAriaElement(), !!this.isExpanded);
     }
 
     public refresh(item: SetFilterModelTreeItem | string | null, isSelected: boolean | undefined, isExpanded: boolean | undefined): void {
