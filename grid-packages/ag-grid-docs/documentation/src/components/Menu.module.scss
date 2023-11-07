@@ -5,34 +5,30 @@
     margin-bottom: $size-1;
 
     a {
-
-
-        #{$darkmode-selector} & {
-            border-radius: 24px;
-            border: 1px solid var(--link-hover-color);
-            width: fit-content;
-        }
-
-
         display: block;
         position: relative;
+        width: fit-content;
+        margin-bottom: $size-2;
+        padding: 2px 10px;
+        text-decoration: none;
         font-size: var(--font-size-small);
         color: var(--link-hover-color);
-        text-decoration: none;
-        border-radius: var(--border-radius);
-        padding: 2px 10px;
+        border-radius: 24px;
+        border: 1px solid var(--link-hover-color);
+        transition: background-color $default-transition-timing, color $default-transition-timing;
         -webkit-font-smoothing: auto;
-        margin-bottom: $size-2;
 
-
-        &:hover, &:focus {
-            background-color: rgba(56, 146, 249, 0.09);
+        &:hover,
+        &:focus {
+            background-color: color-mix(in srgb, var(--link-hover-color) 5%, var(--default-background-color));
         }
-    }
 
-
-    .whatsNewLinkActive {
-        // background-color: rgba(56, 146, 249, 0.09);
+        #{$darkmode-selector} & {
+            &:hover,
+            &:focus {
+                background-color: color-mix(in srgb, var(--link-hover-color) 10%, var(--default-background-color));
+            }
+        }
     }
 }
 
@@ -185,9 +181,8 @@ button:not([class^='ag-']).sectionHeader {
         --icon-size: 1.15em;
         --text-color: var(--enterprise-icon-color);
 
-
-    #{$darkmode-selector} & {
-        --text-color: var(--active-color);
+        #{$darkmode-selector} & {
+            --text-color: var(--active-color);
         }
 
         position: relative;
@@ -220,7 +215,7 @@ button:not([class^='ag-']).sectionHeader {
     transition: color 0.33s ease-in-out, border-color 0.33s ease-in-out, background-color 0.33s ease-in-out;
 
     #{$darkmode-selector} & {
-        --active-color: #3893F9;
+        --active-color: #3893f9;
         --active-border: #3893f9;
         --hover-background: rgba(56, 146, 249, 0.06);
         --active-background: rgba(56, 146, 249, 0.09);
