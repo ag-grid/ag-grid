@@ -7,7 +7,7 @@ import {
 } from '@ag-grid-community/core';
 declare var CustomAgeFilter: any;
 declare function createFakeServer(data: any): any;
-declare function createServerSideDatasource(server: any, gridOptions: GridOptions): IServerSideDatasource;
+declare function createServerSideDatasource(server: any): IServerSideDatasource;
 declare function getCountries(): string[];
 
 const countries = getCountries();
@@ -79,13 +79,11 @@ document.addEventListener('DOMContentLoaded', function () {
   const gridDiv = document.querySelector<HTMLElement>('#myGrid')!;
   gridApi = createGrid(gridDiv, gridOptions);
 
-  // do http request to get our sample data - not using any framework to keep the example self contained.
-  // you will probably use a framework like JQuery, Angular or something else to do your HTTP calls.
   fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
     .then(response => response.json())
     .then(function (data) {
       const fakeServer = createFakeServer(data);
-      const datasource = createServerSideDatasource(fakeServer, gridOptions);
+      const datasource = createServerSideDatasource(fakeServer);
       gridApi!.setGridOption('serverSideDatasource', datasource)
     })
 })
