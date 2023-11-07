@@ -2,7 +2,7 @@
 
 @use "./alpine-variables";
 
-.ag-theme-alpine, .ag-theme-alpine-dark {
+[class*="ag-theme-alpine"] {
     .ag-filter-toolpanel-header,
     .ag-filter-toolpanel-search,
     .ag-status-bar,

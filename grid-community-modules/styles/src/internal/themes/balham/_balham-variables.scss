@@ -1,6 +1,6 @@
 @use "sass:color";
 
-.ag-theme-balham, .ag-theme-balham-dark {
+[class*="ag-theme-balham"] {
     // main colours (overridden by balham-dark)
     --ag-balham-active-color: #0091ea;
     --ag-foreground-color: #000;
@@ -116,12 +116,12 @@
 }
 
 
-.ag-theme-balham-dark, .ag-theme-balham.ag-color-scheme-dark {
+.ag-theme-balham-dark {
     @include -dark-vars();
 }
 
 @media (prefers-color-scheme: dark) {
-    .ag-theme-balham.ag-color-scheme-auto {
+    .ag-theme-balham-auto {
         @include -dark-vars();
     }
 }

@@ -1,6 +1,6 @@
 @use "sass:color";
 
-.ag-theme-alpine, .ag-theme-alpine-dark {
+[class*="ag-theme-alpine"] {
     // COLOURS
 
     // Active colours - same shade, different opacities
@@ -123,12 +123,12 @@
 }
 
 
-.ag-theme-alpine-dark, .ag-theme-alpine.ag-color-scheme-dark {
+.ag-theme-alpine-dark {
     @include -dark-vars();
 }
 
 @media (prefers-color-scheme: dark) {
-    .ag-theme-alpine.ag-color-scheme-auto {
+    .ag-theme-alpine-auto {
         @include -dark-vars();
     }
 }
