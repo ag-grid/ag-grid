@@ -228,25 +228,6 @@
             ]
           }
         ]
-      },
-      {
-        "title": "Updates",
-        "items": [
-          {
-            "title": "Changelog",
-            "url": "/changelog/",
-            "icon": "framework"
-          },
-          {
-            "title": "Pipeline",
-            "url": "/pipeline/",
-            "icon": "framework"
-          },
-          {
-            "title": "Support",
-            "url": "/support/"
-          }
-        ]
       }
     ]
   },
