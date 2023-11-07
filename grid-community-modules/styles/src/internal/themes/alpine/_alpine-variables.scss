@@ -92,7 +92,8 @@
     --ag-side-bar-panel-width: 250px;
 };
 
-.ag-theme-alpine-dark {
+
+@mixin -dark-vars {
     --ag-background-color: #181d1f;
     --ag-foreground-color: #fff;
     --ag-border-color: #68686e;
@@ -117,4 +118,15 @@
     --ag-advanced-filter-column-pill-color: #355f2d;
     --ag-advanced-filter-option-pill-color: #5a3168;
     --ag-advanced-filter-value-pill-color: #374c86;
+}
+
+
+.ag-theme-alpine-dark, .ag-theme-alpine.ag-color-scheme-dark {
+    @include -dark-vars();
+}
+
+@media (prefers-color-scheme: dark) {
+    .ag-theme-alpine.ag-color-scheme-auto {
+        @include -dark-vars();
+    }
 }

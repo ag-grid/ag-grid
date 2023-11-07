@@ -1,5 +1,6 @@
 import { ColDef, createGrid, GridApi, GridOptions } from '@ag-grid-community/core';
 import styled from '@emotion/styled';
+import { useColorScheme } from 'atoms/colorScheme';
 import { useCurrentFeature } from 'atoms/currentFeature';
 import { useEnabledFeatures } from 'atoms/enabledFeatures';
 import { useParentTheme } from 'atoms/parentTheme';
@@ -21,6 +22,7 @@ const GridPreview = () => {
   const features = useEnabledFeatures();
   const currentFeature = useCurrentFeature();
   const parentTheme = useParentTheme();
+  const colorScheme = useColorScheme() || undefined;
   const values = useVariableValues();
   const wrapperRef = useRef<HTMLDivElement>(null);
 
@@ -34,6 +36,7 @@ const GridPreview = () => {
     .filter(isNotNull)
     .map((value) => value.toCss())
     .concat(parentTheme.name)
+    .concat(String(colorScheme))
     .concat(features.map((f) => f.name))
     .join(';');
 
@@ -48,7 +51,7 @@ const GridPreview = () => {
     void rebuildKey;
 
     const options: GridOptions = {
-      colorScheme: 'darkblue',
+      colorScheme,
       pagination: true,
       ...buildGridOptions(features),
       onGridReady: ({ api }) => {

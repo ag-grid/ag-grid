@@ -1,8 +1,8 @@
 import '@ag-grid-community/styles/ag-grid.css';
-import '@ag-grid-community/styles/ag-theme-quartz.css';
 import '@ag-grid-community/styles/ag-theme-alpine.css';
 import '@ag-grid-community/styles/ag-theme-balham.css';
 import '@ag-grid-community/styles/ag-theme-material.css';
+import '@ag-grid-community/styles/ag-theme-quartz.css';
 import { TrashCan } from '@carbon/icons-react';
 import styled from '@emotion/styled';
 import { useParentTheme } from 'atoms/parentTheme';
@@ -11,6 +11,7 @@ import { useResetVariableDefaults } from 'atoms/variableDefaults';
 import { Inspector } from 'components/inspector/Inspector';
 import { memo, useLayoutEffect, useState } from 'react';
 import { Tooltip } from 'react-tooltip';
+import { ColorSchemeMenu } from './ColorSchemeMenu';
 import { CopyButton } from './CopyButton';
 import { GridPreview } from './GridPreview';
 import { IconButton } from './IconButton';
@@ -36,6 +37,7 @@ export const RootContainer = memo(() => {
           <>
             <TopRow>
               <ParentThemeMenu />
+              <ColorSchemeMenu />
               <IconButton
                 label="Discard changes"
                 icon={TrashCan}

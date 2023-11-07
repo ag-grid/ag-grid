@@ -1,6 +1,6 @@
 import { Atom, WritableAtom, createStore } from 'jotai';
 import { Feature, getFeatureOrThrow } from 'model/features';
-import { Theme, alpineDarkTheme, alpineTheme, getThemeOrThrow } from 'model/themes';
+import { Theme, getThemeOrThrow, quartzTheme } from 'model/themes';
 import { logErrorMessage, mapPresentObjectValues } from 'model/utils';
 import { VariableValues, parseCssString } from 'model/values';
 import { getVariableInfoOrThrow } from 'model/variableInfo';
@@ -10,14 +10,14 @@ import { parentThemeAtom } from './parentTheme';
 import { allValueAtoms, valuesAtom } from './values';
 
 export const initStore = () => {
-  const defaultTheme =
-    typeof window === 'object' &&
-    getComputedStyle(window.document.documentElement).getPropertyValue('--color-scheme') === 'dark'
-      ? alpineDarkTheme
-      : alpineTheme;
+  // const defaultColorScheme =
+  //   (typeof window === 'object' &&
+  //     getComputedStyle(window.document.documentElement).getPropertyValue('--color-scheme')) ||
+  //   'light';
 
   const store = createStore();
-  restoreValue('parentTheme', deserializeTheme, store, parentThemeAtom, defaultTheme);
+  restoreValue('parentTheme', deserializeTheme, store, parentThemeAtom, quartzTheme);
+  // restoreValue('colorScheme', deserializeString, store, colorSchemeAtom, defaultColorScheme);
   restoreValue('enabledFeatures', deserializeEnabledFeatures, store, enabledFeaturesAtom);
   restoreValue('values', deserializeValues, store, valuesAtom);
 
@@ -92,6 +92,15 @@ const deserializeTheme = (themeName: unknown) => {
   }
   return getThemeOrThrow(themeName);
 };
+
+// const serializeString = (value: string) => value;
+
+// const deserializeString = (value: unknown) => {
+//   if (typeof value !== 'string') {
+//     throw new Error('expected string');
+//   }
+//   return value;
+// };
 
 const serializeEnabledFeatures = (features: ReadonlyArray<Feature>) => features.map((f) => f.name);
 

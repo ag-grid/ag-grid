@@ -1,20 +1,39 @@
 import styled from '@emotion/styled';
-import { useCurrentFeature } from 'atoms/currentFeature';
-import { useEnabledFeatures } from 'atoms/enabledFeatures';
-import { EnableFeatureButton } from 'components/inspector/EnableFeatureButton';
-import { FeatureEditor } from 'components/inspector/FeatureEditor';
-import { FeatureEditorPanel } from 'components/inspector/FeatureEditorPanel';
-import { InspectFeatureButton } from './InspectFeatureButton';
+import {
+  useAddEnabledFeature,
+  useEnabledFeatures,
+  useRemoveEnabledFeature,
+} from 'atoms/enabledFeatures';
+import { allFeatures, getFeatureOrThrow } from 'model/features';
 
 export const Inspector = () => {
   const enabled = useEnabledFeatures();
-  const inline = enabled.filter((f) => f.alwaysEnabled);
-  const inspectable = enabled.filter((f) => !f.alwaysEnabled);
-  const current = useCurrentFeature();
+  const addEnabledFeature = useAddEnabledFeature();
+  const removeEnabledFeature = useRemoveEnabledFeature();
+  const inspectable = allFeatures.filter((f) => !f.alwaysEnabled);
 
   return (
     <Container>
-      {inline.map((feature) => (
+      {inspectable.map((feature) => (
+        <div key={feature.name}>
+          <input
+            type="checkbox"
+            value={feature.name}
+            checked={enabled.includes(feature)}
+            onChange={(e) => {
+              const feature = getFeatureOrThrow(e.target.value);
+              const enabled = e.target.checked;
+              if (enabled) {
+                addEnabledFeature(feature);
+              } else {
+                removeEnabledFeature(feature);
+              }
+            }}
+          />{' '}
+          {feature.displayName}
+        </div>
+      ))}
+      {/* {inline.map((feature) => (
         <FeatureEditor key={feature.name} feature={feature} />
       ))}
       <Divider />
@@ -22,7 +41,7 @@ export const Inspector = () => {
       {inspectable.map((feature) => (
         <InspectFeatureButton key={feature.name} feature={feature} />
       ))}
-      <FeatureEditorPanel feature={current} />
+      <FeatureEditorPanel feature={current} /> */}
     </Container>
   );
 };
