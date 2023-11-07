@@ -233,7 +233,7 @@ export class GridOptionsService {
 
     private static changeSetId = 0;
     public updateGridOptions({ options, source = 'api' }: { options: Partial<GridOptions>, source?: 'api' | 'gridOptionsUpdated' }): void {
-        const changeSet: PropertyChangeSet = { id: GridOptionsService.changeSetId++, properties: Object.keys(options) as (keyof GridOptions)[] };
+        const changeSet: PropertyChangeSet = { id: GridOptionsService.changeSetId++, properties: [] };
         // all events are fired after grid options has finished updating.
         const events: PropertyValueChangedEvent<keyof GridOptions>[] = [];
         Object.entries(options).forEach(([key, value]) => {
@@ -255,6 +255,9 @@ export class GridOptionsService {
                 }
             }
         });
+
+        // changeSet should just include the properties that have changed.
+        changeSet.properties = events.map(event => event.type);
 
         events.forEach(event => {
             if (this.gridOptions.debug) {
