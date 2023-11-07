@@ -1,6 +1,6 @@
 @use "sass:color";
 
-.ag-theme-quartz, .ag-theme-quartz-light, .ag-theme-quartz-dark, .ag-theme-quartz-auto, .ag-theme-quartz-dark-blue {
+.ag-theme-quartz {
     // COLOURS
     
     // main colours (overridden by dark mode)
@@ -113,18 +113,17 @@
     color-scheme: dark;
 }
 
-.ag-theme-quartz-dark {
+.ag-theme-quartz.ag-color-scheme-dark {
     @include -dark-vars();
 }
 
 @media (prefers-color-scheme: dark) {
-    .ag-theme-quartz-auto {
+    .ag-theme-quartz.ag-color-scheme-auto {
         @include -dark-vars();
     }
 }
 
-.ag-theme-quartz-dark-blue {
-    // TODO look these up
+.ag-theme-quartz.ag-color-scheme-dark-blue {
     --ag-background-color: #0d161e;
     --ag-foreground-color: #fff;
     --ag-border-color: #273039;
