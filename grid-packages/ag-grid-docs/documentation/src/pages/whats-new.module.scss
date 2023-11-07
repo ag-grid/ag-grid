@@ -115,7 +115,7 @@
 
     @media screen and (min-width: $breakpoint-docs-nav-medium) {
         padding-left: 0;
-        padding-right: 0;
+        padding-right: $size-4
     }
 }
 
