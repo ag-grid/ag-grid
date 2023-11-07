@@ -38,7 +38,8 @@ const gridOptions: GridOptions = {
           strokeOpacity: 0.6,
         },
         tooltip: {
-          renderer: (params) => {
+          // @ts-ignore charts typing applied any to avoid issues
+          renderer: (params: any) => {
             var label = params.datum[params.labelKey!]
             // @ts-ignore charts typing
             var size = params.datum[params.sizeKey!]
