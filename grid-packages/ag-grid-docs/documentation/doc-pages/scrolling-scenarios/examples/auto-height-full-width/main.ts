@@ -58,7 +58,7 @@ const gridOptions: GridOptions = {
     isFullWidthRow: isFullWidthRow,
     fullWidthCellRenderer: fullWidthCellRenderer,
     pagination: true,
-    paginationPageSize: 10,
+    paginationPageSize: 20,
     columnDefs: columnDefs,
     domLayout: 'autoHeight',
 }
