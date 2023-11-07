@@ -20,9 +20,12 @@ const Version = ({ date, version, blogUrl, highlights }) => {
         <div className={styles.version}>
             <header>
             <span className={`${styles['text-secondary']} ${styles['font-size-small']}`}>{date}</span>
+            <div className={styles.flex}>
                 <b className={styles['font-size-large']}>Version {version}</b>
+                <a className={styles.bloglink} href={blogHref}>What's new →</a>
+            </div> 
                 <span class={styles.line}></span>
-                <a className={styles.bloglink} href={blogHref}>See what's new →</a>
+               
             </header>
 
             <p className={styles['font-size-small']}>
@@ -45,7 +48,7 @@ const Version = ({ date, version, blogUrl, highlights }) => {
                 target="_blank"
                 rel="noopener noreferrer"
             >
-              Changelog
+              See all changes
             </a>
             
         </div>
