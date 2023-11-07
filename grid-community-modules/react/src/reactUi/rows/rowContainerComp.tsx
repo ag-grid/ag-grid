@@ -1,6 +1,6 @@
 import { getRowContainerTypeForName, IRowContainerComp, RowContainerCtrl, RowContainerName, RowCtrl } from '@ag-grid-community/core';
 import React, { useMemo, useRef, useState, memo, useContext, useCallback } from 'react';
-import { agFlushSync, classesList, getNextValueIfDifferent } from '../utils';
+import { classesList, getNextValueIfDifferent } from '../utils';
 import useReactCommentEffect from '../reactComment';
 import RowComp from './rowComp';
 import { BeansContext } from '../beansContext';
@@ -16,9 +16,10 @@ const RowContainerComp = (params: {name: RowContainerName}) => {
     const eContainer = useRef<HTMLDivElement | null>(null);
 
     const rowCtrlsRef = useRef<RowCtrl[]>([]);
-    const [rowCtrlsOrdered, setRowCtrlsOrdered] = useState<RowCtrl[]>(() => []);
+    const orderedRowCtrlsRef = useRef<RowCtrl[]>([]);
     const domOrderRef = useRef<boolean>(false);
     const rowContainerCtrlRef = useRef<RowContainerCtrl | null>();
+    const rowUpdateCallback = useRef<(() => void) | null>();
 
     const cssClasses = useMemo(() => RowContainerCtrl.getRowContainerCssClasses(name), [name]);
     const viewportClasses = useMemo( ()=> classesList(cssClasses.viewport), [cssClasses]);
@@ -48,6 +49,24 @@ const RowContainerComp = (params: {name: RowContainerName}) => {
         return eContainer.current == null;
     }, []);
 
+    // With React 18 this will use the new useSyncExternalStore hook
+    // With React 17 this will use the useState hook as the renderer is synchronous anyway.
+    let rowCtrlsOrdered: RowCtrl[];
+    if ((React as any).useSyncExternalStore) {
+        const sub = useCallback((callback: any) => {
+            rowUpdateCallback.current = callback;
+            return () => {
+                rowUpdateCallback.current = null;
+            }
+        }, []);
+
+        rowCtrlsOrdered = React.useSyncExternalStore(sub, () => orderedRowCtrlsRef.current);
+    } else {
+        const [ctrlsOrdered, setCtrlsOrdered] = useState<RowCtrl[]>([]);
+        rowUpdateCallback.current = () => setCtrlsOrdered(orderedRowCtrlsRef.current);
+        rowCtrlsOrdered = ctrlsOrdered;
+    }
+
     const setRef = useCallback(() => {
         if (areElementsRemoved()) {
             context.destroyBean(rowContainerCtrlRef.current);
@@ -55,10 +74,11 @@ const RowContainerComp = (params: {name: RowContainerName}) => {
         }
         if (areElementsReady()) {
 
-            const updateRowCtrlsOrdered = (useFlushSync: boolean) => {
-                agFlushSync(useFlushSync, () => {
-                    setRowCtrlsOrdered(prev => getNextValueIfDifferent(prev, rowCtrlsRef.current, domOrderRef.current)!);
-                });
+            const updateRowCtrlsOrdered = () => {
+                orderedRowCtrlsRef.current = getNextValueIfDifferent(orderedRowCtrlsRef.current, rowCtrlsRef.current, domOrderRef.current)!;
+                if (rowUpdateCallback.current) {
+                    rowUpdateCallback.current();
+                }
             }
 
             const compProxy: IRowContainerComp = {
@@ -67,16 +87,15 @@ const RowContainerComp = (params: {name: RowContainerName}) => {
                         eViewport.current.style.height = height;
                     }
                 },
-                setRowCtrls: (rowCtrls, useFlushSync) => {
-                    const useFlush = useFlushSync && rowCtrlsRef.current.length > 0 && rowCtrls.length > 0;
+                setRowCtrls: (rowCtrls) => {
                     // Keep a record of the rowCtrls in case we need to reset the Dom order.
                     rowCtrlsRef.current = rowCtrls;
-                    updateRowCtrlsOrdered(useFlush);
+                    updateRowCtrlsOrdered();
                 },
                 setDomOrder: domOrder => {
                     if (domOrderRef.current != domOrder) {
                         domOrderRef.current = domOrder;
-                        updateRowCtrlsOrdered(false);
+                        updateRowCtrlsOrdered();
                     }
                 },
                 setContainerWidth: width => {
