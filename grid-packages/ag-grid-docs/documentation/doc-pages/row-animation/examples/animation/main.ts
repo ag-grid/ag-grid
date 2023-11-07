@@ -41,7 +41,7 @@ function startInterval(api: GridApi) {
   executeAfterXSeconds()
 
   function executeAfterXSeconds() {
-    setTimeout(function () {
+    setTimeout(() => {
       var action = getActions()[actionIndex]
       action(api)
       actionIndex++

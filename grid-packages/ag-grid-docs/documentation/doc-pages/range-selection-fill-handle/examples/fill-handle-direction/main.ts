@@ -32,7 +32,7 @@ function fillHandleAxis(direction: 'x' | 'y' | 'xy') {
   )
   var button = document.querySelector('.ag-fill-direction.' + direction)!
 
-  buttons.forEach(function (btn) {
+  buttons.forEach((btn) => {
     btn.classList.remove('selected')
   })
 

@@ -92,17 +92,17 @@ function onRemoveSelected() {
 function printResult(res: RowNodeTransaction) {
   console.log('---------------------------------------')
   if (res.add) {
-    res.add.forEach(function (rowNode) {
+    res.add.forEach((rowNode) => {
       console.log('Added Row Node', rowNode)
     })
   }
   if (res.remove) {
-    res.remove.forEach(function (rowNode) {
+    res.remove.forEach((rowNode) => {
       console.log('Removed Row Node', rowNode)
     })
   }
   if (res.update) {
-    res.update.forEach(function (rowNode) {
+    res.update.forEach((rowNode) => {
       console.log('Updated Row Node', rowNode)
     })
   }

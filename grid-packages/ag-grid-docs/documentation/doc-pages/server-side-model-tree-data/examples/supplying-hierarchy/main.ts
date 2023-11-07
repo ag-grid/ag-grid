@@ -78,7 +78,7 @@ document.addEventListener('DOMContentLoaded', function () {
               rowData: data.slice(request.startRow, request.endRow),
             };
             console.log('getRows: result = ', result)
-            setTimeout(function () {
+            setTimeout(() => {
               params.success(result);
 
               const recursivelyPopulateHierarchy = (route: string[], node: any) => {

@@ -8,7 +8,7 @@ import {
 
 var filterParams: ISetFilterParams = {
   values: (params: SetFilterValuesFuncParams) => {
-    setTimeout(function () {
+    setTimeout(() => {
       params.success(['value 1', 'value 2'])
     }, 3000)
   },

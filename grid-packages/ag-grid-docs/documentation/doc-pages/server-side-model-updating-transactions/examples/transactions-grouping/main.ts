@@ -66,7 +66,7 @@ function getServerSideDatasource(server: any) {
       const response = server.getData(params.request);
 
       // adding delay to simulate real server call
-      setTimeout(function () {
+      setTimeout(() => {
         if (response.success) {
           // call the success callback
           params.success({

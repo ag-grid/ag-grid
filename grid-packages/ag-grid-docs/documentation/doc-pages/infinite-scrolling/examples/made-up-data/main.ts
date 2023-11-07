@@ -16,7 +16,7 @@ function getColumnDefs() {
     { headerName: '#', width: 80, valueGetter: 'node.rowIndex' },
   ]
 
-  ALPHABET.forEach(function (letter) {
+  ALPHABET.forEach((letter) => {
     columnDefs.push({
       headerName: letter.toUpperCase(),
       field: letter,
@@ -61,7 +61,7 @@ function getDataSource(count: number) {
       }
 
       // to mimic server call, we reply after a short delay
-      setTimeout(function () {
+      setTimeout(() => {
         // no need to pass the second 'rowCount' parameter as we have already provided it
         params.successCallback(rowsThisPage)
       }, 100)

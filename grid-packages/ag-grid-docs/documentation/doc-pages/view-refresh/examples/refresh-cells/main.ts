@@ -69,7 +69,7 @@ function scrambleAndRefreshAll() {
 function scrambleAndRefreshLeftToRight() {
   scramble();
 
- ['a', 'b', 'c', 'd', 'e', 'f'].forEach(function (col, index) {
+ ['a', 'b', 'c', 'd', 'e', 'f'].forEach((col, index) => {
       var millis = index * 100
       var params = {
         force: isForceRefreshSelected(),
@@ -115,7 +115,7 @@ function scrambleAndRefreshTopToBottom() {
 }
 
 function callRefreshAfterMillis(params: RefreshCellsParams, millis: number, api: GridApi) {
-  setTimeout(function () {
+  setTimeout(() => {
     api.refreshCells(params)
   }, millis)
 }
@@ -127,7 +127,7 @@ function scramble() {
 }
 
 function scrambleItem(item: any) {
-  ['a', 'b', 'c', 'd', 'e', 'f'].forEach(function (colId) {
+  ['a', 'b', 'c', 'd', 'e', 'f'].forEach((colId) => {
     // skip 50% of the cells so updates are random
     if (Math.random() > 0.5) {
       return

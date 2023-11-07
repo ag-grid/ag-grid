@@ -389,12 +389,12 @@ function updateImmutableObject(original: any, newValues: any) {
   const newObject: any = {};
 
   // copy in the old values
-  Object.keys(original).forEach(function (key) {
+  Object.keys(original).forEach((key) => {
     newObject[key] = original[key]
   })
 
   // now override with the new values
-  Object.keys(newValues).forEach(function (key) {
+  Object.keys(newValues).forEach((key) => {
     newObject[key] = newValues[key]
   })
 

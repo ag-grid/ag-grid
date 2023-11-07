@@ -113,7 +113,7 @@ function getCountryValuesAsync(params: SetFilterValuesFuncParams) {
   var countries = fakeServer.getCountries()
 
   // simulating real server call with a 500ms delay
-  setTimeout(function () {
+  setTimeout(() => {
     params.success(countries)
   }, 500)
 }
@@ -122,7 +122,7 @@ function getSportValuesAsync(params: SetFilterValuesFuncParams) {
   var sports = fakeServer.getSports(selectedCountries)
 
   // simulating real server call with a 500ms delay
-  setTimeout(function () {
+  setTimeout(() => {
     params.success(sports)
   }, 500)
 }
@@ -136,7 +136,7 @@ function getServerSideDatasource(server: any): IServerSideDatasource {
       var response = server.getData(params.request)
 
       // simulating real server call with a 500ms delay
-      setTimeout(function () {
+      setTimeout(() => {
         if (response.success) {
           // supply rows for requested block to grid
           params.success({ rowData: response.rows, rowCount: response.lastRow })

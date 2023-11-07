@@ -12,7 +12,7 @@ const rowData = createData(100, 'body');
 
 function getColumnDefs() {
     const columnDefs: ColDef[] = []
-    alphabet().forEach(function (letter) {
+    alphabet().forEach((letter) => {
         const colDef: ColDef = {
             headerName: letter,
             field: letter,
@@ -69,7 +69,7 @@ function createData(count: number, prefix: string) {
         // if a row is full width or not is totally up to you.
         item.fullWidth = i % 3 === 2
         // put in a column for each letter of the alphabet
-        alphabet().forEach(function (letter) {
+        alphabet().forEach((letter) => {
             item[letter] = prefix + ' (' + letter + ',' + i + ')'
         })
         rowData.push(item)

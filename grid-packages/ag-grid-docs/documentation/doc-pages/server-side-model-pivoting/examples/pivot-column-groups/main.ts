@@ -81,7 +81,7 @@ function getServerSideDatasource(server: any): IServerSideDatasource {
       var response = server.getData(request)
 
       // simulating real server call with a 500ms delay
-      setTimeout(function () {
+      setTimeout(() => {
         if (response.success) {
           // supply data to grid
           params.success({

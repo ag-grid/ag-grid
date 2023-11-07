@@ -168,7 +168,7 @@ function onNormalUpdate() {
   setMessage('Running Transaction')
 
   for (var i = 0; i < UPDATE_COUNT; i++) {
-    setTimeout(function () {
+    setTimeout(() => {
       // pick one index at random
       var index = Math.floor(Math.random() * globalRowData.length)
       var itemToUpdate = globalRowData[index]
@@ -185,7 +185,7 @@ function onNormalUpdate() {
   // print message in next VM turn to allow browser to refresh first.
   // we assume the browser executes the timeouts in order they are created,
   // so this timeout executes after all the update timeouts created above.
-  setTimeout(function () {
+  setTimeout(() => {
     var endMillis = new Date().getTime()
     var duration = endMillis - startMillis
     setMessage('Transaction took ' + duration.toLocaleString() + 'ms')
@@ -204,7 +204,7 @@ function onAsyncUpdate() {
 
   var updatedCount = 0
   for (var i = 0; i < UPDATE_COUNT; i++) {
-    setTimeout(function () {
+    setTimeout(() => {
       // pick one index at random
       var index = Math.floor(Math.random() * globalRowData.length)
       var itemToUpdate = globalRowData[index]
@@ -225,7 +225,7 @@ function onAsyncUpdate() {
     updatedCount++
     if (updatedCount === UPDATE_COUNT) {
       // print message in next VM turn to allow browser to refresh
-      setTimeout(function () {
+      setTimeout(() => {
         var endMillis = new Date().getTime()
         var duration = endMillis - startMillis
         setMessage('Async took ' + duration.toLocaleString() + 'ms')
@@ -245,7 +245,7 @@ function copyObject(object: any) {
   var newObject: any = {}
 
   // copy in the old values
-  Object.keys(object).forEach(function (key) {
+  Object.keys(object).forEach((key) => {
     newObject[key] = object[key]
   })
 

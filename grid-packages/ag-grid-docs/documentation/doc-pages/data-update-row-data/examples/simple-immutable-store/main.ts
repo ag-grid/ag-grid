@@ -60,7 +60,7 @@ function setSelectedToGroup(newGroup: string) {
 
 function updatePrices() {
     const newStore: any[] = [];
-    immutableStore.forEach(function (item) {
+    immutableStore.forEach((item) => {
         newStore.push({
             // use same symbol as last time, this is the unique id
             symbol: item.symbol,
@@ -76,7 +76,7 @@ function updatePrices() {
 
 function filter(list: any[], callback: any) {
     const filteredList: any[] = [];
-    list.forEach(function (item) {
+    list.forEach((item) => {
         if (callback(item)) {
             filteredList.push(item)
         }
@@ -137,7 +137,7 @@ function createUniqueRandomSymbol() {
         }
         // check uniqueness
         isUnique = true
-        immutableStore.forEach(function (oldItem) {
+        immutableStore.forEach((oldItem) => {
             if (oldItem.symbol === symbol) {
                 isUnique = false
             }

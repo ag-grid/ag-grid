@@ -35,7 +35,7 @@ function onBtUpperNames() {
         { field: 'bronze' },
         { field: 'total' },
     ]
-    columnDefs.forEach(function (c) {
+    columnDefs.forEach((c) => {
         c.headerName = c.field!.toUpperCase()
     })
     gridApi!.setGridOption('columnDefs', columnDefs)
@@ -54,7 +54,7 @@ function onBtLowerNames() {
         { field: 'bronze' },
         { field: 'total' },
     ]
-    columnDefs.forEach(function (c) {
+    columnDefs.forEach((c) => {
         c.headerName = c.field
     })
     gridApi!.setGridOption('columnDefs', columnDefs)
@@ -73,7 +73,7 @@ function onBtFilterOn() {
         { field: 'bronze' },
         { field: 'total' },
     ]
-    columnDefs.forEach(function (c) {
+    columnDefs.forEach((c) => {
         c.filter = true
     })
     gridApi!.setGridOption('columnDefs', columnDefs)
@@ -92,7 +92,7 @@ function onBtFilterOff() {
         { field: 'bronze' },
         { field: 'total' },
     ]
-    columnDefs.forEach(function (c) {
+    columnDefs.forEach((c) => {
         c.filter = false
     })
     gridApi!.setGridOption('columnDefs', columnDefs)
@@ -111,7 +111,7 @@ function onBtResizeOn() {
         { field: 'bronze' },
         { field: 'total' },
     ]
-    columnDefs.forEach(function (c) {
+    columnDefs.forEach((c) => {
         c.resizable = true
     })
     gridApi!.setGridOption('columnDefs', columnDefs)
@@ -130,7 +130,7 @@ function onBtResizeOff() {
         { field: 'bronze' },
         { field: 'total' },
     ]
-    columnDefs.forEach(function (c) {
+    columnDefs.forEach((c) => {
         c.resizable = false
     })
     gridApi!.setGridOption('columnDefs', columnDefs)

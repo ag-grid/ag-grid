@@ -126,7 +126,7 @@ function binDrop(data: any) {
         remove: [data]
     };
 
-    [leftApi, rightApi].forEach(function (api) {
+    [leftApi, rightApi].forEach((api) => {
         var rowsInGrid = !!api!.getRowNode(data.id);
 
         if (rowsInGrid) {

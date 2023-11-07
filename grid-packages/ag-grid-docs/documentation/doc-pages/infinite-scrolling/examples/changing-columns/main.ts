@@ -84,7 +84,7 @@ function filterData(filterModel: any, data: any[]) {
     var filterFails = false
 
     var filterKeys = Object.keys(filterModel)
-    filterKeys.forEach(function (filterKey) {
+    filterKeys.forEach((filterKey) => {
       var filterValue = filterModel[filterKey].filter
 
       var valueForRow = item[filterKey]
@@ -131,7 +131,7 @@ document.addEventListener('DOMContentLoaded', function () {
           console.log('asking for ' + params.startRow + ' to ' + params.endRow)
           // At this point in your code, you would call the server.
           // To make the demo look real, wait for 500ms before returning
-          setTimeout(function () {
+          setTimeout(() => {
             // take a slice of the total rows
             var dataAfterSortingAndFiltering = sortAndFilter(
               data,

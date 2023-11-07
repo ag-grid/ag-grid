@@ -13,8 +13,8 @@ const gridOptions: GridOptions = {
   columnDefs: [{ field: 'make' }, { field: 'model' }, { field: 'price' }],
   rowData: rowData,
   onGridReady: (params) => {
-    window.addEventListener('resize', function () {
-      setTimeout(function () {
+    window.addEventListener('resize', () => {
+      setTimeout(() => {
         params.api.sizeColumnsToFit()
       })
     })

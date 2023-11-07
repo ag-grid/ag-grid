@@ -15,7 +15,7 @@ class SportRenderer implements ICellRendererComp {
     init(params: ICellRendererParams) {
         this.eGui = document.createElement('i');
 
-        this.eGui.addEventListener('click', function () {
+        this.eGui.addEventListener('click', () => {
             params.api.applyTransaction({ remove: [params.node.data] });
         });
 
@@ -173,11 +173,11 @@ function onExcelExport() {
 const resetBtn = document.querySelector('button.reset')!;
 const exportBtn = document.querySelector('button.excel')!;
 
-resetBtn.addEventListener('click', function () {
+resetBtn.addEventListener('click', () => {
     loadGrids();
 });
 
-exportBtn.addEventListener('click', function () {
+exportBtn.addEventListener('click', () => {
     onExcelExport();
 });
 

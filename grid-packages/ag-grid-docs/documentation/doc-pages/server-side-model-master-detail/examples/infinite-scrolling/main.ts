@@ -49,7 +49,7 @@ const gridOptions: GridOptions = {
     },
   } as IDetailCellRendererParams<IAccount, ICallRecord>,
   onGridReady: (params) => {
-    setTimeout(function () {
+    setTimeout(() => {
       // expand some master row
       var someRow = params.api.getRowNode('1')
       if (someRow) {
@@ -63,7 +63,7 @@ function getServerSideDatasource(server: any): IServerSideDatasource {
   return {
     getRows: (params) => {
       // adding delay to simulate real server call
-      setTimeout(function () {
+      setTimeout(() => {
         var response = server.getResponse(params.request)
 
         if (response.success) {

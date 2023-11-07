@@ -52,7 +52,7 @@ const gridOptions: GridOptions<IAccount> = {
 
 function onFirstDataRendered(params: FirstDataRenderedEvent) {
   // expand the first two rows
-  setTimeout(function () {
+  setTimeout(() => {
     params.api.forEachNode(function (node) {
       node.setExpanded(true)
     })
