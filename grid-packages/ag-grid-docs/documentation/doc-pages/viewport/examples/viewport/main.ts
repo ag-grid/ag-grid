@@ -104,7 +104,7 @@ document.addEventListener('DOMContentLoaded', function () {
       mockServer.init(data)
 
       var viewportDatasource = createViewportDatasource(mockServer)
-      gridApi!.setViewportDatasource(viewportDatasource)
+      gridApi!.setGridOption('viewportDatasource', viewportDatasource)
     })
 })
 

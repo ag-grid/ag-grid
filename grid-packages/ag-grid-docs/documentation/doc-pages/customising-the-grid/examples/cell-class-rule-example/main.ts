@@ -70,5 +70,5 @@ document.addEventListener('DOMContentLoaded', function () {
     gridApi = createGrid(gridDiv, gridOptions);
     fetch('https://downloads.jamesswinton.com/space-mission-data.json')
         .then(response => response.json())
-        .then((data: any) => gridApi.setRowData(data))
+        .then((data: any) => gridApi.setGridOption('rowData', data))
 })
