@@ -525,6 +525,10 @@ export interface ColDef<TData = any, TValue = any> extends AbstractColDef<TData,
     /** Set to `true` if you don't want the column header for this column to span the whole height of the header container. Default: `false` */
     suppressSpanHeaderHeight?: boolean;
 }
+
+/** Configuration options for reusable columns types in AG Grid. This includes all possible options from `ColDef` except the `type` field. */
+export type ColTypeDef<TData = any, TValue = any> = Omit<ColDef<TData, TValue>, 'type'>;
+
 export interface ColumnFunctionCallbackParams<TData = any, TValue = any> extends AgGridCommon<TData, any> {
     /** Row node for the given row */
     node: IRowNode<TData>;
