@@ -4,26 +4,30 @@ title: "Quick Start"
 
 Display your data in a Grid in 60 seconds.
 
+<framework-specific-section frameworks="react">
+
 ## Install
 
-<framework-specific-section frameworks="react">
+Create a new React project and install the `ag-grid-react` library:
+
 <snippet transform={false} language="bash">
 npm install ag-grid-react
 </snippet>
-</framework-specific-section>
 
 _For more information, read our detailed [installation guide](/packages-modules/)._
 
 ## Create
 
-<framework-specific-section frameworks="react">
+Replace your `index.js` file with the following code:
+
 <snippet transform={false} language="jsx">
 |import { useState } from 'react';
 |import { AgGridReact } from 'ag-grid-react'; // Core Grid Logic
 |import "ag-grid-community/styles/ag-grid.css"; // Core CSS
 |import "ag-grid-community/styles/ag-theme-alpine.css"; // Theme
-| 
-|function GridExample() {
+|
+|// Create new GridExample component
+|const GridExample = () => {
 |  // Row Data: The data to be displayed.
 |  const [rowData, setRowData] = useState([
 |    { make: 'Toyota', model: 'Prius', price: 35000 },
@@ -37,7 +41,7 @@ _For more information, read our detailed [installation guide](/packages-modules/
 |    { field: "model" },
 |    { field: "price" }
 |  ]);
-|  
+|
 |  // Container: Defines the grid's theme & dimensions.
 |  return (
 |    &lt;div className="ag-theme-alpine" style={{ width: 600, height: 500 }}>
@@ -46,8 +50,19 @@ _For more information, read our detailed [installation guide](/packages-modules/
 |    &lt;/div>
 |  );
 |}
+|
+|// Render GridExample
+|const root = createRoot(document.getElementById('root'));
+|root.render(&lt;GridExample />);
 </snippet>
+
 </framework-specific-section>
+
+## Run
+
+When you run your application, you should see a basic grid with three rows:
+
+<grid-example title='Quick Start Example' name='quick-start-example' type='generated' options='{ "exampleHeight": 201 }'></grid-example>
 
 ## Next Steps
 
