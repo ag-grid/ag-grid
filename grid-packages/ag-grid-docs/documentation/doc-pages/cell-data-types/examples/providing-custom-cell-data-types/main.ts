@@ -49,8 +49,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const gridDiv = document.querySelector<HTMLElement>('#myGrid')!
   gridApi = createGrid(gridDiv, gridOptions);
 
-  // do http request to get our sample data - not using any framework to keep the example self contained.
-  // you will probably use a framework like JQuery, Angular or something else to do your HTTP calls.
+
   fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
     .then(response => response.json())
     .then((data: IOlympicDataTypes[]) => gridApi!.setGridOption('rowData', data.map(rowData => {
