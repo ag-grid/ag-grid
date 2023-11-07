@@ -112,52 +112,95 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel 
     }
 
     private addPropertyListeners() {
-        const orderedStages = [
-            { step: ClientSideRowModelSteps.EVERYTHING, module: this.groupStage },
-            { step: ClientSideRowModelSteps.FILTER, module: this.filterStage },
-            { step: ClientSideRowModelSteps.PIVOT, module: this.pivotStage },
-            { step: ClientSideRowModelSteps.AGGREGATE, module: this.aggregationStage },
-            { step: ClientSideRowModelSteps.SORT, module: this.sortStage },
-            { step: ClientSideRowModelSteps.MAP, module: this.flattenStage },
-        ].filter(stage => !!stage.module); // remove any unregistered modules.
+        /**
+         * The following properties are omitted, as it's unlikely the user is intending to change them, so should not trigger
+         * side effects.
+         * 
+         * 'getDataPath', 'getRowId', 'isRowMaster', 'getRowHeight',
+         */
+        const resetProps: Set<keyof GridOptions> = new Set([
+            'treeData', 'masterDetail', 'groupSelectsChildren', 'rowHeight',
+        ]);
+        const groupStageRefreshProps: Set<keyof GridOptions> = new Set([
+            'treeData', 'suppressParentsInRowNodes', 'groupDefaultExpanded',
+            'groupAllowUnbalanced', 'initialGroupOrderComparator',
+        ]);
+        const filterStageRefreshProps: Set<keyof GridOptions> = new Set([
+            'excludeChildrenWhenTreeDataFiltering',
+        ]);
+        /**
+         * The following pivot properties are omitted, as they are only relevant for initial column creation
+         * 'pivotDefaultExpanded', 'processPivotResultColDef', 'processPivotResultColGroupDef'
+         */
+        const pivotStageRefreshProps: Set<keyof GridOptions> = new Set([
+            'removePivotHeaderRowWhenSingleValueColumn', 'pivotRowTotals', 'pivotColumnGroupTotals', 'suppressExpandablePivotGroups',
+        ]);
+        const aggregateStageRefreshProps: Set<keyof GridOptions> = new Set([
+            'getGroupRowAgg', 'alwaysAggregateAtRootLevel', 'groupIncludeTotalFooter', 'suppressAggFilteredOnly',
+        ]);
+        /**
+         * The following properties are omitted from `sortStageRefreshProps` as they should only run on future changes
+         * 'deltaSort', 'postSortRows',
+         */
+        const sortStageRefreshProps: Set<keyof GridOptions> = new Set([
+            'groupHideOpenParents', 'groupDisplayType', 'accentedSort',
+        ]);
+        const filterAggStageRefreshProps: Set<keyof GridOptions> = new Set([
+            'groupAggFiltering',
+        ]);
+        const flattenStageRefreshProps: Set<keyof GridOptions> = new Set([
+            'groupRemoveSingleChildren', 'groupRemoveLowestSingleChildren', 'groupIncludeFooter',
+        ]);
 
-        // These props require a full CSRM data reset, as they're used by the node manager.
-        const resetProps: (keyof GridOptions)[] = [
-            'treeData', 'getDataPath',
-            'getRowId',
-            'masterDetail', 'isRowMaster',
-            'isRowSelectable', 'groupSelectsChildren',
-            'rowHeight', 'getRowHeight',
+        const allProps = [
+            ...resetProps, ...groupStageRefreshProps, ...filterStageRefreshProps, ...pivotStageRefreshProps,
+            ...pivotStageRefreshProps, ...aggregateStageRefreshProps, ...sortStageRefreshProps, ...filterAggStageRefreshProps,
+            ...flattenStageRefreshProps
         ];
-
-        const allProperties: (keyof GridOptions)[] = [
-            ...resetProps,
-        ];
-
-        orderedStages.forEach(({ module}) => allProperties.push(...module.getImpactingGridOptions()));
-        this.addManagedPropertyListeners(allProperties, (params) => {
+        this.addManagedPropertyListeners(allProps, params => {
             const properties = params.changeSet?.properties;
-            if (!properties) {
-                return;
-            }
+            if (!properties) { return; };
 
-            const propertySet = new Set(properties); // faster lookup.
+            const arePropertiesImpacted = (propSet: Set<keyof GridOptions>) => (
+                properties.some(prop => propSet.has(prop))
+            );
 
-            const needsFullReset = resetProps.some(prop => propertySet.has(prop));
-            if (needsFullReset) {
+            if (arePropertiesImpacted(resetProps)) {
                 this.setRowData(this.rootNode.allLeafChildren.map(child => child.data));
                 return;
             }
+    
+            if (arePropertiesImpacted(groupStageRefreshProps)) {
+                this.refreshModel({ step: ClientSideRowModelSteps.EVERYTHING });
+                return;
+            }
 
-            // find the first stage that has a property that has changed.
-            for (let i = 0; i < orderedStages.length; i++) {
-                const { step, module } = orderedStages[i];
-                const impactsStage = module.getImpactingGridOptions().some(prop => propertySet.has(prop));
-                if (impactsStage) {
-                    const animate = !this.gridOptionsService.get('suppressAnimationFrame');
-                    this.refreshModel({ step, keepRenderedRows: true, animate });
-                    return;
-                }
+            if (arePropertiesImpacted(filterStageRefreshProps)) {
+                this.refreshModel({ step: ClientSideRowModelSteps.FILTER });
+                return;
+            }
+
+            if (arePropertiesImpacted(pivotStageRefreshProps)) {
+                this.refreshModel({ step: ClientSideRowModelSteps.PIVOT });
+                return;
+            }
+            if (arePropertiesImpacted(aggregateStageRefreshProps)) {
+                this.refreshModel({ step: ClientSideRowModelSteps.AGGREGATE });
+                return;
+            }
+
+            if (arePropertiesImpacted(sortStageRefreshProps)) {
+                this.refreshModel({ step: ClientSideRowModelSteps.SORT });
+                return;
+            }
+
+            if (arePropertiesImpacted(filterAggStageRefreshProps)) {
+                this.refreshModel({ step: ClientSideRowModelSteps.FILTER_AGGREGATES });
+                return;
+            }
+
+            if (arePropertiesImpacted(flattenStageRefreshProps)) {
+                this.refreshModel({ step: ClientSideRowModelSteps.MAP });
             }
         });
     }

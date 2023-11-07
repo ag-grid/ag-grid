@@ -30,14 +30,6 @@ interface AggregationDetails {
 
 @Bean('aggregationStage')
 export class AggregationStage extends BeanStub implements IRowNodeStage {
-    getImpactingGridOptions(): (keyof GridOptions<any>)[] {
-        return [
-            'getGroupRowAgg',
-            'alwaysAggregateAtRootLevel',
-            'groupIncludeTotalFooter',
-            'suppressAggFilteredOnly',
-        ];
-    }
 
     @Autowired('columnModel') private columnModel: ColumnModel;
     @Autowired('valueService') private valueService: ValueService;
