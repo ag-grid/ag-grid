@@ -67,7 +67,7 @@ function createViewportDatasource(): IViewportDatasource {
         rowData[rowIndex] = item
       }
 
-      initParams.setGridOption('rowData', rowData)
+      initParams.setRowData(rowData)
     },
     destroy: () => { }
   }
