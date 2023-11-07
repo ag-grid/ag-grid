@@ -1,7 +1,6 @@
 /************************************************************************************************
  * If you change the GridOptions interface, you must also update PropertyKeys to be consistent. *
  ************************************************************************************************/
-import { ColumnApi } from "../columns/columnApi";
 import {
     AdvancedFilterBuilderVisibleChangedEvent,
     AsyncTransactionsFlushed, BodyScrollEndEvent, BodyScrollEvent, CellClickedEvent,
@@ -77,7 +76,6 @@ import {
     VirtualRowRemovedEvent,
     StateUpdatedEvent
 } from "../events";
-import { GridApi } from "../gridApi";
 import { HeaderPosition } from "../headerRendering/common/headerPosition";
 import {
     CsvExportParams,
