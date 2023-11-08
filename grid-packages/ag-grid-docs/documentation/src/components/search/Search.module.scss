@@ -3,6 +3,7 @@
 .searchForm {
     flex-grow: 1;
     margin-right: auto;
+    top: 12px;
 
     @media screen and (min-width: $breakpoint-docs-search-medium) {
         position: relative;

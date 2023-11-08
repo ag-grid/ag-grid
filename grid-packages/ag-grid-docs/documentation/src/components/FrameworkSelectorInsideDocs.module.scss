@@ -1,0 +1,34 @@
+@use '../design-system' as *;
+
+.frameworkSelector {
+    --icon-size: #{$size-5};
+    display: flex;
+    padding: 2px;
+    background-color: var(--input-background-color);
+    border-radius: var(--border-radius);
+    border: 0.01em solid var(--border-color);
+    margin-top: -18px;
+}
+
+.selectFrameworkContainer {
+    position: relative;
+    display: flex;
+    align-items: center;
+
+    img {
+        width: var(--icon-size);
+        height: var(--icon-size);
+        border-right: 0.04em solid var(--border-color);
+        padding: 4px;
+
+    }
+
+    select {
+        display: block;
+        width: 135px;
+        cursor: pointer;
+        font-weight: var(--font-weight-bold);
+        font-size: var(--font-size-medium);
+        border: none;
+    }
+}

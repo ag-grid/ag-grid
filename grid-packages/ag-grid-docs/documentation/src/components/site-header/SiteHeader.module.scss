@@ -40,7 +40,7 @@
     padding: $size-1 10px;
 
     @media screen and (min-width: $breakpoint-page-margin-padding) {
-        margin-left: calc(var(--horizontal-margin) - 16px);
+        //margin-left: calc(var(--horizontal-margin) - 16px);
     }
 
     @media screen and (min-width: $breakpoint-site-header-small) {

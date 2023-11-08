@@ -108,7 +108,6 @@
     margin-bottom: $size-1;
 
     @media screen and (min-width: $breakpoint-docs-search-medium) {
-        padding-right: 166px;
     }
 
     @media screen and (min-width: $breakpoint-docs-nav-medium) {
@@ -120,11 +119,24 @@
     }
 }
 
+.pageTitleContainer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+}
+
+.pageTitleGroup {
+    display: flex;
+    flex-direction: column;
+}
+
 .headerFramework {
     display: block;
     font-size: var(--font-size-extra-large);
     font-weight: var(--font-weight-normal);
     color: var(--secondary-text-color);
+    padding-bottom: 6px;
 }
 
 .enterpriseLabel {

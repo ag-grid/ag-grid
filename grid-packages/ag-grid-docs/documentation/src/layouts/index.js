@@ -66,8 +66,6 @@ export const Layout = ({
 
                 <SiteHeader path={path} />
 
-                {!fullScreen && <TopBar frameworks={frameworks} currentFramework={framework} path={path} suppressFrameworkSelector={suppressFrameworkSelector} />}
-
                 <div className={classnames(styles.contentContainer, !fullScreen && styles.fullScreenPage)}>
                     <div className={styles.contentViewport}>
                         {!fullScreen &&

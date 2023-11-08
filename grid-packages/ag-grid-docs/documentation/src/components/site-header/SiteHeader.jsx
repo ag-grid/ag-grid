@@ -12,6 +12,7 @@ import { DarkModeToggle } from './DarkModeToggle';
 import styles from './SiteHeader.module.scss';
 import menuData from '../../../doc-pages/licensing/menu.json';
 import apiMenuData from '../../../doc-pages/licensing/api-menu.json';
+import Search from "../search/Search";
 
 const SITE_HEADER_SMALL_WIDTH = parseInt(breakpoints['site-header-small'], 10);
 
@@ -108,7 +109,7 @@ const HeaderExpandButton = ({ isOpen, toggleIsOpen }) => (
     </button>
 );
 
-const HeaderNav = ({ path }) => {
+const HeaderNav = ({ path, currentFramework }) => {
     const [isOpen, setIsOpen] = useState(false);
     const { width } = useWindowSize();
     const isDesktop = width >= SITE_HEADER_SMALL_WIDTH;
@@ -122,7 +123,8 @@ const HeaderNav = ({ path }) => {
     return (
         <>
             <HeaderExpandButton isOpen={isOpen} toggleIsOpen={toggleIsOpen} />
-            
+
+            <Search currentFramework={currentFramework} />
             <Collapsible id="main-nav" isDisabled={isDesktop} isOpen={isOpen}>
                 <nav id={isDesktop ? 'main-nav' : undefined} className={styles.mainNav}>
                     <ul className={classnames(styles.navItemList, 'list-style-none')}>
