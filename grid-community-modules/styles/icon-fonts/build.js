@@ -79,7 +79,7 @@ function generateFontFile(fontName) {
             fontHeight: 1000,
             types: ["woff2"],
             css: false,
-            fixedWidth: false,
+            fixedWidth: true,
             dest: path.join(__dirname, ".."),
             codepoints
         },
