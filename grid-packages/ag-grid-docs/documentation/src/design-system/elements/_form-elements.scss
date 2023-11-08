@@ -75,6 +75,10 @@ input[type='number'] {
             border-color $default-transition-timing,
             box-shadow $default-transition-timing;
 
+    #{$darkmode-selector} & {
+        border: 1px solid var(--input-border-color);
+    }
+
     &::placeholder {
         font-style: italic;
         color: var(--secondary-text-color);
@@ -203,6 +207,10 @@ select#{$exclude-grid-selector} {
     transition:
         border-color $default-transition-timing,
         box-shadow $default-transition-timing;
+
+    #{$darkmode-selector} & {
+        border: 1px solid var(--input-border-color);
+    }
 
     &:not(:disabled) {
         cursor: pointer;

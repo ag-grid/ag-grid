@@ -150,7 +150,7 @@
     color: var(--link-color);
 
     #{$darkmode-selector} & {
-        color: #c3cad3;
+        color: #c3cad3 !important;
     }
 }
 
