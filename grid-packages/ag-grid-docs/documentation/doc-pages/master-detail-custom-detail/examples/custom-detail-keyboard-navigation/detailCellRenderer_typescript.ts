@@ -51,7 +51,15 @@ export class DetailCellRenderer implements ICellRendererComp {
         const currentRow = currentEl && parseInt(currentEl.getAttribute('row-index')!, 10);
         const previousRow = previousRowEl && parseInt(previousRowEl.getAttribute('row-index')!, 10);
 
-        const inputs = currentEl.querySelectorAll('input');
+        const inputs = Array.from(currentEl.querySelectorAll('input')).filter((el: any) => {
+            if (el.checkVisibility) {
+                return el.checkVisibility({
+                    checkOpacity: true,
+                    checkVisibilityCSS: true
+                });
+            }
+            return !!el.offsetParent && window.getComputedStyle(el).visibility === 'visible';
+        });
       
         // Navigating forward, or unknown previous row
         if (!previousRow || currentRow >= previousRow) {

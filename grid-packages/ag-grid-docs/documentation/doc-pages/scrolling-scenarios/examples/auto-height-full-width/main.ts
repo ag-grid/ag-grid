@@ -58,7 +58,7 @@ const gridOptions: GridOptions = {
     isFullWidthRow: isFullWidthRow,
     fullWidthCellRenderer: fullWidthCellRenderer,
     pagination: true,
-    paginationPageSize: 10,
+    paginationPageSize: 20,
     columnDefs: columnDefs,
     domLayout: 'autoHeight',
 }
@@ -84,7 +84,7 @@ function fullWidthCellRenderer(params: ICellRendererParams) {
     eDiv.innerHTML = `<div class="${cssClass}"><button>Click</button> ${message}</div>`
 
     const eButton = eDiv.querySelector('button')!;
-    eButton.addEventListener('click', function () {
+    eButton.addEventListener('click', () => {
         alert('button clicked')
     })
 

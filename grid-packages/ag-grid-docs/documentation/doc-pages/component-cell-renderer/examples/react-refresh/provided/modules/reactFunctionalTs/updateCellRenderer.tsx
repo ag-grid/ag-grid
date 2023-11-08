@@ -1,6 +1,6 @@
 import React, { useCallback } from 'react';
 
-export default props => {
+export default (props:any) => {
     const onClick = useCallback(() => {
         const { gold, silver, bronze } = props.node.data;
         props.node.updateData({

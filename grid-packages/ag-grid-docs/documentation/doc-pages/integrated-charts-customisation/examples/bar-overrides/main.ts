@@ -49,30 +49,33 @@ const gridOptions: GridOptions = {
         },
         tooltip: {
           renderer: (params) => {
+            // @ts-ignore
             return {
               content:
                 '<b>' +
                 params.xName!.toUpperCase() +
                 ':</b> ' +
-                params.xValue +
+                  // @ts-ignore charts typing
+                  params.xValue +
                 '<br/>' +
                 '<b>' +
                 params.yName!.toUpperCase() +
                 ':</b> ' +
-                params.yValue,
+                  // @ts-ignore charts typing
+                  params.yValue,
             }
           },
         },
       },
     },
   },
-  onGridReady,
+  onGridReady : (params: GridReadyEvent) => {
+    getData().then(rowData => params.api.setGridOption('rowData', rowData));
+  },
   onFirstDataRendered,
 };
 
-function onGridReady(params: GridReadyEvent) {
-  getData().then(rowData => params.api.setGridOption('rowData', rowData));
-}
+
 
 function onFirstDataRendered(params: FirstDataRenderedEvent) {
   params.api.createRangeChart({

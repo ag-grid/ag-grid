@@ -13,7 +13,7 @@ class SportRenderer implements ICellRendererComp {
     init(params: ICellRendererParams) {
         this.eGui = document.createElement('i');
 
-        this.eGui.addEventListener('click', function () {
+        this.eGui.addEventListener('click', () => {
             params.api.applyTransaction({ remove: [params.node.data] });
         });
 
@@ -180,12 +180,12 @@ function loadGrids() {
 const resetBtn = document.querySelector('button.reset')!;
 const checkboxToggle = document.querySelector('#toggleCheck') as HTMLInputElement;
 
-resetBtn.addEventListener('click', function () {
+resetBtn.addEventListener('click', () => {
     resetInputs();
     loadGrids();
 });
 
-checkboxToggle.addEventListener('change', function () {
+checkboxToggle.addEventListener('change', () => {
     leftApi!.setColumnVisible('checkbox', checkboxToggle.checked);
     leftApi!.setGridOption('suppressRowClickSelection', checkboxToggle.checked);
 });

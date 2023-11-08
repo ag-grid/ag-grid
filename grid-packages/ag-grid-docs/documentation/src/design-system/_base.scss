@@ -21,7 +21,7 @@ html {
     color: var(--default-text-color);
 
     @media (min-width: $breakpoint-docs-nav-medium) {
-        scroll-padding-top: 92px;
+        scroll-padding-top: $site-header-height + 92px;
     }
 }
 

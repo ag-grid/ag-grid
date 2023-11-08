@@ -1,0 +1,80 @@
+@use '../design-system' as *;
+
+.version {
+    padding: 16px;
+    border-radius: 8px;
+    border: 1px solid var(--border-color);
+
+    header {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+
+        b {
+            font-size: 1.25rem;
+            font-weight: 600;
+        }
+
+        span {
+            font-size: 1.25rem;
+            color: var(--secondary-color);
+        }
+
+        a {
+            text-decoration: none;
+            color: var(--link-color);
+            font-size: 1rem;
+
+            &:hover {
+                text-decoration: underline;
+            }
+        }
+    }
+
+    p {
+        margin-top: 8px;
+        margin-bottom: 4px;
+        font-size: 0.875rem;
+        color: var(--text-color);
+    }
+
+    ul {
+        list-style: none;
+        padding-left: 0;
+        margin-bottom: 16px;
+
+        li::before {
+            content: '• ';
+            color: var(--link-color);
+            font-weight: bold;
+        }
+
+        a {
+            color: var(--link-color);
+            text-decoration: none;
+
+            &:hover {
+                text-decoration: underline;
+            }
+        }
+    }
+
+    a {
+        font-size: 0.875rem;
+    }
+}
+
+
+.versions {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    grid-gap: 16px;
+    margin-top: 32px;
+    margin-bottom: 32px;
+}
+
+@media (max-width: 400px) {
+    .versions {
+        grid-template-columns: 1fr;
+    }
+}

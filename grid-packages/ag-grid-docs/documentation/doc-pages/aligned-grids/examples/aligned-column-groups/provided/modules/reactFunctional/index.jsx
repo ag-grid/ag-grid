@@ -2,6 +2,7 @@ import React, { useMemo, useRef, useState } from 'react';
 import { createRoot } from 'react-dom/client';
 import { AgGridReact } from '@ag-grid-community/react';
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
+import { SizeColumnsToFitGridStrategy } from '@ag-grid-community/core';
 
 import "@ag-grid-community/styles/ag-grid.css";
 import "@ag-grid-community/styles/ag-theme-alpine.css";
@@ -53,7 +54,7 @@ const GridExample = () => {
 
     const [rowData, setRowData] = useState([]);
 
-    const autoSizeStrategy = useMemo(() => ({
+    const autoSizeStrategy = useMemo<SizeColumnsToFitGridStrategy>(() => ({
         type: 'fitGridWidth'
     }), []);
 

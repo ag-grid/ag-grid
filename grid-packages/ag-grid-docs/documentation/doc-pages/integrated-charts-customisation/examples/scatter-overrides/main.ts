@@ -31,14 +31,17 @@ const gridOptions: GridOptions = {
           enabled: true,
           shape: 'square',
           size: 5,
+          // @ts-ignore charts typing
           maxSize: 12,
           strokeWidth: 4,
           fillOpacity: 0.7,
           strokeOpacity: 0.6,
         },
         tooltip: {
-          renderer: (params) => {
+          // @ts-ignore charts typing applied any to avoid issues
+          renderer: (params: any) => {
             var label = params.datum[params.labelKey!]
+            // @ts-ignore charts typing
             var size = params.datum[params.sizeKey!]
 
             return {
@@ -53,13 +56,16 @@ const gridOptions: GridOptions = {
                 '<b>' +
                 params.xName!.toUpperCase() +
                 ':</b> ' +
+                  // @ts-ignore charts typing
                 params.xValue +
                 '<br/>' +
                 '<b>' +
                 params.yName!.toUpperCase() +
                 ':</b> ' +
+                  // @ts-ignore charts typing
                 params.yValue +
                 (size != null
+                    // @ts-ignore charts typing
                   ? '<br/><b>' + params.sizeName!.toUpperCase() + ':</b> ' + size
                   : ''),
             }
@@ -68,13 +74,13 @@ const gridOptions: GridOptions = {
       },
     },
   },
-  onGridReady,
+  onGridReady : (params: GridReadyEvent) => {
+    getData().then(rowData => params.api.setGridOption('rowData', rowData));
+  },
   onFirstDataRendered,
 };
 
-function onGridReady(params: GridReadyEvent) {
-  getData().then(rowData => params.api.setGridOption('rowData', rowData));
-}
+
 
 function onFirstDataRendered(params: FirstDataRenderedEvent) {
   params.api.createRangeChart({

@@ -108,7 +108,7 @@ In the example below, note the following:
  - The group panel has been enabled, allowing a dynamic configuration of groups.
  - The group child counts and aggregations update in sync with changes to the leaf rows.
 
-<grid-example title='Showcase Example' name='transactions-showcase' type='generated' options='{ "enterprise": true, "exampleHeight": 670, "extras": ["alasql"], "modules": ["serverside"] }'></grid-example>
+<grid-example title='Showcase Example' name='transactions-showcase' type='generated' options='{ "enterprise": true, "exampleHeight": 670, "extras": ["alasql"], "modules": ["serverside", "rowgrouping"] }'></grid-example>
 
 ## Tree Data
 

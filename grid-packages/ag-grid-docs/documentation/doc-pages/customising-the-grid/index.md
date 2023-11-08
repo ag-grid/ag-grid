@@ -36,21 +36,37 @@ There are three ways to style the grid:
 
 All grids require a theme and we provide 5 themes out-of-the-box: [Alpine](https://www.ag-grid.com/example/?theme=ag-theme-alpine), [Alpine Dark](https://www.ag-grid.com/example/?theme=ag-theme-alpine-dark), [Balham](https://www.ag-grid.com/example/?theme=ag-theme-balham), [Balham Dark](https://www.ag-grid.com/example/?theme=ag-theme-balham-dark), and [Material](https://www.ag-grid.com/example/?theme=ag-theme-material).
 
-To use a theme, set the classname of the div that contains the grid to the name of the theme. Let's try this out by adding `ag-theme-material` to our container div:
+To use a theme, set the classname of the div that contains the grid to the name of the theme. Let's try this out by adding `ag-theme-alpine-dark` to our container div:
 
 <snippet transform={false} language="jsx">
-|&lt;div className="ag-theme-material" style={{ width: 600, height: 500 }}>
+|&lt;div className="ag-theme-alpine-dark" style={{ width: 600, height: 500 }}>
 |  &lt;AgGridReact ... />
 |&lt;/div>
 </snippet>
 
-_Note: Themes can be customised by overriding [CSS variables](/global-style-customisation-variables/), or you can [create your own theme](/global-style-customisation/#creating-a-reusable-package-of-design-customisations) entirely. Read our [Style Customisation](/global-style-customisation/) guide for more info._
+### Customising Themes
+
+All themes can be customised by overriding [CSS variables](/global-style-customisation-variables/).
+
+Let's test this out by creating a new `styles.css` file with a single selector that matches our chosen theme(`ag-theme-alpine-dark`) and override the `--ag-alpine-active-colour` to change the colour of active elements within the grid:
+
+<snippet transform={false} language="css">
+.ag-theme-alpine-dark {
+  --ag-checkbox-checked-color: rgb(126, 46, 132);
+}
+</snippet>
+
+We should now see the checkboxes styled with our new colour:
+
+<grid-example title='Custom Theme Example' name='custom-theme-example' type='generated' options='{ "exampleHeight": 550 }'></grid-example>
+
+_Note: You can also create your own theme entirely. Read our [Style Customisation](/global-style-customisation/) guide for more info._
 
 ### Styling Rows & Cells
 
 In addition to themes, CSS classes can be applied to rows with __Row Classes__ and to cells with __Cell Classes__.
 
-__Row Classes__ are defined using the `rowClass` prop, with a CSS classname as the value. Let's try this by creating a new `styles.css` file with a `.row` selector to control the font of our rows:
+__Row Classes__ are defined using the `rowClass` prop, with a CSS classname as the value. Let's try this by adding a new `.row` selector in our `styles.css` file to control the font of our rows:
 
 <snippet transform={false} language="css">
 .row {
@@ -263,17 +279,17 @@ Now, when we run the grid, we should see a country flag in place of the name:
 
 Let's put what you've learned so far into action by modifying the grid:
 
-1. Format the Date column using `.toLocaleDateString()`;
+1. Set the colour of `--ag-header-column-resize-handle-color` to `rgb(155, 155, 155)`
 
-    _Hint: Use a `valueFormatter` on the 'Date' column to format its value_
+    _Hint: `--ag-header-column-resize-handle-color` is a theme CSS variable_
 
 2. Apply a CSS Class to the 'mission' column that sets `cursor: pointer`.
 
     _Hint: Use the `cellClass` property on the 'Mission' column to provide a CSS class to the cells_
 
-3. Implement a Custom Tooltip on the 'Mission' column.
+3. Format the Date column using `.toLocaleDateString()`;
 
-    _Hint: Use the `customTooltip` property on the 'Mission' Column to provide a custom Tooltip component_
+    _Hint: Use a `valueFormatter` on the 'Date' column to format its value_
 
 Once complete, your grid should look like the example below. If you're stuck, check out the source code to see how its done:
 
@@ -286,7 +302,7 @@ Once complete, your grid should look like the example below. If you're stuck, ch
 Congratulations! You've completed the tutorial and customised, styled, & extended your grid. By now, you should be familiar with several concepts:
 
 - __Themes:__ CSS Classes that control the look and feel of the entire grid. Choose from and customise 5 pre-made themes, or create your own.
-- __Styles:__ Apply CSS Classes to rows & cells directly, either by default or based on arbirary data in the grid.
+- __Styles:__ Apply CSS Classes to rows & cells directly, either by default or based on arbitrary data in the grid.
 - __Value Formatters:__ Format basic text values into more human readable content
 - __Cell Renderers:__ Add your own custom components to change the look & feel and extend the capabilities of the grid.
 

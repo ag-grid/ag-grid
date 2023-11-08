@@ -1,7 +1,6 @@
 /************************************************************************************************
  * If you change the GridOptions interface, you must also update PropertyKeys to be consistent. *
  ************************************************************************************************/
-import { ColumnApi } from "../columns/columnApi";
 import {
     AdvancedFilterBuilderVisibleChangedEvent,
     AsyncTransactionsFlushed, BodyScrollEndEvent, BodyScrollEvent, CellClickedEvent,
@@ -77,7 +76,6 @@ import {
     VirtualRowRemovedEvent,
     StateUpdatedEvent
 } from "../events";
-import { GridApi } from "../gridApi";
 import { HeaderPosition } from "../headerRendering/common/headerPosition";
 import {
     CsvExportParams,
@@ -95,7 +93,7 @@ import { IViewportDatasource } from "../interfaces/iViewportDatasource";
 import { IRowDragItem } from "../rendering/row/rowDragComp";
 import { ILoadingCellRendererParams } from "../rendering/cellRenderers/loadingCellRenderer";
 import { CellPosition } from "./cellPositionUtils";
-import { ColDef, ColGroupDef, IAggFunc, SortDirection } from "./colDef";
+import { ColDef, ColGroupDef, ColTypeDef, IAggFunc, SortDirection } from "./colDef";
 import { FillOperationParams, GetChartToolbarItemsParams, GetContextMenuItemsParams, GetGroupRowAggParams, GetLocaleTextParams, GetMainMenuItemsParams, GetRowIdParams, GetServerSideGroupLevelParamsParams, InitialGroupOrderComparatorParams, IsApplyServerSideTransactionParams, IsExternalFilterPresentParams, IsFullWidthRowParams, IsGroupOpenByDefaultParams, IsServerSideGroupOpenByDefaultParams, NavigateToNextCellParams, NavigateToNextHeaderParams, PaginationNumberFormatterParams, PostProcessPopupParams, PostSortRowsParams, ProcessDataFromClipboardParams, ProcessRowParams, RowHeightParams, SendToClipboardParams, TabToNextCellParams, TabToNextHeaderParams, GetGroupAggFilteringParams, GetGroupIncludeFooterParams } from "../interfaces/iCallbackParams";
 import { SideBarDef } from "../interfaces/iSideBar";
 import { IRowNode } from "../interfaces/iRowNode";
@@ -191,8 +189,8 @@ export interface GridOptions<TData = any> {
     defaultColDef?: ColDef<TData>;
     /** A default column group definition. All column group definitions will use these properties. Items defined in the actual column group definition get precedence. */
     defaultColGroupDef?: Partial<ColGroupDef<TData>>;
-    /** An object map of custom column types which contain groups of properties that column definitions can inherit by referencing in their `type` property. */
-    columnTypes?: { [key: string]: ColDef<TData>; };
+    /** An object map of custom column types which contain groups of properties that column definitions can reuse by referencing in their `type` property. */
+    columnTypes?: { [key: string]: ColTypeDef<TData>; };
     /**
      * An object map of cell data types to their definitions.
      * Cell data types can either override/update the pre-defined data types
@@ -341,13 +339,6 @@ export interface GridOptions<TData = any> {
     advancedFilterParent?: HTMLElement | null;
     /** Customise the parameters passed to the Advanced Filter Builder. */
     advancedFilterBuilderParams?: IAdvancedFilterBuilderParams;
-
-    /**
-     * Set the theme color scheme. All themes support 'dark' and 'light' color schemes. 'auto'
-     * Uses the CSS 'prefers-color-scheme' media feature to determine the user's preference.
-     * Some themes support additional colour schemes.
-     */
-    colorScheme?: 'dark' | 'light' | 'auto' | string;
 
     // *** Integrated Charts *** //
     /** Set to `true` to Enable Charts. Default: `false` */

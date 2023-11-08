@@ -17,26 +17,26 @@ import {
     PostConstruct,
     RefSelector,
     SeriesChartType,
-    WithoutGridCommon,
     UpdateChartParams,
+    WithoutGridCommon,
 } from "@ag-grid-community/core";
-import { AgChartInstance, AgChartThemeOverrides, AgChartThemePalette } from "ag-charts-enterprise";
-import { ChartMenu } from "./menu/chartMenu";
-import { TitleEdit } from "./chartTitle/titleEdit";
-import { ChartController, DEFAULT_THEMES } from "./chartController";
-import { ChartDataModel, ChartModelParams } from "./model/chartDataModel";
-import { BarChartProxy } from "./chartProxies/cartesian/barChartProxy";
-import { AreaChartProxy } from "./chartProxies/cartesian/areaChartProxy";
-import { ChartProxy, ChartProxyParams } from "./chartProxies/chartProxy";
-import { LineChartProxy } from "./chartProxies/cartesian/lineChartProxy";
-import { PieChartProxy } from "./chartProxies/polar/pieChartProxy";
-import { ScatterChartProxy } from "./chartProxies/cartesian/scatterChartProxy";
-import { HistogramChartProxy } from "./chartProxies/cartesian/histogramChartProxy";
-import { ChartTranslationService } from "./services/chartTranslationService";
-import { ChartCrossFilterService } from "./services/chartCrossFilterService";
-import { CrossFilteringContext } from "../chartService";
-import { ChartOptionsService } from "./services/chartOptionsService";
-import { ComboChartProxy } from "./chartProxies/combo/comboChartProxy";
+import {AgChartInstance, AgChartThemeOverrides, AgChartThemePalette} from "ag-charts-enterprise";
+import {ChartMenu} from "./menu/chartMenu";
+import {TitleEdit} from "./chartTitle/titleEdit";
+import {ChartController, DEFAULT_THEMES} from "./chartController";
+import {ChartDataModel, ChartModelParams} from "./model/chartDataModel";
+import {BarChartProxy} from "./chartProxies/cartesian/barChartProxy";
+import {AreaChartProxy} from "./chartProxies/cartesian/areaChartProxy";
+import {ChartProxy, ChartProxyParams} from "./chartProxies/chartProxy";
+import {LineChartProxy} from "./chartProxies/cartesian/lineChartProxy";
+import {PieChartProxy} from "./chartProxies/polar/pieChartProxy";
+import {ScatterChartProxy} from "./chartProxies/cartesian/scatterChartProxy";
+import {HistogramChartProxy} from "./chartProxies/cartesian/histogramChartProxy";
+import {ChartTranslationService} from "./services/chartTranslationService";
+import {ChartCrossFilterService} from "./services/chartCrossFilterService";
+import {CrossFilteringContext} from "../chartService";
+import {ChartOptionsService} from "./services/chartOptionsService";
+import {ComboChartProxy} from "./chartProxies/combo/comboChartProxy";
 
 export interface GridChartParams {
     chartId: string;
@@ -145,7 +145,6 @@ export class GridChartComp extends Component {
             this.addManagedListener(this.chartMenu, ChartMenu.EVENT_DOWNLOAD_CHART, () => this.downloadChart());
         }
 
-        this.initWebsiteDarkMode();
         this.update();
         this.raiseChartCreatedEvent();
     }
@@ -477,53 +476,6 @@ export class GridChartComp extends Component {
             chartId,
             chartThemeOverrides
         });
-    }
-
-    private initWebsiteDarkMode(): void {
-        const eDocument = this.gridOptionsService.getDocument();
-
-        // exit if not in example runner to prevent side effects
-        if (!eDocument.querySelector('[data-app-identifier="AG-GRID-EXAMPLE-RUNNER"]')) return;
-
-        const isInitialModeDark = (): boolean =>
-            eDocument.documentElement?.getAttribute('data-default-theme')?.endsWith('-dark') ?? false;
-
-        const applyThemeSuffix = (theme: string, isDark: boolean, suffix: string): string =>
-            isDark ? (theme.endsWith(suffix) ? theme : `${theme}${suffix}`) : theme.replace(suffix, '');
-
-        const updateChartThemes = (isDark: boolean): void => {
-            const suffix = isDark ? '-dark' : '-light';
-            const customThemeName = `my-custom-theme${suffix}`;
-
-            const themes = this.chartController.getThemes();
-            const modifiedThemes = Array.from(new Set(themes.map(theme => {
-                if (theme.startsWith('my-custom-theme-')) return customThemeName;
-                return applyThemeSuffix(theme, isDark, '-dark');
-            })));
-
-            if (!modifiedThemes.includes(customThemeName)) {
-                modifiedThemes.push(customThemeName);
-            }
-
-            // updating the `chartThemes` grid option will cause the chart to reactively update!
-            this.gridOptionsService.updateGridOptions({ options: { chartThemes: modifiedThemes } });
-        };
-
-        const handleColorSchemeChange = (event: CustomEvent<{ darkMode: boolean }>): void => {
-            const { darkMode } = event.detail;
-            updateChartThemes(darkMode);
-        };
-
-        // update chart themes when example first loads
-        updateChartThemes(isInitialModeDark());
-
-        // listen for user-triggered dark mode changes
-        eDocument.addEventListener('color-scheme-change', handleColorSchemeChange);
-
-        // store event listener to remove when the chart is destroyed
-        this.onDestroyColorSchemeChangeListener = () => {
-            eDocument.removeEventListener('color-scheme-change', handleColorSchemeChange);
-        };
     }
 
     private raiseChartCreatedEvent(): void {

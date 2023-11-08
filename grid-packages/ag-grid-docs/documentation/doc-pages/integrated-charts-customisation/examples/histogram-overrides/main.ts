@@ -19,7 +19,8 @@ const gridOptions: GridOptions = {
   enableCharts: true,
   chartThemeOverrides: {
     histogram: {
-      series: {
+    series: {
+        // @ts-ignore charts typing
         bins: [
           [0, 10],
           [10, 40],
@@ -64,8 +65,10 @@ const gridOptions: GridOptions = {
                 binSize +
                 (binSize >= 2 ? ' countries' : ' country') +
                 ' got between ' +
+                  // @ts-ignore charts typing
                 params.xValue[0] +
                 ' and ' +
+                  // @ts-ignore charts typing
                 params.xValue[1] +
                 ' ' +
                 medalColour +
@@ -76,13 +79,13 @@ const gridOptions: GridOptions = {
       },
     },
   },
-  onGridReady,
+  onGridReady : (params: GridReadyEvent) => {
+    getData().then(rowData => params.api.setGridOption('rowData', rowData));
+  },
   onFirstDataRendered,
 };
 
-function onGridReady(params: GridReadyEvent) {
-  getData().then(rowData => params.api.setGridOption('rowData', rowData));
-}
+
 
 function onFirstDataRendered(params: FirstDataRenderedEvent) {
   params.api.createRangeChart({
@@ -100,3 +103,29 @@ document.addEventListener('DOMContentLoaded', function () {
   const gridDiv = document.querySelector<HTMLElement>('#myGrid')!
   gridApi = createGrid(gridDiv, gridOptions);
 })
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

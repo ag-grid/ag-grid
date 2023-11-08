@@ -74,7 +74,7 @@ function getAthletesAsync(params: SetFilterValuesFuncParams) {
   var countries = fakeServer.getAthletes()
 
   // simulating real server call with a 500ms delay
-  setTimeout(function () {
+  setTimeout(() => {
     params.success(countries)
   }, 500)
 }
@@ -122,7 +122,7 @@ function getServerSideDatasource(server: any): IServerSideDatasource {
       var response = server.getData(params.request)
 
       // adding delay to simulate real server call
-      setTimeout(function () {
+      setTimeout(() => {
         if (response.success) {
           // call the success callback
           params.success({ rowData: response.rows, rowCount: response.lastRow })

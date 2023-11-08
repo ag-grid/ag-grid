@@ -108,7 +108,7 @@ function moveToPath(newParentPath: string[], node: IRowNode, allUpdatedNodes: an
   allUpdatedNodes.push(node.data)
 
   if (node.childrenAfterGroup) {
-    node.childrenAfterGroup.forEach(function (childNode) {
+    node.childrenAfterGroup.forEach((childNode) => {
       moveToPath(newChildPath, childNode, allUpdatedNodes)
     })
   }

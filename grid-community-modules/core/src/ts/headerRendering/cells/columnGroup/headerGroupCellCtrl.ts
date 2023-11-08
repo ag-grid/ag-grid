@@ -103,9 +103,9 @@ export class HeaderGroupCellCtrl extends AbstractHeaderCellCtrl<IHeaderGroupCell
         const width = rect.width;
 
         const xPosition = ColumnMoveHelper.normaliseX(
-            isLeft ? (left - 20) : (left + width + 20),
+            isLeft !== isRtl ? (left - 20) : (left + width + 20),
             pinned,
-            false,
+            true,
             gridOptionsService,
             ctrlsService
         );

@@ -395,6 +395,7 @@ export {
     ColGroupDef,
     ColDef,
     AbstractColDef,
+    ColTypeDef,
     ValueSetterParams,
     ValueParserParams,
     ValueFormatterParams,

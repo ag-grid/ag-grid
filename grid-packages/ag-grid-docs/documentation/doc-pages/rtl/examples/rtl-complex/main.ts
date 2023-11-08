@@ -488,7 +488,7 @@ const monthGroup: ColGroupDef = {
     children: [],
 };
 defaultCols.push(monthGroup);
-months.forEach(function (month) {
+months.forEach((month) => {
     const child: ColDef = {
         headerName: month,
         field: month.toLocaleLowerCase(),
@@ -569,7 +569,7 @@ function createData() {
     let row = 0;
     const data: any[] = [];
 
-    const intervalId = setInterval(function () {
+    const intervalId = setInterval(() => {
         if (loadInstanceCopy != loadInstance) {
             clearInterval(intervalId)
             return
@@ -585,7 +585,7 @@ function createData() {
 
         if (row >= rowCount) {
             clearInterval(intervalId)
-            setTimeout(function () {
+            setTimeout(() => {
                 gridApi!.setGridOption('columnDefs', colDefs)
                 gridApi!.setGridOption('rowData', data)
             }, 0)
@@ -616,7 +616,7 @@ function createRowItem(row: number, colCount: number) {
     rowItem.rating = Math.round(pseudoRandom() * 5)
 
     let totalWinnings = 0;
-    months.forEach(function (month) {
+    months.forEach((month) => {
         const value = Math.round(pseudoRandom() * 10000000) / 100 - 20;
         rowItem[month.toLocaleLowerCase()] = value
         totalWinnings += value

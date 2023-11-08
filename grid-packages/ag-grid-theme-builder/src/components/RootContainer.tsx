@@ -1,16 +1,18 @@
 import '@ag-grid-community/styles/ag-grid.css';
-import '@ag-grid-community/styles/ag-theme-quartz.css';
 import '@ag-grid-community/styles/ag-theme-alpine.css';
 import '@ag-grid-community/styles/ag-theme-balham.css';
 import '@ag-grid-community/styles/ag-theme-material.css';
+import '@ag-grid-community/styles/ag-theme-quartz.css';
 import { TrashCan } from '@carbon/icons-react';
 import styled from '@emotion/styled';
+import { useColorScheme } from 'atoms/colorScheme';
 import { useParentTheme } from 'atoms/parentTheme';
 import { useRenderedCss } from 'atoms/renderedCss';
 import { useResetVariableDefaults } from 'atoms/variableDefaults';
 import { Inspector } from 'components/inspector/Inspector';
 import { memo, useLayoutEffect, useState } from 'react';
 import { Tooltip } from 'react-tooltip';
+import { ColorSchemeMenu } from './ColorSchemeMenu';
 import { CopyButton } from './CopyButton';
 import { GridPreview } from './GridPreview';
 import { IconButton } from './IconButton';
@@ -18,6 +20,7 @@ import { ParentThemeMenu } from './ParentThemeMenu';
 
 export const RootContainer = memo(() => {
   const parentTheme = useParentTheme();
+  const colorScheme = useColorScheme();
   const renderedCss = useRenderedCss();
   const resetVariableDefaults = useResetVariableDefaults();
   const [hasRenderedStyles, setHasRenderedStyles] = useState(false);
@@ -30,12 +33,13 @@ export const RootContainer = memo(() => {
   return (
     <>
       <style>{renderedCss}</style>
-      <DefaultsElement className={parentTheme.name} id="theme-builder-defaults-computation" />
+      <DefaultsElement className={`${parentTheme.name}-${colorScheme}`} id="theme-builder-defaults-computation" />
       <Container>
         {hasRenderedStyles && (
           <>
             <TopRow>
               <ParentThemeMenu />
+              <ColorSchemeMenu />
               <IconButton
                 label="Discard changes"
                 icon={TrashCan}

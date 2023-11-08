@@ -50,7 +50,7 @@ function countryKeyCreator(params: KeyCreatorParams) {
 
 function patchData(data: any[]) {
     // hack the data, replace each country with an object of country name and code
-    data.forEach(function (row) {
+    data.forEach((row) => {
         const countryName = row.country
         const countryCode = countryName.substring(0, 2).toUpperCase()
         row.country = {

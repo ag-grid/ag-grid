@@ -31,14 +31,14 @@ const gridOptions: GridOptions = {
   enableRangeSelection: true,
   popupParent: document.body,
   enableCharts: true,
-  onGridReady,
+  onGridReady : (params: GridReadyEvent) => {
+    getData().then(rowData => params.api.setGridOption('rowData', rowData));
+  },
   onFirstDataRendered,
   createChartContainer,
 };
 
-function onGridReady(params: GridReadyEvent) {
-  getData().then(rowData => params.api.setGridOption('rowData', rowData));
-}
+
 
 function onFirstDataRendered(params: FirstDataRenderedEvent) {
   currentChartRef = params.api.createRangeChart({

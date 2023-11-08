@@ -93,8 +93,7 @@ document.addEventListener('DOMContentLoaded', function () {
   var gridDiv = document.querySelector<HTMLElement>('#myGrid')!
   gridApi = createGrid(gridDiv, gridOptions);
 
-  // do http request to get our sample data - not using any framework to keep the example self contained.
-  // you will probably use a framework like JQuery, Angular or something else to do your HTTP calls.
+
   fetch('https://www.ag-grid.com/example-assets/stocks.json')
     .then(response => response.json())
     .then(function (data) {
@@ -104,7 +103,7 @@ document.addEventListener('DOMContentLoaded', function () {
       mockServer.init(data)
 
       var viewportDatasource = createViewportDatasource(mockServer)
-      gridApi!.setViewportDatasource(viewportDatasource)
+      gridApi!.setGridOption('viewportDatasource', viewportDatasource)
     })
 })
 

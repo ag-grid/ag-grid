@@ -62,6 +62,7 @@ const gridOptions: GridOptions = {
       },
       series: {
         tooltip: {
+          // @ts-ignore charts typing
           renderer: ({ xValue, yValue }) => {
             xValue = xValue instanceof Date ? xValue : new Date(xValue);
             return {
@@ -75,13 +76,11 @@ const gridOptions: GridOptions = {
   chartToolPanelsDef: {
     panels: ['data', 'format']
   },
-  onGridReady,
+  onGridReady: (params: GridReadyEvent) => {
+    getData().then(rowData => params.api.setGridOption('rowData', rowData));
+  },
   onFirstDataRendered,
 };
-
-function onGridReady(params: GridReadyEvent) {
-  getData().then(rowData => params.api.setGridOption('rowData', rowData));
-}
 
 function onFirstDataRendered(params: FirstDataRenderedEvent) {
   if (currentChartRef) {
@@ -110,7 +109,7 @@ function toggleAxis() {
   axisBtn.value = axisBtn.value === 'time' ? 'category' : 'time'
 
   const columnDefs: ColDef[] = getColumnDefs()
-  columnDefs.forEach(function (colDef) {
+  columnDefs.forEach((colDef) => {
     if (colDef.field === 'date') {
       colDef.chartDataType = axisBtn.value
     }

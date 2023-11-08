@@ -31,7 +31,7 @@ const columnDefs: (ColDef | ColGroupDef)[] = [
 function fillAllCellsWithWidthMeasurement() {
   Array.prototype.slice
     .call(document.querySelectorAll('.ag-cell'))
-    .forEach(function (cell) {
+    .forEach((cell) => {
       var width = cell.offsetWidth
       var isFullWidthRow = cell.parentElement.childNodes.length === 1
       cell.textContent = (isFullWidthRow ? 'Total width: ' : '') + width + 'px'

@@ -67,13 +67,13 @@ export const Toolbar = ({ gridRef, dataSize, setDataSize, rowCols, gridTheme, se
 
                     <label htmlFor="grid-theme">Theme:</label>
                     <select id="grid-theme" onChange={onThemeChanged} value={gridTheme || ''}>
-                        <option value="ag-theme-quartz:light">Quartz (light)</option>
-                        <option value="ag-theme-quartz:dark">Quartz (dark)</option>
-                        <option value="ag-theme-quartz:darkblue">Quartz (dark blue)</option>
-                        <option value="ag-theme-alpine:light">Alpine (light)</option>
-                        <option value="ag-theme-alpine:dark">Alpine (dark)</option>
-                        <option value="ag-theme-balham:light">Balham (light)</option>
-                        <option value="ag-theme-balham:dark">Balham (dark)</option>
+                        <option value="ag-theme-quartz">Quartz (light)</option>
+                        <option value="ag-theme-quartz-dark">Quartz (dark)</option>
+                        <option value="ag-theme-quartz-dark-blue">Quartz (dark blue)</option>
+                        <option value="ag-theme-alpine">Alpine (light)</option>
+                        <option value="ag-theme-alpine-dark">Alpine (dark)</option>
+                        <option value="ag-theme-balham">Balham (light)</option>
+                        <option value="ag-theme-balham-dark">Balham (dark)</option>
                         <option value="ag-theme-material">Material</option>
                     </select>
 

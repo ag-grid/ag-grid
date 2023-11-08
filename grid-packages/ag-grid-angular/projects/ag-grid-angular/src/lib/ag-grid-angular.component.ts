@@ -45,6 +45,7 @@ import {
     ChartToolPanelsDef,
     ColDef,
     ColGroupDef,
+    ColTypeDef,
     ColumnAggFuncChangeRequestEvent,
     ColumnEverythingChangedEvent,
     ColumnGroupOpenedEvent,
@@ -384,8 +385,8 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     @Input() public defaultColDef: ColDef<TData> | undefined = undefined;
     /** A default column group definition. All column group definitions will use these properties. Items defined in the actual column group definition get precedence.     */
     @Input() public defaultColGroupDef: Partial<ColGroupDef<TData>> | undefined = undefined;
-    /** An object map of custom column types which contain groups of properties that column definitions can inherit by referencing in their `type` property.     */
-    @Input() public columnTypes: { [key: string]: ColDef<TData>; } | undefined = undefined;
+    /** An object map of custom column types which contain groups of properties that column definitions can reuse by referencing in their `type` property.     */
+    @Input() public columnTypes: { [key: string]: ColTypeDef<TData>; } | undefined = undefined;
     /** An object map of cell data types to their definitions.
          * Cell data types can either override/update the pre-defined data types
          * (`'text'`, `'number'`,  `'boolean'`,  `'date'`,  `'dateString'` or  `'object'`),
@@ -509,11 +510,6 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     @Input() public advancedFilterParent: HTMLElement | null | undefined = undefined;
     /** Customise the parameters passed to the Advanced Filter Builder.     */
     @Input() public advancedFilterBuilderParams: IAdvancedFilterBuilderParams | undefined = undefined;
-    /** Set the theme color scheme. All themes support 'dark' and 'light' color schemes. 'auto'
-         * Uses the CSS 'prefers-color-scheme' media feature to determine the user's preference.
-         * Some themes support additional colour schemes.
-         */
-    @Input() public colorScheme: 'dark' | 'light' | 'auto' | string | undefined = undefined;
     /** Set to `true` to Enable Charts. Default: `false`     */
     @Input() public enableCharts: boolean | undefined = undefined;
     /** The list of chart themes that a user can chose from in the chart settings panel.

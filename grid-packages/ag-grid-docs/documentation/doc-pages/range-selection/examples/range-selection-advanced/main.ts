@@ -94,13 +94,13 @@ function onRangeSelectionChanged(event: RangeSelectionChangedEvent) {
   var sum = 0;
 
   if (cellRanges) {
-    cellRanges.forEach(function (range: CellRange) {
+    cellRanges.forEach((range: CellRange) => {
       // get starting and ending row, remember rowEnd could be before rowStart
       var startRow = Math.min(range.startRow!.rowIndex, range.endRow!.rowIndex)
       var endRow = Math.max(range.startRow!.rowIndex, range.endRow!.rowIndex)
 
       for (var rowIndex = startRow; rowIndex <= endRow; rowIndex++) {
-        range.columns.forEach(function (column) {
+        range.columns.forEach((column) => {
           var rowModel = gridApi.getModel()
           var rowNode = rowModel.getRow(rowIndex)!
           var value = gridApi.getValue(column, rowNode)

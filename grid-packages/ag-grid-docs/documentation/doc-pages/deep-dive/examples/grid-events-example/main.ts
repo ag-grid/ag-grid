@@ -13,6 +13,7 @@ const gridOptions: GridOptions = {
     columnDefs: [
         {
             field: "mission",
+            // @ts-ignore charts typing
             reiszeable: false
         },
         {
@@ -41,7 +42,7 @@ const gridOptions: GridOptions = {
     },
     // Grid Options & Callbacks
     pagination: true,
-    onCellValueChanged: (event) => { 
+    onCellValueChanged: (event:any) => {
         console.log(`New Cell Value: ${event.value}`)
     }
 }

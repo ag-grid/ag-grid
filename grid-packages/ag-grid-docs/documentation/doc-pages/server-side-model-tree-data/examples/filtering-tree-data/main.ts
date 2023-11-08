@@ -102,7 +102,7 @@ function getServerSideDatasource(server: any): IServerSideDatasource {
       console.log('[Datasource] - rows requested by grid: ', params.request)
 
       // simulating real server call with a 500ms delay
-      setTimeout(function () {
+      setTimeout(() => {
         // get data for request from our fake server
         var response = server.getData(params.request)
         if (response.success) {
@@ -130,7 +130,7 @@ function getDatesAsync(params: SetFilterValuesFuncParams<any, Date>) {
   }
 
   // simulating real server call with a 500ms delay
-  setTimeout(function () {
+  setTimeout(() => {
     params.success(dates)
   }, 500)
 }
@@ -144,7 +144,7 @@ function getEmployeesAsync(params: SetFilterValuesFuncParams<any, string[]>) {
   var employees = fakeServer.getEmployees()
 
   // simulating real server call with a 500ms delay
-  setTimeout(function () {
+  setTimeout(() => {
     params.success(employees)
   }, 500)
 }

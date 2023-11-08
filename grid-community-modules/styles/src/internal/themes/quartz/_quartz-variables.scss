@@ -1,77 +1,6 @@
 @use "sass:color";
 
-
-@mixin -blue-vars {
-    --ag-background-color: #0d161eff;
-    --ag-foreground-color: #ffffffff;
-    --ag-border-color: #273039ff;
-    --ag-secondary-border-color: #58565280;
-    --ag-modal-overlay-background-color: #181d1fa8;
-    --ag-header-background-color: #171f27ff;
-    --ag-tooltip-background-color: #222628ff;
-    --ag-odd-row-background-color: #151c24ff;
-    --ag-control-panel-background-color: #222628ff;
-    --ag-subheader-background-color: transparent;
-    --ag-input-disabled-background-color: #68686e12;
-    --ag-disabled-foreground-color: #ffffff80;
-    --ag-chip-background-color: #ffffff12;
-    --ag-input-disabled-border-color: #68686e4d;
-    --ag-row-hover-color: #1f2831ff;
-    --ag-input-border-color: #323d48ff;
-    --ag-data-color: #ffffffff;
-    --ag-alpine-active-color: #2196f3ff;
-    --ag-selected-row-background-color: #2196f34d;
-    --ag-column-hover-color: #2196f31a;
-    --ag-input-focus-border-color: #2196f366;
-    --ag-range-selection-background-color: #2196f333;
-    --ag-range-selection-background-color-2: #2196f35c;
-    --ag-range-selection-background-color-3: #2196f37d;
-    --ag-range-selection-background-color-4: #2196f396;
-    --ag-invalid-color: #e02525ff;
-    --ag-checkbox-unchecked-color: #3a4550ff;
-    --ag-side-button-selected-background-color: #00000000;
-    --ag-subheader-toolbar-background-color: #ffffff00;
-    --ag-range-selection-chart-category-background-color: #00ff841a;
-    --ag-range-selection-chart-background-color: #0058ff1a;
-    --ag-header-cell-hover-background-color: #ffffff00;
-    --ag-value-change-value-highlight-background-color: #16a08580;
-    --ag-value-change-delta-up-color: #43a047ff;
-    --ag-value-change-delta-down-color: #e53935ff;
-    --ag-alpine-active: #2196f3ff;
-    --ag-border-radius: 8px;
-    --ag-header-column-resize-handle-display: 0px;
-    --ag-header-column-resize-handle-height: 30px;
-    --ag-grid-size: 6px;
-    --ag-icon-size: 16px;
-    --ag-row-height: 42px;
-    --ag-header-height: 48px;
-    --ag-list-item-height: 24px;
-    --ag-cell-horizontal-padding: 18px;
-    --ag-cell-widget-spacing: 12px;
-    --ag-widget-container-vertical-padding: 12px;
-    --ag-widget-container-horizontal-padding: 12px;
-    --ag-widget-vertical-spacing: 9px;
-    --ag-toggle-button-height: 18px;
-    --ag-toggle-button-width: 28px;
-    --ag-font-size: 13px;
-    --ag-selected-tab-underline-width: 2px;
-    --ag-tab-min-width: 240px;
-    --ag-side-bar-panel-width: 250px;
-    --ag-row-width: 100px;
-    --ag-toggle-button-border-width: 1px;
-    --ag-filter-tool-panel-group-indent: 16px;
-    --ag-menu-min-width: 181px;
-    --ag-row-border-width: 1px;
-    --ag-header-column-separator-width: 1px;
-    --ag-header-column-separator-height: 100px;
-    --ag-row-group-indent-size: 28px;
-    --ag-widget-horizontal-spacing: 12px;
-    --ag-header-column-resize-handle-width: 1px;
-    --ag-secondary-data-color: #ffffffff;
-    --ag-hover-menu-color: #1f2831ff;
-};
-
-.ag-theme-quartz {
+[class*="ag-theme-quartz"] {
     // COLOURS
     
     // main colours (overridden by dark mode)
@@ -84,7 +13,7 @@
     --ag-tooltip-background-color: #fbfbfb;
     --ag-odd-row-background-color: #fcfcfc;
     --ag-control-panel-background-color: #fbfbfb;
-    --ag-subheader-background-color: #fff;
+    --ag-subheader-background-color: transparent;
     --ag-invalid-color: #e02525;
     --ag-checkbox-unchecked-color: #cccccc;
     --ag-advanced-filter-join-pill-color: #f08e8d;
@@ -170,7 +99,6 @@
     --ag-tooltip-background-color: #222628;
     --ag-odd-row-background-color: #222628;
     --ag-control-panel-background-color: #222628;
-    --ag-subheader-background-color: #000;
     --ag-input-disabled-background-color: #68686e12;
     --ag-input-focus-box-shadow:
         0 0 2px 0.5px rgba(255, 255, 255, 0.5),
@@ -181,28 +109,29 @@
     --ag-advanced-filter-column-pill-color: #355f2d;
     --ag-advanced-filter-option-pill-color: #5a3168;
     --ag-advanced-filter-value-pill-color: #374c86;
+
+    color-scheme: dark;
 }
 
-.ag-theme-quartz[data-ag-color-scheme='dark'] {
+.ag-theme-quartz-dark {
     @include -dark-vars();
 }
 
 @media (prefers-color-scheme: dark) {
-    .ag-theme-quartz[data-ag-color-scheme='auto'] {
+    .ag-theme-quartz-auto {
         @include -dark-vars();
     }
 }
 
-.ag-theme-quartz[data-ag-color-scheme='darkblue'] {
-    // TODO look these up
+.ag-theme-quartz-dark-blue {
     --ag-background-color: #0d161e;
     --ag-foreground-color: #fff;
     --ag-border-color: #273039;
     --ag-secondary-border-color: #58565280;
     --ag-header-background-color: #171f27;
-    --ag-tooltip-background-color: #222628;
+    --ag-tooltip-background-color: #171f27;
     --ag-odd-row-background-color: #151c24;
-    --ag-control-panel-background-color: #222628;
+    --ag-control-panel-background-color: #171f27;
     --ag-input-disabled-background-color: #68686e12;
     --ag-input-focus-box-shadow:
         0 0 2px 0.5px rgba(255, 255, 255, 0.5),
@@ -213,4 +142,6 @@
     --ag-advanced-filter-column-pill-color: #355f2d;
     --ag-advanced-filter-option-pill-color: #5a3168;
     --ag-advanced-filter-value-pill-color: #374c86;
+
+    color-scheme: dark;
 }

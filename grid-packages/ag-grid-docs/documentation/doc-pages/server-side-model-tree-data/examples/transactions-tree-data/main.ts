@@ -258,7 +258,7 @@ function createServerSideDatasource(fakeServer: any) {
         }
         : { rowData: allRows }
       console.log('getRows: result = ', result)
-      setTimeout(function () {
+      setTimeout(() => {
         params.success(result)
       }, 500)
     }

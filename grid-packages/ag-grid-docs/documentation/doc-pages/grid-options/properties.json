@@ -531,6 +531,12 @@
         "meta": {
             "displayName": "Miscellaneous"
         },
+        "initialState": {
+            "more": {
+                "name": "Grid State",
+                "url": "/grid-state/"
+            }
+        },
         "alignedGrids": {
             "more": {
                 "name": "Aligned Grids",

@@ -43,9 +43,6 @@ export class GridCtrl extends BeanStub {
 
         this.eGui.setAttribute('grid-id', this.context.getGridId());
 
-        this.addManagedPropertyListeners(['colorScheme'], this.updateColorScheme.bind(this));
-        this.updateColorScheme();
-
         // this drop target is just used to see if the drop event is inside the grid
         this.dragAndDropService.addDropTarget({
             getContainer: () => this.eGui,
@@ -154,16 +151,5 @@ export class GridCtrl extends BeanStub {
 
     public forceFocusOutOfContainer(up = false): void {
         this.view.forceFocusOutOfContainer(up);
-    }
-
-    private updateColorScheme(): void {
-        const { el } = this.environment.getTheme();
-        if (!el) return;
-        const colorScheme = this.gridOptionsService.get('colorScheme');
-        if (!colorScheme) {
-            delete el.dataset.agColorScheme;
-        } else {
-            el.dataset.agColorScheme = colorScheme;
-        }
     }
 }

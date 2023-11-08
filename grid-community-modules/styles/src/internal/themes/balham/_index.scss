@@ -2,7 +2,7 @@
 
 @use "./balham-variables";
 
-.ag-theme-balham, .ag-theme-balham-dark {
+[class*="ag-theme-balham"] {
 
     .ag-filter-toolpanel-header,
     .ag-filter-toolpanel-search,
@@ -139,8 +139,4 @@
         border: 1px solid var(--ag-secondary-border-color);
         border-right: none;
     }
-}
-
-.ag-theme-balham-dark {
-    color-scheme: dark;
 }

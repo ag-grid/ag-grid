@@ -41,11 +41,13 @@ const gridOptions: GridOptions = {
                 '<b>' +
                 params.xName!.toUpperCase() +
                 ':</b> ' +
+                  // @ts-ignore charts typing
                 params.xValue +
                 '<br/>' +
                 '<b>' +
                 params.yName!.toUpperCase() +
                 ':</b> ' +
+                  // @ts-ignore charts typing
                 params.yValue,
             }
           },
@@ -53,13 +55,13 @@ const gridOptions: GridOptions = {
       },
     },
   },
-  onGridReady,
+  onGridReady : (params: GridReadyEvent) => {
+    getData().then(rowData => params.api.setGridOption('rowData', rowData));
+  },
   onFirstDataRendered,
 };
 
-function onGridReady(params: GridReadyEvent) {
-  getData().then(rowData => params.api.setGridOption('rowData', rowData));
-}
+
 
 function onFirstDataRendered(params: FirstDataRenderedEvent) {
   params.api.createRangeChart({

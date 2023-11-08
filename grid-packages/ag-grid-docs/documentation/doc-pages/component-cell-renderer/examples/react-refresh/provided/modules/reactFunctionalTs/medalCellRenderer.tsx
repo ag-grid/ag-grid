@@ -18,5 +18,5 @@ export default forwardRef((props: ICellRendererParams<IOlympicData, number>, ref
         };
     });
 
-    return <span>{new Array(value).fill('#').join('')}</span>;
+    return <span>{new Array(value).fill('#' as any).join('')}</span>;
 });

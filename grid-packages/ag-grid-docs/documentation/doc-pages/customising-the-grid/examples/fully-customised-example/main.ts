@@ -1,6 +1,5 @@
 import { CellClassParams, createGrid, GridApi, GridOptions, RowClassParams, ValueFormatterParams, CellValueChangedEvent } from '@ag-grid-community/core';
 import { CountryFlagCellRenderer } from './CountryFlagCellRenderer';
-import { CustomTooltip } from './CustomTooltip';
 
 let gridApi: GridApi;
 
@@ -38,8 +37,6 @@ const gridOptions: GridOptions = {
             field: "mission",
             resizable: false,
             checkboxSelection: true,
-            tooltipField: 'mission',
-            tooltipComponent: CustomTooltip,
             cellClass: 'mission-cell'
         },
         {
@@ -76,8 +73,6 @@ const gridOptions: GridOptions = {
     rowClass: 'row',
     rowSelection: 'multiple',
     rowClassRules: rowClassRules,
-    tooltipShowDelay: 0,
-    tooltipHideDelay: 2000,
     onCellValueChanged: (event: CellValueChangedEvent) => { 
         console.log(`New Cell Value: ${event.value}`)
     }
@@ -87,5 +82,5 @@ document.addEventListener('DOMContentLoaded', function () {
     gridApi = createGrid(gridDiv, gridOptions);
     fetch('https://downloads.jamesswinton.com/space-mission-data.json')
         .then(response => response.json())
-        .then((data: any) => gridApi.setRowData(data))
+        .then((data: any) => gridApi.setGridOption('rowData', data))
 })

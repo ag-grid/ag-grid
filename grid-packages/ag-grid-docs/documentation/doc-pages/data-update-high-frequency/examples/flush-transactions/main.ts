@@ -188,7 +188,7 @@ function onFlushTransactions() {
 function startFeed(api: GridApi) {
   var count = 1
 
-  setInterval(function () {
+  setInterval(() => {
     var thisCount = count++
     var updatedIndexes: any = {}
     var newItems: any[] = []
@@ -207,7 +207,7 @@ function startFeed(api: GridApi) {
       newItem.current = Math.floor(Math.random() * 100000) + 100
       newItems.push(newItem)
     }
-    var resultCallback = function () {
+    var resultCallback = () => {
       console.log('transactionApplied() - ' + thisCount)
     }
     api.applyTransactionAsync({ update: newItems }, resultCallback)
@@ -221,7 +221,7 @@ function copyObject(object: any) {
   var newObject: any = {}
 
   // copy in the old values
-  Object.keys(object).forEach(function (key) {
+  Object.keys(object).forEach((key) => {
     newObject[key] = object[key]
   })
 

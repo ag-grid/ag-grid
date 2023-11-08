@@ -86,7 +86,7 @@ function populateGrid(workbook: any) {
   // iterate over the worksheet pulling out the columns we're expecting
   while (worksheet['A' + rowIndex]) {
     var row: any = {}
-    Object.keys(columns).forEach(function (column) {
+    Object.keys(columns).forEach((column) => {
       row[columns[column]] = worksheet[column + rowIndex].w
     })
 

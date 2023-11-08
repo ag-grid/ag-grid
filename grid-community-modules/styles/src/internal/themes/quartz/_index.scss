@@ -2,7 +2,7 @@
 
 @use "./quartz-variables";
 
-.ag-theme-quartz {
+[class*="ag-theme-quartz"] {
     .ag-filter-toolpanel-header,
     .ag-filter-toolpanel-search,
     .ag-status-bar,
@@ -259,9 +259,4 @@
         padding: var(--ag-grid-size);
         font-weight: 600;
     }
-}
-
-// TODO re-implement
-.ag-theme-alpine-dark {
-    color-scheme: dark;
 }

@@ -25,12 +25,7 @@ const gridOptions: GridOptions<IAccount> = {
 let allRowData: any[];
 
 function onFirstDataRendered(params: FirstDataRenderedEvent) {
-  // arbitrarily expand a row for presentational purposes
-  setTimeout(function () {
-    params.api.getDisplayedRowAtIndex(0)!.setExpanded(true)
-  }, 0);
-
-  setInterval(function () {
+  setInterval(() => {
     if (!allRowData) {
       return
     }
@@ -38,7 +33,7 @@ function onFirstDataRendered(params: FirstDataRenderedEvent) {
     const data = allRowData[0]
 
     const newCallRecords: any[] = []
-    data.callRecords.forEach(function (record: any, index: number) {
+    data.callRecords.forEach((record: any, index: number) => {
       newCallRecords.push({
         name: record.name,
         callId: record.callId,

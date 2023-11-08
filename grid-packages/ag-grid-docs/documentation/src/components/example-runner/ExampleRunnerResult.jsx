@@ -98,7 +98,6 @@ const themes = {
 }
 
 const applyExampleDarkMode = (document, darkMode) => {
-    document.documentElement.dataset.appIdentifier = 'AG-GRID-EXAMPLE-RUNNER'; // used by Integrated Charts
     document.documentElement.dataset.colorScheme = darkMode ? 'dark' : 'light';
     document.documentElement.dataset.defaultTheme = darkMode ? 'ag-theme-alpine-dark' : 'ag-theme-alpine';
     injectStylesheet(document);

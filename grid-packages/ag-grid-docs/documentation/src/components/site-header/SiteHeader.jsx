@@ -22,7 +22,7 @@ const links = [
         docsLink: false,
     },
     {
-        name: 'Learn',
+        name: 'Docs',
         url: withPrefix('/documentation/'),
         docsLink: true,
     },
@@ -63,7 +63,7 @@ const isLinkSelected = (name, path) => {
     );
 
     const menuToCheck = link.docsLink ? (name === "API" ? apiMenuData : menuData) : [];
-    const whatsNewLink = name === "Learn" ? menuToCheck.find(item => item.title === "What's New") : null;
+    const whatsNewLink = name === "Docs" ? menuToCheck.find(item => item.title === "What's New") : null;
 
     return checkItemsRecursive(menuToCheck) || (whatsNewLink && path.endsWith(whatsNewLink.url));
 };
@@ -160,11 +160,3 @@ export const SiteHeader = ({ path }) => {
         </header>
     );
 };
-
-
-const isPathInApiMenu = (path, menuData) =>
-    menuData.some(group =>
-        group.items.some(item =>
-            item.items && item.items.some(subItem => path.endsWith(subItem.url))
-        )
-    );

@@ -34,7 +34,7 @@ function onFirstDataRendered(params: FirstDataRenderedEvent) {
 function onBtPrint() {
   setPrinterFriendly(gridApi)
 
-  setTimeout(function () {
+  setTimeout(() => {
     print()
     setNormal(gridApi)
   }, 2000)

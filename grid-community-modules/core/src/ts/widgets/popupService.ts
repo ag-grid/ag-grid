@@ -106,6 +106,7 @@ export class PopupService extends BeanStub {
         this.ctrlsService.whenReady(p => {
             this.gridCtrl = p.gridCtrl;
         });
+        this.addManagedListener(this.eventService, Events.EVENT_GRID_STYLES_CHANGED, this.handleThemeChange.bind(this));
     }
 
     public getPopupParent(): HTMLElement {
@@ -490,6 +491,22 @@ export class PopupService extends BeanStub {
         }
 
         return eWrapper;
+    }
+
+    private handleThemeChange() {
+        const { allThemes } = this.environment.getTheme();
+
+        for (const popup of this.popupList) {
+            for (const className of Array.from(popup.element.classList)) {
+                if (className.startsWith("ag-theme-")) {
+                    popup.element.classList.remove(className)
+                }
+            }
+            if (allThemes.length) {
+                popup.element.classList.add(...allThemes);
+            }
+        }
+
     }
 
     private addEventListenersToPopup(params: AddPopupParams & { wrapperEl: HTMLElement }): () => void {
