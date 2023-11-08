@@ -80,7 +80,7 @@ export function findEndPosition(expression: string, position: number, includeClo
     let endPosition = position;
     while (endPosition < expression.length) {
         const char = expression[endPosition];
-        if (char === ' ' || (includeCloseBracket && char === ')')) {
+        if (char === '(' || char === ' ' || (includeCloseBracket && char === ')')) {
             endPosition = endPosition - 1;
             break;
         }
