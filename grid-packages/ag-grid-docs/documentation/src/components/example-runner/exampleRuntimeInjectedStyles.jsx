@@ -16,6 +16,15 @@ export default /* css */ `
     --ag-header-column-resize-handle-color: color-mix(in srgb, var(--ag-background-color), var(--ag-foreground-color) 15%);
 }
 
+.ag-theme-alpine-dark .ag-root-wrapper {
+    border-radius: 8px;
+}
+
+.ag-theme-alpine-dark .ag-menu,
+.ag-theme-alpine-dark .ag-menu-header {
+    background-color: #151F28;
+}
+
 .ag-theme-alpine-dark .ag-header-cell {
     font-size: 14px;
 }
