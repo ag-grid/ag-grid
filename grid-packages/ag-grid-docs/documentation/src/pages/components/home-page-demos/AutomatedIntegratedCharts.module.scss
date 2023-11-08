@@ -88,7 +88,7 @@ $z-index-splash-contents: 10;
     flex-direction: column;
     align-items: center;
     text-align: center;
-    margin-bottom: $size-2;
+    margin-bottom: $size-6;
 
     h2 {
         margin-bottom: $size-2;
@@ -114,7 +114,7 @@ $z-index-splash-contents: 10;
     justify-content: center;
     align-items: center;
     gap: $size-6;
-    margin-top: $size-3;
+    margin-top: $size-6;
 
     button:not([class^="ag-"]) {
         margin-left: $size-1;
