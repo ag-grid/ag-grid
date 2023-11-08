@@ -6,17 +6,6 @@
 export default /* css */ `
 
 .ag-theme-alpine-dark {
-    
-    padding-top: 8px;
-
-    .ag-root-wrapper {
-        border-radius: 8px;
-      }
-
-     .ag-menu, .ag-menu-header {
-        background-color: #151F28;
-    }
-      
     --ag-border-radius: 8px;
     --ag-background-color: #0A161F;
     --ag-odd-row-background-color: #151F28;
