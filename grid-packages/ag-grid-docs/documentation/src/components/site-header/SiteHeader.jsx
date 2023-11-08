@@ -113,6 +113,7 @@ const HeaderNav = ({ path, currentFramework }) => {
     const [isOpen, setIsOpen] = useState(false);
     const { width } = useWindowSize();
     const isDesktop = width >= SITE_HEADER_SMALL_WIDTH;
+    const isDocsUrl = path.includes('-data-grid');
 
     const toggleIsOpen = () => {
         setIsOpen((currentIsOpen) => {
@@ -124,7 +125,7 @@ const HeaderNav = ({ path, currentFramework }) => {
         <>
             <HeaderExpandButton isOpen={isOpen} toggleIsOpen={toggleIsOpen} />
 
-            <Search currentFramework={currentFramework} />
+            {isDocsUrl ? <Search currentFramework={currentFramework} /> : null}
             <Collapsible id="main-nav" isDisabled={isDesktop} isOpen={isOpen}>
                 <nav id={isDesktop ? 'main-nav' : undefined} className={styles.mainNav}>
                     <ul className={classnames(styles.navItemList, 'list-style-none')}>
