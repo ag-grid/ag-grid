@@ -14,6 +14,8 @@ export default /* css */ `
     --ag-header-foreground-color: #fff;
     --ag-border-color: color-mix(in srgb, var(--ag-background-color), var(--ag-foreground-color) 12%);
     --ag-header-column-resize-handle-color: color-mix(in srgb, var(--ag-background-color), var(--ag-foreground-color) 15%);
+    --ag-control-panel-background-color: #151F28;
+    --ag-subheader-background-color: #151F28;
 }
 
 .ag-theme-alpine-dark .ag-root-wrapper {
