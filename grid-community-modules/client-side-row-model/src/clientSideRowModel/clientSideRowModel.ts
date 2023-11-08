@@ -112,38 +112,52 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel 
     }
 
     private addPropertyListeners() {
-        /**
-         * The following properties are omitted, as it's unlikely the user is intending to change them, so should not trigger
-         * side effects.
-         * 
-         * 'getDataPath', 'getRowId', 'isRowMaster', 'getRowHeight',
-         */
+        // Omitted Properties
+        //
+        // We do not act reactively on all functional properties, as it's possible the application is React and
+        // has not memoised the property and it's getting set every render.
+        //
+        // ** LIST OF NON REACTIVE, NO ARGUMENT
+        //
+        // getDataPath, getRowId, isRowMaster -- these are called once for each Node when the Node is created.
+        //                                    -- these are immutable Node properties (ie a Node ID cannot be changed)
+        // 
+        // getRowHeight - this is called once when Node is created, if a new getRowHeight function is provided,
+        //              - we do not revisit the heights of each node.
+        //
+        // pivotDefaultExpanded - relevant for initial pivot column creation, no impact on existing pivot columns. 
+        //
+        // deltaSort - this changes the type of algorithm used only, it doesn't change the sort order. so no point
+        //           - in doing the sort again as the same result will be got. the new Prop will be used next time we sort.
+        // 
+        // ** LIST OF NON REACTIVE, SOME ARGUMENT
+        // ** For these, they could be reactive, but not convinced the business argument is strong enough,
+        // ** so leaving as non-reactive for now, and see if anyone complains.
+        //
+        // processPivotResultColDef, processPivotResultColGroupDef
+        //                       - there is an argument for having these reactive, that if the application changes
+        //                       - these props, we should re-create the Pivot Columns, however it's highly unlikely
+        //                       - the application would change these functions, far more likely the functions were
+        //                       - non memoised correctly.
+        
         const resetProps: Set<keyof GridOptions> = new Set([
             'treeData', 'masterDetail', 'groupSelectsChildren', 'rowHeight',
         ]);
         const groupStageRefreshProps: Set<keyof GridOptions> = new Set([
-            'treeData', 'suppressParentsInRowNodes', 'groupDefaultExpanded',
+            'suppressParentsInRowNodes', 'groupDefaultExpanded',
             'groupAllowUnbalanced', 'initialGroupOrderComparator',
         ]);
         const filterStageRefreshProps: Set<keyof GridOptions> = new Set([
             'excludeChildrenWhenTreeDataFiltering',
         ]);
-        /**
-         * The following pivot properties are omitted, as they are only relevant for initial column creation
-         * 'pivotDefaultExpanded', 'processPivotResultColDef', 'processPivotResultColGroupDef'
-         */
         const pivotStageRefreshProps: Set<keyof GridOptions> = new Set([
             'removePivotHeaderRowWhenSingleValueColumn', 'pivotRowTotals', 'pivotColumnGroupTotals', 'suppressExpandablePivotGroups',
         ]);
         const aggregateStageRefreshProps: Set<keyof GridOptions> = new Set([
             'getGroupRowAgg', 'alwaysAggregateAtRootLevel', 'groupIncludeTotalFooter', 'suppressAggFilteredOnly',
         ]);
-        /**
-         * The following properties are omitted from `sortStageRefreshProps` as they should only run on future changes
-         * 'deltaSort', 'postSortRows',
-         */
         const sortStageRefreshProps: Set<keyof GridOptions> = new Set([
-            'groupHideOpenParents', 'groupDisplayType', 'accentedSort',
+            'postSortRows', 'groupHideOpenParents', 'groupDisplayType', 'accentedSort',
         ]);
         const filterAggStageRefreshProps: Set<keyof GridOptions> = new Set([
             'groupAggFiltering',
