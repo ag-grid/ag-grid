@@ -115,6 +115,7 @@
 
     #{$darkmode-selector} & {
         font-weight: 600;
+        color: #f64f76;
     }
 }
 
@@ -131,6 +132,11 @@
 
 .seeMore {
     --text-color: var(--link-color);
+
+    #{$darkmode-selector} & {
+      color: #3893F9;
+    }
+
 
     min-width: 10.5ch;
     transition: color $default-transition-timing;

@@ -109,7 +109,7 @@ const LicensePricing = () => {
 
                                 <a
                                     href="/ecommerce/#/ecommerce/?licenseType=single&productType=both"
-                                    className="button"
+                                    className="button button-secondary"
                                 >
                                     Configure Now
                                 </a>

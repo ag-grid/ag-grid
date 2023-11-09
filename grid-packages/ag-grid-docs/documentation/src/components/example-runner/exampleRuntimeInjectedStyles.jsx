@@ -6,6 +6,17 @@
 export default /* css */ `
 
 .ag-theme-alpine-dark {
+
+    padding-top: 8px;
+
+    .ag-root-wrapper {
+        border-radius: 8px;
+      }
+
+     .ag-menu, .ag-menu-header {
+        background-color: #151F28;
+    }
+      
     --ag-border-radius: 8px;
     --ag-background-color: #0A161F;
     --ag-odd-row-background-color: #151F28;
@@ -14,6 +25,15 @@ export default /* css */ `
     --ag-header-foreground-color: #fff;
     --ag-border-color: color-mix(in srgb, var(--ag-background-color), var(--ag-foreground-color) 12%);
     --ag-header-column-resize-handle-color: color-mix(in srgb, var(--ag-background-color), var(--ag-foreground-color) 15%);
+    --ag-control-panel-background-color: #151F28;
+    --ag-subheader-background-color: #151F28;
+
+    /* charts */
+    --ag-group-title-bar: #151F28;
+
+    .ag-chart-menu-panel {
+        background: #151F28;
+    }
 }
 
 .ag-theme-alpine-dark .ag-root-wrapper {
@@ -66,7 +86,7 @@ html[data-color-scheme='dark'] button:not(#myGrid button, #myChart button, butto
 }
 
 html[data-color-scheme='dark'] button:not(#myGrid button, #myChart button, button[class*='ag-']):hover {
-    background-color: #293949;
+    background-color: #2a343e;
 }
 
 html[data-color-scheme='dark'] select:not(#myGrid select, #myChart select, select[class*='ag-']) {
@@ -80,7 +100,7 @@ html[data-color-scheme='dark'] select:not(#myGrid select, #myChart select, selec
 }
 
 html[data-color-scheme='dark'] select:not(#myGrid select, #myChart select, select[class*='ag-']):hover {
-    background-color: #293949;
+    background-color: #2a343e;
 }
 
 html[data-color-scheme='dark'] input:not(#myGrid input, #myChart input, input[class*='ag-']) {

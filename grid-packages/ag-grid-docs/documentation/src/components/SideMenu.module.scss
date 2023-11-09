@@ -83,7 +83,7 @@
     transition: color $default-transition-timing;
 
     #{$darkmode-selector} & {
-        --active-color: #007bff;
+        --active-color: #3893F9;
         --active-border: #3893f9;
         --hover-background: rgba(56, 146, 249, 0.06);
         --active-background: rgba(56, 146, 249, 0.09);

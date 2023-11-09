@@ -12,6 +12,9 @@
     border-radius: 8px;
     color: var(--text-color);
 
+    margin-top: $size-5 !important;
+    margin-bottom: $size-5;
+
     :global(.icon) {
         align-self: flex-start;
         position: relative;
@@ -35,6 +38,8 @@
 
     #{$darkmode-selector} & {
         --alert-background-color: #121f29;
+
+        color: #c3cad3;
         
         border: 1px solid rgb(255, 255, 255, 0.15);
 
@@ -55,7 +60,8 @@
         --text-color: var(--default-text-color);
 
         :global(.icon) {
-            --text-color: #249fff;
+            --text-color: var(--default-text-color);
+
         }
     }
 }
