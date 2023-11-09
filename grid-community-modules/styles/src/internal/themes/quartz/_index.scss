@@ -13,10 +13,6 @@
         color: var(--ag-header-foreground-color);
     }
 
-    .ag-row {
-        font-size: calc(var(--ag-font-size) + 1px);
-    }
-
     @include ag.text-input {
         min-height: calc(var(--ag-grid-size) * 4);
         border-radius: var(--ag-border-radius);
@@ -95,7 +91,6 @@
     }
 
     &.ag-dnd-ghost {
-        font-size: calc(var(--ag-font-size) - 1px);
         font-weight: 700;
     }
 
