@@ -1,14 +1,9 @@
-import { createGrid, GridApi, GridOptions, CellValueChangedEvent } from '@ag-grid-community/core';
-import { CountryFlagCellRenderer } from './CountryFlagCellRenderer';
+import { createGrid, CellClassParams, GridApi, GridOptions, CellValueChangedEvent, RowClassParams, ValueFormatterParams } from '@ag-grid-community/core';
 
 let gridApi: GridApi;
 
 const currencyFormatter = (params: ValueFormatterParams) => {
     return '£' + params.value.toLocaleString();
-}
-
-const dateFormatter = (params: ValueFormatterParams) => {
-    return new Date(params.value).toLocaleDateString('en-us', { weekday: 'long', year: 'numeric', month: 'short', day: 'numeric' });
 }
 
 const gridOptions: GridOptions = {
@@ -26,16 +21,14 @@ const gridOptions: GridOptions = {
             checkboxSelection: true
         },
         {
-            field: "country",
-            cellRenderer: CountryFlagCellRenderer
+            field: "country"
         },
         {
             field: "successful",
             width: 130
         },
         {
-            field: "date",
-            valueFormatter: dateFormatter
+            field: "date"
         },
         {
             field: "price",
@@ -56,15 +49,11 @@ const gridOptions: GridOptions = {
     // Grid Options & Callbacks
     pagination: true,
     rowSelection: 'multiple',
-    onSelectionChanged: (event: SelectionChangedEvent) => { 
-        console.log('Row Selection Event!')
-    },
     onCellValueChanged: (event: CellValueChangedEvent) => { 
         console.log(`New Cell Value: ${event.value}`)
     }
 }
-
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', function () {
     var gridDiv = document.querySelector<HTMLElement>('#myGrid')!;
     gridApi = createGrid(gridDiv, gridOptions);
     fetch('https://downloads.jamesswinton.com/space-mission-data.json')
