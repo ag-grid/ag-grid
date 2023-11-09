@@ -7,6 +7,7 @@
 
     #{$darkmode-selector} & {
         background: rgb(18, 31, 41);
+       border: 1px solid #394755;
     }
 
     header {
@@ -92,6 +93,10 @@
 
 .line {
     border-bottom: 1px solid var(--border-color);
+
+    #{$darkmode-selector} & {
+       border-bottom: 1px solid #394755;
+    }
 }
 
 .versions {

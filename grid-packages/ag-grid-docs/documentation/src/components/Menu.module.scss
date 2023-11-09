@@ -1,7 +1,7 @@
 @use '../design-system' as *;
 
 .whatsNewLink {
-    margin-top: $size-2;
+    margin-top: $size-5;
     margin-bottom: $size-1;
 
     a {
@@ -71,6 +71,8 @@
     #{$darkmode-selector} & {
         --secondary-border-color: #394755;
 
+        border-right: none;
+
         border-bottom: none;
     }
 }
@@ -94,6 +96,11 @@ ul.menuInner {
         margin-bottom: $size-2;
         height: 1px;
         background-color: var(--border-color);
+
+        #{$darkmode-selector} & {
+            background-color: #394755;
+            height: 0.5px;
+        }
     }
 
     h5 {
@@ -181,10 +188,6 @@ button:not([class^='ag-']).sectionHeader {
         --icon-size: 1.15em;
         --text-color: var(--enterprise-icon-color);
 
-        #{$darkmode-selector} & {
-            --text-color: var(--active-color);
-        }
-
         position: relative;
         margin-left: 4px;
         color: transparent;
@@ -243,7 +246,7 @@ button:not([class^='ag-']).sectionHeader {
     &.activeMenuItem {
         pointer-events: none;
         background-color: var(--active-background);
-        border-left-color: var(--active-border);
+        border-left-color: var(--active-border) !important;
     }
 }
 
@@ -251,6 +254,12 @@ button:not([class^='ag-']).sectionHeader {
     padding-top: 7px;
     padding-bottom: 7px;
     border-left: 1px solid var(--border-color);
+
+    #{$darkmode-selector} & {
+        border-left: 1px solid #394755;
+    }
+    
+
 }
 
 .menuGroup .groupLabel {
@@ -262,6 +271,10 @@ button:not([class^='ag-']).sectionHeader {
     border-left: 1px solid var(--border-color);
     color: var(--neutral-600);
     transition: color $default-transition-timing;
+
+    #{$darkmode-selector} & {
+        border-left: 1px solid #394755;
+    }
 
     #{$darkmode-selector} & {
         color: var(--neutral-800);

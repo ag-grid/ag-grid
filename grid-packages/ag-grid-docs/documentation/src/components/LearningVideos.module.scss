@@ -6,8 +6,10 @@
     gap: $size-2;
 
     @media screen and (max-width: 600px) {
-        gap: $size-1;
+        gap: $size-1; 
     }
+
+
 }
 
 .titleDurationWrapper {
@@ -35,7 +37,7 @@
     box-sizing: border-box;
     color: var(--text-color);
 
-    @media screen and (max-width: 600px) {
+    @media screen and (max-width: 1200px) {
         flex-direction: column;
         align-items: flex-start;
     }
