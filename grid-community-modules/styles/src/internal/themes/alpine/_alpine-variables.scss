@@ -149,7 +149,7 @@
 }
 
 @media (prefers-color-scheme: dark) {
-    .ag-theme-alpine-auto {
+    .ag-theme-alpine-auto-dark {
         @include -dark-vars();
     }
 }

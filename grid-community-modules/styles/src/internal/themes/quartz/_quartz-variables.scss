@@ -113,17 +113,7 @@
     color-scheme: dark;
 }
 
-.ag-theme-quartz-dark {
-    @include -dark-vars();
-}
-
-@media (prefers-color-scheme: dark) {
-    .ag-theme-quartz-auto {
-        @include -dark-vars();
-    }
-}
-
-.ag-theme-quartz-dark-blue {
+@mixin -dark-blue-vars {
     --ag-background-color: #0d161e;
     --ag-foreground-color: #fff;
     --ag-border-color: #273039;
@@ -144,4 +134,21 @@
     --ag-advanced-filter-value-pill-color: #374c86;
 
     color-scheme: dark;
+}
+
+.ag-theme-quartz-dark {
+    @include -dark-vars();
+}
+
+.ag-theme-quartz-dark-blue {
+    @include -dark-blue-vars();
+}
+
+@media (prefers-color-scheme: dark) {
+    .ag-theme-quartz-auto-dark {
+        @include -dark-vars();
+    }
+    .ag-theme-quartz-auto-dark-blue {
+        @include -dark-blue-vars();
+    }
 }
