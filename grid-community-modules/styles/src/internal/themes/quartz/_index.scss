@@ -175,10 +175,6 @@
         }
     }
 
-    .ag-icon {
-        -webkit-font-smoothing: subpixel-antialiased
-    }
-
     .ag-header-cell-menu-button,
     .ag-side-button-button,
     .ag-tab,
@@ -262,5 +258,25 @@
     .ag-advanced-filter-builder-button {
         padding: var(--ag-grid-size);
         font-weight: 600;
+    }
+
+    .ag-icon {
+        // use SVG images instead of icon font
+        background-color: transparent;
+        background-position: top left;
+        background-size: 16px 16px;
+        background-repeat: no-repeat;
+        width: var(--ag-icon-size);
+        height: var(--ag-icon-size);
+
+        &::before {
+            display: none;
+        }
+    }
+}
+
+.ag-theme-quartz-dark, .ag-theme-quartz-dark-blue {
+    .ag-icon {
+        filter: invert(100%);
     }
 }
