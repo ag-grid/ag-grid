@@ -25,14 +25,12 @@ const gridOptions: GridOptions = {
         },
         {
             field: "successful",
-            width: 130
         },
         {
             field: "date"
         },
         {
             field: "price",
-            width: 130,
             valueFormatter: currencyFormatter
         },
         {

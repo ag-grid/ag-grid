@@ -1,6 +1,11 @@
-import { createGrid, GridApi, GridOptions } from '@ag-grid-community/core';
+import { createGrid, GridApi, GridOptions, ValueFormatterParams } from '@ag-grid-community/core';
+import { CountryFlagCellRenderer } from './CountryFlagCellRenderer';
 
 let gridApi: GridApi;
+
+const currencyFormatter = (params: ValueFormatterParams) => {
+    return '£' + params.value.toLocaleString();
+}
 
 const gridOptions: GridOptions = {
     // Data to be displayed
@@ -17,17 +22,18 @@ const gridOptions: GridOptions = {
             reiszeable: false
         },
         {
-            field: "country"
+            field: "country",
+            cellRenderer: CountryFlagCellRenderer
         },
         {
-            field: "successful",
-            width: 130
+            field: "successful"
         },
         {
             field: "date"
         },
         {
-            field: "price"
+            field: "price",
+            valueFormatter: currencyFormatter
         },
         {
             field: "company"

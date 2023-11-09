@@ -30,16 +30,14 @@ const gridOptions: GridOptions = {
             cellRenderer: CountryFlagCellRenderer
         },
         {
-            field: "successful",
-            width: 130
+            field: "successful"
         },
         {
             field: "date",
             valueFormatter: dateFormatter
         },
         {
-            field: "price",
-            width: 130,
+            field: "price"
             valueFormatter: currencyFormatter
         },
         {
