@@ -112,6 +112,12 @@ export const onPreRenderHTML = ({ getHeadComponents, replaceHeadComponents, path
         href="https://cdn.jsdelivr.net/npm/@fontsource/roboto@4.1.0/index.min.css"
         crossOrigin="anonymous"/>,
     );
+    headComponents.unshift(<link
+        key="inter"
+        rel="stylesheet"
+        href="https://rsms.me/inter/inter.css"
+        crossOrigin="anonymous"/>,
+    );
 
     // Add Plausible.io tracking
     if (!isDevelopment()) {
