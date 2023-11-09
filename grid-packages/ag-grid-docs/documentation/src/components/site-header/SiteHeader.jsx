@@ -138,7 +138,7 @@ const HeaderNav = ({ path, currentFramework }) => {
     );
 };
 
-export const SiteHeader = ({ path }) => {
+export const SiteHeader = ({ path, currentFramework }) => {
     const [isLogoHover, setIsLogoHover] = useState(false);
     return (
         <header className={styles.header}>
@@ -158,7 +158,7 @@ export const SiteHeader = ({ path }) => {
                     <LogoMark bounce={isLogoHover} />
                 </a>
 
-                <HeaderNav path={path} />
+                <HeaderNav path={path} currentFramework={currentFramework} />
             </div>
         </header>
     );
