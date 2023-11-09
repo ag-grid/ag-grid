@@ -37,7 +37,7 @@ const gridOptions: GridOptions = {
             valueFormatter: dateFormatter
         },
         {
-            field: "price"
+            field: "price",
             valueFormatter: currencyFormatter
         },
         {
