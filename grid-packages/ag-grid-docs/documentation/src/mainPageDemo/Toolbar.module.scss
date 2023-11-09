@@ -50,7 +50,7 @@ $toolbar-width: 1024px;
 .videoTour {
     display: flex;
     align-items: center;
-    gap: $size-1;
+    gap: 4px;
 
     #{$darkmode-selector} & {
         color: var(--default-text-color);
