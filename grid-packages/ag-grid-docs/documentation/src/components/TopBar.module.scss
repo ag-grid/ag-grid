@@ -2,14 +2,18 @@
 
 .topBar {
     background-color: var(--toolbar-background);
-    
+
+    #{$darkmode-selector} & {
+        border-bottom: 1px solid #394755;
+    }
+
     @media screen and (min-width: $breakpoint-docs-nav-medium) {
         position: sticky;
         top: $site-header-height;
         z-index: 3;
     }
 
-    #{$darkmode-selector} {
+    #{$darkmode-selector} & {
         background: #121f29;
         border-bottom: 0.5px solid #394755;
     }

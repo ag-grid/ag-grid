@@ -86,12 +86,12 @@ const PanelWrapper = ({ theme }) => (
 
 const BottomBar = ({ theme }) => (
     <footer className={styles.footer}>
-        <a
+        <button
             className={classnames('button', styles.downloadButton)}
             href={withPrefix(`/theme-icons/${theme}/${theme}-icons.zip`)}
         >
             Download All <Icon name="download" />
-        </a>
+        </button>
     </footer>
 );
 

@@ -14,7 +14,13 @@
 }
 
 .exampleWrapperDark {
-    background-color: black;
+    background-color: #0a161f;
+}
+
+@media (prefers-color-scheme: dark) {
+    .exampleWrapperAuto {
+        background-color: #0a161f;
+    }
 }
 
 .gridWrapper {

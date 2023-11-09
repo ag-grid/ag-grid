@@ -53,17 +53,6 @@ interface GroupingDetails {
 
 @Bean('groupStage')
 export class GroupStage extends BeanStub implements IRowNodeStage {
-    getImpactingGridOptions(): (keyof GridOptions<any>)[] {
-        return [
-            'treeData',
-            'suppressParentsInRowNodes',
-            'groupDefaultExpanded',
-            'groupAllowUnbalanced',
-            'isGroupOpenByDefault',
-            'initialGroupOrderComparator',
-            'getDataPath',
-        ];
-    }
 
     @Autowired('columnModel') private columnModel: ColumnModel;
     @Autowired('selectableService') private selectableService: SelectableService;
@@ -97,7 +86,7 @@ export class GroupStage extends BeanStub implements IRowNodeStage {
             this.orderGroups(details);
         }
 
-        this.selectableService.updateSelectableAfterGrouping(details.rootNode);
+        this.selectableService.updateSelectableAfterGrouping();
     }
 
     private positionLeafsAndGroups(changedPath: ChangedPath) {

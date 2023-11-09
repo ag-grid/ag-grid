@@ -13,6 +13,7 @@ import { coreFeature } from './core';
 import { filtersToolPanelFeature } from './filtersToolPanel';
 import { gridBodyFeature } from './gridBody';
 import { headerFeature } from './header';
+import { iconsFeature } from './icons';
 import { inputsFeature } from './inputs';
 import { overlayFeature } from './overlay';
 import { rangeSelectionFeature } from './rangeSelection';
@@ -55,6 +56,7 @@ export const allFeatures: ReadonlyArray<Feature> = [
   filtersToolPanelFeature,
   gridBodyFeature,
   headerFeature,
+  iconsFeature,
   inputsFeature,
   overlayFeature,
   rangeSelectionFeature,

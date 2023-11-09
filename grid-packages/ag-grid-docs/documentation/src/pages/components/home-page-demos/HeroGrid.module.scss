@@ -1,6 +1,22 @@
 @use '../../../design-system' as *;
 
 :global(#heroGrid.ag-theme-alpine-dark) {
+    svg[class*='logo-mark'] {
+        position: absolute;
+        display: block;
+        width: 64px * 2;
+        height: 48px * 2;
+        top: 50%;
+        left: 50%;
+        transform: translate(-60px, -48px);
+    }
+    
+    &:global(.loaded) svg[class*='logo-mark'] {
+        display: none;
+    }    
+}
+
+:global(#heroGrid.ag-theme-alpine-dark .ag-root-wrapper) {
     --ag-background-color: #001223;
     --ag-foreground-color: #94b2d0;
 
@@ -21,12 +37,12 @@
     --input-focus-box-shadow-color: rgba(255, 255, 255, 0.25);
 
     #{$darkmode-selector} & {
-        --ag-background-color: #051D31
+        --ag-background-color: #0E1A23;
         --ag-odd-row-background-color: #081A27
 
         --ag-foreground-color: #e6f1fc;
         
-        --ag-header-background-color: #0d2a50;
+        --ag-header-background-color: #182834;
         --ag-header-foreground-color: #BDD8EC
     }
 
@@ -59,20 +75,6 @@
     }
 
     :global(.ag-icon.ag-icon-filter) {
-        display: none;
-    }
-
-    svg[class*='logo-mark'] {
-        position: absolute;
-        display: block;
-        width: 64px * 2;
-        height: 48px * 2;
-        top: 50%;
-        left: 50%;
-        transform: translate(-60px, -48px);
-    }
-
-    &:global(.loaded) svg[class*='logo-mark'] {
         display: none;
     }
 }

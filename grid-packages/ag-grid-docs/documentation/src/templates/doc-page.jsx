@@ -140,6 +140,18 @@ const DocPageTemplate = ({ data, path, pageContext: { framework, frameworks, exa
         }
     }
 
+    const pageTitle = (
+        <>
+
+            
+            <span className={styles.headerFramework}>
+                {getProductType(framework, false, version)}
+            </span>
+            
+            <span>{title}</span>
+        </>
+    );
+
     return (
         <div id="doc-page-wrapper" className={styles['doc-page-wrapper']}>
             <div id="doc-content" className={classnames(styles['doc-page'], { [styles.noSideMenu]: !showSideMenu })}>

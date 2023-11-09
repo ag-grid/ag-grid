@@ -542,7 +542,7 @@ const ExampleRunnerInner = ({
                         <CodeViewer isActive={showCode} exampleInfo={exampleInfo} />
                     </div>
 
-                    <header className={styles.header}>
+                    <footer className={styles.footer}>
                         <button
                             className={classnames(styles.previewCodeToggle, 'button-secondary')}
                             onClick={(e) => {
@@ -576,7 +576,7 @@ const ExampleRunnerInner = ({
                                 </li>
                             )}
                         </ul>
-                    </header>
+                    </footer>
                 </div>
             )}
         </div>

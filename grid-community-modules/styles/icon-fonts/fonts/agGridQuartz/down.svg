@@ -1,5 +1,3 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
-<svg width="100%" height="100%" viewBox="0 0 32 32" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2;">
-    <path id="desc" d="M26.667,16L24.787,14.12L17.334,21.56L17.334,5.333L14.667,5.333L14.667,21.56L7.227,14.107L5.334,16L16.001,26.667L26.668,16L26.667,16Z" style="fill-rule:nonzero;"/>
+<svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path fill-rule="evenodd" clip-rule="evenodd" d="M7.99667 3C7.99667 2.72386 7.77282 2.5 7.49667 2.5C7.22053 2.5 6.99667 2.72386 6.99667 3V11.3262L3.18356 7.51312C2.98829 7.31785 2.67171 7.31785 2.47645 7.51312C2.28119 7.70838 2.28119 8.02496 2.47645 8.22022L7.14312 12.8869C7.33838 13.0822 7.65496 13.0822 7.85022 12.8869L12.5169 8.22022C12.7122 8.02496 12.7122 7.70838 12.5169 7.51312C12.3216 7.31785 12.005 7.31785 11.8098 7.51312L7.99667 11.3262V3Z" fill="black"/>
 </svg>

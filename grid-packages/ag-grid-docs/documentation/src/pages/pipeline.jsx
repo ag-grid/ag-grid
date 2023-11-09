@@ -213,7 +213,7 @@ const Pipeline = ({ location }) => {
                                     masterDetail={true}
                                     rowData={rowData}
                                     onGridReady={gridReady}
-                                    theme={darkMode ? 'ag-theme-alpine-dark' : 'ag-theme-alpine'}
+                                    theme={darkMode ? 'ag-theme-alpine-blue' : 'ag-theme-alpine'}
                                 ></Grid>
                             );
                         }}

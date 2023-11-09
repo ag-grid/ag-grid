@@ -14,6 +14,14 @@ const ExampleStyle = ({ rootId }) => <style media="only screen">
                 -webkit-overflow-scrolling: touch;
             }
 
+            #myGrid.ag-theme-alpine-dark {
+                --ag-background-color: var(--background-200);
+                --ag-odd-row-background-color: #151F28
+                --ag-foreground-color: #e6f1fc; 
+                --ag-header-background-color: #1B2938;
+                --ag-header-foreground-color: #fff
+            }
+
             html {
                 position: absolute;
                 top: 0;
@@ -27,6 +35,7 @@ const ExampleStyle = ({ rootId }) => <style media="only screen">
                 overflow: auto;
                 background-color: transparent
             }
+
         `}
 </style>;
 

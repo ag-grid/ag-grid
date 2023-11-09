@@ -10,9 +10,12 @@ The grid comes with several provided themes which act as a great starting point 
 
 | Theme Name | Description |
 |------------|-------------|
-|[**ag-theme-alpine**](../../example?theme=ag-theme-alpine)<br/>[**ag-theme-alpine-dark**](../../example?theme=ag-theme-alpine-dark)<br/><br/>File name `ag-theme-alpine[.min].css` | Modern looking themes with high contrast, and generous padding. <br/><br/>**Recommendation:** This is the recommended grid theme and an excellent choice for most applications. |
-|[**ag-theme-balham**](../../example?theme=ag-theme-balham)<br/>[**ag-theme-balham-dark**](../../example?theme=ag-theme-balham-dark)<br/><br/>File name `ag-theme-balham[.min].css` | Themes for professional data-heavy applications.<br/><br/>**Recommendation:** Balham was the recommended theme before Alpine was developed. It is still an excellent choice for applications that need to fit more data onto each page. |
+|[**ag-theme-quartz**](../../example?theme=ag-theme-quartz)<br/>[**ag-theme-quartz-dark**](../../example?theme=ag-theme-quartz-dark)<br/>[**ag-theme-quartz-auto-dark**](../../example?theme=ag-theme-quartz-auto-dark) *<br/>[**ag-theme-quartz-dark-blue**](../../example?theme=ag-theme-quartz-dark-blue)<br/>[**ag-theme-quartz-auto-dark-blue**](../../example?theme=ag-theme-quartz-auto-dark-blue) *<br/><br/>File name `ag-theme-quartz[.min].css` | Modern looking themes with high contrast and generous padding.<br/><br/>**Recommendation:** This is the recommended grid theme and an excellent choice for most applications. |
+|[**ag-theme-balham**](../../example?theme=ag-theme-balham)<br/>[**ag-theme-balham-dark**](../../example?theme=ag-theme-balham-dark)<br/>[**ag-theme-balham-auto-dark**](../../example?theme=ag-theme-balham-auto-dark) *<br/><br/>File name `ag-theme-balham[.min].css` | Balham has a more traditional look modelled after a spreadsheet application. It is appropriate for applications that need to fit more data onto each page. |
 |[**ag-theme-material**](../../example?theme=ag-theme-material)<br/><br/>File name `ag-theme-material[.min].css` | A theme designed according to the Google Material Language Specs.<br/><br/>**Recommendation:** This theme looks great for simple applications with lots of white space, and is the obvious choice if the rest of your application follows the Google Material Design spec. However, the Material spec doesn't cater for advanced grid features such as grouped columns and tool panels. If your application uses these features, consider using `ag-theme-alpine` instead. |
+|[**ag-theme-alpine**](../../example?theme=ag-theme-alpine)<br/>[**ag-theme-alpine-dark**](../../example?theme=ag-theme-alpine-dark)<br/>[**ag-theme-alpine-auto-dark**](../../example?theme=ag-theme-alpine-auto-dark) *<br/><br/>File name `ag-theme-alpine[.min].css` | Alpine was the default theme before Quartz was released. It is still supported, but we recommend Quartz for new applications. |
+
+\* The 'auto' versions of each theme use the [prefers-color-scheme](https://developer.mozilla.org/en-US/docs/Web/CSS/@media/prefers-color-scheme) CSS media feature to switch between dark and light variants depending on whether the user has enabled dark mode on their operating system.
 
 ## Applying a Theme to an App
 
@@ -26,7 +29,7 @@ To use a theme, add the theme class name to the `div` element that contains your
 | The grid must always have a theme class set on its container, whether this is a provided theme or your own.
 </warning>
 
-## Loading CSS files
+## Loading CSS files and fonts
 
 In order for the above code to work, the correct stylesheets must be loaded in the correct order. There are two kinds of stylesheet that need to be loaded when using provided themes:
 
@@ -47,6 +50,42 @@ There are various ways to load these stylesheets, as described in the sections b
 |### Pre-built Bundles
 |Some pre-built bundles, whether [downloaded from our website](/download/) or included in the `ag-grid-community` [NPM package](/npm/), already embed the structural styles and all provided themes. If you are using one of these files, you do not need to load separately CSS.
 </framework-specific-section>
+
+### Loading 3rd party fonts
+
+Some themes have a recommended 3rd party font, which is not bundled with the theme CSS. If the font is not available at runtime, the OS default UI font will be used instead - Segoe UI on Windows and SF Pro on Mac.
+
+#### Loading Inter for the Quartz theme
+
+Inter is a typeface carefully crafted & designed for computer screens. Inter features a tall x-height to aid in readability of mixed-case and lower-case text
+
+You can [download Inter from GitHub](https://github.com/rsms/inter) and use it in your application, or load it from their official CDN:
+
+```html
+<!-- in HTML -->
+<link href="https://rsms.me/inter/inter.css" rel="stylesheet" />
+```
+
+```css
+/* in css */
+@import "https://rsms.me/inter/inter.css";
+```
+
+#### Loading Roboto for the Material theme
+
+Roboto is the font recommended by the Material Design specification.
+
+You can [download Roboto from Google Fonts](https://fonts.google.com/specimen/Roboto) and use it in your application, or load it from the Google Fonts API:
+
+```html
+<!-- in html -->
+<link href="https://fonts.googleapis.com/css?family=Roboto" rel="stylesheet" />
+```
+
+```css
+/* is css */
+@import "https://fonts.googleapis.com/css?family=Roboto";
+```
 
 ### JavaScript Bundlers
 
@@ -85,15 +124,6 @@ You can load the structural styles and theme from a free CDN by adding this code
 <note>
 | Change the theme name in the URL to the one that you're using, and ensure that the version number in the URL matches the JS version you're using. This is useful for testing and prototyping but not recommended for production as your app will be unavailable if the jsdelivr servers are down.
 </note>
-
-### Loading the Roboto font for Material theme
-
-The Material theme requires the Roboto font, and this is not bundled in the material CSS. The easiest way to load Roboto is through Google's CDN:
-
-```html
-<link href="https://fonts.googleapis.com/css?family=Roboto" rel="stylesheet" />
-<div id="myGrid" class="ag-theme-material"></div>
-```
 
 ## Creating your own theme
 

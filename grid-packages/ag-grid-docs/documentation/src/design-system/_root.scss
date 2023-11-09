@@ -58,10 +58,6 @@
     }
 }
 
-html {
-    --color-scheme: light;
-}
-
 // Create CSS variables for all dark mode colors
 @mixin dark-mode-variables {
     @each $name, $scale in $dark-scales {

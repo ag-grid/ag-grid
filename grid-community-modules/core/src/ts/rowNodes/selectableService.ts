@@ -1,52 +1,72 @@
 import { RowNode } from "../entities/rowNode";
-import { Bean, PostConstruct } from "../context/context";
-import { IsRowSelectable } from "../entities/gridOptions";
+import { Autowired, Bean, PostConstruct } from "../context/context";
 import { BeanStub } from "../context/beanStub";
-import { exists } from "../utils/generic";
-
+import { IRowModel } from "../interfaces/iRowModel";
+import { ISelectionService } from "../interfaces/iSelectionService";
+import { SelectionService } from "../selectionService";
+import { ChangedPath } from "../utils/changedPath";
+import { IClientSideRowModel } from "../main";
 @Bean('selectableService')
 export class SelectableService extends BeanStub {
-
-    private groupSelectsChildren: boolean;
-    private isRowSelectableFunc?: IsRowSelectable;
-
+    @Autowired('rowModel') private rowModel: IRowModel;
+    @Autowired('selectionService') private selectionService: ISelectionService;
+    
     @PostConstruct
-    public init(): void {
-        this.groupSelectsChildren = this.gridOptionsService.get('groupSelectsChildren');
-        this.isRowSelectableFunc = this.gridOptionsService.get('isRowSelectable');
+    private init() {
+        this.addManagedPropertyListener('isRowSelectable', () => this.updateSelectable());
     }
 
-    public updateSelectableAfterGrouping(rowNode: RowNode): void {
-        if (this.isRowSelectableFunc) {
-            const nextChildrenFunc = (node: RowNode) => node.childrenAfterGroup;
-            this.recurseDown(rowNode.childrenAfterGroup, nextChildrenFunc);
+    /**
+     * Used by CSRM only, to update selectable state after group state changes.
+     */
+    public updateSelectableAfterGrouping(): void {
+        this.updateSelectable(true);
+    }
+
+    private updateSelectable(skipLeafNodes = false) {
+        const isGroupSelectsChildren = this.gridOptionsService.get('groupSelectsChildren');
+        const isRowSelectable = this.gridOptionsService.get('isRowSelectable');
+
+        const isCsrmGroupSelectsChildren = this.rowModel.getType() === 'clientSide' && isGroupSelectsChildren;
+
+        const nodesToDeselect: RowNode[] = [];
+
+        const nodeCallback = (node: RowNode) => {
+            if (skipLeafNodes && !node.group) { return; }
+
+            // Only in the CSRM, we allow group node selection if a child has a selectable=true when using groupSelectsChildren
+            if (isCsrmGroupSelectsChildren && node.group) {
+                const hasSelectableChild = node.childrenAfterGroup!.some(rowNode => rowNode.selectable === true);
+                node.setRowSelectable(hasSelectableChild, true);
+                return;
+            }
+
+            const rowSelectable = isRowSelectable ? isRowSelectable(node) : true;
+            node.setRowSelectable(rowSelectable, true);
+
+            if (!rowSelectable && node.isSelected()) {
+                nodesToDeselect.push(node);
+            }
+        };
+        
+        // Needs to be depth first in this case, so that parents can be updated based on child.
+        if (isCsrmGroupSelectsChildren) {
+            const csrm = this.rowModel as IClientSideRowModel;
+            const changedPath = new ChangedPath(false, csrm.getRootNode());
+            changedPath.forEachChangedNodeDepthFirst(nodeCallback, true, true);
+        } else {
+            // Normal case, update all rows
+            this.rowModel.forEachNode(nodeCallback);
         }
-    }
 
-    private recurseDown(children: RowNode[] | null, nextChildrenFunc: ((rowNode: RowNode) => RowNode[] | null)): void {
-        if (!children) { return; }
+        if (nodesToDeselect.length) {
+            this.selectionService.setNodesSelected({ nodes: nodesToDeselect, newValue: false, source: 'selectableChanged' });
+        }
 
-        children.forEach((child: RowNode) => {
-
-            if (!child.group) { return; } // only interested in groups
-
-            if (child.hasChildren()) {
-                this.recurseDown(nextChildrenFunc(child), nextChildrenFunc);
-            }
-
-            let rowSelectable: boolean;
-
-            if (this.groupSelectsChildren) {
-                // have this group selectable if at least one direct child is selectable
-                const firstSelectable = (nextChildrenFunc(child) || []).find(rowNode => rowNode.selectable ===  true);
-                rowSelectable = exists(firstSelectable);
-            } else {
-                // directly retrieve selectable value from user callback
-                rowSelectable = this.isRowSelectableFunc ? this.isRowSelectableFunc(child) : false;
-            }
-
-            child.setRowSelectable(rowSelectable);
-        });
+        // if csrm and group selects children, update the groups after deselecting leaf nodes.
+        if (isCsrmGroupSelectsChildren && this.selectionService instanceof SelectionService) {
+            this.selectionService.updateGroupsFromChildrenSelections('selectableChanged');
+        }
     }
 
 }

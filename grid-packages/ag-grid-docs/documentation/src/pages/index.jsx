@@ -126,7 +126,7 @@ const Default = () => {
             </div>
 
             <section className={styles.automatedRowGroupingOuter}>
-                <div className={classNames('page-margin', styles.homepageExample)}>
+                <div className={classNames('', styles.homepageExample)}>
                     <div className={styles.automatedRowGrouping}>
                         {!IS_SSR && (
                             <React.Suspense fallback={<></>}>

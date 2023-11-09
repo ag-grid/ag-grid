@@ -13,10 +13,6 @@
         color: var(--ag-header-foreground-color);
     }
 
-    .ag-row {
-        font-size: calc(var(--ag-font-size) + 1px);
-    }
-
     @include ag.text-input {
         min-height: calc(var(--ag-grid-size) * 4);
         border-radius: var(--ag-border-radius);
@@ -95,7 +91,6 @@
     }
 
     &.ag-dnd-ghost {
-        font-size: calc(var(--ag-font-size) - 1px);
         font-weight: 700;
     }
 
@@ -258,5 +253,25 @@
     .ag-advanced-filter-builder-button {
         padding: var(--ag-grid-size);
         font-weight: 600;
+    }
+
+    .ag-icon {
+        // use SVG images instead of icon font
+        background-color: transparent;
+        background-position: top left;
+        background-size: 16px 16px;
+        background-repeat: no-repeat;
+        width: var(--ag-icon-size);
+        height: var(--ag-icon-size);
+
+        &::before {
+            display: none;
+        }
+    }
+}
+
+.ag-theme-quartz-dark, .ag-theme-quartz-dark-blue {
+    .ag-icon {
+        filter: invert(100%);
     }
 }

@@ -19,9 +19,13 @@ const Version = ({ date, version, blogUrl, highlights }) => {
     return (
         <div className={styles.version}>
             <header>
+            <span className={`${styles['text-secondary']} ${styles['font-size-small']}`}>{date}</span>
+            <div className={styles.flex}>
                 <b className={styles['font-size-large']}>Version {version}</b>
-                <span className={`${styles['text-secondary']} ${styles['font-size-large']}`}>{date}</span>
-                <a href={blogHref}>What's new in AG Grid {version}</a>
+                <a className={styles.bloglink} href={blogHref}>What's new →</a>
+            </div> 
+                <span class={styles.line}></span>
+               
             </header>
 
             <p className={styles['font-size-small']}>
@@ -39,19 +43,26 @@ const Version = ({ date, version, blogUrl, highlights }) => {
             )}
 
             <a
-                className={styles['font-size-small']}
+                className={`${styles.changelog} button-secondary`}
                 href={`${hostPrefix}/changelog/?fixVersion=${version}`}
                 target="_blank"
                 rel="noopener noreferrer"
             >
-               See Change Log
+              See all changes
             </a>
+            
         </div>
     );
 };
 
 const WhatsNew = () => {
     return (
+        <div className={styles.heading}>
+             <h1 id="top" className="whats-new">
+                      What's new in AG Grid
+                    </h1>
+                    <p className={styles.description}>See what's been updated in our latest version</p>
+
         <div className={styles.versions}>
             {versionsData.map((versionInfo, index) => (
                 <Version
@@ -61,6 +72,7 @@ const WhatsNew = () => {
                     highlights={versionInfo.highlights}
                 />
             ))}
+        </div>
         </div>
     );
 };

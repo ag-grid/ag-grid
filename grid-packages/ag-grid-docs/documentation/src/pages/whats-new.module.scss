@@ -1,9 +1,14 @@
-@use '../design-system' as *;
+@use '../design-system'as *;
 
 .version {
-    padding: 16px;
+    padding: $size-2;
     border-radius: 8px;
     border: 1px solid var(--border-color);
+
+    #{$darkmode-selector} & {
+        background: rgb(18, 31, 41);
+       border: 1px solid #394755;
+    }
 
     header {
         display: flex;
@@ -13,17 +18,28 @@
         b {
             font-size: 1.25rem;
             font-weight: 600;
+            color: var(--default-text-color);
         }
 
         span {
-            font-size: 1.25rem;
-            color: var(--secondary-color);
+            font-size: 1rem;
+            color: var(--secondary-text);
+            opacity: 0.7;
+
+            #{$darkmode-selector} & {
+                color: #c3cad3;
+                opacity: 1;
+            }
         }
 
         a {
             text-decoration: none;
             color: var(--link-color);
             font-size: 1rem;
+
+            #{$darkmode-selector} & {
+                color: rgb(56, 147, 249);
+            }
 
             &:hover {
                 text-decoration: underline;
@@ -34,24 +50,35 @@
     p {
         margin-top: 8px;
         margin-bottom: 4px;
-        font-size: 0.875rem;
+        font-size: 1rem;
         color: var(--text-color);
+
+        #{$darkmode-selector} & {
+            color: #c3cad3;
+        }
     }
 
     ul {
+        padding-top: 0.75rem;
+        padding-bottom: 0.75rem;
         list-style: none;
         padding-left: 0;
         margin-bottom: 16px;
 
         li::before {
             content: '• ';
-            color: var(--link-color);
+            color: #c3cad3;
             font-weight: bold;
         }
 
         a {
             color: var(--link-color);
             text-decoration: none;
+            font-size: 1rem;
+
+            #{$darkmode-selector} & {
+                color: rgb(56, 147, 249);
+            }
 
             &:hover {
                 text-decoration: underline;
@@ -64,8 +91,16 @@
     }
 }
 
+.line {
+    border-bottom: 1px solid var(--border-color);
+
+    #{$darkmode-selector} & {
+       border-bottom: 1px solid #394755;
+    }
+}
 
 .versions {
+    max-width: var(--max-page-width);
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
     grid-gap: 16px;
@@ -73,8 +108,63 @@
     margin-bottom: 32px;
 }
 
+.heading {
+    padding-top: 32px;
+    padding-left: $size-2;
+    padding-right: $size-2;
+
+    @media screen and (min-width: $breakpoint-page-margin-padding) {
+        padding-left: var(--horizontal-margin);
+        padding-right: var(--horizontal-margin);
+    }
+
+    @media screen and (min-width: $breakpoint-docs-nav-medium) {
+        padding-left: 0;
+        padding-right: $size-4
+    }
+}
+
 @media (max-width: 400px) {
     .versions {
         grid-template-columns: 1fr;
     }
+}
+
+.description {
+    font-size: 18px;
+}
+
+.changelog {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+
+    #{$darkmode-selector} & {
+        background: #2a343e;
+    }
+}
+
+.bloglink {
+    width: 100%;
+    display: flex;
+    justify-content: left;
+    padding-top: 0.5rem;
+    padding-bottom: 0.5rem;
+    font-size: 17px;
+
+    color: var(--link-color);
+
+    #{$darkmode-selector} & {
+        color: #c3cad3 !important;
+    }
+}
+
+.flex {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+}
+
+.flex a {
+    width: auto;
 }

@@ -1,7 +1,3 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
-<svg width="100%" height="100%" viewBox="0 0 32 32" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2;">
-    <g id="tick" transform="matrix(2,0,0,2,4,-2)">
-        <path d="M3.793,12.48L11.859,4.414L12.92,5.475L3.793,14.601L-0.8,10.008L0.26,8.947L3.793,12.48Z"/>
-    </g>
+<svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path fill-rule="evenodd" clip-rule="evenodd" d="M13.6869 3.64645C13.8822 3.84171 13.8822 4.15829 13.6869 4.35355L6.35356 11.6869C6.1583 11.8821 5.84171 11.8821 5.64645 11.6869L2.31312 8.35355C2.11786 8.15829 2.11786 7.84171 2.31312 7.64645C2.50838 7.45118 2.82496 7.45118 3.02023 7.64645L6.00001 10.6262L12.9798 3.64645C13.175 3.45118 13.4916 3.45118 13.6869 3.64645Z" fill="black"/>
 </svg>

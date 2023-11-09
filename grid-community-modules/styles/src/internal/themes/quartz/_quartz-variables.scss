@@ -54,16 +54,16 @@
     --ag-header-column-resize-handle-height: 30%;
 
     // SIZING
-    --ag-grid-size: 6px;
+    --ag-grid-size: 8px;
     --ag-icon-size: 16px;
-    --ag-row-height: calc(var(--ag-grid-size) * 7);          // if changed, update environment.ts
-    --ag-header-height: calc(var(--ag-grid-size) * 8);       // if changed, update environment.ts
-    --ag-list-item-height: calc(var(--ag-grid-size) * 4); // if changed, update environment.ts
+    --ag-header-height: calc(var(--ag-font-size) + var(--ag-grid-size) * 4.25);       // if changed, update environment.ts
+    --ag-row-height: calc(var(--ag-font-size) + var(--ag-grid-size) * 3.5);          // if changed, update environment.ts
+    --ag-list-item-height: calc(var(--ag-grid-size) * 3); // if changed, update environment.ts
     --ag-column-select-indent-size: var(--ag-icon-size);
     --ag-set-filter-indent-size: var(--ag-icon-size);
     --ag-advanced-filter-builder-indent-size: calc(var(--ag-icon-size) + var(--ag-grid-size) * 2);
-    --ag-cell-horizontal-padding: calc(var(--ag-grid-size) * 3);
-    --ag-cell-widget-spacing: calc(var(--ag-grid-size) * 2);
+    --ag-cell-horizontal-padding: calc(var(--ag-grid-size) * 2);
+    --ag-cell-widget-spacing: calc(var(--ag-grid-size) * 1.5);
 
     --ag-widget-container-vertical-padding: calc(var(--ag-grid-size) * 2);
     --ag-widget-container-horizontal-padding: calc(var(--ag-grid-size) * 2);
@@ -73,8 +73,8 @@
     --ag-toggle-button-width: 28px;
 
     // FONTS
-    --ag-font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen-Sans, Ubuntu, Cantarell, 'Helvetica Neue', sans-serif;
-    --ag-font-size: 13px;
+    --ag-font-family: Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen-Sans, Ubuntu, Cantarell, 'Helvetica Neue', sans-serif;
+    --ag-font-size: 14px;
     --ag-icon-font-family: agGridQuartz;
 
     // MISC
@@ -113,17 +113,7 @@
     color-scheme: dark;
 }
 
-.ag-theme-quartz-dark {
-    @include -dark-vars();
-}
-
-@media (prefers-color-scheme: dark) {
-    .ag-theme-quartz-auto {
-        @include -dark-vars();
-    }
-}
-
-.ag-theme-quartz-dark-blue {
+@mixin -dark-blue-vars {
     --ag-background-color: #0d161e;
     --ag-foreground-color: #fff;
     --ag-border-color: #273039;
@@ -144,4 +134,21 @@
     --ag-advanced-filter-value-pill-color: #374c86;
 
     color-scheme: dark;
+}
+
+.ag-theme-quartz-dark {
+    @include -dark-vars();
+}
+
+.ag-theme-quartz-dark-blue {
+    @include -dark-blue-vars();
+}
+
+@media (prefers-color-scheme: dark) {
+    .ag-theme-quartz-auto-dark {
+        @include -dark-vars();
+    }
+    .ag-theme-quartz-auto-dark-blue {
+        @include -dark-blue-vars();
+    }
 }
