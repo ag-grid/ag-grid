@@ -1449,7 +1449,7 @@ const ExampleInner = ({darkMode}) => {
                 <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.6.3/css/all.css" />
                 {helmet.map((entry) => entry)}
             </Helmet>
-            <div className={classnames(styles.exampleWrapper, isDarkTheme && styles.exampleWrapperDark, isAutoTheme && styles.exampleWrapperAuto)}>
+            <div className={classnames(styles.exampleWrapper, isAutoTheme ? styles.exampleWrapperAuto : (isDarkTheme ? styles.exampleWrapperDark : null))}>
                 <Toolbar
                     gridRef={gridRef}
                     dataSize={dataSize}
