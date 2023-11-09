@@ -10,10 +10,6 @@
         max-width: unset;
     }
 
-    &:global('.results-open') {
-        background-color: red;
-    }
-
     input[type='search'] {
         width: 100%;
         padding-top: 0.4375em;

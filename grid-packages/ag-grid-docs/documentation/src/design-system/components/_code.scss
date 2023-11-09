@@ -72,13 +72,6 @@ pre.code {
     }
 }
 
-pre.code {
-    #{$darkmode-selector} & {
-        // margin-top: $size-2;
-        // margin-bottom: $size-2;
-    }
-}
-
 pre.code > code {
     position: relative;
     display: inline-block;

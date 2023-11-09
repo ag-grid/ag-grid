@@ -19,10 +19,7 @@ html {
     font-weight: var(--font-weight);
     background-color: var(--default-background-color);
     color: var(--default-text-color);
-
-    @media (min-width: $breakpoint-docs-nav-medium) {
-        scroll-padding-top: $site-header-height + 92px;
-    }
+    scroll-padding-top: var(--scroll-offset);
 }
 
 #{$darkmode-selector} {
