@@ -53,24 +53,26 @@ select#{$exclude-grid-selector} {
     &[readonly] {
         background-color: var(--neutral-100);
     }
-
-    &:focus:not(:disabled):not([readonly]),
-    &:focus-visible:not(:disabled):not([readonly]) {
-        box-shadow: var(--ag-input-focus-box-shadow);
-    }
 }
 
-input[type='text']#{$exclude-grid-selector},
-input[type='search']#{$exclude-grid-selector},
-input[type='email']#{$exclude-grid-selector},
-input[type='number']#{$exclude-grid-selector} {
-    padding: math.div(6em, 16) math.div(12em, 16);
-    line-height: var(--line-height-normal);
-    border-radius: var(--border-radius);
-    background-color: var(--input-background-color);
-    border: 2px solid var(--input-border-color);
-    outline: none;
-    transition: border-color $default-transition-timing, box-shadow $default-transition-timing;
+input[type='text'],
+input[type='search'],
+input[type='email'],
+input[type='number'] {
+    &#{$exclude-grid-selector} {
+        padding: math.div(6em, 16) math.div(12em, 16);
+        line-height: var(--line-height-normal);
+        border-radius: var(--border-radius);
+        background-color: var(--input-background-color);
+        border: 2px solid var(--input-border-color);
+        outline: none;
+        transition:
+            border-color $default-transition-timing,
+            box-shadow $default-transition-timing;
+
+    #{$darkmode-selector} & {
+        border: 1px solid var(--input-border-color);
+    }
 
     &::placeholder {
         font-style: italic;
@@ -81,14 +83,15 @@ input[type='number']#{$exclude-grid-selector} {
         }
     }
 
-    &:hover:not(:disabled):not([readonly]),
-    &:focus:not(:disabled):not([readonly]),
-    &:focus-visible:not(:disabled):not([readonly]) {
-        border-color: var(--input-focus-border-color);
-    }
+        &:hover:not(:disabled):not([readonly]),
+        &:focus:not(:disabled):not([readonly]),
+        &:focus-visible:not(:disabled):not([readonly]) {
+            border-color: var(--input-focus-border-color);
+        }
 
-    #{$darkmode-selector} & {
-        border-width: 1px;
+        #{$darkmode-selector} & {
+            border-width: 1px;
+        }
     }
 }
 
@@ -118,7 +121,9 @@ input[type='checkbox']:not(.switch)#{$exclude-grid-selector} {
     border-radius: var(--border-radius);
     border: 0.125em solid var(--input-secondary-border-color);
     background-image: $svg-tick;
-    transition: background-color $default-transition-timing, border-color $default-transition-timing,
+    transition:
+        background-color $default-transition-timing,
+        border-color $default-transition-timing,
         box-shadow $default-transition-timing;
 
     &:hover:not(:disabled):not([readonly]),
@@ -142,7 +147,9 @@ input[type='checkbox'].switch {
     );
     background-repeat: no-repeat;
     background-size: $height $height;
-    transition: background-position $default-transition-timing, background-color $default-transition-timing,
+    transition:
+        background-position $default-transition-timing,
+        background-color $default-transition-timing,
         box-shadow $default-transition-timing;
 
     &:checked {
@@ -153,18 +160,25 @@ input[type='checkbox'].switch {
 
 input[type='radio']#{$exclude-grid-selector} {
     border-radius: 50%;
-    box-shadow: inset 0 0 0 0.125em var(--input-secondary-border-color),
+    box-shadow:
+        inset 0 0 0 0.125em var(--input-secondary-border-color),
         inset 0 0 0 0.25em var(--input-background-color);
-    transition: background-color $default-transition-timing, box-shadow $default-transition-timing;
+    transition:
+        background-color $default-transition-timing,
+        box-shadow $default-transition-timing;
 
     &:hover:not(:disabled):not([readonly]),
     &:checked {
-        box-shadow: inset 0 0 0 0.125em var(--input-primary-color), inset 0 0 0 0.25em var(--input-background-color);
+        box-shadow:
+            inset 0 0 0 0.125em var(--input-primary-color),
+            inset 0 0 0 0.25em var(--input-background-color);
     }
 
     &:focus:not(:disabled):not([readonly]),
     &:focus-visible:not(:disabled):not([readonly]) {
-        box-shadow: inset 0 0 0 0.125em var(--input-primary-color), inset 0 0 0 0.25em var(--input-background-color),
+        box-shadow:
+            inset 0 0 0 0.125em var(--input-primary-color),
+            inset 0 0 0 0.25em var(--input-background-color),
             0 0 0 3px var(--input-focus-box-shadow-color);
     }
 }
@@ -185,7 +199,13 @@ select#{$exclude-grid-selector} {
     background-position: center right;
     border: 2px solid var(--input-border-color);
     outline: none;
-    transition: border-color $default-transition-timing, box-shadow $default-transition-timing;
+    transition:
+        border-color $default-transition-timing,
+        box-shadow $default-transition-timing;
+
+    #{$darkmode-selector} & {
+        border: 1px solid var(--input-border-color);
+    }
 
     &:not(:disabled) {
         cursor: pointer;
@@ -232,7 +252,9 @@ input[type='range']#{$exclude-grid-selector} {
     outline: none;
     border: 2px solid transparent;
     cursor: pointer;
-    transition: border-color $default-transition-timing, box-shadow $default-transition-timing;
+    transition:
+        border-color $default-transition-timing,
+        box-shadow $default-transition-timing;
 
     &:focus-visible:not(:disabled):not([readonly]) {
         border-color: var(--input-focus-border-color);

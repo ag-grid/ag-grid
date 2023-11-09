@@ -1,7 +1,3 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
-<svg width="100%" height="100%" viewBox="0 0 32 32" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2;">
-    <g id="aggregation">
-        <path d="M24,6L8,6L8,8L16,16L8,24L8,26L24,26L24,24L11,24L19,16L11,8L24,8L24,6Z" style="fill-rule:nonzero;"/>
-    </g>
+<svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path fill-rule="evenodd" clip-rule="evenodd" d="M3.05279 2.44306C3.13748 2.27367 3.31061 2.16667 3.5 2.16667H11.5C11.7761 2.16667 12 2.39052 12 2.66667V4.66667C12 4.94281 11.7761 5.16667 11.5 5.16667C11.2239 5.16667 11 4.94281 11 4.66667V3.16667H4.5L7.9 7.7C8.03333 7.87778 8.03333 8.12222 7.9 8.3L4.5 12.8333H11V11.3333C11 11.0572 11.2239 10.8333 11.5 10.8333C11.7761 10.8333 12 11.0572 12 11.3333V13.3333C12 13.6095 11.7761 13.8333 11.5 13.8333H3.5C3.31061 13.8333 3.13748 13.7263 3.05279 13.5569C2.96809 13.3875 2.98637 13.1848 3.1 13.0333L6.875 8L3.1 2.96667C2.98637 2.81516 2.96809 2.61245 3.05279 2.44306Z" fill="black"/>
 </svg>

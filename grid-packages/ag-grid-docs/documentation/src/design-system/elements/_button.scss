@@ -78,11 +78,12 @@ input[type='submit']#{$exclude-grid-selector},
     --button-focus-box-shadow-color: var(--900);
 
     #{$darkmode-selector} & {
-        --button-color: var(--primary-300);
-        --button-hover-color: var(--primary-400);
+        --button-color: var(--background-100);
+        --button-hover-color: #2a343e;
         --button-active-color: var(--primary-500);
         --button-text-color: var(--default-text-color);
         --button-focus-box-shadow-color: var(--900);
+        border: 1px solid var(--input-border-color)
     }
 }
 

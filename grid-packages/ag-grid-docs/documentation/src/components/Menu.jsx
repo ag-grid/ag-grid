@@ -40,7 +40,6 @@ const Menu = ({ currentFramework, path, menuData, expandAllGroups = false, hideC
                 <div className={styles.whatsNewLink}>
                     <Link
                         to={convertToFrameworkUrl(whatsNewLink.url, currentFramework)}
-                        activeClassName={styles.whatsNewLinkActive}
                         onClick={collapseAllGroups}
                     >
                         {whatsNewLink.title}

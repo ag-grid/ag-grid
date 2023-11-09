@@ -12,12 +12,6 @@ import {
 
 @Bean('filterAggregatesStage')
 export class FilterAggregatesStage extends BeanStub implements IRowNodeStage {
-    getImpactingGridOptions(): (keyof GridOptions<any>)[] {
-        return [
-            'groupAggFiltering',
-            'treeData',
-        ];
-    }
 
     @Autowired('filterManager') private filterManager: FilterManager;
     @Autowired('columnModel') private columnModel: ColumnModel;

@@ -1,15 +1,3 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<svg width="100%" height="100%" viewBox="0 0 32 32" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
-    <!-- Generator: Sketch 51.3 (57544) - http://www.bohemiancoding.com/sketch -->
-    <title>none</title>
-    <desc>Created with Sketch.</desc>
-    <defs></defs>
-    <g id="none" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
-        <g id="small-down" transform="translate(16.000000, 11.500000) scale(1, -1) translate(-16.000000, -11.500000) translate(8.000000, 6.000000)" fill="#000000" fill-rule="nonzero">
-            <path d="M15.708,2.355 L8,10.061 L0.292,2.355 L1.708,0.939 L8,7.233 L14.292,0.939 C14.764,1.411 15.236,1.883 15.708,2.355 Z" id="Shape"></path>
-        </g>
-        <g id="small-down" transform="translate(8.000000, 18.000000)" fill="#000000" fill-rule="nonzero">
-            <path d="M15.708,2.355 L8,10.061 L0.292,2.355 L1.708,0.939 L8,7.233 L14.292,0.939 C14.764,1.411 15.236,1.883 15.708,2.355 Z" id="Shape"></path>
-        </g>
-    </g>
+<svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path fill-rule="evenodd" clip-rule="evenodd" d="M8.35355 1.64645C8.15829 1.45118 7.84171 1.45118 7.64644 1.64645L4.31311 4.97978C4.11785 5.17504 4.11785 5.49162 4.31311 5.68689C4.50837 5.88215 4.82496 5.88215 5.02022 5.68689L8 2.70711L10.9798 5.68689C11.175 5.88215 11.4916 5.88215 11.6869 5.68689C11.8821 5.49162 11.8821 5.17504 11.6869 4.97978L8.35355 1.64645ZM5.02022 10.3164C4.82496 10.1212 4.50837 10.1212 4.31311 10.3164C4.11785 10.5117 4.11785 10.8283 4.31311 11.0236L7.64644 14.3569C7.84171 14.5521 8.15829 14.5521 8.35355 14.3569L11.6869 11.0236C11.8821 10.8283 11.8821 10.5117 11.6869 10.3164C11.4916 10.1212 11.175 10.1212 10.9798 10.3164L8 13.2962L5.02022 10.3164Z" fill="black"/>
 </svg>

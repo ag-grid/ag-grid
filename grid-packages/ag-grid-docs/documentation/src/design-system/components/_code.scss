@@ -68,7 +68,7 @@ pre.code {
         --property-color: #7ac1d1;
 
         border-radius: $size-1;
-        border: 1px solid rgb(255,255,255,0.1);
+        border: 1px solid rgb(255, 255, 255, 0.1);
     }
 }
 
@@ -85,14 +85,15 @@ pre.code > code {
     background-origin: content-box;
     background-attachment: local;
     border: none;
+    border-radius: 0;
     box-shadow:
         inset 0 $vertical-padding 0 0 var(--default-background-color),
         inset 0 $vertical-padding * -1 0 0 var(--default-background-color);
     overflow-x: auto !important;
 
     #{$darkmode-selector} & {
-        background: #121f29;
-        box-shadow: 0 0 0 1px #121f29;
+        background: var(--background-200);
+        box-shadow: inset 0px 0px;
     }
 }
 
@@ -294,4 +295,3 @@ code[class*='language-css'] {
         color: var(--default-text-color);
     }
 }
-

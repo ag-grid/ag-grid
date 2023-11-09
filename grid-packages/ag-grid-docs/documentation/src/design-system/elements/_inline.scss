@@ -33,12 +33,13 @@ code#{$exclude-grid-selector} {
     #{$darkmode-selector} & {
         -webkit-font-smoothing: subpixel-antialiased;
 
-        border: 1px solid #83483257;
+        border: 1px solid rgba(255,255,255,0.1);
         background-color: transparent;
-        color: #e3794d;
-        background-color: #34201d;
-        padding: 1px 4px;
-        font-size: 14px;
+        color: var(--default-text-color);
+        background-color: #121f29;
+        padding: 2px 6px;
+        font-size: 13px;
+        letter-spacing: 0.5px;
     }
 }
 
@@ -54,11 +55,14 @@ kbd#{$exclude-grid-selector} {
     box-shadow: inset 0 -2px 0 var(--neutral-200);
 
     #{$darkmode-selector} & {
-        background-color: var(--neutral-300);
+        color: var(--default-text-color);
+        background-color: #151F28;
         text-shadow: -1px -1px var(--neutral-100);
-        border: 1px solid var(--neutral-500);
-        border-bottom: 1px solid var(--neutral-400);
+        border: 1px solid rgba(255,255,255,0.2);
+        border-bottom: 2px solid rgba(255,255,255,0.1);
         box-shadow: inset 0 -2px 0 var(--neutral-100);
+        font-weight: 500;
+        border-radius: 6px;
     }
 }
 

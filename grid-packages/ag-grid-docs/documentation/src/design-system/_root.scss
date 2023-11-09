@@ -49,10 +49,13 @@
     --line-height: var(--line-height-normal);
 
     --icon-size: #{$icon-size};
-}
 
-html {
-    --color-scheme: light;
+    // Used to set offset for smooth-scroll polyfill (gatsby-ssr.js)
+    --scroll-offset: #{$size-5};
+
+    @media (min-width: $breakpoint-docs-nav-medium) {
+        --scroll-offset: #{$site-header-height + 92px};
+    }
 }
 
 // Create CSS variables for all dark mode colors

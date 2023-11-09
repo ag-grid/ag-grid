@@ -27,11 +27,13 @@ import LearningVideos from '../components/LearningVideos';
 import NextStepTiles from '../components/NextStepTiles';
 import { trackApiDocumentation } from '../utils/analytics';
 import styles from './doc-page.module.scss';
+import FrameworkSelectorInsideDocs from "../components/FrameworkSelectorInsideDocs";
+import supportedFrameworks from "../utils/supported-frameworks";
 
 /**
  * This template is used for documentation pages, i.e. those generated from Markdown files.
  */
-const DocPageTemplate = ({ data, pageContext: { framework, exampleIndexData, pageName } }) => {
+const DocPageTemplate = ({ data, path, pageContext: { framework, frameworks, exampleIndexData, pageName } }) => {
     const { markdownRemark: page } = data;
     const [showSideMenu, setShowSideMenu] = useState(true);
 
@@ -140,9 +142,12 @@ const DocPageTemplate = ({ data, pageContext: { framework, exampleIndexData, pag
 
     const pageTitle = (
         <>
+
+            
             <span className={styles.headerFramework}>
                 {getProductType(framework, false, version)}
             </span>
+            
             <span>{title}</span>
         </>
     );
@@ -155,7 +160,20 @@ const DocPageTemplate = ({ data, pageContext: { framework, exampleIndexData, pag
 
                 <header className={styles.docsPageHeader}>
                     <h1 id="top" className={styles.docsPageTitle}>
-                        {pageTitle}
+
+                        <div className={styles.pageTitleContainer}>
+                            <div className={styles.pageTitleGroup}>
+                                <span className={styles.headerFramework}>
+                                    {getProductType(framework, false, version)}
+                                </span>
+                                <span>{title}</span>
+                            </div>
+                            <FrameworkSelectorInsideDocs
+                                currentFramework={framework}
+                                path={path}
+                            />
+                        </div>
+
                         {page.frontmatter.enterprise && (
                             <span className={styles.enterpriseLabel}>
                                 Enterprise

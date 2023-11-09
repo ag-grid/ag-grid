@@ -100,13 +100,21 @@
 
 .buyTogether {
     --card-color: #0665cb;
-    --header-tint: 0.9;
+    --header-tint: 0.95;
     
     width: 100%;
     display: flex;
-    border-radius: calc(var(--border-radius) * 2);
+    border-radius: 5px;
     border: 3px solid var(--card-color);
     background-color: var(--card-color);
+
+    #{$darkmode-selector} & {
+        border: 1px solid rgba(255,255,255,0.2);
+        border-radius: 6px;
+        --card-color: var(--background-100);
+    }
+
+
 }
 
 .buyTogetherInner {
@@ -120,11 +128,15 @@
     background-color: var(--default-background-color);
     opacity: var(--header-tint);
 
+    #{$darkmode-selector} & {
+
+    }
+
     @media screen and (min-width: $breakpoint-pricing-medium) {
         flex-direction: row;
         justify-content: space-between;
         gap: $size-4;
-        padding: $size-1 $size-2;
+        padding: $size-2 $size-2;
         text-align: left;
     }
 
@@ -284,6 +296,11 @@
 
     svg {
         --text-color: var(--enterprise-icon-color);
+
+        
+    #{$darkmode-selector} & {
+        --text-color: #3893f9;
+        }
 
         position: absolute;
         margin-top: -4px;

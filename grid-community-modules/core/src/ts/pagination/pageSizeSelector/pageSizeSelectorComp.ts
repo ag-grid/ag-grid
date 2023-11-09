@@ -113,7 +113,7 @@ export class PageSizeSelectorComp extends Component {
         this.selectPageSizeComp.addOptions(options)
             .setValue(String(shouldAddAndSelectEmptyOption ? '' : paginationPageSizeOption))
             .setLabel(localisedLabel)
-            .setLabelAlignment('left')
+            .setInputWidth(60)
             .setAriaLabel(localisedLabel)
             .onValueChange(() => this.handlePageSizeItemSelected());
 

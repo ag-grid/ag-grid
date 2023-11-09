@@ -1,31 +1,39 @@
 @use '../design-system' as *;
 
 .whatsNewLink {
-    margin-top: $size-2;
+    margin-top: $size-5;
     margin-bottom: $size-1;
 
     a {
         display: block;
         position: relative;
-        font-size: var(--font-size-medium);
-        color: var(--link-hover-color);
+        width: fit-content;
+        margin-bottom: $size-2;
+        padding: 2px 10px;
         text-decoration: none;
-        border-radius: var(--border-radius);
-        padding: 4px 8px;
+        font-size: var(--font-size-small);
+        color: var(--link-hover-color);
+        border-radius: 24px;
+        border: 1px solid var(--link-hover-color);
+        transition: background-color $default-transition-timing, color $default-transition-timing;
         -webkit-font-smoothing: auto;
 
-        &:hover, &:focus {
-            background-color: rgba(56, 146, 249, 0.09);
+        &:hover,
+        &:focus {
+            background-color: color-mix(in srgb, var(--link-hover-color) 5%, var(--default-background-color));
         }
-    }
 
-    .whatsNewLinkActive {
-        background-color: rgba(56, 146, 249, 0.09);
+        #{$darkmode-selector} & {
+            &:hover,
+            &:focus {
+                background-color: color-mix(in srgb, var(--link-hover-color) 10%, var(--default-background-color));
+            }
+        }
     }
 }
 
 .menu {
-    $top-bar-height: 58px;
+    $top-bar-height: 0px;
 
     --menu-width: min(30vw, 290px);
     --font-size: 16px;
@@ -63,6 +71,8 @@
     #{$darkmode-selector} & {
         --secondary-border-color: #394755;
 
+        border-right: none;
+
         border-bottom: none;
     }
 }
@@ -85,7 +95,12 @@ ul.menuInner {
         margin-top: $size-2;
         margin-bottom: $size-2;
         height: 1px;
-        background-color: var(--secondary-border-color);
+        background-color: var(--border-color);
+
+        #{$darkmode-selector} & {
+            background-color: #394755;
+            height: 0.5px;
+        }
     }
 
     h5 {
@@ -174,7 +189,7 @@ button:not([class^='ag-']).sectionHeader {
         --text-color: var(--enterprise-icon-color);
 
         position: relative;
-        margin-left: 2px;
+        margin-left: 4px;
         color: transparent;
 
         svg {
@@ -203,7 +218,7 @@ button:not([class^='ag-']).sectionHeader {
     transition: color 0.33s ease-in-out, border-color 0.33s ease-in-out, background-color 0.33s ease-in-out;
 
     #{$darkmode-selector} & {
-        --active-color: #007bff;
+        --active-color: #3893f9;
         --active-border: #3893f9;
         --hover-background: rgba(56, 146, 249, 0.06);
         --active-background: rgba(56, 146, 249, 0.09);
@@ -231,7 +246,7 @@ button:not([class^='ag-']).sectionHeader {
     &.activeMenuItem {
         pointer-events: none;
         background-color: var(--active-background);
-        border-left-color: var(--active-border);
+        border-left-color: var(--active-border) !important;
     }
 }
 
@@ -239,6 +254,12 @@ button:not([class^='ag-']).sectionHeader {
     padding-top: 7px;
     padding-bottom: 7px;
     border-left: 1px solid var(--border-color);
+
+    #{$darkmode-selector} & {
+        border-left: 1px solid #394755;
+    }
+    
+
 }
 
 .menuGroup .groupLabel {
@@ -250,6 +271,10 @@ button:not([class^='ag-']).sectionHeader {
     border-left: 1px solid var(--border-color);
     color: var(--neutral-600);
     transition: color $default-transition-timing;
+
+    #{$darkmode-selector} & {
+        border-left: 1px solid #394755;
+    }
 
     #{$darkmode-selector} & {
         color: var(--neutral-800);

@@ -394,6 +394,7 @@ export {
     IAggFuncParams,
     ColGroupDef,
     ColDef,
+    ColDefField,
     AbstractColDef,
     ColTypeDef,
     ValueSetterParams,

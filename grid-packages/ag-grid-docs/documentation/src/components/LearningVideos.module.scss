@@ -6,8 +6,10 @@
     gap: $size-2;
 
     @media screen and (max-width: 600px) {
-        gap: $size-1;
+        gap: $size-1; 
     }
+
+
 }
 
 .titleDurationWrapper {
@@ -19,12 +21,14 @@
 
 .title {
     font-size: var(--font-size-extra-large);
+
+
 }
 
 .video {
     display: flex;
     gap: $size-2;
-    border: 2px solid var(--border-color);
+    border: 1px solid var(--border-color);
     border-radius: var(--border-radius);
     padding: $size-2;
     margin: $size-2;
@@ -33,9 +37,16 @@
     box-sizing: border-box;
     color: var(--text-color);
 
-    @media screen and (max-width: 600px) {
+    @media screen and (max-width: 1200px) {
         flex-direction: column;
         align-items: flex-start;
+    }
+
+    #{$darkmode-selector} & {
+        color: var(--default-text-color);
+        text-decoration: none !important;
+        background: rgb(18, 31, 41);
+        border: 1px solid var(--border-color);
     }
 
     .duration {
@@ -48,6 +59,9 @@
 
     &:hover {
         border-color: var(--link-hover-color);
+        #{$darkmode-selector} & {
+            border: 1px solid #6c6d70;
+        }
     }
 
     h2 {
@@ -61,7 +75,7 @@
     img {
         width: auto;
         border-radius: var(--border-radius);
-        border: 2px solid var(--border-color);
+        border: 1px solid var(--border-color);
         transition: border-color $default-transition-timing;
 
         @media screen and (max-width: 600px) {
@@ -69,7 +83,7 @@
         }
 
         @media screen and (min-width: $breakpoint-videos-extra-small) {
-            height: 150px;
+            height: 195px;
         }
     }
 

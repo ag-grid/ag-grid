@@ -121,7 +121,7 @@
 }
 
 @media (prefers-color-scheme: dark) {
-    .ag-theme-balham-auto {
+    .ag-theme-balham-auto-dark {
         @include -dark-vars();
     }
 }
