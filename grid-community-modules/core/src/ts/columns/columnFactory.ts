@@ -10,8 +10,8 @@ import { DefaultColumnTypes } from "../entities/defaultColumnTypes";
 import { BeanStub } from "../context/beanStub";
 import { iterateObject, mergeDeep } from '../utils/object';
 import { attrToNumber, attrToBoolean } from '../utils/generic';
-import { removeFromArray } from '../utils/array';
 import { DataTypeService } from './dataTypeService';
+import { warnOnce } from '../utils/function';
 
 // takes ColDefs and ColGroupDefs and turns them into Columns and OriginalGroups
 @Bean('columnFactory')
@@ -447,6 +447,13 @@ export class ColumnFactory extends BeanStub {
             if (key in allColumnTypes) {
                 console.warn(`AG Grid: the column type '${key}' is a default column type and cannot be overridden.`);
             } else {
+                const colType = value as any;
+                if (colType.type) {
+                    warnOnce(`Column type definitions 'columnTypes' with a 'type' attribute are not supported ` +
+                        `because a column type cannot refer to another column type. Only column definitions ` +
+                        `'columnDefs' can use the 'type' attribute to refer to a column type.`);
+                }
+
                 allColumnTypes[key] = value;
             }
         });
