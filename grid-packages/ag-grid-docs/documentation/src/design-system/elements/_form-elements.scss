@@ -95,6 +95,14 @@ input[type='number'] {
     }
 }
 
+// Hide native search icons for iOS Safari
+input[type="search"]::-webkit-search-decoration,
+input[type="search"]::-webkit-search-cancel-button,
+input[type="search"]::-webkit-search-results-button,
+input[type="search"]::-webkit-search-results-decoration {
+    display: none;
+}
+
 input[type='checkbox']#{$exclude-grid-selector},
 input[type='radio']#{$exclude-grid-selector} {
     $square-size: 1.25em;
