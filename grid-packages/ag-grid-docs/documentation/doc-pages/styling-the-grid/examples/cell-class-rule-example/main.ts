@@ -1,27 +1,18 @@
-import { CellClassParams, createGrid, GridApi, GridOptions, RowClassParams, ValueFormatterParams, CellValueChangedEvent } from '@ag-grid-community/core';
-import { CountryFlagCellRenderer } from './CountryFlagCellRenderer';
+import { createGrid, CellClassParams, GridApi, GridOptions, CellValueChangedEvent, RowClassParams } from '@ag-grid-community/core';
 
 let gridApi: GridApi;
 
-const cellClassRules = {
+const rowClassRule = {
+    'unsucessful-mission': (p: RowClassParams) => { return p.data.successful === false },
+    'successful-mission': (p: RowClassParams) => { return p.data.successful === true }
+}
+
+const cellClassRule = {
     'very-low-cost': (p: CellClassParams) => { return p.value < 2500000},
     'low-cost': (p: CellClassParams) => { return p.value > 2500000 && p.value < 5000000},
     'medium-cost': (p: CellClassParams) => { return p.value > 5000000 && p.value < 7500000},
     'high-cost': (p: CellClassParams) => { return p.value > 7500000 && p.value < 9000000},
     'very-high-cost': (p: CellClassParams) => { return p.value >= 9000000},
-}
-
-const rowClassRules = {
-    'unsucessful-mission': (p: RowClassParams) => { return p.data.successful === false },
-    'successful-mission': (p: RowClassParams) => { return p.data.successful === true }
-}
-
-const currencyFormatter = (params: ValueFormatterParams) => {
-    return '£' + params.value.toLocaleString();
-}
-
-const dateFormatter = (params: ValueFormatterParams) => {
-    return new Date(params.value).toLocaleDateString('en-us', { weekday: 'long', year: 'numeric', month: 'short', day: 'numeric' });
 }
 
 const gridOptions: GridOptions = {
@@ -36,26 +27,20 @@ const gridOptions: GridOptions = {
         {
             field: "mission",
             resizable: false,
-            checkboxSelection: true,
             cellClass: 'mission-cell'
         },
         {
-            field: "country",
-            cellRenderer: CountryFlagCellRenderer
+            field: "country"
         },
         {
-            field: "successful",
-            width: 130
+            field: "successful"
         },
         {
-            field: "date",
-            valueFormatter: dateFormatter
+            field: "date"
         },
         {
             field: "price",
-            width: 130,
-            cellClassRules: cellClassRules,
-            valueFormatter: currencyFormatter
+            cellClassRules: cellClassRule
         },
         {
             field: "company"
@@ -71,11 +56,7 @@ const gridOptions: GridOptions = {
     // Grid Options & Callbacks
     pagination: true,
     rowClass: 'row',
-    rowSelection: 'multiple',
-    rowClassRules: rowClassRules,
-    onCellValueChanged: (event: CellValueChangedEvent) => { 
-        console.log(`New Cell Value: ${event.value}`)
-    }
+    rowClassRules: rowClassRule
 }
 document.addEventListener('DOMContentLoaded', function () {
     var gridDiv = document.querySelector<HTMLElement>('#myGrid')!;

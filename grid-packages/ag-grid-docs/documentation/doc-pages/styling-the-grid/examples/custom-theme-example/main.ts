@@ -13,22 +13,19 @@ const gridOptions: GridOptions = {
     columnDefs: [
         {
             field: "mission",
-            resizable: false,
-            checkboxSelection: true
+            resizable: false
         },
         {
             field: "country"
         },
         {
-            field: "successful",
-            width: 130
+            field: "successful"
         },
         {
             field: "date"
         },
         {
-            field: "price",
-            width: 130,
+            field: "price"
         },
         {
             field: "company"
@@ -43,16 +40,11 @@ const gridOptions: GridOptions = {
     },
     // Grid Options & Callbacks
     pagination: true,
-    rowClass: 'row',
-    rowSelection: 'multiple',
-    onCellValueChanged: (event: CellValueChangedEvent) => { 
-        console.log(`New Cell Value: ${event.value}`)
-    }
+    rowClass: 'row'
 }
 document.addEventListener('DOMContentLoaded', function () {
     var gridDiv = document.querySelector<HTMLElement>('#myGrid')!;
     gridApi = createGrid(gridDiv, gridOptions);
-    console.log('test')
     fetch('https://downloads.jamesswinton.com/space-mission-data.json')
         .then(response => response.json())
         .then((data: any) => gridApi.setGridOption('rowData', data))

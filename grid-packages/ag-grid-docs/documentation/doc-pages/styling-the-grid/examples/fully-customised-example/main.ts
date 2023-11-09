@@ -1,13 +1,9 @@
-import { createGrid, CellClassParams, GridApi, GridOptions, CellValueChangedEvent, RowClassParams, ValueFormatterParams } from '@ag-grid-community/core';
+import { CellClassParams, createGrid, GridApi, GridOptions, RowClassParams, ValueFormatterParams, CellValueChangedEvent } from '@ag-grid-community/core';
+import { CountryFlagCellRenderer } from './CountryFlagCellRenderer';
 
 let gridApi: GridApi;
 
-const rowClassRule = {
-    'unsucessful-mission': (p: RowClassParams) => { return p.data.successful === false },
-    'successful-mission': (p: RowClassParams) => { return p.data.successful === true }
-}
-
-const cellClassRule = {
+const cellClassRules = {
     'very-low-cost': (p: CellClassParams) => { return p.value < 2500000},
     'low-cost': (p: CellClassParams) => { return p.value > 2500000 && p.value < 5000000},
     'medium-cost': (p: CellClassParams) => { return p.value > 5000000 && p.value < 7500000},
@@ -15,8 +11,9 @@ const cellClassRule = {
     'very-high-cost': (p: CellClassParams) => { return p.value >= 9000000},
 }
 
-const currencyFormatter = (params: ValueFormatterParams) => {
-    return '£' + params.value.toLocaleString();
+const rowClassRules = {
+    'unsucessful-mission': (p: RowClassParams) => { return p.data.successful === false },
+    'successful-mission': (p: RowClassParams) => { return p.data.successful === true }
 }
 
 const gridOptions: GridOptions = {
@@ -30,8 +27,6 @@ const gridOptions: GridOptions = {
     columnDefs: [
         {
             field: "mission",
-            resizable: false,
-            checkboxSelection: true,
             cellClass: 'mission-cell'
         },
         {
@@ -39,16 +34,13 @@ const gridOptions: GridOptions = {
         },
         {
             field: "successful",
-            width: 130
         },
         {
             field: "date"
         },
         {
             field: "price",
-            width: 130,
-            cellClassRules: cellClassRule,
-            valueFormatter: currencyFormatter
+            cellClassRules: cellClassRules
         },
         {
             field: "company"
@@ -65,10 +57,7 @@ const gridOptions: GridOptions = {
     pagination: true,
     rowClass: 'row',
     rowSelection: 'multiple',
-    rowClassRules: rowClassRule,
-    onCellValueChanged: (event: CellValueChangedEvent) => { 
-        console.log(`New Cell Value: ${event.value}`)
-    }
+    rowClassRules: rowClassRules
 }
 document.addEventListener('DOMContentLoaded', function () {
     var gridDiv = document.querySelector<HTMLElement>('#myGrid')!;

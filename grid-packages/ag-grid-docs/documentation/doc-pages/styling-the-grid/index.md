@@ -1,5 +1,5 @@
 ---
-title: "Customising the Grid"
+title: "Styling the Grid"
 ---
 
 This tutorial demonstrates how to style, customise and extend the grid.
@@ -8,15 +8,14 @@ This tutorial demonstrates how to style, customise and extend the grid.
 
 In this tutorial you will:
 
-1. [Pick a theme](/customising-the-grid/#choosing-a-theme)
-2. [Style rows & cells](/customising-the-grid/#styling-rows--cells)
-3. [Apply styles dynamically](/customising-the-grid/#applying-styles-dynamically)
-4. [Format grid values](/customising-the-grid/#formatting-cell-values)
-5. [Add custom components to Cells](/customising-the-grid/#custom-cell-components)
+1. [Pick a theme](/styling-the-grid/#choosing-a-theme)
+2. [Customise the Theme](/styling-the-grid/#customising-themes)
+3. [Style rows & cells](/styling-the-grid/#styling-rows--cells)
+4. [Apply styles dynamically](/styling-the-grid/#applying-styles-dynamically)
 
 Once complete, you will have a grid with custom styles applied to rows & cells, formatted price & date values, and a component in place of the country values.
 
-Try it out by editing the country, success, price or date columns to see the styles update in real-time:
+Try it out by editing the success or price columns to see the styles update in real-time:
 
 <grid-example title='Full Example' name='fully-customised-example' type='generated' options='{ "exampleHeight": 550 }'></grid-example>
 
@@ -24,7 +23,7 @@ Try it out by editing the country, success, price or date columns to see the sty
 
 <note disableMarkdown='true'>To follow this tutorial clone our <a href='#'>Basic Grid Template</a> or fork the <a href='#'>CodeSandbox Example</a>.</note>
 
-## Theming & Styling
+## Introduction
 
 There are three ways to style the grid:
 
@@ -32,23 +31,11 @@ There are three ways to style the grid:
 - __Styles:__ Applies CSS classes to rows or cells.
 - __Class Rules:__ Applies Styles to rows or cells based on their value.
 
-### Choosing a Theme
-
-All grids require a theme and we provide 5 themes out-of-the-box: [Alpine](https://www.ag-grid.com/example/?theme=ag-theme-alpine), [Alpine Dark](https://www.ag-grid.com/example/?theme=ag-theme-alpine-dark), [Balham](https://www.ag-grid.com/example/?theme=ag-theme-balham), [Balham Dark](https://www.ag-grid.com/example/?theme=ag-theme-balham-dark), and [Material](https://www.ag-grid.com/example/?theme=ag-theme-material).
-
-To use a theme, set the classname of the div that contains the grid to the name of the theme. Let's try this out by adding `ag-theme-alpine-dark` to our container div:
-
-<snippet transform={false} language="jsx">
-|&lt;div className="ag-theme-alpine-dark" style={{ width: 600, height: 500 }}>
-|  &lt;AgGridReact ... />
-|&lt;/div>
-</snippet>
-
-### Customising Themes
+## Customising Themes
 
 All themes can be customised by overriding [CSS variables](/global-style-customisation-variables/).
 
-Let's test this out by creating a new `styles.css` file with a single selector that matches our chosen theme(`ag-theme-alpine-dark`) and override the `--ag-alpine-active-colour` to change the colour of active elements within the grid:
+Let's test this out by creating a new `styles.css` file with a single selector that matches our chosen theme (`ag-theme-alpine-dark`) and override the `--ag-alpine-active-colour` to change the colour of active elements within the grid:
 
 <snippet transform={false} language="css">
 .ag-theme-alpine-dark {
@@ -62,7 +49,7 @@ We should now see the checkboxes styled with our new colour:
 
 _Note: You can also create your own theme entirely. Read our [Style Customisation](/global-style-customisation/) guide for more info._
 
-### Styling Rows & Cells
+## Styling Rows & Cells
 
 In addition to themes, CSS classes can be applied to rows with __Row Classes__ and to cells with __Cell Classes__.
 
@@ -111,7 +98,7 @@ We should now see our mission column with a heavy font-weight:
 
 <grid-example title='Cell Class Example' name='cell-class-example' type='generated' options='{ "exampleHeight": 550 }'></grid-example>
 
-### Applying Styles Dynamically
+## Applying Styles Dynamically
 
 Styles can also be dynamically applied to rows with __Row Class Rules__ and to cells with __Cell Class Rules__.
 
@@ -203,78 +190,6 @@ We should now see our price column formatted based on its value:
 
 ---
 
-## Formatting Cell Values
-
-The data supplied to the grid usually requires some degree of formatting. For basic text formatting we can use __Value Formatters__.
-
-__Value Formatters__ are basic functions which take the value of the cell, apply some basic formatting, and return a new value to be displayed by the grid. Let's try this by adding the `valueFormatter` property to our 'price' column and returning the formatted value:
-
-<snippet transform={false} language=jsx>
-|const [colDefs] = useState([
-|  ...
-|  {
-|    field: "price",
-|    valueFormatter: params => return '£' + params.value.toLocaleString(); // Function which returns a formatted string
-|  }
-|  ...
-|]);
-|
-|return (
-|  &lt;div className="ag-theme-custom" style={{ width: 600, height: 500 }}>
-|    &lt;AgGridReact colDefs={colDefs} />
-|  &lt;/div>
-|);
-</snippet>
-
-The grid should now display a nicely formatted value in the 'price' column:
-
-<grid-example title='Value Formatter Example' name='value-formatter-example' type='generated' options='{ "exampleHeight": 550 }'></grid-example>
-
-## Custom Cell Components
-
-__Value Formatters__ are useful for basic formatting, but for more advanced use-cases we can use __Cell Renderers__ instead.
-
-__Cell Renderers__ allow you to provide your own React components to the grid and are configured by setting the value of the `cellRenderer` prop to the component name on the relevant column.
-
-Let's try this by creating a new component to display a flag in the 'country' column. First, we need to create a component that accepts a single prop (which contains information about the cell) and returns an `<img>` element with the correct flag:
-
-<snippet transform={false} language=jsx>
-|const CountryFlagCellRenderer = (props) => {
-|  {* Return flag based on cell value *}
-|  return (
-|    &lt;span>
-|      { props.value === 'usa' && &lt;img src='https://downloads.jamesswinton.com/flags/us-flag.png)' height={30}>&lt;/img> }
-|      { props.value === 'china' && &lt;img src='https://downloads.jamesswinton.com/flags/cn-flag.png)' height={30}>&lt;/img> }
-|      { props.value === 'Kazakhstan' && &lt;img src='https://downloads.jamesswinton.com/flags/kz-flag.png)' height={30}>&lt;/img> }
-|    &lt;/span>
-|  );
-|}
-</snippet>
-
-And then adding the `cellRenderer` prop on our 'country' column, referencing our component:
-
-<snippet transform={false} language=jsx>
-|const [colDefs] = useState([
-|  {
-|    field: "country",
-|    cellRenderer: 'CountryFlagCellRenderer' // Use 'CountryFlagCellRenderer' for this column
-|  },
-|  ...
-|]);
-|
-|return (
-|  &lt;div className="ag-theme-custom" style={{ width: 600, height: 500 }}>
-|    &lt;AgGridReact colDefs={colDefs} />
-|  &lt;/div>
-|);
-</snippet>
-
-Now, when we run the grid, we should see a country flag in place of the name:
-
-<grid-example title='Cell Renderer Example' name='cell-renderer-example' type='generated' options='{ "exampleHeight": 550 }'></grid-example>
-
----
-
 ## Test Your Knowledge
 
 Let's put what you've learned so far into action by modifying the grid:
@@ -287,10 +202,6 @@ Let's put what you've learned so far into action by modifying the grid:
 
     _Hint: Use the `cellClass` property on the 'Mission' column to provide a CSS class to the cells_
 
-3. Format the Date column using `.toLocaleDateString()`;
-
-    _Hint: Use a `valueFormatter` on the 'Date' column to format its value_
-
 Once complete, your grid should look like the example below. If you're stuck, check out the source code to see how its done:
 
 <grid-example title='Full Example' name='fully-customised-example' type='generated' options='{ "exampleHeight": 550 }'></grid-example>
@@ -301,15 +212,13 @@ Once complete, your grid should look like the example below. If you're stuck, ch
 
 Congratulations! You've completed the tutorial and customised, styled, & extended your grid. By now, you should be familiar with several concepts:
 
-- __Themes:__ CSS Classes that control the look and feel of the entire grid. Choose from and customise 5 pre-made themes, or create your own.
+- __Themes:__ CSS Classes that control the look and feel of the entire grid. Choose from and 1 of 5 pre-made themes, or create your own.
 - __Styles:__ Apply CSS Classes to rows & cells directly, either by default or based on arbitrary data in the grid.
-- __Value Formatters:__ Format basic text values into more human readable content
-- __Cell Renderers:__ Add your own custom components to change the look & feel and extend the capabilities of the grid.
 
 ---
 
 ## Next Steps
 
-Take a look at our final tutorial in the series which introduces some of the more advanced features of the grid:
+Check out our other guides to explore more features of AG Grid:
 
-<next-step-tiles tutorial1="false" tutorial2="false" tutorial3="true"/>
+- [...]()
