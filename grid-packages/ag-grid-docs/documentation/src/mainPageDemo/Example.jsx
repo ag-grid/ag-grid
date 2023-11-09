@@ -1427,6 +1427,7 @@ const ExampleInner = ({darkMode}) => {
     }, [dataSize]);
 
     const isDarkTheme = gridTheme?.includes('dark');
+    const isAutoTheme = gridTheme?.includes('auto');
 
     useEffect(() => {
         if (isDarkTheme) {
@@ -1448,7 +1449,7 @@ const ExampleInner = ({darkMode}) => {
                 <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.6.3/css/all.css" />
                 {helmet.map((entry) => entry)}
             </Helmet>
-            <div className={classnames(styles.exampleWrapper, isDarkTheme && styles.exampleWrapperDark)}>
+            <div className={classnames(styles.exampleWrapper, isDarkTheme && styles.exampleWrapperDark, isAutoTheme && styles.exampleWrapperAuto)}>
                 <Toolbar
                     gridRef={gridRef}
                     dataSize={dataSize}

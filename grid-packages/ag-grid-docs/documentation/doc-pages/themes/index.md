@@ -10,12 +10,48 @@ The grid comes with several provided themes which act as a great starting point 
 
 | Theme Name | Description |
 |------------|-------------|
-|[**ag-theme-quartz**](../../example?theme=ag-theme-quartz)<br/>[**ag-theme-quartz-dark**](../../example?theme=ag-theme-quartz-dark)<br/>[**ag-theme-quartz-dark-blue**](../../example?theme=ag-theme-dark-blue)<br/><br/>File name `ag-theme-quartz[.min].css` | Modern looking themes with high contrast and generous padding.<br/><br/>**Recommendation:** This is the recommended grid theme and an excellent choice for most applications. |
-|[**ag-theme-balham**](../../example?theme=ag-theme-balham)<br/>[**ag-theme-balham-dark**](../../example?theme=ag-theme-balham-dark)<br/><br/>File name `ag-theme-balham[.min].css` | Balham has a more traditional look modelled after a spreadsheet application. It is appropriate for applications that need to fit more data onto each page. |
+|[**ag-theme-quartz**](../../example?theme=ag-theme-quartz)<br/>[**ag-theme-quartz-dark**](../../example?theme=ag-theme-quartz-dark)<br/>[**ag-theme-quartz-dark-blue**](../../example?theme=ag-theme-quartz-dark-blue)<br/>[**ag-theme-quartz-auto**](../../example?theme=ag-theme-quartz-auto) *<br/><br/>File name `ag-theme-quartz[.min].css` | Modern looking themes with high contrast and generous padding.<br/><br/>**Recommendation:** This is the recommended grid theme and an excellent choice for most applications. |
+|[**ag-theme-balham**](../../example?theme=ag-theme-balham)<br/>[**ag-theme-balham-dark**](../../example?theme=ag-theme-balham-dark)<br/>[**ag-theme-balham-auto**](../../example?theme=ag-theme-balham-auto) *<br/><br/>File name `ag-theme-balham[.min].css` | Balham has a more traditional look modelled after a spreadsheet application. It is appropriate for applications that need to fit more data onto each page. |
 |[**ag-theme-material**](../../example?theme=ag-theme-material)<br/><br/>File name `ag-theme-material[.min].css` | A theme designed according to the Google Material Language Specs.<br/><br/>**Recommendation:** This theme looks great for simple applications with lots of white space, and is the obvious choice if the rest of your application follows the Google Material Design spec. However, the Material spec doesn't cater for advanced grid features such as grouped columns and tool panels. If your application uses these features, consider using `ag-theme-alpine` instead. |
-|[**ag-theme-alpine**](../../example?theme=ag-theme-alpine)<br/>[**ag-theme-alpine-dark**](../../example?theme=ag-theme-alpine-dark)<br/><br/>File name `ag-theme-alpine[.min].css` | Alpine was the default theme before Quartz was released. It is still supported, but we recommend Quartz for new applications. |
+|[**ag-theme-alpine**](../../example?theme=ag-theme-alpine)<br/>[**ag-theme-alpine-dark**](../../example?theme=ag-theme-alpine-dark)<br/>[**ag-theme-alpine-auto**](../../example?theme=ag-theme-alpine-auto) *<br/><br/>File name `ag-theme-alpine[.min].css` | Alpine was the default theme before Quartz was released. It is still supported, but we recommend Quartz for new applications. |
 
-### 3rd party fonts
+\* The 'auto' versions of each theme use the [prefers-color-scheme](https://developer.mozilla.org/en-US/docs/Web/CSS/@media/prefers-color-scheme) CSS media feature to switch between dark and light variants depending on whether the user has enabled dark mode on their operating system.
+
+## Applying a Theme to an App
+
+To use a theme, add the theme class name to the `div` element that contains your grid. The following is an example of using the Alpine theme:
+
+```html
+<div id="myGrid" class="ag-theme-alpine"></div>
+```
+
+<warning>
+| The grid must always have a theme class set on its container, whether this is a provided theme or your own.
+</warning>
+
+## Loading CSS files and fonts
+
+In order for the above code to work, the correct stylesheets must be loaded in the correct order. There are two kinds of stylesheet that need to be loaded when using provided themes:
+
+- **`ag-grid.css`** - structural styles containing CSS rules that are essential to the functioning of the grid and must be loaded first.
+- **`ag-theme-{theme-name}.css`** - theme styles that add design look and feel on top of the structural styles.
+
+<note>
+| The correct files to load are located in `ag-grid-community/styles` or `@ag-grid-community/styles` if you're using [modules](../modules/).
+|
+| This path has changed in v28, and the old files are still there as part of the [Legacy Styles](/global-style-upgrading-to-v28/) but will be removed in v29.
+|
+| Double-check that you are importing files from the new paths. If you have `/src/` or `/dist/` in your path then you're using the old paths.
+</note>
+
+There are various ways to load these stylesheets, as described in the sections below:
+
+<framework-specific-section frameworks="javascript">
+|### Pre-built Bundles
+|Some pre-built bundles, whether [downloaded from our website](/download/) or included in the `ag-grid-community` [NPM package](/npm/), already embed the structural styles and all provided themes. If you are using one of these files, you do not need to load separately CSS.
+</framework-specific-section>
+
+### Loading 3rd party fonts
 
 Some themes have a recommended 3rd party font, which is not bundled with the theme CSS. If the font is not available at runtime, the OS default UI font will be used instead - Segoe UI on Windows and SF Pro on Mac.
 
@@ -50,40 +86,6 @@ You can [download Roboto from Google Fonts](https://fonts.google.com/specimen/Ro
 /* is css */
 @import "https://fonts.googleapis.com/css?family=Roboto";
 ```
-
-## Applying a Theme to an App
-
-To use a theme, add the theme class name to the `div` element that contains your grid. The following is an example of using the Alpine theme:
-
-```html
-<div id="myGrid" class="ag-theme-alpine"></div>
-```
-
-<warning>
-| The grid must always have a theme class set on its container, whether this is a provided theme or your own.
-</warning>
-
-## Loading CSS files
-
-In order for the above code to work, the correct stylesheets must be loaded in the correct order. There are two kinds of stylesheet that need to be loaded when using provided themes:
-
-- **`ag-grid.css`** - structural styles containing CSS rules that are essential to the functioning of the grid and must be loaded first.
-- **`ag-theme-{theme-name}.css`** - theme styles that add design look and feel on top of the structural styles.
-
-<note>
-| The correct files to load are located in `ag-grid-community/styles` or `@ag-grid-community/styles` if you're using [modules](../modules/).
-|
-| This path has changed in v28, and the old files are still there as part of the [Legacy Styles](/global-style-upgrading-to-v28/) but will be removed in v29.
-|
-| Double-check that you are importing files from the new paths. If you have `/src/` or `/dist/` in your path then you're using the old paths.
-</note>
-
-There are various ways to load these stylesheets, as described in the sections below:
-
-<framework-specific-section frameworks="javascript">
-|### Pre-built Bundles
-|Some pre-built bundles, whether [downloaded from our website](/download/) or included in the `ag-grid-community` [NPM package](/npm/), already embed the structural styles and all provided themes. If you are using one of these files, you do not need to load separately CSS.
-</framework-specific-section>
 
 ### JavaScript Bundlers
 

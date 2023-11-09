@@ -17,6 +17,12 @@
     background-color: #0a161f;
 }
 
+@media (prefers-color-scheme: dark) {
+    .exampleWrapperDark {
+        background-color: #0a161f;
+    }
+}
+
 .gridWrapper {
     margin-top: $size-2;
     flex: 1 1 auto;
