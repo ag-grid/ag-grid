@@ -58,7 +58,7 @@
     --ag-icon-size: 16px;
     --ag-header-height: calc(var(--ag-font-size) + var(--ag-grid-size) * 4.25);       // if changed, update environment.ts
     --ag-row-height: calc(var(--ag-font-size) + var(--ag-grid-size) * 3.5);          // if changed, update environment.ts
-    --ag-list-item-height: calc(var(--ag-grid-size) * 3); // if changed, update environment.ts
+    --ag-list-item-height: calc(var(--ag-icon-size) + var(--ag-widget-vertical-spacing)); // if changed, update environment.ts
     --ag-column-select-indent-size: var(--ag-icon-size);
     --ag-set-filter-indent-size: var(--ag-icon-size);
     --ag-advanced-filter-builder-indent-size: calc(var(--ag-icon-size) + var(--ag-grid-size) * 2);
