@@ -81,7 +81,7 @@ const Container = styled('div')`
     'header header'
     'menu main';
   grid-template-columns: 300px auto;
-  grid-template-rows: auto auto;
+  grid-template-rows: min-content auto;
   gap: 20px;
 
   .tooltip {

@@ -292,10 +292,17 @@
         border: none;
         background-color: var(--ag-control-panel-background-color);
         @include ag.theme-rtl((
-            border-left: dashed 1px,
-            border-left-color: var(--ag-border-color),
             margin-left: calc(var(--ag-icon-size) * 0.5)
         ))
+    }
+
+    .ag-filter-toolpanel-group-level-0 {
+        border-top: none;
+    }
+
+    .ag-filter-toolpanel-header {
+        height: initial;
+        margin-top: var(--ag-widget-vertical-spacing);
     }
 
     .ag-set-filter-list {
