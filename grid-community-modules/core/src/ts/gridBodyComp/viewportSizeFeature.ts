@@ -77,23 +77,24 @@ export class ViewportSizeFeature extends BeanStub {
     }
 
     private keepPinnedColumnsNarrowerThanViewport(): void {
-        const eBodyViewport = this.gridBodyCtrl.getBodyViewportElement();
-        const bodyWidth = getInnerWidth(eBodyViewport);
+        const columnsToRemove = this.getPinnedColumnsOverflowingViewport();
 
-        const leftColumns: Column[] = [...this.columnModel.getDisplayedLeftColumns()];
-        const rightColumns: Column[] = [...this.columnModel.getDisplayedRightColumns()];
-
-        const columnsToRemove = this.unpinColumnsOverflowingViewport(leftColumns, rightColumns, bodyWidth);
+        if (!columnsToRemove.length) { return; }
 
         this.columnModel.setColumnsPinned(columnsToRemove, null, 'viewportSizeFeature')
     }
 
-    private unpinColumnsOverflowingViewport(pinnedLeftColumns: Column[], pinnedRightColumns: Column[], bodyWidth: number): Column[] {
+    private getPinnedColumnsOverflowingViewport(): Column[] {
+        const eBodyViewport = this.gridBodyCtrl.getBodyViewportElement();
+        const bodyWidth = getInnerWidth(eBodyViewport) - 50;
         const pinnedRightWidth = this.pinnedWidthService.getPinnedRightWidth();
         const pinnedLeftWidth = this.pinnedWidthService.getPinnedLeftWidth();
         const totalPinnedWidth = pinnedRightWidth + pinnedLeftWidth;
 
-        if (totalPinnedWidth < bodyWidth) { return []; }
+        if (isNaN(bodyWidth) || bodyWidth < 0 || totalPinnedWidth < bodyWidth) { return []; }
+
+        const pinnedLeftColumns: Column[] = [...this.columnModel.getDisplayedLeftColumns()];
+        const pinnedRightColumns: Column[] = [...this.columnModel.getDisplayedRightColumns()];
 
         let indexRight = 0;
         let indexLeft = 0;
