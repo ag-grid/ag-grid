@@ -123,9 +123,10 @@ const HeaderNav = ({ path, currentFramework }) => {
 
     return (
         <>
+            {isDocsUrl ? <Search currentFramework={currentFramework} /> : null}
+            
             <HeaderExpandButton isOpen={isOpen} toggleIsOpen={toggleIsOpen} />
 
-            {isDocsUrl ? <Search currentFramework={currentFramework} /> : null}
             <Collapsible id="main-nav" isDisabled={isDesktop} isOpen={isOpen}>
                 <nav id={isDesktop ? 'main-nav' : undefined} className={styles.mainNav}>
                     <ul className={classnames(styles.navItemList, 'list-style-none')}>

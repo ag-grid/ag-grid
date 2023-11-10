@@ -20,10 +20,12 @@
 .headerInner {
     display: flex;
     flex-wrap: wrap;
+    align-items: center;
     width: 100%;
 
     // Required for collapsible mobile menu
-    > div {
+    :global(#main-nav),
+    :global(#main-nav) > div {
         width: 100%;
     }
 
@@ -38,6 +40,7 @@
     display: flex;
     align-items: center;
     padding: $size-1 10px;
+    margin-right: $size-2;
 
     svg {
         width: unset;
@@ -59,7 +62,7 @@
     justify-content: center;
     align-items: center;
     height: $site-header-height;
-    margin-left: auto;
+    margin-left: $size-1;
     padding: 0 16px 0 14px;
     border: none;
     transition: background-color 0.4s ease-in-out;
@@ -80,10 +83,6 @@
     svg {
         position: relative;
         left: 1px;
-    }
-
-    @media screen and (min-width: $breakpoint-page-margin-padding) {
-        padding-right: calc(var(--horizontal-margin));
     }
 
     @media screen and (min-width: $breakpoint-site-header-small) {
@@ -154,14 +153,18 @@
     --link-hover-color: var(--white);
 
     width: 100%;
-    margin-left: auto;
     background-color: var(--site-nav-background);
 
     @media screen and (min-width: $breakpoint-site-header-small) {
-        width: unset;
-        background-color: unset;
         display: block !important;
+        width: unset !important;
+        margin-left: $size-2;
+        background-color: unset;
         overflow: visible;
+    }
+
+    @media screen and (min-width: $breakpoint-site-header-large) {
+        margin-left: auto;
     }
 }
 

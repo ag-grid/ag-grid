@@ -20,9 +20,6 @@
             display: none;
         }
 
-        @media screen and (min-width: $breakpoint-docs-search-medium) {
-            padding-right: 80px;
-        }
     }
 
     :global(.icon) {
@@ -37,4 +34,5 @@
 .resultsOpen {
     border-bottom-right-radius: 0 !important;
     border-bottom-left-radius: 0 !important;
+    padding-right: 80px !important;
 }

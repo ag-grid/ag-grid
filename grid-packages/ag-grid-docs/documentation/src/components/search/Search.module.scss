@@ -4,17 +4,20 @@
     --max-width: 440px;
 
     flex-grow: 1;
-    top: 12px;
 
     @media screen and (min-width: $breakpoint-docs-search-medium) {
         position: relative;
+        width: 100%;
         max-width: var(--max-width);
-        margin-right: $size-3;
+        margin-right: auto;
+        margin-left: auto;
     }
 
     @media screen and (min-width: $breakpoint-site-header-large) {
         position: absolute;
+        
         left: 50%;
+        margin-right: $size-3;
         margin-left: calc(var(--max-width) / -2);
     }
 }
