@@ -13,7 +13,7 @@
     }
 
     #{$darkmode-selector} & {
-        background: #121f29;
+        border-bottom: 1px solid #3b4754;
     }
 }
 
@@ -45,7 +45,7 @@
     }
 
     @media screen and (min-width: $breakpoint-site-header-small) {
-        width: 100%;
+        margin-right: $size-5;
     }
 }
 
@@ -201,7 +201,11 @@
     }
 
     #{$darkmode-selector} & {
-        border-bottom: 1px solid #121f29 !important;
+        border-bottom: 1px solid #121f29;
+
+        @media screen and (min-width: $breakpoint-site-header-small) {
+            border-bottom: none;
+        }
     }
 }
 
