@@ -1,20 +1,38 @@
+@use "../../design-system/" as *;
+
 .navItem {
     padding: 8px 14px;
 }
 
 button.toggle {
-    width: 30px;
-    height: 30px;
+    --size: 30px;
+
+    width: var(--size);
+    height: var(--size);
     margin-right: -8px;
     border-radius: 50%;
     transition: box-shadow 0.25s ease-in-out;
 
     &:hover {
-        box-shadow: 0 0 0 3px var(--site-header-background), 0 0 0 6px rgba(white, 0.3);
+        box-shadow: 0 0 0 4px var(--site-header-background), 0 0 0 6px rgba(white, 0.3);
     }
 
     svg {
-        --icon-size: 30px;
+        --icon-size: var(--size);
         --button-text-color: var(--link-color);
+    }
+
+    @media screen and (min-width: $breakpoint-site-header-small) {
+        --size: 20px;
+
+        position: relative;
+        top: 3px;
+        margin-right: -$size-2;
+        margin-left: -$size-1;
+
+        svg {
+            position: relative;
+            top: -3.5px;
+        }
     }
 }

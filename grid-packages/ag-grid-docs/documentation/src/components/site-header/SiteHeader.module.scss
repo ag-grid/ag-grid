@@ -1,4 +1,3 @@
-@use "sass:map";
 @use "../../design-system/" as *;
 
 .header {
@@ -184,9 +183,19 @@
             transform: scaleX(1);
         }
 
+        &.navItemActive .navLink {
+            #{$darkmode-selector} & {
+                opacity: 1;
+            }
+        }
+
         &.navItemActive a::after {
             opacity: 0.5;
             transform: scaleX(1);
+
+            #{$darkmode-selector} & {
+                opacity: 0.75;
+            }
         }
     }
 
@@ -204,6 +213,7 @@
     font-weight: 500;
     letter-spacing: 0.01em;
     color: var(--link-color);
+    transition: color $default-transition-timing, opacity $default-transition-timing;
 
     &:hover {
         text-decoration: none;
@@ -217,10 +227,10 @@
         &::after {
             content: '';
             position: absolute;
-            height: 3px;
-            bottom: 4px;
-            left: var(--horizontal-padding);
-            right: var(--horizontal-padding);
+            height: 2px;
+            bottom: 6px;
+            left: calc(var(--horizontal-padding) - #{$size-half});
+            right: calc(var(--horizontal-padding) - #{$size-half});
             border-radius: 2px;
             background-color: var(--link-color);
             opacity: 0;
@@ -229,10 +239,10 @@
         }
     }
 
-    @media screen and (min-width: $breakpoint-size-header-medium) {
-        --horizontal-padding: #{$size-3};
 
-        font-size: 18px;
+    #{$darkmode-selector} & {
+        font-weight: 400;
+        opacity: 0.8;
     }
 }
 
@@ -257,13 +267,18 @@
         top: 7px;
         left: 13px;
         border-radius: 50%;
+
+        @media screen and (min-width: $breakpoint-site-header-small) {
+            --icon-size: 20px;
+        }
     }
 
     @media screen and (min-width: $breakpoint-site-header-small) {
         padding-left: 24px;
+        top: -1px;
 
         &:hover svg {
-            box-shadow: 0 0 0 3px var(--site-header-background), 0 0 0 6px rgba(white, 0.3);
+            box-shadow: 0 0 0 4px var(--site-header-background), 0 0 0 6px rgba(white, 0.3);
         }
 
         svg {
