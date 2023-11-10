@@ -135,7 +135,8 @@
                 "name": "Accessing Row Data Values",
                 "url": "/column-definitions/#accessing-row-data-values"
             }
-        }
+        },
+        "processUnpinnedColumns": {}
     },
     "headers": {
         "meta": {
