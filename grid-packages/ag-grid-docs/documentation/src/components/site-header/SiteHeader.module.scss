@@ -35,8 +35,14 @@
 }
 
 .headerLogo {
-    display: block;
+    display: flex;
+    align-items: center;
     padding: $size-1 10px;
+
+    svg {
+        width: unset;
+        height: 34px;
+    }
 
     @media screen and (min-width: $breakpoint-site-header-small) {
         width: 100%;
@@ -152,15 +158,10 @@
     background-color: var(--site-nav-background);
 
     @media screen and (min-width: $breakpoint-site-header-small) {
-        margin-right: calc(var(--horizontal-margin) - 17px);
         width: unset;
         background-color: unset;
         display: block !important;
         overflow: visible;
-    }
-
-    @media screen and (min-width: $breakpoint-size-header-medium) {
-        margin-right: calc(var(--horizontal-margin) - 27px);
     }
 }
 
