@@ -501,6 +501,7 @@ export {
     GetRowIdParams,
     ProcessRowParams,
     IsServerSideGroupOpenByDefaultParams,
+    ProcessUnpinnedColumnsParams,
     IsApplyServerSideTransactionParams,
     IsGroupOpenByDefaultParams,
     GetServerSideGroupLevelParamsParams,

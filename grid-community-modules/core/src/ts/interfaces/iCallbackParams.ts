@@ -24,6 +24,11 @@ export interface GetMainMenuItemsParams<TData = any, TContext = any> extends AgG
     defaultItems: string[];
 }
 
+export interface ProcessUnpinnedColumnsParams<TData = any, TContext = any> extends AgGridCommon<TData, TContext> {
+    columns: Column[],
+    viewportWidth: number
+}
+
 export interface PostProcessPopupParams<TData = any, TContext = any> extends AgGridCommon<TData, TContext> {
     /** If popup is for a column, this gives the Column */
     column?: Column | null;

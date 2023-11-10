@@ -10,6 +10,8 @@ import { getInnerHeight, getInnerWidth } from "../utils/dom";
 import { WithoutGridCommon } from "../interfaces/iCommon";
 import { PinnedWidthService } from "./pinnedWidthService";
 import { Column } from "../entities/column";
+import { ProcessUnpinnedColumnsParams } from "../interfaces/iCallbackParams";
+import { BodyDropPivotTarget } from "../headerRendering/columnDrag/bodyDropPivotTarget";
 
 // listens to changes in the center viewport size, for column and row virtualisation,
 // and adjusts grid as necessary. there are two viewports, one for horizontal and one for
@@ -77,21 +79,34 @@ export class ViewportSizeFeature extends BeanStub {
     }
 
     private keepPinnedColumnsNarrowerThanViewport(): void {
-        const columnsToRemove = this.getPinnedColumnsOverflowingViewport();
+        const eBodyViewport = this.gridBodyCtrl.getBodyViewportElement();
+        const bodyWidth = getInnerWidth(eBodyViewport);
+
+        if (isNaN(bodyWidth) || bodyWidth <= 50) { return; }
+
+        // remove 50px from the bodyWidth to give some margin
+        let columnsToRemove = this.getPinnedColumnsOverflowingViewport(bodyWidth - 50);
+        const processUnpinnedColumns = this.gridOptionsService.getCallback('processUnpinnedColumns');
 
         if (!columnsToRemove.length) { return; }
+
+        if (processUnpinnedColumns) {
+            const params: WithoutGridCommon<ProcessUnpinnedColumnsParams> = {
+                columns: columnsToRemove,
+                viewportWidth: bodyWidth
+            }
+            columnsToRemove = processUnpinnedColumns(params);
+        }
 
         this.columnModel.setColumnsPinned(columnsToRemove, null, 'viewportSizeFeature')
     }
 
-    private getPinnedColumnsOverflowingViewport(): Column[] {
-        const eBodyViewport = this.gridBodyCtrl.getBodyViewportElement();
-        const bodyWidth = getInnerWidth(eBodyViewport) - 50;
+    private getPinnedColumnsOverflowingViewport(viewportWidth: number): Column[] {
         const pinnedRightWidth = this.pinnedWidthService.getPinnedRightWidth();
         const pinnedLeftWidth = this.pinnedWidthService.getPinnedLeftWidth();
         const totalPinnedWidth = pinnedRightWidth + pinnedLeftWidth;
 
-        if (isNaN(bodyWidth) || bodyWidth < 0 || totalPinnedWidth < bodyWidth) { return []; }
+        if (totalPinnedWidth < viewportWidth) { return []; }
 
         const pinnedLeftColumns: Column[] = [...this.columnModel.getDisplayedLeftColumns()];
         const pinnedRightColumns: Column[] = [...this.columnModel.getDisplayedRightColumns()];
@@ -102,7 +117,7 @@ export class ViewportSizeFeature extends BeanStub {
 
         const columnsToRemove: Column[] = [];
 
-        let spaceNecessary = (totalPinnedWidth - totalWidthRemoved) - bodyWidth;
+        let spaceNecessary = (totalPinnedWidth - totalWidthRemoved) - viewportWidth;
 
         while ((indexLeft < pinnedLeftColumns.length || indexRight < pinnedRightColumns.length) && spaceNecessary > 0) {
             if (indexRight < pinnedRightColumns.length) {
