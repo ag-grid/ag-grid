@@ -1,12 +1,20 @@
 @use '../../design-system' as *;
 
 .searchForm {
+    --max-width: 440px;
+
     flex-grow: 1;
-    margin-right: auto;
     top: 12px;
 
     @media screen and (min-width: $breakpoint-docs-search-medium) {
         position: relative;
-        max-width: 32rem;
+        max-width: var(--max-width);
+        margin-right: $size-3;
+    }
+
+    @media screen and (min-width: $breakpoint-site-header-large) {
+        position: absolute;
+        left: 50%;
+        margin-left: calc(var(--max-width) / -2);
     }
 }

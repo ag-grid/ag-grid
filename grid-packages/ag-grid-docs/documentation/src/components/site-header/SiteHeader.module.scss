@@ -206,7 +206,7 @@
 }
 
 .navLink {
-    --horizontal-padding: #{$size-2};
+    --horizontal-padding: #{$size-2 - 4px};
 
     display: block;
     position: relative;
@@ -275,7 +275,7 @@
     }
 
     @media screen and (min-width: $breakpoint-site-header-small) {
-        padding-left: 24px;
+        padding-left: 16px;
         top: -1px;
 
         &:hover svg {
