@@ -923,7 +923,7 @@ export interface GridOptions<TData = any> {
     // *** Columns *** //
     /**
      * Allows the user to process the columns being removed from the pinned section because the viewport is too small to accommodate them.
-     * Returns an of columns to be removed from the pinned areas.
+     * Returns an array of columns to be removed from the pinned areas.
      * */
     processUnpinnedColumns?: (params: ProcessUnpinnedColumnsParams<TData>) => Column[];
 

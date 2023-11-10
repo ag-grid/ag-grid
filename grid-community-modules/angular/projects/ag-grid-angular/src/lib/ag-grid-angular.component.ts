@@ -952,7 +952,7 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     /** Allows user to process popups after they are created. Applications can use this if they want to, for example, reposition the popup.     */
     @Input() public postProcessPopup: ((params: PostProcessPopupParams<TData>) => void) | undefined = undefined;
     /** Allows the user to process the columns being removed from the pinned section because the viewport is too small to accommodate them.
-         * Returns an of columns to be removed from the pinned areas.
+         * Returns an array of columns to be removed from the pinned areas.
          *     */
     @Input() public processUnpinnedColumns: ((params: ProcessUnpinnedColumnsParams<TData>) => Column[]) | undefined = undefined;
     /** Allows you to process cells for the clipboard. Handy if for example you have `Date` objects that need to have a particular format if importing into Excel.     */

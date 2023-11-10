@@ -135,8 +135,7 @@
                 "name": "Accessing Row Data Values",
                 "url": "/column-definitions/#accessing-row-data-values"
             }
-        },
-        "processUnpinnedColumns": {}
+        }
     },
     "headers": {
         "meta": {
@@ -208,6 +207,16 @@
                 "url": "/column-sizing/#auto-size-columns-to-fit-cell-contents"
             }
         }
+    },
+    "columnPinning": {
+        "meta": {
+            "displayName": "Column Pinning",
+            "page": {
+                "name": "Column Pinning",
+                "url": "/column-pinning/"
+            }
+        },
+        "processUnpinnedColumns": {}
     },
     "components": {
         "meta": {
