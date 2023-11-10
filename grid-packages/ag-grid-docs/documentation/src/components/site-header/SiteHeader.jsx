@@ -142,7 +142,7 @@ export const SiteHeader = ({ path, currentFramework }) => {
     const [isLogoHover, setIsLogoHover] = useState(false);
     return (
         <header className={styles.header}>
-            <div className={classnames(styles.headerInner, 'page-margin')}>
+            <div className={styles.headerInner}>
                 <a
                     href="/"
                     aria-label="Home"

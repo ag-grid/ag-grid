@@ -20,9 +20,7 @@
 .headerInner {
     display: flex;
     flex-wrap: wrap;
-
-    padding-left: 0 !important;
-    padding-right: 0 !important;
+    width: 100%;
 
     // Required for collapsible mobile menu
     > div {
@@ -31,6 +29,8 @@
 
     @media screen and (min-width: $breakpoint-site-header-small) {
         flex-wrap: unset;
+        padding-left: $size-1;
+        padding-right: $size-1;
     }
 }
 
