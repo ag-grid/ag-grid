@@ -497,13 +497,13 @@ export class PopupService extends BeanStub {
         const { allThemes } = this.environment.getTheme();
 
         for (const popup of this.popupList) {
-            for (const className of Array.from(popup.element.classList)) {
+            for (const className of Array.from(popup.wrapper.classList)) {
                 if (className.startsWith("ag-theme-")) {
-                    popup.element.classList.remove(className)
+                    popup.wrapper.classList.remove(className)
                 }
             }
             if (allThemes.length) {
-                popup.element.classList.add(...allThemes);
+                popup.wrapper.classList.add(...allThemes);
             }
         }
 
