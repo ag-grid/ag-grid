@@ -1,5 +1,4 @@
-import { CellClassParams, createGrid, GridApi, GridOptions, RowClassParams, ValueFormatterParams, CellValueChangedEvent } from '@ag-grid-community/core';
-import { CountryFlagCellRenderer } from './CountryFlagCellRenderer';
+import { CellClassParams, createGrid, GridApi, GridOptions, RowClassParams } from '@ag-grid-community/core';
 
 let gridApi: GridApi;
 

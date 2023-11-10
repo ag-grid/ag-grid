@@ -1,6 +1,6 @@
 import { ICellRendererComp, ICellRendererParams } from '@ag-grid-community/core';
 
-export class CountryFlagCellRenderer implements ICellRendererComp{
+export class CountryFlagCellRenderer implements ICellRendererComp {
     eGui!: HTMLImageElement;
 
     init(params: ICellRendererParams) {
