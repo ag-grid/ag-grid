@@ -9,7 +9,7 @@
     .ag-header-row,
     .ag-panel-title-bar-title,
     .ag-multi-filter-group-title-bar {
-        font-weight: 700;
+        font-weight: 500;
         color: var(--ag-header-foreground-color);
     }
 
@@ -202,6 +202,7 @@
         display: flex;
         align-items: center;
         border: dashed 1px;
+        background-color: var(--ag-background-color);
         border-color: var(--ag-border-color);
         margin: calc(var(--ag-grid-size) * 2);
         padding: calc(var(--ag-grid-size) * 2);
