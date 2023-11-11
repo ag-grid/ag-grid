@@ -53,7 +53,7 @@ const createRootAndFlushSyncAvailable = (ReactDOM as any).createRoot != null && 
  * as we do not want to use flushSync when we are likely to already be in a render cycle
  */
 export const agFlushSync = (useFlushSync: boolean, fn: () => void) => {
-    if (createRootAndFlushSyncAvailable && useFlushSync) {
+    if (createRootAndFlushSyncAvailable && useFlushSync && false) {
         (ReactDOM as any).flushSync(fn);
     } else {
         fn();
