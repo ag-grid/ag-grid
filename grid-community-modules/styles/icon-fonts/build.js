@@ -104,7 +104,7 @@ function generateScssFile(fontName) {
         let content = fs.readFileSync(path.join(sourceFolder, name + '.svg'), "utf8");
         content = encodeURIComponent(content);
         // content = content.replaceAll(/>\s+</g, "><").replaceAll(/\s+/g, "+").replaceAll(/[/#\s"']/g, encodeURIComponent)
-        scssContent += `\t.ag-icon-${name} {\n`;
+        scssContent += `\t.ag-icon-${name}::before {\n`;
         scssContent += `\t\tbackground-image: url("data:image/svg+xml;charset=utf-8,${content}");\n`;
         scssContent += `\t}\n`;
     }

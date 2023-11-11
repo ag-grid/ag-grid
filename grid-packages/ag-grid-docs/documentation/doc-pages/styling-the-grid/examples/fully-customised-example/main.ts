@@ -1,5 +1,4 @@
-import { CellClassParams, createGrid, GridApi, GridOptions, RowClassParams, ValueFormatterParams, CellValueChangedEvent } from '@ag-grid-community/core';
-import { CountryFlagCellRenderer } from './CountryFlagCellRenderer';
+import { CellClassParams, createGrid, GridApi, GridOptions, RowClassParams } from '@ag-grid-community/core';
 
 let gridApi: GridApi;
 
@@ -16,14 +15,6 @@ const rowClassRules = {
     'successful-mission': (p: RowClassParams) => { return p.data.successful === true }
 }
 
-const currencyFormatter = (params: ValueFormatterParams) => {
-    return '£' + params.value.toLocaleString();
-}
-
-const dateFormatter = (params: ValueFormatterParams) => {
-    return new Date(params.value).toLocaleDateString('en-us', { weekday: 'long', year: 'numeric', month: 'short', day: 'numeric' });
-}
-
 const gridOptions: GridOptions = {
     // Data to be displayed
     rowData: [
@@ -35,27 +26,20 @@ const gridOptions: GridOptions = {
     columnDefs: [
         {
             field: "mission",
-            resizable: false,
-            checkboxSelection: true,
             cellClass: 'mission-cell'
         },
         {
-            field: "country",
-            cellRenderer: CountryFlagCellRenderer
+            field: "country"
         },
         {
             field: "successful",
-            width: 130
         },
         {
-            field: "date",
-            valueFormatter: dateFormatter
+            field: "date"
         },
         {
             field: "price",
-            width: 130,
-            cellClassRules: cellClassRules,
-            valueFormatter: currencyFormatter
+            cellClassRules: cellClassRules
         },
         {
             field: "company"
@@ -72,10 +56,7 @@ const gridOptions: GridOptions = {
     pagination: true,
     rowClass: 'row',
     rowSelection: 'multiple',
-    rowClassRules: rowClassRules,
-    onCellValueChanged: (event: CellValueChangedEvent) => { 
-        console.log(`New Cell Value: ${event.value}`)
-    }
+    rowClassRules: rowClassRules
 }
 document.addEventListener('DOMContentLoaded', function () {
     var gridDiv = document.querySelector<HTMLElement>('#myGrid')!;

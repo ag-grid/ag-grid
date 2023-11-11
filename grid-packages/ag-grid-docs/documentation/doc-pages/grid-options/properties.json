@@ -208,6 +208,16 @@
             }
         }
     },
+    "columnPinning": {
+        "meta": {
+            "displayName": "Column Pinning",
+            "page": {
+                "name": "Column Pinning",
+                "url": "/column-pinning/"
+            }
+        },
+        "processUnpinnedColumns": {}
+    },
     "components": {
         "meta": {
             "displayName": "Components",

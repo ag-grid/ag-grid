@@ -3,11 +3,16 @@
  ************************************************************************************************/
 import {
     AdvancedFilterBuilderVisibleChangedEvent,
-    AsyncTransactionsFlushed, BodyScrollEndEvent, BodyScrollEvent, CellClickedEvent,
+    AsyncTransactionsFlushed,
+    BodyScrollEndEvent,
+    BodyScrollEvent,
+    CellClickedEvent,
     CellContextMenuEvent,
     CellDoubleClickedEvent,
     CellEditingStartedEvent,
-    CellEditingStoppedEvent, CellEditRequestEvent, CellFocusedEvent,
+    CellEditingStoppedEvent,
+    CellEditRequestEvent,
+    CellFocusedEvent,
     CellKeyDownEvent,
     CellMouseDownEvent,
     CellMouseOutEvent,
@@ -37,8 +42,13 @@ import {
     DisplayedColumnsChangedEvent,
     DragStartedEvent,
     DragStoppedEvent,
-    ExpandCollapseAllEvent, FilterChangedEvent,
-    FilterModifiedEvent, FilterOpenedEvent, FirstDataRenderedEvent, FullWidthCellKeyDownEvent, GridColumnsChangedEvent,
+    ExpandCollapseAllEvent,
+    FilterChangedEvent,
+    FilterModifiedEvent,
+    FilterOpenedEvent,
+    FirstDataRenderedEvent,
+    FullWidthCellKeyDownEvent,
+    GridColumnsChangedEvent,
     GridReadyEvent,
     GridPreDestroyedEvent,
     GridSizeChangedEvent,
@@ -79,7 +89,9 @@ import {
 import { HeaderPosition } from "../headerRendering/common/headerPosition";
 import {
     CsvExportParams,
-    ProcessCellForExportParams, ProcessGroupHeaderForExportParams, ProcessHeaderForExportParams
+    ProcessCellForExportParams,
+    ProcessGroupHeaderForExportParams,
+    ProcessHeaderForExportParams,
 } from "../interfaces/exportParams";
 import { AgChartTheme, AgChartThemeOverrides } from "../interfaces/iAgChartOptions";
 import { ChartMenuOptions, ChartToolPanelsDef } from "../interfaces/iChartOptions";
@@ -94,7 +106,37 @@ import { IRowDragItem } from "../rendering/row/rowDragComp";
 import { ILoadingCellRendererParams } from "../rendering/cellRenderers/loadingCellRenderer";
 import { CellPosition } from "./cellPositionUtils";
 import { ColDef, ColGroupDef, ColTypeDef, IAggFunc, SortDirection } from "./colDef";
-import { FillOperationParams, GetChartToolbarItemsParams, GetContextMenuItemsParams, GetGroupRowAggParams, GetLocaleTextParams, GetMainMenuItemsParams, GetRowIdParams, GetServerSideGroupLevelParamsParams, InitialGroupOrderComparatorParams, IsApplyServerSideTransactionParams, IsExternalFilterPresentParams, IsFullWidthRowParams, IsGroupOpenByDefaultParams, IsServerSideGroupOpenByDefaultParams, NavigateToNextCellParams, NavigateToNextHeaderParams, PaginationNumberFormatterParams, PostProcessPopupParams, PostSortRowsParams, ProcessDataFromClipboardParams, ProcessRowParams, RowHeightParams, SendToClipboardParams, TabToNextCellParams, TabToNextHeaderParams, GetGroupAggFilteringParams, GetGroupIncludeFooterParams } from "../interfaces/iCallbackParams";
+import {
+    FillOperationParams,
+    GetChartToolbarItemsParams,
+    GetContextMenuItemsParams,
+    GetGroupRowAggParams,
+    GetLocaleTextParams,
+    GetMainMenuItemsParams,
+    GetRowIdParams,
+    GetServerSideGroupLevelParamsParams,
+    InitialGroupOrderComparatorParams,
+    IsApplyServerSideTransactionParams,
+    IsExternalFilterPresentParams,
+    IsFullWidthRowParams,
+    IsGroupOpenByDefaultParams,
+    IsServerSideGroupOpenByDefaultParams,
+    NavigateToNextCellParams,
+    NavigateToNextHeaderParams,
+    PaginationNumberFormatterParams,
+    PostProcessPopupParams,
+    PostSortRowsParams,
+    ProcessDataFromClipboardParams,
+    ProcessRowParams,
+    RowHeightParams,
+    SendToClipboardParams,
+    TabToNextCellParams,
+    TabToNextHeaderParams,
+    GetGroupAggFilteringParams,
+    GetGroupIncludeFooterParams,
+    ProcessUnpinnedColumnsParams
+} from "../interfaces/iCallbackParams";
+
 import { SideBarDef } from "../interfaces/iSideBar";
 import { IRowNode } from "../interfaces/iRowNode";
 import { DataTypeDefinition } from "./dataType";
@@ -103,6 +145,7 @@ import { IAdvancedFilterBuilderParams } from "../interfaces/iAdvancedFilterBuild
 import { AlignedGrid } from "../interfaces/iAlignedGrid";
 import { GridState } from "../interfaces/gridState";
 import { SizeColumnsToContentStrategy, SizeColumnsToFitProvidedWidthStrategy, SizeColumnsToFitGridStrategy } from "../interfaces/autoSizeStrategy";
+import { Column } from "./column";
 
 export interface GridOptions<TData = any> {
 
@@ -876,6 +919,13 @@ export interface GridOptions<TData = any> {
     getMainMenuItems?: GetMainMenuItems;
     /** Allows user to process popups after they are created. Applications can use this if they want to, for example, reposition the popup. */
     postProcessPopup?: (params: PostProcessPopupParams<TData>) => void;
+
+    // *** Columns *** //
+    /**
+     * Allows the user to process the columns being removed from the pinned section because the viewport is too small to accommodate them.
+     * Returns an array of columns to be removed from the pinned areas.
+     * */
+    processUnpinnedColumns?: (params: ProcessUnpinnedColumnsParams<TData>) => Column[];
 
     // *** Clipboard *** //
     /** Allows you to process cells for the clipboard. Handy if for example you have `Date` objects that need to have a particular format if importing into Excel. */

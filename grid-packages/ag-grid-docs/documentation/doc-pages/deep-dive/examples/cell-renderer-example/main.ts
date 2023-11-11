@@ -1,19 +1,7 @@
 import { createGrid, CellClassParams, GridApi, GridOptions, CellValueChangedEvent, RowClassParams, ValueFormatterParams } from '@ag-grid-community/core';
+import { CountryFlagCellRenderer } from './CountryFlagCellRenderer';
 
 let gridApi: GridApi;
-
-const rowClassRule = {
-    'unsucessful-mission': (p: RowClassParams) => { return p.data.successful === false },
-    'successful-mission': (p: RowClassParams) => { return p.data.successful === true }
-}
-
-const cellClassRule = {
-    'very-low-cost': (p: CellClassParams) => { return p.value < 2500000},
-    'low-cost': (p: CellClassParams) => { return p.value > 2500000 && p.value < 5000000},
-    'medium-cost': (p: CellClassParams) => { return p.value > 5000000 && p.value < 7500000},
-    'high-cost': (p: CellClassParams) => { return p.value > 7500000 && p.value < 9000000},
-    'very-high-cost': (p: CellClassParams) => { return p.value >= 9000000},
-}
 
 const currencyFormatter = (params: ValueFormatterParams) => {
     return '£' + params.value.toLocaleString();
@@ -31,23 +19,20 @@ const gridOptions: GridOptions = {
         {
             field: "mission",
             resizable: false,
-            checkboxSelection: true,
-            cellClass: 'mission-cell'
+            checkboxSelection: true
         },
         {
-            field: "country"
+            field: "country",
+            cellRenderer: CountryFlagCellRenderer
         },
         {
-            field: "successful",
-            width: 130
+            field: "successful"
         },
         {
             field: "date"
         },
         {
             field: "price",
-            width: 130,
-            cellClassRules: cellClassRule,
             valueFormatter: currencyFormatter
         },
         {
@@ -63,9 +48,7 @@ const gridOptions: GridOptions = {
     },
     // Grid Options & Callbacks
     pagination: true,
-    rowClass: 'row',
     rowSelection: 'multiple',
-    rowClassRules: rowClassRule,
     onCellValueChanged: (event: CellValueChangedEvent) => { 
         console.log(`New Cell Value: ${event.value}`)
     }

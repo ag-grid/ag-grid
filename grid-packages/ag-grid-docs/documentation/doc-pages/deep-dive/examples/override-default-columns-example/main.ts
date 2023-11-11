@@ -19,8 +19,7 @@ const gridOptions: GridOptions = {
             field: "country"
         },
         {
-            field: "successful",
-            width: 130
+            field: "successful"
         },
         {
             field: "date"

@@ -46,6 +46,7 @@ import {
     ColDef,
     ColGroupDef,
     ColTypeDef,
+    Column,
     ColumnAggFuncChangeRequestEvent,
     ColumnEverythingChangedEvent,
     ColumnGroupOpenedEvent,
@@ -127,6 +128,7 @@ import {
     ProcessGroupHeaderForExportParams,
     ProcessHeaderForExportParams,
     ProcessRowParams,
+    ProcessUnpinnedColumnsParams,
     RangeDeleteEndEvent,
     RangeDeleteStartEvent,
     RangeSelectionChangedEvent,
@@ -949,6 +951,10 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     @Input() public getMainMenuItems: GetMainMenuItems | undefined = undefined;
     /** Allows user to process popups after they are created. Applications can use this if they want to, for example, reposition the popup.     */
     @Input() public postProcessPopup: ((params: PostProcessPopupParams<TData>) => void) | undefined = undefined;
+    /** Allows the user to process the columns being removed from the pinned section because the viewport is too small to accommodate them.
+         * Returns an array of columns to be removed from the pinned areas.
+         *     */
+    @Input() public processUnpinnedColumns: ((params: ProcessUnpinnedColumnsParams<TData>) => Column[]) | undefined = undefined;
     /** Allows you to process cells for the clipboard. Handy if for example you have `Date` objects that need to have a particular format if importing into Excel.     */
     @Input() public processCellForClipboard: ((params: ProcessCellForExportParams<TData>) => any) | undefined = undefined;
     /** Allows you to process header values for the clipboard.      */
@@ -1222,12 +1228,12 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     static ngAcceptInputType_suppressRowClickSelection: boolean | null | '';
     static ngAcceptInputType_suppressCellFocus: boolean | null | '';
     static ngAcceptInputType_suppressHorizontalScroll: boolean | null | '';
+    static ngAcceptInputType_groupSelectsChildren: boolean | null | '';
     static ngAcceptInputType_alwaysShowHorizontalScroll: boolean | null | '';
     static ngAcceptInputType_alwaysShowVerticalScroll: boolean | null | '';
     static ngAcceptInputType_debug: boolean | null | '';
     static ngAcceptInputType_enableBrowserTooltips: boolean | null | '';
     static ngAcceptInputType_enableCellExpressions: boolean | null | '';
-    static ngAcceptInputType_groupSelectsChildren: boolean | null | '';
     static ngAcceptInputType_groupIncludeTotalFooter: boolean | null | '';
     static ngAcceptInputType_groupSuppressBlankHeader: boolean | null | '';
     static ngAcceptInputType_suppressMenuHide: boolean | null | '';
@@ -1302,8 +1308,7 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     static ngAcceptInputType_suppressAnimationFrame: boolean | null | '';
     static ngAcceptInputType_suppressExcelExport: boolean | null | '';
     static ngAcceptInputType_suppressCsvExport: boolean | null | '';
-    static ngAcceptInputType_treeData: boolean | null | '';
-    static ngAcceptInputType_masterDetail: boolean | null | '';
+    static ngAcceptInputType_includeHiddenColumnsInAdvancedFilter: boolean | null | '';
     static ngAcceptInputType_suppressMultiRangeSelection: boolean | null | '';
     static ngAcceptInputType_enterMovesDown: boolean | null | '';
     static ngAcceptInputType_enterMovesDownAfterEdit: boolean | null | '';
@@ -1354,12 +1359,13 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     static ngAcceptInputType_removePivotHeaderRowWhenSingleValueColumn: boolean | null | '';
     static ngAcceptInputType_suppressCopySingleCellRanges: boolean | null | '';
     static ngAcceptInputType_suppressGroupRowsSticky: boolean | null | '';
+    static ngAcceptInputType_suppressCutToClipboard: boolean | null | '';
     static ngAcceptInputType_suppressServerSideInfiniteScroll: boolean | null | '';
     static ngAcceptInputType_rowGroupPanelSuppressSort: boolean | null | '';
     static ngAcceptInputType_allowShowChangeAfterFilter: boolean | null | '';
-    static ngAcceptInputType_suppressCutToClipboard: boolean | null | '';
     static ngAcceptInputType_enableAdvancedFilter: boolean | null | '';
-    static ngAcceptInputType_includeHiddenColumnsInAdvancedFilter: boolean | null | '';
+    static ngAcceptInputType_masterDetail: boolean | null | '';
+    static ngAcceptInputType_treeData: boolean | null | '';
     static ngAcceptInputType_suppressGroupMaintainValueType: boolean | null | '';
     // @END@
 }

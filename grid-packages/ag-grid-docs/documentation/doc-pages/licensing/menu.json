@@ -21,11 +21,6 @@
             "icon": "framework"
           },
           {
-            "title": "Customising the Grid",
-            "url": "/customising-the-grid/",
-            "icon": "framework"
-          },
-          {
             "title": "Video Tutorials",
             "url": "/videos/"
           }
@@ -150,6 +145,11 @@
       {
         "title": "Guides",
         "items": [
+          {
+            "title": "Styling the Grid",
+            "url": "/styling-the-grid/",
+            "icon": "framework"
+          },
           {
             "title": "Testing",
             "url": "/testing/"

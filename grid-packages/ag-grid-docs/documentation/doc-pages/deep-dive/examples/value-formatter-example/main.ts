@@ -1,6 +1,10 @@
-import { createGrid, GridApi, GridOptions, CellValueChangedEvent } from '@ag-grid-community/core';
+import { createGrid, CellClassParams, GridApi, GridOptions, CellValueChangedEvent, RowClassParams, ValueFormatterParams } from '@ag-grid-community/core';
 
 let gridApi: GridApi;
+
+const currencyFormatter = (params: ValueFormatterParams) => {
+    return '£' + params.value.toLocaleString();
+}
 
 const gridOptions: GridOptions = {
     // Data to be displayed
@@ -21,14 +25,13 @@ const gridOptions: GridOptions = {
         },
         {
             field: "successful",
-            width: 130
         },
         {
             field: "date"
         },
         {
             field: "price",
-            width: 130,
+            valueFormatter: currencyFormatter
         },
         {
             field: "company"
@@ -43,7 +46,6 @@ const gridOptions: GridOptions = {
     },
     // Grid Options & Callbacks
     pagination: true,
-    rowClass: 'row',
     rowSelection: 'multiple',
     onCellValueChanged: (event: CellValueChangedEvent) => { 
         console.log(`New Cell Value: ${event.value}`)

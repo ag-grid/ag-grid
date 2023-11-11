@@ -9,7 +9,6 @@ import { useColorScheme } from 'atoms/colorScheme';
 import { useParentTheme } from 'atoms/parentTheme';
 import { useRenderedCss } from 'atoms/renderedCss';
 import { useResetVariableDefaults } from 'atoms/variableDefaults';
-import { Inspector } from 'components/inspector/Inspector';
 import { memo, useLayoutEffect, useState } from 'react';
 import { Tooltip } from 'react-tooltip';
 import { ColorSchemeMenu } from './ColorSchemeMenu';
@@ -17,6 +16,7 @@ import { CopyButton } from './CopyButton';
 import { GridPreview } from './GridPreview';
 import { IconButton } from './IconButton';
 import { ParentThemeMenu } from './ParentThemeMenu';
+import { Inspector } from './inspector/Inspector';
 
 export const RootContainer = memo(() => {
   const parentTheme = useParentTheme();
@@ -33,11 +33,14 @@ export const RootContainer = memo(() => {
   return (
     <>
       <style>{renderedCss}</style>
-      <DefaultsElement className={`${parentTheme.name}-${colorScheme}`} id="theme-builder-defaults-computation" />
+      <DefaultsElement
+        className={`${parentTheme.name}-${colorScheme}`}
+        id="theme-builder-defaults-computation"
+      />
       <Container>
         {hasRenderedStyles && (
           <>
-            <TopRow>
+            <Header>
               <ParentThemeMenu />
               <ColorSchemeMenu />
               <IconButton
@@ -51,15 +54,13 @@ export const RootContainer = memo(() => {
                 }}
               />
               <CopyButton payload={renderedCss} label="Copy CSS" />
-            </TopRow>
-            <Columns>
-              <LeftColumn>
-                <Inspector />
-              </LeftColumn>
-              <RightColumn>
-                <GridPreview />
-              </RightColumn>
-            </Columns>
+            </Header>
+            <Menu>
+              <Inspector />
+            </Menu>
+            <Main>
+              <GridPreview />
+            </Main>
             <Tooltip
               id="theme-builder-tooltip"
               className="tooltip"
@@ -74,9 +75,13 @@ export const RootContainer = memo(() => {
 });
 
 const Container = styled('div')`
-  display: flex;
-  flex-direction: column;
   height: 100%;
+  display: grid;
+  grid-template-areas:
+    'header header'
+    'menu main';
+  grid-template-columns: 300px auto;
+  grid-template-rows: min-content auto;
   gap: 20px;
 
   .tooltip {
@@ -89,31 +94,17 @@ const DefaultsElement = styled('div')`
   transform: translateY(-10);
 `;
 
-const TopRow = styled('div')`
+const Header = styled('div')`
+  grid-area: header;
   display: flex;
   justify-content: space-between;
 `;
 
-const Columns = styled('div')`
-  display: flex;
-  flex: 1;
-
-  .tooltip {
-    max-width: 400px;
-  }
+const Menu = styled('div')`
+  grid-area: menu;
+  overflow: auto;
 `;
 
-const LeftColumn = styled('div')`
-  display: flex;
-  flex-direction: column;
-  flex: 1.5;
-  min-width: 200px;
-  max-width: 400px;
-  margin-right: 20px;
-  gap: 20px;
-`;
-
-const RightColumn = styled('div')`
-  flex: 2.5;
-  overflow-x: auto;
+const Main = styled('div')`
+  grid-area: main;
 `;

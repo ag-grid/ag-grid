@@ -58,15 +58,15 @@
     --ag-icon-size: 16px;
     --ag-header-height: calc(var(--ag-font-size) + var(--ag-grid-size) * 4.25);       // if changed, update environment.ts
     --ag-row-height: calc(var(--ag-font-size) + var(--ag-grid-size) * 3.5);          // if changed, update environment.ts
-    --ag-list-item-height: calc(var(--ag-grid-size) * 3); // if changed, update environment.ts
+    --ag-list-item-height: calc(var(--ag-icon-size) + var(--ag-widget-vertical-spacing)); // if changed, update environment.ts
     --ag-column-select-indent-size: var(--ag-icon-size);
     --ag-set-filter-indent-size: var(--ag-icon-size);
     --ag-advanced-filter-builder-indent-size: calc(var(--ag-icon-size) + var(--ag-grid-size) * 2);
     --ag-cell-horizontal-padding: calc(var(--ag-grid-size) * 2);
     --ag-cell-widget-spacing: calc(var(--ag-grid-size) * 1.5);
 
-    --ag-widget-container-vertical-padding: calc(var(--ag-grid-size) * 2);
-    --ag-widget-container-horizontal-padding: calc(var(--ag-grid-size) * 2);
+    --ag-widget-container-vertical-padding: calc(var(--ag-grid-size) * 1.5);
+    --ag-widget-container-horizontal-padding: calc(var(--ag-grid-size) * 1.5);
     --ag-widget-vertical-spacing: calc(var(--ag-grid-size) * 1.5);
 
     --ag-toggle-button-height: 18px;
@@ -78,10 +78,7 @@
     --ag-icon-font-family: agGridQuartz;
 
     // MISC
-    --ag-selected-tab-underline-color: var(--ag-active-color);
-    --ag-selected-tab-underline-width: 2px;
-    --ag-selected-tab-underline-transition-speed: 0.3s;
-    --ag-tab-min-width: 240px;
+    --ag-tab-min-width: 260px;
 
     --ag-card-shadow: 0 1px 4px 1px rgba(186, 191, 199, 0.4);
     --ag-popup-shadow: var(--ag-card-shadow);
@@ -127,6 +124,7 @@
         0 0 2px 0.5px rgba(255, 255, 255, 0.5),
         0 0 4px 3px var(--ag-input-focus-border-color);
     --ag-card-shadow: 0 1px 20px 1px black;
+    --ag-input-border-color: #323D48;
 
     --ag-advanced-filter-join-pill-color: #7a3a37;
     --ag-advanced-filter-column-pill-color: #355f2d;

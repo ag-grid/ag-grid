@@ -9,7 +9,7 @@
     .ag-header-row,
     .ag-panel-title-bar-title,
     .ag-multi-filter-group-title-bar {
-        font-weight: 700;
+        font-weight: 500;
         color: var(--ag-header-foreground-color);
     }
 
@@ -22,9 +22,13 @@
         ));
     }
 
+    //
+    // TABS
+    //
+
     .ag-tab {
-        padding: calc(var(--ag-grid-size) * 1.5);
-        transition: color 0.4s;
+        padding: var(--ag-grid-size);
+        transition: background-color 0.1s;
         flex: 1 1 auto;
     }
     .ag-tab-selected {
@@ -37,11 +41,54 @@
 
     .ag-menu-header {
         background-color: var(--ag-control-panel-background-color);
-        padding-top: 1px; // hack to align column menu tab header border with header row border
     }
 
     .ag-tabs-header {
-        border-bottom: var(--ag-borders) var(--ag-border-color);
+        margin: calc(var(--ag-grid-size) * 1.5);
+        margin-bottom: 0;
+        border: var(--ag-borders) var(--ag-border-color);
+        display: flex;
+        border-radius: var(--ag-border-radius);
+    }
+    
+    .ag-tab-selected {
+        margin: -1px;
+        border: var(--ag-borders) var(--ag-input-border-color);
+        background-color: var(--ag-background-color);
+        border-radius: var(--ag-border-radius);
+    }
+    //
+    // VERTICAL TABS
+    // 
+    .ag-side-bar {
+        background-color: var(--ag-control-panel-background-color);
+    }
+    .ag-side-buttons {
+        padding: 0;
+        align-self: flex-start;
+        margin: calc(var(--ag-grid-size) * 1.5);
+        @include ag.theme-rtl((margin-left: 0));
+        border: var(--ag-borders) var(--ag-border-color);
+        border-radius: var(--ag-border-radius);
+    }
+
+    .ag-side-button {
+        transition: background-color 0.15s;
+    }
+    .ag-side-button.ag-selected {
+        margin: -1px;
+        border: var(--ag-borders) var(--ag-input-border-color);
+        background-color: var(--ag-background-color);
+        border-radius: var(--ag-border-radius);
+    }
+    .ag-tool-panel-wrapper {
+        @include ag.theme-rtl((border-right: none));
+    }
+    .ag-column-panel-column-select {
+        border-top: none;
+    }
+    .ag-column-select-header, .ag-column-select, .ag-column-drop-vertical {
+        border-bottom: none;
     }
 
     .ag-charts-settings-group-title-bar,
@@ -60,7 +107,7 @@
     }
 
     .ag-group-title-bar-icon {
-        @include ag.theme-rtl((margin-right: var(--ag-grid-size)))
+        @include ag.theme-rtl((margin-right: var(--ag-grid-size)));
     }
 
     .ag-charts-format-top-level-group-toolbar {
@@ -127,6 +174,21 @@
         }
     }
 
+    .ag-column-drop-cell {
+        border-radius: calc(var(--ag-grid-size) * 3);
+        height: calc(var(--ag-grid-size) * 3);
+        padding: 0 var(--ag-grid-size);
+    }
+
+    .ag-column-drop-cell-button {
+        min-width: 0;
+        margin: 0;
+    }
+
+    .ag-column-drop-cell-drag-handle {
+        margin-left: 0;
+    }
+
     .ag-column-drop-vertical {
         min-height: 75px;
     }
@@ -140,6 +202,7 @@
         display: flex;
         align-items: center;
         border: dashed 1px;
+        background-color: var(--ag-background-color);
         border-color: var(--ag-border-color);
         margin: calc(var(--ag-grid-size) * 2);
         padding: calc(var(--ag-grid-size) * 2);
@@ -206,6 +269,11 @@
         border-right: none;
     }
 
+    .ag-menu-option-icon, .ag-compact-menu-option-icon {
+        @include ag.unthemed-rtl((padding-left: calc(var(--ag-grid-size) * 1.5)));
+        width: var(--ag-icon-size);
+    }
+
     .ag-chart-settings-card-item.ag-not-selected:hover {
         opacity: 0.35;
     }
@@ -225,10 +293,17 @@
         border: none;
         background-color: var(--ag-control-panel-background-color);
         @include ag.theme-rtl((
-            border-left: dashed 1px,
-            border-left-color: var(--ag-border-color),
             margin-left: calc(var(--ag-icon-size) * 0.5)
         ))
+    }
+
+    .ag-filter-toolpanel-group-level-0 {
+        border-top: none;
+    }
+
+    .ag-filter-toolpanel-header {
+        height: initial;
+        margin-top: var(--ag-widget-vertical-spacing);
     }
 
     .ag-set-filter-list {
@@ -255,8 +330,9 @@
         font-weight: 600;
     }
 
-    .ag-icon {
+    .ag-icon::before {
         // use SVG images instead of icon font
+        color: transparent;
         background-color: transparent;
         background-position: top left;
         background-size: 16px 16px;
@@ -271,7 +347,7 @@
 }
 
 .ag-theme-quartz-dark, .ag-theme-quartz-dark-blue {
-    .ag-icon {
+    .ag-icon::before {
         filter: invert(100%);
     }
 }

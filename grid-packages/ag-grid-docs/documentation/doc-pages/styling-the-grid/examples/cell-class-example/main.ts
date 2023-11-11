@@ -14,22 +14,19 @@ const gridOptions: GridOptions = {
         {
             field: "mission",
             resizable: false,
-            checkboxSelection: true,
             cellClass: 'mission-cell'
         },
         {
             field: "country"
         },
         {
-            field: "successful",
-            width: 130
+            field: "successful"
         },
         {
             field: "date"
         },
         {
-            field: "price",
-            width: 130,
+            field: "price"
         },
         {
             field: "company"
@@ -44,11 +41,7 @@ const gridOptions: GridOptions = {
     },
     // Grid Options & Callbacks
     pagination: true,
-    rowClass: 'row',
-    rowSelection: 'multiple',
-    onCellValueChanged: (event: CellValueChangedEvent) => { 
-        console.log(`New Cell Value: ${event.value}`)
-    }
+    rowClass: 'row'
 }
 document.addEventListener('DOMContentLoaded', function () {
     var gridDiv = document.querySelector<HTMLElement>('#myGrid')!;

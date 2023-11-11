@@ -5,11 +5,13 @@
 .ag-theme-alpine {
   --price-cell-background-colour: #d4cccc;
   --ag-checkbox-checked-color: rgb(126, 46, 132);
+  --ag-header-column-resize-handle-color: rgb(155, 155, 155);
 }
 
 .ag-theme-alpine-dark {
   --price-cell-background-colour: #262c31;
   --ag-checkbox-checked-color: rgb(126, 46, 132);
+  --ag-header-column-resize-handle-color: rgb(155, 155, 155);
 }
 
 /*
