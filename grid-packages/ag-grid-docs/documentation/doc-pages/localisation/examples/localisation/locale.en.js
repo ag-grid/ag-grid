@@ -377,6 +377,7 @@ const AG_GRID_LOCALE_EN = {
     ariaUnchecked: 'unchecked',
     ariaVisible: 'visible',
     ariaSearchFilterValues: 'Search filter values',
+    ariaPageSizeShowLabel: 'Page Show Count',
 
     // ARIA Labels for Drop Zones
 

@@ -1,9 +1,9 @@
 import { AgAbstractField } from "./agAbstractField";
 import { Component } from "./component";
 import { RefSelector } from "./componentAnnotations";
-import { setAriaLabelledBy, setAriaLabel, setAriaDescribedBy, setAriaExpanded, setAriaRole } from "../utils/aria";
+import { setAriaLabel, setAriaDescribedBy, setAriaExpanded, setAriaRole } from "../utils/aria";
 import { createIconNoSpan } from "../utils/icon";
-import { setElementWidth, isVisible, getAbsoluteWidth, getInnerHeight, formatSize } from "../utils/dom";
+import { setElementWidth, getAbsoluteWidth, getInnerHeight, formatSize } from "../utils/dom";
 import { KeyCode } from '../constants/keyCode';
 import { IAgLabelParams } from './agAbstractLabel';
 import { AddPopupParams, PopupService } from "./popupService";
@@ -107,6 +107,7 @@ export abstract class AgPickerField<TValue, TConfig extends IPickerFieldParams =
 
         const ariaEl = this.getAriaElement();
         setAriaDescribedBy(ariaEl, displayId);
+
         this.addManagedListener(ariaEl, 'keydown', this.onKeyDown.bind(this));
 
         this.addManagedListener(this.eLabel, 'mousedown', this.onLabelOrWrapperMouseDown.bind(this));
@@ -122,7 +123,6 @@ export abstract class AgPickerField<TValue, TConfig extends IPickerFieldParams =
         }
     }
 
-
     protected setupAria(): void {
         const ariaEl = this.getAriaElement();
         
@@ -133,14 +133,6 @@ export abstract class AgPickerField<TValue, TConfig extends IPickerFieldParams =
         if (this.ariaRole) {
             setAriaRole(ariaEl, this.ariaRole);
         }
-    }
-
-    protected refreshLabel() {
-        const ariaEl = this.getAriaElement();
-
-        setAriaLabelledBy(ariaEl, this.getLabelId() ?? '');
-
-        super.refreshLabel();
     }
 
     private onLabelOrWrapperMouseDown(e?: MouseEvent): void {
@@ -329,6 +321,7 @@ export abstract class AgPickerField<TValue, TConfig extends IPickerFieldParams =
 
     public setAriaLabel(label: string): this {
         setAriaLabel(this.getAriaElement(), label);
+        this.refreshAriaLabelledBy();
 
         return this;
     }

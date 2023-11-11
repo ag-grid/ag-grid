@@ -56,8 +56,8 @@ export function getAriaPosInSet(element: Element): number {
     return parseInt(element.getAttribute('aria-posinset')!, 10);
 }
 
-export function getAriaDescribedBy(element: Element): string {
-    return element.getAttribute('aria-describedby') || '';
+export function getAriaLabel(element: Element): string | null {
+    return element.getAttribute('aria-label');
 }
 
 // ARIA ATTRIBUTE SETTERS
