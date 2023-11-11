@@ -12,7 +12,6 @@ import { escapeString } from "../utils/string";
 import { exists } from "../utils/generic";
 import { setAriaActiveDescendant, setAriaSelected } from "../utils/aria";
 import { VirtualList } from "./virtualList";
-import { padStartWidthZeros } from "../utils/number";
 
 export class RichSelectRow<TValue> extends Component {
 
