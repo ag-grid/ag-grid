@@ -2,6 +2,7 @@ import { AgPickerField, IPickerFieldParams } from "./agPickerField";
 import { ListOption, AgList } from "./agList";
 import { Events } from "../eventKeys";
 import { KeyCode } from "../constants/keyCode";
+import { setAriaControls } from "../utils/aria";
 
 export class AgSelect extends AgPickerField<string | null, IPickerFieldParams, AgList> {
     public static EVENT_ITEM_SELECTED = 'selectedItem';
@@ -14,7 +15,7 @@ export class AgSelect extends AgPickerField<string | null, IPickerFieldParams, A
             pickerType: 'ag-list',
             className: 'ag-select',
             pickerIcon: 'smallDown',
-            ariaRole: 'listbox',
+            ariaRole: 'combobox',
             ...config
         });
     }
@@ -28,6 +29,12 @@ export class AgSelect extends AgPickerField<string | null, IPickerFieldParams, A
     private createListComponent(): void {
         this.listComponent = this.createBean(new AgList('select'));
         this.listComponent.setParentComponent(this);
+
+        const eListAriaEl = this.listComponent.getAriaElement();
+        const listId = `ag-select-list-${this.listComponent.getCompId()}`;
+
+        eListAriaEl.setAttribute('id', listId);
+        setAriaControls(this.getAriaElement(), eListAriaEl);
 
         this.listComponent.addGuiEventListener('keydown', (e: KeyboardEvent) => {
             if (e.key === KeyCode.TAB) {

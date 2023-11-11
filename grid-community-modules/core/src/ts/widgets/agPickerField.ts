@@ -106,8 +106,6 @@ export abstract class AgPickerField<TValue, TConfig extends IPickerFieldParams =
         this.eDisplayField.setAttribute('id', displayId);
 
         const ariaEl = this.getAriaElement();
-        setAriaDescribedBy(ariaEl, displayId);
-
         this.addManagedListener(ariaEl, 'keydown', this.onKeyDown.bind(this));
 
         this.addManagedListener(this.eLabel, 'mousedown', this.onLabelOrWrapperMouseDown.bind(this));
