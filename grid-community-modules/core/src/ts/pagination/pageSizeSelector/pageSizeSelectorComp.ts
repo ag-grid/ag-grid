@@ -2,7 +2,7 @@ import { Component } from "../../widgets/component";
 import { Autowired, PostConstruct } from "../../context/context";
 import { LocaleService } from "../../localeService";
 import { GridOptionsService } from "../../gridOptionsService";
-import { AgSelect } from "../../main";
+import { AgSelect, Events, PaginationChangedEvent, PaginationProxy, WithoutGridCommon} from "../../main";
 import { clearElement } from "../../utils/dom";
 import { warnOnce } from "../../utils/function";
 
@@ -10,6 +10,7 @@ export class PageSizeSelectorComp extends Component {
 
     @Autowired('localeService') protected readonly localeService: LocaleService;
     @Autowired('gridOptionsService') protected readonly gridOptionsService: GridOptionsService;
+    @Autowired('paginationProxy') private paginationProxy: PaginationProxy;
 
     private selectPageSizeComp: AgSelect | undefined;
     private hasEmptyOption = false;
@@ -23,6 +24,12 @@ export class PageSizeSelectorComp extends Component {
         this.addManagedPropertyListener('paginationPageSizeSelector', () => {
             this.onPageSizeSelectorValuesChange();
         });
+
+        this.addManagedListener(
+            this.eventService,
+            Events.EVENT_PAGINATION_CHANGED,
+            (event) => this.handlePaginationChanged(event),
+        );
     }
 
     private handlePageSizeItemSelected = (): void => {
@@ -37,12 +44,10 @@ export class PageSizeSelectorComp extends Component {
         if (
             isNaN(paginationPageSize) ||
             paginationPageSize < 1 ||
-            paginationPageSize === this.gridOptionsService.get('paginationPageSize')
+            paginationPageSize === this.paginationProxy.getPageSize()
         ) { return; }
 
-        const options = { paginationPageSize  };
-
-        this.gridOptionsService.updateGridOptions({ options });
+        this.paginationProxy.setPageSize(paginationPageSize, 'pageSizeSelector');
 
         if (this.hasEmptyOption) {
             // Toggle the selector to force a refresh of the options and hide the empty option,
@@ -50,6 +55,21 @@ export class PageSizeSelectorComp extends Component {
             this.toggleSelectDisplay(true);
         }
     };
+
+    private handlePaginationChanged(paginationChangedEvent?: WithoutGridCommon<PaginationChangedEvent>): void {
+        if (!this.selectPageSizeComp || !paginationChangedEvent?.newPageSize) { return; }
+
+        const paginationPageSize = this.paginationProxy.getPageSize();
+        if (this.getPageSizeSelectorValues().includes(paginationPageSize)) {
+            this.selectPageSizeComp.setValue(paginationPageSize.toString());
+        } else {
+            if (this.hasEmptyOption) {
+                this.selectPageSizeComp.setValue('');
+            } else {
+                this.toggleSelectDisplay(true);
+            }
+        }
+    }
 
     public toggleSelectDisplay(show: boolean) {
         if (this.selectPageSizeComp) {
@@ -82,9 +102,8 @@ export class PageSizeSelectorComp extends Component {
 
     private reloadPageSizesSelector(): void {
         const pageSizeOptions: (number | string)[] = this.getPageSizeSelectorValues();
-        const paginationPageSizeOption = this.gridOptionsService.get('paginationPageSize');
-        const shouldAddAndSelectEmptyOption = !paginationPageSizeOption || !pageSizeOptions.includes(paginationPageSizeOption);
-
+        const paginationPageSizeOption: number = this.paginationProxy.getPageSize();
+        const shouldAddAndSelectEmptyOption = !paginationPageSizeOption || !pageSizeOptions.includes(paginationPageSizeOption)
         if (shouldAddAndSelectEmptyOption) {
             // When the paginationPageSize option is set to a value that is
             // not in the list of page size options.
@@ -92,7 +111,8 @@ export class PageSizeSelectorComp extends Component {
 
             warnOnce(
                 `The paginationPageSize grid option is set to a value that is not in the list of page size options.
-                Please make sure that the paginationPageSize grid option is set to one of the values in the paginationPageSizeSelector array, or set the paginationPageSizeSelector to false to hide the page size selector.`
+                Please make sure that the paginationPageSize grid option is set to one of the values in the 
+                paginationPageSizeSelector array, or set the paginationPageSizeSelector to false to hide the page size selector.`
             );
         }
 

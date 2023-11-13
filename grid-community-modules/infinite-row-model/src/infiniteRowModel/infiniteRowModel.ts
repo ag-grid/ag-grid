@@ -171,6 +171,7 @@ export class InfiniteRowModel extends BeanStub implements IInfiniteRowModel {
             // not sure if these should all be false - noticed if after implementing,
             // maybe they should be true?
             newPage: false,
+            newPageSize: false,
             newData: false,
             keepRenderedRows: true,
             animate: false

@@ -25,6 +25,8 @@ export interface ModelUpdatedEvent<TData = any, TContext = any> extends AgGridEv
     newData: boolean | undefined;
     /** True when pagination and a new page is navigated to. */
     newPage: boolean;
+    /** True when page size changes from the page size selector. */
+    newPageSize: boolean;
     /** true if all we did is changed row height, data still the same, no need to clear the undo/redo stacks */
     keepUndoRedoStack?: boolean;
 }
@@ -38,6 +40,8 @@ export interface PaginationChangedEvent<TData = any, TContext = any> extends AgG
     newData?: boolean;
     /** True if user went to a new page */
     newPage: boolean;
+    /** True if user changed the page size */
+    newPageSize?: boolean;
 }
 
 export interface AgEvent {

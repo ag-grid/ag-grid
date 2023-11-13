@@ -169,7 +169,7 @@ export class StateService extends BeanStub {
         this.addManagedListener(this.eventService, Events.EVENT_ROW_GROUP_OPENED, () => this.updateCachedState('rowGroupExpansion', this.getRowGroupExpansionState()));
         this.addManagedListener(this.eventService, Events.EVENT_SELECTION_CHANGED, () => this.updateCachedState('rowSelection', this.getRowSelectionState()));
         this.addManagedListener(this.eventService, Events.EVENT_PAGINATION_CHANGED, (event: PaginationChangedEvent) => {
-            if (event.newPage) {
+            if (event.newPage || event.newPageSize) {
                 this.updateCachedState('pagination', this.getPaginationState());
             }
         });
@@ -492,11 +492,25 @@ export class StateService extends BeanStub {
 
     private getPaginationState(): PaginationState | undefined {
         const page = this.paginationProxy.getCurrentPage();
-        return page ? { page } : undefined;
+        const pageSize = !this.gridOptionsService.get('paginationAutoPageSize')
+            ? this.paginationProxy.getPageSize() : undefined;
+
+        const result: Partial<PaginationState> = {};
+        if (page) { result['page'] = page; }
+        if (pageSize) { result['pageSize'] = pageSize; }
+        if (Object.keys(result).length === 0) { return undefined; }
+
+        return result as PaginationState;
     }
 
     private setPaginationState(paginationState: PaginationState): void {
-        this.paginationProxy.setPage(paginationState.page);
+        if (typeof paginationState.page === 'number') {
+            this.paginationProxy.setPage(paginationState.page);
+        }
+
+        if (paginationState.pageSize && !this.gridOptionsService.get('paginationAutoPageSize')) {
+            this.paginationProxy.setPageSize(paginationState.pageSize, 'initialState');
+        }
     }
 
     private getRowSelectionState(): string[] | ServerSideRowSelectionState | ServerSideRowGroupSelectionState | undefined {

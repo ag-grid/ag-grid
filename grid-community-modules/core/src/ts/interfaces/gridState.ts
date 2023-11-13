@@ -60,7 +60,9 @@ export interface FocusedCellState extends RowPosition {
 
 export interface PaginationState {
     /** Current page */
-    page: number;
+    page?: number;
+    /** Current page size. Only use when the pageSizeSelector dropdown is visible */
+    pageSize?: number;
 }
 
 export interface SortState {
