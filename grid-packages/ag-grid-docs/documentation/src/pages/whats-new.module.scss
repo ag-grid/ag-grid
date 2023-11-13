@@ -111,6 +111,12 @@
     margin-bottom: 32px;
 }
 
+.topheader {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
 .heading {
     padding-top: 32px;
     padding-left: $size-2;
