@@ -58,6 +58,5 @@
         "dist",
         "typings"
     ],
-    "typescript.enablePromptUseWorkspaceTsdk": true,
-    "scss.completion.completePropertyWithSemicolon": true
+    "typescript.enablePromptUseWorkspaceTsdk": true
 }
