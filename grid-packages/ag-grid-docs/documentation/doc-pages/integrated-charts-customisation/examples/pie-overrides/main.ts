@@ -58,7 +58,7 @@ const gridOptions: GridOptions = {
           length: 15,
         },
         tooltip: {
-          renderer: (params) => {
+          renderer: (params:any) => { // charts typings
             return {
               content:
                 '<b>' +

@@ -35,7 +35,7 @@ const gridOptions: GridOptions = {
           strokeWidth: 4,
         },
         tooltip: {
-          renderer: (params) => {
+          renderer: (params:any) => { // charts typings
             return {
               content:
                 '<b>' +

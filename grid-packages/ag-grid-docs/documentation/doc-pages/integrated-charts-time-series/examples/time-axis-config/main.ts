@@ -32,7 +32,7 @@ const gridOptions: GridOptions = {
         },
         number: {
           label: {
-            formatter: (params) => {
+            formatter: (params:any) => { // charts typings
               return params.value + '%'
             },
           },

@@ -47,14 +47,14 @@ const gridOptions: GridOptions = {
         category: {
           label: {
             rotation: 0,
-            formatter: (params) => {
+            formatter: (params:any) => { // charts typings
               return formatDate(params.value);
             },
           },
         },
         number: {
           label: {
-            formatter: (params) => {
+            formatter: (params:any) => { // charts typings
               return params.value + '°C'
             },
           },
