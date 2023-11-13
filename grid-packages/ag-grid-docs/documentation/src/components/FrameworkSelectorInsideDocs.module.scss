@@ -7,10 +7,10 @@
     background-color: var(--input-background-color);
     border-radius: var(--border-radius);
     border: 1px solid var(--border-color);
-    margin-top: -18px;
+    margin-bottom: $size-2;
 
     #{$darkmode-selector} & {
-        background-color: #151d26;
+        --input-background-color: #151d26;
     }
 }
 
