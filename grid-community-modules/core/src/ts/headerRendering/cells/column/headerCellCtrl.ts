@@ -673,9 +673,17 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl<IHeaderCellComp, Colu
     }
 
     public refreshAriaDescription(): void {
-        const descriptionArray = Array.from(this.ariaDescriptionProperties.values());
+        let ariaDescription: string | null = null;
+        for (const [key, value] of this.ariaDescriptionProperties) {
+            // always announce filtered state first
+            if (key === 'filter') {
+                ariaDescription = `${value} ${ariaDescription || ''}`;
+            } else {
+                ariaDescription = `${ariaDescription || ''} ${value}`
+            }
+        }
 
-        this.comp.setAriaDescription(descriptionArray.length ? descriptionArray.join(' ') : undefined);
+        this.comp.setAriaDescription(ariaDescription ?? undefined);
     }
 
     private refreshAria(): void {
