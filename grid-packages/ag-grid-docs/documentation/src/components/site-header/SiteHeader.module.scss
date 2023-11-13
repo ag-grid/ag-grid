@@ -22,6 +22,7 @@
     flex-wrap: wrap;
     align-items: center;
     width: 100%;
+    min-height: $site-header-height;
 
     // Required for collapsible mobile menu
     :global(#main-nav),
@@ -83,6 +84,13 @@
     svg {
         position: relative;
         left: 1px;
+    }
+
+    @media screen and (max-width: $breakpoint-docs-nav-medium) {
+        position: absolute;
+        top: -$size-half;
+        right: 0;
+        background-color: transparent !important;
     }
 
     @media screen and (min-width: $breakpoint-site-header-small) {
@@ -246,7 +254,6 @@
             transition: transform 0.33s ease-in-out, opacity 0.33s ease-in-out;
         }
     }
-
 
     #{$darkmode-selector} & {
         font-weight: 400;

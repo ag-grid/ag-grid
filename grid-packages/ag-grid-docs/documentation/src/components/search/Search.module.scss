@@ -5,6 +5,11 @@
 
     flex-grow: 1;
 
+    @media screen and (max-width: $breakpoint-docs-nav-medium) {
+        width: calc(100vh - $size-4);
+        margin: $size-1 $size-2 8px;
+    }
+
     @media screen and (min-width: $breakpoint-docs-search-medium) {
         position: relative;
         width: 100%;
