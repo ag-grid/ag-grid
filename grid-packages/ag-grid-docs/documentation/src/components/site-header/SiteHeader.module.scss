@@ -40,6 +40,7 @@
 .headerLogo {
     display: flex;
     align-items: center;
+    min-height: $site-header-height;
     padding: $size-1 10px;
     margin-right: $size-2;
 
@@ -49,7 +50,7 @@
     }
 
     @media screen and (min-width: $breakpoint-site-header-small) {
-        margin-right: $size-5;
+        margin-right: auto;
     }
 }
 
@@ -88,7 +89,7 @@
 
     @media screen and (max-width: $breakpoint-docs-nav-medium) {
         position: absolute;
-        top: -$size-half;
+        top: 0;
         right: 0;
         background-color: transparent !important;
     }
