@@ -27,7 +27,7 @@ if (!isProductionBuild()) {
         <link
             key="hero-grid-theme"
             rel="stylesheet"
-            href={`${localPrefix}/@ag-grid-community/styles/ag-theme-quartz.css`}
+            href={`${localPrefix}/@ag-grid-community/styles/ag-theme-alpine.css`}
             crossOrigin="anonymous"
             type="text/css"
         />
@@ -160,7 +160,7 @@ function AutomatedRowGrouping({ automatedExampleManager, useStaticData, runOnce,
 
             <Helmet>{helmet.map((entry) => entry)}</Helmet>
             {/* eslint-disable-next-line jsx-a11y/no-static-element-interactions, jsx-a11y/click-events-have-key-events */}
-            <div ref={gridRef} className="automated-row-grouping-grid ag-theme-quartz-dark" onClick={gridInteraction}>
+            <div ref={gridRef} className="automated-row-grouping-grid ag-theme-alpine-dark" onClick={gridInteraction}>
                 <OverlayButton
                     ref={overlayRef}
                     ariaLabel="Give me control"

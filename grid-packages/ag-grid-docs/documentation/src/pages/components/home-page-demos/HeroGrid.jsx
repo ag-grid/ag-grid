@@ -14,7 +14,7 @@ if (!isProductionBuild()) {
         <link
             key="hero-grid-theme"
             rel="stylesheet"
-            href={`${localPrefix}/@ag-grid-community/styles/ag-theme-quartz.css`}
+            href={`${localPrefix}/@ag-grid-community/styles/ag-theme-alpine.css`}
             crossOrigin="anonymous"
             type="text/css"
         />
@@ -56,7 +56,7 @@ const HeroGrid = () => {
     return (
         <>
             <Helmet>{helmet.map((entry) => entry)}</Helmet>
-            <div id="heroGrid" style={{ height: '100%', width: '100%' }} className="ag-theme-quartz-dark">
+            <div id="heroGrid" style={{ height: '100%', width: '100%' }} className="ag-theme-alpine-dark">
                 <LogoMark isSpinning />
             </div>
         </>
