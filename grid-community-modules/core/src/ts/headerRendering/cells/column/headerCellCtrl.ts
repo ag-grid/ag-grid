@@ -20,11 +20,12 @@ import { HoverFeature } from "../hoverFeature";
 import { HeaderComp, IHeader, IHeaderParams } from "./headerComp";
 import { ResizeFeature } from "./resizeFeature";
 import { SelectAllFeature } from "./selectAllFeature";
-import { getElementSize } from "../../../utils/dom";
+import { getElementSize, getInnerWidth } from "../../../utils/dom";
 import { ResizeObserverService } from "../../../misc/resizeObserverService";
 import { SortDirection } from "../../../entities/colDef";
 import { ColumnMoveHelper } from "../../columnMoveHelper";
 import { HorizontalDirection } from "../../../constants/direction";
+import { PinnedWidthService } from "../../../gridBodyComp/pinnedWidthService";
 
 export interface IHeaderCellComp extends IAbstractHeaderCellComp {
     setWidth(width: string): void;
@@ -40,6 +41,7 @@ type HeaderAriaDescriptionKey = 'filter' | 'menu' | 'sort' | 'selectAll';
 export class HeaderCellCtrl extends AbstractHeaderCellCtrl<IHeaderCellComp, Column, ResizeFeature> {
 
     @Autowired('columnModel') private readonly columnModel: ColumnModel;
+    @Autowired('pinnedWidthService') private pinnedWidthService: PinnedWidthService;
     @Autowired('columnHoverService') private readonly columnHoverService: ColumnHoverService;
     @Autowired('sortController') private readonly sortController: SortController;
     @Autowired('menuFactory') private readonly menuFactory: IMenuFactory;
@@ -122,6 +124,18 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl<IHeaderCellComp, Colu
         const diff = (isLeft ? -1 : 1) * this.resizeMultiplier;
 
         const newWidth = Math.min(Math.max(actualWidth + diff, minWidth), maxWidth);
+
+        const pinned = this.getPinned();
+
+        if (pinned) {
+            const leftWidth = this.pinnedWidthService.getPinnedLeftWidth();
+            const rightWidth = this.pinnedWidthService.getPinnedRightWidth();
+            const bodyWidth = getInnerWidth(this.ctrlsService.getGridBodyCtrl().getBodyViewportElement()) - 50;
+
+            if (leftWidth + rightWidth + diff > bodyWidth) {
+                return;
+            }
+        }
 
         this.columnModel.setColumnWidths([{ key: this.column, newWidth }], shiftKey, true);
     }
