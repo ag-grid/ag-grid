@@ -18,29 +18,33 @@ const Version = ({ date, version, blogUrl, highlights }) => {
 
     return (
         <div className={styles.version}>
-            <header>
-            <span className={`${styles['text-secondary']} ${styles['font-size-small']}`}>{date}</span>
-            <div className={styles.flex}>
-                <b className={styles['font-size-large']}>Version {version}</b>
-                <a className={styles.bloglink} href={blogHref}>What's new →</a>
-            </div> 
-                <span class={styles.line}></span>
-               
-            </header>
 
-            <p className={styles['font-size-small']}>
-                {isMajor ? 'Major' : 'Minor'} release with new features and bug fixes.
-            </p>
+            <div className={styles.topheader}>
+                <header>
+                <span className={`${styles['text-secondary']} ${styles['font-size-small']}`}>{date}</span>
+                <div className={styles.flex}>
+                    <b className={styles['font-size-large']}>Version {version}</b>
+                    <a className={styles.bloglink} href={blogHref}>What's new →</a>
+                </div> 
+                    <span class={styles.line}></span>
+                
+                </header>
 
-            {highlights?.length > 0 && (
-                <ul className={styles['list-style-none']}>
-                    {highlights.map((highlight, i) => (
-                        <li key={highlight.text + i}>
-                            <a href={highlight.url}>{highlight.text}</a>
-                        </li>
-                    ))}
-                </ul>
-            )}
+                <p className={styles['font-size-small']}>
+                    {isMajor ? 'Major' : 'Minor'} release with new features and bug fixes.
+                </p>
+
+                {highlights?.length > 0 && (
+                    <ul className={styles['list-style-none']}>
+                        {highlights.map((highlight, i) => (
+                            <li key={highlight.text + i}>
+                                <a href={highlight.url}>{highlight.text}</a>
+                            </li>
+                        ))}
+                    </ul>
+                )}
+             </div>
+
 
             <a
                 className={`${styles.changelog} button-secondary`}
