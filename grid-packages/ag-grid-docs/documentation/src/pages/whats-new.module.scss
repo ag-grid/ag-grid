@@ -1,6 +1,9 @@
 @use '../design-system'as *;
 
 .version {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
     padding: $size-2;
     border-radius: 8px;
     border: 1px solid var(--border-color);
@@ -102,7 +105,7 @@
 .versions {
     max-width: var(--max-page-width);
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    grid-template-columns: repeat(3, minmax(300px, 1fr));
     grid-gap: 16px;
     margin-top: 32px;
     margin-bottom: 32px;
@@ -124,9 +127,11 @@
     }
 }
 
-@media (max-width: 400px) {
+@media (max-width: 1200px) {
     .versions {
-        grid-template-columns: 1fr;
+        display: flex;
+        flex-direction: column;
+        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)) !important;
     }
 }
 
