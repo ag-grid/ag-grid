@@ -35,7 +35,7 @@ export interface IHeaderCellComp extends IAbstractHeaderCellComp {
     getUserCompInstance(): IHeader | undefined;
 }
 
-type HeaderAriaDescriptionKey = 'filter' | 'menu' | 'sort';
+type HeaderAriaDescriptionKey = 'filter' | 'menu' | 'sort' | 'selectAll';
 
 export class HeaderCellCtrl extends AbstractHeaderCellCtrl<IHeaderCellComp, Column, ResizeFeature> {
 
