@@ -23,6 +23,7 @@ export default function FrameworkSelectorInsideDocs({ path, currentFramework }) 
                         className={styles.frameworkLogo}
                     />
                 )}
+                <span classnames={styles.divider}></span>
                 <select
                     value={currentFramework}
                     onChange={handleFrameworkChange}

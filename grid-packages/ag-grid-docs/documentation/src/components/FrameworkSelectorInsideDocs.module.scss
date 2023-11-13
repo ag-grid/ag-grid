@@ -1,13 +1,21 @@
 @use '../design-system' as *;
 
 .frameworkSelector {
-    --icon-size: #{$size-5};
+    --icon-size: #{$size-3};
+
     display: flex;
-    padding: 2px;
     background-color: var(--input-background-color);
     border-radius: var(--border-radius);
-    border: 0.01em solid var(--border-color);
-    margin-top: -18px;
+    border: 1px solid var(--border-color);
+    margin-bottom: $size-2;
+
+    @media screen and (min-width: $breakpoint-docs-search-medium) {
+        margin-top: -6px;
+    }
+
+    #{$darkmode-selector} & {
+        --input-background-color: #151d26;
+    }
 }
 
 .selectFrameworkContainer {
@@ -18,9 +26,19 @@
     img {
         width: var(--icon-size);
         height: var(--icon-size);
-        border-right: 0.04em solid var(--border-color);
-        padding: 4px;
+        margin: 10px;
+        border-radius: 4px;
+    }
 
+    span {
+        display: block;
+        width: 1px;
+        height: calc(100% - 12px);
+        background-color: var(--border-color);
+
+        #{$darkmode-selector} & {
+            background-color: #28333d;
+        }
     }
 
     select {

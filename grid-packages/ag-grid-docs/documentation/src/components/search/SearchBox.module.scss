@@ -4,11 +4,6 @@
     display: flex;
     align-items: center;
     position: relative;
-    max-width: calc(100vw - 154.1px); // .1 to fix Safari layout bug
-
-    @media screen and (min-width: $breakpoint-docs-search-medium) {
-        max-width: unset;
-    }
 
     input[type='search'] {
         width: 100%;
@@ -18,10 +13,6 @@
 
         &::-webkit-search-cancel-button {
             display: none;
-        }
-
-        @media screen and (min-width: $breakpoint-docs-search-medium) {
-            padding-right: 80px;
         }
     }
 
@@ -37,4 +28,5 @@
 .resultsOpen {
     border-bottom-right-radius: 0 !important;
     border-bottom-left-radius: 0 !important;
+    padding-right: 80px !important;
 }
