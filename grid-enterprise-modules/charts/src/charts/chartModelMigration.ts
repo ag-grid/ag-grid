@@ -1,5 +1,6 @@
 import { ChartModel } from '@ag-grid-community/core';
-import { AgChartThemeName } from 'ag-charts-enterprise';
+import { AgChartThemeName } from 'ag-charts-community';
+// import { AgChartThemeName } from 'ag-charts-enterprise';
 // @ts-ignore
 import { getSeriesType } from './chartComp/utils/seriesTypeMapper';
 // @ts-ignore

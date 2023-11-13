@@ -48,10 +48,10 @@
                 main: './dist/main.cjs.js',
                 defaultExtension: 'js'
             },
-            'ag-charts-enterprise': {
-                main: './dist/main.cjs.js',
-                defaultExtension: 'js'
-            },
+            // 'ag-charts-enterprise': {
+            //     main: './dist/main.cjs.js',
+            //     defaultExtension: 'js'
+            // },
             'ag-grid-community': {
                 main: './dist/ag-grid-community.cjs.js',
                 defaultExtension: 'js'

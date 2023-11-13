@@ -7,7 +7,16 @@ import {
     AgChartTheme,
     AgChartThemeOverrides,
     AgChartThemePalette
-} from "ag-charts-enterprise";
+} from "ag-charts-community";
+// import {
+//     _Theme,
+//     AgChart,
+//     AgChartInstance,
+//     AgChartOptions,
+//     AgChartTheme,
+//     AgChartThemeOverrides,
+//     AgChartThemePalette
+// } from "ag-charts-enterprise";
 import { CrossFilteringContext } from "../../chartService";
 import { ChartSeriesType, getSeriesType } from "../utils/seriesTypeMapper";
 import { deproxy } from "../utils/integration";

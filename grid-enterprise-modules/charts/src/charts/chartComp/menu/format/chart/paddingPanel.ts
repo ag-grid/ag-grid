@@ -11,7 +11,8 @@ import {
 import { ChartTranslationService } from "../../../services/chartTranslationService";
 import { ChartOptionsService } from "../../../services/chartOptionsService";
 import { getMaxValue } from "../formatPanel";
-import { AgChartPaddingOptions } from "ag-charts-enterprise";
+import { AgChartPaddingOptions } from "ag-charts-community";
+// import { AgChartPaddingOptions } from "ag-charts-enterprise";
 import { ChartController } from "../../../chartController";
 
 export class PaddingPanel extends Component {

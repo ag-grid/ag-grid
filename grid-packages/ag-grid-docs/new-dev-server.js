@@ -225,11 +225,11 @@ function symlinkModules(gridCommunityModules, gridEnterpriseModules, chartCommun
         type: linkType,
         rename: 'ag-charts-community'
     });
-    lnk('./node_modules/ag-charts-enterprise/', '_dev/', {
-        force: true,
-        type: linkType,
-        rename: 'ag-charts-enterprise'
-    });
+    // lnk('./node_modules/ag-charts-enterprise/', '_dev/', {
+    //     force: true,
+    //     type: linkType,
+    //     rename: 'ag-charts-enterprise'
+    // });
     lnk('./node_modules/ag-charts-react/', '_dev/', {
         force: true,
         type: linkType,
@@ -589,11 +589,6 @@ const addWebpackMiddleware = (app, chartsOnly) => {
         // webpack.community-grid-all.config.js -> AG_GRID_SCRIPT_PATH -> //localhost:8080/dev/@ag-grid-enterprise/all-modules/dist/ag-grid-enterprise.js
         addWebpackMiddlewareForConfig(app, 'webpack.enterprise-grid-all-umd.beta.config.js', '/dev/@ag-grid-enterprise/all-modules/dist', 'ag-grid-enterprise.js');
     }
-
-    // for js examples that just require charts community functionality (landing pages, vanilla charts examples etc)
-    // webpack.charts-community-umd.config.js -> AG_GRID_SCRIPT_PATH -> //localhost:8080/dev/ag-charts-community/dist/ag-charts-community.js
-    // addWebpackMiddlewareForConfig(app, 'webpack.charts-community-umd.config.js', '/dev/ag-charts-community/dist', 'ag-charts-community.js');
-    // addWebpackMiddlewareForConfig(app, 'webpack.charts-enterprise-umd.config.js', '/dev/ag-charts-enterprise/dist', 'ag-charts-enterprise.js');
 };
 
 const watchCoreModulesAndCss = async (skipFrameworks, chartsOnly) => {
@@ -711,7 +706,7 @@ const serveModuleAndPackages = (app, gridCommunityModules, gridEnterpriseModules
     servePackage(app, '@ag-grid-community/vue3');
     servePackage(app, '@ag-grid-community/react');
     servePackage(app, 'ag-charts-community');
-    servePackage(app, 'ag-charts-enterprise');
+    // servePackage(app, 'ag-charts-enterprise');
     servePackage(app, 'ag-charts-react');
     servePackage(app, 'ag-charts-angular');
     servePackage(app, 'ag-charts-vue');

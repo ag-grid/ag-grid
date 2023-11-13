@@ -6,7 +6,15 @@ import {
     AgCartesianChartOptions,
     AgChart,
     AgLineSeriesOptions,
-} from "ag-charts-enterprise";
+} from "ag-charts-community";
+// import {
+//     AgAreaSeriesOptions,
+//     AgBaseSeriesOptions,
+//     AgCartesianAxisOptions,
+//     AgCartesianChartOptions,
+//     AgChart,
+//     AgLineSeriesOptions,
+// } from "ag-charts-enterprise";
 
 export abstract class CartesianChartProxy extends ChartProxy {
     protected crossFilteringAllPoints = new Set<string>();

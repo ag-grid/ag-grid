@@ -5,9 +5,9 @@ export function vanillaToTypescript(bindings: any, mainFilePath: string): (impor
     const { externalEventHandlers, imports } = bindings;
 
     let importStrings = [];
-    if (bindings.chartSettings.enterprise) {
-        importStrings.push("import 'ag-charts-enterprise';");
-    }
+    // if (bindings.chartSettings.enterprise) {
+    //     importStrings.push("import 'ag-charts-enterprise';");
+    // }
 
     // attach external handlers to window
     let toAttach = '';

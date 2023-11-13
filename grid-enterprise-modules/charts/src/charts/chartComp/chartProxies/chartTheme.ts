@@ -7,7 +7,16 @@ import {
     AgChartThemeOverrides,
     AgChartThemePalette,
     AgPieSeriesTooltipRendererParams
-} from 'ag-charts-enterprise';
+} from 'ag-charts-community';
+// import {
+//     _Theme,
+//     AgChartLegendClickEvent,
+//     AgChartTheme,
+//     AgChartThemeName,
+//     AgChartThemeOverrides,
+//     AgChartThemePalette,
+//     AgPieSeriesTooltipRendererParams
+// } from 'ag-charts-enterprise';
 import { ALL_AXIS_TYPES } from '../utils/axisTypeMapper';
 import { getSeriesType } from '../utils/seriesTypeMapper';
 import { ChartProxy, ChartProxyParams } from './chartProxy';

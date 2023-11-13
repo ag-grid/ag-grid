@@ -115,7 +115,8 @@ const copyAndConcatMainTypings = () => {
         './dist/lib/agGridCoreExtension.d.ts'
     ])
          // the next line is specifically for AgChartThemeOverrides etc
-        .pipe(replace("import * as agCharts from 'ag-charts-enterprise';", '// @ts-ignore\nimport * as agCharts from \'ag-charts-enterprise\';'))
+        .pipe(replace("import * as agCharts from 'ag-charts-community';", 'import * as agCharts from "./chart/agChartOptions";'))
+        // .pipe(replace("import * as agCharts from 'ag-charts-enterprise';", '// @ts-ignore\nimport * as agCharts from \'ag-charts-enterprise\';'))
         .pipe(concat('main.d.ts'))
         .pipe(gulp.dest('./dist/lib'));
 };
