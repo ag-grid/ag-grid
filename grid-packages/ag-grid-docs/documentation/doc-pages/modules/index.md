@@ -262,7 +262,7 @@ Using the same real-world example from above the `package.json` dependencies wil
 |    // ... rest of function ...
 |
 |    return (
-|        &lt;div style={{height: 400, width: 900}} className="ag-theme-alpine">
+|        &lt;div style={{height: 400, width: 900}} className="ag-theme-quartz">
 |            &lt;AgGridReact
 |                // properties
 |                columnDefs={columnDefs}
@@ -357,7 +357,7 @@ CSS & SCSS is available in the `@ag-grid-community/styles` module.
 <snippet transform={false} language="css">
 |/* CSS Community */
 |import "@ag-grid-community/styles/ag-grid.css";
-|import "@ag-grid-community/styles/ag-theme-alpine.css";
+|import "@ag-grid-community/styles/ag-theme-quartz.css";
 </snippet>
 
 If using SCSS the theme defaults to `alpine`, so you don't have to explicitly include it.

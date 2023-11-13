@@ -55,7 +55,7 @@ export class DetailCellRenderer implements ICellRendererComp {
       '    <div class="full-width-detail"><b>Name: </b>' + data.name + '</div>' +
       '    <div class="full-width-detail"><b>Account: </b>' + data.account + '</div>' +
       '  </div>' +
-      '  <div class="full-width-grid ag-theme-alpine"></div>' +
+      '  <div class="full-width-grid ag-theme-quartz"></div>' +
       '</div>';
 
     return template;

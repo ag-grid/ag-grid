@@ -5,7 +5,7 @@ import { HttpClient } from '@angular/common/http';
 import { Component, ViewChild } from '@angular/core';
 
 import "@ag-grid-community/styles/ag-grid.css";
-import "@ag-grid-community/styles/ag-theme-alpine.css";
+import "@ag-grid-community/styles/ag-theme-quartz.css";
 
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
 import { MenuModule } from '@ag-grid-enterprise/menu';
@@ -48,7 +48,7 @@ export class SportRenderer implements ICellRendererAngularComp {
                     <i class="fas fa-redo" style="margin-right: 5px;"></i>Reset
                 </button>
             </div>
-            <div class="grid-wrapper ag-theme-alpine">
+            <div class="grid-wrapper ag-theme-quartz">
                 <div class="panel panel-primary" style="margin-right: 10px;">
                     <div class="panel-heading">Athletes</div>
                     <div class="panel-body">

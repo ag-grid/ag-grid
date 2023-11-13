@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import "@ag-grid-community/styles/ag-grid.css";
-import "@ag-grid-community/styles/ag-theme-alpine.css";
+import "@ag-grid-community/styles/ag-theme-quartz.css";
 import { DaysFrostRenderer } from './days-frost-renderer.component';
 import { ColDef, GridApi, ICellRenderer, ICellRendererParams, IRowNode } from '@ag-grid-community/core';
 
@@ -77,7 +77,7 @@ class RainPerTenMmRenderer implements ICellRenderer {
         <ag-grid-angular
                 #agGrid
                 style="width: 100%; height: 100%;"
-                class="ag-theme-alpine"
+                class="ag-theme-quartz"
                 [columnDefs]="columnDefs"
                 [defaultColDef]="defaultColDef"
                 (gridReady)="onGridReady($event)"

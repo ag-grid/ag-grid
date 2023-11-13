@@ -30,7 +30,7 @@ function getModuleImports(bindings: any, allStylesheets: string[]): string[] {
     // to account for the (rare) example that has more than one class...just default to alpine if it does
     // we strip off any '-dark' from the theme when loading the CSS as dark versions are now embedded in the
     // "source" non dark version
-    const theme = gridSettings.theme ? gridSettings.theme.replace('-dark', '') : 'ag-theme-alpine';
+    const theme = gridSettings.theme ? gridSettings.theme.replace('-dark', '') : 'ag-theme-quartz';
     imports.push(`import "@ag-grid-community/styles/${theme}.css";`);
 
     let propertyInterfaces = getPropertyInterfaces(properties);
@@ -65,7 +65,7 @@ function getPackageImports(bindings: any, allStylesheets: string[]): string[] {
     // to account for the (rare) example that has more than one class...just default to alpine if it does
     // we strip off any '-dark' from the theme when loading the CSS as dark versions are now embedded in the
     // "source" non dark version
-    const theme = gridSettings.theme ? gridSettings.theme.replace('-dark', '') : 'ag-theme-alpine';
+    const theme = gridSettings.theme ? gridSettings.theme.replace('-dark', '') : 'ag-theme-quartz';
     imports.push(`import "ag-grid-community/styles/${theme}.css";`);
 
     let propertyInterfaces = getPropertyInterfaces(properties);

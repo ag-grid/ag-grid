@@ -26,7 +26,7 @@
 |   ]);
 |
 |   return (
-|       &lt;div className="ag-theme-alpine">
+|       &lt;div className="ag-theme-quartz">
 |           &lt;AgGridReact
 |              columnDefs={columnDefs}
 |              ...other properties

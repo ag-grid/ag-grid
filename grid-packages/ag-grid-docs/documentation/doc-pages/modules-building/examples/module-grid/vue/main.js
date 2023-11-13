@@ -9,12 +9,12 @@ import { ExcelExportModule } from '@ag-grid-enterprise/excel-export';
 ModuleRegistry.registerModules([ClientSideRowModelModule, MenuModule, ExcelExportModule]);
 
 import '@ag-grid-community/styles/ag-grid.css';
-import '@ag-grid-community/styles/ag-theme-alpine.css';
+import '@ag-grid-community/styles/ag-theme-quartz.css';
 
 const VueExample = {
     template: `
         <ag-grid-vue style="width: 100%; height: 100%;"
-                     class="ag-theme-alpine"
+                     class="ag-theme-quartz"
                      :columnDefs="columnDefs"
                      :rowData="rowData">
         </ag-grid-vue>

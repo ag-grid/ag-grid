@@ -1,7 +1,7 @@
 
 import { ColDef, ModelUpdatedEvent } from '@ag-grid-community/core';
 import '@ag-grid-community/styles/ag-grid.css';
-import "@ag-grid-community/styles/ag-theme-alpine.css";
+import "@ag-grid-community/styles/ag-theme-quartz.css";
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { AgGridAngular } from '@ag-grid-community/angular';
 import { getData } from './data';
@@ -14,7 +14,7 @@ import { getData } from './data';
       <input type="text" id="quickFilter" placeholder="Filter..." [(ngModel)]="quickFilterText">
       <div id="numberOfRows">Number of rows: {{displayedRows}}</div>
     </div>
-    <ag-grid-angular style="width: 100%; height: 100%;" class="ag-theme-alpine" [columnDefs]="columnDefs"
+    <ag-grid-angular style="width: 100%; height: 100%;" class="ag-theme-quartz" [columnDefs]="columnDefs"
       [rowData]="rowData" [quickFilterText]="quickFilterText" (modelUpdated)="onModelUpdated($event)"></ag-grid-angular>
   </div>`
 })

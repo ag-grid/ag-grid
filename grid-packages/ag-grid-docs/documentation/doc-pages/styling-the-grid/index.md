@@ -35,10 +35,10 @@ There are three ways to style the grid:
 
 All themes can be customised by overriding [CSS variables](/global-style-customisation-variables/).
 
-Let's test this out by creating a new `styles.css` file with a single selector that matches our chosen theme (`ag-theme-alpine-dark`) and override the `--ag-alpine-active-colour` to change the colour of active elements within the grid:
+Let's test this out by creating a new `styles.css` file with a single selector that matches our chosen theme (`ag-theme-quartz`) and override the `--ag-alpine-active-colour` to change the colour of active elements within the grid:
 
 <snippet transform={false} language="css">
-.ag-theme-alpine-dark {
+.ag-theme-quartz {
   --ag-checkbox-checked-color: rgb(126, 46, 132);
 }
 </snippet>

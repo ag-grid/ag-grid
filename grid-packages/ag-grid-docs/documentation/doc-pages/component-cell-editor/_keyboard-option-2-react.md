@@ -27,7 +27,7 @@
 |                height: '100%',
 |                width: '100%'
 |            }}
-|            className="ag-theme-alpine test-grid">
+|            className="ag-theme-quartz test-grid">
 |            &lt;AgGridReact ...rest of the definition...>
 |                columnDefs={columnDefs}
 |                />

@@ -15,7 +15,7 @@
     flex: 1;
 }
 
-.ag-theme-alpine {
+.ag-theme-quartz {
     /* pink category range */
     --ag-range-selection-chart-category-background-color: rgba(255, 0, 132, 0.1);
     

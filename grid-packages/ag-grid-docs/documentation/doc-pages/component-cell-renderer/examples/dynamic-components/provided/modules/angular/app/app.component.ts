@@ -6,7 +6,7 @@ import { ParamsRenderer } from './params-renderer.component';
 import { SquareRenderer } from './square-renderer.component';
 
 import "@ag-grid-community/styles/ag-grid.css";
-import "@ag-grid-community/styles/ag-theme-alpine.css";
+import "@ag-grid-community/styles/ag-theme-quartz.css";
 import { ColDef, GridApi, GridReadyEvent, IRowNode } from '@ag-grid-community/core';
 
 @Component({
@@ -20,7 +20,7 @@ import { ColDef, GridApi, GridReadyEvent, IRowNode } from '@ag-grid-community/co
                 #agGrid
                 style="width: 100%; height: 100%;"
                 id="myGrid"
-                class="ag-theme-alpine"
+                class="ag-theme-quartz"
                 [columnDefs]="columnDefs"
                 [rowData]="rowData"
                 [context]="context"

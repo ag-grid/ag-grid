@@ -3,7 +3,7 @@ import { AgGridVue } from '@ag-grid-community/vue3';
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
 import { RowGroupingModule } from '@ag-grid-enterprise/row-grouping';
 import '@ag-grid-community/styles/ag-grid.css';
-import "@ag-grid-community/styles/ag-theme-alpine.css";
+import "@ag-grid-community/styles/ag-theme-quartz.css";
 
 import { ModuleRegistry } from '@ag-grid-community/core';
 // Register the required feature modules with the Grid
@@ -43,7 +43,7 @@ const VueExample = {
             <ag-grid-vue
 
                     style="width: 100%; height: 98%;"
-                    class="ag-theme-alpine"
+                    class="ag-theme-quartz"
                     :columnDefs="columnDefs"
                     @grid-ready="onGridReady"
                     :defaultColDef="defaultColDef"

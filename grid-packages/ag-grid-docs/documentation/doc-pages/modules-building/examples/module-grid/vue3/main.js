@@ -6,14 +6,14 @@ import {ClientSideRowModelModule} from '@ag-grid-community/client-side-row-model
 import {MenuModule} from '@ag-grid-enterprise/menu';
 import {ExcelExportModule} from '@ag-grid-enterprise/excel-export';
 import '@ag-grid-community/styles/ag-grid.css';
-import '@ag-grid-community/styles/ag-theme-alpine.css';
+import '@ag-grid-community/styles/ag-theme-quartz.css';
 
 ModuleRegistry.registerModules([ClientSideRowModelModule, MenuModule, ExcelExportModule]);
 
 const VueExample = {
     template: `
         <ag-grid-vue style="width: 100%; height: 100%;"
-                     class="ag-theme-alpine"
+                     class="ag-theme-quartz"
                      :columnDefs="columnDefs"
                      :rowData="rowData">
         </ag-grid-vue>

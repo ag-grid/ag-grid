@@ -2,7 +2,7 @@ import { Component, ViewChild } from '@angular/core';
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
 
 import "@ag-grid-community/styles/ag-grid.css";
-import "@ag-grid-community/styles/ag-theme-alpine.css";
+import "@ag-grid-community/styles/ag-theme-quartz.css";
 import { ModuleRegistry, ColDef, GridApi, GetRowIdParams, GridReadyEvent, RowDropZoneParams } from '@ag-grid-community/core';
 
 // Register the required feature modules with the Grid
@@ -10,7 +10,7 @@ ModuleRegistry.registerModules([ClientSideRowModelModule]);
 @Component({
     selector: 'my-app',
     template: `
-        <div class="example-wrapper ag-theme-alpine">
+        <div class="example-wrapper ag-theme-quartz">
 
             <div class="inner-col">
                 <div class="toolbar">

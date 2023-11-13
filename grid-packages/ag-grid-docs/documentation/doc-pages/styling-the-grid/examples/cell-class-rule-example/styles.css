@@ -2,12 +2,12 @@
   Custom Theme
 */
 
-.ag-theme-alpine {
+.ag-theme-quartz {
   --price-cell-background-colour: #d4cccc;
   --ag-checkbox-checked-color: rgb(126, 46, 132);
 }
 
-.ag-theme-alpine-dark {
+.ag-theme-quartz-dark {
   --price-cell-background-colour: #262c31;
   --ag-checkbox-checked-color: rgb(126, 46, 132);
 }

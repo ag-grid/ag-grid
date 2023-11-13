@@ -16,7 +16,7 @@ Style UI elements that float above the main UI, including menus.
 Elements that float above the user interface are called cards or popups. Internally there is an implementation difference between the two, but they are the same from the user's point of view, so it is appropriate to style them in the same way. To set a drop shadow on all floating elements, set the `--ag-card-shadow` and `--ag-popup-shadow` variables to a [CSS box shadow value](https://developer.mozilla.org/en-US/docs/Web/CSS/box-shadow):
 
 ```css
-.ag-theme-alpine {
+.ag-theme-quartz {
     --ag-card-shadow: 0 3px 4px black;
     --ag-popup-shadow: 0 3px 4px black;
 }
@@ -39,22 +39,22 @@ Menus such as the column menu and context menu are cards and so respond to the i
 This example combines all of the above techniques to style the column menus. Click on the menu icon in a column header to see a tabbed menu, or right click on the grid for a non-tabbed menu:
 
 ```css
-.ag-theme-alpine {
+.ag-theme-quartz {
     --ag-card-radius: 10px;
     --ag-card-shadow: 0 10px 40px rgb(83, 0, 106);
     --ag-popup-shadow: var(--ag-card-shadow);
     --ag-tab-min-width: 350px;
 }
 
-.ag-theme-alpine .ag-menu {
+.ag-theme-quartz .ag-menu {
     background-color: rgb(244, 220, 250); /* light purple */
 }
 
-.ag-theme-alpine .ag-menu-header {
+.ag-theme-quartz .ag-menu-header {
     background-color: rgb(100, 32, 119); /* dark purple */
 }
 
-.ag-theme-alpine .ag-menu-header .ag-icon {
+.ag-theme-quartz .ag-menu-header .ag-icon {
     color: white;
 }
 ```

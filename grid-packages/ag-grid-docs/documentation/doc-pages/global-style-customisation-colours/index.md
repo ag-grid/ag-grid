@@ -9,7 +9,7 @@ The grid exposes many CSS `--ag-*-color` variables that affect the colour of ele
 ## Example
 
 ```css
-.ag-theme-alpine {
+.ag-theme-quartz {
     --ag-foreground-color: rgb(126, 46, 132);
     --ag-background-color: rgb(249, 245, 227);
     --ag-header-foreground-color: rgb(204, 245, 172);

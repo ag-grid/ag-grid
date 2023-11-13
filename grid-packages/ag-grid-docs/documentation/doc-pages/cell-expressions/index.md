@@ -95,7 +95,7 @@ This example demonstrates cell expressions. The second column values in the LHS 
 - "Today's Date" prints the date.
 - "Sum A" and "Sum B" both call a user provided function that is attached to the context (Note that "Sum A" and "Sum B" are using values from the RHS grid).
 
-<grid-example title='Cell Expressions' name='cell-expressions' type='typescript' options='{ "exampleHeight": 455, "theme": "ag-theme-alpine-dark" }'></grid-example>
+<grid-example title='Cell Expressions' name='cell-expressions' type='typescript' options='{ "exampleHeight": 455 }'></grid-example>
 
 ## How Expressions Work
 

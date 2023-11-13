@@ -12,8 +12,8 @@ The grid comes with several provided themes which act as a great starting point 
 |------------|-------------|
 |[**ag-theme-quartz**](../../example?theme=ag-theme-quartz)<br/>[**ag-theme-quartz-dark**](../../example?theme=ag-theme-quartz-dark)<br/>[**ag-theme-quartz-auto-dark**](../../example?theme=ag-theme-quartz-auto-dark) *<br/>[**ag-theme-quartz-dark-blue**](../../example?theme=ag-theme-quartz-dark-blue)<br/>[**ag-theme-quartz-auto-dark-blue**](../../example?theme=ag-theme-quartz-auto-dark-blue) *<br/><br/>File name `ag-theme-quartz[.min].css` | Modern looking themes with high contrast and generous padding.<br/><br/>**Recommendation:** This is the recommended grid theme and an excellent choice for most applications. |
 |[**ag-theme-balham**](../../example?theme=ag-theme-balham)<br/>[**ag-theme-balham-dark**](../../example?theme=ag-theme-balham-dark)<br/>[**ag-theme-balham-auto-dark**](../../example?theme=ag-theme-balham-auto-dark) *<br/><br/>File name `ag-theme-balham[.min].css` | Balham has a more traditional look modelled after a spreadsheet application. It is appropriate for applications that need to fit more data onto each page. |
-|[**ag-theme-material**](../../example?theme=ag-theme-material)<br/><br/>File name `ag-theme-material[.min].css` | A theme designed according to the Google Material Language Specs.<br/><br/>**Recommendation:** This theme looks great for simple applications with lots of white space, and is the obvious choice if the rest of your application follows the Google Material Design spec. However, the Material spec doesn't cater for advanced grid features such as grouped columns and tool panels. If your application uses these features, consider using `ag-theme-alpine` instead. |
-|[**ag-theme-alpine**](../../example?theme=ag-theme-alpine)<br/>[**ag-theme-alpine-dark**](../../example?theme=ag-theme-alpine-dark)<br/>[**ag-theme-alpine-auto-dark**](../../example?theme=ag-theme-alpine-auto-dark) *<br/><br/>File name `ag-theme-alpine[.min].css` | Alpine was the default theme before Quartz was released. It is still supported, but we recommend Quartz for new applications. |
+|[**ag-theme-material**](../../example?theme=ag-theme-material)<br/><br/>File name `ag-theme-material[.min].css` | A theme designed according to the Google Material Language Specs.<br/><br/>**Recommendation:** This theme looks great for simple applications with lots of white space, and is the obvious choice if the rest of your application follows the Google Material Design spec. However, the Material spec doesn't cater for advanced grid features such as grouped columns and tool panels. If your application uses these features, consider using `ag-theme-quartz` instead. |
+|[**ag-theme-quartz**](../../example?theme=ag-theme-quartz)<br/>[**ag-theme-alpine-dark**](../../example?theme=ag-theme-alpine-dark)<br/>[**ag-theme-alpine-auto-dark**](../../example?theme=ag-theme-alpine-auto-dark) *<br/><br/>File name `ag-theme-quartz[.min].css` | Alpine was the default theme before Quartz was released. It is still supported, but we recommend Quartz for new applications. |
 
 \* The 'auto' versions of each theme use the [prefers-color-scheme](https://developer.mozilla.org/en-US/docs/Web/CSS/@media/prefers-color-scheme) CSS media feature to switch between dark and light variants depending on whether the user has enabled dark mode on their operating system.
 
@@ -22,7 +22,7 @@ The grid comes with several provided themes which act as a great starting point 
 To use a theme, add the theme class name to the `div` element that contains your grid. The following is an example of using the Alpine theme:
 
 ```html
-<div id="myGrid" class="ag-theme-alpine"></div>
+<div id="myGrid" class="ag-theme-quartz"></div>
 ```
 
 <warning>
@@ -118,7 +118,7 @@ You can load the structural styles and theme from a free CDN by adding this code
 
 <link
         rel="stylesheet"
-        href="https://cdn.jsdelivr.net/npm/ag-grid-community@@AG_GRID_VERSION@/styles/ag-theme-alpine.css" />
+        href="https://cdn.jsdelivr.net/npm/ag-grid-community@@AG_GRID_VERSION@/styles/ag-theme-quartz.css" />
 ```
 
 <note>

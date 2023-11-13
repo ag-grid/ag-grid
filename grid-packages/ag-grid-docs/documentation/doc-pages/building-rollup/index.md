@@ -79,7 +79,7 @@ var api = createGrid(eGridDiv, gridOptions);
 <head>
 </head>
 <body>
-<div id="myGrid" style="height: 200px;width:500px;" class="ag-theme-alpine"></div>
+<div id="myGrid" style="height: 200px;width:500px;" class="ag-theme-quartz"></div>
 
 <script src="./dist/ag-bundle.js"></script>
 </body>

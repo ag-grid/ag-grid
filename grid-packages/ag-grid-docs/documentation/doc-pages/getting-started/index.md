@@ -22,7 +22,7 @@ Replace your `index.js` file with the following code:
 |import { useState } from 'react';
 |import { AgGridReact } from 'ag-grid-react'; // Core Grid Logic
 |import "ag-grid-community/styles/ag-grid.css"; // Core CSS
-|import "ag-grid-community/styles/ag-theme-alpine.css"; // Theme
+|import "ag-grid-community/styles/ag-theme-quartz.css"; // Theme
 |
 |// Create new GridExample component
 |const GridExample = () => {
@@ -45,7 +45,7 @@ Replace your `index.js` file with the following code:
 |
 |  // Container: Defines the grid's theme & dimensions.
 |  return (
-|    &lt;div className="ag-theme-alpine" style={{ width: 600, height: 500 }}>
+|    &lt;div className="ag-theme-quartz" style={{ width: 600, height: 500 }}>
 |      {/* The AG Grid component, with Row Data & Column Definiton props */}
 |      &lt;AgGridReact rowData={rowData} columnDefs={colDefs} />
 |    &lt;/div>

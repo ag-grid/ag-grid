@@ -243,7 +243,7 @@ Before discussing the grid features in our File View, here are all of the grid o
 
 render() {
     return (
-        <div className="ag-theme-alpine">
+        <div className="ag-theme-quartz">
             <AgGridReact
                 {/* provide column definitions */}                 
                 columnDefs={this.colDefs}

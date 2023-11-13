@@ -14,7 +14,7 @@ import { ColDef, GridApi, GridReadyEvent, ICellRendererParams } from '@ag-grid-c
                  #agGrid 
                  style="height: 100%;"
                  id="detailGrid"
-                 class="full-width-grid ag-theme-alpine"
+                 class="full-width-grid ag-theme-quartz"
                  [columnDefs]="colDefs"
                  [defaultColDef]="defaultColDef"
                  [rowData]="rowData"

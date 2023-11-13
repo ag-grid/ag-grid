@@ -2,7 +2,7 @@ import { createApp, ref } from 'vue';
 import { AgGridVue } from '@ag-grid-community/vue3';
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
 import "@ag-grid-community/styles/ag-grid.css";
-import "@ag-grid-community/styles/ag-theme-alpine.css";
+import "@ag-grid-community/styles/ag-theme-quartz.css";
 import MedalCellRenderer from './medalCellRendererVue.js';
 import TotalValueRenderer from './totalValueRendererVue.js';
 
@@ -15,7 +15,7 @@ const VueExample = {
         <div style="height: 100%">
             <ag-grid-vue
                     style="width: 100%; height: 100%;"
-                    class="ag-theme-alpine"
+                    class="ag-theme-quartz"
                     id="myGrid"
                     :columnDefs="columnDefs"
                     @grid-ready="onGridReady"

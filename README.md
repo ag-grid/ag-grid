@@ -72,7 +72,7 @@ $ npm install --save ag-grid-community
 ### Add a placeholder to HTML
 
 ```html
-<div id="myGrid" style="height: 150px; width: 600px" class="ag-theme-alpine"></div>
+<div id="myGrid" style="height: 150px; width: 600px" class="ag-theme-quartz"></div>
 ```
 
 ### Import the grid and styles
@@ -81,7 +81,7 @@ $ npm install --save ag-grid-community
 import { Grid } from 'ag-grid-community';
 
 import 'ag-grid-community/styles/ag-grid.css';
-import 'ag-grid-community/styles/ag-theme-alpine.css';
+import 'ag-grid-community/styles/ag-theme-quartz.css';
 ```
 
 ### Set configuration

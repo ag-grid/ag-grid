@@ -135,7 +135,7 @@ In this section we demonstrate how you can cherry pick modules to provide the fe
 | ModuleRegistry.register(ExcelExportModule);
 |
 | import '@ag-grid-community/styles/ag-grid.css';
-| import '@ag-grid-community/styles/ag-theme-alpine.css';
+| import '@ag-grid-community/styles/ag-theme-quartz.css';
 </snippet>
 </framework-specific-section>
 
@@ -216,7 +216,7 @@ In this section we demonstrate how you can cherry pick modules to provide the fe
 |     &lt;/script>
 | &lt;/head>
 | &lt;body>
-|     &lt;div id="myGrid" style="height: 200px; width:500px;" class="ag-theme-alpine">&lt;/div>
+|     &lt;div id="myGrid" style="height: 200px; width:500px;" class="ag-theme-quartz">&lt;/div>
 | &lt;/body>
 | &lt;/html>
 </snippet>

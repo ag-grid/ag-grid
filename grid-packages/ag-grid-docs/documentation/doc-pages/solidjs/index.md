@@ -59,13 +59,13 @@ It's best to place the grid component inside another DOM element that has a set 
 import AgGridSolid from 'ag-grid-solid';
 
 import 'ag-grid-community/styles/ag-grid.css'; // grid core CSS
-import "ag-grid-community/styles/ag-theme-alpine.css"; // optional theme
+import "ag-grid-community/styles/ag-theme-quartz.css"; // optional theme
 
 const MySolidApp = ()=> {
 
     return (
-        // set fixed size to parent div, and apply grid theme ag-theme-alpine
-        <div style={{height: '500px'}} class="ag-theme-alpine">
+        // set fixed size to parent div, and apply grid theme ag-theme-quartz
+        <div style={{height: '500px'}} class="ag-theme-quartz">
             <AgGridSolid
                 rowData={...}
                 columnDefs={...}
@@ -85,7 +85,7 @@ You can use [Grid Properties](/grid-options/), either bind Solid Signals (for ch
 import AgGridSolid from 'ag-grid-solid';
 
 import 'ag-grid-community/styles/ag-grid.css'; // grid core CSS
-import "ag-grid-community/styles/ag-theme-alpine.css"; // optional theme
+import "ag-grid-community/styles/ag-theme-quartz.css"; // optional theme
 
 const MySolidApp = ()=> {
 
@@ -105,7 +105,7 @@ const MySolidApp = ()=> {
     };
 
     return (
-        <div style={{height: '500px'}} class="ag-theme-alpine">
+        <div style={{height: '500px'}} class="ag-theme-quartz">
             <AgGridSolid
                 rowData={rowData()} // use signal
                 columnDefs={columnDefs} // no signal
@@ -135,7 +135,7 @@ const MySolidApp = ()=> {
     };
 
     return (
-        <div style={{height: '500px'}} class="ag-theme-alpine">
+        <div style={{height: '500px'}} class="ag-theme-quartz">
             <AgGridSolid
                 rowData={...}
                 columnDefs={...}

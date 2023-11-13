@@ -1,6 +1,6 @@
 import { Component, OnDestroy } from '@angular/core';
 import "@ag-grid-community/styles/ag-grid.css";
-import "@ag-grid-community/styles/ag-theme-alpine.css";
+import "@ag-grid-community/styles/ag-theme-quartz.css";
 import { MySimpleEditor } from './mySimple-editor.component';
 import { ColDef, GridReadyEvent } from '@ag-grid-community/core';
 
@@ -9,7 +9,7 @@ import { ColDef, GridReadyEvent } from '@ag-grid-community/core';
     template: `
       <ag-grid-angular
           style="width: 100%; height: 100%;"
-          class="ag-theme-alpine"
+          class="ag-theme-quartz"
           [columnDefs]="columnDefs"
           [defaultColDef]="defaultColDef"
           [rowData]="rowData"

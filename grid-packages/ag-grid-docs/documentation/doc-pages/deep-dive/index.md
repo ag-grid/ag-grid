@@ -42,17 +42,15 @@ _Note: `rowData` and `columnDefs` arrays use the `useState` hook. We recommend `
 
 ## Choose a Theme
 
-All grids require a theme. We provide 5 themes out-of-the-box: [Alpine](https://www.ag-grid.com/example/?theme=ag-theme-alpine), [Alpine Dark](https://www.ag-grid.com/example/?theme=ag-theme-alpine-dark), [Balham](https://www.ag-grid.com/example/?theme=ag-theme-balham), [Balham Dark](https://www.ag-grid.com/example/?theme=ag-theme-balham-dark), & [Material](https://www.ag-grid.com/example/?theme=ag-theme-material).
-
-To use a theme, set the `className` of the div that contains the grid to the name of the theme. Let's try this out by adding `ag-theme-alpine-dark` to our container div:
+All grids require a theme. The default theme is Quartz and we provide [several others](/themes). To use a theme, set the `className` of the div that contains the grid to the name of the theme. Let's try this out by adding `ag-theme-quartz` to our container div:
 
 <snippet transform={false} language="jsx">
-|&lt;div className="ag-theme-alpine-dark" style={{ width: 600, height: 500 }}>
+|&lt;div className="ag-theme-quartz" style={{ width: 600, height: 500 }}>
 |  &lt;AgGridReact ... />
 |&lt;/div>
 </snippet>
 
-Now when we run our code we should see the grid styled with the `ag-theme-alpine-dark` theme:
+Now when we run our code we should see the grid styled with the `ag-theme-quartz` theme:
 
 <grid-example title='Theme Example' name='theme-example' type='generated' options='{ "exampleHeight": 220 }'></grid-example>
 
@@ -122,7 +120,7 @@ The example above demonstrates how to configure a single column. To apply this c
 |  resizeable: true // Enable resizing on all columns
 |}))
 |
-|&lt;div className="ag-theme-alpine" style={{ width: 600, height: 500 }}>
+|&lt;div className="ag-theme-quartz" style={{ width: 600, height: 500 }}>
 |  &lt;AgGridReact rowData={rowData} columnDefs={colDefs} defaultColDef={defaultColDefs} />
 |&lt;/div>
 </snippet>
@@ -161,7 +159,7 @@ So far we've covered creating a grid, updating the data within the grid, and con
 Grid Options are passed to the grid component directly as props. Let's enable pagination by adding `pagination={true}`:
 
 <snippet transform={false} language="jsx">
-|&lt;div className="ag-theme-alpine" style={{ width: 600, height: 500 }}>
+|&lt;div className="ag-theme-quartz" style={{ width: 600, height: 500 }}>
 |  &lt;AgGridReact
 |    ...
 |    pagination={true} // Enable Pagination
@@ -254,7 +252,7 @@ To be notified of when an event is raised by the grid we need to use the relevan
 |  editable: true // Enable editing on all columns
 |}))
 |
-|&lt;div className="ag-theme-alpine" style={{ width: 600, height: 500 }}>
+|&lt;div className="ag-theme-quartz" style={{ width: 600, height: 500 }}>
 |  &lt;AgGridReact
 |    ...
 |    {/* Log new value to console when cell value is changed */}

@@ -1,7 +1,7 @@
 import { ColDef,GridApi,GridReadyEvent } from '@ag-grid-community/core';
 // NOTE: Angular CLI does not support component CSS imports: angular-cli/issues/23273
 import '@ag-grid-community/styles/ag-grid.css';
-import "@ag-grid-community/styles/ag-theme-alpine.css";
+import "@ag-grid-community/styles/ag-theme-quartz.css";
 import { Component } from '@angular/core';
 import { getData } from './data';
 
@@ -25,7 +25,7 @@ import { getData } from './data';
       <ag-grid-angular
         *ngIf="isVisible"
         style="width: 100%; height: 100%;"
-        class="ag-theme-alpine"
+        class="ag-theme-quartz"
         [columnDefs]="columnDefs"
         [rowData]="rowData"
         [rowSelection]="rowSelection"

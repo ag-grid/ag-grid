@@ -1,7 +1,7 @@
 import { createApp } from 'vue';
 import { AgGridVue } from '@ag-grid-community/vue3';
 import '@ag-grid-community/styles/ag-grid.css';
-import '@ag-grid-community/styles/ag-theme-alpine.css';
+import '@ag-grid-community/styles/ag-theme-quartz.css';
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
 
 import { ModuleRegistry } from '@ag-grid-community/core';
@@ -10,7 +10,7 @@ ModuleRegistry.registerModules([ClientSideRowModelModule]);
 
 const VueExample = {
     template: /* html */ `
-        <div class="outer ag-theme-alpine">
+        <div class="outer ag-theme-quartz">
             <div style="height: 100%" class="inner-col" v-on:dragover="gridDragOver($event)" v-on:drop="gridDrop($event, 'left')">
                 <ag-grid-vue
                     style="height: 100%; width: 100%;"

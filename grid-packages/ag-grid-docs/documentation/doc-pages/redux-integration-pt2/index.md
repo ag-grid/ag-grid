@@ -187,7 +187,7 @@ Before discussing the grid features in our file browser, here are all of the gri
 
 render() {
     return (
-        <div className="ag-theme-alpine">
+        <div className="ag-theme-quartz">
             <AgGridReact
                 {/* shared column definition */}
                 defaultColDef={this.defaultColDef}

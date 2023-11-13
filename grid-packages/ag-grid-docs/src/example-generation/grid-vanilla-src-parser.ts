@@ -610,7 +610,7 @@ function internalParser(examplePath, {
 
     if (inlineClass) {
         const theme = inlineClass.split(' ').filter(className => className.indexOf('ag-theme') >= 0);
-        exampleSettings.theme = theme && theme.length > 0 ? theme[0] : 'ag-theme-alpine';
+        exampleSettings.theme = theme && theme.length > 0 ? theme[0] : 'ag-theme-quartz';
     }
 
     if (parseInt(inlineHeight)) {
@@ -630,7 +630,7 @@ function internalParser(examplePath, {
     tsBindings.gridSettings = {
         width: '100%',
         height: '100%',
-        theme: 'ag-theme-alpine',
+        theme: 'ag-theme-quartz',
         ...exampleSettings
     };
 
