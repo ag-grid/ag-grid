@@ -4,7 +4,7 @@ import { AgGridReact } from '@ag-grid-community/react';
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
 
 import "@ag-grid-community/styles/ag-grid.css";
-import "@ag-grid-community/styles/ag-theme-alpine.css";
+import "@ag-grid-community/styles/ag-theme-quartz.css";
 import './styles.css';
 
 
@@ -157,7 +157,7 @@ const GridExample = () => {
 
     return (
         <div className="outer">
-            <div style={{ height: "100%" }} className="inner-col ag-theme-alpine" onDragOver={gridDragOver}
+            <div style={{ height: "100%" }} className="inner-col ag-theme-quartz" onDragOver={gridDragOver}
                 onDrop={(e) => gridDrop('left', e)}>
                 <AgGridReact ref={leftGridRef} gridOptions={leftGridOptions} onGridReady={onLeftGridReady} />
             </div>
@@ -183,7 +183,7 @@ const GridExample = () => {
                 </span>
             </div>
 
-            <div style={{ height: "100%" }} className="inner-col ag-theme-alpine" onDragOver={gridDragOver}
+            <div style={{ height: "100%" }} className="inner-col ag-theme-quartz" onDragOver={gridDragOver}
                 onDrop={(e) => gridDrop('right', e)}>
                 <AgGridReact ref={rightGridRef} gridOptions={rightGridOptions} onGridReady={onRightGridReady} />
             </div>

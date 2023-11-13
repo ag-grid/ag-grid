@@ -9,7 +9,7 @@ import { MasterDetailModule } from "@ag-grid-enterprise/master-detail";
 import { MenuModule } from "@ag-grid-enterprise/menu";
 import { ModuleRegistry } from "@ag-grid-community/core";
 import "@ag-grid-community/styles/ag-grid.css";
-import "@ag-grid-community/styles/ag-theme-alpine.css";
+import "@ag-grid-community/styles/ag-theme-quartz.css";
 
 // Register the required feature modules with the Grid
 ModuleRegistry.registerModules([ClientSideRowModelModule, MasterDetailModule, MenuModule, ColumnsToolPanelModule])
@@ -110,7 +110,7 @@ const GridExample = () => {
 
   return (
     <div style={containerStyle}>
-      <div style={gridStyle} className="ag-theme-alpine">
+      <div style={gridStyle} className="ag-theme-quartz">
         <AgGridReact
           ref={gridRef}
           rowData={rowData}

@@ -4,7 +4,7 @@ import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-mod
 import { AgGridReactUi } from './reactUi/agGridReactUi';
 
 import '@ag-grid-community/styles/ag-grid.css';
-import '@ag-grid-community/styles/ag-theme-alpine.css';
+import '@ag-grid-community/styles/ag-theme-quartz.css';
 import { ColDef } from 'ag-grid-community';
 
 
@@ -27,7 +27,7 @@ const App = () => {
 
     return (
         <div style={{ display: 'flex' }}>
-            <div className="ag-theme-alpine" style={{ height: 400, width: 600, margin: 10 }}>
+            <div className="ag-theme-quartz" style={{ height: 400, width: 600, margin: 10 }}>
                 <AgGridReactUi
                     defaultColDef={{
                         resizable: true,

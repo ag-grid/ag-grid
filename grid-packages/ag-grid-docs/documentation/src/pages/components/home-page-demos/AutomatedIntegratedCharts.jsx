@@ -28,7 +28,7 @@ if (!isProductionBuild()) {
         <link
             key="hero-grid-theme"
             rel="stylesheet"
-            href={`${localPrefix}/@ag-grid-community/styles/ag-theme-alpine.css`}
+            href={`${localPrefix}/@ag-grid-community/styles/ag-theme-quartz.css`}
             crossOrigin="anonymous"
             type="text/css"
         />
@@ -147,7 +147,7 @@ function AutomatedIntegratedCharts({ automatedExampleManager, useStaticData, run
 
             <Helmet>{helmet.map((entry) => entry)}</Helmet>
             {/* eslint-disable-next-line jsx-a11y/no-static-element-interactions, jsx-a11y/click-events-have-key-events */}
-            <div ref={gridRef} className="automated-integrated-charts-grid ag-theme-alpine" onClick={gridInteraction}>
+            <div ref={gridRef} className="automated-integrated-charts-grid ag-theme-quartz" onClick={gridInteraction}>
                 <OverlayButton
                     ref={overlayRef}
                     ariaLabel="Give me control"

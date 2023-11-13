@@ -4,7 +4,7 @@
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
 import { ModuleRegistry } from '@ag-grid-community/core';
 import '@ag-grid-community/styles/ag-grid.css';
-import '@ag-grid-community/styles/ag-theme-alpine.css';
+import '@ag-grid-community/styles/ag-theme-quartz.css';
 import { AgGridReact } from '@ag-grid-community/react';
 import React, { useEffect, useRef, useMemo, useState } from 'react';
 import { createRoot } from 'react-dom/client';
@@ -66,7 +66,7 @@ const GridExample = () => {
                 <button onClick={() => fillMedium()}>Fill 60%</button>
                 <button onClick={() => fillExact()}>Exactly 400 x 400 pixels</button>
             </div>
-            <div style={{ height: 'calc(100% - 25px)' }} className="ag-theme-alpine">
+            <div style={{ height: 'calc(100% - 25px)' }} className="ag-theme-quartz">
                 <div style={style}>
                     <AgGridReact
                         ref={gridRef}

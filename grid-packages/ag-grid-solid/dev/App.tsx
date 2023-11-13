@@ -2,7 +2,7 @@ import type {Component} from "solid-js";
 import AgGridSolid from "../src";
 
 import '@ag-grid-community/styles/ag-grid.css';
-import '@ag-grid-community/styles/ag-theme-alpine.css';
+import '@ag-grid-community/styles/ag-theme-quartz.css';
 
 const App: Component = () => {
     const columnDefs = [
@@ -22,7 +22,7 @@ const App: Component = () => {
     };
 
     return (
-        <div class="ag-theme-alpine" style={{height: "100%"}}>
+        <div class="ag-theme-quartz" style={{height: "100%"}}>
             <AgGridSolid
                 columnDefs={columnDefs}
                 rowData={rowData}

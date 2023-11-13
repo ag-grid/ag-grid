@@ -8,7 +8,7 @@ import { RangeSelectionModule } from '@ag-grid-enterprise/range-selection';
 import { RowGroupingModule } from '@ag-grid-enterprise/row-grouping';
 import { StatusBarModule } from '@ag-grid-enterprise/status-bar';
 import '@ag-grid-community/styles/ag-grid.css';
-import "@ag-grid-community/styles/ag-theme-alpine.css";
+import "@ag-grid-community/styles/ag-theme-quartz.css";
 
 import { ModuleRegistry } from '@ag-grid-community/core';
 // Register the required feature modules with the Grid
@@ -213,7 +213,7 @@ const GridExample = () => {
                 </div>
                 <div style={{ "flex": "1 1 0px" }}>
 
-                    <div style={gridStyle} className="ag-theme-alpine">
+                    <div style={gridStyle} className="ag-theme-quartz">
                         <AgGridReact
                             ref={gridRef}
                             rowData={rowData}

@@ -4,7 +4,7 @@ import React, {useCallback, useMemo, useRef, useState, StrictMode} from 'react';
 import {createRoot} from 'react-dom/client';
 import {AgGridReact} from '@ag-grid-community/react';
 import '@ag-grid-community/styles/ag-grid.css';
-import '@ag-grid-community/styles/ag-theme-alpine.css';
+import '@ag-grid-community/styles/ag-theme-quartz.css';
 import {ModuleRegistry} from '@ag-grid-community/core';
 import {ClientSideRowModelModule} from '@ag-grid-community/client-side-row-model';
 import { SizeColumnsToFitGridStrategy } from '@ag-grid-community/core';
@@ -82,7 +82,7 @@ const GridExample = () => {
                     </div>
                     <button id="loadGridDataButton" onClick={loadGridData} style={{"marginBottom": "1rem"}}>Load Grid Data</button>
                 </div>
-                <div style={gridStyle} className="ag-theme-alpine">
+                <div style={gridStyle} className="ag-theme-quartz">
                     <AgGridReact
                         columnDefs={columnDefs}
                         defaultColDef={defaultColDef}

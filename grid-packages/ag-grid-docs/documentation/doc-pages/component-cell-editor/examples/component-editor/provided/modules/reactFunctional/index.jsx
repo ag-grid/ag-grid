@@ -7,7 +7,7 @@ import { AgGridReact } from '@ag-grid-community/react';
 
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
 import "@ag-grid-community/styles/ag-grid.css";
-import "@ag-grid-community/styles/ag-theme-alpine.css";
+import "@ag-grid-community/styles/ag-theme-quartz.css";
 import './styles.css';
 
 
@@ -337,7 +337,7 @@ const GridExample = () => {
                     height: '100%',
                     width: '100%'
                 }}
-                className="ag-theme-alpine test-grid">
+                className="ag-theme-quartz test-grid">
                 <AgGridReact
                     columnDefs={columnDefs}
                     rowData={rowData}

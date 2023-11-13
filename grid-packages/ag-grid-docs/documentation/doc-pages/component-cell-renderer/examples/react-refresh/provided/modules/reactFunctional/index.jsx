@@ -4,7 +4,7 @@ import React, { useCallback, useMemo, useState, StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 import { AgGridReact } from '@ag-grid-community/react';
 import '@ag-grid-community/styles/ag-grid.css';
-import '@ag-grid-community/styles/ag-theme-alpine.css';
+import '@ag-grid-community/styles/ag-theme-quartz.css';
 import { ModuleRegistry } from '@ag-grid-community/core';
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
 import MedalCellRenderer from './medalCellRenderer.jsx';
@@ -39,7 +39,7 @@ const GridExample = () => {
 
     return  (
         <div style={{ width: '100%', height: '100%' }}>
-            <div style={{ height: '100%', width: '100%' }} className="ag-theme-alpine">
+            <div style={{ height: '100%', width: '100%' }} className="ag-theme-quartz">
                 <AgGridReact
                     columnDefs={columnDefs}
                     defaultColDef={defaultColDef}

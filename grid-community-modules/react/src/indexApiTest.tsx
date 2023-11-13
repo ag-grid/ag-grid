@@ -6,7 +6,7 @@ import { AgGridReact } from './agGridReact';
 import { useGridApi } from './useGridApi';
 
 import '@ag-grid-community/styles/ag-grid.css';
-import '@ag-grid-community/styles/ag-theme-alpine.css';
+import '@ag-grid-community/styles/ag-theme-quartz.css';
 import { ColDef } from '@ag-grid-community/core';
 
 interface RowData {
@@ -34,7 +34,7 @@ const App = () => {
     }, [])
 
     return (
-        <div className="ag-theme-alpine" style={{height: 400, width: 600}}>
+        <div className="ag-theme-quartz" style={{height: 400, width: 600}}>
             <AgGridReact
                 ref={ gridRef }
                 rowData={ rowData }
