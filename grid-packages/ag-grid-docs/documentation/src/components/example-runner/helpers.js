@@ -366,7 +366,7 @@ export const openCodeSandbox = (exampleInfo) => {
 export const isUsingPublishedPackages = () => process.env.GATSBY_USE_PUBLISHED_PACKAGES === 'true';
 
 export const getCssFilePaths = (importType, theme) => {
-    const themeFiles = theme ? [theme] : ['alpine', 'balham', 'material'];
+    const themeFiles = theme ? [theme] : ['quartz', 'alpine', 'balham', 'material'];
 
     const cssFiles = ['ag-grid.css', ...themeFiles.map((theme) => `ag-theme-${theme}.css`)];
 
