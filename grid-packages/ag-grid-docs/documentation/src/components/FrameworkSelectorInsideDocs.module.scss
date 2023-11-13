@@ -9,6 +9,10 @@
     border: 1px solid var(--border-color);
     margin-bottom: $size-2;
 
+    @media screen and (min-width: $breakpoint-docs-search-medium) {
+        margin-top: -6px;
+    }
+
     #{$darkmode-selector} & {
         --input-background-color: #151d26;
     }
@@ -30,7 +34,11 @@
         display: block;
         width: 1px;
         height: calc(100% - 12px);
-        background-color: #28333d;
+        background-color: var(--border-color);
+
+        #{$darkmode-selector} & {
+            background-color: #28333d;
+        }
     }
 
     select {
