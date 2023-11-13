@@ -67,17 +67,21 @@ html[data-color-scheme='dark'] div + #myGrid {
 }
 
 html[data-color-scheme='dark'] button:not(#myGrid button, #myChart button, button[class*='ag-']) {
+    border: 2px solid rgba(255,255,255, 0.2);
+}
+
+html button:not(#myGrid button, #myChart button, button[class*='ag-']) {
     appearance: none;
-    background-color: #202A34;
-    border: 1px solid rgb(255,255,255,0.1);
-    border-radius: 4px;
+    background-color: var(--background-100);
+    border: 2px solid rgba(0,0,0, 0.2);
+    border-radius: 6px;
     height: 36px;
-    color: #fff;
+    color: var(--default-text-color);
     cursor: pointer;
     display: inline-block;
     font-size: 14px;
     font-weight: 500;
-    letter-spacing: .025em;
+    letter-spacing: .01em;
     padding: 0.375em 1em 0.5em;
     white-space: nowrap;
     margin-right: 6px;
@@ -87,6 +91,10 @@ html[data-color-scheme='dark'] button:not(#myGrid button, #myChart button, butto
 
 html[data-color-scheme='dark'] button:not(#myGrid button, #myChart button, button[class*='ag-']):hover {
     background-color: #2a343e;
+}
+
+html button:not(#myGrid button, #myChart button, button[class*='ag-']):hover {
+    background-color: rgba(0,0,0, 0.1);
 }
 
 html[data-color-scheme='dark'] select:not(#myGrid select, #myChart select, select[class*='ag-']) {
