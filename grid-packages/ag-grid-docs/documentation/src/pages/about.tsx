@@ -69,57 +69,67 @@ const AboutPage = () => {
                             <div>
                                 <img src="../images/team/sean.jpg" alt="Sean Landsman, Lead Developer" />
                                 <h3>Sean Landsman</h3>
-                                <p>Lead Developer, Frameworks</p>
+                                <p>Lead Developer,<br />Frameworks</p>
                             </div>
                             <div>
                                 <img src="../images/team/gil.jpg" alt="Guilherme Lopes, Lead Developer" />
                                 <h3>Guilherme Lopes</h3>
-                                <p>Lead Developer, UI</p>
+                                <p>Lead Developer,<br />UI</p>
                             </div>
                             <div>
                                 <img src="../images/team/stephen.jpeg" alt="Stephen Cooper, Developer" />
                                 <h3>Stephen Cooper</h3>
-                                <p>Developer, Grid Core</p>
+                                <p>Developer,<br />Grid Core</p>
                             </div>
                             <div>
                                 <img src="../images/team/andy.jpg" alt="Andrew Glazier, Developer" />
                                 <h3>Andrew Glazier</h3>
-                                <p>Developer, Grid Core</p>
+                                <p>Developer,<br />Grid Core</p>
                             </div>
                             <div>
                                 <img src="../images/team/tak.png" alt="Tak Tran, Developer" />
                                 <h3>Tak Tran</h3>
-                                <p>Developer, Grid Core</p>
+                                <p>Developer,<br />Grid Core</p>
                             </div>
                             <div>
                                 <img src="../images/team/peter.jpg" alt="Peter Reynolds, Developer" />
                                 <h3>Peter Reynolds</h3>
-                                <p>Developer, Grid Core</p>
+                                <p>Developer,<br />Grid Core</p>
                             </div>
                             <div>
                                 <img src="../images/team/salmen.jpg" alt="Salmen Hichri, Developer" />
                                 <h3>Salmen Hichri</h3>
-                                <p>Developer, Grid Core</p>
+                                <p>Developer,<br />Grid Core</p>
+                            </div>
+                            <div>
+                                <img src="../images/team/tim.jpg" alt="Tim Kendrick, Developer" />
+                                <h3>Tim Kendrick</h3>
+                                <p>Developer,<br />Grid Core</p>
                             </div>
                             <div>
                                 <img src="../images/team/alanT.jpg" alt="Alan Treadway, Developer" />
                                 <h3>Alan Treadway</h3>
-                                <p>Lead Developer, Data Visualisation</p>
+                                <p>Lead Developer,<br />Data Visualisation</p>
                             </div>
                             <div>
                                 <img src="../images/team/mana.jpeg" alt="Mana Peirov, Developer" />
                                 <h3>Mana Peirov</h3>
-                                <p>Developer, Data Visualisation</p>
+                                <p>Developer,<br />Data Visualisation</p>
                             </div>
                             <div>
                                 <img src="../images/team/ido.jpg" alt="Ido Moshe, Developer" />
                                 <h3>Ido Moshe</h3>
-                                <p>Developer, Data Visualisation</p>
+                                <p>Developer,<br />Data Visualisation</p>
                             </div>
                             <div>
                                 <img src="../images/team/oli.jpg" alt="Oli Legat, Developer" />
                                 <h3>Oli Legat</h3>
-                                <p>Developer, Data Visualisation</p>
+                                <p>Developer,<br />Data Visualisation</p>
+                            </div>
+                            <div>
+                                <img src="../images/team/jacob.jpg" alt="Jacob Parker, Developer" />
+                                <h3>Jacob Parker</h3>
+                                <p>Developer,<br />Data Visualisation</p>
                             </div>
                             <div>
                                 <img
@@ -152,7 +162,7 @@ const AboutPage = () => {
                             <div>
                                 <img src="../images/team/viqas.jpg" alt="Viqas Hussain, Lead Developer" />
                                 <h3>Viqas Hussain</h3>
-                                <p>Lead Developer, E-commerce</p>
+                                <p>Lead Developer,<br />E-commerce</p>
                             </div>
                             <div>
                                 <img src="../images/team/mark.jpg" alt="Mark Durrant, Lead UX Designer" />
@@ -267,12 +277,17 @@ const AboutPage = () => {
                                 <p>Customer Experience Manager</p>
                             </div>
                             <div>
+                                <img src="../images/team/jay.jpg" alt="Jay Thompson, Customer Experience Manager" />
+                                <h3>Jay Thompson</h3>
+                                <p>Customer Experience Manager</p>
+                            </div>
+                            <div>
                                 <img
                                     src="../images/team/kathryn.png"
                                     alt="Kathryn Knapman, Customer Experience Manager"
                                 />
                                 <h3>Kathryn Knapman</h3>
-                                <p>PA to CEO and Office Manager</p>
+                                <p>PA to CEO,<br />& Office Manager</p>
                             </div>
                         </article>
                     </section>
