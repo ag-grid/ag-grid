@@ -5,50 +5,6 @@
  */
 export default /* css */ `
 
-.ag-theme-alpine-dark {
-
-    padding-top: 8px;
-
-    .ag-root-wrapper {
-        border-radius: 8px;
-      }
-
-     .ag-menu, .ag-menu-header {
-        background-color: #151F28;
-    }
-      
-    --ag-border-radius: 8px;
-    --ag-background-color: #0A161F;
-    --ag-odd-row-background-color: #151F28;
-    --ag-foreground-color: #e6f1fc; 
-    --ag-header-background-color: #151F28;
-    --ag-header-foreground-color: #fff;
-    --ag-border-color: color-mix(in srgb, var(--ag-background-color), var(--ag-foreground-color) 12%);
-    --ag-header-column-resize-handle-color: color-mix(in srgb, var(--ag-background-color), var(--ag-foreground-color) 15%);
-    --ag-control-panel-background-color: #151F28;
-    --ag-subheader-background-color: #151F28;
-
-    /* charts */
-    --ag-group-title-bar: #151F28;
-
-    .ag-chart-menu-panel {
-        background: #151F28;
-    }
-}
-
-.ag-theme-alpine-dark .ag-root-wrapper {
-    border-radius: 8px;
-}
-
-.ag-theme-alpine-dark .ag-menu,
-.ag-theme-alpine-dark .ag-menu-header {
-    background-color: #151F28;
-}
-
-.ag-theme-alpine-dark .ag-header-cell {
-    font-size: 14px;
-}
-
 body {
     padding: 0;
 }
