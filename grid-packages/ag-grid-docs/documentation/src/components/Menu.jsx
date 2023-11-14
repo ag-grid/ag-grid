@@ -65,6 +65,7 @@ const Menu = ({ currentFramework, path, menuData, expandAllGroups = false, hideC
                                 isDocsButtonOpen={isDocsButtonOpen}
                                 setIsDocsButtonOpen={setIsDocsButtonOpen}
                                 hideChevrons={hideChevrons}
+                                expandAllGroups={expandAllGroups}
                             />
                         ))}
                         {index < filteredMenuData.length - 1 && <hr/>}
@@ -75,8 +76,8 @@ const Menu = ({ currentFramework, path, menuData, expandAllGroups = false, hideC
     );
 };
 
-const MenuSection = ({title, items, currentFramework, activeParentItems, toggleActive, activeSections, setActiveSections, hideChevrons}) => {
-    const [shouldAutoExpand, setShouldAutoExpand] = useState(false);
+const MenuSection = ({title, items, currentFramework, activeParentItems, toggleActive, activeSections, setActiveSections, hideChevrons, expandAllGroups}) => {
+    const [shouldAutoExpand, setShouldAutoExpand] = useState(expandAllGroups);
     const [isDocsButtonOpen, setIsDocsButtonOpen] = useDocsButtonState();
 
     const isActive = activeSections.has(title);
