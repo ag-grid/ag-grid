@@ -13,7 +13,7 @@ import styles from './SiteHeader.module.scss';
 import menuData from '../../../doc-pages/licensing/menu.json';
 import apiMenuData from '../../../doc-pages/licensing/api-menu.json';
 import Search from "../search/Search";
-import LocalStorage from "../../utils/local-storage";
+import {getCurrentFramework} from '../../utils/local-storage';
 
 const SITE_HEADER_SMALL_WIDTH = parseInt(breakpoints['site-header-small'], 10);
 
@@ -71,9 +71,6 @@ const isLinkSelected = (name, path) => {
 };
 
 const HeaderLinks = ({ path, isOpen, toggleIsOpen }) => {
-    const frameworkStorageKey = 'framework';
-    const selectedFramework = LocalStorage.get(frameworkStorageKey) || 'javascript';
-
     return links.map((link) => {
         const linkClasses = classnames(styles.navItem, {
             [styles.navItemActive]: isLinkSelected(link.name, path),
@@ -84,7 +81,7 @@ const HeaderLinks = ({ path, isOpen, toggleIsOpen }) => {
             <li key={link.name.toLocaleLowerCase()} className={linkClasses}>
                 <a
                     className={styles.navLink}
-                    href={link.docsLink ? `/${selectedFramework}-data-grid${link.url}` : link.url}
+                    href={link.docsLink ? `/${getCurrentFramework()}-data-grid${link.url}` : link.url}
                     onClick={() => {
                         if (isOpen) {
                             toggleIsOpen();
