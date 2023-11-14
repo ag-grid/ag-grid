@@ -7,7 +7,7 @@ const { ComponentUtil } = require("@ag-grid-community/core/dist/cjs/es5/componen
 const { getFormatterForTS } = require('../../scripts/formatAST');
 const prettierJs = require('prettier');
 
-const { formatNode, findNode, getJsDoc } = getFormatterForTS(ts);
+const { formatNode, findNode, getFullJsDoc, getJsDoc } = getFormatterForTS(ts);
 
 const EVENT_LOOKUP = ComponentUtil.EVENT_CALLBACKS;
 
@@ -35,7 +35,7 @@ function findAllInNodesTree(node) {
     let interfaces = [];
 
     const interfaceNode = kind == 'InterfaceDeclaration' || kind == 'EnumDeclaration' || kind == 'TypeAliasDeclaration';
-    const classNode = kind == 'ClassDeclaration' && getJsDoc(node)?.indexOf('@docsInterface') >= 0;
+    const classNode = kind == 'ClassDeclaration' && getFullJsDoc(node)?.indexOf('@docsInterface') >= 0;
     if (interfaceNode || classNode) {
         interfaces.push(node);
     }
@@ -79,12 +79,12 @@ function extractTypesFromNode(node, srcFile, includeQuestionMark) {
             const methodArgs = getArgTypes(node.type.parameters, srcFile);
             returnType = formatNode(node.type.type, srcFile);
             nodeMembers[name] = {
-                description: getJsDoc(node),
+                meta: getJsDoc(node),
                 type: { arguments: methodArgs, returnType, optional }
             };
         } else {
             // i.e colWidth?: number;             
-            nodeMembers[name] = { description: getJsDoc(node), type: { returnType, optional } };
+            nodeMembers[name] = { meta: getJsDoc(node), type: { returnType, optional } };
         }
     } else if (kind == 'MethodSignature' || kind == 'MethodDeclaration') {
         // i.e isExternalFilterPresent?(): boolean;
@@ -92,7 +92,7 @@ function extractTypesFromNode(node, srcFile, includeQuestionMark) {
         const methodArgs = getArgTypes(node.parameters, srcFile);
 
         nodeMembers[name] = {
-            description: getJsDoc(node),
+            meta: getJsDoc(node),
             type: { arguments: methodArgs, returnType, optional }
         };
 
@@ -289,7 +289,7 @@ function extractInterfaces(srcFile, extension) {
         if (kind == 'EnumDeclaration') {
             iLookup[name] = {
                 meta: { isEnum: true }, type: node.members.map(n => formatNode(n, srcFile)),
-                docs: node.members.map(n => getJsDoc(n))
+                docs: node.members.map(n => getFullJsDoc(n))
             }
         } else if (kind == 'TypeAliasDeclaration') {
             iLookup[name] = {
@@ -321,9 +321,9 @@ function extractInterfaces(srcFile, extension) {
                         const propName = formatNode(p, srcFile, true);
                         const propType = formatNode(p.type, srcFile);
                         members[propName] = propType;
-                        const doc = getJsDoc(p);
+                        const doc = getFullJsDoc(p);
                         if (doc) {
-                            docs[propName] = getJsDoc(p);
+                            docs[propName] = getFullJsDoc(p);
                         }
                     }
 
@@ -348,7 +348,7 @@ function extractInterfaces(srcFile, extension) {
                 iLookup[name] = { ...orig, meta: { ...orig.meta, typeParams: node.typeParameters.map(tp => formatNode(tp, srcFile)) } }
             }
 
-            const doc = getJsDoc(node);
+            const doc = getFullJsDoc(node);
             if (doc) {
                 const orig = iLookup[name];
                 iLookup[name] = { ...orig, meta: { ...orig.meta, doc } }
@@ -434,12 +434,12 @@ function extractMethodsAndPropsFromNode(node, srcFile) {
         const methodArgs = getArgTypes(node.parameters, srcFile);
 
         nodeMembers[name] = {
-            description: getJsDoc(node),
+            meta: getJsDoc(node),
             type: { arguments: methodArgs, returnType }
         };
     } else if (kind == 'PropertyDeclaration') {
         nodeMembers[name] = {
-            description: getJsDoc(node),
+            meta: getJsDoc(node),
             type: { returnType: returnType }
         }
     }

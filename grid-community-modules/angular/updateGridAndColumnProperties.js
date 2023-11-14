@@ -5,7 +5,7 @@ const ts = require('typescript');
 const ComponentUtil = require("@ag-grid-community/core/dist/cjs/es5/components/componentUtil.js").ComponentUtil;
 const { getFormatterForTS } = require('./../../scripts/formatAST');
 
-const { formatNode, findNode, getJsDoc } = getFormatterForTS(ts);
+const { formatNode, findNode, getFullJsDoc } = getFormatterForTS(ts);
 
 function writeSortedLines(toWrite, result) {
     toWrite.sort((a, b) => {
@@ -26,7 +26,7 @@ function extractTypesFromNode(srcFile, node, { typeLookup, eventTypeLookup, publ
     const kind = ts.SyntaxKind[node.kind];
     const name = node && node.name && node.name.escapedText;
     const returnType = node && node.type && node.type.getFullText();
-    docLookup[name] = getJsDoc(node);
+    docLookup[name] = getFullJsDoc(node);
     if (kind == 'PropertySignature') {
         typeLookup[name] = returnType;
     } else if (kind == 'MethodSignature') {

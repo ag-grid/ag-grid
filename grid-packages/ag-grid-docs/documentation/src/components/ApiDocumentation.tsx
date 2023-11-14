@@ -454,7 +454,7 @@ const Property: React.FC<PropertyCall> = ({ framework, id, name, definition, con
         );
     }
 
-    let propDescription = definition.description || (gridParams && gridParams.description) || undefined;
+    let propDescription = definition.description || (gridParams && gridParams.meta.comment) || undefined;
     if (propDescription) {
         propDescription = formatJsDocString(propDescription);
         // process property object
@@ -469,11 +469,9 @@ const Property: React.FC<PropertyCall> = ({ framework, id, name, definition, con
     }
 
     // Default may or may not be on a new line in JsDoc but in both cases we want the default to be on the next line
-    let defaultValue = definition.default;
-    if (description != null && !defaultValue) {
-        const defaultReg = / Default: <code>(.*)<\/code>/;
-        defaultValue = description.match(defaultReg)?.length === 2 ? description.match(defaultReg)[1] : undefined;
-    }
+    const jsdocDefault = gridParams?.meta?.tags?.find((t) => t.name === 'default');
+    const defaultValue = definition.default ?? jsdocDefault?.comment;
+    const isManaged = gridParams?.meta?.tags?.some(t => t.name === 'managed') ?? false;
 
     let displayName = name;
     if (!!definition.isRequired) {
@@ -492,9 +490,10 @@ const Property: React.FC<PropertyCall> = ({ framework, id, name, definition, con
         if (gridParams && gridParams.type) {
             type = gridParams.type;
 
-            if (gridParams.description && gridParams.description.includes('@deprecated')) {
+            const isDeprecated = gridParams.meta.tags?.some((t) => t.name === 'deprecated');
+            if (isDeprecated) {
                 console.warn(`<api-documentation>: Docs include a property: ${name} that has been marked as deprecated.`);
-                console.warn('<api-documentation>: ' + gridParams.description);
+                console.warn('<api-documentation>: ' + gridParams.meta.all);
             }
 
             const anyInterfaces = extractInterfaces(
@@ -603,6 +602,14 @@ const Property: React.FC<PropertyCall> = ({ framework, id, name, definition, con
                             <span className={styles.metaValue}>{formattedDefaultValue}</span>
                         </div>
                     )}
+                    {
+                        isManaged && (
+                            <div className={styles.metaItem}>
+                                <span className={styles.metaLabel}>Managed</span>
+                                <span className={styles.metaValue}>true</span>
+                            </div>
+                        )
+                    }
                 </div>
             </td>
             <td className={styles.rightColumn}>

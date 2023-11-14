@@ -36,7 +36,7 @@ function findInNodeTree(ts) {
 // }
 const printer = (ts) => ts.createPrinter({ removeComments: true, omitTrailingSemicolon: true });
 
-function getJsDoc(ts) {
+function getFullJsDoc(ts) {
     return function (node) {
         if (node.jsDoc) {
             const result = node.jsDoc.map(j => {
@@ -46,6 +46,22 @@ function getJsDoc(ts) {
             });
             return result.join('\n');
         }
+    }
+}
+
+function getJsDoc(ts) {
+    return function (node) {
+        if (node.jsDoc && node.jsDoc.length === 1) {
+            const j = node.jsDoc[0];
+            return {
+                all: j.getFullText().replace(/\/\*\*\n\s*\*/g, '/**'),
+                comment: j.comment,
+                tags: j.tags?.map(tag => (
+                    { name: tag.tagName.escapedText, comment: tag.comment }
+                ))
+            };
+        }
+        return undefined;
     }
 }
 
@@ -116,7 +132,8 @@ module.exports = {
             formatNode: formatNode(ts1),
             findNode: findNode(ts1),
             findInNodeTree: findInNodeTree(ts1),
-            getJsDoc: getJsDoc(ts1)
+            getFullJsDoc: getFullJsDoc(ts1),
+            getJsDoc: getJsDoc(ts1),
         };
     },
 };
