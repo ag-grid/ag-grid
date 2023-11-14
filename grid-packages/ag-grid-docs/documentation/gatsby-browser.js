@@ -10,24 +10,12 @@ import { cleanUp as heroGridCleanUp } from './src/components/hero-grid';
 import { cleanUp as rowGroupingExampleCleanUp } from './src/components/automated-examples/examples/row-grouping';
 import { cleanUp as integratedChartsExampleCleanUp } from './src/components/automated-examples/examples/integrated-charts';
 
-const pathsConfig = {
-    learn: {
-        path: '/documentation/',
-        startingPage: 'getting-started/',
-    },
-    api: {
-        path: '/api/',
-        startingPage: 'grid-interface/',
-    },
-};
-
 const frameworkStorageKey = 'framework';
 const getRelativePath = path => path.replace(withPrefix('/'), '/');
 
-// Function to navigate to a framework-specific path
-const navigateToFrameworkPath = (basePath, endPath) => {
+const getFrameworkPath = () => {
     const selectedFramework = LocalStorage.get(frameworkStorageKey) || 'javascript';
-    navigate(`/${selectedFramework}-data-grid/${endPath}`, { replace: true });
+    return `/${selectedFramework}-data-grid`;
 };
 
 /**
@@ -38,18 +26,15 @@ const navigateToFrameworkPath = (basePath, endPath) => {
 export const onRouteUpdate = ({ location, prevLocation }) => {
     const relativePath = getRelativePath(location.pathname);
 
-    for (const { path, startingPage } of Object.values(pathsConfig)) {
-        if (relativePath.startsWith(path)) {
-            navigateToFrameworkPath(path, startingPage);
-            return;
-        }
-    }
-
     if (LocalStorage.exists()) {
         const framework = relativePath.split('/').find(Boolean)?.replace(/-data-grid|-grid/, '');
         if (supportedFrameworks.includes(framework)) {
             LocalStorage.set(frameworkStorageKey, framework);
         }
+    }
+
+    if(location.pathname === getFrameworkPath()) {
+        navigate(`${getFrameworkPath()}/getting-started`)
     }
 
     // If coming from homepage, clean up all the grids
