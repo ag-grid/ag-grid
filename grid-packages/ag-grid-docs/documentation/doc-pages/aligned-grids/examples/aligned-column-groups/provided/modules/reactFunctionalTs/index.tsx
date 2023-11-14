@@ -5,7 +5,7 @@ import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-mod
 import { SizeColumnsToFitGridStrategy } from '@ag-grid-community/core';
 
 import "@ag-grid-community/styles/ag-grid.css";
-import "@ag-grid-community/styles/ag-theme-alpine.css";
+import "@ag-grid-community/styles/ag-theme-quartz.css";
 import './styles.css';
 
 
@@ -75,7 +75,7 @@ const GridExample = () => {
 
     return (
         <div className="container">
-            <div className="grid ag-theme-alpine">
+            <div className="grid ag-theme-quartz">
                 <AgGridReact
                     ref={topGridRef}
                     rowData={rowData}
@@ -90,7 +90,7 @@ const GridExample = () => {
 
             <div className="divider"></div>
 
-            <div className="grid ag-theme-alpine">
+            <div className="grid ag-theme-quartz">
                 <AgGridReact
                     ref={bottomGridRef}
                     rowData={rowData}

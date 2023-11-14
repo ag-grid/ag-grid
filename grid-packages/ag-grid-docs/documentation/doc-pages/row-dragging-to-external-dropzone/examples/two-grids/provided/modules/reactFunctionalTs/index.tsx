@@ -4,7 +4,7 @@ import { AgGridReact } from '@ag-grid-community/react';
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
 
 import "@ag-grid-community/styles/ag-grid.css";
-import "@ag-grid-community/styles/ag-theme-alpine.css";
+import "@ag-grid-community/styles/ag-theme-quartz.css";
 import './styles.css';
 
 
@@ -194,7 +194,7 @@ const GridExample = () => {
     )
 
     return (
-        <div className="example-wrapper ag-theme-alpine">
+        <div className="example-wrapper ag-theme-quartz">
             {getInnerGridCol('Left')}
             <div className="inner-col vertical-toolbar">
                 <span className="bin" ref={eBin}>

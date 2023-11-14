@@ -5,7 +5,7 @@ import { createRoot } from 'react-dom/client';
 import { AgGridReact } from '@ag-grid-community/react';
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
 import '@ag-grid-community/styles/ag-grid.css';
-import '@ag-grid-community/styles/ag-theme-alpine.css';
+import '@ag-grid-community/styles/ag-theme-quartz.css';
 
 import { CellClassParams, CellClassRules, ColDef, ICellRendererParams, ModuleRegistry, ValueParserParams, GridReadyEvent } from '@ag-grid-community/core';
 // Register the required feature modules with the Grid
@@ -126,7 +126,7 @@ const GridExample = () => {
     return (
         <div style={containerStyle}>
 
-            <div style={gridStyle} className="ag-theme-alpine">
+            <div style={gridStyle} className="ag-theme-quartz">
                 <AgGridReact
 
                     rowData={rowData}
