@@ -87,30 +87,6 @@
 
 
 @mixin -dark-vars {
-    --ag-background-color: #181d1f;
-    --ag-foreground-color: #fff;
-    --ag-border-color: #4f4f4f;
-    --ag-secondary-border-color: #58565280;
-    --ag-modal-overlay-background-color: #181d1fa8;
-    --ag-header-background-color: #222628;
-    --ag-tooltip-background-color: #222628;
-    --ag-odd-row-background-color: #222628;
-    --ag-control-panel-background-color: #222628;
-    --ag-input-disabled-background-color: #68686e12;
-    --ag-input-focus-box-shadow:
-        0 0 2px 0.5px rgba(255, 255, 255, 0.5),
-        0 0 4px 3px var(--ag-input-focus-border-color);
-    --ag-card-shadow: 0 1px 20px 1px black;
-
-    --ag-advanced-filter-join-pill-color: #7a3a37;
-    --ag-advanced-filter-column-pill-color: #355f2d;
-    --ag-advanced-filter-option-pill-color: #5a3168;
-    --ag-advanced-filter-value-pill-color: #374c86;
-
-    color-scheme: dark;
-}
-
-@mixin -dark-blue-vars {
     --ag-background-color: #0d161e;
     --ag-foreground-color: #fff;
     --ag-border-color: #273039;
@@ -138,15 +114,8 @@
     @include -dark-vars();
 }
 
-.ag-theme-quartz-dark-blue {
-    @include -dark-blue-vars();
-}
-
 @media (prefers-color-scheme: dark) {
     .ag-theme-quartz-auto-dark {
         @include -dark-vars();
-    }
-    .ag-theme-quartz-auto-dark-blue {
-        @include -dark-blue-vars();
     }
 }

@@ -350,7 +350,7 @@ const Changelog = ({ location }) => {
                                     onFirstDataRendered={() => {
                                         applyFixVersionFilter();
                                     }}
-                                    theme={!darkMode ? 'ag-theme-quartz' : 'ag-theme-quartz-dark-blue'}
+                                    theme={!darkMode ? 'ag-theme-quartz' : 'ag-theme-quartz-dark'}
                                 ></Grid>
                             );
                         }}

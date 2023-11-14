@@ -91,8 +91,8 @@ const ExampleRunnerResult = ({ isOnScreen = true, resultFrameIsVisible = true, e
 };
 
 const themes = {
-    "ag-theme-quartz": {dark: false, other: "ag-theme-quartz-dark-blue"},
-    "ag-theme-quartz-dark-blue": {dark: true, other: "ag-theme-quartz"},
+    "ag-theme-quartz": {dark: false, other: "ag-theme-quartz-dark"},
+    "ag-theme-quartz-dark": {dark: true, other: "ag-theme-quartz"},
     "ag-theme-alpine": {dark: false, other: "ag-theme-alpine-dark"},
     "ag-theme-alpine-dark": {dark: true, other: "ag-theme-alpine"},
     "ag-theme-balham": {dark: false, other: "ag-theme-balham-dark"},

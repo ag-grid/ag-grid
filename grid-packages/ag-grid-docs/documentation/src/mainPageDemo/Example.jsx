@@ -630,7 +630,7 @@ const ExampleInner = ({darkMode}) => {
         if (gridTheme == null && themeFromURL) {
             setGridTheme(themeFromURL)
         } else {
-            setGridTheme(darkMode ? 'ag-theme-quartz-dark-blue' : 'ag-theme-quartz');
+            setGridTheme(darkMode ? 'ag-theme-quartz-dark' : 'ag-theme-quartz');
         }
     }, [darkMode]);
     const [base64Flags, setBase64Flags] = useState();
