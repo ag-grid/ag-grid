@@ -8,7 +8,7 @@ export interface BaseExportParams {
     /**
      * If `true`, all columns will be exported in the order they appear in the columnDefs.
      * When `false` only the columns currently being displayed will be exported.
-     * Default: `false`
+     * @default false
      */
     allColumns?: boolean;
     /**
@@ -23,43 +23,43 @@ export interface BaseExportParams {
     fileName?: string;
     /**
      * Determines whether rows are exported before being filtered and sorted.
-     * Default: `filteredAndSorted`
+     * @default 'filteredAndSorted'
      */
     exportedRows?: 'all' | 'filteredAndSorted';
     /**
      * Export only selected rows.
-     * Default: `false`
+     * @default false
      */
     onlySelected?: boolean;
     /**
      * Only export selected rows including other pages (only makes sense when using pagination).
-     * Default: `false`
+     * @default false
      */
     onlySelectedAllPages?: boolean;
 
     /**
      * Set to `true` to exclude header column groups.
-     * Default: `false`
+     * @default false
      */
     skipColumnGroupHeaders?: boolean;
     /**
      * Set to `true` if you don't want to export column headers.
-     * Default: `false`
+     * @default false
      */
     skipColumnHeaders?: boolean;
     /**
      * Set to `true` to skip row group headers if grouping rows. Only relevant when grouping rows.
-     * Default: `false`
+     * @default false
      */
     skipRowGroups?: boolean;
     /**
      * Set to `true` to suppress exporting rows pinned to the top of the grid.
-     * Default: `false`
+     * @default false
      */
     skipPinnedTop?: boolean;
     /**
      * Set to `true` to suppress exporting rows pinned to the bottom of the grid.
-     * Default: `false`
+     * @default false
      */
     skipPinnedBottom?: boolean;
 
@@ -109,7 +109,7 @@ export interface CsvCell {
     data: CsvCellData;
     /**
      * The number of cells to span across (1 means span 2 columns).
-     * Default: `0`
+     * @default 0
      */
     mergeAcross?: number;
 }
@@ -124,13 +124,13 @@ export type CsvCustomContent = CsvCell[][] | string;
 export interface CsvExportParams extends ExportParams<CsvCustomContent> {
     /**
      * Delimiter to insert between cell values.
-     * Default: `,`
+     * @default ,
      */
     columnSeparator?: string;
     /**
      * By default cell values are encoded according to CSV format rules: values are wrapped in double quotes, and any double quotes within the values are escaped, so my value becomes \"my\"\"value\". Pass `true` to insert the value into the CSV file without escaping.
      * In this case it is your responsibility to ensure that no cells contain the columnSeparator character.
-     * Default: `false`
+     * @default false
      */
     suppressQuotes?: boolean;
 }

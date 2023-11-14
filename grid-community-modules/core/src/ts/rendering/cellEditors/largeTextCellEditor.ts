@@ -6,11 +6,20 @@ import { exists } from "../../utils/generic";
 import { KeyCode } from '../../constants/keyCode';
 
 export interface ILargeTextEditorParams extends ICellEditorParams {
-/** Max number of characters to allow. Default: `200` */
+    /**
+     * Max number of characters to allow.
+     * @default 200
+     */
     maxLength: number;
-/** Number of character rows to display. Default: `10` */
+    /**
+     * Number of character rows to display.
+     * @default 10
+     */
     rows: number;
-/** Number of character columns to display. Default: `60` */
+    /**
+     * Number of character columns to display.
+     * @default 60
+     */
     cols: number;
 }
 

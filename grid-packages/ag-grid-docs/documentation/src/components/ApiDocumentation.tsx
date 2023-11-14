@@ -262,6 +262,7 @@ export const ApiDocumentation: React.FC<ApiProps> = ({
         propertiesFromFiles
     );
     const properties = mergeObjects(processed);
+    console.log(properties);
 
     return (
         <Section
@@ -490,10 +491,10 @@ const Property: React.FC<PropertyCall> = ({ framework, id, name, definition, con
         if (gridParams && gridParams.type) {
             type = gridParams.type;
 
-            const isDeprecated = gridParams.meta.tags?.some((t) => t.name === 'deprecated');
+            const isDeprecated = gridParams.meta?.tags?.some((t) => t.name === 'deprecated');
             if (isDeprecated) {
                 console.warn(`<api-documentation>: Docs include a property: ${name} that has been marked as deprecated.`);
-                console.warn('<api-documentation>: ' + gridParams.meta.all);
+                console.warn('<api-documentation>: ' + gridParams.meta?.all);
             }
 
             const anyInterfaces = extractInterfaces(

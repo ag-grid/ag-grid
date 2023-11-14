@@ -127,7 +127,7 @@ export interface ISetFilterParams<TData = any, V = string> extends IProvidedFilt
      * If `true`, the Set Filter values will not be sorted. Use this if you are providing your own
      * values and don't want them sorted as you are providing in the order you want.
      * 
-     * Default: `false`
+     * @default false
      */
     suppressSorting?: boolean;
     /**
@@ -138,18 +138,18 @@ export interface ISetFilterParams<TData = any, V = string> extends IProvidedFilt
     /**
      * Set to `true` to hide the Mini Filter.
      * 
-     * Default: `false`
+     * @default false
      */
     suppressMiniFilter?: boolean;
     /**
      * Set to `true` to apply the Set Filter immediately when the user is typing in the Mini Filter.
      * 
-     * Default: `false`
+     * @default false
      */
     applyMiniFilterWhileTyping?: boolean;
     /**
      * Set to `true` to remove the Select All checkbox.
-     * Default: `false`
+     * @default false
      */
     suppressSelectAll?: boolean;
     /**
@@ -185,12 +185,12 @@ export interface ISetFilterParams<TData = any, V = string> extends IProvidedFilt
      * If `true`, hovering over a value in the Set Filter will show a tooltip containing the full,
      * untruncated value.
      * 
-     * Default: `false`
+     * @default false
      */
     showTooltips?: boolean;
     /**
      * If `true`, enables case-sensitivity in the SetFilter Mini-Filter and Filter List.
-     * Default: `false`.
+     * @default false
      */
     caseSensitive?: boolean;
     /**

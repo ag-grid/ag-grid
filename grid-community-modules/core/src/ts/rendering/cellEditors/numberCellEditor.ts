@@ -17,7 +17,10 @@ export interface INumberCellEditorParams<TData = any, TContext = any> extends IC
      * Defaults to any value allowed.
      */
     step?: number;
-    /** Display stepper buttons in editor. Default: `false` */
+    /**
+     * Display stepper buttons in editor.
+     * @default false
+     */
     showStepperButtons?: boolean;
 }
 

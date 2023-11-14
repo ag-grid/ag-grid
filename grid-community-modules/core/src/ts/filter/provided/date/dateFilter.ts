@@ -43,11 +43,14 @@ export interface IDateFilterParams extends IScalarFilterParams {
      *  - `true`: Force the browser date picker to be used.
      *  - `false`: Force a plain text box to be used.
      *
-     * Default: `undefined` - If a date component is not provided, then the grid will use the browser date picker
+     * If a date component is not provided, then the grid will use the browser date picker
      * for all supported browsers and a plain text box for other browsers.
      */
     browserDatePicker?: boolean;
-    /** This is the minimum year that may be entered in a date field for the value to be considered valid. Default: `1000` */
+    /**
+     * This is the minimum year that may be entered in a date field for the value to be considered valid. 
+     * @default 1000
+     * */
     minValidYear?: number;
     /** This is the maximum year that may be entered in a date field for the value to be considered valid. Default is no restriction. */
     maxValidYear?: number;
@@ -66,7 +69,7 @@ export interface IDateFilterParams extends IScalarFilterParams {
     /**
      * Defines the date format for the floating filter text when an in range filter has been applied.
      *
-     * Default: `YYYY-MM-DD`
+     * @default YYYY-MM-DD
      */
      inRangeFloatingFilterDateFormat?: string;
 }
