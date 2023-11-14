@@ -22,8 +22,8 @@
     
     // derived colours (no color blending - these are shared by dark mode)
     --ag-selected-row-background-color: color-mix(in srgb, transparent, var(--ag-active-color) 30%);
-    --ag-row-hover-color: color-mix(in srgb, transparent, var(--ag-active-color) 10%);
-    --ag-column-hover-color: color-mix(in srgb, transparent, var(--ag-active-color) 10%);
+    --ag-row-hover-color: color-mix(in srgb, transparent, var(--ag-foreground-color) 5%);
+    --ag-column-hover-color: color-mix(in srgb, transparent, var(--ag-foreground-color) 5%);
     --ag-input-focus-border-color: color-mix(in srgb, transparent, var(--ag-active-color) 40%);
     --ag-range-selection-background-color: color-mix(in srgb, transparent, var(--ag-active-color) 20%);
     --ag-range-selection-background-color-2: color-mix(in srgb, transparent, var(--ag-active-color) 36%);
@@ -77,7 +77,7 @@
     --ag-icon-font-family: agGridQuartz;
 
     // MISC
-    --ag-tab-min-width: 260px;
+    --ag-tab-min-width: 280px;
 
     --ag-card-shadow: 0 1px 4px 1px rgba(186, 191, 199, 0.4);
     --ag-popup-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);

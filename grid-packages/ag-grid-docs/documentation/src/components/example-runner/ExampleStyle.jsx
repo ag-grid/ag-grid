@@ -4,10 +4,11 @@ import React from 'react';
 /**
  * These are the CSS styles shared by all examples.
  */
-const ExampleStyle = ({ rootId }) => <style media="only screen">
-    {`
-            @import url(https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500&display=swap);
-            
+const ExampleStyle = ({ rootId }) => (
+    <>
+        <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500&display=swap" rel="stylesheet" />
+        <style media="only screen">
+        {`  
             html, body${rootId ? `, #${rootId}` : ''} {
                 height: 100%;
                 width: 100%;
@@ -29,8 +30,9 @@ const ExampleStyle = ({ rootId }) => <style media="only screen">
                 overflow: auto;
                 background-color: transparent
             }
-
-        `}
-</style>;
+            `}
+        </style>
+    </>
+);
 
 export default ExampleStyle;
