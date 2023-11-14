@@ -114,8 +114,8 @@ const copyAndConcatMainTypings = () => {
         ...typingsDirs,
         './dist/lib/agGridCoreExtension.d.ts'
     ])
-         // the next line is specifically for AgChartThemeOverrides etc
-        .pipe(replace("import * as agCharts from 'ag-charts-community';", 'import * as agCharts from "./chart/agChartOptions";'))
+        // the next line is specifically for AgChartThemeOverrides etc
+        .pipe(replace("import * as agCharts from 'ag-charts-community';", 'import * as agCharts from "./ag-charts-community/options/agChartOptions";'))
         // .pipe(replace("import * as agCharts from 'ag-charts-enterprise';", '// @ts-ignore\nimport * as agCharts from \'ag-charts-enterprise\';'))
         .pipe(concat('main.d.ts'))
         .pipe(gulp.dest('./dist/lib'));
@@ -147,7 +147,10 @@ const copyGridCoreTypings = (done) => {
 
     exportedCommunityModules.forEach(exportedCommunityModule => result = result.pipe(replace(exportedCommunityModule, "ag-grid-community")));
 
-    return result.pipe(gulp.dest('./dist/lib'));
+    return merge([
+        gulp.src(['./node_modules/ag-charts-community/dist/src/**']).pipe(gulp.dest('./dist/lib/ag-charts-community')),
+        result.pipe(gulp.dest('./dist/lib'))
+    ]);
 };
 
 const copyGridAllUmdFiles = (done) => {
