@@ -33,7 +33,7 @@ export const onRouteUpdate = ({ location, prevLocation }) => {
         }
     }
 
-    if(location.pathname === getFrameworkPath()) {
+    if(location.pathname === getFrameworkPath() || location.pathname.includes('documentation')) {
         navigate(`${getFrameworkPath()}/getting-started`)
     }
 
