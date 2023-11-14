@@ -170,8 +170,13 @@ const AboutPage = () => {
                                 <p>Lead UX Designer</p>
                             </div>
                             <div>
+                                <img src="../images/team/kyler.jpg" alt="Kyler Phillips, Lead UX Designer" />
+                                <h3>Kyler Phillips</h3>
+                                <p>Product Designer</p>
+                            </div>
+                            <div>
                                 <img src="../images/team/james.jpg" alt="James Swinton-Bland, Developer relations lead" />
-                                <h3>James Swinton-Bland</h3>
+                                <h3>James<br />Swinton-Bland</h3>
                                 <p>Developer Relations Lead</p>
                             </div>
                         </article>
@@ -193,7 +198,7 @@ const AboutPage = () => {
                             </div>
                             <div>
                                 <img src="../images/team/nathan.jpeg" alt="Nathan Gauge-Klein, General Counsel" />
-                                <h3>Nathan Gauge-Klein</h3>
+                                <h3>Nathan<br />Gauge-Klein</h3>
                                 <p>General Counsel</p>
                             </div>
                             <div>
