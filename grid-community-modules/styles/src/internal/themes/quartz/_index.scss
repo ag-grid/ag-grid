@@ -66,10 +66,10 @@
     .ag-side-buttons {
         padding: 0;
         align-self: flex-start;
-        margin: calc(var(--ag-grid-size) * 1.5);
-        @include ag.theme-rtl((margin-left: 0));
+        margin: var(--ag-widget-container-vertical-padding) var(--ag-widget-container-horizontal-padding);
         border: var(--ag-borders) var(--ag-border-color);
         border-radius: var(--ag-border-radius);
+        width: calc(var(--ag-icon-size) + var(--ag-grid-size) * 2);
     }
 
     .ag-side-button {
@@ -89,6 +89,14 @@
     }
     .ag-column-select-header, .ag-column-select, .ag-column-drop-vertical {
         border-bottom: none;
+    }
+
+    .ag-filter-toolpanel-search {
+        height: initial;
+        margin-top: var(--ag-widget-container-vertical-padding);
+    }
+    .ag-filter-toolpanel-search-input {
+        margin: 0;
     }
 
     .ag-charts-settings-group-title-bar,
@@ -139,10 +147,6 @@
 
     &.ag-dnd-ghost {
         font-weight: 700;
-    }
-
-    .ag-side-buttons {
-        width: calc(var(--ag-grid-size) * 5);
     }
 
     .ag-standard-button {

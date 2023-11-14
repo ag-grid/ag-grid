@@ -55,20 +55,20 @@ There are various ways to load these stylesheets, as described in the sections b
 
 Some themes have a recommended 3rd party font, which is not bundled with the theme CSS. If the font is not available at runtime, the OS default UI font will be used instead - Segoe UI on Windows and SF Pro on Mac.
 
-#### Loading Inter for the Quartz theme
+#### Loading IBM Plex Sans for the Quartz theme
 
-Inter is a typeface carefully crafted & designed for computer screens. Inter features a tall x-height to aid in readability of mixed-case and lower-case text
+Plex Sans is a font that gives excellent readability on both regular and high DPI screens. It features a tall x-height to aid in readability of mixed-case and lower-case text.
 
-You can [download Inter from GitHub](https://github.com/rsms/inter) and use it in your application, or load it from their official CDN:
+You can [download Plex Sans from Google Fonts](https://fonts.google.com/specimen/IBM+Plex+Sans) (you need weights 400/Regular and 500/Medium)and use it in your application, or load it from the Google Fonts API:
 
 ```html
 <!-- in HTML -->
-<link href="https://rsms.me/inter/inter.css" rel="stylesheet" />
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500&display=swap" rel="stylesheet" />
 ```
 
 ```css
 /* in css */
-@import "https://rsms.me/inter/inter.css";
+@import "https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500&display=swap";
 ```
 
 #### Loading Roboto for the Material theme

@@ -35,7 +35,7 @@
     .ag-column-drop-horizontal {
         background-color: var(--ag-header-background-color);
         color: var(--ag-secondary-foreground-color);
-        height: var(--ag-row-height);
+        height: var(--ag-header-height);
         border-bottom: var(--ag-borders) var(--ag-border-color);
 
         @include ag.unthemed-rtl(( padding-left: var(--ag-cell-horizontal-padding) ));

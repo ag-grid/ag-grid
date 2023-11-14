@@ -6,6 +6,8 @@ import React from 'react';
  */
 const ExampleStyle = ({ rootId }) => <style media="only screen">
     {`
+            @import "https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500&display=swap";
+            
             html, body${rootId ? `, #${rootId}` : ''} {
                 height: 100%;
                 width: 100%;
