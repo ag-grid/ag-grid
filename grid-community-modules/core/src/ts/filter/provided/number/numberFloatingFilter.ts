@@ -1,7 +1,6 @@
 import { getAllowedCharPattern, NumberFilter, NumberFilterModel, NumberFilterModelFormatter, NumberFilterParams } from './numberFilter';
 import { FloatingFilterInputService, FloatingFilterTextInputService, ITextInputFloatingFilterParams,TextInputFloatingFilter } from '../../floating/provided/textInputFloatingFilter';
 import { SimpleFilterModelFormatter } from '../simpleFilter';
-import { IFloatingFilterParams } from '../../floating/floatingFilter';
 import { AgInputNumberField } from '../../../widgets/agInputNumberField';
 import { AgInputTextField } from '../../../widgets/agInputTextField';
 import { BeanStub } from '../../../context/beanStub';

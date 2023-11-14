@@ -6,8 +6,11 @@ import { GridBodyCtrl } from "./gridBodyCtrl";
 import { BodyHeightChangedEvent, Events } from "../events";
 import { CtrlsService } from "../ctrlsService";
 import { RowContainerCtrl } from "./rowContainer/rowContainerCtrl";
-import { getInnerHeight } from "../utils/dom";
+import { getInnerHeight, getInnerWidth } from "../utils/dom";
 import { WithoutGridCommon } from "../interfaces/iCommon";
+import { PinnedWidthService } from "./pinnedWidthService";
+import { Column } from "../entities/column";
+import { ProcessUnpinnedColumnsParams } from "../interfaces/iCallbackParams";
 
 // listens to changes in the center viewport size, for column and row virtualisation,
 // and adjusts grid as necessary. there are two viewports, one for horizontal and one for
@@ -15,6 +18,7 @@ import { WithoutGridCommon } from "../interfaces/iCommon";
 export class ViewportSizeFeature extends BeanStub {
 
     @Autowired('ctrlsService') private ctrlsService: CtrlsService;
+    @Autowired('pinnedWidthService') private pinnedWidthService: PinnedWidthService;
     @Autowired('columnModel') private columnModel: ColumnModel;
     @Autowired('scrollVisibleService') private scrollVisibleService: ScrollVisibleService;
 
@@ -57,6 +61,7 @@ export class ViewportSizeFeature extends BeanStub {
 
     private onCenterViewportResized(): void {
         if (this.centerContainerCtrl.isViewportVisible()) {
+            this.keepPinnedColumnsNarrowerThanViewport();
             this.checkViewportAndScrolls();
 
             const newWidth = this.centerContainerCtrl.getCenterWidth();
@@ -70,6 +75,64 @@ export class ViewportSizeFeature extends BeanStub {
         } else {
             this.bodyHeight = 0;
         }
+    }
+
+    private keepPinnedColumnsNarrowerThanViewport(): void {
+        const eBodyViewport = this.gridBodyCtrl.getBodyViewportElement();
+        const bodyWidth = getInnerWidth(eBodyViewport);
+
+        if (isNaN(bodyWidth) || bodyWidth <= 50) { return; }
+
+        // remove 50px from the bodyWidth to give some margin
+        let columnsToRemove = this.getPinnedColumnsOverflowingViewport(bodyWidth - 50);
+        const processUnpinnedColumns = this.gridOptionsService.getCallback('processUnpinnedColumns');
+
+        if (!columnsToRemove.length) { return; }
+
+        if (processUnpinnedColumns) {
+            const params: WithoutGridCommon<ProcessUnpinnedColumnsParams> = {
+                columns: columnsToRemove,
+                viewportWidth: bodyWidth
+            }
+            columnsToRemove = processUnpinnedColumns(params);
+        }
+
+        this.columnModel.setColumnsPinned(columnsToRemove, null, 'viewportSizeFeature')
+    }
+
+    private getPinnedColumnsOverflowingViewport(viewportWidth: number): Column[] {
+        const pinnedRightWidth = this.pinnedWidthService.getPinnedRightWidth();
+        const pinnedLeftWidth = this.pinnedWidthService.getPinnedLeftWidth();
+        const totalPinnedWidth = pinnedRightWidth + pinnedLeftWidth;
+
+        if (totalPinnedWidth < viewportWidth) { return []; }
+
+        const pinnedLeftColumns: Column[] = [...this.columnModel.getDisplayedLeftColumns()];
+        const pinnedRightColumns: Column[] = [...this.columnModel.getDisplayedRightColumns()];
+
+        let indexRight = 0;
+        let indexLeft = 0;
+        let totalWidthRemoved = 0;
+
+        const columnsToRemove: Column[] = [];
+
+        let spaceNecessary = (totalPinnedWidth - totalWidthRemoved) - viewportWidth;
+
+        while ((indexLeft < pinnedLeftColumns.length || indexRight < pinnedRightColumns.length) && spaceNecessary > 0) {
+            if (indexRight < pinnedRightColumns.length) {
+                const currentColumn = pinnedRightColumns[indexRight++];
+                spaceNecessary -= currentColumn.getActualWidth();
+                columnsToRemove.push(currentColumn);
+            }
+
+            if (indexLeft < pinnedLeftColumns.length && spaceNecessary > 0) {
+                const currentColumn = pinnedLeftColumns[indexLeft++];
+                spaceNecessary -= currentColumn.getActualWidth();
+                columnsToRemove.push(currentColumn);
+            }
+        }
+
+        return columnsToRemove;
     }
 
     // gets called every time the viewport size changes. we use this to check visibility of scrollbars

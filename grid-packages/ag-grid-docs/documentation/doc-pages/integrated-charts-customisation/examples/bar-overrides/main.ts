@@ -37,7 +37,7 @@ const gridOptions: GridOptions = {
           fontSize: 15,
           fontFamily: 'Arial, sans-serif',
           color: 'green',
-          formatter: (params) => {
+          formatter: (params:any) => { // charts typings
             return '<' + params.value + '>'
           },
         },
@@ -48,7 +48,7 @@ const gridOptions: GridOptions = {
           },
         },
         tooltip: {
-          renderer: (params) => {
+          renderer: (params:any) => { // charts typings
             // @ts-ignore
             return {
               content:

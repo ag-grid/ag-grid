@@ -9,14 +9,14 @@ Style text inputs, checkboxes, toggle buttons and range sliders.
 Text inputs can be styled with a combination of CSS variables and selectors:
 
 ```css
-.ag-theme-alpine {
+.ag-theme-quartz {
     --ag-borders-input: dotted 2px;
     --ag-input-border-color: orange;
 }
-.ag-theme-alpine .ag-text-field-input {
+.ag-theme-quartz .ag-text-field-input {
     background-color: rgb(255, 209, 123); /* light orange */
 }
-.ag-theme-alpine .ag-text-field-input::placeholder {
+.ag-theme-quartz .ag-text-field-input::placeholder {
     color: rgb(155, 101, 1); /* darker orange */
 }
 ```
@@ -36,7 +36,7 @@ See the [Custom Icons](/custom-icons/) documentation for how to replace the chec
 The colours can be controlled using the following CSS Variables:
 
 ```css
-.ag-theme-alpine {
+.ag-theme-quartz {
     --ag-checkbox-background-color: yellow;
     --ag-checkbox-checked-color: red;
     --ag-checkbox-unchecked-color: darkred;

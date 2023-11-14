@@ -4,7 +4,7 @@ import { AgGridVue } from '@ag-grid-community/vue';
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
 
 import '@ag-grid-community/styles/ag-grid.css';
-import '@ag-grid-community/styles/ag-theme-alpine.css';
+import '@ag-grid-community/styles/ag-theme-quartz.css';
 
 import { ModuleRegistry } from '@ag-grid-community/core';
 // Register the required feature modules with the Grid
@@ -12,7 +12,7 @@ ModuleRegistry.registerModules([ClientSideRowModelModule]);
 
 const VueExample = {
     template: `
-        <div style="height: 100%; display: flex; flex-direction: column" class="ag-theme-alpine">
+        <div style="height: 100%; display: flex; flex-direction: column" class="ag-theme-quartz">
             <div style="flex: 0 1 auto;">
                 <label><input type="checkbox" checked @change="onCbAthlete($event.target.checked)"/>Athlete</label>
                 <label><input type="checkbox" checked @change="onCbAge($event.target.checked)"/>Age</label>
@@ -21,7 +21,7 @@ const VueExample = {
 
             <ag-grid-vue style="flex: 1 1 auto;"
                          ref="topGrid"
-                         class="ag-theme-alpine"
+                         class="ag-theme-quartz"
                          :columnDefs="columnDefs"
                          :rowData="rowData"
                          
@@ -31,7 +31,7 @@ const VueExample = {
 
             <ag-grid-vue style="flex: 1 1 auto;"
                          ref="bottomGrid"
-                         class="ag-theme-alpine"
+                         class="ag-theme-quartz"
                          :columnDefs="columnDefs"
                          :rowData="rowData"
                          

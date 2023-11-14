@@ -20,7 +20,7 @@ const gridOptions: GridOptions = {
 // Function for creating the chart container
 function createChartContainer(chartRef: ChartRef): void {
   const eChart = chartRef.chartElement;
-  const themeName = document.documentElement?.getAttribute('data-default-theme') || 'ag-theme-alpine';
+  const themeName = document.documentElement?.getAttribute('data-default-theme') || 'ag-theme-quartz';
   const eParent = document.querySelector('#container') as HTMLElement;
 
   const chartWrapperHTML = `

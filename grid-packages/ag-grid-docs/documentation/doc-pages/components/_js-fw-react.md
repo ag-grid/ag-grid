@@ -46,7 +46,7 @@
 |   ], []);
 |
 |    return (
-|        &lt;div className="ag-theme-alpine">
+|        &lt;div className="ag-theme-quartz">
 |            &lt;AgGridReact
 |               components={components}
 |               columnDefs={columnDefs}

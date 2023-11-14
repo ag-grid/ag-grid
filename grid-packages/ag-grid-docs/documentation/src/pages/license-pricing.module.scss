@@ -100,13 +100,19 @@
 
 .buyTogether {
     --card-color: #0665cb;
-    --header-tint: 0.9;
-    
+    --header-tint: 0.95;
+
     width: 100%;
     display: flex;
-    border-radius: calc(var(--border-radius) * 2);
+    border-radius: 5px;
     border: 3px solid var(--card-color);
     background-color: var(--card-color);
+
+    #{$darkmode-selector} & {
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        border-radius: 6px;
+        --card-color: var(--background-100);
+    }
 }
 
 .buyTogetherInner {
@@ -120,11 +126,14 @@
     background-color: var(--default-background-color);
     opacity: var(--header-tint);
 
+    #{$darkmode-selector} & {
+    }
+
     @media screen and (min-width: $breakpoint-pricing-medium) {
         flex-direction: row;
         justify-content: space-between;
         gap: $size-4;
-        padding: $size-1 $size-2;
+        padding: $size-2 $size-2;
         text-align: left;
     }
 
@@ -153,7 +162,7 @@
 .enterpriseProducts {
     margin-top: $size-1;
     margin-bottom: $size-3;
-    
+
     @media screen and (min-width: $breakpoint-pricing-medium) {
         margin-top: $size-half;
         margin-bottom: auto;
@@ -216,11 +225,10 @@
     letter-spacing: -0.05em;
 }
 
-.configure button:not([class^="ag-"]) {
+.configure button:not([class^='ag-']) {
     width: 100%;
     height: 100%;
 }
-
 
 .bulkLicenses,
 .communityEnterprise,

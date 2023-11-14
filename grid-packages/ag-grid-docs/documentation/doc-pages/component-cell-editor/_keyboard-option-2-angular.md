@@ -7,7 +7,7 @@
 |    selector: 'my-grid',
 |    template: `
 |        &lt;ag-grid-angular
-|                class="ag-theme-alpine"
+|                class="ag-theme-quartz"
 |                [columnDefs]="columnDefs"
 |                ...rest of the component...>
 |        &lt;/ag-grid-angular>

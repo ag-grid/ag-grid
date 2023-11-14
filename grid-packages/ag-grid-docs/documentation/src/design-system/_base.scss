@@ -19,15 +19,37 @@ html {
     font-weight: var(--font-weight);
     background-color: var(--default-background-color);
     color: var(--default-text-color);
+    scroll-padding-top: var(--scroll-offset);
+}
 
-    @media (min-width: $breakpoint-docs-nav-medium) {
-        scroll-padding-top: $site-header-height + 92px;
+#{$darkmode-selector} {
+    #doc-content a {
+        color: #3893F9;
     }
+
+    nav::-webkit-scrollbar {
+        background-color: var(--background-100);
+    }
+    
+    nav::-webkit-scrollbar-thumb {
+        background-color: #354856;
+        border-radius: 10px;
+        border: 4px solid #0A161F;
+    }
+
 }
 
 #{$darkmode-selector} {
     #doc-content a:not(.button) {
         color: #3893F9;
+    }
+
+    #doc-content h1, h2, h3, h4, h5, h6 {
+        color: var(--default-text-color);
+    }
+
+    #doc-content {
+        color: #c3cad3;
     }
     
     #doc-content a:hover {
@@ -51,14 +73,23 @@ html {
 #{$darkmode-selector} {
     #doc-content a {
         color: #3893F9;
+        text-decoration: underline;
+        text-underline-offset: 2px;
+        text-decoration-color: #3892f977;
     }
+
+    #doc-content a:hover {
+        color: #3893F9;
+        text-decoration-color: #60aafe;
+    }
+
 
     nav::-webkit-scrollbar {
         background-color: var(--background-100);
     }
     
     nav::-webkit-scrollbar-thumb {
-        background-color: #354856;
+        background-color: #3548565a;
         border-radius: 10px;
         border: 4px solid #0A161F;
     }

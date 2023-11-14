@@ -29,7 +29,7 @@ are building applications that would not be possible if AG Grid did not exist.
 <template>
   <ag-grid-vue
     style="width: 500px; height: 200px"
-    class="ag-theme-alpine"
+    class="ag-theme-quartz"
     :columnDefs="columnDefs"
     :rowData="rowData"
   >
@@ -38,7 +38,7 @@ are building applications that would not be possible if AG Grid did not exist.
 
 <script>
 import "ag-grid-community/styles/ag-grid.css";
-import "ag-grid-community/styles/ag-theme-alpine.css";
+import "ag-grid-community/styles/ag-theme-quartz.css";
 import { AgGridVue } from "ag-grid-vue";
 
 export default {
@@ -228,12 +228,12 @@ As a first step, let's add the AG Grid styles - replace the `style` block in `sr
 ```scss
 <style lang="scss">
   @import "~ag-grid-community/styles/ag-grid.css";
-  @import "~ag-grid-community/styles/ag-theme-alpine.css";
+  @import "~ag-grid-community/styles/ag-theme-quartz.css";
 </style>
 ```
 
 The code above imports the grid "structure" stylesheet (`ag-grid.css`), and one of the
-available grid themes: (`ag-theme-alpine.css`). AG Grid ships several different themes - pick one that
+available grid themes: (`ag-theme-quartz.css`). AG Grid ships several different themes - pick one that
 matches your project design.
 
 <note>
@@ -249,7 +249,7 @@ Let's add the component definition to our template. Edit `app/App.vue` and repla
 ```html
 <template>
     <ag-grid-vue style="width: 500px; height: 500px;"
-        class="ag-theme-alpine"
+        class="ag-theme-quartz"
         :columnDefs="columnDefs"
         :rowData="rowData">
     </ag-grid-vue>
@@ -257,7 +257,7 @@ Let's add the component definition to our template. Edit `app/App.vue` and repla
 ```
 
 This is the ag-grid component definition, with two property bindings - `rowData` and `columnDefs`.
-The component also accepts the standard DOM `style` and `class`. We have set the class to `ag-theme-alpine`,
+The component also accepts the standard DOM `style` and `class`. We have set the class to `ag-theme-quartz`,
 which defines the grid theme. As you may have already noticed, the CSS class matches the name of CSS file
 we imported earlier.
 
@@ -295,7 +295,7 @@ export default {
 </script>
 <style lang="scss">
    @import "~ag-grid-community/styles/ag-grid.css";
-   @import "~ag-grid-community/styles/ag-theme-alpine.css";
+   @import "~ag-grid-community/styles/ag-theme-quartz.css";
 </style>
 ```
 
@@ -393,7 +393,7 @@ just a matter of adding and changing couple of properties.
 <template>
  <ag-grid-vue
    style="width: 500px; height: 200px"
-   class="ag-theme-alpine"
+   class="ag-theme-quartz"
    :columnDefs="columnDefs"
    :rowData="rowData"
  >
@@ -429,7 +429,7 @@ export default {
 </script>
 <style lang="scss">
  @import "~ag-grid-community/styles/ag-grid.css";
- @import "~ag-grid-community/styles/ag-theme-alpine.css";
+ @import "~ag-grid-community/styles/ag-theme-quartz.css";
 </style>
 ```
 
@@ -452,7 +452,7 @@ Let's go ahead and make these changes:
 +     <button @click="getSelectedRows()">Get Selected Rows</button>
       <ag-grid-vue
           style="width: 500px; height: 200px"
-          class="ag-theme-alpine"
+          class="ag-theme-quartz"
           :columnDefs="columnDefs"
           :rowData="rowData"
       >
@@ -501,7 +501,7 @@ export default {
 </script>
 <style lang="scss">
  @import "~ag-grid-community/styles/ag-grid.css";
- @import "~ag-grid-community/styles/ag-theme-alpine.css";
+ @import "~ag-grid-community/styles/ag-theme-quartz.css";
 </style>
 ```
 
@@ -559,7 +559,7 @@ the `columnDefs` with a `rowGroup`:
    <div>
        <button @click="getSelectedRows()">Get Selected Rows</button>
        <ag-grid-vue style="width: 500px; height: 500px;"
-                    class="ag-theme-alpine"
+                    class="ag-theme-quartz"
                     :columnDefs="columnDefs"
                     :rowData="rowData"
 +                   :autoGroupColumnDef="autoGroupColumnDef"
@@ -617,7 +617,7 @@ the `columnDefs` with a `rowGroup`:
 </script>
 <style lang="scss">
    @import "~ag-grid-community/styles/ag-grid.css";
-   @import "~ag-grid-community/styles/ag-theme-alpine.css";
+   @import "~ag-grid-community/styles/ag-theme-quartz.css";
 </style>
 ```
 

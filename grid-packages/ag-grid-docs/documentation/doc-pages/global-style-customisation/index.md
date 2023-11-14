@@ -8,11 +8,11 @@ The grid exposes many CSS variables that allow you to control its appearance usi
 
 ```css
 /* set the background color of many elements across the grid */
-.ag-theme-alpine {
+.ag-theme-quartz {
     --ag-background-color: #ddd;
 }
 /* change the font style of a single UI component */
-.ag-theme-alpine .ag-header-cell-label {
+.ag-theme-quartz .ag-header-cell-label {
     font-style: italic;
 }
 ```
@@ -31,7 +31,7 @@ The grid wrapper element should specify both the class name of the theme you're 
 
 ```html
 <!-- grid div applies your class after the theme class -->
-<div id="myGrid" class="ag-theme-alpine ag-theme-acmecorp"></div>
+<div id="myGrid" class="ag-theme-quartz ag-theme-acmecorp"></div>
 ```
 
 ```css

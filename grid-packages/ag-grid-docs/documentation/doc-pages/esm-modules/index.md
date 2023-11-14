@@ -17,7 +17,7 @@ If however you want to use ES Modules directly in the browser then you can do so
 <html>
 <head>
     <link rel="stylesheet" href="./node_modules/@ag-grid-community/styles/ag-grid.css">
-    <link rel="stylesheet" href="./node_modules/@ag-grid-community/styles/ag-theme-alpine.css">
+    <link rel="stylesheet" href="./node_modules/@ag-grid-community/styles/ag-theme-quartz.css">
     <script type="module">
         import {
             ClientSideRowModelModule
@@ -59,7 +59,7 @@ If however you want to use ES Modules directly in the browser then you can do so
 </head>
 
 <body>
-<div id="myGrid" style="height: 200px; width:500px;" class="ag-theme-alpine"></div>
+<div id="myGrid" style="height: 200px; width:500px;" class="ag-theme-quartz"></div>
 </body>
 </html>
 ```
@@ -81,7 +81,7 @@ For example:
 <html>
 <head>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/ag-grid-enterprise/styles/ag-grid.css">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/ag-grid-enterprise/styles/ag-theme-alpine.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/ag-grid-enterprise/styles/ag-theme-quartz.css">
     <script type="module">
         import {
             AdvancedFilterModule,
@@ -155,7 +155,7 @@ For example:
 </head>
 
 <body>
-<div id="myGrid" style="height: 200px; width:500px;" class="ag-theme-alpine"></div>
+<div id="myGrid" style="height: 200px; width:500px;" class="ag-theme-quartz"></div>
 </body>
 </html>
 ```

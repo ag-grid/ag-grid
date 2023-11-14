@@ -41,7 +41,7 @@ export interface IProvidedFilterParams {
      * If the Apply button is present, the filter popup will be closed immediately when the Apply
      * or Reset button is clicked if this is set to `true`.
      *
-     * Default: `false`
+     * @default false
      */
     closeOnApply?: boolean;
     /**
@@ -54,7 +54,7 @@ export interface IProvidedFilterParams {
      * If set to `true`, disables controls in the filter to mutate its state. Normally this would
      * be used in conjunction with the Filter API.
      *
-     * Default: `false`
+     * @default false
      */
     readOnly?: boolean;
 }

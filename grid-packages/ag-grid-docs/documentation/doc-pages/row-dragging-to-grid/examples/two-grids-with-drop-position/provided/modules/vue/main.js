@@ -4,7 +4,7 @@ import { AgGridVue } from '@ag-grid-community/vue';
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
 
 import '@ag-grid-community/styles/ag-grid.css';
-import '@ag-grid-community/styles/ag-theme-alpine.css';
+import '@ag-grid-community/styles/ag-theme-quartz.css';
 
 import 'styles.css';
 
@@ -31,7 +31,7 @@ const createRowBlock = (blocks) => Array.apply(null, Array(blocks || 1))
 
 const VueExample = {
     template: /* html */
-        `<div class="example-wrapper ag-theme-alpine">
+        `<div class="example-wrapper ag-theme-quartz">
 
             <div class="inner-col">
                 <div class="toolbar">

@@ -7,22 +7,22 @@ Under normal usage, your application should set the width and height of the grid
 <framework-specific-section frameworks="javascript">
 <snippet transform={false} language="html">
 | &lt;!-- set width using percentages -->
-| &lt;div id="myGrid" class="ag-theme-alpine" style="width: 100%; height: 100%;">&lt;/div>
+| &lt;div id="myGrid" class="ag-theme-quartz" style="width: 100%; height: 100%;">&lt;/div>
 |
 | &lt;!-- OR set width using fixed pixels -->
-|&lt;div id="myGrid" class="ag-theme-alpine" style="width: 500px; height: 200px;">&lt;/div>
+|&lt;div id="myGrid" class="ag-theme-quartz" style="width: 500px; height: 200px;">&lt;/div>
 </snippet>
 </framework-specific-section>
 
 <framework-specific-section frameworks="angular">
 <snippet transform={false} language="html">
 | &lt;!-- set width using percentages -->
-| &lt;div class="ag-theme-alpine">
+| &lt;div class="ag-theme-quartz">
 |     &lt;ag-grid-angular style="width: 100%; height: 100%;">&lt;/ag-grid-angular>
 | &lt;/div>
 |
 | <!-- OR set width using fixed pixels -->
-| &lt;div class="ag-theme-alpine">
+| &lt;div class="ag-theme-quartz">
 |     &lt;ag-grid-angular style="width: 500px; height: 200px">&lt;/ag-grid-angular>
 | &lt;/div>
 </snippet>
@@ -31,12 +31,12 @@ Under normal usage, your application should set the width and height of the grid
 <framework-specific-section frameworks="react">
 <snippet transform={false} language="jsx">
 | &lt;!-- set width using percentages -->
-| &lt;div class="ag-theme-alpine">
+| &lt;div class="ag-theme-quartz">
 |     &lt;AgGridReact style={{ width: '100%', height: '100%' }} />
 | &lt;/div>
 |
 | &lt;!-- OR set width using fixed pixels -->
-| &lt;div class="ag-theme-alpine">
+| &lt;div class="ag-theme-quartz">
 |     &lt;AgGridReact style={{ width: 500, height: 200 }} />
 | &lt;/div>
 </snippet>
@@ -45,12 +45,12 @@ Under normal usage, your application should set the width and height of the grid
 <framework-specific-section frameworks="vue">
 <snippet transform={false} language="html">
 | &lt;!-- set width using percentages -->
-| &lt;div class="ag-theme-alpine">
+| &lt;div class="ag-theme-quartz">
 |     &lt;ag-grid-vue style="width: 100%; height: 100%;">&lt;/ag-grid-vue>
 | &lt;/div>
 |
 | &lt;!-- OR set width using fixed pixels -->
-| &lt;div class="ag-theme-alpine">
+| &lt;div class="ag-theme-quartz">
 |     &lt;ag-grid-vue style="width: 500px; height: 200px">&lt;/ag-grid-vue>
 | &lt;/div>
 </snippet>

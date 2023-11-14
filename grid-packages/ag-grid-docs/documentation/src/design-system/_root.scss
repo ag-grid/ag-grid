@@ -49,10 +49,9 @@
     --line-height: var(--line-height-normal);
 
     --icon-size: #{$icon-size};
-}
 
-html {
-    --color-scheme: light;
+    // Used to set offset for smooth-scroll polyfill (gatsby-ssr.js)
+    --scroll-offset: #{$site-header-height + 13px};
 }
 
 // Create CSS variables for all dark mode colors

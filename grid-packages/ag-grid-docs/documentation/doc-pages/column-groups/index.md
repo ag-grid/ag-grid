@@ -94,7 +94,7 @@ const gridOptions = {
 The labels in the grouping headers are positioned with `display: flex`. To make the group headers right-aligned, add the following rule set in your application, after the grid's stylesheets. Change the theme class to the one you use.
 
 ```css
-.ag-theme-alpine .ag-header-group-cell-label {
+.ag-theme-quartz .ag-header-group-cell-label {
     flex-direction: row-reverse;
 }
 ```

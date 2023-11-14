@@ -82,7 +82,7 @@ export interface ITextInputFloatingFilterParams extends IFloatingFilterParams<Te
      * - `false` to disable the browser autocomplete/autofill behavior by setting the `autocomplete` attribute to `off`.
      * - A **string** to be used as the [autocomplete](https://developer.mozilla.org/en-US/docs/Web/HTML/Attributes/autocomplete) attribute value.
      * Some browsers do not respect setting the HTML attribute `autocomplete="off"` and display the auto-fill prompts anyway.
-     * Default: `false`
+     * @default false
      */
     browserAutoComplete?: boolean | string;
 };

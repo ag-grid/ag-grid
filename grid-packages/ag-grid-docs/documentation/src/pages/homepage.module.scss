@@ -34,9 +34,7 @@ gatsby-fast-refresh {
     }
 
     #{$darkmode-selector} & {
-        background-color: var(--default-background-color);
-        background-color: var(--background-100);
-        background-color: var(--default-background-color);
+        background-color: #121f29;
     }
 }
 
@@ -111,6 +109,10 @@ gatsby-fast-refresh {
     border-top-left-radius: 4px;
     border-top-right-radius: 4px;
 
+    #{$darkmode-selector} & {
+        background-color: #121f29;
+    }
+
     @media screen and (min-width: $breakpoint-hero-large) {
         width: 860px;
         height: 416px;
@@ -143,7 +145,8 @@ gatsby-fast-refresh {
     }
 
     #{$darkmode-selector} & {
-        background-color: var(--default-background-color);
+        background-color: #121f29;
+        // border-bottom: 1px solid #394755;
     }
 }
 
@@ -151,6 +154,15 @@ gatsby-fast-refresh {
     padding-top: $size-6;
     padding-bottom: $size-7;
 
+    padding-left: $size-8;
+    padding-right: $size-8;
+
+    #{$darkmode-selector} & {
+        border-bottom: 1px solid #394755;
+    }
+
+
+    
     @media screen and (min-width: $breakpoint-automated-row-grouping-medium) {
         padding-top: $size-8;
         padding-bottom: $size-9;
@@ -206,6 +218,12 @@ gatsby-fast-refresh {
 .homepageCustomers {
     background-color: var(--background-100);
     padding-bottom: $size-6;
+
+    #{$darkmode-selector} & {
+        border-bottom: 1px solid #394755;
+    }
+
+
 }
 
 .customersInner {

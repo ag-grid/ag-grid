@@ -3,7 +3,7 @@ import { Component } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 // NOTE: Angular CLI does not support component CSS imports: angular-cli/issues/23273
 import '@ag-grid-community/styles/ag-grid.css';
-import "@ag-grid-community/styles/ag-theme-alpine.css";
+import "@ag-grid-community/styles/ag-theme-quartz.css";
 import '../styles.css';
 import { ColDef, GridApi, GridReadyEvent } from '@ag-grid-community/core';
 // Required feature modules are registered in app.module.ts
@@ -71,7 +71,7 @@ import { IOlympicData } from './interfaces'
         <ag-grid-angular
     style="width: 100%; height: 100%;"
     
-    class="ag-theme-alpine"
+    class="ag-theme-quartz"
     [columnDefs]="columnDefs"
     [defaultColDef]="defaultColDef"
     [popupParent]="popupParent"

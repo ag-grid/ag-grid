@@ -110,7 +110,7 @@ export interface DropTarget {
     /**
      * If `true`, the DragSources will only be allowed to be dragged within the DragTarget that contains them.
      * This is useful for changing order of items within a container, and not moving items across containers.
-     * Default: `false`
+     * @default false
      */
     targetContainsSource?: boolean;
 

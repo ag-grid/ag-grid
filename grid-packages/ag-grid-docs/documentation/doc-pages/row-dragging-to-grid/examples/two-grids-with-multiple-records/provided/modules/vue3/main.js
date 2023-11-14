@@ -4,7 +4,7 @@ import { AgGridVue } from '@ag-grid-community/vue3';
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
 
 import '@ag-grid-community/styles/ag-grid.css';
-import '@ag-grid-community/styles/ag-theme-alpine.css';
+import '@ag-grid-community/styles/ag-theme-quartz.css';
 
 import 'styles.css';
 
@@ -41,7 +41,7 @@ const VueExample = {
                     </span>
                 </div>
             </div>
-            <div class="grid-wrapper ag-theme-alpine">
+            <div class="grid-wrapper ag-theme-quartz">
                 <div class="panel panel-primary" style="margin-right: 10px;">
                     <div class="panel-heading">Athletes</div>
                     <div class="panel-body">

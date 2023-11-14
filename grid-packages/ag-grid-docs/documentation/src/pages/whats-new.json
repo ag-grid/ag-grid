@@ -1,85 +1,157 @@
 [
   {
     "version": "30.2.0",
-    "date": "Sep 26",
+    "date": "September 26th 2023",
     "highlights": [
       {
-        "text": "Advanced Filter Builder",
+        "text": "Advanced Filter Builder UI for building filter expressions",
         "url": "https://www.ag-grid.com/javascript-data-grid/filter-advanced/#advanced-filter-builder"
       },
       {
-        "text": "Dynamic Group Footers",
+        "text": "Support for Custom Matching in Quick Filter",
+        "url": "https://www.ag-grid.com/javascript-data-grid/filter-quick/#quick-filter-matcher"
+      },
+      {
+        "text": "Typing, filtering, async population of values in Rich Select Editor",
+        "url": "https://www.ag-grid.com/javascript-data-grid/provided-cell-editors/#rich-select-cell-editor"
+      },
+      {
+        "text": "Dynamic Group Footer Rows",
         "url": "https://www.ag-grid.com/javascript-data-grid/grouping-footers/#dynamic-group-footers"
+      },
+      {
+        "text": "Documentation examples on CodeSandbox",
+        "url": ""
       }
     ]
   },
   {
     "version": "30.1.0",
-    "date": "Aug 26",
+    "date": "August 22nd 2023",
     "highlights": [
       {
-        "text": "Advanced Filter Builder",
-        "url": "https://www.ag-grid.com/javascript-data-grid/filter-advanced/#advanced-filter-builder"
+        "text": "Advanced filtering with boolean expressions",
+        "url": "https://www.ag-grid.com/javascript-data-grid/filter-advanced/"
       },
       {
-        "text": "Dynamic Group Footers",
-        "url": "https://www.ag-grid.com/javascript-data-grid/grouping-footers/#dynamic-group-footers"
+        "text": "Rebuilt Rich Select Editor",
+        "url": "https://www.ag-grid.com/javascript-data-grid/provided-cell-editors/#rich-select-cell-editor"
+      },
+      {
+        "text": "Figma Design System to design and customize AG Grid",
+        "url": "https://www.ag-grid.com/javascript-data-grid/ag-grid-design-system/"
+      },
+      {
+        "text": "Automatic pivot columns for server-side row model",
+        "url": "https://www.ag-grid.com/javascript-data-grid/server-side-model-pivoting/#supplying-pivot-result-fields-simple"
+      },
+      {
+        "text": "Interactive Tooltips",
+        "url": "https://www.ag-grid.com/javascript-data-grid/component-tooltip/#interactive-tooltips"
+      }
+    ]
+  },
+  {
+    "version": "30.0.0",
+    "date": "June 19th 2023",
+    "highlights": [
+      {
+        "text": "Cell data types with automatic type inference",
+        "url": "https://www.ag-grid.com/javascript-data-grid/cell-data-types/"
+      },
+      {
+        "text": "Built-in cell editors",
+        "url": "https://www.ag-grid.com/javascript-data-grid/provided-cell-editors/?ref=blog.ag-grid.com#top"
+      },
+      {
+        "text": "Group footer rows when using server-side row model",
+        "url": "https://www.ag-grid.com/javascript-data-grid/server-side-model-grouping/#row-group-footers"
+      },
+      {
+        "text": "Module registration is no longer global and is per-grid",
+        "url": "https://www.ag-grid.com/javascript-data-grid/modules/#providing-modules-to-individual-grids"
+      },
+      {
+        "text": "Export row groups to Excel with their current expanded state",
+        "url": ""
+      }
+    ]
+  },
+  {
+    "version": "29.3.0",
+    "date": "April 20th 2023",
+    "highlights": [
+      {
+        "text": "Sticky group rows for master-detail, tree data and server-side row model",
+        "url": "https://www.ag-grid.com/javascript-data-grid/master-detail-master-rows/"
+      },
+      {
+        "text": "Horizontal sticky column group headers",
+        "url": ""
+      },
+      {
+        "text": "ShadowDOM support",
+        "url": ""
+      },
+      {
+        "text": "Tooltip customization and interaction support for charts",
+        "url": "https://www.ag-grid.com/javascript-charts/tooltips/#interaction-with-tooltips"
+      },
+      {
+        "text": "Pie chart callout labels anti-collision improvements",
+        "url": ""
       }
     ]
   },
   {
     "version": "29.2.0",
-    "date": "Jul 26",
+    "date": "March 21st 2023",
     "highlights": [
       {
-        "text": "Advanced Filter Builder",
-        "url": "https://www.ag-grid.com/javascript-data-grid/filter-advanced/#advanced-filter-builder"
+        "text": "Header checkbox and group selection when using server-side row model",
+        "url": "https://www.ag-grid.com/javascript-data-grid/server-side-model-selection/#header-checkbox-selection"
       },
       {
-        "text": "Dynamic Group Footers",
-        "url": "https://www.ag-grid.com/javascript-data-grid/grouping-footers/#dynamic-group-footers"
+        "text": "Entering more than two filter conditions in a column filter",
+        "url": "https://www.ag-grid.com/javascript-data-grid/filter-conditions/"
+      },
+      {
+        "text": "Vertically-spanning column header cells",
+        "url": ""
+      },
+      {
+        "text": "Displaying \"No Data\" overlay in the chart when there's no data",
+        "url": "https://www.ag-grid.com/javascript-charts/overlays/#missing-data-overlay"
+      },
+      {
+        "text": "Displaying stacked and unstacked column series together in the chart",
+        "url": ""
       }
     ]
   },
   {
     "version": "29.1.0",
-    "date": "Jun 26",
+    "date": "February 17th 2023",
     "highlights": [
       {
-        "text": "Advanced Filter Builder",
-        "url": "https://www.ag-grid.com/javascript-data-grid/filter-advanced/#advanced-filter-builder"
+        "text": "Group column filters",
+        "url": "https://www.ag-grid.com/javascript-data-grid/grouping-column-filter/"
       },
       {
-        "text": "Dynamic Group Footers",
-        "url": "https://www.ag-grid.com/javascript-data-grid/grouping-footers/#dynamic-group-footers"
-      }
-    ]
-  },
-  {
-    "version": "28.2.0",
-    "date": "May 26",
-    "highlights": [
-      {
-        "text": "Advanced Filter Builder",
-        "url": "https://www.ag-grid.com/javascript-data-grid/filter-advanced/#advanced-filter-builder"
+        "text": "Tree data transaction support in server-side row model",
+        "url": "https://www.ag-grid.com/javascript-data-grid/server-side-model-tree-data/#transactions-with-tree-data"
       },
       {
-        "text": "Dynamic Group Footers",
-        "url": "https://www.ag-grid.com/javascript-data-grid/grouping-footers/#dynamic-group-footers"
-      }
-    ]
-  },
-  {
-    "version": "28.1.0",
-    "date": "Apr 26",
-    "highlights": [
-      {
-        "text": "Advanced Filter Builder",
-        "url": "https://www.ag-grid.com/javascript-data-grid/filter-advanced/#advanced-filter-builder"
+        "text": "Header checkbox selection for current page rows",
+        "url": "https://www.ag-grid.com/javascript-data-grid/row-selection/#example-select-only-the-current-page"
       },
       {
-        "text": "Dynamic Group Footers",
-        "url": "https://www.ag-grid.com/javascript-data-grid/grouping-footers/#dynamic-group-footers"
+        "text": "Enhanced support for Read Only Edit",
+        "url": "https://www.ag-grid.com/javascript-data-grid/value-setters/#read-only-edit"
+      },
+      {
+        "text": "Customization options for chart axis tick positioning",
+        "url": "https://www.ag-grid.com/javascript-charts/axes-ticks/"
       }
     ]
   }

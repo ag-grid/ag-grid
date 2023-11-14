@@ -47,10 +47,10 @@ function addModuleImports(imports: string[], bindings: any, allStylesheets: stri
     imports.push('// NOTE: Angular CLI does not support component CSS imports: angular-cli/issues/23273');
     imports.push("import '@ag-grid-community/styles/ag-grid.css';");
 
-    // to account for the (rare) example that has more than one class...just default to alpine if it does
+    // to account for the (rare) example that has more than one class...just default to quartz if it does
     // we strip off any '-dark' from the theme when loading the CSS as dark versions are now embedded in the
     // "source" non dark version
-    const theme = gridSettings.theme ? gridSettings.theme.replace('-dark', '') : 'ag-theme-alpine';
+    const theme = gridSettings.theme ? gridSettings.theme.replace('-dark', '') : 'ag-theme-quartz';
     imports.push(`import "@ag-grid-community/styles/${theme}.css";`);
 
     if (allStylesheets && allStylesheets.length > 0) {
@@ -83,10 +83,10 @@ function addPackageImports(imports: string[], bindings: any, allStylesheets: str
 
     imports.push("import 'ag-grid-community/styles/ag-grid.css';");
 
-    // to account for the (rare) example that has more than one class...just default to alpine if it does
+    // to account for the (rare) example that has more than one class...just default to quartz if it does
     // we strip off any '-dark' from the theme when loading the CSS as dark versions are now embedded in the
     // "source" non dark version
-    const theme = gridSettings.theme ? gridSettings.theme.replace('-dark', '') : 'ag-theme-alpine';
+    const theme = gridSettings.theme ? gridSettings.theme.replace('-dark', '') : 'ag-theme-quartz';
     imports.push(`import "ag-grid-community/styles/${theme}.css";`);
 
     if(allStylesheets && allStylesheets.length > 0) {

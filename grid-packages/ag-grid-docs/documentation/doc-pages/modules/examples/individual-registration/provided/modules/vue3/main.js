@@ -2,7 +2,7 @@ import { createApp } from 'vue';
 import { AgGridVue } from '@ag-grid-community/vue3';
 
 import '@ag-grid-community/styles/ag-grid.css';
-import '@ag-grid-community/styles/ag-theme-alpine.css';
+import '@ag-grid-community/styles/ag-theme-quartz.css';
 
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
 import { ClipboardModule } from '@ag-grid-enterprise/clipboard';
@@ -32,7 +32,7 @@ const createRowBlock = () => ['Red', 'Green', 'Blue'].map((color) =>
 
 const VueExample = {
     template: /* html */
-        `<div class="example-wrapper ag-theme-alpine">
+        `<div class="example-wrapper ag-theme-quartz">
 
             <div class="inner-col">
                 <div style="height: 100%;" class="inner-col">

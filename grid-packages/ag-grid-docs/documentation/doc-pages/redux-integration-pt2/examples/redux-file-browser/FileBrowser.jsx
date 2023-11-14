@@ -9,7 +9,7 @@ import { MenuModule } from '@ag-grid-enterprise/menu';
 import { RowGroupingModule } from '@ag-grid-enterprise/row-grouping';
 
 import "@ag-grid-community/styles/ag-grid.css";
-import "@ag-grid-community/styles/ag-theme-alpine.css";
+import "@ag-grid-community/styles/ag-theme-quartz.css";
 
 import FileCellRenderer from './FileCellRenderer.jsx';
 
@@ -35,7 +35,7 @@ class FileBrowser extends Component {
 
   render() {
     return (
-      <div style={{ height: '100%' }} className="ag-theme-alpine">
+      <div style={{ height: '100%' }} className="ag-theme-quartz">
         <AgGridReact
           defaultColDef={this.defaultColDef}
           columnDefs={this.colDefs}

@@ -20,9 +20,9 @@ function getImports(componentFilenames: string[], bindings): string[] {
         "import { createRoot } from 'react-dom/client';",
     ];
 
-    if (bindings.chartSettings.enterprise) {
-        imports.push("import 'ag-charts-enterprise';");
-    }
+    // if (bindings.chartSettings.enterprise) {
+    //     imports.push("import 'ag-charts-enterprise';");
+    // }
 
     imports.push("import { AgChartsReact } from 'ag-charts-react';");
 

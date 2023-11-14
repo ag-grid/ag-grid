@@ -27,6 +27,10 @@
     background-position-y: center;
     background-repeat: no-repeat;
     content: 'e';
+
+    #{$darkmode-selector} & {
+        --text-color: var(--active-color);
+        }
 }
 
 .doc-page {
@@ -36,7 +40,8 @@
     padding-bottom: $size-7;
 
     @media screen and (min-width: $breakpoint-docs-nav-large) {
-        padding-right: $size-7;
+        padding-right: $size-6;
+        padding-left: $size-3;
         max-width: var(--docs-page-max-width);
     }
 
@@ -85,7 +90,7 @@
     }
 
     enterprise-icon::after {
-        @extend %enterprise-icon;
+        @extend %enterprise-icon;        
 
         width: 1rem;
         margin-left: 0.25rem;
@@ -105,11 +110,7 @@
 }
 
 .docsPageTitle {
-    margin-bottom: $size-1;
-
-    @media screen and (min-width: $breakpoint-docs-search-medium) {
-        padding-right: 166px;
-    }
+    margin-bottom: $size-2;
 
     @media screen and (min-width: $breakpoint-docs-nav-medium) {
         line-height: var(--line-height-ultra-tight);
@@ -120,18 +121,39 @@
     }
 }
 
+.pageTitleContainer {
+    display: flex;
+    flex-direction: column-reverse;
+    justify-content: space-between;
+    align-items: flex-start;
+    width: 100%;
+
+    @media screen and (min-width: $breakpoint-docs-search-medium) {
+        flex-direction: row;
+    }
+}
+
+.pageTitleGroup {
+    display: flex;
+    flex-direction: column;
+}
+
 .headerFramework {
-    display: block;
+    display: none;
     font-size: var(--font-size-extra-large);
     font-weight: var(--font-weight-normal);
     color: var(--secondary-text-color);
+    padding-bottom: 6px;
+
+    @media screen and (min-width: $breakpoint-docs-search-medium) {
+        display: block;
+    }
 }
 
 .enterpriseLabel {
     display: inline-block;
     position: relative;
     bottom: 0.05em;
-    padding-left: $size-1;
     font-size: var(--font-size-extra-large);
     font-weight: var(--font-weight-normal);
     color: var(--secondary-text-color);
@@ -144,17 +166,13 @@
         padding-left: 0;
     }
 
-    @media screen and (min-width: $max-page-width) {
-        top: 1.8em;
-    }
-
     :global(.icon) {
         --icon-size: 1.25em;
-        --text-color: var(--enterprise-icon-color) !important;
+        --text-color: var(--enterprise-icon-color) ;
 
         position: relative;
-        margin-left: $size-half;
         top: -0.1em;
+        margin-left: $size-half;
     }
 }
 
@@ -187,7 +205,7 @@
 
     > h3,
     > h4 {
-        margin-top: $size-4;
+        margin-top: $size-5;
     }
 
     p,

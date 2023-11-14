@@ -1,5 +1,5 @@
 import { CellCtrl, Component, ICellComp, ICellEditor, ICellRendererComp, UserCompDetails, _, ICellEditorComp, CssClassManager, CellStyle } from '@ag-grid-community/core';
-import React, { MutableRefObject, useCallback, useEffect, useRef, useState, useMemo, memo, useContext, useLayoutEffect } from 'react';
+import React, { MutableRefObject, useCallback, useRef, useState, useMemo, memo, useContext, useLayoutEffect } from 'react';
 import { isComponentStateless } from '../utils';
 import PopupEditorComp from './popupEditorComp';
 import useJsCellRenderer from './showJsRenderer';

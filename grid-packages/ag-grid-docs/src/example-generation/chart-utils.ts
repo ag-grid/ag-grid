@@ -16,17 +16,31 @@ export function wrapOptionsUpdateCode(
 
 export function getChartImports(imports: BindingImport[], usesChartApi: boolean): string {
 
-    const enterpriseCharts = imports.find(i => i.module.includes('ag-charts-enterprise'));
-    const chartsImport = imports.find(i => i.module.includes('ag-charts-community') || i.module.includes('ag-charts-enterprise'));
+    const chartsImport = imports.find(i => i.module.includes('ag-charts-community'));
     if (chartsImport) {
         // Only included AgChart if its api is used. Otherwise it can be removed as AgChart.create is handled by framework components
         // But if AgChart.download is used we mustn't remove it.
-        const extraImports = chartsImport.imports.filter(i => usesChartApi || (i !== 'AgChart' && i !== 'AgEnterpriseCharts'));
-
+        const extraImports = chartsImport.imports.filter(i => usesChartApi || i !== 'AgChart');
         if (extraImports.length > 0) {
-            return `import { ${extraImports.join(', ')} } from 'ag-charts-${enterpriseCharts ? 'enterprise' : 'community'}';`;
+            return `import { ${extraImports.join(', ')} } from 'ag-charts-community';`;
         }
     }
-
     return undefined;
 }
+
+// export function getChartImports(imports: BindingImport[], usesChartApi: boolean): string {
+//
+//     const enterpriseCharts = imports.find(i => i.module.includes('ag-charts-enterprise'));
+//     const chartsImport = imports.find(i => i.module.includes('ag-charts-community') || i.module.includes('ag-charts-enterprise'));
+//     if (chartsImport) {
+//         // Only included AgChart if its api is used. Otherwise it can be removed as AgChart.create is handled by framework components
+//         // But if AgChart.download is used we mustn't remove it.
+//         const extraImports = chartsImport.imports.filter(i => usesChartApi || (i !== 'AgChart' && i !== 'AgEnterpriseCharts'));
+//
+//         if (extraImports.length > 0) {
+//             return `import { ${extraImports.join(', ')} } from 'ag-charts-${enterpriseCharts ? 'enterprise' : 'community'}';`;
+//         }
+//     }
+//
+//     return undefined;
+// }

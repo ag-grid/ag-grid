@@ -4,7 +4,7 @@ import { AgGridReact } from '@ag-grid-community/react';
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
 
 import "@ag-grid-community/styles/ag-grid.css";
-import "@ag-grid-community/styles/ag-theme-alpine.css";
+import "@ag-grid-community/styles/ag-theme-quartz.css";
 import './styles.css';
 
 import { ModuleRegistry, ColDef, ColGroupDef, GridReadyEvent, SizeColumnsToFitGridStrategy } from '@ag-grid-community/core';
@@ -92,7 +92,7 @@ const GridExample = () => {
                 </label>
             </div>
 
-            <div className="grid ag-theme-alpine">
+            <div className="grid ag-theme-quartz">
                 <AgGridReact
                     ref={topGrid}
                     alignedGrids={[bottomGrid]}
@@ -104,7 +104,7 @@ const GridExample = () => {
                 />
             </div>
 
-            <div className="grid ag-theme-alpine">
+            <div className="grid ag-theme-quartz">
                 <AgGridReact
                     ref={bottomGrid}
                     alignedGrids={[topGrid]}

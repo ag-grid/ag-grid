@@ -6,7 +6,7 @@ function extractPropertyKeys(filePath) {
     const testConfig = JSON.parse(fileContents);
 
     const propKeys = Object.entries(testConfig).filter(([k, v]) => {
-        return !v.description?.includes('deprecated');
+        return !v.meta?.tags?.some(tag => tag.name === 'deprecated');
     }).map(([k, v]) => k);
     return propKeys;
 }

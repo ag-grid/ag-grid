@@ -121,7 +121,6 @@
     "@vue/component-compiler-utils": "^2.6.0",
     "ag-charts-angular": "9.0.0-beta.20231103.1656",
     "ag-charts-community": "9.0.0-beta.20231103.1656",
-    "ag-charts-enterprise": "9.0.0-beta.20231103.1656",
     "ag-charts-react": "9.0.0-beta.20231103.1656",
     "ag-charts-vue": "9.0.0-beta.20231103.1656",
     "ag-grid-angular": "~30.2.0",

@@ -223,7 +223,7 @@ If you mix the methods above (eg if you are using CommonJS in your application, 
 |import {render} from "react-dom";
 |
 |import "@ag-grid-enterprise/core/styles/ag-grid.css";
-|import "@ag-grid-enterprise/core/styles/ag-theme-alpine.css";
+|import "@ag-grid-enterprise/core/styles/ag-theme-quartz.css";
 |
 |import {LicenseManager} from "@ag-grid-enterprise/core";
 |LicenseManager.setLicenseKey("your license key");
@@ -251,7 +251,7 @@ If you mix the methods above (eg if you are using CommonJS in your application, 
 |import Vue from "vue";
 |
 |import "@ag-grid-enterprise/styles/ag-grid.css";
-|import "@ag-grid-enterprise/styles/ag-theme-alpine.css";
+|import "@ag-grid-enterprise/styles/ag-theme-quartz.css";
 |
 |import { LicenseManager } from "@ag-grid-enterprise/core";
 |

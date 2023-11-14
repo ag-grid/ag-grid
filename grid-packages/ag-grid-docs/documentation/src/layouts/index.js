@@ -64,9 +64,7 @@ export const Layout = ({
             <div className={styles.mainContainer}>
                 <Helmet htmlAttributes={{ lang: 'en' }} />
 
-                <SiteHeader path={path} />
-
-                {!fullScreen && <TopBar frameworks={frameworks} currentFramework={framework} path={path} suppressFrameworkSelector={suppressFrameworkSelector} />}
+                <SiteHeader path={path} currentFramework={framework} />
 
                 <div className={classnames(styles.contentContainer, !fullScreen && styles.fullScreenPage)}>
                     <div className={styles.contentViewport}>

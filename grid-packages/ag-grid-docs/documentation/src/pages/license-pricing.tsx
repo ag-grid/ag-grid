@@ -97,7 +97,7 @@ const LicensePricing = () => {
                                 <div className={styles.rightInner}>
                                     <div className={styles.rightPrice}>
                                         <p className="font-size-small">Starting at...</p>
-                                        <p className={styles.price}>$1,183</p>
+                                        <p className={styles.price}>$1,199</p>
                                         <p className="font-size-small">Per Developer</p>
                                     </div>
                                     <div className={styles.rightInfo}>
@@ -109,7 +109,7 @@ const LicensePricing = () => {
 
                                 <a
                                     href="/ecommerce/#/ecommerce/?licenseType=single&productType=both"
-                                    className="button"
+                                    className="button button-secondary"
                                 >
                                     Configure Now
                                 </a>
@@ -157,34 +157,6 @@ const LicensePricing = () => {
                         </a>{' '}
                         and supported by our technical staff.
                     </p>
-                    {/* ////// taking out, until we have an equivalent for Charts Enterprise
-                        <p>
-                        <b>AG Grid Enterprise</b> offers advanced functionality like{' '}
-                        <a href={`${hostPrefix}/javascript-data-grid/grouping/`} target="_blank">
-                            Row Grouping
-                        </a>
-                        ,{' '}
-                        <a href={`${hostPrefix}/javascript-data-grid/range-selection/`} target="_blank">
-                            Range Selection
-                        </a>
-                        ,{' '}
-                        <a href={`${hostPrefix}/javascript-data-grid/master-detail/`} target="_blank">
-                            Master / Detail
-                        </a>
-                        ,{' '}
-                        <a href={`${hostPrefix}/javascript-data-grid/server-side-model/`} target="_blank">
-                            Server Side Row Model
-                        </a>{' '}
-                        and{' '}
-                        <a href={`${hostPrefix}/javascript-data-grid/licensing/#feature-comparison`} target="_blank">
-                            much much more
-                        </a>
-                        . <b>AG Grid Enterprise</b> also comes with{' '}
-                        <a href={`${hostPrefix}/javascript-data-grid/integrated-charts/`} target="_blank">
-                            Integrated Charts
-                        </a>
-                        , allowing your users to create charts using the grid's UI.
-                    </p> */}
 
                     <p>
                         To evaluate <b>AG Grid Enterprise</b> or <b>AG Charts Enterprise</b> you don't need our

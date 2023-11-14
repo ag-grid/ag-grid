@@ -351,6 +351,7 @@ const AG_GRID_LOCALE_EN = {
     ariaChecked: 'checked',
     ariaColumn: 'Column',
     ariaColumnGroup: 'Column Group',
+    ariaColumnFiltered: 'Column Filtered',
     ariaColumnSelectAll: 'Toggle Select All Columns',
     ariaDateFilterInput: 'Date Filter Input',
     ariaDefaultListName: 'List',
@@ -377,9 +378,9 @@ const AG_GRID_LOCALE_EN = {
     ariaUnchecked: 'unchecked',
     ariaVisible: 'visible',
     ariaSearchFilterValues: 'Search filter values',
+    ariaPageSizeShowLabel: 'Page Show Count',
 
     // ARIA Labels for Drop Zones
-
     ariaRowGroupDropZonePanelLabel: 'Row Groups',
     ariaValuesDropZonePanelLabel: 'Values',
     ariaPivotDropZonePanelLabel: 'Column Labels',

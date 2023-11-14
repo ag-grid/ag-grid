@@ -85,7 +85,7 @@ new SimpleGrid();
 </head>
 
 <body>
-    <div id="myGrid" style="height: 200px;width: 600px" class="ag-theme-alpine"></div>
+    <div id="myGrid" style="height: 200px;width: 600px" class="ag-theme-quartz"></div>
 </body>
 </html>
 ```

@@ -6,7 +6,7 @@ import { CsvExportModule } from '@ag-grid-community/csv-export';
 import { ExcelExportModule, exportMultipleSheetsAsExcel } from '@ag-grid-enterprise/excel-export';
 
 import '@ag-grid-community/styles/ag-grid.css';
-import '@ag-grid-community/styles/ag-theme-alpine.css';
+import '@ag-grid-community/styles/ag-theme-quartz.css';
 
 import 'styles.css';
 
@@ -34,7 +34,7 @@ const VueExample = {
                     <i class="fas fa-redo" style="margin-right: 5px;"></i>Reset
                 </button>
             </div>
-            <div class="grid-wrapper ag-theme-alpine">
+            <div class="grid-wrapper ag-theme-quartz">
                 <div class="panel panel-primary" style="margin-right: 10px;">
                     <div class="panel-heading">Athletes</div>
                     <div class="panel-body">

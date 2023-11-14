@@ -2,7 +2,7 @@
 
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
 import '@ag-grid-community/styles/ag-grid.css';
-import '@ag-grid-community/styles/ag-theme-alpine.css';
+import '@ag-grid-community/styles/ag-theme-quartz.css';
 import { AgGridReact } from '@ag-grid-community/react';
 import { RangeSelectionModule } from '@ag-grid-enterprise/range-selection';
 import { RichSelectModule } from '@ag-grid-enterprise/rich-select';
@@ -86,7 +86,7 @@ function GridExample() {
 
     return (
         <AgGridReact
-            className="ag-theme-alpine"
+            className="ag-theme-quartz"
             animateRows={true}
             columnDefs={columnDefs}
             defaultColDef={defaultColDef}

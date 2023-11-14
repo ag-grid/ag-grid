@@ -6,19 +6,21 @@ $toolbar-width: 1024px;
 .toolbar {
     width: 100%;
     position: relative;
-
     background-color: var(--toolbar-background);
-    
-    #{$darkmode-selector} {
-        background: #121f29;
-        border-bottom: 0.5px solid #394755;
+
+    #{$darkmode-selector} & {
+        border-bottom: 1px solid #394755;
     }
 }
 
 .controlsContainer {
-    padding-top: ($size-1 + 1px);
-    padding-bottom: $size-1;
+    padding: ($size-1 + 1px) $size-2 $size-1;
     overflow: auto;
+
+    @media screen and (min-width: $breakpoint-site-header-small){
+        padding-right: $size-3;
+        padding-left: $size-3;
+    }
 }
 
 .controls {
@@ -50,9 +52,17 @@ $toolbar-width: 1024px;
 .videoTour {
     display: flex;
     align-items: center;
-    gap: $size-1;
+    gap: 4px;
+
+    #{$darkmode-selector} & {
+        color: var(--default-text-color);
+    }
 
     :global(.icon) {
         fill: #f00;
+
+        #{$darkmode-selector} & {
+            fill: var(--default-text-color);
+        }
     }
 }

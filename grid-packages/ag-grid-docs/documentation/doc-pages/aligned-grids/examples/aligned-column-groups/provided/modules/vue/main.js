@@ -2,7 +2,7 @@ import Vue from 'vue';
 import { AgGridVue } from '@ag-grid-community/vue';
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
 import '@ag-grid-community/styles/ag-grid.css';
-import '@ag-grid-community/styles/ag-theme-alpine.css';
+import '@ag-grid-community/styles/ag-theme-quartz.css';
 
 import { ModuleRegistry } from '@ag-grid-community/core';
 // Register the required feature modules with the Grid
@@ -13,7 +13,7 @@ const VueExample = {
       <div style="height: 100%">
           <ag-grid-vue
               style="width: 100%; height: 45%;"
-              class="ag-theme-alpine"
+              class="ag-theme-quartz"
               ref="topGrid"
               :gridOptions="topOptions"
               :columnDefs="columnDefs"
@@ -23,7 +23,7 @@ const VueExample = {
           <div style='height: 5%'></div>
           <ag-grid-vue
               style="width: 100%; height: 45%;"
-              class="ag-theme-alpine"
+              class="ag-theme-quartz"
               ref="bottomGrid"
               :gridOptions="bottomOptions"
               :columnDefs="columnDefs"

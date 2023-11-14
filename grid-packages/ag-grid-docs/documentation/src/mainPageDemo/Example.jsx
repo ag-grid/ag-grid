@@ -44,6 +44,7 @@ import {
     suppressColumnMoveAnimation,
 } from './utils';
 import { WinningsFilter } from './WinningsFilter';
+import GlobalContextConsumer from 'components/GlobalContext';
 
 const IS_SSR = typeof window === 'undefined';
 
@@ -617,19 +618,21 @@ const desktopDefaultCols = [
     },
 ];
 
-const Example = () => {
+const ExampleInner = ({darkMode}) => {
     const gridRef = useRef(null);
     const loadInstance = useRef(0);
     const [gridTheme, setGridTheme] = useState(null);
     useEffect(() => {
+        
+    }, [darkMode]);
+    useEffect(() => {
         const themeFromURL = new URLSearchParams(window.location.search).get('theme');
-        if (themeFromURL) {
+        if (gridTheme == null && themeFromURL) {
             setGridTheme(themeFromURL)
         } else {
-            const isDarkMode = getComputedStyle(document.documentElement).getPropertyValue('--color-scheme') === 'dark';
-            setGridTheme(isDarkMode ? 'ag-theme-quartz-dark' : 'ag-theme-quartz');
+            setGridTheme(darkMode ? 'ag-theme-quartz-dark-blue' : 'ag-theme-quartz');
         }
-    }, []);
+    }, [darkMode]);
     const [base64Flags, setBase64Flags] = useState();
     const [defaultCols, setDefaultCols] = useState();
     const [isSmall, setIsSmall] = useState(false);
@@ -1424,6 +1427,7 @@ const Example = () => {
     }, [dataSize]);
 
     const isDarkTheme = gridTheme?.includes('dark');
+    const isAutoTheme = gridTheme?.includes('auto');
 
     useEffect(() => {
         if (isDarkTheme) {
@@ -1445,7 +1449,7 @@ const Example = () => {
                 <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.6.3/css/all.css" />
                 {helmet.map((entry) => entry)}
             </Helmet>
-            <div className={classnames(styles.exampleWrapper, isDarkTheme && styles.exampleWrapperDark)}>
+            <div className={classnames(styles.exampleWrapper, isAutoTheme ? styles.exampleWrapperAuto : (isDarkTheme ? styles.exampleWrapperDark : null))}>
                 <Toolbar
                     gridRef={gridRef}
                     dataSize={dataSize}
@@ -1478,5 +1482,13 @@ const Example = () => {
         </>
     );
 };
+
+const Example = () => (
+    <GlobalContextConsumer>
+        {({ darkMode }) => (
+            <ExampleInner darkMode={darkMode} />
+        )}
+    </GlobalContextConsumer>
+);
 
 export default Example;

@@ -36,7 +36,7 @@ function writeFile(destination, contents) {
     const themeOverride = process.env.AG_EXAMPLE_THEME_OVERRIDE;
 
     if (themeOverride && extensionsToOverride.has(path.extname(destination).slice(1))) {
-        contents = contents.replace(/ag-theme-alpine/g, `ag-theme-${themeOverride}`);
+        contents = contents.replace(/ag-theme-quartz/g, `ag-theme-${themeOverride}`);
     }
 
     const extension = path.extname(destination).slice(1);

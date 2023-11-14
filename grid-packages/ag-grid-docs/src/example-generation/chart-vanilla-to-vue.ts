@@ -22,9 +22,9 @@ function getImports(componentFileNames: string[], bindings): string[] {
         imports.push(...componentFileNames.map(getImport));
     }
 
-    if (bindings.chartSettings.enterprise) {
-        imports.push("import 'ag-charts-enterprise';");
-    }
+    // if (bindings.chartSettings.enterprise) {
+    //     imports.push("import 'ag-charts-enterprise';");
+    // }
 
     return imports;
 }

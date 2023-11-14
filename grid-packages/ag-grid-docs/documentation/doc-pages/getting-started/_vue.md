@@ -17,7 +17,7 @@
 |&lt;template>
 |  &lt;ag-grid-vue
 |    style="width: 500px; height: 200px"
-|    class="ag-theme-alpine"
+|    class="ag-theme-quartz"
 |    :columnDefs="columnDefs"
 |    :rowData="rowData"
 |  >
@@ -26,7 +26,7 @@
 |
 |&lt;script>
 |import "ag-grid-community/styles/ag-grid.css";
-|import "ag-grid-community/styles/ag-theme-alpine.css";
+|import "ag-grid-community/styles/ag-theme-quartz.css";
 |import { AgGridVue } from "ag-grid-vue3";
 |
 |export default {
@@ -188,7 +188,7 @@
 |&lt;template>
 |  &lt;button @click="deselectRows">deselect rows&lt;/button>
 |  &lt;ag-grid-vue
-|    class="ag-theme-alpine"
+|    class="ag-theme-quartz"
 |    style="height: 500px"
 |    :columnDefs="columnDefs.value"
 |    :rowData="rowData.value"
@@ -206,7 +206,7 @@
 |import { reactive, onMounted, ref } from "vue";
 |
 |import "ag-grid-community/styles/ag-grid.css"; // Core grid CSS, always needed
-|import "ag-grid-community/styles/ag-theme-alpine.css"; // Optional theme CSS
+|import "ag-grid-community/styles/ag-theme-quartz.css"; // Optional theme CSS
 |
 |export default {
 |  name: "App",
@@ -285,21 +285,21 @@
 <framework-specific-section frameworks="vue">
 <snippet transform={false} language="jsx">
 |import 'ag-grid-community/styles/ag-grid.css'; // Core grid CSS, always needed
-|import 'ag-grid-community/styles/ag-theme-alpine.css'; // Optional theme CSS
+|import 'ag-grid-community/styles/ag-theme-quartz.css'; // Optional theme CSS
 </snippet>
 </framework-specific-section>
 
 <framework-specific-section frameworks="vue">
 | The first `ag-grid.css` is always needed. It's the core structural CSS needed by the grid. Without this, the Grid will not work.
 |
-| The second `ag-theme-alpine.css` is the chosen [Grid Theme](/themes/). This is then subsequently applied to the Grid by including the Theme's CSS Class in the Grid's element `class="ag-theme-alpine"`.
+| The second `ag-theme-quartz.css` is the chosen [Grid Theme](/themes/). This is then subsequently applied to the Grid by including the Theme's CSS Class in the Grid's element `class="ag-theme-quartz"`.
 |
 </framework-specific-section>
 
 <framework-specific-section frameworks="vue">
 <snippet transform={false} language="jsx">
 | &lt;ag-grid-vue
-|    class="ag-theme-alpine"
+|    class="ag-theme-quartz"
 </snippet>
 </framework-specific-section>
 

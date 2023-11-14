@@ -27,6 +27,7 @@ const ExampleStyle = ({ rootId }) => <style media="only screen">
                 overflow: auto;
                 background-color: transparent
             }
+
         `}
 </style>;
 

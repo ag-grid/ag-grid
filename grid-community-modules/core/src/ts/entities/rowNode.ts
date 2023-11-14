@@ -342,18 +342,29 @@ export class RowNode<TData = any> implements IEventEmitter, IRowNode<TData> {
         this.setRowSelectable(isRowSelectableFunc ? isRowSelectableFunc!(this) : true);
     }
 
-    public setRowSelectable(newVal: boolean) {
+    public setRowSelectable(newVal: boolean, suppressSelectionUpdate?: boolean) {
         if (this.selectable !== newVal) {
             this.selectable = newVal;
             if (this.eventService) {
                 this.eventService.dispatchEvent(this.createLocalRowEvent(RowNode.EVENT_SELECTABLE_CHANGED));
             }
 
+            if (suppressSelectionUpdate) { return; }
+
             const isGroupSelectsChildren = this.beans.gridOptionsService.get('groupSelectsChildren');
             if (isGroupSelectsChildren) {
                 const selected = this.calculateSelectedFromChildren();
                 this.setSelectedParams({
                     newValue: selected ?? false,
+                    source: 'selectableChanged',
+                });
+                return;
+            }
+
+            // if row is selected but shouldn't be selectable, then deselect.
+            if (this.isSelected() && !this.selectable) {
+                this.setSelectedParams({
+                    newValue: false,
                     source: 'selectableChanged',
                 });
             }

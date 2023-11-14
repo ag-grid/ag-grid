@@ -1,7 +1,7 @@
 import { createApp } from 'vue';
 import { AgGridVue } from '@ag-grid-community/vue3';
 import '@ag-grid-community/styles/ag-grid.css';
-import '@ag-grid-community/styles/ag-theme-alpine.css';
+import '@ag-grid-community/styles/ag-theme-quartz.css';
 import './styles.css';
 import CustomGroupCellRenderer from './customGroupCellRendererVue.js';
 import { ModuleRegistry } from '@ag-grid-community/core';
@@ -18,7 +18,7 @@ const VueExample = {
                 <ag-grid-vue
                 
                 style="width: 100%; height: 100%;"
-                class="ag-theme-alpine"
+                class="ag-theme-quartz"
                 :columnDefs="columnDefs"
                 @grid-ready="onGridReady"
                 @cell-double-clicked="onCellDoubleClicked"

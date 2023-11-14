@@ -1,6 +1,7 @@
 import { Component, PostConstruct, RefSelector, ManagedFocusFeature, _ } from "@ag-grid-community/core";
 import { AgColorPicker } from "./agColorPicker";
-import { _Util } from 'ag-charts-enterprise';
+import { _Util } from 'ag-charts-community';
+// import { _Util } from 'ag-charts-enterprise';
 import { KeyCode } from "@ag-grid-community/core";
 
 export class AgColorPanel extends Component {

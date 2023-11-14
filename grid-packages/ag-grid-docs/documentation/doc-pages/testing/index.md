@@ -584,7 +584,7 @@ testing with AG Grid in this section.
 |     template:
 |         `&lt;div>
 |             &lt;ag-grid-angular
-|                 style="width: 100%; height: 350px;" class="ag-theme-alpine"
+|                 style="width: 100%; height: 350px;" class="ag-theme-quartz"
 |                 [columnDefs]="columnDefs"
 |                 [rowData]="rowData"
 |                 [stopEditingWhenCellsLoseFocus]="false"
@@ -663,7 +663,7 @@ testing with AG Grid in this section.
 | // not strictly required for testing but useful when debugging the grid in action
 | files: [
 |     '../node_modules/ag-grid-community/styles/ag-grid.css',
-|     '../node_modules/ag-grid-community/styles/ag-theme-alpine.css'
+|     '../node_modules/ag-grid-community/styles/ag-theme-quartz.css'
 | ]
 </snippet>
 </framework-specific-section>

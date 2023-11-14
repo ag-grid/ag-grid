@@ -36,19 +36,18 @@ const Menu = ({ currentFramework, path, menuData, expandAllGroups = false, hideC
 
     return (
         <nav className={classnames(styles.menu, 'font-size-responsive')}>
-            {whatsNewLink && (
-                <div className={styles.whatsNewLink}>
-                    <Link
-                        to={convertToFrameworkUrl(whatsNewLink.url, currentFramework)}
-                        activeClassName={styles.whatsNewLinkActive}
-                        onClick={collapseAllGroups}
-                    >
-                        {whatsNewLink.title}
-                    </Link>
-                </div>
-            )}
-
             <ul id="side-nav" className={classnames(styles.menuInner, 'list-style-none', 'collapse')}>
+                {whatsNewLink && (
+                    <li className={styles.whatsNewLink}>
+                        <Link
+                            to={convertToFrameworkUrl(whatsNewLink.url, currentFramework)}
+                            onClick={collapseAllGroups}
+                        >
+                            {whatsNewLink.title}
+                        </Link>
+                    </li>
+                )}
+
                 {filteredMenuData.map(({group, items}, index) => (
                     <React.Fragment key={group}>
 

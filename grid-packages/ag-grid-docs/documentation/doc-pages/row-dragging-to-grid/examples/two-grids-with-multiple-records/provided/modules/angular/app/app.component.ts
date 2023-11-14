@@ -3,7 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
 
 import "@ag-grid-community/styles/ag-grid.css";
-import "@ag-grid-community/styles/ag-theme-alpine.css";
+import "@ag-grid-community/styles/ag-theme-quartz.css";
 import { ModuleRegistry, ColDef, GetRowIdParams, GridApi, GridReadyEvent, ICellRendererParams } from '@ag-grid-community/core';
 import { ICellRendererAngularComp } from '@ag-grid-community/angular';
 
@@ -52,7 +52,7 @@ export class SportRenderer implements ICellRendererAngularComp {
                     </span>
                 </div>
             </div>
-            <div class="grid-wrapper ag-theme-alpine">
+            <div class="grid-wrapper ag-theme-quartz">
                 <div class="panel panel-primary" style="margin-right: 10px;">
                     <div class="panel-heading">Athletes</div>
                     <div class="panel-body">

@@ -1,8 +1,10 @@
 import { ColumnModel } from "../../../columns/columnModel";
 import { BeanStub } from "../../../context/beanStub";
 import { Autowired, PostConstruct } from "../../../context/context";
+import { CtrlsService } from "../../../ctrlsService";
 import { Column, ColumnPinnedType } from "../../../entities/column";
-import { setDisplayed } from "../../../utils/dom";
+import { PinnedWidthService } from "../../../gridBodyComp/pinnedWidthService";
+import { getInnerWidth, setDisplayed } from "../../../utils/dom";
 import { TouchListener } from "../../../widgets/touchListener";
 import { HorizontalResizeService } from "../../common/horizontalResizeService";
 import { IHeaderResizeFeature } from "../abstractCell/abstractHeaderCellCtrl";
@@ -12,6 +14,8 @@ import { HeaderCellCtrl, IHeaderCellComp } from "./headerCellCtrl";
 export class ResizeFeature extends BeanStub implements IHeaderResizeFeature {
 
     @Autowired('horizontalResizeService') private horizontalResizeService: HorizontalResizeService;
+    @Autowired('pinnedWidthService') private pinnedWidthService: PinnedWidthService;
+    @Autowired('ctrlsService') private ctrlsService: CtrlsService;
     @Autowired('columnModel') private columnModel: ColumnModel;
 
     private pinned: ColumnPinnedType;
@@ -19,6 +23,7 @@ export class ResizeFeature extends BeanStub implements IHeaderResizeFeature {
     private eResize: HTMLElement;
     private comp: IHeaderCellComp;
 
+    private lastResizeAmount: number;
     private resizeStartWidth: number;
     private resizeWithShiftKey: boolean;
 
@@ -101,8 +106,25 @@ export class ResizeFeature extends BeanStub implements IHeaderResizeFeature {
     }
 
     private onResizing(finished: boolean, resizeAmount: number): void {
+        const { column: key, lastResizeAmount, resizeStartWidth } = this;
+
         const resizeAmountNormalised = this.normaliseResizeAmount(resizeAmount);
-        const columnWidths = [{ key: this.column, newWidth: this.resizeStartWidth + resizeAmountNormalised }];
+        const newWidth = resizeStartWidth + resizeAmountNormalised;
+
+        const columnWidths = [{ key, newWidth }];
+
+        if (this.column.getPinned()) {
+            const leftWidth = this.pinnedWidthService.getPinnedLeftWidth();
+            const rightWidth = this.pinnedWidthService.getPinnedRightWidth();
+            const bodyWidth = getInnerWidth(this.ctrlsService.getGridBodyCtrl().getBodyViewportElement()) - 50;
+
+            if (leftWidth + rightWidth + (resizeAmountNormalised - lastResizeAmount) > bodyWidth) {
+                return;
+            }
+        }
+
+        this.lastResizeAmount = resizeAmountNormalised;
+
         this.columnModel.setColumnWidths(columnWidths, this.resizeWithShiftKey, finished, "uiColumnResized");
 
         if (finished) {
@@ -112,6 +134,7 @@ export class ResizeFeature extends BeanStub implements IHeaderResizeFeature {
 
     private onResizeStart(shiftKey: boolean): void {
         this.resizeStartWidth = this.column.getActualWidth();
+        this.lastResizeAmount = 0;
         this.resizeWithShiftKey = shiftKey;
 
         this.toggleColumnResizing(true);

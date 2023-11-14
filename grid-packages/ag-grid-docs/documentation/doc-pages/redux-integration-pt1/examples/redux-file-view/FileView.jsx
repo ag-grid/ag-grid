@@ -9,7 +9,7 @@ import { MenuModule } from '@ag-grid-enterprise/menu';
 import { RowGroupingModule } from '@ag-grid-enterprise/row-grouping';
 
 import "@ag-grid-community/styles/ag-grid.css";
-import "@ag-grid-community/styles/ag-theme-alpine.css";
+import "@ag-grid-community/styles/ag-theme-quartz.css";
 
 import { ModuleRegistry } from '@ag-grid-community/core';
 import { useMemo } from 'react';
@@ -38,7 +38,7 @@ class FileView extends Component {
 
   render() {
     return (
-      <div id='myGrid' style={{ flex: 1 }} className="ag-theme-alpine">
+      <div id='myGrid' style={{ flex: 1 }} className="ag-theme-quartz">
         <AgGridReact
           defaultColDef={this.defaultColDef}
           columnDefs={this.colDefs}

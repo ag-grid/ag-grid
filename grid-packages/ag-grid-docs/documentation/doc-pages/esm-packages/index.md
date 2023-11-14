@@ -17,7 +17,7 @@ If however you want to use ES Modules directly in the browser then you can do so
 <html>
 <head>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/ag-grid-enterprise/styles/ag-grid.css">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/ag-grid-enterprise/styles/ag-theme-alpine.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/ag-grid-enterprise/styles/ag-theme-quartz.css">
     <script type="module">
         import {
             Grid
@@ -58,7 +58,7 @@ If however you want to use ES Modules directly in the browser then you can do so
 </head>
 
 <body>
-<div id="myGrid" style="height: 200px; width:500px;" class="ag-theme-alpine"></div>
+<div id="myGrid" style="height: 200px; width:500px;" class="ag-theme-quartz"></div>
 </body>
 </html>
 ```

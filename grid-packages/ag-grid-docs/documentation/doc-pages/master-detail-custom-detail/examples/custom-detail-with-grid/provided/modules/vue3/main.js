@@ -5,7 +5,7 @@ import { MasterDetailModule } from '@ag-grid-enterprise/master-detail';
 import { MenuModule } from '@ag-grid-enterprise/menu';
 import { ColumnsToolPanelModule } from '@ag-grid-enterprise/column-tool-panel';
 import '@ag-grid-community/styles/ag-grid.css';
-import "@ag-grid-community/styles/ag-theme-alpine.css";
+import "@ag-grid-community/styles/ag-theme-quartz.css";
 import DetailCellRenderer from './detailCellRendererVue.js';
 
 import { ModuleRegistry } from '@ag-grid-community/core';
@@ -22,7 +22,7 @@ const VueExample = {
                 </div>
                 <ag-grid-vue
                         style="width: 100%; height: 100%;"
-                        class="ag-theme-alpine"
+                        class="ag-theme-quartz"
                         id="myGrid"
                         :columnDefs="columnDefs"
                         @grid-ready="onGridReady"

@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 
 import "@ag-grid-community/styles/ag-grid.css";
-import "@ag-grid-community/styles/ag-theme-alpine.css";
+import "@ag-grid-community/styles/ag-theme-quartz.css";
 import { ColDef, FirstDataRenderedEvent, GridApi, GridOptions, GridReadyEvent } from '@ag-grid-community/core';
 
 import { ModuleRegistry } from '@ag-grid-community/core';
@@ -18,7 +18,7 @@ ModuleRegistry.registerModules([ClientSideRowModelModule])
                  (drop)="gridDrop($event,'left')">
                 <ag-grid-angular
                         style="height: 100%"
-                        class="ag-theme-alpine"
+                        class="ag-theme-quartz"
                         [gridOptions]="leftGridOptions"
                         [columnDefs]="columnDefs"
                         (gridReady)="onGridReady($event,'left')">
@@ -48,7 +48,7 @@ ModuleRegistry.registerModules([ClientSideRowModelModule])
                  (drop)="gridDrop($event,'right')">
                 <ag-grid-angular
                         style="height: 100%"
-                        class="ag-theme-alpine"
+                        class="ag-theme-quartz"
                         [gridOptions]="rightGridOptions"
                         [columnDefs]="columnDefs"
                         (gridReady)="onGridReady($event,'right')">

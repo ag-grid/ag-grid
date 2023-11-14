@@ -17,14 +17,14 @@ with `defineExpose`, as follows:
 |  &lt;ag-grid-vue
 |      :columnDefs="columnDefs"
 |      :rowData="rowData"
-|      class="ag-theme-alpine">
+|      class="ag-theme-quartz">
 |  &lt;/ag-grid-vue>
 |&lt;/template>
 |
 |&lt;script setup>
 |import {ref} from 'vue';
 |import "ag-grid-community/styles/ag-grid.css";
-|import "ag-grid-community/styles/ag-theme-alpine.css";
+|import "ag-grid-community/styles/ag-theme-quartz.css";
 |import {AgGridVue} from "ag-grid-vue3";
 |
 |import CellComponentRenderer from "./CellComponentRenderer.vue"

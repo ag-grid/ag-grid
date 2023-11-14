@@ -1,7 +1,7 @@
 import { Component } from "@angular/core";
 
 import "@ag-grid-community/styles/ag-grid.css";
-import "@ag-grid-community/styles/ag-theme-alpine.css";
+import "@ag-grid-community/styles/ag-theme-quartz.css";
 
 import { RatioParentComponent } from "./ratio.parent.component";
 import { ClickableParentComponent } from "./clickable.parent.component";
@@ -11,7 +11,7 @@ import { ColDef, GridOptions, Module } from "@ag-grid-community/core";
 @Component({
     selector: 'my-app',
     template: `
-    <ag-grid-angular style="width: 100%; height: 360px;" class="ag-theme-alpine"
+    <ag-grid-angular style="width: 100%; height: 360px;" class="ag-theme-quartz"
                  [gridOptions]="gridOptions"
                  [modules]="modules">
     </ag-grid-angular>

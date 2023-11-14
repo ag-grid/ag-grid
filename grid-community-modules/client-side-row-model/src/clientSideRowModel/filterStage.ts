@@ -11,13 +11,6 @@ import { FilterService } from "./filterService";
 
 @Bean('filterStage')
 export class FilterStage extends BeanStub implements IRowNodeStage {
-    getImpactingGridOptions(): (keyof GridOptions<any>)[] {
-        return [
-            'treeData',
-            'excludeChildrenWhenTreeDataFiltering',
-        ];
-    }
-
     @Autowired('filterService') private filterService: FilterService;
 
     public execute(params: StageExecuteParams): void {

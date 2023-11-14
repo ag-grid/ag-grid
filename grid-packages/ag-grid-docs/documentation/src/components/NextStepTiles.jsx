@@ -5,7 +5,6 @@ import styles from './NextStepTiles.module.scss';
 
 // Use disableMarkdown if you need to use nested html within your note. E.g. <kbd>.
 const NextStepTiles = (props) => {
-    console.log('logging ze props:' + props.tutorial2);
     return (
         <div className={styles.tilesContainer}>
             {props.tutorial1 === "true" &&

@@ -20,7 +20,7 @@
         --button-text-color: var(--dark-blue-300);
 
         #{$darkmode-selector} & {
-            --button-text-color: var(--primary-800);
+            --button-text-color: rgb(0, 123, 255);
         }
     }
 

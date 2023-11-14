@@ -15,36 +15,35 @@ export class PageSizeSelectorComp extends Component {
     private hasEmptyOption = false;
 
     constructor() {
-        super(
-            `<span class="ag-paging-page-size"></span>`
-        );
+        super(/* html */`<span class="ag-paging-page-size"></span>`);
     }
 
     @PostConstruct
     private init() {
-        this.addManagedPropertyListener(
-            'paginationPageSizeSelector',
-            () => this.onPageSizeSelectorValuesChange(),
-        );
-    }
-
-    private get isSelectorVisible() {
-        return this.selectPageSizeComp !== undefined;
+        this.addManagedPropertyListener('paginationPageSizeSelector', () => {
+            this.onPageSizeSelectorValuesChange();
+        });
     }
 
     private handlePageSizeItemSelected = (): void => {
-        if (!this.selectPageSizeComp) {
-            return;
-        }
+        if (!this.selectPageSizeComp) { return; }
 
         const newValue = this.selectPageSizeComp.getValue();
+
         if (!newValue) { return; }
 
-        const newPageSize = Number(newValue);
-        if (isNaN(newPageSize) || newPageSize < 1) { return; }
-        if (newPageSize === this.gridOptionsService.get('paginationPageSize')) { return; }
+        const paginationPageSize = Number(newValue);
 
-        this.gridOptionsService.updateGridOptions({ options: { paginationPageSize: newPageSize } });
+        if (
+            isNaN(paginationPageSize) ||
+            paginationPageSize < 1 ||
+            paginationPageSize === this.gridOptionsService.get('paginationPageSize')
+        ) { return; }
+
+        const options = { paginationPageSize  };
+
+        this.gridOptionsService.updateGridOptions({ options });
+
         if (this.hasEmptyOption) {
             // Toggle the selector to force a refresh of the options and hide the empty option,
             // as it's no longer needed.
@@ -53,15 +52,15 @@ export class PageSizeSelectorComp extends Component {
     };
 
     public toggleSelectDisplay(show: boolean) {
-        if (this.isSelectorVisible) { this.reset(); }
-        if (!show) {
-            return;
+        if (this.selectPageSizeComp) {
+            this.reset();
         }
 
+        if (!show) { return; }
+
         this.reloadPageSizesSelector();
-        if (!this.selectPageSizeComp) {
-            return;
-        }
+
+        if (!this.selectPageSizeComp) { return; }
 
         this.appendChild(this.selectPageSizeComp);
     }
@@ -69,37 +68,33 @@ export class PageSizeSelectorComp extends Component {
     private reset(): void {
         clearElement(this.getGui());
 
-        if (this.selectPageSizeComp) {
-            this.destroyBean(this.selectPageSizeComp);
-            this.selectPageSizeComp = undefined;
-        }
+        if (!this.selectPageSizeComp) { return; }
+
+        this.destroyBean(this.selectPageSizeComp);
+        this.selectPageSizeComp = undefined;
     }
 
     private onPageSizeSelectorValuesChange(): void {
-        if (!this.isSelectorVisible) {
-            return;
-        }
+        if (!this.selectPageSizeComp) { return; }
 
         this.reloadPageSizesSelector();
     }
 
     private reloadPageSizesSelector(): void {
         const pageSizeOptions: (number | string)[] = this.getPageSizeSelectorValues();
-        const paginationPageSizeOption: number | string = this.gridOptionsService.get('paginationPageSize');
-        const shouldAddAndSelectEmptyOption = !paginationPageSizeOption || !pageSizeOptions.includes(paginationPageSizeOption)
+        const paginationPageSizeOption = this.gridOptionsService.get('paginationPageSize');
+        const shouldAddAndSelectEmptyOption = !paginationPageSizeOption || !pageSizeOptions.includes(paginationPageSizeOption);
+
         if (shouldAddAndSelectEmptyOption) {
-            // When the paginationPageSize option is set to a value that is not in the list of page size options,
-            // 
+            // When the paginationPageSize option is set to a value that is
+            // not in the list of page size options.
             pageSizeOptions.unshift('');
 
-            warnOnce('The paginationPageSize grid option is set to a value that is not in the list of page size options. ' +
-                'Please make sure that the paginationPageSize grid option is set to one of the values in the paginationPageSizeSelector array, ' +
-                'or set the paginationPageSizeSelector to false to hide the page size selector.');
+            warnOnce(
+                `The paginationPageSize grid option is set to a value that is not in the list of page size options.
+                Please make sure that the paginationPageSize grid option is set to one of the values in the paginationPageSizeSelector array, or set the paginationPageSizeSelector to false to hide the page size selector.`
+            );
         }
-
-        const options = pageSizeOptions.map(
-            value => ({ value: String(value), text: String(value) })
-        );
 
         if (this.selectPageSizeComp) {
             this.destroyBean(this.selectPageSizeComp);
@@ -109,12 +104,18 @@ export class PageSizeSelectorComp extends Component {
         const localeTextFunc = this.localeService.getLocaleTextFunc();
         const localisedLabel = localeTextFunc('pageSizeShowLabel', 'Show');
 
-        this.selectPageSizeComp = this.createManagedBean(new AgSelect());
-        this.selectPageSizeComp.addOptions(options)
+        const options = pageSizeOptions.map(value => ({
+            value: String(value),
+            text: String(value)
+        }));
+
+        const localisedAriaLabel = localeTextFunc('ariaPageSizeShowLabel', 'Page Show Count');
+
+        this.selectPageSizeComp = this.createManagedBean(new AgSelect())
+            .addOptions(options)
             .setValue(String(shouldAddAndSelectEmptyOption ? '' : paginationPageSizeOption))
+            .setAriaLabel(localisedAriaLabel)
             .setLabel(localisedLabel)
-            .setLabelAlignment('left')
-            .setAriaLabel(localisedLabel)
             .onValueChange(() => this.handlePageSizeItemSelected());
 
         this.hasEmptyOption = shouldAddAndSelectEmptyOption;
@@ -137,8 +138,8 @@ export class PageSizeSelectorComp extends Component {
     private validateValues(values: number[]): boolean {
         if (!values.length) {
             warnOnce(
-                `The paginationPageSizeSelector grid option is an empty array. This is most likely a mistake.` +
-                `If you want to hide the page size selector, please set the paginationPageSizeSelector to false.`
+                `The paginationPageSizeSelector grid option is an empty array. This is most likely a mistake.
+                If you want to hide the page size selector, please set the paginationPageSizeSelector to false.`
             );
 
             return false;
@@ -151,16 +152,16 @@ export class PageSizeSelectorComp extends Component {
 
             if (!isNumber) {
                 warnOnce(
-                    `The paginationPageSizeSelector grid option contains a non-numeric value.` +
-                    `Please make sure that all values in the paginationPageSizeSelector array are numbers.`
+                    `The paginationPageSizeSelector grid option contains a non-numeric value.
+                    Please make sure that all values in the paginationPageSizeSelector array are numbers.`
                 );
                 return false;
             }
 
             if (!isPositive) {
                 warnOnce(
-                    `The paginationPageSizeSelector grid option contains a negative number or zero. ` +
-                    `Please make sure that all values in the paginationPageSizeSelector array are positive.`
+                    `The paginationPageSizeSelector grid option contains a negative number or zero.
+                    Please make sure that all values in the paginationPageSizeSelector array are positive.`
                 );
 
                 return false;

@@ -7,10 +7,10 @@ This page contains information for troubleshooting and advanced use of CSS
 As described in [Customising Global Styles](/global-style-customisation/), you can set CSS variables and write CSS rules that target the grid's CSS class names:
 
 ```css
-.ag-theme-alpine {
+.ag-theme-quartz {
     --ag-background-color: #ddd;
 }
-.ag-theme-alpine .ag-header-cell-label {
+.ag-theme-quartz .ag-header-cell-label {
     font-style: italic;
 }
 ```
@@ -31,7 +31,7 @@ provided by the grid, you can do this by passing a CSS `var()` value to a CSS va
 
 
 ```css
-.ag-theme-alpine {
+.ag-theme-quartz {
     --ag-foreground-color: var(--appMainTextColor);
 }
 ```
@@ -68,7 +68,7 @@ Some design effects can't be achieved through CSS variables alone. For example, 
 It is important to include the name of the theme in the rule. Without the theme name, your styles will not override the theme's built-in styles due to CSS selector specificity rules:
 
 ```css
-.ag-theme-alpine .ag-header-cell-label {
+.ag-theme-quartz .ag-header-cell-label {
     font-style: italic;
 }
 ```
@@ -80,7 +80,7 @@ The best way to find the right class name to use in a CSS rule is using the brow
 You can reference CSS variables in your own CSS rules:
 
 ```css
-.ag-theme-alpine .ag-header-cell-label {
+.ag-theme-quartz .ag-header-cell-label {
     /* invert colours in header cells */
     background-color: var(--ag-foreground-color);
     foreground-color: var(--ag-background-color);
@@ -90,7 +90,7 @@ You can reference CSS variables in your own CSS rules:
 You can use `calc()` expressions to perform real-time calculations on size values:
 
 ```css
-.ag-theme-alpine .ag-header-cell-label {
+.ag-theme-quartz .ag-header-cell-label {
     padding-left: calc(var(--ag-grid-size) * 2)
 }
 ```

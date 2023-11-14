@@ -6,15 +6,15 @@ This section details how to provide your own icons for the grid and style grid i
 
 ## Swapping the Provided Icon Fonts
 
-Each provided theme comes with its own icon font. It is simple to use one provided theme with another theme's icons. Set `--ag-icon-font-family` to one of: `agGridAlpine`, `agGridBalham` or `agGridMaterial`. You can compare the available icon fonts in the [Provided Icons list](#provided-icons).
+Each provided theme comes with its own icon font. It is simple to use one provided theme with another theme's icons. Set `--ag-icon-font-family` to one of: `agGridQuartz`, `agGridAlpine`, `agGridBalham` or `agGridMaterial`. You can compare the available icon fonts in the [Provided Icons list](#provided-icons).
 
-If you are using the Sass API, it will embed the required font data for you. Apps using CSS should load the font's CSS file from whatever location they are loading `ag-grid.css` and other CSS files. For example to use the Alpine icons in the Material theme:
+If you are using the Sass API, it will embed the required font data for you. Apps using CSS should load the font's CSS file from whatever location they are loading `ag-grid.css` and other CSS files. For example to use the Material icons in the Quartz theme:
 
 1. Load `agGridMaterialFont.css`
-2. (optional) switch `ag-theme-alpine.css` for `ag-theme-alpine-no-font.css` to save a few kB if you no longer require the Material icons
+2. (optional) switch `ag-theme-quartz.css` for `ag-theme-quartz-no-font.css` to save a few kB if you no longer require the Quartz icons
 3. Set the CSS variable `--ag-icon-font-family: agGridMaterial`
 
-This example uses the Alpine theme with icons from the Material theme:
+This example uses the Quartz theme with icons from the Material theme:
 
 <grid-example title='Swapping the Icon Font' name='icons-swapping-font' type='generated' options='{ "enterprise": true, "modules": ["clientside", "rowgrouping", "menu", "setfilter", "columnpanel", "filterpanel"]  }'></grid-example>
 
@@ -30,7 +30,7 @@ If you intend to replace every icon in the grid using the same font then you can
 
 ```css
 /* replace all icons in the grid with icons from Font Awesome */
-.ag-theme-alpine {
+.ag-theme-quartz {
   --ag-icon-font-family: "Font Awesome 5 Free";
   --ag-icon-font-code-aggregation: "\f247";
   --ag-icon-font-code-arrows: "\f0b2";
@@ -43,7 +43,7 @@ Or to replace some icons without affecting others, set the variables using a CSS
 
 ```css
 /* selectively replace the group icon with one from Material Design Icons */
-.ag-theme-alpine .ag-icon-group {
+.ag-theme-quartz .ag-icon-group {
     --ag-icon-font-family: "Material Design Icons";
     --ag-icon-font-code-group: "\F0328";
 }
@@ -58,7 +58,7 @@ This example demonstrates both techniques - most icons are replaced by Font Awes
 To replace icons with an image, including SVG images, use CSS selectors that target the icon class. You can hide the existing icon character by setting the `color` to transparent.
 
 ```css
-.ag-theme-alpine .ag-icon-menu {
+.ag-theme-quartz .ag-icon-menu {
   background: transparent url("https://www.ag-grid.com/example-assets/svg-icons/menu.svg") center/contain no-repeat;
   color: transparent;
 }

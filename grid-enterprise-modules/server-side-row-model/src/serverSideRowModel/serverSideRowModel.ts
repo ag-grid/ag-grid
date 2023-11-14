@@ -108,14 +108,12 @@ export class ServerSideRowModel extends BeanStub implements IServerSideRowModel 
         this.addManagedListener(this.eventService, Events.EVENT_COLUMN_ROW_GROUP_CHANGED, resetListener);
         this.addManagedListener(this.eventService, Events.EVENT_COLUMN_PIVOT_MODE_CHANGED, resetListener);
         this.addManagedPropertyListeners([
-            'getRowId',
-            'masterDetail', 'isRowMaster',
-            'isRowSelectable', 'groupSelectsChildren',
-            'rowHeight', 'getRowHeight',
-            'treeData', 'isServerSideGroup', 'getServerSideGroupKey',
-            'removePivotHeaderRowWhenSingleValueColumn',
-            'suppressServerSideInfiniteScroll',
-            'cacheBlockSize',
+            /**
+             * Following properties omitted as they are likely to come with undesired  side effects.
+             * 'getRowId', 'isRowMaster', 'getRowHeight', 'isServerSideGroup', 'getServerSideGroupKey',
+             * */
+            'masterDetail', 'groupSelectsChildren', 'rowHeight', 'treeData', 'removePivotHeaderRowWhenSingleValueColumn',
+            'suppressServerSideInfiniteScroll', 'cacheBlockSize',
         ], resetListener);
         this.verifyProps();
 

@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 
 import '@ag-grid-community/styles/ag-grid.css';
-import '@ag-grid-community/styles/ag-theme-alpine.css';
+import '@ag-grid-community/styles/ag-theme-quartz.css';
 import '../styles.css';
 
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
@@ -31,7 +31,7 @@ ModuleRegistry.registerModules([
         <div class="example-wrapper">
             <div class="inner-col">
                 <ag-grid-angular
-                    class="ag-theme-alpine"
+                    class="ag-theme-quartz"
                     [defaultColDef]="defaultColDef"
                     [rowData]="leftRowData"
                     [modules]="leftModules"
@@ -43,7 +43,7 @@ ModuleRegistry.registerModules([
 
             <div class="inner-col">
                 <ag-grid-angular
-                    class="ag-theme-alpine"
+                    class="ag-theme-quartz"
                     [defaultColDef]="defaultColDef"
                     [rowData]="leftRowData"
                     [modules]="rightModules"

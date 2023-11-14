@@ -2,7 +2,7 @@ import Vue from 'vue';
 import { AgGridVue } from '@ag-grid-community/vue';
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
 import "@ag-grid-community/styles/ag-grid.css";
-import "@ag-grid-community/styles/ag-theme-alpine.css";
+import "@ag-grid-community/styles/ag-theme-quartz.css";
 import ChildMessageRenderer from './childMessageRendererVue.js';
 import CubeRenderer from './cubeRendererVue.js';
 import CurrencyRenderer from './currencyRendererVue.js';
@@ -22,7 +22,7 @@ const VueExample = {
             </button>
             <ag-grid-vue
                     style="width: 100%; height: 100%;"
-                    class="ag-theme-alpine"
+                    class="ag-theme-quartz"
                     id="myGrid"
                     @grid-ready="onGridReady"
                     :columnDefs="columnDefs"

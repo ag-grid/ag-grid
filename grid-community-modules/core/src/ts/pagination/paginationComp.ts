@@ -212,7 +212,7 @@ export class PaginationComp extends Component {
         this.toggleButtonDisabled(this.btPrevious, this.previousAndFirstButtonsDisabled);
 
         const zeroPagesToDisplay = this.isZeroPagesToDisplay();
-        const onLastPage = maxRowFound && currentPage === (totalPages - 1);
+        const onLastPage = currentPage === (totalPages - 1);
 
         this.nextButtonDisabled = onLastPage || zeroPagesToDisplay;
         this.lastButtonDisabled = !maxRowFound || zeroPagesToDisplay || currentPage === (totalPages - 1);

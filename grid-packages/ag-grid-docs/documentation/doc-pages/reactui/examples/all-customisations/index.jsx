@@ -16,7 +16,7 @@ import { FiltersToolPanelModule } from '@ag-grid-enterprise/filter-tool-panel';
 import { MenuModule } from '@ag-grid-enterprise/menu';
 import { StatusBarModule } from '@ag-grid-enterprise/status-bar';
 import '@ag-grid-community/styles/ag-grid.css';
-import '@ag-grid-community/styles/ag-theme-alpine.css';
+import '@ag-grid-community/styles/ag-theme-quartz.css';
 
 import { ModuleRegistry } from '@ag-grid-community/core';
 // Register the required feature modules with the Grid
@@ -113,7 +113,7 @@ function GridExample() {
                 ref={gridRef}
                 sideBar={sideBar}
                 statusBar={statusBar}
-                className="ag-theme-alpine my-grid"
+                className="ag-theme-quartz my-grid"
                 animateRows="true"
                 loadingOverlayComponent={MyLoadingOverlay}
                 noRowsOverlayComponent={MyNoRowsOverlay}

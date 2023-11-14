@@ -28,10 +28,16 @@ export interface AbstractColDef<TData = any, TValue = any> {
     columnGroupShow?: ColumnGroupShowType;
     /** CSS class to use for the tool panel cell. Can be a string, array of strings, or function. */
     toolPanelClass?: ToolPanelClass<TData, TValue>;
-    /** Set to `true` if you do not want this column or group to appear in the Columns Tool Panel. Default: `false` */
+    /**
+     * Set to `true` if you do not want this column or group to appear in the Columns Tool Panel.
+     * @default false
+     */
     suppressColumnsToolPanel?: boolean;
 
-    /** Set to `true` if you do not want this column (filter) or group (filter group) to appear in the Filters Tool Panel. Default: `false` */
+    /**
+     * Set to `true` if you do not want this column (filter) or group (filter group) to appear in the Filters Tool Panel.
+     * @default false
+     */
     suppressFiltersToolPanel?: boolean;
 
     /**
@@ -52,12 +58,19 @@ export interface ColGroupDef<TData = any> extends AbstractColDef<TData> {
     children: (ColDef<TData> | ColGroupDef<TData>)[];
     /** The unique ID to give the column. This is optional. If missing, a unique ID will be generated. This ID is used to identify the column group in the column API. */
     groupId?: string;
-    /** Set to `true` if this group should be opened by default. Default: `false` */
+    /**
+     * Set to `true` if this group should be opened by default.
+     * @default false
+     */
     openByDefault?: boolean;
-    /** Set to `true` to keep columns in this group beside each other in the grid. Moving the columns outside of the group (and hence breaking the group) is not allowed. Default: `false` */
+    /**
+     * Set to `true` to keep columns in this group beside each other in the grid. Moving the columns outside of the group (and hence breaking the group) is not allowed.
+     * @default false
+     */
     marryChildren?: boolean;
     /**
-     * If `true` the label of the Column Group will not scroll alongside the grid to always remain visible. Default: `false`
+     * If `true` the label of the Column Group will not scroll alongside the grid to always remain visible.
+     * @default false
      */
     suppressStickyLabel?: boolean;
 
@@ -161,7 +174,7 @@ export interface ColDef<TData = any, TValue = any> extends AbstractColDef<TData,
      * It will also not work if the `valueGetter`, `valueParser` or `refData` properties are defined,
      * or if this column is a sparkline.
      * 
-     * Default: `true`
+     * @default true
      */
     cellDataType?: boolean | string;
     /** Function or expression. Gets the value from your data for display. */
@@ -173,7 +186,9 @@ export interface ColDef<TData = any, TValue = any> extends AbstractColDef<TData,
     /**
      * Function to return a string key for a value.
      * This string is used for grouping, Set filtering, and searching within cell editor dropdowns.
-     * When filtering and searching the string is exposed to the user, so make sure to return a human-readable value. */
+     * When filtering and searching the string is exposed to the user, so make sure to return a human-readable value.
+     * @managed
+     */
     keyCreator?: (params: KeyCreatorParams<TData, TValue>) => string;
     /**
      * Custom comparator for values, used by renderer to know if values have changed. Cells whose values have not changed don't get refreshed.
@@ -187,19 +202,29 @@ export interface ColDef<TData = any, TValue = any> extends AbstractColDef<TData,
      * If using a custom `tooltipComponent` you may return any custom value to be passed to your tooltip component.
      */
     tooltipValueGetter?: (params: ITooltipParams<TData, TValue>) => string | any;
-    /** Set to `true` (or return `true` from function) to render a selection checkbox in the column. Default: `false` */
+    /**
+     * Set to `true` (or return `true` from function) to render a selection checkbox in the column.
+     * @default false
+     * @managed
+     */
     checkboxSelection?: boolean | CheckboxSelectionCallback<TData, TValue>;
-    /** Set to `true` to display a disabled checkbox when row is not selectable and checkboxes are enabled. Default: `false` */
+    /**
+     * Set to `true` to display a disabled checkbox when row is not selectable and checkboxes are enabled.
+     * @default false
+     */
     showDisabledCheckboxes?: boolean;
     /** Icons to use inside the column instead of the grid's default icons. Leave undefined to use defaults. */
     icons?: { [key: string]: Function | string; };
     /**
      * Set to `true` if this column is not navigable (i.e. cannot be tabbed into), otherwise `false`.
      * Can also be a callback function to have different rows navigable.
-     * Default: `false`
+     * @default false
      */
     suppressNavigable?: boolean | SuppressNavigableCallback<TData, TValue>;
-    /** Allows the user to suppress certain keyboard events in the grid cell. Default: `false` */
+    /**
+     * Allows the user to suppress certain keyboard events in the grid cell.
+     * @default false
+     */
     suppressKeyboardEvent?: (params: SuppressKeyboardEventParams<TData, TValue>) => boolean;
     /**
      * Pasting is on by default as long as cells are editable (non-editable cells cannot be modified, even with a paste operation).
@@ -211,28 +236,40 @@ export interface ColDef<TData = any, TValue = any> extends AbstractColDef<TData,
 
     // *** Columns: Display *** //
 
-    /** Set to `true` for this column to be hidden. Default: `false` */
+    /**
+     * Set to `true` for this column to be hidden.
+     * @default false
+     */
     hide?: boolean;
     /** Same as `hide`, except only applied when creating a new column. Not applied when updating column definitions. */
     initialHide?: boolean;
-    /** Set to `true` to block making column visible / hidden via the UI (API will still work). Default: `false` */
+    /**
+     * Set to `true` to block making column visible / hidden via the UI (API will still work).
+     * @default false
+     */
     lockVisible?: boolean;
     /** Lock a column to position to `'left'` or`'right'` to always have this column displayed in that position. `true` is treated as `'left'` */
     lockPosition?: boolean | 'left' | 'right';
-    /** Set to `true` if you do not want this column to be movable via dragging. Default: `false` */
+    /**
+     * Set to `true` if you do not want this column to be movable via dragging.
+     * @default false
+     */
     suppressMovable?: boolean;
     /**
      * By default, values are formatted using the column's `valueFormatter` when exporting data from the grid.
      * This applies to CSV and Excel export, as well as clipboard operations and the fill handle.
      * Set to `false` to prevent values from being formatted for these operations.
      * Regardless of this option, if custom handling is provided for the export operation, the value formatter will not be used.
-     * Default: `true`
+     * @default true
      */
     useValueFormatterForExport?: boolean;
 
     // *** Columns: Editing *** //
 
-    /** Set to `true` if this column is editable, otherwise `false`. Can also be a function to have different rows editable. Default: `false` */
+    /**
+     * Set to `true` if this column is editable, otherwise `false`. Can also be a function to have different rows editable.
+     * @default false
+     */
     editable?: boolean | EditableCallback<TData, TValue>;
     /** Function or expression. Sets the value into your data for saving. Return `true` if the data changed. */
     valueSetter?: string | ValueSetterFunc<TData, TValue>;
@@ -248,7 +285,10 @@ export interface ColDef<TData = any, TValue = any> extends AbstractColDef<TData,
     /** Callback to select which cell editor to be used for a given row within the same column. */
     cellEditorSelector?: CellEditorSelectorFunc<TData, TValue>;
 
-    /** Set to `true` to have cells under this column enter edit mode after single click. Default: `false` */
+    /**
+     * Set to `true` to have cells under this column enter edit mode after single click.
+     * @default false
+     */
     singleClickEdit?: boolean;
 
     /**
@@ -260,14 +300,15 @@ export interface ColDef<TData = any, TValue = any> extends AbstractColDef<TData,
      *  - `over` Popup will be positioned over the cell
      *  - `under` Popup will be positioned below the cell leaving the cell value visible.
      *
-     * Default: `over`. */
+     * @default 'over'
+     */
     cellEditorPopupPosition?: 'over' | 'under';
     /**
      * By default, values are parsed using the column's `valueParser` when importing data to the grid.
      * This applies to clipboard operations and the fill handle.
      * Set to `false` to prevent values from being parsed for these operations.
      * Regardless of this option, if custom handling is provided for the import operation, the value parser will not be used.
-     * Default: `true`
+     * @default true
      */
     useValueParserForImport?: boolean;
 
@@ -286,9 +327,15 @@ export interface ColDef<TData = any, TValue = any> extends AbstractColDef<TData,
 
     /** A function to tell the grid what Quick Filter text to use for this column if you don't want to use the default (which is calling `toString` on the value). */
     getQuickFilterText?: (params: GetQuickFilterTextParams<TData, TValue>) => string;
-    /** Function or expression. Gets the value for filtering purposes. */
+    /**
+     * Function or expression. Gets the value for filtering purposes.
+     * @managed
+     */
     filterValueGetter?: string | ValueGetterFunc<TData, TValue>;
-    /** Whether to display a floating filter for this column. Default: `false` */
+    /**
+     * Whether to display a floating filter for this column.
+     * @default false
+     */
     floatingFilter?: boolean;
 
     // *** Column Headers *** //
@@ -297,7 +344,8 @@ export interface ColDef<TData = any, TValue = any> extends AbstractColDef<TData,
     wrapHeaderText?: boolean;
     /** If enabled then the column header row will automatically adjust height to accommodate the size of the header cell.
     * This can be useful when using your own `headerComponent` or long header names in conjunction with `wrapHeaderText`.
-    * Default: `false`
+    * @default false
+    * @managed
     */
     autoHeaderHeight?: boolean;
 
@@ -316,13 +364,24 @@ export interface ColDef<TData = any, TValue = any> extends AbstractColDef<TData,
     menuTabs?: ColumnMenuTab[];
     /** Params used to change the behaviour and appearance of the Columns Menu tab. */
     columnsMenuParams?: ColumnsMenuParams;
-    /** Set to `true` if no menu should be shown for this column header. Default: `false` */
+    /**
+     * Set to `true` if no menu should be shown for this column header.
+     * @default false
+     */
     suppressMenu?: boolean;
     /** If `true` or the callback returns `true`, a 'select all' checkbox will be put into the header. */
     headerCheckboxSelection?: boolean | HeaderCheckboxSelectionCallback<TData, TValue>;
-    /** If `true`, the header checkbox selection will only select filtered items. */
+    /**
+     * If `true`, the header checkbox selection will only select filtered items.
+     * @default false
+     * @managed
+     */
     headerCheckboxSelectionFilteredOnly?: boolean;
-    /** If `true`, the header checkbox selection will only select nodes on the current page. */
+    /**
+     * If `true`, the header checkbox selection will only select nodes on the current page.
+     * @default false
+     * @managed
+     */
     headerCheckboxSelectionCurrentPageOnly?: boolean;
 
     // *** Columns: Integrated Charts *** //
@@ -336,7 +395,10 @@ export interface ColDef<TData = any, TValue = any> extends AbstractColDef<TData,
     pinned?: boolean | 'left' | 'right' | null;
     /** Same as `pinned`, except only applied when creating a new column. Not applied when updating column definitions. */
     initialPinned?: boolean | 'left' | 'right';
-    /** Set to true to block the user pinning the column, the column can only be pinned via definitions or API. Default: `false`  */
+    /**
+     * Set to true to block the user pinning the column, the column can only be pinned via definitions or API.
+     * @default false
+     */
     lockPinned?: boolean;
 
     // *** Columns: Pivoting *** //
@@ -360,7 +422,10 @@ export interface ColDef<TData = any, TValue = any> extends AbstractColDef<TData,
      * The values will always be strings, as the pivot service uses strings as keys for the pivot groups.
      */
     pivotComparator?: (valueA: string, valueB: string) => number;
-    /** Set to `true` if you want to be able to pivot by this column via the GUI. This will not block the API or properties being used to achieve pivot. Default: `false` */
+    /**
+     * Set to `true` if you want to be able to pivot by this column via the GUI. This will not block the API or properties being used to achieve pivot.
+     * @default false
+     */
     enablePivot?: boolean;
 
     // *** Columns: Rendering and Styling *** //
@@ -369,7 +434,10 @@ export interface ColDef<TData = any, TValue = any> extends AbstractColDef<TData,
     cellStyle?: CellStyle | CellStyleFunc<TData, TValue>;
     /** Class to use for the cell. Can be string, array of strings, or function that returns a string or array of strings. */
     cellClass?: string | string[] | CellClassFunc<TData, TValue>;
-    /** Rules which can be applied to include certain CSS classes. */
+    /**
+     * Rules which can be applied to include certain CSS classes.
+     * @managed
+     */
     cellClassRules?: CellClassRules<TData, TValue>;
 
     /**
@@ -382,35 +450,59 @@ export interface ColDef<TData = any, TValue = any> extends AbstractColDef<TData,
     /** Callback to select which cell renderer to be used for a given row within the same column. */
     cellRendererSelector?: CellRendererSelectorFunc<TData, TValue>;
 
-    /** Set to `true` to have the grid calculate the height of a row based on contents of this column. Default: `false` */
+    /**
+     * Set to `true` to have the grid calculate the height of a row based on contents of this column.
+     * @default false
+     * @managed
+     */
     autoHeight?: boolean;
-    /** Set to `true` to have the text wrap inside the cell - typically used with `autoHeight`. Default: `false` */
+    /**
+     * Set to `true` to have the text wrap inside the cell - typically used with `autoHeight`.
+     * @default false
+     */
     wrapText?: boolean;
-    /** Set to `true` to flash a cell when it's refreshed. Default: `false` */
+    /**
+     * Set to `true` to flash a cell when it's refreshed.
+     * @default false
+     */
     enableCellChangeFlash?: boolean;
-    /** Set to `true` to prevent this column from flashing on changes. Only applicable if cell flashing is turned on for the grid. Default: `false` */
+    /**
+     * Set to `true` to prevent this column from flashing on changes. Only applicable if cell flashing is turned on for the grid.
+     * @default false
+     */
     suppressCellFlash?: boolean;
 
     // *** Columns: Row Dragging *** //
 
-    /** `boolean` or `Function`. Set to `true` (or return `true` from function) to allow row dragging. Default: `false` */
+    /**
+     * `boolean` or `Function`. Set to `true` (or return `true` from function) to allow row dragging.
+     * @default false
+     */
     rowDrag?: boolean | RowDragCallback<TData, TValue>;
 
     /**
      * A callback that should return a string to be displayed by the `rowDragComp` while dragging a row.
      * If this callback is not set, the `rowDragText` callback in the `gridOptions` will be used and
      * if there is no callback in the `gridOptions` the current cell value will be used.
+     * @managed
      */
     rowDragText?: (params: IRowDragItem, dragItemCount: number) => string;
 
-    /** `boolean` or `Function`. Set to `true` (or return `true` from function) to allow dragging for native drag and drop. Default: `false` */
+    /**
+     * `boolean` or `Function`. Set to `true` (or return `true` from function) to allow dragging for native drag and drop.
+     * @default false
+     * @managed
+     */
     dndSource?: boolean | DndSourceCallback<TData, TValue>;
     /** Function to allow custom drag functionality for native drag and drop. */
     dndSourceOnRowDrag?: (params: DndSourceOnRowDragParams<TData>) => void;
 
     // *** Columns: Row Grouping *** //
 
-    /** Set to `true` to row group by this column. Default: `false` */
+    /**
+     * Set to `true` to row group by this column.
+     * @default false
+     */
     rowGroup?: boolean;
     /** Same as `rowGroup`, except only applied when creating a new column. Not applied when updating column definitions. */
     initialRowGroup?: boolean;
@@ -425,13 +517,13 @@ export interface ColDef<TData = any, TValue = any> extends AbstractColDef<TData,
     /**
      * Set to `true` if you want to be able to row group by this column via the GUI.
      * This will not block the API or properties being used to achieve row grouping.
-     * Default: `false`
+     * @default false
      */
     enableRowGroup?: boolean;
     /**
      * Set to `true` if you want to be able to aggregate by this column via the GUI.
      * This will not block the API or properties being used to achieve aggregation.
-     * Default: `false`
+     * @default false
      */
     enableValue?: boolean;
     /** Name of function to use for aggregation. In-built options are: `sum`, `min`, `max`, `count`, `avg`, `first`, `last`. Also accepts a custom aggregation name or an aggregation function. */
@@ -441,7 +533,7 @@ export interface ColDef<TData = any, TValue = any> extends AbstractColDef<TData,
     /**
      * The name of the aggregation function to use for this column when it is enabled via the GUI.
      * Note that this does not immediately apply the aggregation function like `aggFunc`
-     * Default: `sum`
+     * @default 'sum'
      */
     defaultAggFunc?: string;
     /**
@@ -455,7 +547,10 @@ export interface ColDef<TData = any, TValue = any> extends AbstractColDef<TData,
 
     // *** Columns: Sort *** //
 
-    /** Set to `true` to allow sorting on this column. Default: `false` */
+    /**
+     * Set to `true` to allow sorting on this column.
+     * @default false
+     */
     sortable?: boolean;
     /** If sorting by default, set it here. Set to `asc` or `desc`. */
     sort?: SortDirection;
@@ -486,14 +581,21 @@ export interface ColDef<TData = any, TValue = any> extends AbstractColDef<TData,
         nodeB: IRowNode<TData>,
         isDescending: boolean
     ) => number;
-    /** Set to `true` if you want the unsorted icon to be shown when no sort is applied to this column. Default: `false` */
+    /**
+     * Set to `true` if you want the unsorted icon to be shown when no sort is applied to this column.
+     * @default false
+     * @managed
+     */
     unSortIcon?: boolean;
 
     // *** Columns: Spanning *** //
 
     /** By default, each cell will take up the width of one column. You can change this behaviour to allow cells to span multiple columns. */
     colSpan?: (params: ColSpanParams<TData, TValue>) => number;
-    /** By default, each cell will take up the height of one row. You can change this behaviour to allow cells to span multiple rows. */
+    /**
+     * By default, each cell will take up the height of one row. You can change this behaviour to allow cells to span multiple rows.
+     * @managed
+     */
     rowSpan?: (params: RowSpanParams<TData, TValue>) => number;
 
     // *** Columns: Widths *** //
@@ -510,11 +612,21 @@ export interface ColDef<TData = any, TValue = any> extends AbstractColDef<TData,
     flex?: number;
     /** Same as `flex`, except only applied when creating a new column. Not applied when updating column definitions. */
     initialFlex?: number;
-    /** Set to `true` to allow this column should be resized. Default: `false` */
+    /**
+     * Set to `true` to allow this column should be resized.
+     * @default false
+     */
     resizable?: boolean;
-    /** Set to `true` if you want this column's width to be fixed during 'size to fit' operations. Default: `false` */
+    /**
+     * Set to `true` if you want this column's width to be fixed during 'size to fit' operations.
+     * @default false
+     */
     suppressSizeToFit?: boolean;
-    /** Set to `true` if you do not want this column to be auto-resizable by double clicking it's edge. Default: `false` */
+    /**
+     * Set to `true` if you do not want this column to be auto-resizable by double clicking it's edge.
+     * @default false
+     * @managed
+     */
     suppressAutoSize?: boolean;
 
     /** Never set this, it is used internally by grid when doing in-grid pivoting */
@@ -522,7 +634,11 @@ export interface ColDef<TData = any, TValue = any> extends AbstractColDef<TData,
     /** Never set this, it is used internally by grid when doing in-grid pivoting */
     pivotTotalColumnIds?: string[];
 
-    /** Set to `true` if you don't want the column header for this column to span the whole height of the header container. Default: `false` */
+    /**
+     * Set to `true` if you don't want the column header for this column to span the whole height of the header container.
+     * @default false
+     * @managed
+     */
     suppressSpanHeaderHeight?: boolean;
 }
 

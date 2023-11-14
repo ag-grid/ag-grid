@@ -6,7 +6,7 @@ import { CsvExportModule } from '@ag-grid-community/csv-export';
 import { ExcelExportModule, exportMultipleSheetsAsExcel } from '@ag-grid-enterprise/excel-export';
 
 import "@ag-grid-community/styles/ag-grid.css";
-import "@ag-grid-community/styles/ag-theme-alpine.css";
+import "@ag-grid-community/styles/ag-theme-quartz.css";
 import './styles.css';
 
 
@@ -186,7 +186,7 @@ const GridExample = () => {
     return (
         <div className="top-container">
             {getTopToolBar()}
-            <div className="grid-wrapper ag-theme-alpine">
+            <div className="grid-wrapper ag-theme-quartz">
                 {getGridWrapper(0)}
                 {getGridWrapper(1)}
             </div>

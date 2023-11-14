@@ -57,10 +57,10 @@
                 main: './dist/main.cjs.js',
                 defaultExtension: 'js'
             },
-            'ag-charts-enterprise': {
-                main: './dist/main.cjs.js',
-                defaultExtension: 'js'
-            },
+            // 'ag-charts-enterprise': {
+            //     main: './dist/main.cjs.js',
+            //     defaultExtension: 'js'
+            // },
             'ag-grid-react': {
                 main: './lib/main.js',
                 defaultExtension: 'js'

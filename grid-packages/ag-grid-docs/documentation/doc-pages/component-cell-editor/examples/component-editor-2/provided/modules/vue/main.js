@@ -1,6 +1,6 @@
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
 import '@ag-grid-community/styles/ag-grid.css';
-import '@ag-grid-community/styles/ag-theme-alpine.css';
+import '@ag-grid-community/styles/ag-theme-quartz.css';
 import { AgGridVue } from '@ag-grid-community/vue';
 import { RichSelectModule } from '@ag-grid-enterprise/rich-select';
 import Vue from 'vue';
@@ -33,7 +33,7 @@ const VueExample = {
             <ag-grid-vue
                 
                 style="width: 100%; height: 100%;"
-                class="ag-theme-alpine"
+                class="ag-theme-quartz"
                 :columnDefs="columnDefs"
                 @grid-ready="onGridReady"
                 :rowData="rowData"

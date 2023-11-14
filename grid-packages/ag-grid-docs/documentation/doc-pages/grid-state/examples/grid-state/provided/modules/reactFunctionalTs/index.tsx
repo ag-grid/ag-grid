@@ -5,7 +5,7 @@ import React, { useCallback, useMemo, useRef, useState, StrictMode } from 'react
 import { createRoot } from 'react-dom/client';
 import { AgGridReact } from '@ag-grid-community/react';
 import '@ag-grid-community/styles/ag-grid.css';
-import '@ag-grid-community/styles/ag-theme-alpine.css';
+import '@ag-grid-community/styles/ag-theme-quartz.css';
 import './styles.css';
 import { IOlympicData } from './interfaces'
 import { ColDef, GridPreDestroyedEvent, GridReadyEvent, GridState, ModuleRegistry, StateUpdatedEvent } from '@ag-grid-community/core';
@@ -92,7 +92,7 @@ const GridExample = () => {
                         <button onClick={printState}>Print State</button>
                     </span>
                 </div>
-                <div  style={gridStyle} className="ag-theme-alpine">             
+                <div  style={gridStyle} className="ag-theme-quartz">             
                     {gridVisible && <AgGridReact<IOlympicData>
                         ref={gridRef}
                         rowData={rowData}

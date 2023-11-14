@@ -65,7 +65,7 @@ Use the setup instructions below or go through [a 5-minute-quickstart guide](htt
     import {AgGridReact} from 'ag-grid-react';
     
     import 'ag-grid-community/styles//ag-grid.css';
-    import 'ag-grid-community/styles//ag-theme-alpine.css';
+    import 'ag-grid-community/styles//ag-theme-quartz.css';
 
 ### Set the grid's configuration in a parent component
 	class App extends Component {
@@ -97,7 +97,7 @@ Use the setup instructions below or go through [a 5-minute-quickstart guide](htt
 		render() {
 			return (
 				<div
-					className="ag-theme-alpine"
+					className="ag-theme-quartz"
 					style={{
 						height: '500px',
 						width: '600px'

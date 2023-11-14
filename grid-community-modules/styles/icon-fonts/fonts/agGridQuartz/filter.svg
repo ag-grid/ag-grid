@@ -1,7 +1,3 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
-<svg width="100%" height="100%" viewBox="0 0 32 32" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2;">
-    <g id="filter">
-        <path d="M28,8L20,16L20,21L14,27L14,16L6,8L6,6L28,6L28,8ZM9,8L16,15L16,22L18,20L18,15L25,8L9,8Z" style="fill-rule:nonzero;"/>
-    </g>
+<svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path fill-rule="evenodd" clip-rule="evenodd" d="M1.5 3.5C1.5 3.22386 1.72386 3 2 3H14C14.2761 3 14.5 3.22386 14.5 3.5C14.5 3.77614 14.2761 4 14 4H2C1.72386 4 1.5 3.77614 1.5 3.5ZM4.16667 7.5C4.16667 7.22386 4.39053 7 4.66667 7H11.3333C11.6095 7 11.8333 7.22386 11.8333 7.5C11.8333 7.77614 11.6095 8 11.3333 8H4.66667C4.39053 8 4.16667 7.77614 4.16667 7.5ZM6.66667 11C6.39053 11 6.16667 11.2239 6.16667 11.5C6.16667 11.7761 6.39053 12 6.66667 12H9.33334C9.60948 12 9.83334 11.7761 9.83334 11.5C9.83334 11.2239 9.60948 11 9.33334 11H6.66667Z" fill="black"/>
 </svg>

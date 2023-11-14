@@ -9,7 +9,7 @@ AG Charts support [Chart Themes](/charts-themes/) to change how charts are style
 
 ## Provided Themes
 
-There are five chart themes that are provided by the grid: `'ag-default'`, `'ag-material'`, `'ag-pastel'`, `'ag-vivid'` and `'ag-solar'`. When using a dark theme for the grid (e.g. `ag-theme-alpine-dark`), dark equivalents of the chart themes are provided by default instead, named with a `-dark` suffix, e.g. `'ag-vivid-dark'`.
+There are five chart themes that are provided by the grid: `'ag-default'`, `'ag-material'`, `'ag-pastel'`, `'ag-vivid'` and `'ag-solar'`. When using a dark theme for the grid (e.g. `ag-theme-quartz-dark`), dark equivalents of the chart themes are provided by default instead, named with a `-dark` suffix, e.g. `'ag-vivid-dark'`.
 
 When you create a chart, you can scroll through the different available themes in the chart settings.
 

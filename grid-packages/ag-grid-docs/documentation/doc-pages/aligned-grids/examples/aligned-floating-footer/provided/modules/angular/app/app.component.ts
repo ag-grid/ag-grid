@@ -2,7 +2,7 @@ import { Component } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 
 import "@ag-grid-community/styles/ag-grid.css";
-import "@ag-grid-community/styles/ag-theme-alpine.css";
+import "@ag-grid-community/styles/ag-theme-quartz.css";
 import { ColDef, ColGroupDef, GridOptions } from '@ag-grid-community/core';
 
 import { ModuleRegistry } from '@ag-grid-community/core';
@@ -21,7 +21,7 @@ ModuleRegistry.registerModules([ClientSideRowModelModule])
             <ag-grid-angular
                     style="flex: 1 1 auto;"
                     #topGrid
-                    class="ag-theme-alpine"
+                    class="ag-theme-quartz"
                     [rowData]="rowData"
                     [gridOptions]="topOptions"
                     [alignedGrids]="[bottomGrid]"
@@ -31,7 +31,7 @@ ModuleRegistry.registerModules([ClientSideRowModelModule])
             <ag-grid-angular
                     style="flex: none; height: 60px;"
                     #bottomGrid
-                    class="ag-theme-alpine"
+                    class="ag-theme-quartz"
                     [rowData]="bottomData"
                     [gridOptions]="bottomOptions"
                     [alignedGrids]="[topGrid]"

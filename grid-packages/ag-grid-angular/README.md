@@ -77,7 +77,7 @@ Use the setup instructions below or go through [a 5-minute-quickstart guide](htt
 ### Import styles in `styles.css`
 
     @import "~ag-grid-community/styles//ag-grid.css";
-    @import "~ag-grid-community/styles//ag-theme-alpine.css";
+    @import "~ag-grid-community/styles//ag-theme-quartz.css";
 
 ### Set the grid's configuration in a parent component
 
@@ -101,7 +101,7 @@ Use the setup instructions below or go through [a 5-minute-quickstart guide](htt
 
 	<ag-grid-angular 
 		style="width: 500px; height: 500px;" 
-		class="ag-theme-alpine"
+		class="ag-theme-quartz"
 		[rowData]="rowData" 
 		[columnDefs]="columnDefs">
 	</ag-grid-angular>

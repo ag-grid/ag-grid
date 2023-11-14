@@ -4,7 +4,7 @@ import React, {useCallback, useMemo, useRef, useState, StrictMode} from 'react';
 import {createRoot} from 'react-dom/client';
 import {AgGridReact} from '@ag-grid-community/react';
 import '@ag-grid-community/styles/ag-grid.css';
-import '@ag-grid-community/styles/ag-theme-alpine.css';
+import '@ag-grid-community/styles/ag-theme-quartz.css';
 import {GridApi, ModuleRegistry} from '@ag-grid-community/core';
 import {ClientSideRowModelModule} from '@ag-grid-community/client-side-row-model';
 import { ColDef, ColumnApi, GridPreDestroyedEvent, GridReadyEvent } from '@ag-grid-community/core';
@@ -122,7 +122,7 @@ const GridExample = () => {
                             height: '100%',
                             width: '100%'
                         }}
-                        className="ag-theme-alpine">
+                        className="ag-theme-quartz">
                         {gridVisible && (
                             <AgGridReact
                                 columnDefs={columnDefs}

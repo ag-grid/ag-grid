@@ -16,6 +16,7 @@ export const rowGroupingFeature: Feature = {
   ],
   gridOptions: {
     groupDefaultExpanded: 2,
+    rowGroupPanelShow: 'always',
   },
   getState(api) {
     const expanded: boolean[] = [];

@@ -11,9 +11,15 @@ export interface IRichCellEditorParams<TData = any, TValue = any> {
     cellHeight: number;
     /** The cell renderer to use to render each value. Cell renderers are useful for rendering rich HTML values, or when processing complex data. */
     cellRenderer: any;
-    /** Set to `true` to be able to type values in the display area. Default: `false`. */
+    /**
+     * Set to `true` to be able to type values in the display area.
+     * @default false
+     */
     allowTyping?: boolean;
-    /** If `true` it will filter the list of values as you type (only relevant when `allowTyping=true`). Default: `false` */
+    /**
+     * If `true` it will filter the list of values as you type (only relevant when `allowTyping=true`).
+     * @default false
+     */
     filterList: true;
     /** 
      * The type of search algorithm that is used when searching for values. 
@@ -21,23 +27,31 @@ export interface IRichCellEditorParams<TData = any, TValue = any> {
      *  - `matchAny` - Matches if the value contains the text typed.
      *  - `fuzzy` - Matches the closest value to text typed.
      * Note: When a cellRenderer is specified, this option will not work. 
-     * Default: `fuzzy` 
+     * @default 'fuzzy' 
      */
     searchType?: 'match' | 'matchAny' | 'fuzzy';
     /**
      * If `true`, each item on the list of values will highlight the part of the text that matches the input. 
      * This option does not work when `searchType="fuzzy"`.
-     * Default: `false`.
+     * @default false.
      */
     highlightMatch?: boolean;
-    /** The value in `ms` for the search algorithm debounce delay (only relevant when `allowTyping=false`). Default: `300` */
+    /**
+     * The value in `ms` for the search algorithm debounce delay (only relevant when `allowTyping=false`).
+     * @default 300
+     */
     searchDebounceDelay?: number;
     /** A string value to be used when no value has been selected. */
     valuePlaceholder?: string;
-    /** The space in pixels between the value display and the list of items. Default: `4` */
+    /**
+     * The space in pixels between the value display and the list of items.
+     * @default 4
+     */
     valueListGap?: number;
-    /** The maximum height of the list of items. If the value is a `number` it will be 
-     * treated as pixels, otherwise it should be a valid CSS size string. Default: `calc(var(--ag-row-height) * 6.5)`
+    /**
+     * The maximum height of the list of items. If the value is a `number` it will be 
+     * treated as pixels, otherwise it should be a valid CSS size string.
+     * @default 'calc(var(--ag-row-height) * 6.5)'
      */
     valueListMaxHeight?: number | string;
     /** The maximum width of the list of items. If the value is a `number` it will be 

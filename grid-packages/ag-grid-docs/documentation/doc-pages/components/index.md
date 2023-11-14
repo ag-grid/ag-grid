@@ -297,7 +297,7 @@ To override the default component, register the custom component in the GridOpti
 |    selector: 'my-app',
 |    template: `
 |      &lt;ag-grid-angular
-|          class="ag-theme-alpine"
+|          class="ag-theme-quartz"
 |          [components]="components"
 |          ...other properties...  
 |      >&lt;/ag-grid-angular>

@@ -3,7 +3,7 @@ import AgGridSolid from "../src";
 import {ClientSideRowModelModule} from '@ag-grid-community/client-side-row-model';
 
 import '@ag-grid-community/styles/ag-grid.css';
-import '@ag-grid-community/styles/ag-theme-alpine.css';
+import '@ag-grid-community/styles/ag-theme-quartz.css';
 import { ColDef } from "@ag-grid-community/core";
 
 interface ICar {
@@ -32,7 +32,7 @@ const App: Component = () => {
     };
 
     return (
-        <div class="ag-theme-alpine" style={{height: "100%"}}>
+        <div class="ag-theme-quartz" style={{height: "100%"}}>
             <AgGridSolid
                 columnDefs={columnDefs}
                 rowData={rowData}

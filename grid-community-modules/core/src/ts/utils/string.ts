@@ -108,7 +108,13 @@ export function utf8_encode(s: string | null): string {
 }
 
 export function capitalise(str: string): string {
-    return str[0].toUpperCase() + str.substr(1).toLowerCase();
+    return str[0].toUpperCase() + str.substr(1);
+}
+
+export function titleCase(str: string): string {
+    return str.replace(/\w\S*/g, function(word){
+        return word.charAt(0).toUpperCase() + word.substr(1).toLowerCase();
+    });
 }
 
 export function escapeString(toEscape?: string | null, skipEscapingHtmlChars?: boolean): string | null {

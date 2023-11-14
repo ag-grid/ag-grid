@@ -120,6 +120,9 @@ export interface ICallSignature extends BaseInterface {
         isEnum?: never;
         isCallSignature: true;
         isEvent?: never;
+        tags: {name: string, comment: string}[];
+        comment: string;
+        all: string;
     };
     type: {
         arguments: {

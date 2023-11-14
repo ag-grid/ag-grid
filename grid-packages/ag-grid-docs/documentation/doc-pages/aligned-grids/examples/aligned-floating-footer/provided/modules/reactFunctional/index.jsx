@@ -4,7 +4,7 @@ import { AgGridReact } from '@ag-grid-community/react';
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
 
 import "@ag-grid-community/styles/ag-grid.css";
-import "@ag-grid-community/styles/ag-theme-alpine.css";
+import "@ag-grid-community/styles/ag-theme-quartz.css";
 
 import { ModuleRegistry } from '@ag-grid-community/core';
 // Register the required feature modules with the Grid
@@ -67,7 +67,7 @@ const GridExample = () => {
     }
 
     return (
-        <div style={{ display: 'flex', flexDirection: 'column', height: '100%' }} className="ag-theme-alpine">
+        <div style={{ display: 'flex', flexDirection: 'column', height: '100%' }} className="ag-theme-quartz">
             <div style={{ flex: '1 1 auto' }} >
                 <AgGridReact
                     ref={topGrid}

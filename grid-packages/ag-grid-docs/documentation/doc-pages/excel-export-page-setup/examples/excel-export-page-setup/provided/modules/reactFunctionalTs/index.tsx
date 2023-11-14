@@ -5,7 +5,7 @@ import React, { useCallback, useMemo, useRef, useState, StrictMode } from 'react
 import { createRoot } from 'react-dom/client';
 import { AgGridReact } from '@ag-grid-community/react';
 import '@ag-grid-community/styles/ag-grid.css';
-import '@ag-grid-community/styles/ag-theme-alpine.css';
+import '@ag-grid-community/styles/ag-theme-quartz.css';
 import './styles.css';
 import { ColDef, GridApi, GridReadyEvent } from '@ag-grid-community/core';
 import { IOlympicData } from './interfaces'
@@ -141,7 +141,7 @@ const GridExample = () => {
                     </div>
                 </form>
                 <div className="grid-wrapper">
-                    <div  style={gridStyle} className="ag-theme-alpine">
+                    <div  style={gridStyle} className="ag-theme-quartz">
                         <AgGridReact<IOlympicData>
                             rowData={rowData}
                             columnDefs={columnDefs}

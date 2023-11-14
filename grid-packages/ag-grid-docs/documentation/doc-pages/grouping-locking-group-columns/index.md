@@ -36,6 +36,8 @@ Note in the example above the following:
 
 - Only `year` and `sport` columns can be rearranged or removed. While `country` cannot be rearranged or removed.
 
+- The option to `Un-Group All` from the Group Column's context menu is displayed but clicking it doesn’t ungroup the `Country` group as it's locked - it only ungroups any other groups.
+
 ## Locking Multiple Group Columns
 
 To lock multiple group columns, you can either specify the number of group columns to lock or you can provide the value `groupLockGroupColumns = -1`, which will lock all group columns.
@@ -63,7 +65,7 @@ Note in the example above the following:
 
 - Group Column locking has been applied to the first two group column `country` and `year`.
 
-- As the example has `groupDisplayType = 'multipleColumns'`, it is possible to `Un-Group by Sport` by the Sport Column's context menu. However, as `country` and `year` columns are locked, there is no ungroup option for these group columns.
+- As the example has `groupDisplayType='multipleColumns'`, it is possible to `Un-Group by Sport` via the Sport Column's context menu. The column menus for the `Country` and `Year` columns include the `Un-group by Country` and `Un-group by Year` menu options, but as Country and Year columns are locked, these menu items are disabled.
 
 
 ## Next Up

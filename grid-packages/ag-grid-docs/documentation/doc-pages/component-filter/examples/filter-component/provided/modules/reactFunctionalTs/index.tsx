@@ -4,7 +4,7 @@ import React, { useCallback, useMemo, useRef, useState } from 'react';
 import { createRoot } from 'react-dom/client';
 import { AgGridReact } from '@ag-grid-community/react';
 import '@ag-grid-community/styles/ag-grid.css';
-import '@ag-grid-community/styles/ag-theme-alpine.css';
+import '@ag-grid-community/styles/ag-theme-quartz.css';
 import { ColDef, ColGroupDef } from '@ag-grid-community/core';
 import PartialMatchFilter from './partialMatchFilter';
 import { ModuleRegistry } from '@ag-grid-community/core';
@@ -49,7 +49,7 @@ const GridExample = () => {
             <div className="example-wrapper">
                 <button style={{ "marginBottom": "5px" }} onClick={onClicked} className="btn btn-primary">Invoke Filter Instance Method</button>
 
-                <div style={gridStyle} className="ag-theme-alpine">
+                <div style={gridStyle} className="ag-theme-quartz">
                     <AgGridReact
                         ref={gridRef}
                         rowData={rowData}
