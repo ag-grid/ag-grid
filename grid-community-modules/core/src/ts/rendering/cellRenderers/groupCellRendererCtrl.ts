@@ -139,7 +139,7 @@ export class GroupCellRendererCtrl extends BeanStub {
             if (!isSingleGroupColumn && isNullValueAndNotMaster) {
                 return;
             }
-            
+
             // this footer should only be non-top level. Don't need to check groupIncludeFooter
             // as we won't have footer rows in that instance.
             if (node.footer && this.gridOptionsService.get('groupHideOpenParents')) {
@@ -148,7 +148,7 @@ export class GroupCellRendererCtrl extends BeanStub {
 
                 // if the groupCellRenderer is inside of a footer and groupHideOpenParents is true
                 // we should only display the groupCellRenderer if the current column is the rowGroupedColumn
-                if(showRowGroup !== rowGroupColumnId) {
+                if (showRowGroup !== rowGroupColumnId) {
                     return;
                 }
             }
@@ -586,7 +586,8 @@ export class GroupCellRendererCtrl extends BeanStub {
 
         // compensation padding for leaf nodes, so there is blank space instead of the expand icon
         const pivotMode = columnModel.isPivotMode();
-        const pivotModeAndLeafGroup = pivotMode && displayedGroup.leafGroup;
+        const hideOpenParents = this.gridOptionsService.is('groupHideOpenParents');
+        const pivotModeAndLeafGroup = pivotMode && (displayedGroup.leafGroup || (hideOpenParents && !isExpandable));
         const addExpandableCss = isExpandable && !pivotModeAndLeafGroup;
         const isTotalFooterNode = node.footer && node.level === -1;
 
