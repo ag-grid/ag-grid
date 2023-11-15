@@ -941,14 +941,14 @@ export class ColumnModel extends BeanStub {
     }
 
     public isColumnAtEdge(col: Column | ColumnGroup, edge: 'first' | 'last'): boolean {
-        const allColumns = this.getAllGridColumns();
+        const allColumns = this.getAllDisplayedColumns();
         if (!allColumns.length) { return false; }
 
         const isFirst = edge === 'first';
 
         let columnToCompare: Column;
         if (col instanceof ColumnGroup) {
-            const leafColumns = col.getLeafColumns();
+            const leafColumns = col.getLeafColumns().filter(col => col.isVisible());
             if (!leafColumns.length) { return false; }
 
             columnToCompare = isFirst ? leafColumns[0] : last(leafColumns);
