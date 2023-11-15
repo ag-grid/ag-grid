@@ -66,7 +66,7 @@ export class GridChartComp extends Component {
                 <div ref="eEmpty" class="ag-chart-empty-text ag-unselectable"></div>
             </div>
             <div ref="eTitleEditContainer"></div>
-            <div ref="eMenuContainer" class="ag-chart-docked-container"></div>
+            <div ref="eMenuContainer" class="ag-chart-docked-container" style="min-width: 0px;"></div>
         </div>`;
 
     @RefSelector('eChart') private readonly eChart: HTMLElement;
