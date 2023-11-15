@@ -53,16 +53,6 @@
 </framework-specific-section>
 
 <framework-specific-section frameworks="angular">
-| The api is also accessible within the component template. If the Grid is given the template reference of `'#myGrid'` the api can be accessed as follows:
-</framework-specific-section>
-
-<framework-specific-section frameworks="angular">
-<snippet transform={false}>
-| &lt;button (click)="myGrid.api.deselectAll()">Clear Selection&lt;/button>
-</snippet>
-</framework-specific-section>
-
-<framework-specific-section frameworks="angular">
 | ## Grid Options
 |
 | The `gridOptions` object can be used instead of, or in addition to, the component bindings. If an option is set via `gridOptions`, as well as directly on the component, then the component value will take precedence.
