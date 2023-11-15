@@ -1,7 +1,7 @@
 import { AlignedGridsService } from "./alignedGridsService";
 import { ColumnApi } from "./columns/columnApi";
 import { ApplyColumnStateParams, ColumnModel, ColumnState, ISizeColumnsToFitParams } from "./columns/columnModel";
-import { Autowired, Bean, Context, Optional, PostConstruct } from "./context/context";
+import { Autowired, Bean, Context, Optional, PostConstruct, PreDestroy } from "./context/context";
 import { CtrlsService } from "./ctrlsService";
 import { DragAndDropService } from "./dragAndDrop/dragAndDropService";
 import { CellPosition } from "./entities/cellPositionUtils";
@@ -42,7 +42,7 @@ import {
     TabToNextHeaderParams
 } from "./interfaces/iCallbackParams";
 import { IRowNode, RowPinnedType } from "./interfaces/iRowNode";
-import { AgEvent, ColumnEventType, FilterChangedEventSourceType, SelectionEventSourceType } from "./events";
+import { AgEvent, ColumnEventType, FilterChangedEventSourceType, GridPreDestroyedEvent, SelectionEventSourceType } from "./events";
 import { EventService } from "./eventService";
 import { FilterManager } from "./filter/filterManager";
 import { FocusService } from "./focusService";
@@ -65,7 +65,7 @@ import {
     IChartService,
     OpenChartToolPanelParams, UpdateChartParams,
 } from './interfaces/IChartService';
-import { ClientSideRowModelStep, IClientSideRowModel } from "./interfaces/iClientSideRowModel";
+import { ClientSideRowModelStep, ClientSideRowModelSteps, IClientSideRowModel } from "./interfaces/iClientSideRowModel";
 import { IClipboardCopyParams, IClipboardCopyRowsParams, IClipboardService } from "./interfaces/iClipboardService";
 import { IColumnToolPanel } from "./interfaces/iColumnToolPanel";
 import { IContextMenuFactory } from "./interfaces/iContextMenuFactory";
@@ -135,9 +135,9 @@ import { OverlayService } from "./rendering/overlays/overlayService";
 import { GridState } from "./interfaces/gridState";
 import { StateService } from "./misc/stateService";
 import { IExpansionService } from "./interfaces/iExpansionService";
+import { WithoutGridCommon } from "./interfaces/iCommon";
 import { warnOnce } from "./utils/function";
 import { ApiEventService } from "./misc/apiEventService";
-import { IFrameworkOverrides } from "./interfaces/iFrameworkOverrides";
 
 export interface DetailGridInfo {
     /**
@@ -171,6 +171,7 @@ export function unwrapUserComp<T>(comp: T): T {
 @Bean('gridApi')
 export class GridApi<TData = any> {
 
+    @Optional('immutableService') private immutableService: IImmutableService;
     @Optional('csvCreator') private csvCreator: ICsvCreator;
     @Optional('excelCreator') private excelCreator: IExcelCreator;
     @Autowired('rowRenderer') private rowRenderer: RowRenderer;
@@ -207,7 +208,6 @@ export class GridApi<TData = any> {
     @Autowired('stateService') private stateService: StateService;
     @Autowired('expansionService') private expansionService: IExpansionService;
     @Autowired('apiEventService') private apiEventService: ApiEventService;
-    @Autowired('frameworkOverrides') private frameworkOverrides: IFrameworkOverrides;
 
     private gridBodyCtrl: GridBodyCtrl;
 
@@ -1078,10 +1078,6 @@ export class GridApi<TData = any> {
 
     /** Will destroy the grid and release resources. If you are using a framework you do not need to call this, as the grid links in with the framework lifecycle. However if you are using Web Components or native JavaScript, you do need to call this, to avoid a memory leak in your application. */
     public destroy(): void {
-
-        // Get framework link before this is destroyed
-        const preDestroyLink = `See ${this.frameworkOverrides.getDocLink('grid-lifecycle/#grid-pre-destroyed')}`;
-
         // this is needed as GridAPI is a bean, and GridAPI.destroy() is called as part
         // of context.destroy(). so we need to stop the infinite loop.
         if (this.destroyCalled) { return; }
@@ -1099,11 +1095,17 @@ export class GridApi<TData = any> {
 
         // destroy the services
         this.context.destroy();
+    }
 
+    @PreDestroy
+    private cleanDownReferencesToAvoidMemoryLeakInCaseApplicationIsKeepingReferenceToDestroyedGrid(): void {
         // some users were raising support issues with regards memory leaks. the problem was the customers applications
         // were keeping references to the API. trying to educate them all would be difficult, easier to just remove
         // all references in the API so at least the core grid can be garbage collected.
-        removeAllReferences<GridApi>(this, ['isDestroyed'], preDestroyLink);
+        //
+        // wait about 100ms before clearing down the references, in case user has some cleanup to do,
+        // and needs to deference the API first
+        setTimeout(removeAllReferences.bind(window, this, 'Grid API', ['isDestroyed']), 100);
     }
 
     /** Returns `true` if the grid has been destroyed. */
