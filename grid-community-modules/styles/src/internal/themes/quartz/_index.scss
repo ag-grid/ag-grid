@@ -102,9 +102,11 @@
 
     .ag-charts-settings-group-title-bar,
     .ag-charts-data-group-title-bar,
-    .ag-charts-format-top-level-group-title-bar {
-        padding: var(--ag-grid-size) calc(var(--ag-grid-size) * 2);
-        line-height: calc(var(--ag-icon-size) + var(--ag-grid-size) - 2px);
+    .ag-charts-format-top-level-group-title-bar,
+    .ag-charts-settings-group-container {
+        border-top: none;
+        padding: var(--ag-grid-size) calc(var(--ag-grid-size) * 1.5);
+        font-weight: 500;
     }
 
     .ag-chart-mini-thumbnail {
@@ -272,6 +274,10 @@
         background: var(--ag-header-background-color);
         border: 1px solid var(--ag-border-color);
         border-right: none;
+    }
+
+    .ag-chart-docked-container {
+        min-width: 260px;
     }
 
     .ag-menu-option-icon, .ag-compact-menu-option-icon {

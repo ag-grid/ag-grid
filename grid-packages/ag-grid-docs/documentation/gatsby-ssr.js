@@ -118,6 +118,12 @@ export const onPreRenderHTML = ({ getHeadComponents, replaceHeadComponents, path
         href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500&display=swap"
         crossOrigin="anonymous"/>,
     );
+    headComponents.unshift(<link
+        key="inter"
+        rel="stylesheet"
+        href="https://rsms.me/inter/inter.css"
+        crossOrigin="anonymous"/>,
+    );
 
     // Add Plausible.io tracking
     if (!isDevelopment()) {

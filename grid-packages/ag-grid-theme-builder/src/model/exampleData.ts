@@ -2,7 +2,7 @@ import { ColDef, ColGroupDef } from '@ag-grid-community/core';
 
 export const getColumnDefs = (): ColDef[] => [
   { field: 'make', flex: 1 },
-  { field: 'model', flex: 1 },
+  { field: 'model', flex: 1, filter: 'agSetColumnFilter' },
   { field: 'year', flex: 1 },
   { field: 'price', flex: 1 },
 ];

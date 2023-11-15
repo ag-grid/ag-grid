@@ -66,7 +66,7 @@
 
     --ag-widget-container-vertical-padding: calc(var(--ag-grid-size) * 1.5);
     --ag-widget-container-horizontal-padding: calc(var(--ag-grid-size) * 1.5);
-    --ag-widget-vertical-spacing: calc(var(--ag-grid-size) * 1.5);
+    --ag-widget-vertical-spacing: calc(var(--ag-grid-size) * 1);
 
     --ag-toggle-button-height: 18px;
     --ag-toggle-button-width: 28px;
@@ -77,7 +77,7 @@
     --ag-icon-font-family: agGridQuartz;
 
     // MISC
-    --ag-tab-min-width: 280px;
+    --ag-tab-min-width: 0;
 
     --ag-card-shadow: 0 1px 4px 1px rgba(186, 191, 199, 0.4);
     --ag-popup-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
@@ -106,6 +106,14 @@
     --ag-advanced-filter-value-pill-color: #374c86;
 
     color-scheme: dark;
+}
+
+// TODO remove these, they're for testing fonts
+.ag-font-inter {
+    --ag-font-family: 'Inter', cursive;
+}
+.ag-font-plex {
+    --ag-font-family: 'IBM Plex Sans', cursive;
 }
 
 .ag-theme-quartz-dark {

@@ -15,7 +15,7 @@ export const baseTheme: Theme = {
 export const quartzTheme: Theme = {
   name: 'ag-theme-quartz',
   extends: baseTheme,
-  colorSchemes: ['light', 'dark', 'auto', 'dark-blue'],
+  colorSchemes: ['light', 'dark', 'auto'],
 };
 
 export const alpineTheme: Theme = {

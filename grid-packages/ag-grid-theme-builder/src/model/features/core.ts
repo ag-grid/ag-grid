@@ -1,4 +1,5 @@
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
+import { SetFilterModule } from '@ag-grid-enterprise/set-filter';
 import { Feature } from '.';
 
 export const coreFeature: Feature = {
@@ -15,5 +16,5 @@ export const coreFeature: Feature = {
     '--ag-background-color',
     '--ag-border-color',
   ],
-  modules: [ClientSideRowModelModule],
+  modules: [ClientSideRowModelModule, SetFilterModule],
 };
