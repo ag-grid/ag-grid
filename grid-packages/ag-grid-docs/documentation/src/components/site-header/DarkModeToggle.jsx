@@ -8,7 +8,19 @@ import headerStyles from './SiteHeader.module.scss';
 const IS_SSR = typeof window === 'undefined';
 
 export const DarkModeToggle = () => {
-    return IS_SSR ? null : (
+    return IS_SSR ? (
+        <li className={classNames(headerStyles.navItem, styles.navItem)}>
+            <button
+                className={classNames(
+                    styles.toggle,
+                    styles.light,
+                    'button-style-none'
+                )}
+            >
+                <Icon name="sun" />
+            </button>
+        </li>
+    ) : (
         <GlobalContextConsumer>
             {({ darkMode, set }) => {
                 const htmlEl = document.querySelector('html');
