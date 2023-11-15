@@ -215,7 +215,7 @@ export class SelectionService extends BeanStub implements ISelectionService {
     }
 
     public getSelectionCount(): number {
-        return Object.values(this.selectedNodes).length;
+        return this.selectedNodes.size;
     }
 
     /**

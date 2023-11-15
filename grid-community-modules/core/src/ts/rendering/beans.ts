@@ -101,15 +101,11 @@ export class Beans {
     @Autowired('valueParserService') public valueParserService: ValueParserService;
     @Autowired('syncService') public syncService: SyncService;
 
-    public doingMasterDetail: boolean;
-
     public clientSideRowModel: IClientSideRowModel;
     public serverSideRowModel: IServerSideRowModel;
 
     @PostConstruct
     private postConstruct(): void {
-        this.doingMasterDetail = this.gridOptionsService.get('masterDetail');
-
         if (this.gridOptionsService.isRowModelType('clientSide')) {
             this.clientSideRowModel = this.rowModel as IClientSideRowModel;
         }

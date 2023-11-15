@@ -1037,6 +1037,9 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel 
         // no need to invalidate cache, as the cache is stored on the rowNode,
         // so new rowNodes means the cache is wiped anyway.
         
+        // - clears selection, done before we set row data to ensure it isn't readded via `selectionService.syncInOldRowNode`
+        this.selectionService.reset('rowDataChanged');
+
         this.nodeManager.setRowData(rowData);
         
         if (this.hasStarted) {
@@ -1045,8 +1048,6 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel 
     }
 
     private dispatchUpdateEventsAndRefresh(): void {
-        // - clears selection
-        this.selectionService.reset('rowDataChanged');
 
         // this event kicks off:
         // - shows 'no rows' overlay if needed
@@ -1057,7 +1058,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel 
 
         this.refreshModel({
             step: ClientSideRowModelSteps.EVERYTHING,
-            newData: true
+            newData: true,
         });
     }
 
