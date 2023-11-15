@@ -99,7 +99,7 @@ const DetailCellRenderer = (props: IDetailCellRendererParams, ref: any) => {
         <div className={topClassName} ref={setRef}>
             {
                 detailGridOptions &&
-                <AgGridReactUi className={gridClassName} {...detailGridOptions} modules={parentModules} rowData={detailRowData} setGridApi={setGridApi}></AgGridReactUi>
+                <AgGridReactUi className={gridClassName} {...detailGridOptions} modules={parentModules} rowData={detailRowData} setGridApi={setGridApi} />
             }
         </div>
     );
