@@ -34,7 +34,7 @@
 
     .ag-menu {
         background-color: var(--ag-control-panel-background-color);
-        min-width: 260px;
+        min-width: 280px;
     }
 
     .ag-menu-header {
@@ -64,6 +64,8 @@
     // 
     .ag-side-bar {
         background-color: var(--ag-control-panel-background-color);
+        // prevent it getting too small when all tool panels are hidden so it's just the side buttons showing
+        min-width: calc(var(--ag-icon-size) + var(--ag-grid-size) * 5);
     }
     .ag-side-buttons {
         padding: 0;
@@ -100,6 +102,10 @@
     }
     .ag-filter-toolpanel-search-input {
         margin: 0;
+    }
+    .ag-filter-apply-panel {
+        border: none;
+        padding-top: var(--ag-widget-vertical-spacing);
     }
 
     .ag-charts-settings-group-title-bar,
@@ -256,6 +262,7 @@
             border-radius: 1px;
             background-color: var(--ag-row-hover-color);
             box-shadow: 0 0 0 4px var(--ag-row-hover-color);
+            cursor: pointer;
         }
     }
 
@@ -314,11 +321,6 @@
         margin-top: var(--ag-widget-vertical-spacing);
     }
 
-    .ag-set-filter-list {
-        padding-top: calc(var(--ag-grid-size) * 0.5);
-        padding-bottom: calc(var(--ag-grid-size) * 0.5);
-    }
-
     .ag-layout-auto-height, .ag-layout-print {
         .ag-center-cols-viewport, .ag-center-cols-container {
             min-height: 150px;
@@ -356,11 +358,38 @@
     .ag-icon-grip {
         opacity: 0.6;
     }
+
+    .ag-column-select-header-filter-wrapper, .ag-filter-toolpanel-search {
+        .ag-input-wrapper::before {
+            position: absolute;
+            display: block;
+            @include ag.theme-rtl((margin-left: var(--ag-grid-size)));
+            width: 12px;
+            height: 12px;
+            background-image: url("data:image/svg+xml;charset=utf-8;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIHZpZXdCb3g9IjAgMCAxMiAxMiIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4NCjxwYXRoIGQ9Ik01LjI1IDlDNy4zMjEwNyA5IDkgNy4zMjEwNyA5IDUuMjVDOSAzLjE3ODkzIDcuMzIxMDcgMS41IDUuMjUgMS41QzMuMTc4OTMgMS41IDEuNSAzLjE3ODkzIDEuNSA1LjI1QzEuNSA3LjMyMTA3IDMuMTc4OTMgOSA1LjI1IDlaIiBzdHJva2U9ImJsYWNrIiBzdHJva2Utd2lkdGg9IjEuMiIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIi8+DQo8cGF0aCBkPSJNMTAuNTAwMiAxMC40OTk3TDguMjUwNDkgOC4yNSIgc3Ryb2tlPSJibGFjayIgc3Ryb2tlLXdpZHRoPSIxLjIiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIvPg0KPC9zdmc+");
+            background-position: 50% 50%;
+            background-size: contain;
+            opacity: 33%;
+            content: "";
+            filter: var(--ag-icon-filter);
+        }
+
+        input.ag-text-field-input {
+            @include ag.theme-rtl((padding-left: calc(var(--ag-grid-size) * 2 + 12px)));
+        }
+    }
 }
 
 .ag-theme-quartz-dark {
     .ag-icon::before {
         filter: invert(100%);
+    }
+
+    .ag-column-select-header-filter-wrapper, .ag-filter-toolpanel-search {
+        .ag-input-wrapper::before {
+            opacity: 66%;
+            filter: invert(100%);
+        }
     }
 
     .ag-radio-button-input-wrapper.ag-checked,
