@@ -67,7 +67,6 @@ export const agFlushSync = (useFlushSync: boolean, fn: () => void) => {
  * @returns 
  */
 export function getNextValueIfDifferent<T extends { getInstanceId: () => string }>(prev: T[] | null, next: T[] | null, maintainOrder: boolean): T[] | null {
-
     if (next == null || prev == null) {
         return next;
     }
@@ -107,7 +106,8 @@ export function getNextValueIfDifferent<T extends { getInstanceId: () => string 
     for (let i = 0; i < next.length; i++) {
         const c = next[i];
         const instanceId = c.getInstanceId();
-        if (!prevMap.has(instanceId)) {          
+
+        if (!prevMap.has(instanceId)) {
             newValues.push(c);
         }
     }
