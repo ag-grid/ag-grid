@@ -4,7 +4,7 @@ import { BeanStub } from "../../context/beanStub";
 import { Beans } from "../beans";
 import { PostConstruct } from "../../context/context";
 import { ColumnGroup } from "../../entities/columnGroup";
-import { setAriaColIndex, setAriaColSpan } from "../../utils/aria";
+import { setAriaColSpan } from "../../utils/aria";
 import { last } from "../../utils/array";
 import { exists } from "../../utils/generic";
 import { Events } from "../../eventKeys";
@@ -145,8 +145,5 @@ export class SetLeftFeature extends BeanStub {
 
             indexColumn = children[0];
         }
-
-        const index = this.beans.columnModel.getAriaColumnIndex(indexColumn);
-        setAriaColIndex(this.ariaEl, index);
     }
 }

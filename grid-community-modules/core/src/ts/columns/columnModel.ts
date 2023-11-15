@@ -940,8 +940,35 @@ export class ColumnModel extends BeanStub {
         );
     }
 
-    public getAriaColumnIndex(col: Column): number {
-        return this.getAllGridColumns().indexOf(col) + 1;
+    public isColumnAtEdge(col: Column | ColumnGroup, edge: 'first' | 'last'): boolean {
+        const allColumns = this.getAllGridColumns();
+        if (!allColumns.length) { return false; }
+
+        const isFirst = edge === 'first';
+
+        let columnToCompare: Column;
+        if (col instanceof ColumnGroup) {
+            const leafColumns = col.getLeafColumns();
+            if (!leafColumns.length) { return false; }
+
+            columnToCompare = isFirst ? leafColumns[0] : last(leafColumns);
+        } else {
+            columnToCompare = col;
+        }
+
+        return (isFirst ? allColumns[0] : last(allColumns)) === columnToCompare;
+    }
+
+    public getAriaColumnIndex(col: Column | ColumnGroup): number {
+        let targetColumn: Column;
+
+        if (col instanceof ColumnGroup) {
+            targetColumn = col.getLeafColumns()[0];
+        } else {
+            targetColumn = col;
+        }
+
+        return this.getAllGridColumns().indexOf(targetColumn) + 1;
     }
 
     private isColumnInHeaderViewport(col: Column): boolean {
