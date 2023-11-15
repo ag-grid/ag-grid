@@ -13,7 +13,6 @@ import styles from './SiteHeader.module.scss';
 import menuData from '../../../doc-pages/licensing/menu.json';
 import apiMenuData from '../../../doc-pages/licensing/api-menu.json';
 import Search from "../search/Search";
-import {getCurrentFramework} from '../../utils/local-storage';
 
 const SITE_HEADER_SMALL_WIDTH = parseInt(breakpoints['site-header-small'], 10);
 
@@ -51,6 +50,8 @@ const links = [
         docsLink: false,
     },
 ];
+
+const IS_SSR = typeof window === 'undefined';
 
 const isLinkSelected = (name, path) => {
     const link = links.find(l => l.name === name);
@@ -125,17 +126,32 @@ const HeaderNav = ({ path, currentFramework }) => {
     return (
         <>
             {isDocsUrl ? <Search currentFramework={currentFramework} /> : null}
-            
-            <HeaderExpandButton isOpen={isOpen} toggleIsOpen={toggleIsOpen} />
 
-            <Collapsible id="main-nav" isDisabled={isDesktop} isOpen={isOpen}>
-                <nav id={isDesktop ? 'main-nav' : undefined} className={styles.mainNav}>
-                    <ul className={classnames(styles.navItemList, 'list-style-none')}>
-                        <HeaderLinks path={path} isOpen={isOpen} toggleIsOpen={toggleIsOpen} />
-                        <DarkModeToggle />
-                    </ul>
-                </nav>
-            </Collapsible>
+
+            {IS_SSR && (
+                <>
+                    <HeaderExpandButton isOpen={false} />
+                    <nav id="main-nav" className={styles.mainNav}>
+                        <ul className={classnames(styles.navItemList, 'list-style-none')}>
+                            <HeaderLinks path={path} isOpen={isOpen} toggleIsOpen={toggleIsOpen} />
+                            <DarkModeToggle />
+                        </ul>
+                    </nav>
+                </>
+            )}
+            {!IS_SSR && (
+                <>
+                    <HeaderExpandButton isOpen={isOpen} toggleIsOpen={toggleIsOpen} />
+                    <Collapsible id={styles.mainNav} isDisabled={isDesktop} isOpen={isOpen}>
+                        <nav id={isDesktop ? 'main-nav' : undefined} className={styles.mainNav}>
+                            <ul className={classnames(styles.navItemList, 'list-style-none')}>
+                                <HeaderLinks path={path} isOpen={isOpen} toggleIsOpen={toggleIsOpen} />
+                                <DarkModeToggle />
+                            </ul>
+                        </nav>
+                    </Collapsible>
+                </>
+            )}
         </>
     );
 };
