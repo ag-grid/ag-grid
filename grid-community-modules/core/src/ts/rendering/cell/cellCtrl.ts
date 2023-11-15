@@ -314,6 +314,10 @@ export class CellCtrl extends BeanStub {
         });
     }
 
+    public getCellAriaRole(): string {
+        return this.column.getColDef().cellAriaRole ?? 'gridcell';
+    }
+
     public getInstanceId(): string {
         return this.instanceId;
     }

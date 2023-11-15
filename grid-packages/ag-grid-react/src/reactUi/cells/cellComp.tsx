@@ -155,6 +155,7 @@ const CellComp = (props: {
 
     // useMemo as more then just accessing a boolean on the cellCtrl
     const forceWrapper = useMemo(() => cellCtrl.isForceWrapper(), [cellCtrl]);
+    const cellAriaRole = useMemo(() => cellCtrl.getCellAriaRole(), [cellCtrl]);
     const eGui = useRef<HTMLDivElement | null>(null);
     const cellRendererRef = useRef<any>(null);
     const jsCellRendererRef = useRef<ICellRendererComp>();
@@ -198,10 +199,12 @@ const CellComp = (props: {
         (cellRenderer: ICellEditor | undefined) => setCellEditorRef(false, cellRenderer), 
         [setCellEditorRef]
     );
+
     let cssClassManager = useRef<CssClassManager>();
-    if(!cssClassManager.current){
+
+    if (!cssClassManager.current) {
         cssClassManager.current = new CssClassManager(() => eGui.current);
-    }    
+    }
 
     useJsCellRenderer(renderDetails, showCellWrapper, eCellValue.current, cellValueVersion, jsCellRendererRef, eGui);
 
@@ -433,7 +436,7 @@ const CellComp = (props: {
             ref={setRef}
             style={ userStyles }
             tabIndex={ tabIndex }
-            role={'gridcell'}
+            role={ cellAriaRole }
             col-id={colId}
         >
             { showCellWrapper

@@ -50,6 +50,12 @@ export interface AbstractColDef<TData = any, TValue = any> {
 
     /** Never set this, it is used internally by grid when doing in-grid pivoting */
     pivotKeys?: string[];
+
+    /**
+     * The role property of the cells that belong to this column.
+     * * @default 'gridcell'
+     */
+    cellAriaRole?: string;
 }
 
 /** Configuration options for column groups in AG Grid.  */
