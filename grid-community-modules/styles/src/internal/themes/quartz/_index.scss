@@ -355,10 +355,19 @@
             display: none;
         }
     }
+    
+    .ag-icon-grip {
+        opacity: 0.6;
+    }
 }
 
 .ag-theme-quartz-dark {
     .ag-icon::before {
         filter: invert(100%);
+    }
+
+    .ag-checkbox-input-wrapper.ag-checked,
+    .ag-checkbox-input-wrapper.ag-indeterminate {
+        background-color: #fff;
     }
 }

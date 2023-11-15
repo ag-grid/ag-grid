@@ -14,7 +14,7 @@
     --ag-control-panel-background-color: #fbfbfb;
     --ag-subheader-background-color: transparent;
     --ag-invalid-color: #e02525;
-    --ag-checkbox-unchecked-color: #cccccc;
+    --ag-checkbox-unchecked-color: color-mix(in srgb, var(--ag-background-color), var(--ag-foreground-color) 30%);
     --ag-advanced-filter-join-pill-color: #f08e8d;
     --ag-advanced-filter-column-pill-color: #a6e194;
     --ag-advanced-filter-option-pill-color: #f3c08b;
@@ -38,7 +38,7 @@
     --ag-input-focus-box-shadow: 0 0 2px 0.1rem var(--ag-input-focus-border-color);
     --ag-disabled-foreground-color: color-mix(in srgb, transparent, var(--ag-foreground-color) 50%);
     --ag-chip-background-color: color-mix(in srgb, transparent, var(--ag-foreground-color) 7%);
-    --ag-input-disabled-border-color: color-mix(in srgb, transparent, var(--ag-border-color) 15%);
+    --ag-input-disabled-border-color: var(--ag-border-color);
     --ag-input-disabled-background-color: color-mix(in srgb, transparent, var(--ag-border-color) 30%);
     --ag-modal-overlay-background-color: color-mix(in srgb, transparent, var(--ag-background-color) 66%);
 
@@ -99,6 +99,7 @@
         0 0 4px 3px var(--ag-input-focus-border-color);
     --ag-card-shadow: 0 1px 20px 1px black;
     --ag-input-border-color: #323D48;
+    --ag-checkbox-unchecked-color: color-mix(in srgb, var(--ag-background-color), var(--ag-foreground-color) 40%);
 
     --ag-advanced-filter-join-pill-color: #7a3a37;
     --ag-advanced-filter-column-pill-color: #355f2d;
