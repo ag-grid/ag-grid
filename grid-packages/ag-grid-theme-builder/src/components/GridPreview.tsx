@@ -51,7 +51,6 @@ const GridPreview = () => {
     void rebuildKey;
 
     const options: GridOptions = {
-      pagination: true,
       ...buildGridOptions(features),
       onGridReady: ({ api }) => {
         for (const feature of features) {

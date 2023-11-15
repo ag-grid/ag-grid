@@ -34,6 +34,7 @@
 
     .ag-menu {
         background-color: var(--ag-control-panel-background-color);
+        min-width: 260px;
     }
 
     .ag-menu-header {
@@ -67,7 +68,8 @@
     .ag-side-buttons {
         padding: 0;
         align-self: flex-start;
-        margin: var(--ag-widget-container-vertical-padding) var(--ag-widget-container-horizontal-padding);
+        margin: var(--ag-widget-container-vertical-padding) 0;
+        @include ag.theme-rtl((margin-right: var(--ag-widget-container-horizontal-padding)));
         border: var(--ag-borders) var(--ag-border-color);
         border-radius: var(--ag-border-radius);
         width: calc(var(--ag-icon-size) + var(--ag-grid-size) * 2);
@@ -156,22 +158,17 @@
         appearance: none;
         -webkit-appearance: none;
         border-radius: var(--ag-border-radius);
-        border: 1px solid;
-        border-color: var(--ag-active-color);
-        color: var(--ag-active-color);
+        border: solid 1px var(--ag-input-border-color);
         background-color: var(--ag-background-color);
-        font-weight: 600;
         padding: var(--ag-grid-size) calc(var(--ag-grid-size) * 2);
+        cursor: pointer;
 
         &:hover {
-            border-color: var(--ag-active-color);
             background-color: var(--ag-row-hover-color);
         }
 
         &:active {
             border-color: var(--ag-active-color);
-            background-color: var(--ag-active-color);
-            color: var(--ag-background-color);
         }
 
         &:disabled {
@@ -258,7 +255,7 @@
         &:hover {
             border-radius: 1px;
             background-color: var(--ag-row-hover-color);
-            box-shadow: 0 0 0 calc(var(--ag-grid-size) * 0.5) var(--ag-row-hover-color);
+            box-shadow: 0 0 0 4px var(--ag-row-hover-color);
         }
     }
 
