@@ -15,6 +15,7 @@ import { gridBodyFeature } from './gridBody';
 import { headerFeature } from './header';
 import { iconsFeature } from './icons';
 import { inputsFeature } from './inputs';
+import { integratedChartsFeature } from './integratedCharts';
 import { overlayFeature } from './overlay';
 import { rangeSelectionFeature } from './rangeSelection';
 import { rowDragFeature } from './rowDrag';
@@ -58,6 +59,7 @@ export const allFeatures: ReadonlyArray<Feature> = [
   headerFeature,
   iconsFeature,
   inputsFeature,
+  integratedChartsFeature,
   overlayFeature,
   rangeSelectionFeature,
   rowDragFeature,

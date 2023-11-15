@@ -35,7 +35,7 @@ const GridPreview = () => {
     .map((variableName) => values[variableName])
     .filter(isNotNull)
     .map((value) => value.toCss())
-    .concat(parentTheme.name)
+    // .concat(parentTheme.name)
     .concat(String(colorScheme))
     .concat(features.map((f) => f.name))
     .join(';');
