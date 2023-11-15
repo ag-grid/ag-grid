@@ -11,7 +11,6 @@
     --ag-secondary-border-color: #f0f0f0;
     --ag-header-background-color: #fbfbfb;
     --ag-tooltip-background-color: #fbfbfb;
-    --ag-odd-row-background-color: #fcfcfc;
     --ag-control-panel-background-color: #fbfbfb;
     --ag-subheader-background-color: transparent;
     --ag-invalid-color: #e02525;
@@ -23,8 +22,8 @@
     
     // derived colours (no color blending - these are shared by dark mode)
     --ag-selected-row-background-color: color-mix(in srgb, transparent, var(--ag-active-color) 30%);
-    --ag-row-hover-color: color-mix(in srgb, transparent, var(--ag-active-color) 10%);
-    --ag-column-hover-color: color-mix(in srgb, transparent, var(--ag-active-color) 10%);
+    --ag-row-hover-color: color-mix(in srgb, transparent, var(--ag-foreground-color) 5%);
+    --ag-column-hover-color: color-mix(in srgb, transparent, var(--ag-foreground-color) 5%);
     --ag-input-focus-border-color: color-mix(in srgb, transparent, var(--ag-active-color) 40%);
     --ag-range-selection-background-color: color-mix(in srgb, transparent, var(--ag-active-color) 20%);
     --ag-range-selection-background-color-2: color-mix(in srgb, transparent, var(--ag-active-color) 36%);
@@ -73,51 +72,26 @@
     --ag-toggle-button-width: 28px;
 
     // FONTS
-    --ag-font-family: Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen-Sans, Ubuntu, Cantarell, 'Helvetica Neue', sans-serif;
+    --ag-font-family: 'IBM Plex Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen-Sans, Ubuntu, Cantarell, 'Helvetica Neue', sans-serif;
     --ag-font-size: 14px;
     --ag-icon-font-family: agGridQuartz;
 
     // MISC
-    --ag-tab-min-width: 260px;
+    --ag-tab-min-width: 280px;
 
     --ag-card-shadow: 0 1px 4px 1px rgba(186, 191, 199, 0.4);
-    --ag-popup-shadow: var(--ag-card-shadow);
+    --ag-popup-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
     --ag-side-bar-panel-width: 250px;
 };
 
 
 @mixin -dark-vars {
-    --ag-background-color: #181d1f;
-    --ag-foreground-color: #fff;
-    --ag-border-color: #4f4f4f;
-    --ag-secondary-border-color: #58565280;
-    --ag-modal-overlay-background-color: #181d1fa8;
-    --ag-header-background-color: #222628;
-    --ag-tooltip-background-color: #222628;
-    --ag-odd-row-background-color: #222628;
-    --ag-control-panel-background-color: #222628;
-    --ag-input-disabled-background-color: #68686e12;
-    --ag-input-focus-box-shadow:
-        0 0 2px 0.5px rgba(255, 255, 255, 0.5),
-        0 0 4px 3px var(--ag-input-focus-border-color);
-    --ag-card-shadow: 0 1px 20px 1px black;
-
-    --ag-advanced-filter-join-pill-color: #7a3a37;
-    --ag-advanced-filter-column-pill-color: #355f2d;
-    --ag-advanced-filter-option-pill-color: #5a3168;
-    --ag-advanced-filter-value-pill-color: #374c86;
-
-    color-scheme: dark;
-}
-
-@mixin -dark-blue-vars {
     --ag-background-color: #0d161e;
     --ag-foreground-color: #fff;
     --ag-border-color: #273039;
     --ag-secondary-border-color: #58565280;
     --ag-header-background-color: #171f27;
     --ag-tooltip-background-color: #171f27;
-    --ag-odd-row-background-color: #151c24;
     --ag-control-panel-background-color: #171f27;
     --ag-input-disabled-background-color: #68686e12;
     --ag-input-focus-box-shadow:
@@ -138,15 +112,8 @@
     @include -dark-vars();
 }
 
-.ag-theme-quartz-dark-blue {
-    @include -dark-blue-vars();
-}
-
 @media (prefers-color-scheme: dark) {
     .ag-theme-quartz-auto-dark {
         @include -dark-vars();
-    }
-    .ag-theme-quartz-auto-dark-blue {
-        @include -dark-blue-vars();
     }
 }

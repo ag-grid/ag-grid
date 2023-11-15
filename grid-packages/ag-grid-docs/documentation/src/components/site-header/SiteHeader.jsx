@@ -13,6 +13,7 @@ import styles from './SiteHeader.module.scss';
 import menuData from '../../../doc-pages/licensing/menu.json';
 import apiMenuData from '../../../doc-pages/licensing/api-menu.json';
 import Search from "../search/Search";
+import {getCurrentFramework} from '../../utils/local-storage';
 
 const SITE_HEADER_SMALL_WIDTH = parseInt(breakpoints['site-header-small'], 10);
 
@@ -24,12 +25,12 @@ const links = [
     },
     {
         name: 'Docs',
-        url: withPrefix('/documentation/'),
+        url: withPrefix('/getting-started'),
         docsLink: true,
     },
     {
         name: 'API',
-        url: withPrefix('/api/'),
+        url: withPrefix('/grid-interface'),
         docsLink: true,
     },
     {
@@ -80,7 +81,7 @@ const HeaderLinks = ({ path, isOpen, toggleIsOpen }) => {
             <li key={link.name.toLocaleLowerCase()} className={linkClasses}>
                 <a
                     className={styles.navLink}
-                    href={link.url}
+                    href={link.docsLink ? `/${getCurrentFramework()}-data-grid${link.url}` : link.url}
                     onClick={() => {
                         if (isOpen) {
                             toggleIsOpen();

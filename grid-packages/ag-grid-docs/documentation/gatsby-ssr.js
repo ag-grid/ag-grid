@@ -115,7 +115,7 @@ export const onPreRenderHTML = ({ getHeadComponents, replaceHeadComponents, path
     headComponents.unshift(<link
         key="inter"
         rel="stylesheet"
-        href="https://rsms.me/inter/inter.css"
+        href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500&display=swap"
         crossOrigin="anonymous"/>,
     );
 

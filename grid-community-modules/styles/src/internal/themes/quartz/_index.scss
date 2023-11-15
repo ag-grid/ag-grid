@@ -31,9 +31,6 @@
         transition: background-color 0.1s;
         flex: 1 1 auto;
     }
-    .ag-tab-selected {
-        color: var(--ag-active-color);
-    }
 
     .ag-menu {
         background-color: var(--ag-control-panel-background-color);
@@ -41,6 +38,10 @@
 
     .ag-menu-header {
         background-color: var(--ag-control-panel-background-color);
+    }
+
+    .ag-menu-option {
+        font-weight: 500;
     }
 
     .ag-tabs-header {
@@ -66,10 +67,10 @@
     .ag-side-buttons {
         padding: 0;
         align-self: flex-start;
-        margin: calc(var(--ag-grid-size) * 1.5);
-        @include ag.theme-rtl((margin-left: 0));
+        margin: var(--ag-widget-container-vertical-padding) var(--ag-widget-container-horizontal-padding);
         border: var(--ag-borders) var(--ag-border-color);
         border-radius: var(--ag-border-radius);
+        width: calc(var(--ag-icon-size) + var(--ag-grid-size) * 2);
     }
 
     .ag-side-button {
@@ -89,6 +90,14 @@
     }
     .ag-column-select-header, .ag-column-select, .ag-column-drop-vertical {
         border-bottom: none;
+    }
+
+    .ag-filter-toolpanel-search {
+        height: initial;
+        margin-top: var(--ag-widget-container-vertical-padding);
+    }
+    .ag-filter-toolpanel-search-input {
+        margin: 0;
     }
 
     .ag-charts-settings-group-title-bar,
@@ -139,10 +148,6 @@
 
     &.ag-dnd-ghost {
         font-weight: 700;
-    }
-
-    .ag-side-buttons {
-        width: calc(var(--ag-grid-size) * 5);
     }
 
     .ag-standard-button {
@@ -234,8 +239,6 @@
     }
 
     .ag-header-cell-menu-button,
-    .ag-side-button-button,
-    .ag-tab,
     .ag-panel-title-bar-button,
     .ag-header-expand-icon,
     .ag-column-group-icons,
@@ -251,7 +254,9 @@
     .ag-chart-menu-icon,
     .ag-chart-menu-close {
         &:hover {
-            color: var(--ag-active-color);
+            border-radius: 1px;
+            background-color: var(--ag-row-hover-color);
+            box-shadow: 0 0 0 calc(var(--ag-grid-size) * 0.5) var(--ag-row-hover-color);
         }
     }
 
@@ -346,7 +351,7 @@
     }
 }
 
-.ag-theme-quartz-dark, .ag-theme-quartz-dark-blue {
+.ag-theme-quartz-dark {
     .ag-icon::before {
         filter: invert(100%);
     }

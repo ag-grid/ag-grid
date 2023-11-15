@@ -1,3 +1,4 @@
+import { Label } from '@carbon/icons-react';
 import classnames from 'classnames';
 import React from 'react';
 import { Icon } from '../components/Icon';
@@ -6,6 +7,16 @@ import styles from './Toolbar.module.scss';
 import { createDataSizeValue } from './utils';
 
 const IS_SSR = typeof window === 'undefined';
+
+const options: Record<string, string> = {
+    "ag-theme-quartz": "Quartz (light)",
+    "ag-theme-quartz-dark": "Quartz (dark)",
+    "ag-theme-alpine": "Alpine (light)",
+    "ag-theme-alpine-dark": "Alpine (dark)",
+    "ag-theme-balham": "Balham (light)",
+    "ag-theme-balham-dark": "Balham (dark)",
+    "ag-theme-material": "Material",
+}
 
 export const Toolbar = ({ gridRef, dataSize, setDataSize, rowCols, gridTheme, setGridTheme, setCountryColumnPopupEditor }) => {
     function onDataSizeChanged(event) {
@@ -67,14 +78,12 @@ export const Toolbar = ({ gridRef, dataSize, setDataSize, rowCols, gridTheme, se
 
                     <label htmlFor="grid-theme">Theme:</label>
                     <select id="grid-theme" onChange={onThemeChanged} value={gridTheme || ''}>
-                        <option value="ag-theme-quartz">Quartz (light)</option>
-                        <option value="ag-theme-quartz-dark">Quartz (dark)</option>
-                        <option value="ag-theme-quartz-dark-blue">Quartz (dark blue)</option>
-                        <option value="ag-theme-alpine">Alpine (light)</option>
-                        <option value="ag-theme-alpine-dark">Alpine (dark)</option>
-                        <option value="ag-theme-balham">Balham (light)</option>
-                        <option value="ag-theme-balham-dark">Balham (dark)</option>
-                        <option value="ag-theme-material">Material</option>
+                        {
+                            Object.entries(options).map(([themeName, label]) => <option key={themeName} value={themeName}>{label}</option>)
+                        }
+                        {
+                            gridTheme && options[gridTheme] == null && <option value={gridTheme}>{gridTheme.replace("ag-theme-", "")}</option>
+                        }
                     </select>
 
                     <label htmlFor="global-filter">Filter:</label>

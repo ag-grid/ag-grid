@@ -2,11 +2,13 @@ import classnames from 'classnames';
 import fwLogos from 'images/fw-logos';
 import React from 'react';
 import styles from './FrameworkSelector.module.scss';
+import {getCurrentFramework} from '../utils/local-storage';
 
 // This is shown on the homepage, and in the top right of the documentation pages.
 // It is used to allow users to choose which framework they wish to see documentation for.
 
 export default function FrameworkSelector({ data, currentFramework, isFullWidth, showSelectedFramework }) {
+    console.log(getCurrentFramework());
     return (
         <div
             className={classnames(styles.frameworkSelector, {
@@ -21,7 +23,7 @@ export default function FrameworkSelector({ data, currentFramework, isFullWidth,
 
                 return (
                     <a
-                        href={framework.url}
+                        href={`${framework.url}getting-started`}
                         key={framework.name}
                         className={classnames(styles.option, {
                             [styles.selected]: isSelected,

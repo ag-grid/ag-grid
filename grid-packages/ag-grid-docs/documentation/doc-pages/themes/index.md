@@ -10,10 +10,10 @@ The grid comes with several provided themes which act as a great starting point 
 
 | Theme Name | Description |
 |------------|-------------|
-|[**ag-theme-quartz**](../../example?theme=ag-theme-quartz)<br/>[**ag-theme-quartz-dark**](../../example?theme=ag-theme-quartz-dark)<br/>[**ag-theme-quartz-auto-dark**](../../example?theme=ag-theme-quartz-auto-dark) *<br/>[**ag-theme-quartz-dark-blue**](../../example?theme=ag-theme-quartz-dark-blue)<br/>[**ag-theme-quartz-auto-dark-blue**](../../example?theme=ag-theme-quartz-auto-dark-blue) *<br/><br/>File name `ag-theme-quartz[.min].css` | Modern looking themes with high contrast and generous padding.<br/><br/>**Recommendation:** This is the recommended grid theme and an excellent choice for most applications. |
+|[**ag-theme-quartz**](../../example?theme=ag-theme-quartz)<br/>[**ag-theme-quartz-dark**](../../example?theme=ag-theme-quartz-dark)<br/>[**ag-theme-quartz-auto-dark**](../../example?theme=ag-theme-quartz-auto-dark) *<br/><br/>File name `ag-theme-quartz[.min].css` | Modern looking themes with high contrast and generous padding.<br/><br/>**Recommendation:** This is the recommended grid theme and an excellent choice for most applications. |
 |[**ag-theme-balham**](../../example?theme=ag-theme-balham)<br/>[**ag-theme-balham-dark**](../../example?theme=ag-theme-balham-dark)<br/>[**ag-theme-balham-auto-dark**](../../example?theme=ag-theme-balham-auto-dark) *<br/><br/>File name `ag-theme-balham[.min].css` | Balham has a more traditional look modelled after a spreadsheet application. It is appropriate for applications that need to fit more data onto each page. |
 |[**ag-theme-material**](../../example?theme=ag-theme-material)<br/><br/>File name `ag-theme-material[.min].css` | A theme designed according to the Google Material Language Specs.<br/><br/>**Recommendation:** This theme looks great for simple applications with lots of white space, and is the obvious choice if the rest of your application follows the Google Material Design spec. However, the Material spec doesn't cater for advanced grid features such as grouped columns and tool panels. If your application uses these features, consider using `ag-theme-quartz` instead. |
-|[**ag-theme-quartz**](../../example?theme=ag-theme-quartz)<br/>[**ag-theme-alpine-dark**](../../example?theme=ag-theme-alpine-dark)<br/>[**ag-theme-alpine-auto-dark**](../../example?theme=ag-theme-alpine-auto-dark) *<br/><br/>File name `ag-theme-quartz[.min].css` | Alpine was the default theme before Quartz was released. It is still supported, but we recommend Quartz for new applications. |
+|[**ag-theme-alpine**](../../example?theme=ag-theme-alpine)<br/>[**ag-theme-alpine-dark**](../../example?theme=ag-theme-alpine-dark)<br/>[**ag-theme-alpine-auto-dark**](../../example?theme=ag-theme-alpine-auto-dark) *<br/><br/>File name `ag-theme-alpine[.min].css` | Alpine was the default theme before Quartz was released. It is still supported, but we recommend Quartz for new applications. |
 
 \* The 'auto' versions of each theme use the [prefers-color-scheme](https://developer.mozilla.org/en-US/docs/Web/CSS/@media/prefers-color-scheme) CSS media feature to switch between dark and light variants depending on whether the user has enabled dark mode on their operating system.
 
@@ -55,20 +55,20 @@ There are various ways to load these stylesheets, as described in the sections b
 
 Some themes have a recommended 3rd party font, which is not bundled with the theme CSS. If the font is not available at runtime, the OS default UI font will be used instead - Segoe UI on Windows and SF Pro on Mac.
 
-#### Loading Inter for the Quartz theme
+#### Loading IBM Plex Sans for the Quartz theme
 
-Inter is a typeface carefully crafted & designed for computer screens. Inter features a tall x-height to aid in readability of mixed-case and lower-case text
+Plex Sans is a font that gives excellent readability on both regular and high DPI screens. It features a tall x-height to aid in readability of mixed-case and lower-case text.
 
-You can [download Inter from GitHub](https://github.com/rsms/inter) and use it in your application, or load it from their official CDN:
+You can [download Plex Sans from Google Fonts](https://fonts.google.com/specimen/IBM+Plex+Sans) (you need weights 400/Regular and 500/Medium)and use it in your application, or load it from the Google Fonts API:
 
 ```html
 <!-- in HTML -->
-<link href="https://rsms.me/inter/inter.css" rel="stylesheet" />
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500&display=swap" rel="stylesheet" />
 ```
 
 ```css
 /* in css */
-@import "https://rsms.me/inter/inter.css";
+@import "https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500&display=swap";
 ```
 
 #### Loading Roboto for the Material theme

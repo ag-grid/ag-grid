@@ -1831,7 +1831,7 @@ export class GridApi<TData = any> {
     }
 
     /**
-     * Updates a single gridOption to the new value provided.
+     * Updates a single `Managed` gridOption to the new value provided.
      * If updating multiple options, it is recommended to instead use `api.updateGridOptions()` which batches update logic.
      */
     public setGridOption<Key extends keyof GridOptions>(key: Key, value: GridOptions[Key]): void {
@@ -1839,7 +1839,7 @@ export class GridApi<TData = any> {
     }
 
     /**
-     * Updates the provided subset of gridOptions with the provided values.
+     * Updates the provided subset of `Managed` gridOptions with the provided values.
      */
     public updateGridOptions(options: Partial<GridOptions>): void {
         this.gos.updateGridOptions({ options });
