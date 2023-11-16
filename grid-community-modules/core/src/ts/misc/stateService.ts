@@ -495,12 +495,8 @@ export class StateService extends BeanStub {
         const pageSize = !this.gridOptionsService.get('paginationAutoPageSize')
             ? this.paginationProxy.getPageSize() : undefined;
 
-        const result: Partial<PaginationState> = {};
-        if (page) { result['page'] = page; }
-        if (pageSize) { result['pageSize'] = pageSize; }
-        if (Object.keys(result).length === 0) { return undefined; }
-
-        return result as PaginationState;
+        if (!page && !pageSize) { return; }
+        return { page, pageSize }
     }
 
     private setPaginationState(paginationState: PaginationState): void {
