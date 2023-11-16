@@ -141,7 +141,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel 
         //                       - non memoised correctly.
         
         const resetProps: Set<keyof GridOptions> = new Set([
-            'treeData', 'masterDetail', 'groupSelectsChildren', 'rowHeight',
+            'treeData', 'masterDetail', 'rowHeight',
         ]);
         const groupStageRefreshProps: Set<keyof GridOptions> = new Set([
             'suppressParentsInRowNodes', 'groupDefaultExpanded',

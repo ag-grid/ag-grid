@@ -112,7 +112,7 @@ export class ServerSideRowModel extends BeanStub implements IServerSideRowModel 
              * Following properties omitted as they are likely to come with undesired  side effects.
              * 'getRowId', 'isRowMaster', 'getRowHeight', 'isServerSideGroup', 'getServerSideGroupKey',
              * */
-            'masterDetail', 'groupSelectsChildren', 'rowHeight', 'treeData', 'removePivotHeaderRowWhenSingleValueColumn',
+            'masterDetail', 'rowHeight', 'treeData', 'removePivotHeaderRowWhenSingleValueColumn',
             'suppressServerSideInfiniteScroll', 'cacheBlockSize',
         ], resetListener);
         this.verifyProps();
