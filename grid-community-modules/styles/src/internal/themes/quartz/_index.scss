@@ -16,10 +16,14 @@
     @include ag.text-input {
         min-height: calc(var(--ag-grid-size) * 4);
         border-radius: var(--ag-border-radius);
-
+        
         @include ag.theme-rtl((
             padding-left: var(--ag-grid-size),
-        ));
+            ));
+        }
+        
+    .ag-picker-field-wrapper {
+        min-height: calc(var(--ag-grid-size) * 4);
     }
 
     //
@@ -35,6 +39,11 @@
     .ag-menu {
         background-color: var(--ag-control-panel-background-color);
         min-width: 280px;
+        color: color-mix(in srgb, transparent, var(--ag-foreground-color) 75%);
+
+    }
+    .ag-menu-option .ag-icon {
+        opacity: 65%;
     }
 
     .ag-menu-header {
@@ -51,6 +60,7 @@
         border: var(--ag-borders) var(--ag-border-color);
         display: flex;
         border-radius: var(--ag-border-radius);
+        background-color: color-mix(in srgb, transparent, var(--ag-foreground-color) 5%)
     }
     
     .ag-tab-selected {
@@ -58,6 +68,7 @@
         border: var(--ag-borders) var(--ag-input-border-color);
         background-color: var(--ag-background-color);
         border-radius: var(--ag-border-radius);
+        box-shadow: 0px 1px 4px 0px rgba(0, 0, 0, 0.04);
     }
     //
     // VERTICAL TABS
@@ -208,6 +219,10 @@
         padding-bottom: 0px;
     }
 
+    .ag-column-drop-vertical-icon {
+        @include ag.theme-rtl((margin-left: 0, margin-right: var(--ag-widget-horizontal-spacing)));
+    }
+
     .ag-column-drop-vertical-empty-message {
         display: flex;
         align-items: center;
@@ -220,7 +235,6 @@
 
     .ag-column-drop-empty-message {
         color: var(--ag-foreground-color);
-        opacity: 0.75;
     }
 
     .ag-status-bar {
@@ -236,10 +250,10 @@
     }
 
     .ag-column-drop-cell-button {
-        opacity: 0.5;
+        opacity: 0.75;
 
         &:hover {
-            opacity: 0.75;
+            opacity: 1;
         }
     }
 
@@ -256,22 +270,23 @@
     .ag-column-select-header-icon,
     .ag-floating-filter-button-button,
     .ag-filter-toolpanel-expand,
+    .ag-panel-title-bar-button-icon,
     .ag-chart-menu-icon,
     .ag-chart-menu-close {
-        &:hover {
+        &:hover::before {
             border-radius: 1px;
-            background-color: var(--ag-row-hover-color);
-            box-shadow: 0 0 0 4px var(--ag-row-hover-color);
+            background-color: color-mix(in srgb, transparent, var(--ag-foreground-color) 10%);
+            box-shadow: 0 0 0 4px color-mix(in srgb, transparent, var(--ag-foreground-color) 10%);
             cursor: pointer;
         }
     }
 
-    .ag-chart-menu-close {
-        background: var(--ag-background-color);
+    .ag-chart-menu-icon {
+        opacity: 0.6;
     }
 
-    .ag-chart-menu-close:hover .ag-icon {
-        border-color: var(--ag-active-color);
+    .ag-chart-menu-close {
+        background: var(--ag-background-color);
     }
 
     .ag-chart-menu-close .ag-icon {
@@ -285,7 +300,7 @@
     }
 
     .ag-menu-option-icon, .ag-compact-menu-option-icon {
-        @include ag.unthemed-rtl((padding-left: calc(var(--ag-grid-size) * 1.5)));
+        @include ag.theme-rtl((padding-left: calc(var(--ag-grid-size) * 1.5)));
         width: var(--ag-icon-size);
     }
 
@@ -349,14 +364,27 @@
         background-repeat: no-repeat;
         width: var(--ag-icon-size);
         height: var(--ag-icon-size);
+        opacity: 0.9;
 
         &::before {
             display: none;
         }
     }
     
-    .ag-icon-grip {
+    .ag-icon-grip::before {
         opacity: 0.6;
+    }
+
+
+
+    .ag-advanced-filter-builder-item-button-disabled,
+    .ag-disabled,
+    .ag-column-select-column-readonly,
+    .ag-column-select-column-group-readonly,
+    [disabled] {
+        .ag-icon {
+            opacity: 0.6;
+        }
     }
 
     .ag-column-select-header-filter-wrapper, .ag-filter-toolpanel-search {
@@ -378,6 +406,18 @@
             @include ag.theme-rtl((padding-left: calc(var(--ag-grid-size) * 2 + 12px)));
         }
     }
+
+    .ag-checkbox-input-wrapper.ag-checked.ag-disabled {
+        --ag-checkbox-checked-color: var(--ag-checkbox-unchecked-color);
+    }
+
+    .ag-checkbox-input-wrapper,
+    .ag-toggle-button-input-wrapper,
+    .ag-radio-button-input-wrapper,
+    input[class^='ag-'][type='range'] {
+        cursor: pointer;
+    }
+
 }
 
 .ag-theme-quartz-dark {

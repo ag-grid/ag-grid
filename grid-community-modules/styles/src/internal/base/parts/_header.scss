@@ -49,7 +49,7 @@
 
     .ag-header-expand-icon {
         cursor: pointer;
-        @include ag.unthemed-rtl(( padding-left: 4px ));
+        @include ag.unthemed-rtl(( margin-left: 4px ));
     }
 
     .ag-header-row:not(:first-child) {
@@ -124,7 +124,7 @@
     }
 
     .ag-floating-filter-button {
-        @include ag.unthemed-rtl(( margin-left: calc(var(--ag-grid-size) * 3) ));
+        @include ag.unthemed-rtl(( margin-left: var(--ag-cell-widget-spacing) ));
     }
 
     .ag-floating-filter-button-button {

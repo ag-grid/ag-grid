@@ -41,8 +41,6 @@
     .ag-chart-menu {
         position: absolute;
         top: 10px;
-        width: 24px;
-        overflow: hidden;
         display: flex;
         flex-direction: column;
 
@@ -231,7 +229,6 @@
     .ag-chart .ag-chart-tool-panel-button-enable .ag-chart-menu {
         display: flex;
         flex-direction: row;
-        overflow: auto;
         top: 5px;
         gap: calc(var(--ag-grid-size) * 3 - 8px);
         width: auto;
@@ -331,10 +328,6 @@
 
     .ag-chart-menu-icon {
         opacity: 0.5;
-        line-height: 24px;
-        font-size: 24px;
-        width: 24px;
-        height: 24px;
         margin: 2px 0;
         cursor: pointer;
         border-radius: var(--ag-card-radius);

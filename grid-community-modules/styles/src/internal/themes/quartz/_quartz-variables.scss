@@ -8,7 +8,7 @@
     --ag-background-color: #fff;
     --ag-foreground-color: #181d1f;
     --ag-border-color: #ececec;
-    --ag-secondary-border-color: #f0f0f0;
+    --ag-secondary-border-color: color-mix(in srgb, transparent, var(--ag-foreground-color) 10%);
     --ag-header-background-color: #fbfbfb;
     --ag-tooltip-background-color: #fbfbfb;
     --ag-control-panel-background-color: #fbfbfb;
@@ -19,6 +19,7 @@
     --ag-advanced-filter-column-pill-color: #a6e194;
     --ag-advanced-filter-option-pill-color: #f3c08b;
     --ag-advanced-filter-value-pill-color: #85c0e4;
+    --ag-header-column-resize-handle-color: var(--ag-secondary-border-color);
     
     // derived colours (no color blending - these are shared by dark mode)
     --ag-selected-row-background-color: color-mix(in srgb, transparent, var(--ag-active-color) 30%);
@@ -92,7 +93,7 @@
     --ag-background-color: #0d161e;
     --ag-foreground-color: #fff;
     --ag-border-color: #273039;
-    --ag-secondary-border-color: #58565280;
+    --ag-secondary-border-color: color-mix(in srgb, transparent, var(--ag-foreground-color) 10%);
     --ag-header-background-color: #171f27;
     --ag-tooltip-background-color: #171f27;
     --ag-control-panel-background-color: #171f27;
@@ -100,11 +101,14 @@
     --ag-card-shadow: 0 1px 20px 1px black;
     --ag-input-border-color: #323D48;
     --ag-checkbox-unchecked-color: color-mix(in srgb, var(--ag-background-color), var(--ag-foreground-color) 40%);
+    --ag-toggle-button-switch-background-color: #fff;
 
     --ag-advanced-filter-join-pill-color: #7a3a37;
     --ag-advanced-filter-column-pill-color: #355f2d;
     --ag-advanced-filter-option-pill-color: #5a3168;
     --ag-advanced-filter-value-pill-color: #374c86;
+
+    --ag-popup-shadow: 0 1px 6px rgba(0, 0, 0, 0.5);
 
     color-scheme: dark;
 }
