@@ -111,7 +111,7 @@ The example below demonstrates the autoHeight feature. Notice the following:
 - The height will also adjust as you filter, to add and remove rows.
 - If you have pinned rows, the grid will size to accommodate the pinned rows.
 - Vertical scrolling will not happen, however horizontal scrolling, including pinned columns, will work as normal.
-- It is possible to move the grid into and out of 'full height' mode by using the `api.setDomLayout()` or by changing the bound property `domLayout`.
+- It is possible to move the grid into and out of 'full height' mode by using the `api.setGridOption('domLayout', layout)` or by changing the bound property `domLayout`.
 
 <note>
 The following test is best viewed if you open it in a new tab, so it is obvious that there are no scroll bars.

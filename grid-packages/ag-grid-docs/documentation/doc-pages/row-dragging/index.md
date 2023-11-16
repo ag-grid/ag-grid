@@ -188,7 +188,7 @@ The example below demonstrates entire row dragging with [Multi-Row Dragging](/ro
 
 ## Suppress Row Drag
 
-You can hide the draggable area by calling the grid API `setSuppressRowDrag()`
+You can hide the draggable area by calling the grid API `setGridOption('suppressRowDrag', suppressed)`
 or by setting the bound property `suppressRowDrag`.
 
 The example below is almost identical to the [Managed Dragging](#managed-dragging) example with the following differences:

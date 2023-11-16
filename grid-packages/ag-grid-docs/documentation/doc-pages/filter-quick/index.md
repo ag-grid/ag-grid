@@ -22,10 +22,10 @@ You can set the Quick Filter text via the `quickFilterText` grid option.
 
 <framework-specific-section frameworks="javascript,angular,vue">
 
-You can set the Quick Filter text by calling the `setQuickFilter()` method on the grid API.
+You can set the Quick Filter text by calling the `setGridOption('quickFilterText', text)` method on the grid API.
 
 <snippet>
-api.setQuickFilter('new filter text');
+api.setGridOption('quickFilterText', 'new filter text');
 </snippet>
 
 You can also set the initial Quick Filter text via the `quickFilterText` grid option.
@@ -83,7 +83,7 @@ When in use, the Quick Filter cache text can be manually reset in one of the fol
 
 By default the Quick Filter will only check visible column values. If you want to check hidden column values, then you can set the grid option `includeHiddenColumnsInQuickFilter = true`. Note that if you have a large number of hidden columns then this can have a performance impact.
 
-This can also be set via the API method `setIncludeHiddenColumnsInQuickFilter`.
+This can also be set via the API method `setGridOption('includeHiddenColumnsInQuickFilter', toInclude)`.
 
 ## Quick Filter Parser
 

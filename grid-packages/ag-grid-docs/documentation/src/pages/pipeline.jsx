@@ -152,12 +152,12 @@ const Pipeline = ({ location }) => {
 
     const gridReady = (params) => {
         setGridApi(params.api);
-        params.api.setQuickFilter(URLFilterSearchQuery);
+        params.api.setGridOption('quickFilterText', URLFilterSearchQuery);
     };
 
     const onQuickFilterChange = useCallback(
         (event) => {
-            gridApi.setQuickFilter(event.target.value);
+            gridApi.setGridOption('quickFilterText', event.target.value);
         },
         [gridApi]
     );

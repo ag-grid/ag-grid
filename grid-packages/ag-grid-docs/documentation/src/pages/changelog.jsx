@@ -113,14 +113,14 @@ const Changelog = ({ location }) => {
         (params) => {
             setGridApi(params.api);
             searchBarEl.current.value = URLFilterItemKey;
-            params.api.setQuickFilter(URLFilterItemKey);
+            params.api.setGridOption('quickFilterText', URLFilterItemKey);
         },
         [URLFilterItemKey]
     );
 
     const onQuickFilterChange = useCallback(
         (event) => {
-            gridApi.setQuickFilter(event.target.value);
+            gridApi.setGridOption('quickFilterText', event.target.value);
         },
         [gridApi]
     );
