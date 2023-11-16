@@ -161,7 +161,6 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel 
             'postSortRows', 'groupDisplayType', 'accentedSort',
         ]);
         const filterAggStageRefreshProps: Set<keyof GridOptions> = new Set([
-            'groupAggFiltering',
         ]);
         const flattenStageRefreshProps: Set<keyof GridOptions> = new Set([
             'groupRemoveSingleChildren', 'groupRemoveLowestSingleChildren', 'groupIncludeFooter',
@@ -569,6 +568,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel 
     }
 
     refreshModel(paramsOrStep: RefreshModelParams | ClientSideRowModelStep | undefined): void {
+        console.log('ref', paramsOrStep)
         if (!this.hasStarted) { return; }
 
         let params = typeof paramsOrStep === 'object' && "step" in paramsOrStep ? paramsOrStep : this.buildRefreshModelParams(paramsOrStep);
