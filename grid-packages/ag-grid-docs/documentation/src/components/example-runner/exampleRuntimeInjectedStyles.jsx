@@ -26,6 +26,14 @@ html[data-color-scheme='dark'] button:not(#myGrid button, #myChart button, butto
     border: 2px solid rgba(255,255,255, 0.2);
 }
 
+.ag-theme-quartz-dark {
+
+    --ag-background-color: color-mix(in srgb, transparent, var(--ag-header-background-color) 100%);
+
+    .ag-row {
+        background: color-mix(in srgb, transparent, var(--ag-header-background-color) 80%); 
+    }
+}
 html button:not(#myGrid button, #myChart button, button[class*='ag-']) {
     appearance: none;
     background-color: var(--background-100);
