@@ -7,11 +7,11 @@
     --ag-active-color: #2196f3;
     --ag-background-color: #fff;
     --ag-foreground-color: #181d1f;
-    --ag-border-color: #ececec;
-    --ag-secondary-border-color: color-mix(in srgb, transparent, var(--ag-foreground-color) 10%);
-    --ag-header-background-color: #fbfbfb;
-    --ag-tooltip-background-color: #fbfbfb;
-    --ag-control-panel-background-color: #fbfbfb;
+    --ag-border-color: color-mix(in srgb, var(--ag-background-color), var(--ag-foreground-color) 10%);
+    --ag-secondary-border-color: var(--ag-border-color);
+    --ag-header-background-color: color-mix(in srgb, var(--ag-background-color), var(--ag-foreground-color) 2%);
+    --ag-tooltip-background-color: var(--ag-header-background-color);
+    --ag-control-panel-background-color: var(--ag-header-background-color);
     --ag-subheader-background-color: transparent;
     --ag-invalid-color: #e02525;
     --ag-checkbox-unchecked-color: color-mix(in srgb, var(--ag-background-color), var(--ag-foreground-color) 30%);
@@ -41,7 +41,7 @@
     --ag-chip-background-color: color-mix(in srgb, transparent, var(--ag-foreground-color) 7%);
     --ag-chip-border-color: color-mix(in srgb, var(--ag-header-background-color), var(--ag-foreground-color) 13%);
     --ag-input-disabled-border-color: var(--ag-border-color);
-    --ag-input-disabled-background-color: color-mix(in srgb, transparent, var(--ag-border-color) 30%);
+    --ag-input-disabled-background-color: color-mix(in srgb, var(--ag-background-color), var(--ag-foreground-color) 6%);
     --ag-modal-overlay-background-color: color-mix(in srgb, transparent, var(--ag-background-color) 66%);
 
     // BORDERS
@@ -92,12 +92,8 @@
 @mixin -dark-vars {
     --ag-background-color: #0d161e;
     --ag-foreground-color: #fff;
-    --ag-border-color: #273039;
-    --ag-secondary-border-color: color-mix(in srgb, transparent, var(--ag-foreground-color) 10%);
-    --ag-header-background-color: #171f27;
-    --ag-tooltip-background-color: #171f27;
-    --ag-control-panel-background-color: #171f27;
-    --ag-input-disabled-background-color: #68686e12;
+    --ag-border-color: color-mix(in srgb, transparent, var(--ag-foreground-color) 10%);
+    --ag-header-background-color: color-mix(in srgb, var(--ag-background-color), var(--ag-foreground-color) 4%);
     --ag-card-shadow: 0 1px 20px 1px black;
     --ag-input-border-color: #323D48;
     --ag-checkbox-unchecked-color: color-mix(in srgb, var(--ag-background-color), var(--ag-foreground-color) 40%);
