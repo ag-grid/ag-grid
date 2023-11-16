@@ -242,12 +242,10 @@
         font-weight: normal;
     }
 
-    .ag-status-name-value-value {
-        font-weight: 700;
-    }
-
-    .ag-paging-number, .ag-paging-row-summary-panel-number {
-        font-weight: 700;
+    .ag-status-name-value-value,
+    .ag-paging-number,
+    .ag-paging-row-summary-panel-number {
+        font-weight: 500;
     }
 
     .ag-column-drop-cell-button {
@@ -274,7 +272,7 @@
     .ag-panel-title-bar-button-icon,
     .ag-chart-menu-icon,
     .ag-chart-menu-close {
-        &:hover::before {
+        &:hover {
             border-radius: 1px;
             background-color: color-mix(in srgb, transparent, var(--ag-foreground-color) 10%);
             box-shadow: 0 0 0 4px color-mix(in srgb, transparent, var(--ag-foreground-color) 10%);
@@ -412,9 +410,9 @@
         --ag-checkbox-checked-color: var(--ag-checkbox-unchecked-color);
     }
 
-    .ag-checkbox-input-wrapper,
-    .ag-toggle-button-input-wrapper,
-    .ag-radio-button-input-wrapper,
+    .ag-checkbox-input,
+    .ag-toggle-button-input,
+    .ag-radio-button-input,
     input[class^='ag-'][type='range'] {
         cursor: pointer;
     }
