@@ -98,7 +98,10 @@ export class AggregationStage extends BeanStub implements IRowNodeStage {
             // if total footer is displayed, the value is in use
             if (isRootNode && !aggDetails.groupIncludeTotalFooter) {
                 const notPivoting = !this.columnModel.isPivotMode();
-                if (!aggDetails.alwaysAggregateAtRootLevel && notPivoting) { return; }
+                if (!aggDetails.alwaysAggregateAtRootLevel && notPivoting) {
+                    rowNode.setAggData(null);
+                    return;
+                }
             }
 
             this.aggregateRowNode(rowNode, aggDetails);
