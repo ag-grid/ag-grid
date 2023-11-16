@@ -132,7 +132,7 @@ export class FontPanel extends Component {
                 initialValue = families[valueIndex];
             } else {
                 // add user provided value to list
-                const capitalisedFontValue = _.titleCase(family);
+                const capitalisedFontValue = _.capitalise(family);
 
                 families.push(capitalisedFontValue);
 

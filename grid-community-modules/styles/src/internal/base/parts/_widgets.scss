@@ -374,7 +374,7 @@
         }
 
         &:not(.ag-cell-editor, .ag-label-align-top) {
-            height: var(--ag-list-item-height);
+            min-height: var(--ag-list-item-height);
         }
 
         .ag-picker-field-display {

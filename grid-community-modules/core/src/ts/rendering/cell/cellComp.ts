@@ -89,7 +89,7 @@ export class CellComp extends Component implements TooltipParentComp {
             }
         };
 
-        setAriaRole(eGui, 'gridcell');
+        setAriaRole(eGui, cellCtrl.getCellAriaRole());
         setAttribute('col-id', cellCtrl.getColumnIdSanitised());
         const tabIndex = cellCtrl.getTabIndex();
         if (tabIndex !== undefined) {

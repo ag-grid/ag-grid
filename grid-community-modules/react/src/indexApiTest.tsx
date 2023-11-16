@@ -1,13 +1,12 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { createRoot } from 'react-dom/client';
 
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
+import { ColDef } from '@ag-grid-community/core';
 import { AgGridReact } from './agGridReact';
-import { useGridApi } from './useGridApi';
 
 import '@ag-grid-community/styles/ag-grid.css';
 import '@ag-grid-community/styles/ag-theme-quartz.css';
-import { ColDef } from '@ag-grid-community/core';
 
 interface RowData {
     make: string;
@@ -16,7 +15,7 @@ interface RowData {
 }
 
 const App = () => {
-    const [gridRef, apiRef] = useGridApi<RowData>();
+    const gridRef = useRef<AgGridReact<RowData>>(null);
 
     const [rowData] = useState([
         { make: 'Toyota', model: 'Celica', price: 35000 },
@@ -30,7 +29,7 @@ const App = () => {
     ]);
 
     useEffect(() => {
-        console.log(apiRef.current?.setGridOption('rowData', [ { make: 'Toyota', model: 'Celica', price: 35000 } ]));
+        console.log(gridRef.current?.api.setGridOption('rowData', [ { make: 'Toyota', model: 'Celica', price: 35000 } ]));
     }, [])
 
     return (

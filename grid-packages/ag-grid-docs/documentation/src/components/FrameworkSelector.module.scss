@@ -8,7 +8,7 @@
     display: flex;
     width: 100%;
     border-radius: var(--border-radius);
-    background-color: var(--input-background-color);    
+    background-color: var(--input-background-color);
 }
 
 .option {
@@ -134,11 +134,11 @@
         --height: #{$size-7};
         --icon-size: #{$size-5};
         --font-size: var(--font-size-extra-large);
-        --x-padding: 20px;
     }
 
     #{$darkmode-selector} & {
-        background-color: #121f29;
+        background-color: rgba(255, 255, 255, 0.05);
+        border: 1px solid #394755;
     }
 }
 
@@ -148,6 +148,10 @@
     &:hover::after,
     &:focus-visible::after {
         opacity: 1;
+    }
+
+    img {
+        border-radius: 14%;
     }
 
     @media screen and (min-width: $breakpoint-fw-selector-full-width-medium) {

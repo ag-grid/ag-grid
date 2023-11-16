@@ -18,7 +18,6 @@ import { UserCompDetails } from "../../../components/framework/userComponentFact
 import { setAriaLabel } from "../../../utils/aria";
 
 export interface IHeaderFilterCellComp extends IAbstractHeaderCellComp {
-    addOrRemoveCssClass(cssClassName: string, on: boolean): void;
     addOrRemoveBodyCssClass(cssClassName: string, on: boolean): void;
     setButtonWrapperDisplayed(displayed: boolean): void;
     setCompDetails(compDetails?: UserCompDetails | null): void;
@@ -50,11 +49,11 @@ export class HeaderFilterCellCtrl extends AbstractHeaderCellCtrl<IHeaderFilterCe
     }
 
     public setComp(comp: IHeaderFilterCellComp, eGui: HTMLElement, eButtonShowMainFilter: HTMLElement, eFloatingFilterBody: HTMLElement): void {
-        this.setGui(eGui);
         this.comp = comp;
         this.eButtonShowMainFilter = eButtonShowMainFilter;
         this.eFloatingFilterBody = eFloatingFilterBody;
 
+        this.setGui(eGui);
         this.setupActive();
 
         this.setupWidth();
@@ -149,13 +148,13 @@ export class HeaderFilterCellCtrl extends AbstractHeaderCellCtrl<IHeaderFilterCe
     }
 
     private findNextColumnWithFloatingFilter(backwards: boolean): Column | null {
-        const columModel = this.beans.columnModel;
+        const columnModel = this.beans.columnModel;
         let nextCol: Column | null = this.column;
 
         do {
             nextCol = backwards
-                ? columModel.getDisplayedColBefore(nextCol)
-                : columModel.getDisplayedColAfter(nextCol);
+                ? columnModel.getDisplayedColBefore(nextCol)
+                : columnModel.getDisplayedColAfter(nextCol);
 
             if (!nextCol) { break; }
 

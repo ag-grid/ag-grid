@@ -7,11 +7,9 @@ $z-index-mouse-mask: 10000; // NOTE: Above .ag-dnd-ghost z-index of 9999
 $z-index-debug-canvas: $z-index-mouse-mask + 10;
 $z-index-debug-panel: $z-index-debug-canvas + 10;
 
-:global(.automated-row-grouping-grid.ag-theme-alpine-dark) {
+:global(.automated-row-grouping-grid.ag-theme-quartz-dark) {
     position: relative;
     width: 100%;
-    background-color: #00162d;
-    border-radius: var(--border-radius);
     overflow: hidden;
     z-index: $z-index-grid;
 
@@ -21,7 +19,6 @@ $z-index-debug-panel: $z-index-debug-canvas + 10;
         margin-bottom: calc(500px / -2 + $size-4);
         transform-origin: top left;
         transform: scale(0.5);
-        border-radius: calc(var(--border-radius) * 2);
         overflow: hidden;
         pointer-events: none;
     }
@@ -83,7 +80,7 @@ $z-index-debug-panel: $z-index-debug-canvas + 10;
         margin-top: $size-6;
     }
 
-    button:not([class^="ag-"]) {
+    button:not([class^='ag-']) {
         margin-left: $size-1;
     }
 }

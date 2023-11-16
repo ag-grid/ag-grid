@@ -7,21 +7,26 @@ import { HeaderRowCtrl } from "../../row/headerRowCtrl";
 import { KeyCode } from "../.././../constants/keyCode";
 import { Beans } from "../../../rendering/beans";
 import { UserComponentFactory } from '../../../components/framework/userComponentFactory';
-import { ColumnPinnedType } from "../../../entities/column";
+import { Column, ColumnPinnedType } from "../../../entities/column";
 import { CtrlsService } from "../../../ctrlsService";
 import { HorizontalDirection } from "../../../constants/direction";
 import { DragAndDropService, DragSource } from "../../../dragAndDrop/dragAndDropService";
+import { CssClassApplier } from "../cssClassApplier";
+import { ColumnGroup } from "../../../entities/columnGroup";
+import { setAriaColIndex } from "../../../utils/aria";
+import { Events } from "../../../eventKeys";
 
 let instanceIdSequence = 0;
 
 export interface IAbstractHeaderCellComp {
+    addOrRemoveCssClass(cssClassName: string, on: boolean): void;
 }
 
 export interface IHeaderResizeFeature {
     toggleColumnResizing(resizing: boolean): void;
 }
 
-export abstract class AbstractHeaderCellCtrl<TComp = any, TColumn = any, TFeature extends IHeaderResizeFeature = any> extends BeanStub {
+export abstract class AbstractHeaderCellCtrl<TComp extends IAbstractHeaderCellComp = any, TColumn extends IHeaderColumn = any, TFeature extends IHeaderResizeFeature = any> extends BeanStub {
 
     public static DOM_DATA_KEY_HEADER_CTRL = 'headerCtrl';
 
@@ -42,7 +47,7 @@ export abstract class AbstractHeaderCellCtrl<TComp = any, TColumn = any, TFeatur
     protected eGui: HTMLElement;
     protected resizeFeature: TFeature | null = null;
     protected comp: TComp;
-    protected column: TColumn;
+    protected column: TColumn
 
     public lastFocusEvent: KeyboardEvent | null = null;
 
@@ -82,6 +87,26 @@ export abstract class AbstractHeaderCellCtrl<TComp = any, TColumn = any, TFeatur
     protected setGui(eGui: HTMLElement): void {
         this.eGui = eGui;
         this.addDomData();
+        this.addManagedListener(this.beans.eventService, Events.EVENT_DISPLAYED_COLUMNS_CHANGED, this.onDisplayedColumnsChanged.bind(this));
+        this.onDisplayedColumnsChanged();
+    }
+
+    protected onDisplayedColumnsChanged(): void {
+        if (!this.comp || !this.column) { return; }
+        this.refreshFirstAndLastStyles();
+        this.refreshAriaColIndex();
+    }
+
+    private refreshFirstAndLastStyles(): void {
+        const { comp, column, beans } = this;
+        CssClassApplier.refreshFirstAndLastStyles(comp, (column as unknown as Column | ColumnGroup), beans.columnModel);
+    }
+
+    private refreshAriaColIndex(): void {
+        const { beans, column } = this;
+
+        const colIdx = beans.columnModel.getAriaColumnIndex(column as unknown as Column | ColumnGroup);
+        setAriaColIndex(this.eGui, colIdx); // for react, we don't use JSX, as it slowed down column moving
     }
 
     protected addResizeAndMoveKeyboardListeners(): void {

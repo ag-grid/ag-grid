@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { createRoot } from 'react-dom/client';
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model'
-import { AgGridReactUi } from './reactUi/agGridReactUi';
+import { AgGridReact } from './agGridReact';
 
 import '@ag-grid-community/styles/ag-grid.css';
 import '@ag-grid-community/styles/ag-theme-quartz.css';
@@ -28,7 +28,7 @@ const App = () => {
     return (
         <div style={{ display: 'flex' }}>
             <div className="ag-theme-quartz" style={{ height: 400, width: 600, margin: 10 }}>
-                <AgGridReactUi
+                <AgGridReact
                     defaultColDef={{
                         resizable: true,
                         filter: true,
@@ -40,8 +40,8 @@ const App = () => {
                     onGridReady={ onGridReady }
                     rowData={ rowData }
                     columnDefs={colDefs}
-                    modules={[ClientSideRowModelModule]}>
-                </AgGridReactUi>
+                    modules={[ClientSideRowModelModule]} />
+                
             </div>
         </div>
     );

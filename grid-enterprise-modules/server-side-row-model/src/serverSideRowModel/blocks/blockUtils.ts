@@ -27,13 +27,6 @@ export class BlockUtils extends BeanStub {
     @Autowired('beans') private beans: Beans;
     @Autowired('expansionService') private readonly expansionService: ServerSideExpansionService;
 
-    private rowHeight: number;
-
-    @PostConstruct
-    private postConstruct(): void {
-        this.rowHeight = this.gridOptionsService.getRowHeightAsNumber();
-    }
-
     public createRowNode(params: {
         group: boolean, leafGroup: boolean, level: number,
         parent: RowNode, field: string, rowGroupColumn: Column, rowHeight?: number
@@ -41,7 +34,7 @@ export class BlockUtils extends BeanStub {
 
         const rowNode = new RowNode(this.beans);
 
-        const rowHeight = params.rowHeight != null ? params.rowHeight : this.rowHeight;
+        const rowHeight = params.rowHeight != null ? params.rowHeight : this.gridOptionsService.getRowHeightAsNumber();
         rowNode.setRowHeight(rowHeight);
 
         rowNode.group = params.group;

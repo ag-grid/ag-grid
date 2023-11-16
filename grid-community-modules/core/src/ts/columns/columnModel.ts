@@ -272,7 +272,7 @@ export class ColumnModel extends BeanStub {
             this.pivotMode = pivotMode;
         }
 
-        this.addManagedPropertyListeners(['groupDisplayType', 'treeData', 'treeDataDisplayType'], () => this.buildAutoGroupColumns());
+        this.addManagedPropertyListeners(['groupDisplayType', 'treeData', 'treeDataDisplayType', 'groupHideOpenParents'], () => this.buildAutoGroupColumns());
         this.addManagedPropertyListener('autoGroupColumnDef', () => this.onAutoGroupColumnDefChanged());
         this.addManagedPropertyListeners(['defaultColDef', 'columnTypes', 'suppressFieldDotNotation'], (params: ColDefPropertyChangedEvent) => this.onSharedColDefChanged(params.source));
         this.addManagedPropertyListener('pivotMode', () => this.setPivotMode(this.gridOptionsService.get('pivotMode')));
@@ -940,8 +940,35 @@ export class ColumnModel extends BeanStub {
         );
     }
 
-    public getAriaColumnIndex(col: Column): number {
-        return this.getAllGridColumns().indexOf(col) + 1;
+    public isColumnAtEdge(col: Column | ColumnGroup, edge: 'first' | 'last'): boolean {
+        const allColumns = this.getAllDisplayedColumns();
+        if (!allColumns.length) { return false; }
+
+        const isFirst = edge === 'first';
+
+        let columnToCompare: Column;
+        if (col instanceof ColumnGroup) {
+            const leafColumns = col.getLeafColumns().filter(col => col.isVisible());
+            if (!leafColumns.length) { return false; }
+
+            columnToCompare = isFirst ? leafColumns[0] : last(leafColumns);
+        } else {
+            columnToCompare = col;
+        }
+
+        return (isFirst ? allColumns[0] : last(allColumns)) === columnToCompare;
+    }
+
+    public getAriaColumnIndex(col: Column | ColumnGroup): number {
+        let targetColumn: Column;
+
+        if (col instanceof ColumnGroup) {
+            targetColumn = col.getLeafColumns()[0];
+        } else {
+            targetColumn = col;
+        }
+
+        return this.getAllGridColumns().indexOf(targetColumn) + 1;
     }
 
     private isColumnInHeaderViewport(col: Column): boolean {
@@ -4171,8 +4198,7 @@ export class ColumnModel extends BeanStub {
 
     public isColumnGroupingLocked(column: Column): boolean {
         const groupLockGroupColumns = this.gridOptionsService.get('groupLockGroupColumns');
-        const autoColumns = this.getGroupAutoColumns();
-        if (!autoColumns?.length || !column.isRowGroupActive() || groupLockGroupColumns === 0) {
+        if (!column.isRowGroupActive() || groupLockGroupColumns === 0) {
             return false;
         }
 

@@ -121,7 +121,7 @@
         }
 
         &.ag-checked::before {
-            left: calc(100% - var(--ag-toggle-button-height) );
+            left: calc(100% - var(--ag-toggle-button-height) + var(--ag-toggle-button-border-width));
             border-color: var(--ag-toggle-button-on-border-color);
         }
     }

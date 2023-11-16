@@ -29,7 +29,6 @@ import { PinnedWidthService } from "../../../gridBodyComp/pinnedWidthService";
 
 export interface IHeaderCellComp extends IAbstractHeaderCellComp {
     setWidth(width: string): void;
-    addOrRemoveCssClass(cssClassName: string, on: boolean): void;
     setAriaDescription(description?: string): void;
     setAriaSort(sort?: ColumnSortState): void;
     setUserCompDetails(compDetails: UserCompDetails): void;
@@ -68,9 +67,9 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl<IHeaderCellComp, Colu
     }
 
     public setComp(comp: IHeaderCellComp, eGui: HTMLElement, eResize: HTMLElement, eHeaderCompWrapper: HTMLElement): void {
-        this.setGui(eGui);
         this.comp = comp;
 
+        this.setGui(eGui);
         this.updateState();
         this.setupWidth();
         this.setupMovingCss();
@@ -104,13 +103,12 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl<IHeaderCellComp, Colu
 
         this.addResizeAndMoveKeyboardListeners();
 
-        this.addManagedPropertyListeners(['suppressMovableColumns', 'suppressMenuHide'], this.refresh.bind(this));
+        this.addManagedPropertyListeners(['suppressMovableColumns', 'suppressMenuHide', 'suppressAggFuncInHeader'], this.refresh.bind(this));
         this.addManagedListener(this.column, Column.EVENT_COL_DEF_CHANGED, this.refresh.bind(this));
         this.addManagedListener(this.eventService, Events.EVENT_COLUMN_VALUE_CHANGED, this.onColumnValueChanged.bind(this));
         this.addManagedListener(this.eventService, Events.EVENT_COLUMN_ROW_GROUP_CHANGED, this.onColumnRowGroupChanged.bind(this));
         this.addManagedListener(this.eventService, Events.EVENT_COLUMN_PIVOT_CHANGED, this.onColumnPivotChanged.bind(this));
         this.addManagedListener(this.eventService, Events.EVENT_HEADER_HEIGHT_CHANGED, this.onHeaderHeightChanged.bind(this));
-        this.addManagedListener(this.eventService, Events.EVENT_DISPLAYED_COLUMNS_CHANGED, this.onDisplayedColumnsChanged.bind(this));
     }
 
     protected resizeHeader(direction: HorizontalDirection, shiftKey: boolean): void {
@@ -517,7 +515,8 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl<IHeaderCellComp, Colu
         this.addRefreshFunction(listener);
     }
 
-    private onDisplayedColumnsChanged(): void {
+    protected onDisplayedColumnsChanged(): void {
+        super.onDisplayedColumnsChanged();
         if (!this.isAlive()) { return; }
         this.onHeaderHeightChanged();
     }

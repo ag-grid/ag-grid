@@ -112,9 +112,10 @@ export class ServerSideRowModel extends BeanStub implements IServerSideRowModel 
              * Following properties omitted as they are likely to come with undesired  side effects.
              * 'getRowId', 'isRowMaster', 'getRowHeight', 'isServerSideGroup', 'getServerSideGroupKey',
              * */
-            'masterDetail', 'groupSelectsChildren', 'rowHeight', 'treeData', 'removePivotHeaderRowWhenSingleValueColumn',
+            'masterDetail', 'treeData', 'removePivotHeaderRowWhenSingleValueColumn',
             'suppressServerSideInfiniteScroll', 'cacheBlockSize',
         ], resetListener);
+        this.addManagedPropertyListener('rowHeight', () => this.resetRowHeights());
         this.verifyProps();
 
         this.addManagedPropertyListener('serverSideDatasource', () => this.updateDatasource());
@@ -256,6 +257,47 @@ export class ServerSideRowModel extends BeanStub implements IServerSideRowModel 
         this.managingPivotResultColumns = true;
         this.columnModel.setSecondaryColumns(pivotColumnGroupDefs, "rowModelUpdated");
     };
+
+    public resetRowHeights(): void {
+        const atLeastOne = this.resetRowHeightsForAllRowNodes();
+
+        const rootNodeHeight = this.gridOptionsService.getRowHeightForNode(this.rootNode);
+        this.rootNode.setRowHeight(rootNodeHeight.height, rootNodeHeight.estimated);
+        if (this.rootNode.sibling) {
+            const rootNodeSibling = this.gridOptionsService.getRowHeightForNode(this.rootNode.sibling);
+            this.rootNode.sibling.setRowHeight(rootNodeSibling.height, rootNodeSibling.estimated);
+        }
+
+        // when pivotMode but pivot not active, root node is displayed on its own
+        // because it's only ever displayed alone, refreshing the model (onRowHeightChanged) is not required
+        if (atLeastOne) {
+            this.onRowHeightChanged();
+        }
+    }
+
+    private resetRowHeightsForAllRowNodes(): boolean {
+        let atLeastOne = false;
+        this.forEachNode(rowNode => {
+            const rowHeightForNode = this.gridOptionsService.getRowHeightForNode(rowNode);
+            rowNode.setRowHeight(rowHeightForNode.height, rowHeightForNode.estimated);
+            // we keep the height each row is at, however we set estimated=true rather than clear the height.
+            // this means the grid will not reset the row heights back to defaults, rather it will re-calc
+            // the height for each row as the row is displayed. otherwise the scroll will jump when heights are reset.
+            const detailNode = rowNode.detailNode;
+            if (detailNode) {
+                const detailRowHeight = this.gridOptionsService.getRowHeightForNode(detailNode);
+                detailNode.setRowHeight(detailRowHeight.height, detailRowHeight.estimated);
+            }
+
+            if (rowNode.sibling) {
+                const siblingRowHeight = this.gridOptionsService.getRowHeightForNode(rowNode.sibling);
+                detailNode.setRowHeight(siblingRowHeight.height, siblingRowHeight.estimated);
+            }
+            atLeastOne = true;
+        });
+
+        return atLeastOne;
+    }
 
     public resetRootStore(): void {
         this.destroyRootStore();

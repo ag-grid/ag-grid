@@ -34,8 +34,8 @@ const HeaderRowComp = (props: {ctrl: HeaderRowCtrl}) => {
         const prevMap = _.mapById(prev, c => c.getInstanceId());
         const nextMap = _.mapById(next, c => c.getInstanceId());
 
-        const oldCtrlsWeAreKeeping = prev.filter( c => nextMap.has(c.getInstanceId()) );
-        const newCtrls = next.filter( c => !prevMap.has(c.getInstanceId()) )
+        const oldCtrlsWeAreKeeping = prev.filter(c => nextMap.has(c.getInstanceId()));
+        const newCtrls = next.filter(c => !prevMap.has(c.getInstanceId()))
 
         const nextOrderMaintained = [...oldCtrlsWeAreKeeping, ...newCtrls];
         setCellCtrls(nextOrderMaintained);

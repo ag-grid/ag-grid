@@ -416,16 +416,25 @@
     .ag-header-group-cell-label, .ag-header-cell-label {
         display: flex;
         flex: 1 1 auto;
-        overflow: hidden;
-        align-items: center;
-        text-overflow: ellipsis;
         align-self: stretch;
+        align-items: center;
+    }
+    
+    .ag-header-cell-label {
+        overflow: hidden;
+        text-overflow: ellipsis;
     }
 
     .ag-header-group-cell-label.ag-sticky-label {
         position: sticky;
         flex: none;
         max-width: 100%;
+    }
+
+    .ag-header-group-text {
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
     }
 
     .ag-header-cell-text {
@@ -449,12 +458,6 @@
 
     .ag-right-aligned-header .ag-header-cell-label {
         flex-direction: row-reverse;
-    }
-
-    .ag-header-group-text {
-        overflow: hidden;
-        text-overflow: ellipsis;
-        white-space: nowrap;
     }
 
     .ag-header-cell-resize {

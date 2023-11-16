@@ -83,6 +83,8 @@ export class Environment extends BeanStub {
     private postConstruct(): void {
         const el = this.getTheme().el ?? this.eGridDiv;
 
+        this.addManagedPropertyListener('rowHeight', () => this.refreshRowHeightVariable());
+
         this.mutationObserver = new MutationObserver(() => {
             this.calculatedSizes = {};
             this.fireGridStylesChangedEvent();
@@ -221,7 +223,12 @@ export class Environment extends BeanStub {
         const oldRowHeight = this.eGridDiv.style.getPropertyValue('--ag-line-height').trim();
         const height = this.gridOptionsService.get('rowHeight');
 
-        if (height == null || isNaN(height) || !isFinite(height)) { return -1; }
+        if (height == null || isNaN(height) || !isFinite(height)) {
+            if (oldRowHeight !== null) {
+                this.eGridDiv.style.setProperty('--ag-line-height', null);
+            }
+            return -1;
+        }
 
         const newRowHeight = `${height}px`;
 

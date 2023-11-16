@@ -19,9 +19,6 @@ import { PortalManager } from '../shared/portalManager';
 import { ReactFrameworkOverrides } from '../shared/reactFrameworkOverrides';
 import GridComp from './gridComp';
 
-function debug(msg: string, obj?: any) {
-    // console.log(msg, obj);
-}
 
 export const AgGridReactUi = <TData,>(props: AgReactUiProps<TData>) => {
     const apiRef = useRef<GridApi<TData>>();
@@ -41,7 +38,6 @@ export const AgGridReactUi = <TData,>(props: AgReactUiProps<TData>) => {
         eGui.current = e;
         if (!eGui.current) {
 
-            debug('AgGridReactUi.destroy');
             destroyFuncs.current.forEach((f) => f());
             destroyFuncs.current.length = 0;
 
@@ -82,7 +78,6 @@ export const AgGridReactUi = <TData,>(props: AgReactUiProps<TData>) => {
             // because React is Async, we need to wait for the UI to be initialised before exposing the API's
             const ctrlsService = context.getBean(CtrlsService.NAME) as CtrlsService;
             ctrlsService.whenReady(() => {
-                debug('AgGridReactUi. ctlService is ready');
 
                 if (context.isDestroyed()) {
                     return;
@@ -103,7 +98,6 @@ export const AgGridReactUi = <TData,>(props: AgReactUiProps<TData>) => {
         const acceptChangesCallback = (context: Context) => {
             const ctrlsService = context.getBean(CtrlsService.NAME) as CtrlsService;
             ctrlsService.whenReady(() => {
-                debug('AgGridReactUi.acceptChangesCallback');
                 whenReadyFuncs.current.forEach((f) => f());
                 whenReadyFuncs.current.length = 0;
                 ready.current = true;
@@ -130,10 +124,8 @@ export const AgGridReactUi = <TData,>(props: AgReactUiProps<TData>) => {
 
     const processWhenReady = useCallback((func: () => void) => {
         if (ready.current) {
-            debug('AgGridReactUi.processWhenReady sync');
             func();
         } else {
-            debug('AgGridReactUi.processWhenReady async');
             whenReadyFuncs.current.push(func);
         }
     }, []);

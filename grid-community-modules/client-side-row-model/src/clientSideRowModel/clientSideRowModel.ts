@@ -141,11 +141,12 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel 
         //                       - non memoised correctly.
         
         const resetProps: Set<keyof GridOptions> = new Set([
-            'treeData', 'masterDetail', 'groupSelectsChildren', 'rowHeight',
+            'treeData', 'masterDetail',
         ]);
         const groupStageRefreshProps: Set<keyof GridOptions> = new Set([
             'suppressParentsInRowNodes', 'groupDefaultExpanded',
             'groupAllowUnbalanced', 'initialGroupOrderComparator',
+            'groupHideOpenParents', 'groupDisplayType',
         ]);
         const filterStageRefreshProps: Set<keyof GridOptions> = new Set([
             'excludeChildrenWhenTreeDataFiltering',
@@ -157,10 +158,9 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel 
             'getGroupRowAgg', 'alwaysAggregateAtRootLevel', 'groupIncludeTotalFooter', 'suppressAggFilteredOnly',
         ]);
         const sortStageRefreshProps: Set<keyof GridOptions> = new Set([
-            'postSortRows', 'groupHideOpenParents', 'groupDisplayType', 'accentedSort',
+            'postSortRows', 'groupDisplayType', 'accentedSort',
         ]);
         const filterAggStageRefreshProps: Set<keyof GridOptions> = new Set([
-            'groupAggFiltering',
         ]);
         const flattenStageRefreshProps: Set<keyof GridOptions> = new Set([
             'groupRemoveSingleChildren', 'groupRemoveLowestSingleChildren', 'groupIncludeFooter',
@@ -169,7 +169,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel 
         const allProps = [
             ...resetProps, ...groupStageRefreshProps, ...filterStageRefreshProps, ...pivotStageRefreshProps,
             ...pivotStageRefreshProps, ...aggregateStageRefreshProps, ...sortStageRefreshProps, ...filterAggStageRefreshProps,
-            ...flattenStageRefreshProps
+            ...flattenStageRefreshProps,
         ];
         this.addManagedPropertyListeners(allProps, params => {
             const properties = params.changeSet?.properties;
@@ -183,7 +183,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel 
                 this.setRowData(this.rootNode.allLeafChildren.map(child => child.data));
                 return;
             }
-    
+
             if (arePropertiesImpacted(groupStageRefreshProps)) {
                 this.refreshModel({ step: ClientSideRowModelSteps.EVERYTHING });
                 return;
@@ -217,6 +217,8 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel 
                 this.refreshModel({ step: ClientSideRowModelSteps.MAP });
             }
         });
+
+        this.addManagedPropertyListener('rowHeight', () => this.resetRowHeights());
     }
 
     public start(): void {
@@ -1037,6 +1039,9 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel 
         // no need to invalidate cache, as the cache is stored on the rowNode,
         // so new rowNodes means the cache is wiped anyway.
         
+        // - clears selection, done before we set row data to ensure it isn't readded via `selectionService.syncInOldRowNode`
+        this.selectionService.reset('rowDataChanged');
+
         this.nodeManager.setRowData(rowData);
         
         if (this.hasStarted) {
@@ -1045,8 +1050,6 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel 
     }
 
     private dispatchUpdateEventsAndRefresh(): void {
-        // - clears selection
-        this.selectionService.reset('rowDataChanged');
 
         // this event kicks off:
         // - shows 'no rows' overlay if needed
@@ -1057,7 +1060,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel 
 
         this.refreshModel({
             step: ClientSideRowModelSteps.EVERYTHING,
-            newData: true
+            newData: true,
         });
     }
 

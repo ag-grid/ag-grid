@@ -27,7 +27,6 @@ import { ColumnMoveHelper } from "../../columnMoveHelper";
 import { HeaderPosition } from "../../common/headerPosition";
 
 export interface IHeaderGroupCellComp extends IAbstractHeaderCellComp {
-    addOrRemoveCssClass(cssClassName: string, on: boolean): void;
     setResizableDisplayed(displayed: boolean): void;
     setWidth(width: string): void;
     setAriaExpanded(expanded: 'true' | 'false' | undefined): void;
@@ -48,8 +47,8 @@ export class HeaderGroupCellCtrl extends AbstractHeaderCellCtrl<IHeaderGroupCell
     }
 
     public setComp(comp: IHeaderGroupCellComp, eGui: HTMLElement, eResize: HTMLElement): void {
-        this.setGui(eGui);
         this.comp = comp;
+        this.setGui(eGui);
 
         this.displayName = this.columnModel.getDisplayNameForColumnGroup(this.column, 'header');
 

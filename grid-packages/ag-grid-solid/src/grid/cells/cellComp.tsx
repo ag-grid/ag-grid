@@ -210,7 +210,7 @@ const CellComp = (props: {
             ref={ eGui! }
             style={ userStyles() }
             tabIndex={ tabIndex() }
-            role={'gridcell'}
+            role={ cellCtrl.getCellAriaRole() }
             col-id={ colId() }
         > {
             showCellWrapper()

@@ -35,6 +35,7 @@ import { RowDragComp } from "../row/rowDragComp";
 import { getValueUsingField } from "../../utils/object";
 import { getElementSize } from "../../utils/dom";
 import { setAriaColIndex } from "../../utils/aria";
+import { CssClassApplier } from "../../headerRendering/cells/cssClassApplier";
 
 const CSS_CELL = 'ag-cell';
 const CSS_AUTO_HEIGHT = 'ag-cell-auto-height';
@@ -239,7 +240,8 @@ export class CellCtrl extends BeanStub {
 
         this.setupAutoHeight(eCellWrapper);
 
-        this.setAriaColIndex();
+        this.refreshFirstAndLastStyles();
+        this.refreshAriaColIndex();
 
         this.cellPositionFeature?.setComp(eGui);
         this.cellCustomStyleFeature?.setComp(comp);
@@ -312,6 +314,10 @@ export class CellCtrl extends BeanStub {
             destroyResizeObserver();
             this.rowNode.setRowAutoHeight(undefined, this.column);
         });
+    }
+
+    public getCellAriaRole(): string {
+        return this.column.getColDef().cellAriaRole ?? 'gridcell';
     }
 
     public getInstanceId(): string {
@@ -842,10 +848,16 @@ export class CellCtrl extends BeanStub {
 
     public onDisplayedColumnsChanged(): void {
         if (!this.eGui) { return; }
-        this.setAriaColIndex();
+        this.refreshAriaColIndex();
+        this.refreshFirstAndLastStyles();
     }
 
-    private setAriaColIndex(): void {
+    private refreshFirstAndLastStyles(): void {
+        const { cellComp, column, beans } = this;
+        CssClassApplier.refreshFirstAndLastStyles(cellComp, column, beans.columnModel);
+    }
+
+    private refreshAriaColIndex(): void {
         const colIdx = this.beans.columnModel.getAriaColumnIndex(this.column);
         setAriaColIndex(this.getGui(), colIdx); // for react, we don't use JSX, as it slowed down column moving
     }

@@ -9,10 +9,9 @@ $z-index-splash: $z-index-debug-canvas + 10;
 $z-index-debug-panel: $z-index-splash + 10;
 $z-index-splash-contents: 10;
 
-:global(.automated-integrated-charts-grid.ag-theme-alpine) {
+:global(.automated-integrated-charts-grid.ag-theme-quartz) {
     position: relative;
     width: 100%;
-    border-radius: var(--border-radius);
     z-index: $z-index-grid;
 
     @media screen and (max-width: $breakpoint-automated-row-grouping-medium) {
@@ -21,7 +20,6 @@ $z-index-splash-contents: 10;
         margin-bottom: calc(450px / -2 + $size-2);
         transform-origin: top left;
         transform: scale(0.5);
-        border-radius: calc(var(--border-radius) * 2);
         overflow: hidden;
 
         :global(.overlay-button) {
@@ -63,14 +61,6 @@ $z-index-splash-contents: 10;
 
         @media screen and (max-width: $breakpoint-automated-row-grouping-medium) {
             font-size: 1.25rem;
-        }
-    }
-
-    :global(.ag-root-wrapper) {
-        border-radius: var(--border-radius);
-
-        @media screen and (max-width: $breakpoint-automated-row-grouping-medium) {
-            border-radius: calc(var(--border-radius) * 2);
         }
     }
 
@@ -116,7 +106,7 @@ $z-index-splash-contents: 10;
     gap: $size-6;
     margin-top: $size-6;
 
-    button:not([class^="ag-"]) {
+    button:not([class^='ag-']) {
         margin-left: $size-1;
     }
 }
