@@ -168,7 +168,7 @@ const VueExample = {
             this.gridApi.setGridOption('columnDefs', columnDefs);
         },
         onBtPivotOn() {
-            this.gridApi.setPivotMode(true);
+            this.gridApi.setGridOption('pivotMode', true);
             const columnDefs = this.getColumnDefs();
             columnDefs.forEach(colDef => {
                 if (colDef.field === 'country') {
@@ -178,7 +178,7 @@ const VueExample = {
             this.gridApi.setGridOption('columnDefs', columnDefs);
         },
         onBtPivotOff() {
-            this.gridApi.setPivotMode(false);
+            this.gridApi.setGridOption('pivotMode', false);
             const columnDefs = this.getColumnDefs();
             columnDefs.forEach(colDef => {
                 colDef.pivot = false;

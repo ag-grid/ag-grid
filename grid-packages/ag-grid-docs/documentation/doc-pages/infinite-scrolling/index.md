@@ -64,12 +64,12 @@ This is useful if the context of your data changes, i.e. if you want to look at 
 
 
 <note>
-| If you call `setDatasource()` the grid will act assuming
+| If you call `setGridOption('datasource', datasource)` the grid will act assuming
 | it's a new datasource, resetting the block cache. However you can pass in the same datasource instance.
 | So your application, for example, might have one instance of a datasource that is aware of some
 | external context (e.g. the business date selected for a report, or the 'bank ATM instance' data you are
 | connecting to), and when the context changes, you want to reset, but still keep the same datasource
-| instance. In this case, just call `setDatasource()` and pass the same datasource in again.
+| instance. In this case, just call `setGridOption('datasource', datasource)` and pass the same datasource in again.
 </note>
 
 ### Datasource Interface

@@ -50,7 +50,7 @@ export const Toolbar = ({ gridRef, dataSize, setDataSize, rowCols, gridTheme, se
     }
 
     function onFilterChanged(event) {
-        gridRef.current.api.setQuickFilter(event.target.value);
+        gridRef.current.api.setGridOption('quickFilterText', event.target.value);
         trackOnceDemoToolbar({
             type: 'filterChange',
         })
