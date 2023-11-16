@@ -164,6 +164,12 @@ export class GroupCellRendererCtrl extends BeanStub {
         this.refreshAriaExpanded();
     }
 
+    public getCellAriaRole(): string {
+        const colDefAriaRole= this.params.colDef?.cellAriaRole;
+        const columnColDefAriaRole = this.params.column?.getColDef().cellAriaRole;
+        return colDefAriaRole || columnColDefAriaRole || 'gridcell';
+    }
+
     protected destroy(): void {
         super.destroy();
         // property cleanup to avoid memory leaks

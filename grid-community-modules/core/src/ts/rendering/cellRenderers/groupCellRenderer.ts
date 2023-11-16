@@ -47,7 +47,7 @@ export class GroupCellRenderer extends Component implements ICellRendererComp {
         ctrl.init(compProxy, eGui, this.eCheckbox, this.eExpanded, this.eContracted, this.constructor, params);
 
         if (fullWidth) {
-            setAriaRole(eGui, 'gridcell');
+            setAriaRole(eGui, ctrl.getCellAriaRole());
         }
     }
 

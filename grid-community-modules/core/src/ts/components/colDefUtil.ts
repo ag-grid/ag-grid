@@ -30,6 +30,7 @@ export class ColDefUtil {
         pinned: undefined,
         initialPinned: undefined,
         chartDataType: undefined,
+        cellAriaRole: undefined,
         cellEditorPopupPosition: undefined,
         headerGroupComponent: undefined,
         headerGroupComponentParams: undefined,
