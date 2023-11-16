@@ -146,6 +146,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel 
         const groupStageRefreshProps: Set<keyof GridOptions> = new Set([
             'suppressParentsInRowNodes', 'groupDefaultExpanded',
             'groupAllowUnbalanced', 'initialGroupOrderComparator',
+            'groupHideOpenParents',
         ]);
         const filterStageRefreshProps: Set<keyof GridOptions> = new Set([
             'excludeChildrenWhenTreeDataFiltering',
@@ -157,7 +158,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel 
             'getGroupRowAgg', 'alwaysAggregateAtRootLevel', 'groupIncludeTotalFooter', 'suppressAggFilteredOnly',
         ]);
         const sortStageRefreshProps: Set<keyof GridOptions> = new Set([
-            'postSortRows', 'groupHideOpenParents', 'groupDisplayType', 'accentedSort',
+            'postSortRows', 'groupDisplayType', 'accentedSort',
         ]);
         const filterAggStageRefreshProps: Set<keyof GridOptions> = new Set([
             'groupAggFiltering',
