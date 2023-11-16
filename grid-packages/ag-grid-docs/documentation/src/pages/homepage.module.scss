@@ -136,7 +136,7 @@ gatsby-fast-refresh {
 }
 
 .homepageFrameworks {
-    background-color: var(--background-500);
+    background-color: var(--bright-blue-gray);
     padding-top: $size-2;
     padding-bottom: $size-6;
 
@@ -146,7 +146,7 @@ gatsby-fast-refresh {
 
     #{$darkmode-selector} & {
         background-color: #121f29;
-        // border-bottom: 1px solid #394755;
+        border-bottom: 1px solid #394755;
     }
 }
 
@@ -161,8 +161,6 @@ gatsby-fast-refresh {
         border-bottom: 1px solid #394755;
     }
 
-
-    
     @media screen and (min-width: $breakpoint-automated-row-grouping-medium) {
         padding-top: $size-8;
         padding-bottom: $size-9;
@@ -202,6 +200,10 @@ gatsby-fast-refresh {
         --font-size: var(--font-size-extra-large);
         --font-weight: var(--font-weight-thin);
     }
+
+    #{$darkmode-selector} & {
+        color: var(--default-text-color);
+    }
 }
 
 .homepageQuotes {
@@ -222,8 +224,6 @@ gatsby-fast-refresh {
     #{$darkmode-selector} & {
         border-bottom: 1px solid #394755;
     }
-
-
 }
 
 .customersInner {
@@ -256,7 +256,6 @@ gatsby-fast-refresh {
     @media screen and (min-width: 640px) {
         gap: 0 $size-6;
     }
-
 
     img {
         height: $size-1 * 7;
@@ -409,7 +408,7 @@ gatsby-fast-refresh {
         display: flex;
         justify-content: space-between;
 
-        button:not([class^="ag-"]) {
+        button:not([class^='ag-']) {
             padding: $size-half;
             line-height: $line-height-ultra-tight;
         }
