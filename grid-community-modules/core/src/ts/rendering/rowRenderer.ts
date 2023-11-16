@@ -529,7 +529,10 @@ export class RowRenderer extends BeanStub {
     // +) onPinnedRowDataChanged, recycleRows = true
     // +) redrawRows (from Grid API), recycleRows = true/false
     private redrawAfterModelUpdate(params: RefreshViewParams = {}): void {
-        this.getLockOnRefresh();
+        if(!this.getLockOnRefresh()){
+            queueMicrotask(() => this.redrawAfterModelUpdate(params));
+            return;
+        }
 
         const focusedCell: CellPosition | null = this.getCellToRestoreFocusToAfterRefresh(params);
 
@@ -601,18 +604,13 @@ export class RowRenderer extends BeanStub {
         this.rowContainerHeightService.setModelHeight(containerHeight);
     }
 
-    private getLockOnRefresh(): void {
+    private getLockOnRefresh(): boolean {
         if (this.refreshInProgress) {
-            throw new Error(
-                "AG Grid: cannot get grid to draw rows when it is in the middle of drawing rows. " +
-                "Your code probably called a grid API method while the grid was in the render stage. To overcome " +
-                "this, put the API call into a timeout, e.g. instead of api.redrawRows(), " +
-                "call setTimeout(function() { api.redrawRows(); }, 0). To see what part of your code " +
-                "that caused the refresh check this stacktrace."
-            );
+            return false;
         }
 
         this.refreshInProgress = true;
+        return true;
     }
 
     private releaseLockOnRefresh(): void {
@@ -937,7 +935,10 @@ export class RowRenderer extends BeanStub {
 
         if (afterScroll && !hasStickyRowChanges && !rangeChanged) { return; }
 
-        this.getLockOnRefresh();
+        if(!this.getLockOnRefresh()){
+            queueMicrotask(() => this.redraw(params));
+            return;
+        }
         this.recycleRows(null, false, afterScroll);
         this.releaseLockOnRefresh();
         this.dispatchDisplayedRowsChanged(afterScroll);
