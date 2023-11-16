@@ -88,6 +88,7 @@ export class InfiniteRowModel extends BeanStub implements IInfiniteRowModel {
         this.addManagedListener(this.eventService, Events.EVENT_NEW_COLUMNS_LOADED, this.onColumnEverything.bind(this));
         this.addManagedListener(this.eventService, Events.EVENT_STORE_UPDATED, this.onCacheUpdated.bind(this));
         this.addManagedPropertyListener('datasource', () => this.setDatasource(this.gridOptionsService.get('datasource')));
+        this.addManagedPropertyListener('cacheBlockSize', () => this.resetCache());
     }
 
     private onFilterChanged(): void {
@@ -162,9 +163,6 @@ export class InfiniteRowModel extends BeanStub implements IInfiniteRowModel {
         }
 
         this.resetCache();
-
-        const event = this.createModelUpdatedEvent();
-        this.eventService.dispatchEvent(event);
     }
 
     private createModelUpdatedEvent(): WithoutGridCommon<ModelUpdatedEvent> {
@@ -218,6 +216,9 @@ export class InfiniteRowModel extends BeanStub implements IInfiniteRowModel {
         this.eventService.dispatchEventOnce({
             type: Events.EVENT_ROW_COUNT_READY
         });
+
+        const event = this.createModelUpdatedEvent();
+        this.eventService.dispatchEvent(event);
     }
 
     private destroyCache(): void {
