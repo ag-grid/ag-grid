@@ -4198,8 +4198,7 @@ export class ColumnModel extends BeanStub {
 
     public isColumnGroupingLocked(column: Column): boolean {
         const groupLockGroupColumns = this.gridOptionsService.get('groupLockGroupColumns');
-        const autoColumns = this.getGroupAutoColumns();
-        if (!autoColumns?.length || !column.isRowGroupActive() || groupLockGroupColumns === 0) {
+        if (!column.isRowGroupActive() || groupLockGroupColumns === 0) {
             return false;
         }
 
