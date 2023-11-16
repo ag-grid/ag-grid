@@ -226,6 +226,7 @@
     .ag-column-drop-vertical-empty-message {
         display: flex;
         align-items: center;
+        justify-content: center;
         border: dashed 1px;
         background-color: var(--ag-background-color);
         border-color: var(--ag-border-color);
