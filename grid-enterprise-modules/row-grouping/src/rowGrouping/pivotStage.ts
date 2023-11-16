@@ -37,7 +37,6 @@ export class PivotStage extends BeanStub implements IRowNodeStage {
     private suppressExpandablePivotGroupsLastTime: GridOptions['suppressExpandablePivotGroups'];
     private removePivotHeaderRowWhenSingleValueColumnLastTime: GridOptions['removePivotHeaderRowWhenSingleValueColumn'];
 
-
     public execute(params: StageExecuteParams): void {
         const changedPath = params.changedPath;
         if (this.columnModel.isPivotActive()) {

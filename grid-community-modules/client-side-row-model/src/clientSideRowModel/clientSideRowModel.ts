@@ -141,7 +141,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel 
         //                       - non memoised correctly.
         
         const resetProps: Set<keyof GridOptions> = new Set([
-            'treeData', 'masterDetail', 'rowHeight',
+            'treeData', 'masterDetail',
         ]);
         const groupStageRefreshProps: Set<keyof GridOptions> = new Set([
             'suppressParentsInRowNodes', 'groupDefaultExpanded',
@@ -169,7 +169,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel 
         const allProps = [
             ...resetProps, ...groupStageRefreshProps, ...filterStageRefreshProps, ...pivotStageRefreshProps,
             ...pivotStageRefreshProps, ...aggregateStageRefreshProps, ...sortStageRefreshProps, ...filterAggStageRefreshProps,
-            ...flattenStageRefreshProps
+            ...flattenStageRefreshProps,
         ];
         this.addManagedPropertyListeners(allProps, params => {
             const properties = params.changeSet?.properties;
@@ -183,7 +183,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel 
                 this.setRowData(this.rootNode.allLeafChildren.map(child => child.data));
                 return;
             }
-    
+
             if (arePropertiesImpacted(groupStageRefreshProps)) {
                 this.refreshModel({ step: ClientSideRowModelSteps.EVERYTHING });
                 return;
@@ -217,6 +217,8 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel 
                 this.refreshModel({ step: ClientSideRowModelSteps.MAP });
             }
         });
+
+        this.addManagedPropertyListener('rowHeight', () => this.resetRowHeights());
     }
 
     public start(): void {
