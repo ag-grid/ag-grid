@@ -2119,7 +2119,7 @@ export class GridApi<TData = any> {
      * Call to set new column definitions. The grid will redraw all the column headers, and then redraw all of the rows.
      */
     public setColumnDefs(colDefs: (ColDef<TData> | ColGroupDef<TData>)[], source: ColumnEventType = "api") {
-        warnOnce(`setColumnDefs is deprecated. Please use 'api.setGridOption('setColumnDefs', newValue)' or 'api.updateGridOptions({ setColumnDefs: newValue })' instead.`);
+        warnOnce(`setColumnDefs is deprecated. Please use 'api.setGridOption('columnDefs', newValue)' or 'api.updateGridOptions({ columnDefs: newValue })' instead.`);
         this.gos.updateGridOptions({
             options: { columnDefs: colDefs },
             source: source as any,
@@ -2131,7 +2131,7 @@ export class GridApi<TData = any> {
      * Call to set new auto group column definition. The grid will recreate any auto-group columns if present.
      * */
     public setAutoGroupColumnDef(colDef: ColDef<TData>, source: ColumnEventType = "api") {
-        warnOnce(`setAutoGroupColumnDef is deprecated. Please use 'api.setGridOption('setAutoGroupColumnDef', newValue)' or 'api.updateGridOptions({ setAutoGroupColumnDef: newValue })' instead.`);
+        warnOnce(`setAutoGroupColumnDef is deprecated. Please use 'api.setGridOption('autoGroupColumnDef', newValue)' or 'api.updateGridOptions({ autoGroupColumnDef: newValue })' instead.`);
         this.gos.updateGridOptions({
             options: { autoGroupColumnDef: colDef },
             source: source as any,
@@ -2143,7 +2143,7 @@ export class GridApi<TData = any> {
      * Call to set new Default Column Definition.
      * */
     public setDefaultColDef(colDef: ColDef<TData>, source: ColumnEventType = "api") {
-        warnOnce(`setDefaultColDef is deprecated. Please use 'api.setGridOption('setDefaultColDef', newValue)' or 'api.updateGridOptions({ setDefaultColDef: newValue })' instead.`);
+        warnOnce(`setDefaultColDef is deprecated. Please use 'api.setGridOption('defaultColDef', newValue)' or 'api.updateGridOptions({ defaultColDef: newValue })' instead.`);
         this.gos.updateGridOptions({
             options: { defaultColDef: colDef },
             source: source as any,
@@ -2155,7 +2155,7 @@ export class GridApi<TData = any> {
      * Call to set new Column Types.
      * */
     public setColumnTypes(columnTypes: { string: ColDef<TData> }, source: ColumnEventType = "api") {
-        warnOnce(`setColumnTypes is deprecated. Please use 'api.setGridOption('setColumnTypes', newValue)' or 'api.updateGridOptions({ setColumnTypes: newValue })' instead.`);
+        warnOnce(`setColumnTypes is deprecated. Please use 'api.setGridOption('columnTypes', newValue)' or 'api.updateGridOptions({ columnTypes: newValue })' instead.`);
         this.gos.updateGridOptions({
             options: { columnTypes: columnTypes },
             source: source as any,
