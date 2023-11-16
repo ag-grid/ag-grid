@@ -491,5 +491,8 @@
             }
         },
         "headerGroupComponentParams": {}
+    },
+    "aria": {
+        "cellAriaRole": {}
     }
 }
