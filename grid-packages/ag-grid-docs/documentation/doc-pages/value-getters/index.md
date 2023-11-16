@@ -112,8 +112,8 @@ The following are the grid properties related to the value cache.
 
 The value cache starts empty. Then as value getters execute, their results are stored and the value cache fills up. Certain events trigger the value cache to be emptied. This is called expiring the value cache. Once expired, every value getter will get executed again next time the value is needed. The events that cause the value cache to expire are the following:
 
-- New row data is set into the grid via `setRowData(newData)` API or changing the `rowData` framework bound property*.
-- New columns are set into the grid via `setColumnDefs()` API or changing the `columnDefs` framework bound property*.
+- New row data is set into the grid via `setGridOption('rowData', newData)` API or changing the `rowData` framework bound property*.
+- New columns are set into the grid via `setGridOption('columnDefs', columnDefs)` API or changing the `columnDefs` framework bound property*.
 - Data is modified using the `rowNode.setData(data)` or `rowNode.setDataValue(col,value)` node API methods.
 - A value is modified in the grid using the grid's UI editing feature, e.g. the user double clicks a cell and enters a new value.
 - The `expireValueCache()` grid API method gets called by the application.
