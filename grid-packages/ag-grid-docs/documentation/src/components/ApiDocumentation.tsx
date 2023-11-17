@@ -262,7 +262,6 @@ export const ApiDocumentation: React.FC<ApiProps> = ({
         propertiesFromFiles
     );
     const properties = mergeObjects(processed);
-    console.log(properties);
 
     return (
         <Section
