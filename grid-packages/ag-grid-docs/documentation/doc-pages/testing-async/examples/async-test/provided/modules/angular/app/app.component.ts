@@ -14,12 +14,13 @@ import { getData } from './data';
       <input type="text" id="quickFilter" placeholder="Filter..." [(ngModel)]="quickFilterText">
       <div id="numberOfRows">Number of rows: {{displayedRows}}</div>
     </div>
-    <ag-grid-angular style="width: 100%; height: 100%;" class="ag-theme-quartz" [columnDefs]="columnDefs"
+    <ag-grid-angular style="width: 100%; height: 100%;" [class]="themeClass" [columnDefs]="columnDefs"
       [rowData]="rowData" [quickFilterText]="quickFilterText" (modelUpdated)="onModelUpdated($event)"></ag-grid-angular>
   </div>`
 })
 
 export class AppComponent implements OnInit {
+    public themeClass = /** DARK MODE START **/document.documentElement?.dataset.defaultTheme || 'ag-theme-quartz'/** DARK MODE END **/;
     public displayedRows: number = 10;
     public quickFilterText: string = '';
 

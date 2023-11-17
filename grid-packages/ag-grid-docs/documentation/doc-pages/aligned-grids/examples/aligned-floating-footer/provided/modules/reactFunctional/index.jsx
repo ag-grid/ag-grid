@@ -67,7 +67,7 @@ const GridExample = () => {
     }
 
     return (
-        <div style={{ display: 'flex', flexDirection: 'column', height: '100%' }} className="ag-theme-quartz">
+        <div style={{ display: 'flex', flexDirection: 'column', height: '100%' }} className={/** DARK MODE START **/document.documentElement?.dataset.defaultTheme || 'ag-theme-quartz'/** DARK MODE END **/}>
             <div style={{ flex: '1 1 auto' }} >
                 <AgGridReact
                     ref={topGrid}
