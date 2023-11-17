@@ -38,10 +38,14 @@
 
     .ag-menu {
         background-color: var(--ag-control-panel-background-color);
-        min-width: 280px;
         color: color-mix(in srgb, transparent, var(--ag-foreground-color) 75%);
 
+        &.ag-tabs {
+            // min width only on top-level popup menu to stop it switching as we change tab
+            min-width: 280px;
+        }
     }
+
     .ag-menu-option .ag-icon {
         opacity: 65%;
     }
@@ -401,8 +405,8 @@
             filter: var(--ag-icon-filter);
         }
 
-        input.ag-text-field-input {
-            @include ag.theme-rtl((padding-left: calc(var(--ag-grid-size) * 2 + 12px)));
+        input.ag-text-field-input::placeholder {
+            @include ag.theme-rtl((padding-left: 16px));
         }
     }
 
