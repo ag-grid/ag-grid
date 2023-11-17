@@ -2,10 +2,12 @@
   {
     "title": "What's New",
     "url": "/whats-new/",
-    "whatsNewLink": true
+    "whatsNewLink": true,
+    "excludeFromFeatures": true
   },
   {
     "group": "OVERVIEW",
+    "excludeFromFeatures": true,
     "items": [
       {
         "title": "Get Started",
