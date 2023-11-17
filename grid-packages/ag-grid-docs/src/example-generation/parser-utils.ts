@@ -694,6 +694,6 @@ export function preferParamsApi(code: string): string {
 export const DARK_MODE_START = '/** DARK MODE START **/';
 export const DARK_MODE_END = '/** DARK MODE END **/';
 
-export function getActiveTheme(theme: string, typescript: boolean, semiColon: boolean) {
-    return `${DARK_MODE_START}document.documentElement${typescript ? '?' : ''}.dataset.defaultTheme || "${theme}"${semiColon ? ';' : ''}${DARK_MODE_END}`;
+export function getActiveTheme(theme: string, typescript: boolean) {
+    return `${DARK_MODE_START}document.documentElement${typescript ? '?' : ''}.dataset.defaultTheme || '${theme}'${DARK_MODE_END}`;
 }

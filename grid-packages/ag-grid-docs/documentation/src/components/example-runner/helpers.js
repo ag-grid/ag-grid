@@ -13,7 +13,7 @@ export function stripOutDarkModeCode(files, useCurrentTheme = true) {
     const defaultTheme = document.documentElement.dataset.darkMode?.toUpperCase()  === 'TRUE' ? 'ag-theme-quartz-dark' : 'ag-theme-quartz';
     mainFiles.forEach((mainFile) => {
         if (files[mainFile]) {
-            files[mainFile].source = files[mainFile].source?.replace(/document\.documentElement(\??)\.dataset\.defaultTheme.*\|\|.*"(?<theme>.*)"(;?)/g, `"${useCurrentTheme ? defaultTheme : '$2'}"`).replace(DARK_MODE_START, '').replace(DARK_MODE_END, '');
+            files[mainFile].source = files[mainFile].source?.replace(/("?)document\.documentElement(\??)\.dataset\.defaultTheme.*\|\|.*'(?<theme>.*)'("?)/g, `"${useCurrentTheme ? defaultTheme : '$3'}"`).replace(DARK_MODE_START, '').replace(DARK_MODE_END, '');
         }
     });
 }

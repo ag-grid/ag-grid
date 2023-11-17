@@ -193,8 +193,7 @@ export function vanillaToAngular(bindings: any, componentFileNames: string[], al
             propertyAssignments.push(`public rowData!: ${rowDataType}[];`);
         }
         
-        propertyAttributes.push('[class]="themeClass"');
-        propertyAssignments.push(`public themeClass: string = ${getActiveTheme(bindings.gridSettings.theme)};`);
+        propertyAttributes.push(`[class]="${getActiveTheme(bindings.gridSettings.theme, true)}"`);
 
         const componentForCheckBody = eventHandlers
             .concat(externalEventHandlers)

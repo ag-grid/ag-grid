@@ -363,7 +363,7 @@ const VueExample = {
             gridApi,
             ${propertyNames.join(',\n')},
             onGridReady,
-            themeClass: ${getActiveTheme(bindings.gridSettings.theme)},
+            themeClass: ${getActiveTheme(bindings.gridSettings.theme, false)},
             ${functionNames ? functionNames.filter(functionName => !propertyNames.includes(functionName)).join(',\n') : ''}
         }        
     }
