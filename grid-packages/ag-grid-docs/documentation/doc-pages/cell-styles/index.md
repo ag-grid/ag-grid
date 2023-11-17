@@ -109,8 +109,8 @@ const gridOptions = {
             cellClassRules: {
                 // apply green to 2008
                 'rag-green-outer': params => params.value === 2008,
-                // apply amber 2004
-                'rag-amber-outer': params => params.value === 2004,
+                // apply blue to 2004
+                'rag-blue-outer': params => params.value === 2004,
                 // apply red to 2000
                 'rag-red-outer': params => params.value === 2000,
             }
@@ -151,7 +151,7 @@ const gridOptions = {
             field: 'age',
             cellClassRules: {
                 'rag-green': 'x < 20',
-                'rag-amber': 'x >= 20 && x < 25',
+                'rag-blue': 'x >= 20 && x < 25',
                 'rag-red': 'x >= 25',
             }
         }

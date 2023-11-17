@@ -9,17 +9,12 @@
     width: 100%;
 }
 
-.column-group-g {
-    background-color: #1b6d85 !important;
+.ag-header-group-cell.column-group-g {
+    background-color: #2244CC44;
 }
 
-.column-group-c {
-    background-color: #67b168 !important;
-}
-
-.column-group-g:focus-visible::after,
-.column-group-c:focus-visible::after {
-    border-color: azure;
+.ag-header-group-cell.column-group-c {
+    background-color: #33CC3344;
 }
 
 .button-bar {

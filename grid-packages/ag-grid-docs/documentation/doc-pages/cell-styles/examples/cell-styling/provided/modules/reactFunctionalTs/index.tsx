@@ -13,7 +13,7 @@ ModuleRegistry.registerModules([ClientSideRowModelModule]);
 
 const ragCellClassRules: CellClassRules = {
     'rag-green-outer': params => params.value === 2008,
-    'rag-amber-outer': params => params.value === 2004,
+    'rag-blue-outer': params => params.value === 2004,
     'rag-red-outer': params => params.value === 2000,
 };
 
@@ -25,7 +25,7 @@ const cellStyle = (params: CellClassParams) => {
 }
 
 const cellClass = (params: CellClassParams) => {
-    return params.value === 'Swimming' ? 'rag-green' : 'rag-amber';
+    return params.value === 'Swimming' ? 'rag-green' : 'rag-blue';
 }
 
 const numberToColor = (val: number) => {
@@ -67,7 +67,7 @@ const GridExample = () => {
             valueParser: numberParser,
             cellClassRules: {
                 'rag-green': 'x < 20',
-                'rag-amber': 'x >= 20 && x < 25',
+                'rag-blue': 'x >= 20 && x < 25',
                 'rag-red': 'x >= 25',
             },
         },
@@ -79,7 +79,7 @@ const GridExample = () => {
             cellClassRules: ragCellClassRules,
             cellRenderer: ragRenderer,
         },
-        { field: 'date', cellClass: 'rag-amber' },
+        { field: 'date', cellClass: 'rag-blue' },
         {
             field: 'sport',
             cellClass: cellClass,
