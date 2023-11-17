@@ -6,7 +6,7 @@ import Code from '../Code';
 import { Icon } from '../Icon';
 import CodeOptions from './CodeOptions';
 import styles from './CodeViewer.module.scss';
-import { getEntryFile, getExampleFiles } from './helpers';
+import { getEntryFile, getExampleFiles, stripOutDarkModeCode} from './helpers';
 import { trackExampleRunnerEvent } from './track-example-runner-event';
 
 /**
@@ -101,6 +101,7 @@ const updateFiles = (exampleInfo, setFiles, setActiveFile, didUnmount) => {
         if (didUnmount()) {
             return;
         }
+        stripOutDarkModeCode(files);
 
         setFiles(files);
 

@@ -1,5 +1,5 @@
 import { templatePlaceholder } from "./grid-vanilla-src-parser";
-import { addBindingImports, addGenericInterfaceImport, convertFunctionToConstPropertyTs, getFunctionName, getModuleRegistration, getPropertyInterfaces, handleRowGenericInterface, ImportType, isInstanceMethod, preferParamsApi } from './parser-utils';
+import { addBindingImports, addGenericInterfaceImport, convertFunctionToConstPropertyTs, getActiveTheme, getFunctionName, getModuleRegistration, getPropertyInterfaces, handleRowGenericInterface, ImportType, isInstanceMethod, preferParamsApi } from './parser-utils';
 import { convertFunctionalTemplate, convertFunctionToConstCallbackTs, getImport, getValueType } from './react-utils';
 const path = require('path');
 
@@ -100,7 +100,7 @@ function getImports(bindings: any, componentFileNames: string[], importType: Imp
 function getTemplate(bindings: any, componentAttributes: string[], rowDataGeneric: string): string {
     const { gridSettings } = bindings;
     const agGridTag = `
-        <div ${gridSettings.myGridReference ? 'id="myGrid"' : ''} style={gridStyle} className={document.documentElement.dataset.defaultTheme || "${gridSettings.theme}"}>
+        <div ${gridSettings.myGridReference ? 'id="myGrid"' : ''} style={gridStyle} className={${getActiveTheme(gridSettings.theme)}}>
             <AgGridReact${rowDataGeneric}
                 ref={gridRef}
                 ${componentAttributes.join('\n')}

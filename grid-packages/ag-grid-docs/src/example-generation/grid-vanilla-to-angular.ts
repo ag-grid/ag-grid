@@ -1,6 +1,6 @@
 import { convertTemplate,getImport,toConst,toInput,toMemberWithValue,toOutput } from './angular-utils';
 import { templatePlaceholder } from "./grid-vanilla-src-parser";
-import { addBindingImports,addGenericInterfaceImport,getPropertyInterfaces,handleRowGenericInterface,ImportType,isInstanceMethod,preferParamsApi,removeFunctionKeyword, replaceGridReadyRowData } from './parser-utils';
+import { addBindingImports,addGenericInterfaceImport,getActiveTheme,getPropertyInterfaces,handleRowGenericInterface,ImportType,isInstanceMethod,preferParamsApi,removeFunctionKeyword, replaceGridReadyRowData } from './parser-utils';
 const path = require('path');
 
 function getOnGridReadyCode(
@@ -194,7 +194,7 @@ export function vanillaToAngular(bindings: any, componentFileNames: string[], al
         }
         
         propertyAttributes.push('[class]="themeClass"');
-        propertyAssignments.push(`public themeClass: string = document.documentElement?.dataset.defaultTheme || '${bindings.gridSettings.theme}';`);
+        propertyAssignments.push(`public themeClass: string = ${getActiveTheme(bindings.gridSettings.theme)};`);
 
         const componentForCheckBody = eventHandlers
             .concat(externalEventHandlers)

@@ -5,6 +5,19 @@ import {agGridVersion, localPrefix} from 'utils/consts';
 import isDevelopment from 'utils/is-development';
 import {getIndexHtml} from './index-html-helper';
 
+export const DARK_MODE_START = '/** DARK MODE START **/';
+export const DARK_MODE_END = '/** DARK MODE END **/';
+
+export function stripOutDarkModeCode(files, useCurrentTheme = true) {
+    const mainFiles = ['main.js', 'main.ts', 'index.tsx', 'index.jsx', 'app.component.ts', 'app/app.component.ts'];
+    const defaultTheme = document.documentElement.dataset.darkMode?.toUpperCase()  === 'TRUE' ? 'ag-theme-quartz-dark' : 'ag-theme-quartz';
+    mainFiles.forEach((mainFile) => {
+        if (files[mainFile]) {
+            files[mainFile].source = files[mainFile].source?.replace(/document\.documentElement(\??)\.dataset\.defaultTheme.*\|\|.*"(?<theme>.*)"(;?)/g, `"${useCurrentTheme ? defaultTheme : '$2'}"`).replace(DARK_MODE_START, '').replace(DARK_MODE_END, '');
+        }
+    });
+}
+
 /**
  * The "internalFramework" is the framework name we use inside the example runner depending on which options the
  * user has selected. It can be one of the following:
@@ -228,6 +241,7 @@ export const openPlunker = (exampleInfo) => {
 
     getExampleFiles(exampleInfo, true).then((exampleFiles) => {
         const files = exampleFiles.plunker;
+        stripOutDarkModeCode(files, true);
         // Let's open the grid configuration file by default
         const fileToOpen = getEntryFile(framework, internalFramework);
 
@@ -277,6 +291,7 @@ export const openCodeSandbox = (exampleInfo) => {
 
     getExampleFiles(exampleInfo, true).then((exampleFiles) => {
         const files = exampleFiles.csb;
+        stripOutDarkModeCode(files, true);
 
         const form = document.createElement('form');
         form.method = 'post';

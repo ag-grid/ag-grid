@@ -1,5 +1,6 @@
 import {
     convertFunctionToConstProperty,
+    getActiveTheme,
     getFunctionName,
     getModuleRegistration,
     ImportType,
@@ -362,7 +363,7 @@ const VueExample = {
             gridApi,
             ${propertyNames.join(',\n')},
             onGridReady,
-            themeClass: document.documentElement.dataset.defaultTheme || '${bindings.gridSettings.theme}',
+            themeClass: ${getActiveTheme(bindings.gridSettings.theme)},
             ${functionNames ? functionNames.filter(functionName => !propertyNames.includes(functionName)).join(',\n') : ''}
         }        
     }

@@ -690,3 +690,10 @@ export function preferParamsApi(code: string): string {
     // use params.api instead of gridApi.api when we have access to the params object
     return code.replace(/([\s\(!])gridApi(\W)/g, '$1params.api$2');
 }
+
+export const DARK_MODE_START = '/** DARK MODE START **/';
+export const DARK_MODE_END = '/** DARK MODE END **/';
+
+export function getActiveTheme(theme: string, typescript: boolean, semiColon: boolean) {
+    return `${DARK_MODE_START}document.documentElement${typescript ? '?' : ''}.dataset.defaultTheme || "${theme}"${semiColon ? ';' : ''}${DARK_MODE_END}`;
+}
