@@ -67,7 +67,7 @@ html[data-color-scheme='dark'] select:not(#myGrid select, #myChart select, selec
     background-color: #2a343e;
 }
 
-html[data-color-scheme='dark'] input:not(#myGrid input, #myChart input, input[class*='ag-']) {
+html[data-color-scheme='dark'] input:not(#myGrid input, #myChart input, [class*='ag-'], [type='checkbox'], [type='radio']) {
     appearance: none;
     background-color: #202A34;
     border: 1px solid rgb(255,255,255,0.1);
