@@ -2,7 +2,7 @@ import {
     convertFunctionToConstProperty,
     getActiveTheme,
     getFunctionName,
-    getIntegratedChartsHack,
+    getIntegratedChartsThemeHandler,
     getModuleRegistration,
     ImportType,
     isInstanceMethod,
@@ -350,7 +350,7 @@ const VueExample = {
         
         onBeforeMount(() => {
             ${propertyAssignments.join(';\n')}
-            ${getIntegratedChartsHack(bindings.exampleName)}
+            ${getIntegratedChartsThemeHandler(bindings.exampleName)}
         });
         
         ${eventHandlers

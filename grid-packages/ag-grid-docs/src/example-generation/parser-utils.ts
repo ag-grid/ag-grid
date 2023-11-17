@@ -700,12 +700,17 @@ export function getActiveTheme(theme: string, typescript: boolean) {
     return `${DARK_MODE_START}document.documentElement${typescript ? '?' : ''}.dataset.defaultTheme || '${theme}'${DARK_MODE_END}`;
 }
 
-export function getIntegratedChartsHack(exampleName){
+export function getIntegratedChartsThemeHandler(exampleName){
     if(!exampleName.includes('integrated-charts-')){
         return '';
     }
 
     return `${DARK_INTEGRATED_START}
-        console.log('Integrated Charts is not supported in dark mode');
-        ${DARK_INTEGRATED_END}`;
+       
+    // listen for user-triggered dark mode changes
+    document.addEventListener('color-scheme-change', (event) => {
+        console.log('>> Dark Mode updated in', "${exampleName}", event.detail);
+    })
+    //FIXME: remove listener!
+    ${DARK_INTEGRATED_END}`;
 }

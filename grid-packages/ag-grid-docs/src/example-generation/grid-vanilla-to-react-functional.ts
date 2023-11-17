@@ -1,4 +1,4 @@
-import { convertFunctionToConstProperty, getActiveTheme, getFunctionName, getIntegratedChartsHack, getModuleRegistration, ImportType, isInstanceMethod, preferParamsApi } from './parser-utils';
+import { convertFunctionToConstProperty, getActiveTheme, getFunctionName, getIntegratedChartsThemeHandler, getModuleRegistration, ImportType, isInstanceMethod, preferParamsApi } from './parser-utils';
 import { convertFunctionalTemplate, convertFunctionToConstCallback, getImport, getValueType } from './react-utils';
 import { templatePlaceholder } from "./grid-vanilla-src-parser";
 const path = require('path');
@@ -291,7 +291,7 @@ ${gridReady}
 
 ${[].concat(eventHandlers, externalEventHandlers, instanceMethods).join('\n\n   ')}
 
-${getIntegratedChartsHack(bindings.exampleName)}
+${getIntegratedChartsThemeHandler(bindings.exampleName)}
     return  (
             <div ${containerStyle}>
                 ${template}
