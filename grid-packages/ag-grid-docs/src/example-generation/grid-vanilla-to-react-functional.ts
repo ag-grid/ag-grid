@@ -291,7 +291,7 @@ ${gridReady}
 
 ${[].concat(eventHandlers, externalEventHandlers, instanceMethods).join('\n\n   ')}
 
-${getIntegratedChartsThemeHandler(bindings.exampleName)}
+${getIntegratedChartsThemeHandler(bindings.exampleName, false)}
     return  (
             <div ${containerStyle}>
                 ${template}

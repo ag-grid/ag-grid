@@ -350,7 +350,7 @@ const VueExample = {
         
         onBeforeMount(() => {
             ${propertyAssignments.join(';\n')}
-            ${getIntegratedChartsThemeHandler(bindings.exampleName)}
+            ${getIntegratedChartsThemeHandler(bindings.exampleName, false)}
         });
         
         ${eventHandlers

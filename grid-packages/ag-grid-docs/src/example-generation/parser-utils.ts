@@ -700,7 +700,7 @@ export function getActiveTheme(theme: string, typescript: boolean) {
     return `${DARK_MODE_START}document.documentElement${typescript ? '?' : ''}.dataset.defaultTheme || '${theme}'${DARK_MODE_END}`;
 }
 
-export function getIntegratedChartsThemeHandler(exampleName){
+export function getIntegratedChartsThemeHandler(exampleName: string, typescript: boolean){
     if(!exampleName.includes('integrated-charts-')){
         return '';
     }
@@ -708,7 +708,7 @@ export function getIntegratedChartsThemeHandler(exampleName){
     return `${DARK_INTEGRATED_START}
        
     // listen for user-triggered dark mode changes
-    document.addEventListener('color-scheme-change', (event) => {
+    document.addEventListener('color-scheme-change', (event${typescript ? ': any' : ''}) => {
         console.log('>> Dark Mode updated in', "${exampleName}", event.detail);
     })
     //FIXME: remove listener!

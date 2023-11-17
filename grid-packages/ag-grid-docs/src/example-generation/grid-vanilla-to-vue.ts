@@ -157,7 +157,7 @@ const VueExample = {
     },
     created() {
         ${propertyAssignments.join(';\n')}
-        ${getIntegratedChartsThemeHandler(bindings.exampleName)}
+        ${getIntegratedChartsThemeHandler(bindings.exampleName, false)}
 
     },
     methods: {

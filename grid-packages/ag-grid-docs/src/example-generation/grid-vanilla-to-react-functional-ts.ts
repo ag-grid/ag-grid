@@ -319,7 +319,7 @@ ${gridReady}
 
 ${[].concat(eventHandlers, externalEventHandlers, instanceMethods).join('\n\n   ')}
 
-${getIntegratedChartsThemeHandler(bindings.exampleName)}
+${getIntegratedChartsThemeHandler(bindings.exampleName, true)}
     return  (
             <div ${containerStyle}>
                 ${template}

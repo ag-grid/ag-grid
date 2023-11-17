@@ -226,7 +226,7 @@ export function vanillaToAngular(bindings: any, componentFileNames: string[], al
             // We do not need the non-null assertion in component code as already applied to the declaration for the apis.            
             .replace(/(?<!this.)gridApi(\??)(!?)/g, 'this.gridApi');
 
-        const integratedThemeHandler = getIntegratedChartsThemeHandler(bindings.exampleName);
+        const integratedThemeHandler = getIntegratedChartsThemeHandler(bindings.exampleName, true);
         let generatedOutput = `
 ${imports.join('\n')}
 ${bindings.gridSettings.licenseKey ? "// enter your license key here to suppress console message and watermark\nLicenseManager.setLicenseKey('');\n" : ''}
