@@ -602,6 +602,24 @@ function internalParser(examplePath, {
         },
         tsCollectors
     );
+    
+    if (!tsBindings.onGridReady) {
+        tsBindings.onGridReady = `{      
+            const setDarkMode = (darkMode) => {
+                const themes = ['ag-default', 'ag-vivid'].map(theme => theme + (darkMode ? '-dark' : ''));
+                params.api.setGridOption('chartThemes', themes);
+            };
+            const initialTheme = document.documentElement.getAttribute('data-default-theme');
+            const initialThemeDark = initialTheme ? initialTheme.endsWith('-dark') : false;
+            setDarkMode(initialThemeDark);
+            const handleColorSchemeChange = (event) => {
+                const { darkMode } = event.detail;
+                setDarkMode(darkMode);
+            }
+            // listen for user-triggered dark mode changes
+            document.addEventListener('color-scheme-change', handleColorSchemeChange);
+        }`;
+    }
 
     const gridElement = domTree.find('#myGrid').replaceWith(templatePlaceholder);
     const inlineClass = gridElement.attr('class');
