@@ -1,6 +1,6 @@
 import { convertTemplate,getImport,toConst,toInput,toMemberWithValue,toOutput } from './angular-utils';
 import { templatePlaceholder } from "./grid-vanilla-src-parser";
-import { addBindingImports,addGenericInterfaceImport,getActiveTheme,getPropertyInterfaces,handleRowGenericInterface,ImportType,isInstanceMethod,preferParamsApi,removeFunctionKeyword, replaceGridReadyRowData } from './parser-utils';
+import { addBindingImports,addGenericInterfaceImport,getActiveTheme,getIntegratedChartsHack,getPropertyInterfaces,handleRowGenericInterface,ImportType,isInstanceMethod,preferParamsApi,removeFunctionKeyword, replaceGridReadyRowData } from './parser-utils';
 const path = require('path');
 
 function getOnGridReadyCode(
@@ -226,6 +226,7 @@ export function vanillaToAngular(bindings: any, componentFileNames: string[], al
             // We do not need the non-null assertion in component code as already applied to the declaration for the apis.            
             .replace(/(?<!this.)gridApi(\??)(!?)/g, 'this.gridApi');
 
+        const integratedChartsHack = getIntegratedChartsHack(bindings.exampleName);
         let generatedOutput = `
 ${imports.join('\n')}
 ${bindings.gridSettings.licenseKey ? "// enter your license key here to suppress console message and watermark\nLicenseManager.setLicenseKey('');\n" : ''}
@@ -241,8 +242,9 @@ ${hasGridApi ? `    private gridApi!: GridApi${genericParams};\n` : ''}
     ${propertyVars.join('\n')}
     ${propertyAssignments.join(';\n')}
 
-${diParams.length > 0 ?
+${diParams.length > 0 || integratedChartsHack.length > 0 ?
                 `    constructor(${diParams.join(', ')}) {
+                    ${integratedChartsHack}
 }
 
 `: ''}

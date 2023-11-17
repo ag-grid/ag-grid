@@ -693,7 +693,19 @@ export function preferParamsApi(code: string): string {
 
 export const DARK_MODE_START = '/** DARK MODE START **/';
 export const DARK_MODE_END = '/** DARK MODE END **/';
+export const DARK_INTEGRATED_START = '/** DARK INTEGRATED START **/';
+export const DARK_INTEGRATED_END = '/** DARK INTEGRATED END **/';
 
 export function getActiveTheme(theme: string, typescript: boolean) {
     return `${DARK_MODE_START}document.documentElement${typescript ? '?' : ''}.dataset.defaultTheme || '${theme}'${DARK_MODE_END}`;
+}
+
+export function getIntegratedChartsHack(exampleName){
+    if(!exampleName.includes('integrated-charts-')){
+        return '';
+    }
+
+    return `${DARK_INTEGRATED_START}
+        console.log('Integrated Charts is not supported in dark mode');
+        ${DARK_INTEGRATED_END}`;
 }

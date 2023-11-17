@@ -1,4 +1,4 @@
-import { getActiveTheme, getModuleRegistration, ImportType, preferParamsApi, replaceGridReadyRowData } from './parser-utils';
+import { getActiveTheme, getIntegratedChartsHack, getModuleRegistration, ImportType, preferParamsApi, replaceGridReadyRowData } from './parser-utils';
 import { getImport, toOutput } from './vue-utils';
 import { convertDefaultColDef, getAllMethods, getColumnDefs, getPropertyBindings, getTemplate } from "./grid-vanilla-to-vue-common";
 const path = require('path');
@@ -157,6 +157,8 @@ const VueExample = {
     },
     created() {
         ${propertyAssignments.join(';\n')}
+        ${getIntegratedChartsHack(bindings.exampleName)}
+
     },
     methods: {
         ${eventHandlers
