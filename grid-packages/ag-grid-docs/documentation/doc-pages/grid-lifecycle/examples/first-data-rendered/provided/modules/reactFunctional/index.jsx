@@ -82,7 +82,7 @@ const GridExample = () => {
                     </div>
                     <button id="loadGridDataButton" onClick={loadGridData} style={{"marginBottom": "1rem"}}>Load Grid Data</button>
                 </div>
-                <div style={gridStyle} className="ag-theme-quartz">
+                <div style={gridStyle} className={/** DARK MODE START **/document.documentElement?.dataset.defaultTheme || 'ag-theme-quartz'/** DARK MODE END **/}>
                     <AgGridReact
                         columnDefs={columnDefs}
                         defaultColDef={defaultColDef}

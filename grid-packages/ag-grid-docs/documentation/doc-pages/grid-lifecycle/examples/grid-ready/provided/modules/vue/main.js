@@ -24,7 +24,7 @@ const VueExample = {
                 <ag-grid-vue
                     v-if="isVisible"
                     style="width: 100%; height: 100%;"
-                    class="ag-theme-quartz"
+                    :class="themeClass"
                     :columnDefs="columnDefs"
                     @grid-ready="onGridReady"
                     :rowData="rowData"
@@ -64,6 +64,7 @@ const VueExample = {
             rowSelection: null,
 
             isVisible: true,
+            themeClass: /** DARK MODE START **/document.documentElement.dataset.defaultTheme || 'ag-theme-quartz'/** DARK MODE END **/,
         }
     },
     created() {

@@ -18,7 +18,7 @@ const VueExample = {
                 <button @click="fillExact">Exactly 400 x 400 pixels</button>
             </div>
             <div style="width: 100%; flex: 1 1 auto;">
-                <ag-grid-vue :style="{width, height}" class="ag-theme-quartz"
+                <ag-grid-vue :style="{width, height}" :class="themeClass"
                              @grid-ready="onGridReady"
                              :columnDefs="columnDefs"
                              :rowData="rowData"
@@ -34,7 +34,8 @@ const VueExample = {
             columnDefs: null,
             rowData: null,
             height: '100%',
-            width: '100%'
+            width: '100%',
+            themeClass: /** DARK MODE START **/document.documentElement.dataset.defaultTheme || 'ag-theme-quartz'/** DARK MODE END **/,
         };
     },
     beforeMount() {

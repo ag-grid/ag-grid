@@ -40,7 +40,7 @@ const VueExample = {
                 </div>
                 <ag-grid-vue
                         style="width: 100%; height: 100%;"
-                        class="ag-theme-quartz"
+                        :class="themeClass"
                         id="myGrid"
                         :columnDefs="columnDefs"
                         @grid-ready="onGridReady"
@@ -62,7 +62,8 @@ const VueExample = {
                 sortable: true,
                 resizable: true
             },
-            rowData: null
+            rowData: null,
+            themeClass: /** DARK MODE START **/document.documentElement.dataset.defaultTheme || 'ag-theme-quartz'/** DARK MODE END **/,
         }
     },
     beforeMount() {

@@ -71,7 +71,7 @@ import { IOlympicData } from './interfaces'
         <ag-grid-angular
     style="width: 100%; height: 100%;"
     
-    class="ag-theme-quartz"
+    [class]="themeClass"
     [columnDefs]="columnDefs"
     [defaultColDef]="defaultColDef"
     [popupParent]="popupParent"
@@ -83,6 +83,7 @@ import { IOlympicData } from './interfaces'
 })
 
 export class AppComponent {
+    themeClass = /** DARK MODE START **/document.documentElement?.dataset.defaultTheme || 'ag-theme-quartz'/** DARK MODE END **/;
     public columnDefs: ColDef[] = [
         { field: 'athlete', minWidth: 200 },
         { field: 'country', minWidth: 200 },
