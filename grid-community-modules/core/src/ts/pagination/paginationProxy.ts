@@ -283,6 +283,7 @@ export class PaginationProxy extends BeanStub {
                 break;
             case 'pageSizeSelector':
                 this.pageSizeFromPageSizeSelector = size;
+                if (this.currentPage !== 0) { this.goToPage(0); }
                 break;
             case 'initialState':
                 this.pageSizeFromInitialState = size;
