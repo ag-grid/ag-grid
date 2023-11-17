@@ -1,4 +1,4 @@
-import { getModuleRegistration, ImportType, preferParamsApi, replaceGridReadyRowData } from './parser-utils';
+import { getActiveTheme, getIntegratedChartsHack, getModuleRegistration, ImportType, preferParamsApi, replaceGridReadyRowData } from './parser-utils';
 import { getImport, toOutput } from './vue-utils';
 import { convertDefaultColDef, getAllMethods, getColumnDefs, getPropertyBindings, getTemplate } from "./grid-vanilla-to-vue-common";
 const path = require('path');
@@ -150,13 +150,15 @@ const VueExample = {
         return {
             columnDefs: ${columnDefs},
             gridApi: null,
-            themeClass: document.documentElement.dataset.defaultTheme || '${bindings.gridSettings.theme}',
+            themeClass: ${getActiveTheme(bindings.gridSettings.theme, false)},
             ${defaultColDef ? `defaultColDef: ${defaultColDef},` : ''}
             ${propertyVars.join(',\n')}
         }
     },
     created() {
         ${propertyAssignments.join(';\n')}
+        ${getIntegratedChartsHack(bindings.exampleName)}
+
     },
     methods: {
         ${eventHandlers

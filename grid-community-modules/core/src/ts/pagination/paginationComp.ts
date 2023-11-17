@@ -1,7 +1,7 @@
 import { Component } from "../widgets/component";
 import { Autowired, PostConstruct } from "../context/context";
 import { RefSelector } from "../widgets/componentAnnotations";
-import { Events } from "../events";
+import {Events, PaginationChangedEvent} from "../events";
 import { PaginationProxy } from "./paginationProxy";
 import { createIconNoSpan } from "../utils/icon";
 import { formatNumberCommas } from "../utils/number";
@@ -57,13 +57,12 @@ export class PaginationComp extends Component {
         this.addManagedPropertyListeners(['paginationPageSizeSelector', 'paginationAutoPageSize', 'suppressPaginationPanel'],
             () => this.onPageSizeRelatedOptionsChange(),
         );
-        this.addManagedPropertyListener('paginationPageSize', () => this.onPaginationPageSizeChanged());
 
         const paginationPageSizeSelector = this.gridOptionsService.get('paginationPageSizeSelector');
         const paginationAutoPageSize = this.gridOptionsService.get('paginationAutoPageSize');
         const suppressPaginationPanel = this.gridOptionsService.get('suppressPaginationPanel');
-        this.pageSizeComp.toggleSelectDisplay(!!paginationPageSizeSelector && !paginationAutoPageSize && !suppressPaginationPanel);
 
+        this.pageSizeComp.toggleSelectDisplay(!!paginationPageSizeSelector && !paginationAutoPageSize && !suppressPaginationPanel);
         this.onPaginationChanged();
     }
 
@@ -89,11 +88,6 @@ export class PaginationComp extends Component {
         const paginationAutoPageSize = this.gridOptionsService.get('paginationAutoPageSize');
         const suppressPaginationPanel = this.gridOptionsService.get('suppressPaginationPanel');
         this.pageSizeComp.toggleSelectDisplay(!!paginationPageSizeSelector && !paginationAutoPageSize && !suppressPaginationPanel);
-    }
-
-    private onPaginationPageSizeChanged(): void {
-        const paginationPageSize = this.gridOptionsService.get('paginationPageSize');
-        this.paginationProxy.setPageSize(paginationPageSize);
     }
 
     private setupListeners() {

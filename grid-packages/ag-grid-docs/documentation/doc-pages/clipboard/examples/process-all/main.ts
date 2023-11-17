@@ -28,8 +28,6 @@ const gridOptions: GridOptions = {
       'cell-blue': 'value.startsWith("Blue")',
       'cell-red': 'value.startsWith("Red")',
       'cell-yellow': 'value.startsWith("Yellow")',
-      'cell-orange': 'value.startsWith("Orange")',
-      'cell-grey': 'value.startsWith("Grey")',
     },
   },
 
@@ -58,8 +56,8 @@ function processDataFromClipboard(params: ProcessDataFromClipboardParams): strin
   if (containsRed) {
     // replace the paste request with another
     return [
-      ['Orange', 'Orange'],
-      ['Grey', 'Grey'],
+      ['Custom 1', 'Custom 2'],
+      ['Custom 3', 'Custom 4'],
     ]
   }
 

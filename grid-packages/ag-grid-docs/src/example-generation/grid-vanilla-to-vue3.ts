@@ -1,6 +1,8 @@
 import {
     convertFunctionToConstProperty,
+    getActiveTheme,
     getFunctionName,
+    getIntegratedChartsHack,
     getModuleRegistration,
     ImportType,
     isInstanceMethod,
@@ -348,6 +350,7 @@ const VueExample = {
         
         onBeforeMount(() => {
             ${propertyAssignments.join(';\n')}
+            ${getIntegratedChartsHack(bindings.exampleName)}
         });
         
         ${eventHandlers
@@ -362,7 +365,7 @@ const VueExample = {
             gridApi,
             ${propertyNames.join(',\n')},
             onGridReady,
-            themeClass: document.documentElement.dataset.defaultTheme || '${bindings.gridSettings.theme}',
+            themeClass: ${getActiveTheme(bindings.gridSettings.theme, false)},
             ${functionNames ? functionNames.filter(functionName => !propertyNames.includes(functionName)).join(',\n') : ''}
         }        
     }

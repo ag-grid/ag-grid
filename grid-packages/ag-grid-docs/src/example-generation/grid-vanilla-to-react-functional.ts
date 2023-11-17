@@ -1,4 +1,4 @@
-import { convertFunctionToConstProperty, getFunctionName, getModuleRegistration, ImportType, isInstanceMethod, preferParamsApi } from './parser-utils';
+import { convertFunctionToConstProperty, getActiveTheme, getFunctionName, getIntegratedChartsHack, getModuleRegistration, ImportType, isInstanceMethod, preferParamsApi } from './parser-utils';
 import { convertFunctionalTemplate, convertFunctionToConstCallback, getImport, getValueType } from './react-utils';
 import { templatePlaceholder } from "./grid-vanilla-src-parser";
 const path = require('path');
@@ -86,7 +86,7 @@ function getImports(bindings: any, componentFileNames: string[], importType: Imp
 function getTemplate(bindings: any, componentAttributes: string[]): string {
     const { gridSettings } = bindings;
     const agGridTag = `
-        <div ${gridSettings.myGridReference ? 'id="myGrid"' : ''} style={gridStyle} className={document.documentElement.dataset.defaultTheme || "${gridSettings.theme}"}>
+        <div ${gridSettings.myGridReference ? 'id="myGrid"' : ''} style={gridStyle} className={${getActiveTheme(gridSettings.theme, false)}}>
             <AgGridReact
                 ref={gridRef}
                 ${componentAttributes.join('\n')}
@@ -291,7 +291,7 @@ ${gridReady}
 
 ${[].concat(eventHandlers, externalEventHandlers, instanceMethods).join('\n\n   ')}
 
-
+${getIntegratedChartsHack(bindings.exampleName)}
     return  (
             <div ${containerStyle}>
                 ${template}

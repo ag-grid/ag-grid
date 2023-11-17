@@ -146,8 +146,8 @@ export class RowRenderer extends BeanStub {
             'groupRowRenderer', 'groupRowRendererParams', // maybe only needs to refresh FW rows...
             'loadingCellRenderer', 'loadingCellRendererParams',
             'detailCellRenderer', 'detailCellRendererParams',
+            'enableRangeSelection', 'enableCellTextSelection',
         ], () => this.redrawRows());
-        this.addManagedPropertyListeners(['enableRangeSelection', 'enableCellTextSelection'], () => this.refreshCells());
 
         if (this.gridOptionsService.isGroupRowsSticky()) {
             const rowModelType = this.rowModel.getType();
