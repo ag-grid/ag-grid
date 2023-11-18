@@ -4,7 +4,7 @@ title: "AG Grid Design System"
 
 Our Figma design system allows designers to prototype & customise AG Grid applications with ease.
 
-<image-caption src="ag-grid-design-system/resources/FDS-Example.png" alt="AG Grid Design System" constrained="false" centered="true"></image-caption>
+<image-caption src="ag-grid-design-system/resources/FDS-Example.png" alt="AG Grid Design System" constrained="false" centered="true" toggledarkmode="true"></image-caption>
 
 The AG Grid design system replicates the Alpine & Alpine Dark AG Grid themes within Figma. These default themes can be extended with Figma variables to match any existing visual design or create entirely new AG Grid themes.
 

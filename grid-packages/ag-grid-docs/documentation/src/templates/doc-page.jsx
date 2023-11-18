@@ -28,7 +28,6 @@ import NextStepTiles from '../components/NextStepTiles';
 import { trackApiDocumentation } from '../utils/analytics';
 import styles from './doc-page.module.scss';
 import FrameworkSelectorInsideDocs from "../components/FrameworkSelectorInsideDocs";
-import supportedFrameworks from "../utils/supported-frameworks";
 
 /**
  * This template is used for documentation pages, i.e. those generated from Markdown files.
@@ -140,18 +139,6 @@ const DocPageTemplate = ({ data, path, pageContext: { framework, frameworks, exa
         }
     }
 
-    const pageTitle = (
-        <>
-
-            
-            <span className={styles.headerFramework}>
-                {getProductType(framework, false, version)}
-            </span>
-            
-            <span>{title}</span>
-        </>
-    );
-
     return (
         <div id="doc-page-wrapper" className={styles['doc-page-wrapper']}>
             <div id="doc-content" className={classnames(styles['doc-page'], { [styles.noSideMenu]: !showSideMenu })}>
@@ -212,7 +199,7 @@ export const pageQuery = graphql`
             frontmatter {
                 title
                 version
-                enterprise                
+                enterprise
                 description
             }
             headings {
