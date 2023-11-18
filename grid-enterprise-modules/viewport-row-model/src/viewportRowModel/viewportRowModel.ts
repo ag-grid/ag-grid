@@ -43,6 +43,10 @@ export class ViewportRowModel extends BeanStub implements IRowModel {
         this.rowHeight = this.gridOptionsService.getRowHeightAsNumber();
         this.addManagedListener(this.eventService, Events.EVENT_VIEWPORT_CHANGED, this.onViewportChanged.bind(this));
         this.addManagedPropertyListener('viewportDatasource', () => this.updateDatasource());
+        this.addManagedPropertyListener('rowHeight', () => {
+            this.rowHeight = this.gridOptionsService.getRowHeightAsNumber();
+            this.updateRowHeights();
+        });
     }
 
     public start(): void {
@@ -195,6 +199,22 @@ export class ViewportRowModel extends BeanStub implements IRowModel {
             rowHeight: this.rowHeight,
             rowTop: this.rowHeight * index
         };
+    }
+
+    private updateRowHeights() {
+        this.forEachNode(node => {
+            node.setRowHeight(this.rowHeight);
+            node.setRowTop(this.rowHeight * node.rowIndex!);
+        });
+        
+        const event: WithoutGridCommon<ModelUpdatedEvent> = {
+            type: Events.EVENT_MODEL_UPDATED,
+            newData: false,
+            newPage: false,
+            keepRenderedRows: true,
+            animate: false,
+        };
+        this.eventService.dispatchEvent(event);
     }
 
     public getTopLevelRowCount(): number {
