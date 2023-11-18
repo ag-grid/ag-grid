@@ -62,8 +62,6 @@ const ImageCaption = ({
                 }
             }
 
-            console.log(darkMode, src);
-
             let imgSrc;
             const fluidImage = getImage(fluidImages, pageName, src);
         
