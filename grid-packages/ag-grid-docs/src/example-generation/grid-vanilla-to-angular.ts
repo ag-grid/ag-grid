@@ -8,7 +8,8 @@ function getOnGridReadyCode(
     resizeToFit: boolean,
     data: { url: string; callback: string },
     rowDataType: string | undefined,
-    hasApi: boolean
+    hasApi: boolean,
+    exampleName: string
 ): string {
     const additionalLines = [];
 
@@ -34,10 +35,11 @@ function getOnGridReadyCode(
         );
         return `
         onGridReady(params: GridReadyEvent${gridReadyEventParam}) {
+            ${getIntegratedChartsThemeHandler(exampleName, false)} 
             ${hasApi ? 'this.gridApi = params.api;' : ''}${additional}
         }`;
     } else {
-        return '';
+        return 'console.log("")';
     }
 }
 
@@ -203,7 +205,7 @@ export function vanillaToAngular(bindings: any, componentFileNames: string[], al
             .join('\n\n');
 
         const hasGridApi = componentForCheckBody.includes('gridApi');
-        const gridReadyCode = getOnGridReadyCode(bindings.onGridReady, bindings.resizeToFit, data, rowDataType, hasGridApi);
+        const gridReadyCode = getOnGridReadyCode(bindings.onGridReady, bindings.resizeToFit, data, rowDataType, hasGridApi, bindings.exampleName);
         const additional = [];
 
         if (gridReadyCode) {
@@ -226,7 +228,6 @@ export function vanillaToAngular(bindings: any, componentFileNames: string[], al
             // We do not need the non-null assertion in component code as already applied to the declaration for the apis.            
             .replace(/(?<!this.)gridApi(\??)(!?)/g, 'this.gridApi');
 
-        const integratedThemeHandler = getIntegratedChartsThemeHandler(bindings.exampleName, true);
         let generatedOutput = `
 ${imports.join('\n')}
 ${bindings.gridSettings.licenseKey ? "// enter your license key here to suppress console message and watermark\nLicenseManager.setLicenseKey('');\n" : ''}
@@ -242,9 +243,8 @@ ${hasGridApi ? `    private gridApi!: GridApi${genericParams};\n` : ''}
     ${propertyVars.join('\n')}
     ${propertyAssignments.join(';\n')}
 
-${diParams.length > 0 || integratedThemeHandler.length > 0 ?
-                `    constructor(${diParams.join(', ')}) {
-                    ${integratedThemeHandler}
+${diParams.length > 0 ?
+            `    constructor(${diParams.join(', ')}) {
 }
 
 `: ''}

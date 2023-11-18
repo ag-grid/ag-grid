@@ -184,8 +184,11 @@ export function vanillaToReactFunctionalTs(bindings: any, componentFilenames: st
 
         const additionalInReady = [];
         if (data) {
-            const setRowDataBlock = data.callback.replace('gridApi!.setGridOption(\'rowData\',', 'setRowData(');
+            additionalInReady.push(
+                `${getIntegratedChartsThemeHandler(bindings.exampleName, false)}`
+            );
 
+            const setRowDataBlock = data.callback.replace('gridApi!.setGridOption(\'rowData\',', 'setRowData(');
             additionalInReady.push(`
                 fetch(${data.url})
                 .then(resp => resp.json())
@@ -194,6 +197,9 @@ export function vanillaToReactFunctionalTs(bindings: any, componentFilenames: st
         }
 
         if (onGridReady) {
+            additionalInReady.push(
+                `${getIntegratedChartsThemeHandler(bindings.exampleName, false)}`
+            );
             const hackedHandler = onGridReady.replace(/^{|}$/g, '')
                 .replace('gridApi!.setGridOption(\'rowData\',', 'setRowData(');
             additionalInReady.push(hackedHandler);
@@ -319,7 +325,6 @@ ${gridReady}
 
 ${[].concat(eventHandlers, externalEventHandlers, instanceMethods).join('\n\n   ')}
 
-${getIntegratedChartsThemeHandler(bindings.exampleName, true)}
     return  (
             <div ${containerStyle}>
                 ${template}

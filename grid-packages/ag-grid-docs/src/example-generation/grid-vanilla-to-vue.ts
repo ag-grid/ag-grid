@@ -30,6 +30,7 @@ function getOnGridReadyCode(bindings: any): string {
     }
     const additional = preferParamsApi(additionalLines.length > 0 ? `\n\n        ${additionalLines.join('\n        ')}` : '')
     return `onGridReady(params) {
+        ${getIntegratedChartsThemeHandler(bindings.exampleName, false)}
         this.gridApi = params.api;
         ${additional}
     }`;
@@ -156,9 +157,7 @@ const VueExample = {
         }
     },
     created() {
-        ${propertyAssignments.join(';\n')}
-        ${getIntegratedChartsThemeHandler(bindings.exampleName, false)}
-
+        ${propertyAssignments.join(';\n')}        
     },
     methods: {
         ${eventHandlers
