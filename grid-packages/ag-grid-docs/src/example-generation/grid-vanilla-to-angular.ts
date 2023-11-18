@@ -39,7 +39,7 @@ function getOnGridReadyCode(
             ${hasApi ? 'this.gridApi = params.api;' : ''}${additional}
         }`;
     } else {
-        return 'console.log("")';
+        return '';
     }
 }
 
