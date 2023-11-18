@@ -7,7 +7,6 @@
   "devDependencies": {
     "@vusion/webfonts-generator": "^0.8.0",
     "chokidar-cli": "^3.0.0",
-    "lucide-static": "^0.292.0",
     "oslllo-svg-fixer": "^3.0.0"
   }
 }

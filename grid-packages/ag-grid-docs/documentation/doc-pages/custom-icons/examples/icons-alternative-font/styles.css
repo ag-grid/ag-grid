@@ -1,5 +1,5 @@
 /* replace the icons with fontswesome */
-.ag-theme-quartz {
+.custom-icons {
     --ag-icon-font-family: "Font Awesome 5 Free";
     --ag-icon-font-code-aggregation: "\f247";
     --ag-icon-font-code-arrows: "\f0b2";
@@ -49,23 +49,25 @@
     --ag-icon-font-code-checkbox-unchecked: "\f00d";
 }
 
-.ag-theme-quartz .ag-icon,
-.ag-theme-quartz .ag-checkbox-input-wrapper,
-.ag-theme-quartz .ag-radio-button-input-wrapper {
+.custom-icons .ag-icon,
+.custom-icons .ag-checkbox-input-wrapper,
+.custom-icons .ag-radio-button-input-wrapper {
     /* Font Awesome requires bold on all icon elements */
     font-weight: bold;
 }
 
 /* selectively replace the group and aggregation icons with Material Design Icons */
-.ag-theme-quartz .ag-icon-group {
+.custom-icons .ag-icon-group {
     --ag-icon-font-family: "Material Design Icons";
     --ag-icon-font-code-group: "\F0328";
-    font-weight: normal;
+    /* If you're using the Quartz theme, hide the icon image since Quartz uses SVG
+       images rather than an icon font */
+    --ag-quartz-icon-image-display: none;
     color: red;
 }
-.ag-theme-quartz .ag-icon-aggregation {
+.custom-icons .ag-icon-aggregation {
     --ag-icon-font-family: "Material Design Icons";
     --ag-icon-font-code-aggregation: "\F02C3";
-    font-weight: normal;
+    --ag-quartz-icon-image-display: none;
     color: red;
 }
