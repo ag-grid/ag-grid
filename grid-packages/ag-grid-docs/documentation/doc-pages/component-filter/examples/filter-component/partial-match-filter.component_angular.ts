@@ -11,11 +11,10 @@ import { IFilterAngularComp } from '@ag-grid-community/angular';
     `, styles: [
         `
            .container {
-                border: 2px solid #22ff22;
                 border-radius: 5px;
-                background-color: #bbffbb;
                 width: 200px;
-                height: 50px
+                height: 50px;
+                padding: 10px;
             }
 
             input {

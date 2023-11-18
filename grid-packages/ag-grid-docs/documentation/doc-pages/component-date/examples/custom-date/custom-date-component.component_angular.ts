@@ -20,7 +20,7 @@ declare var flatpickr: any;
             .custom-date-filter a {
                 position: absolute;
                 right: 20px;
-                color: rgba(0, 0, 0, 0.54);
+                color: #999;
                 cursor: pointer;
             }
 
@@ -32,7 +32,7 @@ declare var flatpickr: any;
                 font-family: 'Font Awesome 5 Free';
                 right: 5px;
                 pointer-events: none;
-                color: rgba(0, 0, 0, 0.54);
+                color: #999;
             }
         `
     ]

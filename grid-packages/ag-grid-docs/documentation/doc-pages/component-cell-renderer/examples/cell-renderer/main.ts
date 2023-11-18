@@ -46,7 +46,7 @@ const columnDefs: ColDef[] = [
     headerName: 'Month',
     field: 'Month',
     width: 75,
-    cellStyle: { color: 'darkred' },
+    cellStyle: { backgroundColor: '#CC222244' },
   },
   {
     headerName: 'Max Temp (˚C)',

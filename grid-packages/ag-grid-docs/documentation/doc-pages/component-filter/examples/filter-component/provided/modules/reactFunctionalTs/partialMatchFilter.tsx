@@ -62,9 +62,8 @@ export default forwardRef((props: IFilterParams, ref) => {
     }
 
     const style = {
-        border: '2px solid #22ff22',
         borderRadius: '5px',
-        backgroundColor: '#bbffbb',
+        backgroundColor: '#33CC3344',
         width: '200px',
         height: '50px'
     };

@@ -6,7 +6,7 @@ const columnDefs: ColDef[] = [
     field: 'athlete',
     minWidth: 150,
     tooltipField: 'athlete',
-    tooltipComponentParams: { color: '#ececec' },
+    tooltipComponentParams: { color: '#55AA77' },
   },
   { field: 'age' },
   { field: 'country', minWidth: 130, tooltipField: 'country' },
