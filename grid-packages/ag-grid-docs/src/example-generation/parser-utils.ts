@@ -700,7 +700,7 @@ export function getActiveTheme(theme: string, typescript: boolean) {
     return `${DARK_MODE_START}document.documentElement${typescript ? '?' : ''}.dataset.defaultTheme || '${theme}'${DARK_MODE_END}`;
 }
 
-export function getIntegratedChartsThemeHandler(exampleName: string, typescript: boolean, gridApi = 'params.api'){
+export function getIntegratedDarkModeCode(exampleName: string, gridApi = 'params.api'){
     if(!exampleName.includes('integrated-charts-')){
         return '';
     }

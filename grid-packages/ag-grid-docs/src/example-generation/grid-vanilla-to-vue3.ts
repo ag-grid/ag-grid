@@ -2,7 +2,7 @@ import {
     convertFunctionToConstProperty,
     getActiveTheme,
     getFunctionName,
-    getIntegratedChartsThemeHandler,
+    getIntegratedDarkModeCode,
     getModuleRegistration,
     ImportType,
     isInstanceMethod,
@@ -51,7 +51,7 @@ function getOnGridReadyCode(bindings: any): string {
 
     const additional = preferParamsApi(additionalLines.length > 0 ? `\n\n        ${additionalLines.join('\n        ')}` : '')
     return `const onGridReady = (params) => {
-        ${getIntegratedChartsThemeHandler(bindings.exampleName, false)}
+        ${getIntegratedDarkModeCode(bindings.exampleName)}
         gridApi.value = params.api;
         ${additional}
     }`;

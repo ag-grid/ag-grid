@@ -1,4 +1,4 @@
-import {addBindingImports, addGenericInterfaceImport, getIntegratedChartsThemeHandler, getModuleRegistration, ImportType} from './parser-utils';
+import {addBindingImports, addGenericInterfaceImport, getIntegratedDarkModeCode, getModuleRegistration, ImportType} from './parser-utils';
 
 const path = require('path');
 const fs = require('fs-extra');
@@ -130,7 +130,7 @@ export function vanillaToTypescript(bindings: any, mainFilePath: string, allStyl
         // Remove the original import statements
         unWrapped = unWrapped.replace(/import ((.|\n)*?)from.*\n/g, '');
 
-        return `${formattedImports}${getIntegratedChartsThemeHandler(bindings.exampleName, true)}${unWrapped} ${toAttach || ''}`
+        return `${formattedImports}${unWrapped} ${toAttach || ''}`
     }
 }
 

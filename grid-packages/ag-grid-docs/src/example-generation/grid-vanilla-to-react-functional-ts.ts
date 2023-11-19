@@ -1,5 +1,5 @@
 import { templatePlaceholder } from "./grid-vanilla-src-parser";
-import { addBindingImports, addGenericInterfaceImport, convertFunctionToConstPropertyTs, getActiveTheme, getFunctionName, getIntegratedChartsThemeHandler, getModuleRegistration, getPropertyInterfaces, handleRowGenericInterface, ImportType, isInstanceMethod, preferParamsApi } from './parser-utils';
+import { addBindingImports, addGenericInterfaceImport, convertFunctionToConstPropertyTs, getActiveTheme, getFunctionName, getIntegratedDarkModeCode, getModuleRegistration, getPropertyInterfaces, handleRowGenericInterface, ImportType, isInstanceMethod, preferParamsApi } from './parser-utils';
 import { convertFunctionalTemplate, convertFunctionToConstCallbackTs, getImport, getValueType } from './react-utils';
 const path = require('path');
 
@@ -185,7 +185,7 @@ export function vanillaToReactFunctionalTs(bindings: any, componentFilenames: st
         const additionalInReady = [];
         if (data) {
             additionalInReady.push(
-                `${getIntegratedChartsThemeHandler(bindings.exampleName, false)}`
+                `${getIntegratedDarkModeCode(bindings.exampleName)}`
             );
 
             const setRowDataBlock = data.callback.replace('gridApi!.setGridOption(\'rowData\',', 'setRowData(');
@@ -198,7 +198,7 @@ export function vanillaToReactFunctionalTs(bindings: any, componentFilenames: st
 
         if (onGridReady) {
             additionalInReady.push(
-                `${getIntegratedChartsThemeHandler(bindings.exampleName, false)}`
+                `${getIntegratedDarkModeCode(bindings.exampleName)}`
             );
             const hackedHandler = onGridReady.replace(/^{|}$/g, '')
                 .replace('gridApi!.setGridOption(\'rowData\',', 'setRowData(');
