@@ -194,6 +194,10 @@ const FULL_SCREEN_WITH_FOOTER_PAGES = [
     'style-guide',
 ];
 
+const BARE_PAGES = [
+    'license-pricing-bare'
+]
+
 const SUPPRESS_FRAMEWORK_SELECTOR_PAGES = [
     'pipeline',
     'changelog'
@@ -206,6 +210,7 @@ function matchesPath(page, path) {
 
 const isFullScreenPage = path => path === '/' || FULL_SCREEN_PAGES.some(page => matchesPath(page, path));
 const isFullScreenPageWithFooter = path => FULL_SCREEN_WITH_FOOTER_PAGES.some(page => matchesPath(page, path));
+const isBarePage = path => BARE_PAGES.some(page => matchesPath(page, path));
 const isSuppressFrameworkSelector = path => SUPPRESS_FRAMEWORK_SELECTOR_PAGES.some(page => matchesPath(page, path));
 
 /**
@@ -213,7 +218,7 @@ const isSuppressFrameworkSelector = path => SUPPRESS_FRAMEWORK_SELECTOR_PAGES.so
  */
 exports.onCreatePage = ({page, actions: {createPage}}) => {
     // used in layouts/index.js
-    if (page.path.match(/example-runner/)) {
+    if (page.path.match(/example-runner/) || isBarePage(page.path)) {
         page.context.layout = 'bare';
         createPage(page);
     } else if (isFullScreenPage(page.path)) {
