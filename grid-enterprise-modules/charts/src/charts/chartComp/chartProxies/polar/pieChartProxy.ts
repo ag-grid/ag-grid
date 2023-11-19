@@ -1,6 +1,6 @@
 import { ChartProxy, ChartProxyParams, FieldDefinition, UpdateParams } from '../chartProxy';
-import { AgChart, AgPieSeriesOptions, AgPolarChartOptions, AgPolarSeriesOptions, } from 'ag-charts-community';
-// import { AgChart, AgPieSeriesOptions, AgPolarChartOptions, AgPolarSeriesOptions, } from 'ag-charts-enterprise';
+import { AgCharts, AgPieSeriesOptions, AgPolarChartOptions, AgPolarSeriesOptions, } from 'ag-charts-community';
+
 import { changeOpacity } from '../../utils/color';
 import { deepMerge } from '../../utils/object';
 
@@ -24,7 +24,7 @@ export class PieChartProxy extends ChartProxy {
             series: this.getSeries(params),
         }
 
-        AgChart.update(this.getChartRef(), options);
+        AgCharts.update(this.getChartRef(), options);
     }
 
     private getSeries(params: UpdateParams): AgPolarSeriesOptions[] {

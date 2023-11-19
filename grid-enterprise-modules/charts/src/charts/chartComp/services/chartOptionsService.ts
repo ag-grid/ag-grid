@@ -1,6 +1,6 @@
 import { _, BeanStub, ChartOptionsChanged, ChartType, Events, WithoutGridCommon } from "@ag-grid-community/core";
-import { AgCartesianAxisType, AgChart, AgChartOptions } from "ag-charts-community";
-// import { AgCartesianAxisType, AgChart, AgChartOptions } from "ag-charts-enterprise";
+import { AgCartesianAxisType, AgCharts, AgChartOptions } from "ag-charts-community";
+
 import { ChartController } from "../chartController";
 import { AgChartActual } from "../utils/integration";
 import { deepMerge } from "../utils/object";
@@ -139,7 +139,7 @@ export class ChartOptionsService extends BeanStub {
 
     private updateChart(chartOptions: AgChartOptions) {
         const chartRef = this.chartController.getChartProxy().getChartRef();
-        AgChart.updateDelta(chartRef, chartOptions);
+        AgCharts.updateDelta(chartRef, chartOptions);
     }
 
     private createChartOptions<T>({ seriesType, expression, value }: {
