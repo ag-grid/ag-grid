@@ -242,8 +242,8 @@ export class GridOptionsService {
 
             if (this.gridOptionLookup.has(key)) {
                 const previousValue = this.gridOptions[key as keyof GridOptions];
-                if (shouldForce || previousValue !== value) {
-                    this.gridOptions[key as keyof GridOptions] = value;
+                if (shouldForce || previousValue !== coercedValue) {
+                    this.gridOptions[key as keyof GridOptions] = coercedValue;
                     const event: PropertyValueChangedEvent<keyof GridOptions> & { source: string }= {
                         type: key as keyof GridOptions,
                         currentValue: coercedValue,
