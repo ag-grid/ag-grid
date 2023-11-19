@@ -12,6 +12,8 @@ export class ComponentUtil {
     // all events
     public static EVENTS: string[] = values<any>(Events);
 
+    public static VUE_OMITTED_PROPERTY = 'AG-VUE-OMITTED-PROPERTY';
+
     // events that are internal to AG Grid and should not be exposed to users via documentation or generated framework components
     /** Exclude the following internal events from code generation to prevent exposing these events via framework components */
     public static EXCLUDED_INTERNAL_EVENTS: string[] = [
@@ -97,7 +99,7 @@ export class ComponentUtil {
         // Loop through component props, if they are not undefined and a valid gridOption copy to gridOptions
         keys.forEach(key => {
             const value = component[key];
-            if (typeof value !== 'undefined') {
+            if (typeof value !== 'undefined' && value !== ComponentUtil.VUE_OMITTED_PROPERTY) {
                 mergedOptions[key] = value;
             }
         })

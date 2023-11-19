@@ -18,6 +18,7 @@ export const getAgGridProperties = (): [Properties, Properties, Properties, {}] 
         props() {
             const options: { [key: string]: any } = {};
             ComponentUtil.ALL_PROPERTIES.forEach((propertyName: string) => {
+                if (this[propertyName] === ComponentUtil.VUE_OMITTED_PROPERTY) { return; }
                 options[propertyName] = this[propertyName] ?? this.gridOptions[propertyName];
             });
             return options;
@@ -52,7 +53,9 @@ export const getAgGridProperties = (): [Properties, Properties, Properties, {}] 
     };
 
     ComponentUtil.ALL_PROPERTIES.forEach((propertyName: string) => {
-        props[propertyName] = {};
+        props[propertyName] = {
+            default: ComponentUtil.VUE_OMITTED_PROPERTY,
+        };
     });
 
     const model: { prop: string, event: string } = {

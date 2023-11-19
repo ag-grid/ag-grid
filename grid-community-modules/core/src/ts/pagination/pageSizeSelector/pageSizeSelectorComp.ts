@@ -97,7 +97,18 @@ export class PageSizeSelectorComp extends Component {
     private onPageSizeSelectorValuesChange(): void {
         if (!this.selectPageSizeComp) { return; }
 
-        this.reloadPageSizesSelector();
+        if(this.shouldShowPageSizeSelector()) {
+            this.reloadPageSizesSelector();
+        }
+    }
+
+    public shouldShowPageSizeSelector(): boolean {
+        return (
+            this.gridOptionsService.get('pagination') &&
+            !this.gridOptionsService.get('suppressPaginationPanel') &&
+            !this.gridOptionsService.get('paginationAutoPageSize') &&
+            !!this.gridOptionsService.get('paginationPageSizeSelector')
+        );
     }
 
     private reloadPageSizesSelector(): void {

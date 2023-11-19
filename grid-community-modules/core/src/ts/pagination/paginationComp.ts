@@ -58,11 +58,10 @@ export class PaginationComp extends Component {
             () => this.onPageSizeRelatedOptionsChange(),
         );
 
-        const paginationPageSizeSelector = this.gridOptionsService.get('paginationPageSizeSelector');
-        const paginationAutoPageSize = this.gridOptionsService.get('paginationAutoPageSize');
-        const suppressPaginationPanel = this.gridOptionsService.get('suppressPaginationPanel');
+        this.pageSizeComp.toggleSelectDisplay(
+            this.pageSizeComp.shouldShowPageSizeSelector()
+        );
 
-        this.pageSizeComp.toggleSelectDisplay(!!paginationPageSizeSelector && !paginationAutoPageSize && !suppressPaginationPanel);
         this.onPaginationChanged();
     }
 
@@ -84,10 +83,9 @@ export class PaginationComp extends Component {
     }
 
     private onPageSizeRelatedOptionsChange(): void {
-        const paginationPageSizeSelector = this.gridOptionsService.get('paginationPageSizeSelector');
-        const paginationAutoPageSize = this.gridOptionsService.get('paginationAutoPageSize');
-        const suppressPaginationPanel = this.gridOptionsService.get('suppressPaginationPanel');
-        this.pageSizeComp.toggleSelectDisplay(!!paginationPageSizeSelector && !paginationAutoPageSize && !suppressPaginationPanel);
+        this.pageSizeComp.toggleSelectDisplay(
+            this.pageSizeComp.shouldShowPageSizeSelector()
+        );
     }
 
     private setupListeners() {
