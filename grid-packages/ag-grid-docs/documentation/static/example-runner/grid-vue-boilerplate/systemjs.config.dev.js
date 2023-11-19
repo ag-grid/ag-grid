@@ -53,11 +53,11 @@
                 defaultExtension: 'js'
             },
             'ag-charts-community': {
-                main: './dist/main.cjs.js',
+                main: './dist/package/main.cjs.js',
                 defaultExtension: 'js'
             },
             // 'ag-charts-enterprise': {
-            //     main: './dist/main.cjs.js',
+            //     main: './dist/package/main.cjs.js',
             //     defaultExtension: 'js'
             // },
             // these are a little different in that they're in a directory and sjs doesn't default to the index.js inside...

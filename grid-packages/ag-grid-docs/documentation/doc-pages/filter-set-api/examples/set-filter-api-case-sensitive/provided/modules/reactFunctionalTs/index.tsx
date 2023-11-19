@@ -136,7 +136,7 @@ const GridExample = () => {
                     </div>
                 </div>
 
-                <div style={gridStyle} className="ag-theme-quartz">
+                <div style={gridStyle} className={/** DARK MODE START **/document.documentElement?.dataset.defaultTheme || 'ag-theme-quartz'/** DARK MODE END **/}>
                     <AgGridReact
                         ref={gridRef}
                         rowData={rowData}

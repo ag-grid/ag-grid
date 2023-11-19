@@ -358,23 +358,30 @@
         font-weight: 600;
     }
 
-    .ag-icon::before {
-        // use SVG images instead of icon font
+    .ag-icon {
         color: transparent;
-        background-color: transparent;
-        background-position: top left;
-        background-size: 16px 16px;
-        background-repeat: no-repeat;
-        width: var(--ag-icon-size);
-        height: var(--ag-icon-size);
-        opacity: 0.9;
+        position: relative;
+        --ag-quartz-icon-image-display: block;
 
-        &::before {
-            display: none;
+        &::after {
+            // use SVG images instead of icon font
+            display: var(--ag-quartz-icon-image-display);
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-position: top left;
+            background-size: 16px 16px;
+            background-repeat: no-repeat;
+            width: var(--ag-icon-size);
+            height: var(--ag-icon-size);
+            opacity: 0.9;
+            content: "";
         }
     }
     
-    .ag-icon-grip::before {
+    .ag-icon-grip::after {
         opacity: 0.6;
     }
 
@@ -424,12 +431,12 @@
 }
 
 .ag-theme-quartz-dark {
-    .ag-icon::before {
+    .ag-icon::after {
         filter: invert(100%);
     }
 
     .ag-column-select-header-filter-wrapper, .ag-filter-toolpanel-search {
-        .ag-input-wrapper::before {
+        .ag-input-wrapper::after {
             opacity: 66%;
             filter: invert(100%);
         }

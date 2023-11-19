@@ -23,7 +23,7 @@ const VueExample = {
                 </div>
                 <ag-grid-vue
                     style="width: 100%; height: 100%;"
-                    class="ag-theme-quartz"
+                    :class="themeClass"
                     :columnDefs="columnDefs"
                     @grid-ready="onGridReady"
                     :defaultColDef="defaultColDef"
@@ -102,7 +102,8 @@ const VueExample = {
             athleteDescriptionColWidthOnReady,
             athleteDescriptionColWidthOnFirstDataRendered,
             autoSizeStrategy,
-            loadGridData
+            loadGridData,
+            themeClass: /** DARK MODE START **/document.documentElement.dataset.defaultTheme || 'ag-theme-quartz'/** DARK MODE END **/,
         }
     }
 }

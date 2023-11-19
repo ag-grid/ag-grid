@@ -43,7 +43,7 @@ const VueExample = {
             <ag-grid-vue
 
                     style="width: 100%; height: 98%;"
-                    class="ag-theme-quartz"
+                    :class="themeClass"
                     :columnDefs="columnDefs"
                     @grid-ready="onGridReady"
                     :defaultColDef="defaultColDef"
@@ -90,7 +90,8 @@ const VueExample = {
             columnTypes: null,
             rowData: null,
             groupDefaultExpanded: null,
-            rowGroupPanelShow: null
+            rowGroupPanelShow: null,
+            themeClass: /** DARK MODE START **/document.documentElement.dataset.defaultTheme || 'ag-theme-quartz'/** DARK MODE END **/,
         }
     },
     created() {

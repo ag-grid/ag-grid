@@ -87,7 +87,7 @@ There are two ways you can get fix this problem:
 </framework-specific-section>
 
 <framework-specific-section frameworks="angular">
-<grid-example title='Angular Filter Component' name='filter-component' type='mixed' options='{ "enterprise": false, "exampleHeight": 445, "onlyShow": "angular", "extras": ["bootstrap"], "includeNgFormsModule" : true }'></grid-example>
+<grid-example title='Angular Filter Component' name='filter-component' type='mixed' options='{ "enterprise": false, "exampleHeight": 445, "onlyShow": "angular", "includeNgFormsModule" : true }'></grid-example>
 </framework-specific-section>
 
 <framework-specific-section frameworks="react">
@@ -129,7 +129,7 @@ There are two ways you can get fix this problem:
 </framework-specific-section>
 
 <framework-specific-section frameworks="react">
-<grid-example title='React Filter Component' name='filter-component' type='mixed' options='{ "enterprise": false, "exampleHeight": 445, "extras": ["bootstrap"] }'></grid-example>
+<grid-example title='React Filter Component' name='filter-component' type='mixed' options='{ "enterprise": false, "exampleHeight": 445 }'></grid-example>
 </framework-specific-section>
 
 <framework-specific-section frameworks="vue">
@@ -166,5 +166,5 @@ There are two ways you can get fix this problem:
 </framework-specific-section>
 
 <framework-specific-section frameworks="vue">
-<grid-example title='Vue Filter Component' name='filter-component' type='mixed' options='{ "enterprise": false, "exampleHeight": 445, "onlyShow": "vue", "extras": ["bootstrap"] }'></grid-example>
+<grid-example title='Vue Filter Component' name='filter-component' type='mixed' options='{ "enterprise": false, "exampleHeight": 445, "onlyShow": "vue" }'></grid-example>
 </framework-specific-section>

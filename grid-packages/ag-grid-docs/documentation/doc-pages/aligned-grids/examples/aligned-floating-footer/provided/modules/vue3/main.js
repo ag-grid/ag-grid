@@ -12,7 +12,7 @@ ModuleRegistry.registerModules([ClientSideRowModelModule]);
 
 const VueExample = {
     template: `
-        <div style="height: 100%; display: flex; flex-direction: column" class="ag-theme-quartz">
+        <div style="height: 100%; display: flex; flex-direction: column" :class="themeClass">
             <ag-grid-vue style="flex: 1 1 auto;"
                          ref="topGrid"
                          :gridOptions="topGridOptions"
@@ -44,7 +44,8 @@ const VueExample = {
             athleteVisible: true,
             ageVisible: true,
             countryVisible: true,
-            rowStyle: { fontWeight: 'bold' }
+            rowStyle: { fontWeight: 'bold' },
+            themeClass: /** DARK MODE START **/document.documentElement.dataset.defaultTheme || 'ag-theme-quartz'/** DARK MODE END **/,
         };
     },
     beforeMount() {

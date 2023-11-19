@@ -25,7 +25,7 @@ import { getData } from './data';
       <ag-grid-angular
         *ngIf="isVisible"
         style="width: 100%; height: 100%;"
-        class="ag-theme-quartz"
+        [class]="themeClass"
         [columnDefs]="columnDefs"
         [rowData]="rowData"
         [rowSelection]="rowSelection"
@@ -35,6 +35,7 @@ import { getData } from './data';
   `,
 })
 export class AppComponent {
+    themeClass = /** DARK MODE START **/document.documentElement?.dataset.defaultTheme || 'ag-theme-quartz'/** DARK MODE END **/;
   public isVisible = true
   private gridApi!: GridApi
   public columnDefs: ColDef[] = [

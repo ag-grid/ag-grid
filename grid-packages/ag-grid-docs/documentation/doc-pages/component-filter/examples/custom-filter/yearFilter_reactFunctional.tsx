@@ -35,11 +35,11 @@ export default forwardRef((props: IFilterParams, ref) => {
 
     return (
         <div style={{ display: "inline-block", width: "400px" }} onChange={onYearChange}>
-            <div style={{ padding: "10px", backgroundColor: "#d3d3d3", textAlign: "center" }}>Select Year Range</div>
-            <label style={{ margin: "10px", padding: "50px", display: "inline-block", backgroundColor: "#999999" }}>
+            <div style={{ padding: "10px", textAlign: "center" }}>Select Year Range</div>
+            <label style={{ margin: "10px", padding: "50px", display: "inline-block" }}>
                 <input type="radio" name="year" value="All" checked={year === 'All'} /> All
             </label>
-            <label style={{ margin: "10px", padding: "50px", display: "inline-block", backgroundColor: "#999999" }}>
+            <label style={{ margin: "10px", padding: "50px", display: "inline-block" }}>
                 <input type="radio" name="year" value="2010" /> Since 2010
             </label>
         </div>

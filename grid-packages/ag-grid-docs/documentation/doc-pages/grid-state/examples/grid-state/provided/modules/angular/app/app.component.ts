@@ -21,7 +21,7 @@ import { IOlympicData } from './interfaces'
             </div>
             <ag-grid-angular *ngIf="gridVisible"
                 style="width: 100%; height: 100%;"
-                class="ag-theme-quartz"
+                [class]="themeClass"
                 [columnDefs]="columnDefs"
                 [defaultColDef]="defaultColDef"
                 [enableRangeSelection]="true"
@@ -41,6 +41,7 @@ import { IOlympicData } from './interfaces'
 })
 
 export class AppComponent {
+    themeClass = /** DARK MODE START **/document.documentElement?.dataset.defaultTheme || 'ag-theme-quartz'/** DARK MODE END **/;
     private gridApi!: GridApi<IOlympicData>;
     
     public columnDefs: ColDef[] = [

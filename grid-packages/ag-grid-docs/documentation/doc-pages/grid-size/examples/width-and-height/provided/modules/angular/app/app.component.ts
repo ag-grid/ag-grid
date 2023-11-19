@@ -20,7 +20,7 @@ import { Component, OnInit, ViewChild } from '@angular/core';
         <ag-grid-angular
                 style="width: 100%; height:100%;"
                 #agGrid
-                class="ag-theme-quartz"
+                [class]="themeClass"
                 [rowData]="rowData"
                 [columnDefs]="columnDefs"
         >
@@ -31,6 +31,7 @@ import { Component, OnInit, ViewChild } from '@angular/core';
 })
 
 export class AppComponent implements OnInit {
+    themeClass = /** DARK MODE START **/document.documentElement?.dataset.defaultTheme || 'ag-theme-quartz'/** DARK MODE END **/;
 
     @ViewChild('agGrid') agGrid!: AgGridAngular<IOlympicData>;
 

@@ -81,7 +81,7 @@ const GridExample = () => {
             headerName: "Month",
             field: "Month",
             width: 75,
-            cellStyle: { color: "darkred" }
+            cellStyle: { backgroundColor: "#CC222244" }
         },
         {
             headerName: "Max Temp (\u02DAC)",
@@ -153,7 +153,7 @@ const GridExample = () => {
                         height: '100%',
                         width: '100%'
                     }}
-                    className="ag-theme-quartz">
+                    className={/** DARK MODE START **/document.documentElement?.dataset.defaultTheme || 'ag-theme-quartz'/** DARK MODE END **/}>
                     <AgGridReact
                         ref={gridRef}
                         rowData={rowData}

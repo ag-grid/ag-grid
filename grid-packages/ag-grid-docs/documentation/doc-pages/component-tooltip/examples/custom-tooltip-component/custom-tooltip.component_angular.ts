@@ -44,6 +44,6 @@ export class CustomTooltip implements ITooltipAngularComp {
         this.params = params;
 
         this.data = params.api!.getDisplayedRowAtIndex(params.rowIndex!)!.data;
-        this.color = this.params.color || 'white';
+        this.color = this.params.color || '#999';
     }
 }

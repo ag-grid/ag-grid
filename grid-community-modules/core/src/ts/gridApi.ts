@@ -2052,7 +2052,8 @@ export class GridApi<TData = any> {
      * Pass a Quick Filter text into the grid for filtering.
      * */
     public setQuickFilter(newFilter: string): void {
-        this.deprecatedUpdateGridOption('quickFilterText', newFilter);
+        warnOnce(`setQuickFilter is deprecated. Please use 'api.setGridOption('quickFilterText', newValue)' or 'api.updateGridOptions({ quickFilterText: newValue })' instead.`);
+        this.gos.updateGridOptions({ options: { quickFilterText: newFilter }});
     }
 
     /** 

@@ -4,7 +4,7 @@ export class CustomTooltip implements ITooltipComp {
     eGui: any;
     init(params: ITooltipParams & { color: string }) {
         const eGui = this.eGui = document.createElement('div');
-        const color = params.color || 'white';
+        const color = params.color || '#999';
         const data = params.api!.getDisplayedRowAtIndex(params.rowIndex!)!.data;
 
         eGui.classList.add('custom-tooltip');

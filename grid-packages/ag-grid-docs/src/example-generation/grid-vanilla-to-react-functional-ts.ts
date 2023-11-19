@@ -1,5 +1,5 @@
 import { templatePlaceholder } from "./grid-vanilla-src-parser";
-import { addBindingImports, addGenericInterfaceImport, convertFunctionToConstPropertyTs, getActiveTheme, getFunctionName, getIntegratedChartsHack, getModuleRegistration, getPropertyInterfaces, handleRowGenericInterface, ImportType, isInstanceMethod, preferParamsApi } from './parser-utils';
+import { addBindingImports, addGenericInterfaceImport, convertFunctionToConstPropertyTs, getActiveTheme, getFunctionName, getIntegratedChartsThemeHandler, getModuleRegistration, getPropertyInterfaces, handleRowGenericInterface, ImportType, isInstanceMethod, preferParamsApi } from './parser-utils';
 import { convertFunctionalTemplate, convertFunctionToConstCallbackTs, getImport, getValueType } from './react-utils';
 const path = require('path');
 
@@ -184,8 +184,11 @@ export function vanillaToReactFunctionalTs(bindings: any, componentFilenames: st
 
         const additionalInReady = [];
         if (data) {
-            const setRowDataBlock = data.callback.replace('gridApi!.setGridOption(\'rowData\',', 'setRowData(');
+            additionalInReady.push(
+                `${getIntegratedChartsThemeHandler(bindings.exampleName, false)}`
+            );
 
+            const setRowDataBlock = data.callback.replace('gridApi!.setGridOption(\'rowData\',', 'setRowData(');
             additionalInReady.push(`
                 fetch(${data.url})
                 .then(resp => resp.json())
@@ -194,6 +197,9 @@ export function vanillaToReactFunctionalTs(bindings: any, componentFilenames: st
         }
 
         if (onGridReady) {
+            additionalInReady.push(
+                `${getIntegratedChartsThemeHandler(bindings.exampleName, false)}`
+            );
             const hackedHandler = onGridReady.replace(/^{|}$/g, '')
                 .replace('gridApi!.setGridOption(\'rowData\',', 'setRowData(');
             additionalInReady.push(hackedHandler);
@@ -319,7 +325,6 @@ ${gridReady}
 
 ${[].concat(eventHandlers, externalEventHandlers, instanceMethods).join('\n\n   ')}
 
-${getIntegratedChartsHack(bindings.exampleName)}
     return  (
             <div ${containerStyle}>
                 ${template}

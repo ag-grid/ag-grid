@@ -61,11 +61,10 @@ export default forwardRef((props, ref) => {
     }
 
     const style = {
-        border: '2px solid #22ff22',
         borderRadius: '5px',
-        backgroundColor: '#bbffbb',
         width: '200px',
-        height: '50px'
+        height: '50px',
+        padding: '10px'
     };
 
     return (

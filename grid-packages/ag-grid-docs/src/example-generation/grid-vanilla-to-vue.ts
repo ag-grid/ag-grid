@@ -1,4 +1,4 @@
-import { getActiveTheme, getIntegratedChartsHack, getModuleRegistration, ImportType, preferParamsApi, replaceGridReadyRowData } from './parser-utils';
+import { getActiveTheme, getIntegratedChartsThemeHandler, getModuleRegistration, ImportType, preferParamsApi, replaceGridReadyRowData } from './parser-utils';
 import { getImport, toOutput } from './vue-utils';
 import { convertDefaultColDef, getAllMethods, getColumnDefs, getPropertyBindings, getTemplate } from "./grid-vanilla-to-vue-common";
 const path = require('path');
@@ -30,6 +30,7 @@ function getOnGridReadyCode(bindings: any): string {
     }
     const additional = preferParamsApi(additionalLines.length > 0 ? `\n\n        ${additionalLines.join('\n        ')}` : '')
     return `onGridReady(params) {
+        ${getIntegratedChartsThemeHandler(bindings.exampleName, false)}
         this.gridApi = params.api;
         ${additional}
     }`;
@@ -156,9 +157,7 @@ const VueExample = {
         }
     },
     created() {
-        ${propertyAssignments.join(';\n')}
-        ${getIntegratedChartsHack(bindings.exampleName)}
-
+        ${propertyAssignments.join(';\n')}        
     },
     methods: {
         ${eventHandlers

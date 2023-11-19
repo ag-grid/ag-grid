@@ -41,7 +41,7 @@ function getContextMenuItems(params: GetContextMenuItemsParams): (string | MenuI
       action: () => {
         window.alert('Alerting about ' + params.value)
       },
-      cssClasses: ['redFont', 'bold'],
+      cssClasses: ['red', 'bold'],
     },
     {
       // custom item

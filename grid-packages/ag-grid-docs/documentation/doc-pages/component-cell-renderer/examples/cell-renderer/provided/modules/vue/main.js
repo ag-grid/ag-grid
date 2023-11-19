@@ -73,7 +73,7 @@ const VueExample = {
             </div>
             <ag-grid-vue
                     style="width: 100%; height: 100%;"
-                    class="ag-theme-quartz"
+                    :class="themeClass"
                     :columnDefs="columnDefs"
                     :rowData="rowData"
                     :defaultColDef="defaultColDef"
@@ -101,7 +101,7 @@ const VueExample = {
                     headerName: "Month",
                     field: "Month",
                     width: 75,
-                    cellStyle: { color: "darkred" }
+                    cellStyle: { backgroundColor: "#CC222244" }
                 },
                 {
                     headerName: "Max Temp (\u02DAC)",
@@ -145,7 +145,8 @@ const VueExample = {
                 filter: true,
                 resizable: true
             },
-            rowData: null
+            rowData: null,
+            themeClass: /** DARK MODE START **/document.documentElement.dataset.defaultTheme || 'ag-theme-quartz'/** DARK MODE END **/,
         }
     },
     methods: {
