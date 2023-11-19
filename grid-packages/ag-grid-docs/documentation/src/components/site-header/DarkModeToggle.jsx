@@ -16,6 +16,7 @@ export const DarkModeToggle = () => {
                     styles.light,
                     'button-style-none'
                 )}
+                aria-label="Toggle Dark Mode"
             >
                 <Icon name="sun" />
             </button>
