@@ -185,7 +185,7 @@ export function vanillaToReactFunctionalTs(bindings: any, componentFilenames: st
         const additionalInReady = [];
         if (data) {
             additionalInReady.push(
-                `${getIntegratedDarkModeCode(bindings.exampleName)}`
+                `${getIntegratedDarkModeCode(bindings.exampleName, true)}`
             );
 
             const setRowDataBlock = data.callback.replace('gridApi!.setGridOption(\'rowData\',', 'setRowData(');
@@ -198,7 +198,7 @@ export function vanillaToReactFunctionalTs(bindings: any, componentFilenames: st
 
         if (onGridReady) {
             additionalInReady.push(
-                `${getIntegratedDarkModeCode(bindings.exampleName)}`
+                `${getIntegratedDarkModeCode(bindings.exampleName, true)}`
             );
             const hackedHandler = onGridReady.replace(/^{|}$/g, '')
                 .replace('gridApi!.setGridOption(\'rowData\',', 'setRowData(');

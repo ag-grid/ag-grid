@@ -35,7 +35,7 @@ function getOnGridReadyCode(
         );
         return `
         onGridReady(params: GridReadyEvent${gridReadyEventParam}) {
-            ${getIntegratedDarkModeCode(exampleName)} 
+            ${getIntegratedDarkModeCode(exampleName, true)} 
             ${hasApi ? 'this.gridApi = params.api;' : ''}${additional}
         }`;
     } else {
