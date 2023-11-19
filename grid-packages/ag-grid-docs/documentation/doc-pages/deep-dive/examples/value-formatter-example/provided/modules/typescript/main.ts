@@ -1,5 +1,8 @@
 import { createGrid, ColDef, GridApi, GridOptions } from '@ag-grid-community/core';
 import { ValueFormatterParams } from 'ag-grid-community';
+import { ModuleRegistry } from '@ag-grid-community/core';
+import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
+ModuleRegistry.registerModules([ ClientSideRowModelModule ]);
 
 // Row Data Interface
 interface IRow {

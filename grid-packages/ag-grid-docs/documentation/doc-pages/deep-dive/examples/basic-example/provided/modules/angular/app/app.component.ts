@@ -2,7 +2,9 @@ import { Component } from '@angular/core';
 import { ColDef } from 'ag-grid-community';
 import "@ag-grid-community/styles/ag-grid.css";
 import "@ag-grid-community/styles/ag-theme-quartz.css";
-
+import { ModuleRegistry } from '@ag-grid-community/core';
+import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
+ModuleRegistry.registerModules([ ClientSideRowModelModule ]);
 @Component({
   selector: 'my-app',
   template: 

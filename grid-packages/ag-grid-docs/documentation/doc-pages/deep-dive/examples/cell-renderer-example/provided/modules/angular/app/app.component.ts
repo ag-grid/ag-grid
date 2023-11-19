@@ -4,6 +4,9 @@ import { HttpClient } from '@angular/common/http';
 import "@ag-grid-community/styles/ag-grid.css";
 import "@ag-grid-community/styles/ag-theme-quartz.css";
 import { CountryFlagCellRendererComponent } from './country-flag-cell-renderer.component'
+import { ModuleRegistry } from '@ag-grid-community/core';
+import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
+ModuleRegistry.registerModules([ ClientSideRowModelModule ]);
 
 @Component({
   selector: 'my-app',
