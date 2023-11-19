@@ -4,17 +4,9 @@ import {
     AgBaseSeriesOptions,
     AgCartesianAxisOptions,
     AgCartesianChartOptions,
-    AgChart,
+    AgCharts,
     AgLineSeriesOptions,
 } from "ag-charts-community";
-// import {
-//     AgAreaSeriesOptions,
-//     AgBaseSeriesOptions,
-//     AgCartesianAxisOptions,
-//     AgCartesianChartOptions,
-//     AgChart,
-//     AgLineSeriesOptions,
-// } from "ag-charts-enterprise";
 
 export abstract class CartesianChartProxy extends ChartProxy {
     protected crossFilteringAllPoints = new Set<string>();
@@ -37,7 +29,7 @@ export abstract class CartesianChartProxy extends ChartProxy {
             series: this.getSeries(params),
         };
 
-        AgChart.update(this.getChartRef(), options);
+        AgCharts.update(this.getChartRef(), options);
     }
 
     private getData(params: UpdateParams, axes: AgCartesianAxisOptions[]): any[] {

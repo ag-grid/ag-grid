@@ -20,7 +20,7 @@ import {
     UpdateChartParams,
     WithoutGridCommon,
 } from "@ag-grid-community/core";
-// import {AgChartInstance, AgChartThemeOverrides, AgChartThemePalette} from "ag-charts-enterprise";
+
 import {AgChartInstance, AgChartThemeOverrides, AgChartThemePalette} from "ag-charts-community";
 import {ChartMenu} from "./menu/chartMenu";
 import {TitleEdit} from "./chartTitle/titleEdit";
@@ -154,7 +154,7 @@ export class GridChartComp extends Component {
         // if chart already exists, destroy it and remove it from DOM
         let chartInstance: AgChartInstance | undefined = undefined;
         if (this.chartProxy) {
-            chartInstance = this.chartProxy.destroy({ keepChartInstance: false });
+            chartInstance = this.chartProxy.destroy({ keepChartInstance: true });
         }
 
         const crossFilterCallback = (event: any, reset: boolean) => {
