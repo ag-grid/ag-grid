@@ -130,7 +130,8 @@ export function vanillaToTypescript(bindings: any, mainFilePath: string, allStyl
         // Remove the original import statements
         unWrapped = unWrapped.replace(/import ((.|\n)*?)from.*\n/g, '');
 
-        return `${formattedImports}${getIntegratedDarkModeCode(bindings.exampleName)}${unWrapped} ${toAttach || ''}`
+        // TODO: skipping dark mode handling for TS
+        return `${formattedImports}${getIntegratedDarkModeCode('')}${unWrapped} ${toAttach || ''}`
     }
 }
 
