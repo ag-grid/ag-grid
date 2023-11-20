@@ -114,7 +114,8 @@ $abstract-colors: (
     'cerise-pink': #e83e8c,
     'danger-red': #dc3545,
     'papaya-whip': #ffeed9,
-    'pineapple': #5c3508
+    'pineapple': #5c3508,
+    'dark-bg-new': #0b1d28,
 );
 
 $color-scales: (
@@ -370,7 +371,7 @@ $semantic-colors: (
 // Semantic colors based on abstract colors
 $dark-semantic-colors: (
     // Background
-    'default-background-color': background-100,
+    'default-background-color': dark-bg-new,
     // Text
     'default-text-color': ghost-white,
     'text-color': default-text-color,
