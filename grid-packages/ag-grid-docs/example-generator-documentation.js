@@ -232,7 +232,7 @@ const skipPackages = () => {
 }
 
 function createExampleGenerator(exampleType, prefix, importTypes, incremental) {
-    const [parser, vanillaToVue, vanillaToVue3, vanillaToReactFunctional, vanillaToReactFunctionalTs, vanillaToAngular, vanillaToTypescript] = getGeneratorCode(prefix);
+    const [parser, vanillaToVue, vanillaToVue3, vanillaToReactFunctional, vanillaToReactFunctionalTs, vanillaToAngular, vanillaToTypescript, getIntegratedDarkModeCode] = getGeneratorCode(prefix);
     const appModuleAngular = new Map();
 
     importTypes.forEach(importType => {
@@ -555,6 +555,10 @@ function createExampleGenerator(exampleType, prefix, importTypes, incremental) {
                         // replace Typescript LicenseManager.setLicenseKey( with Javascript agGrid.LicenseManager.setLicenseKey(
                         jsFile = jsFile.replace(/LicenseManager\.setLicenseKey\(/g, "agGrid.LicenseManager.setLicenseKey(");
 
+                        if(tsFile.includes('integrated-charts') && tsFile.includes('main.ts')) {
+                            jsFile = jsFile + getIntegratedDarkModeCode(tsFile, false, 'gridApi', true);
+                        }
+
                         const jsFileName = path.parse(tsFile).base.replace('.ts', '.js').replace('_typescript.js', '.js');
                         jsFiles[jsFileName] = jsFile;
                     });
@@ -674,8 +678,9 @@ function getGeneratorCode(prefix) {
     const {vanillaToReactFunctional} = require(`${prefix}vanilla-to-react-functional.ts`);
     const {vanillaToReactFunctionalTs} = require(`${prefix}vanilla-to-react-functional-ts.ts`);
     const {vanillaToAngular} = require(`${prefix}vanilla-to-angular.ts`);
+    const {getIntegratedDarkModeCode} = require(`${prefix.replace('grid-','')}parser-utils.ts`);
 
-    return [parser, vanillaToVue, vanillaToVue3, vanillaToReactFunctional, vanillaToReactFunctionalTs, vanillaToAngular, vanillaToTypescript];
+    return [parser, vanillaToVue, vanillaToVue3, vanillaToReactFunctional, vanillaToReactFunctionalTs, vanillaToAngular, vanillaToTypescript, getIntegratedDarkModeCode];
 }
 
 function generateExamples(type, importTypes, scope, trigger, done) {

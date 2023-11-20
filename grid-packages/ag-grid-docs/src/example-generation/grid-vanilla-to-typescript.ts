@@ -131,7 +131,7 @@ export function vanillaToTypescript(bindings: any, mainFilePath: string, allStyl
         unWrapped = unWrapped.replace(/import ((.|\n)*?)from.*\n/g, '');
 
         // TODO: skipping dark mode handling for TS
-        return `${formattedImports}${getIntegratedDarkModeCode('')}${unWrapped} ${toAttach || ''}`
+        return `${formattedImports}${unWrapped} ${toAttach || ''} ${getIntegratedDarkModeCode(bindings.exampleName, true, 'gridApi')}`
     }
 }
 
