@@ -40,9 +40,7 @@ html[data-color-scheme='dark'] button:not(#myGrid button, #myChart button, butto
 
     .ag-header {
         background: color-mix(in srgb, #fff, transparent 98%);
-    }
-
-   
+    }  
 }
 
 .ag-theme-quartz {
