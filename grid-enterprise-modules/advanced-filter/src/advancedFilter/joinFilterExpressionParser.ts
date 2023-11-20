@@ -106,7 +106,7 @@ class OperatorParser {
         // if we don't have a start position, haven't typed anything yet, so use current position
         const startPosition = this.operatorStartPositions.length > operatorIndex ? this.operatorStartPositions[operatorIndex] : position;
         const endPosition = (this.operatorEndPositions.length > operatorIndex ? this.operatorEndPositions[operatorIndex] : undefined)
-            ?? findEndPosition(expression, position, true);
+            ?? findEndPosition(expression, position, true).endPosition;
         return updateExpression(
             expression,
             startPosition,

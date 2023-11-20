@@ -213,7 +213,7 @@ const GridExample = () => {
                 </div>
                 <div style={{ "flex": "1 1 0px" }}>
 
-                    <div style={gridStyle} className={/** DARK MODE START **/document.documentElement?.dataset.defaultTheme || 'ag-theme-quartz'/** DARK MODE END **/}>
+                    <div style={gridStyle} className={/** DARK MODE START **/document.documentElement.dataset.defaultTheme || 'ag-theme-quartz'/** DARK MODE END **/}>
                         <AgGridReact
                             ref={gridRef}
                             rowData={rowData}

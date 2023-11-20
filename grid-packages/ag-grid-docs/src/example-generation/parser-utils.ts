@@ -700,13 +700,11 @@ export function getActiveTheme(theme: string, typescript: boolean) {
     return `${DARK_MODE_START}document.documentElement${typescript ? '?' : ''}.dataset.defaultTheme || '${theme}'${DARK_MODE_END}`;
 }
 
-export function getIntegratedDarkModeCode(exampleName: string, typescript?: boolean, apiName = 'params.api', wrapInTimeout = false): string {
+export function getIntegratedDarkModeCode(exampleName: string, typescript?: boolean, apiName = 'params.api'): string {
     if (!exampleName.includes('integrated-charts-')) {
         return '';
     }
-    const setTimeoutOpen = wrapInTimeout ? ' setTimeout(() => { ' : '';
-    const setTimeoutClose = wrapInTimeout ? ' }, 0);' : '';
-    return `${DARK_INTEGRATED_START}${setTimeoutOpen}${(typescript ? darkModeTs : darkModeJS).replace('params.api', apiName)}${setTimeoutClose}${DARK_INTEGRATED_END}`;
+    return `${DARK_INTEGRATED_START}${(typescript ? darkModeTs : darkModeJS).replace('params.api', apiName)}${DARK_INTEGRATED_END}`;
 }
 
 const darkModeTs = `

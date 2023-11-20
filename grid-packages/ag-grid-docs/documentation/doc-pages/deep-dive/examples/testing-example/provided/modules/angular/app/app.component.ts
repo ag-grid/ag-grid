@@ -50,7 +50,7 @@ export class CountryFlagCellRendererComponent implements ICellRendererAngularCom
         <!-- The AG Grid component, with various Grid Option properties -->
         <ag-grid-angular
           style="width: 100%; height: 550px;"
-          class="ag-theme-quartz-dark"
+          [class]="themeClass"
           [rowData]="rowData"
           [columnDefs]="colDefs"
           [defaultColDef]="defaultColDefs" 
@@ -67,6 +67,7 @@ export class CountryFlagCellRendererComponent implements ICellRendererAngularCom
 })
 
 export class AppComponent {
+  themeClass = /** DARK MODE START **/document.documentElement?.dataset.defaultTheme || 'ag-theme-quartz'/** DARK MODE END **/;
 
   // Return formatted date value
   dateFormatter(params: ValueFormatterParams) {

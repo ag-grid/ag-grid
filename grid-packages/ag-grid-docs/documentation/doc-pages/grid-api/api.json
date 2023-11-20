@@ -540,8 +540,7 @@
                 "name": "Viewport Row Model",
                 "url": "/viewport/"
             }
-        },
-        "setViewportDatasource": {}
+        }
     },
     "overlays": {
         "meta": {

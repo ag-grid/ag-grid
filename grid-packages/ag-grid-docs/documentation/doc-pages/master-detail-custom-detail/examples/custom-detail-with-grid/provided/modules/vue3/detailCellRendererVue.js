@@ -10,7 +10,7 @@ export default {
         <div class="full-width-detail"><b>Account: </b>{{ params.data.account }}</div>
       </div>
       <ag-grid-vue style="height: 100%;"
-                   class="full-width-grid ag-theme-quartz"
+                   :class="themeClass"
                    :gridOptions="gridOptions"
                    :columnDefs="colDefs"
                    :defaultColDef="defaultColDef"
@@ -27,6 +27,7 @@ export default {
             gridOptions: null,
             colDefs: null,
             rowData: null,
+            themeClass: 'full-width-grid ' + /** DARK MODE START **/document.documentElement.dataset.defaultTheme || 'ag-theme-quartz'/** DARK MODE END **/,
         };
     },
     beforeMount() {

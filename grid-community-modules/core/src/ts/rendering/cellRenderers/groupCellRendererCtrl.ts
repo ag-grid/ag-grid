@@ -132,14 +132,6 @@ export class GroupCellRendererCtrl extends BeanStub {
                 return;
             }
 
-            // when group column is multiple group columns, don't render for empty checkboxes
-            // as UX becomes overloaded with empty cells including checkboxes.
-            const isSingleGroupColumn = colDef?.showRowGroup === true;
-            const isNullValueAndNotMaster = value == null && !node.master;
-            if (!isSingleGroupColumn && isNullValueAndNotMaster) {
-                return;
-            }
-            
             // this footer should only be non-top level. Don't need to check groupIncludeFooter
             // as we won't have footer rows in that instance.
             if (node.footer && this.gridOptionsService.get('groupHideOpenParents')) {
@@ -326,7 +318,11 @@ export class GroupCellRendererCtrl extends BeanStub {
 
         let valueWhenNoRenderer = valueFormatted;
         if (valueWhenNoRenderer == null) {
-            if (value === '' && this.params.node.group) {
+            const isGroupColForNode = (
+                this.displayedGroupNode.rowGroupColumn && this.params.column?.isRowGroupDisplayed(this.displayedGroupNode.rowGroupColumn.getId())
+            );
+
+            if (this.displayedGroupNode.key === ""  && this.displayedGroupNode.group && isGroupColForNode) {
                 const localeTextFunc = this.localeService.getLocaleTextFunc();
                 valueWhenNoRenderer = localeTextFunc('blanks', '(Blanks)');
             } else {

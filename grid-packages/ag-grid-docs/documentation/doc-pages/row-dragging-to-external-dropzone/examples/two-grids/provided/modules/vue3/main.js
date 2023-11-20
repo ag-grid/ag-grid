@@ -31,7 +31,7 @@ function createLeftRowData() {
 
 const VueExample = {
     template: /* html */
-        `<div class="example-wrapper ag-theme-quartz">        
+        `<div class="example-wrapper">        
             <div class="inner-col">
                 <div class="toolbar">
                     <button class="factory factory-red" data-color="Red" data-side="left" @click="onFactoryButtonClick($event)">
@@ -47,6 +47,7 @@ const VueExample = {
                 <div style="height: 100%;" class="inner-col" ref="eLeftGrid">
                     <ag-grid-vue
                         style="height: 100%;"
+                        :class="themeClass"
                         :defaultColDef="defaultColDef"
                         :getRowId="getRowId"
                         :rowClassRules="rowClassRules"
@@ -82,6 +83,7 @@ const VueExample = {
                 <div style="height: 100%;" class="inner-col" ref="eRightGrid">
                     <ag-grid-vue
                         style="height: 100%;"
+                        :class="themeClass"
                         :defaultColDef="defaultColDef"
                         :getRowId="getRowId"
                         :rowClassRules="rowClassRules"
@@ -123,7 +125,8 @@ const VueExample = {
                 { field: "color" },
                 { field: "value1" },
                 { field: "value2" }
-            ]
+            ],
+            themeClass: /** DARK MODE START **/document.documentElement.dataset.defaultTheme || 'ag-theme-quartz'/** DARK MODE END **/,
         };
     },
     beforeMount() {

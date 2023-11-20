@@ -41,12 +41,13 @@ const VueExample = {
                     </span>
                 </div>
             </div>
-            <div class="grid-wrapper ag-theme-quartz">
+            <div class="grid-wrapper">
                 <div class="panel panel-primary" style="margin-right: 10px;">
                     <div class="panel-heading">Athletes</div>
                     <div class="panel-body">
                         <ag-grid-vue
                                 style="height: 100%;"
+                                :class="themeClass"
                                 :defaultColDef="defaultColDef"
                                 rowSelection="multiple"
                                 :rowDragMultiRow="true"
@@ -67,6 +68,7 @@ const VueExample = {
                     <div class="panel-body">
                         <ag-grid-vue
                                 style="height: 100%;"
+                                :class="themeClass"
                                 :defaultColDef="defaultColDef"
                                 :getRowId="getRowId"
                                 :rowDragManaged="true"
@@ -139,7 +141,8 @@ const VueExample = {
                     maxWidth: 50,
                     cellRenderer: 'SportRenderer'
                 }
-            ]
+            ],
+            themeClass: /** DARK MODE START **/document.documentElement.dataset.defaultTheme || 'ag-theme-quartz'/** DARK MODE END **/,
         };
     },
     beforeMount() {

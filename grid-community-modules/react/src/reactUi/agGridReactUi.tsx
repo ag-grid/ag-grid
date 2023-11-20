@@ -26,6 +26,7 @@ export const AgGridReactUi = <TData,>(props: AgReactUiProps<TData>) => {
     const portalManager = useRef<PortalManager | null>(null);
     const destroyFuncs = useRef<(() => void)[]>([]);
     const whenReadyFuncs = useRef<(() => void)[]>([]);
+    const prevProps = useRef<AgReactUiProps<any>>(props);
 
     const ready = useRef<boolean>(false);
 
@@ -131,9 +132,11 @@ export const AgGridReactUi = <TData,>(props: AgReactUiProps<TData>) => {
     }, []);
 
     useEffect(() => {
+        const changes = extractGridPropertyChanges(prevProps.current, props);
+        prevProps.current = props;
         processWhenReady(() => {
             if (apiRef.current) {
-                ComponentUtil.processOnChange(props, apiRef.current)
+                ComponentUtil.processOnChange(changes, apiRef.current)
             }
         });
     }, [props]);
@@ -145,6 +148,18 @@ export const AgGridReactUi = <TData,>(props: AgReactUiProps<TData>) => {
         </div>
     );
 };
+
+function extractGridPropertyChanges(prevProps: any, nextProps: any): { [p: string]: any } {
+    const changes: { [p: string]: any } = {};
+    Object.keys(nextProps).forEach(propKey => {
+        const propValue = nextProps[propKey];
+        if (prevProps[propKey] !== propValue) {
+            changes[propKey] = propValue;
+        }
+    });
+
+    return changes;
+}
 
 class ReactFrameworkComponentWrapper
     extends BaseComponentWrapper<WrappableInterface>

@@ -548,6 +548,8 @@ function createExampleGenerator(exampleType, prefix, importTypes, incremental) {
                     let jsFiles = {}
                     const tsScripts = getMatchingPaths('*.ts', {ignore: ['**/*_{angular,react,vue,vue3}.ts']});
                     tsScripts.forEach(tsFile => {
+
+
                         let jsFile = readAsJsFile(tsFile);
                         // replace Typescript createGrid( with Javascript agGrid.createGrid(
                         jsFile = jsFile.replace(/createGrid\(/g, 'agGrid.createGrid(');
@@ -556,7 +558,7 @@ function createExampleGenerator(exampleType, prefix, importTypes, incremental) {
                         jsFile = jsFile.replace(/LicenseManager\.setLicenseKey\(/g, "agGrid.LicenseManager.setLicenseKey(");
 
                         if(tsFile.includes('integrated-charts') && tsFile.includes('main.ts')) {
-                            jsFile = jsFile + getIntegratedDarkModeCode(tsFile, false, 'gridApi', true);
+                            jsFile = jsFile.replace(/agGrid\.createGrid(.*);/g, `agGrid.createGrid$1; ${getIntegratedDarkModeCode(tsFile, false, 'gridApi')}`);
                         }
 
                         const jsFileName = path.parse(tsFile).base.replace('.ts', '.js').replace('_typescript.js', '.js');

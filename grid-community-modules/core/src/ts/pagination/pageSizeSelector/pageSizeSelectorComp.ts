@@ -107,7 +107,7 @@ export class PageSizeSelectorComp extends Component {
             this.gridOptionsService.get('pagination') &&
             !this.gridOptionsService.get('suppressPaginationPanel') &&
             !this.gridOptionsService.get('paginationAutoPageSize') &&
-            !!this.gridOptionsService.get('paginationPageSizeSelector')
+            this.gridOptionsService.get('paginationPageSizeSelector') !== false
         );
     }
 

@@ -5,7 +5,7 @@ import { Icon } from './Icon';
 import styles from './IconsPanel.module.scss';
 import { Tabs } from './tabs/Tabs';
 
-const THEMES = ['alpine', 'balham', 'material'];
+const THEMES = ['quartz', 'alpine', 'balham', 'material'];
 const ICONS = [
     'aggregation',
     'arrows',
@@ -70,7 +70,7 @@ const capitalizeName = (name) => `${name.slice(0, 1).toUpperCase()}${name.slice(
 const IconsList = ({ theme }) => (
     <>
         {ICONS.map((icon) => (
-            <div className={styles.iconItem}>
+            <div key={styles.iconName} className={styles.iconItem}>
                 <img src={withPrefix(`/theme-icons/${theme}/${icon}.svg`)} alt={icon} title={icon}></img>
                 <p className={styles.iconName}>{icon}</p>
             </div>
@@ -86,12 +86,12 @@ const PanelWrapper = ({ theme }) => (
 
 const BottomBar = ({ theme }) => (
     <footer className={styles.footer}>
-        <button
+        <a
             className={classnames('button', styles.downloadButton)}
             href={withPrefix(`/theme-icons/${theme}/${theme}-icons.zip`)}
         >
             Download All <Icon name="download" />
-        </button>
+        </a>
     </footer>
 );
 

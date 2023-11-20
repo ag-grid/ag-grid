@@ -80,6 +80,7 @@ export class PaginationComp extends Component {
         this.updateRowLabels();
         this.setCurrentPageLabel();
         this.setTotalLabels();
+        this.onPageSizeRelatedOptionsChange();
     }
 
     private onPageSizeRelatedOptionsChange(): void {

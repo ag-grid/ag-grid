@@ -75,7 +75,7 @@ const GridExample = () => {
 
     return (
         <div className="container">
-            <div className="grid ag-theme-quartz">
+            <div className={'grid ' + /** DARK MODE START **/document.documentElement?.dataset.defaultTheme || 'ag-theme-quartz'/** DARK MODE END **/}>
                 <AgGridReact
                     ref={topGridRef}
                     rowData={rowData}
@@ -90,7 +90,7 @@ const GridExample = () => {
 
             <div className="divider"></div>
 
-            <div className="grid ag-theme-quartz">
+            <div className={'grid ' + /** DARK MODE START **/document.documentElement?.dataset.defaultTheme || 'ag-theme-quartz'/** DARK MODE END **/}>
                 <AgGridReact
                     ref={bottomGridRef}
                     rowData={rowData}

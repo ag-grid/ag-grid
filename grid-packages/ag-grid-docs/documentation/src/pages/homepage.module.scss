@@ -150,16 +150,16 @@ gatsby-fast-refresh {
     }
 }
 
-.homepageExample {
-    padding-top: $size-6;
-    padding-bottom: $size-7;
-
-    padding-left: $size-8;
-    padding-right: $size-8;
-
+.automatedRowGroupingOuter,
+.automatedIntegratedChartsOuter {
     #{$darkmode-selector} & {
         border-bottom: 1px solid #394755;
     }
+}
+
+.homepageExample {
+    padding-top: $size-6;
+    padding-bottom: $size-7;
 
     @media screen and (min-width: $breakpoint-automated-row-grouping-medium) {
         padding-top: $size-8;
