@@ -166,6 +166,12 @@
             }
         }
     },
+    "accessibility": {
+        "meta": {
+            "displayName": "Columns: Accessibility"
+        },
+        "cellAriaRole": {}
+    },
     "display": {
         "meta": {
             "displayName": "Columns: Display"
@@ -491,8 +497,5 @@
             }
         },
         "headerGroupComponentParams": {}
-    },
-    "Accessibility": {
-        "cellAriaRole": {}
     }
 }
