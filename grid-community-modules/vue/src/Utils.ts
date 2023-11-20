@@ -46,7 +46,12 @@ export const getAgGridProperties = (): [Properties, Properties, Properties, {}] 
         props: {
             handler(currentValue: any, previousValue: any) {
                 if (!this.gridCreated || !this.api) { return; }
-                ComponentUtil.processOnChange(currentValue, this.api);
+                const changes: any = {};
+                Object.entries(currentValue).forEach(([key, value]) => {
+                    if (previousValue[key] === value) return;
+                    changes[key] = value;
+                });
+                ComponentUtil.processOnChange(changes, this.api);
             },
             deep: true,
         },
