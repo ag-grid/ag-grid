@@ -75,7 +75,7 @@ export const convertLegacyColor = (color?: string): string | undefined => {
     if (color == undefined) { return color; }
 
     if (color.charAt(0) === '#') {
-        color = color.substr(1);
+        color = color.substring(1);
     }
 
     return color.length === 6 ? 'FF' + color : color;

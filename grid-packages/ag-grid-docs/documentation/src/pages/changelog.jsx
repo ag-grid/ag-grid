@@ -193,14 +193,15 @@ const Changelog = ({ location }) => {
                             length = endIndex - beginningIndex;
                         }
 
+                        const httpIdx = element.indexOf('http');
                         const link = length
-                            ? element.substr(element.indexOf('http'), length)
-                            : element.substr(element.indexOf('http'));
+                            ? element.substring(httpIdx, httpIdx + length)
+                            : element.substring(httpIdx);
                         const htmlLink = isEndIndex
                             ? `<a class=${styles.link} href="${link}"
-         target="_blank">${link}</a>${element.substr(endIndex)}`
+         target="_blank">${link}</a>${element.substring(endIndex)}`
                             : `<a class=${styles.link} target="_blank" href="${link}">${link}</a>`;
-                        return element.substr(0, beginningIndex) + htmlLink;
+                        return element.substring(0, beginningIndex) + htmlLink;
                     }
                     return element;
                 });

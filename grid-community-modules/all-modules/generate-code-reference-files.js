@@ -60,7 +60,7 @@ function getArgTypes(parameters, file) {
 }
 
 function toCamelCase(value) {
-    return value[0].toLowerCase() + value.substr(1);
+    return value[0].toLowerCase() + value.substring(1);
 }
 
 function extractTypesFromNode(node, srcFile, includeQuestionMark) {
@@ -98,7 +98,7 @@ function extractTypesFromNode(node, srcFile, includeQuestionMark) {
 
         if (EVENT_LOOKUP.includes(name)) {
             // Duplicate events without their prefix
-            let shortName = name.substr(2);
+            let shortName = name.substring(2);
             shortName = toCamelCase(shortName);
 
             nodeMembers[shortName] = { ...nodeMembers[name], meta: { isEvent: true, name } };

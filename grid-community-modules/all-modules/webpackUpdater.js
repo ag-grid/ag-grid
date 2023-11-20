@@ -21,8 +21,8 @@ const modules = glob.sync("../../grid-community-modules/*")
     .map(module => module.replace('.ts', ''))
     .map(module => {
         // this relies on the module name within the module class to be the same as the filename
-        const directory = module.substr(0, module.lastIndexOf('/src'));
-        const filename = module.substr(module.lastIndexOf('/') + 1);
+        const directory = module.substring(0, module.lastIndexOf('/src'));
+        const filename = module.substring(module.lastIndexOf('/') + 1);
         const moduleName = filename.charAt(0).toUpperCase() + filename.slice(1);
         return {
             directory,

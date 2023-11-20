@@ -779,7 +779,7 @@ const ObjectCodeSample: React.FC<ObjectCode> = ({ framework, id, breadcrumbs, pr
     return <Code code={escapedLines} keepMarkup={true} />;
 };
 
-const getInterfaceName = (name) => `${name.substr(0, 1).toUpperCase()}${name.substr(1)}`;
+const getInterfaceName = (name) => `${name.substring(0, 1).toUpperCase()}${name.substring(1)}`;
 
 function isGridOptionEvent(gridProp: InterfaceEntry): gridProp is IEvent {
     return gridProp && gridProp.meta && gridProp.meta.isEvent;

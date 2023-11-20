@@ -83,7 +83,7 @@ const removeGoogleTagManager = filename => {
     const contents = fs.readFileSync(filename, 'UTF8');
     const start = contents.indexOf('<!-- Google Tag Manager -->')
     const end = contents.indexOf('<!-- End Google Tag Manager -->');
-    return contents.substr(0, start) + contents.substr(end, contents.length);
+    return contents.substring(0, start) + contents.substring(end, end + contents.length);
 };
 
 console.log('Starting...');
