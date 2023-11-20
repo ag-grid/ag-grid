@@ -27,24 +27,26 @@ html[data-color-scheme='dark'] button:not(#myGrid button, #myChart button, butto
 }
 
 .ag-theme-quartz-dark {
-    --ag-background-color: color-mix(in srgb, transparent, var(--ag-header-background-color) 100%);
+
+    --ag-border-color: rgba(255,255,255,0.095);
+    --ag-background-color: color-mix(in srgb, #000, #0e2736 95%);
 
     .ag-row {
-        background: color-mix(in srgb, transparent, var(--ag-header-background-color) 80%); 
-        --ag-data-color: rgba(255,255,255,0.85)
+        background: color-mix(in srgb, #000, #0e2736 95%);
+        --ag-data-color: rgba(255,255,255,1)
     }
 
     .ag-header {
-        background: color-mix(in srgb, rgb(255,255,255), var(--ag-header-background-color) 97%); 
+        background: color-mix(in srgb, #fff, transparent 98%);
     }
 }
 
 .ag-theme-quartz {
-    --ag-background-color: color-mix(in srgb, transparent, var(--ag-header-background-color) 60%);
+    --ag-background-color: color-mix(in srgb, transparent, #fff 60%);
     
 
     .ag-row {
-        background: color-mix(in srgb, transparent, var(--ag-header-background-color) 60%); 
+        background: color-mix(in srgb, transparent, #fff 60%); 
         --ag-data-color: rgba(0,0,0,0.75)
     
     }
