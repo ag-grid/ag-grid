@@ -283,6 +283,7 @@ export class PaginationProxy extends BeanStub {
                 break;
             case 'pageSizeSelector':
                 this.pageSizeFromPageSizeSelector = size;
+                if (this.currentPage !== 0) { this.goToFirstPage(); }
                 break;
             case 'initialState':
                 this.pageSizeFromInitialState = size;
@@ -291,11 +292,11 @@ export class PaginationProxy extends BeanStub {
                 this.pageSizeFromGridOptions = size;
                 this.pageSizeFromInitialState = undefined;
                 this.pageSizeFromPageSizeSelector = undefined;
+                if (this.currentPage !== 0) { this.goToFirstPage(); }
                 break;
         }
 
         if (currentSize !== this.pageSize) {
-            if (this.currentPage !== 0) { this.goToFirstPage(); }
             const event: WithoutGridCommon<ModelUpdatedEvent> = {
                 type: Events.EVENT_MODEL_UPDATED,
                 animate: false,
