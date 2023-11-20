@@ -26,7 +26,7 @@ const App = {
     `
     <ag-grid-vue
         style="width: 100%; height: 100%"
-        class="ag-theme-quartz-dark"
+        :class="themeClass"
         :columnDefs="colDefs"
         :rowData="rowData"
         :defaultColDef="defaultColDefs"
@@ -71,7 +71,8 @@ const App = {
     return {
       rowData,
       colDefs,
-      defaultColDefs
+      defaultColDefs,
+      themeClass: /** DARK MODE START **/document.documentElement.dataset.defaultTheme || 'ag-theme-quartz'/** DARK MODE END **/,
     };
   },
 };

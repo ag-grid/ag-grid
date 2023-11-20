@@ -32,12 +32,13 @@ const createRowBlock = () => ['Red', 'Green', 'Blue'].map((color) =>
 
 const VueExample = {
     template: /* html */
-        `<div class="example-wrapper ag-theme-quartz">
+        `<div class="example-wrapper">
 
             <div class="inner-col">
                 <div style="height: 100%;" class="inner-col">
                     <ag-grid-vue
                         style="height: 100%;"
+                        :class="themeClass"
                         :defaultColDef="defaultColDef"
                         :rowData="leftRowData"
                         :columnDefs="columns"
@@ -53,6 +54,7 @@ const VueExample = {
                 <div style="height: 100%;" class="inner-col">
                     <ag-grid-vue
                         style="height: 100%;"
+                        :class="themeClass"
                         :defaultColDef="defaultColDef"
                         :rowData="rightRowData"
                         :columnDefs="columns"
@@ -85,7 +87,8 @@ const VueExample = {
                 { field: "id" },
                 { field: "color" },
                 { field: "value1" }
-            ]
+            ],
+            themeClass: /** DARK MODE START **/document.documentElement.dataset.defaultTheme || 'ag-theme-quartz'/** DARK MODE END **/,
         };
     },
     beforeMount() {
