@@ -17,7 +17,6 @@ export class ValidationService extends BeanStub {
     @PostConstruct
     public init(): void {
         this.processGridOptions(this.gridOptions);
-        this.addManagedPropertyListeners(GRID_OPTIONS_VALIDATORS.allProperties as (keyof GridOptions)[], () => this.processGridOptions(this.gridOptions));
     }
 
     public processGridOptions(options: GridOptions): void {

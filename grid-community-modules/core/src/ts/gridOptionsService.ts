@@ -15,6 +15,7 @@ import { exists, missing } from "./utils/generic";
 import { getScrollbarWidth } from './utils/browser';
 import { IRowNode } from "./interfaces/iRowNode";
 import { GRID_OPTION_DEFAULTS } from "./validation/rules/gridOptionsValidations";
+import { ValidationService } from "./validation/validationService";
 
 type GetKeys<T, U> = {
     [K in keyof T]: T[K] extends U | undefined ? K : never
@@ -71,6 +72,7 @@ export class GridOptionsService {
     @Autowired('eventService') private readonly eventService: EventService;
     @Autowired('environment') private readonly environment: Environment;
     @Autowired('eGridDiv') private eGridDiv: HTMLElement;
+    @Autowired('validationService') private validationService: ValidationService;
 
     private destroyed = false;
     // we store this locally, so we are not calling getScrollWidth() multiple times as it's an expensive operation
@@ -240,21 +242,21 @@ export class GridOptionsService {
             const coercedValue = GridOptionsService.getCoercedValue(key as keyof GridOptions, value);
             const shouldForce = (typeof coercedValue) === 'object' && source === 'api'; // force objects as they could have been mutated.
 
-            if (this.gridOptionLookup.has(key)) {
-                const previousValue = this.gridOptions[key as keyof GridOptions];
-                if (shouldForce || previousValue !== coercedValue) {
-                    this.gridOptions[key as keyof GridOptions] = coercedValue;
-                    const event: PropertyValueChangedEvent<keyof GridOptions> & { source: string }= {
-                        type: key as keyof GridOptions,
-                        currentValue: coercedValue,
-                        previousValue,
-                        changeSet,
-                        source
-                    };
-                    events.push(event);
-                }
+            const previousValue = this.gridOptions[key as keyof GridOptions];
+            if (shouldForce || previousValue !== coercedValue) {
+                this.gridOptions[key as keyof GridOptions] = coercedValue;
+                const event: PropertyValueChangedEvent<keyof GridOptions> & { source: string }= {
+                    type: key as keyof GridOptions,
+                    currentValue: coercedValue,
+                    previousValue,
+                    changeSet,
+                    source
+                };
+                events.push(event);
             }
         });
+
+        this.validationService.processGridOptions(this.gridOptions);
 
         // changeSet should just include the properties that have changed.
         changeSet.properties = events.map(event => event.type);
