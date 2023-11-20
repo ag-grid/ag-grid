@@ -16,7 +16,7 @@ function build(builds) {
             if (built < total) {
                 next()
             }
-        }).catch(logError)
+        })
     };
 
     next()
