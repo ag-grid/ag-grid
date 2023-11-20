@@ -28,12 +28,12 @@ html[data-color-scheme='dark'] button:not(#myGrid button, #myChart button, butto
 
 .ag-theme-quartz-dark {
     --ag-border-color: rgba(255,255,255,0.1);
-    --ag-background-color: color-mix(in srgb, #000, #121f29 95%);
+    --ag-background-color: color-mix(in srgb, #fff, #0b1d28 97%);
     --ag-control-panel-background-color:  color-mix(in srgb, #fff, #09202e 98%);
     --ag-header-background-color: color-mix(in srgb, #fff, #09202e 98%);
 
     .ag-row {
-        background: color-mix(in srgb, #000, #121f29 95%);
+        background: color-mix(in srgb, #fff, #0b1d28 97%);
         --ag-data-color: rgba(255,255,255,1)
     }
 
