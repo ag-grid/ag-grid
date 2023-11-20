@@ -492,7 +492,7 @@
         },
         "headerGroupComponentParams": {}
     },
-    "aria": {
+    "accessibility": {
         "cellAriaRole": {}
     }
 }

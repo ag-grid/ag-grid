@@ -52,8 +52,8 @@ export interface AbstractColDef<TData = any, TValue = any> {
     pivotKeys?: string[];
 
     /**
-     * The role property of the cells that belong to this column.
-     * * @default 'gridcell'
+     * Used for screen reader announcements - the role property of the cells that belong to this column.
+     * @default 'gridcell'
      */
     cellAriaRole?: string;
 }
