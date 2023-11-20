@@ -1,4 +1,4 @@
-import { createGrid, GridApi, GridOptions, ValueFormatterParams } from '@ag-grid-community/core';
+import { CellValueChangedEvent, createGrid, GridApi, GridOptions, ValueFormatterParams } from '@ag-grid-community/core';
 import { CountryFlagCellRenderer } from './CountryFlagCellRenderer';
 
 let gridApi: GridApi;
@@ -41,14 +41,12 @@ const gridOptions: GridOptions = {
     ],
     // Configurations applied to all columns
     defaultColDef: {
-        filter: true,
-        sortable: true,
         editable: true,
         resizable: true
     },
     // Grid Options & Callbacks
     pagination: true,
-    onCellValueChanged: (event:any) => {
+    onCellValueChanged: (event: CellValueChangedEvent) => {
         console.log(`New Cell Value: ${event.value}`)
     }
 }

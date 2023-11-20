@@ -18,15 +18,15 @@ export class CountryFlagCellRenderer implements ICellRendererComp{
 
     getFlagForCountry = (country: string): string => {
         if (country === 'USA') {
-            return 'https://downloads.jamesswinton.com/flags/us-flag.png'
+            return 'https://www.ag-grid.com/example-assets/flags/us-flag.png'
         }
 
         if (country === 'China') {
-            return 'https://downloads.jamesswinton.com/flags/cn-flag.png'
+            return 'https://www.ag-grid.com/example-assets/flags/cn-flag.png'
         }
 
         if (country === 'Kazakhstan') {
-            return 'https://downloads.jamesswinton.com/flags/kz-flag.png'
+            return 'https://www.ag-grid.com/example-assets/flags/kz-flag.png'
         }
 
         return '';

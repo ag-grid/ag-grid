@@ -52,13 +52,14 @@ export class SportRenderer implements ICellRendererAngularComp {
                     </span>
                 </div>
             </div>
-            <div class="grid-wrapper ag-theme-quartz">
+            <div class="grid-wrapper">
                 <div class="panel panel-primary" style="margin-right: 10px;">
                     <div class="panel-heading">Athletes</div>
                     <div class="panel-body">
                         <div id="eLeftGrid">
                             <ag-grid-angular
                                     style="height: 100%;"
+                                    [class]="themeClass"
                                     [defaultColDef]="defaultColDef"
                                     rowSelection="multiple"
                                     [rowDragMultiRow]="true"
@@ -80,6 +81,7 @@ export class SportRenderer implements ICellRendererAngularComp {
                         <div id="eRightGrid">
                             <ag-grid-angular
                                     style="height: 100%;"
+                                    [class]="themeClass"
                                     [defaultColDef]="defaultColDef"
                                     [getRowId]="getRowId"
                                     [rowDragManaged]="true"
@@ -95,6 +97,7 @@ export class SportRenderer implements ICellRendererAngularComp {
         </div>`
 })
 export class AppComponent {
+    themeClass = /** DARK MODE START **/document.documentElement?.dataset.defaultTheme || 'ag-theme-quartz'/** DARK MODE END **/;
     rawData: any[] = [];
     leftRowData: any[] = [];
     rightRowData: any[] = []

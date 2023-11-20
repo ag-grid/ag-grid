@@ -11,7 +11,7 @@ import SEO from './components/SEO';
 // @ts-ignore
 import styles from './license-pricing.module.scss';
 
-const LicensePricing = () => {
+export const LicensePricing = () => {
     useEffect(() => {
         const onSelectionChange = () => {
             const selection = document.getSelection()?.toString();

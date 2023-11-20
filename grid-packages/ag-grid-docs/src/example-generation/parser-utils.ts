@@ -700,13 +700,71 @@ export function getActiveTheme(theme: string, typescript: boolean) {
     return `${DARK_MODE_START}document.documentElement${typescript ? '?' : ''}.dataset.defaultTheme || '${theme}'${DARK_MODE_END}`;
 }
 
-export function getIntegratedChartsThemeHandler(exampleName: string, typescript: boolean, gridApi = 'params.api'){
-    if(!exampleName.includes('integrated-charts-')){
+export function getIntegratedDarkModeCode(exampleName: string, typescript?: boolean, apiName = 'params.api'): string {
+    if (!exampleName.includes('integrated-charts-')) {
         return '';
     }
+    return `${DARK_INTEGRATED_START}${(typescript ? darkModeTs : darkModeJS).replace('params.api', apiName)}${DARK_INTEGRATED_END}`;
+}
 
-    return `${DARK_INTEGRATED_START}        
-        const isInitialModeDark = () => {
+const darkModeTs = `
+    const isInitialModeDark = (): boolean => {
+            const attr: string | null = document.documentElement.getAttribute('data-default-theme');
+            return attr ? attr.endsWith('-dark') : false;
+        };
+        
+        // apply a theme suffix based on the theme and dark mode status
+        const applyThemeSuffix = (theme: string, isDark: boolean, suffix: string): string => 
+            isDark ? (theme.endsWith(suffix) ? theme : theme + suffix) : theme.replace(suffix, '');
+        
+        // update chart themes based on dark mode status
+        const updateChartThemes = (isDark: boolean): void => {
+            const suffix: string = isDark ? '-dark' : '-light';
+            const customThemeName: string = 'my-custom-theme' + suffix + ';';
+        
+            const themes: string[] = ['ag-default', 'ag-vivid'];
+            
+            let customThemeFound: boolean = false;
+            const modifiedThemes: string[] = Array.from(
+                new Set(
+                    themes.map((theme: string): string => {
+                        customThemeFound = theme.startsWith('my-custom-theme-');
+                        return customThemeFound
+                            ? customThemeName
+                            : applyThemeSuffix(theme, isDark, '-dark');
+                    })
+                )
+            );
+        
+            // check if the custom theme was found and add it if not already included
+            if (customThemeFound && !modifiedThemes.includes(customThemeName)) {                
+                modifiedThemes.push(customThemeName);
+            }
+        
+            // updating the 'chartThemes' grid option will cause the chart to reactively update!
+            params.api.setGridOption('chartThemes', modifiedThemes);
+        };
+        
+        // update chart themes when example first loads
+        updateChartThemes(isInitialModeDark());
+                      
+        interface ColorSchemeChangeEventDetail {
+            darkMode: boolean;
+        }
+        
+        // event handler for color scheme changes
+        const handleColorSchemeChange = (event: CustomEvent<ColorSchemeChangeEventDetail>): void => {
+            const { darkMode } = event.detail;
+            updateChartThemes(darkMode);
+        }
+        
+        // listen for user-triggered dark mode changes (not removing listener is fine here!)
+        document.addEventListener('color-scheme-change', handleColorSchemeChange as EventListener);                
+    `;
+
+
+const darkModeJS = `
+    const isInitialModeDark = () => {
             const attr = document.documentElement.getAttribute('data-default-theme');
             return attr ? attr.endsWith('-dark') : false;
         };
@@ -737,7 +795,7 @@ export function getIntegratedChartsThemeHandler(exampleName: string, typescript:
             }
 
             // updating the 'chartThemes' grid option will cause the chart to reactively update!
-            ${gridApi}.setGridOption('chartThemes', modifiedThemes);
+            params.api.setGridOption('chartThemes', modifiedThemes);
         };
 
         // update chart themes when example first loads
@@ -749,6 +807,5 @@ export function getIntegratedChartsThemeHandler(exampleName: string, typescript:
         }
 
         // listen for user-triggered dark mode changes (not removing listener is fine here!)
-        document.addEventListener('color-scheme-change', handleColorSchemeChange);     
-    ${DARK_INTEGRATED_END}`;
-}
+        document.addEventListener('color-scheme-change', handleColorSchemeChange);
+    `;

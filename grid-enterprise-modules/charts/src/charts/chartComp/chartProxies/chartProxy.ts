@@ -1,22 +1,14 @@
 import { _, AgChartTheme as GridAgChartTheme, ChartType, SeriesChartType } from "@ag-grid-community/core";
 import {
     _Theme,
-    AgChart,
+    AgCharts,
     AgChartInstance,
     AgChartOptions,
     AgChartTheme,
     AgChartThemeOverrides,
     AgChartThemePalette
 } from "ag-charts-community";
-// import {
-//     _Theme,
-//     AgChart,
-//     AgChartInstance,
-//     AgChartOptions,
-//     AgChartTheme,
-//     AgChartThemeOverrides,
-//     AgChartThemePalette
-// } from "ag-charts-enterprise";
+
 import { CrossFilteringContext } from "../../chartService";
 import { ChartSeriesType, getSeriesType } from "../utils/seriesTypeMapper";
 import { deproxy } from "../utils/integration";
@@ -82,7 +74,7 @@ export abstract class ChartProxy {
         this.standaloneChartType = getSeriesType(this.chartType);
 
         if (this.chart == null) {
-            this.chart = AgChart.create(this.getCommonChartOptions());
+            this.chart = AgCharts.create(this.getCommonChartOptions());
         } else {
             // On chart change, reset formatting panel changes.
             this.clearThemeOverrides = true;
@@ -107,7 +99,7 @@ export abstract class ChartProxy {
         const imageFileName = fileName || (rawChart.title ? rawChart.title.text : 'chart');
         const { width, height } = dimensions || {};
 
-        AgChart.download(chart, { width, height, fileName: imageFileName, fileFormat });
+        AgCharts.download(chart, { width, height, fileName: imageFileName, fileFormat });
     }
 
     public getChartImageDataURL(type?: string) {
@@ -133,7 +125,7 @@ export abstract class ChartProxy {
         // the first column is used for X and every other column is treated as Y
         // (or alternates between Y and size for bubble)
         const seriesType = getSeriesType(this.chartProxyParams.chartType);
-        AgChart.updateDelta(this.chart, { theme: { overrides: { [seriesType]: { paired }}}});
+        AgCharts.updateDelta(this.chart, { theme: { overrides: { [seriesType]: { paired }}}});
     }
 
     public isPaired(): boolean {

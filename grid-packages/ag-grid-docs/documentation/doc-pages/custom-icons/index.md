@@ -18,15 +18,28 @@ This example uses the Quartz theme with icons from the Material theme:
 
 <grid-example title='Swapping the Icon Font' name='icons-swapping-font' type='generated' options='{ "enterprise": true, "modules": ["clientside", "rowgrouping", "menu", "setfilter", "columnpanel", "filterpanel"]  }'></grid-example>
 
-## Using an Alternative Icon Font
+## Using Alternative Icons
 
-The grid exposes a number of CSS variables to control the icon font:
+Grid icons can use an icon font or images. The grid exposes a number of CSS variables to control the icons. Each variable can optionally be suffixed with the name of a specific icon, and will affect only that icon, e.g. setting `--ag-icon-font-color-loading` sets the color of the "loading" icon.
 
-- `--ag-icon-font-family` sets the icon font to use.
-- `--ag-icon-font-code-{icon-name}` sets the character within the icon font for the `{icon-name}` icon. You can get the icon names from the [Provided Icons list](#provided-icons) below.
-- `--ag-icon-size` sets the height of icons in pixels. Width is automatic depending on the character in the icon font.
+Icon font variables:
 
-If you intend to replace every icon in the grid using the same font then you can set these variables using a CSS selector targeting the theme name, as you would any other CSS variable:
+  - `--ag-icon-font-family[-icon-name]` set the icon font family.
+  - `--ag-icon-font-code[-icon-name]` set the unicode character of the icon within the icon font, using a unicode escape sequence like `"\f247"`.
+  - `--ag-icon-font-weight[-icon-name]` sets the font weight, used for icon fonts that require a specific weight to work.
+  - `--ag-icon-font-color[-icon-name]` set the color of the icon, or can be set to `transparent` to hide the icon font if you want to provide an image instead.
+
+Icon image variables:
+  - `--ag-icon-image[-icon-name]` set this to `url(/path/to/icon.svg)`
+  - `--ag-icon-image-display[-icon-name]` set this to `none` to hide the icon image if you want to provide an font-based icon instead.
+
+Other icon variables:
+
+- `--ag-icon-size` sets the height and width of icons in pixels.
+
+### Example: using an alternative icon font
+
+This example demonstrates globally changing the icon font, and also selectively replacing:
 
 ```css
 /* replace all icons in the grid with icons from Font Awesome */

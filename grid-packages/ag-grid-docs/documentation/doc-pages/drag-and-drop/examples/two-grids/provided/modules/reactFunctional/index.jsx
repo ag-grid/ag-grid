@@ -157,7 +157,7 @@ const GridExample = () => {
 
     return (
         <div className="outer">
-            <div style={{ height: "100%" }} className="inner-col ag-theme-quartz" onDragOver={gridDragOver}
+            <div style={{ height: "100%" }} className={'inner-col ' + /** DARK MODE START **/document.documentElement.dataset.defaultTheme || 'ag-theme-quartz'/** DARK MODE END **/} onDragOver={gridDragOver}
                 onDrop={(e) => gridDrop('left', e)}>
                 <AgGridReact ref={leftGridRef} gridOptions={leftGridOptions} onGridReady={onLeftGridReady} />
             </div>
@@ -183,7 +183,7 @@ const GridExample = () => {
                 </span>
             </div>
 
-            <div style={{ height: "100%" }} className="inner-col ag-theme-quartz" onDragOver={gridDragOver}
+            <div style={{ height: "100%" }} className={'innerCol ' + /** DARK MODE START **/document.documentElement.dataset.defaultTheme || 'ag-theme-quartz'/** DARK MODE END **/} onDragOver={gridDragOver}
                 onDrop={(e) => gridDrop('right', e)}>
                 <AgGridReact ref={rightGridRef} gridOptions={rightGridOptions} onGridReady={onRightGridReady} />
             </div>

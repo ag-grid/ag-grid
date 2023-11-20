@@ -104,9 +104,7 @@ function generateScssFile(fontName) {
         let content = fs.readFileSync(path.join(sourceFolder, name + '.svg'), "utf8");
         content = encodeURIComponent(content);
         // content = content.replaceAll(/>\s+</g, "><").replaceAll(/\s+/g, "+").replaceAll(/[/#\s"']/g, encodeURIComponent)
-        scssContent += `\t.ag-icon-${name}::after {\n`;
-        scssContent += `\t\tbackground-image: url("data:image/svg+xml;charset=utf-8,${content}");\n`;
-        scssContent += `\t}\n`;
+        scssContent += `\t--ag-icon-image-${name}: url("data:image/svg+xml;charset=utf-8,${content}");\n`;
     }
     scssContent += "}\n";
     const scssFile = path.join(fontDataFolder,  `_${kebabCase(fontName)}-embedded-svg.scss`);

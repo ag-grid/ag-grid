@@ -6,6 +6,6 @@
 
 const fs = require('fs-extra');
 
-fs.copySync('./scripts/customise/index.js', './node_modules/@rollup/plugin-node-resolve/dist/cjs/index.js')
+// fs.copySync('./scripts/customise/index.js', './node_modules/@rollup/plugin-node-resolve/dist/cjs/index.js')
 
 console.log(`--------------------------------------------------------------------------------`);

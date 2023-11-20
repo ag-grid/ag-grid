@@ -1,6 +1,6 @@
 import { convertTemplate,getImport,toConst,toInput,toMemberWithValue,toOutput } from './angular-utils';
 import { templatePlaceholder } from "./grid-vanilla-src-parser";
-import { addBindingImports,addGenericInterfaceImport,getActiveTheme,getIntegratedChartsThemeHandler,getPropertyInterfaces,handleRowGenericInterface,ImportType,isInstanceMethod,preferParamsApi,removeFunctionKeyword, replaceGridReadyRowData } from './parser-utils';
+import { addBindingImports,addGenericInterfaceImport,getActiveTheme,getIntegratedDarkModeCode,getPropertyInterfaces,handleRowGenericInterface,ImportType,isInstanceMethod,preferParamsApi,removeFunctionKeyword, replaceGridReadyRowData } from './parser-utils';
 const path = require('path');
 
 function getOnGridReadyCode(
@@ -35,7 +35,7 @@ function getOnGridReadyCode(
         );
         return `
         onGridReady(params: GridReadyEvent${gridReadyEventParam}) {
-            ${getIntegratedChartsThemeHandler(exampleName, false)} 
+            ${getIntegratedDarkModeCode(exampleName, true)} 
             ${hasApi ? 'this.gridApi = params.api;' : ''}${additional}
         }`;
     } else {

@@ -50,7 +50,7 @@ const ReactStyleSelector = ({ id, tracking }) => {
             {({ useTypescript, set }) => {
                 const onChange = (event) => {
                     const value = event.target.value;
-                    switch (value) {                        
+                    switch (value) {
                         case 'hooks':
                             set({ useTypescript: false });
                             break;
