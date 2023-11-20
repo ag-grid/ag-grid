@@ -30,6 +30,8 @@ html[data-color-scheme='dark'] button:not(#myGrid button, #myChart button, butto
 
     --ag-border-color: rgba(255,255,255,0.095);
     --ag-background-color: color-mix(in srgb, #000, #0e2736 95%);
+    --ag-control-panel-background-color:  color-mix(in srgb, #fff, #09202e 98%);
+    --ag-header-background-color: color-mix(in srgb, #fff, #09202e 98%);
 
     .ag-row {
         background: color-mix(in srgb, #000, #0e2736 95%);
@@ -39,6 +41,8 @@ html[data-color-scheme='dark'] button:not(#myGrid button, #myChart button, butto
     .ag-header {
         background: color-mix(in srgb, #fff, transparent 98%);
     }
+
+   
 }
 
 .ag-theme-quartz {
