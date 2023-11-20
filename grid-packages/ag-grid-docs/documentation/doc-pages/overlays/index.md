@@ -7,7 +7,7 @@ At present, there are two overlays for the grid. These are displayed in the foll
 - **Loading**: Gets displayed when the grid is loading data or waiting for column definitions.
 - **No Rows**: Gets displayed when loading has completed but there are no rows to show.
 
-The grid manages showing and hiding of the overlays for you. When the table is first initialised, the loading overlay is displayed if `rowData` or `columnDefs` are set to `null` or `undefined`. When these options are updated the loading overlay is hidden.
+The grid manages showing and hiding of the overlays for you. When the table is first initialised, the loading overlay is displayed if `rowData` or `columnDefs` are set to `null` or `undefined`. When these options are updated, or `rowData` / `columnDefs` are set via `api.setGridOption` or `api.updateGridOptions`, the loading overlay is hidden.
 
 <note>
 |Overlays are generally not used when using [Row Models](../row-models/) other than the Client-Side Row Model. This is because data is
