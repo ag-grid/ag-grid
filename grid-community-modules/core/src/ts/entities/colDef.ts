@@ -337,7 +337,7 @@ export interface ColDef<TData = any, TValue = any> extends AbstractColDef<TData,
      * Function or expression. Gets the value for filtering purposes.
      * @managed
      */
-    filterValueGetter?: string | ValueGetterFunc<TData, TValue>;
+    filterValueGetter?: string | ValueGetterFunc<TData>;
     /**
      * Whether to display a floating filter for this column.
      * @default false
