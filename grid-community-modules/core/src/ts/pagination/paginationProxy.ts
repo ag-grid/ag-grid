@@ -85,6 +85,7 @@ export class PaginationProxy extends BeanStub {
             animate: false,
             newData: false,
             newPage: false,
+            newPageSize: false,
             // important to keep rendered rows, otherwise every time grid is resized,
             // we would destroy all the rows.
             keepRenderedRows: true
@@ -93,8 +94,7 @@ export class PaginationProxy extends BeanStub {
     }
 
     private onPageSizeGridOptionChanged(): void {
-        this.pageSizeFromGridOptions = this.gridOptionsService.get('paginationPageSize');
-        this.onPaginationGridOptionChanged();
+        this.setPageSize(this.gridOptionsService.get('paginationPageSize'),'gridOptions');
     }
 
     public goToPage(page: number): void {
@@ -283,17 +283,19 @@ export class PaginationProxy extends BeanStub {
                 break;
             case 'pageSizeSelector':
                 this.pageSizeFromPageSizeSelector = size;
-                if (this.currentPage !== 0) { this.goToPage(0); }
                 break;
             case 'initialState':
                 this.pageSizeFromInitialState = size;
                 break;
             case 'gridOptions':
                 this.pageSizeFromGridOptions = size;
+                this.pageSizeFromInitialState = undefined;
+                this.pageSizeFromPageSizeSelector = undefined;
                 break;
         }
 
         if (currentSize !== this.pageSize) {
+            if (this.currentPage !== 0) { this.goToFirstPage(); }
             const event: WithoutGridCommon<ModelUpdatedEvent> = {
                 type: Events.EVENT_MODEL_UPDATED,
                 animate: false,
