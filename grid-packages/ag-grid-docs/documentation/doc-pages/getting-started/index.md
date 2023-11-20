@@ -165,15 +165,26 @@ Replace the `app.component.ts` file with the following code:
 |  selector: 'app-root',
 |  standalone: true,
 |  imports: [AgGridModule], // Add AG Grid Module to component
-|  templateUrl: './app.component.html',
-|  styleUrls: ['./app.component.css']
+|  styleUrls: ['./app.component.css'],
+|  template:
+|  `&lt;main class="main">
+|     &lt;div class="content">
+|       &lt;!-- The AG Grid component, with Dimensions, CSS Theme, Row Data, and Column Definition -->
+|       &lt;ag-grid-angular
+|         style="width: 600px; height: 500px;"
+|         class="ag-theme-alpine"
+|         [rowData]="rowData"
+|         [columnDefs]="colDefs">
+|       &lt;/ag-grid-angular>
+|     &lt;/div>
+|  &lt;/main>`
 |})
 |
 |export class AppComponent {
 |  // Row Data: The data to be displayed.
 |  rowData = [
-|    {company: "SpaceX", country: "USA", date: "2022-07-24", mission: "Starlink Group 4-25", price: 3230000, successful: true},
 |    {company: "CASC", country: "China", date: "2022-07-24", mission: "Wentian", price: 2150000, successful: true},
+|    {company: "SpaceX", country: "USA", date: "2022-07-24", mission: "Starlink Group 4-25", price: 3230000, successful: true},
 |    {company: "SpaceX", country: "USA", date: "2022-07-22", mission: "Starlink Group 3-2", price: 8060000, successful: true}
 |  ];
 |
@@ -187,22 +198,6 @@ Replace the `app.component.ts` file with the following code:
 |    { field: "company" }
 |  ];
 |}
-</snippet>
-
-Replace the `app.component.html` with the following code:
-
-<snippet transform={false} language="html">
-|&lt;main class="main">
-|  &lt;div class="content">
-|    &lt;!-- The AG Grid component, with Dimensions, CSS Theme, Row Data, and Column Definition -->
-|    &lt;ag-grid-angular
-|      style="width: 600px; height: 500px;"
-|      class="ag-theme-quartz"
-|      [rowData]="rowData"
-|      [columnDefs]="colDefs">
-|    &lt;/ag-grid-angular>
-|  &lt;/div>
-|&lt;/main>
 </snippet>
 
 Replace the `styles.css` file with the following code:
