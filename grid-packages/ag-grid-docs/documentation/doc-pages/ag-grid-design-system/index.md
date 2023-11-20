@@ -37,7 +37,7 @@ The AG Grid design system utilises [Figma's native variables feature](https://he
 
 You can find more information about how to create and manage themes within the Figma file under the **Create your own theme** page in the Figma file.
 
-<image-caption src="ag-grid-design-system/resources/FDS-themes.png" alt="Figma Variable Theming" constrained="false" centered="true"></image-caption>
+<image-caption src="ag-grid-design-system/resources/FDS-themes.png" alt="Figma Variable Theming" constrained="false" centered="true" toggledarkmode="true"></image-caption>
 
 ## Generating AG Grid Themes From Figma Variables
 
@@ -50,7 +50,7 @@ To export your Figma Variables as json...
 3. Deselect all include types except for "Figma Variables".
 4. Click the 'Save & Export' button and save the json to the `./tokens/` directory.
 
-<image-caption src="ag-grid-design-system/resources/FDS-export-variables.png" alt="Export Figma Variables" constrained="false" centered="true"></image-caption>
+<image-caption src="ag-grid-design-system/resources/FDS-export-variables.png" alt="Export Figma Variables" constrained="false" centered="true" toggledarkmode="true"></image-caption>
 
 ## Support and Future versions
 
