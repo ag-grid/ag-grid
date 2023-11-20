@@ -17,6 +17,10 @@
     margin-left: 0;
     padding: 0 $size-3 0 0;
     border: none;
+
+    #{$darkmode-selector} & {
+        border: none;
+    }
 }
 
 .importInfoIcon svg {

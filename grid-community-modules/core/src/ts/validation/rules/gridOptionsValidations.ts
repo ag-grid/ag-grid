@@ -258,8 +258,8 @@ const GRID_OPTION_VALIDATIONS: Validations<GridOptions> = {
                 case 'clientSide':
                     return null;
                 case 'serverSide':
-                    const warning = 'groupIncludeFooter is not supported alongside suppressServersideInfiniteScroll';
-                    return options.suppressServerSideInfiniteScroll ? null : warning;
+                    const warning = 'groupIncludeFooter is not supported alongside suppressServerSideInfiniteScroll';
+                    return options.suppressServerSideInfiniteScroll ? warning : null;
             }
             return null;
         },

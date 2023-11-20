@@ -4,7 +4,7 @@
 // Configuration
 // =============
 $css-variables-root: ':root' !default; // The root level where CSS variables are applied
-$exclude-grid-selector: ":where(:not([class^=ag]))"; // Exclude simple selectors from interfering with grid styles
+$exclude-grid-selector: ':where(:not([class^=ag]))'; // Exclude simple selectors from interfering with grid styles
 
 // Size constants
 // ==============
@@ -91,6 +91,7 @@ $abstract-colors: (
     'dark-cerulean-blue': #00407f,
     'medium-electric-blue': #044c93,
     'azure-blue': #007bff,
+    'brilliant-azure': #3893f9,
     'sky-blue': #80bdff,
     'water-blue': #cce5ff,
     'light-water-blue': #d9f0fa,
@@ -98,7 +99,7 @@ $abstract-colors: (
     'ghost-blue': #f9fcff,
     // Grays
     'black': #000000,
-    'eerie-black': #181C22,
+    'eerie-black': #181c22,
     'dark-gunmetal-gray': #212529,
     'charcoal': #354856,
     'auro-metal': #6c757d,
@@ -141,25 +142,25 @@ $color-scales: (
     ),
     'background': (
         '100': #f9fcff,
-        '200': #F6FAFD,
-        '300': #F2F7FB,
-        '400': #EEF4F9,
+        '200': #f6fafd,
+        '300': #f2f7fb,
+        '400': #eef4f9,
         '500': #eaf0f6,
-        '600': #E3EEF9,
-        '700': #DCEBFB,
-        '800': #D4E8FD,
+        '600': #e3eef9,
+        '700': #dcebfb,
+        '800': #d4e8fd,
         '900': #cce5ff,
     ),
     'neutral': (
-        '100': #F8F9FA,
-        '200': #E5E7E9,
-        '300': #D1D4D7,
-        '400': #BDC1C5,
-        '500': #A9AEB3,
-        '600': #959CA2,
-        '700': #81888F,
+        '100': #f8f9fa,
+        '200': #e5e7e9,
+        '300': #d1d4d7,
+        '400': #bdc1c5,
+        '500': #a9aeb3,
+        '600': #959ca2,
+        '700': #81888f,
         '800': #6c757d,
-        '900': #5C646B,
+        '900': #5c646b,
     ),
     'red': (
         '100': #ffe8e7,
@@ -253,15 +254,15 @@ $dark-scales: (
         '900': #042d6c,
     ),
     'neutral': (
-        '100': #18191B,
-        '200': #1F1F20,
-        '300': #2B2C2D,
-        '400': #38393B,
+        '100': #18191b,
+        '200': #1f1f20,
+        '300': #2b2c2d,
+        '400': #38393b,
         '500': #444748,
         '600': #515456,
-        '700': #5D6163,
-        '800': #6A6E71,
-        '900': #848B90,
+        '700': #5d6163,
+        '800': #6a6e71,
+        '900': #848b90,
     ),
     'red': (
         '100': #ffe8e7,
@@ -362,7 +363,7 @@ $semantic-colors: (
     // Warnings
     'warning-background': brown-100,
     'warning-text': brown-700,
-    // Enterprise 
+    // Enterprise
     'enterprise-icon-color': red-700
 );
 
@@ -378,7 +379,7 @@ $dark-semantic-colors: (
     'border-color': neutral-400,
     'secondary-border-color': neutral-300,
     // Link
-    'link-color': primary-600,
+    'link-color': brilliant-azure,
     'link-hover-color': orange-800,
     // Button
     'button-text-color': white,
@@ -408,6 +409,6 @@ $dark-semantic-colors: (
     // Warnings
     'warning-background': brown-100,
     'warning-text': brown-700,
-    // Enterprise 
+    // Enterprise
     'enterprise-icon-color': red-700
 );
