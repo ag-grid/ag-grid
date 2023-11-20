@@ -6,9 +6,10 @@
 error_found=false
 
 # a valid grid - no errors should be emitted
-./node_modules/.bin/tsc --target "ES5" --module 'commonjs' --lib esnext,dom --allowSyntheticDefaultImports --jsx 'preserve' --noEmit --strict tests/SimpleGrid.ts &> /dev/null
+OUTPUT=`./node_modules/.bin/tsc --target "ES5" --module 'commonjs' --lib esnext,dom --allowSyntheticDefaultImports --jsx 'preserve' --noEmit --strict tests/SimpleGrid.ts`
 if [ $? -ne 0 ]; then
     echo "valid ag-grid grid should compile"
+    echo $OUTPUT
     error_found=true
 fi
 
