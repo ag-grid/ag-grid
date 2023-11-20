@@ -7,11 +7,43 @@
 @mixin output() {
     .ag-icon {
         @include ag.icon();
+
+        position: relative;
+
+        // ::before used for icon font glyph, content is overridden by
+        // .ag-icon-iconname::before styles below
+        &::before {
+            content: "";
+        }
+
+        // ::after used for icon images
+        &::after {
+            background: transparent var(--ag-icon-image, none) center/contain no-repeat;
+            display: var(--ag-icon-image-display);
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            width: var(--ag-icon-size);
+            height: var(--ag-icon-size);
+            opacity: 0.9;
+            content: "";
+        }
     }
 
     @each $icon-name, $font-code in ag.$icon-font-codes {
+        .ag-icon-#{$icon-name} {
+            font-family: var(--ag-icon-font-family-#{$icon-name}, var(--ag-icon-font-family));
+            font-weight: var(--ag-icon-font-weight-#{$icon-name}, var(--ag-icon-font-weight));
+            color: var(--ag-icon-font-color-#{$icon-name}, var(--ag-icon-font-color));
+        }
         .ag-icon-#{$icon-name}::before {
             content: ag.icon-content($icon-name);
+        }
+        .ag-icon-#{$icon-name}::after {
+            background-image: var(--ag-icon-image-#{$icon-name}, var(--ag-icon-image));
+            display: var(--ag-icon-image-display-#{$icon-name}, var(--ag-icon-image-display));
         }
     }
 

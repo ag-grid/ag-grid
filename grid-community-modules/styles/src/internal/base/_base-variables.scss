@@ -140,10 +140,12 @@
         --ag-minichart-selected-page-color: var(--ag-checkbox-checked-color);
 
 
-
         --ag-grid-size: 4px;
 
         --ag-icon-size: 12px;
+        --ag-icon-font-weight: normal;
+        --ag-icon-font-color: var(--ag-foreground-color);
+        --ag-icon-image-display: block;
 
         --ag-widget-container-horizontal-padding: calc(var(--ag-grid-size) * 1.5);
         --ag-widget-container-vertical-padding: calc(var(--ag-grid-size) * 1.5);

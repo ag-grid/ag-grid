@@ -309,6 +309,10 @@
       "description": "The size of square icons and icon-buttons",
       "type": "CSS length (e.g. `0`, `4px` or `50%`)"
     },
+    "--ag-icon-font-weight": {
+      "description": "The font weight to apply to icon elements, used for icon fonts that require a specific weight to work",
+      "type": "CSS length (e.g. `0`, `4px` or `50%`)"
+    },
     "--ag-widget-container-horizontal-padding": {
       "description": "The horizontal padding of containers that contain stacked widgets, such as menus and tool panels",
       "type": "CSS length (e.g. `0`, `4px` or `50%`)"
