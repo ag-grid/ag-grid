@@ -143,7 +143,7 @@ const GridExample = () => {
                     </div>
                 </form>
                 <div className="grid-wrapper">
-                    <div  style={gridStyle} className={/** DARK MODE START **/document.documentElement?.dataset.defaultTheme || 'ag-theme-quartz'/** DARK MODE END **/}>
+                    <div  style={gridStyle} className={/** DARK MODE START **/document.documentElement.dataset.defaultTheme || 'ag-theme-quartz'/** DARK MODE END **/}>
                         <AgGridReact
                             rowData={rowData}
                             columnDefs={columnDefs}

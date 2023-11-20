@@ -81,7 +81,7 @@ const GridExample = () => {
                         <input type="text" />
                     </div>
                 </div>
-                <div id="myGrid" style={{ height: '100%', width: '100%' }} className={/** DARK MODE START **/document.documentElement?.dataset.defaultTheme || 'ag-theme-quartz'/** DARK MODE END **/}>
+                <div id="myGrid" style={{ height: '100%', width: '100%' }} className={/** DARK MODE START **/document.documentElement.dataset.defaultTheme || 'ag-theme-quartz'/** DARK MODE END **/}>
                     <AgGridReact
                         rowData={rowData}
                         columnDefs={columnDefs}
