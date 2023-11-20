@@ -9,7 +9,8 @@ $z-index-splash: $z-index-debug-canvas + 10;
 $z-index-debug-panel: $z-index-splash + 10;
 $z-index-splash-contents: 10;
 
-:global(.automated-integrated-charts-grid.ag-theme-quartz) {
+:global(.automated-integrated-charts-grid.ag-theme-quartz),
+:global(.automated-integrated-charts-grid.ag-theme-quartz-dark) {
     position: relative;
     width: 100%;
     z-index: $z-index-grid;

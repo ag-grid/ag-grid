@@ -50,13 +50,14 @@ if (!isProductionBuild()) {
     );
 }
 
-function AutomatedIntegratedCharts({ automatedExampleManager, useStaticData, runOnce, visibilityThreshold }) {
+function AutomatedIntegratedCharts({ automatedExampleManager, useStaticData, runOnce, visibilityThreshold, darkMode }) {
     const exampleId = INTEGRATED_CHARTS_ID;
     const gridClassname = 'automated-integrated-charts-grid';
     const gridRef = useRef(null);
     const overlayRef = useRef(null);
     const [scriptIsEnabled, setScriptIsEnabled] = useState(true);
     const [gridIsReady, setGridIsReady] = useState(false);
+    const [automatedExample, setAutomatedExample] = useState();
     const [gridIsHoveredOver, setGridIsHoveredOver] = useState(false);
     const debuggerManager = automatedExampleManager?.getDebuggerManager();
     const isMobile = () => window.innerWidth <= AUTOMATED_EXAMPLE_MEDIUM_WIDTH;
@@ -95,6 +96,7 @@ function AutomatedIntegratedCharts({ automatedExampleManager, useStaticData, run
     useEffect(() => {
         let params = {
             gridClassname,
+            darkMode,
             getOverlay: () => {
                 return overlayRef.current;
             },
@@ -129,11 +131,21 @@ function AutomatedIntegratedCharts({ automatedExampleManager, useStaticData, run
             visibilityThreshold,
         };
 
+        const automatedExample = createAutomatedIntegratedCharts(params);
         automatedExampleManager.add({
             id: exampleId,
-            automatedExample: createAutomatedIntegratedCharts(params),
+            automatedExample,
         });
+
+        setAutomatedExample(automatedExample);
     }, []);
+
+    useEffect(() => {
+        if (!automatedExample) {
+            return;
+        }
+        automatedExample.updateDarkMode(darkMode);
+    }, [darkMode])
 
     return (
         <>
@@ -147,7 +159,10 @@ function AutomatedIntegratedCharts({ automatedExampleManager, useStaticData, run
 
             <Helmet>{helmet.map((entry) => entry)}</Helmet>
             {/* eslint-disable-next-line jsx-a11y/no-static-element-interactions, jsx-a11y/click-events-have-key-events */}
-            <div ref={gridRef} className="automated-integrated-charts-grid ag-theme-quartz" onClick={gridInteraction}>
+            <div ref={gridRef} className={classNames("automated-integrated-charts-grid", {
+                "ag-theme-quartz": !darkMode,
+                "ag-theme-quartz-dark": darkMode,
+            })} onClick={gridInteraction}>
                 <OverlayButton
                     ref={overlayRef}
                     ariaLabel="Give me control"

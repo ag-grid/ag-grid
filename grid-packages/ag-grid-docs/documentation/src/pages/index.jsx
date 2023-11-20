@@ -10,6 +10,7 @@ import Seo from './components/SEO';
 // @ts-ignore
 import styles from './homepage.module.scss';
 import LogoMark from '../components/LogoMark';
+import GlobalContextConsumer from '../components/GlobalContext';
 
 const IS_SSR = typeof window === 'undefined';
 
@@ -124,40 +125,47 @@ const Default = () => {
                     </div>
                 </div>
             </div>
+            <GlobalContextConsumer>
+                {({ darkMode }) => {
+                    return <>
+                        <section className={styles.automatedRowGroupingOuter}>
+                            <div className={classNames('page-margin', styles.homepageExample)}>
+                                <div className={styles.automatedRowGrouping}>
+                                    {!IS_SSR && (
+                                        <React.Suspense fallback={<></>}>
+                                            <AutomatedRowGrouping
+                                                automatedExampleManager={automatedExampleManager}
+                                                useStaticData={isCI}
+                                                runOnce={runAutomatedExamplesOnce}
+                                                visibilityThreshold={0.2}
+                                                darkMode={darkMode}
+                                            />
+                                        </React.Suspense>
+                                    )}
+                                </div>
+                            </div>
+                        </section>
 
-            <section className={styles.automatedRowGroupingOuter}>
-                <div className={classNames('page-margin', styles.homepageExample)}>
-                    <div className={styles.automatedRowGrouping}>
-                        {!IS_SSR && (
-                            <React.Suspense fallback={<></>}>
-                                <AutomatedRowGrouping
-                                    automatedExampleManager={automatedExampleManager}
-                                    useStaticData={isCI}
-                                    runOnce={runAutomatedExamplesOnce}
-                                    visibilityThreshold={0.2}
-                                />
-                            </React.Suspense>
-                        )}
-                    </div>
-                </div>
-            </section>
-
-            <section className={styles.automatedIntegratedChartsOuter}>
-                <div className={classNames('page-margin', styles.homepageExample)}>
-                    <div className={styles.automatedIntegratedCharts}>
-                        {!IS_SSR && (
-                            <React.Suspense fallback={<></>}>
-                                <AutomatedIntegratedCharts
-                                    automatedExampleManager={automatedExampleManager}
-                                    useStaticData={isCI}
-                                    runOnce={runAutomatedExamplesOnce}
-                                    visibilityThreshold={0.8}
-                                />
-                            </React.Suspense>
-                        )}
-                    </div>
-                </div>
-            </section>
+                        <section className={styles.automatedIntegratedChartsOuter}>
+                            <div className={classNames('page-margin', styles.homepageExample)}>
+                                <div className={styles.automatedIntegratedCharts}>
+                                    {!IS_SSR && (
+                                        <React.Suspense fallback={<></>}>
+                                            <AutomatedIntegratedCharts
+                                                automatedExampleManager={automatedExampleManager}
+                                                useStaticData={isCI}
+                                                runOnce={runAutomatedExamplesOnce}
+                                                visibilityThreshold={0.8}
+                                                darkMode={darkMode}
+                                            />
+                                        </React.Suspense>
+                                    )}
+                                </div>
+                            </div>
+                        </section>
+                    </>;
+                }}
+            </GlobalContextConsumer>
 
             <div className={styles.homepageSponsorship}>
                 <section className={classNames(styles.sponsorshipInner, 'page-margin')}>
