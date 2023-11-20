@@ -322,9 +322,7 @@ export class GroupCellRendererCtrl extends BeanStub {
                 this.displayedGroupNode.rowGroupColumn && this.params.column?.isRowGroupDisplayed(this.displayedGroupNode.rowGroupColumn.getId())
             );
 
-            if (this.params.column?.getColDef().showRowGroup === 'country' && this.displayedGroupNode.key === "") debugger;
             if (this.displayedGroupNode.key === ""  && this.displayedGroupNode.group && isGroupColForNode) {
-                // debugger;
                 const localeTextFunc = this.localeService.getLocaleTextFunc();
                 valueWhenNoRenderer = localeTextFunc('blanks', '(Blanks)');
             } else {
