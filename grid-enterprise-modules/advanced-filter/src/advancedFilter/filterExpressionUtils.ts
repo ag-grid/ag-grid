@@ -45,9 +45,10 @@ export function updateExpression(
     endPosition: number,
     updatedValuePart: string,
     appendSpace?: boolean,
-    appendQuote?: boolean
+    appendQuote?: boolean,
+    empty?: boolean
 ): AutocompleteUpdate {
-    const secondPartStartPosition = endPosition + (!expression.length ? 0 : 1);
+    const secondPartStartPosition = endPosition + (!expression.length || empty ? 0 : 1);
     let positionOffset = 0;
     if (appendSpace) {
         if (expression[secondPartStartPosition] === ' ') {
@@ -76,17 +77,25 @@ export function findStartPosition(expression: string, position: number, endPosit
     return startPosition;
 }
 
-export function findEndPosition(expression: string, position: number, includeCloseBracket?: boolean) {
+export function findEndPosition(expression: string, position: number, includeCloseBracket?: boolean, isStartPositionUnknown?: boolean): { endPosition: number, isEmpty: boolean } {
     let endPosition = position;
+    let isEmpty = false;
     while (endPosition < expression.length) {
         const char = expression[endPosition];
-        if (char === ' ' || (includeCloseBracket && char === ')')) {
+        if (char === '(') {
+            if (isStartPositionUnknown && expression[endPosition - 1] === ' ') {
+                isEmpty = true;
+            } else {
+                endPosition = endPosition - 1;
+            }
+            break;
+        } else if (char === ' ' || (includeCloseBracket && char === ')')) {
             endPosition = endPosition - 1;
             break;
         }
         endPosition++;
     }
-    return endPosition;
+    return { endPosition, isEmpty };
 }
 
 export function checkAndUpdateExpression(

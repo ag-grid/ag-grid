@@ -378,7 +378,7 @@ export class ColFilterExpressionParser {
             return updateExpression(
                 this.params.expression,
                 this.startPosition,
-                this.columnParser?.getColId() ? this.columnParser!.endPosition! : findEndPosition(expression, position),
+                this.columnParser?.getColId() ? this.columnParser!.endPosition! : findEndPosition(expression, position).endPosition,
                 this.params.advancedFilterExpressionService.getColumnValue(updateEntry),
                 true
             );
@@ -398,14 +398,23 @@ export class ColFilterExpressionParser {
                     doesOperandNeedQuotes
                 );
             } else {
-                const endPosition = this.operatorParser?.getOperatorKey() ? this.operatorParser!.endPosition! : findEndPosition(expression, position);
+                let endPosition: number;
+                let empty = false;
+                if (this.operatorParser?.getOperatorKey()) {
+                    endPosition = this.operatorParser!.endPosition!;
+                } else {
+                    const { endPosition: calculatedEndPosition, isEmpty } = findEndPosition(expression, position, true, true);
+                    endPosition = calculatedEndPosition;
+                    empty = isEmpty;
+                }
                 update = updateExpression(
                     expression,
                     findStartPosition(expression, this.columnParser!.endPosition! + 1, endPosition),
                     endPosition,
                     updateEntry.displayValue ?? updateEntry.key,
                     hasOperand,
-                    doesOperandNeedQuotes
+                    doesOperandNeedQuotes,
+                    empty
                 );
             }
             return { ...update, hideAutocomplete: !hasOperand };
