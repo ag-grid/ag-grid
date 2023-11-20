@@ -33,6 +33,7 @@ interface CreateAutomatedIntegratedChartsParams {
     runOnce: boolean;
     scriptDebuggerManager: ScriptDebuggerManager;
     visibilityThreshold: number;
+    darkMode: boolean;
 }
 
 function numberCellFormatter(params) {
@@ -105,6 +106,10 @@ const gridOptions: GridOptions = {
     rowGroupPanelShow: 'always',
 };
 
+function getDarkModeChartThemes(darkMode: boolean) {
+    return darkMode ? ['ag-default-dark'] : ['ag-default'];
+}
+
 export function createAutomatedIntegratedCharts({
     gridClassname,
     mouseMaskClassname,
@@ -117,6 +122,7 @@ export function createAutomatedIntegratedCharts({
     scriptDebuggerManager,
     runOnce,
     visibilityThreshold,
+    darkMode
 }: CreateAutomatedIntegratedChartsParams): AutomatedExample {
     const gridSelector = `.${gridClassname}`;
     let gridDiv: HTMLElement;
@@ -133,6 +139,8 @@ export function createAutomatedIntegratedCharts({
         if (additionalContextMenuItems) {
             gridOptions.getContextMenuItems = () => getAdditionalContextMenuItems(additionalContextMenuItems);
         }
+
+        gridOptions.chartThemes = getDarkModeChartThemes(darkMode);
 
         gridOptions.onGridReady = () => {
             onGridReady && onGridReady();
@@ -171,6 +179,9 @@ export function createAutomatedIntegratedCharts({
 
         api = globalThis.agGrid.createGrid(gridDiv, gridOptions);
     };
+    const updateDarkMode = (newDarkMode: boolean) => {
+        api?.setGridOption('chartThemes', getDarkModeChartThemes(newDarkMode));
+    }
 
     const loadGrid = function () {
         if (document.querySelector(gridSelector) && globalThis.agGrid) {
@@ -191,6 +202,7 @@ export function createAutomatedIntegratedCharts({
             return isInViewport({ element: gridDiv, threshold: visibilityThreshold });
         },
         getDebugger: () => scriptDebugger,
+        updateDarkMode
     };
 }
 

@@ -39,6 +39,7 @@ interface CreateAutomatedRowGroupingParams {
     runOnce: boolean;
     scriptDebuggerManager: ScriptDebuggerManager;
     visibilityThreshold: number;
+    darkMode: boolean
 }
 
 export type RowGroupingAutomatedExample = AutomatedExample & {
@@ -103,7 +104,6 @@ const gridOptions: GridOptions = {
             cellRenderer: 'agAnimateShowChangeCellRenderer',
         },
     },
-    chartThemes: ['ag-default-dark'],
     animateRows: true,
     enableCharts: true,
     enableRangeSelection: true,
@@ -113,6 +113,10 @@ const gridOptions: GridOptions = {
     },
     rowGroupPanelShow: 'always',
 };
+
+function getDarkModeChartThemes(darkMode: boolean) {
+    return darkMode ? ['ag-default-dark'] : ['ag-default'];
+}
 
 function initWorker() {
     dataWorker = new Worker(
@@ -164,6 +168,7 @@ export function createAutomatedRowGrouping({
     scriptDebuggerManager,
     runOnce,
     visibilityThreshold,
+    darkMode
 }: CreateAutomatedRowGroupingParams): RowGroupingAutomatedExample {
     const gridSelector = `.${gridClassname}`;
     let gridDiv: HTMLElement;
@@ -182,6 +187,7 @@ export function createAutomatedRowGrouping({
         if (additionalContextMenuItems) {
             gridOptions.getContextMenuItems = () => getAdditionalContextMenuItems(additionalContextMenuItems);
         }
+        gridOptions.chartThemes = getDarkModeChartThemes(darkMode);
         gridOptions.onGridReady = (params) => {
             if (suppressUpdates) {
                 return;
@@ -228,6 +234,10 @@ export function createAutomatedRowGrouping({
         };
        api = globalThis.agGrid.createGrid(gridDiv, gridOptions);
     };
+    const updateDarkMode = (newDarkMode: boolean) => {
+        // NOTE: Invert dark mode
+        api?.setGridOption('chartThemes', getDarkModeChartThemes(!newDarkMode));
+    }
 
     const setUpdateFrequency = (value: number) => {
         dataWorker?.postMessage({
@@ -259,6 +269,7 @@ export function createAutomatedRowGrouping({
         },
         setUpdateFrequency,
         getDebugger: () => scriptDebugger,
+        updateDarkMode
     };
 }
 

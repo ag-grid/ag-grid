@@ -49,7 +49,7 @@ if (!isProductionBuild()) {
     );
 }
 
-function AutomatedRowGrouping({ automatedExampleManager, useStaticData, runOnce, visibilityThreshold }) {
+function AutomatedRowGrouping({ automatedExampleManager, useStaticData, runOnce, visibilityThreshold, darkMode }) {
     const exampleId = ROW_GROUPING_ID;
     const gridClassname = 'automated-row-grouping-grid';
     const gridRef = useRef(null);
@@ -106,6 +106,7 @@ function AutomatedRowGrouping({ automatedExampleManager, useStaticData, runOnce,
     useEffect(() => {
         let params = {
             gridClassname,
+            darkMode,
             getOverlay: () => {
                 return overlayRef.current;
             },
@@ -147,6 +148,13 @@ function AutomatedRowGrouping({ automatedExampleManager, useStaticData, runOnce,
         });
     }, []);
 
+    useEffect(() => {
+        if (!exampleRef.current) {
+            return;
+        }
+        exampleRef.current.updateDarkMode(darkMode);
+    }, [darkMode])
+
     return (
         <>
             <header className={styles.sectionHeader}>
@@ -160,7 +168,11 @@ function AutomatedRowGrouping({ automatedExampleManager, useStaticData, runOnce,
 
             <Helmet>{helmet.map((entry) => entry)}</Helmet>
             {/* eslint-disable-next-line jsx-a11y/no-static-element-interactions, jsx-a11y/click-events-have-key-events */}
-            <div ref={gridRef} className="automated-row-grouping-grid ag-theme-quartz-dark" onClick={gridInteraction}>
+            <div ref={gridRef} className={classNames("automated-row-grouping-grid", {
+                "ag-theme-quartz": darkMode,
+                "ag-theme-quartz-dark": !darkMode,
+            })}
+            onClick={gridInteraction}>
                 <OverlayButton
                     ref={overlayRef}
                     ariaLabel="Give me control"
