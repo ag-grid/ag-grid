@@ -16,7 +16,7 @@ ModuleRegistry.registerModules([ ClientSideRowModelModule ]);
         <!-- The AG Grid component, with Dimensions, CSS Theme, Row Data, and Column Definition -->
         <ag-grid-angular
           style="width: 100%; height: 550px;"
-          class="ag-theme-quartz-dark"
+          [class]="themeClass"
           [rowData]="rowData"
           [columnDefs]="colDefs"
           (gridReady)="onGridReady($event)"
@@ -28,6 +28,7 @@ ModuleRegistry.registerModules([ ClientSideRowModelModule ]);
 })
 
 export class AppComponent {
+  themeClass = /** DARK MODE START **/document.documentElement?.dataset.defaultTheme || 'ag-theme-quartz'/** DARK MODE END **/;
   // Row Data: The data to be displayed.
   rowData = [
     {company: "CASC", country: "China", date: "2022-07-24", mission: "Wentian", price: 2150000, successful: true},
