@@ -184,7 +184,7 @@ const ColorScale = ({ name }) => {
             </div>
             <div>
                 {scale.map((color) => {
-                    return <span key={color}>{color.substr(-3)}</span>;
+                    return <span key={color}>{color.slice(-3)}</span>;
                 })}
             </div>
         </div>

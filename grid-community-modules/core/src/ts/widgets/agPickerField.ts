@@ -317,13 +317,6 @@ export abstract class AgPickerField<TValue, TConfig extends IPickerFieldParams =
         }
     }
 
-    public setAriaLabel(label: string): this {
-        setAriaLabel(this.getAriaElement(), label);
-        this.refreshAriaLabelledBy();
-
-        return this;
-    }
-
     public setInputWidth(width: number | 'flex'): this {
         setElementWidth(this.eWrapper, width);
         return this;

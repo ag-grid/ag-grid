@@ -64,7 +64,7 @@ export class ComponentUtil {
         if (!eventName || eventName.length < 2) {
             return eventName;
         }
-        return 'on' + eventName[0].toUpperCase() + eventName.substr(1);
+        return 'on' + eventName[0].toUpperCase() + eventName.substring(1);
     }
     // onXXX methods, based on the above events
     public static EVENT_CALLBACKS: string[] = ComponentUtil.EVENTS.map(event => ComponentUtil.getCallbackForEvent(event));

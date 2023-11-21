@@ -34,7 +34,7 @@ function validateDocFile(name, autoFile, docFiles, manualExclusions = [], eventS
 
         Object.entries(eventsProps).forEach(([k, v]) => {
             Object.keys(v).forEach(key => {
-                const eventName = 'on' + key[0].toUpperCase() + key.substr(1)
+                const eventName = 'on' + key[0].toUpperCase() + key.substring(1)
                 docKeys[key] = true
                 docKeys[eventName] = true
             })

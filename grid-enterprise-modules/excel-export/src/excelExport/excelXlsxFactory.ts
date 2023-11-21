@@ -21,7 +21,7 @@ import relationshipsFactory from './files/ooxml/relationships';
 
 import { setExcelImageTotalHeight, setExcelImageTotalWidth, createXmlPart } from './assets/excelUtils';
 import { ImageIdMap, ExcelCalculatedImage } from './assets/excelInterfaces';
-import { ExcelGridSerializingParams } from './baseExcelSerializingSession';
+import { ExcelGridSerializingParams } from './excelSerializingSession';
 
 /**
  * See https://www.ecma-international.org/news/TC45_current_work/OpenXML%20White%20Paper.pdf

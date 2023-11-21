@@ -67,10 +67,6 @@ export class CsvCreator extends BaseCreator<CsvCustomContent, CsvSerializingSess
         return this.getData(mergedParams);
     }
 
-    public getDefaultFileName(): string {
-        return 'export.csv';
-    }
-
     public getDefaultFileExtension(): string {
         return 'csv';
     }

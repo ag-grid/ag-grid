@@ -6,7 +6,7 @@ import { stopPropagationForAgGrid } from "../../utils/event";
 import { CellEditingStartedEvent, CellEditingStoppedEvent, Events } from "../../events";
 import { WithoutGridCommon } from "../../interfaces/iCommon";
 import { KeyCode } from "../../constants/keyCode";
-import { getAriaCheckboxStateName } from "../../utils/aria";
+import { getAriaCheckboxStateName, setAriaLive } from "../../utils/aria";
 import { GROUP_AUTO_COLUMN_ID } from "../../columns/autoGroupColService";
 
 export interface ICheckboxCellRendererParams<TData = any, TContext = any> extends ICellRendererParams<TData, boolean, TContext> {
@@ -30,9 +30,11 @@ export class CheckboxCellRenderer extends Component implements ICellRenderer {
     public init(params: ICheckboxCellRendererParams): void {
         this.params = params;
         this.updateCheckbox(params);
-        this.eCheckbox.getInputElement().setAttribute('tabindex', '-1');
+        const inputEl = this.eCheckbox.getInputElement();
+        inputEl.setAttribute('tabindex', '-1');
+        setAriaLive(inputEl, 'polite');
 
-        this.addManagedListener(this.eCheckbox.getInputElement(), 'click', (event: Event) => {
+        this.addManagedListener(inputEl, 'click', (event: Event) => {
             stopPropagationForAgGrid(event);
 
             if (this.eCheckbox.isDisabled()) {
@@ -44,7 +46,7 @@ export class CheckboxCellRenderer extends Component implements ICellRenderer {
             this.onCheckboxChanged(isSelected)
         });
 
-        this.addManagedListener(this.eCheckbox.getInputElement(), 'dblclick', (event: Event) => {
+        this.addManagedListener(inputEl, 'dblclick', (event: Event) => {
             stopPropagationForAgGrid(event);
         });
 

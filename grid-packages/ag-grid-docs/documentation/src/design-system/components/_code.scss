@@ -92,7 +92,7 @@ pre.code > code {
     overflow-x: auto !important;
 
     #{$darkmode-selector} & {
-        background: var(--background-200);
+        background: #0d2431;
         box-shadow: inset 0px 0px;
     }
 }

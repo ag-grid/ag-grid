@@ -39,41 +39,44 @@ Other icon variables:
 
 ### Example: using an alternative icon font
 
-This example demonstrates globally changing the icon font, and also selectively replacing:
+This example demonstrates globally changing the icon font, and also selectively replacing individual icons:
 
 ```css
-/* replace all icons in the grid with icons from Font Awesome */
 .ag-theme-quartz {
+  /* replace all icons in the grid with icons from Font Awesome */
   --ag-icon-font-family: "Font Awesome 5 Free";
   --ag-icon-font-code-aggregation: "\f247";
   --ag-icon-font-code-arrows: "\f0b2";
   --ag-icon-font-code-asc: "\f062";
-  /* ... and so on - you must define a font code for every icon */
+  /* ... and so on - because --ag-icon-font-family sets the font for
+     all icons, a new code must be provided for every one. If you only
+     wanted to replace some icons, use --ag-icon-font-family-{icon-name} */
+
+  /* selectively replace the the group icon with one from Material Design Icons */
+  --ag-icon-font-family-group: "Material Design Icons";
+  --ag-icon-font-code-group: "\F0328";
+  --ag-icon-font-color-group: red;
+  --ag-icon-font-weight-group: normal;
 }
 ```
-
-Or to replace some icons without affecting others, set the variables using a CSS selector targeting the icon class:
-
-```css
-/* selectively replace the group icon with one from Material Design Icons */
-.ag-theme-quartz .ag-icon-group {
-    --ag-icon-font-family: "Material Design Icons";
-    --ag-icon-font-code-group: "\F0328";
-}
-```
-
-This example demonstrates both techniques - most icons are replaced by Font Awesome icons and the group and aggregation icons (highlighted in red) are from Material Design Icons:
 
 <grid-example title='Alternative Icon Font' name='icons-alternative-font' type='generated' options='{ "enterprise": true, "modules": ["clientside", "rowgrouping", "menu", "setfilter", "columnpanel", "filterpanel"], "extras": ["fontawesome", "materialdesignicons"]  }'></grid-example>
 
-## SVG Icons
+### Example: SVG icons
 
-To replace icons with an image, including SVG images, use CSS selectors that target the icon class. You can hide the existing icon character by setting the `color` to transparent.
+This example demonstrates using the `--ag-icon-image-icon-name` variables to set an 
 
 ```css
-.ag-theme-quartz .ag-icon-menu {
-  background: transparent url("https://www.ag-grid.com/example-assets/svg-icons/menu.svg") center/contain no-repeat;
-  color: transparent;
+.ag-theme-quartz {
+  /* hide all font icons */
+  --ag-icon-font-color: transparent;
+  /* provide a SVG icon */
+  --ag-icon-image-aggregation: url("https://www.ag-grid.com/example-assets/svg-icons/aggregation.svg");
+  --ag-icon-image-arrows: url("https://www.ag-grid.com/example-assets/svg-icons/arrows.svg");
+  --ag-icon-image-asc: url("https://www.ag-grid.com/example-assets/svg-icons/asc.svg");
+  /* ... and so on - because --ag-icon-font-color:transparent hides all
+     icons, an image must be provided for every one. If you only wanted
+     to replace some icons, use --ag-icon-font-color-{icon-name} */
 }
 ```
 

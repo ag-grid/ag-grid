@@ -325,7 +325,7 @@ const getReactValue = node => {
     return (typeof value === 'string') ? `"${value}"` : `{${value}}`;
 }
 
-const capitalise = str => str[0].toUpperCase() + str.substr(1);
+const capitalise = str => str[0].toUpperCase() + str.substring(1);
 const isProperty = node => node.type === 'Property';
 const isObjectProperty = node => isProperty(node) && node.value.type === 'ObjectExpression';
 const isObjectExpr = node => node.type === 'ObjectExpression';

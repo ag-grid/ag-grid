@@ -2,8 +2,7 @@ import { IAgLabelParams } from './agAbstractLabel';
 import { RefSelector } from './componentAnnotations';
 import { AgAbstractField, FieldElement } from './agAbstractField';
 import { setDisabled, setElementWidth, addOrRemoveAttribute } from '../utils/dom';
-import { setAriaLabelledBy, setAriaLabel } from '../utils/aria';
-import { exists } from '../utils/generic';
+import { setAriaLabel } from '../utils/aria';
 
 export interface IInputField extends IAgLabelParams {
     value?: any;
@@ -51,16 +50,6 @@ export abstract class AgAbstractInputField<TElement extends FieldElement, TValue
         this.activateTabIndex([this.eInput]);
     }
 
-    protected refreshLabel() {
-        if (exists(this.getLabel())) {
-            setAriaLabelledBy(this.eInput, this.getLabelId());
-        } else {
-            this.eInput.removeAttribute('aria-labelledby');
-        }
-
-        super.refreshLabel();
-    }
-
     protected addInputListeners() {
         this.addManagedListener(this.eInput, 'input', e => this.setValue(e.target.value));
     }
@@ -106,6 +95,7 @@ export abstract class AgAbstractInputField<TElement extends FieldElement, TValue
 
     public setInputAriaLabel(label?: string | null): this {
         setAriaLabel(this.eInput, label);
+        this.refreshAriaLabelledBy();
 
         return this;
     }

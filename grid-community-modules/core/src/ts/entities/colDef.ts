@@ -52,8 +52,8 @@ export interface AbstractColDef<TData = any, TValue = any> {
     pivotKeys?: string[];
 
     /**
-     * The role property of the cells that belong to this column.
-     * * @default 'gridcell'
+     * Used for screen reader announcements - the role property of the cells that belong to this column.
+     * @default 'gridcell'
      */
     cellAriaRole?: string;
 }
@@ -337,7 +337,7 @@ export interface ColDef<TData = any, TValue = any> extends AbstractColDef<TData,
      * Function or expression. Gets the value for filtering purposes.
      * @managed
      */
-    filterValueGetter?: string | ValueGetterFunc<TData, TValue>;
+    filterValueGetter?: string | ValueGetterFunc<TData>;
     /**
      * Whether to display a floating filter for this column.
      * @default false

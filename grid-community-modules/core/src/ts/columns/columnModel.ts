@@ -948,7 +948,7 @@ export class ColumnModel extends BeanStub {
 
         let columnToCompare: Column;
         if (col instanceof ColumnGroup) {
-            const leafColumns = col.getLeafColumns().filter(col => col.isVisible());
+            const leafColumns = col.getDisplayedLeafColumns();
             if (!leafColumns.length) { return false; }
 
             columnToCompare = isFirst ? leafColumns[0] : last(leafColumns);

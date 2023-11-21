@@ -11,7 +11,7 @@ export default class FileCellRenderer extends Component {
   }
 
   getFileIcon = (filename) => {
-    const extension = filename.substr(-4);
+    const extension = filename.slice(-4);
     const isAudio = extension === '.mp3' || extension === '.wav';
 
     return isAudio ? 'far fa-file-audio' :
