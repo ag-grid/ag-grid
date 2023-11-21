@@ -39,7 +39,7 @@ const GridExample = () => {
   const [colDefs] = useState<ColDef[]>([
     { 
       field: "mission", 
-      resizable: true,
+      filter: true,
       checkboxSelection: true
     },
     { 
@@ -68,7 +68,7 @@ const GridExample = () => {
   // Apply settings across all columns
   const defaultColDefs = useMemo<ColDef>(() => {
     return {
-      resizable: true,
+      filter: true,
       editable: true
     };
   }, []);

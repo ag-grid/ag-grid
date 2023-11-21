@@ -42,7 +42,7 @@ const gridOptions: GridOptions = {
     // Configurations applied to all columns
     defaultColDef: {
         editable: true,
-        resizable: true
+        filter: true
     },
     // Grid Options & Callbacks
     pagination: true,

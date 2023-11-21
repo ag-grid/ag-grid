@@ -16,7 +16,7 @@ const GridExample = () => {
   
   // Column Definitions: Defines & controls grid columns.
   const [colDefs] = useState([
-    { field: "mission", resizable: true },
+    { field: "mission", filter: true },
     { 
       field: "country", 
       cellRenderer: CountryFlagCellRenderer 
@@ -40,7 +40,7 @@ const GridExample = () => {
 
   // Apply settings across all columns
   const defaultColDefs = useMemo(() => ({
-    resizable: true
+    filter: true
   }))
 
   // Container: Defines the grid's theme & dimensions.

@@ -13,7 +13,7 @@ const gridOptions: GridOptions = {
     columnDefs: [
         {
             field: "mission", 
-            resizable: true
+            filter: true
         },
         {
             field: "country"

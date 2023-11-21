@@ -17,7 +17,7 @@ const gridOptions: GridOptions = {
     columnDefs: [
         {
             field: "mission",
-            resizable: false,
+            filter: true,
             checkboxSelection: true
         },
         {
@@ -40,9 +40,7 @@ const gridOptions: GridOptions = {
     // Configurations applied to all columns
     defaultColDef: {
         filter: true,
-        sortable: true,
-        editable: true,
-        resizable: true
+        editable: true
     },
     // Grid Options & Callbacks
     pagination: true,

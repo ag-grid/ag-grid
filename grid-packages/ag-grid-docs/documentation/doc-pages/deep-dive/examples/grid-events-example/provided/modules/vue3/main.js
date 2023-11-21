@@ -48,7 +48,7 @@ const App = {
     const rowData = ref([]);
 
     const colDefs = ref([
-      { field: "mission", resizable: true },
+      { field: "mission", filter: true },
       { field: "country", cellRenderer: "countryFlagCellRenderer" },
       { field: "successful" },
       { field: "date" },
@@ -58,7 +58,7 @@ const App = {
 
     const defaultColDefs = ref({
       editable: true,
-      resizable: true
+      filter: true
     });
 
     // Fetch data when the component is mounted

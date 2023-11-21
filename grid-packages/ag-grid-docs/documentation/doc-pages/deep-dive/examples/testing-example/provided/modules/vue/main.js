@@ -44,7 +44,7 @@ const App = {
     return {
       rowData: [],
       colDefs: [
-        { field: "mission", resizable: true, checkboxSelection: true },
+        { field: "mission", filter: true, checkboxSelection: true },
         { field: "country", cellRenderer: "countryFlagCellRenderer" },
         { field: "successful" },
         { field: "date", valueFormatter: this.dateFormatter },
@@ -53,7 +53,7 @@ const App = {
       ],
       // Default Column Definitions: Apply configurations to all columns
       defaultColDefs: {
-        resizable: true,
+        filter: true,
         editable: true
       },
       themeClass: /** DARK MODE START **/document.documentElement.dataset.defaultTheme || 'ag-theme-quartz'/** DARK MODE END **/,

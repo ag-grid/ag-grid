@@ -357,16 +357,16 @@ Note: All [Grid Option](/grid-options/) properties tagged as 'managed' are autom
 
 Now that we have a basic grid with some arbitrary data, we can start to configure the grid with ___Column Properties___.
 
-Column Properties can be added to one or more columns to enable/disable column-specific features. Let's try this by adding the `resizable: true` property to the 'mission' column:
+Column Properties can be added to one or more columns to enable/disable column-specific features. Let's try this by adding the `filter: true` property to the 'mission' column:
 
 <snippet transform={false} language="jsx">
 |columnDefs: [
-|  { field: "mission", resizable: true },
+|  { field: "mission", filter: true },
 |  // ...
 |],
 </snippet>
 
-We should now be able to drag & resize the 'mission' column:
+We should now be able to filter the 'mission' column:
 
 <grid-example title='Configuring Columns Example' name='configure-columns-example' type='mixed' options='{ "exampleHeight": 550 }'></grid-example>
 
@@ -380,16 +380,16 @@ _Note: Column properties can be used to configure a wide-range of features; refe
 
 Now that we have a basic grid with some arbitrary data, we can start to configure the grid with ___Column Properties___.
 
-Column Properties can be added to one or more columns to enable/disable column-specific features. Let's try this by adding the `resizable: true` property to the 'mission' column:
+Column Properties can be added to one or more columns to enable/disable column-specific features. Let's try this by adding the `filter: true` property to the 'mission' column:
 
 <snippet transform={false} language="jsx">
 |const [colDefs] = useState([
-|  { field: "mission", resizable: true },
+|  { field: "mission", filter: true },
 |  // ...
 |]);
 </snippet>
 
-We should now be able to drag & resize the 'mission' column:
+We should now be able to filter the 'mission' column:
 
 <grid-example title='Configuring Columns Example' name='configure-columns-example' type='mixed' options='{ "exampleHeight": 550 }'></grid-example>
 
@@ -403,16 +403,16 @@ _Note: Column properties can be used to configure a wide-range of features; refe
 
 Now that we have a basic grid with some arbitrary data, we can start to configure the grid with ___Column Properties___.
 
-Column Properties can be added to one or more columns to enable/disable column-specific features. Let's try this by adding the `resizable: true` property to the 'mission' column:
+Column Properties can be added to one or more columns to enable/disable column-specific features. Let's try this by adding the `filter: true` property to the 'mission' column:
 
 <snippet transform={false} language="jsx">
 |colDefs: ColDef[] = [
-|  { field: "mission", resizable: true },
+|  { field: "mission", filter: true },
 |  // ...
 |];
 </snippet>
 
-We should now be able to drag & resize the 'mission' column:
+We should now be able to filter the 'mission' column:
 
 <grid-example title='Configuring Columns Example' name='configure-columns-example' type='mixed' options='{ "exampleHeight": 550 }'></grid-example>
 
@@ -426,16 +426,16 @@ _Note: Column properties can be used to configure a wide-range of features; refe
 
 Now that we have a basic grid with some arbitrary data, we can start to configure the grid with ___Column Properties___.
 
-Column Properties can be added to one or more columns to enable/disable column-specific features. Let's try this by adding the `resizable: true` property to the 'mission' column:
+Column Properties can be added to one or more columns to enable/disable column-specific features. Let's try this by adding the `filter: true` property to the 'mission' column:
 
 <snippet transform={false} language="jsx">
 |const colDefs = ref([
-|  { field: "mission", resizable: true },
+|  { field: "mission", filter: true },
 |  // ...
 |];
 </snippet>
 
-We should now be able to drag & resize the 'mission' column:
+We should now be able to filter the 'mission' column:
 
 <grid-example title='Configuring Columns Example' name='configure-columns-example' type='mixed' options='{ "exampleHeight": 550 }'></grid-example>
 
@@ -449,18 +449,18 @@ _Note: Column properties can be used to configure a wide-range of features; refe
 
 <!-- Default Column Definitions -->
 
-The example above demonstrates how to configure a single column. To apply this configuration across all columns we can use ___Default Column Definitions___ instead. Let's make all of our columns resizeable by creating adding the `defaultColDefs` property to our Grid Options object, and setting `resizeable: true`:
+The example above demonstrates how to configure a single column. To apply this configuration across all columns we can use ___Default Column Definitions___ instead. Let's make all of our columns filterable by adding the `defaultColDefs` property to our Grid Options object, and setting `filter: true`:
 
 <snippet transform={false} language="jsx">
 |const gridOptions = {
 |  defaultColDef: {
-|    resizable: true
+|    filter: true
 |  }
 |  // ...
 |}
 </snippet>
 
-The grid should now allow re-sizing on all columns:
+The grid should now allow filtering on all columns:
 
 <grid-example title='Default Column Definitions Example' name='default-columns-example' type='mixed' options='{ "exampleHeight": 550 }'></grid-example>
 
@@ -474,12 +474,12 @@ _Note: Column Definitions take precedence over Default Column Definitions_
 
 <!-- Default Column Definitions -->
 
-The example above demonstrates how to configure a single column. To apply this configuration across all columns we can use ___Default Column Definitions___ instead. Let's make all of our columns resizeable by creating a `defaultColDefs` object, setting `resizeable: true`, and passing this to the grid via the `defaultColDef` prop:
+The example above demonstrates how to configure a single column. To apply this configuration across all columns we can use ___Default Column Definitions___ instead. Let's make all of our columns filterable by creating a `defaultColDefs` object, setting `filter: true`, and passing this to the grid via the `defaultColDef` prop:
 
 <snippet transform={false} language="jsx">
 |// Apply settings across all columns
 |const defaultColDefs = useMemo(() => ({
-|  resizable: true // Enable resizing on all columns
+|  filter: true // Enable filtering on all columns
 |}))
 |
 |&lt;div className="ag-theme-quartz" style={{ width: 600, height: 500 }}>
@@ -490,7 +490,7 @@ The example above demonstrates how to configure a single column. To apply this c
 |&lt;/div>
 </snippet>
 
-The grid should now allow re-sizing on all columns:
+The grid should now allow filtering on all columns:
 
 <grid-example title='Default Column Definitions Example' name='default-columns-example' type='mixed' options='{ "exampleHeight": 550 }'></grid-example>
 
@@ -504,7 +504,7 @@ _Note: Column Definitions take precedence over Default Column Definitions_
 
 <!-- Default Column Definitions -->
 
-The example above demonstrates how to configure a single column. To apply this configuration across all columns we can use ___Default Column Definitions___ instead. Let's make all of our columns resizeable by creating a `defaultColDefs` object, setting `resizeable: true`, and passing this to our template:
+The example above demonstrates how to configure a single column. To apply this configuration across all columns we can use ___Default Column Definitions___ instead. Let's make all of our columns filterable by creating a `defaultColDefs` object, setting `filter: true`, and passing this to our template:
 
 <snippet transform={false} language="jsx">
 |@Component({
@@ -524,13 +524,13 @@ The example above demonstrates how to configure a single column. To apply this c
 |export class AppComponent {
 |  // Default Column Definitions: Apply configuration across all columns
 |  defaultColDefs: ColDef = {
-|    resizable: true
+|    filter: true
 |  }
 |  // ...
 |}
 </snippet>
 
-The grid should now allow re-sizing on all columns:
+The grid should now allow filtering on all columns:
 
 <grid-example title='Default Column Definitions Example' name='default-columns-example' type='mixed' options='{ "exampleHeight": 550 }'></grid-example>
 
@@ -544,13 +544,13 @@ _Note: Column Definitions take precedence over Default Column Definitions_
 
 <!-- Default Column Definitions -->
 
-The example above demonstrates how to configure a single column. To apply this configuration across all columns we can use ___Default Column Definitions___ instead. Let's make all of our columns resizeable by creating a `defaultColDefs` object with the property `resizeable: true`:
+The example above demonstrates how to configure a single column. To apply this configuration across all columns we can use ___Default Column Definitions___ instead. Let's make all of our columns filterable by creating a `defaultColDefs` object with the property `filter: true`:
 
 <snippet transform={false} language="jsx">
 |const App = {
 |  setup() {
 |    const defaultColDefs = ref({
-|      resizable: true
+|      filter: true
 |    });
 |    // ...
 |  }
@@ -581,7 +581,7 @@ And then adding this to our `ag-grid-vue` component:
 }
 </snippet>
 
-The grid should now allow re-sizing on all columns:
+The grid should now allow filtering on all columns:
 
 <grid-example title='Default Column Definitions Example' name='default-columns-example' type='mixed' options='{ "exampleHeight": 550 }'></grid-example>
 

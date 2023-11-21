@@ -7,7 +7,7 @@ const gridOptions = {
   rowData: [],
   // Column Definitions: Defines & controls grid columns.
   columnDefs: [
-    { field: "mission", resizable: true },
+    { field: "mission", filter: true },
     { field: "country" },
     { field: "successful" },
     { field: "date" },
@@ -17,9 +17,7 @@ const gridOptions = {
   // Configurations applied to all columns
   defaultColDef: {
     filter: true,
-    sortable: true,
-    editable: true,
-    resizable: true
+    editable: true
   },
   // Grid Options
   pagination: true

@@ -93,7 +93,7 @@ export class AppComponent {
   colDefs: ColDef[] = [
     { 
       field: "mission", 
-      resizable: true, // Disable resizing
+      filter: true, // Enable filtering
       checkboxSelection: true // Enable row selection via checkbox
     },
     { 
@@ -114,7 +114,7 @@ export class AppComponent {
 
   // Default Column Definitions: Apply configuration across all columns
   defaultColDefs: ColDef = {
-    resizable: true, // Enable resizing on all columns
+    filter: true, // Enable filtering on all columns
     editable: true // Enable editing on all columns
   }
 

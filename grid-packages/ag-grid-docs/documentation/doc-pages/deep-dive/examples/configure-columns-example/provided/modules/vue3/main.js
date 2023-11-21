@@ -24,7 +24,7 @@ const App = {
     const rowData = ref([]);
 
     const colDefs = ref([
-      { field: "mission", resizable: true },
+      { field: "mission", filter: true },
       { field: "country" },
       { field: "successful" },
       { field: "date" },

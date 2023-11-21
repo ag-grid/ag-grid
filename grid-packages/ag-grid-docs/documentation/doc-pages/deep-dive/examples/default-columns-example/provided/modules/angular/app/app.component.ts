@@ -53,7 +53,7 @@ export class AppComponent {
 
   // Default Column Definitions: Apply configuration across all columns
   defaultColDefs: ColDef = {
-    resizable: true
+    filter: true
   }
 
   // Load data into grid when ready
