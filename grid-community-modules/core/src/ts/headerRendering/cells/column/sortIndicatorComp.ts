@@ -59,8 +59,7 @@ export class SortIndicatorComp extends Component {
 
         this.setupMultiSortIndicator();
 
-        const canSort = !!this.column.getColDef().sortable;
-        if (!canSort) {
+        if (!this.column.isSortable()) {
             return;
         }
 

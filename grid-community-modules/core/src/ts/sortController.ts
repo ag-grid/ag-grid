@@ -37,7 +37,7 @@ export class SortController extends BeanStub {
         if (isColumnsSortingCoupledToGroup) {
             if (column.getColDef().showRowGroup) {
                 const rowGroupColumns = this.columnModel.getSourceColumnsForGroupColumn(column);
-                const sortableRowGroupColumns = rowGroupColumns?.filter(col => col.getColDef().sortable);
+                const sortableRowGroupColumns = rowGroupColumns?.filter(col => col.isSortable());
                 
                 if (sortableRowGroupColumns) {
                     columnsToUpdate = [column, ...sortableRowGroupColumns];

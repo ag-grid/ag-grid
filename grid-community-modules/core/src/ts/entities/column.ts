@@ -1,32 +1,24 @@
+import { ColumnState } from "../columns/columnModel";
+import { ColumnUtils } from "../columns/columnUtils";
+import { Autowired, PostConstruct } from "../context/context";
+import { AgEvent, ColumnEvent, ColumnEventType } from "../events";
+import { EventService } from "../eventService";
+import { GridOptionsService } from "../gridOptionsService";
+import { IEventEmitter } from "../interfaces/iEventEmitter";
 import { IHeaderColumn } from "../interfaces/iHeaderColumn";
 import { IProvidedColumn } from "../interfaces/iProvidedColumn";
+import { IRowNode } from "../interfaces/iRowNode";
+import { ColumnHoverService } from "../rendering/columnHoverService";
+import { exists, missing } from "../utils/generic";
+import { mergeDeep } from "../utils/object";
 import {
     AbstractColDef,
     BaseColDefParams,
     ColDef,
-    ColSpanParams,
-    IAggFunc,
-    ColumnFunctionCallbackParams,
-    RowSpanParams,
-    ColumnMenuTab,
-    SortDirection
+    ColSpanParams, ColumnFunctionCallbackParams, ColumnMenuTab, IAggFunc, RowSpanParams, SortDirection
 } from "./colDef";
-import { EventService } from "../eventService";
-import { Autowired, PostConstruct, PreDestroy } from "../context/context";
-import { ColumnUtils } from "../columns/columnUtils";
-import { IEventEmitter } from "../interfaces/iEventEmitter";
-import { AgEvent, ColumnEvent, ColumnEventType, Events } from "../events";
 import { ColumnGroup, ColumnGroupShowType } from "./columnGroup";
 import { ProvidedColumnGroup } from "./providedColumnGroup";
-import { ModuleNames } from "../modules/moduleNames";
-import { ModuleRegistry } from "../modules/moduleRegistry";
-import { attrToNumber, attrToBoolean, exists, missing } from "../utils/generic";
-import { warnOnce } from "../utils/function";
-import { mergeDeep } from "../utils/object";
-import { GridOptionsService } from "../gridOptionsService";
-import { ColumnHoverService } from "../rendering/columnHoverService";
-import { IRowNode } from "../interfaces/iRowNode";
-import { ColumnState } from "../columns/columnModel";
 
 export type ColumnPinnedType = 'left' | 'right' | boolean | null | undefined;
 export type ColumnEventName =
@@ -45,6 +37,11 @@ export type ColumnEventName =
     'columnPivotChanged' |
     'columnValueChanged' |
     'columnStateUpdated';
+
+const COL_DEF_DEFAULTS: Partial<ColDef> = {
+    resizable: true,
+    sortable: true
+};
 
 let instanceIdSequence = 0;
 export function getNextColInstanceId() {
@@ -172,8 +169,8 @@ export class Column<TValue = any> implements IHeaderColumn<TValue>, IProvidedCol
         }
 
         // sortIndex
-        const sortIndex = attrToNumber(colDef.sortIndex);
-        const initialSortIndex = attrToNumber(colDef.initialSortIndex);
+        const sortIndex = colDef.sortIndex;
+        const initialSortIndex = colDef.initialSortIndex;
         if (sortIndex !== undefined) {
             if (sortIndex !== null) {
                 this.sortIndex = sortIndex;
@@ -185,8 +182,8 @@ export class Column<TValue = any> implements IHeaderColumn<TValue>, IProvidedCol
         }
 
         // hide
-        const hide = attrToBoolean(colDef.hide);
-        const initialHide = attrToBoolean(colDef.initialHide);
+        const hide = colDef.hide;
+        const initialHide = colDef.initialHide;
 
         if (hide !== undefined) {
             this.visible = !hide;
@@ -202,8 +199,8 @@ export class Column<TValue = any> implements IHeaderColumn<TValue>, IProvidedCol
         }
 
         // flex
-        const flex = attrToNumber(colDef.flex);
-        const initialFlex = attrToNumber(colDef.initialFlex);
+        const flex = colDef.flex;
+        const initialFlex = colDef.initialFlex;
         if (flex !== undefined) {
             this.flex = flex;
         } else if (initialFlex !== undefined) {
@@ -379,15 +376,15 @@ export class Column<TValue = any> implements IHeaderColumn<TValue>, IProvidedCol
     }
 
     public isSuppressFillHandle(): boolean {
-        return !!attrToBoolean(this.colDef.suppressFillHandle);
+        return !!this.colDef.suppressFillHandle;
     }
 
     public isAutoHeight(): boolean {
-        return !!attrToBoolean(this.colDef.autoHeight);
+        return !!this.colDef.autoHeight;
     }
 
     public isAutoHeaderHeight(): boolean {
-        return !!attrToBoolean(this.colDef.autoHeaderHeight);
+        return !!this.colDef.autoHeaderHeight;
     }
 
     public isRowDrag(rowNode: IRowNode): boolean {
@@ -407,7 +404,12 @@ export class Column<TValue = any> implements IHeaderColumn<TValue>, IProvidedCol
     }
 
     public isResizable(): boolean {
-        return !!attrToBoolean(this.colDef.resizable);
+        return !!this.getColDefValue('resizable');
+    }
+    
+    /** Get value from ColDef or default if it exists. */
+    private getColDefValue<K extends keyof ColDef>(key: K): ColDef[K] {
+        return this.colDef[key] ?? COL_DEF_DEFAULTS[key];
     }
 
     private isColumnFunc(rowNode: IRowNode, value?: boolean | ((params: ColumnFunctionCallbackParams) => boolean) | null): boolean {
@@ -469,6 +471,10 @@ export class Column<TValue = any> implements IHeaderColumn<TValue>, IProvidedCol
 
     public isMenuVisible(): boolean {
         return this.menuVisible;
+    }
+
+    public isSortable(): boolean {
+        return !!this.getColDefValue('sortable');
     }
 
     public isSortAscending(): boolean {

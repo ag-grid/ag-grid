@@ -554,8 +554,8 @@ export interface ColDef<TData = any, TValue = any> extends AbstractColDef<TData,
     // *** Columns: Sort *** //
 
     /**
-     * Set to `true` to allow sorting on this column.
-     * @default false
+     * Set to `false` to disable sorting which is enabled by default.
+     * @default true
      */
     sortable?: boolean;
     /** If sorting by default, set it here. Set to `asc` or `desc`. */
@@ -619,8 +619,8 @@ export interface ColDef<TData = any, TValue = any> extends AbstractColDef<TData,
     /** Same as `flex`, except only applied when creating a new column. Not applied when updating column definitions. */
     initialFlex?: number;
     /**
-     * Set to `true` to allow this column should be resized.
-     * @default false
+     * Set to `false` to disable resizing which is enabled by default.
+     * @default true
      */
     resizable?: boolean;
     /**

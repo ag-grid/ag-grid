@@ -913,8 +913,8 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
          * @default false
          */
     @Input() public removePivotHeaderRowWhenSingleValueColumn: boolean | undefined = undefined;
-    /** Set to `true` to enable Row Animation.
-         * @default false
+    /** Set to `false` to disable Row Animation which is enabled by default.
+         * @default true
          * @managed
          */
     @Input() public animateRows: boolean | undefined = undefined;
@@ -943,6 +943,7 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
          */
     @Input() public domLayout: DomLayoutType | undefined = undefined;
     /** When `true`, the order of rows and columns in the DOM are consistent with what is on screen.
+         * Disables row animations.
          * @default false
          */
     @Input() public ensureDomOrder: boolean | undefined = undefined;

@@ -931,8 +931,8 @@ export interface GridOptions<TData = any> {
     removePivotHeaderRowWhenSingleValueColumn?: boolean;
     // *** Rendering *** //
     /**
-     * Set to `true` to enable Row Animation.
-     * @default false
+     * Set to `false` to disable Row Animation which is enabled by default.
+     * @default true
      * @managed
      */
     animateRows?: boolean;
@@ -967,6 +967,7 @@ export interface GridOptions<TData = any> {
     domLayout?: DomLayoutType;
     /**
      * When `true`, the order of rows and columns in the DOM are consistent with what is on screen.
+     * Disables row animations.
      * @default false
      */
     ensureDomOrder?: boolean;
