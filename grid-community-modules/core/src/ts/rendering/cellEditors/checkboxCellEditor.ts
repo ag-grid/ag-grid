@@ -23,7 +23,8 @@ export class CheckboxCellEditor extends PopupComponent implements ICellEditorCom
 
         this.eCheckbox.setValue(isSelected);
 
-        this.eCheckbox.getInputElement().setAttribute('tabindex', '-1');
+        const inputEl = this.eCheckbox.getInputElement();
+        inputEl.setAttribute('tabindex', '-1');
 
         this.setAriaLabel(isSelected);
 
