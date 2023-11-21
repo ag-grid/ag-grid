@@ -44,11 +44,7 @@ interface IRow {
 
 const gridOptions: GridOptions = {
     // Data to be displayed
-    rowData: [
-        {company: "CASC", country: "China", date: "2022-07-24", mission: "Wentian", price: 2150000, successful: true},
-        {company: "SpaceX", country: "USA", date: "2022-07-24", mission: "Starlink Group 4-25", price: 3230000, successful: true},
-        {company: "SpaceX", country: "USA", date: "2022-07-22", mission: "Starlink Group 3-2", price: 8060000, successful: true}
-    ] as IRow[],
+    rowData: [] as IRow[],
     // Columns to be displayed (Should match rowData properties)
     columnDefs: [
         {
