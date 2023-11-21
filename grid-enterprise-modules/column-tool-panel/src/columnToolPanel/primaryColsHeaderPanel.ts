@@ -83,6 +83,7 @@ export class PrimaryColsHeaderPanel extends Component {
     private onFunctionsReadOnlyPropChanged(): void {
         const readOnly = this.gridOptionsService.get('functionsReadOnly');
         this.eSelect.setDisabled(readOnly);
+        this.eSelect.addOrRemoveCssClass('ag-column-select-column-readonly', readOnly);
     }
 
     public init(params: ToolPanelColumnCompParams): void {
@@ -90,6 +91,7 @@ export class PrimaryColsHeaderPanel extends Component {
 
         const readOnly = this.gridOptionsService.get('functionsReadOnly');
         this.eSelect.setDisabled(readOnly);
+        this.eSelect.addOrRemoveCssClass('ag-column-select-column-readonly', readOnly);
 
         if (this.columnModel.isReady()) {
             this.showOrHideOptions();
