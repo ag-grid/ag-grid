@@ -929,7 +929,7 @@ Let's try this by creating a new component to display a flag in the 'country' co
 |  agInit(params: ICellRendererParams): void {
 |    this.value = params.value;
 |  }
-|  refresh(params: ICellRendererParams&lt;any, any, any>): boolean {
+|  refresh(params: ICellRendererParams): boolean {
 |    this.value = params.value;
 |    return true;
 |  }

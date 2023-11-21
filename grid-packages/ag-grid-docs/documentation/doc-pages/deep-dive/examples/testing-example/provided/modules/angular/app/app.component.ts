@@ -44,7 +44,7 @@ export class CountryFlagCellRendererComponent implements ICellRendererAngularCom
   }
 
   // Return Cell Value
-  refresh(params: ICellRendererParams<any, any, any>): boolean {
+  refresh(params: ICellRendererParams): boolean {
     this.value = params.value;
     return true;
   }
