@@ -33,7 +33,8 @@ html[data-color-scheme='dark'] button:not(#myGrid button, #myChart button, butto
 .ag-theme-quartz {
     --ag-background-color: color-mix(in srgb, transparent, #fff 60%);
     
-
+/*
+TODO - reinstate these in a way that doesn't clobber example's row colours
     .ag-row {
         background: color-mix(in srgb, transparent, #fff 60%); 
         --ag-data-color: rgba(0,0,0,0.75)
@@ -43,6 +44,7 @@ html[data-color-scheme='dark'] button:not(#myGrid button, #myChart button, butto
     .ag-header {
         background: color-mix(in srgb, var(--ag-data-color), var(--ag-header-background-color) 98%); 
     }
+*/
 }
 
 
