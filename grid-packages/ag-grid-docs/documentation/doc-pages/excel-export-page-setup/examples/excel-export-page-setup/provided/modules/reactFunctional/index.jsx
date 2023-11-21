@@ -128,15 +128,15 @@ const GridExample = () => {
                                 </select>
                             </label>
                         </div>
-                        <div className="column margin-container">
-                            <div>Margins</div>
+                        <fieldset className="column margin-container">
+                            <legend>Margins</legend>
                             <label htmlFor="top">Top = <input type="number" id="top" defaultValue="0.75" min="0" step="0.05" /></label>
                             <label htmlFor="right">Right = <input type="number" id="right" defaultValue="0.7" min="0" step="0.05" /></label>
                             <label htmlFor="bottom">Bottom = <input type="number" id="bottom" defaultValue="0.75" min="0" step="0.05" /></label>
                             <label htmlFor="left">Left = <input type="number" id="left" defaultValue="0.7" min="0" step="0.05" /></label>
                             <label htmlFor="header">Header = <input type="number" id="header" defaultValue="0.3" min="0" step="0.05" /></label>
                             <label htmlFor="footer">Footer = <input type="number" id="footer" defaultValue="0.3" min="0" step="0.05" /></label>
-                        </div>
+                        </fieldset>
                     </div>
                     <div>
                         <input type="submit" style={{"margin":"5px 0px","fontWeight":"bold"}} value="Export to Excel" />

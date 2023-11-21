@@ -202,6 +202,15 @@ The Grid API provides a way of interacting with the grid. To update the data wit
 |  .then((data: any) => gridApi.setGridOption('rowData', data))
 </snippet>
 
+Now that we're loading data from an external source, we can empty our `rowData` array which will allow the grid to display a loading spinner whilst the data is being fetched:
+
+<snippet transform={false} language="jsx">
+|const gridOptions = {
+|  rowData: [],
+|  // ...
+|}
+</snippet>
+
 When we run our application, we should see a grid with ~2,500 rows:
 
 <grid-example title='Updating Example' name='updating-example' type='mixed' options='{ "exampleHeight": 550 }'></grid-example>
@@ -227,6 +236,16 @@ As `rowData` is a reactive property, any updates to its state will be reflected 
 |}, [])
 </snippet>
 
+Now that we're loading data from an external source, we can empty our `rowData` array which will allow the grid to display a loading spinner whilst the data is being fetched:
+
+<snippet transform={false} language="jsx">
+|const GridExample = () => {
+|  // Row Data: The data to be displayed.
+|  const [rowData, setRowData] = useState([]);
+|  // ...
+|}
+</snippet>
+
 When we run our application, we should see a grid with ~2,500 rows:
 
 <grid-example title='Updating Example' name='updating-example' type='mixed' options='{ "exampleHeight": 550 }'></grid-example>
@@ -245,7 +264,7 @@ As rowData is a managed property, any updates to its value will be reflected in 
 
 First we need to hook into the `gridReady` event by adding `(gridReady)="onGridReady($event)"` to the `ag-grid-angular` component:
 
-<snippet transform={false} language="ts">
+<snippet transform={false} language="html">
 |&lt;!-- The AG Grid component, with various Grid Option properties -->
 |&lt;ag-grid-angular
 |  style="width: 100%; height: 550px;"
@@ -267,6 +286,16 @@ And then executing a HTTP request when the onGridReady event is fired, subscribi
 |  this.http
 |    .get&lt;any[]>('https://downloads.jamesswinton.com/space-mission-data.json')
 |    .subscribe(data => this.rowData = data);
+|}
+</snippet>
+
+Finally, now that we're loading data from an external source, we can empty our `rowData` array which will allow the grid to display a loading spinner whilst the data is being fetched:
+
+<snippet transform={false} language="jsx">
+|export class AppComponent {
+|  // Row Data: The data to be displayed.
+|  rowData: IRow[] = [];
+|  // ...
 |}
 </snippet>
 
@@ -296,6 +325,18 @@ As rowData is a managed property, any updates to its value will be reflected in 
 |  const response = await fetch('https://downloads.jamesswinton.com/space-mission-data.json');
 |  return response.json();
 |};
+</snippet>
+
+And now that we're loading data from an external source, we can empty our `rowData` array which will allow the grid to display a loading spinner whilst the data is being fetched:
+
+<snippet transform={false} language="jsx">
+|const App = {
+|  setup() {
+|    const rowData = ref([]);
+|    // ...
+|  }
+|  // ...
+|}
 </snippet>
 
 When we run our application, we should see a grid with ~2,500 rows:
@@ -364,7 +405,7 @@ Now that we have a basic grid with some arbitrary data, we can start to configur
 
 Column Properties can be added to one or more columns to enable/disable column-specific features. Let's try this by adding the `resizable: true` property to the 'mission' column:
 
-<snippet transform={false} language="ts">
+<snippet transform={false} language="jsx">
 |colDefs: ColDef[] = [
 |  { field: "mission", resizable: true },
 |  // ...
@@ -463,12 +504,29 @@ _Note: Column Definitions take precedence over Default Column Definitions_
 
 <!-- Default Column Definitions -->
 
-The example above demonstrates how to configure a single column. To apply this configuration across all columns we can use ___Default Column Definitions___ instead. Let's make all of our columns resizeable by creating a `defaultColDefs` object, setting `resizeable: true`, and passing this to TODO - explain what its passed to:
+The example above demonstrates how to configure a single column. To apply this configuration across all columns we can use ___Default Column Definitions___ instead. Let's make all of our columns resizeable by creating a `defaultColDefs` object, setting `resizeable: true`, and passing this to our template:
 
-<snippet transform={false} language="ts">
-|// Default Column Definitions: Apply configuration across all columns
-|defaultColDefs: ColDef = {
-|  resizable: true
+<snippet transform={false} language="jsx">
+|@Component({
+|  template:
+|  `
+|  &lt;div class="content">
+|    &lt;ag-grid-angular
+|      ...
+|      [defaultColDef]="defaultColDefs"
+|    >
+|    &lt;/ag-grid-angular>
+|  &lt;/div>
+|  `,
+|  // ...
+|})
+|
+|export class AppComponent {
+|  // Default Column Definitions: Apply configuration across all columns
+|  defaultColDefs: ColDef = {
+|    resizable: true
+|  }
+|  // ...
 |}
 </snippet>
 

@@ -18,10 +18,6 @@ html[data-color-scheme='dark'] body > * {
     color-scheme: dark;
 }
 
-html[data-color-scheme='dark'] div + #myGrid {
-    margin-top: -8px;
-}
-
 html[data-color-scheme='dark'] button:not(#myGrid button, #myChart button, button[class*='ag-']) {
     border: 2px solid rgba(255,255,255, 0.2);
 }
@@ -33,7 +29,8 @@ html[data-color-scheme='dark'] button:not(#myGrid button, #myChart button, butto
 .ag-theme-quartz {
     --ag-background-color: color-mix(in srgb, transparent, #fff 60%);
     
-
+/*
+TODO - reinstate these in a way that doesn't clobber example's row colours
     .ag-row {
         background: color-mix(in srgb, transparent, #fff 60%); 
         --ag-data-color: rgba(0,0,0,0.75)
@@ -43,6 +40,7 @@ html[data-color-scheme='dark'] button:not(#myGrid button, #myChart button, butto
     .ag-header {
         background: color-mix(in srgb, var(--ag-data-color), var(--ag-header-background-color) 98%); 
     }
+*/
 }
 
 
@@ -99,5 +97,26 @@ html[data-color-scheme='dark'] input:not(#myGrid input, #myChart input, [class*=
 
 html[data-color-scheme='dark'] body:not(#myGrid body, #myChart body) {
   color: #fff;
+}
+
+#myChart, .my-chart {
+    margin-top: 8px;
+    margin-bottom: 8px;
+    border-radius: 8px;
+    border: 1px solid var(--ag-border-color);
+    overflow: hidden;
+}
+
+.my-chart + .my-chart,
+#top .my-chart {
+    margin-top: 0;
+}
+
+#top .my-chart {
+    margin-bottom: 0;
+}
+
+#top .my-chart:first-child {
+    margin-right: 8px;
 }
 `;

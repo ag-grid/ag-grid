@@ -15,7 +15,6 @@ export class DragSourceRenderer implements ICellRendererAngularComp {
     }
 
     onDragStart(dragEvent: DragEvent) {
-        var userAgent = window.navigator.userAgent;
         dragEvent.dataTransfer!.setData('text/plain', 'Dragged item with ID: ' + this.params.node.data.id);
     }
 

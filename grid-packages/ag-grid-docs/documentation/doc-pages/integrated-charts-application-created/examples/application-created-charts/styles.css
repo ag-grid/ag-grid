@@ -8,7 +8,6 @@
 
 .my-grid {
     flex-grow: 1;
-    border: 1px solid lightslategrey;
 }
 
 .my-chart {
@@ -16,5 +15,4 @@
     height: 135px;
     display: inline-block;
     margin-top: 0.5rem;
-    border: 1px solid lightslategrey;
 }
