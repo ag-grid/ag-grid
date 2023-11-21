@@ -7,7 +7,6 @@ export default class DragSourceRenderer extends Component<ICellRendererParams> {
   }
 
   onDragStart = (dragEvent: any) => {
-    var userAgent = window.navigator.userAgent;
     dragEvent.dataTransfer.setData(
       'text/plain',
       'Dragged item with ID: ' + this.props.node.data.id

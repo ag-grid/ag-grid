@@ -16,15 +16,20 @@
 .ag-header-span-height:not(.ag-header-span-total) {
     border-bottom: unset;
 }
+
+.gold-header, .silver-header, .bronze-header {
+    color: black;
+    --ag-icon-font-color: black;
+}
   
 .gold-header {
-    background-color: gold;
+    background-color: gold!important;
 }
 
 .silver-header {
-    background-color: silver
+    background-color: silver!important;
 }
 
 .bronze-header {
-    background-color: chocolate;
+    background-color: chocolate!important;
 }
