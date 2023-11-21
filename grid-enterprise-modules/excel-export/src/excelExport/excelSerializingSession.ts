@@ -58,7 +58,6 @@ export interface ExcelGridSerializingParams extends GridSerializingParams {
     rowGroupExpandState?:  'expanded' | 'collapsed' | 'match';
     styleLinker: (params: StyleLinkerInterface) => string[];
     addImageToCell?: (rowIndex: number, column: Column, value: string) => { image: ExcelImage, value?: string } | undefined;
-    suppressTextAsCDATA?: boolean;
 }
 
 export class ExcelSerializingSession extends BaseGridSerializingSession<ExcelRow[]> {

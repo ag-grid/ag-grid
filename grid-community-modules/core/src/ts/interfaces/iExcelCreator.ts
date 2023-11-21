@@ -397,11 +397,6 @@ export interface ExcelExportParams extends ExportParams<ExcelRow[]> {
     /** The configuration for header and footers. */
     headerFooterConfig?: ExcelHeaderFooterConfig;
     /**
-     * If `true`, text content will be encoded with XML character entities like `&amp;lt;` and `&amp;gt;`. This is only relevant when `exportMode='xml'`.
-     * @default false
-     */
-    suppressTextAsCDATA?: boolean;
-    /**
      * If `true`, the outline (controls to expand and collapse) for Row Groups will not be added automatically to the Excel Document.
      * @default false.
      */
@@ -421,7 +416,7 @@ export interface ExcelExportParams extends ExportParams<ExcelRow[]> {
      */
     rowGroupExpandState?: 'expanded' | 'collapsed' | 'match';
     /**
-     * The mimeType of the Excel file. Note that this defaults to `application/vnd.ms-excel` if exportMode is `xml`.
+     * The mimeType of the Excel file.
      * @default 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
      */
     mimeType?: string;
