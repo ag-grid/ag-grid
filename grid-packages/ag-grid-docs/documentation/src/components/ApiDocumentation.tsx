@@ -564,6 +564,7 @@ const Property: React.FC<PropertyCall> = ({ framework, id, name, definition, con
         : defaultValue;
 
     return (
+        <>
         <tr ref={propertyRef}>
             <td role="presentation" className={styles.leftColumn}>
                 <h6 id={idName} className={classnames(styles.name, 'side-menu-exclude')}>
@@ -675,9 +676,15 @@ const Property: React.FC<PropertyCall> = ({ framework, id, name, definition, con
                         </span>
                     )}
                 </div>
-                {showAdditionalDetails && isExpanded && <div>{codeSection}</div>}
             </td>
         </tr>
+            {showAdditionalDetails && isExpanded &&
+                <tr className={classnames(styles.expandedContent)}>
+                    <td colSpan={2}>
+                        <div >{codeSection}</div>
+                    </td>
+                </tr>}
+        </>
     );
 };
 

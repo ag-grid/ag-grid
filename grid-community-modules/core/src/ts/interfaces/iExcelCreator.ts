@@ -336,10 +336,6 @@ export interface ExcelContentType {
     PartName?: string;
 }
 
-export interface ExcelXMLTemplate {
-    getTemplate(styleProperties?: ExcelStyle | ExcelWorksheet | ExcelColumn | ExcelRow | ExcelCell): XmlElement;
-}
-
 export interface ExcelOOXMLTemplate {
     getTemplate(config?: any, idx?: number, currentSheet?: number): XmlElement;
     convertType?(type: string): string;

@@ -27,7 +27,7 @@ Use a viewport to manage large live sets of data in the grid, where you only wan
 The diagram below shows how the viewport maps to a connection to your dataset. The dataset connection knows what the viewport is displaying and sends data accordingly. When the user scrolls, the viewport will 'get' data from the source. If / when the data changes, the source will 'push' the data to the viewport if it knows the viewport is displaying that data.
 
 
-<image-caption src="viewport/resources/viewport.png" alt="Viewport Connected to Dataset" constrained="true" centered="true"></image-caption>
+<image-caption src="viewport/resources/viewport.png" alt="Viewport Connected to Dataset" constrained="true" centered="true" filterdarkmode="true"></image-caption>
 
 <br/>
 

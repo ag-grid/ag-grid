@@ -28,7 +28,7 @@ In this Olympic Medals application, the server endpoint will be hosted using a w
 
 An overview of technologies used in this guide is illustrated in the diagram below:
 
-<image-caption src="server-side-operations-nodejs/resources/app-arch.png" alt="App Arch" constrained="true"></image-caption>
+<image-caption src="server-side-operations-nodejs/resources/app-arch.png" alt="App Arch" constrained="true" filterdarkmode="true"></image-caption>
 
 We will now proceed to install and run the application before going through the implementation details.
 

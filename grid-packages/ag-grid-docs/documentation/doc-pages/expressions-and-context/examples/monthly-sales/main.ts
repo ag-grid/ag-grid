@@ -95,7 +95,6 @@ const columnDefs: (ColDef | ColGroupDef)[] = [
         cellClass: 'cell-figure',
         cellRenderer: accountingCellRenderer,
         valueGetter: yearToDateValueGetter,
-        cellStyle: { 'font-weight': 'bold' },
         aggFunc: 'sum',
       },
     ],
@@ -103,7 +102,23 @@ const columnDefs: (ColDef | ColGroupDef)[] = [
 ]
 
 let gridApi: GridApi;
-
+const context ={
+  month: 0,
+  months: [
+    'jan',
+    'feb',
+    'mar',
+    'apr',
+    'may',
+    'jun',
+    'jul',
+    'aug',
+    'sep',
+    'oct',
+    'nov',
+    'dec',
+  ],
+};
 const gridOptions: GridOptions = {
   columnDefs: columnDefs,
   defaultColDef: {
@@ -124,23 +139,7 @@ const gridOptions: GridOptions = {
   animateRows: true,
   rowSelection: 'multiple',
   groupSelectsChildren: true,
-  context: {
-    month: 0,
-    months: [
-      'jan',
-      'feb',
-      'mar',
-      'apr',
-      'may',
-      'jun',
-      'jul',
-      'aug',
-      'sep',
-      'oct',
-      'nov',
-      'dec',
-    ],
-  },
+  context: context
 }
 
 var monthNames = [
@@ -160,7 +159,7 @@ var monthNames = [
 ]
 
 function onChangeMonth(i: number) {
-  var newMonth = (gridOptions.context.month += i)
+  var newMonth = (context.month += i)
 
   if (newMonth < -1) {
     newMonth = -1
@@ -168,15 +167,18 @@ function onChangeMonth(i: number) {
   if (newMonth > 5) {
     newMonth = 5
   }
-
-  gridOptions.context.month = newMonth
+  // Mutate the context object in place
+  context.month = newMonth
   document.querySelector('#monthName')!.innerHTML = monthNames[newMonth + 1]
   gridApi!.refreshClientSideRowModel('aggregate')
   gridApi!.refreshCells()
 }
 
-function onQuickFilterChanged(value: any) {
-  gridApi!.setGridOption('quickFilterText', value);
+function onQuickFilterChanged() {
+  gridApi!.setGridOption(
+    'quickFilterText',
+    (document.getElementById('filter-text-box') as HTMLInputElement).value
+  )
 }
 
 

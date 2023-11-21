@@ -233,6 +233,7 @@
         border: var(--ag-borders);
         border-color: var(--ag-border-color);
         border-radius: 5px;
+        background-color: var(--ag-background-color);
 
         &:disabled {
             color: var(--ag-disabled-foreground-color);
@@ -259,6 +260,11 @@
 
     .ag-color-picker .ag-picker-field-display {
         height: var(--ag-icon-size);
+    }
+
+    .ag-color-picker .ag-picker-field-wrapper {
+        max-width: 45px;
+        min-width: 45px;
     }
 
     .ag-color-panel {
@@ -363,7 +369,6 @@
     ////////////////////////////////////////
     .ag-select {
         .ag-picker-field-wrapper {
-            background-color: var(--ag-background-color);
             min-height: var(--ag-list-item-height);
             @include ag.unthemed-rtl(( padding-left: calc(var(--ag-cell-horizontal-padding) / 2) ));
             @include ag.unthemed-rtl(( padding-right: var(--ag-grid-size) ));

@@ -76,6 +76,8 @@
     .ag-toggle-button-input-wrapper {
         box-sizing: border-box;
         width: var(--ag-toggle-button-width);
+        min-width: var(--ag-toggle-button-width);
+        max-width: var(--ag-toggle-button-width);
         height: var(--ag-toggle-button-height);
         background-color: var(--ag-toggle-button-off-background-color);
         border-radius: calc(var(--ag-toggle-button-height) * 0.5);

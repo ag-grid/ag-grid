@@ -31,7 +31,7 @@ The simplest approach is to send all row data to the browser in response to a si
 
 This scenario is illustrated below where 10,000 records are loaded directly into the browser:
 
-<image-caption src="server-side-operations-oracle/resources/in-memory-row-model.png" alt="In Memory Row Model" constrained="true"></image-caption>
+<image-caption src="server-side-operations-oracle/resources/in-memory-row-model.png" alt="In Memory Row Model" constrained="true" filterdarkmode="true"></image-caption>
 
 The Client-Side Row Model only renders the rows currently visible, so the upper limit of rows is governed by the browser's memory footprint and data transfer time, rather than any restrictions inside the grid.
 
@@ -43,7 +43,7 @@ This is precisely the problem the [Server-Side Row Model](/server-side-model/) a
 
 The following diagram shows the approach used by the Server-Side Row Model. Here there are 10 million records, however the number of records is only constrained by the limits of the server:
 
-<image-caption src="server-side-operations-oracle/resources/enterprise-row-model.png" alt="Enterprise Row Model" constrained="true"></image-caption>
+<image-caption src="server-side-operations-oracle/resources/enterprise-row-model.png" alt="Enterprise Row Model" constrained="true" filterdarkmode="true"></image-caption>
 
 As the user performs operations such as sorting and grouping, the grid issues requests to the server that contains all the necessary metadata required, including which portion of data should be returned based on the user's position in the dataset.
 
@@ -105,7 +105,7 @@ mvn clean install
 
 To confirm all went well you should see the following maven output:
 
-<image-caption src="server-side-operations-oracle/resources/mvn-success.png" alt="MVN Success" constrained="true"></image-caption>
+<image-caption src="server-side-operations-oracle/resources/mvn-success.png" alt="MVN Success" constrained="true" filterdarkmode="true"></image-caption>
 
 ## Configure Oracle
 
@@ -161,7 +161,7 @@ mvn spring-boot:run
 
 If successful you should see something like this:
 
-<image-caption src="server-side-operations-oracle/resources/tomcat-started.png" alt="TomCat Started" constrained="true"></image-caption>
+<image-caption src="server-side-operations-oracle/resources/tomcat-started.png" alt="TomCat Started" constrained="true" filterdarkmode="true"></image-caption>
 
 To test the application point your browser to [http://localhost:9090](http://localhost:9090)
 

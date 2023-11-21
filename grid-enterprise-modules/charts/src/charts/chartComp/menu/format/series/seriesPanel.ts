@@ -121,7 +121,7 @@ export class SeriesPanel extends Component {
             .setLabel(this.translate('seriesType'))
             .setLabelAlignment("left")
             .setLabelWidth('flex')
-            .setInputWidth(100)
+            .setInputWidth('flex')
             .addOptions(this.getSeriesSelectOptions())
             .setValue(`${this.seriesType}`)
             .onValueChange((newValue: ChartSeriesType) => {
@@ -140,7 +140,7 @@ export class SeriesPanel extends Component {
             .setLabel(this.translate("tooltips"))
             .setLabelAlignment("left")
             .setLabelWidth("flex")
-            .setInputWidth(45)
+            .setInputWidth('flex')
             .setValue(this.getSeriesOption("tooltip.enabled") || false)
             .onValueChange(newValue => this.setSeriesOption("tooltip.enabled", newValue));
 

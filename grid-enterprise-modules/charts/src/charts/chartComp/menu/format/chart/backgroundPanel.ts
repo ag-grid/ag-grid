@@ -53,7 +53,7 @@ export class BackgroundPanel extends Component {
         this.colorPicker
             .setLabel(this.chartTranslationService.translate('color'))
             .setLabelWidth('flex')
-            .setInputWidth(45)
+            .setInputWidth('flex')
             .setValue(this.chartOptionsService.getChartOption('background.fill'))
             .onValueChange(newColor => this.chartOptionsService.setChartOption('background.fill', newColor));
     }

@@ -19,7 +19,7 @@
 
 .filter-icon {
     margin-left: 4px;
-    color: grey;
+    opacity: 0.6;
 }
 
 .filter-icon-disabled {

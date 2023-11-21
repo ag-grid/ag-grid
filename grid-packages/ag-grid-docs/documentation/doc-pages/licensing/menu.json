@@ -535,6 +535,11 @@
             "showInCollapsed": true
           },
           {
+            "title": "Context",
+            "url": "/context/",
+            "showInCollapsed": true
+          },
+          {
             "title": "See Also",
             "url": "",
             "items": [
@@ -1040,11 +1045,6 @@
           {
             "title": "Data Stages",
             "url": "/client-side-row-stages/",
-            "showInCollapsed": true
-          },
-          {
-            "title": "Context",
-            "url": "/context/",
             "showInCollapsed": true
           }
         ]

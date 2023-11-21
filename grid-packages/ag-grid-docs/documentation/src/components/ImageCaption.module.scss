@@ -36,3 +36,8 @@
 .bodyText {
     white-space: nowrap;
 }
+
+#{$darkmode-selector} .filterDarkMode img {
+    filter: invert(1) hue-rotate(180deg) saturate(1.25);
+    mix-blend-mode: screen;
+}

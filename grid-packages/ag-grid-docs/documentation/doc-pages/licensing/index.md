@@ -12,7 +12,7 @@ AG Grid comes in two forms: AG Grid Community (free for everyone, including prod
         <br/>
         See <a href="https://www.ag-grid.com/license-pricing">Pricing</a> for details on purchasing an AG Grid Enterprise license.
     </div>
-    <image-caption src="licensing/resources/enterprise-features.png" alt="Enterprise Features" minwidth="15rem" width="15rem" maxwidth="15rem" height="10rem" constrained="true"></image-caption>
+    <image-caption src="licensing/resources/enterprise-features.png" alt="Enterprise Features" minwidth="15rem" width="15rem" maxwidth="15rem" height="10rem" constrained="true" filterdarkmode="true"></image-caption>
 </div>
 
 ## Trial AG Grid Enterprise for Free
