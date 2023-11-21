@@ -202,6 +202,15 @@ The Grid API provides a way of interacting with the grid. To update the data wit
 |  .then((data: any) => gridApi.setGridOption('rowData', data))
 </snippet>
 
+Now that we're loading data from an external source, we can empty our `rowData` array which will allow the grid to display a loading spinner whilst the data is being fetched:
+
+<snippet transform={false} language="jsx">
+|const gridOptions = {
+|  rowData: [],
+|  // ...
+|}
+</snippet>
+
 When we run our application, we should see a grid with ~2,500 rows:
 
 <grid-example title='Updating Example' name='updating-example' type='mixed' options='{ "exampleHeight": 550 }'></grid-example>
