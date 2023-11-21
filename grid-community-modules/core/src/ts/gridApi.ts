@@ -295,15 +295,9 @@ export class GridApi<TData = any> {
         }
     }
 
-    private getExcelExportMode(params?: ExcelExportParams): 'xlsx' | 'xml' {
-        const baseParams = this.gos.get('defaultExcelExportParams');
-        const mergedParams = Object.assign({ exportMode: 'xlsx' }, baseParams, params);
-        return mergedParams.exportMode;
-    }
     private assertNotExcelMultiSheet(method: keyof GridApi, params?: ExcelExportParams): boolean {
         if (!ModuleRegistry.__assertRegistered(ModuleNames.ExcelExportModule, 'api.' + method, this.context.getGridId())) { return false }
-        const exportMode = this.getExcelExportMode(params);
-        if (this.excelCreator.getFactoryMode(exportMode) === ExcelFactoryMode.MULTI_SHEET) {
+        if (this.excelCreator.getFactoryMode() === ExcelFactoryMode.MULTI_SHEET) {
             console.warn("AG Grid: The Excel Exporter is currently on Multi Sheet mode. End that operation by calling 'api.getMultipleSheetAsExcel()' or 'api.exportMultipleSheetsAsExcel()'");
             return false;
         }
@@ -327,8 +321,7 @@ export class GridApi<TData = any> {
     /** This is method to be used to get the grid's data as a sheet, that will later be exported either by `getMultipleSheetsAsExcel()` or `exportMultipleSheetsAsExcel()`. */
     public getSheetDataForExcel(params?: ExcelExportParams): string | undefined {
         if (!ModuleRegistry.__assertRegistered(ModuleNames.ExcelExportModule, 'api.getSheetDataForExcel', this.context.getGridId())) { return; }
-        const exportMode = this.getExcelExportMode(params);
-        this.excelCreator.setFactoryMode(ExcelFactoryMode.MULTI_SHEET, exportMode);
+        this.excelCreator.setFactoryMode(ExcelFactoryMode.MULTI_SHEET);
 
         return this.excelCreator.getSheetDataForExcel(params);
     }

@@ -30,8 +30,11 @@ export abstract class BaseCreator<T, S extends GridSerializingSession<T>, P exte
         return data;
     }
 
+    public getDefaultFileName(): string {
+        return `export.${this.getDefaultFileExtension()}`;
+    }
+
     public abstract createSerializingSession(params?: P): S;
-    public abstract getDefaultFileName(): string;
     public abstract getDefaultFileExtension(): string;
     public abstract isExportSuppressed(): boolean;
 }

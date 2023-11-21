@@ -373,11 +373,6 @@ export interface ExcelExportParams extends ExportParams<ExcelRow[]> {
      */
     columnWidth?: number | ((params: ColumnWidthCallbackParams) => number);
     /**
-     * For backwards compatibility, this property could be set to `xml`, which will export an Excel Spreadsheet compatible with old Office versions (prior to Office 2007). Setting this to `xml` is not recommended as some features will not work in legacy mode.
-     * @default xlsx
-     */
-    exportMode?: 'xlsx' | 'xml';
-    /**
      * The default value for the font size of the Excel document.
      * @default 11
      */
@@ -498,8 +493,8 @@ export interface IExcelCreator {
     exportMultipleSheetsAsExcel(params: ExcelExportMultipleSheetParams): void;
 
     /** private methods */
-    setFactoryMode(factoryMode: ExcelFactoryMode, exportMode: 'xml' | 'xlsx'): void;
-    getFactoryMode(exportMode: 'xml' | 'xlsx'): ExcelFactoryMode;
+    setFactoryMode(factoryMode: ExcelFactoryMode): void;
+    getFactoryMode(): ExcelFactoryMode;
 }
 
 export interface ExcelSheetMargin {
