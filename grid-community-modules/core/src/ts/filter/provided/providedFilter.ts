@@ -6,7 +6,7 @@ import { clearElement, loadTemplate, removeFromParent, setDisabled } from '../..
 import { debounce } from '../../utils/function';
 import { AgPromise } from '../../utils/promise';
 import { PopupEventParams } from '../../widgets/popupService';
-import { IFilterLocaleText, IFilterTitleLocaleText, DEFAULT_FILTER_LOCALE_TEXT } from '../filterLocaleText';
+import { FILTER_LOCALE_TEXT } from '../filterLocaleText';
 import { ManagedFocusFeature } from '../../widgets/managedFocusFeature';
 import { convertToSet } from '../../utils/set';
 import { Component } from '../../widgets/component';
@@ -109,7 +109,7 @@ export abstract class ProvidedFilter<M, V> extends Component implements IProvide
     private eButtonsPanel: HTMLElement;
     private buttonListeners: ((() => null) | undefined)[] = [];
 
-    constructor(private readonly filterNameKey: keyof IFilterTitleLocaleText) {
+    constructor(private readonly filterNameKey: keyof typeof FILTER_LOCALE_TEXT) {
         super();
     }
 
@@ -527,10 +527,10 @@ export abstract class ProvidedFilter<M, V> extends Component implements IProvide
         super.destroy();
     }
 
-    protected translate(key: keyof IFilterLocaleText | keyof IFilterTitleLocaleText): string {
+    protected translate(key: keyof typeof FILTER_LOCALE_TEXT): string {
         const translate = this.localeService.getLocaleTextFunc();
 
-        return translate(key, DEFAULT_FILTER_LOCALE_TEXT[key]);
+        return translate(key, FILTER_LOCALE_TEXT[key]);
     }
 
     protected getCellValue(rowNode: IRowNode): V | null | undefined {

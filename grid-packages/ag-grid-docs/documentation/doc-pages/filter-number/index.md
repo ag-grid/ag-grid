@@ -130,20 +130,20 @@ The Number Filter presents a list of [Filter Options](/filter-conditions/#filter
 
 The list of options are as follows:
 
-| Option Name             | Option Key            | Included by Default |
-| ----------------------- | --------------------- | ------------------- |
-| Equals                  | `equals`              | Yes                 |
-| Not equal               | `notEqual`            | Yes                 |
-| Less than               | `lessThan`            | Yes                 |
-| Less than or equals     | `lessThanOrEqual`     | Yes                 |
-| Greater than            | `greaterThan`         | Yes                 |
-| Greater than or equals  | `greaterThanOrEqual`  | Yes                 |
-| In range                | `inRange`             | Yes                 |
-| Blank                   | `blank`               | Yes                 |
-| Not blank               | `notBlank`            | Yes                 |
-| Choose One              | `empty`               | No                  |
+| Option Name              | Option Key            | Included by Default |
+| ------------------------ | --------------------- | ------------------- |
+| Equals                   | `equals`              | Yes                 |
+| Does not equal           | `notEqual`            | Yes                 |
+| Greater than             | `greaterThan`         | Yes                 |
+| Greater than or equal to | `greaterThanOrEqual`  | Yes                 |
+| Less than                | `lessThan`            | Yes                 |
+| Less than or equal to    | `lessThanOrEqual`     | Yes                 |
+| Between                  | `inRange`             | Yes                 |
+| Blank                    | `blank`               | Yes                 |
+| Not blank                | `notBlank`            | Yes                 |
+| Choose one               | `empty`               | No                  |
 
-Note that the `empty` filter option is primarily used when creating [Custom Filter Options](/filter-conditions/#custom-filter-options). When 'Choose One' is displayed, the filter is not active.
+Note that the `empty` filter option is primarily used when creating [Custom Filter Options](/filter-conditions/#custom-filter-options). When 'Choose one' is displayed, the filter is not active.
 
 The default option for the Number Filter is `equals`.
 
@@ -162,7 +162,7 @@ Applying the Number Filter is described in more detail in the following sections
 
 ## Blank Cells
 
-If the row data contains blanks (i.e. `null` or `undefined`), by default the row won't be included in filter results. To change this, use the filter params `includeBlanksInEquals`, `includeBlanksInLessThan`, `includeBlanksInGreaterThan` and `includeBlanksInRange`. For example, the code snippet below configures a filter to include `null` for equals, but not for less than, greater than or in range:
+If the row data contains blanks (i.e. `null` or `undefined`), by default the row won't be included in filter results. To change this, use the filter params `includeBlanksInEquals`, `includeBlanksInLessThan`, `includeBlanksInGreaterThan` and `includeBlanksInRange`. For example, the code snippet below configures a filter to include `null` for equals, but not for less than, greater than or in range (between):
 
 ```js
 const filterParams = {

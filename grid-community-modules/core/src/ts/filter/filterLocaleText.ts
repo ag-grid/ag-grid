@@ -1,38 +1,4 @@
-export interface IFilterLocaleText {
-    applyFilter: string;
-    clearFilter: string;
-    resetFilter: string;
-    cancelFilter: string;
-    filterOoo: string;
-    empty: string;
-    equals: string;
-    notEqual: string;
-    lessThan: string;
-    greaterThan: string;
-    inRange: string;
-    inRangeStart: string;
-    inRangeEnd: string;
-    lessThanOrEqual: string;
-    greaterThanOrEqual: string;
-    contains: string;
-    notContains: string;
-    startsWith: string;
-    endsWith: string;
-    blank: string;
-    notBlank: string;
-    andCondition: string;
-    orCondition: string;
-    dateFormatOoo: string;
-}
-
-export interface IFilterTitleLocaleText {
-    textFilter: string;
-    numberFilter: string;
-    dateFilter: string;
-    setFilter: string;
-}
-
-export const DEFAULT_FILTER_LOCALE_TEXT: IFilterLocaleText & IFilterTitleLocaleText = {
+export const FILTER_LOCALE_TEXT = {
     applyFilter: 'Apply',
     clearFilter: 'Clear',
     resetFilter: 'Reset',
@@ -42,22 +8,24 @@ export const DEFAULT_FILTER_LOCALE_TEXT: IFilterLocaleText & IFilterTitleLocaleT
     dateFilter: 'Date Filter',
     setFilter: 'Set Filter',
     filterOoo: 'Filter...',
-    empty: 'Choose One',
+    empty: 'Choose one',
     equals: 'Equals',
-    notEqual: 'Not equal',
+    notEqual: 'Does not equal',
     lessThan: 'Less than',
     greaterThan: 'Greater than',
-    inRange: 'In range',
+    inRange: 'Between',
     inRangeStart: 'From',
     inRangeEnd: 'To',
-    lessThanOrEqual: 'Less than or equals',
-    greaterThanOrEqual: 'Greater than or equals',
+    lessThanOrEqual: 'Less than or equal to',
+    greaterThanOrEqual: 'Greater than or equal to',
     contains: 'Contains',
-    notContains: 'Not contains',
-    startsWith: 'Starts with',
+    notContains: 'Does not contain',
+    startsWith: 'Begins with',
     endsWith: 'Ends with',
     blank: 'Blank',
     notBlank: 'Not blank',
+    before: 'Before',
+    after: 'After',
     andCondition: 'AND',
     orCondition: 'OR',
     dateFormatOoo: 'yyyy-mm-dd',

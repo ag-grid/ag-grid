@@ -12,28 +12,30 @@ const AG_GRID_LOCALE_EN = {
     // Number Filter & Text Filter
     filterOoo: 'Filter...',
     equals: 'Equals',
-    notEqual: 'Not equal',
+    notEqual: 'Does not equal',
     blank: 'Blank',
     notBlank: 'Not blank',
-    empty: 'Choose One',
+    empty: 'Choose one',
 
     // Number Filter
     lessThan: 'Less than',
     greaterThan: 'Greater than',
-    lessThanOrEqual: 'Less than or equal',
-    greaterThanOrEqual: 'Greater than or equal',
-    inRange: 'In range',
-    inRangeStart: 'from',
-    inRangeEnd: 'to',
+    lessThanOrEqual: 'Less than or equal to',
+    greaterThanOrEqual: 'Greater than or equal to',
+    inRange: 'Between',
+    inRangeStart: 'From',
+    inRangeEnd: 'To',
 
     // Text Filter
     contains: 'Contains',
-    notContains: 'Not contains',
-    startsWith: 'Starts with',
+    notContains: 'Does not contain',
+    startsWith: 'Begins with',
     endsWith: 'Ends with',
 
     // Date Filter
     dateFormatOoo: 'yyyy-mm-dd',
+    before: 'Before',
+    after: 'After',
 
     // Filter Conditions
     andCondition: 'AND',
@@ -59,7 +61,7 @@ const AG_GRID_LOCALE_EN = {
     advancedFilterNotContains: 'does not contain',
     advancedFilterTextEquals: 'equals',
     advancedFilterTextNotEqual: 'does not equal',
-    advancedFilterStartsWith: 'starts with',
+    advancedFilterStartsWith: 'begins with',
     advancedFilterEndsWith: 'ends with',
     advancedFilterBlank: 'is blank',
     advancedFilterNotBlank: 'is not blank',
@@ -88,7 +90,7 @@ const AG_GRID_LOCALE_EN = {
     advancedFilterValidationInvalidJoinOperator: 'Join operator not found',
     advancedFilterValidationMissingEndBracket: 'Missing end bracket',
     advancedFilterValidationExtraEndBracket: 'Too many end brackets',
-    advancedFilterValidationMessage: 'Expression has an error. ${variable1} - ${variable2}.',
+    advancedFilterValidationMessage: 'Expression has an error. ${variable} - ${variable}.',
     advancedFilterValidationMessageAtEnd: 'Expression has an error. ${variable} at end of expression.',
     advancedFilterBuilderTitle: 'Advanced Filter',
     advancedFilterBuilderApply: 'Apply',
@@ -338,8 +340,8 @@ const AG_GRID_LOCALE_EN = {
     secondaryAxis: 'Secondary Axis',
 
     // ARIA
-    ariaAdvancedFilterBuilderItem: '${variable1}. Level ${variable2}. Press ENTER to edit.',
-    ariaAdvancedFilterBuilderItemValidation: '${variable1}. Level ${variable2}. ${variable3} Press ENTER to edit.',
+    ariaAdvancedFilterBuilderItem: '${variable}. Level ${variable}. Press ENTER to edit.',
+    ariaAdvancedFilterBuilderItemValidation: '${variable}. Level ${variable}. ${variable} Press ENTER to edit.',
     ariaAdvancedFilterBuilderList: 'Advanced Filter Builder List',
     ariaAdvancedFilterBuilderFilterItem: 'Filter Condition',
     ariaAdvancedFilterBuilderGroupItem: 'Filter Group',

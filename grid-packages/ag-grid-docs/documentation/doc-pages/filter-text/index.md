@@ -193,16 +193,16 @@ The list of options are as follows:
 | Option Name             | Option Key            | Included by Default |
 | ----------------------- | --------------------- | ------------------- |
 | Contains                | `contains`            | Yes                 |
-| Not contains            | `notContains`         | Yes                 |
+| Does not contain        | `notContains`         | Yes                 |
 | Equals                  | `equals`              | Yes                 |
-| Not equal               | `notEqual`            | Yes                 |
-| Starts with             | `startsWith`          | Yes                 |
+| Does not equal          | `notEqual`            | Yes                 |
+| Begins with             | `startsWith`          | Yes                 |
 | Ends with               | `endsWith`            | Yes                 |
 | Blank                   | `blank`               | Yes                 |
 | Not blank               | `notBlank`            | Yes                 |
-| Choose One              | `empty`               | No                  |
+| Choose one              | `empty`               | No                  |
 
-Note that the `empty` filter option is primarily used when creating [Custom Filter Options](/filter-conditions/#custom-filter-options). When 'Choose One' is displayed, the filter is not active.
+Note that the `empty` filter option is primarily used when creating [Custom Filter Options](/filter-conditions/#custom-filter-options). When 'Choose one' is displayed, the filter is not active.
 
 The default option for the Text Filter is `contains`.
 
