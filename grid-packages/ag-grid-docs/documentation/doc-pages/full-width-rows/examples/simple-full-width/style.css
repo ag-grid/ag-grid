@@ -7,7 +7,7 @@
   border-style: ridge;
   box-sizing: border-box;
   padding: 5px;
-  background-color: darkgray;
+  background-color: #99999944;
 }
 
 .full-width-flag {
@@ -33,7 +33,7 @@
   height: 100%;
   box-sizing: border-box;
   font-family: cursive;
-  background-color: #fafafa;
+  background-color: #99999944;
 }
 
 .full-width-center p {

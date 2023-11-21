@@ -5,7 +5,7 @@
     border: 1px solid cornflowerblue;
     pointer-events: none;
     transition: opacity 1s;
-    background-color: white;
+    background-color: var(--ag-background-color);
 }
 
 .custom-tooltip.ag-tooltip-hiding {
