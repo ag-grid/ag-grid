@@ -80,7 +80,6 @@ export {
     ExcelRow,
     ExcelStyle,
     ExcelTable,
-    ExcelXMLTemplate,
     ExcelWorksheet
 } from "./interfaces/iExcelCreator";
 
