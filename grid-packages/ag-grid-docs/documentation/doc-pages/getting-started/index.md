@@ -111,7 +111,7 @@ Replace your `index.js` file with the following code:
 <snippet transform={false} language="jsx">
 |import React, { useState } from 'react';
 |import { createRoot } from 'react-dom/client';
-|import { AgGridReact } from 'ag-grid-react'; // Core Grid Logic
+|import { AgGridReact } from 'ag-grid-react'; // React Grid Logic
 |import "ag-grid-community/styles/ag-grid.css"; // Core CSS
 |import "ag-grid-community/styles/ag-theme-quartz.css"; // Theme
 |
@@ -243,7 +243,7 @@ Replace the `app.vue` file with the following code:
 |import { ref } from 'vue';
 |import "ag-grid-community/styles/ag-grid.css"; // Core CSS
 |import "ag-grid-community/styles/ag-theme-quartz.css"; // Theme
-|import { AgGridVue } from "ag-grid-vue3"; // Core Grid Logic
+|import { AgGridVue } from "ag-grid-vue3"; // Vue Grid Logic
 |
 |export default {
 |  name: "App",

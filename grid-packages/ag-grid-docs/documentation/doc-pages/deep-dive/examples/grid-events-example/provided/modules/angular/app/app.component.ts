@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ICellRendererAngularComp } from 'ag-grid-angular'; // Core Grid Logic
+import { ICellRendererAngularComp } from 'ag-grid-angular'; // Angular Grid Logic
 import { CellValueChangedEvent, ColDef, GridReadyEvent, ICellRendererParams, ValueFormatterParams } from 'ag-grid-community'; // Column Definitions Interface
 import { HttpClient } from '@angular/common/http';
 import "@ag-grid-community/styles/ag-grid.css";
