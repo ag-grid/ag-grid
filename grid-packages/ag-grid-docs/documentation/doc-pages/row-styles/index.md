@@ -153,3 +153,19 @@ Row Highlighting works by the grid adding the CSS class `ag-row-hover` to the ro
 
 Column Highlighting works by the grid adding the CSS class `ag-column-hover`
 to all Cells to be highlighted.
+
+## Styling the First and Last Rows
+
+It's possible to style the first and last rows of the grid using CSS by targeting the `.ag-row-first` and `.ag-row-last` selectors as follows:
+
+```css
+.ag-row.ag-row-first .ag-cell {
+    background-color: darkblue;
+}
+
+.ag-row.ag-row-last .ag-cell {
+    background-color: gold;
+}
+```
+
+<grid-example title='Row Styling First and Last' name='row-styling-first-last' type='generated'></grid-example>

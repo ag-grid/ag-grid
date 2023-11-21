@@ -1,0 +1,25 @@
+.ag-header-group-cell.ag-column-first {
+    background-color: darkblue !important;
+    color: white;
+}
+
+.ag-header-cell.ag-column-first {
+    background-color: mediumblue !important;
+    color: white;
+}
+
+.ag-floating-filter.ag-column-first {
+    background-color: cornflowerblue !important;
+}
+
+.ag-header-group-cell.ag-column-last {
+    background-color: darkorange !important;
+}
+
+.ag-header-cell.ag-column-last {
+    background-color: orange !important;
+}
+
+.ag-floating-filter.ag-column-last {
+    background-color: gold !important;
+}

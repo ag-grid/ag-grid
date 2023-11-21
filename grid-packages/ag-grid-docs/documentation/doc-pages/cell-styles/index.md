@@ -193,3 +193,19 @@ Below shows both cssClassRules snippets above in a full working example. The exa
 - Silver and Bronze set `cellStyle` using a function and depends on the value. Editing will update the cellStyle.
 
 <grid-example title='Cell Styling' name='cell-styling' type='mixed'></grid-example>
+
+## Styling Cells in the First and Last Columns
+
+It's possible to style the cells in the first and last columns using CSS by targeting the `.ag-column-first` and `.ag-column-last` selectors as follows:
+
+```css
+.ag-cell.ag-column-first {
+    background-color: darkblue;
+}
+
+.ag-cell.ag-column-last {
+    background-color: gold;
+}
+```
+
+<grid-example title='Cell Styling' name='cell-styling-first-last' type='generated'></grid-example>

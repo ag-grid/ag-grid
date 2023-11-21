@@ -1,0 +1,8 @@
+.ag-row.ag-row-first {
+    background-color: darkblue;
+    color: white;
+}
+
+.ag-row.ag-row-last {
+    background-color: gold;
+}

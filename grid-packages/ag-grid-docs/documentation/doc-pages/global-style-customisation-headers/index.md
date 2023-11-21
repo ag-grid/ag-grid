@@ -48,10 +48,6 @@ Header Column Separators appear between every column, whereas Resize Handles onl
 
 <grid-example title='Column Separators' name='header-customisation-columns' type='generated' options='{ "exampleHeight": 400 }'></grid-example>
 
-## Full List of Header Variables
-
-<api-documentation source='global-style-customisation-variables/resources/variables.json' section='variables' config='{"namePattern": "--ag-header", "maxLeftColumnWidth": 35, "hideHeader": true}'></api-documentation>
-
 ## Style Header on Filter
 
 Each time a [Column Filter](/filtering/) is applied to a column, the CSS class `ag-header-cell-filtered` is added to the header. This can be used for adding style to headers that are filtered.
@@ -59,3 +55,41 @@ Each time a [Column Filter](/filtering/) is applied to a column, the CSS class `
 The example below adds some styling to `ag-header-cell-filtered`, so when you filter a column you will notice the column header change.
 
 <grid-example title='Style Header' name='style-header-on-filter' type='generated' options='{ "exampleHeight": 520 }'></grid-example>
+
+# Styling the First and Last Columns
+
+It's possible to style the all first and last column header (Grouped, Non-Grouped and Floating Filters) using CSS by targeting the `.ag-column-first` and `.ag-column-last` selectors as follows:
+
+```css
+.ag-theme-quartz .ag-header-group-cell.ag-column-first {
+    background-color: darkblue;
+}
+
+.ag-theme-quartz .ag-header-cell.ag-column-first {
+    background-color: mediumblue;
+}
+
+.ag-theme-quartz .ag-floating-filter.ag-column-first {
+    background-color: cornflowerblue;
+}
+
+.ag-theme-quartz .ag-header-group-cell.ag-column-last {
+    background-color: darkorange;
+}
+
+.ag-theme-quartz .ag-header-cell.ag-column-last {
+    background-color: orange;
+}
+
+.ag-theme-quartz .ag-floating-filter.ag-column-last {
+    background-color: gold;
+}
+```
+
+<grid-example title='Style Header' name='style-header-first-last' type='generated' options='{ "exampleHeight": 520 }'></grid-example>
+
+## Full List of Header Variables
+
+<api-documentation source='global-style-customisation-variables/resources/variables.json' section='variables' config='{"namePattern": "--ag-header", "maxLeftColumnWidth": 35, "hideHeader": true}'></api-documentation>
+
+
