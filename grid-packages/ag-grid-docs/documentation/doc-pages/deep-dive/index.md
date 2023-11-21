@@ -45,7 +45,7 @@ Complete our [Quick Start](/getting-started/) or fork our [CodeSandbox example T
 
 <!-- Create a Basic Grid -->
 
-Complete our [Quick Start](/getting-started/) or fork our [CodeSandbox example]() to start with a basic grid, comprised of:
+Complete our [Quick Start](/getting-started/) or fork our [CodeSandbox example TODO]() to start with a basic grid, comprised of:
 
 1. __Row Data:__ The data to be displayed.
 2. __Column Definition:__ Defines & controls grid columns.
@@ -64,7 +64,7 @@ _Note: `rowData` and `columnDefs` arrays use the `useState` hook. We recommend `
 
 <!-- Create a Basic Grid -->
 
-Complete our [Quick Start](/getting-started/) or fork our [CodeSandbox example TODO]() to start with a basic grid, made up of three things:
+Complete our [Quick Start](/getting-started/) or fork our [CodeSandbox example TODO]() to start with a basic grid, comprised of:
 
 1. __Row Data:__ The data to be displayed.
 2. __Column Definition:__ Defines & controls grid columns.
