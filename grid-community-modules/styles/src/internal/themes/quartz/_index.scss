@@ -148,7 +148,8 @@
     }
 
     .ag-charts-format-top-level-group-container {
-        @include ag.theme-rtl((padding-left: 0));
+        @include ag.theme-rtl((padding-left: 0, padding-right: 0));
+        padding: 0;
     }
 
     .ag-chart-mini-thumbnail {
@@ -193,7 +194,7 @@
         padding-top: 0;
         padding-bottom: 0;
         background: none;
-        font-weight: 700;
+        font-weight: 500;
     }
 
     .ag-charts-format-sub-level-group-container {
@@ -205,7 +206,7 @@
     }
 
     &.ag-dnd-ghost {
-        font-weight: 700;
+        font-weight: 500;
     }
 
     .ag-standard-button {
