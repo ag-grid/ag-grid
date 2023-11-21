@@ -151,3 +151,10 @@
         transition: fill $default-transition-timing;
     }
 }
+
+.expandedContent {
+    border-top: none;
+    td {
+        padding-top: 0;
+    }
+}
