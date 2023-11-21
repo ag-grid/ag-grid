@@ -22,11 +22,7 @@ const dateFormatter = (params) => {
 // Create new GridExample component
 const GridExample = () => {
   // Row Data: The data to be displayed.
-  const [rowData, setRowData] = useState([
-    {company: "CASC", country: "China", date: "2022-07-24", mission: "Wentian", price: 2150000, successful: true},
-    {company: "SpaceX", country: "USA", date: "2022-07-24", mission: "Starlink Group 4-25", price: 3230000, successful: true},
-    {company: "SpaceX", country: "USA", date: "2022-07-22", mission: "Starlink Group 3-2", price: 8060000, successful: true}
-  ]);
+  const [rowData, setRowData] = useState([]);
   
   // Column Definitions: Defines & controls grid columns.
   const [colDefs] = useState([
