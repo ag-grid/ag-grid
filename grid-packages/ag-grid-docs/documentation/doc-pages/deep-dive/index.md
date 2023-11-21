@@ -327,6 +327,18 @@ As rowData is a managed property, any updates to its value will be reflected in 
 |};
 </snippet>
 
+And now that we're loading data from an external source, we can empty our `rowData` array which will allow the grid to display a loading spinner whilst the data is being fetched:
+
+<snippet transform={false} language="jsx">
+|const App = {
+|  setup() {
+|    const rowData = ref([]);
+|    // ...
+|  }
+|  // ...
+|}
+</snippet>
+
 When we run our application, we should see a grid with ~2,500 rows:
 
 <grid-example title='Updating Example' name='updating-example' type='mixed' options='{ "exampleHeight": 550 }'></grid-example>
