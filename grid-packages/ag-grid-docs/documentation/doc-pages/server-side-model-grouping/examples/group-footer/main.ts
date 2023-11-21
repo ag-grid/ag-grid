@@ -33,7 +33,6 @@ const gridOptions: GridOptions<IOlympicData> = {
   rowModelType: 'serverSide',
   rowSelection: 'multiple',
   isServerSideGroupOpenByDefault: isServerSideGroupOpenByDefault,
-  animateRows: true,
   getRowId: getRowId,
   groupIncludeFooter: true,
 }

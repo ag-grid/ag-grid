@@ -67,7 +67,6 @@ const gridOptions: GridOptions<IOlympicData> = {
   rowModelType: 'serverSide',
   rowGroupPanelShow: 'always',
   pivotPanelShow: 'always',
-  animateRows: true,
   sideBar: true,
   maxConcurrentDatasourceRequests: 1,
   maxBlocksInCache: 2,

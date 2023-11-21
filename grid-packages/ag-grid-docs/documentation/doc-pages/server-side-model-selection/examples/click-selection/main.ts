@@ -37,7 +37,6 @@ const gridOptions: GridOptions<IOlympicData> = {
   // allow multiple leaf row selections
   rowSelection: 'multiple',
 
-  animateRows: true,
   suppressAggFuncInHeader: true,
 }
 

@@ -26,7 +26,6 @@ const gridOptions: GridOptions = {
     }
     return node.rowGroupColumn.getId() === 'country';
   },
-  animateRows: true,
   groupDefaultExpanded: 1
 }
 

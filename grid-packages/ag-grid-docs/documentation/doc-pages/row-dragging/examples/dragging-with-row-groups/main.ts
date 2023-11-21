@@ -24,7 +24,6 @@ const gridOptions: GridOptions = {
     sortable: true,
     filter: true,
   },
-  animateRows: true,
   groupDefaultExpanded: 1,
   onRowDragMove: onRowDragMove,
   onGridReady: (params) => {

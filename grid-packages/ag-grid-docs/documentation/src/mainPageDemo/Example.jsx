@@ -815,7 +815,6 @@ const ExampleInner = ({darkMode}) => {
             enableRtl: IS_SSR ? false : /[?&]rtl=true/.test(window.location.search),
             enableCharts: true,
             // multiSortKey: 'ctrl',
-            animateRows: true,
 
             enableRangeSelection: true,
             // enableRangeHandle: true,

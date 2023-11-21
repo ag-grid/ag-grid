@@ -31,7 +31,6 @@ const gridOptions: GridOptions = {
   },
   rowData: getData(),
   treeData: true,
-  animateRows: true,
   groupDefaultExpanded: -1,
   getDataPath: (data: any) => {
     return data.filePath

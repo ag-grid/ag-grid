@@ -23,7 +23,6 @@ const gridOptions: GridOptions<IOlympicData> = {
   rowDragEntireRow: true,
   rowDragMultiRow: true,
   rowSelection: 'multiple',
-  animateRows: true,
 }
 
 // setup the grid after the page has finished loading

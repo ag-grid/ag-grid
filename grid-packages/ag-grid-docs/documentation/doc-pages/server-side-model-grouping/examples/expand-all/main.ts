@@ -36,7 +36,6 @@ const gridOptions: GridOptions<IOlympicData> = {
   },
   maxConcurrentDatasourceRequests: 1,
   rowModelType: 'serverSide',
-  animateRows: true,
 }
 
 function onBtExpandAll() {

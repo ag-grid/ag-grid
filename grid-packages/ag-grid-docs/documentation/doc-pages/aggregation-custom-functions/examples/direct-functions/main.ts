@@ -25,7 +25,6 @@ const gridOptions: GridOptions<IOlympicData> = {
         minWidth: 200,
     },
     sideBar: true,
-    animateRows: true,
 }
 
 // setup the grid after the page has finished loading

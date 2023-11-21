@@ -26,7 +26,6 @@ const gridOptions: GridOptions<IOlympicData> = {
     sortable: true,
     filter: true,
   },
-  animateRows: true,
   onRowDragEnter: onRowDragEnter,
   onRowDragEnd: onRowDragEnd,
   onRowDragMove: onRowDragMove,

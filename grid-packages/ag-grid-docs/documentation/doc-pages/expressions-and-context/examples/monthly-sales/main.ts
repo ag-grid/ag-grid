@@ -136,7 +136,6 @@ const gridOptions: GridOptions = {
       checkbox: true,
     } as IGroupCellRendererParams,
   },
-  animateRows: true,
   rowSelection: 'multiple',
   groupSelectsChildren: true,
   context: context

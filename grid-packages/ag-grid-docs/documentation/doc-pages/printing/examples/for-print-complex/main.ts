@@ -22,7 +22,6 @@ const gridOptions: GridOptions = {
   },
   columnDefs: columnDefs,
   rowData: getData(),
-  animateRows: true,
   groupDisplayType: 'groupRows',
   onFirstDataRendered: onFirstDataRendered,
 }

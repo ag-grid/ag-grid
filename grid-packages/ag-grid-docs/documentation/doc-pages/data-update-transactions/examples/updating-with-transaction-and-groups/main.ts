@@ -44,7 +44,6 @@ const gridOptions: GridOptions = {
   rowData: getData(),
   suppressRowClickSelection: true,
   rowSelection: 'multiple',
-  animateRows: true,
   groupSelectsChildren: true,
   suppressAggFuncInHeader: true,
   // this allows the different colors per group, by assigning a different

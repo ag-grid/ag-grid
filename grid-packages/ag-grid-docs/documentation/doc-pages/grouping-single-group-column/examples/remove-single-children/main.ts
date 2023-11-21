@@ -39,7 +39,6 @@ const gridOptions: GridOptions = {
   groupDefaultExpanded: -1,
 
   suppressAggFuncInHeader: true,
-  animateRows: true,
 }
 
 function changeSelection(type: string) {

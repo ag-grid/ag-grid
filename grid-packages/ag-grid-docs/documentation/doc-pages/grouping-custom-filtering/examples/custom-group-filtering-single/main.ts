@@ -22,7 +22,6 @@ const gridOptions: GridOptions<IOlympicData> = {
     filter: 'agTextColumnFilter',
     filterValueGetter: (params: ValueGetterParams) => params.data.sport,
   },
-  animateRows: true,
 }
 
 function applyFilter() {

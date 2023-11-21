@@ -25,7 +25,6 @@ const gridOptions: GridOptions<IOlympicData> = {
     resizable: true,
   },
   groupDisplayType: 'groupRows',
-  animateRows: true,
 }
 
 // setup the grid after the page has finished loading

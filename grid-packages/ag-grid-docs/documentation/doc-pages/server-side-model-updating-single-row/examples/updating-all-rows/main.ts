@@ -20,7 +20,6 @@ const gridOptions: GridOptions = {
   // use the enterprise row model
   rowModelType: 'serverSide',
   cacheBlockSize: 75,
-  animateRows: true,
   enableCellChangeFlash: true,
 }
 

@@ -48,7 +48,6 @@ const gridOptions: GridOptions = {
   rowData: getData(),
   groupDefaultExpanded: -1,
   rowGroupPanelShow: 'always',
-  animateRows: true,
 }
 
 const COUNTRY_CODES: Record<string, string> = {

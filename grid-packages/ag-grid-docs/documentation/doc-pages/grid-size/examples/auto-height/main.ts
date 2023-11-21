@@ -40,7 +40,6 @@ const gridOptions: GridOptions = {
   },
   rowData: getData(5),
   domLayout: 'autoHeight',
-  animateRows: true,
   onGridReady: (params) => {
     document.querySelector('#currentRowCount')!.innerHTML = '5'
   },

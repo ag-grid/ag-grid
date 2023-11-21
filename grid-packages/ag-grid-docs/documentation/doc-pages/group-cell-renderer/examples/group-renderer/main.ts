@@ -68,7 +68,6 @@ const gridOptions: GridOptions = {
     groupDefaultExpanded: 1,
     rowSelection: 'multiple',
     groupSelectsChildren: true,
-    animateRows: true,
 }
 
 // setup the grid after the page has finished loading

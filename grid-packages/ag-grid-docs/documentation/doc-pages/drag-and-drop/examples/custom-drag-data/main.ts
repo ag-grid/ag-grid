@@ -33,7 +33,6 @@ const gridOptions: GridOptions = {
     { field: 'value1' },
     { field: 'value2' },
   ],
-  animateRows: true,
 }
 
 function onDragOver(event: any) {

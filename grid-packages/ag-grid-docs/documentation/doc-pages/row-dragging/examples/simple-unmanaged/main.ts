@@ -22,7 +22,6 @@ const gridOptions: GridOptions = {
     filter: true,
   },
   // this tells the grid we are doing updates when setting new data
-  animateRows: true,
   onRowDragMove: onRowDragMove,
   getRowId: getRowId,
   onSortChanged: onSortChanged,

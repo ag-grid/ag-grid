@@ -27,7 +27,6 @@ const gridOptions: GridOptions = {
   rowData: getData(),
   rowDragManaged: true,
   columnDefs: columnDefs,
-  animateRows: true,
 }
 
 function onDragOver(event: any) {

@@ -21,7 +21,6 @@ const gridOptions: GridOptions<IOlympicData> = {
   groupDisplayType: 'groupRows',
   rowGroupPanelShow: 'always',
   groupDefaultExpanded: 1,
-  animateRows: true,
 }
 
 // setup the grid after the page has finished loading

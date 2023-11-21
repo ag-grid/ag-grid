@@ -25,7 +25,6 @@ const gridOptions: GridOptions = {
   defaultColDef: {
     flex: 1,
   },
-  animateRows: true,
   getRowId: (params: GetRowIdParams) => {
     return params.data.account
   },

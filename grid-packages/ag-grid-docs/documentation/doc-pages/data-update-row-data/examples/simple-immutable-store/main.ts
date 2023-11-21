@@ -165,7 +165,6 @@ const gridOptions: GridOptions = {
         sortable: true,
         resizable: true,
     },
-    animateRows: true,
     rowSelection: 'multiple',
     enableRangeSelection: true,
     autoGroupColumnDef: {

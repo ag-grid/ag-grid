@@ -20,7 +20,6 @@ const gridOptions: GridOptions<IOlympicData> = {
   autoGroupColumnDef: {
     minWidth: 200,
   },
-  animateRows: true,
   isGroupOpenByDefault: (params: IsGroupOpenByDefaultParams) => {
     return (
       (params.field === 'year' && params.key === '2004') ||

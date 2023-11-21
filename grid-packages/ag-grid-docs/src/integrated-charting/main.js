@@ -157,7 +157,6 @@
                 cellRenderer: 'agAnimateShowChangeCellRenderer'
             }
         },
-        animateRows: true,
         enableCharts: true,
         suppressAggFuncInHeader: true,
         getRowId: function(params) { return params.data.trade; },

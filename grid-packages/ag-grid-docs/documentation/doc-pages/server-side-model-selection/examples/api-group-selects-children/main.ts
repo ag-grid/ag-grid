@@ -74,7 +74,6 @@ const gridOptions: GridOptions<IOlympicData> = {
 
   groupSelectsChildren: true,
 
-  animateRows: true,
   suppressAggFuncInHeader: true,
 }
 

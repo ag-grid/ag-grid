@@ -310,7 +310,6 @@ const gridOptions: GridOptions = {
   rowSelection: 'multiple',
   groupSelectsChildren: true,
   rowData: globalRowData,
-  animateRows: true,
   suppressAggFuncInHeader: true,
   suppressRowClickSelection: true,
   getRowId: (params: GetRowIdParams) => {

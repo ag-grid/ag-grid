@@ -26,7 +26,6 @@ const gridOptions: GridOptions = {
 
     return false;
   },
-  animateRows: true,
   onFirstDataRendered: (params: FirstDataRenderedEvent) => {
     params.api.forEachNode((node) => {
       if (node.key === 'France' || node.key === 'South Korea') {

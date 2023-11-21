@@ -35,7 +35,6 @@ const gridOptions: GridOptions<IOlympicData> = {
     },
   },
   groupHideOpenParents: true,
-  animateRows: true,
 }
 
 // setup the grid after the page has finished loading

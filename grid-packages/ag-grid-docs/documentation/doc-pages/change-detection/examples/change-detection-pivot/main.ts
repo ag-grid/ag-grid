@@ -40,7 +40,6 @@ const gridOptions: GridOptions = {
   pivotMode: true,
   groupDefaultExpanded: 1,
   // enableCellChangeFlash: true,
-  animateRows: true,
   getRowId: (params: GetRowIdParams) => {
     return params.data.student
   },

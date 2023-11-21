@@ -18,7 +18,6 @@ const gridOptions: GridOptions<IOlympicData> = {
   autoGroupColumnDef: {
     minWidth: 150,
   },
-  animateRows: true,
   rowGroupPanelShow: 'always',
   groupDefaultExpanded: -1,
   groupDisplayType: 'multipleColumns',

@@ -22,7 +22,6 @@ const gridOptions: GridOptions = {
   },
   groupIncludeFooter: true,
   groupIncludeTotalFooter: true,
-  animateRows: true,
   rowData: getData(),
 }
 

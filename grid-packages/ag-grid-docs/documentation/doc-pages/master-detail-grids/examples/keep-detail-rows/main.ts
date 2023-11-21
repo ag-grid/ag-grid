@@ -24,7 +24,6 @@ const gridOptions: GridOptions<IAccount> = {
   },
   keepDetailRows: true,
   keepDetailRowsCount: 2,
-  animateRows: true,
   detailCellRendererParams: {
     detailGridOptions: {
       columnDefs: [

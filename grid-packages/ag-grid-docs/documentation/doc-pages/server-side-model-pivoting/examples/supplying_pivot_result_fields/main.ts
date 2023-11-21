@@ -29,7 +29,6 @@ const gridOptions: GridOptions<IOlympicData> = {
     serverSidePivotResultFieldSeparator: '_',
 
     suppressAggFuncInHeader: true,
-    animateRows: true,
 }
 
 // setup the grid after the page has finished loading

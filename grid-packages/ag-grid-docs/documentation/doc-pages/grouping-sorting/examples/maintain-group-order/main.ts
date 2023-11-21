@@ -22,7 +22,6 @@ const gridOptions: GridOptions = {
   groupDisplayType: 'multipleColumns',
   groupMaintainOrder: true,
   groupDefaultExpanded: -1,
-  animateRows: true,
   rowData: getData(),
 }
 

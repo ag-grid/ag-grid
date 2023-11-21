@@ -19,7 +19,6 @@ const gridOptions: GridOptions<IOlympicData> = {
     filter: true,
   },
   rowDragManaged: true,
-  animateRows: true,
 }
 
 function onBtSuppressRowDrag() {

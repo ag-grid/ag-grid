@@ -227,7 +227,6 @@ const gridOptions: GridOptions = {
     rowGroupPanelShow: 'always', // on of ['always','onlyWhenGrouping']
     pivotPanelShow: 'always', // on of ['always','onlyWhenPivoting']
     enableRtl: true,
-    animateRows: true,
     statusBar: {
         statusPanels: [{ statusPanel: 'agAggregationComponent' }],
     },

@@ -19,7 +19,6 @@ const gridOptions: GridOptions<IOlympicData> = {
     resizable: true,
   },
   groupDisplayType: 'groupRows',
-  animateRows: true,
   sideBar: 'filters',
 }
 

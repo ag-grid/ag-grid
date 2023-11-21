@@ -20,7 +20,6 @@ const gridOptions: GridOptions<IOlympicData> = {
   },
   rowDragManaged: true,
   suppressMoveWhenRowDragging: true,
-  animateRows: true,
 }
 
 // setup the grid after the page has finished loading

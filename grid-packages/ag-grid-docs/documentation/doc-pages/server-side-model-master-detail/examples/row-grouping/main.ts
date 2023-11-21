@@ -21,7 +21,6 @@ const gridOptions: GridOptions = {
   autoGroupColumnDef: {
     field: 'accountId',
   },
-  animateRows: true,
 
   // use the server-side row model
   rowModelType: 'serverSide',

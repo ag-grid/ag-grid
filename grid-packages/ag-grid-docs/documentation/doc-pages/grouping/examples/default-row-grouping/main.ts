@@ -21,7 +21,6 @@ const gridOptions: GridOptions<IOlympicData> = {
   autoGroupColumnDef: {
     minWidth: 200,
   },
-  animateRows: true,
 }
 
 // setup the grid after the page has finished loading

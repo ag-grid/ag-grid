@@ -43,7 +43,6 @@ const gridOptions: GridOptions = {
     minWidth: 280
   },
   treeData: true,
-  animateRows: true,
   groupDefaultExpanded: -1,
   getDataPath: (data: any) => data.dataPath,
   getRowId: (params: GetRowIdParams<any>) => params.data.employeeId,

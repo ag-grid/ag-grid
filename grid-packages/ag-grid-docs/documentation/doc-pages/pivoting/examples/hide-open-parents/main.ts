@@ -41,7 +41,6 @@ const gridOptions: GridOptions<IOlympicData> = {
   groupDefaultExpanded: 9,
   groupHideOpenParents: true,
   groupDisplayType: 'multipleColumns',
-  animateRows: true,
   sideBar: true,
 }
 

@@ -30,7 +30,6 @@ const gridOptions: GridOptions<IOlympicData> = {
     const b = params.nodeB.key || ''
     return a < b ? -1 : a > b ? 1 : 0
   },
-  animateRows: true,
 }
 
 // setup the grid after the page has finished loading

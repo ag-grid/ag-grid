@@ -38,7 +38,6 @@ const gridOptions: GridOptions<IOlympicData> = {
     resizable: true,
   },
   columnDefs: columnDefs,
-  animateRows: true,
   rowData: null,
 }
 

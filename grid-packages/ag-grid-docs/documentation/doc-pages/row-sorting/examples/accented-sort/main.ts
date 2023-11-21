@@ -9,7 +9,6 @@ const gridOptions: GridOptions = {
     sortable: true,
   },
   columnDefs: columnDefs,
-  animateRows: true,
   sortingOrder: ['desc', 'asc', null],
   accentedSort: true,
   rowData: [{ accented: 'aáàä' }, { accented: 'aàáä' }, { accented: 'aäàá' }],

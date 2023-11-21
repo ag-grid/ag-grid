@@ -33,7 +33,6 @@ const gridOptions: GridOptions<IOlympicData> = {
   },
   rowDragManaged: true,
   columnDefs: columnDefs,
-  animateRows: true,
   onRowDragEnter: onRowDragEnter,
   onRowDragEnd: onRowDragEnd,
 }

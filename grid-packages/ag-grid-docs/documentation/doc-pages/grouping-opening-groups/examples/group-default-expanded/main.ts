@@ -23,7 +23,6 @@ const gridOptions: GridOptions<IOlympicData> = {
   },
   // all 'country' row groups will be open by default
   groupDefaultExpanded: 1,
-  animateRows: true,
 }
 
 // setup the grid after the page has finished loading

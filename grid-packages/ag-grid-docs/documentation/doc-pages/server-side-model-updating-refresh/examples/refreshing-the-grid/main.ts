@@ -51,7 +51,6 @@ const gridOptions: GridOptions = {
   enableCellChangeFlash: true,
   suppressAggFuncInHeader: true,
 
-  animateRows: true,
 };
 
 let allData: any[];

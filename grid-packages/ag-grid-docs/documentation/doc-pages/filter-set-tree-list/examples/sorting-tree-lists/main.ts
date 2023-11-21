@@ -44,7 +44,6 @@ const gridOptions: GridOptions = {
     minWidth: 280
   },
   treeData: true,
-  animateRows: true,
   groupDefaultExpanded: -1,
   getDataPath: (data) => {
     return data.dataPath

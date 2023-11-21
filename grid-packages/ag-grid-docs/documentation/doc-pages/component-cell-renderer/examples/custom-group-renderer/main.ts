@@ -44,7 +44,6 @@ const gridOptions: GridOptions<IOlympicData> = {
         resizable: true,
     },
     groupDefaultExpanded: 1,
-    animateRows: true,
     onCellDoubleClicked: (params: CellDoubleClickedEvent<IOlympicData, any>) => {
         if(params.colDef.showRowGroup) {
             params.node.setExpanded(!params.node.expanded);

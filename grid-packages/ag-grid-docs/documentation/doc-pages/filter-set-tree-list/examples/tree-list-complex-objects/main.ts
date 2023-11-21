@@ -45,7 +45,6 @@ const gridOptions: GridOptions = {
     valueFormatter: (params: ValueFormatterParams) => params.value.displayValue
   },
   treeData: true,
-  animateRows: true,
   groupDefaultExpanded: -1,
   getDataPath: data => data.path.key.split('.'),
   rowData: getData(),

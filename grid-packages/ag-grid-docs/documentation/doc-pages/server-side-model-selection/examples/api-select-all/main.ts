@@ -66,7 +66,6 @@ const gridOptions: GridOptions<IOlympicData> = {
   // restrict row selections via checkbox selection
   suppressRowClickSelection: true,
 
-  animateRows: true,
   suppressAggFuncInHeader: true,
 }
 

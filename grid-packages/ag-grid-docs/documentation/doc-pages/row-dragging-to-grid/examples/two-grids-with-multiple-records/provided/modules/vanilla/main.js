@@ -82,7 +82,6 @@ const leftGridOptions = {
     rowDragManaged: true,
     suppressMoveWhenRowDragging: true,
     columnDefs: leftColumnDefs,
-    animateRows: true,
     onGridReady: (params) => {
         addGridDropZone(params);
     }
@@ -101,7 +100,6 @@ const rightGridOptions = {
     },
     rowDragManaged: true,
     columnDefs: rightColumnDefs,
-    animateRows: true
 };
 
 function addGridDropZone(params) {

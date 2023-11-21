@@ -47,7 +47,6 @@ const gridOptions: GridOptions<IOlympicData> = {
   // only keep 10 blocks of rows
   maxBlocksInCache: 10,
 
-  animateRows: true,
 }
 
 // setup the grid after the page has finished loading

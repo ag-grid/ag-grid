@@ -22,7 +22,6 @@ const gridOptions: GridOptions<IOlympicData> = {
   },
   columnDefs: columnDefs,
   rowData: null,
-  animateRows: true,
   sortingOrder: ['desc', 'asc', null],
 }
 

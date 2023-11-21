@@ -33,7 +33,6 @@ const gridOptions: GridOptions = {
   rowData: createRowData(),
   rowDragManaged: true,
   columnDefs: columnDefs,
-  animateRows: true,
   onGridReady: (params) => {
     addDropZones(params)
     addCheckboxListener(params)

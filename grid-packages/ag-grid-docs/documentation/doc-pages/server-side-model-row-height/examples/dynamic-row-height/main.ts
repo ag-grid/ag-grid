@@ -33,7 +33,6 @@ const gridOptions: GridOptions<IOlympicData> = {
     return 40
   },
 
-  animateRows: true,
   suppressAggFuncInHeader: true,
 }
 

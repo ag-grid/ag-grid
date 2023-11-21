@@ -65,7 +65,6 @@ const gridOptions: GridOptions<IOlympicData> = {
     (document.getElementById('bronze') as HTMLInputElement).checked = true;
   },
 
-  animateRows: true,
   suppressAggFuncInHeader: true,
   // debug: true,
 }

@@ -32,7 +32,6 @@ var leftGridOptions = {
     rowDragManaged: true,
     suppressMoveWhenRowDragging: true,
     columnDefs: leftColumnDefs,
-    animateRows: true,
     onGridReady: (params) => {
         addBinZone(params);
         addGridDropZone(params, 'Right');
@@ -58,7 +57,6 @@ var rightGridOptions = {
     rowDragManaged: true,
     suppressMoveWhenRowDragging: true,
     columnDefs: rightColumnDefs,
-    animateRows: true,
     onGridReady: (params) => {
         addBinZone(params);
         addGridDropZone(params, 'Left');

@@ -25,7 +25,6 @@ const gridOptions: GridOptions<IOlympicData> = {
     },
   },
   groupDisplayType: 'multipleColumns',
-  animateRows: true,
 }
 
 // setup the grid after the page has finished loading

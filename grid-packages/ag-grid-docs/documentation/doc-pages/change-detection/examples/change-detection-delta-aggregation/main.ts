@@ -72,7 +72,6 @@ const gridOptions: GridOptions = {
   },
   groupDefaultExpanded: 1,
   suppressAggFuncInHeader: true,
-  animateRows: true,
   getRowId: (params: GetRowIdParams) => {
     return params.data.id
   },

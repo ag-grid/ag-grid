@@ -27,7 +27,6 @@ const baseGridOptions = {
         'blue-row': 'data.color == "Blue"'
     },
     rowDragManaged: true,
-    animateRows: true
 }
 
 const baseColumnDefs = [

@@ -29,7 +29,6 @@ const gridOptions: GridOptions<IOlympicData> = {
   },
   rowDragManaged: true,
   columnDefs: columnDefs,
-  animateRows: true,
   rowDragText: rowDragText
 }
 

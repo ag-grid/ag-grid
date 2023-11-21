@@ -72,7 +72,6 @@ const gridOptions: GridOptions<IOlympicData> = {
   // only keep 10 blocks of rows
   maxBlocksInCache: 10,
 
-  animateRows: true,
 
   onFilterChanged: onFilterChanged,
 }

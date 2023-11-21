@@ -34,7 +34,6 @@ const gridOptions: GridOptions<IOlympicData> = {
     minWidth: 200,
     filter: 'agGroupColumnFilter',
   },
-  animateRows: true,
   rowGroupPanelShow: 'always',
   groupDisplayType: 'multipleColumns',
 }

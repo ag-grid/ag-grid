@@ -63,7 +63,6 @@ const gridOptions: GridOptions = {
         cellRenderer: 'agAnimateShowChangeCellRenderer',
       },
     },
-    animateRows: true,
     enableCharts: true,
     suppressAggFuncInHeader: true,
     suppressChartToolPanelsButton: true,

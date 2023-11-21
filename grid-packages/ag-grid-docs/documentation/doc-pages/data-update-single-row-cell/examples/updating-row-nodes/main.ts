@@ -24,7 +24,6 @@ const gridOptions: GridOptions = {
     sortable: true,
     filter: true,
   },
-  animateRows: true,
   getRowId: (params: GetRowIdParams) => {
     return params.data.id
   },

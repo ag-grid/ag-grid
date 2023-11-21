@@ -89,7 +89,6 @@ export class AppComponent {
         },
         rowData: this.createLeftRowData(),
         rowDragManaged: true,
-        animateRows: true
     };
 
     rightGridOptions: GridOptions = {
@@ -109,7 +108,6 @@ export class AppComponent {
         },
         rowData: [],
         rowDragManaged: true,
-        animateRows: true
     };
 
     createLeftRowData() {

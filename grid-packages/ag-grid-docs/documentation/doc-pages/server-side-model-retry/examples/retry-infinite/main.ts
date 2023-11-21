@@ -37,7 +37,6 @@ const gridOptions: GridOptions<IOlympicData> = {
 
   cacheBlockSize: 20,
 
-  animateRows: true,
 }
 
 function getServerSideDatasource(server: any): IServerSideDatasource {

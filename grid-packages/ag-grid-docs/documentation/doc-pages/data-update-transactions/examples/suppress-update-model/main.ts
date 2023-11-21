@@ -187,7 +187,6 @@ const gridOptions: GridOptions = {
     getRowId: getRowId,
     rowSelection: 'multiple',
     groupSelectsChildren: true,
-    animateRows: true,
     suppressRowClickSelection: true,
     autoGroupColumnDef: {
         field: 'name',

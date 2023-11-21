@@ -32,7 +32,6 @@ const gridOptions: GridOptions = {
   groupDefaultExpanded: 1,
   suppressAggFuncInHeader: true,
   enableCellChangeFlash: true,
-  animateRows: true,
 }
 
 function getRowData() {

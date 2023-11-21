@@ -39,7 +39,6 @@ const gridOptions: GridOptions = {
   // use the server-side row model
   rowModelType: 'serverSide',
 
-  animateRows: true,
   suppressAggFuncInHeader: true,
 
   onGridReady: (params) => {

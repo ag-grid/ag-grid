@@ -20,7 +20,6 @@ const gridOptions: GridOptions<IOlympicData> = {
     { field: 'total' },
   ],
   rowData: getData(),
-  animateRows: true,
   groupDefaultExpanded: 1,
   getRowHeight: getRowHeight,
 }

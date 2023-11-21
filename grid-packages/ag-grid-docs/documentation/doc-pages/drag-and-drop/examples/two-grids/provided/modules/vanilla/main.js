@@ -30,7 +30,6 @@ var leftGridOptions = {
     rowData: createLeftRowData(),
     rowDragManaged: true,
     columnDefs: leftColumnDefs,
-    animateRows: true
 };
 var rightApi;
 var rightGridOptions = {
@@ -49,7 +48,6 @@ var rightGridOptions = {
     rowData: [],
     rowDragManaged: true,
     columnDefs: rightColumnDefs,
-    animateRows: true
 };
 
 function createLeftRowData() {

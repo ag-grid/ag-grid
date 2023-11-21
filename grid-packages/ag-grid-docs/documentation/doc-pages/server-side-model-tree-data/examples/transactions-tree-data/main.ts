@@ -40,7 +40,6 @@ const gridOptions: GridOptions = {
   rowModelType: 'serverSide',
   treeData: true,
   columnDefs: columnDefs,
-  animateRows: true,
   cacheBlockSize: 10,
   rowSelection: 'single',
 

@@ -4195,8 +4195,6 @@ function createRowData() {
         rowSelection: "multiple",
         enableRangeSelection: true,
         suppressRowClickSelection: true,
-        animateRows: true,
-        // debug: true
     };
 
     var btBringGridBack;

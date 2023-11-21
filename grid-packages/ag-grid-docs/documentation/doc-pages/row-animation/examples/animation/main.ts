@@ -20,7 +20,6 @@ const gridOptions: GridOptions<IOlympicData> = {
     filter: true,
   },
   columnDefs: columnDefs,
-  animateRows: true,
   suppressAggFuncInHeader: true, // so we don't see sum() in gold, silver and bronze headers
   autoGroupColumnDef: {
     // to get 'athlete' showing in the leaf level in this column

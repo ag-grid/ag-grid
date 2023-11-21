@@ -30,7 +30,6 @@ const gridOptions: GridOptions<IOlympicData> = {
     },
   },
   groupDisplayType: 'multipleColumns',
-  animateRows: true,
 }
 
 function applyFilter() {

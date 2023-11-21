@@ -49,7 +49,6 @@ const gridOptions: GridOptions = {
   rowData: getData(),
   groupDefaultExpanded: -1,
   rowGroupPanelShow: 'always',
-  animateRows: true,
   groupAllowUnbalanced: true,
 }
 
