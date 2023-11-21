@@ -158,8 +158,18 @@ Replace the `app.component.ts` file with the following code:
 
 <snippet transform={false} language="jsx">
 |import { Component } from '@angular/core';
-|import { AgGridModule } from 'ag-grid-angular'; // Core Grid Logic
+|import { AgGridModule } from 'ag-grid-angular'; // Angular Grid Logic
 |import { ColDef } from 'ag-grid-community'; // Column Definitions Interface
+|
+|// Row Data Interface
+|interface IRow {
+|  company: string;
+|  country: 'USA' | 'China' | 'Kazakhstan';
+|  date: string;
+|  mission: string;
+|  price: number;
+|  successful: boolean;
+|}
 |
 |@Component({
 |  selector: 'app-root',
@@ -167,22 +177,22 @@ Replace the `app.component.ts` file with the following code:
 |  imports: [AgGridModule], // Add AG Grid Module to component
 |  styleUrls: ['./app.component.css'],
 |  template:
-|  `&lt;main class="main">
-|     &lt;div class="content">
-|       &lt;!-- The AG Grid component, with Dimensions, CSS Theme, Row Data, and Column Definition -->
-|       &lt;ag-grid-angular
-|         style="width: 600px; height: 500px;"
-|         class="ag-theme-alpine"
-|         [rowData]="rowData"
-|         [columnDefs]="colDefs">
-|       &lt;/ag-grid-angular>
-|     &lt;/div>
-|  &lt;/main>`
+|  `
+|   &lt;div class="content">
+|     &lt;!-- The AG Grid component, with Dimensions, CSS Theme, Row Data, and Column Definition -->
+|     &lt;ag-grid-angular
+|       style="width: 600px; height: 500px;"
+|       class="ag-theme-alpine"
+|       [rowData]="rowData"
+|       [columnDefs]="colDefs">
+|     &lt;/ag-grid-angular>
+|   &lt;/div>
+|  `
 |})
 |
 |export class AppComponent {
 |  // Row Data: The data to be displayed.
-|  rowData = [
+|  rowData: IRow[] = [
 |    {company: "CASC", country: "China", date: "2022-07-24", mission: "Wentian", price: 2150000, successful: true},
 |    {company: "SpaceX", country: "USA", date: "2022-07-24", mission: "Starlink Group 4-25", price: 3230000, successful: true},
 |    {company: "SpaceX", country: "USA", date: "2022-07-22", mission: "Starlink Group 3-2", price: 8060000, successful: true}
