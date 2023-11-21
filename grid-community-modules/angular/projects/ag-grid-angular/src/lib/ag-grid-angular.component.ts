@@ -658,8 +658,8 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
          * @managed
          */
     @Input() public enableCharts: boolean | undefined = undefined;
-    /** The list of chart themes that a user can chose from in the chart settings panel.
-         * @default ['ag-default', 'ag-material', 'ag-pastel', 'ag-vivid', 'ag-solar' ]
+    /** The list of chart themes that a user can choose from in the chart settings panel.
+         * @default ['ag-default', 'ag-material', 'ag-sheets', 'ag-polychroma', 'ag-vivid'];
          */
     @Input() public chartThemes: string[] | undefined = undefined;
     /** A map containing custom chart themes.
