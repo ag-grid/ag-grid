@@ -722,7 +722,7 @@ const darkModeTs = `
             const suffix: string = isDark ? '-dark' : '-light';
             const customThemeName: string = 'my-custom-theme' + suffix + ';';
         
-            const themes: string[] = ['ag-default', 'ag-vivid'];
+            const themes: string[] = ['ag-default', 'ag-material', 'ag-sheets', 'ag-polychroma', 'ag-vivid'];
             
             let customThemeFound: boolean = false;
             const modifiedThemes: string[] = Array.from(
@@ -776,7 +776,7 @@ const darkModeJS = `
             const suffix = isDark ? '-dark' : '-light';
             const customThemeName = 'my-custom-theme' + suffix + ';';
 
-            const themes = ['ag-default', 'ag-vivid'];
+            const themes = ['ag-default', 'ag-material', 'ag-sheets', 'ag-polychroma', 'ag-vivid'];
             
             let customThemeFound = false;
             const modifiedThemes = Array.from(

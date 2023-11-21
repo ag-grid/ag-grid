@@ -70,6 +70,14 @@ function migrateV24(model: ChartModel) {
         ...(i === 0 ? xAxis : yAxis),
     }));
 
+    // Precise legacy palette fills/strokes can be found here for future reference:
+    // https://github.com/ag-grid/ag-grid/blob/b22.1.0/grid-enterprise-modules/charts/src/charts/chart/palettes.ts
+    const LEGACY_PALETTES: Record<string, AgChartThemeName> = {
+        borneo: 'ag-default',
+        material: 'ag-material',
+        bright: 'ag-vivid',
+    };
+
     return {
         chartType,
         chartThemeName: LEGACY_PALETTES[chartPalette] ?? 'ag-default',
@@ -258,8 +266,19 @@ function migrateV30(model: ChartModel) {
 }
 
 function migrateV31(model: ChartModel) {
-    model = jsonRename('chartOptions.column', 'bar', model);
-    return model;
+    const V30_LEGACY_PALETTES: Record<string, AgChartThemeName> = {
+        'ag-pastel': 'ag-sheets',
+        'ag-solar': 'ag-polychroma'
+    };
+
+    const updatedModel = jsonRename('chartOptions.column', 'bar', model);
+
+    const chartThemeName = V30_LEGACY_PALETTES[updatedModel.chartThemeName] || updatedModel.chartThemeName;
+
+    return {
+        ...updatedModel,
+        chartThemeName
+    };
 }
 
 function cleanup(model: ChartModel) {
@@ -485,11 +504,3 @@ function jsonMutate(path: string | string[], json: any, mutator: (v: any) => any
 }
 
 const merge = (r: {}, n: {}) => ({ ...r, ...n });
-
-// Precise legacy palette fills/strokes can be found here for future reference:
-// https://github.com/ag-grid/ag-grid/blob/b22.1.0/grid-enterprise-modules/charts/src/charts/chart/palettes.ts
-const LEGACY_PALETTES: Record<string, AgChartThemeName> = {
-    borneo: 'ag-default',
-    material: 'ag-material',
-    bright: 'ag-vivid',
-};

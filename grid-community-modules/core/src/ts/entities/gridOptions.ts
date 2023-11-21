@@ -591,8 +591,8 @@ export interface GridOptions<TData = any> {
      */
     enableCharts?: boolean;
     /**
-     * The list of chart themes that a user can chose from in the chart settings panel.
-     * @default ['ag-default', 'ag-material', 'ag-pastel', 'ag-vivid', 'ag-solar' ]
+     * The list of chart themes that a user can choose from in the chart settings panel.
+     * @default ['ag-default', 'ag-material', 'ag-sheets', 'ag-polychroma', 'ag-vivid'];
      */
     chartThemes?: string[];
     /**
