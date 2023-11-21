@@ -30,7 +30,7 @@ export class ValidationService extends BeanStub {
     private processOptions<T extends {}>(options: T, validator: OptionsValidator<T>): void {
         const { validations, deprecations, allProperties, propertyExceptions, objectName, docsUrl } = validator;
         
-        if (allProperties) {
+        if (allProperties && this.gridOptions.suppressPropertyNamesCheck !== true) {
             this.checkProperties(
                 options,
                 [...propertyExceptions ?? [], ...Object.keys(deprecations)],
