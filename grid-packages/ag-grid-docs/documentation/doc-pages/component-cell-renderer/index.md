@@ -93,11 +93,11 @@ The diagram below (which is taken from the section [Cell Content](/cell-content/
 In short, a value is prepared. The value comes using either the `colDef.field` or the `colDef.valueGetter`. The value is also optionally passed through a `colDef.valueFormatter` if it exists. Then the value is finally placed into the DOM, either directly, or by using the chosen `colDef.cellRenderer`.
 
 <framework-specific-section frameworks="javascript">
-<image-caption src='value-getters/resources/valueGetterFlow.svg' width="55rem" centered="true" alt='Value Getter Flow' constrained='true'></image-caption>
+<image-caption src='value-getters/resources/valueGetterFlow.svg' width="55rem" centered="true" alt='Value Getter Flow' constrained='true' filterdarkmode="true"></image-caption>
 </framework-specific-section>
 
 <framework-specific-section frameworks="angular,react,vue">
-<image-caption src='resources/valueGetterFlowFw.svg' width="55rem" centered="true" alt='Value Getter Flow' constrained='true'></image-caption>
+<image-caption src='resources/valueGetterFlowFw.svg' width="55rem" centered="true" alt='Value Getter Flow' constrained='true' filterdarkmode="true"></image-caption>
 </framework-specific-section>
 
 ## Complementing Cell Renderer Params

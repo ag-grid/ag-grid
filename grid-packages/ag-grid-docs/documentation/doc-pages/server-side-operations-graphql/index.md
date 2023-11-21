@@ -28,7 +28,7 @@ One of the main benefits of GraphQL is the ability to expose a single endpoint a
 
 In our application, the GraphQL endpoint will be hosted using a web server comprised of [Node.js](https://nodejs.org/) running [Express.js](https://expressjs.com/). An overview of technologies used in this guide is illustrated in the diagram below:
 
-<image-caption src="server-side-operations-graphql/resources/graphql-arch.png" alt="GraphQL" constrained="true"/></image-caption>
+<image-caption src="server-side-operations-graphql/resources/graphql-arch.png" alt="GraphQL" constrained="true" filterdarkmode="true"/></image-caption>
 
 We will now proceed to install and run the application before going through the implementation details.
 
@@ -181,7 +181,7 @@ app.listen(4000, () => {
 
 Notice that we have supplied the option: `graphiql: true` to enable the GraphiQL client, which is a useful tool for testing queries during development, and is available at: [http://localhost:4000/graphql](http://localhost:4000/graphql/).
 
-<image-caption src="server-side-operations-graphql/resources/graphiql.png" alt="GraphQL" constrained="true"></image-caption>
+<image-caption src="server-side-operations-graphql/resources/graphiql.png" alt="GraphQL" constrained="true" filterdarkmode="true"></image-caption>
 
 ## Server-Side Datasource
 
