@@ -269,7 +269,7 @@ export class DropZoneColumnComp extends Component {
             // if aggFunc is a string, we can use it, but if it's a function, then we swap with 'func'
             const aggFuncString = typeof aggFunc === 'string' ? aggFunc : 'agg';
             const localeTextFunc = this.localeService.getLocaleTextFunc();
-            aggFuncName = localeTextFunc(aggFuncString, this.aggFuncService.getDefaultFuncLabel(aggFuncString));
+            aggFuncName = localeTextFunc(aggFuncString, aggFuncString);
         }
 
         return { name, aggFuncName };

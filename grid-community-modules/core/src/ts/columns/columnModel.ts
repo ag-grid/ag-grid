@@ -2817,10 +2817,7 @@ export class ColumnModel extends BeanStub {
         if (aggFuncFound) {
             const aggFuncString = (typeof aggFunc === 'string') ? aggFunc : 'func';
             const localeTextFunc = this.localeService.getLocaleTextFunc();
-            const aggFuncStringTranslated = localeTextFunc(
-                aggFuncString,
-                this.aggFuncService.getDefaultFuncLabel(aggFuncString)
-            );
+            const aggFuncStringTranslated = localeTextFunc(aggFuncString, aggFuncString);
             return `${aggFuncStringTranslated}(${headerName})`;
         }
 
