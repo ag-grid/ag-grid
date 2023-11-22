@@ -1,13 +1,9 @@
 <framework-specific-section frameworks="javascript">
 | ## Grid Options
 |
-| The `gridOptions` object is used to configure the grid. 
+| The `gridOptions` object is used to configure the grid. The GridOptions interface supports a generic parameter for row data as detailed in [Typescript Generics](/typescript-generics).
 |
 | The example below shows the different types of items available on `gridOptions`.
-|
-| ### Initial Only 
-|
-| TODO: Explain initial only vs reactive
 |
 </framework-specific-section>
 

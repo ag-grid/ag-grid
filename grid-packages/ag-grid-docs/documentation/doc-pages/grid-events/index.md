@@ -35,25 +35,6 @@ This is a list of all the events that the grid raises.
 </snippet>
 </framework-specific-section>
 
-<framework-specific-section frameworks="react">
-| Provide your event handler to the relevant React Prop on the `AgGridReact` component.
-</framework-specific-section>
-
-<framework-specific-section frameworks="react">
-<snippet transform="{false}" language="ts">
-| const onCellClicked = (params: CellClickedEvent) => console.log('Cell was clicked');
-|
-| &lt;AgGridReact onCellClicked={onCellClicked}> &lt;/AgGridReact>
-</snippet>
-</framework-specific-section>
-
-<framework-specific-section frameworks="react">
-| ## React Hooks
-|
-| When adding event listeners, you can optionally use `useCallback`. See [React Hooks](/react-hooks/) for best practices on using React Hooks with the grid.
-|
-</framework-specific-section>
-
 <framework-specific-section frameworks="vue">
 | Provide your event handler to the relevant event callback on the `ag-grid-vue` component.
 </framework-specific-section>
@@ -83,6 +64,8 @@ This is a list of all the events that the grid raises.
 | }
 </snippet>
 </framework-specific-section>
+
+Grid events are asynchronous so that the state of the grid will be settled by the time your event callback gets invoked.
 
 ## List of Events
 

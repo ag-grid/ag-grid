@@ -1,5 +1,7 @@
 <framework-specific-section frameworks="vue">
 |
+| ## Properties, Callbacks, Events
+|
 | - **Attributes**: attributes are properties, but aren't bound - they are instead provided literal values (e.g. `rowSelection="multiple"`).
 | - **Properties**: properties are bound attributes (e.g. `:columnDefs="columnDefs"`).
 | - **Callbacks**: callbacks are bound in the same as properties are (e.g. `:getRowHeight="myGetRowHeightFunction"`).
@@ -7,10 +9,6 @@
 |
 | All of the above (attributes, properties, callbacks and event handlers) are registered using their 'dash' syntax and not camel-case. For example, the property `pivotMode` is bound using `pivot-mode`. The following example shows some bindings:
 |
-|
-| ## Initial Only 
-|
-| TODO: Explain initial only vs reactive
 </framework-specific-section>
 
 <framework-specific-section frameworks="vue">

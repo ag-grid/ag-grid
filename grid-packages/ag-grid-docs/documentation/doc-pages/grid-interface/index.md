@@ -1,35 +1,48 @@
 ---
-title: "Grid Interface" 
+title: "Grid Overview" 
 ---
 
-This section details the public interface that your application can use to interact with the grid, including methods, properties and events.
- 
-The grid interface is the combination of the following items:
- 
-- [Grid Options](/grid-options/): properties and callbacks used to configure the grid.
-- [Grid Events](/grid-events/): events published by the grid to inform applications of changes in state.
-- [Grid API](/grid-api/): methods used to interact with the grid after it's created.
-    
+This section provides key information for configuring and interacting with a grid. 
+
+## Grid Options
+
 md-include:index-javascript.md
 md-include:index-angular.md
-md-include:index-react.md
+md-include:index-react.md 
 md-include:index-vue.md
+ 
+For a full list of options see: [Grid Options](grid-options).
 
-## Access the Grid API
+## Grid Events
+
+md-include:events-javascript.md
+md-include:events-angular.md 
+md-include:events-react.md 
+md-include:events-vue.md
+
+For a full list of events see: [Grid Events](/grid-events).
+
+## Grid API
 
 md-include:api-javascript.md
 md-include:api-angular.md
 md-include:api-react.md
 md-include:api-vue.md
 
-## Events Are Asynchronous
+For a full list of api methods see: [Grid API](grid-api). 
+
+## Grid State
+
+As a user interacts with the grid they may change state such as filtering, sorting and column order. This state is independent of the configuration and to provide save and restore capabilities the grid enables applications to save / restore this state.
+
+For a full list of the state properties see: [Grid State](/grid-state/).
+
+## Grid Lifecycle
  
-Grid events are asynchronous so that the state of the grid will be settled by the time your event callback gets invoked.
+When working with AG Grid it is a common requirement to perform actions when the grid is first initialised, when data is first rendered and when the grid is about to be destroyed. 
 
-## Default Boolean Properties
-
-Where the property is a boolean (`true` or `false`), then `false` (or left blank) is the default value. For this reason, on / off items are presented in a way that causes the most common behaviour to be used when the value is `false`. For example, `suppressCellFocus` is named as such because most people will want cell focus to be enabled.
+For full details about how to interact with the grid at these key moments see: [Grid Lifecycle](/grid-lifecycle/).
 
 ## Next Steps
 
- Complete references available: [options](/grid-options/), [methods](/grid-api/) and [events](/grid-events/).
+ Complete references available: [Options](/grid-options/), [API](/grid-api/), [Events](/grid-events/), [Grid State](/grid-state/), [Grid Lifecycle](/grid-lifecycle/).

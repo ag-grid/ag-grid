@@ -1,39 +1,31 @@
 <framework-specific-section frameworks="react">
 |
-| ## Properties, Callbacks, Events
+| All properties, callbacks are defined via props on the `AgGridReact` component.
 |
-| Properties, callbacks and event handlers are all defined via props on the `AgGridReact` component. 
+| ### Initial Only 
 |
+| TODO: Explain initial only vs reactive
 </framework-specific-section>
 
 <framework-specific-section frameworks="react">
 <snippet transform={false} language="jsx">
 | &lt;AgGridReact
-|    ref={gridRef} // useful for accessing the grid's api
-|
-|    rowSelection="multiple" // simple attributes, not bound to any state or prop
-|
-|    // these are bound props, so can use anything in React state or props
+|    // Reference to component including the grid's api
+|    ref={gridRef}
+|    // Simple attributes
+|    rowSelection="multiple"
+|    // State item
 |    columnDefs={columnDefs}
-|    showToolPanel={showToolPanel}
-|
-|    // this is a callback
+|    // Callback function
 |    getRowHeight={myGetRowHeightCallback}
-|
-|    // these are registering event handlers
+|    // Event handlers
 |    onCellClicked={onCellClicked}
-|    onColumnResized={onColumnEvent}
-|
-|    // inside onGridReady, you receive the grid api
-|    onGridReady={onGridReady}
 | />
 </snippet>
 </framework-specific-section>
 
-
 <framework-specific-section frameworks="react">
-| ## React Hooks
-|
-| When setting properties, it's best to treat non-simple types as immutable objects (e.g. by using `useState` or `useMemo`). See [React Hooks](/react-hooks/) for best practices.
-|
+ <warning>
+ When setting properties, it's best to treat non-simple types as immutable objects (e.g. by using `useState` or `useMemo`). See [React Hooks](/react-hooks/) for best practices.
+ </warning>
 </framework-specific-section>

@@ -3,6 +3,16 @@
     "group": "",
     "items": [
       {
+        "title": "AG Grid",
+        "items": [
+          {
+            "title": "Reference",
+            "url": "/reference/",
+            "showInCollapsed": true
+          }          
+        ]
+      },
+      {
         "title": "Grid",
         "items": [
           {
@@ -16,13 +26,13 @@
             "showInCollapsed": true
           },
           {
-            "title": "Grid API",
-            "url": "/grid-api/",
+            "title": "Grid Events",
+            "url": "/grid-events/",
             "showInCollapsed": true
           },
           {
-            "title": "Grid Events",
-            "url": "/grid-events/",
+            "title": "Grid API",
+            "url": "/grid-api/",
             "showInCollapsed": true
           },
           {
@@ -47,12 +57,17 @@
             "showInCollapsed": true
           },
           {
-            "title": "Column Properties",
+            "title": "Column Definition",
             "url": "/column-properties/",
             "showInCollapsed": true
           },
           {
-            "title": "Column Object",
+            "title": "Column Group Definition",
+            "url": "/column-group-properties/",
+            "showInCollapsed": true
+          },
+          {
+            "title": "Column",
             "url": "/column-object/",
             "showInCollapsed": true
           }
@@ -62,13 +77,18 @@
         "title": "Row",
         "items": [
           {
+            "title": "Overview",
+            "url": "/row-interface/",
+            "showInCollapsed": true
+          },
+          {
             "title": "Row Node",
             "url": "/row-object/",
             "showInCollapsed": true
           },
           {
-            "title": "Row API",
-            "url": "/row-api/",
+            "title": "Row Methods",
+            "url": "/row-methods/",
             "showInCollapsed": true
           },
           {
