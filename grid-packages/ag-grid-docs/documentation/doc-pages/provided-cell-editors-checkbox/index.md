@@ -8,6 +8,10 @@ Specified with `agCheckboxCellEditor`.
 
 Generally used in conjunction with the [Checkbox Cell Renderer](/cell-rendering/#checkbox-cell-renderer).
 
+<grid-example title='Checkbox Editor' name='checkbox-editor' type='generated' options='{ "modules": ["clientside"] }'></grid-example>
+
+## Interface
+
 ```js
 columnDefs: [
     {
@@ -16,5 +20,3 @@ columnDefs: [
     }
 ]
 ```
-
-<grid-example title='Checkbox Editor' name='checkbox-editor' type='generated' options='{ "modules": ["clientside"] }'></grid-example>

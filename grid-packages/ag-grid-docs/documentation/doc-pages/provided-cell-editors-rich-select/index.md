@@ -12,11 +12,11 @@ Benefits over browser's `select` are as follows:
 - Uses HTML to render the values: you can provide cell renderers to customise what each value looks like.
 - FuzzySearch of values: You can type within the Editor to select a specific record.
 
-<framework-specific-section frameworks="react">
-|Should always set `cellEditorPopup=true`. Otherwise the editor will be clipped to the cell contents.
-</framework-specific-section>
-
 Specified with `agRichSelectCellEditor` and configured with `IRichCellEditorParams`.
+
+<grid-example title='Rich Select Editor' name='rich-select-editor' type='generated' options='{ "enterprise": true, "modules": ["clientside", "richselect"] }'></grid-example>
+
+## Interface
 
 <interface-documentation interfaceName='IRichCellEditorParams' names='["values", "cellHeight", "cellRenderer", "allowTyping", "filterList", "searchType", "highlightMatch", "valuePlaceholder", "valueListGap", "valueListMaxHeight", "valueListMaxWidth", "formatValue", "searchDebounceDelay" ]'></interface-documentation>
 
@@ -35,8 +35,6 @@ columnDefs: [
     }
 ]
 </snippet>
-
-<grid-example title='Rich Select Editor' name='rich-select-editor' type='generated' options='{ "enterprise": true, "modules": ["clientside", "richselect"] }'></grid-example>
 
 Continue to the next section: [Number Cell Editor](../provided-cell-editors-number/).
 

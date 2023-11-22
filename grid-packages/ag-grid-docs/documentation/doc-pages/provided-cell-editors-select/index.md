@@ -6,6 +6,10 @@ Simple editor that uses HTML `select`.
 
 Specified with `agSelectCellEditor` and configured with `ILargeTextEditorParams`.
 
+<grid-example title='Select Editor' name='select-editor' type='generated' options='{ "modules": ["clientside"] }'></grid-example>
+
+## Interface
+
 <interface-documentation interfaceName='ISelectCellEditorParams' names='["values", "valueListGap", "valueListMaxHeight", "valueListMaxWidth"]'></interface-documentation>
 
 <snippet transform={false}>
@@ -39,7 +43,5 @@ Note there is no need to specify `cellEditorPopup=true` for Select Cell Editor a
 |browsers standard Select (ie avoid `agSelectCellEditor`) and instead use `agRichSelectCellEditor` or
 |create your own using a [Cell Editor Component](../component-cell-editor/).
 </note>
-
-<grid-example title='Select Editor' name='select-editor' type='generated' options='{ "modules": ["clientside"] }'></grid-example>
 
 Continue to the next section: [Rich Select Cell Editor](../provided-cell-editors-rich-select/).

@@ -6,6 +6,10 @@ Simple editor that uses the standard HTML `textarea`. Best used in conjunction w
 
 Specified with `agLargeTextCellEditor` and configured with `ILargeTextEditorParams`.
 
+<grid-example title='Large Text Editor' name='large-text-editor' type='generated' options='{ "modules": ["clientside"] }'></grid-example>
+
+## Interface
+
 <interface-documentation interfaceName='ILargeTextEditorParams' names='["maxLength","rows","cols"]'></interface-documentation>
 
 ```js
@@ -21,8 +25,6 @@ columnDefs: [
         // ...other props
     }
 ]
-```
-
-<grid-example title='Large Text Editor' name='large-text-editor' type='generated' options='{ "modules": ["clientside"] }'></grid-example>
+``````
 
 Continue to the next section: [Select Cell Editor](../provided-cell-editors-select/).
