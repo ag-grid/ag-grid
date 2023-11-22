@@ -156,41 +156,38 @@ export interface GridOptions<TData = any> {
     // *** Accessories *** //
     /**
      * Specifies the status bar components to use in the status bar.
+     * @initial
      */
     statusBar?: { statusPanels: StatusPanelDef[]; };
     /**
      * Specifies the side bar components.
-     * @managed
      */
     sideBar?: SideBarDef | string | string[] | boolean | null;
     /**
      * Set to `true` to not show the context menu. Use if you don't want to use the default 'right click' context menu.
      * @default false
-     * @managed
      */
     suppressContextMenu?: boolean;
     /**
      * When using `suppressContextMenu`, you can use the `onCellContextMenu` function to provide your own code to handle cell `contextmenu` events.
      * This flag is useful to prevent the browser from showing its default context menu.
      * @default false
-     * @managed
      */
     preventDefaultOnContextMenu?: boolean;
     /**
      * Allows context menu to show, even when `Ctrl` key is held down.
      * @default false
-     * @managed
      */
     allowContextMenuWithControlKey?: boolean;
     /**
      * Set to `true` to always show the column menu button, rather than only showing when the mouse is over the column header.
      * @default false
-     * @managed
      */
     suppressMenuHide?: boolean;
     /**
      * Set to `true` to use the browser's default tooltip instead of using the grid's Tooltip Component.
      * @default false
+     * @initial
      */
     enableBrowserTooltips?: boolean;
     /**
@@ -198,36 +195,36 @@ export interface GridOptions<TData = any> {
      *  - `hover` - The tooltip will show/hide when a cell/header is hovered.
      *  - `focus` - The tooltip will show/hide when a cell/header is focused.
      * @default 'hover'
+     * @initial
      */
     tooltipTrigger?: 'hover' | 'focus';
     /**
      * The delay in milliseconds that it takes for tooltips to show up once an element is hovered over.
      * **Note:** This property does not work if `enableBrowserTooltips` is `true`.
      * @default 2000
-     * @managed
      */
     tooltipShowDelay?: number;
     /**
      * The delay in milliseconds that it takes for tooltips to hide once they have been displayed.
      * **Note:** This property does not work if `enableBrowserTooltips` is `true` and `tooltipHideTriggers` includes `timeout`.
      * @default 10000
-     * @managed
      */
     tooltipHideDelay?: number;
     /**
      * Set to `true` to have tooltips follow the cursor once they are displayed.
      * @default false
+     * @initial
      */
     tooltipMouseTrack?: boolean;
     /**
      * Set to `true` to enable tooltip interaction. When this option is enabled, the tooltip will not hide while the
      * tooltip itself it being hovered or has focus.
      * @default false
+     * @initial
      */
     tooltipInteraction?: boolean;
     /**
      * DOM element to use as the popup parent for grid popups (context menu, column menu etc).
-     * @managed
      */
     popupParent?: HTMLElement | null;
 
@@ -235,76 +232,65 @@ export interface GridOptions<TData = any> {
     /**
      * Set to `true` to also include headers when copying to clipboard using `Ctrl + C` clipboard.
      * @default false
-     * @managed
      */
     copyHeadersToClipboard?: boolean;
     /**
      * Set to `true` to also include group headers when copying to clipboard using `Ctrl + C` clipboard.
      * @default false
-     * @managed
      */
     copyGroupHeadersToClipboard?: boolean;
     /**
      * Specify the delimiter to use when copying to clipboard.
      * @default '\t'
-     * @managed
     */
     clipboardDelimiter?: string;
     /**
      * Set to `true` to copy the cell range or focused cell to the clipboard and never the selected rows.
      * @default false
-     * @managed
      */
     suppressCopyRowsToClipboard?: boolean;
     /**
      * Set to `true` to copy rows instead of ranges when a range with only a single cell is selected.
      * @default false
-     * @managed
      */
     suppressCopySingleCellRanges?: boolean;
     /**
      * Set to `true` to work around a bug with Excel (Windows) that adds an extra empty line at the end of ranges copied to the clipboard.
      * @default false
-     * @managed
      */
     suppressLastEmptyLineOnPaste?: boolean;
     /**
      * Set to `true` to turn off paste operations within the grid.
      * @default false
-     * @managed
      */
     suppressClipboardPaste?: boolean;
     /**
      * Set to `true` to stop the grid trying to use the Clipboard API, if it is blocked, and immediately fallback to the workaround.
      * @default false
-     * @managed
      */
     suppressClipboardApi?: boolean;
     /**
      * Set to `true` to block **cut** operations within the grid.
      * @default false
-     * @managed
      */
     suppressCutToClipboard?: boolean;
 
     // *** Columns *** //
     /**
      * Array of Column / Column Group definitions.
-     * @managed
      */
     columnDefs?: (ColDef<TData> | ColGroupDef<TData>)[] | null;
     /**
      * A default column definition. Items defined in the actual column definitions get precedence.
-     * @managed
      */
     defaultColDef?: ColDef<TData>;
     /**
      * A default column group definition. All column group definitions will use these properties. Items defined in the actual column group definition get precedence.
+     * @initial
      */
     defaultColGroupDef?: Partial<ColGroupDef<TData>>;
     /**
      * An object map of custom column types which contain groups of properties that column definitions can reuse by referencing in their `type` property.
-     * @managed
      */
     columnTypes?: { [key: string]: ColTypeDef<TData>; };
     /**
@@ -319,40 +305,33 @@ export interface GridOptions<TData = any> {
     /**
      * Keeps the order of Columns maintained after new Column Definitions are updated.
      * @default false
-     * @managed
      */
     maintainColumnOrder?: boolean;
     /**
      * If `true`, then dots in field names (e.g. `'address.firstLine'`) are not treated as deep references. Allows you to use dots in your field name if you prefer.
      * @default false
-     * @managed
      */
     suppressFieldDotNotation?: boolean;
 
     // *** Column Headers *** //
     /**
      * The height in pixels for the row containing the column label header. If not specified, it uses the theme value of `header-height`.
-     * @managed
      */
     headerHeight?: number;
     /**
      * The height in pixels for the rows containing header column groups. If not specified, it uses `headerHeight`.
-     * @managed
      */
     groupHeaderHeight?: number;
     /**
      * The height in pixels for the row containing the floating filters. If not specified, it uses the theme value of `header-height`.
-     * @managed
      */
     floatingFiltersHeight?: number;
     /**
      * The height in pixels for the row containing the columns when in pivot mode. If not specified, it uses `headerHeight`.
-     * @managed
      */
     pivotHeaderHeight?: number;
     /**
      * The height in pixels for the row containing header column groups when in pivot mode. If not specified, it uses `groupHeaderHeight`.
-     * @managed
      */
     pivotGroupHeaderHeight?: number;
 
@@ -360,91 +339,84 @@ export interface GridOptions<TData = any> {
     /**
      * Allow reordering and pinning columns by dragging columns from the Columns Tool Panel to the grid.
      * @default false
-     * @managed
      */
     allowDragFromColumnsToolPanel?: boolean;
     /**
      * Set to `true` to suppress column moving, i.e. to make the columns fixed position.
      * @default false
-     * @managed
      */
     suppressMovableColumns?: boolean;
     /**
      * If `true`, the `ag-column-moving` class is not added to the grid while columns are moving. In the default themes, this results in no animation when moving columns.
      * @default false
-     * @managed
      */
     suppressColumnMoveAnimation?: boolean;
     /**
      * If `true`, when you drag a column out of the grid (e.g. to the group zone) the column is not hidden.
      * @default false
-     * @managed
      */
     suppressDragLeaveHidesColumns?: boolean;
     /**
      * If `true`, when you drag a column into a row group panel the column is not hidden.
      * @default false
-     * @managed
      */
     suppressRowGroupHidesColumns?: boolean;
 
     // *** Column Sizing *** //
     /**
      * Set to `'shift'` to have shift-resize as the default resize operation (same as user holding down `Shift` while resizing).
-     * @managed
      */
     colResizeDefault?: 'shift';
     /**
      * Suppresses auto-sizing columns for columns. In other words, double clicking a column's header's edge will not auto-size.
      * @default false
+     * @initial
      */
     suppressAutoSize?: boolean;
     /**
      * Number of pixels to add to a column width after the [auto-sizing](/column-sizing/#auto-size-columns-to-fit-cell-contents) calculation.
      * Set this if you want to add extra room to accommodate (for example) sort icons, or some other dynamic nature of the header.
      * @default 20
-     * @managed
      */
     autoSizePadding?: number;
     /**
      * Set this to `true` to skip the `headerName` when `autoSize` is called by default.
      * @default false
+     * @initial
      */
     skipHeaderOnAutoSize?: boolean;
     /**
      * Auto-size the columns when the grid is loaded. Can size to fit the grid width, fit a provided width, or fit the cell contents.
+     * @initial
      */
     autoSizeStrategy?: SizeColumnsToFitGridStrategy | SizeColumnsToFitProvidedWidthStrategy | SizeColumnsToContentStrategy;
 
     // *** Components *** //
     /**
      * A map of component names to components.
+     * @initial
      */
     components?: { [p: string]: any; };
 
     // *** Editing *** //
     /**
      * Set to `'fullRow'` to enable Full Row Editing. Otherwise leave blank to edit one cell at a time.
-     * @managed
      */
     editType?: 'fullRow';
     /**
      * Set to `true` to enable Single Click Editing for cells, to start editing with a single click.
      * @default false
-     * @managed
      */
     singleClickEdit?: boolean;
     /**
      * Set to `true` so that neither single nor double click starts editing.
      * @default false
-     * @managed
      */
     suppressClickEdit?: boolean;
 
     /**
      * Set to `true` to stop the grid updating data after `Edit`, `Clipboard` and `Fill Handle` operations. When this is set, it is intended the application will update the data, eg in an external immutable store, and then pass the new dataset to the grid. <br />**Note:** `rowNode.setDataValue()` does not update the value of the cell when this is `True`, it fires `onCellEditRequest` instead.
      * @default false
-     * @managed
      */
     readOnlyEdit?: boolean;
 
@@ -452,88 +424,84 @@ export interface GridOptions<TData = any> {
      * Set this to `true` to stop cell editing when grid loses focus.
      * The default is that the grid stays editing until focus goes onto another cell.
      * @default false
+     * @initial
      */
     stopEditingWhenCellsLoseFocus?: boolean;
     /**
      * @deprecated As of v30, no longer used. To navigate with the Enter key use `enterNavigatesVertically`.
-     * @managed
      */
     enterMovesDown?: boolean,
     /**
      * @deprecated As of v30, no longer used. To navigate with the Enter key after edit use `enterNavigatesVerticallyAfterEdit`.
-     * @managed
      */
     enterMovesDownAfterEdit?: boolean,
     /**
      * Set to `true` along with `enterNavigatesVerticallyAfterEdit` to have Excel-style behaviour for the `Enter` key.
      * i.e. pressing the `Enter` key will move down to the cell beneath and `Shift+Enter` will move up to the cell above.
      * @default false
-     * @managed
      */
     enterNavigatesVertically?: boolean;
     /**
      * Set to `true` along with `enterNavigatesVertically` to have Excel-style behaviour for the 'Enter' key.
      * i.e. pressing the Enter key will move down to the cell beneath and Shift+Enter key will move up to the cell above.
      * @default false
-     * @managed
      */
     enterNavigatesVerticallyAfterEdit?: boolean;
     /**
      * Forces Cell Editing to start when backspace is pressed. This is only relevant for MacOS users.
-     * @managed
      */
     enableCellEditingOnBackspace?: boolean;
     /**
      * Set to `true` to enable Undo / Redo while editing.
+     * @initial
      */
     undoRedoCellEditing?: boolean;
     /**
      * Set the size of the undo / redo stack.
      * @default 10
+     * @initial
      */
     undoRedoCellEditingLimit?: number;
 
     // *** Export *** //
     /**
      * A default configuration object used to export to CSV.
-     * @managed
      */
     defaultCsvExportParams?: CsvExportParams;
     /**
      * Prevents the user from exporting the grid to CSV.
      * @default false
-     * @managed
      */
     suppressCsvExport?: boolean;
     /**
      * A default configuration object used to export to Excel.
-     * @managed
      */
     defaultExcelExportParams?: ExcelExportParams;
     /**
      * Prevents the user from exporting the grid to Excel.
      * @default false
-     * @managed
      */
     suppressExcelExport?: boolean;
     /**
      * A list (array) of Excel styles to be used when exporting to Excel with styles.
+     * @initial
      */
     excelStyles?: ExcelStyle[];
 
     // *** Filter *** //
     /**
      * Rows are filtered using this text as a Quick Filter.
-     * @managed
      */
     quickFilterText?: string;
     /**
      * Set to `true` to turn on the Quick Filter cache, used to improve performance when using the Quick Filter.
      * @default false
+     * @initial
      */
     cacheQuickFilter?: boolean;
     /**
      * @deprecated As of v30, hidden columns are excluded from the Quick Filter by default. This can be toggled using `includeHiddenColumnsInQuickFilter`.
+     * @initial
      */
     excludeHiddenColumnsFromQuickFilter?: boolean;
     /**
@@ -544,18 +512,15 @@ export interface GridOptions<TData = any> {
     includeHiddenColumnsInQuickFilter?: boolean;
     /**
      * Changes how the Quick Filter splits the Quick Filter text into search terms.
-     * @managed
      */
     quickFilterParser?: (quickFilter: string) => string[];
     /**
      * Changes the matching logic for whether a row passes the Quick Filter.
-     * @managed
      */
     quickFilterMatcher?: (quickFilterParts: string[], rowQuickFilterAggregateText: string) => boolean;
     /**
      * Set to `true` to override the default tree data filtering behaviour to instead exclude child nodes from filter results.
      * @default false
-     * @managed
      */
     excludeChildrenWhenTreeDataFiltering?: boolean;
     /**
@@ -565,6 +530,7 @@ export interface GridOptions<TData = any> {
     enableAdvancedFilter?: boolean;
     /**
      * @deprecated As of v31, use `initialState.filter.advancedFilterModel` instead.
+     * @initial
      */
     advancedFilterModel?: AdvancedFilterModel | null;
     /**
@@ -587,50 +553,54 @@ export interface GridOptions<TData = any> {
     /**
      * Set to `true` to Enable Charts.
      * @default false
-     * @managed
      */
     enableCharts?: boolean;
     /**
      * The list of chart themes that a user can choose from in the chart settings panel.
      * @default ['ag-default', 'ag-material', 'ag-sheets', 'ag-polychroma', 'ag-vivid'];
+     * @initial
      */
     chartThemes?: string[];
     /**
      * A map containing custom chart themes.
+     * @initial
      */
     customChartThemes?: { [name: string]: AgChartTheme };
     /**
      * Chart theme overrides applied to all themes.
+     * @initial
      */
     chartThemeOverrides?: AgChartThemeOverrides;
     /**
      * @deprecated As of v29, no longer used. To suppress use `suppressChartToolPanelsButton`.
+     * @initial
      */
     enableChartToolPanelsButton?: boolean;
     /**
      * Set to `true` to show the 'hamburger' menu option from the Chart Toolbar and display the remaining toolbar buttons.
      * @default false
+     * @initial
      */
     suppressChartToolPanelsButton?: boolean;
     /**
      * Allows customisation of the Chart Tool Panels, such as changing the tool panels visibility and order, as well as choosing which charts should be displayed in the settings panel.
+     * @initial
      */
     chartToolPanelsDef?: ChartToolPanelsDef;
 
     // *** Loading Cell Renderers *** //
     /**
-    * Provide your own loading cell renderer to use when data is loading via a DataSource.
-    * See [Loading Cell Renderer](https://www.ag-grid.com/javascript-data-grid/component-loading-cell-renderer/) for framework specific implementation details.
-    * @managed
-    */
+     * Provide your own loading cell renderer to use when data is loading via a DataSource.
+     * See [Loading Cell Renderer](https://www.ag-grid.com/javascript-data-grid/component-loading-cell-renderer/) for framework specific implementation details.
+     */
     loadingCellRenderer?: any;
     /**
      * Params to be passed to the `loadingCellRenderer` component.
-     * @managed
      */
     loadingCellRendererParams?: any;
     /**
      * Callback to select which loading cell renderer to be used when data is loading via a DataSource.
+     * @initial
      */
     loadingCellRendererSelector?: LoadingCellRendererSelectorFunc<TData>;
 
@@ -638,6 +608,7 @@ export interface GridOptions<TData = any> {
     // just set once
     /**
      * A map of key->value pairs for localising text within the grid.
+     * @initial
      */
     localeText?: { [key: string]: string };
 
@@ -645,38 +616,39 @@ export interface GridOptions<TData = any> {
     /**
      * Set to `true` to enable Master Detail.
      * @default false
-     * @managed
      */
     masterDetail?: boolean;
     /**
      * Set to `true` to keep detail rows for when they are displayed again.
      * @default false
+     * @initial
      */
     keepDetailRows?: boolean;
     /**
      * Sets the number of details rows to keep.
      * @default 10
+     * @initial
      */
     keepDetailRowsCount?: number;
 
     /**
-    * Provide a custom `detailCellRenderer` to use when a master row is expanded.
-    * See [Detail Cell Renderer](https://www.ag-grid.com/javascript-data-grid/master-detail-custom-detail/) for framework specific implementation details.
-    * @managed
-    */
+     * Provide a custom `detailCellRenderer` to use when a master row is expanded.
+     * See [Detail Cell Renderer](https://www.ag-grid.com/javascript-data-grid/master-detail-custom-detail/) for framework specific implementation details.
+     */
     detailCellRenderer?: any;
     /**
      * Specifies the params to be used by the Detail Cell Renderer. Can also be a function that provides the params to enable dynamic definitions of the params.
-     * @managed
      */
     detailCellRendererParams?: any;
 
     /**
      * Set fixed height in pixels for each detail row.
+     * @initial
      */
     detailRowHeight?: number;
     /**
      * Set to `true` to have the detail grid dynamically change it's height to fit it's rows.
+     * @initial
      */
     detailRowAutoHeight?: boolean;
 
@@ -684,6 +656,7 @@ export interface GridOptions<TData = any> {
     // changeable, but no immediate impact
     /**
      * Provides a context object that is provided to different callbacks the grid uses. Used for passing additional information to the callbacks by your application.
+     * @initial
      */
     context?: any;
     /**
@@ -691,33 +664,37 @@ export interface GridOptions<TData = any> {
      * A list of grids to treat as Aligned Grids.
      * Provide a list if the grids / apis already exist or return via a callback to allow the aligned grids to be retrieved asynchronously.
      * If grids are aligned then the columns and horizontal scrolling will be kept in sync.
+     * @initial
      */
     alignedGrids?: AlignedGrid[] | (() => AlignedGrid[]);
     /**
      * Change this value to set the tabIndex order of the Grid within your application.
      * @default 0
+     * @initial
      */
     tabIndex?: number;
     /**
      * The number of rows rendered outside the viewable area the grid renders.
      * Having a buffer means the grid will have rows ready to show as the user slowly scrolls vertically.
      * @default 10
-     * @managed
      */
     rowBuffer?: number;
     /**
      * Set to `true` to turn on the value cache.
      * @default false
+     * @initial
      */
     valueCache?: boolean;
     /**
      * Set to `true` to configure the value cache to not expire after data updates.
      * @default false
+     * @initial
      */
     valueCacheNeverExpires?: boolean;
     /**
      * Set to `true` to allow cell expressions.
      * @default false
+     * @initial
      */
     enableCellExpressions?: boolean;
     /**
@@ -725,87 +702,94 @@ export interface GridOptions<TData = any> {
      * The grid doesn't use the parent reference, but it is included to help the client code navigate the node tree if it wants by providing bi-direction navigation up and down the tree.
      * If this is a problem (e.g. if you need to convert the tree to JSON, which does not allow cyclic dependencies) then set this to `true`.
      * @default false
+     * @initial
      */
     suppressParentsInRowNodes?: boolean;
     /**
      * Disables touch support (but does not remove the browser's efforts to simulate mouse events on touch).
      * @default false
+     * @initial
      */
     suppressTouch?: boolean;
     /**
      * Set to `true` to not set focus back on the grid after a refresh. This can avoid issues where you want to keep the focus on another part of the browser.
      * @default false
-     * @managed
      */
     suppressFocusAfterRefresh?: boolean;
     /**
-     * Disables the asynchronous nature of the events introduced in v10, and makes them synchronous. This property only exists for the purpose of supporting legacy code which has a dependency on synchronous events from earlier versions (v9 or earlier) of AG Grid. **It is strongly recommended that you do not change this property unless you have legacy issues.** @default false
+     * Disables the asynchronous nature of the events introduced in v10, and makes them synchronous. This property only exists for the purpose of supporting legacy code which has a dependency on synchronous events from earlier versions (v9 or earlier) of AG Grid. **It is strongly recommended that you do not change this property unless you have legacy issues.**
+     * @default false
+     * @initial
      */
     suppressAsyncEvents?: boolean;
     /**
      * The grid will check for `ResizeObserver` and use it if it exists in the browser, otherwise it will use the grid's alternative implementation. Some users reported issues with Chrome's `ResizeObserver`. Use this property to always use the grid's alternative implementation should such problems exist.
      * @default false
+     * @initial
      */
     suppressBrowserResizeObserver?: boolean;
     /**
      * Disables showing a warning message in the console if using a `gridOptions` or `colDef` property that doesn't exist.
      * @default false
+     * @initial
      */
     suppressPropertyNamesCheck?: boolean;
     /**
      * Disables change detection.
      * @default false
-     * @managed
      */
     suppressChangeDetection?: boolean;
     /**
      * Set this to `true` to enable debug information from the grid and related components. Will result in additional logging being output, but very useful when investigating problems.
      * @default false
+     * @initial
      */
     debug?: boolean;
 
     // *** Overlays *** //
     /**
      * Provide a template for 'loading' overlay.
-     * @managed
      */
     overlayLoadingTemplate?: string;
     /**
-    * Provide a custom loading overlay component.
-    * See [Loading Overlay Component](https://www.ag-grid.com/javascript-data-grid/component-overlay/#simple-loading-overlay-component) for framework specific implementation details.
-    */
+     * Provide a custom loading overlay component.
+     * See [Loading Overlay Component](https://www.ag-grid.com/javascript-data-grid/component-overlay/#simple-loading-overlay-component) for framework specific implementation details.
+     * @initial
+     */
     loadingOverlayComponent?: any;
     /**
      * Customise the parameters provided to the loading overlay component.
+     * @initial
      */
     loadingOverlayComponentParams?: any;
 
     /**
      * Disables the 'loading' overlay.
      * @default false
+     * @initial
      */
     suppressLoadingOverlay?: boolean;
 
     /**
      * Provide a template for 'no rows' overlay.
-     * @managed
      */
     overlayNoRowsTemplate?: string;
 
     /**
-    * Provide a custom no rows overlay component.
-    * See [No Rows Overlay Component](https://www.ag-grid.com/javascript-data-grid/component-overlay/#simple-no-rows-overlay-component) for framework specific implementation details.
-    */
+     * Provide a custom no rows overlay component.
+     * See [No Rows Overlay Component](https://www.ag-grid.com/javascript-data-grid/component-overlay/#simple-no-rows-overlay-component) for framework specific implementation details.
+     * @initial
+     */
     noRowsOverlayComponent?: any;
     /**
      * Customise the parameters provided to the no rows overlay component.
+     * @initial
      */
     noRowsOverlayComponentParams?: any;
 
     /**
      * Disables the 'no rows' overlay.
      * @default false
-     * @managed
      */
     suppressNoRowsOverlay?: boolean;
 
@@ -813,13 +797,11 @@ export interface GridOptions<TData = any> {
     /**
      * Set whether pagination is enabled.
      * @default false
-     * @managed
      */
     pagination?: boolean;
     /**
      * How many rows to load per page. If `paginationAutoPageSize` is specified, this property is ignored.
      * @default 100
-     * @managed
      */
     paginationPageSize?: number;
     /**
@@ -828,17 +810,18 @@ export interface GridOptions<TData = any> {
      * Set to `true` to show the page size selector with the default page sizes `[20, 50, 100]`.
      * Set to `false` to hide the page size selector.
      * @default true
+     * @initial
      */
     paginationPageSizeSelector?: number[] | boolean;
     /**
      * Set to `true` so that the number of rows to load per page is automatically adjusted by the grid so each page shows enough rows to just fill the area designated for the grid. If `false`, `paginationPageSize` is used.
      * @default false
-     * @managed
      */
     paginationAutoPageSize?: boolean;
     /**
      * Set to `true` to have pages split children of groups when using Row Grouping or detail rows with Master Detail.
      * @default false
+     * @initial
      */
     paginateChildRows?: boolean;
     /**
@@ -846,7 +829,6 @@ export interface GridOptions<TData = any> {
      * This is useful if `pagination=true` and you want to provide your own pagination controls.
      * Otherwise, when `pagination=true` the grid automatically shows the necessary controls at the bottom so that the user can navigate through the different pages.
      * @default false
-     * @managed
      */
     suppressPaginationPanel?: boolean;
 
@@ -854,38 +836,37 @@ export interface GridOptions<TData = any> {
     /**
      * Set to `true` to enable pivot mode.
      * @default false
-     * @managed
      */
     pivotMode?: boolean;
     /**
      * When to show the 'pivot panel' (where you drag rows to pivot) at the top. Note that the pivot panel will never show if `pivotMode` is off.
      * @default 'never'
+     * @initial
      */
     pivotPanelShow?: 'always' | 'onlyWhenPivoting' | 'never';
     /**
      * If pivoting, set to the number of column group levels to expand by default, e.g. `0` for none, `1` for first level only, etc. Set to `-1` to expand everything.
      * @default 0
-     * @managed
      */
     pivotDefaultExpanded?: number;
     /**
      * When set and the grid is in pivot mode, automatically calculated totals will appear within the Pivot Column Groups, in the position specified.
-     * @managed
      */
     pivotColumnGroupTotals?: 'before' | 'after';
     /**
      * When set and the grid is in pivot mode, automatically calculated totals will appear for each value column in the position specified.
-     * @managed
      */
     pivotRowTotals?: 'before' | 'after';
     /**
      * If `true`, the grid will not swap in the grouping column when pivoting. Useful if pivoting using Server Side Row Model or Viewport Row Model and you want full control of all columns including the group column.
      * @default false
+     * @initial
      */
     pivotSuppressAutoColumn?: boolean;
     /**
      * When enabled, pivot column groups will appear 'fixed', without the ability to expand and collapse the column groups.
      * @default false
+     * @initial
      */
     suppressExpandablePivotGroups?: boolean;
     /**
@@ -895,101 +876,104 @@ export interface GridOptions<TData = any> {
     functionsReadOnly?: boolean;
     /**
      * A map of 'function name' to 'function' for custom aggregation functions.
+     * @initial
      */
     aggFuncs?: { [key: string]: IAggFunc<TData>; };
     /**
      * When `true`, column headers won't include the `aggFunc` name, e.g. `'sum(Bank Balance)`' will just be `'Bank Balance'`.
      * @default false
+     * @initial
      */
     suppressAggFuncInHeader?: boolean;
 
     /**
      * When using aggregations, the grid will always calculate the root level aggregation value.
      * @default false
-     * @managed
      */
     alwaysAggregateAtRootLevel?: boolean;
     /**
-     * @deprecated v30 - made default and toggled via alwaysAggregateAtRootLevel  */
+     * @deprecated v30 - made default and toggled via alwaysAggregateAtRootLevel
+     * @initial
+     */
     suppressAggAtRootLevel?: boolean;
     /**
      * When using change detection, only the updated column will be re-aggregated.
      * @default false
-     * @managed
      */
     aggregateOnlyChangedColumns?: boolean;
     /**
      * Set to `true` so that aggregations are not impacted by filtering.
      * @default false
-     * @managed
      */
     suppressAggFilteredOnly?: boolean;
     /**
      * Set to `true` to omit the value Column header when there is only a single value column.
      * @default false
+     * @initial
      */
     removePivotHeaderRowWhenSingleValueColumn?: boolean;
     // *** Rendering *** //
     /**
      * Set to `false` to disable Row Animation which is enabled by default.
      * @default true
-     * @managed
      */
     animateRows?: boolean;
     /**
      * Set to `true` to have cells flash after data changes.
      * @default false
-     * @managed
      */
     enableCellChangeFlash?: boolean;
     /**
      * To be used in combination with `enableCellChangeFlash`, this configuration will set the delay in milliseconds of how long a cell should remain in its "flashed" state.
      * @default 500
-     * @managed
      */
     cellFlashDelay?: number;
     /**
      * To be used in combination with `enableCellChangeFlash`, this configuration will set the delay in milliseconds of how long the "flashed" state animation takes to fade away after the timer set by `cellFlashDelay` has completed.
      * @default 1000
-     * @managed
      */
     cellFadeDelay?: number;
     /**
      * Set to `true` to have cells flash after data changes even when the change is due to filtering.
      * @default false
+     * @initial
      */
     allowShowChangeAfterFilter?: boolean;
     /**
      * Switch between layout options: `normal`, `autoHeight`, `print`.
      * @default 'normal'
-     * @managed
      */
     domLayout?: DomLayoutType;
     /**
      * When `true`, the order of rows and columns in the DOM are consistent with what is on screen.
      * Disables row animations.
      * @default false
+     * @initial
      */
     ensureDomOrder?: boolean;
     /**
      * Set to `true` to operate the grid in RTL (Right to Left) mode.
      * @default false
+     * @initial
      */
     enableRtl?: boolean;
     /**
      * Set to `true` so that the grid doesn't virtualise the columns. For example, if you have 100 columns, but only 10 visible due to scrolling, all 100 will always be rendered.
      * @default false
+     * @initial
      */
     suppressColumnVirtualisation?: boolean;
     /**
      * By default the grid has a limit of rendering a maximum of 500 rows at once (remember the grid only renders rows you can see, so unless your display shows more than 500 rows without vertically scrolling this will never be an issue).
      * <br />**This is only relevant if you are manually setting `rowBuffer` to a high value (rendering more rows than can be seen), or `suppressRowVirtualisation` is true, or if your grid height is able to display more than 500 rows at once.**
      * @default false
+     * @initial
      */
     suppressMaxRenderedRowRestriction?: boolean;
     /**
      * Set to `true` so that the grid doesn't virtualise the rows. For example, if you have 100 rows, but only 10 visible due to scrolling, all 100 will always be rendered.
      * @default false
+     * @initial
      */
     suppressRowVirtualisation?: boolean;
 
@@ -997,31 +981,26 @@ export interface GridOptions<TData = any> {
     /**
      * Set to `true` to enable Managed Row Dragging.
      * @default false
-     * @managed
      */
     rowDragManaged?: boolean;
     /**
      * Set to `true` to suppress row dragging.
      * @default false
-     * @managed
      */
     suppressRowDrag?: boolean;
     /**
      * Set to `true` to suppress moving rows while dragging the `rowDrag` waffle. This option highlights the position where the row will be placed and it will only move the row on mouse up.
      * @default false
-     * @managed
      */
     suppressMoveWhenRowDragging?: boolean;
     /**
      * Set to `true` to enable clicking and dragging anywhere on the row without the need for a drag handle.
      * @default false
-     * @managed
      */
     rowDragEntireRow?: boolean;
     /**
      * Set to `true` to enable dragging multiple rows at the same time.
      * @default false
-     * @managed
      */
     rowDragMultiRow?: boolean;
     /**
@@ -1029,26 +1008,24 @@ export interface GridOptions<TData = any> {
      * If this callback is not set, the current cell value will be used.
      * If the `rowDragText` callback is set in the ColDef it will take precedence over this, except when
      * `rowDragEntireRow=true`.
+     * @initial
      */
     rowDragText?: (params: IRowDragItem, dragItemCount: number) => string;
 
     // *** Row Full Width *** //
 
     /**
-    * Provide your own cell renderer component to use for full width rows.
-    * See [Full Width Rows](https://www.ag-grid.com/javascript-data-grid/full-width-rows/) for framework specific implementation details.
-    * @managed
-    */
+     * Provide your own cell renderer component to use for full width rows.
+     * See [Full Width Rows](https://www.ag-grid.com/javascript-data-grid/full-width-rows/) for framework specific implementation details.
+     */
     fullWidthCellRenderer?: any;
     /**
      * Customise the parameters provided to the `fullWidthCellRenderer` component.
-     * @managed
      */
     fullWidthCellRendererParams?: any;
 
     /**
      * Set to `true` to have the Full Width Rows embedded in grid's main container so they can be scrolled horizontally.
-     * @managed
      */
     embedFullWidthRows?: boolean;
 
@@ -1058,6 +1035,7 @@ export interface GridOptions<TData = any> {
      * @deprecated v31
      * When enabled, the grid will cast group values to string type.
      * @default false
+     * @initial
      */
     suppressGroupMaintainValueType?: boolean;
     /**
@@ -1074,34 +1052,32 @@ export interface GridOptions<TData = any> {
     /**
      * If grouping, set to the number of levels to expand by default, e.g. `0` for none, `1` for first level only, etc. Set to `-1` to expand everything.
      * @default 0
-     * @managed
      */
     groupDefaultExpanded?: number;
     /**
      * Allows specifying the group 'auto column' if you are not happy with the default. If grouping, this column definition is included as the first column in the grid. If not grouping, this column is not included.
+     * @initial
      */
     autoGroupColumnDef?: ColDef<TData>;
     /**
      * When `true`, preserves the current group order when sorting on non-group columns.
      * @default false
-     * @managed
      */
     groupMaintainOrder?: boolean;
     /**
      * When `true`, if you select a group, the children of the group will also be selected.
      * @default false
-     * @managed
      */
     groupSelectsChildren?: boolean;
     /**
      * If grouping, locks the group settings of a number of columns, e.g. `0` for no group locking. `1` for first group column locked, `-1` for all group columns locked.
      * @default 0
+     * @initial
      */
     groupLockGroupColumns?: number;
     /**
      * Set to determine whether filters should be applied on aggregated group values.
      * @default false
-     * @managed
      */
     groupAggFiltering?: boolean | IsRowFilterable<TData>;
     /**
@@ -1111,109 +1087,95 @@ export interface GridOptions<TData = any> {
      * This is handy for 'total' rows, that are displayed below the data when the group is open, and alongside the group when it is closed.
      * If a callback function is provided, it can used to select which groups will have a footer added.
      * @default false
-     * @managed
      */
     groupIncludeFooter?: boolean | UseGroupFooter<TData>;
     /**
      * Set to `true` to show a 'grand total' group footer across all groups.
      * @default false
-     * @managed
      */
     groupIncludeTotalFooter?: boolean;
     /**
      * If `true`, and showing footer, aggregate data will always be displayed at both the header and footer levels. This stops the possibly undesirable behaviour of the header details 'jumping' to the footer on expand.
      * @default false
-     * @managed
      */
     groupSuppressBlankHeader?: boolean;
     /**
      * If using `groupSelectsChildren`, then only the children that pass the current filter will get selected.
      * @default false
-     * @managed
      */
     groupSelectsFiltered?: boolean;
     /**
      * Shows the open group in the group column for non-group rows.
      * @default false
-     * @managed
      */
     showOpenedGroup?: boolean;
     /**
      * Set to `true` to collapse groups that only have one child.
      * @default false
-     * @managed
      */
     groupRemoveSingleChildren?: boolean;
     /**
      * Set to `true` to collapse lowest level groups that only have one child.
      * @default false
-     * @managed
      */
     groupRemoveLowestSingleChildren?: boolean;
     /**
      * Set to `true` to hide parents that are open. When used with multiple columns for showing groups, it can give a more pleasing user experience.
      * @default false
-     * @managed
      */
     groupHideOpenParents?: boolean;
     /**
      * Set to `true` to prevent the grid from creating a '(Blanks)' group for nodes which do not belong to a group, and display the unbalanced nodes alongside group nodes.
      * @default false
-     * @managed
      */
     groupAllowUnbalanced?: boolean;
     /**
      * When to show the 'row group panel' (where you drag rows to group) at the top.
      * @default 'never'
-     * @managed
      */
     rowGroupPanelShow?: 'always' | 'onlyWhenGrouping' | 'never';
     /**
-    * Provide the Cell Renderer to use when `groupDisplayType = 'groupRows'`.
-    * See [Group Row Cell Renderer](https://www.ag-grid.com/javascript-data-grid/grouping-group-rows/#providing-cell-renderer) for framework specific implementation details.
-    * @managed
-    */
+     * Provide the Cell Renderer to use when `groupDisplayType = 'groupRows'`.
+     * See [Group Row Cell Renderer](https://www.ag-grid.com/javascript-data-grid/grouping-group-rows/#providing-cell-renderer) for framework specific implementation details.
+     */
     groupRowRenderer?: any;
     /**
      * Customise the parameters provided to the `groupRowRenderer` component.
-     * @managed
      */
     groupRowRendererParams?: any;
 
     /**
      * By default, when a column is un-grouped, i.e. using the Row Group Panel, it is made visible in the grid. This property stops the column becoming visible again when un-grouping.
      * @default false
-     * @managed
      */
     suppressMakeColumnVisibleAfterUnGroup?: boolean;
     /**
      * Set to `true` to enable the Grid to work with Tree Data. You must also implement the `getDataPath(data)` callback.
      * @default false
-     * @managed
      */
     treeData?: boolean;
 
     /**
      * Set to `true` to suppress sort indicators and actions from the row group panel.
      * @default false
+     * @initial
      */
     rowGroupPanelSuppressSort?: boolean;
 
     /**
      * Set to `true` prevent Group Rows from sticking to the top of the grid.
      * @default false
+     * @initial
      */
     suppressGroupRowsSticky?: boolean;
 
     // *** Row Pinning *** //
     /**
      * Data to be displayed as pinned top rows in the grid.
-     * @managed
      */
     pinnedTopRowData?: any[];
     /**
      * Data to be displayed as pinned bottom rows in the grid.
-     * @managed
      */
     pinnedBottomRowData?: any[];
 
@@ -1221,6 +1183,7 @@ export interface GridOptions<TData = any> {
     /**
      * Sets the row model type.
      * @default 'clientSide'
+     * @initial
      */
     rowModelType?: RowModelType;
 
@@ -1228,128 +1191,127 @@ export interface GridOptions<TData = any> {
     // changeable with impact
     /**
      * Set the data to be displayed as rows in the grid.
-     * @managed
      */
     rowData?: TData[] | null;
     /**
      * How many milliseconds to wait before executing a batch of async transactions.
-     * @managed
      */
     asyncTransactionWaitMillis?: number;
     /**
      * Prevents Transactions changing sort, filter, group or pivot state when transaction only contains updates.
      * @default false
-     * @managed
      */
     suppressModelUpdateAfterUpdateTransaction?: boolean;
 
     // *** Row Model: Infinite / Server-side *** //
     /**
      * Provide the datasource for infinite scrolling.
-     * @managed
      */
     datasource?: IDatasource;
     /**
      * How many extra blank rows to display to the user at the end of the dataset, which sets the vertical scroll and then allows the grid to request viewing more rows of data.
      * @default 1
+     * @initial
      */
     cacheOverflowSize?: number;
     /**
      * How many extra blank rows to display to the user at the end of the dataset, which sets the vertical scroll and then allows the grid to request viewing more rows of data.
      * @default 1
+     * @initial
      */
     infiniteInitialRowCount?: number;
     /**
      * Set how many loading rows to display to the user for the root level group.
      * @default 1
+     * @initial
      */
     serverSideInitialRowCount?: number;
 
     /**
      * When `true`, the Server-side Row Model will suppress Infinite Scrolling and load all the data at the current level.
      * @default false
+     * @initial
      */
     suppressServerSideInfiniteScroll?: boolean;
     /**
      * How many rows for each block in the store, i.e. how many rows returned from the server at a time.
      * @default 100
-     * @managed
      */
     cacheBlockSize?: number;
     /**
      * How many blocks to keep in the store. Default is no limit, so every requested block is kept. Use this if you have memory concerns, and blocks that were least recently viewed will be purged when the limit is hit. The grid will additionally make sure it has all the blocks needed to display what is currently visible, in case this property is set to a low value.
+     * @initial
      */
     maxBlocksInCache?: number;
     /**
      * How many requests to hit the server with concurrently. If the max is reached, requests are queued.
      * Set to `-1` for no maximum restriction on requests.
      * @default 2
+     * @initial
      */
     maxConcurrentDatasourceRequests?: number;
     /**
      * How many milliseconds to wait before loading a block. Useful when scrolling over many blocks, as it prevents blocks loading until scrolling has settled.
+     * @initial
      */
     blockLoadDebounceMillis?: number;
     /**
      * When enabled, closing group rows will remove children of that row. Next time the row is opened, child rows will be read from the datasource again. This property only applies when there is Row Grouping.
      * @default false
-     * @managed
      */
     purgeClosedRowNodes?: boolean;
     /**
      * Provide the `serverSideDatasource` for server side row model.
-     * @managed
      */
     serverSideDatasource?: IServerSideDatasource;
 
     /**
      * When enabled, always refreshes top level groups regardless of which column was sorted. This property only applies when there is Row Grouping & sorting is handled on the server.
      * @default false
-     * @managed
      */
     serverSideSortAllLevels?: boolean;
     /**
      * When enabled, only refresh groups directly impacted by a filter. This property only applies when there is Row Grouping & filtering is handled on the server.
      * @default false
+     * @initial
      */
     serverSideOnlyRefreshFilteredGroups?: boolean;
     /**
      * @deprecated v30 This property has been deprecated. Use `serverSideOnlyRefreshFilteredGroups` instead.
-     * @managed
      */
     serverSideFilterAllLevels?: boolean;
     /**
      *
      * When enabled, Sorting will be done on the server. Only applicable when `suppressServerSideInfiniteScroll=true`.
      * @default false
-     * @managed
      */
     serverSideSortOnServer?: boolean;
     /**
      * When enabled, Filtering will be done on the server. Only applicable when `suppressServerSideInfiniteScroll=true`.
      * @default false
-     * @managed
      */
     serverSideFilterOnServer?: boolean;
 
     /**
      * Used to split pivot field strings for generating pivot result columns when `pivotResultFields` is provided as part of a `getRows` success.
      * @default '_'
+     * @initial
      */
     serverSidePivotResultFieldSeparator?: string;
 
     // *** Row Model: Viewport *** //
     /**
      * To use the viewport row model you need to provide the grid with a `viewportDatasource`.
-     * @managed
      */
     viewportDatasource?: IViewportDatasource;
     /**
      * When using viewport row model, sets the page size for the viewport.
+     * @initial
      */
     viewportRowModelPageSize?: number;
     /**
      * When using viewport row model, sets the buffer size for the viewport.
+     * @initial
      */
     viewportRowModelBufferSize?: number;
 
@@ -1357,93 +1319,85 @@ export interface GridOptions<TData = any> {
     /**
      * Set to `true` to always show the horizontal scrollbar.
      * @default false
-     * @managed
      */
     alwaysShowHorizontalScroll?: boolean;
     /**
      * Set to `true` to always show the vertical scrollbar.
      * @default false
-     * @managed
      */
     alwaysShowVerticalScroll?: boolean;
     /**
      * Set to `true` to debounce the vertical scrollbar. Can provide smoother scrolling on slow machines.
      * @default false
+     * @initial
      */
     debounceVerticalScrollbar?: boolean;
     /**
      * Set to `true` to never show the horizontal scroll. This is useful if the grid is aligned with another grid and will scroll when the other grid scrolls. (Should not be used in combination with `alwaysShowHorizontalScroll`.)
      * @default false
-     * @managed
      */
     suppressHorizontalScroll?: boolean;
     /**
      * When `true`, the grid will not scroll to the top when new row data is provided. Use this if you don't want the default behaviour of scrolling to the top every time you load new data.
      * @default false
-     * @managed
      */
     suppressScrollOnNewData?: boolean;
     /**
      * When `true`, the grid will not allow mousewheel / touchpad scroll when popup elements are present.
      * @default false
-     * @managed
      */
     suppressScrollWhenPopupsAreOpen?: boolean;
     /**
      * When `true`, the grid will not use animation frames when drawing rows while scrolling. Use this if the grid is working fast enough that you don't need animation frames and you don't want the grid to flicker.
      * @default false
+     * @initial
      */
     suppressAnimationFrame?: boolean;
     /**
      * If `true`, middle clicks will result in `click` events for cells and rows. Otherwise the browser will use middle click to scroll the grid.<br />**Note:** Not all browsers fire `click` events with the middle button. Most will fire only `mousedown` and `mouseup` events, which can be used to focus a cell, but will not work to call the `onCellClicked` function.
      * @default false
-     * @managed
      */
     suppressMiddleClickScrolls?: boolean;
     /**
      * If `true`, mouse wheel events will be passed to the browser. Useful if your grid has no vertical scrolls and you want the mouse to scroll the browser page.
      * @default false
+     * @initial
      */
     suppressPreventDefaultOnMouseWheel?: boolean;
     /**
      * Tell the grid how wide in pixels the scrollbar is, which is used in grid width calculations. Set only if using non-standard browser-provided scrollbars, so the grid can use the non-standard size in its calculations.
+     * @initial
      */
     scrollbarWidth?: number;
 
     // *** Selection *** //
     /**
      * Type of Row Selection: `single`, `multiple`.
-     * @managed
      */
     rowSelection?: 'single' | 'multiple';
     /**
      * Set to `true` to allow multiple rows to be selected using single click.
      * @default false
-     * @managed
      */
     rowMultiSelectWithClick?: boolean;
     /**
      * If `true`, rows will not be deselected if you hold down `Ctrl` and click the row or press `Space`.
      * @default false
-     * @managed
      */
     suppressRowDeselection?: boolean;
     /**
      * If `true`, row selection won't happen when rows are clicked. Use when you only want checkbox selection.
      * @default false
-     * @managed
      */
     suppressRowClickSelection?: boolean;
     /**
      * If `true`, cells won't be focusable. This means keyboard navigation will be disabled for grid cells, but remain enabled in other elements of the grid such as column headers, floating filters, tool panels.
      * @default false
-     * @managed
      */
     suppressCellFocus?: boolean;
     /**
      * If `true`, only a single range can be selected.
      * @default false
-     * @managed
      */
     suppressMultiRangeSelection?: boolean;
     /**
@@ -1451,37 +1405,31 @@ export interface GridOptions<TData = any> {
      *
      * **Note:** When this is set to `true`, the clipboard service is disabled and only selected text is copied.
      * @default false
-     * @managed
      */
     enableCellTextSelection?: boolean;
     /**
      * Set to `true` to enable Range Selection.
      * @default false
-     * @managed
      */
     enableRangeSelection?: boolean;
     /**
      * Set to `true` to enable the Range Handle.
      * @default false
-     * @managed
      */
     enableRangeHandle?: boolean;
     /**
      * Set to `true` to enable the Fill Handle.
      * @default false
-     * @managed
      */
     enableFillHandle?: boolean;
     /**
      * Set to `'x'` to force the fill handle direction to horizontal, or set to `'y'` to force the fill handle direction to vertical.
      * @default 'xy'
-     * @managed
      */
     fillHandleDirection?: 'x' | 'y' | 'xy';
     /**
      * Set this to `true` to prevent cell values from being cleared when the Range Selection is reduced by the Fill Handle.
      * @default false
-     * @managed
      */
     suppressClearOnFillReduction?: boolean;
 
@@ -1489,112 +1437,108 @@ export interface GridOptions<TData = any> {
     /**
      * Array defining the order in which sorting occurs (if sorting is enabled). Values can be `'asc'`, `'desc'` or `null`. For example: `sortingOrder: ['asc', 'desc']`.
      * @default [null, 'asc', 'desc']
-     * @managed
      */
     sortingOrder?: (SortDirection)[];
     /**
      * Set to `true` to specify that the sort should take accented characters into account. If this feature is turned on the sort will be slower.
      * @default false
-     * @managed
      */
     accentedSort?: boolean;
     /**
      * Set to `true` to show the 'no sort' icon.
      * @default false
-     * @managed
      */
     unSortIcon?: boolean;
     /**
      * Set to `true` to suppress multi-sort when the user shift-clicks a column header.
      * @default false
-     * @managed
      */
     suppressMultiSort?: boolean;
     /**
      * Set to `true` to always multi-sort when the user clicks a column header, regardless of key presses.
      * @default false
-     * @managed
      */
     alwaysMultiSort?: boolean;
     /**
      * Set to `'ctrl'` to have multi sorting work using the `Ctrl` (or `Command ⌘` for Mac) key.
-     * @managed
      */
     multiSortKey?: 'ctrl';
     /**
      * Set to `true` to suppress sorting of un-sorted data to match original row data.
      * @default false
-     * @managed
      */
     suppressMaintainUnsortedOrder?: boolean;
 
     // *** Styling *** //
     /**
      * Icons to use inside the grid instead of the grid's default icons.
+     * @initial
      */
     icons?: { [key: string]: Function | string; };
     /**
      * Default row height in pixels.
      * @default 25
-     * @managed
      */
     rowHeight?: number;
     /**
      * The style properties to apply to all rows. Set to an object of key (style names) and values (style values).
-     * @managed
      */
     rowStyle?: RowStyle;
     /**
      * CSS class(es) for all rows. Provide either a string (class name) or array of strings (array of class names).
-     * @managed
      */
     rowClass?: string | string[];
     /**
      * Rules which can be applied to include certain CSS classes.
-     * @managed
      */
     rowClassRules?: RowClassRules<TData>;
     /**
      * Set to `true` to not highlight rows by adding the `ag-row-hover` CSS class.
      * @default false
-     * @managed
      */
     suppressRowHoverHighlight?: boolean;
     /**
      * Uses CSS `top` instead of CSS `transform` for positioning rows. Useful if the transform function is causing issues such as used in row spanning.
      * @default false
+     * @initial
      */
     suppressRowTransform?: boolean;
     /**
      * Set to `true` to highlight columns by adding the `ag-column-hover` CSS class.
      * @default false
-     * @managed
      */
     columnHoverHighlight?: boolean;
 
     /**
-     * Provide a custom `gridId` for this instance of the grid. Value will be set on the root DOM node using the attribute `grid-id` as well as being accessible via the `gridApi.getGridId()` method.  */
+     * Provide a custom `gridId` for this instance of the grid. Value will be set on the root DOM node using the attribute `grid-id` as well as being accessible via the `gridApi.getGridId()` method.
+     * @initial
+     */
     gridId?: string;
 
     /**
      * When enabled, sorts only the rows added/updated by a transaction.
      * @default false
-     * @managed
      */
     deltaSort?: boolean;
 
     /**
-     * @managed
      */
     treeDataDisplayType?: TreeDataDisplayType;
 
     /**
-     * @deprecated v29.2 */
+     * @deprecated v29.2
+     * @initial
+     */
     functionsPassive?: boolean;
+
+    /**
+     * @initial
+     */
     enableGroupEdit?: boolean;
 
     /**
      * Initial state for the grid. Only read once on initialization. Can be used in conjunction with `api.getState()` to save and restore grid state.
+     * @initial
      */
     initialState?: GridState;
 
@@ -1605,16 +1549,15 @@ export interface GridOptions<TData = any> {
     // *** Accessories *** //
     /**
      * For customising the context menu.
-     * @managed
      */
     getContextMenuItems?: GetContextMenuItems<TData>;
     /**
      * For customising the main 'column header' menu.
+     * @initial
      */
     getMainMenuItems?: GetMainMenuItems;
     /**
      * Allows user to process popups after they are created. Applications can use this if they want to, for example, reposition the popup.
-     * @managed
      */
     postProcessPopup?: (params: PostProcessPopupParams<TData>) => void;
 
@@ -1622,161 +1565,147 @@ export interface GridOptions<TData = any> {
     /**
      * Allows the user to process the columns being removed from the pinned section because the viewport is too small to accommodate them.
      * Returns an array of columns to be removed from the pinned areas.
-     * */
+     * @initial
+     */
     processUnpinnedColumns?: (params: ProcessUnpinnedColumnsParams<TData>) => Column[];
 
     // *** Clipboard *** //
     /**
      * Allows you to process cells for the clipboard. Handy if for example you have `Date` objects that need to have a particular format if importing into Excel.
-     * @managed
      */
     processCellForClipboard?: (params: ProcessCellForExportParams<TData>) => any;
     /**
      * Allows you to process header values for the clipboard.
-     * @managed
      */
     processHeaderForClipboard?: (params: ProcessHeaderForExportParams<TData>) => any;
     /**
      * Allows you to process group header values for the clipboard.
-     * @managed
      */
     processGroupHeaderForClipboard?: (params: ProcessGroupHeaderForExportParams<TData>) => any;
     /**
      * Allows you to process cells from the clipboard. Handy if for example you have number fields, and want to block non-numbers from getting into the grid.
-     * @managed
      */
     processCellFromClipboard?: (params: ProcessCellForExportParams<TData>) => any;
     /**
      * Allows you to get the data that would otherwise go to the clipboard. To be used when you want to control the 'copy to clipboard' operation yourself.
-     * @managed
      */
     sendToClipboard?: (params: SendToClipboardParams<TData>) => void;
     /**
      * Allows complete control of the paste operation, including cancelling the operation (so nothing happens) or replacing the data with other data.
-     * @managed
      */
     processDataFromClipboard?: (params: ProcessDataFromClipboardParams<TData>) => string[][] | null;
 
     // *** Filtering *** //
     /**
      * Grid calls this method to know if an external filter is present.
-     * @managed
      */
     isExternalFilterPresent?: (params: IsExternalFilterPresentParams<TData>) => boolean;
     /**
      * Should return `true` if external filter passes, otherwise `false`.
-     * @managed
      */
     doesExternalFilterPass?: (node: IRowNode<TData>) => boolean;
 
     // *** Integrated Charts *** //
     /**
      * Callback to be used to customise the chart toolbar items.
+     * @initial
      */
     getChartToolbarItems?: GetChartToolbarItems;
     /**
      * Callback to enable displaying the chart in an alternative chart container.
+     * @initial
      */
     createChartContainer?: (params: ChartRefParams<TData>) => void;
 
     // *** Keyboard Navigation *** //
     /**
      * Allows overriding the default behaviour for when user hits navigation (arrow) key when a header is focused. Return the next Header position to navigate to or `null` to stay on current header.
-     * @managed
      */
     navigateToNextHeader?: (params: NavigateToNextHeaderParams<TData>) => (HeaderPosition | null);
     /**
      * Allows overriding the default behaviour for when user hits `Tab` key when a header is focused. Return the next Header position to navigate to or `null` to stay on current header.
-     * @managed
      */
     tabToNextHeader?: (params: TabToNextHeaderParams<TData>) => (HeaderPosition | null);
     /**
      * Allows overriding the default behaviour for when user hits navigation (arrow) key when a cell is focused. Return the next Cell position to navigate to or `null` to stay on current cell.
-     * @managed
      */
     navigateToNextCell?: (params: NavigateToNextCellParams<TData>) => (CellPosition | null);
     /**
      * Allows overriding the default behaviour for when user hits `Tab` key when a cell is focused. Return the next Cell position to navigate to or null to stay on current cell.
-     * @managed
      */
     tabToNextCell?: (params: TabToNextCellParams<TData>) => (CellPosition | null);
 
     // *** Localisation *** //
     /**
      * A callback for localising text within the grid.
+     * @initial
      */
     getLocaleText?: (params: GetLocaleTextParams<TData>) => string;
 
     // *** Miscellaneous *** //
     /**
-     * Allows overriding what `document` is used. Currently used by Drag and Drop (may extend to other places in the future). Use this when you want the grid to use a different `document` than the one available on the global scope. This can happen if docking out components (something which Electron supports) */
+     * Allows overriding what `document` is used. Currently used by Drag and Drop (may extend to other places in the future). Use this when you want the grid to use a different `document` than the one available on the global scope. This can happen if docking out components (something which Electron supports)
+     */
     getDocument?: () => Document;
 
     // *** Pagination *** //
     /**
      * Allows user to format the numbers in the pagination panel, i.e. 'row count' and 'page number' labels. This is for pagination panel only, to format numbers inside the grid's cells (i.e. your data), then use `valueFormatter` in the column definitions.
+     * @initial
      */
     paginationNumberFormatter?: (params: PaginationNumberFormatterParams<TData>) => string;
 
     // *** Row Grouping and Pivoting *** //
     /**
      * Callback to use when you need access to more then the current column for aggregation.
-     * @managed
      */
     getGroupRowAgg?: (params: GetGroupRowAggParams<TData>) => any;
     /**
      * (Client-side Row Model only) Allows groups to be open by default.
-     * @managed
      */
     isGroupOpenByDefault?: (params: IsGroupOpenByDefaultParams<TData>) => boolean;
     /**
      * Allows default sorting of groups.
-     * @managed
      */
     initialGroupOrderComparator?: (params: InitialGroupOrderComparatorParams<TData>) => number;
     /**
      * Callback to be used with pivoting, to allow changing the second column definition.
-     * @managed
      */
     processPivotResultColDef?: (colDef: ColDef<TData>) => void;
     /**
      * Callback to be used with pivoting, to allow changing the second column group definition.
-     * @managed
      */
     processPivotResultColGroupDef?: (colGroupDef: ColGroupDef<TData>) => void;
     /**
      * Callback to be used when working with Tree Data when `treeData = true`.
-     * @managed
      */
     getDataPath?: GetDataPath<TData>;
 
     // *** Row Model: Server Side *** //
     /**
      * Allows setting the child count for a group row.
+     * @initial
      */
     getChildCount?: (dataItem: any) => number;
     /**
      * Allows providing different params for different levels of grouping.
+     * @initial
      */
     getServerSideGroupLevelParams?: (params: GetServerSideGroupLevelParamsParams) => ServerSideGroupLevelParams;
     /**
      * Allows groups to be open by default.
-     * @managed
      */
     isServerSideGroupOpenByDefault?: (params: IsServerSideGroupOpenByDefaultParams) => boolean;
     /**
      * Allows cancelling transactions.
-     * @managed
      */
     isApplyServerSideTransaction?: IsApplyServerSideTransaction;
     /**
      * SSRM Tree Data: Allows specifying which rows are expandable.
-     * @managed
      */
     isServerSideGroup?: IsServerSideGroup;
     /**
      * SSRM Tree Data: Allows specifying group keys.
-     * @managed
      */
     getServerSideGroupKey?: GetServerSideGroupKey;
 
@@ -1784,67 +1713,57 @@ export interface GridOptions<TData = any> {
     /**
      * Return a business key for the node. If implemented, each row in the DOM will have an attribute `row-id='abc'` where `abc` is what you return as the business key.
      * This is useful for automated testing, as it provides a way for your tool to identify rows based on unique business keys.
-     * @managed
      */
     getBusinessKeyForNode?: (node: IRowNode<TData>) => string;
 
     /**
      * Allows setting the ID for a particular row node based on the data.
+     * @initial
      */
     getRowId?: GetRowIdFunc<TData>;
     /**
      * When enabled, getRowId() callback is implemented and new Row Data is set, the grid will disregard all previous rows and treat the new Row Data as new data. As a consequence, all Row State (eg selection, rendered rows) will be reset.
      * @default false
-     * @managed
      */
     resetRowDataOnUpdate?: boolean;
     /**
      * Allows you to process rows after they are created, so you can do final adding of custom attributes etc.
-     * @managed
      */
     processRowPostCreate?: (params: ProcessRowParams<TData>) => void;
     /**
      * Callback to be used to determine which rows are selectable. By default rows are selectable, so return `false` to make a row un-selectable.
-     * @managed
      */
     isRowSelectable?: IsRowSelectable<TData>;
     /**
      * Callback to be used with Master Detail to determine if a row should be a master row. If `false` is returned no detail row will exist for this row.
-     * @managed
      */
     isRowMaster?: IsRowMaster<TData>;
     /**
      * Callback to fill values instead of simply copying values or increasing number values using linear progression.
-     * @managed
      */
     fillOperation?: (params: FillOperationParams<TData>) => any;
 
     // *** Sorting *** //
     /**
      * Callback to perform additional sorting after the grid has sorted the rows. When used with SSRM, only applicable when `suppressServerSideInfiniteScroll=true`.
-     * @managed
      */
     postSortRows?: (params: PostSortRowsParams<TData>) => void;
 
     // *** Styling *** //
     /**
      * Callback version of property `rowStyle` to set style for each row individually. Function should return an object of CSS values or undefined for no styles.
-     * @managed
      */
     getRowStyle?: (params: RowClassParams<TData>) => RowStyle | undefined;
     /**
      * Callback version of property `rowClass` to set class(es) for each row individually. Function should return either a string (class name), array of strings (array of class names) or undefined for no class.
-     * @managed
      */
     getRowClass?: (params: RowClassParams<TData>) => string | string[] | undefined;
     /**
      * Callback version of property `rowHeight` to set height for each row individually. Function should return a positive number of pixels, or return `null`/`undefined` to use the default row height.
-     * @managed
      */
     getRowHeight?: (params: RowHeightParams<TData>) => number | undefined | null;
     /**
      * Tells the grid if this row should be rendered as full width.
-     * @managed
      */
     isFullWidthRow?: (params: IsFullWidthRowParams<TData>) => boolean;
 

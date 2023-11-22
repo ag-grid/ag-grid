@@ -250,7 +250,7 @@ When we run our application, we should see a grid with ~2,500 rows:
 
 <grid-example title='Updating Example' name='updating-example' type='mixed' options='{ "exampleHeight": 550 }'></grid-example>
 
-_Note: All properties tagged as 'managed' are reactive. See our [API docs](/grid-options/) for a complete list._
+_Note: All properties that are not tagged as 'initial' are reactive. See our [API docs](/grid-options/) for a complete list._
 
 ---
 

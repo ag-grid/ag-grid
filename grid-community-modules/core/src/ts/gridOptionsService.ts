@@ -9,7 +9,7 @@ import { EventService } from "./eventService";
 import { GridApi } from "./gridApi";
 import { AgGridCommon, WithoutGridCommon } from "./interfaces/iCommon";
 import { RowModelType } from "./interfaces/iRowModel";
-import { AnyGridOptions, PropertyKeys } from "./propertyKeys";
+import { AnyGridOptions, INITIAL_GRID_OPTION_KEYS, PropertyKeys } from "./propertyKeys";
 import { warnOnce } from "./utils/function";
 import { exists, missing } from "./utils/generic";
 import { getScrollbarWidth } from './utils/browser';
@@ -239,6 +239,9 @@ export class GridOptionsService {
         // all events are fired after grid options has finished updating.
         const events: PropertyValueChangedEvent<keyof GridOptions>[] = [];
         Object.entries(options).forEach(([key, value]) => {
+            if (source === 'api' && (INITIAL_GRID_OPTION_KEYS as any)[key]) {
+                warnOnce(`${key} is an initial property and cannot be updated.`)
+            }
             const coercedValue = GridOptionsService.getCoercedValue(key as keyof GridOptions, value);
             const shouldForce = (typeof coercedValue) === 'object' && source === 'api'; // force objects as they could have been mutated.
 
