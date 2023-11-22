@@ -1047,7 +1047,6 @@ export interface GridOptions<TData = any> {
      * - `'multipleColumns'`: a group column per row group is added automatically.
      * - `'groupRows'`: group rows are automatically added instead of group columns.
      * - `'custom'`: informs the grid that group columns will be provided.
-     * @initial
      */
     groupDisplayType?: RowGroupingDisplayType;
     /**

@@ -999,7 +999,6 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
          * - `'multipleColumns'`: a group column per row group is added automatically.
          * - `'groupRows'`: group rows are automatically added instead of group columns.
          * - `'custom'`: informs the grid that group columns will be provided.
-         * @initial
          */
     @Input() public groupDisplayType: RowGroupingDisplayType | undefined = undefined;
     /** If grouping, set to the number of levels to expand by default, e.g. `0` for none, `1` for first level only, etc. Set to `-1` to expand everything.
