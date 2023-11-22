@@ -1,4 +1,4 @@
-import {createGrid, FirstDataRenderedEvent, GridApi, GridOptions, GridReadyEvent} from '@ag-grid-community/core';
+import {createGrid, FirstDataRenderedEvent, GridApi, GridOptions, GridReadyEvent, ValueFormatterParams} from '@ag-grid-community/core';
 import {getData} from "./data";
 
 let gridApi: GridApi;
@@ -15,7 +15,14 @@ const gridOptions: GridOptions = {
       filter: 'agNumberColumnFilter',
       chartDataType: 'series',
     },
-    { field: 'saleDate', chartDataType: 'category' },
+    {
+      field: 'saleDate',
+      chartDataType: 'category',
+      filter: 'agSetColumnFilter',
+      filterParams: {
+        valueFormatter: (params: ValueFormatterParams) => `${params.value}`,
+      },
+    },
     {
       field: 'quarter',
       maxWidth: 160,
