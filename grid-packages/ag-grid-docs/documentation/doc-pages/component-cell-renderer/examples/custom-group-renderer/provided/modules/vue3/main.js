@@ -26,7 +26,6 @@ const VueExample = {
                 :autoGroupColumnDef="autoGroupColumnDef"
                 :defaultColDef="defaultColDef"
                 :groupDefaultExpanded="groupDefaultExpanded"
-                :animateRows="true"
                 :rowData="rowData"></ag-grid-vue>
         </div>
     `,

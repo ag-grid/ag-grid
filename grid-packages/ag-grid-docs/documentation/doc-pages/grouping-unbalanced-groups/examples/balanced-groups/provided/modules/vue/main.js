@@ -51,8 +51,7 @@ const VueExample = {
                     :columnTypes="columnTypes"
                     :rowData="rowData"
                     :groupDefaultExpanded="groupDefaultExpanded"
-                    :rowGroupPanelShow="rowGroupPanelShow"
-                    :animateRows="true"></ag-grid-vue>
+                    :rowGroupPanelShow="rowGroupPanelShow""></ag-grid-vue>
         </div>
     `,
     components: {

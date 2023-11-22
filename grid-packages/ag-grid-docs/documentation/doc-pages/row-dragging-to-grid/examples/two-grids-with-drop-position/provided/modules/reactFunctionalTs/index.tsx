@@ -183,7 +183,6 @@ const GridExample = () => {
                     rowClassRules={rowClassRules}
                     rowDragManaged={true}
                     suppressMoveWhenRowDragging={true}
-                    animateRows={true}
                     rowData={side === 'Left' ? leftRowData : rightRowData}
                     columnDefs={[...columns]}
                     onGridReady={params => onGridReady(side, params)}

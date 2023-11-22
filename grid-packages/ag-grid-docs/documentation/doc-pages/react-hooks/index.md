@@ -111,7 +111,6 @@ const App = () => {
 
     const rowBuffer = 0;
     const rowSelection = 'multiple';
-    const animateRows = true;
 
     return (
         <AgGridReact 
@@ -119,7 +118,6 @@ const App = () => {
             // only set once
             rowBuffer={rowBuffer} 
             rowSelection={rowSelection} 
-            animateRows={animateRows} 
 
             // inline also works well, properties only set once
             rowModelType='clientSide'

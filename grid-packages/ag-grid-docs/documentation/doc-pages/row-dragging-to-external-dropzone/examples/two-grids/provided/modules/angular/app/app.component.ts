@@ -33,7 +33,6 @@ ModuleRegistry.registerModules([ClientSideRowModelModule])
                         [rowClassRules]="rowClassRules"
                         [rowDragManaged]="true"
                         [suppressMoveWhenRowDragging]="true"
-                        [animateRows]="true"
                         [rowData]="leftRowData"
                         [columnDefs]="columns"
                         (gridReady)="onGridReady($event, 'Left')">
@@ -68,7 +67,6 @@ ModuleRegistry.registerModules([ClientSideRowModelModule])
                         [rowClassRules]="rowClassRules"
                         [rowDragManaged]="true"
                         [suppressMoveWhenRowDragging]="true"
-                        [animateRows]="true"
                         [rowData]="rightRowData"
                         [columnDefs]="columns"
                         (gridReady)="onGridReady($event, 'Right')">

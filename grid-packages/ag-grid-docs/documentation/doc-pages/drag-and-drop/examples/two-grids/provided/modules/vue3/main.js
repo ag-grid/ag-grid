@@ -20,8 +20,7 @@ const VueExample = {
                     :columnDefs="leftColumnDefs"
                     :rowClassRules="rowClassRules"
                     :rowData="leftRowData"
-                    :rowDragManaged="true"
-                    :animateRows="true">
+                    :rowDragManaged="true">
                 </ag-grid-vue>
             </div>
             <div class="inner-col factory-panel">
@@ -51,8 +50,7 @@ const VueExample = {
                     :columnDefs ="rightColumnDefs"
                     :rowClassRules="rowClassRules"
                     :rowData="rightRowData"
-                    :rowDragManaged="true"
-                    :animateRows="true">
+                    :rowDragManaged="true">
                 </ag-grid-vue>
             </div>
         </div>

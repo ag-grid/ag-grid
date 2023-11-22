@@ -44,7 +44,6 @@ const VueExample = {
                 :context="context"
                 :defaultColDef="defaultColDef"
                 :autoGroupColumnDef="autoGroupColumnDef"
-                :animateRows="true"
                 :rowSelection="rowSelection"
                 :groupSelectsChildren="true"
                 :rowData="rowData"></ag-grid-vue></div>

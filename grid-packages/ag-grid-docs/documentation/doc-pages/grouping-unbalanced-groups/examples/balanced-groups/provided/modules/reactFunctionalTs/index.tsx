@@ -113,7 +113,6 @@ const GridExample = () => {
                     columnTypes={columnTypes}
                     groupDefaultExpanded={-1}
                     rowGroupPanelShow={'always'}
-                    animateRows={true}
                 />
             </div>
         </div>

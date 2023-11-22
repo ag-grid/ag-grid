@@ -13,9 +13,16 @@ The grid will animate the rows in the following scenarios:
     - Sorting Rows
     - Expanding / Collapsing Row Groups
 
-<note>
-Column animations, and row animations (since v31) are **on** by default.
-</note>
+## Disable Animation
+
+Row animations can be disabled by setting the grid option `animateRows = false`.
+
+## Example Animation
+The example below automatically triggers grid actions to demonstrate the animations.
+
+<grid-example title='Animation' name='animation' type='generated' options='{ "enterprise": true, "modules": ["clientside", "rowgrouping", "menu", "setfilter", "columnpanel"] }'></grid-example>
+
+## Animation Sequence Details
 
 You do not need to know how the animations work, however,
 if you are creating a theme or otherwise want to adjust the animations, it will be useful
@@ -29,10 +36,3 @@ for you to understand the sequence of rules which are as follows:
 
 In addition to the transition animations, old rows are placed behind new rows such that moving rows are
 on top of old rows when moved (hence old rows are not fading out on top of new rows, but behind new rows).
-
-
-## Example Animation
-The example below automatically triggers grid actions to demonstrate the animations.
-
-<grid-example title='Animation' name='animation' type='generated' options='{ "enterprise": true, "modules": ["clientside", "rowgrouping", "menu", "setfilter", "columnpanel"] }'></grid-example>
-

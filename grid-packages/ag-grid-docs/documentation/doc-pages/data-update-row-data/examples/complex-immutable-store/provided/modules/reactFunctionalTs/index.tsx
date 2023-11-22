@@ -400,7 +400,6 @@ const GridExample = () => {
                         autoGroupColumnDef={autoGroupColumnDef}
                         rowSelection={'multiple'}
                         groupSelectsChildren={true}
-                        animateRows={true}
                         suppressAggFuncInHeader={true}
                         getRowId={getRowId}
                     />

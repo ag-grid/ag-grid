@@ -217,7 +217,6 @@ const GridExample = () => {
                             rowData={rowData}
                             columnDefs={columnDefs}
                             defaultColDef={defaultColDef}
-                            animateRows={true}
                             rowSelection={'multiple'}
                             enableRangeSelection={true}
                             autoGroupColumnDef={autoGroupColumnDef}

@@ -194,7 +194,6 @@
 |    :rowData="rowData.value"
 |    :defaultColDef="defaultColDef"
 |    rowSelection="multiple"
-|    animateRows="true"
 |    @cell-clicked="cellWasClicked"
 |    @grid-ready="onGridReady"
 |  >
