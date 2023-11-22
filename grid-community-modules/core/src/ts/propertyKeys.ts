@@ -127,7 +127,7 @@ export const INITIAL_GRID_OPTION_KEYS = {
     getRowId: true,
 };
 
-export type InitialGridOptionKey = keyof typeof INITIAL_GRID_OPTION_KEYS;
+type InitialGridOptionKey = keyof typeof INITIAL_GRID_OPTION_KEYS;
 
 export type ManagedGridOptionKey = Exclude<GridOptionKey, InitialGridOptionKey>;
 
