@@ -10,12 +10,7 @@ import { createApp, onBeforeMount, ref } from "vue"
 import "./styles.css"
 
 // Register the required feature modules with the Grid
-ModuleRegistry.registerModules([
-  ClientSideRowModelModule,
-  RowGroupingModule,
-  SetFilterModule,
-  FiltersToolPanelModule,
-])
+ModuleRegistry.registerModules([ClientSideRowModelModule, RowGroupingModule, SetFilterModule, FiltersToolPanelModule]);
 
 const VueExample = {
   template: `
