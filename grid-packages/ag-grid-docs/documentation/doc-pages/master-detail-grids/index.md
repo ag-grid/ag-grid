@@ -21,7 +21,7 @@ The example below shows configuring a Detail Grid with some additional Grid Opti
 
 - The `detailGridOptions` is provided inside the `detailCellRendererParams`.
 - The Detail Grid Options has the following properties set: `rowSelection=multiple`, `suppressRowClickSelection=true`, `enableRangeSelection=true`, `pagination=true` and `paginationAutoPageSize=true`.
-- The Detail Grid Options is provided with a Default Column Definition (`defaultColDef`) that makes all columns sortable and use Flex for sizing.
+- The Detail Grid Options is provided with a Default Column Definition (`defaultColDef`) that makes all columns use Flex for sizing.
 - The first Column Definition is configured to use Checkbox Selection.
 
 <grid-example title='Detail Grid Options' name='grid-options' type='generated' options='{ "enterprise": true, "modules": ["clientside", "masterdetail", "menu", "columnpanel", "range"] }'></grid-example>

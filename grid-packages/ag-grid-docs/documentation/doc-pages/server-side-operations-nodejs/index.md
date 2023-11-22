@@ -97,17 +97,13 @@ const gridOptions = {
         { field: 'silver', aggFunc: 'sum' },
         { field: 'bronze', aggFunc: 'sum' },
     ],
-
-    defaultColDef: {
-        sortable: true
-    }
 }
 ```
 
 In the code snippet above, the grid is configured to use the Server-Side Row Model by setting: `gridOptions.rowModelType = 'serverSide'`.
 
 
-Sorting is enabled via `defaultColDef.sortable = true` property. A simple number filter is also added to the 'year' column. Note that as new data is loaded the applied filters are kept.
+Sorting is enabled by default. A simple number filter is also added to the 'year' column. Note that as new data is loaded the applied filters are kept.
 
 To demonstrate [Row Grouping](/server-side-model-grouping/), the 'country' and 'sport' columns have been configured with `rowGroup = true`. Finally, to ensure the medal values are aggregated up the group hierarchy, the value columns have been set up with an aggregation function: `aggFunc='sum'`.
 
