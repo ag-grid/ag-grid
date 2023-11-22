@@ -14,9 +14,8 @@ ModuleRegistry.registerModules([ClientSideRowModelModule]);
 
 const baseDefaultColDef = {
     flex: 1,
-    sortable: true,
     filter: true,
-    resizable: true
+    
 };
 
 const baseGridOptions = {

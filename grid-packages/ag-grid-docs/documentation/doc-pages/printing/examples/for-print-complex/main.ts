@@ -17,9 +17,7 @@ const columnDefs: ColDef[] = [
 ]
 
 const gridOptions: GridOptions = {
-  defaultColDef: {
-    sortable: true,
-  },
+
   columnDefs: columnDefs,
   rowData: getData(),
   groupDisplayType: 'groupRows',

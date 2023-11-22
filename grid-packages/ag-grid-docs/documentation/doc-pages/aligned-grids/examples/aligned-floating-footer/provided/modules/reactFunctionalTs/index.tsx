@@ -30,8 +30,6 @@ const GridExample = () => {
     const bottomGrid = useRef<AgGridReact>(null);
 
     const defaultColDef: ColDef = useMemo(() => ({        
-        sortable: true,
-        resizable: true,
         filter: true,
         flex: 1,
         minWidth: 100

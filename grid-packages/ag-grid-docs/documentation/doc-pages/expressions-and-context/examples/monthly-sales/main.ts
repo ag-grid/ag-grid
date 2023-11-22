@@ -124,8 +124,6 @@ const gridOptions: GridOptions = {
   defaultColDef: {
     flex: 1,
     minWidth: 120,
-    sortable: true,
-    resizable: true,
   },
   autoGroupColumnDef: {
     headerName: 'Location',

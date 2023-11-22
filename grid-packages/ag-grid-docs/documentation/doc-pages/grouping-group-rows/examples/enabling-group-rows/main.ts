@@ -21,8 +21,6 @@ const gridOptions: GridOptions<IOlympicData> = {
   defaultColDef: {
     flex: 1,
     minWidth: 100,
-    sortable: true,
-    resizable: true,
   },
   groupDisplayType: 'groupRows',
 }

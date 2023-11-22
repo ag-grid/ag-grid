@@ -21,7 +21,6 @@ const gridOptions: GridOptions = {
   ],
   defaultColDef: {
     width: 170,
-    sortable: true,
     filter: true,
   },
   groupDefaultExpanded: 1,

@@ -26,10 +26,8 @@ const gridOptions: GridOptions = {
   defaultColDef: {
     flex: 1,
     editable: true,
-    sortable: true,
     filter: 'agMultiColumnFilter',
     floatingFilter: true,
-    resizable: true,
   },
   enableCharts: true,
   chartThemeOverrides: {

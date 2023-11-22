@@ -29,8 +29,6 @@ const gridOptions: GridOptions = {
   columnDefs: columnDefs,
   defaultColDef: {
     flex: 1,
-    resizable: true,
-    sortable: true,
   },
   autoGroupColumnDef: {
     flex: 1,

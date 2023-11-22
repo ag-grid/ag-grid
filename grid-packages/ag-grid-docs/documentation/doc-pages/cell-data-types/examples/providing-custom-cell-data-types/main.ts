@@ -20,8 +20,6 @@ const gridOptions: GridOptions<IOlympicDataTypes> = {
   defaultColDef: {
     filter: true,
     floatingFilter: true,
-    sortable: true,
-    resizable: true,
     editable: true,
   },
   dataTypeDefinitions: {

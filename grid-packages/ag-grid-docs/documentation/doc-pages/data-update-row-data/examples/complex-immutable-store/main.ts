@@ -296,8 +296,6 @@ const gridOptions: GridOptions = {
   columnDefs: columnDefs,
   defaultColDef: {
     width: 120,
-    sortable: true,
-    resizable: true,
     filter: 'agNumberColumnFilter',
   },
   autoGroupColumnDef: {

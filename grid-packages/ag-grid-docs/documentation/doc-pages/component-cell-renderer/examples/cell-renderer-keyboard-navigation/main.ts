@@ -100,7 +100,6 @@ let gridApi: GridApi;
 const gridOptions: GridOptions = {
   columnDefs,
   defaultColDef: {
-    resizable: true,
     minWidth: 130,
     suppressKeyboardEvent
   }

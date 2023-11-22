@@ -18,7 +18,6 @@ const gridOptions: GridOptions = {
   ],
   defaultColDef: {
     width: 170,
-    sortable: true,
     filter: true,
   },
   // this tells the grid we are doing updates when setting new data

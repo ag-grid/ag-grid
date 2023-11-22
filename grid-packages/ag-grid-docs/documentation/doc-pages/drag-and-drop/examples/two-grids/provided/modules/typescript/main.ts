@@ -26,9 +26,7 @@ var leftApi: GridApi;
 var leftGridOptions: GridOptions = {
     defaultColDef: {
         flex: 1,
-        sortable: true,
         filter: true,
-        resizable: true
     },
     rowClassRules: {
         'red-row': 'data.color == "Red"',
@@ -45,9 +43,7 @@ var rightApi: GridApi;
 var rightGridOptions: GridOptions = {
     defaultColDef: {
         flex: 1,
-        sortable: true,
         filter: true,
-        resizable: true
     },
     rowClassRules: {
         'red-row': 'data.color == "Red"',

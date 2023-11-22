@@ -47,9 +47,7 @@ const gridOptions: GridOptions<IOlympicData> = {
         return (params.node.rowIndex || 0) % 2 == 0
       },
     },
-    sortable: true,
     filter: true,
-    resizable: true,
     minWidth: 100,
     flex: 1,
   },

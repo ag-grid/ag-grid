@@ -8,8 +8,8 @@ const gridOptions: GridOptions<IOlympicData> = {
     {
       headerName: "Group 1",
       children: [
-        { field: 'athlete', minWidth: 170, resizable: true },
-        { field: 'age', resizable: true }
+        { field: 'athlete', minWidth: 170,  },
+        { field: 'age',  }
       ]
     },
     {
@@ -28,7 +28,6 @@ const gridOptions: GridOptions<IOlympicData> = {
   ],
   defaultColDef: {
     editable: true,
-    sortable: true,
     filter: true
   }
 }

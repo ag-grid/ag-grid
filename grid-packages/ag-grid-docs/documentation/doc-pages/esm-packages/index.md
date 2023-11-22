@@ -41,8 +41,6 @@ If however you want to use ES Modules directly in the browser then you can do so
             defaultColDef: {
                 wrapText: true,
                 autoHeight: true,
-                resizable: true,
-                sortable: true,
                 filter: true
             },
             columnDefs: columnDefs,

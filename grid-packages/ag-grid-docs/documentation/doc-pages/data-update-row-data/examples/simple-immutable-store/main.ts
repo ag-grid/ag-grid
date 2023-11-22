@@ -162,8 +162,6 @@ const gridOptions: GridOptions = {
     ],
     defaultColDef: {
         width: 250,
-        sortable: true,
-        resizable: true,
     },
     rowSelection: 'multiple',
     enableRangeSelection: true,

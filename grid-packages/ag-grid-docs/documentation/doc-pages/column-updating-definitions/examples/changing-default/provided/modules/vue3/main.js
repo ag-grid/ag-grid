@@ -37,8 +37,6 @@ const VueExample = {
             gridApi: null,
             defaultColDef: {
                 initialWidth: 100,
-                sortable: true,
-                resizable: true
             },
             rowData: null,
             themeClass: /** DARK MODE START **/document.documentElement.dataset.defaultTheme || 'ag-theme-quartz'/** DARK MODE END **/,

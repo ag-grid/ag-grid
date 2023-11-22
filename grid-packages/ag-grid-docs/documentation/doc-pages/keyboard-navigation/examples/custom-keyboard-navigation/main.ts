@@ -47,11 +47,9 @@ const gridOptions: GridOptions<IOlympicData> = {
   // make all cols editable
   defaultColDef: {
     editable: true,
-    sortable: true,
     flex: 1,
     minWidth: 100,
     filter: true,
-    resizable: true,
   },
 
   navigateToNextCell: navigateToNextCell,

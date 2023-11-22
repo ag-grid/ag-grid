@@ -31,7 +31,6 @@ let gridApi: GridApi;
 const gridOptions: GridOptions = {
   defaultColDef: {
     width: 235,
-    resizable: true,
     flex: 1,
   },
   autoGroupColumnDef: {

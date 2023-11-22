@@ -16,7 +16,6 @@ let gridApi: GridApi<IOlympicData>;
 const gridOptions: GridOptions<IOlympicData> = {
   defaultColDef: {
     flex: 1,
-    sortable: true,
     filter: true,
   },
   columnDefs: columnDefs,

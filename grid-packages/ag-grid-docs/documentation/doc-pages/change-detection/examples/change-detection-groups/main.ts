@@ -19,7 +19,6 @@ const gridOptions: GridOptions = {
   ],
   defaultColDef: {
     flex: 1,
-    sortable: true,
   },
   autoGroupColumnDef: {
     minWidth: 100,

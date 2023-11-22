@@ -75,9 +75,7 @@ export class AppComponent {
     leftGridOptions: GridOptions = {
         defaultColDef: {
             flex: 1,
-            sortable: true,
             filter: true,
-            resizable: true
         },
         rowClassRules: {
             "red-row": 'data.color == "Red"',
@@ -94,9 +92,7 @@ export class AppComponent {
     rightGridOptions: GridOptions = {
         defaultColDef: {
             flex: 1,
-            sortable: true,
             filter: true,
-            resizable: true
         },
         rowClassRules: {
             "red-row": 'data.color == "Red"',

@@ -27,9 +27,7 @@ var leftGridOptions: GridOptions = {
     defaultColDef: {
         flex: 1,
         minWidth: 100,
-        sortable: true,
         filter: true,
-        resizable: true
     },
     rowClassRules: {
         "red-row": 'data.color == "Red"',
@@ -51,9 +49,8 @@ var rightGridOptions: GridOptions = {
     defaultColDef: {
         flex: 1,
         minWidth: 100,
-        sortable: true,
         filter: true,
-        resizable: true
+        
     },
     rowClassRules: {
         "red-row": 'data.color == "Red"',

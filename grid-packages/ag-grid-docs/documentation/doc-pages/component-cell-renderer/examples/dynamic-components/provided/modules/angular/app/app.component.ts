@@ -80,11 +80,9 @@ export class AppComponent {
 
     public defaultColDef: ColDef = {
         editable: true,
-        sortable: true,
         flex: 1,
         minWidth: 100,
         filter: true,
-        resizable: true
     };
 
     public rowData: any[];

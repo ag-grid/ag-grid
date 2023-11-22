@@ -15,7 +15,6 @@ const gridOptions: GridOptions<IOlympicData> = {
   ],
   defaultColDef: {
     width: 170,
-    sortable: true,
     filter: true,
   },
   rowDragManaged: true,

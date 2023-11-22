@@ -42,8 +42,6 @@ const gridOptions: GridOptions<IOlympicData> = {
     // allow every column to be pivoted
     enablePivot: true,
     filter: true,
-    sortable: true,
-    resizable: true,
   },
   autoGroupColumnDef: {
     minWidth: 200,

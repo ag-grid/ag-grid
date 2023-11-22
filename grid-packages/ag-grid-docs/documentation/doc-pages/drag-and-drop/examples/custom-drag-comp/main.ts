@@ -13,9 +13,7 @@ let gridApi: GridApi;
 const gridOptions: GridOptions = {
   defaultColDef: {
     width: 80,
-    sortable: true,
     filter: true,
-    resizable: true,
   },
   rowClassRules: rowClassRules,
   rowData: getData(),

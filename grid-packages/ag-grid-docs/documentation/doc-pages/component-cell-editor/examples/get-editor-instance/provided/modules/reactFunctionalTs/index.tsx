@@ -125,7 +125,14 @@ const GridExample = () => {
 
             return () => clearInterval(interval);
         }
-    }, [])
+    }, []);
+
+    const defaultColDef = useMemo(() => ({
+        editable: true,
+        flex: 1,
+        minWidth: 100,
+        filter: true,
+    }), []);
 
     return (
         <div style={{ width: '100%', height: '100%' }}>
@@ -137,14 +144,7 @@ const GridExample = () => {
                 className={/** DARK MODE START **/document.documentElement?.dataset.defaultTheme || 'ag-theme-quartz'/** DARK MODE END **/}>
                 <AgGridReact
                     ref={gridRef}
-                    defaultColDef={{
-                        editable: true,
-                        sortable: true,
-                        flex: 1,
-                        minWidth: 100,
-                        filter: true,
-                        resizable: true
-                    }}
+                    defaultColDef={defaultColDef}
                     rowData={rowData}
                     columnDefs={columnDefs}
                     onGridReady={onGridReady}

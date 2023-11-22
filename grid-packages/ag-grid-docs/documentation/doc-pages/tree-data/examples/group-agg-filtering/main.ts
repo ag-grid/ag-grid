@@ -37,8 +37,6 @@ const gridOptions: GridOptions = {
     flex: 1,
     filter: true,
     floatingFilter: true,
-    sortable: true,
-    resizable: true,
   },
   autoGroupColumnDef: {
     headerName: 'Files',

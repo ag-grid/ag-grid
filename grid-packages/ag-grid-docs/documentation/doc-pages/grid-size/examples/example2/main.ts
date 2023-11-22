@@ -27,9 +27,6 @@ const gridOptions: GridOptions = {
     { field: 'total', minWidth: 80 },
   ],
 
-  defaultColDef: {
-    resizable: true,
-  },
 
   rowData: getData(),
   autoSizeStrategy: {

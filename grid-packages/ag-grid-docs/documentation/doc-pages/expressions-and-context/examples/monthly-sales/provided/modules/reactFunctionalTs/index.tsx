@@ -150,8 +150,6 @@ const GridExample = () => {
         return {
             flex: 1,
             minWidth: 120,
-            sortable: true,
-            resizable: true,
         }
     }, []);
     const autoGroupColumnDef = useMemo<ColDef>(() => {

@@ -25,7 +25,6 @@ const GridExample = () => {
     const defaultColDef = useMemo(() => ({
         flex: 1,
         minWidth: 100,
-        resizable: true,
     }), []);
     const [rowData, setRowData] = useState();
 

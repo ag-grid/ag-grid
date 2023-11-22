@@ -13,7 +13,6 @@ const gridOptions: GridOptions<IOlympicData> = {
   ],
   defaultColDef: {
     maxWidth: 140,
-    resizable: true,
   },
   pivotMode: true,
   pivotPanelShow: 'always',

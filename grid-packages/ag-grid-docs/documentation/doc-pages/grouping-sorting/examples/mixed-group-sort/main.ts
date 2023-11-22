@@ -25,8 +25,7 @@ const gridOptions: GridOptions = {
     flex: 1,
     minWidth: 100,
     filter: true,
-    sortable: true,
-    resizable: true,
+    sortable: false,
   },
   autoGroupColumnDef: {
     minWidth: 300,

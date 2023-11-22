@@ -49,11 +49,9 @@ const gridOptions: GridOptions = {
     columnDefs: getColumnDefs(),
     defaultColDef: {
       editable: true,
-      sortable: true,
       flex: 1,
       minWidth: 140,
       filter: true,
-      resizable: true,
     },
     columnTypes: {
       measure: {

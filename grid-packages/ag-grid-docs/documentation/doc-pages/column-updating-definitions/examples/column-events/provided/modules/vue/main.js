@@ -79,8 +79,6 @@ const VueExample = {
         columnDefs: [],
         gridApi: null,
         defaultColDef: {
-            sortable: true,
-            resizable: true,
             width: 150,
             enableRowGroup: true,
             enablePivot: true,

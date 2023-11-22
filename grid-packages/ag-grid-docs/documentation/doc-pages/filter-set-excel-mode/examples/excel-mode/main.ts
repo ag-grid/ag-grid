@@ -30,7 +30,6 @@ const gridOptions: GridOptions = {
   defaultColDef: {
     flex: 1,
     minWidth: 200,
-    resizable: true,
   },
   sideBar: 'filters',
   rowData: getData(),

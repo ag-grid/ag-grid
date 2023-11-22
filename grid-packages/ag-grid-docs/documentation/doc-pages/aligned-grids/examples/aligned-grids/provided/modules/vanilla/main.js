@@ -19,8 +19,6 @@ const columnDefs = [
     }
 ];
 const defaultColDef = {
-    sortable: true,
-    resizable: true,
     filter: true,
     minWidth: 100
 }

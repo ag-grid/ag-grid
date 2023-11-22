@@ -25,7 +25,6 @@ const gridOptions: GridOptions = {
     ],
     defaultColDef: {
         editable: true,
-        resizable: true,
     },
     rowData: getDataSet(),
     onGridPreDestroyed: (params: GridPreDestroyedEvent<TAthlete>) => {

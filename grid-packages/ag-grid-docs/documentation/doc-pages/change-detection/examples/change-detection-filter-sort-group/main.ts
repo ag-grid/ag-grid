@@ -20,7 +20,6 @@ const gridOptions: GridOptions = {
   ],
   defaultColDef: {
     flex: 1,
-    sortable: true,
     filter: true,
   },
   autoGroupColumnDef: {

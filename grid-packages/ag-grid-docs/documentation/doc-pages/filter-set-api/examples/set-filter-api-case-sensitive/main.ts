@@ -38,7 +38,6 @@ const gridOptions: GridOptions = {
     flex: 1,
     minWidth: 225,
     cellRenderer: colourCellRenderer,
-    resizable: true,
     floatingFilter: true,
   },
   sideBar: 'filters',

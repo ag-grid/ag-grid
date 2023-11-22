@@ -28,7 +28,6 @@ const gridOptions: GridOptions = {
     flex: 1,
     minWidth: 110,
     editable: true,
-    resizable: true,
   },
   rowData: getData(),
   pinnedTopRowData: getPinnedTopData(),

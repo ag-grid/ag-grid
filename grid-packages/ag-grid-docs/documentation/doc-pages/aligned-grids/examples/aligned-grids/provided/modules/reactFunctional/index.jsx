@@ -17,8 +17,6 @@ const GridExample = () => {
     const bottomGrid = useRef(null);
 
     const defaultColDef = useMemo(() => ({
-        sortable: true,
-        resizable: true,
         filter: true,
         minWidth: 100
     }));

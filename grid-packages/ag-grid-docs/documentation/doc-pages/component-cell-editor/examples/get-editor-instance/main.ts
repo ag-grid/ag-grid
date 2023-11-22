@@ -39,10 +39,8 @@ const gridOptions: GridOptions = {
   columnDefs: columnDefs,
   defaultColDef: {
     editable: true,
-    sortable: true,
     minWidth: 100,
     filter: true,
-    resizable: true,
   },
   rowData: getData(),
   onGridReady: (params) => {

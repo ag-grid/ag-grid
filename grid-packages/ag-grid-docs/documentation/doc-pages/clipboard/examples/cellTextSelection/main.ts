@@ -20,7 +20,6 @@ const gridOptions: GridOptions<IOlympicData> = {
     editable: true,
     flex: 1,
     minWidth: 100,
-    resizable: true,
   },
 
   ensureDomOrder: true,

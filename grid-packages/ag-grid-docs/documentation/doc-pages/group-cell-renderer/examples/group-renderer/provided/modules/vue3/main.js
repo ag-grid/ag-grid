@@ -82,7 +82,6 @@ const VueExample = {
             defaultColDef: {
                 flex: 1,
                 minWidth: 120,
-                resizable: true,
             },
             rowData: null,
             groupDisplayType: null,

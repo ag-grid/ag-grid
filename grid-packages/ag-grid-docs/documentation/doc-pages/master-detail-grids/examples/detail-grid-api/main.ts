@@ -31,7 +31,6 @@ const gridOptions: GridOptions<IAccount> = {
       defaultColDef: {
         flex: 1,
         editable: true,
-        resizable: true,
       },
     },
     getDetailRowData: (params) => {
@@ -45,7 +44,6 @@ const gridOptions: GridOptions<IAccount> = {
   defaultColDef: {
     flex: 1,
     editable: true,
-    resizable: true,
   },
   onFirstDataRendered: onFirstDataRendered,
 }

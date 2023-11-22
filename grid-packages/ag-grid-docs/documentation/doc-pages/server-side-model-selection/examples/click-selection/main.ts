@@ -14,8 +14,6 @@ const gridOptions: GridOptions<IOlympicData> = {
     floatingFilter: true,
     flex: 1,
     minWidth: 120,
-    resizable: true,
-    sortable: true,
   },
   autoGroupColumnDef: {
     flex: 1,

@@ -18,7 +18,6 @@ const gridOptions: GridOptions = {
   defaultColDef: {
     flex: 1,
     editable: true,
-    resizable: true,
     cellDataType: false,
   },
   rowData: getData(),

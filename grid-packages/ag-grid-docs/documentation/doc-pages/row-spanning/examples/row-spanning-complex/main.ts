@@ -71,7 +71,6 @@ let gridApi: GridApi;
 const gridOptions: GridOptions = {
     columnDefs: columnDefs,
     defaultColDef: {
-        resizable: true,
         width: 170,
     },
     rowData: getData(),

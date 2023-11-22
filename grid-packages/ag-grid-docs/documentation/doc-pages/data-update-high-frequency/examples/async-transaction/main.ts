@@ -149,8 +149,6 @@ const gridOptions: GridOptions = {
   },
   defaultColDef: {
     width: 120,
-    sortable: true,
-    resizable: true,
   },
   autoGroupColumnDef: {
     width: 250,

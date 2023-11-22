@@ -18,7 +18,6 @@ const gridOptions: GridOptions<IOlympicData> = {
   defaultColDef: {
     flex: 1,
     minWidth: 100,
-    resizable: true,
   },
   statusBar: {
     statusPanels: [{ statusPanel: 'agAggregationComponent' }],

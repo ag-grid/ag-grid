@@ -59,7 +59,6 @@ const gridOptions: GridOptions = {
     defaultColDef: {
         flex: 1,
         minWidth: 120,
-        resizable: true,
     },
     rowData: getData(),
     // we don't want the auto column here, as we are providing our own cols

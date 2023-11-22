@@ -5,9 +5,7 @@ const columnDefs: ColDef[] = [{ field: 'accented', width: 150 }]
 let gridApi: GridApi;
 
 const gridOptions: GridOptions = {
-  defaultColDef: {
-    sortable: true,
-  },
+
   columnDefs: columnDefs,
   sortingOrder: ['desc', 'asc', null],
   accentedSort: true,

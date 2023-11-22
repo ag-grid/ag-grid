@@ -33,7 +33,6 @@ const defaultColDef: ColDef = {
     minWidth: 80,
     filter: true,
     floatingFilter: true,
-    resizable: true,
 };
 
 const GridExample = () => {

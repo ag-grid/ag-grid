@@ -65,8 +65,6 @@ let gridApi: GridApi<IOlympicData>;
 
 const gridOptions: GridOptions<IOlympicData> = {
   defaultColDef: {
-    sortable: true,
-    resizable: true,
     floatingFilter: true,
     width: 120
   },

@@ -41,7 +41,6 @@ const gridOptions: GridOptions<IOlympicData> = {
     defaultColDef: {
         flex: 1,
         minWidth: 120,
-        resizable: true,
     },
     groupDefaultExpanded: 1,
     onCellDoubleClicked: (params: CellDoubleClickedEvent<IOlympicData, any>) => {

@@ -20,7 +20,6 @@ const gridOptions: GridOptions = {
   defaultColDef: {
     editable: true,
     minWidth: 120,
-    resizable: true,
     flex: 1,
 
     cellClassRules: {

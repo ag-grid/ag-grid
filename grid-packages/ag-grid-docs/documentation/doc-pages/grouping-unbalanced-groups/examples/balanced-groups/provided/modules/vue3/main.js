@@ -84,7 +84,6 @@ const VueExample = {
             defaultColDef: {
                 flex: 1,
                 minWidth: 150,
-                resizable: true,
             },
             autoGroupColumnDef: null,
             columnTypes: null,

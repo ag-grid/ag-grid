@@ -28,9 +28,7 @@ const gridOptions: GridOptions<IOlympicData> = {
     },
   ],
   defaultColDef: {
-    flex: 1,
-    resizable: true,
-    sortable: true
+    flex: 1
   }
 }
 

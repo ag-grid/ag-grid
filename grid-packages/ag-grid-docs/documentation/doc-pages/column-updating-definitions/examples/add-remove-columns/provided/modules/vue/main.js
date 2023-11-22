@@ -58,9 +58,7 @@ const VueExample = {
             columnDefs: colDefsMedalsIncluded,
             gridApi: null,
             defaultColDef: {
-                initialWidth: 100,
-                sortable: true,
-                resizable: true
+                initialWidth: 100
             },
             rowData: null,
             themeClass: /** DARK MODE START **/document.documentElement.dataset.defaultTheme || 'ag-theme-quartz'/** DARK MODE END **/,

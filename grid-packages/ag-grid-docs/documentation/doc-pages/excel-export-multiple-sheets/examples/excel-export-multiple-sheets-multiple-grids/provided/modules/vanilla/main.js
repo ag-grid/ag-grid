@@ -62,9 +62,7 @@ const leftGridOptions = {
     defaultColDef: {
         flex: 1,
         minWidth: 100,
-        sortable: true,
         filter: true,
-        resizable: true
     },
     rowSelection: 'multiple',
     rowDragMultiRow: true,
@@ -83,9 +81,7 @@ const rightGridOptions = {
     defaultColDef: {
         flex: 1,
         minWidth: 100,
-        sortable: true,
         filter: true,
-        resizable: true
     },
     getRowId: (params) => {
         return params.data.athlete;

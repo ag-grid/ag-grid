@@ -18,7 +18,6 @@ const gridOptions: GridOptions<IOlympicData> = {
     flex: 1,
     minWidth: 100,
     filter: true,
-    resizable: true,
   },
   autoGroupColumnDef: {
     headerName: 'Athlete',

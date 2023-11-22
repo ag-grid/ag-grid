@@ -28,7 +28,6 @@ const gridOptions: GridOptions = {
   defaultColDef: {
     flex: 1,
     width: 100,
-    sortable: true,
   },
   autoGroupColumnDef: {
     headerName: 'Group',

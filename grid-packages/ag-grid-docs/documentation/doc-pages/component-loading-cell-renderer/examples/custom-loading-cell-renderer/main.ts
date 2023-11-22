@@ -25,11 +25,9 @@ let gridApi: GridApi<IOlympicData>;
 const gridOptions: GridOptions<IOlympicData> = {
   defaultColDef: {
     editable: true,
-    sortable: true,
     flex: 1,
     minWidth: 100,
     filter: true,
-    resizable: true,
   },
   loadingCellRenderer: CustomLoadingCellRenderer,
   loadingCellRendererParams: {

@@ -20,11 +20,9 @@ const gridOptions: GridOptions<IOlympicData> = {
   rowData: null,
   columnDefs: columnDefs,
   defaultColDef: {
-    sortable: true,
     flex: 1,
     minWidth: 100,
     filter: true,
-    resizable: true,
   },
   onCellKeyDown: onCellKeyDown
 }

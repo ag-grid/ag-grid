@@ -22,8 +22,6 @@ const gridOptions: GridOptions<IOlympicData> = {
     floatingFilter: true,
     flex: 1,
     minWidth: 120,
-    resizable: true,
-    sortable: true,
   },
   getRowId: (params: GetRowIdParams) => {
     if (params.data.id != null) {

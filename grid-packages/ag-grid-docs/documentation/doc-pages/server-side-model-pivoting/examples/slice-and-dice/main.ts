@@ -56,8 +56,6 @@ const gridOptions: GridOptions<IOlympicData> = {
     // include a custom function 'random' that just returns a
     // random number
     allowedAggFuncs: ['sum', 'min', 'max', 'random'],
-    sortable: true,
-    resizable: true,
     filter: true,
   },
   autoGroupColumnDef: {
