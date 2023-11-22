@@ -144,9 +144,7 @@ export class AppComponent {
   }
   public defaultColDef: ColDef = {
     flex: 1,
-    minWidth: 120,
-    sortable: true,
-    resizable: true,
+    minWidth: 120
   }
   public autoGroupColumnDef: ColDef = {
     headerName: "Location",

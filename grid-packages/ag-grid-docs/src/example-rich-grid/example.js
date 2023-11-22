@@ -4186,8 +4186,6 @@ function createRowData() {
     let api;
     var gridOptions = {
         defaultColDef: {
-            sortable: true,
-            resizable: true,
             filter: true,
             minWidth: 80
         },

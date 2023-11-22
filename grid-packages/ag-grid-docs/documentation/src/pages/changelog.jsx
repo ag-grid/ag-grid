@@ -140,8 +140,6 @@ const Changelog = ({ location }) => {
     );
 
     const defaultColDef = {
-        sortable: true,
-        resizable: true,
         cellClass: styles.fontClass,
         headerClass: styles.fontClass,
         autoHeaderHeight: true,
@@ -228,7 +226,6 @@ const Changelog = ({ location }) => {
                 field: 'key',
                 headerName: 'Issue',
                 width: 150,
-                resizable: true,
                 cellRendererSelector: (params) => {
                     if (
                         params.node.data.moreInformation ||
@@ -256,7 +253,6 @@ const Changelog = ({ location }) => {
             {
                 field: 'summary',
                 tooltipField: 'summary',
-                resizable: true,
                 width: 300,
                 minWidth: 200,
                 flex: 1,
@@ -266,7 +262,6 @@ const Changelog = ({ location }) => {
                 field: 'versions',
                 headerName: 'Version',
                 width: 145,
-                resizable: true,
                 filter: 'agSetColumnFilter',
                 filterParams: {
                     comparator: (a, b) => {
@@ -282,6 +277,7 @@ const Changelog = ({ location }) => {
                 valueFormatter: (params) => (params.value === 'Bug' ? 'Defect' : 'Feature Request'),
                 cellRenderer: 'issueTypeCellRenderer',
                 width: 175,
+                resizable: false
             },
             {
                 field: 'status',
@@ -289,6 +285,7 @@ const Changelog = ({ location }) => {
                     return params.data.resolution;
                 },
                 width: 110,
+                resizable: false
             },
         ],
         []

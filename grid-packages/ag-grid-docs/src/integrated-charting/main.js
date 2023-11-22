@@ -146,8 +146,6 @@
         columnDefs: columnDefs,
         defaultColDef: {
             width: 120,
-            sortable: true,
-            resizable: true
         },
         columnTypes: {
             measure: {

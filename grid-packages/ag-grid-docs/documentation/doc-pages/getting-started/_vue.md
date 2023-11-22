@@ -234,7 +234,6 @@
 |
 |    // DefaultColDef sets props common to all Columns
 |    const defaultColDef = {
-|      sortable: true,
 |      filter: true,
 |      flex: 1
 |    };
@@ -359,7 +358,6 @@
 |
 | // DefaultColDef sets props common to all Columns
 | const defaultColDef = {
-|   sortable: true,
 |   filter: true,
 |   flex: 1
 | };
