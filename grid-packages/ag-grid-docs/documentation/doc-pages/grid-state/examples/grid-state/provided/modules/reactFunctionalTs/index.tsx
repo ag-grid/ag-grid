@@ -43,8 +43,6 @@ const GridExample = () => {
     const defaultColDef = useMemo<ColDef>(() => { return {
         flex: 1,
         minWidth: 100,
-        sortable: true,
-        resizable: true,
         filter: true,
         enableRowGroup: true,
         enablePivot: true,

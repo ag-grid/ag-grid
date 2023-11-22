@@ -290,7 +290,6 @@
                 {component: 'agAggregationComponent'}
             ]
         },
-        animateRows: true,
         enableRangeSelection: true,
         rowGroupPanelShow: "always",
         pivotPanelShow: "always",

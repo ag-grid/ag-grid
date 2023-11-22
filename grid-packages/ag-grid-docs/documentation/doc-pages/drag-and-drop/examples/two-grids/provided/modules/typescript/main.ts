@@ -26,9 +26,7 @@ var leftApi: GridApi;
 var leftGridOptions: GridOptions = {
     defaultColDef: {
         flex: 1,
-        sortable: true,
         filter: true,
-        resizable: true
     },
     rowClassRules: {
         'red-row': 'data.color == "Red"',
@@ -39,16 +37,13 @@ var leftGridOptions: GridOptions = {
     rowData: createLeftRowData(),
     rowDragManaged: true,
     columnDefs: leftColumnDefs,
-    animateRows: true
 };
 
 var rightApi: GridApi;
 var rightGridOptions: GridOptions = {
     defaultColDef: {
         flex: 1,
-        sortable: true,
         filter: true,
-        resizable: true
     },
     rowClassRules: {
         'red-row': 'data.color == "Red"',
@@ -59,7 +54,6 @@ var rightGridOptions: GridOptions = {
     rowData: [],
     rowDragManaged: true,
     columnDefs: rightColumnDefs,
-    animateRows: true
 };
 
 function createLeftRowData() {

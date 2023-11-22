@@ -36,7 +36,7 @@ columnDefs: [
 ]
 </snippet>
 
-<grid-example title='Rich Select Editor' name='rich-select-editor' type='generated' options='{ "modules": ["clientside"] }'></grid-example>
+<grid-example title='Rich Select Editor' name='rich-select-editor' type='generated' options='{ "enterprise": true, "modules": ["clientside", "richselect"] }'></grid-example>
 
 Continue to the next section: [Number Cell Editor](../provided-cell-editors-number/).
 

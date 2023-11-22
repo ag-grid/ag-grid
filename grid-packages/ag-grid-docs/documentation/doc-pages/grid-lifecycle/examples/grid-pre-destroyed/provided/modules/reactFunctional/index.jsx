@@ -26,7 +26,6 @@ const GridExample = () => {
     const defaultColDef = useMemo(() => {
         return {
             editable: true,
-            resizable: true,
         }
     }, []);
 

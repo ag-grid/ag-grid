@@ -11,14 +11,12 @@ Specified with `agTextCellEditor` and configured with `ITextCellEditorParams`.
 ```js
 columnDefs: [
     {
+        valueFormatter: (params) => `£ ${params.value}`,
         cellEditor: 'agTextCellEditor',
-        valueFormatter: (params) => '£' + params.value,
         cellEditorParams: {
-            useFormatter: true,
-            maxLength: 200
-        }
-        // ...other props
-    }
+            maxLength: 20
+        },
+    },
 ]
 ```
 

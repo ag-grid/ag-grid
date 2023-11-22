@@ -19,7 +19,6 @@ const gridOptions: GridOptions<IAccount> = {
   defaultColDef: {
     flex: 1,
   },
-  animateRows: true,
   masterDetail: true,
   detailRowAutoHeight: true,
   detailCellRendererParams: {

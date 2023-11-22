@@ -18,8 +18,6 @@ const gridOptions: GridOptions = {
   ],
   defaultColDef: {
     width: 150,
-    sortable: true,
-    resizable: true,
     filter: true,
   },
   // call back function, to tell the grid what height each row should be

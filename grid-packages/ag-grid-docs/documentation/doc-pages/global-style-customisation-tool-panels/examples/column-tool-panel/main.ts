@@ -35,9 +35,7 @@ const gridOptions: GridOptions<IOlympicData> = {
   ],
   defaultColDef: {
     editable: true,
-    sortable: true,
     filter: true,
-    resizable: true,
   },
   sideBar: 'columns'
 }

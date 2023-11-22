@@ -21,9 +21,7 @@ const gridOptions: GridOptions<IOlympicData> = {
   rowSelection: 'multiple',
   defaultColDef: {
     editable: true,
-    sortable: true,
     filter: true,
-    resizable: true,
   }
 }
 

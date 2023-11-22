@@ -3,19 +3,10 @@ import {
   createGrid,
   ColDef,
   GridOptions,
-  INumberCellEditorParams,
   ValueFormatterParams,
 } from '@ag-grid-community/core';
 
 const columnDefs: ColDef[] = [
-  { 
-    headerName: 'Number Editor',
-    field: 'number',
-    cellEditor: 'agNumberCellEditor',
-    cellEditorParams: {
-      precision: 0,
-    } as INumberCellEditorParams,
-  },
   { 
     headerName: 'Date Editor',
     field: 'date',
@@ -29,31 +20,17 @@ const columnDefs: ColDef[] = [
     },
     cellEditor: 'agDateCellEditor',
   },
-  { 
-    headerName: 'Date as String Editor',
-    field: 'dateString',
-    cellEditor: 'agDateStringCellEditor',
-  },
-  { 
-    headerName: 'Checkbox Cell Editor',
-    field: 'boolean',
-    cellEditor: 'agCheckboxCellEditor',
-  }
 ];
 
 const data = Array.from(Array(20).keys()).map( (val: any, index: number) => ({
-  number: index,
   date: new Date(2023, 5, index + 1),
-  dateString: `2023-06-${index < 9 ? '0' + (index + 1) : index + 1}`,
-  boolean: !!(index % 2),
-}) );
+}));
 
 let gridApi: GridApi;
 
 const gridOptions: GridOptions = {
   defaultColDef: {
     flex: 1,
-    resizable: true,
     editable: true
   },
   columnDefs: columnDefs,

@@ -96,9 +96,7 @@ export class AppComponent {
     defaultColDef: ColDef = {
         flex: 1,
         minWidth: 100,
-        sortable: true,
         filter: true,
-        resizable: true
     };
 
     columns: ColDef[] = [

@@ -13,8 +13,6 @@ const gridOptions: GridOptions<IOlympicData> = {
   defaultColDef: {
     flex: 1,
     minWidth: 100,
-    sortable: true,
-    resizable: true,
   },
   autoGroupColumnDef: {
     headerValueGetter: params => `${params.colDef.headerName} Group Column`,
@@ -25,7 +23,6 @@ const gridOptions: GridOptions<IOlympicData> = {
     },
   },
   groupDisplayType: 'multipleColumns',
-  animateRows: true,
 }
 
 // setup the grid after the page has finished loading

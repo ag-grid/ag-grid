@@ -57,7 +57,6 @@ const gridOptions: GridOptions<IOlympicData> = {
   rowData: null,
   defaultColDef: {
     width: 100,
-    resizable: true,
   },
 }
 // setup the grid after the page has finished loading

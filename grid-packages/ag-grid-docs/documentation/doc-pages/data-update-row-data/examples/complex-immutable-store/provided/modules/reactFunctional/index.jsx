@@ -357,8 +357,6 @@ const GridExample = () => {
     const defaultColDef = useMemo(() => {
         return {
             width: 120,
-            sortable: true,
-            resizable: true,
             filter: 'agNumberColumnFilter',
         }
     }, []);

@@ -13,7 +13,7 @@ const gridOptions: GridOptions = {
     columnDefs: [
         {
             field: "mission",
-            resizable: false
+            filter: true
         },
         {
             field: "country"
@@ -33,9 +33,7 @@ const gridOptions: GridOptions = {
     ],
     // Configurations applied to all columns
     defaultColDef: {
-        filter: true,
-        sortable: true,
-        resizable: true
+        filter: true
     },
     // Grid Options & Callbacks
     pagination: true,

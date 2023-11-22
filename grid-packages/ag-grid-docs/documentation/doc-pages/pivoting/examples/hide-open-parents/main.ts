@@ -31,8 +31,6 @@ const gridOptions: GridOptions<IOlympicData> = {
     enablePivot: true,
     enableValue: true,
     filter: true,
-    resizable: true,
-    sortable: true,
   },
   autoGroupColumnDef: {
     minWidth: 250,
@@ -41,7 +39,6 @@ const gridOptions: GridOptions<IOlympicData> = {
   groupDefaultExpanded: 9,
   groupHideOpenParents: true,
   groupDisplayType: 'multipleColumns',
-  animateRows: true,
   sideBar: true,
 }
 

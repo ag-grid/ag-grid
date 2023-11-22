@@ -19,8 +19,6 @@ const gridOptions: GridOptions<IOlympicData> = {
         flex: 1,
         minWidth: 100,
         filter: true,
-        sortable: true,
-        resizable: true,
     },
 
     // custom loading template. the class ag-overlay-loading-center is part of the grid,

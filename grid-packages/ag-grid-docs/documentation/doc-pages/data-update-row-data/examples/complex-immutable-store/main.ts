@@ -296,8 +296,6 @@ const gridOptions: GridOptions = {
   columnDefs: columnDefs,
   defaultColDef: {
     width: 120,
-    sortable: true,
-    resizable: true,
     filter: 'agNumberColumnFilter',
   },
   autoGroupColumnDef: {
@@ -310,7 +308,6 @@ const gridOptions: GridOptions = {
   rowSelection: 'multiple',
   groupSelectsChildren: true,
   rowData: globalRowData,
-  animateRows: true,
   suppressAggFuncInHeader: true,
   suppressRowClickSelection: true,
   getRowId: (params: GetRowIdParams) => {

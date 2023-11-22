@@ -28,9 +28,7 @@ const rowClassRules = {
 const defaultColDef = {
     flex: 1,
     minWidth: 100,
-    sortable: true,
     filter: true,
-    resizable: true
 };
 
 const GridExample = () => {

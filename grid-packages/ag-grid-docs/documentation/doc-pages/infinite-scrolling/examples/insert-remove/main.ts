@@ -72,7 +72,6 @@ let gridApi: GridApi;
 
 const gridOptions: GridOptions = {
     defaultColDef: {
-        resizable: true,
         flex: 1,
     },
     rowSelection: 'multiple',

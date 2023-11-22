@@ -14,13 +14,10 @@ const gridOptions: GridOptions<IOlympicData> = {
     flex: 1,
     minWidth: 100,
     filter: true,
-    sortable: true,
-    resizable: true,
   },
   autoGroupColumnDef: {
     minWidth: 200,
   },
-  animateRows: true,
   isGroupOpenByDefault: (params: IsGroupOpenByDefaultParams) => {
     return (
       (params.field === 'year' && params.key === '2004') ||

@@ -44,7 +44,7 @@ export class CountryFlagCellRendererComponent implements ICellRendererAngularCom
   }
 
   // Return Cell Value
-  refresh(params: ICellRendererParams<any, any, any>): boolean {
+  refresh(params: ICellRendererParams): boolean {
     this.value = params.value;
     return true;
   }
@@ -78,7 +78,7 @@ export class AppComponent {
 
   // Column Definitions: Defines & controls grid columns.
   colDefs: ColDef[] = [
-    { field: "mission", resizable: true },
+    { field: "mission", filter: true },
     { 
       field: "country",
       cellRenderer: CountryFlagCellRendererComponent // Render a custom component
@@ -94,7 +94,7 @@ export class AppComponent {
 
   // Default Column Definitions: Apply configuration across all columns
   defaultColDefs: ColDef = {
-    resizable: true,
+    filter: true,
     editable: true
   }
 

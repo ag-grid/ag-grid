@@ -113,7 +113,7 @@ export const GRID_OPTION_DEFAULTS = {
     aggregateOnlyChangedColumns: false,
     suppressAggFilteredOnly: false,
     removePivotHeaderRowWhenSingleValueColumn: false,
-    animateRows: false,
+    animateRows: true,
     enableCellChangeFlash: false,
     cellFlashDelay: 500,
     cellFadeDelay: 1000,

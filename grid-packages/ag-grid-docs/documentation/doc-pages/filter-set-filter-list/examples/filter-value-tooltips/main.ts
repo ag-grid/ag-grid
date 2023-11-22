@@ -33,7 +33,6 @@ const gridOptions: GridOptions = {
   sideBar: 'filters',
   defaultColDef: {
     flex: 1,
-    resizable: true,
   },
   tooltipShowDelay: 100,
   rowData: getData(),

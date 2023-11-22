@@ -23,8 +23,6 @@ const gridOptions: GridOptions<IOlympicData> = {
   defaultColDef: {
     flex: 1,
     minWidth: 120,
-    resizable: true,
-    sortable: true,
   },
   autoGroupColumnDef: {
     flex: 1,
@@ -33,7 +31,6 @@ const gridOptions: GridOptions<IOlympicData> = {
   rowModelType: 'serverSide',
   rowSelection: 'multiple',
   isServerSideGroupOpenByDefault: isServerSideGroupOpenByDefault,
-  animateRows: true,
   getRowId: getRowId,
   groupIncludeFooter: true,
   groupDisplayType: 'multipleColumns',

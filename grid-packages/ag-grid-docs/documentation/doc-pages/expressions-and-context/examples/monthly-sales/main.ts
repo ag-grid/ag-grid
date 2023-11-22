@@ -124,8 +124,6 @@ const gridOptions: GridOptions = {
   defaultColDef: {
     flex: 1,
     minWidth: 120,
-    sortable: true,
-    resizable: true,
   },
   autoGroupColumnDef: {
     headerName: 'Location',
@@ -136,7 +134,6 @@ const gridOptions: GridOptions = {
       checkbox: true,
     } as IGroupCellRendererParams,
   },
-  animateRows: true,
   rowSelection: 'multiple',
   groupSelectsChildren: true,
   context: context

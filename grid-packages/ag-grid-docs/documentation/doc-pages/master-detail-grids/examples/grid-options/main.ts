@@ -35,7 +35,6 @@ const gridOptions: GridOptions<IAccount> = {
         { field: 'switchCode', minWidth: 150 },
       ],
       defaultColDef: {
-        sortable: true,
         flex: 1,
       },
     },

@@ -35,7 +35,6 @@ const gridOptions: GridOptions = {
   rowModelType: 'serverSide',
   treeData: true,
   columnDefs: columnDefs,
-  animateRows: true,
   isServerSideGroupOpenByDefault: (
     params: IsServerSideGroupOpenByDefaultParams
   ) => {

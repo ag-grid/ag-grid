@@ -1,6 +1,6 @@
 import { agChartsVersion, agGridVersion } from 'utils/consts';
 
-export const getHeaderTitle = (title, framework = 'javascript', isCharts = false, version = '') =>
+export const getHeaderTitle = (title, framework = 'react', isCharts = false, version = '') =>
     `${getProductType(framework, isCharts, version)}: ${title}`;
 
 export const getProductType = (framework, isCharts = false, version = '') =>
@@ -8,10 +8,10 @@ export const getProductType = (framework, isCharts = false, version = '') =>
 
 export const getFrameworkName = (framework) => {
     const mappings = {
-        javascript: 'JavaScript',
-        angular: 'Angular',
         react: 'React',
+        angular: 'Angular',
         vue: 'Vue',
+        javascript: 'JavaScript',
     };
 
     return mappings[framework] || '';

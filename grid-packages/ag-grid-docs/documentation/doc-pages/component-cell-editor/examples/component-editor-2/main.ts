@@ -101,11 +101,9 @@ const gridOptions: GridOptions = {
     rowData: getData(),
     defaultColDef: {
         editable: true,
-        sortable: true,
         flex: 1,
         minWidth: 100,
         filter: true,
-        resizable: true,
     },
     onRowEditingStarted: (event: RowEditingStartedEvent) => {
         console.log('never called - not doing row editing')

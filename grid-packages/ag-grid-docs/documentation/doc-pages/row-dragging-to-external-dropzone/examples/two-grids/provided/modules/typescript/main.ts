@@ -27,9 +27,7 @@ var leftGridOptions: GridOptions = {
     defaultColDef: {
         flex: 1,
         minWidth: 100,
-        sortable: true,
         filter: true,
-        resizable: true
     },
     rowClassRules: {
         "red-row": 'data.color == "Red"',
@@ -41,7 +39,6 @@ var leftGridOptions: GridOptions = {
     rowDragManaged: true,
     suppressMoveWhenRowDragging: true,
     columnDefs: leftColumnDefs,
-    animateRows: true,
     onGridReady: (params) => {
         addBinZone(params);
         addGridDropZone(params, 'Right');
@@ -52,9 +49,7 @@ var rightGridOptions: GridOptions = {
     defaultColDef: {
         flex: 1,
         minWidth: 100,
-        sortable: true,
         filter: true,
-        resizable: true
     },
     rowClassRules: {
         "red-row": 'data.color == "Red"',
@@ -66,7 +61,6 @@ var rightGridOptions: GridOptions = {
     rowDragManaged: true,
     suppressMoveWhenRowDragging: true,
     columnDefs: rightColumnDefs,
-    animateRows: true,
     onGridReady: (params) => {
         addBinZone(params);
         addGridDropZone(params, 'Left');

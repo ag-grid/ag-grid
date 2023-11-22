@@ -15,8 +15,6 @@ const gridOptions: GridOptions<IOlympicData> = {
   defaultColDef: {
     flex: 1,
     minWidth: 100,
-    resizable: true,
-    sortable: true,
   },
   autoGroupColumnDef: {
     flex: 1,
@@ -37,7 +35,6 @@ const gridOptions: GridOptions<IOlympicData> = {
   // keep the row count fixed, even when groups are expanded
   paginateChildRows: true,
 
-  animateRows: true,
   suppressAggFuncInHeader: true,
 }
 

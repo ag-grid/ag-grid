@@ -14,9 +14,8 @@ ModuleRegistry.registerModules([ClientSideRowModelModule]);
 
 const baseDefaultColDef: ColDef = {
     flex: 1,
-    sortable: true,
     filter: true,
-    resizable: true
+    
 };
 
 const baseGridOptions: GridOptions = {
@@ -27,7 +26,6 @@ const baseGridOptions: GridOptions = {
         'blue-row': 'data.color == "Blue"'
     },
     rowDragManaged: true,
-    animateRows: true
 }
 
 const baseColumnDefs: ColDef[] = [

@@ -12,10 +12,8 @@ const gridOptions: GridOptions = {
   ],
   defaultColDef: {
     flex: 1,
-    sortable: true,
     filter: 'agSetColumnFilter',
     floatingFilter: true,
-    resizable: true,
   },
   enableCharts: true,
   onGridReady : (params: GridReadyEvent) => {

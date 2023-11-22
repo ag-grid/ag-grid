@@ -175,37 +175,6 @@
             ]
           },
           {
-            "title": "Rendering",
-            "url": "/reactui/",
-            "frameworks": [
-              "react"
-            ]
-          },
-          {
-            "title": "Redux Integration Part 1",
-            "url": "/redux-integration-pt1/",
-            "showInCollapsed": true,
-            "frameworks": [
-              "react"
-            ]
-          },
-          {
-            "title": "Redux Integration Part 2",
-            "url": "/redux-integration-pt2/",
-            "showInCollapsed": true,
-            "frameworks": [
-              "react"
-            ]
-          },
-          {
-            "title": "Material UI Components",
-            "url": "/material-design/",
-            "showInCollapsed": true,
-            "frameworks": [
-              "angular"
-            ]
-          },
-          {
             "title": "Vue2 Tutorial",
             "url": "/vue2/",
             "showInCollapsed": true,

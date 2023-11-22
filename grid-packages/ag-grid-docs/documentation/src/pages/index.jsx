@@ -29,10 +29,6 @@ const Default = () => {
     );
     const frameworksData = [
         {
-            name: 'javascript',
-            url: '/javascript-data-grid/',
-        },
-        {
             name: 'react',
             url: '/react-data-grid/',
         },
@@ -43,7 +39,11 @@ const Default = () => {
         {
             name: 'vue',
             url: '/vue-data-grid/',
-        }
+        },
+        {
+            name: 'javascript',
+            url: '/javascript-data-grid/',
+        },
     ];
     let debugValue, debugLogLevel, isCI, runAutomatedExamplesOnce;
 

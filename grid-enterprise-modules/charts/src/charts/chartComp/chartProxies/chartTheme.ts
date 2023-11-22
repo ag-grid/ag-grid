@@ -6,17 +6,7 @@ import {
     AgChartThemeName,
     AgChartThemeOverrides,
     AgChartThemePalette,
-    AgPieSeriesTooltipRendererParams
 } from 'ag-charts-community';
-// import {
-//     _Theme,
-//     AgChartLegendClickEvent,
-//     AgChartTheme,
-//     AgChartThemeName,
-//     AgChartThemeOverrides,
-//     AgChartThemePalette,
-//     AgPieSeriesTooltipRendererParams
-// } from 'ag-charts-enterprise';
 import { ALL_AXIS_TYPES } from '../utils/axisTypeMapper';
 import { getSeriesType } from '../utils/seriesTypeMapper';
 import { ChartProxy, ChartProxyParams } from './chartProxy';
@@ -118,26 +108,6 @@ function createCrossFilterThemeOverrides(
     };
 
     const series: AgChartThemeOverrides = {};
-    if (overrideType === 'pie') {
-        series: {
-            tooltip: {
-                renderer: ({
-                               angleName,
-                               datum,
-                               calloutLabelKey,
-                               radiusKey,
-                               angleKey,
-                           }: AgPieSeriesTooltipRendererParams) => {
-                    const title = angleName;
-                    const label = datum[calloutLabelKey as string];
-                    const ratio = datum[radiusKey as string];
-                    const totalValue = datum[angleKey as string];
-                    return {title, content: `${label}: ${totalValue * ratio}`};
-                }
-            }
-        }
-    }
-
     return {
         [overrideType]: {
             tooltip: {

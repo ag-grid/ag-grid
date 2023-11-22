@@ -20,7 +20,6 @@ const gridOptions: GridOptions<IOlympicData> = {
   defaultColDef: {
     maxWidth: 140,
     filter: true,
-    resizable: true,
   },
   autoGroupColumnDef: {
     minWidth: 180,

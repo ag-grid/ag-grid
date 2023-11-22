@@ -12,7 +12,6 @@ let gridApi: GridApi;
 
 const gridOptions: GridOptions = {
   defaultColDef: {
-    resizable: true,
     initialWidth: 200,
     wrapHeaderText: true,
     autoHeaderHeight: true,

@@ -1,4 +1,3 @@
-// import { _Scene } from 'ag-charts-enterprise';
 import { _Scene } from 'ag-charts-community';
 
 export interface CreateColumnRectsParams {

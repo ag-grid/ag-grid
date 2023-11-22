@@ -118,9 +118,7 @@ const VueExample = {
 
         const gridApi = ref();
         const defaultColDef = ref({
-            sortable: true,
             filter: true,
-            resizable: true,
             minWidth: 100,
             flex: 1,
         });

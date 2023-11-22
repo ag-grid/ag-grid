@@ -65,7 +65,6 @@ const gridOptions: GridOptions = {
   columnDefs: columnDefs,
   defaultColDef: {
     flex: 1,
-    resizable: true,
   },
   autoGroupColumnDef: {
     minWidth: 130,

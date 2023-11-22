@@ -109,7 +109,6 @@ let gridApi: GridApi<IOlympicData>;
 const gridOptions: GridOptions<IOlympicData> = {
   columnDefs,
   defaultColDef: {
-    resizable: true,
     minWidth: 130,
     flex: 1,
     suppressHeaderKeyboardEvent

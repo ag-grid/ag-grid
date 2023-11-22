@@ -108,7 +108,6 @@ const GridExample = () => {
     }, []);
     const defaultColDef = useMemo(() => {
         return {
-            resizable: true,
             flex: 1,
         }
     }, []);

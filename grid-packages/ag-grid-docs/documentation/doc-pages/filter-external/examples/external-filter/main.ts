@@ -43,7 +43,6 @@ const gridOptions: GridOptions<IOlympicData> = {
     minWidth: 120,
     filter: true,
   },
-  animateRows: true,
   isExternalFilterPresent: isExternalFilterPresent,
   doesExternalFilterPass: doesExternalFilterPass,
 }

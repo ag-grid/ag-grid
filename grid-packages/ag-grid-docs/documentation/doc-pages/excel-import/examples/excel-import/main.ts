@@ -18,7 +18,6 @@ const gridOptions: GridOptions = {
   ],
 
   defaultColDef: {
-    resizable: true,
     minWidth: 80,
     flex: 1,
   },

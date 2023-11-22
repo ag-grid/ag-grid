@@ -77,15 +77,12 @@ const VueExample = {
     beforeMount() {
         const baseDefaultColDef = {
             flex: 1,
-            sortable: true,
             filter: true,
-            resizable: true
         };
 
         const baseGridOptions = {
             getRowId: (params) => { return params.data.id; },
             rowDragManaged: true,
-            animateRows: true
         }
 
         const baseColumnDefs = [

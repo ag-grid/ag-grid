@@ -44,7 +44,6 @@ const gridOptions: GridOptions = {
   defaultColDef: {
     flex: 1,
     minWidth: 100,
-    resizable: true,
   },
   rowData: getData(),
   rowHeight: 50,

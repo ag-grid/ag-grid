@@ -96,22 +96,23 @@ function generateFontFile(fontName) {
     );
 }
 
-function generateScssFile(fontName) {
-    const fontClass = fontName.replace("agGrid", "").toLowerCase();
-    const sourceFolder = path.join(__dirname, `fonts/${fontName}`);
-    let scssContent = `// THIS FILE IS GENERATED, DO NOT EDIT IT!\n\n[class*="ag-theme-${fontClass}"] {\n`;
-    for (const name of Object.keys(nameToCodepoint)) {
-        let content = fs.readFileSync(path.join(sourceFolder, name + '.svg'), "utf8");
-        content = encodeURIComponent(content);
-        // content = content.replaceAll(/>\s+</g, "><").replaceAll(/\s+/g, "+").replaceAll(/[/#\s"']/g, encodeURIComponent)
-        scssContent += `\t--ag-icon-image-${name}: url("data:image/svg+xml;charset=utf-8,${content}");\n`;
-    }
-    scssContent += "}\n";
-    const scssFile = path.join(fontDataFolder,  `_${kebabCase(fontName)}-embedded-svg.scss`);
-    fs.writeFileSync(scssFile, scssContent, "utf8");
-}
+// This can be used to generate embedded SVG versions of each icon font
+// function generateScssFile(fontName) {
+//     const fontClass = fontName.replace("agGrid", "").toLowerCase();
+//     const sourceFolder = path.join(__dirname, `fonts/${fontName}`);
+//     let scssContent = `// THIS FILE IS GENERATED, DO NOT EDIT IT!\n\n[class*="ag-theme-${fontClass}"] {\n`;
+//     for (const name of Object.keys(nameToCodepoint)) {
+//         let content = fs.readFileSync(path.join(sourceFolder, name + '.svg'), "utf8");
+//         content = encodeURIComponent(content);
+//         // content = content.replaceAll(/>\s+</g, "><").replaceAll(/\s+/g, "+").replaceAll(/[/#\s"']/g, encodeURIComponent)
+//         scssContent += `\t--ag-icon-image-${name}: url("data:image/svg+xml;charset=utf-8,${content}");\n`;
+//     }
+//     scssContent += "}\n";
+//     const scssFile = path.join(fontDataFolder,  `_${kebabCase(fontName)}-embedded-svg.scss`);
+//     fs.writeFileSync(scssFile, scssContent, "utf8");
+// }
 
-const kebabCase = (camelCase) => camelCase.replaceAll(/[A-Z]/g, (letter) => '-' + letter.toLowerCase());
+// const kebabCase = (camelCase) => camelCase.replaceAll(/[A-Z]/g, (letter) => '-' + letter.toLowerCase());
 
 const getIconDataFileContent = (buffer) => `
 // THIS FILE IS GENERATED, DO NOT EDIT IT!
@@ -142,4 +143,4 @@ if (!fs.existsSync(fontDataFolder)) {
 
 generateScssIconMap();
 fonts.forEach(generateFontFile);
-fonts.forEach(generateScssFile);
+// fonts.forEach(generateScssFile);

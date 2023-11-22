@@ -66,7 +66,7 @@ const App = {
     }
 
     const colDefs = ref([
-      { field: "mission", resizable: true, checkboxSelection: true },
+      { field: "mission", filter: true, checkboxSelection: true },
       { field: "country", cellRenderer: "countryFlagCellRenderer" },
       { field: "successful" },
       { field: "date", valueFormatter: dateFormatter },
@@ -75,7 +75,7 @@ const App = {
     ]);
 
     const defaultColDefs = ref({
-      resizable: true,
+      filter: true,
       editable: true
     });
 

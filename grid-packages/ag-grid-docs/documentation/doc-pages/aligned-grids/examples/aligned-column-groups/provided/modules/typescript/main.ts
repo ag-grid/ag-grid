@@ -37,8 +37,6 @@ let bottomApi: GridApi;
 // this is the grid options for the top grid
 const gridOptionsTop: GridOptions = {
     defaultColDef: {
-        sortable: true,
-        resizable: true,
         filter: true,
         flex: 1,
         minWidth: 120
@@ -54,8 +52,6 @@ const gridOptionsTop: GridOptions = {
 // this is the grid options for the bottom grid
 const gridOptionsBottom: GridOptions = {
     defaultColDef: {
-        sortable: true,
-        resizable: true,
         filter: true,
         flex: 1,
         minWidth: 120

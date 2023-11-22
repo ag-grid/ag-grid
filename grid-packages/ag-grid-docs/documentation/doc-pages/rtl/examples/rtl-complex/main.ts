@@ -217,17 +217,14 @@ let gridApi: GridApi;
 const gridOptions: GridOptions = {
     defaultColDef: {
         editable: true,
-        sortable: true,
         minWidth: 100,
         filter: true,
         floatingFilter: true,
-        resizable: true,
     },
     sideBar: true,
     rowGroupPanelShow: 'always', // on of ['always','onlyWhenGrouping']
     pivotPanelShow: 'always', // on of ['always','onlyWhenPivoting']
     enableRtl: true,
-    animateRows: true,
     statusBar: {
         statusPanels: [{ statusPanel: 'agAggregationComponent' }],
     },

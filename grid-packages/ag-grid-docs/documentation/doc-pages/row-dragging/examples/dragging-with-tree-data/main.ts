@@ -27,11 +27,9 @@ const gridOptions: GridOptions = {
   ],
   defaultColDef: {
     flex: 1,
-    resizable: true,
   },
   rowData: getData(),
   treeData: true,
-  animateRows: true,
   groupDefaultExpanded: -1,
   getDataPath: (data: any) => {
     return data.filePath

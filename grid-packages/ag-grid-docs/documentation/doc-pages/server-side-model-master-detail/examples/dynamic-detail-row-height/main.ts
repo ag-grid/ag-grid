@@ -22,7 +22,6 @@ const gridOptions: GridOptions = {
   defaultColDef: {
     flex: 1,
   },
-  animateRows: true,
 
   // use the server-side row model
   rowModelType: 'serverSide',

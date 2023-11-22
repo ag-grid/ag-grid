@@ -209,7 +209,6 @@ const gridOptions: GridOptions<IOlympicData> = {
   defaultColDef: {
     flex: 1,
     minWidth: 150,
-    sortable: true,
     filter: true,
   },
   getLocaleText: (params: GetLocaleTextParams) => {

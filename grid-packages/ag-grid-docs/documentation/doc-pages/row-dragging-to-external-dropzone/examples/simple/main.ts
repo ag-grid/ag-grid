@@ -20,9 +20,7 @@ let gridApi: GridApi;
 
 const gridOptions: GridOptions = {
   defaultColDef: {
-    sortable: true,
     filter: true,
-    resizable: true,
     flex: 1,
   },
   rowClassRules: {
@@ -33,7 +31,6 @@ const gridOptions: GridOptions = {
   rowData: createRowData(),
   rowDragManaged: true,
   columnDefs: columnDefs,
-  animateRows: true,
   onGridReady: (params) => {
     addDropZones(params)
     addCheckboxListener(params)

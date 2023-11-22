@@ -7,7 +7,6 @@ const gridOptions: GridOptions<IAccount> = {
   masterDetail: true,
   detailCellRenderer: DetailCellRenderer,
   detailRowHeight: 150,
-  animateRows: true,
   columnDefs: [
     // group cell renderer needed for expand / collapse icons
     { field: 'name', cellRenderer: 'agGroupCellRenderer', pinned: 'left' },

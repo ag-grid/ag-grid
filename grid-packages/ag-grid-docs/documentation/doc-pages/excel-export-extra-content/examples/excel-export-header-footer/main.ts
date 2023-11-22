@@ -20,9 +20,7 @@ const gridOptions: GridOptions<IOlympicData> = {
     { field: 'total' },
   ],
   defaultColDef: {
-    sortable: true,
     filter: true,
-    resizable: true,
     minWidth: 100,
     flex: 1,
   },

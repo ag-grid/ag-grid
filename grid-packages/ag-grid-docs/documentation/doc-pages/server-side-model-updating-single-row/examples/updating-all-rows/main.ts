@@ -14,13 +14,11 @@ let gridApi: GridApi;
 const gridOptions: GridOptions = {
   defaultColDef: {
     flex: 1,
-    resizable: true,
   },
   columnDefs: columnDefs,
   // use the enterprise row model
   rowModelType: 'serverSide',
   cacheBlockSize: 75,
-  animateRows: true,
   enableCellChangeFlash: true,
 }
 

@@ -815,7 +815,6 @@ const ExampleInner = ({darkMode}) => {
             enableRtl: IS_SSR ? false : /[?&]rtl=true/.test(window.location.search),
             enableCharts: true,
             // multiSortKey: 'ctrl',
-            animateRows: true,
 
             enableRangeSelection: true,
             // enableRangeHandle: true,
@@ -1429,19 +1428,11 @@ const ExampleInner = ({darkMode}) => {
     const isDarkTheme = gridTheme?.includes('dark');
     const isAutoTheme = gridTheme?.includes('auto');
 
+    const defaultChartThemes = ['ag-default', 'ag-material', 'ag-sheets', 'ag-polychroma', 'ag-vivid'];
+    const [chartThemes, setChartThemes] = useState(defaultChartThemes);
     useEffect(() => {
-        if (isDarkTheme) {
-            gridOptions.chartThemes = [
-                'ag-default-dark',
-                'ag-material-dark',
-                'ag-pastel-dark',
-                'ag-vivid-dark',
-                'ag-solar-dark',
-            ];
-        } else {
-            gridOptions.chartThemes = null;
-        }
-    }, [gridTheme]);
+        setChartThemes(isDarkTheme ? defaultChartThemes.map(theme => theme + '-dark') : defaultChartThemes);
+    }, [isDarkTheme]);
 
     return (
         <>
@@ -1471,6 +1462,7 @@ const ExampleInner = ({darkMode}) => {
                                 modules={modules}
                                 gridOptions={gridOptions}
                                 columnDefs={columnDefs}
+                                chartThemes={chartThemes}
                                 rowData={rowData}
                                 defaultCsvExportParams={defaultExportParams}
                                 defaultExcelExportParams={defaultExportParams}

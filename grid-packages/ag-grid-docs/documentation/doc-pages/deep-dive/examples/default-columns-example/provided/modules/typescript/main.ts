@@ -24,7 +24,7 @@ const gridOptions: GridOptions = {
   rowData: [] as IRow[],
   // Columns to be displayed (Should match rowData properties)
   columnDefs: [
-    { field: "mission", resizable: true },
+    { field: "mission", filter: true },
     { field: "country" },
     { field: "successful" },
     { field: "date" },
@@ -34,9 +34,7 @@ const gridOptions: GridOptions = {
   // Configurations applied to all columns
   defaultColDef: {
     filter: true,
-    sortable: true,
-    editable: true,
-    resizable: true
+    editable: true
   } as ColDef,
 }
 

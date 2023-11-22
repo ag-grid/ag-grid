@@ -24,8 +24,6 @@ const gridOptions: GridOptions<IOlympicDataTypes> = {
     minWidth: 180,
     filter: true,
     floatingFilter: true,
-    sortable: true,
-    resizable: true,
     editable: true,
     enableRowGroup: true,
   },

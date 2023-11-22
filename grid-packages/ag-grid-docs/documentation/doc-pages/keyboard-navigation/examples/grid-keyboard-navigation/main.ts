@@ -70,10 +70,8 @@ const gridOptions: GridOptions<IOlympicData> = {
   suppressRowClickSelection: true,
   defaultColDef: {
     editable: true,
-    sortable: true,
     minWidth: 100,
     filter: true,
-    resizable: true,
     floatingFilter: true,
     flex: 1,
   },

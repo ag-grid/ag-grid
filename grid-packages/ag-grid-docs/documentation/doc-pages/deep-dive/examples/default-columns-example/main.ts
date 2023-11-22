@@ -31,9 +31,7 @@ const gridOptions: GridOptions = {
         }
     ],
     defaultColDef: {
-        filter: true, // TBC, remove if default to true change is implemented
-        sortable: true, // TBC, remove if default to true change is implemented
-        resizable: true
+        filter: true
     }
 
 }

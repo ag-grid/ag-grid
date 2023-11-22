@@ -18,7 +18,6 @@ const gridOptions: GridOptions<IAccount> = {
   ],
   defaultColDef: {
     flex: 1,
-    sortable: true,
     filter: true,
   },
   masterDetail: true,
@@ -34,7 +33,6 @@ const gridOptions: GridOptions<IAccount> = {
       defaultColDef: {
         flex: 1,
         filter: true,
-        sortable: true,
       },
     },
     getDetailRowData: (params) => {

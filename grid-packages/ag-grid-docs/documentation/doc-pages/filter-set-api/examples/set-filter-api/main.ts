@@ -38,7 +38,6 @@ const gridOptions: GridOptions<IOlympicData> = {
         flex: 1,
         minWidth: 160,
         filter: true,
-        resizable: true,
     },
     sideBar: 'filters',
     onFirstDataRendered: onFirstDataRendered,

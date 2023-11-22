@@ -28,12 +28,10 @@ let gridApi: GridApi<IOlympicData>;
 const gridOptions: GridOptions<IOlympicData> = {
   defaultColDef: {
     width: 170,
-    sortable: true,
     filter: true,
   },
   rowDragManaged: true,
   columnDefs: columnDefs,
-  animateRows: true,
   onRowDragEnter: onRowDragEnter,
   onRowDragEnd: onRowDragEnd,
 }

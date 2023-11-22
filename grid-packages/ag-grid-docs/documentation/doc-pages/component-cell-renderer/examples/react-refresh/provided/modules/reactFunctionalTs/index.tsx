@@ -26,7 +26,6 @@ const GridExample = () => {
     const defaultColDef = useMemo<ColDef>(() => ({
         flex: 1,
         minWidth: 100,
-        resizable: true,
     }), []);
     const [rowData, setRowData] = useState<IOlympicData[]>();
 

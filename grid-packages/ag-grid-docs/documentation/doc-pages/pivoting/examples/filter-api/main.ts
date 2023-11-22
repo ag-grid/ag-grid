@@ -15,8 +15,6 @@ const gridOptions: GridOptions<IOlympicData> = {
     minWidth: 150,
     filter: true,
     floatingFilter: true,
-    sortable: true,
-    resizable: true,
   },
   processPivotResultColDef: (colDef: ColDef) => {
     colDef.filter = 'agNumberColumnFilter';

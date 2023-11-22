@@ -44,7 +44,7 @@ const App = {
       rowData: [],
       // Column Definitions: Defines & controls grid columns.
       columnDefs: [
-          { field: "mission", resizable: true },
+          { field: "mission", filter: true },
           { field: "country", cellRenderer: "countryFlagCellRenderer" },
           { field: "successful" },
           { field: "date" },
@@ -52,7 +52,7 @@ const App = {
           { field: "company" }
       ],
       defaultColDefs: {
-        resizable: true,
+        filter: true,
         editable: true
       },
       themeClass: /** DARK MODE START **/document.documentElement.dataset.defaultTheme || 'ag-theme-quartz'/** DARK MODE END **/,

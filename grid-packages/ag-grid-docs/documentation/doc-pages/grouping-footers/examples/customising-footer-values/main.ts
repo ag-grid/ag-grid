@@ -14,8 +14,6 @@ const gridOptions: GridOptions = {
   defaultColDef: {
     flex: 1,
     minWidth: 150,
-    sortable: true,
-    resizable: true,
   },
   autoGroupColumnDef: {
     minWidth: 300,
@@ -31,7 +29,6 @@ const gridOptions: GridOptions = {
   },
   groupIncludeFooter: true,
   groupIncludeTotalFooter: true,
-  animateRows: true,
   rowData: getData(),
 }
 

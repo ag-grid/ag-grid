@@ -135,8 +135,6 @@ const gridOptions: GridOptions<IOlympicData> = {
   defaultColGroupDef: { headerClass: headerClassFunc },
   defaultColDef: {
     headerClass: headerClassFunc,
-    sortable: true,
-    resizable: true,
     filter: true,
   },
   icons: {

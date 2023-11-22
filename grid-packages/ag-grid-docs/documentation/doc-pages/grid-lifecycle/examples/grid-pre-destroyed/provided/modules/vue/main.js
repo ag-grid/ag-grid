@@ -62,7 +62,6 @@ const VueExample = {
             gridApi: null,
             defaultColDef: {
                 editable: true,
-                resizable: true,
             },
             rowData: null,
             showGrid: true,

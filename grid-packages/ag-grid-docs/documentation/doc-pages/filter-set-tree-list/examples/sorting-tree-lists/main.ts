@@ -24,7 +24,6 @@ const gridOptions: GridOptions = {
   defaultColDef: {
     flex: 1,
     minWidth: 200,
-    resizable: true,
     filter: true,
     floatingFilter: true,
     cellDataType: false,
@@ -44,7 +43,6 @@ const gridOptions: GridOptions = {
     minWidth: 280
   },
   treeData: true,
-  animateRows: true,
   groupDefaultExpanded: -1,
   getDataPath: (data) => {
     return data.dataPath

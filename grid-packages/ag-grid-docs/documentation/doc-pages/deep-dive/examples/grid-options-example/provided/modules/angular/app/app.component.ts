@@ -48,7 +48,7 @@ export class AppComponent {
 
   // Column Definitions: Defines & controls grid columns.
   colDefs: ColDef[] = [
-    { field: "mission", resizable: true },
+    { field: "mission", filter: true },
     { field: "country" },
     { field: "successful" },
     { field: "date" },
@@ -58,7 +58,7 @@ export class AppComponent {
 
   // Default Column Definitions: Apply configuration across all columns
   defaultColDefs: ColDef = {
-    resizable: true
+    filter: true
   }
 
   // Load data into grid when ready

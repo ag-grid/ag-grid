@@ -20,8 +20,6 @@ const gridOptions: GridOptions<IOlympicData> = {
   rowData: null,
   suppressMenuHide: true,
   defaultColDef: {
-    sortable: true,
-    resizable: true,
     filter: true,
     width: 150,
     headerComponentParams: {

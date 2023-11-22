@@ -16,8 +16,6 @@ const gridOptions: GridOptions<IOlympicData> = {
     flex: 1,
     minWidth: 180,
     filter: true,
-    sortable: true,
-    resizable: true,
   },
   enableAdvancedFilter: true,
   popupParent: document.getElementById('wrapper'),

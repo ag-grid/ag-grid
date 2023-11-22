@@ -142,7 +142,6 @@ let gridApi: GridApi;
 const gridOptions: GridOptions = {
   columnDefs: columnDefs,
   suppressAggFuncInHeader: true,
-  animateRows: true,
   rowGroupPanelShow: 'always',
   pivotPanelShow: 'always',
   getRowId: (params: GetRowIdParams) => {
@@ -150,8 +149,6 @@ const gridOptions: GridOptions = {
   },
   defaultColDef: {
     width: 120,
-    sortable: true,
-    resizable: true,
   },
   autoGroupColumnDef: {
     width: 250,

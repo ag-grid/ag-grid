@@ -22,8 +22,6 @@ const gridOptions: GridOptions<IOlympicData> = {
   paginationPageSizeSelector: [10, 20, 50, 100],
   defaultColDef: {
     editable: true,
-    sortable: true,
-    resizable: true,
     filter: true,
     flex: 1,
     minWidth: 190,

@@ -137,7 +137,7 @@ export class DropZoneColumnComp extends Component {
             ariaInstructions.push(aggregationMenuAria);
         }
 
-        if (this.isGroupingZone() && this.column.getColDef().sortable && !isSortSuppressed) {
+        if (this.isGroupingZone() && this.column.isSortable() && !isSortSuppressed) {
             const sortProgressAria = translate('ariaDropZoneColumnGroupItemDescription', 'Press ENTER to sort');
             ariaInstructions.push(sortProgressAria);
         }
@@ -162,7 +162,7 @@ export class DropZoneColumnComp extends Component {
     }
 
     public setupSort(): void {
-        const canSort = this.column.getColDef().sortable;
+        const canSort = this.column.isSortable();
         const isGroupingZone = this.isGroupingZone();
         if (!canSort || !isGroupingZone) {
             return;
@@ -269,7 +269,7 @@ export class DropZoneColumnComp extends Component {
             // if aggFunc is a string, we can use it, but if it's a function, then we swap with 'func'
             const aggFuncString = typeof aggFunc === 'string' ? aggFunc : 'agg';
             const localeTextFunc = this.localeService.getLocaleTextFunc();
-            aggFuncName = localeTextFunc(aggFuncString, this.aggFuncService.getDefaultFuncLabel(aggFuncString));
+            aggFuncName = localeTextFunc(aggFuncString, aggFuncString);
         }
 
         return { name, aggFuncName };

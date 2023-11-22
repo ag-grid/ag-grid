@@ -60,8 +60,6 @@ const gridOptions: GridOptions<IOlympicData> = {
     enableRowGroup: true,
     enablePivot: true,
     enableValue: true,
-    sortable: true,
-    resizable: true,
     filter: true,
     flex: 1,
     minWidth: 100,

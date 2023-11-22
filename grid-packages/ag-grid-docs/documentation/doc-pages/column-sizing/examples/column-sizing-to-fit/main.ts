@@ -12,9 +12,7 @@ const columnDefs: ColDef[] = [
 let gridApi: GridApi<IOlympicData>;
 
 const gridOptions: GridOptions<IOlympicData> = {
-  defaultColDef: {
-    resizable: true,
-  },
+
   columnDefs: columnDefs,
   rowData: null,
   autoSizeStrategy: {

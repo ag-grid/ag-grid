@@ -17,9 +17,6 @@ let gridApi: GridApi<IOlympicData>;
 
 const gridOptions: GridOptions<IOlympicData> = {
   columnDefs: columnDefs,
-  defaultColDef: {
-    sortable: true,
-  },
 }
 
 function sortByAthleteAsc() {

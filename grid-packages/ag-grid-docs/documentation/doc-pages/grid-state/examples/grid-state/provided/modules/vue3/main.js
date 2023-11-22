@@ -70,8 +70,6 @@ const VueExample = {
         const defaultColDef = ref({
             flex: 1,
             minWidth: 100,
-            sortable: true,
-            resizable: true,
             filter: true,
             enableRowGroup: true,
             enablePivot: true,

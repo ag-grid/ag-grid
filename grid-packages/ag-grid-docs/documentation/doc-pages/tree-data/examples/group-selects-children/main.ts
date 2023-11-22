@@ -22,7 +22,6 @@ const gridOptions: GridOptions = {
   },
   rowData: getData(),
   treeData: true, // enable Tree Data mode
-  animateRows: true,
   groupDefaultExpanded: -1, // expand all groups by default
   rowSelection: 'multiple',
   groupSelectsChildren: true,

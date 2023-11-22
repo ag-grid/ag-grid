@@ -29,7 +29,6 @@ const gridOptions: GridOptions = {
   ],
   defaultColDef: {
     flex: 1,
-    resizable: true,
     floatingFilter: true,
     cellDataType: false,
   },

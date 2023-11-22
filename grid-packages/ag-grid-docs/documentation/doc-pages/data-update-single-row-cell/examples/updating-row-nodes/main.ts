@@ -21,10 +21,8 @@ const gridOptions: GridOptions = {
   defaultColDef: {
     flex: 1,
     editable: true,
-    sortable: true,
     filter: true,
   },
-  animateRows: true,
   getRowId: (params: GetRowIdParams) => {
     return params.data.id
   },

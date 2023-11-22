@@ -37,8 +37,6 @@ const VueExample = {
             gridApi: null,
             defaultColDef: {
                 width: 100, // resets col widths if manually resized
-                sortable: true,
-                resizable: true,
                 pinned: null,
                 sort: null
             },

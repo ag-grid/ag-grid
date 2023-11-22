@@ -37,7 +37,6 @@ const gridOptions: GridOptions<IOlympicData> = {
     columnDefs: columnDefs,
     defaultColDef: {
         width: 150,
-        resizable: true,
     },
     defaultExcelExportParams: {
         addImageToCell: (rowIndex, col, value) => {

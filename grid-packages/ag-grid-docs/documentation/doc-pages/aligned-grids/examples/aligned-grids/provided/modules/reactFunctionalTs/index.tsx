@@ -36,8 +36,6 @@ const GridExample = () => {
     ], []);
 
     const defaultColDef = useMemo<ColDef>(() => ({
-        sortable: true,
-        resizable: true,
         filter: true,
         minWidth: 100
     }), []);

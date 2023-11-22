@@ -328,7 +328,14 @@ const GridExample = () => {
             editable: true,
             width: 280,
         },
-    ], [])
+    ], []);
+
+    const defaultColDef = useMemo(() => ({
+        editable: true,
+        flex: 1,
+        minWidth: 100,
+        filter: true,
+    }), []);
 
     return (
         <div style={{ width: '100%', height: '100%' }}>
@@ -341,14 +348,7 @@ const GridExample = () => {
                 <AgGridReact
                     columnDefs={columnDefs}
                     rowData={rowData}
-                    defaultColDef={{
-                        editable: true,
-                        sortable: true,
-                        flex: 1,
-                        minWidth: 100,
-                        filter: true,
-                        resizable: true
-                    }} />
+                    defaultColDef={defaultColDef} />
             </div>
         </div>
     );

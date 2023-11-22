@@ -48,9 +48,7 @@ const gridOptions: GridOptions = {
     // Configurations applied to all columns
     defaultColDef: {
         filter: true,
-        sortable: true,
         editable: true,
-        resizable: true
     },
     // Grid Options & Callbacks
     pagination: true,

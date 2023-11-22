@@ -20,7 +20,6 @@ const gridOptions: GridOptions = {
   ],
   defaultColDef: {
     flex: 1,
-    sortable: true,
     filter: true,
   },
   autoGroupColumnDef: {
@@ -43,7 +42,6 @@ const gridOptions: GridOptions = {
   rowData: getRowData(),
   groupDefaultExpanded: 1,
   suppressAggFuncInHeader: true,
-  animateRows: true,
   onCellValueChanged: onCellValueChanged,
 }
 

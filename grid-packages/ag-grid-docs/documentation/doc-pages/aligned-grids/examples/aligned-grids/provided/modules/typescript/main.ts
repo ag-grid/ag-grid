@@ -28,8 +28,6 @@ const columnDefs: (ColDef | ColGroupDef)[] = [
     }
 ];
 const defaultColDef: ColDef = {
-    sortable: true,
-    resizable: true,
     filter: true,
     minWidth: 100
 };

@@ -19,7 +19,6 @@ const gridOptions: GridOptions = {
   ],
   defaultColDef: {
     flex: 1,
-    sortable: true,
   },
   autoGroupColumnDef: {
     minWidth: 100,
@@ -41,7 +40,6 @@ const gridOptions: GridOptions = {
   rowData: getRowData(),
   groupDefaultExpanded: 1,
   suppressAggFuncInHeader: true,
-  animateRows: true,
 }
 
 function getRowData() {

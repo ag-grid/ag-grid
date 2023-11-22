@@ -32,15 +32,12 @@ const gridOptions: GridOptions = {
   defaultColDef: {
     flex: 1,
     minWidth: 150,
-    sortable: true,
-    resizable: true,
     cellRenderer: 'agAnimateShowChangeCellRenderer',
   },
   rowData: getRowData(),
   pivotMode: true,
   groupDefaultExpanded: 1,
   // enableCellChangeFlash: true,
-  animateRows: true,
   getRowId: (params: GetRowIdParams) => {
     return params.data.student
   },

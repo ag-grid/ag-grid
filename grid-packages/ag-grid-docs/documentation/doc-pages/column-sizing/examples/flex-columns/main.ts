@@ -41,9 +41,7 @@ function fillAllCellsWithWidthMeasurement() {
 let gridApi: GridApi;
 
 const gridOptions: GridOptions = {
-  defaultColDef: {
-    resizable: true,
-  },
+
   columnDefs: columnDefs,
   rowData: [1, 2],
   onGridReady: (params) => {

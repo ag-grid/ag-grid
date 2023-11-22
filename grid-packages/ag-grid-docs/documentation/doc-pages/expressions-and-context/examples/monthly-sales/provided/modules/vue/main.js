@@ -125,8 +125,6 @@ const VueExample = {
       defaultColDef: {
         flex: 1,
         minWidth: 120,
-        sortable: true,
-        resizable: true,
       },
       context: null,
       autoGroupColumnDef: null,

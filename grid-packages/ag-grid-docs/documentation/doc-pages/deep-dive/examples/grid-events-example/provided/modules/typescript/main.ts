@@ -45,7 +45,7 @@ const gridOptions: GridOptions = {
     // Columns to be displayed (Should match rowData properties)
     columnDefs: [
         {
-            field: "mission", resizable: false },
+            field: "mission", filter: true },
         {
             field: "country",
             cellRenderer: CountryFlagCellRenderer
@@ -61,7 +61,7 @@ const gridOptions: GridOptions = {
     // Configurations applied to all columns
     defaultColDef: {
         editable: true,
-        resizable: true
+        filter: true
     } as ColDef,
     // Grid Options & Callbacks
     pagination: true,

@@ -13,7 +13,6 @@ const gridOptions: GridOptions<IOlympicData> = {
     { field: 'total', aggFunc: 'sum' },
   ],
   defaultColDef: {
-    sortable: true,
     flex: 1,
     minWidth: 150,
   },

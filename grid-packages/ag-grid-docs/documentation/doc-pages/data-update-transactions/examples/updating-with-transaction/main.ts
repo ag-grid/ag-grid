@@ -19,7 +19,6 @@ const gridOptions: GridOptions = {
   },
   rowData: getData(),
   rowSelection: 'multiple',
-  animateRows: true,
 }
 
 let newCount = 1
