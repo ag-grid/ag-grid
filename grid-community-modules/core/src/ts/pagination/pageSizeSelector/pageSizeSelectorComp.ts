@@ -54,6 +54,8 @@ export class PageSizeSelectorComp extends Component {
             // as it's no longer needed.
             this.toggleSelectDisplay(true);
         }
+
+        this.selectPageSizeComp.getFocusableElement().focus();
     };
 
     private handlePaginationChanged(paginationChangedEvent?: WithoutGridCommon<PaginationChangedEvent>): void {
@@ -133,14 +135,14 @@ export class PageSizeSelectorComp extends Component {
         }
 
         const localeTextFunc = this.localeService.getLocaleTextFunc();
-        const localisedLabel = localeTextFunc('pageSizeShowLabel', 'Show');
+        const localisedLabel = localeTextFunc('pageSizeSelectorLabel', 'Page Size:');
 
         const options = pageSizeOptions.map(value => ({
             value: String(value),
             text: String(value)
         }));
 
-        const localisedAriaLabel = localeTextFunc('ariaPageSizeShowLabel', 'Page Show Count');
+        const localisedAriaLabel = localeTextFunc('ariaPageSizeSelectorLabel', 'Page Size');
 
         this.selectPageSizeComp = this.createManagedBean(new AgSelect())
             .addOptions(options)
