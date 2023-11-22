@@ -72,7 +72,7 @@ const isLinkSelected = (name, path) => {
     return checkItemsRecursive(menuToCheck) || (whatsNewLink && path.endsWith(whatsNewLink.url));
 };
 
-const HeaderLinks = ({ path, isOpen, toggleIsOpen }) => {
+const HeaderLinks = ({ path, isOpen, toggleIsOpen, currentFramework }) => {
     return links.map((link) => {
         const linkClasses = classnames(styles.navItem, {
             [styles.navItemActive]: isLinkSelected(link.name, path),
@@ -83,7 +83,7 @@ const HeaderLinks = ({ path, isOpen, toggleIsOpen }) => {
             <li key={link.name.toLocaleLowerCase()} className={linkClasses}>
                 <a
                     className={styles.navLink}
-                    href={link.docsLink ? `/${getCurrentFramework()}-data-grid${link.url}` : link.url}
+                    href={link.docsLink ? `/${currentFramework}-data-grid${link.url}` : link.url}
                     onClick={() => {
                         if (isOpen) {
                             toggleIsOpen();
@@ -134,7 +134,7 @@ const HeaderNav = ({ path, currentFramework }) => {
                     <HeaderExpandButton isOpen={false} />
                     <nav id="main-nav" className={styles.mainNav}>
                         <ul className={classnames(styles.navItemList, 'list-style-none')}>
-                            <HeaderLinks path={path} isOpen={isOpen} toggleIsOpen={toggleIsOpen} />
+                            <HeaderLinks path={path} isOpen={isOpen} toggleIsOpen={toggleIsOpen} currentFramework={currentFramework} />
                             <DarkModeToggle />
                         </ul>
                     </nav>
@@ -146,7 +146,7 @@ const HeaderNav = ({ path, currentFramework }) => {
                     <Collapsible id={styles.mainNav} isDisabled={isDesktop} isOpen={isOpen}>
                         <nav id={isDesktop ? 'main-nav' : undefined} className={styles.mainNav}>
                             <ul className={classnames(styles.navItemList, 'list-style-none')}>
-                                <HeaderLinks path={path} isOpen={isOpen} toggleIsOpen={toggleIsOpen} />
+                                <HeaderLinks path={path} isOpen={isOpen} toggleIsOpen={toggleIsOpen} currentFramework={currentFramework} />
                                 <DarkModeToggle />
                             </ul>
                         </nav>
