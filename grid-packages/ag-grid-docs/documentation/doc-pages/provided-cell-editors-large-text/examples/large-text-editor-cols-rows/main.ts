@@ -11,7 +11,11 @@ const columnDefs: ColDef[] = [
     headerName: 'Large Text Editor',
     field: 'description',
     cellEditor: 'agLargeTextCellEditor',
-    cellEditorPopup: true
+    cellEditorPopup: true,
+    cellEditorParams: {
+        rows: 15,
+        cols: 50
+    } as ILargeTextEditorParams,
   }
 ];
 

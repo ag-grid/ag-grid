@@ -3,26 +3,30 @@ import {
   createGrid,
   ColDef,
   GridOptions,
-  ITextCellEditorParams
+  ISelectCellEditorParams,
 } from '@ag-grid-community/core';
+import { ColourCellRenderer } from './colourCellRenderer_typescript'
 import { colors } from './colors';
 
 const columnDefs: ColDef[] = [
   { 
+    headerName: 'Select Editor Without Max Height and Max Width',
     field: 'color', 
-    cellEditor: 'agTextCellEditor',
+    cellEditor: 'agSelectCellEditor',
     cellEditorParams: {
-      maxLength: 20
-    } as ITextCellEditorParams
+      values: colors
+    } as ISelectCellEditorParams
   },
-  {
-    field: 'value',
-    valueFormatter: (params) => `£ ${params.value}`,
-    cellEditor: 'agTextCellEditor',
+  { 
+    headerName: 'Select Editor With Max Height and Max Width',
+    field: 'color', 
+    cellEditor: 'agSelectCellEditor',
     cellEditorParams: {
-      maxLength: 20,
-    } as ITextCellEditorParams
-  },
+      values: colors,
+      valueListMaxHeight: 200,
+      valueListMaxWidth: 150
+    } as ISelectCellEditorParams
+  }
 ];
 
 function getRandomNumber(min: number, max: number) { // min and max included 
@@ -31,10 +35,7 @@ function getRandomNumber(min: number, max: number) { // min and max included
 
 const data = Array.from(Array(20).keys()).map(() => {
   const color = colors[getRandomNumber(0, colors.length - 1)];
-  return ({
-    color: color,
-    value: getRandomNumber(0, 1000)
-  });
+  return ({ color });
 });
 
 let gridApi: GridApi;

@@ -6,12 +6,6 @@ Simple text editor that uses the standard HTML `input`. This editor is the defau
 
 Specified with `agTextCellEditor` and configured with `ITextCellEditorParams`.
 
-<grid-example title='Text Editor' name='text-editor' type='generated' options='{ "modules": ["clientside"] }'></grid-example>
-
-## Interface
-
-<interface-documentation interfaceName='ITextCellEditorParams' names='["useFormatter","maxLength"]'></interface-documentation>
-
 ```js
 columnDefs: [
     {
@@ -23,6 +17,12 @@ columnDefs: [
     },
 ]
 ```
+
+<grid-example title='Text Editor' name='text-editor' type='generated' options='{ "modules": ["clientside"] }'></grid-example>
+
+## Interface
+
+<interface-documentation interfaceName='ITextCellEditorParams' names='["useFormatter","maxLength"]'></interface-documentation>
 
 ## Next Up
 

@@ -6,11 +6,21 @@ Simple editor that uses HTML `select`.
 
 Specified with `agSelectCellEditor` and configured with `ILargeTextEditorParams`.
 
+<snippet transform={false}>
+columnDefs: [
+    {
+        cellEditor: 'agSelectCellEditor',
+        cellEditorParams: {
+            values: ['English', 'Spanish', 'French', 'Portuguese', '(other)'],
+        }
+        // ...other props
+    }
+]
+</snippet>
+
 <grid-example title='Select Editor' name='select-editor' type='generated' options='{ "modules": ["clientside"] }'></grid-example>
 
-## Interface
-
-<interface-documentation interfaceName='ISelectCellEditorParams' names='["values", "valueListGap", "valueListMaxHeight", "valueListMaxWidth"]'></interface-documentation>
+## Changing the Gap Between Editor and Value List
 
 <snippet transform={false}>
 columnDefs: [
@@ -18,12 +28,38 @@ columnDefs: [
         cellEditor: 'agSelectCellEditor',
         cellEditorParams: {
             values: ['English', 'Spanish', 'French', 'Portuguese', '(other)'],
-            valueListGap: 0
+            valueListGap: 10
         }
         // ...other props
     }
 ]
 </snippet>
+
+<grid-example title='Select Editor List Gap' name='select-editor-list-gap' type='generated' options='{ "modules": ["clientside"] }'></grid-example>
+
+## List Max Height and Max Width
+
+<snippet transform={false}>
+columnDefs: [
+    {
+        cellEditor: 'agSelectCellEditor',
+        cellEditorParams: {
+            values: ['AliceBlue', 'AntiqueWhite', 'Aqua', /* .... many colours */ ],
+            valueListMaxHeight: 120,
+            valueListMaxWidth: 120
+        }
+        // ...other props
+    }
+]
+</snippet>
+
+<grid-example title='Select Editor Max Height and Max Width' name='select-editor-max-height-and-width' type='generated' options='{ "modules": ["clientside"] }'></grid-example>
+
+
+## Interface
+
+<interface-documentation interfaceName='ISelectCellEditorParams' names='["values", "valueListGap", "valueListMaxHeight", "valueListMaxWidth"]'></interface-documentation>
+
 
 Note there is no need to specify `cellEditorPopup=true` for Select Cell Editor as the browsers Select widget will appear on top of the grid.
 

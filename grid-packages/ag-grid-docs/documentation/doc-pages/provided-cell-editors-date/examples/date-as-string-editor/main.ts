@@ -21,7 +21,7 @@ let gridApi: GridApi;
 
 const gridOptions: GridOptions = {
   defaultColDef: {
-    flex: 1,
+    width: 200,
     editable: true
   },
   columnDefs: columnDefs,

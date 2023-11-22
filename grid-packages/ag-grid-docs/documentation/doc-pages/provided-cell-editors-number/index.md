@@ -6,12 +6,6 @@ Simple number editor that uses the standard HTML number `input`.
 
 Specified with `agNumberCellEditor` and configured with `INumberCellEditorParams`.
 
-<grid-example title='Number Editor' name='number-editor' type='generated' options='{ "modules": ["clientside"] }'></grid-example>
-
-## Interface
-
-<interface-documentation interfaceName='INumberCellEditorParams' names='["min","max","precision","step","showStepperButtons"]'></interface-documentation>
-
 ```js
 columnDefs: [
     {
@@ -25,6 +19,12 @@ columnDefs: [
     }
 ]
 ```
+
+<grid-example title='Number Editor' name='number-editor' type='generated' options='{ "modules": ["clientside"] }'></grid-example>
+
+## Interface
+
+<interface-documentation interfaceName='INumberCellEditorParams' names='["min","max","precision","step","showStepperButtons"]'></interface-documentation>
 
 ## Next Up
 

@@ -20,6 +20,7 @@ const columnDefs: ColDef[] = [
     cellEditor: 'agSelectCellEditor',
     cellEditorParams: {
       values: languages,
+      valueListGap: 10
     } as ISelectCellEditorParams
   }
 ];

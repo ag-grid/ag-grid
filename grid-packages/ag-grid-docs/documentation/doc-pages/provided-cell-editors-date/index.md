@@ -8,12 +8,6 @@ Simple date editor that uses the standard HTML date `input`. Requires cell value
 
 Specified with `agDateCellEditor` and configured with `IDateCellEditorParams`.
 
-<grid-example title='Date Editor' name='date-editor' type='generated' options='{ "modules": ["clientside"] }'></grid-example>
-
-### Interface
-
-<interface-documentation interfaceName='IDateCellEditorParams' names='["min","max","step"]'></interface-documentation>
-
 ```js
 columnDefs: [
     {
@@ -27,6 +21,11 @@ columnDefs: [
 ]
 ```
 
+<grid-example title='Date Editor' name='date-editor' type='generated' options='{ "modules": ["clientside"] }'></grid-example>
+
+### Interface
+
+<interface-documentation interfaceName='IDateCellEditorParams' names='["min","max","step"]'></interface-documentation>
 
 ## Date as String Cell Editor
 
@@ -35,12 +34,6 @@ Simple date editor that uses the standard HTML date `input`. Similar to the **Da
 The date format is controlled via [Cell Data Types](/cell-data-types/) and the [Date as String Data Type Definition](/cell-data-types/#date-as-string-data-type-definition). The default is `'yyyy-mm-dd'`.
 
 Specified with `agDateStringCellEditor` and configured with `IDateStringCellEditorParams`.
-
-<grid-example title='Date as String Editor' name='date-as-string-editor' type='generated' options='{ "modules": ["clientside"] }'></grid-example>
-
-### Interface
-
-<interface-documentation interfaceName='IDateStringCellEditorParams' names='["min","max","step"]'></interface-documentation>
 
 ```js
 columnDefs: [
@@ -54,6 +47,12 @@ columnDefs: [
     }
 ]
 ```
+
+<grid-example title='Date as String Editor' name='date-as-string-editor' type='generated' options='{ "modules": ["clientside"] }'></grid-example>
+
+### Interface
+
+<interface-documentation interfaceName='IDateStringCellEditorParams' names='["min","max","step"]'></interface-documentation>
 
 
 ## Next Up
