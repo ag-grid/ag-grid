@@ -14,15 +14,35 @@ export const getAgGridProperties = (): [Properties, Properties, Properties, {}] 
         rowDataModel: undefined,
     };
 
+    const SHALLOW_CHECK_PROPERTIES = ['context', 'popupParent'];
+    const DEEP_CHECK_PROPERTIES = ComponentUtil.ALL_PROPERTIES.filter((propertyName: string) => !SHALLOW_CHECK_PROPERTIES.includes(propertyName));
+
+    const createPropsObject = (properties: string[], component: any) => {
+        const props: { [key: string]: any } = {};
+        properties.forEach((propertyName: string) => {
+            if (component[propertyName] === ComponentUtil.VUE_OMITTED_PROPERTY) { return; }
+            props[propertyName] = component[propertyName];
+        });
+        return props;
+    };
+
+    const processPropsObject = (prev: any, current: any, component: any) => {
+        if (!component.gridCreated || !component.api) { return; }
+        const changes: any = {};
+        Object.entries(current).forEach(([key, value]) => {
+            if (prev[key] === value) return;
+            changes[key] = value;
+        });
+        ComponentUtil.processOnChange(changes, component.api);
+    }
+
     const computed: Properties = {
         props() {
-            const options: { [key: string]: any } = {};
-            ComponentUtil.ALL_PROPERTIES.forEach((propertyName: string) => {
-                if (this[propertyName] === ComponentUtil.VUE_OMITTED_PROPERTY) { return; }
-                options[propertyName] = this[propertyName] ?? this.gridOptions[propertyName];
-            });
-            return options;
+            return createPropsObject(DEEP_CHECK_PROPERTIES, this);
         },
+        shallowProps() {
+            return createPropsObject(SHALLOW_CHECK_PROPERTIES, this);
+        }
     };
 
     const watch: Properties = {
@@ -45,16 +65,17 @@ export const getAgGridProperties = (): [Properties, Properties, Properties, {}] 
         },
         props: {
             handler(currentValue: any, previousValue: any) {
-                if (!this.gridCreated || !this.api) { return; }
-                const changes: any = {};
-                Object.entries(currentValue).forEach(([key, value]) => {
-                    if (previousValue[key] === value) return;
-                    changes[key] = value;
-                });
-                ComponentUtil.processOnChange(changes, this.api);
+                processPropsObject(previousValue, currentValue, this);
             },
             deep: true,
         },
+        // these props may be cyclic, so we don't deep check them.
+        shallowProps: {
+            handler(currentValue: any, previousValue: any) {
+                processPropsObject(previousValue, currentValue, this);
+            },
+            deep: false,
+        }
     };
 
     ComponentUtil.ALL_PROPERTIES.forEach((propertyName: string) => {
