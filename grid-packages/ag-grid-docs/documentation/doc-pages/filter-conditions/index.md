@@ -23,7 +23,7 @@ Information on defining [Custom Filter Options](#custom-filter-options) can be f
 
 ## Filter Value
 
-Each filter option takes zero (a possibility with custom options), one (for most) or two (for 'in range') values. The value type depends on the filter type, e.g. the Date Filter takes Date values.
+Each filter option takes zero (a possibility with custom options), one (for most) or two (for 'inRange') values. The value type depends on the filter type, e.g. the Date Filter takes Date values.
 
 ## Number of Conditions
 
@@ -116,7 +116,7 @@ The following example demonstrates several custom filter options:
   - `Even Numbers`, `Odd Numbers` and `Blanks` have no inputs; their predicate function is provided zero values.
   - `Age 5 Years Ago` has one input; its predicate function is provided one value.
   - `Between (Exclusive)` has two inputs; its predicate function is provided two values.
-  - `Choose One` is a built-in option and acts as an inactive filter option.
+  - `Choose one` is a built-in option and acts as an inactive filter option.
   - The `maxNumConditions=1` option is used to only display one Filter Condition.
 - The **Date** column contains three custom filter options managed by a [Date Filter](/filter-date/):
   - `Equals (with Nulls)` has one inputs; its predicate function is provided one value.

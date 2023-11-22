@@ -8,6 +8,7 @@ import { IAfterGuiAttachedParams } from '../../../interfaces/iAfterGuiAttachedPa
 import { IFilterOptionDef, IFilterParams } from '../../../interfaces/iFilter';
 import { LocaleService } from '../../../localeService';
 import { OptionsFactory } from '../optionsFactory';
+import { FILTER_LOCALE_TEXT } from '../../filterLocaleText';
 
 // The date filter model takes strings, although the filter actually works with dates. This is because a Date object
 // won't convert easily to JSON. When the model is used for doing the filtering, it's converted to a Date object.
@@ -67,7 +68,7 @@ export interface IDateFilterParams extends IScalarFilterParams {
      */
     maxValidDate?: Date | string;
     /**
-     * Defines the date format for the floating filter text when an in range filter has been applied.
+     * Defines the date format for the floating filter text when an `inRange` filter has been applied.
      *
      * @default YYYY-MM-DD
      */
@@ -122,9 +123,9 @@ export class DateFilterModelFormatter extends SimpleFilterModelFormatter {
 export class DateFilter extends ScalarFilter<DateFilterModel, Date, DateCompWrapper> {
     public static DEFAULT_FILTER_OPTIONS = [
         ScalarFilter.EQUALS,
-        ScalarFilter.GREATER_THAN,
-        ScalarFilter.LESS_THAN,
         ScalarFilter.NOT_EQUAL,
+        ScalarFilter.LESS_THAN,
+        ScalarFilter.GREATER_THAN,
         ScalarFilter.IN_RANGE,
         ScalarFilter.BLANK,
         ScalarFilter.NOT_BLANK,
@@ -391,6 +392,16 @@ export class DateFilter extends ScalarFilter<DateFilterModel, Date, DateCompWrap
         });
 
         return result;
+    }
+
+    protected translate(key: keyof typeof FILTER_LOCALE_TEXT): string {
+        if (key === ScalarFilter.LESS_THAN) {
+            return super.translate('before');
+        }
+        if (key === ScalarFilter.GREATER_THAN) {
+            return super.translate('after');
+        }
+        return super.translate(key);
     }
 
     public getModelAsString(model: ISimpleFilterModel): string {

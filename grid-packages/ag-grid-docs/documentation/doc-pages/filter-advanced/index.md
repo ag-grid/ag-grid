@@ -106,7 +106,7 @@ The available options are as follows:
 | =                       | `equals`              | `number`, `date`, `dateString`                              |
 | not equal               | `notEqual`            | `text`, `object`                                            |
 | !=                      | `notEqual`            | `number`, `date`, `dateString`                              |
-| starts with             | `startsWith`          | `text`, `object`                                            |
+| begins with             | `startsWith`          | `text`, `object`                                            |
 | ends with               | `endsWith`            | `text`, `object`                                            |
 | is blank                | `blank`               | `text`, `number`, `boolean`, `date`, `dateString`, `object` |
 | is not blank            | `notBlank`            | `text`, `number`, `boolean`, `date`, `dateString`, `object` |

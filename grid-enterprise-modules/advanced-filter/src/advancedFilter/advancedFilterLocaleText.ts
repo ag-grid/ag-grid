@@ -15,7 +15,7 @@ export const ADVANCED_FILTER_LOCALE_TEXT = {
     advancedFilterNotContains: 'does not contain',
     advancedFilterTextEquals: 'equals',
     advancedFilterTextNotEqual: 'does not equal',
-    advancedFilterStartsWith: 'starts with',
+    advancedFilterStartsWith: 'begins with',
     advancedFilterEndsWith: 'ends with',
     advancedFilterBlank: 'is blank',
     advancedFilterNotBlank: 'is not blank',
