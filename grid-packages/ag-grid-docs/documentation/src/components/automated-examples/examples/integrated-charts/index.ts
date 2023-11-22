@@ -82,11 +82,9 @@ let api: GridApi;
 const gridOptions: GridOptions = {
     columnDefs,
     defaultColDef: {
-        sortable: true,
         flex: 1,
         minWidth: 150,
         filter: true,
-        resizable: true,
     },
     autoGroupColumnDef: {
         minWidth: 280,

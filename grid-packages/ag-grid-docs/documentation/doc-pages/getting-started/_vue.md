@@ -194,7 +194,6 @@
 |    :rowData="rowData.value"
 |    :defaultColDef="defaultColDef"
 |    rowSelection="multiple"
-|    animateRows="true"
 |    @cell-clicked="cellWasClicked"
 |    @grid-ready="onGridReady"
 |  >
@@ -234,7 +233,6 @@
 |
 |    // DefaultColDef sets props common to all Columns
 |    const defaultColDef = {
-|      sortable: true,
 |      filter: true,
 |      flex: 1
 |    };
@@ -359,7 +357,6 @@
 |
 | // DefaultColDef sets props common to all Columns
 | const defaultColDef = {
-|   sortable: true,
 |   filter: true,
 |   flex: 1
 | };

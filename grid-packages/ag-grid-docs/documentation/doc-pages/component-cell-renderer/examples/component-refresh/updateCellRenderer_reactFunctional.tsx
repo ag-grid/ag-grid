@@ -1,6 +1,7 @@
 import React, { useCallback } from 'react';
+import { ICellRendererParams } from '@ag-grid-community/core';
 
-export default (props:any) => {
+export default (props: ICellRendererParams<IOlympicData>) => {
     const onClick = useCallback(() => {
         const { gold, silver, bronze } = props.node.data;
         props.node.updateData({

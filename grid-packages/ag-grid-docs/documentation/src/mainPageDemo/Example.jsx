@@ -745,10 +745,8 @@ const ExampleInner = ({darkMode}) => {
             },
             defaultColDef: {
                 minWidth: 50,
-                sortable: true,
                 filter: true,
                 floatingFilter: !isSmall,
-                resizable: true,
                 cellDataType: false,
             },
             enableCellChangeFlash: true,

@@ -22,7 +22,6 @@ const VueExample = {
                     :autoGroupColumnDef="autoGroupColumnDef"
                     :groupIncludeFooter="true"
                     :groupIncludeTotalFooter="true"
-                    :animateRows="true"
                     :rowData="rowData"></ag-grid-vue>
         </div>
     `,

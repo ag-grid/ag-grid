@@ -24,8 +24,7 @@ const VueExample = {
                 :suppressRowClickSelection="true"
                 :groupDefaultExpanded="groupDefaultExpanded"
                 :rowSelection="rowSelection"
-                :groupSelectsChildren="true"
-                :animateRows="true"></ag-grid-vue>
+                :groupSelectsChildren="true"></ag-grid-vue>
         </div>
     `,
     components: {

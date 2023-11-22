@@ -220,7 +220,6 @@ const GridExample = () => {
                         context={context.current}
                         defaultColDef={defaultColDef}
                         autoGroupColumnDef={autoGroupColumnDef}
-                        animateRows={true}
                         rowSelection={'multiple'}
                         groupSelectsChildren={true}
                         onGridReady={onGridReady}

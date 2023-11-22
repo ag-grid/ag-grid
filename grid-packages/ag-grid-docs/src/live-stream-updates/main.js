@@ -267,8 +267,6 @@
     var gridOptions = {
         defaultColDef: {
             width: 120,
-            sortable: true,
-            resizable: true
         },
         columnTypes: {
             dimension: {

@@ -311,21 +311,9 @@ If everything works as expected, you should see a simple grid like the one on th
 
 <image-caption src="step1.png" alt="AG Grid hello world" maxWidth="80%" constrained="true" centered="true"></image-caption>
 
-## Enable Sorting And Filtering
+## Sorting And Filtering
 
-So far, so good. But wouldn't it be nice to be able to sort the data to help us see which car
-is the least/most expensive? Well, enabling sorting in AG Grid is actually quite simple -
-all you need to do is set the `sortable` property to the column definitions.
-
-```js
-this.columnDefs = [
-    { field: 'make', sortable: true },
-    { field: 'model', sortable: true },
-    { field: 'price', sortable: true }
-];
-```
-
-After adding the `sortable` property you should be able to sort the grid by clicking on the column headers.
+AG Grid supports sorting out of the box with no configuration. You sort the grid by clicking on the column headers.
 Clicking on a header toggles through ascending, descending and no-sort.
 
 Our application doesn't have too many rows, so it's fairly easy to find data. But it's easy to
@@ -333,13 +321,13 @@ imagine how a real-world application may have hundreds (or even hundreds of thou
 with many columns. In a data set like this [filtering](/filtering/)
 is your friend.
 
-As with sorting, enabling filtering is as easy as setting the `filter` property:
+Enabling filtering is as easy as setting the `filter` property:
 
 ```js
 this.columnDefs = [
-    { field: 'make', sortable: true, filter: true },
-    { field: 'model', sortable: true, filter: true },
-    { field: 'price', sortable: true, filter: true }
+    { field: 'make', filter: true },
+    { field: 'model', filter: true },
+    { field: 'price', filter: true }
 ];
 ```
 
@@ -362,9 +350,9 @@ add the following fetch statement:
 ```js
 beforeMount() {
      this.columnDefs = [
-       { field: 'make', sortable: true, filter: true },
-       { field: 'model', sortable: true, filter: true },
-       { field: 'price', sortable: true, filter: true }
+       { field: 'make', filter: true },
+       { field: 'model', filter: true },
+       { field: 'price', filter: true }
      ];
 
      fetch('https://www.ag-grid.com/example-assets/small-row-data.json')
@@ -416,9 +404,9 @@ export default {
  },
  beforeMount() {
    this.columnDefs = [
-+      { field: 'make', sortable: true, filter: true, checkboxSelection: true },
-       { field: 'model', sortable: true, filter: true },
-       { field: 'price', sortable: true, filter: true }
++      { field: 'make', filter: true, checkboxSelection: true },
+       { field: 'model', filter: true },
+       { field: 'price', filter: true }
      ];
 
      fetch('https://www.ag-grid.com/example-assets/small-row-data.json')
@@ -477,9 +465,9 @@ export default {
  },
  beforeMount() {
    this.columnDefs = [
-       { field: 'make', sortable: true, filter: true, checkboxSelection: true },
-       { field: 'model', sortable: true, filter: true },
-       { field: 'price', sortable: true, filter: true }
+       { field: 'make', filter: true, checkboxSelection: true },
+       { field: 'model', filter: true },
+       { field: 'price', filter: true }
      ];
 
      fetch('https://www.ag-grid.com/example-assets/small-row-data.json')
@@ -593,9 +581,9 @@ the `columnDefs` with a `rowGroup`:
        },
        beforeMount() {
            this.columnDefs = [
-+              {field: 'make', sortable: true, filter: true, checkboxSelection: true, rowGroup: true },
-               {field: 'model', sortable: true, filter: true},
-               {field: 'price', sortable: true, filter: true}
++              {field: 'make', filter: true, checkboxSelection: true, rowGroup: true },
+               {field: 'model', filter: true},
+               {field: 'price', filter: true}
            ];
 
            fetch('https://www.ag-grid.com/example-assets/small-row-data.json')

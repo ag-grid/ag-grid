@@ -187,7 +187,7 @@ const AG_GRID_LOCALE_EN = {
     lastPage: 'Last Page',
     firstPage: 'First Page',
     previousPage: 'Previous Page',
-    pageSizeShowLabel: 'Show',
+    pageSizeSelectorLabel: 'Page Size:',
 
     // Pivoting
     pivotColumnGroupTotals: 'Total',
@@ -378,7 +378,7 @@ const AG_GRID_LOCALE_EN = {
     ariaUnchecked: 'unchecked',
     ariaVisible: 'visible',
     ariaSearchFilterValues: 'Search filter values',
-    ariaPageSizeShowLabel: 'Page Show Count',
+    ariaPageSizeSelectorLabel: 'Page Size',
 
     // ARIA Labels for Drop Zones
     ariaRowGroupDropZonePanelLabel: 'Row Groups',

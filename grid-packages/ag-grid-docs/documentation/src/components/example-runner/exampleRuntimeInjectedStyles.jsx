@@ -104,10 +104,13 @@ html[data-color-scheme='dark'] body:not(#myGrid body, #myChart body) {
     margin-bottom: 8px;
     border-radius: 8px;
     border: 1px solid var(--ag-border-color);
-    overflow: hidden;
 }
 
-.my-chart + .my-chart,
+#myChart .ag-chart,
+.my-chart .ag-chart {
+    border-radius: 8px;
+}
+
 #top .my-chart {
     margin-top: 0;
 }

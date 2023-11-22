@@ -10,7 +10,7 @@ Add more white space or pack more data into the UI.
 
 ```css
 .ag-theme-quartz {
-    --ag-grid-size: 3px;
+    --ag-grid-size: 5px;
     --ag-list-item-height: 20px;
 }
 ```
@@ -19,7 +19,7 @@ Add more white space or pack more data into the UI.
 
 ```css
 .ag-theme-quartz {
-    --ag-grid-size: 10px;
+    --ag-grid-size: 12px;
     --ag-list-item-height: 40px;
 }
 ```

@@ -154,7 +154,9 @@ export interface ColDef<TData = any, TValue = any> extends AbstractColDef<TData,
 
     /** The unique ID to give the column. This is optional. If missing, the ID will default to the field.
      *  If both field and colId are missing, a unique ID will be generated.
-     *  This ID is used to identify the column in the API for sorting, filtering etc. */
+     *  This ID is used to identify the column in the API for sorting, filtering etc.
+     * @initial
+     */
     colId?: string;
     /**
      * The field of the row object to get the cell's data from.
@@ -193,7 +195,6 @@ export interface ColDef<TData = any, TValue = any> extends AbstractColDef<TData,
      * Function to return a string key for a value.
      * This string is used for grouping, Set filtering, and searching within cell editor dropdowns.
      * When filtering and searching the string is exposed to the user, so make sure to return a human-readable value.
-     * @managed
      */
     keyCreator?: (params: KeyCreatorParams<TData, TValue>) => string;
     /**
@@ -211,7 +212,6 @@ export interface ColDef<TData = any, TValue = any> extends AbstractColDef<TData,
     /**
      * Set to `true` (or return `true` from function) to render a selection checkbox in the column.
      * @default false
-     * @managed
      */
     checkboxSelection?: boolean | CheckboxSelectionCallback<TData, TValue>;
     /**
@@ -219,7 +219,10 @@ export interface ColDef<TData = any, TValue = any> extends AbstractColDef<TData,
      * @default false
      */
     showDisabledCheckboxes?: boolean;
-    /** Icons to use inside the column instead of the grid's default icons. Leave undefined to use defaults. */
+    /**
+     * Icons to use inside the column instead of the grid's default icons. Leave undefined to use defaults.
+     * @initial
+     * */
     icons?: { [key: string]: Function | string; };
     /**
      * Set to `true` if this column is not navigable (i.e. cannot be tabbed into), otherwise `false`.
@@ -247,7 +250,10 @@ export interface ColDef<TData = any, TValue = any> extends AbstractColDef<TData,
      * @default false
      */
     hide?: boolean;
-    /** Same as `hide`, except only applied when creating a new column. Not applied when updating column definitions. */
+    /**
+     * Same as `hide`, except only applied when creating a new column. Not applied when updating column definitions.
+     * @initial
+     */
     initialHide?: boolean;
     /**
      * Set to `true` to block making column visible / hidden via the UI (API will still work).
@@ -335,7 +341,6 @@ export interface ColDef<TData = any, TValue = any> extends AbstractColDef<TData,
     getQuickFilterText?: (params: GetQuickFilterTextParams<TData, TValue>) => string;
     /**
      * Function or expression. Gets the value for filtering purposes.
-     * @managed
      */
     filterValueGetter?: string | ValueGetterFunc<TData>;
     /**
@@ -351,7 +356,6 @@ export interface ColDef<TData = any, TValue = any> extends AbstractColDef<TData,
     /** If enabled then the column header row will automatically adjust height to accommodate the size of the header cell.
     * This can be useful when using your own `headerComponent` or long header names in conjunction with `wrapHeaderText`.
     * @default false
-    * @managed
     */
     autoHeaderHeight?: boolean;
 
@@ -380,13 +384,11 @@ export interface ColDef<TData = any, TValue = any> extends AbstractColDef<TData,
     /**
      * If `true`, the header checkbox selection will only select filtered items.
      * @default false
-     * @managed
      */
     headerCheckboxSelectionFilteredOnly?: boolean;
     /**
      * If `true`, the header checkbox selection will only select nodes on the current page.
      * @default false
-     * @managed
      */
     headerCheckboxSelectionCurrentPageOnly?: boolean;
 
@@ -399,7 +401,10 @@ export interface ColDef<TData = any, TValue = any> extends AbstractColDef<TData,
 
     /** Pin a column to one side: `right` or `left`. A value of `true` is converted to `'left'`. */
     pinned?: boolean | 'left' | 'right' | null;
-    /** Same as `pinned`, except only applied when creating a new column. Not applied when updating column definitions. */
+    /**
+     * Same as `pinned`, except only applied when creating a new column. Not applied when updating column definitions.
+     * @initial
+     */
     initialPinned?: boolean | 'left' | 'right';
     /**
      * Set to true to block the user pinning the column, the column can only be pinned via definitions or API.
@@ -411,7 +416,10 @@ export interface ColDef<TData = any, TValue = any> extends AbstractColDef<TData,
 
     /** Set to true to pivot by this column. */
     pivot?: boolean;
-    /** Same as `pivot`, except only applied when creating a new column. Not applied when updating column definitions. */
+    /**
+     * Same as `pivot`, except only applied when creating a new column. Not applied when updating column definitions.
+     * @initial
+     */
     initialPivot?: boolean;
     /**
      * Set this in columns you want to pivot by.
@@ -419,13 +427,17 @@ export interface ColDef<TData = any, TValue = any> extends AbstractColDef<TData,
      * If pivoting by multiple columns, set this to where you want this column to be in the order of pivots (e.g. `0` for first, `1` for second, and so on).
      */
     pivotIndex?: number | null;
-    /** Same as `pivotIndex`, except only applied when creating a new column. Not applied when updating column definitions. */
+    /**
+     * Same as `pivotIndex`, except only applied when creating a new column. Not applied when updating column definitions.
+     * @initial
+     */
     initialPivotIndex?: number;
     /**
      * Only for CSRM, see [SSRM Pivoting](https://ag-grid.com/javascript-data-grid/server-side-model-pivoting/).
      * 
      * Comparator to use when ordering the pivot columns, when this column is used to pivot on.
      * The values will always be strings, as the pivot service uses strings as keys for the pivot groups.
+     * @initial
      */
     pivotComparator?: (valueA: string, valueB: string) => number;
     /**
@@ -442,7 +454,6 @@ export interface ColDef<TData = any, TValue = any> extends AbstractColDef<TData,
     cellClass?: string | string[] | CellClassFunc<TData, TValue>;
     /**
      * Rules which can be applied to include certain CSS classes.
-     * @managed
      */
     cellClassRules?: CellClassRules<TData, TValue>;
 
@@ -459,7 +470,6 @@ export interface ColDef<TData = any, TValue = any> extends AbstractColDef<TData,
     /**
      * Set to `true` to have the grid calculate the height of a row based on contents of this column.
      * @default false
-     * @managed
      */
     autoHeight?: boolean;
     /**
@@ -490,14 +500,12 @@ export interface ColDef<TData = any, TValue = any> extends AbstractColDef<TData,
      * A callback that should return a string to be displayed by the `rowDragComp` while dragging a row.
      * If this callback is not set, the `rowDragText` callback in the `gridOptions` will be used and
      * if there is no callback in the `gridOptions` the current cell value will be used.
-     * @managed
      */
     rowDragText?: (params: IRowDragItem, dragItemCount: number) => string;
 
     /**
      * `boolean` or `Function`. Set to `true` (or return `true` from function) to allow dragging for native drag and drop.
      * @default false
-     * @managed
      */
     dndSource?: boolean | DndSourceCallback<TData, TValue>;
     /** Function to allow custom drag functionality for native drag and drop. */
@@ -510,7 +518,10 @@ export interface ColDef<TData = any, TValue = any> extends AbstractColDef<TData,
      * @default false
      */
     rowGroup?: boolean;
-    /** Same as `rowGroup`, except only applied when creating a new column. Not applied when updating column definitions. */
+    /**
+     * Same as `rowGroup`, except only applied when creating a new column. Not applied when updating column definitions.
+     * @initial
+     */
     initialRowGroup?: boolean;
     /**
      * Set this in columns you want to group by.
@@ -518,7 +529,10 @@ export interface ColDef<TData = any, TValue = any> extends AbstractColDef<TData,
      * If grouping by multiple columns, set this to where you want this column to be in the group (e.g. `0` for first, `1` for second, and so on).
      */
     rowGroupIndex?: number | null;
-    /** Same as `rowGroupIndex`, except only applied when creating a new column. Not applied when updating column definitions. */
+    /**
+     * Same as `rowGroupIndex`, except only applied when creating a new column. Not applied when updating column definitions.
+     * @initial
+     */
     initialRowGroupIndex?: number;
     /**
      * Set to `true` if you want to be able to row group by this column via the GUI.
@@ -534,7 +548,10 @@ export interface ColDef<TData = any, TValue = any> extends AbstractColDef<TData,
     enableValue?: boolean;
     /** Name of function to use for aggregation. In-built options are: `sum`, `min`, `max`, `count`, `avg`, `first`, `last`. Also accepts a custom aggregation name or an aggregation function. */
     aggFunc?: string | IAggFunc<TData, TValue> | null;
-    /** Same as `aggFunc`, except only applied when creating a new column. Not applied when updating column definitions. */
+    /**
+     * Same as `aggFunc`, except only applied when creating a new column. Not applied when updating column definitions.
+     * @initial
+     */
     initialAggFunc?: string | IAggFunc<TData, TValue>;
     /**
      * The name of the aggregation function to use for this column when it is enabled via the GUI.
@@ -548,7 +565,10 @@ export interface ColDef<TData = any, TValue = any> extends AbstractColDef<TData,
      * This will only restrict what the GUI allows a user to select, it does not impact when you set a function via the API. */
     allowedAggFuncs?: string[];
 
-    /** Set to true to have the grid place the values for the group into the cell, or put the name of a grouped column to just show that group. */
+    /**
+     * Set to true to have the grid place the values for the group into the cell, or put the name of a grouped column to just show that group.
+     * @initial
+     */
     showRowGroup?: string | boolean;
 
     // *** Columns: Sort *** //
@@ -560,11 +580,17 @@ export interface ColDef<TData = any, TValue = any> extends AbstractColDef<TData,
     sortable?: boolean;
     /** If sorting by default, set it here. Set to `asc` or `desc`. */
     sort?: SortDirection;
-    /** Same as `sort`, except only applied when creating a new column. Not applied when updating column definitions. */
+    /**
+     * Same as `sort`, except only applied when creating a new column. Not applied when updating column definitions.
+     * @initial
+     */
     initialSort?: SortDirection;
     /** If sorting more than one column by default, specifies order in which the sorting should be applied. */
     sortIndex?: number | null;
-    /** Same as `sortIndex`, except only applied when creating a new column. Not applied when updating column definitions. */
+    /**
+     * Same as `sortIndex`, except only applied when creating a new column. Not applied when updating column definitions.
+     * @initial
+     */
     initialSortIndex?: number;
     /**  Array defining the order in which sorting occurs (if sorting is enabled). An array with any of the following in any order `['asc','desc',null]` */
     sortingOrder?: (SortDirection)[];
@@ -590,7 +616,6 @@ export interface ColDef<TData = any, TValue = any> extends AbstractColDef<TData,
     /**
      * Set to `true` if you want the unsorted icon to be shown when no sort is applied to this column.
      * @default false
-     * @managed
      */
     unSortIcon?: boolean;
 
@@ -600,7 +625,6 @@ export interface ColDef<TData = any, TValue = any> extends AbstractColDef<TData,
     colSpan?: (params: ColSpanParams<TData, TValue>) => number;
     /**
      * By default, each cell will take up the height of one row. You can change this behaviour to allow cells to span multiple rows.
-     * @managed
      */
     rowSpan?: (params: RowSpanParams<TData, TValue>) => number;
 
@@ -608,7 +632,10 @@ export interface ColDef<TData = any, TValue = any> extends AbstractColDef<TData,
 
     /** Initial width in pixels for the cell. */
     width?: number;
-    /** Same as `width`, except only applied when creating a new column. Not applied when updating column definitions. */
+    /**
+     * Same as `width`, except only applied when creating a new column. Not applied when updating column definitions.
+     * @initial
+     */
     initialWidth?: number;
     /** Minimum width in pixels for the cell. */
     minWidth?: number;
@@ -616,7 +643,10 @@ export interface ColDef<TData = any, TValue = any> extends AbstractColDef<TData,
     maxWidth?: number;
     /** Used instead of `width` when the goal is to fill the remaining empty space of the grid. */
     flex?: number;
-    /** Same as `flex`, except only applied when creating a new column. Not applied when updating column definitions. */
+    /**
+     * Same as `flex`, except only applied when creating a new column. Not applied when updating column definitions.
+     * @initial
+     */
     initialFlex?: number;
     /**
      * Set to `false` to disable resizing which is enabled by default.
@@ -631,7 +661,6 @@ export interface ColDef<TData = any, TValue = any> extends AbstractColDef<TData,
     /**
      * Set to `true` if you do not want this column to be auto-resizable by double clicking it's edge.
      * @default false
-     * @managed
      */
     suppressAutoSize?: boolean;
 
@@ -643,7 +672,6 @@ export interface ColDef<TData = any, TValue = any> extends AbstractColDef<TData,
     /**
      * Set to `true` if you don't want the column header for this column to span the whole height of the header container.
      * @default false
-     * @managed
      */
     suppressSpanHeaderHeight?: boolean;
 }

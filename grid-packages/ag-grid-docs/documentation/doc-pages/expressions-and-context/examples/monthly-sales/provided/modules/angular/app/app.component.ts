@@ -1,14 +1,7 @@
 import { HttpClient } from "@angular/common/http"
 import { Component } from "@angular/core"
 // NOTE: Angular CLI does not support component CSS imports: angular-cli/issues/23273
-import {
-  ColDef,
-  ColGroupDef,
-  GridApi,
-  GridReadyEvent,
-  ICellRendererParams,
-  IGroupCellRendererParams,
-} from "@ag-grid-community/core"
+import { ColDef, ColGroupDef, GridApi, GridReadyEvent, ICellRendererParams, IGroupCellRendererParams } from "@ag-grid-community/core"
 import "@ag-grid-community/styles/ag-grid.css"
 import "@ag-grid-community/styles/ag-theme-quartz.css"
 import "../styles.css"
@@ -53,7 +46,6 @@ import "../styles.css"
       [context]="context"
       [defaultColDef]="defaultColDef"
       [autoGroupColumnDef]="autoGroupColumnDef"
-      [animateRows]="true"
       [rowSelection]="rowSelection"
       [groupSelectsChildren]="true"
       [rowData]="rowData"
@@ -151,7 +143,7 @@ export class AppComponent {
   }
   public defaultColDef: ColDef = {
     flex: 1,
-    minWidth: 120,
+    minWidth: 120
   }
   public autoGroupColumnDef: ColDef = {
     headerName: "Location",

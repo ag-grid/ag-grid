@@ -61,7 +61,7 @@ const VueExample = {
                     :rowData="rowData"
                     :groupDefaultExpanded="groupDefaultExpanded"
                     :rowGroupPanelShow="rowGroupPanelShow"
-                    :animateRows="true"></ag-grid-vue>
+                    ></ag-grid-vue>
         </div>
     `,
     components: {

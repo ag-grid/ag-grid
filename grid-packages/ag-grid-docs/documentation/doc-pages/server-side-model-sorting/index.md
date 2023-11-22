@@ -7,15 +7,15 @@ This section covers Server-Side Sorting using the Server-Side Row Model.
 
 ## Enabling Sorting
 
-Sorting is enabled in the grid via the `sortable` column definition attribute.
+Sorting is enabled by default in the grid and controlled via the `sortable` column definition attribute.
 
 
 <snippet>
 const gridOptions = {
     columnDefs: [
-        { field: 'country', sortable: true },
-        { field: 'year', sortable: true },
-        { field: 'sport' },
+        { field: 'country'},
+        // Disable sorting by sport
+        { field: 'sport', sortable: false },
     ]
 }
 </snippet>
@@ -46,7 +46,6 @@ the grid. The column ID and sort type can then be used by the server to perform 
 
 The example below demonstrates sorting using the SSRM. Note the following:
 
-- All columns have sorting enabled via `defaultColDef.sortable = true`.
 - The server uses the metadata contained in the `sortModel` to sort the rows.
 - Open the browser's dev console to view the `sortModel` supplied in the request to the datasource.
 - Try single / multi-column (using <kbd>⇧ Shift</kbd> key) sorting by clicking on column headers.
