@@ -42,9 +42,8 @@ export class LicenseManager {
             this.outputExpiredTrialKey(licenseDetails.expiry);
         } else if (licenseDetails.expired) {
             const gridReleaseDate = LicenseManager.getGridReleaseDate();
-            const formattedExpiryDate = LicenseManager.formatDate(licenseDetails.expiry);
             const formattedReleaseDate = LicenseManager.formatDate(gridReleaseDate);
-            this.outputIncompatibleVersion(formattedExpiryDate, formattedReleaseDate);
+            this.outputIncompatibleVersion(licenseDetails.expiry, formattedReleaseDate);
         }
     }
 
