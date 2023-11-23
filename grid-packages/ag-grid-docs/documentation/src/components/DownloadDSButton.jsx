@@ -5,7 +5,7 @@ import { hostPrefix } from '../utils/consts';
 import styles from './DownloadDSButton.module.scss';
 import { Icon } from './Icon';
 
-const DS_VERSION = "30.2.0";
+const DS_VERSION = "31.0.0";
 
 const DownloadDSButton = () => {
     return (

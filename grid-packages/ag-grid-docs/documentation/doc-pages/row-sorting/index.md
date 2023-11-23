@@ -14,7 +14,7 @@ const gridOptions = {
         { field: 'name' },
         { field: 'age' },
         // disable sorting by address
-        { field: 'address', sortable: 'false' },
+        { field: 'address', sortable: false },
     ],
 }
 </snippet>

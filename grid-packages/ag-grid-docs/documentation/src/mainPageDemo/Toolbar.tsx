@@ -9,12 +9,9 @@ import { createDataSizeValue } from './utils';
 const IS_SSR = typeof window === 'undefined';
 
 const options: Record<string, string> = {
-    "ag-theme-quartz": "Quartz (light)",
-    "ag-theme-quartz-dark": "Quartz (dark)",
-    "ag-theme-alpine": "Alpine (light)",
-    "ag-theme-alpine-dark": "Alpine (dark)",
-    "ag-theme-balham": "Balham (light)",
-    "ag-theme-balham-dark": "Balham (dark)",
+    "ag-theme-quartz": "Quartz",
+    "ag-theme-alpine": "Alpine",
+    "ag-theme-balham": "Balham",
     "ag-theme-material": "Material",
 }
 

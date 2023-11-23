@@ -187,7 +187,7 @@
 
 .navItem {
     &:not(:last-child) {
-        border-bottom: 1px solid var(--site-header-background);
+        // border-bottom: 1px solid var(--site-header-background);
     }
 
     @media screen and (min-width: $breakpoint-site-header-small) {
@@ -213,7 +213,7 @@
     }
 
     #{$darkmode-selector} & {
-        border-bottom: 1px solid #121f29;
+        // border-bottom: 1px solid #121f29;
 
         @media screen and (min-width: $breakpoint-site-header-small) {
             border-bottom: none;
@@ -257,7 +257,7 @@
     }
 
     #{$darkmode-selector} & {
-        font-weight: 400;
+        font-weight: 500;
         opacity: 0.8;
     }
 }
