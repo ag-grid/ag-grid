@@ -36,8 +36,13 @@
     justify-content: center;
     padding-left: 8px;
     padding-right: 8px;
+    
+     @media only screen and (max-width: 500px) {
+         display: none;
+        }
+
   }
-  
+
   .closeIcon {
     height: 24px;
     width: 24px;
