@@ -2,7 +2,7 @@ import { ICellRendererComp, ICellRendererParams } from '@ag-grid-community/core'
 
 export class UpdateCellRenderer implements ICellRendererComp {
     private eGui: HTMLElement | undefined;
-    private params: ICellRendererParams;
+    private params!: ICellRendererParams;
 
     init(params: ICellRendererParams): void {
         this.eGui = document.createElement("div");
@@ -13,6 +13,10 @@ export class UpdateCellRenderer implements ICellRendererComp {
 
     getGui(): HTMLElement {
         return this.eGui!;
+    }
+
+    refresh(): boolean {
+        return false;
     }
 
     onClick(): void {

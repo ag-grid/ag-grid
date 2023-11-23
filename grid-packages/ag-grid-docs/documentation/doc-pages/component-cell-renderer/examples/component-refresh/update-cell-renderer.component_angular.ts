@@ -17,6 +17,10 @@ export class UpdateCellRenderer implements ICellRendererAngularComp {
         this.params = params;
     }
 
+    refresh(): boolean {
+        return false;
+    }
+
     onClick(): void {
         const { node } = this.params;
         const { gold, silver, bronze } = node.data;
