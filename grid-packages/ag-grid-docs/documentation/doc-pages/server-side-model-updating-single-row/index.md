@@ -9,7 +9,7 @@ This section demonstrates updating rows directly while using the Server-Side Row
 
 You can update a single row by using the row node `updateData` or `setData` functions.
 
-<api-documentation source='row-api/resources/methods.json' section='rowNodeMethods' names='["updateData", "setData"]'></api-documentation>
+<api-documentation source='row-object/resources/reference.json' section='data' names='["updateData", "setData"]'></api-documentation>
 
 <note>
 Setting row data will NOT change the row node ID, so if you are using `getRowId()`
