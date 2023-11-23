@@ -186,10 +186,6 @@
 }
 
 .navItem {
-    &:not(:last-child) {
-        // border-bottom: 1px solid var(--site-header-background);
-    }
-
     @media screen and (min-width: $breakpoint-site-header-small) {
         &:hover a::after {
             opacity: 0.25;
@@ -213,8 +209,6 @@
     }
 
     #{$darkmode-selector} & {
-        // border-bottom: 1px solid #121f29;
-
         @media screen and (min-width: $breakpoint-site-header-small) {
             border-bottom: none;
         }
