@@ -280,6 +280,7 @@
 
         margin-right: 4px;
         border-radius: 50%;
+        fill: var(--white) !important;
     }
 
     @media screen and (min-width: $breakpoint-site-header-small) {
