@@ -14,27 +14,47 @@ Benefits over browser's `select` are as follows:
 
 Specified with `agRichSelectCellEditor` and configured with `IRichCellEditorParams`.
 
-<grid-example title='Rich Select Editor' name='rich-select-editor' type='generated' options='{ "enterprise": true, "modules": ["clientside", "richselect"] }'></grid-example>
-
-## Interface
-
-<interface-documentation interfaceName='IRichCellEditorParams' names='["values", "cellHeight", "cellRenderer", "allowTyping", "filterList", "searchType", "highlightMatch", "valuePlaceholder", "valueListGap", "valueListMaxHeight", "valueListMaxWidth", "formatValue", "searchDebounceDelay" ]'></interface-documentation>
-
 <snippet transform={false}>
 columnDefs: [
     {
         cellEditor: 'agRichSelectCellEditor',
         cellEditorParams: {
             values: ['English', 'Spanish', 'French', 'Portuguese', '(other)'],
-            cellHeight: 20,
-            formatValue: value => value.toUpperCase(),
-            cellRenderer: MyCellRenderer,
-            searchDebounceDelay: 500
         }
         // ...other props
     }
 ]
 </snippet>
+
+<grid-example title='Rich Select Editor' name='rich-select-editor' type='generated' options='{ "enterprise": true, "modules": ["clientside", "richselect"] }'></grid-example>
+
+## Cell Renderer
+
+<snippet transform={false}>
+columnDefs: [
+    {
+        cellEditor: 'agRichSelectCellEditor',
+        cellRenderer: ColourCellRenderer,
+        cellEditorParams: {
+            values: ['AliceBlue', 'AntiqueWhite', 'Aqua', /* .... many colours */ ],
+            cellRenderer: ColourCellRenderer,
+            valueListMaxHeight: 220
+        }
+        // ...other props
+    }
+]
+</snippet>
+
+<grid-example title='Rich Select with Cell Renderer' name='rich-select-cell-renderer' type='generated' options='{ "enterprise": true, "modules": ["clientside", "richselect"] }'></grid-example>
+
+## Search Values
+
+<grid-example title='Rich Select Editor' name='rich-select-search-values' type='generated' options='{ "enterprise": true, "modules": ["clientside", "richselect"] }'></grid-example>
+
+## Interface
+
+<interface-documentation interfaceName='IRichCellEditorParams' names='["values", "cellHeight", "cellRenderer", "allowTyping", "filterList", "searchType", "highlightMatch", "valuePlaceholder", "valueListGap", "valueListMaxHeight", "valueListMaxWidth", "formatValue", "searchDebounceDelay" ]'></interface-documentation>
+
 
 Continue to the next section: [Number Cell Editor](../provided-cell-editors-number/).
 
