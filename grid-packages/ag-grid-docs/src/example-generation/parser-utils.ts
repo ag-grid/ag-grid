@@ -709,103 +709,93 @@ export function getIntegratedDarkModeCode(exampleName: string, typescript?: bool
 
 const darkModeTs = `
     const isInitialModeDark = (): boolean => {
-            const attr: string | null = document.documentElement.getAttribute('data-default-theme');
-            return attr ? attr.endsWith('-dark') : false;
-        };
-        
-        // apply a theme suffix based on the theme and dark mode status
-        const applyThemeSuffix = (theme: string, isDark: boolean, suffix: string): string => 
-            isDark ? (theme.endsWith(suffix) ? theme : theme + suffix) : theme.replace(suffix, '');
-        
-        // update chart themes based on dark mode status
-        const updateChartThemes = (isDark: boolean): void => {
-            const suffix: string = isDark ? '-dark' : '-light';
-            const customThemeName: string = 'my-custom-theme' + suffix + ';';
-        
-            const themes: string[] = ['ag-default', 'ag-material', 'ag-sheets', 'ag-polychroma', 'ag-vivid'];
-            
-            let customThemeFound: boolean = false;
-            const modifiedThemes: string[] = Array.from(
-                new Set(
-                    themes.map((theme: string): string => {
-                        customThemeFound = theme.startsWith('my-custom-theme-');
-                        return customThemeFound
-                            ? customThemeName
-                            : applyThemeSuffix(theme, isDark, '-dark');
-                    })
-                )
-            );
-        
-            // check if the custom theme was found and add it if not already included
-            if (customThemeFound && !modifiedThemes.includes(customThemeName)) {                
-                modifiedThemes.push(customThemeName);
-            }
-        
-            // updating the 'chartThemes' grid option will cause the chart to reactively update!
-            params.api.setGridOption('chartThemes', modifiedThemes);
-        };
-        
-        // update chart themes when example first loads
-        updateChartThemes(isInitialModeDark());
-                      
-        interface ColorSchemeChangeEventDetail {
-            darkMode: boolean;
+        const attr: string | null = document.documentElement.getAttribute('data-default-theme');
+        return attr ? attr.endsWith('-dark') : false;
+    };
+    
+    // apply a theme suffix based on the theme and dark mode status
+    const applyThemeSuffix = (theme: string, isDark: boolean, suffix: string): string => 
+        isDark ? (theme.endsWith(suffix) ? theme : theme + suffix) : theme.replace(suffix, '');
+    
+    // update chart themes based on dark mode status
+    const updateChartThemes = (isDark) => {
+        const applyThemeSuffix = (theme: string, isDark: boolean, suffix: string): string =>
+ 
+    const updateChartThemes = (isDark: boolean, gridApi: GridApi): void => {
+        const themes = ['ag-default', 'ag-material', 'ag-sheets', 'ag-polychroma', 'ag-vivid'];
+    
+        const currentThemes = gridApi.getGridOption('chartThemes');
+        if (!currentThemes) {
+            console.error('Unable to retrieve current themes.');
+            return;
         }
-        
-        // event handler for color scheme changes
-        const handleColorSchemeChange = (event: CustomEvent<ColorSchemeChangeEventDetail>): void => {
-            const { darkMode } = event.detail;
-            updateChartThemes(darkMode);
-        }
-        
-        // listen for user-triggered dark mode changes (not removing listener is fine here!)
-        document.addEventListener('color-scheme-change', handleColorSchemeChange as EventListener);                
-    `;
+    
+         const customTheme = currentThemes.some((theme) => theme.startsWith('my-custom-theme'));
+    
+         let modifiedThemes: string[] = customTheme
+            ? isDark
+              ? ['my-custom-theme-dark', 'my-custom-theme-light']
+              : ['my-custom-theme-light', 'my-custom-theme-dark']
+            : Array.from(new Set(themes.map((theme) => applyThemeSuffix(theme, isDark, '-dark'))));
+    
+        gridApi.setGridOption('chartThemes', modifiedThemes);
+    };
+    
+    // update chart themes when example first loads
+    updateChartThemes(isInitialModeDark());
+                  
+    interface ColorSchemeChangeEventDetail {
+        darkMode: boolean;
+    }
+    
+    // event handler for color scheme changes
+    const handleColorSchemeChange = (event: CustomEvent<ColorSchemeChangeEventDetail>): void => {
+        const { darkMode } = event.detail;
+        updateChartThemes(darkMode);
+    }
+    
+    // listen for user-triggered dark mode changes (not removing listener is fine here!)
+    document.addEventListener('color-scheme-change', handleColorSchemeChange as EventListener);                
+`;
 
 
 const darkModeJS = `
     const isInitialModeDark = () => {
-            const attr = document.documentElement.getAttribute('data-default-theme');
-            return attr ? attr.endsWith('-dark') : false;
-        };
+        const attr = document.documentElement.getAttribute('data-default-theme');
+        return attr ? attr.endsWith('-dark') : false;
+    };
 
-        const applyThemeSuffix = (theme, isDark, suffix) => 
-            isDark ? (theme.endsWith(suffix) ? theme : theme + suffix) : theme.replace(suffix, '');
-
-        const updateChartThemes = (isDark) => {
-            const suffix = isDark ? '-dark' : '-light';
-            const customThemeName = 'my-custom-theme' + suffix + ';';
-
-            const themes = ['ag-default', 'ag-material', 'ag-sheets', 'ag-polychroma', 'ag-vivid'];
-            
-            let customThemeFound = false;
-            const modifiedThemes = Array.from(
-                new Set(
-                    themes.map((theme) => {
-                        customThemeFound = theme.startsWith('my-custom-theme-');
-                        return customThemeFound
-                            ? customThemeName
-                            : applyThemeSuffix(theme, isDark, '-dark');
-                    })
-                )
-            );
-
-            if (customThemeFound && !modifiedThemes.includes(customThemeName)) {                
-                modifiedThemes.push(customThemeName);
-            }
-
-            // updating the 'chartThemes' grid option will cause the chart to reactively update!
-            params.api.setGridOption('chartThemes', modifiedThemes);
-        };
-
-        // update chart themes when example first loads
-        updateChartThemes(isInitialModeDark());
-
-        const handleColorSchemeChange = (event) => {
-            const { darkMode } = event.detail;
-            updateChartThemes(darkMode);
+    const updateChartThemes = (isDark) => {
+        const themes = ['ag-default', 'ag-material', 'ag-sheets', 'ag-polychroma', 'ag-vivid'];
+        
+        // Safeguard against gridApi being undefined
+        if (!gridApi || !gridApi.getGridOption || !gridApi.setGridOption) {
+            console.error('gridApi is not correctly defined');
+            return;
         }
+        
+        const currentThemes = gridApi.getGridOption('chartThemes');
+        
+        // Check for custom theme presence
+        const customTheme = currentThemes && currentThemes.some(theme => theme.startsWith('my-custom-theme'));
+        
+        // Update themes based on isDark flag and presence of a custom theme
+        let modifiedThemes = customTheme
+            ? (isDark ? ['my-custom-theme-dark', 'my-custom-theme-light'] : ['my-custom-theme-light', 'my-custom-theme-dark'])
+            : Array.from(new Set(themes.map((theme) => theme + (isDark ? '-dark' : ''))));
+        
+        // Update the 'chartThemes' grid option
+        gridApi.setGridOption('chartThemes', modifiedThemes);
+    };
 
-        // listen for user-triggered dark mode changes (not removing listener is fine here!)
-        document.addEventListener('color-scheme-change', handleColorSchemeChange);
-    `;
+    // update chart themes when example first loads
+    updateChartThemes(isInitialModeDark());
+
+    const handleColorSchemeChange = (event) => {
+        const { darkMode } = event.detail;
+        updateChartThemes(darkMode);
+    }
+
+    // listen for user-triggered dark mode changes (not removing listener is fine here!)
+    document.addEventListener('color-scheme-change', handleColorSchemeChange);
+`;
