@@ -3,10 +3,10 @@
     "group": "",
     "items": [
       {
-        "title": "AG Grid",
+        "title": "",
         "items": [
           {
-            "title": "Reference",
+            "title": "Overview",
             "url": "/reference/",
             "showInCollapsed": true
           }          
@@ -62,11 +62,14 @@
             "showInCollapsed": true
           },
           {
+<<<<<<< Updated upstream
             "title": "Column Group Definition",
             "url": "/column-group-properties/",
             "showInCollapsed": true
           },
           {
+=======
+>>>>>>> Stashed changes
             "title": "Column",
             "url": "/column-object/",
             "showInCollapsed": true
@@ -87,11 +90,14 @@
             "showInCollapsed": true
           },
           {
+<<<<<<< Updated upstream
             "title": "Row Methods",
             "url": "/row-methods/",
             "showInCollapsed": true
           },
           {
+=======
+>>>>>>> Stashed changes
             "title": "Row Events",
             "url": "/row-events/",
             "showInCollapsed": true

@@ -1,8 +1,12 @@
 ---
-title: "Column Interface"
+title: "Column Overview"
 ---
 
-Your application interacts with columns through the grid's column interface. The column interface is defined as all the public facing parts of the columns that your application interacts with. This section list all the column methods, properties, events etc. for interacting with the grid's columns.
+Columns are the key configuration point for controlling how data is displayed and interacted with inside the grid. 
+
+## Column Definitions
+
+The Column Definitions 
 
 The column interface is the combination of the following items:
 
