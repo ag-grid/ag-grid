@@ -1,3 +1,5 @@
+// PromoBanner.js
+
 import React, { useState, useEffect } from 'react';
 import styles from './PromoBanner.module.scss';
 import LogoMarkTransparent from '../LogoMarkTransparent';
