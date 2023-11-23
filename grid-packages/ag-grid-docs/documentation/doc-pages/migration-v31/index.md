@@ -56,7 +56,7 @@ Caveats to bear in mind when using the migration tool:
 
 ### Breaking changes
 
-This release include the following breaking changes:
+This release includes the following breaking changes:
 
 ### Deprecations
 
