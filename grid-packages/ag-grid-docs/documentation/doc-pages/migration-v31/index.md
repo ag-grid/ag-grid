@@ -14,17 +14,7 @@ All major AG Grid releases now come with an accompanying migration tool to help 
 
 The migration tool fixes your project's codebase to address the majority of breaking changes and deprecations when upgrading from an older version. This is achieved via codemods, which are small scripts that amend your project's source files to apply any necessary fixes.
 
-To get started, first determine your currently-installed AG Grid version by looking in your project's `package.json`:
-
-```json
-{
-    "dependencies": {
-        "ag-grid-community": "30.2.1"
-    }
-}
-```
-
-Once you know the version you are upgrading from, you can follow these steps to upgrade to version 31:
+Follow these steps to migrate to AG Grid version 31:
 
 1. Open a terminal and navigate to your current project's root folder
 
@@ -34,17 +24,15 @@ Once you know the version you are upgrading from, you can follow these steps to 
     npm install --save-dev ag-grid-community@31.0.0
     ```
 
-3. Run AG Grid migration tool with the `--from` argument set to the previously-installed version from your `package.json`:
+3. Run version `31.0.0` of the AG Grid migration tool:
 
     ```
-    npx @ag-grid-community/cli@31.0.0 migrate --from=30.2.1
+    npx @ag-grid-community/cli@31.0.0 migrate
     ```
 
     This will update your project's source files to prepare for the new release.
 
-    The `@31.0.0` version number indicates that we will apply the changes required to upgrade to version 31.
-
-    By default the codemod will be applied to all source files within the current git repository, however the command can alternatively accept a list of input files if your project has more specific requirements.
+    By default the codemod will be applied to all source files within the current directory. For projects with more specific requirements, pass a list of input files to the `migrate` command.
 
 <note>
 The migration tool will check the state of your project to ensure that you don't lose any work. If you would rather see a diff of the changes instead of applying them, pass the `--dry-run` argument.
