@@ -618,14 +618,10 @@ const desktopDefaultCols = [
     },
 ];
 
-const ExampleInner = (props) => {
+const ExampleInner = ({darkMode}) => {
     const gridRef = useRef(null);
     const loadInstance = useRef(0);
     const [gridTheme, setGridTheme] = useState('ag-theme-quartz');
-    const [darkMode, setDarkMode] = useState(props.darkMode);
-    useEffect(() => {
-        setDarkMode(props.darkMode);
-    }, [props.darkMode]);
     useEffect(() => {
         const themeFromURL = new URLSearchParams(window.location.search).get('theme');
         if (themeFromURL) {
