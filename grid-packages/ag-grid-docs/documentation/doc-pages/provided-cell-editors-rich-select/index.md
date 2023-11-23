@@ -49,7 +49,78 @@ columnDefs: [
 
 ## Search Values
 
+<snippet transform={false}>
+columnDefs: [
+    {
+        cellEditor: 'agRichSelectCellEditor',
+        cellRenderer: ColourCellRenderer,
+        cellEditorParams: {
+            values: ['AliceBlue', 'AntiqueWhite', 'Aqua', /* .... many colours */ ],
+            allowTyping: true,
+            filterList: true,
+            highlightValue: true,
+            valueListMaxHeight: 220
+        }
+        // ...other props
+    }
+]
+</snippet>
+
 <grid-example title='Rich Select Editor' name='rich-select-search-values' type='generated' options='{ "enterprise": true, "modules": ["clientside", "richselect"] }'></grid-example>
+
+## Allow Typing
+
+<snippet transform={false}>
+columnDefs: [
+    {
+        cellEditor: 'agRichSelectCellEditor',
+        cellRenderer: ColourCellRenderer,
+        cellEditorParams: {
+            values: ['AliceBlue', 'AntiqueWhite', 'Aqua', /* .... many colours */ ],
+            allowTyping: true,
+            filterList: true,
+            highlightValue: true,
+            valueListMaxHeight: 220
+        }
+        // ...other props
+    }
+]
+</snippet>
+
+<grid-example title='Rich Select Editor' name='rich-select-allow-typing' type='generated' options='{ "enterprise": true, "modules": ["clientside", "richselect"] }'></grid-example>
+
+## Format Values
+
+<snippet transform={false}>
+columnDefs: [
+    {
+        cellEditor: 'agRichSelectCellEditor',
+        cellEditorParams: {
+            values: ['English', 'Spanish', 'French', 'Portuguese', '(other)'],
+            formatValue: value => value.toUpperCase()
+        }
+        // ...other props
+    }
+]
+</snippet>
+
+<grid-example title='Rich Select Format Values' name='rich-select-format-values' type='generated' options='{ "enterprise": true, "modules": ["clientside", "richselect"] }'></grid-example>
+
+## Async Value List
+
+<snippet transform={false}>
+columnDefs: [
+    {
+        cellEditor: 'agRichSelectCellEditor',
+        cellEditorParams: {
+            values: getValueFromServer(),
+        }
+        // ...other props
+    }
+]
+</snippet>
+
+<grid-example title='Rich Select Async Values' name='rich-select-async-values' type='generated' options='{ "enterprise": true, "modules": ["clientside", "richselect"] }'></grid-example>
 
 ## Interface
 
