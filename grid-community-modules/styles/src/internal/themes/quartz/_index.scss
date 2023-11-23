@@ -32,7 +32,6 @@
 
     .ag-tab {
         padding: var(--ag-grid-size);
-        transition: opacity, background-color 0.1s;
         flex: 1 1 auto;
     }
 
@@ -96,9 +95,6 @@
         background: var(--ag-control-panel-background-color);
     }
 
-    .ag-side-button {
-        transition: background-color 0.15s;
-    }
     .ag-side-button.ag-selected {
         margin: -1px;
         border: var(--ag-borders) var(--ag-border-color);
