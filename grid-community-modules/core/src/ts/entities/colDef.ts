@@ -155,7 +155,6 @@ export interface ColDef<TData = any, TValue = any> extends AbstractColDef<TData,
     /** The unique ID to give the column. This is optional. If missing, the ID will default to the field.
      *  If both field and colId are missing, a unique ID will be generated.
      *  This ID is used to identify the column in the API for sorting, filtering etc.
-     * @initial
      */
     colId?: string;
     /**
