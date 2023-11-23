@@ -153,7 +153,7 @@ export function createGrid<TData>(eGridDiv: HTMLElement, gridOptions: GridOption
     // Instead we place a getter that will log an error when accessed and direct users to the docs
     // Only apply for direct usages of createGrid, not for frameworks
     if(!Object.isFrozen(gridOptions) && !(params as GridParams)?.frameworkOverrides) {
-        const apiUrl = 'https://ag-grid.com/javascript-data-grid/grid-interface/#access-the-grid-api';
+        const apiUrl = 'https://ag-grid.com/javascript-data-grid/grid-interface/#grid-api';
         Object.defineProperty(gridOptions, 'api', {
             get: () => {
                 errorOnce(`gridOptions.api is no longer supported. See ${apiUrl}.`);
