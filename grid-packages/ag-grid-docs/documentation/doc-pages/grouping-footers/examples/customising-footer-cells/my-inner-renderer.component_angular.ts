@@ -5,7 +5,7 @@ import { ICellRendererParams } from "@ag-grid-community/core";
 
 @Component({
     selector: 'total-value-component',
-    template: `<span style="color: {{color}}; font-weight: {{fontWeight}};">{{prefix}} {{cellValue}}</span>`
+    template: `<span style="background-color: {{color}}; font-weight: {{fontWeight}};">{{prefix}} {{cellValue}}</span>`
 })
 export class MyInnerRenderer implements ICellRendererAngularComp {
 
@@ -17,7 +17,7 @@ export class MyInnerRenderer implements ICellRendererAngularComp {
     // gets called once before the renderer is used
     agInit(params: ICellRendererParams): void {
         this.cellValue = params.value;
-        this.color = params.node.footer ? 'navy' : '';
+        this.color = params.node.footer ? '#2244CC44' : '';
         this.fontWeight = (params.node.footer && params.node.level === -1) ? 'bold' : '';
         if (params.node.footer) {
             this.prefix = (params.node.level === -1) ? 'Grand Total' : 'Sub Total';

@@ -1,6 +1,10 @@
 {
   "_config_": {},
   "variables": {
+    "--ag-active-color": {
+      "description": "(Quartz theme only) accent colour used for checked checkboxes, range selections, and input focus outlines in the Quartz theme",
+      "type": "CSS color (e.g. `red` or `#fff`)"
+    },
     "--ag-alpine-active-color": {
       "description": "(Alpine theme only) accent colour used for checked checkboxes, range selections, row hover, row selections, selected tab underlines, and input focus outlines in the Alpine theme",
       "type": "CSS color (e.g. `red` or `#fff`)"

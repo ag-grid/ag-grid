@@ -354,25 +354,27 @@ We can then assume the `core` packages are available implicitly and import from 
 
 CSS & SCSS is available in the `@ag-grid-community/styles` module.
 
+CSS users should import the correct file for their theme:
+
 <snippet transform={false} language="css">
 |/* CSS Community */
 |import "@ag-grid-community/styles/ag-grid.css";
 |import "@ag-grid-community/styles/ag-theme-quartz.css";
 </snippet>
 
-If using SCSS the theme defaults to `alpine`, so you don't have to explicitly include it.
+If using SCSS, the import is the same regardless of the theme used:
 
 <snippet transform={false} language="scss">
 |// SCSS Community
 |@use "~@ag-grid-community/styles" as ag;
 |
-|// Choose balham over default alpine
+|// Choose alpine over default quartz
 |@include ag.grid-styles((
 |    theme: balham
 |));
 </snippet>
 
-See [Choosing a Theme](/global-style-customisation-sass/#choosing-a-theme) for full details of how to select a theme.
+See [Choosing a Theme](/global-style-customisation-sass/#choosing-a-theme) for full details of how to select a theme using Sass.
 
 ## Module Examples
 

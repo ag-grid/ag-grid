@@ -21,6 +21,10 @@ const BASE_GRID_SIZE = 4;
 const BALHAM_GRID_SIZE = 4;
 const ALPINE_GRID_SIZE = 6;
 
+const QUARTZ_ICON_SIZE = 16;
+const QUARTZ_FONT_SIZE = 14;
+const QUARTZ_GRID_SIZE = 8;
+
 const HARD_CODED_SIZES: HardCodedSize = {
     // this item is required for custom themes
     'ag-theme-custom': {
@@ -50,6 +54,13 @@ const HARD_CODED_SIZES: HardCodedSize = {
         listItemHeight: ALPINE_GRID_SIZE * 4,
         rowHeight: ALPINE_GRID_SIZE * 7,
         chartMenuPanelWidth: 240
+    },
+    'ag-theme-quartz': {
+        headerHeight: QUARTZ_FONT_SIZE + QUARTZ_GRID_SIZE * 4.25,
+        headerCellMinWidth: 36,
+        listItemHeight: QUARTZ_ICON_SIZE + QUARTZ_GRID_SIZE,
+        rowHeight: QUARTZ_FONT_SIZE + QUARTZ_GRID_SIZE * 3.5,
+        chartMenuPanelWidth: 260
     }
 };
 

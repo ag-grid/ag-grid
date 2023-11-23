@@ -40,14 +40,14 @@ body {
 
 .drop-target {
     border: 1px solid #888;
-    background-color:#0077d0;
+    background-color:#99999966;
     padding: 10px;
 }
 
 .tile-container {
     box-sizing: border-box;
     border: 1px solid #888;
-    background-color: #505050;
+    background-color: #99999944;
     overflow: auto;
     display: flex;
     align-items: flex-start;
@@ -58,32 +58,27 @@ body {
 
 .tile { 
     width: calc(50% - 30px);
-    height: 60px;
     margin: 5px;
     padding: 10px;
     border-radius: 5px;
 }
 
-.green-row {
-    background-color: #ddffdd !important;
-}
-
 .red-row {
-    background-color: #ffdddd !important;
+    background-color: #CC333344 !important;
 }
-
+.green-row {
+    background-color: #33CC3344 !important;
+}
 .blue-row {
-    background-color: #ddddff !important;
-}
-
-.tile.green {
-    background-color: darkseagreen;
+    background-color: #2244CC44 !important;
 }
 
 .tile.red {
-    background-color: indianred;
+    background-color: #CC333344;
 }
-
+.tile.green {
+    background-color: #33CC3344;
+}
 .tile.blue {
-    background-color: cornflowerblue;
+    background-color: #2244CC44;
 }

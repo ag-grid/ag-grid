@@ -2,8 +2,7 @@
 
 @use "./balham-variables";
 
-[class*="ag-theme-balham"] {
-
+.ag-theme-balham, .ag-theme-balham-dark {
     .ag-filter-toolpanel-header,
     .ag-filter-toolpanel-search,
     .ag-status-bar,

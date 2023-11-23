@@ -603,14 +603,20 @@ const Property: React.FC<PropertyCall> = ({ framework, id, name, definition, con
                             <span className={styles.metaValue}>{formattedDefaultValue}</span>
                         </div>
                     )}
-                    {
-                        isInitial && (
-                            <div className={styles.metaItem}>
+                    {isInitial && (
+                        <div className={styles.metaItem}>
+                            {config.initialLink ? (
+                                <a
+                                    className={styles.metaLabel}
+                                    href={config.initialLink}
+                                >
+                                    Initial
+                                </a>
+                            ) : (
                                 <span className={styles.metaLabel}>Initial</span>
-                                <span className={styles.metaValue}>true</span>
-                            </div>
-                        )
-                    }
+                            )}
+                        </div>
+                    )}
                 </div>
             </td>
             <td className={styles.rightColumn}>

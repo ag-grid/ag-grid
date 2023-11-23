@@ -25,9 +25,9 @@ const gridOptions: GridOptions = {
         strokeWidth: 2,
         shadow: {
           enabled: true,
-          color: 'rgba(0, 0, 0, 0.3)',
-          xOffset: 10,
-          yOffset: 5,
+          color: 'rgba(0, 0, 0, 1)',
+          xOffset: 0,
+          yOffset: 2,
           blur: 8,
         },
         label: {
@@ -36,7 +36,7 @@ const gridOptions: GridOptions = {
           fontWeight: 'bold',
           fontSize: 15,
           fontFamily: 'Arial, sans-serif',
-          color: 'green',
+          color: 'white',
           formatter: (params:any) => { // charts typings
             return '<' + params.value + '>'
           },

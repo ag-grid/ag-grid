@@ -1,6 +1,6 @@
 @use "sass:color";
 
-[class*="ag-theme-quartz"] {
+.ag-theme-quartz, .ag-theme-quartz-dark {
     // COLOURS
     
     // main colours (overridden by dark mode)
@@ -112,14 +112,6 @@
     --ag-popup-shadow: 0 1px 6px rgba(0, 0, 0, 0.5);
 
     color-scheme: dark;
-}
-
-// TODO remove these, they're for testing fonts
-.ag-font-inter {
-    --ag-font-family: 'Inter', cursive;
-}
-.ag-font-plex {
-    --ag-font-family: 'IBM Plex Sans', cursive;
 }
 
 .ag-theme-quartz-dark {
