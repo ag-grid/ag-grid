@@ -156,6 +156,10 @@
     }
 }
 
+#mainNav {
+    width: 100%;
+}
+
 .mainNav {
     --text-color: var(--white);
     --link-color: var(--white);
@@ -216,15 +220,17 @@
 }
 
 .navLink {
-    --horizontal-padding: #{$size-2 - 4px};
+    --horizontal-padding: #{$size-2 - 2px};
 
     display: block;
     position: relative;
-    padding: 10px 14px 11px;
+    padding: 19px 14px 16px;
+    font-size: 17px;
     font-weight: 500;
     letter-spacing: 0.01em;
     color: var(--link-color);
     transition: color $default-transition-timing, opacity $default-transition-timing;
+    cursor: pointer;
 
     &:hover {
         text-decoration: none;
@@ -239,7 +245,7 @@
             content: '';
             position: absolute;
             height: 2px;
-            bottom: 6px;
+            bottom: 12px;
             left: calc(var(--horizontal-padding) - #{$size-half});
             right: calc(var(--horizontal-padding) - #{$size-half});
             border-radius: 2px;
@@ -256,50 +262,43 @@
     }
 }
 
-.github-item {
+.githubItem {
     order: 2;
 }
 
-.github-item a {
-    display: inline-block;
-    position: relative;
-    padding-left: 48px;
+.buttonItem {
+    .navLink {
+        padding: 19px 14px 16px !important;
+    }
 
-    &::after {
+    a::after {
         display: none;
     }
 
     svg {
-        --icon-size: 30px;
+        --icon-size: 24px !important;
 
-        display: block;
-        position: absolute;
-        top: 7px;
-        left: 13px;
+        margin-right: 4px;
         border-radius: 50%;
-
-        @media screen and (min-width: $breakpoint-site-header-small) {
-            --icon-size: 20px;
-        }
     }
 
     @media screen and (min-width: $breakpoint-site-header-small) {
-        padding-left: 16px;
-        top: -1px;
+        span:not(.navLink) {
+            display: none;
+        }
 
-        &:hover svg {
-            box-shadow: 0 0 0 4px var(--site-header-background), 0 0 0 6px rgba(white, 0.3);
+        .navLink {
+            padding-left: 12px !important;
+            padding-right: 12px !important;
         }
 
         svg {
-            position: relative;
-            top: 5px;
-            left: 0;
-            transition: box-shadow 0.25s ease-in-out;
+            margin-right: 0;
+            transition: box-shadow 0.33s ease-in-out;
         }
 
-        span {
-            display: none;
+        .navLink:hover svg {
+            box-shadow: 0 0 0 4px var(--site-header-background), 0 0 0 6px rgba(white, 0.3);
         }
     }
 }

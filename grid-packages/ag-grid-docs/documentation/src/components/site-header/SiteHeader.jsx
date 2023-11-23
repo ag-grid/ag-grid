@@ -47,7 +47,7 @@ const links = [
         name: 'Github',
         url: 'https://github.com/ag-grid/ag-grid',
         icon: <Icon name="github" />,
-        cssClass: 'github-item',
+        github: true,
         docsLink: false,
     },
 ];
@@ -76,7 +76,8 @@ const HeaderLinks = ({ path, isOpen, toggleIsOpen, currentFramework }) => {
     return links.map((link) => {
         const linkClasses = classnames(styles.navItem, {
             [styles.navItemActive]: isLinkSelected(link.name, path),
-            [styles[link.cssClass]]: link.cssClass,
+            [styles.buttonItem]: link.github,
+            [styles.githubItem]: link.github,
         });
 
         return (
