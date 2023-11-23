@@ -1,0 +1,31 @@
+/* PromoBanner.module.scss */
+
+.promoBanner {
+    height: 48px;
+    /* Add additional styling for your promo banner here */
+    display: flex;
+    justify-content: center;
+    align-content: center;
+    gap: 16px;
+    font-weight: 500;
+    background: linear-gradient(180deg, #054B93 0%, #1D5E9E 100%);
+    border-bottom: 1px solid rbga(255,255,255,0.2);
+    align-items: center;
+  }
+
+  .promoText {
+    color: white;
+  }
+
+  .visitButton {
+    border-radius: 24px;
+    background: white;
+    color: #054B93;
+    font-size: 15px;
+    display: flex;
+    height: 26px;
+    align-items: center;
+    justify-content: center;
+    padding-left: 8px;
+    padding-right: 8px;
+  }
