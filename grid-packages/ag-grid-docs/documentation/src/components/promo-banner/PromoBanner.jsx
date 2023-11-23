@@ -6,14 +6,12 @@ import LogoMarkTransparent from '../LogoMarkTransparent';
 import CloseIcon from '../../images/inline-svgs/cross-banner.svg';
 
 const PromoBanner = () => {
-  const [isVisible, setIsVisible] = useState(true);
+  const [isVisible, setIsVisible] = useState(false);
 
   useEffect(() => {
     // Check local storage to see if the banner should be hidden
     const isBannerHidden = localStorage.getItem('isPromoBannerHidden');
-    if (isBannerHidden) {
-      setIsVisible(false);
-    }
+    setIsVisible(!isBannerHidden);
   }, []);
 
   const handleCloseClick = () => {
@@ -22,12 +20,8 @@ const PromoBanner = () => {
     localStorage.setItem('isPromoBannerHidden', 'true');
   };
 
-  if (!isVisible) {
-    return null; // Don't render the banner if it's hidden
-  }
-
   return (
-    <div className={styles.promoBanner}>
+    <div className={`${styles.promoBanner} ${isVisible ? styles.visible : styles.hidden}`}>
       <LogoMarkTransparent />
       <div className={styles.promoText}>
         Introducing our new AG Charts library
