@@ -2,7 +2,7 @@
 
 @use "./quartz-variables";
 
-[class*="ag-theme-quartz"] {
+.ag-theme-quartz, .ag-theme-quartz-dark {
     .ag-filter-toolpanel-header,
     .ag-filter-toolpanel-search,
     .ag-status-bar,

@@ -39,7 +39,7 @@ To emit all the styles you need for an AG Grid application, include the `grid-st
 @include ag.grid-styles();
 ```
 
-Because no theme is specified, it will default to Alpine. Compiling this file will select the `ag-grid.css` and `ag-theme-quartz.css` files from the grid distribution and combine them into the output. There is no need to separately include `ag-grid.css` in your build.
+Because no theme is specified, it will default to Quartz. Compiling this file will select the `ag-grid.css` and `ag-theme-quartz.css` files from the grid distribution and combine them into the output. There is no need to separately include `ag-grid.css` in your build.
 
 To use the theme, set the `ag-theme-quartz` class on your grid div:
 
@@ -62,7 +62,7 @@ Use the `theme` parameter to set the name of the outputted theme.
 
 This can be either:
 
-1. a [provided theme](/themes/) (`alpine`, `alpine-dark`, `balham`, `balham-dark` or `material`). The CSS file for the theme will automatically be included.
+1. a [provided theme](/themes/) (`quartz`, `quartz-dark`, `alpine`, `alpine-dark`, `balham`, `balham-dark` or `material`). The CSS file for the theme will automatically be included.
 2. Any string of your choice to create a custom theme.
 
 ## Setting CSS variables
