@@ -9,7 +9,7 @@ const columnDefs: ColDef[] = [
         return {
           component: CustomPinnedRowRenderer,
           params: {
-            style: { color: 'blue' },
+            style: { color: '#5577CC' },
           },
         }
       } else {
