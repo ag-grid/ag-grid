@@ -2,23 +2,19 @@
 title: "AG Grid: Reference" 
 ---
 
-This section provides reference documentation for AG Grid and consists of three main parts: Grid, Columns and Rows.
-
-<note>
-If you are looking for an introduction to AG Grid, please visit our [Getting Started](/getting-started/) page.
-</note>
+The reference section of our documentation covers all the public interfaces for interacting with AG Grid across Grid, Columns and Rows.
 
 ## Grid
 
-Grid section starts with an overview explaining key information for configuring and interacting with the grid such as: how to configure the grid, update properties and interact with the grid via an api. 
+The grid section starts with an overview explaining key information for configuring and interacting with the grid such as: how to configure the grid, update properties and interact with the grid via its api. 
 
   - [Overview](/grid-interface/): Key information for working with the grid. (Read first)
 
 Reference pages list all configuration options, events and API methods:
 
-   - [Reference: Options](/grid-options/): Properties and callbacks used to configure the grid.
-   - [Reference: Events](/grid-events/): Events that can be used to trigger application logic.
-   - [Reference: API](/grid-api/): Methods used to interact with a grid instance.
+   - [Options Reference](/grid-options/): Properties and callbacks used to configure the grid.
+   - [Events Reference](/grid-events/): Events that can be used to trigger application logic.
+   - [API Reference](/grid-api/): Methods used to interact with a grid instance.
 
 Grid state and lifecycle pages:
 
@@ -27,9 +23,14 @@ Grid state and lifecycle pages:
 
 ## Columns
 
-Columns reference lists all column configurations and details the instantiated Column object:
-  - [Reference: Column Definition](/column-properties/): Properties and callbacks use to configure a column.
-  - [Reference: Column](/column-object/): Attributes, methods and events relating to an instantiated column.
+The columns reference section starts with an overview of Columns.
+
+ - [Overview](/column-interface): Key information for working with columns. (Read first)
+
+Reference pages lists all column configurations and Column attributes, methods and events:
+  - [Options Reference](/column-properties/): Properties and callbacks use to configure a column.
+  - [Column Reference](/column-object/): Attributes and methods available on Columns.
+  - [Events Reference](/column-events/): Events fired by Columns.
 
 ## Rows
 
@@ -38,7 +39,7 @@ Rows reference section overviews how to interact with instantiated rows displaye
  - [Overview](/row-interface): Key information for working with rows. (Read first)
 
 Reference pages list all Row object attributes, methods and events:
- - [Reference: Row](/row-object/): Row node attributes and methods for rows.
- - [Reference: Events](/row-events/): Events fired by row nodes. 
+ - [Row Reference](/row-object/): Row node attributes and methods for rows.
+ - [Events Reference](/row-events/): Events fired by Rows. 
 
 

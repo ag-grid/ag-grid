@@ -52,6 +52,11 @@
         "showInCollapsed": true,
         "items": [
           {
+            "title": "Overview",
+            "url": "/column-interface/",
+            "showInCollapsed": true
+          },
+          {
             "title": "Options Reference",
             "url": "/column-properties/",
             "showInCollapsed": true
@@ -59,6 +64,11 @@
           {
             "title": "Column Reference",
             "url": "/column-object/",
+            "showInCollapsed": true
+          },
+          {
+            "title": "Events Reference",
+            "url": "/column-events/",
             "showInCollapsed": true
           }
         ]

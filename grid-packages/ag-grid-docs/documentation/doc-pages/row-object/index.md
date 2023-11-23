@@ -1,5 +1,5 @@
 ---
-title: "Row Node"
+title: "Row Reference"
 ---
 
 Attributes and methods available on the `IRowNode<TData>` interface.

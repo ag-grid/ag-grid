@@ -113,7 +113,7 @@ md-include:api-angular.md
 md-include:api-react.md  
 md-include:api-vue.md
  
-For a full list of api methods see: [Grid API](grid-api).  
+For a full list of api methods see: [Grid API](/grid-api).  
 
 ## Grid State
 
