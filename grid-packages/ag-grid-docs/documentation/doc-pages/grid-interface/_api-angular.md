@@ -6,11 +6,13 @@
 
 <framework-specific-section frameworks="angular">
 <snippet transform={false}>
+| // Add a template reference to the grid
 | &lt;ag-grid-angular #myGrid  />
 |
 | // Select grid via template reference
 | @ViewChild('myGrid') grid!: AgGridAngular;
 |
+| // Access the api off the grid
 | onClick() { this.grid.api.deselectRows() }
 </snippet>
 </framework-specific-section>
@@ -30,7 +32,5 @@
 |     // Store the api for later use
 |     this.api = event.api;
 | }
-|
-| onClick() { this.api.deselectRows() }
 </snippet>
 </framework-specific-section>

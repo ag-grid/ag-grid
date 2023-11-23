@@ -1,24 +1,16 @@
 <framework-specific-section frameworks="react">
 |
-| All event handlers are defined via props on the `AgGridReact` component.
+| To listen to an event pass a callback to the `AgGridReact` component for the given event. All events start with the prefix `on`, i.e the `cellClicked` event has the prop name `onCellClicked`.
+| We recommend the use of  `useCallback` to avoid wasted renders: see [React Hooks](/react-hooks/).
 |
-</framework-specific-section>
-
-
-<framework-specific-section frameworks="react">
-| Provide your event handler to the relevant React Prop on the `AgGridReact` component.
 </framework-specific-section>
 
 <framework-specific-section frameworks="react">
 <snippet transform="{false}" language="ts">
-| const onCellClicked = (params: CellClickedEvent) => console.log('Cell was clicked');
+| const onCellClicked = useCallback((params: CellClickedEvent) => {
+|   console.log('Cell was clicked')   
+| }, []);
 |
 | &lt;AgGridReact onCellClicked={onCellClicked}> &lt;/AgGridReact>
 </snippet>
-</framework-specific-section>
-
-<framework-specific-section frameworks="react">
-|
-| When adding event listeners, you can optionally use `useCallback`. See [React Hooks](/react-hooks/) for best practices on using React Hooks with the grid.
-|
 </framework-specific-section>

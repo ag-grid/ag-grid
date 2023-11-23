@@ -1,14 +1,13 @@
 <framework-specific-section frameworks="angular">
-|
-| All grid events have corresponding Outputs on the `ag-grid-angular` component which fire as required with the relevant parameters.
-|
+| To listen to an event pass your event handler to the relevant `Output` property on the `ag-grid-angular` component. 
 </framework-specific-section>
 
 <framework-specific-section frameworks="angular">
-<snippet transform={false}>
-| &lt;ag-grid-angular
-|    // Register an event handler
-|    (cellClicked)="onCellClicked($event)">
-| &lt;/ag-grid-angular>
+<snippet transform={false} language="html">
+|onCellClicked(event: CellClickedEvent){
+|   console.log("Cell was clicked")   
+|}
+|
+| &lt;ag-grid-angular (cellClicked)="onCellClicked($event)">
 </snippet>
 </framework-specific-section>

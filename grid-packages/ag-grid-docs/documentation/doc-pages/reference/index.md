@@ -10,31 +10,35 @@ If you are looking for an introduction to AG Grid, please visit our [Getting Sta
 
 ## Grid
 
-The Grid reference section starts with an overview explaining key information for configuring and interacting with the grid. With this knowledge you should be then be able to explore the exhaustive reference documentation:
+Grid section starts with an overview explaining key information for configuring and interacting with the grid such as: how to configure the grid, update properties and interact with the grid via an api. 
 
-  - [Grid Overview](/grid-interface/): key information for working with the grid. (Read first)
-  - [Grid Options](/grid-options/): properties and callbacks used to configure the grid.
-  - [Grid Events](/grid-events/): grid events that can be used to trigger application logic.
-  - [Grid API](/grid-api/): methods used to interact with the grid after it's created.
-  - [Grid State](/grid-state/): state of the grid for saving and restoring user interactions. 
-  - [Grid Lifecycle](grid-lifecycle): outlines the key moments in the grid's lifecycle.
+  - [Overview](/grid-interface/): Key information for working with the grid. (Read first)
+
+Reference pages list all configuration options, events and API methods:
+
+   - [Reference: Options](/grid-options/): Properties and callbacks used to configure the grid.
+   - [Reference: Events](/grid-events/): Events that can be used to trigger application logic.
+   - [Reference: API](/grid-api/): Methods used to interact with a grid instance.
+
+Grid state and lifecycle pages:
+
+   - [Grid State](/grid-state/): Save and restore runtime state of the grid. 
+   - [Grid Lifecycle](grid-lifecycle/): Understand how to leverage the grid components lifecycle.
 
 ## Columns
 
-The Columns reference section outlines all the properties available to configure columns / column groups within the grid. It also outlines the attributes and method's available on a column instance at runtime.
-
- - [Column Overview](column-interface): key information for working with columns. (Read first)
- - [Column Definition](column-properties): properties and callbacks use to configure a column.
- - [Column Group Definition](column-group-properties): properties and callbacks use to configure a column group.
- - [Column](column-object): attributes, methods and events relating to a column instance.
+Columns reference lists all column configurations and details the instantiated Column object:
+  - [Reference: Column Definition](/column-properties/): Properties and callbacks use to configure a column.
+  - [Reference: Column](/column-object/): Attributes, methods and events relating to an instantiated column.
 
 ## Rows
 
-The Rows reference section outlines the attributes, methods and events relating to Row Nodes. Additional attributes are used if the Row Node is a group.
+Rows reference section overviews how to interact with instantiated rows displayed within the grid.
 
- - [Overview](/row-interface): key information for working with rows. (Read first)
- - [Row Node](/row-object/): row node attributes for rows and group rows.
- - [Row Methods](/row-api/): methods available on row nodes.
- - [Row Events](/row-events/): events fired by row nodes. 
+ - [Overview](/row-interface): Key information for working with rows. (Read first)
+
+Reference pages list all Row object attributes, methods and events:
+ - [Reference: Row](/row-object/): Row node attributes and methods for rows.
+ - [Reference: Events](/row-events/): Events fired by row nodes. 
 
 

@@ -1,21 +1,16 @@
 <framework-specific-section frameworks="angular">
-|
-| All properties and callbacks are passed into the `ag-grid-angular` component as `Inputs`.
-|
-| ### Initial Only 
-|
-| TODO: Explain initial only vs reactive
+| The grid is configure via Inputs on the `ag-grid-angular` component. Properties consist of simple types, arrays, complex objects and callback functions.
 </framework-specific-section>
 
 <framework-specific-section frameworks="angular">
 <snippet transform={false}>
 | &lt;ag-grid-angular
+|    // Set boolean properties
+|    pagination    
 |    // Bind property / callback to component
 |    [columnDefs]="columnDefs"
 |    [getRowHeight]="myGetRowHeight"
 |
-|    // Register event handler
-|    (cellClicked)="onCellClicked($event)">
 | &lt;/ag-grid-angular>
 </snippet>
 </framework-specific-section>

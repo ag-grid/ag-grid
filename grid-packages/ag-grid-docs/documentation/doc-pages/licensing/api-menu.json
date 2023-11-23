@@ -21,17 +21,17 @@
             "showInCollapsed": true
           },
           {
-            "title": "Grid Options",
+            "title": "Reference: Options",
             "url": "/grid-options/",
             "showInCollapsed": true
           },
           {
-            "title": "Grid Events",
+            "title": "Reference: Events",
             "url": "/grid-events/",
             "showInCollapsed": true
           },
           {
-            "title": "Grid API",
+            "title": "Reference: API",
             "url": "/grid-api/",
             "showInCollapsed": true
           },
@@ -52,25 +52,12 @@
         "showInCollapsed": true,
         "items": [
           {
-            "title": "Overview",
-            "url": "/column-interface/",
-            "showInCollapsed": true
-          },
-          {
-            "title": "Column Definition",
+            "title": "Reference: Column Definition",
             "url": "/column-properties/",
             "showInCollapsed": true
           },
           {
-<<<<<<< Updated upstream
-            "title": "Column Group Definition",
-            "url": "/column-group-properties/",
-            "showInCollapsed": true
-          },
-          {
-=======
->>>>>>> Stashed changes
-            "title": "Column",
+            "title": "Reference: Column",
             "url": "/column-object/",
             "showInCollapsed": true
           }
@@ -85,20 +72,12 @@
             "showInCollapsed": true
           },
           {
-            "title": "Row Node",
+            "title": "Reference: Row",
             "url": "/row-object/",
             "showInCollapsed": true
           },
           {
-<<<<<<< Updated upstream
-            "title": "Row Methods",
-            "url": "/row-methods/",
-            "showInCollapsed": true
-          },
-          {
-=======
->>>>>>> Stashed changes
-            "title": "Row Events",
+            "title": "Reference: Events",
             "url": "/row-events/",
             "showInCollapsed": true
           }

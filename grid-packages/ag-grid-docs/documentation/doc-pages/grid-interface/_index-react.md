@@ -1,28 +1,22 @@
 <framework-specific-section frameworks="react">
-|
-| All properties, callbacks are defined via props on the `AgGridReact` component.
-|
-| ### Initial Only 
-|
-| TODO: Explain initial only vs reactive
+| The grid is configure via props on the `AgGridReact` component. Props consist of simple types, arrays, complex objects and callback functions.
 </framework-specific-section>
 
 <framework-specific-section frameworks="react">
 <snippet transform={false} language="jsx">
 | &lt;AgGridReact
-|    // Reference to component including the grid's api
-|    ref={gridRef}
 |    // Simple attributes
 |    rowSelection="multiple"
-|    // State item
+|    // Component state 
 |    columnDefs={columnDefs}
-|    // Callback function
-|    getRowHeight={myGetRowHeightCallback}
+|    // Callback
+|    getRowHeight={getRowHeight}
 |    // Event handlers
 |    onCellClicked={onCellClicked}
 | />
 </snippet>
 </framework-specific-section>
+
 
 <framework-specific-section frameworks="react">
  <warning>
