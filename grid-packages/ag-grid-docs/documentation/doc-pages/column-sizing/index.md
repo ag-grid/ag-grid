@@ -4,7 +4,7 @@ title: "Column Sizing"
 
 All columns can be resized by dragging the top right portion of the column.
 
-## Enable Sizing
+## Sizing
 
 Column resizing is enabled by default for all columns. To control resizing for individual columns, set the boolean `resizable` property in the column definitions.
 
