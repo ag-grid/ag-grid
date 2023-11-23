@@ -3,7 +3,8 @@
 import React from 'react';
 import styles from './PromoBanner.module.scss';
 import LogoMarkTransparent from '../LogoMarkTransparent';
-import { Icon } from '../Icon';
+import CloseIcon from '../../images/inline-svgs/cross-banner.svg';
+
 
 const PromoBanner = () => {
   return (
@@ -19,6 +20,8 @@ const PromoBanner = () => {
     Visit →
   </div>
 </a>
+<CloseIcon className={styles.closeIcon} />
+
     </div>
 
 
