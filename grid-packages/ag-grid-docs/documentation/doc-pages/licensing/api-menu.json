@@ -21,17 +21,17 @@
             "showInCollapsed": true
           },
           {
-            "title": "Reference: Options",
+            "title": "Options Reference",
             "url": "/grid-options/",
             "showInCollapsed": true
           },
           {
-            "title": "Reference: Events",
+            "title": "Events Reference",
             "url": "/grid-events/",
             "showInCollapsed": true
           },
           {
-            "title": "Reference: API",
+            "title": "API Reference",
             "url": "/grid-api/",
             "showInCollapsed": true
           },
@@ -52,12 +52,12 @@
         "showInCollapsed": true,
         "items": [
           {
-            "title": "Reference: Column Definition",
+            "title": "Options Reference",
             "url": "/column-properties/",
             "showInCollapsed": true
           },
           {
-            "title": "Reference: Column",
+            "title": "Column Reference",
             "url": "/column-object/",
             "showInCollapsed": true
           }
@@ -72,12 +72,12 @@
             "showInCollapsed": true
           },
           {
-            "title": "Reference: Row",
+            "title": "Row Reference",
             "url": "/row-object/",
             "showInCollapsed": true
           },
           {
-            "title": "Reference: Events",
+            "title": "Events Reference",
             "url": "/row-events/",
             "showInCollapsed": true
           }

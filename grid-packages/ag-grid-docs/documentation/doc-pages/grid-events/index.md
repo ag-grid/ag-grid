@@ -1,5 +1,5 @@
 ---
-title: "Grid Events"
+title: "Grid Events Reference"
 ---
 
 To listen to events see [Grid Events](/grid-interface/#grid-events).

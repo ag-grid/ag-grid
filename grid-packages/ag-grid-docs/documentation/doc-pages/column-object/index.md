@@ -1,5 +1,5 @@
 ---
-title: "Column Object"
+title: "Column Reference"
 ---
 
 A `Column` object represents a column in the grid. The `Column` will contain a reference to the column definition your application provided as well as other column runtime information. The column contains methods and emits events.

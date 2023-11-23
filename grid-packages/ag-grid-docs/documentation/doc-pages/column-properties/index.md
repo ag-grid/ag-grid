@@ -1,5 +1,5 @@
 ---
-title: "Column Properties"
+title: "Column Options Reference"
 ---
 
 Configuration for columns `ColDef<TData, TValue>` and column groups `ColGroupDef<TData>`.

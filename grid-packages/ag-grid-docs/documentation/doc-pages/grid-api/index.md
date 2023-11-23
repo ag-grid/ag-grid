@@ -1,5 +1,5 @@
 ---
-title: "Grid API"
+title: "Grid API Reference"
 ---
 
 To access the api see: [Grid Api](/grid-interface/#grid-api).
