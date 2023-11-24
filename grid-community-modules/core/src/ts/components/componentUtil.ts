@@ -116,7 +116,7 @@ export class ComponentUtil {
         let hasChanges = false;
         Object.keys(changes)
             .filter((key) => ComponentUtil.ALL_PROPERTIES_AND_CALLBACKS_SET.has(key))
-            .map((key) => {
+            .forEach((key) => {
                 gridChanges[key] = changes[key]
                 hasChanges = true;
             });
