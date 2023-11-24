@@ -13,8 +13,12 @@ export function stripOutDarkModeCode(files) {
     const defaultTheme = document.documentElement.dataset.darkMode?.toUpperCase()  === 'TRUE' ? 'ag-theme-quartz-dark' : 'ag-theme-quartz';
     mainFiles.forEach((mainFile) => {
         if (files[mainFile]) {
+
+            // Integrated charts examples can only be viewed in light mode so that chart and grid match
+            const useDefaultTheme = !files[mainFile].source?.includes('DARK INTEGRATED START');
+
             // Hide theme switcher
-            files[mainFile].source = files[mainFile].source?.replace(/\/\*\* DARK MODE START \*\*\/([\s\S]*?)defaultTheme.*\|\|.*'(?<theme>.*)'([\s\S]*?)\/\*\* DARK MODE END \*\*\//g, `"${defaultTheme}"`);
+            files[mainFile].source = files[mainFile].source?.replace(/\/\*\* DARK MODE START \*\*\/([\s\S]*?)defaultTheme.*\|\|.*'(?<theme>.*)'([\s\S]*?)\/\*\* DARK MODE END \*\*\//g, `"${ useDefaultTheme ? defaultTheme : 'ag-theme-quartz'}"`);
 
             // hide integrated theme switcher
             files[mainFile].source = files[mainFile].source?.replace(/\/\*\* DARK INTEGRATED START \*\*\/([\s\S]*?)\/\*\* DARK INTEGRATED END \*\*\//g, '');
