@@ -138,7 +138,8 @@ const Default = () => {
                                                 useStaticData={isCI}
                                                 runOnce={runAutomatedExamplesOnce}
                                                 visibilityThreshold={0.2}
-                                                darkMode={darkMode}
+                                                // Always keep it in dark mode
+                                                darkMode={true}
                                             />
                                         </React.Suspense>
                                     )}
