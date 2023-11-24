@@ -8,13 +8,9 @@ Learn how to perform server-side operations using GraphQL with a complete refere
 
 In this guide we will develop an Olympic Medals application that demonstrates how to integrate a GraphQL endpoint with AG Grid's [Server-Side Row Model](/server-side-model/). Specifically it will show how data can be lazy-loaded as required, even when performing group, filter, sort operations when working with large datasets.
 
-The following screenshot shows what the finished application looks like:
-
-<image-caption src="server-side-operations-graphql/resources/graphql-app.png" alt="GraphQL" constrained="true"/></image-caption>
-
-<note>
+<warning>
 The reference implementation covered in this guide is for demonstration purposes only. If you use this in production it comes with no warranty or support.
-</note>
+</warning>
 
 The source code can be found here: [https://github.com/ag-grid/ag-grid-server-side-graphql-example](https://github.com/ag-grid/ag-grid-server-side-graphql-example).
 

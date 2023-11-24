@@ -11,14 +11,10 @@ This guide is intended as a starting point when learning how to use the [Server-
 
 The sample Olympic Medals application is developed using a Node.js server that connects to a MySQL database and will demonstrate how data can be lazy-loaded as required, even when performing group, filter and sort operations when working with large datasets.
 
-The following screenshot shows what the finished application looks like:
-
-<image-caption src="server-side-operations-nodejs/resources/nodejs-app.png" alt="NodeJS" constrained="true"></image-caption>
-
-<note>
+<warning>
 The reference implementation covered in this guide is for demonstration purposes only. If you use
 this in production it comes with no warranty or support.
-</note>
+</warning>
 
 The source code can be found here: [https://github.com/ag-grid/ag-grid-server-side-nodejs-example](https://github.com/ag-grid/ag-grid-server-side-nodejs-example).
 
