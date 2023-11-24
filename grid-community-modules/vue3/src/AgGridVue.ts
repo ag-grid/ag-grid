@@ -195,7 +195,9 @@ export const AgGridVue = defineComponent({
         this.checkForBindingConflicts();
 
         const rowData = this.getRowDataBasedOnBindings();
-        gridOptions.rowData = rowData ? (Object.isFrozen(rowData) ? rowData : markRaw(toRaw(rowData))) : rowData;
+        if (rowData !== ComponentUtil.VUE_OMITTED_PROPERTY) {
+            gridOptions.rowData = rowData ? (Object.isFrozen(rowData) ? rowData : markRaw(toRaw(rowData))) : rowData;
+        }
 
         const gridParams = {
             globalEventListener: this.globalEventListenerFactory().bind(this),
