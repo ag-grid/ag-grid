@@ -4,7 +4,11 @@ title: "Select Cell Editor"
 
 Simple editor that uses HTML `select`.
 
-Specified with `agSelectCellEditor` and configured with `ILargeTextEditorParams`.
+## Enabling Select Cell Editor
+
+<grid-example title='Select Editor' name='select-editor' type='generated' options='{ "modules": ["clientside"] }'></grid-example>
+
+Specified with `agSelectCellEditor` and configured with `ISelectCellEditorParams`.
 
 <snippet transform={false}>
 columnDefs: [
@@ -18,9 +22,11 @@ columnDefs: [
 ]
 </snippet>
 
-<grid-example title='Select Editor' name='select-editor' type='generated' options='{ "modules": ["clientside"] }'></grid-example>
+## Customisation
 
-## Changing the Gap Between Editor and Value List
+### List Gap
+
+<grid-example title='Select Editor List Gap' name='select-editor-list-gap' type='generated' options='{ "modules": ["clientside"] }'></grid-example>
 
 <snippet transform={false}>
 columnDefs: [
@@ -35,9 +41,12 @@ columnDefs: [
 ]
 </snippet>
 
-<grid-example title='Select Editor List Gap' name='select-editor-list-gap' type='generated' options='{ "modules": ["clientside"] }'></grid-example>
+The `valueListGap` will set the width of the gap between the editor and the value list when the Select Editor is expanded.
 
-## List Max Height and Max Width
+
+### List Size
+
+<grid-example title='Select Editor Max Height and Max Width' name='select-editor-max-height-and-width' type='generated' options='{ "modules": ["clientside"] }'></grid-example>
 
 <snippet transform={false}>
 columnDefs: [
@@ -53,15 +62,10 @@ columnDefs: [
 ]
 </snippet>
 
-<grid-example title='Select Editor Max Height and Max Width' name='select-editor-max-height-and-width' type='generated' options='{ "modules": ["clientside"] }'></grid-example>
 
-
-## Interface
+## API Reference
 
 <interface-documentation interfaceName='ISelectCellEditorParams' names='["values", "valueListGap", "valueListMaxHeight", "valueListMaxWidth"]'></interface-documentation>
-
-
-Note there is no need to specify `cellEditorPopup=true` for Select Cell Editor as the browsers Select widget will appear on top of the grid.
 
 <note>
 |We have found the standard HTML Select doesn't have an API that's rich enough to play
