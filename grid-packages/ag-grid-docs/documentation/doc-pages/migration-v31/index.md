@@ -158,7 +158,7 @@ This release includes the following deprecations:
 
 **GridOptions:**
 
-* Grid option `advancedFilterModel` is deprecated in favour of `initialState.filter.advancedFilterModel`
+* Grid option `advancedFilterModel` is deprecated in favour of `initialState.filter.advancedFilterModel`.
 
 **Grid API:** 
 
