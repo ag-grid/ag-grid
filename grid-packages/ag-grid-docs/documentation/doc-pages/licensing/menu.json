@@ -442,124 +442,6 @@
         ]
       },
       {
-        "title": "Rendering",
-        "items": [
-          {
-            "title": "Cell Content",
-            "url": "/cell-content/",
-            "showInCollapsed": true,
-            "items": [
-              {
-                "title": "Value Getters",
-                "url": "/value-getters/",
-                "showInCollapsed": true
-              },
-              {
-                "title": "Value Formatters",
-                "url": "/value-formatters/",
-                "showInCollapsed": true
-              },
-              {
-                "title": "Expressions",
-                "url": "/cell-expressions/",
-                "showInCollapsed": true
-              },
-              {
-                "title": "Reference Data",
-                "url": "/reference-data/",
-                "showInCollapsed": true
-              }
-            ]
-          },
-          {
-            "title": "Cell Rendering",
-            "url": "/cell-rendering/",
-            "showInCollapsed": true,
-            "items": [
-              {
-                "title": "Group Cell Renderer",
-                "url": "/group-cell-renderer/",
-                "enterprise": true
-              },
-              {
-                "title": "Change Cell Renderers",
-                "url": "/change-cell-renderers/"
-              }
-            ]
-          },
-          {
-            "title": "Rendering API",
-            "url": "/rendering-api/",
-            "showInCollapsed": true
-          },
-          {
-            "title": "View Refresh",
-            "url": "/view-refresh/",
-            "showInCollapsed": true
-          },
-          {
-            "title": "Flashing Cells",
-            "url": "/flashing-cells/",
-            "showInCollapsed": true
-          },
-          {
-            "title": "Change Detection",
-            "url": "/change-detection/",
-            "showInCollapsed": true
-          },
-          {
-            "title": "Context",
-            "url": "/context/",
-            "showInCollapsed": true
-          },
-          {
-            "title": "See Also",
-            "url": "",
-            "items": [
-              {
-                "title": "Expressions & Context",
-                "url": "/expressions-and-context/"
-              }
-            ]
-          }
-        ]
-      },
-      {
-        "title": "Selection",
-        "items": [
-          {
-            "title": "Overview",
-            "url": "/selection-overview/",
-            "showInCollapsed": true
-          },
-          {
-            "title": "Row Selection",
-            "url": "/row-selection/",
-            "showInCollapsed": true
-          },
-          {
-            "title": "Range Selection",
-            "url": "/range-selection/",
-            "enterprise": true,
-            "showInCollapsed": true,
-            "items": [
-              {
-                "title": "Range Handle",
-                "url": "/range-selection-handle/",
-                "enterprise": true,
-                "showInCollapsed": true
-              },
-              {
-                "title": "Fill Handle",
-                "url": "/range-selection-fill-handle/",
-                "enterprise": true,
-                "showInCollapsed": true
-              }
-            ]
-          }
-        ]
-      },
-      {
         "title": "Filtering",
         "items": [
           {
@@ -668,6 +550,136 @@
         ]
       },
       {
+        "title": "Client-Side Data",
+        "items": [
+          {
+            "title": "Overview",
+            "url": "/client-side-model/",
+            "showInCollapsed": true
+          },
+          {
+            "title": "Accessing Data",
+            "url": "/accessing-data/",
+            "showInCollapsed": true
+          },
+          {
+            "title": "Updating Data",
+            "url": "/data-update/",
+            "showInCollapsed": true,
+            "items": [
+              {
+                "title": "Row Data",
+                "url": "/data-update-row-data/",
+                "showInCollapsed": true
+              },
+              {
+                "title": "Single Row / Cell",
+                "url": "/data-update-single-row-cell/",
+                "showInCollapsed": true
+              },
+              {
+                "title": "Transactions",
+                "url": "/data-update-transactions/",
+                "showInCollapsed": true
+              },
+              {
+                "title": "High Frequency",
+                "url": "/data-update-high-frequency/",
+                "showInCollapsed": true
+              }
+            ]
+          },
+          {
+            "title": "Data Stages",
+            "url": "/client-side-row-stages/",
+            "showInCollapsed": true
+          }
+        ]
+      },
+      {
+        "title": "Rendering",
+        "items": [
+          {
+            "title": "Cell Content",
+            "url": "/cell-content/",
+            "showInCollapsed": true,
+            "items": [
+              {
+                "title": "Value Getters",
+                "url": "/value-getters/",
+                "showInCollapsed": true
+              },
+              {
+                "title": "Value Formatters",
+                "url": "/value-formatters/",
+                "showInCollapsed": true
+              },
+              {
+                "title": "Expressions",
+                "url": "/cell-expressions/",
+                "showInCollapsed": true
+              },
+              {
+                "title": "Reference Data",
+                "url": "/reference-data/",
+                "showInCollapsed": true
+              }
+            ]
+          },
+          {
+            "title": "Cell Rendering",
+            "url": "/cell-rendering/",
+            "showInCollapsed": true,
+            "items": [
+              {
+                "title": "Group Cell Renderer",
+                "url": "/group-cell-renderer/",
+                "enterprise": true
+              },
+              {
+                "title": "Change Cell Renderers",
+                "url": "/change-cell-renderers/"
+              }
+            ]
+          },
+          {
+            "title": "Rendering API",
+            "url": "/rendering-api/",
+            "showInCollapsed": true
+          },
+          {
+            "title": "View Refresh",
+            "url": "/view-refresh/",
+            "showInCollapsed": true
+          },
+          {
+            "title": "Flashing Cells",
+            "url": "/flashing-cells/",
+            "showInCollapsed": true
+          },
+          {
+            "title": "Change Detection",
+            "url": "/change-detection/",
+            "showInCollapsed": true
+          },
+          {
+            "title": "Context",
+            "url": "/context/",
+            "showInCollapsed": true
+          },
+          {
+            "title": "See Also",
+            "url": "",
+            "items": [
+              {
+                "title": "Expressions & Context",
+                "url": "/expressions-and-context/"
+              }
+            ]
+          }
+        ]
+      },
+      {
         "title": "Editing",
         "items": [
           {
@@ -747,6 +759,41 @@
             "title": "Full Row",
             "url": "/cell-editing-full-row/",
             "showInCollapsed": true
+          }
+        ]
+      },
+      {
+        "title": "Selection",
+        "items": [
+          {
+            "title": "Overview",
+            "url": "/selection-overview/",
+            "showInCollapsed": true
+          },
+          {
+            "title": "Row Selection",
+            "url": "/row-selection/",
+            "showInCollapsed": true
+          },
+          {
+            "title": "Range Selection",
+            "url": "/range-selection/",
+            "enterprise": true,
+            "showInCollapsed": true,
+            "items": [
+              {
+                "title": "Range Handle",
+                "url": "/range-selection-handle/",
+                "enterprise": true,
+                "showInCollapsed": true
+              },
+              {
+                "title": "Fill Handle",
+                "url": "/range-selection-fill-handle/",
+                "enterprise": true,
+                "showInCollapsed": true
+              }
+            ]
           }
         ]
       },
@@ -971,53 +1018,6 @@
             "title": "Pivoting",
             "url": "/pivoting/",
             "enterprise": true,
-            "showInCollapsed": true
-          }
-        ]
-      },
-      {
-        "title": "Client-Side Data",
-        "items": [
-          {
-            "title": "Overview",
-            "url": "/client-side-model/",
-            "showInCollapsed": true
-          },
-          {
-            "title": "Accessing Data",
-            "url": "/accessing-data/",
-            "showInCollapsed": true
-          },
-          {
-            "title": "Updating Data",
-            "url": "/data-update/",
-            "showInCollapsed": true,
-            "items": [
-              {
-                "title": "Row Data",
-                "url": "/data-update-row-data/",
-                "showInCollapsed": true
-              },
-              {
-                "title": "Single Row / Cell",
-                "url": "/data-update-single-row-cell/",
-                "showInCollapsed": true
-              },
-              {
-                "title": "Transactions",
-                "url": "/data-update-transactions/",
-                "showInCollapsed": true
-              },
-              {
-                "title": "High Frequency",
-                "url": "/data-update-high-frequency/",
-                "showInCollapsed": true
-              }
-            ]
-          },
-          {
-            "title": "Data Stages",
-            "url": "/client-side-row-stages/",
             "showInCollapsed": true
           }
         ]
