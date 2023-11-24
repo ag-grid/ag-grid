@@ -17,7 +17,6 @@ const VueExample = {
               ref="topGrid"
               :gridOptions="topOptions"
               :columnDefs="columnDefs"
-              :defaultColDef="defaultColDef"
               :rowData="rowData">
           </ag-grid-vue>
           <div style='height: 5%'></div>
@@ -27,7 +26,6 @@ const VueExample = {
               ref="bottomGrid"
               :gridOptions="bottomOptions"
               :columnDefs="columnDefs"
-              :defaultColDef="defaultColDef"
               :rowData="rowData">
           </ag-grid-vue>
       </div>
