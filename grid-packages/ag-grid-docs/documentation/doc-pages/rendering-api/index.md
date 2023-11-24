@@ -32,7 +32,7 @@ When grouping, displayed rows are those rows that are currently visible with reg
 
 In the example below `getDisplayedRowCount()` will return back 7. This is composed of 5 top level 'Language' rows and two second level 'Country' rows. Each of the 7 displayed rows will have a row index from 0 to 6. All rows not displayed (as they are contained within closed groups) are not displayed and do not have a row index.
 
-<image-caption src="rendering-api/resources/rowGroups.png" alt="Row Groups" width="40rem" centered="true"></image-caption>
+<image-caption src="rendering-api/resources/rowGroups.png" alt="Row Groups" width="40rem" centered="true" toggledarkmode="true"></image-caption>
 
 ## Displayed Rows & Loading
 
@@ -41,5 +41,5 @@ If using [Server-Side Row Model](/server-side-model/) or [Infinite Row Model](/i
 
 For example, calling `getDisplayedRowCount()` below will return 5 as there are 4 normal rows and 1 loading row.
 
-<image-caption src="rendering-api/resources/serverSideLoading.png" alt="Server Side Loading" width="38rem" centered="true"></image-caption>
+<image-caption src="rendering-api/resources/serverSideLoading.png" alt="Server Side Loading" width="38rem" centered="true" toggledarkmode="true"></image-caption>
 
