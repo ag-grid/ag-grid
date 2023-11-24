@@ -58,11 +58,11 @@ The floating filters for Text, Number and Date (the simple filters) are editable
 The screen shots below show example scenarios where the provided Number floating filter is editable and read-only.
 
 - **One Value and One Condition - Editable**
-    <image-caption src="floating-filters/resources/oneValueOneCondition.png" alt="One Value One Condition" width="24rem"></image-caption>
+    <image-caption src="floating-filters/resources/oneValueOneCondition.png" alt="One Value One Condition" width="24rem" toggledarkmode="true"></image-caption>
 - **One Value and Two Conditions - Read-Only**
-    <image-caption src="floating-filters/resources/oneValueTwoConditions.png" alt="One Value Two Conditions" width="24rem"></image-caption>
+    <image-caption src="floating-filters/resources/oneValueTwoConditions.png" alt="One Value Two Conditions" width="24rem" toggledarkmode="true"></image-caption>
 - **Two Values and One Condition - Read-Only**
-    <image-caption src="floating-filters/resources/twoValuesOneCondition.png" alt="Two Values One Condition" width="24rem"></image-caption>
+    <image-caption src="floating-filters/resources/twoValuesOneCondition.png" alt="Two Values One Condition" width="24rem" toggledarkmode="true"></image-caption>
 
 ### Controlling Autocomplete on Floating Filters
 
