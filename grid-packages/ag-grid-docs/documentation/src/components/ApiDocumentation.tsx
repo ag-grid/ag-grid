@@ -631,6 +631,10 @@ const Property: React.FC<PropertyCall> = ({ framework, id, name, definition, con
                         See <a href={`#reference-${id}.${name}`}>{name}</a> for more details.
                     </div>
                 )}
+                {isInitial && config.showInitialDescription && (<div
+                    onClick={() => setExpanded(!isExpanded)}
+                    className={styles.description} 
+                >This property will only be read on initialisation.</div>)}
 
                 {definition.options != null && (
                     <div>
