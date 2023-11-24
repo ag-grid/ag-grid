@@ -35,6 +35,7 @@ const gridOptions: GridOptions = {
     rowHeight: 48,
     headerHeight: 30,
     domLayout: 'autoHeight',
+    animateRows: false,
     getRowId: ({ data }: GetRowIdParams) => {
         return data.stock;
     },

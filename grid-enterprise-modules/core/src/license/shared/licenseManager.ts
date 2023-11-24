@@ -103,12 +103,7 @@ export class LicenseManager {
                 expired = (gridReleaseDate > expiry);
 
                 switch (version) {
-                    case "legacy": {
-                        if (isTrial) {
-                            handleTrial();
-                        }
-                        break;
-                    }
+                    case "legacy":
                     case "2": {
                         if (isTrial) {
                             handleTrial();
@@ -279,7 +274,7 @@ export class LicenseManager {
         console.error('***************************************** AG Grid Enterprise License ********************************************');
         console.error('********************************************* Invalid License ***************************************************');
         if(exists(incorrectLicenseType) && incorrectLicenseType && licenseType === 'CHARTS') {
-            console.error('* Your license is for AG Charts Enterprise but the license supplied is for AG Grid Enterprise Only              *');
+            console.error('* The license supplied is for AG Charts Enterprise Only and does not cover AG Grid Enterprise                   *');
         }
         console.error('* Your license for AG Grid Enterprise is not valid - please contact info@ag-grid.com to obtain a valid license. *');
         console.error('*****************************************************************************************************************');

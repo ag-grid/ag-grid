@@ -21,15 +21,11 @@ export const PromoBanner = () => {
   return (
     <div className={`${styles.promoBanner} ${isVisible ? styles.visible : styles.hidden}`}>
       <LogoMarkTransparent />
-      <a href="http://charts.ag-grid.com/" >
-      <div className={styles.promoText}>
-        Introducing our new AG Charts library
-      </div>
+      <a href="http://charts.ag-grid.com/" className={styles.promoText}>
+        Introducing our new AG Charts library!
       </a>
       <a href="http://charts.ag-grid.com/" className={styles.visitButton}>
-        <div>
-          Visit →
-        </div>
+        Visit →
       </a>
       <CloseIcon
         className={styles.closeIcon}
