@@ -66,11 +66,8 @@
     }
 
     .ag-tabs-header {
-        margin: calc(var(--ag-grid-size) * 1.5);
-        margin-bottom: 0;
-        border: var(--ag-borders) var(--ag-border-color);
+        border-bottom: var(--ag-borders) var(--ag-border-color);
         display: flex;
-        border-radius: var(--ag-border-radius);
         background-color: color-mix(in srgb, transparent, var(--ag-foreground-color) 5%)
     }
     
@@ -78,8 +75,6 @@
         margin: -1px;
         border: var(--ag-borders) var(--ag-border-color);
         background-color: var(--ag-background-color);
-        border-radius: var(--ag-border-radius);
-        box-shadow: 0px 1px 4px 0px rgba(0, 0, 0, 0.04);
     }
     //
     // VERTICAL TABS
@@ -99,12 +94,6 @@
         margin: -1px;
         border: var(--ag-borders) var(--ag-border-color);
         background-color: var(--ag-background-color);
-        border-radius: var(--ag-border-radius);
-
-        &:first-of-type {
-            border-top-left-radius: 0;
-            border-top-right-radius: 0;
-        }
     }
 
     .ag-column-panel-column-select {

@@ -16,12 +16,12 @@ The migration tool fixes your project's codebase to address the majority of brea
 
 Follow these steps to migrate to AG Grid version 31:
 
-1. Open a terminal and navigate to your current project's root folder
+1. Open a terminal and navigate to your project's root folder
 
 2. Update the AG Grid dependency to version `31.0.0`:
 
     ```
-    npm install --save-dev ag-grid-community@31.0.0
+    npm install ag-grid-community@31.0.0
     ```
 
 3. Run version `31.0.0` of the AG Grid migration tool:
