@@ -383,4 +383,4 @@ Our Example Runner enables you to view the `modules` version of an example via t
 When 'Modules' is selected, the source code includes the required modules along with the module import paths. This means
 you can copy and paste code from our examples without further tweaks.
 
-<image-caption src="module-example-runner.png" alt="Module Examples" maxWidth="90%" constrained="true" centered="true"></image-caption>
+<image-caption src="module-example-runner.png" alt="Module Examples" maxWidth="90%" constrained="true" centered="true" toggleDarkMode="true"></image-caption>
