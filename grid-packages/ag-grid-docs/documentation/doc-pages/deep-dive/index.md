@@ -9,13 +9,12 @@ An introduction to the key concepts of AG Grid.
 In this tutorial you will:
 
 1. [Create a basic grid](/deep-dive/#create-a-basic-grid)
-2. [Pick a theme](/deep-dive/#pick-a-theme)
-3. [Load external data into the grid](/deep-dive/#load-new-data)
-4. [Configure columns](/deep-dive/#configure-columns)
-5. [Configure grid features](/deep-dive/#configure-the-grid)
-6. [Hook into grid events](/deep-dive/#handle-grid-events)
-7. [Format cell values](/deep-dive/#format-cell-values)
-8. [Add custom components to cells](/deep-dive/#custom-cell-components)
+2. [Load external data into the grid](/deep-dive/#load-new-data)
+3. [Configure columns](/deep-dive/#configure-columns)
+4. [Configure grid features](/deep-dive/#configure-the-grid)
+5. [Format cell values](/deep-dive/#format-cell-values)
+6. [Add custom components to cells](/deep-dive/#custom-cell-components)
+7. [Hook into grid events](/deep-dive/#handle-grid-events)
 
 Once complete, you'll have an interactive grid, with custom components and formatted data - Try it out for yourself by __sorting__, __filtering__, __resizing__, __selecting__, or __editing__ data in the grid:
 
@@ -27,7 +26,7 @@ Once complete, you'll have an interactive grid, with custom components and forma
 
 <!-- Create a Basic Grid -->
 
-Complete our [Quick Start](/getting-started/) or fork our [CodeSandbox example TODO]() to start with a basic grid, comprised of:
+Complete our [Quick Start](/getting-started/) (or open the example below in CodeSandbox / Plunker) to start with a basic grid, comprised of:
 
 1. __Grid Options:__ An object which holds all of the options for the grid, such as Row Data & Column Definitions.
 2. __Row Data:__ The data to be displayed.
@@ -45,7 +44,7 @@ Complete our [Quick Start](/getting-started/) or fork our [CodeSandbox example T
 
 <!-- Create a Basic Grid -->
 
-Complete our [Quick Start](/getting-started/) or fork our [CodeSandbox example TODO]() to start with a basic grid, comprised of:
+Complete our [Quick Start](/getting-started/) (or open the example below in CodeSandbox / Plunker) to start with a basic grid, comprised of:
 
 1. __Row Data:__ The data to be displayed.
 2. __Column Definition:__ Defines & controls grid columns.
@@ -64,7 +63,7 @@ _Note: `rowData` and `columnDefs` arrays use the `useState` hook. We recommend `
 
 <!-- Create a Basic Grid -->
 
-Complete our [Quick Start](/getting-started/) or fork our [CodeSandbox example TODO]() to start with a basic grid, comprised of:
+Complete our [Quick Start](/getting-started/) (or open the example below in CodeSandbox / Plunker) to start with a basic grid, comprised of:
 
 1. __Row Data:__ The data to be displayed.
 2. __Column Definition:__ Defines & controls grid columns.
@@ -80,109 +79,13 @@ Complete our [Quick Start](/getting-started/) or fork our [CodeSandbox example T
 
 <!-- Create a Basic Grid -->
 
-Complete our [Quick Start](/getting-started/) or fork our [CodeSandbox example TODO]() to start with a basic grid, comprised of:
+Complete our [Quick Start](/getting-started/) (or open the example below in CodeSandbox / Plunker) to start with a basic grid, comprised of:
 
 1. __Row Data:__ The data to be displayed.
 2. __Column Definition:__ Defines & controls grid columns.
 3. __Grid Component:__ The `ag-grid-vue` component, with Dimensions, CSS Theme, Row Data, and Column Definition attributes
 
 <grid-example title='Basic Example' name='basic-example' type='mixed' options='{ "exampleHeight": 220 }'></grid-example>
-
----
-
-</framework-specific-section>
-
-## Choose a Theme
-
-<framework-specific-section frameworks="javascript">
-
-<!-- Choose a Theme -->
-
-All grids require a theme. The default theme is Quartz and we provide [several others](/themes). To use a theme, set the `className` of the div that contains the grid to the name of the theme. Let's try this out by adding `ag-theme-quartz-dark` to our container div:
-
-<snippet transform={false} language="jsx">
-|&lt;div id="myGrid" style="width: 100%; height: 100%" class="ag-theme-quartz-dark">&lt;/div>
-</snippet>
-
-Now when we run our code we should see the grid styled with the `ag-theme-quartz-dark` theme:
-
-<grid-example title='Theme Example' name='theme-example' type='mixed' options='{ "exampleHeight": 220 }'></grid-example>
-
-_Note: You can customise themes or create your own theme entirely. Read our [Styling the Grid](/styling-the-grid/) guide for more info._
-
----
-
-</framework-specific-section>
-
-<framework-specific-section frameworks="react">
-
-<!-- Choose a Theme -->
-
-All grids require a theme. The default theme is Quartz and we provide [several others](/themes). To use a theme, set the `className` of the div that contains the grid to the name of the theme. Let's try this out by adding `ag-theme-quartz-dark` to our container div:
-
-<snippet transform={false} language="jsx">
-|&lt;div className="ag-theme-quartz-dark" style={{ width: 600, height: 500 }}>
-|  &lt;AgGridReact /* ... */ />
-|&lt;/div>
-</snippet>
-
-Now when we run our code we should see the grid styled with the `ag-theme-quartz-dark` theme:
-
-<grid-example title='Theme Example' name='theme-example' type='mixed' options='{ "exampleHeight": 220 }'></grid-example>
-
-_Note: You can customise themes or create your own theme entirely. Read our [Styling the Grid](/styling-the-grid/) guide for more info._
-
----
-
-</framework-specific-section>
-
-<framework-specific-section frameworks="angular">
-
-<!-- Choose a Theme -->
-
-All grids require a theme. The default theme is Quartz and we provide [several others](/themes). To use a theme, set the `className` of the `ag-grid-angular` component to the name of the theme. Let's try this out by replacing `ag-theme-quartz` with `ag-theme-quartz-dark`:
-
-<snippet transform={false} language="ts">
-|&lt;ag-grid-angular
-|  style="width: 100%; height: 550px;"
-|  class="ag-theme-quartz-dark"
-|  [rowData]="rowData"
-|  [columnDefs]="colDefs"
-|>
-|&lt;/ag-grid-angular>
-</snippet>
-
-Now when we run our code we should see the grid styled with the `ag-theme-quartz-dark` theme:
-
-<grid-example title='Theme Example' name='theme-example' type='mixed' options='{ "exampleHeight": 220 }'></grid-example>
-
-_Note: You can customise themes or create your own theme entirely. Read our [Styling the Grid](/styling-the-grid/) guide for more info._
-
----
-
-</framework-specific-section>
-
-<framework-specific-section frameworks="vue">
-
-<!-- Choose a Theme -->
-
-All grids require a theme. The default theme is Quartz and we provide [several others](/themes). To use a theme, set the `className` of the div that contains the grid to the name of the theme. Let's try this out by adding `ag-theme-quartz` to our container div:
-
-<snippet transform={false} language="jsx">
-|&lt;ag-grid-vue
-|  style="width: 100%; height: 550px"
-|  class="ag-theme-quartz-dark"
-|  :columnDefs="columnDefs"
-|  :rowData="rowData"
-|>
-|&lt;/ag-grid-vue>
-</snippet>
-
-Now when we run our code we should see the grid styled with the `ag-theme-quartz` theme:
-
-<grid-example title='Theme Example' name='theme-example' type='mixed' options='{ "exampleHeight": 220 }'></grid-example>
-
-_Note: You can customise themes or create your own theme entirely. Read our [Styling the Grid](/styling-the-grid/) guide for more info._
 
 ---
 
@@ -211,7 +114,7 @@ Now that we're loading data from an external source, we can empty our `rowData` 
 |}
 </snippet>
 
-When we run our application, we should see a grid with ~2,500 rows:
+When we run our application, we should see a grid with ~1,400 rows:
 
 <grid-example title='Updating Example' name='updating-example' type='mixed' options='{ "exampleHeight": 550 }'></grid-example>
 
@@ -246,7 +149,7 @@ Now that we're loading data from an external source, we can empty our `rowData` 
 |}
 </snippet>
 
-When we run our application, we should see a grid with ~2,500 rows:
+When we run our application, we should see a grid with ~1,400 rows:
 
 <grid-example title='Updating Example' name='updating-example' type='mixed' options='{ "exampleHeight": 550 }'></grid-example>
 
@@ -299,7 +202,7 @@ Finally, now that we're loading data from an external source, we can empty our `
 |}
 </snippet>
 
-When we run our application, we should see a grid with ~2,500 rows:
+When we run our application, we should see a grid with ~1,400 rows:
 
 <grid-example title='Updating Example' name='updating-example' type='mixed' options='{ "exampleHeight": 550 }'></grid-example>
 
@@ -339,7 +242,7 @@ And now that we're loading data from an external source, we can empty our `rowDa
 |}
 </snippet>
 
-When we run our application, we should see a grid with ~2,500 rows:
+When we run our application, we should see a grid with ~1,400 rows:
 
 <grid-example title='Updating Example' name='updating-example' type='mixed' options='{ "exampleHeight": 550 }'></grid-example>
 
@@ -366,7 +269,7 @@ Column Properties can be added to one or more columns to enable/disable column-s
 |],
 </snippet>
 
-We should now be able to filter the 'mission' column:
+We should now be able to filter the 'mission' column - you can test this by filtering for the 'Apollo' missions:
 
 <grid-example title='Configuring Columns Example' name='configure-columns-example' type='mixed' options='{ "exampleHeight": 550 }'></grid-example>
 
@@ -389,7 +292,7 @@ Column Properties can be added to one or more columns to enable/disable column-s
 |]);
 </snippet>
 
-We should now be able to filter the 'mission' column:
+We should now be able to filter the 'mission' column - you can test this by filtering for the 'Apollo' missions:
 
 <grid-example title='Configuring Columns Example' name='configure-columns-example' type='mixed' options='{ "exampleHeight": 550 }'></grid-example>
 
@@ -412,7 +315,7 @@ Column Properties can be added to one or more columns to enable/disable column-s
 |];
 </snippet>
 
-We should now be able to filter the 'mission' column:
+We should now be able to filter the 'mission' column - you can test this by filtering for the 'Apollo' missions:
 
 <grid-example title='Configuring Columns Example' name='configure-columns-example' type='mixed' options='{ "exampleHeight": 550 }'></grid-example>
 
@@ -435,7 +338,7 @@ Column Properties can be added to one or more columns to enable/disable column-s
 |];
 </snippet>
 
-We should now be able to filter the 'mission' column:
+We should now be able to filter the 'mission' column - you can test this by filtering for the 'Apollo' missions:
 
 <grid-example title='Configuring Columns Example' name='configure-columns-example' type='mixed' options='{ "exampleHeight": 550 }'></grid-example>
 
@@ -733,6 +636,8 @@ The grid should now show the formatted value in the 'price' column:
 
 <grid-example title='Value Formatter Example' name='value-formatter-example' type='mixed' options='{ "exampleHeight": 550 }'></grid-example>
 
+_Note: Read our [Value Formatter](/value-formatters/) page for more information on formatting cell values_
+
 ---
 
 </framework-specific-section>
@@ -760,6 +665,8 @@ The grid should now show the formatted value in the 'price' column:
 
 <grid-example title='Value Formatter Example' name='value-formatter-example' type='mixed' options='{ "exampleHeight": 550 }'></grid-example>
 
+_Note: Read our [Value Formatter](/value-formatters/) page for more information on formatting cell values_
+
 ---
 
 </framework-specific-section>
@@ -786,6 +693,8 @@ The grid should now show the formatted value in the 'price' column:
 
 <grid-example title='Value Formatter Example' name='value-formatter-example' type='mixed' options='{ "exampleHeight": 550 }'></grid-example>
 
+_Note: Read our [Value Formatter](/value-formatters/) page for more information on formatting cell values_
+
 ---
 
 </framework-specific-section>
@@ -809,6 +718,8 @@ The grid should now show the formatted value in the 'price' column:
 
 <grid-example title='Value Formatter Example' name='value-formatter-example' type='mixed' options='{ "exampleHeight": 550 }'></grid-example>
 
+_Note: Read our [Value Formatter](/value-formatters/) page for more information on formatting cell values_
+
 </framework-specific-section>
 
 ## Custom Cell Components
@@ -821,45 +732,55 @@ __Value Formatters__ are useful for basic formatting, but for more advanced use-
 
 __Cell Renderers__ allow you add custom HTML & JS within cells. To use a Cell Renderer, set the `cellRenderer` prop on a column, with the value as the name of your Cell Renderer.
 
-Let's try this by creating a new component to display a flag in the 'country' column:
+Let's try this by creating a new component to display the company logo in the 'company' column:
 
 <snippet transform={false} language=jsx>
-|class CountryFlagCellRenderer {
+|class CompanyLogoRenderer {
 |  eGui;
 |
 |  // Optional: Params for rendering. The same params that are passed to the cellRenderer function.
 |  init(params) {
-|    this.eGui = document.createElement('img');
-|    this.eGui.src = `https://www.ag-grid.com/example-assets/flags/${params.value.toLowerCase()}-flag-sm.png`;
+|    let companyLogo = document.createElement('img');
+|    companyLogo.src = `https://downloads.jamesswinton.com/space-company-logos/${params.value.toLowerCase()}.png`
+|    companyLogo.setAttribute('style', 'display: block; width: 25px; height: auto; max-height: 50%; margin-right: 12px; filter: brightness(1.1)');
+|    let companyName = document.createElement('p');
+|    companyName.innerHTML = params.value;
+|    companyName.setAttribute('style', 'text-overflow: ellipsis; overflow: hidden; white-space: nowrap;');
+|    this.eGui = document.createElement('span');
+|    this.eGui.setAttribute('style', 'display: flex; height: 100%; width: 100%; align-items: center')
+|    this.eGui.appendChild(companyLogo)
+|    this.eGui.appendChild(companyName)
 |  }
 |
-|  // Required: Return the DOM element of the component, this is what the grid puts into the cell.
+|  // Required: Return the DOM element of the component, this is what the grid puts into the cell
 |  getGui() {
 |    return this.eGui;
 |  }
 |
 |  // Required: Get the cell to refresh.
-| refresh(params) {
-|   return false
-| }
+|  refresh(params) {
+|    return false
+|  }
 |}
 </snippet>
 
-And then adding `cellRenderer: CountryFlagCellRenderer` to the 'country' column definition:
+And then adding `cellRenderer: CompanyLogoRenderer` to the 'company' column definition:
 
 <snippet transform={false} language=jsx>
 |columnDefs: [
 |  {
 |    field: "country",
-|    cellRenderer: CountryFlagCellRenderer
+|    cellRenderer: CompanyLogoRenderer
 |  },
 |  // ...
 |],
 </snippet>
 
-Now, when we run the grid, we should see a country flag in place of the name:
+Now, when we run the grid, we should see a company logo next to the name:
 
 <grid-example title='Cell Renderer Example' name='cell-renderer-example' type='mixed' options='{ "exampleHeight": 550 }'></grid-example>
+
+_Note: Read our [Cell Renderer](/cell-rendering/) page for more information on using custom components in cells_
 
 ---
 
@@ -873,33 +794,33 @@ __Value Formatters__ are useful for basic formatting, but for more advanced use-
 
 __Cell Renderers__ allow you to use your own React components within cells. To use a custom component, set the `cellRenderer` prop on a column, with the value as the name of your component.
 
-Let's try this by creating a new component to display a flag in the 'country' column:
+Let's try this by creating a new component to display the company logo in the 'company' column:
 
 <snippet transform={false} language=jsx>
 |// Custom Cell Renderer (Display flags based on cell value)
-|const CountryFlagCellRenderer = ({ value }) => (
-|  &lt;span>
-|    {value && &lt;img alt={`${value} Flag`} src={`https://www.ag-grid.com/example-assets/flags/${value.toLowerCase()}-flag-sm.png`} height={30} />}
-|  &lt;/span>
-|);
+|const CompanyLogoRenderer = ({ value }) => (
+|  &lt;span style={{ display: "flex", height: "100%", width: "100%", alignItems: "center" }}>{value && &lt;img alt={`${value} Flag`} src={`https://downloads.jamesswinton.com/space-company-logos/${value.toLowerCase()}.png`} style={{display: "block", width: "25px", height: "auto", maxHeight: "50%", marginRight: "12px", filter: "brightness(1.1)"}} />}&lt;p style={{ textOverflow: "ellipsis", overflow: "hidden", whiteSpace: "nowrap" }}>{value}&lt;p>&lt;/span>
+);
 </snippet>
 
-And then adding the `cellRenderer` prop on our 'country' column to use our component:
+And then adding the `cellRenderer` prop on our 'company' column to use our component:
 
 <snippet transform={false} language=jsx>
 |const [colDefs] = useState([
 |  {
-|    field: "country",
+|    field: "company",
 |    // Add component to column via cellRenderer
-|    cellRenderer: CountryFlagCellRenderer
+|    cellRenderer: CompanyLogoRenderer
 |  },
 |  // ...
 |]);
 </snippet>
 
-Now, when we run the grid, we should see a country flag in place of the name:
+Now, when we run the grid, we should see a company logo next to the name:
 
 <grid-example title='Cell Renderer Example' name='cell-renderer-example' type='mixed' options='{ "exampleHeight": 550 }'></grid-example>
+
+_Note: Read our [Cell Renderer](/cell-rendering/) page for more information on using custom components in cells_
 
 ---
 
@@ -913,22 +834,26 @@ __Value Formatters__ are useful for basic formatting, but for more advanced use-
 
 __Cell Renderers__ allow you to use your own components within cells. To use a custom component, add the `cellRenderer` prop to a column and set the value to the name of your component.
 
-Let's try this by creating a new component to display a flag in the 'country' column:
+Let's try this by creating a new component to display the company logo in the 'company' column:
 
 <snippet transform={false} language=jsx>
+|// Custom Cell Renderer Component
 |@Component({
-|  selector: 'app-country-flag-cell-renderer',
+|  selector: 'app-company-logo-renderer',
 |  standalone: true,
 |  imports: [CommonModule],
-|  template:
-|  `&lt;span *ngIf="value">&lt;img [alt]="' ' + value + ' Flag'" [src]="'https://www.ag-grid.com/example-assets/flags/' + value.toLowerCase() + '-flag-sm.png'" [height]="30" />&lt;/span>`
+|  template: `&lt;span *ngIf="value" >&lt;img [alt]="value" [src]="'https://downloads.jamesswinton.com/space-company-logos/' + value.toLowerCase() + '.png'" /> &lt;p>{{ value }}&lt;/p>&lt;/span>`,
+|  styles: ["img {display: block; width: 25px; height: auto; maxHeight: 50%; margin-right: 12px; filter: brightness(1.2);} span {display: flex; height: 100%; width: 100%; align-items: center} p { text-overflow: ellipsis; overflow: hidden; white-space: nowrap }"]
 |})
 |
-|export class CountryFlagCellRendererComponent implements ICellRendererAngularComp {
+|export class CompanyLogoRenderer implements ICellRendererAngularComp {
+|  // Init Cell Value
 |  public value!: string;
 |  agInit(params: ICellRendererParams): void {
 |    this.value = params.value;
 |  }
+|
+|  // Return Cell Value
 |  refresh(params: ICellRendererParams): boolean {
 |    this.value = params.value;
 |    return true;
@@ -936,21 +861,23 @@ Let's try this by creating a new component to display a flag in the 'country' co
 |}
 </snippet>
 
-And then adding the cellRenderer prop on our 'country' column to use our component:
+And then adding the cellRenderer prop on our 'company' column to use our component:
 
 <snippet transform={false} language="ts">
 |colDefs: ColDef[] = [
 |  {
-|    field: "country",
-|    cellRenderer: CountryFlagCellRendererComponent // Render a custom component
+|    field: "company",
+|    cellRenderer: CompanyLogoRenderer // Render a custom component
 |  }
 |  // ...
 |];
 </snippet>
 
-Now, when we run the grid, we should see a country flag in place of the name:
+Now, when we run the grid, we should see a company logo next to the name:
 
 <grid-example title='Cell Renderer Example' name='cell-renderer-example' type='mixed' options='{ "exampleHeight": 550 }'></grid-example>
+
+_Note: Read our [Cell Renderer](/cell-rendering/) page for more information on using custom components in cells_
 
 ---
 
@@ -964,36 +891,39 @@ __Value Formatters__ are useful for basic formatting, but for more advanced use-
 
 __Cell Renderers__ allow you to use your own components within cells. To use a custom component, set the `cellRenderer` prop on a column, with the value as the name of your component.
 
-Let's try this by creating a new component to display a flag in the 'country' column:
+Let's try this by creating a new component to display the company logo in the 'company' column:
 
 <snippet transform={false} language=jsx>
-|const CountryFlagCellRenderer = {
+|const CompanyLogoRenderer = {
 |  template:
 |    `
-|      &lt;span>
-|        &lt;img :src="'https://www.ag-grid.com/example-assets/flags/' + cellValue + '-flag-sm.png'" height="30" />
-|      &lt;/span>
+|    &lt;span style="display: flex; height: 100%; width: 100%; align-items: center;">
+|      &lt;img :src="'https://downloads.jamesswinton.com/space-company-logos/' + cellValueLowerCase + '.png'" style="display: block; width: 25px; height: auto; max-height: 50%; margin-right: 12px; filter: brightness(1.1);" />
+|      &lt;p style="text-overflow: ellipsis; overflow: hidden; white-space: nowrap;">{{ cellValue }}&lt;/p>
+|    &lt;/span>
 |    `,
 |  setup(props) {
-|    const cellValue = props.params.value.toLowerCase();
+|    const cellValue = props.params.value;
+|    const cellValueLowerCase = cellValue.toLowerCase();
 |    return {
-|      cellValue
+|      cellValue,
+|      cellValueLowerCase
 |    };
 |  },
 |};
 </snippet>
 
-And then adding the `cellRenderer` property to the 'country' column:
+And then adding the `cellRenderer` property to the 'company' column:
 
 <snippet transform={false} language=jsx>
 |const App = {
 |  components: {
 |    AgGridVue,
-|    countryFlagCellRenderer: CountryFlagCellRenderer
+|    companyLogoRenderer: CompanyLogoRenderer
 |  },
 |  setup() {
 |    const colDefs = ref([
-|      { field: "country", cellRenderer: "countryFlagCellRenderer" },
+|      { field: "country", cellRenderer: "companyLogoRenderer" },
 |      // ...
 |    ]);
 |    // ...
@@ -1002,9 +932,11 @@ And then adding the `cellRenderer` property to the 'country' column:
 |}
 </snippet>
 
-Now, when we run the grid, we should see a country flag in place of the name:
+Now, when we run the grid, we should see a company logo next to the name:
 
 <grid-example title='Cell Renderer Example' name='cell-renderer-example' type='mixed' options='{ "exampleHeight": 550 }'></grid-example>
+
+_Note: Read our [Cell Renderer](/cell-rendering/) page for more information on using custom components in cells_
 
 ---
 
@@ -1194,6 +1126,10 @@ Let's put what you've learned so far into action by modifying the grid:
 
     _Hint: Use a `valueFormatter` on the 'Date' column to format its value_
 
+5. Add a Cell Renderer to display [ticks](https://downloads.jamesswinton.com/icons/tick-in-circle.png) and [crosses](https://downloads.jamesswinton.com/icons/cross-in-circle.png) in place of checkboxes on the 'Successful' column:
+
+   _Hint: Use a `cellRenderer` on the 'successful' column_
+
 Once complete, your grid should look like the example below. If you're stuck, check out the source code to see how its done:
 
 <grid-example title='Testing Example' name='testing-example' type='mixed' options='{ "exampleHeight": 550 }'></grid-example>
@@ -1223,6 +1159,10 @@ Let's put what you've learned so far into action by modifying the grid:
 4. Format the Date column using `.toLocaleDateString()`;
 
     _Hint: Use a `valueFormatter` on the 'Date' column to format its value_
+
+5. Add a Cell Renderer to display [ticks](https://downloads.jamesswinton.com/icons/tick-in-circle.png) and [crosses](https://downloads.jamesswinton.com/icons/cross-in-circle.png) in place of checkboxes on the 'Successful' column:
+
+   _Hint: Use a `cellRenderer` on the 'successful' column_
 
 Once complete, your grid should look like the example below. If you're stuck, check out the source code to see how its done:
 
@@ -1254,6 +1194,10 @@ Let's put what you've learned so far into action by modifying the grid:
 
     _Hint: Use a `valueFormatter` on the 'Date' column to format its value_
 
+5. Add a Cell Renderer to display [ticks](https://downloads.jamesswinton.com/icons/tick-in-circle.png) and [crosses](https://downloads.jamesswinton.com/icons/cross-in-circle.png) in place of checkboxes on the 'Successful' column:
+
+   _Hint: Use a `cellRenderer` on the 'successful' column_
+
 Once complete, your grid should look like the example below. If you're stuck, check out the source code to see how its done:
 
 <grid-example title='Testing Example' name='testing-example' type='mixed' options='{ "exampleHeight": 550 }'></grid-example>
@@ -1283,6 +1227,10 @@ Let's put what you've learned so far into action by modifying the grid:
 4. Format the Date column using `.toLocaleDateString()`;
 
     _Hint: Use a `valueFormatter` on the 'Date' column to format its value_
+
+5. Add a Cell Renderer to display [ticks](https://downloads.jamesswinton.com/icons/tick-in-circle.png) and [crosses](https://downloads.jamesswinton.com/icons/cross-in-circle.png) in place of checkboxes on the 'Successful' column:
+
+   _Hint: Use a `cellRenderer` on the 'successful' column_
 
 Once complete, your grid should look like the example below. If you're stuck, check out the source code to see how its done:
 
