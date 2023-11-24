@@ -101,8 +101,8 @@ function extractTypesFromNode(node, srcFile, includeQuestionMark) {
             let shortName = name.substring(2);
             shortName = toCamelCase(shortName);
 
-            nodeMembers[shortName] = { ...nodeMembers[name], meta: { isEvent: true, name } };
-            nodeMembers[name] = { ...nodeMembers[name], meta: { isEvent: true, name } };
+            nodeMembers[shortName] = { ...nodeMembers[name], meta: { ...nodeMembers[name].meta, isEvent: true, name } };
+            nodeMembers[name] = { ...nodeMembers[name], meta: { ...nodeMembers[name].meta, isEvent: true, name } };
         }
 
     }
