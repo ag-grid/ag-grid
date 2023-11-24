@@ -5,7 +5,7 @@ enterprise: true
 
 This section covers Server-Side Sorting using the Server-Side Row Model.
 
-## Enabling Sorting
+## Sorting
 
 Sorting is enabled by default in the grid and controlled via the `sortable` column definition attribute.
 
@@ -36,8 +36,6 @@ The request object sent to the server contains sort metadata in the `sortModel` 
         { colId: 'country', sort: 'asc' },
         { colId: 'year', sort: 'desc' },
     ]
-    
-    // other properties
 }
 ```
 

@@ -27,6 +27,7 @@ const GRID_OPTION_DEPRECATIONS: Deprecations<GridOptions> = {
     suppressParentsInRowNodes: { version: '30.2', message: 'Using suppressParentsInRowNodes is no longer recommended. To serialize nodes it is now recommended to instead remove the parent node reference before serialization.'},
 
     advancedFilterModel: { version: '31', message: 'Use `initialState.filter.advancedFilterModel` instead.'},
+    suppressAsyncEvents: { version: '31', message: 'Events should be handled asynchronously.'},
 };
 
 // Leave untyped. so it can be inferred.

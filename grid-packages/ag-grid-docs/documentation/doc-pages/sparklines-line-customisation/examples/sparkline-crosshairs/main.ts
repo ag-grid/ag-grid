@@ -89,7 +89,7 @@ const gridOptions: GridOptions = {
 function renderer(params: TooltipRendererParams) {
   return {
     backgroundColor: 'black',
-    opacity: 0.5,
+    opacity: 0.9,
     color: 'white',
   }
 }

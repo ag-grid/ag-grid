@@ -718,6 +718,7 @@ export interface GridOptions<TData = any> {
     suppressFocusAfterRefresh?: boolean;
     /**
      * Disables the asynchronous nature of the events introduced in v10, and makes them synchronous. This property only exists for the purpose of supporting legacy code which has a dependency on synchronous events from earlier versions (v9 or earlier) of AG Grid. **It is strongly recommended that you do not change this property unless you have legacy issues.**
+     * @deprecated v31 Events should be handled asynchronously.
      * @default false
      * @initial
      */
@@ -2148,11 +2149,11 @@ export interface GridOptions<TData = any> {
     onColumnAggFuncChangeRequest?(event: ColumnAggFuncChangeRequestEvent<TData>): void;
 
     /**
-     * @deprecated Since v31 api is no longer attached to GridOptions. See https://ag-grid.com/javascript-data-grid/grid-interface/#access-the-grid-api for how to access the api in your framework.
+     * @deprecated Since v31 api is no longer attached to GridOptions. See https://ag-grid.com/javascript-data-grid/grid-interface/#grid-api for how to access the api in your framework.
      */
     api?: never;
     /**
-     * @deprecated Since v31 `columnApi` is deprecated and all methods are now on the grid `api`. See https://ag-grid.com/javascript-data-grid/grid-interface/#access-the-grid-api for how to access the api in your framework.
+     * @deprecated Since v31 `columnApi` is deprecated and all methods are now on the grid `api`. See https://ag-grid.com/javascript-data-grid/grid-interface/#grid-api for how to access the api in your framework.
      */
     columnApi?: never;
 }

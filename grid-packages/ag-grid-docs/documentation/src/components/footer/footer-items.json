@@ -43,6 +43,10 @@
         "title": "The Company",
         "links": [
             {
+                "name": "AG Charts",
+                "url": "https://charts.ag-grid.com"
+            },
+            {
                 "name": "About",
                 "url": "/about"
             },

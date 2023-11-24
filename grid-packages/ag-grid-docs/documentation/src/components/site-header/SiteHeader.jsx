@@ -14,6 +14,7 @@ import menuData from '../../../doc-pages/licensing/menu.json';
 import apiMenuData from '../../../doc-pages/licensing/api-menu.json';
 import Search from "../search/Search";
 import {getCurrentFramework} from '../../utils/local-storage';
+import {PromoBanner} from '../promo-banner/PromoBanner'; 
 
 const SITE_HEADER_SMALL_WIDTH = parseInt(breakpoints['site-header-small'], 10);
 
@@ -30,7 +31,7 @@ const links = [
     },
     {
         name: 'API',
-        url: withPrefix('/grid-interface'),
+        url: withPrefix('/reference'),
         docsLink: true,
     },
     {
@@ -47,7 +48,7 @@ const links = [
         name: 'Github',
         url: 'https://github.com/ag-grid/ag-grid',
         icon: <Icon name="github" />,
-        cssClass: 'github-item',
+        github: true,
         docsLink: false,
     },
 ];
@@ -76,7 +77,8 @@ const HeaderLinks = ({ path, isOpen, toggleIsOpen, currentFramework }) => {
     return links.map((link) => {
         const linkClasses = classnames(styles.navItem, {
             [styles.navItemActive]: isLinkSelected(link.name, path),
-            [styles[link.cssClass]]: link.cssClass,
+            [styles.buttonItem]: link.github,
+            [styles.githubItem]: link.github,
         });
 
         return (
@@ -160,7 +162,7 @@ const HeaderNav = ({ path, currentFramework }) => {
 export const SiteHeader = ({ path, currentFramework }) => {
     const [isLogoHover, setIsLogoHover] = useState(false);
     return (
-        <header className={styles.header}>
+        <><PromoBanner /><header className={styles.header}>
             <div className={styles.headerInner}>
                 <a
                     href="/"
@@ -168,10 +170,10 @@ export const SiteHeader = ({ path, currentFramework }) => {
                     className={styles.headerLogo}
                     onMouseEnter={() => {
                         setIsLogoHover(true);
-                    }}
+                    } }
                     onMouseLeave={() => {
                         setIsLogoHover(false);
-                    }}
+                    } }
                 >
                     <LogoType />
                     <LogoMark bounce={isLogoHover} />
@@ -179,6 +181,6 @@ export const SiteHeader = ({ path, currentFramework }) => {
 
                 <HeaderNav path={path} currentFramework={currentFramework} />
             </div>
-        </header>
+        </header></>
     );
 };

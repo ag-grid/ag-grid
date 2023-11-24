@@ -14,6 +14,7 @@ let gridApi: GridApi;
 const gridOptions: GridOptions = {
   defaultColDef: {
     flex: 1,
+    sortable: false,
   },
   columnDefs: columnDefs,
   // use the enterprise row model

@@ -39,6 +39,7 @@ const gridOptions: GridOptions = {
     filter: 'agTextColumnFilter',
     floatingFilter: true,
     flex: 1,
+    sortable: false,
   },
   autoGroupColumnDef: {
     field: 'employeeName',

@@ -746,6 +746,7 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
          */
     @Input() public suppressFocusAfterRefresh: boolean | undefined = undefined;
     /** Disables the asynchronous nature of the events introduced in v10, and makes them synchronous. This property only exists for the purpose of supporting legacy code which has a dependency on synchronous events from earlier versions (v9 or earlier) of AG Grid.     **It is strongly recommended that you do not change this property unless you have legacy issues.**
+         * @deprecated v31 Events should be handled asynchronously.
          * @default false
          * @initial
          */

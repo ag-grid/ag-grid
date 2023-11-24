@@ -20,7 +20,6 @@
 }
 
 .toolbar {
-    height: 30px;
     white-space: nowrap;
 }
 
@@ -54,25 +53,21 @@ button i {
 }
 
 .factory-red {
-    background-color: indianred;
+    background-color: #CC333344;
 }
-
 .factory-green {
-    background-color: darkseagreen;
+    background-color: #33CC3344;
 }
-
 .factory-blue {
-    background-color: cornflowerblue;
-}
-
-.green-row {
-    background-color: #ddffdd !important;
+    background-color: #2244CC44;
 }
 
 .red-row {
-    background-color: #ffdddd !important;
+    background-color: #CC333344 !important;
 }
-
+.green-row {
+    background-color: #33CC3344 !important;
+}
 .blue-row {
-    background-color: #ddddff !important;
+    background-color: #2244CC44 !important;
 }

@@ -34,6 +34,7 @@ const gridOptions: GridOptions = {
           type: 'bar',
           valueAxisDomain: [0, 100],
           label: {
+            color: '#5577CC',
             enabled: true,
             placement: 'outsideEnd',
             formatter: function (params) { return `${params.value}%` },
@@ -80,6 +81,7 @@ const gridOptions: GridOptions = {
         sparklineOptions: {
           type: 'column',
           label: {
+            color: '#5577CC',
             enabled: true,
             placement: 'outsideEnd',
             fontFamily: 'Arial, Helvetica, sans-serif',

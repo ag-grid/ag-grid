@@ -772,7 +772,6 @@
             }
         },
         "suppressFocusAfterRefresh": {},
-        "suppressAsyncEvents": {},
         "suppressBrowserResizeObserver": {},
         "suppressPropertyNamesCheck": {},
         "suppressChangeDetection": {

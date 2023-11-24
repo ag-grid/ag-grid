@@ -12,7 +12,6 @@ const LicensePricingBare = ({location}) => {
         // Using .no-transitions class so that there are no animations between light/dark modes
         htmlEl.classList.add('no-transitions');
         htmlEl.dataset.darkMode = darkMode ? 'true' : 'false';
-        htmlEl.offsetHeight; // Trigger a reflow, flushing the CSS changes
         htmlEl.classList.remove('no-transitions');
     }
 
