@@ -1,6 +1,6 @@
 import { ColumnApi } from "./columns/columnApi";
 import { ComponentUtil } from "./components/componentUtil";
-import { Autowired, Bean, PostConstruct, PreDestroy, Qualifier } from "./context/context";
+import { Autowired, Bean, PostConstruct, PreDestroy } from "./context/context";
 import { DomLayoutType, GridOptions } from "./entities/gridOptions";
 import { GetGroupAggFilteringParams, GetGroupIncludeFooterParams, RowHeightParams } from "./interfaces/iCallbackParams";
 import { Environment } from "./environment";
@@ -28,7 +28,6 @@ type GetKeys<T, U> = {
 export type KeysOfType<U> = Exclude<GetKeys<GridOptions, U>, AnyGridOptions>;
 
 type BooleanProps = Exclude<KeysOfType<boolean>, AnyGridOptions>;
-type NumberProps = Exclude<KeysOfType<number>, AnyGridOptions>;
 type NoArgFuncs = KeysOfType<() => any>;
 type AnyArgFuncs = KeysOfType<(arg: 'NO_MATCH') => any>;
 type CallbackProps = Exclude<KeysOfType<(params: AgGridCommon<any, any>) => any>, NoArgFuncs | AnyArgFuncs>;
@@ -90,13 +89,11 @@ export class GridOptionsService {
     }
 
     private propertyEventService: EventService = new EventService();
-    private gridOptionLookup: Set<string>;
 
 
     @PostConstruct
     public init(): void {
         this.columnApi = new ColumnApi(this.api);
-        this.gridOptionLookup = new Set([...ComponentUtil.ALL_PROPERTIES, ...ComponentUtil.EVENT_CALLBACKS]);
         const async = !this.get('suppressAsyncEvents');
         this.eventService.addGlobalListener(this.globalEventHandlerFactory().bind(this), async);
         this.eventService.addGlobalListener(this.globalEventHandlerFactory(true).bind(this), false);
