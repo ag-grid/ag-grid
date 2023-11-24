@@ -4,6 +4,10 @@ title: "Text Cell Editor"
 
 Simple text editor that uses the standard HTML `input`. This editor is the default if none other specified.
 
+## Enabling Text Cell Editor
+
+<grid-example title='Text Editor' name='text-editor' type='generated' options='{ "modules": ["clientside"] }'></grid-example>
+
 Specified with `agTextCellEditor` and configured with `ITextCellEditorParams`.
 
 ```js
@@ -18,9 +22,7 @@ columnDefs: [
 ]
 ```
 
-<grid-example title='Text Editor' name='text-editor' type='generated' options='{ "modules": ["clientside"] }'></grid-example>
-
-## Interface
+## API Reference
 
 <interface-documentation interfaceName='ITextCellEditorParams' names='["useFormatter","maxLength"]'></interface-documentation>
 
