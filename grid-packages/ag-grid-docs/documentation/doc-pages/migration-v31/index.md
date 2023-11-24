@@ -150,6 +150,8 @@ This release includes the following breaking changes:
 
 ### Deprecations
 
+This release includes the following deprecations:
+
 **Column Filters:**
 
 * `IFilterParams.valueGetter` is deprecated in favour of `IFilterParams.getValue`, which provides a simpler method of retrieving cell values.
