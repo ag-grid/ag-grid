@@ -95,7 +95,7 @@ This example uses the previous custom filter but implementing the `getModelAsStr
 </framework-specific-section>
 
 <framework-specific-section frameworks="angular">
-<grid-example title='Angular Floating Filter Component' name='floating-filter-component' type='generated' options='{ "exampleHeight": 370, "extras": ["bootstrap"], "includeNgFormsModule" : true }'></grid-example>
+<grid-example title='Angular Floating Filter Component' name='floating-filter-component' type='generated' options='{ "exampleHeight": 370, "includeNgFormsModule" : true }'></grid-example>
 </framework-specific-section>
 
 <framework-specific-section frameworks="react">
@@ -105,7 +105,7 @@ This example uses the previous custom filter but implementing the `getModelAsStr
 </framework-specific-section>
 
 <framework-specific-section frameworks="react">
-<grid-example title='React Floating Filter Component' name='floating-filter-component' type='generated' options='{ "exampleHeight": 370, "onlyShow": "react", "extras": ["bootstrap"] }'></grid-example>
+<grid-example title='React Floating Filter Component' name='floating-filter-component' type='generated' options='{ "exampleHeight": 370, "onlyShow": "react" }'></grid-example>
 </framework-specific-section>
 
 <framework-specific-section frameworks="react">
@@ -120,7 +120,7 @@ This example uses the previous custom filter but implementing the `getModelAsStr
 </framework-specific-section>
 
 <framework-specific-section frameworks="vue">
-<grid-example title='Vue Floating Filter Component' name='floating-filter-component' type='generated' options='{ "exampleHeight": 370, "extras": ["bootstrap"] }'></grid-example>
+<grid-example title='Vue Floating Filter Component' name='floating-filter-component' type='generated' options='{ "exampleHeight": 370 }'></grid-example>
 </framework-specific-section>
 
 ## Complex example with jQuery

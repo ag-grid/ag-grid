@@ -121,7 +121,7 @@ const MoodEditor = memo(forwardRef((props: ICellEditorParams, ref) => {
     const mood = {
         borderRadius: 15,
         border: '1px solid grey',
-        background: '#e6e6e6',
+        backgroundColor: '#e6e6e6',
         padding: 15,
         textAlign: 'center' as const,
         display: 'inline-block'

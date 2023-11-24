@@ -5,11 +5,11 @@
 }
 
 .locked-col {
-    background: #ddd;
+    background-color: #99999944;
 }
 
 .suppress-movable-col {
-    background: #f5f5dc;
+    background-color: #CC333344;
 }
 
 .legend-box {

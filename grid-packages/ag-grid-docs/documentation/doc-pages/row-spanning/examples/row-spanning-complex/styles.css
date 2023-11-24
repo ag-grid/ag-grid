@@ -1,5 +1,5 @@
 .show-cell {
-    background: #99999944;
+    background-color: #99999944;
     border-left: 1px solid var(--ag-foreground-color) !important;
     border-right: 1px solid var(--ag-foreground-color) !important;
     border-bottom: 1px solid var(--ag-foreground-color) !important;

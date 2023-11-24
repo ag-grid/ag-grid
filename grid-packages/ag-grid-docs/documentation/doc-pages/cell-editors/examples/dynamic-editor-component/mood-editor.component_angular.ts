@@ -14,7 +14,7 @@ import { ICellEditorAngularComp } from "@ag-grid-community/angular";
         .mood {
             border-radius: 15px;
             border: 1px solid grey;
-            background: #e6e6e6;
+            background-color: #e6e6e6;
             padding: 15px;
             text-align: center;
             display: inline-block;

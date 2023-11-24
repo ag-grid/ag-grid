@@ -226,7 +226,7 @@ refer to the [hook specific](../react-hooks/) documentation for more information
 |- Storing the Grid API via the "Grid Ready" event, and using it later
 </framework-specific-section>
 <framework-specific-section frameworks="angular">
-<grid-example title='Simple Dynamic Component' name='dynamic-components' type='mixed' options='{ "extras": ["fontawesome", "bootstrap"] }'></grid-example>
+<grid-example title='Simple Dynamic Component' name='dynamic-components' type='mixed' options='{ "extras": ["fontawesome"] }'></grid-example>
 </framework-specific-section>
 
 <framework-specific-section frameworks="react">
@@ -237,7 +237,7 @@ refer to the [hook specific](../react-hooks/) documentation for more information
 |- Using a `ref` to access `AgGridReact` in order to access the underlying APIs
 </framework-specific-section>
 <framework-specific-section frameworks="react">
-<grid-example title='Simple Dynamic Component' name='dynamic-components' type='mixed' options='{ "extras": ["fontawesome", "bootstrap"] }'></grid-example>
+<grid-example title='Simple Dynamic Component' name='dynamic-components' type='mixed' options='{ "extras": ["fontawesome"] }'></grid-example>
 </framework-specific-section>
 
 <framework-specific-section frameworks="vue">
@@ -248,7 +248,7 @@ refer to the [hook specific](../react-hooks/) documentation for more information
 |- Storing the Grid API via the "Grid Ready" event, and using it later
 </framework-specific-section>
 <framework-specific-section frameworks="vue">
-<grid-example title='Simple Dynamic Component' name='dynamic-components' type='mixed' options='{ "extras": ["fontawesome", "bootstrap"] }'></grid-example>
+<grid-example title='Simple Dynamic Component' name='dynamic-components' type='mixed' options='{ "extras": ["fontawesome"] }'></grid-example>
 </framework-specific-section>
 
 <framework-specific-section frameworks="angular">
@@ -257,7 +257,7 @@ refer to the [hook specific](../react-hooks/) documentation for more information
 | Using more complex Angular Components in the Cell Renderers - specifically how you can use nested `NgModule`'s within the grid.
 </framework-specific-section>
 <framework-specific-section frameworks="angular">
-<grid-example title='Richer Dynamic Components' name='angular-rich-dynamic' type='angular' options='{ "exampleHeight": 380, "extras": ["bootstrap"] }'></grid-example>
+<grid-example title='Richer Dynamic Components' name='angular-rich-dynamic' type='angular' options='{ "exampleHeight": 380 }'></grid-example>
 </framework-specific-section>
 
 ## Cell Renderer Keyboard Navigation
