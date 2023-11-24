@@ -1,5 +1,3 @@
-// PromoBanner.js
-
 import React, { useState, useEffect } from 'react';
 import styles from './PromoBanner.module.scss';
 import LogoMarkTransparent from '../LogoMarkTransparent';
@@ -23,12 +21,12 @@ export const PromoBanner = () => {
   return (
     <div className={`${styles.promoBanner} ${isVisible ? styles.visible : styles.hidden}`}>
       <LogoMarkTransparent />
-      <a href="https://ag-grid.com/ag-charts" >
+      <a href="http://charts.ag-grid.com/" >
       <div className={styles.promoText}>
         Introducing our new AG Charts library
       </div>
       </a>
-      <a href="https://ag-grid.com/ag-charts" className={styles.visitButton}>
+      <a href="http://charts.ag-grid.com/" className={styles.visitButton}>
         <div>
           Visit →
         </div>
