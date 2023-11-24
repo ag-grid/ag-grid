@@ -18,7 +18,7 @@ class CompanyLogoRenderer implements ICellRendererComp {
     // Optional: Params for rendering. The same params that are passed to the cellRenderer function.
     init(params: ICellRendererParams) {
         let companyLogo: HTMLImageElement = document.createElement('img');
-        companyLogo.src = `https://downloads.jamesswinton.com/space-company-logos/${params.value.toLowerCase()}.png`
+        companyLogo.src = `https://www.ag-grid.com/example-assets/space-company-logos/${params.value.toLowerCase()}.png`
         companyLogo.setAttribute('style', 'display: block; width: 25px; height: auto; max-height: 50%; margin-right: 12px; filter: brightness(1.1)');
         
         let companyName: HTMLParagraphElement = document.createElement('p');
@@ -48,7 +48,7 @@ class MissionResultRenderer implements ICellRendererComp {
     // Optional: Params for rendering. The same params that are passed to the cellRenderer function.
     init(params: ICellRendererParams) {
         let icon: HTMLImageElement = document.createElement('img');
-        icon.src = `https://downloads.jamesswinton.com/icons/${params.value ? 'tick-in-circle' : 'cross-in-circle'}.png`
+        icon.src = `https://www.ag-grid.com/example-assets/icons/${params.value ? 'tick-in-circle' : 'cross-in-circle'}.png`
         icon.setAttribute('style', 'width: auto; height: auto;');
 
         this.eGui = document.createElement('span');
@@ -135,6 +135,6 @@ const gridOptions: GridOptions = {
 gridApi = createGrid(document.querySelector<HTMLElement>('#myGrid')!, gridOptions);
 
 // Fetch Remote Data
-fetch('https://downloads.jamesswinton.com/space-mission-data.json')
+fetch('https://www.ag-grid.com/example-assets/space-mission-data.json')
     .then(response => response.json())
     .then((data: any) => gridApi.setGridOption('rowData', data))

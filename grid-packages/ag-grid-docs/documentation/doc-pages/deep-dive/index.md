@@ -100,7 +100,7 @@ Complete our [Quick Start](/getting-started/) (or open the example below in Code
 The Grid API provides a way of interacting with the grid. To update the data within the grid, we can use the `setGridOption` API. Let's test this by fetching some data and updating our grid with the response:
 
 <snippet transform={false} language="jsx">
-|fetch('https://downloads.jamesswinton.com/space-mission-data.json')
+|fetch('https://www.ag-grid.com/example-assets/space-mission-data.json')
 |  .then(response => response.json())
 |  .then((data: any) => gridApi.setGridOption('rowData', data))
 </snippet>
@@ -133,7 +133,7 @@ As `rowData` is a reactive property, any updates to its state will be reflected 
 <snippet transform={false} language="jsx">
 |// Fetch data & update rowData state
 |useEffect(() => {
-|  fetch('https://downloads.jamesswinton.com/space-mission-data.json') // Fetch data from server
+|  fetch('https://www.ag-grid.com/example-assets/space-mission-data.json') // Fetch data from server
 |    .then(result => result.json()) // Convert to JSON
 |    .then(rowData => setRowData(rowData)) // Update state of `rowData`
 |}, [])
@@ -187,7 +187,7 @@ And then executing a HTTP request when the onGridReady event is fired, subscribi
 |// Load data into grid when ready
 |onGridReady(params: GridReadyEvent) {
 |  this.http
-|    .get&lt;any[]>('https://downloads.jamesswinton.com/space-mission-data.json')
+|    .get&lt;any[]>('https://www.ag-grid.com/example-assets/space-mission-data.json')
 |    .subscribe(data => this.rowData = data);
 |}
 </snippet>
@@ -225,7 +225,7 @@ As rowData is a managed property, any updates to its value will be reflected in 
 |});
 |
 |const fetchData = async () => {
-|  const response = await fetch('https://downloads.jamesswinton.com/space-mission-data.json');
+|  const response = await fetch('https://www.ag-grid.com/example-assets/space-mission-data.json');
 |  return response.json();
 |};
 </snippet>
@@ -741,7 +741,7 @@ Let's try this by creating a new component to display the company logo in the 'c
 |  // Optional: Params for rendering. The same params that are passed to the cellRenderer function.
 |  init(params) {
 |    let companyLogo = document.createElement('img');
-|    companyLogo.src = `https://downloads.jamesswinton.com/space-company-logos/${params.value.toLowerCase()}.png`
+|    companyLogo.src = `https://www.ag-grid.com/example-assets/space-company-logos/${params.value.toLowerCase()}.png`
 |    companyLogo.setAttribute('style', 'display: block; width: 25px; height: auto; max-height: 50%; margin-right: 12px; filter: brightness(1.1)');
 |    let companyName = document.createElement('p');
 |    companyName.innerHTML = params.value;
@@ -799,7 +799,7 @@ Let's try this by creating a new component to display the company logo in the 'c
 <snippet transform={false} language=jsx>
 |// Custom Cell Renderer (Display flags based on cell value)
 |const CompanyLogoRenderer = ({ value }) => (
-|  &lt;span style={{ display: "flex", height: "100%", width: "100%", alignItems: "center" }}>{value && &lt;img alt={`${value} Flag`} src={`https://downloads.jamesswinton.com/space-company-logos/${value.toLowerCase()}.png`} style={{display: "block", width: "25px", height: "auto", maxHeight: "50%", marginRight: "12px", filter: "brightness(1.1)"}} />}&lt;p style={{ textOverflow: "ellipsis", overflow: "hidden", whiteSpace: "nowrap" }}>{value}&lt;p>&lt;/span>
+|  &lt;span style={{ display: "flex", height: "100%", width: "100%", alignItems: "center" }}>{value && &lt;img alt={`${value} Flag`} src={`https://www.ag-grid.com/example-assets/space-company-logos/${value.toLowerCase()}.png`} style={{display: "block", width: "25px", height: "auto", maxHeight: "50%", marginRight: "12px", filter: "brightness(1.1)"}} />}&lt;p style={{ textOverflow: "ellipsis", overflow: "hidden", whiteSpace: "nowrap" }}>{value}&lt;p>&lt;/span>
 );
 </snippet>
 
@@ -842,7 +842,7 @@ Let's try this by creating a new component to display the company logo in the 'c
 |  selector: 'app-company-logo-renderer',
 |  standalone: true,
 |  imports: [CommonModule],
-|  template: `&lt;span *ngIf="value" >&lt;img [alt]="value" [src]="'https://downloads.jamesswinton.com/space-company-logos/' + value.toLowerCase() + '.png'" /> &lt;p>{{ value }}&lt;/p>&lt;/span>`,
+|  template: `&lt;span *ngIf="value" >&lt;img [alt]="value" [src]="'https://www.ag-grid.com/example-assets/space-company-logos/' + value.toLowerCase() + '.png'" /> &lt;p>{{ value }}&lt;/p>&lt;/span>`,
 |  styles: ["img {display: block; width: 25px; height: auto; maxHeight: 50%; margin-right: 12px; filter: brightness(1.2);} span {display: flex; height: 100%; width: 100%; align-items: center} p { text-overflow: ellipsis; overflow: hidden; white-space: nowrap }"]
 |})
 |
@@ -898,7 +898,7 @@ Let's try this by creating a new component to display the company logo in the 'c
 |  template:
 |    `
 |    &lt;span style="display: flex; height: 100%; width: 100%; align-items: center;">
-|      &lt;img :src="'https://downloads.jamesswinton.com/space-company-logos/' + cellValueLowerCase + '.png'" style="display: block; width: 25px; height: auto; max-height: 50%; margin-right: 12px; filter: brightness(1.1);" />
+|      &lt;img :src="'https://www.ag-grid.com/example-assets/space-company-logos/' + cellValueLowerCase + '.png'" style="display: block; width: 25px; height: auto; max-height: 50%; margin-right: 12px; filter: brightness(1.1);" />
 |      &lt;p style="text-overflow: ellipsis; overflow: hidden; white-space: nowrap;">{{ cellValue }}&lt;/p>
 |    &lt;/span>
 |    `,
@@ -1126,7 +1126,7 @@ Let's put what you've learned so far into action by modifying the grid:
 
     _Hint: Use a `valueFormatter` on the 'Date' column to format its value_
 
-5. Add a Cell Renderer to display [ticks](https://downloads.jamesswinton.com/icons/tick-in-circle.png) and [crosses](https://downloads.jamesswinton.com/icons/cross-in-circle.png) in place of checkboxes on the 'Successful' column:
+5. Add a Cell Renderer to display [ticks](https://www.ag-grid.com/example-assets/icons/tick-in-circle.png) and [crosses](https://www.ag-grid.com/example-assets/icons/cross-in-circle.png) in place of checkboxes on the 'Successful' column:
 
    _Hint: Use a `cellRenderer` on the 'successful' column_
 
@@ -1160,7 +1160,7 @@ Let's put what you've learned so far into action by modifying the grid:
 
     _Hint: Use a `valueFormatter` on the 'Date' column to format its value_
 
-5. Add a Cell Renderer to display [ticks](https://downloads.jamesswinton.com/icons/tick-in-circle.png) and [crosses](https://downloads.jamesswinton.com/icons/cross-in-circle.png) in place of checkboxes on the 'Successful' column:
+5. Add a Cell Renderer to display [ticks](https://www.ag-grid.com/example-assets/icons/tick-in-circle.png) and [crosses](https://www.ag-grid.com/example-assets/icons/cross-in-circle.png) in place of checkboxes on the 'Successful' column:
 
    _Hint: Use a `cellRenderer` on the 'successful' column_
 
@@ -1194,7 +1194,7 @@ Let's put what you've learned so far into action by modifying the grid:
 
     _Hint: Use a `valueFormatter` on the 'Date' column to format its value_
 
-5. Add a Cell Renderer to display [ticks](https://downloads.jamesswinton.com/icons/tick-in-circle.png) and [crosses](https://downloads.jamesswinton.com/icons/cross-in-circle.png) in place of checkboxes on the 'Successful' column:
+5. Add a Cell Renderer to display [ticks](https://www.ag-grid.com/example-assets/icons/tick-in-circle.png) and [crosses](https://www.ag-grid.com/example-assets/icons/cross-in-circle.png) in place of checkboxes on the 'Successful' column:
 
    _Hint: Use a `cellRenderer` on the 'successful' column_
 
@@ -1228,7 +1228,7 @@ Let's put what you've learned so far into action by modifying the grid:
 
     _Hint: Use a `valueFormatter` on the 'Date' column to format its value_
 
-5. Add a Cell Renderer to display [ticks](https://downloads.jamesswinton.com/icons/tick-in-circle.png) and [crosses](https://downloads.jamesswinton.com/icons/cross-in-circle.png) in place of checkboxes on the 'Successful' column:
+5. Add a Cell Renderer to display [ticks](https://www.ag-grid.com/example-assets/icons/tick-in-circle.png) and [crosses](https://www.ag-grid.com/example-assets/icons/cross-in-circle.png) in place of checkboxes on the 'Successful' column:
 
    _Hint: Use a `cellRenderer` on the 'successful' column_
 

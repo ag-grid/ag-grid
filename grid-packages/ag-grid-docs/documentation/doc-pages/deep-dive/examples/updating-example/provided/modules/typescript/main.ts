@@ -40,6 +40,6 @@ const gridOptions: GridOptions = {
 gridApi = createGrid(document.querySelector<HTMLElement>('#myGrid')!, gridOptions);
 
 // Fetch Remote Data
-fetch('https://downloads.jamesswinton.com/space-mission-data.json')
+fetch('https://www.ag-grid.com/example-assets/space-mission-data.json')
   .then(response => response.json())
   .then((data: any) => gridApi.setGridOption('rowData', data))

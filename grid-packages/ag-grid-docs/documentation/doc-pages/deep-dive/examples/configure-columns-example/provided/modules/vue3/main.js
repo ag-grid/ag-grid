@@ -39,7 +39,7 @@ const App = {
     });
 
     const fetchData = async () => {
-      const response = await fetch('https://downloads.jamesswinton.com/space-mission-data.json');
+      const response = await fetch('https://www.ag-grid.com/example-assets/space-mission-data.json');
       return response.json();
     };
 

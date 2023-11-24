@@ -7,12 +7,12 @@ import { ColDef, ICellRendererParams, ValueFormatterParams } from 'ag-grid-commu
 
 // Custom Cell Renderer (Display logos based on cell value)
 const CompanyLogoRenderer = (params: ICellRendererParams) => (
-  <span style={{ display: "flex", height: "100%", width: "100%", alignItems: "center" }}>{params.value && <img alt={`${params.value} Flag`} src={`https://downloads.jamesswinton.com/space-company-logos/${params.value.toLowerCase()}.png`} style={{display: "block", width: "25px", height: "auto", maxHeight: "50%", marginRight: "12px", filter: "brightness(1.1)"}} />}<p style={{ textOverflow: "ellipsis", overflow: "hidden", whiteSpace: "nowrap" }}>{params.value}</p></span>
+  <span style={{ display: "flex", height: "100%", width: "100%", alignItems: "center" }}>{params.value && <img alt={`${params.value} Flag`} src={`https://www.ag-grid.com/example-assets/space-company-logos/${params.value.toLowerCase()}.png`} style={{display: "block", width: "25px", height: "auto", maxHeight: "50%", marginRight: "12px", filter: "brightness(1.1)"}} />}<p style={{ textOverflow: "ellipsis", overflow: "hidden", whiteSpace: "nowrap" }}>{params.value}</p></span>
 );
 
 /* Custom Cell Renderer (Display tick / cross in 'Successful' column) */
 const MissionResultRenderer = (params: ICellRendererParams) => (
-  <span style={{ display: "flex", justifyContent: "center", height: "100%", alignItems: "center"}}>{<img alt={`${params.value}`} src={`https://downloads.jamesswinton.com/icons/${params.value ? 'tick-in-circle' : 'cross-in-circle'}.png`} style={{width: "auto", height: "auto"}} />}</span>
+  <span style={{ display: "flex", justifyContent: "center", height: "100%", alignItems: "center"}}>{<img alt={`${params.value}`} src={`https://www.ag-grid.com/example-assets/icons/${params.value ? 'tick-in-circle' : 'cross-in-circle'}.png`} style={{width: "auto", height: "auto"}} />}</span>
 );
 
 /* Format Date Cells */
@@ -77,7 +77,7 @@ const GridExample = () => {
 
   // Fetch data & update rowData state
   useEffect(() => {
-    fetch('https://downloads.jamesswinton.com/space-mission-data.json')
+    fetch('https://www.ag-grid.com/example-assets/space-mission-data.json')
       .then(result => result.json())
       .then(rowData => setRowData(rowData))
   }, [])

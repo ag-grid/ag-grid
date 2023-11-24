@@ -29,7 +29,7 @@ interface IRow {
   template:
   `
   <span *ngIf="value" >
-    <img [alt]="value" [src]="'https://downloads.jamesswinton.com/space-company-logos/' + value.toLowerCase() + '.png'" />
+    <img [alt]="value" [src]="'https://www.ag-grid.com/example-assets/space-company-logos/' + value.toLowerCase() + '.png'" />
     <p>{{ value }}</p>
   </span>
   `,
@@ -107,7 +107,7 @@ export class AppComponent {
   constructor(private http: HttpClient) {}
   onGridReady(params: GridReadyEvent) {
     this.http
-      .get<any[]>('https://downloads.jamesswinton.com/space-mission-data.json')
+      .get<any[]>('https://www.ag-grid.com/example-assets/space-mission-data.json')
       .subscribe(data => this.rowData = data);
   }
 }
