@@ -1,5 +1,5 @@
 export default {
-    template: `<span :style="{color: color, fontWeight: fontWeight}">{{prefix}} {{cellValue}}</span>`,
+    template: `<span :style="{backgroundColor: color, fontWeight: fontWeight}">{{prefix}} {{cellValue}}</span>`,
     data: function () {
         return {
             cellValue: null,
@@ -10,7 +10,7 @@ export default {
     },
     beforeMount() {
         this.cellValue = this.params.value;
-        this.color = this.params.node.footer ? 'navy' : '';
+        this.color = this.params.node.footer ? '#2244CC44' : '';
         this.fontWeight = (this.params.node.footer && this.params.node.level === -1) ? 'bold' : '';
         if (this.params.node.footer) {
             this.prefix = (this.params.node.level === -1) ? 'Grand Total' : 'Sub Total';

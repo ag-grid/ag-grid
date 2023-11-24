@@ -9,8 +9,14 @@ function exists(value: any, allowEmptyString = false): boolean {
     return value != null && (value !== '' || allowEmptyString);
 }
 
+const LICENSE_TYPES = {
+    '01': 'GRID',
+    '02': 'CHARTS',
+    '0102': 'BOTH'
+}
+
 export class LicenseManager {
-    private static RELEASE_INFORMATION: string = 'MTY5NTU0ODUwMjk2NQ==';
+    private static RELEASE_INFORMATION: string = 'MTcwMDc2MzcxODkzNg==';
     private static licenseKey: string;
     private watermarkMessage: string | undefined = undefined;
 
@@ -25,33 +31,19 @@ export class LicenseManager {
     }
 
     public validateLicense(): void {
-        if (missingOrEmpty(LicenseManager.licenseKey)) {
+        const licenseDetails = this.getLicenseDetails(LicenseManager.licenseKey);
+        if (licenseDetails.missing) {
             if (!this.isWebsiteUrl() || this.isForceWatermark()) {
                 this.outputMissingLicenseKey();
             }
-        } else if (LicenseManager.licenseKey.length > 32) {
-            if (LicenseManager.licenseKey.indexOf("For_Trialing_ag-Grid_Only") !== -1) {
-                this.outputInvalidLicenseKey();
-            } else {
-                const {
-                    md5,
-                    license,
-                    version,
-                    isTrial
-                } = LicenseManager.extractLicenseComponents(LicenseManager.licenseKey);
-
-                if (md5 === this.md5.md5(license)) {
-                    if (exists(version) && version) {
-                        this.validateLicenseKeyForVersion(version, !!isTrial, license);
-                    } else {
-                        this.validateLegacyKey(license);
-                    }
-                } else {
-                    this.outputInvalidLicenseKey();
-                }
-            }
-        } else {
-            this.outputInvalidLicenseKey();
+        } else if (!licenseDetails.valid) {
+            this.outputInvalidLicenseKey(licenseDetails.incorrectLicenseType, licenseDetails.licenseType);
+        } else if (licenseDetails.isTrial && licenseDetails.trialExpired) {
+            this.outputExpiredTrialKey(licenseDetails.expiry);
+        } else if (licenseDetails.expired) {
+            const gridReleaseDate = LicenseManager.getGridReleaseDate();
+            const formattedReleaseDate = LicenseManager.formatDate(gridReleaseDate);
+            this.outputIncompatibleVersion(licenseDetails.expiry, formattedReleaseDate);
         }
     }
 
@@ -67,34 +59,94 @@ export class LicenseManager {
         let cleanedLicenseKey = licenseKey.replace(/[\u200B-\u200D\uFEFF]/g, '');
         cleanedLicenseKey = cleanedLicenseKey.replace(/\r?\n|\r/g, '');
 
+        // the hash that follows the key is 32 chars long
+        if (licenseKey.length <= 32) {
+            return {md5: null, license: licenseKey, version: null, isTrial: null};
+        }
+
         const hashStart = cleanedLicenseKey.length - 32;
         const md5 = cleanedLicenseKey.substring(hashStart);
         const license = cleanedLicenseKey.substring(0, hashStart);
-        const [version, isTrial] = LicenseManager.extractBracketedInformation(cleanedLicenseKey);
-        return {md5, license, version, isTrial};
+        const [version, isTrial, type] = LicenseManager.extractBracketedInformation(cleanedLicenseKey);
+        return {md5, license, version, isTrial, type};
     }
 
     public getLicenseDetails(licenseKey: string) {
-        const { md5, license, version, isTrial } = LicenseManager.extractLicenseComponents(licenseKey);
-        let valid = (md5 === this.md5.md5(license)) && licenseKey.indexOf("For_Trialing_ag-Grid_Only") === -1;
-        let trialExpired: null | boolean = null;
+        if (missingOrEmpty(licenseKey)) {
+            return {
+                licenseKey,
+                valid: false,
+                missing: true
+            }
+        }
 
+        const gridReleaseDate = LicenseManager.getGridReleaseDate();
+        const {md5, license, version, isTrial, type} = LicenseManager.extractLicenseComponents(licenseKey);
+        let valid = (md5 === this.md5.md5(license)) && licenseKey.indexOf("For_Trialing_ag-Grid_Only") === -1;
+        let trialExpired: undefined | boolean = undefined;
+        let expired: undefined | boolean = undefined;
         let expiry: Date | null = null;
+        let incorrectLicenseType: undefined | boolean = undefined;
+        let licenseType: undefined | string = undefined;
+
+        function handleTrial() {
+            const now = new Date();
+            trialExpired = (expiry! < now);
+            expired = undefined;
+        }
+
         if (valid) {
             expiry = LicenseManager.extractExpiry(license);
             valid = !isNaN(expiry.getTime());
 
-            if (isTrial) {
-                const now = new Date();
-                trialExpired = (expiry < now);
+            if (valid) {
+                expired = (gridReleaseDate > expiry);
+
+                switch (version) {
+                    case "legacy": {
+                        if (isTrial) {
+                            handleTrial();
+                        }
+                        break;
+                    }
+                    case "2": {
+                        if (isTrial) {
+                            handleTrial();
+                        }
+                        break;
+                    }
+                    case "3": {
+                        if (missingOrEmpty(type)) {
+                            valid = false;
+                        } else {
+                            if (type !== LICENSE_TYPES['01'] && type !== LICENSE_TYPES['0102']) {
+                                valid = false;
+                                incorrectLicenseType = true
+                                licenseType = type;
+                            } else if (isTrial) {
+                                handleTrial();
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        if (!valid) {
+            return {
+                licenseKey,
+                valid,
+                incorrectLicenseType,
+                licenseType
             }
         }
 
         return {
             licenseKey,
             valid,
-            expiry: valid ? LicenseManager.formatDate(expiry) : null,
-            version: version ? version : 'legacy',
+            expiry: LicenseManager.formatDate(expiry),
+            expired,
+            version,
             isTrial,
             trialExpired
         };
@@ -119,7 +171,7 @@ export class LicenseManager {
     private isForceWatermark(): boolean {
         const win = (this.document.defaultView || window);
         const loc = win.location;
-        const { pathname } = loc;
+        const {pathname} = loc;
 
         return pathname ? pathname.indexOf('forceWatermark') !== -1 : false;
     }
@@ -203,81 +255,32 @@ export class LicenseManager {
         this.licenseKey = licenseKey;
     }
 
-    private static extractBracketedInformation(licenseKey: string): [string | null, boolean | null] {
-        const matches = licenseKey.split('[')
-            .filter(function (v) {
-                return v.indexOf(']') > -1;
-            })
-            .map(function (value) {
-                return value.split(']')[0];
-            });
+    private static extractBracketedInformation(licenseKey: string): [string | null, boolean | null, string?] {
+        // legacy no trial key
+        if (!licenseKey.includes("[")) {
+            return ["legacy", false, undefined];
+        }
 
+        const matches = licenseKey.match(/\[(.*?)\]/g)!.map(match => match.replace("[", "").replace("]", ""));
         if (!matches || matches.length === 0) {
-            return [null, null];
+            return ["legacy", false, undefined];
         }
 
         const isTrial = matches.filter(match => match === 'TRIAL').length === 1;
-        const version = matches.filter(match => match.indexOf("v") === 0).map(match => match.replace(/^v/, ""))[0];
+        const rawVersion = matches.filter(match => match.indexOf("v") === 0)[0];
+        const version = rawVersion ? rawVersion.replace('v', '') : 'legacy';
+        const type = (LICENSE_TYPES as any)[matches.filter(match => (LICENSE_TYPES as any)[match])[0]];
 
-        return [version, isTrial];
+        return [version, isTrial, type];
     }
 
-    private validateLicenseKeyForVersion(version: string, isTrial: boolean, license: string) {
-        if (version !== '2') {
-            return;
-        }
-
-        if (isTrial) {
-            this.validateForTrial(license);
-        } else {
-            this.validateLegacyKey(license);
-        }
-    }
-
-    private validateLegacyKey(license: string) {
-        const gridReleaseDate = LicenseManager.getGridReleaseDate();
-        const expiry = LicenseManager.extractExpiry(license);
-
-        let valid: boolean = false;
-        let current: boolean = false;
-        if (!isNaN(expiry.getTime())) {
-            valid = true;
-            current = (gridReleaseDate < expiry);
-        }
-
-        if (!valid) {
-            this.outputInvalidLicenseKey();
-        } else if (!current) {
-            const formattedExpiryDate = LicenseManager.formatDate(expiry);
-            const formattedReleaseDate = LicenseManager.formatDate(gridReleaseDate);
-
-            this.outputIncompatibleVersion(formattedExpiryDate, formattedReleaseDate);
-        }
-    }
-
-    private validateForTrial(license: string) {
-        const expiry = LicenseManager.extractExpiry(license);
-        const now = new Date();
-
-        let valid: boolean = false;
-        let current: boolean = false;
-        if (!isNaN(expiry.getTime())) {
-            valid = true;
-            current = (expiry > now);
-        }
-
-        if (!valid) {
-            this.outputInvalidLicenseKey();
-        } else if (!current) {
-            const formattedExpiryDate = LicenseManager.formatDate(expiry);
-            this.outputExpiredTrialKey(formattedExpiryDate);
-        }
-    }
-
-    private outputInvalidLicenseKey() {
+    private outputInvalidLicenseKey(incorrectLicenseType?: boolean, licenseType?: string) {
         console.error('*****************************************************************************************************************');
         console.error('***************************************** AG Grid Enterprise License ********************************************');
         console.error('********************************************* Invalid License ***************************************************');
+        if(exists(incorrectLicenseType) && incorrectLicenseType && licenseType === 'CHARTS') {
+            console.error('* Your license is for AG Charts Enterprise but the license supplied is for AG Grid Enterprise Only              *');
+        }
         console.error('* Your license for AG Grid Enterprise is not valid - please contact info@ag-grid.com to obtain a valid license. *');
         console.error('*****************************************************************************************************************');
         console.error('*****************************************************************************************************************');

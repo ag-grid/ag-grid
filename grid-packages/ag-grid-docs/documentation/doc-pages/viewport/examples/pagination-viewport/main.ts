@@ -69,6 +69,7 @@ const gridOptions: GridOptions = {
   defaultColDef: {
     flex: 1,
     minWidth: 140,
+    sortable: false,
   },
   rowModelType: 'viewport',
   pagination: true,

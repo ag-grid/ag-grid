@@ -43,7 +43,7 @@ const gridOptions: GridOptions = {
           fontWeight: 'bold',
           fontSize: 15,
           fontFamily: 'Arial, sans-serif',
-          color: 'green',
+          color: 'white',
           formatter: (params:any) => { // charts typings
             return '<' + params.value + '>'
           },

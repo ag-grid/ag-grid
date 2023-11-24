@@ -27,9 +27,9 @@ const gridOptions: GridOptions = {
           enabled: true,
           fontStyle: 'italic',
           fontWeight: 'bold',
-          fontSize: 14,
+          fontSize: 16,
           fontFamily: 'Arial, sans-serif',
-          color: 'maroon',
+          color: 'deeppink',
         },
         highlightStyle: {
           item: {
@@ -49,7 +49,7 @@ const gridOptions: GridOptions = {
           fontWeight: 'bold',
           fontSize: 14,
           fontFamily: 'Arial, sans-serif',
-          color: '#2222aa',
+          color: '#999',
           minAngle: 30,
         },
         calloutLine: {

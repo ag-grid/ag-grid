@@ -16,7 +16,6 @@ import Search from "../search/Search";
 import {getCurrentFramework} from '../../utils/local-storage';
 import {PromoBanner} from '../promo-banner/PromoBanner'; 
 
-
 const SITE_HEADER_SMALL_WIDTH = parseInt(breakpoints['site-header-small'], 10);
 
 const links = [
@@ -32,7 +31,7 @@ const links = [
     },
     {
         name: 'API',
-        url: withPrefix('/grid-interface'),
+        url: withPrefix('/reference'),
         docsLink: true,
     },
     {
@@ -49,7 +48,7 @@ const links = [
         name: 'Github',
         url: 'https://github.com/ag-grid/ag-grid',
         icon: <Icon name="github" />,
-        cssClass: 'github-item',
+        github: true,
         docsLink: false,
     },
 ];
@@ -78,7 +77,8 @@ const HeaderLinks = ({ path, isOpen, toggleIsOpen, currentFramework }) => {
     return links.map((link) => {
         const linkClasses = classnames(styles.navItem, {
             [styles.navItemActive]: isLinkSelected(link.name, path),
-            [styles[link.cssClass]]: link.cssClass,
+            [styles.buttonItem]: link.github,
+            [styles.githubItem]: link.github,
         });
 
         return (

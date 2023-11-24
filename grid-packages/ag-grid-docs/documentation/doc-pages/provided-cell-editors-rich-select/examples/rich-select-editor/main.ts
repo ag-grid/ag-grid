@@ -5,44 +5,33 @@ import {
   GridOptions,
   IRichCellEditorParams,
 } from '@ag-grid-community/core';
-import { ColourCellRenderer } from './colourCellRenderer_typescript'
-import { colors } from './colors';
 
-const columnDefs: ColDef[] = [
-  { 
-    headerName: 'Rich Select Editor', 
-    field: 'color', 
-    cellRenderer: ColourCellRenderer,
-    cellEditor: 'agRichSelectCellEditor',
-    cellEditorParams: {
-      values: colors, 
-      cellRenderer: ColourCellRenderer,
-      filterList: true,
-      searchType: 'match',
-      allowTyping: true,
-      valueListMaxHeight: 220
-    } as IRichCellEditorParams
-  },
-];
+const languages = ['English', 'Spanish', 'French', 'Portuguese', '(other)'];
 
 function getRandomNumber(min: number, max: number) { // min and max included 
   return Math.floor(Math.random() * (max - min + 1) + min)
 }
 
-const data = Array.from(Array(20).keys()).map(() => {
-  const color = colors[getRandomNumber(0, colors.length - 1)];
-  return ({ color });
-});
+const columnDefs: ColDef[] = [
+  { 
+    headerName: 'Rich Select Editor', 
+    field: 'language', 
+    cellEditor: 'agRichSelectCellEditor',
+    cellEditorParams: {
+      values: languages
+    } as IRichCellEditorParams
+  },
+];
 
 let gridApi: GridApi;
 
 const gridOptions: GridOptions = {
   defaultColDef: {
-    flex: 1,
+    width: 200,
     editable: true
   },
   columnDefs: columnDefs,
-  rowData: data
+  rowData: new Array(100).fill(null).map(() => ({ language: languages[getRandomNumber(0, 4)] }))
 }
 
 // setup the grid after the page has finished loading

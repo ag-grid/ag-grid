@@ -32,7 +32,7 @@ export interface IRichCellEditorParams<TData = any, TValue = any> {
     searchType?: 'match' | 'matchAny' | 'fuzzy';
     /**
      * If `true`, each item on the list of values will highlight the part of the text that matches the input. 
-     * This option does not work when `searchType="fuzzy"`.
+     * Note: It only makes sense to use this option when `filterList` is `true` and `searchType` is **not** `fuzzy`.
      * @default false.
      */
     highlightMatch?: boolean;

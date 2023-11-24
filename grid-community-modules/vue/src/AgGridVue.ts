@@ -91,7 +91,10 @@ export class AgGridVue extends Vue {
         const gridOptions = ComponentUtil.combineAttributesAndGridOptions(this.gridOptions, this);
 
         this.checkForBindingConflicts();
-        gridOptions.rowData = this.getRowDataBasedOnBindings();
+        const rowData = this.getRowDataBasedOnBindings();
+        if (rowData !== ComponentUtil.VUE_OMITTED_PROPERTY) {
+            gridOptions.rowData = rowData;
+        }
 
         const gridParams: GridParams = {
             globalEventListener: this.globalEventListenerFactory().bind(this),

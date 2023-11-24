@@ -5,7 +5,6 @@ import {
   GridOptions,
   ISelectCellEditorParams,
 } from '@ag-grid-community/core';
-import { ColourCellRenderer } from './colourCellRenderer_typescript'
 import { colors } from './colors';
 
 const columnDefs: ColDef[] = [
