@@ -13,7 +13,6 @@ Specified with `agTextCellEditor` and configured with `ITextCellEditorParams`.
 ```js
 columnDefs: [
     {
-        valueFormatter: (params) => `£ ${params.value}`,
         cellEditor: 'agTextCellEditor',
         cellEditorParams: {
             maxLength: 20

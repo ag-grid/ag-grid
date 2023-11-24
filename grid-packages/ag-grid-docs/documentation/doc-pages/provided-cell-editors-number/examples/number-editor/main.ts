@@ -12,7 +12,8 @@ const columnDefs: ColDef[] = [
     field: 'number',
     cellEditor: 'agNumberCellEditor',
     cellEditorParams: {
-      precision: 0,
+      min: 0,
+      max: 100
     } as INumberCellEditorParams,
   }
 ];
