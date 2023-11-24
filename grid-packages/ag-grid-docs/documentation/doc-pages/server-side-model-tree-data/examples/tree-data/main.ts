@@ -22,6 +22,7 @@ const gridOptions: GridOptions = {
   defaultColDef: {
     width: 240,
     flex: 1,
+    sortable: false,
   },
   autoGroupColumnDef: {
     field: 'employeeName',

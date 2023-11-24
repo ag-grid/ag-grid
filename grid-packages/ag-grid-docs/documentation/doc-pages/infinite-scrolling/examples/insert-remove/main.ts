@@ -73,6 +73,7 @@ let gridApi: GridApi;
 const gridOptions: GridOptions = {
     defaultColDef: {
         flex: 1,
+        sortable: false,
     },
     rowSelection: 'multiple',
     columnDefs: columnDefs,
