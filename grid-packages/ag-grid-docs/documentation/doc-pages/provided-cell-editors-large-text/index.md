@@ -2,7 +2,11 @@
 title: "Large Text Cell Editor"
 ---
 
-Simple editor that uses the standard HTML `textarea`. Best used in conjunction with `cellEditorPopup=true`.
+Simple editor that uses the standard HTML `textarea`.
+
+## Enabling Large Text Cell Editor
+
+<grid-example title='Large Text Editor' name='large-text-editor' type='generated' options='{ "modules": ["clientside"] }'></grid-example>
 
 Specified with `agLargeTextCellEditor` and configured with `ILargeTextEditorParams`.
 
@@ -10,15 +14,18 @@ Specified with `agLargeTextCellEditor` and configured with `ILargeTextEditorPara
 columnDefs: [
     {
         cellEditor: 'agLargeTextCellEditor',
-        cellEditorPopup: true
+        cellEditorPopup: true,
+        cellEditorParams: {
+            maxLength: 100
+        }
         // ...other props
     }
 ]
 ```
 
-<grid-example title='Large Text Editor' name='large-text-editor' type='generated' options='{ "modules": ["clientside"] }'></grid-example>
+## Customisation
 
-## Cols and Rows
+### Editor Size
 
 ```js
 columnDefs: [
@@ -26,7 +33,6 @@ columnDefs: [
         cellEditor: 'agLargeTextCellEditor',
         cellEditorPopup: true,
         cellEditorParams: {
-            maxLength: 100,
             rows: 15,
             cols: 50
         }
@@ -35,26 +41,17 @@ columnDefs: [
 ]
 ```
 
+To customise the size, there are two options:
+
+- `cols`: The visible width of the text control, in average character widths.
+- `rows`: The number of visible text lines for the control.
+
 <grid-example title='Large Text Editor Cols and Rows' name='large-text-editor-cols-rows' type='generated' options='{ "modules": ["clientside"] }'></grid-example>
 
 
-## Interface
+## API Reference
 
 <interface-documentation interfaceName='ILargeTextEditorParams' names='["maxLength","rows","cols"]'></interface-documentation>
 
-```js
-columnDefs: [
-    {
-        cellEditor: 'agLargeTextCellEditor',
-        cellEditorPopup: true,
-        cellEditorParams: {
-            maxLength: 100,
-            rows: 10,
-            cols: 50
-        }
-        // ...other props
-    }
-]
-``````
 
 Continue to the next section: [Select Cell Editor](../provided-cell-editors-select/).
