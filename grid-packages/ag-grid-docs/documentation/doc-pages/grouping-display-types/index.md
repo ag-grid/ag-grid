@@ -17,7 +17,7 @@ If the rows supplied to the grid do not need to be grouped by the grid, consider
 
 A single group column is added to the grid which displays all row groups. 
 
-<image-caption src="grouping-display-types/resources/single-group-column.png" alt="Single Group Column" maxWidth="70%" constrained="true" centered="true"></image-caption>
+<image-caption src="grouping-display-types/resources/single-group-column.png" alt="Single Group Column" maxWidth="70%" constrained="true" centered="true" toggledarkmode="true"></image-caption>
 
 As illustrated above, there is a single group column containing the `country` and `year` row groups in a single group hierarchy. 
 
@@ -27,7 +27,7 @@ See the [Single Group Column](../grouping-single-group-column/) section for more
 
 Separate group columns will be added to the grid for each column used to group the rows by.
 
-<image-caption src="grouping-display-types/resources/multiple-group-columns.png" alt="Multiple Group Columns" maxWidth="70%" constrained="true" centered="true"></image-caption>
+<image-caption src="grouping-display-types/resources/multiple-group-columns.png" alt="Multiple Group Columns" maxWidth="70%" constrained="true" centered="true" toggledarkmode="true"></image-caption>
 
 As illustrated above, the `country` and `year` row groups are displayed under separate group columns.
 
@@ -37,7 +37,7 @@ See the [Multiple Group Columns](../grouping-multiple-group-columns/) section fo
 
 No group columns are added to the grid, instead row groups are displayed using group rows.
 
-<image-caption src="grouping-display-types/resources/group-rows.png" alt="Group Rows" maxWidth="70%" constrained="true" centered="true"></image-caption>
+<image-caption src="grouping-display-types/resources/group-rows.png" alt="Group Rows" maxWidth="70%" constrained="true" centered="true" toggledarkmode="true"></image-caption>
 
 As illustrated above, the `country` and `year` row groups are displayed using Group Rows.
 

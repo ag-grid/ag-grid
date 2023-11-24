@@ -6,7 +6,7 @@ enterprise: true
 This section covers the Single Group Column display type, where a single group column is automatically added by the grid
 containing all row groups under a single row group hierarchy.
 
-<image-caption src="grouping-single-group-column/resources/single-group-column.png" alt="Single Group Column" maxWidth="80%" constrained="true" centered="true"></image-caption>
+<image-caption src="grouping-display-types/resources/single-group-column.png" alt="Single Group Column" maxWidth="80%" constrained="true" centered="true" toggledarkmode="true"></image-caption>
 
 ## Enabling Single Group Column
 
