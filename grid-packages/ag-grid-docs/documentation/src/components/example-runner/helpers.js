@@ -8,13 +8,13 @@ import {getIndexHtml} from './index-html-helper';
 export const DARK_MODE_START = '/** DARK MODE START **/';
 export const DARK_MODE_END = '/** DARK MODE END **/';
 
-export function stripOutDarkModeCode(files, useCurrentTheme = true) {
+export function stripOutDarkModeCode(files) {
     const mainFiles = ['main.js', 'main.ts', 'index.tsx', 'index.jsx', 'app.component.ts', 'app/app.component.ts'];
     const defaultTheme = document.documentElement.dataset.darkMode?.toUpperCase()  === 'TRUE' ? 'ag-theme-quartz-dark' : 'ag-theme-quartz';
     mainFiles.forEach((mainFile) => {
         if (files[mainFile]) {
             // Hide theme switcher
-            files[mainFile].source = files[mainFile].source?.replace(/("?)document\.documentElement(\??)\.dataset\.defaultTheme.*\|\|.*'(?<theme>.*)'("?)/g, `"${useCurrentTheme ? defaultTheme : '$3'}"`).replace(DARK_MODE_START, '').replace(DARK_MODE_END, '');
+            files[mainFile].source = files[mainFile].source?.replace(/\/\*\* DARK MODE START \*\*\/([\s\S]*?)defaultTheme.*\|\|.*'(?<theme>.*)'([\s\S]*?)\/\*\* DARK MODE END \*\*\//g, `"${defaultTheme}"`);
 
             // hide integrated theme switcher
             files[mainFile].source = files[mainFile].source?.replace(/\/\*\* DARK INTEGRATED START \*\*\/([\s\S]*?)\/\*\* DARK INTEGRATED END \*\*\//g, '');
@@ -245,7 +245,7 @@ export const openPlunker = (exampleInfo) => {
 
     getExampleFiles(exampleInfo, true).then((exampleFiles) => {
         const files = exampleFiles.plunker;
-        stripOutDarkModeCode(files, true);
+        stripOutDarkModeCode(files);
         // Let's open the grid configuration file by default
         const fileToOpen = getEntryFile(framework, internalFramework);
 
@@ -295,7 +295,7 @@ export const openCodeSandbox = (exampleInfo) => {
 
     getExampleFiles(exampleInfo, true).then((exampleFiles) => {
         const files = exampleFiles.csb;
-        stripOutDarkModeCode(files, true);
+        stripOutDarkModeCode(files);
 
         const form = document.createElement('form');
         form.method = 'post';
