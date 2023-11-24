@@ -2,13 +2,13 @@
 title: "Upgrade to V31"
 ---
 
-## What's new
+## What's New
 
-See the [release post](about:blank) for details of what's new in this major version.
+See the [release post](https://blog.ag-grid.com/whats-new-in-ag-grid-31/) for details of what's new in this major version.
 
 ## Upgrading to V31
 
-### Using the AG Grid migration tool
+### Using the AG Grid Migration Tool
 
 All major AG Grid releases now come with an accompanying migration tool to help automate the upgrade process. This is the easiest way to make sure your projects stay up-to-date with the latest AG Grid changes.
 
@@ -44,7 +44,7 @@ Caveats to bear in mind when using the migration tool:
 - In particular, any automatically-applied changes should always be logically correct, however the formatting of the generated code is likely to vary slightly from the rest of your codebase and could require minor tweaking
 - While we attempt to automate as many upgrade paths as possible, unusual use cases may still require some manual intervention
 
-### Breaking changes
+### Breaking Changes
 
 This release includes the following breaking changes:
 
@@ -62,12 +62,12 @@ This release includes the following breaking changes:
 
 **GridOptions:**
 
-* Javascript - Mutating `gridOptions` after the grid has been created will no longer be picked up by the grid. Instead use `api.setGridOption` (`property`, `newValue`) to updated grid options.
+* Javascript - Mutating `gridOptions` after the grid has been created will no longer be picked up by the grid. Instead use `api.setGridOption` (`property`, `newValue`) to update grid options.
 * Validation is now run when `gridOptions` are updated, meaning warnings may appear in console when changing grid options if an invalid configuration is reached.
 
 **Column Filters:**
 
-* IServerSideGetRowsRequest.filterModel can now be of type AdvancedFilterModel | null if Advanced Filter is enabled, or FilterModel otherwise (for Column Filters).
+* `IServerSideGetRowsRequest.filterModel` can now be of type AdvancedFilterModel | null if Advanced Filter is enabled, or FilterModel otherwise (for Column Filters).
 * There are new localisation keys for the Date Filter - `lessThan` is now `before`, and `greaterThan` is now `after`. As these are new localization keys which don't appear in your localization dictionaries, you will see the English strings for "before" and "after" used in the date filter options list. Please provide translations for these 2 new keys in your localized dictionaries to display your translation instead.
 
 **Export:**
@@ -89,13 +89,13 @@ This release includes the following breaking changes:
 * The `solar` and `pastel` integrated chart themes have been removed. Any saved chart models will be migrated to the new `polychroma` and `sheets` themes respectively.
 
 
-**Grid API:**
+**API:**
 
 * Deprecated grid option `rememberGroupStateWhenNewData` has been removed. Provide `getRowId` to maintain group state when row data updated (see https://ag-grid.com/javascript-data-grid/data-update-row-data/).
 
 * Removal of v28 deprecations in v31 release:
 
-    * Column Api:
+    * Column API:
 
         - `getAllColumns`: use `api.getColumns`.
         - `getPrimaryColumns`: use `api.getColumns`.
@@ -113,7 +113,7 @@ This release includes the following breaking changes:
 
     * GridOptions:
 
-        - `serverSideStoreType`: deprecated in favour of `suppressServerSideInfiniteScroll`. When false, Partial Store is used. When true, Full Store is used.
+        - `serverSideStoreType`: removed in favour of `suppressServerSideInfiniteScroll`. When false, Partial Store is used. When true, Full Store is used.
         - `serverSideSortingAlwaysResets`: use `serverSideSortAllLevels`.
         - `serverSideFilteringAlwaysResets`: use `serverSideOnlyRefreshFilteredGroups`.
         - `processSecondaryColDef`: use `processPivotResultColDef`.
@@ -123,7 +123,7 @@ This release includes the following breaking changes:
 
     * SSRM Interfaces:
 
-        - `ServerSideGroupLevelParams.storeType`: deprecated in favour of `suppressInfiniteScroll`. When false, Partial Store is used. When true, Full Store is used.
+        - `ServerSideGroupLevelParams.storeType`: removed in favour of `suppressInfiniteScroll`. When false, Partial Store is used. When true, Full Store is used.
         - `IsApplyServerSideTransactionParams.storeInfo`: use `IsApplyServerSideTransactionParams.groupLevelInfo`.
         - `LoadSuccessParams.storeInfo`: use `LoadSuccessParams.groupLevelInfo`.
         - `IServerSideGetRowsParams.successCallback`: use `success` method instead with `LoadSuccessParams` params.
@@ -140,7 +140,7 @@ This release includes the following breaking changes:
         - `skipHeader`: use `skipColumnHeaders`.
         - `customFooter`: use `appendContent`.
         - `customHeader`: use `prependContent`.
-        - interfaces `RangeSelection`: Use `CellRange`.
+        - interface `RangeSelection`: Use `CellRange`.
         - interface `AddRangeSelectionParams`: Use `CellRangeParams`.
 
     * React 
@@ -158,13 +158,13 @@ This release includes the following deprecations:
 
 **React:** 
 
-The grid API methods below have been deprecated: 
+The Grid API methods below have been deprecated: 
 
 * `setGetRowId` is no longer supported - `getRowId` cannot be updated.
 
 * Grid option `advancedFilterModel` is deprecated in favour of `initialState.filter.advancedFilterModel`
 
-* Please use grid API methods `setGridOption` and `updateGridOptions` to set properties instead:
+* Please use Grid API methods `setGridOption` and `updateGridOptions` to set properties instead:
 
     * `setPivotMode`
     * `setPinnedTopRowData`
@@ -253,6 +253,10 @@ The grid API methods below have been deprecated:
     * `setGetRowStyle`
     * `setGetRowHeight`
 
-**Grid API:**
+**API:**
 
 * `suppressAsyncEvents`: events should be handled asynchronously.
+
+### Changes List 
+
+If you would like to see the full list of changes in this release, please see the [Changelog](https://www.ag-grid.com/changelog/?fixVersion=31.0.0).
