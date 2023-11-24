@@ -103,12 +103,7 @@ export class LicenseManager {
                 expired = (gridReleaseDate > expiry);
 
                 switch (version) {
-                    case "legacy": {
-                        if (isTrial) {
-                            handleTrial();
-                        }
-                        break;
-                    }
+                    case "legacy":
                     case "2": {
                         if (isTrial) {
                             handleTrial();
