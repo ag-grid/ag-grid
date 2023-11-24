@@ -156,15 +156,15 @@ This release includes the following deprecations:
 
 * `IFilterParams.valueGetter` is deprecated in favour of `IFilterParams.getValue`, which provides a simpler method of retrieving cell values.
 
-**React:** 
-
-The Grid API methods below have been deprecated: 
-
-* `setGetRowId` is no longer supported - `getRowId` cannot be updated.
+**GridOptions:**
 
 * Grid option `advancedFilterModel` is deprecated in favour of `initialState.filter.advancedFilterModel`
 
-* Please use Grid API methods `setGridOption` and `updateGridOptions` to set properties instead:
+**Grid API:** 
+
+* `setGetRowId` is no longer supported - `getRowId` cannot be updated.
+
+* The Grid API methods listed below have been deprecated. Please use Grid API methods `setGridOption` and `updateGridOptions` to set properties instead as described in [Updating Grid Options](https://build.ag-grid.com/react-data-grid/grid-interface/#updating-grid-options).
 
     * `setPivotMode`
     * `setPinnedTopRowData`
