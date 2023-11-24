@@ -1,5 +1,5 @@
 ---
-title: "Styling the Grid"
+title: "Styling the Grid (Draft)"
 ---
 
 This tutorial demonstrates how to style, customise and extend the grid.

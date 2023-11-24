@@ -148,11 +148,6 @@
         "title": "Guides",
         "items": [
           {
-            "title": "Styling the Grid",
-            "url": "/styling-the-grid/",
-            "icon": "framework"
-          },
-          {
             "title": "Testing",
             "url": "/testing/"
           },
