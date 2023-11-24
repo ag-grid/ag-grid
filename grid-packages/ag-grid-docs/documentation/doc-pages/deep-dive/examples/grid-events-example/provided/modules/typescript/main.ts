@@ -8,14 +8,23 @@ ModuleRegistry.registerModules([ ClientSideRowModelModule ]);
 // Grid API: Access to Grid API methods
 let gridApi: GridApi;
 
-// Custom Cell Renderer - Display flags in place of country values
-class CountryFlagCellRenderer implements ICellRendererComp {
-    eGui!: HTMLImageElement;
+class CompanyLogoRenderer implements ICellRendererComp {
+    eGui!: HTMLSpanElement;
 
     // Optional: Params for rendering. The same params that are passed to the cellRenderer function.
     init(params: ICellRendererParams) {
-        this.eGui = document.createElement('img');
-        this.eGui.src = `https://www.ag-grid.com/example-assets/flags/${params.value.toLowerCase()}-flag-sm.png`;
+        let companyLogo: HTMLImageElement = document.createElement('img');
+        companyLogo.src = `https://downloads.jamesswinton.com/space-company-logos/${params.value.toLowerCase()}.png`
+        companyLogo.setAttribute('style', 'display: block; width: 25px; height: auto; max-height: 50%; margin-right: 12px; filter: brightness(1.1)');
+        
+        let companyName: HTMLParagraphElement = document.createElement('p');
+        companyName.innerHTML = params.value;
+        companyName.setAttribute('style', 'text-overflow: ellipsis; overflow: hidden; white-space: nowrap;');
+
+        this.eGui = document.createElement('span');
+        this.eGui.setAttribute('style', 'display: flex; height: 100%; width: 100%; align-items: center')
+        this.eGui.appendChild(companyLogo)
+        this.eGui.appendChild(companyName)
     }
 
     // Required: Return the DOM element of the component, this is what the grid puts into the cell
@@ -31,10 +40,12 @@ class CountryFlagCellRenderer implements ICellRendererComp {
 
 // Row Data Interface
 interface IRow {
-  company: string;
-  country: 'USA' | 'China' | 'Kazakhstan';
-  date: string;
   mission: string;
+  company: string;
+  location: string;
+  date: string;
+  time: string;
+  rocket: string;
   price: number;
   successful: boolean;
 }
@@ -44,19 +55,24 @@ const gridOptions: GridOptions = {
     rowData: [] as IRow[],
     // Columns to be displayed (Should match rowData properties)
     columnDefs: [
-        {
-            field: "mission", filter: true },
-        {
-            field: "country",
-            cellRenderer: CountryFlagCellRenderer
-        },
-        { field: "successful" },
-        { field: "date" },
-        {
+        { 
+            field: "mission", 
+            filter: true 
+          },
+          { 
+            field: "company",
+            cellRenderer: CompanyLogoRenderer 
+          },
+          { 
+            field: "location"
+          },
+          { field: "date" },
+          { 
             field: "price",
-            valueFormatter: (params) => { return '£' + params.value.toLocaleString(); }
-        },
-        { field: "company" }
+            valueFormatter: (params: ValueFormatterParams) => { return '£' + params.value.toLocaleString(); } 
+          },
+          { field: "successful" },
+          { field: "rocket" }
     ] as ColDef[],
     // Configurations applied to all columns
     defaultColDef: {

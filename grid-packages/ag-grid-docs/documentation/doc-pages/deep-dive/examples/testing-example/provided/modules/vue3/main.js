@@ -4,15 +4,37 @@ import "ag-grid-community/styles/ag-grid.css";
 import "ag-grid-community/styles/ag-theme-quartz.css";
 import { AgGridVue } from "ag-grid-vue3";
 
-const CountryFlagCellRenderer = {
+const CompanyLogoRenderer = {
   template: 
     `
-      <span>
-        <img :src="'https://www.ag-grid.com/example-assets/flags/' + cellValue + '-flag-sm.png'" height="30" />
-      </span>
+    <span style="display: flex; height: 100%; width: 100%; align-items: center;">
+      <img :src="'https://downloads.jamesswinton.com/space-company-logos/' + cellValueLowerCase + '.png'" style="display: block; width: 25px; height: auto; max-height: 50%; margin-right: 12px; filter: brightness(1.1);" />
+      <p style="text-overflow: ellipsis; overflow: hidden; white-space: nowrap;">{{ cellValue }}</p>
+    </span>
     `,
   setup(props) {
-    const cellValue = props.params.value.toLowerCase();
+    const cellValue = props.params.value;
+    const cellValueLowerCase = cellValue.toLowerCase();
+    return {
+      cellValue,
+      cellValueLowerCase
+    };
+  },
+};
+
+const MissionResultRenderer = {
+  template: 
+    `
+    <span style="display: flex; justify-content: center; height: 100%; align-items: center;">
+      <img
+        :alt="params.value"
+        :src="'https://downloads.jamesswinton.com/icons/' + cellValue + '.png'"
+        style="width: auto; height: auto;"
+      />
+    </span>
+    `,
+  setup(props) {
+    const cellValue = props.params.value ? 'tick-in-circle' : 'cross-in-circle';
     return {
       cellValue
     };
@@ -39,7 +61,8 @@ const App = {
     `,
   components: {
     AgGridVue,
-    countryFlagCellRenderer: CountryFlagCellRenderer,
+    companyLogoRenderer: CompanyLogoRenderer,
+    missionResultRenderer: MissionResultRenderer
   },
   methods: {
     onCellValueChanged(event) {
@@ -61,17 +84,36 @@ const App = {
       return new Date(params.value).toLocaleDateString('en-us', { weekday: 'long', year: 'numeric', month: 'short', day: 'numeric' });
     }
 
-    const priceFormatter = (params) => {
-      return '£' + params.value.toLocaleString();
-    }
-
     const colDefs = ref([
-      { field: "mission", filter: true, checkboxSelection: true },
-      { field: "country", cellRenderer: "countryFlagCellRenderer" },
-      { field: "successful" },
-      { field: "date", valueFormatter: dateFormatter },
-      { field: "price", valueFormatter: priceFormatter },
-      { field: "company" }
+      {
+        field: "mission", 
+        width: 150,
+        checkboxSelection: true
+      },
+      {
+        field: "company", 
+        width: 130,
+        cellRenderer: "companyLogoRenderer" 
+      },
+      {
+        field: "location",
+        width: 225
+      },
+      {
+        field: "date",
+        valueFormatter: dateFormatter
+      },
+      {
+        field: "price",
+        width: 130,
+        valueFormatter: (params) => { return '£' + params.value.toLocaleString(); } 
+      },
+      {
+        field: "successful", 
+        width: 120,
+        cellRenderer: "missionResultRenderer" 
+      },
+      { field: "rocket" },
     ]);
 
     const defaultColDefs = ref({

@@ -26,12 +26,19 @@ const App = {
     const rowData = ref([]);
 
     const colDefs = ref([
-      { field: "mission", filter: true },
-      { field: "country" },
-      { field: "successful" },
+      { 
+        field: "mission", 
+        filter: true 
+      },
+      { field: "company" },
+      { field: "location" },
       { field: "date" },
-      { field: "price", valueFormatter: (params) => { return '£' + params.value.toLocaleString(); } },
-      { field: "company" }
+      { 
+        field: "price",
+        valueFormatter: (params) => { return '£' + params.value.toLocaleString(); }
+      },
+      { field: "successful" },
+      { field: "rocket" }
     ]);
 
     const defaultColDefs = ref({

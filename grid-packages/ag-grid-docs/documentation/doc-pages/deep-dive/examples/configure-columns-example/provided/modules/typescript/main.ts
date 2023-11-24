@@ -7,10 +7,12 @@ ModuleRegistry.registerModules([ ClientSideRowModelModule ]);
 
 // Row Data Interface
 interface IRow {
-  company: string;
-  country: 'USA' | 'China' | 'Kazakhstan';
-  date: string;
   mission: string;
+  company: string;
+  location: string;
+  date: string;
+  time: string;
+  rocket: string;
   price: number;
   successful: boolean;
 }
@@ -25,11 +27,12 @@ const gridOptions: GridOptions = {
   // Columns to be displayed (Should match rowData properties)
   columnDefs: [
     { field: "mission", filter: true },
-    { field: "country" },
-    { field: "successful" },
+    { field: "company" },
+    { field: "location" },
     { field: "date" },
     { field: "price" },
-    { field: "company" }
+    { field: "successful" },
+    { field: "rocket" }
   ] as ColDef[],
 }
 

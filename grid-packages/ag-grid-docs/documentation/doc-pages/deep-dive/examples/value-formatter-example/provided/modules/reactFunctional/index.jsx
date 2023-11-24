@@ -11,16 +11,19 @@ const GridExample = () => {
   
   // Column Definitions: Defines & controls grid columns.
   const [colDefs] = useState([
-    { field: "mission", filter: true },
-    { field: "country" },
-    { field: "successful" },
+    { 
+      field: "mission", 
+      filter: true 
+    },
+    { field: "company" },
+    { field: "location" },
     { field: "date" },
     { 
-      field: "price", 
-      // Return a formatted string for this column
-      valueFormatter: params => { return '£' + params.value.toLocaleString(); } 
+      field: "price",
+      valueFormatter: (params) => { return '£' + params.value.toLocaleString(); } 
     },
-    { field: "company" }
+    { field: "successful" },
+    { field: "rocket" }
   ]);
 
   // Fetch data & update rowData state

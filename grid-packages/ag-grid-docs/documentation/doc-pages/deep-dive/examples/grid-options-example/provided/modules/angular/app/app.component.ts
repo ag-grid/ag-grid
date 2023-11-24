@@ -9,10 +9,12 @@ ModuleRegistry.registerModules([ ClientSideRowModelModule ]);
 
 // Row Data Interface
 interface IRow {
-  company: string;
-  country: 'USA' | 'China' | 'Kazakhstan';
-  date: string;
   mission: string;
+  company: string;
+  location: string;
+  date: string;
+  time: string;
+  rocket: string;
   price: number;
   successful: boolean;
 }
@@ -40,20 +42,17 @@ interface IRow {
 export class AppComponent {
   themeClass = /** DARK MODE START **/document.documentElement?.dataset.defaultTheme || 'ag-theme-quartz'/** DARK MODE END **/;
   // Row Data: The data to be displayed.
-  rowData: IRow[] = [
-    {company: "CASC", country: "China", date: "2022-07-24", mission: "Wentian", price: 2150000, successful: true},
-    {company: "SpaceX", country: "USA", date: "2022-07-24", mission: "Starlink Group 4-25", price: 3230000, successful: true},
-    {company: "SpaceX", country: "USA", date: "2022-07-22", mission: "Starlink Group 3-2", price: 8060000, successful: true}
-  ];
+  rowData: IRow[] = [];
 
   // Column Definitions: Defines & controls grid columns.
   colDefs: ColDef[] = [
     { field: "mission", filter: true },
-    { field: "country" },
-    { field: "successful" },
+    { field: "company" },
+    { field: "location" },
     { field: "date" },
     { field: "price" },
-    { field: "company" }
+    { field: "successful" },
+    { field: "rocket" }
   ];
 
   // Default Column Definitions: Apply configuration across all columns

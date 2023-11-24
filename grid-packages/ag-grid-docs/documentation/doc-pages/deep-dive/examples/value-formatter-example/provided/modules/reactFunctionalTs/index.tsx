@@ -8,10 +8,12 @@ import { ValueFormatterParams } from 'ag-grid-community';
 
 // Row Data Interface
 interface IRow {
-  company: string;
-  country: 'USA' | 'China' | 'Kazakhstan';
-  date: string;
   mission: string;
+  company: string;
+  location: string;
+  date: string;
+  time: string;
+  rocket: string;
   price: number;
   successful: boolean;
 }
@@ -23,16 +25,19 @@ const GridExample = () => {
   
   // Column Definitions: Defines & controls grid columns.
   const [colDefs] = useState<ColDef[]>([
-    { field: "mission", filter: true },
-    { field: "country" },
-    { field: "successful" },
+    { 
+      field: "mission", 
+      filter: true 
+    },
+    { field: "company" },
+    { field: "location" },
     { field: "date" },
     { 
-      field: "price", 
-      // Return a formatted string for this column
-      valueFormatter: (params: ValueFormatterParams): string => { return '£' + params.value.toLocaleString(); }
+      field: "price",
+      valueFormatter: (params: ValueFormatterParams) => { return '£' + params.value.toLocaleString(); } 
     },
-    { field: "company" }
+    { field: "successful" },
+    { field: "rocket" }
   ]);
 
   // Fetch data & update rowData state

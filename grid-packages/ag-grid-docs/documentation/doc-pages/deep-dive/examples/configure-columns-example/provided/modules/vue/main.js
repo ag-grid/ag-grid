@@ -23,12 +23,13 @@ const App = {
       rowData: [],
       // Column Definitions: Defines & controls grid columns.
       columnDefs: [
-          { field: "mission", filter: true },
-          { field: "country" },
-          { field: "successful" },
-          { field: "date" },
-          { field: "price" },
-          { field: "company" }
+        { field: "mission", filter: true },
+        { field: "company" },
+        { field: "location" },
+        { field: "date" },
+        { field: "price" },
+        { field: "successful" },
+        { field: "rocket" }
       ],
       themeClass: /** DARK MODE START **/document.documentElement.dataset.defaultTheme || 'ag-theme-quartz'/** DARK MODE END **/,
     };

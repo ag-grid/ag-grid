@@ -24,12 +24,13 @@ const App = {
     const rowData = ref([]);
 
     const colDefs = ref([
-      { field: "mission" },
-      { field: "country" },
-      { field: "successful" },
-      { field: "date" },
-      { field: "price" },
-      { field: "company" }
+    { field: "mission" },
+    { field: "company" },
+    { field: "location" },
+    { field: "date" },
+    { field: "price" },
+    { field: "successful" },
+    { field: "rocket" }
     ]);
 
     // Fetch data when the component is mounted

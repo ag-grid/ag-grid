@@ -26,11 +26,12 @@ const App = {
 
     const colDefs = ref([
       { field: "mission", filter: true },
-      { field: "country" },
-      { field: "successful" },
+      { field: "company" },
+      { field: "location" },
       { field: "date" },
       { field: "price" },
-      { field: "company" }
+      { field: "successful" },
+      { field: "rocket" }
     ]);
 
     const defaultColDefs = ref({

@@ -10,10 +10,12 @@ let gridApi: GridApi;
 
 // Row Data Interface
 interface IRow {
-  company: string;
-  country: 'USA' | 'China' | 'Kazakhstan';
-  date: string;
   mission: string;
+  company: string;
+  location: string;
+  date: string;
+  time: string;
+  rocket: string;
   price: number;
   successful: boolean;
 }
@@ -24,12 +26,13 @@ const gridOptions: GridOptions = {
     rowData: [] as IRow[],
     // Columns to be displayed (Should match rowData properties)
     columnDefs: [
-      { field: "mission" },
-      { field: "country" },
-      { field: "successful" },
-      { field: "date" },
-      { field: "price" },
-      { field: "company" }
+    { field: "mission" },
+    { field: "company" },
+    { field: "location" },
+    { field: "date" },
+    { field: "price" },
+    { field: "successful" },
+    { field: "rocket" }
     ] as ColDef[],
 }
 

@@ -3,21 +3,45 @@ import { AgGridVue } from "ag-grid-vue";
 import "ag-grid-community/styles/ag-grid.css";
 import "ag-grid-community/styles/ag-theme-quartz.css";
 
-const CountryFlagCellRenderer = {
+const CompanyLogoRenderer = {
   template: 
     `
-      <span>
-        <img :src="'https://www.ag-grid.com/example-assets/flags/' + cellValue + '-flag-sm.png'" height="30" />
-      </span>
+    <span style="display: flex; height: 100%; width: 100%; align-items: center;">
+      <img :src="'https://downloads.jamesswinton.com/space-company-logos/' + cellValueLowerCase + '.png'" style="display: block; width: 25px; height: auto; max-height: 50%; margin-right: 12px; filter: brightness(1.1);" />
+      <p style="text-overflow: ellipsis; overflow: hidden; white-space: nowrap;">{{ cellValue }}</p>
+    </span>
     `,
-  data: function () {
-    return {
+    data: function () {
+      return {
+        cellValue: '',
+        cellValueLowerCase: ''
+      };
+    },
+    beforeMount() {
+      this.cellValue = this.params.value;
+      this.cellValueLowerCase = this.params.value.toLowerCase();
+    },
+};
+
+const MissionResultRenderer = {
+  template: 
+    `
+    <span style="display: flex; justify-content: center; height: 100%; align-items: center;">
+      <img
+        :alt="params.value"
+        :src="'https://downloads.jamesswinton.com/icons/' + cellValue + '.png'"
+        style="width: auto; height: auto;"
+      />
+    </span>
+    `,
+    data: function () {
+      return {
         cellValue: ''
-    };
-  },
-  beforeMount() {
-      this.cellValue = this.params.value.toLowerCase();
-  },
+      };
+    },
+    beforeMount() {
+      this.cellValue = this.params.value ? 'tick-in-circle' : 'cross-in-circle';
+    },
 };
 
 const App = {
@@ -38,18 +62,42 @@ const App = {
     `,
   components: {
     AgGridVue,
-    countryFlagCellRenderer: CountryFlagCellRenderer
+    companyLogoRenderer: CompanyLogoRenderer,
+    missionResultRenderer: MissionResultRenderer
   },
   data() {
     return {
       rowData: [],
       colDefs: [
-        { field: "mission", filter: true, checkboxSelection: true },
-        { field: "country", cellRenderer: "countryFlagCellRenderer" },
-        { field: "successful" },
-        { field: "date", valueFormatter: this.dateFormatter },
-        { field: "price", valueFormatter: this.priceFormatter },
-        { field: "company" }
+        {
+          field: "mission", 
+          width: 150,
+          checkboxSelection: true
+        },
+        {
+          field: "company", 
+          width: 130,
+          cellRenderer: "companyLogoRenderer" 
+        },
+        {
+          field: "location",
+          width: 225
+        },
+        {
+          field: "date",
+          valueFormatter: this.dateFormatter
+        },
+        {
+          field: "price",
+          width: 130,
+          valueFormatter: (params) => { return '£' + params.value.toLocaleString(); } 
+        },
+        {
+          field: "successful", 
+          width: 120,
+          cellRenderer: "missionResultRenderer" 
+        },
+        { field: "rocket" },
       ],
       // Default Column Definitions: Apply configurations to all columns
       defaultColDefs: {

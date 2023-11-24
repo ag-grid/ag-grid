@@ -4,9 +4,14 @@ import { AgGridReact } from 'ag-grid-react'; // React Grid Logic
 import "ag-grid-community/styles/ag-grid.css"; // Core CSS
 import "ag-grid-community/styles/ag-theme-quartz.css"; // Theme
 
-// Custom Cell Renderer (Display flags based on cell value)
-const CountryFlagCellRenderer = ({ value }) => (
-  <span>{value && <img alt={`${value} Flag`} src={`https://www.ag-grid.com/example-assets/flags/${value.toLowerCase()}-flag-sm.png`} height={30} />}</span>
+// Custom Cell Renderer (Display logos based on cell value)
+const CompanyLogoRenderer = ({ value }) => (
+  <span style={{ display: "flex", height: "100%", width: "100%", alignItems: "center" }}>{value && <img alt={`${value} Flag`} src={`https://downloads.jamesswinton.com/space-company-logos/${value.toLowerCase()}.png`} style={{display: "block", width: "25px", height: "auto", maxHeight: "50%", marginRight: "12px", filter: "brightness(1.1)"}} />}<p style={{ textOverflow: "ellipsis", overflow: "hidden", whiteSpace: "nowrap" }}>{value}</p></span>
+);
+
+/* Custom Cell Renderer (Display tick / cross in 'Successful' column) */
+const MissionResultRenderer = ({ value }) => (
+  <span style={{ display: "flex", justifyContent: "center", height: "100%", alignItems: "center"}}>{<img alt={`${value}`} src={`https://downloads.jamesswinton.com/icons/${value ? 'tick-in-circle' : 'cross-in-circle'}.png`} style={{width: "auto", height: "auto"}} />}</span>
 );
 
 /* Format Date Cells */
@@ -26,25 +31,35 @@ const GridExample = () => {
   
   // Column Definitions: Defines & controls grid columns.
   const [colDefs] = useState([
-    { 
+    {
       field: "mission", 
-      filter: true,
+      width: 150,
       checkboxSelection: true
     },
-    { 
-      field: "country", 
-      cellRenderer: CountryFlagCellRenderer 
+    {
+      field: "company", 
+      width: 130,
+      cellRenderer: CompanyLogoRenderer 
     },
-    { field: "successful" },
-    { 
+    {
+      field: "location",
+      width: 225
+    },
+    {
       field: "date",
       valueFormatter: dateFormatter
     },
-    { 
+    {
       field: "price",
+      width: 130,
       valueFormatter: params => { return '£' + params.value.toLocaleString(); } 
     },
-    { field: "company" }
+    {
+      field: "successful", 
+      width: 120,
+      cellRenderer: MissionResultRenderer 
+    },
+    { field: "rocket" },
   ]);
 
   // Fetch data & update rowData state

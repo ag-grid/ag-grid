@@ -7,16 +7,19 @@ const gridOptions = {
   rowData: [],
   // Column Definitions: Defines & controls grid columns.
   columnDefs: [
-    { field: "mission", filter: true },
-    { field: "country" },
-    { field: "successful" },
+    { 
+      field: "mission", 
+      filter: true 
+    },
+    { field: "company" },
+    { field: "location" },
     { field: "date" },
     { 
-      field: "price", 
-      // Return formatted value 
-      valueFormatter: (params) => { return '£' + params.value.toLocaleString(); } 
+      field: "price",
+      valueFormatter: (params) => { return '£' + params.value.toLocaleString(); }
     },
-    { field: "company" }
+    { field: "successful" },
+    { field: "rocket" }
   ],
   // Configurations applied to all columns
   defaultColDef: {

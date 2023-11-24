@@ -11,32 +11,35 @@ ModuleRegistry.registerModules([ ClientSideRowModelModule ]);
 
 // Row Data Interface
 interface IRow {
-  company: string;
-  country: 'USA' | 'China' | 'Kazakhstan';
-  date: string;
   mission: string;
+  company: string;
+  location: string;
+  date: string;
+  time: string;
+  rocket: string;
   price: number;
   successful: boolean;
 }
 
 // Custom Cell Renderer Component
 @Component({
-  selector: 'app-country-flag-cell-renderer',
+  selector: 'app-company-logo-renderer',
   standalone: true,
   imports: [CommonModule],
   template:
   `
-  <span *ngIf="value">
+  <span *ngIf="value" >
     <img
-      [alt]="' ' + value + ' Flag'"
-      [src]="'https://www.ag-grid.com/example-assets/flags/' + value.toLowerCase() + '-flag-sm.png'"
-      [height]="30"
+      [alt]="value"
+      [src]="'https://downloads.jamesswinton.com/space-company-logos/' + value.toLowerCase() + '.png'"
     />
+    <p>{{ value }}</p>
   </span>
-  `
+  `,
+  styles: ["img {display: block; width: 25px; height: auto; maxHeight: 50%; margin-right: 12px; filter: brightness(1.2);} span {display: flex; height: 100%; width: 100%; align-items: center} p { text-overflow: ellipsis; overflow: hidden; white-space: nowrap }"]
 })
 
-export class CountryFlagCellRendererComponent implements ICellRendererAngularComp {
+export class CompanyLogoRenderer implements ICellRendererAngularComp {
   // Init Cell Value
   public value!: string;
   agInit(params: ICellRendererParams): void {
@@ -78,18 +81,24 @@ export class AppComponent {
 
   // Column Definitions: Defines & controls grid columns.
   colDefs: ColDef[] = [
-    { field: "mission", filter: true },
     { 
-      field: "country",
-      cellRenderer: CountryFlagCellRendererComponent // Render a custom component
+      field: "mission", 
+      filter: true 
     },
-    { field: "successful" },
+    { 
+      field: "company",
+      cellRenderer: CompanyLogoRenderer 
+    },
+    { 
+      field: "location"
+    },
     { field: "date" },
     { 
       field: "price",
-      valueFormatter: (params: ValueFormatterParams) => { return '£' + params.value.toLocaleString(); } // Format with inline function  
+      valueFormatter: (params: ValueFormatterParams) => { return '£' + params.value.toLocaleString(); } 
     },
-    { field: "company" }
+    { field: "successful" },
+    { field: "rocket" }
   ];
 
   // Default Column Definitions: Apply configuration across all columns

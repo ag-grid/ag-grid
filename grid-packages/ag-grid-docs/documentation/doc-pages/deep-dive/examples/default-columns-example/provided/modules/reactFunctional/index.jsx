@@ -12,11 +12,12 @@ const GridExample = () => {
   // Column Definitions: Defines & controls grid columns.
   const [colDefs] = useState([
     { field: "mission", filter: true },
-    { field: "country" },
-    { field: "successful" },
+    { field: "company" },
+    { field: "location" },
     { field: "date" },
     { field: "price" },
-    { field: "company" }
+    { field: "successful" },
+    { field: "rocket" }
   ]);
 
   // Fetch data & update rowData state
