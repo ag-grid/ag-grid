@@ -20,6 +20,6 @@
 
 <framework-specific-section frameworks="react">
  <warning>
- When setting properties, it's best to treat non-simple types as immutable objects (e.g. by using `useState` or `useMemo`). See [React Hooks](/react-hooks/) for best practices.
+ When setting properties, it's best to treat non-simple types as immutable objects (e.g. by using `useState` or `useMemo`). See [React Hooks](https://ag-grid.com/react-data-grid/react-hooks/) for best practices.
  </warning>
 </framework-specific-section>

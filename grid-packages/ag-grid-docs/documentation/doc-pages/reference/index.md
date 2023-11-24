@@ -8,7 +8,7 @@ The reference section of our documentation covers all the public interfaces for 
 
 The grid section starts with an overview explaining key information for configuring and interacting with the grid such as: how to configure the grid, update properties and interact with the grid via its api. 
 
-  - [Overview](/grid-interface/): Key information for working with the grid. (Read first)
+  - [Overview](/grid-interface/): Key information for working with the grid.
 
 Reference pages list all configuration options, events and API methods:
 
@@ -19,13 +19,13 @@ Reference pages list all configuration options, events and API methods:
 Grid state and lifecycle pages:
 
    - [Grid State](/grid-state/): Save and restore runtime state of the grid. 
-   - [Grid Lifecycle](grid-lifecycle/): Understand how to leverage the grid components lifecycle.
+   - [Grid Lifecycle](/grid-lifecycle/): Understand how to leverage the grid components lifecycle.
 
 ## Columns
 
 The columns reference section starts with an overview of Columns.
 
- - [Overview](/column-interface): Key information for working with columns. (Read first)
+ - [Overview](/column-interface/): Key information for working with columns.
 
 Reference pages lists all column configurations and Column attributes, methods and events:
   - [Options Reference](/column-properties/): Properties and callbacks use to configure a column.
@@ -36,7 +36,7 @@ Reference pages lists all column configurations and Column attributes, methods a
 
 Rows reference section overviews how to interact with instantiated rows displayed within the grid.
 
- - [Overview](/row-interface): Key information for working with rows. (Read first)
+ - [Overview](/row-interface): Key information for working with rows.
 
 Reference pages list all Row object attributes, methods and events:
  - [Row Reference](/row-object/): Row node attributes and methods for rows.
