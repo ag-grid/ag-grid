@@ -48,6 +48,211 @@ Caveats to bear in mind when using the migration tool:
 
 This release includes the following breaking changes:
 
+**React:**
+
+* `AgGridReactFire` is no longer exported from `ag-grid-react`. You should use `AgGridReact` instead.
+* The loading overlay is now displayed for all row models if column definitions are not provided when the grid is initialised. The rows will also not be created and rendered until the column definitions are provided.
+* Validation is now run when `gridOptions` are updated, meaning warnings may appear in console when changing grid options if an invalid configuration is reached.
+* Auto-generated group row IDs when using Client-Side Row Model now have a different format (but the same prefix).<br>`rowDataUpdated` event is only fired for the Client-Side Row Model (per the existing documentation)."
+* Legacy React Rendering, enabled via `suppressReactUi` property is deprecated since v28 and is now removed.<br>AG Grid now only renders via React components as has been the default since v28.
+
+**ColDef:**
+
+* Grid columns are now sortable and resizable by default. Also, the grid animates rows by default. In order to avoid this, please set `defaultColDef.resizable = false`, `defaultColDef.sortable = false` and `gridOptions.animateRows = false`.
+
+**GridOptions:**
+
+* Javascript - Mutating `gridOptions` after the grid has been created will no longer be picked up by the grid. Instead use `api.setGridOption` (`property`, `newValue`) to updated grid options.
+* Validation is now run when `gridOptions` are updated, meaning warnings may appear in console when changing grid options if an invalid configuration is reached.
+
+**Column Filters:**
+
+* IServerSideGetRowsRequest.filterModel can now be of type AdvancedFilterModel | null if Advanced Filter is enabled, or FilterModel otherwise (for Column Filters).
+* There are new localisation keys for the Date Filter - `lessThan` is now `before`, and `greaterThan` is now `after`. As these are new localization keys which don't appear in your localization dictionaries, you will see the English strings for "before" and "after" used in the date filter options list. Please provide translations for these 2 new keys in your localized dictionaries to display your translation instead.
+
+**Export:**
+
+* `ExcelExportParams` no longer have the following options (removed without replacement):
+    * `exportMode`
+    * `suppressTextAsCDATA`
+
+**Pagination:**
+
+* When showing the pagination controls, the page size selector is shown by default.
+
+**Row Grouping:**
+
+* Group values will no longer be typeless, and will be inferred from the first row when they were created
+
+**Integrated Charts:**
+
+* The `solar` and `pastel` integrated chart themes have been removed. Any saved chart models will be migrated to the new `polychroma` and `sheets` themes respectively.
+
+
+**Grid API:**
+
+* Deprecated grid option `rememberGroupStateWhenNewData` has been removed. Provide `getRowId` to maintain group state when row data updated (see https://ag-grid.com/javascript-data-grid/data-update-row-data/).
+
+* Removal of v28 deprecations in v31 release:
+
+    * Column Api:
+
+        - `getAllColumns`: use `api.getColumns`.
+        - `getPrimaryColumns`: use `api.getColumns`.
+        - `getSecondaryColumns`: use `api.getPivotResultColumns`.
+        - `setSecondaryColumns`: use `api.setPivotResultColumns`.
+        - `getSecondaryPivotColumn`: use `api.getPivotResultColumn`.
+
+    * Grid API:
+
+        - `refreshServerSideStore`: use `refreshServerSide`.
+        - `getServerSideStoreState`: use `getServerSideGroupLevelState`.
+        - `setProcessSecondaryColDef`: use `api.setGridOption`(`processPivotResultColGroupDef`, `newValue`).
+        - `setProcessSecondaryColGroupDef`: use `api.setGridOption`(`setProcessPivotResultColGroupDef`, `newValue`).
+        - `setGetServerSideStoreParams`: use `api.setGridOption`(`getServerSideGroupLevelParams`, `newValue`).
+
+    * GridOptions:
+
+        - `serverSideStoreType`: deprecated in favour of `suppressServerSideInfiniteScroll`. When false, Partial Store is used. When true, Full Store is used.
+        - `serverSideSortingAlwaysResets`: use `serverSideSortAllLevels`.
+        - `serverSideFilteringAlwaysResets`: use `serverSideOnlyRefreshFilteredGroups`.
+        - `processSecondaryColDef`: use `processPivotResultColDef`.
+        - `processSecondaryColGroupDef`: use `processPivotResultColGroupDef`.
+        - `getServerSideStoreParams`: use `getServerSideGroupLevelParams`.
+        - `onRowDataChanged`: no longer fired, use `onRowDataUpdated`.
+
+    * SSRM Interfaces:
+
+        - `ServerSideGroupLevelParams.storeType`: deprecated in favour of `suppressInfiniteScroll`. When false, Partial Store is used. When true, Full Store is used.
+        - `IsApplyServerSideTransactionParams.storeInfo`: use `IsApplyServerSideTransactionParams.groupLevelInfo`.
+        - `LoadSuccessParams.storeInfo`: use `LoadSuccessParams.groupLevelInfo`.
+        - `IServerSideGetRowsParams.successCallback`: use `success` method instead with `LoadSuccessParams` params.
+        - `IServerSideGetRowsParams.failCallback`: use `fail`. 
+        - interface `ServerSideStoreParams`: use `ServerSideGroupLevelParams`.
+        - interface `GetServerSideStoreParamsParams`: use `GetServerSideGroupLevelParamsParams`.
+        - interface `RefreshStoreParams`: use `RefreshServerSideParams`.
+        - interface `ServerSideGroupState`: use `ServerSideGroupLevelState`.
+
+    * ExportParams 
+
+        - `columnGroups`: groups are exported by default.
+        - `skipGroups`: use `skipRowGroups`.
+        - `skipHeader`: use `skipColumnHeaders`.
+        - `customFooter`: use `appendContent`.
+        - `customHeader`: use `prependContent`.
+        - interfaces `RangeSelection`: Use `CellRange`.
+        - interface `AddRangeSelectionParams`: Use `CellRangeParams`.
+
+    * React 
+
+        - `rowDataChangeDetectionStrategy`: identity / reference equals always used.
+
+
 ### Deprecations
 
 This release includes the following deprecations:
+
+**Column Filters:**
+
+* `IFilterParams.valueGetter` is deprecated in favour of `IFilterParams.getValue`, which provides a simpler method of retrieving cell values.
+
+**React:** 
+
+The grid API methods below have been deprecated: 
+
+* `setGetRowId` is no longer supported - `getRowId` cannot be updated.
+
+* Grid option `advancedFilterModel` is deprecated in favour of `initialState.filter.advancedFilterModel`
+
+* Please use grid API methods `setGridOption` and `updateGridOptions` to set properties instead:
+
+    * `setPivotMode`
+    * `setPinnedTopRowData`
+    * `setPinnedBottomRowData`
+    * `setPopupParent`
+    * `setSuppressModelUpdateAfterUpdateTransaction`
+    * `setDataTypeDefinitions`
+    * `setPagination`
+    * `paginationSetPageSize`
+    * `setSideBar`
+    * `setSuppressClipboardPaste`
+    * `setGroupRemoveSingleChildren`
+    * `setGroupRemoveLowestSingleChildren`
+    * `setGroupDisplayType`
+    * `setGroupIncludeFooter`
+    * `setGroupIncludeTotalFooter`
+    * `setRowClass`
+    * `setDeltaSort`
+    * `setSuppressRowDrag`
+    * `setSuppressMoveWhenRowDragging`
+    * `setSuppressRowClickSelection`
+    * `setEnableAdvancedFilter`
+    * `setIncludeHiddenColumnsInAdvancedFilter`
+    * `setAdvancedFilterParent`
+    * `setAdvancedFilterBuilderParams`
+    * `setQuickFilter`
+    * `setExcludeHiddenColumnsFromQuickFilter`
+    * `setIncludeHiddenColumnsInQuickFilter`
+    * `setQuickFilterParser`
+    * `setQuickFilterMatcher`
+    * `setAlwaysShowHorizontalScroll`
+    * `setAlwaysShowVerticalScroll`
+    * `setFunctionsReadOnly`
+    * `setColumnDefs`
+    * `setAutoGroupColumnDef`
+    * `setDefaultColDef`
+    * `setColumnTypes`
+    * `setTreeData`
+    * `setServerSideDatasource`
+    * `setCacheBlockSize`
+    * `setDatasource`
+    * `setViewportDatasource`
+    * `setRowData`
+    * `setEnableCellTextSelection`
+    * `setHeaderHeight`
+    * `setDomLayout`
+    * `setFillHandleDirection`
+    * `setGroupHeaderHeight`
+    * `setFloatingFiltersHeight`
+    * `setPivotHeaderHeight`
+    * `setPivotGroupHeaderHeight`
+    * `setAnimateRows`
+    * `setIsExternalFilterPresent`
+    * `setDoesExternalFilterPass`
+    * `setNavigateToNextCell`
+    * `setTabToNextCell`
+    * `setTabToNextHeader`
+    * `setNavigateToNextHeader`
+    * `setRowGroupPanelShow`
+    * `setGetGroupRowAgg`
+    * `setGetBusinessKeyForNode`
+    * `setGetChildCount`
+    * `setProcessRowPostCreate`
+    * `setGetRowClass`
+    * `setIsFullWidthRow`
+    * `setIsRowSelectable`
+    * `setIsRowMaster`
+    * `setPostSortRows`
+    * `setGetDocument`
+    * `setGetContextMenuItems`
+    * `setGetMainMenuItems`
+    * `setProcessCellForClipboard`
+    * `setSendToClipboard`
+    * `setProcessCellFromClipboard`
+    * `setProcessPivotResultColDef`
+    * `setProcessPivotResultColGroupDef`
+    * `setPostProcessPopup`
+    * `setInitialGroupOrderComparator`
+    * `setGetChartToolbarItems`
+    * `setPaginationNumberFormatter`
+    * `setGetServerSideGroupLevelParams`
+    * `setIsServerSideGroupOpenByDefault`
+    * `setIsApplyServerSideTransaction`
+    * `setIsServerSideGroup`
+    * `setGetServerSideGroupKey`
+    * `setGetRowStyle`
+    * `setGetRowHeight`
+
+**Grid API:**
+
+* `suppressAsyncEvents`: events should be handled asynchronously.
