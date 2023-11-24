@@ -4,6 +4,7 @@ import {
   ColDef,
   GridOptions,
   IRichCellEditorParams,
+  ICellEditorParams,
 } from '@ag-grid-community/core';
 
 const languages = ['English', 'Spanish', 'French', 'Portuguese', '(other)'];
@@ -12,7 +13,7 @@ function getRandomNumber(min: number, max: number) { // min and max included
   return Math.floor(Math.random() * (max - min + 1) + min)
 }
 
-function getValueFromServer() {
+function getValueFromServer(params: ICellEditorParams): Promise<string[]> {
   return new Promise((resolve) => {
     setTimeout(() => resolve(languages), 1000);
   });
