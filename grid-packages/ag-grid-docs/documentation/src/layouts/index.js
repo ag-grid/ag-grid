@@ -17,7 +17,7 @@ import apiMenuData from '../../doc-pages/licensing/api-menu.json';
  */
 export const Layout = ({
     children,
-    pageContext: { frameworks, framework = 'javascript', layout, pageName, darkMode },
+    pageContext: { frameworks, framework = 'react', layout, pageName, darkMode },
     location: { pathname: path, href },
 }) => {
 
