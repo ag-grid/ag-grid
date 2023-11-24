@@ -5,7 +5,7 @@ import styles from './PromoBanner.module.scss';
 import LogoMarkTransparent from '../LogoMarkTransparent';
 import CloseIcon from '../../images/inline-svgs/cross-banner.svg';
 
-const PromoBanner = () => {
+export const PromoBanner = () => {
   const [isVisible, setIsVisible] = useState(false);
 
   useEffect(() => {
@@ -40,5 +40,3 @@ const PromoBanner = () => {
     </div>
   );
 };
-
-export default PromoBanner;

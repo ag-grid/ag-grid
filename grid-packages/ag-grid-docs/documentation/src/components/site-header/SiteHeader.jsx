@@ -14,7 +14,7 @@ import menuData from '../../../doc-pages/licensing/menu.json';
 import apiMenuData from '../../../doc-pages/licensing/api-menu.json';
 import Search from "../search/Search";
 import {getCurrentFramework} from '../../utils/local-storage';
-import PromoBanner from '../promo-banner/PromoBanner'; 
+import {PromoBanner} from '../promo-banner/PromoBanner'; 
 
 
 const SITE_HEADER_SMALL_WIDTH = parseInt(breakpoints['site-header-small'], 10);

@@ -8,27 +8,27 @@
     align-content: center;
     gap: 16px;
     font-weight: 500;
-    background: linear-gradient(180deg, #054B93 0%, #1D5E9E 100%);
+    background: linear-gradient(180deg, #054b93 0%, #1d5e9e 100%);
     border-bottom: 1px solid rgba(255, 255, 255, 0.2);
     align-items: center;
-  }
-  
-  .visible {
+}
+
+.visible {
     display: flex; /* Display when visible */
-  }
-  
-  .hidden {
+}
+
+.hidden {
     display: none; /* Hide when not visible */
-  }
-  
-  .promoText {
+}
+
+.promoText {
     color: white;
-  }
-  
-  .visitButton {
+}
+
+.visitButton {
     border-radius: 24px;
     background: white;
-    color: #054B93;
+    color: #054b93;
     font-size: 15px;
     display: flex;
     height: 26px;
@@ -36,14 +36,13 @@
     justify-content: center;
     padding-left: 8px;
     padding-right: 8px;
-    
-     @media only screen and (max-width: 500px) {
-         display: none;
-        }
 
-  }
+    @media only screen and (max-width: 500px) {
+        display: none;
+    }
+}
 
-  .closeIcon {
+.closeIcon {
     height: 24px;
     width: 24px;
     fill: #fff;
@@ -51,4 +50,4 @@
     right: 0;
     margin-right: 8px;
     cursor: pointer;
-  }
+}
