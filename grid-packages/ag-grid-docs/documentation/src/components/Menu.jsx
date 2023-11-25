@@ -111,7 +111,7 @@ const MenuSection = ({title, items, currentFramework, activeParentItems, toggleA
         <li className={styles.menuSection}>
             <button onClick={handleToggle} tabIndex="0" className={buttonClasses} aria-expanded={isActive}
                     aria-controls={`#${elementId}`}>
-                {!hideChevrons && <Icon name="chevronRight" svgClasses={iconClasses}/>}
+                {!hideChevrons && title && <Icon name="chevronRight" svgClasses={iconClasses}/>}
                 {title}
             </button>
             <MenuGroup
