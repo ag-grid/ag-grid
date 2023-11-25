@@ -329,6 +329,171 @@
     ]
   },
   {
+    "group": "CHARTING",
+    "items": [
+        {
+          "title": "Sparklines",
+          "items": [
+            {
+              "title": "Overview",
+              "url": "/sparklines-overview/",
+              "enterprise": true,
+              "showInCollapsed": true,
+              "items": [
+                {
+                  "title": "Area",
+                  "url": "/sparklines-area-customisation/",
+                  "enterprise": true,
+                  "showInCollapsed": true
+                },
+                {
+                  "title": "Bar",
+                  "url": "/sparklines-bar-customisation/",
+                  "enterprise": true,
+                  "showInCollapsed": true
+                },
+                {
+                  "title": "Column",
+                  "url": "/sparklines-column-customisation/",
+                  "enterprise": true,
+                  "showInCollapsed": true
+                },
+                {
+                  "title": "Line",
+                  "url": "/sparklines-line-customisation/",
+                  "enterprise": true,
+                  "showInCollapsed": true
+                }
+              ]
+            },
+            {
+              "title": "Sparkline Data",
+              "url": "/sparklines-data/",
+              "enterprise": true,
+              "showInCollapsed": true
+            },
+            {
+              "title": "Axis Types",
+              "url": "/sparklines-axis-types/",
+              "enterprise": true,
+              "showInCollapsed": true
+            },
+            {
+              "title": "Tooltips",
+              "url": "/sparklines-tooltips/",
+              "enterprise": true,
+              "showInCollapsed": true
+            },
+            {
+              "title": "Points of Interest",
+              "url": "/sparklines-points-of-interest/",
+              "enterprise": true,
+              "showInCollapsed": true
+            }
+          ]
+        },
+        {
+          "title": "Integrated Charts",
+          "items": [
+            {
+              "title": "Overview",
+              "url": "/integrated-charts/",
+              "enterprise": true,
+              "showInCollapsed": true
+            },
+            {
+              "title": "User Created Charts",
+              "url": "/integrated-charts-user-created/",
+              "enterprise": true,
+              "showInCollapsed": true,
+              "items": [
+                {
+                  "title": "Range Chart",
+                  "url": "/integrated-charts-range-chart/",
+                  "enterprise": true,
+                  "showInCollapsed": true
+                },
+                {
+                  "title": "Pivot Chart",
+                  "url": "/integrated-charts-pivot-chart/",
+                  "enterprise": true,
+                  "showInCollapsed": true
+                }
+              ]
+            },
+            {
+              "title": "Application Created Charts",
+              "url": "/integrated-charts-application-created/",
+              "enterprise": true,
+              "showInCollapsed": true,
+              "items": [
+                {
+                  "title": "Range Chart API",
+                  "url": "/integrated-charts-api-range-chart/",
+                  "enterprise": true,
+                  "showInCollapsed": true
+                },
+                {
+                  "title": "Pivot Chart API",
+                  "url": "/integrated-charts-api-pivot-chart/",
+                  "enterprise": true,
+                  "showInCollapsed": true
+                },
+                {
+                  "title": "Cross Filter API",
+                  "url": "/integrated-charts-api-cross-filter-chart/",
+                  "enterprise": true
+                }
+              ]
+            },
+            {
+              "title": "Chart Tool Panels",
+              "url": "/integrated-charts-chart-tool-panels/",
+              "enterprise": true,
+              "showInCollapsed": true
+            },
+            {
+              "title": "Chart Toolbar",
+              "url": "/integrated-charts-toolbar/",
+              "enterprise": true,
+              "showInCollapsed": true
+            },
+            {
+              "title": "Chart Container",
+              "url": "/integrated-charts-container/",
+              "enterprise": true
+            },
+            {
+              "title": "Customisation",
+              "url": "/integrated-charts-customisation/",
+              "enterprise": true,
+              "showInCollapsed": true
+            },
+            {
+              "title": "Chart Events",
+              "url": "/integrated-charts-events/",
+              "enterprise": true
+            },
+            {
+              "title": "Time Series",
+              "url": "/integrated-charts-time-series/",
+              "enterprise": true
+            },
+            {
+              "title": "Save / Restore Charts",
+              "url": "/integrated-charts-api-save-restore-charts/",
+              "enterprise": true
+            },
+            {
+              "title": "Chart Image Export",
+              "url": "/integrated-charts-api-downloading-image/",
+              "enterprise": true
+            }
+          ]
+        }
+    ]
+  },
+  {
     "group": "CORE FEATURES",
     "items": [
       {
@@ -550,49 +715,37 @@
         ]
       },
       {
-        "title": "Client-Side Data",
+        "title": "Selection",
         "items": [
           {
             "title": "Overview",
-            "url": "/client-side-model/",
+            "url": "/selection-overview/",
             "showInCollapsed": true
           },
           {
-            "title": "Accessing Data",
-            "url": "/accessing-data/",
+            "title": "Row Selection",
+            "url": "/row-selection/",
             "showInCollapsed": true
           },
           {
-            "title": "Updating Data",
-            "url": "/data-update/",
+            "title": "Range Selection",
+            "url": "/range-selection/",
+            "enterprise": true,
             "showInCollapsed": true,
             "items": [
               {
-                "title": "Row Data",
-                "url": "/data-update-row-data/",
+                "title": "Range Handle",
+                "url": "/range-selection-handle/",
+                "enterprise": true,
                 "showInCollapsed": true
               },
               {
-                "title": "Single Row / Cell",
-                "url": "/data-update-single-row-cell/",
-                "showInCollapsed": true
-              },
-              {
-                "title": "Transactions",
-                "url": "/data-update-transactions/",
-                "showInCollapsed": true
-              },
-              {
-                "title": "High Frequency",
-                "url": "/data-update-high-frequency/",
+                "title": "Fill Handle",
+                "url": "/range-selection-fill-handle/",
+                "enterprise": true,
                 "showInCollapsed": true
               }
             ]
-          },
-          {
-            "title": "Data Stages",
-            "url": "/client-side-row-stages/",
-            "showInCollapsed": true
           }
         ]
       },
@@ -763,37 +916,49 @@
         ]
       },
       {
-        "title": "Selection",
+        "title": "Client-Side Data",
         "items": [
           {
             "title": "Overview",
-            "url": "/selection-overview/",
+            "url": "/client-side-model/",
             "showInCollapsed": true
           },
           {
-            "title": "Row Selection",
-            "url": "/row-selection/",
+            "title": "Accessing Data",
+            "url": "/accessing-data/",
             "showInCollapsed": true
           },
           {
-            "title": "Range Selection",
-            "url": "/range-selection/",
-            "enterprise": true,
+            "title": "Updating Data",
+            "url": "/data-update/",
             "showInCollapsed": true,
             "items": [
               {
-                "title": "Range Handle",
-                "url": "/range-selection-handle/",
-                "enterprise": true,
+                "title": "Row Data",
+                "url": "/data-update-row-data/",
                 "showInCollapsed": true
               },
               {
-                "title": "Fill Handle",
-                "url": "/range-selection-fill-handle/",
-                "enterprise": true,
+                "title": "Single Row / Cell",
+                "url": "/data-update-single-row-cell/",
+                "showInCollapsed": true
+              },
+              {
+                "title": "Transactions",
+                "url": "/data-update-transactions/",
+                "showInCollapsed": true
+              },
+              {
+                "title": "High Frequency",
+                "url": "/data-update-high-frequency/",
                 "showInCollapsed": true
               }
             ]
+          },
+          {
+            "title": "Data Stages",
+            "url": "/client-side-row-stages/",
+            "showInCollapsed": true
           }
         ]
       },
@@ -1023,6 +1188,114 @@
         ]
       },
       {
+        "title": "Master Detail",
+        "items": [
+          {
+            "title": "Overview",
+            "url": "/master-detail/",
+            "enterprise": true,
+            "showInCollapsed": true
+          },
+          {
+            "title": "Detail Grids",
+            "url": "/master-detail-grids/",
+            "enterprise": true,
+            "showInCollapsed": true
+          },
+          {
+            "title": "Detail Height",
+            "url": "/master-detail-height/",
+            "enterprise": true,
+            "showInCollapsed": true
+          },
+          {
+            "title": "Detail Refresh",
+            "url": "/master-detail-refresh/",
+            "enterprise": true,
+            "showInCollapsed": true
+          },
+          {
+            "title": "Master Rows",
+            "url": "/master-detail-master-rows/",
+            "enterprise": true,
+            "showInCollapsed": true
+          },
+          {
+            "title": "Nesting",
+            "url": "/master-detail-nesting/",
+            "enterprise": true,
+            "showInCollapsed": true
+          },
+          {
+            "title": "Custom Detail",
+            "url": "/master-detail-custom-detail/",
+            "enterprise": true,
+            "showInCollapsed": false
+          },
+          {
+            "title": "Other",
+            "url": "/master-detail-other/",
+            "enterprise": true,
+            "showInCollapsed": false
+          }
+        ]
+      },
+      {
+        "title": "Accessories",
+        "level-2-display-style-forced": "block",
+        "items": [
+          {
+            "title": "Tool Panels",
+            "url": "/tool-panel/",
+            "enterprise": true,
+            "showInCollapsed": true,
+            "items": [
+              {
+                "title": "Side Bar",
+                "url": "/side-bar/",
+                "enterprise": true,
+                "showInCollapsed": true
+              },
+              {
+                "title": "Columns Tool Panel",
+                "url": "/tool-panel-columns/",
+                "showInCollapsed": true,
+                "enterprise": true
+              },
+              {
+                "title": "Filters Tool Panel",
+                "url": "/tool-panel-filters/",
+                "showInCollapsed": true,
+                "enterprise": true
+              }
+            ]
+          },
+          {
+            "title": "Column Menu",
+            "url": "/column-menu/",
+            "enterprise": true,
+            "showInCollapsed": true
+          },
+          {
+            "title": "Context Menu",
+            "url": "/context-menu/",
+            "enterprise": true,
+            "showInCollapsed": true
+          },
+          {
+            "title": "Status Bar",
+            "url": "/status-bar/",
+            "enterprise": true,
+            "showInCollapsed": true
+          },
+          {
+            "title": "Overlays",
+            "url": "/overlays/",
+            "showInCollapsed": true
+          }
+        ]
+      },
+      {
         "title": "Server-Side Data",
         "items": [
           {
@@ -1170,59 +1443,6 @@
         ]
       },
       {
-        "title": "Master Detail",
-        "items": [
-          {
-            "title": "Overview",
-            "url": "/master-detail/",
-            "enterprise": true,
-            "showInCollapsed": true
-          },
-          {
-            "title": "Detail Grids",
-            "url": "/master-detail-grids/",
-            "enterprise": true,
-            "showInCollapsed": true
-          },
-          {
-            "title": "Detail Height",
-            "url": "/master-detail-height/",
-            "enterprise": true,
-            "showInCollapsed": true
-          },
-          {
-            "title": "Detail Refresh",
-            "url": "/master-detail-refresh/",
-            "enterprise": true,
-            "showInCollapsed": true
-          },
-          {
-            "title": "Master Rows",
-            "url": "/master-detail-master-rows/",
-            "enterprise": true,
-            "showInCollapsed": true
-          },
-          {
-            "title": "Nesting",
-            "url": "/master-detail-nesting/",
-            "enterprise": true,
-            "showInCollapsed": true
-          },
-          {
-            "title": "Custom Detail",
-            "url": "/master-detail-custom-detail/",
-            "enterprise": true,
-            "showInCollapsed": false
-          },
-          {
-            "title": "Other",
-            "url": "/master-detail-other/",
-            "enterprise": true,
-            "showInCollapsed": false
-          }
-        ]
-      },
-      {
         "title": "Import & Export",
         "items": [
           {
@@ -1327,61 +1547,6 @@
         ]
       },
       {
-        "title": "Accessories",
-        "level-2-display-style-forced": "block",
-        "items": [
-          {
-            "title": "Tool Panels",
-            "url": "/tool-panel/",
-            "enterprise": true,
-            "showInCollapsed": true,
-            "items": [
-              {
-                "title": "Side Bar",
-                "url": "/side-bar/",
-                "enterprise": true,
-                "showInCollapsed": true
-              },
-              {
-                "title": "Columns Tool Panel",
-                "url": "/tool-panel-columns/",
-                "showInCollapsed": true,
-                "enterprise": true
-              },
-              {
-                "title": "Filters Tool Panel",
-                "url": "/tool-panel-filters/",
-                "showInCollapsed": true,
-                "enterprise": true
-              }
-            ]
-          },
-          {
-            "title": "Column Menu",
-            "url": "/column-menu/",
-            "enterprise": true,
-            "showInCollapsed": true
-          },
-          {
-            "title": "Context Menu",
-            "url": "/context-menu/",
-            "enterprise": true,
-            "showInCollapsed": true
-          },
-          {
-            "title": "Status Bar",
-            "url": "/status-bar/",
-            "enterprise": true,
-            "showInCollapsed": true
-          },
-          {
-            "title": "Overlays",
-            "url": "/overlays/",
-            "showInCollapsed": true
-          }
-        ]
-      },
-      {
         "title": "Components",
         "items": [
           {
@@ -1473,166 +1638,6 @@
                 ]
               }
             ]
-          }
-        ]
-      },
-      {
-        "title": "Sparklines",
-        "items": [
-          {
-            "title": "Overview",
-            "url": "/sparklines-overview/",
-            "enterprise": true,
-            "showInCollapsed": true,
-            "items": [
-              {
-                "title": "Area",
-                "url": "/sparklines-area-customisation/",
-                "enterprise": true,
-                "showInCollapsed": true
-              },
-              {
-                "title": "Bar",
-                "url": "/sparklines-bar-customisation/",
-                "enterprise": true,
-                "showInCollapsed": true
-              },
-              {
-                "title": "Column",
-                "url": "/sparklines-column-customisation/",
-                "enterprise": true,
-                "showInCollapsed": true
-              },
-              {
-                "title": "Line",
-                "url": "/sparklines-line-customisation/",
-                "enterprise": true,
-                "showInCollapsed": true
-              }
-            ]
-          },
-          {
-            "title": "Sparkline Data",
-            "url": "/sparklines-data/",
-            "enterprise": true,
-            "showInCollapsed": true
-          },
-          {
-            "title": "Axis Types",
-            "url": "/sparklines-axis-types/",
-            "enterprise": true,
-            "showInCollapsed": true
-          },
-          {
-            "title": "Tooltips",
-            "url": "/sparklines-tooltips/",
-            "enterprise": true,
-            "showInCollapsed": true
-          },
-          {
-            "title": "Points of Interest",
-            "url": "/sparklines-points-of-interest/",
-            "enterprise": true,
-            "showInCollapsed": true
-          }
-        ]
-      },
-      {
-        "title": "Integrated Charts",
-        "items": [
-          {
-            "title": "Overview",
-            "url": "/integrated-charts/",
-            "enterprise": true,
-            "showInCollapsed": true
-          },
-          {
-            "title": "User Created Charts",
-            "url": "/integrated-charts-user-created/",
-            "enterprise": true,
-            "showInCollapsed": true,
-            "items": [
-              {
-                "title": "Range Chart",
-                "url": "/integrated-charts-range-chart/",
-                "enterprise": true,
-                "showInCollapsed": true
-              },
-              {
-                "title": "Pivot Chart",
-                "url": "/integrated-charts-pivot-chart/",
-                "enterprise": true,
-                "showInCollapsed": true
-              }
-            ]
-          },
-          {
-            "title": "Application Created Charts",
-            "url": "/integrated-charts-application-created/",
-            "enterprise": true,
-            "showInCollapsed": true,
-            "items": [
-              {
-                "title": "Range Chart API",
-                "url": "/integrated-charts-api-range-chart/",
-                "enterprise": true,
-                "showInCollapsed": true
-              },
-              {
-                "title": "Pivot Chart API",
-                "url": "/integrated-charts-api-pivot-chart/",
-                "enterprise": true,
-                "showInCollapsed": true
-              },
-              {
-                "title": "Cross Filter API",
-                "url": "/integrated-charts-api-cross-filter-chart/",
-                "enterprise": true
-              }
-            ]
-          },
-          {
-            "title": "Chart Tool Panels",
-            "url": "/integrated-charts-chart-tool-panels/",
-            "enterprise": true,
-            "showInCollapsed": true
-          },
-          {
-            "title": "Chart Toolbar",
-            "url": "/integrated-charts-toolbar/",
-            "enterprise": true,
-            "showInCollapsed": true
-          },
-          {
-            "title": "Chart Container",
-            "url": "/integrated-charts-container/",
-            "enterprise": true
-          },
-          {
-            "title": "Customisation",
-            "url": "/integrated-charts-customisation/",
-            "enterprise": true,
-            "showInCollapsed": true
-          },
-          {
-            "title": "Chart Events",
-            "url": "/integrated-charts-events/",
-            "enterprise": true
-          },
-          {
-            "title": "Time Series",
-            "url": "/integrated-charts-time-series/",
-            "enterprise": true
-          },
-          {
-            "title": "Save / Restore Charts",
-            "url": "/integrated-charts-api-save-restore-charts/",
-            "enterprise": true
-          },
-          {
-            "title": "Chart Image Export",
-            "url": "/integrated-charts-api-downloading-image/",
-            "enterprise": true
           }
         ]
       }
