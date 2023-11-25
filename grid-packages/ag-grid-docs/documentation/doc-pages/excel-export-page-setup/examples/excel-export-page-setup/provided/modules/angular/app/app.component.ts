@@ -95,9 +95,7 @@ export class AppComponent {
 ];
 
 public defaultColDef: ColDef = {
-    sortable: true,
     filter: true,
-    resizable: true,
     minWidth: 100,
     flex: 1,
 };

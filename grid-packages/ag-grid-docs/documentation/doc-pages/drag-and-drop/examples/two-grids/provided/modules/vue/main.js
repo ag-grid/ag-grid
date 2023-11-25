@@ -19,8 +19,7 @@ const VueExample = {
                     :columnDefs="leftColumnDefs"
                     :rowClassRules="rowClassRules"
                     :rowData="leftRowData"
-                    :rowDragManaged="true"
-                    :animateRows="true">
+                    :rowDragManaged="true">
                 </ag-grid-vue>
             </div>
             <div class="inner-col factory-panel">
@@ -50,8 +49,7 @@ const VueExample = {
                     :columnDefs="rightColumnDefs"
                     :rowClassRules="rowClassRules"
                     :rowData="rightRowData"
-                    :rowDragManaged="true"
-                    :animateRows="true">
+                    :rowDragManaged="true">
                 </ag-grid-vue>
             </div>
         </div>
@@ -77,15 +75,12 @@ const VueExample = {
     beforeMount() {
         const baseDefaultColDef = {
             flex: 1,
-            sortable: true,
             filter: true,
-            resizable: true
         };
 
         const baseGridOptions = {
             getRowId: (params) => { return params.data.id; },
             rowDragManaged: true,
-            animateRows: true
         }
 
         const baseColumnDefs = [

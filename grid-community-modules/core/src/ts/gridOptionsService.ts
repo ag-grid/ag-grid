@@ -1,6 +1,6 @@
 import { ColumnApi } from "./columns/columnApi";
 import { ComponentUtil } from "./components/componentUtil";
-import { Autowired, Bean, PostConstruct, PreDestroy, Qualifier } from "./context/context";
+import { Autowired, Bean, PostConstruct, PreDestroy } from "./context/context";
 import { DomLayoutType, GridOptions } from "./entities/gridOptions";
 import { GetGroupAggFilteringParams, GetGroupIncludeFooterParams, RowHeightParams } from "./interfaces/iCallbackParams";
 import { Environment } from "./environment";
@@ -9,7 +9,7 @@ import { EventService } from "./eventService";
 import { GridApi } from "./gridApi";
 import { AgGridCommon, WithoutGridCommon } from "./interfaces/iCommon";
 import { RowModelType } from "./interfaces/iRowModel";
-import { AnyGridOptions, PropertyKeys } from "./propertyKeys";
+import { AnyGridOptions, INITIAL_GRID_OPTION_KEYS, PropertyKeys } from "./propertyKeys";
 import { warnOnce } from "./utils/function";
 import { exists, missing } from "./utils/generic";
 import { getScrollbarWidth } from './utils/browser';
@@ -28,7 +28,6 @@ type GetKeys<T, U> = {
 export type KeysOfType<U> = Exclude<GetKeys<GridOptions, U>, AnyGridOptions>;
 
 type BooleanProps = Exclude<KeysOfType<boolean>, AnyGridOptions>;
-type NumberProps = Exclude<KeysOfType<number>, AnyGridOptions>;
 type NoArgFuncs = KeysOfType<() => any>;
 type AnyArgFuncs = KeysOfType<(arg: 'NO_MATCH') => any>;
 type CallbackProps = Exclude<KeysOfType<(params: AgGridCommon<any, any>) => any>, NoArgFuncs | AnyArgFuncs>;
@@ -90,13 +89,11 @@ export class GridOptionsService {
     }
 
     private propertyEventService: EventService = new EventService();
-    private gridOptionLookup: Set<string>;
 
 
     @PostConstruct
     public init(): void {
         this.columnApi = new ColumnApi(this.api);
-        this.gridOptionLookup = new Set([...ComponentUtil.ALL_PROPERTIES, ...ComponentUtil.EVENT_CALLBACKS]);
         const async = !this.get('suppressAsyncEvents');
         this.eventService.addGlobalListener(this.globalEventHandlerFactory().bind(this), async);
         this.eventService.addGlobalListener(this.globalEventHandlerFactory(true).bind(this), false);
@@ -239,6 +236,9 @@ export class GridOptionsService {
         // all events are fired after grid options has finished updating.
         const events: PropertyValueChangedEvent<keyof GridOptions>[] = [];
         Object.entries(options).forEach(([key, value]) => {
+            if (source === 'api' && (INITIAL_GRID_OPTION_KEYS as any)[key]) {
+                warnOnce(`${key} is an initial property and cannot be updated.`)
+            }
             const coercedValue = GridOptionsService.getCoercedValue(key as keyof GridOptions, value);
             const shouldForce = (typeof coercedValue) === 'object' && source === 'api'; // force objects as they could have been mutated.
 

@@ -753,7 +753,12 @@ export class DataTypeService extends BeanStub {
             },
             boolean: {
                 baseDataType: 'boolean',
-                valueParser: (params: ValueParserLiteParams<any, boolean>) => params.newValue === '' ? null : String(params.newValue).toLowerCase() === 'true',
+                valueParser: (params: ValueParserLiteParams<any, boolean>) => {
+                    if (params.newValue == null) {
+                        return params.newValue;
+                    }
+                    return params.newValue === '' ? null : String(params.newValue).toLowerCase() === 'true'
+                },
                 valueFormatter: (params: ValueFormatterLiteParams<any, boolean>) => params.value == null ? '' : String(params.value),
                 dataTypeMatcher: (value: any) => typeof value === 'boolean',
             },

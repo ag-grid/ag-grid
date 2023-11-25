@@ -7,7 +7,7 @@ This section describes the behaviour of the Set Filter Tree List and shows how i
 
 The Tree List allows the user to display the values in the Filter List grouped in a tree structure.
 
-<image-caption src="filter-set-tree-list/resources/set-filter-tree-list.png" alt="Filter Tree List" constrained="true" centered="true"></image-caption>
+<image-caption src="filter-set-tree-list/resources/set-filter-tree-list.png" alt="Filter Tree List" constrained="true" centered="true" toggledarkmode="true" width="18rem"></image-caption>
 
 ## Enabling Tree Lists
 

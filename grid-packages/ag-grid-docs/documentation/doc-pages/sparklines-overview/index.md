@@ -6,7 +6,7 @@ enterprise: true
 This section introduces the grid's built-in Sparklines - mini charts that are optimised for grid cells that can be used
 to provide insights into data trends at a glance. These sparklines can be fully customised to application's requirements.
 
-<image-caption src="sparklines-overview/resources/sparklines-overview.png" alt="Sparkline Overview" maxWidth="80%" constrained="true" centered="true"></image-caption>
+<image-caption src="sparklines-overview/resources/sparklines-overview.png" alt="Sparkline Overview" maxWidth="80%" constrained="true" centered="true" toggledarkmode="true"></image-caption>
 
 ## Enabling Sparklines
 

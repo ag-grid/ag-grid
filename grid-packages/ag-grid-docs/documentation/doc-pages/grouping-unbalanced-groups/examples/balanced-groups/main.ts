@@ -27,7 +27,6 @@ const gridOptions: GridOptions = {
   defaultColDef: {
     flex: 1,
     minWidth: 150,
-    resizable: true,
   },
   autoGroupColumnDef: {
     field: 'city',
@@ -48,7 +47,6 @@ const gridOptions: GridOptions = {
   rowData: getData(),
   groupDefaultExpanded: -1,
   rowGroupPanelShow: 'always',
-  animateRows: true,
 }
 
 const COUNTRY_CODES: Record<string, string> = {

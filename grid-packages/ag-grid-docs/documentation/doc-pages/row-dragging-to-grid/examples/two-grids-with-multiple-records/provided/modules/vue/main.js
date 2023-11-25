@@ -55,7 +55,6 @@ const VueExample = {
                                 :getRowId="getRowId"
                                 :rowDragManaged="true"
                                 :suppressMoveWhenRowDragging="true"
-                                :animateRows="true"
                                 :rowData="leftRowData"
                                 :columnDefs="leftColumns"
                                 @grid-ready="onGridReady($event, 0)"
@@ -72,7 +71,6 @@ const VueExample = {
                                 :defaultColDef="defaultColDef"
                                 :getRowId="getRowId"
                                 :rowDragManaged="true"
-                                :animateRows="true"
                                 :rowData="rightRowData"
                                 :columnDefs="rightColumns"
                                 @grid-ready="onGridReady($event, 1)"
@@ -96,9 +94,7 @@ const VueExample = {
             defaultColDef: {
                 flex: 1,
                 minWidth: 100,
-                sortable: true,
                 filter: true,
-                resizable: true
             },
             leftColumns: [
                 {

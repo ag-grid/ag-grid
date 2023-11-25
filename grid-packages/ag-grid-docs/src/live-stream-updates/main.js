@@ -267,8 +267,6 @@
     var gridOptions = {
         defaultColDef: {
             width: 120,
-            sortable: true,
-            resizable: true
         },
         columnTypes: {
             dimension: {
@@ -290,7 +288,6 @@
                 {component: 'agAggregationComponent'}
             ]
         },
-        animateRows: true,
         enableRangeSelection: true,
         rowGroupPanelShow: "always",
         pivotPanelShow: "always",

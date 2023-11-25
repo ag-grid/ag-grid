@@ -23,7 +23,6 @@ const gridOptions: GridOptions = {
     flex: 1,
     cellClass: 'align-right',
     enableCellChangeFlash: true,
-    resizable: true,
     valueFormatter: (params) => {
       return formatNumber(params.value)
     },

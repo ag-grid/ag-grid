@@ -56,33 +56,31 @@ The example below adds some styling to `ag-header-cell-filtered`, so when you fi
 
 <grid-example title='Style Header' name='style-header-on-filter' type='generated' options='{ "exampleHeight": 520 }'></grid-example>
 
-# Styling the First and Last Columns
+## Styling the First and Last Columns
 
 It's possible to style the all first and last column header (Grouped, Non-Grouped and Floating Filters) using CSS by targeting the `.ag-column-first` and `.ag-column-last` selectors as follows:
 
 ```css
-.ag-theme-quartz .ag-header-group-cell.ag-column-first {
-    background-color: darkblue;
+.ag-header-group-cell.ag-column-first {
+    background-color: #2244CC66;
+    color: white;
+}
+.ag-header-cell.ag-column-first {
+    background-color: #2244CC44;
+    color: white;
+}
+.ag-floating-filter.ag-column-first {
+    background-color: #2244CC22;
 }
 
-.ag-theme-quartz .ag-header-cell.ag-column-first {
-    background-color: mediumblue;
+.ag-header-group-cell.ag-column-last {
+    background-color: #33CC3366;
 }
-
-.ag-theme-quartz .ag-floating-filter.ag-column-first {
-    background-color: cornflowerblue;
+.ag-header-cell.ag-column-last {
+    background-color: #33CC3344;
 }
-
-.ag-theme-quartz .ag-header-group-cell.ag-column-last {
-    background-color: darkorange;
-}
-
-.ag-theme-quartz .ag-header-cell.ag-column-last {
-    background-color: orange;
-}
-
-.ag-theme-quartz .ag-floating-filter.ag-column-last {
-    background-color: gold;
+.ag-floating-filter.ag-column-last {
+    background-color: #33CC3322;
 }
 ```
 

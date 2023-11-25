@@ -5,51 +5,11 @@ enterprise: true
 
 This section provides details on how to configure and customise how row groups are sorted.
 
-## Enabling Group Sorting
+## Group Sorting
 
-When using [Single Group Column](../grouping-single-group-column/) or [Multiple Group Columns](../grouping-multiple-group-columns/), sorting can be enabled through the `sortable` column property as shown below:  
+When using [Single Group Column](../grouping-single-group-column/) or [Multiple Group Columns](../grouping-multiple-group-columns/) sorting is enabled by default. If you wish to disable sorting this can be achieved by setting `sortable = false`. In cases where it is preferable to suppress sorting on the Row Group Columns only `autoGroupColumnDef.sortable = false` can be used.
 
-<snippet>
-const gridOptions = { 
-    defaultColDef: {
-        // enable sorting across all columns - including Row Group Columns
-        sortable: true,
-    }, 
-    autoGroupColumnDef: {
-        // enabled sorting on Row Group Columns only 
-        sortable: true,        
-    },
-    // also applies to the 'multipleColumns' display type 
-    groupDisplayType: 'singleColumn',
-}
-</snippet>
-
-It is common to simply define `defaultColDef.sortable = true` across all columns, which includes row group columns. 
-However, in cases where it is preferable to define sorting on the Row Group Columns directly, 
-`autoGroupColumnDef.sortable = true` can be used.
-
-Sorting is also enabled using the `sortable` column property with [Custom Group Columns](../grouping-custom-group-columns/), as shown below:
-
-<snippet>
-const gridOptions = {
-    columnDefs: [
-        {   
-            cellRenderer: 'agGroupCellRenderer',
-            showRowGroup: true,
-            // enabled sorting on this Row Group Column only 
-            sortable: true,  
-        },
-    ],
-    defaultColDef: {
-        // enable sorting across all columns - including Row Group Columns
-        sortable: true,
-    }, 
-    groupDisplayType: 'custom',
-};
-</snippet>
-
-The example below demonstrates how sorting is enabled with [Multiple Group Columns](../grouping-multiple-group-columns/). 
-Note that sorting is enabled across all columns, including Row Group Columns, using: `defaultColDef.sortable = true`.
+The example below demonstrates sorting with [Multiple Group Columns](../grouping-multiple-group-columns/). 
 
 <grid-example title='Enabling Group Sorting' name='enabling-group-sorting' type='generated' options='{ "enterprise": true, "exampleHeight": 540, "modules": ["clientside", "rowgrouping"] }'></grid-example>
 
@@ -65,13 +25,11 @@ const gridOptions = {
         {
             field: 'year',
             rowGroup: true,
-            sortable: true,
             sort: 'desc',
         },
         {
             field: 'handset',
             rowGroup: true,
-            sortable: true,
             sort: 'asc',
         },
     ],

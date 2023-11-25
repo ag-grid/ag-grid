@@ -5,7 +5,7 @@
   border: 2px solid grey;
   border-style: ridge;
   box-sizing: border-box;
-  background-color: #fff8d5;
+  background-color: #CCAA22A9;
   display: flex;
   align-items: center;
   gap: 5px;
@@ -17,9 +17,5 @@
 }
 
 .ag-row:focus .full-width-panel {
-  background-color: #e9d985;
-}
-
-.ag-row:focus {
-  background: lightskyblue;
+  background-color: #CCAA22CC;
 }

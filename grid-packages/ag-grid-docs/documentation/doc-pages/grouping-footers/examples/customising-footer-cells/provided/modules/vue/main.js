@@ -22,7 +22,6 @@ const VueExample = {
                     :autoGroupColumnDef="autoGroupColumnDef"
                     :groupIncludeFooter="true"
                     :groupIncludeTotalFooter="true"
-                    :animateRows="true"
                     :rowData="rowData"></ag-grid-vue>
         </div>
     `,
@@ -54,8 +53,6 @@ const VueExample = {
             defaultColDef: {
                 flex: 1,
                 minWidth: 150,
-                sortable: true,
-                resizable: true,
             },
             autoGroupColumnDef: {
                 minWidth: 300,

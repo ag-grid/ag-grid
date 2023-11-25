@@ -23,8 +23,6 @@ const gridOptions: GridOptions<IOlympicDataTypes> = {
     flex: 1,
     minWidth: 180,
     filter: true,
-    sortable: true,
-    resizable: true,
   },
   dataTypeDefinitions: {
     object: {

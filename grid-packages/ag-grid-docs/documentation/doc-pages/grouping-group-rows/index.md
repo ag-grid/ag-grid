@@ -6,7 +6,7 @@ enterprise: true
 This section covers the Group Rows display type, where group rows are automatically added by the grid containing the 
 row groups instead of group columns. This can be preferred if you have a lot of information you want to say about the group.
 
-<image-caption src="grouping-group-rows/resources/group-rows.png" alt="Group Rows" maxWidth="80%" constrained="true" centered="true"></image-caption>
+<image-caption src="grouping-display-types/resources/group-rows.png" alt="Group Rows" maxWidth="80%" constrained="true" centered="true" toggledarkmode="true"></image-caption>
 
 ## Enabling Group Rows
 

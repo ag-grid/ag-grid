@@ -12,8 +12,6 @@ const gridOptions: GridOptions<IOlympicData> = {
   ],
   defaultColDef: {
     flex: 1,
-    sortable: true,
-    resizable: true,
     filter: true,
   },
   rowModelType: 'infinite',

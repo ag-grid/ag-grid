@@ -30,9 +30,6 @@ let gridApi: GridApi;
 
 const gridOptions: GridOptions = {
   columnDefs: getColumnDefs(),
-  defaultColDef: {
-    resizable: true,
-  },
   rowModelType: 'infinite',
   rowSelection: 'multiple',
   maxBlocksInCache: 2,
@@ -41,6 +38,9 @@ const gridOptions: GridOptions = {
     return params.data.a
   },
   datasource: getDataSource(100),
+  defaultColDef: {
+    sortable: false,
+  }
 }
 
 function getDataSource(count: number) {

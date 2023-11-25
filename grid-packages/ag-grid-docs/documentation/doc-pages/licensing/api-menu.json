@@ -3,6 +3,16 @@
     "group": "",
     "items": [
       {
+        "title": "",
+        "items": [
+          {
+            "title": "Overview",
+            "url": "/reference/",
+            "showInCollapsed": true
+          }          
+        ]
+      },
+      {
         "title": "Grid",
         "items": [
           {
@@ -11,18 +21,18 @@
             "showInCollapsed": true
           },
           {
-            "title": "Grid Options",
+            "title": "Options Reference",
             "url": "/grid-options/",
             "showInCollapsed": true
           },
           {
-            "title": "Grid API",
-            "url": "/grid-api/",
+            "title": "Events Reference",
+            "url": "/grid-events/",
             "showInCollapsed": true
           },
           {
-            "title": "Grid Events",
-            "url": "/grid-events/",
+            "title": "API Reference",
+            "url": "/grid-api/",
             "showInCollapsed": true
           },
           {
@@ -47,13 +57,18 @@
             "showInCollapsed": true
           },
           {
-            "title": "Column Properties",
+            "title": "Options Reference",
             "url": "/column-properties/",
             "showInCollapsed": true
           },
           {
-            "title": "Column Object",
+            "title": "Column Reference",
             "url": "/column-object/",
+            "showInCollapsed": true
+          },
+          {
+            "title": "Events Reference",
+            "url": "/column-events/",
             "showInCollapsed": true
           }
         ]
@@ -62,17 +77,17 @@
         "title": "Row",
         "items": [
           {
-            "title": "Row Node",
+            "title": "Overview",
+            "url": "/row-interface/",
+            "showInCollapsed": true
+          },
+          {
+            "title": "Row Reference",
             "url": "/row-object/",
             "showInCollapsed": true
           },
           {
-            "title": "Row API",
-            "url": "/row-api/",
-            "showInCollapsed": true
-          },
-          {
-            "title": "Row Events",
+            "title": "Events Reference",
             "url": "/row-events/",
             "showInCollapsed": true
           }

@@ -13,7 +13,7 @@ understand how the grid organises data obtained from the server into caches.
 The grid arranges rows into blocks which are in turn stored in a cache as illustrated below:
 
 <div style="text-align: center; margin-top: 20px; margin-bottom: 20px;">
-    <image-caption src="server-side-model-configuration/resources/serverSideCache.png" alt="serverSideCache" constrained="true" centered="true"></image-caption>
+    <image-caption src="server-side-model-configuration/resources/serverSideCache.png" alt="serverSideCache" constrained="true" centered="true" filterdarkmode="true"></image-caption>
     <div>Fig 1. Server-side Cache</div>
 </div>
 

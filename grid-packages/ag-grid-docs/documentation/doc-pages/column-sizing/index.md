@@ -4,34 +4,33 @@ title: "Column Sizing"
 
 All columns can be resized by dragging the top right portion of the column.
 
-## Enable Sizing
-Turn column resizing on for the grid by setting `resizable=true` on the 
-[Default Column Definition](/column-definitions/#default-column-definitions). To set resizing for individual columns, 
-set `resizable=true` in their respective definitions.
+## Sizing
 
-The snippet below allows all columns except Address to be resized by explicitly setting each column.
+Column resizing is enabled by default for all columns. To control resizing for individual columns, set the boolean `resizable` property in the column definitions.
 
-<snippet>
-const gridOptions = {
-    columnDefs: [
-        { field: 'name', resizable: true },
-        { field: 'age', resizable: true },
-        { field: 'address' },
-    ],
-}
-</snippet>
-
-The snippet below allows all columns except Address to be resized by setting `resizable=true` on the default column definition and then `resizable=false` on the Address column.
+The snippet below allows all columns except Address to be resized.
 
 <snippet>
 const gridOptions = {
-    defaultColDef: {
-        resizable: true,
-    },
     columnDefs: [
         { field: 'name' },
         { field: 'age' },
         { field: 'address', resizable: false },
+    ],
+}
+</snippet>
+
+The snippet below shows how to only allow the Address column to be resized by setting `resizable=false` on the default column definition and then `resizable=true` on the Address column.
+
+<snippet>
+const gridOptions = {
+    defaultColDef: {
+        resizable: false,
+    },
+    columnDefs: [
+        { field: 'name' },
+        { field: 'age' },
+        { field: 'address', resizable: true },
     ],
 }
 </snippet>

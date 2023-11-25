@@ -126,6 +126,4 @@ rollup -c rollup.ag-grid.config.js
 
 The resulting bundle will be available in `./dist/ag-bundle.js`
 
-If we now serve `index-ag-grid.html` our grid will be rendered as expected:
-
-<image-caption src="building-rollup/resources/bundled-grid.png" width="33rem" alt="Bundled Grid" centered="true" constrained="true"></image-caption>
+If we now serve `index-ag-grid.html` our grid will be rendered as expected.

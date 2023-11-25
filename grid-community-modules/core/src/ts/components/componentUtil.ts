@@ -76,9 +76,9 @@ export class ComponentUtil {
     public static BOOLEAN_PROPERTIES = PropertyKeys.BOOLEAN_PROPERTIES;
     public static FUNCTION_PROPERTIES = PropertyKeys.FUNCTION_PROPERTIES;
     public static ALL_PROPERTIES = PropertyKeys.ALL_PROPERTIES;
-    public static ALL_PROPERTIES_SET = new Set(PropertyKeys.ALL_PROPERTIES);
 
     public static ALL_PROPERTIES_AND_CALLBACKS = [...this.ALL_PROPERTIES, ...this.EVENT_CALLBACKS];
+    public static ALL_PROPERTIES_AND_CALLBACKS_SET = new Set(ComponentUtil.ALL_PROPERTIES_AND_CALLBACKS);
 
     private static getGridOptionKeys() {
         // Vue does not have keys in prod so instead need to run through all the 
@@ -107,18 +107,32 @@ export class ComponentUtil {
     }
 
     public static processOnChange(changes: any, api: GridApi): void {
-        if (!changes || Object.keys(changes).length === 0) {
+        if (!changes) {
+            return;
+        }
+        
+        // Only process changes to properties that are part of the gridOptions
+        const gridChanges: any = {};
+        let hasChanges = false;
+        Object.keys(changes)
+            .filter((key) => ComponentUtil.ALL_PROPERTIES_AND_CALLBACKS_SET.has(key))
+            .forEach((key) => {
+                gridChanges[key] = changes[key]
+                hasChanges = true;
+            });
+
+        if (!hasChanges) {
             return;
         }
 
-        api.__internalUpdateGridOptions(changes);
+        api.__internalUpdateGridOptions(gridChanges);
 
-        // copy changes into an event for dispatch
+        // copy gridChanges into an event for dispatch
         const event: WithoutGridCommon<ComponentStateChangedEvent> = {
             type: Events.EVENT_COMPONENT_STATE_CHANGED
         };
 
-        iterateObject(changes, (key: string, value: any) => {
+        iterateObject(gridChanges, (key: string, value: any) => {
             (event as any)[key] = value;
         });
 

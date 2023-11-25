@@ -2,20 +2,15 @@ import classNames from 'classnames';
 import React from 'react';
 import GlobalContextConsumer from '../GlobalContext';
 import { Icon } from '../Icon';
-import styles from './DarkModeToggle.module.scss';
 import headerStyles from './SiteHeader.module.scss';
 
 const IS_SSR = typeof window === 'undefined';
 
 export const DarkModeToggle = () => {
     return IS_SSR ? (
-        <li className={classNames(headerStyles.navItem, styles.navItem)}>
+        <li className={classNames(headerStyles.navItem, headerStyles.buttonItem)}>
             <button
-                className={classNames(
-                    styles.toggle,
-                    styles.light,
-                    'button-style-none'
-                )}
+                className={classNames(headerStyles.navLink, 'button-style-none')}
                 aria-label="Toggle Dark Mode"
             >
                 <Icon name="sun" />
@@ -33,18 +28,16 @@ export const DarkModeToggle = () => {
                 htmlEl.classList.remove('no-transitions');
 
                 return (
-                    <li className={classNames(headerStyles.navItem, styles.navItem)}>
+                    <li className={classNames(headerStyles.navItem, headerStyles.buttonItem)}>
                         <button
-                            className={classNames(
-                                styles.toggle,
-                                darkMode ? styles.dark : styles.light,
-                                'button-style-none'
-                            )}
+                            className={classNames(headerStyles.navLink, 'button-style-none')}
+                            aria-label="Toggle Dark Mode"
                             onClick={() => {
                                 set({ darkMode: !darkMode });
                             }}
                         >
                             {darkMode ? <Icon name="sun" /> : <Icon name="moon" />}
+                            <span>Toggle Darkmode</span>
                         </button>
                     </li>
                 );

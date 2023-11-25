@@ -28,9 +28,7 @@ const rowClassRules = {
 const defaultColDef = {
     flex: 1,
     minWidth: 100,
-    sortable: true,
     filter: true,
-    resizable: true
 };
 
 const GridExample = () => {
@@ -184,7 +182,6 @@ const GridExample = () => {
                     rowClassRules={rowClassRules}
                     rowDragManaged={true}
                     suppressMoveWhenRowDragging={true}
-                    animateRows={true}
                     rowData={side === 'Left' ? leftRowData : rightRowData}
                     columnDefs={[...columns]}
                     onGridReady={params => onGridReady(side, params)}

@@ -46,8 +46,7 @@ export class AppComponent {
     rowData!: any[];
     topOptions: GridOptions = {
         defaultColDef: {
-            sortable: true,
-            resizable: true,
+
             filter: true,
             flex: 1,
             minWidth: 100
@@ -63,8 +62,7 @@ export class AppComponent {
         headerHeight: 0,
         rowStyle: { fontWeight: 'bold' },
         defaultColDef: {
-            sortable: true,
-            resizable: true,
+
             filter: true,
             flex: 1,
             minWidth: 100

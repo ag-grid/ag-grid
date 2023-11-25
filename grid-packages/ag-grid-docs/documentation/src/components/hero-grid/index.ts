@@ -34,11 +34,8 @@ const gridOptions: GridOptions = {
     rowData,
     rowHeight: 48,
     headerHeight: 30,
-    defaultColDef: {
-        resizable: true,
-        sortable: true,
-    },
     domLayout: 'autoHeight',
+    animateRows: false,
     getRowId: ({ data }: GetRowIdParams) => {
         return data.stock;
     },

@@ -24,12 +24,13 @@ const App = {
     const rowData = ref([]);
 
     const colDefs = ref([
-      { field: "mission" },
-      { field: "country" },
-      { field: "successful" },
-      { field: "date" },
-      { field: "price" },
-      { field: "company" }
+    { field: "mission" },
+    { field: "company" },
+    { field: "location" },
+    { field: "date" },
+    { field: "price" },
+    { field: "successful" },
+    { field: "rocket" }
     ]);
 
     // Fetch data when the component is mounted
@@ -38,7 +39,7 @@ const App = {
     });
 
     const fetchData = async () => {
-      const response = await fetch('https://downloads.jamesswinton.com/space-mission-data.json');
+      const response = await fetch('https://www.ag-grid.com/example-assets/space-mission-data.json');
       return response.json();
     };
 

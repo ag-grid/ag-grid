@@ -18,13 +18,11 @@ const gridOptions: GridOptions<IAccount> = {
   ],
   masterDetail: true,
   defaultColDef: {
-    sortable: true,
     filter: true,
     flex: 1,
   },
   keepDetailRows: true,
   keepDetailRowsCount: 2,
-  animateRows: true,
   detailCellRendererParams: {
     detailGridOptions: {
       columnDefs: [
@@ -36,7 +34,6 @@ const gridOptions: GridOptions<IAccount> = {
       ],
       defaultColDef: {
         flex: 1,
-        sortable: true,
       },
     },
     getDetailRowData: (params) => {

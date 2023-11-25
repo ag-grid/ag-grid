@@ -23,7 +23,7 @@ const gridOptions: GridOptions<IOlympicDataWithId> = {
   defaultColDef: {
     flex: 1,
     minWidth: 100,
-    resizable: true,
+    sortable: false,
   },
 
   // use the server-side row model

@@ -21,8 +21,6 @@ const gridOptions: GridOptions<IOlympicData> = {
     floatingFilter: true,
     flex: 1,
     minWidth: 120,
-    resizable: true,
-    sortable: true,
   },
   getRowId: (params: GetRowIdParams) => {
     if (params.data.id != null) {
@@ -53,7 +51,6 @@ const gridOptions: GridOptions<IOlympicData> = {
   // restrict row selections via checkbox selection
   suppressRowClickSelection: true,
 
-  animateRows: true,
   suppressAggFuncInHeader: true,
 }
 

@@ -53,16 +53,16 @@ All the default filters provided by the grid provide their own implementation of
 | Date   | Sometimes | Provides a date input field to display the filter value, or a read-only label if read-only. |
 | Set    | No        | Provides a read-only label by concatenating all selected values. |
 
-The floating filters for Text, Number and Date (the simple filters) are editable when the filter has one condition and one value. If the floating filter has a) two or more conditions or b) zero (custom option) or two ('In Range') values, the floating filter is read-only.
+The floating filters for Text, Number and Date (the simple filters) are editable when the filter has one condition and one value. If the floating filter has a) two or more conditions or b) zero (custom option) or two ('inRange') values, the floating filter is read-only.
 
 The screen shots below show example scenarios where the provided Number floating filter is editable and read-only.
 
 - **One Value and One Condition - Editable**
-    <image-caption src="floating-filters/resources/oneValueOneCondition.png" alt="One Value One Condition" width="24rem"></image-caption>
+    <image-caption src="floating-filters/resources/oneValueOneCondition.png" alt="One Value One Condition" width="24rem" toggledarkmode="true"></image-caption>
 - **One Value and Two Conditions - Read-Only**
-    <image-caption src="floating-filters/resources/oneValueTwoConditions.png" alt="One Value Two Conditions" width="24rem"></image-caption>
+    <image-caption src="floating-filters/resources/oneValueTwoConditions.png" alt="One Value Two Conditions" width="24rem" toggledarkmode="true"></image-caption>
 - **Two Values and One Condition - Read-Only**
-    <image-caption src="floating-filters/resources/twoValuesOneCondition.png" alt="Two Values One Condition" width="24rem"></image-caption>
+    <image-caption src="floating-filters/resources/twoValuesOneCondition.png" alt="Two Values One Condition" width="24rem" toggledarkmode="true"></image-caption>
 
 ### Controlling Autocomplete on Floating Filters
 

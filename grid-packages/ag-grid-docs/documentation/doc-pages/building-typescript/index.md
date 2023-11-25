@@ -161,9 +161,7 @@ With all this in place, we can now add the following npm scripts to our package.
 
 Now we can either run `npm start` to run the development setup, or `npm run build` for the production build. In the case of the production build the generated files will be under the `dist/` folder.
 
-If we now run our application with the above code we will see this:
-
-<image-caption src="building-typescript/resources/ts-grid.png" alt="Datagrid" width="40rem" centered="true" constrained="true"></image-caption>
+If we now run our application with the above code our grid will be displayed.
 
 ## Example Code
 

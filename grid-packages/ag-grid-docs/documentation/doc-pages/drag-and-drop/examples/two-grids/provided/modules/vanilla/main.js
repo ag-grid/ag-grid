@@ -17,9 +17,7 @@ var leftApi;
 var leftGridOptions = {
     defaultColDef: {
         flex: 1,
-        sortable: true,
         filter: true,
-        resizable: true
     },
     rowClassRules: {
         'red-row': 'data.color == "Red"',
@@ -30,15 +28,12 @@ var leftGridOptions = {
     rowData: createLeftRowData(),
     rowDragManaged: true,
     columnDefs: leftColumnDefs,
-    animateRows: true
 };
 var rightApi;
 var rightGridOptions = {
     defaultColDef: {
         flex: 1,
-        sortable: true,
         filter: true,
-        resizable: true
     },
     rowClassRules: {
         'red-row': 'data.color == "Red"',
@@ -49,7 +44,6 @@ var rightGridOptions = {
     rowData: [],
     rowDragManaged: true,
     columnDefs: rightColumnDefs,
-    animateRows: true
 };
 
 function createLeftRowData() {

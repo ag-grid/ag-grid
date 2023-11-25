@@ -21,8 +21,8 @@ let gridApi: GridApi;
 const gridOptions: GridOptions = {
   defaultColDef: {
     width: 235,
-    resizable: true,
     flex: 1,
+    sortable: false,
   },
   autoGroupColumnDef: {
     field: 'employeeName',
@@ -30,7 +30,6 @@ const gridOptions: GridOptions = {
   rowModelType: 'serverSide',
   treeData: true,
   columnDefs: columnDefs,
-  animateRows: true,
   cacheBlockSize: 10,
   isServerSideGroupOpenByDefault: (params: IsServerSideGroupOpenByDefaultParams) => {
     var isKathrynPowers =

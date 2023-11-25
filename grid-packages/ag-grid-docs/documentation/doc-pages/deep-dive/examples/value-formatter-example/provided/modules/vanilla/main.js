@@ -7,23 +7,24 @@ const gridOptions = {
   rowData: [],
   // Column Definitions: Defines & controls grid columns.
   columnDefs: [
-    { field: "mission", resizable: true },
-    { field: "country" },
-    { field: "successful" },
+    { 
+      field: "mission", 
+      filter: true 
+    },
+    { field: "company" },
+    { field: "location" },
     { field: "date" },
     { 
-      field: "price", 
-      // Return formatted value 
-      valueFormatter: (params) => { return '£' + params.value.toLocaleString(); } 
+      field: "price",
+      valueFormatter: (params) => { return '£' + params.value.toLocaleString(); }
     },
-    { field: "company" }
+    { field: "successful" },
+    { field: "rocket" }
   ],
   // Configurations applied to all columns
   defaultColDef: {
     filter: true,
-    sortable: true,
-    editable: true,
-    resizable: true
+    editable: true
   },
   // Grid Options
   pagination: true
@@ -33,6 +34,6 @@ const gridOptions = {
 gridApi = agGrid.createGrid(document.querySelector('#myGrid'), gridOptions);
 
 // Fetch Remote Data
-fetch('https://downloads.jamesswinton.com/space-mission-data.json')
+fetch('https://www.ag-grid.com/example-assets/space-mission-data.json')
   .then(response => response.json())
   .then((data) => gridApi.setGridOption('rowData', data))

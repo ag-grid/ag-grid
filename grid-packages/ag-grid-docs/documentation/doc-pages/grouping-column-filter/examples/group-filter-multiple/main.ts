@@ -25,8 +25,6 @@ const gridOptions: GridOptions<IOlympicData> = {
   defaultColDef: {
     flex: 1,
     minWidth: 100,
-    sortable: true,
-    resizable: true,
     filter: true,
     floatingFilter: true,
   },
@@ -34,7 +32,6 @@ const gridOptions: GridOptions<IOlympicData> = {
     minWidth: 200,
     filter: 'agGroupColumnFilter',
   },
-  animateRows: true,
   rowGroupPanelShow: 'always',
   groupDisplayType: 'multipleColumns',
 }

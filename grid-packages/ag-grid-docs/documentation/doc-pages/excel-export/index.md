@@ -7,7 +7,7 @@ The grid provides in-built Excel (xlsx) export functionality without the need fo
 Excel can be performed from the [Context Menu](../context-menu/) or programmatically via the [Grid API](../grid-api/) and 
 the exported spreadsheets can be fully customised and styled to meet user requirements.
 
-<image-caption src="excel-export/resources/excel-export-context-menu.png" alt="Excel Export" maxWidth="48rem" constrained="true" centered="true"></image-caption>
+<image-caption src="excel-export/resources/excel-export-context-menu.png" alt="Excel Export" maxWidth="48rem" constrained="true" centered="true" toggledarkmode="true"></image-caption> 
 
 ## Enabling Excel Export
 

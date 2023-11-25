@@ -83,7 +83,6 @@ const gridOptions: GridOptions = {
     defaultColDef: {
         flex: 1,
         minWidth: 100,
-        resizable: true,
     },
     rowData: getData(),
     rowHeight: 50,
@@ -92,7 +91,7 @@ const gridOptions: GridOptions = {
 function renderer(params: TooltipRendererParams) {
     return {
         backgroundColor: 'black',
-        opacity: 0.5,
+        opacity: 0.9,
         color: 'white'
     }
 }

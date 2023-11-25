@@ -15,14 +15,12 @@ const gridOptions: GridOptions<IOlympicData> = {
     minWidth: 150,
     filter: true,
     floatingFilter: true,
-    resizable: true,
   },
   autoGroupColumnDef: {
     minWidth: 260,
     filter: 'agTextColumnFilter',
     filterValueGetter: (params: ValueGetterParams) => params.data.sport,
   },
-  animateRows: true,
 }
 
 function applyFilter() {

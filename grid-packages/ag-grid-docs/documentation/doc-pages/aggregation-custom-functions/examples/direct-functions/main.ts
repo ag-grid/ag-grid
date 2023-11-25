@@ -18,14 +18,11 @@ const gridOptions: GridOptions<IOlympicData> = {
     defaultColDef: {
         flex: 1,
         minWidth: 100,
-        sortable: true,
-        resizable: true,
     },
     autoGroupColumnDef: {
         minWidth: 200,
     },
     sideBar: true,
-    animateRows: true,
 }
 
 // setup the grid after the page has finished loading

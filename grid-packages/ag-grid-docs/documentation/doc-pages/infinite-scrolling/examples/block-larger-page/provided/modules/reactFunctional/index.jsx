@@ -144,8 +144,6 @@ const GridExample = () => {
         return {
             flex: 1,
             minWidth: 150,
-            sortable: true,
-            resizable: true,
             floatingFilter: true,
         }
     }, []);

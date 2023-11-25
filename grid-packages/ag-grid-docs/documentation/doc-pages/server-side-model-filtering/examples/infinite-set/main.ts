@@ -60,8 +60,6 @@ const gridOptions: GridOptions<IOlympicData> = {
   defaultColDef: {
     flex: 1,
     minWidth: 150,
-    sortable: true,
-    resizable: true,
   },
   // use the server-side row model
   rowModelType: 'serverSide',
@@ -72,7 +70,6 @@ const gridOptions: GridOptions<IOlympicData> = {
   // only keep 10 blocks of rows
   maxBlocksInCache: 10,
 
-  animateRows: true,
 
   onFilterChanged: onFilterChanged,
 }

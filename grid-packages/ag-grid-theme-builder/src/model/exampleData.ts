@@ -1,7 +1,7 @@
 import { ColDef, ColGroupDef } from '@ag-grid-community/core';
 
 export const getColumnDefs = (): ColDef[] => [
-  { field: 'make', flex: 1 },
+  { field: 'make', flex: 1, suppressMovable: true, lockPosition: true },
   {
     field: 'model',
     flex: 1,
@@ -23,6 +23,7 @@ export const getGroupColumnDefs = (columns: ColDef[]): ColGroupDef[] => [
     headerName: 'Data',
     children: columns.filter((c) => c.field !== 'make' && c.field !== 'model'),
   },
+  columns.find((c) => c.field === 'model'),
 ];
 
 export const getDeepGroupColumnDefs = (columns: ColDef[]): ColGroupDef[] => [

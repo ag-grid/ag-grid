@@ -9,10 +9,12 @@ ModuleRegistry.registerModules([ ClientSideRowModelModule ]);
 
 // Row Data Interface
 interface IRow {
-  company: string;
-  country: 'USA' | 'China' | 'Kazakhstan';
-  date: string;
   mission: string;
+  company: string;
+  location: string;
+  date: string;
+  time: string;
+  rocket: string;
   price: number;
   successful: boolean;
 }
@@ -44,23 +46,24 @@ export class AppComponent {
   // Column Definitions: Defines & controls grid columns.
   colDefs: ColDef[] = [
     { field: "mission" },
-    { field: "country" },
-    { field: "successful" },
+    { field: "company" },
+    { field: "location" },
     { field: "date" },
     { field: "price" },
-    { field: "company" }
+    { field: "successful" },
+    { field: "rocket" }
   ];
 
   // Default Column Definitions: Apply configuration across all columns
   defaultColDefs: ColDef = {
-    resizable: true
+    filter: true
   }
 
   // Load data into grid when ready
   constructor(private http: HttpClient) {}
   onGridReady(params: GridReadyEvent) {
     this.http
-      .get<any[]>('https://downloads.jamesswinton.com/space-mission-data.json')
+      .get<any[]>('https://www.ag-grid.com/example-assets/space-mission-data.json')
       .subscribe(data => this.rowData = data);
   }
 }

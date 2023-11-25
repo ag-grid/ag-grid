@@ -13,8 +13,6 @@ const gridOptions: GridOptions<IOlympicData> = {
   ],
   defaultColDef: {
     width: 150,
-    resizable: true,
-    sortable: true,
   },
   autoGroupColumnDef: {
     minWidth: 200,
@@ -26,7 +24,6 @@ const gridOptions: GridOptions<IOlympicData> = {
   // enable pivoting
   pivotMode: true,
 
-  animateRows: true,
 
   processPivotResultColDef: (colDef: ColDef) => {
     const pivotValueColumn = colDef.pivotValueColumn;

@@ -21,6 +21,7 @@ const gridOptions: GridOptions = {
   defaultColDef: {
     width: 240,
     flex: 1,
+    sortable: false,
   },
   autoGroupColumnDef: {
     field: 'employeeName',
@@ -34,7 +35,6 @@ const gridOptions: GridOptions = {
   rowModelType: 'serverSide',
   treeData: true,
   columnDefs: columnDefs,
-  animateRows: true,
   isServerSideGroupOpenByDefault: (
     params: IsServerSideGroupOpenByDefaultParams
   ) => {

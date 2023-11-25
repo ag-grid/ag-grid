@@ -10,8 +10,8 @@ The Tool Panel is a tabbed container. It exposes CSS variables:
 
 ```css
 .ag-theme-quartz {
-    --ag-control-panel-background-color: rgb(228, 197, 203);
-    --ag-side-button-selected-background-color: rgb(228, 197, 203);
+    --ag-control-panel-background-color: #CC222244;
+    --ag-side-button-selected-background-color: #CC222244;
 
     --ag-selected-tab-underline-color: deeppink;
     --ag-selected-tab-underline-width: 2px;

@@ -87,7 +87,7 @@ export class LegendPanel extends Component {
         this.legendPositionSelect
             .setLabel(this.chartTranslationService.translate("position"))
             .setLabelWidth("flex")
-            .setInputWidth(80)
+            .setInputWidth('flex')
             .addOptions(positions.map(position => ({
                 value: position,
                 text: this.chartTranslationService.translate(position)

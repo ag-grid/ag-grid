@@ -18,8 +18,6 @@ const gridOptions: GridOptions<IOlympicData> = {
   onRowGroupOpened: onRowGroupOpened,
   defaultColDef: {
     editable: true,
-    sortable: true,
-    resizable: true,
     filter: true,
     flex: 1,
     minWidth: 100,

@@ -7,7 +7,7 @@ This section describes the behaviour of the Mini Filter and shows how it can be 
 
 The Mini Filter allows the user to search for particular values in the Filter List. Entering text into the Mini Filter will narrow down the presented list of values shown inside the Set Filter, but by default will not filter the data inside the grid.
 
-<image-caption src="filter-set-mini-filter/resources/mini-filter.gif" alt="Mini Filter" constrained="true" centered="true"></image-caption>
+<image-caption src="filter-set-mini-filter/resources/mini-filter.gif" alt="Mini Filter" constrained="true" centered="true" toggledarkmode="true"></image-caption>
 
 ## Keyboard Shortcuts
 

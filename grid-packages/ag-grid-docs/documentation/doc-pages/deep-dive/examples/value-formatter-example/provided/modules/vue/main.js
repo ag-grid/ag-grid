@@ -1,11 +1,10 @@
-import Vue from 'vue';
-import { AgGridVue } from "ag-grid-vue";
-import "ag-grid-community/styles/ag-grid.css";
-import "ag-grid-community/styles/ag-theme-quartz.css";
+import "ag-grid-community/styles/ag-grid.css"
+import "ag-grid-community/styles/ag-theme-quartz.css"
+import { AgGridVue } from "ag-grid-vue"
+import Vue from "vue"
 
 const App = {
-  template: 
-    `
+  template: `
     <ag-grid-vue
         style="width: 100%; height: 100%"
         :class="themeClass"
@@ -17,7 +16,7 @@ const App = {
     </ag-grid-vue>
     `,
   components: {
-    AgGridVue
+    AgGridVue,
   },
   data() {
     return {
@@ -25,32 +24,45 @@ const App = {
       rowData: [],
       // Column Definitions: Defines & controls grid columns.
       columnDefs: [
-          { field: "mission", resizable: true },
-          { field: "country" },
-          { field: "successful" },
-          { field: "date" },
-          { field: "price", valueFormatter: (params) => { return '£' + params.value.toLocaleString(); } },
-          { field: "company" }
+        {
+          field: "mission",
+          filter: true,
+        },
+        { field: "company" },
+        { field: "location" },
+        { field: "date" },
+        {
+          field: "price",
+          valueFormatter: params => {
+            return "£" + params.value.toLocaleString()
+          },
+        },
+        { field: "successful" },
+        { field: "rocket" },
       ],
       defaultColDefs: {
-        resizable: true,
-        editable: true
+        filter: true,
+        editable: true,
       },
-      themeClass: /** DARK MODE START **/document.documentElement.dataset.defaultTheme || 'ag-theme-quartz'/** DARK MODE END **/,
-    };
+      themeClass:
+        /** DARK MODE START **/ document.documentElement.dataset.defaultTheme ||
+        "ag-theme-quartz" /** DARK MODE END **/,
+    }
   },
   methods: {
-    fetchData: async function() {
-      const response = await fetch('https://downloads.jamesswinton.com/space-mission-data.json');
-      return response.json();
+    fetchData: async function () {
+      const response = await fetch(
+        "https://www.ag-grid.com/example-assets/space-mission-data.json"
+      )
+      return response.json()
     },
   },
-  mounted: async function() {
-    this.rowData = await this.fetchData();
+  mounted: async function () {
+    this.rowData = await this.fetchData()
   },
-};
+}
 
 // Create the Vue instance and mount the component
 new Vue({
   render: h => h(App),
-}).$mount('#app');
+}).$mount("#app")

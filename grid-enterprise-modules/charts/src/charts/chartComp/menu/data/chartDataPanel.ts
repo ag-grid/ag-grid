@@ -232,7 +232,7 @@ export class ChartDataPanel extends Component {
                 .setLabel(this.chartTranslationService.translate('paired'))
                 .setLabelAlignment('left')
                 .setLabelWidth('flex')
-                .setInputWidth(45)
+                .setInputWidth('flex')
                 .setValue(this.chartOptionsService.getPairedMode())
                 .onValueChange(newValue => {
                     this.chartOptionsService.setPairedMode(!!newValue);

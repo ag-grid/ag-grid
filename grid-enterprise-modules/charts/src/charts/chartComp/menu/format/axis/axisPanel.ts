@@ -77,7 +77,7 @@ export class AxisPanel extends Component {
         this.axisColorInput
             .setLabel(this.translate("color"))
             .setLabelWidth("flex")
-            .setInputWidth(45)
+            .setInputWidth("flex")
             .setValue(this.chartOptionsService.getAxisProperty("line.color"))
             .onValueChange(newColor => this.chartOptionsService.setAxisProperty("line.color", newColor));
 

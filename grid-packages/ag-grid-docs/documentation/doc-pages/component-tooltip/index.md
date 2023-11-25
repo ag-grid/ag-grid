@@ -79,7 +79,7 @@ The example below shows how to use the default tooltip component with group colu
 
 The example below enables mouse tracking to demonstrate a scenario where tooltips need to follow the cursor. To enable this feature, set the `tooltipMouseTrack` to true in the gridOptions.
 
-<grid-example title='Tooltip Mouse Tracking' name='tooltip-mouse-tracking' type='generated' options='{ "extras": ["bootstrap"] }'></grid-example>
+<grid-example title='Tooltip Mouse Tracking' name='tooltip-mouse-tracking' type='generated'></grid-example>
 
 ## Interactive Tooltips
 
@@ -107,7 +107,7 @@ The example below enables tooltip interaction with custom tooltips. Note followi
 - Tooltips will not disappear while being hovered.
 - The custom tooltip displays a text input and a Submit button which when clicked, updates the value of the `Athlete` Column cell in the hovered row and then closes itself by calling `hideTooltipCallback()`.
 
-<grid-example title='Custom Tooltip Interaction' name='custom-tooltip-interaction' type='generated' options='{ "extras": ["bootstrap"]}'></grid-example>
+<grid-example title='Custom Tooltip Interaction' name='custom-tooltip-interaction' type='generated'></grid-example>
 
 ## Using Browser Tooltips
 

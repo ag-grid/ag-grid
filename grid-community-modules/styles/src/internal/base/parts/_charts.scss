@@ -40,7 +40,7 @@
 
     .ag-chart-menu {
         position: absolute;
-        top: 10px;
+        top: 16px;
         display: flex;
         flex-direction: column;
 
@@ -229,8 +229,8 @@
     .ag-chart .ag-chart-tool-panel-button-enable .ag-chart-menu {
         display: flex;
         flex-direction: row;
-        top: 5px;
-        gap: calc(var(--ag-grid-size) * 3 - 8px);
+        top: 8px;
+        gap: 16px;
         width: auto;
 
         @include ag.unthemed-rtl((

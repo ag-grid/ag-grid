@@ -47,8 +47,6 @@ export class AppComponent {
     themeClass = /** DARK MODE START **/document.documentElement?.dataset.defaultTheme || 'ag-theme-quartz'/** DARK MODE END **/;
     columnDefs!: (ColDef | ColGroupDef)[];
     defaultColDef: ColDef = {
-        sortable: true,
-        resizable: true,
         filter: true,
         minWidth: 100
     };

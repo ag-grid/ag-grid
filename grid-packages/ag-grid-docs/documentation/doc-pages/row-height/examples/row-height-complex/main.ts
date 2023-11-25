@@ -17,9 +17,7 @@ const gridOptions: GridOptions = {
   rowHeight: 120,
   defaultColDef: {
     width: 170,
-    sortable: true,
     editable: true,
-    resizable: true,
     filter: true,
   },
 }

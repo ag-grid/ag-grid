@@ -25,11 +25,9 @@ let gridApi: GridApi<IOlympicData>;
 const gridOptions: GridOptions<IOlympicData> = {
   defaultColDef: {
     editable: true,
-    sortable: true,
     flex: 1,
     minWidth: 100,
     filter: true,
-    resizable: true,
   },
   loadingCellRenderer: CustomLoadingCellRenderer,
   loadingCellRendererParams: {
@@ -47,7 +45,6 @@ const gridOptions: GridOptions<IOlympicData> = {
   // only keep 10 blocks of rows
   maxBlocksInCache: 10,
 
-  animateRows: true,
 }
 
 // setup the grid after the page has finished loading

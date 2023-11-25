@@ -82,7 +82,7 @@ listens for changes to the row model and updates the DOM accordingly.
 Below shows a simplified version of a class diagram showing the relationships between
 the major classes involved with the row models.
 
-<image-caption src="row-models/resources/row-models.svg" alt="Diagram of Major Classes involved with the Row Models" constrained="true" centered="true"></image-caption>
+<image-caption src="row-models/resources/row-models.svg" alt="Diagram of Major Classes involved with the Row Models" constrained="true" centered="true" filterdarkmode="true"></image-caption>
 
 The following should be noted from the diagram:
 

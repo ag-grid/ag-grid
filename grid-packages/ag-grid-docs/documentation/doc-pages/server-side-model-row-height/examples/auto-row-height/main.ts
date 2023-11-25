@@ -29,8 +29,6 @@ const gridOptions: GridOptions = {
   columnDefs: columnDefs,
   defaultColDef: {
     flex: 1,
-    resizable: true,
-    sortable: true,
   },
   autoGroupColumnDef: {
     flex: 1,
@@ -39,7 +37,6 @@ const gridOptions: GridOptions = {
   // use the server-side row model
   rowModelType: 'serverSide',
 
-  animateRows: true,
   suppressAggFuncInHeader: true,
 
   onGridReady: (params) => {

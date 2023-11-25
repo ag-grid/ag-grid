@@ -85,7 +85,6 @@ const gridOptions: GridOptions<IOlympicData> = {
     flex: 1,
     minWidth: 150,
     filter: true,
-    sortable: true,
     floatingFilter: true,
   },
 }

@@ -103,8 +103,6 @@ const gridOptions: GridOptions = {
   ],
   defaultColDef: {
     flex: 1,
-    sortable: true,
-    resizable: true,
     filter: true,
     suppressKeyboardEvent,
   },

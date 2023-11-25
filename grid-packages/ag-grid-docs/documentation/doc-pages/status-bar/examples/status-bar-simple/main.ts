@@ -19,7 +19,6 @@ const gridOptions: GridOptions<IOlympicData> = {
     flex: 1,
     minWidth: 100,
     filter: true,
-    resizable: true,
   },
   enableRangeSelection: true,
   rowSelection: 'multiple',

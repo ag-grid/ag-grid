@@ -116,8 +116,6 @@ const GridExample = () => {
         return {
             flex: 1,
             filter: true,
-            sortable: true,
-            resizable: true,
         }
     }, []);
     const autoGroupColumnDef = useMemo(() => {
@@ -221,7 +219,6 @@ const GridExample = () => {
                         defaultColDef={defaultColDef}
                         rowSelection={'multiple'}
                         groupSelectsChildren={true}
-                        animateRows={true}
                         suppressRowClickSelection={true}
                         autoGroupColumnDef={autoGroupColumnDef}
                         isGroupOpenByDefault={isGroupOpenByDefault}

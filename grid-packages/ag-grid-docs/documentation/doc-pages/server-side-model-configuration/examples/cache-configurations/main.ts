@@ -23,7 +23,7 @@ const gridOptions: GridOptions<IOlympicDataWithId> = {
   defaultColDef: {
     flex: 1,
     minWidth: 100,
-    resizable: true,
+    sortable: false,
   },
 
   // to help with this example, no row buffer, so no rows drawn off screen

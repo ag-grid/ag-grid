@@ -38,8 +38,6 @@ const gridOptions: GridOptions<IOlympicData> = {
         filter: 'agTextColumnFilter',
         // enable floating filters by default
         floatingFilter: true,
-        // make columns resizable
-        resizable: true,
         // disable cell data types
         cellDataType: false,
     },

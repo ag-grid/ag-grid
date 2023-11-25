@@ -2,13 +2,13 @@
 title: "Date Cell Editors"
 ---
 
-## Date Cell Editor
+## Enabling Date Cell Editor
 
-Simple date editor that uses the standard HTML date `input`. Requires cell values to be of type `Date`.
+ <grid-example title='Date Editor' name='date-editor' type='generated' options='{ "modules": ["clientside"] }'></grid-example>
+
+ Simple date editor that uses the standard HTML date `input`. Requires cell values to be of type `Date`.
 
 Specified with `agDateCellEditor` and configured with `IDateCellEditorParams`.
-
-<interface-documentation interfaceName='IDateCellEditorParams' names='["min","max","step"]'></interface-documentation>
 
 ```js
 columnDefs: [
@@ -21,22 +21,21 @@ columnDefs: [
         // ...other props
     }
 ]
-
-
 ```
 
-<grid-example title='Date Editor' name='date-editor' type='generated' options='{ "modules": ["clientside"] }'></grid-example>
+### API Reference
 
+<interface-documentation interfaceName='IDateCellEditorParams' names='["min","max","step"]'></interface-documentation>
 
-## Date as String Cell Editor
+## Enabling Date as String Cell Editor
+
+<grid-example title='Date as String Editor' name='date-as-string-editor' type='generated' options='{ "modules": ["clientside"] }'></grid-example>
 
 Simple date editor that uses the standard HTML date `input`. Similar to the **Date Cell Editor**, but works off of cell values with `string` type.
 
 The date format is controlled via [Cell Data Types](/cell-data-types/) and the [Date as String Data Type Definition](/cell-data-types/#date-as-string-data-type-definition). The default is `'yyyy-mm-dd'`.
 
 Specified with `agDateStringCellEditor` and configured with `IDateStringCellEditorParams`.
-
-<interface-documentation interfaceName='IDateStringCellEditorParams' names='["min","max","step"]'></interface-documentation>
 
 ```js
 columnDefs: [
@@ -51,7 +50,9 @@ columnDefs: [
 ]
 ```
 
-<grid-example title='Date as String Editor' name='date-as-string-editor' type='generated' options='{ "modules": ["clientside"] }'></grid-example>
+### API Reference
+
+<interface-documentation interfaceName='IDateStringCellEditorParams' names='["min","max","step"]'></interface-documentation>
 
 
 ## Next Up

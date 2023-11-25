@@ -69,10 +69,6 @@ const columnDefs: ColGroupDef[] = [
 let gridApi: GridApi<IOlympicData>;
 
 const gridOptions: GridOptions<IOlympicData> = {
-    defaultColDef: {
-        sortable: true,
-        resizable: true,
-    },
     columnDefs: columnDefs,
     rowData: null,
     groupHeaderHeight: 75,

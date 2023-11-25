@@ -70,8 +70,6 @@ const COLUMN_DEFS = [
 ];
 
 const defaultColDef = {
-    resizable: true,
-    sortable: true,
     suppressMenu: true,
     autoHeight: true,
     cellClass: styles.fontClass,

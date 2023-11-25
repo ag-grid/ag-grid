@@ -16,7 +16,7 @@
 }
 
 #doughnutChart {
-    width: 40%;
+    width: calc(40% - 8px);
 }
 
 #areaChart {

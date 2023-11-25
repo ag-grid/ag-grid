@@ -113,15 +113,9 @@ export const onPreRenderHTML = ({ getHeadComponents, replaceHeadComponents, path
         crossOrigin="anonymous"/>,
     );
     headComponents.unshift(<link
-        key="inter"
+        key="plex"
         rel="stylesheet"
         href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500&display=swap"
-        crossOrigin="anonymous"/>,
-    );
-    headComponents.unshift(<link
-        key="inter"
-        rel="stylesheet"
-        href="https://rsms.me/inter/inter.css"
         crossOrigin="anonymous"/>,
     );
 

@@ -151,6 +151,7 @@ $-loaded-css-files: ();
 
 $-theme-variables: (
     "quartz": (active-color: "color"),
+    "quartz-dark": (active-color: "color"),
     "alpine": (alpine-active-color: "color"),
     "alpine-dark": (alpine-active-color: "color"),
     "balham": (balham-active-color: "color"),
@@ -169,6 +170,7 @@ $-theme-css-files: (
 
 $-theme-fonts: (
     "quartz": "agGridQuartz",
+    "quartz-dark": "agGridQuartz",
     "alpine": "agGridAlpine",
     "alpine-dark": "agGridAlpine",
     "balham": "agGridBalham",
@@ -242,6 +244,36 @@ $-theme-fonts: (
     $params: -param-default($params, --ag-header-column-resize-handle-color,  --ag-border-color,                     $alpha: 0.5);
     $params: -param-default($params, --ag-input-disabled-border-color,        --ag-input-border-color,               $alpha: 0.3);
     @return $params;
+}
+
+@function -theme-quartz-color-blends($params) {
+    // Simple defaults. We need to define the defaults for any parameters
+    // that are used in blending either below or in the base color blends
+    $params: -param-default($params, --ag-background-color,            #fff);
+    $params: -param-default($params, --ag-foreground-color,            #181d1f);
+    $params: -param-default($params, --ag-subheader-background-color,  #fff);
+    $params: -param-default($params, --ag-active-color,                #2196f3);
+    $params: -param-default($params, --ag-range-selection-border-color, --ag-active-color);
+
+    // Blended defaults
+    $params: -param-default($params, --ag-subheader-toolbar-background-color, --ag-subheader-background-color, $alpha: 0.5);
+    $params: -param-default($params, --ag-selected-row-background-color,      --ag-active-color,               $alpha: 0.1);
+    $params: -param-default($params, --ag-row-hover-color,                    --ag-active-color,               $alpha: 0.1);
+    $params: -param-default($params, --ag-column-hover-color,                 --ag-active-color,               $alpha: 0.1);
+    $params: -param-default($params, --ag-chip-background-color,              --ag-foreground-color,           $alpha: 0.07);
+    $params: -param-default($params, --ag-input-disabled-background-color,    --ag-border-color,               $alpha: 0.15);
+    $params: -param-default($params, --ag-input-disabled-border-color,        --ag-border-color,               $alpha: 0.3);
+    $params: -param-default($params, --ag-disabled-foreground-color,          --ag-foreground-color,           $alpha: 0.5);
+    $params: -param-default($params, --ag-input-focus-border-color,           --ag-active-color,               $alpha: 0.4);
+    @return $params;
+}
+
+@function -theme-quartz-dark-color-blends($params) {
+    $params: -param-default($params, --ag-background-color,           #181d1f);
+    $params: -param-default($params, --ag-foreground-color,           #fff);
+    $params: -param-default($params, --ag-subheader-background-color, #000);
+
+    @return  -theme-quartz-color-blends($params);
 }
 
 @function -theme-alpine-color-blends($params) {

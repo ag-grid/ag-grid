@@ -28,15 +28,12 @@ const gridOptions: GridOptions<IOlympicData> = {
   defaultColDef: {
     flex: 1,
     minWidth: 100,
-    sortable: true,
-    resizable: true,
     filter: true,
     menuTabs: ['filterMenuTab'],
   },
   // use the server-side row model
   rowModelType: 'serverSide',
 
-  animateRows: true,
   enableAdvancedFilter: true,
 }
 

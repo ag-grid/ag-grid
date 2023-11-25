@@ -54,7 +54,7 @@ const GridExample = () => {
                 ],
                 defaultColDef: {
                     flex: 1,
-                    sortable: true,
+                    
                 },
             },
             getDetailRowData: (params) => {

@@ -8,10 +8,12 @@ ModuleRegistry.registerModules([ ClientSideRowModelModule ]);
 
 // Row Data Interface
 interface IRow {
-  company: string;
-  country: 'USA' | 'China' | 'Kazakhstan';
-  date: string;
   mission: string;
+  company: string;
+  location: string;
+  date: string;
+  time: string;
+  rocket: string;
   price: number;
   successful: boolean;
 }
@@ -25,23 +27,24 @@ const gridOptions: GridOptions = {
   rowData: [] as IRow[],
   // Columns to be displayed (Should match rowData properties)
   columnDefs: [
-    { field: "mission", resizable: true },
-    { field: "country" },
-    { field: "successful" },
+    { 
+      field: "mission", 
+      filter: true 
+    },
+    { field: "company" },
+    { field: "location" },
     { field: "date" },
     { 
-      field: "price", 
-      // Return formatted value
-      valueFormatter: (params: ValueFormatterParams): string => { return '£' + params.value.toLocaleString(); } 
+      field: "price",
+      valueFormatter: (params: ValueFormatterParams) => { return '£' + params.value.toLocaleString(); } 
     },
-    { field: "company" }
+    { field: "successful" },
+    { field: "rocket" }
   ] as ColDef[],
   // Configurations applied to all columns
   defaultColDef: {
     filter: true,
-    sortable: true,
-    editable: true,
-    resizable: true
+    editable: true
   } as ColDef,
   // Grid Options
   pagination: true
@@ -51,6 +54,6 @@ const gridOptions: GridOptions = {
 gridApi = createGrid(document.querySelector<HTMLElement>('#myGrid')!, gridOptions);
 
 // Fetch Remote Data
-fetch('https://downloads.jamesswinton.com/space-mission-data.json')
+fetch('https://www.ag-grid.com/example-assets/space-mission-data.json')
   .then(response => response.json())
   .then((data: any) => gridApi.setGridOption('rowData', data))

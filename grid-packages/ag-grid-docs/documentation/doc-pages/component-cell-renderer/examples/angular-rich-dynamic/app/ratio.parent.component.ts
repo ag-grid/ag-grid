@@ -17,7 +17,6 @@ import { ICellRendererAngularComp } from "@ag-grid-community/angular";
             overflow: hidden;
             border: 1px solid #ccc;
             border-radius: 6px;
-            background: #fff;
         }
     `]
 })

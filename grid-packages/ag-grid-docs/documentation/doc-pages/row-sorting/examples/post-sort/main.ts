@@ -17,7 +17,6 @@ const gridOptions: GridOptions<IOlympicData> = {
   ],
   defaultColDef: {
     width: 170,
-    sortable: true,
   },
   postSortRows: (params: PostSortRowsParams<IOlympicData>) => {
     const rowNodes = params.nodes;

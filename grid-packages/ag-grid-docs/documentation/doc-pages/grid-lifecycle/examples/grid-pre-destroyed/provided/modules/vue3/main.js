@@ -61,7 +61,6 @@ const VueExample = {
         const gridApi = ref();
         const defaultColDef = ref({
             editable: true,
-            resizable: true,
         });
 
         const columnsWidthOnPreDestroyed = ref([]);

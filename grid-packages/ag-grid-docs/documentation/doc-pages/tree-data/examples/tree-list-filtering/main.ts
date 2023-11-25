@@ -25,7 +25,6 @@ const gridOptions: GridOptions = {
   defaultColDef: {
     flex: 1,
     minWidth: 200,
-    resizable: true,
     filter: true,
     floatingFilter: true,
   },
@@ -43,7 +42,6 @@ const gridOptions: GridOptions = {
     minWidth: 280
   },
   treeData: true,
-  animateRows: true,
   groupDefaultExpanded: -1,
   getDataPath: (data: any) => data.dataPath,
   getRowId: (params: GetRowIdParams<any>) => params.data.employeeId,

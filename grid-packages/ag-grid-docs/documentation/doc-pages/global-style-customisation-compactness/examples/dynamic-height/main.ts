@@ -28,9 +28,7 @@ const gridOptions: GridOptions<IOlympicData> = {
   columnDefs: columnDefs,
   defaultColDef: {
     editable: true,
-    sortable: true,
     filter: true,
-    resizable: true,
   },
   sideBar: 'columns'
 }

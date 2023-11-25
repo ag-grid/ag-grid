@@ -14,7 +14,6 @@ const gridOptions: GridOptions = {
   defaultColDef: {
     flex: 1,
     cellClass: 'number-cell',
-    resizable: true,
   },
   rowData: createRowData(),
 }

@@ -24,8 +24,6 @@ const gridOptions: GridOptions<IOlympicData> = {
   defaultColDef: {
     flex: 1,
     minWidth: 100,
-    sortable: true,
-    resizable: true,
     menuTabs: ['filterMenuTab'],
   },
   columnTypes: {
@@ -34,7 +32,6 @@ const gridOptions: GridOptions<IOlympicData> = {
   // use the server-side row model
   rowModelType: 'serverSide',
 
-  animateRows: true,
 }
 
 function getServerSideDatasource(server: any): IServerSideDatasource {

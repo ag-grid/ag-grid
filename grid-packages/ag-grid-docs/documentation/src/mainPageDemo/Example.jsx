@@ -112,7 +112,7 @@ function ratingFilterRenderer(params) {
         <span>
             {[...Array(5)].map((x, i) => {
                 return value > i ? (
-                    <img key={i} src="../images/star.svg" alt={`${value} stars`} width="12" height="12" />
+                    <img className={styles.starIcon} key={i} src="../images/star.svg" alt={`${value} stars`} width="12" height="12" />
                 ) : null;
             })}
             (No stars)
@@ -130,7 +130,7 @@ function ratingRenderer(params) {
         <span>
             {[...Array(5)].map((x, i) => {
                 return value > i ? (
-                    <img key={i} src="../images/star.svg" alt={`${value} stars`} width="12" height="12" />
+                    <img className={styles.starIcon} key={i} src="../images/star.svg" alt={`${value} stars`} width="12" height="12" />
                 ) : null;
             })}
         </span>
@@ -621,18 +621,13 @@ const desktopDefaultCols = [
 const ExampleInner = ({darkMode}) => {
     const gridRef = useRef(null);
     const loadInstance = useRef(0);
-    const [gridTheme, setGridTheme] = useState(null);
-    useEffect(() => {
-        
-    }, [darkMode]);
+    const [gridTheme, setGridTheme] = useState('ag-theme-quartz');
     useEffect(() => {
         const themeFromURL = new URLSearchParams(window.location.search).get('theme');
-        if (gridTheme == null && themeFromURL) {
-            setGridTheme(themeFromURL)
-        } else {
-            setGridTheme(darkMode ? 'ag-theme-quartz-dark' : 'ag-theme-quartz');
+        if (themeFromURL) {
+            setGridTheme(themeFromURL);
         }
-    }, [darkMode]);
+    }, []);
     const [base64Flags, setBase64Flags] = useState();
     const [defaultCols, setDefaultCols] = useState();
     const [isSmall, setIsSmall] = useState(false);
@@ -745,10 +740,8 @@ const ExampleInner = ({darkMode}) => {
             },
             defaultColDef: {
                 minWidth: 50,
-                sortable: true,
                 filter: true,
                 floatingFilter: !isSmall,
-                resizable: true,
                 cellDataType: false,
             },
             enableCellChangeFlash: true,
@@ -815,7 +808,6 @@ const ExampleInner = ({darkMode}) => {
             enableRtl: IS_SSR ? false : /[?&]rtl=true/.test(window.location.search),
             enableCharts: true,
             // multiSortKey: 'ctrl',
-            animateRows: true,
 
             enableRangeSelection: true,
             // enableRangeHandle: true,
@@ -1426,22 +1418,18 @@ const ExampleInner = ({darkMode}) => {
         }
     }, [dataSize]);
 
-    const isDarkTheme = gridTheme?.includes('dark');
-    const isAutoTheme = gridTheme?.includes('auto');
+    const isAutoTheme = gridTheme.includes('auto');
+    let themeClass = gridTheme;
+    if (darkMode && themesWithDarkVariant.includes(themeClass)) {
+        themeClass += '-dark';
+    }
+    const isDarkTheme = themeClass.includes('dark');
 
+    const defaultChartThemes = ['ag-default', 'ag-material', 'ag-sheets', 'ag-polychroma', 'ag-vivid'];
+    const [chartThemes, setChartThemes] = useState(defaultChartThemes);
     useEffect(() => {
-        if (isDarkTheme) {
-            gridOptions.chartThemes = [
-                'ag-default-dark',
-                'ag-material-dark',
-                'ag-pastel-dark',
-                'ag-vivid-dark',
-                'ag-solar-dark',
-            ];
-        } else {
-            gridOptions.chartThemes = null;
-        }
-    }, [gridTheme]);
+        setChartThemes(darkMode ? defaultChartThemes.map(theme => theme + '-dark') : defaultChartThemes);
+    }, [darkMode]);
 
     return (
         <>
@@ -1465,12 +1453,13 @@ const ExampleInner = ({darkMode}) => {
                 </span>
                 <section className={styles.gridWrapper} style={{ padding: '1rem', paddingTop: 0 }}>
                     {gridTheme && (
-                        <div id="myGrid" style={{ flex: '1 1 auto', overflow: 'hidden' }} className={gridTheme}>
+                        <div id="myGrid" style={{ flex: '1 1 auto', overflow: 'hidden' }} className={themeClass}>
                             <AgGridReactMemo
                                 ref={gridRef}
                                 modules={modules}
                                 gridOptions={gridOptions}
                                 columnDefs={columnDefs}
+                                chartThemes={chartThemes}
                                 rowData={rowData}
                                 defaultCsvExportParams={defaultExportParams}
                                 defaultExcelExportParams={defaultExportParams}
@@ -1482,6 +1471,8 @@ const ExampleInner = ({darkMode}) => {
         </>
     );
 };
+
+const themesWithDarkVariant = ['ag-theme-quartz', 'ag-theme-alpine', 'ag-theme-balham']
 
 const Example = () => (
     <GlobalContextConsumer>

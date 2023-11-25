@@ -21,8 +21,6 @@ const gridOptions: GridOptions = {
   ],
   defaultColDef: {
     flex: 1,
-    sortable: true,
-    resizable: true,
     filter: true,
   },
   rowData: getData(),
@@ -38,7 +36,6 @@ const gridOptions: GridOptions = {
   },
   // see AG Grid docs cellRenderer for details on how to build cellRenderers
   fullWidthCellRenderer: FullWidthCellRenderer,
-  animateRows: true,
 }
 
 function countryCellRenderer(params: ICellRendererParams) {

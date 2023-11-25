@@ -38,7 +38,7 @@ import { ICellRendererAngularComp } from "@ag-grid-community/angular";
                 border: 2px solid grey;
                 border-style: ridge;
                 padding: 5px;
-                background-color: darkgray;
+                background-color: #99999944;
             }
             .full-width-flag {
                 float: left;
@@ -60,7 +60,7 @@ import { ICellRendererAngularComp } from "@ag-grid-community/angular";
                 padding: 2px;
                 height: 100%;
                 font-family: cursive;
-                background-color: #fafafa;
+                background-color: #99999944;
             }
             .full-width-center p {
                 margin-top: 0px;

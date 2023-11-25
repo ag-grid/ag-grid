@@ -21,6 +21,8 @@ ModuleRegistry.registerModules([
     MenuModule,
     GridChartsModule,
 ]);
+const leftModules = [SetFilterModule, ClipboardModule];
+const rightModules = [ExcelExportModule];
 
 const columns: ColDef[] = [
     { field: 'id' },
@@ -33,7 +35,6 @@ const defaultColDef: ColDef = {
     minWidth: 80,
     filter: true,
     floatingFilter: true,
-    resizable: true,
 };
 
 const GridExample = () => {
@@ -61,8 +62,8 @@ const GridExample = () => {
                 <AgGridReact
                     defaultColDef={defaultColDef}
                     rowData={leftRowData}
-                    modules={[SetFilterModule, ClipboardModule]}
-                    columnDefs={[...columns]}
+                    modules={leftModules}
+                    columnDefs={columns}
                     enableRangeSelection
                     enableCharts
                 />
@@ -72,8 +73,8 @@ const GridExample = () => {
                 <AgGridReact
                     defaultColDef={defaultColDef}
                     rowData={rightRowData}
-                    modules={[ExcelExportModule]}
-                    columnDefs={[...columns]}
+                    modules={rightModules}
+                    columnDefs={columns}
                     enableRangeSelection
                     enableCharts
                 />

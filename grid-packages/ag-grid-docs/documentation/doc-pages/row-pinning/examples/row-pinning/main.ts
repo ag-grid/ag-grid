@@ -9,7 +9,7 @@ const columnDefs: ColDef[] = [
         return {
           component: CustomPinnedRowRenderer,
           params: {
-            style: { color: 'blue' },
+            style: { color: '#5577CC' },
           },
         }
       } else {
@@ -45,9 +45,7 @@ let gridApi: GridApi<IOlympicData>;
 const gridOptions: GridOptions<IOlympicData> = {
   defaultColDef: {
     width: 200,
-    sortable: true,
     filter: true,
-    resizable: true,
     cellDataType: false,
   },
   columnDefs: columnDefs,

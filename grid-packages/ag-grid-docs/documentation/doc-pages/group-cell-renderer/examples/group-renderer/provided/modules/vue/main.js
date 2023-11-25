@@ -24,8 +24,7 @@ const VueExample = {
                 :suppressRowClickSelection="true"
                 :groupDefaultExpanded="groupDefaultExpanded"
                 :rowSelection="rowSelection"
-                :groupSelectsChildren="true"
-                :animateRows="true"></ag-grid-vue>
+                :groupSelectsChildren="true"></ag-grid-vue>
         </div>
     `,
     components: {
@@ -82,7 +81,6 @@ const VueExample = {
             defaultColDef: {
                 flex: 1,
                 minWidth: 120,
-                resizable: true,
             },
             rowData: null,
             groupDisplayType: null,

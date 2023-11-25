@@ -66,8 +66,6 @@ const VueExample = {
         this.topGridOptions = {
             alignedGrids: () => [this.$refs.bottomGrid],
             defaultColDef: {
-                sortable: true,
-                resizable: true,
                 filter: true,
                 flex: 1,
                 minWidth: 100
@@ -81,8 +79,6 @@ const VueExample = {
         this.bottomGridOptions = {
             alignedGrids: () => [this.$refs.topGrid],
             defaultColDef: {
-                sortable: true,
-                resizable: true,
                 filter: true,
                 flex: 1,
                 minWidth: 100

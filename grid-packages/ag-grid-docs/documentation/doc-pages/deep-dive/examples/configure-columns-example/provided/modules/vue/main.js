@@ -23,19 +23,20 @@ const App = {
       rowData: [],
       // Column Definitions: Defines & controls grid columns.
       columnDefs: [
-          { field: "mission", resizable: true },
-          { field: "country" },
-          { field: "successful" },
-          { field: "date" },
-          { field: "price" },
-          { field: "company" }
+        { field: "mission", filter: true },
+        { field: "company" },
+        { field: "location" },
+        { field: "date" },
+        { field: "price" },
+        { field: "successful" },
+        { field: "rocket" }
       ],
       themeClass: /** DARK MODE START **/document.documentElement.dataset.defaultTheme || 'ag-theme-quartz'/** DARK MODE END **/,
     };
   },
   methods: {
     fetchData: async function() {
-      const response = await fetch('https://downloads.jamesswinton.com/space-mission-data.json');
+      const response = await fetch('https://www.ag-grid.com/example-assets/space-mission-data.json');
       return response.json();
     },
   },

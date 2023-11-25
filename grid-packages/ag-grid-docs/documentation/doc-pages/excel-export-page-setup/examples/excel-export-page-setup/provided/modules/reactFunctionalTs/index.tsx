@@ -61,9 +61,7 @@ const GridExample = () => {
     { field: 'total' },
 ]);
     const defaultColDef = useMemo<ColDef>(() => { return {
-        sortable: true,
         filter: true,
-        resizable: true,
         minWidth: 100,
         flex: 1,
     }}, []);

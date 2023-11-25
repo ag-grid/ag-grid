@@ -7,12 +7,13 @@ const gridOptions = {
     rowData: [],
     // Column Definitions: Defines & controls grid columns.
     columnDefs: [
-      { field: "mission" },
-      { field: "country" },
-      { field: "successful" },
-      { field: "date" },
-      { field: "price" },
-      { field: "company" }
+    { field: "mission" },
+    { field: "company" },
+    { field: "location" },
+    { field: "date" },
+    { field: "price" },
+    { field: "successful" },
+    { field: "rocket" }
     ]
 }
 
@@ -20,6 +21,6 @@ const gridOptions = {
 gridApi = agGrid.createGrid(document.querySelector('#myGrid'), gridOptions);
 
 // Fetch Remote Data
-fetch('https://downloads.jamesswinton.com/space-mission-data.json')
+fetch('https://www.ag-grid.com/example-assets/space-mission-data.json')
   .then(response => response.json())
   .then((data) => gridApi.setGridOption('rowData', data))

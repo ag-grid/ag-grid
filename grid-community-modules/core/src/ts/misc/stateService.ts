@@ -500,12 +500,12 @@ export class StateService extends BeanStub {
     }
 
     private setPaginationState(paginationState: PaginationState): void {
-        if (typeof paginationState.page === 'number') {
-            this.paginationProxy.setPage(paginationState.page);
-        }
-
         if (paginationState.pageSize && !this.gridOptionsService.get('paginationAutoPageSize')) {
             this.paginationProxy.setPageSize(paginationState.pageSize, 'initialState');
+        }
+
+        if (typeof paginationState.page === 'number') {
+            this.paginationProxy.setPage(paginationState.page);
         }
     }
 

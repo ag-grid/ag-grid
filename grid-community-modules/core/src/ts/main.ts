@@ -80,7 +80,6 @@ export {
     ExcelRow,
     ExcelStyle,
     ExcelTable,
-    ExcelXMLTemplate,
     ExcelWorksheet
 } from "./interfaces/iExcelCreator";
 
@@ -529,7 +528,7 @@ export {
     WithoutGridCommon
 } from "./interfaces/iCommon";
 
-export * from "./propertyKeys";
+export { ManagedGridOptionKey, ManagedGridOptions, PropertyKeys } from "./propertyKeys";
 export { IPivotColDefService } from "./interfaces/iPivotColDefService";
 export { IProvidedColumn } from "./interfaces/iProvidedColumn";
 export { IHeaderColumn } from "./interfaces/iHeaderColumn";

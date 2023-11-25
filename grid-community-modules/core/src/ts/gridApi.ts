@@ -138,6 +138,7 @@ import { IExpansionService } from "./interfaces/iExpansionService";
 import { warnOnce } from "./utils/function";
 import { ApiEventService } from "./misc/apiEventService";
 import { IFrameworkOverrides } from "./interfaces/iFrameworkOverrides";
+import { ManagedGridOptionKey, ManagedGridOptions } from "./propertyKeys";
 
 export interface DetailGridInfo {
     /**
@@ -1825,14 +1826,14 @@ export class GridApi<TData = any> {
      * Updates a single `Managed` gridOption to the new value provided.
      * If updating multiple options, it is recommended to instead use `api.updateGridOptions()` which batches update logic.
      */
-    public setGridOption<Key extends keyof GridOptions>(key: Key, value: GridOptions[Key]): void {
+    public setGridOption<Key extends keyof GridOptions & ManagedGridOptionKey>(key: Key, value: GridOptions[Key]): void {
         this.updateGridOptions({ [key]: value });
     }
 
     /**
      * Updates the provided subset of `Managed` gridOptions with the provided values.
      */
-    public updateGridOptions(options: Partial<GridOptions>): void {
+    public updateGridOptions(options: Partial<ManagedGridOptions>): void {
         this.gos.updateGridOptions({ options });
     }
 
@@ -1841,7 +1842,7 @@ export class GridApi<TData = any> {
         this.gos.updateGridOptions({ options, source: 'gridOptionsUpdated' });
     }
 
-    private deprecatedUpdateGridOption<K extends keyof GridOptions>(key: K, value: GridOptions[K]) {
+    private deprecatedUpdateGridOption<K extends keyof GridOptions & ManagedGridOptionKey>(key: K, value: GridOptions[K]) {
         warnOnce(`set${key.charAt(0).toUpperCase()}${key.slice(1, key.length)} is deprecated. Please use 'api.setGridOption('${key}', newValue)' or 'api.updateGridOptions({ ${key}: newValue })' instead.`);
         this.setGridOption(key, value);
     }
@@ -2353,10 +2354,10 @@ export class GridApi<TData = any> {
     }
 
     /**
-     * @deprecated v31 Use `api.setGridOption` or `api.updateGridOptions` instead.
+     * @deprecated v31 `getRowId` is a static property and cannot be updated.
      *  */
     public setGetRowId(getRowIdFunc: GetRowIdFunc): void {
-        this.deprecatedUpdateGridOption('getRowId', getRowIdFunc);
+        warnOnce(`getRowId is a static property and can no longer be updated.`);
     }
 
     /**

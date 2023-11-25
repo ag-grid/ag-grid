@@ -15,7 +15,6 @@ const gridOptions: GridOptions<IOlympicDataWithId> = {
   defaultColDef: {
     flex: 1,
     minWidth: 90,
-    resizable: true,
   },
 
   // use the server-side row model
@@ -30,7 +29,6 @@ const gridOptions: GridOptions<IOlympicDataWithId> = {
   // fetch 10 rows per block as page size is 10 (default is 100)
   cacheBlockSize: 10,
 
-  animateRows: true,
 }
 
 // setup the grid after the page has finished loading

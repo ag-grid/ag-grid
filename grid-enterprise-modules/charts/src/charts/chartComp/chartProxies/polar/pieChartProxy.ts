@@ -42,8 +42,9 @@ export class PieChartProxy extends ChartProxy {
                 angleKey: f.colId,
                 angleName: f.displayName!,
                 sectorLabelKey: f.colId,
-                calloutLabelKey: params.category.id,
+                legendItemKey: params.category.id,
                 calloutLabelName: params.category.name,
+                calloutLabelKey: params.category.id,
             }
 
             if (this.chartType === 'doughnut') {

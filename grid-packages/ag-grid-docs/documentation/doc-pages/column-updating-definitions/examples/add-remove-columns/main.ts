@@ -28,8 +28,6 @@ const gridOptions: GridOptions<IOlympicData> = {
   columnDefs: columnDefsMedalsIncluded,
   defaultColDef: {
     initialWidth: 100,
-    sortable: true,
-    resizable: true,
   },
 }
 

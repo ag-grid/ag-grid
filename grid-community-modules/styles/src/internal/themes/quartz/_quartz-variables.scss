@@ -1,6 +1,6 @@
 @use "sass:color";
 
-[class*="ag-theme-quartz"] {
+.ag-theme-quartz, .ag-theme-quartz-dark {
     // COLOURS
     
     // main colours (overridden by dark mode)
@@ -20,6 +20,7 @@
     --ag-advanced-filter-option-pill-color: #f3c08b;
     --ag-advanced-filter-value-pill-color: #85c0e4;
     --ag-header-column-resize-handle-color: var(--ag-secondary-border-color);
+    --ag-icon-font-color: color-mix(in srgb, transparent, var(--ag-foreground-color) 90%);
     
     // derived colours (no color blending - these are shared by dark mode)
     --ag-selected-row-background-color: color-mix(in srgb, transparent, var(--ag-active-color) 30%);
@@ -92,16 +93,16 @@
 @mixin -dark-vars {
     --ag-background-color: color-mix(in srgb, #fff, #0b1d28 97%);
     --ag-foreground-color: #fff;
-    --ag-border-color: rgba(255,255,255,0.1);
+    --ag-border-color: rgba(255,255,255,0.16);
     --ag-secondary-border-color: color-mix(in srgb, transparent, var(--ag-foreground-color) 10%);
     --ag-header-background-color: color-mix(in srgb, #fff, #0b1d28 93%);
     --ag-tooltip-background-color: color-mix(in srgb, #fff, #0b1d28 96%);
-    --ag-control-panel-background-color: color-mix(in srgb, #fff, #0b1d28 96%);
+    --ag-control-panel-background-color: color-mix(in srgb, #fff, #0b1d28 93%);
     --ag-input-disabled-background-color: #68686e12;
     --ag-card-shadow: 0 1px 20px 1px black;
-    --ag-input-border-color: #323D48;
+    --ag-input-border-color: var(--ag-border-color);
+    --ag-input-disabled-border-color: rgba(255,255,255,0.07);
     --ag-checkbox-unchecked-color: color-mix(in srgb, var(--ag-background-color), var(--ag-foreground-color) 40%);
-    --ag-toggle-button-switch-background-color: #fff;
 
     --ag-advanced-filter-join-pill-color: #7a3a37;
     --ag-advanced-filter-column-pill-color: #355f2d;
@@ -113,14 +114,6 @@
     color-scheme: dark;
 }
 
-// TODO remove these, they're for testing fonts
-.ag-font-inter {
-    --ag-font-family: 'Inter', cursive;
-}
-.ag-font-plex {
-    --ag-font-family: 'IBM Plex Sans', cursive;
-}
-
 .ag-theme-quartz-dark {
     @include -dark-vars();
 }
@@ -130,3 +123,4 @@
         @include -dark-vars();
     }
 }
+

@@ -17,9 +17,7 @@ let gridApi: GridApi<IOlympicData>;
 
 const gridOptions: GridOptions<IOlympicData> = {
   columnDefs: columnDefs,
-  defaultColDef: {
-    sortable: true,
-  },
+
   autoGroupColumnDef: {
     comparator: (valueA, valueB, nodeA, nodeB, isDescending) => {
       var res = valueA == valueB ? 0 : valueA > valueB ? 1 : -1

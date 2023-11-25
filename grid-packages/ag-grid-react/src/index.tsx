@@ -30,13 +30,10 @@ const App = () => {
             <div className="ag-theme-quartz" style={{ height: 400, width: 600, margin: 10 }}>
                 <AgGridReact
                     defaultColDef={{
-                        resizable: true,
                         filter: true,
                         flex: 1,
-                        sortable: true
                     }}
                     rowSelection="multiple"
-                    animateRows={ true }
                     onGridReady={ onGridReady }
                     rowData={ rowData }
                     columnDefs={colDefs}

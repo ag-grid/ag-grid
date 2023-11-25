@@ -169,8 +169,8 @@ function AutomatedRowGrouping({ automatedExampleManager, useStaticData, runOnce,
             <Helmet>{helmet.map((entry) => entry)}</Helmet>
             {/* eslint-disable-next-line jsx-a11y/no-static-element-interactions, jsx-a11y/click-events-have-key-events */}
             <div ref={gridRef} className={classNames("automated-row-grouping-grid", {
-                "ag-theme-quartz": darkMode,
-                "ag-theme-quartz-dark": !darkMode,
+                "ag-theme-quartz": !darkMode,
+                "ag-theme-quartz-dark": darkMode,
             })}
             onClick={gridInteraction}>
                 <OverlayButton

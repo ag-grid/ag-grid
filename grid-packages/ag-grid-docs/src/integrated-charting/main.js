@@ -146,8 +146,6 @@
         columnDefs: columnDefs,
         defaultColDef: {
             width: 120,
-            sortable: true,
-            resizable: true
         },
         columnTypes: {
             measure: {
@@ -157,7 +155,6 @@
                 cellRenderer: 'agAnimateShowChangeCellRenderer'
             }
         },
-        animateRows: true,
         enableCharts: true,
         suppressAggFuncInHeader: true,
         getRowId: function(params) { return params.data.trade; },

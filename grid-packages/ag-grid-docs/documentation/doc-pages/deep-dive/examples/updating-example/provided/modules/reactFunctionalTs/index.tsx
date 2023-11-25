@@ -7,10 +7,12 @@ import { ColDef } from 'ag-grid-community';
 
 // Row Data Interface
 interface IRow {
-  company: string;
-  country: 'USA' | 'China' | 'Kazakhstan';
-  date: string;
   mission: string;
+  company: string;
+  location: string;
+  date: string;
+  time: string;
+  rocket: string;
   price: number;
   successful: boolean;
 }
@@ -23,16 +25,17 @@ const GridExample = () => {
   // Column Definitions: Defines & controls grid columns.
   const [colDefs] = useState<ColDef[]>([
     { field: "mission" },
-    { field: "country" },
-    { field: "successful" },
+    { field: "company" },
+    { field: "location" },
     { field: "date" },
     { field: "price" },
-    { field: "company" }
+    { field: "successful" },
+    { field: "rocket" }
   ]);
 
   // Fetch data & update rowData state
   useEffect(() => {
-    fetch('https://downloads.jamesswinton.com/space-mission-data.json') // Fetch data from server
+    fetch('https://www.ag-grid.com/example-assets/space-mission-data.json') // Fetch data from server
       .then(result => result.json()) // Convert to JSON
       .then(rowData => setRowData(rowData)) // Update state of `rowData`
   }, [])

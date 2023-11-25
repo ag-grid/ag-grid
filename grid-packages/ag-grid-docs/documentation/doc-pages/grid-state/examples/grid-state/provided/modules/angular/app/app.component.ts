@@ -64,8 +64,6 @@ export class AppComponent {
     public defaultColDef: ColDef = {
         flex: 1,
         minWidth: 100,
-        sortable: true,
-        resizable: true,
         filter: true,
         enableRowGroup: true,
         enablePivot: true,

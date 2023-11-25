@@ -48,8 +48,6 @@ const gridOptions: GridOptions = {
         enablePivot: true,
         enableValue: true,
         width: 100,
-        sortable: true,
-        resizable: true,
         filter: true,
         flex: 1,
         minWidth: 100,

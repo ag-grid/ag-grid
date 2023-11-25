@@ -39,8 +39,6 @@ const VueExample = {
             gridApi: null,
             defaultColDef: {
                 initialWidth: 100,
-                sortable: true,
-                resizable: true,
                 filter: true
             },
             rowData: null,

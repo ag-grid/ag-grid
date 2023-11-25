@@ -16,7 +16,6 @@ const gridOptions: GridOptions = {
   defaultColDef: {
     flex: 1,
     minWidth: 150,
-    resizable: true,
   },
   autoGroupColumnDef: {
     headerName: 'Group',
@@ -39,7 +38,6 @@ const gridOptions: GridOptions = {
   groupDefaultExpanded: -1,
 
   suppressAggFuncInHeader: true,
-  animateRows: true,
 }
 
 function changeSelection(type: string) {

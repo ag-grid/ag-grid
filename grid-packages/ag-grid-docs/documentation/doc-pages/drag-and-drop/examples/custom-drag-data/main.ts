@@ -8,9 +8,7 @@ let gridApi: GridApi;
 const gridOptions: GridOptions = {
   defaultColDef: {
     width: 80,
-    sortable: true,
     filter: true,
-    resizable: true,
   },
   rowSelection: 'multiple',
   suppressRowClickSelection: true,
@@ -33,7 +31,6 @@ const gridOptions: GridOptions = {
     { field: 'value1' },
     { field: 'value2' },
   ],
-  animateRows: true,
 }
 
 function onDragOver(event: any) {

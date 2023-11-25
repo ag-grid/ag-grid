@@ -21,10 +21,8 @@ const gridOptions: GridOptions = {
   ],
   defaultColDef: {
     width: 170,
-    sortable: true,
     filter: true,
   },
-  animateRows: true,
   groupDefaultExpanded: 1,
   onRowDragMove: onRowDragMove,
   onGridReady: (params) => {

@@ -188,6 +188,10 @@ export interface Config {
 
     /** A list of types to suppress from generated documentation. */
     suppressTypes?: string[];
+    /** When properties defined as `initial`, the relative link to direct to */
+    initialLink?: string;
+    /** Show the description of what an initial property is against initial properties */
+    showInitialDescription?: boolean;
 }
 export type SectionProps = {
     framework: string;

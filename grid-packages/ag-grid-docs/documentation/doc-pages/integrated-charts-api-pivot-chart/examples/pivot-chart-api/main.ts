@@ -12,11 +12,9 @@ const gridOptions: GridOptions = {
   ],
   defaultColDef: {
     editable: true,
-    sortable: true,
     flex: 1,
     minWidth: 130,
     filter: true,
-    resizable: true,
   },
   autoGroupColumnDef: {
     minWidth: 200,

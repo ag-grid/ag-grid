@@ -13,8 +13,6 @@ const gridOptions: GridOptions = {
   defaultColDef: {
     flex: 1,
     minWidth: 150,
-    sortable: true,
-    resizable: true,
   },
   autoGroupColumnDef: {
     minWidth: 300,
@@ -26,7 +24,6 @@ const gridOptions: GridOptions = {
 
     return false;
   },
-  animateRows: true,
   onFirstDataRendered: (params: FirstDataRenderedEvent) => {
     params.api.forEachNode((node) => {
       if (node.key === 'France' || node.key === 'South Korea') {

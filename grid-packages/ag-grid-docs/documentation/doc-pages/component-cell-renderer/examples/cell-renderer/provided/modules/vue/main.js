@@ -138,12 +138,10 @@ const VueExample = {
                 }
             ],
             defaultColDef: {
-                editable: true,
-                sortable: true,
-                flex: 1,
+                editable: true,flex: 1,
                 minWidth: 100,
                 filter: true,
-                resizable: true
+                
             },
             rowData: null,
             themeClass: /** DARK MODE START **/document.documentElement.dataset.defaultTheme || 'ag-theme-quartz'/** DARK MODE END **/,

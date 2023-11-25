@@ -194,12 +194,11 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl<IHeaderCellComp, Colu
     }
 
     private createParams(): IHeaderParams {
-        const colDef = this.column.getColDef();
 
         const params: IHeaderParams = {
             column: this.column,
             displayName: this.displayName,
-            enableSorting: colDef.sortable,
+            enableSorting: this.column.isSortable(),
             enableMenu: this.menuEnabled,
             showColumnMenu: (source: HTMLElement) => {
                 this.gridApi.showColumnMenuAfterButtonClick(this.column, source);
@@ -372,7 +371,7 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl<IHeaderCellComp, Colu
     private updateState(): void {
         const colDef = this.column.getColDef();
         this.menuEnabled = this.menuFactory.isMenuEnabled(this.column) && !colDef.suppressMenu;
-        this.sortable = colDef.sortable;
+        this.sortable = this.column.isSortable();
         this.displayName = this.calculateDisplayName();
         this.draggable = this.workOutDraggable();
     }

@@ -3,21 +3,24 @@ import { AgGridVue } from "ag-grid-vue";
 import "ag-grid-community/styles/ag-grid.css";
 import "ag-grid-community/styles/ag-theme-quartz.css";
 
-const CountryFlagCellRenderer = {
+const CompanyLogoRenderer = {
   template: 
     `
-      <span>
-        <img :src="'https://www.ag-grid.com/example-assets/flags/' + cellValue + '-flag-sm.png'" height="30" />
-      </span>
+    <span style="display: flex; height: 100%; width: 100%; align-items: center;">
+      <img :src="'https://www.ag-grid.com/example-assets/space-company-logos/' + cellValueLowerCase + '.png'" style="display: block; width: 25px; height: auto; max-height: 50%; margin-right: 12px; filter: brightness(1.1);" />
+      <p style="text-overflow: ellipsis; overflow: hidden; white-space: nowrap;">{{ cellValue }}</p>
+    </span>
     `,
-  data: function () {
-    return {
-        cellValue: ''
-    };
-  },
-  beforeMount() {
-      this.cellValue = this.params.value.toLowerCase();
-  },
+    data: function () {
+      return {
+        cellValue: '',
+        cellValueLowerCase: ''
+      };
+    },
+    beforeMount() {
+      this.cellValue = this.params.value;
+      this.cellValueLowerCase = this.params.value.toLowerCase();
+    },
 };
 
 const App = {
@@ -36,7 +39,7 @@ const App = {
     `,
   components: {
     AgGridVue,
-    countryFlagCellRenderer: CountryFlagCellRenderer
+    companyLogoRenderer: CompanyLogoRenderer
   },
   data() {
     return {
@@ -44,15 +47,27 @@ const App = {
       rowData: [],
       // Column Definitions: Defines & controls grid columns.
       columnDefs: [
-          { field: "mission", resizable: true },
-          { field: "country", cellRenderer: "countryFlagCellRenderer" },
-          { field: "successful" },
-          { field: "date" },
-          { field: "price", valueFormatter: (params) => { return '£' + params.value.toLocaleString(); } },
-          { field: "company" }
+        { 
+          field: "mission", 
+          filter: true 
+        },
+        { 
+          field: "company",
+          cellRenderer: "companyLogoRenderer" 
+        },
+        { 
+          field: "location"
+        },
+        { field: "date" },
+        { 
+          field: "price",
+          valueFormatter: params => { return '£' + params.value.toLocaleString(); } 
+        },
+        { field: "successful" },
+        { field: "rocket" }
       ],
       defaultColDefs: {
-        resizable: true,
+        filter: true,
         editable: true
       },
       themeClass: /** DARK MODE START **/document.documentElement.dataset.defaultTheme || 'ag-theme-quartz'/** DARK MODE END **/,
@@ -60,7 +75,7 @@ const App = {
   },
   methods: {
     fetchData: async function() {
-      const response = await fetch('https://downloads.jamesswinton.com/space-mission-data.json');
+      const response = await fetch('https://www.ag-grid.com/example-assets/space-mission-data.json');
       return response.json();
     },
     onCellValueChanged(event) {

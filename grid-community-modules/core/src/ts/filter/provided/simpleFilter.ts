@@ -6,7 +6,7 @@ import { AgSelect } from '../../widgets/agSelect';
 import { AgRadioButton } from '../../widgets/agRadioButton';
 import { areEqual } from '../../utils/array';
 import { setDisplayed, setDisabled, removeFromParent } from '../../utils/dom';
-import { DEFAULT_FILTER_LOCALE_TEXT, IFilterLocaleText } from '../filterLocaleText';
+import { FILTER_LOCALE_TEXT } from '../filterLocaleText';
 import { AgInputTextField } from '../../widgets/agInputTextField';
 import { Component } from '../../widgets/component';
 import { AgAbstractInputField } from '../../widgets/agAbstractInputField';
@@ -156,7 +156,7 @@ export abstract class SimpleFilterModelFormatter<TValue = any> {
             }
             const customOptions = conditions.map(condition => this.getModelAsString(condition));
             const joinOperatorTranslateKey = combinedModel.operator === 'AND' ? 'andCondition' : 'orCondition';
-            return customOptions.join(` ${translate(joinOperatorTranslateKey, DEFAULT_FILTER_LOCALE_TEXT[joinOperatorTranslateKey])} `);
+            return customOptions.join(` ${translate(joinOperatorTranslateKey, FILTER_LOCALE_TEXT[joinOperatorTranslateKey])} `);
         } else if (model.type === SimpleFilter.BLANK || model.type === SimpleFilter.NOT_BLANK) {
             return translate(model.type, model.type);
         } else {
@@ -598,7 +598,7 @@ export abstract class SimpleFilter<M extends ISimpleFilterModel, V, E = AgInputT
     }
 
     private createBoilerplateListOption(option: string): ListOption {
-        return { value: option, text: this.translate(option as keyof IFilterLocaleText) };
+        return { value: option, text: this.translate(option as keyof typeof FILTER_LOCALE_TEXT) };
     }
 
     private createCustomListOption(option: IFilterOptionDef): ListOption {
@@ -608,7 +608,7 @@ export abstract class SimpleFilter<M extends ISimpleFilterModel, V, E = AgInputT
             value: displayKey,
             text: customOption ?
                 this.localeService.getLocaleTextFunc()(customOption.displayKey, customOption.displayName) :
-                this.translate(displayKey as keyof IFilterLocaleText),
+                this.translate(displayKey as keyof typeof FILTER_LOCALE_TEXT),
         };
     }
 
@@ -804,7 +804,7 @@ export abstract class SimpleFilter<M extends ISimpleFilterModel, V, E = AgInputT
         this.lastUiCompletePosition = updatedLastUiCompletePosition;
     }
 
-    private getPlaceholderText(defaultPlaceholder: keyof IFilterLocaleText, position: number): string {
+    private getPlaceholderText(defaultPlaceholder: keyof typeof FILTER_LOCALE_TEXT, position: number): string {
         let placeholder = this.translate(defaultPlaceholder);
         if (isFunction(this.filterPlaceholder)) {
             const filterPlaceholderFn = this.filterPlaceholder as FilterPlaceholderFunction;

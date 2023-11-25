@@ -19,7 +19,6 @@ const gridOptions: GridOptions = {
   ],
   defaultColDef: {
     flex: 1,
-    sortable: true,
   },
   columnTypes: {
     valueColumn: {
@@ -32,7 +31,6 @@ const gridOptions: GridOptions = {
   groupDefaultExpanded: 1,
   suppressAggFuncInHeader: true,
   enableCellChangeFlash: true,
-  animateRows: true,
 }
 
 function getRowData() {

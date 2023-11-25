@@ -30,8 +30,6 @@ const gridOptions: GridOptions = {
   ],
   defaultColDef: {
     flex: 1,
-    sortable: true,
-    resizable: true,
   },
   autoGroupColumnDef: {
     minWidth: 180,
@@ -72,7 +70,6 @@ const gridOptions: GridOptions = {
   },
   groupDefaultExpanded: 1,
   suppressAggFuncInHeader: true,
-  animateRows: true,
   getRowId: (params: GetRowIdParams) => {
     return params.data.id
   },

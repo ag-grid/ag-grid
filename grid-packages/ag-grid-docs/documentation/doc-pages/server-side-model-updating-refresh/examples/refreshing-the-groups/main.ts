@@ -21,8 +21,6 @@ const gridOptions: GridOptions = {
   defaultColDef: {
     flex: 1,
     minWidth: 150,
-    resizable: true,
-    sortable: true,
   },
   autoGroupColumnDef: {
     flex: 1,
@@ -55,7 +53,6 @@ const gridOptions: GridOptions = {
   enableCellChangeFlash: true,
   suppressAggFuncInHeader: true,
 
-  animateRows: true,
 };
 
 let allData: any[];

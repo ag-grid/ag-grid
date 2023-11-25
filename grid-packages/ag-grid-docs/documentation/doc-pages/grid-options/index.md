@@ -1,11 +1,13 @@
 ---
-title: "Grid Options"
+title: "Grid Options Reference"
 ---
 
-All of these grid options are available through the generic `GridOptions<TData>` interface.
+Implements the `GridOptions<TData>` interface.
 
-`TData` can optionally be used to represent the shape of the row data and is explained further under [Typescript Generics](/typescript-generics).
+The grid will respond to property updates unless they are marked as `Initial`. See [Updating Grid Options](/grid-interface/#updating-grid-options).
 
-Properties marked as `Managed` can be updated via property bindings in frameworks, or by using one of the API functions [setGridOption](/grid-api/#reference-gridOptions-setGridOption) or [updateGridOptions](/grid-api/#reference-gridOptions-updateGridOptions).
+<api-documentation source='properties.json' config='{ "showInitialDescription": true }'></api-documentation>
 
-<api-documentation source='properties.json' ></api-documentation>
+<framework-specific-section frameworks="angular,vue,react">
+<api-documentation source='gridOption.json' config='{ "showInitialDescription": true }'></api-documentation>
+</framework-specific-section>

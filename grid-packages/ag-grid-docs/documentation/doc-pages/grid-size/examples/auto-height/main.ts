@@ -34,13 +34,10 @@ const gridOptions: GridOptions = {
     enableRowGroup: true,
     enablePivot: true,
     enableValue: true,
-    sortable: true,
     filter: true,
-    resizable: true,
   },
   rowData: getData(5),
   domLayout: 'autoHeight',
-  animateRows: true,
   onGridReady: (params) => {
     document.querySelector('#currentRowCount')!.innerHTML = '5'
   },

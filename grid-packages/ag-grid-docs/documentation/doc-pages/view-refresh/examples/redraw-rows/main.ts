@@ -1,7 +1,7 @@
 import { GridApi, createGrid, GridOptions, RowClassParams, RowStyle } from '@ag-grid-community/core';
 
 var colorIndex = 0
-var colors = ['#000000', '#000066', '#006600', '#660000']
+var colors = ['#99999944', '#CC333344', '#33CC3344', '#2244CC44']
 
 let gridApi: GridApi;
 

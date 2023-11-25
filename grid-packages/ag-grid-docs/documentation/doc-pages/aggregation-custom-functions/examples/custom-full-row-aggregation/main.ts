@@ -17,7 +17,6 @@ const gridOptions: GridOptions = {
     flex: 1,
     minWidth: 150,
     filter: true,
-    sortable: true,
   },
   autoGroupColumnDef: {
     headerName: 'Athlete',

@@ -90,7 +90,7 @@ export class QuickFilterService extends BeanStub {
 
     private setQuickFilter(newFilter: string | undefined): void {
         if (newFilter != null && typeof newFilter !== 'string') {
-            console.warn(`AG Grid - setQuickFilter() only supports string inputs, received: ${typeof newFilter}`);
+            console.warn(`AG Grid - Grid option quickFilterText only supports string inputs, received: ${typeof newFilter}`);
             return;
         }
 

@@ -56,8 +56,6 @@ const gridOptions: GridOptions<IOlympicData> = {
     // include a custom function 'random' that just returns a
     // random number
     allowedAggFuncs: ['sum', 'min', 'max', 'random'],
-    sortable: true,
-    resizable: true,
     filter: true,
   },
   autoGroupColumnDef: {
@@ -67,7 +65,6 @@ const gridOptions: GridOptions<IOlympicData> = {
   rowModelType: 'serverSide',
   rowGroupPanelShow: 'always',
   pivotPanelShow: 'always',
-  animateRows: true,
   sideBar: true,
   maxConcurrentDatasourceRequests: 1,
   maxBlocksInCache: 2,

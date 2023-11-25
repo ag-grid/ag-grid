@@ -4186,8 +4186,6 @@ function createRowData() {
     let api;
     var gridOptions = {
         defaultColDef: {
-            sortable: true,
-            resizable: true,
             filter: true,
             minWidth: 80
         },
@@ -4195,8 +4193,6 @@ function createRowData() {
         rowSelection: "multiple",
         enableRangeSelection: true,
         suppressRowClickSelection: true,
-        animateRows: true,
-        // debug: true
     };
 
     var btBringGridBack;

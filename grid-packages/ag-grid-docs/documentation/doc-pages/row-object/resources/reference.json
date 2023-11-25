@@ -2,49 +2,127 @@
     "_config_": {
         "codeSrc": "row-object/row-node.AUTO.json"
     },
-    "rowNodeAttributes": {
+    "display": {
         "meta": {
-            "displayName": "All Row Node Attributes"
+            "displayName": "Display"
+        },
+        "rowIndex": {},
+        "rowTop": {},
+        "displayed": {},
+        "isHovered": {},
+        "isFullWidthCell": {}
+    },
+    "expand": {
+        "meta": {
+            "displayName": "Expand / Collapse"
+        },
+        "expanded": {},
+        "isExpandable": {},
+        "setExpanded": {}
+    },
+    "events": {
+        "meta": {
+            "displayName": "Events"
+        },
+        "addEventListener": {},
+        "removeEventListener": {}
+    },
+    "height": {
+        "meta": {
+            "displayName": "Height"
+        },
+        "rowHeight": {},
+        "setRowHeight": {}
+    },
+    "filter": {
+        "meta": {
+            "displayName": "Quick Filter"
+        },
+        "quickFilterAggregateText": {},
+        "resetQuickFilterAggregateText": {}
+    },
+    "serverSide": {
+        "meta": {
+            "displayName": "Server Side Row Model"
+        },
+        "stub": {},
+        "failedLoad": {},
+        "getRoute": {
+            "more": {
+                "name": "Server-Side Model: Open by Default",
+                "url": "/server-side-model-grouping/#open-by-default"
+            }
+        }
+    },
+    "masterDetail": {
+        "meta": {
+            "displayName": "Master Detail"
+        },
+        "master": {},
+        "detail": {}
+    },
+    "pinned": {
+        "meta": {
+            "displayName": "Pinned Rows"
+        },
+        "rowPinned": {},
+        "isRowPinned": {}
+    },
+    "data": {
+        "meta": {
+            "displayName": "Data"
         },
         "id": {},
         "data": {},
-        "displayed": {},
-        "rowPinned": {},
+        "updateData": {},
+        "setData": {
+            "more": {
+                "name": "Client-Side Single Row Update",
+                "url": "/data-update-single-row-cell/"
+            }
+        },
+        "setDataValue": {
+            "more": {
+                "name": "Client-Side Single Cell Update",
+                "url": "/data-update-single-row-cell/"
+            }
+        }
+    },
+    "selection": {
+        "meta": {
+            "displayName": "Selection"
+        },
         "selectable": {},
-        "master": {},
-        "detail": {},
-        "rowHeight": {},
-        "rowTop": {},
-        "group": {},
-        "parent": {},
-        "firstChild": {},
-        "lastChild": {},
-        "childIndex": {},
-        "level": {},
-        "uiLevel": {},
-        "rowIndex": {},
-        "stub": {},
-        "failedLoad": {},
-        "quickFilterAggregateText": {}
+        "setSelected": {
+            "description": "Select (or deselect) the node. <ul class='content'><li>`newValue` - `true` for selection, `false` for deselection.</li><li>`clearSelection` - If selecting, then passing `true` will select the node exclusively (i.e. NOT do multi select). If doing deselection, `clearSelection` has no impact.</li>"
+        },
+        "isSelected": {}
     },
     "groupNodeAttributes": {
         "meta": {
-            "displayName": "Group Node Attributes"
+            "displayName": "Grouping"
         },
+        "group": {},
         "groupData": {},
         "aggData": {},
         "key": {},
         "field": {},
         "rowGroupColumn": {},
         "rowGroupIndex": {},
-        "expanded": {},
         "footer": {},
+        "parent": {},
+        "firstChild": {},
+        "lastChild": {},
+        "childIndex": {},
+        "level": {},
+        "uiLevel": {},
         "allLeafChildren": {},
         "childrenAfterGroup": {},
         "childrenAfterFilter": {},
         "childrenAfterSort": {},
         "allChildrenCount": {},
         "leafGroup": {},
-        "sibling": {}
+        "sibling": {},
+        "depthFirstSearch": {}
     }
 }

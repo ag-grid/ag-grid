@@ -12,8 +12,6 @@ const gridOptions: GridOptions<IOlympicData> = {
     defaultColDef: {
         flex: 1,
         minWidth: 100,
-        resizable: true,
-        sortable: true,
     },
     autoGroupColumnDef: {
         minWidth: 200,
@@ -29,7 +27,6 @@ const gridOptions: GridOptions<IOlympicData> = {
     serverSidePivotResultFieldSeparator: '_',
 
     suppressAggFuncInHeader: true,
-    animateRows: true,
 }
 
 // setup the grid after the page has finished loading

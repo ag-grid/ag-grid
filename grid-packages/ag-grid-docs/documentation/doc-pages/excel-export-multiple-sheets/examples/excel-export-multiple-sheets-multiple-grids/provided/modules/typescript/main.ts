@@ -74,9 +74,7 @@ const leftGridOptions: GridOptions = {
     defaultColDef: {
         flex: 1,
         minWidth: 100,
-        sortable: true,
         filter: true,
-        resizable: true
     },
     rowSelection: 'multiple',
     rowDragMultiRow: true,
@@ -86,7 +84,6 @@ const leftGridOptions: GridOptions = {
     rowDragManaged: true,
     suppressMoveWhenRowDragging: true,
     columnDefs: leftColumnDefs,
-    animateRows: true,
     onGridReady: (params) => {
         addGridDropZone(params);
     }
@@ -96,16 +93,13 @@ const rightGridOptions: GridOptions = {
     defaultColDef: {
         flex: 1,
         minWidth: 100,
-        sortable: true,
         filter: true,
-        resizable: true
     },
     getRowId: (params: GetRowIdParams) => {
         return params.data.athlete;
     },
     rowDragManaged: true,
     columnDefs: rightColumnDefs,
-    animateRows: true
 };
 
 function addGridDropZone(params: GridReadyEvent) {

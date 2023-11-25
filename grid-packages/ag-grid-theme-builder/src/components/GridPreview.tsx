@@ -111,9 +111,7 @@ const Wrapper = styled('div')`
 `;
 
 const buildGridOptions = (features: ReadonlyArray<Feature>): GridOptions => {
-  const defaultColDef: ColDef = {
-    sortable: true,
-  };
+  const defaultColDef: ColDef = { };
   const columnDefs = getColumnDefs();
   const options: GridOptions = { defaultColDef, columnDefs };
   for (const feature of features) {

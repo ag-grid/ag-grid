@@ -11,15 +11,20 @@ import favIcons from '../images/favicons';
 import styles from './index.module.scss';
 import menuData from '../../doc-pages/licensing/menu.json';
 import apiMenuData from '../../doc-pages/licensing/api-menu.json';
+import { getCurrentFramework } from '../utils/local-storage';
 
 /**
  * This controls the layout template for all pages.
  */
 export const Layout = ({
     children,
-    pageContext: { frameworks, framework = 'javascript', layout, pageName, darkMode },
+    pageContext: { frameworks, framework, layout, pageName, darkMode },
     location: { pathname: path, href },
 }) => {
+
+    if(!framework) {
+        framework = getCurrentFramework() ?? 'react';
+    }
 
     // prevent rendering Menu on documentation or API paths to prevent consistency
     const isDocumentationOrApiPath = ["/documentation/", "/api/"].includes(path);

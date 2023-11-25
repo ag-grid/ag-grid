@@ -11,28 +11,31 @@ const GridExample = () => {
   
   // Column Definitions: Defines & controls grid columns.
   const [colDefs] = useState([
-    { field: "mission", resizable: true },
-    { field: "country" },
-    { field: "successful" },
+    { 
+      field: "mission", 
+      filter: true 
+    },
+    { field: "company" },
+    { field: "location" },
     { field: "date" },
     { 
-      field: "price", 
-      // Return a formatted string for this column
-      valueFormatter: params => { return '£' + params.value.toLocaleString(); } 
+      field: "price",
+      valueFormatter: (params) => { return '£' + params.value.toLocaleString(); } 
     },
-    { field: "company" }
+    { field: "successful" },
+    { field: "rocket" }
   ]);
 
   // Fetch data & update rowData state
   useEffect(() => {
-    fetch('https://downloads.jamesswinton.com/space-mission-data.json') // Fetch data from server
+    fetch('https://www.ag-grid.com/example-assets/space-mission-data.json') // Fetch data from server
       .then(result => result.json()) // Convert to JSON
       .then(rowData => setRowData(rowData)) // Update state of `rowData`
   }, [])
 
   // Apply settings across all columns
   const defaultColDefs = useMemo(() => ({
-    resizable: true
+    filter: true
   }))
 
   // Container: Defines the grid's theme & dimensions.

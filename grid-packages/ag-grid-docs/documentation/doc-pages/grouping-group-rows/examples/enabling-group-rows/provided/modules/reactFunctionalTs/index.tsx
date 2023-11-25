@@ -35,8 +35,6 @@ const GridExample = () => {
         return {
             flex: 1,
             minWidth: 100,
-            sortable: true,
-            resizable: true,
         };
     }, []);
 
@@ -56,7 +54,6 @@ const GridExample = () => {
                     columnDefs={columnDefs}
                     defaultColDef={defaultColDef}
                     groupDisplayType={'groupRows'}
-                    animateRows={true}
                     onGridReady={onGridReady}
                 />
             </div>

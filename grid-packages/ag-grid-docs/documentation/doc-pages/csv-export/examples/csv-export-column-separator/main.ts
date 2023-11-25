@@ -5,7 +5,6 @@ let gridApi: GridApi;
 const gridOptions: GridOptions = {
   defaultColDef: {
     editable: true,
-    resizable: true,
     minWidth: 100,
     flex: 1,
   },

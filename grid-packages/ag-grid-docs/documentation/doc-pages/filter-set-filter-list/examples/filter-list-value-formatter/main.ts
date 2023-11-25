@@ -33,7 +33,6 @@ const gridOptions: GridOptions<IOlympicData> = {
   defaultColDef: {
     flex: 1,
     minWidth: 225,
-    resizable: true,
     floatingFilter: true,
   },
   sideBar: 'filters',

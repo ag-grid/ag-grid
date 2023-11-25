@@ -2,7 +2,7 @@
 
 @use "./quartz-variables";
 
-[class*="ag-theme-quartz"] {
+.ag-theme-quartz, .ag-theme-quartz-dark {
     .ag-filter-toolpanel-header,
     .ag-filter-toolpanel-search,
     .ag-status-bar,
@@ -32,13 +32,19 @@
 
     .ag-tab {
         padding: var(--ag-grid-size);
-        transition: background-color 0.1s;
         flex: 1 1 auto;
+    }
+
+    .ag-tab:not(.ag-tab-selected) {
+        opacity: 0.7;
+        &:hover {
+            opacity: 1;
+        }
     }
 
     .ag-menu {
         background-color: var(--ag-control-panel-background-color);
-        color: color-mix(in srgb, transparent, var(--ag-foreground-color) 75%);
+        color: color-mix(in srgb, transparent, var(--ag-foreground-color) 95%);
 
         &.ag-tabs {
             // min width only on top-level popup menu to stop it switching as we change tab
@@ -56,59 +62,43 @@
 
     .ag-menu-option {
         font-weight: 500;
+        cursor: pointer;
     }
 
     .ag-tabs-header {
-        margin: calc(var(--ag-grid-size) * 1.5);
-        margin-bottom: 0;
-        border: var(--ag-borders) var(--ag-border-color);
+        border-bottom: var(--ag-borders) var(--ag-border-color);
         display: flex;
-        border-radius: var(--ag-border-radius);
         background-color: color-mix(in srgb, transparent, var(--ag-foreground-color) 5%)
     }
     
     .ag-tab-selected {
         margin: -1px;
-        border: var(--ag-borders) var(--ag-input-border-color);
+        border: var(--ag-borders) var(--ag-border-color);
         background-color: var(--ag-background-color);
-        border-radius: var(--ag-border-radius);
-        box-shadow: 0px 1px 4px 0px rgba(0, 0, 0, 0.04);
     }
     //
     // VERTICAL TABS
     // 
     .ag-side-bar {
         background-color: var(--ag-control-panel-background-color);
-        // prevent it getting too small when all tool panels are hidden so it's just the side buttons showing
-        min-width: calc(var(--ag-icon-size) + var(--ag-grid-size) * 5);
+        min-width: calc(var(--ag-icon-size) + var(--ag-grid-size) * 2);
     }
     .ag-side-buttons {
         padding: 0;
-        align-self: flex-start;
-        margin: var(--ag-widget-container-vertical-padding) 0;
-        @include ag.theme-rtl((margin-right: var(--ag-widget-container-horizontal-padding)));
-        border: var(--ag-borders) var(--ag-border-color);
-        border-radius: var(--ag-border-radius);
+        align-self: stretch;
         width: calc(var(--ag-icon-size) + var(--ag-grid-size) * 2);
+        background: var(--ag-control-panel-background-color);
     }
 
-    .ag-side-button {
-        transition: background-color 0.15s;
-    }
     .ag-side-button.ag-selected {
         margin: -1px;
-        border: var(--ag-borders) var(--ag-input-border-color);
+        border: var(--ag-borders) var(--ag-border-color);
         background-color: var(--ag-background-color);
-        border-radius: var(--ag-border-radius);
     }
-    .ag-tool-panel-wrapper {
-        @include ag.theme-rtl((border-right: none));
-    }
+
     .ag-column-panel-column-select {
         border-top: none;
-    }
-    .ag-column-select-header, .ag-column-select, .ag-column-drop-vertical {
-        border-bottom: none;
+        border-bottom: 1px solid var(--ag-secondary-border-color);
     }
 
     .ag-filter-toolpanel-search {
@@ -123,17 +113,65 @@
         padding-top: var(--ag-widget-vertical-spacing);
     }
 
+    .ag-chart-tabbed-menu-body {
+        position: relative;
+
+        &::after {
+            content: "";
+            position: absolute;
+            display: block;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 16px;
+            background: linear-gradient(var(--ag-control-panel-background-color), transparent);
+        }
+    }
+
+
     .ag-charts-settings-group-title-bar,
     .ag-charts-data-group-title-bar,
     .ag-charts-format-top-level-group-title-bar,
     .ag-charts-settings-group-container {
         border-top: none;
-        padding: var(--ag-grid-size) calc(var(--ag-grid-size) * 1.5);
+        padding: 0 calc(var(--ag-grid-size) * 1.5);
         font-weight: 500;
+    }
+
+    .ag-charts-settings-group-container {
+        margin-top: calc(var(--ag-grid-size));
+        @include ag.theme-rtl((padding-right: var(--ag-widget-container-horizontal-padding)));
+    }
+    
+    .ag-charts-format-sub-level-group-container {
+        @include ag.theme-rtl((padding-right: 0));
+    }
+
+    .ag-charts-format-top-level-group-toolbar {
+        margin-top: var(--ag-grid-size);
+        @include ag.theme-rtl((padding-left: calc(var(--ag-grid-size) * 2)));
+    }
+    
+    .ag-charts-settings-group-title-bar,
+    .ag-charts-data-group-title-bar,
+    .ag-charts-format-top-level-group-title-bar {
+        margin-top: calc(var(--ag-grid-size) * 2);
+    }
+
+    .ag-charts-format-top-level-group-container {
+        padding: 0;
+        @include ag.theme-rtl((padding-left: 0, padding-right: var(--ag-widget-container-horizontal-padding)));
+    }
+
+    .ag-charts-format-top-level-group-item {
+        margin-top: calc(var(--ag-grid-size) * 2);
+        margin-bottom: 0;
     }
 
     .ag-chart-mini-thumbnail {
         background-color: var(--ag-background-color);
+        margin-top: 0;
+        margin-bottom: 0;
     }
 
     .ag-chart-settings-nav-bar {
@@ -144,9 +182,22 @@
         @include ag.theme-rtl((margin-right: var(--ag-grid-size)));
     }
 
-    .ag-charts-format-top-level-group-toolbar {
-        margin-top: var(--ag-grid-size);
-        @include ag.theme-rtl((padding-left: calc(var(--ag-icon-size) * 0.5 + var(--ag-grid-size) * 2)));
+    .ag-color-picker {
+        .ag-picker-field-wrapper {
+            max-width: 55px;
+            min-width: 55px;
+        }
+        .ag-picker-field-display {
+            height: 18px;
+            width: 18px;
+            flex: auto 0 0;
+            margin: 6px;
+            border-radius: 2px;
+            border: solid 1px var(--ag-input-border-color);
+        }
+        .ag-picker-field-icon {
+            @include ag.theme-rtl((margin-right: 4px));
+        }
     }
 
     .ag-charts-format-sub-level-group {
@@ -160,7 +211,7 @@
         padding-top: 0;
         padding-bottom: 0;
         background: none;
-        font-weight: 700;
+        font-weight: 500;
     }
 
     .ag-charts-format-sub-level-group-container {
@@ -172,10 +223,11 @@
     }
 
     &.ag-dnd-ghost {
-        font-weight: 700;
+        font-weight: 500;
     }
 
     .ag-standard-button {
+        font-family: inherit;
         appearance: none;
         -webkit-appearance: none;
         border-radius: var(--ag-border-radius);
@@ -219,8 +271,7 @@
     }
 
     .ag-column-drop-vertical-title-bar {
-        padding: calc(var(--ag-grid-size) * 2);
-        padding-bottom: 0px;
+        padding: var(--ag-widget-container-vertical-padding) calc(var(--ag-grid-size) * 2) 0;
     }
 
     .ag-column-drop-vertical-icon {
@@ -232,9 +283,8 @@
         align-items: center;
         justify-content: center;
         border: dashed 1px;
-        background-color: var(--ag-background-color);
         border-color: var(--ag-border-color);
-        margin: calc(var(--ag-grid-size) * 2);
+        margin: calc(var(--ag-grid-size) * 1.5) calc(var(--ag-grid-size) * 2);
         padding: calc(var(--ag-grid-size) * 2);
     }
 
@@ -244,6 +294,9 @@
 
     .ag-status-bar {
         font-weight: normal;
+    }
+    .ag-status-name-value {
+        padding: var(--ag-widget-container-vertical-padding) 0;
     }
 
     .ag-status-name-value-value,
@@ -276,16 +329,29 @@
     .ag-panel-title-bar-button-icon,
     .ag-chart-menu-icon,
     .ag-chart-menu-close {
+        --ag-quartz-icon-hover-color: color-mix(in srgb, transparent, var(--ag-foreground-color) 10%);
         &:hover {
             border-radius: 1px;
-            background-color: color-mix(in srgb, transparent, var(--ag-foreground-color) 10%);
-            box-shadow: 0 0 0 4px color-mix(in srgb, transparent, var(--ag-foreground-color) 10%);
+            background-color: var(--ag-quartz-icon-hover-color);
+            box-shadow: 0 0 0 4px var(--ag-quartz-icon-hover-color);
             cursor: pointer;
         }
     }
 
+    .ag-chart-menu-close {
+        // use an opaque hover effect because we don't know what colour we're,
+        // overlaying on top of, the user might have set a custom
+        --ag-quartz-icon-hover-color: color-mix(in srgb, var(--ag-background-color), var(--ag-foreground-color) 10%);
+    }
+
+    .ag-chart-menu {
+        --ag-icon-size: 20px;
+        background-color: color-mix(in srgb, transparent, var(--ag-background-color) 30%);
+        padding: 4px 8px;
+    }
+    
     .ag-chart-menu-icon {
-        opacity: 0.6;
+        opacity: 0.8;
     }
 
     .ag-drag-handle {
@@ -297,9 +363,8 @@
     }
 
     .ag-chart-menu-close .ag-icon {
-        background: var(--ag-header-background-color);
         border: 1px solid var(--ag-border-color);
-        border-right: none;
+        @include ag.theme-rtl((border-right: none));
     }
 
     .ag-chart-docked-container {
@@ -309,6 +374,7 @@
     .ag-menu-option-icon, .ag-compact-menu-option-icon {
         @include ag.theme-rtl((padding-left: calc(var(--ag-grid-size) * 1.5)));
         width: var(--ag-icon-size);
+        cursor: pointer;
     }
 
     .ag-chart-settings-card-item.ag-not-selected:hover {
@@ -320,6 +386,10 @@
             margin-left: calc(var(--ag-grid-size) * 2),
             margin-right: var(--ag-grid-size)
         ));
+    }
+
+    .ag-multi-filter-group-title-bar {
+        padding: calc(var(--ag-grid-size) * 1.5) var(--ag-grid-size);
     }
 
     .ag-filter-toolpanel-group-container {
@@ -340,7 +410,11 @@
 
     .ag-filter-toolpanel-header {
         height: initial;
-        margin-top: var(--ag-widget-vertical-spacing);
+        margin-top: calc(var(--ag-grid-size) * 2);
+    }
+
+    .ag-filter-toolpanel-group-item {
+        margin: 0;
     }
 
     .ag-layout-auto-height, .ag-layout-print {
@@ -362,24 +436,20 @@
         font-weight: 600;
     }
 
-    .ag-icon::after {
-        // make all icon images slightly transparent, since they're black
-        // and this is the only easy way of making them less emphasised
-        opacity: 0.9;
-    }
-    
-    .ag-icon-grip::after {
-        opacity: 0.6;
-    }
-
     .ag-advanced-filter-builder-item-button-disabled,
     .ag-disabled,
-    .ag-column-select-column-readonly,
     .ag-column-select-column-group-readonly,
     [disabled] {
         .ag-icon {
             opacity: 0.6;
         }
+    }
+
+    .ag-icon-grip {
+        opacity: 0.7;
+    }
+    .ag-column-select-column-readonly.ag-icon-grip {
+        opacity: 0.35;
     }
 
     .ag-column-select-header-filter-wrapper, .ag-filter-toolpanel-search {
@@ -392,14 +462,23 @@
             background-image: url("data:image/svg+xml;charset=utf-8;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxMiIgaGVpZ2h0PSIxMiIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjMDAwIiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiIHN0cm9rZS13aWR0aD0iMS41Ij48cGF0aCBkPSJNNS4zIDlhMy43IDMuNyAwIDEgMCAwLTcuNSAzLjcgMy43IDAgMCAwIDAgNy41Wk0xMC41IDEwLjUgOC4zIDguMiIvPjwvc3ZnPg==");
             background-position: 50% 50%;
             background-size: contain;
-            opacity: 33%;
+            opacity: 40%;
             content: "";
             filter: var(--ag-icon-filter);
         }
 
-        input.ag-text-field-input::placeholder {
-            @include ag.theme-rtl((padding-left: 16px));
+        input.ag-text-field-input {
+            @include ag.theme-rtl((padding-left: 26px));
         }
+    }
+
+    .ag-column-select-add-group-indent {
+        @include ag.theme-rtl(( margin-left: calc(var(--ag-icon-size) + var(--ag-grid-size) * 1.5) ));
+    }
+
+    .ag-text-field-input[disabled],
+    .ag-menu-option-disabled {
+        cursor: not-allowed;
     }
 
     .ag-checkbox-input-wrapper.ag-checked.ag-disabled {
@@ -412,20 +491,22 @@
     input[class^='ag-'][type='range'] {
         cursor: pointer;
     }
-
 }
 
 .ag-theme-quartz-dark {
     .ag-column-select-header-filter-wrapper, .ag-filter-toolpanel-search {
-        .ag-input-wrapper::after {
+        .ag-input-wrapper::before {
             opacity: 66%;
             filter: invert(100%);
         }
     }
 
-    .ag-radio-button-input-wrapper.ag-checked,
-    .ag-checkbox-input-wrapper.ag-checked,
-    .ag-checkbox-input-wrapper.ag-indeterminate {
-        background-color: #fff;
+    .ag-chart-menu {
+        background-color: color-mix(in srgb, rgba(24, 39, 50, 0.3), var(--ag-background-color) 30%);
+    }
+
+    .ag-text-field-input::placeholder {
+        color: var(--ag-data-color);
+        opacity: 0.8;
     }
 }

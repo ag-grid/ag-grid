@@ -79,21 +79,22 @@ And a new `index.js` file, in the same directory, with the following code:
 |
 |// Grid Options: Contains all of the grid configurations
 |const gridOptions = {
-|    // Row Data: The data to be displayed.
-|    rowData: [        
-|      {company: "CASC", country: "China", date: "2022-07-24", mission: "Wentian", price: 2150000, successful: true},
-|      {company: "SpaceX", country: "USA", date: "2022-07-24", mission: "Starlink Group 4-25", price: 3230000, successful: true},
-|      {company: "SpaceX", country: "USA", date: "2022-07-22", mission: "Starlink Group 3-2", price: 8060000, successful: true}
-|    ],
-|    // Column Definitions: Defines & controls grid columns.
-|    columnDefs: [
-|      { field: "mission" },
-|      { field: "country" },
-|      { field: "successful" },
-|      { field: "date" },
-|      { field: "price" },
-|      { field: "company" }
-|    ]
+|  // Row Data: The data to be displayed.
+|  rowData: [
+|    { mission: "CRS SpX-25", company: "SpaceX", location: "LC-39A, Kennedy Space Center, Florida, USA", date: "2022-07-15", time: "0:44:00", rocket: "Falcon 9 Block 5", price: 12480000, successful: true },
+|    { mission: "LARES 2 & Cubesats", company: "ESA", location: "ELV-1, Guiana Space Centre, French Guiana, France", date: "2022-07-13", time: "13:13:00", rocket: "Vega C", price: 4470000, successful: true },
+|    { mission: "Wise One Looks Ahead (NROL-162)", company: "Rocket Lab", location: "Rocket Lab LC-1A, Māhia Peninsula, New Zealand", date: "2022-07-13", time: "6:30:00", rocket: "Electron/Curie", price: 9750000, successful: true }
+|  ],
+|  // Column Definitions: Defines & controls grid columns.
+|  columnDefs: [
+|    { field: "mission" },
+|    { field: "company" },
+|    { field: "location" },
+|    { field: "date" },
+|    { field: "price" },
+|    { field: "successful" },
+|    { field: "rocket" }
+|  ]
 |}
 |
 |// Create Grid: Create new grid within the #myGrid div, using the Grid Options object
@@ -119,19 +120,20 @@ Replace your `index.js` file with the following code:
 |const GridExample = () => {
 |  // Row Data: The data to be displayed.
 |  const [rowData, setRowData] = useState([
-|    {company: "SpaceX", country: "USA", date: "2022-07-24", mission: "Starlink Group 4-25", price: 3230000, successful: true},
-|    {company: "CASC", country: "China", date: "2022-07-24", mission: "Wentian", price: 2150000, successful: true},
-|    {company: "SpaceX", country: "USA", date: "2022-07-22", mission: "Starlink Group 3-2", price: 8060000, successful: true}
+|    { mission: "CRS SpX-25", company: "SpaceX", location: "LC-39A, Kennedy Space Center, Florida, USA", date: "2022-07-15", time: "0:44:00", rocket: "Falcon 9 Block 5", price: 12480000, successful: true },
+|    { mission: "LARES 2 & Cubesats", company: "ESA", location: "ELV-1, Guiana Space Centre, French Guiana, France", date: "2022-07-13", time: "13:13:00", rocket: "Vega C", price: 4470000, successful: true },
+|    { mission: "Wise One Looks Ahead (NROL-162)", company: "Rocket Lab", location: "Rocket Lab LC-1A, Māhia Peninsula, New Zealand", date: "2022-07-13", time: "6:30:00", rocket: "Electron/Curie", price: 9750000, successful: true }
 |  ]);
 |  
 |  // Column Definitions: Defines & controls grid columns.
 |  const [colDefs] = useState([
 |    { field: "mission" },
-|    { field: "country" },
-|    { field: "successful" },
+|    { field: "company" },
+|    { field: "location" },
 |    { field: "date" },
 |    { field: "price" },
-|    { field: "company" }
+|    { field: "successful" },
+|    { field: "rocket" }
 |  ]);
 |
 |  // Container: Defines the grid's theme & dimensions.
@@ -163,10 +165,12 @@ Replace the `app.component.ts` file with the following code:
 |
 |// Row Data Interface
 |interface IRow {
-|  company: string;
-|  country: 'USA' | 'China' | 'Kazakhstan';
-|  date: string;
 |  mission: string;
+|  company: string;
+|  location: string;
+|  date: string;
+|  time: string;
+|  rocket: string;
 |  price: number;
 |  successful: boolean;
 |}
@@ -182,7 +186,7 @@ Replace the `app.component.ts` file with the following code:
 |     &lt;!-- The AG Grid component, with Dimensions, CSS Theme, Row Data, and Column Definition -->
 |     &lt;ag-grid-angular
 |       style="width: 600px; height: 500px;"
-|       class="ag-theme-alpine"
+|       class="ag-theme-quartz"
 |       [rowData]="rowData"
 |       [columnDefs]="colDefs">
 |     &lt;/ag-grid-angular>
@@ -193,19 +197,20 @@ Replace the `app.component.ts` file with the following code:
 |export class AppComponent {
 |  // Row Data: The data to be displayed.
 |  rowData: IRow[] = [
-|    {company: "CASC", country: "China", date: "2022-07-24", mission: "Wentian", price: 2150000, successful: true},
-|    {company: "SpaceX", country: "USA", date: "2022-07-24", mission: "Starlink Group 4-25", price: 3230000, successful: true},
-|    {company: "SpaceX", country: "USA", date: "2022-07-22", mission: "Starlink Group 3-2", price: 8060000, successful: true}
+|    { mission: "CRS SpX-25", company: "SpaceX", location: "LC-39A, Kennedy Space Center, Florida, USA", date: "2022-07-15", time: "0:44:00", rocket: "Falcon 9 Block 5", price: 12480000, successful: true },
+|    { mission: "LARES 2 & Cubesats", company: "ESA", location: "ELV-1, Guiana Space Centre, French Guiana, France", date: "2022-07-13", time: "13:13:00", rocket: "Vega C", price: 4470000, successful: true },
+|    { mission: "Wise One Looks Ahead (NROL-162)", company: "Rocket Lab", location: "Rocket Lab LC-1A, Māhia Peninsula, New Zealand", date: "2022-07-13", time: "6:30:00", rocket: "Electron/Curie", price: 9750000, successful: true }
 |  ];
 |
 |  // Column Definitions: Defines & controls grid columns.
 |  colDefs: ColDef[] = [
 |    { field: "mission" },
-|    { field: "country" },
-|    { field: "successful" },
+|    { field: "company" },
+|    { field: "location" },
 |    { field: "date" },
 |    { field: "price" },
-|    { field: "company" }
+|    { field: "successful" },
+|    { field: "rocket" }
 |  ];
 |}
 </snippet>
@@ -253,19 +258,20 @@ Replace the `app.vue` file with the following code:
 |  setup() {
 |    // Row Data: The data to be displayed.
 |    const rowData = ref([
-|      { company: "SpaceX", country: "USA", date: "2022-07-24", mission: "Starlink Group 4-25", price: 3230000, successful: true },
-|      { company: "CASC", country: "China", date: "2022-07-24", mission: "Wentian", price: 2150000, successful: true },
-|      { company: "SpaceX", country: "USA", date: "2022-07-22", mission: "Starlink Group 3-2", price: 8060000, successful: true }
+|    { mission: "CRS SpX-25", company: "SpaceX", location: "LC-39A, Kennedy Space Center, Florida, USA", date: "2022-07-15", time: "0:44:00", rocket: "Falcon 9 Block 5", price: 12480000, successful: true },
+|    { mission: "LARES 2 & Cubesats", company: "ESA", location: "ELV-1, Guiana Space Centre, French Guiana, France", date: "2022-07-13", time: "13:13:00", rocket: "Vega C", price: 4470000, successful: true },
+|    { mission: "Wise One Looks Ahead (NROL-162)", company: "Rocket Lab", location: "Rocket Lab LC-1A, Māhia Peninsula, New Zealand", date: "2022-07-13", time: "6:30:00", rocket: "Electron/Curie", price: 9750000, successful: true }
 |    ]);
 |
 |    // Column Definitions: Defines & controls grid columns.
 |    const colDefs = ref([
 |      { field: "mission" },
-|      { field: "country" },
-|      { field: "successful" },
+|      { field: "company" },
+|      { field: "location" },
 |      { field: "date" },
 |      { field: "price" },
-|      { field: "company" }
+|      { field: "successful" },
+|      { field: "rocket" }
 |    ]);
 |
 |    return {

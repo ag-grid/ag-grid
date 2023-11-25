@@ -16,9 +16,6 @@ const gridOptions: GridOptions<IOlympicData> = {
     { field: 'total', minWidth: 80 },
   ],
 
-  defaultColDef: {
-    resizable: true,
-  },
   autoSizeStrategy: {
     type: 'fitGridWidth'
   },

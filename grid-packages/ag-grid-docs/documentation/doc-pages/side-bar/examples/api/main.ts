@@ -30,7 +30,6 @@ const gridOptions: GridOptions<IOlympicData> = {
     enableRowGroup: true,
     // allow every column to be pivoted
     enablePivot: true,
-    sortable: true,
     filter: true,
   },
   autoGroupColumnDef: {

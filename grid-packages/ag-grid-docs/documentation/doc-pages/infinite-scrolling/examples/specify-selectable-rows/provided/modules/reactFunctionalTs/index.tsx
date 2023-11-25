@@ -47,7 +47,7 @@ const GridExample = () => {
         return {
             flex: 1,
             minWidth: 100,
-            resizable: true,
+            sortable: false,
         }
     }, []);
     const isRowSelectable = useCallback(function (rowNode: IRowNode) {

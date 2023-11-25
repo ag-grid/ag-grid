@@ -24,10 +24,6 @@ const gridOptions: GridOptions = {
       headerName: 'B) Normal Height',
     },
   ],
-  defaultColDef: {
-    sortable: true,
-    resizable: true,
-  },
   onGridReady: (params) => {
     // in this example, the CSS styles are loaded AFTER the grid is created,
     // so we put this in a timeout, so height is calculated after styles are applied.

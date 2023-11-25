@@ -1,25 +1,25 @@
 .ag-header-group-cell.ag-column-first {
-    background-color: darkblue !important;
+    background-color: #2244CC66!important;
     color: white;
 }
 
 .ag-header-cell.ag-column-first {
-    background-color: mediumblue !important;
+    background-color: #2244CC44!important;
     color: white;
 }
 
 .ag-floating-filter.ag-column-first {
-    background-color: cornflowerblue !important;
+    background-color: #2244CC22!important;
 }
 
 .ag-header-group-cell.ag-column-last {
-    background-color: darkorange !important;
+    background-color: #33CC3366!important;
 }
 
 .ag-header-cell.ag-column-last {
-    background-color: orange !important;
+    background-color: #33CC3344!important;
 }
 
 .ag-floating-filter.ag-column-last {
-    background-color: gold !important;
+    background-color: #33CC3322!important;
 }

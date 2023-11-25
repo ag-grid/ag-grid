@@ -21,7 +21,8 @@ const ImageCaption = ({
     maxwidth: maxWidth,
     minwidth: minWidth,
     width,
-    toggledarkmode: toggleDarkMode
+    toggledarkmode: toggleDarkMode,
+    filterdarkmode: filterDarkMode
 }) => {
     const { fluidImages, images } = useImageFileNodes();
 
@@ -84,6 +85,7 @@ const ImageCaption = ({
                     className={classnames(styles.imageCaption, {
                         [styles.centered]: centered,
                         [styles.constrained]: constrained,
+                        [styles.filterDarkMode]: filterDarkMode
                     })}
                     style={style}
                 >

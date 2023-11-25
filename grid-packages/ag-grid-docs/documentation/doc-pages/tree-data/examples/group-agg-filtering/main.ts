@@ -37,8 +37,6 @@ const gridOptions: GridOptions = {
     flex: 1,
     filter: true,
     floatingFilter: true,
-    sortable: true,
-    resizable: true,
   },
   autoGroupColumnDef: {
     headerName: 'Files',
@@ -51,7 +49,6 @@ const gridOptions: GridOptions = {
   },
   rowData: getData(),
   treeData: true,
-  animateRows: true,
   groupDefaultExpanded: -1,
   getDataPath: (data: any) => {
     return data.filePath

@@ -261,7 +261,7 @@ There are two events with regards to selection:<br/>
 
 To select rows programmatically, use the `node.setSelected(params)` method.
 
-<api-documentation source='row-api/resources/methods.json' section='rowNodeMethods' names='["setSelected", "isSelected"]'></api-documentation>
+<api-documentation source='row-object/resources/reference.json' section='selection' names='["setSelected", "isSelected"]'></api-documentation>
 
 <snippet>
 | // set selected, keep any other selections

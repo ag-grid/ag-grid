@@ -11,7 +11,8 @@ Filtering behaves differently on group columns than on normal columns, as there 
 
 The Group Column Filter provides a simple way to configure filters on group columns. Filters are defined on the underlying columns as they would be without Row Grouping. The Group Column Filter re-uses those filters in the group columns (for the columns included in the grouping), and provides a dropdown to switch between them if necessary.
 
-<image-caption src="grouping-column-filter/resources/group-filter.png" alt="Group Column Filter" width="28rem" centered="true"></image-caption>
+<image-caption src="grouping-column-filter/resources/group-filter.png" alt="Group Column Filter" constrained="true" width="18rem" centered="true" toggledarkmode="true"></image-caption>
+
 
 See the [Group Column Filter](../grouping-column-filter/) section for more details.
 

@@ -23,7 +23,6 @@ const gridOptions: GridOptions = {
         { field: 'sort2', sortIndex: 2, sort: 'desc' },
     ],
     defaultColDef: {
-        sortable: true,
         flex: 1,
     },
     rowData: getRowData(100000),

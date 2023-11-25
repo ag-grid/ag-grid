@@ -17,9 +17,7 @@ let gridApi: GridApi;
 
 const gridOptions: GridOptions = {
     defaultColDef: {
-        sortable: true,
         cellClass: 'multiline',
-        resizable: true,
         minWidth: 100,
         flex: 1,
     },

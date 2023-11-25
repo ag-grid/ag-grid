@@ -13,7 +13,7 @@ const gridOptions: GridOptions = {
     columnDefs: [
         {
             field: "mission",
-            resizable: false
+            filter: true
         },
         {
             field: "country"
@@ -33,9 +33,7 @@ const gridOptions: GridOptions = {
     ],
     // Configurations applied to all columns
     defaultColDef: {
-        filter: true,
-        sortable: true,
-        resizable: true
+        filter: true
     },
     // Grid Options & Callbacks
     pagination: true,
@@ -44,7 +42,7 @@ const gridOptions: GridOptions = {
 document.addEventListener('DOMContentLoaded', function () {
     const gridDiv = document.querySelector<HTMLElement>('#myGrid')!;
     gridApi = createGrid(gridDiv, gridOptions);
-    fetch('https://downloads.jamesswinton.com/space-mission-data.json')
+    fetch('https://www.ag-grid.com/example-assets/space-mission-data.json')
         .then(response => response.json())
         .then((data: any) => gridApi.setGridOption('rowData', data))
 })

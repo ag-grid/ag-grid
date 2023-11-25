@@ -45,9 +45,9 @@ See the section [registering custom components](/components/#registering-custom-
 
 Component Refresh needs a bit more explanation. Here we go through some of the finer details.
 
+### Events Causing Refresh
+
 <framework-specific-section frameworks="javascript,angular,vue">
-| ### Events Causing Refresh
-|
 | The grid can refresh the data in the browser, but not every refresh / redraw of the grid results in the refresh method
 | of your cell renderer getting called. The following items are those that **do** cause refresh to be called:
 |
@@ -56,26 +56,47 @@ Component Refresh needs a bit more explanation. Here we go through some of the f
 | - Calling `api.refreshCells()` to inform grid data has changed (see [Refresh](/view-refresh/)).
 |
 | If any of the above occur and the grid confirms the data has changed via [Change Detection](/change-detection/), then the `refresh()` method will be called.
+</framework-specific-section>
+
+<framework-specific-section frameworks="react">
+|When the grid can refresh a cell (instead of replacing it altogether) then the update will occur as follows:
 |
-| The following will **not** result in the cell renderer's refresh method being called:
+|- For class components, `componentWillReceiveProps`, `getDerivedStateFromProps` will get called and the function re-rendered.
+|- For functional components, the function will get called again with new props.
 |
-| - Calling `rowNode.setData(data)` to set new data into a `rowNode`. When you set the data for the whole row, the whole row in the DOM is recreated again from scratch.
-| - Scrolling the grid vertically causes columns (and their containing cells) to be removed and inserted due to column virtualisation.
+|The grid can refresh the data in the browser, but not every refresh / redraw of the grid results in the refresh of your cell renderer.
 |
-| All of the above will result in the component being destroyed and recreated.
+|The following items are those that **do** cause refresh to be called:
 |
-| ### Grid vs Component Refresh
+|- Calling `rowNode.setDataValue(colKey, value)` to set a value directly onto the `rowNode`. This is the preferred API way to change one value from outside the grid.
+|- When editing a cell and editing is stopped, so that cell displays new value after editing.
+|- Calling `api.refreshCells()` to inform grid data has changed (see [Refresh](/view-refresh/)).
 |
+|If any of the above occur and the grid confirms the data has changed via [Change Detection](/change-detection/), then the Cell Renderer is refreshed.
+</framework-specific-section>
+
+The following will **not** result in the cell renderer's refresh method being called:
+
+- Calling `rowNode.setData(data)` to set new data into a `rowNode`. When you set the data for the whole row, the whole row in the DOM is recreated again from scratch.
+- Scrolling the grid vertically causes columns (and their containing cells) to be removed and inserted due to column virtualisation.
+
+All of the above will result in the component being destroyed and recreated.
+
+### Grid vs Component Refresh
+
+<framework-specific-section frameworks="javascript,angular,vue">
 | The refresh method returns back a boolean value. If you do not want to handle the refresh in the cell renderer, just return back `false` from an otherwise empty method. This will indicate to the grid that you did not refresh and the grid will instead destroy the component and create another instance of your component from scratch instead.
 </framework-specific-section>
 
 <framework-specific-section frameworks="react">
-md-include:component-refresh-react.md
+|If you choose to implement the `refresh` method, then note that this method returns a boolean value. If you do not
+|want to handle the refresh in the cell renderer, just return `false` from an otherwise empty method. This will
+|indicate to the grid that you did not refresh and the grid will instead destroy the component and create another instance of your component from scratch instead.
 </framework-specific-section>
 
-<framework-specific-section frameworks="react">
-<grid-example title='Component Refresh' name='react-refresh' type='react'></grid-example>
-</framework-specific-section>
+The example below demonstrates handling the refresh, where the Gold, Silver and Bronze column cell renderers refresh when the Update Data button is clicked.
+
+<grid-example title='Component Refresh' name='component-refresh' type='mixed'></grid-example>
 
 ### Change Detection
 
@@ -93,11 +114,11 @@ The diagram below (which is taken from the section [Cell Content](/cell-content/
 In short, a value is prepared. The value comes using either the `colDef.field` or the `colDef.valueGetter`. The value is also optionally passed through a `colDef.valueFormatter` if it exists. Then the value is finally placed into the DOM, either directly, or by using the chosen `colDef.cellRenderer`.
 
 <framework-specific-section frameworks="javascript">
-<image-caption src='value-getters/resources/valueGetterFlow.svg' width="55rem" centered="true" alt='Value Getter Flow' constrained='true'></image-caption>
+<image-caption src='value-getters/resources/valueGetterFlow.svg' width="55rem" centered="true" alt='Value Getter Flow' constrained='true' filterdarkmode="true"></image-caption>
 </framework-specific-section>
 
 <framework-specific-section frameworks="angular,react,vue">
-<image-caption src='resources/valueGetterFlowFw.svg' width="55rem" centered="true" alt='Value Getter Flow' constrained='true'></image-caption>
+<image-caption src='resources/valueGetterFlowFw.svg' width="55rem" centered="true" alt='Value Getter Flow' constrained='true' filterdarkmode="true"></image-caption>
 </framework-specific-section>
 
 ## Complementing Cell Renderer Params
@@ -205,7 +226,7 @@ refer to the [hook specific](../react-hooks/) documentation for more information
 |- Storing the Grid API via the "Grid Ready" event, and using it later
 </framework-specific-section>
 <framework-specific-section frameworks="angular">
-<grid-example title='Simple Dynamic Component' name='dynamic-components' type='mixed' options='{ "extras": ["fontawesome", "bootstrap"] }'></grid-example>
+<grid-example title='Simple Dynamic Component' name='dynamic-components' type='mixed' options='{ "extras": ["fontawesome"] }'></grid-example>
 </framework-specific-section>
 
 <framework-specific-section frameworks="react">
@@ -216,7 +237,7 @@ refer to the [hook specific](../react-hooks/) documentation for more information
 |- Using a `ref` to access `AgGridReact` in order to access the underlying APIs
 </framework-specific-section>
 <framework-specific-section frameworks="react">
-<grid-example title='Simple Dynamic Component' name='dynamic-components' type='mixed' options='{ "extras": ["fontawesome", "bootstrap"] }'></grid-example>
+<grid-example title='Simple Dynamic Component' name='dynamic-components' type='mixed' options='{ "extras": ["fontawesome"] }'></grid-example>
 </framework-specific-section>
 
 <framework-specific-section frameworks="vue">
@@ -227,7 +248,7 @@ refer to the [hook specific](../react-hooks/) documentation for more information
 |- Storing the Grid API via the "Grid Ready" event, and using it later
 </framework-specific-section>
 <framework-specific-section frameworks="vue">
-<grid-example title='Simple Dynamic Component' name='dynamic-components' type='mixed' options='{ "extras": ["fontawesome", "bootstrap"] }'></grid-example>
+<grid-example title='Simple Dynamic Component' name='dynamic-components' type='mixed' options='{ "extras": ["fontawesome"] }'></grid-example>
 </framework-specific-section>
 
 <framework-specific-section frameworks="angular">
@@ -236,7 +257,7 @@ refer to the [hook specific](../react-hooks/) documentation for more information
 | Using more complex Angular Components in the Cell Renderers - specifically how you can use nested `NgModule`'s within the grid.
 </framework-specific-section>
 <framework-specific-section frameworks="angular">
-<grid-example title='Richer Dynamic Components' name='angular-rich-dynamic' type='angular' options='{ "exampleHeight": 380, "extras": ["bootstrap"] }'></grid-example>
+<grid-example title='Richer Dynamic Components' name='angular-rich-dynamic' type='angular' options='{ "exampleHeight": 380 }'></grid-example>
 </framework-specific-section>
 
 ## Cell Renderer Keyboard Navigation

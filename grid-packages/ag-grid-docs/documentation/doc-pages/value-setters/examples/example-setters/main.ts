@@ -107,7 +107,6 @@ let gridApi: GridApi;
 const gridOptions: GridOptions = {
     defaultColDef: {
         flex: 1,
-        resizable: true,
         editable: true,
     },
     columnDefs: columnDefs,

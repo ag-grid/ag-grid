@@ -62,7 +62,6 @@ export class SportRenderer implements ICellRendererAngularComp {
                                     [getRowId]="getRowId"
                                     [rowDragManaged]="true"
                                     [suppressMoveWhenRowDragging]="true"
-                                    [animateRows]="true"
                                     [rowData]="leftRowData"
                                     [columnDefs]="leftColumns"
                                     (gridReady)="onGridReady($event, 0)"
@@ -81,7 +80,6 @@ export class SportRenderer implements ICellRendererAngularComp {
                                     [defaultColDef]="defaultColDef"
                                     [getRowId]="getRowId"
                                     [rowDragManaged]="true"
-                                    [animateRows]="true"
                                     [rowData]="rightRowData"
                                     [columnDefs]="rightColumns"
                                     (gridReady)="onGridReady($event, 1)"
@@ -104,9 +102,7 @@ export class AppComponent {
     defaultColDef: ColDef = {
         flex: 1,
         minWidth: 100,
-        sortable: true,
         filter: true,
-        resizable: true
     };
 
     leftColumns: ColDef[] = [

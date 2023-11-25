@@ -38,11 +38,8 @@ const gridOptions: GridOptions<IOlympicData> = {
     flex: 1,
     minWidth: 100,
     filter: true,
-    sortable: true,
-    resizable: true,
   },
   groupDisplayType: 'custom',
-  animateRows: true,
 }
 
 // setup the grid after the page has finished loading

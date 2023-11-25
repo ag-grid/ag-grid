@@ -34,7 +34,6 @@ const gridOptions: GridOptions<ICar> = {
   columnDefs: columnDefs,
   rowData: rowDataA,
   rowSelection: 'single',
-  animateRows: true  
 };
 
 function onRowDataA() {

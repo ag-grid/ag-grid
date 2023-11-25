@@ -4,9 +4,9 @@ import { AgGridReact } from 'ag-grid-react'; // React Grid Logic
 import "ag-grid-community/styles/ag-grid.css"; // Core CSS
 import "ag-grid-community/styles/ag-theme-quartz.css"; // Theme
 
-// Custom Cell Renderer (Display flags based on cell value)
-const CountryFlagCellRenderer = (params) => (
-  <span>{params.value && <img alt={`${params.value} Flag`} src={`https://www.ag-grid.com/example-assets/flags/${params.value.toLowerCase()}-flag-sm.png`} height={30} />}</span>
+// Custom Cell Renderer (Display logos based on cell value)
+const CompanyLogoRenderer = ({ value }) => (
+  <span style={{ display: "flex", height: "100%", width: "100%", alignItems: "center" }}>{value && <img alt={`${value} Flag`} src={`https://www.ag-grid.com/example-assets/space-company-logos/${value.toLowerCase()}.png`} style={{display: "block", width: "25px", height: "auto", maxHeight: "50%", marginRight: "12px", filter: "brightness(1.1)"}} />}<p style={{ textOverflow: "ellipsis", overflow: "hidden", whiteSpace: "nowrap" }}>{value}</p></span>
 );
 
 // Create new GridExample component
@@ -16,31 +16,36 @@ const GridExample = () => {
   
   // Column Definitions: Defines & controls grid columns.
   const [colDefs] = useState([
-    { field: "mission", resizable: true },
     { 
-      field: "country", 
-      cellRenderer: CountryFlagCellRenderer 
+      field: "mission", 
+      filter: true 
     },
-    { field: "successful" },
+    { 
+      field: "company",
+      cellRenderer: CompanyLogoRenderer 
+    },
+    { 
+      field: "location"
+    },
     { field: "date" },
     { 
-      field: "price", 
-      // Return a formatted string for this column
+      field: "price",
       valueFormatter: params => { return '£' + params.value.toLocaleString(); } 
     },
-    { field: "company" }
+    { field: "successful" },
+    { field: "rocket" }
   ]);
 
   // Fetch data & update rowData state
   useEffect(() => {
-    fetch('https://downloads.jamesswinton.com/space-mission-data.json') // Fetch data from server
+    fetch('https://www.ag-grid.com/example-assets/space-mission-data.json') // Fetch data from server
       .then(result => result.json()) // Convert to JSON
       .then(rowData => setRowData(rowData)) // Update state of `rowData`
   }, [])
 
   // Apply settings across all columns
   const defaultColDefs = useMemo(() => ({
-    resizable: true
+    filter: true
   }))
 
   // Container: Defines the grid's theme & dimensions.

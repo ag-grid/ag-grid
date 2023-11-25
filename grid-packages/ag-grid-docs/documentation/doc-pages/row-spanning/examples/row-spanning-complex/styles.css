@@ -1,8 +1,8 @@
 .show-cell {
-    background: white;
-    border-left: 1px solid lightgrey !important;
-    border-right: 1px solid lightgrey !important;
-    border-bottom: 1px solid lightgrey !important;
+    background-color: #99999944;
+    border-left: 1px solid var(--ag-foreground-color) !important;
+    border-right: 1px solid var(--ag-foreground-color) !important;
+    border-bottom: 1px solid var(--ag-foreground-color) !important;
 }
 
 .show-name {

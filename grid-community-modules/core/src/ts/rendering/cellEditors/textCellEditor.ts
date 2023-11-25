@@ -8,6 +8,7 @@ export interface ITextCellEditorParams<TData = any, TValue = any, TContext = any
      * Used when the cell value needs formatting prior to editing, such as when using reference data and you
      * want to display text rather than code. */
     useFormatter: boolean;
+
     /**
      * Max number of characters to allow.
      * @default 524288

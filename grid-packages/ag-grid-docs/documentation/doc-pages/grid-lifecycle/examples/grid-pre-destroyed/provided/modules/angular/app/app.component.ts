@@ -69,7 +69,6 @@ export class AppComponent {
 
     public defaultColDef: ColDef = {
         editable: true,
-        resizable: true,
     };
 
     public rowData: any[] | null = getDataSet()

@@ -54,7 +54,7 @@ export class AxisTicksPanel extends Component {
         this.axisTicksColorPicker
             .setLabel(this.chartTranslationService.translate("color"))
             .setLabelWidth("flex")
-            .setInputWidth(45)
+            .setInputWidth('flex')
             .setValue(this.chartOptionsService.getAxisProperty("tick.color"))
             .onValueChange(newColor => this.chartOptionsService.setAxisProperty("tick.color", newColor));
 

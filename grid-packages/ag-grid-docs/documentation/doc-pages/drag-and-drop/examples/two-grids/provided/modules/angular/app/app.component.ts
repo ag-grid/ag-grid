@@ -75,9 +75,7 @@ export class AppComponent {
     leftGridOptions: GridOptions = {
         defaultColDef: {
             flex: 1,
-            sortable: true,
             filter: true,
-            resizable: true
         },
         rowClassRules: {
             "red-row": 'data.color == "Red"',
@@ -89,15 +87,12 @@ export class AppComponent {
         },
         rowData: this.createLeftRowData(),
         rowDragManaged: true,
-        animateRows: true
     };
 
     rightGridOptions: GridOptions = {
         defaultColDef: {
             flex: 1,
-            sortable: true,
             filter: true,
-            resizable: true
         },
         rowClassRules: {
             "red-row": 'data.color == "Red"',
@@ -109,7 +104,6 @@ export class AppComponent {
         },
         rowData: [],
         rowDragManaged: true,
-        animateRows: true
     };
 
     createLeftRowData() {

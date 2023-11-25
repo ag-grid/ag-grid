@@ -48,7 +48,6 @@ const gridOptions: GridOptions = {
   defaultColDef: {
     minWidth: 105,
     flex: 1,
-    resizable: true,
     cellClass: 'align-right',
     valueFormatter: (params) => {
       return formatNumber(params.value)

@@ -27,7 +27,7 @@ html[data-color-scheme='dark'] button:not(#myGrid button, #myChart button, butto
 }
 
 .ag-theme-quartz {
-    --ag-background-color: color-mix(in srgb, transparent, #fff 60%);
+
     
 /*
 TODO - reinstate these in a way that doesn't clobber example's row colours
@@ -104,10 +104,13 @@ html[data-color-scheme='dark'] body:not(#myGrid body, #myChart body) {
     margin-bottom: 8px;
     border-radius: 8px;
     border: 1px solid var(--ag-border-color);
-    overflow: hidden;
 }
 
-.my-chart + .my-chart,
+#myChart .ag-chart,
+.my-chart .ag-chart {
+    border-radius: 8px;
+}
+
 #top .my-chart {
     margin-top: 0;
 }

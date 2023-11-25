@@ -10,7 +10,7 @@ The Client-Side Row Model is responsible for working out how to display the rows
 
 The data as provided by the application. The grid never modifies this array. It just takes the `rowData` items from it. This example is of three data items.
 
-<image-caption src="client-side-row-stages/resources/allData.jpg" alt="Row Data" width="22rem" centered="true">
+<image-caption src="client-side-row-stages/resources/allData.jpg" alt="Row Data" width="22rem" centered="true" filterdarkmode="true">
     Example: Row Data
 </image-caption>
 
@@ -20,7 +20,7 @@ The data as provided by the application. The grid never modifies this array. It 
 
 `allRows` is similar to `rowData` except a new array is created which contains row nodes, with each row node pointing to exactly one data item. The length of the `allRows` array is the same as the `rowData` array.
 
-<image-caption src="client-side-row-stages/resources/allRows.jpg" alt="All Rows" width="22rem" centered="true">
+<image-caption src="client-side-row-stages/resources/allRows.jpg" alt="All Rows" width="22rem" centered="true" filterdarkmode="true">
     Example: All Rows
 </image-caption>
 
@@ -30,7 +30,7 @@ The data as provided by the application. The grid never modifies this array. It 
 
 `rowsAfterGroup` takes `allRows`, and if grouping, groups the data. If no grouping is done, then `rowsAfterGroup` will be identical to `allRows`. This example shows grouping on the colour field, creating two groups.
 
-<image-caption src="client-side-row-stages/resources/rowsAfterGroup.jpg" alt="Rows After Group" width="22rem" centered="true">
+<image-caption src="client-side-row-stages/resources/rowsAfterGroup.jpg" alt="Rows After Group" width="22rem" centered="true" filterdarkmode="true">
     Example: Rows After Group
 </image-caption>
 
@@ -40,7 +40,7 @@ The data as provided by the application. The grid never modifies this array. It 
 
 `rowsAfterFilter` goes through `rowsAfterGroup` and filters the data. This example shows filtering on the colour black (thus removing the second group).
 
-<image-caption src="client-side-row-stages/resources/rowsAfterFilter.jpg" alt="Rows After Filter" width="22rem" centered="true">
+<image-caption src="client-side-row-stages/resources/rowsAfterFilter.jpg" alt="Rows After Filter" width="22rem" centered="true" filterdarkmode="true">
     Example: Rows After Filter
 </image-caption>
 
@@ -50,7 +50,7 @@ The data as provided by the application. The grid never modifies this array. It 
 
 `rowsAfterSort` goes through `rowsAfterFilter` and sorts the data. This example shows sorting on car make.
 
-<image-caption src="client-side-row-stages/resources/rowsAfterSort.jpg" alt="Rows After Sort" width="22rem" centered="true">
+<image-caption src="client-side-row-stages/resources/rowsAfterSort.jpg" alt="Rows After Sort" width="22rem" centered="true" filterdarkmode="true">
     Example: Rows After Sort
 </image-caption>
 
@@ -60,11 +60,11 @@ The data as provided by the application. The grid never modifies this array. It 
 
 `rowsAfterMap` maps the data to what should be drawn inside the grid, taking into account what groups are open and closed. This list is what is iterated through when the grid draws the rows. Two examples are provided below, the first when open (so three rows in the grid, the group row plus two children), the second when closed (so one row in the grid, the closed group).
 
-<image-caption src="client-side-row-stages/resources/rowsAfterMapOpen.jpg" alt="Rows After Map - Open Group" width="22rem" centered="true">
+<image-caption src="client-side-row-stages/resources/rowsAfterMapOpen.jpg" alt="Rows After Map - Open Group" width="22rem" centered="true" filterdarkmode="true">
     Example: Rows After Map - Open Group
 </image-caption>
 
-<image-caption src="client-side-row-stages/resources/rowsAfterMapClosed.jpg" alt="Rows After Map - Closed Group" width="22rem" centered="true">
+<image-caption src="client-side-row-stages/resources/rowsAfterMapClosed.jpg" alt="Rows After Map - Closed Group" width="22rem" centered="true" filterdarkmode="true">
     Example: Rows After Map - Closed Group
 </image-caption>
 

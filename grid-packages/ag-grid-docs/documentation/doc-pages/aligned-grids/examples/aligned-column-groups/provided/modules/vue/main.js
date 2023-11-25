@@ -17,7 +17,6 @@ const VueExample = {
               ref="topGrid"
               :gridOptions="topOptions"
               :columnDefs="columnDefs"
-              :defaultColDef="defaultColDef"
               :rowData="rowData">
           </ag-grid-vue>
           <div style='height: 5%'></div>
@@ -27,7 +26,6 @@ const VueExample = {
               ref="bottomGrid"
               :gridOptions="bottomOptions"
               :columnDefs="columnDefs"
-              :defaultColDef="defaultColDef"
               :rowData="rowData">
           </ag-grid-vue>
       </div>
@@ -40,8 +38,6 @@ const VueExample = {
             topOptions: {
                 alignedGrids: () => [this.$refs.bottomGrid],
                 defaultColDef: {
-                    sortable: true,
-                    resizable: true,
                     filter: true,
                     flex: 1,
                     minWidth: 120
@@ -53,8 +49,6 @@ const VueExample = {
             bottomOptions: {
                 alignedGrids: () => [this.$refs.topGrid],
                 defaultColDef: {
-                    sortable: true,
-                    resizable: true,
                     filter: true,
                     flex: 1,
                     minWidth: 120
@@ -89,9 +83,7 @@ const VueExample = {
                     ]
                 }
             ],
-            defaultColDef: {
-                resizable: true
-            },
+
             rowData: null
         };
     },

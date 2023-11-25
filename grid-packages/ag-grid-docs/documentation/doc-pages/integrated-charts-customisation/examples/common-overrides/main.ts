@@ -32,7 +32,7 @@ const gridOptions: GridOptions = {
         text: 'by country',
         fontSize: 14,
         fontFamily: 'Monaco, monospace',
-        color: 'rgb(100, 100, 100)',
+        color: '#aaa',
       },
       legend: {
         position: 'left',
@@ -43,7 +43,7 @@ const gridOptions: GridOptions = {
             fontWeight: 'bold',
             fontSize: 18,
             fontFamily: 'Palatino, serif',
-            color: '#555',
+            color: '#aaa',
           },
           marker: {
             shape: 'diamond',

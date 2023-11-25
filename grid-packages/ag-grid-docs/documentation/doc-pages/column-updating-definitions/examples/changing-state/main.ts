@@ -20,8 +20,6 @@ let gridApi: GridApi<IOlympicData>;
 const gridOptions: GridOptions<IOlympicData> = {
   defaultColDef: {
     width: 100, // resets col widths if manually resized
-    sortable: true,
-    resizable: true,
     pinned: null, // important - clears pinned if not specified in col def
     sort: null, // important - clears sort if not specified in col def
   },
