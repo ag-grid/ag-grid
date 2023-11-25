@@ -25,7 +25,7 @@ export class PaginationAutoPageSizeService extends BeanStub {
 
             this.addManagedListener(this.eventService, Events.EVENT_BODY_HEIGHT_CHANGED, this.checkPageSize.bind(this));
             this.addManagedListener(this.eventService, Events.EVENT_SCROLL_VISIBILITY_CHANGED, this.checkPageSize.bind(this));
-            this.addManagedPropertyListener('paginationAutoPageSize', this.checkPageSize.bind(this));
+            this.addManagedPropertyListener('paginationAutoPageSize', this.onPaginationAutoSizeChanged.bind(this));
 
             this.checkPageSize();
         });
@@ -35,11 +35,16 @@ export class PaginationAutoPageSizeService extends BeanStub {
         return !this.gridOptionsService.get('paginationAutoPageSize') || this.centerRowContainerCon == null;
     }
 
-    private checkPageSize(): void {
+    private onPaginationAutoSizeChanged(): void {
         if (this.notActive()) {
             this.paginationProxy.unsetAutoCalculatedPageSize();
-            return;
+        } else {
+            this.checkPageSize();
         }
+    }
+
+    private checkPageSize(): void {
+        if (this.notActive()) { return; }
 
         const bodyHeight = this.centerRowContainerCon.getViewportSizeFeature()!.getBodyHeight();
 
