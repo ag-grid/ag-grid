@@ -753,7 +753,7 @@ const darkModeJS = `
       
         const updateChartThemes = (isDark) => {           
             const themes = ['ag-default', 'ag-material', 'ag-sheets', 'ag-polychroma', 'ag-vivid'];            
-            const currentThemes = gridApi.getGridOption('chartThemes');                    
+            const currentThemes = params.api.getGridOption('chartThemes');                    
             const customTheme = currentThemes && currentThemes.some(theme => theme.startsWith('my-custom-theme'));
             
             let modifiedThemes = customTheme
@@ -761,7 +761,7 @@ const darkModeJS = `
                 : Array.from(new Set(themes.map((theme) => theme + (isDark ? '-dark' : ''))));                      
 
             // updating the 'chartThemes' grid option will cause the chart to reactively update!
-            gridApi.setGridOption('chartThemes', modifiedThemes);
+            params.api.setGridOption('chartThemes', modifiedThemes);
         };
 
         // update chart themes when example first loads
