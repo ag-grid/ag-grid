@@ -6,9 +6,11 @@ Simple editor that uses the standard HTML `textarea`.
 
 ## Enabling Large Text Cell Editor
 
+`agLargeTextCellEditor` allows users to enter text using a multi-line editor. Edit any cell in the grid below and note the `agLargeTextCellEditor` is displayed.
+
 <grid-example title='Large Text Editor' name='large-text-editor' type='generated' options='{ "modules": ["clientside"] }'></grid-example>
 
-Specified with `agLargeTextCellEditor` and configured with `ILargeTextEditorParams`.
+Enabled with `agLargeTextCellEditor` and configured with `ILargeTextEditorParams`.
 
 ```js
 columnDefs: [
@@ -26,6 +28,10 @@ columnDefs: [
 ## Customisation
 
 ### Editor Size
+
+The `agLargeTextCellEditor` width and height can be customised. Edit any cell in the grid below and note the `agLargeTextCellEditor` is displayed with a modified size.
+
+<grid-example title='Large Text Editor Cols and Rows' name='large-text-editor-cols-rows' type='generated' options='{ "modules": ["clientside"] }'></grid-example>
 
 ```js
 columnDefs: [
@@ -45,9 +51,6 @@ To customise the size, there are two options:
 
 - `cols`: The visible width of the text control, in average character widths.
 - `rows`: The number of visible text lines for the control.
-
-<grid-example title='Large Text Editor Cols and Rows' name='large-text-editor-cols-rows' type='generated' options='{ "modules": ["clientside"] }'></grid-example>
-
 
 ## API Reference
 
