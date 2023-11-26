@@ -13,9 +13,11 @@ Benefits over browser's `select` are as follows:
 
 ## Enabling Rich Select Cell Editor
 
+`agRichSelectCellEditor` allows users to enter a cell value from a list of provided values by searching or filtering the list. Edit any cell in the grid below and note the agRichSelectCellEditor is displayed:
+
 <grid-example title='Rich Select Editor' name='rich-select-editor' type='generated' options='{ "enterprise": true, "modules": ["clientside", "richselect"] }'></grid-example>
 
-Specified with `agRichSelectCellEditor` and configured with `IRichCellEditorParams`.
+Enabled with `agRichSelectCellEditor` and configured with `IRichCellEditorParams`.
 
 <snippet transform={false}>
 columnDefs: [
@@ -33,6 +35,8 @@ columnDefs: [
 ## Customisation
 
 ### Cell Renderer
+
+`agRichSelectCellEditor` item renderer can be customised as shown below:
 
 <grid-example title='Rich Select with Cell Renderer' name='rich-select-cell-renderer' type='generated' options='{ "enterprise": true, "modules": ["clientside", "richselect"] }'></grid-example>
 
@@ -52,6 +56,8 @@ columnDefs: [
 </snippet>
 
 ### Search Values
+
+`agRichSelectCellEditor` supports multiple types of search as shown below:
 
 <grid-example title='Rich Select Editor' name='rich-select-search-values' type='generated' options='{ "enterprise": true, "modules": ["clientside", "richselect"] }'></grid-example>
 
@@ -74,6 +80,8 @@ columnDefs: [
 
 ### Allow Typing
 
+`agRichSelectCellEditor` allows typing inside the input matching different parts of items as shown below:
+
 <grid-example title='Rich Select Editor' name='rich-select-allow-typing' type='generated' options='{ "enterprise": true, "modules": ["clientside", "richselect"] }'></grid-example>
 
 <snippet transform={false}>
@@ -95,6 +103,8 @@ columnDefs: [
 
 ### Format Values
 
+`agRichSelectCellEditor` allows formatting list items as shown below:
+
 <grid-example title='Rich Select Format Values' name='rich-select-format-values' type='generated' options='{ "enterprise": true, "modules": ["clientside", "richselect"] }'></grid-example>
 
 <snippet transform={false}>
@@ -112,6 +122,8 @@ columnDefs: [
 
 
 ## Async Values
+
+`agRichSelectCellEditor` allows providing list values asynchronously as shown below:
 
 <grid-example title='Rich Select Async Values' name='rich-select-async-values' type='generated' options='{ "enterprise": true, "modules": ["clientside", "richselect"] }'></grid-example>
 
