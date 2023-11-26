@@ -64,7 +64,7 @@ columnDefs: [
             values: ['AliceBlue', 'AntiqueWhite', 'Aqua', /* .... many colours */ ],
             allowTyping: true,
             filterList: true,
-            highlightValue: true,
+            highlightMatch: true,
             valueListMaxHeight: 220
         }
         // ...other props
@@ -85,7 +85,7 @@ columnDefs: [
             values: ['AliceBlue', 'AntiqueWhite', 'Aqua', /* .... many colours */ ],
             allowTyping: true,
             filterList: true,
-            highlightValue: true,
+            highlightMatch: true,
             valueListMaxHeight: 220
         }
         // ...other props

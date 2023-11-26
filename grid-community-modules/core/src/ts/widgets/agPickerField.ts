@@ -135,6 +135,14 @@ export abstract class AgPickerField<TValue, TConfig extends IPickerFieldParams =
 
     private onLabelOrWrapperMouseDown(e?: MouseEvent): void {
         if (e) {
+            const focusableEl = this.getFocusableElement();
+            // if the focusableEl is not the wrapper and the mousedown
+            // targets the focusableEl, we should not expand/collapse the picker.
+            // Note: this will happen when AgRichSelect is set with `allowTyping=true`
+            if (focusableEl !== this.eWrapper && e?.target === focusableEl) {
+                return;
+            }
+
             // this prevents a BUG where MouseDown causes the element to be focused
             // after the picker is shown and focus ends up being lost.
             e.preventDefault();
