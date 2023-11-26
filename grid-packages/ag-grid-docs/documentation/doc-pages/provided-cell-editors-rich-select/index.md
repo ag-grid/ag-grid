@@ -5,12 +5,6 @@ enterprise: true
 
 An alternative to using the browser's `select` popup for dropdowns inside the grid.
 
-Benefits over browser's `select` are as follows:
-
-- Uses DOM row visualisation so very large lists can be displayed.
-- Integrates with the grid perfectly, avoiding glitches seen with the standard select.
-- Uses HTML to render the values: you can provide cell renderers to customise what each value looks like.
-
 ## Enabling Rich Select Cell Editor
 
 `agRichSelectCellEditor` allows users to enter a cell value from a list of provided values by searching or filtering the list. Edit any cell in the grid below and note the agRichSelectCellEditor is displayed:
@@ -31,6 +25,11 @@ columnDefs: [
 ]
 </snippet>
 
+Benefits over browser's `select` are as follows:
+
+- Uses DOM row visualisation so very large lists can be displayed.
+- Integrates with the grid perfectly, avoiding glitches seen with the standard select.
+- Uses HTML to render the values: you can provide cell renderers to customise what each value looks like.
 
 ## Customisation
 
