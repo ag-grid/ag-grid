@@ -6,9 +6,11 @@ Simple text editor that uses the standard HTML `input`. This editor is the defau
 
 ## Enabling Text Cell Editor
 
+Edit any cell in the grid below and note the `agTextCellEditor` is displayed:
+
 <grid-example title='Text Editor' name='text-editor' type='generated' options='{ "modules": ["clientside"] }'></grid-example>
 
-Specified with `agTextCellEditor` and configured with `ITextCellEditorParams`.
+Enabled with `agTextCellEditor` and configured with `ITextCellEditorParams`.
 
 ```js
 columnDefs: [
