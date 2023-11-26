@@ -22,26 +22,13 @@ const gridOptions: GridOptions = {
     area: {
       series: {
         fillOpacity: 0.5,
+        strokeWidth: 4,
         strokeOpacity: 0.5,
-        strokeWidth: 2,
-        highlightStyle: {
-          item: {
-            fill: 'red',
-            stroke: 'yellow',
-          },
-        },
         marker: {
           enabled: true,
-          shape: 'triangle',
+          shape: 'diamond',
           size: 12,
-          strokeWidth: 4,
-        },
-        shadow: {
-          color: 'rgba(0, 0, 0, 0.3)',
-          xOffset: 5,
-          yOffset: 5,
-          blur: 8,
-        },
+        }
       },
     },
   },

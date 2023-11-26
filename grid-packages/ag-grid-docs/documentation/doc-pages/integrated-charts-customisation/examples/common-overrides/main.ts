@@ -29,7 +29,7 @@ const gridOptions: GridOptions = {
         fontSize: 14,
         fontFamily: 'Monaco, monospace',
         color: '#aaa',
-        spacing: 40,
+        spacing: 10,
       },
       padding: {
         left: 80,

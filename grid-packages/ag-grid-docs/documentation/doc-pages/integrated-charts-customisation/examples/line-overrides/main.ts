@@ -32,26 +32,8 @@ const gridOptions: GridOptions = {
           enabled: true,
           shape: 'diamond',
           size: 12,
-          strokeWidth: 4,
-        },
-        tooltip: {
-          renderer: (params:any) => { // charts typings
-            return {
-              content:
-                '<b>' +
-                params.xName!.toUpperCase() +
-                ':</b> ' +
-                  // @ts-ignore charts typing
-                params.xValue +
-                '<br/>' +
-                '<b>' +
-                params.yName!.toUpperCase() +
-                ':</b> ' +
-                  // @ts-ignore charts typing
-                params.yValue,
-            }
-          },
-        },
+          strokeWidth: 2,
+        }
       },
     },
   },
@@ -60,7 +42,6 @@ const gridOptions: GridOptions = {
   },
   onFirstDataRendered,
 };
-
 
 
 function onFirstDataRendered(params: FirstDataRenderedEvent) {
