@@ -105,19 +105,20 @@ Custom [AG Charts Themes](https://charts.ag-grid.com/react/themes/) can also be 
 |             overrides: {
 |                 common: {
 |                     background: {
-|                     fill: '#f4f4f4',
-|                 },
-|                 legend: {
-|                     item: {
-|                         label: {
-|                             color: '#333333',
+|                         fill: '#f4f4f4',
+|                     },
+|                     legend: {
+|                         item: {
+|                             label: {
+|                                 color: '#333333',
+|                             },
 |                         },
 |                     },
-|                 },  
-|             },
-|         },    
-|     },
-|     chartThemes: ['myCustomTheme', 'ag-vivid']
+|                 },
+|             },    
+|         },
+|         chartThemes: ['myCustomTheme', 'ag-vivid'],
+|     }
 | }
 </snippet>
 
