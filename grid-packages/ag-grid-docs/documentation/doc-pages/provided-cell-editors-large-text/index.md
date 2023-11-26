@@ -33,6 +33,11 @@ The `agLargeTextCellEditor` width and height can be customised. Edit any cell in
 
 <grid-example title='Large Text Editor Cols and Rows' name='large-text-editor-cols-rows' type='generated' options='{ "modules": ["clientside"] }'></grid-example>
 
+To customise the size, there are two options:
+
+- `cols`: The visible width of the text control, in average character widths.
+- `rows`: The number of visible text lines for the control.
+
 ```js
 columnDefs: [
     {
@@ -46,11 +51,6 @@ columnDefs: [
     }
 ]
 ```
-
-To customise the size, there are two options:
-
-- `cols`: The visible width of the text control, in average character widths.
-- `rows`: The number of visible text lines for the control.
 
 ## API Reference
 
