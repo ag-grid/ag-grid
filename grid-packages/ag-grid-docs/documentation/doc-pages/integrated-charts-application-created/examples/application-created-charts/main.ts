@@ -64,16 +64,6 @@ const gridOptions: GridOptions = {
     enableCharts: true,
     suppressAggFuncInHeader: true,
     suppressChartToolPanelsButton: true,
-    chartThemeOverrides: {
-      common: {
-          animation: {
-            enabled: false
-          },
-          zoom: {
-            enabled: false
-          }
-      },
-    },
     getRowId: (params: GetRowIdParams) => params.data.trade,
     getChartToolbarItems: (): ChartMenuOptions[] => [],
     onFirstDataRendered,
