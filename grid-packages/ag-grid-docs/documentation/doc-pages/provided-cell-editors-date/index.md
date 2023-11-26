@@ -8,7 +8,7 @@ title: "Date Cell Editors"
 
  Simple date editor that uses the standard HTML date `input`. Requires cell values to be of type `Date`.
 
-Specified with `agDateCellEditor` and configured with `IDateCellEditorParams`.
+Enabled with `agDateCellEditor` and configured with `IDateCellEditorParams`.
 
 ```js
 columnDefs: [
@@ -35,7 +35,7 @@ Simple date editor that uses the standard HTML date `input`. Similar to the **Da
 
 The date format is controlled via [Cell Data Types](/cell-data-types/) and the [Date as String Data Type Definition](/cell-data-types/#date-as-string-data-type-definition). The default is `'yyyy-mm-dd'`.
 
-Specified with `agDateStringCellEditor` and configured with `IDateStringCellEditorParams`.
+Enabled with `agDateStringCellEditor` and configured with `IDateStringCellEditorParams`.
 
 ```js
 columnDefs: [
