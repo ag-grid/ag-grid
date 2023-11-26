@@ -3,25 +3,38 @@ title: "Chart Customisation"
 enterprise: true
 ---
 
-Chart themes can be used to customise the look and feel of your charts to match your application.
-
-AG Charts support [Chart Themes](/charts-themes/) to change how charts are styled. There are a number of chart themes provided out of the box by the grid. You can also provide your own custom chart theme to the grid to customise the colours of charts along with other styling options. Alternatively, you can just provide overrides to tweak the provided chart themes in the way you want.
+Integrated Charts can be customised via the [AG Charts Theme API](https://charts.ag-grid.com/themes-api/).
 
 ## Provided Themes
 
-There are five chart themes that are provided by the grid: `'ag-default'`, `'ag-material'`, `'ag-pastel'`, `'ag-vivid'` and `'ag-solar'`. When using a dark theme for the grid (e.g. `ag-theme-quartz-dark`), dark equivalents of the chart themes are provided by default instead, named with a `-dark` suffix, e.g. `'ag-vivid-dark'`.
+The following themes are provided to Integrated Charts by default.
 
-When you create a chart, you can scroll through the different available themes in the chart settings.
+```js
+['ag-default', 'ag-material', 'ag-sheets', 'ag-polychroma', 'ag-vivid']
+```
 
-<gif src="theme-picker.gif" alt="Theme Picker"></gif>
+These themes correspond to [AG Charts Base Themes](https://charts.ag-grid.com/themes-api/#reference-AgChartTheme-baseTheme). 
 
-You can change which themes are available by setting the `chartThemes` property in `gridOptions`. The example below shows a different selection of themes configured in this way.
+<note>
+When using a dark theme for the grid (e.g. `ag-theme-quartz-dark`), dark equivalents of the chart themes are provided by
+default instead, named with a `-dark` suffix, e.g. `'ag-vivid-dark'`.
+</note>
 
-<grid-example title='Configure Available Themes' name='available-themes' type='generated' options='{ "exampleHeight": 690, "enterprise": true,  "modules": ["clientside", "menu", "charts", "rowgrouping"] }'></grid-example>
+When you create a chart, you can scroll through the different available themes in the [Settings Tool Panel](/integrated-charts-chart-tool-panels/).
+
+It is possible to change the order of the provided themes using the `chartThmes` grid option as shown below:
+
+<snippet spaceBetweenProperties="true">
+| const gridOptions = {
+|     chartThemes: ['ag-vivid', 'ag-polychroma', 'ag-material', 'ag-sheets', 'ag-default']
+| }
+</snippet>
 
 ## Custom Chart Themes
 
-You can create your own chart theme and provide it to the grid in the `customChartThemes` map on `gridOptions`. Your theme should then be specified in `chartThemes` to make it available to your users.
+You can create your own chart theme and provide it to the grid in the `customChartThemes` map on `gridOptions`. Your 
+theme should then be specified in `chartThemes` to make it available to your users.
+
 <snippet spaceBetweenProperties="true">
 | const gridOptions = {
 |     customChartThemes: {
@@ -52,7 +65,7 @@ The example below shows a custom chart theme being used with the grid. Note that
 ## Overriding Existing Themes
 
 Instead of providing a whole custom chart theme, you can simply use the `chartsThemeOverrides` grid option, which maps 
-to the `overrides` [Theme](/charts-api-themes/) property.
+to [AG Charts Theme Overrides](https://charts.ag-grid.com/themes-api/#reference-AgChartTheme-overrides).
 
 <snippet>
 const gridOptions = {
