@@ -17,7 +17,7 @@ To see how chart ranges are created from a cell range, using our [demo page](../
 
 - Bring up the [Context Menu](/context-menu/) and select the desired chart type from the 'Chart Range' sub menu.
 
-<gif src="range-chart-dark.gif" alt="Charting Ranges"></gif>
+<gif src="range-chart.gif" alt="Charting Ranges" toggledarkmode="true"></gif>
 
 As illustrated above, the resulting chart range can subsequently be modified by dragging on the chart range handle, located in the bottom right corner of the chart range.
 
