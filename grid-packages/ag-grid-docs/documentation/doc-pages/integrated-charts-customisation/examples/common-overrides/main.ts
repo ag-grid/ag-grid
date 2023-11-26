@@ -22,10 +22,6 @@ const gridOptions: GridOptions = {
       title: {
         enabled: true,
         text: 'Precious Metals Production',
-        fontStyle: 'italic',
-        fontWeight: 'bold',
-        fontSize: 18,
-        fontFamily: 'Impact, sans-serif',
       },
       subtitle: {
         enabled: true,
@@ -33,10 +29,14 @@ const gridOptions: GridOptions = {
         fontSize: 14,
         fontFamily: 'Monaco, monospace',
         color: '#aaa',
+        spacing: 40,
+      },
+      padding: {
+        left: 80,
+        right: 80,
       },
       legend: {
-        position: 'left',
-        spacing: 2,
+        spacing: 30,
         item: {
           label: {
             fontStyle: 'italic',
@@ -46,17 +46,13 @@ const gridOptions: GridOptions = {
             color: '#aaa',
           },
           marker: {
-            shape: 'diamond',
+            shape: 'circle',
             size: 10,
             padding: 10,
             strokeWidth: 2,
           },
-          paddingX: 120,
-          paddingY: 20,
+          paddingX: 30,
         },
-      },
-      tooltip: {
-        class: 'my-tooltip-class',
       },
     },
   },
@@ -66,16 +62,14 @@ const gridOptions: GridOptions = {
   onFirstDataRendered,
 };
 
-
-
 function onFirstDataRendered(params: FirstDataRenderedEvent) {
   params.api.createRangeChart({
     cellRange: {
       rowStartIndex: 0,
-      rowEndIndex: 4,
+      rowEndIndex: 3,
       columns: ['country', 'gold', 'silver', 'bronze'],
     },
-    chartType: 'groupedBar',
+    chartType: 'groupedColumn',
   });
 }
 

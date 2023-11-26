@@ -29,10 +29,11 @@ by changing the order of the provided themes using the `chartThemes` grid option
 | }
 </snippet>
 
-## Overriding Existing Themes
+## Overriding Themes
 
-Instead of providing a whole custom chart theme, you can simply use the `chartsThemeOverrides` grid option, which maps 
-to [AG Charts Theme Overrides](https://charts.ag-grid.com/themes-api/#reference-AgChartTheme-overrides).
+Integrated Charts uses a theme based configuration which 'overrides' the theme defaults.
+
+To override a charts theme, use the `chartsThemeOverrides` grid option.
 
 <snippet>
 const gridOptions = {
@@ -47,7 +48,11 @@ const gridOptions = {
 }
 </snippet>
 
-The following examples show different types of chart being customised using theme overrides.
+<note>
+Note that the `chartThemeOverrides` grid option maps to [AG Charts Theme Overrides](https://charts.ag-grid.com/themes-api/#reference-AgChartTheme-overrides).
+</note>
+
+The following sections show different types of chart and series overrides.
 
 ### Common Overrides
 
@@ -85,7 +90,7 @@ These overrides are specific to the [AG Charts Pie Series](https://charts.ag-gri
 
 <grid-example title='Pie Overrides' name='pie-overrides' type='generated' options='{ "exampleHeight": 660, "enterprise": true,  "modules": ["clientside", "menu", "charts"] }'></grid-example>
 
-## Custom Chart Themes
+## Custom Chart Theme
 
 Custom [AG Charts Themes](https://charts.ag-grid.com/react/themes/) can also be supplied to the grid via the `customChartThemes` grid option.
 
@@ -93,20 +98,24 @@ Custom [AG Charts Themes](https://charts.ag-grid.com/react/themes/) can also be 
 | const gridOptions = {
 |     customChartThemes: {
 |         myCustomTheme: {
-|             baseTheme: 'ag-pastel',
 |             palette: {
-|                 fills: ['#c16068', '#a2bf8a', '#ebcc87'],
-|                 strokes: ['#874349', '#718661', '#a48f5f']
+|                 fills: ['#42a5f5', '#ffa726', '#81c784'],
+|                 strokes: ['#000000', '#424242'],
 |             },
 |             overrides: {
 |                 common: {
-|                     title: {
-|                         fontSize: 22,
-|                         fontFamily: 'Arial, sans-serif'
-|                     }
-|                 }
-|             }
-|         }
+|                     background: {
+|                     fill: '#f4f4f4',
+|                 },
+|                 legend: {
+|                     item: {
+|                         label: {
+|                             color: '#333333',
+|                         },
+|                     },
+|                 },  
+|             },
+|         },    
 |     },
 |     chartThemes: ['myCustomTheme', 'ag-vivid']
 | }

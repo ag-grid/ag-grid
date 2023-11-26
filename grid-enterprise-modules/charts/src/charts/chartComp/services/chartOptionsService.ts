@@ -17,8 +17,6 @@ export class ChartOptionsService extends BeanStub {
     }
 
     public getChartOption<T = string>(expression: string): T {
-        // TODO: We shouldn't be reading the chart implementation directly, but right now
-        // it isn't possible to either get option defaults OR retrieve themed options.
         return _.get(this.getChart(), expression, undefined) as T;
     }
 
