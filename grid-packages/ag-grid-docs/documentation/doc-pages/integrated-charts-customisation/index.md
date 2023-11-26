@@ -20,9 +20,8 @@ When using a dark theme for the grid (e.g. `ag-theme-quartz-dark`), dark equival
 default instead, named with a `-dark` suffix, e.g. `'ag-vivid-dark'`.
 </note>
 
-When you create a chart, you can scroll through the different available themes in the [Settings Tool Panel](/integrated-charts-chart-tool-panels/).
-
-It is possible to change the order of the provided themes using the `chartThmes` grid option as shown below:
+The selected theme can be changed by the user via the [Settings Tool Panel](/integrated-charts-chart-tool-panels/) or
+by changing the order of the provided themes using the `chartThemes` grid option as shown below:
 
 <snippet spaceBetweenProperties="true">
 | const gridOptions = {
@@ -30,10 +29,65 @@ It is possible to change the order of the provided themes using the `chartThmes`
 | }
 </snippet>
 
+## Overriding Existing Themes
+
+Instead of providing a whole custom chart theme, you can simply use the `chartsThemeOverrides` grid option, which maps 
+to [AG Charts Theme Overrides](https://charts.ag-grid.com/themes-api/#reference-AgChartTheme-overrides).
+
+<snippet>
+const gridOptions = {
+    chartThemeOverrides: {
+        common: {
+            title: {
+                fontSize: 22,
+                fontFamily: 'Arial, sans-serif'
+            }
+        }
+    }
+}
+</snippet>
+
+The following examples show different types of chart being customised using theme overrides.
+
+### Common Overrides
+
+These overrides can be used with any series type. For full list of overrides see [Common Overrides](https://charts.ag-grid.com/themes-api/overrides/common/#reference-AgCommonThemeableChartOptions).
+
+<grid-example title='Common Overrides' name='common-overrides' type='generated' options='{ "exampleHeight": 660, "enterprise": true,  "modules": ["clientside", "menu", "charts"] }'></grid-example>
+
+### Line Overrides
+
+These overrides are specific to the [AG Charts Line Series](https://charts.ag-grid.com/react/line-series/). For full list of overrides see [Line Overrides](https://charts.ag-grid.com/themes-api/overrides/line/#reference-AgLineSeriesThemeOverrides).
+
+<grid-example title='Line Overrides' name='line-overrides' type='generated' options='{ "exampleHeight": 660, "enterprise": true,  "modules": ["clientside", "menu", "charts"] }'></grid-example>
+
+### Bar Overrides
+
+These overrides are specific to the [AG Charts Bar Series](https://charts.ag-grid.com/react/bar-series/). For full list of overrides see [Bar Overrides](https://charts.ag-grid.com/themes-api/overrides/bar/#reference-AgBarSeriesThemeOverrides).
+
+<grid-example title='Bar Overrides' name='bar-overrides' type='generated' options='{ "exampleHeight": 660, "enterprise": true,  "modules": ["clientside", "menu", "charts"] }'></grid-example>
+
+### Area Overrides
+
+These overrides are specific to the [AG Charts Area Series](https://charts.ag-grid.com/react/area-series/). For full list of overrides see [Bar Overrides](https://charts.ag-grid.com/themes-api/overrides/area/#reference-AgAreaSeriesThemeOverrides).
+
+<grid-example title='Area Overrides' name='area-overrides' type='generated' options='{ "exampleHeight": 660, "enterprise": true,  "modules": ["clientside", "menu", "charts"] }'></grid-example>
+
+### Scatter Overrides
+
+These overrides are specific to the [AG Charts Scatter Series](https://charts.ag-grid.com/react/scatter-series/). For full list of overrides see [Scatter Overrides](https://charts.ag-grid.com/themes-api/overrides/scatter/#reference-AgScatterSeriesThemeOverrides).
+
+<grid-example title='Scatter Overrides' name='scatter-overrides' type='generated' options='{ "exampleHeight": 660, "enterprise": true,  "modules": ["clientside", "menu", "charts"] }'></grid-example>
+
+### Pie Overrides
+
+These overrides are specific to the [AG Charts Pie Series](https://charts.ag-grid.com/react/pie-series/). For full list of overrides see [Pie Overrides](https://charts.ag-grid.com/themes-api/overrides/pie/#reference-AgPieSeriesThemeOverrides).
+
+<grid-example title='Pie Overrides' name='pie-overrides' type='generated' options='{ "exampleHeight": 660, "enterprise": true,  "modules": ["clientside", "menu", "charts"] }'></grid-example>
+
 ## Custom Chart Themes
 
-You can create your own chart theme and provide it to the grid in the `customChartThemes` map on `gridOptions`. Your 
-theme should then be specified in `chartThemes` to make it available to your users.
+Custom [AG Charts Themes](https://charts.ag-grid.com/react/themes/) can also be supplied to the grid via the `customChartThemes` grid option.
 
 <snippet spaceBetweenProperties="true">
 | const gridOptions = {
@@ -58,59 +112,10 @@ theme should then be specified in `chartThemes` to make it available to your use
 | }
 </snippet>
 
-The example below shows a custom chart theme being used with the grid. Note that other provided themes can be used alongside a custom theme, and are unaffected by the settings in the custom theme.
+The example below shows a custom chart theme being used with the grid. Note that other provided themes can be used 
+alongside a custom theme, and are unaffected by the settings in the custom theme.
 
 <grid-example title='Custom Chart Theme' name='custom-chart-theme' type='generated' options='{ "exampleHeight": 660,"enterprise": true,  "modules": ["clientside", "menu", "charts"] }'></grid-example>
-
-## Overriding Existing Themes
-
-Instead of providing a whole custom chart theme, you can simply use the `chartsThemeOverrides` grid option, which maps 
-to [AG Charts Theme Overrides](https://charts.ag-grid.com/themes-api/#reference-AgChartTheme-overrides).
-
-<snippet>
-const gridOptions = {
-    chartThemeOverrides: {
-        common: {
-            title: {
-                fontSize: 22,
-                fontFamily: 'Arial, sans-serif'
-            }
-        }
-    }
-}
-</snippet>
-
-The following examples show different types of chart being customised using theme overrides.
-
-### Common Chart Overrides
-
-These overrides can be used with any chart type.
-
-<grid-example title='Common Chart Overrides' name='common-overrides' type='generated' options='{ "exampleHeight": 660, "enterprise": true,  "modules": ["clientside", "menu", "charts"] }'></grid-example>
-
-### Line Chart Overrides
-
-<grid-example title='Line Chart Overrides' name='line-overrides' type='generated' options='{ "exampleHeight": 660, "enterprise": true,  "modules": ["clientside", "menu", "charts"] }'></grid-example>
-
-### Bar/Column Chart Overrides
-
-<grid-example title='Bar/Column Chart Overrides' name='bar-overrides' type='generated' options='{ "exampleHeight": 660, "enterprise": true,  "modules": ["clientside", "menu", "charts"] }'></grid-example>
-
-### Area Chart Overrides
-
-<grid-example title='Area Chart Overrides' name='area-overrides' type='generated' options='{ "exampleHeight": 660, "enterprise": true,  "modules": ["clientside", "menu", "charts"] }'></grid-example>
-
-### Scatter/Bubble Chart Overrides
-
-<grid-example title='Scatter/Bubble Chart Overrides' name='scatter-overrides' type='generated' options='{ "exampleHeight": 660, "enterprise": true,  "modules": ["clientside", "menu", "charts"] }'></grid-example>
-
-### Pie/Doughnut Chart Overrides
-
-<grid-example title='Pie/Doughnut Chart Overrides' name='pie-overrides' type='generated' options='{ "exampleHeight": 660, "enterprise": true,  "modules": ["clientside", "menu", "charts"] }'></grid-example>
-
-### Histogram Chart Overrides
-
-<grid-example title='Histogram Chart Overrides' name='histogram-overrides' type='generated' options='{ "exampleHeight": 660, "enterprise": true,  "modules": ["clientside", "menu", "charts"] }'></grid-example>
 
 ## Next Up
 
