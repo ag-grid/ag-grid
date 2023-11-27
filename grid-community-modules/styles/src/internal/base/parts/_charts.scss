@@ -196,6 +196,7 @@
         flex-direction: column;
         position: relative;
         @include ag.selectable(none);
+        padding-bottom: 16px;
     }
 
     .ag-chart-data-wrapper {

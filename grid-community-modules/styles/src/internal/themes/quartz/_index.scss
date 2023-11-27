@@ -152,6 +152,10 @@
         font-weight: 500;
     }
 
+    .ag-charts-format-top-level-group-item {
+        padding-bottom: 12px;
+    }
+
     .ag-charts-settings-group-container {
         margin-top: calc(var(--ag-grid-size));
         @include ag.theme-rtl((padding-right: var(--ag-widget-container-horizontal-padding)));
