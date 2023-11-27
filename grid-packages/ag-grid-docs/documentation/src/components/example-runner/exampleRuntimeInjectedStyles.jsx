@@ -18,7 +18,7 @@ html[data-color-scheme='dark'] body > * {
     color-scheme: dark;
 }
 
-html[data-color-scheme='dark'] button:not(#myGrid button, #myChart button, button[class*='ag-']) {
+html[data-color-scheme='dark'] button:not(#myGrid button, #myChart button, button[class*='ag-']) , .ag-fill-direction  {
     border: 2px solid rgba(255,255,255, 0.2);
 }
 
@@ -45,7 +45,7 @@ TODO - reinstate these in a way that doesn't clobber example's row colours
 
 
 
-html button:not(#myGrid button, #myChart button, button[class*='ag-']) {
+html button:not(#myGrid button, #myChart button, button[class*='ag-']), .ag-fill-direction  {
     appearance: none;
     background-color: var(--background-100);
     border: 2px solid rgba(0,0,0, 0.2);
