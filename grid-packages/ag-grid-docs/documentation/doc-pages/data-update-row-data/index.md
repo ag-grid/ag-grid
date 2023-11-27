@@ -46,7 +46,7 @@ Note the following:
 
 - **Turn Grouping On / Off**: To turn grouping by symbol on and off.
 
-- **Group Selected A / B / C**: With grouping on, hit the buttons A, B and C to move selected items to that group. Notice how the rows animate to the new position.
+- **Group Selected A / B / C**: With grouping on, hit the buttons Move to Group A, B and C to move selected items to that group. Notice how the rows animate to the new position.
  
 (Note: the example uses the Enterprise-only features [Row Grouping](/grouping/), [Range Selection](/range-selection/) and [Status Bar](/status-bar/).)
 
