@@ -1,6 +1,6 @@
 {
   "name": "@ag-grid-enterprise/advanced-filter",
-  "version": "30.2.0",
+  "version": "31.0.0",
   "description": "Advanced Data Grid / Data Table supporting Javascript / Typescript / React / Angular / Vue",
   "main": "./dist/esm/es6/main.mjs",
   "module": "./dist/esm/es6/main.mjs",
@@ -46,8 +46,8 @@
   ],
   "homepage": "https://www.ag-grid.com/",
   "dependencies": {
-    "@ag-grid-community/core": "~30.2.0",
-    "@ag-grid-enterprise/core": "~30.2.0"
+    "@ag-grid-community/core": "~31.0.0",
+    "@ag-grid-enterprise/core": "~31.0.0"
   },
   "devDependencies": {
     "typescript": "~4.7.4",

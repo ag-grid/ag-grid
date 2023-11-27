@@ -1,0 +1,16 @@
+import type { AgPolarChartOptions } from '../../../../options/agChartOptions';
+export declare const PIE_SERIES: AgPolarChartOptions;
+export declare const PIE_SERIES_NEGATIVE_VALUES: AgPolarChartOptions;
+export declare const PIE_SECTORS_DIFFERENT_RADII: AgPolarChartOptions;
+export declare const PIE_SECTORS_DIFFERENT_RADII_SMALL_RADIUS_MIN: AgPolarChartOptions;
+export declare const PIE_SECTORS_DIFFERENT_RADII_LARGE_RADIUS_MIN: AgPolarChartOptions;
+export declare const PIE_SECTORS_DIFFERENT_RADII_SMALL_RADIUS_MAX: AgPolarChartOptions;
+export declare const PIE_SECTORS_DIFFERENT_RADII_LARGE_RADIUS_MAX: AgPolarChartOptions;
+export declare const PIE_SECTORS_LABELS: AgPolarChartOptions;
+export declare const DOUGHNUT_SERIES: AgPolarChartOptions;
+export declare const DOUGHNUT_SERIES_INNER_TEXT: AgPolarChartOptions;
+export declare const DOUGHNUT_SERIES_RATIO: AgPolarChartOptions;
+export declare const GROUPED_DOUGHNUT_SERIES: AgPolarChartOptions;
+export declare const DOUGHNUT_SERIES_DIFFERENT_RADII: AgPolarChartOptions;
+export declare const GROUPED_DOUGHNUT_SERIES_DIFFERENT_RADII: AgPolarChartOptions;
+export declare const PIE_CALLOUT_LABELS_COLLISIONS: AgPolarChartOptions;

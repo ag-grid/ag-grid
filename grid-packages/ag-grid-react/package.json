@@ -1,6 +1,6 @@
 {
   "name": "ag-grid-react",
-  "version": "30.2.0",
+  "version": "31.0.0",
   "description": "AG Grid React Component",
   "main": "lib/main.js",
   "typings": "./lib/main.d.ts",
@@ -38,10 +38,10 @@
   "devDependencies": {
     "@babel/runtime": "^7.16.3",
     "prop-types": "^15.6.2",
-    "ag-grid-community": "~30.2.0",
-    "@ag-grid-community/react": "~30.2.0",
-    "@ag-grid-community/client-side-row-model": "~30.2.0",
-    "@ag-grid-community/core": "~30.2.0",
+    "ag-grid-community": "~31.0.0",
+    "@ag-grid-community/react": "~31.0.0",
+    "@ag-grid-community/client-side-row-model": "~31.0.0",
+    "@ag-grid-community/core": "~31.0.0",
     "gulp": "^4.0.0",
     "gulp-clean": "^0.4.0",
     "gulp-header": "^2.0.0",
@@ -79,7 +79,7 @@
   },
   "dependencies": {
     "prop-types": "^15.8.1",
-    "ag-grid-community": "~30.2.0"
+    "ag-grid-community": "~31.0.0"
   },
   "peerDependencies": {
     "react": "^16.3.0 || ^17.0.0 || ^18.0.0",

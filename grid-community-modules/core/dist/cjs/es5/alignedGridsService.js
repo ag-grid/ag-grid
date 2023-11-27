@@ -1,0 +1,286 @@
+"use strict";
+var __extends = (this && this.__extends) || (function () {
+    var extendStatics = function (d, b) {
+        extendStatics = Object.setPrototypeOf ||
+            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+            function (d, b) { for (var p in b) if (Object.prototype.hasOwnProperty.call(b, p)) d[p] = b[p]; };
+        return extendStatics(d, b);
+    };
+    return function (d, b) {
+        if (typeof b !== "function" && b !== null)
+            throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+var __param = (this && this.__param) || function (paramIndex, decorator) {
+    return function (target, key) { decorator(target, key, paramIndex); }
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.AlignedGridsService = void 0;
+var events_1 = require("./events");
+var context_1 = require("./context/context");
+var context_2 = require("./context/context");
+var context_3 = require("./context/context");
+var context_4 = require("./context/context");
+var beanStub_1 = require("./context/beanStub");
+var gridApi_1 = require("./gridApi");
+var function_1 = require("./utils/function");
+var AlignedGridsService = /** @class */ (function (_super) {
+    __extends(AlignedGridsService, _super);
+    function AlignedGridsService() {
+        var _this = _super !== null && _super.apply(this, arguments) || this;
+        // flag to mark if we are consuming. to avoid cyclic events (ie other grid firing back to master
+        // while processing a master event) we mark this if consuming an event, and if we are, then
+        // we don't fire back any events.
+        _this.consuming = false;
+        return _this;
+    }
+    AlignedGridsService.prototype.setBeans = function (loggerFactory) {
+        this.logger = loggerFactory.create('AlignedGridsService');
+    };
+    AlignedGridsService.prototype.getAlignedGridApis = function () {
+        var _this = this;
+        var _a;
+        var alignedGrids = (_a = this.gridOptionsService.get('alignedGrids')) !== null && _a !== void 0 ? _a : [];
+        var isCallbackConfig = typeof alignedGrids === 'function';
+        if (typeof alignedGrids === 'function') {
+            alignedGrids = alignedGrids();
+        }
+        var seeUrl = function () { return "See ".concat(_this.getFrameworkOverrides().getDocLink('aligned-grids')); };
+        var apis = alignedGrids.map(function (alignedGrid) {
+            var _a;
+            if (!alignedGrid) {
+                (0, function_1.errorOnce)("alignedGrids contains an undefined option.");
+                if (!isCallbackConfig) {
+                    (0, function_1.errorOnce)("You may want to configure via a callback to avoid setup race conditions:\n                     \"alignedGrids: () => [linkedGrid]\"");
+                }
+                (0, function_1.errorOnce)(seeUrl());
+                return;
+            }
+            if (alignedGrid instanceof gridApi_1.GridApi) {
+                return alignedGrid;
+            }
+            // Extract the GridApi from a ref or component
+            var refOrComp = alignedGrid;
+            if ('current' in refOrComp) {
+                return (_a = refOrComp.current) === null || _a === void 0 ? void 0 : _a.api;
+            }
+            else {
+                if (!refOrComp.api) {
+                    (0, function_1.errorOnce)("alignedGrids - No api found on the linked grid. If you are passing gridOptions to alignedGrids since v31 this is no longer valid. ".concat(seeUrl()));
+                }
+                return refOrComp.api;
+            }
+        }).filter(function (api) { return !!api && !api.isDestroyed(); });
+        return apis;
+    };
+    AlignedGridsService.prototype.init = function () {
+        this.addManagedListener(this.eventService, events_1.Events.EVENT_COLUMN_MOVED, this.fireColumnEvent.bind(this));
+        this.addManagedListener(this.eventService, events_1.Events.EVENT_COLUMN_VISIBLE, this.fireColumnEvent.bind(this));
+        this.addManagedListener(this.eventService, events_1.Events.EVENT_COLUMN_PINNED, this.fireColumnEvent.bind(this));
+        this.addManagedListener(this.eventService, events_1.Events.EVENT_COLUMN_GROUP_OPENED, this.fireColumnEvent.bind(this));
+        this.addManagedListener(this.eventService, events_1.Events.EVENT_COLUMN_RESIZED, this.fireColumnEvent.bind(this));
+        this.addManagedListener(this.eventService, events_1.Events.EVENT_BODY_SCROLL, this.fireScrollEvent.bind(this));
+    };
+    // common logic across all the fire methods
+    AlignedGridsService.prototype.fireEvent = function (callback) {
+        // if we are already consuming, then we are acting on an event from a master,
+        // so we don't cause a cyclic firing of events
+        if (this.consuming) {
+            return;
+        }
+        // iterate through the aligned grids, and pass each aligned grid service to the callback
+        this.getAlignedGridApis().forEach(function (api) {
+            var alignedGridService = api.__getAlignedGridService();
+            callback(alignedGridService);
+        });
+    };
+    // common logic across all consume methods. very little common logic, however extracting
+    // guarantees consistency across the methods.
+    AlignedGridsService.prototype.onEvent = function (callback) {
+        this.consuming = true;
+        callback();
+        this.consuming = false;
+    };
+    AlignedGridsService.prototype.fireColumnEvent = function (event) {
+        this.fireEvent(function (alignedGridsService) {
+            alignedGridsService.onColumnEvent(event);
+        });
+    };
+    AlignedGridsService.prototype.fireScrollEvent = function (event) {
+        if (event.direction !== 'horizontal') {
+            return;
+        }
+        this.fireEvent(function (alignedGridsService) {
+            alignedGridsService.onScrollEvent(event);
+        });
+    };
+    AlignedGridsService.prototype.onScrollEvent = function (event) {
+        var _this = this;
+        this.onEvent(function () {
+            var gridBodyCon = _this.ctrlsService.getGridBodyCtrl();
+            gridBodyCon.getScrollFeature().setHorizontalScrollPosition(event.left, true);
+        });
+    };
+    AlignedGridsService.prototype.getMasterColumns = function (event) {
+        var result = [];
+        if (event.columns) {
+            event.columns.forEach(function (column) {
+                result.push(column);
+            });
+        }
+        else if (event.column) {
+            result.push(event.column);
+        }
+        return result;
+    };
+    AlignedGridsService.prototype.getColumnIds = function (event) {
+        var result = [];
+        if (event.columns) {
+            event.columns.forEach(function (column) {
+                result.push(column.getColId());
+            });
+        }
+        else if (event.column) {
+            result.push(event.column.getColId());
+        }
+        return result;
+    };
+    AlignedGridsService.prototype.onColumnEvent = function (event) {
+        var _this = this;
+        this.onEvent(function () {
+            switch (event.type) {
+                case events_1.Events.EVENT_COLUMN_MOVED:
+                case events_1.Events.EVENT_COLUMN_VISIBLE:
+                case events_1.Events.EVENT_COLUMN_PINNED:
+                case events_1.Events.EVENT_COLUMN_RESIZED:
+                    var colEvent = event;
+                    _this.processColumnEvent(colEvent);
+                    break;
+                case events_1.Events.EVENT_COLUMN_GROUP_OPENED:
+                    var groupOpenedEvent = event;
+                    _this.processGroupOpenedEvent(groupOpenedEvent);
+                    break;
+                case events_1.Events.EVENT_COLUMN_PIVOT_CHANGED:
+                    // we cannot support pivoting with aligned grids as the columns will be out of sync as the
+                    // grids will have columns created based on the row data of the grid.
+                    console.warn('AG Grid: pivoting is not supported with aligned grids. ' +
+                        'You can only use one of these features at a time in a grid.');
+                    break;
+            }
+        });
+    };
+    AlignedGridsService.prototype.processGroupOpenedEvent = function (groupOpenedEvent) {
+        // likewise for column group
+        var masterColumnGroup = groupOpenedEvent.columnGroup;
+        var otherColumnGroup = null;
+        if (masterColumnGroup) {
+            var groupId = masterColumnGroup.getGroupId();
+            otherColumnGroup = this.columnModel.getProvidedColumnGroup(groupId);
+        }
+        if (masterColumnGroup && !otherColumnGroup) {
+            return;
+        }
+        this.logger.log('onColumnEvent-> processing ' + groupOpenedEvent + ' expanded = ' + masterColumnGroup.isExpanded());
+        this.columnModel.setColumnGroupOpened(otherColumnGroup, masterColumnGroup.isExpanded(), "alignedGridChanged");
+    };
+    AlignedGridsService.prototype.processColumnEvent = function (colEvent) {
+        var _this = this;
+        var _a;
+        // the column in the event is from the master grid. need to
+        // look up the equivalent from this (other) grid
+        var masterColumn = colEvent.column;
+        var otherColumn = null;
+        if (masterColumn) {
+            otherColumn = this.columnModel.getPrimaryColumn(masterColumn.getColId());
+        }
+        // if event was with respect to a master column, that is not present in this
+        // grid, then we ignore the event
+        if (masterColumn && !otherColumn) {
+            return;
+        }
+        // in time, all the methods below should use the column ids, it's a more generic way
+        // of handling columns, and also allows for single or multi column events
+        var masterColumns = this.getMasterColumns(colEvent);
+        switch (colEvent.type) {
+            case events_1.Events.EVENT_COLUMN_MOVED:
+                // when the user moves columns via applyColumnState, we can't depend on moving specific columns
+                // to an index, as there maybe be many indexes columns moved to (as wasn't result of a mouse drag).
+                // so only way to be sure is match the order of all columns using Column State.
+                {
+                    var movedEvent = colEvent;
+                    var srcColState = colEvent.api.getColumnState();
+                    var destColState = srcColState.map(function (s) { return ({ colId: s.colId }); });
+                    this.columnModel.applyColumnState({ state: destColState, applyOrder: true }, "alignedGridChanged");
+                    this.logger.log("onColumnEvent-> processing ".concat(colEvent.type, " toIndex = ").concat(movedEvent.toIndex));
+                }
+                break;
+            case events_1.Events.EVENT_COLUMN_VISIBLE:
+                // when the user changes visibility via applyColumnState, we can't depend on visibility flag in event
+                // as there maybe be mix of true/false (as wasn't result of a mouse click to set visiblity).
+                // so only way to be sure is match the visibility of all columns using Column State.
+                {
+                    var visibleEvent = colEvent;
+                    var srcColState = colEvent.api.getColumnState();
+                    var destColState = srcColState.map(function (s) { return ({ colId: s.colId, hide: s.hide }); });
+                    this.columnModel.applyColumnState({ state: destColState }, "alignedGridChanged");
+                    this.logger.log("onColumnEvent-> processing ".concat(colEvent.type, " visible = ").concat(visibleEvent.visible));
+                }
+                break;
+            case events_1.Events.EVENT_COLUMN_PINNED:
+                {
+                    var pinnedEvent = colEvent;
+                    var srcColState = colEvent.api.getColumnState();
+                    var destColState = srcColState.map(function (s) { return ({ colId: s.colId, pinned: s.pinned }); });
+                    this.columnModel.applyColumnState({ state: destColState }, "alignedGridChanged");
+                    this.logger.log("onColumnEvent-> processing ".concat(colEvent.type, " pinned = ").concat(pinnedEvent.pinned));
+                }
+                break;
+            case events_1.Events.EVENT_COLUMN_RESIZED:
+                var resizedEvent = colEvent;
+                var columnWidths_1 = {};
+                masterColumns.forEach(function (column) {
+                    _this.logger.log("onColumnEvent-> processing ".concat(colEvent.type, " actualWidth = ").concat(column.getActualWidth()));
+                    columnWidths_1[column.getId()] = { key: column.getColId(), newWidth: column.getActualWidth() };
+                });
+                // don't set flex columns width
+                (_a = resizedEvent.flexColumns) === null || _a === void 0 ? void 0 : _a.forEach(function (col) {
+                    if (columnWidths_1[col.getId()]) {
+                        delete columnWidths_1[col.getId()];
+                    }
+                });
+                this.columnModel.setColumnWidths(Object.values(columnWidths_1), false, resizedEvent.finished, "alignedGridChanged");
+                break;
+        }
+        var gridBodyCon = this.ctrlsService.getGridBodyCtrl();
+        var isVerticalScrollShowing = gridBodyCon.isVerticalScrollShowing();
+        this.getAlignedGridApis().forEach(function (api) {
+            api.setGridOption('alwaysShowVerticalScroll', isVerticalScrollShowing);
+        });
+    };
+    __decorate([
+        (0, context_3.Autowired)('columnModel')
+    ], AlignedGridsService.prototype, "columnModel", void 0);
+    __decorate([
+        (0, context_3.Autowired)('ctrlsService')
+    ], AlignedGridsService.prototype, "ctrlsService", void 0);
+    __decorate([
+        __param(0, (0, context_2.Qualifier)('loggerFactory'))
+    ], AlignedGridsService.prototype, "setBeans", null);
+    __decorate([
+        context_4.PostConstruct
+    ], AlignedGridsService.prototype, "init", null);
+    AlignedGridsService = __decorate([
+        (0, context_1.Bean)('alignedGridsService')
+    ], AlignedGridsService);
+    return AlignedGridsService;
+}(beanStub_1.BeanStub));
+exports.AlignedGridsService = AlignedGridsService;

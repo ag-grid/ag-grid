@@ -1,0 +1,61 @@
+export declare class LicenseManager {
+    private static RELEASE_INFORMATION;
+    private static licenseKey;
+    private watermarkMessage;
+    private md5;
+    private document;
+    constructor(document: Document);
+    validateLicense(): void;
+    private static extractExpiry;
+    private static extractLicenseComponents;
+    getLicenseDetails(licenseKey: string): {
+        licenseKey: string;
+        valid: boolean;
+        missing: boolean;
+        incorrectLicenseType?: undefined;
+        licenseType?: undefined;
+        expiry?: undefined;
+        expired?: undefined;
+        version?: undefined;
+        isTrial?: undefined;
+        trialExpired?: undefined;
+    } | {
+        licenseKey: string;
+        valid: false;
+        incorrectLicenseType: boolean | undefined;
+        licenseType: string | undefined;
+        missing?: undefined;
+        expiry?: undefined;
+        expired?: undefined;
+        version?: undefined;
+        isTrial?: undefined;
+        trialExpired?: undefined;
+    } | {
+        licenseKey: string;
+        valid: true;
+        expiry: string;
+        expired: boolean | undefined;
+        version: string | null;
+        isTrial: boolean | null;
+        trialExpired: undefined;
+        missing?: undefined;
+        incorrectLicenseType?: undefined;
+        licenseType?: undefined;
+    };
+    isDisplayWatermark(): boolean;
+    getWatermarkMessage(): string;
+    private getHostname;
+    private isForceWatermark;
+    private isWebsiteUrl;
+    private isLocalhost;
+    private static formatDate;
+    private static getGridReleaseDate;
+    private static decode;
+    private static utf8_decode;
+    static setLicenseKey(licenseKey: string): void;
+    private static extractBracketedInformation;
+    private outputInvalidLicenseKey;
+    private outputExpiredTrialKey;
+    private outputMissingLicenseKey;
+    private outputIncompatibleVersion;
+}
