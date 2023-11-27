@@ -116,11 +116,12 @@ function currencyFormatter(params: ValueFormatterParams) {
 }
 
 function numberValueSetter(params: ValueSetterParams) {
-    if (isNaN(parseFloat(params.newValue)) || !isFinite(params.newValue)) {
+    const valueAsNumber = parseFloat(params.newValue);
+    if (isNaN(valueAsNumber) || !isFinite(params.newValue)) {
         return false // don't set invalid numbers!
     }
 
-    params.data.price = params.newValue
+    params.data.price = valueAsNumber;
 
     return true
 }

@@ -9,7 +9,7 @@ export default {
       <div style="margin-top: 20px;">Just to emphasise that anything can go in here, here is an image!!</div>
       <div>
         <img src="https://www.ag-grid.com/images/ag-Grid2-200.png"
-             style="width: 150px; text-align: center; padding: 10px; margin: 10px; border: 1px solid lightgrey;"/>
+             style="width: 150px; text-align: center; padding: 10px; margin: 10px; border: 1px solid lightgrey; background-color: white;"/>
       </div>
       </div>
     `,
