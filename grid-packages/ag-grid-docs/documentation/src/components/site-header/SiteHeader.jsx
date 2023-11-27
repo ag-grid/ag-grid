@@ -26,12 +26,12 @@ const links = [
     },
     {
         name: 'Docs',
-        url: withPrefix('/getting-started'),
+        url: '/getting-started',
         docsLink: true,
     },
     {
         name: 'API',
-        url: withPrefix('/reference'),
+        url: '/reference',
         docsLink: true,
     },
     {
@@ -85,7 +85,7 @@ const HeaderLinks = ({ path, isOpen, toggleIsOpen, currentFramework }) => {
             <li key={link.name.toLocaleLowerCase()} className={linkClasses}>
                 <a
                     className={styles.navLink}
-                    href={link.docsLink ? `/${currentFramework}-data-grid${link.url}` : link.url}
+                    href={link.docsLink ? withPrefix(`/${currentFramework}-data-grid${link.url}`) : link.url}
                     onClick={() => {
                         if (isOpen) {
                             toggleIsOpen();
