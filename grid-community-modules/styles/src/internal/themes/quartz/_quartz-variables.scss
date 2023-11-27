@@ -23,8 +23,8 @@
     --ag-icon-font-color: color-mix(in srgb, transparent, var(--ag-foreground-color) 90%);
     
     // derived colours (no color blending - these are shared by dark mode)
-    --ag-selected-row-background-color: color-mix(in srgb, transparent, var(--ag-active-color) 30%);
-    --ag-row-hover-color: color-mix(in srgb, transparent, var(--ag-foreground-color) 5%);
+    --ag-selected-row-background-color: color-mix(in srgb, transparent, var(--ag-active-color) 8%);
+    --ag-row-hover-color: color-mix(in srgb, transparent, var(--ag-active-color) 12%);
     --ag-column-hover-color: color-mix(in srgb, transparent, var(--ag-foreground-color) 5%);
     --ag-input-focus-border-color: var(--ag-active-color);
     --ag-input-focus-box-shadow: 0 0 0 3px color-mix(in srgb, transparent, var(--ag-input-focus-border-color) 47%);
@@ -103,6 +103,8 @@
     --ag-input-border-color: var(--ag-border-color);
     --ag-input-disabled-border-color: rgba(255,255,255,0.07);
     --ag-checkbox-unchecked-color: color-mix(in srgb, var(--ag-background-color), var(--ag-foreground-color) 40%);
+    --ag-row-hover-color: color-mix(in srgb, transparent, var(--ag-active-color) 20%);
+    --ag-selected-row-background-color: var(--ag-row-hover-color);
 
     --ag-advanced-filter-join-pill-color: #7a3a37;
     --ag-advanced-filter-column-pill-color: #355f2d;
