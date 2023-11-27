@@ -24,14 +24,14 @@ const Version = ({ date, version, blogUrl, highlights }) => {
                 <span className={`${styles['text-secondary']} ${styles['font-size-small']}`}>{date}</span>
                 <div className={styles.flex}>
                     <b className={styles['font-size-large']}>Version {version}</b>
-                    <a className={styles.bloglink} href={blogHref}>What's new →</a>
+                    <a className={styles.bloglink} href={blogHref}>Read more →</a>
                 </div> 
                     <span class={styles.line}></span>
                 
                 </header>
 
                 <p className={styles['font-size-small']}>
-                    {isMajor ? 'Major' : 'Minor'} release with new features and bug fixes.
+                 Feature Highlights
                 </p>
 
                 {highlights?.length > 0 && (
