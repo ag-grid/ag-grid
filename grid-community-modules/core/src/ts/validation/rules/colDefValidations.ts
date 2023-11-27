@@ -8,7 +8,7 @@ const COLUMN_DEFINITION_DEPRECATIONS: Deprecations<ColDef | ColGroupDef> = {
 };
 
 const CSRM_REQUIRES_ROW_GROUP_MODULE = (_options: never, gridOptions: GridOptions) => {
-    if (gridOptions.rowModelType ?? 'clientSide' === 'clientSide') {
+    if ((gridOptions.rowModelType ?? 'clientSide') === 'clientSide') {
         return { module: ModuleNames.RowGroupingModule };
     }
     return null;
