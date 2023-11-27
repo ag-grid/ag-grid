@@ -314,8 +314,13 @@ To override the default component, register the custom component in the GridOpti
 
 <framework-specific-section frameworks="react">
 <snippet transform={false} language="jsx">
+| const components = useMemo(() => (
+|    { agDateInput: CustomDateComponent,
+|      agColumnHeader: CustomHeaderComponent 
+|    }), []);
+|
 |&lt;AgGridReact
-|    components={{ agDateInput: CustomDateComponent, agColumnHeader: CustomHeaderComponent }}
+|    components={components}
 |    ...other properties...
 |/>
 </snippet>
