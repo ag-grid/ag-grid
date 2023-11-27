@@ -33,7 +33,7 @@ columnDefs: [
 
 ## Enabling Date as String Cell Editor
 
-`agDateStringCellEditor`` allows users to edit dates which works with cell values of type [String](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String). Edit any of the cells in the grid below and note the editor is displayed.
+`agDateStringCellEditor` allows users to edit dates which works with cell values of type [String](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String). Edit any of the cells in the grid below and note the editor is displayed.
 
 <grid-example title='Date as String Editor' name='date-as-string-editor' type='generated' options='{ "modules": ["clientside"] }'></grid-example>
 
