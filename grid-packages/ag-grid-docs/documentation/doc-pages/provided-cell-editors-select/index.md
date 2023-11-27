@@ -6,7 +6,7 @@ Simple editor that uses HTML `select`.
 
 ## Enabling Select Cell Editor
 
-Edit any cell in the grid below and note the `agSelectCellEditor` is displayed:
+`agSelectCellEditor` allows users to select a cell value from a list of provided values. Edit any cell in the grid below and note the `agSelectCellEditor` is displayed:
 
 <grid-example title='Select Editor' name='select-editor' type='generated' options='{ "modules": ["clientside"] }'></grid-example>
 
@@ -49,7 +49,7 @@ columnDefs: [
 
 ### List Size
 
-The `agSelectCellEditor` allows to customise the size of the list popup when opened. Edit cells in the two columns note the popup in the editors in the right column is displayed with a specified size.
+The `agSelectCellEditor` allows to customise the size of the list popup when opened. Edit cells in the two columns and note the popup in the editors in the right column is displayed with a specified size.
 
 <grid-example title='Select Editor Max Height and Max Width' name='select-editor-max-height-and-width' type='generated' options='{ "modules": ["clientside"] }'></grid-example>
 
