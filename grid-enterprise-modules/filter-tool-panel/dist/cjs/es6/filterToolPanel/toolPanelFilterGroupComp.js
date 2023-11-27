@@ -185,4 +185,3 @@ __decorate([
     core_1.PostConstruct
 ], ToolPanelFilterGroupComp.prototype, "init", null);
 exports.ToolPanelFilterGroupComp = ToolPanelFilterGroupComp;
-//# sourceMappingURL=toolPanelFilterGroupComp.js.map

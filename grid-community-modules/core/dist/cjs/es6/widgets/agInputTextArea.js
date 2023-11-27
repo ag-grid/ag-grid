@@ -21,5 +21,3 @@ class AgInputTextArea extends agAbstractInputField_1.AgAbstractInputField {
     }
 }
 exports.AgInputTextArea = AgInputTextArea;
-
-//# sourceMappingURL=agInputTextArea.js.map

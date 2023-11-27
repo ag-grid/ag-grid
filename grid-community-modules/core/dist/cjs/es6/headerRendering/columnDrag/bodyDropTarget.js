@@ -105,5 +105,3 @@ __decorate([
     context_1.PostConstruct
 ], BodyDropTarget.prototype, "init", null);
 exports.BodyDropTarget = BodyDropTarget;
-
-//# sourceMappingURL=bodyDropTarget.js.map

@@ -179,4 +179,3 @@ __decorate([
 __decorate([
     PostConstruct
 ], FontPanel.prototype, "init", null);
-//# sourceMappingURL=fontPanel.js.map

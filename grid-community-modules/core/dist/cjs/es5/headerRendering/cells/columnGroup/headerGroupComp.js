@@ -139,5 +139,3 @@ var HeaderGroupComp = /** @class */ (function (_super) {
     return HeaderGroupComp;
 }(component_1.Component));
 exports.HeaderGroupComp = HeaderGroupComp;
-
-//# sourceMappingURL=headerGroupComp.js.map

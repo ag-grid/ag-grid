@@ -185,5 +185,3 @@ var EventService = /** @class */ (function () {
     return EventService;
 }());
 export { EventService };
-
-//# sourceMappingURL=eventService.js.map

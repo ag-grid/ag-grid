@@ -64,5 +64,3 @@ var LocaleService = /** @class */ (function (_super) {
     return LocaleService;
 }(BeanStub));
 export { LocaleService };
-
-//# sourceMappingURL=localeService.js.map

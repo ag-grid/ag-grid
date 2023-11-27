@@ -63,5 +63,3 @@ class TabGuardComp extends component_1.Component {
     }
 }
 exports.TabGuardComp = TabGuardComp;
-
-//# sourceMappingURL=tabGuardComp.js.map

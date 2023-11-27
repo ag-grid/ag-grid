@@ -359,4 +359,3 @@ var SideBarComp = /** @class */ (function (_super) {
     return SideBarComp;
 }(Component));
 export { SideBarComp };
-//# sourceMappingURL=sideBarComp.js.map

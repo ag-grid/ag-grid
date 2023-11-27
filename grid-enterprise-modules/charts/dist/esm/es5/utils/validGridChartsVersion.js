@@ -101,4 +101,3 @@ export function validGridChartsVersion(_a) {
         message: validGridChartsVersionErrorMessage({ type: 'invalid', gridVersion: gridVersion, chartsVersion: chartsVersion })
     };
 }
-//# sourceMappingURL=validGridChartsVersion.js.map

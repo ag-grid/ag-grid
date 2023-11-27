@@ -48,4 +48,3 @@ var MiniColumn = /** @class */ (function (_super) {
     return MiniColumn;
 }(miniChartWithAxes_1.MiniChartWithAxes));
 exports.MiniColumn = MiniColumn;
-//# sourceMappingURL=miniColumn.js.map

@@ -144,5 +144,3 @@ __decorate([
     context_1.PostConstruct
 ], CheckboxSelectionComponent.prototype, "postConstruct", null);
 exports.CheckboxSelectionComponent = CheckboxSelectionComponent;
-
-//# sourceMappingURL=checkboxSelectionComponent.js.map

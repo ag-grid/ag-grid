@@ -102,5 +102,3 @@ var AgSlider = /** @class */ (function (_super) {
     return AgSlider;
 }(agAbstractLabel_1.AgAbstractLabel));
 exports.AgSlider = AgSlider;
-
-//# sourceMappingURL=agSlider.js.map

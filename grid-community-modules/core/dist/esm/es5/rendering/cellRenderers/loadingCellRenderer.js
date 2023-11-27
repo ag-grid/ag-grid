@@ -60,5 +60,3 @@ var LoadingCellRenderer = /** @class */ (function (_super) {
     return LoadingCellRenderer;
 }(Component));
 export { LoadingCellRenderer };
-
-//# sourceMappingURL=loadingCellRenderer.js.map

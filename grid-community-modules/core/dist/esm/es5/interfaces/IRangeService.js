@@ -8,5 +8,3 @@ export var CellRangeType;
     CellRangeType[CellRangeType["VALUE"] = 0] = "VALUE";
     CellRangeType[CellRangeType["DIMENSION"] = 1] = "DIMENSION";
 })(CellRangeType || (CellRangeType = {}));
-
-//# sourceMappingURL=IRangeService.js.map

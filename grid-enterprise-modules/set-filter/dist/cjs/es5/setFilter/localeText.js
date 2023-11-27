@@ -10,4 +10,3 @@ exports.DEFAULT_LOCALE_TEXT = {
     addCurrentSelectionToFilter: 'Add current selection to filter',
     noMatches: 'No matches.'
 };
-//# sourceMappingURL=localeText.js.map

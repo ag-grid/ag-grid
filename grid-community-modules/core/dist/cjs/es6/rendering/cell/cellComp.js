@@ -421,5 +421,3 @@ class CellComp extends component_1.Component {
     }
 }
 exports.CellComp = CellComp;
-
-//# sourceMappingURL=cellComp.js.map

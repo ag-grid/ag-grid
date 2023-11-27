@@ -220,5 +220,3 @@ var GroupResizeFeature = /** @class */ (function (_super) {
     return GroupResizeFeature;
 }(beanStub_1.BeanStub));
 exports.GroupResizeFeature = GroupResizeFeature;
-
-//# sourceMappingURL=groupResizeFeature.js.map

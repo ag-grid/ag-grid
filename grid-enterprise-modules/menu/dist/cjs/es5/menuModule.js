@@ -16,4 +16,3 @@ exports.MenuModule = {
         core_2.EnterpriseCoreModule
     ]
 };
-//# sourceMappingURL=menuModule.js.map

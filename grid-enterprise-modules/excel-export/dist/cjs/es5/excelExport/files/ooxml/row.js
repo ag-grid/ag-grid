@@ -82,4 +82,3 @@ var rowFactory = {
     }
 };
 exports.default = rowFactory;
-//# sourceMappingURL=row.js.map

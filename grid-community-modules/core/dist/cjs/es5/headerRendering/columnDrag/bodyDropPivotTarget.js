@@ -88,5 +88,3 @@ var BodyDropPivotTarget = /** @class */ (function () {
     return BodyDropPivotTarget;
 }());
 exports.BodyDropPivotTarget = BodyDropPivotTarget;
-
-//# sourceMappingURL=bodyDropPivotTarget.js.map

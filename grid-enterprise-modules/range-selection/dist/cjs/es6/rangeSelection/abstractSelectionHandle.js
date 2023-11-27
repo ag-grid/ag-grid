@@ -179,4 +179,3 @@ __decorate([
     core_1.PostConstruct
 ], AbstractSelectionHandle.prototype, "init", null);
 exports.AbstractSelectionHandle = AbstractSelectionHandle;
-//# sourceMappingURL=abstractSelectionHandle.js.map

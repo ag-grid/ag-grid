@@ -56,5 +56,3 @@ ValueFormatterService = __decorate([
     (0, context_1.Bean)('valueFormatterService')
 ], ValueFormatterService);
 exports.ValueFormatterService = ValueFormatterService;
-
-//# sourceMappingURL=valueFormatterService.js.map

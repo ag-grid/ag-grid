@@ -21,5 +21,3 @@ var FloatingFilterMapper = /** @class */ (function () {
     return FloatingFilterMapper;
 }());
 export { FloatingFilterMapper };
-
-//# sourceMappingURL=floatingFilterMapper.js.map

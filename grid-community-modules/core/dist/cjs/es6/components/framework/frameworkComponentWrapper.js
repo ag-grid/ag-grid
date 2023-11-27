@@ -31,5 +31,3 @@ class BaseComponentWrapper {
     }
 }
 exports.BaseComponentWrapper = BaseComponentWrapper;
-
-//# sourceMappingURL=frameworkComponentWrapper.js.map

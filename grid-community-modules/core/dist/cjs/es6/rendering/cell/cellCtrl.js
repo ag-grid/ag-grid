@@ -942,5 +942,3 @@ class CellCtrl extends beanStub_1.BeanStub {
 }
 exports.CellCtrl = CellCtrl;
 CellCtrl.DOM_DATA_KEY_CELL_CTRL = 'cellCtrl';
-
-//# sourceMappingURL=cellCtrl.js.map

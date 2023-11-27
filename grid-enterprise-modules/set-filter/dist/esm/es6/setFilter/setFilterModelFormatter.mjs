@@ -11,4 +11,3 @@ export class SetFilterModelFormatter {
         return `(${numValues}) ${formattedValues.join(',')}${numValues > 10 ? ',...' : ''}`;
     }
 }
-//# sourceMappingURL=setFilterModelFormatter.js.map

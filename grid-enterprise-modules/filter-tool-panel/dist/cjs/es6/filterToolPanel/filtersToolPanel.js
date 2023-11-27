@@ -103,4 +103,3 @@ __decorate([
     (0, core_1.RefSelector)('filtersToolPanelListPanel')
 ], FiltersToolPanel.prototype, "filtersToolPanelListPanel", void 0);
 exports.FiltersToolPanel = FiltersToolPanel;
-//# sourceMappingURL=filtersToolPanel.js.map

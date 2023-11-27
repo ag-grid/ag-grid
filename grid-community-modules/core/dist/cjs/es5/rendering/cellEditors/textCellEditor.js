@@ -63,5 +63,3 @@ var TextCellEditor = /** @class */ (function (_super) {
     return TextCellEditor;
 }(simpleCellEditor_1.SimpleCellEditor));
 exports.TextCellEditor = TextCellEditor;
-
-//# sourceMappingURL=textCellEditor.js.map

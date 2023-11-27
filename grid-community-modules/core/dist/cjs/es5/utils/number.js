@@ -57,5 +57,3 @@ function sum(values) {
     return values == null ? null : values.reduce(function (total, value) { return total + value; }, 0);
 }
 exports.sum = sum;
-
-//# sourceMappingURL=number.js.map

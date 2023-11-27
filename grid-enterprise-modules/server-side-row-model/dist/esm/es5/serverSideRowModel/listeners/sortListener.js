@@ -95,4 +95,3 @@ var SortListener = /** @class */ (function (_super) {
     return SortListener;
 }(BeanStub));
 export { SortListener };
-//# sourceMappingURL=sortListener.js.map

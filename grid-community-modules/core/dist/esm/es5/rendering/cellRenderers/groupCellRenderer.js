@@ -100,5 +100,3 @@ var GroupCellRenderer = /** @class */ (function (_super) {
     return GroupCellRenderer;
 }(Component));
 export { GroupCellRenderer };
-
-//# sourceMappingURL=groupCellRenderer.js.map

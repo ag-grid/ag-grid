@@ -107,4 +107,3 @@ export class CartesianChartProxy extends ChartProxy {
         multiSelection ? this.crossFilteringSelectedPoints.push(value) : this.crossFilteringSelectedPoints = [value];
     }
 }
-//# sourceMappingURL=cartesianChartProxy.js.map

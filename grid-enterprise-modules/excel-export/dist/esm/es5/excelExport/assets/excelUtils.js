@@ -101,4 +101,3 @@ export var getExcelColumnName = function (colIdx) {
     }
     return getExcelColumnName(pos) + fromCharCode(startCode + tableIdx - 1);
 };
-//# sourceMappingURL=excelUtils.js.map

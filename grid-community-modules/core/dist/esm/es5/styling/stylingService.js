@@ -114,5 +114,3 @@ var StylingService = /** @class */ (function (_super) {
     return StylingService;
 }(BeanStub));
 export { StylingService };
-
-//# sourceMappingURL=stylingService.js.map

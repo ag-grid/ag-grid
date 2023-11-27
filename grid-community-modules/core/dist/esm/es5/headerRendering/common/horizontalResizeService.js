@@ -81,5 +81,3 @@ var HorizontalResizeService = /** @class */ (function (_super) {
     return HorizontalResizeService;
 }(BeanStub));
 export { HorizontalResizeService };
-
-//# sourceMappingURL=horizontalResizeService.js.map

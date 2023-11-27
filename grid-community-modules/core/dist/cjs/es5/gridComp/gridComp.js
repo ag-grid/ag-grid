@@ -119,5 +119,3 @@ var GridComp = /** @class */ (function (_super) {
     return GridComp;
 }(tabGuardComp_1.TabGuardComp));
 exports.GridComp = GridComp;
-
-//# sourceMappingURL=gridComp.js.map

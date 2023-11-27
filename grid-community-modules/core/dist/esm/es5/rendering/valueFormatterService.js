@@ -74,5 +74,3 @@ var ValueFormatterService = /** @class */ (function (_super) {
     return ValueFormatterService;
 }(BeanStub));
 export { ValueFormatterService };
-
-//# sourceMappingURL=valueFormatterService.js.map

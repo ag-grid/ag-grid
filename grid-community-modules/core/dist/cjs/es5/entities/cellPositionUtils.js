@@ -49,5 +49,3 @@ var CellPositionUtils = /** @class */ (function (_super) {
     return CellPositionUtils;
 }(beanStub_1.BeanStub));
 exports.CellPositionUtils = CellPositionUtils;
-
-//# sourceMappingURL=cellPositionUtils.js.map

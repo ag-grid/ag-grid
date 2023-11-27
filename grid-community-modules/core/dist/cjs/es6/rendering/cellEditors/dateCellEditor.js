@@ -42,5 +42,3 @@ class DateCellEditor extends simpleCellEditor_1.SimpleCellEditor {
     }
 }
 exports.DateCellEditor = DateCellEditor;
-
-//# sourceMappingURL=dateCellEditor.js.map

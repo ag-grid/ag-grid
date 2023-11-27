@@ -344,5 +344,3 @@ var VirtualList = /** @class */ (function (_super) {
     return VirtualList;
 }(tabGuardComp_1.TabGuardComp));
 exports.VirtualList = VirtualList;
-
-//# sourceMappingURL=virtualList.js.map

@@ -12,5 +12,3 @@ var ClientSideRowModelSteps;
     ClientSideRowModelSteps["PIVOT"] = "pivot";
     ClientSideRowModelSteps["NOTHING"] = "nothing";
 })(ClientSideRowModelSteps = exports.ClientSideRowModelSteps || (exports.ClientSideRowModelSteps = {}));
-
-//# sourceMappingURL=iClientSideRowModel.js.map

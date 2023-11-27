@@ -159,4 +159,3 @@ PivotStage = __decorate([
     (0, core_1.Bean)('pivotStage')
 ], PivotStage);
 exports.PivotStage = PivotStage;
-//# sourceMappingURL=pivotStage.js.map

@@ -77,5 +77,3 @@ var CenterWidthFeature = /** @class */ (function (_super) {
     return CenterWidthFeature;
 }(BeanStub));
 export { CenterWidthFeature };
-
-//# sourceMappingURL=centerWidthFeature.js.map

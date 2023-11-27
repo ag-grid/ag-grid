@@ -77,4 +77,3 @@ export class MiniCustomCombo extends MiniChart {
     }
 }
 MiniCustomCombo.chartType = 'customCombo';
-//# sourceMappingURL=miniCustomCombo.js.map

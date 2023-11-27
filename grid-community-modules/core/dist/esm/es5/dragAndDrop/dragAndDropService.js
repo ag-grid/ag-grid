@@ -482,5 +482,3 @@ var DragAndDropService = /** @class */ (function (_super) {
     return DragAndDropService;
 }(BeanStub));
 export { DragAndDropService };
-
-//# sourceMappingURL=dragAndDropService.js.map

@@ -13,4 +13,3 @@ var cellStylesFactory = {
     }
 };
 export default cellStylesFactory;
-//# sourceMappingURL=cellStyles.js.map

@@ -44,5 +44,3 @@ var CtrlsFactory = /** @class */ (function (_super) {
     return CtrlsFactory;
 }(BeanStub));
 export { CtrlsFactory };
-
-//# sourceMappingURL=ctrlsFactory.js.map

@@ -142,5 +142,3 @@ AutoWidthCalculator = __decorate([
     (0, context_1.Bean)('autoWidthCalculator')
 ], AutoWidthCalculator);
 exports.AutoWidthCalculator = AutoWidthCalculator;
-
-//# sourceMappingURL=autoWidthCalculator.js.map

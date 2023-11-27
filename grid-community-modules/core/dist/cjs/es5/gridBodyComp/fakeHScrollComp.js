@@ -133,5 +133,3 @@ var FakeHScrollComp = /** @class */ (function (_super) {
     return FakeHScrollComp;
 }(abstractFakeScrollComp_1.AbstractFakeScrollComp));
 exports.FakeHScrollComp = FakeHScrollComp;
-
-//# sourceMappingURL=fakeHScrollComp.js.map

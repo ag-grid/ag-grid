@@ -197,5 +197,3 @@ var SelectAllFeature = /** @class */ (function (_super) {
     return SelectAllFeature;
 }(BeanStub));
 export { SelectAllFeature };
-
-//# sourceMappingURL=selectAllFeature.js.map

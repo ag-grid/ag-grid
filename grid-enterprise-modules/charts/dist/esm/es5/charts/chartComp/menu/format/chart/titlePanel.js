@@ -146,4 +146,3 @@ var TitlePanel = /** @class */ (function (_super) {
     return TitlePanel;
 }(Component));
 export default TitlePanel;
-//# sourceMappingURL=titlePanel.js.map

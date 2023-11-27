@@ -27,4 +27,3 @@ var officeTheme = {
     }
 };
 export default officeTheme;
-//# sourceMappingURL=office.js.map

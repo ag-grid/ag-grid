@@ -231,5 +231,3 @@ SortController = SortController_1 = __decorate([
     (0, context_1.Bean)('sortController')
 ], SortController);
 exports.SortController = SortController;
-
-//# sourceMappingURL=sortController.js.map

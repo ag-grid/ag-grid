@@ -53,5 +53,3 @@ __decorate([
     (0, componentAnnotations_1.RefSelector)('eCheckbox')
 ], CheckboxCellEditor.prototype, "eCheckbox", void 0);
 exports.CheckboxCellEditor = CheckboxCellEditor;
-
-//# sourceMappingURL=checkboxCellEditor.js.map

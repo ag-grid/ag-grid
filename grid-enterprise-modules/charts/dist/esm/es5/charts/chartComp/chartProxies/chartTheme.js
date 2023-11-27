@@ -151,4 +151,3 @@ export function lookupCustomChartTheme(chartProxyParams, name) {
     }
     return customChartTheme;
 }
-//# sourceMappingURL=chartTheme.js.map

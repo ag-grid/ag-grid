@@ -64,5 +64,3 @@ var OptionsFactory = /** @class */ (function () {
     return OptionsFactory;
 }());
 export { OptionsFactory };
-
-//# sourceMappingURL=optionsFactory.js.map

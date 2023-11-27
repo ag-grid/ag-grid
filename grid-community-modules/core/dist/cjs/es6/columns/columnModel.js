@@ -3532,5 +3532,3 @@ ColumnModel = __decorate([
     (0, context_1.Bean)('columnModel')
 ], ColumnModel);
 exports.ColumnModel = ColumnModel;
-
-//# sourceMappingURL=columnModel.js.map

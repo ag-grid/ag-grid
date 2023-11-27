@@ -90,5 +90,3 @@ var ScrollVisibleService = /** @class */ (function (_super) {
     return ScrollVisibleService;
 }(BeanStub));
 export { ScrollVisibleService };
-
-//# sourceMappingURL=scrollVisibleService.js.map

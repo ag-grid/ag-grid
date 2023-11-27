@@ -66,5 +66,3 @@ TemplateService = __decorate([
     (0, context_1.Bean)('templateService')
 ], TemplateService);
 exports.TemplateService = TemplateService;
-
-//# sourceMappingURL=templateService.js.map

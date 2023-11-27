@@ -1051,4 +1051,3 @@ ClientSideRowModel = __decorate([
     Bean('rowModel')
 ], ClientSideRowModel);
 export { ClientSideRowModel };
-//# sourceMappingURL=clientSideRowModel.js.map

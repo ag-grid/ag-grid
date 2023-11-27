@@ -92,4 +92,3 @@ var SparklineCellRenderer = /** @class */ (function (_super) {
     return SparklineCellRenderer;
 }(core_1.Component));
 exports.SparklineCellRenderer = SparklineCellRenderer;
-//# sourceMappingURL=sparklineCellRenderer.js.map

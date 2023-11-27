@@ -394,5 +394,3 @@ var GridCoreCreator = /** @class */ (function () {
     return GridCoreCreator;
 }());
 exports.GridCoreCreator = GridCoreCreator;
-
-//# sourceMappingURL=grid.js.map

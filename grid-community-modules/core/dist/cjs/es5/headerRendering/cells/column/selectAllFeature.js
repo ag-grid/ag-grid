@@ -200,5 +200,3 @@ var SelectAllFeature = /** @class */ (function (_super) {
     return SelectAllFeature;
 }(beanStub_1.BeanStub));
 exports.SelectAllFeature = SelectAllFeature;
-
-//# sourceMappingURL=selectAllFeature.js.map

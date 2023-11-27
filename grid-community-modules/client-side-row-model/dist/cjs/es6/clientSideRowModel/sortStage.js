@@ -39,4 +39,3 @@ SortStage = __decorate([
     (0, core_1.Bean)('sortStage')
 ], SortStage);
 exports.SortStage = SortStage;
-//# sourceMappingURL=sortStage.js.map

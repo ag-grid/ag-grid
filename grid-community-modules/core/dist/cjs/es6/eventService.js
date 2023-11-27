@@ -180,5 +180,3 @@ EventService = __decorate([
     (0, context_1.Bean)('eventService')
 ], EventService);
 exports.EventService = EventService;
-
-//# sourceMappingURL=eventService.js.map

@@ -90,4 +90,3 @@ export class PieChartProxy extends ChartProxy {
         // not required in pie charts
     }
 }
-//# sourceMappingURL=pieChartProxy.js.map

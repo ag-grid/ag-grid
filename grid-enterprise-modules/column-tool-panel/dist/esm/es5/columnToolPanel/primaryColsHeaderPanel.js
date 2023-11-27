@@ -139,4 +139,3 @@ var PrimaryColsHeaderPanel = /** @class */ (function (_super) {
     return PrimaryColsHeaderPanel;
 }(Component));
 export { PrimaryColsHeaderPanel };
-//# sourceMappingURL=primaryColsHeaderPanel.js.map

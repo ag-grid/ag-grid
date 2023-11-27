@@ -65,5 +65,3 @@ var Logger = /** @class */ (function () {
     return Logger;
 }());
 export { Logger };
-
-//# sourceMappingURL=logger.js.map

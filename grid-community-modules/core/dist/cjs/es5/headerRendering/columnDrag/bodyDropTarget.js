@@ -124,5 +124,3 @@ var BodyDropTarget = /** @class */ (function (_super) {
     return BodyDropTarget;
 }(beanStub_1.BeanStub));
 exports.BodyDropTarget = BodyDropTarget;
-
-//# sourceMappingURL=bodyDropTarget.js.map

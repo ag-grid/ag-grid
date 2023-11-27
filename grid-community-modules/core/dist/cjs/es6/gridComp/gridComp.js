@@ -108,5 +108,3 @@ __decorate([
     context_1.PostConstruct
 ], GridComp.prototype, "postConstruct", null);
 exports.GridComp = GridComp;
-
-//# sourceMappingURL=gridComp.js.map

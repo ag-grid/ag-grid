@@ -85,5 +85,3 @@ var DndSourceComp = /** @class */ (function (_super) {
     return DndSourceComp;
 }(component_1.Component));
 exports.DndSourceComp = DndSourceComp;
-
-//# sourceMappingURL=dndSourceComp.js.map

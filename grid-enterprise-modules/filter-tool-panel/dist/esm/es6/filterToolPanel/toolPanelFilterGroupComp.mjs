@@ -181,4 +181,3 @@ __decorate([
 __decorate([
     PostConstruct
 ], ToolPanelFilterGroupComp.prototype, "init", null);
-//# sourceMappingURL=toolPanelFilterGroupComp.js.map

@@ -323,4 +323,3 @@ __decorate([
 __decorate([
     PostConstruct
 ], ChartMenu.prototype, "postConstruct", null);
-//# sourceMappingURL=chartMenu.js.map

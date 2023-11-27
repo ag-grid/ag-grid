@@ -94,4 +94,3 @@ var contentTypesFactory = {
     }
 };
 export default contentTypesFactory;
-//# sourceMappingURL=contentTypes.js.map

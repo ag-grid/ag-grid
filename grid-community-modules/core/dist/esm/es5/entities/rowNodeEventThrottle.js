@@ -79,5 +79,3 @@ var RowNodeEventThrottle = /** @class */ (function (_super) {
     return RowNodeEventThrottle;
 }(BeanStub));
 export { RowNodeEventThrottle };
-
-//# sourceMappingURL=rowNodeEventThrottle.js.map

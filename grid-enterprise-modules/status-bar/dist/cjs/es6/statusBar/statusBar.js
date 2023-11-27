@@ -118,4 +118,3 @@ __decorate([
     core_1.PreDestroy
 ], StatusBar.prototype, "destroyComponents", null);
 exports.StatusBar = StatusBar;
-//# sourceMappingURL=statusBar.js.map

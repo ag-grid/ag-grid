@@ -198,5 +198,3 @@ var ColumnApi = /** @class */ (function () {
     return ColumnApi;
 }());
 exports.ColumnApi = ColumnApi;
-
-//# sourceMappingURL=columnApi.js.map

@@ -67,5 +67,3 @@ var LayoutFeature = /** @class */ (function (_super) {
     return LayoutFeature;
 }(BeanStub));
 export { LayoutFeature };
-
-//# sourceMappingURL=layoutFeature.js.map

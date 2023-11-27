@@ -115,4 +115,3 @@ FormatPanel.TEMPLATE = `<div class="ag-chart-format-wrapper"></div>`;
 __decorate([
     PostConstruct
 ], FormatPanel.prototype, "init", null);
-//# sourceMappingURL=formatPanel.js.map

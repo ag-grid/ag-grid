@@ -312,5 +312,3 @@ var DragService = /** @class */ (function (_super) {
     return DragService;
 }(beanStub_1.BeanStub));
 exports.DragService = DragService;
-
-//# sourceMappingURL=dragService.js.map

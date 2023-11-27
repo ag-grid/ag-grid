@@ -307,4 +307,3 @@ var LicenseManager = /** @class */ (function () {
     return LicenseManager;
 }());
 exports.LicenseManager = LicenseManager;
-//# sourceMappingURL=licenseManager.js.map

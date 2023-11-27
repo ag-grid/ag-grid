@@ -42,5 +42,3 @@ class VanillaFrameworkOverrides {
     }
 }
 exports.VanillaFrameworkOverrides = VanillaFrameworkOverrides;
-
-//# sourceMappingURL=vanillaFrameworkOverrides.js.map

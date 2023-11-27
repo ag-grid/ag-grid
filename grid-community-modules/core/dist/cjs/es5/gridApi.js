@@ -2181,5 +2181,3 @@ var GridApi = /** @class */ (function () {
     return GridApi;
 }());
 exports.GridApi = GridApi;
-
-//# sourceMappingURL=gridApi.js.map

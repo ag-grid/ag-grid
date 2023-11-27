@@ -165,4 +165,3 @@ var ChartOptionsService = /** @class */ (function (_super) {
     return ChartOptionsService;
 }(core_1.BeanStub));
 exports.ChartOptionsService = ChartOptionsService;
-//# sourceMappingURL=chartOptionsService.js.map

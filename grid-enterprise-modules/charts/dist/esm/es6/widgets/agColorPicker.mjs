@@ -70,4 +70,3 @@ export class AgColorPicker extends AgPickerField {
         return this.value;
     }
 }
-//# sourceMappingURL=agColorPicker.js.map

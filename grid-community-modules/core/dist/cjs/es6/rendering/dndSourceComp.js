@@ -66,5 +66,3 @@ __decorate([
     context_1.PostConstruct
 ], DndSourceComp.prototype, "postConstruct", null);
 exports.DndSourceComp = DndSourceComp;
-
-//# sourceMappingURL=dndSourceComp.js.map

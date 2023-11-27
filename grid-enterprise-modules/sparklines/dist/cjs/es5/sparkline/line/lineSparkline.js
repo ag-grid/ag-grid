@@ -295,4 +295,3 @@ var LineSparkline = /** @class */ (function (_super) {
     return LineSparkline;
 }(sparkline_1.Sparkline));
 exports.LineSparkline = LineSparkline;
-//# sourceMappingURL=lineSparkline.js.map

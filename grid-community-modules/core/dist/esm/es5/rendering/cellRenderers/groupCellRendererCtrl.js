@@ -581,5 +581,3 @@ var GroupCellRendererCtrl = /** @class */ (function (_super) {
     return GroupCellRendererCtrl;
 }(BeanStub));
 export { GroupCellRendererCtrl };
-
-//# sourceMappingURL=groupCellRendererCtrl.js.map

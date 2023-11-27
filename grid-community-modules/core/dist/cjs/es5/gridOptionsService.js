@@ -466,5 +466,3 @@ var GridOptionsService = /** @class */ (function () {
     return GridOptionsService;
 }());
 exports.GridOptionsService = GridOptionsService;
-
-//# sourceMappingURL=gridOptionsService.js.map

@@ -87,4 +87,3 @@ __decorate([
     (0, core_1.RefSelector)('primaryColsListPanel')
 ], PrimaryColsPanel.prototype, "primaryColsListPanel", void 0);
 exports.PrimaryColsPanel = PrimaryColsPanel;
-//# sourceMappingURL=primaryColsPanel.js.map

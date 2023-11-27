@@ -44,5 +44,3 @@ var ColumnKeyCreator = /** @class */ (function () {
     return ColumnKeyCreator;
 }());
 export { ColumnKeyCreator };
-
-//# sourceMappingURL=columnKeyCreator.js.map

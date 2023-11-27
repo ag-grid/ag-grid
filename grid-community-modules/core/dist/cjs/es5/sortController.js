@@ -282,5 +282,3 @@ var SortController = /** @class */ (function (_super) {
     return SortController;
 }(beanStub_1.BeanStub));
 exports.SortController = SortController;
-
-//# sourceMappingURL=sortController.js.map

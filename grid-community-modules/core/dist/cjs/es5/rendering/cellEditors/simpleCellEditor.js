@@ -111,5 +111,3 @@ var SimpleCellEditor = /** @class */ (function (_super) {
     return SimpleCellEditor;
 }(popupComponent_1.PopupComponent));
 exports.SimpleCellEditor = SimpleCellEditor;
-
-//# sourceMappingURL=simpleCellEditor.js.map

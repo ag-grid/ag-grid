@@ -341,5 +341,3 @@ var HeaderGroupCellCtrl = /** @class */ (function (_super) {
     return HeaderGroupCellCtrl;
 }(AbstractHeaderCellCtrl));
 export { HeaderGroupCellCtrl };
-
-//# sourceMappingURL=headerGroupCellCtrl.js.map

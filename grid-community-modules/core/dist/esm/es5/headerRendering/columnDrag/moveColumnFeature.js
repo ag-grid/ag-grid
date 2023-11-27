@@ -231,5 +231,3 @@ var MoveColumnFeature = /** @class */ (function () {
     return MoveColumnFeature;
 }());
 export { MoveColumnFeature };
-
-//# sourceMappingURL=moveColumnFeature.js.map

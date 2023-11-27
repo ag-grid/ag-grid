@@ -285,5 +285,3 @@ __decorate([
     context_1.PostConstruct
 ], HeaderRowCtrl.prototype, "postConstruct", null);
 exports.HeaderRowCtrl = HeaderRowCtrl;
-
-//# sourceMappingURL=headerRowCtrl.js.map

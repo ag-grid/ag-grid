@@ -36,5 +36,3 @@ var BaseComponentWrapper = /** @class */ (function () {
     return BaseComponentWrapper;
 }());
 exports.BaseComponentWrapper = BaseComponentWrapper;
-
-//# sourceMappingURL=frameworkComponentWrapper.js.map

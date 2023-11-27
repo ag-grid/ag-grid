@@ -609,5 +609,3 @@ PopupService = PopupService_1 = __decorate([
     (0, context_1.Bean)('popupService')
 ], PopupService);
 exports.PopupService = PopupService;
-
-//# sourceMappingURL=popupService.js.map

@@ -298,4 +298,3 @@ var InfiniteRowModel = /** @class */ (function (_super) {
     return InfiniteRowModel;
 }(core_1.BeanStub));
 exports.InfiniteRowModel = InfiniteRowModel;
-//# sourceMappingURL=infiniteRowModel.js.map

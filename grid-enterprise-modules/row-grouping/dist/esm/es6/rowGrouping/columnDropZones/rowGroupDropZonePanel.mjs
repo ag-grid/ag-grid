@@ -77,4 +77,3 @@ __decorate([
 __decorate([
     PostConstruct
 ], RowGroupDropZonePanel.prototype, "passBeansUp", null);
-//# sourceMappingURL=rowGroupDropZonePanel.js.map

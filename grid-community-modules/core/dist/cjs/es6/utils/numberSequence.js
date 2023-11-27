@@ -19,5 +19,3 @@ class NumberSequence {
     }
 }
 exports.NumberSequence = NumberSequence;
-
-//# sourceMappingURL=numberSequence.js.map

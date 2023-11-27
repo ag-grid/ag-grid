@@ -194,5 +194,3 @@ __decorate([
     context_1.PreDestroy
 ], BeanStub.prototype, "destroy", null);
 exports.BeanStub = BeanStub;
-
-//# sourceMappingURL=beanStub.js.map

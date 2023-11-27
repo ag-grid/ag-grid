@@ -121,5 +121,3 @@ var AgCheckbox = /** @class */ (function (_super) {
     return AgCheckbox;
 }(agAbstractInputField_1.AgAbstractInputField));
 exports.AgCheckbox = AgCheckbox;
-
-//# sourceMappingURL=agCheckbox.js.map

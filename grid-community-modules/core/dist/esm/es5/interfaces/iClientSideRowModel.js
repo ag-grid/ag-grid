@@ -9,5 +9,3 @@ export var ClientSideRowModelSteps;
     ClientSideRowModelSteps["PIVOT"] = "pivot";
     ClientSideRowModelSteps["NOTHING"] = "nothing";
 })(ClientSideRowModelSteps || (ClientSideRowModelSteps = {}));
-
-//# sourceMappingURL=iClientSideRowModel.js.map

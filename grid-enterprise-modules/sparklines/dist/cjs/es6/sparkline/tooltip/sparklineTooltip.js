@@ -100,4 +100,3 @@ class SparklineTooltip {
 }
 exports.SparklineTooltip = SparklineTooltip;
 SparklineTooltip.class = 'ag-sparkline-tooltip';
-//# sourceMappingURL=sparklineTooltip.js.map

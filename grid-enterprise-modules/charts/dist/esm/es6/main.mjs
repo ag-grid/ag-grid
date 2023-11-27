@@ -7,4 +7,3 @@ export const agCharts = {
     AgChart
     // AgChart: AgEnterpriseCharts
 };
-//# sourceMappingURL=main.js.map

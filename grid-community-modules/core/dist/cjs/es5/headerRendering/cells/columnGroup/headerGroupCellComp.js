@@ -79,5 +79,3 @@ var HeaderGroupCellComp = /** @class */ (function (_super) {
     return HeaderGroupCellComp;
 }(abstractHeaderCellComp_1.AbstractHeaderCellComp));
 exports.HeaderGroupCellComp = HeaderGroupCellComp;
-
-//# sourceMappingURL=headerGroupCellComp.js.map

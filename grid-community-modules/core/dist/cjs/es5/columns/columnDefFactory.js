@@ -89,5 +89,3 @@ var ColumnDefFactory = /** @class */ (function () {
     return ColumnDefFactory;
 }());
 exports.ColumnDefFactory = ColumnDefFactory;
-
-//# sourceMappingURL=columnDefFactory.js.map

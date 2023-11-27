@@ -198,5 +198,3 @@ var AgPanel = /** @class */ (function (_super) {
     return AgPanel;
 }(component_1.Component));
 exports.AgPanel = AgPanel;
-
-//# sourceMappingURL=agPanel.js.map

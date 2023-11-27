@@ -47,4 +47,3 @@ export function getSeriesType(chartType) {
             return 'cartesian';
     }
 }
-//# sourceMappingURL=seriesTypeMapper.js.map

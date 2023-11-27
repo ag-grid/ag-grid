@@ -183,4 +183,3 @@ __decorate([
     core_1.PostConstruct
 ], FontPanel.prototype, "init", null);
 exports.FontPanel = FontPanel;
-//# sourceMappingURL=fontPanel.js.map

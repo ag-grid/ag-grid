@@ -301,4 +301,3 @@ var ViewportRowModel = /** @class */ (function (_super) {
     return ViewportRowModel;
 }(BeanStub));
 export { ViewportRowModel };
-//# sourceMappingURL=viewportRowModel.js.map

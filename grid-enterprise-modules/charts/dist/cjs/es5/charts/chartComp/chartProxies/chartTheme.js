@@ -157,4 +157,3 @@ function lookupCustomChartTheme(chartProxyParams, name) {
     return customChartTheme;
 }
 exports.lookupCustomChartTheme = lookupCustomChartTheme;
-//# sourceMappingURL=chartTheme.js.map

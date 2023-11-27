@@ -45,4 +45,3 @@ __decorate([
 __decorate([
     PostConstruct
 ], TotalRowsComp.prototype, "postConstruct", null);
-//# sourceMappingURL=totalRowsComp.js.map

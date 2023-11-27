@@ -59,5 +59,3 @@ __decorate([
     context_1.PostConstruct
 ], FakeVScrollComp.prototype, "postConstruct", null);
 exports.FakeVScrollComp = FakeVScrollComp;
-
-//# sourceMappingURL=fakeVScrollComp.js.map

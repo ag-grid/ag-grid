@@ -215,5 +215,3 @@ var PageSizeSelectorComp = /** @class */ (function (_super) {
     return PageSizeSelectorComp;
 }(Component));
 export { PageSizeSelectorComp };
-
-//# sourceMappingURL=pageSizeSelectorComp.js.map

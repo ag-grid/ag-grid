@@ -344,5 +344,3 @@ __decorate([
     context_1.PostConstruct
 ], RowContainerEventsFeature.prototype, "postConstruct", null);
 exports.RowContainerEventsFeature = RowContainerEventsFeature;
-
-//# sourceMappingURL=rowContainerEventsFeature.js.map

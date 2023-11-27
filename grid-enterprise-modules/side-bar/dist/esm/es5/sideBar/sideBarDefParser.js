@@ -86,4 +86,3 @@ var SideBarDefParser = /** @class */ (function () {
     return SideBarDefParser;
 }());
 export { SideBarDefParser };
-//# sourceMappingURL=sideBarDefParser.js.map

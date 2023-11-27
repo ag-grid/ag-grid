@@ -311,5 +311,3 @@ __decorate([
     context_1.PreConstruct
 ], Component.prototype, "createChildComponentsPreConstruct", null);
 exports.Component = Component;
-
-//# sourceMappingURL=component.js.map

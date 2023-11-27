@@ -444,5 +444,3 @@ var GridBodyCtrl = /** @class */ (function (_super) {
     return GridBodyCtrl;
 }(beanStub_1.BeanStub));
 exports.GridBodyCtrl = GridBodyCtrl;
-
-//# sourceMappingURL=gridBodyCtrl.js.map

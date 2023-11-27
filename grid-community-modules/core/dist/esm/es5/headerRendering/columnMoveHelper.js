@@ -297,5 +297,3 @@ var ColumnMoveHelper = /** @class */ (function () {
     return ColumnMoveHelper;
 }());
 export { ColumnMoveHelper };
-
-//# sourceMappingURL=columnMoveHelper.js.map

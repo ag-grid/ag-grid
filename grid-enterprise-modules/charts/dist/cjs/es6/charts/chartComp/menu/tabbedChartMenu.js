@@ -90,4 +90,3 @@ __decorate([
     core_1.PostConstruct
 ], TabbedChartMenu.prototype, "init", null);
 exports.TabbedChartMenu = TabbedChartMenu;
-//# sourceMappingURL=tabbedChartMenu.js.map

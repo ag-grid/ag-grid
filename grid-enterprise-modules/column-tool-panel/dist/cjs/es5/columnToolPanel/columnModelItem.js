@@ -46,4 +46,3 @@ var ColumnModelItem = /** @class */ (function () {
     return ColumnModelItem;
 }());
 exports.ColumnModelItem = ColumnModelItem;
-//# sourceMappingURL=columnModelItem.js.map

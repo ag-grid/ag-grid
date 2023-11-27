@@ -133,4 +133,3 @@ FlattenStage = __decorate([
     (0, core_1.Bean)('flattenStage')
 ], FlattenStage);
 exports.FlattenStage = FlattenStage;
-//# sourceMappingURL=flattenStage.js.map

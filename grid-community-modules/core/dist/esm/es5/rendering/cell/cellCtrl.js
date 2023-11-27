@@ -985,5 +985,3 @@ var CellCtrl = /** @class */ (function (_super) {
     return CellCtrl;
 }(BeanStub));
 export { CellCtrl };
-
-//# sourceMappingURL=cellCtrl.js.map

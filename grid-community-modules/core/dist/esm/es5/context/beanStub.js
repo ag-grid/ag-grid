@@ -198,5 +198,3 @@ var BeanStub = /** @class */ (function () {
     return BeanStub;
 }());
 export { BeanStub };
-
-//# sourceMappingURL=beanStub.js.map

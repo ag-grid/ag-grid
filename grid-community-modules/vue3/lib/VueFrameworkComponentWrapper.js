@@ -102,4 +102,3 @@ class VueComponent {
         this.element = (_a = element.firstElementChild) !== null && _a !== void 0 ? _a : element;
     }
 }
-//# sourceMappingURL=VueFrameworkComponentWrapper.js.map

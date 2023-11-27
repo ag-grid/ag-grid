@@ -112,4 +112,3 @@ export class CsvSerializingSession extends BaseGridSerializingSession {
         this.isFirstLine = false;
     }
 }
-//# sourceMappingURL=csvSerializingSession.js.map

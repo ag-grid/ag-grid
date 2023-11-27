@@ -234,5 +234,3 @@ var TextFilter = /** @class */ (function (_super) {
     return TextFilter;
 }(SimpleFilter));
 export { TextFilter };
-
-//# sourceMappingURL=textFilter.js.map

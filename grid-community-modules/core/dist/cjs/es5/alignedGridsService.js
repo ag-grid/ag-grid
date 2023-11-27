@@ -286,5 +286,3 @@ var AlignedGridsService = /** @class */ (function (_super) {
     return AlignedGridsService;
 }(beanStub_1.BeanStub));
 exports.AlignedGridsService = AlignedGridsService;
-
-//# sourceMappingURL=alignedGridsService.js.map

@@ -16,4 +16,3 @@ SelectionHandleFactory = __decorate([
     Bean('selectionHandleFactory')
 ], SelectionHandleFactory);
 export { SelectionHandleFactory };
-//# sourceMappingURL=selectionHandleFactory.js.map

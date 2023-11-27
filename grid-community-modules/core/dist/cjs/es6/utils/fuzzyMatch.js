@@ -54,5 +54,3 @@ function stringWeightedDistances(str1, str2) {
     }
     return weight;
 }
-
-//# sourceMappingURL=fuzzyMatch.js.map

@@ -104,4 +104,3 @@ var AgColorPicker = /** @class */ (function (_super) {
     return AgColorPicker;
 }(core_1.AgPickerField));
 exports.AgColorPicker = AgColorPicker;
-//# sourceMappingURL=agColorPicker.js.map

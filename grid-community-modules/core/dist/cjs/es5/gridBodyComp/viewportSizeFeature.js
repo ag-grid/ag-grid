@@ -217,5 +217,3 @@ var ViewportSizeFeature = /** @class */ (function (_super) {
     return ViewportSizeFeature;
 }(beanStub_1.BeanStub));
 exports.ViewportSizeFeature = ViewportSizeFeature;
-
-//# sourceMappingURL=viewportSizeFeature.js.map

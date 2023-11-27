@@ -123,5 +123,3 @@ var GridBodyComp = /** @class */ (function (_super) {
     return GridBodyComp;
 }(Component));
 export { GridBodyComp };
-
-//# sourceMappingURL=gridBodyComp.js.map

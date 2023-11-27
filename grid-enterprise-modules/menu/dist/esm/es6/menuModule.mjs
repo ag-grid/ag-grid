@@ -13,4 +13,3 @@ export const MenuModule = {
         EnterpriseCoreModule
     ]
 };
-//# sourceMappingURL=menuModule.js.map

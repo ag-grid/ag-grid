@@ -70,5 +70,3 @@ var CssClassManager = /** @class */ (function () {
     return CssClassManager;
 }());
 export { CssClassManager };
-
-//# sourceMappingURL=cssClassManager.js.map

@@ -12,4 +12,3 @@ export const ClipboardModule = {
         CsvExportModule
     ]
 };
-//# sourceMappingURL=clipboardModule.js.map

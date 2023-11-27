@@ -331,4 +331,3 @@ __decorate([
     core_1.PostConstruct
 ], ChartDataModel.prototype, "init", null);
 exports.ChartDataModel = ChartDataModel;
-//# sourceMappingURL=chartDataModel.js.map

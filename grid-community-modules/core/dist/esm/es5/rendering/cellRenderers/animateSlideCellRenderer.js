@@ -98,5 +98,3 @@ var AnimateSlideCellRenderer = /** @class */ (function (_super) {
     return AnimateSlideCellRenderer;
 }(Component));
 export { AnimateSlideCellRenderer };
-
-//# sourceMappingURL=animateSlideCellRenderer.js.map

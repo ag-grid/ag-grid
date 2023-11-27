@@ -18,4 +18,3 @@ var SetFilterModelFormatter = /** @class */ (function () {
     return SetFilterModelFormatter;
 }());
 exports.SetFilterModelFormatter = SetFilterModelFormatter;
-//# sourceMappingURL=setFilterModelFormatter.js.map

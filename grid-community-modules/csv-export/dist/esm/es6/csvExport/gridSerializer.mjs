@@ -339,4 +339,3 @@ GridSerializer = __decorate([
     Bean("gridSerializer")
 ], GridSerializer);
 export { GridSerializer };
-//# sourceMappingURL=gridSerializer.js.map

@@ -5,5 +5,3 @@ export var BarColumnLabelPlacement;
     BarColumnLabelPlacement["Center"] = "center";
     BarColumnLabelPlacement["OutsideEnd"] = "outsideEnd";
 })(BarColumnLabelPlacement || (BarColumnLabelPlacement = {}));
-
-//# sourceMappingURL=iSparklineCellRendererParams.js.map

@@ -334,5 +334,3 @@ var HeaderFilterCellCtrl = /** @class */ (function (_super) {
     return HeaderFilterCellCtrl;
 }(AbstractHeaderCellCtrl));
 export { HeaderFilterCellCtrl };
-
-//# sourceMappingURL=headerFilterCellCtrl.js.map

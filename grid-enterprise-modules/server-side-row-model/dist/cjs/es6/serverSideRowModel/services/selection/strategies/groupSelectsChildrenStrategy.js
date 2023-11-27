@@ -324,4 +324,3 @@ __decorate([
     core_1.PostConstruct
 ], GroupSelectsChildrenStrategy.prototype, "init", null);
 exports.GroupSelectsChildrenStrategy = GroupSelectsChildrenStrategy;
-//# sourceMappingURL=groupSelectsChildrenStrategy.js.map

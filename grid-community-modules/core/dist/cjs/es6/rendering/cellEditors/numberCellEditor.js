@@ -63,5 +63,3 @@ class NumberCellEditor extends simpleCellEditor_1.SimpleCellEditor {
     }
 }
 exports.NumberCellEditor = NumberCellEditor;
-
-//# sourceMappingURL=numberCellEditor.js.map

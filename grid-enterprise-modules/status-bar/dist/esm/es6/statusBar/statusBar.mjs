@@ -114,4 +114,3 @@ __decorate([
 __decorate([
     PreDestroy
 ], StatusBar.prototype, "destroyComponents", null);
-//# sourceMappingURL=statusBar.js.map

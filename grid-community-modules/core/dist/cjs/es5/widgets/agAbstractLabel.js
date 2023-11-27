@@ -131,5 +131,3 @@ var AgAbstractLabel = /** @class */ (function (_super) {
     return AgAbstractLabel;
 }(component_1.Component));
 exports.AgAbstractLabel = AgAbstractLabel;
-
-//# sourceMappingURL=agAbstractLabel.js.map

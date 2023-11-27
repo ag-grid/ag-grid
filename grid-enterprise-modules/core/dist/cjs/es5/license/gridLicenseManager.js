@@ -54,4 +54,3 @@ var GridLicenseManager = /** @class */ (function (_super) {
     return GridLicenseManager;
 }(core_1.BeanStub));
 exports.GridLicenseManager = GridLicenseManager;
-//# sourceMappingURL=gridLicenseManager.js.map

@@ -82,4 +82,3 @@ SideBarDefParser.DEFAULT_BY_KEY = {
     columns: SideBarDefParser.DEFAULT_COLUMN_COMP,
     filters: SideBarDefParser.DEFAULT_FILTER_COMP
 };
-//# sourceMappingURL=sideBarDefParser.js.map

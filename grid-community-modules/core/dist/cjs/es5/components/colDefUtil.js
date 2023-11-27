@@ -142,5 +142,3 @@ var ColDefUtil = /** @class */ (function () {
     return ColDefUtil;
 }());
 exports.ColDefUtil = ColDefUtil;
-
-//# sourceMappingURL=colDefUtil.js.map

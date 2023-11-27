@@ -119,4 +119,3 @@ export class BaseGridSerializingSession {
         return { value: value !== null && value !== void 0 ? value : '' };
     }
 }
-//# sourceMappingURL=baseGridSerializingSession.js.map

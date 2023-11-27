@@ -124,5 +124,3 @@ ComponentUtil.FUNCTION_PROPERTIES = propertyKeys_1.PropertyKeys.FUNCTION_PROPERT
 ComponentUtil.ALL_PROPERTIES = propertyKeys_1.PropertyKeys.ALL_PROPERTIES;
 ComponentUtil.ALL_PROPERTIES_AND_CALLBACKS = [..._a.ALL_PROPERTIES, ..._a.EVENT_CALLBACKS];
 ComponentUtil.ALL_PROPERTIES_AND_CALLBACKS_SET = new Set(ComponentUtil.ALL_PROPERTIES_AND_CALLBACKS);
-
-//# sourceMappingURL=componentUtil.js.map

@@ -305,5 +305,3 @@ UndoRedoService = __decorate([
     (0, context_1.Bean)('undoRedoService')
 ], UndoRedoService);
 exports.UndoRedoService = UndoRedoService;
-
-//# sourceMappingURL=undoRedoService.js.map

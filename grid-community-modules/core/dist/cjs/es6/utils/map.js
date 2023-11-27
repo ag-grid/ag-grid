@@ -20,5 +20,3 @@ function keys(map) {
     return arr;
 }
 exports.keys = keys;
-
-//# sourceMappingURL=map.js.map

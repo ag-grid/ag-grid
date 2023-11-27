@@ -215,5 +215,3 @@ var AbstractHeaderCellCtrl = /** @class */ (function (_super) {
     return AbstractHeaderCellCtrl;
 }(beanStub_1.BeanStub));
 exports.AbstractHeaderCellCtrl = AbstractHeaderCellCtrl;
-
-//# sourceMappingURL=abstractHeaderCellCtrl.js.map

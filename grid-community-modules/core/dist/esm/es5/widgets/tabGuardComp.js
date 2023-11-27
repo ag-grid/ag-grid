@@ -106,5 +106,3 @@ var TabGuardComp = /** @class */ (function (_super) {
     return TabGuardComp;
 }(Component));
 export { TabGuardComp };
-
-//# sourceMappingURL=tabGuardComp.js.map

@@ -199,5 +199,3 @@ var QuickFilterService = /** @class */ (function (_super) {
     return QuickFilterService;
 }(beanStub_1.BeanStub));
 exports.QuickFilterService = QuickFilterService;
-
-//# sourceMappingURL=quickFilterService.js.map

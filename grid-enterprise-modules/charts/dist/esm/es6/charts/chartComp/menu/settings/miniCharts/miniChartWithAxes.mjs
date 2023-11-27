@@ -37,4 +37,3 @@ export class MiniChartWithAxes extends MiniChart {
 __decorate([
     PostConstruct
 ], MiniChartWithAxes.prototype, "addAxes", null);
-//# sourceMappingURL=miniChartWithAxes.js.map

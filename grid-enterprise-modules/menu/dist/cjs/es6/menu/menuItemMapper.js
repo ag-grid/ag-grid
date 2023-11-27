@@ -308,4 +308,3 @@ MenuItemMapper = __decorate([
     (0, core_1.Bean)('menuItemMapper')
 ], MenuItemMapper);
 exports.MenuItemMapper = MenuItemMapper;
-//# sourceMappingURL=menuItemMapper.js.map

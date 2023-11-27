@@ -174,5 +174,3 @@ QuickFilterService = QuickFilterService_1 = __decorate([
     (0, context_1.Bean)('quickFilterService')
 ], QuickFilterService);
 exports.QuickFilterService = QuickFilterService;
-
-//# sourceMappingURL=quickFilterService.js.map

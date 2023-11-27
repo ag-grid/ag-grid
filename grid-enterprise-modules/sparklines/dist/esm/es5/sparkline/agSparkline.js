@@ -205,4 +205,3 @@ function setValueIfPropertyExists(target, property, value, options) {
         }
     }
 }
-//# sourceMappingURL=agSparkline.js.map

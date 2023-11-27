@@ -103,5 +103,3 @@ var MouseEventService = /** @class */ (function (_super) {
     return MouseEventService;
 }(beanStub_1.BeanStub));
 exports.MouseEventService = MouseEventService;
-
-//# sourceMappingURL=mouseEventService.js.map

@@ -195,4 +195,3 @@ var AbstractSelectionHandle = /** @class */ (function (_super) {
     return AbstractSelectionHandle;
 }(Component));
 export { AbstractSelectionHandle };
-//# sourceMappingURL=abstractSelectionHandle.js.map

@@ -75,5 +75,3 @@ var DragListenerFeature = /** @class */ (function (_super) {
     return DragListenerFeature;
 }(beanStub_1.BeanStub));
 exports.DragListenerFeature = DragListenerFeature;
-
-//# sourceMappingURL=dragListenerFeature.js.map

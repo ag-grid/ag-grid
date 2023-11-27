@@ -94,4 +94,3 @@ var SparklineTooltip = /** @class */ (function () {
     return SparklineTooltip;
 }());
 export { SparklineTooltip };
-//# sourceMappingURL=sparklineTooltip.js.map

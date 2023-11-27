@@ -39,5 +39,3 @@ __decorate([
     context_1.PostConstruct
 ], GridHeaderComp.prototype, "postConstruct", null);
 exports.GridHeaderComp = GridHeaderComp;
-
-//# sourceMappingURL=gridHeaderComp.js.map

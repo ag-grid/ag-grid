@@ -35,5 +35,3 @@ export var ModuleNames;
     // on the grid (ie shouldn't even reference the Module interface)
     // ChartsModule = "@ag-grid-community/charts-core",
 })(ModuleNames || (ModuleNames = {}));
-
-//# sourceMappingURL=moduleNames.js.map

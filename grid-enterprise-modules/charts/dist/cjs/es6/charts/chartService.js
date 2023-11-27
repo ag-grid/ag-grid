@@ -272,4 +272,3 @@ ChartService = __decorate([
     (0, core_1.Bean)('chartService')
 ], ChartService);
 exports.ChartService = ChartService;
-//# sourceMappingURL=chartService.js.map

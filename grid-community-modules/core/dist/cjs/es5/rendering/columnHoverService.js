@@ -53,5 +53,3 @@ var ColumnHoverService = /** @class */ (function (_super) {
     return ColumnHoverService;
 }(beanStub_1.BeanStub));
 exports.ColumnHoverService = ColumnHoverService;
-
-//# sourceMappingURL=columnHoverService.js.map

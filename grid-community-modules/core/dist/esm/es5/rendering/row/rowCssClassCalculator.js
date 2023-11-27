@@ -136,5 +136,3 @@ var RowCssClassCalculator = /** @class */ (function () {
     return RowCssClassCalculator;
 }());
 export { RowCssClassCalculator };
-
-//# sourceMappingURL=rowCssClassCalculator.js.map

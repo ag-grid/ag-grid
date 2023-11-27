@@ -109,4 +109,3 @@ __decorate([
     core_1.PostConstruct
 ], MiniChartsContainer.prototype, "init", null);
 exports.MiniChartsContainer = MiniChartsContainer;
-//# sourceMappingURL=miniChartsContainer.js.map

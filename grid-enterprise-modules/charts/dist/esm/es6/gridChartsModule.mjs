@@ -29,4 +29,3 @@ export const GridChartsModule = {
         EnterpriseCoreModule
     ]
 };
-//# sourceMappingURL=gridChartsModule.js.map

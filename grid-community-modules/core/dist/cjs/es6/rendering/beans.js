@@ -168,5 +168,3 @@ Beans = __decorate([
     (0, context_1.Bean)('beans')
 ], Beans);
 exports.Beans = Beans;
-
-//# sourceMappingURL=beans.js.map

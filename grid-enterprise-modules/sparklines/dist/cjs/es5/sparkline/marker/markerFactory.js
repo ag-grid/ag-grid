@@ -15,4 +15,3 @@ function getMarker(shape) {
     }
 }
 exports.getMarker = getMarker;
-//# sourceMappingURL=markerFactory.js.map

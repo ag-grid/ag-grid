@@ -249,5 +249,3 @@ UserComponentFactory = __decorate([
     (0, context_1.Bean)('userComponentFactory')
 ], UserComponentFactory);
 exports.UserComponentFactory = UserComponentFactory;
-
-//# sourceMappingURL=userComponentFactory.js.map

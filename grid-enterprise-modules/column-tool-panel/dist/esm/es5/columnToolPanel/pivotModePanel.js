@@ -63,4 +63,3 @@ var PivotModePanel = /** @class */ (function (_super) {
     return PivotModePanel;
 }(Component));
 export { PivotModePanel };
-//# sourceMappingURL=pivotModePanel.js.map

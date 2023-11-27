@@ -61,5 +61,3 @@ __decorate([
     context_1.PostConstruct
 ], GroupWidthFeature.prototype, "postConstruct", null);
 exports.GroupWidthFeature = GroupWidthFeature;
-
-//# sourceMappingURL=groupWidthFeature.js.map

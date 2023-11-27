@@ -62,4 +62,3 @@ MiniArea.data = [
     [2, 6, 4],
     [5, 3, 1]
 ];
-//# sourceMappingURL=miniArea.js.map

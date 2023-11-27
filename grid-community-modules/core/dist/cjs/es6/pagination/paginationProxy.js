@@ -382,5 +382,3 @@ PaginationProxy = __decorate([
     (0, context_1.Bean)('paginationProxy')
 ], PaginationProxy);
 exports.PaginationProxy = PaginationProxy;
-
-//# sourceMappingURL=paginationProxy.js.map

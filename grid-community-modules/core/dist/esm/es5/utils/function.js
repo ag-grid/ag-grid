@@ -132,5 +132,3 @@ export function callIfPresent(func) {
     }
 }
 export var noop = function () { return; };
-
-//# sourceMappingURL=function.js.map

@@ -219,5 +219,3 @@ var AnimationFrameService = /** @class */ (function (_super) {
     return AnimationFrameService;
 }(BeanStub));
 export { AnimationFrameService };
-
-//# sourceMappingURL=animationFrameService.js.map

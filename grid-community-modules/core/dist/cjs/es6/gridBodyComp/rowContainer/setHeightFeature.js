@@ -35,5 +35,3 @@ __decorate([
     context_1.PostConstruct
 ], SetHeightFeature.prototype, "postConstruct", null);
 exports.SetHeightFeature = SetHeightFeature;
-
-//# sourceMappingURL=setHeightFeature.js.map

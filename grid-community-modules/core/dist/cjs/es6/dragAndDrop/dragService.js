@@ -291,5 +291,3 @@ DragService = __decorate([
     (0, context_1.Bean)('dragService')
 ], DragService);
 exports.DragService = DragService;
-
-//# sourceMappingURL=dragService.js.map

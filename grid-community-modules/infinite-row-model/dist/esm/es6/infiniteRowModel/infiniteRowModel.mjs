@@ -272,4 +272,3 @@ InfiniteRowModel = __decorate([
     Bean('rowModel')
 ], InfiniteRowModel);
 export { InfiniteRowModel };
-//# sourceMappingURL=infiniteRowModel.js.map

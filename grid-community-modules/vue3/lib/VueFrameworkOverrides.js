@@ -22,4 +22,3 @@ export class VueFrameworkOverrides extends VanillaFrameworkOverrides {
         return typeof comp === 'object';
     }
 }
-//# sourceMappingURL=VueFrameworkOverrides.js.map

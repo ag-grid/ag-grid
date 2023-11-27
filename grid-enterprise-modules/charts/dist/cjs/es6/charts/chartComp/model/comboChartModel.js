@@ -106,4 +106,3 @@ __decorate([
     core_1.PostConstruct
 ], ComboChartModel.prototype, "init", null);
 exports.ComboChartModel = ComboChartModel;
-//# sourceMappingURL=comboChartModel.js.map

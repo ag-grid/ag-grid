@@ -89,5 +89,3 @@ var ScalarFilter = /** @class */ (function (_super) {
     return ScalarFilter;
 }(SimpleFilter));
 export { ScalarFilter };
-
-//# sourceMappingURL=scalarFilter.js.map

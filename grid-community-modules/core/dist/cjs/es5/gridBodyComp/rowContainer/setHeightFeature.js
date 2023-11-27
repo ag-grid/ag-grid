@@ -53,5 +53,3 @@ var SetHeightFeature = /** @class */ (function (_super) {
     return SetHeightFeature;
 }(beanStub_1.BeanStub));
 exports.SetHeightFeature = SetHeightFeature;
-
-//# sourceMappingURL=setHeightFeature.js.map

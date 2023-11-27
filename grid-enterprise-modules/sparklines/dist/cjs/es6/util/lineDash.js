@@ -44,4 +44,3 @@ function getLineDash(lineCap, lineDash = 'solid') {
     return buttOrNull[lineDash];
 }
 exports.getLineDash = getLineDash;
-//# sourceMappingURL=lineDash.js.map

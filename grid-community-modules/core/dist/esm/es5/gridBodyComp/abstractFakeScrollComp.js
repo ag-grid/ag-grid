@@ -117,5 +117,3 @@ var AbstractFakeScrollComp = /** @class */ (function (_super) {
     return AbstractFakeScrollComp;
 }(Component));
 export { AbstractFakeScrollComp };
-
-//# sourceMappingURL=abstractFakeScrollComp.js.map

@@ -80,4 +80,3 @@ var rowFactory = {
     }
 };
 export default rowFactory;
-//# sourceMappingURL=row.js.map

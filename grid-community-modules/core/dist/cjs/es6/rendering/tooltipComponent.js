@@ -14,5 +14,3 @@ class TooltipComponent extends popupComponent_1.PopupComponent {
     }
 }
 exports.TooltipComponent = TooltipComponent;
-
-//# sourceMappingURL=tooltipComponent.js.map

@@ -54,4 +54,3 @@ const cellFactory = {
     }
 };
 export default cellFactory;
-//# sourceMappingURL=cell.js.map

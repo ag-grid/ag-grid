@@ -273,4 +273,3 @@ class LineSparkline extends sparkline_1.Sparkline {
 }
 exports.LineSparkline = LineSparkline;
 LineSparkline.className = 'LineSparkline';
-//# sourceMappingURL=lineSparkline.js.map

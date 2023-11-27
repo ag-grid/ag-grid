@@ -384,4 +384,3 @@ __decorate([
 __decorate([
     PostConstruct
 ], ChartController.prototype, "init", null);
-//# sourceMappingURL=chartController.js.map

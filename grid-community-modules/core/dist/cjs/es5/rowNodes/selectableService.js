@@ -100,5 +100,3 @@ var SelectableService = /** @class */ (function (_super) {
     return SelectableService;
 }(beanStub_1.BeanStub));
 exports.SelectableService = SelectableService;
-
-//# sourceMappingURL=selectableService.js.map

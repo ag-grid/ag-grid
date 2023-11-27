@@ -241,4 +241,3 @@ var ColumnToolPanel = /** @class */ (function (_super) {
     return ColumnToolPanel;
 }(Component));
 export { ColumnToolPanel };
-//# sourceMappingURL=columnToolPanel.js.map

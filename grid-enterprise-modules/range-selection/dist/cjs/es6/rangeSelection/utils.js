@@ -40,4 +40,3 @@ function findLineByLeastSquares(values) {
     return result;
 }
 exports.findLineByLeastSquares = findLineByLeastSquares;
-//# sourceMappingURL=utils.js.map

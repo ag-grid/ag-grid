@@ -153,4 +153,3 @@ var fontScheme = {
     }
 };
 exports.default = fontScheme;
-//# sourceMappingURL=fontScheme.js.map

@@ -182,5 +182,3 @@ __decorate([
     context_1.PostConstruct
 ], TabbedLayout.prototype, "postConstruct", null);
 exports.TabbedLayout = TabbedLayout;
-
-//# sourceMappingURL=tabbedLayout.js.map

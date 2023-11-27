@@ -577,5 +577,3 @@ var AgRichSelect = /** @class */ (function (_super) {
     return AgRichSelect;
 }(AgPickerField));
 export { AgRichSelect };
-
-//# sourceMappingURL=agRichSelect.js.map

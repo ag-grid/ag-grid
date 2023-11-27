@@ -1421,5 +1421,3 @@ class RowCtrl extends beanStub_1.BeanStub {
 }
 exports.RowCtrl = RowCtrl;
 RowCtrl.DOM_DATA_KEY_ROW_CTRL = 'renderedRow';
-
-//# sourceMappingURL=rowCtrl.js.map

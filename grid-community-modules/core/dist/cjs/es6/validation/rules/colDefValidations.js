@@ -61,5 +61,3 @@ exports.COL_DEF_VALIDATORS = {
     deprecations: COLUMN_DEFINITION_DEPRECATIONS,
     validations: COLUMN_DEFINITION_VALIDATIONS,
 };
-
-//# sourceMappingURL=colDefValidations.js.map

@@ -50,4 +50,3 @@ export function createLinePaths(root, data, size, padding) {
     root.append(linesGroup);
     return lines;
 }
-//# sourceMappingURL=miniChartHelpers.js.map

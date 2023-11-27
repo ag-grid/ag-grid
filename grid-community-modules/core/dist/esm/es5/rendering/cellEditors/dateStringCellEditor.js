@@ -74,5 +74,3 @@ var DateStringCellEditor = /** @class */ (function (_super) {
     return DateStringCellEditor;
 }(SimpleCellEditor));
 export { DateStringCellEditor };
-
-//# sourceMappingURL=dateStringCellEditor.js.map

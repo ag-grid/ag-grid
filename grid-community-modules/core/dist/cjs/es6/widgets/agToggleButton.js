@@ -13,5 +13,3 @@ class AgToggleButton extends agCheckbox_1.AgCheckbox {
     }
 }
 exports.AgToggleButton = AgToggleButton;
-
-//# sourceMappingURL=agToggleButton.js.map

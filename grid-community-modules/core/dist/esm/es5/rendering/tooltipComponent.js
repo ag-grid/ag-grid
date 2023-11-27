@@ -28,5 +28,3 @@ var TooltipComponent = /** @class */ (function (_super) {
     return TooltipComponent;
 }(PopupComponent));
 export { TooltipComponent };
-
-//# sourceMappingURL=tooltipComponent.js.map

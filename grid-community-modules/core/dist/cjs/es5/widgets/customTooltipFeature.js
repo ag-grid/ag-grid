@@ -437,5 +437,3 @@ var CustomTooltipFeature = /** @class */ (function (_super) {
     return CustomTooltipFeature;
 }(beanStub_1.BeanStub));
 exports.CustomTooltipFeature = CustomTooltipFeature;
-
-//# sourceMappingURL=customTooltipFeature.js.map

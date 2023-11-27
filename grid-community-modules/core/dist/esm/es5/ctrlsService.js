@@ -217,5 +217,3 @@ var CtrlsService = /** @class */ (function (_super) {
     return CtrlsService;
 }(BeanStub));
 export { CtrlsService };
-
-//# sourceMappingURL=ctrlsService.js.map

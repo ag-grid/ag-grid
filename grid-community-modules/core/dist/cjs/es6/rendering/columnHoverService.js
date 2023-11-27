@@ -33,5 +33,3 @@ ColumnHoverService = __decorate([
     (0, context_1.Bean)('columnHoverService')
 ], ColumnHoverService);
 exports.ColumnHoverService = ColumnHoverService;
-
-//# sourceMappingURL=columnHoverService.js.map

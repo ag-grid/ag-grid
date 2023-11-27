@@ -145,5 +145,3 @@ __decorate([
     context_1.PostConstruct
 ], TabGuardCtrl.prototype, "postConstruct", null);
 exports.TabGuardCtrl = TabGuardCtrl;
-
-//# sourceMappingURL=tabGuardCtrl.js.map

@@ -272,5 +272,3 @@ __decorate([
     (0, componentAnnotations_1.RefSelector)('eSortNone')
 ], HeaderComp.prototype, "eSortNone", void 0);
 exports.HeaderComp = HeaderComp;
-
-//# sourceMappingURL=headerComp.js.map

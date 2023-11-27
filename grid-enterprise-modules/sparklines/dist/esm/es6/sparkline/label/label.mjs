@@ -8,4 +8,3 @@ export class Label {
         this.color = 'rgba(70, 70, 70, 1)';
     }
 }
-//# sourceMappingURL=label.js.map

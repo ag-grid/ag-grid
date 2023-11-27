@@ -95,5 +95,3 @@ class SimpleFloatingFilter extends component_1.Component {
     }
 }
 exports.SimpleFloatingFilter = SimpleFloatingFilter;
-
-//# sourceMappingURL=simpleFloatingFilter.js.map

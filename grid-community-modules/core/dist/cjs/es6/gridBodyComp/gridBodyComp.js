@@ -137,5 +137,3 @@ __decorate([
     context_1.PostConstruct
 ], GridBodyComp.prototype, "init", null);
 exports.GridBodyComp = GridBodyComp;
-
-//# sourceMappingURL=gridBodyComp.js.map

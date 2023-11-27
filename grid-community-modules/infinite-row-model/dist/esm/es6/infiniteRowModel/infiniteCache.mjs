@@ -276,4 +276,3 @@ __decorate([
 __decorate([
     PreDestroy
 ], InfiniteCache.prototype, "destroyAllBlocks", null);
-//# sourceMappingURL=infiniteCache.js.map

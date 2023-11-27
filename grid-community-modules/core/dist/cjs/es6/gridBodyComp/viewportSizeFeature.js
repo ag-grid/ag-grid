@@ -172,5 +172,3 @@ __decorate([
     context_1.PostConstruct
 ], ViewportSizeFeature.prototype, "postConstruct", null);
 exports.ViewportSizeFeature = ViewportSizeFeature;
-
-//# sourceMappingURL=viewportSizeFeature.js.map

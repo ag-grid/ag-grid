@@ -178,5 +178,3 @@ __decorate([
     context_1.PostConstruct
 ], PageSizeSelectorComp.prototype, "init", null);
 exports.PageSizeSelectorComp = PageSizeSelectorComp;
-
-//# sourceMappingURL=pageSizeSelectorComp.js.map

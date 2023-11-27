@@ -146,5 +146,3 @@ var HeaderPositionUtils = /** @class */ (function (_super) {
     return HeaderPositionUtils;
 }(BeanStub));
 export { HeaderPositionUtils };
-
-//# sourceMappingURL=headerPosition.js.map

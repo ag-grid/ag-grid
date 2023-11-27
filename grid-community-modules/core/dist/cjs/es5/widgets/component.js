@@ -335,5 +335,3 @@ var Component = /** @class */ (function (_super) {
     return Component;
 }(beanStub_1.BeanStub));
 exports.Component = Component;
-
-//# sourceMappingURL=component.js.map

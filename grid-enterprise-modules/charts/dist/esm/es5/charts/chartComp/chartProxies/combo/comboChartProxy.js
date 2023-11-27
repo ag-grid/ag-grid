@@ -92,4 +92,3 @@ var ComboChartProxy = /** @class */ (function (_super) {
     return ComboChartProxy;
 }(CartesianChartProxy));
 export { ComboChartProxy };
-//# sourceMappingURL=comboChartProxy.js.map

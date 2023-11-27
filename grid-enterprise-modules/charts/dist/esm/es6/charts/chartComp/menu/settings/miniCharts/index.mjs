@@ -16,4 +16,3 @@ export * from "./histogram/miniHistogram.mjs";
 export * from "./combo/miniColumnLineCombo.mjs";
 export * from "./combo/miniAreaColumnCombo.mjs";
 export * from "./combo/miniCustomCombo.mjs";
-//# sourceMappingURL=index.js.map

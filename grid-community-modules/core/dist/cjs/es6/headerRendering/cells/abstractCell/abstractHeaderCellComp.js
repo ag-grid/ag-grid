@@ -12,5 +12,3 @@ class AbstractHeaderCellComp extends component_1.Component {
     }
 }
 exports.AbstractHeaderCellComp = AbstractHeaderCellComp;
-
-//# sourceMappingURL=abstractHeaderCellComp.js.map

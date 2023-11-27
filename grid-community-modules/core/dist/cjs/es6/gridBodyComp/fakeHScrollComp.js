@@ -121,5 +121,3 @@ __decorate([
     context_1.PostConstruct
 ], FakeHScrollComp.prototype, "postConstruct", null);
 exports.FakeHScrollComp = FakeHScrollComp;
-
-//# sourceMappingURL=fakeHScrollComp.js.map

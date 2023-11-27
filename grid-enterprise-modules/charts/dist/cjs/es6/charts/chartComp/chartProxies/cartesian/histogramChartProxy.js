@@ -32,4 +32,3 @@ class HistogramChartProxy extends cartesianChartProxy_1.CartesianChartProxy {
     }
 }
 exports.HistogramChartProxy = HistogramChartProxy;
-//# sourceMappingURL=histogramChartProxy.js.map

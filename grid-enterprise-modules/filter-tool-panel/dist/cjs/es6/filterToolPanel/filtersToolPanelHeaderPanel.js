@@ -89,4 +89,3 @@ __decorate([
     core_1.PostConstruct
 ], FiltersToolPanelHeaderPanel.prototype, "postConstruct", null);
 exports.FiltersToolPanelHeaderPanel = FiltersToolPanelHeaderPanel;
-//# sourceMappingURL=filtersToolPanelHeaderPanel.js.map

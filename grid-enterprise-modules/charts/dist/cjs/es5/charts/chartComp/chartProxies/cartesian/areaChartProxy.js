@@ -70,4 +70,3 @@ var AreaChartProxy = /** @class */ (function (_super) {
     return AreaChartProxy;
 }(cartesianChartProxy_1.CartesianChartProxy));
 exports.AreaChartProxy = AreaChartProxy;
-//# sourceMappingURL=areaChartProxy.js.map

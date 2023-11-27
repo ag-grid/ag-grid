@@ -28,4 +28,3 @@ export var StatusBarModule = {
         EnterpriseCoreModule
     ]
 };
-//# sourceMappingURL=statusBarModule.js.map

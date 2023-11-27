@@ -144,5 +144,3 @@ __decorate([
     (0, context_1.Autowired)('sortController')
 ], SortIndicatorComp.prototype, "sortController", void 0);
 exports.SortIndicatorComp = SortIndicatorComp;
-
-//# sourceMappingURL=sortIndicatorComp.js.map

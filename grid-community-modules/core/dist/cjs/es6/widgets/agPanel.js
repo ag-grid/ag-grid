@@ -177,5 +177,3 @@ __decorate([
     context_1.PostConstruct
 ], AgPanel.prototype, "postConstruct", null);
 exports.AgPanel = AgPanel;
-
-//# sourceMappingURL=agPanel.js.map

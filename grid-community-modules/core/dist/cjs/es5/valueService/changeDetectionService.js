@@ -85,5 +85,3 @@ var ChangeDetectionService = /** @class */ (function (_super) {
     return ChangeDetectionService;
 }(beanStub_1.BeanStub));
 exports.ChangeDetectionService = ChangeDetectionService;
-
-//# sourceMappingURL=changeDetectionService.js.map

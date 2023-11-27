@@ -67,4 +67,3 @@ class ComboChartProxy extends cartesianChartProxy_1.CartesianChartProxy {
     }
 }
 exports.ComboChartProxy = ComboChartProxy;
-//# sourceMappingURL=comboChartProxy.js.map

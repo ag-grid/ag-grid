@@ -21,4 +21,3 @@ export const FiltersToolPanelModule = {
         EnterpriseCoreModule
     ]
 };
-//# sourceMappingURL=filtersToolPanelModule.js.map

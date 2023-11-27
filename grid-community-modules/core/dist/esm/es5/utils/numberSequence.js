@@ -19,5 +19,3 @@ var NumberSequence = /** @class */ (function () {
     return NumberSequence;
 }());
 export { NumberSequence };
-
-//# sourceMappingURL=numberSequence.js.map

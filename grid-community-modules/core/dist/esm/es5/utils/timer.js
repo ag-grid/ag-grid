@@ -13,5 +13,3 @@ var Timer = /** @class */ (function () {
     return Timer;
 }());
 export { Timer };
-
-//# sourceMappingURL=timer.js.map

@@ -80,4 +80,3 @@ var RangeHandle = /** @class */ (function (_super) {
     return RangeHandle;
 }(abstractSelectionHandle_1.AbstractSelectionHandle));
 exports.RangeHandle = RangeHandle;
-//# sourceMappingURL=rangeHandle.js.map

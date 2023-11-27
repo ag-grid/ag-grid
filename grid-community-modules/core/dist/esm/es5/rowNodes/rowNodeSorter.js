@@ -134,5 +134,3 @@ var RowNodeSorter = /** @class */ (function (_super) {
     return RowNodeSorter;
 }(BeanStub));
 export { RowNodeSorter };
-
-//# sourceMappingURL=rowNodeSorter.js.map

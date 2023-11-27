@@ -237,4 +237,3 @@ var AxisPanel = /** @class */ (function (_super) {
     return AxisPanel;
 }(core_1.Component));
 exports.AxisPanel = AxisPanel;
-//# sourceMappingURL=axisPanel.js.map

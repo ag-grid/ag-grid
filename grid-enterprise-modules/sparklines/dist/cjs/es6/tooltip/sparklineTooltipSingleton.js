@@ -35,4 +35,3 @@ SparklineTooltipSingleton = __decorate([
     (0, core_1.Bean)('sparklineTooltipSingleton')
 ], SparklineTooltipSingleton);
 exports.SparklineTooltipSingleton = SparklineTooltipSingleton;
-//# sourceMappingURL=sparklineTooltipSingleton.js.map

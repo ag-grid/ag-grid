@@ -357,5 +357,3 @@ var HeaderRowCtrl = /** @class */ (function (_super) {
     return HeaderRowCtrl;
 }(beanStub_1.BeanStub));
 exports.HeaderRowCtrl = HeaderRowCtrl;
-
-//# sourceMappingURL=headerRowCtrl.js.map

@@ -33,5 +33,3 @@ exports.FILTER_LOCALE_TEXT = {
     orCondition: 'OR',
     dateFormatOoo: 'yyyy-mm-dd',
 };
-
-//# sourceMappingURL=filterLocaleText.js.map

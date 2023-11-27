@@ -89,4 +89,3 @@ var TotalAndFilteredRowsComp = /** @class */ (function (_super) {
     return TotalAndFilteredRowsComp;
 }(nameValueComp_1.NameValueComp));
 exports.TotalAndFilteredRowsComp = TotalAndFilteredRowsComp;
-//# sourceMappingURL=totalAndFilteredRowsComp.js.map

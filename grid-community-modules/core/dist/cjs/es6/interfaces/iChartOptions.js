@@ -52,5 +52,3 @@ exports.CHART_TOOL_PANEL_MENU_OPTIONS = {
     data: "chartData",
     format: "chartFormat"
 };
-
-//# sourceMappingURL=iChartOptions.js.map

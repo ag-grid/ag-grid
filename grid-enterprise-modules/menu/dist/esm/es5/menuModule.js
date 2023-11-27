@@ -13,4 +13,3 @@ export var MenuModule = {
         EnterpriseCoreModule
     ]
 };
-//# sourceMappingURL=menuModule.js.map

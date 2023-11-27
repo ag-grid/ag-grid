@@ -46,4 +46,3 @@ const borderFactory = {
     }
 };
 exports.default = borderFactory;
-//# sourceMappingURL=border.js.map

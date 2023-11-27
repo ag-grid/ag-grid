@@ -155,5 +155,3 @@ exports.ModuleRegistry = ModuleRegistry;
 ModuleRegistry.globalModulesMap = {};
 ModuleRegistry.gridModulesMap = {};
 ModuleRegistry.areGridScopedModules = false;
-
-//# sourceMappingURL=moduleRegistry.js.map

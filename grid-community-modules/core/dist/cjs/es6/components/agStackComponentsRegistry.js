@@ -37,5 +37,3 @@ AgStackComponentsRegistry = __decorate([
     (0, context_1.Bean)('agStackComponentsRegistry')
 ], AgStackComponentsRegistry);
 exports.AgStackComponentsRegistry = AgStackComponentsRegistry;
-
-//# sourceMappingURL=agStackComponentsRegistry.js.map

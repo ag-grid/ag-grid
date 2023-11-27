@@ -290,5 +290,3 @@ __decorate([
     (0, componentAnnotations_1.RefSelector)('eIcon')
 ], AgPickerField.prototype, "eIcon", void 0);
 exports.AgPickerField = AgPickerField;
-
-//# sourceMappingURL=agPickerField.js.map

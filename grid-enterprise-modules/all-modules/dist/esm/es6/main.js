@@ -58,4 +58,3 @@ export const AllEnterpriseModules = [
     SparklinesModule
 ];
 export const AllModules = AllCommunityModules.concat(AllEnterpriseModules);
-//# sourceMappingURL=main.js.map

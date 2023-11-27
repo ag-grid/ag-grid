@@ -90,5 +90,3 @@ class AgSelect extends agPickerField_1.AgPickerField {
 }
 exports.AgSelect = AgSelect;
 AgSelect.EVENT_ITEM_SELECTED = 'selectedItem';
-
-//# sourceMappingURL=agSelect.js.map

@@ -270,5 +270,3 @@ __decorate([
     context_1.PostConstruct
 ], PaginationComp.prototype, "postConstruct", null);
 exports.PaginationComp = PaginationComp;
-
-//# sourceMappingURL=paginationComp.js.map

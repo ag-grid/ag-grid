@@ -305,4 +305,3 @@ MenuItemMapper = __decorate([
     Bean('menuItemMapper')
 ], MenuItemMapper);
 export { MenuItemMapper };
-//# sourceMappingURL=menuItemMapper.js.map

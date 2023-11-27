@@ -441,5 +441,3 @@ function bindCellRendererToHtmlElement(cellRendererPromise, eTarget) {
     });
 }
 exports.bindCellRendererToHtmlElement = bindCellRendererToHtmlElement;
-
-//# sourceMappingURL=dom.js.map

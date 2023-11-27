@@ -497,5 +497,3 @@ StateService = __decorate([
     (0, context_1.Bean)('stateService')
 ], StateService);
 exports.StateService = StateService;
-
-//# sourceMappingURL=stateService.js.map

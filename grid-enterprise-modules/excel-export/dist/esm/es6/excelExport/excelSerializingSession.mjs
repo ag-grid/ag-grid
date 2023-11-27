@@ -323,4 +323,3 @@ export class ExcelSerializingSession extends BaseGridSerializingSession {
         return this.stylesByIds[styleId] || null;
     }
 }
-//# sourceMappingURL=excelSerializingSession.js.map

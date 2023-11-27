@@ -154,5 +154,3 @@ var PinnedRowModel = /** @class */ (function (_super) {
     return PinnedRowModel;
 }(beanStub_1.BeanStub));
 exports.PinnedRowModel = PinnedRowModel;
-
-//# sourceMappingURL=pinnedRowModel.js.map

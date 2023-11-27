@@ -120,4 +120,3 @@ __decorate([
     core_1.PostConstruct
 ], FormatPanel.prototype, "init", null);
 exports.FormatPanel = FormatPanel;
-//# sourceMappingURL=formatPanel.js.map

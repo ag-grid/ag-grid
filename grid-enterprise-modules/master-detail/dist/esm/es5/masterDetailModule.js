@@ -17,4 +17,3 @@ export var MasterDetailModule = {
         EnterpriseCoreModule
     ]
 };
-//# sourceMappingURL=masterDetailModule.js.map

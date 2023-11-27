@@ -354,5 +354,3 @@ var HeaderRowCtrl = /** @class */ (function (_super) {
     return HeaderRowCtrl;
 }(BeanStub));
 export { HeaderRowCtrl };
-
-//# sourceMappingURL=headerRowCtrl.js.map

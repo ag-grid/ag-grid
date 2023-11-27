@@ -136,4 +136,3 @@ __decorate([
     (0, core_1.Autowired)('filterManager')
 ], MultiFloatingFilterComp.prototype, "filterManager", void 0);
 exports.MultiFloatingFilterComp = MultiFloatingFilterComp;
-//# sourceMappingURL=multiFloatingFilter.js.map

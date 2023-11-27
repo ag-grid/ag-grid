@@ -1515,5 +1515,3 @@ var RowCtrl = /** @class */ (function (_super) {
     return RowCtrl;
 }(beanStub_1.BeanStub));
 exports.RowCtrl = RowCtrl;
-
-//# sourceMappingURL=rowCtrl.js.map

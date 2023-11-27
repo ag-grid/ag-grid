@@ -547,5 +547,3 @@ var SelectionService = /** @class */ (function (_super) {
     return SelectionService;
 }(beanStub_1.BeanStub));
 exports.SelectionService = SelectionService;
-
-//# sourceMappingURL=selectionService.js.map

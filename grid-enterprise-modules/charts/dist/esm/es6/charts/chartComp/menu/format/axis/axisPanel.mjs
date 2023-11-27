@@ -212,4 +212,3 @@ __decorate([
 __decorate([
     PostConstruct
 ], AxisPanel.prototype, "init", null);
-//# sourceMappingURL=axisPanel.js.map

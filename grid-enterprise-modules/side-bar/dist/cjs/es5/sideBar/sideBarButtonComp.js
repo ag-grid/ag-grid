@@ -80,4 +80,3 @@ var SideBarButtonComp = /** @class */ (function (_super) {
     return SideBarButtonComp;
 }(core_1.Component));
 exports.SideBarButtonComp = SideBarButtonComp;
-//# sourceMappingURL=sideBarButtonComp.js.map

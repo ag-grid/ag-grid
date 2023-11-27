@@ -202,4 +202,3 @@ var formatScheme = {
     }
 };
 exports.default = formatScheme;
-//# sourceMappingURL=formatScheme.js.map

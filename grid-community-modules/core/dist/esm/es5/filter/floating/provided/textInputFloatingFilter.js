@@ -168,5 +168,3 @@ var TextInputFloatingFilter = /** @class */ (function (_super) {
     return TextInputFloatingFilter;
 }(SimpleFloatingFilter));
 export { TextInputFloatingFilter };
-
-//# sourceMappingURL=textInputFloatingFilter.js.map

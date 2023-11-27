@@ -98,4 +98,3 @@ var ValuesDropZonePanel = /** @class */ (function (_super) {
     return ValuesDropZonePanel;
 }(baseDropZonePanel_1.BaseDropZonePanel));
 exports.ValuesDropZonePanel = ValuesDropZonePanel;
-//# sourceMappingURL=valueDropZonePanel.js.map

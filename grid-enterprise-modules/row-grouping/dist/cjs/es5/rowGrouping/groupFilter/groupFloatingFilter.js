@@ -169,4 +169,3 @@ var GroupFloatingFilterComp = /** @class */ (function (_super) {
     return GroupFloatingFilterComp;
 }(core_1.Component));
 exports.GroupFloatingFilterComp = GroupFloatingFilterComp;
-//# sourceMappingURL=groupFloatingFilter.js.map

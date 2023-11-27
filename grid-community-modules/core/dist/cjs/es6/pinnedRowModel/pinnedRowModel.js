@@ -132,5 +132,3 @@ PinnedRowModel = __decorate([
     (0, context_1.Bean)('pinnedRowModel')
 ], PinnedRowModel);
 exports.PinnedRowModel = PinnedRowModel;
-
-//# sourceMappingURL=pinnedRowModel.js.map

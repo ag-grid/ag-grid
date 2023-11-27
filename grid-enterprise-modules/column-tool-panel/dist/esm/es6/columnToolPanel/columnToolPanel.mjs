@@ -209,4 +209,3 @@ __decorate([
 __decorate([
     Autowired("columnApi")
 ], ColumnToolPanel.prototype, "columnApi", void 0);
-//# sourceMappingURL=columnToolPanel.js.map

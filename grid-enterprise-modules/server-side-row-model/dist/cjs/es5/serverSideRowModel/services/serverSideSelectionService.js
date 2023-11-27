@@ -239,4 +239,3 @@ var ServerSideSelectionService = /** @class */ (function (_super) {
     return ServerSideSelectionService;
 }(core_1.BeanStub));
 exports.ServerSideSelectionService = ServerSideSelectionService;
-//# sourceMappingURL=serverSideSelectionService.js.map

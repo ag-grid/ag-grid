@@ -264,5 +264,3 @@ AlignedGridsService = __decorate([
     (0, context_1.Bean)('alignedGridsService')
 ], AlignedGridsService);
 exports.AlignedGridsService = AlignedGridsService;
-
-//# sourceMappingURL=alignedGridsService.js.map

@@ -53,5 +53,3 @@ function getOrCreateProps(target, instanceName) {
     }
     return target.__agComponentMetaData[instanceName];
 }
-
-//# sourceMappingURL=componentAnnotations.js.map

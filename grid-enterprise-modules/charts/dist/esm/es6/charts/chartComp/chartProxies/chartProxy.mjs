@@ -105,4 +105,3 @@ export class ChartProxy {
         }
     }
 }
-//# sourceMappingURL=chartProxy.js.map

@@ -36,4 +36,3 @@ export function findLineByLeastSquares(values) {
     }
     return result;
 }
-//# sourceMappingURL=utils.js.map

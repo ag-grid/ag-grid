@@ -168,5 +168,3 @@ var ModuleRegistry = /** @class */ (function () {
     return ModuleRegistry;
 }());
 export { ModuleRegistry };
-
-//# sourceMappingURL=moduleRegistry.js.map

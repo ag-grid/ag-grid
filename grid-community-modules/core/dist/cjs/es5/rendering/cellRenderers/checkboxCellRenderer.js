@@ -139,5 +139,3 @@ var CheckboxCellRenderer = /** @class */ (function (_super) {
     return CheckboxCellRenderer;
 }(component_1.Component));
 exports.CheckboxCellRenderer = CheckboxCellRenderer;
-
-//# sourceMappingURL=checkboxCellRenderer.js.map

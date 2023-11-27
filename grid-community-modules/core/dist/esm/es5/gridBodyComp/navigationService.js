@@ -789,5 +789,3 @@ var NavigationService = /** @class */ (function (_super) {
     return NavigationService;
 }(BeanStub));
 export { NavigationService };
-
-//# sourceMappingURL=navigationService.js.map

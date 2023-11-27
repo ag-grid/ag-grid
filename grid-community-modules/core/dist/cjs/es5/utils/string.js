@@ -146,5 +146,3 @@ function camelCaseToHyphenated(camelCase) {
     return camelCase.replace(/[A-Z]/g, function (s) { return "-".concat(s.toLocaleLowerCase()); });
 }
 exports.camelCaseToHyphenated = camelCaseToHyphenated;
-
-//# sourceMappingURL=string.js.map

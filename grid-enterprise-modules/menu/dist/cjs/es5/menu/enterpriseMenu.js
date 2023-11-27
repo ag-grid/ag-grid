@@ -526,4 +526,3 @@ var EnterpriseMenu = /** @class */ (function (_super) {
     return EnterpriseMenu;
 }(core_1.BeanStub));
 exports.EnterpriseMenu = EnterpriseMenu;
-//# sourceMappingURL=enterpriseMenu.js.map

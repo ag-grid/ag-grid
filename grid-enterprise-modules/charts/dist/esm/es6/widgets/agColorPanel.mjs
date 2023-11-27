@@ -324,4 +324,3 @@ __decorate([
 __decorate([
     PostConstruct
 ], AgColorPanel.prototype, "postConstruct", null);
-//# sourceMappingURL=agColorPanel.js.map

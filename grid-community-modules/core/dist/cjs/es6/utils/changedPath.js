@@ -155,5 +155,3 @@ class ChangedPath {
     }
 }
 exports.ChangedPath = ChangedPath;
-
-//# sourceMappingURL=changedPath.js.map

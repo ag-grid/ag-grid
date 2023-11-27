@@ -329,4 +329,3 @@ var ChartDatasource = /** @class */ (function (_super) {
     return ChartDatasource;
 }(BeanStub));
 export { ChartDatasource };
-//# sourceMappingURL=chartDatasource.js.map

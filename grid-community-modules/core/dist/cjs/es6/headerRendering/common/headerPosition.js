@@ -128,5 +128,3 @@ HeaderPositionUtils = __decorate([
     (0, context_1.Bean)('headerPositionUtils')
 ], HeaderPositionUtils);
 exports.HeaderPositionUtils = HeaderPositionUtils;
-
-//# sourceMappingURL=headerPosition.js.map

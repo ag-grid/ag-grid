@@ -83,5 +83,3 @@ var AutoScrollService = /** @class */ (function () {
     return AutoScrollService;
 }());
 exports.AutoScrollService = AutoScrollService;
-
-//# sourceMappingURL=autoScrollService.js.map

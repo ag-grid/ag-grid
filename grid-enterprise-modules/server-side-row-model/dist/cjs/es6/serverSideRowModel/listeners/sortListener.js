@@ -78,4 +78,3 @@ SortListener = __decorate([
     (0, core_1.Bean)('ssrmSortService')
 ], SortListener);
 exports.SortListener = SortListener;
-//# sourceMappingURL=sortListener.js.map

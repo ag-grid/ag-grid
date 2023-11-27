@@ -91,5 +91,3 @@ var ApiEventService = /** @class */ (function (_super) {
     return ApiEventService;
 }(beanStub_1.BeanStub));
 exports.ApiEventService = ApiEventService;
-
-//# sourceMappingURL=apiEventService.js.map

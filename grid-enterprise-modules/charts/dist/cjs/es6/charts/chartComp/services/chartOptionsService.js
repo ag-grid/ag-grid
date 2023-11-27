@@ -144,4 +144,3 @@ class ChartOptionsService extends core_1.BeanStub {
     }
 }
 exports.ChartOptionsService = ChartOptionsService;
-//# sourceMappingURL=chartOptionsService.js.map

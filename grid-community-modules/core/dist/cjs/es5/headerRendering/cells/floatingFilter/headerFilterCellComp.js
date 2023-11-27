@@ -96,5 +96,3 @@ var HeaderFilterCellComp = /** @class */ (function (_super) {
     return HeaderFilterCellComp;
 }(abstractHeaderCellComp_1.AbstractHeaderCellComp));
 exports.HeaderFilterCellComp = HeaderFilterCellComp;
-
-//# sourceMappingURL=headerFilterCellComp.js.map

@@ -78,4 +78,3 @@ var MiniHistogram = /** @class */ (function (_super) {
     return MiniHistogram;
 }(miniChartWithAxes_1.MiniChartWithAxes));
 exports.MiniHistogram = MiniHistogram;
-//# sourceMappingURL=miniHistogram.js.map

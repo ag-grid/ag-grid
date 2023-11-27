@@ -30,4 +30,3 @@ class MiniColumn extends miniChartWithAxes_1.MiniChartWithAxes {
 }
 exports.MiniColumn = MiniColumn;
 MiniColumn.chartType = 'groupedColumn';
-//# sourceMappingURL=miniColumn.js.map

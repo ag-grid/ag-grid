@@ -97,5 +97,3 @@ var RowNodeBlock = /** @class */ (function (_super) {
     return RowNodeBlock;
 }(beanStub_1.BeanStub));
 exports.RowNodeBlock = RowNodeBlock;
-
-//# sourceMappingURL=rowNodeBlock.js.map

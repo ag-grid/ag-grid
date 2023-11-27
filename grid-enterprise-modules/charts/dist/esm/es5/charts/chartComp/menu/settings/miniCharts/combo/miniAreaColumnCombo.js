@@ -92,4 +92,3 @@ var MiniAreaColumnCombo = /** @class */ (function (_super) {
     return MiniAreaColumnCombo;
 }(MiniChartWithAxes));
 export { MiniAreaColumnCombo };
-//# sourceMappingURL=miniAreaColumnCombo.js.map

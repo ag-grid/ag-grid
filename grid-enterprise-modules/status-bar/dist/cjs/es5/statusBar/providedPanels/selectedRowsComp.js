@@ -79,4 +79,3 @@ var SelectedRowsComp = /** @class */ (function (_super) {
     return SelectedRowsComp;
 }(nameValueComp_1.NameValueComp));
 exports.SelectedRowsComp = SelectedRowsComp;
-//# sourceMappingURL=selectedRowsComp.js.map

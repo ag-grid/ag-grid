@@ -126,4 +126,3 @@ var ComboChartModel = /** @class */ (function (_super) {
     return ComboChartModel;
 }(core_1.BeanStub));
 exports.ComboChartModel = ComboChartModel;
-//# sourceMappingURL=comboChartModel.js.map

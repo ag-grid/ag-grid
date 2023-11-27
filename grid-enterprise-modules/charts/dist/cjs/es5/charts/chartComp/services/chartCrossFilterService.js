@@ -142,4 +142,3 @@ var ChartCrossFilterService = /** @class */ (function (_super) {
     return ChartCrossFilterService;
 }(core_1.BeanStub));
 exports.ChartCrossFilterService = ChartCrossFilterService;
-//# sourceMappingURL=chartCrossFilterService.js.map

@@ -146,5 +146,3 @@ HeaderNavigationService = __decorate([
     (0, context_1.Bean)('headerNavigationService')
 ], HeaderNavigationService);
 exports.HeaderNavigationService = HeaderNavigationService;
-
-//# sourceMappingURL=headerNavigationService.js.map

@@ -554,4 +554,3 @@ var FillHandle = /** @class */ (function (_super) {
     return FillHandle;
 }(AbstractSelectionHandle));
 export { FillHandle };
-//# sourceMappingURL=fillHandle.js.map

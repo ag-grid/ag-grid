@@ -108,4 +108,3 @@ __decorate([
 __decorate([
     PostConstruct
 ], PivotDropZonePanel.prototype, "passBeansUp", null);
-//# sourceMappingURL=pivotDropZonePanel.js.map

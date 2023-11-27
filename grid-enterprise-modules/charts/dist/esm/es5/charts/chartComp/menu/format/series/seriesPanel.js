@@ -324,4 +324,3 @@ var SeriesPanel = /** @class */ (function (_super) {
     return SeriesPanel;
 }(Component));
 export { SeriesPanel };
-//# sourceMappingURL=seriesPanel.js.map

@@ -213,4 +213,3 @@ __decorate([
     (0, core_1.Autowired)("columnApi")
 ], ColumnToolPanel.prototype, "columnApi", void 0);
 exports.ColumnToolPanel = ColumnToolPanel;
-//# sourceMappingURL=columnToolPanel.js.map

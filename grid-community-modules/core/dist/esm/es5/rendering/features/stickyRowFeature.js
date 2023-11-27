@@ -233,5 +233,3 @@ var StickyRowFeature = /** @class */ (function (_super) {
     return StickyRowFeature;
 }(BeanStub));
 export { StickyRowFeature };
-
-//# sourceMappingURL=stickyRowFeature.js.map

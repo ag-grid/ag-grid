@@ -113,5 +113,3 @@ var SimpleFloatingFilter = /** @class */ (function (_super) {
     return SimpleFloatingFilter;
 }(Component));
 export { SimpleFloatingFilter };
-
-//# sourceMappingURL=simpleFloatingFilter.js.map

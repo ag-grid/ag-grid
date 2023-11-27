@@ -277,5 +277,3 @@ class ColumnMoveHelper {
     }
 }
 exports.ColumnMoveHelper = ColumnMoveHelper;
-
-//# sourceMappingURL=columnMoveHelper.js.map

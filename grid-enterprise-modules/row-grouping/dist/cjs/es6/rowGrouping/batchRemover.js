@@ -51,4 +51,3 @@ class BatchRemover {
     }
 }
 exports.BatchRemover = BatchRemover;
-//# sourceMappingURL=batchRemover.js.map

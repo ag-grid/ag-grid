@@ -560,5 +560,3 @@ var StateService = /** @class */ (function (_super) {
     return StateService;
 }(beanStub_1.BeanStub));
 exports.StateService = StateService;
-
-//# sourceMappingURL=stateService.js.map

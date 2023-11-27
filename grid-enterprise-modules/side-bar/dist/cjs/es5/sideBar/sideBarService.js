@@ -40,4 +40,3 @@ var SideBarService = /** @class */ (function (_super) {
     return SideBarService;
 }(core_1.BeanStub));
 exports.SideBarService = SideBarService;
-//# sourceMappingURL=sideBarService.js.map

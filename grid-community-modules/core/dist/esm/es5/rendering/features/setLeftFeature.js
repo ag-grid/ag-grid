@@ -139,5 +139,3 @@ var SetLeftFeature = /** @class */ (function (_super) {
     return SetLeftFeature;
 }(BeanStub));
 export { SetLeftFeature };
-
-//# sourceMappingURL=setLeftFeature.js.map

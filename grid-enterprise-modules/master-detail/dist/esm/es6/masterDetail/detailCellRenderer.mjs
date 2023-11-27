@@ -100,4 +100,3 @@ DetailCellRenderer.TEMPLATE = `<div class="ag-details-row" role="gridcell">
 __decorate([
     RefSelector('eDetailGrid')
 ], DetailCellRenderer.prototype, "eDetailGrid", void 0);
-//# sourceMappingURL=detailCellRenderer.js.map

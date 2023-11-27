@@ -14,4 +14,3 @@ const sheetFactory = {
     }
 };
 export default sheetFactory;
-//# sourceMappingURL=sheet.js.map

@@ -280,5 +280,3 @@ __decorate([
     (0, context_1.Autowired)('userComponentFactory')
 ], DateFilter.prototype, "userComponentFactory", void 0);
 exports.DateFilter = DateFilter;
-
-//# sourceMappingURL=dateFilter.js.map

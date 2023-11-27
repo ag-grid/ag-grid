@@ -17,4 +17,3 @@ function changeOpacity(fills, alpha) {
     });
 }
 exports.changeOpacity = changeOpacity;
-//# sourceMappingURL=color.js.map

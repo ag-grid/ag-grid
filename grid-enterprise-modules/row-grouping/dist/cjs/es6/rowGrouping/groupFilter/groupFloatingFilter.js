@@ -150,4 +150,3 @@ __decorate([
     (0, core_1.RefSelector)('eFloatingFilter')
 ], GroupFloatingFilterComp.prototype, "eFloatingFilter", void 0);
 exports.GroupFloatingFilterComp = GroupFloatingFilterComp;
-//# sourceMappingURL=groupFloatingFilter.js.map

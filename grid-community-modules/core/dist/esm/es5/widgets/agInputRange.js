@@ -65,5 +65,3 @@ var AgInputRange = /** @class */ (function (_super) {
     return AgInputRange;
 }(AgAbstractInputField));
 export { AgInputRange };
-
-//# sourceMappingURL=agInputRange.js.map

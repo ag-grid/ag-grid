@@ -166,4 +166,3 @@ __decorate([
 __decorate([
     PostConstruct
 ], LegendPanel.prototype, "init", null);
-//# sourceMappingURL=legendPanel.js.map

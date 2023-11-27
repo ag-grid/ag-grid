@@ -114,5 +114,3 @@ var ColumnAnimationService = /** @class */ (function (_super) {
     return ColumnAnimationService;
 }(BeanStub));
 export { ColumnAnimationService };
-
-//# sourceMappingURL=columnAnimationService.js.map

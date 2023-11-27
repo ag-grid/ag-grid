@@ -342,4 +342,3 @@ var AgColorPanel = /** @class */ (function (_super) {
     return AgColorPanel;
 }(Component));
 export { AgColorPanel };
-//# sourceMappingURL=agColorPanel.js.map

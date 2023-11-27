@@ -147,5 +147,3 @@ var GridCtrl = /** @class */ (function (_super) {
     return GridCtrl;
 }(beanStub_1.BeanStub));
 exports.GridCtrl = GridCtrl;
-
-//# sourceMappingURL=gridCtrl.js.map

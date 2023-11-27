@@ -117,5 +117,3 @@ var HeaderRowComp = /** @class */ (function (_super) {
     return HeaderRowComp;
 }(Component));
 export { HeaderRowComp };
-
-//# sourceMappingURL=headerRowComp.js.map

@@ -140,5 +140,3 @@ var StandardMenuFactory = /** @class */ (function (_super) {
     return StandardMenuFactory;
 }(BeanStub));
 export { StandardMenuFactory };
-
-//# sourceMappingURL=standardMenu.js.map

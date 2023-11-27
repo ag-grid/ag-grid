@@ -24,5 +24,3 @@
 
     eBox.insertBefore(eMessage, eBox.children[0]);
 } */
-
-//# sourceMappingURL=debug.js.map

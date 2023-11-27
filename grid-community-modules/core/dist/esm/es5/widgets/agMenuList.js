@@ -218,5 +218,3 @@ var AgMenuList = /** @class */ (function (_super) {
     return AgMenuList;
 }(TabGuardComp));
 export { AgMenuList };
-
-//# sourceMappingURL=agMenuList.js.map

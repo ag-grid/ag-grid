@@ -31,5 +31,3 @@ class GroupInstanceIdCreator {
     }
 }
 exports.GroupInstanceIdCreator = GroupInstanceIdCreator;
-
-//# sourceMappingURL=groupInstanceIdCreator.js.map

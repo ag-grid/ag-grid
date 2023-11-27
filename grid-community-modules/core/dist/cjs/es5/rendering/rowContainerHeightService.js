@@ -147,5 +147,3 @@ var RowContainerHeightService = /** @class */ (function (_super) {
     return RowContainerHeightService;
 }(beanStub_1.BeanStub));
 exports.RowContainerHeightService = RowContainerHeightService;
-
-//# sourceMappingURL=rowContainerHeightService.js.map

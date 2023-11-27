@@ -90,5 +90,3 @@ __decorate([
     (0, componentAnnotations_1.RefSelector)('eChildCount')
 ], GroupCellRenderer.prototype, "eChildCount", void 0);
 exports.GroupCellRenderer = GroupCellRenderer;
-
-//# sourceMappingURL=groupCellRenderer.js.map

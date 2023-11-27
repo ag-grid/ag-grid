@@ -1227,4 +1227,3 @@ var TreeModelWrapper = /** @class */ (function () {
     };
     return TreeModelWrapper;
 }());
-//# sourceMappingURL=setFilter.js.map

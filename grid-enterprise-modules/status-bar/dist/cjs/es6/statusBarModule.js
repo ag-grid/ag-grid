@@ -31,4 +31,3 @@ exports.StatusBarModule = {
         core_2.EnterpriseCoreModule
     ]
 };
-//# sourceMappingURL=statusBarModule.js.map

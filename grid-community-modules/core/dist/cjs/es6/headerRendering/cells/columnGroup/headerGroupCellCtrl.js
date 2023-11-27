@@ -310,5 +310,3 @@ __decorate([
     (0, context_1.Autowired)('columnModel')
 ], HeaderGroupCellCtrl.prototype, "columnModel", void 0);
 exports.HeaderGroupCellCtrl = HeaderGroupCellCtrl;
-
-//# sourceMappingURL=headerGroupCellCtrl.js.map

@@ -27,5 +27,3 @@ var AbstractHeaderCellComp = /** @class */ (function (_super) {
     return AbstractHeaderCellComp;
 }(Component));
 export { AbstractHeaderCellComp };
-
-//# sourceMappingURL=abstractHeaderCellComp.js.map

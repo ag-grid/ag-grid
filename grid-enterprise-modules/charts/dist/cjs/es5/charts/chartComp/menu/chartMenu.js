@@ -374,4 +374,3 @@ var ChartMenu = /** @class */ (function (_super) {
     return ChartMenu;
 }(core_1.Component));
 exports.ChartMenu = ChartMenu;
-//# sourceMappingURL=chartMenu.js.map

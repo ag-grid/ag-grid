@@ -56,5 +56,3 @@ __decorate([
     context_1.PostConstruct
 ], DragListenerFeature.prototype, "postConstruct", null);
 exports.DragListenerFeature = DragListenerFeature;
-
-//# sourceMappingURL=dragListenerFeature.js.map

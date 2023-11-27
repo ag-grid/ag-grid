@@ -102,4 +102,3 @@ ComboChartModel.SUPPORTED_COMBO_CHART_TYPES = ['line', 'groupedColumn', 'stacked
 __decorate([
     PostConstruct
 ], ComboChartModel.prototype, "init", null);
-//# sourceMappingURL=comboChartModel.js.map

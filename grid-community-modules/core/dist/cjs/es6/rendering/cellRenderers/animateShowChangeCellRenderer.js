@@ -96,5 +96,3 @@ __decorate([
     (0, context_1.Autowired)('filterManager')
 ], AnimateShowChangeCellRenderer.prototype, "filterManager", void 0);
 exports.AnimateShowChangeCellRenderer = AnimateShowChangeCellRenderer;
-
-//# sourceMappingURL=animateShowChangeCellRenderer.js.map

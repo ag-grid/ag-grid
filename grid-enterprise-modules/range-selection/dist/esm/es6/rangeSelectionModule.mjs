@@ -17,4 +17,3 @@ export const RangeSelectionModule = {
         EnterpriseCoreModule
     ]
 };
-//# sourceMappingURL=rangeSelectionModule.js.map

@@ -2153,5 +2153,3 @@ GridApi = __decorate([
     (0, context_1.Bean)('gridApi')
 ], GridApi);
 exports.GridApi = GridApi;
-
-//# sourceMappingURL=gridApi.js.map

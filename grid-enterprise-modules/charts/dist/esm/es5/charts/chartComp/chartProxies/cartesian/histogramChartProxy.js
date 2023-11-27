@@ -46,4 +46,3 @@ var HistogramChartProxy = /** @class */ (function (_super) {
     return HistogramChartProxy;
 }(CartesianChartProxy));
 export { HistogramChartProxy };
-//# sourceMappingURL=histogramChartProxy.js.map

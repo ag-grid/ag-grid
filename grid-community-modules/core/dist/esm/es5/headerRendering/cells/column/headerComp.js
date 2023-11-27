@@ -283,5 +283,3 @@ var HeaderComp = /** @class */ (function (_super) {
     return HeaderComp;
 }(Component));
 export { HeaderComp };
-
-//# sourceMappingURL=headerComp.js.map

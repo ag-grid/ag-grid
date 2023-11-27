@@ -131,5 +131,3 @@ function parseDateTimeFromString(value) {
     return date;
 }
 exports.parseDateTimeFromString = parseDateTimeFromString;
-
-//# sourceMappingURL=date.js.map

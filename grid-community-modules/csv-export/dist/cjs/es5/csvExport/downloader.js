@@ -31,4 +31,3 @@ var Downloader = /** @class */ (function () {
     return Downloader;
 }());
 exports.Downloader = Downloader;
-//# sourceMappingURL=downloader.js.map

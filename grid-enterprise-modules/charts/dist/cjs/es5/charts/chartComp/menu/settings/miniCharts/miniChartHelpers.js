@@ -55,4 +55,3 @@ function createLinePaths(root, data, size, padding) {
     return lines;
 }
 exports.createLinePaths = createLinePaths;
-//# sourceMappingURL=miniChartHelpers.js.map

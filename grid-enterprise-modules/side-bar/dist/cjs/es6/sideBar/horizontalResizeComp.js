@@ -75,4 +75,3 @@ __decorate([
     core_1.PostConstruct
 ], HorizontalResizeComp.prototype, "postConstruct", null);
 exports.HorizontalResizeComp = HorizontalResizeComp;
-//# sourceMappingURL=horizontalResizeComp.js.map

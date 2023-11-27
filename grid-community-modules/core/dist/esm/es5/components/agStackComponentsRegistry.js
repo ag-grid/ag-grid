@@ -53,5 +53,3 @@ var AgStackComponentsRegistry = /** @class */ (function (_super) {
     return AgStackComponentsRegistry;
 }(BeanStub));
 export { AgStackComponentsRegistry };
-
-//# sourceMappingURL=agStackComponentsRegistry.js.map

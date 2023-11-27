@@ -115,5 +115,3 @@ function isDeleteKey(key, alwaysReturnFalseOnBackspace = false) {
     return false;
 }
 exports.isDeleteKey = isDeleteKey;
-
-//# sourceMappingURL=keyboard.js.map

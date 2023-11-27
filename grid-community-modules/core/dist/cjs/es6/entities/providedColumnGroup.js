@@ -203,5 +203,3 @@ __decorate([
     context_1.PreDestroy
 ], ProvidedColumnGroup.prototype, "destroy", null);
 exports.ProvidedColumnGroup = ProvidedColumnGroup;
-
-//# sourceMappingURL=providedColumnGroup.js.map

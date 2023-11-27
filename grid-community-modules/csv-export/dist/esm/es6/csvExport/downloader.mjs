@@ -24,4 +24,3 @@ export class Downloader {
         }, 0);
     }
 }
-//# sourceMappingURL=downloader.js.map

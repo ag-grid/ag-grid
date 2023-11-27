@@ -124,5 +124,3 @@ var TouchListener = /** @class */ (function () {
     return TouchListener;
 }());
 export { TouchListener };
-
-//# sourceMappingURL=touchListener.js.map

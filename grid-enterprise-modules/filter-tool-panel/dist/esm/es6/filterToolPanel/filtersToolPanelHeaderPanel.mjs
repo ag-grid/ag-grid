@@ -85,4 +85,3 @@ __decorate([
 __decorate([
     PostConstruct
 ], FiltersToolPanelHeaderPanel.prototype, "postConstruct", null);
-//# sourceMappingURL=filtersToolPanelHeaderPanel.js.map

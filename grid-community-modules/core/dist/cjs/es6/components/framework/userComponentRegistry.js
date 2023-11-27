@@ -162,5 +162,3 @@ UserComponentRegistry = __decorate([
     (0, context_1.Bean)('userComponentRegistry')
 ], UserComponentRegistry);
 exports.UserComponentRegistry = UserComponentRegistry;
-
-//# sourceMappingURL=userComponentRegistry.js.map

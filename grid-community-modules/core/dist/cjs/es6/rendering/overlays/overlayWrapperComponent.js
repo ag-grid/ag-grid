@@ -94,5 +94,3 @@ __decorate([
     context_1.PostConstruct
 ], OverlayWrapperComponent.prototype, "postConstruct", null);
 exports.OverlayWrapperComponent = OverlayWrapperComponent;
-
-//# sourceMappingURL=overlayWrapperComponent.js.map

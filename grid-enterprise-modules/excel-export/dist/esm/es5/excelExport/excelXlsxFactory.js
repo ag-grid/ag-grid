@@ -225,4 +225,3 @@ var ExcelXlsxFactory = /** @class */ (function () {
     return ExcelXlsxFactory;
 }());
 export { ExcelXlsxFactory };
-//# sourceMappingURL=excelXlsxFactory.js.map

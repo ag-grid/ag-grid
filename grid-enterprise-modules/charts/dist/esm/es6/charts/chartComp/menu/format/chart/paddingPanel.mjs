@@ -84,4 +84,3 @@ __decorate([
 __decorate([
     PostConstruct
 ], PaddingPanel.prototype, "init", null);
-//# sourceMappingURL=paddingPanel.js.map

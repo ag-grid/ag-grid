@@ -77,4 +77,3 @@ __decorate([
 __decorate([
     PostConstruct
 ], ValuesDropZonePanel.prototype, "passBeansUp", null);
-//# sourceMappingURL=valueDropZonePanel.js.map

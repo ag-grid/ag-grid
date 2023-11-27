@@ -50,4 +50,3 @@ var BatchRemover = /** @class */ (function () {
     return BatchRemover;
 }());
 export { BatchRemover };
-//# sourceMappingURL=batchRemover.js.map

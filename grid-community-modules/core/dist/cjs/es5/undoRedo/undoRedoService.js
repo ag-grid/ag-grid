@@ -367,5 +367,3 @@ var UndoRedoService = /** @class */ (function (_super) {
     return UndoRedoService;
 }(beanStub_1.BeanStub));
 exports.UndoRedoService = UndoRedoService;
-
-//# sourceMappingURL=undoRedoService.js.map

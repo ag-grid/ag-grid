@@ -72,5 +72,3 @@ var FakeVScrollComp = /** @class */ (function (_super) {
     return FakeVScrollComp;
 }(abstractFakeScrollComp_1.AbstractFakeScrollComp));
 exports.FakeVScrollComp = FakeVScrollComp;
-
-//# sourceMappingURL=fakeVScrollComp.js.map

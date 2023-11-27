@@ -240,5 +240,3 @@ function isNonNullObject(value) {
     return typeof value === 'object' && value !== null;
 }
 exports.isNonNullObject = isNonNullObject;
-
-//# sourceMappingURL=object.js.map

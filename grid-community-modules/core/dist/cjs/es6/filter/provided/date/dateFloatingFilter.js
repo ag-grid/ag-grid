@@ -123,5 +123,3 @@ __decorate([
     (0, componentAnnotations_1.RefSelector)('eDateWrapper')
 ], DateFloatingFilter.prototype, "eDateWrapper", void 0);
 exports.DateFloatingFilter = DateFloatingFilter;
-
-//# sourceMappingURL=dateFloatingFilter.js.map

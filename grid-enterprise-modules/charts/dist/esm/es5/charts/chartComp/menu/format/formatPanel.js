@@ -137,4 +137,3 @@ var FormatPanel = /** @class */ (function (_super) {
     return FormatPanel;
 }(Component));
 export { FormatPanel };
-//# sourceMappingURL=formatPanel.js.map

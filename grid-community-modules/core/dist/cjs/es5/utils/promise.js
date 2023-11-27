@@ -58,5 +58,3 @@ var AgPromise = /** @class */ (function () {
     return AgPromise;
 }());
 exports.AgPromise = AgPromise;
-
-//# sourceMappingURL=promise.js.map

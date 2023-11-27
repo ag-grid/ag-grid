@@ -37,4 +37,3 @@ export class AreaChartProxy extends CartesianChartProxy {
         return !this.crossFiltering && this.chartType === 'normalizedArea';
     }
 }
-//# sourceMappingURL=areaChartProxy.js.map

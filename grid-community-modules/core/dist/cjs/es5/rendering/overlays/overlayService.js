@@ -109,5 +109,3 @@ var OverlayService = /** @class */ (function (_super) {
     return OverlayService;
 }(beanStub_1.BeanStub));
 exports.OverlayService = OverlayService;
-
-//# sourceMappingURL=overlayService.js.map

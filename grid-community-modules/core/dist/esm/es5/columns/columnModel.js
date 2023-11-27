@@ -3700,5 +3700,3 @@ var ColumnModel = /** @class */ (function (_super) {
     return ColumnModel;
 }(BeanStub));
 export { ColumnModel };
-
-//# sourceMappingURL=columnModel.js.map

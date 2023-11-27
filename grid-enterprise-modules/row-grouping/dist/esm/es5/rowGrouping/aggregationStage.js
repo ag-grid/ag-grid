@@ -249,4 +249,3 @@ var AggregationStage = /** @class */ (function (_super) {
     return AggregationStage;
 }(BeanStub));
 export { AggregationStage };
-//# sourceMappingURL=aggregationStage.js.map

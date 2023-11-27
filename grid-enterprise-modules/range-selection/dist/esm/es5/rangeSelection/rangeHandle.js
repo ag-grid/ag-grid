@@ -77,4 +77,3 @@ var RangeHandle = /** @class */ (function (_super) {
     return RangeHandle;
 }(AbstractSelectionHandle));
 export { RangeHandle };
-//# sourceMappingURL=rangeHandle.js.map

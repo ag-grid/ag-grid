@@ -779,5 +779,3 @@ var DataTypeService = /** @class */ (function (_super) {
     return DataTypeService;
 }(BeanStub));
 export { DataTypeService };
-
-//# sourceMappingURL=dataTypeService.js.map

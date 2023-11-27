@@ -405,5 +405,3 @@ var ColumnFactory = /** @class */ (function (_super) {
     return ColumnFactory;
 }(beanStub_1.BeanStub));
 exports.ColumnFactory = ColumnFactory;
-
-//# sourceMappingURL=columnFactory.js.map

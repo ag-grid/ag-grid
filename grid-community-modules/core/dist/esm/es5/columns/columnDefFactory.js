@@ -86,5 +86,3 @@ var ColumnDefFactory = /** @class */ (function () {
     return ColumnDefFactory;
 }());
 export { ColumnDefFactory };
-
-//# sourceMappingURL=columnDefFactory.js.map

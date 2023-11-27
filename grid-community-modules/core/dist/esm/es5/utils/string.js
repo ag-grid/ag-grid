@@ -138,5 +138,3 @@ export function camelCaseToHumanText(camelCase) {
 export function camelCaseToHyphenated(camelCase) {
     return camelCase.replace(/[A-Z]/g, function (s) { return "-".concat(s.toLocaleLowerCase()); });
 }
-
-//# sourceMappingURL=string.js.map

@@ -65,5 +65,3 @@ var CheckboxCellEditor = /** @class */ (function (_super) {
     return CheckboxCellEditor;
 }(PopupComponent));
 export { CheckboxCellEditor };
-
-//# sourceMappingURL=checkboxCellEditor.js.map

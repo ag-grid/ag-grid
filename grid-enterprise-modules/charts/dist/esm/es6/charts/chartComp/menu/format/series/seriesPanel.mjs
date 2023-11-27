@@ -292,4 +292,3 @@ __decorate([
 __decorate([
     PostConstruct
 ], SeriesPanel.prototype, "init", null);
-//# sourceMappingURL=seriesPanel.js.map

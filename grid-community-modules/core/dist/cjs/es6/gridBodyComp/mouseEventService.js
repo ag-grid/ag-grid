@@ -84,5 +84,3 @@ MouseEventService = MouseEventService_1 = __decorate([
     (0, context_1.Bean)('mouseEventService')
 ], MouseEventService);
 exports.MouseEventService = MouseEventService;
-
-//# sourceMappingURL=mouseEventService.js.map

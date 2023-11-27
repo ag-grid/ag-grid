@@ -37,4 +37,3 @@ export class MiniDoughnut extends MiniChart {
     }
 }
 MiniDoughnut.chartType = 'doughnut';
-//# sourceMappingURL=miniDoughnut.js.map

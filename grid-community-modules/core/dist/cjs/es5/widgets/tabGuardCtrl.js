@@ -167,5 +167,3 @@ var TabGuardCtrl = /** @class */ (function (_super) {
     return TabGuardCtrl;
 }(beanStub_1.BeanStub));
 exports.TabGuardCtrl = TabGuardCtrl;
-
-//# sourceMappingURL=tabGuardCtrl.js.map

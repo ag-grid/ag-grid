@@ -101,4 +101,3 @@ var PaddingPanel = /** @class */ (function (_super) {
     return PaddingPanel;
 }(core_1.Component));
 exports.PaddingPanel = PaddingPanel;
-//# sourceMappingURL=paddingPanel.js.map

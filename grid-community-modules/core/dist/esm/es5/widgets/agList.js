@@ -179,5 +179,3 @@ var AgList = /** @class */ (function (_super) {
     return AgList;
 }(Component));
 export { AgList };
-
-//# sourceMappingURL=agList.js.map

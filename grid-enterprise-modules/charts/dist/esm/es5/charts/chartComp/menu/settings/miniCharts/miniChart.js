@@ -61,4 +61,3 @@ var MiniChart = /** @class */ (function (_super) {
     return MiniChart;
 }(Component));
 export { MiniChart };
-//# sourceMappingURL=miniChart.js.map

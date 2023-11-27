@@ -193,5 +193,3 @@ class CellMouseListenerFeature extends beans_1.Beans {
     }
 }
 exports.CellMouseListenerFeature = CellMouseListenerFeature;
-
-//# sourceMappingURL=cellMouseListenerFeature.js.map

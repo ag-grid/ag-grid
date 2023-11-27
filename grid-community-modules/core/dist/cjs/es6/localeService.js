@@ -47,5 +47,3 @@ LocaleService = __decorate([
     (0, context_1.Bean)('localeService')
 ], LocaleService);
 exports.LocaleService = LocaleService;
-
-//# sourceMappingURL=localeService.js.map

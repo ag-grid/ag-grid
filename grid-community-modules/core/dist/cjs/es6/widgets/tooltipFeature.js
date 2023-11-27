@@ -78,5 +78,3 @@ class TooltipFeature extends beanStub_1.BeanStub {
     }
 }
 exports.TooltipFeature = TooltipFeature;
-
-//# sourceMappingURL=tooltipFeature.js.map

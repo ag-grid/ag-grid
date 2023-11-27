@@ -413,4 +413,3 @@ PivotColDefService = PivotColDefService_1 = __decorate([
     (0, core_1.Bean)('pivotColDefService')
 ], PivotColDefService);
 exports.PivotColDefService = PivotColDefService;
-//# sourceMappingURL=pivotColDefService.js.map

@@ -69,5 +69,3 @@ PaginationAutoPageSizeService = __decorate([
     (0, context_1.Bean)('paginationAutoPageSizeService')
 ], PaginationAutoPageSizeService);
 exports.PaginationAutoPageSizeService = PaginationAutoPageSizeService;
-
-//# sourceMappingURL=paginationAutoPageSizeService.js.map

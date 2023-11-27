@@ -31,4 +31,3 @@ var MiniNormalizedColumn = /** @class */ (function (_super) {
     return MiniNormalizedColumn;
 }(miniStackedColumn_1.MiniStackedColumn));
 exports.MiniNormalizedColumn = MiniNormalizedColumn;
-//# sourceMappingURL=miniNormalizedColumn.js.map

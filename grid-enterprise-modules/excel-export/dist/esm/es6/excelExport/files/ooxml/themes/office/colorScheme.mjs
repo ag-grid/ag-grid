@@ -40,4 +40,3 @@ const colorScheme = {
     }
 };
 export default colorScheme;
-//# sourceMappingURL=colorScheme.js.map

@@ -68,4 +68,3 @@ class BarChartProxy extends cartesianChartProxy_1.CartesianChartProxy {
     }
 }
 exports.BarChartProxy = BarChartProxy;
-//# sourceMappingURL=barChartProxy.js.map

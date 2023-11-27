@@ -37,5 +37,3 @@ var PopupComponent = /** @class */ (function (_super) {
     return PopupComponent;
 }(Component));
 export { PopupComponent };
-
-//# sourceMappingURL=popupComponent.js.map

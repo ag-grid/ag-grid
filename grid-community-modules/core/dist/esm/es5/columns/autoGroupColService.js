@@ -162,5 +162,3 @@ var AutoGroupColService = /** @class */ (function (_super) {
     return AutoGroupColService;
 }(BeanStub));
 export { AutoGroupColService };
-
-//# sourceMappingURL=autoGroupColService.js.map

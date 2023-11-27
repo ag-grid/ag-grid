@@ -300,5 +300,3 @@ var ColumnMoveHelper = /** @class */ (function () {
     return ColumnMoveHelper;
 }());
 exports.ColumnMoveHelper = ColumnMoveHelper;
-
-//# sourceMappingURL=columnMoveHelper.js.map

@@ -81,5 +81,3 @@ SyncService = __decorate([
     (0, context_1.Bean)('syncService')
 ], SyncService);
 exports.SyncService = SyncService;
-
-//# sourceMappingURL=syncService.js.map

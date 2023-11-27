@@ -920,5 +920,3 @@ RowNode.EVENT_SELECTABLE_CHANGED = 'selectableChanged';
 RowNode.EVENT_UI_LEVEL_CHANGED = 'uiLevelChanged';
 RowNode.EVENT_HIGHLIGHT_CHANGED = 'rowHighlightChanged';
 RowNode.EVENT_DRAGGING_CHANGED = 'draggingChanged';
-
-//# sourceMappingURL=rowNode.js.map

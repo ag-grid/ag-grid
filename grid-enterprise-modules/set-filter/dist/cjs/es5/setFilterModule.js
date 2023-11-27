@@ -18,4 +18,3 @@ exports.SetFilterModule = {
         core_2.EnterpriseCoreModule
     ]
 };
-//# sourceMappingURL=setFilterModule.js.map

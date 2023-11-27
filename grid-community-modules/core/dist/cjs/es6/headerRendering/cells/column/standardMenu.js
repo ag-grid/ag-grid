@@ -120,5 +120,3 @@ StandardMenuFactory = __decorate([
     (0, context_1.Bean)('menuFactory')
 ], StandardMenuFactory);
 exports.StandardMenuFactory = StandardMenuFactory;
-
-//# sourceMappingURL=standardMenu.js.map

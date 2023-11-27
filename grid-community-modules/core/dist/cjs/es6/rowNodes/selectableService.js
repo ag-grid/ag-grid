@@ -78,5 +78,3 @@ SelectableService = __decorate([
     (0, context_1.Bean)('selectableService')
 ], SelectableService);
 exports.SelectableService = SelectableService;
-
-//# sourceMappingURL=selectableService.js.map

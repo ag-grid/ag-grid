@@ -60,4 +60,3 @@ export class XmlFactory {
         return ` ${key}="${xmlValue}"`;
     }
 }
-//# sourceMappingURL=xmlFactory.js.map

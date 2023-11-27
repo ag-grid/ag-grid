@@ -320,5 +320,3 @@ exports.GRID_OPTIONS_VALIDATORS = {
     deprecations: GRID_OPTION_DEPRECATIONS,
     validations: GRID_OPTION_VALIDATIONS,
 };
-
-//# sourceMappingURL=gridOptionsValidations.js.map
