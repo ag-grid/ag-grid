@@ -1,14 +1,12 @@
 ---
-title: "Upgrade to V31"
+title: "Upgrade to AG Grid 31"
 ---
 
 ## What's New
 
 See the [release post](https://blog.ag-grid.com/whats-new-in-ag-grid-31/) for details of what's new in this major version.
 
-## Upgrading to V31
-
-### Using the AG Grid Migration Tool
+## Using the AG Grid Migration Tool
 
 All major AG Grid releases now come with an accompanying migration tool to help automate the upgrade process. This is the easiest way to make sure your projects stay up-to-date with the latest AG Grid changes.
 
@@ -77,6 +75,7 @@ Grid columns are now sortable and resizable by default. Also, the grid animates 
 * `getServerSideStoreParams`: use `getServerSideGroupLevelParams` instead.
 * `onRowDataChanged`: no longer fired, use `onRowDataUpdated` instead.
 * `getRowId` is now an initial property and can no longer be updated.
+* `rememberGroupStateWhenNewData` - removed. Provide getRowId to maintain group state when row data updated instead (see [Updating Row Data](https://ag-grid.com/javascript-data-grid/data-update-row-data/)).
 
 ### Column Filters
 
@@ -116,27 +115,21 @@ When showing the pagination controls, the page size selector is shown by default
 * interface `RangeSelection`: use `CellRange` instead.
 * interface `AddRangeSelectionParams`: use `CellRangeParams` instead.
 
-### API
+### Column API
 
-* `rememberGroupStateWhenNewData` - removed. Provide getRowId to maintain group state when row data updated instead (see [Updating Row Data](https://ag-grid.com/javascript-data-grid/data-update-row-data/)).
+* `getAllColumns`: use `api.getColumns` instead.
+* `getPrimaryColumns`: use `api.getColumns` instead.
+* `getSecondaryColumns`: use `api.getPivotResultColumns` instead.
+* `setSecondaryColumns`: use `api.setPivotResultColumns` instead.
+* `getSecondaryPivotColumn`: use `api.getPivotResultColumn` instead.
 
-* Removal of v28 deprecations in v31 release:
+### Grid API
 
-    * Column API:
-
-        * `getAllColumns`: use `api.getColumns` instead.
-        * `getPrimaryColumns`: use `api.getColumns` instead.
-        * `getSecondaryColumns`: use `api.getPivotResultColumns` instead.
-        * `setSecondaryColumns`: use `api.setPivotResultColumns` instead.
-        * `getSecondaryPivotColumn`: use `api.getPivotResultColumn` instead.
-
-    * Grid API:
-
-        * `refreshServerSideStore`: use `refreshServerSide` instead.
-        * `getServerSideStoreState`: use `getServerSideGroupLevelState` instead.
-        * `setProcessSecondaryColDef`: use `api.setGridOption`(`processPivotResultColGroupDef`, `newValue`) instead.
-        * `setProcessSecondaryColGroupDef`: use `api.setGridOption`(`setProcessPivotResultColGroupDef`, `newValue`) instead.
-        * `setGetServerSideStoreParams`: use `api.setGridOption`(`getServerSideGroupLevelParams`, `newValue`) instead.
+* `refreshServerSideStore`: use `refreshServerSide` instead.
+* `getServerSideStoreState`: use `getServerSideGroupLevelState` instead.
+* `setProcessSecondaryColDef`: use `api.setGridOption`(`processPivotResultColGroupDef`, `newValue`) instead.
+* `setProcessSecondaryColGroupDef`: use `api.setGridOption`(`setProcessPivotResultColGroupDef`, `newValue`) instead.
+* `setGetServerSideStoreParams`: use `api.setGridOption`(`getServerSideGroupLevelParams`, `newValue`) instead.
 
 ## Deprecations
 
