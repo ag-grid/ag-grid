@@ -63,12 +63,12 @@ You can [download Plex Sans from Google Fonts](https://fonts.google.com/specimen
 
 ```html
 <!-- in HTML -->
-<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500&display=swap" rel="stylesheet" />
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;700&display=swap" rel="stylesheet" />
 ```
 
 ```css
 /* in css */
-@import "https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500&display=swap";
+@import "https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;700&display=swap";
 ```
 
 #### Loading Roboto for the Material theme
