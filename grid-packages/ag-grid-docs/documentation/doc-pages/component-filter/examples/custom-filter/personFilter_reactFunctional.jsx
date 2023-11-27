@@ -56,7 +56,7 @@ export default forwardRef((props, ref) => {
             <div style={{marginTop: 20}}>Just to emphasise that anything can go in here, here is an image!!</div>
             <div>
                 <img src="https://www.ag-grid.com/images/ag-Grid2-200.png"
-                    style={{width: 150, textAlign: "center", padding: 10, margin: 10, border: "1px solid lightgrey"}}/>
+                    style={{width: 150, textAlign: "center", padding: 10, margin: 10, border: "1px solid lightgrey", backgroundColor: "white"}}/>
             </div>
         </div>
     )

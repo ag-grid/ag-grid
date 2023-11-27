@@ -24,8 +24,12 @@ export class SelectableService extends BeanStub {
     }
 
     private updateSelectable(skipLeafNodes = false) {
-        const isGroupSelectsChildren = this.gridOptionsService.get('groupSelectsChildren');
+        const isRowSelecting = !!this.gridOptionsService.get('rowSelection');
         const isRowSelectable = this.gridOptionsService.get('isRowSelectable');
+
+        if (!isRowSelecting || !isRowSelectable) { return; }
+
+        const isGroupSelectsChildren = this.gridOptionsService.get('groupSelectsChildren');
 
         const isCsrmGroupSelectsChildren = this.rowModel.getType() === 'clientSide' && isGroupSelectsChildren;
 

@@ -49,7 +49,7 @@
     }
 
     .ag-menu-option-popup-pointer, .ag-compact-menu-option-popup-pointer {
-        padding-right: var(--ag-grid-size);
+        @include ag.unthemed-rtl((padding-right: var(--ag-grid-size)));
     }
 
     ////////////////////////////////////////
@@ -130,18 +130,18 @@
         margin: var(--ag-widget-container-vertical-padding) var(--ag-widget-container-horizontal-padding);
     }
 
-    .ag-set-filter-item-checkbox {
+    .ag-set-filter-item {
         padding: 0px var(--ag-widget-container-horizontal-padding);
-    }
-
-    .ag-set-filter-add-group-indent {
-        @include ag.unthemed-rtl((margin-left: calc(var(--ag-widget-container-horizontal-padding) + var(--ag-icon-size) + var(--ag-grid-size) * 2)));
     }
 
     @for $i from 1 to 10 {
         .ag-set-filter-indent-#{$i} {
-            @include ag.unthemed-rtl(( padding-left: calc(#{$i} * var(--ag-set-filter-indent-size)) ));
+            @include ag.unthemed-rtl(( padding-left: calc(var(--ag-widget-container-horizontal-padding) + #{$i} * var(--ag-set-filter-indent-size)) ));
         }
+    }
+
+    .ag-set-filter-add-group-indent {
+        @include ag.unthemed-rtl((margin-left: calc(var(--ag-icon-size) + var(--ag-grid-size) * 2)));
     }
 
     .ag-set-filter-group-icons {

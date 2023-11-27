@@ -120,7 +120,7 @@ export class FormatPanel extends Component {
         }
 
         const cartesianOnlyGroupPanels = ['axis', 'navigator'];
-        const cartesianSeries = ['bar', 'column', 'line', 'area', 'scatter', 'histogram', 'cartesian'];
+        const cartesianSeries = ['bar', 'column', 'line', 'area', 'scatter', 'bubble', 'histogram', 'cartesian'];
         return !!(cartesianOnlyGroupPanels.includes(group) && cartesianSeries.includes(seriesType));
     }
 

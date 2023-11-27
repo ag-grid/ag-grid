@@ -24,11 +24,11 @@
 }
 
 .participant-group {
-    background-color: #33CC3344;
+    background-color: #33CC3344 !important;
 }
 
 .medals-group {
-    background-color: #2244CC44;
+    background-color: #2244CC44 !important;;
 }
 
 .legend-box {

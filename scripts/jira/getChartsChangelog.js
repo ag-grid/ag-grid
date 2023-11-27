@@ -2,14 +2,14 @@ const fs = require('fs');
 const {executeJiraRequest, saveDataToFile, logger} = require("./utils");
 
 const CHANGELOG_URL = "https://ag-grid.atlassian.net/rest/api/2/search?jql=filter=11743+order+by+fixversion+desc";
-const CHANGELOG_LOG = "/home/ubuntu/jira_reports/changelog.log";
-const CHANGELOG_TMP_FILE = "/var/www/html/changelog/changelog.tmp.json";
-const CHANGELOG_FILE = "/var/www/html/changelog/changelog.json";
-const CHANGELOG_BAK_FILE = "/var/www/html/changelog/changelog.bak.json";
+const CHANGELOG_LOG = "/home/ubuntu/jira_reports/charts-changelog.log";
+const CHANGELOG_TMP_FILE = "/var/www/charts/changelog/changelog.tmp.json";
+const CHANGELOG_FILE = "/var/www/charts/changelog/changelog.json";
+const CHANGELOG_BAK_FILE = "/var/www/charts/changelog/changelog.bak.json";
 
 try {
     logger("Changelog Data Download Started", CHANGELOG_LOG);
-    const changelogData = executeJiraRequest(CHANGELOG_URL, 'Grid');
+    const changelogData = executeJiraRequest(CHANGELOG_URL, 'Charts');
     logger("Changelog Data Downloaded", CHANGELOG_LOG);
 
     saveDataToFile(changelogData, CHANGELOG_TMP_FILE);

@@ -115,7 +115,7 @@ export const onPreRenderHTML = ({ getHeadComponents, replaceHeadComponents, path
     headComponents.unshift(<link
         key="plex"
         rel="stylesheet"
-        href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500&display=swap"
+        href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;700&display=swap"
         crossOrigin="anonymous"/>,
     );
 

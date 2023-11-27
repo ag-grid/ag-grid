@@ -2,11 +2,11 @@
 title: "Aligned Grids"
 ---
 
-Aligning two or more grids means columns will be kept aligned in all grids. In other words, column changes to one grid (column width, column order, column visibility etc) are reflected in the other grid. This is useful if you have two grids, one above the other such that their columns are vertically aligned, and you want to keep the columns aligned.
+Aligning two or more grids means columns will be kept aligned in all grids. In other words, column changes to one grid (column width, column order, column visibility, etc.) are reflected in the other grid. This is useful if you have two grids, one above the other such that their columns are vertically aligned, and you want to keep the columns aligned.
 
 ## Configuration
 
-Configure via the gridOptions property `alignedGrids`.
+Configure via the grid option `alignedGrids`.
 
 <api-documentation source='grid-options/properties.json' section='miscellaneous' names='["alignedGrids"]' ></api-documentation>
 
@@ -122,7 +122,7 @@ Alternatively it is possible to align grids via refs in your component template.
 Below shows two grids, both aligned with the other (so any column change to one will be reflected in the other). The following should be noted:
 
 - When either grid is scrolled horizontally, the other grid follows.
-- Showing / hiding a column on either grid (via the checkbox) will show / hide the column on the other grid, despite the API been called on one grid only.
+- Showing / hiding a column on either grid (via the checkbox) will show / hide the column on the other grid, despite the API being called on one grid only.
 - When a column is resized on either grid, the other grid follows.
 - When a column group is opened on either grid, the other grid follows.
 
@@ -164,4 +164,4 @@ It is possible that you have column groups that are split because of pinning or 
 
 ## Event Propagation
 
-When a grid fires an event, it will be processed to all registered aligned grids. However if a grid is processing such an event, it will not fire an event to other aligned grids. For example, consider the grids A, B and C where B is aligned to A and C is aligned to B (ie A -> B -> C). If A gets a column resized, it will fire the event to B, but B will not fire the event to C. If C is also dependent on A, it needs to be set up directly. This stops cyclic dependencies between grids causing infinite firing of events if two grids are aligned to each other.
+When a grid fires an event, it will be processed by all registered aligned grids. However if a grid is processing such an event, it will not fire an event to other aligned grids. For example, consider the grids A, B and C where B is aligned to A and C is aligned to B (ie A -> B -> C). If A gets a column resized, it will fire the event to B, but B will not fire the event to C. If C is also dependent on A, it needs to be set up directly. This stops cyclic dependencies between grids causing infinite firing of events if two grids are aligned to each other.

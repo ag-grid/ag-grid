@@ -26,12 +26,12 @@ const links = [
     },
     {
         name: 'Docs',
-        url: withPrefix('/getting-started'),
+        url: '/getting-started',
         docsLink: true,
     },
     {
         name: 'API',
-        url: withPrefix('/reference'),
+        url: '/reference',
         docsLink: true,
     },
     {
@@ -85,7 +85,7 @@ const HeaderLinks = ({ path, isOpen, toggleIsOpen, currentFramework }) => {
             <li key={link.name.toLocaleLowerCase()} className={linkClasses}>
                 <a
                     className={styles.navLink}
-                    href={link.docsLink ? `/${currentFramework}-data-grid${link.url}` : link.url}
+                    href={link.docsLink ? withPrefix(`/${currentFramework}-data-grid${link.url}`) : link.url}
                     onClick={() => {
                         if (isOpen) {
                             toggleIsOpen();
@@ -128,8 +128,23 @@ const HeaderNav = ({ path, currentFramework }) => {
 
     return (
         <>
-            {isDocsUrl ? <Search currentFramework={currentFramework} /> : null}
-
+            { isDocsUrl ? <>
+                <button
+                    id="mobile-docs-nav-button"
+                    className={classnames(styles.mobileNavButton, 'button-input')}
+                    type="button"
+                    data-toggle="collapse"
+                    data-target="#side-nav"
+                    aria-controls="side-nav"
+                    aria-expanded="false"
+                    aria-label="Toggle navigation"
+                >
+                    <span>Docs</span>
+                    <Icon name="collapseCategories" />
+                </button>
+                
+                <Search currentFramework={currentFramework} /> 
+            </> : null }
 
             {IS_SSR && (
                 <>

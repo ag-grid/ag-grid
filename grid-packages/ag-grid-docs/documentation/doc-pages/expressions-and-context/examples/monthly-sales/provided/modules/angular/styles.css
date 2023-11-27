@@ -22,16 +22,8 @@ label {
     height: 12px;
 }
 
-.cell-negative {
-    color: darkred;
-}
-
 .cell-figure {
     text-align: right;
-}
-
-.ag-row-group {
-    font-weight: bold;
 }
 
 .test-grid {

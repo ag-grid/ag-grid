@@ -3,16 +3,16 @@
 .searchForm {
     --max-width: 380px;
 
+    position: relative;
+    width: 50%;
     flex-grow: 1;
+    margin: 0 $size-2 8px;
 
-    @media screen and (max-width: $breakpoint-docs-nav-medium) {
-        width: calc(100vh - $size-4);
-        margin: 0 $size-2 8px;
+    @media screen and (min-width: $breakpoint-docs-search-small) {
+        margin-left: 0;
     }
 
-    @media screen and (min-width: $breakpoint-docs-search-medium) {
-        position: relative;
-        width: 100%;
+    @media screen and (min-width: $breakpoint-docs-nav-medium) {
         max-width: var(--max-width);
         margin: 0 auto;
     }
@@ -22,7 +22,7 @@
 
         position: absolute;
         left: 50%;
-        margin-right: $size-3;
+        width: 100%;
         margin-left: calc(var(--max-width) / -2);
     }
 }

@@ -1,11 +1,11 @@
 import React from 'react';
 import { ICellRendererParams } from "@ag-grid-community/core";
+
 export default (props: ICellRendererParams) => {
-    const image = props.value === 'Male' ? 'male.png' : 'female.png';
-    const imageSource = `https://www.ag-grid.com/example-assets/genders/${image}`;
+    const icon = props.value === 'Male' ? 'fa-male' : 'fa-female';
     return (
         <span>
-            <img src={imageSource} />{props.value}
+            <i className={`fa ${icon}`}></i> {props.value}
         </span>
     );
 };

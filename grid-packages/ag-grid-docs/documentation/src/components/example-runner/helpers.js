@@ -18,7 +18,7 @@ export function stripOutDarkModeCode(files) {
             const useDefaultTheme = !files[mainFile].source?.includes('DARK INTEGRATED START');
 
             // Hide theme switcher
-            files[mainFile].source = files[mainFile].source?.replace(/\/\*\* DARK MODE START \*\*\/([\s\S]*?)defaultTheme.*\|\|.*'(?<theme>.*)'([\s\S]*?)\/\*\* DARK MODE END \*\*\//g, `"${ useDefaultTheme ? defaultTheme : 'ag-theme-quartz'}"`);
+            files[mainFile].source = files[mainFile].source?.replace(/\/\*\* DARK MODE START \*\*\/([\s\S]*?)\/\*\* DARK MODE END \*\*\//g, `"${ useDefaultTheme ? defaultTheme : 'ag-theme-quartz'}"`);
 
             // hide integrated theme switcher
             files[mainFile].source = files[mainFile].source?.replace(/\/\*\* DARK INTEGRATED START \*\*\/([\s\S]*?)\/\*\* DARK INTEGRATED END \*\*\//g, '');

@@ -1,6 +1,7 @@
 export default {
-  template: `<div class="ag-overlay-loading-center">
-               <object style="height:100px; width:100px" type="image/svg+xml" data="https://ag-grid.com/images/ag-grid-loading-spinner.svg" aria-label="loading"></object>
-               <div>  {{params.loadingMessage}} </div>
-            </div>`,
+  template: `
+    <div class="ag-overlay-loading-center">
+      <div style="height:100px; width:100px; background: url(https://ag-grid.com/images/ag-grid-loading-spinner.svg) center cover no-repeat" aria-label="loading"></div>
+      <div>{{params.loadingMessage}}</div>
+    </div>`,
 }
