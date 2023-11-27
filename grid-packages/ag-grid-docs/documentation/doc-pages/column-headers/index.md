@@ -136,7 +136,7 @@ You can provide a tooltip to the header using `colDef.headerTooltip`.
 The example below shows header tooltips. Note the following:
 
 - All the columns, apart from **Country** and **Year**, have a header tooltip set.
-- We have set the Grid `tooltipShowDelay` property to 500ms to make the tooltips appear quicker.
+- We have set the Grid `tooltipShowDelay` property to 500ms to make the tooltips appear sooner.
 
 <grid-example title='Header Tooltip' name='header-tooltip' type='generated'></grid-example>
 
