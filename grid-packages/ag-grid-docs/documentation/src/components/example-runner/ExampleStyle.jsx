@@ -6,7 +6,7 @@ import React from 'react';
  */
 const ExampleStyle = ({ rootId }) => (
     <>
-        <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500&display=swap" rel="stylesheet" />
+        <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;700&display=swap" rel="stylesheet" />
         <style media="only screen">
         {`  
             html, body${rootId ? `, #${rootId}` : ''} {
