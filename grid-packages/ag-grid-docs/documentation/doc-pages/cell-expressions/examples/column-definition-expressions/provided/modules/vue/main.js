@@ -66,6 +66,7 @@ const VueExample = {
             defaultColDef: {
                 flex: 1,
                 minWidth: 150,
+                sortable: false
             },
             rowData: this.createRowData(),
             themeClass: /** DARK MODE START **/document.documentElement.dataset.defaultTheme || 'ag-theme-quartz'/** DARK MODE END **/,

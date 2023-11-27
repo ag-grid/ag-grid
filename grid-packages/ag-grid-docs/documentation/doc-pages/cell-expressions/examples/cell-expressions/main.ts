@@ -22,6 +22,7 @@ const gridOptionsLeft: GridOptions<LeftData> = {
   ],
   defaultColDef: {
     flex: 1,
+    sortable: false
   },
   enableCellExpressions: true,
   rowData: rowDataLeft,

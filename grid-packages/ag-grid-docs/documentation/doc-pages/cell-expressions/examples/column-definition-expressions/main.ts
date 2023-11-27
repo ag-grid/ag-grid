@@ -42,6 +42,7 @@ const gridOptions: GridOptions = {
   columnDefs: columnDefs,
   defaultColDef: {
     flex: 1,
+    sortable: false
   },
   rowData: getData(),
   onCellValueChanged: onCellValueChanged,
