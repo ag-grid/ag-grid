@@ -140,7 +140,7 @@ export class GroupCellRendererCtrl extends BeanStub {
 
                 // if the groupCellRenderer is inside of a footer and groupHideOpenParents is true
                 // we should only display the groupCellRenderer if the current column is the rowGroupedColumn
-                if(showRowGroup !== rowGroupColumnId) {
+                if (showRowGroup !== rowGroupColumnId) {
                     return;
                 }
             }
@@ -148,8 +148,35 @@ export class GroupCellRendererCtrl extends BeanStub {
 
         this.setupShowingValueForOpenedParent();
         this.findDisplayedGroupNode();
-        this.addFullWidthRowDraggerIfNeeded();
+
+        if (!topLevelFooter) {
+            // if we're not showing a group value
+            const showOpenGroupValue = (
+                this.gridOptionsService.get('showOpenedGroup') && (
+                    this.gridOptionsService.get('groupDisplayType') === 'singleColumn' ||
+                    (
+                        !params.node.group ||
+                        (
+                            params.node.rowGroupIndex &&
+                            params.node.rowGroupIndex > this.columnModel.getRowGroupColumns().findIndex(c => c.getColId() === params.column?.getColId())
+                        )
+                    )
+                )
+            );
+            // not showing a leaf value (field/valueGetter)
+            const leafWithValues = !node.group && (this.params.colDef?.field || this.params.colDef?.valueGetter);
+            // doesn't have expand/collapse chevron
+            const isExpandable = this.isExpandable();
+
+            // if not showing any values or chevron, skip cell.
+            const canSkipRenderingCell = !this.showingValueForOpenedParent && !isExpandable && !leafWithValues && !showOpenGroupValue;
+            if (canSkipRenderingCell) {
+                return;
+            }
+        }
+
         this.addExpandAndContract();
+        this.addFullWidthRowDraggerIfNeeded();
         this.addCheckboxIfNeeded();
         this.addValueElement();
         this.setupIndent();
@@ -157,7 +184,7 @@ export class GroupCellRendererCtrl extends BeanStub {
     }
 
     public getCellAriaRole(): string {
-        const colDefAriaRole= this.params.colDef?.cellAriaRole;
+        const colDefAriaRole = this.params.colDef?.cellAriaRole;
         const columnColDefAriaRole = this.params.column?.getColDef().cellAriaRole;
         return colDefAriaRole || columnColDefAriaRole || 'gridcell';
     }
@@ -322,7 +349,7 @@ export class GroupCellRendererCtrl extends BeanStub {
                 this.displayedGroupNode.rowGroupColumn && this.params.column?.isRowGroupDisplayed(this.displayedGroupNode.rowGroupColumn.getId())
             );
 
-            if (this.displayedGroupNode.key === ""  && this.displayedGroupNode.group && isGroupColForNode) {
+            if (this.displayedGroupNode.key === "" && this.displayedGroupNode.group && isGroupColForNode) {
                 const localeTextFunc = this.localeService.getLocaleTextFunc();
                 valueWhenNoRenderer = localeTextFunc('blanks', '(Blanks)');
             } else {
