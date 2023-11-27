@@ -51,3 +51,5 @@ var SetPinnedLeftWidthFeature = /** @class */ (function (_super) {
     return SetPinnedLeftWidthFeature;
 }(BeanStub));
 export { SetPinnedLeftWidthFeature };
+
+//# sourceMappingURL=setPinnedLeftWidthFeature.js.map

@@ -35,3 +35,4 @@ var numberFormatFactory = {
     }
 };
 exports.default = numberFormatFactory;
+//# sourceMappingURL=numberFormat.js.map

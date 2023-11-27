@@ -6432,13 +6432,14 @@ var ColumnModel = /** @class */ (function (_super) {
         });
         this.updateGroupsAndDisplayedColumns(source);
         this.setFirstRightAndLastLeftPinned(source);
-        impactedGroups.forEach(function (providedColumnGroup) {
-            var event = {
+        if (impactedGroups.length) {
+            var event_4 = {
                 type: Events.EVENT_COLUMN_GROUP_OPENED,
-                columnGroup: providedColumnGroup
+                columnGroup: ProvidedColumnGroup.length === 1 ? impactedGroups[0] : undefined,
+                columnGroups: impactedGroups,
             };
-            _this.eventService.dispatchEvent(event);
-        });
+            this.eventService.dispatchEvent(event_4);
+        }
         this.columnAnimationService.finish();
     };
     // called by headerRenderer - when a header is opened or closed
@@ -6656,10 +6657,10 @@ var ColumnModel = /** @class */ (function (_super) {
         this.gridColumns.forEach(function (col) { return _this.gridColumnsMap[col.getId()] = col; });
         this.setAutoHeightActive();
         if (!areEqual(prevGridCols, this.gridBalancedTree)) {
-            var event_4 = {
+            var event_5 = {
                 type: Events.EVENT_GRID_COLUMNS_CHANGED
             };
-            this.eventService.dispatchEvent(event_4);
+            this.eventService.dispatchEvent(event_5);
         }
     };
     ColumnModel.prototype.setAutoHeightActive = function () {
@@ -7334,13 +7335,13 @@ var ColumnModel = /** @class */ (function (_super) {
     ColumnModel.prototype.setColumnHeaderHeight = function (col, height) {
         var changed = col.setAutoHeaderHeight(height);
         if (changed) {
-            var event_5 = {
+            var event_6 = {
                 type: Events.EVENT_COLUMN_HEADER_HEIGHT_CHANGED,
                 column: col,
                 columns: [col],
                 source: 'autosizeColumnHeaderHeight',
             };
-            this.eventService.dispatchEvent(event_5);
+            this.eventService.dispatchEvent(event_6);
         }
     };
     ColumnModel.prototype.getColumnGroupHeaderRowHeight = function () {
@@ -22216,7 +22217,11 @@ var GridApi = /** @class */ (function () {
         if (this.destroyCalled) {
             return;
         }
-        this.dispatchEvent({ type: Events.EVENT_GRID_PRE_DESTROYED });
+        var event = {
+            type: Events.EVENT_GRID_PRE_DESTROYED,
+            state: this.getState()
+        };
+        this.dispatchEvent(event);
         // Set after pre-destroy so user can still use the api in pre-destroy event and it is not marked as destroyed yet.
         this.destroyCalled = true;
         // destroy the UI first (as they use the services)
@@ -45965,18 +45970,20 @@ var AlignedGridsService = /** @class */ (function (_super) {
         });
     };
     AlignedGridsService.prototype.processGroupOpenedEvent = function (groupOpenedEvent) {
-        // likewise for column group
-        var masterColumnGroup = groupOpenedEvent.columnGroup;
-        var otherColumnGroup = null;
-        if (masterColumnGroup) {
-            var groupId = masterColumnGroup.getGroupId();
-            otherColumnGroup = this.columnModel.getProvidedColumnGroup(groupId);
-        }
-        if (masterColumnGroup && !otherColumnGroup) {
-            return;
-        }
-        this.logger.log('onColumnEvent-> processing ' + groupOpenedEvent + ' expanded = ' + masterColumnGroup.isExpanded());
-        this.columnModel.setColumnGroupOpened(otherColumnGroup, masterColumnGroup.isExpanded(), "alignedGridChanged");
+        var _this = this;
+        groupOpenedEvent.columnGroups.forEach(function (masterGroup) {
+            // likewise for column group
+            var otherColumnGroup = null;
+            if (masterGroup) {
+                var groupId = masterGroup.getGroupId();
+                otherColumnGroup = _this.columnModel.getProvidedColumnGroup(groupId);
+            }
+            if (masterGroup && !otherColumnGroup) {
+                return;
+            }
+            _this.logger.log('onColumnEvent-> processing ' + groupOpenedEvent + ' expanded = ' + masterGroup.isExpanded());
+            _this.columnModel.setColumnGroupOpened(otherColumnGroup, masterGroup.isExpanded(), "alignedGridChanged");
+        });
     };
     AlignedGridsService.prototype.processColumnEvent = function (colEvent) {
         var _this = this;
@@ -46562,13 +46569,11 @@ var SelectionService = /** @class */ (function (_super) {
     };
     SelectionService.prototype.getSelectionState = function () {
         var selectedIds = [];
-        var selectedNodes = Object.values(this.selectedNodes);
-        for (var i = 0; i < selectedNodes.length; i++) {
-            var node = selectedNodes[i];
+        this.selectedNodes.forEach(function (node) {
             if (node === null || node === void 0 ? void 0 : node.id) {
                 selectedIds.push(node.id);
             }
-        }
+        });
         return selectedIds.length ? selectedIds : null;
     };
     SelectionService.prototype.setSelectionState = function (state, source) {
@@ -49514,8 +49519,12 @@ var SelectableService = /** @class */ (function (_super) {
     };
     SelectableService.prototype.updateSelectable = function (skipLeafNodes) {
         if (skipLeafNodes === void 0) { skipLeafNodes = false; }
-        var isGroupSelectsChildren = this.gridOptionsService.get('groupSelectsChildren');
+        var isRowSelecting = !!this.gridOptionsService.get('rowSelection');
         var isRowSelectable = this.gridOptionsService.get('isRowSelectable');
+        if (!isRowSelecting || !isRowSelectable) {
+            return;
+        }
+        var isGroupSelectsChildren = this.gridOptionsService.get('groupSelectsChildren');
         var isCsrmGroupSelectsChildren = this.rowModel.getType() === 'clientSide' && isGroupSelectsChildren;
         var nodesToDeselect = [];
         var nodeCallback = function (node) {
@@ -51680,7 +51689,7 @@ var RowNodeEventThrottle = /** @class */ (function (_super) {
 var COLUMN_DEFINITION_DEPRECATIONS = {};
 var CSRM_REQUIRES_ROW_GROUP_MODULE = function (_options, gridOptions) {
     var _a;
-    if ((_a = gridOptions.rowModelType) !== null && _a !== void 0 ? _a : 'clientSide' === 'clientSide') {
+    if (((_a = gridOptions.rowModelType) !== null && _a !== void 0 ? _a : 'clientSide') === 'clientSide') {
         return { module: exports.ModuleNames.RowGroupingModule };
     }
     return null;

@@ -72,3 +72,5 @@ var ReadOnlyFloatingFilter = /** @class */ (function (_super) {
     return ReadOnlyFloatingFilter;
 }(Component));
 export { ReadOnlyFloatingFilter };
+
+//# sourceMappingURL=readOnlyFloatingFilter.js.map

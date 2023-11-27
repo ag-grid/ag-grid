@@ -42,3 +42,4 @@ class MiniHistogram extends miniChartWithAxes_1.MiniChartWithAxes {
 }
 exports.MiniHistogram = MiniHistogram;
 MiniHistogram.chartType = 'histogram';
+//# sourceMappingURL=miniHistogram.js.map

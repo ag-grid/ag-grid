@@ -768,7 +768,11 @@ let GridApi = class GridApi {
         if (this.destroyCalled) {
             return;
         }
-        this.dispatchEvent({ type: eventKeys_1.Events.EVENT_GRID_PRE_DESTROYED });
+        const event = {
+            type: eventKeys_1.Events.EVENT_GRID_PRE_DESTROYED,
+            state: this.getState()
+        };
+        this.dispatchEvent(event);
         // Set after pre-destroy so user can still use the api in pre-destroy event and it is not marked as destroyed yet.
         this.destroyCalled = true;
         // destroy the UI first (as they use the services)
@@ -2149,3 +2153,5 @@ GridApi = __decorate([
     (0, context_1.Bean)('gridApi')
 ], GridApi);
 exports.GridApi = GridApi;
+
+//# sourceMappingURL=gridApi.js.map

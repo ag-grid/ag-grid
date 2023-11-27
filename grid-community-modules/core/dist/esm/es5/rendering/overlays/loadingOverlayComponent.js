@@ -35,3 +35,5 @@ var LoadingOverlayComponent = /** @class */ (function (_super) {
     return LoadingOverlayComponent;
 }(Component));
 export { LoadingOverlayComponent };
+
+//# sourceMappingURL=loadingOverlayComponent.js.map

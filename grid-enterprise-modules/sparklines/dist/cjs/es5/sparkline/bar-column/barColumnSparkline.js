@@ -237,3 +237,4 @@ var BarColumnSparkline = /** @class */ (function (_super) {
     return BarColumnSparkline;
 }(sparkline_1.Sparkline));
 exports.BarColumnSparkline = BarColumnSparkline;
+//# sourceMappingURL=barColumnSparkline.js.map

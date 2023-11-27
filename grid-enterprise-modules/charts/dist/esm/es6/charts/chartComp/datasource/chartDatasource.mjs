@@ -301,3 +301,4 @@ __decorate([
 __decorate([
     Optional('aggregationStage')
 ], ChartDatasource.prototype, "aggregationStage", void 0);
+//# sourceMappingURL=chartDatasource.js.map

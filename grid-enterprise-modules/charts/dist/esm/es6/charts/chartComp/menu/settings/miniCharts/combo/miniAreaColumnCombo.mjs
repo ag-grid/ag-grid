@@ -73,3 +73,4 @@ export class MiniAreaColumnCombo extends MiniChartWithAxes {
     }
 }
 MiniAreaColumnCombo.chartType = 'areaColumnCombo';
+//# sourceMappingURL=miniAreaColumnCombo.js.map

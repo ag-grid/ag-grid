@@ -44313,6 +44313,7 @@ const VALID_SERIES_TYPES = [
     'line',
     'pie',
     'scatter',
+    'bubble'
 ];
 const horizontalChartTypes = new Set(['groupedBar', 'stackedBar', 'normalizedBar']);
 function isHorizontal(chartType) {
@@ -44340,8 +44341,9 @@ function getSeriesType(chartType) {
         case 'stackedArea':
         case 'normalizedArea':
             return 'area';
-        case 'scatter':
         case 'bubble':
+            return 'bubble';
+        case 'scatter':
             return 'scatter';
         case 'histogram':
             return 'histogram';
@@ -47022,6 +47024,7 @@ class SeriesPanel extends Component {
             'line': ['tooltips', 'lineWidth', 'lineDash', 'lineOpacity', 'markers', 'labels'],
             'histogram': ['tooltips', 'bins', 'strokeWidth', 'lineDash', 'lineOpacity', 'fillOpacity', 'labels', 'shadow'],
             'scatter': ['tooltips', 'markers', 'labels'],
+            'bubble': ['tooltips', 'markers', 'labels'],
             'pie': ['tooltips', 'strokeWidth', 'lineOpacity', 'fillOpacity', 'labels', 'shadow'],
         };
         this.chartController = chartController;
@@ -47308,7 +47311,7 @@ class FormatPanel extends Component {
                 return true;
             }
             const cartesianOnlyGroupPanels = ['axis', 'navigator'];
-            const cartesianSeries = ['bar', 'column', 'line', 'area', 'scatter', 'histogram', 'cartesian'];
+            const cartesianSeries = ['bar', 'column', 'line', 'area', 'scatter', 'bubble', 'histogram', 'cartesian'];
             return !!(cartesianOnlyGroupPanels.includes(group) && cartesianSeries.includes(seriesType));
         };
     }

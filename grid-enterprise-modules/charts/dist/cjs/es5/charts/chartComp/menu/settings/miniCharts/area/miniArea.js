@@ -81,3 +81,4 @@ var MiniArea = /** @class */ (function (_super) {
     return MiniArea;
 }(miniChartWithAxes_1.MiniChartWithAxes));
 exports.MiniArea = MiniArea;
+//# sourceMappingURL=miniArea.js.map

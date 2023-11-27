@@ -91,3 +91,5 @@ var PaginationAutoPageSizeService = /** @class */ (function (_super) {
     return PaginationAutoPageSizeService;
 }(beanStub_1.BeanStub));
 exports.PaginationAutoPageSizeService = PaginationAutoPageSizeService;
+
+//# sourceMappingURL=paginationAutoPageSizeService.js.map

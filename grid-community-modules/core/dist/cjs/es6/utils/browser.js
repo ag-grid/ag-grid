@@ -158,3 +158,5 @@ function isInvisibleScrollbar() {
     return invisibleScrollbar;
 }
 exports.isInvisibleScrollbar = isInvisibleScrollbar;
+
+//# sourceMappingURL=browser.js.map

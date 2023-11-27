@@ -2538,13 +2538,14 @@ var ColumnModel = /** @class */ (function (_super) {
         });
         this.updateGroupsAndDisplayedColumns(source);
         this.setFirstRightAndLastLeftPinned(source);
-        impactedGroups.forEach(function (providedColumnGroup) {
-            var event = {
+        if (impactedGroups.length) {
+            var event_4 = {
                 type: Events.EVENT_COLUMN_GROUP_OPENED,
-                columnGroup: providedColumnGroup
+                columnGroup: ProvidedColumnGroup.length === 1 ? impactedGroups[0] : undefined,
+                columnGroups: impactedGroups,
             };
-            _this.eventService.dispatchEvent(event);
-        });
+            this.eventService.dispatchEvent(event_4);
+        }
         this.columnAnimationService.finish();
     };
     // called by headerRenderer - when a header is opened or closed
@@ -2762,10 +2763,10 @@ var ColumnModel = /** @class */ (function (_super) {
         this.gridColumns.forEach(function (col) { return _this.gridColumnsMap[col.getId()] = col; });
         this.setAutoHeightActive();
         if (!areEqual(prevGridCols, this.gridBalancedTree)) {
-            var event_4 = {
+            var event_5 = {
                 type: Events.EVENT_GRID_COLUMNS_CHANGED
             };
-            this.eventService.dispatchEvent(event_4);
+            this.eventService.dispatchEvent(event_5);
         }
     };
     ColumnModel.prototype.setAutoHeightActive = function () {
@@ -3441,13 +3442,13 @@ var ColumnModel = /** @class */ (function (_super) {
     ColumnModel.prototype.setColumnHeaderHeight = function (col, height) {
         var changed = col.setAutoHeaderHeight(height);
         if (changed) {
-            var event_5 = {
+            var event_6 = {
                 type: Events.EVENT_COLUMN_HEADER_HEIGHT_CHANGED,
                 column: col,
                 columns: [col],
                 source: 'autosizeColumnHeaderHeight',
             };
-            this.eventService.dispatchEvent(event_5);
+            this.eventService.dispatchEvent(event_6);
         }
     };
     ColumnModel.prototype.getColumnGroupHeaderRowHeight = function () {
@@ -3699,3 +3700,5 @@ var ColumnModel = /** @class */ (function (_super) {
     return ColumnModel;
 }(BeanStub));
 export { ColumnModel };
+
+//# sourceMappingURL=columnModel.js.map

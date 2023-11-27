@@ -82,3 +82,4 @@ var AxisTicksPanel = /** @class */ (function (_super) {
     return AxisTicksPanel;
 }(Component));
 export { AxisTicksPanel };
+//# sourceMappingURL=axisTicksPanel.js.map

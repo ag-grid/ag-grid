@@ -9,6 +9,7 @@ exports.VALID_SERIES_TYPES = [
     'line',
     'pie',
     'scatter',
+    'bubble'
 ];
 var horizontalChartTypes = new Set(['groupedBar', 'stackedBar', 'normalizedBar']);
 function isHorizontal(chartType) {
@@ -38,8 +39,9 @@ function getSeriesType(chartType) {
         case 'stackedArea':
         case 'normalizedArea':
             return 'area';
-        case 'scatter':
         case 'bubble':
+            return 'bubble';
+        case 'scatter':
             return 'scatter';
         case 'histogram':
             return 'histogram';
@@ -51,3 +53,4 @@ function getSeriesType(chartType) {
     }
 }
 exports.getSeriesType = getSeriesType;
+//# sourceMappingURL=seriesTypeMapper.js.map

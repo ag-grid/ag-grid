@@ -40,3 +40,4 @@ export class ColumnModelItem {
     }
 }
 ColumnModelItem.EVENT_EXPANDED_CHANGED = 'expandedChanged';
+//# sourceMappingURL=columnModelItem.js.map

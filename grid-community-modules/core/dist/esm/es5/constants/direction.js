@@ -8,3 +8,5 @@ export var HorizontalDirection;
     HorizontalDirection[HorizontalDirection["Left"] = 0] = "Left";
     HorizontalDirection[HorizontalDirection["Right"] = 1] = "Right";
 })(HorizontalDirection || (HorizontalDirection = {}));
+
+//# sourceMappingURL=direction.js.map

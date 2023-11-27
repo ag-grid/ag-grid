@@ -225,3 +225,5 @@ __decorate([
     context_1.PostConstruct
 ], MoveColumnFeature.prototype, "init", null);
 exports.MoveColumnFeature = MoveColumnFeature;
+
+//# sourceMappingURL=moveColumnFeature.js.map

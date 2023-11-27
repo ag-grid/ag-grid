@@ -396,3 +396,4 @@ var RangeMenuItemMapper = /** @class */ (function () {
     };
     return RangeMenuItemMapper;
 }());
+//# sourceMappingURL=chartMenuItemMapper.js.map

@@ -324,3 +324,5 @@ var AgMenuItemComponent = /** @class */ (function (_super) {
     return AgMenuItemComponent;
 }(component_1.Component));
 exports.AgMenuItemComponent = AgMenuItemComponent;
+
+//# sourceMappingURL=agMenuItemComponent.js.map

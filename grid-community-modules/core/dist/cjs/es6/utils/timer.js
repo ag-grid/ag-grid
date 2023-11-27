@@ -15,3 +15,5 @@ class Timer {
     }
 }
 exports.Timer = Timer;
+
+//# sourceMappingURL=timer.js.map

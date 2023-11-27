@@ -7,3 +7,4 @@ export var InfiniteRowModelModule = {
     rowModel: 'infinite',
     beans: [InfiniteRowModel],
 };
+//# sourceMappingURL=infiniteRowModelModule.js.map

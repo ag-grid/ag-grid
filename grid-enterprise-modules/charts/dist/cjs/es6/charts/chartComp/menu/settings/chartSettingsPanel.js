@@ -176,3 +176,4 @@ __decorate([
     core_1.PostConstruct
 ], ChartSettingsPanel.prototype, "postConstruct", null);
 exports.ChartSettingsPanel = ChartSettingsPanel;
+//# sourceMappingURL=chartSettingsPanel.js.map

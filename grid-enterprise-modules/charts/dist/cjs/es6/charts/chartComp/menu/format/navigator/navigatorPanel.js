@@ -65,3 +65,4 @@ __decorate([
     core_1.PostConstruct
 ], NavigatorPanel.prototype, "init", null);
 exports.NavigatorPanel = NavigatorPanel;
+//# sourceMappingURL=navigatorPanel.js.map

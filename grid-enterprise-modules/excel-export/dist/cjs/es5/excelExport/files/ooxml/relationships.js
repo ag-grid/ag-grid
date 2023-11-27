@@ -16,3 +16,4 @@ var relationshipsFactory = {
     }
 };
 exports.default = relationshipsFactory;
+//# sourceMappingURL=relationships.js.map

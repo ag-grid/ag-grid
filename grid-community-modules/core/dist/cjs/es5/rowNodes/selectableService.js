@@ -43,8 +43,12 @@ var SelectableService = /** @class */ (function (_super) {
     };
     SelectableService.prototype.updateSelectable = function (skipLeafNodes) {
         if (skipLeafNodes === void 0) { skipLeafNodes = false; }
-        var isGroupSelectsChildren = this.gridOptionsService.get('groupSelectsChildren');
+        var isRowSelecting = !!this.gridOptionsService.get('rowSelection');
         var isRowSelectable = this.gridOptionsService.get('isRowSelectable');
+        if (!isRowSelecting || !isRowSelectable) {
+            return;
+        }
+        var isGroupSelectsChildren = this.gridOptionsService.get('groupSelectsChildren');
         var isCsrmGroupSelectsChildren = this.rowModel.getType() === 'clientSide' && isGroupSelectsChildren;
         var nodesToDeselect = [];
         var nodeCallback = function (node) {
@@ -96,3 +100,5 @@ var SelectableService = /** @class */ (function (_super) {
     return SelectableService;
 }(beanStub_1.BeanStub));
 exports.SelectableService = SelectableService;
+
+//# sourceMappingURL=selectableService.js.map

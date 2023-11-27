@@ -339,3 +339,4 @@ class AggItemComp extends Component {
         this.addGuiEventListener('click', this.selectItem);
     }
 }
+//# sourceMappingURL=dropZoneColumnComp.js.map

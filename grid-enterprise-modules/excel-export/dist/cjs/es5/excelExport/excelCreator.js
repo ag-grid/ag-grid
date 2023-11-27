@@ -261,3 +261,4 @@ var ExcelCreator = /** @class */ (function (_super) {
     return ExcelCreator;
 }(csv_export_1.BaseCreator));
 exports.ExcelCreator = ExcelCreator;
+//# sourceMappingURL=excelCreator.js.map

@@ -11,3 +11,5 @@ exports.DefaultColumnTypes = {
         cellClass: 'ag-right-aligned-cell'
     }
 };
+
+//# sourceMappingURL=defaultColumnTypes.js.map

@@ -21,3 +21,5 @@ FloatingFilterMapper.filterToFloatingFilterMapping = {
     text: 'agTextColumnFloatingFilter',
     agTextColumnFilter: 'agTextColumnFloatingFilter'
 };
+
+//# sourceMappingURL=floatingFilterMapper.js.map

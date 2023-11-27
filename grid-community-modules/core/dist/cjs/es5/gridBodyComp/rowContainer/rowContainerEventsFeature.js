@@ -380,3 +380,5 @@ var RowContainerEventsFeature = /** @class */ (function (_super) {
     return RowContainerEventsFeature;
 }(beanStub_1.BeanStub));
 exports.RowContainerEventsFeature = RowContainerEventsFeature;
+
+//# sourceMappingURL=rowContainerEventsFeature.js.map

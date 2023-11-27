@@ -5,3 +5,4 @@ export function deproxy(chartOrProxy) {
     }
     return chartOrProxy;
 }
+//# sourceMappingURL=integration.js.map

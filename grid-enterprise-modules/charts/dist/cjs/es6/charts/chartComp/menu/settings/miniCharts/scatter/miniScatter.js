@@ -46,3 +46,4 @@ class MiniScatter extends miniChartWithAxes_1.MiniChartWithAxes {
 }
 exports.MiniScatter = MiniScatter;
 MiniScatter.chartType = 'scatter';
+//# sourceMappingURL=miniScatter.js.map

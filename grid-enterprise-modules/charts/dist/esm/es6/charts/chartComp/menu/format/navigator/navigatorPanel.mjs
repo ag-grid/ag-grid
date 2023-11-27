@@ -61,3 +61,4 @@ __decorate([
 __decorate([
     PostConstruct
 ], NavigatorPanel.prototype, "init", null);
+//# sourceMappingURL=navigatorPanel.js.map

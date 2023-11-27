@@ -166,3 +166,5 @@ var HeaderNavigationService = /** @class */ (function (_super) {
     return HeaderNavigationService;
 }(BeanStub));
 export { HeaderNavigationService };
+
+//# sourceMappingURL=headerNavigationService.js.map

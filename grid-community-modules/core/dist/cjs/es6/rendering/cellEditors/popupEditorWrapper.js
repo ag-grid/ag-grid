@@ -35,3 +35,5 @@ __decorate([
     context_1.PostConstruct
 ], PopupEditorWrapper.prototype, "postConstruct", null);
 exports.PopupEditorWrapper = PopupEditorWrapper;
+
+//# sourceMappingURL=popupEditorWrapper.js.map

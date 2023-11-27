@@ -210,3 +210,4 @@ export class BarColumnSparkline extends Sparkline {
         return value % 1 !== 0 ? value.toFixed(1) : value.toFixed(0);
     }
 }
+//# sourceMappingURL=barColumnSparkline.js.map

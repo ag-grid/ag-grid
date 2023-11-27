@@ -175,3 +175,5 @@ var CellRangeFeature = /** @class */ (function () {
     return CellRangeFeature;
 }());
 export { CellRangeFeature };
+
+//# sourceMappingURL=cellRangeFeature.js.map

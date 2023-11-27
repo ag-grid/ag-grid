@@ -20,3 +20,4 @@ SideBarService = __decorate([
     (0, core_1.Bean)('sideBarService')
 ], SideBarService);
 exports.SideBarService = SideBarService;
+//# sourceMappingURL=sideBarService.js.map

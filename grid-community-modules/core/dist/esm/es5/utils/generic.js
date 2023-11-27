@@ -116,3 +116,5 @@ export function values(object) {
     }
     return Object.values(object);
 }
+
+//# sourceMappingURL=generic.js.map

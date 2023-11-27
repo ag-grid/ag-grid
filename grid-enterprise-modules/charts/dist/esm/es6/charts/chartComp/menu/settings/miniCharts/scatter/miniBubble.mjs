@@ -42,3 +42,4 @@ export class MiniBubble extends MiniChartWithAxes {
     }
 }
 MiniBubble.chartType = 'bubble';
+//# sourceMappingURL=miniBubble.js.map

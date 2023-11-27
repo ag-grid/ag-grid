@@ -53,3 +53,5 @@ var HoverFeature = /** @class */ (function (_super) {
     return HoverFeature;
 }(BeanStub));
 export { HoverFeature };
+
+//# sourceMappingURL=hoverFeature.js.map

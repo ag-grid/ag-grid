@@ -54,3 +54,4 @@ __decorate([
 __decorate([
     PostConstruct
 ], BackgroundPanel.prototype, "init", null);
+//# sourceMappingURL=backgroundPanel.js.map

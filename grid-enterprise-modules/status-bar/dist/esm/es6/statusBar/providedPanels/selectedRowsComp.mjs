@@ -55,3 +55,4 @@ __decorate([
 __decorate([
     PostConstruct
 ], SelectedRowsComp.prototype, "postConstruct", null);
+//# sourceMappingURL=selectedRowsComp.js.map

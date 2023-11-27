@@ -58,3 +58,4 @@ MiniStackedArea.data = [
     [3, 6, 5],
     [6, 2, 2]
 ];
+//# sourceMappingURL=miniStackedArea.js.map

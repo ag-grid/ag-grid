@@ -3,7 +3,7 @@ import { ColDefUtil } from '../../components/colDefUtil.mjs';
 const COLUMN_DEFINITION_DEPRECATIONS = {};
 const CSRM_REQUIRES_ROW_GROUP_MODULE = (_options, gridOptions) => {
     var _a;
-    if ((_a = gridOptions.rowModelType) !== null && _a !== void 0 ? _a : 'clientSide' === 'clientSide') {
+    if (((_a = gridOptions.rowModelType) !== null && _a !== void 0 ? _a : 'clientSide') === 'clientSide') {
         return { module: ModuleNames.RowGroupingModule };
     }
     return null;

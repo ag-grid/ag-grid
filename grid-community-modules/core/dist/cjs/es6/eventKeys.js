@@ -191,3 +191,5 @@ Events.EVENT_DATA_TYPES_INFERRED = 'dataTypesInferred';
 Events.EVENT_FIELD_VALUE_CHANGED = 'fieldValueChanged';
 Events.EVENT_FIELD_PICKER_VALUE_SELECTED = 'fieldPickerValueSelected';
 Events.EVENT_SIDE_BAR_UPDATED = 'sideBarUpdated';
+
+//# sourceMappingURL=eventKeys.js.map

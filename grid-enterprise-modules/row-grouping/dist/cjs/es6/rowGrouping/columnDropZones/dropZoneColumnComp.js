@@ -343,3 +343,4 @@ class AggItemComp extends core_1.Component {
         this.addGuiEventListener('click', this.selectItem);
     }
 }
+//# sourceMappingURL=dropZoneColumnComp.js.map

@@ -75,3 +75,4 @@ __decorate([
     core_1.PostConstruct
 ], ChartPanel.prototype, "init", null);
 exports.ChartPanel = ChartPanel;
+//# sourceMappingURL=chartPanel.js.map

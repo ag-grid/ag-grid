@@ -33,3 +33,5 @@ export var ServerSideTransactionResultStatus;
      */
     ServerSideTransactionResultStatus["StoreNotStarted"] = "StoreNotStarted";
 })(ServerSideTransactionResultStatus || (ServerSideTransactionResultStatus = {}));
+
+//# sourceMappingURL=serverSideTransaction.js.map

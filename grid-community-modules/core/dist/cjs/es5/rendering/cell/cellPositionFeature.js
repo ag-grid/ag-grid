@@ -161,3 +161,5 @@ var CellPositionFeature = /** @class */ (function (_super) {
     return CellPositionFeature;
 }(beanStub_1.BeanStub));
 exports.CellPositionFeature = CellPositionFeature;
+
+//# sourceMappingURL=cellPositionFeature.js.map

@@ -132,3 +132,4 @@ var ChartColumnService = /** @class */ (function (_super) {
     return ChartColumnService;
 }(core_1.BeanStub));
 exports.ChartColumnService = ChartColumnService;
+//# sourceMappingURL=chartColumnService.js.map

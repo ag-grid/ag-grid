@@ -39,3 +39,4 @@ var fontFactory = {
     }
 };
 exports.default = fontFactory;
+//# sourceMappingURL=font.js.map

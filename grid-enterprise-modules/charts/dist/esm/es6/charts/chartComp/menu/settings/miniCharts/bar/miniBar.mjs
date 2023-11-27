@@ -38,3 +38,4 @@ export class MiniBar extends MiniChartWithAxes {
     }
 }
 MiniBar.chartType = 'groupedBar';
+//# sourceMappingURL=miniBar.js.map

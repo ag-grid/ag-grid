@@ -111,3 +111,5 @@ var CellCustomStyleFeature = /** @class */ (function (_super) {
     return CellCustomStyleFeature;
 }(beanStub_1.BeanStub));
 exports.CellCustomStyleFeature = CellCustomStyleFeature;
+
+//# sourceMappingURL=cellCustomStyleFeature.js.map

@@ -44,3 +44,4 @@ export function initFontPanelParams({ labelName, chartOptionsService, getSelecte
     };
     return params;
 }
+//# sourceMappingURL=fontPanelParams.js.map

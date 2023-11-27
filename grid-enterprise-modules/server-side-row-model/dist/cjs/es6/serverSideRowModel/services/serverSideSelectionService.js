@@ -206,3 +206,4 @@ ServerSideSelectionService = __decorate([
     (0, core_1.Bean)('selectionService')
 ], ServerSideSelectionService);
 exports.ServerSideSelectionService = ServerSideSelectionService;
+//# sourceMappingURL=serverSideSelectionService.js.map

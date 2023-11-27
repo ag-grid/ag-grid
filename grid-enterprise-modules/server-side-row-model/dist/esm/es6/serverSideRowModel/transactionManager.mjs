@@ -132,3 +132,4 @@ TransactionManager = __decorate([
     Bean('ssrmTransactionManager')
 ], TransactionManager);
 export { TransactionManager };
+//# sourceMappingURL=transactionManager.js.map

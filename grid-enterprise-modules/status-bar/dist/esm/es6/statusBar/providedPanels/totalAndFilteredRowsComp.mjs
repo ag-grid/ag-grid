@@ -65,3 +65,4 @@ __decorate([
 __decorate([
     PostConstruct
 ], TotalAndFilteredRowsComp.prototype, "postConstruct", null);
+//# sourceMappingURL=totalAndFilteredRowsComp.js.map

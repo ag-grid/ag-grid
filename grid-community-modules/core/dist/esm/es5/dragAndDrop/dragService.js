@@ -309,3 +309,5 @@ var DragService = /** @class */ (function (_super) {
     return DragService;
 }(BeanStub));
 export { DragService };
+
+//# sourceMappingURL=dragService.js.map

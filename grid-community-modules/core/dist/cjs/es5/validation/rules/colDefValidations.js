@@ -6,7 +6,7 @@ var colDefUtil_1 = require("../../components/colDefUtil");
 var COLUMN_DEFINITION_DEPRECATIONS = {};
 var CSRM_REQUIRES_ROW_GROUP_MODULE = function (_options, gridOptions) {
     var _a;
-    if ((_a = gridOptions.rowModelType) !== null && _a !== void 0 ? _a : 'clientSide' === 'clientSide') {
+    if (((_a = gridOptions.rowModelType) !== null && _a !== void 0 ? _a : 'clientSide') === 'clientSide') {
         return { module: moduleNames_1.ModuleNames.RowGroupingModule };
     }
     return null;
@@ -70,3 +70,5 @@ exports.COL_DEF_VALIDATORS = {
     deprecations: COLUMN_DEFINITION_DEPRECATIONS,
     validations: COLUMN_DEFINITION_VALIDATIONS,
 };
+
+//# sourceMappingURL=colDefValidations.js.map

@@ -217,3 +217,5 @@ function createIconNoSpan(iconName, gridOptionsService, column, forceCreate) {
     }
 }
 exports.createIconNoSpan = createIconNoSpan;
+
+//# sourceMappingURL=icon.js.map

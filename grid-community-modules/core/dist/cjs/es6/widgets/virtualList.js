@@ -318,3 +318,5 @@ __decorate([
     context_1.PostConstruct
 ], VirtualList.prototype, "postConstruct", null);
 exports.VirtualList = VirtualList;
+
+//# sourceMappingURL=virtualList.js.map

@@ -220,3 +220,4 @@ __decorate([
 __decorate([
     core_1.PostConstruct
 ], ContextMenu.prototype, "addMenuItems", null);
+//# sourceMappingURL=contextMenu.js.map

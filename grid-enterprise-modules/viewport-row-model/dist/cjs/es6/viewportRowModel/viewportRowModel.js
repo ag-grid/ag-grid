@@ -280,3 +280,4 @@ ViewportRowModel = __decorate([
     (0, core_1.Bean)('rowModel')
 ], ViewportRowModel);
 exports.ViewportRowModel = ViewportRowModel;
+//# sourceMappingURL=viewportRowModel.js.map

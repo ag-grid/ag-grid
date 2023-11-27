@@ -382,3 +382,4 @@ var GroupSelectsChildrenStrategy = /** @class */ (function (_super) {
     return GroupSelectsChildrenStrategy;
 }(BeanStub));
 export { GroupSelectsChildrenStrategy };
+//# sourceMappingURL=groupSelectsChildrenStrategy.js.map

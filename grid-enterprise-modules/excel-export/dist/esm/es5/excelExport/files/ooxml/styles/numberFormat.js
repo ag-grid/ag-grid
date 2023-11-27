@@ -33,3 +33,4 @@ var numberFormatFactory = {
     }
 };
 export default numberFormatFactory;
+//# sourceMappingURL=numberFormat.js.map

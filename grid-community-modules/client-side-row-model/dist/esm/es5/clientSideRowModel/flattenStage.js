@@ -150,3 +150,4 @@ var FlattenStage = /** @class */ (function (_super) {
     return FlattenStage;
 }(BeanStub));
 export { FlattenStage };
+//# sourceMappingURL=flattenStage.js.map

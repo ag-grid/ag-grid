@@ -54,7 +54,8 @@ export interface ISimpleFilterParams extends IProvidedFilterParams {
     defaultJoinOperator?: JoinOperator;
     /**
      * Maximum number of conditions allowed in the filter.
-     * Default: `2`
+     *
+     * @default 2
      */
     maxNumConditions?: number;
     /**
@@ -62,7 +63,8 @@ export interface ISimpleFilterParams extends IProvidedFilterParams {
      * (up to `maxNumConditions`). To have more conditions shown by default, set this to the number required.
      * Conditions will be disabled until the previous conditions have been entered.
      * Note that this cannot be greater than `maxNumConditions` - anything larger will be ignored.
-     * Default: `1`
+     *
+     * @default 1
      */
     numAlwaysVisibleConditions?: number;
     /**

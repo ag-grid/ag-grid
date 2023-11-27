@@ -126,3 +126,4 @@ var PivotDropZonePanel = /** @class */ (function (_super) {
     return PivotDropZonePanel;
 }(BaseDropZonePanel));
 export { PivotDropZonePanel };
+//# sourceMappingURL=pivotDropZonePanel.js.map

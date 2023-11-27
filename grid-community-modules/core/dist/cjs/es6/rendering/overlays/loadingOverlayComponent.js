@@ -21,3 +21,5 @@ class LoadingOverlayComponent extends component_1.Component {
 }
 exports.LoadingOverlayComponent = LoadingOverlayComponent;
 LoadingOverlayComponent.DEFAULT_LOADING_OVERLAY_TEMPLATE = '<span class="ag-overlay-loading-center">[LOADING...]</span>';
+
+//# sourceMappingURL=loadingOverlayComponent.js.map

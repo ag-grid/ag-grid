@@ -421,3 +421,4 @@ var ChartController = /** @class */ (function (_super) {
     return ChartController;
 }(core_1.BeanStub));
 exports.ChartController = ChartController;
+//# sourceMappingURL=chartController.js.map

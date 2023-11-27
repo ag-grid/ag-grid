@@ -315,3 +315,4 @@ __decorate([
 __decorate([
     PostConstruct
 ], SideBarComp.prototype, "postConstruct", null);
+//# sourceMappingURL=sideBarComp.js.map

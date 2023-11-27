@@ -75,3 +75,4 @@ var MiniDoughnut = /** @class */ (function (_super) {
     return MiniDoughnut;
 }(MiniChart));
 export { MiniDoughnut };
+//# sourceMappingURL=miniDoughnut.js.map

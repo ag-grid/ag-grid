@@ -6,3 +6,4 @@ Object.defineProperty(exports, "ExcelExportModule", { enumerable: true, get: fun
 var excelCreator_1 = require("./excelExport/excelCreator");
 Object.defineProperty(exports, "getMultipleSheetsAsExcel", { enumerable: true, get: function () { return excelCreator_1.getMultipleSheetsAsExcel; } });
 Object.defineProperty(exports, "exportMultipleSheetsAsExcel", { enumerable: true, get: function () { return excelCreator_1.exportMultipleSheetsAsExcel; } });
+//# sourceMappingURL=main.js.map

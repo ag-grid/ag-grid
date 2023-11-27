@@ -98,3 +98,4 @@ var RowGroupDropZonePanel = /** @class */ (function (_super) {
     return RowGroupDropZonePanel;
 }(baseDropZonePanel_1.BaseDropZonePanel));
 exports.RowGroupDropZonePanel = RowGroupDropZonePanel;
+//# sourceMappingURL=rowGroupDropZonePanel.js.map

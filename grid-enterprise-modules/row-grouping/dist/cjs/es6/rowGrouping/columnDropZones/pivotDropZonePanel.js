@@ -112,3 +112,4 @@ __decorate([
     core_1.PostConstruct
 ], PivotDropZonePanel.prototype, "passBeansUp", null);
 exports.PivotDropZonePanel = PivotDropZonePanel;
+//# sourceMappingURL=pivotDropZonePanel.js.map

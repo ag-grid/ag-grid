@@ -19,3 +19,5 @@ function areEventsNear(e1, e2, pixelCount) {
     return Math.max(diffX, diffY) <= pixelCount;
 }
 exports.areEventsNear = areEventsNear;
+
+//# sourceMappingURL=mouse.js.map

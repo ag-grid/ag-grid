@@ -47,3 +47,5 @@ PinnedWidthService = __decorate([
     (0, context_1.Bean)('pinnedWidthService')
 ], PinnedWidthService);
 exports.PinnedWidthService = PinnedWidthService;
+
+//# sourceMappingURL=pinnedWidthService.js.map

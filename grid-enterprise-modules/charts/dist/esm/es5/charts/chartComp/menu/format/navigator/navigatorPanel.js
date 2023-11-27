@@ -78,3 +78,4 @@ var NavigatorPanel = /** @class */ (function (_super) {
     return NavigatorPanel;
 }(Component));
 export { NavigatorPanel };
+//# sourceMappingURL=navigatorPanel.js.map

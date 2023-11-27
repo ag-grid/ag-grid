@@ -266,3 +266,5 @@ var PaginationComp = /** @class */ (function (_super) {
     return PaginationComp;
 }(Component));
 export { PaginationComp };
+
+//# sourceMappingURL=paginationComp.js.map

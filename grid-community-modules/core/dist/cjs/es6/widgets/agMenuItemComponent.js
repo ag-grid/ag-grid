@@ -300,3 +300,5 @@ __decorate([
     context_2.PostConstruct
 ], AgMenuItemComponent.prototype, "init", null);
 exports.AgMenuItemComponent = AgMenuItemComponent;
+
+//# sourceMappingURL=agMenuItemComponent.js.map

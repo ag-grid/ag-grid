@@ -18,3 +18,4 @@ export class MiniLine extends MiniChartWithAxes {
     }
 }
 MiniLine.chartType = 'line';
+//# sourceMappingURL=miniLine.js.map

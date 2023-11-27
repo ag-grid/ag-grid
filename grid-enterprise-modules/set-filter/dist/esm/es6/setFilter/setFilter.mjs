@@ -1185,3 +1185,4 @@ class TreeModelWrapper {
         return oldRow != null && newRow != null && oldRow.treeKey === newRow.treeKey && oldRow.depth === newRow.depth;
     }
 }
+//# sourceMappingURL=setFilter.js.map

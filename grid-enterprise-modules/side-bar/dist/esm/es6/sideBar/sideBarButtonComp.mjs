@@ -63,3 +63,4 @@ __decorate([
 __decorate([
     PostConstruct
 ], SideBarButtonComp.prototype, "postConstruct", null);
+//# sourceMappingURL=sideBarButtonComp.js.map

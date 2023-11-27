@@ -88,3 +88,4 @@ __decorate([
     core_1.PostConstruct
 ], PaddingPanel.prototype, "init", null);
 exports.PaddingPanel = PaddingPanel;
+//# sourceMappingURL=paddingPanel.js.map

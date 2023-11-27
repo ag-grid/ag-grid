@@ -10,3 +10,4 @@ var Label = /** @class */ (function () {
     return Label;
 }());
 export { Label };
+//# sourceMappingURL=label.js.map

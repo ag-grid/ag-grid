@@ -6122,8 +6122,11 @@ input[class^=ag-][type=button]:focus, button[class^=ag-]:focus {
   padding-left: var(--ag-grid-size);
 }
 
-.ag-menu-option-popup-pointer, .ag-compact-menu-option-popup-pointer {
+.ag-ltr .ag-menu-option-popup-pointer, .ag-ltr .ag-compact-menu-option-popup-pointer {
   padding-right: var(--ag-grid-size);
+}
+.ag-rtl .ag-menu-option-popup-pointer, .ag-rtl .ag-compact-menu-option-popup-pointer {
+  padding-left: var(--ag-grid-size);
 }
 
 .ag-tabs {
@@ -6214,78 +6217,78 @@ input[class^=ag-][type=button]:focus, button[class^=ag-]:focus {
   margin: var(--ag-widget-container-vertical-padding) var(--ag-widget-container-horizontal-padding);
 }
 
-.ag-set-filter-item-checkbox {
+.ag-set-filter-item {
   padding: 0px var(--ag-widget-container-horizontal-padding);
 }
 
-.ag-ltr .ag-set-filter-add-group-indent {
-  margin-left: calc(var(--ag-widget-container-horizontal-padding) + var(--ag-icon-size) + var(--ag-grid-size) * 2);
-}
-.ag-rtl .ag-set-filter-add-group-indent {
-  margin-right: calc(var(--ag-widget-container-horizontal-padding) + var(--ag-icon-size) + var(--ag-grid-size) * 2);
-}
-
 .ag-ltr .ag-set-filter-indent-1 {
-  padding-left: calc(1 * var(--ag-set-filter-indent-size));
+  padding-left: calc(var(--ag-widget-container-horizontal-padding) + 1 * var(--ag-set-filter-indent-size));
 }
 .ag-rtl .ag-set-filter-indent-1 {
-  padding-right: calc(1 * var(--ag-set-filter-indent-size));
+  padding-right: calc(var(--ag-widget-container-horizontal-padding) + 1 * var(--ag-set-filter-indent-size));
 }
 
 .ag-ltr .ag-set-filter-indent-2 {
-  padding-left: calc(2 * var(--ag-set-filter-indent-size));
+  padding-left: calc(var(--ag-widget-container-horizontal-padding) + 2 * var(--ag-set-filter-indent-size));
 }
 .ag-rtl .ag-set-filter-indent-2 {
-  padding-right: calc(2 * var(--ag-set-filter-indent-size));
+  padding-right: calc(var(--ag-widget-container-horizontal-padding) + 2 * var(--ag-set-filter-indent-size));
 }
 
 .ag-ltr .ag-set-filter-indent-3 {
-  padding-left: calc(3 * var(--ag-set-filter-indent-size));
+  padding-left: calc(var(--ag-widget-container-horizontal-padding) + 3 * var(--ag-set-filter-indent-size));
 }
 .ag-rtl .ag-set-filter-indent-3 {
-  padding-right: calc(3 * var(--ag-set-filter-indent-size));
+  padding-right: calc(var(--ag-widget-container-horizontal-padding) + 3 * var(--ag-set-filter-indent-size));
 }
 
 .ag-ltr .ag-set-filter-indent-4 {
-  padding-left: calc(4 * var(--ag-set-filter-indent-size));
+  padding-left: calc(var(--ag-widget-container-horizontal-padding) + 4 * var(--ag-set-filter-indent-size));
 }
 .ag-rtl .ag-set-filter-indent-4 {
-  padding-right: calc(4 * var(--ag-set-filter-indent-size));
+  padding-right: calc(var(--ag-widget-container-horizontal-padding) + 4 * var(--ag-set-filter-indent-size));
 }
 
 .ag-ltr .ag-set-filter-indent-5 {
-  padding-left: calc(5 * var(--ag-set-filter-indent-size));
+  padding-left: calc(var(--ag-widget-container-horizontal-padding) + 5 * var(--ag-set-filter-indent-size));
 }
 .ag-rtl .ag-set-filter-indent-5 {
-  padding-right: calc(5 * var(--ag-set-filter-indent-size));
+  padding-right: calc(var(--ag-widget-container-horizontal-padding) + 5 * var(--ag-set-filter-indent-size));
 }
 
 .ag-ltr .ag-set-filter-indent-6 {
-  padding-left: calc(6 * var(--ag-set-filter-indent-size));
+  padding-left: calc(var(--ag-widget-container-horizontal-padding) + 6 * var(--ag-set-filter-indent-size));
 }
 .ag-rtl .ag-set-filter-indent-6 {
-  padding-right: calc(6 * var(--ag-set-filter-indent-size));
+  padding-right: calc(var(--ag-widget-container-horizontal-padding) + 6 * var(--ag-set-filter-indent-size));
 }
 
 .ag-ltr .ag-set-filter-indent-7 {
-  padding-left: calc(7 * var(--ag-set-filter-indent-size));
+  padding-left: calc(var(--ag-widget-container-horizontal-padding) + 7 * var(--ag-set-filter-indent-size));
 }
 .ag-rtl .ag-set-filter-indent-7 {
-  padding-right: calc(7 * var(--ag-set-filter-indent-size));
+  padding-right: calc(var(--ag-widget-container-horizontal-padding) + 7 * var(--ag-set-filter-indent-size));
 }
 
 .ag-ltr .ag-set-filter-indent-8 {
-  padding-left: calc(8 * var(--ag-set-filter-indent-size));
+  padding-left: calc(var(--ag-widget-container-horizontal-padding) + 8 * var(--ag-set-filter-indent-size));
 }
 .ag-rtl .ag-set-filter-indent-8 {
-  padding-right: calc(8 * var(--ag-set-filter-indent-size));
+  padding-right: calc(var(--ag-widget-container-horizontal-padding) + 8 * var(--ag-set-filter-indent-size));
 }
 
 .ag-ltr .ag-set-filter-indent-9 {
-  padding-left: calc(9 * var(--ag-set-filter-indent-size));
+  padding-left: calc(var(--ag-widget-container-horizontal-padding) + 9 * var(--ag-set-filter-indent-size));
 }
 .ag-rtl .ag-set-filter-indent-9 {
-  padding-right: calc(9 * var(--ag-set-filter-indent-size));
+  padding-right: calc(var(--ag-widget-container-horizontal-padding) + 9 * var(--ag-set-filter-indent-size));
+}
+
+.ag-ltr .ag-set-filter-add-group-indent {
+  margin-left: calc(var(--ag-icon-size) + var(--ag-grid-size) * 2);
+}
+.ag-rtl .ag-set-filter-add-group-indent {
+  margin-right: calc(var(--ag-icon-size) + var(--ag-grid-size) * 2);
 }
 
 .ag-ltr .ag-set-filter-group-icons {
@@ -7410,6 +7413,7 @@ button.ag-side-button-button:focus {
   -webkit-user-select: none;
   -ms-user-select: none;
   user-select: none;
+  padding-bottom: 16px;
 }
 
 .ag-chart-data-wrapper {
@@ -7444,7 +7448,7 @@ button.ag-side-button-button:focus {
   display: flex;
   flex-direction: row;
   top: 8px;
-  gap: 16px;
+  gap: 20px;
   width: auto;
 }
 .ag-ltr .ag-chart .ag-chart-tool-panel-button-enable .ag-chart-menu {

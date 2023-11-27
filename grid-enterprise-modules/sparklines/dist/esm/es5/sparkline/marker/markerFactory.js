@@ -11,3 +11,4 @@ export function getMarker(shape) {
             return _Scene.Circle;
     }
 }
+//# sourceMappingURL=markerFactory.js.map

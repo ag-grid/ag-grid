@@ -133,3 +133,4 @@ export class BarSparkline extends BarColumnSparkline {
     }
 }
 BarSparkline.className = 'BarSparkline';
+//# sourceMappingURL=barSparkline.js.map

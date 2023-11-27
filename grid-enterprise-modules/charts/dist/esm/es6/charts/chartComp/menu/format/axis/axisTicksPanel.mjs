@@ -68,3 +68,4 @@ __decorate([
 __decorate([
     PostConstruct
 ], AxisTicksPanel.prototype, "init", null);
+//# sourceMappingURL=axisTicksPanel.js.map

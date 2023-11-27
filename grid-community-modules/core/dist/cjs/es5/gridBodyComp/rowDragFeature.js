@@ -434,3 +434,5 @@ var RowDragFeature = /** @class */ (function (_super) {
     return RowDragFeature;
 }(beanStub_1.BeanStub));
 exports.RowDragFeature = RowDragFeature;
+
+//# sourceMappingURL=rowDragFeature.js.map

@@ -67,3 +67,4 @@ __decorate([
     core_1.PostConstruct
 ], SideBarButtonComp.prototype, "postConstruct", null);
 exports.SideBarButtonComp = SideBarButtonComp;
+//# sourceMappingURL=sideBarButtonComp.js.map

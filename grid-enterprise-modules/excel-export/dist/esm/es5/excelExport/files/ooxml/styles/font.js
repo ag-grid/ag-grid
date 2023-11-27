@@ -37,3 +37,4 @@ var fontFactory = {
     }
 };
 export default fontFactory;
+//# sourceMappingURL=font.js.map

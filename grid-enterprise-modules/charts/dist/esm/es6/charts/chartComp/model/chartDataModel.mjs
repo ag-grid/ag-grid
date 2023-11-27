@@ -327,3 +327,4 @@ __decorate([
 __decorate([
     PostConstruct
 ], ChartDataModel.prototype, "init", null);
+//# sourceMappingURL=chartDataModel.js.map

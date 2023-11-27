@@ -6,3 +6,5 @@ var RowHighlightPosition;
     RowHighlightPosition[RowHighlightPosition["Above"] = 0] = "Above";
     RowHighlightPosition[RowHighlightPosition["Below"] = 1] = "Below";
 })(RowHighlightPosition = exports.RowHighlightPosition || (exports.RowHighlightPosition = {}));
+
+//# sourceMappingURL=iRowNode.js.map

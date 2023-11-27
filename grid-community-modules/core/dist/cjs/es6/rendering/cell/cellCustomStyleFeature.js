@@ -91,3 +91,5 @@ class CellCustomStyleFeature extends beanStub_1.BeanStub {
     }
 }
 exports.CellCustomStyleFeature = CellCustomStyleFeature;
+
+//# sourceMappingURL=cellCustomStyleFeature.js.map

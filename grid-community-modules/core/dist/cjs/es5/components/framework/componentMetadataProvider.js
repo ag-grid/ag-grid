@@ -129,3 +129,5 @@ var ComponentMetadataProvider = /** @class */ (function (_super) {
     return ComponentMetadataProvider;
 }(beanStub_1.BeanStub));
 exports.ComponentMetadataProvider = ComponentMetadataProvider;
+
+//# sourceMappingURL=componentMetadataProvider.js.map

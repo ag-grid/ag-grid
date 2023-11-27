@@ -68,3 +68,4 @@ __decorate([
 __decorate([
     PostConstruct
 ], ToolPanelWrapper.prototype, "setupResize", null);
+//# sourceMappingURL=toolPanelWrapper.js.map

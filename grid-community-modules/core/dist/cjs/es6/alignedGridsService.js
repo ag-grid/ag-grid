@@ -160,18 +160,19 @@ let AlignedGridsService = class AlignedGridsService extends beanStub_1.BeanStub 
         });
     }
     processGroupOpenedEvent(groupOpenedEvent) {
-        // likewise for column group
-        const masterColumnGroup = groupOpenedEvent.columnGroup;
-        let otherColumnGroup = null;
-        if (masterColumnGroup) {
-            const groupId = masterColumnGroup.getGroupId();
-            otherColumnGroup = this.columnModel.getProvidedColumnGroup(groupId);
-        }
-        if (masterColumnGroup && !otherColumnGroup) {
-            return;
-        }
-        this.logger.log('onColumnEvent-> processing ' + groupOpenedEvent + ' expanded = ' + masterColumnGroup.isExpanded());
-        this.columnModel.setColumnGroupOpened(otherColumnGroup, masterColumnGroup.isExpanded(), "alignedGridChanged");
+        groupOpenedEvent.columnGroups.forEach(masterGroup => {
+            // likewise for column group
+            let otherColumnGroup = null;
+            if (masterGroup) {
+                const groupId = masterGroup.getGroupId();
+                otherColumnGroup = this.columnModel.getProvidedColumnGroup(groupId);
+            }
+            if (masterGroup && !otherColumnGroup) {
+                return;
+            }
+            this.logger.log('onColumnEvent-> processing ' + groupOpenedEvent + ' expanded = ' + masterGroup.isExpanded());
+            this.columnModel.setColumnGroupOpened(otherColumnGroup, masterGroup.isExpanded(), "alignedGridChanged");
+        });
     }
     processColumnEvent(colEvent) {
         var _a;
@@ -263,3 +264,5 @@ AlignedGridsService = __decorate([
     (0, context_1.Bean)('alignedGridsService')
 ], AlignedGridsService);
 exports.AlignedGridsService = AlignedGridsService;
+
+//# sourceMappingURL=alignedGridsService.js.map

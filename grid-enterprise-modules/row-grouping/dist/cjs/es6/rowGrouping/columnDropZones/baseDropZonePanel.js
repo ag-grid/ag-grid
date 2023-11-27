@@ -408,3 +408,4 @@ __decorate([
     (0, core_1.Autowired)('focusService')
 ], BaseDropZonePanel.prototype, "focusService", void 0);
 exports.BaseDropZonePanel = BaseDropZonePanel;
+//# sourceMappingURL=baseDropZonePanel.js.map

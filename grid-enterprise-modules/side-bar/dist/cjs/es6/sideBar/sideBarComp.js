@@ -319,3 +319,4 @@ __decorate([
     core_1.PostConstruct
 ], SideBarComp.prototype, "postConstruct", null);
 exports.SideBarComp = SideBarComp;
+//# sourceMappingURL=sideBarComp.js.map

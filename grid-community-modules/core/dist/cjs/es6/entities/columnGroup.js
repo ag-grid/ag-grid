@@ -276,3 +276,5 @@ __decorate([
     (0, context_1.Autowired)('gridOptionsService')
 ], ColumnGroup.prototype, "gridOptionsService", void 0);
 exports.ColumnGroup = ColumnGroup;
+
+//# sourceMappingURL=columnGroup.js.map

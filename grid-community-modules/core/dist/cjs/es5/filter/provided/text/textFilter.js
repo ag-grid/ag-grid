@@ -237,3 +237,5 @@ var TextFilter = /** @class */ (function (_super) {
     return TextFilter;
 }(simpleFilter_1.SimpleFilter));
 exports.TextFilter = TextFilter;
+
+//# sourceMappingURL=textFilter.js.map

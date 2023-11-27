@@ -81,3 +81,5 @@ var TemplateService = /** @class */ (function (_super) {
     return TemplateService;
 }(BeanStub));
 export { TemplateService };
+
+//# sourceMappingURL=templateService.js.map

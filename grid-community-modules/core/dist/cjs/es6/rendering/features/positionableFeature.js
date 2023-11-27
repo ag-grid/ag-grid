@@ -714,3 +714,5 @@ __decorate([
     (0, context_1.Autowired)('dragService')
 ], PositionableFeature.prototype, "dragService", void 0);
 exports.PositionableFeature = PositionableFeature;
+
+//# sourceMappingURL=positionableFeature.js.map

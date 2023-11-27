@@ -61,3 +61,5 @@ __decorate([
     context_1.PostConstruct
 ], CenterWidthFeature.prototype, "postConstruct", null);
 exports.CenterWidthFeature = CenterWidthFeature;
+
+//# sourceMappingURL=centerWidthFeature.js.map

@@ -347,3 +347,4 @@ class AreaSparkline extends sparkline_1.Sparkline {
 }
 exports.AreaSparkline = AreaSparkline;
 AreaSparkline.className = 'AreaSparkline';
+//# sourceMappingURL=areaSparkline.js.map

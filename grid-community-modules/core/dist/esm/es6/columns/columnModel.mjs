@@ -2385,13 +2385,14 @@ let ColumnModel = class ColumnModel extends BeanStub {
         });
         this.updateGroupsAndDisplayedColumns(source);
         this.setFirstRightAndLastLeftPinned(source);
-        impactedGroups.forEach(providedColumnGroup => {
+        if (impactedGroups.length) {
             const event = {
                 type: Events.EVENT_COLUMN_GROUP_OPENED,
-                columnGroup: providedColumnGroup
+                columnGroup: ProvidedColumnGroup.length === 1 ? impactedGroups[0] : undefined,
+                columnGroups: impactedGroups,
             };
             this.eventService.dispatchEvent(event);
-        });
+        }
         this.columnAnimationService.finish();
     }
     // called by headerRenderer - when a header is opened or closed

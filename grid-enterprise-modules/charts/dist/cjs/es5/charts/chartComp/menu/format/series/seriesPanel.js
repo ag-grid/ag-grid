@@ -56,6 +56,7 @@ var SeriesPanel = /** @class */ (function (_super) {
             'line': ['tooltips', 'lineWidth', 'lineDash', 'lineOpacity', 'markers', 'labels'],
             'histogram': ['tooltips', 'bins', 'strokeWidth', 'lineDash', 'lineOpacity', 'fillOpacity', 'labels', 'shadow'],
             'scatter': ['tooltips', 'markers', 'labels'],
+            'bubble': ['tooltips', 'markers', 'labels'],
             'pie': ['tooltips', 'strokeWidth', 'lineOpacity', 'fillOpacity', 'labels', 'shadow'],
         };
         _this.chartController = chartController;
@@ -326,3 +327,4 @@ var SeriesPanel = /** @class */ (function (_super) {
     return SeriesPanel;
 }(core_1.Component));
 exports.SeriesPanel = SeriesPanel;
+//# sourceMappingURL=seriesPanel.js.map

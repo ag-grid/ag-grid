@@ -30,3 +30,4 @@ class LineChartProxy extends cartesianChartProxy_1.CartesianChartProxy {
     }
 }
 exports.LineChartProxy = LineChartProxy;
+//# sourceMappingURL=lineChartProxy.js.map

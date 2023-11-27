@@ -49,3 +49,4 @@ function initFontPanelParams(_a) {
     return params;
 }
 exports.initFontPanelParams = initFontPanelParams;
+//# sourceMappingURL=fontPanelParams.js.map

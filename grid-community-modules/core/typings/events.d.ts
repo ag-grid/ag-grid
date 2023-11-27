@@ -328,7 +328,8 @@ export interface ChartDestroyed<TData = any, TContext = any> extends AgGridEvent
     chartId: string;
 }
 export interface ColumnGroupOpenedEvent<TData = any, TContext = any> extends AgGridEvent<TData, TContext> {
-    columnGroup: ProvidedColumnGroup;
+    columnGroup?: ProvidedColumnGroup;
+    columnGroups: ProvidedColumnGroup[];
 }
 export interface ItemsAddedEvent<TData = any, TContext = any> extends AgGridEvent<TData, TContext> {
     items: IRowNode<TData>[];

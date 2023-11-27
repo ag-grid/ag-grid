@@ -29,3 +29,4 @@ exports.ColumnsToolPanelModule = {
         side_bar_1.SideBarModule
     ]
 };
+//# sourceMappingURL=columnsToolPanelModule.js.map

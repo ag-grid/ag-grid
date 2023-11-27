@@ -22,3 +22,5 @@ var NumberSequence = /** @class */ (function () {
     return NumberSequence;
 }());
 exports.NumberSequence = NumberSequence;
+
+//# sourceMappingURL=numberSequence.js.map

@@ -265,3 +265,5 @@ export function removeAllReferences(obj, preserveKeys, preDestroyLink) {
 export function isNonNullObject(value) {
     return typeof value === 'object' && value !== null;
 }
+
+//# sourceMappingURL=object.js.map

@@ -13,3 +13,4 @@ var bordersFactory = {
     }
 };
 export default bordersFactory;
+//# sourceMappingURL=borders.js.map

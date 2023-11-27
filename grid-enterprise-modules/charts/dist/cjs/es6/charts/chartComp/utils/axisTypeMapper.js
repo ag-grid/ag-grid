@@ -29,3 +29,4 @@ function getLegacyAxisType(chartType) {
     }
 }
 exports.getLegacyAxisType = getLegacyAxisType;
+//# sourceMappingURL=axisTypeMapper.js.map

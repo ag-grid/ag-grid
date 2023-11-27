@@ -198,3 +198,4 @@ var FontPanel = /** @class */ (function (_super) {
     return FontPanel;
 }(core_1.Component));
 exports.FontPanel = FontPanel;
+//# sourceMappingURL=fontPanel.js.map

@@ -196,3 +196,5 @@ var TabbedLayout = /** @class */ (function (_super) {
     return TabbedLayout;
 }(Component));
 export { TabbedLayout };
+
+//# sourceMappingURL=tabbedLayout.js.map

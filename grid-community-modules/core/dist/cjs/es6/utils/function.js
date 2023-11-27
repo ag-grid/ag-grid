@@ -135,3 +135,5 @@ function callIfPresent(func) {
 exports.callIfPresent = callIfPresent;
 const noop = () => { return; };
 exports.noop = noop;
+
+//# sourceMappingURL=function.js.map

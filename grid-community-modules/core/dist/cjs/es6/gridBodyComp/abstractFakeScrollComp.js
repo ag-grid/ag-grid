@@ -98,3 +98,5 @@ __decorate([
     (0, context_1.Autowired)('animationFrameService')
 ], AbstractFakeScrollComp.prototype, "animationFrameService", void 0);
 exports.AbstractFakeScrollComp = AbstractFakeScrollComp;
+
+//# sourceMappingURL=abstractFakeScrollComp.js.map

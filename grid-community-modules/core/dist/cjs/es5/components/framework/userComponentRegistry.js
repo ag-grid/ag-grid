@@ -203,3 +203,5 @@ var UserComponentRegistry = /** @class */ (function (_super) {
     return UserComponentRegistry;
 }(beanStub_1.BeanStub));
 exports.UserComponentRegistry = UserComponentRegistry;
+
+//# sourceMappingURL=userComponentRegistry.js.map

@@ -327,3 +327,4 @@ __decorate([
     core_1.PostConstruct
 ], ChartMenu.prototype, "postConstruct", null);
 exports.ChartMenu = ChartMenu;
+//# sourceMappingURL=chartMenu.js.map

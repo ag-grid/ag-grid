@@ -98,3 +98,4 @@ var PrimaryColsPanel = /** @class */ (function (_super) {
     return PrimaryColsPanel;
 }(Component));
 export { PrimaryColsPanel };
+//# sourceMappingURL=primaryColsPanel.js.map

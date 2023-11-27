@@ -28,3 +28,5 @@ KeyCode.V = 'KeyV';
 KeyCode.X = 'KeyX';
 KeyCode.Y = 'KeyY';
 KeyCode.Z = 'KeyZ';
+
+//# sourceMappingURL=keyCode.js.map

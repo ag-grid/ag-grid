@@ -405,3 +405,5 @@ var moduleRegistry_1 = require("./modules/moduleRegistry");
 Object.defineProperty(exports, "ModuleRegistry", { enumerable: true, get: function () { return moduleRegistry_1.ModuleRegistry; } });
 //  events
 __exportStar(require("./events"), exports);
+
+//# sourceMappingURL=main.js.map

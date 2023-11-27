@@ -52,7 +52,7 @@ var FormatPanel = /** @class */ (function (_super) {
                 return true;
             }
             var cartesianOnlyGroupPanels = ['axis', 'navigator'];
-            var cartesianSeries = ['bar', 'column', 'line', 'area', 'scatter', 'histogram', 'cartesian'];
+            var cartesianSeries = ['bar', 'column', 'line', 'area', 'scatter', 'bubble', 'histogram', 'cartesian'];
             return !!(cartesianOnlyGroupPanels.includes(group) && cartesianSeries.includes(seriesType));
         };
         return _this;
@@ -137,3 +137,4 @@ var FormatPanel = /** @class */ (function (_super) {
     return FormatPanel;
 }(Component));
 export { FormatPanel };
+//# sourceMappingURL=formatPanel.js.map

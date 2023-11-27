@@ -137,3 +137,5 @@ export function getAriaCheckboxStateName(translate, state) {
             ? translate('ariaChecked', 'checked')
             : translate('ariaUnchecked', 'unchecked'));
 }
+
+//# sourceMappingURL=aria.js.map

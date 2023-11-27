@@ -502,13 +502,11 @@ var SelectionService = /** @class */ (function (_super) {
     };
     SelectionService.prototype.getSelectionState = function () {
         var selectedIds = [];
-        var selectedNodes = Object.values(this.selectedNodes);
-        for (var i = 0; i < selectedNodes.length; i++) {
-            var node = selectedNodes[i];
+        this.selectedNodes.forEach(function (node) {
             if (node === null || node === void 0 ? void 0 : node.id) {
                 selectedIds.push(node.id);
             }
-        }
+        });
         return selectedIds.length ? selectedIds : null;
     };
     SelectionService.prototype.setSelectionState = function (state, source) {
@@ -546,3 +544,5 @@ var SelectionService = /** @class */ (function (_super) {
     return SelectionService;
 }(BeanStub));
 export { SelectionService };
+
+//# sourceMappingURL=selectionService.js.map

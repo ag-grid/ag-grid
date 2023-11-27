@@ -36,7 +36,7 @@ export class FormatPanel extends Component {
                 return true;
             }
             const cartesianOnlyGroupPanels = ['axis', 'navigator'];
-            const cartesianSeries = ['bar', 'column', 'line', 'area', 'scatter', 'histogram', 'cartesian'];
+            const cartesianSeries = ['bar', 'column', 'line', 'area', 'scatter', 'bubble', 'histogram', 'cartesian'];
             return !!(cartesianOnlyGroupPanels.includes(group) && cartesianSeries.includes(seriesType));
         };
     }
@@ -115,3 +115,4 @@ FormatPanel.TEMPLATE = `<div class="ag-chart-format-wrapper"></div>`;
 __decorate([
     PostConstruct
 ], FormatPanel.prototype, "init", null);
+//# sourceMappingURL=formatPanel.js.map

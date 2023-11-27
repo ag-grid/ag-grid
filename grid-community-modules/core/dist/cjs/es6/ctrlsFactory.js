@@ -29,3 +29,5 @@ CtrlsFactory = __decorate([
     (0, context_1.Bean)('ctrlsFactory')
 ], CtrlsFactory);
 exports.CtrlsFactory = CtrlsFactory;
+
+//# sourceMappingURL=ctrlsFactory.js.map

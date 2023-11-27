@@ -49,3 +49,4 @@ __decorate([
     core_1.PostConstruct
 ], TotalRowsComp.prototype, "postConstruct", null);
 exports.TotalRowsComp = TotalRowsComp;
+//# sourceMappingURL=totalRowsComp.js.map

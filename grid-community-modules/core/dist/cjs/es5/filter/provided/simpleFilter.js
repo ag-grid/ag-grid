@@ -867,3 +867,5 @@ var SimpleFilter = /** @class */ (function (_super) {
     return SimpleFilter;
 }(providedFilter_1.ProvidedFilter));
 exports.SimpleFilter = SimpleFilter;
+
+//# sourceMappingURL=simpleFilter.js.map

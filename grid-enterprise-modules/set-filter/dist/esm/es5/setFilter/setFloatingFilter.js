@@ -98,3 +98,4 @@ var SetFloatingFilterComp = /** @class */ (function (_super) {
     return SetFloatingFilterComp;
 }(Component));
 export { SetFloatingFilterComp };
+//# sourceMappingURL=setFloatingFilter.js.map

@@ -20,3 +20,5 @@ class PopupComponent extends component_1.Component {
     }
 }
 exports.PopupComponent = PopupComponent;
+
+//# sourceMappingURL=popupComponent.js.map

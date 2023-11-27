@@ -146,3 +146,5 @@ var VirtualListDragFeature = /** @class */ (function (_super) {
     return VirtualListDragFeature;
 }(beanStub_1.BeanStub));
 exports.VirtualListDragFeature = VirtualListDragFeature;
+
+//# sourceMappingURL=virtualListDragFeature.js.map

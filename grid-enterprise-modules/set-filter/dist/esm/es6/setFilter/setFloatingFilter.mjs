@@ -79,3 +79,4 @@ __decorate([
 __decorate([
     Autowired('columnModel')
 ], SetFloatingFilterComp.prototype, "columnModel", void 0);
+//# sourceMappingURL=setFloatingFilter.js.map

@@ -74,3 +74,4 @@ class AgColorPicker extends core_1.AgPickerField {
     }
 }
 exports.AgColorPicker = AgColorPicker;
+//# sourceMappingURL=agColorPicker.js.map

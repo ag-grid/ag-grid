@@ -64,3 +64,4 @@ __decorate([
 __decorate([
     PostConstruct
 ], CalloutPanel.prototype, "init", null);
+//# sourceMappingURL=calloutPanel.js.map

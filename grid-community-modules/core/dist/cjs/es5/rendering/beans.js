@@ -171,3 +171,5 @@ var Beans = /** @class */ (function () {
     return Beans;
 }());
 exports.Beans = Beans;
+
+//# sourceMappingURL=beans.js.map

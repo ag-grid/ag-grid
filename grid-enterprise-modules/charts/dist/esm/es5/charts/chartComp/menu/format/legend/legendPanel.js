@@ -182,3 +182,4 @@ var LegendPanel = /** @class */ (function (_super) {
     return LegendPanel;
 }(Component));
 export { LegendPanel };
+//# sourceMappingURL=legendPanel.js.map

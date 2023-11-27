@@ -18,3 +18,5 @@ __exportStar(require("./utils"), exports);
 __exportStar(require("./numberSequence"), exports);
 __exportStar(require("./promise"), exports);
 __exportStar(require("./timer"), exports);
+
+//# sourceMappingURL=index.js.map

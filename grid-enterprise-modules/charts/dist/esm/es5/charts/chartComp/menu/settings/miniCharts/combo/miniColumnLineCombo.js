@@ -52,3 +52,4 @@ var MiniColumnLineCombo = /** @class */ (function (_super) {
     return MiniColumnLineCombo;
 }(MiniChartWithAxes));
 export { MiniColumnLineCombo };
+//# sourceMappingURL=miniColumnLineCombo.js.map

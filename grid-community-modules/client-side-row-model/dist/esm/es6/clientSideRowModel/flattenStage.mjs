@@ -130,3 +130,4 @@ FlattenStage = __decorate([
     Bean('flattenStage')
 ], FlattenStage);
 export { FlattenStage };
+//# sourceMappingURL=flattenStage.js.map

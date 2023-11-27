@@ -6084,13 +6084,14 @@ let ColumnModel = class ColumnModel extends BeanStub {
         });
         this.updateGroupsAndDisplayedColumns(source);
         this.setFirstRightAndLastLeftPinned(source);
-        impactedGroups.forEach(providedColumnGroup => {
+        if (impactedGroups.length) {
             const event = {
                 type: Events.EVENT_COLUMN_GROUP_OPENED,
-                columnGroup: providedColumnGroup
+                columnGroup: ProvidedColumnGroup.length === 1 ? impactedGroups[0] : undefined,
+                columnGroups: impactedGroups,
             };
             this.eventService.dispatchEvent(event);
-        });
+        }
         this.columnAnimationService.finish();
     }
     // called by headerRenderer - when a header is opened or closed
@@ -20318,7 +20319,11 @@ let GridApi = class GridApi {
         if (this.destroyCalled) {
             return;
         }
-        this.dispatchEvent({ type: Events.EVENT_GRID_PRE_DESTROYED });
+        const event = {
+            type: Events.EVENT_GRID_PRE_DESTROYED,
+            state: this.getState()
+        };
+        this.dispatchEvent(event);
         // Set after pre-destroy so user can still use the api in pre-destroy event and it is not marked as destroyed yet.
         this.destroyCalled = true;
         // destroy the UI first (as they use the services)
@@ -41549,18 +41554,19 @@ let AlignedGridsService = class AlignedGridsService extends BeanStub {
         });
     }
     processGroupOpenedEvent(groupOpenedEvent) {
-        // likewise for column group
-        const masterColumnGroup = groupOpenedEvent.columnGroup;
-        let otherColumnGroup = null;
-        if (masterColumnGroup) {
-            const groupId = masterColumnGroup.getGroupId();
-            otherColumnGroup = this.columnModel.getProvidedColumnGroup(groupId);
-        }
-        if (masterColumnGroup && !otherColumnGroup) {
-            return;
-        }
-        this.logger.log('onColumnEvent-> processing ' + groupOpenedEvent + ' expanded = ' + masterColumnGroup.isExpanded());
-        this.columnModel.setColumnGroupOpened(otherColumnGroup, masterColumnGroup.isExpanded(), "alignedGridChanged");
+        groupOpenedEvent.columnGroups.forEach(masterGroup => {
+            // likewise for column group
+            let otherColumnGroup = null;
+            if (masterGroup) {
+                const groupId = masterGroup.getGroupId();
+                otherColumnGroup = this.columnModel.getProvidedColumnGroup(groupId);
+            }
+            if (masterGroup && !otherColumnGroup) {
+                return;
+            }
+            this.logger.log('onColumnEvent-> processing ' + groupOpenedEvent + ' expanded = ' + masterGroup.isExpanded());
+            this.columnModel.setColumnGroupOpened(otherColumnGroup, masterGroup.isExpanded(), "alignedGridChanged");
+        });
     }
     processColumnEvent(colEvent) {
         var _a;
@@ -42119,13 +42125,11 @@ let SelectionService = class SelectionService extends BeanStub {
     }
     getSelectionState() {
         const selectedIds = [];
-        const selectedNodes = Object.values(this.selectedNodes);
-        for (let i = 0; i < selectedNodes.length; i++) {
-            const node = selectedNodes[i];
+        this.selectedNodes.forEach((node) => {
             if (node === null || node === void 0 ? void 0 : node.id) {
                 selectedIds.push(node.id);
             }
-        }
+        });
         return selectedIds.length ? selectedIds : null;
     }
     setSelectionState(state, source) {
@@ -44608,8 +44612,12 @@ let SelectableService = class SelectableService extends BeanStub {
         this.updateSelectable(true);
     }
     updateSelectable(skipLeafNodes = false) {
-        const isGroupSelectsChildren = this.gridOptionsService.get('groupSelectsChildren');
+        const isRowSelecting = !!this.gridOptionsService.get('rowSelection');
         const isRowSelectable = this.gridOptionsService.get('isRowSelectable');
+        if (!isRowSelecting || !isRowSelectable) {
+            return;
+        }
+        const isGroupSelectsChildren = this.gridOptionsService.get('groupSelectsChildren');
         const isCsrmGroupSelectsChildren = this.rowModel.getType() === 'clientSide' && isGroupSelectsChildren;
         const nodesToDeselect = [];
         const nodeCallback = (node) => {
@@ -46477,7 +46485,7 @@ RowNodeEventThrottle = __decorate$f([
 const COLUMN_DEFINITION_DEPRECATIONS = {};
 const CSRM_REQUIRES_ROW_GROUP_MODULE = (_options, gridOptions) => {
     var _a;
-    if ((_a = gridOptions.rowModelType) !== null && _a !== void 0 ? _a : 'clientSide' === 'clientSide') {
+    if (((_a = gridOptions.rowModelType) !== null && _a !== void 0 ? _a : 'clientSide') === 'clientSide') {
         return { module: ModuleNames.RowGroupingModule };
     }
     return null;

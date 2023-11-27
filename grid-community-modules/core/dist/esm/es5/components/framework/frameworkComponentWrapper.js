@@ -33,3 +33,5 @@ var BaseComponentWrapper = /** @class */ (function () {
     return BaseComponentWrapper;
 }());
 export { BaseComponentWrapper };
+
+//# sourceMappingURL=frameworkComponentWrapper.js.map

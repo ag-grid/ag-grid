@@ -405,3 +405,4 @@ function jsonMutate(path, json, mutator) {
     return json;
 }
 const merge = (r, n) => (Object.assign(Object.assign({}, r), n));
+//# sourceMappingURL=chartModelMigration.js.map

@@ -160,3 +160,5 @@ var SortIndicatorComp = /** @class */ (function (_super) {
     return SortIndicatorComp;
 }(component_1.Component));
 exports.SortIndicatorComp = SortIndicatorComp;
+
+//# sourceMappingURL=sortIndicatorComp.js.map

@@ -54,3 +54,5 @@ class AgPromise {
     }
 }
 exports.AgPromise = AgPromise;
+
+//# sourceMappingURL=promise.js.map

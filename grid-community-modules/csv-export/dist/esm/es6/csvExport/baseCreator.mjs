@@ -18,3 +18,4 @@ export class BaseCreator {
         return `export.${this.getDefaultFileExtension()}`;
     }
 }
+//# sourceMappingURL=baseCreator.js.map

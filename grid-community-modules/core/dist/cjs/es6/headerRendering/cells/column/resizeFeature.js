@@ -135,3 +135,5 @@ __decorate([
     context_1.PostConstruct
 ], ResizeFeature.prototype, "postConstruct", null);
 exports.ResizeFeature = ResizeFeature;
+
+//# sourceMappingURL=resizeFeature.js.map

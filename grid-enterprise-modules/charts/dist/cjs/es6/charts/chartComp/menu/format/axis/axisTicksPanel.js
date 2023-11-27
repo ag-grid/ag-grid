@@ -72,3 +72,4 @@ __decorate([
     core_1.PostConstruct
 ], AxisTicksPanel.prototype, "init", null);
 exports.AxisTicksPanel = AxisTicksPanel;
+//# sourceMappingURL=axisTicksPanel.js.map

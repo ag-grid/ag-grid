@@ -113,3 +113,4 @@ const getExcelColumnName = (colIdx) => {
     return (0, exports.getExcelColumnName)(pos) + fromCharCode(startCode + tableIdx - 1);
 };
 exports.getExcelColumnName = getExcelColumnName;
+//# sourceMappingURL=excelUtils.js.map

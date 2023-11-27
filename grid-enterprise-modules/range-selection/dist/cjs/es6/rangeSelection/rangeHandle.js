@@ -51,3 +51,4 @@ class RangeHandle extends abstractSelectionHandle_1.AbstractSelectionHandle {
 }
 exports.RangeHandle = RangeHandle;
 RangeHandle.TEMPLATE = `<div class="ag-range-handle"></div>`;
+//# sourceMappingURL=rangeHandle.js.map

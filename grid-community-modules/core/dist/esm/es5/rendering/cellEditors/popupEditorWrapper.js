@@ -51,3 +51,5 @@ var PopupEditorWrapper = /** @class */ (function (_super) {
     return PopupEditorWrapper;
 }(PopupComponent));
 export { PopupEditorWrapper };
+
+//# sourceMappingURL=popupEditorWrapper.js.map

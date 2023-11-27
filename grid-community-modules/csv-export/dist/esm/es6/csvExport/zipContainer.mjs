@@ -195,3 +195,4 @@ export class ZipContainer {
 }
 ZipContainer.folders = [];
 ZipContainer.files = [];
+//# sourceMappingURL=zipContainer.js.map

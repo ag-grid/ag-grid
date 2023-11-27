@@ -69,3 +69,4 @@ var TotalRowsComp = /** @class */ (function (_super) {
     return TotalRowsComp;
 }(nameValueComp_1.NameValueComp));
 exports.TotalRowsComp = TotalRowsComp;
+//# sourceMappingURL=totalRowsComp.js.map

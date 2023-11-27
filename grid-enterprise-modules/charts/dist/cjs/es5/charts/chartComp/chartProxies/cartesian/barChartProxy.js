@@ -98,3 +98,4 @@ var BarChartProxy = /** @class */ (function (_super) {
     return BarChartProxy;
 }(cartesianChartProxy_1.CartesianChartProxy));
 exports.BarChartProxy = BarChartProxy;
+//# sourceMappingURL=barChartProxy.js.map

@@ -19,3 +19,4 @@ export const SideBarModule = {
         EnterpriseCoreModule
     ]
 };
+//# sourceMappingURL=sideBarModule.js.map

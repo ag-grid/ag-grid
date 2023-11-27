@@ -161,3 +161,5 @@ var AutoWidthCalculator = /** @class */ (function (_super) {
     return AutoWidthCalculator;
 }(BeanStub));
 export { AutoWidthCalculator };
+
+//# sourceMappingURL=autoWidthCalculator.js.map

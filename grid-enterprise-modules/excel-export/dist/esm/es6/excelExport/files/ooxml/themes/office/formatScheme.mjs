@@ -184,3 +184,4 @@ const formatScheme = {
     }
 };
 export default formatScheme;
+//# sourceMappingURL=formatScheme.js.map

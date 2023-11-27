@@ -90,3 +90,5 @@ export function addSafePassiveEventListener(frameworkOverrides, eElement, event,
         frameworkOverrides.addEventListener(eElement, event, listener, options);
     }
 }
+
+//# sourceMappingURL=event.js.map

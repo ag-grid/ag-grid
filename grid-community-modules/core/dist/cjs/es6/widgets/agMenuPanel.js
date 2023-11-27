@@ -44,3 +44,5 @@ __decorate([
     context_1.PostConstruct
 ], AgMenuPanel.prototype, "postConstruct", null);
 exports.AgMenuPanel = AgMenuPanel;
+
+//# sourceMappingURL=agMenuPanel.js.map

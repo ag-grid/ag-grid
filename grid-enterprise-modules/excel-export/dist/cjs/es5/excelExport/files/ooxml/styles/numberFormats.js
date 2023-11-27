@@ -15,3 +15,4 @@ var numberFormatsFactory = {
     }
 };
 exports.default = numberFormatsFactory;
+//# sourceMappingURL=numberFormats.js.map

@@ -414,3 +414,4 @@ __decorate([
     core_1.PostConstruct
 ], ChartDataPanel.prototype, "init", null);
 exports.ChartDataPanel = ChartDataPanel;
+//# sourceMappingURL=chartDataPanel.js.map

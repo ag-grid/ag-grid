@@ -59,3 +59,4 @@ __decorate([
     core_1.PostConstruct
 ], SelectedRowsComp.prototype, "postConstruct", null);
 exports.SelectedRowsComp = SelectedRowsComp;
+//# sourceMappingURL=selectedRowsComp.js.map

@@ -28,3 +28,4 @@ export class HistogramChartProxy extends CartesianChartProxy {
         ];
     }
 }
+//# sourceMappingURL=histogramChartProxy.js.map

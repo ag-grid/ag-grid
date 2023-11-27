@@ -185,3 +185,4 @@ var ChartSettingsPanel = /** @class */ (function (_super) {
     return ChartSettingsPanel;
 }(Component));
 export { ChartSettingsPanel };
+//# sourceMappingURL=chartSettingsPanel.js.map

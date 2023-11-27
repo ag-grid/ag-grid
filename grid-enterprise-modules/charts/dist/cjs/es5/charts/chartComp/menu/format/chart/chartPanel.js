@@ -93,3 +93,4 @@ var ChartPanel = /** @class */ (function (_super) {
     return ChartPanel;
 }(core_1.Component));
 exports.ChartPanel = ChartPanel;
+//# sourceMappingURL=chartPanel.js.map

@@ -20,3 +20,4 @@ exports.RangeSelectionModule = {
         core_2.EnterpriseCoreModule
     ]
 };
+//# sourceMappingURL=rangeSelectionModule.js.map

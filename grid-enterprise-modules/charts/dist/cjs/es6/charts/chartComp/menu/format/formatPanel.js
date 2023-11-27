@@ -40,7 +40,7 @@ class FormatPanel extends core_1.Component {
                 return true;
             }
             const cartesianOnlyGroupPanels = ['axis', 'navigator'];
-            const cartesianSeries = ['bar', 'column', 'line', 'area', 'scatter', 'histogram', 'cartesian'];
+            const cartesianSeries = ['bar', 'column', 'line', 'area', 'scatter', 'bubble', 'histogram', 'cartesian'];
             return !!(cartesianOnlyGroupPanels.includes(group) && cartesianSeries.includes(seriesType));
         };
     }
@@ -120,3 +120,4 @@ __decorate([
     core_1.PostConstruct
 ], FormatPanel.prototype, "init", null);
 exports.FormatPanel = FormatPanel;
+//# sourceMappingURL=formatPanel.js.map

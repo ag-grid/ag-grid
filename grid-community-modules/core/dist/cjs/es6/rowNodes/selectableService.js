@@ -22,8 +22,12 @@ let SelectableService = class SelectableService extends beanStub_1.BeanStub {
         this.updateSelectable(true);
     }
     updateSelectable(skipLeafNodes = false) {
-        const isGroupSelectsChildren = this.gridOptionsService.get('groupSelectsChildren');
+        const isRowSelecting = !!this.gridOptionsService.get('rowSelection');
         const isRowSelectable = this.gridOptionsService.get('isRowSelectable');
+        if (!isRowSelecting || !isRowSelectable) {
+            return;
+        }
+        const isGroupSelectsChildren = this.gridOptionsService.get('groupSelectsChildren');
         const isCsrmGroupSelectsChildren = this.rowModel.getType() === 'clientSide' && isGroupSelectsChildren;
         const nodesToDeselect = [];
         const nodeCallback = (node) => {
@@ -74,3 +78,5 @@ SelectableService = __decorate([
     (0, context_1.Bean)('selectableService')
 ], SelectableService);
 exports.SelectableService = SelectableService;
+
+//# sourceMappingURL=selectableService.js.map

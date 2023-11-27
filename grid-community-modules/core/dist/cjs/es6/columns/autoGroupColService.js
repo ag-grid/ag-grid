@@ -143,3 +143,5 @@ AutoGroupColService = __decorate([
     (0, context_1.Bean)('autoGroupColService')
 ], AutoGroupColService);
 exports.AutoGroupColService = AutoGroupColService;
+
+//# sourceMappingURL=autoGroupColService.js.map

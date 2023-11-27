@@ -26,3 +26,4 @@ export const ColumnsToolPanelModule = {
         SideBarModule
     ]
 };
+//# sourceMappingURL=columnsToolPanelModule.js.map

@@ -273,3 +273,5 @@ var UserComponentFactory = /** @class */ (function (_super) {
     return UserComponentFactory;
 }(beanStub_1.BeanStub));
 exports.UserComponentFactory = UserComponentFactory;
+
+//# sourceMappingURL=userComponentFactory.js.map

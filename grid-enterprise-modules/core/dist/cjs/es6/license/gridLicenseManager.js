@@ -34,3 +34,4 @@ GridLicenseManager = __decorate([
     (0, core_1.Bean)('licenseManager')
 ], GridLicenseManager);
 exports.GridLicenseManager = GridLicenseManager;
+//# sourceMappingURL=gridLicenseManager.js.map

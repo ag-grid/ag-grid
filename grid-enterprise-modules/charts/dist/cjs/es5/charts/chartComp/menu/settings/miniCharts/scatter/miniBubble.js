@@ -81,3 +81,4 @@ var MiniBubble = /** @class */ (function (_super) {
     return MiniBubble;
 }(miniChartWithAxes_1.MiniChartWithAxes));
 exports.MiniBubble = MiniBubble;
+//# sourceMappingURL=miniBubble.js.map

@@ -38,3 +38,5 @@ __decorate([
     context_1.PostConstruct
 ], HoverFeature.prototype, "postConstruct", null);
 exports.HoverFeature = HoverFeature;
+
+//# sourceMappingURL=hoverFeature.js.map

@@ -978,3 +978,4 @@ var ClipboardService = /** @class */ (function (_super) {
     return ClipboardService;
 }(BeanStub));
 export { ClipboardService };
+//# sourceMappingURL=clipboardService.js.map

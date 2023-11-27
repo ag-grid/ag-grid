@@ -401,3 +401,5 @@ var PaginationProxy = /** @class */ (function (_super) {
     return PaginationProxy;
 }(BeanStub));
 export { PaginationProxy };
+
+//# sourceMappingURL=paginationProxy.js.map

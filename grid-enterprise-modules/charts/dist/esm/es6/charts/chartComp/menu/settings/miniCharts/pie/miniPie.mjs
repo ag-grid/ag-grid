@@ -5,3 +5,4 @@ export class MiniPie extends MiniDoughnut {
     }
 }
 MiniPie.chartType = 'pie';
+//# sourceMappingURL=miniPie.js.map

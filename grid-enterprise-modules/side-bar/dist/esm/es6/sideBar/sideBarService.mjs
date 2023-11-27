@@ -17,3 +17,4 @@ SideBarService = __decorate([
     Bean('sideBarService')
 ], SideBarService);
 export { SideBarService };
+//# sourceMappingURL=sideBarService.js.map

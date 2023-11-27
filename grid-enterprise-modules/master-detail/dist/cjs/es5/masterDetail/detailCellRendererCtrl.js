@@ -182,3 +182,4 @@ var DetailCellRendererCtrl = /** @class */ (function (_super) {
     return DetailCellRendererCtrl;
 }(core_1.BeanStub));
 exports.DetailCellRendererCtrl = DetailCellRendererCtrl;
+//# sourceMappingURL=detailCellRendererCtrl.js.map

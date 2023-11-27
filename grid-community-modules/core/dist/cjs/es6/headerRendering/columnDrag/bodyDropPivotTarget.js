@@ -86,3 +86,5 @@ __decorate([
     (0, context_1.Autowired)('gridOptionsService')
 ], BodyDropPivotTarget.prototype, "gridOptionsService", void 0);
 exports.BodyDropPivotTarget = BodyDropPivotTarget;
+
+//# sourceMappingURL=bodyDropPivotTarget.js.map

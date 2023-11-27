@@ -203,3 +203,5 @@ AnimationFrameService = __decorate([
     (0, context_1.Bean)('animationFrameService')
 ], AnimationFrameService);
 exports.AnimationFrameService = AnimationFrameService;
+
+//# sourceMappingURL=animationFrameService.js.map

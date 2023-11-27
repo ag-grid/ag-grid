@@ -47,3 +47,5 @@ export function formatNumberCommas(value, thousandSeparator, decimalSeparator) {
 export function sum(values) {
     return values == null ? null : values.reduce(function (total, value) { return total + value; }, 0);
 }
+
+//# sourceMappingURL=number.js.map

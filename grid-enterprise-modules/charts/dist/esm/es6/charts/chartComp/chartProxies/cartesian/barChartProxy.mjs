@@ -64,3 +64,4 @@ export class BarChartProxy extends CartesianChartProxy {
         return !this.crossFiltering && _.includes(normalisedCharts, this.chartType);
     }
 }
+//# sourceMappingURL=barChartProxy.js.map

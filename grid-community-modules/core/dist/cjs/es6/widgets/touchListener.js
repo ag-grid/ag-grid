@@ -123,3 +123,5 @@ TouchListener.EVENT_TAP = "tap";
 TouchListener.EVENT_DOUBLE_TAP = "doubleTap";
 TouchListener.EVENT_LONG_TAP = "longTap";
 TouchListener.DOUBLE_TAP_MILLIS = 500;
+
+//# sourceMappingURL=touchListener.js.map

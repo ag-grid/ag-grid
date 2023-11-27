@@ -142,3 +142,4 @@ function forEach(list, action) {
         action(list[i], i);
     }
 }
+//# sourceMappingURL=object.js.map

@@ -244,3 +244,4 @@ var ToolPanelContextMenu = /** @class */ (function (_super) {
     return ToolPanelContextMenu;
 }(Component));
 export { ToolPanelContextMenu };
+//# sourceMappingURL=toolPanelContextMenu.js.map

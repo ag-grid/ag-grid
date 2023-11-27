@@ -111,3 +111,4 @@ ChartColumnService = __decorate([
     (0, core_1.Bean)("chartColumnService")
 ], ChartColumnService);
 exports.ChartColumnService = ChartColumnService;
+//# sourceMappingURL=chartColumnService.js.map

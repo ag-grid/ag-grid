@@ -127,3 +127,4 @@ __decorate([
     core_1.PostConstruct
 ], TitlePanel.prototype, "init", null);
 exports.default = TitlePanel;
+//# sourceMappingURL=titlePanel.js.map

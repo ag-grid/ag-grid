@@ -263,3 +263,4 @@ __decorate([
     core_1.PostConstruct
 ], ToolPanelColumnComp.prototype, "init", null);
 exports.ToolPanelColumnComp = ToolPanelColumnComp;
+//# sourceMappingURL=toolPanelColumnComp.js.map

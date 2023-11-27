@@ -172,3 +172,4 @@ __decorate([
 __decorate([
     PostConstruct
 ], ChartSettingsPanel.prototype, "postConstruct", null);
+//# sourceMappingURL=chartSettingsPanel.js.map

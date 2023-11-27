@@ -26,3 +26,4 @@ export class MiniColumn extends MiniChartWithAxes {
     }
 }
 MiniColumn.chartType = 'groupedColumn';
+//# sourceMappingURL=miniColumn.js.map

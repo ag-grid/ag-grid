@@ -6,3 +6,4 @@ Object.defineProperty(exports, "ColumnsToolPanelModule", { enumerable: true, get
 // used by the enterprise column menu
 var primaryColsPanel_1 = require("./columnToolPanel/primaryColsPanel");
 Object.defineProperty(exports, "PrimaryColsPanel", { enumerable: true, get: function () { return primaryColsPanel_1.PrimaryColsPanel; } });
+//# sourceMappingURL=main.js.map

@@ -196,3 +196,4 @@ ExcelXlsxFactory.workbookImageIds = new Map();
 /** Maps all sheet images to unique Ids */
 ExcelXlsxFactory.worksheetImageIds = new Map();
 ExcelXlsxFactory.factoryMode = ExcelFactoryMode.SINGLE_SHEET;
+//# sourceMappingURL=excelXlsxFactory.js.map

@@ -144,3 +144,4 @@ __decorate([
 __decorate([
     PreDestroy
 ], InfiniteBlock.prototype, "destroyRowNodes", null);
+//# sourceMappingURL=infiniteBlock.js.map

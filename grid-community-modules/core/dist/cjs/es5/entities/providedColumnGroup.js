@@ -205,3 +205,5 @@ var ProvidedColumnGroup = /** @class */ (function () {
     return ProvidedColumnGroup;
 }());
 exports.ProvidedColumnGroup = ProvidedColumnGroup;
+
+//# sourceMappingURL=providedColumnGroup.js.map

@@ -38,3 +38,4 @@ NodeManager = __decorate([
     (0, core_1.Bean)('ssrmNodeManager')
 ], NodeManager);
 exports.NodeManager = NodeManager;
+//# sourceMappingURL=nodeManager.js.map

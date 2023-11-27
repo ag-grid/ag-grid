@@ -94,3 +94,5 @@ var ResizeObserverService = /** @class */ (function (_super) {
     return ResizeObserverService;
 }(BeanStub));
 export { ResizeObserverService };
+
+//# sourceMappingURL=resizeObserverService.js.map

@@ -72,3 +72,5 @@ class ScalarFilter extends simpleFilter_1.SimpleFilter {
     }
 }
 exports.ScalarFilter = ScalarFilter;
+
+//# sourceMappingURL=scalarFilter.js.map

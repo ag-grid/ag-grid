@@ -175,3 +175,4 @@ __decorate([
     core_1.PostConstruct
 ], ToolPanelContextMenu.prototype, "postConstruct", null);
 exports.ToolPanelContextMenu = ToolPanelContextMenu;
+//# sourceMappingURL=toolPanelContextMenu.js.map

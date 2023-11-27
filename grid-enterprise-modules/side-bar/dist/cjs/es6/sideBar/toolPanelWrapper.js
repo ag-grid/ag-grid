@@ -72,3 +72,4 @@ __decorate([
     core_1.PostConstruct
 ], ToolPanelWrapper.prototype, "setupResize", null);
 exports.ToolPanelWrapper = ToolPanelWrapper;
+//# sourceMappingURL=toolPanelWrapper.js.map

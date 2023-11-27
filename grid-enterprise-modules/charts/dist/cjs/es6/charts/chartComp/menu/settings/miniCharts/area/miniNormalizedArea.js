@@ -13,3 +13,4 @@ MiniNormalizedArea.data = miniStackedArea_1.MiniStackedArea.data.map(stack => {
     const sum = stack.reduce((p, c) => p + c, 0);
     return stack.map(v => v / sum * 16);
 });
+//# sourceMappingURL=miniNormalizedArea.js.map

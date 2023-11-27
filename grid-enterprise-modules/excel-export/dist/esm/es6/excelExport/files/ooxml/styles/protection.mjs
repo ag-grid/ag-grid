@@ -14,3 +14,4 @@ const protectionFactory = {
     }
 };
 export default protectionFactory;
+//# sourceMappingURL=protection.js.map

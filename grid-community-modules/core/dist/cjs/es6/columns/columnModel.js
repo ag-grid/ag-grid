@@ -2388,13 +2388,14 @@ let ColumnModel = class ColumnModel extends beanStub_1.BeanStub {
         });
         this.updateGroupsAndDisplayedColumns(source);
         this.setFirstRightAndLastLeftPinned(source);
-        impactedGroups.forEach(providedColumnGroup => {
+        if (impactedGroups.length) {
             const event = {
                 type: events_1.Events.EVENT_COLUMN_GROUP_OPENED,
-                columnGroup: providedColumnGroup
+                columnGroup: providedColumnGroup_1.ProvidedColumnGroup.length === 1 ? impactedGroups[0] : undefined,
+                columnGroups: impactedGroups,
             };
             this.eventService.dispatchEvent(event);
-        });
+        }
         this.columnAnimationService.finish();
     }
     // called by headerRenderer - when a header is opened or closed
@@ -3531,3 +3532,5 @@ ColumnModel = __decorate([
     (0, context_1.Bean)('columnModel')
 ], ColumnModel);
 exports.ColumnModel = ColumnModel;
+
+//# sourceMappingURL=columnModel.js.map

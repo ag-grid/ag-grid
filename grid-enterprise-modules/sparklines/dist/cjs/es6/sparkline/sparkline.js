@@ -564,3 +564,4 @@ class Sparkline {
 }
 exports.Sparkline = Sparkline;
 Sparkline.tooltipDocuments = [];
+//# sourceMappingURL=sparkline.js.map

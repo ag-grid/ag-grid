@@ -28,3 +28,4 @@ class Downloader {
     }
 }
 exports.Downloader = Downloader;
+//# sourceMappingURL=downloader.js.map

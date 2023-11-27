@@ -15,3 +15,4 @@ var fontsFactory = {
     }
 };
 exports.default = fontsFactory;
+//# sourceMappingURL=fonts.js.map

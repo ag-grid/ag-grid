@@ -14,3 +14,4 @@ const contentTypeFactory = {
     }
 };
 export default contentTypeFactory;
+//# sourceMappingURL=contentType.js.map

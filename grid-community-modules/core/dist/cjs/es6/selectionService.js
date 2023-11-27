@@ -480,13 +480,11 @@ let SelectionService = class SelectionService extends beanStub_1.BeanStub {
     }
     getSelectionState() {
         const selectedIds = [];
-        const selectedNodes = Object.values(this.selectedNodes);
-        for (let i = 0; i < selectedNodes.length; i++) {
-            const node = selectedNodes[i];
+        this.selectedNodes.forEach((node) => {
             if (node === null || node === void 0 ? void 0 : node.id) {
                 selectedIds.push(node.id);
             }
-        }
+        });
         return selectedIds.length ? selectedIds : null;
     }
     setSelectionState(state, source) {
@@ -523,3 +521,5 @@ SelectionService = __decorate([
     (0, context_1.Bean)('selectionService')
 ], SelectionService);
 exports.SelectionService = SelectionService;
+
+//# sourceMappingURL=selectionService.js.map

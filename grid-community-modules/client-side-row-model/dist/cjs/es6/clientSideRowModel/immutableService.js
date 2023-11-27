@@ -116,3 +116,4 @@ ImmutableService = __decorate([
     (0, core_1.Bean)('immutableService')
 ], ImmutableService);
 exports.ImmutableService = ImmutableService;
+//# sourceMappingURL=immutableService.js.map

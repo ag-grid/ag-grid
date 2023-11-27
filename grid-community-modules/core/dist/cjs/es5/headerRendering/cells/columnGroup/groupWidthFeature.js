@@ -80,3 +80,5 @@ var GroupWidthFeature = /** @class */ (function (_super) {
     return GroupWidthFeature;
 }(beanStub_1.BeanStub));
 exports.GroupWidthFeature = GroupWidthFeature;
+
+//# sourceMappingURL=groupWidthFeature.js.map

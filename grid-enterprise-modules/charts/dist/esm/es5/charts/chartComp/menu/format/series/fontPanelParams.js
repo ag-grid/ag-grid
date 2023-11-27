@@ -45,3 +45,4 @@ export function initFontPanelParams(_a) {
     };
     return params;
 }
+//# sourceMappingURL=fontPanelParams.js.map

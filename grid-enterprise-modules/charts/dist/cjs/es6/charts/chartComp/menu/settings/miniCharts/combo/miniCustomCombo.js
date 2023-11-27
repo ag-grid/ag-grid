@@ -81,3 +81,4 @@ class MiniCustomCombo extends miniChart_1.MiniChart {
 }
 exports.MiniCustomCombo = MiniCustomCombo;
 MiniCustomCombo.chartType = 'customCombo';
+//# sourceMappingURL=miniCustomCombo.js.map

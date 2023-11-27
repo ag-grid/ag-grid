@@ -195,3 +195,5 @@ __decorate([
     (0, context_1.Autowired)('dragAndDropService')
 ], AbstractHeaderCellCtrl.prototype, "dragAndDropService", void 0);
 exports.AbstractHeaderCellCtrl = AbstractHeaderCellCtrl;
+
+//# sourceMappingURL=abstractHeaderCellCtrl.js.map

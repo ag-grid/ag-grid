@@ -152,3 +152,4 @@ var TransactionManager = /** @class */ (function (_super) {
     return TransactionManager;
 }(BeanStub));
 export { TransactionManager };
+//# sourceMappingURL=transactionManager.js.map

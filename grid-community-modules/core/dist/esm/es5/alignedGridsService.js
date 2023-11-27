@@ -176,18 +176,20 @@ var AlignedGridsService = /** @class */ (function (_super) {
         });
     };
     AlignedGridsService.prototype.processGroupOpenedEvent = function (groupOpenedEvent) {
-        // likewise for column group
-        var masterColumnGroup = groupOpenedEvent.columnGroup;
-        var otherColumnGroup = null;
-        if (masterColumnGroup) {
-            var groupId = masterColumnGroup.getGroupId();
-            otherColumnGroup = this.columnModel.getProvidedColumnGroup(groupId);
-        }
-        if (masterColumnGroup && !otherColumnGroup) {
-            return;
-        }
-        this.logger.log('onColumnEvent-> processing ' + groupOpenedEvent + ' expanded = ' + masterColumnGroup.isExpanded());
-        this.columnModel.setColumnGroupOpened(otherColumnGroup, masterColumnGroup.isExpanded(), "alignedGridChanged");
+        var _this = this;
+        groupOpenedEvent.columnGroups.forEach(function (masterGroup) {
+            // likewise for column group
+            var otherColumnGroup = null;
+            if (masterGroup) {
+                var groupId = masterGroup.getGroupId();
+                otherColumnGroup = _this.columnModel.getProvidedColumnGroup(groupId);
+            }
+            if (masterGroup && !otherColumnGroup) {
+                return;
+            }
+            _this.logger.log('onColumnEvent-> processing ' + groupOpenedEvent + ' expanded = ' + masterGroup.isExpanded());
+            _this.columnModel.setColumnGroupOpened(otherColumnGroup, masterGroup.isExpanded(), "alignedGridChanged");
+        });
     };
     AlignedGridsService.prototype.processColumnEvent = function (colEvent) {
         var _this = this;
@@ -281,3 +283,5 @@ var AlignedGridsService = /** @class */ (function (_super) {
     return AlignedGridsService;
 }(BeanStub));
 export { AlignedGridsService };
+
+//# sourceMappingURL=alignedGridsService.js.map

@@ -154,3 +154,4 @@ var ChartTranslationService = /** @class */ (function (_super) {
     return ChartTranslationService;
 }(core_1.BeanStub));
 exports.ChartTranslationService = ChartTranslationService;
+//# sourceMappingURL=chartTranslationService.js.map

@@ -508,3 +508,4 @@ export class SetValueModel {
     }
 }
 SetValueModel.EVENT_AVAILABLE_VALUES_CHANGED = 'availableValuesChanged';
+//# sourceMappingURL=setValueModel.js.map

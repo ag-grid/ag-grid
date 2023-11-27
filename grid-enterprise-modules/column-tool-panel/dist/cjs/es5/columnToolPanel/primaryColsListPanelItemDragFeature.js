@@ -121,3 +121,4 @@ var PrimaryColsListPanelItemDragFeature = /** @class */ (function (_super) {
     return PrimaryColsListPanelItemDragFeature;
 }(core_1.BeanStub));
 exports.PrimaryColsListPanelItemDragFeature = PrimaryColsListPanelItemDragFeature;
+//# sourceMappingURL=primaryColsListPanelItemDragFeature.js.map

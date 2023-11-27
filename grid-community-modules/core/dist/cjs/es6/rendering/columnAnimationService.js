@@ -97,3 +97,5 @@ ColumnAnimationService = __decorate([
     (0, context_1.Bean)('columnAnimationService')
 ], ColumnAnimationService);
 exports.ColumnAnimationService = ColumnAnimationService;
+
+//# sourceMappingURL=columnAnimationService.js.map

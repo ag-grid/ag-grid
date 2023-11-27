@@ -1105,3 +1105,4 @@ var ClientSideRowModel = /** @class */ (function (_super) {
     return ClientSideRowModel;
 }(core_1.BeanStub));
 exports.ClientSideRowModel = ClientSideRowModel;
+//# sourceMappingURL=clientSideRowModel.js.map

@@ -198,3 +198,5 @@ __decorate([
     context_1.PostConstruct
 ], GroupResizeFeature.prototype, "postConstruct", null);
 exports.GroupResizeFeature = GroupResizeFeature;
+
+//# sourceMappingURL=groupResizeFeature.js.map

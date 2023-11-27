@@ -417,3 +417,5 @@ __decorate([
     (0, context_1.Autowired)('filterManager')
 ], GridBodyCtrl.prototype, "filterManager", void 0);
 exports.GridBodyCtrl = GridBodyCtrl;
+
+//# sourceMappingURL=gridBodyCtrl.js.map

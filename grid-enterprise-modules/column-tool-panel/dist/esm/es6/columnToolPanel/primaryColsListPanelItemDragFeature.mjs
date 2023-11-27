@@ -98,3 +98,4 @@ __decorate([
 __decorate([
     PostConstruct
 ], PrimaryColsListPanelItemDragFeature.prototype, "postConstruct", null);
+//# sourceMappingURL=primaryColsListPanelItemDragFeature.js.map

@@ -118,3 +118,4 @@ ChartCrossFilterService = ChartCrossFilterService_1 = __decorate([
     (0, core_1.Bean)("chartCrossFilterService")
 ], ChartCrossFilterService);
 exports.ChartCrossFilterService = ChartCrossFilterService;
+//# sourceMappingURL=chartCrossFilterService.js.map

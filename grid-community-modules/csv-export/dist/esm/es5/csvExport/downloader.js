@@ -28,3 +28,4 @@ var Downloader = /** @class */ (function () {
     return Downloader;
 }());
 export { Downloader };
+//# sourceMappingURL=downloader.js.map

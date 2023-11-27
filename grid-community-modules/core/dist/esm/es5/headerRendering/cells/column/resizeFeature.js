@@ -151,3 +151,5 @@ var ResizeFeature = /** @class */ (function (_super) {
     return ResizeFeature;
 }(BeanStub));
 export { ResizeFeature };
+
+//# sourceMappingURL=resizeFeature.js.map

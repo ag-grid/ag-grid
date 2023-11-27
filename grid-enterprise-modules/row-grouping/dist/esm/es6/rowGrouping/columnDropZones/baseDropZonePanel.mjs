@@ -404,3 +404,4 @@ __decorate([
 __decorate([
     Autowired('focusService')
 ], BaseDropZonePanel.prototype, "focusService", void 0);
+//# sourceMappingURL=baseDropZonePanel.js.map

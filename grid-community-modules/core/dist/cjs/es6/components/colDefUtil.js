@@ -139,3 +139,5 @@ ColDefUtil.ColDefPropertyMap = {
     useValueParserForImport: undefined,
 };
 ColDefUtil.ALL_PROPERTIES = Object.keys(ColDefUtil.ColDefPropertyMap);
+
+//# sourceMappingURL=colDefUtil.js.map

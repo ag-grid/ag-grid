@@ -343,3 +343,4 @@ class RangeMenuItemMapper {
         };
     }
 }
+//# sourceMappingURL=chartMenuItemMapper.js.map

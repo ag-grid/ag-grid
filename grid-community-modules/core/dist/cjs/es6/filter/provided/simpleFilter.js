@@ -803,3 +803,5 @@ SimpleFilter.CONTAINS = 'contains';
 SimpleFilter.NOT_CONTAINS = 'notContains';
 SimpleFilter.STARTS_WITH = 'startsWith';
 SimpleFilter.ENDS_WITH = 'endsWith';
+
+//# sourceMappingURL=simpleFilter.js.map

@@ -124,3 +124,4 @@ __decorate([
 __decorate([
     PostConstruct
 ], TitlePanel.prototype, "init", null);
+//# sourceMappingURL=titlePanel.js.map

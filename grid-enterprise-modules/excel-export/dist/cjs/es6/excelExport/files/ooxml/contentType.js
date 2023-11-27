@@ -16,3 +16,4 @@ const contentTypeFactory = {
     }
 };
 exports.default = contentTypeFactory;
+//# sourceMappingURL=contentType.js.map

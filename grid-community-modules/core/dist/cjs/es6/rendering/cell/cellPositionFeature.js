@@ -142,3 +142,5 @@ class CellPositionFeature extends beanStub_1.BeanStub {
     }
 }
 exports.CellPositionFeature = CellPositionFeature;
+
+//# sourceMappingURL=cellPositionFeature.js.map

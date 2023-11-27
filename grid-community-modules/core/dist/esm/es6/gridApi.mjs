@@ -764,7 +764,11 @@ let GridApi = class GridApi {
         if (this.destroyCalled) {
             return;
         }
-        this.dispatchEvent({ type: Events.EVENT_GRID_PRE_DESTROYED });
+        const event = {
+            type: Events.EVENT_GRID_PRE_DESTROYED,
+            state: this.getState()
+        };
+        this.dispatchEvent(event);
         // Set after pre-destroy so user can still use the api in pre-destroy event and it is not marked as destroyed yet.
         this.destroyCalled = true;
         // destroy the UI first (as they use the services)

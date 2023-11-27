@@ -160,3 +160,5 @@ __decorate([
     context_1.PostConstruct
 ], AgList.prototype, "init", null);
 exports.AgList = AgList;
+
+//# sourceMappingURL=agList.js.map

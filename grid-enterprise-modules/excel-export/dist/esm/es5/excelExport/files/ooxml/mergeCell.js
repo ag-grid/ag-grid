@@ -11,3 +11,4 @@ var mergeCellFactory = {
     }
 };
 export default mergeCellFactory;
+//# sourceMappingURL=mergeCell.js.map

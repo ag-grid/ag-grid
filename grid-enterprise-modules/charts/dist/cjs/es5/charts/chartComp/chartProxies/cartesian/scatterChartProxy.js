@@ -214,3 +214,4 @@ var ScatterChartProxy = /** @class */ (function (_super) {
     return ScatterChartProxy;
 }(cartesianChartProxy_1.CartesianChartProxy));
 exports.ScatterChartProxy = ScatterChartProxy;
+//# sourceMappingURL=scatterChartProxy.js.map

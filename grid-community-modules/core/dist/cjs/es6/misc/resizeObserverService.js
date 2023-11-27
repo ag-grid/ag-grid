@@ -77,3 +77,5 @@ ResizeObserverService = __decorate([
     (0, context_1.Bean)('resizeObserverService')
 ], ResizeObserverService);
 exports.ResizeObserverService = ResizeObserverService;
+
+//# sourceMappingURL=resizeObserverService.js.map

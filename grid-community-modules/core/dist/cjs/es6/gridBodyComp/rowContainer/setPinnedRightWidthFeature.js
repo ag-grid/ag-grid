@@ -36,3 +36,5 @@ __decorate([
     context_1.PostConstruct
 ], SetPinnedRightWidthFeature.prototype, "postConstruct", null);
 exports.SetPinnedRightWidthFeature = SetPinnedRightWidthFeature;
+
+//# sourceMappingURL=setPinnedRightWidthFeature.js.map

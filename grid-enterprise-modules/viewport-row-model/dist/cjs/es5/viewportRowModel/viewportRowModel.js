@@ -304,3 +304,4 @@ var ViewportRowModel = /** @class */ (function (_super) {
     return ViewportRowModel;
 }(core_1.BeanStub));
 exports.ViewportRowModel = ViewportRowModel;
+//# sourceMappingURL=viewportRowModel.js.map

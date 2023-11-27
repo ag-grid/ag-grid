@@ -64,3 +64,5 @@ var PinnedWidthService = /** @class */ (function (_super) {
     return PinnedWidthService;
 }(BeanStub));
 export { PinnedWidthService };
+
+//# sourceMappingURL=pinnedWidthService.js.map

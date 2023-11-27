@@ -29,3 +29,4 @@ var columnFactory = {
     }
 };
 exports.default = columnFactory;
+//# sourceMappingURL=column.js.map

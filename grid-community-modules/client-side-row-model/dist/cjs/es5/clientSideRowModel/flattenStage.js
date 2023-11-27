@@ -153,3 +153,4 @@ var FlattenStage = /** @class */ (function (_super) {
     return FlattenStage;
 }(core_1.BeanStub));
 exports.FlattenStage = FlattenStage;
+//# sourceMappingURL=flattenStage.js.map

@@ -56,3 +56,4 @@ var MiniChartWithAxes = /** @class */ (function (_super) {
     return MiniChartWithAxes;
 }(MiniChart));
 export { MiniChartWithAxes };
+//# sourceMappingURL=miniChartWithAxes.js.map

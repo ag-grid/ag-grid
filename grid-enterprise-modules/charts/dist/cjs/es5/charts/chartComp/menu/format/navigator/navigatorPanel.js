@@ -81,3 +81,4 @@ var NavigatorPanel = /** @class */ (function (_super) {
     return NavigatorPanel;
 }(core_1.Component));
 exports.NavigatorPanel = NavigatorPanel;
+//# sourceMappingURL=navigatorPanel.js.map

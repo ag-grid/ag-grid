@@ -86,3 +86,4 @@ __decorate([
 __decorate([
     PostConstruct
 ], TabbedChartMenu.prototype, "init", null);
+//# sourceMappingURL=tabbedChartMenu.js.map

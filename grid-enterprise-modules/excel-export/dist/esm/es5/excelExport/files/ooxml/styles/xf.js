@@ -32,3 +32,4 @@ var xfFactory = {
     }
 };
 export default xfFactory;
+//# sourceMappingURL=xf.js.map

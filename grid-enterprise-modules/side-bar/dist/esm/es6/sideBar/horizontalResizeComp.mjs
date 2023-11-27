@@ -71,3 +71,4 @@ __decorate([
 __decorate([
     PostConstruct
 ], HorizontalResizeComp.prototype, "postConstruct", null);
+//# sourceMappingURL=horizontalResizeComp.js.map

@@ -47,3 +47,4 @@ export class BatchRemover {
         this.allParents.length = 0;
     }
 }
+//# sourceMappingURL=batchRemover.js.map

@@ -725,3 +725,5 @@ var PositionableFeature = /** @class */ (function (_super) {
     return PositionableFeature;
 }(BeanStub));
 export { PositionableFeature };
+
+//# sourceMappingURL=positionableFeature.js.map

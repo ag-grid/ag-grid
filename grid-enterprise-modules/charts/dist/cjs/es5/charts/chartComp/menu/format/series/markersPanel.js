@@ -135,3 +135,4 @@ var MarkersPanel = /** @class */ (function (_super) {
     return MarkersPanel;
 }(core_1.Component));
 exports.MarkersPanel = MarkersPanel;
+//# sourceMappingURL=markersPanel.js.map

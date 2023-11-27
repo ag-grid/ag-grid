@@ -35,3 +35,4 @@ NodeManager = __decorate([
     Bean('ssrmNodeManager')
 ], NodeManager);
 export { NodeManager };
+//# sourceMappingURL=nodeManager.js.map

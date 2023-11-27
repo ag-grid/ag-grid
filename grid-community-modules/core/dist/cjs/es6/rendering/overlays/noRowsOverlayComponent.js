@@ -21,3 +21,5 @@ class NoRowsOverlayComponent extends component_1.Component {
 }
 exports.NoRowsOverlayComponent = NoRowsOverlayComponent;
 NoRowsOverlayComponent.DEFAULT_NO_ROWS_TEMPLATE = '<span class="ag-overlay-no-rows-center">[NO_ROWS_TO_SHOW]</span>';
+
+//# sourceMappingURL=noRowsOverlayComponent.js.map

@@ -69,3 +69,4 @@ __decorate([
     core_1.PostConstruct
 ], TotalAndFilteredRowsComp.prototype, "postConstruct", null);
 exports.TotalAndFilteredRowsComp = TotalAndFilteredRowsComp;
+//# sourceMappingURL=totalAndFilteredRowsComp.js.map

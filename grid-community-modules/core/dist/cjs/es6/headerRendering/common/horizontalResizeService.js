@@ -63,3 +63,5 @@ HorizontalResizeService = __decorate([
     (0, context_1.Bean)('horizontalResizeService')
 ], HorizontalResizeService);
 exports.HorizontalResizeService = HorizontalResizeService;
+
+//# sourceMappingURL=horizontalResizeService.js.map

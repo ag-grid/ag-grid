@@ -275,3 +275,4 @@ InfiniteRowModel = __decorate([
     (0, core_1.Bean)('rowModel')
 ], InfiniteRowModel);
 exports.InfiniteRowModel = InfiniteRowModel;
+//# sourceMappingURL=infiniteRowModel.js.map

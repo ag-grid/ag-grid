@@ -20,3 +20,4 @@ exports.MasterDetailModule = {
         core_2.EnterpriseCoreModule
     ]
 };
+//# sourceMappingURL=masterDetailModule.js.map

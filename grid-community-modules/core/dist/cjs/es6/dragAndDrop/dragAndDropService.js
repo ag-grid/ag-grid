@@ -411,3 +411,5 @@ DragAndDropService = DragAndDropService_1 = __decorate([
     (0, context_1.Bean)('dragAndDropService')
 ], DragAndDropService);
 exports.DragAndDropService = DragAndDropService;
+
+//# sourceMappingURL=dragAndDropService.js.map

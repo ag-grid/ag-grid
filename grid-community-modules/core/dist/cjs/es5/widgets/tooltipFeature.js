@@ -98,3 +98,5 @@ var TooltipFeature = /** @class */ (function (_super) {
     return TooltipFeature;
 }(beanStub_1.BeanStub));
 exports.TooltipFeature = TooltipFeature;
+
+//# sourceMappingURL=tooltipFeature.js.map

@@ -342,3 +342,4 @@ var MenuItemMapper = /** @class */ (function (_super) {
     return MenuItemMapper;
 }(core_1.BeanStub));
 exports.MenuItemMapper = MenuItemMapper;
+//# sourceMappingURL=menuItemMapper.js.map

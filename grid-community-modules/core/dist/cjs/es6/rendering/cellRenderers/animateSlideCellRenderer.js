@@ -84,3 +84,5 @@ __decorate([
     (0, context_1.Autowired)('filterManager')
 ], AnimateSlideCellRenderer.prototype, "filterManager", void 0);
 exports.AnimateSlideCellRenderer = AnimateSlideCellRenderer;
+
+//# sourceMappingURL=animateSlideCellRenderer.js.map

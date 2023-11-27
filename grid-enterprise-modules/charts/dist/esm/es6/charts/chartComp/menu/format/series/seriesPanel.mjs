@@ -36,6 +36,7 @@ export class SeriesPanel extends Component {
             'line': ['tooltips', 'lineWidth', 'lineDash', 'lineOpacity', 'markers', 'labels'],
             'histogram': ['tooltips', 'bins', 'strokeWidth', 'lineDash', 'lineOpacity', 'fillOpacity', 'labels', 'shadow'],
             'scatter': ['tooltips', 'markers', 'labels'],
+            'bubble': ['tooltips', 'markers', 'labels'],
             'pie': ['tooltips', 'strokeWidth', 'lineOpacity', 'fillOpacity', 'labels', 'shadow'],
         };
         this.chartController = chartController;
@@ -291,3 +292,4 @@ __decorate([
 __decorate([
     PostConstruct
 ], SeriesPanel.prototype, "init", null);
+//# sourceMappingURL=seriesPanel.js.map

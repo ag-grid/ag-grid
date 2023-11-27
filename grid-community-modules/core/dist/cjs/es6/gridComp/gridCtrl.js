@@ -125,3 +125,5 @@ __decorate([
     (0, context_1.Autowired)('dragAndDropService')
 ], GridCtrl.prototype, "dragAndDropService", void 0);
 exports.GridCtrl = GridCtrl;
+
+//# sourceMappingURL=gridCtrl.js.map

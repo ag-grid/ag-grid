@@ -37,3 +37,4 @@ var SideBarService = /** @class */ (function (_super) {
     return SideBarService;
 }(BeanStub));
 export { SideBarService };
+//# sourceMappingURL=sideBarService.js.map

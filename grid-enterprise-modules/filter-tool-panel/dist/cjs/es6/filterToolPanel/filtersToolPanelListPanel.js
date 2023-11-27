@@ -424,3 +424,4 @@ __decorate([
     (0, core_1.Autowired)('columnModel')
 ], FiltersToolPanelListPanel.prototype, "columnModel", void 0);
 exports.FiltersToolPanelListPanel = FiltersToolPanelListPanel;
+//# sourceMappingURL=filtersToolPanelListPanel.js.map

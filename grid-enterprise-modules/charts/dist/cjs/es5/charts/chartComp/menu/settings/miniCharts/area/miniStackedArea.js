@@ -82,3 +82,4 @@ var MiniStackedArea = /** @class */ (function (_super) {
     return MiniStackedArea;
 }(miniChartWithAxes_1.MiniChartWithAxes));
 exports.MiniStackedArea = MiniStackedArea;
+//# sourceMappingURL=miniStackedArea.js.map

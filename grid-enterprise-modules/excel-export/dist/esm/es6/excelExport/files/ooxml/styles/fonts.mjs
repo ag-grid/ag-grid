@@ -13,3 +13,4 @@ const fontsFactory = {
     }
 };
 export default fontsFactory;
+//# sourceMappingURL=fonts.js.map

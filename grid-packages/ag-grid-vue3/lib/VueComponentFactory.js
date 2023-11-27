@@ -96,3 +96,4 @@ export class VueComponentFactory {
         return componentInstance;
     }
 }
+//# sourceMappingURL=VueComponentFactory.js.map

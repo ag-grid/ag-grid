@@ -13,3 +13,4 @@ const numberFormatsFactory = {
     }
 };
 export default numberFormatsFactory;
+//# sourceMappingURL=numberFormats.js.map

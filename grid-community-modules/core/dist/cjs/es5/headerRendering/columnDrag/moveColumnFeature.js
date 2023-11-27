@@ -234,3 +234,5 @@ var MoveColumnFeature = /** @class */ (function () {
     return MoveColumnFeature;
 }());
 exports.MoveColumnFeature = MoveColumnFeature;
+
+//# sourceMappingURL=moveColumnFeature.js.map

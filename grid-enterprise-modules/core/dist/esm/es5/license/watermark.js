@@ -50,3 +50,4 @@ var WatermarkComp = /** @class */ (function (_super) {
     return WatermarkComp;
 }(Component));
 export { WatermarkComp };
+//# sourceMappingURL=watermark.js.map

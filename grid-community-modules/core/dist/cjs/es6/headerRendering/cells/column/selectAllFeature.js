@@ -182,3 +182,5 @@ __decorate([
     (0, context_1.Autowired)('selectionService')
 ], SelectAllFeature.prototype, "selectionService", void 0);
 exports.SelectAllFeature = SelectAllFeature;
+
+//# sourceMappingURL=selectAllFeature.js.map

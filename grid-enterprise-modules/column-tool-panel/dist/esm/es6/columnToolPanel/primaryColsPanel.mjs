@@ -83,3 +83,4 @@ __decorate([
 __decorate([
     RefSelector('primaryColsListPanel')
 ], PrimaryColsPanel.prototype, "primaryColsListPanel", void 0);
+//# sourceMappingURL=primaryColsPanel.js.map

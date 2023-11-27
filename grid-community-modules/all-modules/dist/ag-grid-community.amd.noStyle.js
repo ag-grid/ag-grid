@@ -123,7 +123,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "ClientSideRowModelModule", function() { return _clientSideRowModelModule_mjs__WEBPACK_IMPORTED_MODULE_0__["ClientSideRowModelModule"]; });
 
 
-
+//# sourceMappingURL=main.js.map
 
 /***/ }),
 /* 2 */
@@ -156,7 +156,7 @@ const ClientSideRowModelModule = {
     rowModel: 'clientSide',
     beans: [_clientSideRowModel_clientSideRowModel_mjs__WEBPACK_IMPORTED_MODULE_1__["ClientSideRowModel"], _clientSideRowModel_filterStage_mjs__WEBPACK_IMPORTED_MODULE_2__["FilterStage"], _clientSideRowModel_sortStage_mjs__WEBPACK_IMPORTED_MODULE_3__["SortStage"], _clientSideRowModel_flattenStage_mjs__WEBPACK_IMPORTED_MODULE_4__["FlattenStage"], _clientSideRowModel_sortService_mjs__WEBPACK_IMPORTED_MODULE_5__["SortService"], _clientSideRowModel_filterService_mjs__WEBPACK_IMPORTED_MODULE_6__["FilterService"], _clientSideRowModel_immutableService_mjs__WEBPACK_IMPORTED_MODULE_7__["ImmutableService"]],
 };
-
+//# sourceMappingURL=clientSideRowModelModule.js.map
 
 /***/ }),
 /* 3 */
@@ -6409,13 +6409,14 @@ let ColumnModel = class ColumnModel extends _context_beanStub_mjs__WEBPACK_IMPOR
         });
         this.updateGroupsAndDisplayedColumns(source);
         this.setFirstRightAndLastLeftPinned(source);
-        impactedGroups.forEach(providedColumnGroup => {
+        if (impactedGroups.length) {
             const event = {
                 type: _events_mjs__WEBPACK_IMPORTED_MODULE_2__["Events"].EVENT_COLUMN_GROUP_OPENED,
-                columnGroup: providedColumnGroup
+                columnGroup: _entities_providedColumnGroup_mjs__WEBPACK_IMPORTED_MODULE_4__["ProvidedColumnGroup"].length === 1 ? impactedGroups[0] : undefined,
+                columnGroups: impactedGroups,
             };
             this.eventService.dispatchEvent(event);
-        });
+        }
         this.columnAnimationService.finish();
     }
     // called by headerRenderer - when a header is opened or closed
@@ -23910,7 +23911,11 @@ let GridApi = class GridApi {
         if (this.destroyCalled) {
             return;
         }
-        this.dispatchEvent({ type: _eventKeys_mjs__WEBPACK_IMPORTED_MODULE_6__["Events"].EVENT_GRID_PRE_DESTROYED });
+        const event = {
+            type: _eventKeys_mjs__WEBPACK_IMPORTED_MODULE_6__["Events"].EVENT_GRID_PRE_DESTROYED,
+            state: this.getState()
+        };
+        this.dispatchEvent(event);
         // Set after pre-destroy so user can still use the api in pre-destroy event and it is not marked as destroyed yet.
         this.destroyCalled = true;
         // destroy the UI first (as they use the services)
@@ -46160,18 +46165,19 @@ let AlignedGridsService = class AlignedGridsService extends _context_beanStub_mj
         });
     }
     processGroupOpenedEvent(groupOpenedEvent) {
-        // likewise for column group
-        const masterColumnGroup = groupOpenedEvent.columnGroup;
-        let otherColumnGroup = null;
-        if (masterColumnGroup) {
-            const groupId = masterColumnGroup.getGroupId();
-            otherColumnGroup = this.columnModel.getProvidedColumnGroup(groupId);
-        }
-        if (masterColumnGroup && !otherColumnGroup) {
-            return;
-        }
-        this.logger.log('onColumnEvent-> processing ' + groupOpenedEvent + ' expanded = ' + masterColumnGroup.isExpanded());
-        this.columnModel.setColumnGroupOpened(otherColumnGroup, masterColumnGroup.isExpanded(), "alignedGridChanged");
+        groupOpenedEvent.columnGroups.forEach(masterGroup => {
+            // likewise for column group
+            let otherColumnGroup = null;
+            if (masterGroup) {
+                const groupId = masterGroup.getGroupId();
+                otherColumnGroup = this.columnModel.getProvidedColumnGroup(groupId);
+            }
+            if (masterGroup && !otherColumnGroup) {
+                return;
+            }
+            this.logger.log('onColumnEvent-> processing ' + groupOpenedEvent + ' expanded = ' + masterGroup.isExpanded());
+            this.columnModel.setColumnGroupOpened(otherColumnGroup, masterGroup.isExpanded(), "alignedGridChanged");
+        });
     }
     processColumnEvent(colEvent) {
         var _a;
@@ -47230,13 +47236,11 @@ let SelectionService = class SelectionService extends _context_beanStub_mjs__WEB
     }
     getSelectionState() {
         const selectedIds = [];
-        const selectedNodes = Object.values(this.selectedNodes);
-        for (let i = 0; i < selectedNodes.length; i++) {
-            const node = selectedNodes[i];
+        this.selectedNodes.forEach((node) => {
             if (node === null || node === void 0 ? void 0 : node.id) {
                 selectedIds.push(node.id);
             }
-        }
+        });
         return selectedIds.length ? selectedIds : null;
     }
     setSelectionState(state, source) {
@@ -50039,8 +50043,12 @@ let SelectableService = class SelectableService extends _context_beanStub_mjs__W
         this.updateSelectable(true);
     }
     updateSelectable(skipLeafNodes = false) {
-        const isGroupSelectsChildren = this.gridOptionsService.get('groupSelectsChildren');
+        const isRowSelecting = !!this.gridOptionsService.get('rowSelection');
         const isRowSelectable = this.gridOptionsService.get('isRowSelectable');
+        if (!isRowSelecting || !isRowSelectable) {
+            return;
+        }
+        const isGroupSelectsChildren = this.gridOptionsService.get('groupSelectsChildren');
         const isCsrmGroupSelectsChildren = this.rowModel.getType() === 'clientSide' && isGroupSelectsChildren;
         const nodesToDeselect = [];
         const nodeCallback = (node) => {
@@ -52957,7 +52965,7 @@ __webpack_require__.r(__webpack_exports__);
 const COLUMN_DEFINITION_DEPRECATIONS = {};
 const CSRM_REQUIRES_ROW_GROUP_MODULE = (_options, gridOptions) => {
     var _a;
-    if ((_a = gridOptions.rowModelType) !== null && _a !== void 0 ? _a : 'clientSide' === 'clientSide') {
+    if (((_a = gridOptions.rowModelType) !== null && _a !== void 0 ? _a : 'clientSide') === 'clientSide') {
         return { module: _modules_moduleNames_mjs__WEBPACK_IMPORTED_MODULE_0__["ModuleNames"].RowGroupingModule };
     }
     return null;
@@ -56269,7 +56277,7 @@ ClientSideRowModel = __decorate([
     Object(_ag_grid_community_core__WEBPACK_IMPORTED_MODULE_0__["Bean"])('rowModel')
 ], ClientSideRowModel);
 
-
+//# sourceMappingURL=clientSideRowModel.js.map
 
 /***/ }),
 /* 274 */
@@ -56562,7 +56570,7 @@ class ClientSideNodeManager {
 }
 ClientSideNodeManager.TOP_LEVEL = 0;
 ClientSideNodeManager.ROOT_NODE_ID = 'ROOT_NODE_ID';
-
+//# sourceMappingURL=clientSideNodeManager.js.map
 
 /***/ }),
 /* 275 */
@@ -56592,7 +56600,7 @@ FilterStage = __decorate([
     Object(_ag_grid_community_core__WEBPACK_IMPORTED_MODULE_0__["Bean"])('filterStage')
 ], FilterStage);
 
-
+//# sourceMappingURL=filterStage.js.map
 
 /***/ }),
 /* 276 */
@@ -56640,7 +56648,7 @@ SortStage = __decorate([
     Object(_ag_grid_community_core__WEBPACK_IMPORTED_MODULE_0__["Bean"])('sortStage')
 ], SortStage);
 
-
+//# sourceMappingURL=sortStage.js.map
 
 /***/ }),
 /* 277 */
@@ -56782,7 +56790,7 @@ FlattenStage = __decorate([
     Object(_ag_grid_community_core__WEBPACK_IMPORTED_MODULE_0__["Bean"])('flattenStage')
 ], FlattenStage);
 
-
+//# sourceMappingURL=flattenStage.js.map
 
 /***/ }),
 /* 278 */
@@ -57001,7 +57009,7 @@ SortService = __decorate([
     Object(_ag_grid_community_core__WEBPACK_IMPORTED_MODULE_0__["Bean"])('sortService')
 ], SortService);
 
-
+//# sourceMappingURL=sortService.js.map
 
 /***/ }),
 /* 279 */
@@ -57092,7 +57100,7 @@ FilterService = __decorate([
     Object(_ag_grid_community_core__WEBPACK_IMPORTED_MODULE_0__["Bean"])("filterService")
 ], FilterService);
 
-
+//# sourceMappingURL=filterService.js.map
 
 /***/ }),
 /* 280 */
@@ -57217,7 +57225,7 @@ ImmutableService = __decorate([
     Object(_ag_grid_community_core__WEBPACK_IMPORTED_MODULE_0__["Bean"])('immutableService')
 ], ImmutableService);
 
-
+//# sourceMappingURL=immutableService.js.map
 
 /***/ }),
 /* 281 */
@@ -57228,7 +57236,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "VERSION", function() { return VERSION; });
 // DO NOT UPDATE MANUALLY: Generated from script during build time
 const VERSION = '31.0.0';
-
+//# sourceMappingURL=version.js.map
 
 /***/ }),
 /* 282 */
@@ -57270,7 +57278,7 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
-
+//# sourceMappingURL=main.js.map
 
 /***/ }),
 /* 283 */
@@ -57299,7 +57307,7 @@ class BaseCreator {
         return `export.${this.getDefaultFileExtension()}`;
     }
 }
-
+//# sourceMappingURL=baseCreator.js.map
 
 /***/ }),
 /* 284 */
@@ -57429,7 +57437,7 @@ class BaseGridSerializingSession {
         return { value: value !== null && value !== void 0 ? value : '' };
     }
 }
-
+//# sourceMappingURL=baseGridSerializingSession.js.map
 
 /***/ }),
 /* 285 */
@@ -57532,7 +57540,7 @@ CsvCreator = __decorate([
     Object(_ag_grid_community_core__WEBPACK_IMPORTED_MODULE_0__["Bean"])('csvCreator')
 ], CsvCreator);
 
-
+//# sourceMappingURL=csvCreator.js.map
 
 /***/ }),
 /* 286 */
@@ -57567,7 +57575,7 @@ class Downloader {
         }, 0);
     }
 }
-
+//# sourceMappingURL=downloader.js.map
 
 /***/ }),
 /* 287 */
@@ -57691,7 +57699,7 @@ class CsvSerializingSession extends _baseGridSerializingSession_mjs__WEBPACK_IMP
         this.isFirstLine = false;
     }
 }
-
+//# sourceMappingURL=csvSerializingSession.js.map
 
 /***/ }),
 /* 288 */
@@ -57713,7 +57721,7 @@ const CsvExportModule = {
     moduleName: _ag_grid_community_core__WEBPACK_IMPORTED_MODULE_0__["ModuleNames"].CsvExportModule,
     beans: [_csvExport_csvCreator_mjs__WEBPACK_IMPORTED_MODULE_1__["CsvCreator"], _csvExport_gridSerializer_mjs__WEBPACK_IMPORTED_MODULE_2__["GridSerializer"]]
 };
-
+//# sourceMappingURL=csvExportModule.js.map
 
 /***/ }),
 /* 289 */
@@ -58065,7 +58073,7 @@ GridSerializer = __decorate([
     Object(_ag_grid_community_core__WEBPACK_IMPORTED_MODULE_0__["Bean"])("gridSerializer")
 ], GridSerializer);
 
-
+//# sourceMappingURL=gridSerializer.js.map
 
 /***/ }),
 /* 290 */
@@ -58076,7 +58084,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "VERSION", function() { return VERSION; });
 // DO NOT UPDATE MANUALLY: Generated from script during build time
 const VERSION = '31.0.0';
-
+//# sourceMappingURL=version.js.map
 
 /***/ }),
 /* 291 */
@@ -58147,7 +58155,7 @@ class XmlFactory {
         return ` ${key}="${xmlValue}"`;
     }
 }
-
+//# sourceMappingURL=xmlFactory.js.map
 
 /***/ }),
 /* 292 */
@@ -58354,7 +58362,7 @@ class ZipContainer {
 }
 ZipContainer.folders = [];
 ZipContainer.files = [];
-
+//# sourceMappingURL=zipContainer.js.map
 
 /***/ }),
 /* 293 */
@@ -58366,7 +58374,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "InfiniteRowModelModule", function() { return _infiniteRowModelModule_mjs__WEBPACK_IMPORTED_MODULE_0__["InfiniteRowModelModule"]; });
 
 
-
+//# sourceMappingURL=main.js.map
 
 /***/ }),
 /* 294 */
@@ -58387,7 +58395,7 @@ const InfiniteRowModelModule = {
     rowModel: 'infinite',
     beans: [_infiniteRowModel_infiniteRowModel_mjs__WEBPACK_IMPORTED_MODULE_1__["InfiniteRowModel"]],
 };
-
+//# sourceMappingURL=infiniteRowModelModule.js.map
 
 /***/ }),
 /* 295 */
@@ -58672,7 +58680,7 @@ InfiniteRowModel = __decorate([
     Object(_ag_grid_community_core__WEBPACK_IMPORTED_MODULE_0__["Bean"])('rowModel')
 ], InfiniteRowModel);
 
-
+//# sourceMappingURL=infiniteRowModel.js.map
 
 /***/ }),
 /* 296 */
@@ -58961,7 +58969,7 @@ __decorate([
 __decorate([
     _ag_grid_community_core__WEBPACK_IMPORTED_MODULE_0__["PreDestroy"]
 ], InfiniteCache.prototype, "destroyAllBlocks", null);
-
+//# sourceMappingURL=infiniteCache.js.map
 
 /***/ }),
 /* 297 */
@@ -59117,7 +59125,7 @@ __decorate([
 __decorate([
     _ag_grid_community_core__WEBPACK_IMPORTED_MODULE_0__["PreDestroy"]
 ], InfiniteBlock.prototype, "destroyRowNodes", null);
-
+//# sourceMappingURL=infiniteBlock.js.map
 
 /***/ }),
 /* 298 */
@@ -59128,7 +59136,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "VERSION", function() { return VERSION; });
 // DO NOT UPDATE MANUALLY: Generated from script during build time
 const VERSION = '31.0.0';
-
+//# sourceMappingURL=version.js.map
 
 /***/ }),
 /* 299 */

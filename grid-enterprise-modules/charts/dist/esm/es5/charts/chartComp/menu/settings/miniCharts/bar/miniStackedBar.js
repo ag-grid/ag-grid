@@ -67,3 +67,4 @@ var MiniStackedBar = /** @class */ (function (_super) {
     return MiniStackedBar;
 }(MiniChartWithAxes));
 export { MiniStackedBar };
+//# sourceMappingURL=miniStackedBar.js.map
