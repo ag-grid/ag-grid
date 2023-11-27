@@ -448,7 +448,8 @@
     .ag-icon-grip {
         opacity: 0.7;
     }
-    .ag-column-select-column-readonly.ag-icon-grip {
+    .ag-column-select-column-readonly.ag-icon-grip,
+    .ag-column-select-column-readonly .ag-icon-grip {
         opacity: 0.35;
     }
 
