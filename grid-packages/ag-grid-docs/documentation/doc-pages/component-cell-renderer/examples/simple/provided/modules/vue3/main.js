@@ -35,23 +35,24 @@ const VueExample = {
         return {
             columnDefs: [
                 { field: "athlete" },
-                { field: "year" },
+                { field: "year", minWidth: 60 },
                 {
-                    field: "gold",
-                    cellRenderer: "medalCellRenderer"
+                  field: "gold",
+                  cellRenderer: "medalCellRenderer",
                 },
                 {
-                    field: "silver",
-                    cellRenderer: "medalCellRenderer"
+                  field: "silver",
+                  cellRenderer: "medalCellRenderer",
                 },
                 {
-                    field: "bronze",
-                    cellRenderer: "medalCellRenderer"
-                }, {
-                    field: "total",
-                    minWidth: 175,
-                    cellRenderer: "totalValueRenderer"
-                }
+                  field: "bronze",
+                  cellRenderer: "medalCellRenderer",
+                },
+                {
+                  field: "total",
+                  minWidth: 190,
+                  cellRenderer: "totalValueRenderer",
+                },
             ],
             defaultColDef: {
                 editable: true,
