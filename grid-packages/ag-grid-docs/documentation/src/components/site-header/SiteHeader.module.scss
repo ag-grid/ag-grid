@@ -188,6 +188,7 @@
         top: 0;
         right: 0;
         width: calc(100vw - 240px);
+        background-color: unset;
     }
 
     @media screen and (min-width: $breakpoint-docs-nav-medium) {
@@ -195,7 +196,6 @@
         position: unset;
         width: unset !important;
         margin-left: $size-2;
-        background-color: unset;
         overflow: visible;
     }
 
