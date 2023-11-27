@@ -40,11 +40,9 @@ const gridOptions: GridOptions = {
       },
       series: {
         tooltip: {
-          // @ts-ignore charts typing
-          renderer: ({ xValue, yValue }) => {
-            xValue = xValue instanceof Date ? xValue : new Date(xValue);
+          renderer: ({datum, xKey, yKey}) => {
             return {
-              content: `${formatTime(xValue)}: ${yValue}%`,
+              content: `${formatTime(datum[xKey])}: ${datum[yKey]}%`,
             };
           },
         },

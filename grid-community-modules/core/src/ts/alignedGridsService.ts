@@ -182,19 +182,20 @@ export class AlignedGridsService extends BeanStub {
     }
 
     private processGroupOpenedEvent(groupOpenedEvent: ColumnGroupOpenedEvent): void {
-        // likewise for column group
-        const masterColumnGroup = groupOpenedEvent.columnGroup;
-        let otherColumnGroup: ProvidedColumnGroup | null = null;
-
-        if (masterColumnGroup) {
-            const groupId = masterColumnGroup.getGroupId();
-            otherColumnGroup = this.columnModel.getProvidedColumnGroup(groupId);
-        }
-
-        if (masterColumnGroup && !otherColumnGroup) { return; }
-
-        this.logger.log('onColumnEvent-> processing ' + groupOpenedEvent + ' expanded = ' + masterColumnGroup.isExpanded());
-        this.columnModel.setColumnGroupOpened(otherColumnGroup, masterColumnGroup.isExpanded(), "alignedGridChanged");
+        groupOpenedEvent.columnGroups.forEach(masterGroup => {
+            // likewise for column group
+            let otherColumnGroup: ProvidedColumnGroup | null = null;
+    
+            if (masterGroup) {
+                const groupId = masterGroup.getGroupId();
+                otherColumnGroup = this.columnModel.getProvidedColumnGroup(groupId);
+            }
+    
+            if (masterGroup && !otherColumnGroup) { return; }
+    
+            this.logger.log('onColumnEvent-> processing ' + groupOpenedEvent + ' expanded = ' + masterGroup.isExpanded());
+            this.columnModel.setColumnGroupOpened(otherColumnGroup, masterGroup.isExpanded(), "alignedGridChanged");
+        });
     }
 
     private processColumnEvent(colEvent: ColumnEvent): void {

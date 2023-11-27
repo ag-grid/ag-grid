@@ -21,55 +21,13 @@ const gridOptions: GridOptions = {
   chartThemeOverrides: {
     scatter: {
       series: {
-        highlightStyle: {
-          item: {
-            fill: 'red',
-            stroke: 'yellow',
-          },
-        },
         marker: {
           enabled: true,
           shape: 'square',
-          size: 5,
-          // @ts-ignore charts typing
-          maxSize: 12,
-          strokeWidth: 4,
+          size: 9,
           fillOpacity: 0.7,
-          strokeOpacity: 0.6,
-        },
-        tooltip: {
-          // @ts-ignore charts typing applied any to avoid issues
-          renderer: (params: any) => {
-            var label = params.datum[params.labelKey!]
-            // @ts-ignore charts typing
-            var size = params.datum[params.sizeKey!]
-
-            return {
-              content:
-                (label != null
-                  ? '<b>' +
-                  params.labelName!.toUpperCase() +
-                  ':</b> ' +
-                  label +
-                  '<br/>'
-                  : '') +
-                '<b>' +
-                params.xName!.toUpperCase() +
-                ':</b> ' +
-                  // @ts-ignore charts typing
-                params.xValue +
-                '<br/>' +
-                '<b>' +
-                params.yName!.toUpperCase() +
-                ':</b> ' +
-                  // @ts-ignore charts typing
-                params.yValue +
-                (size != null
-                    // @ts-ignore charts typing
-                  ? '<br/><b>' + params.sizeName!.toUpperCase() + ':</b> ' + size
-                  : ''),
-            }
-          },
+          strokeWidth: 2,
+          strokeOpacity: 0.8,
         },
       },
     },

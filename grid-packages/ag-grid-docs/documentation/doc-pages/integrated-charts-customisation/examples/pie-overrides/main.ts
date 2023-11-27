@@ -23,56 +23,16 @@ const gridOptions: GridOptions = {
         fillOpacity: 0.8,
         strokeOpacity: 0.8,
         strokeWidth: 2,
-        title: {
-          enabled: true,
-          fontStyle: 'italic',
-          fontWeight: 'bold',
-          fontSize: 16,
-          fontFamily: 'Arial, sans-serif',
-          color: 'deeppink',
-        },
-        highlightStyle: {
-          item: {
-            fill: 'red',
-            stroke: 'yellow',
-          },
-        },
-        shadow: {
-          color: 'rgba(96, 96, 175, 0.5)',
-          xOffset: 0,
-          yOffset: 0,
-          blur: 1,
-        },
         calloutLabel: {
           enabled: true,
-          fontStyle: 'italic',
           fontWeight: 'bold',
-          fontSize: 14,
-          fontFamily: 'Arial, sans-serif',
+          fontSize: 12,
           color: '#999',
           minAngle: 30,
         },
         calloutLine: {
           strokeWidth: 3,
-          colors: ['black', '#00ff00'],
           length: 15,
-        },
-        tooltip: {
-          renderer: (params:any) => { // charts typings
-            return {
-              content:
-                '<b>' +
-                params.angleName!.toUpperCase() +
-                ':</b> ' +
-                  // @ts-ignore charts typing
-                params.angleValue +
-                '<br>' +
-                '<b>' +
-                params.calloutLabelName!.toUpperCase() +
-                ':</b> ' +
-                params.datum[params.calloutLabelKey!],
-            }
-          },
         },
       },
     },
@@ -83,16 +43,14 @@ const gridOptions: GridOptions = {
   onFirstDataRendered,
 };
 
-
-
 function onFirstDataRendered(params: FirstDataRenderedEvent) {
   params.api.createRangeChart({
     cellRange: {
       rowStartIndex: 0,
-      rowEndIndex: 4,
-      columns: ['country', 'gold', 'silver', 'bronze'],
+      rowEndIndex: 2,
+      columns: ['country', 'gold'],
     },
-    chartType: 'doughnut',
+    chartType: 'pie',
   });
 }
 

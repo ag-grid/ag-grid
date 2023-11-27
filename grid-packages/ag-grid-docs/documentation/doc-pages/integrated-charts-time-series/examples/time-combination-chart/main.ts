@@ -90,11 +90,9 @@ function numberParser(params: ValueParserParams) {
   return parseFloat(value);
 }
 
-// @ts-ignore charts typing
-function chartTooltipRenderer({ xValue, yValue }: any) {
-  xValue = xValue instanceof Date ? xValue : new Date(xValue);
+function chartTooltipRenderer({ datum, xKey, yKey }: any) {
   return {
-    content: `${formatDate(xValue)}: ${yValue}`,
+    content: `${formatDate(datum[xKey])}: ${datum[yKey]}`,
   };
 }
 

@@ -71,8 +71,8 @@ const GridExample = () => {
                         rowData={rowData}
                         columnDefs={columnDefs}
                         defaultColDef={defaultColDef}
-                        overlayLoadingTemplate={'<object style="position:absolute;top:50%;left:50%;transform:translate(-50%, -50%) scale(2)" type="image/svg+xml" data="https://ag-grid.com/images/ag-grid-loading-spinner.svg" aria-label="loading"></object>'}
-                        overlayNoRowsTemplate={'<span style="padding: 10px; border: 2px solid #444; background: lightgoldenrodyellow">This is a custom \'no rows\' overlay</span>'}
+                        overlayLoadingTemplate={'<div style="height:100px; width:100px; background: url(https://ag-grid.com/images/ag-grid-loading-spinner.svg) center cover no-repeat" aria-label="loading"></div>'}
+                        overlayNoRowsTemplate={'<span style="padding: 10px; border: 2px solid #666; background: #55AA77">This is a custom \'no rows\' overlay</span>'}
                         onGridReady={onGridReady}
                     />
                 </div>

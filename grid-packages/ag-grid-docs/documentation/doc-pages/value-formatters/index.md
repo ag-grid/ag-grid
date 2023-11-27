@@ -61,7 +61,7 @@ Using the value formatter for export applies to the following features:
 
 Using a value formatter for export is normally used in conjunction with [Using a Value Parser for Import](/value-parsers/#use-value-parser-for-import), where a [Value Parser](/value-parsers/) is defined that does the reverse of the value formatter.
 
-The following example demonstrates teh default behaviour using the value formatter for export with each of the supported features mentioned above.
+The following example demonstrates the default behaviour using the value formatter for export with each of the supported features mentioned above.
 
 <grid-example title='Use Value Formatter for Export' name='use-value-formatter-for-export' type='generated' options='{ "enterprise": true, "modules": ["clientside", "range", "clipboard", "excel", "menu"] }'></grid-example>
 

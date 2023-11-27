@@ -704,43 +704,25 @@ export function getIntegratedDarkModeCode(exampleName: string, typescript?: bool
     if (!exampleName.includes('integrated-charts-')) {
         return '';
     }
-    return `${DARK_INTEGRATED_START}${(typescript ? darkModeTs : darkModeJS).replace('params.api', apiName)}${DARK_INTEGRATED_END}`;
+    return `${DARK_INTEGRATED_START}${(typescript ? darkModeTs : darkModeJS).replace(/params\.api/g, apiName)}${DARK_INTEGRATED_END}`;
 }
 
 const darkModeTs = `
-    const isInitialModeDark = (): boolean => {
+        const isInitialModeDark = (): boolean => {
             const attr: string | null = document.documentElement.getAttribute('data-default-theme');
             return attr ? attr.endsWith('-dark') : false;
         };
-        
-        // apply a theme suffix based on the theme and dark mode status
-        const applyThemeSuffix = (theme: string, isDark: boolean, suffix: string): string => 
-            isDark ? (theme.endsWith(suffix) ? theme : theme + suffix) : theme.replace(suffix, '');
-        
+                  
         // update chart themes based on dark mode status
         const updateChartThemes = (isDark: boolean): void => {
-            const suffix: string = isDark ? '-dark' : '-light';
-            const customThemeName: string = 'my-custom-theme' + suffix + ';';
-        
-            const themes: string[] = ['ag-default', 'ag-material', 'ag-sheets', 'ag-polychroma', 'ag-vivid'];
+            const themes: string[] = ['ag-default', 'ag-material', 'ag-sheets', 'ag-polychroma', 'ag-vivid'];            
+            const currentThemes = params.api.getGridOption('chartThemes');    
+            const customTheme = currentThemes && currentThemes.some(theme => theme.startsWith('my-custom-theme'));
             
-            let customThemeFound: boolean = false;
-            const modifiedThemes: string[] = Array.from(
-                new Set(
-                    themes.map((theme: string): string => {
-                        customThemeFound = theme.startsWith('my-custom-theme-');
-                        return customThemeFound
-                            ? customThemeName
-                            : applyThemeSuffix(theme, isDark, '-dark');
-                    })
-                )
-            );
-        
-            // check if the custom theme was found and add it if not already included
-            if (customThemeFound && !modifiedThemes.includes(customThemeName)) {                
-                modifiedThemes.push(customThemeName);
-            }
-        
+            let modifiedThemes: string[] = customTheme
+                ? (isDark ? ['my-custom-theme-dark', 'my-custom-theme-light'] : ['my-custom-theme-light', 'my-custom-theme-dark'])
+                : Array.from(new Set(themes.map((theme) => theme + (isDark ? '-dark' : ''))));                      
+
             // updating the 'chartThemes' grid option will cause the chart to reactively update!
             params.api.setGridOption('chartThemes', modifiedThemes);
         };
@@ -768,31 +750,15 @@ const darkModeJS = `
             const attr = document.documentElement.getAttribute('data-default-theme');
             return attr ? attr.endsWith('-dark') : false;
         };
-
-        const applyThemeSuffix = (theme, isDark, suffix) => 
-            isDark ? (theme.endsWith(suffix) ? theme : theme + suffix) : theme.replace(suffix, '');
-
-        const updateChartThemes = (isDark) => {
-            const suffix = isDark ? '-dark' : '-light';
-            const customThemeName = 'my-custom-theme' + suffix + ';';
-
-            const themes = ['ag-default', 'ag-material', 'ag-sheets', 'ag-polychroma', 'ag-vivid'];
+      
+        const updateChartThemes = (isDark) => {           
+            const themes = ['ag-default', 'ag-material', 'ag-sheets', 'ag-polychroma', 'ag-vivid'];            
+            const currentThemes = params.api.getGridOption('chartThemes');                    
+            const customTheme = currentThemes && currentThemes.some(theme => theme.startsWith('my-custom-theme'));
             
-            let customThemeFound = false;
-            const modifiedThemes = Array.from(
-                new Set(
-                    themes.map((theme) => {
-                        customThemeFound = theme.startsWith('my-custom-theme-');
-                        return customThemeFound
-                            ? customThemeName
-                            : applyThemeSuffix(theme, isDark, '-dark');
-                    })
-                )
-            );
-
-            if (customThemeFound && !modifiedThemes.includes(customThemeName)) {                
-                modifiedThemes.push(customThemeName);
-            }
+            let modifiedThemes = customTheme
+                ? (isDark ? ['my-custom-theme-dark', 'my-custom-theme-light'] : ['my-custom-theme-light', 'my-custom-theme-dark'])
+                : Array.from(new Set(themes.map((theme) => theme + (isDark ? '-dark' : ''))));                      
 
             // updating the 'chartThemes' grid option will cause the chart to reactively update!
             params.api.setGridOption('chartThemes', modifiedThemes);

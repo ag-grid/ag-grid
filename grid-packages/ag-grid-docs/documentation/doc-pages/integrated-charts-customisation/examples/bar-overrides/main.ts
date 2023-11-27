@@ -20,51 +20,16 @@ const gridOptions: GridOptions = {
   chartThemeOverrides: {
     bar: {
       series: {
-        fillOpacity: 0.8,
-        strokeOpacity: 0.8,
+        fillOpacity: 0.7,
         strokeWidth: 2,
-        shadow: {
-          enabled: true,
-          color: 'rgba(0, 0, 0, 1)',
-          xOffset: 0,
-          yOffset: 2,
-          blur: 8,
-        },
+        strokeOpacity: 0.7,
         label: {
           enabled: true,
           fontStyle: 'italic',
           fontWeight: 'bold',
-          fontSize: 15,
+          fontSize: 12,
           fontFamily: 'Arial, sans-serif',
-          color: 'white',
-          formatter: (params:any) => { // charts typings
-            return '<' + params.value + '>'
-          },
-        },
-        highlightStyle: {
-          item: {
-            fill: 'red',
-            stroke: 'yellow',
-          },
-        },
-        tooltip: {
-          renderer: (params:any) => { // charts typings
-            // @ts-ignore
-            return {
-              content:
-                '<b>' +
-                params.xName!.toUpperCase() +
-                ':</b> ' +
-                  // @ts-ignore charts typing
-                  params.xValue +
-                '<br/>' +
-                '<b>' +
-                params.yName!.toUpperCase() +
-                ':</b> ' +
-                  // @ts-ignore charts typing
-                  params.yValue,
-            }
-          },
+          color: 'white'
         },
       },
     },
@@ -80,8 +45,8 @@ const gridOptions: GridOptions = {
 function onFirstDataRendered(params: FirstDataRenderedEvent) {
   params.api.createRangeChart({
     cellRange: {
-      rowStartIndex: 0,
-      rowEndIndex: 4,
+      rowStartIndex: 6,
+      rowEndIndex: 7,
       columns: ['country', 'gold', 'silver', 'bronze'],
     },
     chartType: 'groupedBar',
