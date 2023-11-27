@@ -142,7 +142,6 @@
 
     .ag-set-filter-add-group-indent {
         @include ag.unthemed-rtl((margin-left: calc(var(--ag-icon-size) + var(--ag-grid-size) * 2)));
-        // @include ag.unthemed-rtl((margin-left: var(--ag-set-filter-indent-size)));
     }
 
     .ag-set-filter-group-icons {

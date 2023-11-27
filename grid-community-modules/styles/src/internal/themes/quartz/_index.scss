@@ -17,10 +17,8 @@
         min-height: calc(var(--ag-grid-size) * 4);
         border-radius: var(--ag-border-radius);
         
-        @include ag.theme-rtl((
-            padding-left: var(--ag-grid-size),
-            ));
-        }
+        @include ag.theme-rtl((padding-left: var(--ag-grid-size)));
+    }
         
     .ag-picker-field-wrapper {
         min-height: calc(var(--ag-grid-size) * 4);
@@ -32,7 +30,20 @@
 
     .ag-tab {
         padding: var(--ag-grid-size);
+        border-left: var(--ag-borders) transparent;
+        border-right: var(--ag-borders) transparent;
         flex: 1 1 auto;
+    }
+    
+    .ag-tab-selected {
+        background-color: var(--ag-background-color);
+
+        &:not(:first-of-type) {
+            @include ag.theme-rtl((border-left-color: var(--ag-border-color)));
+        }
+        &:not(:last-of-type) {
+            @include ag.theme-rtl((border-right-color: var(--ag-border-color)));
+        }
     }
 
     .ag-tab:not(.ag-tab-selected) {
@@ -71,11 +82,6 @@
         background-color: color-mix(in srgb, transparent, var(--ag-foreground-color) 5%)
     }
     
-    .ag-tab-selected {
-        margin: -1px;
-        border: var(--ag-borders) var(--ag-border-color);
-        background-color: var(--ag-background-color);
-    }
     //
     // VERTICAL TABS
     // 
@@ -83,16 +89,24 @@
         background-color: var(--ag-control-panel-background-color);
         min-width: calc(var(--ag-icon-size) + var(--ag-grid-size) * 2);
     }
+
     .ag-side-buttons {
         padding: 0;
         align-self: stretch;
         width: calc(var(--ag-icon-size) + var(--ag-grid-size) * 2);
         background: var(--ag-control-panel-background-color);
     }
+    
+    .ag-side-button {
+        border-top: var(--ag-borders) transparent;
+        border-bottom: var(--ag-borders) transparent;
+    }
 
     .ag-side-button.ag-selected {
-        margin: -1px;
-        border: var(--ag-borders) var(--ag-border-color);
+        &:not(:first-of-type) {
+            border-top-color: var(--ag-border-color);
+        }
+        border-bottom-color: var(--ag-border-color);
         background-color: var(--ag-background-color);
     }
 
