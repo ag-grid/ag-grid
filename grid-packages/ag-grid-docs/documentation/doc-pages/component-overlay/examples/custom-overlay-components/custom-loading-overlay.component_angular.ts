@@ -6,12 +6,7 @@ import { Component } from "@angular/core"
   selector: "app-loading-overlay",
   template: `
     <div class="ag-overlay-loading-center">
-      <object
-        style="height:100px; width:100px"
-        type="image/svg+xml"
-        data="https://ag-grid.com/images/ag-grid-loading-spinner.svg"
-        aria-label="loading"
-      ></object>
+      <div style="position:absolute;top:0;left:0;right:0; bottom:0; background: url(https://ag-grid.com/images/ag-grid-loading-spinner.svg) center no-repeat" aria-label="loading"></div>
       <div>{{ params.loadingMessage }}</div>
     </div>
   `,
