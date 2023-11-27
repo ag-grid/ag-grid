@@ -222,7 +222,7 @@ export class AgRichSelect<TValue = any> extends AgPickerField<TValue, RichSelect
     private getCurrentValueIndex(): number {
         const { currentList, value } = this;
 
-        if (value == null) { return -1; }
+        if (value == null || !currentList) { return -1; }
 
         for (let i = 0; i < currentList.length; i++) {
             if (currentList[i] === value) {
