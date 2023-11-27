@@ -4,9 +4,11 @@ title: "Number Cell Editor"
 
 Simple number editor that uses the standard HTML number `input`.
 
+The Number Cell Editor allows users to enter numeric values and to modify them using the <kbd>↑</kbd> <kbd>↓</kbd> keys.
+
 ## Enabling Number Cell Editor
 
-`agNumberCellEditor` allows users to enter numeric values and to modify them using the <kbd>↑</kbd> <kbd>↓</kbd> keys. Edit any cell in the grid below and note the `agNumberCellEditor` is displayed:
+Edit any cell in the grid below to see the Number Cell Editor.
 
 <grid-example title='Number Editor' name='number-editor' type='generated' options='{ "modules": ["clientside"] }'></grid-example>
 
@@ -29,7 +31,7 @@ columnDefs: [
 
 ### Step and Precision
 
-`agNumberCellEditor` allows configuring the step and precision of the stepping behaviour to increment/decrement the cell value. Edit any cell in the grid below and note the stepping behaviour is customised.
+It is possible to configure the step and precision of the stepping behaviour that increments/decrements the cell value. Edit any cell in the grid below to see a customised stepping behaviour.
 
 <grid-example title='Number Editor with Changed Precision' name='number-editor-step-and-precision' type='generated' options='{ "modules": ["clientside"] }'></grid-example>
 
@@ -51,7 +53,7 @@ columnDefs: [
 
 ### Prevent Stepping
 
-`agNumberCellEditor` allows disabling the stepping behaviour. Edit any cell in the grid below and note that stepping is disabled.
+The stepping behaviour can be disabled. Edit any cell in the grid below to see this.
 
 <grid-example title='Number Editor with Changed Precision' name='number-editor-prevent-stepping' type='generated' options='{ "modules": ["clientside"] }'></grid-example>
 
