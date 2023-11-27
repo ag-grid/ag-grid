@@ -127,6 +127,7 @@ interface MoveToElementAndClickAction {
     actionParams: {
         target: AgElementName;
         targetParams?: any;
+        useMouseDown?: boolean;
         speed?: number;
         duration?: number;
         easing?: EasingFunction;
@@ -245,6 +246,7 @@ export function createAGActionCreator({
                 agElementFinder,
                 target: action.actionParams.target,
                 targetParams: action.actionParams.targetParams,
+                useMouseDown: action.actionParams.useMouseDown,
                 easing: action.actionParams.easing || defaultEasing,
                 speed: action.actionParams.speed,
                 duration: action.actionParams.duration,
