@@ -9,16 +9,10 @@ const columnDefs: ColDef[] = [
     editable: true,
   },
   {
-    headerName: 'Bad Number (editable)',
-    field: 'numberBad',
-    editable: true,
-  },
-  {
-    headerName: 'Good Number (editable)',
-    field: 'numberGood',
+    headerName: 'Number (editable)',
+    field: 'number',
     editable: true,
     valueFormatter: `"£" + Math.floor(value).toString().replace(/(\\d)(?=(\\d{3})+(?!\\d))/g, "$1,")`,
-    valueParser: 'Number(newValue)',
   },
   {
     headerName: 'Name (editable)',
@@ -37,9 +31,9 @@ const columnDefs: ColDef[] = [
                 return false;
             }`,
   },
-  { headerName: 'A', field: 'a', maxWidth: 120 },
-  { headerName: 'B', field: 'b', maxWidth: 120 },
-  { headerName: 'A + B', valueGetter: 'data.a + data.b', maxWidth: 120 },
+  { headerName: 'A', field: 'a', width: 100 },
+  { headerName: 'B', field: 'b', width: 100 },
+  { headerName: 'A + B', valueGetter: 'data.a + data.b' },
 ]
 
 let gridApi: GridApi;
@@ -48,11 +42,10 @@ const gridOptions: GridOptions = {
   columnDefs: columnDefs,
   defaultColDef: {
     flex: 1,
-    minWidth: 200,
-    cellDataType: false,
   },
   rowData: getData(),
   onCellValueChanged: onCellValueChanged,
+  autoSizeStrategy: {type: 'fitGridWidth'}
 }
 
 

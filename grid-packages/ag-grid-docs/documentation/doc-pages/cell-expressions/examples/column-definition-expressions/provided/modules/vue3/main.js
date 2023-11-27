@@ -37,16 +37,10 @@ const VueExample = {
                     editable: true,
                 },
                 {
-                    headerName: "Bad Number (editable)",
-                    field: "numberBad",
-                    editable: true,
-                },
-                {
-                    headerName: "Good Number (editable)",
-                    field: "numberGood",
+                    headerName: "Number (editable)",
+                    field: "number",
                     editable: true,
                     valueFormatter: `"£" + Math.floor(value).toString().replace(/(\\d)(?=(\\d{3})+(?!\\d))/g, "$1,")`,
-                    valueParser: 'Number(newValue)'
                 },
                 {
                     headerName: "Name (editable)",
@@ -65,13 +59,13 @@ const VueExample = {
                             return false;
                         }`
                 },
-                { headerName: "A", field: 'a', maxWidth: 120 },
-                { headerName: "B", field: 'b', maxWidth: 120 },
+                { headerName: "A", field: 'a', minWidth: 100 },
+                { headerName: "B", field: 'b', minWidth: 100 },
                 { headerName: "A + B", valueGetter: 'data.a + data.b', maxWidth: 120 }
             ],
             defaultColDef: {
                 flex: 1,
-                minWidth: 200,
+                minWidth: 150,
             },
             rowData: this.createRowData(),
             themeClass: /** DARK MODE START **/document.documentElement.dataset.defaultTheme || 'ag-theme-quartz'/** DARK MODE END **/,
@@ -117,8 +111,7 @@ const VueExample = {
                     words[i % words.length] + ' ' + words[(i * 17) % words.length];
                 rowData.push({
                     simple: randomWords,
-                    numberBad: Math.floor(((i + 2) * 173456) % 10000),
-                    numberGood: Math.floor(((i + 2) * 476321) % 10000),
+                    number: Math.floor(((i + 2) * 476321) % 10000),
                     a: Math.floor(i % 4),
                     b: Math.floor(i % 7),
                     firstName: firstNames[i % firstNames.length],

@@ -153,7 +153,7 @@ Below shows an example with dynamic editor parameters. The following can be note
 - Column **City** uses dynamic parameters to display values for the selected country, and uses `formatValue` to add the selected city's country as a suffix.
 - Column **Address** uses the large text area editor.
 
-<grid-example title='Dynamic Parameters' name='dynamic-parameters' type='generated' options='{ "enterprise": true, "modules": ["clientside", "richselect", "menu", "columnpanel"], "exampleHeight": 520 }'></grid-example>
+<grid-example title='Dynamic Parameters' name='dynamic-parameters' type='generated' options='{ "enterprise": true, "modules": ["clientside", "richselect", "menu", "columnpanel"], "exampleHeight": 520, "extras": ["fontawesome"] }'></grid-example>
 
 
 ## Datepicker Cell Editing Example

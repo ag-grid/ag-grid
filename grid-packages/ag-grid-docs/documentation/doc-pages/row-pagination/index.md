@@ -87,7 +87,7 @@ In the example below, note the following:
 
 The second mode paginates all rows, including child rows when Row Grouping and detail rows with Master Detail. For example if row grouping with a page size of 10, then each page will always contain exactly 10 rows, even if it means having children appear on a page after the page containing the parent. This can be particularly confusing if the last row of a page is expanded, as the children will appear on the next page (not visible to the user unless they navigate to the next page).
 
-This modes is typically best if the application never wants to exceed the maximum number of rows in a page past the page size. This can be helpful if designing for touch devices (eg tablets) where UX requirements state no scrolls should be visible in the application - paging to a strict page size can guarantee no vertical scrolls will appear.
+This modes is typically best if the application never wants to exceed the maximum number of rows in a page past the page size. This can be helpful if designing for touch devices (e.g. tablets) where UX requirements state no scrolls should be visible in the application - paging to a strict page size can guarantee no vertical scrolls will appear.
 
 To enable pagination on all rows, including children, set grid property `paginateChildRows=true`.
 
