@@ -492,6 +492,10 @@
     input[class^='ag-'][type='range'] {
         cursor: pointer;
     }
+
+    .ag-details-row {
+        padding: calc(var(--ag-grid-size) * 3.75);
+    }
 }
 
 .ag-theme-quartz-dark {
