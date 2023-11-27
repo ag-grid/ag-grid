@@ -83,10 +83,10 @@
     transition: color $default-transition-timing;
 
     #{$darkmode-selector} & {
-        --active-color: #3893F9;
+        --active-color: #3893f9;
         --active-border: #3893f9;
-        --hover-background: rgba(56, 146, 249, 0.06);
-        --active-background: rgba(56, 146, 249, 0.09);
+        --hover-background: color-mix(in srgb, rgba(56, 146, 249) 6%, var(--default-background-color));
+        --active-background: color-mix(in srgb, rgba(56, 146, 249) 9%, var(--default-background-color));
 
         color: var(--secondary-text-color);
     }
@@ -152,7 +152,6 @@
 .sideNav .level5,
 .sideNav .level6 {
     font-size: var(--font-size-extra-small);
-    margin-bottom: calc(var(--item-gap) / 2);
+    margin-bottom: calc(var(--item-gap) / 2) !important;
     padding-left: $size-4;
-    opacity: 0.8;
 }
