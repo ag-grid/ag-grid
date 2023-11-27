@@ -128,8 +128,23 @@ const HeaderNav = ({ path, currentFramework }) => {
 
     return (
         <>
-            {isDocsUrl ? <Search currentFramework={currentFramework} /> : null}
-
+            { isDocsUrl ? <>
+                <button
+                    id="mobile-docs-nav-button"
+                    className={classnames(styles.mobileNavButton, 'button-input')}
+                    type="button"
+                    data-toggle="collapse"
+                    data-target="#side-nav"
+                    aria-controls="side-nav"
+                    aria-expanded="false"
+                    aria-label="Toggle navigation"
+                >
+                    <span>Docs</span>
+                    <Icon name="collapseCategories" />
+                </button>
+                
+                <Search currentFramework={currentFramework} /> 
+            </> : null }
 
             {IS_SSR && (
                 <>
