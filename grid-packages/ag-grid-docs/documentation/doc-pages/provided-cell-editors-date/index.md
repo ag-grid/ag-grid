@@ -10,7 +10,7 @@ Two date cell editors are provided - `agDateCellEditor` for cell values provided
 
  <grid-example title='Date Editor' name='date-editor' type='generated' options='{ "modules": ["clientside"] }'></grid-example>
 
-Simple date editor that uses the standard HTML date `input`. Requires cell values to be of type [Date](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date).
+`agDateCellEditor` is a simple date editor that uses the standard HTML date input and requires cell values to be of type [Date](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date).
 
 Enabled with `agDateCellEditor` and configured with `IDateCellEditorParams`.
 
@@ -37,7 +37,7 @@ columnDefs: [
 
 <grid-example title='Date as String Editor' name='date-as-string-editor' type='generated' options='{ "modules": ["clientside"] }'></grid-example>
 
-Simple date editor that uses the standard HTML date `input`. Similar to the **Date Cell Editor**, but works off of cell values with [String](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String) type.
+`agDateStringCellEditor` is a simple date editor that uses the standard HTML date input. It’s similar to the Date Cell Editor, but works off of cell values with [String](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String) type.
 
 The date format is controlled via [Cell Data Types](/cell-data-types/) and the [Date as String Data Type Definition](/cell-data-types/#date-as-string-data-type-definition). The default is `'yyyy-mm-dd'`.
 
