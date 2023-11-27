@@ -10,11 +10,11 @@
 }
 
 .ag-header-group-cell.column-group-g {
-    background-color: #2244CC44;
+    background-color: #2244CC44 !important;
 }
 
 .ag-header-group-cell.column-group-c {
-    background-color: #33CC3344;
+    background-color: #33CC3344 !important;
 }
 
 .button-bar {
