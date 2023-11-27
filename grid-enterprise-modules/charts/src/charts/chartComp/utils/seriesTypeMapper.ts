@@ -13,6 +13,7 @@ export type ChartSeriesType =
     'pie' |
     'hierarchy' |
     'treemap' |
+    'bubble' |
     'common';
 
 export const VALID_SERIES_TYPES: ChartSeriesType[] = [
@@ -23,6 +24,7 @@ export const VALID_SERIES_TYPES: ChartSeriesType[] = [
     'line',
     'pie',
     'scatter',
+    'bubble'
 ];
 
 const horizontalChartTypes = new Set(['groupedBar', 'stackedBar', 'normalizedBar']);
@@ -53,8 +55,9 @@ export function getSeriesType(chartType: ChartType): ChartSeriesType {
         case 'stackedArea':
         case 'normalizedArea':
             return 'area';
-        case 'scatter':
         case 'bubble':
+            return 'bubble';
+        case 'scatter':
             return 'scatter';
         case 'histogram':
             return 'histogram';
