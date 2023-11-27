@@ -62618,10 +62618,6 @@ class GroupedCategoryAxis extends CartesianAxis {
         // Label scale (labels are positioned between ticks, tick count = label count + 1).
         // We don't call is `labelScale` for consistency with other axes.
         this.tickScale = new BandScale$5();
-        this.translation = {
-            x: 0,
-            y: 0,
-        };
         this.line = new AxisLine();
         this.label = new GroupedCategoryAxisLabel();
         /**
@@ -62740,6 +62736,7 @@ class GroupedCategoryAxis extends CartesianAxis {
         this.updateSeparators();
         this.updateAxisLines();
         this.updateCategoryGridLines();
+        this.resetSelectionNodes();
         return undefined;
     }
     updateTitleCaption() {
@@ -72185,10 +72182,9 @@ class AreaSeries extends CartesianSeries {
             const data = enabled && nodeData ? nodeData : [];
             if (this.marker.isDirty()) {
                 markerSelection.clear();
+                markerSelection.cleanup();
             }
-            return markerSelection.update(data, (marker) => {
-                marker.tag = AreaSeriesTag.Marker;
-            });
+            return markerSelection.update(data);
         });
     }
     updateMarkerNodes(opts) {
@@ -72675,7 +72671,7 @@ class BarSeries extends AbstractBarSeries {
             if (animationEnabled) {
                 extraProps.push(animationValidation(this));
             }
-            const visibleProps = !this.visible && animationEnabled ? { forceValue: 0 } : {};
+            const visibleProps = !this.visible ? { forceValue: 0 } : {};
             const { processedData } = yield this.requestDataModel(dataController, data, {
                 props: [
                     keyProperty(this, xKey, isContinuousX, { id: 'xValue' }),
@@ -73296,6 +73292,7 @@ class BubbleSeries extends CartesianSeries {
             const { nodeData, markerSelection } = opts;
             if (this.marker.isDirty()) {
                 markerSelection.clear();
+                markerSelection.cleanup();
             }
             const data = this.marker.enabled ? nodeData : [];
             return markerSelection.update(data, undefined, (datum) => this.getDatumId(datum));
@@ -74222,6 +74219,7 @@ class LineSeries extends CartesianSeries {
             nodeData = shape && enabled ? nodeData : [];
             if (this.marker.isDirty()) {
                 markerSelection.clear();
+                markerSelection.cleanup();
             }
             return markerSelection.update(nodeData, undefined, (datum) => this.getDatumId(datum));
         });
@@ -74606,6 +74604,7 @@ class ScatterSeries extends CartesianSeries {
             const { marker: { enabled }, } = this;
             if (this.marker.isDirty()) {
                 markerSelection.clear();
+                markerSelection.cleanup();
             }
             const data = enabled ? nodeData : [];
             return markerSelection.update(data);
@@ -75258,8 +75257,7 @@ class ChartTheme {
             showInLegend: true,
             highlightStyle: {
                 item: {
-                    fill: 'white',
-                    fillOpacity: 0.33,
+                    fill: 'rgba(255,255,255, 0.33)',
                     stroke: `rgba(0, 0, 0, 0.4)`,
                     strokeWidth: 2,
                 },

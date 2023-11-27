@@ -1,7 +1,6 @@
 import type { ModuleContext } from '../../module/moduleContext';
 import { BandScale } from '../../scale/bandScale';
 import { BBox } from '../../scene/bbox';
-import type { Point } from '../../scene/point';
 import { AxisLabel } from './axisLabel';
 import { AxisLine } from './axisLine';
 import { CartesianAxis } from './cartesianAxis';
@@ -20,7 +19,6 @@ export declare class GroupedCategoryAxis extends CartesianAxis<BandScale<string 
     constructor(moduleCtx: ModuleContext);
     protected updateRange(): void;
     private resizeTickTree;
-    readonly translation: Point;
     readonly line: AxisLine;
     readonly label: GroupedCategoryAxisLabel;
     private get lineHeight();

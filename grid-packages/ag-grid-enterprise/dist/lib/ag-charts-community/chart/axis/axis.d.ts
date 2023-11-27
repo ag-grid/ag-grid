@@ -14,6 +14,7 @@ import { Caption } from '../caption';
 import type { ChartAxis, ChartAxisLabel, ChartAxisLabelFlipFlag } from '../chartAxis';
 import { ChartAxisDirection } from '../chartAxisDirection';
 import type { CrossLine } from '../crossline/crossLine';
+import type { AnimationManager } from '../interaction/animationManager';
 import type { AxisLayout } from '../layout/layoutService';
 import type { ISeries } from '../series/seriesTypes';
 import { AxisGridLine } from './axisGridLine';
@@ -121,7 +122,7 @@ export declare abstract class Axis<S extends Scale<D, number, TickInterval<S>> =
     rotation: number;
     protected readonly layout: Pick<AxisLayout, 'label'>;
     protected axisContext?: AxisContext;
-    private animationManager;
+    protected animationManager: AnimationManager;
     private animationState;
     private destroyFns;
     private minRect?;
@@ -262,7 +263,7 @@ export declare abstract class Axis<S extends Scale<D, number, TickInterval<S>> =
     createModuleContext(): ModuleContextWithParent<AxisContext>;
     protected createAxisContext(): AxisContext;
     animateReadyUpdate(diff: FromToDiff): void;
-    private resetSelectionNodes;
+    protected resetSelectionNodes(): void;
     private calculateUpdateDiff;
 }
 export {};
