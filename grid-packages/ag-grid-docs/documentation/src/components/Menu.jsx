@@ -168,8 +168,9 @@ const MenuItem = ({item, currentFramework, activeParentItems}) => {
         <li>
             {item.url ? (
                 <Link
-                    to={convertToFrameworkUrl(item.url, currentFramework)}
+                    to={item.absoluteUrl ? item.url : convertToFrameworkUrl(item.url, currentFramework)}
                     activeClassName={styles.activeMenuItem}
+                    target={item.newWindow ? '_blank' : '_self'}
                     className={isActiveParent ? styles.activeItemParent : undefined}
                     onClick={() => isDocsButtonOpen && setIsDocsButtonOpen(false)}
                 >
@@ -180,6 +181,7 @@ const MenuItem = ({item, currentFramework, activeParentItems}) => {
                             <Icon name="enterprise"/>
                         </span>
                     )}
+                    {item.newWindow && <Icon name="newTab" svgClasses={styles.newWindowIcon} />}
                 </Link>
             ) : (
                 <span
