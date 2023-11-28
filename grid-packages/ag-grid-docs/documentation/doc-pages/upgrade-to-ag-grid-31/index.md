@@ -14,10 +14,10 @@ Follow these steps to upgrade your project's AG Grid version to `31.0.0`:
 
 2. Update any AG Grid dependencies listed in your project's `package.json` to version `31.0.0`.
 
-3. Run version `31.0` of the AG Grid Codemod:
+3. Run the `migrate` command of version `31.0.0-rc.1` of the AG Grid codemod runner:
 
     ```
-    npx @ag-grid-community/cli@31.0 migrate
+    npx @ag-grid-community/cli@31.0.0-rc.1 migrate
     ```
 
     This will update your project's source files to prepare for the new release.
