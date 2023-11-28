@@ -1,5 +1,5 @@
 ---
-title: "Upgrade to AG Grid 31"
+title: "Upgrading to AG Grid 31"
 ---
 
 ## What's New

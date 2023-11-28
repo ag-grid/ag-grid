@@ -1,5 +1,5 @@
 ---
-title: "Upgrade to Older Versions"
+title: "Upgrading to Older Versions"
 ---
 
 Refer to the release notes of the previous version for breaking changes and deprecations. 
