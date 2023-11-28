@@ -491,7 +491,7 @@
             filter: var(--ag-icon-filter);
         }
 
-        input.ag-text-field-input {
+        input.ag-text-field-input, input.ag-number-field-input {
             @include ag.theme-rtl((padding-left: 26px));
         }
     }
