@@ -27,6 +27,10 @@ This section details how such state items can be manipulated without having to u
 
 ## Save and Apply State {#save-and-apply}
 
+<note>
+|If you are only interested in restoring Column State on grid initialisation, you should consider using [Initial State](../grid-state/) instead, which contains all of the Column State properties.
+</note>
+
 There are two API methods provided for getting and setting Column State. `api.getColumnState()` gets the current
 column state and `api.applyColumnState(params)` sets the column state.
 

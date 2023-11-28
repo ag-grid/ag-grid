@@ -51,13 +51,15 @@ let gridApi: GridApi;
 const gridOptions: GridOptions = {
   defaultColDef: {
     editable: true,
-    flex: 1,
     minWidth: 100,
     filter: true,
     floatingFilter: true,
   },
   columnDefs: columnDefs,
   rowData: getData(),
+  autoSizeStrategy: {
+    type: 'fitGridWidth',
+  },
 }
 
 // setup the grid after the page has finished loading

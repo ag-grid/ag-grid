@@ -60,13 +60,13 @@ const GridExample = () => {
     };
 
     return (
-        <div style={{ height: '100%' }}>
+        <div className='example-wrapper'>
             <div style={{ marginBottom: '5px' }}>
                 <button onClick={() => fillLarge()}>Fill 100%</button>
                 <button onClick={() => fillMedium()}>Fill 60%</button>
                 <button onClick={() => fillExact()}>Exactly 400 x 400 pixels</button>
             </div>
-            <div style={{ height: 'calc(100% - 25px)' }} className={/** DARK MODE START **/document.documentElement.dataset.defaultTheme || 'ag-theme-quartz'/** DARK MODE END **/}>
+            <div className={"grid-wrapper " + /** DARK MODE START **/document.documentElement.dataset.defaultTheme || 'ag-theme-quartz'/** DARK MODE END **/}>
                 <div style={style}>
                     <AgGridReact
                         ref={gridRef}

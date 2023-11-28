@@ -150,18 +150,19 @@ export class GroupCellRendererCtrl extends BeanStub {
         this.findDisplayedGroupNode();
 
         if (!topLevelFooter) {
+            const showingFooterTotal = params.node.footer && params.node.rowGroupIndex === this.columnModel.getRowGroupColumns().findIndex(c => c.getColId() === params.colDef?.showRowGroup);
             // if we're not showing a group value
+            const isAlwaysShowing = this.gridOptionsService.get('groupDisplayType') === 'singleColumn' || this.gridOptionsService.get('treeData');
             const showOpenGroupValue = (
-                this.gridOptionsService.get('showOpenedGroup') && (
-                    this.gridOptionsService.get('groupDisplayType') === 'singleColumn' ||
+                isAlwaysShowing || (this.gridOptionsService.get('showOpenedGroup') && !params.node.footer && (
                     (
                         !params.node.group ||
                         (
-                            params.node.rowGroupIndex &&
-                            params.node.rowGroupIndex > this.columnModel.getRowGroupColumns().findIndex(c => c.getColId() === params.column?.getColId())
+                            params.node.rowGroupIndex != null &&
+                            params.node.rowGroupIndex > this.columnModel.getRowGroupColumns().findIndex(c => c.getColId() === params.colDef?.showRowGroup)
                         )
                     )
-                )
+                ))
             );
             // not showing a leaf value (field/valueGetter)
             const leafWithValues = !node.group && (this.params.colDef?.field || this.params.colDef?.valueGetter);
@@ -169,7 +170,7 @@ export class GroupCellRendererCtrl extends BeanStub {
             const isExpandable = this.isExpandable();
 
             // if not showing any values or chevron, skip cell.
-            const canSkipRenderingCell = !this.showingValueForOpenedParent && !isExpandable && !leafWithValues && !showOpenGroupValue;
+            const canSkipRenderingCell = !this.showingValueForOpenedParent && !isExpandable && !leafWithValues && !showOpenGroupValue && !showingFooterTotal;
             if (canSkipRenderingCell) {
                 return;
             }
