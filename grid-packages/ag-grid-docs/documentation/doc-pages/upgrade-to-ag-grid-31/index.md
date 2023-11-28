@@ -114,6 +114,10 @@ This release includes the following deprecations:
 
 `IFilterParams.valueGetter` - deprecated, use `IFilterParams.getValue` instead.
 
+### Column API
+
+Column API is now deprecated. Column API methods are now available in [Grid API](/grid-api/) instead.
+
 ### Grid API
 
 * `setGetRowId` is now deprecated because `getRowId` can no longer be updated (listed as a breaking change above).

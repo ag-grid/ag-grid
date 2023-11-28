@@ -34,4 +34,4 @@ Read about [What's New](https://blog.ag-grid.com/whats-new-in-ag-grid-30/) in AG
 
 ## Older Versions
 
-Click [here](https://www.ag-grid.com/changelog/?fixVersion=29.3.5) for the Release Notes and Changelog of older versions. 
+Click [here](https://www.ag-grid.com/changelog/?fixVersion=All+Versions) for the Release Notes and Changelog of older versions. 
