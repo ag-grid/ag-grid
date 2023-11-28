@@ -109,6 +109,8 @@ const GridExample = () => {
                 />
             </div>
 
+            <div className="divider"></div>
+
             <div className={'grid ' + /** DARK MODE START **/document.documentElement.dataset.defaultTheme || 'ag-theme-quartz'/** DARK MODE END **/}>
                 <AgGridReact
                     ref={bottomGrid}
