@@ -17,7 +17,7 @@ ModuleRegistry.registerModules([ClientSideRowModelModule])
         font-weight: bold;
     } `],
     template: `
-        <div style="height: 100%; display: flex; flex-direction: column">
+        <div style="height: 100%; display: flex; flex-direction: column" class="example-container">
             <ag-grid-angular
                     style="flex: 1 1 auto;"
                     #topGrid

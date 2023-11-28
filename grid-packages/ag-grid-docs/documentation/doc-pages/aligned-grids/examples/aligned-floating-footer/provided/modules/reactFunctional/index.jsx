@@ -5,6 +5,7 @@ import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-mod
 
 import "@ag-grid-community/styles/ag-grid.css";
 import "@ag-grid-community/styles/ag-theme-quartz.css";
+import './styles.css';
 
 import { ModuleRegistry } from '@ag-grid-community/core';
 // Register the required feature modules with the Grid
@@ -64,8 +65,14 @@ const GridExample = () => {
             .then(data => setRowData(data));
     }
 
+    const baseClassName = 'example-container'
+    const themeClassName = /** DARK MODE START **/document.documentElement.dataset.defaultTheme || 'ag-theme-quartz'/** DARK MODE END **/;
+
     return (
-        <div style={{ display: 'flex', flexDirection: 'column', height: '100%' }} className={/** DARK MODE START **/document.documentElement.dataset.defaultTheme || 'ag-theme-quartz'/** DARK MODE END **/}>
+        <div
+            style={{ display: 'flex', flexDirection: 'column', height: '100%' }}
+            className={`${baseClassName} ${themeClassName}`}
+        >
             <div style={{ flex: '1 1 auto' }} >
                 <AgGridReact
                     ref={topGrid}
@@ -79,7 +86,6 @@ const GridExample = () => {
                     autoSizeStrategy={autoSizeStrategy}
                 />
             </div>
-
             <div style={{ flex: 'none', height: '60px' }}>
                 <AgGridReact
                     ref={bottomGrid}

@@ -24,7 +24,9 @@
         "text": "Documentation examples on CodeSandbox",
         "url": ""
       }
-    ]
+    ],
+    "buttonURL": "/react-data-grid/migration-v31/",
+    "majorMinor": true
   },
   {
     "version": "30.1.0",
@@ -50,7 +52,8 @@
         "text": "Interactive Tooltips",
         "url": "https://www.ag-grid.com/javascript-data-grid/component-tooltip/#interactive-tooltips"
       }
-    ]
+    ],
+    "majorMinor": false
   },
   {
     "version": "30.0.0",
@@ -76,7 +79,8 @@
         "text": "Export row groups to Excel with their current expanded state",
         "url": ""
       }
-    ]
+    ],
+    "majorMinor": false
   },
   {
     "version": "29.3.0",
@@ -102,7 +106,8 @@
         "text": "Pie chart callout labels anti-collision improvements",
         "url": ""
       }
-    ]
+    ],
+    "majorMinor": false
   },
   {
     "version": "29.2.0",
@@ -128,7 +133,8 @@
         "text": "Displaying stacked and unstacked column series together in the chart",
         "url": ""
       }
-    ]
+    ],
+    "majorMinor": false
   },
   {
     "version": "29.1.0",
@@ -154,6 +160,7 @@
         "text": "Customization options for chart axis tick positioning",
         "url": "https://www.ag-grid.com/javascript-charts/axes-ticks/"
       }
-    ]
+    ],
+    "majorMinor": false
   }
 ]
