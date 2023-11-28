@@ -621,7 +621,7 @@ const desktopDefaultCols = [
 const ExampleInner = ({darkMode}) => {
     const gridRef = useRef(null);
     const loadInstance = useRef(0);
-    const [gridTheme, setGridTheme] = useState('ag-theme-quartz');
+    const [gridTheme, setGridTheme] = useState('quartz');
     useEffect(() => {
         const themeFromURL = new URLSearchParams(window.location.search).get('theme');
         if (themeFromURL) {
@@ -1422,8 +1422,11 @@ const ExampleInner = ({darkMode}) => {
 
     const isAutoTheme = gridTheme.includes('auto');
     let themeClass = gridTheme;
-    if (darkMode && themesWithDarkVariant.includes(themeClass)) {
-        themeClass += '-dark';
+    if (!themeClass.startsWith('ag-theme-')) {
+        themeClass = 'ag-theme-' + themeClass;
+        if (darkMode && themesWithDarkVariant.includes(themeClass)) {
+            themeClass += '-dark';
+        }
     }
     const isDarkTheme = themeClass.includes('dark');
 
