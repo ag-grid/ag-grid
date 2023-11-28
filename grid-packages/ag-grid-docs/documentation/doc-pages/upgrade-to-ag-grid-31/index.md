@@ -6,9 +6,9 @@ title: "Upgrade to AG Grid 31"
 
 See the [release post](https://blog.ag-grid.com/whats-new-in-ag-grid-31/) for details of what's new in this major version.
 
-## Automatic Migration Tool
+## Codemods
 
-See the [automatic migration tool](/migration-tool/) instructions for a step-by-step guide on upgrading your codebase while avoiding breaking changes.
+See the [Codemods](/automatic-migration-tool/) instructions for a step-by-step guide on upgrading your codebase while avoiding breaking changes.
 
 ## Breaking Changes
 
@@ -45,7 +45,7 @@ Grid columns are now sortable and resizable by default. Also, the grid animates 
 * `getServerSideStoreParams` - removed, use `getServerSideGroupLevelParams` instead.
 * `onRowDataChanged`: no longer fired, use `onRowDataUpdated` instead.
 * `getRowId` is now an initial property and can no longer be updated.
-* `rememberGroupStateWhenNewData` - removed. Provide getRowId to maintain group state when row data updated instead (see [Updating Row Data](https://ag-grid.com/javascript-data-grid/data-update-row-data/)).
+* `rememberGroupStateWhenNewData` - removed. Provide getRowId to maintain group state when row data updated instead (see [Updating Row Data](/data-update-row-data/)).
 
 ### Column Filters
 
@@ -118,7 +118,7 @@ This release includes the following deprecations:
 
 * `setGetRowId` is now deprecated because `getRowId` can no longer be updated (listed as a breaking change above).
 
-* The Grid API methods listed below have been deprecated. Please use Grid API methods `setGridOption` and `updateGridOptions` to set properties instead as described in [Updating Grid Options](https://build.ag-grid.com/react-data-grid/grid-interface/#updating-grid-options).
+* The Grid API methods listed below have been deprecated. Please use Grid API methods `setGridOption` and `updateGridOptions` to set properties instead as described in [Updating Grid Options](/grid-interface/#updating-grid-options/).
 
     * `setPivotMode`
     * `setPinnedTopRowData`
