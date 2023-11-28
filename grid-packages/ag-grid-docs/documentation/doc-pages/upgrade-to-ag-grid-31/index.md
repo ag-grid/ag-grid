@@ -6,7 +6,7 @@ title: "Upgrade to AG Grid 31"
 
 See the [release post](https://blog.ag-grid.com/whats-new-in-ag-grid-31/) for details of what's new in this major version.
 
-## Upgrade to AG Grid 31
+## Automatic Migration Tool
 
 See the [automatic migration tool](/migration-tool/) instructions for a step-by-step guide on upgrading your codebase while avoiding breaking changes.
 

@@ -199,15 +199,15 @@
         "title": "Migration",
         "items": [
           {
-            "title": "Automatic migration tool",
-            "url": "/migration-tool/"
+            "title": "Automatic Migration Tool",
+            "url": "/automatic-migration-tool/"
           },
           {
             "title": "Upgrade to AG Grid 31",
             "url": "/upgrade-to-ag-grid-31/"
           },
           {
-            "title": "Upgrade to Older Versions",  
+            "title": "Upgrade to Older Versions",
             "url": "/upgrade-to-older-versions/"
           }
         ]
@@ -339,166 +339,177 @@
   {
     "group": "CHARTING",
     "items": [
-        {
-          "title": "Sparklines",
-          "items": [
-            {
-              "title": "Overview",
-              "url": "/sparklines-overview/",
-              "enterprise": true,
-              "showInCollapsed": true,
-              "items": [
-                {
-                  "title": "Area",
-                  "url": "/sparklines-area-customisation/",
-                  "enterprise": true,
-                  "showInCollapsed": true
-                },
-                {
-                  "title": "Bar",
-                  "url": "/sparklines-bar-customisation/",
-                  "enterprise": true,
-                  "showInCollapsed": true
-                },
-                {
-                  "title": "Column",
-                  "url": "/sparklines-column-customisation/",
-                  "enterprise": true,
-                  "showInCollapsed": true
-                },
-                {
-                  "title": "Line",
-                  "url": "/sparklines-line-customisation/",
-                  "enterprise": true,
-                  "showInCollapsed": true
-                }
-              ]
-            },
-            {
-              "title": "Sparkline Data",
-              "url": "/sparklines-data/",
-              "enterprise": true,
-              "showInCollapsed": true
-            },
-            {
-              "title": "Axis Types",
-              "url": "/sparklines-axis-types/",
-              "enterprise": true,
-              "showInCollapsed": true
-            },
-            {
-              "title": "Tooltips",
-              "url": "/sparklines-tooltips/",
-              "enterprise": true,
-              "showInCollapsed": true
-            },
-            {
-              "title": "Points of Interest",
-              "url": "/sparklines-points-of-interest/",
-              "enterprise": true,
-              "showInCollapsed": true
-            }
-          ]
-        },
-        {
-          "title": "Integrated Charts",
-          "items": [
-            {
-              "title": "Overview",
-              "url": "/integrated-charts/",
-              "enterprise": true,
-              "showInCollapsed": true
-            },
-            {
-              "title": "User Created Charts",
-              "url": "/integrated-charts-user-created/",
-              "enterprise": true,
-              "showInCollapsed": true,
-              "items": [
-                {
-                  "title": "Range Chart",
-                  "url": "/integrated-charts-range-chart/",
-                  "enterprise": true,
-                  "showInCollapsed": true
-                },
-                {
-                  "title": "Pivot Chart",
-                  "url": "/integrated-charts-pivot-chart/",
-                  "enterprise": true,
-                  "showInCollapsed": true
-                }
-              ]
-            },
-            {
-              "title": "Application Created Charts",
-              "url": "/integrated-charts-application-created/",
-              "enterprise": true,
-              "showInCollapsed": true,
-              "items": [
-                {
-                  "title": "Range Chart API",
-                  "url": "/integrated-charts-api-range-chart/",
-                  "enterprise": true,
-                  "showInCollapsed": true
-                },
-                {
-                  "title": "Pivot Chart API",
-                  "url": "/integrated-charts-api-pivot-chart/",
-                  "enterprise": true,
-                  "showInCollapsed": true
-                },
-                {
-                  "title": "Cross Filter API",
-                  "url": "/integrated-charts-api-cross-filter-chart/",
-                  "enterprise": true
-                }
-              ]
-            },
-            {
-              "title": "Chart Tool Panels",
-              "url": "/integrated-charts-chart-tool-panels/",
-              "enterprise": true,
-              "showInCollapsed": true
-            },
-            {
-              "title": "Chart Toolbar",
-              "url": "/integrated-charts-toolbar/",
-              "enterprise": true,
-              "showInCollapsed": true
-            },
-            {
-              "title": "Chart Container",
-              "url": "/integrated-charts-container/",
-              "enterprise": true
-            },
-            {
-              "title": "Customisation",
-              "url": "/integrated-charts-customisation/",
-              "enterprise": true,
-              "showInCollapsed": true
-            },
-            {
-              "title": "Chart Events",
-              "url": "/integrated-charts-events/",
-              "enterprise": true
-            },
-            {
-              "title": "Time Series",
-              "url": "/integrated-charts-time-series/",
-              "enterprise": true
-            },
-            {
-              "title": "Save / Restore Charts",
-              "url": "/integrated-charts-api-save-restore-charts/",
-              "enterprise": true
-            },
-            {
-              "title": "Chart Image Export",
-              "url": "/integrated-charts-api-downloading-image/",
-              "enterprise": true
-            }
-          ]
-        }
+      {
+        "title": "Sparklines",
+        "items": [
+          {
+            "title": "Overview",
+            "url": "/sparklines-overview/",
+            "enterprise": true,
+            "showInCollapsed": true,
+            "items": [
+              {
+                "title": "Area",
+                "url": "/sparklines-area-customisation/",
+                "enterprise": true,
+                "showInCollapsed": true
+              },
+              {
+                "title": "Bar",
+                "url": "/sparklines-bar-customisation/",
+                "enterprise": true,
+                "showInCollapsed": true
+              },
+              {
+                "title": "Column",
+                "url": "/sparklines-column-customisation/",
+                "enterprise": true,
+                "showInCollapsed": true
+              },
+              {
+                "title": "Line",
+                "url": "/sparklines-line-customisation/",
+                "enterprise": true,
+                "showInCollapsed": true
+              }
+            ]
+          },
+          {
+            "title": "Sparkline Data",
+            "url": "/sparklines-data/",
+            "enterprise": true,
+            "showInCollapsed": true
+          },
+          {
+            "title": "Axis Types",
+            "url": "/sparklines-axis-types/",
+            "enterprise": true,
+            "showInCollapsed": true
+          },
+          {
+            "title": "Tooltips",
+            "url": "/sparklines-tooltips/",
+            "enterprise": true,
+            "showInCollapsed": true
+          },
+          {
+            "title": "Points of Interest",
+            "url": "/sparklines-points-of-interest/",
+            "enterprise": true,
+            "showInCollapsed": true
+          }
+        ]
+      },
+      {
+        "title": "Integrated Charts",
+        "items": [
+          {
+            "title": "Overview",
+            "url": "/integrated-charts/",
+            "enterprise": true,
+            "showInCollapsed": true
+          },
+          {
+            "title": "User Created Charts",
+            "url": "/integrated-charts-user-created/",
+            "enterprise": true,
+            "showInCollapsed": true,
+            "items": [
+              {
+                "title": "Range Chart",
+                "url": "/integrated-charts-range-chart/",
+                "enterprise": true,
+                "showInCollapsed": true
+              },
+              {
+                "title": "Pivot Chart",
+                "url": "/integrated-charts-pivot-chart/",
+                "enterprise": true,
+                "showInCollapsed": true
+              }
+            ]
+          },
+          {
+            "title": "Application Created Charts",
+            "url": "/integrated-charts-application-created/",
+            "enterprise": true,
+            "showInCollapsed": true,
+            "items": [
+              {
+                "title": "Range Chart API",
+                "url": "/integrated-charts-api-range-chart/",
+                "enterprise": true,
+                "showInCollapsed": true
+              },
+              {
+                "title": "Pivot Chart API",
+                "url": "/integrated-charts-api-pivot-chart/",
+                "enterprise": true,
+                "showInCollapsed": true
+              },
+              {
+                "title": "Cross Filter API",
+                "url": "/integrated-charts-api-cross-filter-chart/",
+                "enterprise": true
+              }
+            ]
+          },
+          {
+            "title": "Chart Tool Panels",
+            "url": "/integrated-charts-chart-tool-panels/",
+            "enterprise": true,
+            "showInCollapsed": true
+          },
+          {
+            "title": "Chart Toolbar",
+            "url": "/integrated-charts-toolbar/",
+            "enterprise": true,
+            "showInCollapsed": true
+          },
+          {
+            "title": "Chart Container",
+            "url": "/integrated-charts-container/",
+            "enterprise": true
+          },
+          {
+            "title": "Customisation",
+            "url": "/integrated-charts-customisation/",
+            "enterprise": true,
+            "showInCollapsed": true
+          },
+          {
+            "title": "Chart Events",
+            "url": "/integrated-charts-events/",
+            "enterprise": true
+          },
+          {
+            "title": "Time Series",
+            "url": "/integrated-charts-time-series/",
+            "enterprise": true
+          },
+          {
+            "title": "Save / Restore Charts",
+            "url": "/integrated-charts-api-save-restore-charts/",
+            "enterprise": true
+          },
+          {
+            "title": "Chart Image Export",
+            "url": "/integrated-charts-api-downloading-image/",
+            "enterprise": true
+          }
+        ]
+      },
+      {
+        "title": "Standalone Charts",
+        "items": [
+          {
+            "title": "See AG Charts",
+            "url": "https://charts.ag-grid.com",
+            "absoluteUrl": true,
+            "newWindow": true
+          }
+        ]
+      }
     ]
   },
   {

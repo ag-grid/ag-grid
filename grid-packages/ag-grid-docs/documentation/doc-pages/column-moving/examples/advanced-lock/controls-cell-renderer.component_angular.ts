@@ -8,9 +8,7 @@ import {ICellRendererAngularComp} from "@ag-grid-community/angular";
 @Component({
     selector: 'simple-component',
     template: `
-        <button>A</button>
-        <button>B</button>
-        <button>C</button>
+        <button>Action</button>
     `
 })
 export class ControlsCellRenderer implements ICellRendererAngularComp {

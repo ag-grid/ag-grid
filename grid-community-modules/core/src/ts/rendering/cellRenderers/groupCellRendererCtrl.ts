@@ -152,17 +152,17 @@ export class GroupCellRendererCtrl extends BeanStub {
         if (!topLevelFooter) {
             const showingFooterTotal = params.node.footer && params.node.rowGroupIndex === this.columnModel.getRowGroupColumns().findIndex(c => c.getColId() === params.colDef?.showRowGroup);
             // if we're not showing a group value
+            const isAlwaysShowing = this.gridOptionsService.get('groupDisplayType') === 'singleColumn' || this.gridOptionsService.get('treeData');
             const showOpenGroupValue = (
-                this.gridOptionsService.get('showOpenedGroup') && !params.node.footer && (
-                    this.gridOptionsService.get('groupDisplayType') === 'singleColumn' ||
+                isAlwaysShowing || (this.gridOptionsService.get('showOpenedGroup') && !params.node.footer && (
                     (
                         !params.node.group ||
                         (
                             params.node.rowGroupIndex != null &&
-                            params.node.rowGroupIndex > this.columnModel.getRowGroupColumns().findIndex(c => c.getColId() === params.column?.getColId())
+                            params.node.rowGroupIndex > this.columnModel.getRowGroupColumns().findIndex(c => c.getColId() === params.colDef?.showRowGroup)
                         )
                     )
-                )
+                ))
             );
             // not showing a leaf value (field/valueGetter)
             const leafWithValues = !node.group && (this.params.colDef?.field || this.params.colDef?.valueGetter);

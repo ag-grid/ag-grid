@@ -11,6 +11,7 @@ import Seo from './components/SEO';
 import styles from './homepage.module.scss';
 import LogoMark from '../components/LogoMark';
 import GlobalContextConsumer from '../components/GlobalContext';
+import ChartsLogo from '../images/inline-svgs/ag-charts-logo.svg';
 
 const IS_SSR = typeof window === 'undefined';
 
@@ -125,6 +126,20 @@ const Default = () => {
                     </div>
                 </div>
             </div>
+
+            <div className={styles.homepageCharts}>
+                <div className={classNames(styles.chartsInner, "page-margin")}>
+                    <div className={styles.chartsCopy}>
+                        <ChartsLogo className={styles.chartsLogo}/>
+                        <p className="font-size-large">Check out the all new <a href="https://charts.ag-grid.com"><b>AG Charts</b></a>. Experience the power of <b>AG Grid</b> <a href="/javascript-data-grid/integrated-charts/">Integrated Charts</a> in a standalone library.</p>
+                    </div>
+                    <div className={styles.chartsExample}>
+                        <img className={styles.chartsExampleLight} src="images/ag-charts-gallery-light.webp" alt="AG Charts" />
+                        <img className={styles.chartsExampleDark} src="images/ag-charts-gallery-dark.webp" alt="AG Charts" />
+                    </div>
+                </div>
+            </div>                
+
             <GlobalContextConsumer>
                 {({ darkMode }) => {
                     return <>
