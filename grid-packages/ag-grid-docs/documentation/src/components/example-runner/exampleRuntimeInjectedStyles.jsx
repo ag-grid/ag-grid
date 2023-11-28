@@ -95,6 +95,15 @@ html[data-color-scheme='dark'] input:not(#myGrid input, #myChart input, [class*=
     min-width: 36px;
 }
 
+html input:not(#myGrid input, #myChart input, [class*='ag-']) {
+    appearance: none;
+    background-color: #fff;
+    border: 1px solid rgb(0,0,0,0.1);
+    border-radius: 4px;
+    height: 36px;
+    min-width: 36px;
+}
+
 html[data-color-scheme='dark'] body:not(#myGrid body, #myChart body) {
   color: #fff;
 }
