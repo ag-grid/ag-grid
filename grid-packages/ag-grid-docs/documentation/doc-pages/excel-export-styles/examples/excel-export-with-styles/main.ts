@@ -74,7 +74,7 @@ const gridOptions: GridOptions<IOlympicData> = {
         fontName: 'Calibri Light',
         underline: 'Single',
         italic: true,
-        color: '#ff0000',
+        color: '#BB0000',
       },
     },
     {

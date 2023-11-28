@@ -271,6 +271,95 @@ gatsby-fast-refresh {
     }
 }
 
+.homepageCharts {
+    padding-top: $size-8;
+    padding-bottom: $size-8;
+
+    #{$darkmode-selector} & {
+        border-bottom: 1px solid #394755;
+    }
+}
+
+.chartsInner {
+    display: flex;
+    flex-direction: column;
+
+    @media screen and (min-width: 920px) {
+        flex-direction: row;
+    }
+}
+
+.chartsCopy {
+    width: 100%;
+    margin-bottom: $size-4;
+    text-align: center;
+
+    @media screen and (min-width: 920px) {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        width: 40%;
+        margin-bottom: 0;
+        padding-right: $size-4;
+        text-align: left;
+    }
+}
+
+.chartsLogo {
+    width: 100%;
+    max-width: 320px;
+    height: auto;
+    margin-bottom: $size-2;
+    margin-left: $size-2;
+
+    @media screen and (min-width: 920px) {
+        $logo-scale: 1.3;
+
+        margin-bottom: $size-1;
+        margin-left: -$size-2;
+
+        :global(.logotype) {
+            width: 154px * $logo-scale;
+            height: 40px * $logo-scale;
+        }
+
+        :global(.logomark) {
+            width: 64px * $logo-scale;
+            height: 48px * $logo-scale;
+        }
+    }
+}
+
+[data-dark-mode='true'] .chartsLogo :global(#LogoType) > * {
+    fill: var(--default-text-color) !important;
+}
+
+.chartsExample {
+    width: 100%;
+
+    @media screen and (min-width: 920px) {
+        width: 60%;
+    }
+
+    img {
+        width: 100%;
+    }
+
+    .chartsExampleDark {
+        display: none;
+    }
+
+    #{$darkmode-selector} & {
+        .chartsExampleLight {
+            display: none;
+        }
+
+        .chartsExampleDark {
+            display: inline;
+        }
+    }
+}
+
 .sponsorshipInner {
     margin-bottom: $size-10;
 

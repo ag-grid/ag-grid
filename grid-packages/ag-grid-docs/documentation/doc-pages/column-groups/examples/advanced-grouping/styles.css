@@ -9,12 +9,12 @@
     width: 100%;
 }
 
-.ag-header-group-cell.column-group-g {
-    background-color: #2244CC44 !important;
+.column-group-g {
+    background-color: #5577CC !important;
 }
-
-.ag-header-group-cell.column-group-c {
-    background-color: #33CC3344 !important;
+  
+.column-group-c {
+    background-color: #55AA77 !important;
 }
 
 .button-bar {

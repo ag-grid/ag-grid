@@ -5,6 +5,7 @@ import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-mod
 
 import "@ag-grid-community/styles/ag-grid.css";
 import "@ag-grid-community/styles/ag-theme-quartz.css";
+import "./styles.css";
 
 import { ModuleRegistry } from '@ag-grid-community/core';
 // Register the required feature modules with the Grid
@@ -15,6 +16,7 @@ const VueExample = {
         <div style="height: 100%; display: flex; flex-direction: column" :class="themeClass">
             <ag-grid-vue style="flex: 1 1 auto;"
                          ref="topGrid"
+                         class="top"
                          :gridOptions="topGridOptions"
                          @grid-ready="onGridReady"
                          :columnDefs="columnDefs"
@@ -22,6 +24,7 @@ const VueExample = {
             ></ag-grid-vue>
             <ag-grid-vue style="height: 60px; flex: none;"
                          ref="bottomGrid"
+                         class="bottom"
                          :gridOptions="bottomGridOptions"
                          :headerHeight="0"
                          :columnDefs="columnDefs"

@@ -32,6 +32,8 @@ ModuleRegistry.registerModules([ClientSideRowModelModule])
                 [columnDefs]="columnDefs">
         </ag-grid-angular>
 
+        <div style='height: 5%'></div>
+
         <ag-grid-angular
                 style="width: 100%; height: 45%"
                 #bottomGrid

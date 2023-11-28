@@ -9,9 +9,9 @@ export default (props: ICellRendererParams) => {
 
     if (footer) {
         if (isRootLevel) {
-            return <span style={{ backgroundColor: '#2244CC44', fontWeight: 'bold' }}>Grand Total</span>;
+            return <span style={{ textDecoration: 'underline', fontWeight: 'bold' }}>Grand Total</span>;
         } else {
-            return <span style={{ backgroundColor: '#2244CC44' }}>Sub Total {value}</span>;
+            return <span style={{ textDecoration: 'underline' }}>Sub Total {value}</span>;
         }
     } else {
         return <span>{value}</span>;
