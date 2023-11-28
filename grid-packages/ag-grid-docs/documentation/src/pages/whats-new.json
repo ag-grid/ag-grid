@@ -13,8 +13,8 @@
         "url": "https://www.ag-grid.com/example/?theme=ag-theme-quartz-auto-dark"
       },
       {
-        "text": "Reactive Grid Properties",
-        "url": "https://www.ag-grid.com/javascript-data-grid/grid-interface/#updating-grid-options"
+        "text": "Column Header resizing and moving via keyboard",
+        "url": "https://www.ag-grid.com/javascript-data-grid/keyboard-navigation/#column-header-navigation"
       },
       {
         "text": "Prevent Group Column reordering and removal",
@@ -159,33 +159,6 @@
       {
         "text": "Displaying stacked and unstacked column series together in the chart",
         "url": ""
-      }
-    ],
-    "majorMinor": false
-  },
-  {
-    "version": "29.1.0",
-    "date": "February 17th 2023",
-    "highlights": [
-      {
-        "text": "Group column filters",
-        "url": "https://www.ag-grid.com/javascript-data-grid/grouping-column-filter/"
-      },
-      {
-        "text": "Tree data transaction support in server-side row model",
-        "url": "https://www.ag-grid.com/javascript-data-grid/server-side-model-tree-data/#transactions-with-tree-data"
-      },
-      {
-        "text": "Header checkbox selection for current page rows",
-        "url": "https://www.ag-grid.com/javascript-data-grid/row-selection/#example-select-only-the-current-page"
-      },
-      {
-        "text": "Enhanced support for Read Only Edit",
-        "url": "https://www.ag-grid.com/javascript-data-grid/value-setters/#read-only-edit"
-      },
-      {
-        "text": "Customization options for chart axis tick positioning",
-        "url": "https://www.ag-grid.com/javascript-charts/axes-ticks/"
       }
     ],
     "majorMinor": false
