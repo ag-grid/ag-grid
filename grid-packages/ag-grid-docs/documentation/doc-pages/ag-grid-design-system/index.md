@@ -54,6 +54,6 @@ To export your Figma Variables as json...
 
 ## Support and Future versions
 
-AG Grid Enterprise customers can request support or suggest features and improvements via [Zenhub](https://ag-grid.zendesk.com/hc/en-us). Community users can file bug reports via [AG Grid Github issues](https://github.com/ag-grid/ag-grid/issues).
+AG Grid Enterprise customers can request support or suggest features and improvements via [Zendesk](https://ag-grid.zendesk.com/hc/en-us). Community users can file bug reports via [AG Grid Github issues](https://github.com/ag-grid/ag-grid/issues).
 
 Future versions of the AG Grid design system will include support for all features of the grid.

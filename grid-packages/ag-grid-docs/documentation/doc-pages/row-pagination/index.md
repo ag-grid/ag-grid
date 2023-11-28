@@ -59,6 +59,8 @@ If you set `suppressPaginationPanel=true`, the grid will not show the standard n
 
 In the example below you can see how this works. Note that we are listening to `onPaginationChanged` to update the information about the current pagination status. We also call methods on the pagination API to change the pagination state.
 
+The example also shows how the grid handles the case where the requested page doesn't exist. In this case, when the users requests page 50, the grid will show the last page (page 18 in this example).
+
 A summary of the API methods and events can be found at the top of this documentation page.
 
 The example also sets property `suppressScrollOnNewData=true`, which tells the grid to NOT scroll to the top when the page changes.
@@ -81,7 +83,7 @@ In the example below, note the following:
 - Each page will always contain exactly 10 groups.
 - Expanding a group will not push rows to the next page.
 
-<grid-example title='Grouping Normal' name='grouping-normal' type='generated' options='{ "enterprise": true, "modules": ["clientside", "rowgrouping" ] }'></grid-example>
+<grid-example title='Grouping Normal' name='grouping-normal' type='generated' options='{ "exampleHeight": 530, "enterprise": true, "modules": ["clientside", "rowgrouping" ] }'></grid-example>
 
 ### Mode 2: Paginate All Rows, Including Children
 
@@ -100,7 +102,7 @@ In the example below, note the following:
 When `paginateChildRows=true` the Grid automatically disables Group Rows Sticky, see: [suppressGroupRowsSticky](../grid-options/#reference-rowGrouping-suppressGroupRowsSticky).
 </note>
 
-<grid-example title='Grouping Paginate Child Rows' name='grouping-paginate-child-rows' type='generated' options='{ "enterprise": true, "modules": ["clientside", "rowgrouping" ] }'></grid-example>
+<grid-example title='Grouping Paginate Child Rows' name='grouping-paginate-child-rows' type='generated' options='{ "exampleHeight": 530, "enterprise": true, "modules": ["clientside", "rowgrouping" ] }'></grid-example>
 
 ### Fallback to Mode 2
 

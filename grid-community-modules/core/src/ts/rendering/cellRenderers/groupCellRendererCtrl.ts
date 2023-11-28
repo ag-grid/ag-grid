@@ -150,14 +150,15 @@ export class GroupCellRendererCtrl extends BeanStub {
         this.findDisplayedGroupNode();
 
         if (!topLevelFooter) {
+            const showingFooterTotal = params.node.footer && params.node.rowGroupIndex === this.columnModel.getRowGroupColumns().findIndex(c => c.getColId() === params.colDef?.showRowGroup);
             // if we're not showing a group value
             const showOpenGroupValue = (
-                this.gridOptionsService.get('showOpenedGroup') && (
+                this.gridOptionsService.get('showOpenedGroup') && !params.node.footer && (
                     this.gridOptionsService.get('groupDisplayType') === 'singleColumn' ||
                     (
                         !params.node.group ||
                         (
-                            params.node.rowGroupIndex &&
+                            params.node.rowGroupIndex != null &&
                             params.node.rowGroupIndex > this.columnModel.getRowGroupColumns().findIndex(c => c.getColId() === params.column?.getColId())
                         )
                     )
@@ -169,7 +170,7 @@ export class GroupCellRendererCtrl extends BeanStub {
             const isExpandable = this.isExpandable();
 
             // if not showing any values or chevron, skip cell.
-            const canSkipRenderingCell = !this.showingValueForOpenedParent && !isExpandable && !leafWithValues && !showOpenGroupValue;
+            const canSkipRenderingCell = !this.showingValueForOpenedParent && !isExpandable && !leafWithValues && !showOpenGroupValue && !showingFooterTotal;
             if (canSkipRenderingCell) {
                 return;
             }
