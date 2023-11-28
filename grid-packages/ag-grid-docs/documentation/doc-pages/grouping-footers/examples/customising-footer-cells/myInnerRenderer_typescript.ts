@@ -14,12 +14,12 @@ export class MyInnerRenderer implements ICellRendererComp {
         if (params.node.footer) {
             const isRootLevel = params.node.level === -1;
             if (isRootLevel) {
-              template = `<span style="background-color:#2244CC44; font-weight:bold">Grand Total</span>`;
+              template = `<span style="text-decoration: underline; font-weight:bold">Grand Total</span>`;
             } else {
-              template = `<span style="background-color:#2244CC44">Sub Total ${params.value}</span>`;
+              template = `<span style="text-decoration: underline">Sub Total ${params.value}</span>`;
             }
           } else {
-              template = params.value;
+              template = params.value ?? '';
           }
 
           this.eGui.innerHTML = template;
