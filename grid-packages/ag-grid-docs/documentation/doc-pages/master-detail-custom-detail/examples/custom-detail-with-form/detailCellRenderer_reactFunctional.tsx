@@ -7,7 +7,7 @@ const DetailCellRenderer = ({ data }: ICellRendererParams) => {
   const [number, setNumber] = useState(firstRecord.number);
   const [direction, setDirection] = useState(firstRecord.direction);
 
-  return <div class="cell-renderer-outer">
+  return <div className="cell-renderer-outer">
     <form>
       <div>
         <div>
