@@ -340,17 +340,6 @@
     "group": "CHARTING",
     "items": [
       {
-        "title": "Standalone Charts",
-        "items": [
-          {
-            "title": "See AG Charts",
-            "url": "https://charts.ag-grid.com",
-            "absoluteUrl": true,
-            "newWindow": true
-          }
-        ]
-      },
-      {
         "title": "Sparklines",
         "items": [
           {
@@ -507,6 +496,17 @@
             "title": "Chart Image Export",
             "url": "/integrated-charts-api-downloading-image/",
             "enterprise": true
+          }
+        ]
+      },
+      {
+        "title": "Standalone Charts",
+        "items": [
+          {
+            "title": "See AG Charts",
+            "url": "https://charts.ag-grid.com",
+            "absoluteUrl": true,
+            "newWindow": true
           }
         ]
       }
