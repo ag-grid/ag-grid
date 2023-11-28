@@ -127,7 +127,7 @@ When showing the pagination controls, the page size selector is shown by default
 
 * `refreshServerSideStore` - removed, use `refreshServerSide` instead.
 * `getServerSideStoreState` - removed, use `getServerSideGroupLevelState` instead.
-* `setProcessSecondaryColDef` - removed, use `api.setGridOption`(`processPivotResultColGroupDef`, `newValue`) instead.
+* `setProcessSecondaryColDef` - removed, use `api.setGridOption`(`processPivotResultColDef`, `newValue`) instead.
 * `setProcessSecondaryColGroupDef` - removed, use `api.setGridOption`(`setProcessPivotResultColGroupDef`, `newValue`) instead.
 * `setGetServerSideStoreParams` - removed, use `api.setGridOption`(`getServerSideGroupLevelParams`, `newValue`) instead.
 
