@@ -59,6 +59,8 @@ If you set `suppressPaginationPanel=true`, the grid will not show the standard n
 
 In the example below you can see how this works. Note that we are listening to `onPaginationChanged` to update the information about the current pagination status. We also call methods on the pagination API to change the pagination state.
 
+The example also shows how the grid handles the case where the requested page doesn't exist. In this case, when the users requests page 50, the grid will show the last page (page 18 in this example).
+
 A summary of the API methods and events can be found at the top of this documentation page.
 
 The example also sets property `suppressScrollOnNewData=true`, which tells the grid to NOT scroll to the top when the page changes.
