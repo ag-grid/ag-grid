@@ -10,7 +10,7 @@ const columnDefs: ColDef[] = [
     floatingFilterComponent: NumberFloatingFilterComponent,
     floatingFilterComponentParams: {
       suppressFilterButton: true,
-      color: 'red',
+      color: 'gold',
     },
   },
   {
@@ -20,7 +20,7 @@ const columnDefs: ColDef[] = [
     floatingFilterComponent: NumberFloatingFilterComponent,
     floatingFilterComponentParams: {
       suppressFilterButton: true,
-      color: 'blue',
+      color: 'silver',
     },
   },
   {
@@ -30,7 +30,7 @@ const columnDefs: ColDef[] = [
     floatingFilterComponent: NumberFloatingFilterComponent,
     floatingFilterComponentParams: {
       suppressFilterButton: true,
-      color: 'green',
+      color: '#CD7F32',
     },
   },
   {
@@ -40,7 +40,7 @@ const columnDefs: ColDef[] = [
     floatingFilterComponent: NumberFloatingFilterComponent,
     floatingFilterComponentParams: {
       suppressFilterButton: true,
-      color: 'orange',
+      color: 'unset',
     },
   },
 ]
