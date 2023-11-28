@@ -53,7 +53,7 @@ This release includes the following breaking changes:
 * Validation is now run when `gridOptions` are updated, meaning warnings may appear in console when changing grid options if an invalid configuration is reached.
 * Auto-generated group row IDs when using Client-Side Row Model now have a different format (but the same prefix).<br>`rowDataUpdated` event is only fired for the Client-Side Row Model (per the existing documentation)."
 * Legacy React Rendering, enabled via `suppressReactUi` property is deprecated since v28 and is now removed.<br>AG Grid now only renders via React components as has been the default since v28.
-* `rowDataChangeDetectionStrategy`: identity / reference equals always used.
+* `rowDataChangeDetectionStrategy` - removed. identity / reference equals always used.
 
 ### Integrated Charts
 
@@ -67,12 +67,12 @@ Grid columns are now sortable and resizable by default. Also, the grid animates 
 
 * Javascript - Mutating `gridOptions` after the grid has been created will no longer be picked up by the grid. Instead use `api.setGridOption` (`property`, `newValue`) to update grid options.
 * Validation is now run when `gridOptions` are updated, meaning warnings may appear in console when changing grid options if an invalid configuration is reached.
-* `serverSideStoreType`: removed in favour of `suppressServerSideInfiniteScroll`. When false, Partial Store is used. When true, Full Store is used.
-* `serverSideSortingAlwaysResets`: use `serverSideSortAllLevels` instead.
-* `serverSideFilteringAlwaysResets`: use `serverSideOnlyRefreshFilteredGroups` instead.
-* `processSecondaryColDef`: use `processPivotResultColDef` instead.
-* `processSecondaryColGroupDef`: use `processPivotResultColGroupDef` instead.
-* `getServerSideStoreParams`: use `getServerSideGroupLevelParams` instead.
+* `serverSideStoreType` - removed, use `suppressServerSideInfiniteScroll` instead. When false, Partial Store is used. When true, Full Store is used.
+* `serverSideSortingAlwaysResets` - removed, use `serverSideSortAllLevels` instead.
+* `serverSideFilteringAlwaysResets` - removed, use `serverSideOnlyRefreshFilteredGroups` instead.
+* `processSecondaryColDef` - removed, use `processPivotResultColDef` instead.
+* `processSecondaryColGroupDef` - removed, use `processPivotResultColGroupDef` instead.
+* `getServerSideStoreParams` - removed, use `getServerSideGroupLevelParams` instead.
 * `onRowDataChanged`: no longer fired, use `onRowDataUpdated` instead.
 * `getRowId` is now an initial property and can no longer be updated.
 * `rememberGroupStateWhenNewData` - removed. Provide getRowId to maintain group state when row data updated instead (see [Updating Row Data](https://ag-grid.com/javascript-data-grid/data-update-row-data/)).
@@ -80,7 +80,7 @@ Grid columns are now sortable and resizable by default. Also, the grid animates 
 ### Column Filters
 
 * `IServerSideGetRowsRequest.filterModel` can now be of type AdvancedFilterModel | null if Advanced Filter is enabled, or FilterModel otherwise (for Column Filters).
-* There are new localisation keys for the Date Filter - `lessThan` is now `before`, and `greaterThan` is now `after`. As these are new localization keys which don't appear in your localization dictionaries, you will see the English strings for "before" and "after" used in the date filter options list. Please provide translations for these 2 new keys in your localized dictionaries to display your translation instead.
+* Added new localisation keys for the Date Filter - `lessThan` is now `before`, and `greaterThan` is now `after`. Please provide translations for these 2 new keys in your localized dictionaries to display your translation instead of the English strings for "before" and "after".
 
 ### Row Grouping
 
@@ -92,15 +92,15 @@ When showing the pagination controls, the page size selector is shown by default
 
 ### Sever-Side Row Model
 
-* `ServerSideGroupLevelParams.storeType`: removed in favour of `suppressInfiniteScroll`. When false, Partial Store is used. When true, Full Store is used.
-* `IsApplyServerSideTransactionParams.storeInfo`: use `IsApplyServerSideTransactionParams.groupLevelInfo` instead.
-* `LoadSuccessParams.storeInfo`: use `LoadSuccessParams.groupLevelInfo` instead.
-* `IServerSideGetRowsParams.successCallback`: use `success` method instead with `LoadSuccessParams` params instead.
-* `IServerSideGetRowsParams.failCallback`: use `fail` instead. 
-* interface `ServerSideStoreParams`: use `ServerSideGroupLevelParams` instead.
-* interface `GetServerSideStoreParamsParams`: use `GetServerSideGroupLevelParamsParams` instead.
-* interface `RefreshStoreParams`: use `RefreshServerSideParams` instead.
-* interface `ServerSideGroupState`: use `ServerSideGroupLevelState` instead.
+* `ServerSideGroupLevelParams.storeType` - removed, use `suppressInfiniteScroll` instead. When false, Partial Store is used. When true, Full Store is used.
+* `IsApplyServerSideTransactionParams.storeInfo` - removed, use `IsApplyServerSideTransactionParams.groupLevelInfo` instead.
+* `LoadSuccessParams.storeInfo` - removed, use `LoadSuccessParams.groupLevelInfo` instead.
+* `IServerSideGetRowsParams.successCallback` - removed, use `success` method with `LoadSuccessParams` params instead.
+* `IServerSideGetRowsParams.failCallback` - removed, use `fail` instead. 
+* interface `ServerSideStoreParams` - removed, use `ServerSideGroupLevelParams` instead.
+* interface `GetServerSideStoreParamsParams` - removed, use `GetServerSideGroupLevelParamsParams` instead.
+* interface `RefreshStoreParams` - removed, use `RefreshServerSideParams` instead.
+* interface `ServerSideGroupState` - removed, use `ServerSideGroupLevelState` instead.
 
 ### Export
 
@@ -108,28 +108,28 @@ When showing the pagination controls, the page size selector is shown by default
     * `exportMode`
     * `suppressTextAsCDATA`
 * `columnGroups`: groups are exported by default.
-* `skipGroups`: use `skipRowGroups` instead.
-* `skipHeader`: use `skipColumnHeaders` instead.
-* `customFooter`: use `appendContent` instead.
-* `customHeader`: use `prependContent` instead.
-* interface `RangeSelection`: use `CellRange` instead.
-* interface `AddRangeSelectionParams`: use `CellRangeParams` instead.
+* `skipGroups` - removed, use `skipRowGroups` instead.
+* `skipHeader` - removed, use `skipColumnHeaders` instead.
+* `customFooter` - removed, use `appendContent` instead.
+* `customHeader` - removed, use `prependContent` instead.
+* interface `RangeSelection` - removed, use `CellRange` instead.
+* interface `AddRangeSelectionParams` - removed, use `CellRangeParams` instead.
 
 ### Column API
 
-* `getAllColumns`: use `api.getColumns` instead.
-* `getPrimaryColumns`: use `api.getColumns` instead.
-* `getSecondaryColumns`: use `api.getPivotResultColumns` instead.
-* `setSecondaryColumns`: use `api.setPivotResultColumns` instead.
-* `getSecondaryPivotColumn`: use `api.getPivotResultColumn` instead.
+* `getAllColumns` - removed, use `api.getColumns` instead.
+* `getPrimaryColumns` - removed, use `api.getColumns` instead.
+* `getSecondaryColumns` - removed, use `api.getPivotResultColumns` instead.
+* `setSecondaryColumns` - removed, use `api.setPivotResultColumns` instead.
+* `getSecondaryPivotColumn` - removed, use `api.getPivotResultColumn` instead.
 
 ### Grid API
 
-* `refreshServerSideStore`: use `refreshServerSide` instead.
-* `getServerSideStoreState`: use `getServerSideGroupLevelState` instead.
-* `setProcessSecondaryColDef`: use `api.setGridOption`(`processPivotResultColGroupDef`, `newValue`) instead.
-* `setProcessSecondaryColGroupDef`: use `api.setGridOption`(`setProcessPivotResultColGroupDef`, `newValue`) instead.
-* `setGetServerSideStoreParams`: use `api.setGridOption`(`getServerSideGroupLevelParams`, `newValue`) instead.
+* `refreshServerSideStore` - removed, use `refreshServerSide` instead.
+* `getServerSideStoreState` - removed, use `getServerSideGroupLevelState` instead.
+* `setProcessSecondaryColDef` - removed, use `api.setGridOption`(`processPivotResultColGroupDef`, `newValue`) instead.
+* `setProcessSecondaryColGroupDef` - removed, use `api.setGridOption`(`setProcessPivotResultColGroupDef`, `newValue`) instead.
+* `setGetServerSideStoreParams` - removed, use `api.setGridOption`(`getServerSideGroupLevelParams`, `newValue`) instead.
 
 ## Deprecations
 
@@ -137,12 +137,12 @@ This release includes the following deprecations:
 
 ### GridOptions
 
-* Grid option `advancedFilterModel` is deprecated in favour of `initialState.filter.advancedFilterModel`.
+* `advancedFilterModel` - deprecated, use `initialState.filter.advancedFilterModel` instead.
 * `suppressAsyncEvents` and synchronous event handling is deprecated. Please update your events to be handled asynchronously. 
 
 ### Column Filters
 
-`IFilterParams.valueGetter` is deprecated in favour of `IFilterParams.getValue`, which provides a simpler method of retrieving cell values.
+`IFilterParams.valueGetter` - deprecated, use `IFilterParams.getValue` instead.
 
 ### Grid API
 
