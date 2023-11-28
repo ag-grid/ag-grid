@@ -4,6 +4,7 @@
     --example-border-color: color-mix(in srgb, var(--secondary-border-color), var(--border-color));
 
     margin-bottom: $size-2;
+    margin-top: $size-4;
 
     #{$darkmode-selector} & {
         --example-border-color: color-mix(in srgb, var(--default-background-color), white 10%);
