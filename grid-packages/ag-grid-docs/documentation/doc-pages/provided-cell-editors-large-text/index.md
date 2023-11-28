@@ -2,7 +2,7 @@
 title: "Large Text Cell Editor"
 ---
 
-Simple editor that uses the standard HTML `textarea`, allowing users to enter text over multiple lines.
+Simple editor that uses the standard HTML `textarea`, allowing users to enter text shown over multiple lines.
 
 ## Enabling Large Text Cell Editor
 
