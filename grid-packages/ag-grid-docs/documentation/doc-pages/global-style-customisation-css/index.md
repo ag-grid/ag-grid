@@ -53,12 +53,18 @@ This is implemented by setting default values for variables that reference other
 --ag-grid-size: 4px;
 --ag-cell-horizontal-padding: calc(var(--ag-grid-size) * 3);
 --ag-header-height: var(--ag-row-height);
+
+// blending cascades for colours (Quartz theme only)
+--ag-selected-row-background-color:
+    color-mix(in srgb, transparent, var(--ag-active-color) 8%);
 ```
 
-In this example, if you provide a value for `--ag-grid-size` of 10px then `--ag-cell-horizontal-padding` will default to 30px and --ag-header-height to 10px. However it is still possible to override these defaults with your own values.
+If you provide a value for `--ag-grid-size` of "10px" then `--ag-cell-horizontal-padding` will default to "30px" and `--ag-header-height` to "10px". However it is still possible to override these defaults with your own values.
+
+Likewise, if you provide a value for `--ag-active-color` of red "rgb(255,0,0)" then --ag-selected-row-background-color will default to an 8% semi-transparent red "rgba(255,0,0,0.08)".
 
 <note>
-The Sass Styling API additionally implements [Colour Blending](../global-style-customisation-sass/#colour-blending), where for example if you set `range-selection-border-color` to red then `range-selection-background-color` will automatically default to a semi-transparent red. This is not possible in pure CSS, so it's necessary to set both `--ag-range-selection-border-color` and `--ag-range-selection-background-color`. See [Theme Colour Variables](#theme-colour-variables) for instructions on how to manually recreate this in CSS.
+Colour Blending on CSS variables is currently only implemented in the Quartz theme. Other themes need to specify their own colours for each variable, or use the Sass Styling API which implements [Colour Blending](../global-style-customisation-sass/#colour-blending) for all themes.
 </note>
 
 ## Customising Themes using CSS Rules
