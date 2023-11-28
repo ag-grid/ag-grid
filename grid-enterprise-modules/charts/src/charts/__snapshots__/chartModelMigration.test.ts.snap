@@ -2136,13 +2136,7 @@ exports[`chartModelMigration upgradeChartModel should upgrade 26.0.0-scatter suc
   },
   "chartId": "id-3iq3jaaivcd",
   "chartOptions": {
-    "common": {
-      "legend": {
-        "enabled": true,
-        "position": "right",
-      },
-    },
-    "scatter": {
+    "bubble": {
       "autoSize": true,
       "axes": {
         "category": {
@@ -2271,8 +2265,8 @@ exports[`chartModelMigration upgradeChartModel should upgrade 26.0.0-scatter suc
         "right": 20,
         "top": 20,
       },
-      "paired": true,
       "series": {
+        "fillOpacity": 1,
         "highlightStyle": {
           "item": {
             "fill": "yellow",
@@ -2290,12 +2284,13 @@ exports[`chartModelMigration upgradeChartModel should upgrade 26.0.0-scatter suc
         },
         "marker": {
           "enabled": true,
-          "fillOpacity": 1,
           "shape": "circle",
           "size": 6,
-          "strokeOpacity": 1,
           "strokeWidth": 1,
         },
+        "paired": true,
+        "strokeOpacity": 1,
+        "strokeWidth": 2,
         "tooltip": {
           "enabled": true,
         },
@@ -2323,6 +2318,12 @@ exports[`chartModelMigration upgradeChartModel should upgrade 26.0.0-scatter suc
           "type": "node",
         },
         "range": "nearest",
+      },
+    },
+    "common": {
+      "legend": {
+        "enabled": true,
+        "position": "right",
       },
     },
   },

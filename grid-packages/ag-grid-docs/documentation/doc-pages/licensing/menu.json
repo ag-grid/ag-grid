@@ -1161,7 +1161,7 @@
               },
               {
                 "title": "Filtering",
-                "url": "/aggregation-filtering/#default-filtering-with-aggregated-values",
+                "url": "/aggregation-filtering/",
                 "enterprise": true,
                 "showInCollapsed": false
               },

@@ -31,7 +31,7 @@ Note that in this example:
 
 1. Since these floating filters are providing a subset of the functionality of their parent filter, which can filter for other conditions which are not `'greaterThan'`, the user is prevented from seeing the parent filter by adding `suppressFilterButton: true` in the `floatingFilterComponentParams` and `suppressMenu: true` in the `colDef`
 
-1. `floatingFilterComponentParams` for all the medal columns have an additional param that is used to customise the font colour of the floating filter input text box.
+1. `floatingFilterComponentParams` for all the medal columns have an additional param that is used to customise the border colour of the floating filter input text box.
 
 <grid-example title='Custom Floating Filter' name='custom-floating-filter' type='generated' options='{ "includeNgFormsModule" : true}'></grid-example>
 

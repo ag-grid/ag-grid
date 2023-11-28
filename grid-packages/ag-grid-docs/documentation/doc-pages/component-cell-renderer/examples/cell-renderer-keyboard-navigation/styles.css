@@ -45,10 +45,6 @@ body {
   line-height: 1rem;
 }
 
-.ag-row:focus {
-  background: lightskyblue;
-}
-
 a {
   color: inherit;
 }

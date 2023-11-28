@@ -518,7 +518,7 @@ export class GroupStage extends BeanStub implements IRowNodeStage {
 
             // a performance improvement for tree data, by starting at the shortest paths,
             // less redundant groups need created and destroyed
-            for (let checkedLevel = 1; checkedLevel < longestPath; checkedLevel++) {
+            for (let checkedLevel = 1; checkedLevel < longestPath + 1; checkedLevel++) {
                 rowNodesAndPaths.forEach(([rowNode, path]) => {
                     if (path.length !== checkedLevel) { return; }
                     this.insertOneNode(rowNode, details, isMove, undefined, path);

@@ -27,7 +27,7 @@ export const VALID_SERIES_TYPES: ChartSeriesType[] = [
     'bubble'
 ];
 
-const horizontalChartTypes = new Set(['groupedBar', 'stackedBar', 'normalizedBar']);
+const horizontalChartTypes = new Set(['bar', 'groupedBar', 'stackedBar', 'normalizedBar']);
 export function isHorizontal(chartType: ChartType): boolean {
     return horizontalChartTypes.has(chartType);
 }
