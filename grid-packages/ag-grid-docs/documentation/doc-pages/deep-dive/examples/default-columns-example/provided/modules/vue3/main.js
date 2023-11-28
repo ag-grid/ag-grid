@@ -14,7 +14,7 @@ const App = {
         :class="themeClass"
         :columnDefs="colDefs"
         :rowData="rowData"
-        :defaultColDef="defaultColDefs"
+        :defaultColDef="defaultColDef"
     >
     </ag-grid-vue>
     `,
@@ -34,7 +34,7 @@ const App = {
       { field: "rocket" }
     ]);
 
-    const defaultColDefs = ref({
+    const defaultColDef = ref({
       filter: true
     });
 
@@ -51,7 +51,7 @@ const App = {
     return {
       rowData,
       colDefs,
-      defaultColDefs,
+      defaultColDef,
       themeClass: /** DARK MODE START **/document.documentElement.dataset.defaultTheme || 'ag-theme-quartz'/** DARK MODE END **/,
     };
   },

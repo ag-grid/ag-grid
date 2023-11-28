@@ -34,7 +34,7 @@ const GridExample = () => {
   }, [])
 
   // Apply settings across all columns
-  const defaultColDefs = useMemo(() => ({
+  const defaultColDef = useMemo(() => ({
     filter: true
   }))
 
@@ -44,7 +44,7 @@ const GridExample = () => {
       <AgGridReact 
         rowData={rowData}
         columnDefs={colDefs}
-        defaultColDef={defaultColDefs}
+        defaultColDef={defaultColDef}
         pagination={true}
       />
     </div>
