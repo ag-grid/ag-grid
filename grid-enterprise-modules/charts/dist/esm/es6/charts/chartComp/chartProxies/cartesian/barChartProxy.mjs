@@ -29,7 +29,7 @@ export class BarChartProxy extends CartesianChartProxy {
         const series = params.fields.map(f => ({
             type: this.standaloneChartType,
             direction: isHorizontal(this.chartType) ? 'horizontal' : 'vertical',
-            stacked: isStacked(this.chartType),
+            stacked: this.crossFiltering || isStacked(this.chartType),
             normalizedTo: this.isNormalised() ? 100 : undefined,
             xKey: params.category.id,
             xName: params.category.name,

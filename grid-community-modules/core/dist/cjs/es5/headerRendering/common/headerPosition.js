@@ -94,7 +94,7 @@ var HeaderPositionUtils = /** @class */ (function (_super) {
         var nextFocusColumn = column;
         var nextRow = currentIndex + 1;
         if (currentRowType === headerRowComp_1.HeaderRowType.COLUMN_GROUP) {
-            var leafColumns = column.getLeafColumns();
+            var leafColumns = column.getDisplayedLeafColumns();
             var leafChild = direction === 'After' ? leafColumns[0] : (0, array_1.last)(leafColumns);
             if (this.isAnyChildSpanningHeaderHeight(leafChild.getParent())) {
                 nextFocusColumn = leafChild;

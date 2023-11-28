@@ -388,28 +388,6 @@ let GroupStage = class GroupStage extends BeanStub {
         return noFurtherProcessingNeeded;
     }
     insertNodes(newRowNodes, details, isMove) {
-        if (details.usingTreeData) {
-            let longestPath = 1;
-            const rowNodesAndPaths = newRowNodes.map(node => {
-                const path = this.getGroupInfo(node, details);
-                longestPath = Math.max(longestPath, path.length);
-                return [node, path];
-            });
-            // a performance improvement for tree data, by starting at the shortest paths,
-            // less redundant groups need created and destroyed
-            for (let checkedLevel = 1; checkedLevel < longestPath; checkedLevel++) {
-                rowNodesAndPaths.forEach(([rowNode, path]) => {
-                    if (path.length !== checkedLevel) {
-                        return;
-                    }
-                    this.insertOneNode(rowNode, details, isMove, undefined, path);
-                    if (details.changedPath.isActive()) {
-                        details.changedPath.addParentNode(rowNode.parent);
-                    }
-                });
-            }
-            return;
-        }
         newRowNodes.forEach(rowNode => {
             this.insertOneNode(rowNode, details, isMove);
             if (details.changedPath.isActive()) {
@@ -417,8 +395,8 @@ let GroupStage = class GroupStage extends BeanStub {
             }
         });
     }
-    insertOneNode(childNode, details, isMove, batchRemover, providedPath) {
-        const path = providedPath !== null && providedPath !== void 0 ? providedPath : this.getGroupInfo(childNode, details);
+    insertOneNode(childNode, details, isMove, batchRemover) {
+        const path = this.getGroupInfo(childNode, details);
         const parentGroup = this.findParentForNode(childNode, path, details, batchRemover);
         if (!parentGroup.group) {
             console.warn(`AG Grid: duplicate group keys for row data, keys should be unique`, [parentGroup.data, childNode.data]);

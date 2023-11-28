@@ -5,7 +5,7 @@ import type { AgPolarAxisShape } from './polarAxisOptions';
 import type { Ratio } from './types';
 export interface AgRadiusNumberAxisOptions extends AgBaseAxisOptions {
     type: 'radius-number';
-    /** If 'true', the range will be rounded up to ensure nice equal spacing between the ticks. */
+    /** If `true`, the range will be rounded up to ensure nice equal spacing between the ticks. */
     nice?: boolean;
     /** User override for the automatically determined min value (based on series data). */
     min?: number;
@@ -40,17 +40,17 @@ export interface AgRadiusCategoryAxisOptions extends AgBaseAxisOptions {
      * This property is for grouped polar series plotted on a radius category axis.
      * It is a proportion between 0 and 1 which determines the size of the gap between the items within a single group along the angle axis.
      */
-    groupPaddingInner?: number;
+    groupPaddingInner?: Ratio;
     /**
      * This property is for grouped polar series plotted on a radius category axis.
      * It is a proportion between 0 and 1 which determines the size of the gap between the groups of items along the angle axis.
      */
-    paddingInner?: number;
+    paddingInner?: Ratio;
     /**
      * This property is for grouped polar series plotted on a radius category axis.
      * It is a proportion between 0 and 1 which determines the size of the gap between the groups of items along the angle axis.
      */
-    paddingOuter?: number;
+    paddingOuter?: Ratio;
 }
 export interface AgRadiusCrossLineOptions extends AgBaseCrossLineOptions<AgRadiusCrossLineLabelOptions> {
 }

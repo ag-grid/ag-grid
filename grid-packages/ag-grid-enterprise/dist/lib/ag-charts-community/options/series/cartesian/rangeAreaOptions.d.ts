@@ -1,30 +1,11 @@
-import type { AgChartCallbackParams } from '../../chart/callbackOptions';
 import type { AgDropShadowOptions } from '../../chart/dropShadowOptions';
 import type { AgChartLabelOptions } from '../../chart/labelOptions';
 import type { AgSeriesTooltip } from '../../chart/tooltipOptions';
-import type { CssColor, PixelSize } from '../../chart/types';
+import type { PixelSize } from '../../chart/types';
 import type { AgSeriesMarkerOptions } from '../markerOptions';
 import type { AgBaseSeriesOptions, AgBaseSeriesThemeableOptions, AgSeriesHighlightStyle } from '../seriesOptions';
 import type { AgCartesianSeriesTooltipRendererParams } from './cartesianSeriesTooltipOptions';
 import type { FillOptions, LineDashOptions, StrokeOptions } from './commonOptions';
-export interface AgRangeAreaSeriesMarkerFormatterParams<TDatum> extends AgChartCallbackParams<TDatum> {
-    readonly itemId: string;
-    readonly lowValue: number;
-    readonly highValue: number;
-    readonly size: number;
-    readonly fill?: CssColor;
-    readonly stroke?: CssColor;
-    readonly strokeWidth: PixelSize;
-    readonly highlighted: boolean;
-    readonly xKey: string;
-    readonly yLowKey: string;
-    readonly yHighKey: string;
-}
-export interface AgRangeAreaSeriesFormat {
-    fill?: CssColor;
-    stroke?: CssColor;
-    strokeWidth?: PixelSize;
-}
 export interface AgRangeAreaSeriesTooltipRendererParams extends Omit<AgCartesianSeriesTooltipRendererParams, 'yKey' | 'yValue'> {
     /** The Id to distinguish the type of datum. This can be `positive`, `negative`, `total` or `subtotal`. */
     itemId: string;

@@ -43,7 +43,11 @@ export interface AgRangeBarSeriesLabelOptions<TDatum> extends AgChartLabelOption
 }
 export type AgRangeBarSeriesLabelPlacement = 'inside' | 'outside';
 export interface AgRangeBarSeriesThemeableOptions<TDatum = any> extends AgBaseSeriesThemeableOptions, FillOptions, StrokeOptions, LineDashOptions {
-    /** Bar rendering direction. NOTE: This option affects the layout direction of X and Y data values. */
+    /**
+     * Bar rendering direction.
+     *
+     * NOTE: This option affects the layout direction of X and Y data values.
+     */
     direction?: 'horizontal' | 'vertical';
     /** Series-specific tooltip configuration. */
     tooltip?: AgSeriesTooltip<AgRangeBarSeriesTooltipRendererParams>;

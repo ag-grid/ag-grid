@@ -442,32 +442,6 @@ var GroupStage = /** @class */ (function (_super) {
     };
     GroupStage.prototype.insertNodes = function (newRowNodes, details, isMove) {
         var _this = this;
-        if (details.usingTreeData) {
-            var longestPath_1 = 1;
-            var rowNodesAndPaths = newRowNodes.map(function (node) {
-                var path = _this.getGroupInfo(node, details);
-                longestPath_1 = Math.max(longestPath_1, path.length);
-                return [node, path];
-            });
-            var _loop_2 = function (checkedLevel) {
-                rowNodesAndPaths.forEach(function (_a) {
-                    var _b = __read(_a, 2), rowNode = _b[0], path = _b[1];
-                    if (path.length !== checkedLevel) {
-                        return;
-                    }
-                    _this.insertOneNode(rowNode, details, isMove, undefined, path);
-                    if (details.changedPath.isActive()) {
-                        details.changedPath.addParentNode(rowNode.parent);
-                    }
-                });
-            };
-            // a performance improvement for tree data, by starting at the shortest paths,
-            // less redundant groups need created and destroyed
-            for (var checkedLevel = 1; checkedLevel < longestPath_1; checkedLevel++) {
-                _loop_2(checkedLevel);
-            }
-            return;
-        }
         newRowNodes.forEach(function (rowNode) {
             _this.insertOneNode(rowNode, details, isMove);
             if (details.changedPath.isActive()) {
@@ -475,8 +449,8 @@ var GroupStage = /** @class */ (function (_super) {
             }
         });
     };
-    GroupStage.prototype.insertOneNode = function (childNode, details, isMove, batchRemover, providedPath) {
-        var path = providedPath !== null && providedPath !== void 0 ? providedPath : this.getGroupInfo(childNode, details);
+    GroupStage.prototype.insertOneNode = function (childNode, details, isMove, batchRemover) {
+        var path = this.getGroupInfo(childNode, details);
         var parentGroup = this.findParentForNode(childNode, path, details, batchRemover);
         if (!parentGroup.group) {
             console.warn("AG Grid: duplicate group keys for row data, keys should be unique", [parentGroup.data, childNode.data]);

@@ -60,7 +60,7 @@ export interface AgChartCaptionOptions {
     /** The colour to use for the text. */
     color?: CssColor;
     /** Spacing added to help position the text. */
-    spacing?: number;
+    spacing?: PixelSize;
     /** Used to constrain the width of the title. */
     maxWidth?: PixelSize;
     /** Used to constrain the height of the title. */

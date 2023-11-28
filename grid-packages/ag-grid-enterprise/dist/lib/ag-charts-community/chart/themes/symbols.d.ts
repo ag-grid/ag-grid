@@ -26,4 +26,5 @@ export declare const DEFAULT_WATERFALL_SERIES_TOTAL_COLOURS: string;
 export declare const DEFAULT_WATERFALL_SERIES_CONNECTOR_LINE_STROKE: string;
 export declare const DEFAULT_POLAR_SERIES_STROKE: string;
 export declare const DEFAULT_DIVERGING_SERIES_COLOUR_RANGE: string;
-export declare const DEFAULT_BACKGROUND_CONTRAST_COLOR_RANGE: string;
+export declare const DEFAULT_HIERARCHY_FILLS: string;
+export declare const DEFAULT_HIERARCHY_STROKES: string;

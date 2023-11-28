@@ -31,9 +31,9 @@ export interface AgSunburstSeriesThemeableOptions<TDatum = any> extends Omit<AgB
     /** Options for a secondary, smaller label in a sector - displayed under the primary label */
     secondaryLabel?: AgSunburstSeriesBaseLabelOptions<TDatum>;
     /** Spacing between the sectors */
-    sectorSpacing?: number;
+    sectorSpacing?: PixelSize;
     /** Minimum distance between text and the edges of the sectors */
-    padding?: number;
+    padding?: PixelSize;
     /** The colours to cycle through for the fills of the sectors. */
     fills?: CssColor[];
     /** The colours to cycle through for the strokes of the sectors. */

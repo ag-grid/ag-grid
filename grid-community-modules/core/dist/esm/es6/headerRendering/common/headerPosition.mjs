@@ -71,7 +71,7 @@ let HeaderPositionUtils = class HeaderPositionUtils extends BeanStub {
         let nextFocusColumn = column;
         let nextRow = currentIndex + 1;
         if (currentRowType === HeaderRowType.COLUMN_GROUP) {
-            const leafColumns = column.getLeafColumns();
+            const leafColumns = column.getDisplayedLeafColumns();
             const leafChild = direction === 'After' ? leafColumns[0] : last(leafColumns);
             if (this.isAnyChildSpanningHeaderHeight(leafChild.getParent())) {
                 nextFocusColumn = leafChild;

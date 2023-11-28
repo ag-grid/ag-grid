@@ -40,7 +40,7 @@ export interface AgHistogramSeriesOptions<TDatum = any> extends AgBaseSeriesOpti
     areaPlot?: boolean;
     /** Set the bins explicitly. The bins need not be of equal width. Note that `bins` is ignored if `binCount` is also supplied. */
     bins?: [number, number][];
-    /** The number of bins to try to split the x axis into. Clashes with the `bins` setting. */
+    /** The number of bins to try to split the x-axis into. Clashes with the `bins` setting. */
     binCount?: number;
     /** Dictates how the bins are aggregated. If set to 'sum', the value shown for the bins will be the total of the yKey values. If set to 'mean', it will display the average yKey value of the bin. */
     aggregation?: 'count' | 'sum' | 'mean';

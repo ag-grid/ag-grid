@@ -1,4 +1,4 @@
-import type { CssColor, Opacity, PixelSize } from './types';
+import type { CssColor, Opacity, PixelSize, Ratio } from './types';
 export interface AgNavigatorMaskOptions {
     /** The fill colour used by the mask. */
     fill?: CssColor;
@@ -33,9 +33,9 @@ export interface AgNavigatorOptions {
     /** The distance between the navigator and the bottom axis. */
     margin?: PixelSize;
     /** The start of the visible range in the `[0, 1]` interval. */
-    min?: number;
+    min?: Ratio;
     /** The end of the visible range in the `[0, 1]` interval. */
-    max?: number;
+    max?: Ratio;
     /** Configuration for the navigator's visible range mask. */
     mask?: AgNavigatorMaskOptions;
     /** Configuration for the navigator's left handle. */

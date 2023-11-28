@@ -57,7 +57,7 @@ var BarChartProxy = /** @class */ (function (_super) {
         var series = params.fields.map(function (f) { return ({
             type: _this.standaloneChartType,
             direction: isHorizontal(_this.chartType) ? 'horizontal' : 'vertical',
-            stacked: isStacked(_this.chartType),
+            stacked: _this.crossFiltering || isStacked(_this.chartType),
             normalizedTo: _this.isNormalised() ? 100 : undefined,
             xKey: params.category.id,
             xName: params.category.name,

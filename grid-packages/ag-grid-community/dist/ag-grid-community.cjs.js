@@ -19045,6 +19045,7 @@ var GroupCellRendererCtrl = /** @class */ (function (_super) {
         return _super !== null && _super.apply(this, arguments) || this;
     }
     GroupCellRendererCtrl.prototype.init = function (comp, eGui, eCheckbox, eExpanded, eContracted, compClass, params) {
+        var _a, _b;
         this.params = params;
         this.eGui = eGui;
         this.eCheckbox = eCheckbox;
@@ -19074,8 +19075,25 @@ var GroupCellRendererCtrl = /** @class */ (function (_super) {
         }
         this.setupShowingValueForOpenedParent();
         this.findDisplayedGroupNode();
-        this.addFullWidthRowDraggerIfNeeded();
+        if (!topLevelFooter) {
+            var showingFooterTotal = params.node.footer && params.node.rowGroupIndex === this.columnModel.getRowGroupColumns().findIndex(function (c) { var _a; return c.getColId() === ((_a = params.colDef) === null || _a === void 0 ? void 0 : _a.showRowGroup); });
+            // if we're not showing a group value
+            var isAlwaysShowing = this.gridOptionsService.get('groupDisplayType') === 'singleColumn' || this.gridOptionsService.get('treeData');
+            var showOpenGroupValue = (isAlwaysShowing || (this.gridOptionsService.get('showOpenedGroup') && !params.node.footer && ((!params.node.group ||
+                (params.node.rowGroupIndex != null &&
+                    params.node.rowGroupIndex > this.columnModel.getRowGroupColumns().findIndex(function (c) { var _a; return c.getColId() === ((_a = params.colDef) === null || _a === void 0 ? void 0 : _a.showRowGroup); }))))));
+            // not showing a leaf value (field/valueGetter)
+            var leafWithValues = !node.group && (((_a = this.params.colDef) === null || _a === void 0 ? void 0 : _a.field) || ((_b = this.params.colDef) === null || _b === void 0 ? void 0 : _b.valueGetter));
+            // doesn't have expand/collapse chevron
+            var isExpandable = this.isExpandable();
+            // if not showing any values or chevron, skip cell.
+            var canSkipRenderingCell = !this.showingValueForOpenedParent && !isExpandable && !leafWithValues && !showOpenGroupValue && !showingFooterTotal;
+            if (canSkipRenderingCell) {
+                return;
+            }
+        }
         this.addExpandAndContract();
+        this.addFullWidthRowDraggerIfNeeded();
         this.addCheckboxIfNeeded();
         this.addValueElement();
         this.setupIndent();
@@ -38460,14 +38478,13 @@ var ExpansionService = /** @class */ (function (_super) {
         this.isClientSideRowModel = this.rowModel.getType() === 'clientSide';
     };
     ExpansionService.prototype.expandRows = function (rowIds) {
-        var _this = this;
         if (!this.isClientSideRowModel) {
             return;
         }
-        rowIds.forEach(function (rowId) {
-            var rowNode = _this.rowModel.getRowNode(rowId);
-            if (rowNode) {
-                rowNode.expanded = true;
+        var rowIdSet = new Set(rowIds);
+        this.rowModel.forEachNode(function (node) {
+            if (node.id && rowIdSet.has(node.id)) {
+                node.expanded = true;
             }
         });
         this.onGroupExpandedOrCollapsed();
@@ -42477,7 +42494,7 @@ var AgRichSelect = /** @class */ (function (_super) {
     };
     AgRichSelect.prototype.getCurrentValueIndex = function () {
         var _a = this, currentList = _a.currentList, value = _a.value;
-        if (value == null) {
+        if (value == null || !currentList) {
             return -1;
         }
         for (var i = 0; i < currentList.length; i++) {
@@ -42713,13 +42730,14 @@ var AgRichSelect = /** @class */ (function (_super) {
     AgRichSelect.prototype.displayOrHidePicker = function () {
         var _a;
         var eListGui = (_a = this.listComponent) === null || _a === void 0 ? void 0 : _a.getGui();
-        eListGui === null || eListGui === void 0 ? void 0 : eListGui.classList.toggle('ag-hidden', this.currentList.length === 0);
+        var toggleValue = this.currentList ? this.currentList.length === 0 : false;
+        eListGui === null || eListGui === void 0 ? void 0 : eListGui.classList.toggle('ag-hidden', toggleValue);
     };
     AgRichSelect.prototype.clearSearchString = function () {
         this.searchString = '';
     };
     AgRichSelect.prototype.selectListItem = function (index, preventUnnecessaryScroll) {
-        if (!this.isPickerDisplayed || !this.listComponent || index < 0 || index >= this.currentList.length) {
+        if (!this.isPickerDisplayed || !this.currentList || !this.listComponent || index < 0 || index >= this.currentList.length) {
             return;
         }
         var wasScrolled = this.listComponent.ensureIndexVisible(index, !preventUnnecessaryScroll);
@@ -42729,7 +42747,7 @@ var AgRichSelect = /** @class */ (function (_super) {
         this.highlightSelectedValue(index);
     };
     AgRichSelect.prototype.setValue = function (value, silent, fromPicker) {
-        var index = this.currentList.indexOf(value);
+        var index = this.currentList ? this.currentList.indexOf(value) : -1;
         if (index === -1) {
             return this;
         }
@@ -42790,10 +42808,12 @@ var AgRichSelect = /** @class */ (function (_super) {
             return;
         }
         e.preventDefault();
-        this.onListValueSelected(this.currentList[this.highlightedItem], true);
+        if (this.currentList) {
+            this.onListValueSelected(this.currentList[this.highlightedItem], true);
+        }
     };
     AgRichSelect.prototype.onTabKeyDown = function () {
-        if (!this.isPickerDisplayed) {
+        if (!this.isPickerDisplayed || !this.currentList) {
             return;
         }
         this.setValue(this.currentList[this.highlightedItem], false, true);
@@ -50636,7 +50656,7 @@ var HeaderPositionUtils = /** @class */ (function (_super) {
         var nextFocusColumn = column;
         var nextRow = currentIndex + 1;
         if (currentRowType === exports.HeaderRowType.COLUMN_GROUP) {
-            var leafColumns = column.getLeafColumns();
+            var leafColumns = column.getDisplayedLeafColumns();
             var leafChild = direction === 'After' ? leafColumns[0] : last(leafColumns);
             if (this.isAnyChildSpanningHeaderHeight(leafChild.getParent())) {
                 nextFocusColumn = leafChild;

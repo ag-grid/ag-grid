@@ -29,7 +29,7 @@ export interface AgAxisCaptionOptions {
     /** The colour to use for the title. */
     color?: CssColor;
     /** Spacing between the axis labels and the axis title. */
-    spacing?: number;
+    spacing?: PixelSize;
     /** Formatter to allow dynamic axis title calculation. */
     formatter?: (params: AgAxisCaptionFormatterParams) => string;
 }
@@ -69,12 +69,10 @@ export interface AgAxisBaseTickOptions {
     size?: PixelSize;
     /** The colour of the axis ticks. */
     color?: CssColor;
-    /** Array of values in axis units to display as ticks along the axis.
-     * The values in this array must be compatible with the axis type.
-     */
+    /** Array of values in axis units to display as ticks along the axis. The values in this array must be compatible with the axis type. */
     values?: any[];
     /** Minimum gap in pixels between tick lines. */
-    minSpacing?: number;
+    minSpacing?: PixelSize;
 }
 export interface AgAxisLabelFormatterParams {
     readonly value: any;

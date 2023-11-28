@@ -208,10 +208,10 @@ export declare abstract class Series<TDatum extends SeriesNodeDatum, TLabel = TD
     getModuleMap(): SeriesModuleMap;
     createModuleContext(): SeriesContext;
     protected getLabelText<TParams>(label: AgChartLabelOptions<any, TParams>, params: TParams & Omit<AgChartLabelFormatterParams<any>, 'seriesId'>, defaultFormatter?: (value: any) => string): string;
-    protected getMarkerStyle<TParams>(marker: ISeriesMarker<TDatum, TParams>, params: TParams & Omit<AgSeriesMarkerFormatterParams<TDatum['datum']>, 'seriesId'>, defaultStyle?: AgSeriesMarkerStyle): AgSeriesMarkerStyle & {
-        size: any;
+    protected getMarkerStyle<TParams>(marker: ISeriesMarker<TDatum, TParams>, params: TParams & Omit<AgSeriesMarkerFormatterParams<TDatum>, 'seriesId'>, defaultStyle?: AgSeriesMarkerStyle): AgSeriesMarkerStyle & {
+        size: number;
     };
-    protected updateMarkerStyle<TParams>(markerNode: Marker, marker: ISeriesMarker<TDatum, TParams>, params: TParams & Omit<AgSeriesMarkerFormatterParams<TDatum['datum']>, 'seriesId'>, defaultStyle?: AgSeriesMarkerStyle, { applyTranslation }?: {
+    protected updateMarkerStyle<TParams>(markerNode: Marker, marker: ISeriesMarker<TDatum, TParams>, params: TParams & Omit<AgSeriesMarkerFormatterParams<TDatum>, 'seriesId'>, defaultStyle?: AgSeriesMarkerStyle, { applyTranslation }?: {
         applyTranslation?: boolean | undefined;
     }): void;
     getMinRect(): BBox | undefined;

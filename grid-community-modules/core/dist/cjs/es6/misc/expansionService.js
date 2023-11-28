@@ -18,10 +18,10 @@ let ExpansionService = class ExpansionService extends beanStub_1.BeanStub {
         if (!this.isClientSideRowModel) {
             return;
         }
-        rowIds.forEach(rowId => {
-            const rowNode = this.rowModel.getRowNode(rowId);
-            if (rowNode) {
-                rowNode.expanded = true;
+        const rowIdSet = new Set(rowIds);
+        this.rowModel.forEachNode(node => {
+            if (node.id && rowIdSet.has(node.id)) {
+                node.expanded = true;
             }
         });
         this.onGroupExpandedOrCollapsed();

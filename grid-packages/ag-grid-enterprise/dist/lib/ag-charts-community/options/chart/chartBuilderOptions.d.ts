@@ -3,6 +3,7 @@ import type { AgBaseHierarchyChartOptions } from '../series/hierarchy/hierarchyO
 import type { AgBasePolarChartOptions } from '../series/polar/polarOptions';
 import type { AgBaseChartOptions } from './chartOptions';
 import type { AgBaseChartThemeOptions, AgBaseChartThemeOverrides, AgChartTheme, AgChartThemeName } from './themeOptions';
+import type { PixelSize } from './types';
 export interface AgChartThemeOptions extends AgBaseChartThemeOptions {
 }
 export type AgChartThemeOverrides = AgBaseChartThemeOverrides;
@@ -55,9 +56,9 @@ export interface DownloadOptions extends ImageDataUrlOptions {
 }
 export interface ImageDataUrlOptions {
     /** Width of downloaded chart image in pixels. Defaults to current chart width. */
-    width?: number;
+    width?: PixelSize;
     /** Height of downloaded chart image in pixels. Defaults to current chart height. */
-    height?: number;
+    height?: PixelSize;
     /** A MIME-type string indicating the image format. The default format type is `image/png`. Options: `image/png`, `image/jpeg`.  */
     fileFormat?: string;
 }

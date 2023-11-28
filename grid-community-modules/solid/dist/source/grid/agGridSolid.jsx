@@ -29,10 +29,7 @@ const AgGridSolid = (props) => {
             const currentValue = props[key];
             const previousValue = propsCopy[key];
             if (previousValue !== currentValue) {
-                changes[key] = {
-                    currentValue,
-                    previousValue
-                };
+                changes[key] = currentValue;
                 propsCopy[key] = currentValue;
                 changesExist = true;
             }

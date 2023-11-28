@@ -31,14 +31,13 @@ var ExpansionService = /** @class */ (function (_super) {
         this.isClientSideRowModel = this.rowModel.getType() === 'clientSide';
     };
     ExpansionService.prototype.expandRows = function (rowIds) {
-        var _this = this;
         if (!this.isClientSideRowModel) {
             return;
         }
-        rowIds.forEach(function (rowId) {
-            var rowNode = _this.rowModel.getRowNode(rowId);
-            if (rowNode) {
-                rowNode.expanded = true;
+        var rowIdSet = new Set(rowIds);
+        this.rowModel.forEachNode(function (node) {
+            if (node.id && rowIdSet.has(node.id)) {
+                node.expanded = true;
             }
         });
         this.onGroupExpandedOrCollapsed();

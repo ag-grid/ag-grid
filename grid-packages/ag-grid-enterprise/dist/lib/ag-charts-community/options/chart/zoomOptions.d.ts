@@ -1,3 +1,4 @@
+import type { Ratio } from './types';
 export type AgZoomAnchorPoint = 'pointer' | 'start' | 'middle' | 'end';
 export type AgZoomAxes = 'x' | 'y' | 'xy';
 export type AgZoomPanKey = 'alt' | 'ctrl' | 'meta' | 'shift';
@@ -60,5 +61,5 @@ export interface AgZoomOptions {
      * The amount to zoom when scrolling with the mouse wheel, as a ratio of the full chart.
      * Default: `0.1`
      */
-    scrollingStep?: number;
+    scrollingStep?: Ratio;
 }

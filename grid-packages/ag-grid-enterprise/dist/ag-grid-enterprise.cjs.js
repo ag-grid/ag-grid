@@ -4658,8 +4658,6 @@ var AdvancedFilterModule = {
 
 const AgErrorBarSupportedSeriesTypes = ['bar', 'line', 'scatter'];
 
-const AgTooltipPositionTypes = ['pointer', 'node'];
-
 /**
  * Internal Use Only: Used to ensure this file is treated as a module until we can use moduleDetection flag in Ts v4.7
  */
@@ -11083,10 +11081,8 @@ class Sector extends Path {
             }
         }
         else {
-            const innerRadius = Math.max(this.innerRadius + inset, 0);
-            const outerRadius = Math.max(this.outerRadius - inset, 0);
-            if (innerRadius >= outerRadius)
-                return;
+            const innerRadius = Math.min(this.innerRadius + inset, this.outerRadius - inset);
+            const outerRadius = Math.max(this.innerRadius + inset, this.outerRadius - inset);
             const innerAngleOffset = innerRadius > 0 ? inset / innerRadius : 0;
             const outerAngleOffset = outerRadius > 0 ? inset / outerRadius : 0;
             const sweep = Math.abs(endAngle - startAngle);
@@ -17309,7 +17305,7 @@ class Axis {
     }
     getTicks({ tickGenerationType, previousTicks, tickCount, minTickCount, maxTickCount, primaryTickCount, }) {
         var _a;
-        const { scale, visibleRange } = this;
+        const { range, scale, visibleRange } = this;
         let rawTicks = [];
         switch (tickGenerationType) {
             case TickGenerationType.VALUES:
@@ -17337,18 +17333,12 @@ class Axis {
         // Only get the ticks within a sliding window of the visible range to improve performance
         const start = Math.max(0, Math.floor(visibleRange[0] * rawTicks.length));
         const end = Math.min(rawTicks.length, Math.ceil(visibleRange[1] * rawTicks.length));
-        let [rangeMin, rangeMax] = scale.range;
-        if (rangeMin > rangeMax) {
-            [rangeMin, rangeMax] = [rangeMax, rangeMin];
-        }
         for (let i = start; i < end; i++) {
             const rawTick = rawTicks[i];
             const translationY = scale.convert(rawTick) + halfBandwidth;
-            // Do not render ticks outside the scale range. A clip rect would trim long labels, so instead hide ticks
-            // based on their translation.
-            if (rangeMin != null && translationY < rangeMin)
-                continue;
-            if (rangeMax != null && translationY > rangeMax)
+            // Do not render ticks outside the range with a small tolerance. A clip rect would trim long labels, so
+            // instead hide ticks based on their translation.
+            if (range.length > 0 && !this.inRange(translationY, 0, 0.001))
                 continue;
             const tickLabel = this.formatTick(rawTick, i);
             // Create a tick id from the label, or as an increment of the last label if this tick label is blank
@@ -26966,7 +26956,8 @@ const DEFAULT_WATERFALL_SERIES_TOTAL_COLOURS = Symbol('default-waterfall-series-
 const DEFAULT_WATERFALL_SERIES_CONNECTOR_LINE_STROKE = Symbol('default-waterfall-series-connector-line-stroke');
 const DEFAULT_POLAR_SERIES_STROKE = Symbol('default-polar-series-stroke');
 const DEFAULT_DIVERGING_SERIES_COLOUR_RANGE = Symbol('default-diverging-series-colour-range');
-const DEFAULT_BACKGROUND_CONTRAST_COLOR_RANGE = Symbol('default-background-contrast-colour-range');
+const DEFAULT_HIERARCHY_FILLS = Symbol('default-hierarchy-fills');
+const DEFAULT_HIERARCHY_STROKES = Symbol('default-hierarchy-strokes');
 
 /**
  * Implements a per-path "to/from" animation.
@@ -28113,7 +28104,7 @@ class AreaSeries extends CartesianSeries {
             stroke: this.stroke,
             strokeWidth: this.strokeWidth,
         });
-        const { fill: color } = this.getMarkerStyle(marker, { datum, xKey, yKey, highlighted: false }, baseStyle);
+        const { fill: color } = this.getMarkerStyle(marker, { datum: nodeDatum, xKey, yKey, highlighted: false }, baseStyle);
         return tooltip.toTooltipHtml({ title, content, backgroundColor: color }, {
             datum,
             xKey,
@@ -30218,7 +30209,7 @@ class LineSeries extends CartesianSeries {
         const title = sanitizeHtml((_a = this.title) !== null && _a !== void 0 ? _a : yName);
         const content = sanitizeHtml(xString + ': ' + yString);
         const baseStyle = mergeDefaults({ fill: marker.stroke }, marker.getStyle(), { strokeWidth: this.strokeWidth });
-        const { fill: color } = this.getMarkerStyle(marker, { datum, xKey, yKey, highlighted: false }, baseStyle);
+        const { fill: color } = this.getMarkerStyle(marker, { datum: nodeDatum, xKey, yKey, highlighted: false }, baseStyle);
         return tooltip.toTooltipHtml({ title, content, backgroundColor: color }, Object.assign({ datum,
             xKey,
             xName,
@@ -32239,13 +32230,8 @@ class ChartTheme {
             DEFAULT_FILLS.YELLOW,
             DEFAULT_FILLS.GREEN,
         ]);
-        properties.set(DEFAULT_BACKGROUND_CONTRAST_COLOR_RANGE, [
-            '#9eaab4',
-            '#7f8a94',
-            '#616c75',
-            '#444f58',
-            '#29343c',
-        ]);
+        properties.set(DEFAULT_HIERARCHY_FILLS, ['#ffffff', '#e0e5ea', '#c1ccd5', '#a3b4c1', '#859cad']);
+        properties.set(DEFAULT_HIERARCHY_STROKES, ['#ffffff', '#c5cbd1', '#a4b1bd', '#8498a9', '#648096']);
         properties.set(DEFAULT_POLAR_SERIES_STROKE, DEFAULT_BACKGROUND_FILL);
         properties.set(DEFAULT_WATERFALL_SERIES_POSITIVE_COLOURS, ChartTheme.getWaterfallSeriesDefaultPositiveColors());
         properties.set(DEFAULT_WATERFALL_SERIES_NEGATIVE_COLOURS, ChartTheme.getWaterfallSeriesDefaultNegativeColors());
@@ -32329,6 +32315,8 @@ class DarkTheme extends ChartTheme {
             DEFAULT_DARK_FILLS.YELLOW,
             DEFAULT_DARK_FILLS.GREEN,
         ]);
+        result.properties.set(DEFAULT_HIERARCHY_FILLS, ['#192834', '#253746', '#324859', '#3f596c', '#4d6a80']);
+        result.properties.set(DEFAULT_HIERARCHY_STROKES, ['#192834', '#3b5164', '#496275', '#577287', '#668399']);
         result.properties.set(DEFAULT_BACKGROUND_COLOUR, DEFAULT_DARK_BACKGROUND_FILL);
         result.properties.set(DEFAULT_INSIDE_SERIES_LABEL_COLOUR, DEFAULT_DARK_BACKGROUND_FILL);
         return result;
@@ -32985,8 +32973,9 @@ function getGlobalTooltipPositionOptions(position) {
     }
     const { type, xOffset, yOffset } = position;
     const result = {};
-    const allowedTypes = AgTooltipPositionTypes;
-    if (typeof type === 'string' && allowedTypes.includes(type)) {
+    const AgTooltipPositionTypeMap = { pointer: true, node: true };
+    const isTooltipPositionType = (value) => Object.keys(AgTooltipPositionTypeMap).includes(value);
+    if (typeof type === 'string' && isTooltipPositionType(type)) {
         result.type = type;
     }
     if (typeof xOffset === 'number' && !isNaN(xOffset) && isFinite(xOffset)) {
@@ -33975,7 +33964,8 @@ var integratedChartsTheme = /*#__PURE__*/Object.freeze({
     DEFAULT_WATERFALL_SERIES_CONNECTOR_LINE_STROKE: DEFAULT_WATERFALL_SERIES_CONNECTOR_LINE_STROKE,
     DEFAULT_POLAR_SERIES_STROKE: DEFAULT_POLAR_SERIES_STROKE,
     DEFAULT_DIVERGING_SERIES_COLOUR_RANGE: DEFAULT_DIVERGING_SERIES_COLOUR_RANGE,
-    DEFAULT_BACKGROUND_CONTRAST_COLOR_RANGE: DEFAULT_BACKGROUND_CONTRAST_COLOR_RANGE,
+    DEFAULT_HIERARCHY_FILLS: DEFAULT_HIERARCHY_FILLS,
+    DEFAULT_HIERARCHY_STROKES: DEFAULT_HIERARCHY_STROKES,
     FONT_SIZE: FONT_SIZE,
     BOLD: BOLD,
     NORMAL: NORMAL,
@@ -34005,7 +33995,7 @@ var VALID_SERIES_TYPES = [
     'scatter',
     'bubble'
 ];
-var horizontalChartTypes = new Set(['groupedBar', 'stackedBar', 'normalizedBar']);
+var horizontalChartTypes = new Set(['bar', 'groupedBar', 'stackedBar', 'normalizedBar']);
 function isHorizontal(chartType) {
     return horizontalChartTypes.has(chartType);
 }
@@ -41140,7 +41130,7 @@ var BarChartProxy = /** @class */ (function (_super) {
         var series = params.fields.map(function (f) { return ({
             type: _this.standaloneChartType,
             direction: isHorizontal(_this.chartType) ? 'horizontal' : 'vertical',
-            stacked: isStacked(_this.chartType),
+            stacked: _this.crossFiltering || isStacked(_this.chartType),
             normalizedTo: _this.isNormalised() ? 100 : undefined,
             xKey: params.category.id,
             xName: params.category.name,
@@ -50228,32 +50218,6 @@ var GroupStage = /** @class */ (function (_super) {
     };
     GroupStage.prototype.insertNodes = function (newRowNodes, details, isMove) {
         var _this = this;
-        if (details.usingTreeData) {
-            var longestPath_1 = 1;
-            var rowNodesAndPaths = newRowNodes.map(function (node) {
-                var path = _this.getGroupInfo(node, details);
-                longestPath_1 = Math.max(longestPath_1, path.length);
-                return [node, path];
-            });
-            var _loop_2 = function (checkedLevel) {
-                rowNodesAndPaths.forEach(function (_a) {
-                    var _b = __read$n(_a, 2), rowNode = _b[0], path = _b[1];
-                    if (path.length !== checkedLevel) {
-                        return;
-                    }
-                    _this.insertOneNode(rowNode, details, isMove, undefined, path);
-                    if (details.changedPath.isActive()) {
-                        details.changedPath.addParentNode(rowNode.parent);
-                    }
-                });
-            };
-            // a performance improvement for tree data, by starting at the shortest paths,
-            // less redundant groups need created and destroyed
-            for (var checkedLevel = 1; checkedLevel < longestPath_1; checkedLevel++) {
-                _loop_2(checkedLevel);
-            }
-            return;
-        }
         newRowNodes.forEach(function (rowNode) {
             _this.insertOneNode(rowNode, details, isMove);
             if (details.changedPath.isActive()) {
@@ -50261,8 +50225,8 @@ var GroupStage = /** @class */ (function (_super) {
             }
         });
     };
-    GroupStage.prototype.insertOneNode = function (childNode, details, isMove, batchRemover, providedPath) {
-        var path = providedPath !== null && providedPath !== void 0 ? providedPath : this.getGroupInfo(childNode, details);
+    GroupStage.prototype.insertOneNode = function (childNode, details, isMove, batchRemover) {
+        var path = this.getGroupInfo(childNode, details);
         var parentGroup = this.findParentForNode(childNode, path, details, batchRemover);
         if (!parentGroup.group) {
             console.warn("AG Grid: duplicate group keys for row data, keys should be unique", [parentGroup.data, childNode.data]);
@@ -74519,7 +74483,6 @@ Object.defineProperty(exports, 'getRowContainerTypeForName', {
 exports.AgChart = AgChart;
 exports.AgCharts = AgCharts;
 exports.AgErrorBarSupportedSeriesTypes = AgErrorBarSupportedSeriesTypes;
-exports.AgTooltipPositionTypes = AgTooltipPositionTypes;
 exports.GridChartsModule = GridChartsModule;
 exports.LicenseManager = GridLicenseManager;
 exports.Marker = Marker;

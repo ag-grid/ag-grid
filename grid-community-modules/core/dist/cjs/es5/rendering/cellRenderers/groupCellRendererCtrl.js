@@ -50,6 +50,7 @@ var GroupCellRendererCtrl = /** @class */ (function (_super) {
         return _super !== null && _super.apply(this, arguments) || this;
     }
     GroupCellRendererCtrl.prototype.init = function (comp, eGui, eCheckbox, eExpanded, eContracted, compClass, params) {
+        var _a, _b;
         this.params = params;
         this.eGui = eGui;
         this.eCheckbox = eCheckbox;
@@ -79,8 +80,25 @@ var GroupCellRendererCtrl = /** @class */ (function (_super) {
         }
         this.setupShowingValueForOpenedParent();
         this.findDisplayedGroupNode();
-        this.addFullWidthRowDraggerIfNeeded();
+        if (!topLevelFooter) {
+            var showingFooterTotal = params.node.footer && params.node.rowGroupIndex === this.columnModel.getRowGroupColumns().findIndex(function (c) { var _a; return c.getColId() === ((_a = params.colDef) === null || _a === void 0 ? void 0 : _a.showRowGroup); });
+            // if we're not showing a group value
+            var isAlwaysShowing = this.gridOptionsService.get('groupDisplayType') === 'singleColumn' || this.gridOptionsService.get('treeData');
+            var showOpenGroupValue = (isAlwaysShowing || (this.gridOptionsService.get('showOpenedGroup') && !params.node.footer && ((!params.node.group ||
+                (params.node.rowGroupIndex != null &&
+                    params.node.rowGroupIndex > this.columnModel.getRowGroupColumns().findIndex(function (c) { var _a; return c.getColId() === ((_a = params.colDef) === null || _a === void 0 ? void 0 : _a.showRowGroup); }))))));
+            // not showing a leaf value (field/valueGetter)
+            var leafWithValues = !node.group && (((_a = this.params.colDef) === null || _a === void 0 ? void 0 : _a.field) || ((_b = this.params.colDef) === null || _b === void 0 ? void 0 : _b.valueGetter));
+            // doesn't have expand/collapse chevron
+            var isExpandable = this.isExpandable();
+            // if not showing any values or chevron, skip cell.
+            var canSkipRenderingCell = !this.showingValueForOpenedParent && !isExpandable && !leafWithValues && !showOpenGroupValue && !showingFooterTotal;
+            if (canSkipRenderingCell) {
+                return;
+            }
+        }
         this.addExpandAndContract();
+        this.addFullWidthRowDraggerIfNeeded();
         this.addCheckboxIfNeeded();
         this.addValueElement();
         this.setupIndent();

@@ -1,6 +1,7 @@
 import type { AgAxisCategoryTickOptions, AgAxisNumberTickOptions } from '../series/cartesian/cartesianOptions';
 import type { AgBaseAxisLabelOptions, AgBaseAxisOptions } from './axisOptions';
 import type { AgBaseCrossLineOptions } from './crossLineOptions';
+import type { Ratio } from './types';
 export type AgPolarAxisType = 'angle-category' | 'angle-number' | 'radius-category' | 'radius-number';
 export type AgPolarAxisShape = 'polygon' | 'circle';
 export interface AgAngleCategoryAxisOptions extends AgBaseAxisOptions<AgAngleAxisLabelOptions> {
@@ -19,12 +20,12 @@ export interface AgAngleCategoryAxisOptions extends AgBaseAxisOptions<AgAngleAxi
      * This property is for grouped polar series plotted on a angle category axis.
      * It is a proportion between 0 and 1 which determines the size of the gap between the items within a single group along the angle axis.
      */
-    groupPaddingInner?: number;
+    groupPaddingInner?: Ratio;
     /**
      * This property is for grouped polar series plotted on a angle category axis.
      * It is a proportion between 0 and 1 which determines the size of the gap between the groups of items along the angle axis.
      */
-    paddingInner?: number;
+    paddingInner?: Ratio;
 }
 export interface AgAngleNumberAxisOptions extends AgBaseAxisOptions<AgAngleAxisLabelOptions> {
     type: 'angle-number';
@@ -36,7 +37,7 @@ export interface AgAngleNumberAxisOptions extends AgBaseAxisOptions<AgAngleAxisL
     endAngle?: number;
     /** Add cross lines or regions corresponding to data values. */
     crossLines?: AgAngleCrossLineOptions[];
-    /** If 'true', the range will be rounded up to ensure nice equal spacing between the ticks. */
+    /** If `true`, the range will be rounded up to ensure nice equal spacing between the ticks. */
     nice?: boolean;
 }
 export type AgAngleAxisLabelOrientation = 'fixed' | 'parallel' | 'perpendicular';

@@ -153,7 +153,7 @@ export class AgRichSelect extends AgPickerField {
     }
     getCurrentValueIndex() {
         const { currentList, value } = this;
-        if (value == null) {
+        if (value == null || !currentList) {
             return -1;
         }
         for (let i = 0; i < currentList.length; i++) {
@@ -387,13 +387,14 @@ export class AgRichSelect extends AgPickerField {
     displayOrHidePicker() {
         var _a;
         const eListGui = (_a = this.listComponent) === null || _a === void 0 ? void 0 : _a.getGui();
-        eListGui === null || eListGui === void 0 ? void 0 : eListGui.classList.toggle('ag-hidden', this.currentList.length === 0);
+        const toggleValue = this.currentList ? this.currentList.length === 0 : false;
+        eListGui === null || eListGui === void 0 ? void 0 : eListGui.classList.toggle('ag-hidden', toggleValue);
     }
     clearSearchString() {
         this.searchString = '';
     }
     selectListItem(index, preventUnnecessaryScroll) {
-        if (!this.isPickerDisplayed || !this.listComponent || index < 0 || index >= this.currentList.length) {
+        if (!this.isPickerDisplayed || !this.currentList || !this.listComponent || index < 0 || index >= this.currentList.length) {
             return;
         }
         const wasScrolled = this.listComponent.ensureIndexVisible(index, !preventUnnecessaryScroll);
@@ -403,7 +404,7 @@ export class AgRichSelect extends AgPickerField {
         this.highlightSelectedValue(index);
     }
     setValue(value, silent, fromPicker) {
-        const index = this.currentList.indexOf(value);
+        const index = this.currentList ? this.currentList.indexOf(value) : -1;
         if (index === -1) {
             return this;
         }
@@ -464,10 +465,12 @@ export class AgRichSelect extends AgPickerField {
             return;
         }
         e.preventDefault();
-        this.onListValueSelected(this.currentList[this.highlightedItem], true);
+        if (this.currentList) {
+            this.onListValueSelected(this.currentList[this.highlightedItem], true);
+        }
     }
     onTabKeyDown() {
-        if (!this.isPickerDisplayed) {
+        if (!this.isPickerDisplayed || !this.currentList) {
             return;
         }
         this.setValue(this.currentList[this.highlightedItem], false, true);

@@ -177,7 +177,7 @@ var AgRichSelect = /** @class */ (function (_super) {
     };
     AgRichSelect.prototype.getCurrentValueIndex = function () {
         var _a = this, currentList = _a.currentList, value = _a.value;
-        if (value == null) {
+        if (value == null || !currentList) {
             return -1;
         }
         for (var i = 0; i < currentList.length; i++) {
@@ -414,13 +414,14 @@ var AgRichSelect = /** @class */ (function (_super) {
     AgRichSelect.prototype.displayOrHidePicker = function () {
         var _a;
         var eListGui = (_a = this.listComponent) === null || _a === void 0 ? void 0 : _a.getGui();
-        eListGui === null || eListGui === void 0 ? void 0 : eListGui.classList.toggle('ag-hidden', this.currentList.length === 0);
+        var toggleValue = this.currentList ? this.currentList.length === 0 : false;
+        eListGui === null || eListGui === void 0 ? void 0 : eListGui.classList.toggle('ag-hidden', toggleValue);
     };
     AgRichSelect.prototype.clearSearchString = function () {
         this.searchString = '';
     };
     AgRichSelect.prototype.selectListItem = function (index, preventUnnecessaryScroll) {
-        if (!this.isPickerDisplayed || !this.listComponent || index < 0 || index >= this.currentList.length) {
+        if (!this.isPickerDisplayed || !this.currentList || !this.listComponent || index < 0 || index >= this.currentList.length) {
             return;
         }
         var wasScrolled = this.listComponent.ensureIndexVisible(index, !preventUnnecessaryScroll);
@@ -430,7 +431,7 @@ var AgRichSelect = /** @class */ (function (_super) {
         this.highlightSelectedValue(index);
     };
     AgRichSelect.prototype.setValue = function (value, silent, fromPicker) {
-        var index = this.currentList.indexOf(value);
+        var index = this.currentList ? this.currentList.indexOf(value) : -1;
         if (index === -1) {
             return this;
         }
@@ -491,10 +492,12 @@ var AgRichSelect = /** @class */ (function (_super) {
             return;
         }
         e.preventDefault();
-        this.onListValueSelected(this.currentList[this.highlightedItem], true);
+        if (this.currentList) {
+            this.onListValueSelected(this.currentList[this.highlightedItem], true);
+        }
     };
     AgRichSelect.prototype.onTabKeyDown = function () {
-        if (!this.isPickerDisplayed) {
+        if (!this.isPickerDisplayed || !this.currentList) {
             return;
         }
         this.setValue(this.currentList[this.highlightedItem], false, true);

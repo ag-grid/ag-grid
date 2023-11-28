@@ -29,7 +29,7 @@ export interface AgPieTitleOptions extends Toggleable, FontOptions {
     /** The text to display. */
     text?: string;
     /** Spacing added to help position the text. */
-    spacing?: number;
+    spacing?: PixelSize;
     /** Whether the title text should be shown in the legend. */
     showInLegend?: boolean;
 }

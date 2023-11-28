@@ -14,8 +14,7 @@ export interface AgChartTooltipOptions {
     /** The time interval (in milliseconds) after which the tooltip is shown. */
     delay?: number;
 }
-export declare const AgTooltipPositionTypes: readonly ["pointer", "node"];
-export type AgTooltipPositionType = (typeof AgTooltipPositionTypes)[number];
+export type AgTooltipPositionType = 'pointer' | 'node';
 export interface AgTooltipPositionOptions {
     /** The type of positioning for the tooltip. By default, the tooltip follows the mouse pointer for series without markers, and it is anchored to the highlighted marker node for series with markers. */
     type?: AgTooltipPositionType;
