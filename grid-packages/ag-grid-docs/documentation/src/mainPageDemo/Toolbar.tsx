@@ -9,10 +9,10 @@ import { createDataSizeValue } from './utils';
 const IS_SSR = typeof window === 'undefined';
 
 const options: Record<string, string> = {
-    "ag-theme-quartz": "Quartz",
-    "ag-theme-balham": "Balham",
-    "ag-theme-material": "Material",
-    "ag-theme-alpine": "Alpine",
+    "quartz": "Quartz",
+    "balham": "Balham",
+    "material": "Material",
+    "alpine": "Alpine",
 }
 
 export const Toolbar = ({ gridRef, dataSize, setDataSize, rowCols, gridTheme, setGridTheme, setCountryColumnPopupEditor }) => {
@@ -79,7 +79,7 @@ export const Toolbar = ({ gridRef, dataSize, setDataSize, rowCols, gridTheme, se
                             Object.entries(options).map(([themeName, label]) => <option key={themeName} value={themeName}>{label}</option>)
                         }
                         {
-                            gridTheme && options[gridTheme] == null && <option value={gridTheme}>{gridTheme.replace("ag-theme-", "")}</option>
+                            gridTheme && options[gridTheme] == null && <option value={gridTheme}>{gridTheme}</option>
                         }
                     </select>
 

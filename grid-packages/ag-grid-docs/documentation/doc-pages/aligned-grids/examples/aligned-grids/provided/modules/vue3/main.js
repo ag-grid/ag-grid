@@ -18,7 +18,6 @@ const VueExample = {
                 <label><input type="checkbox" checked @change="onCbAge($event.target.checked)"/>Age</label>
                 <label><input type="checkbox" checked @change="onCbCountry($event.target.checked)"/>Country</label>
             </div>
-
             <ag-grid-vue style="flex: 1 1 auto;"
                          ref="topGrid"
                          :class="themeClass"
@@ -28,7 +27,7 @@ const VueExample = {
                          :gridOptions="topOptions"
                          @grid-ready="onGridReady($event)">
             </ag-grid-vue>
-
+            <div style='height: 5%'></div>
             <ag-grid-vue style="flex: 1 1 auto;"
                          ref="bottomGrid"
                          :class="themeClass"
