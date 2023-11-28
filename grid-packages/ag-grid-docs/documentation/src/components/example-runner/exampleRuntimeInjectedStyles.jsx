@@ -14,6 +14,7 @@ body {
     margin-bottom: 0 !important;
 }
 
+html[data-color-scheme='dark'],
 html[data-color-scheme='dark'] body > * {
     color-scheme: dark;
 }
