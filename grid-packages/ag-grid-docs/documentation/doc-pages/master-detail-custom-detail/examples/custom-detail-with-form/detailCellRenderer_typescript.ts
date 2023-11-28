@@ -8,27 +8,28 @@ export class DetailCellRenderer implements ICellRendererComp {
         var firstRecord = params.data.callRecords[0];
 
         this.eGui = document.createElement('div');
+        this.eGui.className = "cell-renderer-outer";
         this.eGui.innerHTML =
             '<form>' +
             '  <div>' +
-            '  <p>' +
+            '  <div>' +
             '    <label>' +
             '      Call Id:<br>' +
             '    <input type="text" value="' + firstRecord.callId + '">' +
             '    </label>' +
-            '  </p>' +
-            '  <p>' +
+            '  </div>' +
+            '  <div>' +
             '    <label>' +
             '      Number:<br>' +
             '    <input type="text" value="' + firstRecord.number + '">' +
             '    </label>' +
-            '  </p>' +
-            '  <p>' +
+            '  </div>' +
+            '  <div>' +
             '    <label>' +
             '      Direction:<br>' +
             '    <input type="text" value="' + firstRecord.direction + '">' +
             '    </label>' +
-            '  </p>' +
+            '  </div>' +
             '</form>' +
             '</div>';
     }
