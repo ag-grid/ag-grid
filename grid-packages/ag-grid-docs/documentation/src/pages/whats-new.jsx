@@ -83,7 +83,7 @@ const WhatsNew = () => {
             <h1 id="top" className="whats-new">
                 What's New in AG Grid
             </h1>
-            <p className={styles.description}>See what's new in our recent AG Grid versions.</p>
+            <p className={styles.description}>See what's new in recent AG Grid versions.</p>
 
             <div className={styles.versions}>
                 {versionsData.map((versionInfo, index) => (
