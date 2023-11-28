@@ -46,7 +46,7 @@ export class AppComponent {
   ];
 
   // Column Definitions: Defines & controls grid columns.
-  colDefs: ColDef[] = [
+  colDefs: ColDef<IRow>[] = [
     { field: "mission" },
     { field: "company" },
     { field: "location" },

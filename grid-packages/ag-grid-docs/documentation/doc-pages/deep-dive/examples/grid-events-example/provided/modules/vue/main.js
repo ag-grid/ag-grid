@@ -31,7 +31,7 @@ const App = {
         :class="themeClass"
         :columnDefs="columnDefs"
         :rowData="rowData"
-        :defaultColDef="defaultColDefs"
+        :defaultColDef="defaultColDef"
         :pagination="true"
         @cell-value-changed="onCellValueChanged"
     >
@@ -66,7 +66,7 @@ const App = {
         { field: "successful" },
         { field: "rocket" }
       ],
-      defaultColDefs: {
+      defaultColDef: {
         filter: true,
         editable: true
       },

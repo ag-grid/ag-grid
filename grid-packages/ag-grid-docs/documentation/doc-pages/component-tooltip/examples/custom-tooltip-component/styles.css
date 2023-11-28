@@ -1,7 +1,6 @@
 .custom-tooltip {
     width: 150px;
-    height: 70px;
-    overflow: auto;
+    padding: 5px;
     color: var(--ag-foreground-color);
     background-color: #5577CC;
 }

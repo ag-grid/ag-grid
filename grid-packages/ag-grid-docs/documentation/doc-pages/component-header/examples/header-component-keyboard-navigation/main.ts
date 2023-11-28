@@ -91,16 +91,19 @@ function suppressHeaderKeyboardEvent({ event }: SuppressHeaderKeyboardEventParam
 
 const columnDefs: ColDef[] = [
   {
-    field: "athlete"
+    field: "athlete",
+    sortable: false,
   },
   {
     field: "country",
     headerComponent: CustomHeader,
     minWidth: 270,
     flex: 1,
+    sortable: false,
   },
   {
-    field: "age"
+    field: "age",
+    sortable: false,
   }
 ]
 

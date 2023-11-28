@@ -78,7 +78,7 @@ This value cache is for advanced users who have time-consuming value getters and
 |recomputed the aggregations, resulting in all the value getters getting called again, causing the grid to
 |stall for around 1,000ms as rows were added.
 |
-|Introducing the value cache meant the value getters were execute once when the initial data was loaded, so
+|Introducing the value cache meant the value getters were executed once when the initial data was loaded, so
 |the 1,000ms happened once. Then when delta changes came in, the value getters were only executed on the
 |new records, giving an almost seamless experience to the user.
 </note>
