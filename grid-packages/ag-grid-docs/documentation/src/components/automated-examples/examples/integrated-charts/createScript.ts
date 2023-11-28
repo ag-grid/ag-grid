@@ -300,6 +300,8 @@ export const createScript = ({
                     groupTitle: 'Legend',
                     selectLabel: 'Position',
                 },
+                // Picker element requires mousedown
+                useMouseDown: true
             },
         },
         { type: 'wait', duration: 300 },

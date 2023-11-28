@@ -264,7 +264,7 @@ export function vanillaToReactFunctional(bindings: any, componentFilenames: stri
             .replace(/gridApi\./g, "gridRef.current.api.")
             .replace(/gridApi;/g, "gridRef.current.api;")
             .replace("gridRef.current.api.setGridOption('rowData',", "setRowData(")
-            .replace("gridApi", "gridRef.current.api")
+            .replace(/gridApi/g, "gridRef.current.api");
 
         const template = getTemplate(bindings, componentProps.map(thisReferenceConverter));
         const eventHandlers = bindings.eventHandlers.map(event => convertFunctionToConstCallback(event.handler, callbackDependencies)).map(thisReferenceConverter).map(gridInstanceConverter);

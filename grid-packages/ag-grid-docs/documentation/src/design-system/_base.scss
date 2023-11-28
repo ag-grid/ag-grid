@@ -23,7 +23,7 @@ html {
 }
 
 #{$darkmode-selector} {
-    #doc-content h1,
+    .doc-content h1,
     h2,
     h3,
     h4,
@@ -32,11 +32,11 @@ html {
         color: var(--default-text-color);
     }
 
-    #doc-content {
+    .doc-content {
         color: #c3cad3;
     }
 
-    #doc-content a {
+    .doc-content a:not(.button) {
         color: var(--brilliant-azure);
         text-decoration: underline;
         text-underline-offset: 2px;
@@ -44,7 +44,7 @@ html {
         transition: text-decoration-color $default-transition-timing;
     }
 
-    #doc-content a:hover {
+    .doc-content a:hover {
         color: var(--brilliant-azure);
         text-decoration-color: #60aafe;
     }

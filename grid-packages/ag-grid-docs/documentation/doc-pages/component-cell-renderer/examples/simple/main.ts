@@ -4,11 +4,11 @@ import { TotalValueRenderer } from "./totalValueRenderer_typescript";
 
 const columnDefs: ColDef[] = [
   { field: 'athlete' },
-  { field: 'year' },
+  { field: 'year', minWidth: 60 },
   { field: 'gold', cellRenderer: MedalCellRenderer },
   { field: 'silver', cellRenderer: MedalCellRenderer },
   { field: 'bronze', cellRenderer: MedalCellRenderer },
-  { field: 'total', minWidth: 175, cellRenderer: TotalValueRenderer },
+  { field: 'total', minWidth: 190, cellRenderer: TotalValueRenderer },
 ]
 
 let gridApi: GridApi<IOlympicData>;

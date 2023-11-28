@@ -116,6 +116,7 @@ const GridExample = () => {
                     defaultColDef={defaultColDef}
                     pagination={true}
                     paginationPageSize={10}
+                    paginationPageSizeSelector={[10, 20, 50]}
                     domLayout={'autoHeight'}
                     isFullWidthRow={isFullWidthRow}
                     fullWidthCellRenderer={fullWidthCellRenderer}

@@ -1,8 +1,11 @@
 .custom-tooltip {
-    overflow: visible;
+    overflow: auto;
+    color: var(--ag-foreground-color);
+    background-color: #5577CC;
+    padding: 5px;
 }
 
-.custom-tooltip p {
+.custom-tooltip p, .custom-tooltip h3 {
     margin: 5px;
     white-space: nowrap;
 }

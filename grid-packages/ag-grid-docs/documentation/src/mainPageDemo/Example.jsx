@@ -743,6 +743,8 @@ const ExampleInner = ({darkMode}) => {
                 filter: true,
                 floatingFilter: !isSmall,
                 cellDataType: false,
+                useValueFormatterForExport: false,
+                useValueParserForImport: false,
             },
             enableCellChangeFlash: true,
             rowDragManaged: true,

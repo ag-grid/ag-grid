@@ -59,6 +59,8 @@ If you set `suppressPaginationPanel=true`, the grid will not show the standard n
 
 In the example below you can see how this works. Note that we are listening to `onPaginationChanged` to update the information about the current pagination status. We also call methods on the pagination API to change the pagination state.
 
+The example also shows how the grid handles the case where the requested page doesn't exist. In this case, when the users requests page 50, the grid will show the last page (page 18 in this example).
+
 A summary of the API methods and events can be found at the top of this documentation page.
 
 The example also sets property `suppressScrollOnNewData=true`, which tells the grid to NOT scroll to the top when the page changes.
@@ -81,13 +83,13 @@ In the example below, note the following:
 - Each page will always contain exactly 10 groups.
 - Expanding a group will not push rows to the next page.
 
-<grid-example title='Grouping Normal' name='grouping-normal' type='generated' options='{ "enterprise": true, "modules": ["clientside", "rowgrouping" ] }'></grid-example>
+<grid-example title='Grouping Normal' name='grouping-normal' type='generated' options='{ "exampleHeight": 530, "enterprise": true, "modules": ["clientside", "rowgrouping" ] }'></grid-example>
 
 ### Mode 2: Paginate All Rows, Including Children
 
 The second mode paginates all rows, including child rows when Row Grouping and detail rows with Master Detail. For example if row grouping with a page size of 10, then each page will always contain exactly 10 rows, even if it means having children appear on a page after the page containing the parent. This can be particularly confusing if the last row of a page is expanded, as the children will appear on the next page (not visible to the user unless they navigate to the next page).
 
-This modes is typically best if the application never wants to exceed the maximum number of rows in a page past the page size. This can be helpful if designing for touch devices (eg tablets) where UX requirements state no scrolls should be visible in the application - paging to a strict page size can guarantee no vertical scrolls will appear.
+This modes is typically best if the application never wants to exceed the maximum number of rows in a page past the page size. This can be helpful if designing for touch devices (e.g. tablets) where UX requirements state no scrolls should be visible in the application - paging to a strict page size can guarantee no vertical scrolls will appear.
 
 To enable pagination on all rows, including children, set grid property `paginateChildRows=true`.
 
@@ -100,7 +102,7 @@ In the example below, note the following:
 When `paginateChildRows=true` the Grid automatically disables Group Rows Sticky, see: [suppressGroupRowsSticky](../grid-options/#reference-rowGrouping-suppressGroupRowsSticky).
 </note>
 
-<grid-example title='Grouping Paginate Child Rows' name='grouping-paginate-child-rows' type='generated' options='{ "enterprise": true, "modules": ["clientside", "rowgrouping" ] }'></grid-example>
+<grid-example title='Grouping Paginate Child Rows' name='grouping-paginate-child-rows' type='generated' options='{ "exampleHeight": 530, "enterprise": true, "modules": ["clientside", "rowgrouping" ] }'></grid-example>
 
 ### Fallback to Mode 2
 

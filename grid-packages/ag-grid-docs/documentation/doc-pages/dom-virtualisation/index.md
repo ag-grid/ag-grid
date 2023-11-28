@@ -4,7 +4,7 @@ title: "DOM Virtualisation"
 
 The grid uses DOM virtualisation to vastly improve rendering performance.
 
-If you loaded 1,000 records with 20 columns into the browser without using a datagrid (eg using 'table', 'tr' and 'td' tags), then the page would end up with a lot of rendered DOM elements. This would drastically slow down the web page. This results in either a very poor user experience, or simply crashing the browser as the browser runs out of memory.
+If you loaded 1,000 records with 20 columns into the browser without using a datagrid (e.g. using `<table>`, `<tr>` and `<td>` tags), then the page would end up with a lot of rendered DOM elements. This would drastically slow down the web page. This results in either a very poor user experience, or simply crashing the browser as the browser runs out of memory.
 
 To get around this, the grid only renders what you see on the screen. For example if you load 1,000 records and 20 columns into the grid, but the user can only see 50 records and 10 columns (as the rest are not scrolled into view), then the grid only renders the 50 rows and 10 columns that the user can actually see.
 
@@ -14,7 +14,7 @@ This technique of only rendering into the DOM what is in the visible scrollable 
 
 ## Inspect the DOM
 
-To observe row and column virtualisation, you are invited to inspect the DOM of the grid using the browsers developer tools and notice row rows and column DOM elements (i.e. the 'div' elements) get inserted and removed as the grid scrolls.
+To observe row and column virtualisation, you are invited to inspect the DOM of the grid using the browser's developer tools and notice row and column DOM elements (i.e. the 'div' elements) get inserted and removed as the grid scrolls.
 
 ## Row Buffer
 

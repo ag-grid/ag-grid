@@ -5,9 +5,11 @@ enterprise: true
 
 An alternative to using the browser's `select` popup for dropdowns inside the grid.
 
+The Rich Select Cell Editor allows users to enter a cell value from a list of provided values by searching or filtering the list.
+
 ## Enabling Rich Select Cell Editor
 
-`agRichSelectCellEditor` allows users to enter a cell value from a list of provided values by searching or filtering the list. Edit any cell in the grid below and note the agRichSelectCellEditor is displayed:
+Edit any cell in the grid below to see the Rich Select Cell Editor.
 
 <grid-example title='Rich Select Editor' name='rich-select-editor' type='generated' options='{ "enterprise": true, "modules": ["clientside", "richselect"] }'></grid-example>
 
@@ -27,7 +29,7 @@ columnDefs: [
 
 Benefits over browser's `select` are as follows:
 
-- Uses DOM row visualisation so very large lists can be displayed.
+- Uses DOM row virtualisation so very large lists can be displayed.
 - Integrates with the grid perfectly, avoiding glitches seen with the standard select.
 - Uses HTML to render the values: you can provide cell renderers to customise what each value looks like.
 
@@ -35,7 +37,7 @@ Benefits over browser's `select` are as follows:
 
 ### Cell Renderer
 
-`agRichSelectCellEditor` item renderer can be customised as shown below:
+The cell renderer used within the editor can be customised as shown below:
 
 <grid-example title='Rich Select with Cell Renderer' name='rich-select-cell-renderer' type='generated' options='{ "enterprise": true, "modules": ["clientside", "richselect"] }'></grid-example>
 
@@ -56,7 +58,7 @@ columnDefs: [
 
 ### Search Values
 
-`agRichSelectCellEditor` supports multiple types of search as shown below:
+Different types of search are possible within the editor list as shown below:
 
 <grid-example title='Rich Select Editor' name='rich-select-search-values' type='generated' options='{ "enterprise": true, "modules": ["clientside", "richselect"] }'></grid-example>
 
@@ -79,7 +81,7 @@ columnDefs: [
 
 ### Allow Typing
 
-`agRichSelectCellEditor` allows typing inside the input matching different parts of items as shown below:
+The editor input can be configured to allow text input, which is used to match different parts of the editor list items as shown below:
 
 <grid-example title='Rich Select Editor' name='rich-select-allow-typing' type='generated' options='{ "enterprise": true, "modules": ["clientside", "richselect"] }'></grid-example>
 
@@ -102,7 +104,7 @@ columnDefs: [
 
 ### Format Values
 
-`agRichSelectCellEditor` allows formatting list items as shown below:
+Items in the editor list can be formatted as shown below:
 
 <grid-example title='Rich Select Format Values' name='rich-select-format-values' type='generated' options='{ "enterprise": true, "modules": ["clientside", "richselect"] }'></grid-example>
 
@@ -122,7 +124,7 @@ columnDefs: [
 
 ## Async Values
 
-`agRichSelectCellEditor` allows providing list values asynchronously as shown below:
+List values can be provided asynchronously to the editor as shown below:
 
 <grid-example title='Rich Select Async Values' name='rich-select-async-values' type='generated' options='{ "enterprise": true, "modules": ["clientside", "richselect"] }'></grid-example>
 

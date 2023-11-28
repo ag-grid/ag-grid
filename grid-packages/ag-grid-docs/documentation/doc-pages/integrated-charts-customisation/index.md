@@ -90,7 +90,7 @@ These overrides are specific to the [AG Charts Pie Series](https://charts.ag-gri
 
 <grid-example title='Pie Overrides' name='pie-overrides' type='generated' options='{ "exampleHeight": 660, "enterprise": true,  "modules": ["clientside", "menu", "charts"] }'></grid-example>
 
-## Custom Chart Theme
+## Custom Chart Themes
 
 Custom [AG Charts Themes](https://charts.ag-grid.com/react/themes/) can also be supplied to the grid via the `customChartThemes` grid option.
 

@@ -147,7 +147,7 @@ In this example Column highlighting is disabled by default and Row highlighting 
 
 <grid-example title='No Highlighting Rows And Columns' name='highlight-nothing' type='generated'></grid-example>
 
-Rows highlight by default as this is a common requirement. Column highlighting is less common and as such needs to be opted it.
+Rows highlight by default as this is a common requirement. Column highlighting is less common and as such needs to be opted in.
 
 Row Highlighting works by the grid adding the CSS class `ag-row-hover` to the row's getting hovered. The grid cannot depend on using CSS `:hover` selector as this will not highlight the entire row if Columns are pinned.
 

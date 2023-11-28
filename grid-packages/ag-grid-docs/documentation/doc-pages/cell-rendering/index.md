@@ -192,7 +192,7 @@ Here is a full example.
 - `colDef.cellRendererSelector` is a function that selects the renderer based on the row data.
 - The column 'Rendered Value' show the data rendered applying the component and params specified by `colDef.cellRendererSelector`
 
-<grid-example title='Dynamic Rendering Component' name='dynamic-rendering-component' type='mixed' options='{ "exampleHeight": 335 }'></grid-example>
+<grid-example title='Dynamic Rendering Component' name='dynamic-rendering-component' type='mixed' options='{ "exampleHeight": 335, "extras": ["fontawesome"] }'></grid-example>
 
 ## Provided Cell Renderers
 

@@ -2,11 +2,11 @@
 title: "Select Cell Editor"
 ---
 
-Simple editor that uses HTML `select`.
+Simple editor that uses HTML `select`, allowing users to select a cell value from a list of provided values.
 
 ## Enabling Select Cell Editor
 
-`agSelectCellEditor` allows users to select a cell value from a list of provided values. Edit any cell in the grid below and note the `agSelectCellEditor` is displayed:
+Edit any cell in the grid below to see the Select Cell Editor.
 
 <grid-example title='Select Editor' name='select-editor' type='generated' options='{ "modules": ["clientside"] }'></grid-example>
 
@@ -28,7 +28,7 @@ columnDefs: [
 
 ### List Gap
 
-The `agSelectCellEditor` allows to customise the space between the editor input and the popup when opened. Edit any cell below and note the popup is displayed at an offset from the input.
+It is possible to customise the space between the editor input and the popup when opened. Edit any cell below to see the popup displayed at an offset from the input.
 
 <grid-example title='Select Editor List Gap' name='select-editor-list-gap' type='generated' options='{ "modules": ["clientside"] }'></grid-example>
 
@@ -49,7 +49,7 @@ columnDefs: [
 
 ### List Size
 
-The `agSelectCellEditor` allows to customise the size of the list popup when opened. Edit cells in the two columns and note the popup in the editors in the right column is displayed with a specified size.
+It is possible to customise the size of the list popup when opened. In the grid below, the editor popups in the right column are displayed with a specified size, whereas the editor popups in the left column are displayed with the default size.
 
 <grid-example title='Select Editor Max Height and Max Width' name='select-editor-max-height-and-width' type='generated' options='{ "modules": ["clientside"] }'></grid-example>
 

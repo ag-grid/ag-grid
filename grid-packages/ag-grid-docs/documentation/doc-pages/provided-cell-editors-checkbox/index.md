@@ -6,7 +6,7 @@ Simple boolean editor that uses the standard HTML checkbox `input`.
 
 ## Enabling Checkbox Cell Editor
 
-`agCheckboxCellEditor` allows users to provide boolean values as shown in the grid cells below:
+Edit any cell in the grid below to see the Checkbox Cell Editor. Note that by default the Checkbox Cell Renderer is shown, and the editor is only displayed when you start editing (e.g. double click within the cell).
 
 <grid-example title='Checkbox Editor' name='checkbox-editor' type='generated' options='{ "modules": ["clientside"] }'></grid-example>
 

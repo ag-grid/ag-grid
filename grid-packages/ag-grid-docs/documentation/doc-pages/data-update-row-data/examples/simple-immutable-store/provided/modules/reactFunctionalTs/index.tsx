@@ -187,27 +187,21 @@ const GridExample = () => {
     return (
         <div style={containerStyle}>
             <div style={{ "height": "100%", "width": "100%", "display": "flex", "flexDirection": "column" }}>
-                <div style={{ "marginBottom": "5px", "minHeight": "30px" }}>
-                    <button onClick={reverseItems}>Reverse</button>
-                    <button onClick={() => addFiveItems(true)}>Append</button>
-                    <button onClick={() => addFiveItems(false)}>Prepend</button>
-                    <button onClick={removeSelected}>Remove Selected</button>
-                    <button onClick={updatePrices}>Update Prices</button>
-
-                    <button id="groupingOn" onClick={() => onGroupingEnabled(true)}>Grouping On</button>
-                    <button id="groupingOff" onClick={() => onGroupingEnabled(false)}>Grouping Off</button>
-                    <span style={{
-                        "border": "1px solid lightgrey",
-                        "marginLeft": "20px",
-                        "padding": "8px",
-                        "whiteSpace": "nowrap",
-                        "display": "inline-block"
-                    }}>
-                        Move to Group:
-                        <button onClick={() => setSelectedToGroup('A')}>A</button>
-                        <button onClick={() => setSelectedToGroup('B')}>B</button>
-                        <button onClick={() => setSelectedToGroup('C')}>C</button>
-                    </span>
+                <div>
+                    <div style={{ "marginBottom": "5px", "minHeight": "30px" }}>
+                        <button onClick={reverseItems}>Reverse</button>
+                        <button onClick={() => addFiveItems(true)}>Append</button>
+                        <button onClick={() => addFiveItems(false)}>Prepend</button>
+                        <button onClick={removeSelected}>Remove Selected</button>
+                        <button onClick={updatePrices}>Update Prices</button>
+                    </div>
+                    <div style={{ "marginBottom": "5px", "minHeight": "30px" }}>
+                        <button id="groupingOn" onClick={() => onGroupingEnabled(true)}>Grouping On</button>
+                        <button id="groupingOff" onClick={() => onGroupingEnabled(false)}>Grouping Off</button>
+                        <button onClick={() => setSelectedToGroup('A')}>Move to Group A</button>
+                        <button onClick={() => setSelectedToGroup('B')}>Move to Group B</button>
+                        <button onClick={() => setSelectedToGroup('C')}>Move to Group C</button>
+                    </div>
                 </div>
                 <div style={{ "flex": "1 1 0px" }}>
 

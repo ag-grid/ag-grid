@@ -8,7 +8,7 @@ Every row displayed in the grid is represented by a Row Node which exposes state
 
 Row Nodes implement the `IRowNode<TData>` interface and in most cases wrap individual data items as supplied to the grid. Row nodes also contain runtime information about the row such as its current rowIndex. The Row Node contains attributes, methods and emits events. Additional attributes are used if the Row Node is a group. 
 
-See [Row Node](/row-object/) for a complete list of attributes / methods associated with rows.
+See [Row Reference](/row-object/) for a complete list of attributes / methods associated with rows.
 
 ## Row Events
 

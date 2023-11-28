@@ -567,13 +567,11 @@ export class SelectionService extends BeanStub implements ISelectionService {
 
     public getSelectionState(): string[] | null {
         const selectedIds: string[] = [];
-        const selectedNodes = Object.values(this.selectedNodes);
-        for (let i = 0; i < selectedNodes.length; i++) {
-            const node = selectedNodes[i];
+        this.selectedNodes.forEach((node) => {
             if (node?.id) {
                 selectedIds.push(node.id);
             }
-        }
+        });
         return selectedIds.length ? selectedIds : null;
     }
 

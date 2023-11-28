@@ -61,7 +61,7 @@ Try changing the chart cell range in the grid and notice the subtitle is updated
 
 ## Standalone Chart Events
 
-It is possible to subscribe to the [Standalone Charts Events](/charts-events/) using the theme based configuration 
+It is possible to subscribe to the [AG Charts Events](https://charts.ag-grid.com/react/events/) using the theme based configuration 
 via the `chartThemeOverrides` grid option:
 
 <snippet>
@@ -81,7 +81,9 @@ via the `chartThemeOverrides` grid option:
 | }
 </snippet>
 
-Note that `chartThemeOverrides` maps to the `overrides` [Theme](/charts-api-themes/) property. 
+<note>
+Note that the `chartThemeOverrides` grid option maps to [AG Charts Theme Overrides](https://charts.ag-grid.com/themes-api/#reference-AgChartTheme-overrides).
+</note>
 
 The example below demonstrates Standalone Charts Events subscription:
 

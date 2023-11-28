@@ -29,16 +29,22 @@ body {
 
 .custom-element button {
   width: 80px;
+  padding: 5px!important;
+  height: initial!important;
+  margin: 0!important;
 }
 
 .custom-element input {
   width: 100px;
+  padding: 5px!important;
+  height: initial!important;
+  margin: 0!important;
 }
 
 .custom-element a {
   line-height: 1rem;
 }
 
-.ag-row:focus {
-  background: lightskyblue;
+a {
+  color: inherit;
 }

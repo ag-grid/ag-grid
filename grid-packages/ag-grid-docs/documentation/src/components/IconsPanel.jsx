@@ -5,7 +5,7 @@ import { Icon } from './Icon';
 import styles from './IconsPanel.module.scss';
 import { Tabs } from './tabs/Tabs';
 
-const THEMES = ['quartz', 'alpine', 'balham', 'material'];
+const THEMES = ['quartz', 'balham', 'material', 'alpine'];
 const ICONS = [
     'aggregation',
     'arrows',

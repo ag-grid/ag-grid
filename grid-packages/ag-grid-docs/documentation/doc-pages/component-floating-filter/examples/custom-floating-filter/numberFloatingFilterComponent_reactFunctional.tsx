@@ -44,7 +44,7 @@ export default forwardRef((props: CustomParams, ref) => {
     }
 
     const style = {
-        color: props.color,
+        borderColor: props.color,
         width: "30px"
     };
 

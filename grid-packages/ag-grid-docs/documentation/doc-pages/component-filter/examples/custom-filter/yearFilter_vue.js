@@ -2,10 +2,10 @@ export default {
     template: `
       <div style="display: inline-block; width: 400px;">
       <div style="padding: 10px; text-align: center;">Select Year Range</div>
-      <label style="margin: 10px; padding: 50px; display: inline-block;">
+      <label style="margin: 10px; padding: 10px; display: inline-block;">
         <input type="radio" name="year" v-model="year" v-on:change="updateFilter()" value="All"/> All
       </label>
-      <label style="margin: 10px; padding: 50px; display: inline-block;">
+      <label style="margin: 10px; padding: 10px; display: inline-block;">
         <input type="radio" name="year" v-model="year" v-on:change="updateFilter()" value="2010"/> Since 2010
       </label>
       </div>

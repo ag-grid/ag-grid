@@ -30,20 +30,27 @@ const VueExample = {
     },
     data: function () {
         return {
-            columnDefs: [{ field: "athlete" }, { field: "year" }, {
-                field: "gold",
-                cellRenderer: "medalCellRenderer"
-            }, {
-                field: "silver",
-                cellRenderer: "medalCellRenderer"
-            }, {
-                field: "bronze",
-                cellRenderer: "medalCellRenderer"
-            }, {
-                field: "total",
-                minWidth: 175,
-                cellRenderer: "totalValueRenderer"
-            }],
+            columnDefs: [
+                { field: "athlete" },
+                { field: "year", minWidth: 60 },
+                {
+                    field: "gold",
+                    cellRenderer: "medalCellRenderer",
+                },
+                {
+                    field: "silver",
+                    cellRenderer: "medalCellRenderer",
+                },
+                {
+                    field: "bronze",
+                    cellRenderer: "medalCellRenderer",
+                },
+                {
+                    field: "total",
+                    minWidth: 190,
+                    cellRenderer: "totalValueRenderer",
+                },
+            ],
             gridApi: null,
             defaultColDef: {
                 editable: true,
