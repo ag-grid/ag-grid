@@ -74,11 +74,12 @@ Grid columns are now sortable and resizable by default. Also, the grid animates 
 
 ### Row Grouping
 
-Group values will no longer be typeless, and will be inferred from the first row when they were created
+* Group values will no longer be typeless, and will be inferred from the first row when they were created.
+* When using row grouping with `groupDisplayType=singleColumn` (which is the default behavior) and displaying checkboxes in the auto-group column, checkboxes in leaf rows are only displayed if `autoGroupColumnDef` provides a field or a valueGetter to show values in leaf row cells. If you'd like to show checkboxes in the group columns for leaf rows, provide a field or valueGetter in the `autoGroupColumnDef`.
 
 ### Pagination
 
-When showing the pagination controls, the page size selector is shown by default. You can prevent this by setting paginationPageSizeSelector=false
+When showing the pagination controls, the page size selector is shown by default. You can prevent this by setting `paginationPageSizeSelector=false`.
 
 ### Sever-Side Row Model
 
