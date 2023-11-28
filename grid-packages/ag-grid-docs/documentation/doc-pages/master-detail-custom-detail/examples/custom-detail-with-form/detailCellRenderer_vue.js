@@ -1,26 +1,26 @@
 export default {
   template: `
-      <div>
+      <div class="cell-renderer-outer">
       <form>
         <div>
-          <p>
+          <div>
             <label>
               Call Id:<br>
               <input type="text" :value="firstRecord.callId">
             </label>
-          </p>
-          <p>
+          </div>
+          <div>
             <label>
               Number:<br>
               <input type="text" :value="firstRecord.number">
             </label>
-          </p>
-          <p>
+          </div>
+          <div>
             <label>
               Direction:<br>
               <input type="text" :value="firstRecord.direction">
             </label>
-          </p>
+          </div>
         </div>
       </form>
       </div>
