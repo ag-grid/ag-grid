@@ -1,5 +1,4 @@
 .custom-tooltip {
-    overflow: auto;
     color: var(--ag-foreground-color);
     background-color: #5577CC;
     padding: 5px;

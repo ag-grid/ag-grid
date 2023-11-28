@@ -2,46 +2,36 @@
 title: "Upgrade to Older Versions"
 ---
 
-Please refer to the release notes of the previous version for breaking changes and deprecations. 
+Refer to the release notes of the previous version for breaking changes and deprecations. 
 
 ## AG Grid 30
 
-### v30.2.1
+### AG Grid 30.2
 
-Click [here](https://build.ag-grid.com/changelog/?fixVersion=30.2.1) for the Release Notes and Changelog of AG Grid 30.2.1. 
+Read about [What's New](https://blog.ag-grid.com/whats-new-in-ag-grid-30-2/) in AG Grid 30.2.
 
-### v30.2.0
+* Click [here](https://build.ag-grid.com/changelog/?fixVersion=30.2.1) for the Release Notes and Changelog of AG Grid 30.2.1. 
 
-Read [What's New](https://blog.ag-grid.com/whats-new-in-ag-grid-30-2/) in AG Grid 30.2.0.
+* Click [here](https://build.ag-grid.com/changelog/?fixVersion=30.2.0) for the Release Notes and Changelog of AG Grid 30.2.0. 
 
-Click [here](https://build.ag-grid.com/changelog/?fixVersion=30.2.0) for the Release Notes and Changelog of AG Grid 30.2.0. 
+### AG Grid 30.1
 
-### v30.1.0
+Read about [What's New](https://blog.ag-grid.com/whats-new-in-ag-grid-30-1/) in AG Grid 30.1.
 
-Read [What's New](https://blog.ag-grid.com/whats-new-in-ag-grid-30-1/) in AG Grid 30.1.0.
+* Click [here](https://build.ag-grid.com/changelog/?fixVersion=30.1.0) for the Release Notes and Changelog of AG Grid 30.1.0. 
 
-Click [here](https://build.ag-grid.com/changelog/?fixVersion=30.1.0) for the Release Notes and Changelog of AG Grid 30.1.0. 
+### AG Grid 30.0
 
-### v30.0.6
+Read about [What's New](https://blog.ag-grid.com/whats-new-in-ag-grid-30/) in AG Grid 30.0.
 
-Click [here](https://build.ag-grid.com/changelog/?fixVersion=30.0.6) for the Release Notes and Changelog of AG Grid 30.0.6. 
+* Click [here](https://build.ag-grid.com/changelog/?fixVersion=30.0.6) for the Release Notes and Changelog of AG Grid 30.0.6. 
 
-### v30.0.5
+* Click [here](https://build.ag-grid.com/changelog/?fixVersion=30.0.5) for the Release Notes and Changelog of AG Grid 30.0.5. 
 
-Click [here](https://build.ag-grid.com/changelog/?fixVersion=30.0.5) for the Release Notes and Changelog of AG Grid 30.0.5. 
+* Click [here](https://build.ag-grid.com/changelog/?fixVersion=30.0.2) for the Release Notes and Changelog of AG Grid 30.0.2. 
 
-### v30.0.2
-
-Click [here](https://build.ag-grid.com/changelog/?fixVersion=30.0.2) for the Release Notes and Changelog of AG Grid 30.0.2. 
-
-### v30.0.0
-
-Read [What's New](https://blog.ag-grid.com/whats-new-in-ag-grid-30/) in AG Grid 30.0.0.
-
-Click [here](https://build.ag-grid.com/changelog/?fixVersion=30.0.0) for the Release Notes and Changelog of AG Grid 30.0.0. 
+* Click [here](https://build.ag-grid.com/changelog/?fixVersion=30.0.0) for the Release Notes and Changelog of AG Grid 30.0.0. 
 
 ## Older Versions
 
-Click [here](https://www.ag-grid.com/changelog/?fixVersion=29.3.5) for the Release Notes and Changelog of AG Grid 29.3.5. 
-
-Use the dropdown on the top right to select older versions if needed.  
+Click [here](https://www.ag-grid.com/changelog/?fixVersion=29.3.5) for the Release Notes and Changelog of older versions. 
