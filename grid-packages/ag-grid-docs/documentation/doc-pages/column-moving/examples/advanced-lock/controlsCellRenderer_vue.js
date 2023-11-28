@@ -4,9 +4,7 @@
 export default {
     template: `
       <div>
-          <button>A</button>
-          <button>B</button>
-          <button>C</button>
+          <button>Action</button>
       </div>
     `,
 };
