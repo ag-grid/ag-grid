@@ -96,7 +96,7 @@ html[data-color-scheme='dark'] input:not(#myGrid input):not(#myChart input):not(
     min-width: 36px;
 }
 
-html[data-color-scheme='dark'] input:not(#myGrid input):not(#myChart input):not([class*='ag-']):not([type='checkbox']):not([type='radio']) {
+html[data-color-scheme='light'] input:not(#myGrid input):not(#myChart input):not([class*='ag-']):not([type='checkbox']):not([type='radio']) {
     appearance: none;
     background-color: #fff;
     border: 1px solid rgb(0,0,0,0.1);
