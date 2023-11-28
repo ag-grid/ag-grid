@@ -27,7 +27,7 @@ const GridExample = () => {
   ]);
   
   // Column Definitions: Defines & controls grid columns.
-  const [colDefs] = useState<ColDef[]>([
+  const [colDefs, setColDefs] = useState<ColDef[]>([
     { field: "mission" },
     { field: "company" },
     { field: "location" },
