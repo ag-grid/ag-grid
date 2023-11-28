@@ -46,7 +46,7 @@
         display: block;
         width: 135px;
         cursor: pointer;
-        font-weight: var(--font-weight-bold);
+        font-weight: normal; // NOTE: ust be normal or bold for Safari, can't be semi-bold
         font-size: var(--font-size-medium);
         border: none;
     }

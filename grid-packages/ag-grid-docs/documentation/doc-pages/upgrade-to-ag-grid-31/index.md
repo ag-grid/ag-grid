@@ -8,7 +8,27 @@ See the [release post](https://blog.ag-grid.com/whats-new-in-ag-grid-31/) for de
 
 ## Codemods
 
-See the [Codemods](/automatic-migration-tool/) instructions for a step-by-step guide on upgrading your codebase while avoiding breaking changes.
+Follow these steps to upgrade your project's AG Grid version to `31.0.0`:
+
+1. Open a terminal and navigate to your project's root folder.
+
+2. Update any AG Grid dependencies listed in your project's `package.json` to version `31.0.0`.
+
+3. Run version `31.0` of the AG Grid Codemod:
+
+    ```
+    npx @ag-grid-community/cli@31.0 migrate
+    ```
+
+    This will update your project's source files to prepare for the new release.
+
+    By default the Codemod runner will locate all source files within the current directory. For projects with more specific requirements, pass a list of input files to the `migrate` command, or specify the `--help` argument to see more fine-grained usage instructions.
+
+<note>
+The Codemod runner will check the state of your project to ensure that you don't lose any work. If you would rather see a diff of the changes instead of applying them, pass the `--dry-run` argument.
+</note>
+
+See the [Codemods](/codemods/) documentation for more details.
 
 ## Breaking Changes
 
@@ -27,7 +47,7 @@ This release includes the following breaking changes:
 
 The `solar` and `pastel` integrated chart themes have been removed. Any saved chart models will be migrated to the new `polychroma` and `sheets` themes respectively. If you're using themeOverrides, see charts migration page as the structure and naming of options have changed.
 
-If you are using Standalone Charts, please see changes to charts in the [AG Charts Migration Guide](https://charts.ag-grid.com/react/migration-v9/). 
+If you are using Standalone Charts, please see changes to charts in the [AG Charts Migration Guide](https://charts.ag-grid.com/react/migration-v9/).
 
 ### ColDef
 
@@ -54,11 +74,12 @@ Grid columns are now sortable and resizable by default. Also, the grid animates 
 
 ### Row Grouping
 
-Group values will no longer be typeless, and will be inferred from the first row when they were created
+* Group values will no longer be typeless, and will be inferred from the first row when they were created.
+* When using row grouping with `groupDisplayType=singleColumn` (which is the default behavior) and displaying checkboxes in the auto-group column, checkboxes in leaf rows are only displayed if `autoGroupColumnDef` provides a field or a valueGetter to show values in leaf row cells. If you'd like to show checkboxes in the group columns for leaf rows, provide a field or valueGetter in the `autoGroupColumnDef`.
 
 ### Pagination
 
-When showing the pagination controls, the page size selector is shown by default. You can prevent this by setting paginationPageSizeSelector=false
+When showing the pagination controls, the page size selector is shown by default. You can prevent this by setting `paginationPageSizeSelector=false`.
 
 ### Sever-Side Row Model
 
@@ -66,7 +87,7 @@ When showing the pagination controls, the page size selector is shown by default
 * `IsApplyServerSideTransactionParams.storeInfo` - removed, use `IsApplyServerSideTransactionParams.groupLevelInfo` instead.
 * `LoadSuccessParams.storeInfo` - removed, use `LoadSuccessParams.groupLevelInfo` instead.
 * `IServerSideGetRowsParams.successCallback` - removed, use `success` method with `LoadSuccessParams` params instead.
-* `IServerSideGetRowsParams.failCallback` - removed, use `fail` instead. 
+* `IServerSideGetRowsParams.failCallback` - removed, use `fail` instead.
 * interface `ServerSideStoreParams` - removed, use `ServerSideGroupLevelParams` instead.
 * interface `GetServerSideStoreParamsParams` - removed, use `GetServerSideGroupLevelParamsParams` instead.
 * interface `RefreshStoreParams` - removed, use `RefreshServerSideParams` instead.
@@ -108,11 +129,15 @@ This release includes the following deprecations:
 ### GridOptions
 
 * `advancedFilterModel` - deprecated, use `initialState.filter.advancedFilterModel` instead.
-* `suppressAsyncEvents` and synchronous event handling is deprecated. Please update your events to be handled asynchronously. 
+* `suppressAsyncEvents` and synchronous event handling is deprecated. Please update your events to be handled asynchronously.
 
 ### Column Filters
 
 `IFilterParams.valueGetter` - deprecated, use `IFilterParams.getValue` instead.
+
+### Column API
+
+Column API is now deprecated. Column API methods are now available in [Grid API](/grid-api/) instead.
 
 ### Grid API
 
@@ -207,6 +232,6 @@ This release includes the following deprecations:
     * `setGetRowStyle`
     * `setGetRowHeight`
 
-## Changes List 
+## Changes List
 
 If you would like to see the full list of changes in this release, please see the [Changelog](https://www.ag-grid.com/changelog/?fixVersion=31.0.0).

@@ -19,6 +19,15 @@
     display: none;
 }
 
-td {
-    width: 250px;
+.example-wrapper td.labels {
+    width: 200px;
+}
+
+.example-wrapper td.buttons-container {
+    width: 200px;
+}
+
+.example-wrapper td.buttons-container button:not(#myGrid button, #myChart button, button[class*='ag-']) {
+    padding: 0.4em;
+    margin: 0 0.2em 0 0;
 }

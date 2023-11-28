@@ -14,7 +14,7 @@ Try it out on our [demo page](../../example) by doing the following:
 - Enter [Pivot Mode](/pivoting/#pivot-mode) and select a combination of group, pivot and value columns.
 - Bring up the [Context Menu](/context-menu/) and select the desired chart type from the 'Pivot Chart' sub menu.
 
-<gif src="pivot-chart.gif" alt="Pivot Chart"></gif>
+<gif src="pivot-chart.gif" alt="Pivot Chart" toggledarkmode="true"></gif>
 
 Notice from the demonstration above that all data is charted when using the Pivot Chart. Also note that the category axis will update to reflect the expanded group categories.
 

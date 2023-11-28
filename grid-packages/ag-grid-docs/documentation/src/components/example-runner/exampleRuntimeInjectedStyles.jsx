@@ -14,8 +14,9 @@ body {
     margin-bottom: 0 !important;
 }
 
-html[data-color-scheme='dark'] body > * {
+html[data-color-scheme='dark'] {
     color-scheme: dark;
+    background-color: #0b1d28;
 }
 
 html[data-color-scheme='dark'] button:not(#myGrid button, #myChart button, button[class*='ag-']) , .ag-fill-direction  {
@@ -57,7 +58,7 @@ html button:not(#myGrid button, #myChart button, button[class*='ag-']), .ag-fill
     font-size: 14px;
     font-weight: 500;
     letter-spacing: .01em;
-    padding: 0.375em 1em 0.5em;
+    padding: 0.375em 1em 0.4em;
     white-space: nowrap;
     margin-right: 6px;
     margin-bottom: 8px;
@@ -95,7 +96,7 @@ html[data-color-scheme='dark'] input:not(#myGrid input):not(#myChart input):not(
     min-width: 36px;
 }
 
-html[data-color-scheme='dark'] input:not(#myGrid input):not(#myChart input):not([class*='ag-']):not([type='checkbox']):not([type='radio']) {
+html[data-color-scheme='light'] input:not(#myGrid input):not(#myChart input):not([class*='ag-']):not([type='checkbox']):not([type='radio']) {
     appearance: none;
     background-color: #fff;
     border: 1px solid rgb(0,0,0,0.1);

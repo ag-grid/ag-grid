@@ -25,6 +25,7 @@ const gridOptions: GridOptions = {
           },
           label: {
             enabled: true,
+            color: '#999999',
             placement: 'outsideEnd',
           },
         } as ColumnSparklineOptions,

@@ -20,3 +20,7 @@ a {
 button:focus, a:focus, input:focus {
     border-color: cornflowerblue;
 }
+
+:focus {
+    background: lightskyblue !important;
+}

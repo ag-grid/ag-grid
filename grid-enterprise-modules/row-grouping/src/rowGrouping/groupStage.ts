@@ -508,28 +508,6 @@ export class GroupStage extends BeanStub implements IRowNodeStage {
     }
 
     private insertNodes(newRowNodes: RowNode[], details: GroupingDetails, isMove: boolean): void {
-        if (details.usingTreeData) {
-            let longestPath = 1;
-            const rowNodesAndPaths = newRowNodes.map<[RowNode, GroupInfo[]]>(node => {
-                const path: GroupInfo[] = this.getGroupInfo(node, details);
-                longestPath = Math.max(longestPath, path.length);
-                return [node, path];
-            });
-
-            // a performance improvement for tree data, by starting at the shortest paths,
-            // less redundant groups need created and destroyed
-            for (let checkedLevel = 1; checkedLevel < longestPath + 1; checkedLevel++) {
-                rowNodesAndPaths.forEach(([rowNode, path]) => {
-                    if (path.length !== checkedLevel) { return; }
-                    this.insertOneNode(rowNode, details, isMove, undefined, path);
-                    if (details.changedPath.isActive()) {
-                        details.changedPath.addParentNode(rowNode.parent);
-                    }
-                });
-            }
-            return;
-        }
-
         newRowNodes.forEach(rowNode => {
             this.insertOneNode(rowNode, details, isMove);
             if (details.changedPath.isActive()) {
@@ -538,9 +516,9 @@ export class GroupStage extends BeanStub implements IRowNodeStage {
         });
     }
 
-    private insertOneNode(childNode: RowNode, details: GroupingDetails, isMove: boolean, batchRemover?: BatchRemover, providedPath?: GroupInfo[]): void {
+    private insertOneNode(childNode: RowNode, details: GroupingDetails, isMove: boolean, batchRemover?: BatchRemover): void {
 
-        const path: GroupInfo[] = providedPath ?? this.getGroupInfo(childNode, details);
+        const path: GroupInfo[] = this.getGroupInfo(childNode, details);
 
         const parentGroup = this.findParentForNode(childNode, path, details, batchRemover);
         if (!parentGroup.group) {

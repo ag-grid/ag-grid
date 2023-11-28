@@ -96,22 +96,25 @@
     }
 }
 
-.major {
-    background: #fe870010 !important;
-    border: 1px solid rgb(254 136 0 / 31%) !important;
-
-    .line {
-        border-bottom: 1px solid rgba(254, 135, 0, 0.274) !important;
-    }
-  
-}
-
 .major-text {
     border: 1px solid var(--link-hover-color);
     border-radius: 24px;
     color: var(--link-hover-color) !important;
     padding: 2px 8px;
     font-weight: 500;
+ }
+
+ .latest-tag {
+    border: 1px solid var(--default-text-color) !important;
+    border-radius: 24px;
+    padding: 2px 8px;
+    margin-right: 8px;
+    font-weight: 500;
+
+    #{$darkmode-selector} & {
+        border: 1px solid #c3cad3 !important;
+    }
+
  }
 
 //  .major .buttonSecondary {
@@ -144,7 +147,7 @@
 }
 
 .heading {
-    padding-top: 32px;
+    padding-top: 28px;
     padding-left: $size-2;
     padding-right: $size-2;
 

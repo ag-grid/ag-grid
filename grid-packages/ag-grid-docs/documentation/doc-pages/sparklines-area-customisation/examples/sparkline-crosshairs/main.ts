@@ -37,12 +37,12 @@ const gridOptions: GridOptions = {
                         xLine: {
                             enabled: true,
                             lineDash: 'dash',
-                            stroke: 'rgba(0, 0, 0, 0.5)',
+                            stroke: '#999',
                         },
                         yLine: {
                             enabled: true,
                             lineDash: 'dash',
-                            stroke: 'rgba(0, 0, 0, 0.5)',
+                            stroke: '#999',
                         },
                     },
                 } as AreaSparklineOptions,

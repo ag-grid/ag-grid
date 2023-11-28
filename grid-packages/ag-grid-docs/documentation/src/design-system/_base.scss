@@ -22,6 +22,12 @@ html {
     scroll-padding-top: var(--scroll-offset);
 }
 
+.doc-content a:not(.button) {
+    text-decoration: underline;
+    text-underline-offset: 2px;
+    text-decoration-color: #3892f977;
+    transition: text-decoration-color $default-transition-timing;
+}
 #{$darkmode-selector} {
     .doc-content h1,
     h2,
