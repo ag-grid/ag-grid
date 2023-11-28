@@ -14,7 +14,7 @@ Follow these steps to upgrade your project's AG Grid version to `31.0.0`:
 
 2. Update any AG Grid dependencies listed in your project's `package.json` to version `31.0.0`.
 
-3. Run version `31.0` of the AG Grid codemod:
+3. Run version `31.0` of the AG Grid Codemod:
 
     ```
     npx @ag-grid-community/cli@31.0 migrate
@@ -22,13 +22,13 @@ Follow these steps to upgrade your project's AG Grid version to `31.0.0`:
 
     This will update your project's source files to prepare for the new release.
 
-    By default the codemod runner will locate all source files within the current directory. For projects with more specific requirements, pass a list of input files to the `migrate` command, or specify the `--help` argument to see more fine-grained usage instructions.
+    By default the Codemod runner will locate all source files within the current directory. For projects with more specific requirements, pass a list of input files to the `migrate` command, or specify the `--help` argument to see more fine-grained usage instructions.
 
 <note>
-The codemod runner will check the state of your project to ensure that you don't lose any work. If you would rather see a diff of the changes instead of applying them, pass the `--dry-run` argument.
+The Codemod runner will check the state of your project to ensure that you don't lose any work. If you would rather see a diff of the changes instead of applying them, pass the `--dry-run` argument.
 </note>
 
-See the [codemods](/codemods/) documentation for more details.
+See the [Codemods](/codemods/) documentation for more details.
 
 ## Breaking Changes
 
