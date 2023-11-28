@@ -27,7 +27,7 @@ const DEV_LICENSE_DATA: LicenseData[] = [
         priceFullDollars: '999',
         launchPrice: null,
         licenseBenefits: ['Perpetual License', '1 Year of Support', '1 Year of Updates'],
-        buyLink: '/ecommerce/#/ecommerce/?licenseType=single&productType=aggrid',
+        buyLink: 'https://ag-grid.com/ecommerce/#/ecommerce/?licenseType=single&productType=aggrid',
         Logo: AGGridLogo
     },
     {
@@ -37,7 +37,7 @@ const DEV_LICENSE_DATA: LicenseData[] = [
         licenseBenefits: ['Perpetual License', '1 Year of Support', '1 Year of Updates'],
         priceFullDollars: '399',
         launchPrice: '199',
-        buyLink: '/ecommerce/#/ecommerce/?licenseType=single&productType=agcharts',
+        buyLink: 'https://ag-grid.com/ecommerce/#/ecommerce/?licenseType=single&productType=agcharts',
         Logo: AGChartsLogo
     },
 ];
@@ -109,6 +109,7 @@ const License = (props: LicenseData) => {
                     <a
                         className="button"
                         href={buyLink}
+                        target="_parent"
                         onClick={() => {
                             trackBuyButton({
                                 type: id,

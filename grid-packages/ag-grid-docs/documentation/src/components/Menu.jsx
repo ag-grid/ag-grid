@@ -1,11 +1,15 @@
 import classnames from 'classnames';
 import React, {useState, useEffect, useMemo, useCallback} from 'react';
 import {Link} from 'gatsby';
+import { useWindowSize } from '../utils/use-window-size';
 import {Icon} from 'components/Icon';
 import convertToFrameworkUrl from 'utils/convert-to-framework-url';
 import {Collapsible} from './Collapsible';
 import styles from './Menu.module.scss';
 import {toElementId, getActiveParentItems, getFilteredMenuData} from './menuUtils';
+import breakpoints from '../design-system/breakpoint.module.scss';
+
+const SITE_HEADER_SMALL_WIDTH = parseInt(breakpoints['site-header-small'], 10);
 
 const useDocsButtonState = () => {
     const [isDocsButtonOpen, setIsDocsButtonOpen] = useState(true);
@@ -159,6 +163,8 @@ const MenuGroup = ({group, currentFramework, isTopLevel, isActive, activeParentI
 
 const MenuItem = ({item, currentFramework, activeParentItems}) => {
     const [isDocsButtonOpen, setIsDocsButtonOpen] = useDocsButtonState();
+    const { width } = useWindowSize();
+    const isDesktop = width >= SITE_HEADER_SMALL_WIDTH;
 
     const isActiveParent = useMemo(() => activeParentItems.some(parentItem => {
         return parentItem.url ? parentItem.url === item.url : parentItem.title === item.title;
@@ -172,7 +178,16 @@ const MenuItem = ({item, currentFramework, activeParentItems}) => {
                     activeClassName={styles.activeMenuItem}
                     target={item.newWindow ? '_blank' : '_self'}
                     className={isActiveParent ? styles.activeItemParent : undefined}
-                    onClick={() => isDocsButtonOpen && setIsDocsButtonOpen(false)}
+                    onClick={(event) => {
+                        isDocsButtonOpen && setIsDocsButtonOpen(false);
+
+                        // Prevent bootstrap collapse on desktop
+                        if (isDesktop) {
+                            event.stopPropagation();
+                        }
+                    }}
+                    data-toggle="collapse"
+                    data-target="#side-nav"
                 >
                     {item.title}
                     {item.enterprise && (

@@ -8,7 +8,7 @@ applications such as Excel, but fully integrated inside your applications.
 
 Users can select a range of cells in the grid and create a chart from the context menu, as shown below:
 
-<gif src="chart-showcase.gif" alt="Chart Showcase"></gif>
+<gif src="chart-showcase.gif" alt="Chart Showcase" toggledarkmode="true"></gif>
 
 Notice that Chart Ranges appear in the grid after a chart is created. These provide useful visual feedback for users by
 highlighting the charted category and series data in the grid.
