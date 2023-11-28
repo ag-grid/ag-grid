@@ -10,9 +10,9 @@ const IS_SSR = typeof window === 'undefined';
 
 const options: Record<string, string> = {
     "ag-theme-quartz": "Quartz",
-    "ag-theme-alpine": "Alpine",
     "ag-theme-balham": "Balham",
     "ag-theme-material": "Material",
+    "ag-theme-alpine": "Alpine",
 }
 
 export const Toolbar = ({ gridRef, dataSize, setDataSize, rowCols, gridTheme, setGridTheme, setCountryColumnPopupEditor }) => {
