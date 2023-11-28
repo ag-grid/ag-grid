@@ -55,7 +55,7 @@ export const LicensePricing = () => {
                     <div className={styles.videoPrompt}>
                         <a href="#video-explainer" className={styles.thumbnail}>
                             <img
-                                src="https://img.youtube.com/vi/20SLdu4wLtI/hqdefault.jpg"
+                                src="https://img.youtube.com/vi/xacx_attYuo/hqdefault.jpg"
                                 alt="AG Grid license explained video"
                             />
                         </a>
@@ -227,7 +227,7 @@ export const LicensePricing = () => {
                 </div>
 
                 <iframe
-                    src="https://www.youtube.com/embed/20SLdu4wLtI"
+                    src="https://www.youtube.com/embed/xacx_attYuo"
                     title="YouTube video player"
                     allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                     allowFullScreen
