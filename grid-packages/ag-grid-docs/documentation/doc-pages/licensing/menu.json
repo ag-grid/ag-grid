@@ -199,8 +199,8 @@
         "title": "Migration",
         "items": [
           {
-            "title": "Automatic migration tool",
-            "url": "/migration-tool/"
+            "title": "Automatic Migration Tool",
+            "url": "/automatic-migration-tool/"
           },
           {
             "title": "Upgrade to AG Grid 31",
