@@ -14,9 +14,9 @@ body {
     margin-bottom: 0 !important;
 }
 
-html[data-color-scheme='dark'],
-html[data-color-scheme='dark'] body > * {
+html[data-color-scheme='dark'] {
     color-scheme: dark;
+    background-color: #0b1d28;
 }
 
 html[data-color-scheme='dark'] button:not(#myGrid button, #myChart button, button[class*='ag-']) , .ag-fill-direction  {
