@@ -22,7 +22,7 @@ a#{$exclude-grid-selector} {
 
 code#{$exclude-grid-selector} {
     font-size: 0.875em;
-    padding: 0 0.2em;
+    padding: 2px 6px;
     font-family: var(--monospace-font-family);
     white-space: normal;
     border-radius: var(--border-radius);
@@ -38,8 +38,8 @@ code#{$exclude-grid-selector} {
         color: var(--default-text-color);
         background-color: #121f29;
         padding: 2px 6px;
-        font-size: 13px;
-        letter-spacing: 0.5px;
+        font-size: .875em;
+        letter-spacing: 0.3px;
     }
 }
 
