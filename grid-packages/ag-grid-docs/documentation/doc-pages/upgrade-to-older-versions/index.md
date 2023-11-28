@@ -36,7 +36,7 @@ Click [here](https://build.ag-grid.com/changelog/?fixVersion=30.0.2) for the Rel
 
 ### v30.0.0
 
-Read [What's New](https://blog.ag-grid.com/whats-new-in-ag-grid-30-0/) in AG Grid 30.0.0.
+Read [What's New](https://blog.ag-grid.com/whats-new-in-ag-grid-30/) in AG Grid 30.0.0.
 
 Click [here](https://build.ag-grid.com/changelog/?fixVersion=30.0.0) for the Release Notes and Changelog of AG Grid 30.0.0. 
 
