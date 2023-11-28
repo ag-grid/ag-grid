@@ -58,7 +58,7 @@ html button:not(#myGrid button, #myChart button, button[class*='ag-']), .ag-fill
     font-size: 14px;
     font-weight: 500;
     letter-spacing: .01em;
-    padding: 0.375em 1em 0.5em;
+    padding: 0.375em 1em 0.4em;
     white-space: nowrap;
     margin-right: 6px;
     margin-bottom: 8px;
