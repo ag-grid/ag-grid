@@ -9,7 +9,8 @@
     },
     {
         "release version": "30.1.0",
-        "markdown": "/releases/30_1_0.md"
+        "markdown": "/releases/30_1_0.md",
+        "showExpandLink": true
     },
     {
         "release version": "30.0.6",
@@ -37,7 +38,8 @@
     },
     {
         "release version": "30.0.0",
-        "markdown": "/releases/30_0_0.md"
+        "markdown": "/releases/30_0_0.md",
+        "showExpandLink": true
     },
     {
         "release version": "<p><b>20th Apr 2023 - Grid v29.3.0 (Charts v7.3.0)</b></p>",

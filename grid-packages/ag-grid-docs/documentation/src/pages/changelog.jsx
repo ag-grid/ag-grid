@@ -33,6 +33,7 @@ const Changelog = ({ location }) => {
     const [currentReleaseNotes, setCurrentReleaseNotes] = useState(null);
     const [markdownContent, setMarkdownContent] = useState(undefined);
     const [fixVersion, setFixVersion] = useState(extractFixVersionParameter(location) || ALL_FIX_VERSIONS);
+    const [hideExpander, setHideExpander] = useState(fixVersion === ALL_FIX_VERSIONS);
     const URLFilterItemKey = useState(extractFilterTerm(location))[0];
     const searchBarEl = useRef(null);
     const autoSizeStrategy = useMemo(() => ({ type: 'fitGridWidth' }), []);
@@ -87,8 +88,10 @@ const Changelog = ({ location }) => {
             );
 
             let currentReleaseNotesHtml = null;
-
+            let newHideExpander = hideExpander;
             if (releaseNotes) {
+                newHideExpander = !releaseNotes['showExpandLink'] && releaseNotes["markdown"];
+            
                 if (releaseNotes['markdown']) {
                     fetch(`${hostPrefix}/changelog` + releaseNotes['markdown'])
                         .then((response) => response.text())
@@ -104,7 +107,11 @@ const Changelog = ({ location }) => {
                         .join(' ');
                     setMarkdownContent(undefined);
                 }
+            } else {
+                newHideExpander = true;
             }
+
+            setHideExpander(newHideExpander);
             setCurrentReleaseNotes(currentReleaseNotesHtml);
         }
     }, [fixVersion, allReleaseNotes]);
@@ -310,7 +317,7 @@ const Changelog = ({ location }) => {
                             versions={versions}
                             fixVersion={fixVersion}
                             onChange={switchDisplayedFixVersion}
-                            hideExpander={fixVersion === ALL_FIX_VERSIONS}
+                            hideExpander={hideExpander}
                         />
                     </section>
 
