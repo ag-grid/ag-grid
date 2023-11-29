@@ -170,6 +170,11 @@ const MenuItem = ({item, currentFramework, activeParentItems}) => {
         return parentItem.url ? parentItem.url === item.url : parentItem.title === item.title;
     }), [item, activeParentItems]);
 
+    const bootstrapCollapseProps = item.absoluteUrl ? {} : {
+        "data-toggle": "collapse",
+        "data-target": "#side-nav"
+    }
+
     return (
         <li>
             {item.url ? (
@@ -179,6 +184,10 @@ const MenuItem = ({item, currentFramework, activeParentItems}) => {
                     target={item.newWindow ? '_blank' : '_self'}
                     className={isActiveParent ? styles.activeItemParent : undefined}
                     onClick={(event) => {
+                        if (item.absoluteUrl) {
+                            return;
+                        }
+
                         isDocsButtonOpen && setIsDocsButtonOpen(false);
 
                         // Prevent bootstrap collapse on desktop
@@ -186,8 +195,7 @@ const MenuItem = ({item, currentFramework, activeParentItems}) => {
                             event.stopPropagation();
                         }
                     }}
-                    data-toggle="collapse"
-                    data-target="#side-nav"
+                    {...bootstrapCollapseProps}
                 >
                     {item.title}
                     {item.enterprise && (
