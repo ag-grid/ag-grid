@@ -27,14 +27,14 @@ The columns reference section starts with an overview of Columns.
 
  - [Overview](/column-interface/): Key information for working with columns.
 
-Reference pages lists all column configurations and Column attributes, methods and events:
-  - [Options Reference](/column-properties/): Properties and callbacks use to configure a column.
+Reference pages list all column configurations and Column attributes, methods and events:
+  - [Options Reference](/column-properties/): Properties and callbacks used to configure a column.
   - [Column Reference](/column-object/): Attributes and methods available on Columns.
   - [Events Reference](/column-events/): Events fired by Columns.
 
 ## Rows
 
-Rows reference section overviews how to interact with instantiated rows displayed within the grid.
+The rows reference section covers the ways to interact with instantiated rows displayed within the grid.
 
  - [Overview](/row-interface): Key information for working with rows.
 
@@ -43,3 +43,8 @@ Reference pages list all Row object attributes, methods and events:
  - [Events Reference](/row-events/): Events fired by Rows. 
 
 
+## Typescript
+
+The Typescript sections outlines the support providing your own interfaces for row data, cell values and grid context to improve developer experience and type checking accuracy.
+
+ - [Typescript Generics](/typescript-generics/) Overview of generic types supported.
