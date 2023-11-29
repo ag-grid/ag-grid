@@ -2,7 +2,7 @@
 title: "Upgrading to Older Versions"
 ---
 
-Refer to the release notes of the previous version for breaking changes and deprecations. 
+Refer to the release notes of the previous versions for breaking changes and deprecations. 
 
 ## AG Grid 30
 

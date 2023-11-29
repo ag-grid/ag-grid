@@ -5,7 +5,7 @@
     "date": "November 29th 2023",
     "highlights": [
       {
-        "text": "Save/Restore the initial Grid State as a single object",
+        "text": "Save/Restore the initial grid state as a single object",
         "url": "https://www.ag-grid.com/javascript-data-grid/grid-state/"
       },
       {
