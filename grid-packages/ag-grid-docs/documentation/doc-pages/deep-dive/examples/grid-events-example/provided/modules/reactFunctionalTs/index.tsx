@@ -58,7 +58,7 @@ const GridExample = () => {
   }, [])
 
   // Apply settings across all columns
-  const defaultColDefs = useMemo<ColDef>(() => {
+  const defaultColDef = useMemo<ColDef>(() => {
     return {
       filter: true,
       editable: true
@@ -72,7 +72,7 @@ const GridExample = () => {
       <AgGridReact 
         rowData={rowData}
         columnDefs={colDefs}
-        defaultColDef={defaultColDefs}
+        defaultColDef={defaultColDef}
         pagination={true}
         onCellValueChanged={event => console.log(`New Cell Value: ${event.value}`)}
       />

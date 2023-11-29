@@ -7,7 +7,7 @@ The Chart Tool Panels allow users to change the selected chart type and customis
 
 <div style="display: flex; margin-bottom: 25px; margin-top: 25px; margin-left: 35px">
     <figure style="flex: 3; margin: 0;">
-        <image-caption src="integrated-charts-chart-tool-panels/resources/chart-tool-panels.png" alt="Open Chart Tool Panels with button to close it on the middle left of the panels" constrained="true" centered="true"></image-caption>
+        <image-caption src="integrated-charts-chart-tool-panels/resources/chart-tool-panels.png" alt="Open Chart Tool Panels with button to close it on the middle left of the panels" constrained="true" centered="true" maxWidth="40%" toggledarkmode="true"></image-caption>
         <figcaption style="text-align: center; font-size: 0.85rem; margin-top: 10px;">Accessing Chart Tool Panels</figcaption>
     </figure>
 </div>
@@ -20,7 +20,7 @@ via configuration (see examples in this section) or programmatically through the
 The Settings Panel can be used to change the chart type and chart theme.
 
 <figure style="flex: 3;">
-    <image-caption src="integrated-charts-chart-tool-panels/resources/settings-panel.png" alt="Chart Settings Panel"  constrained="true" centered="true"></image-caption>
+    <image-caption src="integrated-charts-chart-tool-panels/resources/settings-panel.png" alt="Chart Settings Panel"  constrained="true" centered="true" maxWidth="30%" toggledarkmode="true"></image-caption>
     <figcaption style="text-align: center; font-size: 0.85rem; margin-top: 10px;">Chart Settings Panel</figcaption>
 </figure>
 
@@ -50,7 +50,7 @@ The example below shows a subset of the provided chart groups with the chart typ
 The Data Panel can be used to change the chart category and series.
 
 <figure style="flex: 3;">
-    <image-caption src="integrated-charts-chart-tool-panels/resources/data-panel.png" alt="Chart Data Panel" maxWidth="90%" constrained="true" centered="true"></image-caption>
+    <image-caption src="integrated-charts-chart-tool-panels/resources/data-panel.png" alt="Chart Data Panel" maxWidth="30%" constrained="true" centered="true" toggledarkmode="true"></image-caption>
     <figcaption style="text-align: center; font-size: 0.85rem; margin-top: 10px;">Chart Data Panel</figcaption>
 </figure>
 
@@ -91,7 +91,7 @@ The following example shows some Data Panel customisations. Note the following:
 The Format Panel allows users to format the chart where the available formatting options differ between chart types.
 
 <figure style="flex: 3;">
-    <image-caption src="integrated-charts-chart-tool-panels/resources/format-panel.png" alt="Chart Format Panel" maxWidth="90%" constrained="true" centered="true"></image-caption>
+    <image-caption src="integrated-charts-chart-tool-panels/resources/format-panel.png" alt="Chart Format Panel" maxWidth="30%" constrained="true" centered="true" toggledarkmode="true"></image-caption>
     <figcaption style="text-align: center; font-size: 0.85rem; margin-top: 10px;">Chart Format Panel</figcaption>
 </figure>
 

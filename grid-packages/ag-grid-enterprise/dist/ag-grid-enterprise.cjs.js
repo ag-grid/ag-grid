@@ -6383,13 +6383,22 @@ function Validate(predicate) {
         }
         const targetClassName = targetClass ? `of [${targetClass}] ` : '';
         if (predicate.message) {
-            Logger.warn(`Property [${cleanKey}] ${targetClassName}cannot be set to [${JSON.stringify(v)}]; ${predicate.message}, ignoring.`);
+            Logger.warn(`Property [${cleanKey}] ${targetClassName}cannot be set to [${stringify(v)}]; ${predicate.message}, ignoring.`);
         }
         else {
-            Logger.warn(`Property [${cleanKey}] ${targetClassName}cannot be set to [${JSON.stringify(v)}], ignoring.`);
+            Logger.warn(`Property [${cleanKey}] ${targetClassName}cannot be set to [${stringify(v)}], ignoring.`);
         }
         return BREAK_TRANSFORM_CHAIN;
     });
+}
+function stringify(value) {
+    if (typeof value === 'number' && isNaN(value))
+        return 'NaN';
+    if (value === Infinity)
+        return 'Infinity';
+    if (value === -Infinity)
+        return '-Infinity';
+    return JSON.stringify(value);
 }
 function predicateWithMessage(predicate, message) {
     predicate.message = message;
@@ -12856,8 +12865,6 @@ const defaultTooltipCss = `
     z-index: 99999;
     font: 12px Verdana, sans-serif;
     color: rgb(70, 70, 70);
-    background: white;
-    border-radius: 2px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.08);
 }
 
@@ -12875,25 +12882,28 @@ const defaultTooltipCss = `
 }
 
 .${DEFAULT_TOOLTIP_CLASS}-title {
+    position: relative;
     padding: 8px 14px;
     border-top-left-radius: 2px;
     border-top-right-radius: 2px;
     color: white;
     background-color: #888888;
+    z-index: 1;
+}
+
+.${DEFAULT_TOOLTIP_CLASS}-title:only-child {
+    border-bottom-left-radius: 2px;
+    border-bottom-right-radius: 2px;
 }
 
 .${DEFAULT_TOOLTIP_CLASS}-content {
     padding: 6px 14px;
     line-height: 1.7em;
+    background: white;
     border-bottom-left-radius: 2px;
     border-bottom-right-radius: 2px;
     border: 1px solid rgba(0, 0, 0, 0.15);
     overflow: hidden;
-}
-
-.${DEFAULT_TOOLTIP_CLASS}-content:empty {
-    padding: 0;
-    height: 7px;
 }
 
 .${DEFAULT_TOOLTIP_CLASS}-arrow::before {
@@ -12960,7 +12970,8 @@ function toTooltipHtml(input, defaults) {
         ? `<div class="${DEFAULT_TOOLTIP_CLASS}-title"
         style="color: ${color}; background-color: ${backgroundColor}">${title}</div>`
         : '';
-    return `${titleHtml}<div class="${DEFAULT_TOOLTIP_CLASS}-content">${content}</div>`;
+    const contentHtml = content ? `<div class="${DEFAULT_TOOLTIP_CLASS}-content">${content}</div>` : '';
+    return `${titleHtml}${contentHtml}`;
 }
 const POSITION_TYPES = ['pointer', 'node'];
 const POSITION_TYPE = predicateWithMessage((v) => POSITION_TYPES.includes(v), `expecting a position type keyword such as 'pointer' or 'node'`);
@@ -16502,16 +16513,18 @@ function normaliseEndRotation(start, end) {
     return end - fullCircle;
 }
 function prepareAxisAnimationFunctions(ctx) {
-    const { min, max } = ctx;
     const outOfBounds = (datum) => {
+        var _a, _b;
+        const min = Math.min(...((_a = datum.range) !== null && _a !== void 0 ? _a : [ctx.min]));
+        const max = Math.max(...((_b = datum.range) !== null && _b !== void 0 ? _b : [ctx.max]));
         const translationY = Math.round(datum.translationY);
         return translationY < min || translationY > max;
     };
-    const calculateStatus = (datum, node, status) => {
+    const calculateStatus = (datum, nodeDatum, status) => {
         if (status !== 'removed' && outOfBounds(datum)) {
             return 'removed';
         }
-        else if (status !== 'added' && outOfBounds(node)) {
+        else if (status !== 'added' && outOfBounds(nodeDatum)) {
             return 'added';
         }
         return status;
@@ -16519,7 +16532,7 @@ function prepareAxisAnimationFunctions(ctx) {
     const fromBase = (node, datum, status) => {
         // Default to starting at the same position that the node is currently in.
         const source = { translationY: Math.round(node.translationY), opacity: node.opacity };
-        status = calculateStatus(datum, node, status);
+        status = calculateStatus(datum, node.datum, status);
         if (status === 'added') {
             source.translationY = Math.round(datum.translationY);
             source.opacity = 0;
@@ -16906,7 +16919,12 @@ class Axis {
         const lineData = this.getAxisLineCoordinates();
         const _a = this.tickGenerationResult, { tickData, combinedRotation, textBaseline, textAlign } = _a, ticksResult = __rest(_a, ["tickData", "combinedRotation", "textBaseline", "textAlign"]);
         const previousTicks = this.tickLabelGroupSelection.nodes().map((node) => node.datum.tickId);
-        this.updateSelections(lineData, tickData.ticks, { combinedRotation, textAlign, textBaseline });
+        this.updateSelections(lineData, tickData.ticks, {
+            combinedRotation,
+            textAlign,
+            textBaseline,
+            range: this.scale.range,
+        });
         if (this.animationManager.isSkipped()) {
             this.resetSelectionNodes();
         }
@@ -16943,7 +16961,7 @@ class Axis {
     }
     getTickLabelProps(datum, params) {
         const { label } = this;
-        const { combinedRotation, textBaseline, textAlign } = params;
+        const { combinedRotation, textBaseline, textAlign, range } = params;
         const text = datum.tickLabel;
         const sideFlag = label.getSideFlag();
         const tickSize = this.tick.size;
@@ -16965,6 +16983,7 @@ class Axis {
             visible,
             x: labelX,
             y: 0,
+            range,
         };
     }
     setTitleProps(caption, params) {
@@ -17040,6 +17059,7 @@ class Axis {
                     combinedRotation,
                     textAlign,
                     textBaseline,
+                    range: this.scale.range,
                 });
                 if (!labelProps.visible) {
                     return;
@@ -23374,7 +23394,7 @@ class Chart extends Observable {
                     yield this.processData();
                     this.disablePointer(true);
                     splits['🏭'] = performance.now();
-                // eslint-disable-next-line no-fallthrough
+                // fallthrough
                 case ChartUpdateType.PERFORM_LAYOUT:
                     if (this.checkUpdateShortcut(ChartUpdateType.PERFORM_LAYOUT))
                         break;
@@ -23382,7 +23402,7 @@ class Chart extends Observable {
                         break;
                     yield this.processLayout();
                     splits['⌖'] = performance.now();
-                // eslint-disable-next-line no-fallthrough
+                // fallthrough
                 case ChartUpdateType.SERIES_UPDATE:
                     if (this.checkUpdateShortcut(ChartUpdateType.SERIES_UPDATE))
                         break;
@@ -23390,24 +23410,24 @@ class Chart extends Observable {
                     const seriesUpdates = [...seriesToUpdate].map((series) => series.update({ seriesRect }));
                     yield Promise.all(seriesUpdates);
                     splits['🤔'] = performance.now();
-                // eslint-disable-next-line no-fallthrough
+                // fallthrough
                 case ChartUpdateType.TOOLTIP_RECALCULATION:
                     if (this.checkUpdateShortcut(ChartUpdateType.TOOLTIP_RECALCULATION))
                         break;
                     const tooltipMeta = this.tooltipManager.getTooltipMeta(this.id);
                     const isHovered = ((_a = tooltipMeta === null || tooltipMeta === void 0 ? void 0 : tooltipMeta.event) === null || _a === void 0 ? void 0 : _a.type) === 'hover';
-                    if (performUpdateType < ChartUpdateType.SERIES_UPDATE && isHovered) {
+                    if (performUpdateType <= ChartUpdateType.SERIES_UPDATE && isHovered) {
                         this.handlePointer(tooltipMeta.event);
                     }
                     splits['↖'] = performance.now();
-                // eslint-disable-next-line no-fallthrough
+                // fallthrough
                 case ChartUpdateType.SCENE_RENDER:
                     if (this.checkUpdateShortcut(ChartUpdateType.SCENE_RENDER))
                         break;
                     extraDebugStats['updateShortcutCount'] = this.updateShortcutCount;
                     yield this.scene.render({ debugSplitTimes: splits, extraDebugStats });
                     this.extraDebugStats = {};
-                // eslint-disable-next-line no-fallthrough
+                // fallthrough
                 case ChartUpdateType.NONE:
                     // Do nothing.
                     this.updateShortcutCount = 0;

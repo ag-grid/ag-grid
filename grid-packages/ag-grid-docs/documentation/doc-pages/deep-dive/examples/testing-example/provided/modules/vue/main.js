@@ -52,7 +52,7 @@ const App = {
         :class="themeClass"
         :columnDefs="colDefs"
         :rowData="rowData"
-        :defaultColDef="defaultColDefs"
+        :defaultColDef="defaultColDef"
         :pagination="true"
         :rowSelection="'multiple'"
         @cell-value-changed="onCellValueChanged"
@@ -100,7 +100,7 @@ const App = {
         { field: "rocket" },
       ],
       // Default Column Definitions: Apply configurations to all columns
-      defaultColDefs: {
+      defaultColDef: {
         filter: true,
         editable: true
       },

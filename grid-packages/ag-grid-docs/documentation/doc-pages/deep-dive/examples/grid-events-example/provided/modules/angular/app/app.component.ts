@@ -64,7 +64,7 @@ export class CompanyLogoRenderer implements ICellRendererAngularComp {
       [class]="themeClass"
       [rowData]="rowData"
       [columnDefs]="colDefs"
-      [defaultColDef]="defaultColDefs" 
+      [defaultColDef]="defaultColDef" 
       [pagination]="true"
       (gridReady)="onGridReady($event)"
       (cellValueChanged)="onCellValueChanged($event)"
@@ -102,7 +102,7 @@ export class AppComponent {
   ];
 
   // Default Column Definitions: Apply configuration across all columns
-  defaultColDefs: ColDef = {
+  defaultColDef: ColDef = {
     filter: true,
     editable: true
   }

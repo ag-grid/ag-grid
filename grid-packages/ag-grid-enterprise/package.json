@@ -77,7 +77,7 @@
     "@ag-grid-enterprise/sparklines": "~31.0.0",
     "@ag-grid-enterprise/status-bar": "~31.0.0",
     "@ag-grid-enterprise/viewport-row-model": "~31.0.0",
-    "ag-charts-community": "~9.0.0-beta.20231128.1359",
+    "ag-charts-community": "~9.0.0",
     "@rollup/plugin-alias": "^2.2.0",
     "@types/node": "12.20.20",
     "gulp": "^4.0.0",

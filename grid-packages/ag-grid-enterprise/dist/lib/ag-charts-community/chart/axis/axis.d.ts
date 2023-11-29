@@ -64,6 +64,7 @@ export type LabelNodeDatum = {
     x: number;
     y: number;
     translationY: number;
+    range: number[];
 };
 type TickData = {
     rawTicks: any[];
@@ -231,6 +232,7 @@ export declare abstract class Axis<S extends Scale<D, number, TickInterval<S>> =
         combinedRotation: number;
         textBaseline: CanvasTextBaseline;
         textAlign: CanvasTextAlign;
+        range: number[];
     }): void;
     protected updateAxisLine(): void;
     protected updateGridLines(sideFlag: ChartAxisLabelFlipFlag): void;

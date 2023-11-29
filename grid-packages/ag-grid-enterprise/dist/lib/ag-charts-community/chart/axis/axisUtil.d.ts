@@ -35,12 +35,14 @@ type AxisLabelDatum = {
     rotation: number;
     rotationCenterX: number;
     translationY: number;
+    range: number[];
 };
 export declare function prepareAxisAnimationContext(axis: {
     range: number[];
 }): AxisAnimationContext;
 type WithTranslationY = {
     translationY: number;
+    range?: number[];
 };
 export declare function prepareAxisAnimationFunctions<T extends AxisNodeDatum>(ctx: AxisAnimationContext): {
     tick: {
@@ -67,8 +69,8 @@ export declare function prepareAxisAnimationFunctions<T extends AxisNodeDatum>(c
         };
     };
     label: {
-        fromFn: FromToMotionPropFn<Text, Partial<AxisLabelDatum>, AxisLabelDatum>;
-        toFn: FromToMotionPropFn<Text, Partial<AxisLabelDatum>, AxisLabelDatum>;
+        fromFn: FromToMotionPropFn<Text, Partial<Omit<AxisLabelDatum, "range">>, AxisLabelDatum>;
+        toFn: FromToMotionPropFn<Text, Partial<Omit<AxisLabelDatum, "range">>, AxisLabelDatum>;
     };
     group: {
         fromFn: (group: Group, _datum: AxisGroupDatum) => {

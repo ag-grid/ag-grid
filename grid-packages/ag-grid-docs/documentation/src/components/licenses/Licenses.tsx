@@ -16,6 +16,7 @@ type LicenseData = {
     priceFullDollars: string;
     launchPrice: any;
     buyLink: string;
+    learnMoreLink: string;
     Logo: any;
 };
 
@@ -28,6 +29,7 @@ const DEV_LICENSE_DATA: LicenseData[] = [
         launchPrice: null,
         licenseBenefits: ['Perpetual License', '1 Year of Support', '1 Year of Updates'],
         buyLink: 'https://ag-grid.com/ecommerce/#/ecommerce/?licenseType=single&productType=aggrid',
+        learnMoreLink: "https://ag-grid.com/javascript-data-grid/licensing/",
         Logo: AGGridLogo
     },
     {
@@ -38,6 +40,7 @@ const DEV_LICENSE_DATA: LicenseData[] = [
         priceFullDollars: '399',
         launchPrice: '199',
         buyLink: 'https://ag-grid.com/ecommerce/#/ecommerce/?licenseType=single&productType=agcharts',
+        learnMoreLink: "https://charts.ag-grid.com/javascript/licensing/",
         Logo: AGChartsLogo
     },
 ];
@@ -71,7 +74,7 @@ const Price = ({ priceFullDollars, launchPrice }) => {
 };
 
 const License = (props: LicenseData) => {
-    const { id, subHeading, licenseBenefits, priceFullDollars, launchPrice, buyLink, Logo } = props;
+    const { id, subHeading, licenseBenefits, priceFullDollars, launchPrice, buyLink, learnMoreLink, Logo } = props;
 
     return (
         <>
@@ -90,7 +93,7 @@ const License = (props: LicenseData) => {
                         })}
                     </ul>
 
-                    <a className={classnames(styles.learnMoreLink, 'font-size-small')} href={`#${id}`}>
+                    <a className={classnames(styles.learnMoreLink, 'font-size-small')} href={learnMoreLink}>
                         Learn more
                     </a>
                 </div>

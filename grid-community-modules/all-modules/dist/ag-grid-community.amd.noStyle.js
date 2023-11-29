@@ -18298,6 +18298,7 @@ var __decorate = (undefined && undefined.__decorate) || function (decorators, ta
 
 class GroupCellRendererCtrl extends _context_beanStub_mjs__WEBPACK_IMPORTED_MODULE_1__["BeanStub"] {
     init(comp, eGui, eCheckbox, eExpanded, eContracted, compClass, params) {
+        var _a, _b;
         this.params = params;
         this.eGui = eGui;
         this.eCheckbox = eCheckbox;
@@ -18327,8 +18328,25 @@ class GroupCellRendererCtrl extends _context_beanStub_mjs__WEBPACK_IMPORTED_MODU
         }
         this.setupShowingValueForOpenedParent();
         this.findDisplayedGroupNode();
-        this.addFullWidthRowDraggerIfNeeded();
+        if (!topLevelFooter) {
+            const showingFooterTotal = params.node.footer && params.node.rowGroupIndex === this.columnModel.getRowGroupColumns().findIndex(c => { var _a; return c.getColId() === ((_a = params.colDef) === null || _a === void 0 ? void 0 : _a.showRowGroup); });
+            // if we're not showing a group value
+            const isAlwaysShowing = this.gridOptionsService.get('groupDisplayType') === 'singleColumn' || this.gridOptionsService.get('treeData');
+            const showOpenGroupValue = (isAlwaysShowing || (this.gridOptionsService.get('showOpenedGroup') && !params.node.footer && ((!params.node.group ||
+                (params.node.rowGroupIndex != null &&
+                    params.node.rowGroupIndex > this.columnModel.getRowGroupColumns().findIndex(c => { var _a; return c.getColId() === ((_a = params.colDef) === null || _a === void 0 ? void 0 : _a.showRowGroup); }))))));
+            // not showing a leaf value (field/valueGetter)
+            const leafWithValues = !node.group && (((_a = this.params.colDef) === null || _a === void 0 ? void 0 : _a.field) || ((_b = this.params.colDef) === null || _b === void 0 ? void 0 : _b.valueGetter));
+            // doesn't have expand/collapse chevron
+            const isExpandable = this.isExpandable();
+            // if not showing any values or chevron, skip cell.
+            const canSkipRenderingCell = !this.showingValueForOpenedParent && !isExpandable && !leafWithValues && !showOpenGroupValue && !showingFooterTotal;
+            if (canSkipRenderingCell) {
+                return;
+            }
+        }
         this.addExpandAndContract();
+        this.addFullWidthRowDraggerIfNeeded();
         this.addCheckboxIfNeeded();
         this.addValueElement();
         this.setupIndent();
@@ -38913,10 +38931,10 @@ let ExpansionService = class ExpansionService extends _context_beanStub_mjs__WEB
         if (!this.isClientSideRowModel) {
             return;
         }
-        rowIds.forEach(rowId => {
-            const rowNode = this.rowModel.getRowNode(rowId);
-            if (rowNode) {
-                rowNode.expanded = true;
+        const rowIdSet = new Set(rowIds);
+        this.rowModel.forEachNode(node => {
+            if (node.id && rowIdSet.has(node.id)) {
+                node.expanded = true;
             }
         });
         this.onGroupExpandedOrCollapsed();
@@ -42051,7 +42069,7 @@ class AgRichSelect extends _agPickerField_mjs__WEBPACK_IMPORTED_MODULE_11__["AgP
     }
     getCurrentValueIndex() {
         const { currentList, value } = this;
-        if (value == null) {
+        if (value == null || !currentList) {
             return -1;
         }
         for (let i = 0; i < currentList.length; i++) {
@@ -42285,13 +42303,14 @@ class AgRichSelect extends _agPickerField_mjs__WEBPACK_IMPORTED_MODULE_11__["AgP
     displayOrHidePicker() {
         var _a;
         const eListGui = (_a = this.listComponent) === null || _a === void 0 ? void 0 : _a.getGui();
-        eListGui === null || eListGui === void 0 ? void 0 : eListGui.classList.toggle('ag-hidden', this.currentList.length === 0);
+        const toggleValue = this.currentList ? this.currentList.length === 0 : false;
+        eListGui === null || eListGui === void 0 ? void 0 : eListGui.classList.toggle('ag-hidden', toggleValue);
     }
     clearSearchString() {
         this.searchString = '';
     }
     selectListItem(index, preventUnnecessaryScroll) {
-        if (!this.isPickerDisplayed || !this.listComponent || index < 0 || index >= this.currentList.length) {
+        if (!this.isPickerDisplayed || !this.currentList || !this.listComponent || index < 0 || index >= this.currentList.length) {
             return;
         }
         const wasScrolled = this.listComponent.ensureIndexVisible(index, !preventUnnecessaryScroll);
@@ -42301,7 +42320,7 @@ class AgRichSelect extends _agPickerField_mjs__WEBPACK_IMPORTED_MODULE_11__["AgP
         this.highlightSelectedValue(index);
     }
     setValue(value, silent, fromPicker) {
-        const index = this.currentList.indexOf(value);
+        const index = this.currentList ? this.currentList.indexOf(value) : -1;
         if (index === -1) {
             return this;
         }
@@ -42362,10 +42381,12 @@ class AgRichSelect extends _agPickerField_mjs__WEBPACK_IMPORTED_MODULE_11__["AgP
             return;
         }
         e.preventDefault();
-        this.onListValueSelected(this.currentList[this.highlightedItem], true);
+        if (this.currentList) {
+            this.onListValueSelected(this.currentList[this.highlightedItem], true);
+        }
     }
     onTabKeyDown() {
-        if (!this.isPickerDisplayed) {
+        if (!this.isPickerDisplayed || !this.currentList) {
             return;
         }
         this.setValue(this.currentList[this.highlightedItem], false, true);
@@ -51118,7 +51139,7 @@ let HeaderPositionUtils = class HeaderPositionUtils extends _context_beanStub_mj
         let nextFocusColumn = column;
         let nextRow = currentIndex + 1;
         if (currentRowType === _row_headerRowComp_mjs__WEBPACK_IMPORTED_MODULE_3__["HeaderRowType"].COLUMN_GROUP) {
-            const leafColumns = column.getLeafColumns();
+            const leafColumns = column.getDisplayedLeafColumns();
             const leafChild = direction === 'After' ? leafColumns[0] : Object(_utils_array_mjs__WEBPACK_IMPORTED_MODULE_4__["last"])(leafColumns);
             if (this.isAnyChildSpanningHeaderHeight(leafChild.getParent())) {
                 nextFocusColumn = leafChild;

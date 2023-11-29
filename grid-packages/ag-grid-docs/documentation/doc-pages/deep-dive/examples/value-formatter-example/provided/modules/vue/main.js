@@ -10,7 +10,7 @@ const App = {
         :class="themeClass"
         :columnDefs="columnDefs"
         :rowData="rowData"
-        :defaultColDef="defaultColDefs"
+        :defaultColDef="defaultColDef"
         :pagination="true"
     >
     </ag-grid-vue>
@@ -40,7 +40,7 @@ const App = {
         { field: "successful" },
         { field: "rocket" },
       ],
-      defaultColDefs: {
+      defaultColDef: {
         filter: true,
         editable: true,
       },

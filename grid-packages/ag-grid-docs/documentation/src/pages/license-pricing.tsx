@@ -55,7 +55,7 @@ export const LicensePricing = () => {
                     <div className={styles.videoPrompt}>
                         <a href="#video-explainer" className={styles.thumbnail}>
                             <img
-                                src="https://img.youtube.com/vi/20SLdu4wLtI/hqdefault.jpg"
+                                src="https://img.youtube.com/vi/xacx_attYuo/hqdefault.jpg"
                                 alt="AG Grid license explained video"
                             />
                         </a>
@@ -123,7 +123,7 @@ export const LicensePricing = () => {
                 <div className={styles.community}>
                     <h3>Community Versions</h3>
                     <p>
-                        <b>AG Grid Community</b> and <b>AG Charts Community</b> are free and open source products distributed under the{' '}
+                        <a href="https://www.npmjs.com/package/ag-grid-community"><b>AG Grid Community</b></a> and <a href="https://www.npmjs.com/package/ag-charts-community"><b>AG Charts Community</b></a> are free and open source products distributed under the{' '}
                         <a href={`${hostPrefix}/eula/AG-Grid-Community-License.html`} target="_blank">
                             MIT License
                         </a>
@@ -150,7 +150,7 @@ export const LicensePricing = () => {
                         Enterprise Versions <Icon name="enterprise" />
                     </h3>
                     <p>
-                        <b>AG Grid Enterprise</b> and <b>AG Charts Enterprise</b> are commercial products distributed
+                        <a href="https://ag-grid.com/javascript-data-grid/licensing/"><b>AG Grid Enterprise</b></a> and <a href="https://charts.ag-grid.com/javascript/licensing/"><b>AG Charts Enterprise</b></a> are commercial products distributed
                         under our{' '}
                         <a href={`${hostPrefix}/eula/AG-Grid-Enterprise-License-Latest.html`} target="_blank">
                             EULA
@@ -159,7 +159,7 @@ export const LicensePricing = () => {
                     </p>
 
                     <p>
-                        To evaluate <b>AG Grid Enterprise</b> or <b>AG Charts Enterprise</b> you don't need our
+                        To evaluate <a href="https://ag-grid.com/javascript-data-grid/licensing/"><b>AG Grid Enterprise</b></a> or <a href="https://charts.ag-grid.com/javascript/licensing/"><b>AG Charts Enterprise</b></a> you don't need our
                         permission – all features are unlocked. To temporarily hide the watermark and browser console
                         errors e-mail us to{' '}
                         <InfoEmailLink
@@ -227,7 +227,7 @@ export const LicensePricing = () => {
                 </div>
 
                 <iframe
-                    src="https://www.youtube.com/embed/20SLdu4wLtI"
+                    src="https://www.youtube.com/embed/xacx_attYuo"
                     title="YouTube video player"
                     allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                     allowFullScreen

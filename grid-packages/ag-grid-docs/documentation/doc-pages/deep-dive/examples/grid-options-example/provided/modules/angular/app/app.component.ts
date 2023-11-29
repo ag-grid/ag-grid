@@ -30,7 +30,7 @@ interface IRow {
       [class]="themeClass"
       [rowData]="rowData"
       [columnDefs]="colDefs"
-      [defaultColDef]="defaultColDefs" 
+      [defaultColDef]="defaultColDef" 
       (gridReady)="onGridReady($event)"
       [pagination]="true"
     >
@@ -56,7 +56,7 @@ export class AppComponent {
   ];
 
   // Default Column Definitions: Apply configuration across all columns
-  defaultColDefs: ColDef = {
+  defaultColDef: ColDef = {
     filter: true
   }
 
