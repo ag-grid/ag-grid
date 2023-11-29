@@ -97,7 +97,7 @@ export const LicensePricing = () => {
                                 <div className={styles.rightInner}>
                                     <div className={styles.rightPrice}>
                                         <p className="font-size-small">Starting at...</p>
-                                        <p className={styles.price}>$1,199</p>
+                                        <p className={styles.price}>$1,198</p>
                                         <p className="font-size-small">Per Developer</p>
                                     </div>
                                     <div className={styles.rightInfo}>
