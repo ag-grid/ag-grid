@@ -735,7 +735,10 @@ export class DataTypeService extends BeanStub {
         return {
             number: {
                 baseDataType: 'number',
-                valueParser: (params: ValueParserLiteParams<any, number>) => params.newValue === '' ? null : Number(params.newValue),
+                // can be empty space with legacy copy
+                valueParser: (params: ValueParserLiteParams<any, number>) => params.newValue === '' || params.newValue === ' '
+                    ? null
+                    : Number(params.newValue),
                 valueFormatter: (params: ValueFormatterLiteParams<any, number>) => {
                     if (params.value == null) { return ''; }
                     if (typeof params.value !== 'number' || isNaN(params.value)) {
@@ -757,7 +760,10 @@ export class DataTypeService extends BeanStub {
                     if (params.newValue == null) {
                         return params.newValue;
                     }
-                    return params.newValue === '' ? null : String(params.newValue).toLowerCase() === 'true'
+                    // can be empty space with legacy copy
+                    return params.newValue === '' || params.newValue === ' '
+                        ? null
+                        : String(params.newValue).toLowerCase() === 'true'
                 },
                 valueFormatter: (params: ValueFormatterLiteParams<any, boolean>) => params.value == null ? '' : String(params.value),
                 dataTypeMatcher: (value: any) => typeof value === 'boolean',
