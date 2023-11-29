@@ -186,8 +186,8 @@ const MenuItem = ({item, currentFramework, activeParentItems}) => {
                             event.stopPropagation();
                         }
                     }}
-                    data-toggle="collapse"
-                    data-target="#side-nav"
+                    data-toggle={!item.newWindow ? "collapse" : undefined}
+                    data-target={!item.newWindow ? "#side-nav" : undefined}
                 >
                     {item.title}
                     {item.enterprise && (
