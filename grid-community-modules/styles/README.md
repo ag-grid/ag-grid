@@ -71,7 +71,7 @@ $ npm install --save @ag-grid-community/csv-export
 ### Import the grid and styles
 
 ```js
-import { Grid } from '@ag-grid-community/core';
+import { createGrid } from '@ag-grid-community/core';
 
 import '@ag-grid-community/styles/ag-grid.css';
 import '@ag-grid-community/styles/ag-theme-quartz.css';

@@ -77,7 +77,7 @@ $ npm install --save ag-grid-community
 ### Import the grid and styles
 
 ```js
-import { Grid } from 'ag-grid-community';
+import { createGrid } from 'ag-grid-community';
 
 import 'ag-grid-community/styles//ag-grid.css';
 import 'ag-grid-community/styles//ag-theme-quartz.css';
