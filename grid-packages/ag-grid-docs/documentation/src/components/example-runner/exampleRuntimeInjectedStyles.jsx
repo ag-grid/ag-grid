@@ -19,7 +19,7 @@ html[data-color-scheme='dark'] {
     background-color: #0b1d28;
 }
 
-html[data-color-scheme='dark'] button:not(#myGrid button, #myChart button, button[class*='ag-']) , .ag-fill-direction  {
+html[data-color-scheme='dark'] button:not(.ag-root-wrapper button, #myChart button, button[class*='ag-']) , .ag-fill-direction  {
     border: 2px solid rgba(255,255,255, 0.2);
 }
 
@@ -46,7 +46,7 @@ TODO - reinstate these in a way that doesn't clobber example's row colours
 
 
 
-html button:not(#myGrid button, #myChart button, button[class*='ag-']), .ag-fill-direction  {
+html button:not(.ag-root-wrapper button, .ag-chart button, button[class*='ag-']), .ag-fill-direction  {
     appearance: none;
     background-color: var(--background-100);
     border: 2px solid rgba(0,0,0, 0.2);
@@ -65,15 +65,15 @@ html button:not(#myGrid button, #myChart button, button[class*='ag-']), .ag-fill
     transition: background-color .25s ease-in-out;
 }
 
-html[data-color-scheme='dark'] button:not(#myGrid button, #myChart button, button[class*='ag-']):hover {
+html[data-color-scheme='dark'] button:not(.ag-root-wrapper button, .ag-chart button, button[class*='ag-']):hover {
     background-color: #2a343e;
 }
 
-html button:not(#myGrid button, #myChart button, button[class*='ag-']):hover {
+html button:not(.ag-root-wrapper button, .ag-chart button, button[class*='ag-']):hover {
     background-color: rgba(0,0,0, 0.1);
 }
 
-html[data-color-scheme='dark'] select:not(#myGrid select, #myChart select, select[class*='ag-']) {
+html[data-color-scheme='dark'] select:not(.ag-root-wrapper select, .ag-chart select, select[class*='ag-']) {
     appearance: none;
     background-color: #202A34;
     border: 1px solid rgb(255,255,255,0.1);
@@ -83,11 +83,11 @@ html[data-color-scheme='dark'] select:not(#myGrid select, #myChart select, selec
     transition: background-color .25s ease-in-out;
 }
 
-html[data-color-scheme='dark'] select:not(#myGrid select, #myChart select, select[class*='ag-']):hover {
+html[data-color-scheme='dark'] select:not(.ag-root-wrapper select, .ag-chart select, select[class*='ag-']):hover {
     background-color: #2a343e;
 }
 
-html[data-color-scheme='dark'] input:not(#myGrid input):not(#myChart input):not([class*='ag-']):not([type='checkbox']):not([type='radio']) {
+html[data-color-scheme='dark'] input:not(.ag-root-wrapper input):not(.ag-chart input):not([class*='ag-']):not([type='checkbox']):not([type='radio']) {
     appearance: none;
     background-color: #202A34;
     border: 1px solid rgb(255,255,255,0.1);
@@ -96,7 +96,7 @@ html[data-color-scheme='dark'] input:not(#myGrid input):not(#myChart input):not(
     min-width: 36px;
 }
 
-html[data-color-scheme='light'] input:not(#myGrid input):not(#myChart input):not([class*='ag-']):not([type='checkbox']):not([type='radio']) {
+html[data-color-scheme='light'] input:not(.ag-root-wrapper input):not(.ag-chart input):not([class*='ag-']):not([type='checkbox']):not([type='radio']) {
     appearance: none;
     background-color: #fff;
     border: 1px solid rgb(0,0,0,0.1);
@@ -105,8 +105,7 @@ html[data-color-scheme='light'] input:not(#myGrid input):not(#myChart input):not
     min-width: 36px;
 }
 
-
-html[data-color-scheme='dark'] body:not(#myGrid body, #myChart body) {
+html[data-color-scheme='dark'] body {
   color: #fff;
 }
 
