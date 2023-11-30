@@ -50,14 +50,17 @@ export class SortController extends BeanStub {
         const doingMultiSort = (multiSort || this.gridOptionsService.get('alwaysMultiSort')) && !this.gridOptionsService.get('suppressMultiSort');
 
         // clear sort on all columns except those changed, and update the icons
+        const updatedColumns: Column[] = [];
         if (!doingMultiSort) {
-            this.clearSortBarTheseColumns(columnsToUpdate, source);
+            const clearedColumns = this.clearSortBarTheseColumns(columnsToUpdate, source);
+            updatedColumns.push(...clearedColumns);
         } 
 
         // sortIndex used for knowing order of cols when multi-col sort
         this.updateSortIndex(column);
 
-        this.dispatchSortChangedEvents(source);
+        updatedColumns.push(...columnsToUpdate);
+        this.dispatchSortChangedEvents(source, updatedColumns);
     }
 
     private updateSortIndex(lastColToChange: Column) {
@@ -78,8 +81,8 @@ export class SortController extends BeanStub {
 
     // gets called by API, so if data changes, use can call this, which will end up
     // working out the sort order again of the rows.
-    public onSortChanged(source: string): void {
-        this.dispatchSortChangedEvents(source);
+    public onSortChanged(source: string, columns?: Column[]): void {
+        this.dispatchSortChangedEvents(source, columns);
     }
 
     public isSortActive(): boolean {
@@ -89,23 +92,29 @@ export class SortController extends BeanStub {
         return sortedCols && sortedCols.length > 0;
     }
 
-    public dispatchSortChangedEvents(source: string): void {
+    public dispatchSortChangedEvents(source: string, columns?: Column[]): void {
         const event: WithoutGridCommon<SortChangedEvent> = {
             type: Events.EVENT_SORT_CHANGED,
             source
         };
+
+        if (columns) { event.columns = columns; }
         this.eventService.dispatchEvent(event);
     }
 
-    private clearSortBarTheseColumns(columnsToSkip: Column[], source: ColumnEventType): void {
+    private clearSortBarTheseColumns(columnsToSkip: Column[], source: ColumnEventType): Column[] {
+        const clearedColumns: Column[] = [];
         this.columnModel.getPrimaryAndSecondaryAndAutoColumns().forEach((columnToClear: Column) => {
             // Do not clear if either holding shift, or if column in question was clicked
-            if (!columnsToSkip.includes(columnToClear)) {
+            if (!columnsToSkip.includes(columnToClear) && !!columnToClear.getSort()) {
                 // setting to 'undefined' as null means 'none' rather than cleared, otherwise issue will arise
                 // if sort order is: ['desc', null , 'asc'], as it will start at null rather than 'desc'.
                 columnToClear.setSort(undefined, source);
+                clearedColumns.push(columnToClear);
             }
         });
+
+        return clearedColumns;
     }
 
     private getNextSortDirection(column: Column): SortDirection {
