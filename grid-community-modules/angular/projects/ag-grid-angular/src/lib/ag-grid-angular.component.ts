@@ -1480,7 +1480,7 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     /** SSRM Tree Data: Allows specifying group keys.
          */
     @Input() public getServerSideGroupKey: GetServerSideGroupKey | undefined = undefined;
-    /** Return a business key for the node. If implemented, each row in the DOM will have an attribute `row-id='abc'` where `abc` is what you return as the business key.
+    /** Return a business key for the node. If implemented, each row in the DOM will have an attribute `row-business-key='abc'` where `abc` is what you return as the business key.
          * This is useful for automated testing, as it provides a way for your tool to identify rows based on unique business keys.
          */
     @Input() public getBusinessKeyForNode: ((node: IRowNode<TData>) => string) | undefined = undefined;
