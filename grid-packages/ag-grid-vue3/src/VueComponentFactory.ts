@@ -79,10 +79,12 @@ export class VueComponentFactory {
         return {vNode, destroy, el}
     }
 
-    public static searchForComponentInstance(parent: any,
-                                             component: any,
-                                             maxDepth = 10,
-                                             suppressError = false) {
+    public static searchForComponentInstance(
+        parent: any,
+        component: any,
+        maxDepth = 10,
+        suppressError = false
+    ) {
         let componentInstance: any = null;
 
         let currentParent = parent.$parent;
