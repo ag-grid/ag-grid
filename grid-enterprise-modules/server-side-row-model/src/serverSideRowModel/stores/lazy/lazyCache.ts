@@ -710,7 +710,7 @@ export class LazyCache extends BeanStub {
     }
 
     private extractDuplicateIds(rows: any[]) {
-        if (this.getRowIdFunc != null) {
+        if (this.getRowIdFunc == null) {
             return [];
         }
 
