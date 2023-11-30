@@ -1,5 +1,4 @@
 <framework-specific-section frameworks="javascript">
-|## Cell Editor Component
 |
 |The interface for the cell editor component is as follows:
 |
