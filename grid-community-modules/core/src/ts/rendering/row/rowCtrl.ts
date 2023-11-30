@@ -656,10 +656,6 @@ export class RowCtrl extends BeanStub {
         return this.editingRow;
     }
 
-    public stopRowEditing(cancel: boolean): void {
-        this.stopEditing(cancel);
-    }
-
     public isFullWidth(): boolean {
         return this.rowType !== RowType.Normal;
     }
@@ -715,9 +711,9 @@ export class RowCtrl extends BeanStub {
         }
 
         this.addManagedListener(this.rowNode, RowNode.EVENT_DATA_CHANGED, this.onRowNodeDataChanged.bind(this));
-        this.addManagedListener(this.rowNode, RowNode.EVENT_CELL_CHANGED, this.onRowNodeCellChanged.bind(this));
+        this.addManagedListener(this.rowNode, RowNode.EVENT_CELL_CHANGED, this.postProcessCss.bind(this));
         this.addManagedListener(this.rowNode, RowNode.EVENT_HIGHLIGHT_CHANGED, this.onRowNodeHighlightChanged.bind(this));
-        this.addManagedListener(this.rowNode, RowNode.EVENT_DRAGGING_CHANGED, this.onRowNodeDraggingChanged.bind(this));
+        this.addManagedListener(this.rowNode, RowNode.EVENT_DRAGGING_CHANGED, this.postProcessRowDragging.bind(this));
         this.addManagedListener(this.rowNode, RowNode.EVENT_UI_LEVEL_CHANGED, this.onUiLevelChanged.bind(this));
 
         const eventService = this.beans.eventService;
@@ -725,12 +721,12 @@ export class RowCtrl extends BeanStub {
         this.addManagedListener(eventService, Events.EVENT_HEIGHT_SCALE_CHANGED, this.onTopChanged.bind(this));
         this.addManagedListener(eventService, Events.EVENT_DISPLAYED_COLUMNS_CHANGED, this.onDisplayedColumnsChanged.bind(this));
         this.addManagedListener(eventService, Events.EVENT_VIRTUAL_COLUMNS_CHANGED, this.onVirtualColumnsChanged.bind(this));
-        this.addManagedListener(eventService, Events.EVENT_CELL_FOCUSED, this.onCellFocused.bind(this));
-        this.addManagedListener(eventService, Events.EVENT_CELL_FOCUS_CLEARED, this.onCellFocusCleared.bind(this));
+        this.addManagedListener(eventService, Events.EVENT_CELL_FOCUSED, this.onCellFocusChanged.bind(this));
+        this.addManagedListener(eventService, Events.EVENT_CELL_FOCUS_CLEARED, this.onCellFocusChanged.bind(this));
         this.addManagedListener(eventService, Events.EVENT_PAGINATION_CHANGED, this.onPaginationChanged.bind(this));
-        this.addManagedListener(eventService, Events.EVENT_MODEL_UPDATED, this.onModelUpdated.bind(this));
+        this.addManagedListener(eventService, Events.EVENT_MODEL_UPDATED, this.refreshFirstAndLastRowStyles.bind(this));
 
-        this.addManagedListener(eventService, Events.EVENT_COLUMN_MOVED, this.onColumnMoved.bind(this));
+        this.addManagedListener(eventService, Events.EVENT_COLUMN_MOVED, this.updateColumnLists.bind(this));
 
         this.addDestroyFunc(() => {
             this.destroyBeans(this.rowDragComps, this.beans.context);
@@ -748,10 +744,6 @@ export class RowCtrl extends BeanStub {
         });
 
         this.addListenersForCellComps();
-    }
-
-    private onColumnMoved(): void {
-        this.updateColumnLists();
     }
 
     private addListenersForCellComps(): void {
@@ -810,11 +802,6 @@ export class RowCtrl extends BeanStub {
         this.postProcessCss();
     }
 
-    private onRowNodeCellChanged(): void {
-        // as data has changed, then the style and class needs to be recomputed
-        this.postProcessCss();
-    }
-
     private postProcessCss(): void {
         this.setStylesFromGridOptions(true);
         this.postProcessClassesFromGridOptions();
@@ -831,10 +818,6 @@ export class RowCtrl extends BeanStub {
             gui.rowComp.addOrRemoveCssClass('ag-row-highlight-above', aboveOn);
             gui.rowComp.addOrRemoveCssClass('ag-row-highlight-below', belowOn);
         });
-    }
-
-    private onRowNodeDraggingChanged(): void {
-        this.postProcessRowDragging();
     }
 
     private postProcessRowDragging(): void {
@@ -1158,10 +1141,6 @@ export class RowCtrl extends BeanStub {
 
     private isLastRowOnPage(): boolean {
         return this.rowNode.rowIndex === this.beans.paginationProxy.getPageLastRow();
-    }
-
-    private onModelUpdated(): void {
-        this.refreshFirstAndLastRowStyles();
     }
 
     private refreshFirstAndLastRowStyles(): void {
@@ -1532,14 +1511,6 @@ export class RowCtrl extends BeanStub {
         });
     }
 
-    private onCellFocused(): void {
-        this.onCellFocusChanged();
-    }
-
-    private onCellFocusCleared(): void {
-        this.onCellFocusChanged();
-    }
-
     private onCellFocusChanged(): void {
         const rowFocused = this.beans.focusService.isRowFocused(this.rowNode.rowIndex!, this.rowNode.rowPinned);
 
@@ -1703,25 +1674,4 @@ export class RowCtrl extends BeanStub {
             setAriaRowIndex(c.element, ariaRowIndex);
         });
     }
-
-    // returns the pinned left container, either the normal one, or the embedded full with one if exists
-    public getPinnedLeftRowElement(): HTMLElement {
-        return this.leftGui ? this.leftGui.element : undefined!;
-    }
-
-    // returns the pinned right container, either the normal one, or the embedded full with one if exists
-    public getPinnedRightRowElement(): HTMLElement {
-        return this.rightGui ? this.rightGui.element : undefined!;
-    }
-
-    // returns the body container, either the normal one, or the embedded full with one if exists
-    public getBodyRowElement(): HTMLElement {
-        return this.centerGui ? this.centerGui.element : undefined!;
-    }
-
-    // returns the full width container
-    public getFullWidthRowElement(): HTMLElement {
-        return this.fullWidthGui ? this.fullWidthGui.element : undefined!;
-    }
-
 }
