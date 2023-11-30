@@ -7,7 +7,7 @@ if [ "$#" -ne 1 ]
     exit 1
 fi
 
-example_root_dirs=(charts-examples grid-examples)
+example_root_dirs=(grid-examples)
 
 for example_root_dir in ${example_root_dirs[@]}
 do
