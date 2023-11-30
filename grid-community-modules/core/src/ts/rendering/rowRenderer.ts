@@ -738,9 +738,12 @@ export class RowRenderer extends BeanStub {
                 return;
             }
 
-            const fullWidthRenderer = rowCtrl.getFullWidthCellRenderer();
-            if (fullWidthRenderer) {
-                fullWidthRenderers.push(fullWidthRenderer);
+            const renderers = rowCtrl.getFullWidthCellRenderers();
+            for (let i = 0; i < renderers.length; i++) {
+                const renderer = renderers[i];
+                if(renderer != undefined){
+                    fullWidthRenderers.push(renderer);
+                }
             }
         });
 

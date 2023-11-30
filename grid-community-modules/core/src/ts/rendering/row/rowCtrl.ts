@@ -413,8 +413,11 @@ export class RowCtrl extends BeanStub {
         return this.printLayout;
     }
 
-    public getFullWidthCellRenderer(): ICellRenderer<any> | null | undefined {
-        return this.fullWidthGui?.rowComp?.getFullWidthCellRenderer();
+    public getFullWidthCellRenderers(): (ICellRenderer<any> | null | undefined)[] {
+        if(this.gridOptionsService.get('embedFullWidthRows')) {
+            return this.allRowGuis.map(gui => gui?.rowComp?.getFullWidthCellRenderer());
+        }
+        return [this.fullWidthGui?.rowComp?.getFullWidthCellRenderer()];
     }
 
     // use by autoWidthCalculator, as it clones the elements
