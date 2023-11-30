@@ -2043,6 +2043,11 @@ AddType text/javascript ts jsx
     Redirect 301 /react-data-grid/grid-features/ https://www.ag-grid.com/
     Redirect 301 /vue-data-grid/grid-features/ https://www.ag-grid.com/
 
+    RedirectMatch 301 "^/javascript-data-grid/$" "https://ag-grid.com/javascript-data-grid/getting-started/"
+    RedirectMatch 301 "^/react-data-grid/$" "https://ag-grid.com/react-data-grid/getting-started/"
+    RedirectMatch 301 "^/angular-data-grid/$" "https://ag-grid.com/angular-data-grid/getting-started/"
+    RedirectMatch 301 "^/vue-data-grid/$" "https://ag-grid.com/vue-data-grid/getting-started/"
+
     Redirect 301 /javascript-data-grid/integrated-charts-api-downloading-image/ /javascript-data-grid/integrated-charts-chart-tool-panels/
     Redirect 301 /angular-data-grid/integrated-charts-api-downloading-image/ /angular-data-grid/integrated-charts-chart-tool-panels/
     Redirect 301 /react-data-grid/integrated-charts-api-downloading-image/ /react-data-grid/integrated-charts-chart-tool-panels/
