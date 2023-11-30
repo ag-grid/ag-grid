@@ -26,7 +26,7 @@ function main() {
 function updateAngularProject(CWD, packageDirectory, directory) {
     let angularJson = require(`${CWD}/${packageDirectory}/${directory}/angular.json`);
 
-    let currentSubProjectPackageJsonFile = `${CWD}/${packageDirectory}/${directory}/projects/${angularJson.defaultProject}/package.json`;
+    let currentSubProjectPackageJsonFile = `${CWD}/${packageDirectory}/${directory}/projects/ag-grid-angular/package.json`;
     updateFileWithNewVersions(currentSubProjectPackageJsonFile);
 }
 

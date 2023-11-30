@@ -8,9 +8,9 @@ const WINDOWS = /^win/.test(os.platform());
 
 const npm = WINDOWS ? 'npm.cmd' : 'npm';
 
-if (process.argv.length < 4) {
-    console.log("Usage: node scripts/validateAgPackageAreOnNpm.js [Grid Version] [Chart Version]");
-    console.log("For example: node scripts/validateAgPackageAreOnNpm.js 23.1.0 1.1.0");
+if (process.argv.length < 3) {
+    console.log("Usage: node scripts/validateAgPackageAreOnNpm.js [Grid Version]");
+    console.log("For example: node scripts/validateAgPackageAreOnNpm.js 23.1.0");
     console.log("Note: This script should be run from the root of the monorepo");
     process.exit(1);
 }

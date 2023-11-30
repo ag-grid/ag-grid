@@ -5,7 +5,7 @@ import React, { useEffect } from 'react';
 import { Helmet } from 'react-helmet';
 import { initGrid } from '../../../components/hero-grid';
 import LogoMark from '../../../components/LogoMark';
-import { isProductionBuild, localPrefix } from '../../../utils/consts';
+import {agGridEnterpriseVersion, isProductionBuild, localPrefix} from '../../../utils/consts';
 import './HeroGrid.module.scss';
 
 const helmet = [];
@@ -30,7 +30,7 @@ if (!isProductionBuild()) {
     helmet.push(
         <script
             key="enterprise-lib"
-            src="https://cdn.jsdelivr.net/npm/ag-grid-enterprise/dist/ag-grid-enterprise.min.js"
+            src={`https://cdn.jsdelivr.net/npm/ag-grid-enterprise@${agGridEnterpriseVersion}/dist/ag-grid-enterprise.min.js`}
             type="text/javascript"
         />
     );
