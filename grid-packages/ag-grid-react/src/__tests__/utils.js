@@ -19,7 +19,7 @@ export const waitForAsyncCondition = (condition, maxAttempts, attempts=0) => new
         }
         attempts++;
 
-        if(attempts >= maxAttempts) {
+        if (attempts >= maxAttempts) {
             reject("Max timeout waiting for condition")
         }
 

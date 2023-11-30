@@ -21,7 +21,7 @@ console.log(`-------------------------------------------------------------------
 //                 if (fs.existsSync(packageJsonFilename)) {
 //                     const packageJson = JSON.parse(fs.readFileSync(packageJsonFilename, 'utf-8'));
 //
-//                     if(packageJson.dependencies && packageJson.dependencies['ag-charts-community'] ||
+//                     if (packageJson.dependencies && packageJson.dependencies['ag-charts-community'] ||
 //                         packageJson.devDependencies && packageJson.devDependencies['ag-charts-community'] ||
 //                         packageJson.peerDependencies && packageJson.peerDependencies['ag-charts-community']
 //                     ) {

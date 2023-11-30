@@ -17,7 +17,7 @@ function getModuleImports(bindings: any, componentFilenames: string[], extraCore
     const theme = bindings.gridSettings.theme ? bindings.gridSettings.theme.replace('-dark', '') : 'ag-theme-quartz';
     imports.push(`import '@ag-grid-community/styles/${theme}.css';`);
 
-    if(allStylesheets && allStylesheets.length > 0) {
+    if (allStylesheets && allStylesheets.length > 0) {
         allStylesheets.forEach(styleSheet => imports.push(`import './${path.basename(styleSheet)}';`));
     }
 
@@ -65,7 +65,7 @@ function getPackageImports(bindings: any, componentFilenames: string[], extraCor
     const theme = gridSettings.theme ? gridSettings.theme.replace('-dark', '') : 'ag-theme-quartz';
     imports.push(`import 'ag-grid-community/styles/${theme}.css';`);
 
-    if(allStylesheets && allStylesheets.length > 0) {
+    if (allStylesheets && allStylesheets.length > 0) {
         allStylesheets.forEach(styleSheet => imports.push(`import './${path.basename(styleSheet)}';`));
     }
 

@@ -93,7 +93,7 @@ export class ChartController extends BeanStub {
         let chartModelParams: ChartModelParams = { ...common };
 
         // modify the chart model properties based on the type of update
-        switch(params.type) {
+        switch (params.type) {
             case 'rangeChartUpdate':
                 chartModelParams.cellRange = this.createCellRange(params) ?? this.model.suppliedCellRange;
                 chartModelParams.aggFunc = params.aggFunc ?? this.model.aggFunc;

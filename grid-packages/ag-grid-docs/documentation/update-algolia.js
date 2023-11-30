@@ -56,7 +56,7 @@ const extractTitle = titleTag => {
     let title = titleTag.firstChild.textContent;
 
     let sibling = titleTag.firstChild.nextSibling;
-    while(sibling) {
+    while (sibling) {
         title += ` ${sibling.textContent}`;
         sibling = sibling.nextSibling;
     }

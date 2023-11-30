@@ -17,7 +17,7 @@ $toolbar-width: 1050px;
     padding: ($size-1 + 1px) $size-2 $size-1;
     overflow: auto;
 
-    @media screen and (min-width: $breakpoint-site-header-small){
+    @media screen and (min-width: $breakpoint-site-header-small) {
         padding-right: $size-3;
         padding-left: $size-3;
     }

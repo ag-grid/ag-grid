@@ -1290,11 +1290,11 @@ const ExampleInner = ({darkMode}) => {
     };
 
     const setCountryColumnPopupEditor = (theme, gridApi) => {
-        if(!columnDefs) {
+        if (!columnDefs) {
             return
         }
         const participantGroup = columnDefs.find(group => group.headerName === 'Participant');
-        if(!gridApi || !participantGroup) {
+        if (!gridApi || !participantGroup) {
             return
         }
 

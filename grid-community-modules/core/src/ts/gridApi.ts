@@ -1637,10 +1637,10 @@ export class GridApi<TData = any> {
      * and row data is provided asynchronously, the column sizing will happen asynchronously when row data is added.
      * To always perform this synchronously, set `cellDataType = false` on the default column definition.
      **/
-    public sizeColumnsToFit(paramsOrGridWidth?: ISizeColumnsToFitParams | number){
-        if(typeof paramsOrGridWidth === 'number'){
+    public sizeColumnsToFit(paramsOrGridWidth?: ISizeColumnsToFitParams | number) {
+        if (typeof paramsOrGridWidth === 'number') {
             this.columnModel.sizeColumnsToFit(paramsOrGridWidth, 'api');
-        }else{
+        } else {
             this.gridBodyCtrl.sizeColumnsToFit(paramsOrGridWidth);
         }
     }

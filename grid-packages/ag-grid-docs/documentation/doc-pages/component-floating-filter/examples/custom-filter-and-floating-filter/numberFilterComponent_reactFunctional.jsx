@@ -7,7 +7,7 @@ export default forwardRef((props, ref) => {
     const isNumeric = n => !isNaN(parseFloat(n)) && isFinite(n);
 
     useEffect(() => {
-        if(inputRef.current) {
+        if (inputRef.current) {
             inputRef.current.value = filterText;
         }
         props.filterChangedCallback();

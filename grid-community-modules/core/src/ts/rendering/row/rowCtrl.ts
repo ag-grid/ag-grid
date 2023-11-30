@@ -175,10 +175,10 @@ export class RowCtrl extends BeanStub {
         this.businessKeySanitised = escapeString(businessKey!);
     }
 
-    public getRowId(){
+    public getRowId() {
         return this.rowId;
     }
-    public getRowStyles(){
+    public getRowStyles() {
         return this.rowStyles;
     }
     public getTabIndex() {
@@ -414,7 +414,7 @@ export class RowCtrl extends BeanStub {
     }
 
     public getFullWidthCellRenderers(): (ICellRenderer<any> | null | undefined)[] {
-        if(this.gridOptionsService.get('embedFullWidthRows')) {
+        if (this.gridOptionsService.get('embedFullWidthRows')) {
             return this.allRowGuis.map(gui => gui?.rowComp?.getFullWidthCellRenderer());
         }
         return [this.fullWidthGui?.rowComp?.getFullWidthCellRenderer()];
@@ -1258,7 +1258,7 @@ export class RowCtrl extends BeanStub {
     }
 
     private setStylesFromGridOptions(updateStyles : boolean, gui?: RowGui): void {
-        if(updateStyles){
+        if (updateStyles) {
             this.rowStyles = this.processStylesFromGridOptions();
         }
         this.forEachGui(gui, gui => gui.rowComp.setUserStyles(this.rowStyles));
@@ -1313,7 +1313,7 @@ export class RowCtrl extends BeanStub {
             };
             rowStyleFuncResult = rowStyleFunc(params);
         }
-        if(rowStyleFuncResult || rowStyle){
+        if (rowStyleFuncResult || rowStyle) {
             return Object.assign({}, rowStyle, rowStyleFuncResult);
         }
         // Return constant reference for React
@@ -1660,7 +1660,7 @@ export class RowCtrl extends BeanStub {
         }
     }
 
-    public getRowIndex(){
+    public getRowIndex() {
         return this.rowNode.getRowIndexString();
     }
 

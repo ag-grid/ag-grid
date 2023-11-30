@@ -22,7 +22,7 @@
 <framework-specific-section frameworks="javascript">
 <snippet transform={false}>
 | const gridOptions: GridOptions = {
-|    onGridReady: (event: GridReadyEvent){
+|    onGridReady: (event: GridReadyEvent) {
 |       // use api from event
 |       event.api.ensureIndexVisible(10);
 |    }

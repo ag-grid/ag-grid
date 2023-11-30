@@ -43,29 +43,29 @@ export class AlignedGridsService extends BeanStub {
     private getAlignedGridApis(): GridApi[]{
         let alignedGrids = this.gridOptionsService.get('alignedGrids') ?? [];
         const isCallbackConfig = typeof alignedGrids === 'function';
-        if(typeof alignedGrids === 'function'){
+        if (typeof alignedGrids === 'function') {
             alignedGrids = alignedGrids();
         }
         const seeUrl = () => `See ${this.getFrameworkOverrides().getDocLink('aligned-grids')}`
         const apis = alignedGrids.map((alignedGrid) => {
-            if(!alignedGrid){
+            if (!alignedGrid) {
                 errorOnce(`alignedGrids contains an undefined option.`);
-                if(!isCallbackConfig){
+                if (!isCallbackConfig) {
                     errorOnce(`You may want to configure via a callback to avoid setup race conditions:
                      "alignedGrids: () => [linkedGrid]"`);
                 }
                 errorOnce(seeUrl())
                 return; 
             } 
-            if(alignedGrid instanceof GridApi){
+            if (alignedGrid instanceof GridApi) {
                 return alignedGrid;
             }
             // Extract the GridApi from a ref or component
             const refOrComp = alignedGrid;
-            if('current' in refOrComp){
+            if ('current' in refOrComp) {
                 return refOrComp.current?.api;
-            }else{
-                if(!refOrComp.api){
+            } else {
+                if (!refOrComp.api) {
                     errorOnce(`alignedGrids - No api found on the linked grid. If you are passing gridOptions to alignedGrids since v31 this is no longer valid. ${seeUrl()}`);
                 }
                 return refOrComp.api;

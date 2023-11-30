@@ -377,7 +377,7 @@ export class PivotColDefService extends BeanStub implements IPivotColDefService 
 
         colDef.pivotKeys = pivotKeys;
         colDef.pivotValueColumn = valueColumn;
-        if(colDef.filter === true) {
+        if (colDef.filter === true) {
             colDef.filter = 'agNumberColumnFilter';
         }
 

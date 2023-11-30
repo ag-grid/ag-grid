@@ -37,7 +37,7 @@ const GridBodyComp = () => {
     const [layoutClass, setLayoutClass] = useState<string>('ag-layout-normal');
 
     let cssClassManager = useRef<CssClassManager>();
-    if(!cssClassManager.current){
+    if (!cssClassManager.current) {
         cssClassManager.current = new CssClassManager(() => eRoot.current);
     }
 
@@ -96,7 +96,7 @@ const GridBodyComp = () => {
         const compProxy: IGridBodyComp = {
             setRowAnimationCssOnBodyViewport: setRowAnimationClass,
             setColumnCount: count => {
-                if(eRoot.current){
+                if (eRoot.current) {
                     _.setAriaColCount(eRoot.current, count)
                 }
             } ,
@@ -123,7 +123,7 @@ const GridBodyComp = () => {
                 }
             },
             registerBodyViewportResizeListener: listener => {
-                if(eBodyViewport.current){
+                if (eBodyViewport.current) {
                     const unsubscribeFromResize = resizeObserverService.observeResize(eBodyViewport.current, listener);
                     destroyFuncs.current.push(() => unsubscribeFromResize());
                 }

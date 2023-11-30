@@ -92,7 +92,7 @@ function reloadGrid() {
                 ...colDef,
             };
 
-            if(colDef.field){
+            if (colDef.field) {
                 const restoredWidth = columnWidths?.get(colDef.field);
                 if (restoredWidth) {
                     result.width = restoredWidth;

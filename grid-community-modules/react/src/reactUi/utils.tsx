@@ -98,7 +98,7 @@ export function getNextValueIfDifferent<T extends { getInstanceId: () => string 
     for (let i = 0; i < prev.length; i++) {
         const c = prev[i];
         prevMap.set(c.getInstanceId(), c);
-        if(nextMap.has(c.getInstanceId())){
+        if (nextMap.has(c.getInstanceId())) {
             oldValues.push(c);
         }
     }

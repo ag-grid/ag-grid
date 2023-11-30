@@ -25,7 +25,7 @@ packageNames
         const {isGridPackage, publicPackage} = agPackage;
         const excludePackage = exclude.includes(packageName);
 
-        if(publicPackage && !excludePackage) {
+        if (publicPackage && !excludePackage) {
             const result = spawnSync(npm, ['show', packageName, 'version'],
                 {
                     cwd: process.cwd(),
@@ -37,7 +37,7 @@ packageNames
 
             const publishedVersion = result.stdout;
             const expectedVersion = isGridPackage ? gridNewVersion : chartNewVersion;
-            if(expectedVersion.trim() !== publishedVersion.trim()) {
+            if (expectedVersion.trim() !== publishedVersion.trim()) {
                 console.error('******************************************************************');
                 console.error(`Published version of ${packageName} is ${publishedVersion}, but expected version is ${expectedVersion}`);
                 console.error('******************************************************************');

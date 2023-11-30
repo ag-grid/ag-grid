@@ -150,7 +150,7 @@ You could override this behaviour to focus the first grid cell, if that is a pre
 | // intercept key strokes within input element
 | myInput.addEventListener("keydown", event => {
 |     // ignore non tab key strokes
-|     if(event.key !== 'Tab') return;
+|     if (event.key !== 'Tab') return;
 | 
 |     // prevents tabbing into the url section
 |     event.preventDefault();

@@ -63,7 +63,7 @@ export class SortService extends BeanStub {
                     childrenToBeSorted.sort((row1, row2) => (indexedOrders[row1.id!] ?? 0) - (indexedOrders[row2.id!] ?? 0));
                 }
                 rowNode.childrenAfterSort = childrenToBeSorted;
-            } else if(!sortActive || skipSortingPivotLeafs) {
+            } else if (!sortActive || skipSortingPivotLeafs) {
                 // if there's no sort to make, skip this step
                 rowNode.childrenAfterSort = rowNode.childrenAfterAggFilter!.slice(0);
             } else if (useDeltaSort) {
@@ -128,7 +128,7 @@ export class SortService extends BeanStub {
         const touchedRows: RowNode[] = [];
 
         unsortedRows.forEach(row => {
-            if(allTouchedNodes[row.id!] || !changedPath.canSkip(row)) {
+            if (allTouchedNodes[row.id!] || !changedPath.canSkip(row)) {
                 touchedRows.push(row);
             } else {
                 untouchedRowsMap[row.id!] = true;

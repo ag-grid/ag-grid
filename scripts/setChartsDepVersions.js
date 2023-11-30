@@ -39,7 +39,7 @@ for (const lernaPackage of packageRootDirectories) {
                     updated |= updateDependency(packageJson, 'devDependencies', chartsVersion);
                     updated |= updateDependency(packageJson, 'peerDependencies', chartsVersion);
 
-                    if(updated) {
+                    if (updated) {
                         fs.writeFileSync(packageJsonFilename, JSON.stringify(packageJson, null, 2), 'utf-8');
                     }
                 }

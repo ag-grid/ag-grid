@@ -96,7 +96,7 @@ export default memo(forwardRef((props, ref) => {
             if (event.preventDefault) event.preventDefault();
         }
 
-        if(finishedEditingPressed(event)) {
+        if (finishedEditingPressed(event)) {
             props.stopEditing();
         }
     };

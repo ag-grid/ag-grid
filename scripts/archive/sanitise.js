@@ -12,7 +12,7 @@ const walk = require('walk');
 
 const args = process.argv.slice(2)
 
-if(!args[0]) {
+if (!args[0]) {
     console.error('No release provided');
     process.exit(0);
 }
@@ -93,13 +93,13 @@ walker.on("file", (root, fileStats, next) => {
         const fullFileName = `${root}/${fileStats.name}`;
 
         let scrubbedContents;
-        if(fullFileName.includes('includes/html-helpers.php')) {
+        if (fullFileName.includes('includes/html-helpers.php')) {
             scrubbedContents = removeGoogleTagManager(fullFileName);
         } else {
             scrubbedContents = scrubFile(fullFileName);
         }
 
-        if(modified) {
+        if (modified) {
             console.log(fullFileName);
             execFile('/bin/cp', [fullFileName, `${fullFileName}.bak`]);
             fs.writeFileSync(fullFileName, scrubbedContents, "UTF8");
