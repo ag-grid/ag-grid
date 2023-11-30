@@ -484,7 +484,8 @@ export class GridOptionsService {
         if (
             this.get('suppressGroupRowsSticky') ||
             this.get('paginateChildRows') ||
-            this.get('groupHideOpenParents')
+            this.get('groupHideOpenParents') ||
+            this.isDomLayout('print')
         ) { return false; }
 
         return true;
