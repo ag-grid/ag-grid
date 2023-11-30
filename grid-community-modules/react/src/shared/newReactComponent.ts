@@ -40,13 +40,17 @@ export class NewReactComponent extends ReactComponent {
             };
         }
 
-        this.reactElement = createElement(this.reactComponent, { ...params, key: this.key });
+        this.reactElement = this.createElement(this.reactComponent, { ...params, key: this.key });
 
         this.portal = createPortal(
             this.reactElement,
             this.eParentElement as any,
             this.portalKey // fixed deltaRowModeRefreshCompRenderer
         );
+    }
+
+    protected createElement(reactComponent: any, props: any): any {
+        return createElement(reactComponent, props);
     }
 
     private createReactComponent(resolve: (value: any) => void) {
