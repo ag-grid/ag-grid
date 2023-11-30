@@ -1712,7 +1712,7 @@ export interface GridOptions<TData = any> {
 
     // *** Rows *** //
     /**
-     * Return a business key for the node. If implemented, each row in the DOM will have an attribute `row-id='abc'` where `abc` is what you return as the business key.
+     * Return a business key for the node. If implemented, each row in the DOM will have an attribute `row-business-key='abc'` where `abc` is what you return as the business key.
      * This is useful for automated testing, as it provides a way for your tool to identify rows based on unique business keys.
      */
     getBusinessKeyForNode?: (node: IRowNode<TData>) => string;
