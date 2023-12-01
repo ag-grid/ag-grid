@@ -13,6 +13,7 @@ import React, {
     useRef,
     useState
 } from 'react';
+import { DateComponent } from '../shared/customComp/dateComponent';
 import { FilterComponent } from '../shared/customComp/filterComponent';
 import { AgReactUiProps } from '../shared/interfaces';
 import { NewReactComponent } from '../shared/newReactComponent';
@@ -175,6 +176,8 @@ class ReactFrameworkComponentWrapper
     createWrapper(UserReactComponent: { new(): any }, componentType: ComponentType): WrappableInterface {
         if (componentType.propertyName === 'filter') {
             return new FilterComponent(UserReactComponent, this.parent as any, componentType);
+        } else if (componentType.propertyName === 'dateComponent') {
+            return new DateComponent(UserReactComponent, this.parent as any, componentType);
         }
         return new NewReactComponent(UserReactComponent, this.parent as any, componentType);
     }

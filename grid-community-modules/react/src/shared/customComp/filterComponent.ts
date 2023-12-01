@@ -36,12 +36,14 @@ export class FilterComponent extends CustomComponent<CustomFilterParams, FilterM
         return this.model;
     }
 
-    public setModel(model: any): void | AgPromise<void> {
+    public setModel(model: any): void {
         this.model = model;
+        this.refreshProps(this.createProps());
     }
 
     public refresh(newParams: IFilterParams): boolean {
         this.filterParams = newParams;
+        this.refreshProps(this.createProps());
         return true;
     }
 
@@ -50,8 +52,7 @@ export class FilterComponent extends CustomComponent<CustomFilterParams, FilterM
     }
 
     private updateModel(model: any): void {
-        this.model = model;
-        this.refreshProps(this.createProps());
+        this.setModel(model);
         setTimeout(() => {
             // ensure prop updates have happened
             this.filterParams.filterChangedCallback();

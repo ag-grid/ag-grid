@@ -3,13 +3,7 @@ import { DateFilterParams } from "../filter/provided/date/dateFilter";
 import { IAfterGuiAttachedParams } from "../interfaces/iAfterGuiAttachedParams";
 import { AgGridCommon } from "../interfaces/iCommon";
 
-export interface IDate {
-    /** Returns the current date represented by this component */
-    getDate(): Date | null;
-
-    /** Sets the date represented by this component */
-    setDate(date: Date | null): void;
-
+export interface BaseDate {
     /** Optional: Sets the disabled state of this component */
     setDisabled?(disabled: boolean): void;
 
@@ -27,13 +21,25 @@ export interface IDate {
     afterGuiAttached?(params?: IAfterGuiAttachedParams): void;
 }
 
-export interface IDateParams<TData = any, TContext = any> extends AgGridCommon<TData, TContext> {
-    /** Method for component to tell AG Grid that the date has changed. */
-    onDateChanged: () => void;
+export interface IDate extends BaseDate {
+    /** Returns the current date represented by this component */
+    getDate(): Date | null;
+
+    /** Sets the date represented by this component */
+    setDate(date: Date | null): void;
+
+    /** When used in a floating filter, a hook to perform any necessary operations when the column definition is updated. */
+    onParamsUpdated?(params: IDateParams): void;
+}
+
+export interface BaseDateParams<TData = any, TContext = any> extends AgGridCommon<TData, TContext> {
     filterParams: DateFilterParams;
 }
 
+export interface IDateParams<TData = any, TContext = any> extends BaseDateParams<TData, TContext> {
+    /** Method for component to tell AG Grid that the date has changed. */
+    onDateChanged: () => void;
+}
+
 export interface IDateComp extends IComponent<IDateParams>, IDate {
-    /** When used in a floating filter, a hook to perform any necessary operations when the column definition is updated. */
-    onParamsUpdated?(params: IDateParams): void;
 }
