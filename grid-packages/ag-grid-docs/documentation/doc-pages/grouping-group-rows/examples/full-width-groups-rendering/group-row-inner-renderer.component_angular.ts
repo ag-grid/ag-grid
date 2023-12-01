@@ -7,7 +7,7 @@ interface GroupRowParams extends GroupCellRendererParams {
 }
 
 @Component({
-    selector: 'group-row-cell',
+    standalone: true,
     template: `
         <div class="row">
             <img *ngIf="flagCode" class="flag" border="0" width="20" height="15" [src]="flagCodeImg" />

@@ -1,4 +1,5 @@
 import { AfterViewInit, Component, ViewChild, ViewContainerRef } from "@angular/core";
+import { FormsModule } from "@angular/forms";
 
 import { ICellEditorAngularComp } from "@ag-grid-community/angular";
 import { ICellEditorParams } from "@ag-grid-community/core";
@@ -9,7 +10,8 @@ const KEY_ENTER = 'Enter';
 const KEY_TAB = 'Tab';
 
 @Component({
-    selector: 'numeric-cell',
+    standalone: true,
+    imports: [FormsModule],
     template: `<input #input class="simple-input-editor" (keydown)="onKeyDown($event)" [(ngModel)]="value">`
 })
 export class NumericCellEditor implements ICellEditorAngularComp, AfterViewInit {

@@ -1,9 +1,11 @@
+import { NgIf } from "@angular/common";
 import { IStatusPanelParams } from "@ag-grid-community/core";
 import { Component } from "@angular/core";
 import { IStatusPanelAngularComp } from "@ag-grid-community/angular";
 
 @Component({
-    selector: 'status-component',
+    standalone: true,
+    imports: [NgIf],
     template: `
         <div class="container" *ngIf="visible">
             <div>
@@ -13,8 +15,8 @@ import { IStatusPanelAngularComp } from "@ag-grid-community/angular";
     `
 })
 export class ClickableStatusBarComponent implements IStatusPanelAngularComp {
-    private params!: IStatusPanelParams;
-    private visible = true;
+    public params!: IStatusPanelParams;
+    public visible = true;
 
     agInit(params: IStatusPanelParams): void {
         this.params = params;

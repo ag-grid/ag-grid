@@ -3,7 +3,7 @@ import { IHeaderParams } from '@ag-grid-community/core';
 import { Component, ElementRef, ViewChild } from '@angular/core';
 
 @Component({
-    selector: 'app-loading-overlay',
+    standalone: true,
     template: `
         <div style="display: flex">
             <span *ngIf="params.enableMenu" #menuButton class="ag-icon ag-icon-menu"

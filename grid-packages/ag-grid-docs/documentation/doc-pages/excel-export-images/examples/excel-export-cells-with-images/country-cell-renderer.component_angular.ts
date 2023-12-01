@@ -4,7 +4,7 @@ import {ICellRendererAngularComp} from "@ag-grid-community/angular";
 import { FlagContext, IOlympicData } from './interfaces';
 
 @Component({
-    selector: 'simple-component',
+    standalone: true,
     template: `<img alt="{{params.data.country}}" src="{{params.context.base64flags[params.context.countryCodes[params.data.country]]}}">`
 })
 export class CountryCellRenderer implements ICellRendererAngularComp {

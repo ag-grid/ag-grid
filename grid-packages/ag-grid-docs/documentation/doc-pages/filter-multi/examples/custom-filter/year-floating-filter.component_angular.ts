@@ -3,7 +3,7 @@ import { IFloatingFilterAngularComp } from "@ag-grid-community/angular";
 import { IFloatingFilterParams } from '@ag-grid-community/core';
 import { YearFilter } from './year-filter.component_angular';
 @Component({
-    selector: 'year-floating-filter',
+    standalone: true,
     template: `
         <div class="year-filter">
             <label>
