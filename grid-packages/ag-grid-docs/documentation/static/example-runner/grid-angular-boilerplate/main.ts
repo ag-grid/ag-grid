@@ -1,5 +1,6 @@
-// Angular entry point file
-import { platformBrowserDynamic } from '@angular/platform-browser-dynamic';
-import { AppModule } from 'app/app.module';
+import '@angular/compiler';
+import { bootstrapApplication } from '@angular/platform-browser';
 
-platformBrowserDynamic().bootstrapModule(AppModule);
+import { AppComponent } from 'app.component.ts';
+
+bootstrapApplication(AppComponent);

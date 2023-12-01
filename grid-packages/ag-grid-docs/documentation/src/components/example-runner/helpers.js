@@ -9,7 +9,7 @@ export const DARK_MODE_START = '/** DARK MODE START **/';
 export const DARK_MODE_END = '/** DARK MODE END **/';
 
 export function stripOutDarkModeCode(files) {
-    const mainFiles = ['main.js', 'main.ts', 'index.tsx', 'index.jsx', 'app.component.ts', 'app/app.component.ts'];
+    const mainFiles = ['main.js', 'main.ts', 'index.tsx', 'index.jsx', 'app.component.ts'];
     const defaultTheme = document.documentElement.dataset.darkMode?.toUpperCase()  === 'TRUE' ? 'ag-theme-quartz-dark' : 'ag-theme-quartz';
     mainFiles.forEach((mainFile) => {
         if (files[mainFile]) {
@@ -219,12 +219,6 @@ export const getExampleFiles = (exampleInfo, forPlunker = false) => {
                             `/** @type {import('ag-grid-community').GridOptions} */\nconst gridOptions = {`
                         );
                     }
-                    if (library === 'charts') {
-                        source = source.replace(
-                            `const options = {`,
-                            `/** @type {import('ag-charts-community').AgChartOptions} */\nconst options = {`
-                        );
-                    }
                 }
 
                 files.plunker[f.path] = {source, isFramework: f.isFramework};
@@ -410,7 +404,7 @@ export const getCssFilePaths = (importType, theme) => {
 export const getEntryFile = (framework, internalFramework) => {
     const entryFile = {
         react: internalFramework === 'reactFunctionalTs' ? 'index.tsx' : 'index.jsx',
-        angular: 'app/app.component.ts',
+        angular: 'app.component.ts',
         javascript: internalFramework === 'typescript' ? 'main.ts' : 'main.js',
     };
 
