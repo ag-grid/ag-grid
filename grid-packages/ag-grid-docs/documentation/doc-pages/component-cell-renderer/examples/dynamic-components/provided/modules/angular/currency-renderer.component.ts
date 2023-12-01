@@ -1,9 +1,12 @@
 import { Component } from "@angular/core";
+import { CurrencyPipe } from "@angular/common";
 
 import { ICellRendererParams } from "@ag-grid-community/core";
 import { ICellRendererAngularComp } from "@ag-grid-community/angular";
 
 @Component({
+    standalone: true,
+    imports: [CurrencyPipe],
     selector: 'currency-cell',
     template: `{{params.value | currency:'EUR'}}`
 })

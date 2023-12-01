@@ -1,5 +1,5 @@
 
-import { AgGridAngular } from '@ag-grid-community/angular';
+import { AgGridAngular, AgGridModule } from '@ag-grid-community/angular';
 import { ColDef } from '@ag-grid-community/core';
 import '@ag-grid-community/styles/ag-grid.css';
 import "@ag-grid-community/styles/ag-theme-quartz.css";
@@ -7,6 +7,8 @@ import { HttpClient } from '@angular/common/http';
 import { Component, OnInit, ViewChild } from '@angular/core';
 
 @Component({
+    standalone: true,
+    imports: [AgGridModule]
     selector: 'my-app',
     template: `
     <div style='height: 100%; display: flex; flex-direction: column;'>
@@ -28,7 +30,6 @@ import { Component, OnInit, ViewChild } from '@angular/core';
 </div>
 `
 })
-
 export class AppComponent implements OnInit {
     themeClass = /** DARK MODE START **/document.documentElement?.dataset.defaultTheme || 'ag-theme-quartz'/** DARK MODE END **/;
 

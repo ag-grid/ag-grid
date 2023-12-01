@@ -5,10 +5,13 @@ import { HttpClient } from '@angular/common/http';
 import '@ag-grid-community/styles/ag-grid.css';
 import "@ag-grid-community/styles/ag-theme-quartz.css";
 import '../styles.css';
+import { AgGridModule } from '@ag-grid-community/angular';
 import { ColDef, ColGroupDef, GridApi, GridOptions, GridReadyEvent, SideBarDef, createGrid, GridState, GridPreDestroyedEvent, StateUpdatedEvent } from '@ag-grid-community/core';
 import { IOlympicData } from './interfaces'
 
 @Component({
+    standalone: true,
+    imports: [AgGridModule],
     selector: 'my-app',
     template: `
         <div class="example-wrapper">
@@ -38,7 +41,6 @@ import { IOlympicData } from './interfaces'
         </div>
     `
 })
-
 export class AppComponent {
     themeClass = /** DARK MODE START **/document.documentElement?.dataset.defaultTheme || 'ag-theme-quartz'/** DARK MODE END **/;
     private gridApi!: GridApi<IOlympicData>;

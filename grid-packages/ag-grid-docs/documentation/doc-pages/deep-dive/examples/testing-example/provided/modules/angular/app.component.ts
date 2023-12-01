@@ -1,11 +1,10 @@
 import { Component } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { ICellRendererAngularComp } from 'ag-grid-angular'; // Angular Grid Logic
-import { CellValueChangedEvent, ColDef, GridReadyEvent, ICellRendererParams, SelectionChangedEvent, ValueFormatterParams } from 'ag-grid-community'; // Column Definitions Interface
+import { NgIf } from '@angular/common';
+import { ModuleRegistry, CellValueChangedEvent, ColDef, GridReadyEvent, ICellRendererParams, SelectionChangedEvent, ValueFormatterParams } from '@ag-grid-community/core';
 import { HttpClient } from '@angular/common/http';
 import "@ag-grid-community/styles/ag-grid.css";
 import "@ag-grid-community/styles/ag-theme-quartz.css";
-import { ModuleRegistry } from '@ag-grid-community/core';
+import { AgGridModule, ICellRendererAngularComp } from '@ag-grid-community/angular';
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
 ModuleRegistry.registerModules([ ClientSideRowModelModule ]);
 
@@ -25,9 +24,8 @@ interface IRow {
 @Component({
   selector: 'app-mission-result-renderer',
   standalone: true,
-  imports: [CommonModule],
-  template:
-  `
+  imports: [NgIf],
+  template:`
   <span *ngIf="value" >
     <img
       [alt]="value"
@@ -38,7 +36,6 @@ interface IRow {
   `,
   styles: ["img { width: auto; height: auto; } span {display: flex; height: 100%; justify-content: center; align-items: center} "]
 })
-
 export class MissionResultRenderer implements ICellRendererAngularComp {
   // Init Cell Value
   public value!: string;
@@ -57,9 +54,8 @@ export class MissionResultRenderer implements ICellRendererAngularComp {
 @Component({
   selector: 'app-company-logo-renderer',
   standalone: true,
-  imports: [CommonModule],
-  template:
-  `
+  imports: [NgIf],
+  template: `
   <span *ngIf="value" >
     <img
       [alt]="value"
@@ -71,7 +67,6 @@ export class MissionResultRenderer implements ICellRendererAngularComp {
   `,
   styles: ["img {display: block; width: 25px; height: auto; maxHeight: 50%; margin-right: 12px; filter: brightness(1.1);} span {display: flex; height: 100%; width: 100%; align-items: center} p { text-overflow: ellipsis; overflow: hidden; white-space: nowrap }"]
 })
-
 export class CompanyLogoRenderer implements ICellRendererAngularComp {
   // Init Cell Value
   public value!: string;
@@ -88,8 +83,9 @@ export class CompanyLogoRenderer implements ICellRendererAngularComp {
 
 @Component({
   selector: 'my-app',
-  template: 
-  `
+  standalone: true,
+  imports: [AgGridModule],
+  template: `
   <div class="content">
     <!-- The AG Grid component, with various Grid Option properties -->
     <ag-grid-angular
@@ -108,7 +104,6 @@ export class CompanyLogoRenderer implements ICellRendererAngularComp {
   </div>
   `
 })
-
 export class AppComponent {
   themeClass = /** DARK MODE START **/document.documentElement?.dataset.defaultTheme || 'ag-theme-quartz'/** DARK MODE END **/;
 

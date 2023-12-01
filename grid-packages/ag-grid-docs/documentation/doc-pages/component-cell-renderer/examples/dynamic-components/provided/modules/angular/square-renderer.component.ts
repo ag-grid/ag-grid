@@ -4,6 +4,7 @@ import { ICellRendererParams } from "@ag-grid-community/core";
 import { ICellRendererAngularComp } from "@ag-grid-community/angular";
 
 @Component({
+    standalone: true,
     selector: 'square-cell',
     template: `{{valueSquared()}}`
 })

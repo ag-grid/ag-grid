@@ -7,6 +7,7 @@ import { Component, ViewChild } from '@angular/core';
 import "@ag-grid-community/styles/ag-grid.css";
 import "@ag-grid-community/styles/ag-theme-quartz.css";
 
+import { AgGridModule } from '@ag-grid-community/angular';
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
 import { MenuModule } from '@ag-grid-enterprise/menu';
 
@@ -14,7 +15,7 @@ import { MenuModule } from '@ag-grid-enterprise/menu';
 ModuleRegistry.registerModules([ClientSideRowModelModule, ExcelExportModule, MenuModule])
 
 @Component({
-    selector: 'simple-component',
+    standalone: true,
     template: `
         <i class="far fa-trash-alt" style="cursor: pointer" (click)="applyTransaction()"></i>
     `
@@ -37,8 +38,10 @@ export class SportRenderer implements ICellRendererAngularComp {
 }
 
 @Component({
+    standalone: true,
+    imports : [AgGridModule],
     selector: 'my-app',
-    template: /*html */ `
+    template: `
         <div class="top-container">
             <div>
                 <button type="button" class="btn btn-default excel" style="margin-right: 5px;" (click)="onExcelExport()">

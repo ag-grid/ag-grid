@@ -1,11 +1,10 @@
 import { Component } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { ICellRendererAngularComp } from 'ag-grid-angular'; // Angular Grid Logic
-import { CellValueChangedEvent, ColDef, GridReadyEvent, ICellRendererParams, ValueFormatterParams } from 'ag-grid-community'; // Column Definitions Interface
+import { NgIf } from '@angular/common';
+import { ICellRendererAngularComp, AgGridModule } from  '@ag-grid-community/angular';
+import { CellValueChangedEvent, ColDef, GridReadyEvent, ICellRendererParams, ValueFormatterParams, ModuleRegistry } from '@ag-grid-community/core';
 import { HttpClient } from '@angular/common/http';
 import "@ag-grid-community/styles/ag-grid.css";
 import "@ag-grid-community/styles/ag-theme-quartz.css";
-import { ModuleRegistry } from '@ag-grid-community/core';
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
 ModuleRegistry.registerModules([ ClientSideRowModelModule ]);
 
@@ -25,9 +24,8 @@ interface IRow {
 @Component({
   selector: 'app-company-logo-renderer',
   standalone: true,
-  imports: [CommonModule],
-  template:
-  `
+  imports: [NgIf],
+  template: `
   <span *ngIf="value" >
     <img
       [alt]="value"
@@ -38,7 +36,6 @@ interface IRow {
   `,
   styles: ["img {display: block; width: 25px; height: auto; maxHeight: 50%; margin-right: 12px; filter: brightness(1.2);} span {display: flex; height: 100%; width: 100%; align-items: center} p { text-overflow: ellipsis; overflow: hidden; white-space: nowrap }"]
 })
-
 export class CompanyLogoRenderer implements ICellRendererAngularComp {
   // Init Cell Value
   public value!: string;
@@ -54,9 +51,10 @@ export class CompanyLogoRenderer implements ICellRendererAngularComp {
 }
 
 @Component({
+  standalone: true,
+  imports: [AgGridModule],
   selector: 'my-app',
-  template: 
-  `
+  template: `
   <div class="content">
     <!-- The AG Grid component, with Dimensions, CSS Theme, Row Data, and Column Definition -->
     <ag-grid-angular
@@ -73,7 +71,6 @@ export class CompanyLogoRenderer implements ICellRendererAngularComp {
   </div>
   `
 })
-
 export class AppComponent {
   themeClass = /** DARK MODE START **/document.documentElement?.dataset.defaultTheme || 'ag-theme-quartz'/** DARK MODE END **/;
   // Row Data: The data to be displayed.

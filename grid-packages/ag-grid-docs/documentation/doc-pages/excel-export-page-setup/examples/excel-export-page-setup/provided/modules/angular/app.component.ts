@@ -5,10 +5,13 @@ import { HttpClient } from '@angular/common/http';
 import '@ag-grid-community/styles/ag-grid.css';
 import "@ag-grid-community/styles/ag-theme-quartz.css";
 import '../styles.css';
+import { AgGridModule } from '@ag-grid-community/angular';
 import { ColDef, GridApi, GridReadyEvent } from '@ag-grid-community/core';
 import { IOlympicData } from './interfaces'
 
 @Component({
+    standalone: true,
+    imports: [AgGridModule],
     selector: 'my-app',
     template: `<div class="container">
         <form (submit)="onFormSubmit($event)">
@@ -80,7 +83,6 @@ import { IOlympicData } from './interfaces'
     </div>
 </div>`
 })
-
 export class AppComponent {
     themeClass = /** DARK MODE START **/document.documentElement?.dataset.defaultTheme || 'ag-theme-quartz'/** DARK MODE END **/;
     public columnDefs: ColDef[] = [

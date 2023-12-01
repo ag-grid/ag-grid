@@ -2,6 +2,7 @@ import {Component} from '@angular/core';
 // NOTE: Angular CLI does not support component CSS imports: angular-cli/issues/23273
 import '@ag-grid-community/styles/ag-grid.css';
 import "@ag-grid-community/styles/ag-theme-quartz.css";
+import {AgGridModule} from '@ag-grid-community/angular';
 import {ColDef, GridApi, GridOptions, GridPreDestroyedEvent, GridReadyEvent} from '@ag-grid-community/core';
 import {TAthlete, getDataSet} from './data';
 import '../styles.css';
@@ -12,6 +13,8 @@ interface ColumnWidth {
 }
 
 @Component({
+    standalone: true,
+    imports: [AgGridModule],
     selector: 'my-app',
     template: `
         <div class="test-container">

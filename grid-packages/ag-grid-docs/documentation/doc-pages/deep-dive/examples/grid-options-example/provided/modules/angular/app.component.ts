@@ -1,9 +1,8 @@
 import { Component } from '@angular/core';
-import { ColDef, GridReadyEvent } from 'ag-grid-community';
 import { HttpClient } from '@angular/common/http';
 import "@ag-grid-community/styles/ag-grid.css";
 import "@ag-grid-community/styles/ag-theme-quartz.css";
-import { ModuleRegistry } from '@ag-grid-community/core';
+import { ModuleRegistry, ColDef, GridReadyEvent } from '@ag-grid-community/core';
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
 ModuleRegistry.registerModules([ ClientSideRowModelModule ]);
 
@@ -21,8 +20,7 @@ interface IRow {
 
 @Component({
   selector: 'my-app',
-  template: 
-  `
+  template: `
   <div class="content">
     <!-- The AG Grid component, with Dimensions, CSS Theme, Row Data, and Column Definition -->
     <ag-grid-angular

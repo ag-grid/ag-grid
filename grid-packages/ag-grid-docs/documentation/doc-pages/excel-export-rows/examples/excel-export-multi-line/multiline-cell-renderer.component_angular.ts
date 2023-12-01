@@ -11,7 +11,7 @@ import {ICellRendererAngularComp} from "@ag-grid-community/angular";
 })
 export class MultilineCellRenderer implements ICellRendererAngularComp {
     private params!: ICellRendererParams;
-    private value: any;
+    public value: any;
 
     agInit(params: ICellRendererParams): void {
         this.params = params;
