@@ -5,7 +5,6 @@ import '@ag-grid-community/styles/ag-grid.css';
 import "@ag-grid-community/styles/ag-theme-quartz.css";
 import { HttpClient } from '@angular/common/http';
 import { Component, OnInit, ViewChild } from '@angular/core';
-// Required feature modules are registered in app.module.ts
 
 @Component({
     selector: 'my-app',

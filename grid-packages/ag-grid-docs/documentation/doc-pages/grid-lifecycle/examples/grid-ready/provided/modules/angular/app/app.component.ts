@@ -5,8 +5,6 @@ import "@ag-grid-community/styles/ag-theme-quartz.css";
 import { Component } from '@angular/core';
 import { getData } from './data';
 
-// Required feature modules are registered in app.module.ts
-
 @Component({
   selector: "my-app",
   template: `

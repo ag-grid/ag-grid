@@ -5,7 +5,6 @@ import "@ag-grid-community/styles/ag-theme-quartz.css";
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { AgGridAngular } from '@ag-grid-community/angular';
 import { getData } from './data';
-// Required feature modules are registered in app.module.ts
 
 @Component({
     selector: 'my-app',

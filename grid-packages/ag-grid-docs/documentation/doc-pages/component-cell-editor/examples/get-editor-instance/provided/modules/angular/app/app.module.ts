@@ -9,7 +9,6 @@ import { MySimpleEditor } from './mySimple-editor.component';
 
 import { ModuleRegistry } from '@ag-grid-community/core';
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
-// Required feature modules are registered in app.module.ts
 // Register the required feature modules with the Grid
 ModuleRegistry.registerModules([ClientSideRowModelModule]);
 @NgModule({

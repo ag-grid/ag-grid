@@ -6,8 +6,6 @@ import {ColDef, GridApi, GridOptions, GridPreDestroyedEvent, GridReadyEvent} fro
 import {TAthlete, getDataSet} from './data';
 import '../styles.css';
 
-// Required feature modules are registered in app.module.ts
-
 interface ColumnWidth {
     field: string;
     width: number;
