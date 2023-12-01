@@ -155,14 +155,12 @@ const getFrameworkFiles = (framework, internalFramework) => {
     }
 
     // spl temporary css loader
-    let files = ['systemjs.config.js', 'css.js'];
+    let files = ['css.js'];
 
     if (isDevelopment()) {
         files.push('systemjs.config.dev.js');
-    }
-
-    if (framework === 'angular') {
-        files.unshift('main.ts', 'systemjs-angular-loader.js');
+    }else{
+        files.push('systemjs.config.js');
     }
 
     return files;

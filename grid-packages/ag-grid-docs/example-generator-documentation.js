@@ -463,6 +463,7 @@ function createExampleGenerator(exampleType, prefix, importTypes, incremental) {
                         importTypes.forEach(importType => {
                             let frameworkFiles = {
                                 'app.component.ts': getSource(importType),
+                                'main.ts' : ANGULAR_MAIN_FILE
                             };
                             const interfaces = getInterfaceFileContents(typedBindings);
                             if (interfaces) {
@@ -661,6 +662,14 @@ function addPackageJson(type, framework, importType, basePath) {
 
     writeFile(path.join(basePath, 'package.json'), JSON.stringify(packageJson, null, 4));
 }
+
+const ANGULAR_MAIN_FILE =
+`import '@angular/compiler';
+import { bootstrapApplication } from '@angular/platform-browser';
+import { AppComponent } from './app.component';
+                                
+bootstrapApplication(AppComponent);
+`
 
 function getGeneratorCode(prefix) {
     const {parser} = require(`${prefix}vanilla-src-parser.ts`);
