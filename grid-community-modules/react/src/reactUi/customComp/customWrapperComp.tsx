@@ -1,10 +1,8 @@
-import React, { memo, useEffect, useMemo, useState } from "react";
+import React, { memo, useEffect, useState } from "react";
 import { CustomContext, WrapperParams } from "../../shared/customComp/customComponent"
 
 const CustomWrapperComp = <P, M>(params: WrapperParams<P, M>) => {
-    const { initialProps, addUpdateCallback } = params;
-    const CustomComponentClass = useMemo(() => params.CustomComponentClass, []);
-    const customContext = useMemo(() => ({ setMethods: params.setMethods }), []);
+    const { initialProps, addUpdateCallback, CustomComponentClass, setMethods } = params;
 
     const [props, setProps] = useState(initialProps);
 
@@ -13,7 +11,7 @@ const CustomWrapperComp = <P, M>(params: WrapperParams<P, M>) => {
     }, []);
 
     return (
-        <CustomContext.Provider value={customContext}>
+        <CustomContext.Provider value={{ setMethods }}>
             <CustomComponentClass {...props}/>
         </CustomContext.Provider>
     );
