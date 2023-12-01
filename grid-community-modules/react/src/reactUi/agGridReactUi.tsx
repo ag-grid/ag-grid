@@ -13,7 +13,7 @@ import React, {
     useRef,
     useState
 } from 'react';
-import { FilterComponent } from '../reactUi/customComponent/filterComponent';
+import { FilterComponent } from '../shared/customComp/filterComponent';
 import { AgReactUiProps } from '../shared/interfaces';
 import { NewReactComponent } from '../shared/newReactComponent';
 import { PortalManager } from '../shared/portalManager';

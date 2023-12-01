@@ -1,29 +1,12 @@
 import { AgPromise, BaseFilter, BaseFilterParams, IDoesFilterPassParams, IFilter, IFilterParams } from "@ag-grid-community/core";
-import { useContext, useState } from "react";
-import { CustomComponent, CustomContext } from "./customComponent";
+import CustomWrapperComp from "../../reactUi/customComp/customWrapperComp";
+import { CustomComponent,  useGridCustomComponent } from "./customComponent";
 
-export function useGridFilter(methods: FilterMethods): IFilterParams {
-    const { setMethods, params, addCallback } = useContext(CustomContext);
-    setMethods(methods);
-    const [props, setProps] = useState(params);
-    addCallback(newProps => setProps(newProps));
-    return props;
+export function useGridFilter(methods: FilterMethods): void {
+    return useGridCustomComponent(methods);
 }
 
-export interface DoesFilterPassParams<TData = any, TValue = any, TModel = any> extends IDoesFilterPassParams<TData> {
-    model: TModel,
-    value: TValue | null | undefined,
-}
-
-export interface FilterMethods extends BaseFilter {
-    /**
-     * The grid will ask each active filter, in turn, whether each row in the grid passes. If any
-     * filter fails, then the row will be excluded from the final set. The method is provided a
-     * params object with attributes node (the rodNode the grid creates that wraps the data) and data
-     * (the data object that you provided to the grid for that row).
-     */
-    doesFilterPass: (params: DoesFilterPassParams) => boolean;
-}
+export interface FilterMethods extends BaseFilter {}
 
 export interface CustomFilterParams<TData = any, TContext = any, TModel = any> extends BaseFilterParams<TData, TContext> {
     model: TModel | null,
@@ -32,11 +15,12 @@ export interface CustomFilterParams<TData = any, TContext = any, TModel = any> e
 }
 
 export class FilterComponent extends CustomComponent<CustomFilterParams, FilterMethods> implements IFilter {
-    private model: any;
+    private model: any = null;
     private filterParams!: IFilterParams;
 
-    public init(params: any): AgPromise<void> {
+    public init(params: IFilterParams): AgPromise<void> {
         this.filterParams = params;
+        this.wrapperComponent = CustomWrapperComp;
         return super.init(this.createProps());
     }
 
@@ -45,12 +29,7 @@ export class FilterComponent extends CustomComponent<CustomFilterParams, FilterM
     }
 
     public doesFilterPass(params: IDoesFilterPassParams<any>): boolean {
-        return this.providedMethods.doesFilterPass({
-            data: params.data,
-            node: params.node,
-            model: this.model,
-            value: this.filterParams.getValue(params.node)
-        });
+        return this.providedMethods.doesFilterPass(params);
     }
 
     public getModel(): any {
@@ -72,8 +51,11 @@ export class FilterComponent extends CustomComponent<CustomFilterParams, FilterM
 
     private updateModel(model: any): void {
         this.model = model;
-        this.filterParams.filterChangedCallback();
         this.refreshProps(this.createProps());
+        setTimeout(() => {
+            // ensure prop updates have happened
+            this.filterParams.filterChangedCallback();
+        });
     }
 
     private createProps(): CustomFilterParams {
@@ -89,7 +71,8 @@ export class FilterComponent extends CustomComponent<CustomFilterParams, FilterM
             rowModel,
             model: this.model,
             onModelChange: (model: any) => this.updateModel(model),
-            onUiChange: () => this.filterParams.filterChangedCallback()
-        };
+            onUiChange: () => this.filterParams.filterChangedCallback(),
+            key: this.key
+        } as any;
     }
 }

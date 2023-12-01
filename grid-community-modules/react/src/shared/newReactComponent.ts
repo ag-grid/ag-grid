@@ -9,7 +9,7 @@ import { LegacyPortalManager } from './portalManager';
 
 export class NewReactComponent extends ReactComponent {
     
-    private key: string;
+    protected key: string;
     private portalKey: string;
     private oldPortal: ReactPortal | null = null;
     private reactElement: any;
