@@ -58,7 +58,7 @@ const RowComp = (params: { rowCtrl: RowCtrl, containerType: RowContainerType }) 
     }, [fullWidthCompDetails, autoHeightSetupAttempt]);
 
     let cssClassManager = useRef<CssClassManager>();
-    if(!cssClassManager.current){
+    if (!cssClassManager.current) {
         cssClassManager.current = new CssClassManager(() => eGui.current);
     }
     const setRef = useCallback((e: HTMLDivElement) => {

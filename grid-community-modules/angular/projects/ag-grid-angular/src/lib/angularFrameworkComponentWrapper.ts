@@ -79,7 +79,7 @@ abstract class BaseGuiComponent<P, T extends AgFrameworkComponent<P>> {
     }
 
     public destroy(): void {
-        if(this._frameworkComponentInstance && typeof this._frameworkComponentInstance.destroy === 'function') {
+        if (this._frameworkComponentInstance && typeof this._frameworkComponentInstance.destroy === 'function') {
             this._frameworkComponentInstance.destroy();
         }
         if (this._componentRef) {

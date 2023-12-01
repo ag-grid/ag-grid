@@ -16,7 +16,7 @@ const version = require(`${CWD}/node_modules/lerna/package.json`).version;
 // if lerna gets bumped up we need to ensure this patch is still valid - if it is just bump the version below to match
 const expectedVersion = "5.6.2";
 
-if(version !== expectedVersion) {
+if (version !== expectedVersion) {
     console.error(`Lerna version is ${version} but scripts/patchLerna.js only supports ${expectedVersion}`);
     console.error(`Please inspect ${filename} and ensure that scripts/patchLerna.js is still valid/necessary.`);
 }

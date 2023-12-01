@@ -44,7 +44,7 @@ const gridOptions: GridOptions<IOlympicData> = {
     },
     groupDefaultExpanded: 1,
     onCellDoubleClicked: (params: CellDoubleClickedEvent<IOlympicData, any>) => {
-        if(params.colDef.showRowGroup) {
+        if (params.colDef.showRowGroup) {
             params.node.setExpanded(!params.node.expanded);
         }
     },
@@ -58,7 +58,7 @@ const gridOptions: GridOptions<IOlympicData> = {
         if (params.event.code !== "Enter") {
             return;
         }
-        if(params.colDef.showRowGroup) {
+        if (params.colDef.showRowGroup) {
             params.node.setExpanded(!params.node.expanded);
         }
     }

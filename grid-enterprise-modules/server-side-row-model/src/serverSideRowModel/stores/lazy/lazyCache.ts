@@ -825,7 +825,7 @@ export class LazyCache extends BeanStub {
         if (!this.live) return;
         const wasRefreshing = this.nodesToRefresh.size > 0;
 
-        for(let i = firstRowIndex; i < firstRowIndex + numberOfRowsExpected && i < this.getRowCount(); i++) {
+        for (let i = firstRowIndex; i < firstRowIndex + numberOfRowsExpected && i < this.getRowCount(); i++) {
             let { node }: { node?: RowNode } = this.nodeMap.getBy('index', i) ?? {};
             if (node) {
                 this.nodesToRefresh.delete(node);
@@ -919,7 +919,7 @@ export class LazyCache extends BeanStub {
         const addIndex = indexToAdd == null && this.isLastRowKnown ? realRowCount : indexToAdd;
 
         // can't insert nodes past the end of the store
-        if(addIndex == null || realRowCount < addIndex) {
+        if (addIndex == null || realRowCount < addIndex) {
             return [];
         }
 

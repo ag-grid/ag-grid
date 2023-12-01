@@ -1,6 +1,6 @@
 const fs = require('fs');
 
-if(!fs.existsSync("./grid-packages/ag-grid-docs/documentation/public")) {
+if (!fs.existsSync("./grid-packages/ag-grid-docs/documentation/public")) {
     console.error("./grid-packages/ag-grid-docs/documentation/public doesn't exist - has the documentation build & package been run yet?");
     process.exit(1);
 }

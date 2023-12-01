@@ -425,13 +425,11 @@ export class MultiFilter extends TabGuardComp implements IFilterComp, IMultiFilt
         });
     }
 
-    protected onFocusIn(e: FocusEvent): boolean {
+    protected onFocusIn(e: FocusEvent): void {
         if (this.lastActivatedMenuItem != null && !this.lastActivatedMenuItem.getGui().contains(e.target as HTMLElement)) {
             this.lastActivatedMenuItem.deactivate();
             this.lastActivatedMenuItem = null;
         }
-
-        return true;
     }
 
     getModelAsString(model: IMultiFilterModel): string {

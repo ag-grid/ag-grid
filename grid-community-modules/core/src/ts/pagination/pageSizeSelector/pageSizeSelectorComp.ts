@@ -99,7 +99,7 @@ export class PageSizeSelectorComp extends Component {
     private onPageSizeSelectorValuesChange(): void {
         if (!this.selectPageSizeComp) { return; }
 
-        if(this.shouldShowPageSizeSelector()) {
+        if (this.shouldShowPageSizeSelector()) {
             this.reloadPageSizesSelector();
         }
     }

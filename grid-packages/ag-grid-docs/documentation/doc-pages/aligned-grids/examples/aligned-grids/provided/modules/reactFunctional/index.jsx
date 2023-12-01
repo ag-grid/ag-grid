@@ -62,7 +62,7 @@ const GridExample = () => {
 
     const onCbAge = (event) => {
         // we only need to update one grid, as the other is a slave
-        if (topGrid.current){
+        if (topGrid.current) {
             topGrid.current.api.setColumnVisible('age', event.target.checked);
         }
     }

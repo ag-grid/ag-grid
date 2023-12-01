@@ -41,7 +41,7 @@ export class ComboChartModel extends BeanStub {
     }
 
     public updateSeriesChartTypes(): void {
-        if(!this.chartDataModel.isComboChart()) {
+        if (!this.chartDataModel.isComboChart()) {
             return;
         }
 

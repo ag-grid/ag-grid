@@ -25,7 +25,7 @@ export function stripOutDarkModeCode(files) {
         }
     });
    /* RTI-1751 Would break JS master detail example that provides a grid too,
-   if(files['index.html']) {        
+   if (files['index.html']) {        
         files['index.html'].source = files['index.html'].source?.replace(/(['"\s])ag-theme-quartz(['"\s])/g, "$1" + defaultTheme + "$2");
     } */
 }
@@ -337,15 +337,15 @@ export const openCodeSandbox = (exampleInfo) => {
             }
 
             if (/([a-zA-Z0-9\\s_.])+(.js|.jsx|.tsx|.ts|.css)$/.test(file)) {
-                if(file.endsWith(".js")) {
+                if (file.endsWith(".js")) {
                     return `public/${file}`;
                 }
 
-                if(file.startsWith('index.')) {
+                if (file.startsWith('index.')) {
                     return `src/${file === 'index.jsx' ? 'index.js' : file}`;
                 }
 
-                if(file === 'styles.css') {
+                if (file === 'styles.css') {
                     return `src/styles.css`
                 }
                 return `src/${file}`;

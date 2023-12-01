@@ -22,7 +22,7 @@ export const Layout = ({
     location: { pathname: path, href },
 }) => {
 
-    if(!framework) {
+    if (!framework) {
         framework = getCurrentFramework() ?? 'react';
     }
 

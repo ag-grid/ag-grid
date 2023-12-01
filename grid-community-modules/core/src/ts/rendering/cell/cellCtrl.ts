@@ -767,7 +767,7 @@ export class CellCtrl extends BeanStub {
         this.value = this.rowNode.getValueFromValueService(this.column);
         this.valueFormatted = this.callValueFormatter(this.value);
 
-        if(compareValues){
+        if (compareValues) {
             return !this.valuesAreEqual(oldValue, this.value) || this.valueFormatted != oldValueFormatted;
         }
         return true;
@@ -977,7 +977,7 @@ export class CellCtrl extends BeanStub {
     }
 
     public onCellFocused(event?: CellFocusedEvent): void {
-        if(this.beans.gridOptionsService.get('suppressCellFocus')){
+        if (this.beans.gridOptionsService.get('suppressCellFocus')) {
             return;
         }
         const cellFocused = this.beans.focusService.isCellFocused(this.cellPosition);

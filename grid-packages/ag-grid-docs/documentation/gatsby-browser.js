@@ -34,7 +34,7 @@ export const onRouteUpdate = ({ location, prevLocation }) => {
         }
     }
 
-    if(removeForwardSlashes(location.pathname) === removeForwardSlashes(getFrameworkPath()) || location.pathname.includes('documentation')) {
+    if (removeForwardSlashes(location.pathname) === removeForwardSlashes(getFrameworkPath()) || location.pathname.includes('documentation')) {
         navigate(`${getFrameworkPath()}/getting-started`)
     }
 

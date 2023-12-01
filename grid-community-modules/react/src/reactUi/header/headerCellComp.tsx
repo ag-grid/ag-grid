@@ -18,7 +18,7 @@ const HeaderCellComp = (props: {ctrl: HeaderCellCtrl}) => {
     const userCompRef = useRef<IHeader>();
 
     let cssClassManager = useRef<CssClassManager>();
-    if(!cssClassManager.current){
+    if (!cssClassManager.current) {
         cssClassManager.current = new CssClassManager(() => eGui.current);
     }
     const setRef = useCallback((e: HTMLDivElement) => {

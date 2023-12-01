@@ -44,7 +44,7 @@ export abstract class ReactComponent extends BaseReactComponent {
     }
 
     public destroy(): void {
-        if(this.componentInstance && typeof this.componentInstance.destroy == 'function') {
+        if (this.componentInstance && typeof this.componentInstance.destroy == 'function') {
             this.componentInstance.destroy();
         }
         return this.portalManager.destroyPortal(this.portal as ReactPortal);
@@ -117,9 +117,9 @@ export abstract class ReactComponent extends BaseReactComponent {
     callMethod(name: string, args: IArguments): void {
         const frameworkComponentInstance = this.getFrameworkComponentInstance();
 
-        if(this.isStatelessComponent()) {
+        if (this.isStatelessComponent()) {
             return this.fallbackMethod(name, !!args && args[0] ? args[0] : {});
-        } else if(!(!!frameworkComponentInstance)) {
+        } else if (!(!!frameworkComponentInstance)) {
             // instance not ready yet - wait for it
             setTimeout(() => this.callMethod(name, args));
             return;
