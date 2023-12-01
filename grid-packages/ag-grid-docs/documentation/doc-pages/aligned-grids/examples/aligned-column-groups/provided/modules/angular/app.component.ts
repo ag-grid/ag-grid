@@ -5,16 +5,17 @@ import "@ag-grid-community/styles/ag-grid.css";
 import "@ag-grid-community/styles/ag-theme-quartz.css";
 import { ColDef, ColGroupDef, GridOptions } from '@ag-grid-community/core';
 
-
 import { ModuleRegistry } from '@ag-grid-community/core';
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
-import { AgGridAngular } from '@ag-grid-community/angular';
+import { AgGridAngular, AgGridModule } from '@ag-grid-community/angular';
 
 // Register the required feature modules with the Grid
 ModuleRegistry.registerModules([ClientSideRowModelModule])
 
 @Component({
     selector: 'my-app',
+    standalone: true,
+    imports: [AgGridModule],
     template: `
         <ag-grid-angular
                 style='width: 100%; height: 45%'
