@@ -1,4 +1,5 @@
 import {Component} from '@angular/core';
+import {NgIf} from '@angular/common';
 // NOTE: Angular CLI does not support component CSS imports: angular-cli/issues/23273
 import '@ag-grid-community/styles/ag-grid.css';
 import "@ag-grid-community/styles/ag-theme-quartz.css";
@@ -14,7 +15,7 @@ interface ColumnWidth {
 
 @Component({
     standalone: true,
-    imports: [AgGridModule],
+    imports: [AgGridModule, NgIf],
     selector: 'my-app',
     template: `
         <div class="test-container">

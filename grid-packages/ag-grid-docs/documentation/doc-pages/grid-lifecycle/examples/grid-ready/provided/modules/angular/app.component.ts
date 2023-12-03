@@ -4,11 +4,12 @@ import '@ag-grid-community/styles/ag-grid.css';
 import "@ag-grid-community/styles/ag-theme-quartz.css";
 import { AgGridModule } from '@ag-grid-community/angular';
 import { Component } from '@angular/core';
+import { NgIf } from '@angular/common';
 import { getData } from './data';
 
 @Component({
   standalone: true,
-  imports: [AgGridModule],
+  imports: [AgGridModule, NgIf],
   selector: "my-app",
   template: `
     <div class="test-container">

@@ -4,11 +4,12 @@ import { ColDef } from '@ag-grid-community/core';
 import '@ag-grid-community/styles/ag-grid.css';
 import "@ag-grid-community/styles/ag-theme-quartz.css";
 import { HttpClient } from '@angular/common/http';
+import { NgStyle } from '@angular/common';
 import { Component, OnInit, ViewChild } from '@angular/core';
 
 @Component({
     standalone: true,
-    imports: [AgGridModule]
+    imports: [AgGridModule, NgStyle],
     selector: 'my-app',
     template: `
     <div style='height: 100%; display: flex; flex-direction: column;'>

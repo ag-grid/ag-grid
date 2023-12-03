@@ -15,7 +15,7 @@ import {ICellRendererAngularComp} from "@ag-grid-community/angular";
     `
 })
 export class ColourCellRenderer implements ICellRendererAngularComp {
-    private params!: ICellRendererParams;
+    public params!: ICellRendererParams;
 
     agInit(params: ICellRendererParams): void {
         this.params = params;

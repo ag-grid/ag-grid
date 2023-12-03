@@ -1,12 +1,15 @@
 
 import { ColDef, ModelUpdatedEvent } from '@ag-grid-community/core';
+import { FormsModule } from '@angular/forms';
 import '@ag-grid-community/styles/ag-grid.css';
 import "@ag-grid-community/styles/ag-theme-quartz.css";
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { AgGridAngular } from '@ag-grid-community/angular';
+import { AgGridAngular, AgGridModule } from '@ag-grid-community/angular';
 import { getData } from './data';
 
 @Component({
+    standalone: true,
+    imports: [AgGridModule, FormsModule],
     selector: 'my-app',
     template: `<div class="example-wrapper">
     <div class="example-header">

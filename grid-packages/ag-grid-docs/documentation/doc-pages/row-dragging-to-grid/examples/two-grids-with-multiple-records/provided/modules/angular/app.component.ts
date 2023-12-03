@@ -1,7 +1,7 @@
 import { Component, ViewChild } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
-
+import { AgGridModule } from '@ag-grid-community/angular';
 import "@ag-grid-community/styles/ag-grid.css";
 import "@ag-grid-community/styles/ag-theme-quartz.css";
 import { ModuleRegistry, ColDef, GetRowIdParams, GridApi, GridReadyEvent, ICellRendererParams } from '@ag-grid-community/core';
@@ -10,7 +10,7 @@ import { ICellRendererAngularComp } from '@ag-grid-community/angular';
 // Register the required feature modules with the Grid
 ModuleRegistry.registerModules([ClientSideRowModelModule]);
 @Component({
-    selector: 'simple-component',
+    standalone: true,
     template: `
         <i class="far fa-trash-alt" style="cursor: pointer" (click)="applyTransaction()"></i>`
 })
@@ -32,6 +32,8 @@ export class SportRenderer implements ICellRendererAngularComp {
 }
 
 @Component({
+    standalone: true,
+    imports: [AgGridModule],
     selector: 'my-app',
     template: /*html */ `
         <div class="top-container">
