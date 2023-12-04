@@ -230,11 +230,11 @@ export const getExampleFiles = (exampleInfo, forPlunker = false) => {
 
     files.plunker['index.html'] = {
         source: plunkerIndexHtml,
-        isFramework: false
+        isFramework: framework !== 'javascript' // only show index.html for javascript examples
     };
     files.csb['index.html'] = {
         source: codeSandBoxIndexHtml,
-        isFramework: false
+        isFramework: framework !== 'javascript' // only show index.html for vanilla examples
     };
 
     return Promise.all(promises).then(() => files);
