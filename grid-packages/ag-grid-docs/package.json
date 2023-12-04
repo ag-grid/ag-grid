@@ -154,7 +154,7 @@
     "http": "0.0.1-security",
     "https": "1.0.0",
     "jest": "^25.4.0",
-    "json5": "2.2.0",
+    "json5": "2.2.2",
     "merge-stream": "1.0.1",
     "mini-css-extract-plugin": "1.6.0",
     "optimize-css-assets-webpack-plugin": "^5.0.3",
