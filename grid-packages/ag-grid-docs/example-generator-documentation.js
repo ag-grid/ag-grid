@@ -614,7 +614,6 @@ function addPackageJson(type, framework, importType, basePath) {
 
     const packageJson = {
         name: `ag-${type}-${importType}`,
-        description: 'NOTE: This package.json file is solely used by Plunker to look up type definitions.',
         dependencies: {},
     };
 
@@ -624,6 +623,8 @@ function addPackageJson(type, framework, importType, basePath) {
 
     if (framework === 'angular') {
         addDependency('@angular/core', "^14");
+        addDependency('@angular/common', "^14");
+        addDependency('@angular/forms', "^14");
         addDependency('@angular/platform-browser', "^14");
     }
 

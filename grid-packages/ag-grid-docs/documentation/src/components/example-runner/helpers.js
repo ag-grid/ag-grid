@@ -269,9 +269,9 @@ export const openPlunker = (exampleInfo) => {
         addHiddenInput('private', true);
         addHiddenInput('description', title);
 
-        const supportedFrameworks = new Set(['angular', 'typescript', 'reactFunctionalTs', 'vanilla'])
+        const supportedFrameworks = new Set(['angular', 'typescript', 'reactFunctionalTs', 'vanilla', 'javascript'])
         const include = key => {
-            if (key === 'package.json' && !supportedFrameworks.has(framework)) {
+            if (key === 'package.json' && !supportedFrameworks.has(internalFramework)) {
                 return false;
             }
 
@@ -304,12 +304,11 @@ export const openCodeSandbox = (exampleInfo) => {
         form.target = '_blank';
 
         function isFrameworkReact() {
-            return new Set(['react', 'reactFunctional', 'reactFunctionalTs']).has(internalFramework);
+            return new Set(['reactFunctional', 'reactFunctionalTs']).has(internalFramework);
         }
 
         const getTemplateForInternalFramework = () => {
             switch (internalFramework) {
-                case 'react':
                 case 'reactFunctional':
                     return 'create-react-app';
                 case 'reactFunctionalTs':
