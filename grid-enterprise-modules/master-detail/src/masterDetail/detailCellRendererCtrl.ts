@@ -145,6 +145,12 @@ export class DetailCellRendererCtrl extends BeanStub implements IDetailCellRende
         this.loadRowDataVersion++;
         const versionThisCall = this.loadRowDataVersion;
 
+        if (this.params.detailGridOptions?.rowModelType === 'serverSide') {
+            const node = this.params.node as RowNode;
+            node.detailGridInfo?.api?.refreshServerSide({ purge: true });
+            return;
+        }
+
         const userFunc = this.params.getDetailRowData;
         if (!userFunc) {
             console.warn('AG Grid: could not find getDetailRowData for master / detail, ' +
