@@ -1,7 +1,7 @@
 import Vue from 'vue';
-import { AgGridVue } from "ag-grid-vue";
-import "ag-grid-community/styles/ag-grid.css";
-import "ag-grid-community/styles/ag-theme-quartz.css";
+import { AgGridVue } from "@ag-grid-community/vue";
+import '@ag-grid-community/styles/ag-grid.css';
+import '@ag-grid-community/styles/ag-theme-quartz.css';
 
 const CompanyLogoRenderer = {
   template: 

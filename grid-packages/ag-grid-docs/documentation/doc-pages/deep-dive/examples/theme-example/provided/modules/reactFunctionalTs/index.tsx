@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
 import { createRoot } from 'react-dom/client';
-import { AgGridReact } from 'ag-grid-react'; // React Grid Logic
-import "ag-grid-community/styles/ag-grid.css"; // Core CSS
-import "ag-grid-community/styles/ag-theme-quartz.css"; // Theme
-import { ColDef } from 'ag-grid-community';
+import { AgGridReact } from '@ag-grid-community/react'; // React Grid Logic
+import "@ag-grid-community/styles/ag-grid.css"; // Core CSS
+import "@ag-grid-community/styles/ag-theme-quartz.css"; // Theme
+import { ColDef } from '@ag-grid-community/core';
 
 // Row Data Interface
 interface IRow {

@@ -1,8 +1,8 @@
 'use strict';
 
-import 'ag-grid-community/styles/ag-grid.css';
-import 'ag-grid-community/styles/ag-theme-quartz.css';
-import { AgGridReact } from 'ag-grid-react';
+import '@ag-grid-community/styles/ag-grid.css';
+import '@ag-grid-community/styles/ag-theme-quartz.css';
+import { AgGridReact } from '@ag-grid-community/react';
 import React,{ StrictMode,useCallback,useMemo,useRef,useState } from 'react';
 import { createRoot } from 'react-dom/client';
 import './styles.css';
