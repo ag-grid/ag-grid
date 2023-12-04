@@ -1,11 +1,11 @@
 import { Component } from '@angular/core';
 import { ITooltipAngularComp } from "@ag-grid-community/angular";
 import { ITooltipParams } from '@ag-grid-community/core';
-import { NgIf } from '@angular/common';
+import { NgFor, NgIf } from '@angular/common';
 
 @Component({
     standalone: true,
-    imports: [NgIf],
+    imports: [NgIf, NgFor],
     template: `
         <div class="custom-tooltip" *ngIf="isHeader">
             <p>Group Name: {{params.value}}</p>
