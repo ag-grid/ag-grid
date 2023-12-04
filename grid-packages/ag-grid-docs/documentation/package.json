@@ -125,7 +125,7 @@
     "gulp-tap": "2.0.0",
     "identity-obj-proxy": "3.0.0",
     "jest": "26.6.3",
-    "jsdom": "16.4.0",
+    "jsdom": "16.5.0",
     "prettier": "2.2.1",
     "prettier-plugin-organize-imports": "2.3.4",
     "probe-image-size": "^7.0.0",
