@@ -9,7 +9,7 @@ import { LegacyPortalManager } from './portalManager';
 
 export class NewReactComponent extends ReactComponent {
     
-    private key: string;
+    protected key: string;
     private portalKey: string;
     private oldPortal: ReactPortal | null = null;
     private reactElement: any;
@@ -40,13 +40,17 @@ export class NewReactComponent extends ReactComponent {
             };
         }
 
-        this.reactElement = createElement(this.reactComponent, { ...params, key: this.key });
+        this.reactElement = this.createElement(this.reactComponent, { ...params, key: this.key });
 
         this.portal = createPortal(
             this.reactElement,
             this.eParentElement as any,
             this.portalKey // fixed deltaRowModeRefreshCompRenderer
         );
+    }
+
+    protected createElement(reactComponent: any, props: any): any {
+        return createElement(reactComponent, props);
     }
 
     private createReactComponent(resolve: (value: any) => void) {

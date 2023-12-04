@@ -3,6 +3,8 @@ import { BeansContext } from '../beansContext';
 import { AgPromise, HeaderFilterCellCtrl, IFloatingFilter, IHeaderFilterCellComp, UserCompDetails } from '@ag-grid-community/core';
 import { CssClasses, isComponentStateless } from '../utils';
 import { showJsComp } from '../jsComp';
+import { FloatingFilterComponent, FloatingFilterMethods } from '../../shared/customComp/floatingFilterComponent';
+import { CustomContext } from '../../shared/customComp/customComponent';
 
 const HeaderFilterCellComp = (props: {ctrl: HeaderFilterCellCtrl}) => {
 
@@ -13,6 +15,7 @@ const HeaderFilterCellComp = (props: {ctrl: HeaderFilterCellCtrl}) => {
     const [cssButtonWrapperClasses, setButtonWrapperCssClasses] = useState<CssClasses>(() => new CssClasses('ag-floating-filter-button', 'ag-hidden'));
     const [buttonWrapperAriaHidden, setButtonWrapperAriaHidden] = useState<"true" | "false">("false");
     const [userCompDetails, setUserCompDetails] = useState<UserCompDetails | null>();
+    const [renderKey, setRenderKey] = useState<number>(1);
 
     const eGui = useRef<HTMLDivElement | null>(null);
     const eFloatingFilterBody = useRef<HTMLDivElement>(null);
@@ -80,14 +83,30 @@ const HeaderFilterCellComp = (props: {ctrl: HeaderFilterCellCtrl}) => {
         return !!res;
     }, [userCompDetails]);
 
+
+    const useNewFormat = useMemo(() => true, [context]);
+    const floatingFilterCompProxy = useMemo(() => {
+        if (useNewFormat && userCompDetails) {
+            const compProxy = new FloatingFilterComponent(userCompDetails!.params, () => setRenderKey(prev => prev + 1));
+            userCompRef(compProxy);
+            return compProxy;
+        }
+        return undefined;
+    }, [userCompDetails]);
+    const floatingFilterProps = floatingFilterCompProxy?.getProps();
+
     const reactUserComp = userCompDetails && userCompDetails.componentFromFramework;
     const UserCompClass = userCompDetails && userCompDetails.componentClass;
 
     return (
         <div ref={setRef} className={className} role="gridcell" tabIndex={-1}>
             <div ref={eFloatingFilterBody} className={bodyClassName} role="presentation">
-                { reactUserComp && userCompStateless && <UserCompClass { ...userCompDetails!.params } /> }
-                { reactUserComp && !userCompStateless && <UserCompClass { ...userCompDetails!.params } ref={ userCompRef }/> }
+                { reactUserComp && !useNewFormat && <UserCompClass { ...userCompDetails!.params } ref={ userCompStateless ? () => {} : userCompRef }/> }
+                { reactUserComp && useNewFormat && <CustomContext.Provider value={{
+                    setMethods: (methods: FloatingFilterMethods) => floatingFilterCompProxy!.setMethods(methods)
+                }}>
+                    <UserCompClass { ...floatingFilterProps! }/>
+                </CustomContext.Provider> }
             </div>
             <div ref={eButtonWrapper} aria-hidden={buttonWrapperAriaHidden} className={buttonWrapperClassName} role="presentation">
                 <button ref={eButtonShowMainFilter} type="button" className="ag-button ag-floating-filter-button-button" tabIndex={-1}></button>

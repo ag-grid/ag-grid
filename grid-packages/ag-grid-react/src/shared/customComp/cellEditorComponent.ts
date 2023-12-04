@@ -1,4 +1,4 @@
-import { BaseCellEditor, ICellEditor, ICellEditorParams } from "@ag-grid-community/core";
+import { BaseCellEditor, ICellEditor, ICellEditorParams } from "ag-grid-community";
 import { addOptionalMethods, useGridCustomComponent } from "./customComponent";
 
 export function useGridCellEditor(methods: CellEditorMethods): void {

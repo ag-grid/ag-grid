@@ -5,6 +5,8 @@ import PopupEditorComp from './popupEditorComp';
 import useJsCellRenderer from './showJsRenderer';
 import { BeansContext } from '../beansContext';
 import { createSyncJsComp } from '../jsComp';
+import { CellEditorComponent, CellEditorMethods } from '../../shared/customComp/cellEditorComponent';
+import { CustomContext } from '../../shared/customComp/customComponent';
 
 export enum CellCompState { ShowValue, EditValue }
 
@@ -25,6 +27,44 @@ const checkCellEditorDeprecations = (popup: boolean, cellEditor: ICellEditor, ce
     }
 }
 
+const jsxEditorProxy = (
+    editDetails: EditDetails,
+    CellEditorClass: any,
+    setRef: (cellEditor: ICellEditor | undefined) => void,
+) => {
+    const { compProxy } = editDetails;
+    setRef(compProxy);
+
+    const props = compProxy!.getProps();
+
+    return (
+        <CustomContext.Provider value={{
+            setMethods: (methods: CellEditorMethods)  => compProxy!.setMethods(methods)
+        }}>
+            <CellEditorClass {...props}/>
+        </CustomContext.Provider>
+    );
+}
+
+const jsxEditor = (
+    editDetails: EditDetails,
+    CellEditorClass: any,
+    setRef: (cellEditor: ICellEditor | undefined) => void,
+) => {
+    const newFormat = editDetails.compProxy;
+
+    return (
+        <>
+            {
+                !newFormat && <CellEditorClass {...editDetails.compDetails.params} ref={ setRef } />
+            }
+            {
+                newFormat && jsxEditorProxy(editDetails, CellEditorClass, setRef)
+            }
+        </>
+    );
+}
+
 const jsxEditValue = (
         editDetails: EditDetails, 
         setInlineCellEditorRef: (cellEditor: ICellEditor | undefined)=>void,
@@ -43,7 +83,7 @@ const jsxEditValue = (
     return (
         <>
             { 
-                reactInlineEditor && <CellEditorClass { ...editDetails.compDetails.params } ref={ setInlineCellEditorRef }/> 
+                reactInlineEditor && jsxEditor(editDetails, CellEditorClass, setInlineCellEditorRef)
             }
 
             { 
@@ -53,7 +93,7 @@ const jsxEditValue = (
                     cellCtrl={cellCtrl}
                     eParentCell={eGui}
                     wrappedContent={
-                        <CellEditorClass { ...editDetails.compDetails.params } ref={ setPopupCellEditorRef }/>
+                        jsxEditor(editDetails, CellEditorClass, setPopupCellEditorRef)
                     }
                 />
             }
@@ -125,6 +165,7 @@ export interface EditDetails {
     compDetails: UserCompDetails;
     popup?: boolean;
     popupPosition?: 'over' | 'under';
+    compProxy?: CellEditorComponent;
 }
 
 const CellComp = (props: {
@@ -356,13 +397,18 @@ const CellComp = (props: {
                 });
             },
             
-            setEditDetails: (compDetails, popup, popupPosition) => {
+            setEditDetails: (compDetails, popup, popupPosition, useNewFormat) => {
                 if (compDetails) {
+                    let compProxy = undefined;
+                    if (useNewFormat) {
+                        compProxy = new CellEditorComponent(compDetails.params!, () => setRenderKey( prev => prev + 1 ));
+                    }
                     // start editing
                     setEditDetails({
                         compDetails: compDetails!,
                         popup,
-                        popupPosition
+                        popupPosition,
+                        compProxy
                     });
                     if (!popup) {
                         setRenderDetails(undefined);

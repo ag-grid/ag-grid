@@ -39,7 +39,7 @@ const jsxEditorProxy = (
 
     return (
         <CustomContext.Provider value={{
-            setMethods: (methods: CellEditorMethods)  => compProxy!.setMethods(methods)
+            setMethods: (methods: CellEditorMethods) => compProxy!.setMethods(methods)
         }}>
             <CellEditorClass {...props}/>
         </CustomContext.Provider>

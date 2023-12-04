@@ -1,4 +1,4 @@
-import { AgPromise, BaseFilter, BaseFilterParams, IDoesFilterPassParams, IFilter, IFilterParams } from "@ag-grid-community/core";
+import { AgPromise, BaseFilter, BaseFilterParams, IDoesFilterPassParams, IFilter, IFilterParams } from "ag-grid-community";
 import CustomWrapperComp from "../../reactUi/customComp/customWrapperComp";
 import { CustomComponent,  useGridCustomComponent } from "./customComponent";
 
