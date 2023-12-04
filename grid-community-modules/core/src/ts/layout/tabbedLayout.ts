@@ -1,16 +1,16 @@
 import { AgPromise } from '../utils';
 import { RefSelector } from '../widgets/componentAnnotations';
-import { ManagedFocusFeature } from '../widgets/managedFocusFeature';
 import { IAfterGuiAttachedParams } from '../interfaces/iAfterGuiAttachedParams';
 import { clearElement } from '../utils/dom';
 import { setAriaLabel, setAriaRole } from '../utils/aria';
 import { callIfPresent } from '../utils/function';
 import { KeyCode } from '../constants/keyCode';
-import { Component } from '../widgets/component';
 import { PostConstruct, Autowired } from '../context/context';
 import { FocusService } from '../focusService';
+import { TabGuardComp } from '../widgets/tabGuardComp';
+import { formatNumberTwoDecimalPlacesAndCommas } from '../utils/number';
 
-export class TabbedLayout extends Component {
+export class TabbedLayout extends TabGuardComp {
 
     @Autowired('focusService') private focusService: FocusService;
 
@@ -35,13 +35,13 @@ export class TabbedLayout extends Component {
 
     @PostConstruct
     private postConstruct() {
-        this.createManagedBean(new ManagedFocusFeature(
-            this.getFocusableElement(),
-            {
-                onTabKeyDown: this.onTabKeyDown.bind(this),
-                handleKeyDown: this.handleKeyDown.bind(this)
-            }
-        ));
+
+        this.initialiseTabGuard({
+            onTabKeyDown: this.onTabKeyDown.bind(this),
+            handleKeyDown: this.handleKeyDown.bind(this),
+            focusInnerElement: this.focusInnerElement.bind(this),
+            focusTrapActive: true
+        });
 
         this.addDestroyFunc(() => this.activeItem?.tabbedItem?.afterDetachedCallback?.());
     }
@@ -92,7 +92,7 @@ export class TabbedLayout extends Component {
 
         if (eHeader.contains(activeElement)) {
             // focus is in header, move into body of popup
-            focusService.focusInto(eBody, e.shiftKey);
+            this.focusBody(e.shiftKey);
             return;
         }
 
@@ -112,13 +112,29 @@ export class TabbedLayout extends Component {
             nextEl = focusService.findNextFocusableElement(eBody, false, e.shiftKey);
 
             if (!nextEl) {
-                nextEl = activeItem.eHeaderButton;
+                this.focusHeader();
             }
         }
 
         if (nextEl) {
             nextEl.focus();
         }
+    }
+
+    private focusInnerElement(fromBottom?: boolean): void {
+        if (fromBottom) {
+            this.focusHeader();
+        } else {
+            this.focusBody(true);
+        }
+    }
+
+    private focusHeader(): void {
+        this.activeItem.eHeaderButton.focus();
+    }
+
+    private focusBody(fromBottom?: boolean): void {
+        this.focusService.focusInto(this.eBody, fromBottom);
     }
 
     public setAfterAttachedParams(params: IAfterGuiAttachedParams): void {

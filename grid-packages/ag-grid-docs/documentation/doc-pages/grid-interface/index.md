@@ -30,7 +30,7 @@ It is a common requirement to update a grid option after the grid has been creat
 |    [rowHeight]="rowHeight"    
 | &lt;/ag-grid-angular>
 |
-| updateHeight(){
+| updateHeight() {
 |   this.rowHeight = 50;
 |}
 </snippet>
@@ -42,7 +42,7 @@ It is a common requirement to update a grid option after the grid has been creat
 |    :row-height="rowHeight"
 | &lt;/ag-grid-vue>
 |
-| updateHeight(){
+| updateHeight() {
 |   this.rowHeight = 50;
 |}
 </snippet>

@@ -166,9 +166,9 @@ function addGridDropZone(params: GridReadyEvent, side: string) {
 
 function loadGrid(side: string) {
     var grid = document.querySelector<HTMLElement>('#e' + side + 'Grid')!;
-    if(side === 'Left') {
+    if (side === 'Left') {
         leftApi = createGrid(grid, leftGridOptions);
-    }else{
+    } else {
         rightApi = createGrid(grid, rightGridOptions);
     }
 }

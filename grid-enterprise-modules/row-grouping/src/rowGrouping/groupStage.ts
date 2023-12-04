@@ -80,7 +80,7 @@ export class GroupStage extends BeanStub implements IRowNodeStage {
             this.shotgunResetEverything(details, afterColsChanged);
         }
 
-        if(!details.usingTreeData){
+        if (!details.usingTreeData) {
             // we don't do group sorting for tree data
             this.positionLeafsAndGroups(params.changedPath!);
             this.orderGroups(details);

@@ -93,7 +93,7 @@ const MoodEditor = memo(forwardRef((props: ICellEditorParams, ref) => {
     };
 
     useEffect(() => {
-        if(done) props.stopEditing();
+        if (done) props.stopEditing();
     }, [done]);
 
     useEffect(() => {

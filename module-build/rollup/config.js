@@ -24,7 +24,7 @@ const getBuilds = (umdModuleName, bundlePrefix, esmAutoRegister) => {
         }
     ];
 
-    if(!process.env.AG_CJS_GENERATION_ONLY) {
+    if (!process.env.AG_CJS_GENERATION_ONLY) {
         entries.push({
             name: 'es-modules-dev',
             inputMainFile: (bundlePrefix && !(bundlePrefix === 'ag-grid-community' || bundlePrefix === 'ag-grid-enterprise')) ? './dist/esm/es6/main.mjs' : './dist/esm/es6/main.js',

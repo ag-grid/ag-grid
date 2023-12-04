@@ -3,7 +3,7 @@ import { Helmet } from 'react-helmet';
 import {agGridEnterpriseVersion, isProductionBuild, localPrefix, rootLocalPrefix} from '../../../utils/consts';
 
 const helmet = [];
-if(!isProductionBuild()) {
+if (!isProductionBuild()) {
     helmet.push(
         <link
             key="live-streaming-theme"

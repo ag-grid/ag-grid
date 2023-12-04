@@ -13,7 +13,7 @@ export class Rule extends Lint.Rules.AbstractRule {
 class NoImportsWalker extends Lint.RuleWalker {
     public visitImportDeclaration(node: ts.ImportDeclaration) {
 
-        if(node.getText().indexOf('../ag-grid-community') !== -1) {
+        if (node.getText().indexOf('../ag-grid-community') !== -1) {
             this.addFailureAt(node.getStart(), node.getWidth(), Rule.FAILURE_STRING);
         }
 

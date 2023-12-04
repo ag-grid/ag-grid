@@ -75,7 +75,7 @@ export class HeaderRowCtrl extends BeanStub {
     public setComp(comp: IHeaderRowComp, initCompState: boolean = true): void {
         this.comp = comp;
 
-        if(initCompState){
+        if (initCompState) {
             this.onRowHeightChanged();
             this.onVirtualColumnsChanged();
         }

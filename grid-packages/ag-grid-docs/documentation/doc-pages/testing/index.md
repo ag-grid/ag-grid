@@ -45,7 +45,7 @@ testing with AG Grid in this section.
 | function waitForGridApiToBeAvailable(gridOptions, success) {
 |     // recursive without a terminating condition,
 |     // but jasmines default test timeout will kill it (jasmine.DEFAULT_TIMEOUT_INTERVAL)
-|     if(gridOptions.api) {
+|     if (gridOptions.api) {
 |         success()
 |     } else {
 |         setTimeout(function () {
@@ -418,7 +418,7 @@ testing with AG Grid in this section.
 |        ...options,
 |        packageFilter: pkg => {
 |            const packageName = pkg.name;
-|            if(packageName === '@ag-grid-community/angular') {
+|            if (packageName === '@ag-grid-community/angular') {
 |                return {
 |                    ...pkg,
 |                };

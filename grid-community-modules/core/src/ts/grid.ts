@@ -152,7 +152,7 @@ export function createGrid<TData>(eGridDiv: HTMLElement, gridOptions: GridOption
     // @deprecated v31 api / columnApi no longer mutated onto the provided gridOptions
     // Instead we place a getter that will log an error when accessed and direct users to the docs
     // Only apply for direct usages of createGrid, not for frameworks
-    if(!Object.isFrozen(gridOptions) && !(params as GridParams)?.frameworkOverrides) {
+    if (!Object.isFrozen(gridOptions) && !(params as GridParams)?.frameworkOverrides) {
         const apiUrl = 'https://ag-grid.com/javascript-data-grid/grid-interface/#grid-api';
         Object.defineProperty(gridOptions, 'api', {
             get: () => {

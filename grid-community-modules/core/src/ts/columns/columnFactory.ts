@@ -398,7 +398,7 @@ export class ColumnFactory extends BeanStub {
             const existingDef = existingGroup.getColGroupDef();
             if (!existingDef) { continue; }
 
-            if(existingGroup.getId() === newGroupDef.groupId) {
+            if (existingGroup.getId() === newGroupDef.groupId) {
                 return { idx: i, group: existingGroup};
             }
         }

@@ -1,5 +1,5 @@
 module.exports = (pagePath, framework) => {
-    if(['changelog', 'pipeline', 'whats-new'].some(entry => pagePath.includes(entry))) {
+    if (['changelog', 'pipeline', 'whats-new'].some(entry => pagePath.includes(entry))) {
         return pagePath.endsWith('/') || pagePath.includes('#') ? pagePath : `${pagePath}/`;
     }
 

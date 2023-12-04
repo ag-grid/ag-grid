@@ -77,7 +77,7 @@ export abstract class CartesianChartProxy extends ChartProxy {
 
     protected extractLineAreaCrossFilterSeries(series: (AgLineSeriesOptions | AgAreaSeriesOptions)[], params: UpdateParams) {
         const getYKey = (yKey: string) => {
-            if(this.standaloneChartType === 'area') {
+            if (this.standaloneChartType === 'area') {
                 const lastSelectedChartId = params.getCrossFilteringContext().lastSelectedChartId;
                 return (lastSelectedChartId === params.chartId) ? yKey + '-total' : yKey;
             }

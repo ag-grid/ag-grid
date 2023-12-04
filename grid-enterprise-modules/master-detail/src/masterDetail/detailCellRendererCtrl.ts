@@ -174,7 +174,7 @@ export class DetailCellRendererCtrl extends BeanStub implements IDetailCellRende
         const GET_GRID_TO_REFRESH = false;
         const GET_GRID_TO_DO_NOTHING = true;
 
-        switch(this.refreshStrategy) {
+        switch (this.refreshStrategy) {
             // ignore this refresh, make grid think we've refreshed but do nothing
             case 'nothing': return GET_GRID_TO_DO_NOTHING;
             // grid will destroy and recreate the cell

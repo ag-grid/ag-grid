@@ -200,7 +200,7 @@ export class AppComponent {
         gridApi!.applyTransaction(transaction);
     }
 
-    onGridReady(params: GridReadyEvent, grid: 'left' | 'right'){
+    onGridReady(params: GridReadyEvent, grid: 'left' | 'right') {
         if (grid === 'left') {
             this.leftGridApi = params.api;
         } else {

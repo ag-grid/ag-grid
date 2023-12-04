@@ -450,7 +450,7 @@ function createExampleGenerator(exampleType, prefix, importTypes, incremental) {
             }
 
 
-            if(!skipFramework('angular')) {
+            if (!skipFramework('angular')) {
                 if (type === 'mixed' && providedExamples['angular']) {
                     importTypes.forEach(importType => copyProvidedExample(importType, 'angular', providedExamples['angular']));
                 } else {
@@ -481,7 +481,7 @@ function createExampleGenerator(exampleType, prefix, importTypes, incremental) {
                 }
             }
 
-            if(!skipFramework('vue')) {
+            if (!skipFramework('vue')) {
                 if (type === 'mixed' && providedExamples['vue']) {
                     importTypes.forEach(importType => copyProvidedExample(importType, 'vue', providedExamples['vue']));
                 } else {
@@ -503,7 +503,7 @@ function createExampleGenerator(exampleType, prefix, importTypes, incremental) {
                 }
             }
 
-            if(!skipFramework('vue3')) {
+            if (!skipFramework('vue3')) {
                 if (type === 'mixed' && providedExamples['vue3']) {
                     importTypes.forEach(importType => copyProvidedExample(importType, 'vue3', providedExamples['vue3']));
                 } else {
@@ -548,7 +548,7 @@ function createExampleGenerator(exampleType, prefix, importTypes, incremental) {
                         // replace Typescript LicenseManager.setLicenseKey( with Javascript agGrid.LicenseManager.setLicenseKey(
                         jsFile = jsFile.replace(/LicenseManager\.setLicenseKey\(/g, "agGrid.LicenseManager.setLicenseKey(");
 
-                        if(tsFile.includes('integrated-charts') && tsFile.includes('main.ts')) {
+                        if (tsFile.includes('integrated-charts') && tsFile.includes('main.ts')) {
                             jsFile = jsFile.replace(/agGrid\.createGrid(.*);/g, `agGrid.createGrid$1; ${getIntegratedDarkModeCode(tsFile, false, 'gridApi')}`);
                         }
 
@@ -698,7 +698,7 @@ module.exports.generateGridExamples = (scope, trigger, done, tsRegistered = fals
             require('ts-node').register();
         }
         const importTypes = ['modules'];
-        if(!skipPackages()) {
+        if (!skipPackages()) {
             importTypes.push('packages');
         }
         generateExamples('grid', importTypes, scope, trigger, done);

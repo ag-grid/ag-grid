@@ -13,7 +13,7 @@ function getModuleImports(bindings: any, componentFilenames: string[], allStyles
     if (bindings.gridSettings.enableChartApi) {
         imports.push("import { AgChart } from 'ag-charts-community'");
     }
-    if(bindings.gridSettings.licenseKey) {
+    if (bindings.gridSettings.licenseKey) {
         imports.push("import { LicenseManager } from '@ag-grid-enterprise/core';");
     }
 
@@ -24,7 +24,7 @@ function getModuleImports(bindings: any, componentFilenames: string[], allStyles
     const theme = bindings.gridSettings.theme ? bindings.gridSettings.theme.replace('-dark', '') : 'ag-theme-quartz';
     imports.push(`import '@ag-grid-community/styles/${theme}.css';`);
 
-    if(allStylesheets && allStylesheets.length > 0) {
+    if (allStylesheets && allStylesheets.length > 0) {
         allStylesheets.forEach(styleSheet => imports.push(`import './${path.basename(styleSheet)}';`));
     }
 
@@ -52,7 +52,7 @@ function getPackageImports(bindings: any, componentFilenames: string[], allStyle
     if (bindings.gridSettings.enableChartApi) {
         imports.push("import { AgChart } from 'ag-charts-community'");
     }
-    if(bindings.gridSettings.licenseKey) {
+    if (bindings.gridSettings.licenseKey) {
         imports.push("import { LicenseManager } from 'ag-grid-enterprise';");
     }
 
@@ -64,7 +64,7 @@ function getPackageImports(bindings: any, componentFilenames: string[], allStyle
     const theme = gridSettings.theme ? gridSettings.theme.replace('-dark', '') : 'ag-theme-quartz';
     imports.push(`import 'ag-grid-community/styles/${theme}.css';`);
 
-    if(allStylesheets && allStylesheets.length > 0) {
+    if (allStylesheets && allStylesheets.length > 0) {
         allStylesheets.forEach(styleSheet => imports.push(`import './${path.basename(styleSheet)}';`));
     }
 

@@ -26,7 +26,7 @@ import { PinnedRowModel } from "../pinnedRowModel/pinnedRowModel";
 import { exists } from "../utils/generic";
 import { getAllValuesInObject, iterateObject } from "../utils/object";
 import { createArrayOfNumbers } from "../utils/number";
-import { warnOnce, executeInAWhile } from "../utils/function";
+import { executeInAWhile } from "../utils/function";
 import { CtrlsService } from "../ctrlsService";
 import { GridBodyCtrl } from "../gridBodyComp/gridBodyCtrl";
 import { CellCtrl } from "./cell/cellCtrl";
@@ -196,10 +196,10 @@ export class RowRenderer extends BeanStub {
         const zombieList = getAllValuesInObject(this.zombieRowCtrls);
         const cachedList = this.cachedRowCtrls ? this.cachedRowCtrls.getEntries() : [];
 
-        if(zombieList.length > 0 || cachedList.length > 0) {
+        if (zombieList.length > 0 || cachedList.length > 0) {
             // Only spread if we need to.
             this.allRowCtrls = [...liveList, ...zombieList, ...cachedList];
-        }else{
+        } else {
             this.allRowCtrls = liveList;
         }
     }
@@ -741,7 +741,7 @@ export class RowRenderer extends BeanStub {
             const renderers = rowCtrl.getFullWidthCellRenderers();
             for (let i = 0; i < renderers.length; i++) {
                 const renderer = renderers[i];
-                if(renderer != undefined){
+                if (renderer != null) {
                     fullWidthRenderers.push(renderer);
                 }
             }

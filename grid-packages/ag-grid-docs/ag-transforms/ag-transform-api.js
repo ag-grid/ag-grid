@@ -14,9 +14,9 @@ module.exports = function (fileInfo, api) {
     const source = j(fileInfo.source);
 
     source
-        .find(j.Identifier)                
+        .find(j.Identifier)
         .filter((path) => {
-            if(path.value.name === 'api'){
+            if (path.value.name === 'api') {
                 // don't replace api if it' params.api.method
                 var chainedPath = path.parent.value.type == 'MemberExpression' && path.parent.parent.value.type == 'MemberExpression';
                 return !chainedPath;

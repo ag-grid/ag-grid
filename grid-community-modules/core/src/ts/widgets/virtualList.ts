@@ -92,22 +92,18 @@ export class VirtualList<C extends Component = Component> extends TabGuardComp {
         this.focusRow(fromBottom ? this.model.getRowCount() - 1 : 0);
     }
 
-    protected onFocusIn(e: FocusEvent): boolean {
+    protected onFocusIn(e: FocusEvent): void {
         const target = e.target as HTMLElement;
 
         if (target.classList.contains('ag-virtual-list-item')) {
             this.lastFocusedRowIndex = getAriaPosInSet(target) - 1;
         }
-
-        return false;
     }
 
-    protected onFocusOut(e: FocusEvent): boolean {
+    protected onFocusOut(e: FocusEvent): void {
         if (!this.getFocusableElement().contains(e.relatedTarget as HTMLElement)) {
             this.lastFocusedRowIndex = null;
         }
-
-        return false;
     }
 
     protected handleKeyDown(e: KeyboardEvent): void {

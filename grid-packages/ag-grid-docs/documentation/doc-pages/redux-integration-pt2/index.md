@@ -286,7 +286,7 @@ via: `onRowDragEnd={this.onRowDragEnd}`. Here is the implementation:
 
 ```js
 onRowDragEnd = (event) => {
-    if(event.overNode.data.file) return;
+    if (event.overNode.data.file) return;
 
     let movingFilePath = event.node.data.filePath;
     let targetPath = event.overNode.data.filePath;
