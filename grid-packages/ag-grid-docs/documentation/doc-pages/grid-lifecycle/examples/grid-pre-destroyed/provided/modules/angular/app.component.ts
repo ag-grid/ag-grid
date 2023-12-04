@@ -8,6 +8,10 @@ import {ColDef, GridApi, GridOptions, GridPreDestroyedEvent, GridReadyEvent} fro
 import {TAthlete, getDataSet} from './data';
 import '../styles.css';
 
+import { ModuleRegistry } from '@ag-grid-community/core';
+import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
+ModuleRegistry.registerModules([ClientSideRowModelModule])
+
 interface ColumnWidth {
     field: string;
     width: number;

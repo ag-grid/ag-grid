@@ -7,6 +7,10 @@ import { Component, OnInit, ViewChild } from '@angular/core';
 import { AgGridAngular, AgGridModule } from '@ag-grid-community/angular';
 import { getData } from './data';
 
+import { ModuleRegistry } from '@ag-grid-community/core';
+import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
+ModuleRegistry.registerModules([ClientSideRowModelModule])
+
 @Component({
     standalone: true,
     imports: [AgGridModule, FormsModule],

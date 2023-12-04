@@ -9,6 +9,14 @@ import { AgGridModule } from '@ag-grid-community/angular';
 import { ColDef, GridApi, GridReadyEvent } from '@ag-grid-community/core';
 import { IOlympicData } from './interfaces'
 
+import { ModuleRegistry } from '@ag-grid-community/core';
+import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
+import { MenuModule } from '@ag-grid-enterprise/menu';
+import { ExcelExportModule } from '@ag-grid-enterprise/excel-export';
+
+// Register the required feature modules with the Grid
+ModuleRegistry.registerModules([ClientSideRowModelModule, MenuModule, ExcelExportModule])
+
 @Component({
     standalone: true,
     imports: [AgGridModule],

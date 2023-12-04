@@ -11,6 +11,12 @@ import "@ag-grid-community/styles/ag-grid.css";
 import "@ag-grid-community/styles/ag-theme-quartz.css";
 import { ColDef, GridApi, GridReadyEvent, IRowNode } from '@ag-grid-community/core';
 
+import { ModuleRegistry } from '@ag-grid-community/core';
+import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
+
+// Register the required feature modules with the Grid
+ModuleRegistry.registerModules([ClientSideRowModelModule])
+
 @Component({
     selector: 'my-app',
     standalone: true,

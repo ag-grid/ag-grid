@@ -6,6 +6,9 @@ import "@ag-grid-community/styles/ag-theme-quartz.css";
 import { HttpClient } from '@angular/common/http';
 import { NgStyle } from '@angular/common';
 import { Component, OnInit, ViewChild } from '@angular/core';
+import { ModuleRegistry } from '@ag-grid-community/core';
+import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
+ModuleRegistry.registerModules([ClientSideRowModelModule])
 
 @Component({
     standalone: true,

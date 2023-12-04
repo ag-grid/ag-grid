@@ -1,10 +1,12 @@
 import { Component } from "@angular/core";
+import { NgFor } from "@angular/common";
 
 import { ICellRendererAngularComp } from "@ag-grid-community/angular";
 import { ICellRendererParams } from "@ag-grid-community/core";
 
 @Component({
     standalone: true,
+    imports: [NgFor],
     template: `<span><img *ngFor="let number of value" [src]="rendererImage"/></span>`
 })
 export class DaysFrostRenderer implements ICellRendererAngularComp {

@@ -10,6 +10,16 @@ import { AgGridModule } from '@ag-grid-community/angular';
 import { ColDef, ColGroupDef, GridApi, GridOptions, GridReadyEvent, SideBarDef, createGrid, GridState, GridPreDestroyedEvent, StateUpdatedEvent } from '@ag-grid-community/core';
 import { IOlympicData } from './interfaces'
 
+import { ModuleRegistry } from '@ag-grid-community/core';
+import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
+import { ColumnsToolPanelModule } from '@ag-grid-enterprise/column-tool-panel';
+import { FiltersToolPanelModule } from '@ag-grid-enterprise/filter-tool-panel';
+import { SetFilterModule } from '@ag-grid-enterprise/set-filter';
+import { RangeSelectionModule } from '@ag-grid-enterprise/range-selection';
+
+// Register the required feature modules with the Grid
+ModuleRegistry.registerModules([ClientSideRowModelModule, ColumnsToolPanelModule, FiltersToolPanelModule, SetFilterModule, RangeSelectionModule])
+
 @Component({
     standalone: true,
     imports: [AgGridModule, NgIf],

@@ -7,6 +7,15 @@ import "@ag-grid-community/styles/ag-grid.css"
 import "@ag-grid-community/styles/ag-theme-quartz.css"
 import "../styles.css"
 
+import { ModuleRegistry } from '@ag-grid-community/core';
+import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
+import { RowGroupingModule } from '@ag-grid-enterprise/row-grouping';
+import { SetFilterModule } from '@ag-grid-enterprise/set-filter';
+import { FiltersToolPanelModule } from '@ag-grid-enterprise/filter-tool-panel';
+
+// Register the required feature modules with the Grid
+ModuleRegistry.registerModules([ClientSideRowModelModule, RowGroupingModule, SetFilterModule, FiltersToolPanelModule])
+
 @Component({
   standalone: true,
   imports: [AgGridModule],

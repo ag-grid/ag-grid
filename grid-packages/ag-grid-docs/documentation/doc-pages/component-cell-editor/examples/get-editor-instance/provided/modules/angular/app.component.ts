@@ -5,6 +5,12 @@ import { MySimpleEditor } from './mySimple-editor.component';
 import { ColDef, GridReadyEvent } from '@ag-grid-community/core';
 import { AgGridModule } from '@ag-grid-community/angular';
 
+import { ModuleRegistry } from '@ag-grid-community/core';
+import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
+
+// Register the required feature modules with the Grid
+ModuleRegistry.registerModules([ClientSideRowModelModule])
+
 @Component({
     selector: 'my-app',
     standalone: true,

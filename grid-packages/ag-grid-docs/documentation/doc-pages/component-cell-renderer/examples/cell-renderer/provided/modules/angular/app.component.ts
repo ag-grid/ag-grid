@@ -6,6 +6,12 @@ import { DaysFrostRenderer } from './days-frost-renderer.component';
 import { ColDef, GridApi, ICellRenderer, ICellRendererParams, IRowNode } from '@ag-grid-community/core';
 import { AgGridModule } from '@ag-grid-community/angular';
 
+import { ModuleRegistry } from '@ag-grid-community/core';
+import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
+
+// Register the required feature modules with the Grid
+ModuleRegistry.registerModules([ClientSideRowModelModule])
+
 /*
 * It's unlikely you'll use functions that create and manipulate DOM elements like this in an Angular application, but it
 * demonstrates what is at least possible, and may be preferable in certain use cases
