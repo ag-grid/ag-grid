@@ -37,15 +37,14 @@ export class DateComponent extends CustomComponent<CustomDateParams, DateMethods
     }
 
     private createProps(): CustomDateParams {
-        const { api, columnApi, context, filterParams } = this.dateParams;
-        return {
-            api,
-            columnApi,
-            context,
-            filterParams,
+        const props: CustomDateParams = {
+            ...this.dateParams,
             date: this.date,
             onDateChange: (date: Date | null) => this.updateDate(date),
             key: this.key
         } as any;
+        // remove props in IDataParams but not BaseDateParams
+        delete (props as any).onDateChanged;
+        return props;
     }
 }

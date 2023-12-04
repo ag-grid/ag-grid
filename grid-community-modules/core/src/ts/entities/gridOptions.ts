@@ -1543,6 +1543,11 @@ export interface GridOptions<TData = any> {
      */
     initialState?: GridState;
 
+    /**
+     * @initial
+     */
+    reactiveCustomComponents?: boolean;
+
     // *****************************************************************************************************
     // If you change the callbacks on this interface, you must also update PropertyKeys to be consistent. *
     // *****************************************************************************************************

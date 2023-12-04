@@ -49,20 +49,17 @@ export class FilterComponent extends CustomComponent<CustomFilterParams, FilterM
     }
 
     private createProps(): CustomFilterParams {
-        const { api, columnApi, context, colDef, column, doesRowPassOtherFilter, getValue, rowModel } = this.filterParams;
-        return {
-            api,
-            columnApi,
-            context, 
-            colDef, 
-            column,
-            doesRowPassOtherFilter,
-            getValue, 
-            rowModel,
+        const props: CustomFilterParams = {
+            ...this.filterParams,
             model: this.model,
             onModelChange: (model: any) => this.updateModel(model),
             onUiChange: () => this.filterParams.filterChangedCallback(),
             key: this.key
         } as any;
+        // remove props in IFilterParams but not CustomFilterParams
+        delete (props as any).filterChangedCallback;
+        delete (props as any).filterModifiedCallback;
+        delete (props as any).valueGetter;
+        return props;
     }
 }

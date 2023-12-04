@@ -9,7 +9,7 @@ import { FloatingFilterMethods } from '../../shared/customComp/interfaces';
 
 const HeaderFilterCellComp = (props: {ctrl: HeaderFilterCellCtrl}) => {
 
-    const {context} = useContext(BeansContext);
+    const { context, gridOptionsService } = useContext(BeansContext);
 
     const [cssClasses, setCssClasses] = useState<CssClasses>(() => new CssClasses('ag-header-cell', 'ag-floating-filter'));
     const [cssBodyClasses, setBodyCssClasses] = useState<CssClasses>(() => new CssClasses());
@@ -85,9 +85,9 @@ const HeaderFilterCellComp = (props: {ctrl: HeaderFilterCellCtrl}) => {
     }, [userCompDetails]);
 
 
-    const useNewFormat = useMemo(() => true, [context]);
+    const reactiveCustomComponents = useMemo(() => gridOptionsService.get('reactiveCustomComponents'), []);
     const floatingFilterCompProxy = useMemo(() => {
-        if (useNewFormat && userCompDetails) {
+        if (reactiveCustomComponents && userCompDetails) {
             const compProxy = new FloatingFilterComponent(userCompDetails!.params, () => setRenderKey(prev => prev + 1));
             userCompRef(compProxy);
             return compProxy;
@@ -102,8 +102,8 @@ const HeaderFilterCellComp = (props: {ctrl: HeaderFilterCellCtrl}) => {
     return (
         <div ref={setRef} className={className} role="gridcell" tabIndex={-1}>
             <div ref={eFloatingFilterBody} className={bodyClassName} role="presentation">
-                { reactUserComp && !useNewFormat && <UserCompClass { ...userCompDetails!.params } ref={ userCompStateless ? () => {} : userCompRef }/> }
-                { reactUserComp && useNewFormat && <CustomContext.Provider value={{
+                { reactUserComp && !reactiveCustomComponents && <UserCompClass { ...userCompDetails!.params } ref={ userCompStateless ? () => {} : userCompRef }/> }
+                { reactUserComp && reactiveCustomComponents && <CustomContext.Provider value={{
                     setMethods: (methods: FloatingFilterMethods) => floatingFilterCompProxy!.setMethods(methods)
                 }}>
                     <UserCompClass { ...floatingFilterProps! }/>

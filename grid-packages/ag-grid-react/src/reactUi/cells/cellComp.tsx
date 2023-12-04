@@ -398,10 +398,10 @@ const CellComp = (props: {
                 });
             },
             
-            setEditDetails: (compDetails, popup, popupPosition, useNewFormat) => {
+            setEditDetails: (compDetails, popup, popupPosition, reactiveCustomComponents) => {
                 if (compDetails) {
                     let compProxy = undefined;
-                    if (useNewFormat) {
+                    if (reactiveCustomComponents) {
                         compProxy = new CellEditorComponent(compDetails.params!, () => setRenderKey( prev => prev + 1 ));
                     }
                     // start editing

@@ -1372,6 +1372,9 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
          * @initial
          */
     @Input() public initialState: GridState | undefined = undefined;
+    /** @initial
+         */
+    @Input() public reactiveCustomComponents: boolean | undefined = undefined;
     /** For customising the context menu.
          */
     @Input() public getContextMenuItems: GetContextMenuItems<TData> | undefined = undefined;
@@ -1921,5 +1924,6 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     static ngAcceptInputType_masterDetail: boolean | null | '';
     static ngAcceptInputType_treeData: boolean | null | '';
     static ngAcceptInputType_suppressGroupMaintainValueType: boolean | null | '';
+    static ngAcceptInputType_reactiveCustomComponents: boolean | null | '';
     // @END@
 }
