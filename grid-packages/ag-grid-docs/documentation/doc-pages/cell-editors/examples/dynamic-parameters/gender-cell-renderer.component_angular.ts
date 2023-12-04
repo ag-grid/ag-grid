@@ -3,7 +3,7 @@ import { ICellRendererParams } from "@ag-grid-community/core";
 import { ICellRendererAngularComp } from "@ag-grid-community/angular";
 
 @Component({
-    selector: 'app-gender-renderer',
+    standalone: true,
     template: `
         <span>
             <i [class]="iconClass"> </i> {{ value }}

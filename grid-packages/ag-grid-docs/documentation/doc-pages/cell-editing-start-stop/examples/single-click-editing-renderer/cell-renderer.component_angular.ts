@@ -4,7 +4,7 @@ import { ICellRendererAngularComp } from "@ag-grid-community/angular";
 import { ICellRendererParams } from "@ag-grid-community/core"
 
 @Component({
-    selector: 'cell-renderer',
+    standalone: true,
     template: `<span>
         <button style="height: 30px;" (click)="onClick()">✎</button>
         <span style="padding-left: 4px;">{{this.displayValue}}</span>

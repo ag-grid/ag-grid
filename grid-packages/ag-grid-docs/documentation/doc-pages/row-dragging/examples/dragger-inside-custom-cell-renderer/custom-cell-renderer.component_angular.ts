@@ -4,7 +4,7 @@ import { ICellRendererParams } from "@ag-grid-community/core";
 import { ICellRendererAngularComp } from "@ag-grid-community/angular";
 
 @Component({
-    selector: 'custom-cell',
+    standalone: true,
     template: /* html */
         `<div class="athlete-info">
             <span>{{athlete}}</span>

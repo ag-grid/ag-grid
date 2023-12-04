@@ -99,19 +99,15 @@
             typescript: "npm:typescript@4.3.5/lib/typescript.min.js",
 
             // our app is within the app folder, appLocation comes from index.html
-            app: appLocation + "app",
+            app: appLocation,
             ...systemJsMap
         },
         // packages tells the System loader how to load when no filename and/or no extension
         packages: {
+            css: {}, // Stop css.js from defaulting to apps .ts extension
             app: {
                 main: "./main.ts",
                 defaultExtension: "ts",
-                meta: {
-                    "./*.ts": {
-                        loader: boilerplatePath + "systemjs-angular-loader.js"
-                    }
-                }
             },
             'ag-grid-angular': {
                 main: './fesm2015/ag-grid-angular.mjs',

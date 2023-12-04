@@ -3,7 +3,7 @@ import { ICellRendererAngularComp } from "@ag-grid-community/angular";
 import { ICellRendererParams } from '@ag-grid-community/core';
 
 @Component({
-    selector: 'app-detail-cell-renderer',
+    standalone: true,
     template: `<h1 class="custom-detail" style="padding: 20px;">{{pinned}}</h1>`
 })
 export class DetailCellRenderer implements ICellRendererAngularComp {

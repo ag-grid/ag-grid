@@ -3,9 +3,6 @@ const {window, document} = new JSDOM('<!DOCTYPE html><html lang="en"></html>');
 const sucrase = require("sucrase");
 
 const agGridVersion = "^" + require('../../grid-community-modules/core/package.json').version;
-const agChartsVersion = "^" + require('./node_modules/ag-charts-community/package.json').version;
-const agChartsAngularVersion = "^" + require('./node_modules/ag-charts-angular/package.json').version;
-const agChartsReactVersion = "^" + require('./node_modules/ag-charts-react/package.json').version;
 const agGridEnterpriseVersion = "^" + require('../../grid-enterprise-modules/core/package.json').version;
 const agGridReactVersion = "^" + require('../../grid-community-modules/react/package.json').version;
 const agGridAngularVersion = "^" + require('../../grid-community-modules/angular/package.json').version;
@@ -85,7 +82,6 @@ function copyFiles(files, dest, tokenToReplace, replaceValue = '', importType, f
                 src = src.replace(/import.*from.*\n/g, '').replace(/import.*?;\n/g, '');
                 if (convertToPackage) {
                     src = src
-                        .replace(/\/\/ Required feature modules are registered in app\.module\.ts\n/, '')
                         .replace(/\/\/ Register the required feature modules with the Grid\n/, '')
                         .replace(/ModuleRegistry.registerModules.*?\n/, '');
 
@@ -233,11 +229,6 @@ const skipPackages = () => {
 
 function createExampleGenerator(exampleType, prefix, importTypes, incremental) {
     const [parser, vanillaToVue, vanillaToVue3, vanillaToReactFunctional, vanillaToReactFunctionalTs, vanillaToAngular, vanillaToTypescript, getIntegratedDarkModeCode] = getGeneratorCode(prefix);
-    const appModuleAngular = new Map();
-
-    importTypes.forEach(importType => {
-        appModuleAngular.set(importType, require(`${prefix}${importType}-angular-app-module.ts`).appModuleAngular);
-    });
 
     return (examplePath, type, options) => {
         //          section                 example        glob
@@ -472,7 +463,7 @@ function createExampleGenerator(exampleType, prefix, importTypes, incremental) {
                         importTypes.forEach(importType => {
                             let frameworkFiles = {
                                 'app.component.ts': getSource(importType),
-                                'app.module.ts': appModuleAngular.get(importType)(angularComponentFileNames, typedBindings),
+                                'main.ts' : ANGULAR_MAIN_FILE
                             };
                             const interfaces = getInterfaceFileContents(typedBindings);
                             if (interfaces) {
@@ -486,7 +477,7 @@ function createExampleGenerator(exampleType, prefix, importTypes, incremental) {
                         throw e;
                     }
 
-                    importTypes.forEach(importType => writeExampleFiles(importType, 'angular', 'angular', angularScripts, angularConfigs.get(importType), 'app'));
+                    importTypes.forEach(importType => writeExampleFiles(importType, 'angular', 'angular', angularScripts, angularConfigs.get(importType)));
                 }
             }
 
@@ -672,6 +663,14 @@ function addPackageJson(type, framework, importType, basePath) {
     writeFile(path.join(basePath, 'package.json'), JSON.stringify(packageJson, null, 4));
 }
 
+const ANGULAR_MAIN_FILE =
+`import '@angular/compiler';
+import { bootstrapApplication } from '@angular/platform-browser';
+import { AppComponent } from './app.component';
+                                
+bootstrapApplication(AppComponent);
+`
+
 function getGeneratorCode(prefix) {
     const {parser} = require(`${prefix}vanilla-src-parser.ts`);
     const {vanillaToVue} = require(`${prefix}vanilla-to-vue.ts`);
@@ -712,7 +711,7 @@ module.exports.generateGridExamples = (scope, trigger, done, tsRegistered = fals
     }
 };
 
-module.exports.generateDocumentationExamples = async (chartsOnly, scope, trigger) => {
+module.exports.generateDocumentationExamples = async (scope, trigger) => {
     require('ts-node').register();
     if (trigger) {
         console.log(`\u270E ${trigger} was changed`);

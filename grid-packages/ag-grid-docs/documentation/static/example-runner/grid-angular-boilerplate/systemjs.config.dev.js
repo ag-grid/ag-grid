@@ -26,7 +26,8 @@
         },
         paths: {
             // paths serve as alias
-            "npm:": "https://cdn.jsdelivr.net/npm/"
+            "npm:": "https://cdn.jsdelivr.net/npm/",
+            ...systemJsPaths
         },
         // RxJS makes a lot of requests to jsdelivr. This guy addressed it:
         // https://github.com/OasisDigital/rxjs-system-bundle.
@@ -98,19 +99,15 @@
             typescript: "npm:typescript@4.3.5/lib/typescript.min.js",
 
             // our app is within the app folder, appLocation comes from index.html
-            app: appLocation + "app",
+            app: appLocation,
             ...systemJsMap
         },
         // packages tells the System loader how to load when no filename and/or no extension
         packages: {
+            css: {}, // Stop css.js from defaulting to apps .ts extension
             app: {
                 main: "./main.ts",
                 defaultExtension: "ts",
-                meta: {
-                    "*.ts": {
-                        loader: boilerplatePath + "systemjs-angular-loader.js"
-                    }
-                }
             },
             'ag-grid-angular': {
                 main: './dist/ag-grid-angular/fesm2015/ag-grid-angular.mjs',

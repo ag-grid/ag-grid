@@ -3,7 +3,7 @@ import { ICellRendererParams } from "@ag-grid-community/core";
 import { ICellRendererAngularComp } from "@ag-grid-community/angular";
 
 @Component({
-    selector: 'full-cell-renderer',
+    standalone: true,
     template: `
         <div class="full-width-panel">
             <button><img width="15" height="10" src="https://www.ag-grid.com/example-assets/flags/{{params.data.code}}.png"></button>

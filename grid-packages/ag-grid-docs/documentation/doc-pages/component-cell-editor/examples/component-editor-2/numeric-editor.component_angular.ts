@@ -2,6 +2,7 @@ import { AfterViewInit, Component, ViewChild, ViewContainerRef } from "@angular/
 
 import { ICellEditorAngularComp } from "@ag-grid-community/angular";
 import { ICellEditorParams } from "@ag-grid-community/core";
+import { FormsModule } from "@angular/forms";
 
 // backspace starts the editor on Windows
 const KEY_BACKSPACE = 'Backspace';
@@ -10,7 +11,8 @@ const KEY_ENTER = 'Enter';
 const KEY_TAB = 'Tab';
 
 @Component({
-    selector: 'numeric-cell',
+    standalone: true,
+    imports: [FormsModule],
     template: `<input #input (keydown)="onKeyDown($event)" [(ngModel)]="value" class="numeric-input">`
 })
 export class NumericEditor implements ICellEditorAngularComp, AfterViewInit {

@@ -1,7 +1,6 @@
 const os = require('os');
 const fs = require('fs-extra');
 const cp = require('child_process');
-const glob = require('glob');
 const resolve = require('path').resolve;
 const https = require('https');
 const express = require('express');
@@ -10,7 +9,6 @@ const webpackMiddleware = require('webpack-dev-middleware');
 const chokidar = require('chokidar');
 const tcpPortUsed = require('tcp-port-used');
 const {generateDocumentationExamples} = require('./example-generator-documentation');
-const {watchValidateExampleTypes} = require('./example-validator');
 const {updateBetweenStrings, getAllModules, processStdio} = require('./utils');
 const {EOL} = os;
 
@@ -286,7 +284,7 @@ function symlinkModules(gridCommunityModules, gridEnterpriseModules, chartCommun
 
 const exampleDirMatch = new RegExp('src/([\-\\w]+)/');
 
-async function regenerateDocumentationExamplesForFileChange(file, chartsOnly) {
+async function regenerateDocumentationExamplesForFileChange(file) {
     let scope;
 
     try {
@@ -296,23 +294,23 @@ async function regenerateDocumentationExamplesForFileChange(file, chartsOnly) {
     }
 
     if (scope) {
-        await generateDocumentationExamples(chartsOnly, scope, file);
+        await generateDocumentationExamples(scope, file);
     }
 }
 
-async function watchAndGenerateExamples(chartsOnly) {
-    await generateDocumentationExamples(chartsOnly);
+async function watchAndGenerateExamples() {
+    await generateDocumentationExamples();
 
     const npm = 'npm';
     cp.spawnSync(npm, ['run', 'hash']);
 
     chokidar
         .watch([`./documentation/doc-pages/**/examples/**/*.{html,css,js,jsx,ts}`], {ignored: ['**/_gen/**/*']})
-        .on('change', debounceByPath((path) => regenerateDocumentationExamplesForFileChange(path, chartsOnly)));
+        .on('change', debounceByPath((path) => regenerateDocumentationExamplesForFileChange(path)));
 
     chokidar
         .watch([`./documentation/doc-pages/**/*.md`], {ignoreInitial: true})
-        .on('add', debounceByPath((path) => regenerateDocumentationExamplesForFileChange(path, chartsOnly)));
+        .on('add', debounceByPath((path) => regenerateDocumentationExamplesForFileChange(path)));
 }
 
 const updateWebpackSourceFiles = (gridCommunityModules, gridEnterpriseModules) => {
@@ -421,7 +419,7 @@ function updateUtilsSystemJsMappingsForFrameworks(gridCommunityModules, gridEnte
     fs.writeFileSync(utilityFilename, updatedUtilFileContents, 'UTF-8');
 }
 
-const watchCoreModules = async (skipFrameworks, chartsOnly) => {
+const watchCoreModules = async (skipFrameworks) => {
     console.log("Watching TS files only...");
     const tsc = getTscPath();
     const tsWatch = cp.spawn(tsc, ["--build", "--preserveWatchOutput", '--watch'], {
@@ -433,7 +431,7 @@ const watchCoreModules = async (skipFrameworks, chartsOnly) => {
     tsWatch.stdout.on('data', await processStdio(async (output) => {
         console.log("Core Typescript: " + output);
         if (output.includes("Found 0 errors. Watching for file changes.")) {
-            if (!chartsOnly && !skipFrameworks) {
+            if (!skipFrameworks) {
                 cp.spawnSync('npx', ['nx', 'run-many', "--target=build-docs", (process.env.AG_SERVE_FRAMEWORK ? `--projects=@ag-grid-community/${process.env.AG_SERVE_FRAMEWORK}` : '')], {
                     cwd: '../../',
                     stdio: 'inherit',
@@ -463,7 +461,7 @@ const watchCoreModules = async (skipFrameworks, chartsOnly) => {
     });
 };
 
-const buildCoreModules = async (exitOnError, skipFrameworks, chartsOnly) => {
+const buildCoreModules = async (exitOnError, skipFrameworks) => {
     console.log("Building Core Modules...");
     const tsc = getTscPath();
     let result = cp.spawnSync(tsc, ['--build'], {
@@ -505,7 +503,7 @@ const buildCoreModules = async (exitOnError, skipFrameworks, chartsOnly) => {
     });
     console.log("Core Modules Built");
 
-    if (!chartsOnly && !skipFrameworks) {
+    if (!skipFrameworks) {
         result = cp.spawnSync('npx', ['nx', 'run-many', "--target=build-docs", (process.env.AG_SERVE_FRAMEWORK ? `--projects=@ag-grid-community/${process.env.AG_SERVE_FRAMEWORK}` : '')], {
             stdio: 'inherit',
             cwd: '../../'
@@ -573,25 +571,23 @@ function updateSystemJsBoilerplateMappingsForFrameworks(gridCommunityModules, gr
     });
 }
 
-const performInitialBuild = async (skipFrameworks, chartsOnly) => {
+const performInitialBuild = async (skipFrameworks) => {
     // if we encounter a build failure on startup we exit
     // prevents the need to have to CTRL+C several times for certain types of error
-    await buildCoreModules(true, skipFrameworks, chartsOnly);
+    await buildCoreModules(true, skipFrameworks);
 };
 
-const addWebpackMiddleware = (app, chartsOnly) => {
-    if (!chartsOnly) {
-        // for js examples that just require community functionality (landing pages, vanilla community examples etc)
-        // webpack.community-grid-all.config.js -> AG_GRID_SCRIPT_PATH -> //localhost:8080/dev/@ag-grid-community/all-modules/dist/ag-grid-community.js
-        addWebpackMiddlewareForConfig(app, 'webpack.community-grid-all-umd.beta.config.js', '/dev/@ag-grid-community/all-modules/dist', 'ag-grid-community.js');
+const addWebpackMiddleware = (app) => {
+    // for js examples that just require community functionality (landing pages, vanilla community examples etc)
+    // webpack.community-grid-all.config.js -> AG_GRID_SCRIPT_PATH -> //localhost:8080/dev/@ag-grid-community/all-modules/dist/ag-grid-community.js
+    addWebpackMiddlewareForConfig(app, 'webpack.community-grid-all-umd.beta.config.js', '/dev/@ag-grid-community/all-modules/dist', 'ag-grid-community.js');
 
-        // for js examples that just require enterprise functionality (landing pages, vanilla enterprise examples etc)
-        // webpack.community-grid-all.config.js -> AG_GRID_SCRIPT_PATH -> //localhost:8080/dev/@ag-grid-enterprise/all-modules/dist/ag-grid-enterprise.js
-        addWebpackMiddlewareForConfig(app, 'webpack.enterprise-grid-all-umd.beta.config.js', '/dev/@ag-grid-enterprise/all-modules/dist', 'ag-grid-enterprise.js');
-    }
+    // for js examples that just require enterprise functionality (landing pages, vanilla enterprise examples etc)
+    // webpack.community-grid-all.config.js -> AG_GRID_SCRIPT_PATH -> //localhost:8080/dev/@ag-grid-enterprise/all-modules/dist/ag-grid-enterprise.js
+    addWebpackMiddlewareForConfig(app, 'webpack.enterprise-grid-all-umd.beta.config.js', '/dev/@ag-grid-enterprise/all-modules/dist', 'ag-grid-enterprise.js');
 };
 
-const watchCoreModulesAndCss = async (skipFrameworks, chartsOnly) => {
+const watchCoreModulesAndCss = async (skipFrameworks) => {
     const buildCss = () => {
         const result = cp.spawnSync('npx', ['nx', 'run-many', "--target=build-css"], {
             cwd: '../../',
@@ -619,7 +615,7 @@ const watchCoreModulesAndCss = async (skipFrameworks, chartsOnly) => {
         .on("unlink", path => buildCss(path, 'removed'))
 
 
-    await watchCoreModules(skipFrameworks, chartsOnly);
+    await watchCoreModules(skipFrameworks);
 };
 
 const watchFrameworkModules = async () => {
@@ -719,7 +715,7 @@ const serveModuleAndPackages = (app, gridCommunityModules, gridEnterpriseModules
     servePackage(app, 'ag-grid-react');
 };
 
-module.exports = async (skipFrameworks, skipExampleFormatting, chartsOnly, skipExampleGeneration, skipAutoDocGeneration, done) => {
+module.exports = async (skipFrameworks, skipExampleFormatting, skipExampleGeneration, skipAutoDocGeneration, done) => {
     tcpPortUsed.check(EXPRESS_HTTPS_PORT)
         .then(async (inUse) => {
             if (inUse) {
@@ -741,17 +737,12 @@ module.exports = async (skipFrameworks, skipExampleFormatting, chartsOnly, skipE
             console.log("Config", {
                 skipFrameworks,
                 skipExampleFormatting,
-                chartsOnly,
                 skipExampleGeneration,
                 skipAutoDocGeneration,
                 AG_SERVE_FRAMEWORK: process.env.AG_SERVE_FRAMEWORK,
                 AG_FW_EXAMPLES_TO_GENERATE: process.env.AG_FW_EXAMPLES_TO_GENERATE,
                 AG_SKIP_PACKAGE_EXAMPLES: process.env.AG_SKIP_PACKAGE_EXAMPLES
             });
-
-            if (chartsOnly) {
-                console.log("Build & Watching Charts Only");
-            }
 
             // Formatting code when generating examples takes ages, so disable it for local development.
             if (skipExampleFormatting) {
@@ -785,15 +776,13 @@ module.exports = async (skipFrameworks, skipExampleFormatting, chartsOnly, skipE
                 return next();
             });
 
-            if (!chartsOnly) {
-                updateWebpackConfigWithBundles(gridCommunityModules, gridEnterpriseModules);
-            }
+            updateWebpackConfigWithBundles(gridCommunityModules, gridEnterpriseModules);
 
             console.log("Performing Initial Build");
-            await performInitialBuild(skipFrameworks, chartsOnly);
+            await performInitialBuild(skipFrameworks);
 
             console.log("Watch Core Modules & CSS");
-            await watchCoreModulesAndCss(skipFrameworks, chartsOnly);
+            await watchCoreModulesAndCss(skipFrameworks);
 
             if (!skipAutoDocGeneration) {
                 console.log("Watching Auto Doc Files");
@@ -805,7 +794,7 @@ module.exports = async (skipFrameworks, skipExampleFormatting, chartsOnly, skipE
                 await watchFrameworkModules();
             }
 
-            addWebpackMiddleware(app, chartsOnly);
+            addWebpackMiddleware(app);
             symlinkModules(gridCommunityModules, gridEnterpriseModules, chartCommunityModules, chartEnterpriseModules);
 
             updateUtilsSystemJsMappingsForFrameworks(gridCommunityModules, gridEnterpriseModules, chartCommunityModules, chartEnterpriseModules);
@@ -820,7 +809,7 @@ module.exports = async (skipFrameworks, skipExampleFormatting, chartsOnly, skipE
 
                 // regenerate examples and then watch them
                 console.log("Watch and Generate Examples");
-                await watchAndGenerateExamples(chartsOnly);
+                await watchAndGenerateExamples();
                 console.log("Examples Generated");
 
                 console.log("Watch Typescript examples...");
@@ -883,5 +872,5 @@ module.exports = async (skipFrameworks, skipExampleFormatting, chartsOnly, skipE
 const [cmd, script, execFunc, exampleDir, watch] = process.argv;
 
 if (process.argv.length >= 3 && execFunc === 'generate-examples') {
-    generateDocumentationExamples(false, exampleDir);
+    generateDocumentationExamples(exampleDir);
 }

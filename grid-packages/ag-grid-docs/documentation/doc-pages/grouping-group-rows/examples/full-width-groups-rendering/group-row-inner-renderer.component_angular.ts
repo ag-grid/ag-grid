@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { NgIf } from '@angular/common';
 import { ICellRendererAngularComp } from "@ag-grid-community/angular";
 import { GroupCellRendererParams, IRowNode } from '@ag-grid-community/core';
 
@@ -7,7 +8,8 @@ interface GroupRowParams extends GroupCellRendererParams {
 }
 
 @Component({
-    selector: 'group-row-cell',
+    standalone: true,
+    imports: [NgIf],
     template: `
         <div class="row">
             <img *ngIf="flagCode" class="flag" border="0" width="20" height="15" [src]="flagCodeImg" />

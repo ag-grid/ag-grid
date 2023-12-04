@@ -3,7 +3,7 @@ import { ILoadingCellRendererAngularComp } from "@ag-grid-community/angular";
 import { ILoadingCellRendererParams } from "@ag-grid-community/core";
 
 @Component({
-  selector: 'app-loading-cell-renderer',
+  standalone: true,
   template: `
       <div class="ag-custom-loading-cell" style="padding-left: 10px; line-height: 25px;">
         <i class="fas fa-spinner fa-pulse"></i>

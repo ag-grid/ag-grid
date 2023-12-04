@@ -1,9 +1,11 @@
 import {Component} from "@angular/core";
+import { NgIf } from "@angular/common";
 import { ICellRendererParams } from "@ag-grid-community/core";
 import { ICellRendererAngularComp } from "@ag-grid-community/angular";
 
 @Component({
-    selector: 'custom-group-component',
+    standalone: true,
+    imports: [NgIf],
     template: `
         <div
             [style.paddingLeft.px]="paddingLeft"
