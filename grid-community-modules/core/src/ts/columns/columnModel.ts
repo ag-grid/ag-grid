@@ -2518,12 +2518,8 @@ export class ColumnModel extends BeanStub {
         const flex = getValue('flex').value1;
         if (flex !== undefined) {
             column.setFlex(flex);
-        }
-
-        // width - we only set width if column is not flexing
-        const noFlexThisCol = column.getFlex() <= 0;
-        if (noFlexThisCol) {
-            // both null and undefined means we skip, as it's not possible to 'clear' width (a column must have a width)
+        } else {
+            // if no flex, then use width if it's there
             const width = getValue('width').value1;
             if (width != null) {
                 if (minColWidth != null && width >= minColWidth) {
