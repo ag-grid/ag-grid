@@ -1,16 +1,6 @@
-import { BaseCellEditor, ICellEditor, ICellEditorParams } from "@ag-grid-community/core";
-import { addOptionalMethods, useGridCustomComponent } from "./customComponent";
-
-export function useGridCellEditor(methods: CellEditorMethods): void {
-    useGridCustomComponent(methods);
-}
-
-export interface CustomCellEditorParams<TData = any, TValue = any, TContext = any> extends ICellEditorParams<TData, TValue, TContext> {
-    initialValue: TValue | null | undefined;
-    onValueChange: (value: TValue | null | undefined) => void;
-}
-
-export interface CellEditorMethods extends BaseCellEditor {}
+import { ICellEditor, ICellEditorParams } from "@ag-grid-community/core";
+import { addOptionalMethods } from "./customComponent";
+import { CellEditorMethods, CustomCellEditorParams } from "./interfaces";
 
 export class CellEditorComponent implements ICellEditor {
     private value: any;

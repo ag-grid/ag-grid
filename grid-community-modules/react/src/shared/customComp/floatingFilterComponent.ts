@@ -1,16 +1,6 @@
-import { AgPromise, BaseFloatingFilter, IFilter, IFloatingFilter, IFloatingFilterParams, IFloatingFilterParent } from "@ag-grid-community/core";
-import { addOptionalMethods, useGridCustomComponent } from "./customComponent";
-
-export function useGridFloatingFilter(methods: FloatingFilterMethods): void {
-    useGridCustomComponent(methods);
-}
-
-export interface CustomFloatingFilterParams<P = IFloatingFilterParent & IFilter, TData = any, TContext = any, TModel = any> extends IFloatingFilterParams<P, TData, TContext> {
-    model: TModel | null;
-    onModelChange: (model: TModel | null) => void;
-}
-
-export interface FloatingFilterMethods extends BaseFloatingFilter {}
+import { AgPromise,  IFloatingFilter, IFloatingFilterParams } from "@ag-grid-community/core";
+import { addOptionalMethods } from "./customComponent";
+import { CustomFloatingFilterParams, FloatingFilterMethods } from "./interfaces";
 
 export class FloatingFilterComponent implements IFloatingFilter {
     private model: any = null;

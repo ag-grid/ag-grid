@@ -1,17 +1,7 @@
-import { AgPromise, BaseDate, BaseDateParams, IDate, IDateParams } from "ag-grid-community";
+import { AgPromise, IDate, IDateParams } from "ag-grid-community";
 import CustomWrapperComp from "../../reactUi/customComp/customWrapperComp";
-import { CustomComponent,  useGridCustomComponent } from "./customComponent";
-
-export function useGridDate(methods: DateMethods): void {
-    return useGridCustomComponent(methods);
-}
-
-export interface DateMethods extends BaseDate {}
-
-export interface CustomDateParams<TData = any, TContext = any> extends BaseDateParams<TData, TContext> {
-    date: Date | null,
-    onDateChange: (date: Date | null) => void,
-}
+import { CustomComponent } from "./customComponent";
+import { CustomDateParams, DateMethods } from "./interfaces";
 
 export class DateComponent extends CustomComponent<CustomDateParams, DateMethods> implements IDate {
     private date: Date | null = null;

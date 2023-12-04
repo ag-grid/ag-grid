@@ -1,18 +1,7 @@
-import { AgPromise, BaseFilter, BaseFilterParams, IDoesFilterPassParams, IFilter, IFilterParams } from "ag-grid-community";
+import { AgPromise, IDoesFilterPassParams, IFilter, IFilterParams } from "ag-grid-community";
 import CustomWrapperComp from "../../reactUi/customComp/customWrapperComp";
-import { CustomComponent,  useGridCustomComponent } from "./customComponent";
-
-export function useGridFilter(methods: FilterMethods): void {
-    return useGridCustomComponent(methods);
-}
-
-export interface FilterMethods extends BaseFilter {}
-
-export interface CustomFilterParams<TData = any, TContext = any, TModel = any> extends BaseFilterParams<TData, TContext> {
-    model: TModel | null,
-    onModelChange: (model: TModel | null) => void,
-    onUiChange: () => void,
-}
+import { CustomComponent } from "./customComponent";
+import { CustomFilterParams, FilterMethods } from "./interfaces";
 
 export class FilterComponent extends CustomComponent<CustomFilterParams, FilterMethods> implements IFilter {
     private model: any = null;

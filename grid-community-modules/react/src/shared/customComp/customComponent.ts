@@ -1,14 +1,4 @@
-import { createContext, useContext } from "react";
 import { NewReactComponent } from "../newReactComponent";
-
-export function useGridCustomComponent<M>(methods: M): void {
-    const { setMethods } = useContext(CustomContext);
-    setMethods(methods);
-}
-
-export type CustomContextParams<M> = {
-    setMethods: (methods: M) => void,
-}
 
 export type WrapperParams<P, M> = {
     initialProps: P;
@@ -16,10 +6,6 @@ export type WrapperParams<P, M> = {
     setMethods: (methods: M) => void;
     addUpdateCallback: (callback: (props: P) => void) => void;
 }
-
-export const CustomContext = createContext<CustomContextParams<any>>({
-    setMethods: () => {},
-});
 
 export function addOptionalMethods<M, C>(optionalMethodNames: string[], providedMethods: M, component: C): void {
     optionalMethodNames.forEach(methodName => {

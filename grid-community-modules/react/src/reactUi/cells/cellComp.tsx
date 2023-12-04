@@ -5,8 +5,9 @@ import PopupEditorComp from './popupEditorComp';
 import useJsCellRenderer from './showJsRenderer';
 import { BeansContext } from '../beansContext';
 import { createSyncJsComp } from '../jsComp';
-import { CellEditorComponent, CellEditorMethods } from '../../shared/customComp/cellEditorComponent';
-import { CustomContext } from '../../shared/customComp/customComponent';
+import { CellEditorComponent } from '../../shared/customComp/cellEditorComponent';
+import { CustomContext } from '../../shared/customComp/customContext';
+import { CellEditorMethods } from '../../shared/customComp/interfaces';
 
 export enum CellCompState { ShowValue, EditValue }
 

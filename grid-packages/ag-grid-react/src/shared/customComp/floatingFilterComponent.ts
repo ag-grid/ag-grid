@@ -1,16 +1,6 @@
-import { BaseFloatingFilter, IFilter, IFloatingFilter, IFloatingFilterParams, IFloatingFilterParent } from "ag-grid-community";
-import { addOptionalMethods, useGridCustomComponent } from "./customComponent";
-
-export function useGridFloatingFilter(methods: FloatingFilterMethods): void {
-    useGridCustomComponent(methods);
-}
-
-export interface CustomFloatingFilterParams<P = IFloatingFilterParent & IFilter, TData = any, TContext = any, TModel = any> extends IFloatingFilterParams<P, TData, TContext> {
-    model: TModel | null;
-    onModelChange: (model: TModel | null) => void;
-}
-
-export interface FloatingFilterMethods extends BaseFloatingFilter {}
+import { AgPromise,  IFloatingFilter, IFloatingFilterParams } from "ag-grid-community";
+import { addOptionalMethods } from "./customComponent";
+import { CustomFloatingFilterParams, FloatingFilterMethods } from "./interfaces";
 
 export class FloatingFilterComponent implements IFloatingFilter {
     private model: any = null;
@@ -27,6 +17,7 @@ export class FloatingFilterComponent implements IFloatingFilter {
 
     public onParentModelChanged(parentModel: any): void {
         this.model = parentModel;
+        this.refreshProps();
     }
 
     public onParamsUpdated(params: IFloatingFilterParams): void {
@@ -45,5 +36,10 @@ export class FloatingFilterComponent implements IFloatingFilter {
     private updateModel(model: any): void {
         this.model = model;
         this.refreshProps();
+        this.floatingFilterParams.parentFilterInstance(instance => {
+            (instance.setModel(model) || AgPromise.resolve()).then(() => {
+                this.floatingFilterParams.filterParams.filterChangedCallback();
+            });
+        });
     }
 }

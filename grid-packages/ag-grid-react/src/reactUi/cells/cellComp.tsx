@@ -5,8 +5,9 @@ import PopupEditorComp from './popupEditorComp';
 import useJsCellRenderer from './showJsRenderer';
 import { BeansContext } from '../beansContext';
 import { createSyncJsComp } from '../jsComp';
-import { CellEditorComponent, CellEditorMethods } from '../../shared/customComp/cellEditorComponent';
-import { CustomContext } from '../../shared/customComp/customComponent';
+import { CellEditorComponent } from '../../shared/customComp/cellEditorComponent';
+import { CustomContext } from '../../shared/customComp/customContext';
+import { CellEditorMethods } from '../../shared/customComp/interfaces';
 
 export enum CellCompState { ShowValue, EditValue }
 
@@ -39,7 +40,7 @@ const jsxEditorProxy = (
 
     return (
         <CustomContext.Provider value={{
-            setMethods: (methods: CellEditorMethods)  => compProxy!.setMethods(methods)
+            setMethods: (methods: CellEditorMethods) => compProxy!.setMethods(methods)
         }}>
             <CellEditorClass {...props}/>
         </CustomContext.Provider>

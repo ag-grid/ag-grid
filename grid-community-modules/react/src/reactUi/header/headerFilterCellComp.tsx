@@ -3,8 +3,9 @@ import { BeansContext } from '../beansContext';
 import { AgPromise, HeaderFilterCellCtrl, IFloatingFilter, IHeaderFilterCellComp, UserCompDetails } from '@ag-grid-community/core';
 import { CssClasses, isComponentStateless } from '../utils';
 import { showJsComp } from '../jsComp';
-import { FloatingFilterComponent, FloatingFilterMethods } from '../../shared/customComp/floatingFilterComponent';
-import { CustomContext } from '../../shared/customComp/customComponent';
+import { FloatingFilterComponent } from '../../shared/customComp/floatingFilterComponent';
+import { CustomContext } from '../../shared/customComp/customContext';
+import { FloatingFilterMethods } from '../../shared/customComp/interfaces';
 
 const HeaderFilterCellComp = (props: {ctrl: HeaderFilterCellCtrl}) => {
 
