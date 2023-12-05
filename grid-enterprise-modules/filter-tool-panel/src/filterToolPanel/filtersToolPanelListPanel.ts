@@ -3,11 +3,9 @@ import {
     AbstractColDef,
     Autowired,
     Column,
-    ColumnApi,
     ColumnModel,
     Component,
     Events,
-    GridApi,
     ProvidedColumnGroup,
     IProvidedColumn,
     FiltersToolPanelState
@@ -23,8 +21,6 @@ export class FiltersToolPanelListPanel extends Component {
 
     private static TEMPLATE = /* html */ `<div class="ag-filter-list-panel"></div>`;
 
-    @Autowired("gridApi") private gridApi: GridApi;
-    @Autowired("columnApi") private columnApi: ColumnApi;
     @Autowired('toolPanelColDefService') private toolPanelColDefService: ToolPanelColDefService;
     @Autowired('columnModel') private columnModel: ColumnModel;
 
@@ -45,14 +41,11 @@ export class FiltersToolPanelListPanel extends Component {
     public init(params: ToolPanelFiltersCompParams): void {
         this.initialised = true;
 
-        const defaultParams: Partial<ToolPanelFiltersCompParams> = {
+        const defaultParams: Partial<ToolPanelFiltersCompParams> = this.gridOptionsService.addGridCommonParams({
             suppressExpandAll: false,
             suppressFilterSearch: false,
-            suppressSyncLayoutWithGrid: false,
-            api: this.gridApi,
-            columnApi: this.columnApi,
-            context: this.gridOptionsService.context
-        };
+            suppressSyncLayoutWithGrid: false
+        });
         _.mergeDeep(defaultParams, params);
         this.params = defaultParams as ToolPanelFiltersCompParams;
 

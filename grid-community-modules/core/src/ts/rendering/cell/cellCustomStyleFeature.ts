@@ -39,17 +39,14 @@ export class CellCustomStyleFeature extends BeanStub {
     public applyCellClassRules(): void {
         const colDef = this.column.getColDef();
         const { cellClassRules } = colDef;
-        const cellClassParams: CellClassParams = {
+        const cellClassParams: CellClassParams = this.beans.gridOptionsService.addGridCommonParams({
             value: this.cellCtrl.getValue(),
             data: this.rowNode.data,
             node: this.rowNode,
             colDef: colDef,
             column: this.column,
-            rowIndex: this.rowNode.rowIndex!,
-            api: this.beans.gridOptionsService.api,
-            columnApi: this.beans.gridOptionsService.columnApi,
-            context: this.beans.gridOptionsService.context
-        };
+            rowIndex: this.rowNode.rowIndex!
+        });
 
         this.beans.stylingService.processClassRules(
             // if current was previous, skip
@@ -70,17 +67,14 @@ export class CellCustomStyleFeature extends BeanStub {
         let styles: CellStyle | null | undefined;
 
         if (typeof colDef.cellStyle === 'function') {
-            const cellStyleParams: CellClassParams = {
+            const cellStyleParams: CellClassParams = this.beans.gridOptionsService.addGridCommonParams({
                 column: this.column,
                 value: this.cellCtrl.getValue(),
                 colDef: colDef,
                 data: this.rowNode.data,
                 node: this.rowNode,
-                rowIndex: this.rowNode.rowIndex!,
-                api: this.beans.gridOptionsService.api,
-                columnApi: this.beans.gridOptionsService.columnApi,
-                context: this.beans.gridOptionsService.context,
-            };
+                rowIndex: this.rowNode.rowIndex!
+            });
             const cellStyleFunc = colDef.cellStyle as CellStyleFunc;
             styles = cellStyleFunc(cellStyleParams);
         } else {
@@ -94,17 +88,14 @@ export class CellCustomStyleFeature extends BeanStub {
 
     public applyClassesFromColDef() {
         const colDef = this.column.getColDef();
-        const cellClassParams: CellClassParams = {
+        const cellClassParams: CellClassParams = this.beans.gridOptionsService.addGridCommonParams({
             value: this.cellCtrl.getValue(),
             data: this.rowNode.data,
             node: this.rowNode,
             column: this.column,
             colDef: colDef,
-            rowIndex: this.rowNode.rowIndex!,
-            api: this.beans.gridOptionsService.api,
-            columnApi: this.beans.gridOptionsService.columnApi,
-            context: this.beans.gridOptionsService.context
-        };
+            rowIndex: this.rowNode.rowIndex!
+        });
 
         if (this.staticClasses.length) {
             this.staticClasses.forEach(className => this.cellComp.addOrRemoveCssClass(className, false));

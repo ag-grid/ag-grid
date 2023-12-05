@@ -804,8 +804,6 @@ export class PopupService extends BeanStub {
 
         const params = {
             type: 'popupToFront',
-            api: this.gridOptionsService.api,
-            columnApi: this.gridOptionsService.columnApi,
             eWrapper
         };
 

@@ -119,16 +119,13 @@ export class RichSelectCellEditor<TData = any, TValue = any> extends PopupCompon
         }
 
         return (values: TValue[]) => values.map((value: TValue) => {
-            const keyParams: KeyCreatorParams = {
+            const keyParams: KeyCreatorParams = this.gridOptionsService.addGridCommonParams({
                 value: value,
                 colDef: this.params.colDef,
                 column: this.params.column,
                 node: this.params.node,
-                data: this.params.data,
-                api: this.gridOptionsService.api,
-                columnApi: this.gridOptionsService.columnApi,
-                context: this.gridOptionsService.context
-            };
+                data: this.params.data
+            });
             return colDef.keyCreator!(keyParams);
         });
     }

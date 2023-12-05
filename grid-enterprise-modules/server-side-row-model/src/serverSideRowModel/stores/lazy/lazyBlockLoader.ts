@@ -138,15 +138,12 @@ export class LazyBlockLoader extends BeanStub {
             this.queueLoadAction();
         }
 
-        const params: IServerSideGetRowsParams = {
+        const params: IServerSideGetRowsParams = this.gridOptionsService.addGridCommonParams({
             request,
             success,
             fail,
-            parentNode: this.parentNode,
-            api: this.api,
-            columnApi: this.gridOptionsService.columnApi,
-            context: this.gridOptionsService.context
-        };
+            parentNode: this.parentNode
+        });
 
         addNodesToLoadingMap();
         this.cache.getSsrmParams().datasource?.getRows(params);

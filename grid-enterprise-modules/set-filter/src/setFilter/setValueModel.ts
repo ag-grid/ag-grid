@@ -313,21 +313,16 @@ export class SetValueModel<V> implements IEventEmitter {
                     this.setIsLoading(true);
 
                     const callback = this.providedValues as SetFilterValuesFunc<any, V>;
-                    const { columnApi, api, column, colDef } = this.filterParams;
-                    const { context } = this.gridOptionsService;
-                    const params: SetFilterValuesFuncParams<any, V> = {
+                    const { column, colDef } = this.filterParams;
+                    const params: SetFilterValuesFuncParams<any, V> = this.gridOptionsService.addGridCommonParams({
                         success: values => {
                             this.setIsLoading(false);
 
                             resolve(this.processAllValues(this.uniqueValues(this.validateProvidedValues(values))));
                         },
                         colDef,
-                        column,
-                        columnApi,
-                        api,
-                        context,
-
-                    };
+                        column
+                    });
 
                     window.setTimeout(() => callback(params), 0);
 

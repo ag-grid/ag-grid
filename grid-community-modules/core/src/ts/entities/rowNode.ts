@@ -706,16 +706,13 @@ export class RowNode<TData = any> implements IEventEmitter, IRowNode<TData> {
     }
 
     private createGlobalRowEvent(type: string): RowEvent<TData> {
-        return {
+        return this.beans.gridOptionsService.addGridCommonParams({
             type: type,
             node: this,
             data: this.data,
             rowIndex: this.rowIndex,
-            rowPinned: this.rowPinned,
-            context: this.beans.gridOptionsService.context,
-            api: this.beans.gridOptionsService.api,
-            columnApi: this.beans.gridOptionsService.columnApi
-        };
+            rowPinned: this.rowPinned
+        });
     }
 
     private dispatchLocalEvent(event: AgEvent): void {
@@ -788,23 +785,20 @@ export class RowNode<TData = any> implements IEventEmitter, IRowNode<TData> {
     }
 
     private dispatchEventForSaveValueReadOnly(column: Column, oldValue: any, newValue: any, eventSource?: string): void {
-        const event: CellEditRequestEvent = {
+        const event: CellEditRequestEvent = this.beans.gridOptionsService.addGridCommonParams({
             type: Events.EVENT_CELL_EDIT_REQUEST,
             event: null,
             rowIndex: this.rowIndex!,
             rowPinned: this.rowPinned,
             column: column,
             colDef: column.getColDef(),
-            context: this.beans.gridOptionsService.context,
-            api: this.beans.gridOptionsService.api,
-            columnApi: this.beans.gridOptionsService.columnApi,
             data: this.data,
             node: this,
             oldValue,
             newValue,
             value: newValue,
             source: eventSource
-        };
+        });
 
         this.beans.eventService.dispatchEvent(event);
     }

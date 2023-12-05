@@ -162,16 +162,13 @@ export class QuickFilterService extends BeanStub {
         const colDef = column.getColDef();
 
         if (colDef.getQuickFilterText) {
-            const params: GetQuickFilterTextParams = {
+            const params: GetQuickFilterTextParams = this.gridOptionsService.addGridCommonParams({
                 value,
                 node,
                 data: node.data,
                 column,
-                colDef,
-                api: this.gridOptionsService.api,
-                columnApi: this.gridOptionsService.columnApi,
-                context: this.gridOptionsService.context
-            };
+                colDef
+            });
 
             value = colDef.getQuickFilterText(params);
         }

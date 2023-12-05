@@ -2751,16 +2751,13 @@ export class ColumnModel extends BeanStub {
         const headerValueGetter = colDef.headerValueGetter;
 
         if (headerValueGetter) {
-            const params: HeaderValueGetterParams = {
+            const params: HeaderValueGetterParams = this.gridOptionsService.addGridCommonParams({
                 colDef: colDef,
                 column: column,
                 columnGroup: columnGroup,
                 providedColumnGroup: providedColumnGroup,
-                location: location,
-                api: this.gridOptionsService.api,
-                columnApi: this.gridOptionsService.columnApi,
-                context: this.gridOptionsService.context
-            };
+                location: location
+            });
 
             if (typeof headerValueGetter === 'function') {
                 // valueGetter is a function, so just call it

@@ -80,11 +80,11 @@ export class GridOptionsService {
     private static readonly alwaysSyncGlobalEvents: Set<string> = new Set([Events.EVENT_GRID_PRE_DESTROYED]);
 
     // Store locally to avoid retrieving many times as these are requested for every callback
-    @Autowired('gridApi') public readonly api: GridApi;
+    @Autowired('gridApi') private readonly api: GridApi;
     /** @deprecated v31 ColumnApi has been deprecated and all methods moved to the api. */
-    public columnApi: ColumnApi;
+    private columnApi: ColumnApi;
     // This is quicker then having code call gridOptionsService.get('context')
-    public get context() {
+    private get context() {
         return this.gridOptions['context'];
     }
 
@@ -542,5 +542,21 @@ export class GridOptionsService {
         if (pivotMode) { return false; }
 
         return this.gridOptions.groupDisplayType === 'groupRows';
+    }
+
+    public getGridCommonParams<TData = any, TContext = any>(): AgGridCommon<TData, TContext> {
+        return {
+            api: this.api,
+            columnApi: this.columnApi,
+            context: this.context
+        };
+    }
+
+    public addGridCommonParams<T extends AgGridCommon<TData, TContext>, TData = any, TContext = any>(params: WithoutGridCommon<T>): T {
+        const updatedParams = params as T;
+        updatedParams.api = this.api;
+        updatedParams.columnApi = this.columnApi;
+        updatedParams.context = this.context;
+        return updatedParams;
     }
 }

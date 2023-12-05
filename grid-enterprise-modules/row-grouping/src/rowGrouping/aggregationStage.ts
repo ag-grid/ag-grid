@@ -270,17 +270,14 @@ export class AggregationStage extends BeanStub implements IRowNodeStage {
         }
 
         const aggFuncAny = aggFunc;
-        const params: IAggFuncParams = {
+        const params: IAggFuncParams = this.gridOptionsService.addGridCommonParams({
             values: values,
             column: column,
             colDef: column ? column.getColDef() : undefined,
             pivotResultColumn: pivotResultColumn,
             rowNode: rowNode,
-            data: rowNode ? rowNode.data : undefined,
-            api: this.gridOptionsService.api,
-            columnApi: this.gridOptionsService.columnApi,
-            context: this.gridOptionsService.context,
-        } as any; // the "as any" is needed to allow the deprecation warning messages
+            data: rowNode ? rowNode.data : undefined
+        } as any); // the "as any" is needed to allow the deprecation warning messages
 
         return aggFuncAny(params);
     }

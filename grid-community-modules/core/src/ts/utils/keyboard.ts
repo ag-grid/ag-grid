@@ -46,17 +46,14 @@ export function isUserSuppressingKeyboardEvent(
     // if no callbacks provided by user, then do nothing
     if (!colDefFunc) { return false; }
 
-    const params: SuppressKeyboardEventParams = {
+    const params: SuppressKeyboardEventParams = gridOptionsService.addGridCommonParams({
         event: keyboardEvent,
         editing,
         column,
-        api: gridOptionsService.api,
         node: rowNode,
         data: rowNode.data,
-        colDef: column.getColDef(),
-        context: gridOptionsService.context,
-        columnApi: gridOptionsService.columnApi
-    };
+        colDef: column.getColDef()
+    });
 
     // colDef get first preference on suppressing events
     if (colDefFunc) {
@@ -80,15 +77,12 @@ export function isUserSuppressingHeaderKeyboardEvent(
 
     if (!exists(colDefFunc)) { return false; }
 
-    const params: SuppressHeaderKeyboardEventParams = {
-        api: gridOptionsService.api,
-        columnApi: gridOptionsService.columnApi,
-        context: gridOptionsService.context,
+    const params: SuppressHeaderKeyboardEventParams = gridOptionsService.addGridCommonParams({
         colDef: colDef,
         column,
         headerRowIndex,
         event: keyboardEvent
-    };
+    });
 
     return !!colDefFunc(params);
 }

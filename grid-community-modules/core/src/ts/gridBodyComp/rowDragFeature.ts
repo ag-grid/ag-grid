@@ -408,11 +408,8 @@ export class RowDragFeature extends BeanStub implements DropTarget {
                 break;
         }
 
-        const event: RowDragEvent = {
+        const event: RowDragEvent = this.gridOptionsService.addGridCommonParams({
             type: type,
-            api: this.gridOptionsService.api,
-            columnApi: this.gridOptionsService.columnApi,
-            context: this.gridOptionsService.context,
             event: draggingEvent.event,
             node: draggingEvent.dragItem.rowNode!,
             nodes: draggingEvent.dragItem.rowNodes!,
@@ -420,7 +417,7 @@ export class RowDragFeature extends BeanStub implements DropTarget {
             overNode: overNode,
             y: yNormalised,
             vDirection: vDirectionString!
-        };
+        });
 
         return event;
     }

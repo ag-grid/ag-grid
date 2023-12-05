@@ -944,17 +944,14 @@ export class RowCtrl extends BeanStub {
     }
 
     public createRowEvent(type: string, domEvent?: Event): RowEvent {
-        return {
+        return this.gridOptionsService.addGridCommonParams({
             type: type,
             node: this.rowNode,
             data: this.rowNode.data,
             rowIndex: this.rowNode.rowIndex!,
             rowPinned: this.rowNode.rowPinned,
-            context: this.gridOptionsService.context,
-            api: this.gridOptionsService.api,
-            columnApi: this.gridOptionsService.columnApi,
             event: domEvent
-        };
+        });
     }
 
     private createRowEventWithSource(type: string, domEvent: Event): RowEvent {
@@ -1092,23 +1089,20 @@ export class RowCtrl extends BeanStub {
     }
 
     public createFullWidthParams(eRow: HTMLElement, pinned: ColumnPinnedType): ICellRendererParams {
-        const params = {
+        const params = this.gridOptionsService.addGridCommonParams({
             fullWidth: true,
             data: this.rowNode.data,
             node: this.rowNode,
             value: this.rowNode.key,
             valueFormatted: this.rowNode.key,
             rowIndex: this.rowNode.rowIndex!,
-            api: this.gridOptionsService.api,
-            columnApi: this.gridOptionsService.columnApi,
-            context: this.gridOptionsService.context,
             // these need to be taken out, as part of 'afterAttached' now
             eGridCell: eRow,
             eParentOfValue: eRow,
             pinned: pinned,
             addRenderedRowListener: this.addEventListener.bind(this),
             registerRowDragger: (rowDraggerElement, dragStartPixels, value, suppressVisibilityChange) => this.addFullWidthRowDragging(rowDraggerElement, dragStartPixels, value, suppressVisibilityChange)
-        } as ICellRendererParams;
+        } as WithoutGridCommon<ICellRendererParams>);
 
         return params;
     }
