@@ -333,7 +333,7 @@ export class StateService extends BeanStub {
             });
             defaultState.pivot = null;
             defaultState.pivotIndex = null;
-            this.gridOptionsService.updateGridOptions({ options: { pivotMode: pivotState.pivotMode } });
+            this.gridOptionsService.updateGridOptions({ options: { pivotMode: pivotState.pivotMode }, source: 'gridInitializing' as any });
         }
         if (columnPinningState) {
             columnPinningState.leftColIds.forEach(colId => {
