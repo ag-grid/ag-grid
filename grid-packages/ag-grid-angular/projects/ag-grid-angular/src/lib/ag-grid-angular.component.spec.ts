@@ -8,7 +8,7 @@ describe('MyLibComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ AgGridAngular ]
+      imports: [ AgGridAngular ]
     })
     .compileComponents();
   }));
