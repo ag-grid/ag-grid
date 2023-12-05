@@ -195,9 +195,9 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl<IHeaderCellComp, Colu
 
     private createParams(): IHeaderParams {
 
-        const params: IHeaderParams = {
+        const params: IHeaderParams = this.gridOptionsService.addGridCommonParams({
             column: this.column,
-            displayName: this.displayName,
+            displayName: this.displayName!,
             enableSorting: this.column.isSortable(),
             enableMenu: this.menuEnabled,
             showColumnMenu: (source: HTMLElement) => {
@@ -209,11 +209,8 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl<IHeaderCellComp, Colu
             setSort: (sort: SortDirection, multiSort?: boolean) => {
                 this.sortController.setSortForColumn(this.column, sort, !!multiSort, "uiColumnSorted");
             },
-            api: this.gridApi,
-            columnApi: this.gridOptionsService.columnApi,
-            context: this.gridOptionsService.context,
             eGridHeader: this.getGui()
-        } as IHeaderParams;
+        });
 
         return params;
     }

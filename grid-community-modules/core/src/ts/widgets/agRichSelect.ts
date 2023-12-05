@@ -186,8 +186,7 @@ export class AgRichSelect<TValue = any> extends AgPickerField<TValue, RichSelect
         if (config.cellRenderer) {
             userCompDetails = this.userComponentFactory.getCellRendererDetails(this.config, {
                 value,
-                valueFormatted,
-                api: this.gridOptionsService.api
+                valueFormatted
             } as ICellRendererParams);
         }
 

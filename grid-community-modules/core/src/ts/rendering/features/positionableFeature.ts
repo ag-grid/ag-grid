@@ -777,9 +777,7 @@ export class PositionableFeature extends BeanStub {
         this.boundaryEl = null;
 
         const params = {
-            type: 'resize',
-            api: this.gridOptionsService.api,
-            columnApi: this.gridOptionsService.columnApi
+            type: 'resize'
         };
 
         this.element.classList.remove('ag-resizing');

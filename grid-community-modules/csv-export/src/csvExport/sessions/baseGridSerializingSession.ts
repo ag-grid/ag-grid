@@ -121,12 +121,7 @@ export abstract class BaseGridSerializingSession<T> implements GridSerializingSe
 
     private getHeaderName(callback: ((params: ProcessHeaderForExportParams) => string) | undefined, column: Column): string | null {
         if (callback) {
-            return callback({
-                column: column,
-                api: this.gridOptionsService.api,
-                columnApi: this.gridOptionsService.columnApi,
-                context: this.gridOptionsService.context
-            });
+            return callback(this.gridOptionsService.addGridCommonParams({ column }));
         }
 
         return this.columnModel.getDisplayNameForColumn(column, 'csv', true);
@@ -134,12 +129,7 @@ export abstract class BaseGridSerializingSession<T> implements GridSerializingSe
 
     private createValueForGroupNode(node: RowNode): string {
         if (this.processRowGroupCallback) {
-            return this.processRowGroupCallback({
-                node: node,
-                api: this.gridOptionsService.api,
-                columnApi: this.gridOptionsService.columnApi,
-                context: this.gridOptionsService.context,
-            });
+            return this.processRowGroupCallback(this.gridOptionsService.addGridCommonParams({ node }));
         }
         const isFooter = node.footer;
         const keys = [node.key];
@@ -163,18 +153,15 @@ export abstract class BaseGridSerializingSession<T> implements GridSerializingSe
 
         if (processCellCallback) {
             return {
-                value: processCellCallback({
+                value: processCellCallback(this.gridOptionsService.addGridCommonParams({
                     accumulatedRowIndex,
                     column: column,
                     node: rowNode,
                     value: value,
-                    api: this.gridOptionsService.api,
-                    columnApi: this.gridOptionsService.columnApi,
-                    context: this.gridOptionsService.context,
                     type: type,
                     parseValue: (valueToParse: string) => this.valueParserService.parseValue(column, rowNode, valueToParse, this.valueService.getValue(column, rowNode)),
                     formatValue: (valueToFormat: any) => this.valueFormatterService.formatValue(column, rowNode, valueToFormat) ?? valueToFormat
-                }) ?? ''
+                })) ?? ''
             };
         }
 

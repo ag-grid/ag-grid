@@ -625,7 +625,7 @@ export class FilterManager extends BeanStub {
     }
 
     public createFilterParams(column: Column, colDef: ColDef): IFilterParams {
-        const params: IFilterParams = {
+        const params: IFilterParams = this.gridOptionsService.addGridCommonParams({
             column,
             colDef: cloneObject(colDef),
             rowModel: this.rowModel,
@@ -634,10 +634,7 @@ export class FilterManager extends BeanStub {
             valueGetter: this.createValueGetter(column),
             getValue: this.createGetValue(column),
             doesRowPassOtherFilter: () => true,
-            api: this.gridOptionsService.api,
-            columnApi: this.gridOptionsService.columnApi,
-            context: this.gridOptionsService.context,
-        };
+        });
 
         return params;
     }
