@@ -10,12 +10,11 @@ import { SetFilterModule } from '@ag-grid-enterprise/set-filter';
 import { MenuModule } from '@ag-grid-enterprise/menu';
 import { ExcelExportModule } from '@ag-grid-enterprise/excel-export';
 import { GridChartsModule } from '@ag-grid-enterprise/charts';
+import { AgGridAngular } from '@ag-grid-community/angular';
 
 import {
     ColDef,
-    GridOptions,
     ModuleRegistry,
-    Grid,
 } from '@ag-grid-community/core';
 
 // Register shared Modules globally
@@ -27,6 +26,8 @@ ModuleRegistry.registerModules([
 
 @Component({
     selector: 'my-app',
+    standalone: true,
+    imports : [AgGridAngular],
     template: `
         <div class="example-wrapper">
             <div class="inner-col">
