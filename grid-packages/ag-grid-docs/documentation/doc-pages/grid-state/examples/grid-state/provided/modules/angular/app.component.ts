@@ -6,7 +6,7 @@ import { NgIf } from "@angular/common";
 import '@ag-grid-community/styles/ag-grid.css';
 import "@ag-grid-community/styles/ag-theme-quartz.css";
 import '../styles.css';
-import { AgGridModule } from '@ag-grid-community/angular';
+import { AgGridAngular } from '@ag-grid-community/angular';
 import { ColDef, ColGroupDef, GridApi, GridOptions, GridReadyEvent, SideBarDef, createGrid, GridState, GridPreDestroyedEvent, StateUpdatedEvent } from '@ag-grid-community/core';
 import { IOlympicData } from './interfaces'
 
@@ -22,7 +22,7 @@ ModuleRegistry.registerModules([ClientSideRowModelModule, ColumnsToolPanelModule
 
 @Component({
     standalone: true,
-    imports: [AgGridModule, NgIf],
+    imports: [AgGridAngular, NgIf],
     selector: 'my-app',
     template: `
         <div class="example-wrapper">

@@ -1,6 +1,6 @@
 import { Component, ViewChild } from '@angular/core';
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
-import { AgGridModule } from '@ag-grid-community/angular';
+import { AgGridAngular } from '@ag-grid-community/angular';
 import "@ag-grid-community/styles/ag-grid.css";
 import "@ag-grid-community/styles/ag-theme-quartz.css";
 import { ModuleRegistry, ColDef, GridApi, GetRowIdParams, GridReadyEvent, RowDropZoneParams } from '@ag-grid-community/core';
@@ -9,7 +9,7 @@ import { ModuleRegistry, ColDef, GridApi, GetRowIdParams, GridReadyEvent, RowDro
 ModuleRegistry.registerModules([ClientSideRowModelModule]);
 @Component({
     standalone: true,
-    imports: [AgGridModule],
+    imports: [AgGridAngular],
     selector: 'my-app',
     template: `
         <div class="example-wrapper">

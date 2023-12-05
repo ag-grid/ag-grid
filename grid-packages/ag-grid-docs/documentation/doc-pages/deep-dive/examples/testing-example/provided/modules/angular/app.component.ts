@@ -4,7 +4,7 @@ import { ModuleRegistry, CellValueChangedEvent, ColDef, GridReadyEvent, ICellRen
 import { HttpClient } from '@angular/common/http';
 import "@ag-grid-community/styles/ag-grid.css";
 import "@ag-grid-community/styles/ag-theme-quartz.css";
-import { AgGridModule, ICellRendererAngularComp } from '@ag-grid-community/angular';
+import { AgGridAngular, ICellRendererAngularComp } from '@ag-grid-community/angular';
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
 ModuleRegistry.registerModules([ ClientSideRowModelModule ]);
 
@@ -84,7 +84,7 @@ export class CompanyLogoRenderer implements ICellRendererAngularComp {
 @Component({
   selector: 'my-app',
   standalone: true,
-  imports: [AgGridModule],
+  imports: [AgGridAngular],
   template: `
   <div class="content">
     <!-- The AG Grid component, with various Grid Option properties -->

@@ -4,7 +4,7 @@ import { FormsModule } from '@angular/forms';
 import '@ag-grid-community/styles/ag-grid.css';
 import "@ag-grid-community/styles/ag-theme-quartz.css";
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { AgGridAngular, AgGridModule } from '@ag-grid-community/angular';
+import { AgGridAngular } from '@ag-grid-community/angular';
 import { getData } from './data';
 
 import { ModuleRegistry } from '@ag-grid-community/core';
@@ -13,7 +13,7 @@ ModuleRegistry.registerModules([ClientSideRowModelModule])
 
 @Component({
     standalone: true,
-    imports: [AgGridModule, FormsModule],
+    imports: [AgGridAngular, FormsModule],
     selector: 'my-app',
     template: `<div class="example-wrapper">
     <div class="example-header">

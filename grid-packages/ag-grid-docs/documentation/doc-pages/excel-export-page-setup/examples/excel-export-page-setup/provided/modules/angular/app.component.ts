@@ -5,7 +5,7 @@ import { HttpClient } from '@angular/common/http';
 import '@ag-grid-community/styles/ag-grid.css';
 import "@ag-grid-community/styles/ag-theme-quartz.css";
 import '../styles.css';
-import { AgGridModule } from '@ag-grid-community/angular';
+import { AgGridAngular } from '@ag-grid-community/angular';
 import { ColDef, GridApi, GridReadyEvent } from '@ag-grid-community/core';
 import { IOlympicData } from './interfaces'
 
@@ -19,7 +19,7 @@ ModuleRegistry.registerModules([ClientSideRowModelModule, MenuModule, ExcelExpor
 
 @Component({
     standalone: true,
-    imports: [AgGridModule],
+    imports: [AgGridAngular],
     selector: 'my-app',
     template: `<div class="container">
         <form (submit)="onFormSubmit($event)">

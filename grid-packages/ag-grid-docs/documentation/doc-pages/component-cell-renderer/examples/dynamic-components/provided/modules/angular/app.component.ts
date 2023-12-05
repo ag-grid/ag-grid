@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { AgGridModule } from '@ag-grid-community/angular';
+import { AgGridAngular } from '@ag-grid-community/angular';
 
 import { ChildMessageRenderer } from './child-message-renderer.component';
 import { CubeRenderer } from './cube-renderer.component';
@@ -20,7 +20,7 @@ ModuleRegistry.registerModules([ClientSideRowModelModule])
 @Component({
     selector: 'my-app',
     standalone: true,
-    imports: [AgGridModule, ChildMessageRenderer, CubeRenderer, CurrencyRenderer, ParamsRenderer, SquareRenderer],
+    imports: [AgGridAngular, ChildMessageRenderer, CubeRenderer, CurrencyRenderer, ParamsRenderer, SquareRenderer],
     template: `
         <div class="example-wrapper">
         <button (click)="refreshEvenRowsCurrencyData()" style="margin-bottom: 10px" class="btn btn-primary">

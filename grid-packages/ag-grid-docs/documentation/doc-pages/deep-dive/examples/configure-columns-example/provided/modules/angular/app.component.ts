@@ -2,7 +2,7 @@ import { Component } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import "@ag-grid-community/styles/ag-grid.css";
 import "@ag-grid-community/styles/ag-theme-quartz.css";
-import { AgGridModule } from '@ag-grid-community/angular';
+import { AgGridAngular } from '@ag-grid-community/angular';
 import { ModuleRegistry, GridReadyEvent, ColDef} from '@ag-grid-community/core';
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
 ModuleRegistry.registerModules([ ClientSideRowModelModule ]);
@@ -22,7 +22,7 @@ interface IRow {
 @Component({
   selector: 'my-app',
   standalone: true,
-  imports: [AgGridModule],
+  imports: [AgGridAngular],
   template: 
   `
   <div class="content">

@@ -2,7 +2,7 @@ import { NgModule } from "@angular/core";
 import { BrowserModule } from "@angular/platform-browser";
 import { FormsModule } from "@angular/forms";
 // ag-grid
-import { AgGridModule } from "@ag-grid-community/angular";
+import { AgGridAngular } from "@ag-grid-community/angular";
 
 // material design
 import {MatCardModule} from '@angular/material/card';
@@ -28,7 +28,7 @@ import { ColumnAlignmentService } from "./columnAlignmentService";
     imports: [
         BrowserModule,
         FormsModule,
-        AgGridModule,
+        AgGridAngular,
         BrowserAnimationsModule,
         MatCheckboxModule,
         MatFormFieldModule,

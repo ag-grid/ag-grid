@@ -46,7 +46,7 @@ function getOnGridReadyCode(
 function addModuleImports(imports: string[], bindings: any, allStylesheets: string[]): string[] {
     const { gridSettings, imports: bindingImports, properties } = bindings;
 
-    imports.push("import { AgGridModule } from '@ag-grid-community/angular';");
+    imports.push("import { AgGridAngular } from '@ag-grid-community/angular';");
     imports.push('// NOTE: Angular CLI does not support component CSS imports: angular-cli/issues/23273');
     imports.push("import '@ag-grid-community/styles/ag-grid.css';");
 
@@ -80,7 +80,7 @@ function addModuleImports(imports: string[], bindings: any, allStylesheets: stri
 function addPackageImports(imports: string[], bindings: any, allStylesheets: string[]): string[] {
     const { gridSettings, imports: bindingImports, properties } = bindings;
 
-    imports.push("import { AgGridModule } from 'ag-grid-angular';");
+    imports.push("import { AgGridAngular } from 'ag-grid-angular';");
     if (gridSettings.enterprise) {
         imports.push("import 'ag-grid-enterprise';");
     }
@@ -235,7 +235,7 @@ export function vanillaToAngular(bindings: any, componentFileNames: string[], al
             .replace(/(?<!this.)gridApi(\??)(!?)/g, 'this.gridApi');
 
   const { includeNgFormsModule } = bindings.gridSettings;
-   let standaloneImports = ["AgGridModule"];
+   let standaloneImports = ["AgGridAngular"];
    if(includeNgFormsModule) {
     standaloneImports.push("FormsModule");
    }
