@@ -98,7 +98,7 @@ const License = (props: LicenseData) => {
                     </a>
                 </div>
 
-                
+
                 <div className={styles.launchExplainer}>
                     { launchPrice && (
                         <>
@@ -112,7 +112,7 @@ const License = (props: LicenseData) => {
                     <a
                         className="button"
                         href={buyLink}
-                        target="_parent"
+                        target="_blank"
                         onClick={() => {
                             trackBuyButton({
                                 type: id,

@@ -109,6 +109,7 @@ export const LicensePricing = () => {
 
                                 <a
                                     href="https://ag-grid.com/ecommerce/#/ecommerce/?licenseType=single&productType=both"
+                                    target='_blank'
                                     className="button button-secondary"
                                 >
                                     Configure Now
@@ -123,8 +124,8 @@ export const LicensePricing = () => {
                 <div className={styles.community}>
                     <h3>Community Versions</h3>
                     <p>
-                        <a href="https://www.npmjs.com/package/ag-grid-community"><b>AG Grid Community</b></a> and <a href="https://www.npmjs.com/package/ag-charts-community"><b>AG Charts Community</b></a> are free and open source products distributed under the{' '}
-                        <a href={`${hostPrefix}/eula/AG-Grid-Community-License.html`} target="_blank">
+                        <a href="https://www.npmjs.com/package/ag-grid-community" target='_blank'><b>AG Grid Community</b></a> and <a href="https://www.npmjs.com/package/ag-charts-community" target='_blank'><b>AG Charts Community</b></a> are free and open source products distributed under the{' '}
+                        <a href="https://www.ag-grid.com/eula/AG-Grid-Community-License.html" target="_blank">
                             MIT License
                         </a>
                         . These versions are free to use in production environments.
@@ -132,6 +133,7 @@ export const LicensePricing = () => {
 
                     <a
                         href="https://www.npmjs.com/package/ag-grid-community"
+                        target='_blank'
                         className={classnames(styles.NpmButton, 'button-secondary')}
                     >
                         <NPMIcon /> Get AG Grid Community at NPM
@@ -139,6 +141,7 @@ export const LicensePricing = () => {
                     <br />
                     <a
                         href="https://www.npmjs.com/package/ag-charts-community"
+                        target='_blank'
                         className={classnames(styles.NpmButton, 'button-secondary')}
                     >
                         <NPMIcon /> Get AG Charts Community at NPM
@@ -150,16 +153,16 @@ export const LicensePricing = () => {
                         Enterprise Versions <Icon name="enterprise" />
                     </h3>
                     <p>
-                        <a href="https://ag-grid.com/javascript-data-grid/licensing/"><b>AG Grid Enterprise</b></a> and <a href="https://charts.ag-grid.com/javascript/licensing/"><b>AG Charts Enterprise</b></a> are commercial products distributed
+                        <a href="https://ag-grid.com/javascript-data-grid/licensing/" target='_blank'><b>AG Grid Enterprise</b></a> and <a href="https://charts.ag-grid.com/javascript/licensing/" target='_blank'><b>AG Charts Enterprise</b></a> are commercial products distributed
                         under our{' '}
-                        <a href={`${hostPrefix}/eula/AG-Grid-Enterprise-License-Latest.html`} target="_blank">
+                        <a href="https://www.ag-grid.com/eula/AG-Grid-Enterprise-License-Latest.html" target="_blank">
                             EULA
                         </a>{' '}
                         and supported by our technical staff.
                     </p>
 
                     <p>
-                        To evaluate <a href="https://ag-grid.com/javascript-data-grid/licensing/"><b>AG Grid Enterprise</b></a> or <a href="https://charts.ag-grid.com/javascript/licensing/"><b>AG Charts Enterprise</b></a> you don't need our
+                        To evaluate <a href="https://ag-grid.com/javascript-data-grid/licensing/" target='_blank'><b>AG Grid Enterprise</b></a> or <a href="https://charts.ag-grid.com/javascript/licensing/" target='_blank'><b>AG Charts Enterprise</b></a> you don't need our
                         permission – all features are unlocked. To temporarily hide the watermark and browser console
                         errors e-mail us to{' '}
                         <InfoEmailLink
@@ -190,8 +193,17 @@ export const LicensePricing = () => {
                     <a
                         href={`${hostPrefix}/javascript-data-grid/licensing/#feature-comparison`}
                         className="button-secondary"
+                        target='_blank'
                     >
                         See all AG Grid Enterprise features
+                    </a>
+                    <br/>
+                    <a
+                        href="https://charts.ag-grid.com/react/licensing/#feature-comparison"
+                        className="button-secondary"
+                        target='_blank'
+                    >
+                        See all AG Charts Enterprise features
                     </a>
                 </div>
             </div>
