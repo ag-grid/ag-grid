@@ -178,35 +178,44 @@ const MenuItem = ({item, currentFramework, activeParentItems}) => {
     return (
         <li>
             {item.url ? (
-                <Link
-                    to={item.absoluteUrl ? item.url : convertToFrameworkUrl(item.url, currentFramework)}
-                    activeClassName={styles.activeMenuItem}
-                    target={item.newWindow ? '_blank' : '_self'}
-                    className={isActiveParent ? styles.activeItemParent : undefined}
-                    onClick={(event) => {
-                        if (item.absoluteUrl) {
-                            return;
-                        }
+                item.absoluteUrl ? 
+                    (
+                        <a href={item.url}>
+                            {item.title}
+                            {item.enterprise && (
+                                <span className={styles.enterpriseIcon}>
+                                    (e)
+                                    <Icon name="enterprise"/>
+                                </span>
+                            )}
+                            {item.newWindow && <Icon name="newTab" svgClasses={styles.newWindowIcon} />}
+                        </a>
+                    ) : (
+                        <Link
+                            to={convertToFrameworkUrl(item.url, currentFramework)}
+                            activeClassName={styles.activeMenuItem}
+                            target={item.newWindow ? '_blank' : '_self'}
+                            className={isActiveParent ? styles.activeItemParent : undefined}
+                            onClick={(event) => {
+                                isDocsButtonOpen && setIsDocsButtonOpen(false);
 
-                        isDocsButtonOpen && setIsDocsButtonOpen(false);
-
-                        // Prevent bootstrap collapse on desktop
-                        if (isDesktop) {
-                            event.stopPropagation();
-                        }
-                    }}
-                    data-toggle={!item.newWindow ? "collapse" : undefined}
-                    data-target={!item.newWindow ? "#side-nav" : undefined}
-                >
-                    {item.title}
-                    {item.enterprise && (
-                        <span className={styles.enterpriseIcon}>
-                            (e)
-                            <Icon name="enterprise"/>
-                        </span>
-                    )}
-                    {item.newWindow && <Icon name="newTab" svgClasses={styles.newWindowIcon} />}
-                </Link>
+                                // Prevent bootstrap collapse on desktop
+                                if (isDesktop) {
+                                    event.stopPropagation();
+                                }
+                            }}
+                            data-toggle={!item.newWindow ? "collapse" : undefined}
+                            data-target={!item.newWindow ? "#side-nav" : undefined}
+                        >
+                            {item.title}
+                            {item.enterprise && (
+                                <span className={styles.enterpriseIcon}>
+                                    (e)
+                                    <Icon name="enterprise"/>
+                                </span>
+                            )}
+                        </Link>
+                )
             ) : (
                 <span
                     className={classnames(styles.groupLabel, isActiveParent && styles.activeItemParent, 'text-secondary')}>
