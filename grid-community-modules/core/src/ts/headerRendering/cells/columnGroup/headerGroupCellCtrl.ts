@@ -168,16 +168,13 @@ export class HeaderGroupCellCtrl extends AbstractHeaderCellCtrl<IHeaderGroupCell
     }
 
     private setupUserComp(): void {
-        const params: IHeaderGroupParams = {
+        const params: IHeaderGroupParams = this.gridOptionsService.addGridCommonParams({
             displayName: this.displayName!,
             columnGroup: this.column,
             setExpanded: (expanded: boolean) => {
                 this.columnModel.setColumnGroupOpened(this.column.getProvidedColumnGroup(), expanded, "gridInitializing");
-            },
-            api: this.gridOptionsService.api,
-            columnApi: this.gridOptionsService.columnApi,
-            context: this.gridOptionsService.context
-        };
+            }
+        });
 
         const compDetails = this.userComponentFactory.getHeaderGroupCompDetails(params)!;
         this.comp.setUserCompDetails(compDetails);

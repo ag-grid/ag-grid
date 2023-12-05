@@ -178,13 +178,10 @@ export class SelectAllFeature extends BeanStub {
 
         if (typeof result === 'function') {
             const func = result as (params: HeaderCheckboxSelectionCallbackParams) => boolean;
-            const params: HeaderCheckboxSelectionCallbackParams = {
+            const params: HeaderCheckboxSelectionCallbackParams = this.gridOptionsService.addGridCommonParams({
                 column: this.column,
-                colDef: this.column.getColDef(),
-                columnApi: this.gridOptionsService.columnApi,
-                api: this.gridOptionsService.api,
-                context: this.gridOptionsService.context
-            };
+                colDef: this.column.getColDef()
+            });
             result = func(params);
         }
 

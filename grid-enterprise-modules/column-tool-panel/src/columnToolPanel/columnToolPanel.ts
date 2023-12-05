@@ -1,12 +1,9 @@
 import {
     _,
-    Autowired,
     ColDef,
     ColGroupDef,
-    ColumnApi,
     Component,
     Events,
-    GridApi,
     IColumnToolPanel,
     IToolPanelComp,
     ToolPanelColumnCompParams,
@@ -21,9 +18,6 @@ import { PrimaryColsPanel } from "./primaryColsPanel";
 export class ColumnToolPanel extends Component implements IColumnToolPanel, IToolPanelComp {
 
     private static TEMPLATE = `<div class="ag-column-panel"></div>`;
-
-    @Autowired("gridApi") private gridApi: GridApi;
-    @Autowired("columnApi") private columnApi: ColumnApi;
 
     private initialised = false;
     private params: ToolPanelColumnCompParams;
@@ -49,7 +43,7 @@ export class ColumnToolPanel extends Component implements IColumnToolPanel, IToo
     }
 
     public init(params: ToolPanelColumnCompParams): void {
-        const defaultParams: Partial<ToolPanelColumnCompParams> = {
+        const defaultParams: Partial<ToolPanelColumnCompParams> = this.gridOptionsService.addGridCommonParams({
             suppressColumnMove: false,
             suppressColumnSelectAll: false,
             suppressColumnFilter: false,
@@ -60,13 +54,10 @@ export class ColumnToolPanel extends Component implements IColumnToolPanel, IToo
             suppressValues: false,
             suppressPivots: false,
             suppressSyncLayoutWithGrid: false,
-            api: this.gridApi,
-            columnApi: this.columnApi,
-        };
+        });
         this.params = {
             ...defaultParams,
             ...params,
-            context: this.gridOptionsService.context,
         };
 
         if (this.isRowGroupingModuleLoaded() && !this.params.suppressPivotMode) {

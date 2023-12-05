@@ -49,15 +49,12 @@ export class StoreUtils extends BeanStub {
             sortModel: storeParams.sortModel
         };
 
-        const getRowsParams: IServerSideGetRowsParams = {
+        const getRowsParams: IServerSideGetRowsParams = this.gridOptionsService.addGridCommonParams({
             success: p.success,
             fail: p.fail,
             request: request,
-            parentNode: p.parentNode,
-            api: this.gridOptionsService.api,
-            columnApi: this.gridOptionsService.columnApi,
-            context: this.gridOptionsService.context
-        };
+            parentNode: p.parentNode
+        });
 
         window.setTimeout(() => {
             if (!storeParams.datasource || !parentBlock.isAlive()) {

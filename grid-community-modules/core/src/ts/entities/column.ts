@@ -336,15 +336,12 @@ export class Column<TValue = any> implements IHeaderColumn<TValue>, IProvidedCol
     }
 
     public createColumnFunctionCallbackParams(rowNode: IRowNode): ColumnFunctionCallbackParams {
-        return {
+        return this.gridOptionsService.addGridCommonParams({
             node: rowNode,
             data: rowNode.data,
             column: this,
-            colDef: this.colDef,
-            context: this.gridOptionsService.context,
-            api: this.gridOptionsService.api,
-            columnApi: this.gridOptionsService.columnApi
-        };
+            colDef: this.colDef
+        });
     }
 
     public isSuppressNavigable(rowNode: IRowNode): boolean {
@@ -434,15 +431,12 @@ export class Column<TValue = any> implements IHeaderColumn<TValue>, IProvidedCol
     }
 
     private createColumnEvent(type: ColumnEventName, source: ColumnEventType): ColumnEvent {
-        return {
+        return this.gridOptionsService.addGridCommonParams({
             type: type,
             column: this,
             columns: [this],
-            source: source,
-            api: this.gridOptionsService.api,
-            columnApi: this.gridOptionsService.columnApi,
-            context: this.gridOptionsService.context
-        };
+            source: source
+        });
     }
 
     public isMoving(): boolean {
@@ -677,15 +671,12 @@ export class Column<TValue = any> implements IHeaderColumn<TValue>, IProvidedCol
     }
 
     private createBaseColDefParams(rowNode: IRowNode): BaseColDefParams {
-        const params: BaseColDefParams = {
+        const params: BaseColDefParams = this.gridOptionsService.addGridCommonParams({
             node: rowNode,
             data: rowNode.data,
             colDef: this.colDef,
-            column: this,
-            api: this.gridOptionsService.api,
-            columnApi: this.gridOptionsService.columnApi,
-            context: this.gridOptionsService.context
-        };
+            column: this
+        });
         return params;
     }
 

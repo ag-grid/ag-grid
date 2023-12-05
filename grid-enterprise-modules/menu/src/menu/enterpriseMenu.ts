@@ -573,7 +573,7 @@ export class EnterpriseMenu extends BeanStub {
             suppressColumnSelectAll, suppressSyncLayoutWithGrid, columnLayout
         } = columnsMenuParams;
 
-        columnSelectPanel.init(false, {
+        columnSelectPanel.init(false, this.gridOptionsService.addGridCommonParams({
             suppressColumnMove: false,
             suppressValues: false,
             suppressPivots: false,
@@ -584,11 +584,8 @@ export class EnterpriseMenu extends BeanStub {
             suppressColumnFilter: !!suppressColumnFilter,
             suppressColumnSelectAll: !!suppressColumnSelectAll,
             suppressSyncLayoutWithGrid: !!columnLayout || !!suppressSyncLayoutWithGrid,
-            api: this.gridOptionsService.api,
-            columnApi: this.gridOptionsService.columnApi,
-            context: this.gridOptionsService.context,
             onStateUpdated: () => {}
-        }, 'columnMenu');
+        }), 'columnMenu');
 
         if (columnLayout) {
             columnSelectPanel.setColumnLayout(columnLayout);

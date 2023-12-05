@@ -113,8 +113,7 @@ export class RichSelectRow<TValue> extends Component {
         if (this.params.cellRenderer) {
             userCompDetails = this.userComponentFactory.getCellRendererDetails(this.params, {
                 value,
-                valueFormatted,
-                api: this.gridOptionsService.api
+                valueFormatted
             } as ICellRendererParams);
             
         }

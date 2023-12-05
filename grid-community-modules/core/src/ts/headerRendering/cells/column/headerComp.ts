@@ -17,6 +17,7 @@ import { SortIndicatorComp } from "./sortIndicatorComp";
 import { ColumnModel } from "../../../columns/columnModel";
 import { Events } from "../../../eventKeys";
 import { SortDirection } from "../../../entities/colDef";
+import { GridApi } from "../../../gridApi";
 
 export interface IHeaderParams<TData = any, TContext = any> extends AgGridCommon<TData, TContext> {
     /** The column the header is for. */
@@ -89,6 +90,7 @@ export class HeaderComp extends Component implements IHeaderComp {
     @Autowired('sortController') private sortController: SortController;
     @Autowired('menuFactory') private menuFactory: IMenuFactory;
     @Autowired('columnModel')  private readonly  columnModel: ColumnModel;
+    @Autowired('gridApi') private readonly api: GridApi;
 
     @RefSelector('eFilter') private eFilter: HTMLElement;
     @RefSelector('eSortIndicator') private eSortIndicator: SortIndicatorComp;
@@ -186,7 +188,7 @@ export class HeaderComp extends Component implements IHeaderComp {
     }
 
     private setupTap(): void {
-        const { gridOptionsService } = this;
+        const { gridOptionsService, api } = this;
 
         if (gridOptionsService.get('suppressTouch')) { return; }
 
@@ -198,7 +200,7 @@ export class HeaderComp extends Component implements IHeaderComp {
         if (this.params.enableMenu) {
             const eventType = tapMenuButton ? 'EVENT_TAP' : 'EVENT_LONG_TAP';
             const showMenuFn = (event: TapEvent | LongTapEvent) => {
-                gridOptionsService.api.showColumnMenuAfterMouseClick(this.params.column, event.touchStart);
+                api.showColumnMenuAfterMouseClick(this.params.column, event.touchStart);
             };
             this.addManagedListener(menuTouchListener, TouchListener[eventType], showMenuFn);
         }

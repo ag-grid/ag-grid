@@ -175,11 +175,8 @@ export class CellCtrl extends BeanStub {
             const valueGetter = colDef.tooltipValueGetter;
 
             if (valueGetter) {
-                return valueGetter({
+                return valueGetter(this.beans.gridOptionsService.addGridCommonParams({
                     location: 'cell',
-                    api: this.beans.gridOptionsService.api,
-                    columnApi: this.beans.gridOptionsService.columnApi,
-                    context: this.beans.gridOptionsService.context,
                     colDef: this.column.getColDef(),
                     column: this.column,
                     rowIndex: this.cellPosition.rowIndex,
@@ -187,7 +184,7 @@ export class CellCtrl extends BeanStub {
                     data: this.rowNode.data,
                     value: this.value,
                     valueFormatted: this.valueFormatted,
-                });
+                }));
             }
 
             return null;
@@ -516,7 +513,7 @@ export class CellCtrl extends BeanStub {
     }
 
     private createCellEditorParams(key: string | null, cellStartedEdit: boolean): ICellEditorParams {
-        return {
+        return this.beans.gridOptionsService.addGridCommonParams({
             value: this.rowNode.getValueFromValueService(this.column),
             eventKey: key,
             column: this.column,
@@ -524,21 +521,18 @@ export class CellCtrl extends BeanStub {
             rowIndex: this.getCellPosition().rowIndex,
             node: this.rowNode,
             data: this.rowNode.data,
-            api: this.beans.gridOptionsService.api,
             cellStartedEdit: cellStartedEdit,
-            columnApi: this.beans.gridOptionsService.columnApi,
-            context: this.beans.gridOptionsService.context,
             onKeyDown: this.onKeyDown.bind(this),
             stopEditing: this.stopEditingAndFocus.bind(this),
             eGridCell: this.getGui(),
             parseValue: this.parseValue.bind(this),
             formatValue: this.formatValue.bind(this)
-        };
+        });
     }
 
     private createCellRendererParams(): ICellRendererParams {
 
-        const res: ICellRendererParams = {
+        const res: ICellRendererParams = this.beans.gridOptionsService.addGridCommonParams({
             value: this.value,
             valueFormatted: this.valueFormatted,
             getValue: () => this.rowNode.getValueFromValueService(this.column),
@@ -546,20 +540,17 @@ export class CellCtrl extends BeanStub {
             formatValue: this.formatValue.bind(this),
             data: this.rowNode.data,
             node: this.rowNode,
-            pinned: this.column.getPinned(),
+            pinned: this.column.getPinned() as any,
             colDef: this.column.getColDef(),
             column: this.column,
             rowIndex: this.getCellPosition().rowIndex,
-            api: this.beans.gridOptionsService.api,
-            columnApi: this.beans.gridOptionsService.columnApi,
-            context: this.beans.gridOptionsService.context,
             refreshCell: this.refreshCell.bind(this),
             eGridCell: this.getGui(),
-            eParentOfValue: this.cellComp.getParentOfValue(),
+            eParentOfValue: this.cellComp.getParentOfValue()!,
 
             registerRowDragger: (rowDraggerElement: HTMLElement, dragStartPixels: number, value?: string, suppressVisibilityChange?: boolean) => this.registerRowDragger(rowDraggerElement, dragStartPixels, suppressVisibilityChange),
 
-        } as ICellRendererParams;
+        });
 
         return res;
     }
@@ -799,20 +790,17 @@ export class CellCtrl extends BeanStub {
     }
 
     public createEvent(domEvent: Event | null, eventType: string): CellEvent {
-        const event: CellEvent = {
+        const event: CellEvent = this.beans.gridOptionsService.addGridCommonParams({
             type: eventType,
             node: this.rowNode,
             data: this.rowNode.data,
             value: this.value,
             column: this.column,
             colDef: this.column.getColDef(),
-            context: this.beans.gridOptionsService.context,
-            api: this.beans.gridApi,
-            columnApi: this.beans.columnApi,
             rowPinned: this.rowNode.rowPinned,
             event: domEvent,
             rowIndex: this.rowNode.rowIndex!
-        };
+        });
 
         return event;
     }
