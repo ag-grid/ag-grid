@@ -106,11 +106,13 @@ export class SortController extends BeanStub {
         const clearedColumns: Column[] = [];
         this.columnModel.getPrimaryAndSecondaryAndAutoColumns().forEach((columnToClear: Column) => {
             // Do not clear if either holding shift, or if column in question was clicked
-            if (!columnsToSkip.includes(columnToClear) && !!columnToClear.getSort()) {
+            if (!columnsToSkip.includes(columnToClear)) {
+                // add to list of cleared cols when sort direction is set
+                if (!!columnToClear.getSort()) { clearedColumns.push(columnToClear); }
+
                 // setting to 'undefined' as null means 'none' rather than cleared, otherwise issue will arise
                 // if sort order is: ['desc', null , 'asc'], as it will start at null rather than 'desc'.
                 columnToClear.setSort(undefined, source);
-                clearedColumns.push(columnToClear);
             }
         });
 
