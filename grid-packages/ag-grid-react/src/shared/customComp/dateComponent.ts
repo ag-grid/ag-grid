@@ -1,17 +1,9 @@
-import { AgPromise, IDate, IDateParams } from "ag-grid-community";
-import CustomWrapperComp from "../../reactUi/customComp/customWrapperComp";
+import { IDate, IDateParams } from "ag-grid-community";
 import { CustomComponent } from "./customComponent";
 import { CustomDateParams, DateMethods } from "./interfaces";
 
-export class DateComponent extends CustomComponent<CustomDateParams, DateMethods> implements IDate {
+export class DateComponent extends CustomComponent<IDateParams, CustomDateParams, DateMethods> implements IDate {
     private date: Date | null = null;
-    private dateParams!: IDateParams;
-
-    public init(params: IDateParams): AgPromise<void> {
-        this.dateParams = params;
-        this.wrapperComponent = CustomWrapperComp;
-        return super.init(this.createProps());
-    }
 
     public getDate(): Date | null {
         return this.date;
@@ -19,12 +11,12 @@ export class DateComponent extends CustomComponent<CustomDateParams, DateMethods
 
     public setDate(date: Date | null): void {
         this.date = date;
-        this.refreshProps(this.createProps());
+        this.refreshProps(this.getProps());
     }
 
     public onParamsUpdated(params: IDateParams): void {
-        this.dateParams = params;
-        this.refreshProps(this.createProps());
+        this.sourceParams = params;
+        this.refreshProps(this.getProps());
     }
 
     protected getOptionalMethods(): string[] {
@@ -33,12 +25,12 @@ export class DateComponent extends CustomComponent<CustomDateParams, DateMethods
 
     private updateDate(date: Date | null): void {
         this.setDate(date);
-        this.dateParams.onDateChanged();
+        this.sourceParams.onDateChanged();
     }
 
-    private createProps(): CustomDateParams {
+    protected getProps(): CustomDateParams {
         const props: CustomDateParams = {
-            ...this.dateParams,
+            ...this.sourceParams,
             date: this.date,
             onDateChange: (date: Date | null) => this.updateDate(date),
             key: this.key

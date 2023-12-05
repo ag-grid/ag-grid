@@ -1,17 +1,9 @@
-import { AgPromise, IDoesFilterPassParams, IFilter, IFilterParams } from "@ag-grid-community/core";
-import CustomWrapperComp from "../../reactUi/customComp/customWrapperComp";
+import { IDoesFilterPassParams, IFilter, IFilterParams } from "@ag-grid-community/core";
 import { CustomComponent } from "./customComponent";
 import { CustomFilterParams, FilterMethods } from "./interfaces";
 
-export class FilterComponent extends CustomComponent<CustomFilterParams, FilterMethods> implements IFilter {
+export class FilterComponent extends CustomComponent<IFilterParams, CustomFilterParams, FilterMethods> implements IFilter {
     private model: any = null;
-    private filterParams!: IFilterParams;
-
-    public init(params: IFilterParams): AgPromise<void> {
-        this.filterParams = params;
-        this.wrapperComponent = CustomWrapperComp;
-        return super.init(this.createProps());
-    }
 
     public isFilterActive(): boolean {
         return this.model != null;
@@ -27,12 +19,12 @@ export class FilterComponent extends CustomComponent<CustomFilterParams, FilterM
 
     public setModel(model: any): void {
         this.model = model;
-        this.refreshProps(this.createProps());
+        this.refreshProps(this.getProps());
     }
 
     public refresh(newParams: IFilterParams): boolean {
-        this.filterParams = newParams;
-        this.refreshProps(this.createProps());
+        this.sourceParams = newParams;
+        this.refreshProps(this.getProps());
         return true;
     }
 
@@ -44,16 +36,16 @@ export class FilterComponent extends CustomComponent<CustomFilterParams, FilterM
         this.setModel(model);
         setTimeout(() => {
             // ensure prop updates have happened
-            this.filterParams.filterChangedCallback();
+            this.sourceParams.filterChangedCallback();
         });
     }
 
-    private createProps(): CustomFilterParams {
+    protected getProps(): CustomFilterParams {
         const props: CustomFilterParams = {
-            ...this.filterParams,
+            ...this.sourceParams,
             model: this.model,
             onModelChange: (model: any) => this.updateModel(model),
-            onUiChange: () => this.filterParams.filterChangedCallback(),
+            onUiChange: () => this.sourceParams.filterChangedCallback(),
             key: this.key
         } as any;
         // remove props in IFilterParams but not CustomFilterParams

@@ -5,7 +5,7 @@ import { CustomFloatingFilterParams, FloatingFilterMethods } from "./interfaces"
 export class FloatingFilterComponent implements IFloatingFilter {
     private model: any = null;
 
-    constructor(private floatingFilterParams: IFloatingFilterParams, private refreshProps: () => void) {}
+    constructor(private floatingFilterParams: IFloatingFilterParams, private readonly refreshProps: () => void) {}
 
     public getProps(): CustomFloatingFilterParams {
         return {

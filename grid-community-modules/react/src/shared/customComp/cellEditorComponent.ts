@@ -5,7 +5,7 @@ import { CellEditorMethods, CustomCellEditorParams } from "./interfaces";
 export class CellEditorComponent implements ICellEditor {
     private value: any;
 
-    constructor(private cellEditorParams: ICellEditorParams, private refreshProps: () => void) {
+    constructor(private readonly cellEditorParams: ICellEditorParams, private readonly refreshProps: () => void) {
         this.value = cellEditorParams.value;
     }
 

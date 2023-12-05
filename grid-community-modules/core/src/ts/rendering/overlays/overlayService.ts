@@ -8,6 +8,7 @@ import { ColumnModel } from "../../columns/columnModel";
 import { Events } from "../../eventKeys";
 import { ILoadingOverlayParams } from "./loadingOverlayComponent";
 import { INoRowsOverlayParams } from "./noRowsOverlayComponent";
+import { GridOptions } from "../../entities/gridOptions";
 
 @Bean('overlayService')
 export class OverlayService extends BeanStub {
@@ -41,7 +42,7 @@ export class OverlayService extends BeanStub {
         const params: WithoutGridCommon<ILoadingOverlayParams> = {};
 
         const compDetails = this.userComponentFactory.getLoadingOverlayCompDetails(params);
-        this.showOverlay(compDetails, 'ag-overlay-loading-wrapper');
+        this.showOverlay(compDetails, 'ag-overlay-loading-wrapper', 'loadingOverlayComponentParams');
     }
 
     public showNoRowsOverlay(): void {
@@ -50,14 +51,23 @@ export class OverlayService extends BeanStub {
         const params: WithoutGridCommon<INoRowsOverlayParams> = {};
 
         const compDetails = this.userComponentFactory.getNoRowsOverlayCompDetails(params);
-        this.showOverlay(compDetails, 'ag-overlay-no-rows-wrapper');
+        this.showOverlay(compDetails, 'ag-overlay-no-rows-wrapper', 'noRowsOverlayComponentParams');
     }
 
-    private showOverlay(compDetails: UserCompDetails, wrapperCssClass: string): void {
+    private showOverlay(compDetails: UserCompDetails, wrapperCssClass: string, gridOption: keyof GridOptions): void {
         const promise = compDetails.newAgStackInstance();
+        const listenerDestroyFunc = this.addManagedPropertyListener(gridOption, ({ currentValue }) => {
+            promise.then(comp => {
+                if (comp!.onParamsUpdated) {
+                    comp.onParamsUpdated(this.gridOptionsService.addGridCommonParams({
+                        ...(currentValue ?? {})
+                    }));
+                }
+            });
+        });
 
         this.manuallyDisplayed = this.columnModel.isReady() && !this.paginationProxy.isEmpty();
-        this.overlayWrapperComp.showOverlay(promise, wrapperCssClass);
+        this.overlayWrapperComp.showOverlay(promise, wrapperCssClass, listenerDestroyFunc);
     }
 
     public hideOverlay(): void {

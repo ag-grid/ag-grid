@@ -760,7 +760,6 @@ export interface GridOptions<TData = any> {
     loadingOverlayComponent?: any;
     /**
      * Customise the parameters provided to the loading overlay component.
-     * @initial
      */
     loadingOverlayComponentParams?: any;
 
@@ -784,7 +783,6 @@ export interface GridOptions<TData = any> {
     noRowsOverlayComponent?: any;
     /**
      * Customise the parameters provided to the no rows overlay component.
-     * @initial
      */
     noRowsOverlayComponentParams?: any;
 

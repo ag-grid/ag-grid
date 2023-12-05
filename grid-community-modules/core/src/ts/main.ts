@@ -213,8 +213,8 @@ export { IColumnToolPanel } from "./interfaces/iColumnToolPanel";
 export { IFiltersToolPanel } from "./interfaces/iFiltersToolPanel";
 
 // overlays
-export { ILoadingOverlayComp, ILoadingOverlayParams } from "./rendering/overlays/loadingOverlayComponent";
-export { INoRowsOverlayComp, INoRowsOverlayParams } from "./rendering/overlays/noRowsOverlayComponent";
+export { ILoadingOverlayComp, ILoadingOverlayParams, ILoadingOverlay } from "./rendering/overlays/loadingOverlayComponent";
+export { INoRowsOverlayComp, INoRowsOverlayParams, INoRowsOverlay } from "./rendering/overlays/noRowsOverlayComponent";
 
 // features
 export { SetLeftFeature } from "./rendering/features/setLeftFeature";

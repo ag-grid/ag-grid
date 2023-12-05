@@ -1,3 +1,5 @@
+import { AgPromise } from "@ag-grid-community/core";
+import customWrapperComp from "../../reactUi/customComp/customWrapperComp";
 import { NewReactComponent } from "../newReactComponent";
 
 export type WrapperParams<P, M> = {
@@ -16,34 +18,45 @@ export function addOptionalMethods<M, C>(optionalMethodNames: string[], provided
     });
 }
 
-export class CustomComponent<P, M> extends NewReactComponent {
-    protected refreshProps!: (props: P) => void;
+export class CustomComponent<TInputParams, TOutputParams, TMethods> extends NewReactComponent {
+    protected refreshProps!: (props: TOutputParams) => void;
 
-    protected providedMethods!: M;
+    protected providedMethods!: TMethods;
 
-    protected wrapperComponent: any;
+    protected wrapperComponent: any = customWrapperComp;
+
+    protected sourceParams!: TInputParams;
+
+    public init(params: TInputParams): AgPromise<void> {
+        this.sourceParams = params;
+        return super.init(this.getProps());
+    }
 
     public addMethod(): void {
         // do nothing
     }
 
-    protected createElement(reactComponent: any, props: P): any {
+    protected createElement(reactComponent: any, props: TOutputParams): any {
         return super.createElement(this.wrapperComponent, {
             initialProps: props,
             CustomComponentClass: reactComponent,
-            setMethods: (methods: M) => this.setMethods(methods),
-            addUpdateCallback: (callback: (props: P) => void) => {
+            setMethods: (methods: TMethods) => this.setMethods(methods),
+            addUpdateCallback: (callback: (props: TOutputParams) => void) => {
                 this.refreshProps = callback;
             }
         });
     }
 
-    protected setMethods(methods: M): void {
+    protected setMethods(methods: TMethods): void {
         this.providedMethods = methods;
         addOptionalMethods(this.getOptionalMethods(), this.providedMethods, this);
     }
 
     protected getOptionalMethods(): string[] {
         return [];
+    }
+
+    protected getProps(): TOutputParams {
+        return this.sourceParams as any;
     }
 }

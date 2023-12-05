@@ -15,6 +15,8 @@ import React, {
 } from 'react';
 import { DateComponent } from '../shared/customComp/dateComponent';
 import { FilterComponent } from '../shared/customComp/filterComponent';
+import { LoadingOverlayComponent } from '../shared/customComp/loadingOverlayComponent';
+import { NoRowsOverlayComponent } from '../shared/customComp/noRowsOverlayComponent';
 import { AgReactUiProps } from '../shared/interfaces';
 import { NewReactComponent } from '../shared/newReactComponent';
 import { PortalManager } from '../shared/portalManager';
@@ -174,11 +176,18 @@ class ReactFrameworkComponentWrapper
     }
 
     createWrapper(UserReactComponent: { new(): any }, componentType: ComponentType): WrappableInterface {
-        if (componentType.propertyName === 'filter') {
-            return new FilterComponent(UserReactComponent, this.parent as any, componentType);
-        } else if (componentType.propertyName === 'dateComponent') {
-            return new DateComponent(UserReactComponent, this.parent as any, componentType);
+        switch (componentType.propertyName) {
+            case 'filter':
+            case 'filterComponent':
+                return new FilterComponent(UserReactComponent, this.parent, componentType);
+            case 'dateComponent':
+                return new DateComponent(UserReactComponent, this.parent, componentType);
+            case 'loadingOverlayComponent':
+                return new LoadingOverlayComponent(UserReactComponent, this.parent, componentType);
+            case 'noRowsOverlayComponent':
+                return new NoRowsOverlayComponent(UserReactComponent, this.parent, componentType);
+            default:
+                return new NewReactComponent(UserReactComponent, this.parent, componentType);
         }
-        return new NewReactComponent(UserReactComponent, this.parent as any, componentType);
     }
 }
