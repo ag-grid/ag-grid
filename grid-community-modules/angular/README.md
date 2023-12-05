@@ -65,19 +65,6 @@ Use the setup instructions below or go through [a 5-minute-quickstart guide](htt
 $ npm install --save @ag-grid-community/core @ag-grid-community/angular
 ```
 
-### Import `AgGridModule` and add it to the `App` module
-
-```ts
-import { AgGridModule } from '@ag-grid-community/angular';
-
-@NgModule({
-	declarations: [AppComponent],
-	imports: [BrowserModule, AgGridModule],
-	bootstrap: [AppComponent]
-})
-export class AppModule {}
-```
-
 ### Import styles in `styles.css`
 
 ```scss
@@ -88,6 +75,14 @@ export class AppModule {}
 ### Set the grid's configuration in a parent component
 
 ```ts
+import { AgGridAngular } from '@ag-grid-community/angular';
+
+@Component({
+    selector: 'app-grid',
+    standalone: true,
+    imports: [AgGridAngular],
+    template: ` ... `
+})
 export class AppComponent {
 	title = 'app';
 
