@@ -18,7 +18,8 @@ describe('formatValue', () => {
         column = mock<Column>('getColDef');
         column.getColDef.mockReturnValue(colDef);
 
-        gridOptionsService = mock<GridOptionsService>('get');
+        gridOptionsService = mock<GridOptionsService>('get', 'addGridCommonParams');
+        gridOptionsService.addGridCommonParams.mockImplementation(params => params as any);
         expressionService = mock<ExpressionService>('evaluate');
         valueFormatterService = new ValueFormatterService();
         (valueFormatterService as any).gridOptionsService = gridOptionsService;
