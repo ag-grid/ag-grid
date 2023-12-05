@@ -848,22 +848,9 @@ export class GridApi<TData = any> {
     /**
      * Gets the grid to act as if the sort was changed.
      * Useful if you update some values and want to get the grid to reorder them according to the new values.
-     *
-     * @param columns Optional list of columns sorted. This can either be an array of `Column` objects or `colKey`
-     * strings. The list will be passed to the `SortChanged` event.
      */
-    public onSortChanged(columns?: (string | Column)[]) {
-        const sortedColumns = columns ? columns
-            .map(colOrColdId => {
-                if (typeof colOrColdId === 'string') {
-                    return this.columnModel.getPrimaryColumn(colOrColdId) ?? undefined;
-                }
-
-                return colOrColdId;
-            })
-            .filter(col => !!col) as Column[] : undefined;
-
-        this.sortController.onSortChanged('api', sortedColumns);
+    public onSortChanged() {
+        this.sortController.onSortChanged('api');
     }
 
     /**
