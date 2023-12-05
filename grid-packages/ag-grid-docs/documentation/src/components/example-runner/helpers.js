@@ -9,7 +9,7 @@ export const DARK_MODE_START = '/** DARK MODE START **/';
 export const DARK_MODE_END = '/** DARK MODE END **/';
 
 export function stripOutDarkModeCode(files) {
-    const mainFiles = ['main.js', 'main.ts', 'index.tsx', 'index.jsx', 'app.component.ts', 'app/app.component.ts'];
+    const mainFiles = ['main.js', 'main.ts', 'index.tsx', 'index.jsx', 'app.component.ts'];
     const defaultTheme = document.documentElement.dataset.darkMode?.toUpperCase()  === 'TRUE' ? 'ag-theme-quartz-dark' : 'ag-theme-quartz';
     mainFiles.forEach((mainFile) => {
         if (files[mainFile]) {
@@ -155,14 +155,12 @@ const getFrameworkFiles = (framework, internalFramework) => {
     }
 
     // spl temporary css loader
-    let files = ['systemjs.config.js', 'css.js'];
+    let files = ['css.js'];
 
     if (isDevelopment()) {
         files.push('systemjs.config.dev.js');
-    }
-
-    if (framework === 'angular') {
-        files.unshift('main.ts', 'systemjs-angular-loader.js');
+    }else{
+        files.push('systemjs.config.js');
     }
 
     return files;
@@ -219,12 +217,6 @@ export const getExampleFiles = (exampleInfo, forPlunker = false) => {
                             `/** @type {import('ag-grid-community').GridOptions} */\nconst gridOptions = {`
                         );
                     }
-                    if (library === 'charts') {
-                        source = source.replace(
-                            `const options = {`,
-                            `/** @type {import('ag-charts-community').AgChartOptions} */\nconst options = {`
-                        );
-                    }
                 }
 
                 files.plunker[f.path] = {source, isFramework: f.isFramework};
@@ -238,11 +230,11 @@ export const getExampleFiles = (exampleInfo, forPlunker = false) => {
 
     files.plunker['index.html'] = {
         source: plunkerIndexHtml,
-        isFramework: false
+        isFramework: framework !== 'javascript' // only show index.html for javascript examples
     };
     files.csb['index.html'] = {
         source: codeSandBoxIndexHtml,
-        isFramework: false
+        isFramework: framework !== 'javascript' // only show index.html for vanilla examples
     };
 
     return Promise.all(promises).then(() => files);
@@ -277,9 +269,9 @@ export const openPlunker = (exampleInfo) => {
         addHiddenInput('private', true);
         addHiddenInput('description', title);
 
-        const supportedFrameworks = new Set(['angular', 'typescript', 'reactFunctionalTs', 'vanilla'])
+        const supportedFrameworks = new Set(['angular', 'typescript', 'reactFunctionalTs', 'vanilla', 'javascript'])
         const include = key => {
-            if (key === 'package.json' && !supportedFrameworks.has(framework)) {
+            if (key === 'package.json' && !supportedFrameworks.has(internalFramework)) {
                 return false;
             }
 
@@ -312,12 +304,11 @@ export const openCodeSandbox = (exampleInfo) => {
         form.target = '_blank';
 
         function isFrameworkReact() {
-            return new Set(['react', 'reactFunctional', 'reactFunctionalTs']).has(internalFramework);
+            return new Set(['reactFunctional', 'reactFunctionalTs']).has(internalFramework);
         }
 
         const getTemplateForInternalFramework = () => {
             switch (internalFramework) {
-                case 'react':
                 case 'reactFunctional':
                     return 'create-react-app';
                 case 'reactFunctionalTs':
@@ -410,7 +401,7 @@ export const getCssFilePaths = (importType, theme) => {
 export const getEntryFile = (framework, internalFramework) => {
     const entryFile = {
         react: internalFramework === 'reactFunctionalTs' ? 'index.tsx' : 'index.jsx',
-        angular: 'app/app.component.ts',
+        angular: 'app.component.ts',
         javascript: internalFramework === 'typescript' ? 'main.ts' : 'main.js',
     };
 

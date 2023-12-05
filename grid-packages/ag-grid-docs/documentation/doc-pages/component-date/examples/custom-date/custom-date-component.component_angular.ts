@@ -7,7 +7,7 @@ import { IDateAngularComp } from '@ag-grid-community/angular';
 declare var flatpickr: any;
 
 @Component({
-    selector: 'app-loading-overlay',
+    standalone: true,
     template: `
       <div #flatpickrEl class="ag-input-wrapper custom-date-filter" role="presentation">
       <input type="text" #eInput data-input style="width: 100%;"/>

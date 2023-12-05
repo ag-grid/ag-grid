@@ -3,7 +3,7 @@ import { ICellRendererParams } from "@ag-grid-community/core";
 import { ICellRendererAngularComp } from "@ag-grid-community/angular";
 
 @Component({
-    selector: 'custom-elements',
+    standalone: true,
     template: `
         <div class="custom-element">
             <button>Age: {{params.data.age ? params.data.age : '?'}}</button>

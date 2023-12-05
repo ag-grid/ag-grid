@@ -77,7 +77,7 @@ var dataObservers = [];
 function randomUpdates({ numRemove, numAdd, numUpdate }) {
     // removes
     const remove = [];
-    for (let i = 0; i < (Math.ceil(numRemove)); i++) 
+    for (let i = 0; i < (Math.ceil(numRemove)); i++) {
         const idx = randomBetween(0, data.length-1);
         const d = data[idx];
         data.splice(idx, 1);
@@ -111,7 +111,7 @@ function randomUpdates({ numRemove, numAdd, numUpdate }) {
     data.push(...add);
 
     // notify observers
-    dataObservers.forEach(obs => obs({update, add, remove})); 
+    dataObservers.forEach(obs => obs({update, add, remove}));
 }
 
 function randomBetween(min, max) {

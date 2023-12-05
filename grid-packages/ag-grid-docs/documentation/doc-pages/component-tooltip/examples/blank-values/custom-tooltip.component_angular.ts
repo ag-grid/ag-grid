@@ -3,7 +3,7 @@ import { ITooltipParams } from "@ag-grid-community/core";
 import { ITooltipAngularComp } from "@ag-grid-community/angular";
 
 @Component({
-    selector: 'tooltip-component',
+    standalone: true,
     template: `
       <div class="custom-tooltip">
       <p><span>Athlete's Name:</span></p>

@@ -3,7 +3,7 @@ import { IFilterAngularComp } from "@ag-grid-community/angular";
 import { IDoesFilterPassParams, IFilterParams } from '@ag-grid-community/core';
 
 @Component({
-    selector: 'year-filter',
+    standalone: true,
     template: `
         <div class="year-filter">
             <label>

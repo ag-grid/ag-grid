@@ -251,15 +251,6 @@ refer to the [hook specific](../react-hooks/) documentation for more information
 <grid-example title='Simple Dynamic Component' name='dynamic-components' type='mixed' options='{ "extras": ["fontawesome"] }'></grid-example>
 </framework-specific-section>
 
-<framework-specific-section frameworks="angular">
-| ### Example: Rendering using nested Modules
-|
-| Using more complex Angular Components in the Cell Renderers - specifically how you can use nested `NgModule`'s within the grid.
-</framework-specific-section>
-<framework-specific-section frameworks="angular">
-<grid-example title='Richer Dynamic Components' name='angular-rich-dynamic' type='angular' options='{ "exampleHeight": 380 }'></grid-example>
-</framework-specific-section>
-
 ## Cell Renderer Keyboard Navigation
 
 When using custom cell renderers, the custom cell renderer is responsible for implementing support for keyboard navigation among its focusable elements. This is why by default, focusing a grid cell with a custom cell renderer will focus the entire cell instead of any of the elements inside the custom cell renderer. 

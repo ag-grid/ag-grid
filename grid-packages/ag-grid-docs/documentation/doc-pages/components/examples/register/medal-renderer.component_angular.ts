@@ -3,7 +3,7 @@ import {ICellRendererAngularComp} from '@ag-grid-community/angular';
 import {ICellRendererParams} from "@ag-grid-community/core";
 
 @Component({
-    selector: 'total-value-component',
+    standalone: true,
     template: `
         <span class="total-value-renderer">
              <span>{{country}}</span>

@@ -2,9 +2,11 @@ import { Component } from "@angular/core";
 
 import { IFilterAngularComp } from "@ag-grid-community/angular";
 import { IDoesFilterPassParams, IFilterParams } from "@ag-grid-community/core";
+import { FormsModule } from "@angular/forms";
 
 @Component({
-    selector: 'year-component',
+    standalone: true,
+    imports: [FormsModule],
     template: `
       <div style="padding: 4px; width: 200px;">
       <div style="font-weight: bold;">Custom Athlete Filter</div>

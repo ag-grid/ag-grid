@@ -1,8 +1,10 @@
 import { Component } from '@angular/core';
+import { NgClass } from '@angular/common';
 import { IHeaderGroupAngularComp } from "@ag-grid-community/angular";
 import { IHeaderGroupParams } from '@ag-grid-community/core';
 @Component({
-    selector: 'app-custom-header-group',
+    standalone: true,
+    imports: [NgClass],
     template: `
         <div class="ag-header-group-cell-label">
             <div class="customHeaderLabel">{{params.displayName}}</div>

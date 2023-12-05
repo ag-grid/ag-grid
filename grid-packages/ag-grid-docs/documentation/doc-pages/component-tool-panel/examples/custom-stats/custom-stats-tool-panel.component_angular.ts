@@ -3,7 +3,7 @@ import { IToolPanelParams, IRowNode } from "@ag-grid-community/core";
 import { IToolPanelAngularComp } from "@ag-grid-community/angular";
 
 @Component({
-    selector: 'custom-stats',
+    standalone: true,
     template: `
       <div style="text-align: center">
       <span>

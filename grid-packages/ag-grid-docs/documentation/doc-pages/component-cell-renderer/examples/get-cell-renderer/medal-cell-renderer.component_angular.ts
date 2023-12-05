@@ -4,7 +4,7 @@ import { ICellRendererAngularComp } from "@ag-grid-community/angular";
 import { ICellRendererParams } from "@ag-grid-community/core"
 
 @Component({
-    selector: 'medal-component',
+    standalone: true,
     template: `<span>{{this.displayValue}}</span>`
 })
 export class MedalCellRenderer implements ICellRendererAngularComp {

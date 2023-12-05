@@ -4,7 +4,7 @@ import { ICellRendererParams } from "@ag-grid-community/core";
 import { ICellRendererAngularComp } from "@ag-grid-community/angular";
 
 @Component({
-    selector: 'full-width-cell',
+    standalone: true,
     template: `
         <div class="full-width-panel">
             <div class="full-width-flag">

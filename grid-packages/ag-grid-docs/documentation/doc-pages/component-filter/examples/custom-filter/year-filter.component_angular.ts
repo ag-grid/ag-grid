@@ -1,10 +1,12 @@
 import { Component } from "@angular/core";
+import { FormsModule } from "@angular/forms";
 
 import { IFilterAngularComp } from "@ag-grid-community/angular";
 import { IDoesFilterPassParams, IFilterParams } from "@ag-grid-community/core";
 
 @Component({
-  selector: 'year-component',
+  standalone: true,
+  imports: [FormsModule],
   template: `
       <div style="display: inline-block; width: 400px;">
       <div style="padding: 10px; text-align: center;">Select Year Range</div>

@@ -4,7 +4,7 @@ import { IStatusPanelParams } from "@ag-grid-community/core";
 import { IStatusPanelAngularComp } from "@ag-grid-community/angular";
 
 @Component({
-    selector: 'status-component',
+    standalone: true,
     template: `
         <div class="ag-status-name-value">
             <span class="component">Status Bar Component <input type="button" (click)="onClick()"
