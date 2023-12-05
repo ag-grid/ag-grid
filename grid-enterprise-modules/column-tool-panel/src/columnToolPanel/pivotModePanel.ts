@@ -38,7 +38,7 @@ export class PivotModePanel extends Component {
     private onBtPivotMode(): void {
         const newValue = !!this.cbPivotMode.getValue();
         if (newValue !== this.columnModel.isPivotMode()) {
-            this.columnModel.setPivotMode(newValue, "toolPanelUi");
+            this.gridOptionsService.updateGridOptions({ options: { pivotMode: newValue} });
             const { api } = this;
             if (api) {
                 api.refreshHeader();

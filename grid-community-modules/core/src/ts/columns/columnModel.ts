@@ -510,7 +510,7 @@ export class ColumnModel extends BeanStub {
         return true;
     }
 
-    public setPivotMode(pivotMode: boolean, source: ColumnEventType = 'api'): void {
+    private setPivotMode(pivotMode: boolean, source: ColumnEventType = 'api'): void {
         if (pivotMode === this.pivotMode || !this.isPivotSettingAllowed(this.pivotMode)) { return; }
 
         this.pivotMode = pivotMode;
