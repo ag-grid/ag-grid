@@ -1,18 +1,13 @@
-import {ComponentFactoryResolver, ComponentRef, Injectable, ViewContainerRef} from "@angular/core";
+import {ComponentRef, Injectable, ViewContainerRef} from "@angular/core";
 import {BaseComponentWrapper, FrameworkComponentWrapper, WrappableInterface} from '@ag-grid-community/core';
 import {AgFrameworkComponent} from "./interfaces";
 
 @Injectable()
 export class AngularFrameworkComponentWrapper extends BaseComponentWrapper<WrappableInterface> implements FrameworkComponentWrapper {
     private viewContainerRef: ViewContainerRef;
-    private componentFactoryResolver: ComponentFactoryResolver;
 
     public setViewContainerRef(viewContainerRef: ViewContainerRef) {
         this.viewContainerRef = viewContainerRef;
-    }
-
-    public setComponentFactoryResolver(componentFactoryResolver: ComponentFactoryResolver) {
-        this.componentFactoryResolver = componentFactoryResolver;
     }
 
     createWrapper(OriginalConstructor: { new(): any }): WrappableInterface {
@@ -48,11 +43,7 @@ export class AngularFrameworkComponentWrapper extends BaseComponentWrapper<Wrapp
     }
 
     public createComponent<T>(componentType: { new(...args: any[]): T; }): ComponentRef<T> {
-        // used to cache the factory, but this a) caused issues when used with either webpack/angularcli with --prod
-        // but more significantly, the underlying implementation of resolveComponentFactory uses a map too, so us
-        // caching the factory here yields no performance benefits
-        let factory = this.componentFactoryResolver.resolveComponentFactory(componentType);
-        return this.viewContainerRef.createComponent(factory);
+        return this.viewContainerRef.createComponent(componentType);
     }
 }
 

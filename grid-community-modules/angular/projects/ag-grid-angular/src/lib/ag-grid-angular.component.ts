@@ -1,7 +1,6 @@
 import {
     AfterViewInit,
     Component,
-    ComponentFactoryResolver,
     ElementRef,
     EventEmitter,
     Input,
@@ -182,6 +181,7 @@ import { AngularFrameworkComponentWrapper } from "./angularFrameworkComponentWra
 
 @Component({
     selector: 'ag-grid-angular',
+    standalone: true,
     template: '',
     providers: [
         AngularFrameworkOverrides,
@@ -213,15 +213,13 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     constructor(elementDef: ElementRef,
         private viewContainerRef: ViewContainerRef,
         private angularFrameworkOverrides: AngularFrameworkOverrides,
-        private frameworkComponentWrapper: AngularFrameworkComponentWrapper,
-        private componentFactoryResolver: ComponentFactoryResolver) {
+        private frameworkComponentWrapper: AngularFrameworkComponentWrapper) {
         this._nativeElement = elementDef.nativeElement;
 
     }
 
     ngAfterViewInit(): void {
         this.frameworkComponentWrapper.setViewContainerRef(this.viewContainerRef);
-        this.frameworkComponentWrapper.setComponentFactoryResolver(this.componentFactoryResolver);
         this.angularFrameworkOverrides.setEmitterUsedCallback(this.isEmitterUsed.bind(this));
 
         const mergedGridOps = ComponentUtil.combineAttributesAndGridOptions(this.gridOptions, this);
