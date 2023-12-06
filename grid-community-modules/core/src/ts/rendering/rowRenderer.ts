@@ -940,6 +940,7 @@ export class RowRenderer extends BeanStub {
         this.getLockOnRefresh();
         this.recycleRows(null, false, afterScroll);
         this.releaseLockOnRefresh();
+        // AfterScroll results in flushSync in React but we need to disable flushSync for sticky row group changes to avoid flashing
         this.dispatchDisplayedRowsChanged(afterScroll && !hasStickyRowChanges);
 
         if (cellFocused != null) {
