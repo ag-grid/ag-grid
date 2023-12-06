@@ -32,7 +32,6 @@ type CallbackKeys = KeysOfType<(any: AgGridCommon<any, any>) => any>;
 type FunctionKeys = Exclude<KeysLike<Function>, CallbackKeys>;
 
 export const INITIAL_GRID_OPTION_KEYS = {
-    statusBar: true,
     enableBrowserTooltips: true,
     tooltipTrigger: true,
     tooltipMouseTrack: true,

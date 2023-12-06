@@ -318,7 +318,6 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
 
     // @START@
     /** Specifies the status bar components to use in the status bar.
-         * @initial
          */
     @Input() public statusBar: { statusPanels: StatusPanelDef[]; } | undefined = undefined;
     /** Specifies the side bar components.

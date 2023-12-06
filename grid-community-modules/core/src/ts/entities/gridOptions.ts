@@ -156,7 +156,6 @@ export interface GridOptions<TData = any> {
     // *** Accessories *** //
     /**
      * Specifies the status bar components to use in the status bar.
-     * @initial
      */
     statusBar?: { statusPanels: StatusPanelDef[]; };
     /**
