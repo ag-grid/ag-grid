@@ -144,6 +144,9 @@ export class AgRichSelect<TValue = any> extends AgPickerField<TValue, RichSelect
     private createListComponent(): void {
         this.listComponent = this.createBean(new VirtualList({ cssIdentifier: 'rich-select' }))
         this.listComponent.setComponentCreator(this.createRowComponent.bind(this));
+
+        const componentUpdater = (item: TValue, component: any) => { /* nothing to update but method required to soft refresh */ };
+        this.listComponent.setComponentUpdater(componentUpdater);
         this.listComponent.setParentComponent(this);
 
         this.addManagedListener(this.listComponent, Events.EVENT_FIELD_PICKER_VALUE_SELECTED, (e: FieldPickerValueSelectedEvent) => {
@@ -286,7 +289,8 @@ export class AgRichSelect<TValue = any> extends AgPickerField<TValue, RichSelect
 
         this.listComponent.setModel({
             getRowCount: () => valueList.length,
-            getRow: (index: number) => valueList[index]
+            getRow: (index: number) => valueList[index],
+            areRowsEqual: (oldRow, newRow) => oldRow === newRow,
         });
 
         if (refresh) {
@@ -297,7 +301,7 @@ export class AgRichSelect<TValue = any> extends AgPickerField<TValue, RichSelect
                     this.showCurrentValueInPicker();
                 }
             } else {
-                this.listComponent.refresh();
+                this.listComponent.refresh(true);
             }
         }
     }

@@ -226,13 +226,13 @@ Then, create a new component in your application with the required dependencies:
 
 <snippet transform={false} language="jsx">
 |import { Component } from '@angular/core';
-|import { AgGridModule } from 'ag-grid-angular'; // Angular Grid Logic
-|import { ColDef } from 'ag-grid-community'; // Column Definitions Interface
+|import { AgGridAngular } from 'ag-grid-angular';
+|import { ColDef } from 'ag-grid-community'; // Column Definition Type Interface
 |
 |@Component({
 |  selector: 'app-root',
 |  standalone: true,
-|  imports: [AgGridModule], // Add AG Grid Module to component
+|  imports: [AgGridAngular], // Add AG Grid component
 |  styleUrls: ['./app.component.css'],
 |  template: ``
 |})

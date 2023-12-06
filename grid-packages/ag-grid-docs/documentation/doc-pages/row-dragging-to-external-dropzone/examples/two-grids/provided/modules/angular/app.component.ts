@@ -3,14 +3,14 @@ import "@ag-grid-community/styles/ag-grid.css";
 import "@ag-grid-community/styles/ag-theme-quartz.css";
 import { Component, ViewChild } from '@angular/core';
 
-import { AgGridModule } from '@ag-grid-community/angular';
+import { AgGridAngular } from '@ag-grid-community/angular';
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
 // Register the required feature modules with the Grid
 ModuleRegistry.registerModules([ClientSideRowModelModule])
 
 @Component({
     standalone: true,
-    imports: [AgGridModule],
+    imports: [AgGridAngular],
     selector: 'my-app',
     template: `
         <div class="example-wrapper">

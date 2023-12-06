@@ -4,7 +4,7 @@ import "@ag-grid-community/styles/ag-grid.css";
 import "@ag-grid-community/styles/ag-theme-quartz.css";
 import { DaysFrostRenderer } from './days-frost-renderer.component';
 import { ColDef, GridApi, ICellRenderer, ICellRendererParams, IRowNode } from '@ag-grid-community/core';
-import { AgGridModule } from '@ag-grid-community/angular';
+import { AgGridAngular } from '@ag-grid-community/angular';
 
 import { ModuleRegistry } from '@ag-grid-community/core';
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
@@ -77,7 +77,7 @@ class RainPerTenMmRenderer implements ICellRenderer {
 @Component({
     selector: 'my-app',
     standalone: true,
-    imports: [DaysFrostRenderer, HttpClientModule, AgGridModule],
+    imports: [DaysFrostRenderer, HttpClientModule, AgGridAngular],
     template: `
         <div class="example-wrapper">
         <div style="margin-bottom: 5px;">

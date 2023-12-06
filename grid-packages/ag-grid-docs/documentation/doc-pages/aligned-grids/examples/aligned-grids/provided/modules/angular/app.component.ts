@@ -1,5 +1,5 @@
 import { Component, ViewChild } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpClientModule } from '@angular/common/http';
 
 import "@ag-grid-community/styles/ag-grid.css";
 import "@ag-grid-community/styles/ag-theme-quartz.css";
@@ -7,7 +7,7 @@ import { ColDef, ColGroupDef, GridOptions } from '@ag-grid-community/core';
 
 import { ModuleRegistry } from '@ag-grid-community/core';
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
-import { AgGridAngular, AgGridModule } from '@ag-grid-community/angular';
+import { AgGridAngular } from '@ag-grid-community/angular';
 
 // Register the required feature modules with the Grid
 ModuleRegistry.registerModules([ClientSideRowModelModule])
@@ -15,7 +15,7 @@ ModuleRegistry.registerModules([ClientSideRowModelModule])
 @Component({
     selector: 'my-app',
     standalone: true,
-    imports: [AgGridModule],
+    imports: [AgGridAngular, HttpClientModule],
     template: `
 
         <div class="test-header" style="height: 5%">

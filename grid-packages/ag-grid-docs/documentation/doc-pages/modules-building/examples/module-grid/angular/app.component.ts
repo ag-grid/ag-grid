@@ -9,12 +9,12 @@ ModuleRegistry.registerModules([ClientSideRowModelModule, MenuModule, ExcelExpor
 
 import "@ag-grid-community/styles/ag-grid.css";
 import "@ag-grid-community/styles/ag-theme-quartz.css";
-import { AgGridModule } from '@ag-grid-community/angular';
+import { AgGridAngular } from '@ag-grid-community/angular';
 
 @Component({
     selector: 'my-app',
     standalone: true,
-    imports: [AgGridModule, HttpClientModule],
+    imports: [AgGridAngular, HttpClientModule],
     template: `
         <ag-grid-angular
                 style="width: 100%; height: 100%;"

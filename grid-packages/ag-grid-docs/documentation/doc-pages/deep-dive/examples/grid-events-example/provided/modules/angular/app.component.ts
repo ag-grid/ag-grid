@@ -1,8 +1,8 @@
 import { Component } from '@angular/core';
 import { NgIf } from '@angular/common';
-import { ICellRendererAngularComp, AgGridModule } from  '@ag-grid-community/angular';
+import { ICellRendererAngularComp, AgGridAngular } from  '@ag-grid-community/angular';
 import { CellValueChangedEvent, ColDef, GridReadyEvent, ICellRendererParams, ValueFormatterParams, ModuleRegistry } from '@ag-grid-community/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpClientModule } from '@angular/common/http';
 import "@ag-grid-community/styles/ag-grid.css";
 import "@ag-grid-community/styles/ag-theme-quartz.css";
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
@@ -52,7 +52,7 @@ export class CompanyLogoRenderer implements ICellRendererAngularComp {
 
 @Component({
   standalone: true,
-  imports: [AgGridModule],
+  imports: [AgGridAngular, HttpClientModule],
   selector: 'my-app',
   template: `
   <div class="content">

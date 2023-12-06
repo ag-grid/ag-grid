@@ -62,49 +62,51 @@ Use the setup instructions below or go through [a 5-minute-quickstart guide](htt
 
     $ npm i --save ag-grid-community ag-grid-angular
 
-#### Import `AgGridModule` and add it to the `App` module
-
-	import { AgGridModule } from 'ag-grid-angular';
-
-	@NgModule({
-	  declarations: [AppComponent],
-	  imports: [BrowserModule, AgGridModule],
-	  providers: [],
-	  bootstrap: [AppComponent]
-	})
-	export class AppModule {}
-
 ### Import styles in `styles.css`
 
-    @import "~ag-grid-community/styles//ag-grid.css";
-    @import "~ag-grid-community/styles//ag-theme-quartz.css";
+```scss
+@import "~ag-grid-community/styles//ag-grid.css";
+@import "~ag-grid-community/styles//ag-theme-quartz.css";
+```
 
 ### Set the grid's configuration in a parent component
 
-	export class AppComponent {
-		title = 'app';
+```ts
+import { AgGridAngular } from 'ag-grid-angular';
 
-		columnDefs = [
-			{headerName: 'Make', field: 'make' },
-			{headerName: 'Model', field: 'model' },
-			{headerName: 'Price', field: 'price'}
-		];
+@Component({
+    selector: 'app-grid',
+    standalone: true,
+    imports: [AgGridAngular],
+    template: ` ... `
+})
+export class AppComponent {
+	title = 'app';
 
-		rowData = [
-			{ make: 'Toyota', model: 'Celica', price: 35000 },
-			{ make: 'Ford', model: 'Mondeo', price: 32000 },
-			{ make: 'Porsche', model: 'Boxster', price: 72000 }
-		];
-	}
+	columnDefs: ColDef[] = [
+		{ headerName: 'Make', field: 'make' },
+		{ headerName: 'Model', field: 'model' },
+		{ headerName: 'Price', field: 'price' }
+	];
+
+	rowData = [
+		{ make: 'Toyota', model: 'Celica', price: 35000 },
+		{ make: 'Ford', model: 'Mondeo', price: 32000 },
+		{ make: 'Porsche', model: 'Boxster', price: 72000 }
+	];
+}
+```
 
 ### Render the grid as the `ag-grid-angular` child component
 
+```html
 	<ag-grid-angular 
 		style="width: 500px; height: 500px;" 
 		class="ag-theme-quartz"
 		[rowData]="rowData" 
 		[columnDefs]="columnDefs">
 	</ag-grid-angular>
+```
 
 Issue Reporting
 ----------

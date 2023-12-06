@@ -275,7 +275,7 @@ export class ColumnModel extends BeanStub {
         this.addManagedPropertyListeners(['groupDisplayType', 'treeData', 'treeDataDisplayType', 'groupHideOpenParents'], () => this.buildAutoGroupColumns());
         this.addManagedPropertyListener('autoGroupColumnDef', () => this.onAutoGroupColumnDefChanged());
         this.addManagedPropertyListeners(['defaultColDef', 'columnTypes', 'suppressFieldDotNotation'], (params: ColDefPropertyChangedEvent) => this.onSharedColDefChanged(params.source));
-        this.addManagedPropertyListener('pivotMode', () => this.setPivotMode(this.gridOptionsService.get('pivotMode')));
+        this.addManagedPropertyListener('pivotMode', event => this.setPivotMode(this.gridOptionsService.get('pivotMode'), (event as any).source));
         this.addManagedListener(this.eventService, Events.EVENT_FIRST_DATA_RENDERED, () => this.onFirstDataRendered());
     }
 
@@ -510,7 +510,7 @@ export class ColumnModel extends BeanStub {
         return true;
     }
 
-    public setPivotMode(pivotMode: boolean, source: ColumnEventType = 'api'): void {
+    private setPivotMode(pivotMode: boolean, source: ColumnEventType = 'api'): void {
         if (pivotMode === this.pivotMode || !this.isPivotSettingAllowed(this.pivotMode)) { return; }
 
         this.pivotMode = pivotMode;
@@ -2398,8 +2398,9 @@ export class ColumnModel extends BeanStub {
             this.dispatchColumnVisibleEvent(getChangedColumns(visibilityChangePredicate), source);
 
             const sortChangePredicate = (cs: ColumnState, c: Column) => cs.sort != c.getSort() || cs.sortIndex != c.getSortIndex();
-            if (getChangedColumns(sortChangePredicate).length > 0) {
-                this.sortController.dispatchSortChangedEvents(source);
+            const changedColumns = getChangedColumns(sortChangePredicate);
+            if (changedColumns.length > 0) {
+                this.sortController.dispatchSortChangedEvents(source, changedColumns);
             }
 
             // special handling for moved column events

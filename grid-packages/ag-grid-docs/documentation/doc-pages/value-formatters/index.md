@@ -71,4 +71,4 @@ Note that if any of the following conditions are true, then `useValueFormatterFo
 - If `processCellForClipboard` is provided when using copy range down.
 - If `processCellCallback` is provided when using CSV export.
 - If `processCellCallback` or [Excel Data Types](/excel-export-data-types/) are provided when using Excel export.
-- If the underlying value is a number when using Excel export.
+- If the underlying value is a number when using Excel export. To export formatted number values to Excel, please use the [Excel Data Type](/excel-export-data-types/#strings-number-and-booleans/) feature.

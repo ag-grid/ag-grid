@@ -1,9 +1,9 @@
 
-import { AgGridAngular, AgGridModule } from '@ag-grid-community/angular';
+import { AgGridAngular } from '@ag-grid-community/angular';
 import { ColDef } from '@ag-grid-community/core';
 import '@ag-grid-community/styles/ag-grid.css';
 import "@ag-grid-community/styles/ag-theme-quartz.css";
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpClientModule } from '@angular/common/http';
 import { NgStyle } from '@angular/common';
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { ModuleRegistry } from '@ag-grid-community/core';
@@ -12,7 +12,7 @@ ModuleRegistry.registerModules([ClientSideRowModelModule])
 
 @Component({
     standalone: true,
-    imports: [AgGridModule, NgStyle],
+    imports: [AgGridAngular, HttpClientModule, NgStyle],
     selector: 'my-app',
     template: `
     <div style='height: 100%; display: flex; flex-direction: column;'>

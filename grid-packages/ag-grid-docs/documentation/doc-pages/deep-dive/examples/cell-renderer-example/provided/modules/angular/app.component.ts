@@ -1,10 +1,10 @@
 import { Component } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { HttpClient } from '@angular/common/http';
+import { NgIf } from '@angular/common';
+import { HttpClient, HttpClientModule } from '@angular/common/http';
 import "@ag-grid-community/styles/ag-grid.css";
 import "@ag-grid-community/styles/ag-theme-quartz.css";
 import { ModuleRegistry, GridReadyEvent, ColDef, ValueFormatterParams, ICellRendererParams} from '@ag-grid-community/core';
-import { AgGridModule, ICellRendererAngularComp } from '@ag-grid-community/angular';
+import { AgGridAngular, ICellRendererAngularComp } from '@ag-grid-community/angular';
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
 ModuleRegistry.registerModules([ ClientSideRowModelModule ]);
 
@@ -24,9 +24,8 @@ interface IRow {
 @Component({
   selector: 'app-company-logo-renderer',
   standalone: true,
-  imports: [CommonModule],
-  template:
-  `
+  imports: [NgIf],
+  template: `
   <span *ngIf="value" >
     <img [alt]="value" [src]="'https://www.ag-grid.com/example-assets/space-company-logos/' + value.toLowerCase() + '.png'" />
     <p>{{ value }}</p>
@@ -34,7 +33,6 @@ interface IRow {
   `,
   styles: ["img {display: block; width: 25px; height: auto; maxHeight: 50%; margin-right: 12px; filter: brightness(1.2);} span {display: flex; height: 100%; width: 100%; align-items: center} p { text-overflow: ellipsis; overflow: hidden; white-space: nowrap }"]
 })
-
 export class CompanyLogoRenderer implements ICellRendererAngularComp {
   // Init Cell Value
   public value!: string;
@@ -52,9 +50,8 @@ export class CompanyLogoRenderer implements ICellRendererAngularComp {
 @Component({
   selector: 'my-app',
   standalone: true,
-  imports: [AgGridModule],
-  template: 
-  `
+  imports: [AgGridAngular, HttpClientModule],
+  template: `
   <div class="content">
     <!-- The AG Grid component, with Dimensions, CSS Theme, Row Data, and Column Definition -->
     <ag-grid-angular

@@ -621,7 +621,7 @@ export function addBindingImports(bindingImports: any, imports: string[], conver
 
         if (convertToPackage && k.includes('ag-grid')) {
             // Remove module related imports
-            unique = unique.filter(i => !i.includes('Module') || i == 'AgGridModule');
+            unique = unique.filter(i => !i.includes('Module'));
             hasEnterpriseModules = hasEnterpriseModules || k.includes('enterprise');
         }
         if (unique.length > 0 || v.namedImport) {

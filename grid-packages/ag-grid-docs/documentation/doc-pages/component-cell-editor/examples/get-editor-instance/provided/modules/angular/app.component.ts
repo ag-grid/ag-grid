@@ -3,7 +3,7 @@ import "@ag-grid-community/styles/ag-grid.css";
 import "@ag-grid-community/styles/ag-theme-quartz.css";
 import { MySimpleEditor } from './mySimple-editor.component';
 import { ColDef, GridReadyEvent } from '@ag-grid-community/core';
-import { AgGridModule } from '@ag-grid-community/angular';
+import { AgGridAngular } from '@ag-grid-community/angular';
 
 import { ModuleRegistry } from '@ag-grid-community/core';
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
@@ -14,7 +14,7 @@ ModuleRegistry.registerModules([ClientSideRowModelModule])
 @Component({
     selector: 'my-app',
     standalone: true,
-    imports: [MySimpleEditor, AgGridModule],
+    imports: [MySimpleEditor, AgGridAngular],
     template: `
       <ag-grid-angular
           style="width: 100%; height: 100%;"
