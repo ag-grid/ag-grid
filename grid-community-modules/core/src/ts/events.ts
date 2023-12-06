@@ -193,6 +193,10 @@ export interface AdvancedFilterBuilderVisibleChangedEvent<TData = any, TContext 
 export interface SortChangedEvent<TData = any, TContext = any> extends AgGridEvent<TData, TContext> {
     /** Source of the sort change. */
     source: string;
+    /**
+     * The list of columns impacted by the sort change.
+     */
+    columns?: Column[];
 }
 
 export interface GridReadyEvent<TData = any, TContext = any> extends AgGridEvent<TData, TContext> { }

@@ -2398,8 +2398,9 @@ export class ColumnModel extends BeanStub {
             this.dispatchColumnVisibleEvent(getChangedColumns(visibilityChangePredicate), source);
 
             const sortChangePredicate = (cs: ColumnState, c: Column) => cs.sort != c.getSort() || cs.sortIndex != c.getSortIndex();
-            if (getChangedColumns(sortChangePredicate).length > 0) {
-                this.sortController.dispatchSortChangedEvents(source);
+            const changedColumns = getChangedColumns(sortChangePredicate);
+            if (changedColumns.length > 0) {
+                this.sortController.dispatchSortChangedEvents(source, changedColumns);
             }
 
             // special handling for moved column events
