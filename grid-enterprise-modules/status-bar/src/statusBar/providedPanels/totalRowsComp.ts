@@ -40,6 +40,10 @@ export class TotalRowsComp extends NameValueComp implements IStatusPanelComp {
     public init() {
     }
 
+    public refresh(): boolean {
+        return true;
+    }
+
     // this is a user component, and IComponent has "public destroy()" as part of the interface.
     // so we need to override destroy() just to make the method public.
     public destroy(): void {

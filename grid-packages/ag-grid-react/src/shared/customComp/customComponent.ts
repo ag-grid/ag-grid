@@ -19,7 +19,7 @@ export function addOptionalMethods<M, C>(optionalMethodNames: string[], provided
 }
 
 export class CustomComponent<TInputParams, TOutputParams, TMethods> extends NewReactComponent {
-    protected refreshProps!: (props: TOutputParams) => void;
+    protected refreshProps!: () => void;
 
     protected providedMethods!: TMethods;
 
@@ -42,7 +42,7 @@ export class CustomComponent<TInputParams, TOutputParams, TMethods> extends NewR
             CustomComponentClass: reactComponent,
             setMethods: (methods: TMethods) => this.setMethods(methods),
             addUpdateCallback: (callback: (props: TOutputParams) => void) => {
-                this.refreshProps = callback;
+                this.refreshProps = () => callback(this.getProps());
             }
         });
     }
@@ -57,6 +57,9 @@ export class CustomComponent<TInputParams, TOutputParams, TMethods> extends NewR
     }
 
     protected getProps(): TOutputParams {
-        return this.sourceParams as any;
+        return {
+            ...this.sourceParams,
+            key: this.key
+         } as any;
     }
 }

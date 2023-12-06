@@ -19,12 +19,12 @@ export class FilterComponent extends CustomComponent<IFilterParams, CustomFilter
 
     public setModel(model: any): void {
         this.model = model;
-        this.refreshProps(this.getProps());
+        this.refreshProps();
     }
 
     public refresh(newParams: IFilterParams): boolean {
         this.sourceParams = newParams;
-        this.refreshProps(this.getProps());
+        this.refreshProps();
         return true;
     }
 

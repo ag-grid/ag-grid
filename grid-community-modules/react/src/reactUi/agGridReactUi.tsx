@@ -17,6 +17,7 @@ import { DateComponent } from '../shared/customComp/dateComponent';
 import { FilterComponent } from '../shared/customComp/filterComponent';
 import { LoadingOverlayComponent } from '../shared/customComp/loadingOverlayComponent';
 import { NoRowsOverlayComponent } from '../shared/customComp/noRowsOverlayComponent';
+import { StatusPanelComponent } from '../shared/customComp/statusPanelComponent';
 import { AgReactUiProps } from '../shared/interfaces';
 import { NewReactComponent } from '../shared/newReactComponent';
 import { PortalManager } from '../shared/portalManager';
@@ -174,16 +175,24 @@ class ReactFrameworkComponentWrapper
 
     createWrapper(UserReactComponent: { new(): any }, componentType: ComponentType): WrappableInterface {
         if (this.reactiveCustomComponents) {
-            switch (componentType.propertyName) {
-                case 'filter':
-                case 'filterComponent':
-                    return new FilterComponent(UserReactComponent, this.parent, componentType);
-                case 'dateComponent':
-                    return new DateComponent(UserReactComponent, this.parent, componentType);
-                case 'loadingOverlayComponent':
-                    return new LoadingOverlayComponent(UserReactComponent, this.parent, componentType);
-                case 'noRowsOverlayComponent':
-                    return new NoRowsOverlayComponent(UserReactComponent, this.parent, componentType);
+            const getComponentClass = (propertyName: string) => {
+                switch (propertyName) {
+                    case 'filter':
+                    case 'filterComponent':
+                        return FilterComponent;
+                    case 'dateComponent':
+                        return DateComponent;
+                    case 'loadingOverlayComponent':
+                        return LoadingOverlayComponent;
+                    case 'noRowsOverlayComponent':
+                        return NoRowsOverlayComponent;
+                    case 'statusPanel':
+                        return StatusPanelComponent;
+                }
+            }
+            const ComponentClass = getComponentClass(componentType.propertyName);
+            if (ComponentClass) {
+                return new ComponentClass(UserReactComponent, this.parent, componentType);
             }
         }
         return new NewReactComponent(UserReactComponent, this.parent, componentType);

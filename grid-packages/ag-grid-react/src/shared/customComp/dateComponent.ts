@@ -11,12 +11,12 @@ export class DateComponent extends CustomComponent<IDateParams, CustomDateParams
 
     public setDate(date: Date | null): void {
         this.date = date;
-        this.refreshProps(this.getProps());
+        this.refreshProps();
     }
 
     public onParamsUpdated(params: IDateParams): void {
         this.sourceParams = params;
-        this.refreshProps(this.getProps());
+        this.refreshProps();
     }
 
     protected getOptionalMethods(): string[] {

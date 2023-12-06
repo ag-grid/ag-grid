@@ -12,7 +12,9 @@ import {
     ValueService,
     _, CellPositionUtils,
     RowPositionUtils,
-    RowRenderer, Optional
+    RowRenderer, Optional,
+    AggregationStatusPanelAggFunc,
+    IAggregationStatusPanelParams
 } from '@ag-grid-community/core';
 import { NameValueComp } from "./nameValueComp";
 
@@ -40,6 +42,8 @@ export class AggregationComp extends Component implements IStatusPanelComp {
     @RefSelector('minAggregationComp') private minAggregationComp: NameValueComp;
     @RefSelector('maxAggregationComp') private maxAggregationComp: NameValueComp;
     @RefSelector('avgAggregationComp') private avgAggregationComp: NameValueComp;
+
+    private params!: IAggregationStatusPanelParams;
 
     constructor() {
         super(AggregationComp.TEMPLATE);
@@ -74,11 +78,18 @@ export class AggregationComp extends Component implements IStatusPanelComp {
         return rowModelType === 'clientSide' || rowModelType === 'serverSide';
     }
 
-    public init() {
+    public init(params: IAggregationStatusPanelParams) {
+        this.params = params;
     }
 
-    private setAggregationComponentValue(aggFuncName: string, value: number | null, visible: boolean) {
-        const statusBarValueComponent = this.getAggregationValueComponent(aggFuncName);
+    public refresh(params: IAggregationStatusPanelParams): boolean {
+        this.params = params;
+        this.onRangeSelectionChanged();
+        return true;
+    }
+
+    private setAggregationComponentValue(aggFuncName: AggregationStatusPanelAggFunc, value: number | null, visible: boolean) {
+        const statusBarValueComponent = this.getAllowedAggregationValueComponent(aggFuncName);
         if (_.exists(statusBarValueComponent) && statusBarValueComponent) {
             const localeTextFunc = this.localeService.getLocaleTextFunc();
             const thousandSeparator = localeTextFunc('thousandSeparator', ',');
@@ -89,32 +100,19 @@ export class AggregationComp extends Component implements IStatusPanelComp {
         }
     }
 
-    private getAggregationValueComponent(aggFuncName: string): NameValueComp | null {
-        // converts user supplied agg name to our reference - eg: sum => sumAggregationComp
-        const refComponentName = `${aggFuncName}AggregationComp`;
-
+    private getAllowedAggregationValueComponent(aggFuncName: AggregationStatusPanelAggFunc): NameValueComp | null {
         // if the user has specified the agAggregationPanelComp but no aggFuncs we show the all
         // if the user has specified the agAggregationPanelComp and aggFuncs, then we only show the aggFuncs listed
-        let statusBarValueComponent: NameValueComp | null = null;
-        const statusBar = this.gridOptionsService.get('statusBar');
-        const aggregationPanelConfig = _.exists(statusBar) && statusBar ? statusBar.statusPanels.find(panel => panel.statusPanel === 'agAggregationComponent') : null;
-        if (_.exists(aggregationPanelConfig) && aggregationPanelConfig) {
-            // a little defensive here - if no statusPanelParams show it, if componentParams we also expect aggFuncs
-            if (!_.exists(aggregationPanelConfig.statusPanelParams) ||
-                (_.exists(aggregationPanelConfig.statusPanelParams) &&
-                    _.exists(aggregationPanelConfig.statusPanelParams.aggFuncs) &&
-                    _.exists(aggregationPanelConfig.statusPanelParams.aggFuncs.find((func: any) => func === aggFuncName)))
-            ) {
-                statusBarValueComponent = (this as any)[refComponentName];
-            }
-        } else {
-            // components not specified - assume we can show this component
-            statusBarValueComponent = (this as any)[refComponentName];
+        const { aggFuncs } = this.params;
+        if (!aggFuncs || aggFuncs.includes(aggFuncName)) {
+            // converts user supplied agg name to our reference - eg: sum => sumAggregationComp
+            const refComponentName = `${aggFuncName}AggregationComp`;
+            return (this as any)[refComponentName];
         }
 
         // either we can't find it (which would indicate a typo or similar user side), or the user has deliberately
         // not listed the component in aggFuncs
-        return statusBarValueComponent;
+        return null;
     }
 
     private onRangeSelectionChanged(): void {

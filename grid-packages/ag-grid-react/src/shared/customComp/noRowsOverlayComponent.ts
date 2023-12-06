@@ -3,6 +3,7 @@ import { CustomComponent } from "./customComponent";
 
 export class NoRowsOverlayComponent extends CustomComponent<INoRowsOverlayParams, INoRowsOverlayParams, {}> implements INoRowsOverlay {
     public onParamsUpdated(params: INoRowsOverlayParams): void {
-        this.refreshProps(params);
+        this.sourceParams = params;
+        this.refreshProps();
     }
 }

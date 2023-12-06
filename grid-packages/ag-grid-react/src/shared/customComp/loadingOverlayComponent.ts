@@ -3,6 +3,7 @@ import { CustomComponent } from "./customComponent";
 
 export class LoadingOverlayComponent extends CustomComponent<ILoadingOverlayParams, ILoadingOverlayParams, {}> implements ILoadingOverlay {
     public onParamsUpdated(params: ILoadingOverlayParams): void {
-        this.refreshProps(params);
+        this.sourceParams = params;
+        this.refreshProps();
     }
 }
