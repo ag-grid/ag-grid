@@ -81,6 +81,7 @@ const gridOptions: GridOptions<IOlympicData> = {
     rowGroupPanelShow: 'always',
     pagination: true,
     paginationPageSize: 500,
+    paginationPageSizeSelector: [100, 500, 1000],
     enableRangeSelection: true,
     enableCharts: true,
     getLocaleText: (params: GetLocaleTextParams) => {
