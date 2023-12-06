@@ -1,6 +1,6 @@
 import '@ag-grid-community/styles/ag-grid.css';
 import "@ag-grid-community/styles/ag-theme-quartz.css";
-import { ColDef, ColGroupDef, createGrid, Grid, GridApi, GridOptions } from '@ag-grid-community/core';
+import { ColDef, ColGroupDef, createGrid, GridOptions } from '@ag-grid-community/core';
 import { ModuleRegistry } from '@ag-grid-community/core';
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
 
