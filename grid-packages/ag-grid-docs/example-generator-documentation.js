@@ -36,9 +36,10 @@ function writeFile(destination, contents) {
         contents = contents.replace(/ag-theme-quartz/g, `ag-theme-${themeOverride}`);
     }
 
+    const filename = path.basename(destination);
     const extension = path.extname(destination).slice(1);
     const parser = parsers[extension] || extension;
-    const formattedContent = format(contents, parser, destination);
+    const formattedContent = format(filename, contents, parser, destination);
 
     if (fs.existsSync(destination) && fs.readFileSync(destination).toString('utf-8') === formattedContent) {
         // Nothing to write (don't trigger a cascade of build processes).
@@ -178,20 +179,20 @@ function forEachExample(done, name, regex, generateExample, scope = '*', trigger
     });
 }
 
-function format(source, parser, destination) {
+function format(filename, source, parser, destination) {
     const formatted = source;
     if (process.env.AG_EXAMPLE_DISABLE_FORMATTING === 'true') {
         return formatted;
     }
     try {
-        // Turn off the organise imports plugin as it removes React incorrectly
-        const turnOffOrganise = destination?.endsWith('.jsx') || destination?.endsWith('.tsx');
         return prettier.format(formatted, {
+            // Filename is necessary to trigger jsx mode (prevents removing unused `React` imports)
+            filepath: filename,
             parser,
             singleQuote: true,
             trailingComma: 'es5',
-            pluginSearchDirs: turnOffOrganise ? ["./prettier-no-op"] : ["./"],
-            plugins: turnOffOrganise ? [] : ["prettier-plugin-organize-imports"],
+            pluginSearchDirs: ["./"],
+            plugins: ["prettier-plugin-organize-imports"],
         })
     } catch (error) {
         console.log(destination, error)
@@ -311,7 +312,7 @@ function createExampleGenerator(exampleType, prefix, importTypes, incremental) {
         // inline styles in the examples index.html
         // will be added to styles.css in the various generated fw examples
         const style = /<style>(.*)<\/style>/s.exec(indexHtml);
-        let inlineStyles = style && style.length > 0 && format(style[1], 'css');
+        let inlineStyles = style && style.length > 0 && format('styles.css', style[1], 'css');
 
         // for anything but vanilla JS we need all stylesheets (including any created styles.css from inline styles)
         const allStylesheets = stylesheets.concat(inlineStyles ? ['styles.css'] : []);
