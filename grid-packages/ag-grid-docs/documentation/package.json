@@ -112,7 +112,7 @@
     "@types/react-dom": "~18.0.0",
     "@types/react-test-renderer": "^18.0.0",
     "ag-grid-testing": "0.0.3",
-    "babel-jest": "26.6.3",
+    "babel-jest": "29.7.0",
     "babel-preset-gatsby": "3.9.0",
     "commander": "7.1.0",
     "del": "5.1.0",
