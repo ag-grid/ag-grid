@@ -11,6 +11,10 @@ import SEO from './components/SEO';
 // @ts-ignore
 import styles from './license-pricing.module.scss';
 
+import AGGridLogo from '../images/inline-svgs/ag-grid-logo.svg';
+import AGChartsLogo from '../images/inline-svgs/ag-charts-logo.svg';
+
+
 export const LicensePricing = () => {
     useEffect(() => {
         const onSelectionChange = () => {
@@ -75,48 +79,45 @@ export const LicensePricing = () => {
                 <div className={styles.licensesOuter}>
                     <Licenses />
 
-                    <p className={styles.buyTogether}>
+                    <div className={styles.buyTogether}>
                         <div className={styles.buyTogetherInner}>
+                            <div className={styles.products}>
+                                <AGGridLogo /> <span>+</span> <AGChartsLogo />
+                            </div>
+
                             <div className={styles.left}>
-                                <p className={styles.products}>
-                                    <b>AG&nbsp;Grid</b> +<wbr /> <b>AG&nbsp;Charts</b>
-                                </p>
                                 <div className={classnames(styles.enterpriseProducts, 'font-size-small')}>
                                     <p>
-                                        AG Grid Enterprise <Icon name="enterprise" />
-                                    </p>
-                                    <p>
-                                        AG Charts Enterprise <Icon name="enterprise" />
+                                        <Icon name="enterprise" /> Enterprise 
                                     </p>
                                 </div>
 
-                                <p className="font-size-small">The Ultimate Grid and Charts Combination</p>
+                                <div className={styles.rightPrice}>
+                                    <p>Starting at...</p>
+                                    <p className={styles.price}>$1,198</p>
+                                    <p>Per Developer</p>
+                                </div>
                             </div>
 
                             <div className={styles.right}>
-                                <div className={styles.rightInner}>
-                                    <div className={styles.rightPrice}>
-                                        <p className="font-size-small">Starting at...</p>
-                                        <p className={styles.price}>$1,198</p>
-                                        <p className="font-size-small">Per Developer</p>
-                                    </div>
+                                {/* <div className={styles.rightInner}>
                                     <div className={styles.rightInfo}>
                                         <p className="font-size-small">Perpetual License</p>
                                         <p className="font-size-small">1 Year of Support</p>
                                         <p className="font-size-small">1 Year of Updates</p>
                                     </div>
-                                </div>
+                                </div> */}
 
                                 <a
                                     href="https://ag-grid.com/ecommerce/#/ecommerce/?licenseType=single&productType=both"
                                     target='_blank'
-                                    className="button button-secondary"
+                                    className="button"
                                 >
                                     Configure Now
                                 </a>
                             </div>
                         </div>
-                    </p>
+                    </div>
                 </div>
             </div>
 

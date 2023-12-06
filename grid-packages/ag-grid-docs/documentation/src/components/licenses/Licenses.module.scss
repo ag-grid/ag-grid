@@ -1,9 +1,13 @@
 @use "../../design-system/" as *;
 
 .license {
-    display: flex;
-    flex-direction: column;
     width: 100%;
+    border-radius: var(--border-radius);
+    border: 1px solid #c5c5c5;
+
+    #{$darkmode-selector} & {
+        border-color: #394755;
+    }
 
     @media screen and (min-width: $breakpoint-pricing-medium) {
         max-width: calc(50% - $size-2);
@@ -15,35 +19,25 @@
     }
 
     .top {
-        flex-grow: 1;
-        display: grid;
-        grid-template-columns: auto auto;
-        grid-template-rows: auto auto auto auto;
-        grid-template-areas: 'meta meta' 'price benefits' 'launch launch' 'actions actions';
-        padding: $size-3 $size-2 $size-2;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+        height: 100%;
+        padding: $size-2;
+
+        @media screen and (min-width: $breakpoint-pricing-medium) {
+            align-items: flex-start;
+            text-align: left;
+        }
     }
 }
 
-.gridLicense {
-    --card-color: #0665cb;
-    --header-tint: 90%;
-}
-
-.chartsLicense {
-    --card-color: #144dae;
-    --header-tint: 90%;
-}
-
-.product{
-    --card-color: #0f5bce;
-    --header-tint: 90%;
-    --content-tint: 96%;
-}
-
 .licenseMeta {
-    grid-area: meta;
     display: flex;
     flex-direction: column;
+    margin-bottom: $size-1;
+    color: var(--secondary-text-color);
 
     :global(.icon) {
         margin-top: -1px;
@@ -52,18 +46,19 @@
         opacity: 0.6666;
 
         * {
-            fill: var(--default-text-color) !important;
+            fill: var(--secondary-text-color) !important;
         }
-    }
-
-    .top & {
-        margin-bottom: $size-2;
-        text-align: center;
     }
 }
 
 .logo {
-    height: $size-7;
+    height: 54px;
+    width: fit-content;
+
+    @media screen and (min-width: $breakpoint-pricing-medium) {
+        margin-left: -10px;
+        margin-bottom: -4px;
+    }
 
     #{$darkmode-selector} & {
         :global(#LogoType) * {
@@ -73,56 +68,46 @@
 }
 
 p.name {
-    .top & {
-        font-size: 46px;
-        line-height: $line-height-ultra-tight;
-        margin-top: $size-half;
-        margin-bottom: $size-1;
+    font-size: 46px;
+    line-height: $line-height-ultra-tight;
+    margin-top: $size-half;
+    margin-bottom: $size-1;
 
-        @media screen and (min-width: $breakpoint-pricing-medium) and (max-width: $breakpoint-pricing-large) {
-            max-width: 340px;
-            margin-left: auto;
-            margin-right: auto;
-        }
+    @media screen and (min-width: $breakpoint-pricing-medium) and (max-width: $breakpoint-pricing-large) {
+        max-width: 340px;
+        margin-left: auto;
+        margin-right: auto;
     }
 }
 
 .price {
     display: flex;
     flex-direction: column;
-    justify-content: flex-end;
-    grid-area: price;
-    align-self: end;
+    margin-bottom: $size-2;
+}
 
-    .top & {
-        @media screen and (min-width: $breakpoint-pricing-medium) {
-            min-height: 152px;
-        }
+.standardPrice {
+    display: inline-block;
+    position: relative;
+    margin-left: $size-2;
+    color: var(--secondary-text-color);
+
+    &::after {
+        content: '';
+        position: absolute;
+        top: 50%;
+        right: $size-half * -1;
+        left: $size-half * -1;
+        height: $size-half;
+        margin-top: $size-half * -1;
+        background-color: var(--secondary-text-color);
     }
 }
 
-p.standardPrice {
-    align-self: flex-start;
-    position: relative;
-    margin-bottom: -$size-1;
-    font-weight: var(--font-weight-thin);
-    color: var(--secondary-text-color);
-}
-
-.standardPriceCross {
-    position: absolute;
-    width: calc(100% + $size-2);
-    height: calc(100% - $size-2);
-    top: $size-1;
-    left: -$size-half;
-    stroke: var(--secondary-text-color);
-    stroke-width: 4px;
-}
-
-p.priceFullDollars,
-p.standardPrice {
+.priceFullDollars,
+.standardPrice {
     font-size: 46px !important; // !important for font-size weirdness
-    line-height: $line-height-tight;
+    line-height: $line-height-ultra-tight;
     letter-spacing: -0.05em;
 
     &::before {
@@ -130,30 +115,43 @@ p.standardPrice {
     }
 }
 
-p.priceFullDollars {
+.priceFullDollars {
     font-weight: var(--font-weight-bold);
 }
 
 .licenseBenefits {
     display: flex;
     flex-direction: column;
-    justify-content: flex-end;
-    text-align: right;
 
-    @media screen and (min-width: $breakpoint-pricing-medium) and (max-width: $breakpoint-pricing-large) {
-        min-height: 152px;
+    li {
+        margin-bottom: $size-half !important;
     }
 
     a {
         display: block;
         margin-top: $size-half;
     }
+
+    svg {
+        position: relative;
+        top: -2px;
+        width: 20px;
+        height: 20px;
+        border-radius: 3px;
+        fill: #7a7a7a;
+        background-color: #efefef;
+
+        #{$darkmode-selector} & {
+            fill: var(--default-text-color);
+            background-color: #394755;
+        }
+    }
 }
 
 .launchExplainer {
-    grid-area: launch;
     margin-top: $size-1;
     min-height: 36px;
+    margin-bottom: $size-2;
 
     p {
         line-height: var(--line-height-tight);
@@ -161,17 +159,12 @@ p.priceFullDollars {
 }
 
 .licenseActions {
-    grid-area: actions;
-    align-self: end;
-    margin-top: $size-4;
+    width: 100%;
+    margin-top: auto;
 
     a {
         width: 100%;
         text-align: center;
-
-        &:not(:last-child) {
-            margin-bottom: $size-half;
-        }
     }
 }
 
@@ -181,7 +174,7 @@ p.priceFullDollars {
     }
 
     &::after {
-        content: '↓';
+        content: '→';
         padding-left: 0.25em;
         transition: transform $default-transition-timing;
     }
