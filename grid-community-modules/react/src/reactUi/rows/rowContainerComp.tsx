@@ -24,6 +24,9 @@ const RowContainerComp = (params: {name: RowContainerName}) => {
     const viewportClasses = useMemo( ()=> classesList(cssClasses.viewport), [cssClasses]);
     const containerClasses = useMemo( ()=> classesList(cssClasses.container), [cssClasses]);
 
+    // We need to suppress flushSync when the row container is sticky to avoid flashing.
+    const isSticky = name === RowContainerName.STICKY_TOP_CENTER || name === RowContainerName.STICKY_TOP_LEFT || name === RowContainerName.STICKY_TOP_RIGHT || name === RowContainerName.STICKY_TOP_FULL_WIDTH;
+
     // no need to useMemo for boolean types
     const centerTemplate = name === RowContainerName.CENTER
         || name === RowContainerName.TOP_CENTER
@@ -71,7 +74,7 @@ const RowContainerComp = (params: {name: RowContainerName}) => {
                     const useFlush = useFlushSync && rowCtrlsRef.current.length > 0 && rowCtrls.length > 0;
                     // Keep a record of the rowCtrls in case we need to reset the Dom order.
                     rowCtrlsRef.current = rowCtrls;
-                    updateRowCtrlsOrdered(useFlush);
+                    updateRowCtrlsOrdered(useFlush && !isSticky);
                 },
                 setDomOrder: domOrder => {
                     if (domOrderRef.current != domOrder) {
