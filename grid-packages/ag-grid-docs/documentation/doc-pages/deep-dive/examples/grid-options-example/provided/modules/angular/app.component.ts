@@ -1,9 +1,10 @@
 import { Component } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpClientModule } from '@angular/common/http';
 import "@ag-grid-community/styles/ag-grid.css";
 import "@ag-grid-community/styles/ag-theme-quartz.css";
 import { ModuleRegistry, ColDef, GridReadyEvent } from '@ag-grid-community/core';
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
+import { AgGridAngular } from '@ag-grid-community/angular';
 ModuleRegistry.registerModules([ ClientSideRowModelModule ]);
 
 // Row Data Interface
@@ -19,7 +20,9 @@ interface IRow {
 }
 
 @Component({
+  standalone: true,
   selector: 'my-app',
+  imports: [AgGridAngular, HttpClientModule],
   template: `
   <div class="content">
     <!-- The AG Grid component, with Dimensions, CSS Theme, Row Data, and Column Definition -->
@@ -36,7 +39,6 @@ interface IRow {
   </div>
   `
 })
-
 export class AppComponent {
   themeClass = /** DARK MODE START **/document.documentElement?.dataset.defaultTheme || 'ag-theme-quartz'/** DARK MODE END **/;
   // Row Data: The data to be displayed.

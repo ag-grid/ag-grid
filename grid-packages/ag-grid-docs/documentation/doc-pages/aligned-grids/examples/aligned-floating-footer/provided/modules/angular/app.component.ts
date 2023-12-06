@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpClientModule } from '@angular/common/http';
 
 import "@ag-grid-community/styles/ag-grid.css";
 import "@ag-grid-community/styles/ag-theme-quartz.css";
@@ -15,7 +15,7 @@ ModuleRegistry.registerModules([ClientSideRowModelModule])
 @Component({
     selector: 'my-app',
     standalone: true,
-    imports: [AgGridAngular],
+    imports: [AgGridAngular, HttpClientModule],
     styles: [`.bold-row {
         font-weight: bold;
     } `],

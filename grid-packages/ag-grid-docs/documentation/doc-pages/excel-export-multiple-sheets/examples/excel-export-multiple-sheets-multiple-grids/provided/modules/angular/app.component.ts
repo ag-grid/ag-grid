@@ -1,7 +1,7 @@
 import { ICellRendererAngularComp } from '@ag-grid-community/angular';
 import { ColDef, GetRowIdParams, GridApi, GridReadyEvent, ICellRendererParams, ModuleRegistry } from '@ag-grid-community/core';
 import { ExcelExportModule, exportMultipleSheetsAsExcel } from '@ag-grid-enterprise/excel-export';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpClientModule } from '@angular/common/http';
 import { Component, ViewChild } from '@angular/core';
 
 import "@ag-grid-community/styles/ag-grid.css";
@@ -39,7 +39,7 @@ export class SportRenderer implements ICellRendererAngularComp {
 
 @Component({
     standalone: true,
-    imports : [AgGridAngular],
+    imports : [AgGridAngular, HttpClientModule],
     selector: 'my-app',
     template: `
         <div class="top-container">

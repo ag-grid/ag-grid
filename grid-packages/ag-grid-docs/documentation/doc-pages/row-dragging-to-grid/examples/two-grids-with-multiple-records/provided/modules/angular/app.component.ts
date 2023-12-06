@@ -1,5 +1,5 @@
 import { Component, ViewChild } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpClientModule } from '@angular/common/http';
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
 import { AgGridAngular } from '@ag-grid-community/angular';
 import "@ag-grid-community/styles/ag-grid.css";
@@ -33,7 +33,7 @@ export class SportRenderer implements ICellRendererAngularComp {
 
 @Component({
     standalone: true,
-    imports: [AgGridAngular],
+    imports: [AgGridAngular, HttpClientModule],
     selector: 'my-app',
     template: /*html */ `
         <div class="top-container">

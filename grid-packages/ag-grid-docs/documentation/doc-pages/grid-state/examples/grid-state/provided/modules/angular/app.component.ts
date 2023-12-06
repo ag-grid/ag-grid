@@ -1,6 +1,6 @@
 
 import { Component, ChangeDetectorRef } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpClientModule } from '@angular/common/http';
 import { NgIf } from "@angular/common";
 // NOTE: Angular CLI does not support component CSS imports: angular-cli/issues/23273
 import '@ag-grid-community/styles/ag-grid.css';
@@ -22,7 +22,7 @@ ModuleRegistry.registerModules([ClientSideRowModelModule, ColumnsToolPanelModule
 
 @Component({
     standalone: true,
-    imports: [AgGridAngular, NgIf],
+    imports: [AgGridAngular, HttpClientModule, NgIf],
     selector: 'my-app',
     template: `
         <div class="example-wrapper">

@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpClientModule } from '@angular/common/http';
 import "@ag-grid-community/styles/ag-grid.css";
 import "@ag-grid-community/styles/ag-theme-quartz.css";
 import { AgGridAngular } from '@ag-grid-community/angular';
@@ -22,9 +22,8 @@ interface IRow {
 @Component({
   selector: 'my-app',
   standalone: true,
-  imports: [AgGridAngular],
-  template: 
-  `
+  imports: [AgGridAngular, HttpClientModule],
+  template: `
   <div class="content">
     <!-- The AG Grid component, with Dimensions, CSS Theme, Row Data, and Column Definition -->
     <ag-grid-angular
@@ -38,7 +37,6 @@ interface IRow {
   </div>
   `
 })
-
 export class AppComponent {
   themeClass = /** DARK MODE START **/document.documentElement?.dataset.defaultTheme || 'ag-theme-quartz'/** DARK MODE END **/;
   // Row Data: The data to be displayed.

@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { NgIf } from '@angular/common';
 import { ModuleRegistry, CellValueChangedEvent, ColDef, GridReadyEvent, ICellRendererParams, SelectionChangedEvent, ValueFormatterParams } from '@ag-grid-community/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpClientModule } from '@angular/common/http';
 import "@ag-grid-community/styles/ag-grid.css";
 import "@ag-grid-community/styles/ag-theme-quartz.css";
 import { AgGridAngular, ICellRendererAngularComp } from '@ag-grid-community/angular';
@@ -84,7 +84,7 @@ export class CompanyLogoRenderer implements ICellRendererAngularComp {
 @Component({
   selector: 'my-app',
   standalone: true,
-  imports: [AgGridAngular],
+  imports: [AgGridAngular, HttpClientModule],
   template: `
   <div class="content">
     <!-- The AG Grid component, with various Grid Option properties -->

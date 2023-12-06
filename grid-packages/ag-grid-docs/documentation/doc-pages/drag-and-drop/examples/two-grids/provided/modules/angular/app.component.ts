@@ -3,7 +3,7 @@ import { Component } from '@angular/core';
 import "@ag-grid-community/styles/ag-grid.css";
 import "@ag-grid-community/styles/ag-theme-quartz.css";
 import { AgGridAngular } from '@ag-grid-community/angular';
-import { ColDef, FirstDataRenderedEvent, GridApi, GridOptions, GridReadyEvent } from '@ag-grid-community/core';
+import { ColDef, GridApi, GridOptions, GridReadyEvent } from '@ag-grid-community/core';
 
 import { ModuleRegistry } from '@ag-grid-community/core';
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';

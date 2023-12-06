@@ -1,4 +1,4 @@
-import { HttpClient } from "@angular/common/http"
+import { HttpClient, HttpClientModule } from "@angular/common/http"
 import { Component } from "@angular/core"
 // NOTE: Angular CLI does not support component CSS imports: angular-cli/issues/23273
 import { ColDef, ColGroupDef, GridApi, GridReadyEvent, ICellRendererParams, IGroupCellRendererParams } from "@ag-grid-community/core";
@@ -18,7 +18,7 @@ ModuleRegistry.registerModules([ClientSideRowModelModule, RowGroupingModule, Set
 
 @Component({
   standalone: true,
-  imports: [AgGridAngular],
+  imports: [AgGridAngular, HttpClientModule],
   selector: "my-app",
   template: `<div class="test-container">
     <div class="test-header">
