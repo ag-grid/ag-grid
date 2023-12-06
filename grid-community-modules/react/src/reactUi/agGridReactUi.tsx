@@ -63,15 +63,15 @@ export const AgGridReactUi = <TData,>(props: AgReactUiProps<TData>) => {
             });
         }
 
+        const mergedGridOps = ComponentUtil.combineAttributesAndGridOptions(props.gridOptions, props);
+
         const gridParams: GridParams = {
             providedBeanInstances: {
-                frameworkComponentWrapper: new ReactFrameworkComponentWrapper(portalManager.current),
+                frameworkComponentWrapper: new ReactFrameworkComponentWrapper(portalManager.current, !!mergedGridOps.reactiveCustomComponents),
             },
             modules,
             frameworkOverrides: new ReactFrameworkOverrides(),
         };
-
-        const mergedGridOps = ComponentUtil.combineAttributesAndGridOptions(props.gridOptions, props);
 
         const createUiCallback = (context: Context) => {
             setContext(context);
@@ -168,26 +168,24 @@ function extractGridPropertyChanges(prevProps: any, nextProps: any): { [p: strin
 class ReactFrameworkComponentWrapper
     extends BaseComponentWrapper<WrappableInterface>
     implements FrameworkComponentWrapper {
-    private readonly parent: PortalManager;
-
-    constructor(parent: PortalManager) {
+    constructor(private readonly parent: PortalManager, private readonly reactiveCustomComponents: boolean) {
         super();
-        this.parent = parent;
     }
 
     createWrapper(UserReactComponent: { new(): any }, componentType: ComponentType): WrappableInterface {
-        switch (componentType.propertyName) {
-            case 'filter':
-            case 'filterComponent':
-                return new FilterComponent(UserReactComponent, this.parent, componentType);
-            case 'dateComponent':
-                return new DateComponent(UserReactComponent, this.parent, componentType);
-            case 'loadingOverlayComponent':
-                return new LoadingOverlayComponent(UserReactComponent, this.parent, componentType);
-            case 'noRowsOverlayComponent':
-                return new NoRowsOverlayComponent(UserReactComponent, this.parent, componentType);
-            default:
-                return new NewReactComponent(UserReactComponent, this.parent, componentType);
+        if (this.reactiveCustomComponents) {
+            switch (componentType.propertyName) {
+                case 'filter':
+                case 'filterComponent':
+                    return new FilterComponent(UserReactComponent, this.parent, componentType);
+                case 'dateComponent':
+                    return new DateComponent(UserReactComponent, this.parent, componentType);
+                case 'loadingOverlayComponent':
+                    return new LoadingOverlayComponent(UserReactComponent, this.parent, componentType);
+                case 'noRowsOverlayComponent':
+                    return new NoRowsOverlayComponent(UserReactComponent, this.parent, componentType);
+            }
         }
+        return new NewReactComponent(UserReactComponent, this.parent, componentType);
     }
 }
