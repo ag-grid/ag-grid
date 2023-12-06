@@ -152,7 +152,7 @@ export class GroupCellRendererCtrl extends BeanStub {
         if (!topLevelFooter) {
             const showingFooterTotal = params.node.footer && params.node.rowGroupIndex === this.columnModel.getRowGroupColumns().findIndex(c => c.getColId() === params.colDef?.showRowGroup);
             // if we're always showing a group value
-            const isAlwaysShowing = this.gridOptionsService.get('groupDisplayType') === 'singleColumn' || this.gridOptionsService.get('treeData');
+            const isAlwaysShowing = this.gridOptionsService.get('groupDisplayType') != 'multipleColumns' || this.gridOptionsService.get('treeData');
             // if the cell is populated with a parent value due to `showOpenedGroup`
             const showOpenGroupValue = (
                 isAlwaysShowing || (this.gridOptionsService.get('showOpenedGroup') && !params.node.footer && (
