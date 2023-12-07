@@ -21,8 +21,8 @@ const RowContainerComp = (params: {name: RowContainerName}) => {
     const rowContainerCtrlRef = useRef<RowContainerCtrl | null>();
 
     const cssClasses = useMemo(() => RowContainerCtrl.getRowContainerCssClasses(name), [name]);
-    const viewportClasses = useMemo( ()=> classesList(cssClasses.viewport), [cssClasses]);
-    const containerClasses = useMemo( ()=> classesList(cssClasses.container), [cssClasses]);
+    const viewportClasses = useMemo(() => classesList(cssClasses.viewport), [cssClasses]);
+    const containerClasses = useMemo(() => classesList(cssClasses.container), [cssClasses]);
 
     // no need to useMemo for boolean types
     const centerTemplate = name === RowContainerName.CENTER
@@ -67,8 +67,8 @@ const RowContainerComp = (params: {name: RowContainerName}) => {
                         eViewport.current.style.height = height;
                     }
                 },
-                setRowCtrls: (rowCtrls, useFlushSync) => {
-                    const useFlush = useFlushSync && rowCtrlsRef.current.length > 0 && rowCtrls.length > 0;
+                setRowCtrls: ({ rowCtrls, useFlushSync }) => {
+                    const useFlush = !!useFlushSync && rowCtrlsRef.current.length > 0 && rowCtrls.length > 0;
                     // Keep a record of the rowCtrls in case we need to reset the Dom order.
                     rowCtrlsRef.current = rowCtrls;
                     updateRowCtrlsOrdered(useFlush);
