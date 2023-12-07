@@ -128,7 +128,7 @@ This release includes the following deprecations:
 
 ### Creating AG Grid
 
-Creating AG Grid via `new agGrid.Grid(...)` is now deprecated. Use `agGrid.createGrid` API instead: `const gridApi = agGrid.createGrid(...)`.
+`new agGrid.Grid(...)` is deprecated. Use `agGrid.createGrid` API instead: `const gridApi = agGrid.createGrid(...)`.
 
 ### GridOptions
 
