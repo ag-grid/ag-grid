@@ -80,7 +80,7 @@ function copyFiles(files, dest, tokenToReplace, replaceValue = '', importType, f
                 formattedImports = `${importStrings.join('\n')}\n`
 
                 // Remove the original import statements
-                src = src.replace(/import.*from.*\n/g, '').replace(/import.*?;\n/g, '');
+                src = src.replace(/import.*from.*\n/g, '').replace(/import.*['"].*['"].*\n/g, '');
                 if (convertToPackage) {
                     src = src
                         .replace(/\/\/ Register the required feature modules with the Grid\n/, '')
