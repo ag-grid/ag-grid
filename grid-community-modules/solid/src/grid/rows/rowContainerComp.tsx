@@ -32,7 +32,7 @@ const RowContainerComp = (props: {name: RowContainerName})=> {
     // if domOrder=true, then we just copy rowCtrls into rowCtrlsOrdered observing order,
     // however if false, then we need to keep the order as they are in the dom, otherwise rowAnimation breaks
     let rowCtrlsOrderedCopy: RowCtrl[] = [];
-    createEffect( () => {
+    createEffect(() => {
         if (domOrder()) {
             setRowCtrlsOrdered(rowCtrls());
             return;
@@ -53,7 +53,7 @@ const RowContainerComp = (props: {name: RowContainerName})=> {
     onMount(() => {
         const compProxy: IRowContainerComp = {
             setViewportHeight: setViewportHeight,
-            setRowCtrls: rowCtrls => setRowCtrls(rowCtrls),
+            setRowCtrls: ({ rowCtrls }) => setRowCtrls(rowCtrls),
             setDomOrder: domOrder => setDomOrder(domOrder),
             setContainerWidth: width => {
                 if (eContainer) {
