@@ -118,7 +118,7 @@ When we run our application, we should see a grid with ~1,400 rows:
 
 <grid-example title='Updating Example' name='updating-example' type='mixed' options='{ "exampleHeight": 550 }'></grid-example>
 
-_Note: There are a large number of APIs available. See our [API Docs](/api/) for an exhaustive list._
+_Note: There are a large number of APIs available. See our [API Docs](/grid-api/) for an exhaustive list._
 
 ---
 
