@@ -1057,7 +1057,6 @@ export interface GridOptions<TData = any> {
     groupDefaultExpanded?: number;
     /**
      * Allows specifying the group 'auto column' if you are not happy with the default. If grouping, this column definition is included as the first column in the grid. If not grouping, this column is not included.
-     * @initial
      */
     autoGroupColumnDef?: ColDef<TData>;
     /**

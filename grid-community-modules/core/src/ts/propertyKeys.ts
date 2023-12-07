@@ -93,7 +93,6 @@ export const INITIAL_GRID_OPTION_KEYS = {
     suppressRowVirtualisation: true,
     rowDragText: true,
     suppressGroupMaintainValueType: true,
-    autoGroupColumnDef: true,
     groupLockGroupColumns: true,
     rowGroupPanelSuppressSort: true,
     suppressGroupRowsSticky: true,
