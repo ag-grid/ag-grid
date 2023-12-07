@@ -126,8 +126,13 @@ When showing the pagination controls, the page size selector is shown by default
 
 This release includes the following deprecations:
 
+### Creating AG Grid
+
+Creating AG Grid via `new agGrid.Grid(...)` is now deprecated. Use `agGrid.createGrid` API instead: `const gridApi = agGrid.createGrid(...)`.
+
 ### GridOptions
 
+* When using `agGrid.createGrid` API, `gridOptions.api` is deprecated. Use the grid API reference that is returned by `agGrid.createGrid(...)` instead.
 * `advancedFilterModel` - deprecated, use `initialState.filter.advancedFilterModel` instead.
 * `suppressAsyncEvents` and synchronous event handling is deprecated. Please update your events to be handled asynchronously.
 
