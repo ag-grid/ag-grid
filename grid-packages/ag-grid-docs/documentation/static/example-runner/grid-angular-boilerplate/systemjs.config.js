@@ -46,11 +46,8 @@
         },
         // map tells the System loader where to look for things
         map: {
-            // Angular bundles in System.register format via esm-bundle
-            // Cell renderers only work with the esm-bundle version
-            // TemplateUrls only works with platform-browser-dynamic from esm-bundle
-            '@angular/compiler': 'npm:@esm-bundle/angular__compiler@' + ANGULAR_VERSION + '/system/es2015/ivy/angular-compiler.min.js',
-            '@angular/platform-browser-dynamic': 'npm:@esm-bundle/angular__platform-browser-dynamic@' + ANGULAR_VERSION + '/system/es2015/ivy/angular-platform-browser-dynamic.min.js',
+            '@angular/compiler': 'npm:@angular/compiler@' + ANGULAR_VERSION + '/fesm2015/compiler.mjs',
+            '@angular/platform-browser-dynamic': 'npm:@angular/platform-browser-dynamic@' + ANGULAR_VERSION + '/fesm2015/platform-browser-dynamic.mjs',
 
             '@angular/core': 'npm:@angular/core@' + ANGULAR_VERSION + '/fesm2015/core.mjs',
             '@angular/common': 'npm:@angular/common@' + ANGULAR_VERSION + '/fesm2015/common.mjs',
