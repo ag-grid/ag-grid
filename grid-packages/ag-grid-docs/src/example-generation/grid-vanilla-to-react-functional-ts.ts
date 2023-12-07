@@ -1,5 +1,5 @@
 import { templatePlaceholder } from "./grid-vanilla-src-parser";
-import { addBindingImports, addGenericInterfaceImport, convertFunctionToConstPropertyTs, getActiveTheme, getFunctionName, getIntegratedDarkModeCode, getModuleRegistration, getPropertyInterfaces, handleRowGenericInterface, ImportType, isInstanceMethod, preferParamsApi } from './parser-utils';
+import { addGenericInterfaceImport, convertFunctionToConstPropertyTs, getActiveTheme, getFunctionName, getIntegratedDarkModeCode, getModuleRegistration, getPropertyInterfaces, handleRowGenericInterface, ImportType, isInstanceMethod, parseBindingImports, preferParamsApi } from './parser-utils';
 import { convertFunctionalTemplate, convertFunctionToConstCallbackTs, getImport, getValueType } from './react-utils';
 const path = require('path');
 
@@ -30,7 +30,7 @@ function getModuleImports(bindings: any, componentFilenames: string[], extraCore
     })
 
     if (bImports.length > 0) {
-        addBindingImports(bImports, imports, false, true);
+        imports.push(...parseBindingImports(bImports, { importType: 'modules', ignoreTsImports: true }));
     }
 
     if (componentFilenames) {
@@ -77,7 +77,7 @@ function getPackageImports(bindings: any, componentFilenames: string[], extraCor
         imports: [...propertyInterfaces, ...extraCoreTypes]
     })
     if (bImports.length > 0) {
-        addBindingImports(bImports, imports, true, true);
+        imports.push(...parseBindingImports(bImports, { importType: 'packages', ignoreTsImports: true }));
     }
 
     if (componentFilenames) {

@@ -1,6 +1,6 @@
 import { convertTemplate,getImport,toConst,toInput,toMemberWithValue,toOutput, toTitleCase } from './angular-utils';
 import { templatePlaceholder } from "./grid-vanilla-src-parser";
-import { addBindingImports,addGenericInterfaceImport,getActiveTheme,getIntegratedDarkModeCode,getModuleRegistration,getPropertyInterfaces,handleRowGenericInterface,ImportType,isInstanceMethod,preferParamsApi,removeFunctionKeyword, replaceGridReadyRowData } from './parser-utils';
+import { addGenericInterfaceImport,getActiveTheme,getIntegratedDarkModeCode,getModuleRegistration,getPropertyInterfaces,handleRowGenericInterface,ImportType,isInstanceMethod,parseBindingImports,preferParamsApi,removeFunctionKeyword, replaceGridReadyRowData } from './parser-utils';
 const path = require('path');
 
 function getOnGridReadyCode(
@@ -23,7 +23,7 @@ function getOnGridReadyCode(
 
     if (data) {
         const { url, callback } = data;
-        const setRowDataBlock = replaceGridReadyRowData(callback, 'this.rowData');        
+        const setRowDataBlock = replaceGridReadyRowData(callback, 'this.rowData');
         additionalLines.push(`this.http.get<${rowDataType}[]>(${url}).subscribe(data => ${setRowDataBlock});`);
     }
     const gridReadyEventParam = rowDataType !== 'any' ? `<${rowDataType}>` : '';
@@ -35,7 +35,7 @@ function getOnGridReadyCode(
         );
         return `
         onGridReady(params: GridReadyEvent${gridReadyEventParam}) {
-            ${getIntegratedDarkModeCode(exampleName, true)} 
+            ${getIntegratedDarkModeCode(exampleName, true)}
             ${hasApi ? 'this.gridApi = params.api;' : ''}${additional}
         }`;
     } else {
@@ -69,7 +69,7 @@ function addModuleImports(imports: string[], bindings: any, allStylesheets: stri
     });
 
     if (bImports.length > 0) {
-        addBindingImports(bImports, imports, false, true);
+        imports.push(...parseBindingImports(bImports, { importType: 'modules', ignoreTsImports: true}));
     }
 
     imports.push(...getModuleRegistration(bindings));
@@ -106,7 +106,7 @@ function addPackageImports(imports: string[], bindings: any, allStylesheets: str
     })
 
     if (bImports.length > 0) {
-        addBindingImports(bImports, imports, true, true);
+        imports.push(...parseBindingImports(bImports, { importType: 'packages', ignoreTsImports: true}));
     }
 
     return imports;
@@ -122,7 +122,7 @@ function getImports(bindings: any, componentFileNames: string[], importType: Imp
     if (bindings.data) {
         imports.push("import { HttpClient, HttpClientModule } from '@angular/common/http';");
     }
-    
+
 
     if (importType === "packages") {
         addPackageImports(imports, bindings, allStylesheets);
@@ -200,7 +200,7 @@ export function vanillaToAngular(bindings: any, componentFileNames: string[], al
         if (!propertyAssignments.find(item => item.indexOf('rowData') >= 0)) {
             propertyAssignments.push(`public rowData!: ${rowDataType}[];`);
         }
-        
+
         propertyAttributes.push('[class]="themeClass"');
         propertyAssignments.push(`public themeClass: string = ${getActiveTheme(bindings.gridSettings.theme, true)};`);
 
@@ -230,9 +230,7 @@ export function vanillaToAngular(bindings: any, componentFileNames: string[], al
             .concat(additional)
             .concat(instanceMethods)
             .map(snippet => snippet.trim())
-            .join('\n\n')
-            // We do not need the non-null assertion in component code as already applied to the declaration for the apis.            
-            .replace(/(?<!this.)gridApi(\??)(!?)/g, 'this.gridApi');
+            .join('\n\n');
 
   const { includeNgFormsModule } = bindings.gridSettings;
    let standaloneImports = ["AgGridAngular"];

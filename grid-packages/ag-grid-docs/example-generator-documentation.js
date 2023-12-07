@@ -49,40 +49,48 @@ function writeFile(destination, contents) {
     fs.writeFileSync(destination, formattedContent, encodingOptions);
 }
 
-function copyFiles(files, dest, tokenToReplace, replaceValue = '', importType, forceConversion = false) {
+function copyFiles(files, dest, options = {}) {
+    const { tokenToReplace, replaceValue = '', importType, forceConversion = false, transpile = false } = options;
     files.forEach(sourceFile => {
         const filename = path.basename(sourceFile);
-        const destinationFile = path.join(dest, tokenToReplace ? filename.replace(tokenToReplace, replaceValue) : filename);
+        const rewrittenFilename = tokenToReplace ? filename.replace(tokenToReplace, replaceValue) : filename;
+        const transpiledFilename = transpile ? rewrittenFilename.replace(/\.t(s|sx)$/, '.j$1') : rewrittenFilename;
+        const destinationFile = path.join(dest, transpiledFilename);
 
         const updateImports = (src) => {
 
             if (!forceConversion &&
-                (!destinationFile.endsWith('.ts') &&
-                    !destinationFile.endsWith('.tsx') &&
-                    !destinationFile.endsWith('.jsx'))) {
+                (!filename.endsWith('.ts') &&
+                    !filename.endsWith('.tsx') &&
+                    !filename.endsWith('.jsx'))) {
                 return src;
             }
 
             const {
                 parseFile,
                 extractImportStatements,
-                addBindingImports,
+                parseBindingImports,
                 stripImportDeclarations,
+                transpileTypeScriptSource,
             } = require(`./src/example-generation/parser-utils.ts`);
+
+            if (transpile && (filename.endsWith('.ts') || filename.endsWith('.tsx'))) {
+                src = transpileTypeScriptSource(src, filename, {
+                    transforms: filename.endsWith('.tsx') ? ['typescript', 'jsx'] : ['typescript'],
+                    keepUnusedImports: false,
+                });
+            }
             src = tokenToReplace ? src.replace(tokenToReplace, '') : src;
             const parsed = parseFile(src)
             const imports = extractImportStatements(parsed);
 
-            let formattedImports = '';
             if (imports.length > 0) {
-                let importStrings = [];
-                const convertToPackage = importType === 'packages';
-                addBindingImports(imports, importStrings, convertToPackage, true);
-                formattedImports = `${importStrings.join('\n')}\n`
+                const importStrings = parseBindingImports(imports, { importType, ignoreTsImports: true });
+                const formattedImports = `${importStrings.join('\n')}\n`
 
                 // Remove the original import statements
                 src = stripImportDeclarations(src);
-                if (convertToPackage) {
+                if (importType !== 'modules') {
                     src = src
                         .replace(/\/\/ Register the required feature modules with the Grid\n/, '')
                         .replace(/ModuleRegistry\.registerModules\(\[\s*(?:\w+\s*,\s*)*(?:\w+\s*)?\]\);?\n/, '');
@@ -182,12 +190,11 @@ function forEachExample(done, name, regex, generateExample, scope = '*', trigger
 }
 
 function format(filename, source, parser, destination) {
-    const formatted = source;
     if (process.env.AG_EXAMPLE_DISABLE_FORMATTING === 'true') {
-        return formatted;
+        return source;
     }
     try {
-        return prettier.format(formatted, {
+        return prettier.format(source, {
             // Filename is necessary to trigger jsx mode (prevents removing unused `React` imports)
             filepath: filename,
             parser,
@@ -197,8 +204,8 @@ function format(filename, source, parser, destination) {
             plugins: ["prettier-plugin-organize-imports"],
         })
     } catch (error) {
-        console.log(destination, error)
-        return formatted;
+        console.error(destination, error)
+        return source;
     }
 }
 
@@ -285,7 +292,7 @@ function createExampleGenerator(exampleType, prefix, importTypes, incremental) {
             const providedExamplePaths = glob.sync(`${examplePath}/provided/modules/*`);
 
             for (const providedExamplePath of providedExamplePaths) {
-                providedExamples[path.basename(providedExamplePath)] = `${examplePath}/provided`;
+                providedExamples[path.basename(providedExamplePath)] = providedExamplePath;
             }
         }
 
@@ -344,18 +351,26 @@ function createExampleGenerator(exampleType, prefix, importTypes, incremental) {
 
             copyFiles(stylesheets, basePath);
             copyFiles(rawScripts, basePath);
-            copyFiles(frameworkScripts, scriptsPath, `_${tokenToReplace}`, componentPostfix, importType);
+            copyFiles(frameworkScripts, scriptsPath, {
+                importType,
+                tokenToReplace: `_${tokenToReplace}`,
+                replaceValue: componentPostfix,
+            });
         };
 
-        const copyProvidedExample = (importType, framework, providedRootPath) => {
+        const copyProvidedExample = (sourcePath, options) => {
+            const { framework, importType, transpile = false } = options;
 
             const destPath = path.join(createExamplePath(`_gen/${importType}`), framework);
-            const sourcePath = path.join(providedRootPath, 'modules', framework);
+
+            // Determine the import type for the provided example, bearing in mind that any examples
+            // transpiled into vanilla JavaScript will have their imports replaced by ambient globals
+            const transpiledImportType = framework === 'vanilla' && transpile ? 'globals' : importType;
 
             // May want to formalise this feature in the future for other examples...
             const suppressProvidePackageConversion = sourcePath.includes('modules/examples/individual-registration');
 
-            if (importType === 'packages' && !suppressProvidePackageConversion) {
+            if (transpiledImportType !== 'modules' && !suppressProvidePackageConversion) {
                 // Convert the modules provided example into a packages version
                 fs.mkdirSync(destPath, {recursive: true});
 
@@ -364,7 +379,13 @@ function createExampleGenerator(exampleType, prefix, importTypes, incremental) {
                 let folders = fileOrFolders.filter(f => !f.includes('.'));
 
                 if (files.length > 0) {
-                    copyFiles(files.map(f => sourcePath + '/' + f), destPath, `_IGNORE`, '', 'packages', true);
+                    copyFiles(files.map(f => sourcePath + '/' + f), destPath, {
+                        importType: transpiledImportType,
+                        tokenToReplace: `_IGNORE`,
+                        replaceValue: '',
+                        forceConversion: true,
+                        transpile,
+                    });
                 }
                 if (folders) {
                     folders.forEach(f => {
@@ -372,8 +393,42 @@ function createExampleGenerator(exampleType, prefix, importTypes, incremental) {
                         const subDest = destPath + '/' + f;
                         fs.mkdirSync(subDest, {recursive: true});
                         let subFiles = fs.readdirSync(folderPath);
-                        copyFiles(subFiles.map(s => folderPath + '/' + s), subDest, `_IGNORE`, '', 'packages', true);
+                        copyFiles(subFiles.map(s => folderPath + '/' + s), subDest, {
+                            importType: transpiledImportType,
+                            tokenToReplace: `_IGNORE`,
+                            replaceValue: '',
+                            forceConversion: true,
+                            transpile,
+                        });
                     })
+                }
+            } else if (transpile) {
+                const {
+                    transpileTypeScriptSource,
+                } = require(`./src/example-generation/parser-utils.ts`);
+
+                const transpiledFiles = [];
+                fs.copySync(sourcePath, destPath, {
+                    filter: (src, dest) => {
+                        if (src.endsWith('.ts') || src.endsWith('.tsx')) {
+                            transpiledFiles.push({ src, dest });
+                            return false;
+                        }
+                        return true;
+                    },
+                });
+                for (const { src, dest } of transpiledFiles) {
+                    const source = getFileContents(src);
+                    const transpiledSource = transpileTypeScriptSource(source, src, {
+                        transforms: src.endsWith('.tsx') ? ['typescript', 'jsx'] : ['typescript'],
+                        keepUnusedImports: false,
+                    });
+                    const filename = path.basename(src);
+                    const extension = path.extname(dest).slice(1);
+                    const parser = parsers[extension] || extension;
+                    const destinationFilename = dest.replace(/\.t(s|sx)$/, '.j$1');
+                    const formattedContent = format(filename, transpiledSource, parser, destinationFilename);
+                    fs.writeFileSync(destinationFilename, formattedContent, encodingOptions);
                 }
             } else {
                 fs.copySync(sourcePath, destPath);
@@ -392,8 +447,18 @@ function createExampleGenerator(exampleType, prefix, importTypes, incremental) {
             // When the type == typescript we only want to generate the vanilla option and so skip all other frameworks
 
             if (!skipFramework('react')) {
-                if (type === 'mixed' && providedExamples['reactFunctional']) {
-                    importTypes.forEach(importType => copyProvidedExample(importType, 'reactFunctional', providedExamples['reactFunctional']));
+                if (type === 'mixed' && (providedExamples['reactFunctional'])) {
+                    importTypes.forEach(importType => copyProvidedExample(providedExamples['reactFunctional'], {
+                        framework: 'reactFunctional',
+                        importType,
+                    }));
+                // If a TypeScript React example was provided, strip the type annotations to generate the JavaScript React example
+                } else if (type === 'mixed' && (providedExamples['reactFunctionalTs'])) {
+                    importTypes.forEach(importType => copyProvidedExample(providedExamples['reactFunctionalTs'], {
+                        framework: 'reactFunctional',
+                        importType,
+                        transpile: true,
+                    }));
                 } else {
                     let reactDeclarativeScripts = null;
                     let reactDeclarativeConfigs = new Map();
@@ -417,7 +482,10 @@ function createExampleGenerator(exampleType, prefix, importTypes, incremental) {
                 }
 
                 if (type === 'mixed' && providedExamples['reactFunctionalTs']) {
-                    importTypes.forEach(importType => copyProvidedExample(importType, 'reactFunctionalTs', providedExamples['reactFunctionalTs']));
+                    importTypes.forEach(importType => copyProvidedExample(providedExamples['reactFunctionalTs'], {
+                        framework: 'reactFunctionalTs',
+                        importType,
+                    }));
                 } else {
                     let reactDeclarativeScripts = null;
                     let reactDeclarativeConfigs = new Map();
@@ -455,7 +523,10 @@ function createExampleGenerator(exampleType, prefix, importTypes, incremental) {
 
             if (!skipFramework('angular')) {
                 if (type === 'mixed' && providedExamples['angular']) {
-                    importTypes.forEach(importType => copyProvidedExample(importType, 'angular', providedExamples['angular']));
+                    importTypes.forEach(importType => copyProvidedExample(providedExamples['angular'], {
+                        framework: 'angular',
+                        importType,
+                    }));
                 } else {
                     const angularScripts = getMatchingPaths('*_angular*');
                     let angularConfigs = new Map();
@@ -486,7 +557,10 @@ function createExampleGenerator(exampleType, prefix, importTypes, incremental) {
 
             if (!skipFramework('vue')) {
                 if (type === 'mixed' && providedExamples['vue']) {
-                    importTypes.forEach(importType => copyProvidedExample(importType, 'vue', providedExamples['vue']));
+                    importTypes.forEach(importType => copyProvidedExample(providedExamples['vue'], {
+                        framework: 'vue',
+                        importType,
+                    }));
                 } else {
                     const vueScripts = getMatchingPaths('*_vue*');
                     let vueConfigs = new Map();
@@ -508,7 +582,10 @@ function createExampleGenerator(exampleType, prefix, importTypes, incremental) {
 
             if (!skipFramework('vue3')) {
                 if (type === 'mixed' && providedExamples['vue3']) {
-                    importTypes.forEach(importType => copyProvidedExample(importType, 'vue3', providedExamples['vue3']));
+                    importTypes.forEach(importType => copyProvidedExample(providedExamples['vue3'], {
+                        framework: 'vue3',
+                        importType,
+                    }));
                 } else {
                     if (vanillaToVue3) {
                         const vueScripts = getMatchingPaths('*_vue*');
@@ -533,7 +610,17 @@ function createExampleGenerator(exampleType, prefix, importTypes, incremental) {
 
         if (!skipFramework('vanilla')) {
             if (type === 'mixed' && providedExamples['vanilla']) {
-                importTypes.forEach(importType => copyProvidedExample(importType, 'vanilla', providedExamples['vanilla']));
+                importTypes.forEach(importType => copyProvidedExample(providedExamples['vanilla'], {
+                    framework: 'vanilla',
+                    importType,
+                }));
+            // If a TypeScript example was provided, strip the type annotations to generate the JavaScript example
+            } else if (type === 'mixed' && (providedExamples['typescript'])) {
+                importTypes.forEach(importType => copyProvidedExample(providedExamples['typescript'], {
+                    framework: 'vanilla',
+                    importType,
+                    transpile: true,
+                }));
             } else {
 
                 inlineStyles = undefined; // unset these as they don't need to be copied for vanilla
@@ -569,7 +656,10 @@ function createExampleGenerator(exampleType, prefix, importTypes, incremental) {
             }
 
             if (type === 'mixed' && providedExamples['typescript']) {
-                importTypes.forEach(importType => copyProvidedExample(importType, 'typescript', providedExamples['typescript']));
+                importTypes.forEach(importType => copyProvidedExample(providedExamples['typescript'], {
+                    framework: 'typescript',
+                    importType,
+                }));
             } else {
 
                 const htmlScripts = getMatchingPaths('*.html');

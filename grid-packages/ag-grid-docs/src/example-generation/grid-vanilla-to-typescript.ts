@@ -1,4 +1,4 @@
-import {addBindingImports, addGenericInterfaceImport, getIntegratedDarkModeCode, getModuleRegistration, ImportType} from './parser-utils';
+import {addGenericInterfaceImport, getIntegratedDarkModeCode, getModuleRegistration, ImportType, parseBindingImports} from './parser-utils';
 
 const path = require('path');
 const fs = require('fs-extra');
@@ -42,7 +42,7 @@ function getModuleImports(bindings: any, allStylesheets: string[]): string[] {
     })
 
     if (bImports.length > 0) {
-        addBindingImports(bImports, imports, false, false);
+        imports.push(...parseBindingImports(bImports, { importType: 'modules', ignoreTsImports: false}));
     }
 
     addGenericInterfaceImport(imports, bindings.tData, bindings);
@@ -77,7 +77,7 @@ function getPackageImports(bindings: any, allStylesheets: string[]): string[] {
     })
 
     if (bImports.length > 0) {
-        addBindingImports(bImports, imports, true, false);
+        imports.push(...parseBindingImports(bImports, { importType: 'packages', ignoreTsImports: false}));
     }
 
     addGenericInterfaceImport(imports, bindings.tData, bindings);

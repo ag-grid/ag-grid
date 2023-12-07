@@ -1,3 +1,5 @@
+import type { Options as SucraseOptions } from "sucrase";
+
 import ts = require("typescript");
 const sucrase = require("sucrase");
 
@@ -12,6 +14,31 @@ export interface BindingImport {
 
 const moduleMapping = require('../../documentation/doc-pages/modules/modules.json');
 
+const SUCRASE_OPTIONS: SucraseOptions = {
+    transforms: ["typescript"],
+    jsxRuntime: "preserve",
+    disableESTransforms: true,
+    keepUnusedImports: true,
+    preserveDynamicImport: true,
+};
+
+export function transpileTypeScriptSource(source: string, filename: string | null, options?: SucraseOptions): string {
+    try {
+        return sucrase.transform(source, {
+            ...SUCRASE_OPTIONS,
+            ...options,
+        }).code;
+    } catch (error) {
+        if (error instanceof SyntaxError) {
+            throw Object.assign(
+                new SyntaxError(`Failed to parse ${filename || 'TypeScript source'}:\n${error.message}`),
+                error,
+            );
+        }
+        throw error;
+    }
+}
+
 export function readAsJsFile(srcFile, options: { includeImports: boolean } = undefined) {
     const tsFile = srcFile
         // Remove imports that are not required in javascript
@@ -19,9 +46,7 @@ export function readAsJsFile(srcFile, options: { includeImports: boolean } = und
         // Remove export statement
         .replace(/export /g, "")
 
-    let jsFile = sucrase.transform(tsFile, { transforms: ["typescript"] }).code;
-
-    return jsFile;
+    return transpileTypeScriptSource(tsFile, srcFile);
 }
 
 export function parseFile(src) {
@@ -226,7 +251,7 @@ export function tsNodeIsTopLevelVariable(node: ts.Node, registered: string[] = [
         if (node.declarations.length > 0) {
             const declaration = node.declarations[0];
             // Don't include api declarations as these are handled separately
-            const isLetApi = declaration.name.getText() === 'gridApi';            
+            const isLetApi = declaration.name.getText() === 'gridApi';
             return !isLetApi && !isDeclareStatement(node.parent) && registered.indexOf(declaration.name.getText()) < 0 && ts.isSourceFile(node.parent.parent);
         }
     }
@@ -273,7 +298,7 @@ export function tsNodeIsFunctionCall(node: any): boolean {
 }
 
 export function tsNodeIsGlobalFunctionCall(node: ts.Node) {
-    // Get top level function calls like 
+    // Get top level function calls like
     // setInterval(callback, 500)
     // but don't match things like
     // AgChart.create(options)
@@ -504,7 +529,7 @@ function getLowestExpression(exp: any) {
 }
 
 /**
- * Find all the properties accessed in this node. 
+ * Find all the properties accessed in this node.
  */
 export function findAllAccessedProperties(node) {
     let properties = [];
@@ -544,7 +569,7 @@ export function findAllAccessedProperties(node) {
     }
     else if (ts.isVariableDeclaration(node)) {
         // get lowest identifier as this is the first in the statement
-        // i.e var nextHeader = params.nextHeaderPosition 
+        // i.e var nextHeader = params.nextHeaderPosition
         // we need to recurse down the initializer tree to extract params and not nextHeaderPosition
         let init = node.initializer as any;
         if (init) {
@@ -592,7 +617,7 @@ export function findAllAccessedProperties(node) {
 
 /** Convert import paths to their package equivalent when the docs are in Packages mode
  * i.e import { GridOptions } from '@ag-grid-community/core';
- * to 
+ * to
  * import { GridOptions } from '@ag-grid-community';
  */
 export function convertImportPath(modulePackage: string, convertToPackage: boolean) {
@@ -649,24 +674,29 @@ export function getPropertyInterfaces(properties) {
  *  Add the imports from the parsed file
  * We ignore any component files as those imports are generated for each framework.
  */
-export function addBindingImports(bindingImports: any, imports: string[], convertToPackage: boolean, ignoreTsImports: boolean) {
-    let workingImports = {};
-    let namespacedImports = [];
+export function parseBindingImports(bindingImports: Array<BindingImport>, options: {
+    importType: 'modules' | 'packages' | 'globals',
+    ignoreTsImports: boolean,
+}): Array<string> {
+    const { importType, ignoreTsImports } = options;
+    const convertToPackage = importType === 'packages' || importType === 'globals';
+    const imports = new Array<string>();
+    let workingImports: Record<string, {
+        namespacedImport: string | true | undefined,
+        namedImport: string | undefined,
+        imports: Array<string>,
+    }> = {};
 
     const chartsEnterprise = false;
     // const chartsEnterprise = bindingImports.some(i => i.module.includes('ag-charts-enterprise'));
 
     bindingImports.forEach((i: BindingImport) => {
 
-        const path = convertImportPath(i.module, convertToPackage)
+        const path = convertImportPath(i.module, convertToPackage);
         if (!i.module.includes('_typescript') || !ignoreTsImports) {
-            workingImports[path] = workingImports[path] || { namedImport: undefined, imports: [] };
+            workingImports[path] = workingImports[path] || { namespacedImport: undefined, namedImport: undefined, imports: [] };
             if (i.isNamespaced) {
-                if (i.imports.length > 0) {
-                    namespacedImports.push(`import * as ${i.imports[0]} from ${path};`);
-                } else {
-                    namespacedImports.push(`import ${path};`);
-                }
+                workingImports[path] = { ...workingImports[path], namespacedImport: i.imports.length > 0 ? i.imports[0] : true };
             } else {
                 if (i.namedImport) {
                     workingImports[path] = { ...workingImports[path], namedImport: i.namedImport };
@@ -678,31 +708,49 @@ export function addBindingImports(bindingImports: any, imports: string[], conver
         }
     });
 
-    [...new Set(namespacedImports)].forEach(ni => imports.push(ni));
-
     let hasEnterpriseModules = false;
-    Object.entries(workingImports).forEach(([k, v]: ([string, { namedImport: string, imports: string[] }])) => {
+    Object.entries(workingImports).forEach(([k, v]: ([string, { namespacedImport: string | true | undefined, namedImport: string | undefined, imports: string[] }])) => {
+        const isAgGridImport = k.includes('ag-grid');
+        if (v.namespacedImport) {
+            if (importType === 'globals' && isAgGridImport) {
+                if (typeof v.namespacedImport === 'string') {
+                    imports.push(`const ${v.namespacedImport} = agGrid;`);
+                }
+            } else if (v.namespacedImport === true) {
+                imports.push(`import ${k};`);
+            } else {
+                imports.push(`import * as ${v.namespacedImport} from ${k};`);
+            }
+        }
+
         let unique = [...new Set(v.imports)].sort();
 
-        if (convertToPackage && k.includes('ag-grid')) {
+        if (convertToPackage && isAgGridImport) {
             // Remove module related imports
             unique = unique.filter(i => !i.includes('Module'));
             hasEnterpriseModules = hasEnterpriseModules || k.includes('enterprise');
         }
         if (unique.length > 0 || v.namedImport) {
-            const namedImport = v.namedImport ? v.namedImport : '';
-            const importStr = unique.length > 0 ? `{ ${unique.join(', ')} }` : ''
-            const joiningComma = namedImport && importStr ? ", " : "";
-            imports.push(`import ${namedImport}${joiningComma}${importStr} from ${k};`);
+            if (importType === 'globals' && isAgGridImport) {
+                if (v.namedImport) imports.push(`const ${v.namedImport} = agGrid;`);
+                if (unique.length > 0) imports.push(`const { ${unique.join(', ')} } = agGrid;`);
+            } else {
+                const namedImport = v.namedImport ? v.namedImport : '';
+                const importStr = unique.length > 0 ? `{ ${unique.join(', ')} }` : ''
+                const joiningComma = namedImport && importStr ? ", " : "";
+                imports.push(`import ${namedImport}${joiningComma}${importStr} from ${k};`);
+            }
         }
     })
-    if (hasEnterpriseModules && convertToPackage) {
+    if (hasEnterpriseModules && importType === 'packages') {
         imports.push(`import 'ag-grid-enterprise';`)
     }
 
     // if (chartsEnterprise) {
     //     imports.push(`import 'ag-charts-enterprise';`)
     // }
+
+    return imports;
 }
 
 export function getModuleRegistration({ gridSettings, enterprise, exampleName }) {
@@ -777,36 +825,36 @@ const darkModeTs = `
             const attr: string | null = document.documentElement.getAttribute('data-default-theme');
             return attr ? attr.endsWith('-dark') : false;
         };
-                  
+
         // update chart themes based on dark mode status
         const updateChartThemes = (isDark: boolean): void => {
-            const themes: string[] = ['ag-default', 'ag-material', 'ag-sheets', 'ag-polychroma', 'ag-vivid'];            
-            const currentThemes = params.api.getGridOption('chartThemes');    
+            const themes: string[] = ['ag-default', 'ag-material', 'ag-sheets', 'ag-polychroma', 'ag-vivid'];
+            const currentThemes = params.api.getGridOption('chartThemes');
             const customTheme = currentThemes && currentThemes.some(theme => theme.startsWith('my-custom-theme'));
-            
+
             let modifiedThemes: string[] = customTheme
                 ? (isDark ? ['my-custom-theme-dark', 'my-custom-theme-light'] : ['my-custom-theme-light', 'my-custom-theme-dark'])
-                : Array.from(new Set(themes.map((theme) => theme + (isDark ? '-dark' : ''))));                      
+                : Array.from(new Set(themes.map((theme) => theme + (isDark ? '-dark' : ''))));
 
             // updating the 'chartThemes' grid option will cause the chart to reactively update!
             params.api.setGridOption('chartThemes', modifiedThemes);
         };
-        
+
         // update chart themes when example first loads
         updateChartThemes(isInitialModeDark());
-                      
+
         interface ColorSchemeChangeEventDetail {
             darkMode: boolean;
         }
-        
+
         // event handler for color scheme changes
         const handleColorSchemeChange = (event: CustomEvent<ColorSchemeChangeEventDetail>): void => {
             const { darkMode } = event.detail;
             updateChartThemes(darkMode);
         }
-        
+
         // listen for user-triggered dark mode changes (not removing listener is fine here!)
-        document.addEventListener('color-scheme-change', handleColorSchemeChange as EventListener);                
+        document.addEventListener('color-scheme-change', handleColorSchemeChange as EventListener);
     `;
 
 
@@ -815,15 +863,15 @@ const darkModeJS = `
             const attr = document.documentElement.getAttribute('data-default-theme');
             return attr ? attr.endsWith('-dark') : false;
         };
-      
-        const updateChartThemes = (isDark) => {           
-            const themes = ['ag-default', 'ag-material', 'ag-sheets', 'ag-polychroma', 'ag-vivid'];            
-            const currentThemes = params.api.getGridOption('chartThemes');                    
+
+        const updateChartThemes = (isDark) => {
+            const themes = ['ag-default', 'ag-material', 'ag-sheets', 'ag-polychroma', 'ag-vivid'];
+            const currentThemes = params.api.getGridOption('chartThemes');
             const customTheme = currentThemes && currentThemes.some(theme => theme.startsWith('my-custom-theme'));
-            
+
             let modifiedThemes = customTheme
                 ? (isDark ? ['my-custom-theme-dark', 'my-custom-theme-light'] : ['my-custom-theme-light', 'my-custom-theme-dark'])
-                : Array.from(new Set(themes.map((theme) => theme + (isDark ? '-dark' : ''))));                      
+                : Array.from(new Set(themes.map((theme) => theme + (isDark ? '-dark' : ''))));
 
             // updating the 'chartThemes' grid option will cause the chart to reactively update!
             params.api.setGridOption('chartThemes', modifiedThemes);
