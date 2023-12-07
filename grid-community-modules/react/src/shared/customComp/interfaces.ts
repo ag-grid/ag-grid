@@ -5,6 +5,7 @@ import {
     BaseFilter,
     BaseFilterParams,
     BaseFloatingFilter,
+    BaseToolPanelParams,
     ICellEditorParams,
     IFilter,
     IFloatingFilterParams,
@@ -62,3 +63,8 @@ export interface CustomFloatingFilterParams<P = IFloatingFilterParent & IFilter,
 }
 
 export interface FloatingFilterMethods extends BaseFloatingFilter {}
+
+export interface CustomToolPanelParams<TData = any, TContext = any, TState = any> extends BaseToolPanelParams<TData, TContext, TState> {
+    state: TState | undefined,
+    onStateChange: (model: TState | undefined) => void;
+}

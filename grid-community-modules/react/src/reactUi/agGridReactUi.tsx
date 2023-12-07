@@ -18,6 +18,7 @@ import { FilterComponent } from '../shared/customComp/filterComponent';
 import { LoadingOverlayComponent } from '../shared/customComp/loadingOverlayComponent';
 import { NoRowsOverlayComponent } from '../shared/customComp/noRowsOverlayComponent';
 import { StatusPanelComponent } from '../shared/customComp/statusPanelComponent';
+import { ToolPanelComponent } from '../shared/customComp/toolPanelComponent';
 import { AgReactUiProps } from '../shared/interfaces';
 import { NewReactComponent } from '../shared/newReactComponent';
 import { PortalManager } from '../shared/portalManager';
@@ -188,6 +189,8 @@ class ReactFrameworkComponentWrapper
                         return NoRowsOverlayComponent;
                     case 'statusPanel':
                         return StatusPanelComponent;
+                    case 'toolPanel':
+                        return ToolPanelComponent;
                 }
             }
             const ComponentClass = getComponentClass(componentType.propertyName);
