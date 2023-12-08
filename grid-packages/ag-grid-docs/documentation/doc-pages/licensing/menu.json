@@ -163,7 +163,7 @@
             "url": "/security/"
           },
           {
-            "title": "Using Hooks",
+            "title": "Best Practices",
             "url": "/react-hooks/",
             "frameworks": [
               "react"
