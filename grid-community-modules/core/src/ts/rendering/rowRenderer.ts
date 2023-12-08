@@ -187,12 +187,6 @@ export class RowRenderer extends BeanStub {
     }
     private updateAllRowCtrls(): void {
         const liveList = getAllValuesInObject(this.rowCtrlsByRowIndex);
-        const isEnsureDomOrder = this.gridOptionsService.get('ensureDomOrder');
-        const isPrintLayout = this.gridOptionsService.isDomLayout('print');
-
-        if (isEnsureDomOrder || isPrintLayout) {
-            liveList.sort((a, b) => a.getRowNode().rowIndex - b.getRowNode.rowIndex);
-        }
         const zombieList = getAllValuesInObject(this.zombieRowCtrls);
         const cachedList = this.cachedRowCtrls ? this.cachedRowCtrls.getEntries() : [];
 
