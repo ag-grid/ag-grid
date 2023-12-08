@@ -4,7 +4,7 @@ import { AgGridCommon } from "./iCommon";
 import { IPopupComponent } from "./iPopupComponent";
 import { IRowNode } from "./iRowNode";
 
-export interface BaseCellEditor {
+export interface BaseCellEditor<TData = any, TValue = any, TContext = any> {
     /** Gets called once after initialised. If you return true, the editor will
      * appear in a popup, so is not constrained to the boundaries of the cell.
      * This is great if you want to, for example, provide you own custom dropdown list
@@ -47,9 +47,11 @@ export interface BaseCellEditor {
      * This is useful for any logic that requires attachment before executing, such as putting focus on a particular DOM element.
      */
     afterGuiAttached?(): void;
+
+    onParamsUpdated?(params: ICellEditorParams<TData, TValue, TContext>): void;
 }
 
-export interface ICellEditor<TValue = any> extends BaseCellEditor {
+export interface ICellEditor<TValue = any> extends BaseCellEditor<any, TValue> {
     /**
      * Return the final value - called by the grid once after editing is complete
      */
@@ -92,4 +94,5 @@ export interface ICellEditorParams<TData = any, TValue = any, TContext = any> ex
     formatValue: (value: TValue | null | undefined) => string;
 }
 
-export interface ICellEditorComp<TData = any, TValue = any> extends ICellEditor<TValue>, IPopupComponent<ICellEditorParams<TData, TValue>> { }
+export interface ICellEditorComp<TData = any, TValue = any, TContext = any>
+    extends ICellEditor<TValue>, IPopupComponent<ICellEditorParams<TData, TValue, TContext>> { }

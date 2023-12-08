@@ -78,6 +78,7 @@ export class CellCtrl extends BeanStub {
     private column: Column;
     private rowNode: RowNode;
     private rowCtrl: RowCtrl;
+    private editCompDetails?: UserCompDetails;
 
     private focusEventToRestore: CellFocusedEvent | undefined;
 
@@ -401,6 +402,7 @@ export class CellCtrl extends BeanStub {
         const editorParams = this.createCellEditorParams(key, cellStartedEdit);
         const colDef = this.column.getColDef();
         const compDetails = this.beans.userComponentFactory.getCellEditorDetails(colDef, editorParams);
+        this.editCompDetails = compDetails;
 
         // if cellEditorSelector was used, we give preference to popup and popupPosition from the selector
         const popup = compDetails?.popupFromSelector != null ? compDetails.popupFromSelector : !!colDef.cellEditorPopup ;
@@ -493,6 +495,7 @@ export class CellCtrl extends BeanStub {
 
         this.setEditing(false);
         this.cellComp.setEditDetails(); // passing nothing stops editing
+        this.editCompDetails = undefined;
 
         this.updateAndFormatValue(false);
         this.refreshCell({ forceRefresh: true, suppressFlash: true });
@@ -1048,6 +1051,15 @@ export class CellCtrl extends BeanStub {
 
         if (!this.editing) {
             this.refreshOrDestroyCell({ forceRefresh: true, suppressFlash: true });
+        } else {
+            const cellEditor = this.getCellEditor();
+            if (cellEditor?.onParamsUpdated) {
+                const { eventKey, cellStartedEdit } = this.editCompDetails!.params;
+                const editorParams = this.createCellEditorParams(eventKey, cellStartedEdit);
+                const colDef = this.column.getColDef();
+                const compDetails = this.beans.userComponentFactory.getCellEditorDetails(colDef, editorParams);
+                cellEditor.onParamsUpdated(compDetails!.params);
+            }
         }
     }
 
