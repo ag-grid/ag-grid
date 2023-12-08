@@ -364,7 +364,7 @@ export class RangeService extends BeanStub implements IRangeService {
                 if (!rowNode) { return; }
                 for (let i = 0; i < cellRange.columns.length; i++) {
                     const column = this.columnModel.getGridColumn(cellRange.columns[i]);
-                    if (!column || !column.isCellEditable(rowNode)) { return; }
+                    if (!column || !column.isCellEditable(rowNode)) { continue; }
                     rowNode.setDataValue(column, null, cellEventSource);
                 }
             });
