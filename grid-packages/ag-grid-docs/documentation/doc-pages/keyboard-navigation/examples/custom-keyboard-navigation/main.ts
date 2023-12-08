@@ -76,11 +76,7 @@ function navigateToNextHeader(params: NavigateToNextHeaderParams): HeaderPositio
     params.key === 'ArrowDown'
   );
 
-  const isSameHeader =
-    processedNextHeader.column === nextHeader?.column &&
-    processedNextHeader.headerRowIndex === nextHeader?.headerRowIndex;
-
-  return isSameHeader ? null : processedNextHeader;
+  return processedNextHeader;
 }
 
 function tabToNextHeader(params: TabToNextHeaderParams): (HeaderPosition | null) {
@@ -114,7 +110,10 @@ function moveHeaderFocusUpDown(previousHeader: HeaderPosition, headerRowCount: n
         parentColumn = parentColumn.getParent();
       }
     }
-    nextColumn = parentColumn || previousColumn;
+
+    if (!parentColumn) { return previousHeader; }
+
+    nextColumn = parentColumn;
   } else {
       const children = ((previousColumn as ColumnGroup).getChildren && (previousColumn as ColumnGroup).getChildren()) || [];
       nextColumn = children.length > 0 ? children[0] : previousColumn;
