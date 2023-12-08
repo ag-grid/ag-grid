@@ -58,8 +58,8 @@ export class OverlayService extends BeanStub {
         const promise = compDetails.newAgStackInstance();
         const listenerDestroyFunc = this.addManagedPropertyListener(gridOption, ({ currentValue }) => {
             promise.then(comp => {
-                if (comp!.onParamsUpdated) {
-                    comp.onParamsUpdated(this.gridOptionsService.addGridCommonParams({
+                if (comp!.refresh) {
+                    comp.refresh(this.gridOptionsService.addGridCommonParams({
                         ...(currentValue ?? {})
                     }));
                 }

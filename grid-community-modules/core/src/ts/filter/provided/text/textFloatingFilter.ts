@@ -13,8 +13,8 @@ export class TextFloatingFilter extends TextInputFloatingFilter<TextFilterModel>
         this.filterModelFormatter = new TextFilterModelFormatter(this.localeService, this.optionsFactory);
     }
 
-    public onParamsUpdated(params: ITextFloatingFilterParams): void {
-        super.onParamsUpdated(params);
+    public refresh(params: ITextFloatingFilterParams): void {
+        super.refresh(params);
         this.filterModelFormatter.updateParams({ optionsFactory: this.optionsFactory });
     }
 

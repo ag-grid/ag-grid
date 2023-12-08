@@ -48,7 +48,7 @@ export interface BaseCellEditor<TData = any, TValue = any, TContext = any> {
      */
     afterGuiAttached?(): void;
 
-    onParamsUpdated?(params: ICellEditorParams<TData, TValue, TContext>): void;
+    refresh?(params: ICellEditorParams<TData, TValue, TContext>): void;
 }
 
 export interface ICellEditor<TValue = any> extends BaseCellEditor<any, TValue> {

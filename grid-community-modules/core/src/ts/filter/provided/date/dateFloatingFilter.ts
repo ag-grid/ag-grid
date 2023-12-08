@@ -51,8 +51,8 @@ export class DateFloatingFilter extends SimpleFloatingFilter {
             .setInputAriaLabel(translate('ariaDateFilterInput', 'Date Filter Input'));
     }
 
-    public onParamsUpdated(params: IFloatingFilterParams<DateFilter>): void {
-        super.onParamsUpdated(params);
+    public refresh(params: IFloatingFilterParams<DateFilter>): void {
+        super.refresh(params);
         this.params = params;
         this.filterParams = params.filterParams;
 

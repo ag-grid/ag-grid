@@ -14,7 +14,7 @@ export class DateComponent extends CustomComponent<IDateParams, CustomDateParams
         this.refreshProps();
     }
 
-    public onParamsUpdated(params: IDateParams): void {
+    public refresh(params: IDateParams): void {
         this.sourceParams = params;
         this.refreshProps();
     }

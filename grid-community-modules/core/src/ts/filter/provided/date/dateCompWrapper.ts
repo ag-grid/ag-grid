@@ -96,8 +96,10 @@ export class DateCompWrapper {
     }
 
     public updateParams(params: IDateParams): void {
-        if (this.dateComp?.onParamsUpdated && typeof this.dateComp.onParamsUpdated === 'function') {
-            this.dateComp.onParamsUpdated(params)
+        if (this.dateComp?.refresh && typeof this.dateComp.refresh === 'function') {
+            this.dateComp.refresh(params);
+        } else if (this.dateComp?.onParamsUpdated && typeof this.dateComp.onParamsUpdated === 'function') {
+            this.dateComp.onParamsUpdated(params);
         }
     }
 

@@ -62,7 +62,7 @@ export class MultiFloatingFilterComp extends Component implements IFloatingFilte
         });
     }
 
-    public onParamsUpdated(params: IFloatingFilterParams<MultiFilter>): void {
+    public refresh(params: IFloatingFilterParams<MultiFilter>): void {
         this.params = params;
         const { compDetailsList: newCompDetailsList, floatingFilterParamsList } = this.getCompDetailsList(params);
         const allFloatingFilterCompsUnchanged = newCompDetailsList.length === this.compDetailsList.length
@@ -71,7 +71,11 @@ export class MultiFloatingFilterComp extends Component implements IFloatingFilte
         if (allFloatingFilterCompsUnchanged) {
             floatingFilterParamsList.forEach((floatingFilterParams, index) => {
                 const floatingFilter = this.floatingFilters[index] as IFloatingFilterComp<IFilter>;
-                floatingFilter.onParamsUpdated?.(floatingFilterParams);
+                if (floatingFilter.refresh) {
+                    floatingFilter.refresh(floatingFilterParams);
+                } else {
+                    floatingFilter.onParamsUpdated?.(floatingFilterParams);
+                }
             });
         } else {
             _.clearElement(this.getGui());

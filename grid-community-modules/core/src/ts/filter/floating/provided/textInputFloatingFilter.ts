@@ -152,8 +152,8 @@ export abstract class TextInputFloatingFilter<M extends ModelUnion> extends Simp
         }
     }
 
-    public onParamsUpdated(params: ITextInputFloatingFilterParams): void {
-        super.onParamsUpdated(params);
+    public refresh(params: ITextInputFloatingFilterParams): void {
+        super.refresh(params);
         this.setTextInputParams(params);
     }
 

@@ -22,7 +22,7 @@ export class CellEditorComponent implements ICellEditor {
         return this.value;
     }
 
-    public onParamsUpdated(params: ICellEditorParams): void {
+    public refresh(params: ICellEditorParams): void {
         this.cellEditorParams = params;
         this.refreshProps();
     }

@@ -5,7 +5,7 @@ import { Component } from "../../widgets/component";
 export interface ILoadingOverlayParams<TData = any, TContext = any> extends AgGridCommon<TData, TContext> { }
 
 export interface ILoadingOverlay<TData = any, TContext = any> {
-    onParamsUpdated?(params: ILoadingOverlayParams<TData, TContext>): void;
+    refresh?(params: ILoadingOverlayParams<TData, TContext>): void;
 }
 
 export interface ILoadingOverlayComp<TData = any, TContext = any> extends IComponent<ILoadingOverlayParams<TData, TContext>>, ILoadingOverlay<TData, TContext> { }

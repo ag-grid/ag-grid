@@ -20,7 +20,7 @@ export class FloatingFilterComponent implements IFloatingFilter {
         this.refreshProps();
     }
 
-    public onParamsUpdated(params: IFloatingFilterParams): void {
+    public refresh(params: IFloatingFilterParams): void {
         this.floatingFilterParams = params;
         this.refreshProps();
     }

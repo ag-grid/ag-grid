@@ -1053,12 +1053,12 @@ export class CellCtrl extends BeanStub {
             this.refreshOrDestroyCell({ forceRefresh: true, suppressFlash: true });
         } else {
             const cellEditor = this.getCellEditor();
-            if (cellEditor?.onParamsUpdated) {
+            if (cellEditor?.refresh) {
                 const { eventKey, cellStartedEdit } = this.editCompDetails!.params;
                 const editorParams = this.createCellEditorParams(eventKey, cellStartedEdit);
                 const colDef = this.column.getColDef();
                 const compDetails = this.beans.userComponentFactory.getCellEditorDetails(colDef, editorParams);
-                cellEditor.onParamsUpdated(compDetails!.params);
+                cellEditor.refresh(compDetails!.params);
             }
         }
     }

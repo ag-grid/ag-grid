@@ -357,8 +357,10 @@ export class HeaderFilterCellCtrl extends AbstractHeaderCellCtrl<IHeaderFilterCe
         const params = userCompDetails.params;
 
         this.comp.getFloatingFilterComp()?.then(floatingFilter => {
-            if (floatingFilter?.onParamsUpdated && typeof floatingFilter.onParamsUpdated === 'function') {
-                floatingFilter.onParamsUpdated(params)
+            if (floatingFilter?.refresh && typeof floatingFilter.refresh === 'function') {
+                floatingFilter.refresh(params);
+            } else if (floatingFilter?.onParamsUpdated && typeof floatingFilter.onParamsUpdated === 'function') {
+                floatingFilter.onParamsUpdated(params);
             }
         })
     }

@@ -22,7 +22,7 @@ export class ComponentMetadataProvider extends BeanStub {
         this.componentMetaData = {
             dateComponent: {
                 mandatoryMethodList: ['getDate', 'setDate'],
-                optionalMethodList: ['afterGuiAttached', 'setInputPlaceholder', 'setInputAriaLabel', 'setDisabled', 'onParamsUpdated']
+                optionalMethodList: ['afterGuiAttached', 'setInputPlaceholder', 'setInputAriaLabel', 'setDisabled', 'onParamsUpdated', 'refresh']
             },
             detailCellRenderer: {
                 mandatoryMethodList: [],
@@ -43,15 +43,15 @@ export class ComponentMetadataProvider extends BeanStub {
             },
             loadingOverlayComponent: {
                 mandatoryMethodList: [],
-                optionalMethodList: ['onParamsUpdated']
+                optionalMethodList: ['refresh']
             },
             noRowsOverlayComponent: {
                 mandatoryMethodList: [],
-                optionalMethodList: ['onParamsUpdated']
+                optionalMethodList: ['refresh']
             },
             floatingFilterComponent: {
                 mandatoryMethodList: ['onParentModelChanged'],
-                optionalMethodList: ['afterGuiAttached', 'onParamsUpdated']
+                optionalMethodList: ['afterGuiAttached', 'onParamsUpdated', 'refresh']
             },
             cellRenderer: {
                 mandatoryMethodList: [],
@@ -60,7 +60,7 @@ export class ComponentMetadataProvider extends BeanStub {
             },
             cellEditor: {
                 mandatoryMethodList: ['getValue'],
-                optionalMethodList: ['isPopup', 'isCancelBeforeStart', 'isCancelAfterEnd', 'getPopupPosition', 'focusIn', 'focusOut', 'afterGuiAttached', 'onParamsUpdated']
+                optionalMethodList: ['isPopup', 'isCancelBeforeStart', 'isCancelAfterEnd', 'getPopupPosition', 'focusIn', 'focusOut', 'afterGuiAttached', 'refresh']
             },
             innerRenderer: {
                 mandatoryMethodList: [],
