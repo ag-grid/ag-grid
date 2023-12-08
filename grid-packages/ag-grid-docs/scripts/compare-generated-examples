@@ -1,0 +1,120 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+# Trap SIGINT (Ctrl-C) and SIGTERM (kill) to ensure the EXIT signal is generated when the user cancels the script
+trap "exit 1" SIGINT SIGTERM
+
+# Utility function that prints the provided message to stderr
+log () {
+    echo "$1" >&2
+}
+
+# Set the working directory to the package root
+cd "$(dirname $0)/.."
+
+# Get the commit reference from the first command-line argument, or exit if no argument was passed
+previous_commit_ref=${1:?"No comparison commit reference provided"}
+
+# Get the current and comparison output directories from the second command-line argument, or use default values if no arguments were passed
+current_output_dir=${2:-"_compare/current"}
+previous_output_dir=${3:-"_compare/previous"}
+
+# Ensure the provided commit reference exists before generating the examples
+git rev-parse --verify "$previous_commit_ref" >/dev/null || {
+    log "Commit reference '$previous_commit_ref' not found"
+    exit 1
+}
+
+# Ensure there are no uncommitted git changes before generating the examples
+if [ -n "$(git status --porcelain --untracked-files=no)" ]; then
+    log "There are uncommitted changes in the git working tree"
+    exit 1
+fi
+
+# Store the current git branch for reverting once the examples have been generated
+current_branch=$(git branch --show-current)
+if [ -z "$current_branch" ]; then
+    log "Currently on a detached HEAD"
+    exit 1
+fi
+
+log "Comparing generated examples with commit $previous_commit_ref"
+log "Outputting to $current_output_dir and $previous_output_dir"
+
+# Ensure the output directories exist
+mkdir -p "$current_output_dir"
+mkdir -p "$previous_output_dir"
+
+# Clean the output directories
+rm -rf "$current_output_dir"/*
+rm -rf "$previous_output_dir"/*
+
+# Function that generates the examples for the current state of the repository and copies them to the provided output directory
+generate_examples() {
+    output_dir=$1
+    docs_dir=./documentation/doc-pages
+
+    # Generate the examples, redirecting stdout to stderr
+    AG_EXAMPLE_DISABLE_FORMATTING=true \
+        npm run generate-examples 1>&2
+
+    # Get a list of all directories that contain generated example
+    all_examples=$(cd "$docs_dir" && echo */examples/*/_gen)
+
+    # Get a deduplicated list of sections that contain generated examples
+    sections=$(echo $all_examples | tr ' ' '\n' | sed 's/\/.*//' | uniq)
+
+    # Copy the generated examples to the output directory
+    num_examples=$(wc -w <<< "$all_examples" | tr -d ' ')
+    log "Copying $num_examples examples to $output_dir"
+    for section in $sections; do
+        # Get a list of all generated examples in the current section
+        examples="$(cd "$docs_dir"/"$section"/examples && echo */_gen | tr ' ' '\n' | sed 's/\/.*//')"
+        for example in $examples; do
+            log "Copying $section/$example"
+            # Ensure the output directory exists
+            mkdir -p "$output_dir"/"$section"/"$example"
+            # Copy the example files
+            cp -r "$docs_dir"/"$section"/examples/"$example"/_gen/ "$output_dir"/"$section"/"$example"/
+        done
+    done
+}
+
+# Add an exit trap to switch back to the active branch if the script exits
+trap "git checkout $current_branch" EXIT
+
+# Checkout the previous commit
+log "Checking out $previous_commit_ref"
+git -c advice.detachedHead=false checkout "$previous_commit_ref"
+
+# Generate the examples for the previous commit
+log "Generating examples for commit $previous_commit_ref"
+generate_examples "$previous_output_dir"
+
+# Switch back to the active branch
+log "Resetting to $current_branch"
+git checkout "$current_branch"
+
+# Now that we have switched back to the active branch, clear the exit trap
+trap - EXIT
+
+# Generate the examples for the active branch
+log "Generating examples for commit $current_branch"
+generate_examples "$current_output_dir"
+
+log "Comparing generated examples"
+# Generate a unified diff of the two output directories and log to stdout, capturing the exit status code
+diff_status=0
+diff --unified --recursive --new-file "$previous_output_dir" "$current_output_dir" || diff_status=$?
+
+# Exit with the correct status code according to whether any differences were found in the generated examples
+if [ $diff_status -eq 0 ]; then
+    log "No differences found"
+    exit 0
+elif [ $diff_status -eq 1 ]; then
+    log "Found differences between generated examples"
+    exit 1
+else
+    log "Failed to generate diff"
+    exit $diff_status
+fi
