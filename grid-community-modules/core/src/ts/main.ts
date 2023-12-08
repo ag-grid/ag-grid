@@ -115,7 +115,7 @@ export { ISimpleFilter, SimpleFilter, ISimpleFilterParams, SimpleFilterParams, I
 export { ScalarFilter, IScalarFilterParams, ScalarFilterParams } from "./filter/provided/scalarFilter";
 
 export { NumberFilter, INumberFilterParams, NumberFilterParams, NumberFilterModel } from "./filter/provided/number/numberFilter";
-export { TextFilter, ITextFilterParams, TextFilterParams, TextFilterModel, TextFormatter } from "./filter/provided/text/textFilter";
+export { TextFilter, ITextFilterParams, TextFilterParams, TextFilterModel, TextFormatter, TextMatcherParams, TextMatcher } from "./filter/provided/text/textFilter";
 export { DateFilter, IDateFilterParams, DateFilterParams, DateFilterModel } from "./filter/provided/date/dateFilter";
 
 export { IFloatingFilter, IFloatingFilterParams, IFloatingFilterComp, BaseFloatingFilterChange, IFloatingFilterParent, IFloatingFilterParentCallback, BaseFloatingFilter } from "./filter/floating/floatingFilter";

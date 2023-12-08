@@ -320,7 +320,6 @@ AddType text/javascript ts jsx
     Redirect 301 /documentation/angular/master-detail-other/ /angular-data-grid/master-detail-other/
     Redirect 301 /documentation/angular/master-detail-refresh/ /angular-data-grid/master-detail-refresh/
     Redirect 301 /documentation/angular/master-detail/ /angular-data-grid/master-detail/
-    Redirect 301 /documentation/angular/material-design/ /angular-data-grid/material-design/
     Redirect 301 /documentation/angular/modules-building/ /angular-data-grid/modules-building/
     Redirect 301 /documentation/angular/modules-more-details/ /angular-data-grid/modules/
     Redirect 301 /angular-data-grid/modules-more-details/ /angular-data-grid/modules/
@@ -985,7 +984,6 @@ AddType text/javascript ts jsx
     Redirect 301 /documentation/vue/viewport/ /vue-data-grid/viewport/
     Redirect 301 /documentation/vue/ /vue-data-grid/
     Redirect 301 /embracing-the-future-with-angularjs2-web-components-and-ag-grid/ https://medium.com/ag-grid/embracing-the-future-with-angular-2-0-web-components-and-ag-grid-fec000d5a304
-    Redirect 301 /example-angular-material-design/ /angular-data-grid/material-design/
     Redirect 301 /example-angular-rxjs/ /angular-data-grid/data-update/
     Redirect 301 /example-excel-import/ /javascript-data-grid/excel-import/
     Redirect 301 /example-expressions-and-context/ /javascript-data-grid/expressions-and-context/

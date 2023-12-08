@@ -35,7 +35,7 @@ export class VueFrameworkComponentWrapper extends BaseComponentWrapper<Wrappable
             public hasMethod(name: string): boolean {
                 const componentInstance = wrapper.getFrameworkComponentInstance()
                 if (!componentInstance[name]) {
-                    return componentInstance.$.setupState[name] !== null
+                    return componentInstance.$.setupState[name] != null
                 } else {
                     return true
                 }

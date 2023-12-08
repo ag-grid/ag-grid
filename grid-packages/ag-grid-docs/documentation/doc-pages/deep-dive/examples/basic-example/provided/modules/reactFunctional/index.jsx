@@ -3,6 +3,9 @@ import { createRoot } from 'react-dom/client';
 import { AgGridReact } from '@ag-grid-community/react'; // React Grid Logic
 import "@ag-grid-community/styles/ag-grid.css"; // Core CSS
 import "@ag-grid-community/styles/ag-theme-quartz.css"; // Theme
+import { ModuleRegistry } from '@ag-grid-community/core';
+import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
+ModuleRegistry.registerModules([ ClientSideRowModelModule ]);
 
 // Create new GridExample component
 const GridExample = () => {

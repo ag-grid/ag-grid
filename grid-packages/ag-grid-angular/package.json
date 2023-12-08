@@ -24,10 +24,8 @@
     "@angular/common": "^14.3.0",
     "@angular/compiler": "^14.3.0",
     "@angular/core": "^14.3.0",
-    "@angular/forms": "^14.3.0",
     "@angular/platform-browser": "^14.3.0",
     "@angular/platform-browser-dynamic": "^14.3.0",
-    "@angular/router": "^14.3.0",
     "rxjs": "~7.5.0",
     "tslib": "^2.3.0",
     "zone.js": "~0.11.4"

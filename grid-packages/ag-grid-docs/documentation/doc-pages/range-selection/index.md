@@ -100,10 +100,10 @@ This will also emit the following events, which can be seen in the [Advanced Ran
 
 <api-documentation source='grid-events/events.json' section='editing' names='["rangeDeleteStart","rangeDeleteEnd"]' ></api-documentation>
 
-## Example: Advanced Range Selection
+## Advanced Range Selection
 
 The example below demonstrates a more complex range selection scenario. The example listens for the `rangeSelectionChanged` event and creates a sum of all the number values that are in the range (it ignores all non-number values). The `finished` flag is used to update the eager and lazy figures separately.
 
-The example also shows use of the `processCellForClipboard` and `processCellFromClipboard` [callbacks](clipboard/#processing-pasted-data) by making all the athlete names uppercase when copying into the clipboard and lowercase when copying from the clipboard.
+The example also shows use of the `processCellForClipboard` and `processCellFromClipboard` [callbacks](/clipboard/#processing-pasted-data) by making all the athlete names uppercase when copying into the clipboard and lowercase when copying from the clipboard.
 
 <grid-example title='Advanced Range Selection' name='range-selection-advanced' type='generated' options='{ "enterprise": true, "exampleHeight": 700, "modules": ["clientside", "range", "menu", "clipboard"] }'></grid-example>

@@ -1,4 +1,4 @@
-import { ModuleRegistry, ColDef, Grid, GridOptions, GridReadyEvent, RowDropZoneParams, GetRowIdParams, GridApi, createGrid } from "@ag-grid-community/core";
+import { ModuleRegistry, ColDef, GridOptions, GridReadyEvent, RowDropZoneParams, GetRowIdParams, GridApi, createGrid } from "@ag-grid-community/core";
 import '@ag-grid-community/styles/ag-grid.css';
 import "@ag-grid-community/styles/ag-theme-quartz.css";
 

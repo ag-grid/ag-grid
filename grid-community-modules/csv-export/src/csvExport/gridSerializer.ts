@@ -304,12 +304,7 @@ export class GridSerializer extends BeanStub {
         let columnsToExport: Column[] = [];
 
         if (allColumns && !isPivotMode) {
-            // add auto group column for tree data
-            const columns = isTreeData
-                ? this.columnModel.getGridColumns([GROUP_AUTO_COLUMN_ID])
-                : [];
-
-            columnsToExport =  columns.concat(this.columnModel.getAllGridColumns());
+            columnsToExport =  this.columnModel.getAllGridColumns();
         } else {
             columnsToExport = this.columnModel.getAllDisplayedColumns();
         }

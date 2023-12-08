@@ -39,7 +39,7 @@ const ChevronButtonCellRenderer = forwardRef((props, ref) => {
                         }}
                     ></input>
                 </div>
-                <span>{props.value}</span>
+                <span>{props.valueFormatted ?? props.value}</span>
             </div>
         );
     }

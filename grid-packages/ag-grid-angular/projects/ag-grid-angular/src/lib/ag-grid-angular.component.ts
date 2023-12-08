@@ -1002,7 +1002,6 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
          */
     @Input() public groupDefaultExpanded: number | undefined = undefined;
     /** Allows specifying the group 'auto column' if you are not happy with the default. If grouping, this column definition is included as the first column in the grid. If not grouping, this column is not included.
-         * @initial
          */
     @Input() public autoGroupColumnDef: ColDef<TData> | undefined = undefined;
     /** When `true`, preserves the current group order when sorting on non-group columns.

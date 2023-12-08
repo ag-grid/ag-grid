@@ -41,12 +41,6 @@ const extrasMap = {
     'xlsx-style': {
         scripts: ['https://cdn.jsdelivr.net/npm/xlsx-style@0.8.13/dist/xlsx.full.min.js']
     },
-    materialdesign: {
-        styles: [
-            `https://cdn.jsdelivr.net/npm/@angular/material@${ANGULAR_VERSION}/prebuilt-themes/indigo-pink.css`,
-            'https://fonts.googleapis.com/icon?family=Material+Icons'
-        ]
-    },
     materialdesignicons: {
         styles: [
             'https://cdn.jsdelivr.net/npm/@mdi/font/css/materialdesignicons.css'

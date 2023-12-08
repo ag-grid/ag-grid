@@ -3,6 +3,10 @@ import "@ag-grid-community/styles/ag-theme-quartz.css"
 import { AgGridVue } from "@ag-grid-community/vue"
 import Vue from "vue"
 
+import { ModuleRegistry } from '@ag-grid-community/core';
+import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
+ModuleRegistry.registerModules([ ClientSideRowModelModule ]);
+
 const App = {
   template: `
     <ag-grid-vue

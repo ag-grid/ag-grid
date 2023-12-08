@@ -30,6 +30,7 @@ const gridOptions: GridOptions<IOlympicData> = {
     // debug: true,
     rowSelection: 'multiple',
     paginationPageSize: 500,
+    paginationPageSizeSelector: [100, 500, 1000],
     columnDefs: columnDefs,
     pagination: true,
     suppressPaginationPanel: true,
