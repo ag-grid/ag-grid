@@ -6,8 +6,6 @@ var rowData = [
   { make: 'Porsche', model: 'Boxster', price: 72000 },
 ]
 
-let gridApi: GridApi;
-
 // let the grid know which columns and what data to use
 const gridOptions: GridOptions = {
   columnDefs: [{ field: 'make' }, { field: 'model' }, { field: 'price' }],
@@ -26,7 +24,5 @@ const gridOptions: GridOptions = {
   },
 }
 
-document.addEventListener('DOMContentLoaded', function () {
-  var eGridDiv = document.querySelector<HTMLElement>('#myGrid')!
-  gridApi = createGrid(eGridDiv, gridOptions);
-})
+var eGridDiv = document.querySelector<HTMLElement>('#myGrid')!
+const gridApi: GridApi = createGrid(eGridDiv, gridOptions);

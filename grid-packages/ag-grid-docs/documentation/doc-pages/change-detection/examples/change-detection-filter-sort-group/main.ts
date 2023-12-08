@@ -1,7 +1,5 @@
 import { GridApi, createGrid, CellValueChangedEvent, GridOptions } from '@ag-grid-community/core';
 
-let gridApi: GridApi;
-
 const gridOptions: GridOptions = {
   columnDefs: [
     // do NOT hide this column, it's needed for editing
@@ -64,8 +62,6 @@ function getRowData() {
   return rowData
 }
 
-// setup the grid after the page has finished loading
-document.addEventListener('DOMContentLoaded', function () {
-  var gridDiv = document.querySelector<HTMLElement>('#myGrid')!
-  gridApi = createGrid(gridDiv, gridOptions);
-})
+// setup the grid
+var gridDiv = document.querySelector<HTMLElement>('#myGrid')!
+const gridApi: GridApi = createGrid(gridDiv, gridOptions);

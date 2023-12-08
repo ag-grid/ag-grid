@@ -11,8 +11,6 @@ import {
   ICellEditorParams,
 } from '@ag-grid-community/core';
 
-let gridApi: GridApi;
-
 const gridOptions: GridOptions = {
   columnDefs: [
     {
@@ -45,7 +43,7 @@ const gridOptions: GridOptions = {
 }
 
 function createValueA(value: string, data: any) {
-  return value == null ? null : {    
+  return value == null ? null : {
     actualValueA: value,
     anotherPropertyA: data.anotherPropertyA,
   };
@@ -136,7 +134,7 @@ function getRows() {
   return Array.apply(null, Array(100)).map(function (_, i) {
     return {
       a: 'a-' + i,
-      b: {    
+      b: {
         actualValueB: 'b-' + i,
         anotherPropertyB: 'b',
       },
@@ -145,8 +143,6 @@ function getRows() {
   })
 }
 
-// setup the grid after the page has finished loading
-document.addEventListener('DOMContentLoaded', function () {
-  var gridDiv = document.querySelector<HTMLElement>('#myGrid')!
-  gridApi = createGrid(gridDiv, gridOptions);
-})
+// setup the grid
+var gridDiv = document.querySelector<HTMLElement>('#myGrid')!
+const gridApi: GridApi = createGrid(gridDiv, gridOptions);

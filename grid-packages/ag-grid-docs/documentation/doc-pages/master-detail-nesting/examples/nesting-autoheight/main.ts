@@ -39,8 +39,6 @@ var rowData = [
   },
 ]
 
-let gridApi: GridApi;
-
 // level 1 grid options
 const gridOptions: GridOptions = {
   rowData: rowData,
@@ -90,8 +88,6 @@ const gridOptions: GridOptions = {
   } as IDetailCellRendererParams,
 }
 
-// setup the grid after the page has finished loading
-document.addEventListener('DOMContentLoaded', function () {
-  var gridDiv = document.querySelector<HTMLElement>('#myGrid')!
-  gridApi = createGrid(gridDiv, gridOptions);
-})
+// setup the grid
+var gridDiv = document.querySelector<HTMLElement>('#myGrid')!
+const gridApi: GridApi = createGrid(gridDiv, gridOptions);

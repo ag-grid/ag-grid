@@ -31,8 +31,6 @@ const columnDefs: ColDef[] = [
   { field: 'total', width: 100 },
 ]
 
-let gridApi: GridApi;
-
 const gridOptions: GridOptions = {
   defaultColDef: {
     editable: true,
@@ -46,18 +44,16 @@ const gridOptions: GridOptions = {
   columnDefs: columnDefs,
 }
 
-// setup the grid after the page has finished loading
-document.addEventListener('DOMContentLoaded', () => {
-  const gridDiv = document.querySelector<HTMLElement>('#myGrid')!
-  gridApi = createGrid(gridDiv, gridOptions);
+// setup the grid
+const gridDiv = document.querySelector<HTMLElement>('#myGrid')!
+const gridApi: GridApi = createGrid(gridDiv, gridOptions);
 
-  fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
-    .then(response => response.json())
-    .then(data => {
-      // set some blank values to test tooltip against
-      data[0].athlete = undefined;
-      data[1].athlete = null;
-      data[2].athlete = '';
-      gridApi!.setGridOption('rowData', data)
-    })
-})
+fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
+  .then(response => response.json())
+  .then(data => {
+    // set some blank values to test tooltip against
+    data[0].athlete = undefined;
+    data[1].athlete = null;
+    data[2].athlete = '';
+    gridApi.setGridOption('rowData', data)
+  })

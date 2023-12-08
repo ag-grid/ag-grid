@@ -1,8 +1,6 @@
 import { GridApi, createGrid, GridOptions } from '@ag-grid-community/core';
 import { getData } from "./data";
 
-let gridApi: GridApi;
-
 const gridOptions: GridOptions = {
   columnDefs: [
     { field: 'symbol', maxWidth: 120 },
@@ -59,9 +57,7 @@ function stop() {
   intervalId = undefined
 }
 
-// setup the grid after the page has finished loading
+// setup the grid
 
-document.addEventListener('DOMContentLoaded', function () {
-  var gridDiv = document.querySelector<HTMLElement>('#myGrid')!
-  gridApi = createGrid(gridDiv, gridOptions);
-})
+var gridDiv = document.querySelector<HTMLElement>('#myGrid')!
+const gridApi: GridApi = createGrid(gridDiv, gridOptions);

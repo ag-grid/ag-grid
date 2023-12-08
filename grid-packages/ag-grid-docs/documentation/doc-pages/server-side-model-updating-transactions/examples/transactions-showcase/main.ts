@@ -38,8 +38,6 @@ const columnDefs: ColDef[] = [
   { field: 'current', aggFunc: 'sum' },
 ];
 
-let gridApi: GridApi;
-
 const gridOptions: GridOptions = {
   columnDefs,
   defaultColDef: {
@@ -62,16 +60,16 @@ const gridOptions: GridOptions = {
   getChildCount: getChildCount,
   onGridReady: (params) => {
     disable('#stopUpdates', true);
-  
+
     // setup the fake server
     fakeServerInstance = new FakeServer();
-  
+
     // create datasource with a reference to the fake server
     const datasource = getServerSideDatasource(fakeServerInstance);
-  
+
     // register the datasource with the grid
     params.api.setGridOption('serverSideDatasource', datasource);
-  
+
     // register interest in data changes
     registerObserver({
       transactionFunc: (t: ServerSideTransaction) => params.api.applyServerSideTransactionAsync(t),
@@ -166,8 +164,6 @@ function isServerSideGroupOpenByDefault(params: IsServerSideGroupOpenByDefaultPa
   ].indexOf(routeAsString) >= 0
 }
 
-// setup the grid after the page has finished loading
-document.addEventListener('DOMContentLoaded', function () {
-  const gridDiv = document.querySelector<HTMLElement>('#myGrid');
-  gridApi = createGrid(gridDiv!, gridOptions);
-});
+// setup the grid
+const gridDiv = document.querySelector<HTMLElement>('#myGrid');
+const gridApi: GridApi = createGrid(gridDiv!, gridOptions);

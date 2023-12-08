@@ -1,8 +1,6 @@
 import {createGrid, FirstDataRenderedEvent, GridApi, GridOptions, GridReadyEvent} from '@ag-grid-community/core';
 import {getData} from "./data";
 
-let gridApi: GridApi;
-
 const gridOptions: GridOptions = {
   columnDefs: [
     { field: 'city', chartDataType: 'category' },
@@ -82,7 +80,5 @@ function createBubbleChart(api: GridApi) {
   });
 }
 
-// setup the grid after the page has finished loading
-document.addEventListener('DOMContentLoaded', function () {
-  gridApi = createGrid(document.querySelector<HTMLElement>('#myGrid')!, gridOptions);
-})
+// setup the grid
+const gridApi: GridApi = createGrid(document.querySelector<HTMLElement>('#myGrid')!, gridOptions);

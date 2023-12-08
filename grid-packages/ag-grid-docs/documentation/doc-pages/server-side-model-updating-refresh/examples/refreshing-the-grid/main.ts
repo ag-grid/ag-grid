@@ -1,13 +1,3 @@
-import {
-  GridApi,
-  createGrid,
-  GridOptions,
-  IServerSideDatasource,
-  GetRowIdParams,
-  StoreRefreshedEvent,
-} from '@ag-grid-community/core';
-declare var FakeServer: any;
-let gridApi: GridApi;
 const gridOptions: GridOptions = {
   columnDefs: [
     { field: 'country' },
@@ -119,30 +109,28 @@ const getServerSideDatasource = (server: any): IServerSideDatasource => {
   }
 }
 
-// setup the grid after the page has finished loading
-document.addEventListener('DOMContentLoaded', () => {
-  var gridDiv = document.querySelector<HTMLElement>('#myGrid')!
-  gridApi = createGrid(gridDiv, gridOptions);
+// setup the grid
+var gridDiv = document.querySelector<HTMLElement>('#myGrid')!
+const gridApi: GridApi = createGrid(gridDiv, gridOptions);
 
-  fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
-    .then(response => response.json())
-    .then((data) => {
+fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
+  .then(response => response.json())
+  .then((data) => {
 
-      // give each data item an ID
-      const dataWithId = data.map((d: any, idx: number) => ({
-        ...d,
-        id: idx,
-      }));
-      allData = dataWithId;
+    // give each data item an ID
+    const dataWithId = data.map((d: any, idx: number) => ({
+      ...d,
+      id: idx,
+    }));
+    allData = dataWithId;
 
-      // setup the fake server with entire dataset
-      const fakeServer = new FakeServer(allData);
+    // setup the fake server with entire dataset
+    const fakeServer = new FakeServer(allData);
 
-      // create datasource with a reference to the fake server
-      const datasource = getServerSideDatasource(fakeServer);
+    // create datasource with a reference to the fake server
+    const datasource = getServerSideDatasource(fakeServer);
 
-      // register the datasource with the grid
-      gridApi!.setGridOption('serverSideDatasource', datasource);
-      beginPeriodicallyModifyingData();
-    })
-})
+    // register the datasource with the grid
+    gridApi.setGridOption('serverSideDatasource', datasource);
+    beginPeriodicallyModifyingData();
+  })

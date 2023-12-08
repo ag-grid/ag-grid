@@ -5,8 +5,6 @@ var rowData = [
   { a: 2, b: 2, c: 2, d: 2, e: 2 },
 ]
 
-let gridApi: GridApi;
-
 const gridOptions: GridOptions = {
   columnDefs: [
     { field: 'a' },
@@ -18,8 +16,6 @@ const gridOptions: GridOptions = {
   rowData: rowData,
 }
 
-// setup the grid after the page has finished loading
-document.addEventListener('DOMContentLoaded', function () {
-  var gridDiv = document.querySelector<HTMLElement>('#myGrid')!
-  gridApi = createGrid(gridDiv, gridOptions);
-})
+// setup the grid
+var gridDiv = document.querySelector<HTMLElement>('#myGrid')!
+const gridApi: GridApi = createGrid(gridDiv, gridOptions);

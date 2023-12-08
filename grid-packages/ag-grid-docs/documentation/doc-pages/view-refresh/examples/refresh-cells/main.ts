@@ -1,11 +1,5 @@
 import { createGrid, GridApi, GridOptions, IRowNode, RefreshCellsParams } from '@ag-grid-community/core'
 
-// placing in 13 rows, so there are exactly enough rows to fill the grid, makes
-// the row animation look nice when you see all the rows
-var data: any[] = []
-var topRowData: any[] = []
-var bottomRowData: any[] = []
-let gridApi: GridApi;
 const gridOptions: GridOptions = {
   columnDefs: [
     { field: 'a', suppressCellFlash: true },
@@ -136,8 +130,6 @@ function scrambleItem(item: any) {
   })
 }
 
-// setup the grid after the page has finished loading
-document.addEventListener('DOMContentLoaded', function () {
-  var gridDiv = document.querySelector<HTMLElement>('#myGrid')!
-  gridApi = createGrid(gridDiv, gridOptions)
-})
+// setup the grid
+var gridDiv = document.querySelector<HTMLElement>('#myGrid')!
+const gridApi: GridApi = createGrid(gridDiv, gridOptions)

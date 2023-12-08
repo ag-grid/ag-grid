@@ -16,9 +16,6 @@ interface IRow {
   successful: boolean;
 }
 
-// Grid API: Access to Grid API methods
-let gridApi: GridApi;
-
 // Grid Options: Contains all of the grid configurations
 const gridOptions: GridOptions<IRow> = {
     // Data to be displayed
@@ -39,4 +36,4 @@ const gridOptions: GridOptions<IRow> = {
     ],
 }
 // Create Grid: Create new grid within the #myGrid div, using the Grid Options object
-gridApi = createGrid(document.querySelector<HTMLElement>('#myGrid')!, gridOptions);
+const gridApi: GridApi = createGrid(document.querySelector<HTMLElement>('#myGrid')!, gridOptions);

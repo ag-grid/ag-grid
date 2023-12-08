@@ -9,8 +9,6 @@ import {
 } from '@ag-grid-community/core';
 declare var NumericCellEditor: ICellEditorComp;
 
-let gridApi: GridApi;
-
 const gridOptions: GridOptions = {
   columnDefs: [
     {
@@ -109,7 +107,5 @@ function onBtStartEditing() {
 
 // wait for the document to be loaded, otherwise
 // AG Grid will not find the div in the document.
-document.addEventListener('DOMContentLoaded', function () {
-  var eGridDiv = document.querySelector<HTMLElement>('#myGrid')!
-  gridApi = createGrid(eGridDiv, gridOptions);
-})
+var eGridDiv = document.querySelector<HTMLElement>('#myGrid')!
+const gridApi: GridApi = createGrid(eGridDiv, gridOptions);

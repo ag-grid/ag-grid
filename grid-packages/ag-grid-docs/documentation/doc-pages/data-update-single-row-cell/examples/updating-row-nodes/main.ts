@@ -10,8 +10,6 @@ const rowData = [
   { id: 'gg', make: 'Horse', model: 'Outside', price: 99000 },
 ]
 
-let gridApi: GridApi;
-
 const gridOptions: GridOptions = {
   columnDefs: [
     { field: 'make' },
@@ -69,7 +67,5 @@ function updateDataOnFord() {
 
 // wait for the document to be loaded, otherwise
 // AG Grid will not find the div in the document.
-document.addEventListener('DOMContentLoaded', function () {
-  const eGridDiv = document.querySelector<HTMLElement>('#myGrid')!
-  gridApi = createGrid(eGridDiv, gridOptions);
-})
+const eGridDiv = document.querySelector<HTMLElement>('#myGrid')!
+const gridApi: GridApi = createGrid(eGridDiv, gridOptions);

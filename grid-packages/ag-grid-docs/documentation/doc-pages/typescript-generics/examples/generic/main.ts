@@ -37,8 +37,6 @@ var rowData: ICar[] = [
   { make: 'Porsche', model: 'Boxster', price: 72000 },
 ]
 
-let gridApi: GridApi<ICar>;
-
 // Pass ICar as generic row data type
 const gridOptions: GridOptions<ICar> = {
   columnDefs: columnDefs,
@@ -71,10 +69,8 @@ function onShowSelection() {
 
 // wait for the document to be loaded, otherwise
 // AG Grid will not find the div in the document.
-document.addEventListener('DOMContentLoaded', function () {
-  // lookup the container we want the Grid to use
-  var eGridDiv = document.querySelector<HTMLElement>('#myGrid')!
+// lookup the container we want the Grid to use
+var eGridDiv = document.querySelector<HTMLElement>('#myGrid')!
 
-  // create the grid passing in the div to use together with the columns & data we want to use
-  gridApi = createGrid(eGridDiv, gridOptions);
-})
+// create the grid passing in the div to use together with the columns & data we want to use
+const gridApi: GridApi<ICar> = createGrid(eGridDiv, gridOptions);

@@ -15,8 +15,6 @@ function poundFormatter(params: ValueFormatterParams) {
     .replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,'));
 }
 
-let gridApi: GridApi;
-
 const gridOptions: GridOptions = {
   columnDefs: [
     { field: 'category', rowGroupIndex: 1, hide: true },
@@ -96,7 +94,5 @@ function onRemoveSelected() {
 
 // wait for the document to be loaded, otherwise
 // AG Grid will not find the div in the document.
-document.addEventListener('DOMContentLoaded', function () {
-  var eGridDiv = document.querySelector<HTMLElement>('#myGrid')!
-  gridApi = createGrid(eGridDiv, gridOptions);
-})
+var eGridDiv = document.querySelector<HTMLElement>('#myGrid')!
+const gridApi: GridApi = createGrid(eGridDiv, gridOptions);

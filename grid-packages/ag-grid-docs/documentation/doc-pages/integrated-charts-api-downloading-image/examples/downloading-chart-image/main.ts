@@ -10,7 +10,6 @@ import {
 } from '@ag-grid-community/core';
 import { getData } from './data';
 
-let gridApi: GridApi;
 let chartId: string | undefined;
 
 const gridOptions: GridOptions = {
@@ -106,7 +105,5 @@ function openChartImage(fileFormat: string) {
   }
 }
 
-// setup the grid after the page has finished loading
-document.addEventListener('DOMContentLoaded', function () {
-  gridApi = createGrid(document.querySelector<HTMLElement>('#myGrid')!, gridOptions);
-})
+// setup the grid
+const gridApi: GridApi = createGrid(document.querySelector<HTMLElement>('#myGrid')!, gridOptions);

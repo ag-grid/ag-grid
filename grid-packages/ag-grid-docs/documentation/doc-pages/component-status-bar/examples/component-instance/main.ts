@@ -20,8 +20,6 @@ function toggleStatusBarComp() {
   statusBarComponent.setVisible(!statusBarComponent.isVisible())
 }
 
-let gridApi: GridApi;
-
 const gridOptions: GridOptions = {
   defaultColDef: {
     editable: true,
@@ -64,8 +62,6 @@ const gridOptions: GridOptions = {
   },
 }
 
-// setup the grid after the page has finished loading
-document.addEventListener('DOMContentLoaded', () => {
-  const gridDiv = document.querySelector<HTMLElement>('#myGrid')!
-  gridApi = createGrid(gridDiv, gridOptions);
-})
+// setup the grid
+const gridDiv = document.querySelector<HTMLElement>('#myGrid')!
+const gridApi: GridApi = createGrid(gridDiv, gridOptions);

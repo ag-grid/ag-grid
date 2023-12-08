@@ -9,7 +9,6 @@ import {
 } from '@ag-grid-community/core';
 import {getData} from "./data";
 
-let gridApi: GridApi;
 let chartModel: ChartModel | undefined;
 let currentChartRef: ChartRef | undefined;
 
@@ -80,8 +79,6 @@ function restoreChart() {
   currentChartRef = gridApi!.restoreChart(chartModel)!
 }
 
-// setup the grid after the page has finished loading
-document.addEventListener('DOMContentLoaded', function () {
-  const gridDiv = document.querySelector<HTMLElement>('#myGrid')!
-  gridApi = createGrid(gridDiv, gridOptions);
-})
+// setup the grid
+const gridDiv = document.querySelector<HTMLElement>('#myGrid')!
+const gridApi: GridApi = createGrid(gridDiv, gridOptions);

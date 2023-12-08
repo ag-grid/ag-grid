@@ -9,8 +9,6 @@ const columnDefs: ColDef[] = [
   { field: 'version' },
 ]
 
-let gridApi: GridApi;
-
 const gridOptions: GridOptions = {
   defaultColDef: {
     flex: 1,
@@ -73,21 +71,19 @@ const getServerSideDatasource = (server: any): IServerSideDatasource => {
   }
 }
 
-// setup the grid after the page has finished loading
-document.addEventListener('DOMContentLoaded', function () {
-  var gridDiv = document.querySelector<HTMLElement>('#myGrid')!
-  gridApi = createGrid(gridDiv, gridOptions);
+// setup the grid
+var gridDiv = document.querySelector<HTMLElement>('#myGrid')!
+const gridApi: GridApi = createGrid(gridDiv, gridOptions);
 
-  fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
-    .then(response => response.json())
-    .then(function (data) {
-      // setup the fake server with entire dataset
-      var fakeServer = new FakeServer(data)
+fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
+  .then(response => response.json())
+  .then(function (data) {
+    // setup the fake server with entire dataset
+    var fakeServer = new FakeServer(data)
 
-      // create datasource with a reference to the fake server
-      var datasource = getServerSideDatasource(fakeServer)
+    // create datasource with a reference to the fake server
+    var datasource = getServerSideDatasource(fakeServer)
 
-      // register the datasource with the grid
-      gridApi!.setGridOption('serverSideDatasource', datasource)
-    })
-})
+    // register the datasource with the grid
+    gridApi.setGridOption('serverSideDatasource', datasource)
+  })

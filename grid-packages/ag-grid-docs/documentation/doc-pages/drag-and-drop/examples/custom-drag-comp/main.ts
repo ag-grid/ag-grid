@@ -8,8 +8,6 @@ var rowClassRules = {
   'blue-row': 'data.color == "Blue"',
 }
 
-let gridApi: GridApi;
-
 const gridOptions: GridOptions = {
   defaultColDef: {
     width: 80,
@@ -51,8 +49,6 @@ function onDrop(event: any) {
   eJsonDisplay.appendChild(eJsonRow)
 }
 
-// setup the grid after the page has finished loading
-document.addEventListener('DOMContentLoaded', function () {
-  var gridDiv = document.querySelector<HTMLElement>('#myGrid')!
-  gridApi = createGrid(gridDiv, gridOptions);
-})
+// setup the grid
+var gridDiv = document.querySelector<HTMLElement>('#myGrid')!
+const gridApi: GridApi = createGrid(gridDiv, gridOptions);

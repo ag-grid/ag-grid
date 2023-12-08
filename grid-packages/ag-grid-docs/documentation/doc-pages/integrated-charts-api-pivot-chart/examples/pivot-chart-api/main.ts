@@ -1,7 +1,5 @@
 import {createGrid, FirstDataRenderedEvent, GridApi, GridOptions,} from '@ag-grid-community/core';
 
-let gridApi: GridApi;
-
 const gridOptions: GridOptions = {
   columnDefs: [
     { field: 'country', pivot: true },
@@ -42,14 +40,12 @@ function onFirstDataRendered(params: FirstDataRenderedEvent) {
   setTimeout( () => params.api.getDisplayedRowAtIndex(2)!.setExpanded(true), 0);
 }
 
-// setup the grid after the page has finished loading
-document.addEventListener('DOMContentLoaded', function () {
-  const gridDiv = document.querySelector<HTMLElement>('#myGrid')!
-  gridApi = createGrid(gridDiv, gridOptions);
+// setup the grid
+const gridDiv = document.querySelector<HTMLElement>('#myGrid')!
+const gridApi: GridApi = createGrid(gridDiv, gridOptions);
 
-  fetch('https://www.ag-grid.com/example-assets/wide-spread-of-sports.json')
-    .then(response => response.json())
-    .then(function (data) {
-      gridApi!.setGridOption('rowData', data)
-    })
-})
+fetch('https://www.ag-grid.com/example-assets/wide-spread-of-sports.json')
+  .then(response => response.json())
+  .then(function (data) {
+    gridApi.setGridOption('rowData', data)
+  })

@@ -12,31 +12,31 @@ import { ColourCellRenderer } from './colourCellRenderer_typescript'
 import { colors } from './colors';
 
 const columnDefs: ColDef[] = [
-  { 
-    headerName: 'Text Editor', 
-    field: 'color1', 
+  {
+    headerName: 'Text Editor',
+    field: 'color1',
     cellRenderer: ColourCellRenderer,
     cellEditor: 'agTextCellEditor',
     cellEditorParams: {
       maxLength: 20
     } as ITextCellEditorParams
   },
-  { 
-    headerName: 'Select Editor', 
-    field: 'color2', 
+  {
+    headerName: 'Select Editor',
+    field: 'color2',
     cellRenderer: ColourCellRenderer,
     cellEditor: 'agSelectCellEditor',
     cellEditorParams: {
       values: colors
     } as ISelectCellEditorParams
   },
-  { 
-    headerName: 'Rich Select Editor', 
-    field: 'color3', 
+  {
+    headerName: 'Rich Select Editor',
+    field: 'color3',
     cellRenderer: ColourCellRenderer,
     cellEditor: 'agRichSelectCellEditor',
     cellEditorParams: {
-      values: colors, 
+      values: colors,
       cellRenderer: ColourCellRenderer,
       filterList: true,
       searchType: 'match',
@@ -44,21 +44,21 @@ const columnDefs: ColDef[] = [
       valueListMaxHeight: 220
     } as IRichCellEditorParams
   },
-  { 
-    headerName: 'Large Text Editor', 
-    field: 'description', 
+  {
+    headerName: 'Large Text Editor',
+    field: 'description',
     cellEditorPopup: true,
-    cellEditor: 'agLargeTextCellEditor', 
+    cellEditor: 'agLargeTextCellEditor',
     cellEditorParams: {
       maxLength: 250,
       rows: 10,
       cols: 50
     } as ILargeTextEditorParams,
-    flex: 2 
+    flex: 2
   }
 ];
 
-function getRandomNumber(min: number, max: number) { // min and max included 
+function getRandomNumber(min: number, max: number) { // min and max included
   return Math.floor(Math.random() * (max - min + 1) + min)
 }
 
@@ -72,8 +72,6 @@ const data = Array.from(Array(20).keys()).map(() => {
   });
 });
 
-let gridApi: GridApi;
-
 const gridOptions: GridOptions = {
   defaultColDef: {
     flex: 1,
@@ -83,8 +81,6 @@ const gridOptions: GridOptions = {
   rowData: data
 }
 
-// setup the grid after the page has finished loading
-document.addEventListener('DOMContentLoaded', () => {
-  const gridDiv = document.querySelector<HTMLElement>('#myGrid')!
-  gridApi = createGrid(gridDiv, gridOptions);
-})
+// setup the grid
+const gridDiv = document.querySelector<HTMLElement>('#myGrid')!
+const gridApi: GridApi = createGrid(gridDiv, gridOptions);

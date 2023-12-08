@@ -7,8 +7,6 @@ import {
   ValueFormatterParams,
 } from '@ag-grid-community/core';
 
-let gridApi: GridApi;
-
 const gridOptions: GridOptions = {
   columnDefs: [
     { field: 'country', rowGroup: true, hide: true },
@@ -68,27 +66,25 @@ function groupTreeListFormatter(pathKey: string | null, level: number, _parentPa
   return pathKey || '(Blanks)';
 }
 
-// setup the grid after the page has finished loading
-document.addEventListener('DOMContentLoaded', function () {
-  var gridDiv = document.querySelector<HTMLElement>('#myGrid')!
-  gridApi = createGrid(gridDiv, gridOptions);
-  fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
-  .then(response => response.json())
-  .then((data: any[]) => {
-      const randomDays = [1, 4, 10, 15, 18];
-      gridApi!.setGridOption('rowData', [
-        {},
-        ...data.map(row => {
-          // generate pseudo-random dates
-          const dateParts = row.date.split('/');
-          const randomMonth = parseInt(dateParts[1]) - Math.floor(Math.random() * 3);
-          const newDate = new Date(
-            parseInt(dateParts[2]),
-            randomMonth,
-            randomMonth + randomDays[Math.floor(Math.random() * 5)]
-          );
-          return {...row, date: newDate};
-        })
-      ]);
-  })
+// setup the grid
+var gridDiv = document.querySelector<HTMLElement>('#myGrid')!
+const gridApi: GridApi = createGrid(gridDiv, gridOptions);
+fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
+.then(response => response.json())
+.then((data: any[]) => {
+    const randomDays = [1, 4, 10, 15, 18];
+    gridApi.setGridOption('rowData', [
+      {},
+      ...data.map(row => {
+        // generate pseudo-random dates
+        const dateParts = row.date.split('/');
+        const randomMonth = parseInt(dateParts[1]) - Math.floor(Math.random() * 3);
+        const newDate = new Date(
+          parseInt(dateParts[2]),
+          randomMonth,
+          randomMonth + randomDays[Math.floor(Math.random() * 5)]
+        );
+        return {...row, date: newDate};
+      })
+    ]);
 })

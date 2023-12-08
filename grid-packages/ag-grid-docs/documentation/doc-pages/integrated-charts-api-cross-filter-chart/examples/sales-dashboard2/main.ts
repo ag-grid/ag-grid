@@ -1,8 +1,6 @@
 import {createGrid, FirstDataRenderedEvent, GridApi, GridOptions, GridReadyEvent, ValueFormatterParams} from '@ag-grid-community/core';
 import {getData} from "./data";
 
-let gridApi: GridApi;
-
 const gridOptions: GridOptions = {
   columnDefs: [
     { field: 'salesRep', chartDataType: 'category' },
@@ -146,7 +144,5 @@ function createHandsetSalesChart(api: GridApi) {
   })
 }
 
-// setup the grid after the page has finished loading
-document.addEventListener('DOMContentLoaded', function () {
-  gridApi = createGrid(document.querySelector<HTMLElement>('#myGrid')!, gridOptions);
-})
+// setup the grid
+const gridApi: GridApi = createGrid(document.querySelector<HTMLElement>('#myGrid')!, gridOptions);

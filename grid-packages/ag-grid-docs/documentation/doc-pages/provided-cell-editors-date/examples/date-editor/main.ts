@@ -7,7 +7,7 @@ import {
 } from '@ag-grid-community/core';
 
 const columnDefs: ColDef[] = [
-  { 
+  {
     headerName: 'Date Editor',
     field: 'date',
     valueFormatter: (params: ValueFormatterParams<any, Date>) => {
@@ -26,8 +26,6 @@ const data = Array.from(Array(20).keys()).map( (val: any, index: number) => ({
   date: new Date(2023, 5, index + 1),
 }));
 
-let gridApi: GridApi;
-
 const gridOptions: GridOptions = {
   defaultColDef: {
     width: 200,
@@ -37,8 +35,6 @@ const gridOptions: GridOptions = {
   rowData: data
 }
 
-// setup the grid after the page has finished loading
-document.addEventListener('DOMContentLoaded', () => {
-  const gridDiv = document.querySelector<HTMLElement>('#myGrid')!
-  gridApi = createGrid(gridDiv, gridOptions);
-})
+// setup the grid
+const gridDiv = document.querySelector<HTMLElement>('#myGrid')!
+const gridApi: GridApi = createGrid(gridDiv, gridOptions);

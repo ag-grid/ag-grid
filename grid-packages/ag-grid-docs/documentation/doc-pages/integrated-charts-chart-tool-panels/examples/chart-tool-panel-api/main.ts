@@ -9,7 +9,6 @@ import {
 } from '@ag-grid-community/core';
 import {getData} from './data';
 
-let gridApi: GridApi;
 let chartId: string | undefined;
 
 const gridOptions: GridOptions = {
@@ -63,7 +62,5 @@ function closeChartToolPanel() {
 }
 
 // Initialise the grid after the DOM is fully loaded
-document.addEventListener('DOMContentLoaded', () => {
-  const gridDiv = document.querySelector<HTMLElement>('#myGrid')!;
-  gridApi = createGrid(gridDiv, gridOptions);
-});
+const gridDiv = document.querySelector<HTMLElement>('#myGrid')!;
+const gridApi: GridApi = createGrid(gridDiv, gridOptions);

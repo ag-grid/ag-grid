@@ -1,8 +1,6 @@
 import { ColDef, GridApi, createGrid, GridOptions } from '@ag-grid-community/core';
 import { CustomHeader } from './customHeader_typescript'
 
-let gridApi: GridApi<IOlympicData>;
-
 const gridOptions: GridOptions<IOlympicData> = {
     columnDefs: [
         { field: 'athlete' },
@@ -136,14 +134,12 @@ function onBtResizeOff() {
     gridApi!.setGridOption('columnDefs', columnDefs)
 }
 
-// setup the grid after the page has finished loading
-document.addEventListener('DOMContentLoaded', function () {
-    const gridDiv = document.querySelector<HTMLElement>('#myGrid')!
-    gridApi = createGrid(gridDiv, gridOptions);
+// setup the grid
+  const gridDiv = document.querySelector<HTMLElement>('#myGrid')!
+  const gridApi: GridApi<IOlympicData> = createGrid(gridDiv, gridOptions);
 
-    fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
-        .then(response => response.json())
-        .then(function (data) {
-            gridApi!.setGridOption('rowData', data)
-        })
-})
+  fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
+      .then(response => response.json())
+      .then(function (data) {
+          gridApi.setGridOption('rowData', data)
+      })

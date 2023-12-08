@@ -62,8 +62,6 @@ const columnDefs: ColDef[] = [
   },
 ]
 
-let gridApi: GridApi;
-
 const gridOptions: GridOptions = {
   columnDefs: columnDefs,
   defaultColDef: {
@@ -92,24 +90,22 @@ function numberFormatter(params: ValueFormatterParams) {
   }
 }
 
-// setup the grid after the page has finished loading
-document.addEventListener('DOMContentLoaded', function () {
-  var gridDiv = document.querySelector<HTMLElement>('#myGrid')!
-  gridApi = createGrid(gridDiv, gridOptions);
+// setup the grid
+var gridDiv = document.querySelector<HTMLElement>('#myGrid')!
+const gridApi: GridApi = createGrid(gridDiv, gridOptions);
 
 
-  fetch('https://www.ag-grid.com/example-assets/stocks.json')
-    .then(response => response.json())
-    .then(function (data) {
-      // set up a mock server - real code will not do this, it will contact your
-      // real server to get what it needs
-      var mockServer = createMockServer()
-      mockServer.init(data)
+fetch('https://www.ag-grid.com/example-assets/stocks.json')
+  .then(response => response.json())
+  .then(function (data) {
+    // set up a mock server - real code will not do this, it will contact your
+    // real server to get what it needs
+    var mockServer = createMockServer()
+    mockServer.init(data)
 
-      var viewportDatasource = createViewportDatasource(mockServer)
-      gridApi!.setGridOption('viewportDatasource', viewportDatasource)
-    })
-})
+    var viewportDatasource = createViewportDatasource(mockServer)
+    gridApi.setGridOption('viewportDatasource', viewportDatasource)
+  })
 
 
 

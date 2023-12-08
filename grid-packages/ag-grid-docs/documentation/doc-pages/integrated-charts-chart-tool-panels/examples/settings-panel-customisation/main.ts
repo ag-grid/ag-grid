@@ -1,8 +1,6 @@
 import {createGrid, FirstDataRenderedEvent, GridApi, GridOptions, GridReadyEvent} from '@ag-grid-community/core';
 import {getData} from './data';
 
-let gridApi: GridApi;
-
 const gridOptions: GridOptions = {
     columnDefs: [
         {field: 'country', chartDataType: 'category', width: 150},
@@ -41,6 +39,4 @@ function onFirstDataRendered(params: FirstDataRenderedEvent) {
     });
 }
 
-document.addEventListener('DOMContentLoaded', () => {
-    gridApi = createGrid(document.querySelector<HTMLElement>('#myGrid')!, gridOptions);
-});
+  const gridApi: GridApi = createGrid(document.querySelector<HTMLElement>('#myGrid')!, gridOptions);

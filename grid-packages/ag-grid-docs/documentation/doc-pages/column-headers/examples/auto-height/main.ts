@@ -8,8 +8,6 @@ const columnDefs: ColDef[] = [
   { field: 'total', headerName: 'The Total number of medals won by the athlete'},
 ]
 
-let gridApi: GridApi;
-
 const gridOptions: GridOptions = {
   defaultColDef: {
     initialWidth: 200,
@@ -19,12 +17,10 @@ const gridOptions: GridOptions = {
   columnDefs: columnDefs,
 }
 
-// setup the grid after the page has finished loading
-document.addEventListener('DOMContentLoaded', () => {
-  const gridDiv = document.querySelector<HTMLElement>('#myGrid')!
-  gridApi = createGrid(gridDiv, gridOptions);
+// setup the grid
+const gridDiv = document.querySelector<HTMLElement>('#myGrid')!
+const gridApi: GridApi = createGrid(gridDiv, gridOptions);
 
-  fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
-    .then(response => response.json())
-    .then(data => gridApi!.setGridOption('rowData', data))
-})
+fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
+  .then(response => response.json())
+  .then(data => gridApi.setGridOption('rowData', data))

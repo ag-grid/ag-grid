@@ -1,7 +1,5 @@
 import { CellClassParams, createGrid, GridApi, GridOptions, RowClassParams } from '@ag-grid-community/core';
 
-let gridApi: GridApi;
-
 const cellClassRules = {
     'very-low-cost': (p: CellClassParams) => { return p.value < 2500000},
     'low-cost': (p: CellClassParams) => { return p.value > 2500000 && p.value < 5000000},
@@ -56,10 +54,8 @@ const gridOptions: GridOptions = {
     rowSelection: 'multiple',
     rowClassRules: rowClassRules
 }
-document.addEventListener('DOMContentLoaded', function () {
-    var gridDiv = document.querySelector<HTMLElement>('#myGrid')!;
-    gridApi = createGrid(gridDiv, gridOptions);
-    fetch('https://www.ag-grid.com/example-assets/space-mission-data.json')
-        .then(response => response.json())
-        .then((data: any) => gridApi.setGridOption('rowData', data))
-})
+  var gridDiv = document.querySelector<HTMLElement>('#myGrid')!;
+  const gridApi: GridApi = createGrid(gridDiv, gridOptions);
+  fetch('https://www.ag-grid.com/example-assets/space-mission-data.json')
+      .then(response => response.json())
+      .then((data: any) => gridApi.setGridOption('rowData', data))

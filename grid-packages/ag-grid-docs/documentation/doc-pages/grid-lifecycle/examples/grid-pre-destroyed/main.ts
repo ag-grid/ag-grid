@@ -83,37 +83,35 @@ function destroyGrid() {
 }
 
 function reloadGrid() {
-    const gridDiv = document.querySelector<HTMLElement>('#myGrid')!;
+  const gridDiv = document.querySelector<HTMLElement>('#myGrid')!;
 
-    const updatedColDefs = gridOptions.columnDefs && columnWidths ?
-        gridOptions.columnDefs.map(val => {
-            const colDef = val as ColDef;
-            const result: ColDef = {
-                ...colDef,
-            };
+  const updatedColDefs = gridOptions.columnDefs && columnWidths ?
+      gridOptions.columnDefs.map(val => {
+          const colDef = val as ColDef;
+          const result: ColDef = {
+              ...colDef,
+          };
 
-            if (colDef.field) {
-                const restoredWidth = columnWidths?.get(colDef.field);
-                if (restoredWidth) {
-                    result.width = restoredWidth;
-                }
-            }
+          if (colDef.field) {
+              const restoredWidth = columnWidths?.get(colDef.field);
+              if (restoredWidth) {
+                  result.width = restoredWidth;
+              }
+          }
 
-            return result;
-        }) : gridOptions.columnDefs;
+          return result;
+      }) : gridOptions.columnDefs;
 
-    gridOptions.columnDefs = updatedColDefs;
+  gridOptions.columnDefs = updatedColDefs;
 
-    gridApi = createGrid(gridDiv, gridOptions);
+  gridApi = createGrid(gridDiv, gridOptions);
 
-    const parentContainer = document.querySelector<HTMLElement>('#gridPreDestroyedState');
-    parentContainer!.style.display = 'none';
+  const parentContainer = document.querySelector<HTMLElement>('#gridPreDestroyedState');
+  parentContainer!.style.display = 'none';
 
-    const exampleButtons = document.querySelector<HTMLElement>('#exampleButtons');
-    exampleButtons!.style.display = 'block';
+  const exampleButtons = document.querySelector<HTMLElement>('#exampleButtons');
+  exampleButtons!.style.display = 'block';
 }
 
-document.addEventListener('DOMContentLoaded', () => {
-    const gridDiv = document.querySelector<HTMLElement>('#myGrid')!;
-    gridApi = createGrid(gridDiv, gridOptions);
-});
+const gridDiv = document.querySelector<HTMLElement>('#myGrid')!;
+gridApi = createGrid(gridDiv, gridOptions);

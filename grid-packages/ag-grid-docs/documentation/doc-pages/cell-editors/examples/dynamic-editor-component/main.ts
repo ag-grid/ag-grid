@@ -14,9 +14,6 @@ import { MoodEditor } from './moodEditor_typescript';
 import { NumericCellEditor } from './numericCellEditor_typescript';
 
 
-let gridApi: GridApi<IRow>;
-
-
 const gridOptions: GridOptions<IRow> = {
   columnDefs: [
     { field: 'type' },
@@ -83,8 +80,6 @@ function cellEditorSelector(params: ICellEditorParams<IRow>): CellEditorSelector
   return undefined
 }
 
-// setup the grid after the page has finished loading
-document.addEventListener('DOMContentLoaded', function () {
-  var gridDiv = document.querySelector<HTMLElement>('#myGrid')!
-  gridApi = createGrid(gridDiv, gridOptions);
-})
+// setup the grid
+var gridDiv = document.querySelector<HTMLElement>('#myGrid')!
+const gridApi: GridApi<IRow> = createGrid(gridDiv, gridOptions);

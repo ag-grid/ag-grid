@@ -57,8 +57,6 @@ const columnDefs: ColDef[] = [
     { field: 'total', suppressMenu: true },
 ]
 
-let gridApi: GridApi;
-
 const gridOptions: GridOptions = {
     defaultColDef: {
         flex: 1,
@@ -162,47 +160,45 @@ function filterData(filterModel: any, data: any[]) {
     return resultOfFilter
 }
 
-// setup the grid after the page has finished loading
-document.addEventListener('DOMContentLoaded', function () {
-    const gridDiv = document.querySelector<HTMLElement>('#myGrid')!;
-    gridApi = createGrid(gridDiv, gridOptions);
+// setup the grid
+  const gridDiv = document.querySelector<HTMLElement>('#myGrid')!;
+  const gridApi: GridApi = createGrid(gridDiv, gridOptions);
 
-    fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
-        .then(response => response.json())
-        .then(function (data) {
-            // give each row an id
-            data.forEach(function (x: any, index: number) {
-                x.id = 'R' + (index + 1)
-            })
+  fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
+      .then(response => response.json())
+      .then(function (data) {
+          // give each row an id
+          data.forEach(function (x: any, index: number) {
+              x.id = 'R' + (index + 1)
+          })
 
-            const dataSource: IDatasource = {
-                rowCount: undefined, // behave as infinite scroll
-                getRows: (params: IGetRowsParams) => {
-                    console.log('asking for ' + params.startRow + ' to ' + params.endRow)
-                    // At this point in your code, you would call the server
-                    // To make the demo look real, wait for 500ms before returning
-                    setTimeout(() => {
-                        // take a slice of the total rows
-                        const dataAfterSortingAndFiltering = sortAndFilter(
-                            data,
-                            params.sortModel,
-                            params.filterModel
-                        );
-                        const rowsThisPage = dataAfterSortingAndFiltering.slice(
-                            params.startRow,
-                            params.endRow
-                        );
-                        // if on or after the last page, work out the last row.
-                        let lastRow = -1;
-                        if (dataAfterSortingAndFiltering.length <= params.endRow) {
-                            lastRow = dataAfterSortingAndFiltering.length
-                        }
-                        // call the success callback
-                        params.successCallback(rowsThisPage, lastRow)
-                    }, 500)
-                },
-            };
+          const dataSource: IDatasource = {
+              rowCount: undefined, // behave as infinite scroll
+              getRows: (params: IGetRowsParams) => {
+                  console.log('asking for ' + params.startRow + ' to ' + params.endRow)
+                  // At this point in your code, you would call the server
+                  // To make the demo look real, wait for 500ms before returning
+                  setTimeout(() => {
+                      // take a slice of the total rows
+                      const dataAfterSortingAndFiltering = sortAndFilter(
+                          data,
+                          params.sortModel,
+                          params.filterModel
+                      );
+                      const rowsThisPage = dataAfterSortingAndFiltering.slice(
+                          params.startRow,
+                          params.endRow
+                      );
+                      // if on or after the last page, work out the last row.
+                      let lastRow = -1;
+                      if (dataAfterSortingAndFiltering.length <= params.endRow) {
+                          lastRow = dataAfterSortingAndFiltering.length
+                      }
+                      // call the success callback
+                      params.successCallback(rowsThisPage, lastRow)
+                  }, 500)
+              },
+          };
 
-            gridApi!.setGridOption('datasource', dataSource)
-        })
-})
+          gridApi.setGridOption('datasource', dataSource)
+      })

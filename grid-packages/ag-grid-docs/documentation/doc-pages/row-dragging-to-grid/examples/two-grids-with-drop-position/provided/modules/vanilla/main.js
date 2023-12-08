@@ -42,7 +42,7 @@ var rightGridOptions = {
         flex: 1,
         minWidth: 100,
         filter: true,
-        
+
     },
     rowClassRules: {
         "red-row": 'data.color == "Red"',
@@ -165,14 +165,12 @@ function loadGrid(side) {
     return agGrid.createGrid(grid, side === 'Left' ? leftGridOptions : rightGridOptions);
 }
 
-// setup the grid after the page has finished loading
-document.addEventListener('DOMContentLoaded', function () {
-    var buttons = document.querySelectorAll('button.factory');
+var buttons = document.querySelectorAll('button.factory');
 
-    for (var i = 0; i < buttons.length; i++) {
-        buttons[i].addEventListener('click', onFactoryButtonClick);
-    }
+for (var i = 0; i < buttons.length; i++) {
+  buttons[i].addEventListener('click', onFactoryButtonClick);
+}
 
-    leftApi = loadGrid('Left');
-    rightApi = loadGrid('Right');
-});
+// setup the grid
+leftApi = loadGrid('Left');
+rightApi = loadGrid('Right');

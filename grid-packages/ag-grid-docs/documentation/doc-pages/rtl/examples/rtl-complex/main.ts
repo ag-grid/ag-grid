@@ -212,8 +212,6 @@ const autoGroupColumnDef: ColDef = {
     } as IGroupCellRendererParams,
 };
 
-let gridApi: GridApi;
-
 const gridOptions: GridOptions = {
     defaultColDef: {
         editable: true,
@@ -802,9 +800,7 @@ function languageCellRenderer(params: ICellRendererParams) {
     }
 }
 
-document.addEventListener('DOMContentLoaded', function () {
-    const gridDiv = document.querySelector<HTMLElement>('#myGrid')!;
+  const gridDiv = document.querySelector<HTMLElement>('#myGrid')!;
 
-    gridApi = createGrid(gridDiv, gridOptions);
-    createData()
-})
+  const gridApi: GridApi = createGrid(gridDiv, gridOptions);
+  createData()

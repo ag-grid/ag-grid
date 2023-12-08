@@ -2,9 +2,6 @@ import { GridApi, createGrid, GridOptions, RowNodeTransaction } from '@ag-grid-c
 import { getData } from "./data";
 
 
-let gridApi: GridApi;
-
-
 const gridOptions: GridOptions = {
   columnDefs: [
     { field: 'make' },
@@ -109,7 +106,5 @@ function printResult(res: RowNodeTransaction) {
 
 // wait for the document to be loaded, otherwise
 // AG Grid will not find the div in the document.
-document.addEventListener('DOMContentLoaded', function () {
-  const eGridDiv = document.querySelector<HTMLElement>('#myGrid')!
-  gridApi = createGrid(eGridDiv, gridOptions);
-})
+const eGridDiv = document.querySelector<HTMLElement>('#myGrid')!
+const gridApi: GridApi = createGrid(eGridDiv, gridOptions);

@@ -6,8 +6,6 @@ import {
   IServerSideGetRowsRequest,
 } from '@ag-grid-community/core';
 
-let gridApi: GridApi<IOlympicDataWithId>;
-
 const gridOptions: GridOptions<IOlympicDataWithId> = {
   columnDefs: [
     { field: 'id', maxWidth: 80 },
@@ -39,30 +37,28 @@ const gridOptions: GridOptions<IOlympicDataWithId> = {
   maxBlocksInCache: 2,
 }
 
-// setup the grid after the page has finished loading
-document.addEventListener('DOMContentLoaded', function () {
-  var gridDiv = document.querySelector<HTMLElement>('#myGrid')!
-  gridApi = createGrid(gridDiv, gridOptions);
+// setup the grid
+var gridDiv = document.querySelector<HTMLElement>('#myGrid')!
+const gridApi: GridApi<IOlympicDataWithId> = createGrid(gridDiv, gridOptions);
 
-  fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
-    .then(response => response.json())
-    .then(function (data) {
-      // adding row id to data
-      var idSequence = 0
-      data.forEach(function (item: any) {
-        item.id = idSequence++
-      })
-
-      // setup the fake server with entire dataset
-      var fakeServer = createFakeServer(data)
-
-      // create datasource with a reference to the fake server
-      var datasource = createServerSideDatasource(fakeServer)
-
-      // register the datasource with the grid
-      gridApi!.setGridOption('serverSideDatasource', datasource)
+fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
+  .then(response => response.json())
+  .then(function (data) {
+    // adding row id to data
+    var idSequence = 0
+    data.forEach(function (item: any) {
+      item.id = idSequence++
     })
-})
+
+    // setup the fake server with entire dataset
+    var fakeServer = createFakeServer(data)
+
+    // create datasource with a reference to the fake server
+    var datasource = createServerSideDatasource(fakeServer)
+
+    // register the datasource with the grid
+    gridApi.setGridOption('serverSideDatasource', datasource)
+  })
 
 function createServerSideDatasource(server: any): IServerSideDatasource {
   return {

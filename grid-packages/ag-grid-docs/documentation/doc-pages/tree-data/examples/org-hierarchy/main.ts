@@ -1,8 +1,6 @@
 import { GridApi, createGrid, GridOptions } from '@ag-grid-community/core';
 import { getData } from "./data";
 
-let gridApi: GridApi;
-
 const gridOptions: GridOptions = {
   columnDefs: [
     // we're using the auto group column by default!
@@ -36,10 +34,8 @@ function onFilterTextBoxChanged() {
 
 // wait for the document to be loaded, otherwise
 // AG Grid will not find the div in the document.
-document.addEventListener('DOMContentLoaded', function () {
-  // lookup the container we want the Grid to use
-  var gridDiv = document.querySelector<HTMLElement>('#myGrid')!
+// lookup the container we want the Grid to use
+var gridDiv = document.querySelector<HTMLElement>('#myGrid')!
 
-  // create the grid passing in the div to use together with the columns & data we want to use
-  gridApi = createGrid(gridDiv, gridOptions);
-})
+// create the grid passing in the div to use together with the columns & data we want to use
+const gridApi: GridApi = createGrid(gridDiv, gridOptions);

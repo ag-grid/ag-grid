@@ -12,8 +12,6 @@ const updateRowCount = (value?: string | number) => {
     element!.innerHTML = value !== undefined ? value.toString() : '-';
 }
 
-let gridApi: GridApi;
-
 const gridOptions: GridOptions = {
     columnDefs: [
         { field: 'name', headerName: 'Athlete' },
@@ -37,7 +35,5 @@ function loadDataSetB() {
     gridApi!.setGridOption('rowData', getDataSetB());
 }
 
-document.addEventListener('DOMContentLoaded', () => {
-    const gridDiv = document.querySelector<HTMLElement>('#myGrid')!;
-    gridApi = createGrid(gridDiv, gridOptions);
-});
+  const gridDiv = document.querySelector<HTMLElement>('#myGrid')!;
+  const gridApi: GridApi = createGrid(gridDiv, gridOptions);

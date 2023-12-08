@@ -161,21 +161,18 @@ function loadGrids() {
         });
 }
 
-// setup the grid after the page has finished loading
-document.addEventListener('DOMContentLoaded', function () {
-    const resetBtn = document.querySelector('button.reset');
-    const checkboxToggle = document.querySelector('#toggleCheck');
+const resetBtn = document.querySelector('button.reset');
+const checkboxToggle = document.querySelector('#toggleCheck');
 
-    resetBtn.addEventListener('click', function () {
-        resetInputs();
-        loadGrids();
-    });
-
-    checkboxToggle.addEventListener('change', function () {
-        leftApi.setColumnVisible('checkbox', checkboxToggle.checked);
-        leftApi.setGridOption('suppressRowClickSelection', checkboxToggle.checked);
-    });
-
-    loadGrids();
+resetBtn.addEventListener('click', function () {
+  resetInputs();
+  loadGrids();
 });
 
+checkboxToggle.addEventListener('change', function () {
+  leftApi.setColumnVisible('checkbox', checkboxToggle.checked);
+  leftApi.setGridOption('suppressRowClickSelection', checkboxToggle.checked);
+});
+
+// setup the grid
+loadGrids();

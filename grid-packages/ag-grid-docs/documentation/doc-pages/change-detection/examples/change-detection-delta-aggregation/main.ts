@@ -8,8 +8,6 @@ import {
 var rowIdCounter = 0
 var callCount = 0
 
-let gridApi: GridApi;
-
 const gridOptions: GridOptions = {
   columnDefs: [
     { field: 'topGroup', rowGroup: true, hide: true },
@@ -225,8 +223,6 @@ function changeGroupUsingTransaction() {
   gridApi!.applyTransaction(transaction)
 }
 
-// setup the grid after the page has finished loading
-document.addEventListener('DOMContentLoaded', function () {
-  var gridDiv = document.querySelector<HTMLElement>('#myGrid')!
-  gridApi = createGrid(gridDiv, gridOptions);
-})
+// setup the grid
+var gridDiv = document.querySelector<HTMLElement>('#myGrid')!
+const gridApi: GridApi = createGrid(gridDiv, gridOptions);

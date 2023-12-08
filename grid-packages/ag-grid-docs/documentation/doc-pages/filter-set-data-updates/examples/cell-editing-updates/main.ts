@@ -6,8 +6,6 @@ import {
   IFiltersToolPanel,
 } from '@ag-grid-community/core';
 
-let gridApi: GridApi;
-
 const gridOptions: GridOptions = {
   rowData: getRowData(),
   columnDefs: [
@@ -43,8 +41,6 @@ function onFirstDataRendered(params: FirstDataRenderedEvent) {
   params.api.getToolPanelInstance('filters')!.expandFilters();
 }
 
-// setup the grid after the page has finished loading
-document.addEventListener('DOMContentLoaded', function () {
-  var gridDiv = document.querySelector<HTMLElement>('#myGrid')!
-  gridApi = createGrid(gridDiv, gridOptions);
-})
+// setup the grid
+var gridDiv = document.querySelector<HTMLElement>('#myGrid')!
+const gridApi: GridApi = createGrid(gridDiv, gridOptions);

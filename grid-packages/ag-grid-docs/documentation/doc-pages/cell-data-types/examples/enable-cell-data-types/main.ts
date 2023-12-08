@@ -8,8 +8,6 @@ interface IOlympicDataTypes extends IOlympicData {
   };
 }
 
-let gridApi: GridApi<IOlympicDataTypes>;
-
 const gridOptions: GridOptions<IOlympicDataTypes> = {
   columnDefs: [
     { field: 'athlete' },
@@ -36,24 +34,22 @@ const gridOptions: GridOptions<IOlympicDataTypes> = {
   },
 }
 
-// setup the grid after the page has finished loading
-document.addEventListener('DOMContentLoaded', () => {
-  const gridDiv = document.querySelector<HTMLElement>('#myGrid')!
-  gridApi = createGrid(gridDiv, gridOptions);
+// setup the grid
+const gridDiv = document.querySelector<HTMLElement>('#myGrid')!
+const gridApi: GridApi<IOlympicDataTypes> = createGrid(gridDiv, gridOptions);
 
 
-  fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
-    .then(response => response.json())
-    .then((data: IOlympicDataTypes[]) => gridApi!.setGridOption('rowData', data.map(rowData => {
-      const dateParts = rowData.date.split('/');
-      return {
-        ...rowData,
-        date: `${dateParts[2]}-${dateParts[1]}-${dateParts[0]}`,
-        dateObject: new Date(parseInt(dateParts[2]), parseInt(dateParts[1]) - 1, parseInt(dateParts[0])),
-        countryObject: {
-          name: rowData.country,
-        },
-        hasGold: rowData.gold > 0,
-      };
-    })))
-})
+fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
+  .then(response => response.json())
+  .then((data: IOlympicDataTypes[]) => gridApi.setGridOption('rowData', data.map(rowData => {
+    const dateParts = rowData.date.split('/');
+    return {
+      ...rowData,
+      date: `${dateParts[2]}-${dateParts[1]}-${dateParts[0]}`,
+      dateObject: new Date(parseInt(dateParts[2]), parseInt(dateParts[1]) - 1, parseInt(dateParts[0])),
+      countryObject: {
+        name: rowData.country,
+      },
+      hasGold: rowData.gold > 0,
+    };
+  })))

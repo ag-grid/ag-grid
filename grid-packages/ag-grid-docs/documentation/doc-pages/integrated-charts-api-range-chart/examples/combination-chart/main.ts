@@ -2,8 +2,6 @@ import {createGrid, FirstDataRenderedEvent, GridApi, GridOptions, GridReadyEvent
 import {AgAxisCaptionFormatterParams} from 'ag-charts-community';
 import {getData} from "./data";
 
-let gridApi: GridApi;
-
 const gridOptions: GridOptions = {
   columnDefs: [
     { field: 'day', maxWidth: 90 },
@@ -74,6 +72,4 @@ function onFirstDataRendered(params: FirstDataRenderedEvent) {
 }
 
 // set up the grid after the page has finished loading
-document.addEventListener('DOMContentLoaded', function () {
-  gridApi = createGrid(document.querySelector<HTMLElement>('#myGrid')!, gridOptions);
-});
+const gridApi: GridApi = createGrid(document.querySelector<HTMLElement>('#myGrid')!, gridOptions);

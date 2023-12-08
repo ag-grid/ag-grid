@@ -11,7 +11,6 @@ import {getData} from './data';
 
 declare var moment: any;
 
-let gridApi: GridApi;
 let currentChartRef: any;
 
 function getColumnDefs() {
@@ -120,8 +119,6 @@ function formatDate(date: Date | number) {
   return Intl.DateTimeFormat('en-GB', { day: '2-digit', month: 'short', year: undefined }).format(new Date(date))
 }
 
-// setup the grid after the page has finished loading
-document.addEventListener('DOMContentLoaded', function () {
-  const gridDiv = document.querySelector<HTMLElement>('#myGrid')!
-  gridApi = createGrid(gridDiv, gridOptions);
-})
+// setup the grid
+const gridDiv = document.querySelector<HTMLElement>('#myGrid')!
+const gridApi: GridApi = createGrid(gridDiv, gridOptions);

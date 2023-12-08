@@ -6,8 +6,6 @@ import {
   IServerSideGetRowsRequest,
 } from '@ag-grid-community/core';
 
-let gridApi: GridApi<IOlympicData>;
-
 const gridOptions: GridOptions<IOlympicData> = {
   columnDefs: [
     { headerName: 'Index', valueGetter: 'node.rowIndex', minWidth: 100},
@@ -30,27 +28,25 @@ const gridOptions: GridOptions<IOlympicData> = {
   serverSideInitialRowCount: 5500,
 }
 
-// setup the grid after the page has finished loading
-document.addEventListener('DOMContentLoaded', function () {
-  var gridDiv = document.querySelector<HTMLElement>('#myGrid')!
-  gridApi = createGrid(gridDiv, gridOptions);
+// setup the grid
+var gridDiv = document.querySelector<HTMLElement>('#myGrid')!
+const gridApi: GridApi<IOlympicData> = createGrid(gridDiv, gridOptions);
 
-  fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
-    .then(response => response.json())
-    .then(function (data) {
-      // setup the fake server with entire dataset
-      var fakeServer = createFakeServer(data);
+fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
+  .then(response => response.json())
+  .then(function (data) {
+    // setup the fake server with entire dataset
+    var fakeServer = createFakeServer(data);
 
-      // create datasource with a reference to the fake server
-      var datasource = createServerSideDatasource(fakeServer);
+    // create datasource with a reference to the fake server
+    var datasource = createServerSideDatasource(fakeServer);
 
-      // register the datasource with the grid
-      gridApi!.setGridOption('serverSideDatasource', datasource);
+    // register the datasource with the grid
+    gridApi.setGridOption('serverSideDatasource', datasource);
 
-      // scroll the grid down until row 5000 is at the top of the viewport
-      gridApi!.ensureIndexVisible(5000, 'top');
-    })
-})
+    // scroll the grid down until row 5000 is at the top of the viewport
+    gridApi.ensureIndexVisible(5000, 'top');
+  })
 
 function createServerSideDatasource(server: any): IServerSideDatasource {
   return {

@@ -26,8 +26,6 @@ const columnDefs: ColGroupDef[] = [
   },
 ]
 
-let gridApi: GridApi;
-
 const gridOptions: GridOptions = {
   columnDefs: columnDefs,
   defaultColDef: {
@@ -104,8 +102,6 @@ function setFixedHeight() {
   (document.querySelector<HTMLElement>('#myGrid')! as any)!.style.height = '400px'
 }
 
-// setup the grid after the page has finished loading
-document.addEventListener('DOMContentLoaded', function () {
-  var gridDiv = document.querySelector<HTMLElement>('#myGrid')!
-  gridApi = createGrid(gridDiv, gridOptions);
-})
+// setup the grid
+var gridDiv = document.querySelector<HTMLElement>('#myGrid')!
+const gridApi: GridApi = createGrid(gridDiv, gridOptions);

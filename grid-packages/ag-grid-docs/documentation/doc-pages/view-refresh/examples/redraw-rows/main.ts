@@ -3,8 +3,6 @@ import { GridApi, createGrid, GridOptions, RowClassParams, RowStyle } from '@ag-
 var colorIndex = 0
 var colors = ['#99999944', '#CC333344', '#33CC3344', '#2244CC44']
 
-let gridApi: GridApi;
-
 const gridOptions: GridOptions = {
   columnDefs: [
     { headerName: 'A', field: 'a' },
@@ -62,8 +60,6 @@ function redrawTopRows() {
   gridApi!.redrawRows({ rowNodes: rows })
 }
 
-// setup the grid after the page has finished loading
-document.addEventListener('DOMContentLoaded', function () {
-  var gridDiv = document.querySelector<HTMLElement>('#myGrid')!
-  gridApi = createGrid(gridDiv, gridOptions);
-})
+// setup the grid
+var gridDiv = document.querySelector<HTMLElement>('#myGrid')!
+const gridApi: GridApi = createGrid(gridDiv, gridOptions);

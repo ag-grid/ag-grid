@@ -23,11 +23,11 @@ const columnDefs: ColDef[] = [
       `var nameSplit = newValue.split(" ");
              var newFirstName = nameSplit[0];
              var newLastName = nameSplit[1];
-             if (data.firstName !== newFirstName || data.lastName !== newLastName) {  
-                data.firstName = newFirstName;  
-                data.lastName = newLastName;  
+             if (data.firstName !== newFirstName || data.lastName !== newLastName) {
+                data.firstName = newFirstName;
+                data.lastName = newLastName;
                 return true;
-            } else {  
+            } else {
                 return false;
             }`,
   },
@@ -35,8 +35,6 @@ const columnDefs: ColDef[] = [
   { headerName: 'B', field: 'b', width: 100 },
   { headerName: 'A + B', valueGetter: 'data.a + data.b' },
 ]
-
-let gridApi: GridApi;
 
 const gridOptions: GridOptions = {
   columnDefs: columnDefs,
@@ -54,8 +52,6 @@ function onCellValueChanged(event: CellValueChangedEvent) {
   console.log('data after changes is: ', event.data)
 }
 
-// setup the grid after the page has finished loading
-document.addEventListener('DOMContentLoaded', function () {
-  const gridDiv = document.querySelector<HTMLElement>('#myGrid')!
-  gridApi = createGrid(gridDiv, gridOptions);
-})
+// setup the grid
+const gridDiv = document.querySelector<HTMLElement>('#myGrid')!
+const gridApi: GridApi = createGrid(gridDiv, gridOptions);

@@ -1,8 +1,6 @@
 import { GridApi, createGrid, GridOptions } from '@ag-grid-community/core';
 import { getData } from "./data";
 
-let gridApi: GridApi;
-
 const gridOptions: GridOptions = {
   rowData: getData(),
   columnDefs: [
@@ -52,7 +50,5 @@ function randomInt() {
 
 // wait for the document to be loaded, otherwise
 // AG Grid will not find the div in the document.
-document.addEventListener('DOMContentLoaded', function () {
-  var eGridDiv = document.querySelector<HTMLElement>('#myGrid')!
-  gridApi = createGrid(eGridDiv, gridOptions);
-})
+var eGridDiv = document.querySelector<HTMLElement>('#myGrid')!
+const gridApi: GridApi = createGrid(eGridDiv, gridOptions);

@@ -1,6 +1,3 @@
-import { GridApi, createGrid, GridOptions, IServerSideDatasource } from '@ag-grid-community/core';
-declare var FakeServer: any;
-let gridApi: GridApi<IOlympicDataWithId>;
 const gridOptions: GridOptions<IOlympicDataWithId> = {
   columnDefs: [
     { field: 'id', maxWidth: 75 },
@@ -31,30 +28,28 @@ const gridOptions: GridOptions<IOlympicDataWithId> = {
 
 }
 
-// setup the grid after the page has finished loading
-document.addEventListener('DOMContentLoaded', function () {
-  var gridDiv = document.querySelector<HTMLElement>('#myGrid')!
-  gridApi = createGrid(gridDiv, gridOptions);
+// setup the grid
+var gridDiv = document.querySelector<HTMLElement>('#myGrid')!
+const gridApi: GridApi<IOlympicDataWithId> = createGrid(gridDiv, gridOptions);
 
-  fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
-    .then(response => response.json())
-    .then(function (data) {
-      // add id to data
-      var idSequence = 1
-      data.forEach(function (item: any) {
-        item.id = idSequence++
-      })
-
-      // setup the fake server with entire dataset
-      var fakeServer = new FakeServer(data)
-
-      // create datasource with a reference to the fake server
-      var datasource = getServerSideDatasource(fakeServer)
-
-      // register the datasource with the grid
-      gridApi!.setGridOption('serverSideDatasource', datasource)
+fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
+  .then(response => response.json())
+  .then(function (data) {
+    // add id to data
+    var idSequence = 1
+    data.forEach(function (item: any) {
+      item.id = idSequence++
     })
-})
+
+    // setup the fake server with entire dataset
+    var fakeServer = new FakeServer(data)
+
+    // create datasource with a reference to the fake server
+    var datasource = getServerSideDatasource(fakeServer)
+
+    // register the datasource with the grid
+    gridApi.setGridOption('serverSideDatasource', datasource)
+  })
 
 function getServerSideDatasource(server: any): IServerSideDatasource {
   return {

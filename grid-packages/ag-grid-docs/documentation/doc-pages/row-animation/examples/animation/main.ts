@@ -11,8 +11,6 @@ const columnDefs: ColDef[] = [
   { field: 'bronze', aggFunc: 'sum' },
 ]
 
-let gridApi: GridApi<IOlympicData>;
-
 const gridOptions: GridOptions<IOlympicData> = {
   defaultColDef: {
     flex: 1,
@@ -128,17 +126,15 @@ function getActions() {
 }
 
 // from actual demo page (/animation/)
-document.addEventListener('DOMContentLoaded', function () {
-  var gridDiv =
-    document.querySelector<HTMLElement>('#myGrid')! ||
-    document.querySelector('#animationGrid')
+var gridDiv =
+  document.querySelector<HTMLElement>('#myGrid')! ||
+  document.querySelector('#animationGrid')
 
-  gridApi = createGrid(gridDiv, gridOptions);
+const gridApi: GridApi<IOlympicData> = createGrid(gridDiv, gridOptions);
 
-  fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
-    .then(response => response.json())
-    .then(function (data) {
-      gridApi!.setGridOption('rowData', data.slice(0, 50))
-      startInterval(gridApi!)
-    })
-})
+fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
+  .then(response => response.json())
+  .then(function (data) {
+    gridApi.setGridOption('rowData', data.slice(0, 50))
+    startInterval(gridApi)
+  })

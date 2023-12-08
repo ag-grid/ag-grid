@@ -8,22 +8,6 @@ function abValueGetter(params: ValueGetterParams) {
   return params.data.a + params.data.b
 }
 
-function a1000ValueGetter(params: ValueGetterParams) {
-  return params.data.a * 1000
-}
-function b137ValueGetter(params: ValueGetterParams) {
-  return params.data.b * 137
-}
-function randomValueGetter() {
-  return Math.floor(Math.random() * 1000)
-}
-function chainValueGetter(params: ValueGetterParams) {
-  return params.getValue('a&b') * 1000
-}
-function constValueGetter() {
-  return 99999
-}
-let gridApi: GridApi;
 const gridOptions: GridOptions = {
   columnDefs: [
     {
@@ -82,8 +66,6 @@ function createRowData() {
   return rowData
 }
 
-// setup the grid after the page has finished loading
-document.addEventListener('DOMContentLoaded', function () {
-  var gridDiv = document.querySelector<HTMLElement>('#myGrid')!
-  gridApi = createGrid(gridDiv, gridOptions);
-})
+// setup the grid
+var gridDiv = document.querySelector<HTMLElement>('#myGrid')!
+const gridApi: GridApi = createGrid(gridDiv, gridOptions);

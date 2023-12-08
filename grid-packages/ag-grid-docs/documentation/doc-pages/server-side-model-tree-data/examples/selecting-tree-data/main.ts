@@ -26,8 +26,6 @@ const columnDefs: ColDef[] = [
   { field: 'startDate' },
 ];
 
-let gridApi: GridApi;
-
 const gridOptions: GridOptions = {
   defaultColDef: {
     width: 235,
@@ -60,29 +58,27 @@ const gridOptions: GridOptions = {
   getServerSideGroupKey: (dataItem: any) => dataItem.employeeName,
 }
 
-// setup the grid after the page has finished loading
-document.addEventListener('DOMContentLoaded', function () {
-  var gridDiv = document.querySelector<HTMLElement>('#myGrid')!
-  gridApi = createGrid(gridDiv, gridOptions);
+// setup the grid
+var gridDiv = document.querySelector<HTMLElement>('#myGrid')!
+const gridApi: GridApi = createGrid(gridDiv, gridOptions);
 
-  fetch('https://www.ag-grid.com/example-assets/tree-data.json')
-    .then(response => response.json())
-    .then(function (data) {
+fetch('https://www.ag-grid.com/example-assets/tree-data.json')
+  .then(response => response.json())
+  .then(function (data) {
 
-      const adjustedData = [
-        {
-          employeeId: -1,
-          employeeName: 'Robert Peterson',
-          employmentType: 'Founder',
-          startDate: '24/01/1990',
-        },
-        ...data,
-      ];
-      var fakeServer = createFakeServer(adjustedData, gridApi!)
-      var datasource = createServerSideDatasource(fakeServer)
-      gridApi!.setGridOption('serverSideDatasource', datasource)
-    })
-})
+    const adjustedData = [
+      {
+        employeeId: -1,
+        employeeName: 'Robert Peterson',
+        employmentType: 'Founder',
+        startDate: '24/01/1990',
+      },
+      ...data,
+    ];
+    var fakeServer = createFakeServer(adjustedData, gridApi)
+    var datasource = createServerSideDatasource(fakeServer)
+    gridApi.setGridOption('serverSideDatasource', datasource)
+  })
 
 function createFakeServer(fakeServerData: any[], api: GridApi) {
   const getDataAtRoute = (route: string[]) => {

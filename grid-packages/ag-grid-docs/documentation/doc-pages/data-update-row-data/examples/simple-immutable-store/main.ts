@@ -152,8 +152,6 @@ function reverseItems() {
     gridApi!.setGridOption('rowData', immutableStore)
 }
 
-let gridApi: GridApi;
-
 const gridOptions: GridOptions = {
     columnDefs: [
         { headerName: 'Symbol', field: 'symbol' },
@@ -187,7 +185,5 @@ const gridOptions: GridOptions = {
 }
 
 // after page is loaded, create the grid.
-document.addEventListener('DOMContentLoaded', function () {
-    const eGridDiv = document.querySelector<HTMLElement>('#myGrid')!;
-    gridApi = createGrid(eGridDiv, gridOptions);
-})
+  const eGridDiv = document.querySelector<HTMLElement>('#myGrid')!;
+  const gridApi: GridApi = createGrid(eGridDiv, gridOptions);

@@ -8,14 +8,14 @@ import {
 
 const languages = ['English', 'Spanish', 'French', 'Portuguese', '(other)'];
 
-function getRandomNumber(min: number, max: number) { // min and max included 
+function getRandomNumber(min: number, max: number) { // min and max included
   return Math.floor(Math.random() * (max - min + 1) + min)
 }
 
 const columnDefs: ColDef[] = [
-  { 
+  {
     headerName: 'Rich Select Editor',
-    field: 'language', 
+    field: 'language',
     cellEditor: 'agRichSelectCellEditor',
     cellEditorParams: {
       values: languages,
@@ -23,8 +23,6 @@ const columnDefs: ColDef[] = [
     } as IRichCellEditorParams
   },
 ];
-
-let gridApi: GridApi;
 
 const gridOptions: GridOptions = {
   defaultColDef: {
@@ -35,8 +33,6 @@ const gridOptions: GridOptions = {
   rowData: new Array(100).fill(null).map(() => ({ language: languages[getRandomNumber(0, 4)] }))
 }
 
-// setup the grid after the page has finished loading
-document.addEventListener('DOMContentLoaded', () => {
-  const gridDiv = document.querySelector<HTMLElement>('#myGrid')!
-  gridApi = createGrid(gridDiv, gridOptions);
-})
+// setup the grid
+const gridDiv = document.querySelector<HTMLElement>('#myGrid')!
+const gridApi: GridApi = createGrid(gridDiv, gridOptions);

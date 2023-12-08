@@ -64,14 +64,13 @@ const columnDefs = [
         cellEditor: MySimpleEditor
     }
 ];
-let api;
 const gridOptions = {
     columnDefs: columnDefs,
     defaultColDef: {
         editable: true,
         flex: 1,
         minWidth: 100,
-        filter: true,    
+        filter: true,
     },
     rowData: createRowData(),
     onGridReady: (params) => {
@@ -94,9 +93,6 @@ const gridOptions = {
 
 };
 
-// setup the grid after the page has finished loading
-document.addEventListener('DOMContentLoaded', () => {
-    const gridDiv = document.querySelector('#myGrid');
-    api = agGrid.createGrid(gridDiv, gridOptions);
-});
-
+// setup the grid
+const gridDiv = document.querySelector('#myGrid');
+const gridApi = agGrid.createGrid(gridDiv, gridOptions);

@@ -1,8 +1,6 @@
 import { GridApi, createGrid, FirstDataRenderedEvent, GridOptions } from '@ag-grid-community/core';
 import { DetailCellRenderer } from './detailCellRenderer_typescript'
 
-let gridApi: GridApi<IAccount>;
-
 const gridOptions: GridOptions<IAccount> = {
   masterDetail: true,
   detailCellRenderer: DetailCellRenderer,
@@ -25,14 +23,12 @@ function onFirstDataRendered(params: FirstDataRenderedEvent) {
   })
 }
 
-// setup the grid after the page has finished loading
-document.addEventListener('DOMContentLoaded', function () {
-  var gridDiv = document.querySelector<HTMLElement>('#myGrid')!
-  gridApi = createGrid(gridDiv, gridOptions);
+// setup the grid
+var gridDiv = document.querySelector<HTMLElement>('#myGrid')!
+const gridApi: GridApi<IAccount> = createGrid(gridDiv, gridOptions);
 
-  fetch('https://www.ag-grid.com/example-assets/master-detail-data.json')
-    .then(response => response.json())
-    .then((data: IAccount[]) => {
-      gridApi!.setGridOption('rowData', data)
-    })
-})
+fetch('https://www.ag-grid.com/example-assets/master-detail-data.json')
+  .then(response => response.json())
+  .then((data: IAccount[]) => {
+    gridApi.setGridOption('rowData', data)
+  })

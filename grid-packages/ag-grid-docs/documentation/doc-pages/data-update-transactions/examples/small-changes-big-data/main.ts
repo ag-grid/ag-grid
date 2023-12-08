@@ -5,7 +5,7 @@ import { createDataItem, getData } from './data'
 var aggCallCount = 0
 var compareCallCount = 0
 var filterCallCount = 0
-let gridApi: GridApi;
+
 function myAggFunc(params: IAggFuncParams) {
   aggCallCount++
 
@@ -210,9 +210,6 @@ function isGroupOpenByDefault(params: IsGroupOpenByDefaultParams<IOlympicData, a
   return ['Delhi', 'Seoul'].includes(params.key);
 }
 
-// wait for the document to be loaded, otherwise
-// AG Grid will not find the div in the document.
-document.addEventListener('DOMContentLoaded', function () {
-  var eGridDiv = document.querySelector<HTMLElement>('#myGrid')!
-  gridApi = createGrid(eGridDiv, gridOptions)
-})
+// setup the grid
+var eGridDiv = document.querySelector<HTMLElement>('#myGrid')!;
+const gridApi: GridApi = createGrid(eGridDiv, gridOptions);

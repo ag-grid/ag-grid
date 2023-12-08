@@ -19,8 +19,6 @@ const setCol1SizeInfOnFirstDataRendered = (value?: string | number) => {
     element!.innerHTML = value !== undefined ? `${value.toString()}px` : '-';
 };
 
-let gridApi: GridApi;
-
 const gridOptions: GridOptions = {
     columnDefs: [
         {
@@ -66,7 +64,5 @@ function loadGridData() {
     document.querySelector<HTMLElement>('#loadGridDataButton')!.style.display = 'none';
 }
 
-document.addEventListener('DOMContentLoaded', () => {
-    const gridDiv = document.querySelector<HTMLElement>('#myGrid')!;
-    gridApi = createGrid(gridDiv, gridOptions);
-});
+  const gridDiv = document.querySelector<HTMLElement>('#myGrid')!;
+  const gridApi: GridApi = createGrid(gridDiv, gridOptions);

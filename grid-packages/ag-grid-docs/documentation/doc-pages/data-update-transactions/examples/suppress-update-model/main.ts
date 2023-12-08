@@ -82,7 +82,6 @@ function getMyFilter(): IFilterType {
 
 const myFilter = getMyFilter();
 
-let gridApi: GridApi;
 const columnDefs: ColDef[] = [
     { field: 'city', rowGroup: true, hide: true },
     { field: 'laptop', rowGroup: true, hide: true },
@@ -208,10 +207,8 @@ function isGroupOpenByDefault(params: IsGroupOpenByDefaultParams<IOlympicData, a
 
 // wait for the document to be loaded, otherwise
 // AG Grid will not find the div in the document.
-document.addEventListener('DOMContentLoaded', function () {
-    const eGridDiv = document.querySelector<HTMLElement>('#myGrid')!;
-    gridApi = createGrid(eGridDiv, gridOptions)
-})
+  const eGridDiv = document.querySelector<HTMLElement>('#myGrid')!;
+  const gridApi: GridApi = createGrid(eGridDiv, gridOptions)
 
 function timeOperation(name: string, operation: any) {
     aggCallCount = 0

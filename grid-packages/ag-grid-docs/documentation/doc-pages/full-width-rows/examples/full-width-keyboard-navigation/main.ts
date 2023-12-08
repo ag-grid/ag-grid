@@ -93,8 +93,6 @@ function suppressKeyboardEvent({ event }: SuppressKeyboardEventParams<any>) {
   return suppressEvent
 }
 
-let gridApi: GridApi;
-
 const gridOptions: GridOptions = {
   columnDefs: [
     { field: "name" },
@@ -119,8 +117,6 @@ function isFullWidth(data: any) {
   return ["Peru", "France", "Italy"].includes(data.name)
 }
 
-// setup the grid after the page has finished loading
-document.addEventListener("DOMContentLoaded", function () {
-  const gridDiv = document.querySelector<HTMLElement>("#myGrid")!
-  gridApi = createGrid(gridDiv, gridOptions);
-})
+// setup the grid
+const gridDiv = document.querySelector<HTMLElement>("#myGrid")!
+const gridApi: GridApi = createGrid(gridDiv, gridOptions);

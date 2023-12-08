@@ -1,8 +1,6 @@
 import { GridApi, createGrid, GridOptions, GridReadyEvent } from '@ag-grid-community/core';
 import { getData,TAthlete } from './data';
 
-let gridApi: GridApi;
-
 const gridOptions: GridOptions = {
     columnDefs: [
         { field: 'name', headerName: 'Athlete', width: 250 },
@@ -32,11 +30,9 @@ function reloadGrid() {
     gridApi.destroy()
   }
 
-  setTimeout(() => {
-    // Artificial delay to show grid being destroyed and re-created
-    const gridDiv = document.querySelector<HTMLElement>("#myGrid")!
-    gridApi = createGrid(gridDiv, gridOptions);
-  }, 500)
+  // Artificial delay to show grid being destroyed and re-created
+  const gridDiv = document.querySelector<HTMLElement>("#myGrid")!
+  const gridApi: GridApi = createGrid(gridDiv, gridOptions);
 }
 
 const gridDiv = document.querySelector<HTMLElement>('#myGrid')!;

@@ -290,8 +290,6 @@ function createTradeId() {
   return nextTradeId
 }
 
-let gridApi: GridApi;
-
 const gridOptions: GridOptions = {
   columnDefs: columnDefs,
   defaultColDef: {
@@ -399,7 +397,5 @@ function updateImmutableObject(original: any, newValues: any) {
 }
 
 // after page is loaded, create the grid.
-document.addEventListener('DOMContentLoaded', function () {
-  const eGridDiv = document.querySelector<HTMLElement>('#myGrid')!;
-  gridApi = createGrid(eGridDiv, gridOptions);
-})
+const eGridDiv = document.querySelector<HTMLElement>('#myGrid')!;
+const gridApi: GridApi = createGrid(eGridDiv, gridOptions);

@@ -13,8 +13,6 @@ const MedalRenderer = function (params: ICellRendererParams) {
   return getMedalString(params.value)
 };
 
-let gridApi: GridApi;
-
 const gridOptions: GridOptions = {
   columnDefs: [
     // simple column, easy to understand
@@ -109,8 +107,6 @@ function quickFilterMatcher(quickFilterParts: string[], rowQuickFilterAggregateT
   return quickFilterParts.every(part => rowQuickFilterAggregateText.match(part));
 }
 
-// setup the grid after the page has finished loading
-document.addEventListener('DOMContentLoaded', function () {
-  var gridDiv = document.querySelector<HTMLElement>('#myGrid')!
-  gridApi = createGrid(gridDiv, gridOptions);
-})
+// setup the grid
+var gridDiv = document.querySelector<HTMLElement>('#myGrid')!
+const gridApi: GridApi = createGrid(gridDiv, gridOptions);

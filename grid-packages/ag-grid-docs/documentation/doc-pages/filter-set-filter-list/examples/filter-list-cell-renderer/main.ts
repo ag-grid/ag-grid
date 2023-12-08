@@ -23,8 +23,6 @@ const COUNTRY_CODES: Record<string, string> = {
     Uruguay: 'uy',
 };
 
-let gridApi: GridApi<IOlympicData>;
-
 const gridOptions: GridOptions<IOlympicData> = {
     columnDefs: [
         {
@@ -68,23 +66,21 @@ function onFirstDataRendered(params: FirstDataRenderedEvent) {
     params.api.getToolPanelInstance('filters')!.expandFilters();
 }
 
-// setup the grid after the page has finished loading
-document.addEventListener('DOMContentLoaded', function () {
-    const gridDiv = document.querySelector<HTMLElement>('#myGrid')!;
-    gridApi = createGrid(gridDiv, gridOptions);
+// setup the grid
+  const gridDiv = document.querySelector<HTMLElement>('#myGrid')!;
+  const gridApi: GridApi<IOlympicData> = createGrid(gridDiv, gridOptions);
 
-    fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
-        .then(response => response.json())
-        .then(function (data) {
-            // only return data that has corresponding country codes
-            const dataWithFlags = data.filter(function (d: any) {
-                return COUNTRY_CODES[d.country]
-            });
+  fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
+      .then(response => response.json())
+      .then(function (data) {
+          // only return data that has corresponding country codes
+          const dataWithFlags = data.filter(function (d: any) {
+              return COUNTRY_CODES[d.country]
+          });
 
-            // Empty data used to demonstrate custom (Blanks) handling in filter cell renderer
-            dataWithFlags[0].country = '';
+          // Empty data used to demonstrate custom (Blanks) handling in filter cell renderer
+          dataWithFlags[0].country = '';
 
-            gridApi!.setGridOption('rowData', dataWithFlags)
-        })
-})
+          gridApi.setGridOption('rowData', dataWithFlags)
+      })
 

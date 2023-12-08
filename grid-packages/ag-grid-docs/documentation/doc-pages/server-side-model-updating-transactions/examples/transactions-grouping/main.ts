@@ -19,12 +19,10 @@ declare var createRowOnServer: any;
 const columnDefs: ColDef[] = [
     { field: 'tradeId' },
     { field: 'portfolio', hide: true, rowGroup: true },
-    { field: 'book' },    
+    { field: 'book' },
     { field: 'previous' },
     { field: 'current' },
 ];
-
-let gridApi: GridApi;
 
 const gridOptions: GridOptions = {
   columnDefs,
@@ -164,8 +162,6 @@ function updateAggressiveToHybrid() {
   }
 }
 
-// setup the grid after the page has finished loading
-document.addEventListener('DOMContentLoaded', function () {
-  const gridDiv = document.querySelector<HTMLElement>('#myGrid')!;
-  gridApi = createGrid(gridDiv, gridOptions);
-});
+// setup the grid
+const gridDiv = document.querySelector<HTMLElement>('#myGrid')!;
+const gridApi: GridApi = createGrid(gridDiv, gridOptions);

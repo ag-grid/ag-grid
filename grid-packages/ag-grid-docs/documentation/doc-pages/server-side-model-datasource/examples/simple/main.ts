@@ -6,8 +6,6 @@ import {
   IServerSideGetRowsRequest,
 } from '@ag-grid-community/core';
 
-let gridApi: GridApi<IOlympicData>;
-
 const gridOptions: GridOptions<IOlympicData> = {
   columnDefs: [
     { field: 'athlete', minWidth: 220 },
@@ -29,24 +27,22 @@ const gridOptions: GridOptions<IOlympicData> = {
   rowModelType: 'serverSide',
 }
 
-// setup the grid after the page has finished loading
-document.addEventListener('DOMContentLoaded', function () {
-  let gridDiv = document.querySelector<HTMLElement>('#myGrid')!
-  gridApi = createGrid(gridDiv, gridOptions);
+// setup the grid
+let gridDiv = document.querySelector<HTMLElement>('#myGrid')!
+const gridApi: GridApi<IOlympicData> = createGrid(gridDiv, gridOptions);
 
-  fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
-    .then(response => response.json())
-    .then(function (data) {
-      // setup the fake server with entire dataset
-      const fakeServer = createFakeServer(data)
+fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
+  .then(response => response.json())
+  .then(function (data) {
+    // setup the fake server with entire dataset
+    const fakeServer = createFakeServer(data)
 
-      // create datasource with a reference to the fake server
-      const datasource = createServerSideDatasource(fakeServer)
+    // create datasource with a reference to the fake server
+    const datasource = createServerSideDatasource(fakeServer)
 
-      // register the datasource with the grid
-      gridApi!.setGridOption('serverSideDatasource', datasource)
-    })
-})
+    // register the datasource with the grid
+    gridApi.setGridOption('serverSideDatasource', datasource)
+  })
 
 function createServerSideDatasource(server: any): IServerSideDatasource {
   return {

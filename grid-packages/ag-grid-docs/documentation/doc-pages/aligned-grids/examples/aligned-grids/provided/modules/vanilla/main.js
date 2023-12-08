@@ -67,15 +67,13 @@ function setData(rowData) {
     bottomApi.setGridOption('rowData', rowData);
 }
 
-// setup the grid after the page has finished loading
-document.addEventListener('DOMContentLoaded', () => {
-    const gridDivTop = document.querySelector('#myGridTop');
-    topApi = agGrid.createGrid(gridDivTop, gridOptionsTop);
+// setup the grid
+const gridDivTop = document.querySelector('#myGridTop');
+topApi = agGrid.createGrid(gridDivTop, gridOptionsTop);
 
-    const gridDivBottom = document.querySelector('#myGridBottom');
-    bottomApi = agGrid.createGrid(gridDivBottom, gridOptionsBottom);
+const gridDivBottom = document.querySelector('#myGridBottom');
+bottomApi = agGrid.createGrid(gridDivBottom, gridOptionsBottom);
 
-    fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
-        .then(response => response.json())
-        .then(data => setData(data));
-});
+fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
+  .then((response) => response.json())
+  .then((data) => setData(data));

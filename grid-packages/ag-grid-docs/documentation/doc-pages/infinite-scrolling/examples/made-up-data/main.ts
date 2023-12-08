@@ -26,8 +26,6 @@ function getColumnDefs() {
   return columnDefs
 }
 
-let gridApi: GridApi;
-
 const gridOptions: GridOptions = {
   columnDefs: getColumnDefs(),
   rowModelType: 'infinite',
@@ -71,7 +69,5 @@ function getDataSource(count: number) {
   return dataSource;
 }
 
-document.addEventListener('DOMContentLoaded', function () {
-  var gridDiv = document.querySelector<HTMLElement>('#myGrid')!
-  gridApi = createGrid(gridDiv, gridOptions);
-})
+var gridDiv = document.querySelector<HTMLElement>('#myGrid')!
+const gridApi: GridApi = createGrid(gridDiv, gridOptions);

@@ -16,7 +16,7 @@ declare var randomUpdates: any;
 const columnDefs: ColDef[] = [
     { field: 'tradeId' },
     { field: 'portfolio' },
-    { field: 'book' },    
+    { field: 'book' },
     { field: 'previous' },
     { field: 'current' },
     {
@@ -26,8 +26,8 @@ const columnDefs: ColDef[] = [
       valueFormatter: (params) => {
         const ts = params.data!.lastUpdated;
         if (ts) {
-          const hh_mm_ss = ts.toLocaleString().split(' ')[1];   
-          const SSS = ts.getMilliseconds();       
+          const hh_mm_ss = ts.toLocaleString().split(' ')[1];
+          const SSS = ts.getMilliseconds();
           return `${hh_mm_ss}:${SSS}`;
         }
         return '';
@@ -36,19 +36,17 @@ const columnDefs: ColDef[] = [
     { field: 'updateCount' },
 ];
 
-let gridApi: GridApi;
-
 const gridOptions: GridOptions = {
   columnDefs,
   defaultColDef: {
     flex: 1,
-    minWidth: 100,  
+    minWidth: 100,
   },
   autoGroupColumnDef: {
     minWidth: 220,
   },
   enableCellChangeFlash: true,
-  getRowId: (params: GetRowIdParams) => {  
+  getRowId: (params: GetRowIdParams) => {
     var rowId = '';
     if (params.parentKeys && params.parentKeys.length) {
       rowId += params.parentKeys.join('-') + '-';
@@ -65,16 +63,16 @@ const gridOptions: GridOptions = {
   },
   onGridReady: (params: GridReadyEvent) => {
     disable('#stopUpdates', true);
-  
+
     // setup the fake server
     const server = new FakeServer();
-  
+
     // create datasource with a reference to the fake server
     const datasource = getServerSideDatasource(server);
-  
+
     // register the datasource with the grid
     params.api.setGridOption('serverSideDatasource', datasource);
-  
+
     // register interest in data changes
     dataObservers.push((t: ServerSideTransaction) => {
       params.api.applyServerSideTransactionAsync(t);
@@ -126,8 +124,6 @@ function disable(id: string, disabled: boolean) {
   document.querySelector<HTMLInputElement>(id)!.disabled = disabled;
 }
 
-// setup the grid after the page has finished loading
-document.addEventListener('DOMContentLoaded', function () {
-  const gridDiv = document.querySelector<HTMLElement>('#myGrid')!;
-  gridApi = createGrid(gridDiv, gridOptions);
-});
+// setup the grid
+const gridDiv = document.querySelector<HTMLElement>('#myGrid')!;
+const gridApi: GridApi = createGrid(gridDiv, gridOptions);

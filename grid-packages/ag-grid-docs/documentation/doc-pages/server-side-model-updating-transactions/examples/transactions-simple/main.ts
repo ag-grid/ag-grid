@@ -15,17 +15,15 @@ declare var data: any;
 const columnDefs: ColDef[] = [
     { field: 'tradeId' },
     { field: 'portfolio' },
-    { field: 'book' },    
+    { field: 'book' },
     { field: 'current' },
 ];
-
-let gridApi: GridApi;
 
 const gridOptions: GridOptions = {
   columnDefs,
   defaultColDef: {
     flex: 1,
-    minWidth: 100,  
+    minWidth: 100,
   },
   autoGroupColumnDef: {
     minWidth: 220,
@@ -34,10 +32,10 @@ const gridOptions: GridOptions = {
   onGridReady: (params: GridReadyEvent) => {
     // setup the fake server
     const server = new FakeServer();
-  
+
     // create datasource with a reference to the fake server
     const datasource = getServerSideDatasource(server);
-  
+
     // register the datasource with the grid
     params.api.setGridOption('serverSideDatasource', datasource);
   },
@@ -131,8 +129,6 @@ function createRow() {
   };
 }
 
-// setup the grid after the page has finished loading
-document.addEventListener('DOMContentLoaded', () => {
-  const gridDiv = document.querySelector<HTMLElement>('#myGrid')!;
-  gridApi = createGrid(gridDiv, gridOptions);
-});
+// setup the grid
+const gridDiv = document.querySelector<HTMLElement>('#myGrid')!;
+const gridApi: GridApi = createGrid(gridDiv, gridOptions);

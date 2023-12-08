@@ -1,7 +1,5 @@
 import { createGrid, GridApi, GridOptions } from '@ag-grid-community/core';
 
-let gridApi: GridApi;
-
 const gridOptions: GridOptions = {
     // Data to be displayed
     rowData: [
@@ -20,7 +18,5 @@ const gridOptions: GridOptions = {
     ],
 }
 
-document.addEventListener('DOMContentLoaded', function () {
-    const gridDiv = document.querySelector<HTMLElement>('#myGrid')!;
-    gridApi = createGrid(gridDiv, gridOptions);
-})
+  const gridDiv = document.querySelector<HTMLElement>('#myGrid')!;
+  const gridApi: GridApi = createGrid(gridDiv, gridOptions);

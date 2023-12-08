@@ -17,9 +17,6 @@ interface WorkerMessage {
   records?: any[];
 }
 
-// Global variables
-let chartRef: any;
-let gridApi: GridApi;
 let worker: Worker;
 
 // Column Definitions
@@ -108,10 +105,8 @@ function handleWorkerMessage(e: any): void {
 }
 
 // after page is loaded, create the grid
-document.addEventListener('DOMContentLoaded', function () {
-  var eGridDiv = document.querySelector<HTMLElement>('#myGrid')!
-  gridApi = createGrid(eGridDiv, gridOptions);
-});
+var eGridDiv = document.querySelector<HTMLElement>('#myGrid')!
+const gridApi: GridApi = createGrid(eGridDiv, gridOptions);
 
 // IIFE
 (function () {

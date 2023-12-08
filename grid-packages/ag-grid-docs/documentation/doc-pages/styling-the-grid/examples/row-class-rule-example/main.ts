@@ -1,7 +1,5 @@
 import { createGrid, GridApi, GridOptions, CellValueChangedEvent, RowClassParams } from '@ag-grid-community/core';
 
-let gridApi: GridApi;
-
 const rowClassRule = {
     'unsucessful-mission': (p: RowClassParams) => { return p.data.successful === false },
     'successful-mission': (p: RowClassParams) => { return p.data.successful === true }
@@ -54,10 +52,8 @@ const gridOptions: GridOptions = {
         console.log(`New Cell Value: ${event.value}`)
     }
 }
-document.addEventListener('DOMContentLoaded', function () {
-    var gridDiv = document.querySelector<HTMLElement>('#myGrid')!;
-    gridApi = createGrid(gridDiv, gridOptions);
-    fetch('https://www.ag-grid.com/example-assets/space-mission-data.json')
-        .then(response => response.json())
-        .then((data: any) => gridApi.setGridOption('rowData', data))
-})
+  var gridDiv = document.querySelector<HTMLElement>('#myGrid')!;
+  const gridApi: GridApi = createGrid(gridDiv, gridOptions);
+  fetch('https://www.ag-grid.com/example-assets/space-mission-data.json')
+      .then(response => response.json())
+      .then((data: any) => gridApi.setGridOption('rowData', data))

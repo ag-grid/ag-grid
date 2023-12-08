@@ -1,12 +1,10 @@
 import { GridApi, createGrid, GridOptions, FirstDataRenderedEvent, IRowNode } from '@ag-grid-community/core';
 
-let gridApi: GridApi<IOlympicData>;
-
 const gridOptions: GridOptions<IOlympicData> = {
   columnDefs: [
     {
       field: 'athlete',
-      headerCheckboxSelection: true,      
+      headerCheckboxSelection: true,
       checkboxSelection: true,
       showDisabledCheckboxes: true,
     },
@@ -19,9 +17,9 @@ const gridOptions: GridOptions<IOlympicData> = {
   },
   rowSelection: 'multiple',
   suppressRowClickSelection: true,
-  isRowSelectable: (params: IRowNode<IOlympicData>) => {   
+  isRowSelectable: (params: IRowNode<IOlympicData>) => {
     return !!params.data && params.data.year === 2012;
-  },  
+  },
   onFirstDataRendered: (params: FirstDataRenderedEvent<IOlympicData>) => {
     const nodesToSelect: IRowNode[] = [];
     params.api.forEachNode((node: IRowNode) => {
@@ -33,12 +31,10 @@ const gridOptions: GridOptions<IOlympicData> = {
   }
 }
 
-// setup the grid after the page has finished loading
-document.addEventListener('DOMContentLoaded', function () {
-  var gridDiv = document.querySelector<HTMLElement>('#myGrid')!
-  gridApi = createGrid(gridDiv, gridOptions);
+// setup the grid
+var gridDiv = document.querySelector<HTMLElement>('#myGrid')!
+const gridApi: GridApi<IOlympicData> = createGrid(gridDiv, gridOptions);
 
-  fetch('https://www.ag-grid.com/example-assets/small-olympic-winners.json')
-    .then(response => response.json())
-    .then((data: IOlympicData[]) => gridApi!.setGridOption('rowData', data))
-})
+fetch('https://www.ag-grid.com/example-assets/small-olympic-winners.json')
+  .then(response => response.json())
+  .then((data: IOlympicData[]) => gridApi.setGridOption('rowData', data))

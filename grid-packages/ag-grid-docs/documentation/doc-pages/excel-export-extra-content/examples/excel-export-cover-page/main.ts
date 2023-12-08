@@ -1,7 +1,5 @@
 import { GridApi, createGrid, GridOptions } from '@ag-grid-community/core';
 
-let gridApi: GridApi<IOlympicData>;
-
 const gridOptions: GridOptions<IOlympicData> = {
   defaultColDef: {
     filter: true,
@@ -105,14 +103,12 @@ function onBtExport() {
   })
 }
 
-// setup the grid after the page has finished loading
-document.addEventListener('DOMContentLoaded', () => {
-  const gridDiv = document.querySelector<HTMLElement>('#myGrid')!
-  gridApi = createGrid(gridDiv, gridOptions);
+// setup the grid
+const gridDiv = document.querySelector<HTMLElement>('#myGrid')!
+const gridApi: GridApi<IOlympicData> = createGrid(gridDiv, gridOptions);
 
-  fetch('https://www.ag-grid.com/example-assets/small-olympic-winners.json')
-    .then(response => response.json())
-    .then(data =>
-      gridApi!.setGridOption('rowData', data.filter((rec: any) => rec.country != null))
-    )
-})
+fetch('https://www.ag-grid.com/example-assets/small-olympic-winners.json')
+  .then(response => response.json())
+  .then(data =>
+    gridApi.setGridOption('rowData', data.filter((rec: any) => rec.country != null))
+  )

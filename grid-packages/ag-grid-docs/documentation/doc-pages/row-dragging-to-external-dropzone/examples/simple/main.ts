@@ -16,8 +16,6 @@ const columnDefs: ColDef[] = [
   { field: 'value2' },
 ]
 
-let gridApi: GridApi;
-
 const gridOptions: GridOptions = {
   defaultColDef: {
     filter: true,
@@ -103,9 +101,7 @@ function addDropZones(params: GridReadyEvent) {
   params.api.addRowDropZone(dropZone)
 }
 
-// setup the grid after the page has finished loading
-document.addEventListener('DOMContentLoaded', function () {
-  var gridDiv = document.querySelector<HTMLElement>('#myGrid')!
+// setup the grid
+var gridDiv = document.querySelector<HTMLElement>('#myGrid')!
 
-  gridApi = createGrid(gridDiv, gridOptions);
-})
+const gridApi: GridApi = createGrid(gridDiv, gridOptions);

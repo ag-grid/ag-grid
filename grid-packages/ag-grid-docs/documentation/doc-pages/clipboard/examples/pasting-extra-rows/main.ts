@@ -9,8 +9,6 @@ const columnDefs: ColDef[] = [
   { headerName: 'Sport', field: 'sport', width: 110 },
 ];
 
-let gridApi: GridApi;
-
 const gridOptions: GridOptions = {
   defaultColDef: {
     editable: true,
@@ -61,12 +59,10 @@ function processDataFromClipboard(params: ProcessDataFromClipboardParams): strin
   return data;
 }
 
-// setup the grid after the page has finished loading
-document.addEventListener('DOMContentLoaded', function () {
-  var gridDiv = document.querySelector<HTMLElement>('#myGrid')!;
-  gridApi = createGrid(gridDiv, gridOptions);
+// setup the grid
+var gridDiv = document.querySelector<HTMLElement>('#myGrid')!;
+const gridApi: GridApi = createGrid(gridDiv, gridOptions);
 
-  fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
-    .then((response) => response.json())
-    .then((data) => gridApi!.setGridOption('rowData', data.slice(0,8)));
-});
+fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
+  .then((response) => response.json())
+  .then((data) => gridApi.setGridOption('rowData', data.slice(0,8)));

@@ -7,8 +7,6 @@ import {
   ValueFormatterParams,
 } from '@ag-grid-community/core';
 
-let gridApi: GridApi<IOlympicData>;
-
 const gridOptions: GridOptions<IOlympicData> = {
   columnDefs: [
     {
@@ -53,22 +51,20 @@ function onFirstDataRendered(params: FirstDataRenderedEvent) {
   params.api.getToolPanelInstance('filters')!.expandFilters();
 }
 
-// setup the grid after the page has finished loading
-document.addEventListener('DOMContentLoaded', function () {
-  var gridDiv = document.querySelector<HTMLElement>('#myGrid')!
-  gridApi = createGrid(gridDiv, gridOptions);
+// setup the grid
+var gridDiv = document.querySelector<HTMLElement>('#myGrid')!
+const gridApi: GridApi<IOlympicData> = createGrid(gridDiv, gridOptions);
 
-  fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
-    .then(response => response.json())
-    .then(function (data) {
-      // only return data that has corresponding country codes
-      var dataWithFlags = data.filter(function (d: any) {
-        return COUNTRY_CODES[d.country]
-      })
-
-      gridApi!.setGridOption('rowData', dataWithFlags)
+fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
+  .then(response => response.json())
+  .then(function (data) {
+    // only return data that has corresponding country codes
+    var dataWithFlags = data.filter(function (d: any) {
+      return COUNTRY_CODES[d.country]
     })
-})
+
+    gridApi.setGridOption('rowData', dataWithFlags)
+  })
 
 var COUNTRY_CODES: Record<string, string> = {
   Ireland: 'ie',

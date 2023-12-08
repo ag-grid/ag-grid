@@ -1,7 +1,5 @@
 import { GridApi, createGrid, GridOptions } from '@ag-grid-community/core';
 
-let gridApi: GridApi<IOlympicData>;
-
 const gridOptions: GridOptions<IOlympicData> = {
   columnDefs: [
     { field: 'athlete', minWidth: 200 },
@@ -59,19 +57,18 @@ function onFormSubmit(e: any) {
   gridApi!.exportDataAsExcel({ pageSetup, margins });
 }
 
-// setup the grid after the page has finished loading
-document.addEventListener('DOMContentLoaded', function () {
-  const gridDiv = document.querySelector<HTMLElement>('#myGrid');
-  const form = document.querySelector<HTMLFormElement>('form');
+// setup the grid
+const gridDiv = document.querySelector<HTMLElement>('#myGrid')!;
+const form = document.querySelector<HTMLFormElement>('form');
 
-  form?.addEventListener('submit', (e) => onFormSubmit(e));
+form?.addEventListener('submit', (e) => onFormSubmit(e));
 
-  if (gridDiv) {
-    gridApi = createGrid(gridDiv, gridOptions);
-    fetch('https://www.ag-grid.com/example-assets/small-olympic-winners.json')
-      .then(response => response.json())
-      .then(data =>
-        gridApi!.setGridOption('rowData', data.filter((rec: any) => rec.country != null))
-      )
-  }
-})
+const gridApi: GridApi<IOlympicData> = createGrid(gridDiv, gridOptions);
+fetch('https://www.ag-grid.com/example-assets/small-olympic-winners.json')
+  .then((response) => response.json())
+  .then((data) =>
+    gridApi.setGridOption(
+      'rowData',
+      data.filter((rec: any) => rec.country != null)
+    )
+  );

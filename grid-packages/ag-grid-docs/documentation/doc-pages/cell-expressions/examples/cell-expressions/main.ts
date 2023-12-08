@@ -46,7 +46,6 @@ const rowDataRight: RightData[] = [
   { a: 6, b: 77 },
   { a: 7, b: 88 },
 ]
-let rightGridApi: GridApi;
 const gridOptionsRight: GridOptions<RightData> = {
   columnDefs: [
     { field: 'a' },
@@ -80,10 +79,9 @@ function cellValueChanged() {
   leftGridApi!.refreshCells()
 }
 
-// setup the grid after the page has finished loading
-document.addEventListener('DOMContentLoaded', function () {
-  var gridDivLeft = document.querySelector<HTMLElement>('#myGridLeft')!
-  leftGridApi = createGrid(gridDivLeft, gridOptionsLeft);
-  var gridDivRight = document.querySelector<HTMLElement>('#myGridRight')!
-  rightGridApi = createGrid(gridDivRight, gridOptionsRight);
-})
+// setup the grid
+var gridDivLeft = document.querySelector<HTMLElement>('#myGridLeft')!;
+leftGridApi = createGrid(gridDivLeft, gridOptionsLeft);
+
+var gridDivRight = document.querySelector<HTMLElement>('#myGridRight')!;
+const rightGridApi: GridApi = createGrid(gridDivRight, gridOptionsRight);

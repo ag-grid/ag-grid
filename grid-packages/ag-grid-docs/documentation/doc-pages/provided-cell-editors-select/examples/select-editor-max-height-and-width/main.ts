@@ -8,17 +8,17 @@ import {
 import { colors } from './colors';
 
 const columnDefs: ColDef[] = [
-  { 
+  {
     headerName: 'Select Editor Without Max Height and Max Width',
-    field: 'color', 
+    field: 'color',
     cellEditor: 'agSelectCellEditor',
     cellEditorParams: {
       values: colors
     } as ISelectCellEditorParams
   },
-  { 
+  {
     headerName: 'Select Editor With Max Height and Max Width',
-    field: 'color', 
+    field: 'color',
     cellEditor: 'agSelectCellEditor',
     cellEditorParams: {
       values: colors,
@@ -28,7 +28,7 @@ const columnDefs: ColDef[] = [
   }
 ];
 
-function getRandomNumber(min: number, max: number) { // min and max included 
+function getRandomNumber(min: number, max: number) { // min and max included
   return Math.floor(Math.random() * (max - min + 1) + min)
 }
 
@@ -36,8 +36,6 @@ const data = Array.from(Array(20).keys()).map(() => {
   const color = colors[getRandomNumber(0, colors.length - 1)];
   return ({ color });
 });
-
-let gridApi: GridApi;
 
 const gridOptions: GridOptions = {
   defaultColDef: {
@@ -48,8 +46,6 @@ const gridOptions: GridOptions = {
   rowData: data
 }
 
-// setup the grid after the page has finished loading
-document.addEventListener('DOMContentLoaded', () => {
-  const gridDiv = document.querySelector<HTMLElement>('#myGrid')!
-  gridApi = createGrid(gridDiv, gridOptions);
-})
+// setup the grid
+const gridDiv = document.querySelector<HTMLElement>('#myGrid')!
+const gridApi: GridApi = createGrid(gridDiv, gridOptions);

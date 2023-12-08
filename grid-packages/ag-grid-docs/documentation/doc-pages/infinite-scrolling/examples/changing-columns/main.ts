@@ -1,7 +1,5 @@
 import { GridApi, createGrid, GridOptions, IDatasource, SortModelItem } from '@ag-grid-community/core';
 
-let gridApi: GridApi<IOlympicData>;
-
 const gridOptions: GridOptions<IOlympicData> = {
   columnDefs: [
     { field: 'athlete', colId: 'athlete', minWidth: 180 },
@@ -110,47 +108,45 @@ function filterData(filterModel: any, data: any[]) {
   return resultOfFilter
 }
 
-// setup the grid after the page has finished loading
-document.addEventListener('DOMContentLoaded', function () {
-  var gridDiv = document.querySelector<HTMLElement>('#myGrid')!
-  gridApi = createGrid(gridDiv, gridOptions);
+// setup the grid
+var gridDiv = document.querySelector<HTMLElement>('#myGrid')!
+const gridApi: GridApi<IOlympicData> = createGrid(gridDiv, gridOptions);
 
-  fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
-    .then(response => response.json())
-    .then(function (data) {
-      // give each row an id
-      data.forEach(function (d: any, index: number) {
-        d.id = 'R' + (index + 1)
-      })
-
-      var dataSource: IDatasource = {
-        rowCount: undefined, // behave as infinite scroll
-        getRows: (params) => {
-          console.log('asking for ' + params.startRow + ' to ' + params.endRow)
-          // At this point in your code, you would call the server.
-          // To make the demo look real, wait for 500ms before returning
-          setTimeout(() => {
-            // take a slice of the total rows
-            var dataAfterSortingAndFiltering = sortAndFilter(
-              data,
-              params.sortModel,
-              params.filterModel
-            )
-            var rowsThisPage = dataAfterSortingAndFiltering.slice(
-              params.startRow,
-              params.endRow
-            )
-            // if on or after the last page, work out the last row.
-            var lastRow = -1
-            if (dataAfterSortingAndFiltering.length <= params.endRow) {
-              lastRow = dataAfterSortingAndFiltering.length
-            }
-            // call the success callback
-            params.successCallback(rowsThisPage, lastRow)
-          }, 500)
-        },
-      }
-
-      gridApi!.setGridOption('datasource', dataSource)
+fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
+  .then(response => response.json())
+  .then(function (data) {
+    // give each row an id
+    data.forEach(function (d: any, index: number) {
+      d.id = 'R' + (index + 1)
     })
-})
+
+    var dataSource: IDatasource = {
+      rowCount: undefined, // behave as infinite scroll
+      getRows: (params) => {
+        console.log('asking for ' + params.startRow + ' to ' + params.endRow)
+        // At this point in your code, you would call the server.
+        // To make the demo look real, wait for 500ms before returning
+        setTimeout(() => {
+          // take a slice of the total rows
+          var dataAfterSortingAndFiltering = sortAndFilter(
+            data,
+            params.sortModel,
+            params.filterModel
+          )
+          var rowsThisPage = dataAfterSortingAndFiltering.slice(
+            params.startRow,
+            params.endRow
+          )
+          // if on or after the last page, work out the last row.
+          var lastRow = -1
+          if (dataAfterSortingAndFiltering.length <= params.endRow) {
+            lastRow = dataAfterSortingAndFiltering.length
+          }
+          // call the success callback
+          params.successCallback(rowsThisPage, lastRow)
+        }, 500)
+      },
+    }
+
+    gridApi.setGridOption('datasource', dataSource)
+  })

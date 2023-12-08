@@ -9,8 +9,6 @@ import {
 import {AgAxisCaptionFormatterParams, AgCartesianSeriesTooltipRendererParams} from 'ag-charts-community';
 import {getData} from "./data";
 
-let gridApi: GridApi;
-
 const gridOptions: GridOptions = {
   columnDefs: [
     { field: 'date', chartDataType: 'time', valueFormatter: (params) => params.value.toISOString().substring(0, 10) },
@@ -105,6 +103,4 @@ function formatDate(date: Date | number) {
 }
 
 // set up the grid after the page has finished loading
-document.addEventListener('DOMContentLoaded', function () {
-  gridApi = createGrid(document.querySelector<HTMLElement>('#myGrid')!, gridOptions);
-});
+const gridApi: GridApi = createGrid(document.querySelector<HTMLElement>('#myGrid')!, gridOptions);

@@ -138,7 +138,6 @@ function numberCellFormatter(params: ValueFormatterParams) {
     .replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,');
 }
 
-let gridApi: GridApi;
 const gridOptions: GridOptions = {
   columnDefs: columnDefs,
   suppressAggFuncInHeader: true,
@@ -250,7 +249,5 @@ function copyObject(object: any) {
 }
 
 // after page is loaded, create the grid.
-document.addEventListener('DOMContentLoaded', function () {
-  var eGridDiv = document.querySelector<HTMLElement>('#myGrid')!
-  gridApi = createGrid(eGridDiv, gridOptions)
-})
+var eGridDiv = document.querySelector<HTMLElement>('#myGrid')!
+const gridApi: GridApi = createGrid(eGridDiv, gridOptions)

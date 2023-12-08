@@ -1,8 +1,6 @@
 import { createGrid, CellClassParams, GridApi, GridOptions, CellValueChangedEvent, RowClassParams, ValueFormatterParams } from '@ag-grid-community/core';
 import { CountryFlagCellRenderer } from './CountryFlagCellRenderer';
 
-let gridApi: GridApi;
-
 const currencyFormatter = (params: ValueFormatterParams) => {
     return '£' + params.value.toLocaleString();
 }
@@ -51,10 +49,8 @@ const gridOptions: GridOptions = {
         console.log(`New Cell Value: ${event.value}`)
     }
 }
-document.addEventListener('DOMContentLoaded', function () {
-    var gridDiv = document.querySelector<HTMLElement>('#myGrid')!;
-    gridApi = createGrid(gridDiv, gridOptions);
-    fetch('https://www.ag-grid.com/example-assets/space-mission-data.json')
-        .then(response => response.json())
-        .then((data: any) => gridApi.setGridOption('rowData', data))
-})
+  var gridDiv = document.querySelector<HTMLElement>('#myGrid')!;
+  const gridApi: GridApi = createGrid(gridDiv, gridOptions);
+  fetch('https://www.ag-grid.com/example-assets/space-mission-data.json')
+      .then(response => response.json())
+      .then((data: any) => gridApi.setGridOption('rowData', data))

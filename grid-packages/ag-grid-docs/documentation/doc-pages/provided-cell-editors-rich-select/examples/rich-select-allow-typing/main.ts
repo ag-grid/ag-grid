@@ -9,13 +9,13 @@ import { ColourCellRenderer } from './colourCellRenderer_typescript'
 import { colors } from './colors';
 
 const columnDefs: ColDef[] = [
-  { 
-    headerName: 'Allow Typing (Match)', 
-    field: 'color', 
+  {
+    headerName: 'Allow Typing (Match)',
+    field: 'color',
     cellRenderer: ColourCellRenderer,
     cellEditor: 'agRichSelectCellEditor',
     cellEditorParams: {
-      values: colors, 
+      values: colors,
       searchType: 'match',
       allowTyping: true,
       filterList: true,
@@ -23,13 +23,13 @@ const columnDefs: ColDef[] = [
       valueListMaxHeight: 220
     } as IRichCellEditorParams
   },
-  { 
-    headerName: 'Allow Typing (MatchAny)', 
-    field: 'color', 
+  {
+    headerName: 'Allow Typing (MatchAny)',
+    field: 'color',
     cellRenderer: ColourCellRenderer,
     cellEditor: 'agRichSelectCellEditor',
     cellEditorParams: {
-      values: colors, 
+      values: colors,
       searchType: 'matchAny',
       allowTyping: true,
       filterList: true,
@@ -39,7 +39,7 @@ const columnDefs: ColDef[] = [
   },
 ];
 
-function getRandomNumber(min: number, max: number) { // min and max included 
+function getRandomNumber(min: number, max: number) { // min and max included
   return Math.floor(Math.random() * (max - min + 1) + min)
 }
 
@@ -47,8 +47,6 @@ const data = Array.from(Array(20).keys()).map(() => {
   const color = colors[getRandomNumber(0, colors.length - 1)];
   return ({ color });
 });
-
-let gridApi: GridApi;
 
 const gridOptions: GridOptions = {
   defaultColDef: {
@@ -59,8 +57,6 @@ const gridOptions: GridOptions = {
   rowData: data
 }
 
-// setup the grid after the page has finished loading
-document.addEventListener('DOMContentLoaded', () => {
-  const gridDiv = document.querySelector<HTMLElement>('#myGrid')!
-  gridApi = createGrid(gridDiv, gridOptions);
-})
+// setup the grid
+const gridDiv = document.querySelector<HTMLElement>('#myGrid')!
+const gridApi: GridApi = createGrid(gridDiv, gridOptions);

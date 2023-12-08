@@ -12,8 +12,6 @@ const generateItem = (id = lastGen++) => {
 
 const getRowData = (rows = 10) => new Array(rows).fill(undefined).map(_ => generateItem());
 
-let gridApi: GridApi;
-
 const gridOptions: GridOptions = {
     columnDefs: [
         { field: 'id' },
@@ -53,7 +51,6 @@ function addDefault() {
 
 }
 
-document.addEventListener('DOMContentLoaded', function () {
-    const eGridDiv = document.querySelector<HTMLElement>('#myGrid')!;
-    gridApi = createGrid(eGridDiv, gridOptions);
-});
+// setup the grid
+const eGridDiv = document.querySelector<HTMLElement>('#myGrid')!;
+const gridApi: GridApi = createGrid(eGridDiv, gridOptions);

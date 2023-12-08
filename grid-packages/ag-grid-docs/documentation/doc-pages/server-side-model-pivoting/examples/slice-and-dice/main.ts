@@ -46,8 +46,6 @@ const columnDefs: ColDef[] = [
   { field: 'bronze', aggFunc: 'sum', filter: false, enableValue: true },
 ]
 
-let gridApi: GridApi<IOlympicData>;
-
 const gridOptions: GridOptions<IOlympicData> = {
   defaultColDef: {
     flex: 1,
@@ -71,17 +69,15 @@ const gridOptions: GridOptions<IOlympicData> = {
   purgeClosedRowNodes: true,
 }
 
-// setup the grid after the page has finished loading
-document.addEventListener('DOMContentLoaded', function () {
-  const gridDiv = document.querySelector<HTMLElement>('#myGrid')!;
-  gridApi = createGrid(gridDiv, gridOptions);
+// setup the grid
+const gridDiv = document.querySelector<HTMLElement>('#myGrid')!;
+const gridApi: GridApi<IOlympicData> = createGrid(gridDiv, gridOptions);
 
-  fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
-    .then(response => response.json())
-    .then(function (data) {
-      const fakeServer = createFakeServer(data);
-      const datasource = createServerSideDatasource(fakeServer);
-      gridApi!.setGridOption('serverSideDatasource', datasource)
-    })
-})
+fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
+  .then(response => response.json())
+  .then(function (data) {
+    const fakeServer = createFakeServer(data);
+    const datasource = createServerSideDatasource(fakeServer);
+    gridApi.setGridOption('serverSideDatasource', datasource)
+  })
 

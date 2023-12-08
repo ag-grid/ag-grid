@@ -15,8 +15,6 @@ const columnDefs: ColDef[] = [
   { field: 'employmentType' },
 ]
 
-let gridApi: GridApi;
-
 const gridOptions: GridOptions = {
   defaultColDef: {
     width: 240,
@@ -51,59 +49,57 @@ const gridOptions: GridOptions = {
   },
 }
 
-// setup the grid after the page has finished loading
-document.addEventListener('DOMContentLoaded', function () {
-  var gridDiv = document.querySelector<HTMLElement>('#myGrid')!
-  gridApi = createGrid(gridDiv, gridOptions);
+// setup the grid
+var gridDiv = document.querySelector<HTMLElement>('#myGrid')!
+const gridApi: GridApi = createGrid(gridDiv, gridOptions);
 
-  fetch('https://www.ag-grid.com/example-assets/tree-data.json')
-    .then(response => response.json())
-    .then(function (data) {
-      var datasource = createServerSideDatasource(data)
-      gridApi!.setGridOption('serverSideDatasource', datasource)
+fetch('https://www.ag-grid.com/example-assets/tree-data.json')
+  .then(response => response.json())
+  .then(function (data) {
+    var datasource = createServerSideDatasource(data)
+    gridApi.setGridOption('serverSideDatasource', datasource)
 
-      function createServerSideDatasource(data: any) {
-        const dataSource: IServerSideDatasource = {
-          getRows: (params: IServerSideGetRowsParams) => {
-            console.log('ServerSideDatasource.getRows: params = ', params)
+    function createServerSideDatasource(data: any) {
+      const dataSource: IServerSideDatasource = {
+        getRows: (params: IServerSideGetRowsParams) => {
+          console.log('ServerSideDatasource.getRows: params = ', params)
 
-            const request = params.request;
-            if (request.groupKeys.length) {
-              // this example doesn't need to support lower levels.
-              params.fail();
-              return;
-            }
+          const request = params.request;
+          if (request.groupKeys.length) {
+            // this example doesn't need to support lower levels.
+            params.fail();
+            return;
+          }
 
-            const result = {
-              rowData: data.slice(request.startRow, request.endRow),
+          const result = {
+            rowData: data.slice(request.startRow, request.endRow),
+          };
+          console.log('getRows: result = ', result)
+          setTimeout(() => {
+            params.success(result);
+
+            const recursivelyPopulateHierarchy = (route: string[], node: any) => {
+              if (node.underlings) {
+                gridApi.applyServerSideRowData({
+                  route,
+                  successParams: {
+                    rowData: node.underlings,
+                    rowCount: node.underlings.length,
+                  }
+                });
+                node.underlings.forEach((child: any) => {
+                  recursivelyPopulateHierarchy([...route, child.employeeId], child);
+                });
+              }
             };
-            console.log('getRows: result = ', result)
-            setTimeout(() => {
-              params.success(result);
-
-              const recursivelyPopulateHierarchy = (route: string[], node: any) => {
-                if (node.underlings) {
-                  gridApi!.applyServerSideRowData({
-                    route,
-                    successParams: {
-                      rowData: node.underlings,
-                      rowCount: node.underlings.length,
-                    }
-                  });
-                  node.underlings.forEach((child: any) => {
-                    recursivelyPopulateHierarchy([...route, child.employeeId], child);
-                  });
-                }
-              };
-              result.rowData.forEach((topLevelNode: any) => {
-                recursivelyPopulateHierarchy([topLevelNode.employeeId], topLevelNode);
-              });
-            }, 200)
-          },
-        }
-
-        return dataSource
+            result.rowData.forEach((topLevelNode: any) => {
+              recursivelyPopulateHierarchy([topLevelNode.employeeId], topLevelNode);
+            });
+          }, 200)
+        },
       }
 
-    })
-})
+      return dataSource
+    }
+
+  })

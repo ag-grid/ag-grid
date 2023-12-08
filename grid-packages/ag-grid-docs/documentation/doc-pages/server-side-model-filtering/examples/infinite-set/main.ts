@@ -53,8 +53,6 @@ function countryComparator(a: { name: string, code: string }, b:  { name: string
   return 0;
 }
 
-let gridApi: GridApi<IOlympicData>;
-
 const gridOptions: GridOptions<IOlympicData> = {
   columnDefs: columnDefs,
   defaultColDef: {
@@ -145,41 +143,39 @@ function getServerSideDatasource(server: any): IServerSideDatasource {
   }
 }
 
-// setup the grid after the page has finished loading
-document.addEventListener('DOMContentLoaded', function () {
-  var gridDiv = document.querySelector<HTMLElement>('#myGrid')!
-  gridApi = createGrid(gridDiv, gridOptions);
+// setup the grid
+var gridDiv = document.querySelector<HTMLElement>('#myGrid')!
+const gridApi: GridApi<IOlympicData> = createGrid(gridDiv, gridOptions);
 
-  fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
-    .then(response => response.json())
-    .then(function (data) {
-      // we don't have unique codes in our dataset, so generate unique ones
-      const namesToCodes: Map<string, string> = new Map();
-      const codesToNames: Map<string, string> = new Map();
-      data.forEach((row: any) => {
-        row.countryName = row.country;
-        if (namesToCodes.has(row.countryName)) {
-          row.countryCode = namesToCodes.get(row.countryName);
-        } else {
-          row.countryCode = row.country.substring(0, 2).toUpperCase();
-          if (codesToNames.has(row.countryCode)) {
-            let num = 0;
-            do {
-              row.countryCode = `${row.countryCode[0]}${num++}`;
-            } while (codesToNames.has(row.countryCode));
-          } 
-          codesToNames.set(row.countryCode, row.countryName);
-          namesToCodes.set(row.countryName, row.countryCode);
+fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
+  .then(response => response.json())
+  .then(function (data) {
+    // we don't have unique codes in our dataset, so generate unique ones
+    const namesToCodes: Map<string, string> = new Map();
+    const codesToNames: Map<string, string> = new Map();
+    data.forEach((row: any) => {
+      row.countryName = row.country;
+      if (namesToCodes.has(row.countryName)) {
+        row.countryCode = namesToCodes.get(row.countryName);
+      } else {
+        row.countryCode = row.country.substring(0, 2).toUpperCase();
+        if (codesToNames.has(row.countryCode)) {
+          let num = 0;
+          do {
+            row.countryCode = `${row.countryCode[0]}${num++}`;
+          } while (codesToNames.has(row.countryCode));
         }
-        delete row.country;
-      });
-      // setup the fake server with entire dataset
-      fakeServer = new FakeServer(data)
+        codesToNames.set(row.countryCode, row.countryName);
+        namesToCodes.set(row.countryName, row.countryCode);
+      }
+      delete row.country;
+    });
+    // setup the fake server with entire dataset
+    fakeServer = new FakeServer(data)
 
-      // create datasource with a reference to the fake server
-      var datasource = getServerSideDatasource(fakeServer)
+    // create datasource with a reference to the fake server
+    var datasource = getServerSideDatasource(fakeServer)
 
-      // register the datasource with the grid
-      gridApi!.setGridOption('serverSideDatasource', datasource)
-    })
-})
+    // register the datasource with the grid
+    gridApi.setGridOption('serverSideDatasource', datasource)
+  })

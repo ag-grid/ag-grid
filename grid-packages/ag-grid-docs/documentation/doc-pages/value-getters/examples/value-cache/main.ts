@@ -89,16 +89,16 @@ function destroyOldGridIfExists() {
 }
 
 function makeGrid(valueCacheOn: boolean) {
-  console.log('==========> creating grid')
-  callCount = 1
-  gridOptions.valueCache = valueCacheOn
+  console.log('==========> creating grid');
+  callCount = 1;
+  gridOptions.valueCache = valueCacheOn;
 
   // then similar to all the other examples, create the grid
-  var gridDiv = document.querySelector<HTMLElement>('#myGrid')!
+  var gridDiv = document.querySelector<HTMLElement>('#myGrid')!;
   gridApi = createGrid(gridDiv, gridOptions);
 }
 
-// setup the grid after the page has finished loading
+// setup the grid
 document.addEventListener('DOMContentLoaded', function () {
   onValueCache(false)
 })

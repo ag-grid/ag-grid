@@ -1,7 +1,5 @@
 import { GridApi, createGrid, GridOptions } from "@ag-grid-community/core";
 
-let gridApi: GridApi<IOlympicData>;
-
 const gridOptions: GridOptions<IOlympicData> = {
     columnDefs: [
         { field: "athlete", width: 150 },
@@ -36,7 +34,7 @@ function setWidthAndHeight(size: string) {
 }
 
 var gridDiv = document.querySelector<HTMLElement>('#myGrid')!;
-gridApi = createGrid(gridDiv, gridOptions);
+const gridApi: GridApi<IOlympicData> = createGrid(gridDiv, gridOptions);
 
 fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
     .then(response => response.json())

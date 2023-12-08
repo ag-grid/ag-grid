@@ -1,7 +1,5 @@
 import { createGrid, GridApi, GridOptions, CellValueChangedEvent } from '@ag-grid-community/core';
 
-let gridApi: GridApi;
-
 const gridOptions: GridOptions = {
     // Data to be displayed
     rowData: [
@@ -40,10 +38,8 @@ const gridOptions: GridOptions = {
     pagination: true,
     rowClass: 'row'
 }
-document.addEventListener('DOMContentLoaded', function () {
-    var gridDiv = document.querySelector<HTMLElement>('#myGrid')!;
-    gridApi = createGrid(gridDiv, gridOptions);
-    fetch('https://www.ag-grid.com/example-assets/space-mission-data.json')
-        .then(response => response.json())
-        .then((data: any) => gridApi.setGridOption('rowData', data))
-})
+  var gridDiv = document.querySelector<HTMLElement>('#myGrid')!;
+  const gridApi: GridApi = createGrid(gridDiv, gridOptions);
+  fetch('https://www.ag-grid.com/example-assets/space-mission-data.json')
+      .then(response => response.json())
+      .then((data: any) => gridApi.setGridOption('rowData', data))

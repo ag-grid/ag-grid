@@ -151,19 +151,16 @@ function onExcelExport() {
     });
 }
 
-// setup the grid after the page has finished loading
-document.addEventListener('DOMContentLoaded', function () {
-    const resetBtn = document.querySelector('button.reset');
-    const exportBtn = document.querySelector('button.excel');
+// setup the grid
+const resetBtn = document.querySelector('button.reset');
+const exportBtn = document.querySelector('button.excel');
 
-    resetBtn.addEventListener('click', function () {
-        loadGrids();
-    });
-
-    exportBtn.addEventListener('click', function () {
-        onExcelExport();
-    });
-
-    loadGrids();
+resetBtn.addEventListener('click', function () {
+  loadGrids();
 });
 
+exportBtn.addEventListener('click', function () {
+  onExcelExport();
+});
+
+loadGrids();

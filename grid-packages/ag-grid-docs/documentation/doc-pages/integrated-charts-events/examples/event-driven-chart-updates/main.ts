@@ -8,8 +8,6 @@ import {
   GridOptions
 } from '@ag-grid-community/core';
 
-let gridApi: GridApi;
-
 const gridOptions: GridOptions = {
   columnDefs: [
     { field: 'Month', width: 150, chartDataType: 'category' },
@@ -74,14 +72,12 @@ function updateTitle(api: GridApi, chartId: string) {
   });
 }
 
-// setup the grid after the page has finished loading
-document.addEventListener('DOMContentLoaded', function () {
-  const gridDiv = document.querySelector<HTMLElement>('#myGrid')!
-  gridApi = createGrid(gridDiv, gridOptions);
+// setup the grid
+const gridDiv = document.querySelector<HTMLElement>('#myGrid')!
+const gridApi: GridApi = createGrid(gridDiv, gridOptions);
 
-  fetch('https://www.ag-grid.com/example-assets/weather-se-england.json')
-    .then(response => response.json())
-    .then(function (data) {
-      gridApi!.setGridOption('rowData', data)
-    })
-})
+fetch('https://www.ag-grid.com/example-assets/weather-se-england.json')
+  .then(response => response.json())
+  .then(function (data) {
+    gridApi.setGridOption('rowData', data)
+  })

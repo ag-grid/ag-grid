@@ -1,7 +1,5 @@
 import { createGrid, GridApi, GridOptions } from '@ag-grid-community/core';
 
-let gridApi: GridApi;
-
 const gridOptions: GridOptions = {
     // Data to be displayed
     rowData: [
@@ -32,10 +30,8 @@ const gridOptions: GridOptions = {
     ],
 }
 
-document.addEventListener('DOMContentLoaded', function () {
-    const gridDiv = document.querySelector<HTMLElement>('#myGrid')!;
-    gridApi = createGrid(gridDiv, gridOptions);
-    fetch('https://www.ag-grid.com/example-assets/space-mission-data.json')
-        .then(response => response.json())
-        .then((data: any) => gridApi.setGridOption('rowData', data))
-})
+  const gridDiv = document.querySelector<HTMLElement>('#myGrid')!;
+  const gridApi: GridApi = createGrid(gridDiv, gridOptions);
+  fetch('https://www.ag-grid.com/example-assets/space-mission-data.json')
+      .then(response => response.json())
+      .then((data: any) => gridApi.setGridOption('rowData', data))
