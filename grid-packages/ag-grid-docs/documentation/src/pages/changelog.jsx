@@ -250,8 +250,8 @@ const Changelog = ({ location }) => {
                 filter: 'agSetColumnFilter',
                 filterParams: {
                     comparator: (a, b) => {
-                        const valA = parseInt(a);
-                        const valB = parseInt(b);
+                        const valA = parseInt(a.replace('AG-',''));
+                        const valB = parseInt(b.replace('AG-',''));
                         if (valA === valB) return 0;
                         return valA > valB ? -1 : 1;
                     }
@@ -272,8 +272,8 @@ const Changelog = ({ location }) => {
                 filter: 'agSetColumnFilter',
                 filterParams: {
                     comparator: (a, b) => {
-                        const valA = parseInt(a);
-                        const valB = parseInt(b);
+                        const valA = parseInt(a.replace(/\./g,''));
+                        const valB = parseInt(b.replace(/\./g,''));
                         if (valA === valB) return 0;
                         return valA > valB ? -1 : 1;
                     }
