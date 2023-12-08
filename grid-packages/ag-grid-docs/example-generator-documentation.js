@@ -160,6 +160,7 @@ function forEachExample(done, name, regex, generateExample, scope = '*', trigger
                     return;
                 }
 
+                console.log(`Processing example ${section}/${example}`);
                 generateExample(examplePath, type, options ? JSON.parse(options) : {});
                 processedExamples.add(examplePath);
             } catch (error) {
