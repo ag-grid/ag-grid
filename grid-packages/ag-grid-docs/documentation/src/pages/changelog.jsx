@@ -2,67 +2,17 @@ import classnames from 'classnames';
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { Alert } from '../components/alert/Alert';
 import GlobalContextConsumer from '../components/GlobalContext';
-import ChevronButtonCellRenderer from '../components/grid/ChevronButtonRenderer';
 import DetailCellRenderer from '../components/grid/DetailCellRendererComponent';
 import Grid from '../components/grid/Grid';
-import IssueTypeCellRenderer from '../components/grid/IssueTypeRenderer';
-import PaddingCellRenderer from '../components/grid/PaddingCellRenderer';
 import { Icon } from '../components/Icon';
 import ReleaseVersionNotes from '../components/release-notes/ReleaseVersionNotes.jsx';
 import { hostPrefix } from '../utils/consts';
+import { IssueColDef, IssueTypeColDef } from '../utils/grid/issueColDefs';
 import styles from './pipelineChangelog.module.scss';
 
 const IS_SSR = typeof window === 'undefined';
 const ALL_FIX_VERSIONS = 'All Versions';
 
-export const IssueColDef = {
-    colId: 'key',
-    field: 'key',
-    headerName: 'Issue',
-    width: 150,
-    valueGetter: (params) => {
-        return parseInt(params.data.key.replace('AG-', ''));
-    },
-    valueFormatter: (params) => {
-        return params.value ? `AG-${params.value}` : '';
-    },
-    cellRendererSelector: (params) => {
-        if (
-            params.node.data.moreInformation ||
-            params.node.data.deprecationNotes ||
-            params.node.data.breakingChangesNotes
-        ) {
-            return {
-                component: ChevronButtonCellRenderer,
-            };
-        }
-        return {
-            component: PaddingCellRenderer,
-        };
-    },
-    filter: 'agSetColumnFilter',
-    filterParams: {
-        valueFormatter: (params) => {
-            return params.value ? `AG-${params.value}` : '';
-        },
-        comparator: (a, b) => {
-        var valA = a == null ? 0 : parseInt(a);
-        var valB = b == null ? 0 : parseInt(b);
-        if (valA === valB) return 0;
-        return valA > valB ? 1 : -1;
-        },
-    },
-}
-export const IssueTypeColDef = {
-    field: 'issueType',
-    valueFormatter: (params) => (params.value === 'Bug' ? 'Defect' : 'Feature Request'),
-    cellRenderer: IssueTypeCellRenderer,
-    width: 175,
-    resizable: false,
-    filterParams: {
-        valueFormatter: (params) => (params.value === 'Bug' ? 'Defect' : 'Feature Request'),
-    }
-};
 
 const Changelog = ({ location }) => {
     const extractFixVersionParameter = (location) => {
@@ -274,7 +224,6 @@ const Changelog = ({ location }) => {
 
     const COLUMN_DEFS = useMemo(
         () => [
-
             IssueColDef,
             {
                 field: 'summary',
