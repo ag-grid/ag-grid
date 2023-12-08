@@ -59,6 +59,10 @@ export class GroupFloatingFilterComp extends Component implements IFloatingFilte
         });
     }
 
+    public onParamsUpdated(params: IFloatingFilterParams<GroupFilter>): void {
+        this.refresh(params);
+    }
+
     public refresh(params: IFloatingFilterParams<GroupFilter>): void {
         this.params = params;
         this.setParams();

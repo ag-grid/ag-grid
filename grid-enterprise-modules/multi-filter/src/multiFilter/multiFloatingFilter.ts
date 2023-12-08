@@ -62,6 +62,10 @@ export class MultiFloatingFilterComp extends Component implements IFloatingFilte
         });
     }
 
+    public onParamsUpdated(params: IFloatingFilterParams<MultiFilter>): void {
+        this.refresh(params);
+    }
+
     public refresh(params: IFloatingFilterParams<MultiFilter>): void {
         this.params = params;
         const { compDetailsList: newCompDetailsList, floatingFilterParamsList } = this.getCompDetailsList(params);
