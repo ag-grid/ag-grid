@@ -100,7 +100,7 @@ const App = () => {
 
             // GOOD
             rowModelType='clientSide'
-            rowHeight="50"
+            rowHeight={50}
             />
     );
 };
@@ -117,10 +117,10 @@ const App = () => {
     const [count, setCount] = useState(0);
 
     // BAD will re-run selection logic on every render
-    const isRowSelectable = (params) => params.data > count;
+    const isRowSelectable = (node) => node.data.value > count;
 
     // GOOD will only re-run selection logic when count changes
-    const isRowSelectable = useCallback((params) => params.data > count, [count]);
+    const isRowSelectable = useCallback((node) => node.data.value > count, [count]);
 
     return <AgGridReact isRowSelectable={isRowSelectable} />;
 };
@@ -147,7 +147,7 @@ const App = () => {
     // GOOD callback, no stale data
     const onFilterOpened = useCallback( ()=> {
         console.log(`number of clicks is ${clickedCount}`);
-    }, [clickedRow]);
+    }, [clickedCount]);
 
     return <AgGridReact 
                 onCellClicked={onCellClicked} 
@@ -159,7 +159,7 @@ const App = () => {
 
 ## Components
 
-Custom Components can be referenced by Name or Direct Reference, see [Registering Components](/components/). When providing a Direct Reference to the component AG Grid will avoid most unnecessarily renders. However, if your component is rendered more than you expect, it may help to wrap it with `memo`.
+Custom Components can be referenced by Name or Direct Reference, see [Registering Components](/components/). When providing a Direct Reference to the component AG Grid will avoid most unnecessary renders. However, if your component is rendered more than you expect, it may help to wrap it with `memo`.
 
 ```jsx
 const MyCellRenderer = p => <span>{p.value}</span>;
