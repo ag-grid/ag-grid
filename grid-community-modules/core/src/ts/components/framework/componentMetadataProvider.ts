@@ -43,19 +43,15 @@ export class ComponentMetadataProvider extends BeanStub {
             },
             loadingOverlayComponent: {
                 mandatoryMethodList: [],
-                optionalMethodList: []
+                optionalMethodList: ['onParamsUpdated']
             },
             noRowsOverlayComponent: {
                 mandatoryMethodList: [],
-                optionalMethodList: []
+                optionalMethodList: ['onParamsUpdated']
             },
             floatingFilterComponent: {
                 mandatoryMethodList: ['onParentModelChanged'],
-                optionalMethodList: ['afterGuiAttached']
-            },
-            floatingFilterWrapperComponent: {
-                mandatoryMethodList: [],
-                optionalMethodList: []
+                optionalMethodList: ['afterGuiAttached', 'onParamsUpdated']
             },
             cellRenderer: {
                 mandatoryMethodList: [],
@@ -85,17 +81,13 @@ export class ComponentMetadataProvider extends BeanStub {
                 mandatoryMethodList: ['isFilterActive', 'doesFilterPass', 'getModel', 'setModel'],
                 optionalMethodList: ['afterGuiAttached', 'afterGuiDetached', 'onNewRowsLoaded', 'getModelAsString', 'onFloatingFilterChanged', 'onAnyFilterChanged', 'refresh']
             },
-            filterComponent: {
-                mandatoryMethodList: ['isFilterActive', 'doesFilterPass', 'getModel', 'setModel'],
-                optionalMethodList: ['afterGuiAttached', 'afterGuiDetached', 'onNewRowsLoaded', 'getModelAsString', 'onFloatingFilterChanged', 'onAnyFilterChanged', 'refresh']
-            },
             statusPanel: {
                 mandatoryMethodList: [],
                 optionalMethodList: ['afterGuiAttached'],
             },
             toolPanel: {
                 mandatoryMethodList: [],
-                optionalMethodList: ['refresh', 'afterGuiAttached']
+                optionalMethodList: ['refresh', 'getState']
             },
             tooltipComponent: {
                 mandatoryMethodList: [],

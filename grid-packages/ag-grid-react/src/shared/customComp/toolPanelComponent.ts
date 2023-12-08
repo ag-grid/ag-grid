@@ -1,4 +1,4 @@
-import { IToolPanel, IToolPanelParams } from "@ag-grid-community/core";
+import { IToolPanel, IToolPanelParams } from "ag-grid-community";
 import { CustomComponent } from "./customComponent";
 import { CustomToolPanelParams } from "./interfaces";
 
