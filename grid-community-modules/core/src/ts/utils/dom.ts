@@ -338,10 +338,6 @@ export function ensureDomOrder(eContainer: HTMLElement, eChild: HTMLElement, eCh
             eContainer.insertAdjacentElement('afterbegin', eChild);
         }
     }
-
-    if (eChildHasFocus && focusedEl && browserSupportsPreventScroll()) {
-        focusedEl.focus({ preventScroll: true });
-    }
 }
 
 export function setDomChildOrder(eContainer: HTMLElement, orderedChildren: (HTMLElement | null)[]): void {
