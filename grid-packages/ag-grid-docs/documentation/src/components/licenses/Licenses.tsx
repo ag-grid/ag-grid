@@ -28,8 +28,8 @@ const DEV_LICENSE_DATA: LicenseData[] = [
         priceFullDollars: '999',
         launchPrice: null,
         licenseBenefits: ['Perpetual License', '1 Year of Support', '1 Year of Updates'],
-        buyLink: 'https://ag-grid.com/ecommerce/#/ecommerce/?licenseType=single&productType=aggrid',
-        learnMoreLink: "https://ag-grid.com/javascript-data-grid/licensing/",
+        buyLink: 'https://www.ag-grid.com/ecommerce/#/ecommerce/?licenseType=single&productType=aggrid',
+        learnMoreLink: "https://www.ag-grid.com/javascript-data-grid/licensing/",
         Logo: AGGridLogo
     },
     {
@@ -39,7 +39,7 @@ const DEV_LICENSE_DATA: LicenseData[] = [
         licenseBenefits: ['Perpetual License', '1 Year of Support', '1 Year of Updates'],
         priceFullDollars: '399',
         launchPrice: '199',
-        buyLink: 'https://ag-grid.com/ecommerce/#/ecommerce/?licenseType=single&productType=agcharts',
+        buyLink: 'https://www.ag-grid.com/ecommerce/#/ecommerce/?licenseType=single&productType=agcharts',
         learnMoreLink: "https://charts.ag-grid.com/javascript/licensing/",
         Logo: AGChartsLogo
     },
@@ -97,7 +97,7 @@ const License = (props: LicenseData) => {
                     </a>
                 </div>
 
-                
+
                 <div className={styles.launchExplainer}>
                     { launchPrice && (
                         <>
