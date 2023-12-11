@@ -164,7 +164,7 @@ export declare class ColumnModel extends BeanStub {
     setViewportPosition(scrollWidth: number, scrollPosition: number, afterScroll?: boolean): void;
     isPivotMode(): boolean;
     private isPivotSettingAllowed;
-    setPivotMode(pivotMode: boolean, source?: ColumnEventType): void;
+    private setPivotMode;
     getSecondaryPivotColumn(pivotKeys: string[], valueColKey: ColKey): Column | null;
     private setBeans;
     private setFirstRightAndLastLeftPinned;

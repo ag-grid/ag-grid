@@ -37933,9 +37933,7 @@ var ChartService = /** @class */ (function (_super) {
         };
         if (model.modelType === 'pivot') {
             // if required enter pivot mode
-            if (!this.columnModel.isPivotMode()) {
-                this.columnModel.setPivotMode(true, "pivotChart");
-            }
+            this.gridOptionsService.updateGridOptions({ options: { pivotMode: true }, source: 'pivotChart' });
             // pivot chart range contains all visible column without a row range to include all rows
             var columns = this.columnModel.getAllDisplayedColumns().map(function (col) { return col.getColId(); });
             var chartAllRangeParams = {
@@ -37970,9 +37968,7 @@ var ChartService = /** @class */ (function (_super) {
     };
     ChartService.prototype.createPivotChart = function (params) {
         // if required enter pivot mode
-        if (!this.columnModel.isPivotMode()) {
-            this.columnModel.setPivotMode(true, "pivotChart");
-        }
+        this.gridOptionsService.updateGridOptions({ options: { pivotMode: true }, source: 'pivotChart' });
         // pivot chart range contains all visible column without a row range to include all rows
         var chartAllRangeParams = {
             rowStartIndex: null,

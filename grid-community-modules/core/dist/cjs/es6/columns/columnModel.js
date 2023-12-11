@@ -85,7 +85,7 @@ let ColumnModel = class ColumnModel extends beanStub_1.BeanStub {
         this.addManagedPropertyListeners(['groupDisplayType', 'treeData', 'treeDataDisplayType', 'groupHideOpenParents'], () => this.buildAutoGroupColumns());
         this.addManagedPropertyListener('autoGroupColumnDef', () => this.onAutoGroupColumnDefChanged());
         this.addManagedPropertyListeners(['defaultColDef', 'columnTypes', 'suppressFieldDotNotation'], (params) => this.onSharedColDefChanged(params.source));
-        this.addManagedPropertyListener('pivotMode', () => this.setPivotMode(this.gridOptionsService.get('pivotMode')));
+        this.addManagedPropertyListener('pivotMode', event => this.setPivotMode(this.gridOptionsService.get('pivotMode'), event.source));
         this.addManagedListener(this.eventService, events_1.Events.EVENT_FIRST_DATA_RENDERED, () => this.onFirstDataRendered());
     }
     buildAutoGroupColumns() {

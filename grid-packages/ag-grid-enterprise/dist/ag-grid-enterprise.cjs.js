@@ -42963,9 +42963,7 @@ var ChartService = /** @class */ (function (_super) {
         };
         if (model.modelType === 'pivot') {
             // if required enter pivot mode
-            if (!this.columnModel.isPivotMode()) {
-                this.columnModel.setPivotMode(true, "pivotChart");
-            }
+            this.gridOptionsService.updateGridOptions({ options: { pivotMode: true }, source: 'pivotChart' });
             // pivot chart range contains all visible column without a row range to include all rows
             var columns = this.columnModel.getAllDisplayedColumns().map(function (col) { return col.getColId(); });
             var chartAllRangeParams = {
@@ -43000,9 +42998,7 @@ var ChartService = /** @class */ (function (_super) {
     };
     ChartService.prototype.createPivotChart = function (params) {
         // if required enter pivot mode
-        if (!this.columnModel.isPivotMode()) {
-            this.columnModel.setPivotMode(true, "pivotChart");
-        }
+        this.gridOptionsService.updateGridOptions({ options: { pivotMode: true }, source: 'pivotChart' });
         // pivot chart range contains all visible column without a row range to include all rows
         var chartAllRangeParams = {
             rowStartIndex: null,
@@ -49471,8 +49467,8 @@ var PivotModePanel = /** @class */ (function (_super) {
     PivotModePanel.prototype.onBtPivotMode = function () {
         var newValue = !!this.cbPivotMode.getValue();
         if (newValue !== this.columnModel.isPivotMode()) {
-            this.columnModel.setPivotMode(newValue, "toolPanelUi");
-            var api = this.gridOptionsService.api;
+            this.gridOptionsService.updateGridOptions({ options: { pivotMode: newValue }, source: 'toolPanelUi' });
+            var api = this.api;
             if (api) {
                 api.refreshHeader();
             }
@@ -49485,6 +49481,9 @@ var PivotModePanel = /** @class */ (function (_super) {
     __decorate$_([
         agGridCommunity.Autowired('columnModel')
     ], PivotModePanel.prototype, "columnModel", void 0);
+    __decorate$_([
+        agGridCommunity.Autowired('gridApi')
+    ], PivotModePanel.prototype, "api", void 0);
     __decorate$_([
         agGridCommunity.RefSelector('cbPivotMode')
     ], PivotModePanel.prototype, "cbPivotMode", void 0);

@@ -2042,7 +2042,7 @@ class VueFrameworkComponentWrapper_VueFrameworkComponentWrapper extends external
             hasMethod(name) {
                 const componentInstance = wrapper.getFrameworkComponentInstance();
                 if (!componentInstance[name]) {
-                    return componentInstance.$.setupState[name] !== null;
+                    return componentInstance.$.setupState[name] != null;
                 }
                 else {
                     return true;

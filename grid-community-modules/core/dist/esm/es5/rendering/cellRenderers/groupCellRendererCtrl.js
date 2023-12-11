@@ -47,7 +47,7 @@ var GroupCellRendererCtrl = /** @class */ (function (_super) {
         return _super !== null && _super.apply(this, arguments) || this;
     }
     GroupCellRendererCtrl.prototype.init = function (comp, eGui, eCheckbox, eExpanded, eContracted, compClass, params) {
-        var _a, _b;
+        var _a, _b, _c, _d;
         this.params = params;
         this.eGui = eGui;
         this.eCheckbox = eCheckbox;
@@ -79,8 +79,9 @@ var GroupCellRendererCtrl = /** @class */ (function (_super) {
         this.findDisplayedGroupNode();
         if (!topLevelFooter) {
             var showingFooterTotal = params.node.footer && params.node.rowGroupIndex === this.columnModel.getRowGroupColumns().findIndex(function (c) { var _a; return c.getColId() === ((_a = params.colDef) === null || _a === void 0 ? void 0 : _a.showRowGroup); });
-            // if we're not showing a group value
-            var isAlwaysShowing = this.gridOptionsService.get('groupDisplayType') === 'singleColumn' || this.gridOptionsService.get('treeData');
+            // if we're always showing a group value
+            var isAlwaysShowing = this.gridOptionsService.get('groupDisplayType') != 'multipleColumns' || this.gridOptionsService.get('treeData');
+            // if the cell is populated with a parent value due to `showOpenedGroup`
             var showOpenGroupValue = (isAlwaysShowing || (this.gridOptionsService.get('showOpenedGroup') && !params.node.footer && ((!params.node.group ||
                 (params.node.rowGroupIndex != null &&
                     params.node.rowGroupIndex > this.columnModel.getRowGroupColumns().findIndex(function (c) { var _a; return c.getColId() === ((_a = params.colDef) === null || _a === void 0 ? void 0 : _a.showRowGroup); }))))));
@@ -88,8 +89,10 @@ var GroupCellRendererCtrl = /** @class */ (function (_super) {
             var leafWithValues = !node.group && (((_a = this.params.colDef) === null || _a === void 0 ? void 0 : _a.field) || ((_b = this.params.colDef) === null || _b === void 0 ? void 0 : _b.valueGetter));
             // doesn't have expand/collapse chevron
             var isExpandable = this.isExpandable();
+            // is showing pivot leaf cell
+            var showPivotModeLeafValue = this.columnModel.isPivotMode() && node.leafGroup && ((_c = node.rowGroupColumn) === null || _c === void 0 ? void 0 : _c.getColId()) === ((_d = params.column) === null || _d === void 0 ? void 0 : _d.getColDef().showRowGroup);
             // if not showing any values or chevron, skip cell.
-            var canSkipRenderingCell = !this.showingValueForOpenedParent && !isExpandable && !leafWithValues && !showOpenGroupValue && !showingFooterTotal;
+            var canSkipRenderingCell = !this.showingValueForOpenedParent && !isExpandable && !leafWithValues && !showOpenGroupValue && !showingFooterTotal && !showPivotModeLeafValue;
             if (canSkipRenderingCell) {
                 return;
             }

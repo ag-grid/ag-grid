@@ -43,8 +43,8 @@ var PivotModePanel = /** @class */ (function (_super) {
     PivotModePanel.prototype.onBtPivotMode = function () {
         var newValue = !!this.cbPivotMode.getValue();
         if (newValue !== this.columnModel.isPivotMode()) {
-            this.columnModel.setPivotMode(newValue, "toolPanelUi");
-            var api = this.gridOptionsService.api;
+            this.gridOptionsService.updateGridOptions({ options: { pivotMode: newValue }, source: 'toolPanelUi' });
+            var api = this.api;
             if (api) {
                 api.refreshHeader();
             }
@@ -57,6 +57,9 @@ var PivotModePanel = /** @class */ (function (_super) {
     __decorate([
         (0, core_1.Autowired)('columnModel')
     ], PivotModePanel.prototype, "columnModel", void 0);
+    __decorate([
+        (0, core_1.Autowired)('gridApi')
+    ], PivotModePanel.prototype, "api", void 0);
     __decorate([
         (0, core_1.RefSelector)('cbPivotMode')
     ], PivotModePanel.prototype, "cbPivotMode", void 0);

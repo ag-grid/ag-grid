@@ -282,7 +282,7 @@ var StateService = /** @class */ (function (_super) {
             });
             defaultState.pivot = null;
             defaultState.pivotIndex = null;
-            this.columnModel.setPivotMode(pivotState.pivotMode);
+            this.gridOptionsService.updateGridOptions({ options: { pivotMode: pivotState.pivotMode }, source: 'gridInitializing' });
         }
         if (columnPinningState) {
             columnPinningState.leftColIds.forEach(function (colId) {

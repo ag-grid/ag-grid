@@ -110,9 +110,7 @@ let ChartService = class ChartService extends BeanStub {
         };
         if (model.modelType === 'pivot') {
             // if required enter pivot mode
-            if (!this.columnModel.isPivotMode()) {
-                this.columnModel.setPivotMode(true, "pivotChart");
-            }
+            this.gridOptionsService.updateGridOptions({ options: { pivotMode: true }, source: 'pivotChart' });
             // pivot chart range contains all visible column without a row range to include all rows
             const columns = this.columnModel.getAllDisplayedColumns().map(col => col.getColId());
             const chartAllRangeParams = {
@@ -147,9 +145,7 @@ let ChartService = class ChartService extends BeanStub {
     }
     createPivotChart(params) {
         // if required enter pivot mode
-        if (!this.columnModel.isPivotMode()) {
-            this.columnModel.setPivotMode(true, "pivotChart");
-        }
+        this.gridOptionsService.updateGridOptions({ options: { pivotMode: true }, source: 'pivotChart' });
         // pivot chart range contains all visible column without a row range to include all rows
         const chartAllRangeParams = {
             rowStartIndex: null,

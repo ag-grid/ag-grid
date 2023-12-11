@@ -432,7 +432,7 @@ class HeaderCellCtrl extends abstractHeaderCellCtrl_1.AbstractHeaderCellCtrl {
             return;
         }
         comp.addOrRemoveCssClass('ag-header-span-total', isSpanningTotal);
-        const pivotMode = gridOptionsService.get('pivotMode');
+        const pivotMode = columnModel.isPivotMode();
         const groupHeaderHeight = pivotMode
             ? columnModel.getPivotGroupHeaderHeight()
             : columnModel.getGroupHeaderHeight();

@@ -139,7 +139,7 @@ var ColumnModel = /** @class */ (function (_super) {
         this.addManagedPropertyListeners(['groupDisplayType', 'treeData', 'treeDataDisplayType', 'groupHideOpenParents'], function () { return _this.buildAutoGroupColumns(); });
         this.addManagedPropertyListener('autoGroupColumnDef', function () { return _this.onAutoGroupColumnDefChanged(); });
         this.addManagedPropertyListeners(['defaultColDef', 'columnTypes', 'suppressFieldDotNotation'], function (params) { return _this.onSharedColDefChanged(params.source); });
-        this.addManagedPropertyListener('pivotMode', function () { return _this.setPivotMode(_this.gridOptionsService.get('pivotMode')); });
+        this.addManagedPropertyListener('pivotMode', function (event) { return _this.setPivotMode(_this.gridOptionsService.get('pivotMode'), event.source); });
         this.addManagedListener(this.eventService, events_1.Events.EVENT_FIRST_DATA_RENDERED, function () { return _this.onFirstDataRendered(); });
     };
     ColumnModel.prototype.buildAutoGroupColumns = function () {

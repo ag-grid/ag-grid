@@ -233,7 +233,7 @@ let StateService = class StateService extends beanStub_1.BeanStub {
             });
             defaultState.pivot = null;
             defaultState.pivotIndex = null;
-            this.columnModel.setPivotMode(pivotState.pivotMode);
+            this.gridOptionsService.updateGridOptions({ options: { pivotMode: pivotState.pivotMode }, source: 'gridInitializing' });
         }
         if (columnPinningState) {
             columnPinningState.leftColIds.forEach(colId => {
