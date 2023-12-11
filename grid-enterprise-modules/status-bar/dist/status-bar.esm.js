@@ -49245,7 +49245,7 @@ class LicenseManager {
         this.watermarkMessage = "License Expired";
     }
 }
-LicenseManager.RELEASE_INFORMATION = 'MTcwMTA3MzA3NTIwOQ==';
+LicenseManager.RELEASE_INFORMATION = 'MTcwMjI5MjcxNTE0OQ==';
 
 var __decorate$9 = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;

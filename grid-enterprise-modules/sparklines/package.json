@@ -49,7 +49,7 @@
   "dependencies": {
     "@ag-grid-community/core": "~31.0.0",
     "@ag-grid-enterprise/core": "~31.0.0",
-    "ag-charts-community": "~9.0.0"
+    "ag-charts-community": "~v9.0.0-beta.20231127"
   },
   "devDependencies": {
     "@types/jest": "^29.5.0",

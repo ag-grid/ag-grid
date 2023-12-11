@@ -480,7 +480,7 @@ var LicenseManager = /** @class */ (function () {
         console.error('****************************************************************************************************************************');
         this.watermarkMessage = "License Expired";
     };
-    LicenseManager.RELEASE_INFORMATION = 'MTcwMTA3MzA3NTIwOQ==';
+    LicenseManager.RELEASE_INFORMATION = 'MTcwMjI5MjcxNTE0OQ==';
     return LicenseManager;
 }());
 
@@ -33944,7 +33944,7 @@ function applySeriesValues(target, options, { path, index } = {}) {
 }
 
 // DO NOT UPDATE MANUALLY: Generated from script during build time
-const VERSION$2 = '9.0.0';
+const VERSION$2 = '9.0.1';
 
 const themes = Object.entries(themes$1).reduce((obj, [name, factory]) => {
     obj[name] = factory();
