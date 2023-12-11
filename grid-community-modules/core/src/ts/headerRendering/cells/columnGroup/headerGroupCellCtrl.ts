@@ -296,7 +296,7 @@ export class HeaderGroupCellCtrl extends AbstractHeaderCellCtrl<IHeaderGroupCell
     // unlike columns, this will only get called once, as we don't react on props on column groups
     // (we will always destroy and recreate this comp if something changes)
     public setDragSource(eHeaderGroup: HTMLElement): void {
-        if (this.isSuppressMoving()) {
+        if (!this.isAlive() || this.isSuppressMoving()) {
             return;
         }
 
