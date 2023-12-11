@@ -66,7 +66,8 @@ function copyFiles(files, dest, tokenToReplace, replaceValue = '', importType, f
             const {
                 parseFile,
                 extractImportStatements,
-                addBindingImports
+                addBindingImports,
+                stripImportDeclarations,
             } = require(`./src/example-generation/parser-utils.ts`);
             src = tokenToReplace ? src.replace(tokenToReplace, '') : src;
             const parsed = parseFile(src)
@@ -80,11 +81,11 @@ function copyFiles(files, dest, tokenToReplace, replaceValue = '', importType, f
                 formattedImports = `${importStrings.join('\n')}\n`
 
                 // Remove the original import statements
-                src = src.replace(/import.*from.*\n/g, '').replace(/import.*['"].*['"].*\n/g, '');
+                src = stripImportDeclarations(src);
                 if (convertToPackage) {
                     src = src
                         .replace(/\/\/ Register the required feature modules with the Grid\n/, '')
-                        .replace(/ModuleRegistry.registerModules.*?\n/, '');
+                        .replace(/ModuleRegistry\.registerModules\(\[\s*(?:\w+\s*,\s*)*(?:\w+\s*)?\]\);?\n/, '');
 
 
                     const ensureRegistryUsed = ['[modules]=', ':modules=', 'modules={', 'modules:'];
@@ -670,7 +671,7 @@ const ANGULAR_MAIN_FILE =
 `import '@angular/compiler';
 import { bootstrapApplication } from '@angular/platform-browser';
 import { AppComponent } from './app.component';
-                                
+
 bootstrapApplication(AppComponent);
 `
 

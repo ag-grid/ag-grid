@@ -97,6 +97,71 @@ export function isInstanceMethod(methods: string[], property: any): boolean {
     return methods.map(getFunctionName).filter(name => name === property.name).length > 0;
 }
 
+const IMPORT_STATEMENT = importStatementRegExp();
+
+export function stripImportDeclarations(source: string): string {
+    return source.replace(new RegExp(IMPORT_STATEMENT.source, 'g'), '');
+}
+
+function importStatementRegExp(): RegExp {
+    const IDENTIFIER = /\w+/;
+    const WHITESPACE = /\s+/;
+    const OPTIONAL_WHITESPACE = /\s*/;
+    const BRACKET_OPEN = /\{/;
+    const BRACKET_CLOSE = /\}/;
+    const COMMA = /,/;
+    const SINGLE_QUOTE_STRING_LITERAL = /"[^"]*?"/;
+    const DOUBLE_QUOTE_STRING_LITERAL = /'[^']*?'/;
+    const STRING_LITERAL = oneOf(SINGLE_QUOTE_STRING_LITERAL, DOUBLE_QUOTE_STRING_LITERAL);
+    const KEYWORD_IMPORT = /import/;
+    const STAR = /\*/;
+    const KEYWORD_AS = /as/;
+    const KEYWORD_FROM = /from/;
+    const STATEMENT_TERMINATOR = /[;\n]/;
+    const IMPORT_DEFAULT_SPECIFIER = IDENTIFIER;
+    const IMPORT_NAMESPACED_SPECIFIER = sequence(STAR, OPTIONAL_WHITESPACE, KEYWORD_AS, WHITESPACE, IDENTIFIER);
+    const IMPORT_NAMED_EXPORT_SPECIFIER = IDENTIFIER;
+    const IMPORT_ALIASED_EXPORT_SPECIFIER = sequence(IDENTIFIER, WHITESPACE, KEYWORD_AS, WHITESPACE, IDENTIFIER);
+    const NAMED_IMPORT_SPECIFIER = oneOf(IMPORT_NAMED_EXPORT_SPECIFIER, IMPORT_ALIASED_EXPORT_SPECIFIER);
+    const NAMED_IMPORT_SEPARATOR = sequence(OPTIONAL_WHITESPACE, COMMA, OPTIONAL_WHITESPACE);
+    const IMPORT_NAMED_SPECIFIER = sequence(
+        BRACKET_OPEN,
+        OPTIONAL_WHITESPACE,
+        delimitedList(NAMED_IMPORT_SPECIFIER, NAMED_IMPORT_SEPARATOR),
+        OPTIONAL_WHITESPACE,
+        BRACKET_CLOSE
+    );
+    const IMPORT_SPECIFIER = oneOf(
+        IMPORT_DEFAULT_SPECIFIER,
+        IMPORT_NAMED_SPECIFIER,
+        IMPORT_NAMESPACED_SPECIFIER,
+        sequence(IMPORT_DEFAULT_SPECIFIER, NAMED_IMPORT_SEPARATOR, IMPORT_NAMED_SPECIFIER)
+    );
+    const IMPORT_STATEMENT = sequence(
+        KEYWORD_IMPORT,
+        maybe(sequence(WHITESPACE, IMPORT_SPECIFIER, OPTIONAL_WHITESPACE, KEYWORD_FROM)),
+        OPTIONAL_WHITESPACE,
+        STRING_LITERAL,
+        OPTIONAL_WHITESPACE,
+        STATEMENT_TERMINATOR
+    );
+    return IMPORT_STATEMENT;
+
+    function sequence(...patterns: Array<RegExp>): RegExp {
+        return new RegExp(patterns.map((r) => r.source).join(''));
+    }
+    function maybe(pattern: RegExp): RegExp {
+        return new RegExp(`(?:${pattern.source})?`);
+    }
+    function oneOf(...patterns: Array<RegExp>): RegExp {
+        return new RegExp(`(?:${patterns.map((r) => r.source).join('|')})`);
+    }
+    function delimitedList(item: RegExp, delimiter: RegExp): RegExp {
+        return new RegExp(`(?:${item.source}${delimiter.source})*(?:${item.source})?`);
+    }
+}
+
+
 export const enum NodeType {
     Variable = 'VariableDeclaration',
     Function = 'FunctionDeclaration',
