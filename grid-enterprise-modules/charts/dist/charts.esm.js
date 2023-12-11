@@ -1,5 +1,5 @@
 /**
-          * @ag-grid-enterprise/charts - Advanced Data Grid / Data Table supporting Javascript / Typescript / React / Angular / Vue * @version v31.0.0
+          * @ag-grid-enterprise/charts - Advanced Data Grid / Data Table supporting Javascript / Typescript / React / Angular / Vue * @version v31.0.1
           * @link https://www.ag-grid.com/
           * @license Commercial
           */
@@ -48846,7 +48846,7 @@ var BarColumnLabelPlacement;
 
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / Typescript / React / Angular / Vue
- * @version v31.0.0
+ * @version v31.0.1
  * @link https://www.ag-grid.com/
  * @license MIT
  */
@@ -49380,7 +49380,7 @@ __decorate$C([
 ], WatermarkComp.prototype, "postConstruct", null);
 
 // DO NOT UPDATE MANUALLY: Generated from script during build time
-const VERSION$3 = '31.0.0';
+const VERSION$3 = '31.0.1';
 
 const EnterpriseCoreModule = {
     version: VERSION$3,
@@ -85232,7 +85232,7 @@ __decorate$8([
 ], GridChartComp.prototype, "init", null);
 
 // DO NOT UPDATE MANUALLY: Generated from script during build time
-const VERSION$1 = '31.0.0';
+const VERSION$1 = '31.0.1';
 
 var __rest = (undefined && undefined.__rest) || function (s, e) {
     var t = {};
@@ -87600,7 +87600,7 @@ SelectionHandleFactory = __decorate$1([
 ], SelectionHandleFactory);
 
 // DO NOT UPDATE MANUALLY: Generated from script during build time
-const VERSION = '31.0.0';
+const VERSION = '31.0.1';
 
 const RangeSelectionModule = {
     version: VERSION,

@@ -1,5 +1,5 @@
 /**
-          * @ag-grid-enterprise/filter-tool-panel - Advanced Data Grid / Data Table supporting Javascript / Typescript / React / Angular / Vue * @version v31.0.0
+          * @ag-grid-enterprise/filter-tool-panel - Advanced Data Grid / Data Table supporting Javascript / Typescript / React / Angular / Vue * @version v31.0.1
           * @link https://www.ag-grid.com/
           * @license Commercial
           */
@@ -48783,7 +48783,7 @@ var BarColumnLabelPlacement;
 
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / Typescript / React / Angular / Vue
- * @version v31.0.0
+ * @version v31.0.1
  * @link https://www.ag-grid.com/
  * @license MIT
  */
@@ -49317,7 +49317,7 @@ __decorate$c([
 ], WatermarkComp.prototype, "postConstruct", null);
 
 // DO NOT UPDATE MANUALLY: Generated from script during build time
-const VERSION$2 = '31.0.0';
+const VERSION$2 = '31.0.1';
 
 const EnterpriseCoreModule = {
     version: VERSION$2,
@@ -51166,7 +51166,7 @@ ToolPanelColDefService = __decorate$1([
 ], ToolPanelColDefService);
 
 // DO NOT UPDATE MANUALLY: Generated from script during build time
-const VERSION$1 = '31.0.0';
+const VERSION$1 = '31.0.1';
 
 var __decorate = (undefined && undefined.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -51201,7 +51201,7 @@ const SideBarModule = {
 };
 
 // DO NOT UPDATE MANUALLY: Generated from script during build time
-const VERSION = '31.0.0';
+const VERSION = '31.0.1';
 
 const FiltersToolPanelModule = {
     version: VERSION,

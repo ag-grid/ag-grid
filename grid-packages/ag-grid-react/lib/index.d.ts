@@ -1,3 +1,3 @@
-// ag-grid-react v31.0.0
+// ag-grid-react v31.0.1
 import '@ag-grid-community/styles/ag-grid.css';
 import '@ag-grid-community/styles/ag-theme-quartz.css';

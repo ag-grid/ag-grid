@@ -1,5 +1,5 @@
 /**
-          * @ag-grid-enterprise/excel-export - Advanced Data Grid / Data Table supporting Javascript / Typescript / React / Angular / Vue * @version v31.0.0
+          * @ag-grid-enterprise/excel-export - Advanced Data Grid / Data Table supporting Javascript / Typescript / React / Angular / Vue * @version v31.0.1
           * @link https://www.ag-grid.com/
           * @license Commercial
           */
@@ -48783,7 +48783,7 @@ var BarColumnLabelPlacement;
 
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / Typescript / React / Angular / Vue
- * @version v31.0.0
+ * @version v31.0.1
  * @link https://www.ag-grid.com/
  * @license MIT
  */
@@ -49317,7 +49317,7 @@ __decorate$3([
 ], WatermarkComp.prototype, "postConstruct", null);
 
 // DO NOT UPDATE MANUALLY: Generated from script during build time
-const VERSION$2 = '31.0.0';
+const VERSION$2 = '31.0.1';
 
 const EnterpriseCoreModule = {
     version: VERSION$2,
@@ -50170,7 +50170,7 @@ GridSerializer = __decorate$1([
 ], GridSerializer);
 
 // DO NOT UPDATE MANUALLY: Generated from script during build time
-const VERSION$1 = '31.0.0';
+const VERSION$1 = '31.0.1';
 
 const CsvExportModule = {
     version: VERSION$1,
@@ -53332,7 +53332,7 @@ ExcelCreator = __decorate([
 ], ExcelCreator);
 
 // DO NOT UPDATE MANUALLY: Generated from script during build time
-const VERSION = '31.0.0';
+const VERSION = '31.0.1';
 
 const ExcelExportModule = {
     version: VERSION,

@@ -1,5 +1,5 @@
 /**
-          * @ag-grid-enterprise/charts - Advanced Data Grid / Data Table supporting Javascript / Typescript / React / Angular / Vue * @version v31.0.0
+          * @ag-grid-enterprise/charts - Advanced Data Grid / Data Table supporting Javascript / Typescript / React / Angular / Vue * @version v31.0.1
           * @link https://www.ag-grid.com/
           * @license Commercial
           */
@@ -37328,7 +37328,7 @@ var GridChartComp = /** @class */ (function (_super) {
 }(core.Component));
 
 // DO NOT UPDATE MANUALLY: Generated from script during build time
-var VERSION = '31.0.0';
+var VERSION = '31.0.1';
 
 var __assign$2 = (undefined && undefined.__assign) || function () {
     __assign$2 = Object.assign || function(t) {

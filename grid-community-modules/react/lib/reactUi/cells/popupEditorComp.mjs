@@ -1,4 +1,4 @@
-// @ag-grid-community/react v31.0.0
+// @ag-grid-community/react v31.0.1
 import { PopupEditorWrapper } from '@ag-grid-community/core';
 import React, { useState, memo, useContext } from 'react';
 import { createPortal } from 'react-dom';

@@ -1,4 +1,4 @@
-// @ag-grid-community/react v31.0.0
+// @ag-grid-community/react v31.0.1
 import { ComponentType, AgPromise } from '@ag-grid-community/core';
 import { ReactComponent } from './reactComponent';
 import { LegacyPortalManager } from './portalManager';

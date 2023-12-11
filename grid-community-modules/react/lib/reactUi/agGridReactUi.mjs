@@ -1,4 +1,4 @@
-// @ag-grid-community/react v31.0.0
+// @ag-grid-community/react v31.0.1
 import { BaseComponentWrapper, ColumnApi, ComponentUtil, CtrlsService, GridCoreCreator } from '@ag-grid-community/core';
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { NewReactComponent } from '../shared/newReactComponent.mjs';

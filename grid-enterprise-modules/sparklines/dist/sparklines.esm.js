@@ -1,5 +1,5 @@
 /**
-          * @ag-grid-enterprise/sparklines - Advanced Data Grid / Data Table supporting Javascript / Typescript / React / Angular / Vue * @version v31.0.0
+          * @ag-grid-enterprise/sparklines - Advanced Data Grid / Data Table supporting Javascript / Typescript / React / Angular / Vue * @version v31.0.1
           * @link https://www.ag-grid.com/
           * @license Commercial
           */
@@ -48783,7 +48783,7 @@ var BarColumnLabelPlacement$1;
 
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / Typescript / React / Angular / Vue
- * @version v31.0.0
+ * @version v31.0.1
  * @link https://www.ag-grid.com/
  * @license MIT
  */
@@ -49317,7 +49317,7 @@ __decorate$3([
 ], WatermarkComp.prototype, "postConstruct", null);
 
 // DO NOT UPDATE MANUALLY: Generated from script during build time
-const VERSION$1 = '31.0.0';
+const VERSION$1 = '31.0.1';
 
 const EnterpriseCoreModule = {
     version: VERSION$1,
@@ -78568,7 +78568,7 @@ SparklineTooltipSingleton = __decorate([
 ], SparklineTooltipSingleton);
 
 // DO NOT UPDATE MANUALLY: Generated from script during build time
-const VERSION = '31.0.0';
+const VERSION = '31.0.1';
 
 const SparklinesModule = {
     version: VERSION,
