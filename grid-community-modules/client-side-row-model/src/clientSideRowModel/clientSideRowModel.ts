@@ -78,6 +78,12 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel 
     private hasStarted: boolean = false;
     /** E.g. data has been set into the node manager already */
     private shouldSkipSettingDataOnStart: boolean = false;
+    /**
+     * This is to prevent refresh model being called when it's already being called.
+     * E.g. the group stage can trigger initial state filter model to be applied. This fires onFilterChanged,
+     * which then triggers the listener here that calls refresh model again but at the filter stage
+     * (which is about to be run by the original call).
+     */
     private isRefreshingModel: boolean = false;
 
     @PostConstruct
