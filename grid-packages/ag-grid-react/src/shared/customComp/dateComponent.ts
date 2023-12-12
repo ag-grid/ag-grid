@@ -1,8 +1,8 @@
 import { IDate, IDateParams } from "ag-grid-community";
 import { CustomComponent } from "./customComponent";
-import { CustomDateParams, DateMethods } from "./interfaces";
+import { CustomDateProps, CustomDateCallbacks } from "./interfaces";
 
-export class DateComponent extends CustomComponent<IDateParams, CustomDateParams, DateMethods> implements IDate {
+export class DateComponent extends CustomComponent<IDateParams, CustomDateProps, CustomDateCallbacks> implements IDate {
     private date: Date | null = null;
 
     public getDate(): Date | null {
@@ -28,8 +28,8 @@ export class DateComponent extends CustomComponent<IDateParams, CustomDateParams
         this.sourceParams.onDateChanged();
     }
 
-    protected getProps(): CustomDateParams {
-        const props: CustomDateParams = {
+    protected getProps(): CustomDateProps {
+        const props: CustomDateProps = {
             ...this.sourceParams,
             date: this.date,
             onDateChange: (date: Date | null) => this.updateDate(date),

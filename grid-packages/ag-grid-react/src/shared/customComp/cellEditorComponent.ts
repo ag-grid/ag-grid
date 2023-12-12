@@ -1,6 +1,6 @@
 import { ICellEditor, ICellEditorParams } from "ag-grid-community";
 import { addOptionalMethods } from "./customComponent";
-import { CellEditorMethods, CustomCellEditorParams } from "./interfaces";
+import { CustomCellEditorCallbacks, CustomCellEditorProps } from "./interfaces";
 
 export class CellEditorComponent implements ICellEditor {
     private value: any;
@@ -9,7 +9,7 @@ export class CellEditorComponent implements ICellEditor {
         this.value = cellEditorParams.value;
     }
 
-    public getProps(): CustomCellEditorParams {
+    public getProps(): CustomCellEditorProps {
         return {
             ...this.cellEditorParams,
             initialValue: this.cellEditorParams.value,
@@ -27,7 +27,7 @@ export class CellEditorComponent implements ICellEditor {
         this.refreshProps();
     }
 
-    public setMethods(methods: CellEditorMethods): void {
+    public setMethods(methods: CustomCellEditorCallbacks): void {
         addOptionalMethods(this.getOptionalMethods(), methods, this);
     }
 

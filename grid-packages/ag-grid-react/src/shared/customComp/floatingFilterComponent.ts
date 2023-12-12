@@ -1,13 +1,13 @@
 import { AgPromise,  IFloatingFilter, IFloatingFilterParams } from "ag-grid-community";
 import { addOptionalMethods } from "./customComponent";
-import { CustomFloatingFilterParams, FloatingFilterMethods } from "./interfaces";
+import { CustomFloatingFilterProps, CustomFloatingFilterCallbacks } from "./interfaces";
 
 export class FloatingFilterComponent implements IFloatingFilter {
     private model: any = null;
 
     constructor(private floatingFilterParams: IFloatingFilterParams, private readonly refreshProps: () => void) {}
 
-    public getProps(): CustomFloatingFilterParams {
+    public getProps(): CustomFloatingFilterProps {
         return {
             ...this.floatingFilterParams,
             model: this.model,
@@ -25,7 +25,7 @@ export class FloatingFilterComponent implements IFloatingFilter {
         this.refreshProps();
     }
 
-    public setMethods(methods: FloatingFilterMethods): void {
+    public setMethods(methods: CustomFloatingFilterCallbacks): void {
         addOptionalMethods(this.getOptionalMethods(), methods, this);
     }
 

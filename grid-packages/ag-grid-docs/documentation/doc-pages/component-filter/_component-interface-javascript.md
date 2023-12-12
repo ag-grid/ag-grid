@@ -1,6 +1,4 @@
 <framework-specific-section frameworks="javascript">
-|## Custom Filter Interface
-|
 |The interface for a custom filter component is as follows:
 </framework-specific-section>
 
@@ -91,11 +89,4 @@
 |    getModelAsString?(model: any): string;
 |}
 </snippet>
-</framework-specific-section>
-
-<framework-specific-section frameworks="javascript">
-|### Custom Filter Parameters
-|
-|The `init(params)` method takes a params object with the items listed below. If custom params are provided via the `colDef.filterParams` property, these 
-|will be additionally added to the params object, overriding items of the same name if a name clash exists.
 </framework-specific-section>

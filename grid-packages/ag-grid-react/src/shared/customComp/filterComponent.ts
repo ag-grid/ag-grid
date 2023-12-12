@@ -1,8 +1,8 @@
 import { IDoesFilterPassParams, IFilter, IFilterParams } from "ag-grid-community";
 import { CustomComponent } from "./customComponent";
-import { CustomFilterParams, FilterMethods } from "./interfaces";
+import { CustomFilterProps, CustomFilterCallbacks } from "./interfaces";
 
-export class FilterComponent extends CustomComponent<IFilterParams, CustomFilterParams, FilterMethods> implements IFilter {
+export class FilterComponent extends CustomComponent<IFilterParams, CustomFilterProps, CustomFilterCallbacks> implements IFilter {
     private model: any = null;
 
     public isFilterActive(): boolean {
@@ -40,15 +40,15 @@ export class FilterComponent extends CustomComponent<IFilterParams, CustomFilter
         });
     }
 
-    protected getProps(): CustomFilterParams {
-        const props: CustomFilterParams = {
+    protected getProps(): CustomFilterProps {
+        const props: CustomFilterProps = {
             ...this.sourceParams,
             model: this.model,
             onModelChange: (model: any) => this.updateModel(model),
             onUiChange: () => this.sourceParams.filterChangedCallback(),
             key: this.key
         } as any;
-        // remove props in IFilterParams but not CustomFilterParams
+        // remove props in IFilterParams but not CustomFilterProps
         delete (props as any).filterChangedCallback;
         delete (props as any).filterModifiedCallback;
         delete (props as any).valueGetter;

@@ -1,14 +1,62 @@
-<framework-specific-section frameworks="vue">
-|When a Vue component is instantiated the grid will make the grid APIs, a number of utility methods as well as the cell &
-|row values available to you via `this.params`.
-|
-|The interface for a custom filter component is as follows:
-</framework-specific-section>
+---
+title: "Filter Component - Imperative"
+frameworks: ["react"]
+---
 
-<framework-specific-section frameworks="vue">
-<snippet transform={false} language="ts">
-|interface IFilter {
+<warning>
+|This page describes the old imperative way of declaring custom filter components when the grid option `reactiveCustomComponents` is not set. It is strongly recommended to instead use the new behaviour described on the [Custom Filter](../component-filter) page.
+</warning>
+
+An example filter component looks like this:
+
+<snippet transform={false} language="jsx">
+|export default forwardRef((props, ref) => {
+|    const [model, setModel] = useState(null);
+|    // expose AG Grid Filter Lifecycle callbacks
+|    useImperativeHandle(ref, () => {
+|        return {
+|            doesFilterPass(params) {
+|                // filtering logic
+|                ...
+|                return rowMatchesFilter;
+|            },
 |
+|            isFilterActive() {
+|                return model != null;
+|            },
+|
+|            getModel() {
+|                return model;
+|            },
+|
+|            setModel(model) {
+|                setModel(model);
+|            }
+|        }
+|    });
+|
+|    useEffect(() => {
+|        props.filterChangedCallback()
+|    }, [model]);
+|
+|    return (
+|        &lt;div>
+|            &lt;input
+|                type="text"
+|                value={model == null ? '' : model}
+|                onChange={({ target: { value }}) => setModel(value === '' ? null : value)}
+|            />
+|        &lt;/div>
+|    );
+|});
+</snippet>
+
+## Custom Filter Interface
+
+The interface for a custom filter component is as follows:
+
+<snippet transform={false} language="ts">
+|interface IFilterReactComp {
 |    // Return true if the filter is active. If active then 1) the grid will show the filter icon in the column
 |    // header and 2) the filter will be included in the filtering of the data.
 |    isFilterActive(): boolean;
@@ -83,4 +131,57 @@
 |    afterGuiDetached?(): void;
 |}
 </snippet>
-</framework-specific-section>
+
+<note>
+|Note that if you're using Hooks for Grid Components that have lifecycle/callbacks that the
+|grid will call (for example, the `doesFilterPass` callback from an Editor Component), then you'll need to expose them with
+|`forwardRef` & `useImperativeHandle`.
+|
+|Please refer to the [Hook](/react-hooks/) documentation (or the examples on this page) for more information.
+</note>
+
+### Custom Filter Parameters
+
+When a React component is instantiated the grid will make the grid APIs, a number of utility methods as well as the cell &
+row values available to you via `props` - the interface for what is provided is documented below.
+
+If custom params are provided via the `colDef.filterParams` property, these
+will be additionally added to the params object, overriding items of the same name if a name clash exists.
+
+<interface-documentation interfaceName='IFilterParams' ></interface-documentation>
+
+### IDoesFilterPassParams
+
+The method `doesFilterPass(params)` takes the following as a parameter:
+
+<interface-documentation interfaceName='IDoesFilterPassParams' ></interface-documentation>
+
+## Accessing the React Component Instance
+
+AG Grid allows you to get a reference to the filter instances via `api.getFilterInstance(colKey, callback)`. React components are created asynchronously, so it is necessary to use a callback rather than relying on the return value of this method. 
+
+<snippet transform={false} language="ts">
+|// let's assume a React component as follows
+|export default forwardRef((props, ref) => {
+|    useImperativeHandle(ref, () => {
+|        return {
+|            ... // required filter methods
+|
+|            // put a custom method on the filter
+|            myMethod() {
+|                // does something
+|            }
+|        }
+|    });
+|
+|    ... // rest of component
+|}
+|
+|// later in your app, if you want to execute myMethod()...
+|laterOnInYourApplicationSomewhere() {
+|    // get reference to the AG Grid Filter component on name column
+|    api.getFilterInstance('name', filterInstance => {
+|        filterInstance.myMethod();
+|    });
+|}
+</snippet>

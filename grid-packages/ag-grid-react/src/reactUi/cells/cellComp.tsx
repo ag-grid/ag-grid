@@ -7,7 +7,7 @@ import { BeansContext } from '../beansContext';
 import { createSyncJsComp } from '../jsComp';
 import { CellEditorComponent } from '../../shared/customComp/cellEditorComponent';
 import { CustomContext } from '../../shared/customComp/customContext';
-import { CellEditorMethods } from '../../shared/customComp/interfaces';
+import { CustomCellEditorCallbacks } from '../../shared/customComp/interfaces';
 
 export enum CellCompState { ShowValue, EditValue }
 
@@ -40,7 +40,7 @@ const jsxEditorProxy = (
 
     return (
         <CustomContext.Provider value={{
-            setMethods: (methods: CellEditorMethods) => compProxy!.setMethods(methods)
+            setMethods: (methods: CustomCellEditorCallbacks) => compProxy!.setMethods(methods)
         }}>
             <CellEditorClass {...props}/>
         </CustomContext.Provider>

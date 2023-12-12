@@ -5,7 +5,7 @@ import { CssClasses, isComponentStateless } from '../utils';
 import { showJsComp } from '../jsComp';
 import { FloatingFilterComponent } from '../../shared/customComp/floatingFilterComponent';
 import { CustomContext } from '../../shared/customComp/customContext';
-import { FloatingFilterMethods } from '../../shared/customComp/interfaces';
+import { CustomFloatingFilterCallbacks } from '../../shared/customComp/interfaces';
 
 const HeaderFilterCellComp = (props: {ctrl: HeaderFilterCellCtrl}) => {
 
@@ -104,7 +104,7 @@ const HeaderFilterCellComp = (props: {ctrl: HeaderFilterCellCtrl}) => {
             <div ref={eFloatingFilterBody} className={bodyClassName} role="presentation">
                 { reactUserComp && !reactiveCustomComponents && <UserCompClass { ...userCompDetails!.params } ref={ userCompStateless ? () => {} : userCompRef }/> }
                 { reactUserComp && reactiveCustomComponents && <CustomContext.Provider value={{
-                    setMethods: (methods: FloatingFilterMethods) => floatingFilterCompProxy!.setMethods(methods)
+                    setMethods: (methods: CustomFloatingFilterCallbacks) => floatingFilterCompProxy!.setMethods(methods)
                 }}>
                     <UserCompClass { ...floatingFilterProps! }/>
                 </CustomContext.Provider> }
