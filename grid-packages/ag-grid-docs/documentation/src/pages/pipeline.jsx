@@ -2,47 +2,23 @@ import classnames from 'classnames';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { Alert } from '../components/alert/Alert';
 import GlobalContextConsumer from '../components/GlobalContext';
-import ChevronButtonCellRenderer from '../components/grid/ChevronButtonRenderer';
 import DetailCellRenderer from '../components/grid/DetailCellRendererComponent';
 import Grid from '../components/grid/Grid';
-import IssueTypeCellRenderer from '../components/grid/IssueTypeRenderer';
-import PaddingCellRenderer from '../components/grid/PaddingCellRenderer';
 import { Icon } from '../components/Icon';
+import { IssueColDef, IssueTypeColDef } from './changelog';
 import styles from './pipelineChangelog.module.scss';
 
 const COLUMN_DEFS = [
-    {
-        field: 'key',
-        headerName: 'Issue',
-        width: 140,
-        cellRendererSelector: (params) => {
-            if (
-                params.node.data.moreInformation ||
-                params.node.data.deprecationNotes ||
-                params.node.data.breakingChangesNotes
-            ) {
-                return {
-                    component: 'chevronButtonRenderer',
-                };
-            }
-            return {
-                component: 'paddingCellRenderer',
-            };
-        },
-    },
+    IssueColDef,
     {
         field: 'summary',
         tooltipField: 'summary',
         width: 300,
         minWidth: 200,
         flex: 1,
+        filter: 'agTextColumnFilter'
     },
-    {
-        field: 'issueType',
-        width: 180,
-        valueFormatter: (params) => (params.value === 'Bug' ? 'Defect' : 'Feature Request'),
-        cellRenderer: 'issueTypeCellRenderer',
-    },
+    IssueTypeColDef,
     {
         field: 'status',
         width: 135,
@@ -70,8 +46,8 @@ const COLUMN_DEFS = [
 ];
 
 const defaultColDef = {
-    suppressMenu: true,
     autoHeight: true,
+    filter: true,
     cellClass: styles.fontClass,
     headerClass: styles.fontClass,
     suppressKeyboardEvent: (params) => {
@@ -199,16 +175,10 @@ const Pipeline = ({ location }) => {
                                     columnDefs={COLUMN_DEFS}
                                     isRowMaster={isRowMaster}
                                     detailRowAutoHeight={true}
-                                    components={{
-                                        myDetailCellRenderer: DetailCellRenderer,
-                                        paddingCellRenderer: PaddingCellRenderer,
-                                        chevronButtonRenderer: ChevronButtonCellRenderer,
-                                        issueTypeCellRenderer: IssueTypeCellRenderer,
-                                    }}
                                     defaultColDef={defaultColDef}
                                     enableCellTextSelection={true}
                                     detailCellRendererParams={detailCellRendererParams}
-                                    detailCellRenderer={'myDetailCellRenderer'}
+                                    detailCellRenderer={DetailCellRenderer}
                                     masterDetail={true}
                                     rowData={rowData}
                                     onGridReady={gridReady}
