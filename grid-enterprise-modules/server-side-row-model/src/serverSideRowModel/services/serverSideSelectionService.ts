@@ -177,6 +177,10 @@ export class ServerSideSelectionService extends BeanStub implements ISelectionSe
         return this.selectionStrategy.isEmpty();
     }
 
+    public hasNodesToSelect(justFiltered = false, justCurrentPage = false) {
+        return true;
+    }
+
     public selectAllRowNodes(params: { source: SelectionEventSourceType; justFiltered?: boolean | undefined; justCurrentPage?: boolean | undefined; }): void {
         if (params.justCurrentPage || params.justFiltered) {
             console.warn("AG Grid: selecting just filtered only works when gridOptions.rowModelType='clientSide'");

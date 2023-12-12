@@ -489,6 +489,10 @@ export class SelectionService extends BeanStub implements ISelectionService {
         return selectedCount > 0;
     }
 
+    public hasNodesToSelect(justFiltered = false, justCurrentPage = false) {
+        return this.getNodesToSelect(justFiltered, justCurrentPage).filter(node => node.selectable).length > 0;
+    }
+
     /**
      * @param justFiltered whether to just include nodes which have passed the filter
      * @param justCurrentPage whether to just include nodes on the current page

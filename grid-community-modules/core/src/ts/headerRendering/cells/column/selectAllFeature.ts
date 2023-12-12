@@ -102,7 +102,8 @@ export class SelectAllFeature extends BeanStub {
         );
 
         this.cbSelectAll.setValue(allSelected!);
-        this.cbSelectAll.setDisabled(this.rowModel.getRowCount() === 0);
+        const hasNodesToSelect = this.selectionService.hasNodesToSelect(this.isFilteredOnly(), this.isCurrentPageOnly());
+        this.cbSelectAll.setDisabled(!hasNodesToSelect);
         this.refreshSelectAllLabel();
 
         this.processingEventFromCheckbox = false;
@@ -199,9 +200,4 @@ export class SelectAllFeature extends BeanStub {
     private isCurrentPageOnly(): boolean {
         return !!this.column.getColDef().headerCheckboxSelectionCurrentPageOnly;
     }
-}
-
-interface SelectionCount {
-    selected: number;
-    notSelected: number;
 }
