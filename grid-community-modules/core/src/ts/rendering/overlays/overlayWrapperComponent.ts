@@ -11,9 +11,9 @@ export class OverlayWrapperComponent extends Component implements LayoutView {
 
     // wrapping in outer div, and wrapper, is needed to center the loading icon
     private static TEMPLATE = /* html */`
-        <div class="ag-overlay" role="presentation">
-            <div class="ag-overlay-panel" role="presentation">
-                <div class="ag-overlay-wrapper" ref="eOverlayWrapper" role="presentation"></div>
+        <div class="ag-overlay" aria-hidden="true">
+            <div class="ag-overlay-panel">
+                <div class="ag-overlay-wrapper" ref="eOverlayWrapper"></div>
             </div>
         </div>`;
 
