@@ -11,8 +11,8 @@ export class EventService implements IEventEmitter {
     private allSyncListeners = new Map<string, Set<Function>>();
     private allAsyncListeners = new Map<string, Set<Function>>();
 
-    private globalSyncListeners = new Set<Function>();
-    private globalAsyncListeners = new Set<Function>();
+    private globalSyncListeners = new Map<Function, boolean>();
+    private globalAsyncListeners = new Map<Function, boolean>();
 
     private frameworkOverrides: IFrameworkOverrides;
     private gridOptionsService?: GridOptionsService;
@@ -89,8 +89,8 @@ export class EventService implements IEventEmitter {
         }
     }
 
-    public addGlobalListener(listener: Function, async = false): void {
-        (async ? this.globalAsyncListeners : this.globalSyncListeners).add(listener);
+    public addGlobalListener(listener: Function, async = false, external = false): void {
+        (async ? this.globalAsyncListeners : this.globalSyncListeners).set(listener, external);
     }
 
     public removeGlobalListener(listener: Function, async = false): void {
@@ -150,13 +150,12 @@ export class EventService implements IEventEmitter {
 
         const globalListeners = new Set(async ? this.globalAsyncListeners : this.globalSyncListeners);
 
-        globalListeners.forEach(listener => {
+        globalListeners.forEach(([listener, isExternal]) => {
+            const callback = () => this.frameworkOverrides.dispatchEvent(eventType, () => listener(eventType, event), isExternal)
             if (async) {
-                this.dispatchAsync(
-                    () => this.frameworkOverrides.dispatchEvent(eventType, () => listener(eventType, event), true)
-                );
+                this.dispatchAsync(callback);
             } else {
-                this.frameworkOverrides.dispatchEvent(eventType, () => listener(eventType, event), true);
+                callback();
             }
         });
     }

@@ -1,12 +1,12 @@
 import {Component} from '@angular/core';
-import {NgIf} from '@angular/common';
+import {NgFor, NgIf} from '@angular/common';
 // NOTE: Angular CLI does not support component CSS imports: angular-cli/issues/23273
 import '@ag-grid-community/styles/ag-grid.css';
 import "@ag-grid-community/styles/ag-theme-quartz.css";
 import {AgGridAngular} from '@ag-grid-community/angular';
 import {ColDef, GridApi, GridOptions, GridPreDestroyedEvent, GridReadyEvent} from '@ag-grid-community/core';
 import {TAthlete, getDataSet} from './data';
-import '../styles.css';
+import './styles.css';
 
 import { ModuleRegistry } from '@ag-grid-community/core';
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
@@ -19,7 +19,7 @@ interface ColumnWidth {
 
 @Component({
     standalone: true,
-    imports: [AgGridAngular, NgIf],
+    imports: [AgGridAngular, NgIf, NgFor],
     selector: 'my-app',
     template: `
         <div class="test-container">

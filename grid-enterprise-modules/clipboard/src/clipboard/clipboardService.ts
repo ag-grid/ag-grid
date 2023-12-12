@@ -844,6 +844,22 @@ export class ClipboardService extends BeanStub implements IClipboardService {
         return { rowPositions, cellsToFlash }
     }
 
+    private getCellsToFlashFromRowNodes(rowNodes: RowNode[]): CellsToFlashType {
+        const allDisplayedColumns = this.columnModel.getAllDisplayedColumns();
+        const cellsToFlash: CellsToFlashType = {};
+        for (let i = 0; i < rowNodes.length; i++) {
+            const { rowIndex, rowPinned } = rowNodes[i];
+            if (rowIndex == null) { continue; }
+            for (let j = 0; j < allDisplayedColumns.length; j++) {
+                const column = allDisplayedColumns[j];
+                const cellId = this.cellPositionUtils.createIdFromValues({ rowIndex, column, rowPinned })
+                cellsToFlash[cellId] = true;
+            }
+        }
+
+        return cellsToFlash;
+    }
+
     private copyFocusedCellToClipboard(params: IClipboardCopyParams = {}): void {
         const focusedCell = this.focusService.getFocusedCell();
 
@@ -871,10 +887,11 @@ export class ClipboardService extends BeanStub implements IClipboardService {
             columns: columnKeys,
             includeHeaders,
             includeGroupHeaders
-
         });
 
         this.copyDataToClipboard(data);
+        const rowNodes = this.selectionService.getSelectedNodes() || [];
+        this.dispatchFlashCells(this.getCellsToFlashFromRowNodes(rowNodes));
     }
 
     private buildExportParams(params: {

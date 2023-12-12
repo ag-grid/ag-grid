@@ -221,7 +221,7 @@ export class HeaderGroupCellCtrl extends AbstractHeaderCellCtrl<IHeaderGroupCell
         }
     }
 
-    public getColId() {
+    public getColId(): string {
         return this.column.getUniqueId();
     }
 
@@ -261,7 +261,7 @@ export class HeaderGroupCellCtrl extends AbstractHeaderCellCtrl<IHeaderGroupCell
     }
 
     private onSuppressColMoveChange = () => {
-        if (this.isSuppressMoving()) {
+        if (!this.isAlive() || this.isSuppressMoving()) {
             this.removeDragSource();
         } else {
             if (!this.dragSource) {
@@ -296,7 +296,7 @@ export class HeaderGroupCellCtrl extends AbstractHeaderCellCtrl<IHeaderGroupCell
     // unlike columns, this will only get called once, as we don't react on props on column groups
     // (we will always destroy and recreate this comp if something changes)
     public setDragSource(eHeaderGroup: HTMLElement): void {
-        if (this.isSuppressMoving()) {
+        if (!this.isAlive() || this.isSuppressMoving()) {
             return;
         }
 

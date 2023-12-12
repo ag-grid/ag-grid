@@ -11,7 +11,7 @@ export interface INoRowsOverlay<TData = any, TContext = any> {
 export interface INoRowsOverlayComp<TData = any, TContext = any> extends IComponent<INoRowsOverlayParams<TData, TContext>>, INoRowsOverlay<TData, TContext> { }
 
 export class NoRowsOverlayComponent extends Component implements INoRowsOverlayComp {
-    private static DEFAULT_NO_ROWS_TEMPLATE = '<span class="ag-overlay-no-rows-center">[NO_ROWS_TO_SHOW]</span>';
+    private static DEFAULT_NO_ROWS_TEMPLATE = /* html */ `<span class="ag-overlay-no-rows-center"></span>`;
 
     constructor() {
         super();
@@ -24,11 +24,17 @@ export class NoRowsOverlayComponent extends Component implements INoRowsOverlayC
     }
 
     public init(params: INoRowsOverlayParams): void {
-        const template =
-            this.gridOptionsService.get('overlayNoRowsTemplate') ?? NoRowsOverlayComponent.DEFAULT_NO_ROWS_TEMPLATE;
+        const customTemplate = this.gridOptionsService.get('overlayNoRowsTemplate');
 
-        const localeTextFunc = this.localeService.getLocaleTextFunc();
-        const localisedTemplate = template!.replace('[NO_ROWS_TO_SHOW]', localeTextFunc('noRowsToShow', 'No Rows To Show'));
-        this.setTemplate(localisedTemplate);
+        this.setTemplate(customTemplate ?? NoRowsOverlayComponent.DEFAULT_NO_ROWS_TEMPLATE);
+
+        if (!customTemplate) {
+            const localeTextFunc = this.localeService.getLocaleTextFunc();
+            // setTimeout is used because some screen readers only announce `aria-live` text when
+            // there is a "text change", so we force a change from empty.
+            setTimeout(() => {
+                this.getGui().innerText = localeTextFunc('noRowsToShow', 'No Rows To Show');
+            });
+        }
     }
 }

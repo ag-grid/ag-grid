@@ -22,7 +22,8 @@ export class ApiEventService extends BeanStub {
         const async = this.gridOptionsService.useAsyncEvents();
         const listeners = async ? this.asyncGlobalEventListeners : this.syncGlobalEventListeners;
         listeners.add(listener);
-        this.eventService.addGlobalListener(listener, async);
+        // Pass true to isExternal so that we can identify global event listeners added by the user
+        this.eventService.addGlobalListener(listener, async, true);
     }
 
     public removeEventListener(eventType: string, listener: Function): void {

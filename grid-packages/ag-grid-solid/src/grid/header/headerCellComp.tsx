@@ -22,12 +22,6 @@ const HeaderCellComp = (props: {ctrl: HeaderCellCtrl})=> {
         userComp = ref;
     }
 
-    const clearRef = (ref: any) => {
-        if (userComp===ref) {
-            userComp = undefined;
-        }
-    }
-
     const cssClassManager = new CssClassManager(() => eGui);
 
     onMount(() => {
@@ -49,18 +43,6 @@ const HeaderCellComp = (props: {ctrl: HeaderCellCtrl})=> {
     });
 
     const style = createMemo(() => ({ width: getWidth() }));
-
-    const showSolidComp = createMemo( ()=> {
-        const details = getUserCompDetails();
-        if (!details) { return false; }
-        return details.componentFromFramework;
-    });
-
-    const showJsComp = createMemo( ()=> {
-        const details = getUserCompDetails();
-        if (!details) { return false; }
-        return !details.componentFromFramework;
-    });
 
     return (
         <div

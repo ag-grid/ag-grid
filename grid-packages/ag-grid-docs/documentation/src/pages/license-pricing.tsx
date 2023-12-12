@@ -109,9 +109,9 @@ export const LicensePricing = () => {
                                 </div> */}
 
                                 <a
-                                    href="https://ag-grid.com/ecommerce/#/ecommerce/?licenseType=single&productType=both"
+                                    href="https://www.ag-grid.com/ecommerce/#/ecommerce/?licenseType=single&productType=both"
                                     target='_blank'
-                                    className="button"
+                                    className="button button-secondary"
                                 >
                                     Configure Now
                                 </a>
@@ -154,7 +154,7 @@ export const LicensePricing = () => {
                         Enterprise Versions <Icon name="enterprise" />
                     </h3>
                     <p>
-                        <a href="https://ag-grid.com/javascript-data-grid/licensing/" target='_blank'><b>AG Grid Enterprise</b></a> and <a href="https://charts.ag-grid.com/javascript/licensing/" target='_blank'><b>AG Charts Enterprise</b></a> are commercial products distributed
+                        <a href="https://www.ag-grid.com/javascript-data-grid/licensing/" target='_blank'><b>AG Grid Enterprise</b></a> and <a href="https://charts.ag-grid.com/javascript/licensing/" target='_blank'><b>AG Charts Enterprise</b></a> are commercial products distributed
                         under our{' '}
                         <a href="https://www.ag-grid.com/eula/AG-Grid-Enterprise-License-Latest.html" target="_blank">
                             EULA
@@ -163,7 +163,7 @@ export const LicensePricing = () => {
                     </p>
 
                     <p>
-                        To evaluate <a href="https://ag-grid.com/javascript-data-grid/licensing/" target='_blank'><b>AG Grid Enterprise</b></a> or <a href="https://charts.ag-grid.com/javascript/licensing/" target='_blank'><b>AG Charts Enterprise</b></a> you don't need our
+                        To evaluate <a href="https://www.ag-grid.com/javascript-data-grid/licensing/" target='_blank'><b>AG Grid Enterprise</b></a> or <a href="https://charts.ag-grid.com/javascript/licensing/" target='_blank'><b>AG Charts Enterprise</b></a> you don't need our
                         permission – all features are unlocked. To temporarily hide the watermark and browser console
                         errors e-mail us to{' '}
                         <InfoEmailLink

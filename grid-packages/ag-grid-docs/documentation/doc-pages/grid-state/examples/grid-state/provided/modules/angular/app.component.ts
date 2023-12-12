@@ -5,9 +5,9 @@ import { NgIf } from "@angular/common";
 // NOTE: Angular CLI does not support component CSS imports: angular-cli/issues/23273
 import '@ag-grid-community/styles/ag-grid.css';
 import "@ag-grid-community/styles/ag-theme-quartz.css";
-import '../styles.css';
+import './styles.css';
 import { AgGridAngular } from '@ag-grid-community/angular';
-import { ColDef, ColGroupDef, GridApi, GridOptions, GridReadyEvent, SideBarDef, createGrid, GridState, GridPreDestroyedEvent, StateUpdatedEvent } from '@ag-grid-community/core';
+import { ColDef, GridApi, GridOptions, GridReadyEvent, GridState, GridPreDestroyedEvent, StateUpdatedEvent } from '@ag-grid-community/core';
 import { IOlympicData } from './interfaces'
 
 import { ModuleRegistry } from '@ag-grid-community/core';

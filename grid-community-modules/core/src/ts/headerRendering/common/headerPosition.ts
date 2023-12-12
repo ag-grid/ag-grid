@@ -104,7 +104,7 @@ export class HeaderPositionUtils extends BeanStub {
                     nextRow++;
                 }
             } else {
-                nextFocusColumn =  (column as ColumnGroup).getDisplayedChildren()![0] as ColumnGroup;
+                nextFocusColumn = (column as ColumnGroup).getDisplayedChildren()![0] as ColumnGroup;
             }
         }
 

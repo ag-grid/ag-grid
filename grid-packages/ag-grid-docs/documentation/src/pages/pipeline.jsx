@@ -5,7 +5,7 @@ import GlobalContextConsumer from '../components/GlobalContext';
 import DetailCellRenderer from '../components/grid/DetailCellRendererComponent';
 import Grid from '../components/grid/Grid';
 import { Icon } from '../components/Icon';
-import { IssueColDef, IssueTypeColDef } from './changelog';
+import { IssueColDef, IssueTypeColDef } from '../utils/grid/issueColDefs';
 import styles from './pipelineChangelog.module.scss';
 
 const COLUMN_DEFS = [
