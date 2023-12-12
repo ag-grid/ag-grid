@@ -4,7 +4,7 @@ import { HttpClient, HttpClientModule } from '@angular/common/http';
 // NOTE: Angular CLI does not support component CSS imports: angular-cli/issues/23273
 import '@ag-grid-community/styles/ag-grid.css';
 import "@ag-grid-community/styles/ag-theme-quartz.css";
-import '../styles.css';
+import './styles.css';
 import { AgGridAngular } from '@ag-grid-community/angular';
 import { ColDef, GridApi, GridReadyEvent } from '@ag-grid-community/core';
 import { IOlympicData } from './interfaces'
