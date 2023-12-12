@@ -341,6 +341,7 @@ export class HeaderFilterCellCtrl extends AbstractHeaderCellCtrl<IHeaderFilterCe
     }
 
     private updateCompDetails(compDetails: UserCompDetails | null | undefined, becomeActive: boolean): void {
+        if (!this.isAlive()) { return; }
         this.setCompDetails(compDetails);
         // filter button and UI can change based on params, so always want to update
         this.setupFilterButton();

@@ -723,7 +723,7 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl<IHeaderCellComp, Colu
         listener();
     }
 
-    public getColId() {
+    public getColId(): string {
         return this.column.getColId();
     }
 
