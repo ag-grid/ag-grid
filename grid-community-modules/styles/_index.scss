@@ -74,7 +74,9 @@
                 $theme-color-blends: meta.get-function($blend-function-name);
                 $theme-params: meta.call($theme-color-blends, $theme-params);
             }
-            $theme-params: -base-color-blends($theme-params);
+            @if (not -is-quartz($theme-name) and not -is-quartz($extended-theme-name)) {
+                $theme-params: -base-color-blends($theme-params);
+            }
         
             @each $name, $value in $theme-params {
                 // use meta.inspect to preserve the quote style of strings
@@ -99,7 +101,7 @@ $-loaded-css-files: ();
 // be kept as long as we want to support earlier Sass versions
 @mixin -load-css-file($file, $ignore-missing: false) {
     @if not map.get($-loaded-css-files, $file) {
-        $-loaded-css-files: map.set($-loaded-css-files, $file, true);
+        $-loaded-css-files: map.set($-loaded-css-files, $file, true) !global;
         @include css-content.output-css-file($file, $ignore-missing: $ignore-missing);
     }
 }
@@ -121,6 +123,10 @@ $-loaded-css-files: ();
         $name: string.slice($name, string.length($remove-prefix) + 1);
     }
     @return $name;
+}
+
+@function -is-quartz($theme) {
+    @return $theme and string.index(-clean-theme-name($theme), "quartz") == 1;
 }
 
 @function -clean-variable-name($name) {
@@ -161,6 +167,7 @@ $-theme-variables: (
 
 $-theme-css-files: (
     "quartz": "ag-theme-quartz-no-font.css",
+    "quartz-dark": "ag-theme-quartz-no-font.css",
     "alpine": "ag-theme-alpine-no-font.css",
     "alpine-dark": "ag-theme-alpine-no-font.css",
     "balham": "ag-theme-balham-no-font.css",
@@ -246,36 +253,6 @@ $-theme-fonts: (
     @return $params;
 }
 
-@function -theme-quartz-color-blends($params) {
-    // Simple defaults. We need to define the defaults for any parameters
-    // that are used in blending either below or in the base color blends
-    $params: -param-default($params, --ag-background-color,            #fff);
-    $params: -param-default($params, --ag-foreground-color,            #181d1f);
-    $params: -param-default($params, --ag-subheader-background-color,  #fff);
-    $params: -param-default($params, --ag-active-color,                #2196f3);
-    $params: -param-default($params, --ag-range-selection-border-color, --ag-active-color);
-
-    // Blended defaults
-    $params: -param-default($params, --ag-subheader-toolbar-background-color, --ag-subheader-background-color, $alpha: 0.5);
-    $params: -param-default($params, --ag-selected-row-background-color,      --ag-active-color,               $alpha: 0.1);
-    $params: -param-default($params, --ag-row-hover-color,                    --ag-active-color,               $alpha: 0.1);
-    $params: -param-default($params, --ag-column-hover-color,                 --ag-active-color,               $alpha: 0.1);
-    $params: -param-default($params, --ag-chip-background-color,              --ag-foreground-color,           $alpha: 0.07);
-    $params: -param-default($params, --ag-input-disabled-background-color,    --ag-border-color,               $alpha: 0.15);
-    $params: -param-default($params, --ag-input-disabled-border-color,        --ag-border-color,               $alpha: 0.3);
-    $params: -param-default($params, --ag-disabled-foreground-color,          --ag-foreground-color,           $alpha: 0.5);
-    $params: -param-default($params, --ag-input-focus-border-color,           --ag-active-color,               $alpha: 0.4);
-    @return $params;
-}
-
-@function -theme-quartz-dark-color-blends($params) {
-    $params: -param-default($params, --ag-background-color,           #181d1f);
-    $params: -param-default($params, --ag-foreground-color,           #fff);
-    $params: -param-default($params, --ag-subheader-background-color, #000);
-
-    @return  -theme-quartz-color-blends($params);
-}
-
 @function -theme-alpine-color-blends($params) {
     // Simple defaults. We need to define the defaults for any parameters
     // that are used in blending either below or in the base color blends
@@ -303,7 +280,7 @@ $-theme-fonts: (
     $params: -param-default($params, --ag-foreground-color,           #fff);
     $params: -param-default($params, --ag-subheader-background-color, #000);
 
-    @return  -theme-alpine-color-blends($params);
+    @return -theme-alpine-color-blends($params);
 }
 
 @function -theme-balham-color-blends($params) {
