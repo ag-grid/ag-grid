@@ -5,9 +5,9 @@ import { Component } from "@angular/core"
 @Component({
   standalone: true,
   template: `
-    <div class="ag-overlay-loading-center">
-      <div style="width: 100px; height: 100px; background: url(https://ag-grid.com/images/ag-grid-loading-spinner.svg) center / contain no-repeat; margin: 0 auto;" aria-label="loading"></div>
-      <div>{{ params.loadingMessage }}</div>
+    <div class="ag-overlay-loading-center" role="presentation">
+      <div role="presentation" style="width: 100px; height: 100px; background: url(https://ag-grid.com/images/ag-grid-loading-spinner.svg) center / contain no-repeat; margin: 0 auto;"></div>
+      <div aria-live="polite" aria-atomic="true">{{ params.loadingMessage }}</div>
     </div>
   `,
 })
