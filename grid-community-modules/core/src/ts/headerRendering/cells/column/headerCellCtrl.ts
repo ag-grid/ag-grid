@@ -657,7 +657,7 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl<IHeaderCellComp, Colu
             const translate = this.localeService.getLocaleTextFunc();
             const sort = this.sortController.getDisplaySortForColumn(this.column) || null;
             this.comp.setAriaSort(getAriaSortState(sort));
-            this.setAriaDescriptionProperty('sort', translate('ariaSortableColumn', 'Press ENTER to sort.'));
+            this.setAriaDescriptionProperty('sort', translate('ariaSortableColumn', 'Press ENTER to sort'));
         } else {
             this.comp.setAriaSort();
             this.setAriaDescriptionProperty('sort', null);
@@ -667,7 +667,7 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl<IHeaderCellComp, Colu
     private refreshAriaMenu(): void {
         if (this.menuEnabled) {
             const translate = this.localeService.getLocaleTextFunc();
-            this.setAriaDescriptionProperty('menu', translate('ariaMenuColumn', 'Press CTRL ENTER to open column menu.'));
+            this.setAriaDescriptionProperty('menu', translate('ariaMenuColumn', 'Press CTRL ENTER to open column menu'));
         } else {
             this.setAriaDescriptionProperty('menu', null);
         }
@@ -692,15 +692,12 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl<IHeaderCellComp, Colu
     }
 
     public refreshAriaDescription(): void {
-        let ariaDescription: string | null = null;
-        for (const [key, value] of this.ariaDescriptionProperties) {
-            // always announce filtered state first
-            if (key === 'filter') {
-                ariaDescription = `${value} ${ariaDescription || ''}`;
-            } else {
-                ariaDescription = `${ariaDescription || ''} ${value}`
-            }
-        }
+        const ariaDescription = 
+            Array.from(this.ariaDescriptionProperties.keys())
+                // always announce the filter description first
+                .sort((a: string, b: string) => a === 'filter' ? - 1 : (b.charCodeAt(0) - a.charCodeAt(0)))
+                .map((key: HeaderAriaDescriptionKey) => this.ariaDescriptionProperties.get(key))
+                .join('. ')
 
         this.comp.setAriaDescription(ariaDescription ?? undefined);
     }
