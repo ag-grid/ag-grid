@@ -7,7 +7,7 @@ export const overlayFeature: Feature = {
   variableNames: ['--ag-modal-overlay-background-color'],
   gridOptions: {
     overlayLoadingTemplate:
-      '<span class="ag-overlay-loading-center">This is a overlay. Overlays are shown when data is loading or there are no rows in the loaded data set.</span>',
+      '<span aria-live="polite" aria-atomic="true" class="ag-overlay-loading-center">This is a overlay. Overlays are shown when data is loading or there are no rows in the loaded data set.</span>',
   },
   show(api) {
     api.showLoadingOverlay();
