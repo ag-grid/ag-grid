@@ -1,7 +1,7 @@
 import { ColumnState } from "../columns/columnModel";
 import { ColumnUtils } from "../columns/columnUtils";
 import { Autowired, PostConstruct } from "../context/context";
-import { AgEvent, ColumnEvent, ColumnEventType } from "../events";
+import { AgEvent, AgEventListener, ColumnEvent, ColumnEventType } from "../events";
 import { EventService } from "../eventService";
 import { GridOptionsService } from "../gridOptionsService";
 import { IEventEmitter } from "../interfaces/iEventEmitter";
@@ -326,12 +326,12 @@ export class Column<TValue = any> implements IHeaderColumn<TValue>, IProvidedCol
     }
 
     /** Add an event listener to the column. */
-    public addEventListener(eventType: ColumnEventName, listener: Function): void {
+    public addEventListener(eventType: ColumnEventName, listener: AgEventListener): void {
         this.eventService.addEventListener(eventType, listener);
     }
 
     /** Remove event listener from the column. */
-    public removeEventListener(eventType: ColumnEventName, listener: Function): void {
+    public removeEventListener(eventType: ColumnEventName, listener: AgEventListener): void {
         this.eventService.removeEventListener(eventType, listener);
     }
 

@@ -1,8 +1,7 @@
-import { AgEvent, Events, RowEvent, RowSelectedEvent, SelectionEventSourceType } from "../events";
+import { AgEvent, AgEventListener, Events, RowEvent, RowSelectedEvent, SelectionEventSourceType } from "../events";
 import { EventService } from "../eventService";
 import { DetailGridInfo } from "../gridApi";
 import { IClientSideRowModel } from "../interfaces/iClientSideRowModel";
-import { WithoutGridCommon } from "../interfaces/iCommon";
 import { IEventEmitter } from "../interfaces/iEventEmitter";
 import { IServerSideRowModel } from "../interfaces/iServerSideRowModel";
 import { IServerSideStore } from "../interfaces/IServerSideStore";
@@ -1074,7 +1073,7 @@ export class RowNode<TData = any> implements IEventEmitter, IRowNode<TData> {
     }
 
     /** Add an event listener. */
-    public addEventListener(eventType: RowNodeEventType, listener: Function): void {
+    public addEventListener(eventType: RowNodeEventType, listener: AgEventListener): void {
         if (!this.eventService) {
             this.eventService = new EventService();
         }
@@ -1082,7 +1081,7 @@ export class RowNode<TData = any> implements IEventEmitter, IRowNode<TData> {
     }
 
     /** Remove event listener. */
-    public removeEventListener(eventType: RowNodeEventType, listener: Function): void {
+    public removeEventListener(eventType: RowNodeEventType, listener: AgEventListener): void {
         if (!this.eventService) { return; }
 
         this.eventService.removeEventListener(eventType, listener);

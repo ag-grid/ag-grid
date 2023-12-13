@@ -43,7 +43,7 @@ init(params: ICellRendererParams) {
     // remove listener on destroy
     params.api.addRenderedRowListener('virtualRowRemoved', params.rowIndex, () => {
         params.node.removeEventListener('rowSelected', selectionChangedCallback);
-    }
+    })
 }
 ```
 

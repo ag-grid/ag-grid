@@ -5,7 +5,7 @@ import { AbstractColDef } from "./colDef";
 import { ProvidedColumnGroup } from "./providedColumnGroup";
 import { EventService } from "../eventService";
 import { Autowired } from "../context/context";
-import { AgEvent } from "../events";
+import { AgEvent, AgEventListener } from "../events";
 import { last } from "../utils/array";
 import { GridOptionsService } from "../gridOptionsService";
 
@@ -127,11 +127,11 @@ export class ColumnGroup implements IHeaderColumn {
         return { type };
     }
 
-    public addEventListener(eventType: string, listener: Function): void {
+    public addEventListener(eventType: string, listener: AgEventListener): void {
         this.localEventService.addEventListener(eventType, listener);
     }
 
-    public removeEventListener(eventType: string, listener: Function): void {
+    public removeEventListener(eventType: string, listener: AgEventListener): void {
         this.localEventService.removeEventListener(eventType, listener);
     }
 
