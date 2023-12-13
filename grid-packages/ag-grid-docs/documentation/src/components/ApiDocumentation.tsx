@@ -469,9 +469,10 @@ const Property: React.FC<PropertyCall> = ({ framework, id, name, definition, con
     }
 
     // Default may or may not be on a new line in JsDoc but in both cases we want the default to be on the next line
-    const jsdocDefault = gridParams?.meta?.tags?.find((t) => t.name === 'default');
+    const tags = gridParams?.meta?.tags ?? definition?.tags ?? [];
+    const jsdocDefault = tags.find((t) => t.name === 'default');
     const defaultValue = definition.default ?? jsdocDefault?.comment;
-    const isInitial = gridParams?.meta?.tags?.some(t => t.name === 'initial') ?? false;
+    const isInitial = tags.some(t => t.name === 'initial') ?? false;
 
     let displayName = name;
     if (!!definition.isRequired) {
