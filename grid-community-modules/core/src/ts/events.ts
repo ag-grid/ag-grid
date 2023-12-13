@@ -506,7 +506,9 @@ export type ColumnEventType =
     "cellDataTypeInferred" |
     "viewportSizeFeature" |
     "columnHeaderMouseOver" |
-    "columnHeaderMouseLeave";
+    "columnHeaderMouseLeave" |
+    "columnHeaderClicked" |
+    "columnHeaderDoubleClicked";
 
 export interface ColumnEvent<TData = any, TContext = any> extends AgGridEvent<TData, TContext> {
     /** The impacted column, only set if action was on one column */
@@ -550,6 +552,11 @@ export interface ColumnPinnedEvent<TData = any, TContext = any> extends ColumnEv
 export interface ColumnHeaderMouseOverEvent<TData = any, TContext = any> extends ColumnEvent<TData, TContext> { }
 
 export interface ColumnHeaderMouseLeaveEvent<TData = any, TContext = any> extends ColumnEvent<TData, TContext> { }
+
+export interface ColumnHeaderClickedEvent<TData = any, TContext = any> extends ColumnEvent<TData, TContext> {
+    /** Is the event triggered by a double click */
+    isDoubleClick: boolean;
+}
 
 /**------------*/
 

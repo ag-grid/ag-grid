@@ -87,6 +87,7 @@ import {
     StateUpdatedEvent,
     ColumnHeaderMouseOverEvent,
     ColumnHeaderMouseLeaveEvent,
+    ColumnHeaderClickedEvent,
 } from "../events";
 import { HeaderPosition } from "../headerRendering/common/headerPosition";
 import {
@@ -1869,6 +1870,18 @@ export interface GridOptions<TData = any> {
      * @param event
      */
     onColumnHeaderMouseLeave?(event: ColumnHeaderMouseLeaveEvent<TData>): void;
+
+    /**
+     * A mouse button is pressed down on a column header.
+     * @param event
+     */
+    onColumnHeaderClicked?(event: ColumnHeaderClickedEvent<TData>): void;
+
+    /**
+     * A double-click is performed on a column header.
+     * @param event
+     */
+    onColumnHeaderDoubleClicked?(event: ColumnHeaderClickedEvent<TData>): void;
 
     // *** Components *** //
     /**

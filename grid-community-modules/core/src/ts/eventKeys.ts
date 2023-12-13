@@ -61,6 +61,12 @@ export class Events {
     /** Column header mouse leave */
     public static EVENT_COLUMN_HEADER_MOUSE_LEAVE: 'columnHeaderMouseLeave' = 'columnHeaderMouseLeave';
 
+    /** Column header clicked */
+    public static EVENT_COLUMN_HEADER_CLICKED: 'columnHeaderClicked' = 'columnHeaderClicked';
+
+    /** Column header double-clicked */
+    public static EVENT_COLUMN_HEADER_DOUBLE_CLICKED: 'columnHeaderDoubleClicked' = 'columnHeaderDoubleClicked';
+
     /** Async Transactions Executed */
     public static EVENT_ASYNC_TRANSACTIONS_FLUSHED: 'asyncTransactionsFlushed' = 'asyncTransactionsFlushed';
 

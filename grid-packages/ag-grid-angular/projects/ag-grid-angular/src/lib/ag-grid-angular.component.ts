@@ -49,6 +49,7 @@ import {
     ColumnAggFuncChangeRequestEvent,
     ColumnEverythingChangedEvent,
     ColumnGroupOpenedEvent,
+    ColumnHeaderClickedEvent,
     ColumnHeaderMouseLeaveEvent,
     ColumnHeaderMouseOverEvent,
     ColumnMovedEvent,
@@ -1584,6 +1585,14 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
          * @param event
          */
     @Output() public columnHeaderMouseLeave: EventEmitter<ColumnHeaderMouseLeaveEvent<TData>> = new EventEmitter<ColumnHeaderMouseLeaveEvent<TData>>();
+    /** A mouse button is pressed down on a column header.
+         * @param event
+         */
+    @Output() public columnHeaderClicked: EventEmitter<ColumnHeaderClickedEvent<TData>> = new EventEmitter<ColumnHeaderClickedEvent<TData>>();
+    /** A double-click is performed on a column header.
+         * @param event
+         */
+    @Output() public columnHeaderDoubleClicked: EventEmitter<ColumnHeaderClickedEvent<TData>> = new EventEmitter<ColumnHeaderClickedEvent<TData>>();
     /** Only used by Angular, React and VueJS AG Grid components (not used if doing plain JavaScript).
          * If the grid receives changes due to bound properties, this event fires after the grid has finished processing the change.
          */

@@ -27,7 +27,12 @@ import { ColumnMoveHelper } from "../../columnMoveHelper";
 import { HorizontalDirection } from "../../../constants/direction";
 import { PinnedWidthService } from "../../../gridBodyComp/pinnedWidthService";
 import {WithoutGridCommon} from "../../../interfaces/iCommon";
-import {ColumnHeaderMouseLeaveEvent, ColumnHeaderMouseOverEvent, GridColumnsChangedEvent} from "../../../events";
+import {
+    ColumnHeaderClickedEvent,
+    ColumnHeaderMouseLeaveEvent,
+    ColumnHeaderMouseOverEvent,
+    GridColumnsChangedEvent
+} from "../../../events";
 
 export interface IHeaderCellComp extends IAbstractHeaderCellComp {
     setWidth(width: string): void;
@@ -728,8 +733,13 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl<IHeaderCellComp, Colu
 
     private addActiveHeaderMouseListeners(): void {
         const listener = (e: MouseEvent) => this.handleMouseOverChange(e.type === 'mouseenter');
+        const clickListener = (event: MouseEvent) => this.handleColumnHeaderClick(event, false);
+        const doubleClickListener = (event: MouseEvent) => this.handleColumnHeaderClick(event, true);
+
         this.addManagedListener(this.getGui(), 'mouseenter', listener);
         this.addManagedListener(this.getGui(), 'mouseleave', listener);
+        this.addManagedListener(this.getGui(), 'click', clickListener);
+        this.addManagedListener(this.getGui(), 'dblclick', doubleClickListener);
     }
 
     private handleMouseOverChange(mouseOver: boolean): void {
@@ -740,6 +750,19 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl<IHeaderCellComp, Colu
             source: eventType,
             column: this.column,
             columns: null,
+        };
+
+        this.eventService.dispatchEvent(event);
+    }
+
+    private handleColumnHeaderClick(e: MouseEvent, isDoubleClick: boolean): void {
+        const eventType = isDoubleClick ? Events.EVENT_COLUMN_HEADER_DOUBLE_CLICKED : Events.EVENT_COLUMN_HEADER_CLICKED;
+        const event: WithoutGridCommon<ColumnHeaderClickedEvent> = {
+            type: eventType,
+            source: eventType,
+            column: this.column,
+            columns: null,
+            isDoubleClick,
         };
 
         this.eventService.dispatchEvent(event);
