@@ -316,7 +316,11 @@
         "gridColumnsChanged": {},
         "displayedColumnsChanged": {},
         "virtualColumnsChanged": {},
-        "columnEverythingChanged": {}
+        "columnEverythingChanged": {},
+        "columnHeaderMouseOver": {},
+        "columnHeaderMouseLeave": {},
+        "columnHeaderClicked": {},
+        "columnHeaderDoubleClicked": {}
     },
     "rowGrouping": {
         "meta": {

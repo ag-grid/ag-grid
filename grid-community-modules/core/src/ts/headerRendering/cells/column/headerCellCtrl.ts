@@ -749,20 +749,21 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl<IHeaderCellComp, Colu
             type: eventType,
             source: eventType,
             column: this.column,
-            columns: null,
+            columns: [this.column],
         };
 
         this.eventService.dispatchEvent(event);
     }
 
     private handleColumnHeaderClick(e: MouseEvent, isDoubleClick: boolean): void {
-        const eventType = isDoubleClick ? Events.EVENT_COLUMN_HEADER_DOUBLE_CLICKED : Events.EVENT_COLUMN_HEADER_CLICKED;
+        const eventType = isDoubleClick ?
+            Events.EVENT_COLUMN_HEADER_DOUBLE_CLICKED : Events.EVENT_COLUMN_HEADER_CLICKED;
+
         const event: WithoutGridCommon<ColumnHeaderClickedEvent> = {
             type: eventType,
             source: eventType,
             column: this.column,
-            columns: null,
-            isDoubleClick,
+            columns: [this.column],
         };
 
         this.eventService.dispatchEvent(event);

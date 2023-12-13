@@ -553,10 +553,9 @@ export interface ColumnHeaderMouseOverEvent<TData = any, TContext = any> extends
 
 export interface ColumnHeaderMouseLeaveEvent<TData = any, TContext = any> extends ColumnEvent<TData, TContext> { }
 
-export interface ColumnHeaderClickedEvent<TData = any, TContext = any> extends ColumnEvent<TData, TContext> {
-    /** Is the event triggered by a double click */
-    isDoubleClick: boolean;
-}
+export interface ColumnHeaderClickedEvent<TData = any, TContext = any> extends ColumnEvent<TData, TContext> { }
+
+export interface ColumnHeaderDoubleClickedEvent<TData = any, TContext = any> extends ColumnEvent<TData, TContext> { }
 
 /**------------*/
 

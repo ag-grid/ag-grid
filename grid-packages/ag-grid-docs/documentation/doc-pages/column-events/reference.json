@@ -97,6 +97,42 @@
                 },
                 "returnType": "void"
             }
+        },
+        "columnHeaderMouseOver": {
+            "description": "A mouse cursor is initially moved over a column header.",
+            "type": {
+                "arguments": {
+                    "event": "ColumnHeaderMouseOverEvent"
+                },
+                "returnType": "void"
+            }
+        },
+        "columnHeaderMouseLeave": {
+            "description": "A mouse cursor is moved out of a column header.",
+            "type": {
+                "arguments": {
+                    "event": "ColumnHeaderMouseLeaveEvent"
+                },
+                "returnType": "void"
+            }
+        },
+        "columnHeaderClicked": {
+            "description": "A column header was clicked.",
+            "type": {
+                "arguments": {
+                    "event": "ColumnHeaderClickedEvent"
+                },
+                "returnType": "void"
+            }
+        },
+        "columnHeaderDoubleClicked": {
+            "description": "A column header was double clicked.",
+            "type": {
+                "arguments": {
+                    "event": "ColumnHeaderDoubleClickedEvent"
+                },
+                "returnType": "void"
+            }
         }
     }
 }

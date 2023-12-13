@@ -50,6 +50,7 @@ import {
     ColumnEverythingChangedEvent,
     ColumnGroupOpenedEvent,
     ColumnHeaderClickedEvent,
+    ColumnHeaderDoubleClickedEvent,
     ColumnHeaderMouseLeaveEvent,
     ColumnHeaderMouseOverEvent,
     ColumnMovedEvent,
@@ -1577,11 +1578,11 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     /** Shotgun - gets called when either a) new columns are set or b) `api.applyColumnState()` is used, so everything has changed.
          */
     @Output() public columnEverythingChanged: EventEmitter<ColumnEverythingChangedEvent<TData>> = new EventEmitter<ColumnEverythingChangedEvent<TData>>();
-    /** A mouse cursor (or a pointing device) is initially moved over a column header.
+    /** A mouse cursor is initially moved over a column header.
          * @param event
          */
     @Output() public columnHeaderMouseOver: EventEmitter<ColumnHeaderMouseOverEvent<TData>> = new EventEmitter<ColumnHeaderMouseOverEvent<TData>>();
-    /** A mouse cursor (or a pointing device) is moved out of a column header.
+    /** A mouse cursor is moved out of a column header.
          * @param event
          */
     @Output() public columnHeaderMouseLeave: EventEmitter<ColumnHeaderMouseLeaveEvent<TData>> = new EventEmitter<ColumnHeaderMouseLeaveEvent<TData>>();
@@ -1592,7 +1593,7 @@ export class AgGridAngular<TData = any, TColDef extends ColDef<TData> = ColDef<a
     /** A double-click is performed on a column header.
          * @param event
          */
-    @Output() public columnHeaderDoubleClicked: EventEmitter<ColumnHeaderClickedEvent<TData>> = new EventEmitter<ColumnHeaderClickedEvent<TData>>();
+    @Output() public columnHeaderDoubleClicked: EventEmitter<ColumnHeaderDoubleClickedEvent<TData>> = new EventEmitter<ColumnHeaderDoubleClickedEvent<TData>>();
     /** Only used by Angular, React and VueJS AG Grid components (not used if doing plain JavaScript).
          * If the grid receives changes due to bound properties, this event fires after the grid has finished processing the change.
          */
