@@ -26,6 +26,8 @@ import { SortDirection } from "../../../entities/colDef";
 import { ColumnMoveHelper } from "../../columnMoveHelper";
 import { HorizontalDirection } from "../../../constants/direction";
 import { PinnedWidthService } from "../../../gridBodyComp/pinnedWidthService";
+import {WithoutGridCommon} from "../../../interfaces/iCommon";
+import {ColumnHeaderMouseLeaveEvent, ColumnHeaderMouseOverEvent, GridColumnsChangedEvent} from "../../../events";
 
 export interface IHeaderCellComp extends IAbstractHeaderCellComp {
     setWidth(width: string): void;
@@ -725,9 +727,22 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl<IHeaderCellComp, Colu
     }
 
     private addActiveHeaderMouseListeners(): void {
-        const listener = (e: MouseEvent) => this.setActiveHeader(e.type === 'mouseenter');
+        const listener = (e: MouseEvent) => this.handleMouseOverChange(e.type === 'mouseenter');
         this.addManagedListener(this.getGui(), 'mouseenter', listener);
         this.addManagedListener(this.getGui(), 'mouseleave', listener);
+    }
+
+    private handleMouseOverChange(mouseOver: boolean): void {
+        this.setActiveHeader(mouseOver);
+        const eventType = mouseOver ? Events.EVENT_COLUMN_HEADER_MOUSE_OVER : Events.EVENT_COLUMN_HEADER_MOUSE_LEAVE
+        const event: WithoutGridCommon<ColumnHeaderMouseOverEvent> | WithoutGridCommon<ColumnHeaderMouseLeaveEvent> = {
+            type: eventType,
+            source: eventType,
+            column: this.column,
+            columns: null,
+        };
+
+        this.eventService.dispatchEvent(event);
     }
 
     private setActiveHeader(active: boolean): void {

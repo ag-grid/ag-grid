@@ -504,7 +504,9 @@ export type ColumnEventType =
     "pivotChart" |
     "columnRowGroupChanged" |
     "cellDataTypeInferred" |
-    "viewportSizeFeature";
+    "viewportSizeFeature" |
+    "columnHeaderMouseOver" |
+    "columnHeaderMouseLeave";
 
 export interface ColumnEvent<TData = any, TContext = any> extends AgGridEvent<TData, TContext> {
     /** The impacted column, only set if action was on one column */
@@ -544,6 +546,10 @@ export interface ColumnPinnedEvent<TData = any, TContext = any> extends ColumnEv
     /** Either 'left', 'right', or null (it not pinned) */
     pinned: ColumnPinnedType;
 }
+
+export interface ColumnHeaderMouseOverEvent<TData = any, TContext = any> extends ColumnEvent<TData, TContext> { }
+
+export interface ColumnHeaderMouseLeaveEvent<TData = any, TContext = any> extends ColumnEvent<TData, TContext> { }
 
 /**------------*/
 

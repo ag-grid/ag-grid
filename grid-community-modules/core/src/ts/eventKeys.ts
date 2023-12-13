@@ -55,6 +55,12 @@ export class Events {
     /** The list of virtual columns has changed, results from viewport changing */
     public static EVENT_VIRTUAL_COLUMNS_CHANGED: 'virtualColumnsChanged' = 'virtualColumnsChanged';
 
+    /** Column header mouse over */
+    public static EVENT_COLUMN_HEADER_MOUSE_OVER: 'columnHeaderMouseOver' = 'columnHeaderMouseOver';
+
+    /** Column header mouse leave */
+    public static EVENT_COLUMN_HEADER_MOUSE_LEAVE: 'columnHeaderMouseLeave' = 'columnHeaderMouseLeave';
+
     /** Async Transactions Executed */
     public static EVENT_ASYNC_TRANSACTIONS_FLUSHED: 'asyncTransactionsFlushed' = 'asyncTransactionsFlushed';
 

@@ -84,7 +84,9 @@ import {
     ViewportChangedEvent,
     VirtualColumnsChangedEvent,
     VirtualRowRemovedEvent,
-    StateUpdatedEvent
+    StateUpdatedEvent,
+    ColumnHeaderMouseOverEvent,
+    ColumnHeaderMouseLeaveEvent,
 } from "../events";
 import { HeaderPosition } from "../headerRendering/common/headerPosition";
 import {
@@ -1853,6 +1855,20 @@ export interface GridOptions<TData = any> {
      * Shotgun - gets called when either a) new columns are set or b) `api.applyColumnState()` is used, so everything has changed.
      */
     onColumnEverythingChanged?(event: ColumnEverythingChangedEvent<TData>): void;
+
+    // *** Column Header *** //
+
+    /**
+     * A mouse cursor (or a pointing device) is initially moved over a column header.
+     * @param event
+     */
+    onColumnHeaderMouseOver?(event: ColumnHeaderMouseOverEvent<TData>): void;
+
+    /**
+     * A mouse cursor (or a pointing device) is moved out of a column header.
+     * @param event
+     */
+    onColumnHeaderMouseLeave?(event: ColumnHeaderMouseLeaveEvent<TData>): void;
 
     // *** Components *** //
     /**
